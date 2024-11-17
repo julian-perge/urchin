@@ -1,0 +1,5468 @@
+{
+  "items": [
+	{
+	  "name": "None",
+	  "type": 0,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 0,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 5,
+		"magic": 4,
+		"speed": 3,
+		"strength": 5
+	  },
+	  "piercing": {},
+	  "defense": {}
+	},
+	{
+	  "name": "Mace",
+	  "type": 7,
+	  "rarity": "Uncommon",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 4,
+		"strength": 8
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SWORD1"
+	},
+	{
+	  "name": "Jeans",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 100
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JEANS"
+	},
+	{
+	  "name": "A Broken Pipe",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 100
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PIPE"
+	},
+	{
+	  "name": "Fire Axe",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 100
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FIREAXE"
+	},
+	{
+	  "name": "Crow Bar",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 100
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CROWBAR"
+	},
+	{
+	  "name": "Converse All Stars",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 100
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JEANS"
+	},
+	{
+	  "name": "Engineering Gloves",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 1
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ENGINEERINGGLOVES"
+	},
+	{
+	  "name": "Navy Boots",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 1,
+		"strength": 1
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "NAVY"
+	},
+	{
+	  "name": "White T-Shirt",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 100
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHIRT"
+	},
+	{
+	  "name": "Stick",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {},
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "STICK"
+	},
+	{
+	  "name": "M4",
+	  "type": 7,
+	  "rarity": "Uncommon",
+	  "required_class": 0,
+	  "required_level": 3,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 3,
+		"magic": 11
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "M4"
+	},
+	{
+	  "name": "Metal Baton",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 11,
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "BATON"
+	},
+	{
+	  "name": "Hans the Butcher",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 11,
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FRANKEN"
+	},
+	{
+	  "name": "Surgery Blade",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 11,
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "DOCKNIFE"
+	},
+	{
+	  "name": "Scientist Robe",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 11,
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "MADSCI"
+	},
+	{
+	  "name": "Scientist Sleeves",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 11,
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "MADSCI"
+	},
+	{
+	  "name": "Frankie Body",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 11
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FRANKEN"
+	},
+	{
+	  "name": "Frankie Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 11
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FRANKEN2"
+	},
+	{
+	  "name": "Frankie Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 11
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FRANKEN"
+	},
+	{
+	  "name": "Felicity\\'s Knife",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 11
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE"
+	},
+	{
+	  "name": "Tank",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 350,
+		"strength": 150,
+		"speed": 100
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHIRT2"
+	},
+	{
+	  "name": "Physical DPS",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 100,
+		"strength": 400,
+		"speed": 200
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHIRT3"
+	},
+	{
+	  "name": "Magic DPS",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 200,
+		"magic": 250,
+		"speed": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHIRT4"
+	},
+	{
+	  "name": "Piercing",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 150,
+		"strength": 150,
+		"speed": 250
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHIRT5"
+	},
+	{
+	  "name": "Tat Shirt",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 50,
+		"strength": 25,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TAT2"
+	},
+	{
+	  "name": "Tat Leggings",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 50,
+		"strength": 25,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TAT"
+	},
+	{
+	  "name": "Tat Glove",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 50,
+		"strength": 25,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TAT"
+	},
+	{
+	  "name": "Tat Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 50,
+		"strength": 25,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TAT"
+	},
+	{
+	  "name": "Tat Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 50,
+		"strength": 25,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TAT"
+	},
+	{
+	  "name": "Gay Pants/Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 1
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "GAY"
+	},
+	{
+	  "name": "Gay Hat",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 1
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUX"
+	},
+	{
+	  "name": "Medic Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 4,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 40,
+		"strength": 30,
+		"speed": 15,
+		"magic": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI3"
+	},
+	{
+	  "name": "Medic Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 4,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 50,
+		"strength": 15,
+		"speed": 10,
+		"magic": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI3"
+	},
+	{
+	  "name": "Medic Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 4,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"strength": 50,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI3"
+	},
+	{
+	  "name": "Medic Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 4,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 10,
+		"strength": 15,
+		"speed": 60,
+		"magic": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI3"
+	},
+	{
+	  "name": "Medic Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 4,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"strength": 10,
+		"speed": 20,
+		"magic": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI3"
+	},
+	{
+	  "name": "Gun",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 4,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 40,
+		"speed": 20,
+		"magic": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "M4"
+	},
+	{
+	  "name": "Dull Sword",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 40,
+		"speed": 20,
+		"magic": 40,
+		"health": 75,
+		"instinct": 60,
+		"focus": 5
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SWORD1"
+	},
+	{
+	  "name": "Guard\\'s Trousers",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 50,
+		"speed": 30,
+		"health": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON"
+	},
+	{
+	  "name": "Guard\\'s Grip",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 50,
+		"speed": 30,
+		"health": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON"
+	},
+	{
+	  "name": "Guard\\'s Runners",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 50,
+		"speed": 30,
+		"health": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON"
+	},
+	{
+	  "name": "Guard\\'s Uniform",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON"
+	},
+	{
+	  "name": "Watcher\\'s Cap",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON"
+	},
+	{
+	  "name": "Standard Trousers. XL",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 2,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 50,
+		"strength": 50,
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRISON"
+	},
+	{
+	  "name": "Standard Shirt. XL",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 2,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRISON"
+	},
+	{
+	  "name": "Doctor\\'s Labcoat",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 3,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "MADSCI"
+	},
+	{
+	  "name": "Doctor\\'s Grasp",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 3,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "MADSCI"
+	},
+	{
+	  "name": "Monster\\'s Rags",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 5,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRISON2"
+	},
+	{
+	  "name": "Warden\\'s Body Armour",
+	  "type": 3,
+	  "rarity": "Uncommon",
+	  "required_class": 0,
+	  "required_level": 5,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 35,
+		"health": 25,
+		"strength": 55
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON2"
+	},
+	{
+	  "name": "Warden\\'s Grasp",
+	  "type": 4,
+	  "rarity": "Uncommon",
+	  "required_class": 0,
+	  "required_level": 5,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 35,
+		"health": 25,
+		"strength": 55
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON2"
+	},
+	{
+	  "name": "Warden\\'s Steel Toes",
+	  "type": 6,
+	  "rarity": "Uncommon",
+	  "required_class": 0,
+	  "required_level": 5,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 29,
+		"speed": 34,
+		"health": 11,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON2"
+	},
+	{
+	  "name": "Warden\\'s Leggings",
+	  "type": 5,
+	  "rarity": "Uncommon",
+	  "required_class": 0,
+	  "required_level": 5,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 30,
+		"speed": 30,
+		"health": 25,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON2"
+	},
+	{
+	  "name": "Warden\\'s Helm",
+	  "type": 2,
+	  "rarity": "Uncommon",
+	  "required_class": 0,
+	  "required_level": 5,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 30,
+		"speed": 30,
+		"health": 30,
+		"strength": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON2"
+	},
+	{
+	  "name": "Frankie\\'s Protection",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 6,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FRANKEN"
+	},
+	{
+	  "name": "Elite Leggings",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 7,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI"
+	},
+	{
+	  "name": "Gilded Boots",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 7,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI"
+	},
+	{
+	  "name": "Chosen Gloves",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 7,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI"
+	},
+	{
+	  "name": "Noble Helm",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 7,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI"
+	},
+	{
+	  "name": "Elite Armour",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 7,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI"
+	},
+	{
+	  "name": "Frosted Armor",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 8,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FROSTPLATE"
+	},
+	{
+	  "name": "Frosted Leggings",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 8,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FROSTPLATE"
+	},
+	{
+	  "name": "Icy Runners",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 8,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FROSTPLATE"
+	},
+	{
+	  "name": "Glacial Gloves",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 8,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FROSTPLATE"
+	},
+	{
+	  "name": "Frozen Helm",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 8,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {}
+	},
+	{
+	  "name": "Faith Runners",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TAT"
+	},
+	{
+	  "name": "Rebellious Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 25,
+		"speed": 25,
+		"health": 25,
+		"strength": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TAT"
+	},
+	{
+	  "name": "Dissident\\'s Crest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 25,
+		"speed": 25,
+		"health": 25,
+		"strength": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TAT2"
+	},
+	{
+	  "name": "Hope\\'s Strength",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TAT"
+	},
+	{
+	  "name": "Justice Helm",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER"
+	},
+	{
+	  "name": "Rightful Grasp",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER"
+	},
+	{
+	  "name": "Righteous Breastplate",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER"
+	},
+	{
+	  "name": "Zealot\\'s Leggings",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER"
+	},
+	{
+	  "name": "Zealot\\'s Marchers",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER"
+	},
+	{
+	  "name": "Believer\\'s Crown",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST"
+	},
+	{
+	  "name": "Spirit Slippers",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST"
+	},
+	{
+	  "name": "Clairvoyant Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST"
+	},
+	{
+	  "name": "Healer\\'s Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST"
+	},
+	{
+	  "name": "Divine Garments",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST"
+	},
+	{
+	  "name": "Enlightened Helm",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST2"
+	},
+	{
+	  "name": "Arcane Armour",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST2"
+	},
+	{
+	  "name": "Ancient Gloves",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST2"
+	},
+	{
+	  "name": "Tomekeeper\\'s Slippers",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST2"
+	},
+	{
+	  "name": "Tomekeeper\\'s Leggings",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST2"
+	},
+	{
+	  "name": "Supreme Grasp",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER2"
+	},
+	{
+	  "name": "Demigod\\'s Visage",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER2"
+	},
+	{
+	  "name": "Usurper\\'s Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER2"
+	},
+	{
+	  "name": "Holy Slippers",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER2"
+	},
+	{
+	  "name": "Pretender\\'s Leggings",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER2"
+	},
+	{
+	  "name": "X5C8-3",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ARCTIC"
+	},
+	{
+	  "name": "X5C8-1",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ARCTIC"
+	},
+	{
+	  "name": "X5C8-2",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ARCTIC"
+	},
+	{
+	  "name": "X5C8-5",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ARCTIC"
+	},
+	{
+	  "name": "X5C8-4",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ARCTIC"
+	},
+	{
+	  "name": "Medical Visor",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI3"
+	},
+	{
+	  "name": "Surgeon Gloves",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI3"
+	},
+	{
+	  "name": "MedPak Armor",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI3"
+	},
+	{
+	  "name": "Medic Treads",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI3"
+	},
+	{
+	  "name": "MedPak Leggings",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI3"
+	},
+	{
+	  "name": "Agile Boots",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI2"
+	},
+	{
+	  "name": "Steadfast Leggings",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI2"
+	},
+	{
+	  "name": "Deft Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI2"
+	},
+	{
+	  "name": "Flexible Armour",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI2"
+	},
+	{
+	  "name": "Accuracy Display",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ZPCI2"
+	},
+	{
+	  "name": "Juggernaut\\'s Panzer",
+	  "type": 3,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 65,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "HUNT"
+	},
+	{
+	  "name": "Dreadnaught\\'s Panzer",
+	  "type": 5,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 55,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "HUNT"
+	},
+	{
+	  "name": "Reinforced Grasp",
+	  "type": 4,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 55,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "HUNT"
+	},
+	{
+	  "name": "Combat Boots",
+	  "type": 6,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 20,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "HUNT"
+	},
+	{
+	  "name": "Eliminator\\'s Sight",
+	  "type": 2,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 40,
+		"health": 30,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "HUNT"
+	},
+	{
+	  "name": "Bugo Hoss Tuxedo",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 14,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUX"
+	},
+	{
+	  "name": "White Top Hat",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 14,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUX"
+	},
+	{
+	  "name": "Upper Rags",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 25,
+		"speed": 25,
+		"health": 25,
+		"strength": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "HOBO"
+	},
+	{
+	  "name": "Lower Rags",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 25,
+		"speed": 25,
+		"health": 25,
+		"strength": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "HOBO"
+	},
+	{
+	  "name": "Do Rag",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "HOBO"
+	},
+	{
+	  "name": "Hope\\'s Grasp",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "HOBO"
+	},
+	{
+	  "name": "Winter Boots",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "HOBO"
+	},
+	{
+	  "name": "Flamboyant Shirt",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 27,
+		"speed": 39,
+		"health": 7,
+		"strength": 27
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHIRT5"
+	},
+	{
+	  "name": "Flamboyant Trousers",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 57,
+		"speed": 30,
+		"health": 13
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "GAY"
+	},
+	{
+	  "name": "Flamboyant Shoes",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "GAY"
+	},
+	{
+	  "name": "Mining Helmet",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 0.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "WORKER"
+	},
+	{
+	  "name": "Mining Shirt",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 0.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "WORKERSHIRT"
+	},
+	{
+	  "name": "Cloaking Helm",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 5,
+		"speed": 15,
+		"health": 50,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TAT"
+	},
+	{
+	  "name": "Guard\\'s Baton",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 1,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 40,
+		"strength": 60
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "BATON"
+	},
+	{
+	  "name": "Surgery Blade",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 3,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 50,
+		"magic": 25,
+		"strength": 25,
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "DOCKNIFE"
+	},
+	{
+	  "name": "EMD Blade",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 4,
+	  "price_modifier": 0.0,
+	  "stats": {
+		"speed": 5,
+		"health": 10,
+		"magic": 45
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TASER"
+	},
+	{
+	  "name": "Terror Blade",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 4,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "UBER2"
+	},
+	{
+	  "name": "Persecution",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 5,
+	  "price_modifier": 3.0,
+	  "stats": {
+		"speed": 30,
+		"health": 30,
+		"magic": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "BATON2"
+	},
+	{
+	  "name": "Green Terror",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 6,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 62,
+		"strength": 68
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FRANKEN"
+	},
+	{
+	  "name": "Standard Rifle",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 6,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"health": 10,
+		"magic": 60,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "M4"
+	},
+	{
+	  "name": "Curved Blade",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 7,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 10,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE"
+	},
+	{
+	  "name": "Metal Mask",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 3,
+	  "price_modifier": 0.0,
+	  "stats": {
+		"health": 60,
+		"strength": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON3"
+	},
+	{
+	  "name": "Voltage Cage",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 3,
+	  "price_modifier": 0.0,
+	  "stats": {
+		"health": 55,
+		"magic": 45
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON3"
+	},
+	{
+	  "name": "Frosted Gloves",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 3,
+	  "price_modifier": 0.0,
+	  "stats": {
+		"magic": 35,
+		"health": 65
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON3"
+	},
+	{
+	  "name": "Toxic Plates",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 3,
+	  "price_modifier": 0.0,
+	  "stats": {
+		"health": 68,
+		"strength": 32
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON3"
+	},
+	{
+	  "name": "Metal Sprinter",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 3,
+	  "price_modifier": 0.0,
+	  "stats": {
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON3"
+	},
+	{
+	  "name": "Dirty 31",
+	  "type": 5,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 3,
+	  "price_modifier": 3.0,
+	  "stats": {
+		"speed": 100
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JEANS"
+	},
+	{
+	  "name": "Prison Shanker",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 3,
+	  "price_modifier": 0.0,
+	  "stats": {},
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE"
+	},
+	{
+	  "name": "Light\\'s Blade",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"health": 20,
+		"magic": 20,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PALADINSWORD"
+	},
+	{
+	  "name": "Metal Shield",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 50,
+		"magic": 25,
+		"strength": 5
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHIELD2"
+	},
+	{
+	  "name": "Fiery Doom",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 20,
+		"magic": 60
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "MAGESTAFF"
+	},
+	{
+	  "name": "Frosted Light",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"health": 50,
+		"magic": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIESTSTAFF"
+	},
+	{
+	  "name": "Icy Maul",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 8,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ICESTICK"
+	},
+	{
+	  "name": "Frosted Fate",
+	  "type": 7,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 3.0,
+	  "stats": {
+		"speed": 30,
+		"magic": 20,
+		"strength": 60
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FROSTAXE"
+	},
+	{
+	  "name": "Runeblade",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 27,
+		"health": 17,
+		"magic": 17,
+		"strength": 37
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER"
+	},
+	{
+	  "name": "ZPCI Sniper Rifle",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 25,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "UBER4"
+	},
+	{
+	  "name": "Rebellion Striker",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 11,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 25,
+		"strength": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "AK"
+	},
+	{
+	  "name": "Venom Smite",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 9,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"magic": 5,
+		"strength": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "BROAD"
+	},
+	{
+	  "name": "Fury",
+	  "type": 7,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 50,
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TASER2"
+	},
+	{
+	  "name": "Wrath",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 10,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"focus": 15,
+		"speed": 7,
+		"magic": 7
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TASER2"
+	},
+	{
+	  "name": "Unholy Runeblade",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 40,
+		"health": 30,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER2"
+	},
+	{
+	  "name": "Vendor Shaman Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMAN1"
+	},
+	{
+	  "name": "Vendor Shaman Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMAN1"
+	},
+	{
+	  "name": "Vendor Shaman Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMAN1"
+	},
+	{
+	  "name": "Vendor Shaman Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 14,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 30,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMAN1"
+	},
+	{
+	  "name": "Vendor Shaman Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"health": 20,
+		"strength": 70
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMAN1"
+	},
+	{
+	  "name": "Vendor Samurai Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 40,
+		"strength": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SAMURAI4"
+	},
+	{
+	  "name": "Vendor Samurai Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 25,
+		"health": 20,
+		"strength": 10,
+		"magic": 45
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SAMURAI4"
+	},
+	{
+	  "name": "Vendor Samurai Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 100
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SAMURAI4"
+	},
+	{
+	  "name": "Vendor Samurai Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 14,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"health": 70,
+		"strength": 10,
+		"magic": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SAMURAI4"
+	},
+	{
+	  "name": "Vendor Samurai Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 80,
+		"strength": 10,
+		"magic": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SAMURAI4"
+	},
+	{
+	  "name": "Drop Shaman Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 30,
+		"magic": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMAN2"
+	},
+	{
+	  "name": "Drop Shaman Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 20,
+		"strength": 50,
+		"magic": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMAN2"
+	},
+	{
+	  "name": "Drop Shaman Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 10,
+		"magic": 70
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMAN2"
+	},
+	{
+	  "name": "Drop Shaman Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"health": 20,
+		"strength": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMAN2"
+	},
+	{
+	  "name": "Drop Shaman Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 14,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"health": 60,
+		"strength": 10,
+		"magic": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMAN2"
+	},
+	{
+	  "name": "Drop Samurai Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"health": 60,
+		"strength": 20,
+		"magic": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SAMURAI2"
+	},
+	{
+	  "name": "Drop Samurai Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 20,
+		"strength": 60
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SAMURAI2"
+	},
+	{
+	  "name": "Drop Samurai Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 70,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SAMURAI2"
+	},
+	{
+	  "name": "Drop Samurai Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 20,
+		"magic": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SAMURAI2"
+	},
+	{
+	  "name": "Drop Samurai Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 14,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"health": 25,
+		"strength": 60,
+		"magic": 5
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SAMURAI2"
+	},
+	{
+	  "name": "Drop ZPCI Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 35,
+		"strength": 5,
+		"magic": 60
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "USA2"
+	},
+	{
+	  "name": "Drop ZPCI Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 40,
+		"health": 20,
+		"magic": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "USA2"
+	},
+	{
+	  "name": "Drop ZPCI Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"health": 20,
+		"strength": 50,
+		"magic": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "USA2"
+	},
+	{
+	  "name": "Drop ZPCI Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 50,
+		"strength": 10,
+		"magic": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "USA2"
+	},
+	{
+	  "name": "Drop ZPCI Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 14,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"health": 10,
+		"magic": 80
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "USA2"
+	},
+	{
+	  "name": "Tank Sword",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 15,
+		"health": 55,
+		"strength": 15,
+		"magic": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMANKNIFE"
+	},
+	{
+	  "name": "Magic Mace",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 40,
+		"magic": 60
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SPELLMACE"
+	},
+	{
+	  "name": "Annihilation",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 13,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 10,
+		"strength": 100
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "UBER1"
+	},
+	{
+	  "name": "Shield",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "UBER7"
+	},
+	{
+	  "name": "Green 1",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 15,
+		"strength": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE2"
+	},
+	{
+	  "name": "Green 2",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE2"
+	},
+	{
+	  "name": "Red 1",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE3"
+	},
+	{
+	  "name": "Red 2",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE3"
+	},
+	{
+	  "name": "Blue Axe",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 15,
+		"magic": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMANMED"
+	},
+	{
+	  "name": "Orange Axe",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 12,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 35
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHAMANMAGIC"
+	},
+	{
+	  "name": "Gold Katana",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 14,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 10,
+		"strength": 50,
+		"magic": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "KATANA"
+	},
+	{
+	  "name": "Sun Struck Horrors",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 25,
+		"health": 30,
+		"strength": 50,
+		"magic": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "MOON"
+	},
+	{
+	  "name": "Devil Blade",
+	  "type": 7,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 15,
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHANK"
+	},
+	{
+	  "name": "Demon Blade",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 14,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 15,
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHANK"
+	},
+	{
+	  "name": "Spell Staff",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 40,
+		"health": 40,
+		"magic": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SPELLSTAFF"
+	},
+	{
+	  "name": "Drop CLEMONS Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"strength": 40,
+		"magic": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CLEMONS"
+	},
+	{
+	  "name": "Drop CLEMONS Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"health": 70
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CLEMONS"
+	},
+	{
+	  "name": "Drop CLEMONS Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 80,
+		"strength": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CLEMONS"
+	},
+	{
+	  "name": "Drop CLEMONS Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 40,
+		"strength": 40,
+		"magic": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CLEMONS"
+	},
+	{
+	  "name": "Drop CLEMONS Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 15,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 65,
+		"health": 20,
+		"magic": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CLEMONS"
+	},
+	{
+	  "name": "Drop BLACK OPS Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNTAT"
+	},
+	{
+	  "name": "Drop BLACK OPS Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 50,
+		"health": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNTAT2"
+	},
+	{
+	  "name": "Drop BLACK OPS Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"strength": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNTAT"
+	},
+	{
+	  "name": "Drop BLACK OPS Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 10,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNTAT"
+	},
+	{
+	  "name": "Drop BLACK OPS Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 35,
+		"strength": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNTAT"
+	},
+	{
+	  "name": "Drop VIKING Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 19,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 35,
+		"speed": 20,
+		"magic": 45
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNNELSET2"
+	},
+	{
+	  "name": "Drop VIKING Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 19,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 15,
+		"strength": 20,
+		"magic": 65
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNNELSET2"
+	},
+	{
+	  "name": "Drop VIKING Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 17,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 35,
+		"speed": 10,
+		"magic": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNNELSET2"
+	},
+	{
+	  "name": "Drop VIKING Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 35,
+		"speed": 10,
+		"magic": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNNELSET2"
+	},
+	{
+	  "name": "Drop VIKING Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 35,
+		"speed": 15,
+		"magic": 35
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNNELSET2"
+	},
+	{
+	  "name": "Drop IRONGUARD Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"strength": 70
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNNELSET1"
+	},
+	{
+	  "name": "Drop IRONGUARD Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 70,
+		"strength": 20,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNNELSET1"
+	},
+	{
+	  "name": "Drop IRONGUARD Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 17,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"strength": 50,
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNNELSET1"
+	},
+	{
+	  "name": "Drop IRONGUARD Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 17,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 50,
+		"strength": 40,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNNELSET1"
+	},
+	{
+	  "name": "Drop IRONGUARD Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 17,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 60,
+		"strength": 30,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TUNNELSET1"
+	},
+	{
+	  "name": "Drop EMPEROR Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 15,
+		"magic": 75,
+		"health": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CLEMONS2"
+	},
+	{
+	  "name": "Drop EMPEROR Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 40,
+		"magic": 45,
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CLEMONS2"
+	},
+	{
+	  "name": "Drop EMPEROR Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 16,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"magic": 80
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CLEMONS2"
+	},
+	{
+	  "name": "Drop EMPEROR Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 17,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"magic": 50,
+		"strength": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CLEMONS2"
+	},
+	{
+	  "name": "Drop EMPEROR Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 17,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 35,
+		"magic": 50,
+		"health": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CLEMONS2"
+	},
+	{
+	  "name": "Drop ROCKSTAR Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 22,
+		"strength": 38,
+		"magic": 30,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROCKSTAR"
+	},
+	{
+	  "name": "Drop ROCKSTAR Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"strength": 35,
+		"magic": 15,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROCKSTAR"
+	},
+	{
+	  "name": "Drop ROCKSTAR Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 16,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"strength": 35,
+		"magic": 15,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROCKSTAR"
+	},
+	{
+	  "name": "Drop ROCKSTAR Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 17,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"strength": 40,
+		"magic": 10,
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROCKSTAR"
+	},
+	{
+	  "name": "Drop ROCKSTAR Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 17,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 15,
+		"strength": 45,
+		"magic": 15,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROCKSTAR"
+	},
+	{
+	  "name": "SHIELD",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 17,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "UBER6"
+	},
+	{
+	  "name": "SWORD",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 16,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20,
+		"health": 12,
+		"strength": 40,
+		"magic": 8
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SWORD1"
+	},
+	{
+	  "name": "FROZEN RUNEBLADE",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 17,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 15,
+		"strength": 25,
+		"magic": 45
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER3"
+	},
+	{
+	  "name": "GUN",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 18,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 15,
+		"strength": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "AK2"
+	},
+	{
+	  "name": "TRIDENT",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 19,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30,
+		"magic": 60
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TRIDENT"
+	},
+	{
+	  "name": "OLD SWORD",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 19,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"strength": 110
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "BROAD2"
+	},
+	{
+	  "name": "SMALL SWORD",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 17,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "UBER11"
+	},
+	{
+	  "name": "SMALL SWORD",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 19,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "UBER11"
+	},
+	{
+	  "name": "SHARD",
+	  "type": 0,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 20,
+	  "price_modifier": 1.0,
+	  "stats": {},
+	  "piercing": {},
+	  "defense": {}
+	},
+	{
+	  "name": "Drop IMPERIAL Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"strength": 60,
+		"speed": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "IMPERIAL"
+	},
+	{
+	  "name": "Drop IMPERIAL Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 15,
+		"strength": 70,
+		"speed": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "IMPERIAL"
+	},
+	{
+	  "name": "Drop IMPERIAL Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 15,
+		"strength": 45,
+		"speed": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "IMPERIAL"
+	},
+	{
+	  "name": "Drop IMPERIAL Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 5,
+		"strength": 80,
+		"speed": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "IMPERIAL"
+	},
+	{
+	  "name": "Drop IMPERIAL Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"strength": 60,
+		"speed": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "IMPERIAL"
+	},
+	{
+	  "name": "Drop ROBOT Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 60,
+		"magic": 15,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROBOT"
+	},
+	{
+	  "name": "Drop ROBOT Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 100
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROBOT"
+	},
+	{
+	  "name": "Drop ROBOT Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 40,
+		"magic": 35,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROBOT"
+	},
+	{
+	  "name": "Drop ROBOT Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 70,
+		"magic": 10,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROBOT"
+	},
+	{
+	  "name": "Drop ROBOT Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 80,
+		"magic": 15,
+		"speed": 5
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROBOT"
+	},
+	{
+	  "name": "Drop POLICE Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 50,
+		"strength": 15,
+		"magic": 20,
+		"speed": 5
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "POLICE"
+	},
+	{
+	  "name": "Drop POLICE Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"strength": 30,
+		"magic": 20,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "POLICE"
+	},
+	{
+	  "name": "Drop POLICE Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"strength": 40,
+		"magic": 15,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "POLICE"
+	},
+	{
+	  "name": "Drop POLICE Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"strength": 15,
+		"magic": 20,
+		"speed": 35
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "POLICE"
+	},
+	{
+	  "name": "Drop POLICE Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"strength": 25,
+		"magic": 25,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "POLICE"
+	},
+	{
+	  "name": "Drop COUNCIL Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 23,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"magic": 60,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST3"
+	},
+	{
+	  "name": "Drop COUNCIL Chest",
+	  "type": 3,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 23,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"magic": 70,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST3"
+	},
+	{
+	  "name": "Drop COUNCIL Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 10,
+		"magic": 70,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST3"
+	},
+	{
+	  "name": "Drop COUNCIL Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"magic": 40,
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST3"
+	},
+	{
+	  "name": "Drop COUNCIL Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 10,
+		"magic": 80,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST3"
+	},
+	{
+	  "name": "Drop SPECIALIST Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 5,
+		"focus": 5,
+		"speed": 45
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SINJID"
+	},
+	{
+	  "name": "Drop SPECIALIST Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 10,
+		"focus": 5,
+		"speed": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SINJID"
+	},
+	{
+	  "name": "Drop SPECIALIST Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 40,
+		"focus": 5,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SINJID"
+	},
+	{
+	  "name": "Drop SPECIALIST Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 30,
+		"focus": 5,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SINJID"
+	},
+	{
+	  "name": "Drop SPECIALIST Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 15,
+		"focus": 5,
+		"speed": 35
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SINJID"
+	},
+	{
+	  "name": "Drop POLICE2 Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"strength": 10,
+		"magic": 60,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "POLICE2"
+	},
+	{
+	  "name": "Drop POLICE2 Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"strength": 15,
+		"magic": 35,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "POLICE2"
+	},
+	{
+	  "name": "Drop POLICE2 Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"strength": 5,
+		"magic": 55,
+		"speed": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "POLICE2"
+	},
+	{
+	  "name": "Drop POLICE2 Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"magic": 50,
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "POLICE2"
+	},
+	{
+	  "name": "Drop POLICE2 Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"strength": 20,
+		"magic": 30,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "POLICE2"
+	},
+	{
+	  "name": "Drop IMPERIAL2 Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 23,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 55,
+		"strength": 30,
+		"speed": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "IMPERIAL2"
+	},
+	{
+	  "name": "Drop IMPERIAL2 Chest",
+	  "type": 3,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 23,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 65,
+		"strength": 35,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "IMPERIAL2"
+	},
+	{
+	  "name": "Drop IMPERIAL2 Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 55,
+		"strength": 30,
+		"speed": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "IMPERIAL2"
+	},
+	{
+	  "name": "Drop IMPERIAL2 Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 50,
+		"strength": 44,
+		"speed": 5
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "IMPERIAL2"
+	},
+	{
+	  "name": "Drop IMPERIAL2 Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 60,
+		"strength": 30,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "IMPERIAL2"
+	},
+	{
+	  "name": "Drop MAYOR Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 24,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"magic": 60,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST4"
+	},
+	{
+	  "name": "Drop MAYOR Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 24,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 15,
+		"magic": 80,
+		"speed": 5
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST4"
+	},
+	{
+	  "name": "Drop MAYOR Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 23,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"magic": 60,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST4"
+	},
+	{
+	  "name": "Drop MAYOR Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 23,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 40,
+		"magic": 40,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST4"
+	},
+	{
+	  "name": "Drop MAYOR Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 23,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"magic": 60,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PRIEST4"
+	},
+	{
+	  "name": "RIOT GUN",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 35,
+		"magic": 30,
+		"speed": 25,
+		"health": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "AK4"
+	},
+	{
+	  "name": "IMPERIAL GUN",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 15,
+		"strength": 30,
+		"speed": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "IMPERIAL"
+	},
+	{
+	  "name": "COLONEL GUN",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 50,
+		"magic": 50,
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "AK3"
+	},
+	{
+	  "name": "STAFF",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"magic": 70,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "COUNCILSTAFF"
+	},
+	{
+	  "name": "SMALL BLADE 1",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE3"
+	},
+	{
+	  "name": "SMALL BLADE 2",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE3"
+	},
+	{
+	  "name": "SHIELD",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "UBER5"
+	},
+	{
+	  "name": "SPELL BLADE",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TASER3"
+	},
+	{
+	  "name": "TRIDENT",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"magic": 70
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "TRIDENT2"
+	},
+	{
+	  "name": "BLUE SWORD",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 40,
+		"strength": 20,
+		"magic": 20,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FLATBLADE"
+	},
+	{
+	  "name": "BLUE SWORD 2",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 21,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"strength": 20,
+		"magic": 20,
+		"speed": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FLATBLADE"
+	},
+	{
+	  "name": "2H SWORD",
+	  "type": 9,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 22,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"strength": 70,
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SWORD2"
+	},
+	{
+	  "name": "Drop WARDEN Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 26,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"speed": 5,
+		"strength": 65
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON4"
+	},
+	{
+	  "name": "Drop WARDEN Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 27,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"strength": 70
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON4"
+	},
+	{
+	  "name": "Drop WARDEN Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 23,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 70,
+		"magic": 5,
+		"speed": 10,
+		"strength": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON4"
+	},
+	{
+	  "name": "Drop WARDEN Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 25,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 60,
+		"magic": 5,
+		"speed": 15,
+		"strength": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON4"
+	},
+	{
+	  "name": "Drop WARDEN Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 24,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 10,
+		"speed": 75,
+		"strength": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "JASON4"
+	},
+	{
+	  "name": "Drop NOS Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 24,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"magic": 60,
+		"speed": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "NOS"
+	},
+	{
+	  "name": "Drop NOS Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 23,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"magic": 25,
+		"speed": 25,
+		"strength": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "NOS"
+	},
+	{
+	  "name": "Drop NOS Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 25,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 10,
+		"magic": 80,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "NOS"
+	},
+	{
+	  "name": "Drop NOS Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 26,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"magic": 20,
+		"speed": 60
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "NOS"
+	},
+	{
+	  "name": "Drop NOS Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 27,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 60,
+		"magic": 30,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "NOS"
+	},
+	{
+	  "name": "Drop BLUE NINJA Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 27,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"speed": 30,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "BLUENIN"
+	},
+	{
+	  "name": "Drop BLUE NINJA Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 24,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 15,
+		"speed": 70,
+		"strength": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "BLUENIN"
+	},
+	{
+	  "name": "Drop BLUE NINJA Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 26,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"speed": 60,
+		"strength": 20
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "BLUENIN"
+	},
+	{
+	  "name": "Drop BLUE NINJA Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 25,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"magic": 25,
+		"speed": 25,
+		"strength": 25
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "BLUENIN"
+	},
+	{
+	  "name": "Drop BLUE NINJA Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 23,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 15,
+		"speed": 15,
+		"strength": 60
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "BLUENIN"
+	},
+	{
+	  "name": "GUN",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 25,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"magic": 20,
+		"speed": 20,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "AK2"
+	},
+	{
+	  "name": "SWORD",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 26,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"magic": 10,
+		"speed": 5,
+		"strength": 65
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "XADER"
+	},
+	{
+	  "name": "KNIFE",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 25,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"strength": 70
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE5"
+	},
+	{
+	  "name": "KNIFE2",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 23,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 70
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE5"
+	},
+	{
+	  "name": "MACE",
+	  "type": 7,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 26,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"magic": 60,
+		"speed": 15
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SPELLMACE"
+	},
+	{
+	  "name": "BATON",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 25,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"strength": 70,
+		"speed": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "BATON2"
+	},
+	{
+	  "name": "SHIELD",
+	  "type": 8,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 24,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 90,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "SHIELD2"
+	},
+	{
+	  "name": "GOLDEN CROWBAR",
+	  "type": 8,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 90,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "CROWBAR2"
+	},
+	{
+	  "name": "GOLDEN PIPE",
+	  "type": 8,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 90,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PIPE2"
+	},
+	{
+	  "name": "GOLDEN AXE",
+	  "type": 8,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 90,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FIREAXE2"
+	},
+	{
+	  "name": "Drop KLIMA Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 4,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"speed": 20,
+		"magic": 35,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "KLIMA"
+	},
+	{
+	  "name": "Drop KLIMA Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 4,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"speed": 20,
+		"magic": 35,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "KLIMA"
+	},
+	{
+	  "name": "Drop KLIMA Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 4,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"speed": 20,
+		"magic": 35,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "KLIMA"
+	},
+	{
+	  "name": "Drop KLIMA Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 4,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"speed": 20,
+		"magic": 35,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "KLIMA"
+	},
+	{
+	  "name": "Drop KLIMA Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 4,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 25,
+		"speed": 20,
+		"magic": 35,
+		"strength": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "KLIMA"
+	},
+	{
+	  "name": "Drop ULTI3 Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"speed": 60,
+		"magic": 10,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI3"
+	},
+	{
+	  "name": "Drop ULTI3 Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"speed": 60,
+		"magic": 10,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI3"
+	},
+	{
+	  "name": "Drop ULTI3 Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 50,
+		"magic": 10,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI3"
+	},
+	{
+	  "name": "Drop ULTI3 Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 50,
+		"magic": 10,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI3"
+	},
+	{
+	  "name": "Drop ULTI3 Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 50,
+		"magic": 10,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI3"
+	},
+	{
+	  "name": "Drop ULTI Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"speed": 10,
+		"magic": 10,
+		"strength": 60
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI"
+	},
+	{
+	  "name": "Drop ULTI Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"speed": 10,
+		"magic": 10,
+		"strength": 60
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI"
+	},
+	{
+	  "name": "Drop ULTI Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 10,
+		"magic": 10,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI"
+	},
+	{
+	  "name": "Drop ULTI Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 10,
+		"magic": 10,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI"
+	},
+	{
+	  "name": "Drop ULTI Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 10,
+		"magic": 10,
+		"strength": 50
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI"
+	},
+	{
+	  "name": "Drop ULTI2 Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"speed": 10,
+		"magic": 60,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI2"
+	},
+	{
+	  "name": "Drop ULTI2 Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 20,
+		"speed": 10,
+		"magic": 60,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI2"
+	},
+	{
+	  "name": "Drop ULTI2 Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 10,
+		"magic": 50,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI2"
+	},
+	{
+	  "name": "Drop ULTI2 Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 10,
+		"magic": 50,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI2"
+	},
+	{
+	  "name": "Drop ULTI2 Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 10,
+		"magic": 50,
+		"strength": 10
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ULTI2"
+	},
+	{
+	  "name": "Drop ROBOT2 Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 40,
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROBOT2"
+	},
+	{
+	  "name": "Drop ROBOT2 Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 40,
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROBOT2"
+	},
+	{
+	  "name": "Drop ROBOT2 Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROBOT2"
+	},
+	{
+	  "name": "Drop ROBOT2 Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROBOT2"
+	},
+	{
+	  "name": "Drop ROBOT2 Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 40,
+		"speed": 30
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "ROBOT2"
+	},
+	{
+	  "name": "Drop FIRESAM Head",
+	  "type": 2,
+	  "rarity": "Rare",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 30,
+		"magic": 10,
+		"strength": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FIRESAM"
+	},
+	{
+	  "name": "Drop FIRESAM Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 30,
+		"magic": 10,
+		"strength": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FIRESAM"
+	},
+	{
+	  "name": "Drop FIRESAM Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 30,
+		"magic": 10,
+		"strength": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FIRESAM"
+	},
+	{
+	  "name": "Drop FIRESAM Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 30,
+		"magic": 10,
+		"strength": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FIRESAM"
+	},
+	{
+	  "name": "Drop FIRESAM Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 30,
+		"magic": 10,
+		"strength": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FIRESAM"
+	},
+	{
+	  "name": "Drop CORRUPTOR Head",
+	  "type": 2,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {},
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PURPLENIN"
+	},
+	{
+	  "name": "Drop CORRUPTOR Chest",
+	  "type": 3,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {},
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PURPLENIN"
+	},
+	{
+	  "name": "Drop CORRUPTOR Hands",
+	  "type": 4,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {},
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PURPLENIN"
+	},
+	{
+	  "name": "Drop CORRUPTOR Legs",
+	  "type": 5,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {},
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PURPLENIN"
+	},
+	{
+	  "name": "Drop CORRUPTOR Feet",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {},
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "PURPLENIN"
+	},
+	{
+	  "name": "Guardian Sword",
+	  "type": 6,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {},
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FLATBLADE2"
+	},
+	{
+	  "name": "Fire Sword",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 30,
+		"strength": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "KATANA2"
+	},
+	{
+	  "name": "Fire Sword",
+	  "type": 9,
+	  "rarity": "Common",
+	  "required_class": 0,
+	  "required_level": 28,
+	  "price_modifier": 1.0,
+	  "stats": {
+		"health": 30,
+		"speed": 30,
+		"strength": 40
+	  },
+	  "piercing": {},
+	  "defense": {},
+	  "visual_model": "FELKNIFE4"
+	}
+  ]
+}
