@@ -1,97 +1,82 @@
-[gd_scene load_steps=8 format=3 uid="uid://b72a78kxlnpmh"]
+[gd_scene load_steps=11 format=3 uid="uid://b72a78kxlnpmh"]
 
-[ext_resource type="Texture2D" uid="uid://b45pdt17wi2pm" path="res://resources/zone1.jpg" id="1_5c47o"]
 [ext_resource type="Script" path="res://scripts/autoload/zone_manager.gd" id="1_anype"]
 [ext_resource type="Script" path="res://scripts/zones/zone_map.gd" id="1_crbee"]
+[ext_resource type="Texture2D" uid="uid://dyoi32pyqdx66" path="res://assets/backgrounds/JAIL-gigapixel-cgi-4x.png" id="1_w5r6k"]
 [ext_resource type="PackedScene" uid="uid://bkvbwuvy6gwpg" path="res://scenes/orb.tscn" id="2_uvyff"]
 [ext_resource type="Script" path="res://scripts/ui/fight_orb.gd" id="3_1rdbq"]
 [ext_resource type="Script" path="res://scripts/ui/store_orb.gd" id="4_a0x2j"]
+[ext_resource type="PackedScene" uid="uid://brmx4sa7xb3xq" path="res://scenes/ui/store/store_window.tscn" id="5_2lk61"]
 [ext_resource type="Script" path="res://scripts/ui/training_orb.gd" id="5_gjfcg"]
+[ext_resource type="Script" path="res://scripts/battle/battle_manager.gd" id="8_ox6tl"]
+[ext_resource type="PackedScene" uid="uid://ce0fyqjs5nd5q" path="res://scenes/ui/hotbar.tscn" id="10_t2wcy"]
 
-[node name="Node2D" type="Node2D"]
+[node name="Background" type="ColorRect"]
+z_index = -2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+mouse_filter = 1
+color = Color(0, 0, 0, 1)
 
-[node name="MarginContainer" type="AspectRatioContainer" parent="."]
-offset_right = 1280.0
-offset_bottom = 720.0
+[node name="Split" type="VSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="ZoneBackground" type="TextureRect" parent="MarginContainer"]
+[node name="GameWindow" type="MarginContainer" parent="Split" groups=["game_window"]]
 layout_mode = 2
-texture = ExtResource("1_5c47o")
-expand_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 5.0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
 
-[node name="InteractiveObjects" type="Node2D" parent="."]
+[node name="ZoneBackground" type="TextureRect" parent="Split/GameWindow"]
+layout_mode = 2
+texture = ExtResource("1_w5r6k")
+expand_mode = 1
 
-[node name="StoryFight" parent="InteractiveObjects" instance=ExtResource("2_uvyff")]
-position = Vector2(799, 395)
-script = ExtResource("3_1rdbq")
-
-[node name="ItemStore" parent="InteractiveObjects" instance=ExtResource("2_uvyff")]
-position = Vector2(204, 470)
+[node name="ItemStore" parent="Split/GameWindow/ZoneBackground" instance=ExtResource("2_uvyff")]
+position = Vector2(264, 547)
 script = ExtResource("4_a0x2j")
 
-[node name="TrainingFight" parent="InteractiveObjects" instance=ExtResource("2_uvyff")]
-position = Vector2(1098, 502)
+[node name="StoryFight" parent="Split/GameWindow/ZoneBackground" instance=ExtResource("2_uvyff")]
+position = Vector2(1142, 424)
+script = ExtResource("3_1rdbq")
+
+[node name="TrainingFight" parent="Split/GameWindow/ZoneBackground" instance=ExtResource("2_uvyff")]
+position = Vector2(1475, 475)
 script = ExtResource("5_gjfcg")
 
-[node name="UI" type="CanvasLayer" parent="."]
-
-[node name="BottomBar" type="Panel" parent="UI"]
-
-[node name="LeftButtons" type="HBoxContainer" parent="UI/BottomBar"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Inventory" type="TextureButton" parent="UI/BottomBar/LeftButtons"]
+[node name="StoreWindow" parent="Split" groups=["store_window"] instance=ExtResource("5_2lk61")]
+visible = false
 layout_mode = 2
 
-[node name="Abilities" type="TextureButton" parent="UI/BottomBar/LeftButtons"]
-layout_mode = 2
+[node name="UI" type="CanvasLayer" parent="Split"]
+visible = false
 
-[node name="Save" type="TextureButton" parent="UI/BottomBar/LeftButtons"]
-layout_mode = 2
-
-[node name="Options" type="TextureButton" parent="UI/BottomBar/LeftButtons"]
-layout_mode = 2
-
-[node name="Respec" type="TextureButton" parent="UI/BottomBar/LeftButtons"]
-layout_mode = 2
-
-[node name="MapBtn" type="TextureButton" parent="UI/BottomBar"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="ProgressBar" type="ProgressBar" parent="UI/BottomBar"]
-layout_mode = 0
-offset_right = 4.0
-offset_bottom = 27.0
-
-[node name="ZoneMap" type="Control" parent="UI"]
+[node name="ZoneMap" type="Control" parent="Split/UI"]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_crbee")
 
-[node name="StoreWindow" type="Control" parent="UI"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Managers" type="Node" parent="Split"]
 
-[node name="ItemGrid" type="GridContainer" parent="UI/StoreWindow"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="PlayerInventory" type="GridContainer" parent="UI/StoreWindow"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Gold" type="Label" parent="UI/StoreWindow"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-
-[node name="ZoneManager" type="Node2D" parent="."]
+[node name="ZoneManager" type="Node2D" parent="Split/Managers"]
 script = ExtResource("1_anype")
+
+[node name="BattleManager" type="Node2D" parent="Split/Managers"]
+script = ExtResource("8_ox6tl")
+
+[node name="Hotbar" parent="Split" instance=ExtResource("10_t2wcy")]
+layout_mode = 2

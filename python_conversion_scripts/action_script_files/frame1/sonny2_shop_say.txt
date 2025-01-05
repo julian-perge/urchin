@@ -1,0 +1,9 @@
+# frame1, DoAction
+
+KrinLang.ENGLISH.SHOP[0] = "I got what you need mate. Except soap. Someone's taken all the soap. That's why it always stinks around here. But don't worry mate, you'll get used to it.";
+KrinLang.ENGLISH.SHOP[1] = "Sssh! Keep your voices down, lads. We're amongst enemies here. In fact, I don't even know if I can trust you. Just buy what you need and leave.";
+KrinLang.ENGLISH.SHOP[2] = "Listen. I'm a collector of antique artifacts, and I usually don't sell what I find, but since we're in tough financial times... Consider yourself lucky.";
+KrinLang.ENGLISH.SHOP[3] = "I'm fine, I'm fine! My nose is bleeding a little but I'll be alright. You need any more gear? I've got another suitcase of things for you to buy.";
+KrinLang.ENGLISH.SHOP[4] = "Police? Proletariat? I don't care, I buy and sell everything from everyone. But do keep your distance, stranger. You're in the city now.";
+KrinLang.ENGLISH.SHOP[5] = "";
+KrinLang.ENGLISH.SHOP[6] = "";

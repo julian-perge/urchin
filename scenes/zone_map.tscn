@@ -1,3 +1,117 @@
-[gd_scene format=3 uid="uid://de1ljqswptjjj"]
+[gd_scene load_steps=5 format=3 uid="uid://de1ljqswptjjj"]
 
-[node name="ZoneMap" type="Node2D"]
+[ext_resource type="Texture2D" uid="uid://dms6vskl8ellq" path="res://assets/zone_map_full.png" id="1_mmn5b"]
+[ext_resource type="Texture2D" uid="uid://b3jstfvd3x4vb" path="res://assets/zone_map_button_outer.png" id="3_27lxd"]
+[ext_resource type="Texture2D" uid="uid://bo71ayunmem66" path="res://assets/zone_map_button_inactive.png" id="4_8m3sq"]
+[ext_resource type="Texture2D" uid="uid://b6nq12eephq0s" path="res://assets/zone_map_button_active.png" id="4_aqs41"]
+
+[node name="ZoneMapControl" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ZoneMap" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("1_mmn5b")
+expand_mode = 1
+
+[node name="Zones" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Zone1" type="TextureButton" parent="Zones"]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 0
+offset_left = 214.0
+offset_top = 888.0
+offset_right = 286.0
+offset_bottom = 960.0
+texture_normal = ExtResource("3_27lxd")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TextureRect" type="TextureRect" parent="Zones/Zone1"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_8m3sq")
+expand_mode = 1
+
+[node name="Zone2" type="TextureButton" parent="Zones"]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 0
+offset_left = 704.0
+offset_top = 668.0
+offset_right = 776.0
+offset_bottom = 740.0
+texture_normal = ExtResource("4_aqs41")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Zone3" type="TextureButton" parent="Zones"]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 0
+offset_left = 1586.0
+offset_top = 857.0
+offset_right = 1658.0
+offset_bottom = 929.0
+texture_normal = ExtResource("4_aqs41")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Zone4" type="TextureButton" parent="Zones"]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 0
+offset_left = 1790.0
+offset_top = 641.0
+offset_right = 1862.0
+offset_bottom = 713.0
+texture_normal = ExtResource("4_aqs41")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Zone5" type="TextureButton" parent="Zones"]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 0
+offset_left = 1452.0
+offset_top = 376.0
+offset_right = 1524.0
+offset_bottom = 448.0
+texture_normal = ExtResource("4_aqs41")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Zone6" type="TextureButton" parent="Zones"]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 0
+offset_left = 1196.0
+offset_top = 224.0
+offset_right = 1268.0
+offset_bottom = 296.0
+texture_normal = ExtResource("4_aqs41")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Zone7" type="TextureButton" parent="Zones"]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 0
+offset_left = 185.0
+offset_top = 312.0
+offset_right = 257.0
+offset_bottom = 384.0
+texture_normal = ExtResource("4_aqs41")
+ignore_texture_size = true
+stretch_mode = 0

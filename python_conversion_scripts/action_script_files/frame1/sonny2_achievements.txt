@@ -1,0 +1,37 @@
+# frame1, DoAction
+
+KrinLang.ENGLISH.ACH = new Array();
+KrinLang.ENGLISH.ACHDESC = new Array();
+KrinLang.ENGLISH.ACHSAY = new Array();
+KrinLang.ENGLISH.ACHSAY[0] = "New Achievement!";
+KrinLang.ENGLISH.ACHSAY[1] = "Achievements";
+KrinLang.ENGLISH.ACH[0] = "The Tape";
+KrinLang.ENGLISH.ACHDESC[0] = "Retrieve the tape from Felicity.";
+KrinLang.ENGLISH.ACH[1] = "Black Magic";
+KrinLang.ENGLISH.ACHDESC[1] = "Defeat Clemons for the first time, without using any team mates. This can only be done on Challenging or Heroic difficulty.";
+KrinLang.ENGLISH.ACH[2] = "Pacifist";
+KrinLang.ENGLISH.ACHDESC[2] = "Defeat the Hydra for the first time, without dealing more than 2000 damage throughout the whole fight. This can only be done on Challenging or Heroic difficulty.";
+KrinLang.ENGLISH.ACH[3] = "Predator";
+KrinLang.ENGLISH.ACHDESC[3] = "Defeat Captain Hunt without using any training fights, and without repeating any defeated bosses. This can only be done on Heroic difficulty.";
+KrinLang.ENGLISH.ACH[4] = "Legend";
+KrinLang.ENGLISH.ACHDESC[4] = "Defeat the Mayor without using any training fights, and without repeating any defeated bosses. This can only be done on Heroic difficulty.";
+KrinLang.ENGLISH.ACH[5] = "All Star";
+KrinLang.ENGLISH.ACHDESC[5] = "Defeat the Mayor on Heroic difficulty with all three classes";
+KrinLang.ENGLISH.ACH[6] = "Jail Break";
+KrinLang.ENGLISH.ACHDESC[6] = "Defeat Metal Warden using only one team member.";
+KrinLang.ENGLISH.ACH[7] = "Doomsday";
+KrinLang.ENGLISH.ACHDESC[7] = "Defeat the Time Bomb in less than 40 turns. ";
+KrinLang.ENGLISH.ACH[8] = "Old Ghosts";
+KrinLang.ENGLISH.ACHDESC[8] = "Defeat Nostalgia without using any team members.";
+KrinLang.ENGLISH.ACH[9] = "Over the Ashes";
+KrinLang.ENGLISH.ACHDESC[9] = "Defeat the Corruptor in Zone 7.";
+KrinLang.ENGLISH.ACH[10] = "The Tape";
+KrinLang.ENGLISH.ACHDESC[10] = "Retrieve the tape from Felicity.";
+KrinLang.ENGLISH.ACH[11] = "Black Magic";
+KrinLang.ENGLISH.ACHDESC[11] = "Defeat Clemons for the first time, without using any team mates. This can only be done on Challenging or Heroic difficulty.";
+KrinLang.ENGLISH.ACH[12] = "Pacifist";
+KrinLang.ENGLISH.ACHDESC[12] = "Defeat the Hydra for the first time, without using a single damaging spell on the enemy. This can only be done on Challenging or Heroic difficulty.";
+KrinLang.ENGLISH.ACH[13] = "Predator";
+KrinLang.ENGLISH.ACHDESC[13] = "Defeat Captain Hunt without using any training fights, and without repeating any defeated bosses. This can only be done on Heroic difficulty.";
+KrinLang.ENGLISH.ACH[4] = "Legend";
+KrinLang.ENGLISH.ACHDESC[14] = "Defeat the Mayor without using any training fights, and without repeating any defeated bosses. This can only be done on Heroic difficulty.";

@@ -2,7 +2,6 @@
 extends Control
 
 @onready var zone_container = $ScrollContainer/Zones
-@onready var zone_manager = get_node("/root/ZoneManager")
 
 #func _ready():
 	## Create zone buttons dynamically
@@ -21,8 +20,8 @@ extends Control
 	#zone_manager.zone_unlocked.connect(_on_zone_unlocked)
 
 func _on_zone_selected(zone_id: int):
-	if zone_manager.can_access_zone(zone_id):
-		zone_manager.change_zone(zone_id)
+	if ZoneManager.can_access_zone(zone_id):
+		ZoneManager.change_zone(zone_id)
 		hide() # Hide map after selecti"res://scenes/game.tscn"on
 
 func _on_zone_unlocked(zone_id: int):
@@ -31,3 +30,7 @@ func _on_zone_unlocked(zone_id: int):
 		if zone_button.zone_id == zone_id:
 			zone_button.set_accessible(true)
 			break
+
+
+func _on_pressed() -> void:
+	pass # Replace with function body.

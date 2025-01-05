@@ -8,6 +8,33 @@
 	  "speed": 15.0,
 	  "focus": 100.0,
 	  "moves": {
+		"attack": [],
+		"defense": [],
+		"absolute": []
+	  },
+	  "stats": {
+		"aggression": [],
+		"piercing": [],
+		"defense": []
+	  },
+	  "visuals": {
+		"model": [],
+		"equipment": [],
+		"skin": null,
+		"voice": {
+		  "hit": [],
+		  "die": null
+		}
+	  }
+	},
+	{
+	  "name": "Bio",
+	  "vitality": 7.0,
+	  "strength": 14.0,
+	  "magic": 4.0,
+	  "speed": 15.0,
+	  "focus": 100.0,
+	  "moves": {
 		"attack": [
 		  2,
 		  3,
@@ -72,7 +99,20 @@
 	  "moves": {
 		"attack": [],
 		"defense": [],
-		"absolute": []
+		"absolute": [
+		  [
+			2,
+			0
+		  ],
+		  [
+			5,
+			1
+		  ],
+		  [
+			3,
+			2
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -284,7 +324,16 @@
 		"defense": [
 		  506
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			523,
+			0
+		  ],
+		  [
+			15,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -355,7 +404,12 @@
 		  527
 		],
 		"defense": [],
-		"absolute": []
+		"absolute": [
+		  [
+			528,
+			2
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -501,7 +555,24 @@
 		"defense": [
 		  20
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			16,
+			0
+		  ],
+		  [
+			17,
+			0
+		  ],
+		  [
+			18,
+			0
+		  ],
+		  [
+			19,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -572,7 +643,24 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			11,
+			1
+		  ],
+		  [
+			12,
+			2
+		  ],
+		  [
+			13,
+			2
+		  ],
+		  [
+			14,
+			3
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -719,7 +807,28 @@
 		  523,
 		  524
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			532,
+			1
+		  ],
+		  [
+			531,
+			1
+		  ],
+		  [
+			530,
+			2
+		  ],
+		  [
+			163,
+			3
+		  ],
+		  [
+			136,
+			3
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -1019,7 +1128,12 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			529,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -1537,7 +1651,28 @@
 		"defense": [
 		  549
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			544,
+			1
+		  ],
+		  [
+			550,
+			2
+		  ],
+		  [
+			551,
+			2
+		  ],
+		  [
+			550,
+			3
+		  ],
+		  [
+			551,
+			3
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -1682,7 +1817,12 @@
 		"defense": [
 		  546
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			554,
+			3
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -1753,7 +1893,20 @@
 		"defense": [
 		  20
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			17,
+			0
+		  ],
+		  [
+			18,
+			0
+		  ],
+		  [
+			19,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -1826,7 +1979,16 @@
 		"defense": [
 		  9
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			475,
+			1
+		  ],
+		  [
+			537,
+			2
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -1901,7 +2063,20 @@
 		  459,
 		  466
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			538,
+			1
+		  ],
+		  [
+			539,
+			3
+		  ],
+		  [
+			541,
+			1
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -2054,7 +2229,12 @@
 		  502,
 		  234
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			522,
+			2
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -2125,7 +2305,28 @@
 		"defense": [
 		  547
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			544,
+			1
+		  ],
+		  [
+			552,
+			2
+		  ],
+		  [
+			553,
+			2
+		  ],
+		  [
+			552,
+			3
+		  ],
+		  [
+			553,
+			3
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -2199,7 +2400,12 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			573,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -2273,7 +2479,12 @@
 		  576,
 		  425
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			452,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -2346,7 +2557,12 @@
 		"defense": [
 		  1
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			166,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -2493,7 +2709,16 @@
 		  2,
 		  577
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			555,
+			0
+		  ],
+		  [
+			556,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -2640,7 +2865,12 @@
 		"defense": [
 		  520
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			557,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -2713,7 +2943,36 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			559,
+			1
+		  ],
+		  [
+			563,
+			2
+		  ],
+		  [
+			564,
+			2
+		  ],
+		  [
+			562,
+			2
+		  ],
+		  [
+			566,
+			3
+		  ],
+		  [
+			578,
+			3
+		  ],
+		  [
+			565,
+			3
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -2931,7 +3190,12 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			600,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -3004,7 +3268,16 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			613,
+			1
+		  ],
+		  [
+			617,
+			2
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -3077,7 +3350,12 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			603,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -3307,7 +3585,12 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			623,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -3381,7 +3664,12 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			618,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -3529,7 +3817,24 @@
 		"defense": [
 		  634
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			630,
+			1
+		  ],
+		  [
+			631,
+			2
+		  ],
+		  [
+			632,
+			3
+		  ],
+		  [
+			633,
+			3
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -3733,7 +4038,44 @@
 		  755,
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			764,
+			1
+		  ],
+		  [
+			763,
+			2
+		  ],
+		  [
+			19,
+			2
+		  ],
+		  [
+			766,
+			2
+		  ],
+		  [
+			755,
+			2
+		  ],
+		  [
+			762,
+			2
+		  ],
+		  [
+			2,
+			2
+		  ],
+		  [
+			759,
+			2
+		  ],
+		  [
+			764,
+			4
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -4119,7 +4461,16 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			704,
+			0
+		  ],
+		  [
+			705,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -4195,7 +4546,12 @@
 		"defense": [
 		  510
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			710,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -4275,7 +4631,16 @@
 		  749,
 		  1
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			777,
+			1
+		  ],
+		  [
+			778,
+			2
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -4351,7 +4716,40 @@
 		  1,
 		  772
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			1,
+			1
+		  ],
+		  [
+			1,
+			2
+		  ],
+		  [
+			768,
+			3
+		  ],
+		  [
+			782,
+			4
+		  ],
+		  [
+			770,
+			4
+		  ],
+		  [
+			771,
+			4
+		  ],
+		  [
+			769,
+			4
+		  ],
+		  [
+			475,
+			5
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -4421,7 +4819,24 @@
 		  276
 		],
 		"defense": [],
-		"absolute": []
+		"absolute": [
+		  [
+			781,
+			1
+		  ],
+		  [
+			780,
+			2
+		  ],
+		  [
+			780,
+			3
+		  ],
+		  [
+			780,
+			4
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -4568,7 +4983,24 @@
 		"defense": [
 		  20
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			16,
+			0
+		  ],
+		  [
+			17,
+			0
+		  ],
+		  [
+			18,
+			0
+		  ],
+		  [
+			19,
+			0
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -4639,7 +5071,24 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			11,
+			1
+		  ],
+		  [
+			12,
+			2
+		  ],
+		  [
+			785,
+			2
+		  ],
+		  [
+			14,
+			3
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -4785,7 +5234,32 @@
 		  119,
 		  110
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			786,
+			1
+		  ],
+		  [
+			787,
+			2
+		  ],
+		  [
+			788,
+			3
+		  ],
+		  [
+			782,
+			4
+		  ],
+		  [
+			780,
+			5
+		  ],
+		  [
+			791,
+			6
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -4860,7 +5334,12 @@
 		  9,
 		  524
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			792,
+			1
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -5015,7 +5494,12 @@
 		"defense": [
 		  1
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			784,
+			2
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -5089,7 +5573,20 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			800,
+			1
+		  ],
+		  [
+			798,
+			2
+		  ],
+		  [
+			799,
+			3
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -5162,7 +5659,20 @@
 		"defense": [
 		  9
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			800,
+			1
+		  ],
+		  [
+			797,
+			2
+		  ],
+		  [
+			799,
+			3
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -5233,7 +5743,12 @@
 		"defense": [
 		  2
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			801,
+			1
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -5303,7 +5818,16 @@
 		  798
 		],
 		"defense": [],
-		"absolute": []
+		"absolute": [
+		  [
+			803,
+			1
+		  ],
+		  [
+			804,
+			2
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -5373,7 +5897,12 @@
 		  806
 		],
 		"defense": [],
-		"absolute": []
+		"absolute": [
+		  [
+			805,
+			1
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [
@@ -5445,7 +5974,12 @@
 		"defense": [
 		  1
 		],
-		"absolute": []
+		"absolute": [
+		  [
+			807,
+			2
+		  ]
+		]
 	  },
 	  "stats": {
 		"aggression": [

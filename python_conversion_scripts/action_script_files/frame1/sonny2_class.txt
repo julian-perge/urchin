@@ -1,0 +1,16 @@
+# frame1, DoAction
+
+KrinLang.ENGLISH.CLASS = new Array();
+KrinLang.ENGLISH.CLASS[0] = "Biological";
+KrinLang.ENGLISH.CLASS[1] = "Psychological";
+KrinLang.ENGLISH.CLASS[2] = "Hydraulic";
+KrinLang.ENGLISH.CLASS[3] = "Combat Medic";
+KrinLang.ENGLISH.CLASS[4] = "Assassin";
+KrinLang.ENGLISH.CLASS[31] = "Insurgent";
+KrinLang.ENGLISH.CLASS[70] = "Blade Dancer";
+
+KrinLang.ENGLISH.CLASSDESCRIPT = new Array();
+KrinLang.ENGLISH.CLASSDESCRIPT[0] = "Wild and animalistic, the Biological line harnesses its power from strength and speed. You have the choice of ripping your prey apart with advanced physical combat, or melting them down with your toxic arsenal of poisons. This is probably the most straightforward class to play. Recommended for beginners.";
+KrinLang.ENGLISH.CLASSDESCRIPT[2] = "Strong and stable, the Hydraulic line derives its power from its mastery of water. You can use it to bolster your physical strength, or channel it against the enemy to bring about their icy doom. Wielding such powers allows you greater control over the battle, as well as powerful survival and team support options.";
+KrinLang.ENGLISH.CLASSDESCRIPT[1] = "If insanity were a weapon, then this would be its form. The Psychological line is heavily based on directly attacking the enemy's mind. The abilities you have available are often quite situational, but some of the most powerful. You may betray or even sacrifice your friends if you let the darkness consume you. ";
+KrinLang.ENGLISH.CLASSDESCRIPT[3] = "This class in only available on ArmorGames.com. Click here if you wish to play it!";

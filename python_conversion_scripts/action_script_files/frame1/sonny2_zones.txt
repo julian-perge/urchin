@@ -1,0 +1,32 @@
+# frame1, DoAction
+
+KrinLang.ENGLISH.ZONES = new Array();
+KrinLang.ENGLISH.ZONES2 = new Array();
+KrinLang.ENGLISH.ZONES[0] = "N/A";
+KrinLang.ENGLISH.ZONES2[0] = "N/A";
+KrinLang.ENGLISH.ZONES[1] = "New Alcatraz";
+KrinLang.ENGLISH.ZONES2[1] = "The Iron Prison";
+KrinLang.ENGLISH.ZONES[2] = "Oberursel";
+KrinLang.ENGLISH.ZONES2[2] = "The Frozen Village";
+KrinLang.ENGLISH.ZONES[3] = "Ivory Line ";
+KrinLang.ENGLISH.ZONES2[3] = "The Train";
+KrinLang.ENGLISH.ZONES[4] = "Labyrinth";
+KrinLang.ENGLISH.ZONES2[4] = "Tunnel of Illusions";
+KrinLang.ENGLISH.ZONES[5] = "Hew";
+KrinLang.ENGLISH.ZONES2[5] = "The Dystopia";
+KrinLang.ENGLISH.ZONES[6] = "Il Sanctus";
+KrinLang.ENGLISH.ZONES2[6] = "The Supreme Court";
+KrinLang.ENGLISH.ZONES[7] = "Sho\'Tul Shelf";
+KrinLang.ENGLISH.ZONES2[7] = "The Divided Cliff";
+KrinLang.ENGLISH.ZONES[8] = "X";
+KrinLang.ENGLISH.ZONES2[8] = "X";
+KrinLang.ENGLISH.ZONES[9] = "X";
+KrinLang.ENGLISH.ZONES2[9] = "X";
+KrinLang.ENGLISH.ZONES[10] = "X";
+KrinLang.ENGLISH.ZONES2[10] = "X";
+KrinLang.ENGLISH.ZONES[11] = "X";
+KrinLang.ENGLISH.ZONES2[11] = "X";
+KrinLang.ENGLISH.ZONES[12] = "X";
+KrinLang.ENGLISH.ZONES2[12] = "X";
+KrinLang.ENGLISH.ZONES[13] = "X";
+KrinLang.ENGLISH.ZONES2[13] = "X";

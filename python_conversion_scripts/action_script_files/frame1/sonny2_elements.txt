@@ -1,0 +1,11 @@
+# frame1, DoAction
+
+KrinLang.ENGLISH.ELEMENTS = new Array();
+KrinLang.ENGLISH.ELEMENTS[0] = "Physical";
+KrinLang.ENGLISH.ELEMENTS[1] = "Cosmic";
+KrinLang.ENGLISH.ELEMENTS[2] = "Ice";
+KrinLang.ENGLISH.ELEMENTS[3] = "Fire";
+KrinLang.ENGLISH.ELEMENTS[4] = "Lightning";
+KrinLang.ENGLISH.ELEMENTS[5] = "Earth";
+KrinLang.ENGLISH.ELEMENTS[6] = "Shadow";
+KrinLang.ENGLISH.ELEMENTS[7] = "Poison";

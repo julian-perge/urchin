@@ -1,12 +1,11 @@
 extends OrbBase
 class_name ItemStoreOrb
 
-signal store_opened
-
 func _ready():
-	super._ready()
-	orb_color = Color.CYAN
+	orb_color = Color.html("68CBF4")
 	tooltip_text = "Item Store"
+	super._ready()
 
 func interact():
-	store_opened.emit()
+	super.interact()
+	StoreManager.open_store()

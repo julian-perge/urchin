@@ -1,0 +1,55 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "python-conversion-scripts"
+version = "0.0.0"
+package-mode = false
+authors = [
+    "Julian Perge"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+description = "python3 helper scripts for converting ActionScript code/lines into JSON"
+license = "Custom"
+maintainers = [
+    "Julian Perge <julianperge@gmail.us>"
+]
+readme = "README.md"
+repository = "https://github.com/julian-perge/urchin"
+
+[tool.poetry.dependencies]
+python = ">=3.10, <4.0"
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "primary"
+
+# <editor-fold desc="Ruff">
+[tool.ruff]
+# Same as Black.
+line-length = 120
+indent-width = 4
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["E", "W", "F", "N", "F403", "F401"]
+ignore = ["E501"]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+# </editor-fold desc="Ruff">

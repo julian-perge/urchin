@@ -15,10 +15,28 @@ run/main_scene="res://scenes/game.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+StoreManager="*res://scripts/autoload/store_manager.gd"
+UnitManagerAuto="*res://scripts/autoload/unit_manager.gd"
+ItemManagerAuto="*res://scripts/autoload/item_manager.gd"
+Inventory="*res://scripts/inventory.gd"
+ZoneManager="*res://scripts/autoload/zone_manager.gd"
+
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
-window/size/initial_position_type=0
-window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/mode="viewport"
+window/vsync/vsync_mode=0
+
+[global_group]
+
+game_window=""
+store_window=""
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+viewport/hdr_2d=true
+2d/snap/snap_2d_transforms_to_pixel=true

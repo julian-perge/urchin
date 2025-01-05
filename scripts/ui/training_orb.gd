@@ -4,9 +4,10 @@ class_name TrainingFightOrb
 signal training_requested
 
 func _ready():
-	super._ready()
-	orb_color = Color.YELLOW
+	orb_color = Color.html("FFCC00")
 	tooltip_text = "Training"
+	super._ready()
 
 func interact():
+	super.interact()
 	training_requested.emit()

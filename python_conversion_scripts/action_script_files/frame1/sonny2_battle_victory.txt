@@ -1,0 +1,8 @@
+# frame1, DoAction
+
+KrinLang.ENGLISH.VICTORY = new Array();
+KrinLang.ENGLISH.VICTORY[0] = "Victory! Items that dropped:";
+KrinLang.ENGLISH.VICTORY[1] = "CLICK on the items that you wish to keep!";
+KrinLang.ENGLISH.VICTORY[2] = "Money gained:";
+KrinLang.ENGLISH.VICTORY[3] = "Exp. gained:";
+KrinLang.ENGLISH.VICTORY[4] = "Once you are finished, press below to proceed:";

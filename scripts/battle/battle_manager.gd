@@ -10,5 +10,6 @@ var current_turn = 0
 
 func execute_move(ability, source, target):
 	# Convert from ActionScript executeMove()
-	var damage = calculate_damage(ability, source, target)
-	apply_damage(target, damage)
+	#var damage = calculate_damage(ability, source, target)
+	#apply_damage(target, damage)
+	print("execute_move")
