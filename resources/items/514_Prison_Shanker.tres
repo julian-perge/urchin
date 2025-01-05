@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://be3pcdx0a2cq"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ltc0w"]
+[ext_resource type="Texture2D" uid="uid://v8y56k0fgar3" path="res://resources/sprites/M_WEAPON_FELKNIFE.png" id="2_p0ckn"]
+
+[resource]
+script = ExtResource("1_ltc0w")
+id = 514.0
+looks = "FELKNIFE"
+sprite_image = ExtResource("2_p0ckn")
+name = "Prison Shanker"
+display_name = "Prison Shanker"
+internal_name = "Prison Shanker"
+tooltip = "Watch your back."
+tooltipAlt = ["Physical Piercing +43", "Poison Piercing +11"]
+item_type = 8
+rarity = 0
+class_type = 1
+required_level = 3.0
+price = 31.0
+price_modifier = 0.4
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 43.0,
+"Poison": 11.0,
+"Shadow": 0.0
+}
+}

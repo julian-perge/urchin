@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ddbm5pmr4j4pj"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_id578"]
+[ext_resource type="Texture2D" uid="uid://dv0eyfcgnjmud" path="res://resources/sprites/M_WEAPON_KATANA.png" id="2_b8qc1"]
+
+[resource]
+script = ExtResource("1_id578")
+id = 563.0
+looks = "KATANA"
+sprite_image = ExtResource("2_b8qc1")
+name = "Ancient Katana"
+display_name = "Ancient Katana"
+internal_name = "Gold Katana"
+tooltip = ""
+tooltipAlt = ["Speed +20", "Instinct +20", "Strength +49", "Vitality +10"]
+item_type = 9
+rarity = 0
+class_type = 1
+required_level = 14.0
+price = 1571.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 10.0,
+"magic": 20.0,
+"speed": 20.0,
+"strength": 49.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

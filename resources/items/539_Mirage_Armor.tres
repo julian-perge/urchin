@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bx562jko8gveb"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_cxgeg"]
+[ext_resource type="Texture2D" uid="uid://cu8h5ybaq0nd2" path="res://resources/sprites/M_CHEST_SHAMAN2.png" id="2_fe5kf"]
+
+[resource]
+script = ExtResource("1_cxgeg")
+id = 539.0
+looks = "SHAMAN2"
+sprite_image = ExtResource("2_fe5kf")
+name = "Mirage Armor"
+display_name = "Mirage Armor"
+internal_name = "Drop Shaman Chest"
+tooltip = ""
+tooltipAlt = ["Speed +6", "Instinct +3", "Strength +15", "Vitality +6"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 13.0
+price = 492.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 6.0,
+"magic": 3.0,
+"speed": 6.0,
+"strength": 15.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

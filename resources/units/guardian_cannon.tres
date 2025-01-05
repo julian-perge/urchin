@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://bgj73m64uoiot"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_pfhdu"]
+
+[resource]
+script = ExtResource("1_pfhdu")
+name = "Guardian Cannon"
+vitality = 15.0
+strength = 15.0
+magic = 15.0
+speed = 5.0
+focus = 100.0
+moves = {
+"absolute": [[781.0, 1.0], [780.0, 2.0], [780.0, 3.0], [780.0, 4.0]],
+"attack": [276.0],
+"defense": []
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 35.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL8", "HYDRA3", ","],
+"skin": null,
+"voice": {
+"die": "dead_monster",
+"hit": ["hit_monster1", "hit_monster2", "hit_monster3"]
+}
+}

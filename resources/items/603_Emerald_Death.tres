@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dkjs6gesiw0j5"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_l8x3b"]
+[ext_resource type="Texture2D" uid="uid://nfermn6srvd5" path="res://resources/sprites/M_WEAPON_BROAD2.png" id="2_wesup"]
+
+[resource]
+script = ExtResource("1_l8x3b")
+id = 603.0
+looks = "BROAD2"
+sprite_image = ExtResource("2_wesup")
+name = "Emerald Death"
+display_name = "Emerald Death"
+internal_name = "OLD SWORD"
+tooltip = "It's rare that you find a shard this perfect."
+tooltipAlt = ["Strength +186", "Vitality +34"]
+item_type = 9
+rarity = 2
+class_type = 1
+required_level = 19.0
+price = 2485.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 34.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 186.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

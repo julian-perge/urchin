@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b62aj452oqnca"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_v5krg"]
+[ext_resource type="Texture2D" uid="uid://b4mdlwx5we0x3" path="res://resources/sprites/M_WEAPON_AK.png" id="2_3w8n0"]
+
+[resource]
+script = ExtResource("1_v5krg")
+id = 523.0
+looks = "AK"
+sprite_image = ExtResource("2_3w8n0")
+name = "Rebellion Striker"
+display_name = "Rebellion Striker"
+internal_name = "Rebellion Striker"
+tooltip = "Seems to be modelled after the AK47."
+tooltipAlt = ["Speed +16", "Strength +16", "Fire Piercing +89", "Poison Piercing +89"]
+item_type = 9
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 1094.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 16.0,
+"strength": 16.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 89.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 89.0,
+"Shadow": 0.0
+}
+}

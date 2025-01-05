@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dnw4ghd03rx2w"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_g26us"]
+[ext_resource type="Texture2D" uid="uid://chre6qg3mj8ek" path="res://resources/sprites/M_HEAD_JASON3.png" id="2_86fr0"]
+
+[resource]
+script = ExtResource("1_g26us")
+id = 508.0
+looks = "JASON3"
+sprite_image = ExtResource("2_86fr0")
+name = "Metal Mask"
+display_name = "Metal Mask"
+internal_name = "Metal Mask"
+tooltip = ""
+tooltipAlt = ["Strength +2", "Vitality +4", "Physical Defense +8"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 3.0
+price = 22.0
+price_modifier = 0.4
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 4.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 2.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 8.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

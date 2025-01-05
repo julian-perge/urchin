@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bus7uno5103i1"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_cuj4a"]
+[ext_resource type="Texture2D" uid="uid://b2gvog2oeckqe" path="res://resources/sprites/M_LEG2_JEANS.png" id="2_gjs7w"]
+
+[resource]
+script = ExtResource("1_cuj4a")
+id = 4.0
+looks = "JEANS"
+sprite_image = ExtResource("2_gjs7w")
+name = "Levo Jeans"
+display_name = "Levo Jeans"
+internal_name = "Jeans"
+tooltip = "It's still a little too tight!"
+tooltipAlt = ["Instinct +5"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 1.0
+price = 11.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 5.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

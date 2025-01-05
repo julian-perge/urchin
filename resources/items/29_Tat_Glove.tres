@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bb7evyumfj3cm"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_hw7kt"]
+[ext_resource type="Texture2D" uid="uid://4crqexwb4kef" path="res://resources/sprites/M_HAND_TAT.png" id="2_no1n7"]
+
+[resource]
+script = ExtResource("1_hw7kt")
+id = 29.0
+looks = "TAT"
+sprite_image = ExtResource("2_no1n7")
+name = ""
+display_name = "Tat Glove"
+internal_name = "Tat Glove"
+tooltip = ""
+tooltipAlt = ["Speed +7", "Strength +7", "Vitality +14"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 15.0
+price = 436.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 14.0,
+"magic": 0.0,
+"speed": 7.0,
+"strength": 7.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

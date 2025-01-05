@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bu8e10pwv2gpb"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_nxjit"]
+[ext_resource type="Texture2D" uid="uid://cm4nga2q8f0vv" path="res://resources/sprites/M_FOOT_ZPCI3.png" id="2_vgvnu"]
+
+[resource]
+script = ExtResource("1_nxjit")
+id = 37.0
+looks = "ZPCI3"
+sprite_image = ExtResource("2_vgvnu")
+name = "Medic-B Boots"
+display_name = "Medic-B Boots"
+internal_name = "Medic Feet"
+tooltip = ""
+tooltipAlt = ["Speed +2", "Instinct +1", "Strength +1", "Vitality +1", "Lightning Piercing +6"]
+item_type = 6
+rarity = 0
+class_type = 5
+required_level = 1.0
+price = 8.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 1.0,
+"magic": 1.0,
+"speed": 2.0,
+"strength": 1.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 6.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

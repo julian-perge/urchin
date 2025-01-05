@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bfu1ja6h70r0q"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_83k5a"]
+[ext_resource type="Texture2D" uid="uid://nnegedg34rl0" path="res://resources/sprites/M_HEAD_JASON4.png" id="2_ksxu3"]
+
+[resource]
+script = ExtResource("1_83k5a")
+id = 659.0
+looks = "JASON4"
+sprite_image = ExtResource("2_ksxu3")
+name = "Sight of Pursuit"
+display_name = "Sight of Pursuit"
+internal_name = "Drop WARDEN Head"
+tooltip = ""
+tooltipAlt = ["Speed +6", "Strength +67", "Vitality +21", "Physical Defense +11"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 26.0
+price = 1392.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 21.0,
+"magic": 0.0,
+"speed": 6.0,
+"strength": 67.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 11.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

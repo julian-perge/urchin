@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dbqrc1t5fb28v"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_gy2bq"]
+[ext_resource type="Texture2D" uid="uid://ct6l3y8is4w1e" path="res://resources/sprites/M_CHEST_SHIRT5.png" id="2_6mwxw"]
+
+[resource]
+script = ExtResource("1_gy2bq")
+id = 377.0
+looks = "SHIRT5"
+sprite_image = ExtResource("2_6mwxw")
+name = "Flamboyant Shirt"
+display_name = "Flamboyant Shirt"
+internal_name = "Flamboyant Shirt"
+tooltip = "It smells of perfume."
+tooltipAlt = ["Speed +22", "Instinct +15", "Strength +15", "Vitality +4"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 18.0
+price = 802.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 4.0,
+"magic": 15.0,
+"speed": 22.0,
+"strength": 15.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

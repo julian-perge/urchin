@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://byps7gq4q8mx1"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_3c83h"]
+[ext_resource type="Texture2D" uid="uid://cysnyk6cnluj4" path="res://resources/sprites/M_WEAPON_M4.png" id="2_87nte"]
+
+[resource]
+script = ExtResource("1_3c83h")
+id = 39.0
+looks = "M4"
+sprite_image = ExtResource("2_87nte")
+name = "Storm Rifle"
+display_name = "Storm Rifle"
+internal_name = "Gun"
+tooltip = ""
+tooltipAlt = ["Speed +3", "Instinct +5", "Strength +5", "Lightning Piercing +46"]
+item_type = 9
+rarity = 0
+class_type = 5
+required_level = 1.0
+price = 30.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 5.0,
+"speed": 3.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 46.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

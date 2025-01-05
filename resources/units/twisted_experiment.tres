@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://c3got8fw6rcus"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_gcti3"]
+
+[resource]
+script = ExtResource("1_gcti3")
+name = "Twisted Experiment"
+vitality = 20.0
+strength = 30.0
+magic = 5.0
+speed = 12.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [149.0, 2.0, 145.0, 136.0, 145.0, 145.0],
+"defense": [534.0, 166.0]
+}
+stats = {
+"aggression": [50.0, 50.0, 20.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 300.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 503.0, 0.0],
+"model": ["MODEL1", "FIVE", ","],
+"skin": "PRISON2",
+"voice": {
+"die": "dead_twisted",
+"hit": ["hit_twisted1", "hit_twisted2", "hit_twisted3"]
+}
+}

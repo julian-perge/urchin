@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bslafeigwcl3l"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_hmk41"]
+[ext_resource type="Texture2D" uid="uid://cq7i58qsssmo8" path="res://resources/sprites/M_CHEST_JASON.png" id="2_6ltgi"]
+
+[resource]
+script = ExtResource("1_hmk41")
+id = 303.0
+looks = "JASON"
+sprite_image = ExtResource("2_6ltgi")
+name = "Guard's Uniform"
+display_name = "Guard's Uniform"
+internal_name = "Guard's Uniform"
+tooltip = ""
+tooltipAlt = ["Speed +2", "Instinct +3", "Vitality +1"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 1.0
+price = 11.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 1.0,
+"magic": 3.0,
+"speed": 2.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

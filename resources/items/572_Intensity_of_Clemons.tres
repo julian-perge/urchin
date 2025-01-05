@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cmxyanqrnw15m"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_k3vii"]
+[ext_resource type="Texture2D" uid="uid://dfhogkqp6sc1n" path="res://resources/sprites/M_FOOT_CLEMONS.png" id="2_fum6c"]
+
+[resource]
+script = ExtResource("1_k3vii")
+id = 572.0
+looks = "CLEMONS"
+sprite_image = ExtResource("2_fum6c")
+name = "Intensity of Clemons"
+display_name = "Intensity of Clemons"
+internal_name = "Drop CLEMONS Feet"
+tooltip = ""
+tooltipAlt = ["Speed +18", "Instinct +5", "Vitality +6"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 15.0
+price = 436.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 6.0,
+"magic": 5.0,
+"speed": 18.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

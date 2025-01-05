@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bmyhph7xtqmft"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_tu2xa"]
+[ext_resource type="Texture2D" uid="uid://cshu3vjw65em0" path="res://resources/sprites/M_HEAD_TUNNELSET2.png" id="2_6v0wf"]
+
+[resource]
+script = ExtResource("1_tu2xa")
+id = 578.0
+looks = "TUNNELSET2"
+sprite_image = ExtResource("2_6v0wf")
+name = "Mask of Horror"
+display_name = "Mask of Horror"
+internal_name = "Drop VIKING Head"
+tooltip = ""
+tooltipAlt = ["Speed +12", "Instinct +27", "Strength +21", "Ice Piercing +7"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 19.0
+price = 870.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 27.0,
+"speed": 12.0,
+"strength": 21.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 7.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

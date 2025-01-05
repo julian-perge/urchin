@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://fq4f4sbs6bg0"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_wc7op"]
+
+[resource]
+script = ExtResource("1_wc7op")
+id = 173.0
+looks = ""
+name = ""
+display_name = "Unicorn Horn"
+internal_name = "Unicorn Horn"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +7", "Instinct +14", "Strength +14", "Vitality +21", "Lightning Defense +13", "Earth Defense +13"]
+item_type = 7
+rarity = 2
+class_type = 1
+required_level = 10.0
+price = 94394.0
+price_modifier = 199.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 21.0,
+"magic": 14.0,
+"speed": 7.0,
+"strength": 14.0
+},
+"defense": {
+"Earth": 13.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 13.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

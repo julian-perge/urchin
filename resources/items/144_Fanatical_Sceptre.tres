@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://b2k42phyt8ehk"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_3jv33"]
+
+[resource]
+script = ExtResource("1_3jv33")
+id = 144.0
+looks = ""
+name = ""
+display_name = "Fanatical Sceptre"
+internal_name = "Fanatical Sceptre"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +5", "Instinct +13", "Strength +4", "Vitality +5", "Lightning Defense +11", "Earth Defense +11"]
+item_type = 7
+rarity = 1
+class_type = 1
+required_level = 7.0
+price = 17779.0
+price_modifier = 64.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 5.0,
+"magic": 13.0,
+"speed": 5.0,
+"strength": 4.0
+},
+"defense": {
+"Earth": 11.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 11.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

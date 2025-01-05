@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://lgq6bc7bvglf"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_oylsy"]
+[ext_resource type="Texture2D" uid="uid://devrffqssd1pp" path="res://resources/sprites/M_HAND_SAMURAI4.png" id="2_5jwmo"]
+
+[resource]
+script = ExtResource("1_oylsy")
+id = 535.0
+looks = "SAMURAI4"
+sprite_image = ExtResource("2_5jwmo")
+name = "Runed Gloves"
+display_name = "Runed Gloves"
+internal_name = "Vendor Samurai Hands"
+tooltip = "...But the writings can read you."
+tooltipAlt = ["Strength +19"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 312.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 19.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

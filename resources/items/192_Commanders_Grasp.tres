@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://crsnuqcke2qs"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_5ui2s"]
+
+[resource]
+script = ExtResource("1_5ui2s")
+id = 192.0
+looks = ""
+name = ""
+display_name = "Commander's Grasp"
+internal_name = "Commander's Grasp"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +16", "Instinct +6", "Strength +16", "Vitality +6", "Lightning Defense +7", "Earth Defense +7"]
+item_type = 4
+rarity = 2
+class_type = 1
+required_level = 13.0
+price = 109681.0
+price_modifier = 312.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 6.0,
+"magic": 6.0,
+"speed": 16.0,
+"strength": 16.0
+},
+"defense": {
+"Earth": 7.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 7.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

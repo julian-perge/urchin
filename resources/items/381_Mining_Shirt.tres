@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dvelapcjx2usr"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_rq02r"]
+[ext_resource type="Texture2D" uid="uid://boawapfbn52xe" path="res://resources/sprites/M_CHEST_WORKERSHIRT.png" id="2_en6be"]
+
+[resource]
+script = ExtResource("1_rq02r")
+id = 381.0
+looks = "WORKERSHIRT"
+sprite_image = ExtResource("2_en6be")
+name = "Mining Shirt"
+display_name = "Mining Shirt"
+internal_name = "Mining Shirt"
+tooltip = "Enhanced protection for the workers."
+tooltipAlt = ["Speed +17", "Strength +28", "Vitality +11"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 18.0
+price = 160.0
+price_modifier = 0.2
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 11.0,
+"magic": 0.0,
+"speed": 17.0,
+"strength": 28.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://byklrlj8tcyhf"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ip130"]
+
+[resource]
+script = ExtResource("1_ip130")
+id = 177.0
+looks = ""
+name = ""
+display_name = "Police Pants"
+internal_name = "Police Pants"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +6", "Instinct +3", "Strength +12", "Vitality +17", "Lightning Defense +9", "Earth Defense +9"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 78529.0
+price_modifier = 205.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 17.0,
+"magic": 3.0,
+"speed": 6.0,
+"strength": 12.0
+},
+"defense": {
+"Earth": 9.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 9.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

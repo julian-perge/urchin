@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cxveyuk2bvia6"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_qvu61"]
+
+[resource]
+script = ExtResource("1_qvu61")
+id = 129.0
+looks = ""
+name = ""
+display_name = "Tribal Crown"
+internal_name = "Tribal Crown"
+tooltip = ""
+tooltipAlt = ["Speed +7", "Instinct +2", "Strength +4", "Vitality +6", "Lightning Defense +7", "Earth Defense +7"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 5.0
+price = 2583.0
+price_modifier = 22.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 6.0,
+"magic": 2.0,
+"speed": 7.0,
+"strength": 4.0
+},
+"defense": {
+"Earth": 7.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 7.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c827nxgbmvg3j"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_nbtrp"]
+[ext_resource type="Texture2D" uid="uid://bf631i6tmw2ut" path="res://resources/sprites/M_WEAPON_FELKNIFE3.png" id="2_ydkhs"]
+
+[resource]
+script = ExtResource("1_nbtrp")
+id = 560.0
+looks = "FELKNIFE3"
+sprite_image = ExtResource("2_ydkhs")
+name = "Pain Striker"
+display_name = "Pain Striker"
+internal_name = "Red 2"
+tooltip = ""
+tooltipAlt = ["Strength +4", "Physical Piercing +84"]
+item_type = 8
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 624.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 4.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 84.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

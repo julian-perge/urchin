@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://duurmxj1hrydb"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_kpuyy"]
+[ext_resource type="Texture2D" uid="uid://cr4r1ddbe2pak" path="res://resources/sprites/M_HEAD_ROBOT.png" id="2_lf7iu"]
+
+[resource]
+script = ExtResource("1_kpuyy")
+id = 612.0
+looks = "ROBOT"
+sprite_image = ExtResource("2_lf7iu")
+name = "Titanium Cranium"
+display_name = "Titanium Cranium"
+internal_name = "Drop ROBOT Head"
+tooltip = ""
+tooltipAlt = ["Speed +19", "Instinct +12", "Vitality +46"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 22.0
+price = 1083.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 46.0,
+"magic": 12.0,
+"speed": 19.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

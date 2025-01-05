@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://bd3ubc455wu3b"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_y1qfw"]
+
+[resource]
+script = ExtResource("1_y1qfw")
+name = "ZPCI Elite"
+vitality = 25.0
+strength = 25.0
+magic = 1.0
+speed = 13.0
+focus = 100.0
+moves = {
+"absolute": [[16.0, 0.0], [17.0, 0.0], [18.0, 0.0], [19.0, 0.0]],
+"attack": [9.0],
+"defense": [20.0]
+}
+stats = {
+"aggression": [50.0, 80.0, 50.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 13.0, 0.0],
+"model": ["MODEL1", "MAN", ","],
+"skin": "ZPCI",
+"voice": {
+"die": "dead_zpci",
+"hit": ["hit_zpci1", "hit_zpci2", "hit_zpci3"]
+}
+}

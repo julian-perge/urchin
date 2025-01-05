@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://b3qd4kpxxvxmv"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_x1oah"]
+
+[resource]
+script = ExtResource("1_x1oah")
+name = "Felicity"
+vitality = 15.0
+strength = 25.0
+magic = 15.0
+speed = 25.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [533.0, 1.0, 763.0, 136.0, 523.0, 524.0],
+"defense": [531.0]
+}
+stats = {
+"aggression": [50.0, 50.0, 10.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 22.0, 22.0],
+"model": ["MODEL4", "FEL", ","],
+"skin": null,
+"voice": {
+"die": "dead_fel",
+"hit": ["hit_fel1", "hit_fel2", "hit_fel3"]
+}
+}

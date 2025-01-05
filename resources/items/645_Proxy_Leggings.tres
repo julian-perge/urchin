@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dts1xlbpevp48"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_1o5na"]
+[ext_resource type="Texture2D" uid="uid://c62teiqpomfv" path="res://resources/sprites/M_LEG2_PRIEST4.png" id="2_s2mhr"]
+
+[resource]
+script = ExtResource("1_1o5na")
+id = 645.0
+looks = "PRIEST4"
+sprite_image = ExtResource("2_s2mhr")
+name = "Proxy Leggings"
+display_name = "Proxy Leggings"
+internal_name = "Drop MAYOR Legs"
+tooltip = ""
+tooltipAlt = ["Speed +17", "Instinct +33", "Vitality +33", "Fire Defense +44"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 23.0
+price = 1158.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 33.0,
+"magic": 33.0,
+"speed": 17.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 44.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

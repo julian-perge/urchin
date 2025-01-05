@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://baggoy67g48jb"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_snjo3"]
+[ext_resource type="Texture2D" uid="uid://cm3atudyiin2" path="res://resources/sprites/M_WEAPON_XADER3.png" id="2_0egka"]
+
+[resource]
+script = ExtResource("1_snjo3")
+id = 600.0
+looks = "XADER3"
+sprite_image = ExtResource("2_0egka")
+name = "Frozen Runeblade"
+display_name = "Frozen Runeblade"
+internal_name = "FROZEN RUNEBLADE"
+tooltip = ""
+tooltipAlt = ["Instinct +32", "Strength +18", "Vitality +11", "Ice Piercing +17"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 17.0
+price = 1051.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 11.0,
+"magic": 32.0,
+"speed": 0.0,
+"strength": 18.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 17.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

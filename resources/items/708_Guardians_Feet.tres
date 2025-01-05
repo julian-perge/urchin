@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cms8crvimeo4m"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_bb0bl"]
+[ext_resource type="Texture2D" uid="uid://mep7vo4aqavn" path="res://resources/sprites/M_FOOT_ROBOT2.png" id="2_2fa6j"]
+
+[resource]
+script = ExtResource("1_bb0bl")
+id = 708.0
+looks = "ROBOT2"
+sprite_image = ExtResource("2_2fa6j")
+name = "Guardian's Feet"
+display_name = "Guardian's Feet"
+internal_name = "Drop ROBOT2 Feet"
+tooltip = ""
+tooltipAlt = ["Speed +26", "Vitality +34", "Fire Defense +81"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1111.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 34.0,
+"magic": 0.0,
+"speed": 26.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 81.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://7a15keggdx73"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_j4tpv"]
+[ext_resource type="Texture2D" uid="uid://ca5o005dvrbw4" path="res://resources/sprites/M_LEG2_JASON2.png" id="2_2uxrv"]
+
+[resource]
+script = ExtResource("1_j4tpv")
+id = 313.0
+looks = "JASON2"
+sprite_image = ExtResource("2_2uxrv")
+name = "Warden's Leggings"
+display_name = "Warden's Leggings"
+internal_name = "Warden's Leggings"
+tooltip = ""
+tooltipAlt = ["Speed +3", "Instinct +3", "Strength +3", "Vitality +2"]
+item_type = 5
+rarity = 1
+class_type = 1
+required_level = 5.0
+price = 117.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 2.0,
+"magic": 3.0,
+"speed": 3.0,
+"strength": 3.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

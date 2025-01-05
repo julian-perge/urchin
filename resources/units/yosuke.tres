@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://c2mjhfeqacqor"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_2mfdj"]
+
+[resource]
+script = ExtResource("1_2mfdj")
+name = "Yosuke"
+vitality = 20.0
+strength = 15.0
+magic = 15.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [[801.0, 1.0]],
+"attack": [802.0],
+"defense": [2.0]
+}
+stats = {
+"aggression": [50.0, 2.0, 1.0, 100.0, 15.0],
+"defense": [100.0, 100.0, 60.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 720.0, 0.0],
+"model": ["MODEL1", "MAN", "MAD", "M"],
+"skin": "FIRESAM",
+"voice": {
+"die": "dead_twisted",
+"hit": ["hit_twisted1", "hit_twisted2", "hit_twisted3"]
+}
+}

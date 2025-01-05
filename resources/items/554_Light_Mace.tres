@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b3p3b6qb84oso"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_sdx0t"]
+[ext_resource type="Texture2D" uid="uid://dtg1hf1im06nk" path="res://resources/sprites/M_WEAPON_SPELLMACE.png" id="2_mcb5v"]
+
+[resource]
+script = ExtResource("1_sdx0t")
+id = 554.0
+looks = "SPELLMACE"
+sprite_image = ExtResource("2_mcb5v")
+name = "Light Mace"
+display_name = "Light Mace"
+internal_name = "Magic Mace"
+tooltip = ""
+tooltipAlt = ["Speed +15", "Instinct +22"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 624.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 22.0,
+"speed": 15.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

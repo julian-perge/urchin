@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dvg6515fegwmm"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_smto3"]
+[ext_resource type="Texture2D" uid="uid://fyss4r6jcjoh" path="res://resources/sprites/M_HAND_CLEMONS2.png" id="2_iavtv"]
+
+[resource]
+script = ExtResource("1_smto3")
+id = 590.0
+looks = "CLEMONS2"
+sprite_image = ExtResource("2_iavtv")
+name = "Spark Gloves"
+display_name = "Spark Gloves"
+internal_name = "Drop EMPEROR Hands"
+tooltip = ""
+tooltipAlt = ["Speed +7", "Instinct +26", "Lightning Piercing +4"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 16.0
+price = 480.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 26.0,
+"speed": 7.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 4.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

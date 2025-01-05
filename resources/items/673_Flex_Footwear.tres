@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bdbcrwmvkevuv"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_4le0u"]
+[ext_resource type="Texture2D" uid="uid://byxcn3ycusx0t" path="res://resources/sprites/M_FOOT_BLUENIN.png" id="2_ipawt"]
+
+[resource]
+script = ExtResource("1_4le0u")
+id = 673.0
+looks = "BLUENIN"
+sprite_image = ExtResource("2_ipawt")
+name = "Flex Footwear"
+display_name = "Flex Footwear"
+internal_name = "Drop BLUE NINJA Feet"
+tooltip = ""
+tooltipAlt = ["Speed +9", "Strength +36", "Vitality +9"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 23.0
+price = 827.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 9.0,
+"magic": 0.0,
+"speed": 9.0,
+"strength": 36.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

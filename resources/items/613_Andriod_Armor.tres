@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cvf4wgjn84n2e"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_3e4ay"]
+[ext_resource type="Texture2D" uid="uid://ce6myot5qroq8" path="res://resources/sprites/M_CHEST_ROBOT.png" id="2_qfu1k"]
+
+[resource]
+script = ExtResource("1_3e4ay")
+id = 613.0
+looks = "ROBOT"
+sprite_image = ExtResource("2_qfu1k")
+name = "Andriod Armor"
+display_name = "Andriod Armor"
+internal_name = "Drop ROBOT Chest"
+tooltip = "It's made of memory alloy. Incredibly durable."
+tooltipAlt = ["Vitality +76"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 22.0
+price = 1083.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 76.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

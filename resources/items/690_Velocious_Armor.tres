@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://11bqlvm1t0ta"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_wb066"]
+[ext_resource type="Texture2D" uid="uid://dm3rg87igycib" path="res://resources/sprites/M_CHEST_ULTI3.png" id="2_2a886"]
+
+[resource]
+script = ExtResource("1_wb066")
+id = 690.0
+looks = "ULTI3"
+sprite_image = ExtResource("2_2a886")
+name = "Velocious Armor"
+display_name = "Velocious Armor"
+internal_name = "Drop ULTI3 Chest"
+tooltip = ""
+tooltipAlt = ["Speed +71", "Instinct +12", "Strength +12", "Vitality +24"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1556.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 24.0,
+"magic": 12.0,
+"speed": 71.0,
+"strength": 12.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

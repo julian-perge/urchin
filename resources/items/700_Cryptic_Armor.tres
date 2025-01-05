@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bayo53wygj0n7"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_efrxd"]
+[ext_resource type="Texture2D" uid="uid://f5phqte4omeo" path="res://resources/sprites/M_CHEST_ULTI2.png" id="2_3i607"]
+
+[resource]
+script = ExtResource("1_efrxd")
+id = 700.0
+looks = "ULTI2"
+sprite_image = ExtResource("2_3i607")
+name = "Cryptic Armor"
+display_name = "Cryptic Armor"
+internal_name = "Drop ULTI2 Chest"
+tooltip = ""
+tooltipAlt = ["Speed +12", "Instinct +71", "Strength +12", "Vitality +24"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1556.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 24.0,
+"magic": 71.0,
+"speed": 12.0,
+"strength": 12.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

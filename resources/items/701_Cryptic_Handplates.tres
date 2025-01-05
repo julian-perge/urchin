@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bk6figoemlqm2"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_na81j"]
+
+[resource]
+script = ExtResource("1_na81j")
+id = 701.0
+looks = "ULTI2"
+name = "Cryptic Handplates"
+display_name = "Cryptic Handplates"
+internal_name = "Drop ULTI2 Hands"
+tooltip = ""
+tooltipAlt = ["Speed +9", "Instinct +42", "Strength +9", "Vitality +26"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1111.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 26.0,
+"magic": 42.0,
+"speed": 9.0,
+"strength": 9.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

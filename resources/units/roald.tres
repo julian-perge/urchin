@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://salaui6dnkyx"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_dqyoj"]
+
+[resource]
+script = ExtResource("1_dqyoj")
+name = "Roald"
+vitality = 26.0
+strength = 13.0
+magic = 4.0
+speed = 20.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [535.0, 19.0, 524.0, 9.0],
+"defense": [536.0]
+}
+stats = {
+"aggression": [50.0, 80.0, 20.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [382.0, 328.0, 327.0, 329.0, 326.0, 523.0, 0.0],
+"model": ["MODEL1", "MANTAT", ","],
+"skin": null,
+"voice": {
+"die": "dead_roald",
+"hit": ["hit_roald1", "hit_roald2", "hit_roald3"]
+}
+}

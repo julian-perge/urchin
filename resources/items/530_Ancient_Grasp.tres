@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b8nlt0v28t4ve"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_hv8a5"]
+[ext_resource type="Texture2D" uid="uid://b0q824ll1t0s" path="res://resources/sprites/M_HAND_SHAMAN1.png" id="2_om2jd"]
+
+[resource]
+script = ExtResource("1_hv8a5")
+id = 530.0
+looks = "SHAMAN1"
+sprite_image = ExtResource("2_om2jd")
+name = "Ancient Grasp"
+display_name = "Ancient Grasp"
+internal_name = "Vendor Shaman Hands"
+tooltip = "It's made from human skin."
+tooltipAlt = ["Speed +4", "Vitality +6", "Physical Piercing +23"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 312.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 6.0,
+"magic": 0.0,
+"speed": 4.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 23.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

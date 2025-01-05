@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://bbah80p1qpmp4"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_wftb5"]
+
+[resource]
+script = ExtResource("1_wftb5")
+name = "Hydro"
+vitality = 15.0
+strength = 10.0
+magic = 8.0
+speed = 7.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [2.0],
+"defense": []
+}
+stats = {
+"aggression": [50.0, 80.0, 20.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 12.0, 0.0],
+"model": ["MODEL1", "METABII", ","],
+"skin": null,
+"voice": {
+"die": "dead_sonny",
+"hit": ["hit_sonny1", "hit_sonny2", "hit_sonny3"]
+}
+}

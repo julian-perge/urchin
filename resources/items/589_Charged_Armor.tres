@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ddgcqvtbsk481"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_0logt"]
+[ext_resource type="Texture2D" uid="uid://clcwram1s8mir" path="res://resources/sprites/M_CHEST_CLEMONS2.png" id="2_544dj"]
+
+[resource]
+script = ExtResource("1_0logt")
+id = 589.0
+looks = "CLEMONS2"
+sprite_image = ExtResource("2_544dj")
+name = "Charged Armor"
+display_name = "Charged Armor"
+internal_name = "Drop EMPEROR Chest"
+tooltip = ""
+tooltipAlt = ["Speed +22", "Instinct +25", "Vitality +9", "Lightning Piercing +7"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 18.0
+price = 802.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 9.0,
+"magic": 25.0,
+"speed": 22.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 7.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

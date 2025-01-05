@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://dsft0lamqacma"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_0usnl"]
+
+[resource]
+script = ExtResource("1_0usnl")
+id = 190.0
+looks = ""
+name = ""
+display_name = "Assault Armour"
+internal_name = "Assault Armour"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +15", "Instinct +7", "Strength +17", "Vitality +12", "Lightning Defense +10", "Earth Defense +10"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 123086.0
+price_modifier = 282.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 12.0,
+"magic": 7.0,
+"speed": 15.0,
+"strength": 17.0
+},
+"defense": {
+"Earth": 10.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 10.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

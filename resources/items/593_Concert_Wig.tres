@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ujnsdjejj7e5"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_af7uw"]
+[ext_resource type="Texture2D" uid="uid://cirk27i8xwx7l" path="res://resources/sprites/M_HEAD_ROCKSTAR.png" id="2_4ydu6"]
+
+[resource]
+script = ExtResource("1_af7uw")
+id = 593.0
+looks = "ROCKSTAR"
+sprite_image = ExtResource("2_4ydu6")
+name = "Concert Wig"
+display_name = "Concert Wig"
+internal_name = "Drop ROCKSTAR Head"
+tooltip = "You ain't nothing but a hound dog..."
+tooltipAlt = ["Speed +6", "Instinct +17", "Strength +21", "Vitality +12"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 18.0
+price = 802.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 12.0,
+"magic": 17.0,
+"speed": 6.0,
+"strength": 21.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bo76jhxtj5p4t"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_iec1k"]
+
+[resource]
+script = ExtResource("1_iec1k")
+id = 142.0
+looks = ""
+name = ""
+display_name = "Sacrificial Garments"
+internal_name = "Sacrificial Garments"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +2", "Instinct +8", "Strength +2", "Vitality +3", "Lightning Defense +7", "Earth Defense +7"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 6.0
+price = 6636.0
+price_modifier = 43.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 3.0,
+"magic": 8.0,
+"speed": 2.0,
+"strength": 2.0
+},
+"defense": {
+"Earth": 7.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 7.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

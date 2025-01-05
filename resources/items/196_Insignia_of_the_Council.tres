@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://big71fceca4m8"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_b7w6v"]
+
+[resource]
+script = ExtResource("1_b7w6v")
+id = 196.0
+looks = ""
+name = ""
+display_name = "Insignia of the Council"
+internal_name = "Insignia of the Council"
+tooltip = ""
+tooltipAlt = []
+item_type = 0
+rarity = 1
+class_type = 1
+required_level = 13.0
+price = 431693.0
+price_modifier = 307.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

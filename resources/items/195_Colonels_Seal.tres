@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://e5ci4ickbvhu"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_f3b6m"]
+
+[resource]
+script = ExtResource("1_f3b6m")
+id = 195.0
+looks = ""
+name = ""
+display_name = "Colonel's Seal"
+internal_name = "Colonel's Seal"
+tooltip = ""
+tooltipAlt = []
+item_type = 0
+rarity = 1
+class_type = 1
+required_level = 13.0
+price = 442942.0
+price_modifier = 315.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

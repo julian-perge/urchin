@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://d1i6hibb0q6gy"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_avl3i"]
+
+[resource]
+script = ExtResource("1_avl3i")
+name = "Metal Warden"
+vitality = 60.0
+strength = 47.0
+magic = 10.0
+speed = 13.0
+focus = 100.0
+moves = {
+"absolute": [[11.0, 1.0], [12.0, 2.0], [785.0, 2.0], [14.0, 3.0]],
+"attack": [15.0],
+"defense": [2.0]
+}
+stats = {
+"aggression": [50.0, 61.0, 60.0, 65.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 679.0, 0.0],
+"model": ["MODEL1", "MAN", ","],
+"skin": "JASON4",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

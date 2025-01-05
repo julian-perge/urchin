@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://blt3d35qlcxc0"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_24sux"]
+[ext_resource type="Texture2D" uid="uid://31faehrfval3" path="res://resources/sprites/M_CHEST_ROCKSTAR.png" id="2_p153a"]
+
+[resource]
+script = ExtResource("1_24sux")
+id = 594.0
+looks = "ROCKSTAR"
+sprite_image = ExtResource("2_p153a")
+name = "Rocker's Crest"
+display_name = "Rocker's Crest"
+internal_name = "Drop ROCKSTAR Chest"
+tooltip = ""
+tooltipAlt = ["Speed +14", "Instinct +9", "Strength +19", "Vitality +14"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 18.0
+price = 802.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 14.0,
+"magic": 9.0,
+"speed": 14.0,
+"strength": 19.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

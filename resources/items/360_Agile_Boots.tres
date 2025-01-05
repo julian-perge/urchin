@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://f8uk424akth7"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_so3u2"]
+[ext_resource type="Texture2D" uid="uid://et0v1h05gie8" path="res://resources/sprites/M_FOOT_ZPCI2.png" id="2_hntvt"]
+
+[resource]
+script = ExtResource("1_so3u2")
+id = 360.0
+looks = "ZPCI2"
+sprite_image = ExtResource("2_hntvt")
+name = "Agile Boots"
+display_name = "Agile Boots"
+internal_name = "Agile Boots"
+tooltip = ""
+tooltipAlt = ["Speed +7", "Instinct +5", "Strength +5", "Vitality +2"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 274.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 2.0,
+"magic": 5.0,
+"speed": 7.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

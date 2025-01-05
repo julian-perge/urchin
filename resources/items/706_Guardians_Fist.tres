@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://brg7e06n0w07k"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_f71d1"]
+[ext_resource type="Texture2D" uid="uid://cuknq5v267gvf" path="res://resources/sprites/M_HAND_ROBOT2.png" id="2_13ayl"]
+
+[resource]
+script = ExtResource("1_f71d1")
+id = 706.0
+looks = "ROBOT2"
+sprite_image = ExtResource("2_13ayl")
+name = "Guardian's Fist"
+display_name = "Guardian's Fist"
+internal_name = "Drop ROBOT2 Hands"
+tooltip = ""
+tooltipAlt = ["Speed +26", "Fire Defense +323"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1111.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 26.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 323.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

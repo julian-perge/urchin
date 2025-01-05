@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://omx1bgmnf0oq"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_cf2af"]
+[ext_resource type="Texture2D" uid="uid://bv8ltxg8xktw2" path="res://resources/sprites/M_WEAPON_TRIDENT2.png" id="2_rmxrc"]
+
+[resource]
+script = ExtResource("1_cf2af")
+id = 655.0
+looks = "TRIDENT2"
+sprite_image = ExtResource("2_rmxrc")
+name = "Wrath of the Council"
+display_name = "Wrath of the Council"
+internal_name = "TRIDENT"
+tooltip = "Incredible power..."
+tooltipAlt = ["Instinct +152", "Ice Piercing +81", "Lightning Piercing +81", "Poison Piercing +81"]
+item_type = 9
+rarity = 2
+class_type = 1
+required_level = 22.0
+price = 3096.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 152.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 81.0,
+"Lightning": 81.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 81.0,
+"Shadow": 0.0
+}
+}

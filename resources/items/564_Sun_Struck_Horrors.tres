@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dsdg203xhh2xk"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_qv38d"]
+[ext_resource type="Texture2D" uid="uid://e3dljey3ggmg" path="res://resources/sprites/M_WEAPON_MOON.png" id="2_1rh8p"]
+
+[resource]
+script = ExtResource("1_qv38d")
+id = 564.0
+looks = "MOON"
+sprite_image = ExtResource("2_1rh8p")
+name = "Sun Struck Horrors"
+display_name = "Sun Struck Horrors"
+internal_name = "Sun Struck Horrors"
+tooltip = "You can hear twisted laughs..."
+tooltipAlt = ["Speed +28", "Instinct +28", "Strength +56", "Vitality +34", "Fire Piercing +211"]
+item_type = 9
+rarity = 2
+class_type = 1
+required_level = 15.0
+price = 1743.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 34.0,
+"magic": 28.0,
+"speed": 28.0,
+"strength": 56.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 211.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

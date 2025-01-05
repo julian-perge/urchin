@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dbdcfo080bqn8"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_d5rx2"]
+[ext_resource type="Texture2D" uid="uid://wbtpr3q1tnvt" path="res://resources/sprites/M_HAND_TUNNELSET2.png" id="2_3kps4"]
+
+[resource]
+script = ExtResource("1_d5rx2")
+id = 580.0
+looks = "TUNNELSET2"
+sprite_image = ExtResource("2_3kps4")
+name = "Rusted Grasp"
+display_name = "Rusted Grasp"
+internal_name = "Drop VIKING Hands"
+tooltip = ""
+tooltipAlt = ["Speed +4", "Instinct +15", "Vitality +13", "Ice Piercing +5"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 17.0
+price = 526.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 13.0,
+"magic": 15.0,
+"speed": 4.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 5.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

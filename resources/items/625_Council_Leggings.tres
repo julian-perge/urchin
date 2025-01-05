@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cqy16nt8hnclh"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_w3tpa"]
+[ext_resource type="Texture2D" uid="uid://cqt6s68kj38y7" path="res://resources/sprites/M_LEG2_PRIEST3.png" id="2_3xn8p"]
+
+[resource]
+script = ExtResource("1_w3tpa")
+id = 625.0
+looks = "PRIEST3"
+sprite_image = ExtResource("2_3xn8p")
+name = "Council Leggings"
+display_name = "Council Leggings"
+internal_name = "Drop COUNCIL Legs"
+tooltip = ""
+tooltipAlt = ["Speed +23", "Instinct +31", "Vitality +23", "Lightning Defense +29"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 22.0
+price = 1083.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 23.0,
+"magic": 31.0,
+"speed": 23.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 29.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

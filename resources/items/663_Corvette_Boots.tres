@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://1tbt5jebdsks"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_e1qi0"]
+[ext_resource type="Texture2D" uid="uid://dudm52tyo2i8l" path="res://resources/sprites/M_FOOT_JASON4.png" id="2_c12tc"]
+
+[resource]
+script = ExtResource("1_e1qi0")
+id = 663.0
+looks = "JASON4"
+sprite_image = ExtResource("2_c12tc")
+name = "Corvette Boots"
+display_name = "Corvette Boots"
+internal_name = "Drop WARDEN Feet"
+tooltip = ""
+tooltipAlt = ["Speed +48", "Strength +10", "Vitality +7"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 24.0
+price = 882.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 7.0,
+"magic": 0.0,
+"speed": 48.0,
+"strength": 10.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

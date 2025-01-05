@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bcgicf7pmek71"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_7kvgu"]
+[ext_resource type="Texture2D" uid="uid://xl6tvg7p7obj" path="res://resources/sprites/M_WEAPON_UBER2.png" id="2_tr6he"]
+
+[resource]
+script = ExtResource("1_7kvgu")
+id = 503.0
+looks = "UBER2"
+sprite_image = ExtResource("2_tr6he")
+name = "Terror Blade"
+display_name = "Terror Blade"
+internal_name = "Terror Blade"
+tooltip = "It smells of blood and poison."
+tooltipAlt = ["Strength +5", "Physical Piercing +15", "Poison Piercing +15"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 4.0
+price = 120.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 15.0,
+"Poison": 15.0,
+"Shadow": 0.0
+}
+}

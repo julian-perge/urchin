@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cwj2ip7hngv5m"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_o0huj"]
+[ext_resource type="Texture2D" uid="uid://byk02v34db5a0" path="res://resources/sprites/M_FOOT_POLICE2.png" id="2_4ybdd"]
+
+[resource]
+script = ExtResource("1_o0huj")
+id = 636.0
+looks = "POLICE2"
+sprite_image = ExtResource("2_4ybdd")
+name = "Caretaker's Stompers"
+display_name = "Caretaker's Stompers"
+internal_name = "Drop POLICE2 Feet"
+tooltip = ""
+tooltipAlt = ["Speed +13", "Instinct +16", "Strength +11", "Vitality +13"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 722.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 13.0,
+"magic": 16.0,
+"speed": 13.0,
+"strength": 11.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

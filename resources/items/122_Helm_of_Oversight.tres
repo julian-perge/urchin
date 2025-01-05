@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://hcqbnsnc6a37"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_u5ohn"]
+
+[resource]
+script = ExtResource("1_u5ohn")
+id = 122.0
+looks = ""
+name = ""
+display_name = "Helm of Oversight"
+internal_name = "Helm of Oversight"
+tooltip = ""
+tooltipAlt = ["Speed +2", "Instinct +5", "Strength +2", "Vitality +6", "Lightning Defense +6", "Earth Defense +6"]
+item_type = 2
+rarity = 1
+class_type = 1
+required_level = 4.0
+price = 1176.0
+price_modifier = 14.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 6.0,
+"magic": 5.0,
+"speed": 2.0,
+"strength": 2.0
+},
+"defense": {
+"Earth": 6.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 6.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

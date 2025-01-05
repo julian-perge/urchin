@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bcnjcfsxwx6wa"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_3s26o"]
+[ext_resource type="Texture2D" uid="uid://1wdvcy21af2s" path="res://resources/sprites/M_FOOT_JASON3.png" id="2_lo0ll"]
+
+[resource]
+script = ExtResource("1_3s26o")
+id = 512.0
+looks = "JASON3"
+sprite_image = ExtResource("2_lo0ll")
+name = "Metal Sprinter"
+display_name = "Metal Sprinter"
+internal_name = "Metal Sprinter"
+tooltip = ""
+tooltipAlt = ["Speed +1", "Physical Piercing +22"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 3.0
+price = 16.0
+price_modifier = 0.4
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 1.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 22.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

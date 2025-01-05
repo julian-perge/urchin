@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://nhhkdd66xd7n"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_f7frd"]
+[ext_resource type="Texture2D" uid="uid://b8bp4m3a75psd" path="res://resources/sprites/M_CHEST_KLIMA.png" id="2_5i2np"]
+
+[resource]
+script = ExtResource("1_f7frd")
+id = 685.0
+looks = "KLIMA"
+sprite_image = ExtResource("2_5i2np")
+name = "Surgeon's Shelter"
+display_name = "Surgeon's Shelter"
+internal_name = "Drop KLIMA Chest"
+tooltip = ""
+tooltipAlt = ["Speed +24", "Instinct +41", "Strength +36", "Vitality +30"]
+item_type = 3
+rarity = 0
+class_type = 5
+required_level = 28.0
+price = 1556.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 30.0,
+"magic": 41.0,
+"speed": 24.0,
+"strength": 36.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

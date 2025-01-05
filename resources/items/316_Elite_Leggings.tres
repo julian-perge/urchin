@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://p8expn6i1ie3"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_j7hmb"]
+[ext_resource type="Texture2D" uid="uid://bapi6d8t4fe1o" path="res://resources/sprites/M_LEG2_ZPCI.png" id="2_xpw6d"]
+
+[resource]
+script = ExtResource("1_j7hmb")
+id = 316.0
+looks = "ZPCI"
+sprite_image = ExtResource("2_xpw6d")
+name = "Elite Leggings"
+display_name = "Elite Leggings"
+internal_name = "Elite Leggings"
+tooltip = "'Property of Zombie Pest Control Inc.'"
+tooltipAlt = ["Speed +2", "Instinct +1", "Strength +4", "Vitality +6"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 7.0
+price = 194.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 6.0,
+"magic": 1.0,
+"speed": 2.0,
+"strength": 4.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

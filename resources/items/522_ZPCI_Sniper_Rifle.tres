@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://csjbe3iidq2fn"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_43req"]
+[ext_resource type="Texture2D" uid="uid://byriobvfj4pkt" path="res://resources/sprites/M_WEAPON_UBER4.png" id="2_rjbx5"]
+
+[resource]
+script = ExtResource("1_43req")
+id = 522.0
+looks = "UBER4"
+sprite_image = ExtResource("2_rjbx5")
+name = "ZPCI Sniper Rifle"
+display_name = "ZPCI Sniper Rifle"
+internal_name = "ZPCI Sniper Rifle"
+tooltip = "An excellent gun, but the golden plating seems pointless."
+tooltipAlt = ["Speed +19", "Strength +19", "Vitality +16", "Fire Piercing +89"]
+item_type = 9
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 1094.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 16.0,
+"magic": 0.0,
+"speed": 19.0,
+"strength": 19.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 89.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

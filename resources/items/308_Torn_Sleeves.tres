@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://5g6ikxfj4p4f"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_n84vy"]
+[ext_resource type="Texture2D" uid="uid://sper3uvlptby" path="res://resources/sprites/M_HAND_MADSCI.png" id="2_fkck5"]
+
+[resource]
+script = ExtResource("1_n84vy")
+id = 308.0
+looks = "MADSCI"
+sprite_image = ExtResource("2_fkck5")
+name = "Torn Sleeves"
+display_name = "Torn Sleeves"
+internal_name = "Doctor's Grasp"
+tooltip = "The rest of the lab-coat is missing."
+tooltipAlt = ["Speed +2", "Instinct +3", "Vitality +1"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 3.0
+price = 39.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 1.0,
+"magic": 3.0,
+"speed": 2.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

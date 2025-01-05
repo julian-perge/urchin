@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bu4g1yikn4dho"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6vq6a"]
+[ext_resource type="Texture2D" uid="uid://dm2lwr6riv4uw" path="res://resources/sprites/M_CHEST_PRIEST2.png" id="2_hsg8f"]
+
+[resource]
+script = ExtResource("1_6vq6a")
+id = 341.0
+looks = "PRIEST2"
+sprite_image = ExtResource("2_hsg8f")
+name = "Arcane Armor"
+display_name = "Arcane Armor"
+internal_name = "Arcane Armour"
+tooltip = ""
+tooltipAlt = ["Speed +8", "Instinct +6", "Strength +6", "Vitality +2"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 10.0
+price = 332.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 2.0,
+"magic": 6.0,
+"speed": 8.0,
+"strength": 6.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

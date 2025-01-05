@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bnaikyodqvb67"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_3o470"]
+[ext_resource type="Texture2D" uid="uid://cwociwd3fqon2" path="res://resources/sprites/M_WEAPON_FELKNIFE2.png" id="2_v024s"]
+
+[resource]
+script = ExtResource("1_3o470")
+id = 558.0
+looks = "FELKNIFE2"
+sprite_image = ExtResource("2_v024s")
+name = "Acidic Edge"
+display_name = "Acidic Edge"
+internal_name = "Green 2"
+tooltip = ""
+tooltipAlt = ["Strength +11", "Poison Piercing +65"]
+item_type = 8
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 624.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 11.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 65.0,
+"Shadow": 0.0
+}
+}

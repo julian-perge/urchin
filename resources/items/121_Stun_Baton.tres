@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://dmjh6lhnib0sn"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_2mssr"]
+
+[resource]
+script = ExtResource("1_2mssr")
+id = 121.0
+looks = ""
+name = ""
+display_name = "Stun Baton"
+internal_name = "Stun Baton"
+tooltip = ""
+tooltipAlt = ["Speed +3", "Instinct +3", "Strength +10", "Vitality +9", "Lightning Defense +9", "Earth Defense +9"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 4.0
+price = 1920.0
+price_modifier = 16.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 9.0,
+"magic": 3.0,
+"speed": 3.0,
+"strength": 10.0
+},
+"defense": {
+"Earth": 9.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 9.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

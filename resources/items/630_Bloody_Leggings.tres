@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://hmjdij6dd5bb"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_wsuba"]
+[ext_resource type="Texture2D" uid="uid://ctrtme605hxr4" path="res://resources/sprites/M_LEG2_SINJID.png" id="2_rrhkx"]
+
+[resource]
+script = ExtResource("1_wsuba")
+id = 630.0
+looks = "SINJID"
+sprite_image = ExtResource("2_rrhkx")
+name = "Bloody Leggings"
+display_name = "Bloody Leggings"
+internal_name = "Drop SPECIALIST Legs"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +15", "Strength +22", "Physical Piercing +41"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 1010.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 15.0,
+"strength": 22.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 41.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

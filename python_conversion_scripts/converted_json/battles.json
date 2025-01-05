@@ -1,0 +1,8474 @@
+{
+  "battles": [
+    {
+      "absolute_start": 0,
+      "id": 1,
+      "id_name": "KBR1",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        0,
+        -2,
+        -2,
+        -1,
+        -1
+      ],
+      "players_levels": [
+        1,
+        9,
+        9,
+        9,
+        9
+      ],
+      "sky_background": "JAIL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 49,
+      "id_name": "KBR49",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        49,
+        0,
+        0,
+        48,
+        0
+      ],
+      "players_levels": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "SEA",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 5,
+          "say": "I may be blind, but there's no mistaking that smell. Can you take him out?",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v_1"
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Yes, I...I suppose I can. Ugh...I don't feel too well.",
+          "timeToSay": 5,
+          "turnTime": 0,
+          "turnTime2": 1
+        },
+        {
+          "phase": 1,
+          "player": 5,
+          "say": "It will wear off eventually. You need to focus!",
+          "timeToSay": 3.7,
+          "turnTime": 0,
+          "turnTime2": 2
+        },
+        {
+          "phase": 1,
+          "player": 0,
+          "say": "Notice the grey 'ring' in the lower middle panel, around the exclamation mark. Wait until it turns blue.",
+          "timeToSay": 6.5,
+          "turnTime": 0,
+          "turnTime2": 3
+        },
+        {
+          "phase": 1,
+          "player": 0,
+          "say": "Once the ring is blue, click on the enemy to target him. Your abilities will appear around him.",
+          "timeToSay": 5.5,
+          "turnTime": 0,
+          "turnTime2": 4
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "He doesn't look too happy.",
+          "timeToSay": 1.5,
+          "turnTime": 2,
+          "turnTime2": 0,
+          "voiceOver": "v_2"
+        },
+        {
+          "phase": 1,
+          "player": 5,
+          "say": "He's enraged! You'll have to defend yourself! Get ready!",
+          "timeToSay": 3.5,
+          "turnTime": 2,
+          "turnTime2": 1
+        },
+        {
+          "phase": 1,
+          "player": 0,
+          "say": "Target yourself instead of the enemy this turn, so you can use your defensive ability.",
+          "timeToSay": 5,
+          "turnTime": 2,
+          "turnTime2": 2
+        },
+        {
+          "phase": 1,
+          "player": 0,
+          "say": "To find out more about an ability, hold your mouse over its icon for a couple of seconds.",
+          "timeToSay": 5,
+          "turnTime": 2,
+          "turnTime2": 3
+        },
+        {
+          "phase": 1,
+          "player": 5,
+          "say": "Good job, Sonny. Keep going, and stay alert. There will be more of them ahead.",
+          "timeToSay": 5,
+          "turnTime": 4,
+          "turnTime2": 0,
+          "voiceOver": "v_3"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "WHITE NOVEMBER"
+    },
+    {
+      "absolute_start": 0,
+      "id": 50,
+      "id_name": "KBR50",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.6,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.15,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        9,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 51,
+      "id_name": "KBR51",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        20,
+        -2,
+        21,
+        -1,
+        22
+      ],
+      "players_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "SNOW",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 52,
+      "id_name": "KBR52",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        25,
+        -2,
+        23,
+        -1,
+        23
+      ],
+      "players_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "SNOW",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 53,
+      "id_name": "KBR53",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.35000000000000003,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        33,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "SNOW",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 54,
+      "id_name": "KBR54",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        7,
+        -2,
+        15,
+        -1,
+        0
+      ],
+      "players_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 4,
+          "say": "Wake up Frankie, the guests are here. Wake up! And make Daddy proud!",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v_"
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "RAAAWWR!",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": "v_"
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "This prison is one hell of a freak show...",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": "v_"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 99,
+      "id_name": "KBR99",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        12,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Oh the horrors! I can't take it anymore! Please. Let me... taste your... blood water.",
+          "timeToSay": 2,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v_"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 100,
+      "id_name": "KBR100",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 300,
+          "name": "Guard's Leggings"
+        },
+        {
+          "id": 301,
+          "name": "Guard's Grip"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        5,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "More hostiles! You've made a big mistake by breaking in here.",
+          "timeToSay": 4.1000000000000005,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_1"
+        },
+        {
+          "phase": 1,
+          "player": "Sonny",
+          "say": "Sorry about the gate, I couldn't find the doorbell.",
+          "timeToSay": 2.600000000000001,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 101,
+      "id_name": "KBR101",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 302,
+          "name": "Guard's Runners"
+        },
+        {
+          "id": 303,
+          "name": "Guard's Uniform"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 304,
+          "name": "Watcher's Visage"
+        },
+        {
+          "id": 500,
+          "name": "Guard's Baton"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        5,
+        -2,
+        5,
+        -1,
+        0
+      ],
+      "players_levels": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "The prisoners are escaping! We need more men!",
+          "timeToSay": 2.9,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_2"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 102,
+      "id_name": "KBR102",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 305,
+          "name": "Prison Trousers XL"
+        },
+        {
+          "id": 306,
+          "name": "Prison Shirt XXS"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 5,
+          "name": "A Broken Pipe"
+        },
+        {
+          "id": 6,
+          "name": "Fire Axe"
+        },
+        {
+          "id": 7,
+          "name": "Crow Bar"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        10,
+        -2,
+        13,
+        -1,
+        0
+      ],
+      "players_levels": [
+        1,
+        1,
+        2,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "These guys are trying to escape!",
+          "timeToSay": 2.100000000000001,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_3"
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "Hey! HEY YOU! Did you just see a zombie chick run through here? Help us, and we'll help you!",
+          "timeToSay": 5.4,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Don't listen to him Andy, it's a trick...!",
+          "timeToSay": 2,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "They're trying to play us for fools! You saw what they did to Frank!",
+          "timeToSay": 4.1000000000000005,
+          "turnTime": 0,
+          "turnTime2": 3,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Look, we just want to know if-",
+          "timeToSay": 1.2,
+          "turnTime": 0,
+          "turnTime2": 4,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Back off, Mary Poppins!",
+          "timeToSay": 2,
+          "turnTime": 0,
+          "turnTime2": 5,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "You asked for it.",
+          "timeToSay": 1.3000000000000005,
+          "turnTime": 0,
+          "turnTime2": 6,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 103,
+      "id_name": "KBR103",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 305,
+          "name": "Prison Trousers XL"
+        },
+        {
+          "id": 306,
+          "name": "Prison Shirt XXS"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 5,
+          "name": "A Broken Pipe"
+        },
+        {
+          "id": 6,
+          "name": "Fire Axe"
+        },
+        {
+          "id": 7,
+          "name": "Crow Bar"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        14,
+        -2,
+        13,
+        -1,
+        10
+      ],
+      "players_levels": [
+        2,
+        1,
+        1,
+        1,
+        2
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "They're here for us, Johnny! I told you they'd come! I TOLD YOU!",
+          "timeToSay": 4.75,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_4"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 104,
+      "id_name": "KBR104",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 307,
+            "name": "Doctor's Labcoat"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 302,
+          "name": "Guard's Runners"
+        },
+        {
+          "id": 303,
+          "name": "Guard's Uniform"
+        },
+        {
+          "id": 301,
+          "name": "Guard's Grip"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 300,
+          "name": "Guard's Leggings"
+        },
+        {
+          "id": 304,
+          "name": "Watcher's Visage"
+        },
+        {
+          "id": 500,
+          "name": "Guard's Baton"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.3,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        6,
+        -2,
+        5,
+        -1,
+        5
+      ],
+      "players_levels": [
+        4,
+        1,
+        3,
+        1,
+        3
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Oh. What fine specimens! But you do not belong here! Guards, escort these gentlemen to the exit!",
+          "timeToSay": 15,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_5"
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "There's something fishy about this place. And it's not just the smell.",
+          "timeToSay": 4.5,
+          "turnTime": 2,
+          "turnTime2": 0,
+          "voiceOver": "v1_6"
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "It has functional nostrils, too? Fascinating...",
+          "timeToSay": 4.5,
+          "turnTime": 2,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 105,
+      "id_name": "KBR105",
+      "item_drops": [
+        {
+          "chance": 50,
+          "item": {
+            "id": 503,
+            "name": "Terror Blade"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        12,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        5,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Oh the horrors! I can't take it anymore! Please. Let me... taste your... blood water.",
+          "timeToSay": 15,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_7"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 106,
+      "id_name": "KBR106",
+      "item_drops": [
+        {
+          "chance": 25,
+          "item": {
+            "id": 504,
+            "name": "Persecution"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 312,
+          "name": "Shawshank Boots"
+        },
+        {
+          "id": 311,
+          "name": "Punisher Gloves"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 313,
+          "name": "Warden's Leggings"
+        },
+        {
+          "id": 314,
+          "name": "Eye of Justice"
+        },
+        {
+          "id": 310,
+          "name": "Warden's Armor"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.6,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.15,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        9,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        5,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "There is no escape from MY prison! I will crush you!",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_8"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 107,
+      "id_name": "KBR107",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 315,
+            "name": "Green Fuel-Tank"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 308,
+            "name": "Torn Sleeves"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        7,
+        -2,
+        15,
+        -1,
+        0
+      ],
+      "players_levels": [
+        6,
+        1,
+        6,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 4,
+          "say": "Wake up Frankie, the guests are here. Wake up! And make Daddy proud!",
+          "timeToSay": 11.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_9"
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "RAAAWWR!",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "This prison is one hell of a freak show...",
+          "timeToSay": 2.2,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 108,
+      "id_name": "KBR108",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 317,
+          "name": "Gilded Boots"
+        },
+        {
+          "id": 318,
+          "name": "Precision Grips"
+        },
+        {
+          "id": 316,
+          "name": "Elite Leggings"
+        },
+        {
+          "id": 319,
+          "name": "Double Visor"
+        },
+        {
+          "id": 320,
+          "name": "Elite Armor"
+        },
+        {
+          "id": 506,
+          "name": "Standard Rifle"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 2,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        8,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        7,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "That uniform! Not these guys again...",
+          "timeToSay": 2.9,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_10"
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "It's like they're everywhere!",
+          "timeToSay": 1.6,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Ah, the meddlers...I'm sure I'll be rewarded handsomely for bringing back your heads, and thwarting your disturbance of our operation here!",
+          "timeToSay": 9.200000000000001,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 199,
+      "id_name": "KBR199",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 507,
+            "name": "Curved Blade"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.5,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.35000000000000003,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": true,
+              "life": 0.1,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        11,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        7,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "Don't start what you can't finish, boys.",
+          "timeToSay": 3.4,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_11"
+        },
+        {
+          "phase": 3,
+          "player": 2,
+          "say": "You’re not getting that tape!",
+          "timeToSay": 2.3000000000000003,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_12"
+        },
+        {
+          "phase": 4,
+          "player": 1,
+          "say": "Give us the tape, this is getting old.",
+          "timeToSay": 2.7,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v1_13"
+        },
+        {
+          "phase": 4,
+          "player": 2,
+          "say": "You want it that bad, huh? Catch it if you can!",
+          "timeToSay": 4.700000000000002,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 200,
+      "id_name": "KBR200",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 321,
+          "name": "Frosted Armor"
+        },
+        {
+          "id": 325,
+          "name": "Frozen Helm"
+        },
+        {
+          "id": 322,
+          "name": "Frosted Leggings"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        23,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        8,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "SNOW",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Isn't this a long row to hoe. Looks like we're hoofing it from here.",
+          "timeToSay": 4.1000000000000005,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_1"
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "It was fun while it lasted, right? And look, a welcoming party!",
+          "timeToSay": 4.1000000000000005,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Mmmgghrrr!",
+          "timeToSay": 2.5,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 201,
+      "id_name": "KBR201",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": true,
+              "life": 0.1,
+              "player": 2,
+              "turn": 3,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        32,
+        -2,
+        29,
+        -1,
+        0
+      ],
+      "players_levels": [
+        9,
+        1,
+        9,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "SNOW",
+      "speeches": [
+        {
+          "phase": 2,
+          "player": 4,
+          "say": "Hey, wait! You're not like the rest of them! Who are you? Can you talk?",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_2"
+        },
+        {
+          "phase": 2,
+          "player": 1,
+          "say": "We're just passing through. Move, or die.",
+          "timeToSay": 3.5,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "Amazing!",
+          "timeToSay": 2.8000000000000003,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 4,
+          "say": "Let's put down our weapons. We are not your enemies.",
+          "timeToSay": 3.5,
+          "turnTime": 0,
+          "turnTime2": 3,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "We were a group of people devoted to find a cure for... your condition. But things started happening… ",
+          "timeToSay": 7,
+          "turnTime": 0,
+          "turnTime2": 4,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "Assassinations… Kidnappings… Someone didn't want us to continue our research.",
+          "timeToSay": 7,
+          "turnTime": 0,
+          "turnTime2": 5,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 4,
+          "say": "Those of us that survived – we fled from the Utopia, and ended up hiding here.",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 6,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "This place isn't much better. The village is infested with some kind of cult.",
+          "timeToSay": 5.5,
+          "turnTime": 0,
+          "turnTime2": 7,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "They sacrifice innocent people. Will you help us?",
+          "timeToSay": 3.5,
+          "turnTime": 0,
+          "turnTime2": 8,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 1,
+          "say": "Tell us how to find that Utopia. Then we will help you.",
+          "timeToSay": 3.5,
+          "turnTime": 0,
+          "turnTime2": 9,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "If you can rid us from this zealous cult – I'll take you there myself.",
+          "timeToSay": 3.5,
+          "turnTime": 0,
+          "turnTime2": 10,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": "Veradux",
+          "say": "All in a days work!",
+          "timeToSay": 1.5,
+          "turnTime": 0,
+          "turnTime2": 11,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 202,
+      "id_name": "KBR202",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 321,
+          "name": "Frosted Armor"
+        },
+        {
+          "id": 325,
+          "name": "Frozen Helm"
+        },
+        {
+          "id": 322,
+          "name": "Frosted Leggings"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 323,
+          "name": "Icy Runners"
+        },
+        {
+          "id": 324,
+          "name": "Glacial Gloves"
+        },
+        {
+          "id": 519,
+          "name": "Icy Maul"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        25,
+        -2,
+        23,
+        -1,
+        23
+      ],
+      "players_levels": [
+        9,
+        1,
+        9,
+        1,
+        9
+      ],
+      "sky_background": "SNOW",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Do you know anything about the prison?",
+          "timeToSay": 2.5,
+          "turnTime": 6,
+          "turnTime2": 0,
+          "voiceOver": "v2_3"
+        },
+        {
+          "phase": 1,
+          "player": "Roald",
+          "say": "A prison? Here?",
+          "timeToSay": 2,
+          "turnTime": 6,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "No, but not far. They were conducting experiments there, on the prisoners.",
+          "timeToSay": 4,
+          "turnTime": 6,
+          "turnTime2": 2,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "Then the ZPCI showed up! Those guys just won't leave us alone.",
+          "timeToSay": 5,
+          "turnTime": 7,
+          "turnTime2": 0,
+          "voiceOver": "v2_4"
+        },
+        {
+          "phase": 1,
+          "player": "Roald",
+          "say": "The ZPCI? Are you sure? But they protect us - they're the good guys!",
+          "timeToSay": 5.5,
+          "turnTime": 7,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Somehow, I don't think so...",
+          "timeToSay": 2,
+          "turnTime": 7,
+          "turnTime2": 2,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 203,
+      "id_name": "KBR203",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 330,
+          "name": "Justice Helm"
+        },
+        {
+          "id": 331,
+          "name": "Rightful Grasp"
+        },
+        {
+          "id": 332,
+          "name": "Righteous Breastplate"
+        },
+        {
+          "id": 333,
+          "name": "Zealot's Leggings"
+        },
+        {
+          "id": 334,
+          "name": "Zealot's Marcher"
+        },
+        {
+          "id": 515,
+          "name": "Light's Blade"
+        },
+        {
+          "id": 516,
+          "name": "Metal Shield"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.3,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        20,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        9,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "SNOW",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "You are here to join our ranks? Then prove yourselves!",
+          "timeToSay": 3.600000000000001,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_5"
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "Lay down your arms, I... *cough* accept your request.",
+          "timeToSay": 5.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_6"
+        },
+        {
+          "phase": 2,
+          "player": 1,
+          "say": "Your membership fees are too high. I'd rather kill you.",
+          "timeToSay": 3.5,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "Heretic! My Master will have your heads!",
+          "timeToSay": 3.5,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 204,
+      "id_name": "KBR204",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 330,
+          "name": "Justice Helm"
+        },
+        {
+          "id": 331,
+          "name": "Rightful Grasp"
+        },
+        {
+          "id": 332,
+          "name": "Righteous Breastplate"
+        },
+        {
+          "id": 333,
+          "name": "Zealot's Leggings"
+        },
+        {
+          "id": 334,
+          "name": "Zealot's Marcher"
+        },
+        {
+          "id": 515,
+          "name": "Light's Blade"
+        },
+        {
+          "id": 516,
+          "name": "Metal Shield"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 335,
+          "name": "Believer's Crown"
+        },
+        {
+          "id": 336,
+          "name": "Spirit Slippers"
+        },
+        {
+          "id": 337,
+          "name": "Clairvoyant Chest"
+        },
+        {
+          "id": 338,
+          "name": "Healer's Hands"
+        },
+        {
+          "id": 339,
+          "name": "Divine Garments"
+        },
+        {
+          "id": 518,
+          "name": "Frosted Light"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        21,
+        -2,
+        20,
+        -1,
+        0
+      ],
+      "players_levels": [
+        10,
+        1,
+        9,
+        1,
+        1
+      ],
+      "sky_background": "SNOW",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 4,
+          "say": "We don't fear death!",
+          "timeToSay": 1.8000000000000005,
+          "turnTime": 3,
+          "turnTime2": 0,
+          "voiceOver": "v2_7"
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Our master will save us from the undead!",
+          "timeToSay": 2.7,
+          "turnTime": 6,
+          "turnTime2": 0,
+          "voiceOver": "v2_8"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 205,
+      "id_name": "KBR205",
+      "item_drops": [
+        {
+          "chance": 25,
+          "item": {
+            "id": 520,
+            "name": "Frosted Fate"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 321,
+          "name": "Frosted Armor"
+        },
+        {
+          "id": 325,
+          "name": "Frozen Helm"
+        },
+        {
+          "id": 322,
+          "name": "Frosted Leggings"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 323,
+          "name": "Icy Runners"
+        },
+        {
+          "id": 324,
+          "name": "Glacial Gloves"
+        },
+        {
+          "id": 519,
+          "name": "Icy Maul"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        33,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        10,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "SNOW",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "What are the tattoos for? You all have them.",
+          "timeToSay": 3,
+          "turnTime": 6,
+          "turnTime2": 0,
+          "voiceOver": "v2_9"
+        },
+        {
+          "phase": 1,
+          "player": "Roald",
+          "say": "When things started to get ugly, we got them made in secret so we knew who we could trust.",
+          "timeToSay": 4.200000000000002,
+          "turnTime": 6,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "They look familiar, somehow.",
+          "timeToSay": 2,
+          "turnTime": 6,
+          "turnTime2": 2,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 206,
+      "id_name": "KBR206",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 330,
+          "name": "Justice Helm"
+        },
+        {
+          "id": 331,
+          "name": "Rightful Grasp"
+        },
+        {
+          "id": 332,
+          "name": "Righteous Breastplate"
+        },
+        {
+          "id": 333,
+          "name": "Zealot's Leggings"
+        },
+        {
+          "id": 334,
+          "name": "Zealot's Marcher"
+        },
+        {
+          "id": 515,
+          "name": "Light's Blade"
+        },
+        {
+          "id": 516,
+          "name": "Metal Shield"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 340,
+          "name": "Enlightened Helm"
+        },
+        {
+          "id": 341,
+          "name": "Arcane Armor"
+        },
+        {
+          "id": 342,
+          "name": "Ancient Gloves"
+        },
+        {
+          "id": 343,
+          "name": "Tomekeeper's Slippers"
+        },
+        {
+          "id": 344,
+          "name": "Tomekeeper's Leggings"
+        },
+        {
+          "id": 517,
+          "name": "Fiery Doom"
+        }
+      ],
+      "item_rare3": [
+        {
+          "id": 335,
+          "name": "Believer's Crown"
+        },
+        {
+          "id": 336,
+          "name": "Spirit Slippers"
+        },
+        {
+          "id": 337,
+          "name": "Clairvoyant Chest"
+        },
+        {
+          "id": 338,
+          "name": "Healer's Hands"
+        },
+        {
+          "id": 339,
+          "name": "Divine Garments"
+        },
+        {
+          "id": 518,
+          "name": "Frosted Light"
+        }
+      ],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        20,
+        -2,
+        21,
+        -1,
+        22
+      ],
+      "players_levels": [
+        10,
+        1,
+        10,
+        1,
+        10
+      ],
+      "sky_background": "CHURCH",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 4,
+          "say": "Sacrifice the intruders! Their blood will save us from death!",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_10"
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "But nothing will save you from ME.",
+          "timeToSay": 2,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH"
+    },
+    {
+      "absolute_start": 0,
+      "id": 207,
+      "id_name": "KBR207",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 330,
+          "name": "Justice Helm"
+        },
+        {
+          "id": 331,
+          "name": "Rightful Grasp"
+        },
+        {
+          "id": 332,
+          "name": "Righteous Breastplate"
+        },
+        {
+          "id": 333,
+          "name": "Zealot's Leggings"
+        },
+        {
+          "id": 334,
+          "name": "Zealot's Marcher"
+        },
+        {
+          "id": 515,
+          "name": "Light's Blade"
+        },
+        {
+          "id": 516,
+          "name": "Metal Shield"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 340,
+          "name": "Enlightened Helm"
+        },
+        {
+          "id": 341,
+          "name": "Arcane Armor"
+        },
+        {
+          "id": 342,
+          "name": "Ancient Gloves"
+        },
+        {
+          "id": 343,
+          "name": "Tomekeeper's Slippers"
+        },
+        {
+          "id": 344,
+          "name": "Tomekeeper's Leggings"
+        },
+        {
+          "id": 517,
+          "name": "Fiery Doom"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 2,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        20,
+        -2,
+        22,
+        -1,
+        22
+      ],
+      "players_levels": [
+        10,
+        1,
+        11,
+        1,
+        11
+      ],
+      "sky_background": "CHURCH",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 4,
+          "say": "The master will be pleased! Die for us now!",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_11"
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "You first. I insist!",
+          "timeToSay": 2,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH"
+    },
+    {
+      "absolute_start": 0,
+      "id": 208,
+      "id_name": "KBR208",
+      "item_drops": [
+        {
+          "chance": 17,
+          "item": {
+            "id": 521,
+            "name": "Runeblade"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 345,
+          "name": "Supreme Grasp"
+        },
+        {
+          "id": 346,
+          "name": "Demigod's Visage"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.3,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": true,
+              "life": 0,
+              "player": 2,
+              "turn": 1,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        30,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        11,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "CHURCH",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": "Roald",
+          "say": "It's their leader! If we can take him out, their cult is finished!",
+          "timeToSay": 3.8000000000000003,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_12"
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Ow, my head...hurting...I've felt this before!",
+          "timeToSay": 5.5,
+          "turnTime": 5,
+          "turnTime2": 0,
+          "voiceOver": "v2_13"
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "Could it be...?",
+          "timeToSay": 1.2,
+          "turnTime": 5,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 1,
+          "say": "The Baron!",
+          "timeToSay": 1.2,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_14"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH"
+    },
+    {
+      "absolute_start": 0,
+      "id": 209,
+      "id_name": "KBR209",
+      "item_drops": [
+        {
+          "chance": 17,
+          "item": {
+            "id": 527,
+            "name": "Unholy Runeblade"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 347,
+          "name": "Usurper's Chest"
+        },
+        {
+          "id": 348,
+          "name": "Holy Slippers"
+        },
+        {
+          "id": 349,
+          "name": "Pretender's Leggings"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.5,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.2,
+              "player": 2,
+              "turn": 7,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": 0.05,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        31,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        11,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "CHURCH",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Oh, it’s you! You always give me trouble! And here I was, having SUCH a good time.",
+          "timeToSay": 7.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_15"
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Not him again!",
+          "timeToSay": 1.5,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "My loyal subjects are on their way here. This time, you're mine!",
+          "timeToSay": 6.5,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "Let's break this bowl of fruit before the guards arrive!",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 3,
+          "voiceOver": ""
+        },
+        {
+          "phase": 4,
+          "player": 2,
+          "say": "No! Not again! I would've gotten away with it...if it weren't for you meddling kids!",
+          "timeToSay": 10,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_16"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH"
+    },
+    {
+      "absolute_start": 0,
+      "id": 210,
+      "id_name": "KBR210",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": {
+            "members": {
+              "endGame": true,
+              "life": 0.3,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        20,
+        -2,
+        21,
+        -1,
+        22
+      ],
+      "players_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "CHURCH",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 6,
+          "say": "Our master - is he one of them? He's a zombie too?",
+          "timeToSay": 4.75,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_17"
+        },
+        {
+          "phase": 1,
+          "player": 4,
+          "say": "I don't believe it! All those things he said...*sobbing*",
+          "timeToSay": 6,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 6,
+          "say": "It's true, Carl, it's true!...He lied to us.",
+          "timeToSay": 5,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "We have no reason to fight for him anymore. Let us leave this place.",
+          "timeToSay": 5,
+          "turnTime": 0,
+          "turnTime2": 3,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH2"
+    },
+    {
+      "absolute_start": 0,
+      "id": 211,
+      "id_name": "KBR211",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 351,
+          "name": "X5C8-1"
+        },
+        {
+          "id": 352,
+          "name": "X5C8-2"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        8,
+        -2,
+        27,
+        -1,
+        27
+      ],
+      "players_levels": [
+        11,
+        1,
+        11,
+        1,
+        11
+      ],
+      "sky_background": "SNOW",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 2,
+      "id": 299,
+      "id_name": "KBR299",
+      "item_drops": [
+        {
+          "chance": 15,
+          "item": {
+            "id": 525,
+            "name": "Fury"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 355,
+          "name": "Medical Visor"
+        },
+        {
+          "id": 356,
+          "name": "Surgeon Gloves"
+        },
+        {
+          "id": 357,
+          "name": "MedPak Armor"
+        },
+        {
+          "id": 358,
+          "name": "Medic Treads"
+        },
+        {
+          "id": 359,
+          "name": "MedPak Leggings"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 360,
+          "name": "Agile Boots"
+        },
+        {
+          "id": 361,
+          "name": "Steadfast Leggings"
+        },
+        {
+          "id": 362,
+          "name": "Deft Hands"
+        },
+        {
+          "id": 363,
+          "name": "Flexible Armor"
+        },
+        {
+          "id": 364,
+          "name": "Accuracy Display"
+        },
+        {
+          "id": 522,
+          "name": "ZPCI Sniper Rifle"
+        }
+      ],
+      "item_rare3": [
+        {
+          "id": 365,
+          "name": "Juggernaut's Panzer"
+        },
+        {
+          "id": 366,
+          "name": "Dreadnaught's Panzer"
+        },
+        {
+          "id": 367,
+          "name": "Reinforced Grasp"
+        },
+        {
+          "id": 368,
+          "name": "Combat Boots"
+        },
+        {
+          "id": 369,
+          "name": "Eliminator's Sight"
+        }
+      ],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.2,
+              "player": 2,
+              "turn": 1,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.5,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": true,
+              "life": 0.15,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        28,
+        -2,
+        26,
+        -1,
+        34
+      ],
+      "players_levels": [
+        11,
+        1,
+        11,
+        1,
+        11
+      ],
+      "sky_background": "SNOW",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Make sure no one leaves this place. Alive or dead. Disintegrate everything.",
+          "timeToSay": 6.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_18"
+        },
+        {
+          "phase": 1,
+          "player": 6,
+          "say": "We'll take care of it Capt'n!",
+          "timeToSay": 1.5,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 4,
+          "player": "Roald",
+          "say": "Quickly, come with me! We need to get underground, we can get out of here by train.",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v2_19"
+        },
+        {
+          "phase": 4,
+          "player": 2,
+          "say": "Get them! We can't leave anyone alive! DO IT!",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 300,
+      "id_name": "KBR300",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 555,
+            "name": "Annihilation"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 538,
+          "name": "Spirit Cover"
+        },
+        {
+          "id": 539,
+          "name": "Mirage Armor"
+        },
+        {
+          "id": 540,
+          "name": "Ghastly Grasp"
+        },
+        {
+          "id": 541,
+          "name": "Ocean Leggings"
+        },
+        {
+          "id": 542,
+          "name": "Aura Treads"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        40,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        12,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": "Roald",
+          "say": "This train is old, we'll need more fuel to get out of their range! There should be more coal in the back of the train. Let's hurry!",
+          "timeToSay": 6,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v3_1"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 301,
+      "id_name": "KBR301",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 555,
+            "name": "Annihilation"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 548,
+          "name": "Old ZPCI Helm"
+        },
+        {
+          "id": 549,
+          "name": "Old ZPCI Armor"
+        },
+        {
+          "id": 550,
+          "name": "Old ZPCI Gloves"
+        },
+        {
+          "id": 551,
+          "name": "Old ZPCI Leggings"
+        },
+        {
+          "id": 552,
+          "name": "Old ZPCI Boots"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 2,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        8,
+        -2,
+        8,
+        -1,
+        0
+      ],
+      "players_levels": [
+        12,
+        1,
+        11,
+        1,
+        1
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "That's about as far as you'll go, troublemakers. The Captain wants you dead.",
+          "timeToSay": 5.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v3_2"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 302,
+      "id_name": "KBR302",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 555,
+            "name": "Annihilation"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 538,
+          "name": "Spirit Cover"
+        },
+        {
+          "id": 539,
+          "name": "Mirage Armor"
+        },
+        {
+          "id": 540,
+          "name": "Ghastly Grasp"
+        },
+        {
+          "id": 541,
+          "name": "Ocean Leggings"
+        },
+        {
+          "id": 542,
+          "name": "Aura Treads"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 543,
+          "name": "Bone Helm"
+        },
+        {
+          "id": 544,
+          "name": "Emperor's Armor"
+        },
+        {
+          "id": 545,
+          "name": "Pride's Grip"
+        },
+        {
+          "id": 546,
+          "name": "Honor Guards"
+        },
+        {
+          "id": 547,
+          "name": "Ornate Greaves"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        40,
+        -2,
+        40,
+        -1,
+        0
+      ],
+      "players_levels": [
+        12,
+        1,
+        12,
+        1,
+        1
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 303,
+      "id_name": "KBR303",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 555,
+            "name": "Annihilation"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 553,
+          "name": "Ancient Sword"
+        },
+        {
+          "id": 559,
+          "name": "Bloody Blade"
+        },
+        {
+          "id": 561,
+          "name": "Frosted Axe"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 562,
+          "name": "Charged Axe"
+        },
+        {
+          "id": 563,
+          "name": "Ancient Katana"
+        },
+        {
+          "id": 566,
+          "name": "Demon Blade"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        41,
+        -2,
+        42,
+        -1,
+        43
+      ],
+      "players_levels": [
+        13,
+        1,
+        13,
+        1,
+        13
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 304,
+      "id_name": "KBR304",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 374,
+          "name": "Beard"
+        },
+        {
+          "id": 372,
+          "name": "Upper Rags"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        44,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        13,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 305,
+      "id_name": "KBR305",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 375,
+          "name": "Hope's Grasp"
+        },
+        {
+          "id": 376,
+          "name": "Beggar Boots"
+        },
+        {
+          "id": 373,
+          "name": "Lower Rags"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 2,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        45,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        14,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Spare some change?",
+          "timeToSay": 1.7,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v3_3"
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Ow! That...hurt.",
+          "timeToSay": 1.75,
+          "turnTime": 5,
+          "turnTime2": 0,
+          "voiceOver": "v3_4"
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "Wait a sec...that wasn't a zombie!",
+          "timeToSay": 2,
+          "turnTime": 5,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Well I couldn't just give him my hard earned cash, now could I?",
+          "timeToSay": 2.5,
+          "turnTime": 5,
+          "turnTime2": 2,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 306,
+      "id_name": "KBR306",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 371,
+          "name": "White Top Hat"
+        },
+        {
+          "id": 370,
+          "name": "Bugo Hoss Tuxedo"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        46,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        14,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 307,
+      "id_name": "KBR307",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 538,
+          "name": "Spirit Cover"
+        },
+        {
+          "id": 539,
+          "name": "Mirage Armor"
+        },
+        {
+          "id": 540,
+          "name": "Ghastly Grasp"
+        },
+        {
+          "id": 541,
+          "name": "Ocean Leggings"
+        },
+        {
+          "id": 542,
+          "name": "Aura Treads"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 543,
+          "name": "Bone Helm"
+        },
+        {
+          "id": 544,
+          "name": "Emperor's Armor"
+        },
+        {
+          "id": 545,
+          "name": "Pride's Grip"
+        },
+        {
+          "id": 546,
+          "name": "Honor Guards"
+        },
+        {
+          "id": 547,
+          "name": "Ornate Greaves"
+        }
+      ],
+      "item_rare3": [
+        {
+          "id": 548,
+          "name": "Old ZPCI Helm"
+        },
+        {
+          "id": 549,
+          "name": "Old ZPCI Armor"
+        },
+        {
+          "id": 550,
+          "name": "Old ZPCI Gloves"
+        },
+        {
+          "id": 551,
+          "name": "Old ZPCI Leggings"
+        },
+        {
+          "id": 552,
+          "name": "Old ZPCI Boots"
+        }
+      ],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        40,
+        -2,
+        40,
+        -1,
+        40
+      ],
+      "players_levels": [
+        14,
+        1,
+        15,
+        1,
+        14
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 399,
+      "id_name": "KBR399",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 568,
+          "name": "Vision of Clemons"
+        },
+        {
+          "id": 569,
+          "name": "Tenacity of Clemons"
+        },
+        {
+          "id": 570,
+          "name": "Dexterity of Clemons"
+        },
+        {
+          "id": 571,
+          "name": "Will of Clemons"
+        },
+        {
+          "id": 572,
+          "name": "Intensity of Clemons"
+        }
+      ],
+      "item_rare3": [
+        {
+          "id": 567,
+          "name": "Shandor's Darkstaff"
+        },
+        {
+          "id": 565,
+          "name": "Devil Blade"
+        },
+        {
+          "id": 564,
+          "name": "Sun Struck Horrors"
+        }
+      ],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.6600000000000001,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.33000000000000007,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        47,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        15,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Tickets, please!",
+          "timeToSay": 3.25,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v3_5"
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "We don't have any.",
+          "timeToSay": 1.25,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "No tickets, no ride! Get off my train! GET OFF!",
+          "timeToSay": 6,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "I can see right through you!",
+          "timeToSay": 2.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v3_6"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 400,
+      "id_name": "KBR400",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 573,
+          "name": "Night Vision"
+        },
+        {
+          "id": 581,
+          "name": "Bone Braces"
+        },
+        {
+          "id": 585,
+          "name": "Toxic Clutch"
+        },
+        {
+          "id": 591,
+          "name": "Spark Leggings"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        50,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        16,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Just our luck. Why does everything break around us?",
+          "timeToSay": 4,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v4_1"
+        },
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "At least we got those ZPCI off our backs. They don't seem to be following us anymore.",
+          "timeToSay": 5,
+          "turnTime": 3,
+          "turnTime2": 0,
+          "voiceOver": "v4_2"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 2,
+      "id": 401,
+      "id_name": "KBR401",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 575,
+          "name": "Flex-o-Matic"
+        },
+        {
+          "id": 578,
+          "name": "Mask of Horror"
+        },
+        {
+          "id": 584,
+          "name": "Venomsteel Armor"
+        },
+        {
+          "id": 595,
+          "name": "Pink Sleeves"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.3,
+              "player": 2,
+              "turn": 10,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        51,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        16,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": "Roald",
+          "say": "These tunnels should lead us to Hew. We need to head through it if we're to reach Utopia!",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v4_3"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 402,
+      "id_name": "KBR402",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [
+        {
+          "id": 577,
+          "name": "Black-Ops Boots"
+        },
+        {
+          "id": 587,
+          "name": "Venomsteel Greaves"
+        },
+        {
+          "id": 589,
+          "name": "Charged Armor"
+        },
+        {
+          "id": 597,
+          "name": "Flower Shoes"
+        }
+      ],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        52,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        17,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": "Roald",
+          "say": "The air in here... it feels different.",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v4_4"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 403,
+      "id_name": "KBR403",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 575,
+          "name": "Flex-o-Matic"
+        },
+        {
+          "id": 578,
+          "name": "Mask of Horror"
+        },
+        {
+          "id": 584,
+          "name": "Venomsteel Armor"
+        },
+        {
+          "id": 595,
+          "name": "Pink Sleeves"
+        }
+      ],
+      "item_rare3": [
+        {
+          "id": 577,
+          "name": "Black-Ops Boots"
+        },
+        {
+          "id": 587,
+          "name": "Venomsteel Greaves"
+        },
+        {
+          "id": 589,
+          "name": "Charged Armor"
+        },
+        {
+          "id": 597,
+          "name": "Flower Shoes"
+        }
+      ],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        53,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        17,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "That one looks just like Sonny! Haha!",
+          "timeToSay": 3.75,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v4_5"
+        },
+        {
+          "phase": 1,
+          "player": "Roald",
+          "say": "Hey, it kinda does!",
+          "timeToSay": 1.5,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "I’m not amused.",
+          "timeToSay": 1.5,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 404,
+      "id_name": "KBR404",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 573,
+          "name": "Night Vision"
+        },
+        {
+          "id": 581,
+          "name": "Bone Braces"
+        },
+        {
+          "id": 585,
+          "name": "Toxic Clutch"
+        },
+        {
+          "id": 591,
+          "name": "Spark Leggings"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [
+        {
+          "id": 577,
+          "name": "Black-Ops Boots"
+        },
+        {
+          "id": 587,
+          "name": "Venomsteel Greaves"
+        },
+        {
+          "id": 589,
+          "name": "Charged Armor"
+        },
+        {
+          "id": 597,
+          "name": "Flower Shoes"
+        }
+      ],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        54,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        18,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 405,
+      "id_name": "KBR405",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 575,
+          "name": "Flex-o-Matic"
+        },
+        {
+          "id": 578,
+          "name": "Mask of Horror"
+        },
+        {
+          "id": 584,
+          "name": "Venomsteel Armor"
+        },
+        {
+          "id": 595,
+          "name": "Pink Sleeves"
+        }
+      ],
+      "item_rare3": [
+        {
+          "id": 605,
+          "name": "Amberstone Sword"
+        },
+        {
+          "id": 579,
+          "name": "DeathBone Armor"
+        },
+        {
+          "id": 588,
+          "name": "Thunder Mask"
+        },
+        {
+          "id": 596,
+          "name": "White Jeans"
+        }
+      ],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        55,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        18,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 406,
+      "id_name": "KBR406",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 573,
+          "name": "Night Vision"
+        },
+        {
+          "id": 581,
+          "name": "Bone Braces"
+        },
+        {
+          "id": 585,
+          "name": "Toxic Clutch"
+        },
+        {
+          "id": 591,
+          "name": "Spark Leggings"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [
+        {
+          "id": 605,
+          "name": "Amberstone Sword"
+        },
+        {
+          "id": 579,
+          "name": "DeathBone Armor"
+        },
+        {
+          "id": 588,
+          "name": "Thunder Mask"
+        },
+        {
+          "id": 596,
+          "name": "White Jeans"
+        }
+      ],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        56,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        18,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "You are my sunshine, my only sunshine...",
+          "timeToSay": 7.5,
+          "turnTime": 4,
+          "turnTime2": 0,
+          "voiceOver": "v4_6"
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Stop that.",
+          "timeToSay": 1.5,
+          "turnTime": 4,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 407,
+      "id_name": "KBR407",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 377,
+          "name": "Flamboyant Shirt"
+        },
+        {
+          "id": 378,
+          "name": "Flamboyant Trousers"
+        },
+        {
+          "id": 379,
+          "name": "Flamboyant Shoes"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [
+        {
+          "id": 605,
+          "name": "Amberstone Sword"
+        },
+        {
+          "id": 579,
+          "name": "DeathBone Armor"
+        },
+        {
+          "id": 588,
+          "name": "Thunder Mask"
+        },
+        {
+          "id": 596,
+          "name": "White Jeans"
+        }
+      ],
+      "item_rare_dropper": 2,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        57,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        19,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "I'm freaking out... man...",
+          "timeToSay": 3.4,
+          "turnTime": 3,
+          "turnTime2": 0,
+          "voiceOver": "v4_7"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 408,
+      "id_name": "KBR408",
+      "item_drops": [
+        {
+          "chance": 25,
+          "item": {
+            "id": 603,
+            "name": "Emerald Death"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 606,
+            "name": "Broken Emerald Shard"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.85,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.42,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        58,
+        -2,
+        59,
+        -1,
+        59
+      ],
+      "players_levels": [
+        20,
+        0,
+        20,
+        0,
+        20
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 499,
+      "id_name": "KBR499",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 380,
+            "name": "Mining Helmet"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 380,
+            "name": "Mining Helmet"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 380,
+            "name": "Mining Helmet"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 381,
+            "name": "Mining Shirt"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 381,
+            "name": "Mining Shirt"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 381,
+            "name": "Mining Shirt"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": {
+            "members": {
+              "endGame": true,
+              "life": 0.3,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        60,
+        -2,
+        60,
+        -1,
+        60
+      ],
+      "players_levels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Oi, Miller, look! There are still people down here!",
+          "timeToSay": 2.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v4_8"
+        },
+        {
+          "phase": 1,
+          "player": 4,
+          "say": "Ey, I'd give these guys some masks, if they breathe in any more of this stuff they're done for!",
+          "timeToSay": 5,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 500,
+      "id_name": "KBR500",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 617,
+          "name": "Patrol Headset"
+        },
+        {
+          "id": 618,
+          "name": "Riot Armor"
+        },
+        {
+          "id": 620,
+          "name": "Riot Leggings"
+        },
+        {
+          "id": 647,
+          "name": "Riot Gun"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        63,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        21,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "STREETS",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Put down your weapons! Resistance will be met by force.",
+          "timeToSay": 4,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v5_1"
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "I don't usually resort to violence, but I've got a major headache right now.",
+          "timeToSay": 4,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 0,
+      "id": 501,
+      "id_name": "KBR501",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 617,
+          "name": "Patrol Headset"
+        },
+        {
+          "id": 618,
+          "name": "Riot Armor"
+        },
+        {
+          "id": 620,
+          "name": "Riot Leggings"
+        },
+        {
+          "id": 647,
+          "name": "Riot Gun"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        63,
+        -2,
+        65,
+        -1,
+        0
+      ],
+      "players_levels": [
+        21,
+        1,
+        21,
+        1,
+        1
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 0,
+      "id": 502,
+      "id_name": "KBR502",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 607,
+          "name": "Imperial War Helm"
+        },
+        {
+          "id": 608,
+          "name": "Imperial Armor"
+        },
+        {
+          "id": 610,
+          "name": "Royal Leggings"
+        },
+        {
+          "id": 648,
+          "name": "Imperial Rifle"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 2,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        62,
+        -2,
+        62,
+        -1,
+        0
+      ],
+      "players_levels": [
+        21,
+        1,
+        21,
+        1,
+        1
+      ],
+      "sky_background": "STREETS",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": "Roald",
+          "say": "Wow, those workers are really going for it. And they're all headed to the mayor's office!",
+          "timeToSay": 4,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v5_2"
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "A bit more attention than I would have liked, but at least we're moving forward.",
+          "timeToSay": 4,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 2,
+      "id": 503,
+      "id_name": "KBR503",
+      "item_drops": [
+        {
+          "chance": 20,
+          "item": {
+            "id": 649,
+            "name": "Supremacy"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 637,
+          "name": "Colonel's Helm"
+        },
+        {
+          "id": 638,
+          "name": "Guardian Armor"
+        },
+        {
+          "id": 639,
+          "name": "Imperial Clutch"
+        },
+        {
+          "id": 640,
+          "name": "Colonel's Leggings"
+        },
+        {
+          "id": 641,
+          "name": "Palace Greaves"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 2,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.85,
+              "player": 2,
+              "turn": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.85,
+              "player": 2,
+              "turn": 10,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": 0.85,
+              "player": 2,
+              "turn": 11,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "4": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        61,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        22,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS2"
+    },
+    {
+      "absolute_start": 0,
+      "id": 504,
+      "id_name": "KBR504",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": {
+            "members": {
+              "endGame": true,
+              "life": 0.3,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        71,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "sky_background": "STREETS",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": "Veradux",
+          "say": "Biker girl is here too.",
+          "timeToSay": 1.5,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v5_5"
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Quick. Cover your face.",
+          "timeToSay": 1.5,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 0,
+      "id": 505,
+      "id_name": "KBR505",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 632,
+          "name": "Caretaker's Helm"
+        },
+        {
+          "id": 633,
+          "name": "Field Armor"
+        },
+        {
+          "id": 647,
+          "name": "Riot Gun"
+        },
+        {
+          "id": 635,
+          "name": "Bite Proof Pants"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 2,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        66,
+        -2,
+        65,
+        -1,
+        65
+      ],
+      "players_levels": [
+        22,
+        1,
+        22,
+        1,
+        22
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 0,
+      "id": 506,
+      "id_name": "KBR506",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 617,
+          "name": "Patrol Headset"
+        },
+        {
+          "id": 618,
+          "name": "Riot Armor"
+        },
+        {
+          "id": 620,
+          "name": "Riot Leggings"
+        },
+        {
+          "id": 647,
+          "name": "Riot Gun"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [
+        {
+          "id": 612,
+          "name": "Titanium Cranium"
+        },
+        {
+          "id": 613,
+          "name": "Andriod Armor"
+        },
+        {
+          "id": 615,
+          "name": "Cyborg Leggings"
+        },
+        {
+          "id": 656,
+          "name": "Azure Flatblade"
+        }
+      ],
+      "item_rare_dropper": 2,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        67,
+        -2,
+        63,
+        -1,
+        63
+      ],
+      "players_levels": [
+        22,
+        1,
+        22,
+        1,
+        22
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 0,
+      "id": 507,
+      "id_name": "KBR507",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 627,
+          "name": "Bloody Ambition"
+        },
+        {
+          "id": 628,
+          "name": "Nightstrike Armor"
+        },
+        {
+          "id": 630,
+          "name": "Bloody Leggings"
+        },
+        {
+          "id": 651,
+          "name": "Crimson Blade"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [
+        {
+          "id": 612,
+          "name": "Titanium Cranium"
+        },
+        {
+          "id": 613,
+          "name": "Andriod Armor"
+        },
+        {
+          "id": 615,
+          "name": "Cyborg Leggings"
+        },
+        {
+          "id": 656,
+          "name": "Azure Flatblade"
+        }
+      ],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 2,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        64,
+        -2,
+        67,
+        -1,
+        67
+      ],
+      "players_levels": [
+        22,
+        1,
+        22,
+        1,
+        22
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 0,
+      "id": 508,
+      "id_name": "KBR508",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": {
+            "members": {
+              "endGame": true,
+              "life": 0.3,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        69,
+        71,
+        72,
+        0,
+        0
+      ],
+      "players_levels": [
+        22,
+        22,
+        22,
+        1,
+        1
+      ],
+      "sky_background": "STREETS3",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "What can we do? They're getting closer. They're going to hang me for this!",
+          "timeToSay": 3.3000000000000003,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v5_4"
+        },
+        {
+          "phase": 1,
+          "player": 4,
+          "say": "Not to worry Mayor. Plans are in motion to subdue the masses once again.",
+          "timeToSay": 5,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 3,
+          "say": "Hello boys, did you miss me?",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Felicity! No! I thought you were dead! Don't let her come near me!",
+          "timeToSay": 6,
+          "turnTime": 0,
+          "turnTime2": 3,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS3"
+    },
+    {
+      "absolute_start": 2,
+      "id": 509,
+      "id_name": "KBR509",
+      "item_drops": [
+        {
+          "chance": 20,
+          "item": {
+            "id": 655,
+            "name": "Wrath of the Council"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 622,
+          "name": "Council Vision"
+        },
+        {
+          "id": 623,
+          "name": "Magistrate Robes"
+        },
+        {
+          "id": 624,
+          "name": "Diplomat's Hand"
+        },
+        {
+          "id": 625,
+          "name": "Council Leggings"
+        },
+        {
+          "id": 626,
+          "name": "Council Shoes"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 2,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "teamLeft": 1,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        68,
+        -2,
+        68,
+        -1,
+        0
+      ],
+      "players_levels": [
+        23,
+        1,
+        23,
+        1,
+        1
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS2"
+    },
+    {
+      "absolute_start": 0,
+      "id": 510,
+      "id_name": "KBR510",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 627,
+          "name": "Bloody Ambition"
+        },
+        {
+          "id": 628,
+          "name": "Nightstrike Armor"
+        },
+        {
+          "id": 630,
+          "name": "Bloody Leggings"
+        },
+        {
+          "id": 651,
+          "name": "Crimson Blade"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 607,
+          "name": "Imperial War Helm"
+        },
+        {
+          "id": 608,
+          "name": "Imperial Armor"
+        },
+        {
+          "id": 610,
+          "name": "Royal Leggings"
+        },
+        {
+          "id": 648,
+          "name": "Imperial Rifle"
+        }
+      ],
+      "item_rare3": [
+        {
+          "id": 612,
+          "name": "Titanium Cranium"
+        },
+        {
+          "id": 613,
+          "name": "Andriod Armor"
+        },
+        {
+          "id": 615,
+          "name": "Cyborg Leggings"
+        },
+        {
+          "id": 656,
+          "name": "Azure Flatblade"
+        }
+      ],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        67,
+        -2,
+        64,
+        -1,
+        62
+      ],
+      "players_levels": [
+        23,
+        1,
+        23,
+        1,
+        23
+      ],
+      "sky_background": "STREETS",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 6,
+          "say": "We're outnumbered! Where are those ZPCI when you need them?!",
+          "timeToSay": 3.3000000000000003,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v5_3"
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 0,
+      "id": 511,
+      "id_name": "KBR511",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 627,
+          "name": "Bloody Ambition"
+        },
+        {
+          "id": 628,
+          "name": "Nightstrike Armor"
+        },
+        {
+          "id": 630,
+          "name": "Bloody Leggings"
+        },
+        {
+          "id": 651,
+          "name": "Crimson Blade"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 2,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        64,
+        -2,
+        65,
+        -1,
+        65
+      ],
+      "players_levels": [
+        23,
+        1,
+        23,
+        1,
+        23
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 0,
+      "id": 512,
+      "id_name": "KBR512",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 607,
+          "name": "Imperial War Helm"
+        },
+        {
+          "id": 608,
+          "name": "Imperial Armor"
+        },
+        {
+          "id": 610,
+          "name": "Royal Leggings"
+        },
+        {
+          "id": 648,
+          "name": "Imperial Rifle"
+        }
+      ],
+      "item_rare3": [
+        {
+          "id": 612,
+          "name": "Titanium Cranium"
+        },
+        {
+          "id": 613,
+          "name": "Andriod Armor"
+        },
+        {
+          "id": 615,
+          "name": "Cyborg Leggings"
+        },
+        {
+          "id": 656,
+          "name": "Azure Flatblade"
+        }
+      ],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 2,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        62,
+        -2,
+        67,
+        -1,
+        67
+      ],
+      "players_levels": [
+        23,
+        1,
+        23,
+        1,
+        23
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 2,
+      "id": 599,
+      "id_name": "KBR599",
+      "item_drops": [
+        {
+          "chance": 20,
+          "item": {
+            "id": 658,
+            "name": "Death Sentence"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 642,
+          "name": "Broken Promise"
+        },
+        {
+          "id": 643,
+          "name": "Johnson's Legacy"
+        },
+        {
+          "id": 644,
+          "name": "Ken's Legacy"
+        },
+        {
+          "id": 645,
+          "name": "Proxy Leggings"
+        },
+        {
+          "id": 646,
+          "name": "Townhall Shoes"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 2,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "turn": 6,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.9000000000000002,
+              "player": 2,
+              "turn": 18,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": 0.6500000000000002,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "4": {
+            "members": {
+              "endGame": false,
+              "life": 0.3,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "5": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        69,
+        -2,
+        0,
+        -1,
+        70
+      ],
+      "players_levels": [
+        24,
+        1,
+        20,
+        1,
+        24
+      ],
+      "sky_background": "STREETS",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "That ambassador was talking about a plan. What are they planning?",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": "v5_6"
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "I won't let you kill me, you filthy corpse! I'm the Mayor!",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Get out! Get out or my guards will make you! GUARDS!",
+          "timeToSay": 4.5,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS2"
+    },
+    {
+      "absolute_start": 0,
+      "id": 600,
+      "id_name": "KBR600",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 661,
+            "name": "Hands of Diamond"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 662,
+            "name": "Platinum Legplates"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 663,
+            "name": "Corvette Boots"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 679,
+            "name": "Platinum Baton"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.5,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.15,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        73,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        22,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "ROME",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Who are you? How did you find this place?",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Where is the ambassador?",
+          "timeToSay": 2,
+          "turnTime": 3,
+          "turnTime2": 0,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Ambassador? I don't know what you're talking about...",
+          "timeToSay": 3,
+          "turnTime": 3,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Do you know anything about a secret weapon?",
+          "timeToSay": 2.5,
+          "turnTime": 6,
+          "turnTime2": 0,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "You've come to the wrong place. There's nothing for you here.",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 1,
+          "say": "Really? So what's with the high level security?",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "We're hunting down a target. You better leave before somebody gets hurt.",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 2,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "If you kill me, we won't be able to apprehend the target...",
+          "timeToSay": 4,
+          "turnTime": 4,
+          "turnTime2": 0,
+          "voiceOver": ""
+        },
+        {
+          "phase": 2,
+          "player": 2,
+          "say": "My team will have no choice but to bomb the entire region. Everything will burn, including you!",
+          "timeToSay": 4,
+          "turnTime": 4,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH"
+    },
+    {
+      "absolute_start": 0,
+      "id": 601,
+      "id_name": "KBR601",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 660,
+            "name": "Platinum Cage"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 665,
+            "name": "Memory Plates"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 673,
+            "name": "Flex Footwear"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 678,
+            "name": "Mending Beacon"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 680,
+            "name": "Blast Shield"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": true,
+              "life": -1,
+              "player": 2,
+              "turn": 60,
+              "winOrLose": 0
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        74,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        24,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "ROME",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "60... 59...",
+          "timeToSay": 2,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "It's a bomb! Quick, dismantle it before it explodes!",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "30... 29...",
+          "timeToSay": 2,
+          "turnTime": 30,
+          "turnTime2": 0,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "5... 4...",
+          "timeToSay": 2,
+          "turnTime": 55,
+          "turnTime2": 0,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH"
+    },
+    {
+      "absolute_start": 0,
+      "id": 602,
+      "id_name": "KBR602",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 664,
+            "name": "Deadly Visage"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 666,
+            "name": "Hallowed Gloves"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 667,
+            "name": "Tempo Legplates"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 675,
+            "name": "Temporal Blade"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.75,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "turn": 4,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": 0.5,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "4": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "turn": 4,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "5": {
+            "members": {
+              "endGame": false,
+              "life": 0.25,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "6": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        75,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        26,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "ROME",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "This must be the target that Warden was talking about.",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 3,
+          "say": "What IS that thing?",
+          "timeToSay": 2,
+          "turnTime": 0,
+          "turnTime2": 1,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH"
+    },
+    {
+      "absolute_start": 0,
+      "id": 699,
+      "id_name": "KBR699",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 670,
+            "name": "Special Ops Armor"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 672,
+            "name": "Azure Leggings"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 671,
+            "name": "Azure Grips"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 676,
+            "name": "Azure Knife"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        76,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        28,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "ROME",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Criminals everywhere... This world is truly rotten.",
+          "timeToSay": 3,
+          "turnTime": 4,
+          "turnTime2": 0,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Lady, you should be happy we killed your target for you.",
+          "timeToSay": 2.2,
+          "turnTime": 4,
+          "turnTime2": 1,
+          "voiceOver": ""
+        },
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Alas, only I may judge the enemy! Turn yourselves in.",
+          "timeToSay": 4,
+          "turnTime": 4,
+          "turnTime2": 2,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH"
+    },
+    {
+      "absolute_start": 0,
+      "id": 700,
+      "id_name": "KBR700",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 684,
+            "name": "Surgeon's Visage"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 685,
+            "name": "Surgeon's Shelter"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 686,
+            "name": "Surgeon's Dexterity"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 687,
+            "name": "Surgeon's Leggings"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 688,
+            "name": "Surgeon's Boots"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "turn": 4,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        78,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        22,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Hey! That suit would look really good on Veradux. Mind if we take it?",
+          "timeToSay": 4,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 2,
+      "id": 701,
+      "id_name": "KBR701",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 704,
+            "name": "Guardian's Helm"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 705,
+            "name": "Guardian's Cage"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 706,
+            "name": "Guardian's Fist"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 707,
+            "name": "Guardian's Leggings"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 708,
+            "name": "Guardian's Feet"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 704,
+            "name": "Guardian's Helm"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 705,
+            "name": "Guardian's Cage"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 706,
+            "name": "Guardian's Fist"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 707,
+            "name": "Guardian's Leggings"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 708,
+            "name": "Guardian's Feet"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "turn": 1,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "teamLeft": 1,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": -1,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        80,
+        -2,
+        0,
+        -1,
+        79
+      ],
+      "players_levels": [
+        30,
+        1,
+        30,
+        1,
+        30
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 6,
+          "say": "Let them kill me, Dave! Let them kill me, and we will win.",
+          "timeToSay": 4,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 2,
+      "id": 702,
+      "id_name": "KBR702",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 709,
+            "name": "Flame Helm"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 710,
+            "name": "Flame Armor"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 711,
+            "name": "Flame Fist"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 712,
+            "name": "Flame Leggings"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 713,
+            "name": "Flame Boots"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 720,
+            "name": "Flame Katana"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "turn": 1,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": -1,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        81,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        30,
+        1,
+        30,
+        1,
+        30
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 2,
+          "say": "Intruders! Stay still, let me find your melting point...",
+          "timeToSay": 4,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 2,
+      "id": 999,
+      "id_name": "KBR999",
+      "item_drops": [
+        {
+          "chance": 100,
+          "item": {
+            "id": 714,
+            "name": "Corrupted Helm"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 715,
+            "name": "Corrupted Armor"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 716,
+            "name": "Corrupted Gloves"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 717,
+            "name": "Corrupted Leggings"
+          }
+        },
+        {
+          "chance": 100,
+          "item": {
+            "id": 718,
+            "name": "Corrupted Shoes"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "teamLeft": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": true,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        84,
+        -2,
+        82,
+        -1,
+        83
+      ],
+      "players_levels": [
+        30,
+        1,
+        30,
+        1,
+        30
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [
+        {
+          "phase": 1,
+          "player": 1,
+          "say": "Those orbs...",
+          "timeToSay": 3,
+          "turnTime": 0,
+          "turnTime2": 0,
+          "voiceOver": ""
+        }
+      ],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1000,
+      "id_name": "KBR1000",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 300,
+          "name": "Guard's Leggings"
+        },
+        {
+          "id": 301,
+          "name": "Guard's Grip"
+        },
+        {
+          "id": 302,
+          "name": "Guard's Runners"
+        },
+        {
+          "id": 303,
+          "name": "Guard's Uniform"
+        },
+        {
+          "id": 304,
+          "name": "Watcher's Visage"
+        },
+        {
+          "id": 500,
+          "name": "Guard's Baton"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        5,
+        -2,
+        5,
+        0,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        "X",
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1001,
+      "id_name": "KBR1001",
+      "item_drops": [
+        {
+          "chance": 50,
+          "item": {
+            "id": 503,
+            "name": "Terror Blade"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        12,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1002,
+      "id_name": "KBR1002",
+      "item_drops": [
+        {
+          "chance": 30,
+          "item": {
+            "id": 504,
+            "name": "Persecution"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 312,
+          "name": "Shawshank Boots"
+        },
+        {
+          "id": 311,
+          "name": "Punisher Gloves"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 313,
+          "name": "Warden's Leggings"
+        },
+        {
+          "id": 314,
+          "name": "Eye of Justice"
+        },
+        {
+          "id": 310,
+          "name": "Warden's Armor"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.6,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.15,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        9,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1003,
+      "id_name": "KBR1003",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 317,
+          "name": "Gilded Boots"
+        },
+        {
+          "id": 318,
+          "name": "Precision Grips"
+        },
+        {
+          "id": 316,
+          "name": "Elite Leggings"
+        },
+        {
+          "id": 319,
+          "name": "Double Visor"
+        },
+        {
+          "id": 320,
+          "name": "Elite Armor"
+        },
+        {
+          "id": 506,
+          "name": "Standard Rifle"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 2,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        8,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "JAIL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "JAIL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1004,
+      "id_name": "KBR1004",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 321,
+          "name": "Frosted Armor"
+        },
+        {
+          "id": 325,
+          "name": "Frozen Helm"
+        },
+        {
+          "id": 322,
+          "name": "Frosted Leggings"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        23,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "SNOW",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1005,
+      "id_name": "KBR1005",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 321,
+          "name": "Frosted Armor"
+        },
+        {
+          "id": 325,
+          "name": "Frozen Helm"
+        },
+        {
+          "id": 322,
+          "name": "Frosted Leggings"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 323,
+          "name": "Icy Runners"
+        },
+        {
+          "id": 324,
+          "name": "Glacial Gloves"
+        },
+        {
+          "id": 519,
+          "name": "Icy Maul"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        25,
+        -2,
+        23,
+        -1,
+        23
+      ],
+      "players_levels": [
+        "X",
+        1,
+        "X",
+        1,
+        "X"
+      ],
+      "sky_background": "SNOW",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1006,
+      "id_name": "KBR1006",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 330,
+          "name": "Justice Helm"
+        },
+        {
+          "id": 331,
+          "name": "Rightful Grasp"
+        },
+        {
+          "id": 332,
+          "name": "Righteous Breastplate"
+        },
+        {
+          "id": 333,
+          "name": "Zealot's Leggings"
+        },
+        {
+          "id": 334,
+          "name": "Zealot's Marcher"
+        },
+        {
+          "id": 515,
+          "name": "Light's Blade"
+        },
+        {
+          "id": 516,
+          "name": "Metal Shield"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.3,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        20,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "SNOW",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1007,
+      "id_name": "KBR1007",
+      "item_drops": [
+        {
+          "chance": 25,
+          "item": {
+            "id": 520,
+            "name": "Frosted Fate"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 321,
+          "name": "Frosted Armor"
+        },
+        {
+          "id": 325,
+          "name": "Frozen Helm"
+        },
+        {
+          "id": 322,
+          "name": "Frosted Leggings"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 323,
+          "name": "Icy Runners"
+        },
+        {
+          "id": 324,
+          "name": "Glacial Gloves"
+        },
+        {
+          "id": 519,
+          "name": "Icy Maul"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        33,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "SNOW",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1008,
+      "id_name": "KBR1008",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 330,
+          "name": "Justice Helm"
+        },
+        {
+          "id": 331,
+          "name": "Rightful Grasp"
+        },
+        {
+          "id": 332,
+          "name": "Righteous Breastplate"
+        },
+        {
+          "id": 333,
+          "name": "Zealot's Leggings"
+        },
+        {
+          "id": 334,
+          "name": "Zealot's Marcher"
+        },
+        {
+          "id": 515,
+          "name": "Light's Blade"
+        },
+        {
+          "id": 516,
+          "name": "Metal Shield"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 340,
+          "name": "Enlightened Helm"
+        },
+        {
+          "id": 341,
+          "name": "Arcane Armor"
+        },
+        {
+          "id": 342,
+          "name": "Ancient Gloves"
+        },
+        {
+          "id": 343,
+          "name": "Tomekeeper's Slippers"
+        },
+        {
+          "id": 344,
+          "name": "Tomekeeper's Leggings"
+        },
+        {
+          "id": 517,
+          "name": "Fiery Doom"
+        }
+      ],
+      "item_rare3": [
+        {
+          "id": 335,
+          "name": "Believer's Crown"
+        },
+        {
+          "id": 336,
+          "name": "Spirit Slippers"
+        },
+        {
+          "id": 337,
+          "name": "Clairvoyant Chest"
+        },
+        {
+          "id": 338,
+          "name": "Healer's Hands"
+        },
+        {
+          "id": 339,
+          "name": "Divine Garments"
+        },
+        {
+          "id": 518,
+          "name": "Frosted Light"
+        }
+      ],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        20,
+        -2,
+        21,
+        -1,
+        22
+      ],
+      "players_levels": [
+        "X",
+        1,
+        "X",
+        1,
+        "X"
+      ],
+      "sky_background": "SNOW",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1009,
+      "id_name": "KBR1009",
+      "item_drops": [
+        {
+          "chance": 17,
+          "item": {
+            "id": 521,
+            "name": "Runeblade"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 345,
+          "name": "Supreme Grasp"
+        },
+        {
+          "id": 346,
+          "name": "Demigod's Visage"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        30,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "CHURCH",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1010,
+      "id_name": "KBR1010",
+      "item_drops": [
+        {
+          "chance": 17,
+          "item": {
+            "id": 527,
+            "name": "Unholy Runeblade"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 347,
+          "name": "Usurper's Chest"
+        },
+        {
+          "id": 348,
+          "name": "Holy Slippers"
+        },
+        {
+          "id": 349,
+          "name": "Pretender's Leggings"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.5,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.2,
+              "player": 2,
+              "turn": 7,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": 0.05,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        31,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "CHURCH",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1011,
+      "id_name": "KBR1011",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 351,
+          "name": "X5C8-1"
+        },
+        {
+          "id": 352,
+          "name": "X5C8-2"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        8,
+        -2,
+        27,
+        -1,
+        27
+      ],
+      "players_levels": [
+        "X",
+        1,
+        "X",
+        1,
+        "X"
+      ],
+      "sky_background": "SNOW",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "SNOW"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1012,
+      "id_name": "KBR1012",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 555,
+            "name": "Annihilation"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 548,
+          "name": "Old ZPCI Helm"
+        },
+        {
+          "id": 549,
+          "name": "Old ZPCI Armor"
+        },
+        {
+          "id": 550,
+          "name": "Old ZPCI Gloves"
+        },
+        {
+          "id": 551,
+          "name": "Old ZPCI Leggings"
+        },
+        {
+          "id": 552,
+          "name": "Old ZPCI Boots"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 2,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        8,
+        -2,
+        8,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        "X",
+        1,
+        1
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1013,
+      "id_name": "KBR1013",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 555,
+            "name": "Annihilation"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 538,
+          "name": "Spirit Cover"
+        },
+        {
+          "id": 539,
+          "name": "Mirage Armor"
+        },
+        {
+          "id": 540,
+          "name": "Ghastly Grasp"
+        },
+        {
+          "id": 541,
+          "name": "Ocean Leggings"
+        },
+        {
+          "id": 542,
+          "name": "Aura Treads"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 543,
+          "name": "Bone Helm"
+        },
+        {
+          "id": 544,
+          "name": "Emperor's Armor"
+        },
+        {
+          "id": 545,
+          "name": "Pride's Grip"
+        },
+        {
+          "id": 546,
+          "name": "Honor Guards"
+        },
+        {
+          "id": 547,
+          "name": "Ornate Greaves"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        40,
+        -2,
+        40,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        "X",
+        1,
+        1
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1014,
+      "id_name": "KBR1014",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 555,
+            "name": "Annihilation"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 553,
+          "name": "Ancient Sword"
+        },
+        {
+          "id": 559,
+          "name": "Bloody Blade"
+        },
+        {
+          "id": 561,
+          "name": "Frosted Axe"
+        }
+      ],
+      "item_rare2": [
+        {
+          "id": 562,
+          "name": "Charged Axe"
+        },
+        {
+          "id": 563,
+          "name": "Ancient Katana"
+        },
+        {
+          "id": 566,
+          "name": "Demon Blade"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        41,
+        -2,
+        42,
+        -1,
+        43
+      ],
+      "players_levels": [
+        "X",
+        1,
+        "X",
+        1,
+        "X"
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1015,
+      "id_name": "KBR1015",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 555,
+            "name": "Annihilation"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 538,
+          "name": "Spirit Cover"
+        },
+        {
+          "id": 539,
+          "name": "Mirage Armor"
+        },
+        {
+          "id": 540,
+          "name": "Ghastly Grasp"
+        },
+        {
+          "id": 541,
+          "name": "Ocean Leggings"
+        },
+        {
+          "id": 542,
+          "name": "Aura Treads"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        40,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "TRAIN",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TRAIN"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1016,
+      "id_name": "KBR1016",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 573,
+          "name": "Night Vision"
+        },
+        {
+          "id": 581,
+          "name": "Bone Braces"
+        },
+        {
+          "id": 585,
+          "name": "Toxic Clutch"
+        },
+        {
+          "id": 591,
+          "name": "Spark Leggings"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        50,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1017,
+      "id_name": "KBR1017",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 575,
+          "name": "Flex-o-Matic"
+        },
+        {
+          "id": 578,
+          "name": "Mask of Horror"
+        },
+        {
+          "id": 584,
+          "name": "Venomsteel Armor"
+        },
+        {
+          "id": 595,
+          "name": "Pink Sleeves"
+        }
+      ],
+      "item_rare3": [
+        {
+          "id": 577,
+          "name": "Black-Ops Boots"
+        },
+        {
+          "id": 587,
+          "name": "Venomsteel Greaves"
+        },
+        {
+          "id": 589,
+          "name": "Charged Armor"
+        },
+        {
+          "id": 597,
+          "name": "Flower Shoes"
+        }
+      ],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        53,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        0,
+        0,
+        0,
+        0
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1018,
+      "id_name": "KBR1018",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 573,
+          "name": "Night Vision"
+        },
+        {
+          "id": 581,
+          "name": "Bone Braces"
+        },
+        {
+          "id": 585,
+          "name": "Toxic Clutch"
+        },
+        {
+          "id": 591,
+          "name": "Spark Leggings"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [
+        {
+          "id": 577,
+          "name": "Black-Ops Boots"
+        },
+        {
+          "id": 587,
+          "name": "Venomsteel Greaves"
+        },
+        {
+          "id": 589,
+          "name": "Charged Armor"
+        },
+        {
+          "id": 597,
+          "name": "Flower Shoes"
+        }
+      ],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        54,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        0,
+        0,
+        0,
+        0
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1019,
+      "id_name": "KBR1019",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 575,
+          "name": "Flex-o-Matic"
+        },
+        {
+          "id": 578,
+          "name": "Mask of Horror"
+        },
+        {
+          "id": 584,
+          "name": "Venomsteel Armor"
+        },
+        {
+          "id": 595,
+          "name": "Pink Sleeves"
+        }
+      ],
+      "item_rare3": [
+        {
+          "id": 605,
+          "name": "Amberstone Sword"
+        },
+        {
+          "id": 579,
+          "name": "DeathBone Armor"
+        },
+        {
+          "id": 588,
+          "name": "Thunder Mask"
+        },
+        {
+          "id": 596,
+          "name": "White Jeans"
+        }
+      ],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        55,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        0,
+        0,
+        0,
+        0
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1020,
+      "id_name": "KBR1020",
+      "item_drops": [
+        {
+          "chance": 8,
+          "item": {
+            "id": 602,
+            "name": "Poseidon's Fury"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 377,
+          "name": "Flamboyant Shirt"
+        },
+        {
+          "id": 378,
+          "name": "Flamboyant Trousers"
+        },
+        {
+          "id": 379,
+          "name": "Flamboyant Shoes"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [
+        {
+          "id": 605,
+          "name": "Amberstone Sword"
+        },
+        {
+          "id": 579,
+          "name": "DeathBone Armor"
+        },
+        {
+          "id": 588,
+          "name": "Thunder Mask"
+        },
+        {
+          "id": 596,
+          "name": "White Jeans"
+        }
+      ],
+      "item_rare_dropper": 2,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        57,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        0,
+        0,
+        0,
+        0
+      ],
+      "sky_background": "TUNNEL",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "TUNNEL"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1021,
+      "id_name": "KBR1021",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 632,
+          "name": "Caretaker's Helm"
+        },
+        {
+          "id": 633,
+          "name": "Field Armor"
+        },
+        {
+          "id": 647,
+          "name": "Riot Gun"
+        },
+        {
+          "id": 635,
+          "name": "Bite Proof Pants"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 2,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        66,
+        -2,
+        65,
+        -1,
+        65
+      ],
+      "players_levels": [
+        "X",
+        1,
+        "X",
+        1,
+        "X"
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1022,
+      "id_name": "KBR1022",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 617,
+          "name": "Patrol Headset"
+        },
+        {
+          "id": 618,
+          "name": "Riot Armor"
+        },
+        {
+          "id": 620,
+          "name": "Riot Leggings"
+        },
+        {
+          "id": 647,
+          "name": "Riot Gun"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [
+        {
+          "id": 607,
+          "name": "Imperial War Helm"
+        },
+        {
+          "id": 608,
+          "name": "Imperial Armor"
+        },
+        {
+          "id": 609,
+          "name": "Royal Grips"
+        },
+        {
+          "id": 610,
+          "name": "Royal Leggings"
+        }
+      ],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        63,
+        -2,
+        62,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        "X",
+        1,
+        22
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1023,
+      "id_name": "KBR1023",
+      "item_drops": [],
+      "item_rare": [
+        {
+          "id": 627,
+          "name": "Bloody Ambition"
+        },
+        {
+          "id": 628,
+          "name": "Nightstrike Armor"
+        },
+        {
+          "id": 630,
+          "name": "Bloody Leggings"
+        },
+        {
+          "id": 651,
+          "name": "Crimson Blade"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [
+        {
+          "id": 612,
+          "name": "Titanium Cranium"
+        },
+        {
+          "id": 613,
+          "name": "Andriod Armor"
+        },
+        {
+          "id": 615,
+          "name": "Cyborg Leggings"
+        },
+        {
+          "id": 656,
+          "name": "Azure Flatblade"
+        }
+      ],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 1,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        64,
+        -2,
+        67,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        "X",
+        1,
+        22
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS"
+    },
+    {
+      "absolute_start": 2,
+      "id": 1024,
+      "id_name": "KBR1024",
+      "item_drops": [
+        {
+          "chance": 20,
+          "item": {
+            "id": 649,
+            "name": "Supremacy"
+          }
+        }
+      ],
+      "item_rare": [],
+      "item_rare2": [
+        {
+          "id": 637,
+          "name": "Colonel's Helm"
+        },
+        {
+          "id": 638,
+          "name": "Guardian Armor"
+        },
+        {
+          "id": 639,
+          "name": "Imperial Clutch"
+        },
+        {
+          "id": 640,
+          "name": "Colonel's Leggings"
+        },
+        {
+          "id": 641,
+          "name": "Palace Greaves"
+        }
+      ],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 1,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0.85,
+              "player": 2,
+              "turn": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0.85,
+              "player": 2,
+              "turn": 10,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "3": {
+            "members": {
+              "endGame": false,
+              "life": 0.85,
+              "player": 2,
+              "turn": 11,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "4": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        61,
+        -2,
+        0,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        1,
+        1,
+        1
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS2"
+    },
+    {
+      "absolute_start": 2,
+      "id": 1025,
+      "id_name": "KBR1025",
+      "item_drops": [
+        {
+          "chance": 20,
+          "item": {
+            "id": 655,
+            "name": "Wrath of the Council"
+          }
+        }
+      ],
+      "item_rare": [
+        {
+          "id": 622,
+          "name": "Council Vision"
+        },
+        {
+          "id": 623,
+          "name": "Magistrate Robes"
+        },
+        {
+          "id": 624,
+          "name": "Diplomat's Hand"
+        },
+        {
+          "id": 625,
+          "name": "Council Leggings"
+        },
+        {
+          "id": 626,
+          "name": "Council Shoes"
+        }
+      ],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 1,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {
+          "0": "EMPTY",
+          "1": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "teamLeft": 1,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          },
+          "2": {
+            "members": {
+              "endGame": false,
+              "life": 0,
+              "player": 2,
+              "winOrLose": 1
+            },
+            "type": "Object"
+          }
+        },
+        "type": "EcmaArray"
+      },
+      "players": [
+        68,
+        -2,
+        68,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "X",
+        1,
+        "X",
+        1,
+        1
+      ],
+      "sky_background": "STREETS",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "STREETS2"
+    },
+    {
+      "absolute_start": 0,
+      "id": 1026,
+      "id_name": "KBR1026",
+      "item_drops": [],
+      "item_rare": [],
+      "item_rare2": [],
+      "item_rare3": [],
+      "item_rare_dropper": 0,
+      "item_rare_dropper2": 0,
+      "item_rare_dropper3": 0,
+      "phases": {
+        "associativeValues": {},
+        "denseValues": {},
+        "type": "EcmaArray"
+      },
+      "players": [
+        77,
+        -2,
+        77,
+        -1,
+        0
+      ],
+      "players_levels": [
+        "Z",
+        1,
+        "Z",
+        1,
+        "X"
+      ],
+      "sky_background": "ROME",
+      "speeches": [],
+      "time_lock": false,
+      "win_date": -1,
+      "win_date_condition": 0,
+      "zone_background": "CHURCH"
+    }
+  ]
+}

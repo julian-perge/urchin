@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dxx2kgse4k138"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_xdcga"]
+[ext_resource type="Texture2D" uid="uid://p2yqan2j3gjh" path="res://resources/sprites/M_CHEST_ARCTIC.png" id="2_bjphh"]
+
+[resource]
+script = ExtResource("1_xdcga")
+id = 352.0
+looks = "ARCTIC"
+sprite_image = ExtResource("2_bjphh")
+name = "X5C8-2"
+display_name = "X5C8-2"
+internal_name = "X5C8-2"
+tooltip = "This is the Artic model of the ZPCI uniform."
+tooltipAlt = ["Speed +7", "Instinct +13", "Vitality +3"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 383.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 3.0,
+"magic": 13.0,
+"speed": 7.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

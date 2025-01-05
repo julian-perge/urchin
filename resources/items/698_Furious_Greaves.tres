@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://gkjt4mydfo66"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_dviws"]
+[ext_resource type="Texture2D" uid="uid://bwe0whvslk1mu" path="res://resources/sprites/M_FOOT_ULTI.png" id="2_0jx3i"]
+
+[resource]
+script = ExtResource("1_dviws")
+id = 698.0
+looks = "ULTI"
+sprite_image = ExtResource("2_0jx3i")
+name = "Furious Greaves"
+display_name = "Furious Greaves"
+internal_name = "Drop ULTI Feet"
+tooltip = ""
+tooltipAlt = ["Speed +9", "Instinct +9", "Strength +42", "Vitality +26"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1111.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 26.0,
+"magic": 9.0,
+"speed": 9.0,
+"strength": 42.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

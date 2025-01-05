@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://4u2dikdc5hbk"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_p81ji"]
+[ext_resource type="Texture2D" uid="uid://kv70l0gjqn6b" path="res://resources/sprites/M_CHEST_SHIRT4.png" id="2_68m1p"]
+
+[resource]
+script = ExtResource("1_p81ji")
+id = 25.0
+looks = "SHIRT4"
+sprite_image = ExtResource("2_68m1p")
+name = ""
+display_name = "Magic DPS"
+internal_name = "Magic DPS"
+tooltip = ""
+tooltipAlt = ["Speed +20", "Instinct +97", "Vitality +78", "Ice Piercing +74", "Lightning Piercing +74", "Poison Piercing +74"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 15.0
+price = 610.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 78.0,
+"magic": 97.0,
+"speed": 20.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 74.0,
+"Lightning": 74.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 74.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bjp3wsqohatki"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_b4h1y"]
+[ext_resource type="Texture2D" uid="uid://bkil57ssa8gqb" path="res://resources/sprites/M_LEG2_SHAMAN1.png" id="2_46fo3"]
+
+[resource]
+script = ExtResource("1_b4h1y")
+id = 531.0
+looks = "SHAMAN1"
+sprite_image = ExtResource("2_46fo3")
+name = "Leather Wraps"
+display_name = "Leather Wraps"
+internal_name = "Vendor Shaman Legs"
+tooltip = ""
+tooltipAlt = ["Speed +7", "Strength +17", "Vitality +11"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 14.0
+price = 550.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 11.0,
+"magic": 0.0,
+"speed": 7.0,
+"strength": 17.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

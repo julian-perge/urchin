@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bhwbvxh5au5fj"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_il6sm"]
+[ext_resource type="Texture2D" uid="uid://b06ncam6b8fjl" path="res://resources/sprites/M_HEAD_USA2.png" id="2_psflc"]
+
+[resource]
+script = ExtResource("1_il6sm")
+id = 548.0
+looks = "USA2"
+sprite_image = ExtResource("2_psflc")
+name = "Old ZPCI Helm"
+display_name = "Old ZPCI Helm"
+internal_name = "Drop ZPCI Head"
+tooltip = "This line of ZPCI armor is no longer being manufactured."
+tooltipAlt = ["Instinct +18", "Strength +2", "Vitality +11"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 13.0
+price = 492.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 11.0,
+"magic": 18.0,
+"speed": 0.0,
+"strength": 2.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

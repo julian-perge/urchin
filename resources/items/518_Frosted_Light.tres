@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dfqumi2qyn51"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_17ooe"]
+[ext_resource type="Texture2D" uid="uid://cq3e74ya6776w" path="res://resources/sprites/M_WEAPON_PRIESTSTAFF.png" id="2_oaj0h"]
+
+[resource]
+script = ExtResource("1_17ooe")
+id = 518.0
+looks = "PRIESTSTAFF"
+sprite_image = ExtResource("2_oaj0h")
+name = "Frosted Light"
+display_name = "Frosted Light"
+internal_name = "Frosted Light"
+tooltip = ""
+tooltipAlt = ["Speed +5", "Instinct +14", "Vitality +23", "Physical Defense +16"]
+item_type = 9
+rarity = 0
+class_type = 1
+required_level = 9.0
+price = 810.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 23.0,
+"magic": 14.0,
+"speed": 5.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 16.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

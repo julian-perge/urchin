@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bw24iwkeh2603"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_13dhu"]
+[ext_resource type="Texture2D" uid="uid://www888llv4ss" path="res://resources/sprites/M_WEAPON_AK2.png" id="2_cuy67"]
+
+[resource]
+script = ExtResource("1_13dhu")
+id = 674.0
+looks = "AK2"
+sprite_image = ExtResource("2_cuy67")
+name = "Enforcer Rifle"
+display_name = "Enforcer Rifle"
+internal_name = "GUN"
+tooltip = ""
+tooltipAlt = ["Speed +55", "Instinct +55", "Strength +82", "Vitality +82"]
+item_type = 9
+rarity = 0
+class_type = 1
+required_level = 25.0
+price = 3750.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 82.0,
+"magic": 55.0,
+"speed": 55.0,
+"strength": 82.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

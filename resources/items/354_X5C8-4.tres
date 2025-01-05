@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cscw41y7os1uh"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_7kus4"]
+[ext_resource type="Texture2D" uid="uid://fqtbn2tgyyms" path="res://resources/sprites/M_LEG2_ARCTIC.png" id="2_413jr"]
+
+[resource]
+script = ExtResource("1_7kus4")
+id = 354.0
+looks = "ARCTIC"
+sprite_image = ExtResource("2_413jr")
+name = "X5C8-4"
+display_name = "X5C8-4"
+internal_name = "X5C8-4"
+tooltip = ""
+tooltipAlt = ["Speed +9", "Instinct +6", "Strength +6", "Vitality +2"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 383.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 2.0,
+"magic": 6.0,
+"speed": 9.0,
+"strength": 6.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

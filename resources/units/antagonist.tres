@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://dkxvmycgxjsb3"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_6u13f"]
+
+[resource]
+script = ExtResource("1_6u13f")
+name = "Antagonist"
+vitality = 20.0
+strength = 5.0
+magic = 17.0
+speed = 8.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [211.0, 219.0, 223.0, 203.0, 207.0],
+"defense": [276.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 200.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL1", "GUARDIAN", ","],
+"skin": " ",
+"voice": {
+"die": "dead_twisted",
+"hit": ["hit_twisted1", "hit_twisted2", "hit_twisted3"]
+}
+}

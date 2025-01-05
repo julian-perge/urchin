@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://6n0xcn6hphmm"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_qqjbi"]
+[ext_resource type="Texture2D" uid="uid://s1dcm4bm30j7" path="res://resources/sprites/M_LEG2_TUNNELSET2.png" id="2_ny3xn"]
+
+[resource]
+script = ExtResource("1_qqjbi")
+id = 581.0
+looks = "TUNNELSET2"
+sprite_image = ExtResource("2_ny3xn")
+name = "Bone Braces"
+display_name = "Bone Braces"
+internal_name = "Drop VIKING Legs"
+tooltip = ""
+tooltipAlt = ["Speed +6", "Instinct +22", "Vitality +19", "Ice Piercing +7"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 18.0
+price = 802.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 19.0,
+"magic": 22.0,
+"speed": 6.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 7.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

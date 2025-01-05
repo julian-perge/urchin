@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://uuh0358oimrd"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_yyt7o"]
+[ext_resource type="Texture2D" uid="uid://xgafpivkhjxu" path="res://resources/sprites/M_WEAPON_UBER5.png" id="2_8bqkb"]
+
+[resource]
+script = ExtResource("1_yyt7o")
+id = 653.0
+looks = "UBER5"
+sprite_image = ExtResource("2_8bqkb")
+name = "Riot Shield"
+display_name = "Riot Shield"
+internal_name = "SHIELD"
+tooltip = ""
+tooltipAlt = ["Vitality +51", "Physical Defense +66", "Fire Defense +66"]
+item_type = 8
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 1444.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 51.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 66.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 66.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

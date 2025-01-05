@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bcvufdge3oe0v"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_34c87"]
+
+[resource]
+script = ExtResource("1_34c87")
+id = 104.0
+looks = ""
+name = ""
+display_name = "Trendy Jeans"
+internal_name = "Trendy Jeans"
+tooltip = ""
+tooltipAlt = ["Speed +3", "Instinct +2", "Strength +2", "Vitality +3"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 1.0
+price = 11.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 3.0,
+"magic": 2.0,
+"speed": 3.0,
+"strength": 2.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bkfiqyj1xkug1"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_daxjr"]
+[ext_resource type="Texture2D" uid="uid://bfqutgvb7g5f" path="res://resources/sprites/M_CHEST_FRANKEN.png" id="2_8o1ne"]
+
+[resource]
+script = ExtResource("1_daxjr")
+id = 315.0
+looks = "FRANKEN"
+sprite_image = ExtResource("2_8o1ne")
+name = "Green Fuel-Tank"
+display_name = "Green Fuel-Tank"
+internal_name = "Frankie's Protection"
+tooltip = "Model 44: Developed in New Alcatraz."
+tooltipAlt = ["Speed +2", "Instinct +1", "Strength +3", "Vitality +5"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 6.0
+price = 154.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 5.0,
+"magic": 1.0,
+"speed": 2.0,
+"strength": 3.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

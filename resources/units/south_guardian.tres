@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://bek2c7av7jda3"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_3gg2b"]
+
+[resource]
+script = ExtResource("1_3gg2b")
+name = "South Guardian"
+vitality = 25.0
+strength = 17.0
+magic = 17.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [[800.0, 1.0], [797.0, 2.0], [799.0, 3.0]],
+"attack": [256.0, 260.0, 132.0],
+"defense": [9.0]
+}
+stats = {
+"aggression": [50.0, 2.0, 1.0, 65.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 719.0, 0.0],
+"model": ["MODEL1", "MAN", ","],
+"skin": "ROBOT2",
+"voice": {
+"die": "dead_zpci",
+"hit": ["hit_zpci1", "hit_zpci2", "hit_zpci3"]
+}
+}

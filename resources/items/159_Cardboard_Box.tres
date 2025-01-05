@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://ckll1o3tdbkyj"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_o21k1"]
+
+[resource]
+script = ExtResource("1_o21k1")
+id = 159.0
+looks = ""
+name = ""
+display_name = "Cardboard Box"
+internal_name = "Cardboard Box"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +15", "Instinct +2", "Strength +5", "Vitality +2", "Lightning Defense +8", "Earth Defense +8"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 8.0
+price = 950.0
+price_modifier = 4.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 2.0,
+"magic": 2.0,
+"speed": 15.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 8.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 8.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dwlxv1lmuiycq"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_mdptl"]
+[ext_resource type="Texture2D" uid="uid://cmr2r8uj7tlk5" path="res://resources/sprites/M_FOOT_IMPERIAL.png" id="2_4kuk1"]
+
+[resource]
+script = ExtResource("1_mdptl")
+id = 611.0
+looks = "IMPERIAL"
+sprite_image = ExtResource("2_4kuk1")
+name = "Imperial Marchers"
+display_name = "Imperial Marchers"
+internal_name = "Drop IMPERIAL Feet"
+tooltip = "Designed to help you goose-step with ease."
+tooltipAlt = ["Speed +8", "Strength +31", "Vitality +13"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 722.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 13.0,
+"magic": 0.0,
+"speed": 8.0,
+"strength": 31.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

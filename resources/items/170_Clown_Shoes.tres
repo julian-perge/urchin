@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://c4yd4g6njqsqh"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ytygq"]
+
+[resource]
+script = ExtResource("1_ytygq")
+id = 170.0
+looks = ""
+name = ""
+display_name = "Clown Shoes"
+internal_name = "Clown Shoes"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +4", "Instinct +4", "Strength +11", "Vitality +11", "Lightning Defense +6", "Earth Defense +6"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 10.0
+price = 40793.0
+price_modifier = 172.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 11.0,
+"magic": 4.0,
+"speed": 4.0,
+"strength": 11.0
+},
+"defense": {
+"Earth": 6.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 6.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

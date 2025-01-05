@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ms4d55esoevq"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_k8yo4"]
+[ext_resource type="Texture2D" uid="uid://t36mjms8qfj6" path="res://resources/sprites/M_HAND_ROBOT.png" id="2_ygdsw"]
+
+[resource]
+script = ExtResource("1_k8yo4")
+id = 614.0
+looks = "ROBOT"
+sprite_image = ExtResource("2_ygdsw")
+name = "Titanium Grips"
+display_name = "Titanium Grips"
+internal_name = "Drop ROBOT Hands"
+tooltip = ""
+tooltipAlt = ["Speed +13", "Instinct +18", "Vitality +21"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 722.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 21.0,
+"magic": 18.0,
+"speed": 13.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

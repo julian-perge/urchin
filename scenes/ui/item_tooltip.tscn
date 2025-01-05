@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://dc81g0wi6lpbp"]
+
+[ext_resource type="Script" path="res://scripts/ui/store/item_tooltip.gd" id="1_script"]
+
+[node name="ItemTooltip" type="Control"]
+z_index = 1
+layout_mode = 3
+anchors_preset = 0
+offset_right = 146.0
+offset_bottom = 60.0
+tooltip_text = "TESTING"
+script = ExtResource("1_script")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+layout_mode = 2
+offset_right = 146.0
+offset_bottom = 60.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Panel/MarginContainer"]
+layout_mode = 2

@@ -1,0 +1,6170 @@
+{
+  "units": [
+    {
+      "id": 1,
+      "name": "Bio",
+      "health": 7,
+      "strength": 14,
+      "magic": 4,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          2,
+          3,
+          5
+        ],
+        "defense": [
+          4,
+          6
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 90,
+          "Aggressive": 40,
+          "Tactical": 60,
+          "Defensive": 90,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "ONE",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_sonny1",
+            "hit_sonny2",
+            "hit_sonny3"
+          ],
+          "die": "dead_sonny"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "name": "Psycho",
+      "health": 7,
+      "strength": 3,
+      "magic": 20,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            2,
+            0
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            3,
+            2
+          ]
+        ],
+        "attack": [],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "METABII",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          6,
+          0
+        ],
+        "skin": "ZPCI",
+        "voice": {
+          "hit": [
+            "hit_sonny1",
+            "hit_sonny2",
+            "hit_sonny3"
+          ],
+          "die": "dead_sonny"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "name": "Hydro",
+      "health": 15,
+      "strength": 10,
+      "magic": 8,
+      "speed": 7,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          2
+        ],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "METABII",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          12,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_sonny1",
+            "hit_sonny2",
+            "hit_sonny3"
+          ],
+          "die": "dead_sonny"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "name": "Veradux",
+      "health": 20,
+      "strength": 20,
+      "magic": 20,
+      "speed": 20,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          9,
+          10
+        ],
+        "defense": [
+          8
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "METABII",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "ZPCI3",
+        "voice": {
+          "hit": [
+            "hit_dux1",
+            "hit_dux2",
+            "hit_dux3"
+          ],
+          "die": "dead_dux"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "name": "Prison Guard",
+      "health": 10,
+      "strength": 10,
+      "magic": 5,
+      "speed": 12,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            523,
+            0
+          ],
+          [
+            15,
+            0
+          ]
+        ],
+        "attack": [
+          2
+        ],
+        "defense": [
+          506
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 35,
+          "Defensive": 60,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          14,
+          0
+        ],
+        "skin": "JASON",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "name": "Doctor Leath",
+      "health": 8,
+      "strength": 11,
+      "magic": 11,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            528,
+            2
+          ]
+        ],
+        "attack": [
+          2,
+          526,
+          527
+        ],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          0,
+          17,
+          18,
+          4,
+          8,
+          16,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_doc1",
+            "hit_doc2",
+            "hit_doc3"
+          ],
+          "die": "dead_doc"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "name": "Frankie",
+      "health": 70,
+      "strength": 18,
+      "magic": 2,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          256,
+          260,
+          267,
+          271
+        ],
+        "defense": [
+          510
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "FIVE",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          19,
+          0,
+          20,
+          21,
+          15,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "name": "ZPCI Elite",
+      "health": 25,
+      "strength": 25,
+      "magic": 1,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            16,
+            0
+          ],
+          [
+            17,
+            0
+          ],
+          [
+            18,
+            0
+          ],
+          [
+            19,
+            0
+          ]
+        ],
+        "attack": [
+          9
+        ],
+        "defense": [
+          20
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          13,
+          0
+        ],
+        "skin": "ZPCI",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "name": "The Warden",
+      "health": 30,
+      "strength": 50,
+      "magic": 10,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            11,
+            1
+          ],
+          [
+            12,
+            2
+          ],
+          [
+            13,
+            2
+          ],
+          [
+            14,
+            3
+          ]
+        ],
+        "attack": [
+          15
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 60,
+          "Defensive": 61,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          504,
+          0
+        ],
+        "skin": "JASON2",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "name": "Brutal Convict",
+      "health": 12,
+      "strength": 19,
+      "magic": 1,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          2,
+          267,
+          103
+        ],
+        "defense": [
+          506
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 80,
+          "Tactical": 20,
+          "Defensive": 40,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0
+        ],
+        "skin": "PRISON",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "name": "Felicity",
+      "health": 60,
+      "strength": 17,
+      "magic": 10,
+      "speed": 16,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            532,
+            1
+          ],
+          [
+            531,
+            1
+          ],
+          [
+            530,
+            2
+          ],
+          [
+            163,
+            3
+          ],
+          [
+            136,
+            3
+          ]
+        ],
+        "attack": [
+          533,
+          1
+        ],
+        "defense": [
+          523,
+          524
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 10,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL4",
+          "FEL",
+          "",
+          "F"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          22,
+          22
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "name": "Twisted Experiment",
+      "health": 20,
+      "strength": 30,
+      "magic": 5,
+      "speed": 12,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          149,
+          2,
+          145,
+          136,
+          145,
+          145
+        ],
+        "defense": [
+          534,
+          166
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 300,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "FIVE",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          503,
+          0
+        ],
+        "skin": "PRISON2",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "name": "Agile Convict",
+      "health": 10,
+      "strength": 13,
+      "magic": 3,
+      "speed": 14,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          525,
+          2,
+          275
+        ],
+        "defense": [
+          122
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 80,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN2",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          6,
+          0
+        ],
+        "skin": "PRISON",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "name": "Cunning Convict",
+      "health": 7,
+      "strength": 11,
+      "magic": 11,
+      "speed": 11,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          256,
+          2
+        ],
+        "defense": [
+          8,
+          122
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 80,
+          "Tactical": 60,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN4",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          0
+        ],
+        "skin": "PRISON",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "name": "Doctor Hedger",
+      "health": 5,
+      "strength": 50,
+      "magic": 5,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            529,
+            0
+          ]
+        ],
+        "attack": [
+          145,
+          145,
+          145,
+          149,
+          149
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 5,
+          "Defensive": 10,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          0,
+          17,
+          18,
+          4,
+          8,
+          16,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_doc1",
+            "hit_doc2",
+            "hit_doc3"
+          ],
+          "die": "dead_doc"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "name": "Knight",
+      "health": 21,
+      "strength": 12,
+      "magic": 1,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          2,
+          507,
+          508,
+          509
+        ],
+        "defense": [
+          505,
+          506,
+          510
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 40,
+          "Defensive": 70,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 130,
+          "Shadow": 130,
+          "Earth": 130,
+          "Lightning": 130,
+          "Fire": 130,
+          "Ice": 130,
+          "Magic": 130,
+          "Physical": 130
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          515,
+          516
+        ],
+        "skin": "XADER",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 21,
+      "name": "Priest",
+      "health": 15,
+      "strength": 1,
+      "magic": 15,
+      "speed": 13,
+      "focus": 150,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          515,
+          513,
+          514
+        ],
+        "defense": [
+          512,
+          511
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 20,
+          "Aggressive": 50,
+          "Tactical": 70,
+          "Defensive": 90,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          518,
+          0
+        ],
+        "skin": "PRIEST",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "name": "Mage",
+      "health": 13,
+      "strength": 1,
+      "magic": 16,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          516,
+          517,
+          518,
+          520
+        ],
+        "defense": [
+          519
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 24,
+          "Defensive": 25,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          517,
+          0
+        ],
+        "skin": "PRIEST2",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "name": "Frost Zombie",
+      "health": 15,
+      "strength": 20,
+      "magic": 20,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          500,
+          2,
+          207
+        ],
+        "defense": [
+          502
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 40,
+          "Defensive": 70,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "FROST",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          519,
+          0
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 24,
+      "name": "Wolf",
+      "health": 10,
+      "strength": 10,
+      "magic": 10,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          2,
+          3,
+          5
+        ],
+        "defense": [
+          4
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL5",
+          "WOLF",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          14,
+          0
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 25,
+      "name": "Frost Terror",
+      "health": 20,
+      "strength": 13,
+      "magic": 3,
+      "speed": 14,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          501,
+          504,
+          503,
+          2,
+          219,
+          521
+        ],
+        "defense": [
+          502
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "Frost",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "FROST",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 26,
+      "name": "ZPCI Medic",
+      "health": 20,
+      "strength": 20,
+      "magic": 20,
+      "speed": 10,
+      "focus": 150,
+      "moves": {
+        "absolute": [
+          [
+            544,
+            1
+          ],
+          [
+            550,
+            2
+          ],
+          [
+            551,
+            2
+          ],
+          [
+            550,
+            3
+          ],
+          [
+            551,
+            3
+          ]
+        ],
+        "attack": [
+          547
+        ],
+        "defense": [
+          549
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 100,
+          "Defensive": 101,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          13,
+          0
+        ],
+        "skin": "ZPCI3",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 27,
+      "name": "Armored Hound",
+      "health": 10,
+      "strength": 20,
+      "magic": 20,
+      "speed": 40,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          109,
+          543,
+          542
+        ],
+        "defense": [
+          1
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 75,
+          "Tactical": 1,
+          "Defensive": 10,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL5",
+          "WOLF",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 28,
+      "name": "Captain Hunt",
+      "health": 40,
+      "strength": 30,
+      "magic": 30,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            554,
+            3
+          ]
+        ],
+        "attack": [
+          545,
+          157
+        ],
+        "defense": [
+          546
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 49,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          523,
+          0
+        ],
+        "skin": "HUNT",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 29,
+      "name": "Insurgent",
+      "health": 10,
+      "strength": 10,
+      "magic": 10,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            17,
+            0
+          ],
+          [
+            18,
+            0
+          ],
+          [
+            19,
+            0
+          ]
+        ],
+        "attack": [
+          9
+        ],
+        "defense": [
+          20
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN2TAT",
+          "",
+          "M"
+        ],
+        "equipment": [
+          31,
+          27,
+          29,
+          28,
+          30,
+          523,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 30,
+      "name": "Cult Leader",
+      "health": 60,
+      "strength": 20,
+      "magic": 20,
+      "speed": 10,
+      "focus": 300,
+      "moves": {
+        "absolute": [
+          [
+            475,
+            1
+          ],
+          [
+            537,
+            2
+          ]
+        ],
+        "attack": [
+          275,
+          271,
+          267
+        ],
+        "defense": [
+          9
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          521,
+          0
+        ],
+        "skin": "XADER2",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 31,
+      "name": "Baron Brixius",
+      "health": 600,
+      "strength": 40,
+      "magic": 40,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            538,
+            1
+          ],
+          [
+            539,
+            3
+          ],
+          [
+            541,
+            1
+          ]
+        ],
+        "attack": [
+          540
+        ],
+        "defense": [
+          403,
+          451,
+          455,
+          459,
+          466
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 10,
+          "Tactical": 50,
+          "Defensive": 51,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "ZOMBIE2",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          527,
+          0
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "BaronHit1",
+            "BaronHit2",
+            "BaronHit3"
+          ],
+          "die": "BaronDie"
+        }
+      }
+    },
+    {
+      "id": 32,
+      "name": "Roald",
+      "health": 26,
+      "strength": 13,
+      "magic": 4,
+      "speed": 20,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          535,
+          19,
+          524,
+          9
+        ],
+        "defense": [
+          536
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MANTAT",
+          "",
+          "M"
+        ],
+        "equipment": [
+          382,
+          328,
+          327,
+          329,
+          326,
+          523,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_roald1",
+            "hit_roald2",
+            "hit_roald3"
+          ],
+          "die": "dead_roald"
+        }
+      }
+    },
+    {
+      "id": 33,
+      "name": "Frost Lord",
+      "health": 30,
+      "strength": 40,
+      "magic": 20,
+      "speed": 14,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            522,
+            2
+          ]
+        ],
+        "attack": [
+          500,
+          501,
+          503,
+          504,
+          2,
+          207,
+          219,
+          211
+        ],
+        "defense": [
+          502,
+          234
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "GUARDIAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 34,
+      "name": "ZPCI Sniper",
+      "health": 20,
+      "strength": 25,
+      "magic": 25,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            544,
+            1
+          ],
+          [
+            552,
+            2
+          ],
+          [
+            553,
+            2
+          ],
+          [
+            552,
+            3
+          ],
+          [
+            553,
+            3
+          ]
+        ],
+        "attack": [
+          548
+        ],
+        "defense": [
+          547
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          522,
+          0
+        ],
+        "skin": "ZPCI2",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 40,
+      "name": "Spectre",
+      "health": 20,
+      "strength": 25,
+      "magic": 25,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            573,
+            0
+          ]
+        ],
+        "attack": [
+          260,
+          572,
+          574,
+          575
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "GHOST",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 41,
+      "name": "Phantom",
+      "health": 12,
+      "strength": 5,
+      "magic": 15,
+      "speed": 12,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            452,
+            0
+          ]
+        ],
+        "attack": [
+          403,
+          436,
+          2
+        ],
+        "defense": [
+          576,
+          425
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 70,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "PSYCHO",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 42,
+      "name": "Beast",
+      "health": 15,
+      "strength": 15,
+      "magic": 5,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            166,
+            0
+          ]
+        ],
+        "attack": [
+          103,
+          578,
+          115
+        ],
+        "defense": [
+          1
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "PREDATOR",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 43,
+      "name": "Antagonist",
+      "health": 20,
+      "strength": 5,
+      "magic": 17,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          211,
+          219,
+          223,
+          203,
+          207
+        ],
+        "defense": [
+          276
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 200,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "GUARDIAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 44,
+      "name": "The Hobo",
+      "health": 60,
+      "strength": 30,
+      "magic": 25,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            555,
+            0
+          ],
+          [
+            556,
+            0
+          ]
+        ],
+        "attack": [
+          532
+        ],
+        "defense": [
+          2,
+          577
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 20,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0
+        ],
+        "skin": "HOBO",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 45,
+      "name": "The Real Hobo",
+      "health": 300,
+      "strength": 100,
+      "magic": 100,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          567,
+          568,
+          569,
+          570,
+          571
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0
+        ],
+        "skin": "HOBO",
+        "voice": {
+          "hit": [
+            "hit_bug1",
+            "hit_bug2",
+            "hit_bug3"
+          ],
+          "die": "dead_bug"
+        }
+      }
+    },
+    {
+      "id": 46,
+      "name": "The Host",
+      "health": 40,
+      "strength": 25,
+      "magic": 25,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            557,
+            0
+          ]
+        ],
+        "attack": [
+          109,
+          558
+        ],
+        "defense": [
+          520
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          563,
+          0
+        ],
+        "skin": "TUX",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 47,
+      "name": "Clemons The Deceiver",
+      "health": 70,
+      "strength": 27,
+      "magic": 27,
+      "speed": 10,
+      "focus": 300,
+      "moves": {
+        "absolute": [
+          [
+            559,
+            1
+          ],
+          [
+            563,
+            2
+          ],
+          [
+            564,
+            2
+          ],
+          [
+            562,
+            2
+          ],
+          [
+            566,
+            3
+          ],
+          [
+            578,
+            3
+          ],
+          [
+            565,
+            3
+          ]
+        ],
+        "attack": [
+          580,
+          459,
+          436
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 130,
+          "Shadow": 130,
+          "Earth": 130,
+          "Lightning": 130,
+          "Fire": 130,
+          "Ice": 130,
+          "Magic": 130,
+          "Physical": 130
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "GHOST",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          565,
+          566
+        ],
+        "skin": "CLEMONS",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 48,
+      "name": "Louis the Blind",
+      "health": 100,
+      "strength": 10,
+      "magic": 10,
+      "speed": 16,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          0
+        ],
+        "defense": [
+          0
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "BART",
+          "M"
+        ],
+        "equipment": [
+          0,
+          11,
+          0,
+          4,
+          8,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 49,
+      "name": "Metabii",
+      "health": 7,
+      "strength": 20,
+      "magic": 20,
+      "speed": 6,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          132
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "METABII",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          12,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 50,
+      "name": "Tunnel Beast",
+      "health": 40,
+      "strength": 32,
+      "magic": 20,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            600,
+            0
+          ]
+        ],
+        "attack": [
+          126,
+          145,
+          542,
+          424
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 150
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 150
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL6",
+          "BEAST",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 51,
+      "name": "Vivian Vixen",
+      "health": 2,
+      "strength": 45,
+      "magic": 45,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            613,
+            1
+          ],
+          [
+            617,
+            2
+          ]
+        ],
+        "attack": [
+          616,
+          615,
+          614
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL4",
+          "VIV",
+          "",
+          "F"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          565,
+          566
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 52,
+      "name": "Gregor",
+      "health": 23,
+      "strength": 35,
+      "magic": 35,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            603,
+            0
+          ]
+        ],
+        "attack": [
+          601,
+          602,
+          415
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL7",
+          "GREGOR",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_bug1",
+            "hit_bug2",
+            "hit_bug3"
+          ],
+          "die": "dead_bug"
+        }
+      }
+    },
+    {
+      "id": 53,
+      "name": "Shunny",
+      "health": 30,
+      "strength": 35,
+      "magic": 35,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          10,
+          145,
+          455,
+          223,
+          542,
+          415,
+          115,
+          578
+        ],
+        "defense": [
+          125,
+          534,
+          1
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 30,
+          "Tactical": 20,
+          "Defensive": 40,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "ONE",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          4,
+          8,
+          5,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_sonny1",
+            "hit_sonny2",
+            "hit_sonny3"
+          ],
+          "die": "dead_sonny"
+        }
+      }
+    },
+    {
+      "id": 54,
+      "name": "The Magical Monkey",
+      "health": 30,
+      "strength": 50,
+      "magic": 50,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          611,
+          612,
+          547,
+          10
+        ],
+        "defense": [
+          1
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 30,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL6",
+          "APE",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 55,
+      "name": "Mokoshotar",
+      "health": 210,
+      "strength": 37,
+      "magic": 37,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            623,
+            0
+          ]
+        ],
+        "attack": [
+          628,
+          624,
+          625,
+          626,
+          627
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 30,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 150,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL5",
+          "MOKO",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 56,
+      "name": "Bunny",
+      "health": 150,
+      "strength": 65,
+      "magic": 65,
+      "speed": 17,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            618,
+            0
+          ]
+        ],
+        "attack": [
+          619,
+          620,
+          621,
+          622
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 30,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL7",
+          "BUNNY",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [],
+          "die": {
+            "type": "Undefined"
+          }
+        }
+      }
+    },
+    {
+      "id": 57,
+      "name": "Flower Zombie",
+      "health": 30,
+      "strength": 35,
+      "magic": 35,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          604,
+          605,
+          606,
+          607,
+          608,
+          609,
+          610
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 30,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "ZOMBIE1",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          33,
+          26,
+          0,
+          32,
+          32,
+          5,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_sonny1",
+            "hit_sonny2",
+            "hit_sonny3"
+          ],
+          "die": "dead_sonny"
+        }
+      }
+    },
+    {
+      "id": 58,
+      "name": "The Hydra",
+      "health": 52,
+      "strength": 32,
+      "magic": 32,
+      "speed": 13,
+      "focus": 130,
+      "moves": {
+        "absolute": [
+          [
+            630,
+            1
+          ],
+          [
+            631,
+            2
+          ],
+          [
+            632,
+            3
+          ],
+          [
+            633,
+            3
+          ]
+        ],
+        "attack": [
+          141,
+          145,
+          635,
+          145
+        ],
+        "defense": [
+          634
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 25,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 250,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 320,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 320,
+          "Fire": 100,
+          "Ice": 320,
+          "Magic": 100,
+          "Physical": 75
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL8",
+          "HYDRA",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 59,
+      "name": "Fire Claw",
+      "health": 15,
+      "strength": 8,
+      "magic": 8,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          629
+        ],
+        "defense": [
+          1
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 15,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 150,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 15,
+          "Shadow": 450,
+          "Earth": 450,
+          "Lightning": 20,
+          "Fire": 450,
+          "Ice": 20,
+          "Magic": 450,
+          "Physical": 180
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL8",
+          "HYDRA2",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 60,
+      "name": "Tunnel Worker",
+      "health": 10,
+      "strength": 10,
+      "magic": 10,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          1
+        ],
+        "defense": [
+          1
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 15,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 150,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 20,
+          "Shadow": 20,
+          "Earth": 450,
+          "Lightning": 450,
+          "Fire": 450,
+          "Ice": 20,
+          "Magic": 450,
+          "Physical": 450
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          380,
+          381,
+          9,
+          4,
+          10,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 61,
+      "name": "Police Colonel",
+      "health": 210,
+      "strength": 13,
+      "magic": 6,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            764,
+            1
+          ],
+          [
+            763,
+            2
+          ],
+          [
+            19,
+            2
+          ],
+          [
+            766,
+            2
+          ],
+          [
+            755,
+            2
+          ],
+          [
+            762,
+            2
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            759,
+            2
+          ],
+          [
+            764,
+            4
+          ]
+        ],
+        "attack": [
+          765
+        ],
+        "defense": [
+          759,
+          19,
+          762,
+          760,
+          767,
+          766,
+          755,
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 35,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          649,
+          0
+        ],
+        "skin": "IMPERIAL2",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 62,
+      "name": "Secret Police",
+      "health": 30,
+      "strength": 27,
+      "magic": 15,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          723,
+          725,
+          726,
+          728,
+          734,
+          9
+        ],
+        "defense": [
+          722,
+          735
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 30,
+          "Defensive": 65,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          648,
+          0
+        ],
+        "skin": "IMPERIAL",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 63,
+      "name": "Riot Police",
+      "health": 25,
+      "strength": 28,
+      "magic": 20,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          732,
+          733,
+          736,
+          731,
+          730,
+          729,
+          19,
+          9
+        ],
+        "defense": [
+          727
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 15,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          647,
+          0
+        ],
+        "skin": "POLICE",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 64,
+      "name": "Specialist",
+      "health": 20,
+      "strength": 10,
+      "magic": 10,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          716,
+          717,
+          718,
+          719,
+          720,
+          532,
+          524,
+          523,
+          721
+        ],
+        "defense": [
+          1
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          651,
+          651
+        ],
+        "skin": "SINJID",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 65,
+      "name": "Blood Hound",
+      "health": 20,
+      "strength": 33,
+      "magic": 30,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          701,
+          702,
+          703,
+          107
+        ],
+        "defense": [
+          1,
+          122
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL5",
+          "DOG",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 66,
+      "name": "Care Taker",
+      "health": 20,
+      "strength": 12,
+      "magic": 12,
+      "speed": 10,
+      "focus": 120,
+      "moves": {
+        "absolute": [
+          [
+            704,
+            0
+          ],
+          [
+            705,
+            0
+          ]
+        ],
+        "attack": [
+          706,
+          107
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          647,
+          0
+        ],
+        "skin": "POLICE2",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 67,
+      "name": "Android Guard",
+      "health": 17,
+      "strength": 12,
+      "magic": 25,
+      "speed": 10,
+      "focus": 250,
+      "moves": {
+        "absolute": [
+          [
+            710,
+            0
+          ]
+        ],
+        "attack": [
+          714,
+          713,
+          712,
+          223,
+          514
+        ],
+        "defense": [
+          510
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 49,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 70,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          656,
+          0
+        ],
+        "skin": "ROBOT",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 68,
+      "name": "City Council",
+      "health": 15,
+      "strength": 19,
+      "magic": 28,
+      "speed": 10,
+      "focus": 2000,
+      "moves": {
+        "absolute": [
+          [
+            777,
+            1
+          ],
+          [
+            778,
+            2
+          ]
+        ],
+        "attack": [
+          779
+        ],
+        "defense": [
+          738,
+          742,
+          743,
+          745,
+          746,
+          747,
+          748,
+          749,
+          1
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 35,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          650,
+          0
+        ],
+        "skin": "PRIEST3",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 69,
+      "name": "Mayor",
+      "health": 60,
+      "strength": 13,
+      "magic": 28,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            768,
+            3
+          ],
+          [
+            782,
+            4
+          ],
+          [
+            770,
+            4
+          ],
+          [
+            771,
+            4
+          ],
+          [
+            769,
+            4
+          ],
+          [
+            475,
+            5
+          ]
+        ],
+        "attack": [
+          773,
+          774,
+          775,
+          776
+        ],
+        "defense": [
+          1,
+          772
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          654,
+          0
+        ],
+        "skin": "PRIEST4",
+        "voice": {
+          "hit": [
+            "hit_mayor1",
+            "hit_mayor2",
+            "hit_mayor3"
+          ],
+          "die": "dead_mayor"
+        }
+      }
+    },
+    {
+      "id": 70,
+      "name": "Guardian Cannon",
+      "health": 15,
+      "strength": 15,
+      "magic": 15,
+      "speed": 5,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            781,
+            1
+          ],
+          [
+            780,
+            2
+          ],
+          [
+            780,
+            3
+          ],
+          [
+            780,
+            4
+          ]
+        ],
+        "attack": [
+          276
+        ],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 35,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL8",
+          "HYDRA3",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 71,
+      "name": "Felicity",
+      "health": 15,
+      "strength": 25,
+      "magic": 15,
+      "speed": 25,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          533,
+          1,
+          763,
+          136,
+          523,
+          524
+        ],
+        "defense": [
+          531
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 10,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL4",
+          "FEL",
+          "",
+          "F"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          22,
+          22
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 72,
+      "name": "ZPCI Ambassador",
+      "health": 25,
+      "strength": 25,
+      "magic": 1,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            16,
+            0
+          ],
+          [
+            17,
+            0
+          ],
+          [
+            18,
+            0
+          ],
+          [
+            19,
+            0
+          ]
+        ],
+        "attack": [
+          9
+        ],
+        "defense": [
+          20
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          13,
+          0
+        ],
+        "skin": "ZPCI",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 73,
+      "name": "Metal Warden",
+      "health": 60,
+      "strength": 47,
+      "magic": 10,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            11,
+            1
+          ],
+          [
+            12,
+            2
+          ],
+          [
+            785,
+            2
+          ],
+          [
+            14,
+            3
+          ]
+        ],
+        "attack": [
+          15
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 60,
+          "Defensive": 61,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          679,
+          0
+        ],
+        "skin": "JASON4",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 74,
+      "name": "The Bomb",
+      "health": 250,
+      "strength": 1,
+      "magic": 1,
+      "speed": 1,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          0
+        ],
+        "defense": [
+          0
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 60,
+          "Defensive": 61,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL9",
+          "",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 75,
+      "name": "Nostalgia",
+      "health": 55,
+      "strength": 25,
+      "magic": 10,
+      "speed": 9,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            786,
+            1
+          ],
+          [
+            787,
+            2
+          ],
+          [
+            788,
+            3
+          ],
+          [
+            782,
+            4
+          ],
+          [
+            780,
+            5
+          ],
+          [
+            791,
+            6
+          ]
+        ],
+        "attack": [
+          790,
+          789
+        ],
+        "defense": [
+          9,
+          107,
+          119,
+          110
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 55,
+          "Tactical": 75,
+          "Defensive": 76,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          675,
+          0
+        ],
+        "skin": "NOS",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 76,
+      "name": "The Judge",
+      "health": 35,
+      "strength": 35,
+      "magic": 10,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            792,
+            1
+          ]
+        ],
+        "attack": [
+          796,
+          793,
+          794,
+          795
+        ],
+        "defense": [
+          9,
+          524
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL4",
+          "FIR",
+          "",
+          "F"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          676,
+          676
+        ],
+        "skin": "FIR",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 77,
+      "name": "Peace Keeper",
+      "health": 8,
+      "strength": 12,
+      "magic": 12,
+      "speed": 7,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          732,
+          733,
+          736,
+          731,
+          730,
+          729,
+          19,
+          9
+        ],
+        "defense": [
+          727
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 15,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          647,
+          0
+        ],
+        "skin": "POLICE",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 78,
+      "name": "Doctor Klima",
+      "health": 5000,
+      "strength": 90,
+      "magic": 90,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            784,
+            2
+          ]
+        ],
+        "attack": [
+          455,
+          443,
+          145,
+          149,
+          141,
+          578
+        ],
+        "defense": [
+          1
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 70,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          681,
+          0
+        ],
+        "skin": "KLIMA",
+        "voice": {
+          "hit": [
+            "hit_doc1",
+            "hit_doc2",
+            "hit_doc3"
+          ],
+          "die": "dead_doc"
+        }
+      }
+    },
+    {
+      "id": 79,
+      "name": "North Guardian",
+      "health": 25,
+      "strength": 17,
+      "magic": 17,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            800,
+            1
+          ],
+          [
+            798,
+            2
+          ],
+          [
+            799,
+            3
+          ]
+        ],
+        "attack": [
+          111,
+          524,
+          115
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 200,
+          "Shadow": 200,
+          "Earth": 200,
+          "Lightning": 200,
+          "Fire": 200,
+          "Ice": 200,
+          "Magic": 200,
+          "Physical": 200
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          719,
+          0
+        ],
+        "skin": "ROBOT2",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 80,
+      "name": "South Guardian",
+      "health": 25,
+      "strength": 17,
+      "magic": 17,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            800,
+            1
+          ],
+          [
+            797,
+            2
+          ],
+          [
+            799,
+            3
+          ]
+        ],
+        "attack": [
+          256,
+          260,
+          132
+        ],
+        "defense": [
+          9
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          719,
+          0
+        ],
+        "skin": "ROBOT2",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 81,
+      "name": "Yosuke",
+      "health": 20,
+      "strength": 15,
+      "magic": 15,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            801,
+            1
+          ]
+        ],
+        "attack": [
+          802
+        ],
+        "defense": [
+          2
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 60,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          720,
+          0
+        ],
+        "skin": "FIRESAM",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 82,
+      "name": "Orb of Restraint",
+      "health": 51,
+      "strength": 15,
+      "magic": 15,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            803,
+            1
+          ],
+          [
+            804,
+            2
+          ]
+        ],
+        "attack": [
+          798
+        ],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 60,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL2",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          720,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 83,
+      "name": "Orb of Sanctuary",
+      "health": 14,
+      "strength": 15,
+      "magic": 15,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            805,
+            1
+          ]
+        ],
+        "attack": [
+          806
+        ],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 60,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL2",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          720,
+          0
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 84,
+      "name": "Versu the Corruptor",
+      "health": 40,
+      "strength": 10,
+      "magic": 5,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          [
+            807,
+            2
+          ]
+        ],
+        "attack": [
+          532
+        ],
+        "defense": [
+          1
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL4",
+          "FIR2",
+          "",
+          "F"
+        ],
+        "equipment": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          721,
+          721
+        ],
+        "skin": "FIR2",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    }
+  ]
+}

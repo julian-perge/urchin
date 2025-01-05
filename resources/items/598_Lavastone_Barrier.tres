@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b46m87usjjr77"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ln1ov"]
+[ext_resource type="Texture2D" uid="uid://bss1iis5do5cv" path="res://resources/sprites/M_WEAPON_UBER6.png" id="2_xpiek"]
+
+[resource]
+script = ExtResource("1_ln1ov")
+id = 598.0
+looks = "UBER6"
+sprite_image = ExtResource("2_xpiek")
+name = "Lavastone Barrier"
+display_name = "Lavastone Barrier"
+internal_name = "SHIELD"
+tooltip = ""
+tooltipAlt = ["Vitality +15", "Physical Defense +114", "Fire Defense +114"]
+item_type = 8
+rarity = 0
+class_type = 1
+required_level = 17.0
+price = 1051.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 15.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 114.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 114.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://qv65jvusp1a"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ueais"]
+
+[resource]
+script = ExtResource("1_ueais")
+id = 199.0
+looks = ""
+name = ""
+display_name = "Gloves of Control"
+internal_name = "Gloves of Control"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +5", "Instinct +18", "Strength +17", "Vitality +16", "Lightning Defense +7", "Earth Defense +7"]
+item_type = 4
+rarity = 2
+class_type = 1
+required_level = 13.0
+price = 115306.0
+price_modifier = 328.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 16.0,
+"magic": 18.0,
+"speed": 5.0,
+"strength": 17.0
+},
+"defense": {
+"Earth": 7.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 7.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cqajckfloscxl"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_qyhy8"]
+[ext_resource type="Texture2D" uid="uid://cv8hs8536tu5y" path="res://resources/sprites/M_FOOT_PRIEST.png" id="2_2iko6"]
+
+[resource]
+script = ExtResource("1_qyhy8")
+id = 336.0
+looks = "PRIEST"
+sprite_image = ExtResource("2_2iko6")
+name = "Spirit Slippers"
+display_name = "Spirit Slippers"
+internal_name = "Spirit Slippers"
+tooltip = ""
+tooltipAlt = ["Speed +5", "Instinct +8", "Vitality +2"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 10.0
+price = 237.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 2.0,
+"magic": 8.0,
+"speed": 5.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cnm0ri4bdx4ks"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_j8uid"]
+[ext_resource type="Texture2D" uid="uid://bhxg1qwy5s6x2" path="res://resources/sprites/M_WEAPON_TASER.png" id="2_pl5de"]
+
+[resource]
+script = ExtResource("1_j8uid")
+id = 502.0
+looks = "TASER"
+sprite_image = ExtResource("2_pl5de")
+name = "EMD Blade"
+display_name = "EMD Blade"
+internal_name = "EMD Blade"
+tooltip = "The bastard child of a knife and a taser."
+tooltipAlt = ["Speed +1", "Instinct +5", "Vitality +1", "Lightning Piercing +23"]
+item_type = 8
+rarity = 0
+class_type = 1
+required_level = 4.0
+price = 48.0
+price_modifier = 0.4
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 1.0,
+"magic": 5.0,
+"speed": 1.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 23.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

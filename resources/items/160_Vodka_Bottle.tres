@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://coqkn8vvs1ckg"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_pa3xw"]
+
+[resource]
+script = ExtResource("1_pa3xw")
+id = 160.0
+looks = ""
+name = ""
+display_name = "Vodka Bottle"
+internal_name = "Vodka Bottle"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +9", "Instinct +11", "Strength +6", "Vitality +2", "Lightning Defense +11", "Earth Defense +11"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 8.0
+price = 28850.0
+price_modifier = 85.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 2.0,
+"magic": 11.0,
+"speed": 9.0,
+"strength": 6.0
+},
+"defense": {
+"Earth": 11.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 11.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

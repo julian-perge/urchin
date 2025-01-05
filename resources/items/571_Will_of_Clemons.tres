@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://k3rjm5dr6s6r"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_kw5r3"]
+[ext_resource type="Texture2D" uid="uid://dojcl1akyqi4x" path="res://resources/sprites/M_LEG2_CLEMONS.png" id="2_xxro8"]
+
+[resource]
+script = ExtResource("1_kw5r3")
+id = 571.0
+looks = "CLEMONS"
+sprite_image = ExtResource("2_xxro8")
+name = "Will of Clemons"
+display_name = "Will of Clemons"
+internal_name = "Drop CLEMONS Legs"
+tooltip = ""
+tooltipAlt = ["Instinct +8", "Strength +16", "Vitality +16"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 15.0
+price = 610.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 16.0,
+"magic": 8.0,
+"speed": 0.0,
+"strength": 16.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://5fi63y12pbf7"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_rxuyi"]
+[ext_resource type="Texture2D" uid="uid://b3qdcjy2ir3tb" path="res://resources/sprites/M_FOOT_XADER.png" id="2_n6bww"]
+
+[resource]
+script = ExtResource("1_rxuyi")
+id = 334.0
+looks = "XADER"
+sprite_image = ExtResource("2_n6bww")
+name = "Zealot's Marcher"
+display_name = "Zealot's Marcher"
+internal_name = "Zealot's Marchers"
+tooltip = ""
+tooltipAlt = ["Speed +2", "Instinct +1", "Strength +4", "Vitality +6"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 9.0
+price = 203.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 6.0,
+"magic": 1.0,
+"speed": 2.0,
+"strength": 4.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

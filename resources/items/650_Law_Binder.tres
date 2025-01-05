@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bdv4qmkvdmx4"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_5k6bt"]
+[ext_resource type="Texture2D" uid="uid://qkmvuf5y2u5x" path="res://resources/sprites/M_WEAPON_COUNCILSTAFF.png" id="2_i7t18"]
+
+[resource]
+script = ExtResource("1_5k6bt")
+id = 650.0
+looks = "COUNCILSTAFF"
+sprite_image = ExtResource("2_i7t18")
+name = "Law Binder"
+display_name = "Law Binder"
+internal_name = "STAFF"
+tooltip = ""
+tooltipAlt = ["Speed +21", "Instinct +141", "Vitality +41"]
+item_type = 9
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 2887.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 41.0,
+"magic": 141.0,
+"speed": 21.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

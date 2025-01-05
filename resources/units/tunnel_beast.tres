@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://2b57nshlscsd"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_yg8y2"]
+
+[resource]
+script = ExtResource("1_yg8y2")
+name = "Tunnel Beast"
+vitality = 40.0
+strength = 32.0
+magic = 20.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [[600.0, 0.0]],
+"attack": [126.0, 145.0, 542.0, 424.0],
+"defense": [2.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [150.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [150.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL6", "BEAST", ","],
+"skin": null,
+"voice": {
+"die": "dead_monster",
+"hit": ["hit_monster1", "hit_monster2", "hit_monster3"]
+}
+}

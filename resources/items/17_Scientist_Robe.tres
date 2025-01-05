@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://fi746ca01bsl"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ndcus"]
+[ext_resource type="Texture2D" uid="uid://b6f7xkgs3vgct" path="res://resources/sprites/M_CHEST_MADSCI.png" id="2_k40s6"]
+
+[resource]
+script = ExtResource("1_ndcus")
+id = 17.0
+looks = "MADSCI"
+sprite_image = ExtResource("2_k40s6")
+name = ""
+display_name = "Scientist Robe"
+internal_name = "Scientist Robe"
+tooltip = ""
+tooltipAlt = ["Strength +1", "Vitality +1", "Physical Piercing +2"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 1.0
+price = 11.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 1.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 1.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 2.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

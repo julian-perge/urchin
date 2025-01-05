@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cslhhmksmgbb8"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_tryah"]
+[ext_resource type="Texture2D" uid="uid://cdfnddjwsdvrw" path="res://resources/sprites/M_HAND_POLICE2.png" id="2_cgfnv"]
+
+[resource]
+script = ExtResource("1_tryah")
+id = 634.0
+looks = "POLICE2"
+sprite_image = ExtResource("2_cgfnv")
+name = "Grips of Command"
+display_name = "Grips of Command"
+internal_name = "Drop POLICE2 Hands"
+tooltip = ""
+tooltipAlt = ["Speed +8", "Instinct +28", "Strength +3", "Vitality +11"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 722.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 11.0,
+"magic": 28.0,
+"speed": 8.0,
+"strength": 3.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

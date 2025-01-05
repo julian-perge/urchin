@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://caspqd5qvxysu"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_curuj"]
+[ext_resource type="Texture2D" uid="uid://bdqvdms7vkhmy" path="res://resources/sprites/M_HAND_BLUENIN.png" id="2_8u1c0"]
+
+[resource]
+script = ExtResource("1_curuj")
+id = 671.0
+looks = "BLUENIN"
+sprite_image = ExtResource("2_8u1c0")
+name = "Azure Grips"
+display_name = "Azure Grips"
+internal_name = "Drop BLUE NINJA Hands"
+tooltip = ""
+tooltipAlt = ["Speed +44", "Strength +15", "Vitality +15"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 26.0
+price = 994.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 15.0,
+"magic": 0.0,
+"speed": 44.0,
+"strength": 15.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://03fkfo6u5rp1"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_mf6b2"]
+[ext_resource type="Texture2D" uid="uid://d4fiy357bl3kd" path="res://resources/sprites/M_WEAPON_ICESTICK.png" id="2_beljr"]
+
+[resource]
+script = ExtResource("1_mf6b2")
+id = 519.0
+looks = "ICESTICK"
+sprite_image = ExtResource("2_beljr")
+name = "Icy Maul"
+display_name = "Icy Maul"
+internal_name = "Icy Maul"
+tooltip = ""
+tooltipAlt = ["Instinct +4", "Ice Piercing +61"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 8.0
+price = 339.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 4.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 61.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

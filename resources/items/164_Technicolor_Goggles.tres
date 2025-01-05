@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://c28rte7wpl107"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_vgn0s"]
+
+[resource]
+script = ExtResource("1_vgn0s")
+id = 164.0
+looks = ""
+name = ""
+display_name = "Technicolor Goggles"
+internal_name = "Technicolor Goggles"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +5", "Instinct +5", "Strength +5", "Vitality +5", "Lightning Defense +8", "Earth Defense +8"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 9.0
+price = 40541.0
+price_modifier = 143.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 5.0,
+"magic": 5.0,
+"speed": 5.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 8.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 8.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

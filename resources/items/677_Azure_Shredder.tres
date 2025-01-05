@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://uvuonr6utbks"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_8riul"]
+[ext_resource type="Texture2D" uid="uid://dspl6fpvml45t" path="res://resources/sprites/M_WEAPON_FELKNIFE5.png" id="2_eub0a"]
+
+[resource]
+script = ExtResource("1_8riul")
+id = 677.0
+looks = "FELKNIFE5"
+sprite_image = ExtResource("2_eub0a")
+name = "Azure Shredder"
+display_name = "Azure Shredder"
+internal_name = "KNIFE2"
+tooltip = ""
+tooltipAlt = ["Speed +83", "Physical Piercing +42"]
+item_type = 8
+rarity = 0
+class_type = 1
+required_level = 23.0
+price = 1655.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 83.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 42.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

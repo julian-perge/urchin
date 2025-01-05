@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://b2spx14kykh33"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_fo3k5"]
+
+[resource]
+script = ExtResource("1_fo3k5")
+name = "Metabii"
+vitality = 7.0
+strength = 20.0
+magic = 20.0
+speed = 6.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [132.0],
+"defense": [2.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 100.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 12.0, 0.0],
+"model": ["MODEL1", "METABII", ","],
+"skin": null,
+"voice": {
+"die": "dead_zombie",
+"hit": ["hit_zombie1", "hit_zombie2", "hit_zombie3"]
+}
+}

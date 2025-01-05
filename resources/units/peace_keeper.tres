@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://cas5a0ou1cdm8"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_eaykk"]
+
+[resource]
+script = ExtResource("1_eaykk")
+name = "Peace Keeper"
+vitality = 8.0
+strength = 12.0
+magic = 12.0
+speed = 7.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [732.0, 733.0, 736.0, 731.0, 730.0, 729.0, 19.0, 9.0],
+"defense": [727.0]
+}
+stats = {
+"aggression": [50.0, 50.0, 15.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 647.0, 0.0],
+"model": ["MODEL1", "MAN", "ONE", "M"],
+"skin": "POLICE",
+"voice": {
+"die": "dead_zpci",
+"hit": ["hit_zpci1", "hit_zpci2", "hit_zpci3"]
+}
+}

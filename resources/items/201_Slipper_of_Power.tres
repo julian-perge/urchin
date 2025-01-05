@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://b7r8qyvof7w26"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_nceq6"]
+
+[resource]
+script = ExtResource("1_nceq6")
+id = 201.0
+looks = ""
+name = ""
+display_name = "Slipper of Power"
+internal_name = "Slipper of Power"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +4", "Instinct +16", "Strength +5", "Vitality +19", "Lightning Defense +8", "Earth Defense +8"]
+item_type = 6
+rarity = 2
+class_type = 1
+required_level = 14.0
+price = 147328.0
+price_modifier = 375.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 19.0,
+"magic": 16.0,
+"speed": 4.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 8.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 8.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

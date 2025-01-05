@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://1u4ekvqq8swk"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_h8ypl"]
+[ext_resource type="Texture2D" uid="uid://cfbthuu0prqsc" path="res://resources/sprites/M_CHEST_PRIEST4.png" id="2_trm8d"]
+
+[resource]
+script = ExtResource("1_h8ypl")
+id = 643.0
+looks = "PRIEST4"
+sprite_image = ExtResource("2_trm8d")
+name = "Johnson's Legacy"
+display_name = "Johnson's Legacy"
+internal_name = "Drop MAYOR Chest"
+tooltip = ""
+tooltipAlt = ["Speed +5", "Instinct +71", "Vitality +14", "Fire Defense +45"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 24.0
+price = 1235.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 14.0,
+"magic": 71.0,
+"speed": 5.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 45.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://dirkt1mbhib7d"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_g8f1l"]
+
+[resource]
+script = ExtResource("1_g8f1l")
+id = 140.0
+looks = ""
+name = ""
+display_name = "Visor of Insanity"
+internal_name = "Visor of Insanity"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +6", "Instinct +6", "Strength +2", "Vitality +2", "Lightning Defense +7", "Earth Defense +7"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 6.0
+price = 6173.0
+price_modifier = 40.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 2.0,
+"magic": 6.0,
+"speed": 6.0,
+"strength": 2.0
+},
+"defense": {
+"Earth": 7.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 7.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

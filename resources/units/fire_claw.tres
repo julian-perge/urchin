@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://djgr8gedevvhy"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_0iq5i"]
+
+[resource]
+script = ExtResource("1_0iq5i")
+name = "Fire Claw"
+vitality = 15.0
+strength = 8.0
+magic = 8.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [629.0],
+"defense": [1.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 15.0, 15.0],
+"defense": [180.0, 450.0, 20.0, 450.0, 20.0, 450.0, 450.0, 15.0],
+"piercing": [100.0, 100.0, 100.0, 150.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [],
+"model": ["MODEL8", "HYDRA2", ","],
+"skin": null,
+"voice": {
+"die": "dead_monster",
+"hit": ["hit_monster1", "hit_monster2", "hit_monster3"]
+}
+}

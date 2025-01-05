@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://b3embbwktif3j"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_eleaw"]
+
+[resource]
+script = ExtResource("1_eleaw")
+name = "Priest"
+vitality = 15.0
+strength = 1.0
+magic = 15.0
+speed = 13.0
+focus = 150.0
+moves = {
+"absolute": [],
+"attack": [515.0, 513.0, 514.0],
+"defense": [512.0, 511.0]
+}
+stats = {
+"aggression": [50.0, 90.0, 70.0, 50.0, 20.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 518.0, 0.0],
+"model": ["MODEL1", "MAN", ","],
+"skin": "PRIEST",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

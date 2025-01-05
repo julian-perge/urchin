@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=3 uid="uid://cle8w8ur6fdo5"]
+
+[ext_resource type="Script" path="res://scenes/button_hover.gd" id="1_ro8fx"]
+[ext_resource type="Shader" path="res://scenes/button.gdshader" id="2_vt3fn"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vmjjs"]
+shader = ExtResource("2_vt3fn")
+shader_parameter/hpass = 1.0
+shader_parameter/vpass = 1.0
+shader_parameter/radius = 65
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="Button" type="Control" parent="."]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -2992.0
+offset_bottom = -1592.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
+script = ExtResource("1_ro8fx")
+
+[node name="TextureRect" type="ColorRect" parent="Button"]
+material = SubResource("ShaderMaterial_vmjjs")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.777832, 0, 0.260205, 1)

@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://dreq1t5kgmhhq"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_0fyx2"]
+
+[resource]
+script = ExtResource("1_0fyx2")
+name = "Phantom"
+vitality = 12.0
+strength = 5.0
+magic = 15.0
+speed = 12.0
+focus = 100.0
+moves = {
+"absolute": [[452.0, 0.0]],
+"attack": [403.0, 436.0, 2.0],
+"defense": [576.0, 425.0]
+}
+stats = {
+"aggression": [50.0, 70.0, 50.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL1", "PSYCHO", ","],
+"skin": " ",
+"voice": {
+"die": "dead_twisted",
+"hit": ["hit_twisted1", "hit_twisted2", "hit_twisted3"]
+}
+}

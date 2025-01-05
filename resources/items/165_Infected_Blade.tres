@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bpuiw6pbtqfe2"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_staou"]
+
+[resource]
+script = ExtResource("1_staou")
+id = 165.0
+looks = ""
+name = ""
+display_name = "Infected Blade"
+internal_name = "Infected Blade"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +6", "Instinct +6", "Strength +18", "Vitality +6", "Lightning Defense +12", "Earth Defense +12"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 9.0
+price = 60345.0
+price_modifier = 149.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 6.0,
+"magic": 6.0,
+"speed": 6.0,
+"strength": 18.0
+},
+"defense": {
+"Earth": 12.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 12.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://deqka71g2mhyt"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_04fhj"]
+[ext_resource type="Texture2D" uid="uid://dqfddsa3a64si" path="res://resources/sprites/M_CHEST_JASON3.png" id="2_j3ovk"]
+
+[resource]
+script = ExtResource("1_04fhj")
+id = 509.0
+looks = "JASON3"
+sprite_image = ExtResource("2_j3ovk")
+name = "Voltage Cage"
+display_name = "Voltage Cage"
+internal_name = "Voltage Cage"
+tooltip = ""
+tooltipAlt = ["Instinct +3", "Vitality +4"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 3.0
+price = 22.0
+price_modifier = 0.4
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 4.0,
+"magic": 3.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

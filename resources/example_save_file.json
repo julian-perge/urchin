@@ -1,0 +1,843 @@
+{
+  "nameUser": "Lvl 12 Gunslinger",
+  "topDamageElemental": 205,
+  "topDamagePhysical": 49,
+  "numberOfTrainingUsed": 9,
+  "numberOfRespecUsed": 0,
+  "highestZoneDefeated": 2,
+  "LIFE": 35,
+  "SPEED": 40,
+  "FOCUS": 160,
+  "MAGIC": 92,
+  "STRENGTH": 18,
+  "Exp": 0,
+  "statPoints": 0,
+  "skillPoints": 0,
+  "Level": 12,
+  "Class": 3,
+  "Euro": 834,
+  "progressLevelOn": 35,
+  "sectionIn": 2,
+  "sound": true,
+  "graphics": false,
+  "autoSaver": true,
+  "qual": "LOW",
+  "lastDay1": {
+	"type": "Undefined"
+  },
+  "lastDay2": {
+	"type": "Undefined"
+  },
+  "respecSet": {
+	"type": "Undefined"
+  },
+  "PER": {
+	"type": "Object",
+	"members": {
+	  "Physical": 85
+	}
+  },
+  "DEF": {
+	"type": "Object",
+	"members": {
+	  "Physical": 131
+	}
+  },
+  "ClassStats": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "5": 4,
+	  "4": 2,
+	  "3": 1,
+	  "2": 3,
+	  "1": 5,
+	  "0": 4
+	},
+	"associativeValues": {
+
+	}
+  },
+  "ExpSets": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 45.9287239199939,
+	  "0": 45.9287239199939
+	},
+	"associativeValues": {
+
+	}
+  },
+  "friendArrayX": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "1": 2,
+	  "0": 1
+	},
+	"associativeValues": {
+
+	}
+  },
+  "StatSets4": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "StatSets3": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "StatSets2": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "StatSets1": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "4": 0,
+	  "3": 37,
+	  "2": 18,
+	  "1": 26,
+	  "0": 18
+	},
+	"associativeValues": {
+
+	}
+  },
+  "StatSets0": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "4": 60,
+	  "3": 11,
+	  "2": 50,
+	  "1": 18,
+	  "0": 13
+	},
+	"associativeValues": {
+
+	}
+  },
+  "StatSets5": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "DefSets5": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "DefSets4": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "DefSets3": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "DefSets2": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "DefSets1": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "DefSets0": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 46,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 46
+	},
+	"associativeValues": {
+
+	}
+  },
+  "PerSets5": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "PerSets4": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "PerSets3": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "PerSets2": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "PerSets1": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 17,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 78
+	},
+	"associativeValues": {
+
+	}
+  },
+  "PerSets0": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 77,
+	  "3": 0,
+	  "2": 40,
+	  "1": 45,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "equipArray5": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "equipArray4": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "equipArray3": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "equipArray2": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "equipArray1": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "6": 0,
+	  "5": 31,
+	  "4": 58,
+	  "3": 47,
+	  "2": 46,
+	  "1": 45,
+	  "0": 44
+	},
+	"associativeValues": {
+
+	}
+  },
+  "equipArray0": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "6": 0,
+	  "5": 78,
+	  "4": 68,
+	  "3": 52,
+	  "2": 51,
+	  "1": 50,
+	  "0": 54
+	},
+	"associativeValues": {
+
+	}
+  },
+  "LevelStats": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "5": 12,
+	  "4": 12,
+	  "3": 12,
+	  "2": 12,
+	  "1": 12,
+	  "0": 12
+	},
+	"associativeValues": {
+
+	}
+  },
+  "friendArray": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "5": -1,
+	  "4": -1,
+	  "3": -1,
+	  "2": -1,
+	  "1": 1,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "itemArray": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "36": 0,
+	  "35": 63,
+	  "34": 38,
+	  "33": 37,
+	  "32": 36,
+	  "31": 35,
+	  "30": 34,
+	  "29": 60,
+	  "28": 63,
+	  "27": 0,
+	  "26": 0,
+	  "25": 0,
+	  "24": 0,
+	  "23": 59,
+	  "22": 0,
+	  "21": 51,
+	  "20": 0,
+	  "19": 76,
+	  "18": 9,
+	  "17": 51,
+	  "16": 56,
+	  "15": 66,
+	  "14": 40,
+	  "13": 45,
+	  "12": 8,
+	  "11": 47,
+	  "10": 50,
+	  "9": 65,
+	  "8": 17,
+	  "7": 53,
+	  "6": 4,
+	  "5": 57,
+	  "4": 50,
+	  "3": 67,
+	  "2": 15,
+	  "1": 13,
+	  "0": 5
+	},
+	"associativeValues": {
+
+	}
+  },
+  "buffAdderMatrix": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "37": 0,
+	  "36": 0,
+	  "35": 0,
+	  "34": 0,
+	  "33": 0,
+	  "32": 0,
+	  "31": 0,
+	  "30": 0,
+	  "29": 0,
+	  "28": 0,
+	  "27": 0,
+	  "26": 0,
+	  "25": 0,
+	  "24": 0,
+	  "23": 0,
+	  "22": 0,
+	  "21": 0,
+	  "20": 0,
+	  "19": 0,
+	  "18": 0,
+	  "17": 0,
+	  "16": 0,
+	  "15": 0,
+	  "14": 0,
+	  "13": 0,
+	  "12": 0,
+	  "11": 0,
+	  "10": 0,
+	  "9": 0,
+	  "8": 0,
+	  "7": 0,
+	  "6": "REGENERATION4",
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "skillAdderMatrixOld": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "37": 0,
+	  "36": 0,
+	  "35": 0,
+	  "34": 0,
+	  "33": 0,
+	  "32": 0,
+	  "31": 0,
+	  "30": 0,
+	  "29": 0,
+	  "28": 0,
+	  "27": 0,
+	  "26": 0,
+	  "25": 0,
+	  "24": 0,
+	  "23": 0,
+	  "22": 0,
+	  "21": 0,
+	  "20": 0,
+	  "19": 0,
+	  "18": 0,
+	  "17": 0,
+	  "16": 0,
+	  "15": 0,
+	  "14": 0,
+	  "13": 0,
+	  "12": 0,
+	  "11": 0,
+	  "10": 0,
+	  "9": 0,
+	  "8": 0,
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "skillAdderMatrix": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "37": 0,
+	  "36": 0,
+	  "35": 0,
+	  "34": 0,
+	  "33": 0,
+	  "32": 0,
+	  "31": 0,
+	  "30": 0,
+	  "29": 0,
+	  "28": 0,
+	  "27": 0,
+	  "26": 0,
+	  "25": 100,
+	  "24": 97,
+	  "23": 96,
+	  "22": 0,
+	  "21": 0,
+	  "20": 71,
+	  "19": 0,
+	  "18": 0,
+	  "17": 0,
+	  "16": 0,
+	  "15": 0,
+	  "14": 0,
+	  "13": 0,
+	  "12": 0,
+	  "11": 0,
+	  "10": 0,
+	  "9": 0,
+	  "8": 0,
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 13,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "talentMainArray": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "37": 0,
+	  "36": 0,
+	  "35": 0,
+	  "34": 0,
+	  "33": 0,
+	  "32": 0,
+	  "31": 0,
+	  "30": 0,
+	  "29": 0,
+	  "28": 0,
+	  "27": 0,
+	  "26": 0,
+	  "25": 1,
+	  "24": 1,
+	  "23": 3,
+	  "22": 0,
+	  "21": 0,
+	  "20": 1,
+	  "19": 0,
+	  "18": 0,
+	  "17": 0,
+	  "16": 0,
+	  "15": 0,
+	  "14": 0,
+	  "13": 0,
+	  "12": 0,
+	  "11": 0,
+	  "10": 0,
+	  "9": 0,
+	  "8": 0,
+	  "7": 0,
+	  "6": 4,
+	  "5": 0,
+	  "4": 1,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  },
+  "moveMatrix2Limit": {
+	"type": "EcmaArray",
+	"denseValues": {
+
+	},
+	"associativeValues": {
+
+	}
+  },
+  "moveMatrix2": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "6": 13,
+	  "5": 71,
+	  "4": 96,
+	  "3": 97,
+	  "2": 100,
+	  "1": 70,
+	  "0": 69
+	},
+	"associativeValues": {
+
+	}
+  },
+  "moveMatrix": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 13,
+	  "6": 97,
+	  "5": 97,
+	  "4": 96,
+	  "3": 71,
+	  "2": 100,
+	  "1": 100,
+	  "0": 70
+	},
+	"associativeValues": {
+
+	}
+  },
+  "agMode": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "5": 2,
+	  "4": 2,
+	  "3": 2,
+	  "2": 2,
+	  "1": 2,
+	  "0": 2
+	},
+	"associativeValues": {
+
+	}
+  },
+  "agArray5": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "3": 55,
+	  "2": 78,
+	  "1": 88,
+	  "0": 25
+	},
+	"associativeValues": {
+
+	}
+  },
+  "agArray4": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "3": 55,
+	  "2": 78,
+	  "1": 88,
+	  "0": 25
+	},
+	"associativeValues": {
+
+	}
+  },
+  "agArray3": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "3": 55,
+	  "2": 78,
+	  "1": 88,
+	  "0": 25
+	},
+	"associativeValues": {
+
+	}
+  },
+  "agArray2": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "3": 55,
+	  "2": 78,
+	  "1": 88,
+	  "0": 25
+	},
+	"associativeValues": {
+
+	}
+  },
+  "agArray1": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "3": 55,
+	  "2": 78,
+	  "1": 88,
+	  "0": 25
+	},
+	"associativeValues": {
+
+	}
+  },
+  "agArray0": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "3": 55,
+	  "2": 78,
+	  "1": 88,
+	  "0": 25
+	},
+	"associativeValues": {
+
+	}
+  },
+  "bgElementsInteracted": {
+	"type": "EcmaArray",
+	"denseValues": {
+	  "7": 0,
+	  "6": 0,
+	  "5": 0,
+	  "4": 0,
+	  "3": 0,
+	  "2": 0,
+	  "1": 0,
+	  "0": 0
+	},
+	"associativeValues": {
+
+	}
+  }
+}

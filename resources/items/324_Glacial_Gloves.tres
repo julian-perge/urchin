@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dwy4qma2bvhei"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_sokcl"]
+[ext_resource type="Texture2D" uid="uid://cbfr4v3jltq4l" path="res://resources/sprites/M_HAND_FROSTPLATE.png" id="2_bmi26"]
+
+[resource]
+script = ExtResource("1_sokcl")
+id = 324.0
+looks = "FROSTPLATE"
+sprite_image = ExtResource("2_bmi26")
+name = "Glacial Gloves"
+display_name = "Glacial Gloves"
+internal_name = "Glacial Gloves"
+tooltip = ""
+tooltipAlt = ["Speed +4", "Instinct +3", "Strength +3", "Vitality +1", "Ice Piercing +4"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 8.0
+price = 170.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 1.0,
+"magic": 3.0,
+"speed": 4.0,
+"strength": 3.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 4.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bbn070gunsy47"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_h13uu"]
+[ext_resource type="Texture2D" uid="uid://ymkb4vrctpk2" path="res://resources/sprites/M_LEG2_TUNNELSET1.png" id="2_0io04"]
+
+[resource]
+script = ExtResource("1_h13uu")
+id = 586.0
+looks = "TUNNELSET1"
+sprite_image = ExtResource("2_0io04")
+name = "Acidic Leggings"
+display_name = "Acidic Leggings"
+internal_name = "Drop IRONGUARD Legs"
+tooltip = ""
+tooltipAlt = ["Speed +5", "Strength +20", "Vitality +25", "Poison Piercing +6"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 17.0
+price = 736.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 25.0,
+"magic": 0.0,
+"speed": 5.0,
+"strength": 20.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 6.0,
+"Shadow": 0.0
+}
+}

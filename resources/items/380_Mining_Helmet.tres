@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://n5vc7npv63xk"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6l2g2"]
+[ext_resource type="Texture2D" uid="uid://byvgcl8flxtrd" path="res://resources/sprites/M_HEAD_WORKER.png" id="2_2unpb"]
+
+[resource]
+script = ExtResource("1_6l2g2")
+id = 380.0
+looks = "WORKER"
+sprite_image = ExtResource("2_2unpb")
+name = "Mining Helmet"
+display_name = "Mining Helmet"
+internal_name = "Mining Helmet"
+tooltip = ""
+tooltipAlt = ["Speed +9", "Instinct +3", "Strength +17", "Vitality +28", "Physical Defense +125"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 18.0
+price = 160.0
+price_modifier = 0.2
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 28.0,
+"magic": 3.0,
+"speed": 9.0,
+"strength": 17.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 125.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

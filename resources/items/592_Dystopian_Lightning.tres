@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c1afe2kqv1b67"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_klcc3"]
+[ext_resource type="Texture2D" uid="uid://bnstbjwqbu12r" path="res://resources/sprites/M_FOOT_CLEMONS2.png" id="2_p7qre"]
+
+[resource]
+script = ExtResource("1_klcc3")
+id = 592.0
+looks = "CLEMONS2"
+sprite_image = ExtResource("2_p7qre")
+name = "Dystopian Lightning"
+display_name = "Dystopian Lightning"
+internal_name = "Drop EMPEROR Feet"
+tooltip = ""
+tooltipAlt = ["Speed +13", "Instinct +18", "Vitality +6", "Lightning Piercing +5"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 17.0
+price = 526.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 6.0,
+"magic": 18.0,
+"speed": 13.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 5.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

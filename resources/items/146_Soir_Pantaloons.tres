@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://y12aje74y06f"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_gjm68"]
+
+[resource]
+script = ExtResource("1_gjm68")
+id = 146.0
+looks = ""
+name = ""
+display_name = "Soir Pantaloons"
+internal_name = "Soir Pantaloons"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +6", "Instinct +9", "Strength +6", "Vitality +3", "Lightning Defense +8", "Earth Defense +8"]
+item_type = 5
+rarity = 1
+class_type = 1
+required_level = 7.0
+price = 14196.0
+price_modifier = 73.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 3.0,
+"magic": 9.0,
+"speed": 6.0,
+"strength": 6.0
+},
+"defense": {
+"Earth": 8.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 8.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

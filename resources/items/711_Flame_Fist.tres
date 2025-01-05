@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://874m3sg00k1f"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_5bpfl"]
+[ext_resource type="Texture2D" uid="uid://dn2a7sxnmyygx" path="res://resources/sprites/M_HAND_FIRESAM.png" id="2_3qi6c"]
+
+[resource]
+script = ExtResource("1_5bpfl")
+id = 711.0
+looks = "FIRESAM"
+sprite_image = ExtResource("2_3qi6c")
+name = "Flame Fist"
+display_name = "Flame Fist"
+internal_name = "Drop FIRESAM Hands"
+tooltip = ""
+tooltipAlt = ["Speed +26", "Instinct +9", "Strength +34", "Vitality +26", "Fire Piercing +20"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1111.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 26.0,
+"magic": 9.0,
+"speed": 26.0,
+"strength": 34.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 20.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

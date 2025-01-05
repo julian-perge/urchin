@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://sw08n2g5ty3y"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_eyiev"]
+
+[resource]
+script = ExtResource("1_eyiev")
+id = 193.0
+looks = ""
+name = ""
+display_name = "Commander's Cap"
+internal_name = "Commander's Cap"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +23", "Instinct +24", "Strength +23", "Vitality +6", "Lightning Defense +10", "Earth Defense +10"]
+item_type = 2
+rarity = 2
+class_type = 1
+required_level = 13.0
+price = 164381.0
+price_modifier = 334.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 6.0,
+"magic": 24.0,
+"speed": 23.0,
+"strength": 23.0
+},
+"defense": {
+"Earth": 10.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 10.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://bel822nqqxtye"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_kaq21"]
+
+[resource]
+script = ExtResource("1_kaq21")
+name = "The Warden"
+vitality = 30.0
+strength = 50.0
+magic = 10.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [[11.0, 1.0], [12.0, 2.0], [13.0, 2.0], [14.0, 3.0]],
+"attack": [15.0],
+"defense": [2.0]
+}
+stats = {
+"aggression": [50.0, 61.0, 60.0, 65.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 504.0, 0.0],
+"model": ["MODEL1", "MAN", ","],
+"skin": "JASON2",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

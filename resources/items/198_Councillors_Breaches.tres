@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://dh1v27lk1ld8e"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_0x6u0"]
+
+[resource]
+script = ExtResource("1_0x6u0")
+id = 198.0
+looks = ""
+name = ""
+display_name = "Councillor's Breaches"
+internal_name = "Councillor's Breaches"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +8", "Instinct +26", "Strength +5", "Vitality +23", "Lightning Defense +10", "Earth Defense +10"]
+item_type = 5
+rarity = 2
+class_type = 1
+required_level = 13.0
+price = 155522.0
+price_modifier = 316.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 23.0,
+"magic": 26.0,
+"speed": 8.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 10.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 10.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

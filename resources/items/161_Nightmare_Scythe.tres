@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cwqsl3qanbqub"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_y2xpb"]
+
+[resource]
+script = ExtResource("1_y2xpb")
+id = 161.0
+looks = ""
+name = ""
+display_name = "Nightmare Scythe"
+internal_name = "Nightmare Scythe"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +21", "Instinct +26", "Strength +28", "Vitality +19", "Lightning Defense +24", "Earth Defense +24"]
+item_type = 9
+rarity = 1
+class_type = 1
+required_level = 9.0
+price = 127170.0
+price_modifier = 157.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 19.0,
+"magic": 26.0,
+"speed": 21.0,
+"strength": 28.0
+},
+"defense": {
+"Earth": 24.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 24.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

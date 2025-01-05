@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c7pr8mpb5yrjp"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ugggl"]
+[ext_resource type="Texture2D" uid="uid://dk0uhfurroo40" path="res://resources/sprites/M_WEAPON_SWORD1.png" id="2_5p5jn"]
+
+[resource]
+script = ExtResource("1_ugggl")
+id = 599.0
+looks = "SWORD1"
+sprite_image = ExtResource("2_5p5jn")
+name = "Burk's Precision"
+display_name = "Burk's Precision"
+internal_name = "SWORD"
+tooltip = "The eye patch should be somewhere around here too..."
+tooltipAlt = ["Speed +26", "Instinct +11", "Strength +51", "Vitality +16"]
+item_type = 9
+rarity = 0
+class_type = 1
+required_level = 16.0
+price = 1920.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 16.0,
+"magic": 11.0,
+"speed": 26.0,
+"strength": 51.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

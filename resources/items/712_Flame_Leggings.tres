@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dqntfkvum6xjl"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_7dt8v"]
+[ext_resource type="Texture2D" uid="uid://dgyb1pkp2uv33" path="res://resources/sprites/M_LEG2_FIRESAM.png" id="2_3kjod"]
+
+[resource]
+script = ExtResource("1_7dt8v")
+id = 712.0
+looks = "FIRESAM"
+sprite_image = ExtResource("2_3kjod")
+name = "Flame Leggings"
+display_name = "Flame Leggings"
+internal_name = "Drop FIRESAM Legs"
+tooltip = ""
+tooltipAlt = ["Speed +36", "Instinct +12", "Strength +47", "Vitality +36", "Fire Piercing +28"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1556.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 36.0,
+"magic": 12.0,
+"speed": 36.0,
+"strength": 47.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 28.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

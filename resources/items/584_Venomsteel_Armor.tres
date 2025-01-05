@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://1g0lnf2tkhml"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_yb3tb"]
+[ext_resource type="Texture2D" uid="uid://donxc7msgdp0e" path="res://resources/sprites/M_CHEST_TUNNELSET1.png" id="2_m2nfr"]
+
+[resource]
+script = ExtResource("1_yb3tb")
+id = 584.0
+looks = "TUNNELSET1"
+sprite_image = ExtResource("2_m2nfr")
+name = "Venomsteel Armor"
+display_name = "Venomsteel Armor"
+internal_name = "Drop IRONGUARD Chest"
+tooltip = ""
+tooltipAlt = ["Speed +6", "Strength +11", "Vitality +38", "Poison Piercing +7"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 18.0
+price = 802.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 38.0,
+"magic": 0.0,
+"speed": 6.0,
+"strength": 11.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 7.0,
+"Shadow": 0.0
+}
+}

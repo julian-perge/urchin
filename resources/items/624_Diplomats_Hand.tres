@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dovjdt5pug8o"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_4lthl"]
+[ext_resource type="Texture2D" uid="uid://bu75b3a6kgluk" path="res://resources/sprites/M_HAND_PRIEST3.png" id="2_6fr2i"]
+
+[resource]
+script = ExtResource("1_4lthl")
+id = 624.0
+looks = "PRIEST3"
+sprite_image = ExtResource("2_6fr2i")
+name = "Diplomat's Hand"
+display_name = "Diplomat's Hand"
+internal_name = "Drop COUNCIL Hands"
+tooltip = ""
+tooltipAlt = ["Speed +11", "Instinct +38", "Vitality +6", "Lightning Defense +20"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 22.0
+price = 774.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 6.0,
+"magic": 38.0,
+"speed": 11.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 20.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bgbudg343jjex"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_5cu7g"]
+[ext_resource type="Texture2D" uid="uid://0s6pmq70vesu" path="res://resources/sprites/M_FOOT_SAMURAI2.png" id="2_or0k2"]
+
+[resource]
+script = ExtResource("1_5cu7g")
+id = 547.0
+looks = "SAMURAI2"
+sprite_image = ExtResource("2_or0k2")
+name = "Ornate Greaves"
+display_name = "Ornate Greaves"
+internal_name = "Drop Samurai Feet"
+tooltip = ""
+tooltipAlt = ["Speed +3", "Instinct +2", "Strength +15", "Vitality +7"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 14.0
+price = 393.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 7.0,
+"magic": 2.0,
+"speed": 3.0,
+"strength": 15.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

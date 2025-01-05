@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cnxc1hj4oql70"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_bcmwx"]
+[ext_resource type="Texture2D" uid="uid://cm2nluj10k1gf" path="res://resources/sprites/M_LEG2_ULTI3.png" id="2_4okhb"]
+
+[resource]
+script = ExtResource("1_bcmwx")
+id = 692.0
+looks = "ULTI3"
+sprite_image = ExtResource("2_4okhb")
+name = "Velocious Legplates"
+display_name = "Velocious Legplates"
+internal_name = "Drop ULTI3 Legs"
+tooltip = ""
+tooltipAlt = ["Speed +59", "Instinct +12", "Strength +12", "Vitality +36"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1556.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 36.0,
+"magic": 12.0,
+"speed": 59.0,
+"strength": 12.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

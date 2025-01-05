@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cfdp3acvqnt3w"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_f5h68"]
+
+[resource]
+script = ExtResource("1_f5h68")
+id = 151.0
+looks = ""
+name = ""
+display_name = "Ghostly Gloves"
+internal_name = "Ghostly Gloves"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +6", "Instinct +6", "Strength +3", "Vitality +3", "Lightning Defense +5", "Earth Defense +5"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 7.0
+price = 11529.0
+price_modifier = 83.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 3.0,
+"magic": 6.0,
+"speed": 6.0,
+"strength": 3.0
+},
+"defense": {
+"Earth": 5.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 5.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

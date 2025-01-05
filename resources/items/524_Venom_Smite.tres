@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://diddifv0yc3i2"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_2caad"]
+[ext_resource type="Texture2D" uid="uid://cgebv0eaqkln7" path="res://resources/sprites/M_WEAPON_BROAD.png" id="2_jxvx0"]
+
+[resource]
+script = ExtResource("1_2caad")
+id = 524.0
+looks = "BROAD"
+sprite_image = ExtResource("2_jxvx0")
+name = "Venom Smite"
+display_name = "Venom Smite"
+internal_name = "Venom Smite"
+tooltip = ""
+tooltipAlt = ["Instinct +3", "Strength +19", "Vitality +12", "Poison Piercing +48"]
+item_type = 9
+rarity = 0
+class_type = 1
+required_level = 9.0
+price = 810.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 12.0,
+"magic": 3.0,
+"speed": 0.0,
+"strength": 19.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 48.0,
+"Shadow": 0.0
+}
+}

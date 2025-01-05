@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dq76iig35e5sx"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_rw7yb"]
+[ext_resource type="Texture2D" uid="uid://b3adqg1l4ruie" path="res://resources/sprites/M_FOOT_SAMURAI4.png" id="2_i3ex8"]
+
+[resource]
+script = ExtResource("1_rw7yb")
+id = 537.0
+looks = "SAMURAI4"
+sprite_image = ExtResource("2_i3ex8")
+name = "Misted Greaves"
+display_name = "Misted Greaves"
+internal_name = "Vendor Samurai Feet"
+tooltip = ""
+tooltipAlt = ["Instinct +3", "Strength +3", "Vitality +17"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 13.0
+price = 352.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 17.0,
+"magic": 3.0,
+"speed": 0.0,
+"strength": 3.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

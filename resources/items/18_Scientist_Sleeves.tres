@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://oedt2o6st4p5"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_8mlcc"]
+[ext_resource type="Texture2D" uid="uid://sper3uvlptby" path="res://resources/sprites/M_HAND_MADSCI.png" id="2_y28sg"]
+
+[resource]
+script = ExtResource("1_8mlcc")
+id = 18.0
+looks = "MADSCI"
+sprite_image = ExtResource("2_y28sg")
+name = ""
+display_name = "Scientist Sleeves"
+internal_name = "Scientist Sleeves"
+tooltip = ""
+tooltipAlt = ["Strength +1", "Vitality +1", "Physical Piercing +1"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 1.0
+price = 8.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 1.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 1.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 1.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://pb4h2tgsgkv1"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_5p4pi"]
+[ext_resource type="Texture2D" uid="uid://bqc6ono8uptjl" path="res://resources/sprites/M_CHEST_PRISON.png" id="2_duk3p"]
+
+[resource]
+script = ExtResource("1_5p4pi")
+id = 306.0
+looks = "PRISON"
+sprite_image = ExtResource("2_duk3p")
+name = "Prison Shirt XXS"
+display_name = "Prison Shirt XXS"
+internal_name = "Standard Shirt. XL"
+tooltip = ""
+tooltipAlt = ["Speed +1", "Strength +2", "Vitality +3"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 2.0
+price = 30.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 3.0,
+"magic": 0.0,
+"speed": 1.0,
+"strength": 2.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

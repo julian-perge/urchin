@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://cpu5s0jpxshxk"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_21cdh"]
+
+[resource]
+script = ExtResource("1_21cdh")
+name = "Prison Guard"
+vitality = 10.0
+strength = 10.0
+magic = 5.0
+speed = 12.0
+focus = 100.0
+moves = {
+"absolute": [[523.0, 0.0], [15.0, 0.0]],
+"attack": [2.0],
+"defense": [506.0]
+}
+stats = {
+"aggression": [50.0, 60.0, 35.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 14.0, 0.0],
+"model": ["MODEL1", "MAN", ","],
+"skin": "JASON",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

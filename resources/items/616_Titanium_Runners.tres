@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://jctx3g15c6fb"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_nivha"]
+[ext_resource type="Texture2D" uid="uid://bj7rkea7s1cec" path="res://resources/sprites/M_FOOT_ROBOT.png" id="2_0v4vb"]
+
+[resource]
+script = ExtResource("1_nivha")
+id = 616.0
+looks = "ROBOT"
+sprite_image = ExtResource("2_0v4vb")
+name = "Titanium Runners"
+display_name = "Titanium Runners"
+internal_name = "Drop ROBOT Feet"
+tooltip = ""
+tooltipAlt = ["Speed +3", "Instinct +8", "Vitality +41"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 722.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 41.0,
+"magic": 8.0,
+"speed": 3.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

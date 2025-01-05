@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bh28wfy2087uv"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_dd0jq"]
+[ext_resource type="Texture2D" uid="uid://c8dof0tjfi1ax" path="res://resources/sprites/M_WEAPON_DOCKNIFE.png" id="2_kpl7h"]
+
+[resource]
+script = ExtResource("1_dd0jq")
+id = 501.0
+looks = "DOCKNIFE"
+sprite_image = ExtResource("2_kpl7h")
+name = "Surgery Blade"
+display_name = "Surgery Blade"
+internal_name = "Surgery Blade"
+tooltip = "A surgery blade this big... What kind of monster were they operating on?"
+tooltipAlt = ["Speed +5", "Instinct +3", "Strength +3", "Vitality +2"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 3.0
+price = 78.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 2.0,
+"magic": 3.0,
+"speed": 5.0,
+"strength": 3.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

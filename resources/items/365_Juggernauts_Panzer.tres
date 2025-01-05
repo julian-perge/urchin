@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b6cebeciy1b0u"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6u02n"]
+[ext_resource type="Texture2D" uid="uid://bbtvd63tcn73o" path="res://resources/sprites/M_CHEST_HUNT.png" id="2_ru0cx"]
+
+[resource]
+script = ExtResource("1_6u02n")
+id = 365.0
+looks = "HUNT"
+sprite_image = ExtResource("2_ru0cx")
+name = "Juggernaut's Panzer"
+display_name = "Juggernaut's Panzer"
+internal_name = "Juggernaut's Panzer"
+tooltip = ""
+tooltipAlt = ["Speed +4", "Instinct +2", "Strength +7", "Vitality +15"]
+item_type = 3
+rarity = 2
+class_type = 1
+required_level = 11.0
+price = 383.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 15.0,
+"magic": 2.0,
+"speed": 4.0,
+"strength": 7.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

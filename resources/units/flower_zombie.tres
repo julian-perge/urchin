@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://bw4itylljsb5d"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_qthew"]
+
+[resource]
+script = ExtResource("1_qthew")
+name = "Flower Zombie"
+vitality = 30.0
+strength = 35.0
+magic = 35.0
+speed = 13.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [604.0, 605.0, 606.0, 607.0, 608.0, 609.0, 610.0],
+"defense": [2.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 30.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [33.0, 26.0, 0.0, 32.0, 32.0, 5.0, 0.0],
+"model": ["MODEL1", "ZOMBIE1", "ONE", "M"],
+"skin": null,
+"voice": {
+"die": "dead_sonny",
+"hit": ["hit_sonny1", "hit_sonny2", "hit_sonny3"]
+}
+}

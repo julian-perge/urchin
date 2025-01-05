@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://dbqdg5lgbgnfs"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_kjtyb"]
+
+[resource]
+script = ExtResource("1_kjtyb")
+name = "Clemons The Deceiver"
+vitality = 70.0
+strength = 27.0
+magic = 27.0
+speed = 10.0
+focus = 300.0
+moves = {
+"absolute": [[559.0, 1.0], [563.0, 2.0], [564.0, 2.0], [562.0, 2.0], [566.0, 3.0], [578.0, 3.0], [565.0, 3.0]],
+"attack": [580.0, 459.0, 436.0],
+"defense": [2.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [130.0, 130.0, 130.0, 130.0, 130.0, 130.0, 130.0, 130.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 565.0, 566.0],
+"model": ["MODEL1", "GHOST", "ONE", "M"],
+"skin": "CLEMONS",
+"voice": {
+"die": "dead_zombie",
+"hit": ["hit_zombie1", "hit_zombie2", "hit_zombie3"]
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://mo8gcups0u2i"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_wrrk6"]
+[ext_resource type="Texture2D" uid="uid://b6cfev6j2knio" path="res://resources/sprites/M_CHEST_POLICE2.png" id="2_cambv"]
+
+[resource]
+script = ExtResource("1_wrrk6")
+id = 633.0
+looks = "POLICE2"
+sprite_image = ExtResource("2_cambv")
+name = "Field Armor"
+display_name = "Field Armor"
+internal_name = "Drop POLICE2 Chest"
+tooltip = ""
+tooltipAlt = ["Speed +16", "Instinct +27", "Strength +12", "Vitality +23"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 22.0
+price = 1083.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 23.0,
+"magic": 27.0,
+"speed": 16.0,
+"strength": 12.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

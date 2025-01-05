@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://53idb1pt65um"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_hd7n6"]
+[ext_resource type="Texture2D" uid="uid://cl88hq1jl4oyb" path="res://resources/sprites/M_WEAPON_SHANK.png" id="2_sm5ek"]
+
+[resource]
+script = ExtResource("1_hd7n6")
+id = 566.0
+looks = "SHANK"
+sprite_image = ExtResource("2_sm5ek")
+name = "Demon Blade"
+display_name = "Demon Blade"
+internal_name = "Demon Blade"
+tooltip = ""
+tooltipAlt = ["Speed +8", "Vitality +8", "Physical Piercing +71"]
+item_type = 8
+rarity = 0
+class_type = 1
+required_level = 14.0
+price = 786.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 8.0,
+"magic": 0.0,
+"speed": 8.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 71.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

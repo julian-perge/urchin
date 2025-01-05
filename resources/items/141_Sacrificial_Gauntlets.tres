@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://def6kqk3elt6f"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_mcqdj"]
+
+[resource]
+script = ExtResource("1_mcqdj")
+id = 141.0
+looks = ""
+name = ""
+display_name = "Sacrificial Gauntlets"
+internal_name = "Sacrificial Gauntlets"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +2", "Instinct +6", "Strength +2", "Vitality +2", "Lightning Defense +5", "Earth Defense +5"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 6.0
+price = 4519.0
+price_modifier = 41.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 2.0,
+"magic": 6.0,
+"speed": 2.0,
+"strength": 2.0
+},
+"defense": {
+"Earth": 5.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 5.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

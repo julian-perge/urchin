@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://duxqydn2hw6b3"]
+
+[ext_resource type="Texture2D" uid="uid://d2kbx8w7oj15b" path="res://resources/sh.png" id="1_cxyt3"]
+[ext_resource type="Script" path="res://scripts/ui/store/item_slot.gd" id="1_script"]
+
+[node name="ItemSlot" type="ColorRect" groups=["item_slot"]]
+custom_minimum_size = Vector2(64, 64)
+offset_right = 64.0
+offset_bottom = 64.0
+script = ExtResource("1_script")
+
+[node name="ItemIcon" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_cxyt3")
+expand_mode = 4

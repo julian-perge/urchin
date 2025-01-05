@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bkhitninlc05k"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_b5lai"]
+[ext_resource type="Texture2D" uid="uid://d3qg3yt3lsiho" path="res://resources/sprites/M_FOOT_ULTI3.png" id="2_mti5i"]
+
+[resource]
+script = ExtResource("1_b5lai")
+id = 693.0
+looks = "ULTI3"
+sprite_image = ExtResource("2_mti5i")
+name = "Velocious Greaves"
+display_name = "Velocious Greaves"
+internal_name = "Drop ULTI3 Feet"
+tooltip = ""
+tooltipAlt = ["Speed +42", "Instinct +9", "Strength +9", "Vitality +26"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1111.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 26.0,
+"magic": 9.0,
+"speed": 42.0,
+"strength": 9.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bbbedbqf5vhds"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6ukep"]
+[ext_resource type="Texture2D" uid="uid://bkl404wj1qkbu" path="res://resources/sprites/M_WEAPON_SHIELD2.png" id="2_ypdc1"]
+
+[resource]
+script = ExtResource("1_6ukep")
+id = 203.0
+looks = "SHIELD2"
+sprite_image = ExtResource("2_ypdc1")
+name = ""
+display_name = "Metal Shield"
+internal_name = "Metal Shield"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +10", "Instinct +20", "Strength +20", "Vitality +37", "Lightning Defense +15", "Earth Defense +15"]
+item_type = 8
+rarity = 2
+class_type = 1
+required_level = 14.0
+price = 300156.0
+price_modifier = 382.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 37.0,
+"magic": 20.0,
+"speed": 10.0,
+"strength": 20.0
+},
+"defense": {
+"Earth": 15.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 15.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

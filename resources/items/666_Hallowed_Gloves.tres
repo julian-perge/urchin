@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dw5m87b7tsrp4"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_rj0v3"]
+[ext_resource type="Texture2D" uid="uid://bvhro48vjfids" path="res://resources/sprites/M_HAND_NOS.png" id="2_x40el"]
+
+[resource]
+script = ExtResource("1_rj0v3")
+id = 666.0
+looks = "NOS"
+sprite_image = ExtResource("2_x40el")
+name = "Hallowed Gloves"
+display_name = "Hallowed Gloves"
+internal_name = "Drop NOS Hands"
+tooltip = ""
+tooltipAlt = ["Speed +7", "Instinct +55", "Vitality +7"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 25.0
+price = 938.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 7.0,
+"magic": 55.0,
+"speed": 7.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dpk7fjua044yj"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_4q6pg"]
+[ext_resource type="Texture2D" uid="uid://bamdhxyv17q63" path="res://resources/sprites/M_FOOT_IMPERIAL2.png" id="2_4toxj"]
+
+[resource]
+script = ExtResource("1_4q6pg")
+id = 641.0
+looks = "IMPERIAL2"
+sprite_image = ExtResource("2_4toxj")
+name = "Palace Greaves"
+display_name = "Palace Greaves"
+internal_name = "Drop IMPERIAL2 Feet"
+tooltip = ""
+tooltipAlt = ["Speed +6", "Strength +17", "Vitality +33", "Lightning Defense +20"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 22.0
+price = 774.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 33.0,
+"magic": 0.0,
+"speed": 6.0,
+"strength": 17.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 20.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

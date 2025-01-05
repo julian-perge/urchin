@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cflf5y3rxopbu"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_4an6w"]
+[ext_resource type="Texture2D" uid="uid://bb6a7yln675xd" path="res://resources/sprites/M_LEG2_PURPLENIN.png" id="2_hymox"]
+
+[resource]
+script = ExtResource("1_4an6w")
+id = 717.0
+looks = "PURPLENIN"
+sprite_image = ExtResource("2_hymox")
+name = "Corrupted Leggings"
+display_name = "Corrupted Leggings"
+internal_name = "Drop CORRUPTOR Legs"
+tooltip = ""
+tooltipAlt = ["Physical Piercing +113", "Ice Piercing +113", "Lightning Piercing +113", "Shadow Piercing +113", "Poison Piercing +113"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1556.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 113.0,
+"Lightning": 113.0,
+"Magic": 0.0,
+"Physical": 113.0,
+"Poison": 113.0,
+"Shadow": 113.0
+}
+}

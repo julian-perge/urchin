@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cnwot5rinupll"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_l12fa"]
+[ext_resource type="Texture2D" uid="uid://b1x2qufhf8x07" path="res://resources/sprites/M_WEAPON_UBER11.png" id="2_tu5rt"]
+
+[resource]
+script = ExtResource("1_l12fa")
+id = 604.0
+looks = "UBER11"
+sprite_image = ExtResource("2_tu5rt")
+name = "Lavastone Sword"
+display_name = "Lavastone Sword"
+internal_name = "SMALL SWORD"
+tooltip = ""
+tooltipAlt = ["Speed +15", "Physical Piercing +91"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 17.0
+price = 1051.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 15.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 91.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

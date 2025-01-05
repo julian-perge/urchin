@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://yj2sqb0bqvad"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_4hm2v"]
+
+[resource]
+script = ExtResource("1_4hm2v")
+name = "Agile Convict"
+vitality = 10.0
+strength = 13.0
+magic = 3.0
+speed = 14.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [525.0, 2.0, 275.0],
+"defense": [122.0]
+}
+stats = {
+"aggression": [50.0, 80.0, 20.0, 80.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 6.0, 0.0],
+"model": ["MODEL1", "MAN2", "ONE", "M"],
+"skin": "PRISON",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

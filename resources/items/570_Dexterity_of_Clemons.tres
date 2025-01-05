@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://caod2fwlahngf"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_8gfuo"]
+[ext_resource type="Texture2D" uid="uid://dnd6gl6dra2o5" path="res://resources/sprites/M_HAND_CLEMONS.png" id="2_jrwlm"]
+
+[resource]
+script = ExtResource("1_8gfuo")
+id = 570.0
+looks = "CLEMONS"
+sprite_image = ExtResource("2_jrwlm")
+name = "Dexterity of Clemons"
+display_name = "Dexterity of Clemons"
+internal_name = "Drop CLEMONS Hands"
+tooltip = ""
+tooltipAlt = ["Speed +23", "Strength +6"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 15.0
+price = 436.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 23.0,
+"strength": 6.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

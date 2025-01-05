@@ -1,0 +1,3 @@
+[gd_scene format=3 uid="uid://cc8kcjhv176py"]
+
+[node name="StatLabel" type="Label"]

@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://l475mq1qflud"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_u620g"]
+
+[resource]
+script = ExtResource("1_u620g")
+name = "The Judge"
+vitality = 35.0
+strength = 35.0
+magic = 10.0
+speed = 8.0
+focus = 100.0
+moves = {
+"absolute": [[792.0, 1.0]],
+"attack": [796.0, 793.0, 794.0, 795.0],
+"defense": [9.0, 524.0]
+}
+stats = {
+"aggression": [50.0, 2.0, 1.0, 65.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 676.0, 676.0],
+"model": ["MODEL4", "FIR", ","],
+"skin": "FIR",
+"voice": {
+"die": "dead_fel",
+"hit": ["hit_fel1", "hit_fel2", "hit_fel3"]
+}
+}

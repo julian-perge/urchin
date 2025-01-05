@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cpxlg5hfa7iy7"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_8rdro"]
+
+[resource]
+script = ExtResource("1_8rdro")
+id = 180.0
+looks = ""
+name = ""
+display_name = "Uniform Boots"
+internal_name = "Uniform Boots"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +8", "Instinct +7", "Strength +8", "Vitality +4", "Lightning Defense +7", "Earth Defense +7"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 57187.0
+price_modifier = 209.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 4.0,
+"magic": 7.0,
+"speed": 8.0,
+"strength": 8.0
+},
+"defense": {
+"Earth": 7.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 7.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

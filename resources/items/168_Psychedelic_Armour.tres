@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bqm0cdu58pyfb"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_fg2my"]
+
+[resource]
+script = ExtResource("1_fg2my")
+id = 168.0
+looks = ""
+name = ""
+display_name = "Psychedelic Armour"
+internal_name = "Psychedelic Armour"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +5", "Instinct +9", "Strength +13", "Vitality +9", "Lightning Defense +8", "Earth Defense +8"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 9.0
+price = 39690.0
+price_modifier = 140.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 9.0,
+"magic": 9.0,
+"speed": 5.0,
+"strength": 13.0
+},
+"defense": {
+"Earth": 8.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 8.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

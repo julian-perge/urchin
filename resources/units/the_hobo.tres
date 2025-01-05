@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://le2re4embgpc"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_2ghso"]
+
+[resource]
+script = ExtResource("1_2ghso")
+name = "The Hobo"
+vitality = 60.0
+strength = 30.0
+magic = 25.0
+speed = 8.0
+focus = 100.0
+moves = {
+"absolute": [[555.0, 0.0], [556.0, 0.0]],
+"attack": [532.0],
+"defense": [2.0, 577.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 20.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 0.0],
+"model": ["MODEL1", "MAN", ","],
+"skin": "HOBO",
+"voice": {
+"die": "dead_monster",
+"hit": ["hit_monster1", "hit_monster2", "hit_monster3"]
+}
+}

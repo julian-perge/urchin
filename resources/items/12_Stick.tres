@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cme1mmqk57501"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_tcksf"]
+[ext_resource type="Texture2D" uid="uid://bwj23yl666m3x" path="res://resources/sprites/M_WEAPON_STICK.png" id="2_6maqd"]
+
+[resource]
+script = ExtResource("1_tcksf")
+id = 12.0
+looks = "STICK"
+sprite_image = ExtResource("2_6maqd")
+name = ""
+display_name = "Stick"
+internal_name = "Stick"
+tooltip = ""
+tooltipAlt = []
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 1.0
+price = 15.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

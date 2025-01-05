@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bdko2ch8u48mm"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_sqgyu"]
+[ext_resource type="Texture2D" uid="uid://c4u6grh0t4rd1" path="res://resources/sprites/M_WEAPON_FLATBLADE.png" id="2_p1ife"]
+
+[resource]
+script = ExtResource("1_sqgyu")
+id = 657.0
+looks = "FLATBLADE"
+sprite_image = ExtResource("2_p1ife")
+name = "Azure Defender"
+display_name = "Azure Defender"
+internal_name = "BLUE SWORD 2"
+tooltip = ""
+tooltipAlt = ["Speed +41", "Instinct +21", "Strength +21", "Vitality +21"]
+item_type = 8
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 1444.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 21.0,
+"magic": 21.0,
+"speed": 41.0,
+"strength": 21.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

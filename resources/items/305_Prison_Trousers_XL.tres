@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bmlm4n7q6pbew"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_gc4lj"]
+[ext_resource type="Texture2D" uid="uid://bnh0ax7y43j6" path="res://resources/sprites/M_LEG2_PRISON.png" id="2_f5n6x"]
+
+[resource]
+script = ExtResource("1_gc4lj")
+id = 305.0
+looks = "PRISON"
+sprite_image = ExtResource("2_f5n6x")
+name = "Prison Trousers XL"
+display_name = "Prison Trousers XL"
+internal_name = "Standard Trousers. XL"
+tooltip = "Too loose. The belt's been removed."
+tooltipAlt = ["Instinct +3", "Strength +3", "Vitality +1"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 2.0
+price = 30.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 1.0,
+"magic": 3.0,
+"speed": 0.0,
+"strength": 3.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

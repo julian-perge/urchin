@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bays3v35n6avc"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_y2k1p"]
+[ext_resource type="Texture2D" uid="uid://g0ef5d6cv6vh" path="res://resources/sprites/M_CHEST_SINJID.png" id="2_q8oey"]
+
+[resource]
+script = ExtResource("1_y2k1p")
+id = 628.0
+looks = "SINJID"
+sprite_image = ExtResource("2_q8oey")
+name = "Nightstrike Armor"
+display_name = "Nightstrike Armor"
+internal_name = "Drop SPECIALIST Chest"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +31", "Strength +8", "Physical Piercing +43"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 22.0
+price = 1083.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 31.0,
+"strength": 8.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 43.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

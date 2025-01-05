@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://sm00fbbaxh7j"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_q68jp"]
+[ext_resource type="Texture2D" uid="uid://3j111u3n0ie0" path="res://resources/sprites/M_LEG2_JASON4.png" id="2_0viwd"]
+
+[resource]
+script = ExtResource("1_q68jp")
+id = 662.0
+looks = "JASON4"
+sprite_image = ExtResource("2_0viwd")
+name = "Platinum Legplates"
+display_name = "Platinum Legplates"
+internal_name = "Drop WARDEN Legs"
+tooltip = ""
+tooltipAlt = ["Speed +15", "Instinct +5", "Strength +20", "Vitality +58"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 25.0
+price = 1313.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 58.0,
+"magic": 5.0,
+"speed": 15.0,
+"strength": 20.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

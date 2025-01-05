@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://f2ca15ljmyim"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_rthh6"]
+[ext_resource type="Texture2D" uid="uid://cq6ie6hok8tn7" path="res://resources/sprites/M_HAND_XADER2.png" id="2_b22df"]
+
+[resource]
+script = ExtResource("1_rthh6")
+id = 345.0
+looks = "XADER2"
+sprite_image = ExtResource("2_b22df")
+name = "Supreme Grasp"
+display_name = "Supreme Grasp"
+internal_name = "Supreme Grasp"
+tooltip = ""
+tooltipAlt = ["Speed +5", "Strength +8", "Vitality +4"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 274.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 4.0,
+"magic": 0.0,
+"speed": 5.0,
+"strength": 8.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

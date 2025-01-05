@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bvs7emla55ohx"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_2tree"]
+[ext_resource type="Texture2D" uid="uid://dug5a1wo2kqcf" path="res://resources/sprites/M_WEAPON_UBER1.png" id="2_i8k0i"]
+
+[resource]
+script = ExtResource("1_2tree")
+id = 555.0
+looks = "UBER1"
+sprite_image = ExtResource("2_i8k0i")
+name = "Annihilation"
+display_name = "Annihilation"
+internal_name = "Annihilation"
+tooltip = "Consider yourself lucky that you aren't on the receiving end."
+tooltipAlt = ["Speed +17", "Strength +85", "Vitality +9"]
+item_type = 9
+rarity = 2
+class_type = 1
+required_level = 13.0
+price = 1406.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 9.0,
+"magic": 0.0,
+"speed": 17.0,
+"strength": 85.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

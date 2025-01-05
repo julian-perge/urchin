@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dhc21ldjeo36v"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_dj48q"]
+[ext_resource type="Texture2D" uid="uid://dtg1hf1im06nk" path="res://resources/sprites/M_WEAPON_SPELLMACE.png" id="2_byl3y"]
+
+[resource]
+script = ExtResource("1_dj48q")
+id = 678.0
+looks = "SPELLMACE"
+sprite_image = ExtResource("2_byl3y")
+name = "Mending Beacon"
+display_name = "Mending Beacon"
+internal_name = "MACE"
+tooltip = ""
+tooltipAlt = ["Speed +22", "Instinct +88", "Vitality +37"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 26.0
+price = 1989.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 37.0,
+"magic": 88.0,
+"speed": 22.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

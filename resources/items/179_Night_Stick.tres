@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://chb77k5rlmsnx"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6yg4c"]
+
+[resource]
+script = ExtResource("1_6yg4c")
+id = 179.0
+looks = ""
+name = ""
+display_name = "Night Stick"
+internal_name = "Night Stick"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +8", "Instinct +13", "Strength +19", "Vitality +8", "Lightning Defense +13", "Earth Defense +13"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 118205.0
+price_modifier = 216.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 8.0,
+"magic": 13.0,
+"speed": 8.0,
+"strength": 19.0
+},
+"defense": {
+"Earth": 13.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 13.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

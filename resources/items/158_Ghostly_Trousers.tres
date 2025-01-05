@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://w0g4i45nemeo"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ifxaf"]
+
+[resource]
+script = ExtResource("1_ifxaf")
+id = 158.0
+looks = ""
+name = ""
+display_name = "Ghostly Trousers"
+internal_name = "Ghostly Trousers"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +10", "Instinct +2", "Strength +5", "Vitality +5", "Lightning Defense +8", "Earth Defense +8"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 8.0
+price = 26847.0
+price_modifier = 113.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 5.0,
+"magic": 2.0,
+"speed": 10.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 8.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 8.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

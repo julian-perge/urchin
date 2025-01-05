@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://42alueq3vuol"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_d4sk0"]
+
+[resource]
+script = ExtResource("1_d4sk0")
+id = 117.0
+looks = ""
+name = ""
+display_name = "High Voltage Boots"
+internal_name = "High Voltage Boots"
+tooltip = ""
+tooltipAlt = ["Speed +2", "Instinct +4", "Strength +2", "Vitality +3", "Lightning Defense +4", "Earth Defense +4"]
+item_type = 6
+rarity = 1
+class_type = 1
+required_level = 3.0
+price = 312.0
+price_modifier = 8.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 3.0,
+"magic": 4.0,
+"speed": 2.0,
+"strength": 2.0
+},
+"defense": {
+"Earth": 4.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 4.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

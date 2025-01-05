@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://uj1cn5ou0lq"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6echr"]
+[ext_resource type="Texture2D" uid="uid://dk6dr036cefxb" path="res://resources/sprites/M_LEG2_SHAMAN2.png" id="2_f688l"]
+
+[resource]
+script = ExtResource("1_6echr")
+id = 541.0
+looks = "SHAMAN2"
+sprite_image = ExtResource("2_f688l")
+name = "Ocean Leggings"
+display_name = "Ocean Leggings"
+internal_name = "Drop Shaman Legs"
+tooltip = ""
+tooltipAlt = ["Speed +3", "Strength +6", "Vitality +6", "Physical Piercing +33"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 436.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 6.0,
+"magic": 0.0,
+"speed": 3.0,
+"strength": 6.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 33.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

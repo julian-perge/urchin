@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=4 format=3 uid="uid://01551w84rvhh"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_34a61"]
+[ext_resource type="Texture2D" uid="uid://60582holpd5b" path="res://resources/sprites/M_CHEST_SHIRT.png" id="2_icopy"]
+[ext_resource type="Texture2D" uid="uid://bmabe8p8u1xlo" path="res://assets/item_slot_icons/OTHER/White_T_Shirt.png" id="2_l7v0y"]
+
+[resource]
+script = ExtResource("1_34a61")
+id = 11.0
+looks = "SHIRT"
+sprite_image = ExtResource("2_icopy")
+slot_image = ExtResource("2_l7v0y")
+name = "White T-shirt"
+display_name = "White T-shirt"
+internal_name = "White T-Shirt"
+tooltip = "It's covered by bike tracks."
+tooltipAlt = ["Vitality +5"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 1.0
+price = 11.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 5.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

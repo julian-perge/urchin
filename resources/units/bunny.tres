@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://bdbdio3yewxgq"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_3ib4q"]
+
+[resource]
+script = ExtResource("1_3ib4q")
+name = "Bunny"
+vitality = 150.0
+strength = 65.0
+magic = 65.0
+speed = 17.0
+focus = 100.0
+moves = {
+"absolute": [[618.0, 0.0]],
+"attack": [619.0, 620.0, 621.0, 622.0],
+"defense": [2.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 30.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL7", "BUNNY", ","],
+"skin": null,
+"voice": {
+"die": null,
+"hit": []
+}
+}

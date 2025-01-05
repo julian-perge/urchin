@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bsi014kpvyamk"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_a2evs"]
+[ext_resource type="Texture2D" uid="uid://dpby6lba30vc1" path="res://resources/sprites/M_LEG2_IMPERIAL.png" id="2_k5tbb"]
+
+[resource]
+script = ExtResource("1_a2evs")
+id = 610.0
+looks = "IMPERIAL"
+sprite_image = ExtResource("2_k5tbb")
+name = "Royal Leggings"
+display_name = "Royal Leggings"
+internal_name = "Drop IMPERIAL Legs"
+tooltip = ""
+tooltipAlt = ["Speed +11", "Strength +57", "Vitality +4"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 1010.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 4.0,
+"magic": 0.0,
+"speed": 11.0,
+"strength": 57.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://8eq1831sbwv0"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_2nqw5"]
+[ext_resource type="Texture2D" uid="uid://btbfwlxj7eikr" path="res://resources/sprites/M_CHEST_BLUENIN.png" id="2_mf14d"]
+
+[resource]
+script = ExtResource("1_2nqw5")
+id = 670.0
+looks = "BLUENIN"
+sprite_image = ExtResource("2_mf14d")
+name = "Special Ops Armor"
+display_name = "Special Ops Armor"
+internal_name = "Drop BLUE NINJA Chest"
+tooltip = ""
+tooltipAlt = ["Speed +63", "Strength +14", "Vitality +14"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 24.0
+price = 1235.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 14.0,
+"magic": 0.0,
+"speed": 63.0,
+"strength": 14.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

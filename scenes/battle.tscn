@@ -1,0 +1,310 @@
+[gd_scene load_steps=18 format=3 uid="uid://cpfcxmvx6nsy0"]
+
+[ext_resource type="Texture2D" uid="uid://cj2eixtof4yry" path="res://assets/sonny2_hotbar_bg.png" id="1_no7aq"]
+[ext_resource type="FontFile" uid="uid://bjuuak0xaaiav" path="res://assets/fonts/2738_Rockwell.ttf" id="2_ltm6f"]
+[ext_resource type="FontFile" uid="uid://lyrver0xmjhs" path="res://assets/fonts/335_Tahoma.ttf" id="2_ugvrv"]
+[ext_resource type="Texture2D" uid="uid://g1iwxcnsgmiv" path="res://assets/hotbar_background.png" id="2_v0j1n"]
+[ext_resource type="Texture2D" uid="uid://nfk1jpidfae5" path="res://assets/hotbar_team_select.png" id="3_0e8fj"]
+[ext_resource type="Texture2D" uid="uid://bqey66wvy1t6b" path="res://assets/battle_pbar_full.png" id="3_875ki"]
+[ext_resource type="Texture2D" uid="uid://dor5k8h3mis6k" path="res://assets/battle_progress_bar_inner.png" id="4_05sip"]
+[ext_resource type="FontFile" uid="uid://dxyeb3ydck803" path="res://assets/fonts/3307_copy 10_65.ttf" id="4_6yn25"]
+[ext_resource type="Texture2D" uid="uid://cshxsxntxhyk1" path="res://assets/backgrounds/zone/JAIL.png" id="4_prju8"]
+[ext_resource type="PackedScene" uid="uid://cigs3xa2f5htj" path="res://scenes/character.tscn" id="5_pnmjt"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5halh"]
+bg_color = Color(0.101961, 0.101961, 0.101961, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ideex"]
+bg_color = Color(0.25098, 0.627451, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_348hh"]
+font = ExtResource("2_ltm6f")
+font_size = 32
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_rsga2"]
+font = ExtResource("2_ugvrv")
+font_size = 32
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u61cr"]
+bg_color = Color(0.101961, 0.101961, 0.101961, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gyg24"]
+bg_color = Color(0.407843, 0.796078, 0.956863, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_s0dim"]
+font = ExtResource("4_6yn25")
+font_size = 22
+font_color = Color(0.444843, 0.444843, 0.444843, 1)
+
+[node name="Battle" type="ColorRect"]
+texture_filter = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Vitals" type="MarginContainer" parent="VBoxContainer"]
+z_index = 1
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/Vitals"]
+layout_mode = 2
+texture = ExtResource("1_no7aq")
+expand_mode = 1
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Vitals/TextureRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerHealthBarContainer" type="VBoxContainer" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer/PlayerHealthBarContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ProgressBar" type="ProgressBar" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer/PlayerHealthBarContainer/PanelContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_5halh")
+theme_override_styles/fill = SubResource("StyleBoxFlat_ideex")
+max_value = 1e+07
+step = 1.0
+value = 1e+07
+show_percentage = false
+
+[node name="Label" type="Label" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer/PlayerHealthBarContainer/PanelContainer/ProgressBar"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -16.0
+offset_right = 112.0
+offset_bottom = 16.0
+grow_vertical = 2
+text = "Sonny"
+label_settings = SubResource("LabelSettings_348hh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer/PlayerHealthBarContainer/PanelContainer/ProgressBar"]
+custom_minimum_size = Vector2(112, 32)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -11.5
+offset_bottom = 11.5
+grow_horizontal = 0
+grow_vertical = 2
+text = "33132"
+label_settings = SubResource("LabelSettings_rsga2")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ProgressBar2" type="ProgressBar" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer/PlayerHealthBarContainer/PanelContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_styles/background = SubResource("StyleBoxFlat_u61cr")
+theme_override_styles/fill = SubResource("StyleBoxFlat_gyg24")
+max_value = 99999.0
+step = 1.0
+value = 49999.0
+
+[node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer/PlayerHealthBarContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ProgressBar" type="ProgressBar" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer/PlayerHealthBarContainer/PanelContainer2"]
+layout_mode = 2
+
+[node name="ProgressBar2" type="ProgressBar" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer/PlayerHealthBarContainer/PanelContainer2"]
+layout_mode = 2
+
+[node name="PanelContainer3" type="PanelContainer" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer/PlayerHealthBarContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ProgressBar" type="ProgressBar" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer/PlayerHealthBarContainer/PanelContainer3"]
+layout_mode = 2
+
+[node name="ProgressBar2" type="ProgressBar" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer/PlayerHealthBarContainer/PanelContainer3"]
+layout_mode = 2
+
+[node name="EnemyHealthBarContainer" type="VBoxContainer" parent="VBoxContainer/Vitals/TextureRect/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="BattleWindow" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="BattleBG" type="TextureRect" parent="VBoxContainer/BattleWindow"]
+clip_contents = true
+layout_mode = 2
+texture = ExtResource("4_prju8")
+expand_mode = 1
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/BattleWindow/BattleBG"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerSpots" type="Control" parent="VBoxContainer/BattleWindow/BattleBG/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Middle" parent="VBoxContainer/BattleWindow/BattleBG/HSplitContainer/PlayerSpots" instance=ExtResource("5_pnmjt")]
+position = Vector2(475, 430)
+scale = Vector2(0.17, 0.17)
+
+[node name="Bottom" parent="VBoxContainer/BattleWindow/BattleBG/HSplitContainer/PlayerSpots" instance=ExtResource("5_pnmjt")]
+position = Vector2(600, 575)
+scale = Vector2(0.17, 0.17)
+
+[node name="Top" parent="VBoxContainer/BattleWindow/BattleBG/HSplitContainer/PlayerSpots" instance=ExtResource("5_pnmjt")]
+position = Vector2(600, 325)
+scale = Vector2(0.17, 0.17)
+
+[node name="EnemySpots" type="Control" parent="VBoxContainer/BattleWindow/BattleBG/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Middle" parent="VBoxContainer/BattleWindow/BattleBG/HSplitContainer/EnemySpots" instance=ExtResource("5_pnmjt")]
+position = Vector2(450, 430)
+scale = Vector2(0.17, 0.17)
+
+[node name="Bottom" parent="VBoxContainer/BattleWindow/BattleBG/HSplitContainer/EnemySpots" instance=ExtResource("5_pnmjt")]
+position = Vector2(300, 575)
+scale = Vector2(0.17, 0.17)
+
+[node name="Top" parent="VBoxContainer/BattleWindow/BattleBG/HSplitContainer/EnemySpots" instance=ExtResource("5_pnmjt")]
+position = Vector2(300, 325)
+scale = Vector2(0.17, 0.17)
+
+[node name="BattleHotbar" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/BattleHotbar"]
+layout_mode = 2
+texture = ExtResource("2_v0j1n")
+expand_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/BattleHotbar/TextureRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/BattleHotbar/TextureRect/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.3
+theme_override_constants/separation = -32
+
+[node name="TeamMember1_BG" type="TextureRect" parent="VBoxContainer/BattleHotbar/TextureRect/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(640, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+texture = ExtResource("3_0e8fj")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/BattleHotbar/TextureRect/HBoxContainer/VBoxContainer/TeamMember1_BG"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "< Team Member Inactive >"
+label_settings = SubResource("LabelSettings_s0dim")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TeamMember2_BG" type="TextureRect" parent="VBoxContainer/BattleHotbar/TextureRect/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(640, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+texture = ExtResource("3_0e8fj")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/BattleHotbar/TextureRect/HBoxContainer/VBoxContainer/TeamMember2_BG"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "< Team Member Inactive >"
+label_settings = SubResource("LabelSettings_s0dim")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer/BattleHotbar/TextureRect/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/BattleHotbar/TextureRect/HBoxContainer/CenterContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(166, 170)
+layout_mode = 2
+texture = ExtResource("3_875ki")
+expand_mode = 1
+
+[node name="ProgressBar" type="TextureProgressBar" parent="VBoxContainer/BattleHotbar/TextureRect/HBoxContainer/CenterContainer"]
+modulate = Color(0, 0, 1, 1)
+texture_filter = 1
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+value = 95.0
+fill_mode = 4
+nine_patch_stretch = true
+texture_progress = ExtResource("4_05sip")
+
+[node name="Control" type="Control" parent="VBoxContainer/BattleHotbar/TextureRect/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.3

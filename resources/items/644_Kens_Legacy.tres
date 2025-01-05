@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bkmmby55jmxg7"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_nxdk7"]
+[ext_resource type="Texture2D" uid="uid://djxw4wracel0c" path="res://resources/sprites/M_HAND_PRIEST4.png" id="2_cra70"]
+
+[resource]
+script = ExtResource("1_nxdk7")
+id = 644.0
+looks = "PRIEST4"
+sprite_image = ExtResource("2_cra70")
+name = "Ken's Legacy"
+display_name = "Ken's Legacy"
+internal_name = "Drop MAYOR Hands"
+tooltip = ""
+tooltipAlt = ["Speed +12", "Instinct +36", "Vitality +12", "Fire Defense +32"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 23.0
+price = 827.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 12.0,
+"magic": 36.0,
+"speed": 12.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 32.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

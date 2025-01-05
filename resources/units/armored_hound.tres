@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://yujjjli2h7kl"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_sbest"]
+
+[resource]
+script = ExtResource("1_sbest")
+name = "Armored Hound"
+vitality = 10.0
+strength = 20.0
+magic = 20.0
+speed = 40.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [109.0, 543.0, 542.0],
+"defense": [1.0]
+}
+stats = {
+"aggression": [50.0, 10.0, 1.0, 75.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL5", "WOLF", ","],
+"skin": " ",
+"voice": {
+"die": "dead_monster",
+"hit": ["hit_monster1", "hit_monster2", "hit_monster3"]
+}
+}

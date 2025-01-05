@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://l7623fxwvu6a"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_bjp0s"]
+
+[resource]
+script = ExtResource("1_bjp0s")
+id = 136.0
+looks = ""
+name = ""
+display_name = "Bloodied Armour"
+internal_name = "Bloodied Armour"
+tooltip = ""
+tooltipAlt = ["Speed +4", "Instinct +4", "Strength +5", "Vitality +4", "Lightning Defense +7", "Earth Defense +7"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 5.0
+price = 2935.0
+price_modifier = 25.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 4.0,
+"magic": 4.0,
+"speed": 4.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 7.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 7.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dm7gw4ik6agxi"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_wbe74"]
+[ext_resource type="Texture2D" uid="uid://w63o5ihkwu0w" path="res://resources/sprites/M_HEAD_PRIEST.png" id="2_wmp4b"]
+
+[resource]
+script = ExtResource("1_wbe74")
+id = 335.0
+looks = "PRIEST"
+sprite_image = ExtResource("2_wmp4b")
+name = "Believer's Crown"
+display_name = "Believer's Crown"
+internal_name = "Believer's Crown"
+tooltip = "Wearing this, you could see things you didn't see before."
+tooltipAlt = ["Speed +6", "Instinct +11", "Vitality +3"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 10.0
+price = 332.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 3.0,
+"magic": 11.0,
+"speed": 6.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

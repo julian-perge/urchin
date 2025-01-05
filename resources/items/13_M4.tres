@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://chcajm3ofr8oj"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ju138"]
+[ext_resource type="Texture2D" uid="uid://cysnyk6cnluj4" path="res://resources/sprites/M_WEAPON_M4.png" id="2_efg6e"]
+
+[resource]
+script = ExtResource("1_ju138")
+id = 13.0
+looks = "M4"
+sprite_image = ExtResource("2_efg6e")
+name = ""
+display_name = "M4"
+internal_name = "M4"
+tooltip = ""
+tooltipAlt = ["Instinct +1", "Strength +1", "Cosmic Piercing +3"]
+item_type = 7
+rarity = 1
+class_type = 1
+required_level = 3.0
+price = 78.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 1.0,
+"speed": 0.0,
+"strength": 1.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 3.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c1hit86xkmymx"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_0c3ro"]
+[ext_resource type="Texture2D" uid="uid://5l863u70swkh" path="res://resources/sprites/M_WEAPON_SWORD2.png" id="2_s7vtf"]
+
+[resource]
+script = ExtResource("1_0c3ro")
+id = 658.0
+looks = "SWORD2"
+sprite_image = ExtResource("2_s7vtf")
+name = "Death Sentence"
+display_name = "Death Sentence"
+internal_name = "2H SWORD"
+tooltip = ""
+tooltipAlt = ["Speed +66", "Strength +152", "Vitality +66"]
+item_type = 9
+rarity = 2
+class_type = 1
+required_level = 22.0
+price = 3096.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 66.0,
+"magic": 0.0,
+"speed": 66.0,
+"strength": 152.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ccdhedmi7nhal"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_1skb7"]
+[ext_resource type="Texture2D" uid="uid://chardvjwrf4m1" path="res://resources/sprites/M_WEAPON_UBER7.png" id="2_m3av0"]
+
+[resource]
+script = ExtResource("1_1skb7")
+id = 556.0
+looks = "UBER7"
+sprite_image = ExtResource("2_m3av0")
+name = "Ancient Shield"
+display_name = "Ancient Shield"
+internal_name = "Shield"
+tooltip = ""
+tooltipAlt = ["Vitality +10", "Physical Defense +46", "Shadow Defense +46"]
+item_type = 8
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 624.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 10.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 46.0,
+"Poison": 0.0,
+"Shadow": 46.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

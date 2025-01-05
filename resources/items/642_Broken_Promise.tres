@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bjht2qkqwi0co"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_l6shb"]
+[ext_resource type="Texture2D" uid="uid://c2qgptxjm52iy" path="res://resources/sprites/M_HEAD_PRIEST4.png" id="2_sxe1g"]
+
+[resource]
+script = ExtResource("1_l6shb")
+id = 642.0
+looks = "PRIEST4"
+sprite_image = ExtResource("2_sxe1g")
+name = "Broken Promise"
+display_name = "Broken Promise"
+internal_name = "Drop MAYOR Head"
+tooltip = ""
+tooltipAlt = ["Speed +18", "Instinct +54", "Vitality +18", "Fire Defense +45"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 24.0
+price = 1235.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 18.0,
+"magic": 54.0,
+"speed": 18.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 45.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

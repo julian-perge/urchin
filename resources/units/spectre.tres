@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://i6esyvych5dw"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_3wyeq"]
+
+[resource]
+script = ExtResource("1_3wyeq")
+name = "Spectre"
+vitality = 20.0
+strength = 25.0
+magic = 25.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [[573.0, 0.0]],
+"attack": [260.0, 572.0, 574.0, 575.0],
+"defense": [2.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL1", "GHOST", ","],
+"skin": " ",
+"voice": {
+"die": "dead_zombie",
+"hit": ["hit_zombie1", "hit_zombie2", "hit_zombie3"]
+}
+}

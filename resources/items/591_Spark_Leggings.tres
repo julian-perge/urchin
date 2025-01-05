@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://uh8b42r4pt43"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_sk7hh"]
+[ext_resource type="Texture2D" uid="uid://crff0f7i8cpsk" path="res://resources/sprites/M_LEG2_CLEMONS2.png" id="2_4yso3"]
+
+[resource]
+script = ExtResource("1_sk7hh")
+id = 591.0
+looks = "CLEMONS2"
+sprite_image = ExtResource("2_4yso3")
+name = "Spark Leggings"
+display_name = "Spark Leggings"
+internal_name = "Drop EMPEROR Legs"
+tooltip = ""
+tooltipAlt = ["Speed +15", "Instinct +25", "Strength +10", "Lightning Piercing +6"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 17.0
+price = 736.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 25.0,
+"speed": 15.0,
+"strength": 10.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 6.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

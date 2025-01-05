@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d3f1bjb58by1y"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_pjy7a"]
+[ext_resource type="Texture2D" uid="uid://v8y56k0fgar3" path="res://resources/sprites/M_WEAPON_FELKNIFE.png" id="2_34s0q"]
+
+[resource]
+script = ExtResource("1_pjy7a")
+id = 507.0
+looks = "FELKNIFE"
+sprite_image = ExtResource("2_34s0q")
+name = "Curved Blade"
+display_name = "Curved Blade"
+internal_name = "Curved Blade"
+tooltip = "Felicity's Knife. Keep it away from Veradux."
+tooltipAlt = ["Strength +2", "Vitality +2", "Physical Piercing +57"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 7.0
+price = 278.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 2.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 2.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 57.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://7g8rcx4lnt2"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_r0ybb"]
+[ext_resource type="Texture2D" uid="uid://crs8nv5f7hfkc" path="res://resources/sprites/M_HEAD_PRIEST3.png" id="2_5n2os"]
+
+[resource]
+script = ExtResource("1_r0ybb")
+id = 622.0
+looks = "PRIEST3"
+sprite_image = ExtResource("2_5n2os")
+name = "Council Vision"
+display_name = "Council Vision"
+internal_name = "Drop COUNCIL Head"
+tooltip = ""
+tooltipAlt = ["Speed +17", "Instinct +50", "Vitality +17", "Lightning Defense +29"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 23.0
+price = 1158.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 17.0,
+"magic": 50.0,
+"speed": 17.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 29.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

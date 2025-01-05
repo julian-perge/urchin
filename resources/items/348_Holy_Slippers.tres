@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bgqotc3i4xhh5"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_oix4o"]
+[ext_resource type="Texture2D" uid="uid://huhugg8ppn66" path="res://resources/sprites/M_FOOT_XADER2.png" id="2_wk2r1"]
+
+[resource]
+script = ExtResource("1_oix4o")
+id = 348.0
+looks = "XADER2"
+sprite_image = ExtResource("2_wk2r1")
+name = "Holy Slippers"
+display_name = "Holy Slippers"
+internal_name = "Holy Slippers"
+tooltip = "The term 'Slippers' is actually a bit misleading."
+tooltipAlt = ["Speed +3", "Instinct +1", "Strength +5", "Vitality +8"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 274.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 8.0,
+"magic": 1.0,
+"speed": 3.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

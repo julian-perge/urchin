@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ejo8rtgah07f"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_2s143"]
+[ext_resource type="Texture2D" uid="uid://t5y0syxe2mmg" path="res://resources/sprites/M_LEG2_BLUENIN.png" id="2_ttg5b"]
+
+[resource]
+script = ExtResource("1_2s143")
+id = 672.0
+looks = "BLUENIN"
+sprite_image = ExtResource("2_ttg5b")
+name = "Azure Leggings"
+display_name = "Azure Leggings"
+internal_name = "Drop BLUE NINJA Legs"
+tooltip = ""
+tooltipAlt = ["Speed +24", "Instinct +24", "Strength +24", "Vitality +24"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 25.0
+price = 1313.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 24.0,
+"magic": 24.0,
+"speed": 24.0,
+"strength": 24.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ckg1eaghctoax"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_dmcsc"]
+[ext_resource type="Texture2D" uid="uid://c78q4wtmfvbmo" path="res://resources/sprites/M_WEAPON_XADER2.png" id="2_0o8he"]
+
+[resource]
+script = ExtResource("1_dmcsc")
+id = 527.0
+looks = "XADER2"
+sprite_image = ExtResource("2_0o8he")
+name = "Unholy Runeblade"
+display_name = "Unholy Runeblade"
+internal_name = "Unholy Runeblade"
+tooltip = ""
+tooltipAlt = ["Speed +34", "Strength +43", "Vitality +26", "Shadow Piercing +97"]
+item_type = 9
+rarity = 2
+class_type = 1
+required_level = 13.0
+price = 1406.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 26.0,
+"magic": 0.0,
+"speed": 34.0,
+"strength": 43.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 97.0
+}
+}

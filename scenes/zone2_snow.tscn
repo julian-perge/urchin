@@ -1,0 +1,82 @@
+[gd_scene load_steps=11 format=3 uid="uid://c5rpbx1x5fqjv"]
+
+[ext_resource type="Texture2D" uid="uid://dpkdx0luq26c1" path="res://assets/backgrounds/SNOW-gigapixel-cgi-4x.png" id="1_h03e6"]
+[ext_resource type="PackedScene" uid="uid://bkvbwuvy6gwpg" path="res://scenes/orb.tscn" id="2_4ms7o"]
+[ext_resource type="Script" path="res://scripts/ui/store_orb.gd" id="3_r6g46"]
+[ext_resource type="Script" path="res://scripts/ui/fight_orb.gd" id="4_bmpug"]
+[ext_resource type="Script" path="res://scripts/ui/training_orb.gd" id="5_2a6w0"]
+[ext_resource type="PackedScene" uid="uid://brmx4sa7xb3xq" path="res://scenes/ui/store/store_window.tscn" id="6_ljqek"]
+[ext_resource type="Script" path="res://scripts/zones/zone_map.gd" id="7_phntm"]
+[ext_resource type="Script" path="res://scripts/autoload/zone_manager.gd" id="8_4u46v"]
+[ext_resource type="Script" path="res://scripts/battle/battle_manager.gd" id="9_ji3j2"]
+[ext_resource type="PackedScene" uid="uid://ce0fyqjs5nd5q" path="res://scenes/ui/hotbar.tscn" id="10_e27lq"]
+
+[node name="Background" type="ColorRect"]
+z_index = -2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+mouse_filter = 1
+color = Color(0, 0, 0, 1)
+
+[node name="Split" type="VSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="GameWindow" type="MarginContainer" parent="Split" groups=["game_window"]]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 5.0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ZoneBackground" type="TextureRect" parent="Split/GameWindow"]
+layout_mode = 2
+texture = ExtResource("1_h03e6")
+expand_mode = 1
+
+[node name="ItemStore" parent="Split/GameWindow/ZoneBackground" instance=ExtResource("2_4ms7o")]
+position = Vector2(264, 547)
+script = ExtResource("3_r6g46")
+
+[node name="StoryFight" parent="Split/GameWindow/ZoneBackground" instance=ExtResource("2_4ms7o")]
+position = Vector2(1142, 424)
+script = ExtResource("4_bmpug")
+
+[node name="TrainingFight" parent="Split/GameWindow/ZoneBackground" instance=ExtResource("2_4ms7o")]
+position = Vector2(1475, 475)
+script = ExtResource("5_2a6w0")
+
+[node name="StoreWindow" parent="Split" groups=["store_window"] instance=ExtResource("6_ljqek")]
+visible = false
+layout_mode = 2
+
+[node name="UI" type="CanvasLayer" parent="Split"]
+visible = false
+
+[node name="ZoneMap" type="Control" parent="Split/UI"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("7_phntm")
+
+[node name="Managers" type="Node" parent="Split"]
+
+[node name="ZoneManager" type="Node2D" parent="Split/Managers"]
+script = ExtResource("8_4u46v")
+
+[node name="BattleManager" type="Node2D" parent="Split/Managers"]
+script = ExtResource("9_ji3j2")
+
+[node name="Hotbar" parent="Split" instance=ExtResource("10_e27lq")]
+layout_mode = 2

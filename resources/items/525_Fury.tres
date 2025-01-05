@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dptqa7g17ys3c"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6jglw"]
+[ext_resource type="Texture2D" uid="uid://dtleuwl2mqu0h" path="res://resources/sprites/M_WEAPON_TASER2.png" id="2_4kvon"]
+
+[resource]
+script = ExtResource("1_6jglw")
+id = 525.0
+looks = "TASER2"
+sprite_image = ExtResource("2_4kvon")
+name = "Fury"
+display_name = "Fury"
+internal_name = "Fury"
+tooltip = ""
+tooltipAlt = ["Speed +9", "Instinct +14", "Lightning Piercing +42"]
+item_type = 7
+rarity = 2
+class_type = 1
+required_level = 10.0
+price = 474.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 14.0,
+"speed": 9.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 42.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

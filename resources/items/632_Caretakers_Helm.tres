@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://spv0mg1ig7di"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_lg3bt"]
+[ext_resource type="Texture2D" uid="uid://7m6xxxx1ehy" path="res://resources/sprites/M_HEAD_POLICE2.png" id="2_1wwid"]
+
+[resource]
+script = ExtResource("1_lg3bt")
+id = 632.0
+looks = "POLICE2"
+sprite_image = ExtResource("2_1wwid")
+name = "Caretaker's Helm"
+display_name = "Caretaker's Helm"
+internal_name = "Drop POLICE2 Head"
+tooltip = ""
+tooltipAlt = ["Speed +8", "Instinct +46", "Strength +8", "Vitality +16"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 22.0
+price = 1083.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 16.0,
+"magic": 46.0,
+"speed": 8.0,
+"strength": 8.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cfyhet68xigmb"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_0u4ej"]
+[ext_resource type="Texture2D" uid="uid://bgeh7le4uy2uw" path="res://resources/sprites/M_HAND_POLICE.png" id="2_ti774"]
+
+[resource]
+script = ExtResource("1_0u4ej")
+id = 619.0
+looks = "POLICE"
+sprite_image = ExtResource("2_ti774")
+name = "Riot Gloves"
+display_name = "Riot Gloves"
+internal_name = "Drop POLICE Hands"
+tooltip = ""
+tooltipAlt = ["Speed +11", "Instinct +8", "Strength +21", "Vitality +13"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 722.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 13.0,
+"magic": 8.0,
+"speed": 11.0,
+"strength": 21.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

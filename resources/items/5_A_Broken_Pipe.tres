@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cc4ncj4gyd32l"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_2djlf"]
+[ext_resource type="Texture2D" uid="uid://be8s38i3t773y" path="res://resources/sprites/M_WEAPON_PIPE.png" id="2_rdrdp"]
+
+[resource]
+script = ExtResource("1_2djlf")
+id = 5.0
+looks = "PIPE"
+sprite_image = ExtResource("2_rdrdp")
+name = "A Broken Pipe"
+display_name = "A Broken Pipe"
+internal_name = "A Broken Pipe"
+tooltip = "Me and the pipe... We go way back."
+tooltipAlt = ["Strength +6"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 1.0
+price = 15.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 6.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

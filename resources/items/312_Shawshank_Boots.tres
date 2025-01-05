@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c0g0v3at4f46q"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_2vjkq"]
+[ext_resource type="Texture2D" uid="uid://drpmbf3uinqs4" path="res://resources/sprites/M_FOOT_JASON2.png" id="2_wiq5m"]
+
+[resource]
+script = ExtResource("1_2vjkq")
+id = 312.0
+looks = "JASON2"
+sprite_image = ExtResource("2_wiq5m")
+name = "Shawshank Boots"
+display_name = "Shawshank Boots"
+internal_name = "Warden's Steel Toes"
+tooltip = "Everyone is guilty of something."
+tooltipAlt = ["Speed +2", "Instinct +2", "Strength +2", "Vitality +1"]
+item_type = 6
+rarity = 1
+class_type = 1
+required_level = 5.0
+price = 84.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 1.0,
+"magic": 2.0,
+"speed": 2.0,
+"strength": 2.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

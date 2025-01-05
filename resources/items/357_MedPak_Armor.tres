@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://xu3paef71f6l"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_dpbgh"]
+[ext_resource type="Texture2D" uid="uid://bfgi3ei52dlus" path="res://resources/sprites/M_CHEST_ZPCI3.png" id="2_vasyk"]
+
+[resource]
+script = ExtResource("1_dpbgh")
+id = 357.0
+looks = "ZPCI3"
+sprite_image = ExtResource("2_vasyk")
+name = "MedPak Armor"
+display_name = "MedPak Armor"
+internal_name = "MedPak Armor"
+tooltip = ""
+tooltipAlt = ["Speed +7", "Instinct +13", "Vitality +3"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 383.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 3.0,
+"magic": 13.0,
+"speed": 7.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://mdae5pj4lldr"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_j5ooa"]
+
+[resource]
+script = ExtResource("1_j5ooa")
+id = 134.0
+looks = ""
+name = ""
+display_name = "Sandals of Repentence"
+internal_name = "Sandals of Repentence"
+tooltip = ""
+tooltipAlt = ["Speed +2", "Instinct +3", "Strength +3", "Vitality +3", "Lightning Defense +5", "Earth Defense +5"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 5.0
+price = 2432.0
+price_modifier = 29.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 3.0,
+"magic": 3.0,
+"speed": 2.0,
+"strength": 3.0
+},
+"defense": {
+"Earth": 5.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 5.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

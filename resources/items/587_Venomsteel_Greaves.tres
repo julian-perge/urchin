@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b0c0pog6pykf2"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_mqqe3"]
+[ext_resource type="Texture2D" uid="uid://r108q0ipwojh" path="res://resources/sprites/M_FOOT_TUNNELSET1.png" id="2_c0pj2"]
+
+[resource]
+script = ExtResource("1_mqqe3")
+id = 587.0
+looks = "TUNNELSET1"
+sprite_image = ExtResource("2_c0pj2")
+name = "Venomsteel Greaves"
+display_name = "Venomsteel Greaves"
+internal_name = "Drop IRONGUARD Feet"
+tooltip = ""
+tooltipAlt = ["Speed +4", "Strength +11", "Vitality +22", "Poison Piercing +5"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 17.0
+price = 526.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 22.0,
+"magic": 0.0,
+"speed": 4.0,
+"strength": 11.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 5.0,
+"Shadow": 0.0
+}
+}

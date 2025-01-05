@@ -1,0 +1,182 @@
+[gd_scene load_steps=12 format=3 uid="uid://ce0fyqjs5nd5q"]
+
+[ext_resource type="Texture2D" uid="uid://cj2eixtof4yry" path="res://assets/sonny2_hotbar_bg.png" id="1_own7q"]
+[ext_resource type="Texture2D" uid="uid://db5s7rrbpngur" path="res://resources/toolbar/inventory.png" id="3_3nxgp"]
+[ext_resource type="Texture2D" uid="uid://bhw4gc1h2tcj7" path="res://resources/toolbar/abilities.png" id="4_4gjao"]
+[ext_resource type="Texture2D" uid="uid://dv5jpuy4iasyw" path="res://resources/toolbar/save.png" id="5_f6mua"]
+[ext_resource type="Texture2D" uid="uid://cgywy2xni7jr6" path="res://resources/toolbar/options.png" id="6_58jn5"]
+[ext_resource type="Texture2D" uid="uid://ch1xac2a0i2ov" path="res://resources/toolbar/achievements.png" id="7_ipins"]
+[ext_resource type="Texture2D" uid="uid://c3v5cnrljwxl4" path="res://resources/toolbar/respec.png" id="7_uij1d"]
+[ext_resource type="Texture2D" uid="uid://b6ouj2ybww3h2" path="res://resources/toolbar/world_map.png" id="8_qn7ub"]
+[ext_resource type="Script" path="res://scripts/zones/zone_map.gd" id="9_4g2by"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_sd3lk"]
+font_size = 36
+
+[sub_resource type="LabelSettings" id="LabelSettings_b0fuf"]
+font_size = 28
+font_color = Color(0, 1, 0.368627, 1)
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.5
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("1_own7q")
+expand_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="LeftSection" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+clip_children = 2
+layout_mode = 2
+size_flags_stretch_ratio = 3.0
+
+[node name="LeftButtons" type="GridContainer" parent="MarginContainer/HBoxContainer/LeftSection"]
+clip_children = 2
+layout_mode = 2
+theme_override_constants/h_separation = 16
+columns = 6
+
+[node name="Inventory" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource("3_3nxgp")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Abilities" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource("4_4gjao")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Save" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource("5_f6mua")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Options" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource("6_58jn5")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Respec" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource("7_uij1d")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Achievements" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource("7_ipins")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="MiddleSection" type="Panel" parent="MarginContainer/HBoxContainer"]
+clip_children = 2
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ZoneMap" type="TextureButton" parent="MarginContainer/HBoxContainer/MiddleSection"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.0
+offset_top = -48.0
+offset_right = 48.0
+offset_bottom = 48.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_stretch_ratio = 2.0
+texture_normal = ExtResource("8_qn7ub")
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("9_4g2by")
+
+[node name="RightSection" type="Panel" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/RightSection"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="ZoneName" type="Label" parent="MarginContainer/HBoxContainer/RightSection/VBoxContainer"]
+layout_mode = 2
+text = "ZONE 7"
+label_settings = SubResource("LabelSettings_sd3lk")
+horizontal_alignment = 1
+
+[node name="ZoneTooltip" type="Label" parent="MarginContainer/HBoxContainer/RightSection/VBoxContainer"]
+layout_mode = 2
+text = "Sho'Tul Shelf: The Divided Cliff"
+label_settings = SubResource("LabelSettings_b0fuf")
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/HBoxContainer/RightSection/VBoxContainer"]
+custom_minimum_size = Vector2(512, 64)
+layout_mode = 2
+size_flags_vertical = 1
+value = 25.0
+
+[connection signal="button_down" from="MarginContainer/HBoxContainer/LeftSection/LeftButtons/Inventory" to="MarginContainer/HBoxContainer/LeftSection/LeftButtons" method="_on_inventory_button_down"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/MiddleSection/ZoneMap" to="MarginContainer/HBoxContainer/MiddleSection/ZoneMap" method="_on_pressed"]

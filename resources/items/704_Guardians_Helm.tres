@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://citei4ge71a25"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_t6h2r"]
+[ext_resource type="Texture2D" uid="uid://da7b2gopf5hfq" path="res://resources/sprites/M_HEAD_ROBOT2.png" id="2_t5cvs"]
+
+[resource]
+script = ExtResource("1_t6h2r")
+id = 704.0
+looks = "ROBOT2"
+sprite_image = ExtResource("2_t5cvs")
+name = "Guardian's Helm"
+display_name = "Guardian's Helm"
+internal_name = "Drop ROBOT2 Head"
+tooltip = ""
+tooltipAlt = ["Speed +36", "Vitality +47", "Fire Defense +113"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1556.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 47.0,
+"magic": 0.0,
+"speed": 36.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 113.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

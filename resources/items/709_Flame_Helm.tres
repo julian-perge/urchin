@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://f0tnrf65a43f"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_g7rpx"]
+[ext_resource type="Texture2D" uid="uid://bhfswnvnhly3j" path="res://resources/sprites/M_HEAD_FIRESAM.png" id="2_88q6t"]
+
+[resource]
+script = ExtResource("1_g7rpx")
+id = 709.0
+looks = "FIRESAM"
+sprite_image = ExtResource("2_88q6t")
+name = "Flame Helm"
+display_name = "Flame Helm"
+internal_name = "Drop FIRESAM Head"
+tooltip = ""
+tooltipAlt = ["Speed +36", "Instinct +12", "Strength +47", "Vitality +36", "Fire Piercing +28"]
+item_type = 2
+rarity = 2
+class_type = 1
+required_level = 28.0
+price = 1556.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 36.0,
+"magic": 12.0,
+"speed": 36.0,
+"strength": 47.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 28.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

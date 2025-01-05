@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://o4o65kprpa3p"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_d0qdh"]
+[ext_resource type="Texture2D" uid="uid://cojwxyw5olpp5" path="res://resources/sprites/M_CHEST_TAT2.png" id="2_buroe"]
+
+[resource]
+script = ExtResource("1_d0qdh")
+id = 328.0
+looks = "TAT2"
+sprite_image = ExtResource("2_buroe")
+name = "Dissident's Crest"
+display_name = "Dissident's Crest"
+internal_name = "Dissident's Crest"
+tooltip = "Incredibly sturdy for a make-shift uniform."
+tooltipAlt = ["Speed +5", "Instinct +5", "Strength +5", "Vitality +5"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 9.0
+price = 284.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 5.0,
+"magic": 5.0,
+"speed": 5.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

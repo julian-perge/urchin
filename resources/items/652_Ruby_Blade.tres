@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cuqqcc2rkt3i0"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_wykca"]
+[ext_resource type="Texture2D" uid="uid://bf631i6tmw2ut" path="res://resources/sprites/M_WEAPON_FELKNIFE3.png" id="2_17v35"]
+
+[resource]
+script = ExtResource("1_wykca")
+id = 652.0
+looks = "FELKNIFE3"
+sprite_image = ExtResource("2_17v35")
+name = "Ruby Blade"
+display_name = "Ruby Blade"
+internal_name = "SMALL BLADE 2"
+tooltip = ""
+tooltipAlt = ["Strength +21", "Physical Piercing +105"]
+item_type = 8
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 1444.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 21.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 105.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

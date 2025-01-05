@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://csdpt2xvh277i"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_kj3gc"]
+
+[resource]
+script = ExtResource("1_kj3gc")
+name = "Beast"
+vitality = 15.0
+strength = 15.0
+magic = 5.0
+speed = 13.0
+focus = 100.0
+moves = {
+"absolute": [[166.0, 0.0]],
+"attack": [103.0, 578.0, 115.0],
+"defense": [1.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL1", "PREDATOR", ","],
+"skin": " ",
+"voice": {
+"die": "dead_twisted",
+"hit": ["hit_twisted1", "hit_twisted2", "hit_twisted3"]
+}
+}

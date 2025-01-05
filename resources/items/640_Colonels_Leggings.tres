@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://y0nd64a2d5ie"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_2s4hb"]
+[ext_resource type="Texture2D" uid="uid://b0f85xkq72hrv" path="res://resources/sprites/M_LEG2_IMPERIAL2.png" id="2_fe7i3"]
+
+[resource]
+script = ExtResource("1_2s4hb")
+id = 640.0
+looks = "IMPERIAL2"
+sprite_image = ExtResource("2_fe7i3")
+name = "Colonel's Leggings"
+display_name = "Colonel's Leggings"
+internal_name = "Drop IMPERIAL2 Legs"
+tooltip = ""
+tooltipAlt = ["Speed +4", "Strength +34", "Vitality +38", "Lightning Defense +29"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 22.0
+price = 1083.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 38.0,
+"magic": 0.0,
+"speed": 4.0,
+"strength": 34.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 29.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

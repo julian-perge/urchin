@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dysrb2lu5w8p2"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6tbrq"]
+[ext_resource type="Texture2D" uid="uid://d3kowxtaw2wly" path="res://resources/sprites/M_CHEST_SAMURAI4.png" id="2_8sqah"]
+
+[resource]
+script = ExtResource("1_6tbrq")
+id = 534.0
+looks = "SAMURAI4"
+sprite_image = ExtResource("2_8sqah")
+name = "Ancient Cage"
+display_name = "Ancient Cage"
+internal_name = "Vendor Samurai Chest"
+tooltip = "You can't read the writings..."
+tooltipAlt = ["Speed +7", "Instinct +12", "Strength +3", "Vitality +6"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 436.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 6.0,
+"magic": 12.0,
+"speed": 7.0,
+"strength": 3.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

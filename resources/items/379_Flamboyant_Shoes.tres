@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://jb6rab2u1vr4"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6anp8"]
+[ext_resource type="Texture2D" uid="uid://xpunassy0opq" path="res://resources/sprites/M_FOOT_GAY.png" id="2_nw1kg"]
+
+[resource]
+script = ExtResource("1_6anp8")
+id = 379.0
+looks = "GAY"
+sprite_image = ExtResource("2_nw1kg")
+name = "Flamboyant Shoes"
+display_name = "Flamboyant Shoes"
+internal_name = "Flamboyant Shoes"
+tooltip = ""
+tooltipAlt = ["Speed +12", "Strength +20", "Vitality +8"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 18.0
+price = 573.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 8.0,
+"magic": 0.0,
+"speed": 12.0,
+"strength": 20.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

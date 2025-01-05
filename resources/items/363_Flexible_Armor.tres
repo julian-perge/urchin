@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ch1lhnfyx7aiq"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_7xgkv"]
+[ext_resource type="Texture2D" uid="uid://ctxl334id82ng" path="res://resources/sprites/M_CHEST_ZPCI2.png" id="2_avc1n"]
+
+[resource]
+script = ExtResource("1_7xgkv")
+id = 363.0
+looks = "ZPCI2"
+sprite_image = ExtResource("2_avc1n")
+name = "Flexible Armor"
+display_name = "Flexible Armor"
+internal_name = "Flexible Armour"
+tooltip = ""
+tooltipAlt = ["Speed +4", "Instinct +2", "Strength +7", "Vitality +12"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 11.0
+price = 383.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 12.0,
+"magic": 2.0,
+"speed": 4.0,
+"strength": 7.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bxk80sw6mrrtm"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_dexdk"]
+[ext_resource type="Texture2D" uid="uid://d4igm5q8moqif" path="res://resources/sprites/M_CHEST_TUNNELSET2.png" id="2_g1omx"]
+
+[resource]
+script = ExtResource("1_dexdk")
+id = 579.0
+looks = "TUNNELSET2"
+sprite_image = ExtResource("2_g1omx")
+name = "DeathBone Armor"
+display_name = "DeathBone Armor"
+internal_name = "Drop VIKING Chest"
+tooltip = "Someone could really hurt themselves just putting this thing on."
+tooltipAlt = ["Instinct +39", "Strength +12", "Vitality +9", "Ice Piercing +7"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 19.0
+price = 870.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 9.0,
+"magic": 39.0,
+"speed": 0.0,
+"strength": 12.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 7.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

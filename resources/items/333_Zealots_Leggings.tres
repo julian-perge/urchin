@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bi6hrocwavmk7"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ut202"]
+[ext_resource type="Texture2D" uid="uid://c7bqco2fyss3d" path="res://resources/sprites/M_LEG2_XADER.png" id="2_v3jg2"]
+
+[resource]
+script = ExtResource("1_ut202")
+id = 333.0
+looks = "XADER"
+sprite_image = ExtResource("2_v3jg2")
+name = "Zealot's Leggings"
+display_name = "Zealot's Leggings"
+internal_name = "Zealot's Leggings"
+tooltip = ""
+tooltipAlt = ["Speed +7", "Instinct +5", "Strength +5", "Vitality +2"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 9.0
+price = 284.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 2.0,
+"magic": 5.0,
+"speed": 7.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

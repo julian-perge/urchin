@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bn40eoj1vkjs6"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_i2abu"]
+[ext_resource type="Texture2D" uid="uid://c133ldbomut5x" path="res://resources/sprites/M_HEAD_SHAMAN2.png" id="2_7n4xi"]
+
+[resource]
+script = ExtResource("1_i2abu")
+id = 538.0
+looks = "SHAMAN2"
+sprite_image = ExtResource("2_7n4xi")
+name = "Spirit Cover"
+display_name = "Spirit Cover"
+internal_name = "Drop Shaman Head"
+tooltip = ""
+tooltipAlt = ["Speed +6", "Instinct +15", "Vitality +9"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 13.0
+price = 492.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 9.0,
+"magic": 15.0,
+"speed": 6.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

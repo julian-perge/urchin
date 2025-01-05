@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c4rdsphbpa8cd"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_3kknb"]
+[ext_resource type="Texture2D" uid="uid://bschjywnvtnjl" path="res://resources/sprites/M_HEAD_TAT.png" id="2_5bglf"]
+
+[resource]
+script = ExtResource("1_3kknb")
+id = 382.0
+looks = "TAT"
+sprite_image = ExtResource("2_5bglf")
+name = "Cloaking Helm"
+display_name = "Cloaking Helm"
+internal_name = "Cloaking Helm"
+tooltip = ""
+tooltipAlt = ["Speed +3", "Instinct +1", "Strength +5", "Vitality +9"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 9.0
+price = 284.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 9.0,
+"magic": 1.0,
+"speed": 3.0,
+"strength": 5.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

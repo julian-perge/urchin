@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://r8m5rbde5xqm"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_unfnf"]
+[ext_resource type="Texture2D" uid="uid://8vcjch3ihdph" path="res://resources/sprites/M_WEAPON_SHAMANMED.png" id="2_0fcr8"]
+
+[resource]
+script = ExtResource("1_unfnf")
+id = 561.0
+looks = "SHAMANMED"
+sprite_image = ExtResource("2_0fcr8")
+name = "Frosted Axe"
+display_name = "Frosted Axe"
+internal_name = "Blue Axe"
+tooltip = ""
+tooltipAlt = ["Speed +11", "Instinct +11", "Ice Piercing +130"]
+item_type = 9
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 1247.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 11.0,
+"speed": 11.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 130.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

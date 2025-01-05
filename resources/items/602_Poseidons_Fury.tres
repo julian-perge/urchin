@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cso5j36bmjbpb"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_0o655"]
+[ext_resource type="Texture2D" uid="uid://u23jdxkh4mc1" path="res://resources/sprites/M_WEAPON_TRIDENT.png" id="2_dya5t"]
+
+[resource]
+script = ExtResource("1_0o655")
+id = 602.0
+looks = "TRIDENT"
+sprite_image = ExtResource("2_dya5t")
+name = "Poseidon's Fury"
+display_name = "Poseidon's Fury"
+internal_name = "TRIDENT"
+tooltip = "Wield the fury of a titan."
+tooltipAlt = ["Speed +51", "Instinct +102", "Lightning Piercing +98"]
+item_type = 9
+rarity = 2
+class_type = 1
+required_level = 19.0
+price = 2485.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 102.0,
+"speed": 51.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 98.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bx5nu4rut4als"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_bbrq7"]
+
+[resource]
+script = ExtResource("1_bbrq7")
+id = 188.0
+looks = ""
+name = ""
+display_name = "Riot Shield"
+internal_name = "Riot Shield"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +10", "Instinct +17", "Strength +24", "Vitality +37", "Lightning Defense +14", "Earth Defense +14"]
+item_type = 8
+rarity = 1
+class_type = 1
+required_level = 12.0
+price = 168355.0
+price_modifier = 270.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 37.0,
+"magic": 17.0,
+"speed": 10.0,
+"strength": 24.0
+},
+"defense": {
+"Earth": 14.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 14.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

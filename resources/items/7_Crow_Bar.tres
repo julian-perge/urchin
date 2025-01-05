@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dgnq0uiy2kt8y"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_isfxs"]
+[ext_resource type="Texture2D" uid="uid://dxueimqro4lli" path="res://resources/sprites/M_WEAPON_CROWBAR.png" id="2_n3ohv"]
+
+[resource]
+script = ExtResource("1_isfxs")
+id = 7.0
+looks = "CROWBAR"
+sprite_image = ExtResource("2_n3ohv")
+name = "Crow Bar"
+display_name = "Crow Bar"
+internal_name = "Crow Bar"
+tooltip = "The weapon of free men."
+tooltipAlt = ["Strength +6"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 1.0
+price = 15.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 6.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

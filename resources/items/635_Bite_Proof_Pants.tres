@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dls7etd4tbpv2"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_auty0"]
+[ext_resource type="Texture2D" uid="uid://cxgfixpuo6yhf" path="res://resources/sprites/M_LEG2_POLICE2.png" id="2_y4c8g"]
+
+[resource]
+script = ExtResource("1_auty0")
+id = 635.0
+looks = "POLICE2"
+sprite_image = ExtResource("2_y4c8g")
+name = "Bite Proof Pants"
+display_name = "Bite Proof Pants"
+internal_name = "Drop POLICE2 Legs"
+tooltip = "Against dogs maybe."
+tooltipAlt = ["Speed +22", "Instinct +36", "Vitality +15"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 21.0
+price = 1010.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 15.0,
+"magic": 36.0,
+"speed": 22.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://bw12kxx62qgtf"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_70hkj"]
+
+[resource]
+script = ExtResource("1_70hkj")
+name = "The Hydra"
+vitality = 52.0
+strength = 32.0
+magic = 32.0
+speed = 13.0
+focus = 130.0
+moves = {
+"absolute": [[630.0, 1.0], [631.0, 2.0], [632.0, 3.0], [633.0, 3.0]],
+"attack": [141.0, 145.0, 635.0, 145.0],
+"defense": [634.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 25.0, 15.0],
+"defense": [75.0, 100.0, 320.0, 100.0, 320.0, 100.0, 100.0, 320.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 250.0]
+}
+visuals = {
+"equipment": [],
+"model": ["MODEL8", "HYDRA", ","],
+"skin": null,
+"voice": {
+"die": "dead_monster",
+"hit": ["hit_monster1", "hit_monster2", "hit_monster3"]
+}
+}

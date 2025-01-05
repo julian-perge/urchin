@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://m3lc8c8tu8"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_t2ksp"]
+[ext_resource type="Texture2D" uid="uid://dbfx06qvuvr52" path="res://resources/sprites/M_HAND_ULTI.png" id="2_mrbg0"]
+
+[resource]
+script = ExtResource("1_t2ksp")
+id = 696.0
+looks = "ULTI"
+sprite_image = ExtResource("2_mrbg0")
+name = "Furious Handplates"
+display_name = "Furious Handplates"
+internal_name = "Drop ULTI Hands"
+tooltip = ""
+tooltipAlt = ["Speed +9", "Instinct +9", "Strength +42", "Vitality +26"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 28.0
+price = 1111.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 26.0,
+"magic": 9.0,
+"speed": 9.0,
+"strength": 42.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b7k27ncj5hhsy"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_p4clp"]
+[ext_resource type="Texture2D" uid="uid://b5sv2akeyrwid" path="res://resources/sprites/M_FOOT_TUNTAT.png" id="2_gm1jt"]
+
+[resource]
+script = ExtResource("1_p4clp")
+id = 577.0
+looks = "TUNTAT"
+sprite_image = ExtResource("2_gm1jt")
+name = "Black-Ops Boots"
+display_name = "Black-Ops Boots"
+internal_name = "Drop BLACK OPS Feet"
+tooltip = "Made by Addi."
+tooltipAlt = ["Speed +14", "Strength +8", "Physical Piercing +31"]
+item_type = 6
+rarity = 0
+class_type = 1
+required_level = 18.0
+price = 573.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 14.0,
+"strength": 8.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 31.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

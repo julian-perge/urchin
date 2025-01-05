@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://d0sbrf5lbpail"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_m6m28"]
+
+[resource]
+script = ExtResource("1_m6m28")
+id = 182.0
+looks = ""
+name = ""
+display_name = "Sniper Rifle"
+internal_name = "Sniper Rifle"
+tooltip = ""
+tooltipAlt = ["Focus +5", "Speed +7", "Instinct +48", "Strength +10", "Vitality +16", "Lightning Defense +27", "Earth Defense +27"]
+item_type = 9
+rarity = 1
+class_type = 1
+required_level = 11.0
+price = 249543.0
+price_modifier = 228.0
+stats = {
+"attributes": {
+"focus": 5.0,
+"health": 16.0,
+"magic": 48.0,
+"speed": 7.0,
+"strength": 10.0
+},
+"defense": {
+"Earth": 27.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 27.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://x31nv0mjvr0h"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_cdndh"]
+[ext_resource type="Texture2D" uid="uid://cxt018tyd6kio" path="res://resources/sprites/M_LEG2_ROCKSTAR.png" id="2_u6qhv"]
+
+[resource]
+script = ExtResource("1_cdndh")
+id = 596.0
+looks = "ROCKSTAR"
+sprite_image = ExtResource("2_u6qhv")
+name = "White Jeans"
+display_name = "White Jeans"
+internal_name = "Drop ROCKSTAR Legs"
+tooltip = ""
+tooltipAlt = ["Speed +15", "Instinct +5", "Strength +20", "Vitality +10"]
+item_type = 5
+rarity = 0
+class_type = 1
+required_level = 17.0
+price = 736.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 10.0,
+"magic": 5.0,
+"speed": 15.0,
+"strength": 20.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ugah4faojv6s"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_sfjwx"]
+[ext_resource type="Texture2D" uid="uid://b2gvog2oeckqe" path="res://resources/sprites/M_LEG2_JEANS.png" id="2_53mw3"]
+
+[resource]
+script = ExtResource("1_sfjwx")
+id = 513.0
+looks = "JEANS"
+sprite_image = ExtResource("2_53mw3")
+name = "Dirty 31"
+display_name = "Dirty 31"
+internal_name = "Dirty 31"
+tooltip = "Awesome vintage jeans. These actually fit."
+tooltipAlt = ["Speed +6"]
+item_type = 5
+rarity = 2
+class_type = 1
+required_level = 3.0
+price = 164.0
+price_modifier = 3.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 6.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://waivxb5fctc7"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_gy24f"]
+[ext_resource type="Texture2D" uid="uid://cwwvqo5bp8iaj" path="res://resources/sprites/M_CHEST_SHAMAN1.png" id="2_kcp4b"]
+
+[resource]
+script = ExtResource("1_gy24f")
+id = 529.0
+looks = "SHAMAN1"
+sprite_image = ExtResource("2_kcp4b")
+name = "Antique Armor"
+display_name = "Antique Armor"
+internal_name = "Vendor Shaman Chest"
+tooltip = ""
+tooltipAlt = ["Speed +8", "Vitality +3", "Physical Piercing +39"]
+item_type = 3
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 436.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 3.0,
+"magic": 0.0,
+"speed": 8.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 39.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

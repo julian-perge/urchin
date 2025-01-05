@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bxb8qgk0721gh"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_xf8mq"]
+[ext_resource type="Texture2D" uid="uid://yne8gf3cukbh" path="res://resources/sprites/M_WEAPON_XADER.png" id="2_njjag"]
+
+[resource]
+script = ExtResource("1_xf8mq")
+id = 675.0
+looks = "XADER"
+sprite_image = ExtResource("2_njjag")
+name = "Temporal Blade"
+display_name = "Temporal Blade"
+internal_name = "SWORD"
+tooltip = ""
+tooltipAlt = ["Speed +15", "Instinct +30", "Strength +191", "Vitality +59"]
+item_type = 9
+rarity = 0
+class_type = 1
+required_level = 26.0
+price = 3977.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 59.0,
+"magic": 30.0,
+"speed": 15.0,
+"strength": 191.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

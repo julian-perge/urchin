@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d1mjsevrskjv4"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_fh5v5"]
+[ext_resource type="Texture2D" uid="uid://drdi32qtyktdn" path="res://resources/sprites/M_HEAD_SAMURAI4.png" id="2_qlads"]
+
+[resource]
+script = ExtResource("1_fh5v5")
+id = 533.0
+looks = "SAMURAI4"
+sprite_image = ExtResource("2_qlads")
+name = "Heavenly Helm"
+display_name = "Heavenly Helm"
+internal_name = "Vendor Samurai Head"
+tooltip = ""
+tooltipAlt = ["Speed +6", "Strength +11", "Vitality +11"]
+item_type = 2
+rarity = 0
+class_type = 1
+required_level = 12.0
+price = 436.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 11.0,
+"magic": 0.0,
+"speed": 6.0,
+"strength": 11.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

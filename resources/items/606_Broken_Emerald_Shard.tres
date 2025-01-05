@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://c8g3ojxm1yh4i"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_3dgi7"]
+
+[resource]
+script = ExtResource("1_3dgi7")
+id = 606.0
+looks = ""
+name = "Broken Emerald Shard"
+display_name = "Broken Emerald Shard"
+internal_name = "SHARD"
+tooltip = "It's probably worth quite a bit of money."
+tooltipAlt = []
+item_type = 0
+rarity = 0
+class_type = 1
+required_level = 20.0
+price = 2683.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 0.0,
+"speed": 0.0,
+"strength": 0.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

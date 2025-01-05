@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Character" load_steps=2 format=3 uid="uid://delb28ghoqs0p"]
+
+[ext_resource type="Script" path="res://scripts/entities/character.gd" id="1_8wwdj"]
+
+[resource]
+script = ExtResource("1_8wwdj")
+name = "Vivian Vixen"
+vitality = 2.5
+strength = 45.0
+magic = 45.0
+speed = 15.0
+focus = 100.0
+moves = {
+"absolute": [[613.0, 1.0], [617.0, 2.0]],
+"attack": [616.0, 615.0, 614.0],
+"defense": [2.0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 565.0, 566.0],
+"model": ["MODEL4", "VIV", ","],
+"skin": null,
+"voice": {
+"die": "dead_fel",
+"hit": ["hit_fel1", "hit_fel2", "hit_fel3"]
+}
+}

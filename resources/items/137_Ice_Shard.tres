@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://ci5rhsg0ypokk"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_wbe0y"]
+
+[resource]
+script = ExtResource("1_wbe0y")
+id = 137.0
+looks = ""
+name = ""
+display_name = "Ice Shard"
+internal_name = "Ice Shard"
+tooltip = ""
+tooltipAlt = ["Speed +14", "Instinct +7", "Strength +9", "Vitality +7", "Lightning Defense +10", "Earth Defense +10"]
+item_type = 7
+rarity = 0
+class_type = 1
+required_level = 6.0
+price = 7936.0
+price_modifier = 36.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 7.0,
+"magic": 7.0,
+"speed": 14.0,
+"strength": 9.0
+},
+"defense": {
+"Earth": 10.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 10.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}

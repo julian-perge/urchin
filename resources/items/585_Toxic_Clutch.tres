@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dh85xu1o5uvyj"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_e8l7d"]
+[ext_resource type="Texture2D" uid="uid://c8f2jocrhflg3" path="res://resources/sprites/M_HAND_TUNNELSET1.png" id="2_brtq5"]
+
+[resource]
+script = ExtResource("1_e8l7d")
+id = 585.0
+looks = "TUNNELSET1"
+sprite_image = ExtResource("2_brtq5")
+name = "Toxic Clutch"
+display_name = "Toxic Clutch"
+internal_name = "Drop IRONGUARD Hands"
+tooltip = ""
+tooltipAlt = ["Speed +11", "Strength +18", "Vitality +8", "Poison Piercing +5"]
+item_type = 4
+rarity = 0
+class_type = 1
+required_level = 17.0
+price = 526.0
+price_modifier = 1.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 8.0,
+"magic": 0.0,
+"speed": 11.0,
+"strength": 18.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 5.0,
+"Shadow": 0.0
+}
+}

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://12oi4ge7c424"]
+
+[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_d8u8p"]
+[ext_resource type="Texture2D" uid="uid://cyi06txm4hlh1" path="res://resources/sprites/M_WEAPON_FROSTAXE.png" id="2_uyuic"]
+
+[resource]
+script = ExtResource("1_d8u8p")
+id = 520.0
+looks = "FROSTAXE"
+sprite_image = ExtResource("2_uyuic")
+name = "Frosted Fate"
+display_name = "Frosted Fate"
+internal_name = "Frosted Fate"
+tooltip = "This one is actually quite heavy."
+tooltipAlt = ["Speed +9", "Instinct +6", "Strength +17", "Ice Piercing +25"]
+item_type = 7
+rarity = 2
+class_type = 1
+required_level = 10.0
+price = 1423.0
+price_modifier = 3.0
+stats = {
+"attributes": {
+"focus": 0.0,
+"health": 0.0,
+"magic": 6.0,
+"speed": 9.0,
+"strength": 17.0
+},
+"defense": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 0.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+},
+"piercing": {
+"Earth": 0.0,
+"Fire": 0.0,
+"Ice": 25.0,
+"Lightning": 0.0,
+"Magic": 0.0,
+"Physical": 0.0,
+"Poison": 0.0,
+"Shadow": 0.0
+}
+}
