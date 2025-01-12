@@ -11,17 +11,23 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        0,
-        -2,
-        -2,
-        -1,
-        -1
+        {
+          "id": 0
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": -1
+        }
       ],
       "players_levels": [
         1,
@@ -48,17 +54,25 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        49,
-        0,
-        0,
-        48,
-        0
+        {
+          "id": 49,
+          "name": "Metabii"
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": 48,
+          "name": "Louis the Blind"
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         1,
@@ -170,36 +184,43 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.6,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.6,
+            "player": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.15,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.15,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        9,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 9,
+          "name": "The Warden"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         1,
@@ -227,17 +248,26 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        20,
-        -2,
-        21,
-        -1,
-        22
+        {
+          "id": 20,
+          "name": "Knight"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 21,
+          "name": "Priest"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 22,
+          "name": "Mage"
+        }
       ],
       "players_levels": [
         1,
@@ -265,17 +295,26 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        25,
-        -2,
-        23,
-        -1,
-        23
+        {
+          "id": 25,
+          "name": "Frost Terror"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 23,
+          "name": "Frost Zombie"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 23,
+          "name": "Frost Zombie"
+        }
       ],
       "players_levels": [
         1,
@@ -304,27 +343,34 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.35000000000000003,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.35000000000000003,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        33,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 33,
+          "name": "Frost Lord"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         1,
@@ -352,17 +398,24 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        7,
-        -2,
-        15,
-        -1,
-        0
+        {
+          "id": 7,
+          "name": "Frankie"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 15
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         1,
@@ -418,17 +471,24 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        12,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 12,
+          "name": "Twisted Experiment"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         1,
@@ -475,17 +535,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        5,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 5,
+          "name": "Prison Guard"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         1,
@@ -549,17 +616,25 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        5,
-        -2,
-        5,
-        -1,
-        0
+        {
+          "id": 5,
+          "name": "Prison Guard"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 5,
+          "name": "Prison Guard"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         1,
@@ -618,17 +693,25 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        10,
-        -2,
-        13,
-        -1,
-        0
+        {
+          "id": 10,
+          "name": "Brutal Convict"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 13,
+          "name": "Agile Convict"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         1,
@@ -741,17 +824,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        14,
-        -2,
-        13,
-        -1,
-        10
+        {
+          "id": 14,
+          "name": "Cunning Convict"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 13,
+          "name": "Agile Convict"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 10,
+          "name": "Brutal Convict"
+        }
       ],
       "players_levels": [
         2,
@@ -823,27 +915,36 @@
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.3,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.3,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        6,
-        -2,
-        5,
-        -1,
-        5
+        {
+          "id": 6,
+          "name": "Doctor Leath"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 5,
+          "name": "Prison Guard"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 5,
+          "name": "Prison Guard"
+        }
       ],
       "players_levels": [
         4,
@@ -906,17 +1007,24 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        12,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 12,
+          "name": "Twisted Experiment"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         5,
@@ -985,45 +1093,52 @@
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.6,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.6,
+            "player": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.15,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.15,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        9,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 9,
+          "name": "The Warden"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         5,
@@ -1076,17 +1191,24 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        7,
-        -2,
-        15,
-        -1,
-        0
+        {
+          "id": 7,
+          "name": "Frankie"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 15
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         6,
@@ -1167,17 +1289,24 @@
       "item_rare_dropper": 2,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        8,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 8,
+          "name": "ZPCI Elite"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         7,
@@ -1242,45 +1371,52 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.5,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.5,
+            "player": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.35000000000000003,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": true,
-              "life": 0.1,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.35000000000000003,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": true,
+            "life": 0.1,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        11,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 11,
+          "name": "Felicity"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         7,
@@ -1304,7 +1440,7 @@
         {
           "phase": 3,
           "player": 2,
-          "say": "You’re not getting that tape!",
+          "say": "You\u00e2\u20ac\u2122re not getting that tape!",
           "timeToSay": 2.3000000000000003,
           "turnTime": 0,
           "turnTime2": 0,
@@ -1358,17 +1494,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        23,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 23,
+          "name": "Frost Zombie"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         8,
@@ -1425,28 +1568,36 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": true,
-              "life": 0.1,
-              "player": 2,
-              "turn": 3,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": true,
+            "life": 0.1,
+            "player": 2,
+            "turn": 3,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        32,
-        -2,
-        29,
-        -1,
-        0
+        {
+          "id": 32,
+          "name": "Roald"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 29,
+          "name": "Insurgent"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         9,
@@ -1497,7 +1648,7 @@
         {
           "phase": 2,
           "player": 2,
-          "say": "We were a group of people devoted to find a cure for... your condition. But things started happening… ",
+          "say": "We were a group of people devoted to find a cure for... your condition. But things started happening\u00e2\u20ac\u00a6 ",
           "timeToSay": 7,
           "turnTime": 0,
           "turnTime2": 4,
@@ -1506,7 +1657,7 @@
         {
           "phase": 2,
           "player": 2,
-          "say": "Assassinations… Kidnappings… Someone didn't want us to continue our research.",
+          "say": "Assassinations\u00e2\u20ac\u00a6 Kidnappings\u00e2\u20ac\u00a6 Someone didn't want us to continue our research.",
           "timeToSay": 7,
           "turnTime": 0,
           "turnTime2": 5,
@@ -1515,7 +1666,7 @@
         {
           "phase": 2,
           "player": 4,
-          "say": "Those of us that survived – we fled from the Utopia, and ended up hiding here.",
+          "say": "Those of us that survived \u00e2\u20ac\u201c we fled from the Utopia, and ended up hiding here.",
           "timeToSay": 4.5,
           "turnTime": 0,
           "turnTime2": 6,
@@ -1551,7 +1702,7 @@
         {
           "phase": 2,
           "player": 2,
-          "say": "If you can rid us from this zealous cult – I'll take you there myself.",
+          "say": "If you can rid us from this zealous cult \u00e2\u20ac\u201c I'll take you there myself.",
           "timeToSay": 3.5,
           "turnTime": 0,
           "turnTime2": 10,
@@ -1609,17 +1760,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        25,
-        -2,
-        23,
-        -1,
-        23
+        {
+          "id": 25,
+          "name": "Frost Terror"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 23,
+          "name": "Frost Zombie"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 23,
+          "name": "Frost Zombie"
+        }
       ],
       "players_levels": [
         9,
@@ -1731,27 +1891,34 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.3,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.3,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        20,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 20,
+          "name": "Knight"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         9,
@@ -1870,17 +2037,25 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        21,
-        -2,
-        20,
-        -1,
-        0
+        {
+          "id": 21,
+          "name": "Priest"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 20,
+          "name": "Knight"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         10,
@@ -1960,17 +2135,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        33,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 33,
+          "name": "Frost Lord"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         10,
@@ -2105,17 +2287,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        20,
-        -2,
-        21,
-        -1,
-        22
+        {
+          "id": 20,
+          "name": "Knight"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 21,
+          "name": "Priest"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 22,
+          "name": "Mage"
+        }
       ],
       "players_levels": [
         10,
@@ -2215,17 +2406,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 2,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        20,
-        -2,
-        22,
-        -1,
-        22
+        {
+          "id": 20,
+          "name": "Knight"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 22,
+          "name": "Mage"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 22,
+          "name": "Mage"
+        }
       ],
       "players_levels": [
         10,
@@ -2289,37 +2489,44 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.3,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.3,
+            "player": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": true,
-              "life": 0,
-              "player": 2,
-              "turn": 1,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": true,
+            "life": 0,
+            "player": 2,
+            "turn": 1,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        30,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 30,
+          "name": "Cult Leader"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         11,
@@ -2406,46 +2613,53 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.5,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.5,
+            "player": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.2,
-              "player": 2,
-              "turn": 7,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": 0.05,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.2,
+            "player": 2,
+            "turn": 7,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": 0.05,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        31,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 31,
+          "name": "Baron Brixius"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         11,
@@ -2460,7 +2674,7 @@
         {
           "phase": 1,
           "player": 2,
-          "say": "Oh, it’s you! You always give me trouble! And here I was, having SUCH a good time.",
+          "say": "Oh, it\u00e2\u20ac\u2122s you! You always give me trouble! And here I was, having SUCH a good time.",
           "timeToSay": 7.5,
           "turnTime": 0,
           "turnTime2": 0,
@@ -2520,26 +2734,35 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": {
-            "members": {
-              "endGame": true,
-              "life": 0.3,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": {
+          "members": {
+            "endGame": true,
+            "life": 0.3,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        20,
-        -2,
-        21,
-        -1,
-        22
+        {
+          "id": 20,
+          "name": "Knight"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 21,
+          "name": "Priest"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 22,
+          "name": "Mage"
+        }
       ],
       "players_levels": [
         1,
@@ -2613,17 +2836,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        8,
-        -2,
-        27,
-        -1,
-        27
+        {
+          "id": 8,
+          "name": "ZPCI Elite"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 27,
+          "name": "Armored Hound"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 27,
+          "name": "Armored Hound"
+        }
       ],
       "players_levels": [
         11,
@@ -2726,46 +2958,54 @@
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 1,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.2,
-              "player": 2,
-              "turn": 1,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.2,
+            "player": 2,
+            "turn": 1,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.5,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": true,
-              "life": 0.15,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.5,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": true,
+            "life": 0.15,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        28,
-        -2,
-        26,
-        -1,
-        34
+        {
+          "id": 28,
+          "name": "Captain Hunt"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 26,
+          "name": "ZPCI Medic"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 34
+        }
       ],
       "players_levels": [
         11,
@@ -2858,17 +3098,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        40,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 40,
+          "name": "Spectre"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         12,
@@ -2934,17 +3181,25 @@
       "item_rare_dropper": 2,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        8,
-        -2,
-        8,
-        -1,
-        0
+        {
+          "id": 8,
+          "name": "ZPCI Elite"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 8,
+          "name": "ZPCI Elite"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         12,
@@ -3031,17 +3286,25 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        40,
-        -2,
-        40,
-        -1,
-        0
+        {
+          "id": 40,
+          "name": "Spectre"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 40,
+          "name": "Spectre"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         12,
@@ -3102,17 +3365,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        41,
-        -2,
-        42,
-        -1,
-        43
+        {
+          "id": 41,
+          "name": "Phantom"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 42,
+          "name": "Beast"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 43,
+          "name": "Antagonist"
+        }
       ],
       "players_levels": [
         13,
@@ -3148,17 +3420,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        44,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 44,
+          "name": "The Hobo"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         13,
@@ -3198,17 +3477,24 @@
       "item_rare_dropper": 2,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        45,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 45,
+          "name": "The Real Hobo"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         14,
@@ -3281,17 +3567,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        46,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 46,
+          "name": "The Host"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         14,
@@ -3381,17 +3674,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        40,
-        -2,
-        40,
-        -1,
-        40
+        {
+          "id": 40,
+          "name": "Spectre"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 40,
+          "name": "Spectre"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 40,
+          "name": "Spectre"
+        }
       ],
       "players_levels": [
         14,
@@ -3453,45 +3755,52 @@
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 1,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.6600000000000001,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.6600000000000001,
+            "player": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.33000000000000007,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.33000000000000007,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        47,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 47,
+          "name": "Clemons The Deceiver"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         15,
@@ -3580,17 +3889,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        50,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 50,
+          "name": "Tunnel Beast"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         16,
@@ -3662,28 +3978,35 @@
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.3,
-              "player": 2,
-              "turn": 10,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.3,
+            "player": 2,
+            "turn": 10,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        51,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 51,
+          "name": "Vivian Vixen"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         16,
@@ -3745,17 +4068,24 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        52,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 52,
+          "name": "Gregor"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         17,
@@ -3834,17 +4164,24 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        53,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 53,
+          "name": "Shunny"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         17,
@@ -3876,7 +4213,7 @@
         {
           "phase": 1,
           "player": 1,
-          "say": "I’m not amused.",
+          "say": "I\u00e2\u20ac\u2122m not amused.",
           "timeToSay": 1.5,
           "turnTime": 0,
           "turnTime2": 2,
@@ -3941,17 +4278,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        54,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 54,
+          "name": "The Magical Monkey"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         18,
@@ -4020,17 +4364,24 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        55,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 55,
+          "name": "Mokoshotar"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         18,
@@ -4099,17 +4450,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        56,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 56,
+          "name": "Bunny"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         18,
@@ -4193,17 +4551,24 @@
       "item_rare_dropper": 2,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        57,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 57,
+          "name": "Flower Zombie"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         19,
@@ -4256,45 +4621,54 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.85,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.85,
+            "player": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.42,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.42,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        58,
-        -2,
-        59,
-        -1,
-        59
+        {
+          "id": 58,
+          "name": "The Hydra"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 59,
+          "name": "Fire Claw"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 59,
+          "name": "Fire Claw"
+        }
       ],
       "players_levels": [
         20,
@@ -4365,26 +4739,35 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": {
-            "members": {
-              "endGame": true,
-              "life": 0.3,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": {
+          "members": {
+            "endGame": true,
+            "life": 0.3,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        60,
-        -2,
-        60,
-        -1,
-        60
+        {
+          "id": 60,
+          "name": "Tunnel Worker"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 60,
+          "name": "Tunnel Worker"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 60,
+          "name": "Tunnel Worker"
+        }
       ],
       "players_levels": [
         1,
@@ -4448,17 +4831,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        63,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 63,
+          "name": "Riot Police"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         21,
@@ -4521,17 +4911,25 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        63,
-        -2,
-        65,
-        -1,
-        0
+        {
+          "id": 63,
+          "name": "Riot Police"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 65,
+          "name": "Blood Hound"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         21,
@@ -4575,17 +4973,25 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 2,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        62,
-        -2,
-        62,
-        -1,
-        0
+        {
+          "id": 62,
+          "name": "Secret Police"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 62,
+          "name": "Secret Police"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         21,
@@ -4661,57 +5067,64 @@
       "item_rare_dropper2": 2,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.85,
-              "player": 2,
-              "turn": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.85,
+            "player": 2,
+            "turn": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.85,
-              "player": 2,
-              "turn": 10,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": 0.85,
-              "player": 2,
-              "turn": 11,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "4": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.85,
+            "player": 2,
+            "turn": 10,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": 0.85,
+            "player": 2,
+            "turn": 11,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "4": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        61,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 61,
+          "name": "Police Colonel"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         22,
@@ -4739,26 +5152,33 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": {
-            "members": {
-              "endGame": true,
-              "life": 0.3,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": {
+          "members": {
+            "endGame": true,
+            "life": 0.3,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        71,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 71,
+          "name": "Felicity"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         1,
@@ -4821,17 +5241,26 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 2,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        66,
-        -2,
-        65,
-        -1,
-        65
+        {
+          "id": 66,
+          "name": "Care Taker"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 65,
+          "name": "Blood Hound"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 65,
+          "name": "Blood Hound"
+        }
       ],
       "players_levels": [
         22,
@@ -4892,17 +5321,26 @@
       "item_rare_dropper": 2,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        67,
-        -2,
-        63,
-        -1,
-        63
+        {
+          "id": 67,
+          "name": "Android Guard"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 63,
+          "name": "Riot Police"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 63,
+          "name": "Riot Police"
+        }
       ],
       "players_levels": [
         22,
@@ -4963,17 +5401,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 2,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        64,
-        -2,
-        67,
-        -1,
-        67
+        {
+          "id": 64,
+          "name": "Specialist"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 67,
+          "name": "Android Guard"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 67,
+          "name": "Android Guard"
+        }
       ],
       "players_levels": [
         22,
@@ -5001,26 +5448,35 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": {
-            "members": {
-              "endGame": true,
-              "life": 0.3,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": {
+          "members": {
+            "endGame": true,
+            "life": 0.3,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        69,
-        71,
-        72,
-        0,
-        0
+        {
+          "id": 69,
+          "name": "Mayor"
+        },
+        {
+          "id": 71,
+          "name": "Felicity"
+        },
+        {
+          "id": 72,
+          "name": "ZPCI Ambassador"
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         22,
@@ -5114,37 +5570,45 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "teamLeft": 1,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "teamLeft": 1,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        68,
-        -2,
-        68,
-        -1,
-        0
+        {
+          "id": 68,
+          "name": "City Council"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 68,
+          "name": "City Council"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         23,
@@ -5222,17 +5686,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        67,
-        -2,
-        64,
-        -1,
-        62
+        {
+          "id": 67,
+          "name": "Android Guard"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 64,
+          "name": "Specialist"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 62,
+          "name": "Secret Police"
+        }
       ],
       "players_levels": [
         23,
@@ -5286,17 +5759,26 @@
       "item_rare_dropper": 2,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        64,
-        -2,
-        65,
-        -1,
-        65
+        {
+          "id": 64,
+          "name": "Specialist"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 65,
+          "name": "Blood Hound"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 65,
+          "name": "Blood Hound"
+        }
       ],
       "players_levels": [
         23,
@@ -5357,17 +5839,26 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 2,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        62,
-        -2,
-        67,
-        -1,
-        67
+        {
+          "id": 62,
+          "name": "Secret Police"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 67,
+          "name": "Android Guard"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 67,
+          "name": "Android Guard"
+        }
       ],
       "players_levels": [
         23,
@@ -5424,65 +5915,73 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "turn": 6,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "turn": 6,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.9000000000000002,
-              "player": 2,
-              "turn": 18,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": 0.6500000000000002,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "4": {
-            "members": {
-              "endGame": false,
-              "life": 0.3,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "5": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.9000000000000002,
+            "player": 2,
+            "turn": 18,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": 0.6500000000000002,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "4": {
+          "members": {
+            "endGame": false,
+            "life": 0.3,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "5": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        69,
-        -2,
-        0,
-        -1,
-        70
+        {
+          "id": 69,
+          "name": "Mayor"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 70,
+          "name": "Guardian Cannon"
+        }
       ],
       "players_levels": [
         24,
@@ -5567,45 +6066,52 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.5,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.5,
+            "player": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.15,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.15,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        73,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 73,
+          "name": "Metal Warden"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         22,
@@ -5751,28 +6257,35 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": true,
-              "life": -1,
-              "player": 2,
-              "turn": 60,
-              "winOrLose": 0
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": true,
+            "life": -1,
+            "player": 2,
+            "turn": 60,
+            "winOrLose": 0
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        74,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 74,
+          "name": "The Bomb"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         24,
@@ -5866,74 +6379,81 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.75,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.75,
+            "player": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "turn": 4,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": 0.5,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "4": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "turn": 4,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "5": {
-            "members": {
-              "endGame": false,
-              "life": 0.25,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "6": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "turn": 4,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": 0.5,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "4": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "turn": 4,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "5": {
+          "members": {
+            "endGame": false,
+            "life": 0.25,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "6": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        75,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 75,
+          "name": "Nostalgia"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         26,
@@ -6009,27 +6529,34 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        76,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 76,
+          "name": "The Judge"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         28,
@@ -6121,37 +6648,44 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "turn": 4,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "turn": 4,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        78,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 78,
+          "name": "Doctor Klima"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         22,
@@ -6260,47 +6794,55 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "turn": 1,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "turn": 1,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "teamLeft": 1,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": -1,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "teamLeft": 1,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": -1,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        80,
-        -2,
-        0,
-        -1,
-        79
+        {
+          "id": 80,
+          "name": "South Guardian"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 79,
+          "name": "North Guardian"
+        }
       ],
       "players_levels": [
         30,
@@ -6381,37 +6923,44 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "turn": 1,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "turn": 1,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": -1,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": -1,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        81,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 81,
+          "name": "Yosuke"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         30,
@@ -6485,37 +7034,46 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "teamLeft": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "teamLeft": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": true,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": true,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        84,
-        -2,
-        82,
-        -1,
-        83
+        {
+          "id": 84,
+          "name": "Versu the Corruptor"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 82,
+          "name": "Orb of Restraint"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 83,
+          "name": "Orb of Sanctuary"
+        }
       ],
       "players_levels": [
         30,
@@ -6577,17 +7135,25 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        5,
-        -2,
-        5,
-        0,
-        0
+        {
+          "id": 5,
+          "name": "Prison Guard"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 5,
+          "name": "Prison Guard"
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -6622,17 +7188,24 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        12,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 12,
+          "name": "Twisted Experiment"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -6691,45 +7264,52 @@
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.6,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.6,
+            "player": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.15,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.15,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        9,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 9,
+          "name": "The Warden"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -6782,17 +7362,24 @@
       "item_rare_dropper": 2,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        8,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 8,
+          "name": "ZPCI Elite"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -6833,17 +7420,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        23,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 23,
+          "name": "Frost Zombie"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -6897,17 +7491,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        25,
-        -2,
-        23,
-        -1,
-        23
+        {
+          "id": 25,
+          "name": "Frost Terror"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 23,
+          "name": "Frost Zombie"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 23,
+          "name": "Frost Zombie"
+        }
       ],
       "players_levels": [
         "X",
@@ -6964,27 +7567,34 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.3,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
-        },
-        "type": "EcmaArray"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.3,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        20,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 20,
+          "name": "Knight"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -7046,17 +7656,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        33,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 33,
+          "name": "Frost Lord"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -7163,17 +7780,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        20,
-        -2,
-        21,
-        -1,
-        22
+        {
+          "id": 20,
+          "name": "Knight"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 21,
+          "name": "Priest"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 22,
+          "name": "Mage"
+        }
       ],
       "players_levels": [
         "X",
@@ -7217,17 +7843,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        30,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 30,
+          "name": "Cult Leader"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -7277,46 +7910,53 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.5,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.5,
+            "player": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.2,
-              "player": 2,
-              "turn": 7,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": 0.05,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.2,
+            "player": 2,
+            "turn": 7,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": 0.05,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        31,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 31,
+          "name": "Baron Brixius"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -7353,17 +7993,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        8,
-        -2,
-        27,
-        -1,
-        27
+        {
+          "id": 8,
+          "name": "ZPCI Elite"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 27,
+          "name": "Armored Hound"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 27,
+          "name": "Armored Hound"
+        }
       ],
       "players_levels": [
         "X",
@@ -7419,17 +8068,25 @@
       "item_rare_dropper": 2,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        8,
-        -2,
-        8,
-        -1,
-        0
+        {
+          "id": 8,
+          "name": "ZPCI Elite"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 8,
+          "name": "ZPCI Elite"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -7506,17 +8163,25 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        40,
-        -2,
-        40,
-        -1,
-        0
+        {
+          "id": 40,
+          "name": "Spectre"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 40,
+          "name": "Spectre"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -7577,17 +8242,26 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        41,
-        -2,
-        42,
-        -1,
-        43
+        {
+          "id": 41,
+          "name": "Phantom"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 42,
+          "name": "Beast"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 43,
+          "name": "Antagonist"
+        }
       ],
       "players_levels": [
         "X",
@@ -7643,17 +8317,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        40,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 40,
+          "name": "Spectre"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -7705,17 +8386,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        50,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 50,
+          "name": "Tunnel Beast"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -7784,17 +8472,24 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        53,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 53,
+          "name": "Shunny"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -7863,17 +8558,24 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        54,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 54,
+          "name": "The Magical Monkey"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -7942,17 +8644,24 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        55,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 55,
+          "name": "Mokoshotar"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -8017,17 +8726,24 @@
       "item_rare_dropper": 2,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        57,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 57,
+          "name": "Flower Zombie"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -8071,17 +8787,26 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 2,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        66,
-        -2,
-        65,
-        -1,
-        65
+        {
+          "id": 66,
+          "name": "Care Taker"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 65,
+          "name": "Blood Hound"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 65,
+          "name": "Blood Hound"
+        }
       ],
       "players_levels": [
         "X",
@@ -8142,17 +8867,25 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        63,
-        -2,
-        62,
-        -1,
-        0
+        {
+          "id": 63,
+          "name": "Riot Police"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 62,
+          "name": "Secret Police"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -8213,17 +8946,25 @@
       "item_rare_dropper": 1,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 1,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        64,
-        -2,
-        67,
-        -1,
-        0
+        {
+          "id": 64,
+          "name": "Specialist"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 67,
+          "name": "Android Guard"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -8280,57 +9021,64 @@
       "item_rare_dropper2": 1,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0.85,
-              "player": 2,
-              "turn": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0.85,
+            "player": 2,
+            "turn": 2,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0.85,
-              "player": 2,
-              "turn": 10,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "3": {
-            "members": {
-              "endGame": false,
-              "life": 0.85,
-              "player": 2,
-              "turn": 11,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          },
-          "4": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0.85,
+            "player": 2,
+            "turn": 10,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "3": {
+          "members": {
+            "endGame": false,
+            "life": 0.85,
+            "player": 2,
+            "turn": 11,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        },
+        "4": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        61,
-        -2,
-        0,
-        -1,
-        0
+        {
+          "id": 61,
+          "name": "Police Colonel"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 0
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -8387,37 +9135,45 @@
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
       "phases": {
-        "associativeValues": {},
-        "denseValues": {
-          "0": "EMPTY",
-          "1": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "teamLeft": 1,
-              "winOrLose": 1
-            },
-            "type": "Object"
+        "0": "EMPTY",
+        "1": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "teamLeft": 1,
+            "winOrLose": 1
           },
-          "2": {
-            "members": {
-              "endGame": false,
-              "life": 0,
-              "player": 2,
-              "winOrLose": 1
-            },
-            "type": "Object"
-          }
+          "type": "Object"
         },
-        "type": "EcmaArray"
+        "2": {
+          "members": {
+            "endGame": false,
+            "life": 0,
+            "player": 2,
+            "winOrLose": 1
+          },
+          "type": "Object"
+        }
       },
       "players": [
-        68,
-        -2,
-        68,
-        -1,
-        0
+        {
+          "id": 68,
+          "name": "City Council"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 68,
+          "name": "City Council"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "X",
@@ -8444,17 +9200,25 @@
       "item_rare_dropper": 0,
       "item_rare_dropper2": 0,
       "item_rare_dropper3": 0,
-      "phases": {
-        "associativeValues": {},
-        "denseValues": {},
-        "type": "EcmaArray"
-      },
+      "phases": {},
       "players": [
-        77,
-        -2,
-        77,
-        -1,
-        0
+        {
+          "id": 77,
+          "name": "Peace Keeper"
+        },
+        {
+          "id": -2
+        },
+        {
+          "id": 77,
+          "name": "Peace Keeper"
+        },
+        {
+          "id": -1
+        },
+        {
+          "id": 0
+        }
       ],
       "players_levels": [
         "Z",

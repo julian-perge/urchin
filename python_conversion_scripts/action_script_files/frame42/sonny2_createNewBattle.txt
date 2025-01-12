@@ -5,8 +5,8 @@ function createNewBattle()
   _root["KBR" + battleCreationID] = new Object();
   rengi = _root["KBR" + battleCreationID];
   rengi.players = new Array();
-  rengi.players = [0,1,0,2,0];
-  rengi.playersLevels = [1,1,1,1,1];
+  rengi.players = [0,1,0,2,0];       // The IDs of each unit in the battle (player IDs or enemy IDs)
+  rengi.playersLevels = [1,1,1,1,1]; // The level each unit should be spawned at
   rengi.speeches = new Array();
   rengi.phases = new Array();
   rengi.itemDrops = new Array();

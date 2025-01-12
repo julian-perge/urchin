@@ -16,6 +16,10 @@ import json
 def parse_json(parsed_dict: dict):
     """Parse the entire file handling stats that precede battle creation."""
     battles = []
+
+    with open("converted_json/converted_units_by_id.json", 'r') as f4:
+        units_by_id: dict[str, str] = json.load(f4)
+
     with open("converted_json/converted_item_by_id.json", "r") as f:
         items_by_ids: dict = json.load(f)
 
@@ -65,8 +69,25 @@ def parse_json(parsed_dict: dict):
         item_rare_dropper2: int = _root.get("item_rare_dropper2")
         item_rare_dropper3: int = _root.get("item_rare_dropper3")
 
-        phases: str = _root.get("phases")
+        phases: str = _root.get("phases", {}).get("denseValues", {})
+
         players = list(_root.get("players", {}).get("denseValues", {}).values())
+        u_players = []
+        for player in players:
+            if units_by_id.get(str(player), None) is not None:
+                u_players.append(
+                    {
+                        "id": player,
+                        "name": units_by_id.get(str(player)),
+                    }
+                )
+            else:
+                u_players.append(
+                    {
+                        "id": player,
+                    }
+                )
+
         players_levels = list(_root.get("players_levels", {}).get("denseValues", {}).values())
         sky_background: str = _root.get("sky_background")
         speeches_obj = _root.get("speeches", {}).get("denseValues", {})
@@ -88,7 +109,7 @@ def parse_json(parsed_dict: dict):
             "item_rare_dropper2": item_rare_dropper2,
             "item_rare_dropper3": item_rare_dropper3,
             "phases": phases,
-            "players": players,
+            "players": u_players,
             "players_levels": players_levels,
             "sky_background": sky_background,
             "speeches": speeches,

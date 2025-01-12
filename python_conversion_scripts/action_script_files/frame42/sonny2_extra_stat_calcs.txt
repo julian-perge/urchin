@@ -1,4 +1,12 @@
 # frame42, DoAction[15]
+## Used in:
+### frame42, DoAction[8]
+### frame42, DoAction[14]
+### frame42, DoAction[16]
+### frame201, DoAction
+### DefineButton2 (chid: 3179), BUTTONCONDACTION on(release)
+### DefineSprite (chid: 3142) frame1 (inventory), DoAction
+### DefineSprite (chid: 3142) frame25 (skills), DoAction
 function getStat(s_ratio, s_level, s_mode)
 {
   if(s_level <= 0)
@@ -31,6 +39,8 @@ function getStat(s_ratio, s_level, s_mode)
   }
   return s_a;
 }
+### DefineButton2 (chid: 3179), BUTTONCONDACTION on(release)
+### DefineSprite (chid: 3142) frame9 (win), CLIPACTIONRECORD onClipEvent(enterFrame)
 function givePoints(i_level, i_respec)
 {
   i_b = getStat(40,i_level,true);
@@ -55,6 +65,9 @@ function givePoints(i_level, i_respec)
   }
   return i_a;
 }
+### DefineButton2 (chid: 2735), BUTTONCONDACTION on(release)
+### DefineButton2 (chid: 2736), BUTTONCONDACTION on(release)
+### DefineButton2 (chid: 2737), BUTTONCONDACTION on(release)
 function assignPointsStart(a_class)
 {
   free_points = givePoints(1,true);

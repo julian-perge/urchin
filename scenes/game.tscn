@@ -51,11 +51,11 @@ position = Vector2(264, 547)
 script = ExtResource("4_a0x2j")
 
 [node name="StoryFight" parent="Split/GameWindow/ZoneBackground" instance=ExtResource("2_uvyff")]
-position = Vector2(1142, 424)
+position = Vector2(1161, 452)
 script = ExtResource("3_1rdbq")
 
 [node name="TrainingFight" parent="Split/GameWindow/ZoneBackground" instance=ExtResource("2_uvyff")]
-position = Vector2(1475, 475)
+position = Vector2(1523, 446)
 script = ExtResource("5_gjfcg")
 
 [node name="StoreWindow" parent="Split" groups=["store_window"] instance=ExtResource("5_2lk61")]

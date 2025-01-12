@@ -11,13 +11,28 @@
       "moves": {
         "absolute": [],
         "attack": [
-          2,
-          3,
-          5
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 3,
+            "name": "Stun_0"
+          },
+          {
+            "id": 5,
+            "name": "Nuke_0"
+          }
         ],
         "defense": [
-          4,
-          6
+          {
+            "id": 4,
+            "name": "Heal_0"
+          },
+          {
+            "id": 6,
+            "name": "Destroy_0"
+          }
         ]
       },
       "stats": {
@@ -57,13 +72,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -86,18 +115,21 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            2,
-            0
-          ],
-          [
-            5,
-            1
-          ],
-          [
-            3,
-            2
-          ]
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN",
+            "turn": 0
+          },
+          {
+            "id": 5,
+            "name": "Nuke_0",
+            "turn": 1
+          },
+          {
+            "id": 3,
+            "name": "Stun_0",
+            "turn": 2
+          }
         ],
         "attack": [],
         "defense": []
@@ -139,13 +171,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          6,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 6,
+            "name": "Fire Axe"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "ZPCI",
         "voice": {
@@ -169,7 +216,10 @@
       "moves": {
         "absolute": [],
         "attack": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ],
         "defense": []
       },
@@ -210,13 +260,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          12,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 12,
+            "name": "Stick"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -240,11 +305,20 @@
       "moves": {
         "absolute": [],
         "attack": [
-          9,
-          10
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          },
+          {
+            "id": 10,
+            "name": "Dux Electro_0"
+          }
         ],
         "defense": [
-          8
+          {
+            "id": 8,
+            "name": "Dux Heal_0"
+          }
         ]
       },
       "stats": {
@@ -284,13 +358,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "ZPCI3",
         "voice": {
@@ -313,20 +401,28 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            523,
-            0
-          ],
-          [
-            15,
-            0
-          ]
+          {
+            "id": 523,
+            "name": "Gouge_BREAK",
+            "turn": 0
+          },
+          {
+            "id": 15,
+            "name": "Heavy Punishment_HEAVYPUNISHMENT",
+            "turn": 0
+          }
         ],
         "attack": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ],
         "defense": [
-          506
+          {
+            "id": 506,
+            "name": "Block_BLOCK"
+          }
         ]
       },
       "stats": {
@@ -366,13 +462,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          14,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 14,
+            "name": "Metal Baton"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "JASON",
         "voice": {
@@ -395,15 +506,25 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            528,
-            2
-          ]
+          {
+            "id": 528,
+            "name": "Mutate_MUTATION",
+            "turn": 2
+          }
         ],
         "attack": [
-          2,
-          526,
-          527
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 526,
+            "name": "Steroids_ANIMALISM4"
+          },
+          {
+            "id": 527,
+            "name": "Injection_BERSERK3"
+          }
         ],
         "defense": []
       },
@@ -444,13 +565,32 @@
           "M"
         ],
         "equipment": [
-          0,
-          17,
-          18,
-          4,
-          8,
-          16,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 17,
+            "name": "Scientist Robe"
+          },
+          {
+            "id": 18,
+            "name": "Scientist Sleeves"
+          },
+          {
+            "id": 4,
+            "name": "Levo Jeans"
+          },
+          {
+            "id": 8,
+            "name": "Proverse All Stars"
+          },
+          {
+            "id": 16,
+            "name": "Surgery Blade"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -474,13 +614,28 @@
       "moves": {
         "absolute": [],
         "attack": [
-          256,
-          260,
-          267,
-          271
+          {
+            "id": 256,
+            "name": "Impair_IMPAIR4"
+          },
+          {
+            "id": 260,
+            "name": "Bloodshed_BLOODRUSH4"
+          },
+          {
+            "id": 267,
+            "name": "Wreck_WRECK"
+          },
+          {
+            "id": 271,
+            "name": "Demolish_DEMOLISH"
+          }
         ],
         "defense": [
-          510
+          {
+            "id": 510,
+            "name": "Guardian_GUARDIAN"
+          }
         ]
       },
       "stats": {
@@ -520,13 +675,31 @@
           "M"
         ],
         "equipment": [
-          0,
-          19,
-          0,
-          20,
-          21,
-          15,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 19,
+            "name": "Frankie Body"
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 20,
+            "name": "Frankie Legs"
+          },
+          {
+            "id": 21,
+            "name": "Frankie Feet"
+          },
+          {
+            "id": 15,
+            "name": "Hans the Butcher"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -549,28 +722,38 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            16,
-            0
-          ],
-          [
-            17,
-            0
-          ],
-          [
-            18,
-            0
-          ],
-          [
-            19,
-            0
-          ]
+          {
+            "id": 16,
+            "name": "Aim For The Heart_HEART",
+            "turn": 0
+          },
+          {
+            "id": 17,
+            "name": "Poisoned Blade_POISONBLADE",
+            "turn": 0
+          },
+          {
+            "id": 18,
+            "name": "Bayonet Rush_ARTERY",
+            "turn": 0
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK",
+            "turn": 0
+          }
         ],
         "attack": [
-          9
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
         ],
         "defense": [
-          20
+          {
+            "id": 20,
+            "name": "Auxillary Power_AUXILLARY"
+          }
         ]
       },
       "stats": {
@@ -610,13 +793,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          13,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 13,
+            "name": "M4"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "ZPCI",
         "voice": {
@@ -639,28 +837,38 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            11,
-            1
-          ],
-          [
-            12,
-            2
-          ],
-          [
-            13,
-            2
-          ],
-          [
-            14,
-            3
-          ]
+          {
+            "id": 11,
+            "name": "Chains Of Justice_CHAINS",
+            "turn": 1
+          },
+          {
+            "id": 12,
+            "name": "Isolate_SOLITARY",
+            "turn": 2
+          },
+          {
+            "id": 13,
+            "name": "Drop A Soap_PICKTHESOAP",
+            "turn": 2
+          },
+          {
+            "id": 14,
+            "name": "Death Sentence_DEATHSENTENCE",
+            "turn": 3
+          }
         ],
         "attack": [
-          15
+          {
+            "id": 15,
+            "name": "Heavy Punishment_HEAVYPUNISHMENT"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -700,13 +908,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          504,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 504,
+            "name": "Persecution"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "JASON2",
         "voice": {
@@ -730,12 +953,24 @@
       "moves": {
         "absolute": [],
         "attack": [
-          2,
-          267,
-          103
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 267,
+            "name": "Wreck_WRECK"
+          },
+          {
+            "id": 103,
+            "name": "Vicious Strike_CANNIBALBLOOD"
+          }
         ],
         "defense": [
-          506
+          {
+            "id": 506,
+            "name": "Block_BLOCK"
+          }
         ]
       },
       "stats": {
@@ -775,13 +1010,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          5,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 5,
+            "name": "A Broken Pipe"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "PRISON",
         "voice": {
@@ -804,34 +1054,51 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            532,
-            1
-          ],
-          [
-            531,
-            1
-          ],
-          [
-            530,
-            2
-          ],
-          [
-            163,
-            3
-          ],
-          [
-            136,
-            3
-          ]
+          {
+            "id": 532,
+            "name": "Black Metal_COLDSTEEL",
+            "turn": 1
+          },
+          {
+            "id": 531,
+            "name": "Blade Shield_BLADESHIELD",
+            "turn": 1
+          },
+          {
+            "id": 530,
+            "name": "Serious Business_SERIOUS",
+            "turn": 2
+          },
+          {
+            "id": 163,
+            "name": "Shadow Blend_SHADOWBLEND1",
+            "turn": 3
+          },
+          {
+            "id": 136,
+            "name": "Acid Slash_IRRITATE4",
+            "turn": 3
+          }
         ],
         "attack": [
-          533,
-          1
+          {
+            "id": 533,
+            "name": "Throw Knife_KNIFEFACE"
+          },
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ],
         "defense": [
-          523,
-          524
+          {
+            "id": 523,
+            "name": "Gouge_BREAK"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          }
         ]
       },
       "stats": {
@@ -871,13 +1138,29 @@
           "F"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          22,
-          22
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 22,
+            "name": "Felicity's Knife"
+          },
+          {
+            "id": 22,
+            "name": "Felicity's Knife"
+          }
         ],
         "skin": "0",
         "voice": {
@@ -901,16 +1184,40 @@
       "moves": {
         "absolute": [],
         "attack": [
-          149,
-          2,
-          145,
-          136,
-          145,
-          145
+          {
+            "id": 149,
+            "name": "Infect_CONTAMINATE4"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 136,
+            "name": "Acid Slash_IRRITATE4"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          }
         ],
         "defense": [
-          534,
-          166
+          {
+            "id": 534,
+            "name": "Withdrawl_REFORM4"
+          },
+          {
+            "id": 166,
+            "name": "Shadow Blend_SHADOWBLEND4"
+          }
         ]
       },
       "stats": {
@@ -950,13 +1257,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          503,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 503,
+            "name": "Terror Blade"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "PRISON2",
         "voice": {
@@ -980,12 +1302,24 @@
       "moves": {
         "absolute": [],
         "attack": [
-          525,
-          2,
-          275
+          {
+            "id": 525,
+            "name": "Set-Up_EXPOSED3"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 275,
+            "name": "Decimate_DECIMATE4"
+          }
         ],
         "defense": [
-          122
+          {
+            "id": 122,
+            "name": "Adrenaline_ADRENALINE3"
+          }
         ]
       },
       "stats": {
@@ -1025,13 +1359,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          6,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 6,
+            "name": "Fire Axe"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "PRISON",
         "voice": {
@@ -1055,12 +1404,24 @@
       "moves": {
         "absolute": [],
         "attack": [
-          256,
-          2
+          {
+            "id": 256,
+            "name": "Impair_IMPAIR4"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ],
         "defense": [
-          8,
-          122
+          {
+            "id": 8,
+            "name": "Dux Heal_0"
+          },
+          {
+            "id": 122,
+            "name": "Adrenaline_ADRENALINE3"
+          }
         ]
       },
       "stats": {
@@ -1100,13 +1461,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          7,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 7,
+            "name": "Crow Bar"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "PRISON",
         "voice": {
@@ -1120,7 +1496,7 @@
       }
     },
     {
-      "id": 15,
+      "id": 19,
       "name": "Doctor Hedger",
       "health": 5,
       "strength": 50,
@@ -1129,20 +1505,39 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            529,
-            0
-          ]
+          {
+            "id": 529,
+            "name": "Doctor's Watch_DOCSHELL",
+            "turn": 0
+          }
         ],
         "attack": [
-          145,
-          145,
-          145,
-          149,
-          149
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 149,
+            "name": "Infect_CONTAMINATE4"
+          },
+          {
+            "id": 149,
+            "name": "Infect_CONTAMINATE4"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -1182,13 +1577,32 @@
           "M"
         ],
         "equipment": [
-          0,
-          17,
-          18,
-          4,
-          8,
-          16,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 17,
+            "name": "Scientist Robe"
+          },
+          {
+            "id": 18,
+            "name": "Scientist Sleeves"
+          },
+          {
+            "id": 4,
+            "name": "Levo Jeans"
+          },
+          {
+            "id": 8,
+            "name": "Proverse All Stars"
+          },
+          {
+            "id": 16,
+            "name": "Surgery Blade"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -1212,15 +1626,36 @@
       "moves": {
         "absolute": [],
         "attack": [
-          2,
-          507,
-          508,
-          509
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 507,
+            "name": "Blood of the Enemy_BLOODOFTHEENEMY"
+          },
+          {
+            "id": 508,
+            "name": "Aggravate_AGGRAVATE"
+          },
+          {
+            "id": 509,
+            "name": "Disarm_DISARM"
+          }
         ],
         "defense": [
-          505,
-          506,
-          510
+          {
+            "id": 505,
+            "name": "Sanctified Armor_SANCTIFIEDARMOUR"
+          },
+          {
+            "id": 506,
+            "name": "Block_BLOCK"
+          },
+          {
+            "id": 510,
+            "name": "Guardian_GUARDIAN"
+          }
         ]
       },
       "stats": {
@@ -1260,13 +1695,29 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          515,
-          516
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 515,
+            "name": "Light's Blade"
+          },
+          {
+            "id": 516,
+            "name": "Metal Shield"
+          }
         ],
         "skin": "XADER",
         "voice": {
@@ -1290,13 +1741,28 @@
       "moves": {
         "absolute": [],
         "attack": [
-          515,
-          513,
-          514
+          {
+            "id": 515,
+            "name": "Energy Drain_ENERGYDRAIN"
+          },
+          {
+            "id": 513,
+            "name": "Light's Will_LIGHTSWILL"
+          },
+          {
+            "id": 514,
+            "name": "Prayer_PRAYER"
+          }
         ],
         "defense": [
-          512,
-          511
+          {
+            "id": 512,
+            "name": "Mend_MEND"
+          },
+          {
+            "id": 511,
+            "name": "Heal_ADRENALINE1"
+          }
         ]
       },
       "stats": {
@@ -1336,13 +1802,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          518,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 518,
+            "name": "Frosted Light"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "PRIEST",
         "voice": {
@@ -1366,13 +1847,28 @@
       "moves": {
         "absolute": [],
         "attack": [
-          516,
-          517,
-          518,
-          520
+          {
+            "id": 516,
+            "name": "Zap_ZAP"
+          },
+          {
+            "id": 517,
+            "name": "Heavy Burns_HEAVYBURNS"
+          },
+          {
+            "id": 518,
+            "name": "Doom_DOOM"
+          },
+          {
+            "id": 520,
+            "name": "Medidtate_0"
+          }
         ],
         "defense": [
-          519
+          {
+            "id": 519,
+            "name": "Energy Phase_ENERGYPHASE"
+          }
         ]
       },
       "stats": {
@@ -1412,13 +1908,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          517,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 517,
+            "name": "Fiery Doom"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "PRIEST2",
         "voice": {
@@ -1442,12 +1953,24 @@
       "moves": {
         "absolute": [],
         "attack": [
-          500,
-          2,
-          207
+          {
+            "id": 500,
+            "name": "Liquid Veins_LIQUIDVEINS"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 207,
+            "name": "Hypothermia_HYPO4"
+          }
         ],
         "defense": [
-          502
+          {
+            "id": 502,
+            "name": "Recuperate_RECUPERATE"
+          }
         ]
       },
       "stats": {
@@ -1487,13 +2010,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          519,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 519,
+            "name": "Icy Maul"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "",
         "voice": {
@@ -1517,12 +2055,24 @@
       "moves": {
         "absolute": [],
         "attack": [
-          2,
-          3,
-          5
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 3,
+            "name": "Stun_0"
+          },
+          {
+            "id": 5,
+            "name": "Nuke_0"
+          }
         ],
         "defense": [
-          4
+          {
+            "id": 4,
+            "name": "Heal_0"
+          }
         ]
       },
       "stats": {
@@ -1562,13 +2112,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          14,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 14,
+            "name": "Metal Baton"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "",
         "voice": {
@@ -1592,15 +2157,36 @@
       "moves": {
         "absolute": [],
         "attack": [
-          501,
-          504,
-          503,
-          2,
-          219,
-          521
+          {
+            "id": 501,
+            "name": "Icy Blood_ICYBLOOD"
+          },
+          {
+            "id": 504,
+            "name": "Icy Rage_ICYRAGE"
+          },
+          {
+            "id": 503,
+            "name": "Soul Strike_SOULSTRIKE"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 219,
+            "name": "Vascular Arrest_VASCULAR4"
+          },
+          {
+            "id": 521,
+            "name": "Shatter Bolt_SHATTERBOLT"
+          }
         ],
         "defense": [
-          502
+          {
+            "id": 502,
+            "name": "Recuperate_RECUPERATE"
+          }
         ]
       },
       "stats": {
@@ -1640,13 +2226,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "FROST",
         "voice": {
@@ -1669,32 +2269,43 @@
       "focus": 150,
       "moves": {
         "absolute": [
-          [
-            544,
-            1
-          ],
-          [
-            550,
-            2
-          ],
-          [
-            551,
-            2
-          ],
-          [
-            550,
-            3
-          ],
-          [
-            551,
-            3
-          ]
+          {
+            "id": 544,
+            "name": "ZPCI Shell_ZPCISHELL",
+            "turn": 1
+          },
+          {
+            "id": 550,
+            "name": "Med Buff 1_CALMDOWN",
+            "turn": 2
+          },
+          {
+            "id": 551,
+            "name": "Med Buff 2_HEALBUFF",
+            "turn": 2
+          },
+          {
+            "id": 550,
+            "name": "Med Buff 1_CALMDOWN",
+            "turn": 3
+          },
+          {
+            "id": 551,
+            "name": "Med Buff 2_HEALBUFF",
+            "turn": 3
+          }
         ],
         "attack": [
-          547
+          {
+            "id": 547,
+            "name": "Shoot_0"
+          }
         ],
         "defense": [
-          549
+          {
+            "id": 549,
+            "name": "Heal_0"
+          }
         ]
       },
       "stats": {
@@ -1734,13 +2345,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          13,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 13,
+            "name": "M4"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "ZPCI3",
         "voice": {
@@ -1764,12 +2390,24 @@
       "moves": {
         "absolute": [],
         "attack": [
-          109,
-          543,
-          542
+          {
+            "id": 109,
+            "name": "Wound_WOUND2"
+          },
+          {
+            "id": 543,
+            "name": "Infecting Bite_INFECTBITE"
+          },
+          {
+            "id": 542,
+            "name": "Vicious Strike_CANNIBALBLOOD"
+          }
         ],
         "defense": [
-          1
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ]
       },
       "stats": {
@@ -1809,13 +2447,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "",
         "voice": {
@@ -1838,17 +2490,27 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            554,
-            3
-          ]
+          {
+            "id": 554,
+            "name": "ZPCI Shell_ZPCISHELL2",
+            "turn": 3
+          }
         ],
         "attack": [
-          545,
-          157
+          {
+            "id": 545,
+            "name": "Mark For Fire_MARKFIRE"
+          },
+          {
+            "id": 157,
+            "name": "Anesthetic_NUMB4"
+          }
         ],
         "defense": [
-          546
+          {
+            "id": 546,
+            "name": "Mark For Death_MARKDEATH"
+          }
         ]
       },
       "stats": {
@@ -1888,13 +2550,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          523,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 523,
+            "name": "Rebellion Striker"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "HUNT",
         "voice": {
@@ -1917,24 +2594,33 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            17,
-            0
-          ],
-          [
-            18,
-            0
-          ],
-          [
-            19,
-            0
-          ]
+          {
+            "id": 17,
+            "name": "Poisoned Blade_POISONBLADE",
+            "turn": 0
+          },
+          {
+            "id": 18,
+            "name": "Bayonet Rush_ARTERY",
+            "turn": 0
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK",
+            "turn": 0
+          }
         ],
         "attack": [
-          9
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
         ],
         "defense": [
-          20
+          {
+            "id": 20,
+            "name": "Auxillary Power_AUXILLARY"
+          }
         ]
       },
       "stats": {
@@ -1974,13 +2660,33 @@
           "M"
         ],
         "equipment": [
-          31,
-          27,
-          29,
-          28,
-          30,
-          523,
-          0
+          {
+            "id": 31,
+            "name": "Tat Head"
+          },
+          {
+            "id": 27,
+            "name": "Tat Shirt"
+          },
+          {
+            "id": 29,
+            "name": "Tat Glove"
+          },
+          {
+            "id": 28,
+            "name": "Tat Leggings"
+          },
+          {
+            "id": 30,
+            "name": "Tat Feet"
+          },
+          {
+            "id": 523,
+            "name": "Rebellion Striker"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -2003,22 +2709,36 @@
       "focus": 300,
       "moves": {
         "absolute": [
-          [
-            475,
-            1
-          ],
-          [
-            537,
-            2
-          ]
+          {
+            "id": 475,
+            "name": "Retrograde_RETROGRADED",
+            "turn": 1
+          },
+          {
+            "id": 537,
+            "name": "True Form_TRUEFORM",
+            "turn": 2
+          }
         ],
         "attack": [
-          275,
-          271,
-          267
+          {
+            "id": 275,
+            "name": "Decimate_DECIMATE4"
+          },
+          {
+            "id": 271,
+            "name": "Demolish_DEMOLISH"
+          },
+          {
+            "id": 267,
+            "name": "Wreck_WRECK"
+          }
         ],
         "defense": [
-          9
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
         ]
       },
       "stats": {
@@ -2058,13 +2778,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          521,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 521,
+            "name": "Runeblade"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "XADER2",
         "voice": {
@@ -2087,28 +2822,49 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            538,
-            1
-          ],
-          [
-            539,
-            3
-          ],
-          [
-            541,
-            1
-          ]
+          {
+            "id": 538,
+            "name": "Tick Tock_TICKTOCK",
+            "turn": 1
+          },
+          {
+            "id": 539,
+            "name": "Holy Scars_HOLYSCARS",
+            "turn": 3
+          },
+          {
+            "id": 541,
+            "name": "Dark Echoes Baron_ECHOEDSCREAMS4",
+            "turn": 1
+          }
         ],
         "attack": [
-          540
+          {
+            "id": 540,
+            "name": "Deep Burns_DEEPBURNING"
+          }
         ],
         "defense": [
-          403,
-          451,
-          455,
-          459,
-          466
+          {
+            "id": 403,
+            "name": "Dark Echoes_ECHOEDSCREAMS4"
+          },
+          {
+            "id": 451,
+            "name": "Electric Discharge_EARTHED4"
+          },
+          {
+            "id": 455,
+            "name": "Epiphany_EPIPHANY4"
+          },
+          {
+            "id": 459,
+            "name": "Nightmare_WAKINGUP4"
+          },
+          {
+            "id": 466,
+            "name": "Solitary Confinement_CONFINED4"
+          }
         ]
       },
       "stats": {
@@ -2148,13 +2904,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          527,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 527,
+            "name": "Unholy Runeblade"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "",
         "voice": {
@@ -2178,13 +2949,28 @@
       "moves": {
         "absolute": [],
         "attack": [
-          535,
-          19,
-          524,
-          9
+          {
+            "id": 535,
+            "name": "Thurman Impair_SUNDER"
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          },
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
         ],
         "defense": [
-          536
+          {
+            "id": 536,
+            "name": "Greater Purpose_GREATERPURPOSE"
+          }
         ]
       },
       "stats": {
@@ -2224,13 +3010,33 @@
           "M"
         ],
         "equipment": [
-          382,
-          328,
-          327,
-          329,
-          326,
-          523,
-          0
+          {
+            "id": 382,
+            "name": "Cloaking Helm"
+          },
+          {
+            "id": 328,
+            "name": "Dissident's Crest"
+          },
+          {
+            "id": 327,
+            "name": "Rebellious Hands"
+          },
+          {
+            "id": 329,
+            "name": "Hope's Strength"
+          },
+          {
+            "id": 326,
+            "name": "Faith Runners"
+          },
+          {
+            "id": 523,
+            "name": "Rebellion Striker"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -2253,24 +3059,55 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            522,
-            2
-          ]
+          {
+            "id": 522,
+            "name": "Icy Doom_ICYDOOM",
+            "turn": 2
+          }
         ],
         "attack": [
-          500,
-          501,
-          503,
-          504,
-          2,
-          207,
-          219,
-          211
+          {
+            "id": 500,
+            "name": "Liquid Veins_LIQUIDVEINS"
+          },
+          {
+            "id": 501,
+            "name": "Icy Blood_ICYBLOOD"
+          },
+          {
+            "id": 503,
+            "name": "Soul Strike_SOULSTRIKE"
+          },
+          {
+            "id": 504,
+            "name": "Icy Rage_ICYRAGE"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 207,
+            "name": "Hypothermia_HYPO4"
+          },
+          {
+            "id": 219,
+            "name": "Vascular Arrest_VASCULAR4"
+          },
+          {
+            "id": 211,
+            "name": "Mind Freeze_MINDFREEZE4"
+          }
         ],
         "defense": [
-          502,
-          234
+          {
+            "id": 502,
+            "name": "Recuperate_RECUPERATE"
+          },
+          {
+            "id": 234,
+            "name": "Reconstruct_RECONSTRUCT4"
+          }
         ]
       },
       "stats": {
@@ -2310,13 +3147,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -2330,7 +3181,7 @@
       }
     },
     {
-      "id": 34,
+      "id": 39,
       "name": "ZPCI Sniper",
       "health": 20,
       "strength": 25,
@@ -2339,32 +3190,43 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            544,
-            1
-          ],
-          [
-            552,
-            2
-          ],
-          [
-            553,
-            2
-          ],
-          [
-            552,
-            3
-          ],
-          [
-            553,
-            3
-          ]
+          {
+            "id": 544,
+            "name": "ZPCI Shell_ZPCISHELL",
+            "turn": 1
+          },
+          {
+            "id": 552,
+            "name": "Snipe Buff 1_LOCKANDLOAD",
+            "turn": 2
+          },
+          {
+            "id": 553,
+            "name": "Snipe Buff 1_CROUCH",
+            "turn": 2
+          },
+          {
+            "id": 552,
+            "name": "Snipe Buff 1_LOCKANDLOAD",
+            "turn": 3
+          },
+          {
+            "id": 553,
+            "name": "Snipe Buff 1_CROUCH",
+            "turn": 3
+          }
         ],
         "attack": [
-          548
+          {
+            "id": 548,
+            "name": "Snipe_0"
+          }
         ],
         "defense": [
-          547
+          {
+            "id": 547,
+            "name": "Shoot_0"
+          }
         ]
       },
       "stats": {
@@ -2404,13 +3266,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          522,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 522,
+            "name": "ZPCI Sniper Rifle"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "ZPCI2",
         "voice": {
@@ -2433,19 +3310,35 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            573,
-            0
-          ]
+          {
+            "id": 573,
+            "name": "Faithless_FAITHLESS",
+            "turn": 0
+          }
         ],
         "attack": [
-          260,
-          572,
-          574,
-          575
+          {
+            "id": 260,
+            "name": "Bloodshed_BLOODRUSH4"
+          },
+          {
+            "id": 572,
+            "name": "Dull Senses_DULLSENSES"
+          },
+          {
+            "id": 574,
+            "name": "Midnight Oil_MIDNIGHTOIL"
+          },
+          {
+            "id": 575,
+            "name": "Shadow Infusion_SHADOWINFUSION"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -2485,13 +3378,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "",
         "voice": {
@@ -2514,19 +3421,35 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            452,
-            0
-          ]
+          {
+            "id": 452,
+            "name": "Epiphany_EPIPHANY1",
+            "turn": 0
+          }
         ],
         "attack": [
-          403,
-          436,
-          2
+          {
+            "id": 403,
+            "name": "Dark Echoes_ECHOEDSCREAMS4"
+          },
+          {
+            "id": 436,
+            "name": "Shock Therapy_0"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ],
         "defense": [
-          576,
-          425
+          {
+            "id": 576,
+            "name": "Dark Heal_DARKHEAL"
+          },
+          {
+            "id": 425,
+            "name": "Traumatize_SHOCKTRAUMA2"
+          }
         ]
       },
       "stats": {
@@ -2566,13 +3489,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "",
         "voice": {
@@ -2595,18 +3532,31 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            166,
-            0
-          ]
+          {
+            "id": 166,
+            "name": "Shadow Blend_SHADOWBLEND4",
+            "turn": 0
+          }
         ],
         "attack": [
-          103,
-          578,
-          115
+          {
+            "id": 103,
+            "name": "Vicious Strike_CANNIBALBLOOD"
+          },
+          {
+            "id": 578,
+            "name": "Disrupt_DISRUPT"
+          },
+          {
+            "id": 115,
+            "name": "Cripple_DEPLETE4"
+          }
         ],
         "defense": [
-          1
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ]
       },
       "stats": {
@@ -2646,13 +3596,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "",
         "voice": {
@@ -2676,14 +3640,32 @@
       "moves": {
         "absolute": [],
         "attack": [
-          211,
-          219,
-          223,
-          203,
-          207
+          {
+            "id": 211,
+            "name": "Mind Freeze_MINDFREEZE4"
+          },
+          {
+            "id": 219,
+            "name": "Vascular Arrest_VASCULAR4"
+          },
+          {
+            "id": 223,
+            "name": "Glacier_GLACIER4"
+          },
+          {
+            "id": 203,
+            "name": "Frost_FROST4"
+          },
+          {
+            "id": 207,
+            "name": "Hypothermia_HYPO4"
+          }
         ],
         "defense": [
-          276
+          {
+            "id": 276,
+            "name": "Vapour Cannon_VAPOUR"
+          }
         ]
       },
       "stats": {
@@ -2723,13 +3705,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "",
         "voice": {
@@ -2752,21 +3748,32 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            555,
-            0
-          ],
-          [
-            556,
-            0
-          ]
+          {
+            "id": 555,
+            "name": "Pity_PITY",
+            "turn": 0
+          },
+          {
+            "id": 556,
+            "name": "Bad Smell_BADSMELL",
+            "turn": 0
+          }
         ],
         "attack": [
-          532
+          {
+            "id": 532,
+            "name": "Black Metal_COLDSTEEL"
+          }
         ],
         "defense": [
-          2,
-          577
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 577,
+            "name": "Begging Tactics_BEGGINGTACTICS"
+          }
         ]
       },
       "stats": {
@@ -2806,13 +3813,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          5,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 5,
+            "name": "A Broken Pipe"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "HOBO",
         "voice": {
@@ -2836,14 +3858,32 @@
       "moves": {
         "absolute": [],
         "attack": [
-          567,
-          568,
-          569,
-          570,
-          571
+          {
+            "id": 567,
+            "name": "Diseased_HOBODISEASED"
+          },
+          {
+            "id": 568,
+            "name": "Groggy_HOBOGROGGY"
+          },
+          {
+            "id": 569,
+            "name": "Drunk_HOBODRUNK"
+          },
+          {
+            "id": 570,
+            "name": "Life_HOBOSLIFE"
+          },
+          {
+            "id": 571,
+            "name": "Clumsy_HOBOCLUMSY"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -2883,13 +3923,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          5,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 5,
+            "name": "A Broken Pipe"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "HOBO",
         "voice": {
@@ -2912,17 +3967,27 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            557,
-            0
-          ]
+          {
+            "id": 557,
+            "name": "Dark Rage_DARKRAGE",
+            "turn": 0
+          }
         ],
         "attack": [
-          109,
-          558
+          {
+            "id": 109,
+            "name": "Wound_WOUND2"
+          },
+          {
+            "id": 558,
+            "name": "Overdose_OVERDOSE"
+          }
         ],
         "defense": [
-          520
+          {
+            "id": 520,
+            "name": "Medidtate_0"
+          }
         ]
       },
       "stats": {
@@ -2962,13 +4027,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          563,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 563,
+            "name": "Ancient Katana"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "TUX",
         "voice": {
@@ -2991,42 +4071,61 @@
       "focus": 300,
       "moves": {
         "absolute": [
-          [
-            559,
-            1
-          ],
-          [
-            563,
-            2
-          ],
-          [
-            564,
-            2
-          ],
-          [
-            562,
-            2
-          ],
-          [
-            566,
-            3
-          ],
-          [
-            578,
-            3
-          ],
-          [
-            565,
-            3
-          ]
+          {
+            "id": 559,
+            "name": "Buff 1_BUFF1",
+            "turn": 1
+          },
+          {
+            "id": 563,
+            "name": "Void_INSECURE3",
+            "turn": 2
+          },
+          {
+            "id": 564,
+            "name": "Collapse_COLLAPSE",
+            "turn": 2
+          },
+          {
+            "id": 562,
+            "name": "Shadow State_SHADOWSTATE",
+            "turn": 2
+          },
+          {
+            "id": 566,
+            "name": "True Form_TRUEFORM2",
+            "turn": 3
+          },
+          {
+            "id": 578,
+            "name": "Disrupt_DISRUPT",
+            "turn": 3
+          },
+          {
+            "id": 565,
+            "name": "Decay_DECAY",
+            "turn": 3
+          }
         ],
         "attack": [
-          580,
-          459,
-          436
+          {
+            "id": 580,
+            "name": "Shadow Nuke_0"
+          },
+          {
+            "id": 459,
+            "name": "Nightmare_WAKINGUP4"
+          },
+          {
+            "id": 436,
+            "name": "Shock Therapy_0"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -3066,13 +4165,29 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          565,
-          566
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 565,
+            "name": "Devil Blade"
+          },
+          {
+            "id": 566,
+            "name": "Demon Blade"
+          }
         ],
         "skin": "CLEMONS",
         "voice": {
@@ -3096,10 +4211,16 @@
       "moves": {
         "absolute": [],
         "attack": [
-          0
+          {
+            "id": 0,
+            "name": "None_0"
+          }
         ],
         "defense": [
-          0
+          {
+            "id": 0,
+            "name": "None_0"
+          }
         ]
       },
       "stats": {
@@ -3139,13 +4260,30 @@
           "M"
         ],
         "equipment": [
-          0,
-          11,
-          0,
-          4,
-          8,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 11,
+            "name": "White T-shirt"
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 4,
+            "name": "Levo Jeans"
+          },
+          {
+            "id": 8,
+            "name": "Proverse All Stars"
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -3169,10 +4307,16 @@
       "moves": {
         "absolute": [],
         "attack": [
-          132
+          {
+            "id": 132,
+            "name": "Enrage_BERSERK3"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -3212,13 +4356,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          12,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 12,
+            "name": "Stick"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -3241,19 +4400,35 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            600,
-            0
-          ]
+          {
+            "id": 600,
+            "name": "Jugular Grasp_JUGULARGRASP",
+            "turn": 0
+          }
         ],
         "attack": [
-          126,
-          145,
-          542,
-          424
+          {
+            "id": 126,
+            "name": "Animalism_ANIMALISM1"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 542,
+            "name": "Vicious Strike_CANNIBALBLOOD"
+          },
+          {
+            "id": 424,
+            "name": "Traumatize_SHOCKTRAUMA1"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -3293,13 +4468,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -3322,22 +4511,36 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            613,
-            1
-          ],
-          [
-            617,
-            2
-          ]
+          {
+            "id": 613,
+            "name": "Vulpes Dolosus_VULPESDOLOSUS",
+            "turn": 1
+          },
+          {
+            "id": 617,
+            "name": "Lupine Recovery_FOXFORM",
+            "turn": 2
+          }
         ],
         "attack": [
-          616,
-          615,
-          614
+          {
+            "id": 616,
+            "name": "Cunning Gambit_CUNNINGGAMBIT"
+          },
+          {
+            "id": 615,
+            "name": "Infected Wound_INFECTEDWOUND"
+          },
+          {
+            "id": 614,
+            "name": "Lupine Bleed_LUPINEBLEED"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -3377,13 +4580,29 @@
           "F"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          565,
-          566
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 565,
+            "name": "Devil Blade"
+          },
+          {
+            "id": 566,
+            "name": "Demon Blade"
+          }
         ],
         "skin": "0",
         "voice": {
@@ -3406,18 +4625,31 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            603,
-            0
-          ]
+          {
+            "id": 603,
+            "name": "Roach Vitality_ROACHVITALITY",
+            "turn": 0
+          }
         ],
         "attack": [
-          601,
-          602,
-          415
+          {
+            "id": 601,
+            "name": "Pity_PITY2"
+          },
+          {
+            "id": 602,
+            "name": "Apple Throw_APPLETHROW"
+          },
+          {
+            "id": 415,
+            "name": "Terrify_SCHADENFREUDE4"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -3457,13 +4689,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -3487,19 +4733,52 @@
       "moves": {
         "absolute": [],
         "attack": [
-          10,
-          145,
-          455,
-          223,
-          542,
-          415,
-          115,
-          578
+          {
+            "id": 10,
+            "name": "Dux Electro_0"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 455,
+            "name": "Epiphany_EPIPHANY4"
+          },
+          {
+            "id": 223,
+            "name": "Glacier_GLACIER4"
+          },
+          {
+            "id": 542,
+            "name": "Vicious Strike_CANNIBALBLOOD"
+          },
+          {
+            "id": 415,
+            "name": "Terrify_SCHADENFREUDE4"
+          },
+          {
+            "id": 115,
+            "name": "Cripple_DEPLETE4"
+          },
+          {
+            "id": 578,
+            "name": "Disrupt_DISRUPT"
+          }
         ],
         "defense": [
-          125,
-          534,
-          1
+          {
+            "id": 125,
+            "name": "Reform_REFORM3"
+          },
+          {
+            "id": 534,
+            "name": "Withdrawl_REFORM4"
+          },
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ]
       },
       "stats": {
@@ -3539,13 +4818,30 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          4,
-          8,
-          5,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 4,
+            "name": "Levo Jeans"
+          },
+          {
+            "id": 8,
+            "name": "Proverse All Stars"
+          },
+          {
+            "id": 5,
+            "name": "A Broken Pipe"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -3569,13 +4865,28 @@
       "moves": {
         "absolute": [],
         "attack": [
-          611,
-          612,
-          547,
-          10
+          {
+            "id": 611,
+            "name": "Banana Lure_BANANALURE"
+          },
+          {
+            "id": 612,
+            "name": "Spire_SPIRE"
+          },
+          {
+            "id": 547,
+            "name": "Shoot_0"
+          },
+          {
+            "id": 10,
+            "name": "Dux Electro_0"
+          }
         ],
         "defense": [
-          1
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ]
       },
       "stats": {
@@ -3615,13 +4926,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -3644,20 +4969,39 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            623,
-            0
-          ]
+          {
+            "id": 623,
+            "name": "Werezombie_WEREWOLF",
+            "turn": 0
+          }
         ],
         "attack": [
-          628,
-          624,
-          625,
-          626,
-          627
+          {
+            "id": 628,
+            "name": "Wicked Claws_WICKEDCLAWS"
+          },
+          {
+            "id": 624,
+            "name": "Rake_RAKE"
+          },
+          {
+            "id": 625,
+            "name": "Canine Instincts_CANINEINSTINCTS"
+          },
+          {
+            "id": 626,
+            "name": "Howl of the Ancestors_HOWLOFTHEANCESTORS"
+          },
+          {
+            "id": 627,
+            "name": "Iron Jaws_IRONJAWS"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -3697,13 +5041,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -3726,19 +5084,35 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            618,
-            0
-          ]
+          {
+            "id": 618,
+            "name": "Holy Hand Grenade of Antioch_HOLYHANDGRENADEOFANTIOCH",
+            "turn": 0
+          }
         ],
         "attack": [
-          619,
-          620,
-          621,
-          622
+          {
+            "id": 619,
+            "name": "Fuzzy Inside_FUZZYINSIDE"
+          },
+          {
+            "id": 620,
+            "name": "Vicious Paws_VICIOUSPAWS"
+          },
+          {
+            "id": 621,
+            "name": "Failing Courage_FAILINGCOURAGE"
+          },
+          {
+            "id": 622,
+            "name": "Inconspicious_VICIOUSPAWS"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -3778,13 +5152,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -3806,16 +5194,40 @@
       "moves": {
         "absolute": [],
         "attack": [
-          604,
-          605,
-          606,
-          607,
-          608,
-          609,
-          610
+          {
+            "id": 604,
+            "name": "Flower Power_FLOWERPOWER"
+          },
+          {
+            "id": 605,
+            "name": "Perfume_PERFUME"
+          },
+          {
+            "id": 606,
+            "name": "Peace and Love_PEACEANDLOVE"
+          },
+          {
+            "id": 607,
+            "name": "Good Trip_GOODTRIP"
+          },
+          {
+            "id": 608,
+            "name": "Bad Trip_BADTRIP"
+          },
+          {
+            "id": 609,
+            "name": "Feel da Reggae_FEELDAREGGAE"
+          },
+          {
+            "id": 610,
+            "name": "Tie Dye_TIEDYE"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -3855,13 +5267,32 @@
           "M"
         ],
         "equipment": [
-          33,
-          26,
-          0,
-          32,
-          32,
-          5,
-          0
+          {
+            "id": 33,
+            "name": "Gay Hat"
+          },
+          {
+            "id": 26,
+            "name": "Piercing"
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 32,
+            "name": "Gay Pants/Feet"
+          },
+          {
+            "id": 32,
+            "name": "Gay Pants/Feet"
+          },
+          {
+            "id": 5,
+            "name": "A Broken Pipe"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -3884,31 +5315,50 @@
       "focus": 130,
       "moves": {
         "absolute": [
-          [
-            630,
-            1
-          ],
-          [
-            631,
-            2
-          ],
-          [
-            632,
-            3
-          ],
-          [
-            633,
-            3
-          ]
+          {
+            "id": 630,
+            "name": "Burning Acid_BURNINGACID",
+            "turn": 1
+          },
+          {
+            "id": 631,
+            "name": "Potent Toxin_POTENTTOXIN",
+            "turn": 2
+          },
+          {
+            "id": 632,
+            "name": "Epinephrine_EPIN",
+            "turn": 3
+          },
+          {
+            "id": 633,
+            "name": "Heart Attack_HEARTATTACK",
+            "turn": 3
+          }
         ],
         "attack": [
-          141,
-          145,
-          635,
-          145
+          {
+            "id": 141,
+            "name": "Corrosion_CAUTERIZE4"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 635,
+            "name": "Infect Hydra_CONTAMINATE2"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          }
         ],
         "defense": [
-          634
+          {
+            "id": 634,
+            "name": "Medidtate Hydra_0"
+          }
         ]
       },
       "stats": {
@@ -3948,13 +5398,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -3978,10 +5442,16 @@
       "moves": {
         "absolute": [],
         "attack": [
-          629
+          {
+            "id": 629,
+            "name": "Fireball_FIREBURN"
+          }
         ],
         "defense": [
-          1
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ]
       },
       "stats": {
@@ -4021,13 +5491,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -4051,10 +5535,16 @@
       "moves": {
         "absolute": [],
         "attack": [
-          1
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ],
         "defense": [
-          1
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ]
       },
       "stats": {
@@ -4094,13 +5584,32 @@
           "M"
         ],
         "equipment": [
-          380,
-          381,
-          9,
-          4,
-          10,
-          0,
-          0
+          {
+            "id": 380,
+            "name": "Mining Helmet"
+          },
+          {
+            "id": 381,
+            "name": "Mining Shirt"
+          },
+          {
+            "id": 9,
+            "name": "Engineering Gloves"
+          },
+          {
+            "id": 4,
+            "name": "Levo Jeans"
+          },
+          {
+            "id": 10,
+            "name": "Navy Boots"
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -4123,55 +5632,91 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            764,
-            1
-          ],
-          [
-            763,
-            2
-          ],
-          [
-            19,
-            2
-          ],
-          [
-            766,
-            2
-          ],
-          [
-            755,
-            2
-          ],
-          [
-            762,
-            2
-          ],
-          [
-            2,
-            2
-          ],
-          [
-            759,
-            2
-          ],
-          [
-            764,
-            4
-          ]
+          {
+            "id": 764,
+            "name": "Preparation_PREPARATION",
+            "turn": 1
+          },
+          {
+            "id": 763,
+            "name": "Planned Assault_PLANNEDASSAULT",
+            "turn": 2
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK",
+            "turn": 2
+          },
+          {
+            "id": 766,
+            "name": "Cover Fire_COVERFIRE2",
+            "turn": 2
+          },
+          {
+            "id": 755,
+            "name": "Honor and Duty_HONORDUTY",
+            "turn": 2
+          },
+          {
+            "id": 762,
+            "name": "Freeze Police_FREEZEPOLICE",
+            "turn": 2
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN",
+            "turn": 2
+          },
+          {
+            "id": 759,
+            "name": "Donuts_DONUTS",
+            "turn": 2
+          },
+          {
+            "id": 764,
+            "name": "Preparation_PREPARATION",
+            "turn": 4
+          }
         ],
         "attack": [
-          765
+          {
+            "id": 765,
+            "name": "Heavy Guns_HEAVYGUNS"
+          }
         ],
         "defense": [
-          759,
-          19,
-          762,
-          760,
-          767,
-          766,
-          755,
-          2
+          {
+            "id": 759,
+            "name": "Donuts_DONUTS"
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK"
+          },
+          {
+            "id": 762,
+            "name": "Freeze Police_FREEZEPOLICE"
+          },
+          {
+            "id": 760,
+            "name": "Sweep Clean_SWEEPCLEAN"
+          },
+          {
+            "id": 767,
+            "name": "Seek and Destroy_SEEKDESTROY"
+          },
+          {
+            "id": 766,
+            "name": "Cover Fire_COVERFIRE2"
+          },
+          {
+            "id": 755,
+            "name": "Honor and Duty_HONORDUTY"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -4211,13 +5756,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          649,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 649,
+            "name": "Supremacy"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "IMPERIAL2",
         "voice": {
@@ -4241,16 +5801,40 @@
       "moves": {
         "absolute": [],
         "attack": [
-          723,
-          725,
-          726,
-          728,
-          734,
-          9
+          {
+            "id": 723,
+            "name": "Assault Tactics_SPASSAULTTACTICS"
+          },
+          {
+            "id": 725,
+            "name": "Forceful Entry_SPFORCEFULENTRY"
+          },
+          {
+            "id": 726,
+            "name": "Expose Enemy_SPEXPOSE"
+          },
+          {
+            "id": 728,
+            "name": "Surprise Shot_PSURPRISESHOT"
+          },
+          {
+            "id": 734,
+            "name": "Snipe_0"
+          },
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
         ],
         "defense": [
-          722,
-          735
+          {
+            "id": 722,
+            "name": "Body Armour_SPBODYARMOUR"
+          },
+          {
+            "id": 735,
+            "name": "Recovery_SRECOVERY"
+          }
         ]
       },
       "stats": {
@@ -4290,13 +5874,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          648,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 648,
+            "name": "Imperial Rifle"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "IMPERIAL",
         "voice": {
@@ -4320,17 +5919,44 @@
       "moves": {
         "absolute": [],
         "attack": [
-          732,
-          733,
-          736,
-          731,
-          730,
-          729,
-          19,
-          9
+          {
+            "id": 732,
+            "name": "Perfect Aim_SPERFECTAIM"
+          },
+          {
+            "id": 733,
+            "name": "Shrapnel_SSHRAPNEL"
+          },
+          {
+            "id": 736,
+            "name": "Cover Fire_SCOVERFIRE"
+          },
+          {
+            "id": 731,
+            "name": "Setup_PSETUP"
+          },
+          {
+            "id": 730,
+            "name": "Night Stick_PNIGHTSTICK"
+          },
+          {
+            "id": 729,
+            "name": "Pepper Spray_PPEPPERSPRAY"
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK"
+          },
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
         ],
         "defense": [
-          727
+          {
+            "id": 727,
+            "name": "First Aid_PFIRSTAID"
+          }
         ]
       },
       "stats": {
@@ -4370,13 +5996,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          647,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 647,
+            "name": "Riot Gun"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "POLICE",
         "voice": {
@@ -4400,18 +6041,48 @@
       "moves": {
         "absolute": [],
         "attack": [
-          716,
-          717,
-          718,
-          719,
-          720,
-          532,
-          524,
-          523,
-          721
+          {
+            "id": 716,
+            "name": "Distract_DISTRACT"
+          },
+          {
+            "id": 717,
+            "name": "Chloroform_ICHLOROFORM"
+          },
+          {
+            "id": 718,
+            "name": "Digitalis_IDIGITALIS"
+          },
+          {
+            "id": 719,
+            "name": "Ricin_IRICIN"
+          },
+          {
+            "id": 720,
+            "name": "Cyanide_ICYANIDE"
+          },
+          {
+            "id": 532,
+            "name": "Black Metal_COLDSTEEL"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          },
+          {
+            "id": 523,
+            "name": "Gouge_BREAK"
+          },
+          {
+            "id": 721,
+            "name": "Antidote_IANTIDOTE"
+          }
         ],
         "defense": [
-          1
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ]
       },
       "stats": {
@@ -4451,13 +6122,29 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          651,
-          651
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 651,
+            "name": "Crimson Blade"
+          },
+          {
+            "id": 651,
+            "name": "Crimson Blade"
+          }
         ],
         "skin": "SINJID",
         "voice": {
@@ -4481,14 +6168,32 @@
       "moves": {
         "absolute": [],
         "attack": [
-          701,
-          702,
-          703,
-          107
+          {
+            "id": 701,
+            "name": "Rabies_RABIES"
+          },
+          {
+            "id": 702,
+            "name": "Overexertion_OVEREXERTION"
+          },
+          {
+            "id": 703,
+            "name": "Debilitated_DEBILITATED"
+          },
+          {
+            "id": 107,
+            "name": "Wound_WOUND2"
+          }
         ],
         "defense": [
-          1,
-          122
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          },
+          {
+            "id": 122,
+            "name": "Adrenaline_ADRENALINE3"
+          }
         ]
       },
       "stats": {
@@ -4528,13 +6233,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -4557,21 +6276,32 @@
       "focus": 120,
       "moves": {
         "absolute": [
-          [
-            704,
-            0
-          ],
-          [
-            705,
-            0
-          ]
+          {
+            "id": 704,
+            "name": "Caretaker_CARETAKER",
+            "turn": 0
+          },
+          {
+            "id": 705,
+            "name": "Sic_SIC",
+            "turn": 0
+          }
         ],
         "attack": [
-          706,
-          107
+          {
+            "id": 706,
+            "name": "Whiplash_WHIPLASH"
+          },
+          {
+            "id": 107,
+            "name": "Wound_WOUND2"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -4611,13 +6341,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          647,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 647,
+            "name": "Riot Gun"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "POLICE2",
         "voice": {
@@ -4640,20 +6385,39 @@
       "focus": 250,
       "moves": {
         "absolute": [
-          [
-            710,
-            0
-          ]
+          {
+            "id": 710,
+            "name": "Strength Shield_SHIELDSTR",
+            "turn": 0
+          }
         ],
         "attack": [
-          714,
-          713,
-          712,
-          223,
-          514
+          {
+            "id": 714,
+            "name": "Analysis_ANALYSIS"
+          },
+          {
+            "id": 713,
+            "name": "Spiritfist_SPIRITFIST"
+          },
+          {
+            "id": 712,
+            "name": "Ironfist_IRONFIST"
+          },
+          {
+            "id": 223,
+            "name": "Glacier_GLACIER4"
+          },
+          {
+            "id": 514,
+            "name": "Prayer_PRAYER"
+          }
         ],
         "defense": [
-          510
+          {
+            "id": 510,
+            "name": "Guardian_GUARDIAN"
+          }
         ]
       },
       "stats": {
@@ -4693,13 +6457,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          656,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 656,
+            "name": "Azure Flatblade"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "ROBOT",
         "voice": {
@@ -4722,28 +6501,60 @@
       "focus": 2000,
       "moves": {
         "absolute": [
-          [
-            777,
-            1
-          ],
-          [
-            778,
-            2
-          ]
+          {
+            "id": 777,
+            "name": "Council Shield_VETO",
+            "turn": 1
+          },
+          {
+            "id": 778,
+            "name": "Coucil Enrage_AMEND",
+            "turn": 2
+          }
         ],
         "attack": [
-          779
+          {
+            "id": 779,
+            "name": "Coucil Nuke_PRESTIGE"
+          }
         ],
         "defense": [
-          738,
-          742,
-          743,
-          745,
-          746,
-          747,
-          748,
-          749,
-          1
+          {
+            "id": 738,
+            "name": "Be Seated_BESEATED"
+          },
+          {
+            "id": 742,
+            "name": "Force of Justice_FORCEOFJUSTICE"
+          },
+          {
+            "id": 743,
+            "name": "In Contempt_INCONTEMPT"
+          },
+          {
+            "id": 745,
+            "name": "Condemn_CONDEMN"
+          },
+          {
+            "id": 746,
+            "name": "Sentence_SENTENCE"
+          },
+          {
+            "id": 747,
+            "name": "Judge's Hammer_JUDGESHAMMER"
+          },
+          {
+            "id": 748,
+            "name": "Justice Done_JUSTICEDONE"
+          },
+          {
+            "id": 749,
+            "name": "Justice be Done_JUSTICEBEDONE"
+          },
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ]
       },
       "stats": {
@@ -4783,13 +6594,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          650,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 650,
+            "name": "Law Binder"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "PRIEST3",
         "voice": {
@@ -4812,48 +6638,74 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            1,
-            1
-          ],
-          [
-            1,
-            2
-          ],
-          [
-            768,
-            3
-          ],
-          [
-            782,
-            4
-          ],
-          [
-            770,
-            4
-          ],
-          [
-            771,
-            4
-          ],
-          [
-            769,
-            4
-          ],
-          [
-            475,
-            5
-          ]
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED",
+            "turn": 1
+          },
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED",
+            "turn": 2
+          },
+          {
+            "id": 768,
+            "name": "Mayor Enrage_MAYORENRAGE",
+            "turn": 3
+          },
+          {
+            "id": 782,
+            "name": "Un-Enrage_0",
+            "turn": 4
+          },
+          {
+            "id": 770,
+            "name": "Block Healing_BLOCKHEALING",
+            "turn": 4
+          },
+          {
+            "id": 771,
+            "name": "Block Damage_BLOCKDAMAGE",
+            "turn": 4
+          },
+          {
+            "id": 769,
+            "name": "Team Sacrifice_TEAMSACRIFICE",
+            "turn": 4
+          },
+          {
+            "id": 475,
+            "name": "Retrograde_RETROGRADED",
+            "turn": 5
+          }
         ],
         "attack": [
-          773,
-          774,
-          775,
-          776
+          {
+            "id": 773,
+            "name": "Justice_JUSTICE"
+          },
+          {
+            "id": 774,
+            "name": "Peace_PEACE"
+          },
+          {
+            "id": 775,
+            "name": "Unity_UNITY"
+          },
+          {
+            "id": 776,
+            "name": "Equality_EQUALITY"
+          }
         ],
         "defense": [
-          1,
-          772
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          },
+          {
+            "id": 772,
+            "name": "Magistrate_MAGISTRATE"
+          }
         ]
       },
       "stats": {
@@ -4893,13 +6745,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          654,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 654,
+            "name": "Plasma Rod"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "PRIEST4",
         "voice": {
@@ -4922,25 +6789,32 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            781,
-            1
-          ],
-          [
-            780,
-            2
-          ],
-          [
-            780,
-            3
-          ],
-          [
-            780,
-            4
-          ]
+          {
+            "id": 781,
+            "name": "Robot Shield_VETO",
+            "turn": 1
+          },
+          {
+            "id": 780,
+            "name": "Robot Mana Bomb_NOMANALEFT",
+            "turn": 2
+          },
+          {
+            "id": 780,
+            "name": "Robot Mana Bomb_NOMANALEFT",
+            "turn": 3
+          },
+          {
+            "id": 780,
+            "name": "Robot Mana Bomb_NOMANALEFT",
+            "turn": 4
+          }
         ],
         "attack": [
-          276
+          {
+            "id": 276,
+            "name": "Vapour Cannon_VAPOUR"
+          }
         ],
         "defense": []
       },
@@ -4981,13 +6855,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -5011,15 +6899,36 @@
       "moves": {
         "absolute": [],
         "attack": [
-          533,
-          1,
-          763,
-          136,
-          523,
-          524
+          {
+            "id": 533,
+            "name": "Throw Knife_KNIFEFACE"
+          },
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          },
+          {
+            "id": 763,
+            "name": "Planned Assault_PLANNEDASSAULT"
+          },
+          {
+            "id": 136,
+            "name": "Acid Slash_IRRITATE4"
+          },
+          {
+            "id": 523,
+            "name": "Gouge_BREAK"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          }
         ],
         "defense": [
-          531
+          {
+            "id": 531,
+            "name": "Blade Shield_BLADESHIELD"
+          }
         ]
       },
       "stats": {
@@ -5059,13 +6968,29 @@
           "F"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          22,
-          22
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 22,
+            "name": "Felicity's Knife"
+          },
+          {
+            "id": 22,
+            "name": "Felicity's Knife"
+          }
         ],
         "skin": "0",
         "voice": {
@@ -5088,28 +7013,38 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            16,
-            0
-          ],
-          [
-            17,
-            0
-          ],
-          [
-            18,
-            0
-          ],
-          [
-            19,
-            0
-          ]
+          {
+            "id": 16,
+            "name": "Aim For The Heart_HEART",
+            "turn": 0
+          },
+          {
+            "id": 17,
+            "name": "Poisoned Blade_POISONBLADE",
+            "turn": 0
+          },
+          {
+            "id": 18,
+            "name": "Bayonet Rush_ARTERY",
+            "turn": 0
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK",
+            "turn": 0
+          }
         ],
         "attack": [
-          9
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
         ],
         "defense": [
-          20
+          {
+            "id": 20,
+            "name": "Auxillary Power_AUXILLARY"
+          }
         ]
       },
       "stats": {
@@ -5149,13 +7084,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          13,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 13,
+            "name": "M4"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "ZPCI",
         "voice": {
@@ -5178,28 +7128,38 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            11,
-            1
-          ],
-          [
-            12,
-            2
-          ],
-          [
-            785,
-            2
-          ],
-          [
-            14,
-            3
-          ]
+          {
+            "id": 11,
+            "name": "Chains Of Justice_CHAINS",
+            "turn": 1
+          },
+          {
+            "id": 12,
+            "name": "Isolate_SOLITARY",
+            "turn": 2
+          },
+          {
+            "id": 785,
+            "name": "Drop A Soap2_PICKTHESOAP2",
+            "turn": 2
+          },
+          {
+            "id": 14,
+            "name": "Death Sentence_DEATHSENTENCE",
+            "turn": 3
+          }
         ],
         "attack": [
-          15
+          {
+            "id": 15,
+            "name": "Heavy Punishment_HEAVYPUNISHMENT"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -5239,13 +7199,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          679,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 679,
+            "name": "Platinum Baton"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "JASON4",
         "voice": {
@@ -5269,10 +7244,16 @@
       "moves": {
         "absolute": [],
         "attack": [
-          0
+          {
+            "id": 0,
+            "name": "None_0"
+          }
         ],
         "defense": [
-          0
+          {
+            "id": 0,
+            "name": "None_0"
+          }
         ]
       },
       "stats": {
@@ -5312,13 +7293,27 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -5341,40 +7336,64 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            786,
-            1
-          ],
-          [
-            787,
-            2
-          ],
-          [
-            788,
-            3
-          ],
-          [
-            782,
-            4
-          ],
-          [
-            780,
-            5
-          ],
-          [
-            791,
-            6
-          ]
+          {
+            "id": 786,
+            "name": "Fate_FATE",
+            "turn": 1
+          },
+          {
+            "id": 787,
+            "name": "Shell Aura_SHELLAURA",
+            "turn": 2
+          },
+          {
+            "id": 788,
+            "name": "Dark Omen_DARKOMEN",
+            "turn": 3
+          },
+          {
+            "id": 782,
+            "name": "Un-Enrage_0",
+            "turn": 4
+          },
+          {
+            "id": 780,
+            "name": "Robot Mana Bomb_NOMANALEFT",
+            "turn": 5
+          },
+          {
+            "id": 791,
+            "name": "Big Heal_0",
+            "turn": 6
+          }
         ],
         "attack": [
-          790,
-          789
+          {
+            "id": 790,
+            "name": "Pre Fate 2_PREFATE"
+          },
+          {
+            "id": 789,
+            "name": "Pre Fate_PREFATE"
+          }
         ],
         "defense": [
-          9,
-          107,
-          119,
-          110
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          },
+          {
+            "id": 107,
+            "name": "Wound_WOUND2"
+          },
+          {
+            "id": 119,
+            "name": "Exposure_EXPOSED3"
+          },
+          {
+            "id": 110,
+            "name": "Disrupt_DISRUPT"
+          }
         ]
       },
       "stats": {
@@ -5414,13 +7433,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          675,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 675,
+            "name": "Temporal Blade"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "NOS",
         "voice": {
@@ -5443,20 +7477,39 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            792,
-            1
-          ]
+          {
+            "id": 792,
+            "name": "Apprehend_APPREHEND",
+            "turn": 1
+          }
         ],
         "attack": [
-          796,
-          793,
-          794,
-          795
+          {
+            "id": 796,
+            "name": "Persecute_PERSECUTE"
+          },
+          {
+            "id": 793,
+            "name": "Pursuit_PURSUIT"
+          },
+          {
+            "id": 794,
+            "name": "Solid Evidence_SOLIDEVIDENCE"
+          },
+          {
+            "id": 795,
+            "name": "Investigate_INVESTIGATE"
+          }
         ],
         "defense": [
-          9,
-          524
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          }
         ]
       },
       "stats": {
@@ -5496,13 +7549,29 @@
           "F"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          676,
-          676
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 676,
+            "name": "Azure Knife"
+          },
+          {
+            "id": 676,
+            "name": "Azure Knife"
+          }
         ],
         "skin": "FIR",
         "voice": {
@@ -5526,17 +7595,44 @@
       "moves": {
         "absolute": [],
         "attack": [
-          732,
-          733,
-          736,
-          731,
-          730,
-          729,
-          19,
-          9
+          {
+            "id": 732,
+            "name": "Perfect Aim_SPERFECTAIM"
+          },
+          {
+            "id": 733,
+            "name": "Shrapnel_SSHRAPNEL"
+          },
+          {
+            "id": 736,
+            "name": "Cover Fire_SCOVERFIRE"
+          },
+          {
+            "id": 731,
+            "name": "Setup_PSETUP"
+          },
+          {
+            "id": 730,
+            "name": "Night Stick_PNIGHTSTICK"
+          },
+          {
+            "id": 729,
+            "name": "Pepper Spray_PPEPPERSPRAY"
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK"
+          },
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
         ],
         "defense": [
-          727
+          {
+            "id": 727,
+            "name": "First Aid_PFIRSTAID"
+          }
         ]
       },
       "stats": {
@@ -5576,13 +7672,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          647,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 647,
+            "name": "Riot Gun"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "POLICE",
         "voice": {
@@ -5605,21 +7716,43 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            784,
-            2
-          ]
+          {
+            "id": 784,
+            "name": "Klima Heal_0",
+            "turn": 2
+          }
         ],
         "attack": [
-          455,
-          443,
-          145,
-          149,
-          141,
-          578
+          {
+            "id": 455,
+            "name": "Epiphany_EPIPHANY4"
+          },
+          {
+            "id": 443,
+            "name": "Insecurity_INSECURE3"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 149,
+            "name": "Infect_CONTAMINATE4"
+          },
+          {
+            "id": 141,
+            "name": "Corrosion_CAUTERIZE4"
+          },
+          {
+            "id": 578,
+            "name": "Disrupt_DISRUPT"
+          }
         ],
         "defense": [
-          1
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ]
       },
       "stats": {
@@ -5659,13 +7792,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          681,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 681,
+            "name": "Golden Crowbar"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "KLIMA",
         "voice": {
@@ -5688,26 +7836,41 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            800,
-            1
-          ],
-          [
-            798,
-            2
-          ],
-          [
-            799,
-            3
-          ]
+          {
+            "id": 800,
+            "name": "Guardian Shield_TWINGUARDIANS",
+            "turn": 1
+          },
+          {
+            "id": 798,
+            "name": "Super Heal_0",
+            "turn": 2
+          },
+          {
+            "id": 799,
+            "name": "Kill_0",
+            "turn": 3
+          }
         ],
         "attack": [
-          111,
-          524,
-          115
+          {
+            "id": 111,
+            "name": "Disrupt_DISRUPT"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          },
+          {
+            "id": 115,
+            "name": "Cripple_DEPLETE4"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -5747,13 +7910,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          719,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 719,
+            "name": "Guardian Sword"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "ROBOT2",
         "voice": {
@@ -5776,26 +7954,41 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            800,
-            1
-          ],
-          [
-            797,
-            2
-          ],
-          [
-            799,
-            3
-          ]
+          {
+            "id": 800,
+            "name": "Guardian Shield_TWINGUARDIANS",
+            "turn": 1
+          },
+          {
+            "id": 797,
+            "name": "Super Nuke_0",
+            "turn": 2
+          },
+          {
+            "id": 799,
+            "name": "Kill_0",
+            "turn": 3
+          }
         ],
         "attack": [
-          256,
-          260,
-          132
+          {
+            "id": 256,
+            "name": "Impair_IMPAIR4"
+          },
+          {
+            "id": 260,
+            "name": "Bloodshed_BLOODRUSH4"
+          },
+          {
+            "id": 132,
+            "name": "Enrage_BERSERK3"
+          }
         ],
         "defense": [
-          9
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
         ]
       },
       "stats": {
@@ -5835,13 +8028,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          719,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 719,
+            "name": "Guardian Sword"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "ROBOT2",
         "voice": {
@@ -5864,16 +8072,23 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            801,
-            1
-          ]
+          {
+            "id": 801,
+            "name": "Fire Shield_FIRESAM",
+            "turn": 1
+          }
         ],
         "attack": [
-          802
+          {
+            "id": 802,
+            "name": "Fire Strike_FIRESAM2"
+          }
         ],
         "defense": [
-          2
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
         ]
       },
       "stats": {
@@ -5913,13 +8128,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          720,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 720,
+            "name": "Flame Katana"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "FIRESAM",
         "voice": {
@@ -5942,17 +8172,22 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            803,
-            1
-          ],
-          [
-            804,
-            2
-          ]
+          {
+            "id": 803,
+            "name": "Flawed Design_FINAL_FLAWED",
+            "turn": 1
+          },
+          {
+            "id": 804,
+            "name": "Aura of Restraint_FINAL_RESTRAINT",
+            "turn": 2
+          }
         ],
         "attack": [
-          798
+          {
+            "id": 798,
+            "name": "Super Heal_0"
+          }
         ],
         "defense": []
       },
@@ -5993,13 +8228,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          720,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 720,
+            "name": "Flame Katana"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -6022,13 +8272,17 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            805,
-            1
-          ]
+          {
+            "id": 805,
+            "name": "Salvation Aura_FINAL_SALV",
+            "turn": 1
+          }
         ],
         "attack": [
-          806
+          {
+            "id": 806,
+            "name": "Savlation Heal_GREATERPURPOSE"
+          }
         ],
         "defense": []
       },
@@ -6069,13 +8323,28 @@
           "M"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          720,
-          0
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 720,
+            "name": "Flame Katana"
+          },
+          {
+            "id": 0
+          }
         ],
         "skin": "0",
         "voice": {
@@ -6098,16 +8367,23 @@
       "focus": 100,
       "moves": {
         "absolute": [
-          [
-            807,
-            2
-          ]
+          {
+            "id": 807,
+            "name": "Wrath Aura_FINAL_WRATH",
+            "turn": 2
+          }
         ],
         "attack": [
-          532
+          {
+            "id": 532,
+            "name": "Black Metal_COLDSTEEL"
+          }
         ],
         "defense": [
-          1
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
         ]
       },
       "stats": {
@@ -6147,13 +8423,29 @@
           "F"
         ],
         "equipment": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          721,
-          721
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 721,
+            "name": "Fire Sword"
+          },
+          {
+            "id": 721,
+            "name": "Fire Sword"
+          }
         ],
         "skin": "FIR2",
         "voice": {

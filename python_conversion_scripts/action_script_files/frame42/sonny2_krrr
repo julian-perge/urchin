@@ -1,0 +1,25 @@
+# frame42, DoAction[5]
+function KRRR()
+{
+    # KRSC is always set to 0 outside of this?
+    # KRS is an array size of 100, with random values: 0 >= n < 100
+    # KRSO is only ever set here
+		_root.KRSO = _root.KRS[_root.KRSC];
+		_root.KRSC = _root.KRSC + 1;
+		if(_root.KRSC == 100)
+		{
+				_root.KRSC = 0;
+		}
+}
+# Where KRS is used
+# frame42, DoAction[14]
+# frame201, loadbattlescene
+KRS = new Array();
+r = 0;
+while(r < 100)
+{
+    # 0 >= n < 100
+		KRS[r] = random(100);
+		r++;
+}
+KRSC = 0;
