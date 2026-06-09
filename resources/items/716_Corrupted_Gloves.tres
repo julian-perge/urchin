@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://byrwk8o52mkx7"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6o2ds"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6o2ds"]
 [ext_resource type="Texture2D" uid="uid://c4i3gmbdvsi4c" path="res://resources/sprites/M_HAND_PURPLENIN.png" id="2_nooob"]
 
 [resource]

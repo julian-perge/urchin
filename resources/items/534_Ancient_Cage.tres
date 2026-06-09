@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dysrb2lu5w8p2"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6tbrq"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6tbrq"]
 [ext_resource type="Texture2D" uid="uid://d3kowxtaw2wly" path="res://resources/sprites/M_CHEST_SAMURAI4.png" id="2_8sqah"]
 
 [resource]

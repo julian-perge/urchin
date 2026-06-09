@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://li4eoywjg6an"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_alk7v"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_alk7v"]
 [ext_resource type="Texture2D" uid="uid://bdw6v66bthu4p" path="res://resources/sprites/M_HEAD_KLIMA.png" id="2_oo4g0"]
 
 [resource]

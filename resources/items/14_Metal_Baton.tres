@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bbxn0xb8p0oby"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_c6we4"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_c6we4"]
 [ext_resource type="Texture2D" uid="uid://bspqugh0i112u" path="res://resources/sprites/M_WEAPON_BATON.png" id="2_7q7pp"]
 
 [resource]

@@ -61,6 +61,93 @@ modifications/3 = SubResource("SkeletonModification2DTwoBoneIK_hmdb6")
 modifications/4 = SubResource("SkeletonModification2DTwoBoneIK_s8av5")
 modifications/5 = SubResource("SkeletonModification2DTwoBoneIK_a1n2l")
 
+[sub_resource type="Animation" id="Animation_xgess"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(8, 133)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.0284001]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh/FrontLeg:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1.00001, 160.002)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh/FrontLeg:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.187516]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh/FrontLeg/FrontFoot:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1.00001, 254.003)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh/FrontLeg/FrontFoot:rotation")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.258728]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
 [sub_resource type="Animation" id="Animation_hk0fq"]
 resource_name = "idle"
 loop_mode = 1
@@ -150,97 +237,10 @@ tracks/6/keys = {
 "values": [Vector2(0, 0), Vector2(-10, 10)]
 }
 
-[sub_resource type="Animation" id="Animation_xgess"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(8, 133)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [-0.0284001]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh/FrontLeg:position")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1.00001, 160.002)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh/FrontLeg:rotation")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [-0.187516]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh/FrontLeg/FrontFoot:position")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1.00001, 254.003)]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body/FrontThigh/FrontLeg/FrontFoot:rotation")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.258728]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("PartsSkeletonContainer/Skeleton2D/Base/Body:position")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0, 0)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_uu0m6"]
 _data = {
-"RESET": SubResource("Animation_xgess"),
-"idle": SubResource("Animation_hk0fq")
+&"RESET": SubResource("Animation_xgess"),
+&"idle": SubResource("Animation_hk0fq")
 }
 
 [node name="Character" type="Node2D"]
@@ -253,7 +253,7 @@ texture_repeat = 1
 
 [node name="Head" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
 z_index = 1
-position = Vector2(-25.9627, -759.037)
+position = Vector2(-23, -762)
 texture = ExtResource("1_cetts")
 flip_h = true
 
@@ -264,94 +264,94 @@ offset = Vector2(0, -30)
 flip_h = true
 
 [node name="Body" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
-position = Vector2(-3.71147, -574.144)
+position = Vector2(-0.748808, -577.107)
 texture = ExtResource("2_so1h5")
 flip_h = true
 
 [node name="BackShoulder" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
 z_index = 1
-position = Vector2(-66.9627, -685.037)
+position = Vector2(-64, -688)
 texture = ExtResource("3_sygc6")
 flip_h = true
 
 [node name="BackArm" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
 show_behind_parent = true
-position = Vector2(-72.4606, -586.97)
-rotation = 0.0468198
-scale = Vector2(0.79987, 0.79987)
+position = Vector2(-71.8312, -590.056)
+rotation = 0.0821606
+scale = Vector2(0.79994, 0.79994)
 texture = ExtResource("4_gahnb")
 flip_h = true
 
 [node name="BackHand" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
 show_behind_parent = true
-position = Vector2(-141.715, -482.758)
-rotation = 0.987755
-scale = Vector2(0.999781, 0.999781)
+position = Vector2(-142.52, -484.22)
+rotation = 0.960183
+scale = Vector2(0.999925, 0.999925)
 texture = ExtResource("5_a0rjk")
 
 [node name="FrontShoulder" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
 z_index = 1
-position = Vector2(56.8485, -696.853)
+position = Vector2(59.8111, -699.816)
 scale = Vector2(0.999954, 0.999954)
 texture = ExtResource("3_sygc6")
 flip_h = true
 
 [node name="FrontArm" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
-position = Vector2(86.455, -602.229)
-rotation = -0.31132
-scale = Vector2(0.999854, 0.999854)
+position = Vector2(83.3798, -602.057)
+rotation = -0.223021
+scale = Vector2(0.999953, 0.999953)
 texture = ExtResource("4_gahnb")
 flip_h = true
 
 [node name="FrontHand" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
-position = Vector2(56.4017, -484.297)
-rotation = 1.00694
-scale = Vector2(0.999712, 0.999712)
+position = Vector2(48.9635, -479.712)
+rotation = 0.965726
+scale = Vector2(0.999858, 0.999858)
 texture = ExtResource("5_a0rjk")
 flip_h = true
 
 [node name="BackThigh" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
 show_behind_parent = true
-position = Vector2(-54.4584, -351.012)
-rotation = 0.255993
-scale = Vector2(0.999886, 0.999886)
+position = Vector2(-53.718, -354.384)
+rotation = 0.282803
+scale = Vector2(0.999996, 0.999996)
 texture = ExtResource("4_gahnb")
 flip_h = true
 
 [node name="BackLeg" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
-position = Vector2(-64.9103, -164.313)
-rotation = -0.0853859
-scale = Vector2(0.799786, 0.799786)
+position = Vector2(-81.2427, -168.097)
+rotation = 0.0543015
+scale = Vector2(0.799884, 0.799884)
 texture = ExtResource("6_nn7ed")
 flip_h = true
 
 [node name="BackFoot" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
 show_behind_parent = true
-position = Vector2(-71.0618, -50.6161)
-rotation = -0.0213039
-scale = Vector2(0.799649, 0.799649)
+position = Vector2(-65.6714, -55.0841)
+rotation = 2.88101
+scale = Vector2(0.799884, 0.799884)
 texture = ExtResource("7_qrm6l")
 flip_h = true
 
 [node name="FrontThigh" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
 show_behind_parent = true
-position = Vector2(7.13481, -357.022)
-rotation = 0.0110005
+position = Vector2(10.7389, -360.003)
+rotation = 0.00317943
 scale = Vector2(0.999837, 0.999837)
 texture = ExtResource("4_gahnb")
 flip_h = true
 
 [node name="FrontLeg" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
-position = Vector2(34.0109, -159.721)
-rotation = -0.25231
-scale = Vector2(0.899708, 0.899708)
+position = Vector2(36.2604, -162.211)
+rotation = -0.235883
+scale = Vector2(0.899707, 0.899707)
 texture = ExtResource("6_nn7ed")
 flip_h = true
 
 [node name="FrontFoot" type="Sprite2D" parent="PartsSkeletonContainer/Parts"]
 show_behind_parent = true
-position = Vector2(42.3018, -41.1725)
-rotation = 0.1029
+position = Vector2(42.2488, -42.306)
+rotation = 0.0724936
 scale = Vector2(0.999577, 0.999577)
 texture = ExtResource("7_qrm6l")
 flip_h = true
@@ -534,5 +534,5 @@ position = Vector2(-195, -454)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_uu0m6")
+&"": SubResource("AnimationLibrary_uu0m6")
 }

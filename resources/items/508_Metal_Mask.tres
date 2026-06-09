@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dnw4ghd03rx2w"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_g26us"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g26us"]
 [ext_resource type="Texture2D" uid="uid://chre6qg3mj8ek" path="res://resources/sprites/M_HEAD_JASON3.png" id="2_86fr0"]
 
 [resource]

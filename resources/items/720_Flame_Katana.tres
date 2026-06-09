@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b1fpfcpi1ok4c"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6oxu3"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6oxu3"]
 [ext_resource type="Texture2D" uid="uid://bhpxako70o00h" path="res://resources/sprites/M_WEAPON_KATANA2.png" id="2_e5t6i"]
 
 [resource]

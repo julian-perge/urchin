@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bi6hrocwavmk7"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ut202"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ut202"]
 [ext_resource type="Texture2D" uid="uid://c7bqco2fyss3d" path="res://resources/sprites/M_LEG2_XADER.png" id="2_v3jg2"]
 
 [resource]

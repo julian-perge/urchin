@@ -8,13 +8,12 @@
 [ext_resource type="Texture2D" uid="uid://ch1xac2a0i2ov" path="res://resources/toolbar/achievements.png" id="7_ipins"]
 [ext_resource type="Texture2D" uid="uid://c3v5cnrljwxl4" path="res://resources/toolbar/respec.png" id="7_uij1d"]
 [ext_resource type="Texture2D" uid="uid://b6ouj2ybww3h2" path="res://resources/toolbar/world_map.png" id="8_qn7ub"]
-[ext_resource type="Script" path="res://scripts/zones/zone_map.gd" id="9_4g2by"]
+[ext_resource type="Script" uid="uid://b84a2vqgg4wr6" path="res://scripts/zones/zone_map.gd" id="9_4g2by"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_sd3lk"]
-font_size = 36
+font_size = 18
 
 [sub_resource type="LabelSettings" id="LabelSettings_b0fuf"]
-font_size = 28
 font_color = Color(0, 1, 0.368627, 1)
 
 [node name="Control" type="Control"]
@@ -66,7 +65,7 @@ theme_override_constants/h_separation = 16
 columns = 6
 
 [node name="Inventory" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(96, 96)
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
@@ -75,7 +74,7 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="Abilities" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(96, 96)
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
@@ -84,7 +83,7 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="Save" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(96, 96)
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
@@ -93,7 +92,7 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="Options" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(96, 96)
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
@@ -102,7 +101,7 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="Respec" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(96, 96)
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
@@ -111,7 +110,7 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="Achievements" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(96, 96)
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
@@ -125,17 +124,17 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="ZoneMap" type="TextureButton" parent="MarginContainer/HBoxContainer/MiddleSection"]
-custom_minimum_size = Vector2(96, 96)
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -48.0
-offset_top = -48.0
-offset_right = 48.0
-offset_bottom = 48.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -173,7 +172,6 @@ label_settings = SubResource("LabelSettings_b0fuf")
 horizontal_alignment = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="MarginContainer/HBoxContainer/RightSection/VBoxContainer"]
-custom_minimum_size = Vector2(512, 64)
 layout_mode = 2
 size_flags_vertical = 1
 value = 25.0

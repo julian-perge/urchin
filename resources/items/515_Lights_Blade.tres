@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d26luf00nl5c3"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_loebb"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_loebb"]
 [ext_resource type="Texture2D" uid="uid://cw3he64d411rh" path="res://resources/sprites/M_WEAPON_PALADINSWORD.png" id="2_efwic"]
 
 [resource]

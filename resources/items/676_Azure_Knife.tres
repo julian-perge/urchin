@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bov33v8ug1okb"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_jxb0a"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jxb0a"]
 [ext_resource type="Texture2D" uid="uid://dspl6fpvml45t" path="res://resources/sprites/M_WEAPON_FELKNIFE5.png" id="2_0gdtt"]
 
 [resource]

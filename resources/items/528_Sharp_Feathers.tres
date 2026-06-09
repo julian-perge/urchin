@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://1is1v36guiov"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_5ohsg"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5ohsg"]
 [ext_resource type="Texture2D" uid="uid://cyqa5uhcnxjy8" path="res://resources/sprites/M_HEAD_SHAMAN1.png" id="2_bc2d1"]
 
 [resource]

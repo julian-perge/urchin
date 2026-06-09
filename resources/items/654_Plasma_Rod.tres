@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cp82xpu2depra"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_h2x3j"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_h2x3j"]
 [ext_resource type="Texture2D" uid="uid://bf3d406yy8c8c" path="res://resources/sprites/M_WEAPON_TASER3.png" id="2_npmwf"]
 
 [resource]

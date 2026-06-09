@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://jctx3g15c6fb"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_nivha"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_nivha"]
 [ext_resource type="Texture2D" uid="uid://bj7rkea7s1cec" path="res://resources/sprites/M_FOOT_ROBOT.png" id="2_0v4vb"]
 
 [resource]

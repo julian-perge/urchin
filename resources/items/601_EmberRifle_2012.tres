@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cbrymgle4fh3g"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_vn26e"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vn26e"]
 [ext_resource type="Texture2D" uid="uid://www888llv4ss" path="res://resources/sprites/M_WEAPON_AK2.png" id="2_jlrv3"]
 
 [resource]

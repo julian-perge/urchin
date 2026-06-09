@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dhorebp0e51tk"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_luyso"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_luyso"]
 [ext_resource type="Texture2D" uid="uid://cyk4oo5hewf8a" path="res://resources/sprites/M_HAND_XADER.png" id="2_7n47k"]
 
 [resource]

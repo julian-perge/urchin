@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ds7tr2bn1rn3i"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_e8llb"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e8llb"]
 [ext_resource type="Texture2D" uid="uid://0iu75qd7ljay" path="res://resources/sprites/M_WEAPON_FIREAXE.png" id="2_xerng"]
 
 [resource]

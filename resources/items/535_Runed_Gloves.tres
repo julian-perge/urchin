@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://lgq6bc7bvglf"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_oylsy"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_oylsy"]
 [ext_resource type="Texture2D" uid="uid://devrffqssd1pp" path="res://resources/sprites/M_HAND_SAMURAI4.png" id="2_5jwmo"]
 
 [resource]

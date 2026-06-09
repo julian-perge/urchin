@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cle8w8ur6fdo5"]
 
-[ext_resource type="Script" path="res://scenes/button_hover.gd" id="1_ro8fx"]
-[ext_resource type="Shader" path="res://scenes/button.gdshader" id="2_vt3fn"]
+[ext_resource type="Script" uid="uid://b0v5o63h55iws" path="res://scenes/button_hover.gd" id="1_ro8fx"]
+[ext_resource type="Shader" uid="uid://b50svdqxq4vi8" path="res://scenes/button.gdshader" id="2_vt3fn"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vmjjs"]
 shader = ExtResource("2_vt3fn")

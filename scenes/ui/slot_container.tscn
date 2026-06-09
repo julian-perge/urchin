@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://sbb6rkr4jpqc"]
 
-[ext_resource type="Script" path="res://scenes/ui/slot_container.gd" id="1_7updc"]
+[ext_resource type="Script" uid="uid://bvdop5qwxpg16" path="res://scenes/ui/slot_container.gd" id="1_7updc"]
 
 [node name="SlotContainer" type="GridContainer"]
 size_flags_vertical = 3

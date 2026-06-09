@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dgnq0uiy2kt8y"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_isfxs"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_isfxs"]
 [ext_resource type="Texture2D" uid="uid://dxueimqro4lli" path="res://resources/sprites/M_WEAPON_CROWBAR.png" id="2_n3ohv"]
 
 [resource]

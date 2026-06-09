@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://r8m5rbde5xqm"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_unfnf"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_unfnf"]
 [ext_resource type="Texture2D" uid="uid://8vcjch3ihdph" path="res://resources/sprites/M_WEAPON_SHAMANMED.png" id="2_0fcr8"]
 
 [resource]

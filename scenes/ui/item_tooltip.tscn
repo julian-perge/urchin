@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dc81g0wi6lpbp"]
 
-[ext_resource type="Script" path="res://scripts/ui/store/item_tooltip.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://rnt0hx6asp1f" path="res://scripts/ui/store/item_tooltip.gd" id="1_script"]
 
 [node name="ItemTooltip" type="Control"]
 z_index = 1

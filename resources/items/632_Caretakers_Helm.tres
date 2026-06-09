@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://spv0mg1ig7di"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_lg3bt"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lg3bt"]
 [ext_resource type="Texture2D" uid="uid://7m6xxxx1ehy" path="res://resources/sprites/M_HEAD_POLICE2.png" id="2_1wwid"]
 
 [resource]

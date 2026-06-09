@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://brcq07hvqgdww"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_e1wcf"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e1wcf"]
 [ext_resource type="Texture2D" uid="uid://dhgbrljpib006" path="res://resources/sprites/M_HEAD_FROSTPLATE.png" id="2_ovkok"]
 
 [resource]

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cvf4wgjn84n2e"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_3e4ay"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3e4ay"]
 [ext_resource type="Texture2D" uid="uid://ce6myot5qroq8" path="res://resources/sprites/M_CHEST_ROBOT.png" id="2_qfu1k"]
 
 [resource]

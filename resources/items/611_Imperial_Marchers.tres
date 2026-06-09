@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dwlxv1lmuiycq"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_mdptl"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mdptl"]
 [ext_resource type="Texture2D" uid="uid://cmr2r8uj7tlk5" path="res://resources/sprites/M_FOOT_IMPERIAL.png" id="2_4kuk1"]
 
 [resource]

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bkfiqyj1xkug1"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_daxjr"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_daxjr"]
 [ext_resource type="Texture2D" uid="uid://bfqutgvb7g5f" path="res://resources/sprites/M_CHEST_FRANKEN.png" id="2_8o1ne"]
 
 [resource]

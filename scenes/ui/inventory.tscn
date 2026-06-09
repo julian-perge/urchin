@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bwra17qajnemg"]
+[gd_scene load_steps=9 format=3 uid="uid://bwra17qajnemg"]
 
 [ext_resource type="StyleBox" uid="uid://dt6aqtjbna86b" path="res://scenes/ui/button_style.tres" id="1_8ejwu"]
 [ext_resource type="PackedScene" uid="uid://duxqydn2hw6b3" path="res://scenes/ui/item_slot.tscn" id="1_epblc"]
@@ -6,11 +6,14 @@
 [ext_resource type="Texture2D" uid="uid://b58rsnr20txle" path="res://assets/store_sell.png" id="4_7jh2h"]
 [ext_resource type="Texture2D" uid="uid://mvilyi1tcdlr" path="res://resources/delete_item.png" id="5_17e3v"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_ulvp7"]
+font_color = Color(0.499439, 0.49944, 0.499439, 1)
+
 [sub_resource type="LabelSettings" id="LabelSettings_8868f"]
 font = ExtResource("3_csmvm")
-font_size = 48
+font_size = 18
 font_color = Color(1, 0.8, 0, 1)
-outline_size = 16
+outline_size = 8
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hxhlo"]
@@ -22,40 +25,32 @@ border_width_bottom = 2
 corner_detail = 1
 
 [node name="VBoxContainer" type="VBoxContainer"]
-custom_minimum_size = Vector2(600, 0)
-anchors_preset = 9
-anchor_bottom = 1.0
-offset_right = 628.0
-grow_vertical = 2
-theme_override_constants/separation = 18
+offset_right = 261.0
+offset_bottom = 240.0
+size_flags_vertical = 3
+theme_override_constants/separation = 8
 
 [node name="Inventory" type="PanelContainer" parent="."]
-custom_minimum_size = Vector2(0, 500)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = ExtResource("1_8ejwu")
 
 [node name="MarginContainer" type="MarginContainer" parent="Inventory"]
 layout_mode = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 32
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Inventory/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 16
-alignment = 1
 
 [node name="Label" type="Label" parent="Inventory/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+size_flags_vertical = 1
 text = "Your Inventory"
+label_settings = SubResource("LabelSettings_ulvp7")
 horizontal_alignment = 1
 
 [node name="InventoryGrid" type="GridContainer" parent="Inventory/MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_stretch_ratio = 3.0
 theme_override_constants/h_separation = 32
 theme_override_constants/v_separation = 16
 columns = 6
@@ -169,35 +164,32 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Inventory2" type="PanelContainer" parent="."]
-custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 theme_override_styles/panel = ExtResource("1_8ejwu")
 
 [node name="MarginContainer" type="MarginContainer" parent="Inventory2"]
 layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Inventory2/MarginContainer"]
 layout_mode = 2
 
 [node name="PlayerGold" type="Label" parent="Inventory2/MarginContainer/HBoxContainer"]
 layout_mode = 2
-text = "€ 1,001,471"
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "€ 99,999,999"
 label_settings = SubResource("LabelSettings_8868f")
 vertical_alignment = 2
 
 [node name="Otther_hbox" type="HBoxContainer" parent="Inventory2/MarginContainer/HBoxContainer"]
-custom_minimum_size = Vector2(72, 64)
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_constants/separation = 16
 
 [node name="SellItemButton" type="Button" parent="Inventory2/MarginContainer/HBoxContainer/Otther_hbox"]
 visible = false
-custom_minimum_size = Vector2(72, 0)
+custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_hxhlo")
 icon = ExtResource("4_7jh2h")
@@ -205,7 +197,7 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="DeleteItemButton" type="Button" parent="Inventory2/MarginContainer/HBoxContainer/Otther_hbox"]
-custom_minimum_size = Vector2(72, 0)
+custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_hxhlo")
 icon = ExtResource("5_17e3v")

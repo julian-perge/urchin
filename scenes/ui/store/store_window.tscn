@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://brmx4sa7xb3xq"]
 
-[ext_resource type="Script" path="res://scripts/ui/store/store_window.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dci8fqqpbntjm" path="res://scripts/ui/store/store_window.gd" id="1_script"]
 [ext_resource type="StyleBox" uid="uid://dt6aqtjbna86b" path="res://scenes/ui/button_style.tres" id="2_ojn43"]
 [ext_resource type="Texture2D" uid="uid://cmkhyl6c8yx0p" path="res://resources/store/background.png" id="2_sig51"]
 [ext_resource type="Texture2D" uid="uid://du6puo57i8na" path="res://resources/store/3112.png" id="3_3cksd"]
@@ -9,7 +9,6 @@
 [ext_resource type="PackedScene" uid="uid://bwra17qajnemg" path="res://scenes/ui/inventory.tscn" id="5_lc6bi"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bi8hb"]
-font_size = 32
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -24,7 +23,6 @@ size_flags_stretch_ratio = 5.0
 script = ExtResource("1_script")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-z_index = -1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,17 +39,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_stretch_ratio = 5.0
-theme_override_constants/margin_left = 48
-theme_override_constants/margin_top = 96
-theme_override_constants/margin_right = 64
-theme_override_constants/margin_bottom = 56
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
 
 [node name="StoreLayout" type="HBoxContainer" parent="StoreWindow"]
 layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 6.0
 theme_override_constants/separation = 10
-alignment = 2
 
 [node name="StoreDescription" type="PanelContainer" parent="StoreWindow/StoreLayout"]
 layout_mode = 2
@@ -67,7 +62,7 @@ stretch_mode = 5
 [node name="DescriptionLabel" type="Label" parent="StoreWindow/StoreLayout/StoreDescription"]
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 1
 text = "Sssh! Keep your voices down, lads. We're amongst enemies here. In fact, I don't even know if I can trust you. Just buy what you need and leave."
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -83,18 +78,13 @@ size_flags_vertical = 3
 
 [node name="PanelContainer" type="PanelContainer" parent="StoreWindow/StoreLayout/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
 theme_override_styles/panel = ExtResource("2_ojn43")
 
 [node name="MarginContainer" type="MarginContainer" parent="StoreWindow/StoreLayout/VBoxContainer/PanelContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 32
 
 [node name="VBoxContainer" type="VBoxContainer" parent="StoreWindow/StoreLayout/VBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 64
 
 [node name="Label" type="Label" parent="StoreWindow/StoreLayout/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2

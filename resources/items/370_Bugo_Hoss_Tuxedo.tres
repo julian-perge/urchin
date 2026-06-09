@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cwl7t7skea2q7"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_5wu6i"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5wu6i"]
 [ext_resource type="Texture2D" uid="uid://drsnr8yl0y3vl" path="res://resources/sprites/M_CHEST_TUX.png" id="2_7vdv3"]
 
 [resource]

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://1g0lnf2tkhml"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_yb3tb"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yb3tb"]
 [ext_resource type="Texture2D" uid="uid://donxc7msgdp0e" path="res://resources/sprites/M_CHEST_TUNNELSET1.png" id="2_m2nfr"]
 
 [resource]

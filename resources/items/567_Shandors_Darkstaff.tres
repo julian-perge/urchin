@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://be51l6mul2sj"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_sh24r"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sh24r"]
 [ext_resource type="Texture2D" uid="uid://qb0syj8d00tj" path="res://resources/sprites/M_WEAPON_SPELLSTAFF.png" id="2_kl8n8"]
 
 [resource]

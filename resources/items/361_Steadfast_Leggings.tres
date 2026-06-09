@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cys7motghjk32"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_l8r81"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_l8r81"]
 [ext_resource type="Texture2D" uid="uid://bbsdj4p8jw0xu" path="res://resources/sprites/M_LEG2_ZPCI2.png" id="2_imtgs"]
 
 [resource]

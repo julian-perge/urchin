@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://37c06b328woi"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_npftv"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_npftv"]
 [ext_resource type="Texture2D" uid="uid://1uwp1mmnj1dy" path="res://resources/sprites/M_WEAPON_MAGESTAFF.png" id="2_3gq0y"]
 
 [resource]

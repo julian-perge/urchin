@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bh28wfy2087uv"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_dd0jq"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dd0jq"]
 [ext_resource type="Texture2D" uid="uid://c8dof0tjfi1ax" path="res://resources/sprites/M_WEAPON_DOCKNIFE.png" id="2_kpl7h"]
 
 [resource]

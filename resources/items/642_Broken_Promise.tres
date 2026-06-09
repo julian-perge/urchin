@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bjht2qkqwi0co"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_l6shb"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_l6shb"]
 [ext_resource type="Texture2D" uid="uid://c2qgptxjm52iy" path="res://resources/sprites/M_HEAD_PRIEST4.png" id="2_sxe1g"]
 
 [resource]

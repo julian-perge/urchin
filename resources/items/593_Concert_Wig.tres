@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ujnsdjejj7e5"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_af7uw"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_af7uw"]
 [ext_resource type="Texture2D" uid="uid://cirk27i8xwx7l" path="res://resources/sprites/M_HEAD_ROCKSTAR.png" id="2_4ydu6"]
 
 [resource]

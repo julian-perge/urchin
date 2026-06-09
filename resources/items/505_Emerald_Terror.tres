@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cmkteqd7paoj6"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_6i3fm"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6i3fm"]
 [ext_resource type="Texture2D" uid="uid://ck6rsw37pjpl4" path="res://resources/sprites/M_WEAPON_FRANKEN.png" id="2_dckuv"]
 
 [resource]

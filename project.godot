@@ -12,7 +12,7 @@ config_version=5
 
 config/name="urchin"
 run/main_scene="res://scenes/game.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -25,15 +25,20 @@ ZoneManager="*res://scripts/autoload/zone_manager.gd"
 
 [display]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
+window/size/viewport_width=800
+window/size/viewport_height=575
 window/stretch/mode="viewport"
-window/vsync/vsync_mode=0
 
 [global_group]
 
 game_window=""
 store_window=""
+
+[importer_defaults]
+
+animation_library={
+&"animation/fps": 60.0
+}
 
 [rendering]
 

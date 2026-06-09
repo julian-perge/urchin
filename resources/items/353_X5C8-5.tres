@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b6qa260rx6won"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_e5t1j"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e5t1j"]
 [ext_resource type="Texture2D" uid="uid://c4s5g0kslk7i2" path="res://resources/sprites/M_FOOT_ARCTIC.png" id="2_ol7b7"]
 
 [resource]

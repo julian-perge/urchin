@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://53idb1pt65um"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_hd7n6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hd7n6"]
 [ext_resource type="Texture2D" uid="uid://cl88hq1jl4oyb" path="res://resources/sprites/M_WEAPON_SHANK.png" id="2_sm5ek"]
 
 [resource]

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ddgcqvtbsk481"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_0logt"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0logt"]
 [ext_resource type="Texture2D" uid="uid://clcwram1s8mir" path="res://resources/sprites/M_CHEST_CLEMONS2.png" id="2_544dj"]
 
 [resource]

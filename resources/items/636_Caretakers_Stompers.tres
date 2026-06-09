@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cwj2ip7hngv5m"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_o0huj"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_o0huj"]
 [ext_resource type="Texture2D" uid="uid://byk02v34db5a0" path="res://resources/sprites/M_FOOT_POLICE2.png" id="2_4ybdd"]
 
 [resource]

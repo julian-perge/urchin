@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://yi50wq56t2gy"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_403qo"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_403qo"]
 [ext_resource type="Texture2D" uid="uid://58wxkloyq07w" path="res://resources/sprites/M_CHEST_TUNTAT2.png" id="2_s48gk"]
 
 [resource]

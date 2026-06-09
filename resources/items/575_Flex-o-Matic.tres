@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://conxeyo5xrxiu"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_ymbgp"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ymbgp"]
 [ext_resource type="Texture2D" uid="uid://cu30bj1pam3hp" path="res://resources/sprites/M_HAND_TUNTAT.png" id="2_k0kxa"]
 
 [resource]

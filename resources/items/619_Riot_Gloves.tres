@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cfyhet68xigmb"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_0u4ej"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0u4ej"]
 [ext_resource type="Texture2D" uid="uid://bgeh7le4uy2uw" path="res://resources/sprites/M_HAND_POLICE.png" id="2_ti774"]
 
 [resource]

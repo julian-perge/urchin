@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cqy16nt8hnclh"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_w3tpa"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_w3tpa"]
 [ext_resource type="Texture2D" uid="uid://cqt6s68kj38y7" path="res://resources/sprites/M_LEG2_PRIEST3.png" id="2_3xn8p"]
 
 [resource]

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cc4ncj4gyd32l"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_2djlf"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2djlf"]
 [ext_resource type="Texture2D" uid="uid://be8s38i3t773y" path="res://resources/sprites/M_WEAPON_PIPE.png" id="2_rdrdp"]
 
 [resource]

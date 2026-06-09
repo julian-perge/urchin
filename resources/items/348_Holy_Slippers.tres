@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bgqotc3i4xhh5"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_oix4o"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_oix4o"]
 [ext_resource type="Texture2D" uid="uid://huhugg8ppn66" path="res://resources/sprites/M_FOOT_XADER2.png" id="2_wk2r1"]
 
 [resource]

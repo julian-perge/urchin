@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ds8hpxe6svnid"]
 
-[ext_resource type="Script" path="res://scripts/entities/game_item.gd" id="1_rojoo"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rojoo"]
 [ext_resource type="Texture2D" uid="uid://n5i4xndqdoa" path="res://resources/sprites/M_HAND_IMPERIAL2.png" id="2_mgs75"]
 
 [resource]
