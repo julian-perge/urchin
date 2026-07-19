@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://m84yyy3odrtc"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://m84yyy3odrtc"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_guwdo"]
-[ext_resource type="Texture2D" uid="uid://bfqutgvb7g5f" path="res://resources/sprites/M_CHEST_FRANKEN.png" id="2_bhv0u"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ngs6t"]
 
 [resource]
-script = ExtResource("1_guwdo")
-id = 19.0
-looks = "FRANKEN"
-sprite_image = ExtResource("2_bhv0u")
-name = ""
+script = ExtResource("1_ngs6t")
+id = 19
 display_name = "Frankie Body"
 internal_name = "Frankie Body"
-tooltip = ""
+looks = "FRANKEN"
 tooltipAlt = ["Strength +1", "Physical Piercing +2"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 11.0
+required_level = 1
+price = 11
 price_modifier = 1.0
 stats = {
 "attributes": {

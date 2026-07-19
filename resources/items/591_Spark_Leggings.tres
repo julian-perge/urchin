@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://uh8b42r4pt43"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://uh8b42r4pt43"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sk7hh"]
-[ext_resource type="Texture2D" uid="uid://crff0f7i8cpsk" path="res://resources/sprites/M_LEG2_CLEMONS2.png" id="2_4yso3"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_je8bh"]
+[ext_resource type="Texture2D" uid="uid://bj7r3171l5x7r" path="res://assets/item_slot_icons/PANTS/Spark_Leggings.png" id="2_b27cq"]
 
 [resource]
-script = ExtResource("1_sk7hh")
-id = 591.0
-looks = "CLEMONS2"
-sprite_image = ExtResource("2_4yso3")
+script = ExtResource("1_je8bh")
+id = 591
+slot_image = ExtResource("2_b27cq")
 name = "Spark Leggings"
 display_name = "Spark Leggings"
 internal_name = "Drop EMPEROR Legs"
-tooltip = ""
+looks = "CLEMONS2"
 tooltipAlt = ["Speed +15", "Instinct +25", "Strength +10", "Lightning Piercing +6"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 17.0
-price = 736.0
+required_level = 17
+price = 736
 price_modifier = 1.0
 stats = {
 "attributes": {

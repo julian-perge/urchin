@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://baggoy67g48jb"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://baggoy67g48jb"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_snjo3"]
-[ext_resource type="Texture2D" uid="uid://cm3atudyiin2" path="res://resources/sprites/M_WEAPON_XADER3.png" id="2_0egka"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_uiw0y"]
+[ext_resource type="Texture2D" uid="uid://c6w0koi3ybxxi" path="res://assets/item_slot_icons/WEAPONS/Frozen_Runeblade.png" id="2_yjxnm"]
 
 [resource]
-script = ExtResource("1_snjo3")
-id = 600.0
-looks = "XADER3"
-sprite_image = ExtResource("2_0egka")
+script = ExtResource("1_uiw0y")
+id = 600
+slot_image = ExtResource("2_yjxnm")
 name = "Frozen Runeblade"
 display_name = "Frozen Runeblade"
 internal_name = "FROZEN RUNEBLADE"
-tooltip = ""
+looks = "XADER3"
 tooltipAlt = ["Instinct +32", "Strength +18", "Vitality +11", "Ice Piercing +17"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 17.0
-price = 1051.0
+required_level = 17
+price = 1051
 price_modifier = 1.0
 stats = {
 "attributes": {

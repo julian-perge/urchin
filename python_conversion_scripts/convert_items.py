@@ -1,7 +1,21 @@
 import json
+from pathlib import Path
+
+import swf_models
 
 
 # ["Physical","Magic","Ice","Fire","Lightning","Earth","Shadow","Poison"]
+
+# The runtime dump captured KRINITEM.looks as Undefined - the real values
+# are the `gghhjjuu.looks = "X"` assignments in
+# source_files/action_script/frame_42/DoAction_16.as (default "NINJA" for
+# wearables), extracted by swf_extraction/extract_item_looks.py.
+_LOOKS_TABLE_PATH = Path(__file__).resolve().parent / "converted_json" / "item_looks.json"
+try:
+    LOOKS_BY_ID = swf_models.load_json(_LOOKS_TABLE_PATH)
+except FileNotFoundError:
+    LOOKS_BY_ID = {}
+
 
 def parse_items_with_stats(parsed_dict: dict):
     """Parse the entire file handling stats that precede item creation."""
@@ -20,13 +34,27 @@ def parse_items_with_stats(parsed_dict: dict):
 
         item_looks = _item.get("looks")
         if isinstance(item_looks, dict):
-            item_looks = ""
+            item_looks = LOOKS_BY_ID.get(str(_id), "")
 
         rarity: str = _item.get("rarity")
 
         class_type: str = _item.get("class_type")
         if isinstance(class_type, dict):
             class_type = "None"
+
+        # The dump's class_type strings are junk labels: the raw AS3 value is
+        # a required UNIT id (KRINITEM[3], matched against ClassStats), and
+        # the dump named it via krinClassArray by index. Decoded 2026-07-18:
+        # "Dreadnaught" = 0 (anyone), "Phaser" = 4 (Veradux-only gear - his
+        # Medic/KLIMA sets). No item restricts by player class.
+        class_unit_id = {
+            "Dreadnaught": 0,
+            "Phantom": 1,
+            "Enigma": 2,
+            "Templar": 3,
+            "Phaser": 4,
+            "None": 0,
+        }.get(class_type, 0)
 
         required_level = int(_item.get("required_level"))
         price = int(_item.get("price"))
@@ -47,6 +75,7 @@ def parse_items_with_stats(parsed_dict: dict):
             "looks":          item_looks,
             "rarity":         rarity,
             "class_type":     class_type,
+            "class_unit_id":  class_unit_id,
             "required_level": required_level,
             "price":          price,
             "price_modifier": price_modifier,
@@ -67,8 +96,7 @@ def parse_items_with_stats(parsed_dict: dict):
 
 def convert_items_to_json(input_file, output_file):
     """Convert full ActionScript item definitions to JSON."""
-    with open(input_file, 'r') as f:
-        content: dict = json.load(f)
+    content: dict = swf_models.load_json(input_file)
 
     items = parse_items_with_stats(content.get("ITEMS", {}).get("denseValues"))
 

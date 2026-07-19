@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://p8expn6i1ie3"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://p8expn6i1ie3"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j7hmb"]
-[ext_resource type="Texture2D" uid="uid://bapi6d8t4fe1o" path="res://resources/sprites/M_LEG2_ZPCI.png" id="2_xpw6d"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_q6m66"]
+[ext_resource type="Texture2D" uid="uid://04fjhxisq7na" path="res://assets/item_slot_icons/PANTS/Elite_Leggings.png" id="2_jggr2"]
 
 [resource]
-script = ExtResource("1_j7hmb")
-id = 316.0
-looks = "ZPCI"
-sprite_image = ExtResource("2_xpw6d")
+script = ExtResource("1_q6m66")
+id = 316
+slot_image = ExtResource("2_jggr2")
 name = "Elite Leggings"
 display_name = "Elite Leggings"
 internal_name = "Elite Leggings"
+looks = "ZPCI"
 tooltip = "'Property of Zombie Pest Control Inc.'"
 tooltipAlt = ["Speed +2", "Instinct +1", "Strength +4", "Vitality +6"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 7.0
-price = 194.0
+required_level = 7
+price = 194
 price_modifier = 1.0
 stats = {
 "attributes": {

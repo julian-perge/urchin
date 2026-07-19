@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dls7etd4tbpv2"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dls7etd4tbpv2"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_auty0"]
-[ext_resource type="Texture2D" uid="uid://cxgfixpuo6yhf" path="res://resources/sprites/M_LEG2_POLICE2.png" id="2_y4c8g"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lboxs"]
+[ext_resource type="Texture2D" uid="uid://bk1hmnm4iajss" path="res://assets/item_slot_icons/PANTS/Bite_Proof_Pants.png" id="2_vph68"]
 
 [resource]
-script = ExtResource("1_auty0")
-id = 635.0
-looks = "POLICE2"
-sprite_image = ExtResource("2_y4c8g")
+script = ExtResource("1_lboxs")
+id = 635
+slot_image = ExtResource("2_vph68")
 name = "Bite Proof Pants"
 display_name = "Bite Proof Pants"
 internal_name = "Drop POLICE2 Legs"
+looks = "POLICE2"
 tooltip = "Against dogs maybe."
 tooltipAlt = ["Speed +22", "Instinct +36", "Vitality +15"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 1010.0
+required_level = 21
+price = 1010
 price_modifier = 1.0
 stats = {
 "attributes": {

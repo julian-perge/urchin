@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dhxdh811revp1"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dhxdh811revp1"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_twgho"]
-[ext_resource type="Texture2D" uid="uid://v8y56k0fgar3" path="res://resources/sprites/M_WEAPON_FELKNIFE.png" id="2_ut82m"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wb5np"]
 
 [resource]
-script = ExtResource("1_twgho")
-id = 22.0
-looks = "FELKNIFE"
-sprite_image = ExtResource("2_ut82m")
-name = ""
+script = ExtResource("1_wb5np")
+id = 22
 display_name = "Felicity's Knife"
 internal_name = "Felicity's Knife"
-tooltip = ""
+looks = "FELKNIFE"
 tooltipAlt = ["Strength +1", "Physical Piercing +2"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 15.0
+required_level = 1
+price = 15
 price_modifier = 1.0
 stats = {
 "attributes": {

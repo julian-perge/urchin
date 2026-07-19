@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dw403iflrfh4t"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dw403iflrfh4t"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_uedfk"]
-[ext_resource type="Texture2D" uid="uid://coyip243mvi5w" path="res://resources/sprites/M_LEG2_PRIEST.png" id="2_yixup"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_w0w8d"]
+[ext_resource type="Texture2D" uid="uid://bactuek1hkq8a" path="res://assets/item_slot_icons/PANTS/Divine_Garments.png" id="2_3eii5"]
 
 [resource]
-script = ExtResource("1_uedfk")
-id = 339.0
-looks = "PRIEST"
-sprite_image = ExtResource("2_yixup")
+script = ExtResource("1_w0w8d")
+id = 339
+slot_image = ExtResource("2_3eii5")
 name = "Divine Garments"
 display_name = "Divine Garments"
 internal_name = "Divine Garments"
-tooltip = ""
+looks = "PRIEST"
 tooltipAlt = ["Speed +3", "Instinct +1", "Strength +6", "Vitality +10"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 10.0
-price = 332.0
+required_level = 10
+price = 332
 price_modifier = 1.0
 stats = {
 "attributes": {

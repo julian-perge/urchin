@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c0g0v3at4f46q"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c0g0v3at4f46q"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2vjkq"]
-[ext_resource type="Texture2D" uid="uid://drpmbf3uinqs4" path="res://resources/sprites/M_FOOT_JASON2.png" id="2_wiq5m"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_we2y0"]
+[ext_resource type="Texture2D" uid="uid://o2jdxlsa3ejs" path="res://assets/item_slot_icons/OTHER/Shawshank_Boots.png" id="2_pxm5b"]
 
 [resource]
-script = ExtResource("1_2vjkq")
-id = 312.0
-looks = "JASON2"
-sprite_image = ExtResource("2_wiq5m")
+script = ExtResource("1_we2y0")
+id = 312
+slot_image = ExtResource("2_pxm5b")
 name = "Shawshank Boots"
 display_name = "Shawshank Boots"
 internal_name = "Warden's Steel Toes"
+looks = "JASON2"
 tooltip = "Everyone is guilty of something."
 tooltipAlt = ["Speed +2", "Instinct +2", "Strength +2", "Vitality +1"]
 item_type = 6
 rarity = 1
 class_type = 1
-required_level = 5.0
-price = 84.0
+required_level = 5
+price = 84
 price_modifier = 1.0
 stats = {
 "attributes": {

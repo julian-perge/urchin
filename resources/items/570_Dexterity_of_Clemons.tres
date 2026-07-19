@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://caod2fwlahngf"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://caod2fwlahngf"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8gfuo"]
-[ext_resource type="Texture2D" uid="uid://dnd6gl6dra2o5" path="res://resources/sprites/M_HAND_CLEMONS.png" id="2_jrwlm"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wfqic"]
+[ext_resource type="Texture2D" uid="uid://d0b2nnygq51y6" path="res://assets/item_slot_icons/GLOVES/Dexterity_of_Clemons.png" id="2_fi16u"]
 
 [resource]
-script = ExtResource("1_8gfuo")
-id = 570.0
-looks = "CLEMONS"
-sprite_image = ExtResource("2_jrwlm")
+script = ExtResource("1_wfqic")
+id = 570
+slot_image = ExtResource("2_fi16u")
 name = "Dexterity of Clemons"
 display_name = "Dexterity of Clemons"
 internal_name = "Drop CLEMONS Hands"
-tooltip = ""
+looks = "CLEMONS"
 tooltipAlt = ["Speed +23", "Strength +6"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 15.0
-price = 436.0
+required_level = 15
+price = 436
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://fblr3u2e47up"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_ka7s0"]
+
+[resource]
+script = ExtResource("1_ka7s0")
+id = 32
+name = "Roald"
+vitality = 26.0
+strength = 13.0
+magic = 4.0
+speed = 20.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [535, 19, 524, 9],
+"defense": [536]
+}
+stats = {
+"aggression": [50.0, 80.0, 20.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [382.0, 328.0, 327.0, 329.0, 326.0, 523.0, 0.0],
+"model": ["MODEL1", "MANTAT", "", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_roald",
+"hit": ["hit_roald1", "hit_roald2", "hit_roald3"]
+}
+}

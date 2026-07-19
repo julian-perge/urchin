@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cbtqd2lqnh3a"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cbtqd2lqnh3a"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_u4ccm"]
-[ext_resource type="Texture2D" uid="uid://c884wc4b8km7v" path="res://resources/sprites/M_WEAPON_IMPERIAL.png" id="2_60ado"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sk2c0"]
+[ext_resource type="Texture2D" uid="uid://cithvbuby605y" path="res://assets/item_slot_icons/WEAPONS/Imperial_Rifle.png" id="2_w6ttc"]
 
 [resource]
-script = ExtResource("1_u4ccm")
-id = 648.0
-looks = "IMPERIAL"
-sprite_image = ExtResource("2_60ado")
+script = ExtResource("1_sk2c0")
+id = 648
+slot_image = ExtResource("2_w6ttc")
 name = "Imperial Rifle"
 display_name = "Imperial Rifle"
 internal_name = "IMPERIAL GUN"
-tooltip = ""
+looks = "IMPERIAL"
 tooltipAlt = ["Speed +51", "Strength +61", "Vitality +31", "Fire Piercing +197"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 2887.0
+required_level = 21
+price = 2887
 price_modifier = 1.0
 stats = {
 "attributes": {

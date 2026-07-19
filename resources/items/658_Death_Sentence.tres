@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c1hit86xkmymx"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c1hit86xkmymx"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0c3ro"]
-[ext_resource type="Texture2D" uid="uid://5l863u70swkh" path="res://resources/sprites/M_WEAPON_SWORD2.png" id="2_s7vtf"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_onad6"]
+[ext_resource type="Texture2D" uid="uid://exi83183j2jw" path="res://assets/item_slot_icons/WEAPONS/Death_Sentence.png" id="2_tak1l"]
 
 [resource]
-script = ExtResource("1_0c3ro")
-id = 658.0
-looks = "SWORD2"
-sprite_image = ExtResource("2_s7vtf")
+script = ExtResource("1_onad6")
+id = 658
+slot_image = ExtResource("2_tak1l")
 name = "Death Sentence"
 display_name = "Death Sentence"
 internal_name = "2H SWORD"
-tooltip = ""
+looks = "SWORD2"
 tooltipAlt = ["Speed +66", "Strength +152", "Vitality +66"]
 item_type = 9
 rarity = 2
 class_type = 1
-required_level = 22.0
-price = 3096.0
+required_level = 22
+price = 3096
 price_modifier = 1.0
 stats = {
 "attributes": {

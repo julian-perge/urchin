@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cqylx8p4s2lrn"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_ds8vx"]
+
+[resource]
+script = ExtResource("1_ds8vx")
+id = 1004
+id_name = "KBR1004"
+item_rare = [{
+"id": 321.0,
+"name": "Frosted Armor"
+}, {
+"id": 325.0,
+"name": "Frozen Helm"
+}, {
+"id": 322.0,
+"name": "Frosted Leggings"
+}]
+item_rare_dropper = 1
+players = [{
+"id": 23.0,
+"name": "Frost Zombie"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "SNOW"
+win_date = -1
+zone_background = "SNOW"

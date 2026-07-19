@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b5xdcf3hqj6k0"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b5xdcf3hqj6k0"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_nkt43"]
-[ext_resource type="Texture2D" uid="uid://bu6kq5f1e8n2d" path="res://resources/sprites/M_FOOT_SHAMAN1.png" id="2_jlubs"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_y7nc7"]
+[ext_resource type="Texture2D" uid="uid://b8jeswtu6elma" path="res://assets/item_slot_icons/SHOES/Shin_Guards.png" id="2_vipa7"]
 
 [resource]
-script = ExtResource("1_nkt43")
-id = 532.0
-looks = "SHAMAN1"
-sprite_image = ExtResource("2_jlubs")
+script = ExtResource("1_y7nc7")
+id = 532
+slot_image = ExtResource("2_vipa7")
 name = "Shin Guards"
 display_name = "Shin Guards"
 internal_name = "Vendor Shaman Feet"
-tooltip = ""
+looks = "SHAMAN1"
 tooltipAlt = ["Speed +3", "Strength +15", "Vitality +5"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 13.0
-price = 352.0
+required_level = 13
+price = 352
 price_modifier = 1.0
 stats = {
 "attributes": {

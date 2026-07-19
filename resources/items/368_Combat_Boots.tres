@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cyq6s80snctvt"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cyq6s80snctvt"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_fjsv5"]
-[ext_resource type="Texture2D" uid="uid://dio1qm16g5lba" path="res://resources/sprites/M_FOOT_HUNT.png" id="2_8gabi"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_trv37"]
+[ext_resource type="Texture2D" uid="uid://d1gwro881srxd" path="res://assets/item_slot_icons/SHOES/Combat_Boots.png" id="2_pknev"]
 
 [resource]
-script = ExtResource("1_fjsv5")
-id = 368.0
-looks = "HUNT"
-sprite_image = ExtResource("2_8gabi")
+script = ExtResource("1_trv37")
+id = 368
+slot_image = ExtResource("2_pknev")
 name = "Combat Boots"
 display_name = "Combat Boots"
 internal_name = "Combat Boots"
-tooltip = ""
+looks = "HUNT"
 tooltipAlt = ["Speed +7", "Instinct +5", "Strength +5", "Vitality +4"]
 item_type = 6
 rarity = 2
 class_type = 1
-required_level = 11.0
-price = 274.0
+required_level = 11
+price = 274
 price_modifier = 1.0
 stats = {
 "attributes": {

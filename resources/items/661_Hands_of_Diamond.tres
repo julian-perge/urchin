@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d0s2la2uvk4um"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d0s2la2uvk4um"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6jkg4"]
-[ext_resource type="Texture2D" uid="uid://beob8meeyp41i" path="res://resources/sprites/M_HAND_JASON4.png" id="2_mfvr4"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tmnf4"]
+[ext_resource type="Texture2D" uid="uid://b1iiw2aw3wbx6" path="res://assets/item_slot_icons/OTHER/Hands_of_Diamond.png" id="2_p00c5"]
 
 [resource]
-script = ExtResource("1_6jkg4")
-id = 661.0
-looks = "JASON4"
-sprite_image = ExtResource("2_mfvr4")
+script = ExtResource("1_tmnf4")
+id = 661
+slot_image = ExtResource("2_p00c5")
 name = "Hands of Diamond"
 display_name = "Hands of Diamond"
 internal_name = "Drop WARDEN Hands"
-tooltip = ""
+looks = "JASON4"
 tooltipAlt = ["Speed +6", "Instinct +3", "Strength +9", "Vitality +42"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 23.0
-price = 827.0
+required_level = 23
+price = 827
 price_modifier = 1.0
 stats = {
 "attributes": {

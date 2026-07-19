@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://coqkn8vvs1ckg"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://coqkn8vvs1ckg"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_pa3xw"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ktwux"]
 
 [resource]
-script = ExtResource("1_pa3xw")
-id = 160.0
-looks = ""
-name = ""
+script = ExtResource("1_ktwux")
+id = 160
 display_name = "Vodka Bottle"
 internal_name = "Vodka Bottle"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +9", "Instinct +11", "Strength +6", "Vitality +2", "Lightning Defense +11", "Earth Defense +11"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 8.0
-price = 28850.0
+required_level = 8
+price = 28850
 price_modifier = 85.0
 stats = {
 "attributes": {

@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://ce5mu306mt5ke"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_i0tjf"]
+
+[resource]
+script = ExtResource("1_i0tjf")
+id = 1000
+id_name = "KBR1000"
+item_rare = [{
+"id": 300.0,
+"name": "Guard's Leggings"
+}, {
+"id": 301.0,
+"name": "Guard's Grip"
+}, {
+"id": 302.0,
+"name": "Guard's Runners"
+}, {
+"id": 303.0,
+"name": "Guard's Uniform"
+}, {
+"id": 304.0,
+"name": "Watcher's Visage"
+}, {
+"id": 500.0,
+"name": "Guard's Baton"
+}]
+item_rare_dropper = 1
+players = [{
+"id": 5.0,
+"name": "Prison Guard"
+}, {
+"id": -2.0
+}, {
+"id": 5.0,
+"name": "Prison Guard"
+}, {
+"id": 0.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, "X", 1.0, 1.0]
+sky_background = "JAIL"
+win_date = -1
+zone_background = "JAIL"

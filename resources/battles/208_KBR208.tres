@@ -1,0 +1,88 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dcyabbfp6kwuy"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_0ffxt"]
+
+[resource]
+script = ExtResource("1_0ffxt")
+id = 208
+id_name = "KBR208"
+item_drops = [{
+"chance": 17.0,
+"item": {
+"id": 521.0,
+"name": "Runeblade"
+}
+}]
+item_rare = [{
+"id": 345.0,
+"name": "Supreme Grasp"
+}, {
+"id": 346.0,
+"name": "Demigod's Visage"
+}]
+item_rare_dropper = 1
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.3,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": true,
+"life": 0.0,
+"player": 2.0,
+"turn": 1.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 30.0,
+"name": "Cult Leader"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [11.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "CHURCH"
+speeches = [{
+"phase": 1.0,
+"player": "Roald",
+"say": "It's their leader! If we can take him out, their cult is finished!",
+"timeToSay": 3.8,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_12"
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "Ow, my head...hurting...I've felt this before!",
+"timeToSay": 5.5,
+"turnTime": 5.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_13"
+}, {
+"phase": 1.0,
+"player": "Veradux",
+"say": "Could it be...?",
+"timeToSay": 1.2,
+"turnTime": 5.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 1.0,
+"say": "The Baron!",
+"timeToSay": 1.2,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_14"
+}]
+win_date = -1
+zone_background = "CHURCH"

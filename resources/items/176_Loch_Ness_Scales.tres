@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://7d0doxdw0uia"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://7d0doxdw0uia"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3bt6x"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qo7d3"]
 
 [resource]
-script = ExtResource("1_3bt6x")
-id = 176.0
-looks = ""
-name = ""
+script = ExtResource("1_qo7d3")
+id = 176
 display_name = "Loch Ness Scales"
 internal_name = "Loch Ness Scales"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +13", "Instinct +2", "Strength +7", "Vitality +7", "Lightning Defense +6", "Earth Defense +6"]
 item_type = 4
 rarity = 1
 class_type = 1
-required_level = 10.0
-price = 44114.0
+required_level = 10
+price = 44114
 price_modifier = 186.0
 stats = {
 "attributes": {

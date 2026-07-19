@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://b8yjtqqrxq1vo"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b8yjtqqrxq1vo"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_pcd15"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yrttr"]
 
 [resource]
-script = ExtResource("1_pcd15")
-id = 107.0
-looks = ""
-name = ""
+script = ExtResource("1_yrttr")
+id = 107
 display_name = "Guard's Boots"
 internal_name = "Guard's Boots"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +2", "Strength +2", "Vitality +2"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 23.0
+required_level = 1
+price = 23
 price_modifier = 3.0
 stats = {
 "attributes": {

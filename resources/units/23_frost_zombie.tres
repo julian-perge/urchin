@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://dk7e3g7xw1gkq"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_0qp5h"]
+
+[resource]
+script = ExtResource("1_0qp5h")
+id = 23
+name = "Frost Zombie"
+vitality = 15.0
+strength = 20.0
+magic = 20.0
+speed = 13.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [500, 2, 207],
+"defense": [502]
+}
+stats = {
+"aggression": [50.0, 70.0, 40.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 519.0, 0.0],
+"model": ["MODEL1", "FROST", "", "M"],
+"skin": "",
+"voice": {
+"die": "dead_zombie",
+"hit": ["hit_zombie1", "hit_zombie2", "hit_zombie3"]
+}
+}

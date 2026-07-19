@@ -1,0 +1,83 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dhspgj00febt0"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_04t2j"]
+
+[resource]
+script = ExtResource("1_04t2j")
+absolute_start = 2
+id = 999
+id_name = "KBR999"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 714.0,
+"name": "Corrupted Helm"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 715.0,
+"name": "Corrupted Armor"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 716.0,
+"name": "Corrupted Gloves"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 717.0,
+"name": "Corrupted Leggings"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 718.0,
+"name": "Corrupted Shoes"
+}
+}]
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"teamLeft": 2.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": true,
+"life": 0.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 84.0,
+"name": "Versu the Corruptor"
+}, {
+"id": -2.0
+}, {
+"id": 82.0,
+"name": "Orb of Restraint"
+}, {
+"id": -1.0
+}, {
+"id": 83.0,
+"name": "Orb of Sanctuary"
+}]
+players_levels = [30.0, 1.0, 30.0, 1.0, 30.0]
+sky_background = "TUNNEL"
+speeches = [{
+"phase": 1.0,
+"player": 1.0,
+"say": "Those orbs...",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "STREETS"

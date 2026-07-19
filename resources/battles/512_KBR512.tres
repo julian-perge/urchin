@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bp8m1jmxtmrht"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_k8s38"]
+
+[resource]
+script = ExtResource("1_k8s38")
+id = 512
+id_name = "KBR512"
+item_rare2 = [{
+"id": 607.0,
+"name": "Imperial War Helm"
+}, {
+"id": 608.0,
+"name": "Imperial Armor"
+}, {
+"id": 610.0,
+"name": "Royal Leggings"
+}, {
+"id": 648.0,
+"name": "Imperial Rifle"
+}]
+item_rare3 = [{
+"id": 612.0,
+"name": "Titanium Cranium"
+}, {
+"id": 613.0,
+"name": "Andriod Armor"
+}, {
+"id": 615.0,
+"name": "Cyborg Leggings"
+}, {
+"id": 656.0,
+"name": "Azure Flatblade"
+}]
+item_rare_dropper2 = 1
+item_rare_dropper3 = 2
+players = [{
+"id": 62.0,
+"name": "Secret Police"
+}, {
+"id": -2.0
+}, {
+"id": 67.0,
+"name": "Android Guard"
+}, {
+"id": -1.0
+}, {
+"id": 67.0,
+"name": "Android Guard"
+}]
+players_levels = [23.0, 1.0, 23.0, 1.0, 23.0]
+sky_background = "STREETS"
+win_date = -1
+zone_background = "STREETS"

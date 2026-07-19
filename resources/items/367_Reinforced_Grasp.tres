@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d0cvsqx8yro"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d0cvsqx8yro"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qej8u"]
-[ext_resource type="Texture2D" uid="uid://bjpv506ke0txq" path="res://resources/sprites/M_HAND_HUNT.png" id="2_x8ceb"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_oiefj"]
+[ext_resource type="Texture2D" uid="uid://dpr2qxemsn6ln" path="res://assets/item_slot_icons/GLOVES/Reinforced_Grasp.png" id="2_t36vf"]
 
 [resource]
-script = ExtResource("1_qej8u")
-id = 367.0
-looks = "HUNT"
-sprite_image = ExtResource("2_x8ceb")
+script = ExtResource("1_oiefj")
+id = 367
+slot_image = ExtResource("2_t36vf")
 name = "Reinforced Grasp"
 display_name = "Reinforced Grasp"
 internal_name = "Reinforced Grasp"
-tooltip = ""
+looks = "HUNT"
 tooltipAlt = ["Speed +3", "Instinct +1", "Strength +5", "Vitality +9"]
 item_type = 4
 rarity = 2
 class_type = 1
-required_level = 11.0
-price = 274.0
+required_level = 11
+price = 274
 price_modifier = 1.0
 stats = {
 "attributes": {

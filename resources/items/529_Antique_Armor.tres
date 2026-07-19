@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://waivxb5fctc7"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://waivxb5fctc7"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gy24f"]
-[ext_resource type="Texture2D" uid="uid://cwwvqo5bp8iaj" path="res://resources/sprites/M_CHEST_SHAMAN1.png" id="2_kcp4b"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vtxok"]
+[ext_resource type="Texture2D" uid="uid://wx72x35u1g4i" path="res://assets/item_slot_icons/ARMOR/Antique_Armor.png" id="2_bdxsg"]
 
 [resource]
-script = ExtResource("1_gy24f")
-id = 529.0
-looks = "SHAMAN1"
-sprite_image = ExtResource("2_kcp4b")
+script = ExtResource("1_vtxok")
+id = 529
+slot_image = ExtResource("2_bdxsg")
 name = "Antique Armor"
 display_name = "Antique Armor"
 internal_name = "Vendor Shaman Chest"
-tooltip = ""
+looks = "SHAMAN1"
 tooltipAlt = ["Speed +8", "Vitality +3", "Physical Piercing +39"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 436.0
+required_level = 12
+price = 436
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,0 +1,87 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://jakonmitarsd"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_tjjuo"]
+
+[resource]
+script = ExtResource("1_tjjuo")
+absolute_start = 2
+id = 702
+id_name = "KBR702"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 709.0,
+"name": "Flame Helm"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 710.0,
+"name": "Flame Armor"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 711.0,
+"name": "Flame Fist"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 712.0,
+"name": "Flame Leggings"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 713.0,
+"name": "Flame Boots"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 720.0,
+"name": "Flame Katana"
+}
+}]
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"turn": 1.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": -1.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 81.0,
+"name": "Yosuke"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [30.0, 1.0, 30.0, 1.0, 30.0]
+sky_background = "TUNNEL"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "Intruders! Stay still, let me find your melting point...",
+"timeToSay": 4.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "STREETS"

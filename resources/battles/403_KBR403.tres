@@ -1,0 +1,84 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dhp7mwx715f5f"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_udwmn"]
+
+[resource]
+script = ExtResource("1_udwmn")
+id = 403
+id_name = "KBR403"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 602.0,
+"name": "Poseidon's Fury"
+}
+}]
+item_rare2 = [{
+"id": 575.0,
+"name": "Flex-o-Matic"
+}, {
+"id": 578.0,
+"name": "Mask of Horror"
+}, {
+"id": 584.0,
+"name": "Venomsteel Armor"
+}, {
+"id": 595.0,
+"name": "Pink Sleeves"
+}]
+item_rare3 = [{
+"id": 577.0,
+"name": "Black-Ops Boots"
+}, {
+"id": 587.0,
+"name": "Venomsteel Greaves"
+}, {
+"id": 589.0,
+"name": "Charged Armor"
+}, {
+"id": 597.0,
+"name": "Flower Shoes"
+}]
+item_rare_dropper2 = 1
+item_rare_dropper3 = 1
+players = [{
+"id": 53.0,
+"name": "Shunny"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [17.0, 0.0, 0.0, 0.0, 0.0]
+sky_background = "TUNNEL"
+speeches = [{
+"phase": 1.0,
+"player": "Veradux",
+"say": "That one looks just like Sonny! Haha!",
+"timeToSay": 3.75,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v4_5"
+}, {
+"phase": 1.0,
+"player": "Roald",
+"say": "Hey, it kinda does!",
+"timeToSay": 1.5,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "I’m not amused.",
+"timeToSay": 1.5,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "TUNNEL"

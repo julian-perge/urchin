@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://dpr4uo2dh6yf3"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_b1jg1"]
+
+[resource]
+script = ExtResource("1_b1jg1")
+id = 22
+name = "Mage"
+vitality = 13.0
+strength = 1.0
+magic = 16.0
+speed = 13.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [516, 517, 518, 520],
+"defense": [519]
+}
+stats = {
+"aggression": [50.0, 25.0, 24.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 517.0, 0.0],
+"model": ["MODEL1", "MAN", "", "M"],
+"skin": "PRIEST2",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

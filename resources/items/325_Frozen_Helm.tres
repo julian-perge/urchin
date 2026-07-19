@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://brcq07hvqgdww"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://brcq07hvqgdww"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e1wcf"]
-[ext_resource type="Texture2D" uid="uid://dhgbrljpib006" path="res://resources/sprites/M_HEAD_FROSTPLATE.png" id="2_ovkok"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_atnpo"]
+[ext_resource type="Texture2D" uid="uid://cs30kjc657ix2" path="res://assets/item_slot_icons/HELMS/Frozen_Helm.png" id="2_p7sd7"]
 
 [resource]
-script = ExtResource("1_e1wcf")
-id = 325.0
-looks = "FROSTPLATE"
-sprite_image = ExtResource("2_ovkok")
+script = ExtResource("1_atnpo")
+id = 325
+slot_image = ExtResource("2_p7sd7")
 name = "Frozen Helm"
 display_name = "Frozen Helm"
 internal_name = "Frozen Helm"
-tooltip = ""
+looks = "FROSTPLATE"
 tooltipAlt = ["Speed +3", "Instinct +1", "Strength +5", "Vitality +7", "Ice Piercing +5"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 8.0
-price = 238.0
+required_level = 8
+price = 238
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d26luf00nl5c3"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d26luf00nl5c3"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_loebb"]
-[ext_resource type="Texture2D" uid="uid://cw3he64d411rh" path="res://resources/sprites/M_WEAPON_PALADINSWORD.png" id="2_efwic"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_w2llx"]
+[ext_resource type="Texture2D" uid="uid://cdpra0xt6ij5s" path="res://assets/item_slot_icons/WEAPONS/Lights_Blade.png" id="2_rvquc"]
 
 [resource]
-script = ExtResource("1_loebb")
-id = 515.0
-looks = "PALADINSWORD"
-sprite_image = ExtResource("2_efwic")
+script = ExtResource("1_w2llx")
+id = 515
+slot_image = ExtResource("2_rvquc")
 name = "Light's Blade"
 display_name = "Light's Blade"
 internal_name = "Light's Blade"
+looks = "PALADINSWORD"
 tooltip = "This weapon looks familiar..."
 tooltipAlt = ["Speed +3", "Instinct +5", "Strength +12", "Vitality +5"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 9.0
-price = 405.0
+required_level = 9
+price = 405
 price_modifier = 1.0
 stats = {
 "attributes": {

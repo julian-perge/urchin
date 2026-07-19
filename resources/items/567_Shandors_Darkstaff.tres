@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://be51l6mul2sj"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://be51l6mul2sj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sh24r"]
-[ext_resource type="Texture2D" uid="uid://qb0syj8d00tj" path="res://resources/sprites/M_WEAPON_SPELLSTAFF.png" id="2_kl8n8"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e4dec"]
+[ext_resource type="Texture2D" uid="uid://djcyojlc8uq4a" path="res://assets/item_slot_icons/WEAPONS/Shandors_Darkstaff.png" id="2_cy2ap"]
 
 [resource]
-script = ExtResource("1_sh24r")
-id = 567.0
-looks = "SPELLSTAFF"
-sprite_image = ExtResource("2_kl8n8")
+script = ExtResource("1_e4dec")
+id = 567
+slot_image = ExtResource("2_cy2ap")
 name = "Shandor's Darkstaff"
 display_name = "Shandor's Darkstaff"
 internal_name = "Spell Staff"
+looks = "SPELLSTAFF"
 tooltip = "Shandor!"
 tooltipAlt = ["Speed +45", "Instinct +56", "Vitality +45"]
 item_type = 9
 rarity = 2
 class_type = 1
-required_level = 15.0
-price = 1743.0
+required_level = 15
+price = 1743
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dory6y5qte507"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_iyd4l"]
+
+[resource]
+script = ExtResource("1_iyd4l")
+id = 103
+id_name = "KBR103"
+item_rare = [{
+"id": 305.0,
+"name": "Prison Trousers XL"
+}, {
+"id": 306.0,
+"name": "Prison Shirt XXS"
+}]
+item_rare2 = [{
+"id": 5.0,
+"name": "A Broken Pipe"
+}, {
+"id": 6.0,
+"name": "Fire Axe"
+}, {
+"id": 7.0,
+"name": "Crow Bar"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+players = [{
+"id": 14.0,
+"name": "Cunning Convict"
+}, {
+"id": -2.0
+}, {
+"id": 13.0,
+"name": "Agile Convict"
+}, {
+"id": -1.0
+}, {
+"id": 10.0,
+"name": "Brutal Convict"
+}]
+players_levels = [2.0, 1.0, 1.0, 1.0, 2.0]
+sky_background = "JAIL"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "They're here for us, Johnny! I told you they'd come! I TOLD YOU!",
+"timeToSay": 4.75,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v1_4"
+}]
+win_date = -1
+zone_background = "JAIL"

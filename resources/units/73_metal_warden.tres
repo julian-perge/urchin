@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://bjq6877tv4bqt"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_ycynx"]
+
+[resource]
+script = ExtResource("1_ycynx")
+id = 73
+name = "Metal Warden"
+vitality = 60.0
+strength = 47.0
+magic = 10.0
+speed = 13.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 11,
+"phase": 1
+}, {
+"id": 12,
+"phase": 2
+}, {
+"id": 785,
+"phase": 2
+}, {
+"id": 14,
+"phase": 3
+}],
+"attack": [15],
+"defense": [2]
+}
+stats = {
+"aggression": [50.0, 61.0, 60.0, 65.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 679.0, 0.0],
+"model": ["MODEL1", "MAN", "", "M"],
+"skin": "JASON4",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

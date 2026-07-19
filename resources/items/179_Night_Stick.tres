@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://chb77k5rlmsnx"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://chb77k5rlmsnx"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6yg4c"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3sy2v"]
 
 [resource]
-script = ExtResource("1_6yg4c")
-id = 179.0
-looks = ""
-name = ""
+script = ExtResource("1_3sy2v")
+id = 179
 display_name = "Night Stick"
 internal_name = "Night Stick"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +8", "Instinct +13", "Strength +19", "Vitality +8", "Lightning Defense +13", "Earth Defense +13"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 118205.0
+required_level = 11
+price = 118205
 price_modifier = 216.0
 stats = {
 "attributes": {

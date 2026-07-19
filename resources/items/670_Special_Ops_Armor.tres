@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://8eq1831sbwv0"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://8eq1831sbwv0"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2nqw5"]
-[ext_resource type="Texture2D" uid="uid://btbfwlxj7eikr" path="res://resources/sprites/M_CHEST_BLUENIN.png" id="2_mf14d"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_eeq7b"]
+[ext_resource type="Texture2D" uid="uid://c6erc73wjern2" path="res://assets/item_slot_icons/ARMOR/Special_Ops_Armor.png" id="2_vcrgo"]
 
 [resource]
-script = ExtResource("1_2nqw5")
-id = 670.0
-looks = "BLUENIN"
-sprite_image = ExtResource("2_mf14d")
+script = ExtResource("1_eeq7b")
+id = 670
+slot_image = ExtResource("2_vcrgo")
 name = "Special Ops Armor"
 display_name = "Special Ops Armor"
 internal_name = "Drop BLUE NINJA Chest"
-tooltip = ""
+looks = "BLUENIN"
 tooltipAlt = ["Speed +63", "Strength +14", "Vitality +14"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 24.0
-price = 1235.0
+required_level = 24
+price = 1235
 price_modifier = 1.0
 stats = {
 "attributes": {

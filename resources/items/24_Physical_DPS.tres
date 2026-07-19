@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bjcm1n2t7jg5i"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bjcm1n2t7jg5i"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0gidq"]
-[ext_resource type="Texture2D" uid="uid://b358r1xx8tjfu" path="res://resources/sprites/M_CHEST_SHIRT3.png" id="2_i8a67"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n8kan"]
 
 [resource]
-script = ExtResource("1_0gidq")
-id = 24.0
-looks = "SHIRT3"
-sprite_image = ExtResource("2_i8a67")
-name = ""
+script = ExtResource("1_n8kan")
+id = 24
 display_name = "Physical DPS"
 internal_name = "Physical DPS"
-tooltip = ""
+looks = "SHIRT3"
 tooltipAlt = ["Speed +78", "Strength +155", "Vitality +39"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 15.0
-price = 610.0
+required_level = 15
+price = 610
 price_modifier = 1.0
 stats = {
 "attributes": {

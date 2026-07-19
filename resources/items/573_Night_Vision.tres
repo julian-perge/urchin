@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c0fyjflt37igy"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c0fyjflt37igy"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_s0nny"]
-[ext_resource type="Texture2D" uid="uid://m6i82gdlrnxj" path="res://resources/sprites/M_HEAD_TUNTAT.png" id="2_81tn4"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ant45"]
+[ext_resource type="Texture2D" uid="uid://b0ksa8ykboey2" path="res://assets/item_slot_icons/HELMS/Night_Vision.png" id="2_4hpbe"]
 
 [resource]
-script = ExtResource("1_s0nny")
-id = 573.0
-looks = "TUNTAT"
-sprite_image = ExtResource("2_81tn4")
+script = ExtResource("1_ant45")
+id = 573
+slot_image = ExtResource("2_4hpbe")
 name = "Night Vision"
 display_name = "Night Vision"
 internal_name = "Drop BLACK OPS Head"
-tooltip = ""
+looks = "TUNTAT"
 tooltipAlt = ["Speed +6", "Strength +28", "Physical Piercing +40"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 18.0
-price = 802.0
+required_level = 18
+price = 802
 price_modifier = 1.0
 stats = {
 "attributes": {

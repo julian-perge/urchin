@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dflnwwomxbmmd"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_3bsu0"]
+
+[resource]
+script = ExtResource("1_3bsu0")
+id = 1026
+id_name = "KBR1026"
+players = [{
+"id": 77.0,
+"name": "Peace Keeper"
+}, {
+"id": -2.0
+}, {
+"id": 77.0,
+"name": "Peace Keeper"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["Z", 1.0, "Z", 1.0, "X"]
+sky_background = "ROME"
+win_date = -1
+zone_background = "CHURCH"

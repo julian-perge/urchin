@@ -1,180 +1,282 @@
-[gd_scene load_steps=12 format=3 uid="uid://ce0fyqjs5nd5q"]
+[gd_scene load_steps=17 format=3 uid="uid://ce0fyqjs5nd5q"]
 
-[ext_resource type="Texture2D" uid="uid://cj2eixtof4yry" path="res://assets/sonny2_hotbar_bg.png" id="1_own7q"]
-[ext_resource type="Texture2D" uid="uid://db5s7rrbpngur" path="res://resources/toolbar/inventory.png" id="3_3nxgp"]
-[ext_resource type="Texture2D" uid="uid://bhw4gc1h2tcj7" path="res://resources/toolbar/abilities.png" id="4_4gjao"]
-[ext_resource type="Texture2D" uid="uid://dv5jpuy4iasyw" path="res://resources/toolbar/save.png" id="5_f6mua"]
-[ext_resource type="Texture2D" uid="uid://cgywy2xni7jr6" path="res://resources/toolbar/options.png" id="6_58jn5"]
-[ext_resource type="Texture2D" uid="uid://ch1xac2a0i2ov" path="res://resources/toolbar/achievements.png" id="7_ipins"]
-[ext_resource type="Texture2D" uid="uid://c3v5cnrljwxl4" path="res://resources/toolbar/respec.png" id="7_uij1d"]
-[ext_resource type="Texture2D" uid="uid://b6ouj2ybww3h2" path="res://resources/toolbar/world_map.png" id="8_qn7ub"]
-[ext_resource type="Script" uid="uid://b84a2vqgg4wr6" path="res://scripts/zones/zone_map.gd" id="9_4g2by"]
+[ext_resource type="Script" path="res://scripts/ui/hotbar.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/hotbar/background.png" id="2_panel"]
+[ext_resource type="Script" uid="uid://bla0fvdm45ped" path="res://scripts/ui/zone_map_toggle_button.gd" id="3_maptoggle"]
+[ext_resource type="Texture2D" path="res://resources/toolbar/inventory.png" id="4_inv"]
+[ext_resource type="Texture2D" path="res://resources/toolbar/abilities.png" id="5_abil"]
+[ext_resource type="Texture2D" path="res://resources/toolbar/save.png" id="6_save"]
+[ext_resource type="Texture2D" path="res://resources/toolbar/options.png" id="7_opt"]
+[ext_resource type="Texture2D" path="res://resources/toolbar/respec.png" id="8_respec"]
+[ext_resource type="Texture2D" path="res://resources/toolbar/achievements.png" id="9_ach"]
+[ext_resource type="Texture2D" path="res://resources/toolbar/world_map.png" id="10_map"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_sd3lk"]
-font_size = 18
+[sub_resource type="StyleBoxFlat" id="btn_normal"]
+bg_color = Color(0.09, 0.1, 0.11, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.38, 0.42, 0.45, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
-[sub_resource type="LabelSettings" id="LabelSettings_b0fuf"]
-font_color = Color(0, 1, 0.368627, 1)
+[sub_resource type="StyleBoxFlat" id="btn_hover"]
+bg_color = Color(0.16, 0.18, 0.19, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.62, 0.68, 0.72, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
-[node name="Control" type="Control"]
+[sub_resource type="StyleBoxFlat" id="btn_pressed"]
+bg_color = Color(0.05, 0.06, 0.06, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.33, 0.35, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="bar_bg"]
+bg_color = Color(0.05, 0.06, 0.06, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="bar_fill"]
+bg_color = Color(0.35, 0.88, 0.16, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+shadow_color = Color(0.35, 0.88, 0.16, 0.45)
+shadow_size = 5
+
+[sub_resource type="LabelSettings" id="title_settings"]
+font_size = 20
+font_color = Color(1, 1, 1, 1)
+shadow_size = 4
+shadow_color = Color(0, 0, 0, 0.6)
+
+[node name="Hotbar" type="Control" groups=["hotbar"]]
 layout_mode = 3
-anchors_preset = 15
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -130.0
 grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-size_flags_stretch_ratio = 1.5
+grow_vertical = 0
+script = ExtResource("1_script")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="Strip" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("1_own7q")
-expand_mode = 2
+mouse_filter = 1
+color = Color(0.04, 0.05, 0.06, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="LeftPanel" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 10.0
+offset_right = 332.0
+offset_bottom = 120.0
+texture = ExtResource("2_panel")
+expand_mode = 1
+
+[node name="LeftButtons" type="HBoxContainer" parent="LeftPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_right = 16
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 32
-
-[node name="LeftSection" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
-clip_children = 2
-layout_mode = 2
-size_flags_stretch_ratio = 3.0
-
-[node name="LeftButtons" type="GridContainer" parent="MarginContainer/HBoxContainer/LeftSection"]
-clip_children = 2
-layout_mode = 2
-theme_override_constants/h_separation = 16
-columns = 6
-
-[node name="Inventory" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
-texture_normal = ExtResource("3_3nxgp")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Abilities" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
-texture_normal = ExtResource("4_4gjao")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Save" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
-texture_normal = ExtResource("5_f6mua")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Options" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
-texture_normal = ExtResource("6_58jn5")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Respec" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
-texture_normal = ExtResource("7_uij1d")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Achievements" type="TextureButton" parent="MarginContainer/HBoxContainer/LeftSection/LeftButtons"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
-texture_normal = ExtResource("7_ipins")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="MiddleSection" type="Panel" parent="MarginContainer/HBoxContainer"]
-clip_children = 2
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ZoneMap" type="TextureButton" parent="MarginContainer/HBoxContainer/MiddleSection"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_stretch_ratio = 2.0
-texture_normal = ExtResource("8_qn7ub")
-ignore_texture_size = true
-stretch_mode = 0
-script = ExtResource("9_4g2by")
-
-[node name="RightSection" type="Panel" parent="MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 3.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/RightSection"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 9
 alignment = 1
 
-[node name="ZoneName" type="Label" parent="MarginContainer/HBoxContainer/RightSection/VBoxContainer"]
+[node name="InventoryButton" type="Button" parent="LeftPanel/LeftButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
-text = "ZONE 7"
-label_settings = SubResource("LabelSettings_sd3lk")
+size_flags_vertical = 4
+tooltip_text = "Items"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_constants/icon_max_width = 28
+icon = ExtResource("4_inv")
+icon_alignment = 1
+expand_icon = true
+
+[node name="AbilitiesButton" type="Button" parent="LeftPanel/LeftButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Abilities"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_constants/icon_max_width = 28
+icon = ExtResource("5_abil")
+icon_alignment = 1
+expand_icon = true
+
+[node name="SaveButton" type="Button" parent="LeftPanel/LeftButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Save game"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_constants/icon_max_width = 28
+icon = ExtResource("6_save")
+icon_alignment = 1
+expand_icon = true
+
+[node name="OptionsButton" type="Button" parent="LeftPanel/LeftButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Options"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_constants/icon_max_width = 28
+icon = ExtResource("7_opt")
+icon_alignment = 1
+expand_icon = true
+
+[node name="RespecButton" type="Button" parent="LeftPanel/LeftButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Respec"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_constants/icon_max_width = 28
+icon = ExtResource("8_respec")
+icon_alignment = 1
+expand_icon = true
+
+[node name="AchievementsButton" type="Button" parent="LeftPanel/LeftButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Achievements"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_constants/icon_max_width = 28
+icon = ExtResource("9_ach")
+icon_alignment = 1
+expand_icon = true
+
+[node name="MiddlePanel" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 340.0
+offset_top = 10.0
+offset_right = 460.0
+offset_bottom = 120.0
+texture = ExtResource("2_panel")
+expand_mode = 1
+
+[node name="MapCenter" type="CenterContainer" parent="MiddlePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ZoneMapButton" type="Button" parent="MiddlePanel/MapCenter"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "World map"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_constants/icon_max_width = 32
+icon = ExtResource("10_map")
+icon_alignment = 1
+expand_icon = true
+script = ExtResource("3_maptoggle")
+
+[node name="RightPanel" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 468.0
+offset_top = 10.0
+offset_right = 788.0
+offset_bottom = 120.0
+texture = ExtResource("2_panel")
+expand_mode = 1
+
+[node name="ZoneInfo" type="VBoxContainer" parent="RightPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 8.0
+offset_right = -16.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 1
+
+[node name="ZoneTitle" type="Label" parent="RightPanel/ZoneInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Zone 1"
+label_settings = SubResource("title_settings")
 horizontal_alignment = 1
 
-[node name="ZoneTooltip" type="Label" parent="MarginContainer/HBoxContainer/RightSection/VBoxContainer"]
+[node name="ZoneSubtitle" type="Label" parent="RightPanel/ZoneInfo"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Sho'Tul Shelf: The Divided Cliff"
-label_settings = SubResource("LabelSettings_b0fuf")
+theme_override_colors/font_color = Color(0.35, 0.88, 0.16, 1)
+theme_override_font_sizes/font_size = 12
+text = "New Alcatraz: The Iron Prison"
 horizontal_alignment = 1
 
-[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/HBoxContainer/RightSection/VBoxContainer"]
+[node name="ZoneProgress" type="ProgressBar" parent="RightPanel/ZoneInfo"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
-size_flags_vertical = 1
-value = 25.0
+theme_override_styles/background = SubResource("bar_bg")
+theme_override_styles/fill = SubResource("bar_fill")
+max_value = 9.0
+show_percentage = false
 
-[connection signal="button_down" from="MarginContainer/HBoxContainer/LeftSection/LeftButtons/Inventory" to="MarginContainer/HBoxContainer/LeftSection/LeftButtons" method="_on_inventory_button_down"]
-[connection signal="pressed" from="MarginContainer/HBoxContainer/MiddleSection/ZoneMap" to="MarginContainer/HBoxContainer/MiddleSection/ZoneMap" method="_on_pressed"]
+[node name="StageLabel" type="Label" parent="RightPanel/ZoneInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Stage 1"
+horizontal_alignment = 2

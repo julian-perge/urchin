@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://csfteskomnhxj"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_cagxg"]
+
+[resource]
+script = ExtResource("1_cagxg")
+id = 75
+name = "Nostalgia"
+vitality = 55.0
+strength = 25.0
+magic = 10.0
+speed = 9.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 786,
+"phase": 1
+}, {
+"id": 787,
+"phase": 2
+}, {
+"id": 788,
+"phase": 3
+}, {
+"id": 782,
+"phase": 4
+}, {
+"id": 780,
+"phase": 5
+}, {
+"id": 791,
+"phase": 6
+}],
+"attack": [790, 789],
+"defense": [9, 107, 119, 110]
+}
+stats = {
+"aggression": [50.0, 76.0, 75.0, 55.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 675.0, 0.0],
+"model": ["MODEL1", "MAN", "", "M"],
+"skin": "NOS",
+"voice": {
+"die": "dead_twisted",
+"hit": ["hit_twisted1", "hit_twisted2", "hit_twisted3"]
+}
+}

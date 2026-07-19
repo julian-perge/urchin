@@ -1,0 +1,55 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://ctt2ccsx4pth5"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_tnbcm"]
+
+[resource]
+script = ExtResource("1_tnbcm")
+id = 500
+id_name = "KBR500"
+item_rare = [{
+"id": 617.0,
+"name": "Patrol Headset"
+}, {
+"id": 618.0,
+"name": "Riot Armor"
+}, {
+"id": 620.0,
+"name": "Riot Leggings"
+}, {
+"id": 647.0,
+"name": "Riot Gun"
+}]
+item_rare_dropper = 1
+players = [{
+"id": 63.0,
+"name": "Riot Police"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [21.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "STREETS"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "Put down your weapons! Resistance will be met by force.",
+"timeToSay": 4.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v5_1"
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "I don't usually resort to violence, but I've got a major headache right now.",
+"timeToSay": 4.0,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "STREETS"

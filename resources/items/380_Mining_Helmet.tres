@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://n5vc7npv63xk"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://n5vc7npv63xk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6l2g2"]
-[ext_resource type="Texture2D" uid="uid://byvgcl8flxtrd" path="res://resources/sprites/M_HEAD_WORKER.png" id="2_2unpb"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_37s8g"]
+[ext_resource type="Texture2D" uid="uid://cyu5s513mpuxu" path="res://assets/item_slot_icons/OTHER/Mining_Helmet.png" id="2_anxcw"]
 
 [resource]
-script = ExtResource("1_6l2g2")
-id = 380.0
-looks = "WORKER"
-sprite_image = ExtResource("2_2unpb")
+script = ExtResource("1_37s8g")
+id = 380
+slot_image = ExtResource("2_anxcw")
 name = "Mining Helmet"
 display_name = "Mining Helmet"
 internal_name = "Mining Helmet"
-tooltip = ""
+looks = "WORKER"
 tooltipAlt = ["Speed +9", "Instinct +3", "Strength +17", "Vitality +28", "Physical Defense +125"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 18.0
-price = 160.0
+required_level = 18
+price = 160
 price_modifier = 0.2
 stats = {
 "attributes": {

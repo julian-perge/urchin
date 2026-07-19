@@ -1,0 +1,65 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bl5omlbouwm4y"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_lkuf5"]
+
+[resource]
+script = ExtResource("1_lkuf5")
+absolute_start = 2
+id = 401
+id_name = "KBR401"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 602.0,
+"name": "Poseidon's Fury"
+}
+}]
+item_rare2 = [{
+"id": 575.0,
+"name": "Flex-o-Matic"
+}, {
+"id": 578.0,
+"name": "Mask of Horror"
+}, {
+"id": 584.0,
+"name": "Venomsteel Armor"
+}, {
+"id": 595.0,
+"name": "Pink Sleeves"
+}]
+item_rare_dropper2 = 1
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.3,
+"player": 2.0,
+"turn": 10.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 51.0,
+"name": "Vivian Vixen"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [16.0, 0.0, 0.0, 0.0, 0.0]
+sky_background = "TUNNEL"
+speeches = [{
+"phase": 1.0,
+"player": "Roald",
+"say": "These tunnels should lead us to Hew. We need to head through it if we're to reach Utopia!",
+"timeToSay": 4.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v4_3"
+}]
+win_date = -1
+zone_background = "TUNNEL"

@@ -1,0 +1,66 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://kq2idjddu1d"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_4v2p7"]
+
+[resource]
+script = ExtResource("1_4v2p7")
+id = 1013
+id_name = "KBR1013"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 555.0,
+"name": "Annihilation"
+}
+}]
+item_rare = [{
+"id": 538.0,
+"name": "Spirit Cover"
+}, {
+"id": 539.0,
+"name": "Mirage Armor"
+}, {
+"id": 540.0,
+"name": "Ghastly Grasp"
+}, {
+"id": 541.0,
+"name": "Ocean Leggings"
+}, {
+"id": 542.0,
+"name": "Aura Treads"
+}]
+item_rare2 = [{
+"id": 543.0,
+"name": "Bone Helm"
+}, {
+"id": 544.0,
+"name": "Emperor's Armor"
+}, {
+"id": 545.0,
+"name": "Pride's Grip"
+}, {
+"id": 546.0,
+"name": "Honor Guards"
+}, {
+"id": 547.0,
+"name": "Ornate Greaves"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+players = [{
+"id": 40.0,
+"name": "Spectre"
+}, {
+"id": -2.0
+}, {
+"id": 40.0,
+"name": "Spectre"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, "X", 1.0, 1.0]
+sky_background = "TRAIN"
+win_date = -1
+zone_background = "TRAIN"

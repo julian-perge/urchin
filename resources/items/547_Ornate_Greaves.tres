@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bgbudg343jjex"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bgbudg343jjex"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5cu7g"]
-[ext_resource type="Texture2D" uid="uid://0s6pmq70vesu" path="res://resources/sprites/M_FOOT_SAMURAI2.png" id="2_or0k2"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mvoju"]
+[ext_resource type="Texture2D" uid="uid://cjyk5dv1m6do8" path="res://assets/item_slot_icons/SHOES/Ornate_Greaves.png" id="2_we03f"]
 
 [resource]
-script = ExtResource("1_5cu7g")
-id = 547.0
-looks = "SAMURAI2"
-sprite_image = ExtResource("2_or0k2")
+script = ExtResource("1_mvoju")
+id = 547
+slot_image = ExtResource("2_we03f")
 name = "Ornate Greaves"
 display_name = "Ornate Greaves"
 internal_name = "Drop Samurai Feet"
-tooltip = ""
+looks = "SAMURAI2"
 tooltipAlt = ["Speed +3", "Instinct +2", "Strength +15", "Vitality +7"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 14.0
-price = 393.0
+required_level = 14
+price = 393
 price_modifier = 1.0
 stats = {
 "attributes": {

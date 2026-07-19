@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bpvxi4yqy3p8d"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_wj2jb"]
+
+[resource]
+script = ExtResource("1_wj2jb")
+id = 306
+id_name = "KBR306"
+item_rare = [{
+"id": 371.0,
+"name": "White Top Hat"
+}, {
+"id": 370.0,
+"name": "Bugo Hoss Tuxedo"
+}]
+item_rare_dropper = 1
+players = [{
+"id": 46.0,
+"name": "The Host"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [14.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "TRAIN"
+win_date = -1
+zone_background = "TRAIN"

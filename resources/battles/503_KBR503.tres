@@ -1,0 +1,79 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://6lu24jg1r24c"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_suioj"]
+
+[resource]
+script = ExtResource("1_suioj")
+absolute_start = 2
+id = 503
+id_name = "KBR503"
+item_drops = [{
+"chance": 20.0,
+"item": {
+"id": 649.0,
+"name": "Supremacy"
+}
+}]
+item_rare2 = [{
+"id": 637.0,
+"name": "Colonel's Helm"
+}, {
+"id": 638.0,
+"name": "Guardian Armor"
+}, {
+"id": 639.0,
+"name": "Imperial Clutch"
+}, {
+"id": 640.0,
+"name": "Colonel's Leggings"
+}, {
+"id": 641.0,
+"name": "Palace Greaves"
+}]
+item_rare_dropper2 = 2
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.85,
+"player": 2.0,
+"turn": 2.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.85,
+"player": 2.0,
+"turn": 10.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": false,
+"life": 0.85,
+"player": 2.0,
+"turn": 11.0,
+"winOrLose": 1.0
+},
+"4": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 61.0,
+"name": "Police Colonel"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [22.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "STREETS"
+win_date = -1
+zone_background = "STREETS2"

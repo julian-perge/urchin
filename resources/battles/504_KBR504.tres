@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://ntvbghnr1cxd"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_bevib"]
+
+[resource]
+script = ExtResource("1_bevib")
+id = 504
+id_name = "KBR504"
+phases = {
+"0": {
+"endGame": true,
+"life": 0.3,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 71.0,
+"name": "Felicity"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [1.0, 1.0, 0.0, 1.0, 1.0]
+sky_background = "STREETS"
+speeches = [{
+"phase": 1.0,
+"player": "Veradux",
+"say": "Biker girl is here too.",
+"timeToSay": 1.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v5_5"
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "Quick. Cover your face.",
+"timeToSay": 1.5,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "STREETS"

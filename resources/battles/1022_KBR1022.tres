@@ -1,0 +1,53 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dehyjiycdlhrj"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_b5o6p"]
+
+[resource]
+script = ExtResource("1_b5o6p")
+id = 1022
+id_name = "KBR1022"
+item_rare = [{
+"id": 617.0,
+"name": "Patrol Headset"
+}, {
+"id": 618.0,
+"name": "Riot Armor"
+}, {
+"id": 620.0,
+"name": "Riot Leggings"
+}, {
+"id": 647.0,
+"name": "Riot Gun"
+}]
+item_rare3 = [{
+"id": 607.0,
+"name": "Imperial War Helm"
+}, {
+"id": 608.0,
+"name": "Imperial Armor"
+}, {
+"id": 609.0,
+"name": "Royal Grips"
+}, {
+"id": 610.0,
+"name": "Royal Leggings"
+}]
+item_rare_dropper = 1
+item_rare_dropper3 = 1
+players = [{
+"id": 63.0,
+"name": "Riot Police"
+}, {
+"id": -2.0
+}, {
+"id": 62.0,
+"name": "Secret Police"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, "X", 1.0, 22.0]
+sky_background = "STREETS"
+win_date = -1
+zone_background = "STREETS"

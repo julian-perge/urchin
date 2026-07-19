@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://1is1v36guiov"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://1is1v36guiov"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5ohsg"]
-[ext_resource type="Texture2D" uid="uid://cyqa5uhcnxjy8" path="res://resources/sprites/M_HEAD_SHAMAN1.png" id="2_bc2d1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_pm5sq"]
+[ext_resource type="Texture2D" uid="uid://dim7g2gme5c1k" path="res://assets/item_slot_icons/HELMS/Sharp_Feathers.png" id="2_4t3f0"]
 
 [resource]
-script = ExtResource("1_5ohsg")
-id = 528.0
-looks = "SHAMAN1"
-sprite_image = ExtResource("2_bc2d1")
+script = ExtResource("1_pm5sq")
+id = 528
+slot_image = ExtResource("2_4t3f0")
 name = "Sharp Feathers"
 display_name = "Sharp Feathers"
 internal_name = "Vendor Shaman Head"
-tooltip = ""
+looks = "SHAMAN1"
 tooltipAlt = ["Speed +8", "Vitality +6", "Physical Piercing +33"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 436.0
+required_level = 12
+price = 436
 price_modifier = 1.0
 stats = {
 "attributes": {

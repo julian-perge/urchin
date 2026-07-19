@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b7sqckwdwmi1x"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b7sqckwdwmi1x"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gakn3"]
-[ext_resource type="Texture2D" uid="uid://d1ynwtx704raf" path="res://resources/sprites/M_FOOT_HOBO.png" id="2_klabi"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ou2p0"]
+[ext_resource type="Texture2D" uid="uid://fhvqvvo1uin0" path="res://assets/item_slot_icons/SHOES/Beggar_Boots.png" id="2_30fgr"]
 
 [resource]
-script = ExtResource("1_gakn3")
-id = 376.0
-looks = "HOBO"
-sprite_image = ExtResource("2_klabi")
+script = ExtResource("1_ou2p0")
+id = 376
+slot_image = ExtResource("2_30fgr")
 name = "Beggar Boots"
 display_name = "Beggar Boots"
 internal_name = "Winter Boots"
-tooltip = ""
+looks = "HOBO"
 tooltipAlt = ["Speed +9", "Instinct +6", "Strength +6", "Vitality +2"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 13.0
-price = 352.0
+required_level = 13
+price = 352
 price_modifier = 1.0
 stats = {
 "attributes": {

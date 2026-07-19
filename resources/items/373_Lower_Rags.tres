@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://g0dad38xwn5f"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://g0dad38xwn5f"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0utsq"]
-[ext_resource type="Texture2D" uid="uid://durodo7yvcd52" path="res://resources/sprites/M_LEG2_HOBO.png" id="2_a8i1k"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_72bp7"]
+[ext_resource type="Texture2D" uid="uid://chx4r0wainbtx" path="res://assets/item_slot_icons/PANTS/Lower_Rags.png" id="2_81x4s"]
 
 [resource]
-script = ExtResource("1_0utsq")
-id = 373.0
-looks = "HOBO"
-sprite_image = ExtResource("2_a8i1k")
+script = ExtResource("1_72bp7")
+id = 373
+slot_image = ExtResource("2_81x4s")
 name = "Lower Rags"
 display_name = "Lower Rags"
 internal_name = "Lower Rags"
-tooltip = ""
+looks = "HOBO"
 tooltipAlt = ["Speed +8", "Instinct +8", "Strength +8", "Vitality +8"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 13.0
-price = 492.0
+required_level = 13
+price = 492
 price_modifier = 1.0
 stats = {
 "attributes": {

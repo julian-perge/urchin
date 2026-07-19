@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c7pr8mpb5yrjp"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c7pr8mpb5yrjp"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ugggl"]
-[ext_resource type="Texture2D" uid="uid://dk0uhfurroo40" path="res://resources/sprites/M_WEAPON_SWORD1.png" id="2_5p5jn"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_upo41"]
+[ext_resource type="Texture2D" uid="uid://ddchybdnov8se" path="res://assets/item_slot_icons/WEAPONS/Burks_Precision.png" id="2_ngdeu"]
 
 [resource]
-script = ExtResource("1_ugggl")
-id = 599.0
-looks = "SWORD1"
-sprite_image = ExtResource("2_5p5jn")
+script = ExtResource("1_upo41")
+id = 599
+slot_image = ExtResource("2_ngdeu")
 name = "Burk's Precision"
 display_name = "Burk's Precision"
 internal_name = "SWORD"
+looks = "SWORD1"
 tooltip = "The eye patch should be somewhere around here too..."
 tooltipAlt = ["Speed +26", "Instinct +11", "Strength +51", "Vitality +16"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 16.0
-price = 1920.0
+required_level = 16
+price = 1920
 price_modifier = 1.0
 stats = {
 "attributes": {

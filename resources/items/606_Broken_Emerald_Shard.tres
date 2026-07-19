@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://c8g3ojxm1yh4i"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c8g3ojxm1yh4i"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3dgi7"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ttfqy"]
+[ext_resource type="Texture2D" uid="uid://d1rrjkvbrhmgf" path="res://assets/item_slot_icons/OTHER/Broken_Emerald_Shard.png" id="2_qas1w"]
 
 [resource]
-script = ExtResource("1_3dgi7")
-id = 606.0
-looks = ""
+script = ExtResource("1_ttfqy")
+id = 606
+slot_image = ExtResource("2_qas1w")
 name = "Broken Emerald Shard"
 display_name = "Broken Emerald Shard"
 internal_name = "SHARD"
 tooltip = "It's probably worth quite a bit of money."
-tooltipAlt = []
-item_type = 0
-rarity = 0
 class_type = 1
-required_level = 20.0
-price = 2683.0
+required_level = 20
+price = 2683
 price_modifier = 1.0
 stats = {
 "attributes": {

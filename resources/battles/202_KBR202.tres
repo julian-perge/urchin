@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://b7atjisrdabih"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_na3i3"]
+
+[resource]
+script = ExtResource("1_na3i3")
+id = 202
+id_name = "KBR202"
+item_rare = [{
+"id": 321.0,
+"name": "Frosted Armor"
+}, {
+"id": 325.0,
+"name": "Frozen Helm"
+}, {
+"id": 322.0,
+"name": "Frosted Leggings"
+}]
+item_rare2 = [{
+"id": 323.0,
+"name": "Icy Runners"
+}, {
+"id": 324.0,
+"name": "Glacial Gloves"
+}, {
+"id": 519.0,
+"name": "Icy Maul"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+players = [{
+"id": 25.0,
+"name": "Frost Terror"
+}, {
+"id": -2.0
+}, {
+"id": 23.0,
+"name": "Frost Zombie"
+}, {
+"id": -1.0
+}, {
+"id": 23.0,
+"name": "Frost Zombie"
+}]
+players_levels = [9.0, 1.0, 9.0, 1.0, 9.0]
+sky_background = "SNOW"
+speeches = [{
+"phase": 1.0,
+"player": 1.0,
+"say": "Do you know anything about the prison?",
+"timeToSay": 2.5,
+"turnTime": 6.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_3"
+}, {
+"phase": 1.0,
+"player": "Roald",
+"say": "A prison? Here?",
+"timeToSay": 2.0,
+"turnTime": 6.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "No, but not far. They were conducting experiments there, on the prisoners.",
+"timeToSay": 4.0,
+"turnTime": 6.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": "Veradux",
+"say": "Then the ZPCI showed up! Those guys just won't leave us alone.",
+"timeToSay": 5.0,
+"turnTime": 7.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_4"
+}, {
+"phase": 1.0,
+"player": "Roald",
+"say": "The ZPCI? Are you sure? But they protect us - they're the good guys!",
+"timeToSay": 5.5,
+"turnTime": 7.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "Somehow, I don't think so...",
+"timeToSay": 2.0,
+"turnTime": 7.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "SNOW"

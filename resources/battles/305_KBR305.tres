@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://c1bfisc0b15ml"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_vxy4t"]
+
+[resource]
+script = ExtResource("1_vxy4t")
+id = 305
+id_name = "KBR305"
+item_rare = [{
+"id": 375.0,
+"name": "Hope's Grasp"
+}, {
+"id": 376.0,
+"name": "Beggar Boots"
+}, {
+"id": 373.0,
+"name": "Lower Rags"
+}]
+item_rare_dropper = 2
+players = [{
+"id": 45.0,
+"name": "The Real Hobo"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [14.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "TRAIN"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "Spare some change?",
+"timeToSay": 1.7,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v3_3"
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "Ow! That...hurt.",
+"timeToSay": 1.75,
+"turnTime": 5.0,
+"turnTime2": 0.0,
+"voiceOver": "v3_4"
+}, {
+"phase": 1.0,
+"player": "Veradux",
+"say": "Wait a sec...that wasn't a zombie!",
+"timeToSay": 2.0,
+"turnTime": 5.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "Well I couldn't just give him my hard earned cash, now could I?",
+"timeToSay": 2.5,
+"turnTime": 5.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "TRAIN"

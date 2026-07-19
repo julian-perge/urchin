@@ -1,23 +1,20 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cra7lty5ptadn"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cra7lty5ptadn"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5g8gh"]
-[ext_resource type="Texture2D" uid="uid://cp77hleech702" path="res://resources/sprites/M_HAND_KLIMA.png" id="2_kelr8"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n86hb"]
 
 [resource]
-script = ExtResource("1_5g8gh")
-id = 686.0
-looks = "KLIMA"
-sprite_image = ExtResource("2_kelr8")
+script = ExtResource("1_n86hb")
+id = 686
 name = "Surgeon's Dexterity"
 display_name = "Surgeon's Dexterity"
 internal_name = "Drop KLIMA Hands"
-tooltip = ""
+looks = "KLIMA"
 tooltipAlt = ["Speed +17", "Instinct +30", "Strength +26", "Vitality +21"]
 item_type = 4
-rarity = 0
 class_type = 5
-required_level = 28.0
-price = 1111.0
+required_unit_id = 4
+required_level = 28
+price = 1111
 price_modifier = 1.0
 stats = {
 "attributes": {

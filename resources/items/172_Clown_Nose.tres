@@ -1,21 +1,16 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bked0gdfoj0yb"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bked0gdfoj0yb"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yosha"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_agtfj"]
 
 [resource]
-script = ExtResource("1_yosha")
-id = 172.0
-looks = ""
-name = ""
+script = ExtResource("1_agtfj")
+id = 172
 display_name = "Clown Nose"
 internal_name = "Clown Nose"
-tooltip = ""
-tooltipAlt = []
-item_type = 0
-rarity = 0
+looks = ""
 class_type = 1
-required_level = 10.0
-price = 117637.0
+required_level = 10
+price = 117637
 price_modifier = 124.0
 stats = {
 "attributes": {

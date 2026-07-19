@@ -1,15 +1,21 @@
-[tool.poetry]
+
+[build-system]
+requires = ["uv_build>=0.10,<1"]
+build-backend = "uv_build"
+
+[project]
 name = "urchin"
 version = "0.1.0"
 description = ""
-authors = ["Julian Perge <julianperge@gmail.com>"]
+requires-python = ">=3.14,<4"
+authors = [{ name = "Julian Perge", email = "julianperge@gmail.com" }]
 readme = "README.md"
 
-[tool.poetry.dependencies]
-python = "^3.9"
+dependencies = [
+    "msgspec>=0.21.1",
+    # portrait/face compositing in python_conversion_scripts/swf_extraction
+    "pillow>=11.0",
+]
 
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
+[tool.uv]
+package = false

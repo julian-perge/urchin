@@ -3,7 +3,7 @@ class_name ItemStoreOrb
 
 func _ready():
 	orb_color = Color.html("68CBF4")
-	tooltip_text = "Item Store"
+	tooltip_text = "Item Shop\nClick here to buy and sell items."
 	super._ready()
 
 func interact():

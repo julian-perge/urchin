@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bnfeegk05s1mt"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_t3vkn"]
+
+[resource]
+script = ExtResource("1_t3vkn")
+id = 100
+id_name = "KBR100"
+item_rare = [{
+"id": 300.0,
+"name": "Guard's Leggings"
+}, {
+"id": 301.0,
+"name": "Guard's Grip"
+}]
+item_rare_dropper = 1
+players = [{
+"id": 5.0,
+"name": "Prison Guard"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "JAIL"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "More hostiles! You've made a big mistake by breaking in here.",
+"timeToSay": 4.1000000000000005,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v1_1"
+}, {
+"phase": 1.0,
+"player": "Sonny",
+"say": "Sorry about the gate, I couldn't find the doorbell.",
+"timeToSay": 2.600000000000001,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "JAIL"

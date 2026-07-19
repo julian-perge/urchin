@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bvmvjofke6gfv"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bvmvjofke6gfv"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4odr7"]
-[ext_resource type="Texture2D" uid="uid://cwociwd3fqon2" path="res://resources/sprites/M_WEAPON_FELKNIFE2.png" id="2_7jg1l"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ogn37"]
+[ext_resource type="Texture2D" uid="uid://bpfjhw2vlhfsx" path="res://assets/item_slot_icons/WEAPONS/Poisoned_Knife.png" id="2_ew8jn"]
 
 [resource]
-script = ExtResource("1_4odr7")
-id = 557.0
-looks = "FELKNIFE2"
-sprite_image = ExtResource("2_7jg1l")
+script = ExtResource("1_ogn37")
+id = 557
+slot_image = ExtResource("2_ew8jn")
 name = "Poisoned Knife"
 display_name = "Poisoned Knife"
 internal_name = "Green 1"
-tooltip = ""
+looks = "FELKNIFE2"
 tooltipAlt = ["Speed +6", "Strength +6", "Poison Piercing +65"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 624.0
+required_level = 12
+price = 624
 price_modifier = 1.0
 stats = {
 "attributes": {

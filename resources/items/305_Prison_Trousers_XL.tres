@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bmlm4n7q6pbew"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bmlm4n7q6pbew"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gc4lj"]
-[ext_resource type="Texture2D" uid="uid://bnh0ax7y43j6" path="res://resources/sprites/M_LEG2_PRISON.png" id="2_f5n6x"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_63q35"]
+[ext_resource type="Texture2D" uid="uid://dxdt5tv2kw4ho" path="res://assets/item_slot_icons/OTHER/Prison_Trousers_XL.png" id="2_n0dcd"]
 
 [resource]
-script = ExtResource("1_gc4lj")
-id = 305.0
-looks = "PRISON"
-sprite_image = ExtResource("2_f5n6x")
+script = ExtResource("1_63q35")
+id = 305
+slot_image = ExtResource("2_n0dcd")
 name = "Prison Trousers XL"
 display_name = "Prison Trousers XL"
 internal_name = "Standard Trousers. XL"
+looks = "PRISON"
 tooltip = "Too loose. The belt's been removed."
 tooltipAlt = ["Instinct +3", "Strength +3", "Vitality +1"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 2.0
-price = 30.0
+required_level = 2
+price = 30
 price_modifier = 1.0
 stats = {
 "attributes": {

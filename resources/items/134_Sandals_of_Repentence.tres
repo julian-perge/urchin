@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://mdae5pj4lldr"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://mdae5pj4lldr"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j5ooa"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0ir3f"]
 
 [resource]
-script = ExtResource("1_j5ooa")
-id = 134.0
-looks = ""
-name = ""
+script = ExtResource("1_0ir3f")
+id = 134
 display_name = "Sandals of Repentence"
 internal_name = "Sandals of Repentence"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +3", "Strength +3", "Vitality +3", "Lightning Defense +5", "Earth Defense +5"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 5.0
-price = 2432.0
+required_level = 5
+price = 2432
 price_modifier = 29.0
 stats = {
 "attributes": {

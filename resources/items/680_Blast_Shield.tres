@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dgopmfsorw4be"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dgopmfsorw4be"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kvw45"]
-[ext_resource type="Texture2D" uid="uid://bkl404wj1qkbu" path="res://resources/sprites/M_WEAPON_SHIELD2.png" id="2_bige8"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_t3efr"]
+[ext_resource type="Texture2D" uid="uid://d4i6xaaq2ox2k" path="res://assets/item_slot_icons/WEAPONS/Blast_Shield.png" id="2_itpby"]
 
 [resource]
-script = ExtResource("1_kvw45")
-id = 680.0
-looks = "SHIELD2"
-sprite_image = ExtResource("2_bige8")
+script = ExtResource("1_t3efr")
+id = 680
+slot_image = ExtResource("2_itpby")
 name = "Blast Shield"
 display_name = "Blast Shield"
 internal_name = "SHIELD"
-tooltip = ""
+looks = "SHIELD2"
 tooltipAlt = ["Strength +13", "Vitality +114"]
 item_type = 8
-rarity = 0
 class_type = 1
-required_level = 24.0
-price = 1764.0
+required_level = 24
+price = 1764
 price_modifier = 1.0
 stats = {
 "attributes": {

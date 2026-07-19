@@ -1,0 +1,58 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://lplvyk08qfwd"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_rga2a"]
+
+[resource]
+script = ExtResource("1_rga2a")
+id = 301
+id_name = "KBR301"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 555.0,
+"name": "Annihilation"
+}
+}]
+item_rare = [{
+"id": 548.0,
+"name": "Old ZPCI Helm"
+}, {
+"id": 549.0,
+"name": "Old ZPCI Armor"
+}, {
+"id": 550.0,
+"name": "Old ZPCI Gloves"
+}, {
+"id": 551.0,
+"name": "Old ZPCI Leggings"
+}, {
+"id": 552.0,
+"name": "Old ZPCI Boots"
+}]
+item_rare_dropper = 2
+players = [{
+"id": 8.0,
+"name": "ZPCI Elite"
+}, {
+"id": -2.0
+}, {
+"id": 8.0,
+"name": "ZPCI Elite"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [12.0, 1.0, 11.0, 1.0, 1.0]
+sky_background = "TRAIN"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "That's about as far as you'll go, troublemakers. The Captain wants you dead.",
+"timeToSay": 5.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v3_2"
+}]
+win_date = -1
+zone_background = "TRAIN"

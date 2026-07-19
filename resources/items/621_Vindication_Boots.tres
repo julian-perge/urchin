@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dyl6vnktsk5gh"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dyl6vnktsk5gh"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jocob"]
-[ext_resource type="Texture2D" uid="uid://7alkkcyfugcy" path="res://resources/sprites/M_FOOT_POLICE.png" id="2_mqwcd"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_y6bcw"]
+[ext_resource type="Texture2D" uid="uid://cyfb2cxqthbel" path="res://assets/item_slot_icons/SHOES/Vindication_Boots.png" id="2_xf7p3"]
 
 [resource]
-script = ExtResource("1_jocob")
-id = 621.0
-looks = "POLICE"
-sprite_image = ExtResource("2_mqwcd")
+script = ExtResource("1_y6bcw")
+id = 621
+slot_image = ExtResource("2_xf7p3")
 name = "Vindication Boots"
 display_name = "Vindication Boots"
 internal_name = "Drop POLICE Feet"
-tooltip = ""
+looks = "POLICE"
 tooltipAlt = ["Speed +11", "Instinct +13", "Strength +13", "Vitality +16"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 722.0
+required_level = 21
+price = 722
 price_modifier = 1.0
 stats = {
 "attributes": {

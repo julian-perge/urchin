@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b3xuc6oqsrhqw"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b3xuc6oqsrhqw"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sw0jw"]
-[ext_resource type="Texture2D" uid="uid://vkir5kitsteh" path="res://resources/sprites/M_HAND_ZPCI.png" id="2_q63se"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bho2k"]
+[ext_resource type="Texture2D" uid="uid://d3r7x0oa6yiah" path="res://assets/item_slot_icons/GLOVES/Precision_Grips.png" id="2_g3x4f"]
 
 [resource]
-script = ExtResource("1_sw0jw")
-id = 318.0
-looks = "ZPCI"
-sprite_image = ExtResource("2_q63se")
+script = ExtResource("1_bho2k")
+id = 318
+slot_image = ExtResource("2_g3x4f")
 name = "Precision Grips"
 display_name = "Precision Grips"
 internal_name = "Chosen Gloves"
+looks = "ZPCI"
 tooltip = "'Property of Zombie Pest Control Inc.'"
 tooltipAlt = ["Speed +4", "Instinct +3", "Strength +3", "Vitality +1"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 7.0
-price = 139.0
+required_level = 7
+price = 139
 price_modifier = 1.0
 stats = {
 "attributes": {

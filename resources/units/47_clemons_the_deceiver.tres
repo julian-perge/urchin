@@ -1,0 +1,53 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://di4umou14wbf5"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_vrev6"]
+
+[resource]
+script = ExtResource("1_vrev6")
+id = 47
+name = "Clemons The Deceiver"
+vitality = 70.0
+strength = 27.0
+magic = 27.0
+speed = 10.0
+focus = 300.0
+moves = {
+"absolute": [{
+"id": 559,
+"phase": 1
+}, {
+"id": 563,
+"phase": 2
+}, {
+"id": 564,
+"phase": 2
+}, {
+"id": 562,
+"phase": 2
+}, {
+"id": 566,
+"phase": 3
+}, {
+"id": 578,
+"phase": 3
+}, {
+"id": 565,
+"phase": 3
+}],
+"attack": [580, 459, 436],
+"defense": [2]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [130.0, 130.0, 130.0, 130.0, 130.0, 130.0, 130.0, 130.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 565.0, 566.0],
+"model": ["MODEL1", "GHOST", "ONE", "M"],
+"skin": "CLEMONS",
+"voice": {
+"die": "dead_zombie",
+"hit": ["hit_zombie1", "hit_zombie2", "hit_zombie3"]
+}
+}

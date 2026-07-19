@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cokdsue2c53wl"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cokdsue2c53wl"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5abw7"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_72nkm"]
 
 [resource]
-script = ExtResource("1_5abw7")
-id = 126.0
-looks = ""
-name = ""
+script = ExtResource("1_72nkm")
+id = 126
 display_name = "Frosted Boots"
 internal_name = "Frosted Boots"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +5", "Instinct +4", "Strength +2", "Vitality +5", "Lightning Defense +4", "Earth Defense +4"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 4.0
-price = 840.0
+required_level = 4
+price = 840
 price_modifier = 14.0
 stats = {
 "attributes": {

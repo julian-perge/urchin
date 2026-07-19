@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bh28wfy2087uv"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bh28wfy2087uv"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dd0jq"]
-[ext_resource type="Texture2D" uid="uid://c8dof0tjfi1ax" path="res://resources/sprites/M_WEAPON_DOCKNIFE.png" id="2_kpl7h"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4ejf7"]
+[ext_resource type="Texture2D" uid="uid://of74rq6kdwl4" path="res://assets/item_slot_icons/WEAPONS/Surgery_Blade.png" id="2_g4su5"]
 
 [resource]
-script = ExtResource("1_dd0jq")
-id = 501.0
-looks = "DOCKNIFE"
-sprite_image = ExtResource("2_kpl7h")
+script = ExtResource("1_4ejf7")
+id = 501
+slot_image = ExtResource("2_g4su5")
 name = "Surgery Blade"
 display_name = "Surgery Blade"
 internal_name = "Surgery Blade"
+looks = "DOCKNIFE"
 tooltip = "A surgery blade this big... What kind of monster were they operating on?"
 tooltipAlt = ["Speed +5", "Instinct +3", "Strength +3", "Vitality +2"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 3.0
-price = 78.0
+required_level = 3
+price = 78
 price_modifier = 1.0
 stats = {
 "attributes": {

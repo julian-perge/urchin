@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bcnjcfsxwx6wa"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bcnjcfsxwx6wa"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3s26o"]
-[ext_resource type="Texture2D" uid="uid://1wdvcy21af2s" path="res://resources/sprites/M_FOOT_JASON3.png" id="2_lo0ll"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tehh1"]
+[ext_resource type="Texture2D" uid="uid://x5omno574jtb" path="res://assets/item_slot_icons/OTHER/Metal_Sprinter.png" id="2_mqm4l"]
 
 [resource]
-script = ExtResource("1_3s26o")
-id = 512.0
-looks = "JASON3"
-sprite_image = ExtResource("2_lo0ll")
+script = ExtResource("1_tehh1")
+id = 512
+slot_image = ExtResource("2_mqm4l")
 name = "Metal Sprinter"
 display_name = "Metal Sprinter"
 internal_name = "Metal Sprinter"
-tooltip = ""
+looks = "JASON3"
 tooltipAlt = ["Speed +1", "Physical Piercing +22"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 3.0
-price = 16.0
+required_level = 3
+price = 16
 price_modifier = 0.4
 stats = {
 "attributes": {

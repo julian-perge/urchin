@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://lgq6bc7bvglf"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://lgq6bc7bvglf"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_oylsy"]
-[ext_resource type="Texture2D" uid="uid://devrffqssd1pp" path="res://resources/sprites/M_HAND_SAMURAI4.png" id="2_5jwmo"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_thwcd"]
+[ext_resource type="Texture2D" uid="uid://d0cwlrjkyuduy" path="res://assets/item_slot_icons/GLOVES/Runed_Gloves.png" id="2_84fb0"]
 
 [resource]
-script = ExtResource("1_oylsy")
-id = 535.0
-looks = "SAMURAI4"
-sprite_image = ExtResource("2_5jwmo")
+script = ExtResource("1_thwcd")
+id = 535
+slot_image = ExtResource("2_84fb0")
 name = "Runed Gloves"
 display_name = "Runed Gloves"
 internal_name = "Vendor Samurai Hands"
+looks = "SAMURAI4"
 tooltip = "...But the writings can read you."
 tooltipAlt = ["Strength +19"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 312.0
+required_level = 12
+price = 312
 price_modifier = 1.0
 stats = {
 "attributes": {

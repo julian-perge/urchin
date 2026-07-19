@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://be3pcdx0a2cq"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://be3pcdx0a2cq"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ltc0w"]
-[ext_resource type="Texture2D" uid="uid://v8y56k0fgar3" path="res://resources/sprites/M_WEAPON_FELKNIFE.png" id="2_p0ckn"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8j48d"]
+[ext_resource type="Texture2D" uid="uid://dcf0b3m8nkrsw" path="res://assets/item_slot_icons/WEAPONS/Prison_Shanker.png" id="2_hokas"]
 
 [resource]
-script = ExtResource("1_ltc0w")
-id = 514.0
-looks = "FELKNIFE"
-sprite_image = ExtResource("2_p0ckn")
+script = ExtResource("1_8j48d")
+id = 514
+slot_image = ExtResource("2_hokas")
 name = "Prison Shanker"
 display_name = "Prison Shanker"
 internal_name = "Prison Shanker"
+looks = "FELKNIFE"
 tooltip = "Watch your back."
 tooltipAlt = ["Physical Piercing +43", "Poison Piercing +11"]
 item_type = 8
-rarity = 0
 class_type = 1
-required_level = 3.0
-price = 31.0
+required_level = 3
+price = 31
 price_modifier = 0.4
 stats = {
 "attributes": {

@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://04mxdenc8i2j"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_k8l0m"]
+
+[resource]
+script = ExtResource("1_k8l0m")
+id = 84
+name = "Versu the Corruptor"
+vitality = 40.0
+strength = 10.0
+magic = 5.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 807,
+"phase": 2
+}],
+"attack": [532],
+"defense": [1]
+}
+stats = {
+"aggression": [50.0, 2.0, 1.0, 100.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 721.0, 721.0],
+"model": ["MODEL4", "FIR2", "", "F"],
+"skin": "FIR2",
+"voice": {
+"die": "dead_fel",
+"hit": ["hit_fel1", "hit_fel2", "hit_fel3"]
+}
+}

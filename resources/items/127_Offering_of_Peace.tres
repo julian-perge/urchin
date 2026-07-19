@@ -1,21 +1,17 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cifnapyogkmcs"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cifnapyogkmcs"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qye7v"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_o6an3"]
 
 [resource]
-script = ExtResource("1_qye7v")
-id = 127.0
-looks = ""
-name = ""
+script = ExtResource("1_o6an3")
+id = 127
 display_name = "Offering of Peace"
 internal_name = "Offering of Peace"
-tooltip = ""
-tooltipAlt = []
-item_type = 0
+looks = ""
 rarity = 2
 class_type = 1
-required_level = 5.0
-price = 16771.0
+required_level = 5
+price = 16771
 price_modifier = 50.0
 stats = {
 "attributes": {

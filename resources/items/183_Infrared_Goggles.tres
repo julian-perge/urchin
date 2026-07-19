@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://d0rduu8v5u2fb"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d0rduu8v5u2fb"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_1k8ms"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yl6ea"]
 
 [resource]
-script = ExtResource("1_1k8ms")
-id = 183.0
-looks = ""
-name = ""
+script = ExtResource("1_yl6ea")
+id = 183
 display_name = "Infrared Goggles"
 internal_name = "Infrared Goggles"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +12", "Instinct +12", "Strength +4", "Vitality +6", "Lightning Defense +9", "Earth Defense +9"]
 item_type = 2
 rarity = 1
 class_type = 1
-required_level = 11.0
-price = 90021.0
+required_level = 11
+price = 90021
 price_modifier = 235.0
 stats = {
 "attributes": {

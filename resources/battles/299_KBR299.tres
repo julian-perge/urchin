@@ -1,0 +1,143 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://co1riji6e6oo0"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_swuqq"]
+
+[resource]
+script = ExtResource("1_swuqq")
+absolute_start = 2
+id = 299
+id_name = "KBR299"
+item_drops = [{
+"chance": 15.0,
+"item": {
+"id": 525.0,
+"name": "Fury"
+}
+}]
+item_rare = [{
+"id": 355.0,
+"name": "Medical Visor"
+}, {
+"id": 356.0,
+"name": "Surgeon Gloves"
+}, {
+"id": 357.0,
+"name": "MedPak Armor"
+}, {
+"id": 358.0,
+"name": "Medic Treads"
+}, {
+"id": 359.0,
+"name": "MedPak Leggings"
+}]
+item_rare2 = [{
+"id": 360.0,
+"name": "Agile Boots"
+}, {
+"id": 361.0,
+"name": "Steadfast Leggings"
+}, {
+"id": 362.0,
+"name": "Deft Hands"
+}, {
+"id": 363.0,
+"name": "Flexible Armor"
+}, {
+"id": 364.0,
+"name": "Accuracy Display"
+}, {
+"id": 522.0,
+"name": "ZPCI Sniper Rifle"
+}]
+item_rare3 = [{
+"id": 365.0,
+"name": "Juggernaut's Panzer"
+}, {
+"id": 366.0,
+"name": "Dreadnaught's Panzer"
+}, {
+"id": 367.0,
+"name": "Reinforced Grasp"
+}, {
+"id": 368.0,
+"name": "Combat Boots"
+}, {
+"id": 369.0,
+"name": "Eliminator's Sight"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+item_rare_dropper3 = 1
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.2,
+"player": 2.0,
+"turn": 1.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.5,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": true,
+"life": 0.15,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 28.0,
+"name": "Captain Hunt"
+}, {
+"id": -2.0
+}, {
+"id": 26.0,
+"name": "ZPCI Medic"
+}, {
+"id": -1.0
+}, {
+"id": 34.0,
+"name": "ZPCI Sniper"
+}]
+players_levels = [11.0, 1.0, 11.0, 1.0, 11.0]
+sky_background = "SNOW"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "Make sure no one leaves this place. Alive or dead. Disintegrate everything.",
+"timeToSay": 6.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_18"
+}, {
+"phase": 1.0,
+"player": 6.0,
+"say": "We'll take care of it Capt'n!",
+"timeToSay": 1.5,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 4.0,
+"player": "Roald",
+"say": "Quickly, come with me! We need to get underground, we can get out of here by train.",
+"timeToSay": 4.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_19"
+}, {
+"phase": 4.0,
+"player": 2.0,
+"say": "Get them! We can't leave anyone alive! DO IT!",
+"timeToSay": 4.5,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "SNOW"

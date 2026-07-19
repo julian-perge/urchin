@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d3rhta2cc1ine"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d3rhta2cc1ine"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7t1xs"]
-[ext_resource type="Texture2D" uid="uid://10ss5a3fl8o8" path="res://resources/sprites/M_HAND_HOBO.png" id="2_aa5ll"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bqm4m"]
+[ext_resource type="Texture2D" uid="uid://bscdo70mp3aa2" path="res://assets/item_slot_icons/GLOVES/Hopes_Grasp.png" id="2_qvfpf"]
 
 [resource]
-script = ExtResource("1_7t1xs")
-id = 375.0
-looks = "HOBO"
-sprite_image = ExtResource("2_aa5ll")
+script = ExtResource("1_bqm4m")
+id = 375
+slot_image = ExtResource("2_qvfpf")
 name = "Hope's Grasp"
 display_name = "Hope's Grasp"
 internal_name = "Hope's Grasp"
-tooltip = ""
+looks = "HOBO"
 tooltipAlt = ["Speed +9", "Instinct +6", "Strength +6", "Vitality +2"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 13.0
-price = 352.0
+required_level = 13
+price = 352
 price_modifier = 1.0
 stats = {
 "attributes": {

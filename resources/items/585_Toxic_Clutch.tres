@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dh85xu1o5uvyj"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dh85xu1o5uvyj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e8l7d"]
-[ext_resource type="Texture2D" uid="uid://c8f2jocrhflg3" path="res://resources/sprites/M_HAND_TUNNELSET1.png" id="2_brtq5"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wgk82"]
+[ext_resource type="Texture2D" uid="uid://dcce0a8k538vt" path="res://assets/item_slot_icons/OTHER/Toxic_Clutch.png" id="2_xv6rf"]
 
 [resource]
-script = ExtResource("1_e8l7d")
-id = 585.0
-looks = "TUNNELSET1"
-sprite_image = ExtResource("2_brtq5")
+script = ExtResource("1_wgk82")
+id = 585
+slot_image = ExtResource("2_xv6rf")
 name = "Toxic Clutch"
 display_name = "Toxic Clutch"
 internal_name = "Drop IRONGUARD Hands"
-tooltip = ""
+looks = "TUNNELSET1"
 tooltipAlt = ["Speed +11", "Strength +18", "Vitality +8", "Poison Piercing +5"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 17.0
-price = 526.0
+required_level = 17
+price = 526
 price_modifier = 1.0
 stats = {
 "attributes": {

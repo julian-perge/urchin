@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://xu3paef71f6l"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://xu3paef71f6l"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dpbgh"]
-[ext_resource type="Texture2D" uid="uid://bfgi3ei52dlus" path="res://resources/sprites/M_CHEST_ZPCI3.png" id="2_vasyk"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lxa54"]
+[ext_resource type="Texture2D" uid="uid://b24ukeqnx7c5x" path="res://assets/item_slot_icons/WEAPONS/MedPak_Armor.png" id="2_feo6n"]
 
 [resource]
-script = ExtResource("1_dpbgh")
-id = 357.0
-looks = "ZPCI3"
-sprite_image = ExtResource("2_vasyk")
+script = ExtResource("1_lxa54")
+id = 357
+slot_image = ExtResource("2_feo6n")
 name = "MedPak Armor"
 display_name = "MedPak Armor"
 internal_name = "MedPak Armor"
-tooltip = ""
+looks = "ZPCI3"
 tooltipAlt = ["Speed +7", "Instinct +13", "Vitality +3"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 383.0
+required_level = 11
+price = 383
 price_modifier = 1.0
 stats = {
 "attributes": {

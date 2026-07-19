@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://dsjclpkkxck8f"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_l8ex1"]
+
+[resource]
+script = ExtResource("1_l8ex1")
+id = 83
+name = "Orb of Sanctuary"
+vitality = 14.0
+strength = 15.0
+magic = 15.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 805,
+"phase": 1
+}],
+"attack": [806],
+"defense": []
+}
+stats = {
+"aggression": [50.0, 2.0, 1.0, 100.0, 15.0],
+"defense": [100.0, 100.0, 60.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 720.0, 0.0],
+"model": ["MODEL2", "MAN", "MAD", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_fel",
+"hit": ["hit_fel1", "hit_fel2", "hit_fel3"]
+}
+}

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://chy3mjjg3u7ua"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://chy3mjjg3u7ua"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_q0tqn"]
-[ext_resource type="Texture2D" uid="uid://ck6mjmyq50meh" path="res://resources/sprites/M_HEAD_XADER2.png" id="2_61aty"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_l0xuq"]
+[ext_resource type="Texture2D" uid="uid://id41ccfg2ube" path="res://assets/item_slot_icons/HELMS/Demigods_Visage.png" id="2_des36"]
 
 [resource]
-script = ExtResource("1_q0tqn")
-id = 346.0
-looks = "XADER2"
-sprite_image = ExtResource("2_61aty")
+script = ExtResource("1_l0xuq")
+id = 346
+slot_image = ExtResource("2_des36")
 name = "Demigod's Visage"
 display_name = "Demigod's Visage"
 internal_name = "Demigod's Visage"
-tooltip = ""
+looks = "XADER2"
 tooltipAlt = ["Speed +7", "Strength +12", "Vitality +5"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 383.0
+required_level = 11
+price = 383
 price_modifier = 1.0
 stats = {
 "attributes": {

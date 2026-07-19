@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://btolk7at7w8i"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://btolk7at7w8i"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bdfl2"]
-[ext_resource type="Texture2D" uid="uid://cl88hq1jl4oyb" path="res://resources/sprites/M_WEAPON_SHANK.png" id="2_rr3n6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6ywgq"]
+[ext_resource type="Texture2D" uid="uid://bcjjbd8ftlbiu" path="res://assets/item_slot_icons/WEAPONS/Devil_Blade.png" id="2_xa1o6"]
 
 [resource]
-script = ExtResource("1_bdfl2")
-id = 565.0
-looks = "SHANK"
-sprite_image = ExtResource("2_rr3n6")
+script = ExtResource("1_6ywgq")
+id = 565
+slot_image = ExtResource("2_xa1o6")
 name = "Devil Blade"
 display_name = "Devil Blade"
 internal_name = "Devil Blade"
-tooltip = ""
+looks = "SHANK"
 tooltipAlt = ["Speed +9", "Vitality +9", "Physical Piercing +106"]
 item_type = 7
 rarity = 2
 class_type = 1
-required_level = 15.0
-price = 871.0
+required_level = 15
+price = 871
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://dta8kqyhum56u"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_muqux"]
+
+[resource]
+script = ExtResource("1_muqux")
+id = 57
+name = "Flower Zombie"
+vitality = 30.0
+strength = 35.0
+magic = 35.0
+speed = 13.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [604, 605, 606, 607, 608, 609, 610],
+"defense": [2]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 30.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [33.0, 26.0, 0.0, 32.0, 32.0, 5.0, 0.0],
+"model": ["MODEL1", "ZOMBIE1", "ONE", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_sonny",
+"hit": ["hit_sonny1", "hit_sonny2", "hit_sonny3"]
+}
+}

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cchy2e8jf7eac"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cchy2e8jf7eac"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7nctw"]
-[ext_resource type="Texture2D" uid="uid://dmj08mej85r16" path="res://resources/sprites/M_FOOT_PRIEST4.png" id="2_p4t48"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_t5gwb"]
+[ext_resource type="Texture2D" uid="uid://bk1p4i5plg7pk" path="res://assets/item_slot_icons/SHOES/Townhall_Shoes.png" id="2_emp61"]
 
 [resource]
-script = ExtResource("1_7nctw")
-id = 646.0
-looks = "PRIEST4"
-sprite_image = ExtResource("2_p4t48")
+script = ExtResource("1_t5gwb")
+id = 646
+slot_image = ExtResource("2_emp61")
 name = "Townhall Shoes"
 display_name = "Townhall Shoes"
 internal_name = "Drop MAYOR Feet"
-tooltip = ""
+looks = "PRIEST4"
 tooltipAlt = ["Speed +6", "Instinct +36", "Vitality +18", "Fire Defense +32"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 23.0
-price = 827.0
+required_level = 23
+price = 827
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bsi014kpvyamk"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bsi014kpvyamk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_a2evs"]
-[ext_resource type="Texture2D" uid="uid://dpby6lba30vc1" path="res://resources/sprites/M_LEG2_IMPERIAL.png" id="2_k5tbb"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_v3p3n"]
+[ext_resource type="Texture2D" uid="uid://bvtappkxmd4n5" path="res://assets/item_slot_icons/PANTS/Royal_Leggings.png" id="2_og1p0"]
 
 [resource]
-script = ExtResource("1_a2evs")
-id = 610.0
-looks = "IMPERIAL"
-sprite_image = ExtResource("2_k5tbb")
+script = ExtResource("1_v3p3n")
+id = 610
+slot_image = ExtResource("2_og1p0")
 name = "Royal Leggings"
 display_name = "Royal Leggings"
 internal_name = "Drop IMPERIAL Legs"
-tooltip = ""
+looks = "IMPERIAL"
 tooltipAlt = ["Speed +11", "Strength +57", "Vitality +4"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 1010.0
+required_level = 21
+price = 1010
 price_modifier = 1.0
 stats = {
 "attributes": {

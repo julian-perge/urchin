@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bbbedbqf5vhds"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bbbedbqf5vhds"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6ukep"]
-[ext_resource type="Texture2D" uid="uid://bkl404wj1qkbu" path="res://resources/sprites/M_WEAPON_SHIELD2.png" id="2_ypdc1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0v5t1"]
+[ext_resource type="Texture2D" uid="uid://3ss07bytqbdn" path="res://assets/item_slot_icons/WEAPONS/Metal_Shield.png" id="2_angxf"]
 
 [resource]
-script = ExtResource("1_6ukep")
-id = 203.0
-looks = "SHIELD2"
-sprite_image = ExtResource("2_ypdc1")
-name = ""
+script = ExtResource("1_0v5t1")
+id = 203
+slot_image = ExtResource("2_angxf")
 display_name = "Metal Shield"
 internal_name = "Metal Shield"
-tooltip = ""
+looks = "SHIELD2"
 tooltipAlt = ["Focus +5", "Speed +10", "Instinct +20", "Strength +20", "Vitality +37", "Lightning Defense +15", "Earth Defense +15"]
 item_type = 8
 rarity = 2
 class_type = 1
-required_level = 14.0
-price = 300156.0
+required_level = 14
+price = 300156
 price_modifier = 382.0
 stats = {
 "attributes": {

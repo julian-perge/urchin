@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cmugaka7tjwft"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cmugaka7tjwft"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_we6kl"]
-[ext_resource type="Texture2D" uid="uid://0qk57qa88e56" path="res://resources/sprites/M_HAND_PRIEST.png" id="2_xdl6r"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_emcxy"]
+[ext_resource type="Texture2D" uid="uid://b5l6g30c7ryyu" path="res://assets/item_slot_icons/GLOVES/Healers_Hands.png" id="2_v4tmf"]
 
 [resource]
-script = ExtResource("1_we6kl")
-id = 338.0
-looks = "PRIEST"
-sprite_image = ExtResource("2_xdl6r")
+script = ExtResource("1_emcxy")
+id = 338
+slot_image = ExtResource("2_v4tmf")
 name = "Healer's Hands"
 display_name = "Healer's Hands"
 internal_name = "Healer's Hands"
-tooltip = ""
+looks = "PRIEST"
 tooltipAlt = ["Speed +6", "Instinct +4", "Strength +4", "Vitality +1"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 10.0
-price = 237.0
+required_level = 10
+price = 237
 price_modifier = 1.0
 stats = {
 "attributes": {

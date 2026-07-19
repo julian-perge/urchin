@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://rb3w5y1cwyp"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://rb3w5y1cwyp"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ha7yd"]
-[ext_resource type="Texture2D" uid="uid://d2siaw3u0pgka" path="res://resources/sprites/M_HEAD_SAMURAI2.png" id="2_ayt4c"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_03k7u"]
+[ext_resource type="Texture2D" uid="uid://byclwp6cfte20" path="res://assets/item_slot_icons/HELMS/Bone_Helm.png" id="2_grqso"]
 
 [resource]
-script = ExtResource("1_ha7yd")
-id = 543.0
-looks = "SAMURAI2"
-sprite_image = ExtResource("2_ayt4c")
+script = ExtResource("1_03k7u")
+id = 543
+slot_image = ExtResource("2_grqso")
 name = "Bone Helm"
 display_name = "Bone Helm"
 internal_name = "Drop Samurai Head"
-tooltip = ""
+looks = "SAMURAI2"
 tooltipAlt = ["Speed +3", "Instinct +3", "Strength +6", "Vitality +18"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 13.0
-price = 492.0
+required_level = 13
+price = 492
 price_modifier = 1.0
 stats = {
 "attributes": {

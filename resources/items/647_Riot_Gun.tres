@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ch11lyvwd3b8c"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ch11lyvwd3b8c"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hsn8r"]
-[ext_resource type="Texture2D" uid="uid://dja60skhf0cgv" path="res://resources/sprites/M_WEAPON_AK4.png" id="2_psq18"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_b421c"]
+[ext_resource type="Texture2D" uid="uid://dlgog6hp4m6fw" path="res://assets/item_slot_icons/WEAPONS/Riot_Gun.png" id="2_f73dn"]
 
 [resource]
-script = ExtResource("1_hsn8r")
-id = 647.0
-looks = "AK4"
-sprite_image = ExtResource("2_psq18")
+script = ExtResource("1_b421c")
+id = 647
+slot_image = ExtResource("2_f73dn")
 name = "Riot Gun"
 display_name = "Riot Gun"
 internal_name = "RIOT GUN"
-tooltip = ""
+looks = "AK4"
 tooltipAlt = ["Speed +51", "Instinct +61", "Strength +71", "Vitality +21"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 2887.0
+required_level = 21
+price = 2887
 price_modifier = 1.0
 stats = {
 "attributes": {

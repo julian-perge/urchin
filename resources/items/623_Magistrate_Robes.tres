@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cknguid0wm0qi"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cknguid0wm0qi"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_eabsx"]
-[ext_resource type="Texture2D" uid="uid://c0ipfuwxu8b73" path="res://resources/sprites/M_CHEST_PRIEST3.png" id="2_fks70"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_smwxq"]
+[ext_resource type="Texture2D" uid="uid://cfiqe8ea3d336" path="res://assets/item_slot_icons/ARMOR/Magistrate_Robes.png" id="2_15h1f"]
 
 [resource]
-script = ExtResource("1_eabsx")
-id = 623.0
-looks = "PRIEST3"
-sprite_image = ExtResource("2_fks70")
+script = ExtResource("1_smwxq")
+id = 623
+slot_image = ExtResource("2_15h1f")
 name = "Magistrate Robes"
 display_name = "Magistrate Robes"
 internal_name = "Drop COUNCIL Chest"
+looks = "PRIEST3"
 tooltip = "Wear this! It'll make you feel important."
 tooltipAlt = ["Speed +17", "Instinct +58", "Vitality +25", "Lightning Defense +29"]
 item_type = 3
 rarity = 2
 class_type = 1
-required_level = 23.0
-price = 1158.0
+required_level = 23
+price = 1158
 price_modifier = 1.0
 stats = {
 "attributes": {

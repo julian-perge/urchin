@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://k3rjm5dr6s6r"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://k3rjm5dr6s6r"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kw5r3"]
-[ext_resource type="Texture2D" uid="uid://dojcl1akyqi4x" path="res://resources/sprites/M_LEG2_CLEMONS.png" id="2_xxro8"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qsk4j"]
+[ext_resource type="Texture2D" uid="uid://uit0k42fgg4j" path="res://assets/item_slot_icons/PANTS/Will_of_Clemons.png" id="2_xk7uy"]
 
 [resource]
-script = ExtResource("1_kw5r3")
-id = 571.0
-looks = "CLEMONS"
-sprite_image = ExtResource("2_xxro8")
+script = ExtResource("1_qsk4j")
+id = 571
+slot_image = ExtResource("2_xk7uy")
 name = "Will of Clemons"
 display_name = "Will of Clemons"
 internal_name = "Drop CLEMONS Legs"
-tooltip = ""
+looks = "CLEMONS"
 tooltipAlt = ["Instinct +8", "Strength +16", "Vitality +16"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 15.0
-price = 610.0
+required_level = 15
+price = 610
 price_modifier = 1.0
 stats = {
 "attributes": {

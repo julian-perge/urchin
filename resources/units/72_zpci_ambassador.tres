@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://b6cwcd2iem215"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_bt67i"]
+
+[resource]
+script = ExtResource("1_bt67i")
+id = 72
+name = "ZPCI Ambassador"
+vitality = 25.0
+strength = 25.0
+magic = 1.0
+speed = 13.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 16,
+"phase": 0
+}, {
+"id": 17,
+"phase": 0
+}, {
+"id": 18,
+"phase": 0
+}, {
+"id": 19,
+"phase": 0
+}],
+"attack": [9],
+"defense": [20]
+}
+stats = {
+"aggression": [50.0, 80.0, 50.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 13.0, 0.0],
+"model": ["MODEL1", "MAN", "", "M"],
+"skin": "ZPCI",
+"voice": {
+"die": "dead_zpci",
+"hit": ["hit_zpci1", "hit_zpci2", "hit_zpci3"]
+}
+}

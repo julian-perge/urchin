@@ -1,0 +1,56 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://3nchbcxt5vjq"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_ftufw"]
+
+[resource]
+script = ExtResource("1_ftufw")
+id = 502
+id_name = "KBR502"
+item_rare2 = [{
+"id": 607.0,
+"name": "Imperial War Helm"
+}, {
+"id": 608.0,
+"name": "Imperial Armor"
+}, {
+"id": 610.0,
+"name": "Royal Leggings"
+}, {
+"id": 648.0,
+"name": "Imperial Rifle"
+}]
+item_rare_dropper2 = 2
+players = [{
+"id": 62.0,
+"name": "Secret Police"
+}, {
+"id": -2.0
+}, {
+"id": 62.0,
+"name": "Secret Police"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [21.0, 1.0, 21.0, 1.0, 1.0]
+sky_background = "STREETS"
+speeches = [{
+"phase": 1.0,
+"player": "Roald",
+"say": "Wow, those workers are really going for it. And they're all headed to the mayor's office!",
+"timeToSay": 4.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v5_2"
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "A bit more attention than I would have liked, but at least we're moving forward.",
+"timeToSay": 4.0,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "STREETS"

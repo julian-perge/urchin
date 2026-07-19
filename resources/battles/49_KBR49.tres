@@ -1,0 +1,99 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cc7wuux75mn6n"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_0bwfr"]
+
+[resource]
+script = ExtResource("1_0bwfr")
+id = 49
+id_name = "KBR49"
+players = [{
+"id": 49.0,
+"name": "Metabii"
+}, {
+"id": 0.0
+}, {
+"id": 0.0
+}, {
+"id": 48.0,
+"name": "Louis the Blind"
+}, {
+"id": 0.0
+}]
+players_levels = [1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "SEA"
+speeches = [{
+"phase": 1.0,
+"player": 5.0,
+"say": "I may be blind, but there's no mistaking that smell. Can you take him out?",
+"timeToSay": 4.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v_1"
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "Yes, I...I suppose I can. Ugh...I don't feel too well.",
+"timeToSay": 5.0,
+"turnTime": 0.0,
+"turnTime2": 1.0
+}, {
+"phase": 1.0,
+"player": 5.0,
+"say": "It will wear off eventually. You need to focus!",
+"timeToSay": 3.7,
+"turnTime": 0.0,
+"turnTime2": 2.0
+}, {
+"phase": 1.0,
+"player": 0.0,
+"say": "Notice the grey 'ring' in the lower middle panel, around the exclamation mark. Wait until it turns blue.",
+"timeToSay": 6.5,
+"turnTime": 0.0,
+"turnTime2": 3.0
+}, {
+"phase": 1.0,
+"player": 0.0,
+"say": "Once the ring is blue, click on the enemy to target him. Your abilities will appear around him.",
+"timeToSay": 5.5,
+"turnTime": 0.0,
+"turnTime2": 4.0
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "He doesn't look too happy.",
+"timeToSay": 1.5,
+"turnTime": 2.0,
+"turnTime2": 0.0,
+"voiceOver": "v_2"
+}, {
+"phase": 1.0,
+"player": 5.0,
+"say": "He's enraged! You'll have to defend yourself! Get ready!",
+"timeToSay": 3.5,
+"turnTime": 2.0,
+"turnTime2": 1.0
+}, {
+"phase": 1.0,
+"player": 0.0,
+"say": "Target yourself instead of the enemy this turn, so you can use your defensive ability.",
+"timeToSay": 5.0,
+"turnTime": 2.0,
+"turnTime2": 2.0
+}, {
+"phase": 1.0,
+"player": 0.0,
+"say": "To find out more about an ability, hold your mouse over its icon for a couple of seconds.",
+"timeToSay": 5.0,
+"turnTime": 2.0,
+"turnTime2": 3.0
+}, {
+"phase": 1.0,
+"player": 5.0,
+"say": "Good job, Sonny. Keep going, and stay alert. There will be more of them ahead.",
+"timeToSay": 5.0,
+"turnTime": 4.0,
+"turnTime2": 0.0,
+"voiceOver": "v_3"
+}]
+win_date = -1
+zone_background = "WHITE NOVEMBER"

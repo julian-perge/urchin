@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ccgi1nq65ju65"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ccgi1nq65ju65"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lsbjt"]
-[ext_resource type="Texture2D" uid="uid://ckmv2traho0ww" path="res://resources/sprites/M_WEAPON_SHAMANMAGIC.png" id="2_5n3lq"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tbpw2"]
+[ext_resource type="Texture2D" uid="uid://do7wyo6vj1xdi" path="res://assets/item_slot_icons/WEAPONS/Charged_Axe.png" id="2_ipkxj"]
 
 [resource]
-script = ExtResource("1_lsbjt")
-id = 562.0
-looks = "SHAMANMAGIC"
-sprite_image = ExtResource("2_5n3lq")
+script = ExtResource("1_tbpw2")
+id = 562
+slot_image = ExtResource("2_ipkxj")
 name = "Charged Axe"
 display_name = "Charged Axe"
 internal_name = "Orange Axe"
-tooltip = ""
+looks = "SHAMANMAGIC"
 tooltipAlt = ["Instinct +26", "Lightning Piercing +121"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 1247.0
+required_level = 12
+price = 1247
 price_modifier = 1.0
 stats = {
 "attributes": {

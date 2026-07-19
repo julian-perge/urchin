@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d3niidepwgcnj"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d3niidepwgcnj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_pa2a4"]
-[ext_resource type="Texture2D" uid="uid://ct6l3y8is4w1e" path="res://resources/sprites/M_CHEST_SHIRT5.png" id="2_of8nc"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qr30s"]
 
 [resource]
-script = ExtResource("1_pa2a4")
-id = 26.0
-looks = "SHIRT5"
-sprite_image = ExtResource("2_of8nc")
-name = ""
+script = ExtResource("1_qr30s")
+id = 26
 display_name = "Piercing"
 internal_name = "Piercing"
-tooltip = ""
+looks = "SHIRT5"
 tooltipAlt = ["Speed +97", "Strength +58", "Vitality +58", "Physical Piercing +111"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 15.0
-price = 610.0
+required_level = 15
+price = 610
 price_modifier = 1.0
 stats = {
 "attributes": {

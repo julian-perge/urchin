@@ -1,0 +1,64 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cmhjed4k0ojl4"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_anl1w"]
+
+[resource]
+script = ExtResource("1_anl1w")
+id = 1010
+id_name = "KBR1010"
+item_drops = [{
+"chance": 17.0,
+"item": {
+"id": 527.0,
+"name": "Unholy Runeblade"
+}
+}]
+item_rare = [{
+"id": 347.0,
+"name": "Usurper's Chest"
+}, {
+"id": 348.0,
+"name": "Holy Slippers"
+}, {
+"id": 349.0,
+"name": "Pretender's Leggings"
+}]
+item_rare_dropper = 1
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.5,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.2,
+"player": 2.0,
+"turn": 7.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": false,
+"life": 0.05,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 31.0,
+"name": "Baron Brixius"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "CHURCH"
+win_date = -1
+zone_background = "CHURCH"

@@ -1,0 +1,56 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://cnd77mwx07c7n"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_6inns"]
+
+[resource]
+script = ExtResource("1_6inns")
+id = 69
+name = "Mayor"
+vitality = 60.0
+strength = 13.0
+magic = 28.0
+speed = 15.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 1,
+"phase": 1
+}, {
+"id": 1,
+"phase": 2
+}, {
+"id": 768,
+"phase": 3
+}, {
+"id": 782,
+"phase": 4
+}, {
+"id": 770,
+"phase": 4
+}, {
+"id": 771,
+"phase": 4
+}, {
+"id": 769,
+"phase": 4
+}, {
+"id": 475,
+"phase": 5
+}],
+"attack": [773, 774, 775, 776],
+"defense": [1, 772]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 100.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 654.0, 0.0],
+"model": ["MODEL1", "MAN", "ONE", "M"],
+"skin": "PRIEST4",
+"voice": {
+"die": "dead_mayor",
+"hit": ["hit_mayor1", "hit_mayor2", "hit_mayor3"]
+}
+}

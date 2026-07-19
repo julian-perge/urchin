@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dnxvpxqcoacuk"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dnxvpxqcoacuk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3ppps"]
-[ext_resource type="Texture2D" uid="uid://bxy0er283l0v4" path="res://resources/sprites/M_HEAD_CLEMONS2.png" id="2_8u0ng"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_auheh"]
+[ext_resource type="Texture2D" uid="uid://bs74gu8efuf6a" path="res://assets/item_slot_icons/HELMS/Thunder_Mask.png" id="2_lidjk"]
 
 [resource]
-script = ExtResource("1_3ppps")
-id = 588.0
-looks = "CLEMONS2"
-sprite_image = ExtResource("2_8u0ng")
+script = ExtResource("1_auheh")
+id = 588
+slot_image = ExtResource("2_lidjk")
 name = "Thunder Mask"
 display_name = "Thunder Mask"
 internal_name = "Drop EMPEROR Head"
-tooltip = ""
+looks = "CLEMONS2"
 tooltipAlt = ["Speed +9", "Instinct +41", "Vitality +6", "Lightning Piercing +7"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 18.0
-price = 802.0
+required_level = 18
+price = 802
 price_modifier = 1.0
 stats = {
 "attributes": {

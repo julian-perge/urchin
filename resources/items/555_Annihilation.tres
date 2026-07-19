@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bvs7emla55ohx"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bvs7emla55ohx"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2tree"]
-[ext_resource type="Texture2D" uid="uid://dug5a1wo2kqcf" path="res://resources/sprites/M_WEAPON_UBER1.png" id="2_i8k0i"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hijc2"]
+[ext_resource type="Texture2D" uid="uid://cblvemlcosopf" path="res://assets/item_slot_icons/WEAPONS/Annihilation.png" id="2_4mgdg"]
 
 [resource]
-script = ExtResource("1_2tree")
-id = 555.0
-looks = "UBER1"
-sprite_image = ExtResource("2_i8k0i")
+script = ExtResource("1_hijc2")
+id = 555
+slot_image = ExtResource("2_4mgdg")
 name = "Annihilation"
 display_name = "Annihilation"
 internal_name = "Annihilation"
+looks = "UBER1"
 tooltip = "Consider yourself lucky that you aren't on the receiving end."
 tooltipAlt = ["Speed +17", "Strength +85", "Vitality +9"]
 item_type = 9
 rarity = 2
 class_type = 1
-required_level = 13.0
-price = 1406.0
+required_level = 13
+price = 1406
 price_modifier = 1.0
 stats = {
 "attributes": {

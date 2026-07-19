@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://dke1hjoco4tdl"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dke1hjoco4tdl"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_pfxqt"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_chq4d"]
 
 [resource]
-script = ExtResource("1_pfxqt")
-id = 113.0
-looks = ""
-name = ""
+script = ExtResource("1_chq4d")
+id = 113
 display_name = "Bandana"
 internal_name = "Bandana"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +4", "Instinct +3", "Strength +4", "Vitality +2"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 2.0
-price = 119.0
+required_level = 2
+price = 119
 price_modifier = 4.0
 stats = {
 "attributes": {

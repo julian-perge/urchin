@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cpxlg5hfa7iy7"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cpxlg5hfa7iy7"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8rdro"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qb1c1"]
 
 [resource]
-script = ExtResource("1_8rdro")
-id = 180.0
-looks = ""
-name = ""
+script = ExtResource("1_qb1c1")
+id = 180
 display_name = "Uniform Boots"
 internal_name = "Uniform Boots"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +8", "Instinct +7", "Strength +8", "Vitality +4", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 57187.0
+required_level = 11
+price = 57187
 price_modifier = 209.0
 stats = {
 "attributes": {

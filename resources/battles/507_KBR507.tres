@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://jr4maes3jwnx"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_bv0ww"]
+
+[resource]
+script = ExtResource("1_bv0ww")
+id = 507
+id_name = "KBR507"
+item_rare = [{
+"id": 627.0,
+"name": "Bloody Ambition"
+}, {
+"id": 628.0,
+"name": "Nightstrike Armor"
+}, {
+"id": 630.0,
+"name": "Bloody Leggings"
+}, {
+"id": 651.0,
+"name": "Crimson Blade"
+}]
+item_rare3 = [{
+"id": 612.0,
+"name": "Titanium Cranium"
+}, {
+"id": 613.0,
+"name": "Andriod Armor"
+}, {
+"id": 615.0,
+"name": "Cyborg Leggings"
+}, {
+"id": 656.0,
+"name": "Azure Flatblade"
+}]
+item_rare_dropper = 1
+item_rare_dropper3 = 2
+players = [{
+"id": 64.0,
+"name": "Specialist"
+}, {
+"id": -2.0
+}, {
+"id": 67.0,
+"name": "Android Guard"
+}, {
+"id": -1.0
+}, {
+"id": 67.0,
+"name": "Android Guard"
+}]
+players_levels = [22.0, 1.0, 22.0, 1.0, 22.0]
+sky_background = "STREETS"
+win_date = -1
+zone_background = "STREETS"

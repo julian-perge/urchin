@@ -1,0 +1,71 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dolnfldj32cvn"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_tfqmm"]
+
+[resource]
+script = ExtResource("1_tfqmm")
+id = 1002
+id_name = "KBR1002"
+item_drops = [{
+"chance": 30.0,
+"item": {
+"id": 504.0,
+"name": "Persecution"
+}
+}]
+item_rare = [{
+"id": 312.0,
+"name": "Shawshank Boots"
+}, {
+"id": 311.0,
+"name": "Punisher Gloves"
+}]
+item_rare2 = [{
+"id": 313.0,
+"name": "Warden's Leggings"
+}, {
+"id": 314.0,
+"name": "Eye of Justice"
+}, {
+"id": 310.0,
+"name": "Warden's Armor"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.6,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.15,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 9.0,
+"name": "The Warden"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "JAIL"
+win_date = -1
+zone_background = "JAIL"

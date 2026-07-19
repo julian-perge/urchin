@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dy2smlt5rph7s"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dy2smlt5rph7s"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rbyy3"]
-[ext_resource type="Texture2D" uid="uid://cm4nga2q8f0vv" path="res://resources/sprites/M_FOOT_ZPCI3.png" id="2_vwwpj"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ivmq8"]
+[ext_resource type="Texture2D" uid="uid://cljpvu2ashjuy" path="res://assets/item_slot_icons/WEAPONS/Medic_Treads.png" id="2_i4ly8"]
 
 [resource]
-script = ExtResource("1_rbyy3")
-id = 358.0
-looks = "ZPCI3"
-sprite_image = ExtResource("2_vwwpj")
+script = ExtResource("1_ivmq8")
+id = 358
+slot_image = ExtResource("2_i4ly8")
 name = "Medic Treads"
 display_name = "Medic Treads"
 internal_name = "Medic Treads"
-tooltip = ""
+looks = "ZPCI3"
 tooltipAlt = ["Speed +3", "Instinct +1", "Strength +5", "Vitality +8"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 274.0
+required_level = 11
+price = 274
 price_modifier = 1.0
 stats = {
 "attributes": {

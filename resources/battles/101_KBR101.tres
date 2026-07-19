@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cxi82c2teigsl"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_on5kt"]
+
+[resource]
+script = ExtResource("1_on5kt")
+id = 101
+id_name = "KBR101"
+item_rare = [{
+"id": 302.0,
+"name": "Guard's Runners"
+}, {
+"id": 303.0,
+"name": "Guard's Uniform"
+}]
+item_rare2 = [{
+"id": 304.0,
+"name": "Watcher's Visage"
+}, {
+"id": 500.0,
+"name": "Guard's Baton"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+players = [{
+"id": 5.0,
+"name": "Prison Guard"
+}, {
+"id": -2.0
+}, {
+"id": 5.0,
+"name": "Prison Guard"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "JAIL"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "The prisoners are escaping! We need more men!",
+"timeToSay": 2.9,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v1_2"
+}]
+win_date = -1
+zone_background = "JAIL"

@@ -1,0 +1,110 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dhvwsodn7og1f"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_ra282"]
+
+[resource]
+script = ExtResource("1_ra282")
+absolute_start = 2
+id = 599
+id_name = "KBR599"
+item_drops = [{
+"chance": 20.0,
+"item": {
+"id": 658.0,
+"name": "Death Sentence"
+}
+}]
+item_rare = [{
+"id": 642.0,
+"name": "Broken Promise"
+}, {
+"id": 643.0,
+"name": "Johnson's Legacy"
+}, {
+"id": 644.0,
+"name": "Ken's Legacy"
+}, {
+"id": 645.0,
+"name": "Proxy Leggings"
+}, {
+"id": 646.0,
+"name": "Townhall Shoes"
+}]
+item_rare_dropper = 2
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"turn": 6.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.9000000000000002,
+"player": 2.0,
+"turn": 18.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": false,
+"life": 0.6500000000000002,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"4": {
+"endGame": false,
+"life": 0.3,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"5": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 69.0,
+"name": "Mayor"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 70.0,
+"name": "Guardian Cannon"
+}]
+players_levels = [24.0, 1.0, 20.0, 1.0, 24.0]
+sky_background = "STREETS"
+speeches = [{
+"phase": 1.0,
+"player": 1.0,
+"say": "That ambassador was talking about a plan. What are they planning?",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v5_6"
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "I won't let you kill me, you filthy corpse! I'm the Mayor!",
+"timeToSay": 4.5,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "Get out! Get out or my guards will make you! GUARDS!",
+"timeToSay": 4.5,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "STREETS2"

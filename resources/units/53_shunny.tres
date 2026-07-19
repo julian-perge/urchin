@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://yj6a3thak5ca"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_xs2b3"]
+
+[resource]
+script = ExtResource("1_xs2b3")
+id = 53
+name = "Shunny"
+vitality = 30.0
+strength = 35.0
+magic = 35.0
+speed = 13.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [10, 145, 455, 223, 542, 415, 115, 578],
+"defense": [125, 534, 1]
+}
+stats = {
+"aggression": [50.0, 40.0, 20.0, 30.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 4.0, 8.0, 5.0, 0.0],
+"model": ["MODEL1", "ONE", "ONE", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_sonny",
+"hit": ["hit_sonny1", "hit_sonny2", "hit_sonny3"]
+}
+}

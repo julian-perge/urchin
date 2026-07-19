@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://byps7gq4q8mx1"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://byps7gq4q8mx1"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3c83h"]
-[ext_resource type="Texture2D" uid="uid://cysnyk6cnluj4" path="res://resources/sprites/M_WEAPON_M4.png" id="2_87nte"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ba1s7"]
+[ext_resource type="Texture2D" uid="uid://ch35tdl32u60o" path="res://assets/item_slot_icons/WEAPONS/Storm_Rifle.png" id="2_o7bi6"]
 
 [resource]
-script = ExtResource("1_3c83h")
-id = 39.0
-looks = "M4"
-sprite_image = ExtResource("2_87nte")
+script = ExtResource("1_ba1s7")
+id = 39
+slot_image = ExtResource("2_o7bi6")
 name = "Storm Rifle"
 display_name = "Storm Rifle"
 internal_name = "Gun"
-tooltip = ""
+looks = "M4"
 tooltipAlt = ["Speed +3", "Instinct +5", "Strength +5", "Lightning Piercing +46"]
 item_type = 9
-rarity = 0
 class_type = 5
-required_level = 1.0
-price = 30.0
+required_unit_id = 4
+required_level = 1
+price = 30
 price_modifier = 1.0
 stats = {
 "attributes": {

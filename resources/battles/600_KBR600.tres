@@ -1,0 +1,143 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bwhd2c0ugsx05"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_5st7v"]
+
+[resource]
+script = ExtResource("1_5st7v")
+id = 600
+id_name = "KBR600"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 661.0,
+"name": "Hands of Diamond"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 662.0,
+"name": "Platinum Legplates"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 663.0,
+"name": "Corvette Boots"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 679.0,
+"name": "Platinum Baton"
+}
+}]
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.5,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.15,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 73.0,
+"name": "Metal Warden"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [22.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "ROME"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "Who are you? How did you find this place?",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "Where is the ambassador?",
+"timeToSay": 2.0,
+"turnTime": 3.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "Ambassador? I don't know what you're talking about...",
+"timeToSay": 3.0,
+"turnTime": 3.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "Do you know anything about a secret weapon?",
+"timeToSay": 2.5,
+"turnTime": 6.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "You've come to the wrong place. There's nothing for you here.",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 1.0,
+"say": "Really? So what's with the high level security?",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "We're hunting down a target. You better leave before somebody gets hurt.",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "If you kill me, we won't be able to apprehend the target...",
+"timeToSay": 4.0,
+"turnTime": 4.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "My team will have no choice but to bomb the entire region. Everything will burn, including you!",
+"timeToSay": 4.0,
+"turnTime": 4.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "CHURCH"

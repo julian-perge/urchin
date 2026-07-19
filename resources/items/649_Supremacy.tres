@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://048ixyx1omi6"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://048ixyx1omi6"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0ek27"]
-[ext_resource type="Texture2D" uid="uid://dkx2acqs6yq7j" path="res://resources/sprites/M_WEAPON_AK3.png" id="2_rerb1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gtu4a"]
+[ext_resource type="Texture2D" uid="uid://wkf28jkh8nye" path="res://assets/item_slot_icons/WEAPONS/Supremacy.png" id="2_q0xyk"]
 
 [resource]
-script = ExtResource("1_0ek27")
-id = 649.0
-looks = "AK3"
-sprite_image = ExtResource("2_rerb1")
+script = ExtResource("1_gtu4a")
+id = 649
+slot_image = ExtResource("2_q0xyk")
 name = "Supremacy"
 display_name = "Supremacy"
 internal_name = "COLONEL GUN"
-tooltip = ""
+looks = "AK3"
 tooltipAlt = ["Speed +66", "Instinct +109", "Strength +109"]
 item_type = 9
 rarity = 2
 class_type = 1
-required_level = 22.0
-price = 3096.0
+required_level = 22
+price = 3096
 price_modifier = 1.0
 stats = {
 "attributes": {

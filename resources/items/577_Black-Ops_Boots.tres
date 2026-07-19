@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b7k27ncj5hhsy"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b7k27ncj5hhsy"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_p4clp"]
-[ext_resource type="Texture2D" uid="uid://b5sv2akeyrwid" path="res://resources/sprites/M_FOOT_TUNTAT.png" id="2_gm1jt"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yh8vr"]
+[ext_resource type="Texture2D" uid="uid://c8uhsa1drwg5l" path="res://assets/item_slot_icons/SHOES/Black-Ops_Boots.png" id="2_cy825"]
 
 [resource]
-script = ExtResource("1_p4clp")
-id = 577.0
-looks = "TUNTAT"
-sprite_image = ExtResource("2_gm1jt")
+script = ExtResource("1_yh8vr")
+id = 577
+slot_image = ExtResource("2_cy825")
 name = "Black-Ops Boots"
 display_name = "Black-Ops Boots"
 internal_name = "Drop BLACK OPS Feet"
+looks = "TUNTAT"
 tooltip = "Made by Addi."
 tooltipAlt = ["Speed +14", "Strength +8", "Physical Piercing +31"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 18.0
-price = 573.0
+required_level = 18
+price = 573
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://11bqlvm1t0ta"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://11bqlvm1t0ta"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wb066"]
-[ext_resource type="Texture2D" uid="uid://dm3rg87igycib" path="res://resources/sprites/M_CHEST_ULTI3.png" id="2_2a886"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qnyie"]
+[ext_resource type="Texture2D" uid="uid://c1xk68prbj1c" path="res://assets/item_slot_icons/ARMOR/Velocious_Armor.png" id="2_3780h"]
 
 [resource]
-script = ExtResource("1_wb066")
-id = 690.0
-looks = "ULTI3"
-sprite_image = ExtResource("2_2a886")
+script = ExtResource("1_qnyie")
+id = 690
+slot_image = ExtResource("2_3780h")
 name = "Velocious Armor"
 display_name = "Velocious Armor"
 internal_name = "Drop ULTI3 Chest"
-tooltip = ""
+looks = "ULTI3"
 tooltipAlt = ["Speed +71", "Instinct +12", "Strength +12", "Vitality +24"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 28.0
-price = 1556.0
+required_level = 28
+price = 1556
 price_modifier = 1.0
 stats = {
 "attributes": {

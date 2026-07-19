@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://18skhford0xf"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_gwq12"]
+
+[resource]
+script = ExtResource("1_gwq12")
+id = 15
+name = "Doctor Hedger"
+vitality = 5.0
+strength = 50.0
+magic = 5.0
+speed = 8.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 529,
+"phase": 0
+}],
+"attack": [145, 145, 145, 149, 149],
+"defense": [2]
+}
+stats = {
+"aggression": [50.0, 10.0, 5.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 17.0, 18.0, 4.0, 8.0, 16.0, 0.0],
+"model": ["MODEL1", "MAN", "MAD", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_doc",
+"hit": ["hit_doc1", "hit_doc2", "hit_doc3"]
+}
+}

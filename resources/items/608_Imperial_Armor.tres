@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c1lt1ivfb56p4"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c1lt1ivfb56p4"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_s2cq2"]
-[ext_resource type="Texture2D" uid="uid://d38nfriht72bt" path="res://resources/sprites/M_CHEST_IMPERIAL.png" id="2_llv6i"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ahoig"]
+[ext_resource type="Texture2D" uid="uid://cck7j6ewt3rya" path="res://assets/item_slot_icons/ARMOR/Imperial_Armor.png" id="2_eldjl"]
 
 [resource]
-script = ExtResource("1_s2cq2")
-id = 608.0
-looks = "IMPERIAL"
-sprite_image = ExtResource("2_llv6i")
+script = ExtResource("1_ahoig")
+id = 608
+slot_image = ExtResource("2_eldjl")
 name = "Imperial Armor"
 display_name = "Imperial Armor"
 internal_name = "Drop IMPERIAL Chest"
-tooltip = ""
+looks = "IMPERIAL"
 tooltipAlt = ["Speed +12", "Strength +54", "Vitality +12"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 22.0
-price = 1083.0
+required_level = 22
+price = 1083
 price_modifier = 1.0
 stats = {
 "attributes": {

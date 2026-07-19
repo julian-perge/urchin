@@ -1,0 +1,66 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cidmrxhk313hf"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_idx2i"]
+
+[resource]
+script = ExtResource("1_idx2i")
+absolute_start = 2
+id = 1025
+id_name = "KBR1025"
+item_drops = [{
+"chance": 20.0,
+"item": {
+"id": 655.0,
+"name": "Wrath of the Council"
+}
+}]
+item_rare = [{
+"id": 622.0,
+"name": "Council Vision"
+}, {
+"id": 623.0,
+"name": "Magistrate Robes"
+}, {
+"id": 624.0,
+"name": "Diplomat's Hand"
+}, {
+"id": 625.0,
+"name": "Council Leggings"
+}, {
+"id": 626.0,
+"name": "Council Shoes"
+}]
+item_rare_dropper = 1
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"teamLeft": 1.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 68.0,
+"name": "City Council"
+}, {
+"id": -2.0
+}, {
+"id": 68.0,
+"name": "City Council"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, "X", 1.0, 1.0]
+sky_background = "STREETS"
+win_date = -1
+zone_background = "STREETS2"

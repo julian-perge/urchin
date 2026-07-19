@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cp82xpu2depra"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cp82xpu2depra"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_h2x3j"]
-[ext_resource type="Texture2D" uid="uid://bf3d406yy8c8c" path="res://resources/sprites/M_WEAPON_TASER3.png" id="2_npmwf"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wyj8d"]
+[ext_resource type="Texture2D" uid="uid://5mftq28t6vn2" path="res://assets/item_slot_icons/WEAPONS/Plasma_Rod.png" id="2_1y6i8"]
 
 [resource]
-script = ExtResource("1_h2x3j")
-id = 654.0
-looks = "TASER3"
-sprite_image = ExtResource("2_npmwf")
+script = ExtResource("1_wyj8d")
+id = 654
+slot_image = ExtResource("2_1y6i8")
 name = "Plasma Rod"
 display_name = "Plasma Rod"
 internal_name = "SPELL BLADE"
-tooltip = ""
+looks = "TASER3"
 tooltipAlt = ["Instinct +21", "Ice Piercing +105", "Lightning Piercing +105", "Poison Piercing +105"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 1444.0
+required_level = 21
+price = 1444
 price_modifier = 1.0
 stats = {
 "attributes": {

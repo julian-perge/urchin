@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://r8m5rbde5xqm"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://r8m5rbde5xqm"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_unfnf"]
-[ext_resource type="Texture2D" uid="uid://8vcjch3ihdph" path="res://resources/sprites/M_WEAPON_SHAMANMED.png" id="2_0fcr8"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_02yrm"]
+[ext_resource type="Texture2D" uid="uid://bjflmch3ucqix" path="res://assets/item_slot_icons/WEAPONS/Frosted_Axe.png" id="2_tto54"]
 
 [resource]
-script = ExtResource("1_unfnf")
-id = 561.0
-looks = "SHAMANMED"
-sprite_image = ExtResource("2_0fcr8")
+script = ExtResource("1_02yrm")
+id = 561
+slot_image = ExtResource("2_tto54")
 name = "Frosted Axe"
 display_name = "Frosted Axe"
 internal_name = "Blue Axe"
-tooltip = ""
+looks = "SHAMANMED"
 tooltipAlt = ["Speed +11", "Instinct +11", "Ice Piercing +130"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 1247.0
+required_level = 12
+price = 1247
 price_modifier = 1.0
 stats = {
 "attributes": {

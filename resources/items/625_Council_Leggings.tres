@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cqy16nt8hnclh"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cqy16nt8hnclh"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_w3tpa"]
-[ext_resource type="Texture2D" uid="uid://cqt6s68kj38y7" path="res://resources/sprites/M_LEG2_PRIEST3.png" id="2_3xn8p"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3pc7p"]
+[ext_resource type="Texture2D" uid="uid://c6w4547mrlmxc" path="res://assets/item_slot_icons/PANTS/Council_Leggings.png" id="2_omk74"]
 
 [resource]
-script = ExtResource("1_w3tpa")
-id = 625.0
-looks = "PRIEST3"
-sprite_image = ExtResource("2_3xn8p")
+script = ExtResource("1_3pc7p")
+id = 625
+slot_image = ExtResource("2_omk74")
 name = "Council Leggings"
 display_name = "Council Leggings"
 internal_name = "Drop COUNCIL Legs"
-tooltip = ""
+looks = "PRIEST3"
 tooltipAlt = ["Speed +23", "Instinct +31", "Vitality +23", "Lightning Defense +29"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 22.0
-price = 1083.0
+required_level = 22
+price = 1083
 price_modifier = 1.0
 stats = {
 "attributes": {

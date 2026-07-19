@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://7nvn68f3q0hk"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://7nvn68f3q0hk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_276xd"]
-[ext_resource type="Texture2D" uid="uid://xx43r3myfuer" path="res://resources/sprites/M_HEAD_ULTI2.png" id="2_2kl1m"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ydhbn"]
+[ext_resource type="Texture2D" uid="uid://btmm5pb0vix6b" path="res://assets/item_slot_icons/HELMS/Cryptic_Helm.png" id="2_a1x2b"]
 
 [resource]
-script = ExtResource("1_276xd")
-id = 699.0
-looks = "ULTI2"
-sprite_image = ExtResource("2_2kl1m")
+script = ExtResource("1_ydhbn")
+id = 699
+slot_image = ExtResource("2_a1x2b")
 name = "Cryptic Helm"
 display_name = "Cryptic Helm"
 internal_name = "Drop ULTI2 Head"
-tooltip = ""
+looks = "ULTI2"
 tooltipAlt = ["Speed +12", "Instinct +71", "Strength +12", "Vitality +24"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 28.0
-price = 1556.0
+required_level = 28
+price = 1556
 price_modifier = 1.0
 stats = {
 "attributes": {

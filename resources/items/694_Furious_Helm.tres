@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b35wdfhd6ieoi"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b35wdfhd6ieoi"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tcbc6"]
-[ext_resource type="Texture2D" uid="uid://c5o6flh23q6n1" path="res://resources/sprites/M_HEAD_ULTI.png" id="2_e3wyi"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lth3w"]
+[ext_resource type="Texture2D" uid="uid://n7frn403rvvy" path="res://assets/item_slot_icons/HELMS/Furious_Helm.png" id="2_22tiy"]
 
 [resource]
-script = ExtResource("1_tcbc6")
-id = 694.0
-looks = "ULTI"
-sprite_image = ExtResource("2_e3wyi")
+script = ExtResource("1_lth3w")
+id = 694
+slot_image = ExtResource("2_22tiy")
 name = "Furious Helm"
 display_name = "Furious Helm"
 internal_name = "Drop ULTI Head"
-tooltip = ""
+looks = "ULTI"
 tooltipAlt = ["Speed +12", "Instinct +12", "Strength +71", "Vitality +24"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 28.0
-price = 1556.0
+required_level = 28
+price = 1556
 price_modifier = 1.0
 stats = {
 "attributes": {

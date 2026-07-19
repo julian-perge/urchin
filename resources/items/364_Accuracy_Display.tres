@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cuqn4sy8kenqw"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cuqn4sy8kenqw"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bnwhn"]
-[ext_resource type="Texture2D" uid="uid://b14j0lsl8a3qp" path="res://resources/sprites/M_HEAD_ZPCI2.png" id="2_mvdcw"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j6hv8"]
+[ext_resource type="Texture2D" uid="uid://cef4wpsivttah" path="res://assets/item_slot_icons/HELMS/Accuracy_Display.png" id="2_s2uuc"]
 
 [resource]
-script = ExtResource("1_bnwhn")
-id = 364.0
-looks = "ZPCI2"
-sprite_image = ExtResource("2_mvdcw")
+script = ExtResource("1_j6hv8")
+id = 364
+slot_image = ExtResource("2_s2uuc")
 name = "Accuracy Display"
 display_name = "Accuracy Display"
 internal_name = "Accuracy Display"
+looks = "ZPCI2"
 tooltip = "It even calculates wind speed."
 tooltipAlt = ["Speed +4", "Instinct +2", "Strength +7", "Vitality +12"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 383.0
+required_level = 11
+price = 383
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://c4s4as1logns"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_36xp0"]
+
+[resource]
+script = ExtResource("1_36xp0")
+id = 45
+name = "The Real Hobo"
+vitality = 300.0
+strength = 100.0
+magic = 100.0
+speed = 15.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [567, 568, 569, 570, 571],
+"defense": [2]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 0.0],
+"model": ["MODEL1", "MAN", "", "M"],
+"skin": "HOBO",
+"voice": {
+"die": "dead_bug",
+"hit": ["hit_bug1", "hit_bug2", "hit_bug3"]
+}
+}

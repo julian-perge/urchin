@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://5fi63y12pbf7"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://5fi63y12pbf7"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rxuyi"]
-[ext_resource type="Texture2D" uid="uid://b3qdcjy2ir3tb" path="res://resources/sprites/M_FOOT_XADER.png" id="2_n6bww"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_cge31"]
+[ext_resource type="Texture2D" uid="uid://dtk850scl2bnu" path="res://assets/item_slot_icons/SHOES/Zealots_Marcher.png" id="2_5gw6q"]
 
 [resource]
-script = ExtResource("1_rxuyi")
-id = 334.0
-looks = "XADER"
-sprite_image = ExtResource("2_n6bww")
+script = ExtResource("1_cge31")
+id = 334
+slot_image = ExtResource("2_5gw6q")
 name = "Zealot's Marcher"
 display_name = "Zealot's Marcher"
 internal_name = "Zealot's Marchers"
-tooltip = ""
+looks = "XADER"
 tooltipAlt = ["Speed +2", "Instinct +1", "Strength +4", "Vitality +6"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 9.0
-price = 203.0
+required_level = 9
+price = 203
 price_modifier = 1.0
 stats = {
 "attributes": {

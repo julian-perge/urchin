@@ -1,0 +1,98 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dr740e17glj1w"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_psc8j"]
+
+[resource]
+script = ExtResource("1_psc8j")
+id = 601
+id_name = "KBR601"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 660.0,
+"name": "Platinum Cage"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 665.0,
+"name": "Memory Plates"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 673.0,
+"name": "Flex Footwear"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 678.0,
+"name": "Mending Beacon"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 680.0,
+"name": "Blast Shield"
+}
+}]
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": true,
+"life": -1.0,
+"player": 2.0,
+"turn": 60.0,
+"winOrLose": 0.0
+}
+}
+players = [{
+"id": 74.0,
+"name": "The Bomb"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [24.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "ROME"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "60... 59...",
+"timeToSay": 2.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "It's a bomb! Quick, dismantle it before it explodes!",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "30... 29...",
+"timeToSay": 2.0,
+"turnTime": 30.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "5... 4...",
+"timeToSay": 2.0,
+"turnTime": 55.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "CHURCH"

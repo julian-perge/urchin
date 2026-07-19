@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cgj38ivm21mdg"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cgj38ivm21mdg"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4hlji"]
-[ext_resource type="Texture2D" uid="uid://bttaifonhfjt7" path="res://resources/sprites/M_FOOT_JEANS.png" id="2_pc0j6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_o1x5k"]
+[ext_resource type="Texture2D" uid="uid://dwty0kv7k3jcl" path="res://assets/item_slot_icons/OTHER/Proverse_All_Stars.png" id="2_qrm70"]
 
 [resource]
-script = ExtResource("1_4hlji")
-id = 8.0
-looks = "JEANS"
-sprite_image = ExtResource("2_pc0j6")
+script = ExtResource("1_o1x5k")
+id = 8
+slot_image = ExtResource("2_qrm70")
 name = "Proverse All Stars"
 display_name = "Proverse All Stars"
 internal_name = "Converse All Stars"
+looks = "JEANS"
 tooltip = "It's time to get some new shoes."
 tooltipAlt = ["Speed +3"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 8.0
+required_level = 1
+price = 8
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://5g6ikxfj4p4f"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://5g6ikxfj4p4f"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n84vy"]
-[ext_resource type="Texture2D" uid="uid://sper3uvlptby" path="res://resources/sprites/M_HAND_MADSCI.png" id="2_fkck5"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6ckfr"]
+[ext_resource type="Texture2D" uid="uid://2d2kmrvdiu77" path="res://assets/item_slot_icons/OTHER/Torn_Sleeves.png" id="2_8cixe"]
 
 [resource]
-script = ExtResource("1_n84vy")
-id = 308.0
-looks = "MADSCI"
-sprite_image = ExtResource("2_fkck5")
+script = ExtResource("1_6ckfr")
+id = 308
+slot_image = ExtResource("2_8cixe")
 name = "Torn Sleeves"
 display_name = "Torn Sleeves"
 internal_name = "Doctor's Grasp"
+looks = "MADSCI"
 tooltip = "The rest of the lab-coat is missing."
 tooltipAlt = ["Speed +2", "Instinct +3", "Vitality +1"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 3.0
-price = 39.0
+required_level = 3
+price = 39
 price_modifier = 1.0
 stats = {
 "attributes": {

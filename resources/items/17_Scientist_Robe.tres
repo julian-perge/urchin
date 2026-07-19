@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://fi746ca01bsl"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://fi746ca01bsl"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ndcus"]
-[ext_resource type="Texture2D" uid="uid://b6f7xkgs3vgct" path="res://resources/sprites/M_CHEST_MADSCI.png" id="2_k40s6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_teka6"]
 
 [resource]
-script = ExtResource("1_ndcus")
-id = 17.0
-looks = "MADSCI"
-sprite_image = ExtResource("2_k40s6")
-name = ""
+script = ExtResource("1_teka6")
+id = 17
 display_name = "Scientist Robe"
 internal_name = "Scientist Robe"
-tooltip = ""
+looks = "MADSCI"
 tooltipAlt = ["Strength +1", "Vitality +1", "Physical Piercing +2"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 11.0
+required_level = 1
+price = 11
 price_modifier = 1.0
 stats = {
 "attributes": {

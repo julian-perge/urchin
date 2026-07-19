@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://fbeowo3w4r8j"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://fbeowo3w4r8j"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gnl4n"]
-[ext_resource type="Texture2D" uid="uid://b8nt2p16vu5qs" path="res://resources/sprites/M_WEAPON_BATON2.png" id="2_rbv84"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tek4r"]
+[ext_resource type="Texture2D" uid="uid://22t3gjflri86" path="res://assets/item_slot_icons/WEAPONS/Persecution.png" id="2_o07v4"]
 
 [resource]
-script = ExtResource("1_gnl4n")
-id = 504.0
-looks = "BATON2"
-sprite_image = ExtResource("2_rbv84")
+script = ExtResource("1_tek4r")
+id = 504
+slot_image = ExtResource("2_o07v4")
 name = "Persecution"
 display_name = "Persecution"
 internal_name = "Persecution"
+looks = "BATON2"
 tooltip = "An instrument of fiery justice."
 tooltipAlt = ["Speed +7", "Instinct +5", "Strength +12", "Vitality +7"]
 item_type = 9
 rarity = 2
 class_type = 1
-required_level = 5.0
-price = 1006.0
+required_level = 5
+price = 1006
 price_modifier = 3.0
 stats = {
 "attributes": {

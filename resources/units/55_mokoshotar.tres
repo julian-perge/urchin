@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://bgcyf71ygi8il"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_nv3bp"]
+
+[resource]
+script = ExtResource("1_nv3bp")
+id = 55
+name = "Mokoshotar"
+vitality = 210.0
+strength = 37.0
+magic = 37.0
+speed = 15.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 623,
+"phase": 0
+}],
+"attack": [628, 624, 625, 626, 627],
+"defense": [2]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 30.0, 15.0],
+"defense": [100.0, 100.0, 150.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL5", "MOKO", "", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_monster",
+"hit": ["hit_monster1", "hit_monster2", "hit_monster3"]
+}
+}

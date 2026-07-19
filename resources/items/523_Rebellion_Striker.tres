@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b62aj452oqnca"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b62aj452oqnca"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_v5krg"]
-[ext_resource type="Texture2D" uid="uid://b4mdlwx5we0x3" path="res://resources/sprites/M_WEAPON_AK.png" id="2_3w8n0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_smnp8"]
+[ext_resource type="Texture2D" uid="uid://bkebx0um4qxng" path="res://assets/item_slot_icons/WEAPONS/Rebellion_Striker.png" id="2_ibuao"]
 
 [resource]
-script = ExtResource("1_v5krg")
-id = 523.0
-looks = "AK"
-sprite_image = ExtResource("2_3w8n0")
+script = ExtResource("1_smnp8")
+id = 523
+slot_image = ExtResource("2_ibuao")
 name = "Rebellion Striker"
 display_name = "Rebellion Striker"
 internal_name = "Rebellion Striker"
+looks = "AK"
 tooltip = "Seems to be modelled after the AK47."
 tooltipAlt = ["Speed +16", "Strength +16", "Fire Piercing +89", "Poison Piercing +89"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 1094.0
+required_level = 11
+price = 1094
 price_modifier = 1.0
 stats = {
 "attributes": {

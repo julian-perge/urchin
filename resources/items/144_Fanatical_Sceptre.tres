@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://b2k42phyt8ehk"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b2k42phyt8ehk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3jv33"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_labl0"]
 
 [resource]
-script = ExtResource("1_3jv33")
-id = 144.0
-looks = ""
-name = ""
+script = ExtResource("1_labl0")
+id = 144
 display_name = "Fanatical Sceptre"
 internal_name = "Fanatical Sceptre"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +5", "Instinct +13", "Strength +4", "Vitality +5", "Lightning Defense +11", "Earth Defense +11"]
 item_type = 7
 rarity = 1
 class_type = 1
-required_level = 7.0
-price = 17779.0
+required_level = 7
+price = 17779
 price_modifier = 64.0
 stats = {
 "attributes": {

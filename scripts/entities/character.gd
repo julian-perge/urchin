@@ -13,6 +13,7 @@ class_name Character
 #var abilities = []
 #var buffs = []
 
+@export var id: int
 @export var name: String
 @export var vitality: float
 @export var strength: float

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://citei4ge71a25"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://citei4ge71a25"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_t6h2r"]
-[ext_resource type="Texture2D" uid="uid://da7b2gopf5hfq" path="res://resources/sprites/M_HEAD_ROBOT2.png" id="2_t5cvs"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sn6tx"]
+[ext_resource type="Texture2D" uid="uid://bms177xwaxm3i" path="res://assets/item_slot_icons/HELMS/Guardians_Helm.png" id="2_xodvc"]
 
 [resource]
-script = ExtResource("1_t6h2r")
-id = 704.0
-looks = "ROBOT2"
-sprite_image = ExtResource("2_t5cvs")
+script = ExtResource("1_sn6tx")
+id = 704
+slot_image = ExtResource("2_xodvc")
 name = "Guardian's Helm"
 display_name = "Guardian's Helm"
 internal_name = "Drop ROBOT2 Head"
-tooltip = ""
+looks = "ROBOT2"
 tooltipAlt = ["Speed +36", "Vitality +47", "Fire Defense +113"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 28.0
-price = 1556.0
+required_level = 28
+price = 1556
 price_modifier = 1.0
 stats = {
 "attributes": {

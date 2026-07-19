@@ -17,6 +17,19 @@ func _ready():
 	$AnimationPlayer.stop()
 	$AnimationPlayer.play("spin")
 	setup_orb()
+	# Reliable click path: the Area2D's input_event only fires when no Control
+	# above it consumes the mouse, which full-rect scene layouts always do.
+	# Size the (otherwise zero-sized) Control child into a centered hit box
+	# and take clicks through the GUI system instead.
+	var hit_box: Control = $Control
+	hit_box.position = Vector2(-60, -60)
+	hit_box.size = Vector2(120, 120)
+	hit_box.tooltip_text = tooltip_text
+	hit_box.gui_input.connect(_on_hit_box_input)
+
+func _on_hit_box_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		interact()
 	
 func setup_orb():
 	print("Setting up orb color %s for %s" % [orb_color, name])

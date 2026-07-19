@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b4bm0yxqwdm1w"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b4bm0yxqwdm1w"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_utlgf"]
-[ext_resource type="Texture2D" uid="uid://b2xearc5okn42" path="res://resources/sprites/M_HEAD_HUNT.png" id="2_3ccts"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4lsxj"]
+[ext_resource type="Texture2D" uid="uid://b73rsd321ckpw" path="res://assets/item_slot_icons/HELMS/Eliminators_Sight.png" id="2_kbq77"]
 
 [resource]
-script = ExtResource("1_utlgf")
-id = 369.0
-looks = "HUNT"
-sprite_image = ExtResource("2_3ccts")
+script = ExtResource("1_4lsxj")
+id = 369
+slot_image = ExtResource("2_kbq77")
 name = "Eliminator's Sight"
 display_name = "Eliminator's Sight"
 internal_name = "Eliminator's Sight"
-tooltip = ""
+looks = "HUNT"
 tooltipAlt = ["Speed +9", "Strength +12", "Vitality +7"]
 item_type = 2
 rarity = 2
 class_type = 1
-required_level = 11.0
-price = 383.0
+required_level = 11
+price = 383
 price_modifier = 1.0
 stats = {
 "attributes": {

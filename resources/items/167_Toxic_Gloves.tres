@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://b6s5fh3mlhgli"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b6s5fh3mlhgli"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_k4xfp"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_joji3"]
 
 [resource]
-script = ExtResource("1_k4xfp")
-id = 167.0
-looks = ""
-name = ""
+script = ExtResource("1_joji3")
+id = 167
 display_name = "Toxic Gloves"
 internal_name = "Toxic Gloves"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +6", "Instinct +6", "Strength +9", "Vitality +6", "Lightning Defense +6", "Earth Defense +6"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 9.0
-price = 28755.0
+required_level = 9
+price = 28755
 price_modifier = 142.0
 stats = {
 "attributes": {

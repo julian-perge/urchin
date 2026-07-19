@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bdko2ch8u48mm"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bdko2ch8u48mm"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sqgyu"]
-[ext_resource type="Texture2D" uid="uid://c4u6grh0t4rd1" path="res://resources/sprites/M_WEAPON_FLATBLADE.png" id="2_p1ife"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vf8y8"]
+[ext_resource type="Texture2D" uid="uid://d78syu3xjrj8" path="res://assets/item_slot_icons/WEAPONS/Azure_Defender.png" id="2_fyrll"]
 
 [resource]
-script = ExtResource("1_sqgyu")
-id = 657.0
-looks = "FLATBLADE"
-sprite_image = ExtResource("2_p1ife")
+script = ExtResource("1_vf8y8")
+id = 657
+slot_image = ExtResource("2_fyrll")
 name = "Azure Defender"
 display_name = "Azure Defender"
 internal_name = "BLUE SWORD 2"
-tooltip = ""
+looks = "FLATBLADE"
 tooltipAlt = ["Speed +41", "Instinct +21", "Strength +21", "Vitality +21"]
 item_type = 8
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 1444.0
+required_level = 21
+price = 1444
 price_modifier = 1.0
 stats = {
 "attributes": {

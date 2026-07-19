@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ms4d55esoevq"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ms4d55esoevq"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_k8yo4"]
-[ext_resource type="Texture2D" uid="uid://t36mjms8qfj6" path="res://resources/sprites/M_HAND_ROBOT.png" id="2_ygdsw"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2knap"]
+[ext_resource type="Texture2D" uid="uid://byhiulfjq006o" path="res://assets/item_slot_icons/GLOVES/Titanium_Grips.png" id="2_46fv2"]
 
 [resource]
-script = ExtResource("1_k8yo4")
-id = 614.0
-looks = "ROBOT"
-sprite_image = ExtResource("2_ygdsw")
+script = ExtResource("1_2knap")
+id = 614
+slot_image = ExtResource("2_46fv2")
 name = "Titanium Grips"
 display_name = "Titanium Grips"
 internal_name = "Drop ROBOT Hands"
-tooltip = ""
+looks = "ROBOT"
 tooltipAlt = ["Speed +13", "Instinct +18", "Vitality +21"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 722.0
+required_level = 21
+price = 722
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -24,6 +24,10 @@ enum Rarity {
 }
 
 # ["Dreadnaught","Phantom","Enigma","Templar","Phaser"]
+# DEPRECATED semantics (2026-07-18): these labels are dump-tooling junk - the
+# raw value is a required UNIT id, not a player class. Use required_unit_id
+# below for equip checks; this enum stays only because generated .tres store
+# it for display.
 enum ClassType {
 	NONE = 0,
 	DREADNAUGHT = 1,
@@ -45,6 +49,11 @@ enum ClassType {
 @export var item_type: ItemType
 @export var rarity: Rarity
 @export var class_type: ClassType
+# The real equip restriction (raw KRINITEM[3]): 0 = anyone, otherwise the
+# unit id of the only party member who can wear it (4 = Veradux's Medic/KLIMA
+# gear - the only restricted items in the game). The player's unit id is
+# player_class + 1.
+@export var required_unit_id: int
 @export var required_level: int
 @export var price: int
 @export var price_modifier: float

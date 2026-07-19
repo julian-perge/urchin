@@ -1,0 +1,56 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://d3pjb4prdapdx"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_774jy"]
+
+[resource]
+script = ExtResource("1_774jy")
+id = 1006
+id_name = "KBR1006"
+item_rare = [{
+"id": 330.0,
+"name": "Justice Helm"
+}, {
+"id": 331.0,
+"name": "Rightful Grasp"
+}, {
+"id": 332.0,
+"name": "Righteous Breastplate"
+}, {
+"id": 333.0,
+"name": "Zealot's Leggings"
+}, {
+"id": 334.0,
+"name": "Zealot's Marcher"
+}, {
+"id": 515.0,
+"name": "Light's Blade"
+}, {
+"id": 516.0,
+"name": "Metal Shield"
+}]
+item_rare_dropper = 1
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.3,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 20.0,
+"name": "Knight"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "SNOW"
+win_date = -1
+zone_background = "SNOW"

@@ -1,5 +1,7 @@
 import json
 
+import swf_models
+
 # ["EMPTY","PRISON","VILLAGE","TRAIN","TUNNELS","CITY","ROME","JAPAN","UTOPIA","JAPAN","STORM","EDEN","DOME","BETA"];
 # CHURCH
 # CHURCH2
@@ -17,11 +19,9 @@ def parse_json(parsed_dict: dict):
     """Parse the entire file handling stats that precede battle creation."""
     battles = []
 
-    with open("converted_json/converted_units_by_id.json", 'r') as f4:
-        units_by_id: dict[str, str] = json.load(f4)
+    units_by_id: dict[str, str] = swf_models.load_json("converted_json/converted_units_by_id.json")
 
-    with open("converted_json/converted_item_by_id.json", "r") as f:
-        items_by_ids: dict = json.load(f)
+    items_by_ids: dict = swf_models.load_json("converted_json/converted_item_by_id.json")
 
     # Find all items in this block
     for idx, json_block in parsed_dict.items():
@@ -69,7 +69,17 @@ def parse_json(parsed_dict: dict):
         item_rare_dropper2: int = _root.get("item_rare_dropper2")
         item_rare_dropper3: int = _root.get("item_rare_dropper3")
 
-        phases: str = _root.get("phases", {}).get("denseValues", {})
+        # Boss-phase entries. Slot "0" is the "EMPTY" placeholder; real entries
+        # start at "1" as {player, life, teamLeft?, turn?, endGame, winOrLose}.
+        # Unwrap the AVM {"type": "Object", "members": {...}} envelopes so the
+        # consumer (BattleRunner) reads plain dictionaries.
+        phases_raw = _root.get("phases", {}).get("denseValues", {})
+        phases = {}
+        for phase_index, phase_entry in phases_raw.items():
+            if isinstance(phase_entry, dict) and "members" in phase_entry:
+                phases[phase_index] = phase_entry["members"]
+            else:
+                phases[phase_index] = phase_entry
 
         players = list(_root.get("players", {}).get("denseValues", {}).values())
         u_players = []
@@ -125,8 +135,7 @@ def parse_json(parsed_dict: dict):
 
 def convert_to_json(input_file, output_file):
     """Convert full ActionScript item definitions to JSON."""
-    with open(input_file, "r") as f:
-        content: dict = json.load(f)
+    content: dict = swf_models.load_json(input_file)
 
     items = parse_json(content.get("BATTLES", {}).get("denseValues"))
 

@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d06lslvogm3dj"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d06lslvogm3dj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_aevcx"]
-[ext_resource type="Texture2D" uid="uid://byr3jqtmqcvdn" path="res://resources/sprites/M_HEAD_HOBO.png" id="2_uk4lr"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lggeo"]
+[ext_resource type="Texture2D" uid="uid://cuetkfhoxbnf6" path="res://assets/item_slot_icons/HELMS/Beard.png" id="2_63r1p"]
 
 [resource]
-script = ExtResource("1_aevcx")
-id = 374.0
-looks = "HOBO"
-sprite_image = ExtResource("2_uk4lr")
+script = ExtResource("1_lggeo")
+id = 374
+slot_image = ExtResource("2_63r1p")
 name = "Beard"
 display_name = "Beard"
 internal_name = "Do Rag"
+looks = "HOBO"
 tooltip = "The Hobo's beard."
 tooltipAlt = ["Speed +12", "Instinct +8", "Strength +8", "Vitality +3"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 13.0
-price = 492.0
+required_level = 13
+price = 492
 price_modifier = 1.0
 stats = {
 "attributes": {

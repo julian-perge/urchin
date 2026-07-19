@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b6cebeciy1b0u"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b6cebeciy1b0u"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6u02n"]
-[ext_resource type="Texture2D" uid="uid://bbtvd63tcn73o" path="res://resources/sprites/M_CHEST_HUNT.png" id="2_ru0cx"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3hd4i"]
+[ext_resource type="Texture2D" uid="uid://gpms4cbg0fpa" path="res://assets/item_slot_icons/ARMOR/Juggernauts_Panzer.png" id="2_x4i0v"]
 
 [resource]
-script = ExtResource("1_6u02n")
-id = 365.0
-looks = "HUNT"
-sprite_image = ExtResource("2_ru0cx")
+script = ExtResource("1_3hd4i")
+id = 365
+slot_image = ExtResource("2_x4i0v")
 name = "Juggernaut's Panzer"
 display_name = "Juggernaut's Panzer"
 internal_name = "Juggernaut's Panzer"
-tooltip = ""
+looks = "HUNT"
 tooltipAlt = ["Speed +4", "Instinct +2", "Strength +7", "Vitality +15"]
 item_type = 3
 rarity = 2
 class_type = 1
-required_level = 11.0
-price = 383.0
+required_level = 11
+price = 383
 price_modifier = 1.0
 stats = {
 "attributes": {

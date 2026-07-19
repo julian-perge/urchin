@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cokxxkcn44jng"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_id6tk"]
+
+[resource]
+script = ExtResource("1_id6tk")
+id = 400
+id_name = "KBR400"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 602.0,
+"name": "Poseidon's Fury"
+}
+}]
+item_rare = [{
+"id": 573.0,
+"name": "Night Vision"
+}, {
+"id": 581.0,
+"name": "Bone Braces"
+}, {
+"id": 585.0,
+"name": "Toxic Clutch"
+}, {
+"id": 591.0,
+"name": "Spark Leggings"
+}]
+item_rare_dropper = 1
+players = [{
+"id": 50.0,
+"name": "Tunnel Beast"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [16.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "TUNNEL"
+speeches = [{
+"phase": 1.0,
+"player": 1.0,
+"say": "Just our luck. Why does everything break around us?",
+"timeToSay": 4.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v4_1"
+}, {
+"phase": 1.0,
+"player": "Veradux",
+"say": "At least we got those ZPCI off our backs. They don't seem to be following us anymore.",
+"timeToSay": 5.0,
+"turnTime": 3.0,
+"turnTime2": 0.0,
+"voiceOver": "v4_2"
+}]
+win_date = -1
+zone_background = "TUNNEL"

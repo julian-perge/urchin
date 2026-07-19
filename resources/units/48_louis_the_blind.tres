@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://b6cm6j1ini65p"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_g1pnx"]
+
+[resource]
+script = ExtResource("1_g1pnx")
+id = 48
+name = "Louis the Blind"
+vitality = 100.0
+strength = 10.0
+magic = 10.0
+speed = 16.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [0],
+"defense": [0]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 11.0, 0.0, 4.0, 8.0, 0.0, 0.0],
+"model": ["MODEL1", "MAN", "BART", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

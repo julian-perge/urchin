@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://b8xww2kh78xmo"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b8xww2kh78xmo"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8i8rb"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mwwuy"]
 
 [resource]
-script = ExtResource("1_8i8rb")
-id = 186.0
-looks = ""
-name = ""
+script = ExtResource("1_mwwuy")
+id = 186
 display_name = "Handler's Gloves"
 internal_name = "Handler's Gloves"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +12", "Instinct +9", "Strength +12", "Vitality +7", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 78566.0
+required_level = 12
+price = 78566
 price_modifier = 252.0
 stats = {
 "attributes": {

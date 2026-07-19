@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b3i2saiui2nl5"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b3i2saiui2nl5"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qjlo7"]
-[ext_resource type="Texture2D" uid="uid://dpjg30tmmdnlt" path="res://resources/sprites/M_HAND_ZPCI3.png" id="2_hhn2t"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hwhhq"]
+[ext_resource type="Texture2D" uid="uid://bddn24ovrubrx" path="res://assets/item_slot_icons/WEAPONS/Medic-B_Gloves.png" id="2_muevg"]
 
 [resource]
-script = ExtResource("1_qjlo7")
-id = 36.0
-looks = "ZPCI3"
-sprite_image = ExtResource("2_hhn2t")
+script = ExtResource("1_hwhhq")
+id = 36
+slot_image = ExtResource("2_muevg")
 name = "Medic-B Gloves"
 display_name = "Medic-B Gloves"
 internal_name = "Medic Hands"
-tooltip = ""
+looks = "ZPCI3"
 tooltipAlt = ["Speed +1", "Strength +2", "Vitality +1", "Lightning Piercing +6"]
 item_type = 4
-rarity = 0
 class_type = 5
-required_level = 1.0
-price = 8.0
+required_unit_id = 4
+required_level = 1
+price = 8
 price_modifier = 1.0
 stats = {
 "attributes": {

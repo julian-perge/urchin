@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cyjlqruarcp2o"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cyjlqruarcp2o"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sl3a0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2eftg"]
 
 [resource]
-script = ExtResource("1_sl3a0")
-id = 185.0
-looks = ""
-name = ""
+script = ExtResource("1_2eftg")
+id = 185
 display_name = "Vicious Tooth"
 internal_name = "Vicious Tooth"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +10", "Instinct +17", "Strength +24", "Vitality +10", "Lightning Defense +14", "Earth Defense +14"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 155261.0
+required_level = 12
+price = 155261
 price_modifier = 249.0
 stats = {
 "attributes": {

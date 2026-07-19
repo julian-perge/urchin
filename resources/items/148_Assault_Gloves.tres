@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://c1u88ni8k6v20"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c1u88ni8k6v20"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j6lb7"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_pjm7a"]
 
 [resource]
-script = ExtResource("1_j6lb7")
-id = 148.0
-looks = ""
-name = ""
+script = ExtResource("1_pjm7a")
+id = 148
 display_name = "Assault Gloves"
 internal_name = "Assault Gloves"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +6", "Instinct +3", "Strength +5", "Vitality +4", "Lightning Defense +5", "Earth Defense +5"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 7.0
-price = 10695.0
+required_level = 7
+price = 10695
 price_modifier = 77.0
 stats = {
 "attributes": {

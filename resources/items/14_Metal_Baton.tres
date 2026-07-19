@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bbxn0xb8p0oby"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bbxn0xb8p0oby"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_c6we4"]
-[ext_resource type="Texture2D" uid="uid://bspqugh0i112u" path="res://resources/sprites/M_WEAPON_BATON.png" id="2_7q7pp"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_byqeb"]
 
 [resource]
-script = ExtResource("1_c6we4")
-id = 14.0
-looks = "BATON"
-sprite_image = ExtResource("2_7q7pp")
-name = ""
+script = ExtResource("1_byqeb")
+id = 14
 display_name = "Metal Baton"
 internal_name = "Metal Baton"
-tooltip = ""
+looks = "BATON"
 tooltipAlt = ["Strength +1", "Vitality +1", "Physical Piercing +2"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 15.0
+required_level = 1
+price = 15
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -186,22 +186,16 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.6,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.6,
+          "player": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.15,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.15,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -345,13 +339,10 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.35000000000000003,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.35000000000000003,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -408,7 +399,8 @@
           "id": -2
         },
         {
-          "id": 15
+          "id": 15,
+          "name": "Doctor Hedger"
         },
         {
           "id": -1
@@ -917,13 +909,10 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.3,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.3,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -1095,31 +1084,22 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.6,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.6,
+          "player": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.15,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.15,
+          "player": 2,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -1201,7 +1181,8 @@
           "id": -2
         },
         {
-          "id": 15
+          "id": 15,
+          "name": "Doctor Hedger"
         },
         {
           "id": -1
@@ -1373,31 +1354,22 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.5,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.5,
+          "player": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.35000000000000003,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.35000000000000003,
+          "player": 2,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": true,
-            "life": 0.1,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": true,
+          "life": 0.1,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -1440,7 +1412,7 @@
         {
           "phase": 3,
           "player": 2,
-          "say": "You\u00e2\u20ac\u2122re not getting that tape!",
+          "say": "You\u2019re not getting that tape!",
           "timeToSay": 2.3000000000000003,
           "turnTime": 0,
           "turnTime2": 0,
@@ -1570,14 +1542,11 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": true,
-            "life": 0.1,
-            "player": 2,
-            "turn": 3,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": true,
+          "life": 0.1,
+          "player": 2,
+          "turn": 3,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -1648,7 +1617,7 @@
         {
           "phase": 2,
           "player": 2,
-          "say": "We were a group of people devoted to find a cure for... your condition. But things started happening\u00e2\u20ac\u00a6 ",
+          "say": "We were a group of people devoted to find a cure for... your condition. But things started happening\u2026 ",
           "timeToSay": 7,
           "turnTime": 0,
           "turnTime2": 4,
@@ -1657,7 +1626,7 @@
         {
           "phase": 2,
           "player": 2,
-          "say": "Assassinations\u00e2\u20ac\u00a6 Kidnappings\u00e2\u20ac\u00a6 Someone didn't want us to continue our research.",
+          "say": "Assassinations\u2026 Kidnappings\u2026 Someone didn't want us to continue our research.",
           "timeToSay": 7,
           "turnTime": 0,
           "turnTime2": 5,
@@ -1666,7 +1635,7 @@
         {
           "phase": 2,
           "player": 4,
-          "say": "Those of us that survived \u00e2\u20ac\u201c we fled from the Utopia, and ended up hiding here.",
+          "say": "Those of us that survived \u2013 we fled from the Utopia, and ended up hiding here.",
           "timeToSay": 4.5,
           "turnTime": 0,
           "turnTime2": 6,
@@ -1702,7 +1671,7 @@
         {
           "phase": 2,
           "player": 2,
-          "say": "If you can rid us from this zealous cult \u00e2\u20ac\u201c I'll take you there myself.",
+          "say": "If you can rid us from this zealous cult \u2013 I'll take you there myself.",
           "timeToSay": 3.5,
           "turnTime": 0,
           "turnTime2": 10,
@@ -1893,13 +1862,10 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.3,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.3,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -2491,23 +2457,17 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.3,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.3,
+          "player": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": true,
-            "life": 0,
-            "player": 2,
-            "turn": 1,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": true,
+          "life": 0,
+          "player": 2,
+          "turn": 1,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -2615,32 +2575,23 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.5,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.5,
+          "player": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.2,
-            "player": 2,
-            "turn": 7,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.2,
+          "player": 2,
+          "turn": 7,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": 0.05,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.05,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -2674,7 +2625,7 @@
         {
           "phase": 1,
           "player": 2,
-          "say": "Oh, it\u00e2\u20ac\u2122s you! You always give me trouble! And here I was, having SUCH a good time.",
+          "say": "Oh, it\u2019s you! You always give me trouble! And here I was, having SUCH a good time.",
           "timeToSay": 7.5,
           "turnTime": 0,
           "turnTime2": 0,
@@ -2735,13 +2686,10 @@
       "item_rare_dropper3": 0,
       "phases": {
         "0": {
-          "members": {
-            "endGame": true,
-            "life": 0.3,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": true,
+          "life": 0.3,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -2960,32 +2908,23 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.2,
-            "player": 2,
-            "turn": 1,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.2,
+          "player": 2,
+          "turn": 1,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.5,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.5,
+          "player": 2,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": true,
-            "life": 0.15,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": true,
+          "life": 0.15,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -3004,7 +2943,8 @@
           "id": -1
         },
         {
-          "id": 34
+          "id": 34,
+          "name": "ZPCI Sniper"
         }
       ],
       "players_levels": [
@@ -3757,31 +3697,22 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.6600000000000001,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.6600000000000001,
+          "player": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.33000000000000007,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.33000000000000007,
+          "player": 2,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -3980,14 +3911,11 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.3,
-            "player": 2,
-            "turn": 10,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.3,
+          "player": 2,
+          "turn": 10,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -4213,7 +4141,7 @@
         {
           "phase": 1,
           "player": 1,
-          "say": "I\u00e2\u20ac\u2122m not amused.",
+          "say": "I\u2019m not amused.",
           "timeToSay": 1.5,
           "turnTime": 0,
           "turnTime2": 2,
@@ -4623,31 +4551,22 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.85,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.85,
+          "player": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.42,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.42,
+          "player": 2,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -4740,13 +4659,10 @@
       "item_rare_dropper3": 0,
       "phases": {
         "0": {
-          "members": {
-            "endGame": true,
-            "life": 0.3,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": true,
+          "life": 0.3,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -5069,43 +4985,31 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.85,
-            "player": 2,
-            "turn": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.85,
+          "player": 2,
+          "turn": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.85,
-            "player": 2,
-            "turn": 10,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.85,
+          "player": 2,
+          "turn": 10,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": 0.85,
-            "player": 2,
-            "turn": 11,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.85,
+          "player": 2,
+          "turn": 11,
+          "winOrLose": 1
         },
         "4": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -5153,13 +5057,10 @@
       "item_rare_dropper3": 0,
       "phases": {
         "0": {
-          "members": {
-            "endGame": true,
-            "life": 0.3,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": true,
+          "life": 0.3,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -5449,13 +5350,10 @@
       "item_rare_dropper3": 0,
       "phases": {
         "0": {
-          "members": {
-            "endGame": true,
-            "life": 0.3,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": true,
+          "life": 0.3,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -5572,23 +5470,17 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "teamLeft": 1,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "teamLeft": 1,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -5917,51 +5809,36 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "turn": 6,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "turn": 6,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.9000000000000002,
-            "player": 2,
-            "turn": 18,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.9000000000000002,
+          "player": 2,
+          "turn": 18,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": 0.6500000000000002,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.6500000000000002,
+          "player": 2,
+          "winOrLose": 1
         },
         "4": {
-          "members": {
-            "endGame": false,
-            "life": 0.3,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.3,
+          "player": 2,
+          "winOrLose": 1
         },
         "5": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -6068,31 +5945,22 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.5,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.5,
+          "player": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.15,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.15,
+          "player": 2,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -6259,14 +6127,11 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": true,
-            "life": -1,
-            "player": 2,
-            "turn": 60,
-            "winOrLose": 0
-          },
-          "type": "Object"
+          "endGame": true,
+          "life": -1,
+          "player": 2,
+          "turn": 60,
+          "winOrLose": 0
         }
       },
       "players": [
@@ -6381,60 +6246,42 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.75,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.75,
+          "player": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "turn": 4,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "turn": 4,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": 0.5,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.5,
+          "player": 2,
+          "winOrLose": 1
         },
         "4": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "turn": 4,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "turn": 4,
+          "winOrLose": 1
         },
         "5": {
-          "members": {
-            "endGame": false,
-            "life": 0.25,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.25,
+          "player": 2,
+          "winOrLose": 1
         },
         "6": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -6531,13 +6378,10 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -6650,23 +6494,17 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "turn": 4,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "turn": 4,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -6796,33 +6634,24 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "turn": 1,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "turn": 1,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "teamLeft": 1,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "teamLeft": 1,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": -1,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": -1,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -6925,23 +6754,17 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "turn": 1,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "turn": 1,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": -1,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": -1,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -7036,23 +6859,17 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "teamLeft": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "teamLeft": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": true,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": true,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -7266,31 +7083,22 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.6,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.6,
+          "player": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.15,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.15,
+          "player": 2,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -7569,13 +7377,10 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.3,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.3,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -7912,32 +7717,23 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.5,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.5,
+          "player": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.2,
-            "player": 2,
-            "turn": 7,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.2,
+          "player": 2,
+          "turn": 7,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": 0.05,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.05,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -9023,43 +8819,31 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0.85,
-            "player": 2,
-            "turn": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.85,
+          "player": 2,
+          "turn": 2,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0.85,
-            "player": 2,
-            "turn": 10,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.85,
+          "player": 2,
+          "turn": 10,
+          "winOrLose": 1
         },
         "3": {
-          "members": {
-            "endGame": false,
-            "life": 0.85,
-            "player": 2,
-            "turn": 11,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0.85,
+          "player": 2,
+          "turn": 11,
+          "winOrLose": 1
         },
         "4": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [
@@ -9137,23 +8921,17 @@
       "phases": {
         "0": "EMPTY",
         "1": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "teamLeft": 1,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "teamLeft": 1,
+          "winOrLose": 1
         },
         "2": {
-          "members": {
-            "endGame": false,
-            "life": 0,
-            "player": 2,
-            "winOrLose": 1
-          },
-          "type": "Object"
+          "endGame": false,
+          "life": 0,
+          "player": 2,
+          "winOrLose": 1
         }
       },
       "players": [

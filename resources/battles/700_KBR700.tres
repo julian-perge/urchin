@@ -1,0 +1,80 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dsk3r52b2kr20"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_ds2c2"]
+
+[resource]
+script = ExtResource("1_ds2c2")
+id = 700
+id_name = "KBR700"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 684.0,
+"name": "Surgeon's Visage"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 685.0,
+"name": "Surgeon's Shelter"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 686.0,
+"name": "Surgeon's Dexterity"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 687.0,
+"name": "Surgeon's Leggings"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 688.0,
+"name": "Surgeon's Boots"
+}
+}]
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"turn": 4.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 78.0,
+"name": "Doctor Klima"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [22.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "TUNNEL"
+speeches = [{
+"phase": 1.0,
+"player": 1.0,
+"say": "Hey! That suit would look really good on Veradux. Mind if we take it?",
+"timeToSay": 4.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "STREETS"

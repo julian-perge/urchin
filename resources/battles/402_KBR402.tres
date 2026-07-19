@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dmtl7de0n7mk5"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_e12w1"]
+
+[resource]
+script = ExtResource("1_e12w1")
+id = 402
+id_name = "KBR402"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 602.0,
+"name": "Poseidon's Fury"
+}
+}]
+item_rare3 = [{
+"id": 577.0,
+"name": "Black-Ops Boots"
+}, {
+"id": 587.0,
+"name": "Venomsteel Greaves"
+}, {
+"id": 589.0,
+"name": "Charged Armor"
+}, {
+"id": 597.0,
+"name": "Flower Shoes"
+}]
+item_rare_dropper3 = 1
+players = [{
+"id": 52.0,
+"name": "Gregor"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [17.0, 0.0, 0.0, 0.0, 0.0]
+sky_background = "TUNNEL"
+speeches = [{
+"phase": 1.0,
+"player": "Roald",
+"say": "The air in here... it feels different.",
+"timeToSay": 4.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v4_4"
+}]
+win_date = -1
+zone_background = "TUNNEL"

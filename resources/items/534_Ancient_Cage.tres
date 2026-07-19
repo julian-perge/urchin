@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dysrb2lu5w8p2"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dysrb2lu5w8p2"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6tbrq"]
-[ext_resource type="Texture2D" uid="uid://d3kowxtaw2wly" path="res://resources/sprites/M_CHEST_SAMURAI4.png" id="2_8sqah"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jy1rj"]
+[ext_resource type="Texture2D" uid="uid://bcvc6841s2h3" path="res://assets/item_slot_icons/ARMOR/Ancient_Cage.png" id="2_oqj5e"]
 
 [resource]
-script = ExtResource("1_6tbrq")
-id = 534.0
-looks = "SAMURAI4"
-sprite_image = ExtResource("2_8sqah")
+script = ExtResource("1_jy1rj")
+id = 534
+slot_image = ExtResource("2_oqj5e")
 name = "Ancient Cage"
 display_name = "Ancient Cage"
 internal_name = "Vendor Samurai Chest"
+looks = "SAMURAI4"
 tooltip = "You can't read the writings..."
 tooltipAlt = ["Speed +7", "Instinct +12", "Strength +3", "Vitality +6"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 436.0
+required_level = 12
+price = 436
 price_modifier = 1.0
 stats = {
 "attributes": {

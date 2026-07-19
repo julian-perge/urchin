@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cmkteqd7paoj6"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cmkteqd7paoj6"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6i3fm"]
-[ext_resource type="Texture2D" uid="uid://ck6rsw37pjpl4" path="res://resources/sprites/M_WEAPON_FRANKEN.png" id="2_dckuv"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e4paa"]
+[ext_resource type="Texture2D" uid="uid://cl0yeav31566o" path="res://assets/item_slot_icons/WEAPONS/Emerald_Terror.png" id="2_is1vc"]
 
 [resource]
-script = ExtResource("1_6i3fm")
-id = 505.0
-looks = "FRANKEN"
-sprite_image = ExtResource("2_dckuv")
+script = ExtResource("1_e4paa")
+id = 505
+slot_image = ExtResource("2_is1vc")
 name = "Emerald Terror"
 display_name = "Emerald Terror"
 internal_name = "Green Terror"
+looks = "FRANKEN"
 tooltip = "It's actually made of titanium, so it's not as heavy as it looks."
 tooltipAlt = ["Strength +19", "Vitality +17"]
 item_type = 9
 rarity = 2
 class_type = 1
-required_level = 6.0
-price = 441.0
+required_level = 6
+price = 441
 price_modifier = 1.0
 stats = {
 "attributes": {

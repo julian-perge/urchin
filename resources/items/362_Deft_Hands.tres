@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cs8si3wrbweis"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cs8si3wrbweis"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_72hjb"]
-[ext_resource type="Texture2D" uid="uid://bxbhwp3lm8si4" path="res://resources/sprites/M_HAND_ZPCI2.png" id="2_3nfkv"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_33cbk"]
+[ext_resource type="Texture2D" uid="uid://dfeoa7o44dpea" path="res://assets/item_slot_icons/GLOVES/Deft_Hands.png" id="2_evi7p"]
 
 [resource]
-script = ExtResource("1_72hjb")
-id = 362.0
-looks = "ZPCI2"
-sprite_image = ExtResource("2_3nfkv")
+script = ExtResource("1_33cbk")
+id = 362
+slot_image = ExtResource("2_evi7p")
 name = "Deft Hands"
 display_name = "Deft Hands"
 internal_name = "Deft Hands"
-tooltip = ""
+looks = "ZPCI2"
 tooltipAlt = ["Speed +7", "Instinct +5", "Strength +5", "Vitality +2"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 274.0
+required_level = 11
+price = 274
 price_modifier = 1.0
 stats = {
 "attributes": {

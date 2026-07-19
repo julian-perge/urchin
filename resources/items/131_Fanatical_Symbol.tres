@@ -1,21 +1,16 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cvxwp2rt4m2f6"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cvxwp2rt4m2f6"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2n222"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qr4pd"]
 
 [resource]
-script = ExtResource("1_2n222")
-id = 131.0
-looks = ""
-name = ""
+script = ExtResource("1_qr4pd")
+id = 131
 display_name = "Fanatical Symbol"
 internal_name = "Fanatical Symbol"
-tooltip = ""
-tooltipAlt = []
-item_type = 0
-rarity = 0
+looks = ""
 class_type = 1
-required_level = 5.0
-price = 11739.0
+required_level = 5
+price = 11739
 price_modifier = 35.0
 stats = {
 "attributes": {

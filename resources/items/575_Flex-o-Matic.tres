@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://conxeyo5xrxiu"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://conxeyo5xrxiu"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ymbgp"]
-[ext_resource type="Texture2D" uid="uid://cu30bj1pam3hp" path="res://resources/sprites/M_HAND_TUNTAT.png" id="2_k0kxa"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mu3ne"]
+[ext_resource type="Texture2D" uid="uid://be4vym7lkclir" path="res://assets/item_slot_icons/GLOVES/Flex-o-Matic.png" id="2_lr53h"]
 
 [resource]
-script = ExtResource("1_ymbgp")
-id = 575.0
-looks = "TUNTAT"
-sprite_image = ExtResource("2_k0kxa")
+script = ExtResource("1_mu3ne")
+id = 575
+slot_image = ExtResource("2_lr53h")
 name = "Flex-o-Matic"
 display_name = "Flex-o-Matic"
 internal_name = "Drop BLACK OPS Hands"
-tooltip = ""
+looks = "TUNTAT"
 tooltipAlt = ["Speed +12", "Strength +6", "Physical Piercing +37"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 18.0
-price = 573.0
+required_level = 18
+price = 573
 price_modifier = 1.0
 stats = {
 "attributes": {

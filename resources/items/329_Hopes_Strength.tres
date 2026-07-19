@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bvwj1267drohm"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bvwj1267drohm"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_cdaak"]
-[ext_resource type="Texture2D" uid="uid://drvlvuvnfrcxr" path="res://resources/sprites/M_LEG2_TAT.png" id="2_aus2t"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ym6j5"]
+[ext_resource type="Texture2D" uid="uid://kntopqq0ysvv" path="res://assets/item_slot_icons/WEAPONS/Hopes_Strength.png" id="2_8knji"]
 
 [resource]
-script = ExtResource("1_cdaak")
-id = 329.0
-looks = "TAT"
-sprite_image = ExtResource("2_aus2t")
+script = ExtResource("1_ym6j5")
+id = 329
+slot_image = ExtResource("2_8knji")
 name = "Hope's Strength"
 display_name = "Hope's Strength"
 internal_name = "Hope's Strength"
+looks = "TAT"
 tooltip = "Cut together from pieces of salvaged military armor."
 tooltipAlt = ["Speed +5", "Strength +9", "Vitality +4"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 9.0
-price = 284.0
+required_level = 9
+price = 284
 price_modifier = 1.0
 stats = {
 "attributes": {

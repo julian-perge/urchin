@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bdn0mli32x77q"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bdn0mli32x77q"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6kt1v"]
-[ext_resource type="Texture2D" uid="uid://cosn46dvcj10f" path="res://resources/sprites/M_LEG2_SAMURAI2.png" id="2_lx6qq"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_12783"]
+[ext_resource type="Texture2D" uid="uid://byvsv0xeqftvq" path="res://assets/item_slot_icons/PANTS/Honor_Guards.png" id="2_im043"]
 
 [resource]
-script = ExtResource("1_6kt1v")
-id = 546.0
-looks = "SAMURAI2"
-sprite_image = ExtResource("2_lx6qq")
+script = ExtResource("1_12783")
+id = 546
+slot_image = ExtResource("2_im043")
 name = "Honor Guards"
 display_name = "Honor Guards"
 internal_name = "Drop Samurai Legs"
-tooltip = ""
+looks = "SAMURAI2"
 tooltipAlt = ["Speed +8", "Instinct +13", "Vitality +6"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 436.0
+required_level = 12
+price = 436
 price_modifier = 1.0
 stats = {
 "attributes": {

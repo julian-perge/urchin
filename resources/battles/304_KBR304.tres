@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://5de136fflhfs"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_ktbdc"]
+
+[resource]
+script = ExtResource("1_ktbdc")
+id = 304
+id_name = "KBR304"
+item_rare = [{
+"id": 374.0,
+"name": "Beard"
+}, {
+"id": 372.0,
+"name": "Upper Rags"
+}]
+item_rare_dropper = 1
+players = [{
+"id": 44.0,
+"name": "The Hobo"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [13.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "TRAIN"
+win_date = -1
+zone_background = "TRAIN"

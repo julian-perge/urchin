@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b3p3b6qb84oso"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b3p3b6qb84oso"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sdx0t"]
-[ext_resource type="Texture2D" uid="uid://dtg1hf1im06nk" path="res://resources/sprites/M_WEAPON_SPELLMACE.png" id="2_mcb5v"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4i3n6"]
+[ext_resource type="Texture2D" uid="uid://dopxyuopb2mqq" path="res://assets/item_slot_icons/WEAPONS/Light_Mace.png" id="2_kvcfx"]
 
 [resource]
-script = ExtResource("1_sdx0t")
-id = 554.0
-looks = "SPELLMACE"
-sprite_image = ExtResource("2_mcb5v")
+script = ExtResource("1_4i3n6")
+id = 554
+slot_image = ExtResource("2_kvcfx")
 name = "Light Mace"
 display_name = "Light Mace"
 internal_name = "Magic Mace"
-tooltip = ""
+looks = "SPELLMACE"
 tooltipAlt = ["Speed +15", "Instinct +22"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 624.0
+required_level = 12
+price = 624
 price_modifier = 1.0
 stats = {
 "attributes": {

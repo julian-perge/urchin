@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://brg7e06n0w07k"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://brg7e06n0w07k"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_f71d1"]
-[ext_resource type="Texture2D" uid="uid://cuknq5v267gvf" path="res://resources/sprites/M_HAND_ROBOT2.png" id="2_13ayl"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0vkie"]
+[ext_resource type="Texture2D" uid="uid://gl8ng86cac6x" path="res://assets/item_slot_icons/GLOVES/Guardians_Fist.png" id="2_kd7qt"]
 
 [resource]
-script = ExtResource("1_f71d1")
-id = 706.0
-looks = "ROBOT2"
-sprite_image = ExtResource("2_13ayl")
+script = ExtResource("1_0vkie")
+id = 706
+slot_image = ExtResource("2_kd7qt")
 name = "Guardian's Fist"
 display_name = "Guardian's Fist"
 internal_name = "Drop ROBOT2 Hands"
-tooltip = ""
+looks = "ROBOT2"
 tooltipAlt = ["Speed +26", "Fire Defense +323"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 28.0
-price = 1111.0
+required_level = 28
+price = 1111
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,0 +1,105 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dtb423nbv804u"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_rgvbq"]
+
+[resource]
+script = ExtResource("1_rgvbq")
+id = 209
+id_name = "KBR209"
+item_drops = [{
+"chance": 17.0,
+"item": {
+"id": 527.0,
+"name": "Unholy Runeblade"
+}
+}]
+item_rare = [{
+"id": 347.0,
+"name": "Usurper's Chest"
+}, {
+"id": 348.0,
+"name": "Holy Slippers"
+}, {
+"id": 349.0,
+"name": "Pretender's Leggings"
+}]
+item_rare_dropper = 1
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.5,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.2,
+"player": 2.0,
+"turn": 7.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": false,
+"life": 0.05,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 31.0,
+"name": "Baron Brixius"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [11.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "CHURCH"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "Oh, it’s you! You always give me trouble! And here I was, having SUCH a good time.",
+"timeToSay": 7.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_15"
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "Not him again!",
+"timeToSay": 1.5,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "My loyal subjects are on their way here. This time, you're mine!",
+"timeToSay": 6.5,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": "Veradux",
+"say": "Let's break this bowl of fruit before the guards arrive!",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 3.0,
+"voiceOver": ""
+}, {
+"phase": 4.0,
+"player": 2.0,
+"say": "No! Not again! I would've gotten away with it...if it weren't for you meddling kids!",
+"timeToSay": 10.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_16"
+}]
+win_date = -1
+zone_background = "CHURCH"

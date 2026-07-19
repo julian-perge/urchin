@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ddgcqvtbsk481"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ddgcqvtbsk481"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0logt"]
-[ext_resource type="Texture2D" uid="uid://clcwram1s8mir" path="res://resources/sprites/M_CHEST_CLEMONS2.png" id="2_544dj"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6e6ts"]
+[ext_resource type="Texture2D" uid="uid://bivu1635qpq73" path="res://assets/item_slot_icons/ARMOR/Charged_Armor.png" id="2_h8yys"]
 
 [resource]
-script = ExtResource("1_0logt")
-id = 589.0
-looks = "CLEMONS2"
-sprite_image = ExtResource("2_544dj")
+script = ExtResource("1_6e6ts")
+id = 589
+slot_image = ExtResource("2_h8yys")
 name = "Charged Armor"
 display_name = "Charged Armor"
 internal_name = "Drop EMPEROR Chest"
-tooltip = ""
+looks = "CLEMONS2"
 tooltipAlt = ["Speed +22", "Instinct +25", "Vitality +9", "Lightning Piercing +7"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 18.0
-price = 802.0
+required_level = 18
+price = 802
 price_modifier = 1.0
 stats = {
 "attributes": {

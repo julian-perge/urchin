@@ -13,7 +13,7 @@ class_name BattleFight
 @export var item_rare_dropper3: int
 @export var phases: Dictionary
 @export var players: Array
-@export var players_labels: Array
+@export var players_levels: Array
 @export var sky_background: String
 @export var speeches: Array[Dictionary]
 @export var time_lock: bool

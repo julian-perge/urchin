@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bbn070gunsy47"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bbn070gunsy47"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_h13uu"]
-[ext_resource type="Texture2D" uid="uid://ymkb4vrctpk2" path="res://resources/sprites/M_LEG2_TUNNELSET1.png" id="2_0io04"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8j4m5"]
+[ext_resource type="Texture2D" uid="uid://bnkfynique12j" path="res://assets/item_slot_icons/OTHER/Acidic_Leggings.png" id="2_yhq4q"]
 
 [resource]
-script = ExtResource("1_h13uu")
-id = 586.0
-looks = "TUNNELSET1"
-sprite_image = ExtResource("2_0io04")
+script = ExtResource("1_8j4m5")
+id = 586
+slot_image = ExtResource("2_yhq4q")
 name = "Acidic Leggings"
 display_name = "Acidic Leggings"
 internal_name = "Drop IRONGUARD Legs"
-tooltip = ""
+looks = "TUNNELSET1"
 tooltipAlt = ["Speed +5", "Strength +20", "Vitality +25", "Poison Piercing +6"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 17.0
-price = 736.0
+required_level = 17
+price = 736
 price_modifier = 1.0
 stats = {
 "attributes": {

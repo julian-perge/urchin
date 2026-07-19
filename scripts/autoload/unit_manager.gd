@@ -1,25 +1,37 @@
-# zone_manager.gd
+# unit_manager.gd
 extends Node2D
 
 class_name UnitManager
 
-const UNITS_FILE: String = "res://resources/units.json"
+const UNITS_DIR: String = "res://resources/units/"
 
-var units_data: Array = []
 var units: Array[Character] = []
+# Unit template id -> Character (what BattleSetup.build_units consumes).
+var units_by_id: Dictionary = {}
 
 func _ready():
 	name = "UnitManager"
-	#load_data()
-	#for _unit in units_data:
-		#units.append(Character.new(_unit))
+	load_data()
 
 func load_data() -> void:
 	print("Loading all units data")
-	var file = FileAccess.open(UNITS_FILE, FileAccess.READ)
-	var json = JSON.new()
-	var error = json.parse(file.get_as_text())
-	if error == OK:
-		units_data = json.get_data()
-	else:
-		print("JSON Parse Error: ", json.get_error_message(), " in ", UNITS_FILE, " at line ", json.get_error_line())
+	var dir = DirAccess.open(UNITS_DIR)
+	if dir == null:
+		print("Could not open ", UNITS_DIR)
+		return
+	dir.list_dir_begin()
+	var file_name = dir.get_next()
+	while file_name != "":
+		if file_name.ends_with(".tres"):
+			var unit = load(UNITS_DIR + file_name)
+			if unit is Character:
+				units.append(unit)
+				# Older generated .tres predate Character.id - the filename
+				# prefix ("15_doctor_hedger.tres") carries the id either way.
+				var unit_id = unit.id if unit.id != 0 else int(file_name.get_slice("_", 0))
+				units_by_id[unit_id] = unit
+		file_name = dir.get_next()
+	dir.list_dir_end()
+
+func get_unit(id: int) -> Character:
+	return units_by_id.get(id)

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://diddifv0yc3i2"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://diddifv0yc3i2"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2caad"]
-[ext_resource type="Texture2D" uid="uid://cgebv0eaqkln7" path="res://resources/sprites/M_WEAPON_BROAD.png" id="2_jxvx0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ldh4d"]
+[ext_resource type="Texture2D" uid="uid://bq5ved7ylfdr" path="res://assets/item_slot_icons/WEAPONS/Venom_Smite.png" id="2_vhne8"]
 
 [resource]
-script = ExtResource("1_2caad")
-id = 524.0
-looks = "BROAD"
-sprite_image = ExtResource("2_jxvx0")
+script = ExtResource("1_ldh4d")
+id = 524
+slot_image = ExtResource("2_vhne8")
 name = "Venom Smite"
 display_name = "Venom Smite"
 internal_name = "Venom Smite"
-tooltip = ""
+looks = "BROAD"
 tooltipAlt = ["Instinct +3", "Strength +19", "Vitality +12", "Poison Piercing +48"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 9.0
-price = 810.0
+required_level = 9
+price = 810
 price_modifier = 1.0
 stats = {
 "attributes": {

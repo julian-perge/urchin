@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://fq4f4sbs6bg0"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://fq4f4sbs6bg0"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wc7op"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_iw6y6"]
 
 [resource]
-script = ExtResource("1_wc7op")
-id = 173.0
-looks = ""
-name = ""
+script = ExtResource("1_iw6y6")
+id = 173
 display_name = "Unicorn Horn"
 internal_name = "Unicorn Horn"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +7", "Instinct +14", "Strength +14", "Vitality +21", "Lightning Defense +13", "Earth Defense +13"]
 item_type = 7
 rarity = 2
 class_type = 1
-required_level = 10.0
-price = 94394.0
+required_level = 10
+price = 94394
 price_modifier = 199.0
 stats = {
 "attributes": {

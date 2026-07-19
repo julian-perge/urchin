@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cquv5rr71k3qw"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_c1m5m"]
+
+[resource]
+script = ExtResource("1_c1m5m")
+id = 501
+id_name = "KBR501"
+item_rare = [{
+"id": 617.0,
+"name": "Patrol Headset"
+}, {
+"id": 618.0,
+"name": "Riot Armor"
+}, {
+"id": 620.0,
+"name": "Riot Leggings"
+}, {
+"id": 647.0,
+"name": "Riot Gun"
+}]
+item_rare_dropper = 1
+players = [{
+"id": 63.0,
+"name": "Riot Police"
+}, {
+"id": -2.0
+}, {
+"id": 65.0,
+"name": "Blood Hound"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [21.0, 1.0, 21.0, 1.0, 1.0]
+sky_background = "STREETS"
+win_date = -1
+zone_background = "STREETS"

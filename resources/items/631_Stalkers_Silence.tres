@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cqatktr48gd85"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cqatktr48gd85"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4qr7f"]
-[ext_resource type="Texture2D" uid="uid://bhblpkkyb7n33" path="res://resources/sprites/M_FOOT_SINJID.png" id="2_mx12p"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_s47wd"]
+[ext_resource type="Texture2D" uid="uid://d3esn5xrxbjh0" path="res://assets/item_slot_icons/SHOES/Stalkers_Silence.png" id="2_v4r8s"]
 
 [resource]
-script = ExtResource("1_4qr7f")
-id = 631.0
-looks = "SINJID"
-sprite_image = ExtResource("2_mx12p")
+script = ExtResource("1_s47wd")
+id = 631
+slot_image = ExtResource("2_v4r8s")
 name = "Stalker's Silence"
 display_name = "Stalker's Silence"
 internal_name = "Drop SPECIALIST Feet"
+looks = "SINJID"
 tooltip = "They don't make the slightest sound."
 tooltipAlt = ["Focus +5", "Speed +18", "Strength +8", "Physical Piercing +30"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 722.0
+required_level = 21
+price = 722
 price_modifier = 1.0
 stats = {
 "attributes": {

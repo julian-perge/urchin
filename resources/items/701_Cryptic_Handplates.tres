@@ -1,21 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bk6figoemlqm2"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bk6figoemlqm2"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_na81j"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_d474d"]
+[ext_resource type="Texture2D" uid="uid://dotjlrc6itvvq" path="res://assets/item_slot_icons/GLOVES/Cryptic_Handplates.png" id="2_80ch8"]
 
 [resource]
-script = ExtResource("1_na81j")
-id = 701.0
-looks = "ULTI2"
+script = ExtResource("1_d474d")
+id = 701
+slot_image = ExtResource("2_80ch8")
 name = "Cryptic Handplates"
 display_name = "Cryptic Handplates"
 internal_name = "Drop ULTI2 Hands"
-tooltip = ""
+looks = "ULTI2"
 tooltipAlt = ["Speed +9", "Instinct +42", "Strength +9", "Vitality +26"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 28.0
-price = 1111.0
+required_level = 28
+price = 1111
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,0 +1,101 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cgeyn1mo12mmv"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_3o5jl"]
+
+[resource]
+script = ExtResource("1_3o5jl")
+id = 102
+id_name = "KBR102"
+item_rare = [{
+"id": 305.0,
+"name": "Prison Trousers XL"
+}, {
+"id": 306.0,
+"name": "Prison Shirt XXS"
+}]
+item_rare2 = [{
+"id": 5.0,
+"name": "A Broken Pipe"
+}, {
+"id": 6.0,
+"name": "Fire Axe"
+}, {
+"id": 7.0,
+"name": "Crow Bar"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+players = [{
+"id": 10.0,
+"name": "Brutal Convict"
+}, {
+"id": -2.0
+}, {
+"id": 13.0,
+"name": "Agile Convict"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [1.0, 1.0, 2.0, 1.0, 1.0]
+sky_background = "JAIL"
+speeches = [{
+"phase": 1.0,
+"player": 1.0,
+"say": "These guys are trying to escape!",
+"timeToSay": 2.100000000000001,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v1_3"
+}, {
+"phase": 1.0,
+"player": "Veradux",
+"say": "Hey! HEY YOU! Did you just see a zombie chick run through here? Help us, and we'll help you!",
+"timeToSay": 5.4,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "Don't listen to him Andy, it's a trick...!",
+"timeToSay": 2.0,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "They're trying to play us for fools! You saw what they did to Frank!",
+"timeToSay": 4.1000000000000005,
+"turnTime": 0.0,
+"turnTime2": 3.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "Look, we just want to know if-",
+"timeToSay": 1.2,
+"turnTime": 0.0,
+"turnTime2": 4.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "Back off, Mary Poppins!",
+"timeToSay": 2.0,
+"turnTime": 0.0,
+"turnTime2": 5.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "You asked for it.",
+"timeToSay": 1.3000000000000005,
+"turnTime": 0.0,
+"turnTime2": 6.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "JAIL"

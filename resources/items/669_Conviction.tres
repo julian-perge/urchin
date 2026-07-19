@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c150o0bg6dxnf"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c150o0bg6dxnf"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8yvt5"]
-[ext_resource type="Texture2D" uid="uid://dolaxutqkvkdt" path="res://resources/sprites/M_HEAD_BLUENIN.png" id="2_yvxj4"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_f0ngq"]
+[ext_resource type="Texture2D" uid="uid://bbmvb6yaksyyx" path="res://assets/item_slot_icons/HELMS/Conviction.png" id="2_ela3p"]
 
 [resource]
-script = ExtResource("1_8yvt5")
-id = 669.0
-looks = "BLUENIN"
-sprite_image = ExtResource("2_yvxj4")
+script = ExtResource("1_f0ngq")
+id = 669
+slot_image = ExtResource("2_ela3p")
 name = "Conviction"
 display_name = "Conviction"
 internal_name = "Drop BLUE NINJA Head"
-tooltip = ""
+looks = "BLUENIN"
 tooltipAlt = ["Speed +33", "Strength +55", "Vitality +22"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 27.0
-price = 1473.0
+required_level = 27
+price = 1473
 price_modifier = 1.0
 stats = {
 "attributes": {

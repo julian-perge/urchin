@@ -1,21 +1,17 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://befiwrpa34bwo"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://befiwrpa34bwo"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_t71u7"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_k7tcj"]
 
 [resource]
-script = ExtResource("1_t71u7")
-id = 143.0
-looks = ""
-name = ""
+script = ExtResource("1_k7tcj")
+id = 143
 display_name = "Chalice of Divinity"
 internal_name = "Chalice of Divinity"
-tooltip = ""
-tooltipAlt = []
-item_type = 0
+looks = ""
 rarity = 1
 class_type = 1
-required_level = 7.0
-price = 38893.0
+required_level = 7
+price = 38893
 price_modifier = 70.0
 stats = {
 "attributes": {

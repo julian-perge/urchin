@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cyqrqjrwpj01y"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_eqhvy"]
+
+[resource]
+script = ExtResource("1_eqhvy")
+id = 1018
+id_name = "KBR1018"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 602.0,
+"name": "Poseidon's Fury"
+}
+}]
+item_rare = [{
+"id": 573.0,
+"name": "Night Vision"
+}, {
+"id": 581.0,
+"name": "Bone Braces"
+}, {
+"id": 585.0,
+"name": "Toxic Clutch"
+}, {
+"id": 591.0,
+"name": "Spark Leggings"
+}]
+item_rare3 = [{
+"id": 577.0,
+"name": "Black-Ops Boots"
+}, {
+"id": 587.0,
+"name": "Venomsteel Greaves"
+}, {
+"id": 589.0,
+"name": "Charged Armor"
+}, {
+"id": 597.0,
+"name": "Flower Shoes"
+}]
+item_rare_dropper = 1
+item_rare_dropper3 = 1
+players = [{
+"id": 54.0,
+"name": "The Magical Monkey"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 0.0, 0.0, 0.0, 0.0]
+sky_background = "TUNNEL"
+win_date = -1
+zone_background = "TUNNEL"

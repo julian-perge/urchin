@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://deqka71g2mhyt"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://deqka71g2mhyt"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_04fhj"]
-[ext_resource type="Texture2D" uid="uid://dqfddsa3a64si" path="res://resources/sprites/M_CHEST_JASON3.png" id="2_j3ovk"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_i5x8p"]
+[ext_resource type="Texture2D" uid="uid://cvt2vohfo6cp1" path="res://assets/item_slot_icons/OTHER/Voltage_Cage.png" id="2_y78xh"]
 
 [resource]
-script = ExtResource("1_04fhj")
-id = 509.0
-looks = "JASON3"
-sprite_image = ExtResource("2_j3ovk")
+script = ExtResource("1_i5x8p")
+id = 509
+slot_image = ExtResource("2_y78xh")
 name = "Voltage Cage"
 display_name = "Voltage Cage"
 internal_name = "Voltage Cage"
-tooltip = ""
+looks = "JASON3"
 tooltipAlt = ["Instinct +3", "Vitality +4"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 3.0
-price = 22.0
+required_level = 3
+price = 22
 price_modifier = 0.4
 stats = {
 "attributes": {

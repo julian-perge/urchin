@@ -34,20 +34,54 @@ var item_type_map = {
 	"Secondary Arms": GameItem.ItemType.OFFHAND
 }
 
+# Inventory-slot icon lookup: assets/item_slot_icons/<CATEGORY>/<Name>.png,
+# where <Name> is the display name with spaces as underscores and apostrophes
+# stripped. Tries the type-mapped category first, then all categories.
+const SLOT_ICON_ROOT = "res://assets/item_slot_icons"
+const SLOT_ICON_CATEGORIES = {
+	GameItem.ItemType.HEAD: "HELMS",
+	GameItem.ItemType.CHEST: "ARMOR",
+	GameItem.ItemType.HAND: "GLOVES",
+	GameItem.ItemType.LEGS: "PANTS",
+	GameItem.ItemType.FOOT: "SHOES",
+	GameItem.ItemType.MAINHAND: "WEAPONS",
+	GameItem.ItemType.OFFHAND: "WEAPONS",
+	GameItem.ItemType.TWOHAND: "WEAPONS",
+}
+
+func _find_slot_icon(item) -> Texture2D:
+	var icon_name = item.display_name.replace(" ", "_").replace("'", "")
+	if icon_name == "":
+		return null
+	var candidates = []
+	if SLOT_ICON_CATEGORIES.has(item.item_type):
+		candidates.append(SLOT_ICON_CATEGORIES[item.item_type])
+	for category in ["OTHER", "HELMS", "ARMOR", "GLOVES", "PANTS", "SHOES", "WEAPONS"]:
+		if category not in candidates:
+			candidates.append(category)
+	for category in candidates:
+		var path = "%s/%s/%s.png" % [SLOT_ICON_ROOT, category, icon_name]
+		if ResourceLoader.exists(path):
+			return load(path)
+	return null
+
 func _run():
 	var file = FileAccess.open(
-		"res://python_conversion_scripts/converted_json/converted_items.json",
+		"res://python_conversion_scripts/converted_json/items.json",
 		FileAccess.READ
 	)
 	var json = JSON.parse_string(file.get_as_text())
 	file.close()
-	
-	var item_num = 0
+
 	for item_data in json["items"]:
 		var item = Resource.new()
 		item.set_script(ItemScript)  # This line is crucial!
 
-		item.id = item_data["id"]
+		# JSON.parse_string() always returns float for numbers (no int type in
+		# JSON), and assigning through a generic Resource reference (rather than
+		# a statically-typed GameItem one) skips the usual int coercion - cast
+		# explicitly wherever the field is declared as int.
+		item.id = int(item_data["id"])
 		item.looks = item_data["looks"]
 		item.name = item_data["name"]
 		item.display_name = item_data["display_name"]
@@ -55,8 +89,10 @@ func _run():
 		item.item_type = item_type_map[item_data["item_type"]]
 		item.rarity = rarity_map[item_data["rarity"]]
 		item.class_type = class_type_map[item_data["class_type"]]
-		item.required_level = item_data["required_level"]
-		item.price = item_data["price"]
+		# The real equip restriction - see GameItem.required_unit_id.
+		item.required_unit_id = int(item_data.get("class_unit_id", 0))
+		item.required_level = int(item_data["required_level"])
+		item.price = int(item_data["price"])
 		item.price_modifier = item_data["price_modifier"]
 		item.stats = item_data["stats"]
 		item.tooltipAlt = item_data["tool_tip_alt"]
@@ -67,14 +103,16 @@ func _run():
 		if item.looks != "":
 			var png_item_type = GameItem.ItemType.keys()[item.item_type]
 			if (
-				item.item_type == GameItem.ItemType.MAINHAND 
-				or item.item_type == GameItem.ItemType.TWOHAND 
+				item.item_type == GameItem.ItemType.MAINHAND
+				or item.item_type == GameItem.ItemType.TWOHAND
 				or item.item_type == GameItem.ItemType.OFFHAND
 			):
 				png_item_type = "WEAPON"
 			elif item.item_type == GameItem.ItemType.LEGS:
 				png_item_type = "LEG2"
 			item.sprite_image = load("res://resources/sprites/M_%s_%s.png" % [png_item_type, item.looks])
+
+		item.slot_image = _find_slot_icon(item)
 		
 		var err = ResourceSaver.save(
 			item, 

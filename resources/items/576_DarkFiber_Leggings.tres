@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bul8bewnsuu10"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bul8bewnsuu10"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_okr1q"]
-[ext_resource type="Texture2D" uid="uid://ddxwseygayp6l" path="res://resources/sprites/M_LEG2_TUNTAT.png" id="2_y06gt"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_d150c"]
+[ext_resource type="Texture2D" uid="uid://d0mkj8vqtgiky" path="res://assets/item_slot_icons/PANTS/DarkFiber_Leggings.png" id="2_s0368"]
 
 [resource]
-script = ExtResource("1_okr1q")
-id = 576.0
-looks = "TUNTAT"
-sprite_image = ExtResource("2_y06gt")
+script = ExtResource("1_d150c")
+id = 576
+slot_image = ExtResource("2_s0368")
 name = "DarkFiber Leggings"
 display_name = "DarkFiber Leggings"
 internal_name = "Drop BLACK OPS Legs"
-tooltip = ""
+looks = "TUNTAT"
 tooltipAlt = ["Speed +6", "Strength +28", "Physical Piercing +40"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 18.0
-price = 802.0
+required_level = 18
+price = 802
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bpj30r8hy88rc"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bpj30r8hy88rc"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_70p0n"]
-[ext_resource type="Texture2D" uid="uid://cgsu00y4n7t32" path="res://resources/sprites/M_HAND_JASON.png" id="2_we8p1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jjg83"]
+[ext_resource type="Texture2D" uid="uid://xkgxiix3uilc" path="res://assets/item_slot_icons/OTHER/Guards_Grip.png" id="2_0r3e5"]
 
 [resource]
-script = ExtResource("1_70p0n")
-id = 301.0
-looks = "JASON"
-sprite_image = ExtResource("2_we8p1")
+script = ExtResource("1_jjg83")
+id = 301
+slot_image = ExtResource("2_0r3e5")
 name = "Guard's Grip"
 display_name = "Guard's Grip"
 internal_name = "Guard's Grip"
-tooltip = ""
+looks = "JASON"
 tooltipAlt = ["Speed +1", "Strength +2", "Vitality +1"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 8.0
+required_level = 1
+price = 8
 price_modifier = 1.0
 stats = {
 "attributes": {

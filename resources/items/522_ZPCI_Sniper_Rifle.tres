@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://csjbe3iidq2fn"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://csjbe3iidq2fn"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_43req"]
-[ext_resource type="Texture2D" uid="uid://byriobvfj4pkt" path="res://resources/sprites/M_WEAPON_UBER4.png" id="2_rjbx5"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hciq1"]
+[ext_resource type="Texture2D" uid="uid://xfdevyv5qrqm" path="res://assets/item_slot_icons/WEAPONS/ZPCI_Sniper_Rifle.png" id="2_vpirf"]
 
 [resource]
-script = ExtResource("1_43req")
-id = 522.0
-looks = "UBER4"
-sprite_image = ExtResource("2_rjbx5")
+script = ExtResource("1_hciq1")
+id = 522
+slot_image = ExtResource("2_vpirf")
 name = "ZPCI Sniper Rifle"
 display_name = "ZPCI Sniper Rifle"
 internal_name = "ZPCI Sniper Rifle"
+looks = "UBER4"
 tooltip = "An excellent gun, but the golden plating seems pointless."
 tooltipAlt = ["Speed +19", "Strength +19", "Vitality +16", "Fire Piercing +89"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 1094.0
+required_level = 11
+price = 1094
 price_modifier = 1.0
 stats = {
 "attributes": {

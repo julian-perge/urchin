@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://caoegbhknmqki"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://caoegbhknmqki"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_fcmcw"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bfhej"]
 
 [resource]
-script = ExtResource("1_fcmcw")
-id = 133.0
-looks = ""
-name = ""
+script = ExtResource("1_bfhej")
+id = 133
 display_name = "Hands of Justice"
 internal_name = "Hands of Justice"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +4", "Strength +3", "Vitality +5", "Lightning Defense +5", "Earth Defense +5"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 5.0
-price = 2348.0
+required_level = 5
+price = 2348
 price_modifier = 28.0
 stats = {
 "attributes": {

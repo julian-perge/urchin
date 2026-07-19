@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cnm0ri4bdx4ks"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cnm0ri4bdx4ks"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j8uid"]
-[ext_resource type="Texture2D" uid="uid://bhxg1qwy5s6x2" path="res://resources/sprites/M_WEAPON_TASER.png" id="2_pl5de"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ftd11"]
+[ext_resource type="Texture2D" uid="uid://dawrpj613kmwq" path="res://assets/item_slot_icons/WEAPONS/EMD_Blade.png" id="2_fo4hy"]
 
 [resource]
-script = ExtResource("1_j8uid")
-id = 502.0
-looks = "TASER"
-sprite_image = ExtResource("2_pl5de")
+script = ExtResource("1_ftd11")
+id = 502
+slot_image = ExtResource("2_fo4hy")
 name = "EMD Blade"
 display_name = "EMD Blade"
 internal_name = "EMD Blade"
+looks = "TASER"
 tooltip = "The bastard child of a knife and a taser."
 tooltipAlt = ["Speed +1", "Instinct +5", "Vitality +1", "Lightning Piercing +23"]
 item_type = 8
-rarity = 0
 class_type = 1
-required_level = 4.0
-price = 48.0
+required_level = 4
+price = 48
 price_modifier = 0.4
 stats = {
 "attributes": {

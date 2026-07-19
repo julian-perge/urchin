@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dsdg203xhh2xk"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dsdg203xhh2xk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qv38d"]
-[ext_resource type="Texture2D" uid="uid://e3dljey3ggmg" path="res://resources/sprites/M_WEAPON_MOON.png" id="2_1rh8p"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6x7mr"]
+[ext_resource type="Texture2D" uid="uid://b2sovx5v1cckt" path="res://assets/item_slot_icons/WEAPONS/Sun_Struck_Horrors.png" id="2_3d4qm"]
 
 [resource]
-script = ExtResource("1_qv38d")
-id = 564.0
-looks = "MOON"
-sprite_image = ExtResource("2_1rh8p")
+script = ExtResource("1_6x7mr")
+id = 564
+slot_image = ExtResource("2_3d4qm")
 name = "Sun Struck Horrors"
 display_name = "Sun Struck Horrors"
 internal_name = "Sun Struck Horrors"
+looks = "MOON"
 tooltip = "You can hear twisted laughs..."
 tooltipAlt = ["Speed +28", "Instinct +28", "Strength +56", "Vitality +34", "Fire Piercing +211"]
 item_type = 9
 rarity = 2
 class_type = 1
-required_level = 15.0
-price = 1743.0
+required_level = 15
+price = 1743
 price_modifier = 1.0
 stats = {
 "attributes": {

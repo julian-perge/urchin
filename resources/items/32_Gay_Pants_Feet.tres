@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bpuvdcka083gi"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bpuvdcka083gi"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ryvts"]
-[ext_resource type="Texture2D" uid="uid://xpunassy0opq" path="res://resources/sprites/M_FOOT_GAY.png" id="2_ohk71"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mo5nj"]
 
 [resource]
-script = ExtResource("1_ryvts")
-id = 32.0
-looks = "GAY"
-sprite_image = ExtResource("2_ohk71")
-name = ""
+script = ExtResource("1_mo5nj")
+id = 32
 display_name = "Gay Pants/Feet"
 internal_name = "Gay Pants/Feet"
-tooltip = ""
+looks = "GAY"
 tooltipAlt = ["Vitality +1"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 8.0
+required_level = 1
+price = 8
 price_modifier = 1.0
 stats = {
 "attributes": {

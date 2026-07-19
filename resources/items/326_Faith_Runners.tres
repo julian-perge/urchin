@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dcgxj376g8a8i"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dcgxj376g8a8i"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bl6yx"]
-[ext_resource type="Texture2D" uid="uid://6aoryffldxvy" path="res://resources/sprites/M_FOOT_TAT.png" id="2_a1hq2"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g41yt"]
+[ext_resource type="Texture2D" uid="uid://dl7q6ctkhpokj" path="res://assets/item_slot_icons/WEAPONS/Faith_Runners.png" id="2_qcv1i"]
 
 [resource]
-script = ExtResource("1_bl6yx")
-id = 326.0
-looks = "TAT"
-sprite_image = ExtResource("2_a1hq2")
+script = ExtResource("1_g41yt")
+id = 326
+slot_image = ExtResource("2_qcv1i")
 name = "Faith Runners"
 display_name = "Faith Runners"
 internal_name = "Faith Runners"
-tooltip = ""
+looks = "TAT"
 tooltipAlt = ["Speed +5", "Instinct +4", "Strength +4", "Vitality +1"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 9.0
-price = 203.0
+required_level = 9
+price = 203
 price_modifier = 1.0
 stats = {
 "attributes": {

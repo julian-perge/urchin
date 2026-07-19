@@ -1,23 +1,20 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://uwe2hcb1nk48"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://uwe2hcb1nk48"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_u3t7r"]
-[ext_resource type="Texture2D" uid="uid://dtmd4g44rf3ge" path="res://resources/sprites/M_HEAD_ZPCI.png" id="2_pjwtw"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wplqm"]
 
 [resource]
-script = ExtResource("1_u3t7r")
-id = 319.0
-looks = "ZPCI"
-sprite_image = ExtResource("2_pjwtw")
+script = ExtResource("1_wplqm")
+id = 319
 name = "Double Visor"
 display_name = "Double Visor"
 internal_name = "Noble Helm"
+looks = "ZPCI"
 tooltip = "'Property of Zombie Pest Control Inc.'"
 tooltipAlt = ["Speed +4", "Strength +6", "Vitality +3"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 7.0
-price = 194.0
+required_level = 7
+price = 194
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,0 +1,76 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://b1gypd2ev3gnv"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_qpxpb"]
+
+[resource]
+script = ExtResource("1_qpxpb")
+id = 406
+id_name = "KBR406"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 602.0,
+"name": "Poseidon's Fury"
+}
+}]
+item_rare = [{
+"id": 573.0,
+"name": "Night Vision"
+}, {
+"id": 581.0,
+"name": "Bone Braces"
+}, {
+"id": 585.0,
+"name": "Toxic Clutch"
+}, {
+"id": 591.0,
+"name": "Spark Leggings"
+}]
+item_rare3 = [{
+"id": 605.0,
+"name": "Amberstone Sword"
+}, {
+"id": 579.0,
+"name": "DeathBone Armor"
+}, {
+"id": 588.0,
+"name": "Thunder Mask"
+}, {
+"id": 596.0,
+"name": "White Jeans"
+}]
+item_rare_dropper = 1
+item_rare_dropper3 = 1
+players = [{
+"id": 56.0,
+"name": "Bunny"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [18.0, 0.0, 0.0, 0.0, 0.0]
+sky_background = "TUNNEL"
+speeches = [{
+"phase": 1.0,
+"player": "Veradux",
+"say": "You are my sunshine, my only sunshine...",
+"timeToSay": 7.5,
+"turnTime": 4.0,
+"turnTime2": 0.0,
+"voiceOver": "v4_6"
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "Stop that.",
+"timeToSay": 1.5,
+"turnTime": 4.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "TUNNEL"

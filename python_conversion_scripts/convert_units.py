@@ -1,10 +1,10 @@
 import json
 
-with open("converted_json/converted_moves_by_id.json", 'r') as f2:
-    moves_by_id = json.load(f2)
+import swf_models
 
-with open("converted_json/converted_item_by_id.json", "r") as f:
-    items_by_id = json.load(f)
+moves_by_id = swf_models.load_json("converted_json/converted_moves_by_id.json")
+
+items_by_id = swf_models.load_json("converted_json/converted_item_by_id.json")
 
 def parse_moves(abs_moves: list[list[int]], attacks: list[int], defenses: list[int]):
     u_abs = []
@@ -38,6 +38,19 @@ def parse_moves(abs_moves: list[list[int]], attacks: list[int], defenses: list[i
 
     return u_abs, u_attacks, u_defenses
 
+# The web SWF assigns unit ids with a sequential counter that is manually
+# JUMPED twice (frame42/sonny2_createNewUnitKrin.txt: "createUnitKrinCount =
+# 19" right after Doctor Hedger, "= 39" right after ZPCI Sniper). The Steam
+# data dump recorded the POST-jump counter as those two units' id fields, so
+# they carry the wrong id: battles reference Doctor Hedger as 15 and ZPCI
+# Sniper as 34 (verified: no battle references 19 or 39 at all). Ids 16-19 and
+# 35-39 are genuinely unused.
+ID_CORRECTIONS = {
+    ("Doctor Hedger", 19): 15,
+    ("ZPCI Sniper", 39): 34,
+}
+
+
 def parse_unit_block(parsed_unit: dict):
     """Parse a unit creation block into a dictionary."""
 
@@ -70,7 +83,10 @@ def parse_unit_block(parsed_unit: dict):
             u_equips.append({"id": 0})
 
     unit = {
-        "id":       parsed_unit.get("id"),
+        "id":       ID_CORRECTIONS.get(
+            (parsed_unit.get("name"), parsed_unit.get("id")),
+            parsed_unit.get("id"),
+        ),
         "name":     parsed_unit.get("name"),
         "health":   int(parsed_unit.get("health")),
         "strength": int(parsed_unit.get("strength")),
@@ -107,8 +123,7 @@ def parse_unit_block(parsed_unit: dict):
 
 def convert_units_to_json(input_file, output_file):
     """Convert full ActionScript unit definitions to JSON."""
-    with open(input_file, 'r') as f:
-        content = json.load(f)
+    content = swf_models.load_json(input_file)
 
     # Split content into unit blocks
     unit_blocks = content.get("UNITS").get("denseValues")

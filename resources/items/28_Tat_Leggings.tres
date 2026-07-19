@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b6d5leujuu2t7"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b6d5leujuu2t7"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3ndw4"]
-[ext_resource type="Texture2D" uid="uid://drvlvuvnfrcxr" path="res://resources/sprites/M_LEG2_TAT.png" id="2_07onm"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_prjb6"]
 
 [resource]
-script = ExtResource("1_3ndw4")
-id = 28.0
-looks = "TAT"
-sprite_image = ExtResource("2_07onm")
-name = ""
+script = ExtResource("1_prjb6")
+id = 28
 display_name = "Tat Leggings"
 internal_name = "Tat Leggings"
-tooltip = ""
+looks = "TAT"
 tooltipAlt = ["Speed +10", "Strength +10", "Vitality +20"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 15.0
-price = 610.0
+required_level = 15
+price = 610
 price_modifier = 1.0
 stats = {
 "attributes": {

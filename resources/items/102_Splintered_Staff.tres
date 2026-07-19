@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://doeop7ec24lgs"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://doeop7ec24lgs"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_f1thi"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_opc3w"]
 
 [resource]
-script = ExtResource("1_f1thi")
-id = 102.0
-looks = ""
-name = ""
+script = ExtResource("1_opc3w")
+id = 102
 display_name = "Splintered Staff"
 internal_name = "Splintered Staff"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +9", "Instinct +12", "Strength +4"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 30.0
+required_level = 1
+price = 30
 price_modifier = 1.0
 stats = {
 "attributes": {

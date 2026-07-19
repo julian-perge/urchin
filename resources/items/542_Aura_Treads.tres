@@ -1,21 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://d4nqcyct06jdt"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d4nqcyct06jdt"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g2jv1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hnr1s"]
+[ext_resource type="Texture2D" uid="uid://dr6lpomgvdpkd" path="res://assets/item_slot_icons/SHOES/Aura_Treads.png" id="2_83fiy"]
 
 [resource]
-script = ExtResource("1_g2jv1")
-id = 542.0
-looks = "SHAMAN2"
+script = ExtResource("1_hnr1s")
+id = 542
+slot_image = ExtResource("2_83fiy")
 name = "Aura Treads"
 display_name = "Aura Treads"
 internal_name = "Drop Shaman Feet"
+looks = "SHAMAN2"
 tooltip = "Very peaceful."
 tooltipAlt = ["Speed +3", "Instinct +5", "Strength +3", "Vitality +15"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 14.0
-price = 393.0
+required_level = 14
+price = 393
 price_modifier = 1.0
 stats = {
 "attributes": {

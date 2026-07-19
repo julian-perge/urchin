@@ -1,0 +1,89 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://c5eglme6vmxft"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_vq8dc"]
+
+[resource]
+script = ExtResource("1_vq8dc")
+id = 104
+id_name = "KBR104"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 307.0,
+"name": "Doctor's Labcoat"
+}
+}]
+item_rare = [{
+"id": 302.0,
+"name": "Guard's Runners"
+}, {
+"id": 303.0,
+"name": "Guard's Uniform"
+}, {
+"id": 301.0,
+"name": "Guard's Grip"
+}]
+item_rare2 = [{
+"id": 300.0,
+"name": "Guard's Leggings"
+}, {
+"id": 304.0,
+"name": "Watcher's Visage"
+}, {
+"id": 500.0,
+"name": "Guard's Baton"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.3,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 6.0,
+"name": "Doctor Leath"
+}, {
+"id": -2.0
+}, {
+"id": 5.0,
+"name": "Prison Guard"
+}, {
+"id": -1.0
+}, {
+"id": 5.0,
+"name": "Prison Guard"
+}]
+players_levels = [4.0, 1.0, 3.0, 1.0, 3.0]
+sky_background = "JAIL"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "Oh. What fine specimens! But you do not belong here! Guards, escort these gentlemen to the exit!",
+"timeToSay": 15.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v1_5"
+}, {
+"phase": 1.0,
+"player": "Veradux",
+"say": "There's something fishy about this place. And it's not just the smell.",
+"timeToSay": 4.5,
+"turnTime": 2.0,
+"turnTime2": 0.0,
+"voiceOver": "v1_6"
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "It has functional nostrils, too? Fascinating...",
+"timeToSay": 4.5,
+"turnTime": 2.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "JAIL"

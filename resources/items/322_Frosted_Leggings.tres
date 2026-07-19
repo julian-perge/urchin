@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cdjptba18mkiq"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cdjptba18mkiq"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_w8ref"]
-[ext_resource type="Texture2D" uid="uid://b13kk4geklryg" path="res://resources/sprites/M_LEG2_FROSTPLATE.png" id="2_hiojn"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3tuj2"]
+[ext_resource type="Texture2D" uid="uid://bo0exraaexco8" path="res://assets/item_slot_icons/PANTS/Frosted_Leggings.png" id="2_rhnc5"]
 
 [resource]
-script = ExtResource("1_w8ref")
-id = 322.0
-looks = "FROSTPLATE"
-sprite_image = ExtResource("2_hiojn")
+script = ExtResource("1_3tuj2")
+id = 322
+slot_image = ExtResource("2_rhnc5")
 name = "Frosted Leggings"
 display_name = "Frosted Leggings"
 internal_name = "Frosted Leggings"
-tooltip = ""
+looks = "FROSTPLATE"
 tooltipAlt = ["Speed +5", "Instinct +8", "Vitality +2", "Ice Piercing +5"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 8.0
-price = 238.0
+required_level = 8
+price = 238
 price_modifier = 1.0
 stats = {
 "attributes": {

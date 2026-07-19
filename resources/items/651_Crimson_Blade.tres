@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c8c7f554cvynf"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c8c7f554cvynf"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8vkg3"]
-[ext_resource type="Texture2D" uid="uid://bf631i6tmw2ut" path="res://resources/sprites/M_WEAPON_FELKNIFE3.png" id="2_gunv6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_eu57w"]
+[ext_resource type="Texture2D" uid="uid://kqgvl5c35y7k" path="res://assets/item_slot_icons/WEAPONS/Crimson_Blade.png" id="2_wu3ox"]
 
 [resource]
-script = ExtResource("1_8vkg3")
-id = 651.0
-looks = "FELKNIFE3"
-sprite_image = ExtResource("2_gunv6")
+script = ExtResource("1_eu57w")
+id = 651
+slot_image = ExtResource("2_wu3ox")
 name = "Crimson Blade"
 display_name = "Crimson Blade"
 internal_name = "SMALL BLADE 1"
-tooltip = ""
+looks = "FELKNIFE3"
 tooltipAlt = ["Speed +21", "Physical Piercing +105"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 1444.0
+required_level = 21
+price = 1444
 price_modifier = 1.0
 stats = {
 "attributes": {

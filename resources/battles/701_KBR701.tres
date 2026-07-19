@@ -1,0 +1,119 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cm231t6ax2wei"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_5m5cd"]
+
+[resource]
+script = ExtResource("1_5m5cd")
+absolute_start = 2
+id = 701
+id_name = "KBR701"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 704.0,
+"name": "Guardian's Helm"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 705.0,
+"name": "Guardian's Cage"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 706.0,
+"name": "Guardian's Fist"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 707.0,
+"name": "Guardian's Leggings"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 708.0,
+"name": "Guardian's Feet"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 704.0,
+"name": "Guardian's Helm"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 705.0,
+"name": "Guardian's Cage"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 706.0,
+"name": "Guardian's Fist"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 707.0,
+"name": "Guardian's Leggings"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 708.0,
+"name": "Guardian's Feet"
+}
+}]
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"turn": 1.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"teamLeft": 1.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": false,
+"life": -1.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 80.0,
+"name": "South Guardian"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 79.0,
+"name": "North Guardian"
+}]
+players_levels = [30.0, 1.0, 30.0, 1.0, 30.0]
+sky_background = "TUNNEL"
+speeches = [{
+"phase": 1.0,
+"player": 6.0,
+"say": "Let them kill me, Dave! Let them kill me, and we will win.",
+"timeToSay": 4.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "STREETS"

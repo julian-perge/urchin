@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bdbcrwmvkevuv"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bdbcrwmvkevuv"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4le0u"]
-[ext_resource type="Texture2D" uid="uid://byxcn3ycusx0t" path="res://resources/sprites/M_FOOT_BLUENIN.png" id="2_ipawt"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bxgfk"]
+[ext_resource type="Texture2D" uid="uid://b6ypjv87etfwd" path="res://assets/item_slot_icons/SHOES/Flex_Footwear.png" id="2_xxsg1"]
 
 [resource]
-script = ExtResource("1_4le0u")
-id = 673.0
-looks = "BLUENIN"
-sprite_image = ExtResource("2_ipawt")
+script = ExtResource("1_bxgfk")
+id = 673
+slot_image = ExtResource("2_xxsg1")
 name = "Flex Footwear"
 display_name = "Flex Footwear"
 internal_name = "Drop BLUE NINJA Feet"
-tooltip = ""
+looks = "BLUENIN"
 tooltipAlt = ["Speed +9", "Strength +36", "Vitality +9"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 23.0
-price = 827.0
+required_level = 23
+price = 827
 price_modifier = 1.0
 stats = {
 "attributes": {

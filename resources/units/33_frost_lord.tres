@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://djjrkj2t58k6j"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_h17jt"]
+
+[resource]
+script = ExtResource("1_h17jt")
+id = 33
+name = "Frost Lord"
+vitality = 30.0
+strength = 40.0
+magic = 20.0
+speed = 14.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 522,
+"phase": 2
+}],
+"attack": [500, 501, 503, 504, 2, 207, 219, 211],
+"defense": [502, 234]
+}
+stats = {
+"aggression": [50.0, 80.0, 50.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL1", "GUARDIAN", "", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_monster",
+"hit": ["hit_monster1", "hit_monster2", "hit_monster3"]
+}
+}

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dwy4qma2bvhei"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dwy4qma2bvhei"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sokcl"]
-[ext_resource type="Texture2D" uid="uid://cbfr4v3jltq4l" path="res://resources/sprites/M_HAND_FROSTPLATE.png" id="2_bmi26"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4h2tc"]
+[ext_resource type="Texture2D" uid="uid://lb34ye825c2c" path="res://assets/item_slot_icons/GLOVES/Glacial_Gloves.png" id="2_ph0wi"]
 
 [resource]
-script = ExtResource("1_sokcl")
-id = 324.0
-looks = "FROSTPLATE"
-sprite_image = ExtResource("2_bmi26")
+script = ExtResource("1_4h2tc")
+id = 324
+slot_image = ExtResource("2_ph0wi")
 name = "Glacial Gloves"
 display_name = "Glacial Gloves"
 internal_name = "Glacial Gloves"
-tooltip = ""
+looks = "FROSTPLATE"
 tooltipAlt = ["Speed +4", "Instinct +3", "Strength +3", "Vitality +1", "Ice Piercing +4"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 8.0
-price = 170.0
+required_level = 8
+price = 170
 price_modifier = 1.0
 stats = {
 "attributes": {

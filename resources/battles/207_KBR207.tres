@@ -1,0 +1,86 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://ccii2dyssli3v"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_83qf2"]
+
+[resource]
+script = ExtResource("1_83qf2")
+id = 207
+id_name = "KBR207"
+item_rare = [{
+"id": 330.0,
+"name": "Justice Helm"
+}, {
+"id": 331.0,
+"name": "Rightful Grasp"
+}, {
+"id": 332.0,
+"name": "Righteous Breastplate"
+}, {
+"id": 333.0,
+"name": "Zealot's Leggings"
+}, {
+"id": 334.0,
+"name": "Zealot's Marcher"
+}, {
+"id": 515.0,
+"name": "Light's Blade"
+}, {
+"id": 516.0,
+"name": "Metal Shield"
+}]
+item_rare2 = [{
+"id": 340.0,
+"name": "Enlightened Helm"
+}, {
+"id": 341.0,
+"name": "Arcane Armor"
+}, {
+"id": 342.0,
+"name": "Ancient Gloves"
+}, {
+"id": 343.0,
+"name": "Tomekeeper's Slippers"
+}, {
+"id": 344.0,
+"name": "Tomekeeper's Leggings"
+}, {
+"id": 517.0,
+"name": "Fiery Doom"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 2
+players = [{
+"id": 20.0,
+"name": "Knight"
+}, {
+"id": -2.0
+}, {
+"id": 22.0,
+"name": "Mage"
+}, {
+"id": -1.0
+}, {
+"id": 22.0,
+"name": "Mage"
+}]
+players_levels = [10.0, 1.0, 11.0, 1.0, 11.0]
+sky_background = "CHURCH"
+speeches = [{
+"phase": 1.0,
+"player": 4.0,
+"say": "The master will be pleased! Die for us now!",
+"timeToSay": 4.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_11"
+}, {
+"phase": 1.0,
+"player": "Veradux",
+"say": "You first. I insist!",
+"timeToSay": 2.0,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "CHURCH"

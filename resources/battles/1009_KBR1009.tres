@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bq2x6wup8llv6"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_u5jnv"]
+
+[resource]
+script = ExtResource("1_u5jnv")
+id = 1009
+id_name = "KBR1009"
+item_drops = [{
+"chance": 17.0,
+"item": {
+"id": 521.0,
+"name": "Runeblade"
+}
+}]
+item_rare = [{
+"id": 345.0,
+"name": "Supreme Grasp"
+}, {
+"id": 346.0,
+"name": "Demigod's Visage"
+}]
+item_rare_dropper = 1
+players = [{
+"id": 30.0,
+"name": "Cult Leader"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "CHURCH"
+win_date = -1
+zone_background = "CHURCH"

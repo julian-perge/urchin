@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://djkf7hqajviig"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://djkf7hqajviig"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8v61w"]
-[ext_resource type="Texture2D" uid="uid://d4k4qxf8t57a" path="res://resources/sprites/M_HAND_SHAMAN2.png" id="2_h8bab"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rthl4"]
+[ext_resource type="Texture2D" uid="uid://bnj3g6820gmie" path="res://assets/item_slot_icons/GLOVES/Ghastly_Grasp.png" id="2_wt8iv"]
 
 [resource]
-script = ExtResource("1_8v61w")
-id = 540.0
-looks = "SHAMAN2"
-sprite_image = ExtResource("2_h8bab")
+script = ExtResource("1_rthl4")
+id = 540
+slot_image = ExtResource("2_wt8iv")
 name = "Ghastly Grasp"
 display_name = "Ghastly Grasp"
 internal_name = "Drop Shaman Hands"
-tooltip = ""
+looks = "SHAMAN2"
 tooltipAlt = ["Speed +5", "Instinct +15", "Vitality +3"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 13.0
-price = 352.0
+required_level = 13
+price = 352
 price_modifier = 1.0
 stats = {
 "attributes": {

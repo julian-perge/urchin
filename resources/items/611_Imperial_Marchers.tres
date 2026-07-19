@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dwlxv1lmuiycq"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dwlxv1lmuiycq"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mdptl"]
-[ext_resource type="Texture2D" uid="uid://cmr2r8uj7tlk5" path="res://resources/sprites/M_FOOT_IMPERIAL.png" id="2_4kuk1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rv4m5"]
+[ext_resource type="Texture2D" uid="uid://csjw14wfa6k38" path="res://assets/item_slot_icons/SHOES/Imperial_Marchers.png" id="2_g8i4p"]
 
 [resource]
-script = ExtResource("1_mdptl")
-id = 611.0
-looks = "IMPERIAL"
-sprite_image = ExtResource("2_4kuk1")
+script = ExtResource("1_rv4m5")
+id = 611
+slot_image = ExtResource("2_g8i4p")
 name = "Imperial Marchers"
 display_name = "Imperial Marchers"
 internal_name = "Drop IMPERIAL Feet"
+looks = "IMPERIAL"
 tooltip = "Designed to help you goose-step with ease."
 tooltipAlt = ["Speed +8", "Strength +31", "Vitality +13"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 722.0
+required_level = 21
+price = 722
 price_modifier = 1.0
 stats = {
 "attributes": {

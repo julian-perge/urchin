@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://brlisxsdibf2p"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://brlisxsdibf2p"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_og0nd"]
-[ext_resource type="Texture2D" uid="uid://264qn323a12v" path="res://resources/sprites/M_CHEST_XADER.png" id="2_fqkq7"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2iara"]
+[ext_resource type="Texture2D" uid="uid://dm4ipjg5ni1wn" path="res://assets/item_slot_icons/ARMOR/Righteous_Breastplate.png" id="2_tpt40"]
 
 [resource]
-script = ExtResource("1_og0nd")
-id = 332.0
-looks = "XADER"
-sprite_image = ExtResource("2_fqkq7")
+script = ExtResource("1_2iara")
+id = 332
+slot_image = ExtResource("2_tpt40")
 name = "Righteous Breastplate"
 display_name = "Righteous Breastplate"
 internal_name = "Righteous Breastplate"
+looks = "XADER"
 tooltip = "It's actually more practical that it looks."
 tooltipAlt = ["Speed +5", "Strength +9", "Vitality +4"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 9.0
-price = 284.0
+required_level = 9
+price = 284
 price_modifier = 1.0
 stats = {
 "attributes": {

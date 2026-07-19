@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://b5cbdlrlv38nv"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_glsss"]
+
+[resource]
+script = ExtResource("1_glsss")
+id = 54
+id_name = "KBR54"
+players = [{
+"id": 7.0,
+"name": "Frankie"
+}, {
+"id": -2.0
+}, {
+"id": 15.0,
+"name": "Doctor Hedger"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "JAIL"
+speeches = [{
+"phase": 1.0,
+"player": 4.0,
+"say": "Wake up Frankie, the guests are here. Wake up! And make Daddy proud!",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v_"
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "RAAAWWR!",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": "v_"
+}, {
+"phase": 1.0,
+"player": "Veradux",
+"say": "This prison is one hell of a freak show...",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": "v_"
+}]
+win_date = -1
+zone_background = "JAIL"

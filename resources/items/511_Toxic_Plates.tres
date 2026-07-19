@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://blxe3rxompcdj"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://blxe3rxompcdj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_q70ac"]
-[ext_resource type="Texture2D" uid="uid://cq682t2srux57" path="res://resources/sprites/M_LEG2_JASON3.png" id="2_6kowt"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0exm0"]
+[ext_resource type="Texture2D" uid="uid://bv6yjpsymm8eo" path="res://assets/item_slot_icons/OTHER/Toxic_Plates.png" id="2_b66gt"]
 
 [resource]
-script = ExtResource("1_q70ac")
-id = 511.0
-looks = "JASON3"
-sprite_image = ExtResource("2_6kowt")
+script = ExtResource("1_0exm0")
+id = 511
+slot_image = ExtResource("2_b66gt")
 name = "Toxic Plates"
 display_name = "Toxic Plates"
 internal_name = "Toxic Plates"
-tooltip = ""
+looks = "JASON3"
 tooltipAlt = ["Strength +2", "Vitality +4"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 3.0
-price = 22.0
+required_level = 3
+price = 22
 price_modifier = 0.4
 stats = {
 "attributes": {

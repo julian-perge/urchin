@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cwqsl3qanbqub"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cwqsl3qanbqub"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_y2xpb"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6orx3"]
 
 [resource]
-script = ExtResource("1_y2xpb")
-id = 161.0
-looks = ""
-name = ""
+script = ExtResource("1_6orx3")
+id = 161
 display_name = "Nightmare Scythe"
 internal_name = "Nightmare Scythe"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +21", "Instinct +26", "Strength +28", "Vitality +19", "Lightning Defense +24", "Earth Defense +24"]
 item_type = 9
 rarity = 1
 class_type = 1
-required_level = 9.0
-price = 127170.0
+required_level = 9
+price = 127170
 price_modifier = 157.0
 stats = {
 "attributes": {

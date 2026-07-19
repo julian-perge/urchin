@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c6wt30gf7te6a"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c6wt30gf7te6a"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0ga8h"]
-[ext_resource type="Texture2D" uid="uid://dhk8w4iarajqf" path="res://resources/sprites/M_LEG2_HUNT.png" id="2_chgt6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yv3ml"]
+[ext_resource type="Texture2D" uid="uid://ce6kofj7s5q1u" path="res://assets/item_slot_icons/PANTS/Dreadnaughts_Panzer.png" id="2_33o75"]
 
 [resource]
-script = ExtResource("1_0ga8h")
-id = 366.0
-looks = "HUNT"
-sprite_image = ExtResource("2_chgt6")
+script = ExtResource("1_yv3ml")
+id = 366
+slot_image = ExtResource("2_33o75")
 name = "Dreadnaught's Panzer"
 display_name = "Dreadnaught's Panzer"
 internal_name = "Dreadnaught's Panzer"
+looks = "HUNT"
 tooltip = "This armor is tough as a tank."
 tooltipAlt = ["Speed +4", "Instinct +2", "Strength +7", "Vitality +13"]
 item_type = 5
 rarity = 2
 class_type = 1
-required_level = 11.0
-price = 383.0
+required_level = 11
+price = 383
 price_modifier = 1.0
 stats = {
 "attributes": {

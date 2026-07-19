@@ -1,0 +1,60 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://t16umgcsuxuy"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_t66j6"]
+
+[resource]
+script = ExtResource("1_t66j6")
+id = 408
+id_name = "KBR408"
+item_drops = [{
+"chance": 25.0,
+"item": {
+"id": 603.0,
+"name": "Emerald Death"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 606.0,
+"name": "Broken Emerald Shard"
+}
+}]
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.85,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.42,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 58.0,
+"name": "The Hydra"
+}, {
+"id": -2.0
+}, {
+"id": 59.0,
+"name": "Fire Claw"
+}, {
+"id": -1.0
+}, {
+"id": 59.0,
+"name": "Fire Claw"
+}]
+players_levels = [20.0, 0.0, 20.0, 0.0, 20.0]
+sky_background = "TUNNEL"
+win_date = -1
+zone_background = "TUNNEL"

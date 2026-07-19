@@ -1,0 +1,67 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bi4b1jq6dce23"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_rfrwq"]
+
+[resource]
+script = ExtResource("1_rfrwq")
+id = 508
+id_name = "KBR508"
+phases = {
+"0": {
+"endGame": true,
+"life": 0.3,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 69.0,
+"name": "Mayor"
+}, {
+"id": 71.0,
+"name": "Felicity"
+}, {
+"id": 72.0,
+"name": "ZPCI Ambassador"
+}, {
+"id": 0.0
+}, {
+"id": 0.0
+}]
+players_levels = [22.0, 22.0, 22.0, 1.0, 1.0]
+sky_background = "STREETS3"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "What can we do? They're getting closer. They're going to hang me for this!",
+"timeToSay": 3.3000000000000003,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v5_4"
+}, {
+"phase": 1.0,
+"player": 4.0,
+"say": "Not to worry Mayor. Plans are in motion to subdue the masses once again.",
+"timeToSay": 5.0,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 3.0,
+"say": "Hello boys, did you miss me?",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "Felicity! No! I thought you were dead! Don't let her come near me!",
+"timeToSay": 6.0,
+"turnTime": 0.0,
+"turnTime2": 3.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "STREETS3"

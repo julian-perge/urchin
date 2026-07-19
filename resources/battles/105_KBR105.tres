@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://d26a52qeol72x"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_6m4tv"]
+
+[resource]
+script = ExtResource("1_6m4tv")
+id = 105
+id_name = "KBR105"
+item_drops = [{
+"chance": 50.0,
+"item": {
+"id": 503.0,
+"name": "Terror Blade"
+}
+}]
+players = [{
+"id": 12.0,
+"name": "Twisted Experiment"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [5.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "JAIL"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "Oh the horrors! I can't take it anymore! Please. Let me... taste your... blood water.",
+"timeToSay": 15.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v1_7"
+}]
+win_date = -1
+zone_background = "JAIL"

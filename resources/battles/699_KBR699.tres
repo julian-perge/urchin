@@ -1,0 +1,83 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cj6qijubbhjn"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_8oxe2"]
+
+[resource]
+script = ExtResource("1_8oxe2")
+id = 699
+id_name = "KBR699"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 670.0,
+"name": "Special Ops Armor"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 672.0,
+"name": "Azure Leggings"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 671.0,
+"name": "Azure Grips"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 676.0,
+"name": "Azure Knife"
+}
+}]
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 76.0,
+"name": "The Judge"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [28.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "ROME"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "Criminals everywhere... This world is truly rotten.",
+"timeToSay": 3.0,
+"turnTime": 4.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "Lady, you should be happy we killed your target for you.",
+"timeToSay": 2.2,
+"turnTime": 4.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "Alas, only I may judge the enemy! Turn yourselves in.",
+"timeToSay": 4.0,
+"turnTime": 4.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "CHURCH"

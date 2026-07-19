@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bslafeigwcl3l"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bslafeigwcl3l"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hmk41"]
-[ext_resource type="Texture2D" uid="uid://cq7i58qsssmo8" path="res://resources/sprites/M_CHEST_JASON.png" id="2_6ltgi"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_s170r"]
+[ext_resource type="Texture2D" uid="uid://thyq8nfkfr82" path="res://assets/item_slot_icons/OTHER/Guards_Uniform.png" id="2_ocjhi"]
 
 [resource]
-script = ExtResource("1_hmk41")
-id = 303.0
-looks = "JASON"
-sprite_image = ExtResource("2_6ltgi")
+script = ExtResource("1_s170r")
+id = 303
+slot_image = ExtResource("2_ocjhi")
 name = "Guard's Uniform"
 display_name = "Guard's Uniform"
 internal_name = "Guard's Uniform"
-tooltip = ""
+looks = "JASON"
 tooltipAlt = ["Speed +2", "Instinct +3", "Vitality +1"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 11.0
+required_level = 1
+price = 11
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://c055c41y420j"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_aloun"]
+
+[resource]
+script = ExtResource("1_aloun")
+id = 82
+name = "Orb of Restraint"
+vitality = 51.0
+strength = 15.0
+magic = 15.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 803,
+"phase": 1
+}, {
+"id": 804,
+"phase": 2
+}],
+"attack": [798],
+"defense": []
+}
+stats = {
+"aggression": [50.0, 2.0, 1.0, 100.0, 15.0],
+"defense": [100.0, 100.0, 60.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 720.0, 0.0],
+"model": ["MODEL2", "MAN", "MAD", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_fel",
+"hit": ["hit_fel1", "hit_fel2", "hit_fel3"]
+}
+}

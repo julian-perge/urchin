@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://bltom61t0woxq"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_sefh4"]
+
+[resource]
+script = ExtResource("1_sefh4")
+id = 65
+name = "Blood Hound"
+vitality = 20.0
+strength = 33.0
+magic = 30.0
+speed = 15.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [701, 702, 703, 107],
+"defense": [1, 122]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL5", "DOG", "ONE", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_monster",
+"hit": ["hit_monster1", "hit_monster2", "hit_monster3"]
+}
+}

@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://42alueq3vuol"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://42alueq3vuol"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_d4sk0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lvlgg"]
 
 [resource]
-script = ExtResource("1_d4sk0")
-id = 117.0
-looks = ""
-name = ""
+script = ExtResource("1_lvlgg")
+id = 117
 display_name = "High Voltage Boots"
 internal_name = "High Voltage Boots"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +4", "Strength +2", "Vitality +3", "Lightning Defense +4", "Earth Defense +4"]
 item_type = 6
 rarity = 1
 class_type = 1
-required_level = 3.0
-price = 312.0
+required_level = 3
+price = 312
 price_modifier = 8.0
 stats = {
 "attributes": {

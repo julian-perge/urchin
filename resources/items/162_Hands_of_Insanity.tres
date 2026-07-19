@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bvqhkusw4qsrn"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bvqhkusw4qsrn"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xk2so"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_nreo4"]
 
 [resource]
-script = ExtResource("1_xk2so")
-id = 162.0
-looks = ""
-name = ""
+script = ExtResource("1_nreo4")
+id = 162
 display_name = "Hands of Insanity"
 internal_name = "Hands of Insanity"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +6", "Instinct +9", "Strength +3", "Vitality +5", "Lightning Defense +6", "Earth Defense +6"]
 item_type = 4
 rarity = 1
 class_type = 1
-required_level = 9.0
-price = 27540.0
+required_level = 9
+price = 27540
 price_modifier = 136.0
 stats = {
 "attributes": {

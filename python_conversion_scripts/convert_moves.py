@@ -1,5 +1,7 @@
 import json
 
+import swf_models
+
 
 def parse_move_block(move_dict: dict):
     """Parse a move creation block into a dictionary."""
@@ -115,8 +117,7 @@ def parse_move_block(move_dict: dict):
 
 def convert_to_json(input_file, output_file):
     """Convert full ActionScript move definitions to JSON."""
-    with open(input_file, "r") as f:
-        content: dict = json.load(f)
+    content: dict = swf_models.load_json(input_file)
 
     all_moves = parse_move_block(content.get("ABILITIES").get("denseValues"))
     # Write to JSON file

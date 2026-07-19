@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bb4ljois1i0uh"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bb4ljois1i0uh"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5renk"]
-[ext_resource type="Texture2D" uid="uid://cvjxoekb6t58g" path="res://resources/sprites/M_LEG2_ZPCI3.png" id="2_u8fh0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_q8a2q"]
+[ext_resource type="Texture2D" uid="uid://c7n4q7yv2ukhm" path="res://assets/item_slot_icons/WEAPONS/Medic-B_Legs.png" id="2_owpm0"]
 
 [resource]
-script = ExtResource("1_5renk")
-id = 35.0
-looks = "ZPCI3"
-sprite_image = ExtResource("2_u8fh0")
+script = ExtResource("1_q8a2q")
+id = 35
+slot_image = ExtResource("2_owpm0")
 name = "Medic-B Legs"
 display_name = "Medic-B Legs"
 internal_name = "Medic Legs"
-tooltip = ""
+looks = "ZPCI3"
 tooltipAlt = ["Speed +1", "Instinct +2", "Strength +1", "Vitality +3", "Lightning Piercing +8"]
 item_type = 5
-rarity = 0
 class_type = 5
-required_level = 1.0
-price = 11.0
+required_unit_id = 4
+required_level = 1
+price = 11
 price_modifier = 1.0
 stats = {
 "attributes": {

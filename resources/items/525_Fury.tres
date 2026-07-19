@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dptqa7g17ys3c"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dptqa7g17ys3c"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6jglw"]
-[ext_resource type="Texture2D" uid="uid://dtleuwl2mqu0h" path="res://resources/sprites/M_WEAPON_TASER2.png" id="2_4kvon"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_x304e"]
+[ext_resource type="Texture2D" uid="uid://go2pqo1e56dv" path="res://assets/item_slot_icons/WEAPONS/Fury.png" id="2_ocwmn"]
 
 [resource]
-script = ExtResource("1_6jglw")
-id = 525.0
-looks = "TASER2"
-sprite_image = ExtResource("2_4kvon")
+script = ExtResource("1_x304e")
+id = 525
+slot_image = ExtResource("2_ocwmn")
 name = "Fury"
 display_name = "Fury"
 internal_name = "Fury"
-tooltip = ""
+looks = "TASER2"
 tooltipAlt = ["Speed +9", "Instinct +14", "Lightning Piercing +42"]
 item_type = 7
 rarity = 2
 class_type = 1
-required_level = 10.0
-price = 474.0
+required_level = 10
+price = 474
 price_modifier = 1.0
 stats = {
 "attributes": {

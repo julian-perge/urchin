@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://dxu2gpt0kft61"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_p7jg4"]
+
+[resource]
+script = ExtResource("1_p7jg4")
+id = 4
+name = "Veradux"
+vitality = 20.0
+strength = 20.0
+magic = 20.0
+speed = 20.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [9, 10],
+"defense": [8]
+}
+stats = {
+"aggression": [50.0, 80.0, 20.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL1", "METABII", "", "M"],
+"skin": "ZPCI3",
+"voice": {
+"die": "dead_dux",
+"hit": ["hit_dux1", "hit_dux2", "hit_dux3"]
+}
+}

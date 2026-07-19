@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://fjmbrvdvngyc"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_wguxb"]
+
+[resource]
+script = ExtResource("1_wguxb")
+id = 58
+name = "The Hydra"
+vitality = 52.0
+strength = 32.0
+magic = 32.0
+speed = 13.0
+focus = 130.0
+moves = {
+"absolute": [{
+"id": 630,
+"phase": 1
+}, {
+"id": 631,
+"phase": 2
+}, {
+"id": 632,
+"phase": 3
+}, {
+"id": 633,
+"phase": 3
+}],
+"attack": [141, 145, 635, 145],
+"defense": [634]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 25.0, 15.0],
+"defense": [75.0, 100.0, 320.0, 100.0, 320.0, 100.0, 100.0, 320.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 250.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL8", "HYDRA", "", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_monster",
+"hit": ["hit_monster1", "hit_monster2", "hit_monster3"]
+}
+}

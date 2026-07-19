@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://cx27ilpq3qmpn"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_qromt"]
+
+[resource]
+script = ExtResource("1_qromt")
+id = 52
+name = "Gregor"
+vitality = 23.0
+strength = 35.0
+magic = 35.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 603,
+"phase": 0
+}],
+"attack": [601, 602, 415],
+"defense": [2]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL7", "GREGOR", "", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_bug",
+"hit": ["hit_bug1", "hit_bug2", "hit_bug3"]
+}
+}

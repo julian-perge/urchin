@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://1cb3orlpoi3v"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://1cb3orlpoi3v"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5jgi1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4pubb"]
 
 [resource]
-script = ExtResource("1_5jgi1")
-id = 171.0
-looks = ""
-name = ""
+script = ExtResource("1_4pubb")
+id = 171
 display_name = "Clown Mask"
 internal_name = "Clown Mask"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +5", "Instinct +15", "Strength +5", "Vitality +15", "Lightning Defense +9", "Earth Defense +9"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 10.0
-price = 54454.0
+required_level = 10
+price = 54454
 price_modifier = 164.0
 stats = {
 "attributes": {

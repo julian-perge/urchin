@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://diwl1fvqq1srp"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_k8776"]
+
+[resource]
+script = ExtResource("1_k8776")
+id = 53
+id_name = "KBR53"
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.35000000000000003,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 33.0,
+"name": "Frost Lord"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "SNOW"
+win_date = -1
+zone_background = "SNOW"

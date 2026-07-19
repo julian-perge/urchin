@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://6gf86u1hu28l"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_63x7j"]
+
+[resource]
+script = ExtResource("1_63x7j")
+id = 34
+name = "ZPCI Sniper"
+vitality = 20.0
+strength = 25.0
+magic = 25.0
+speed = 15.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 544,
+"phase": 1
+}, {
+"id": 552,
+"phase": 2
+}, {
+"id": 553,
+"phase": 2
+}, {
+"id": 552,
+"phase": 3
+}, {
+"id": 553,
+"phase": 3
+}],
+"attack": [548],
+"defense": [547]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 522.0, 0.0],
+"model": ["MODEL1", "MAN", "", "M"],
+"skin": "ZPCI2",
+"voice": {
+"die": "dead_zpci",
+"hit": ["hit_zpci1", "hit_zpci2", "hit_zpci3"]
+}
+}

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bkmmby55jmxg7"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bkmmby55jmxg7"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_nxdk7"]
-[ext_resource type="Texture2D" uid="uid://djxw4wracel0c" path="res://resources/sprites/M_HAND_PRIEST4.png" id="2_cra70"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3ts2v"]
+[ext_resource type="Texture2D" uid="uid://dg0yy26wkshd8" path="res://assets/item_slot_icons/GLOVES/Kens_Legacy.png" id="2_xge6e"]
 
 [resource]
-script = ExtResource("1_nxdk7")
-id = 644.0
-looks = "PRIEST4"
-sprite_image = ExtResource("2_cra70")
+script = ExtResource("1_3ts2v")
+id = 644
+slot_image = ExtResource("2_xge6e")
 name = "Ken's Legacy"
 display_name = "Ken's Legacy"
 internal_name = "Drop MAYOR Hands"
-tooltip = ""
+looks = "PRIEST4"
 tooltipAlt = ["Speed +12", "Instinct +36", "Vitality +12", "Fire Defense +32"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 23.0
-price = 827.0
+required_level = 23
+price = 827
 price_modifier = 1.0
 stats = {
 "attributes": {

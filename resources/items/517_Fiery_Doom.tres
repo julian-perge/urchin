@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://37c06b328woi"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://37c06b328woi"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_npftv"]
-[ext_resource type="Texture2D" uid="uid://1uwp1mmnj1dy" path="res://resources/sprites/M_WEAPON_MAGESTAFF.png" id="2_3gq0y"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_cniei"]
+[ext_resource type="Texture2D" uid="uid://cnentp5rhbuvc" path="res://assets/item_slot_icons/WEAPONS/Fiery_Doom.png" id="2_elais"]
 
 [resource]
-script = ExtResource("1_npftv")
-id = 517.0
-looks = "MAGESTAFF"
-sprite_image = ExtResource("2_3gq0y")
+script = ExtResource("1_cniei")
+id = 517
+slot_image = ExtResource("2_elais")
 name = "Fiery Doom"
 display_name = "Fiery Doom"
 internal_name = "Fiery Doom"
-tooltip = ""
+looks = "MAGESTAFF"
 tooltipAlt = ["Speed +10", "Instinct +28", "Vitality +10"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 9.0
-price = 810.0
+required_level = 9
+price = 810
 price_modifier = 1.0
 stats = {
 "attributes": {

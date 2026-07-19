@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d1mjsevrskjv4"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d1mjsevrskjv4"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_fh5v5"]
-[ext_resource type="Texture2D" uid="uid://drdi32qtyktdn" path="res://resources/sprites/M_HEAD_SAMURAI4.png" id="2_qlads"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_k41yo"]
+[ext_resource type="Texture2D" uid="uid://g4ytnrd6ixav" path="res://assets/item_slot_icons/HELMS/Heavenly_Helm.png" id="2_fj4pj"]
 
 [resource]
-script = ExtResource("1_fh5v5")
-id = 533.0
-looks = "SAMURAI4"
-sprite_image = ExtResource("2_qlads")
+script = ExtResource("1_k41yo")
+id = 533
+slot_image = ExtResource("2_fj4pj")
 name = "Heavenly Helm"
 display_name = "Heavenly Helm"
 internal_name = "Vendor Samurai Head"
-tooltip = ""
+looks = "SAMURAI4"
 tooltipAlt = ["Speed +6", "Strength +11", "Vitality +11"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 436.0
+required_level = 12
+price = 436
 price_modifier = 1.0
 stats = {
 "attributes": {

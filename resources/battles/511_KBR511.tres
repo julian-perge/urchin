@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://chj2bcao0t4j6"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_r0082"]
+
+[resource]
+script = ExtResource("1_r0082")
+id = 511
+id_name = "KBR511"
+item_rare = [{
+"id": 627.0,
+"name": "Bloody Ambition"
+}, {
+"id": 628.0,
+"name": "Nightstrike Armor"
+}, {
+"id": 630.0,
+"name": "Bloody Leggings"
+}, {
+"id": 651.0,
+"name": "Crimson Blade"
+}]
+item_rare_dropper = 2
+players = [{
+"id": 64.0,
+"name": "Specialist"
+}, {
+"id": -2.0
+}, {
+"id": 65.0,
+"name": "Blood Hound"
+}, {
+"id": -1.0
+}, {
+"id": 65.0,
+"name": "Blood Hound"
+}]
+players_levels = [23.0, 1.0, 23.0, 1.0, 23.0]
+sky_background = "STREETS"
+win_date = -1
+zone_background = "STREETS"

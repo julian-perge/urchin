@@ -1,25 +1,33 @@
-# zone_manager.gd
+# item_manager.gd
 extends Node2D
 
 class_name ItemManager
 
-const ITEMS_FILE: String = "res://resources/items.json"
+const ITEMS_DIR: String = "res://resources/items/"
 
-var items_data: Array = []
 var items: Array[GameItem] = []
+var items_by_id: Dictionary = {}
 
 func _ready():
 	name = "ItemManager"
-	#load_data()
-	#for _item in items_data:
-		#items.append(GameItem.new(_item))
+	load_data()
 
 func load_data() -> void:
 	print("Loading all item data")
-	var file = FileAccess.open(ITEMS_FILE, FileAccess.READ)
-	var json = JSON.new()
-	var error = json.parse(file.get_as_text())
-	if error == OK:
-		items_data = json.get_data()
-	else:
-		print("JSON Parse Error: ", json.get_error_message(), " in ", ITEMS_FILE, " at line ", json.get_error_line())
+	var dir = DirAccess.open(ITEMS_DIR)
+	if dir == null:
+		print("Could not open ", ITEMS_DIR)
+		return
+	dir.list_dir_begin()
+	var file_name = dir.get_next()
+	while file_name != "":
+		if file_name.ends_with(".tres"):
+			var item = load(ITEMS_DIR + file_name)
+			if item is GameItem:
+				items.append(item)
+				items_by_id[item.id] = item
+		file_name = dir.get_next()
+	dir.list_dir_end()
+
+func get_item(id: int) -> GameItem:
+	return items_by_id.get(id)

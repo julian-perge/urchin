@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://hmjdij6dd5bb"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://hmjdij6dd5bb"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wsuba"]
-[ext_resource type="Texture2D" uid="uid://ctrtme605hxr4" path="res://resources/sprites/M_LEG2_SINJID.png" id="2_rrhkx"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_m1qnm"]
+[ext_resource type="Texture2D" uid="uid://dgpubxbq66gmb" path="res://assets/item_slot_icons/PANTS/Bloody_Leggings.png" id="2_ikg1d"]
 
 [resource]
-script = ExtResource("1_wsuba")
-id = 630.0
-looks = "SINJID"
-sprite_image = ExtResource("2_rrhkx")
+script = ExtResource("1_m1qnm")
+id = 630
+slot_image = ExtResource("2_ikg1d")
 name = "Bloody Leggings"
 display_name = "Bloody Leggings"
 internal_name = "Drop SPECIALIST Legs"
-tooltip = ""
+looks = "SINJID"
 tooltipAlt = ["Focus +5", "Speed +15", "Strength +22", "Physical Piercing +41"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 1010.0
+required_level = 21
+price = 1010
 price_modifier = 1.0
 stats = {
 "attributes": {

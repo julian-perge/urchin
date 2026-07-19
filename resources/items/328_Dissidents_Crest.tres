@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://o4o65kprpa3p"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://o4o65kprpa3p"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_d0qdh"]
-[ext_resource type="Texture2D" uid="uid://cojwxyw5olpp5" path="res://resources/sprites/M_CHEST_TAT2.png" id="2_buroe"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_p3x5i"]
+[ext_resource type="Texture2D" uid="uid://c20v5j4kmy0wf" path="res://assets/item_slot_icons/WEAPONS/Dissidents_Crest.png" id="2_i8yq4"]
 
 [resource]
-script = ExtResource("1_d0qdh")
-id = 328.0
-looks = "TAT2"
-sprite_image = ExtResource("2_buroe")
+script = ExtResource("1_p3x5i")
+id = 328
+slot_image = ExtResource("2_i8yq4")
 name = "Dissident's Crest"
 display_name = "Dissident's Crest"
 internal_name = "Dissident's Crest"
+looks = "TAT2"
 tooltip = "Incredibly sturdy for a make-shift uniform."
 tooltipAlt = ["Speed +5", "Instinct +5", "Strength +5", "Vitality +5"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 9.0
-price = 284.0
+required_level = 9
+price = 284
 price_modifier = 1.0
 stats = {
 "attributes": {

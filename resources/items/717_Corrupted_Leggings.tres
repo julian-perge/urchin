@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cflf5y3rxopbu"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cflf5y3rxopbu"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4an6w"]
-[ext_resource type="Texture2D" uid="uid://bb6a7yln675xd" path="res://resources/sprites/M_LEG2_PURPLENIN.png" id="2_hymox"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lk7qh"]
+[ext_resource type="Texture2D" uid="uid://bdcuoh5qo6vah" path="res://assets/item_slot_icons/PANTS/Corrupted_Leggings.png" id="2_sdv6u"]
 
 [resource]
-script = ExtResource("1_4an6w")
-id = 717.0
-looks = "PURPLENIN"
-sprite_image = ExtResource("2_hymox")
+script = ExtResource("1_lk7qh")
+id = 717
+slot_image = ExtResource("2_sdv6u")
 name = "Corrupted Leggings"
 display_name = "Corrupted Leggings"
 internal_name = "Drop CORRUPTOR Legs"
-tooltip = ""
+looks = "PURPLENIN"
 tooltipAlt = ["Physical Piercing +113", "Ice Piercing +113", "Lightning Piercing +113", "Shadow Piercing +113", "Poison Piercing +113"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 28.0
-price = 1556.0
+required_level = 28
+price = 1556
 price_modifier = 1.0
 stats = {
 "attributes": {

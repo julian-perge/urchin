@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://6n0xcn6hphmm"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://6n0xcn6hphmm"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qqjbi"]
-[ext_resource type="Texture2D" uid="uid://s1dcm4bm30j7" path="res://resources/sprites/M_LEG2_TUNNELSET2.png" id="2_ny3xn"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_l84r7"]
+[ext_resource type="Texture2D" uid="uid://byuwdmn8abxtj" path="res://assets/item_slot_icons/PANTS/Bone_Braces.png" id="2_lspr4"]
 
 [resource]
-script = ExtResource("1_qqjbi")
-id = 581.0
-looks = "TUNNELSET2"
-sprite_image = ExtResource("2_ny3xn")
+script = ExtResource("1_l84r7")
+id = 581
+slot_image = ExtResource("2_lspr4")
 name = "Bone Braces"
 display_name = "Bone Braces"
 internal_name = "Drop VIKING Legs"
-tooltip = ""
+looks = "TUNNELSET2"
 tooltipAlt = ["Speed +6", "Instinct +22", "Vitality +19", "Ice Piercing +7"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 18.0
-price = 802.0
+required_level = 18
+price = 802
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,0 +1,10 @@
+Krin.ClassStats[0] = Krin.Class + 1;
+Krin.BattlePick = 100;
+Krin.progressFight = true;
+soundPlayCounter = 3;
+_root.soundModeKrin = 0;
+bangStart = true;
+Krin.equipArray0 = [0,11,0,4,8,5,0];
+Krin.StatSets0 = [5,6,5,3,0];
+gotoAndStop("LOADBATTLESCENE");
+play();

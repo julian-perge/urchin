@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b4kfonx54c2dp"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b4kfonx54c2dp"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_cb4am"]
-[ext_resource type="Texture2D" uid="uid://bhc3d1mujl8km" path="res://resources/sprites/M_CHEST_USA2.png" id="2_883e1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_fh5nh"]
+[ext_resource type="Texture2D" uid="uid://y0q3patg2sko" path="res://assets/item_slot_icons/ARMOR/Old_ZPCI_Armor.png" id="2_utygq"]
 
 [resource]
-script = ExtResource("1_cb4am")
-id = 549.0
-looks = "USA2"
-sprite_image = ExtResource("2_883e1")
+script = ExtResource("1_fh5nh")
+id = 549
+slot_image = ExtResource("2_utygq")
 name = "Old ZPCI Armor"
 display_name = "Old ZPCI Armor"
 internal_name = "Drop ZPCI Chest"
+looks = "USA2"
 tooltip = "This line of ZPCI armor is no longer being manufactured."
 tooltipAlt = ["Speed +12", "Instinct +12", "Vitality +6"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 13.0
-price = 492.0
+required_level = 13
+price = 492
 price_modifier = 1.0
 stats = {
 "attributes": {

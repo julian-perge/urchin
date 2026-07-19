@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://y6pvmqfg60gi"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_81gg5"]
+
+[resource]
+script = ExtResource("1_81gg5")
+id = 29
+name = "Insurgent"
+vitality = 10.0
+strength = 10.0
+magic = 10.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 17,
+"phase": 0
+}, {
+"id": 18,
+"phase": 0
+}, {
+"id": 19,
+"phase": 0
+}],
+"attack": [9],
+"defense": [20]
+}
+stats = {
+"aggression": [50.0, 80.0, 20.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [31.0, 27.0, 29.0, 28.0, 30.0, 523.0, 0.0],
+"model": ["MODEL1", "MAN2TAT", "", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

@@ -1,0 +1,77 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://b1asskbmlb6do"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_u0wu0"]
+
+[resource]
+script = ExtResource("1_u0wu0")
+id = 307
+id_name = "KBR307"
+item_rare = [{
+"id": 538.0,
+"name": "Spirit Cover"
+}, {
+"id": 539.0,
+"name": "Mirage Armor"
+}, {
+"id": 540.0,
+"name": "Ghastly Grasp"
+}, {
+"id": 541.0,
+"name": "Ocean Leggings"
+}, {
+"id": 542.0,
+"name": "Aura Treads"
+}]
+item_rare2 = [{
+"id": 543.0,
+"name": "Bone Helm"
+}, {
+"id": 544.0,
+"name": "Emperor's Armor"
+}, {
+"id": 545.0,
+"name": "Pride's Grip"
+}, {
+"id": 546.0,
+"name": "Honor Guards"
+}, {
+"id": 547.0,
+"name": "Ornate Greaves"
+}]
+item_rare3 = [{
+"id": 548.0,
+"name": "Old ZPCI Helm"
+}, {
+"id": 549.0,
+"name": "Old ZPCI Armor"
+}, {
+"id": 550.0,
+"name": "Old ZPCI Gloves"
+}, {
+"id": 551.0,
+"name": "Old ZPCI Leggings"
+}, {
+"id": 552.0,
+"name": "Old ZPCI Boots"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+item_rare_dropper3 = 1
+players = [{
+"id": 40.0,
+"name": "Spectre"
+}, {
+"id": -2.0
+}, {
+"id": 40.0,
+"name": "Spectre"
+}, {
+"id": -1.0
+}, {
+"id": 40.0,
+"name": "Spectre"
+}]
+players_levels = [14.0, 1.0, 15.0, 1.0, 14.0]
+sky_background = "TRAIN"
+win_date = -1
+zone_background = "TRAIN"

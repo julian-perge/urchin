@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cnn7ajl3abkxg"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_10dqg"]
+
+[resource]
+script = ExtResource("1_10dqg")
+id = 1021
+id_name = "KBR1021"
+item_rare2 = [{
+"id": 632.0,
+"name": "Caretaker's Helm"
+}, {
+"id": 633.0,
+"name": "Field Armor"
+}, {
+"id": 647.0,
+"name": "Riot Gun"
+}, {
+"id": 635.0,
+"name": "Bite Proof Pants"
+}]
+item_rare_dropper2 = 2
+players = [{
+"id": 66.0,
+"name": "Care Taker"
+}, {
+"id": -2.0
+}, {
+"id": 65.0,
+"name": "Blood Hound"
+}, {
+"id": -1.0
+}, {
+"id": 65.0,
+"name": "Blood Hound"
+}]
+players_levels = ["X", 1.0, "X", 1.0, "X"]
+sky_background = "STREETS"
+win_date = -1
+zone_background = "STREETS"

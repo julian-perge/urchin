@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://dxuf0rdtgik6b"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dxuf0rdtgik6b"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_1whu6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_x7efb"]
 
 [resource]
-script = ExtResource("1_1whu6")
-id = 118.0
-looks = ""
-name = ""
+script = ExtResource("1_x7efb")
+id = 118
 display_name = "Executioner's Axe"
 internal_name = "Executioner's Axe"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +5", "Instinct +13", "Strength +12", "Vitality +5", "Lightning Defense +16", "Earth Defense +16"]
 item_type = 9
 rarity = 1
 class_type = 1
-required_level = 3.0
-price = 1559.0
+required_level = 3
+price = 1559
 price_modifier = 10.0
 stats = {
 "attributes": {

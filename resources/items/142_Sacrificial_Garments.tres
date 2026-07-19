@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bo76jhxtj5p4t"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bo76jhxtj5p4t"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_iec1k"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3iy5q"]
 
 [resource]
-script = ExtResource("1_iec1k")
-id = 142.0
-looks = ""
-name = ""
+script = ExtResource("1_3iy5q")
+id = 142
 display_name = "Sacrificial Garments"
 internal_name = "Sacrificial Garments"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +2", "Instinct +8", "Strength +2", "Vitality +3", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 6.0
-price = 6636.0
+required_level = 6
+price = 6636
 price_modifier = 43.0
 stats = {
 "attributes": {

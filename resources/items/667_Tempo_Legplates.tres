@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dgugn6bcyw2la"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dgugn6bcyw2la"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n65ug"]
-[ext_resource type="Texture2D" uid="uid://61uu8w361b0a" path="res://resources/sprites/M_LEG2_NOS.png" id="2_hsrf1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2ulfw"]
+[ext_resource type="Texture2D" uid="uid://dj711f8fdtiyr" path="res://assets/item_slot_icons/PANTS/Tempo_Legplates.png" id="2_c2gdk"]
 
 [resource]
-script = ExtResource("1_n65ug")
-id = 667.0
-looks = "NOS"
-sprite_image = ExtResource("2_hsrf1")
+script = ExtResource("1_2ulfw")
+id = 667
+slot_image = ExtResource("2_c2gdk")
 name = "Tempo Legplates"
 display_name = "Tempo Legplates"
 internal_name = "Drop NOS Legs"
-tooltip = ""
+looks = "NOS"
 tooltipAlt = ["Speed +62", "Instinct +21", "Vitality +21"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 26.0
-price = 1392.0
+required_level = 26
+price = 1392
 price_modifier = 1.0
 stats = {
 "attributes": {

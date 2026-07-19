@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://cu3hsxit8g0r8"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_6ywji"]
+
+[resource]
+script = ExtResource("1_6ywji")
+id = 78
+name = "Doctor Klima"
+vitality = 5000.0
+strength = 90.0
+magic = 90.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 784,
+"phase": 2
+}],
+"attack": [455, 443, 145, 149, 141, 578],
+"defense": [1]
+}
+stats = {
+"aggression": [50.0, 2.0, 1.0, 70.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 681.0, 0.0],
+"model": ["MODEL1", "MAN", "MAD", "M"],
+"skin": "KLIMA",
+"voice": {
+"die": "dead_doc",
+"hit": ["hit_doc1", "hit_doc2", "hit_doc3"]
+}
+}

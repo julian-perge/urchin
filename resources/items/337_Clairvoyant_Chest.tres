@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bhd65d2t2fu3t"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bhd65d2t2fu3t"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mienx"]
-[ext_resource type="Texture2D" uid="uid://c3k8a4l1qirco" path="res://resources/sprites/M_CHEST_PRIEST.png" id="2_y2pb2"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_x18e2"]
+[ext_resource type="Texture2D" uid="uid://cdkcc7jpka6ls" path="res://assets/item_slot_icons/ARMOR/Clairvoyant_Chest.png" id="2_hf045"]
 
 [resource]
-script = ExtResource("1_mienx")
-id = 337.0
-looks = "PRIEST"
-sprite_image = ExtResource("2_y2pb2")
+script = ExtResource("1_x18e2")
+id = 337
+slot_image = ExtResource("2_hf045")
 name = "Clairvoyant Chest"
 display_name = "Clairvoyant Chest"
 internal_name = "Clairvoyant Chest"
-tooltip = ""
+looks = "PRIEST"
 tooltipAlt = ["Speed +6", "Instinct +11", "Vitality +3"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 10.0
-price = 332.0
+required_level = 10
+price = 332
 price_modifier = 1.0
 stats = {
 "attributes": {

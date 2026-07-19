@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cnwot5rinupll"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cnwot5rinupll"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_l12fa"]
-[ext_resource type="Texture2D" uid="uid://b1x2qufhf8x07" path="res://resources/sprites/M_WEAPON_UBER11.png" id="2_tu5rt"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mpfvk"]
+[ext_resource type="Texture2D" uid="uid://c86u2vovhe0he" path="res://assets/item_slot_icons/WEAPONS/Lavastone_Sword.png" id="2_2eqxd"]
 
 [resource]
-script = ExtResource("1_l12fa")
-id = 604.0
-looks = "UBER11"
-sprite_image = ExtResource("2_tu5rt")
+script = ExtResource("1_mpfvk")
+id = 604
+slot_image = ExtResource("2_2eqxd")
 name = "Lavastone Sword"
 display_name = "Lavastone Sword"
 internal_name = "SMALL SWORD"
-tooltip = ""
+looks = "UBER11"
 tooltipAlt = ["Speed +15", "Physical Piercing +91"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 17.0
-price = 1051.0
+required_level = 17
+price = 1051
 price_modifier = 1.0
 stats = {
 "attributes": {

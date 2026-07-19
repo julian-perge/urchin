@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bfu1ja6h70r0q"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bfu1ja6h70r0q"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_83k5a"]
-[ext_resource type="Texture2D" uid="uid://nnegedg34rl0" path="res://resources/sprites/M_HEAD_JASON4.png" id="2_ksxu3"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j44nh"]
+[ext_resource type="Texture2D" uid="uid://btq4v1fod4he6" path="res://assets/item_slot_icons/OTHER/Sight_of_Pursuit.png" id="2_athbt"]
 
 [resource]
-script = ExtResource("1_83k5a")
-id = 659.0
-looks = "JASON4"
-sprite_image = ExtResource("2_ksxu3")
+script = ExtResource("1_j44nh")
+id = 659
+slot_image = ExtResource("2_athbt")
 name = "Sight of Pursuit"
 display_name = "Sight of Pursuit"
 internal_name = "Drop WARDEN Head"
-tooltip = ""
+looks = "JASON4"
 tooltipAlt = ["Speed +6", "Strength +67", "Vitality +21", "Physical Defense +11"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 26.0
-price = 1392.0
+required_level = 26
+price = 1392
 price_modifier = 1.0
 stats = {
 "attributes": {

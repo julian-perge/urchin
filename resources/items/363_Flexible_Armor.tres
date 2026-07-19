@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ch1lhnfyx7aiq"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ch1lhnfyx7aiq"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7xgkv"]
-[ext_resource type="Texture2D" uid="uid://ctxl334id82ng" path="res://resources/sprites/M_CHEST_ZPCI2.png" id="2_avc1n"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gpfkl"]
+[ext_resource type="Texture2D" uid="uid://bxwp4jnq8yr55" path="res://assets/item_slot_icons/ARMOR/Flexible_Armor.png" id="2_2t63r"]
 
 [resource]
-script = ExtResource("1_7xgkv")
-id = 363.0
-looks = "ZPCI2"
-sprite_image = ExtResource("2_avc1n")
+script = ExtResource("1_gpfkl")
+id = 363
+slot_image = ExtResource("2_2t63r")
 name = "Flexible Armor"
 display_name = "Flexible Armor"
 internal_name = "Flexible Armour"
-tooltip = ""
+looks = "ZPCI2"
 tooltipAlt = ["Speed +4", "Instinct +2", "Strength +7", "Vitality +12"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 383.0
+required_level = 11
+price = 383
 price_modifier = 1.0
 stats = {
 "attributes": {

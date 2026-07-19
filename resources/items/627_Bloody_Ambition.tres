@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://doi5xxo8siu8u"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://doi5xxo8siu8u"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j4sxm"]
-[ext_resource type="Texture2D" uid="uid://c3tp7lpml5g46" path="res://resources/sprites/M_HEAD_SINJID.png" id="2_mvo6b"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tpdpd"]
+[ext_resource type="Texture2D" uid="uid://chmorr3hyc25v" path="res://assets/item_slot_icons/HELMS/Bloody_Ambition.png" id="2_g2waj"]
 
 [resource]
-script = ExtResource("1_j4sxm")
-id = 627.0
-looks = "SINJID"
-sprite_image = ExtResource("2_mvo6b")
+script = ExtResource("1_tpdpd")
+id = 627
+slot_image = ExtResource("2_g2waj")
 name = "Bloody Ambition"
 display_name = "Bloody Ambition"
 internal_name = "Drop SPECIALIST Head"
-tooltip = ""
+looks = "SINJID"
 tooltipAlt = ["Focus +5", "Speed +35", "Strength +4", "Physical Piercing +43"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 22.0
-price = 1083.0
+required_level = 22
+price = 1083
 price_modifier = 1.0
 stats = {
 "attributes": {

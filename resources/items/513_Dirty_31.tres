@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ugah4faojv6s"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ugah4faojv6s"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sfjwx"]
-[ext_resource type="Texture2D" uid="uid://b2gvog2oeckqe" path="res://resources/sprites/M_LEG2_JEANS.png" id="2_53mw3"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_je5ho"]
+[ext_resource type="Texture2D" uid="uid://b5l8g1vip3auo" path="res://assets/item_slot_icons/OTHER/Dirty_31.png" id="2_hp7oc"]
 
 [resource]
-script = ExtResource("1_sfjwx")
-id = 513.0
-looks = "JEANS"
-sprite_image = ExtResource("2_53mw3")
+script = ExtResource("1_je5ho")
+id = 513
+slot_image = ExtResource("2_hp7oc")
 name = "Dirty 31"
 display_name = "Dirty 31"
 internal_name = "Dirty 31"
+looks = "JEANS"
 tooltip = "Awesome vintage jeans. These actually fit."
 tooltipAlt = ["Speed +6"]
 item_type = 5
 rarity = 2
 class_type = 1
-required_level = 3.0
-price = 164.0
+required_level = 3
+price = 164
 price_modifier = 3.0
 stats = {
 "attributes": {

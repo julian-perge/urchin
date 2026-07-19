@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dnw4ghd03rx2w"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dnw4ghd03rx2w"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g26us"]
-[ext_resource type="Texture2D" uid="uid://chre6qg3mj8ek" path="res://resources/sprites/M_HEAD_JASON3.png" id="2_86fr0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2sydh"]
+[ext_resource type="Texture2D" uid="uid://xva316o1676j" path="res://assets/item_slot_icons/OTHER/Metal_Mask.png" id="2_uxc3e"]
 
 [resource]
-script = ExtResource("1_g26us")
-id = 508.0
-looks = "JASON3"
-sprite_image = ExtResource("2_86fr0")
+script = ExtResource("1_2sydh")
+id = 508
+slot_image = ExtResource("2_uxc3e")
 name = "Metal Mask"
 display_name = "Metal Mask"
 internal_name = "Metal Mask"
-tooltip = ""
+looks = "JASON3"
 tooltipAlt = ["Strength +2", "Vitality +4", "Physical Defense +8"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 3.0
-price = 22.0
+required_level = 3
+price = 22
 price_modifier = 0.4
 stats = {
 "attributes": {

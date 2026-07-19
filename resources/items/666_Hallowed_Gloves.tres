@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dw5m87b7tsrp4"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dw5m87b7tsrp4"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rj0v3"]
-[ext_resource type="Texture2D" uid="uid://bvhro48vjfids" path="res://resources/sprites/M_HAND_NOS.png" id="2_x40el"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_u3173"]
+[ext_resource type="Texture2D" uid="uid://viqb2gj8a72h" path="res://assets/item_slot_icons/GLOVES/Hallowed_Gloves.png" id="2_penhy"]
 
 [resource]
-script = ExtResource("1_rj0v3")
-id = 666.0
-looks = "NOS"
-sprite_image = ExtResource("2_x40el")
+script = ExtResource("1_u3173")
+id = 666
+slot_image = ExtResource("2_penhy")
 name = "Hallowed Gloves"
 display_name = "Hallowed Gloves"
 internal_name = "Drop NOS Hands"
-tooltip = ""
+looks = "NOS"
 tooltipAlt = ["Speed +7", "Instinct +55", "Vitality +7"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 25.0
-price = 938.0
+required_level = 25
+price = 938
 price_modifier = 1.0
 stats = {
 "attributes": {

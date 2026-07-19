@@ -1,0 +1,65 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bv0l2oft4qpu4"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_kfv2f"]
+
+[resource]
+script = ExtResource("1_kfv2f")
+id = 407
+id_name = "KBR407"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 602.0,
+"name": "Poseidon's Fury"
+}
+}]
+item_rare = [{
+"id": 377.0,
+"name": "Flamboyant Shirt"
+}, {
+"id": 378.0,
+"name": "Flamboyant Trousers"
+}, {
+"id": 379.0,
+"name": "Flamboyant Shoes"
+}]
+item_rare3 = [{
+"id": 605.0,
+"name": "Amberstone Sword"
+}, {
+"id": 579.0,
+"name": "DeathBone Armor"
+}, {
+"id": 588.0,
+"name": "Thunder Mask"
+}, {
+"id": 596.0,
+"name": "White Jeans"
+}]
+item_rare_dropper = 2
+item_rare_dropper3 = 1
+players = [{
+"id": 57.0,
+"name": "Flower Zombie"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [19.0, 0.0, 0.0, 0.0, 0.0]
+sky_background = "TUNNEL"
+speeches = [{
+"phase": 1.0,
+"player": 1.0,
+"say": "I'm freaking out... man...",
+"timeToSay": 3.4,
+"turnTime": 3.0,
+"turnTime2": 0.0,
+"voiceOver": "v4_7"
+}]
+win_date = -1
+zone_background = "TUNNEL"

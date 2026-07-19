@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://brnh3ya2xed7a"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://brnh3ya2xed7a"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_pw5f3"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_em081"]
 
 [resource]
-script = ExtResource("1_pw5f3")
-id = 103.0
-looks = ""
-name = ""
+script = ExtResource("1_em081")
+id = 103
 display_name = "Hip Vest"
 internal_name = "Hip Vest"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +3", "Instinct +5", "Strength +2", "Vitality +3"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 11.0
+required_level = 1
+price = 11
 price_modifier = 1.0
 stats = {
 "attributes": {

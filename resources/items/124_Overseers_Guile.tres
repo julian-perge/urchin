@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://jd6qnx3jy3le"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://jd6qnx3jy3le"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g67oe"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_uqk3q"]
 
 [resource]
-script = ExtResource("1_g67oe")
-id = 124.0
-looks = ""
-name = ""
+script = ExtResource("1_uqk3q")
+id = 124
 display_name = "Overseer's Guile"
 internal_name = "Overseer's Guile"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +9", "Instinct +8", "Strength +9", "Vitality +2", "Lightning Defense +9", "Earth Defense +9"]
 item_type = 7
 rarity = 1
 class_type = 1
-required_level = 4.0
-price = 2040.0
+required_level = 4
+price = 2040
 price_modifier = 17.0
 stats = {
 "attributes": {

@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cvdklewqjf16b"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cvdklewqjf16b"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bcpef"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ejedx"]
 
 [resource]
-script = ExtResource("1_bcpef")
-id = 112.0
-looks = ""
-name = ""
+script = ExtResource("1_ejedx")
+id = 112
 display_name = "Headband"
 internal_name = "Headband"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +4", "Instinct +4", "Strength +4", "Vitality +2"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 2.0
-price = 119.0
+required_level = 2
+price = 119
 price_modifier = 4.0
 stats = {
 "attributes": {

@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dkjs6gesiw0j5"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dkjs6gesiw0j5"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_l8x3b"]
-[ext_resource type="Texture2D" uid="uid://nfermn6srvd5" path="res://resources/sprites/M_WEAPON_BROAD2.png" id="2_wesup"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gxwh3"]
+[ext_resource type="Texture2D" uid="uid://bexagrdcvyfpt" path="res://assets/item_slot_icons/WEAPONS/Emerald_Death.png" id="2_5xals"]
 
 [resource]
-script = ExtResource("1_l8x3b")
-id = 603.0
-looks = "BROAD2"
-sprite_image = ExtResource("2_wesup")
+script = ExtResource("1_gxwh3")
+id = 603
+slot_image = ExtResource("2_5xals")
 name = "Emerald Death"
 display_name = "Emerald Death"
 internal_name = "OLD SWORD"
+looks = "BROAD2"
 tooltip = "It's rare that you find a shard this perfect."
 tooltipAlt = ["Strength +186", "Vitality +34"]
 item_type = 9
 rarity = 2
 class_type = 1
-required_level = 19.0
-price = 2485.0
+required_level = 19
+price = 2485
 price_modifier = 1.0
 stats = {
 "attributes": {

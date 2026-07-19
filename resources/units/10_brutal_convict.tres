@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://drqlit2vje0fy"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_q7v7e"]
+
+[resource]
+script = ExtResource("1_q7v7e")
+id = 10
+name = "Brutal Convict"
+vitality = 12.0
+strength = 19.0
+magic = 1.0
+speed = 8.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [2, 267, 103],
+"defense": [506]
+}
+stats = {
+"aggression": [50.0, 40.0, 20.0, 80.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 0.0],
+"model": ["MODEL1", "MAN", "ONE", "M"],
+"skin": "PRISON",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

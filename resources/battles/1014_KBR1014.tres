@@ -1,0 +1,55 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dkcmk6qqg8121"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_04suu"]
+
+[resource]
+script = ExtResource("1_04suu")
+id = 1014
+id_name = "KBR1014"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 555.0,
+"name": "Annihilation"
+}
+}]
+item_rare = [{
+"id": 553.0,
+"name": "Ancient Sword"
+}, {
+"id": 559.0,
+"name": "Bloody Blade"
+}, {
+"id": 561.0,
+"name": "Frosted Axe"
+}]
+item_rare2 = [{
+"id": 562.0,
+"name": "Charged Axe"
+}, {
+"id": 563.0,
+"name": "Ancient Katana"
+}, {
+"id": 566.0,
+"name": "Demon Blade"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+players = [{
+"id": 41.0,
+"name": "Phantom"
+}, {
+"id": -2.0
+}, {
+"id": 42.0,
+"name": "Beast"
+}, {
+"id": -1.0
+}, {
+"id": 43.0,
+"name": "Antagonist"
+}]
+players_levels = ["X", 1.0, "X", 1.0, "X"]
+sky_background = "TRAIN"
+win_date = -1
+zone_background = "TRAIN"

@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://wc0vx1koqt3i"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://wc0vx1koqt3i"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lqq03"]
-[ext_resource type="Texture2D" uid="uid://bgpogalrmqych" path="res://resources/sprites/M_HEAD_CLEMONS.png" id="2_3wh5w"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_22kh3"]
+[ext_resource type="Texture2D" uid="uid://25gghabkdfip" path="res://assets/item_slot_icons/HELMS/Vision_of_Clemons.png" id="2_2vbmd"]
 
 [resource]
-script = ExtResource("1_lqq03")
-id = 568.0
-looks = "CLEMONS"
-sprite_image = ExtResource("2_3wh5w")
+script = ExtResource("1_22kh3")
+id = 568
+slot_image = ExtResource("2_2vbmd")
 name = "Vision of Clemons"
 display_name = "Vision of Clemons"
 internal_name = "Drop CLEMONS Head"
+looks = "CLEMONS"
 tooltip = "There's no bunny in this hat."
 tooltipAlt = ["Instinct +16", "Strength +16", "Vitality +8"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 15.0
-price = 610.0
+required_level = 15
+price = 610
 price_modifier = 1.0
 stats = {
 "attributes": {

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://q4wftx27bwlm"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://q4wftx27bwlm"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_l0ntk"]
-[ext_resource type="Texture2D" uid="uid://b5uyhhjyco4ha" path="res://resources/sprites/M_FOOT_PRIEST2.png" id="2_wehmi"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_p1xve"]
+[ext_resource type="Texture2D" uid="uid://vltmj30pb2le" path="res://assets/item_slot_icons/SHOES/Tomekeepers_Slippers.png" id="2_5jd54"]
 
 [resource]
-script = ExtResource("1_l0ntk")
-id = 343.0
-looks = "PRIEST2"
-sprite_image = ExtResource("2_wehmi")
+script = ExtResource("1_p1xve")
+id = 343
+slot_image = ExtResource("2_5jd54")
 name = "Tomekeeper's Slippers"
 display_name = "Tomekeeper's Slippers"
 internal_name = "Tomekeeper's Slippers"
-tooltip = ""
+looks = "PRIEST2"
 tooltipAlt = ["Speed +5", "Instinct +8", "Vitality +2"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 10.0
-price = 237.0
+required_level = 10
+price = 237
 price_modifier = 1.0
 stats = {
 "attributes": {

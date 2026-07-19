@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ko36nq7udps6"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ko36nq7udps6"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qsmj4"]
-[ext_resource type="Texture2D" uid="uid://dxf0flac442vq" path="res://resources/sprites/M_LEG2_POLICE.png" id="2_u1rj4"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lbike"]
+[ext_resource type="Texture2D" uid="uid://brb3vglyft1h0" path="res://assets/item_slot_icons/PANTS/Riot_Leggings.png" id="2_eeype"]
 
 [resource]
-script = ExtResource("1_qsmj4")
-id = 620.0
-looks = "POLICE"
-sprite_image = ExtResource("2_u1rj4")
+script = ExtResource("1_lbike")
+id = 620
+slot_image = ExtResource("2_eeype")
 name = "Riot Leggings"
 display_name = "Riot Leggings"
 internal_name = "Drop POLICE Legs"
-tooltip = ""
+looks = "POLICE"
 tooltipAlt = ["Speed +25", "Instinct +15", "Strength +11", "Vitality +22"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 1010.0
+required_level = 21
+price = 1010
 price_modifier = 1.0
 stats = {
 "attributes": {

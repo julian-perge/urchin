@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://gkjt4mydfo66"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://gkjt4mydfo66"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dviws"]
-[ext_resource type="Texture2D" uid="uid://bwe0whvslk1mu" path="res://resources/sprites/M_FOOT_ULTI.png" id="2_0jx3i"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ugx4u"]
+[ext_resource type="Texture2D" uid="uid://bi230vtmehpje" path="res://assets/item_slot_icons/SHOES/Furious_Greaves.png" id="2_0mnqj"]
 
 [resource]
-script = ExtResource("1_dviws")
-id = 698.0
-looks = "ULTI"
-sprite_image = ExtResource("2_0jx3i")
+script = ExtResource("1_ugx4u")
+id = 698
+slot_image = ExtResource("2_0mnqj")
 name = "Furious Greaves"
 display_name = "Furious Greaves"
 internal_name = "Drop ULTI Feet"
-tooltip = ""
+looks = "ULTI"
 tooltipAlt = ["Speed +9", "Instinct +9", "Strength +42", "Vitality +26"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 28.0
-price = 1111.0
+required_level = 28
+price = 1111
 price_modifier = 1.0
 stats = {
 "attributes": {

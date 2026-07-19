@@ -1,0 +1,78 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bboxd74kyoifb"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_3iytu"]
+
+[resource]
+script = ExtResource("1_3iytu")
+id = 205
+id_name = "KBR205"
+item_drops = [{
+"chance": 25.0,
+"item": {
+"id": 520.0,
+"name": "Frosted Fate"
+}
+}]
+item_rare = [{
+"id": 321.0,
+"name": "Frosted Armor"
+}, {
+"id": 325.0,
+"name": "Frozen Helm"
+}, {
+"id": 322.0,
+"name": "Frosted Leggings"
+}]
+item_rare2 = [{
+"id": 323.0,
+"name": "Icy Runners"
+}, {
+"id": 324.0,
+"name": "Glacial Gloves"
+}, {
+"id": 519.0,
+"name": "Icy Maul"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+players = [{
+"id": 33.0,
+"name": "Frost Lord"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [10.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "SNOW"
+speeches = [{
+"phase": 1.0,
+"player": "Veradux",
+"say": "What are the tattoos for? You all have them.",
+"timeToSay": 3.0,
+"turnTime": 6.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_9"
+}, {
+"phase": 1.0,
+"player": "Roald",
+"say": "When things started to get ugly, we got them made in secret so we knew who we could trust.",
+"timeToSay": 4.200000000000002,
+"turnTime": 6.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "They look familiar, somehow.",
+"timeToSay": 2.0,
+"turnTime": 6.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "SNOW"

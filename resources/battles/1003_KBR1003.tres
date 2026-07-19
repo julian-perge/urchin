@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cu7cws80rnyrk"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_qvf1j"]
+
+[resource]
+script = ExtResource("1_qvf1j")
+id = 1003
+id_name = "KBR1003"
+item_rare = [{
+"id": 317.0,
+"name": "Gilded Boots"
+}, {
+"id": 318.0,
+"name": "Precision Grips"
+}, {
+"id": 316.0,
+"name": "Elite Leggings"
+}, {
+"id": 319.0,
+"name": "Double Visor"
+}, {
+"id": 320.0,
+"name": "Elite Armor"
+}, {
+"id": 506.0,
+"name": "Standard Rifle"
+}]
+item_rare_dropper = 2
+players = [{
+"id": 8.0,
+"name": "ZPCI Elite"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "JAIL"
+win_date = -1
+zone_background = "JAIL"

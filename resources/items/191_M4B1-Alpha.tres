@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://baw7awe8rm5dx"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://baw7awe8rm5dx"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_b460c"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e1a7d"]
 
 [resource]
-script = ExtResource("1_b460c")
-id = 191.0
-looks = ""
-name = ""
+script = ExtResource("1_e1a7d")
+id = 191
 display_name = "M4B1-Alpha"
 internal_name = "M4B1-Alpha"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +41", "Instinct +19", "Strength +55", "Vitality +33", "Lightning Defense +28", "Earth Defense +28"]
 item_type = 9
 rarity = 1
 class_type = 1
-required_level = 12.0
-price = 354170.0
+required_level = 12
+price = 354170
 price_modifier = 284.0
 stats = {
 "attributes": {

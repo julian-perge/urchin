@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://38bibsn2glr7"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://38bibsn2glr7"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rurhy"]
-[ext_resource type="Texture2D" uid="uid://ck6rsw37pjpl4" path="res://resources/sprites/M_WEAPON_FRANKEN.png" id="2_ip3m3"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kwhc5"]
 
 [resource]
-script = ExtResource("1_rurhy")
-id = 15.0
-looks = "FRANKEN"
-sprite_image = ExtResource("2_ip3m3")
-name = ""
+script = ExtResource("1_kwhc5")
+id = 15
 display_name = "Hans the Butcher"
 internal_name = "Hans the Butcher"
-tooltip = ""
+looks = "FRANKEN"
 tooltipAlt = ["Strength +1", "Vitality +1", "Physical Piercing +2"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 15.0
+required_level = 1
+price = 15
 price_modifier = 1.0
 stats = {
 "attributes": {

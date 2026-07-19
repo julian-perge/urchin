@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://n5rv0fananyq"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://n5rv0fananyq"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j0nii"]
-[ext_resource type="Texture2D" uid="uid://6fivrdgf0de4" path="res://resources/sprites/M_WEAPON_FELKNIFE4.png" id="2_83gki"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rdmsi"]
 
 [resource]
-script = ExtResource("1_j0nii")
-id = 721.0
-looks = "FELKNIFE4"
-sprite_image = ExtResource("2_83gki")
-name = ""
+script = ExtResource("1_rdmsi")
+id = 721
 display_name = "Fire Sword"
 internal_name = "Fire Sword"
-tooltip = ""
+looks = "FELKNIFE4"
 tooltipAlt = ["Speed +101", "Strength +134", "Vitality +101", "Fire Piercing +161"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 28.0
-price = 4445.0
+required_level = 28
+price = 4445
 price_modifier = 1.0
 stats = {
 "attributes": {

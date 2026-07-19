@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bb7evyumfj3cm"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bb7evyumfj3cm"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hw7kt"]
-[ext_resource type="Texture2D" uid="uid://4crqexwb4kef" path="res://resources/sprites/M_HAND_TAT.png" id="2_no1n7"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_i7nnh"]
 
 [resource]
-script = ExtResource("1_hw7kt")
-id = 29.0
-looks = "TAT"
-sprite_image = ExtResource("2_no1n7")
-name = ""
+script = ExtResource("1_i7nnh")
+id = 29
 display_name = "Tat Glove"
 internal_name = "Tat Glove"
-tooltip = ""
+looks = "TAT"
 tooltipAlt = ["Speed +7", "Strength +7", "Vitality +14"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 15.0
-price = 436.0
+required_level = 15
+price = 436
 price_modifier = 1.0
 stats = {
 "attributes": {

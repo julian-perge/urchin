@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bspvotcuv15mp"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bspvotcuv15mp"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_p0bhp"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n5qc0"]
 
 [resource]
-script = ExtResource("1_p0bhp")
-id = 189.0
-looks = ""
-name = ""
+script = ExtResource("1_n5qc0")
+id = 189
 display_name = "Steel Toe Boots"
 internal_name = "Steel Toe Boots"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +14", "Instinct +5", "Strength +12", "Vitality +19", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 77007.0
+required_level = 12
+price = 77007
 price_modifier = 247.0
 stats = {
 "attributes": {

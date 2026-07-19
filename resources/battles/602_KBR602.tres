@@ -1,0 +1,107 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bnujvogtx16lj"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_n2x36"]
+
+[resource]
+script = ExtResource("1_n2x36")
+id = 602
+id_name = "KBR602"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 664.0,
+"name": "Deadly Visage"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 666.0,
+"name": "Hallowed Gloves"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 667.0,
+"name": "Tempo Legplates"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 675.0,
+"name": "Temporal Blade"
+}
+}]
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.75,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"turn": 4.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": false,
+"life": 0.5,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"4": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"turn": 4.0,
+"winOrLose": 1.0
+},
+"5": {
+"endGame": false,
+"life": 0.25,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"6": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 75.0,
+"name": "Nostalgia"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [26.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "ROME"
+speeches = [{
+"phase": 1.0,
+"player": 1.0,
+"say": "This must be the target that Warden was talking about.",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 3.0,
+"say": "What IS that thing?",
+"timeToSay": 2.0,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "CHURCH"

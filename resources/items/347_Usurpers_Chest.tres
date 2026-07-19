@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://pqv8d0khd61k"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://pqv8d0khd61k"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6wxeb"]
-[ext_resource type="Texture2D" uid="uid://uxlswfm2hf73" path="res://resources/sprites/M_CHEST_XADER2.png" id="2_onbo5"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_c4u3f"]
+[ext_resource type="Texture2D" uid="uid://b35qm1qemcr44" path="res://assets/item_slot_icons/ARMOR/Usurpers_Chest.png" id="2_aaxbj"]
 
 [resource]
-script = ExtResource("1_6wxeb")
-id = 347.0
-looks = "XADER2"
-sprite_image = ExtResource("2_onbo5")
+script = ExtResource("1_c4u3f")
+id = 347
+slot_image = ExtResource("2_aaxbj")
 name = "Usurper's Chest"
 display_name = "Usurper's Chest"
 internal_name = "Usurper's Chest"
-tooltip = ""
+looks = "XADER2"
 tooltipAlt = ["Speed +7", "Strength +12", "Vitality +5"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 383.0
+required_level = 11
+price = 383
 price_modifier = 1.0
 stats = {
 "attributes": {

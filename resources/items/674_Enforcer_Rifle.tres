@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bw24iwkeh2603"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bw24iwkeh2603"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_13dhu"]
-[ext_resource type="Texture2D" uid="uid://www888llv4ss" path="res://resources/sprites/M_WEAPON_AK2.png" id="2_cuy67"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n8d73"]
+[ext_resource type="Texture2D" uid="uid://2ixvqjbsi5m6" path="res://assets/item_slot_icons/WEAPONS/Enforcer_Rifle.png" id="2_t7eh1"]
 
 [resource]
-script = ExtResource("1_13dhu")
-id = 674.0
-looks = "AK2"
-sprite_image = ExtResource("2_cuy67")
+script = ExtResource("1_n8d73")
+id = 674
+slot_image = ExtResource("2_t7eh1")
 name = "Enforcer Rifle"
 display_name = "Enforcer Rifle"
 internal_name = "GUN"
-tooltip = ""
+looks = "AK2"
 tooltipAlt = ["Speed +55", "Instinct +55", "Strength +82", "Vitality +82"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 25.0
-price = 3750.0
+required_level = 25
+price = 3750
 price_modifier = 1.0
 stats = {
 "attributes": {

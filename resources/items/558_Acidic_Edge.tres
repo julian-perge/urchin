@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bnaikyodqvb67"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bnaikyodqvb67"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3o470"]
-[ext_resource type="Texture2D" uid="uid://cwociwd3fqon2" path="res://resources/sprites/M_WEAPON_FELKNIFE2.png" id="2_v024s"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n4tm3"]
+[ext_resource type="Texture2D" uid="uid://iolkf1misywe" path="res://assets/item_slot_icons/WEAPONS/Acidic_Edge.png" id="2_fnnq1"]
 
 [resource]
-script = ExtResource("1_3o470")
-id = 558.0
-looks = "FELKNIFE2"
-sprite_image = ExtResource("2_v024s")
+script = ExtResource("1_n4tm3")
+id = 558
+slot_image = ExtResource("2_fnnq1")
 name = "Acidic Edge"
 display_name = "Acidic Edge"
 internal_name = "Green 2"
-tooltip = ""
+looks = "FELKNIFE2"
 tooltipAlt = ["Strength +11", "Poison Piercing +65"]
 item_type = 8
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 624.0
+required_level = 12
+price = 624
 price_modifier = 1.0
 stats = {
 "attributes": {

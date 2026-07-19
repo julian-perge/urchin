@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dj6x4y20b0khb"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dj6x4y20b0khb"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7uqiy"]
-[ext_resource type="Texture2D" uid="uid://d11kpl4qyfkhu" path="res://resources/sprites/M_FOOT_ZPCI.png" id="2_ara2q"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_x8lls"]
+[ext_resource type="Texture2D" uid="uid://disvhojij78el" path="res://assets/item_slot_icons/SHOES/Gilded_Boots.png" id="2_7pghe"]
 
 [resource]
-script = ExtResource("1_7uqiy")
-id = 317.0
-looks = "ZPCI"
-sprite_image = ExtResource("2_ara2q")
+script = ExtResource("1_x8lls")
+id = 317
+slot_image = ExtResource("2_7pghe")
 name = "Gilded Boots"
 display_name = "Gilded Boots"
 internal_name = "Gilded Boots"
+looks = "ZPCI"
 tooltip = "'Property of Zombie Pest Control Inc.'"
 tooltipAlt = ["Speed +2", "Instinct +1", "Strength +3", "Vitality +5"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 7.0
-price = 139.0
+required_level = 7
+price = 139
 price_modifier = 1.0
 stats = {
 "attributes": {

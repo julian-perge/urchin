@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dijgesphxnb8r"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dijgesphxnb8r"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_iljl2"]
-[ext_resource type="Texture2D" uid="uid://cfhfluent884g" path="res://resources/sprites/M_FOOT_USA2.png" id="2_v0w2n"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xjcap"]
+[ext_resource type="Texture2D" uid="uid://cq55n5oo4jbvm" path="res://assets/item_slot_icons/SHOES/Old_ZPCI_Boots.png" id="2_rucys"]
 
 [resource]
-script = ExtResource("1_iljl2")
-id = 552.0
-looks = "USA2"
-sprite_image = ExtResource("2_v0w2n")
+script = ExtResource("1_xjcap")
+id = 552
+slot_image = ExtResource("2_rucys")
 name = "Old ZPCI Boots"
 display_name = "Old ZPCI Boots"
 internal_name = "Drop ZPCI Feet"
+looks = "USA2"
 tooltip = "This line of ZPCI armor is no longer being manufactured."
 tooltipAlt = ["Speed +3", "Instinct +20", "Vitality +3"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 14.0
-price = 393.0
+required_level = 14
+price = 393
 price_modifier = 1.0
 stats = {
 "attributes": {

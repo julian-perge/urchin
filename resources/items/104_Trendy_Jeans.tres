@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bcvufdge3oe0v"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bcvufdge3oe0v"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_34c87"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dml7x"]
 
 [resource]
-script = ExtResource("1_34c87")
-id = 104.0
-looks = ""
-name = ""
+script = ExtResource("1_dml7x")
+id = 104
 display_name = "Trendy Jeans"
 internal_name = "Trendy Jeans"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +3", "Instinct +2", "Strength +2", "Vitality +3"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 11.0
+required_level = 1
+price = 11
 price_modifier = 1.0
 stats = {
 "attributes": {

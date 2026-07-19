@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://ceejx7hofoyhw"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_6p4bf"]
+
+[resource]
+script = ExtResource("1_6p4bf")
+id = 25
+name = "Frost Terror"
+vitality = 20.0
+strength = 13.0
+magic = 3.0
+speed = 14.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [501, 504, 503, 2, 219, 521],
+"defense": [502]
+}
+stats = {
+"aggression": [50.0, 80.0, 50.0, 50.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL1", "Frost", "", "M"],
+"skin": "FROST",
+"voice": {
+"die": "dead_zombie",
+"hit": ["hit_zombie1", "hit_zombie2", "hit_zombie3"]
+}
+}

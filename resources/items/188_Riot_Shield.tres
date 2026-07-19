@@ -1,21 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bx5nu4rut4als"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bx5nu4rut4als"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bbrq7"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_1swaa"]
+[ext_resource type="Texture2D" uid="uid://2a6lpb0d6bnb" path="res://assets/item_slot_icons/WEAPONS/Riot_Shield.png" id="2_iogrh"]
 
 [resource]
-script = ExtResource("1_bbrq7")
-id = 188.0
-looks = ""
-name = ""
+script = ExtResource("1_1swaa")
+id = 188
+slot_image = ExtResource("2_iogrh")
 display_name = "Riot Shield"
 internal_name = "Riot Shield"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +10", "Instinct +17", "Strength +24", "Vitality +37", "Lightning Defense +14", "Earth Defense +14"]
 item_type = 8
 rarity = 1
 class_type = 1
-required_level = 12.0
-price = 168355.0
+required_level = 12
+price = 168355
 price_modifier = 270.0
 stats = {
 "attributes": {

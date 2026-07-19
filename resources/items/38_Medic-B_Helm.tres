@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cikpmrmc63ra0"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cikpmrmc63ra0"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wliwc"]
-[ext_resource type="Texture2D" uid="uid://l5js4vlnr561" path="res://resources/sprites/M_HEAD_ZPCI3.png" id="2_wkp3k"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j447d"]
+[ext_resource type="Texture2D" uid="uid://cop0gyr66x6jr" path="res://assets/item_slot_icons/WEAPONS/Medic-B_Helm.png" id="2_h2sot"]
 
 [resource]
-script = ExtResource("1_wliwc")
-id = 38.0
-looks = "ZPCI3"
-sprite_image = ExtResource("2_wkp3k")
+script = ExtResource("1_j447d")
+id = 38
+slot_image = ExtResource("2_h2sot")
 name = "Medic-B Helm"
 display_name = "Medic-B Helm"
 internal_name = "Medic Head"
-tooltip = ""
+looks = "ZPCI3"
 tooltipAlt = ["Speed +1", "Instinct +2", "Strength +1", "Vitality +2", "Lightning Piercing +8"]
 item_type = 2
-rarity = 0
 class_type = 5
-required_level = 1.0
-price = 11.0
+required_unit_id = 4
+required_level = 1
+price = 11
 price_modifier = 1.0
 stats = {
 "attributes": {

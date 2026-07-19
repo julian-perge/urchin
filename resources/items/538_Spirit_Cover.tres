@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bn40eoj1vkjs6"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bn40eoj1vkjs6"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_i2abu"]
-[ext_resource type="Texture2D" uid="uid://c133ldbomut5x" path="res://resources/sprites/M_HEAD_SHAMAN2.png" id="2_7n4xi"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kyjrf"]
+[ext_resource type="Texture2D" uid="uid://yc01f5tifjgo" path="res://assets/item_slot_icons/HELMS/Spirit_Cover.png" id="2_httcj"]
 
 [resource]
-script = ExtResource("1_i2abu")
-id = 538.0
-looks = "SHAMAN2"
-sprite_image = ExtResource("2_7n4xi")
+script = ExtResource("1_kyjrf")
+id = 538
+slot_image = ExtResource("2_httcj")
 name = "Spirit Cover"
 display_name = "Spirit Cover"
 internal_name = "Drop Shaman Head"
-tooltip = ""
+looks = "SHAMAN2"
 tooltipAlt = ["Speed +6", "Instinct +15", "Vitality +9"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 13.0
-price = 492.0
+required_level = 13
+price = 492
 price_modifier = 1.0
 stats = {
 "attributes": {

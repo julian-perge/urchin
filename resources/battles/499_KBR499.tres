@@ -1,0 +1,88 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cx1oujau6u1ht"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_h0p8r"]
+
+[resource]
+script = ExtResource("1_h0p8r")
+id = 499
+id_name = "KBR499"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 380.0,
+"name": "Mining Helmet"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 380.0,
+"name": "Mining Helmet"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 380.0,
+"name": "Mining Helmet"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 381.0,
+"name": "Mining Shirt"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 381.0,
+"name": "Mining Shirt"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 381.0,
+"name": "Mining Shirt"
+}
+}]
+phases = {
+"0": {
+"endGame": true,
+"life": 0.3,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 60.0,
+"name": "Tunnel Worker"
+}, {
+"id": -2.0
+}, {
+"id": 60.0,
+"name": "Tunnel Worker"
+}, {
+"id": -1.0
+}, {
+"id": 60.0,
+"name": "Tunnel Worker"
+}]
+players_levels = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "TUNNEL"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "Oi, Miller, look! There are still people down here!",
+"timeToSay": 2.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v4_8"
+}, {
+"phase": 1.0,
+"player": 4.0,
+"say": "Ey, I'd give these guys some masks, if they breathe in any more of this stuff they're done for!",
+"timeToSay": 5.0,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "TUNNEL"

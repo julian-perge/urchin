@@ -1,0 +1,85 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://034i7y3mlc63"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_jnhyn"]
+
+[resource]
+script = ExtResource("1_jnhyn")
+id = 199
+id_name = "KBR199"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 507.0,
+"name": "Curved Blade"
+}
+}]
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.5,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.35000000000000003,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": true,
+"life": 0.1,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 11.0,
+"name": "Felicity"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [7.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "JAIL"
+speeches = [{
+"phase": 2.0,
+"player": 2.0,
+"say": "Don't start what you can't finish, boys.",
+"timeToSay": 3.4,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v1_11"
+}, {
+"phase": 3.0,
+"player": 2.0,
+"say": "You’re not getting that tape!",
+"timeToSay": 2.3000000000000003,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v1_12"
+}, {
+"phase": 4.0,
+"player": 1.0,
+"say": "Give us the tape, this is getting old.",
+"timeToSay": 2.7,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v1_13"
+}, {
+"phase": 4.0,
+"player": 2.0,
+"say": "You want it that bad, huh? Catch it if you can!",
+"timeToSay": 4.700000000000002,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "JAIL"

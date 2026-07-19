@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dbvy5oxq3bplk"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dbvy5oxq3bplk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3wvvj"]
-[ext_resource type="Texture2D" uid="uid://cigk6fkic8vep" path="res://resources/sprites/M_CHEST_POLICE.png" id="2_vs47c"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_auhca"]
+[ext_resource type="Texture2D" uid="uid://bior7y6t2snfy" path="res://assets/item_slot_icons/ARMOR/Riot_Armor.png" id="2_5qtsf"]
 
 [resource]
-script = ExtResource("1_3wvvj")
-id = 618.0
-looks = "POLICE"
-sprite_image = ExtResource("2_vs47c")
+script = ExtResource("1_auhca")
+id = 618
+slot_image = ExtResource("2_5qtsf")
 name = "Riot Armor"
 display_name = "Riot Armor"
 internal_name = "Drop POLICE Chest"
-tooltip = ""
+looks = "POLICE"
 tooltipAlt = ["Speed +16", "Instinct +16", "Strength +23", "Vitality +23"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 22.0
-price = 1083.0
+required_level = 22
+price = 1083
 price_modifier = 1.0
 stats = {
 "attributes": {

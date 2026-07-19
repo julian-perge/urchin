@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bd70k5ln1138g"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_bvjo7"]
+
+[resource]
+script = ExtResource("1_bvjo7")
+id = 1016
+id_name = "KBR1016"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 602.0,
+"name": "Poseidon's Fury"
+}
+}]
+item_rare = [{
+"id": 573.0,
+"name": "Night Vision"
+}, {
+"id": 581.0,
+"name": "Bone Braces"
+}, {
+"id": 585.0,
+"name": "Toxic Clutch"
+}, {
+"id": 591.0,
+"name": "Spark Leggings"
+}]
+item_rare_dropper = 1
+players = [{
+"id": 50.0,
+"name": "Tunnel Beast"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, 1.0, 1.0, 1.0]
+sky_background = "TUNNEL"
+win_date = -1
+zone_background = "TUNNEL"

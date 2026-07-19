@@ -1,0 +1,89 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://t7iaooaoabui"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_mp6mb"]
+
+[resource]
+script = ExtResource("1_mp6mb")
+id = 203
+id_name = "KBR203"
+item_rare = [{
+"id": 330.0,
+"name": "Justice Helm"
+}, {
+"id": 331.0,
+"name": "Rightful Grasp"
+}, {
+"id": 332.0,
+"name": "Righteous Breastplate"
+}, {
+"id": 333.0,
+"name": "Zealot's Leggings"
+}, {
+"id": 334.0,
+"name": "Zealot's Marcher"
+}, {
+"id": 515.0,
+"name": "Light's Blade"
+}, {
+"id": 516.0,
+"name": "Metal Shield"
+}]
+item_rare_dropper = 1
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.3,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 20.0,
+"name": "Knight"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [9.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "SNOW"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "You are here to join our ranks? Then prove yourselves!",
+"timeToSay": 3.600000000000001,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_5"
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "Lay down your arms, I... *cough* accept your request.",
+"timeToSay": 5.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_6"
+}, {
+"phase": 2.0,
+"player": 1.0,
+"say": "Your membership fees are too high. I'd rather kill you.",
+"timeToSay": 3.5,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "Heretic! My Master will have your heads!",
+"timeToSay": 3.5,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "SNOW"

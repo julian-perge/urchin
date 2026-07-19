@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cka235ksdv8qm"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_4liov"]
+
+[resource]
+script = ExtResource("1_4liov")
+id = 1001
+id_name = "KBR1001"
+item_drops = [{
+"chance": 50.0,
+"item": {
+"id": 503.0,
+"name": "Terror Blade"
+}
+}]
+players = [{
+"id": 12.0,
+"name": "Twisted Experiment"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = ["X", 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "JAIL"
+win_date = -1
+zone_background = "JAIL"

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://uvuonr6utbks"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://uvuonr6utbks"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8riul"]
-[ext_resource type="Texture2D" uid="uid://dspl6fpvml45t" path="res://resources/sprites/M_WEAPON_FELKNIFE5.png" id="2_eub0a"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_oc7hl"]
+[ext_resource type="Texture2D" uid="uid://dq8yxfjhpn0pu" path="res://assets/item_slot_icons/WEAPONS/Azure_Shredder.png" id="2_7kbqs"]
 
 [resource]
-script = ExtResource("1_8riul")
-id = 677.0
-looks = "FELKNIFE5"
-sprite_image = ExtResource("2_eub0a")
+script = ExtResource("1_oc7hl")
+id = 677
+slot_image = ExtResource("2_7kbqs")
 name = "Azure Shredder"
 display_name = "Azure Shredder"
 internal_name = "KNIFE2"
-tooltip = ""
+looks = "FELKNIFE5"
 tooltipAlt = ["Speed +83", "Physical Piercing +42"]
 item_type = 8
-rarity = 0
 class_type = 1
-required_level = 23.0
-price = 1655.0
+required_level = 23
+price = 1655
 price_modifier = 1.0
 stats = {
 "attributes": {

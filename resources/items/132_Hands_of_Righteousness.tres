@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://d3tveyvtoj8t0"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d3tveyvtoj8t0"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jedcq"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_m5tcp"]
 
 [resource]
-script = ExtResource("1_jedcq")
-id = 132.0
-looks = ""
-name = ""
+script = ExtResource("1_m5tcp")
+id = 132
 display_name = "Hands of Righteousness"
 internal_name = "Hands of Righteousness"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +4", "Strength +3", "Vitality +5", "Lightning Defense +5", "Earth Defense +5"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 5.0
-price = 2264.0
+required_level = 5
+price = 2264
 price_modifier = 27.0
 stats = {
 "attributes": {

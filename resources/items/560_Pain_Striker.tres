@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://c827nxgbmvg3j"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c827nxgbmvg3j"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_nbtrp"]
-[ext_resource type="Texture2D" uid="uid://bf631i6tmw2ut" path="res://resources/sprites/M_WEAPON_FELKNIFE3.png" id="2_ydkhs"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_l2tq7"]
+[ext_resource type="Texture2D" uid="uid://c5pseec8egctx" path="res://assets/item_slot_icons/WEAPONS/Pain_Striker.png" id="2_cw100"]
 
 [resource]
-script = ExtResource("1_nbtrp")
-id = 560.0
-looks = "FELKNIFE3"
-sprite_image = ExtResource("2_ydkhs")
+script = ExtResource("1_l2tq7")
+id = 560
+slot_image = ExtResource("2_cw100")
 name = "Pain Striker"
 display_name = "Pain Striker"
 internal_name = "Red 2"
-tooltip = ""
+looks = "FELKNIFE3"
 tooltipAlt = ["Strength +4", "Physical Piercing +84"]
 item_type = 8
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 624.0
+required_level = 12
+price = 624
 price_modifier = 1.0
 stats = {
 "attributes": {

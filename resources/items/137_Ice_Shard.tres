@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://ci5rhsg0ypokk"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ci5rhsg0ypokk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wbe0y"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_k8joh"]
 
 [resource]
-script = ExtResource("1_wbe0y")
-id = 137.0
-looks = ""
-name = ""
+script = ExtResource("1_k8joh")
+id = 137
 display_name = "Ice Shard"
 internal_name = "Ice Shard"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +14", "Instinct +7", "Strength +9", "Vitality +7", "Lightning Defense +10", "Earth Defense +10"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 6.0
-price = 7936.0
+required_level = 6
+price = 7936
 price_modifier = 36.0
 stats = {
 "attributes": {

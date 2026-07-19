@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://li4eoywjg6an"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://li4eoywjg6an"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_alk7v"]
-[ext_resource type="Texture2D" uid="uid://bdw6v66bthu4p" path="res://resources/sprites/M_HEAD_KLIMA.png" id="2_oo4g0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kqbk0"]
+[ext_resource type="Texture2D" uid="uid://xorokuagkuq1" path="res://assets/item_slot_icons/HELMS/Surgeons_Visage.png" id="2_3ttcm"]
 
 [resource]
-script = ExtResource("1_alk7v")
-id = 684.0
-looks = "KLIMA"
-sprite_image = ExtResource("2_oo4g0")
+script = ExtResource("1_kqbk0")
+id = 684
+slot_image = ExtResource("2_3ttcm")
 name = "Surgeon's Visage"
 display_name = "Surgeon's Visage"
 internal_name = "Drop KLIMA Head"
-tooltip = ""
+looks = "KLIMA"
 tooltipAlt = ["Speed +24", "Instinct +41", "Strength +36", "Vitality +30"]
 item_type = 2
-rarity = 0
 class_type = 5
-required_level = 28.0
-price = 1556.0
+required_unit_id = 4
+required_level = 28
+price = 1556
 price_modifier = 1.0
 stats = {
 "attributes": {

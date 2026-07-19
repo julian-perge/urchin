@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dhc21ldjeo36v"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dhc21ldjeo36v"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dj48q"]
-[ext_resource type="Texture2D" uid="uid://dtg1hf1im06nk" path="res://resources/sprites/M_WEAPON_SPELLMACE.png" id="2_byl3y"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xtubk"]
+[ext_resource type="Texture2D" uid="uid://drhroue66w3jp" path="res://assets/item_slot_icons/WEAPONS/Mending_Beacon.png" id="2_srlk5"]
 
 [resource]
-script = ExtResource("1_dj48q")
-id = 678.0
-looks = "SPELLMACE"
-sprite_image = ExtResource("2_byl3y")
+script = ExtResource("1_xtubk")
+id = 678
+slot_image = ExtResource("2_srlk5")
 name = "Mending Beacon"
 display_name = "Mending Beacon"
 internal_name = "MACE"
-tooltip = ""
+looks = "SPELLMACE"
 tooltipAlt = ["Speed +22", "Instinct +88", "Vitality +37"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 26.0
-price = 1989.0
+required_level = 26
+price = 1989
 price_modifier = 1.0
 stats = {
 "attributes": {

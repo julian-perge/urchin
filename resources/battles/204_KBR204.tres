@@ -1,0 +1,85 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://2ydjp12klq5i"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_10psm"]
+
+[resource]
+script = ExtResource("1_10psm")
+id = 204
+id_name = "KBR204"
+item_rare = [{
+"id": 330.0,
+"name": "Justice Helm"
+}, {
+"id": 331.0,
+"name": "Rightful Grasp"
+}, {
+"id": 332.0,
+"name": "Righteous Breastplate"
+}, {
+"id": 333.0,
+"name": "Zealot's Leggings"
+}, {
+"id": 334.0,
+"name": "Zealot's Marcher"
+}, {
+"id": 515.0,
+"name": "Light's Blade"
+}, {
+"id": 516.0,
+"name": "Metal Shield"
+}]
+item_rare2 = [{
+"id": 335.0,
+"name": "Believer's Crown"
+}, {
+"id": 336.0,
+"name": "Spirit Slippers"
+}, {
+"id": 337.0,
+"name": "Clairvoyant Chest"
+}, {
+"id": 338.0,
+"name": "Healer's Hands"
+}, {
+"id": 339.0,
+"name": "Divine Garments"
+}, {
+"id": 518.0,
+"name": "Frosted Light"
+}]
+item_rare_dropper = 1
+item_rare_dropper2 = 1
+players = [{
+"id": 21.0,
+"name": "Priest"
+}, {
+"id": -2.0
+}, {
+"id": 20.0,
+"name": "Knight"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [10.0, 1.0, 9.0, 1.0, 1.0]
+sky_background = "SNOW"
+speeches = [{
+"phase": 1.0,
+"player": 4.0,
+"say": "We don't fear death!",
+"timeToSay": 1.8000000000000005,
+"turnTime": 3.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_7"
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "Our master will save us from the undead!",
+"timeToSay": 2.7,
+"turnTime": 6.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_8"
+}]
+win_date = -1
+zone_background = "SNOW"

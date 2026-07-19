@@ -1,23 +1,20 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://sweemovce5sr"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://sweemovce5sr"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g0138"]
-[ext_resource type="Texture2D" uid="uid://ja2rpxe4v2pw" path="res://resources/sprites/M_FOOT_NAVY.png" id="2_u53ff"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_fp8id"]
+[ext_resource type="Texture2D" uid="uid://c5u2ks1n36jln" path="res://assets/item_slot_icons/OTHER/Navy_Boots.png" id="2_7e8d8"]
 
 [resource]
-script = ExtResource("1_g0138")
-id = 10.0
-looks = "NAVY"
-sprite_image = ExtResource("2_u53ff")
-name = ""
+script = ExtResource("1_fp8id")
+id = 10
+slot_image = ExtResource("2_7e8d8")
 display_name = "Navy Boots"
 internal_name = "Navy Boots"
-tooltip = ""
+looks = "NAVY"
 tooltipAlt = ["Speed +1", "Strength +1"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 8.0
+required_level = 1
+price = 8
 price_modifier = 1.0
 stats = {
 "attributes": {

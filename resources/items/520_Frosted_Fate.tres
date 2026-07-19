@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://12oi4ge7c424"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://12oi4ge7c424"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_d8u8p"]
-[ext_resource type="Texture2D" uid="uid://cyi06txm4hlh1" path="res://resources/sprites/M_WEAPON_FROSTAXE.png" id="2_uyuic"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gplhk"]
+[ext_resource type="Texture2D" uid="uid://k1ljvvrt8244" path="res://assets/item_slot_icons/WEAPONS/Frosted_Fate.png" id="2_nxtpq"]
 
 [resource]
-script = ExtResource("1_d8u8p")
-id = 520.0
-looks = "FROSTAXE"
-sprite_image = ExtResource("2_uyuic")
+script = ExtResource("1_gplhk")
+id = 520
+slot_image = ExtResource("2_nxtpq")
 name = "Frosted Fate"
 display_name = "Frosted Fate"
 internal_name = "Frosted Fate"
+looks = "FROSTAXE"
 tooltip = "This one is actually quite heavy."
 tooltipAlt = ["Speed +9", "Instinct +6", "Strength +17", "Ice Piercing +25"]
 item_type = 7
 rarity = 2
 class_type = 1
-required_level = 10.0
-price = 1423.0
+required_level = 10
+price = 1423
 price_modifier = 3.0
 stats = {
 "attributes": {

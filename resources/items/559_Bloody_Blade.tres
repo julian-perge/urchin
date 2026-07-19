@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b4h1volisywq2"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b4h1volisywq2"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5uibs"]
-[ext_resource type="Texture2D" uid="uid://bf631i6tmw2ut" path="res://resources/sprites/M_WEAPON_FELKNIFE3.png" id="2_f7em6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5qq8l"]
+[ext_resource type="Texture2D" uid="uid://y4qo70bskdp7" path="res://assets/item_slot_icons/WEAPONS/Bloody_Blade.png" id="2_rod6s"]
 
 [resource]
-script = ExtResource("1_5uibs")
-id = 559.0
-looks = "FELKNIFE3"
-sprite_image = ExtResource("2_f7em6")
+script = ExtResource("1_5qq8l")
+id = 559
+slot_image = ExtResource("2_rod6s")
 name = "Bloody Blade"
 display_name = "Bloody Blade"
 internal_name = "Red 1"
-tooltip = ""
+looks = "FELKNIFE3"
 tooltipAlt = ["Speed +4", "Physical Piercing +84"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 624.0
+required_level = 12
+price = 624
 price_modifier = 1.0
 stats = {
 "attributes": {

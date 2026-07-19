@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d0xpu7tmhcabg"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d0xpu7tmhcabg"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ve6ar"]
-[ext_resource type="Texture2D" uid="uid://yne8gf3cukbh" path="res://resources/sprites/M_WEAPON_XADER.png" id="2_mm3jg"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mslfo"]
+[ext_resource type="Texture2D" uid="uid://cs8w2jruytvof" path="res://assets/item_slot_icons/WEAPONS/Runeblade.png" id="2_cnxah"]
 
 [resource]
-script = ExtResource("1_ve6ar")
-id = 521.0
-looks = "XADER"
-sprite_image = ExtResource("2_mm3jg")
+script = ExtResource("1_mslfo")
+id = 521
+slot_image = ExtResource("2_cnxah")
 name = "Runeblade"
 display_name = "Runeblade"
 internal_name = "Runeblade"
-tooltip = ""
+looks = "XADER"
 tooltipAlt = ["Speed +18", "Instinct +11", "Strength +24", "Vitality +11", "Physical Piercing +53"]
 item_type = 9
 rarity = 2
 class_type = 1
-required_level = 11.0
-price = 1094.0
+required_level = 11
+price = 1094
 price_modifier = 1.0
 stats = {
 "attributes": {

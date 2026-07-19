@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://jb6rab2u1vr4"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://jb6rab2u1vr4"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6anp8"]
-[ext_resource type="Texture2D" uid="uid://xpunassy0opq" path="res://resources/sprites/M_FOOT_GAY.png" id="2_nw1kg"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vehrb"]
+[ext_resource type="Texture2D" uid="uid://bmqby4mgvdn78" path="res://assets/item_slot_icons/OTHER/Flamboyant_Shoes.png" id="2_3e65f"]
 
 [resource]
-script = ExtResource("1_6anp8")
-id = 379.0
-looks = "GAY"
-sprite_image = ExtResource("2_nw1kg")
+script = ExtResource("1_vehrb")
+id = 379
+slot_image = ExtResource("2_3e65f")
 name = "Flamboyant Shoes"
 display_name = "Flamboyant Shoes"
 internal_name = "Flamboyant Shoes"
-tooltip = ""
+looks = "GAY"
 tooltipAlt = ["Speed +12", "Strength +20", "Vitality +8"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 18.0
-price = 573.0
+required_level = 18
+price = 573
 price_modifier = 1.0
 stats = {
 "attributes": {

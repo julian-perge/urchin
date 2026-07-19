@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://d37hnwk38pjeu"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d37hnwk38pjeu"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8qd5c"]
-[ext_resource type="Texture2D" uid="uid://efeq0onm7t8l" path="res://resources/sprites/M_CHEST_JASON2.png" id="2_i2csw"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g187g"]
+[ext_resource type="Texture2D" uid="uid://by0xrqvjg6yip" path="res://assets/item_slot_icons/OTHER/Wardens_Armor.png" id="2_wx7ux"]
 
 [resource]
-script = ExtResource("1_8qd5c")
-id = 310.0
-looks = "JASON2"
-sprite_image = ExtResource("2_i2csw")
+script = ExtResource("1_g187g")
+id = 310
+slot_image = ExtResource("2_wx7ux")
 name = "Warden's Armor"
 display_name = "Warden's Armor"
 internal_name = "Warden's Body Armour"
-tooltip = ""
+looks = "JASON2"
 tooltipAlt = ["Speed +3", "Strength +5", "Vitality +2"]
 item_type = 3
 rarity = 1
 class_type = 1
-required_level = 5.0
-price = 117.0
+required_level = 5
+price = 117
 price_modifier = 1.0
 stats = {
 "attributes": {

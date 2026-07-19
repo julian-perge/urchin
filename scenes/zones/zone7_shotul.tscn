@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/zones/zone_scene.gd" id="1_zone"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/battle/STREETS.png" id="2_bg"]
+[ext_resource type="PackedScene" uid="uid://bkvbwuvy6gwpg" path="res://scenes/orb.tscn" id="3_orb"]
+[ext_resource type="Script" uid="uid://c1b7lb4ellb4y" path="res://scripts/ui/fight_orb.gd" id="4_story"]
+[ext_resource type="Script" uid="uid://btdh4sbo1pnkw" path="res://scripts/ui/store_orb.gd" id="5_store"]
+[ext_resource type="Script" uid="uid://dkxcijni1mbpc" path="res://scripts/ui/training_orb.gd" id="6_train"]
+
+[node name="Zone7" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_zone")
+zone_id = 7
+
+[node name="HubArt" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 16.0
+offset_right = 782.0
+offset_bottom = 430.0
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="StoryFight" parent="." instance=ExtResource("3_orb")]
+position = Vector2(526.8, 202.6)
+scale = Vector2(0.4, 0.4)
+script = ExtResource("4_story")
+
+[node name="ItemStore" parent="." instance=ExtResource("3_orb")]
+position = Vector2(139.6, 264.8)
+scale = Vector2(0.4, 0.4)
+script = ExtResource("5_store")
+
+[node name="TrainingFight" parent="." instance=ExtResource("3_orb")]
+position = Vector2(736.4, 269.4)
+scale = Vector2(0.4, 0.4)
+script = ExtResource("6_train")

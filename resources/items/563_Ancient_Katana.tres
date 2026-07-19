@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ddbm5pmr4j4pj"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ddbm5pmr4j4pj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_id578"]
-[ext_resource type="Texture2D" uid="uid://dv0eyfcgnjmud" path="res://resources/sprites/M_WEAPON_KATANA.png" id="2_b8qc1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_d5k5a"]
+[ext_resource type="Texture2D" uid="uid://nr876radkuc4" path="res://assets/item_slot_icons/WEAPONS/Ancient_Katana.png" id="2_27tlj"]
 
 [resource]
-script = ExtResource("1_id578")
-id = 563.0
-looks = "KATANA"
-sprite_image = ExtResource("2_b8qc1")
+script = ExtResource("1_d5k5a")
+id = 563
+slot_image = ExtResource("2_27tlj")
 name = "Ancient Katana"
 display_name = "Ancient Katana"
 internal_name = "Gold Katana"
-tooltip = ""
+looks = "KATANA"
 tooltipAlt = ["Speed +20", "Instinct +20", "Strength +49", "Vitality +10"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 14.0
-price = 1571.0
+required_level = 14
+price = 1571
 price_modifier = 1.0
 stats = {
 "attributes": {

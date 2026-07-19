@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bxk5ts8kedova"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bxk5ts8kedova"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0walf"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jprqy"]
 
 [resource]
-script = ExtResource("1_0walf")
-id = 139.0
-looks = ""
-name = ""
+script = ExtResource("1_jprqy")
+id = 139
 display_name = "Ardor's Guard"
 internal_name = "Ardor's Guard"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +14", "Instinct +9", "Strength +4", "Vitality +11", "Lightning Defense +10", "Earth Defense +10"]
 item_type = 8
-rarity = 0
 class_type = 1
-required_level = 6.0
-price = 8377.0
+required_level = 6
+price = 8377
 price_modifier = 38.0
 stats = {
 "attributes": {

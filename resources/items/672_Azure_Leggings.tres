@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://ejo8rtgah07f"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ejo8rtgah07f"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2s143"]
-[ext_resource type="Texture2D" uid="uid://t5y0syxe2mmg" path="res://resources/sprites/M_LEG2_BLUENIN.png" id="2_ttg5b"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_pbtg8"]
+[ext_resource type="Texture2D" uid="uid://b8v55rttgf3yh" path="res://assets/item_slot_icons/PANTS/Azure_Leggings.png" id="2_bx7id"]
 
 [resource]
-script = ExtResource("1_2s143")
-id = 672.0
-looks = "BLUENIN"
-sprite_image = ExtResource("2_ttg5b")
+script = ExtResource("1_pbtg8")
+id = 672
+slot_image = ExtResource("2_bx7id")
 name = "Azure Leggings"
 display_name = "Azure Leggings"
 internal_name = "Drop BLUE NINJA Legs"
-tooltip = ""
+looks = "BLUENIN"
 tooltipAlt = ["Speed +24", "Instinct +24", "Strength +24", "Vitality +24"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 25.0
-price = 1313.0
+required_level = 25
+price = 1313
 price_modifier = 1.0
 stats = {
 "attributes": {

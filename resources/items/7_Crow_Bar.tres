@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dgnq0uiy2kt8y"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dgnq0uiy2kt8y"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_isfxs"]
-[ext_resource type="Texture2D" uid="uid://dxueimqro4lli" path="res://resources/sprites/M_WEAPON_CROWBAR.png" id="2_n3ohv"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_06xnu"]
+[ext_resource type="Texture2D" uid="uid://bj1oaatnrqrct" path="res://assets/item_slot_icons/OTHER/Crow_Bar.png" id="2_it1cv"]
 
 [resource]
-script = ExtResource("1_isfxs")
-id = 7.0
-looks = "CROWBAR"
-sprite_image = ExtResource("2_n3ohv")
+script = ExtResource("1_06xnu")
+id = 7
+slot_image = ExtResource("2_it1cv")
 name = "Crow Bar"
 display_name = "Crow Bar"
 internal_name = "Crow Bar"
+looks = "CROWBAR"
 tooltip = "The weapon of free men."
 tooltipAlt = ["Strength +6"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 1.0
-price = 15.0
+required_level = 1
+price = 15
 price_modifier = 1.0
 stats = {
 "attributes": {

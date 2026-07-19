@@ -1,0 +1,132 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cthibbbfy6njj"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_oeoj2"]
+
+[resource]
+script = ExtResource("1_oeoj2")
+id = 201
+id_name = "KBR201"
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": true,
+"life": 0.1,
+"player": 2.0,
+"turn": 3.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 32.0,
+"name": "Roald"
+}, {
+"id": -2.0
+}, {
+"id": 29.0,
+"name": "Insurgent"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [9.0, 1.0, 9.0, 1.0, 1.0, 1.0]
+sky_background = "SNOW"
+speeches = [{
+"phase": 2.0,
+"player": 4.0,
+"say": "Hey, wait! You're not like the rest of them! Who are you? Can you talk?",
+"timeToSay": 4.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_2"
+}, {
+"phase": 2.0,
+"player": 1.0,
+"say": "We're just passing through. Move, or die.",
+"timeToSay": 3.5,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "Amazing!",
+"timeToSay": 2.8000000000000003,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 4.0,
+"say": "Let's put down our weapons. We are not your enemies.",
+"timeToSay": 3.5,
+"turnTime": 0.0,
+"turnTime2": 3.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "We were a group of people devoted to find a cure for... your condition. But things started happening… ",
+"timeToSay": 7.0,
+"turnTime": 0.0,
+"turnTime2": 4.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "Assassinations… Kidnappings… Someone didn't want us to continue our research.",
+"timeToSay": 7.0,
+"turnTime": 0.0,
+"turnTime2": 5.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 4.0,
+"say": "Those of us that survived – we fled from the Utopia, and ended up hiding here.",
+"timeToSay": 4.5,
+"turnTime": 0.0,
+"turnTime2": 6.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "This place isn't much better. The village is infested with some kind of cult.",
+"timeToSay": 5.5,
+"turnTime": 0.0,
+"turnTime2": 7.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "They sacrifice innocent people. Will you help us?",
+"timeToSay": 3.5,
+"turnTime": 0.0,
+"turnTime2": 8.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 1.0,
+"say": "Tell us how to find that Utopia. Then we will help you.",
+"timeToSay": 3.5,
+"turnTime": 0.0,
+"turnTime2": 9.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "If you can rid us from this zealous cult – I'll take you there myself.",
+"timeToSay": 3.5,
+"turnTime": 0.0,
+"turnTime2": 10.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": "Veradux",
+"say": "All in a days work!",
+"timeToSay": 1.5,
+"turnTime": 0.0,
+"turnTime2": 11.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "SNOW"

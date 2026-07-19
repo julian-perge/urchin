@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://67qkj4fige3g"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_qhdw8"]
+
+[resource]
+script = ExtResource("1_qhdw8")
+id = 405
+id_name = "KBR405"
+item_drops = [{
+"chance": 8.0,
+"item": {
+"id": 602.0,
+"name": "Poseidon's Fury"
+}
+}]
+item_rare2 = [{
+"id": 575.0,
+"name": "Flex-o-Matic"
+}, {
+"id": 578.0,
+"name": "Mask of Horror"
+}, {
+"id": 584.0,
+"name": "Venomsteel Armor"
+}, {
+"id": 595.0,
+"name": "Pink Sleeves"
+}]
+item_rare3 = [{
+"id": 605.0,
+"name": "Amberstone Sword"
+}, {
+"id": 579.0,
+"name": "DeathBone Armor"
+}, {
+"id": 588.0,
+"name": "Thunder Mask"
+}, {
+"id": 596.0,
+"name": "White Jeans"
+}]
+item_rare_dropper2 = 1
+item_rare_dropper3 = 1
+players = [{
+"id": 55.0,
+"name": "Mokoshotar"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [18.0, 0.0, 0.0, 0.0, 0.0]
+sky_background = "TUNNEL"
+win_date = -1
+zone_background = "TUNNEL"

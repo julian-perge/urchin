@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bxk80sw6mrrtm"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bxk80sw6mrrtm"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dexdk"]
-[ext_resource type="Texture2D" uid="uid://d4igm5q8moqif" path="res://resources/sprites/M_CHEST_TUNNELSET2.png" id="2_g1omx"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_k746k"]
+[ext_resource type="Texture2D" uid="uid://xq8xve00x7pp" path="res://assets/item_slot_icons/ARMOR/DeathBone_Armor.png" id="2_rms0n"]
 
 [resource]
-script = ExtResource("1_dexdk")
-id = 579.0
-looks = "TUNNELSET2"
-sprite_image = ExtResource("2_g1omx")
+script = ExtResource("1_k746k")
+id = 579
+slot_image = ExtResource("2_rms0n")
 name = "DeathBone Armor"
 display_name = "DeathBone Armor"
 internal_name = "Drop VIKING Chest"
+looks = "TUNNELSET2"
 tooltip = "Someone could really hurt themselves just putting this thing on."
 tooltipAlt = ["Instinct +39", "Strength +12", "Vitality +9", "Ice Piercing +7"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 19.0
-price = 870.0
+required_level = 19
+price = 870
 price_modifier = 1.0
 stats = {
 "attributes": {

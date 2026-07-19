@@ -1,0 +1,60 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://ugydkk3kbu4l"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_jk7fd"]
+
+[resource]
+script = ExtResource("1_jk7fd")
+id = 200
+id_name = "KBR200"
+item_rare = [{
+"id": 321.0,
+"name": "Frosted Armor"
+}, {
+"id": 325.0,
+"name": "Frozen Helm"
+}, {
+"id": 322.0,
+"name": "Frosted Leggings"
+}]
+item_rare_dropper = 1
+players = [{
+"id": 23.0,
+"name": "Frost Zombie"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [8.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "SNOW"
+speeches = [{
+"phase": 1.0,
+"player": 1.0,
+"say": "Isn't this a long row to hoe. Looks like we're hoofing it from here.",
+"timeToSay": 4.1000000000000005,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v2_1"
+}, {
+"phase": 1.0,
+"player": "Veradux",
+"say": "It was fun while it lasted, right? And look, a welcoming party!",
+"timeToSay": 4.1000000000000005,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "Mmmgghrrr!",
+"timeToSay": 2.5,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "SNOW"

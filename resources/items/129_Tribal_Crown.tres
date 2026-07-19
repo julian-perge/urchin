@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://cxveyuk2bvia6"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cxveyuk2bvia6"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qvu61"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rabp5"]
 
 [resource]
-script = ExtResource("1_qvu61")
-id = 129.0
-looks = ""
-name = ""
+script = ExtResource("1_rabp5")
+id = 129
 display_name = "Tribal Crown"
 internal_name = "Tribal Crown"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Speed +7", "Instinct +2", "Strength +4", "Vitality +6", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 5.0
-price = 2583.0
+required_level = 5
+price = 2583
 price_modifier = 22.0
 stats = {
 "attributes": {

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dq76iig35e5sx"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dq76iig35e5sx"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rw7yb"]
-[ext_resource type="Texture2D" uid="uid://b3adqg1l4ruie" path="res://resources/sprites/M_FOOT_SAMURAI4.png" id="2_i3ex8"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0ghtq"]
+[ext_resource type="Texture2D" uid="uid://e1c810egulpj" path="res://assets/item_slot_icons/SHOES/Misted_Greaves.png" id="2_rqn32"]
 
 [resource]
-script = ExtResource("1_rw7yb")
-id = 537.0
-looks = "SAMURAI4"
-sprite_image = ExtResource("2_i3ex8")
+script = ExtResource("1_0ghtq")
+id = 537
+slot_image = ExtResource("2_rqn32")
 name = "Misted Greaves"
 display_name = "Misted Greaves"
 internal_name = "Vendor Samurai Feet"
-tooltip = ""
+looks = "SAMURAI4"
 tooltipAlt = ["Instinct +3", "Strength +3", "Vitality +17"]
 item_type = 6
-rarity = 0
 class_type = 1
-required_level = 13.0
-price = 352.0
+required_level = 13
+price = 352
 price_modifier = 1.0
 stats = {
 "attributes": {

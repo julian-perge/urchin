@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://dk5e4gmdtfei8"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_7g1ai"]
+
+[resource]
+script = ExtResource("1_7g1ai")
+id = 1
+name = "Bio"
+vitality = 7.0
+strength = 14.0
+magic = 4.0
+speed = 15.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [2, 3, 5],
+"defense": [4, 6]
+}
+stats = {
+"aggression": [50.0, 90.0, 60.0, 40.0, 90.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"model": ["MODEL1", "ONE", "ONE", "M"],
+"skin": "0",
+"voice": {
+"die": "dead_sonny",
+"hit": ["hit_sonny1", "hit_sonny2", "hit_sonny3"]
+}
+}

@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://f0tnrf65a43f"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://f0tnrf65a43f"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g7rpx"]
-[ext_resource type="Texture2D" uid="uid://bhfswnvnhly3j" path="res://resources/sprites/M_HEAD_FIRESAM.png" id="2_88q6t"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4267j"]
+[ext_resource type="Texture2D" uid="uid://bkqgnv2v50q1t" path="res://assets/item_slot_icons/HELMS/Flame_Helm.png" id="2_ywfw2"]
 
 [resource]
-script = ExtResource("1_g7rpx")
-id = 709.0
-looks = "FIRESAM"
-sprite_image = ExtResource("2_88q6t")
+script = ExtResource("1_4267j")
+id = 709
+slot_image = ExtResource("2_ywfw2")
 name = "Flame Helm"
 display_name = "Flame Helm"
 internal_name = "Drop FIRESAM Head"
-tooltip = ""
+looks = "FIRESAM"
 tooltipAlt = ["Speed +36", "Instinct +12", "Strength +47", "Vitality +36", "Fire Piercing +28"]
 item_type = 2
 rarity = 2
 class_type = 1
-required_level = 28.0
-price = 1556.0
+required_level = 28
+price = 1556
 price_modifier = 1.0
 stats = {
 "attributes": {

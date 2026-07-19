@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://dgsnlsjuh4nqh"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dgsnlsjuh4nqh"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bs7ol"]
-[ext_resource type="Texture2D" uid="uid://b1x2qufhf8x07" path="res://resources/sprites/M_WEAPON_UBER11.png" id="2_upwpl"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yeg8f"]
+[ext_resource type="Texture2D" uid="uid://duay5uotjk3xp" path="res://assets/item_slot_icons/WEAPONS/Amberstone_Sword.png" id="2_m8meu"]
 
 [resource]
-script = ExtResource("1_bs7ol")
-id = 605.0
-looks = "UBER11"
-sprite_image = ExtResource("2_upwpl")
+script = ExtResource("1_yeg8f")
+id = 605
+slot_image = ExtResource("2_m8meu")
 name = "Amberstone Sword"
 display_name = "Amberstone Sword"
 internal_name = "SMALL SWORD"
-tooltip = ""
+looks = "UBER11"
 tooltipAlt = ["Speed +17", "Physical Piercing +98"]
 item_type = 8
-rarity = 0
 class_type = 1
-required_level = 19.0
-price = 1242.0
+required_level = 19
+price = 1242
 price_modifier = 1.0
 stats = {
 "attributes": {

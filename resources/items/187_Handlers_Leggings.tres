@@ -1,21 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://bjbels2adfprj"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bjbels2adfprj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mvrej"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7j2qt"]
 
 [resource]
-script = ExtResource("1_mvrej")
-id = 187.0
-looks = ""
-name = ""
+script = ExtResource("1_7j2qt")
+id = 187
 display_name = "Handler's Leggings"
 internal_name = "Handler's Leggings"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +7", "Instinct +12", "Strength +17", "Vitality +20", "Lightning Defense +10", "Earth Defense +10"]
 item_type = 5
-rarity = 0
 class_type = 1
-required_level = 12.0
-price = 113920.0
+required_level = 12
+price = 113920
 price_modifier = 261.0
 stats = {
 "attributes": {

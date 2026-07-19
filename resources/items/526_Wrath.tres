@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://cb8qg28d030ms"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cb8qg28d030ms"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_110wg"]
-[ext_resource type="Texture2D" uid="uid://dtleuwl2mqu0h" path="res://resources/sprites/M_WEAPON_TASER2.png" id="2_c3ee0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_w5blo"]
+[ext_resource type="Texture2D" uid="uid://cxu8m4tqeet3h" path="res://assets/item_slot_icons/WEAPONS/Wrath.png" id="2_kee4g"]
 
 [resource]
-script = ExtResource("1_110wg")
-id = 526.0
-looks = "TASER2"
-sprite_image = ExtResource("2_c3ee0")
+script = ExtResource("1_w5blo")
+id = 526
+slot_image = ExtResource("2_kee4g")
 name = "Wrath"
 display_name = "Wrath"
 internal_name = "Wrath"
-tooltip = ""
+looks = "TASER2"
 tooltipAlt = ["Focus +15", "Speed +2", "Instinct +2", "Lightning Piercing +42"]
 item_type = 8
-rarity = 0
 class_type = 1
-required_level = 10.0
-price = 474.0
+required_level = 10
+price = 474
 price_modifier = 1.0
 stats = {
 "attributes": {

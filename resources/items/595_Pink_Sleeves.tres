@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://vn7bo7c7od15"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://vn7bo7c7od15"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_l61tb"]
-[ext_resource type="Texture2D" uid="uid://01uw25jxnqo0" path="res://resources/sprites/M_HAND_ROCKSTAR.png" id="2_1s3st"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kgct4"]
+[ext_resource type="Texture2D" uid="uid://b2ajxt6l0keiq" path="res://assets/item_slot_icons/GLOVES/Pink_Sleeves.png" id="2_tss4l"]
 
 [resource]
-script = ExtResource("1_l61tb")
-id = 595.0
-looks = "ROCKSTAR"
-sprite_image = ExtResource("2_1s3st")
+script = ExtResource("1_kgct4")
+id = 595
+slot_image = ExtResource("2_tss4l")
 name = "Pink Sleeves"
 display_name = "Pink Sleeves"
 internal_name = "Drop ROCKSTAR Hands"
-tooltip = ""
+looks = "ROCKSTAR"
 tooltipAlt = ["Speed +8", "Instinct +5", "Strength +11", "Vitality +8"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 16.0
-price = 480.0
+required_level = 16
+price = 480
 price_modifier = 1.0
 stats = {
 "attributes": {

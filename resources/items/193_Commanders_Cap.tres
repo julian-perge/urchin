@@ -1,21 +1,19 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=2 format=3 uid="uid://sw08n2g5ty3y"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://sw08n2g5ty3y"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_eyiev"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7sej2"]
 
 [resource]
-script = ExtResource("1_eyiev")
-id = 193.0
-looks = ""
-name = ""
+script = ExtResource("1_7sej2")
+id = 193
 display_name = "Commander's Cap"
 internal_name = "Commander's Cap"
-tooltip = ""
+looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +23", "Instinct +24", "Strength +23", "Vitality +6", "Lightning Defense +10", "Earth Defense +10"]
 item_type = 2
 rarity = 2
 class_type = 1
-required_level = 13.0
-price = 164381.0
+required_level = 13
+price = 164381
 price_modifier = 334.0
 stats = {
 "attributes": {

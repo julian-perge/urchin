@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://bv1gav5x3whkg"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_h8sk3"]
+
+[resource]
+script = ExtResource("1_h8sk3")
+id = 61
+name = "Police Colonel"
+vitality = 210.0
+strength = 13.0
+magic = 6.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 764,
+"phase": 1
+}, {
+"id": 763,
+"phase": 2
+}, {
+"id": 19,
+"phase": 2
+}, {
+"id": 766,
+"phase": 2
+}, {
+"id": 755,
+"phase": 2
+}, {
+"id": 762,
+"phase": 2
+}, {
+"id": 2,
+"phase": 2
+}, {
+"id": 759,
+"phase": 2
+}, {
+"id": 764,
+"phase": 4
+}],
+"attack": [765],
+"defense": [759, 19, 762, 760, 767, 766, 755, 2]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 35.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 649.0, 0.0],
+"model": ["MODEL1", "MAN", "ONE", "M"],
+"skin": "IMPERIAL2",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

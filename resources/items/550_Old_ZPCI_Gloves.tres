@@ -1,23 +1,22 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b3rg78rxfxvs2"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b3rg78rxfxvs2"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g4rx5"]
-[ext_resource type="Texture2D" uid="uid://d3x4yexe366l2" path="res://resources/sprites/M_HAND_USA2.png" id="2_k4d50"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_56gx6"]
+[ext_resource type="Texture2D" uid="uid://cxxsbx7bqw0pc" path="res://assets/item_slot_icons/GLOVES/Old_ZPCI_Gloves.png" id="2_u34hs"]
 
 [resource]
-script = ExtResource("1_g4rx5")
-id = 550.0
-looks = "USA2"
-sprite_image = ExtResource("2_k4d50")
+script = ExtResource("1_56gx6")
+id = 550
+slot_image = ExtResource("2_u34hs")
 name = "Old ZPCI Gloves"
 display_name = "Old ZPCI Gloves"
 internal_name = "Drop ZPCI Hands"
+looks = "USA2"
 tooltip = "This line of ZPCI armor is no longer being manufactured."
 tooltipAlt = ["Speed +3", "Instinct +5", "Strength +11", "Vitality +5"]
 item_type = 4
-rarity = 0
 class_type = 1
-required_level = 13.0
-price = 352.0
+required_level = 13
+price = 352
 price_modifier = 1.0
 stats = {
 "attributes": {

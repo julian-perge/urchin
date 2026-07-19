@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://03fkfo6u5rp1"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://03fkfo6u5rp1"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mf6b2"]
-[ext_resource type="Texture2D" uid="uid://d4fiy357bl3kd" path="res://resources/sprites/M_WEAPON_ICESTICK.png" id="2_beljr"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_f1yt4"]
+[ext_resource type="Texture2D" uid="uid://bw5raebnq75jb" path="res://assets/item_slot_icons/WEAPONS/Icy_Maul.png" id="2_sc6o3"]
 
 [resource]
-script = ExtResource("1_mf6b2")
-id = 519.0
-looks = "ICESTICK"
-sprite_image = ExtResource("2_beljr")
+script = ExtResource("1_f1yt4")
+id = 519
+slot_image = ExtResource("2_sc6o3")
 name = "Icy Maul"
 display_name = "Icy Maul"
 internal_name = "Icy Maul"
-tooltip = ""
+looks = "ICESTICK"
 tooltipAlt = ["Instinct +4", "Ice Piercing +61"]
 item_type = 7
-rarity = 0
 class_type = 1
-required_level = 8.0
-price = 339.0
+required_level = 8
+price = 339
 price_modifier = 1.0
 stats = {
 "attributes": {

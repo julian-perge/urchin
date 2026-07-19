@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://blt3d35qlcxc0"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://blt3d35qlcxc0"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_24sux"]
-[ext_resource type="Texture2D" uid="uid://31faehrfval3" path="res://resources/sprites/M_CHEST_ROCKSTAR.png" id="2_p153a"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ovfxy"]
+[ext_resource type="Texture2D" uid="uid://hiw0g77nlbqo" path="res://assets/item_slot_icons/ARMOR/Rockers_Crest.png" id="2_ost2y"]
 
 [resource]
-script = ExtResource("1_24sux")
-id = 594.0
-looks = "ROCKSTAR"
-sprite_image = ExtResource("2_p153a")
+script = ExtResource("1_ovfxy")
+id = 594
+slot_image = ExtResource("2_ost2y")
 name = "Rocker's Crest"
 display_name = "Rocker's Crest"
 internal_name = "Drop ROCKSTAR Chest"
-tooltip = ""
+looks = "ROCKSTAR"
 tooltipAlt = ["Speed +14", "Instinct +9", "Strength +19", "Vitality +14"]
 item_type = 3
-rarity = 0
 class_type = 1
-required_level = 18.0
-price = 802.0
+required_level = 18
+price = 802
 price_modifier = 1.0
 stats = {
 "attributes": {

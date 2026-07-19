@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://bdv4qmkvdmx4"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bdv4qmkvdmx4"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5k6bt"]
-[ext_resource type="Texture2D" uid="uid://qkmvuf5y2u5x" path="res://resources/sprites/M_WEAPON_COUNCILSTAFF.png" id="2_i7t18"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kfjxo"]
+[ext_resource type="Texture2D" uid="uid://sf5kqs710o1f" path="res://assets/item_slot_icons/WEAPONS/Law_Binder.png" id="2_6ac2p"]
 
 [resource]
-script = ExtResource("1_5k6bt")
-id = 650.0
-looks = "COUNCILSTAFF"
-sprite_image = ExtResource("2_i7t18")
+script = ExtResource("1_kfjxo")
+id = 650
+slot_image = ExtResource("2_6ac2p")
 name = "Law Binder"
 display_name = "Law Binder"
 internal_name = "STAFF"
-tooltip = ""
+looks = "COUNCILSTAFF"
 tooltipAlt = ["Speed +21", "Instinct +141", "Vitality +41"]
 item_type = 9
-rarity = 0
 class_type = 1
-required_level = 21.0
-price = 2887.0
+required_level = 21
+price = 2887
 price_modifier = 1.0
 stats = {
 "attributes": {

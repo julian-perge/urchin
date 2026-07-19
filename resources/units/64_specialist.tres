@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://bt2gb1jyn381x"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_hq8fx"]
+
+[resource]
+script = ExtResource("1_hq8fx")
+id = 64
+name = "Specialist"
+vitality = 20.0
+strength = 10.0
+magic = 10.0
+speed = 15.0
+focus = 100.0
+moves = {
+"absolute": [],
+"attack": [716, 717, 718, 719, 720, 532, 524, 523, 721],
+"defense": [1]
+}
+stats = {
+"aggression": [50.0, 1.0, 0.0, 65.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 651.0, 651.0],
+"model": ["MODEL1", "MAN", "ONE", "M"],
+"skin": "SINJID",
+"voice": {
+"die": "dead_human",
+"hit": ["hit_human1", "hit_human2", "hit_human3"]
+}
+}

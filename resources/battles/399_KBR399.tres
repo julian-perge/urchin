@@ -1,0 +1,106 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://pqs4wx6njb44"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_h48g2"]
+
+[resource]
+script = ExtResource("1_h48g2")
+id = 399
+id_name = "KBR399"
+item_rare2 = [{
+"id": 568.0,
+"name": "Vision of Clemons"
+}, {
+"id": 569.0,
+"name": "Tenacity of Clemons"
+}, {
+"id": 570.0,
+"name": "Dexterity of Clemons"
+}, {
+"id": 571.0,
+"name": "Will of Clemons"
+}, {
+"id": 572.0,
+"name": "Intensity of Clemons"
+}]
+item_rare3 = [{
+"id": 567.0,
+"name": "Shandor's Darkstaff"
+}, {
+"id": 565.0,
+"name": "Devil Blade"
+}, {
+"id": 564.0,
+"name": "Sun Struck Horrors"
+}]
+item_rare_dropper2 = 1
+item_rare_dropper3 = 1
+phases = {
+"0": "EMPTY",
+"1": {
+"endGame": false,
+"life": 0.6600000000000001,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"2": {
+"endGame": false,
+"life": 0.33000000000000007,
+"player": 2.0,
+"winOrLose": 1.0
+},
+"3": {
+"endGame": false,
+"life": 0.0,
+"player": 2.0,
+"winOrLose": 1.0
+}
+}
+players = [{
+"id": 47.0,
+"name": "Clemons The Deceiver"
+}, {
+"id": -2.0
+}, {
+"id": 0.0
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [15.0, 1.0, 1.0, 1.0, 1.0]
+sky_background = "TRAIN"
+speeches = [{
+"phase": 1.0,
+"player": 2.0,
+"say": "Tickets, please!",
+"timeToSay": 3.25,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v3_5"
+}, {
+"phase": 1.0,
+"player": 1.0,
+"say": "We don't have any.",
+"timeToSay": 1.25,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "No tickets, no ride! Get off my train! GET OFF!",
+"timeToSay": 6.0,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}, {
+"phase": 2.0,
+"player": 2.0,
+"say": "I can see right through you!",
+"timeToSay": 2.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v3_6"
+}]
+win_date = -1
+zone_background = "TRAIN"

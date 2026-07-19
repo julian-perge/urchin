@@ -1,23 +1,18 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b8l3317anhaqt"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b8l3317anhaqt"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xtuq6"]
-[ext_resource type="Texture2D" uid="uid://bschjywnvtnjl" path="res://resources/sprites/M_HEAD_TAT.png" id="2_xevnn"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_1nsre"]
 
 [resource]
-script = ExtResource("1_xtuq6")
-id = 31.0
-looks = "TAT"
-sprite_image = ExtResource("2_xevnn")
-name = ""
+script = ExtResource("1_1nsre")
+id = 31
 display_name = "Tat Head"
 internal_name = "Tat Head"
-tooltip = ""
+looks = "TAT"
 tooltipAlt = ["Speed +10", "Strength +10", "Vitality +20"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 15.0
-price = 610.0
+required_level = 15
+price = 610
 price_modifier = 1.0
 stats = {
 "attributes": {

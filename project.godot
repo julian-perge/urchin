@@ -8,11 +8,15 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="urchin"
-run/main_scene="res://scenes/game.tscn"
-config/features=PackedStringArray("4.5", "Forward Plus")
+run/main_scene="res://scenes/main_menu.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -20,14 +24,23 @@ config/icon="res://icon.svg"
 StoreManager="*res://scripts/autoload/store_manager.gd"
 UnitManagerAuto="*res://scripts/autoload/unit_manager.gd"
 ItemManagerAuto="*res://scripts/autoload/item_manager.gd"
-Inventory="*res://scripts/inventory.gd"
+MoveManagerAuto="*res://scripts/autoload/move_manager.gd"
+BuffManagerAuto="*res://scripts/autoload/buff_manager.gd"
 ZoneManager="*res://scripts/autoload/zone_manager.gd"
+GameData="*res://scripts/autoload/game_data.gd"
+AudioManagerAuto="*res://scripts/autoload/audio_manager.gd"
 
 [display]
 
 window/size/viewport_width=800
-window/size/viewport_height=575
-window/stretch/mode="viewport"
+window/size/viewport_height=600
+window/size/window_width_override=1600
+window/size/window_height_override=1200
+window/stretch/mode="canvas_items"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 
 [global_group]
 

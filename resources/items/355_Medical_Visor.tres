@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://b6hadguyouk21"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b6hadguyouk21"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_i1lrq"]
-[ext_resource type="Texture2D" uid="uid://l5js4vlnr561" path="res://resources/sprites/M_HEAD_ZPCI3.png" id="2_2jpjy"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_p2gub"]
+[ext_resource type="Texture2D" uid="uid://dextfb7if4sd5" path="res://assets/item_slot_icons/WEAPONS/Medical_Visor.png" id="2_truig"]
 
 [resource]
-script = ExtResource("1_i1lrq")
-id = 355.0
-looks = "ZPCI3"
-sprite_image = ExtResource("2_2jpjy")
+script = ExtResource("1_p2gub")
+id = 355
+slot_image = ExtResource("2_truig")
 name = "Medical Visor"
 display_name = "Medical Visor"
 internal_name = "Medical Visor"
-tooltip = ""
+looks = "ZPCI3"
 tooltipAlt = ["Speed +7", "Instinct +13", "Vitality +3"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 383.0
+required_level = 11
+price = 383
 price_modifier = 1.0
 stats = {
 "attributes": {

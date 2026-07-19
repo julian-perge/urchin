@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://cx2vo0n7qrqpf"]
+
+[ext_resource type="Script" uid="uid://do8wej35yp6px" path="res://scripts/entities/character.gd" id="1_a5a06"]
+
+[resource]
+script = ExtResource("1_a5a06")
+id = 31
+name = "Baron Brixius"
+vitality = 600.0
+strength = 40.0
+magic = 40.0
+speed = 10.0
+focus = 100.0
+moves = {
+"absolute": [{
+"id": 538,
+"phase": 1
+}, {
+"id": 539,
+"phase": 3
+}, {
+"id": 541,
+"phase": 1
+}],
+"attack": [540],
+"defense": [403, 451, 455, 459, 466]
+}
+stats = {
+"aggression": [50.0, 51.0, 50.0, 10.0, 15.0],
+"defense": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+"piercing": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+}
+visuals = {
+"equipment": [0.0, 0.0, 0.0, 0.0, 0.0, 527.0, 0.0],
+"model": ["MODEL1", "ZOMBIE2", "", "M"],
+"skin": "",
+"voice": {
+"die": "BaronDie",
+"hit": ["BaronHit1", "BaronHit2", "BaronHit3"]
+}
+}

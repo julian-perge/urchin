@@ -1,0 +1,63 @@
+[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://ccf8h0foaj8l6"]
+
+[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_bwefd"]
+
+[resource]
+script = ExtResource("1_bwefd")
+id = 107
+id_name = "KBR107"
+item_drops = [{
+"chance": 100.0,
+"item": {
+"id": 315.0,
+"name": "Green Fuel-Tank"
+}
+}, {
+"chance": 100.0,
+"item": {
+"id": 308.0,
+"name": "Torn Sleeves"
+}
+}]
+players = [{
+"id": 7.0,
+"name": "Frankie"
+}, {
+"id": -2.0
+}, {
+"id": 15.0,
+"name": "Doctor Hedger"
+}, {
+"id": -1.0
+}, {
+"id": 0.0
+}]
+players_levels = [6.0, 1.0, 6.0, 1.0, 1.0, 1.0]
+sky_background = "JAIL"
+speeches = [{
+"phase": 1.0,
+"player": 4.0,
+"say": "Wake up Frankie, the guests are here. Wake up! And make Daddy proud!",
+"timeToSay": 11.5,
+"turnTime": 0.0,
+"turnTime2": 0.0,
+"voiceOver": "v1_9"
+}, {
+"phase": 1.0,
+"player": 2.0,
+"say": "RAAAWWR!",
+"timeToSay": 3.0,
+"turnTime": 0.0,
+"turnTime2": 1.0,
+"voiceOver": ""
+}, {
+"phase": 1.0,
+"player": "Veradux",
+"say": "This prison is one hell of a freak show...",
+"timeToSay": 2.2,
+"turnTime": 0.0,
+"turnTime2": 2.0,
+"voiceOver": ""
+}]
+win_date = -1
+zone_background = "JAIL"

@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameItem" load_steps=3 format=3 uid="uid://48p8iisgxo1f"]
+[gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://48p8iisgxo1f"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xy5ny"]
-[ext_resource type="Texture2D" uid="uid://bxe0hr005cx0g" path="res://resources/sprites/M_HEAD_ARCTIC.png" id="2_srjil"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_v5eft"]
+[ext_resource type="Texture2D" uid="uid://bbi7q8opcjnf2" path="res://assets/item_slot_icons/HELMS/X5C8-1.png" id="2_r03s0"]
 
 [resource]
-script = ExtResource("1_xy5ny")
-id = 351.0
-looks = "ARCTIC"
-sprite_image = ExtResource("2_srjil")
+script = ExtResource("1_v5eft")
+id = 351
+slot_image = ExtResource("2_r03s0")
 name = "X5C8-1"
 display_name = "X5C8-1"
 internal_name = "X5C8-1"
-tooltip = ""
+looks = "ARCTIC"
 tooltipAlt = ["Speed +7", "Instinct +13", "Vitality +3"]
 item_type = 2
-rarity = 0
 class_type = 1
-required_level = 11.0
-price = 383.0
+required_level = 11
+price = 383
 price_modifier = 1.0
 stats = {
 "attributes": {
