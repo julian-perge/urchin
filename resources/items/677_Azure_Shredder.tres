@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://uvuonr6utbks"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_oc7hl"]
-[ext_resource type="Texture2D" uid="uid://dq8yxfjhpn0pu" path="res://assets/item_slot_icons/WEAPONS/Azure_Shredder.png" id="2_7kbqs"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7kbqs"]
+[ext_resource type="Texture2D" uid="uid://dq8yxfjhpn0pu" path="res://assets/item_slot_icons/WEAPONS/Azure_Shredder.png" id="2_36qba"]
+[ext_resource type="Texture2D" uid="uid://dspl6fpvml45t" path="res://resources/sprites/M_WEAPON_FELKNIFE5.png" id="3_tkun3"]
 
 [resource]
-script = ExtResource("1_oc7hl")
+script = ExtResource("1_7kbqs")
 id = 677
-slot_image = ExtResource("2_7kbqs")
+looks = "FELKNIFE5"
+sprite_image = ExtResource("3_tkun3")
+slot_image = ExtResource("2_36qba")
 name = "Azure Shredder"
 display_name = "Azure Shredder"
 internal_name = "KNIFE2"
-looks = "FELKNIFE5"
 tooltipAlt = ["Speed +83", "Physical Piercing +42"]
 item_type = 8
 class_type = 1

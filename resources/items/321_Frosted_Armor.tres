@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://boy5bqxu50dw1"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_13toq"]
-[ext_resource type="Texture2D" uid="uid://cnvuloo0pqux8" path="res://assets/item_slot_icons/ARMOR/Frosted_Armor.png" id="2_gwymf"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gwymf"]
+[ext_resource type="Texture2D" uid="uid://cnvuloo0pqux8" path="res://assets/item_slot_icons/ARMOR/Frosted_Armor.png" id="2_pmggr"]
+[ext_resource type="Texture2D" uid="uid://d37qvaxp00xrk" path="res://resources/sprites/M_CHEST_FROSTPLATE.png" id="3_w0knm"]
 
 [resource]
-script = ExtResource("1_13toq")
+script = ExtResource("1_gwymf")
 id = 321
-slot_image = ExtResource("2_gwymf")
+looks = "FROSTPLATE"
+sprite_image = ExtResource("3_w0knm")
+slot_image = ExtResource("2_pmggr")
 name = "Frosted Armor"
 display_name = "Frosted Armor"
 internal_name = "Frosted Armor"
-looks = "FROSTPLATE"
 tooltip = "The ice on this armor never seems to melt."
 tooltipAlt = ["Speed +5", "Instinct +8", "Vitality +2", "Ice Piercing +5"]
 item_type = 3

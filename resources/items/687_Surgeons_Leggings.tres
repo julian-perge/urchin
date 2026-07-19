@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bmqlm47m1vf17"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7b0dl"]
-[ext_resource type="Texture2D" uid="uid://cxjxjnedbqlp2" path="res://assets/item_slot_icons/PANTS/Surgeons_Leggings.png" id="2_iaqjn"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_iaqjn"]
+[ext_resource type="Texture2D" uid="uid://cxjxjnedbqlp2" path="res://assets/item_slot_icons/PANTS/Surgeons_Leggings.png" id="2_3sp2n"]
+[ext_resource type="Texture2D" uid="uid://lk7yofkjbbf8" path="res://resources/sprites/M_LEG2_KLIMA.png" id="3_ns5oo"]
 
 [resource]
-script = ExtResource("1_7b0dl")
+script = ExtResource("1_iaqjn")
 id = 687
-slot_image = ExtResource("2_iaqjn")
+looks = "KLIMA"
+sprite_image = ExtResource("3_ns5oo")
+slot_image = ExtResource("2_3sp2n")
 name = "Surgeon's Leggings"
 display_name = "Surgeon's Leggings"
 internal_name = "Drop KLIMA Legs"
-looks = "KLIMA"
 tooltipAlt = ["Speed +24", "Instinct +41", "Strength +36", "Vitality +30"]
 item_type = 5
 class_type = 5

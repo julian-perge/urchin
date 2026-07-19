@@ -1,15 +1,17 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://df4k13tiq1et1"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jtq34"]
-[ext_resource type="Texture2D" uid="uid://of74rq6kdwl4" path="res://assets/item_slot_icons/WEAPONS/Surgery_Blade.png" id="2_5p4xy"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5p4xy"]
+[ext_resource type="Texture2D" uid="uid://of74rq6kdwl4" path="res://assets/item_slot_icons/WEAPONS/Surgery_Blade.png" id="2_bwwvj"]
+[ext_resource type="Texture2D" uid="uid://c8dof0tjfi1ax" path="res://resources/sprites/M_WEAPON_DOCKNIFE.png" id="3_lcajo"]
 
 [resource]
-script = ExtResource("1_jtq34")
+script = ExtResource("1_5p4xy")
 id = 16
-slot_image = ExtResource("2_5p4xy")
+looks = "DOCKNIFE"
+sprite_image = ExtResource("3_lcajo")
+slot_image = ExtResource("2_bwwvj")
 display_name = "Surgery Blade"
 internal_name = "Surgery Blade"
-looks = "DOCKNIFE"
 tooltipAlt = ["Strength +1", "Vitality +1", "Physical Piercing +2"]
 item_type = 7
 class_type = 1

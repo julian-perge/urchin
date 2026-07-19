@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c4e5csd7lf0sr"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_okgcg"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3liii"]
+[ext_resource type="Texture2D" uid="uid://brxrs5bs6q2k0" path="res://resources/sprites/M_CHEST_NINJA.png" id="2_7rxyv"]
 
 [resource]
-script = ExtResource("1_okgcg")
+script = ExtResource("1_3liii")
 id = 105
+looks = "NINJA"
+sprite_image = ExtResource("2_7rxyv")
 display_name = "Voodoo Football Club Hat"
 internal_name = "Voodoo Football Club Hat"
-looks = "NINJA"
 tooltipAlt = ["Speed +3", "Instinct +2", "Strength +2", "Vitality +5"]
 item_type = 3
 class_type = 1

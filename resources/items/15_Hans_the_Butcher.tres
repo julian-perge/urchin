@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://38bibsn2glr7"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kwhc5"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hv5wc"]
+[ext_resource type="Texture2D" uid="uid://ck6rsw37pjpl4" path="res://resources/sprites/M_WEAPON_FRANKEN.png" id="2_i6oic"]
 
 [resource]
-script = ExtResource("1_kwhc5")
+script = ExtResource("1_hv5wc")
 id = 15
+looks = "FRANKEN"
+sprite_image = ExtResource("2_i6oic")
 display_name = "Hans the Butcher"
 internal_name = "Hans the Butcher"
-looks = "FRANKEN"
 tooltipAlt = ["Strength +1", "Vitality +1", "Physical Piercing +2"]
 item_type = 7
 class_type = 1

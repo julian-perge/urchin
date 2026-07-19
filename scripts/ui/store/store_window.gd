@@ -15,13 +15,15 @@ signal store_closed
 
 const ItemSlotScene = preload("res://scenes/ui/item_slot.tscn")
 
-const LEFT_PANEL = Rect2(22.9, 110.9, 249.1, 267.1)
-# The live game draws the backdrop INSIDE the panel (the frame-16 dump's
-# overhang was an art-bounds artifact) with the keeper text left-aligned.
-const SHOP_BACKDROP_RECT = Rect2(47.5, 122.0, 200.0, 140.0)
-const DIALOGUE_RECT = Rect2(50.0, 272.0, 195.0, 120.0)
-const MIDDLE_TOP_PANEL = Rect2(285.6, 100.0, 186.6, 115.0)
-const MIDDLE_BOTTOM_PANEL = Rect2(285.6, 225.0, 186.6, 160.0)
+# Panel alignment per the live game: every column tops out at 81.6 and
+# bottoms out at 409.1 (the inventory column's extent) - left panel full
+# height, middle split into doll (top) and catalog (bottom-aligned with the
+# money bar).
+const LEFT_PANEL = Rect2(22.9, 81.6, 249.1, 327.5)
+const SHOP_BACKDROP_RECT = Rect2(34.0, 92.0, 227.0, 150.0)
+const DIALOGUE_RECT = Rect2(36.0, 252.0, 223.0, 150.0)
+const MIDDLE_TOP_PANEL = Rect2(285.6, 81.6, 186.6, 133.4)
+const MIDDLE_BOTTOM_PANEL = Rect2(285.6, 225.0, 186.6, 184.1)
 const PURCHASE_HINT_RECT = Rect2(290.2, 237.6, 177.0, 30.0)
 const INVENTORY_AT = Vector2(503.5, 81.6)
 # dropSlot0-14 top-left corners (centers 305.1/291.9 on the 38 px pitch).
@@ -88,7 +90,10 @@ func _build_left_panel() -> void:
 	shop_backdrop = TextureRect.new()
 	shop_backdrop.name = "ShopBackdrop"
 	shop_backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	shop_backdrop.stretch_mode = TextureRect.STRETCH_SCALE
+	# Natural crop, no squish - the backdrop bitmaps are wider than the
+	# viewport (the source masks them the same way).
+	shop_backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	shop_backdrop.clip_contents = true
 	shop_backdrop.position = SHOP_BACKDROP_RECT.position
 	shop_backdrop.size = SHOP_BACKDROP_RECT.size
 	shop_backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -120,6 +125,7 @@ func _build_middle() -> void:
 	add_child(store_items)
 	for i in CATALOG_SLOTS:
 		var slot: ItemSlot = ItemSlotScene.instantiate()
+		slot.show_price = true
 		slot.position = Vector2(
 			(i % CATALOG_COLUMNS) * MenuTheme.SLOT_STEP,
 			floorf(i / float(CATALOG_COLUMNS)) * MenuTheme.SLOT_STEP
@@ -168,6 +174,7 @@ func _load_store_items():
 
 
 func _on_store_slot_clicked(slot: ItemSlot) -> void:
+	_status_label.text = ""
 	if slot.item == null:
 		return
 	if selected_store_slot != null:
@@ -181,6 +188,7 @@ func _on_store_slot_clicked(slot: ItemSlot) -> void:
 
 
 func _on_inventory_item_selected(slot: ItemSlot) -> void:
+	_status_label.text = ""
 	if not slot.has_meta("save_index"):
 		return
 	var result = GameData.equip_from_inventory(int(slot.get_meta("save_index")))
@@ -189,6 +197,7 @@ func _on_inventory_item_selected(slot: ItemSlot) -> void:
 
 
 func _on_equip_slot_clicked(equip_index: int) -> void:
+	_status_label.text = ""
 	if not GameData.unequip_to_inventory(equip_index):
 		_status_label.text = "Inventory is full." if GameData.current_save != null else ""
 

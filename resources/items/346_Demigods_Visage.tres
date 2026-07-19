@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://chy3mjjg3u7ua"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_l0xuq"]
-[ext_resource type="Texture2D" uid="uid://id41ccfg2ube" path="res://assets/item_slot_icons/HELMS/Demigods_Visage.png" id="2_des36"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_des36"]
+[ext_resource type="Texture2D" uid="uid://id41ccfg2ube" path="res://assets/item_slot_icons/HELMS/Demigods_Visage.png" id="2_0jjik"]
+[ext_resource type="Texture2D" uid="uid://ck6mjmyq50meh" path="res://resources/sprites/M_HEAD_XADER2.png" id="3_pwhji"]
 
 [resource]
-script = ExtResource("1_l0xuq")
+script = ExtResource("1_des36")
 id = 346
-slot_image = ExtResource("2_des36")
+looks = "XADER2"
+sprite_image = ExtResource("3_pwhji")
+slot_image = ExtResource("2_0jjik")
 name = "Demigod's Visage"
 display_name = "Demigod's Visage"
 internal_name = "Demigod's Visage"
-looks = "XADER2"
 tooltipAlt = ["Speed +7", "Strength +12", "Vitality +5"]
 item_type = 2
 class_type = 1

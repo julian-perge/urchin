@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ciawao6tmeft5"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_arxj7"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8yb8b"]
+[ext_resource type="Texture2D" uid="uid://dsyv7a5f3lljj" path="res://resources/sprites/M_HAND_NINJA.png" id="2_cui61"]
 
 [resource]
-script = ExtResource("1_arxj7")
+script = ExtResource("1_8yb8b")
 id = 119
+looks = "NINJA"
+sprite_image = ExtResource("2_cui61")
 display_name = "Warden's Grasp"
 internal_name = "Warden's Grasp"
-looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +3", "Strength +3", "Vitality +2", "Lightning Defense +4", "Earth Defense +4"]
 item_type = 4
 rarity = 1

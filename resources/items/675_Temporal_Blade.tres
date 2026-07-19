@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bxb8qgk0721gh"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rg2uf"]
-[ext_resource type="Texture2D" uid="uid://bbcw7f715v0tm" path="res://assets/item_slot_icons/WEAPONS/Temporal_Blade.png" id="2_br531"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_br531"]
+[ext_resource type="Texture2D" uid="uid://bbcw7f715v0tm" path="res://assets/item_slot_icons/WEAPONS/Temporal_Blade.png" id="2_08bd7"]
+[ext_resource type="Texture2D" uid="uid://yne8gf3cukbh" path="res://resources/sprites/M_WEAPON_XADER.png" id="3_il7qi"]
 
 [resource]
-script = ExtResource("1_rg2uf")
+script = ExtResource("1_br531")
 id = 675
-slot_image = ExtResource("2_br531")
+looks = "XADER"
+sprite_image = ExtResource("3_il7qi")
+slot_image = ExtResource("2_08bd7")
 name = "Temporal Blade"
 display_name = "Temporal Blade"
 internal_name = "SWORD"
-looks = "XADER"
 tooltipAlt = ["Speed +15", "Instinct +30", "Strength +191", "Vitality +59"]
 item_type = 9
 class_type = 1

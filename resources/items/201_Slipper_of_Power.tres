@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b7r8qyvof7w26"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tsrkf"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3qaic"]
+[ext_resource type="Texture2D" uid="uid://be6t7mp34xyqn" path="res://resources/sprites/M_FOOT_NINJA.png" id="2_rygb7"]
 
 [resource]
-script = ExtResource("1_tsrkf")
+script = ExtResource("1_3qaic")
 id = 201
+looks = "NINJA"
+sprite_image = ExtResource("2_rygb7")
 display_name = "Slipper of Power"
 internal_name = "Slipper of Power"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +4", "Instinct +16", "Strength +5", "Vitality +19", "Lightning Defense +8", "Earth Defense +8"]
 item_type = 6
 rarity = 2

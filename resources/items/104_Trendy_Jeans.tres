@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bcvufdge3oe0v"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dml7x"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_nsrvj"]
+[ext_resource type="Texture2D" uid="uid://bl3b0s2xk0hpj" path="res://resources/sprites/M_LEG2_NINJA.png" id="2_b1mpj"]
 
 [resource]
-script = ExtResource("1_dml7x")
+script = ExtResource("1_nsrvj")
 id = 104
+looks = "NINJA"
+sprite_image = ExtResource("2_b1mpj")
 display_name = "Trendy Jeans"
 internal_name = "Trendy Jeans"
-looks = "NINJA"
 tooltipAlt = ["Speed +3", "Instinct +2", "Strength +2", "Vitality +3"]
 item_type = 5
 class_type = 1

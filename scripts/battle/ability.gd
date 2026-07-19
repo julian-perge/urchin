@@ -85,9 +85,9 @@ static func from_json(data: Dictionary) -> Ability:
 
 	ability.id = int(_num(data.get("1_id"), 0.0))
 	ability.display_name = _text(data.get("0_display_name"))
-	ability.can_target_self = data.get("2_can_target_self") == true
-	ability.can_target_others = data.get("3_can_target_others") == true
-	ability.targets_allies = data.get("4_targets_allies") == true
+	ability.can_target_self = data.get("2_can_target_self")
+	ability.can_target_others = data.get("3_can_target_others")
+	ability.targets_allies = data.get("4_targets_allies")
 	ability.focus_cost = _num(data.get("5_focus_resource_cost"))
 	ability.flat_life_cost = _num(data.get("6_deprecated_life_check"))
 	ability.cooldown_turns = int(_num(data.get("7_cooldown_turns")))
@@ -121,7 +121,7 @@ static func from_json(data: Dictionary) -> Ability:
 	ability.dispel_count = int(_num(ability_two.get("16_dispel_buff_count")))
 	ability.dispel_target_polarity = int(_num(ability_two.get("19_status_effect_tick_rate"), 1.0))
 	ability.dispel_chance = _num(ability_two.get("22_buff_application_chance"), 1.0)
-	ability.hits_all_enemies = ability_two.get("20_is_multi_target") == true
+	ability.hits_all_enemies = ability_two.get("20_is_multi_target")
 
 	ability.ability_two_raw = ability_two
 	return ability

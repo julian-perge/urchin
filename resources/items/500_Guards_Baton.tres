@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dssmvqooaqymx"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ckf27"]
-[ext_resource type="Texture2D" uid="uid://wow17nv4of0a" path="res://assets/item_slot_icons/WEAPONS/Guards_Baton.png" id="2_njw8x"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_njw8x"]
+[ext_resource type="Texture2D" uid="uid://wow17nv4of0a" path="res://assets/item_slot_icons/WEAPONS/Guards_Baton.png" id="2_rb8u7"]
+[ext_resource type="Texture2D" uid="uid://bspqugh0i112u" path="res://resources/sprites/M_WEAPON_BATON.png" id="3_7vs08"]
 
 [resource]
-script = ExtResource("1_ckf27")
+script = ExtResource("1_njw8x")
 id = 500
-slot_image = ExtResource("2_njw8x")
+looks = "BATON"
+sprite_image = ExtResource("3_7vs08")
+slot_image = ExtResource("2_rb8u7")
 name = "Guard's Baton"
 display_name = "Guard's Baton"
 internal_name = "Guard's Baton"
-looks = "BATON"
 tooltip = "Designed to inflict more pain than damage."
 tooltipAlt = ["Strength +4", "Vitality +3"]
 item_type = 7

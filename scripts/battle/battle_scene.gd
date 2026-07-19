@@ -119,7 +119,12 @@ func start_battle(info: Dictionary) -> void:
 
 
 # The original composites a sky layer (SKY_<key>) behind the hall art; the
-# hall PNGs have a transparent sky region.
+# hall PNGs have a transparent sky region. The sky art is a wide horizon
+# STRIP (~800x140 natural), not a full-screen image - it sits with its
+# bottom on the ground line, and the area above it is filled with the
+# strip's own top-edge color.
+const SKY_HORIZON_Y = 292.0
+
 func _load_background() -> void:
 	var key = battle.zone_background.replace(" ", "_")
 	var path = "%s/battle/%s.png" % [BACKGROUND_ROOT, key]
@@ -133,8 +138,30 @@ func _load_background() -> void:
 		sky_path = "%s/sky/SKY_%s.png" % [BACKGROUND_ROOT, sky_key]
 	if not ResourceLoader.exists(sky_path):
 		sky_path = "%s/sky/SKY_JAIL.png" % BACKGROUND_ROOT  # generic city glow
-	if ResourceLoader.exists(sky_path):
-		sky.texture = load(sky_path)
+	if not ResourceLoader.exists(sky_path):
+		return
+	var sky_texture: Texture2D = load(sky_path)
+	sky.texture = sky_texture
+	sky.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	sky.stretch_mode = TextureRect.STRETCH_SCALE
+	# The scene anchors Sky full-rect; explicit sizing needs plain anchors.
+	sky.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	var strip_height = 800.0 * sky_texture.get_height() / sky_texture.get_width()
+	sky.position = Vector2(0, SKY_HORIZON_Y - strip_height)
+	sky.size = Vector2(800, strip_height)
+	# Solid fill above the strip, sampled from its top edge.
+	var image = sky_texture.get_image()
+	var top_color = image.get_pixel(int(image.get_width() / 2.0), 0)
+	var fill: ColorRect = get_node_or_null("SkyFill")
+	if fill == null:
+		fill = ColorRect.new()
+		fill.name = "SkyFill"
+		fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(fill)
+		move_child(fill, 0)
+	fill.color = top_color
+	fill.position = Vector2.ZERO
+	fill.size = Vector2(800, SKY_HORIZON_Y - strip_height + 2)
 
 
 func _spawn_visuals() -> void:
@@ -304,6 +331,10 @@ func _on_unit_clicked(slot: int) -> void:
 func _move_valid_for_target(move: Ability, slot: int) -> bool:
 	var target: CombatUnit = units.get(slot)
 	if target == null or not target.active:
+		return false
+	# Not enough focus darkens the orb (picking it would waste the turn).
+	var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
+	if player != null and move.focus_cost > 0 and player.focus_n < move.focus_cost:
 		return false
 	var is_ally = target.team_side == 1
 	var is_self = slot == BattleRunner.PLAYER_SLOT
@@ -531,18 +562,24 @@ func _battle_loop() -> void:
 			turn_label.text = "Your move"
 			_pass_ring.queue_redraw()
 			while _player_action_pending:
+				if not is_inside_tree():
+					return  # retreat freed the scene mid-wait
 				await get_tree().process_frame
 		else:
 			turn_label.text = "Enemy turn" if runner.team_move_now == 2 else "Ally turn"
 			await _pause(0.4)
+		if not is_inside_tree() or _finished:
+			return
 		_pass_ring.queue_redraw()
 		var action = _selected_move.duplicate()
 		_selected_move = {}
 		_close_radial_menu()
 		var events = runner.advance_half_turn(action)
 		await _play_events(events)
+		if not is_inside_tree() or _finished:
+			return
 		_refresh_bars()
-	await _finish_battle()
+	_finish_battle()
 
 
 func _on_pass_pressed() -> void:
@@ -553,12 +590,13 @@ func _on_pass_pressed() -> void:
 	_player_action_pending = false
 
 
+# Retreat abandons the fight and returns to the save-select screen.
 func _on_retreat_pressed() -> void:
 	if _finished:
 		return
 	_finished = true
 	AudioManagerAuto.play_menu_music()
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 
 # Replays a half-turn's event log with animation + audio pacing.

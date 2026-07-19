@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://mdae5pj4lldr"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0ir3f"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_a22nm"]
+[ext_resource type="Texture2D" uid="uid://be6t7mp34xyqn" path="res://resources/sprites/M_FOOT_NINJA.png" id="2_vhmtn"]
 
 [resource]
-script = ExtResource("1_0ir3f")
+script = ExtResource("1_a22nm")
 id = 134
+looks = "NINJA"
+sprite_image = ExtResource("2_vhmtn")
 display_name = "Sandals of Repentence"
 internal_name = "Sandals of Repentence"
-looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +3", "Strength +3", "Vitality +3", "Lightning Defense +5", "Earth Defense +5"]
 item_type = 6
 class_type = 1

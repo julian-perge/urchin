@@ -20,7 +20,6 @@
                       "2": "hit_sonny3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -38,7 +37,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -50,7 +48,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -94,7 +91,6 @@
                   "4": 90
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -120,7 +116,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -136,7 +131,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -147,10 +141,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -160,7 +152,6 @@
                   "1": 6
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -171,7 +162,6 @@
                   "2": 5
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -203,7 +193,6 @@
                       "2": "hit_sonny3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -221,7 +210,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -233,7 +221,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -277,7 +264,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -303,7 +289,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -319,7 +304,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -337,7 +321,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -347,7 +330,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -357,30 +339,24 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -412,7 +388,6 @@
                       "2": "hit_sonny3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -430,7 +405,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -442,7 +416,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -486,7 +459,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -512,7 +484,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -528,7 +499,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -539,19 +509,15 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -560,7 +526,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -592,7 +557,6 @@
                       "2": "hit_dux3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -610,7 +574,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -622,7 +585,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -666,7 +628,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -692,7 +653,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -708,7 +668,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -719,10 +678,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -731,7 +688,6 @@
                   "0": 8
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -741,7 +697,6 @@
                   "1": 10
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -773,7 +728,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -791,7 +745,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -803,7 +756,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -847,7 +799,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -873,7 +824,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -889,7 +839,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -907,7 +856,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -917,12 +865,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -931,7 +877,6 @@
                   "0": 506
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -940,7 +885,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -972,7 +916,6 @@
                       "2": "hit_doc3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -990,7 +933,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -1002,7 +944,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1046,7 +987,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -1072,7 +1012,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -1088,7 +1027,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1106,21 +1044,17 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -1131,7 +1065,6 @@
                   "2": 527
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1163,7 +1096,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -1181,7 +1113,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -1193,7 +1124,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1237,7 +1167,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -1263,7 +1192,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -1279,7 +1207,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1290,10 +1217,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -1302,7 +1227,6 @@
                   "0": 510
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -1314,7 +1238,6 @@
                   "3": 271
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1346,7 +1269,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -1364,7 +1286,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -1376,7 +1297,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1420,7 +1340,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -1446,7 +1365,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -1462,7 +1380,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1480,7 +1397,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -1490,7 +1406,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -1500,7 +1415,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -1510,12 +1424,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -1524,7 +1436,6 @@
                   "0": 20
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -1533,7 +1444,6 @@
                   "0": 9
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1565,7 +1475,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -1583,7 +1492,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -1595,7 +1503,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1639,7 +1546,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -1665,7 +1571,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -1681,7 +1586,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1699,7 +1603,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -1709,7 +1612,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -1719,7 +1621,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -1729,12 +1630,10 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -1743,7 +1642,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -1752,7 +1650,6 @@
                   "0": 15
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1784,7 +1681,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -1802,7 +1698,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -1814,7 +1709,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1858,7 +1752,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -1884,7 +1777,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -1900,7 +1792,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1911,10 +1802,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -1923,7 +1812,6 @@
                   "0": 506
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -1934,7 +1822,6 @@
                   "2": 103
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -1966,7 +1853,6 @@
                       "2": "hit_fel3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -1984,7 +1870,6 @@
                   "6": 22
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -1996,7 +1881,6 @@
                   "3": "F"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2040,7 +1924,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -2066,7 +1949,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -2082,7 +1964,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2100,7 +1981,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -2110,7 +1990,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -2120,7 +1999,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -2130,7 +2008,6 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   },
                   "4": {
@@ -2140,12 +2017,10 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -2155,7 +2030,6 @@
                   "1": 524
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -2165,7 +2039,6 @@
                   "1": 1
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2197,7 +2070,6 @@
                       "2": "hit_twisted3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -2215,7 +2087,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -2227,7 +2098,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2271,7 +2141,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -2297,7 +2166,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -2313,7 +2181,6 @@
                   "7": 300
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2324,10 +2191,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -2337,7 +2202,6 @@
                   "1": 166
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -2351,7 +2215,6 @@
                   "5": 145
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2383,7 +2246,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -2401,7 +2263,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -2413,7 +2274,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2457,7 +2317,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -2483,7 +2342,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -2499,7 +2357,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2510,10 +2367,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -2522,7 +2377,6 @@
                   "0": 122
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -2533,7 +2387,6 @@
                   "2": 275
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2565,7 +2418,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -2583,7 +2435,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -2595,7 +2446,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2639,7 +2489,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -2665,7 +2514,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -2681,7 +2529,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2692,10 +2539,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -2705,7 +2550,6 @@
                   "1": 122
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -2715,7 +2559,6 @@
                   "1": 2
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2747,7 +2590,6 @@
                       "2": "hit_doc3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -2765,7 +2607,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -2777,7 +2618,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2821,7 +2661,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -2847,7 +2686,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -2863,7 +2701,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2881,12 +2718,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -2895,7 +2730,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -2908,7 +2742,6 @@
                   "4": 149
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -2940,7 +2773,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -2958,7 +2790,6 @@
                   "6": 516
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -2970,7 +2801,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3014,7 +2844,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -3040,7 +2869,6 @@
                   "7": 130
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -3056,7 +2884,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3067,10 +2894,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -3081,7 +2906,6 @@
                   "2": 510
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -3093,7 +2917,6 @@
                   "3": 509
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3125,7 +2948,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -3143,7 +2965,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -3155,7 +2976,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3199,7 +3019,6 @@
                   "4": 20
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -3225,7 +3044,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -3241,7 +3059,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3252,10 +3069,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -3265,7 +3080,6 @@
                   "1": 511
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -3276,7 +3090,6 @@
                   "2": 514
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3308,7 +3121,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -3326,7 +3138,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -3338,7 +3149,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3382,7 +3192,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -3408,7 +3217,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -3424,7 +3232,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3435,10 +3242,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -3447,7 +3252,6 @@
                   "0": 519
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -3459,7 +3263,6 @@
                   "3": 520
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3491,7 +3294,6 @@
                       "2": "hit_zombie3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -3509,7 +3311,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -3521,7 +3322,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3565,7 +3365,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -3591,7 +3390,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -3607,7 +3405,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3618,10 +3415,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -3630,7 +3425,6 @@
                   "0": 502
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -3641,7 +3435,6 @@
                   "2": 207
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3673,7 +3466,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -3691,7 +3483,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -3703,7 +3494,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3747,7 +3537,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -3773,7 +3562,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -3789,7 +3577,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3800,10 +3587,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -3812,7 +3597,6 @@
                   "0": 4
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -3823,7 +3607,6 @@
                   "2": 5
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3855,7 +3638,6 @@
                       "2": "hit_zombie3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -3873,7 +3655,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -3885,7 +3666,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3929,7 +3709,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -3955,7 +3734,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -3971,7 +3749,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -3982,10 +3759,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -3994,7 +3769,6 @@
                   "0": 502
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -4008,7 +3782,6 @@
                   "5": 521
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4040,7 +3813,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -4058,7 +3830,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -4070,7 +3841,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4114,7 +3884,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -4140,7 +3909,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -4156,7 +3924,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4174,7 +3941,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -4184,7 +3950,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -4194,7 +3959,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -4204,7 +3968,6 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   },
                   "4": {
@@ -4214,12 +3977,10 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -4228,7 +3989,6 @@
                   "0": 549
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -4237,7 +3997,6 @@
                   "0": 547
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4269,7 +4028,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -4287,7 +4045,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -4299,7 +4056,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4343,7 +4099,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -4369,7 +4124,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -4385,7 +4139,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4396,10 +4149,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -4408,7 +4159,6 @@
                   "0": 1
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -4419,7 +4169,6 @@
                   "2": 542
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4451,7 +4200,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -4469,7 +4217,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -4481,7 +4228,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4525,7 +4271,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -4551,7 +4296,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -4567,7 +4311,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4585,12 +4328,10 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -4599,7 +4340,6 @@
                   "0": 546
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -4609,7 +4349,6 @@
                   "1": 157
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4641,7 +4380,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -4659,7 +4397,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -4671,7 +4408,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4715,7 +4451,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -4741,7 +4476,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -4757,7 +4491,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4775,7 +4508,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -4785,7 +4517,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -4795,12 +4526,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -4809,7 +4538,6 @@
                   "0": 20
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -4818,7 +4546,6 @@
                   "0": 9
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4850,7 +4577,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -4868,7 +4594,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -4880,7 +4605,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4924,7 +4648,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -4950,7 +4673,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -4966,7 +4688,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -4984,7 +4705,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -4994,12 +4714,10 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -5008,7 +4726,6 @@
                   "0": 9
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -5019,7 +4736,6 @@
                   "2": 267
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5051,7 +4767,6 @@
                       "2": "BaronHit3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -5069,7 +4784,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -5081,7 +4795,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5125,7 +4838,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -5151,7 +4863,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -5167,7 +4878,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5185,7 +4895,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -5195,7 +4904,6 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -5205,12 +4913,10 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -5223,7 +4929,6 @@
                   "4": 466
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -5232,7 +4937,6 @@
                   "0": 540
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5264,7 +4968,6 @@
                       "2": "hit_roald3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -5282,7 +4985,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -5294,7 +4996,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5338,7 +5039,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -5364,7 +5064,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -5380,7 +5079,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5391,10 +5089,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -5403,7 +5099,6 @@
                   "0": 536
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -5415,7 +5110,6 @@
                   "3": 9
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5447,7 +5141,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -5465,7 +5158,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -5477,7 +5169,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5521,7 +5212,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -5547,7 +5237,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -5563,7 +5252,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5581,12 +5269,10 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -5596,7 +5282,6 @@
                   "1": 234
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -5612,7 +5297,6 @@
                   "7": 211
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5644,7 +5328,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -5662,7 +5345,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -5674,7 +5356,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5718,7 +5399,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -5744,7 +5424,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -5760,7 +5439,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5778,7 +5456,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -5788,7 +5465,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -5798,7 +5474,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -5808,7 +5483,6 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   },
                   "4": {
@@ -5818,12 +5492,10 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -5832,7 +5504,6 @@
                   "0": 547
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -5841,7 +5512,6 @@
                   "0": 548
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5873,7 +5543,6 @@
                       "2": "hit_zombie3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -5891,7 +5560,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -5903,7 +5571,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -5947,7 +5614,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -5973,7 +5639,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -5989,7 +5654,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6007,12 +5671,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -6021,7 +5683,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -6033,7 +5694,6 @@
                   "3": 575
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6065,7 +5725,6 @@
                       "2": "hit_twisted3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -6083,7 +5742,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -6095,7 +5753,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6139,7 +5796,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -6165,7 +5821,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -6181,7 +5836,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6199,12 +5853,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -6214,7 +5866,6 @@
                   "1": 425
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -6225,7 +5876,6 @@
                   "2": 2
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6257,7 +5907,6 @@
                       "2": "hit_twisted3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -6275,7 +5924,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -6287,7 +5935,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6331,7 +5978,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -6357,7 +6003,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -6373,7 +6018,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6391,12 +6035,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -6405,7 +6047,6 @@
                   "0": 1
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -6416,7 +6057,6 @@
                   "2": 115
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6448,7 +6088,6 @@
                       "2": "hit_twisted3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -6466,7 +6105,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -6478,7 +6116,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6522,7 +6159,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -6548,7 +6184,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -6564,7 +6199,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6575,10 +6209,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -6587,7 +6219,6 @@
                   "0": 276
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -6600,7 +6231,6 @@
                   "4": 207
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6632,7 +6262,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -6650,7 +6279,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -6662,7 +6290,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6706,7 +6333,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -6732,7 +6358,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -6748,7 +6373,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6766,7 +6390,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -6776,12 +6399,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -6791,7 +6412,6 @@
                   "1": 577
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -6800,7 +6420,6 @@
                   "0": 532
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6832,7 +6451,6 @@
                       "2": "hit_bug3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -6850,7 +6468,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -6862,7 +6479,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6906,7 +6522,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -6932,7 +6547,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -6948,7 +6562,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -6959,10 +6572,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -6971,7 +6582,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -6984,7 +6594,6 @@
                   "4": 571
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7016,7 +6625,6 @@
                       "2": "hit_zombie3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -7034,7 +6642,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -7046,7 +6653,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7090,7 +6696,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -7116,7 +6721,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -7132,7 +6736,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7150,12 +6753,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -7164,7 +6765,6 @@
                   "0": 520
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -7174,7 +6774,6 @@
                   "1": 558
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7206,7 +6805,6 @@
                       "2": "hit_zombie3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -7224,7 +6822,6 @@
                   "6": 566
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -7236,7 +6833,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7280,7 +6876,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -7306,7 +6901,6 @@
                   "7": 130
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -7322,7 +6916,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7340,7 +6933,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -7350,7 +6942,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -7360,7 +6951,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -7370,7 +6960,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "4": {
@@ -7380,7 +6969,6 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   },
                   "5": {
@@ -7390,7 +6978,6 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   },
                   "6": {
@@ -7400,12 +6987,10 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -7414,7 +6999,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -7425,7 +7009,6 @@
                   "2": 436
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7457,7 +7040,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -7475,7 +7057,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -7487,7 +7068,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7531,7 +7111,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -7557,7 +7136,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -7573,7 +7151,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7584,10 +7161,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -7596,7 +7171,6 @@
                   "0": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -7605,7 +7179,6 @@
                   "0": 0
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7637,7 +7210,6 @@
                       "2": "hit_zombie3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -7655,7 +7227,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -7667,7 +7238,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7711,7 +7281,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -7737,7 +7306,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -7753,7 +7321,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7764,10 +7331,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -7776,7 +7341,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -7785,7 +7349,6 @@
                   "0": 132
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7817,7 +7380,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -7835,7 +7397,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -7847,7 +7408,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7891,7 +7451,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -7917,7 +7476,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -7933,7 +7491,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -7951,12 +7508,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -7965,7 +7520,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -7977,7 +7531,6 @@
                   "3": 424
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8009,7 +7562,6 @@
                       "2": "hit_fel3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -8027,7 +7579,6 @@
                   "6": 566
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -8039,7 +7590,6 @@
                   "3": "F"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8083,7 +7633,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -8109,7 +7658,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -8125,7 +7673,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8143,7 +7690,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -8153,12 +7699,10 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -8167,7 +7711,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -8178,7 +7721,6 @@
                   "2": 614
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8210,7 +7752,6 @@
                       "2": "hit_bug3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -8228,7 +7769,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -8240,7 +7780,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8284,7 +7823,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -8310,7 +7848,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -8326,7 +7863,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8344,12 +7880,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -8358,7 +7892,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -8369,7 +7902,6 @@
                   "2": 415
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8401,7 +7933,6 @@
                       "2": "hit_sonny3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -8419,7 +7950,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -8431,7 +7961,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8475,7 +8004,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -8501,7 +8029,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -8517,7 +8044,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8528,10 +8054,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -8542,7 +8066,6 @@
                   "2": 1
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -8558,7 +8081,6 @@
                   "7": 578
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8590,7 +8112,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -8608,7 +8129,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -8620,7 +8140,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8664,7 +8183,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -8690,7 +8208,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -8706,7 +8223,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8717,10 +8233,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -8729,7 +8243,6 @@
                   "0": 1
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -8741,7 +8254,6 @@
                   "3": 10
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8773,7 +8285,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -8791,7 +8302,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -8803,7 +8313,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8847,7 +8356,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -8873,7 +8381,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -8889,7 +8396,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8907,12 +8413,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -8921,7 +8425,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -8934,7 +8437,6 @@
                   "4": 627
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -8963,10 +8465,8 @@
                   "hit": {
                     "type": "EcmaArray",
                     "denseValues": {
-
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -8984,7 +8484,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -8996,7 +8495,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9040,7 +8538,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -9066,7 +8563,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -9082,7 +8578,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9100,12 +8595,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -9114,7 +8607,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -9126,7 +8618,6 @@
                   "3": 622
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9158,7 +8649,6 @@
                       "2": "hit_sonny3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -9176,7 +8666,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -9188,7 +8677,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9232,7 +8720,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -9258,7 +8745,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -9274,7 +8760,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9285,10 +8770,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -9297,7 +8780,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -9312,7 +8794,6 @@
                   "6": 610
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9344,7 +8825,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -9362,7 +8842,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -9374,7 +8853,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9418,7 +8896,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -9444,7 +8921,6 @@
                   "7": 320
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -9460,7 +8936,6 @@
                   "7": 250
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9478,7 +8953,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -9488,7 +8962,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -9498,7 +8971,6 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -9508,12 +8980,10 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -9522,7 +8992,6 @@
                   "0": 634
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -9534,7 +9003,6 @@
                   "3": 145
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9566,7 +9034,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -9584,7 +9051,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -9596,7 +9062,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9640,7 +9105,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -9666,7 +9130,6 @@
                   "7": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -9682,7 +9145,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9693,10 +9155,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -9705,7 +9165,6 @@
                   "0": 1
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -9714,7 +9173,6 @@
                   "0": 629
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9746,7 +9204,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -9764,7 +9221,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -9776,7 +9232,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9820,7 +9275,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -9846,7 +9300,6 @@
                   "7": 20
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -9862,7 +9315,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9873,10 +9325,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -9885,7 +9335,6 @@
                   "0": 1
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -9894,7 +9343,6 @@
                   "0": 1
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -9926,7 +9374,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -9944,7 +9391,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -9956,7 +9402,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10000,7 +9445,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -10026,7 +9470,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -10042,7 +9485,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10060,7 +9502,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -10070,7 +9511,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -10080,7 +9520,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -10090,7 +9529,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "4": {
@@ -10100,7 +9538,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "5": {
@@ -10110,7 +9547,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "6": {
@@ -10120,7 +9556,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "7": {
@@ -10130,7 +9565,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "8": {
@@ -10140,12 +9574,10 @@
                       "1": 4
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -10161,7 +9593,6 @@
                   "7": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -10170,7 +9601,6 @@
                   "0": 765
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10202,7 +9632,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -10220,7 +9649,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -10232,7 +9660,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10276,7 +9703,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -10302,7 +9728,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -10318,7 +9743,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10329,10 +9753,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -10342,7 +9764,6 @@
                   "1": 735
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -10356,7 +9777,6 @@
                   "5": 9
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10388,7 +9808,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -10406,7 +9825,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -10418,7 +9836,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10462,7 +9879,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -10488,7 +9904,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -10504,7 +9919,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10515,10 +9929,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -10527,7 +9939,6 @@
                   "0": 727
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -10543,7 +9954,6 @@
                   "7": 9
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10575,7 +9985,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -10593,7 +10002,6 @@
                   "6": 651
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -10605,7 +10013,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10649,7 +10056,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -10675,7 +10081,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -10691,7 +10096,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10702,10 +10106,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -10714,7 +10116,6 @@
                   "0": 1
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -10731,7 +10132,6 @@
                   "8": 721
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10763,7 +10163,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -10781,7 +10180,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -10793,7 +10191,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10837,7 +10234,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -10863,7 +10259,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -10879,7 +10274,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10890,10 +10284,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -10903,7 +10295,6 @@
                   "1": 122
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -10915,7 +10306,6 @@
                   "3": 107
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -10947,7 +10337,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -10965,7 +10354,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -10977,7 +10365,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11021,7 +10408,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -11047,7 +10433,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -11063,7 +10448,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11081,7 +10465,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -11091,12 +10474,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -11105,7 +10486,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -11115,7 +10495,6 @@
                   "1": 107
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11147,7 +10526,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -11165,7 +10543,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -11177,7 +10554,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11221,7 +10597,6 @@
                   "4": 49
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -11247,7 +10622,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -11263,7 +10637,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11281,12 +10654,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -11295,7 +10666,6 @@
                   "0": 510
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -11308,7 +10678,6 @@
                   "4": 514
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11340,7 +10709,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -11358,7 +10726,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -11370,7 +10737,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11414,7 +10780,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -11440,7 +10805,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -11456,7 +10820,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11474,7 +10837,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -11484,12 +10846,10 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -11506,7 +10866,6 @@
                   "8": 1
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -11515,7 +10874,6 @@
                   "0": 779
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11547,7 +10905,6 @@
                       "2": "hit_mayor3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -11565,7 +10922,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -11577,7 +10933,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11621,7 +10976,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -11647,7 +11001,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -11663,7 +11016,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11681,7 +11033,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -11691,7 +11042,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -11701,7 +11051,6 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -11711,7 +11060,6 @@
                       "1": 4
                     },
                     "associativeValues": {
-
                     }
                   },
                   "4": {
@@ -11721,7 +11069,6 @@
                       "1": 4
                     },
                     "associativeValues": {
-
                     }
                   },
                   "5": {
@@ -11731,7 +11078,6 @@
                       "1": 4
                     },
                     "associativeValues": {
-
                     }
                   },
                   "6": {
@@ -11741,7 +11087,6 @@
                       "1": 4
                     },
                     "associativeValues": {
-
                     }
                   },
                   "7": {
@@ -11751,12 +11096,10 @@
                       "1": 5
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -11766,7 +11109,6 @@
                   "1": 772
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -11778,7 +11120,6 @@
                   "3": 776
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11810,7 +11151,6 @@
                       "2": "hit_monster3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -11828,7 +11168,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -11840,7 +11179,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11884,7 +11222,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -11910,7 +11247,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -11926,7 +11262,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -11944,7 +11279,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -11954,7 +11288,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -11964,7 +11297,6 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -11974,21 +11306,17 @@
                       "1": 4
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -11997,7 +11325,6 @@
                   "0": 276
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12029,7 +11356,6 @@
                       "2": "hit_fel3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -12047,7 +11373,6 @@
                   "6": 22
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -12059,7 +11384,6 @@
                   "3": "F"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12103,7 +11427,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -12129,7 +11452,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -12145,7 +11467,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12156,10 +11477,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -12168,7 +11487,6 @@
                   "0": 531
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -12182,7 +11500,6 @@
                   "5": 524
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12214,7 +11531,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -12232,7 +11548,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -12244,7 +11559,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12288,7 +11602,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -12314,7 +11627,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -12330,7 +11642,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12348,7 +11659,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -12358,7 +11668,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -12368,7 +11677,6 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -12378,12 +11686,10 @@
                       "1": 0
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -12392,7 +11698,6 @@
                   "0": 20
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -12401,7 +11706,6 @@
                   "0": 9
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12433,7 +11737,6 @@
                       "2": "hit_human3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -12451,7 +11754,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -12463,7 +11765,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12507,7 +11808,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -12533,7 +11833,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -12549,7 +11848,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12567,7 +11865,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -12577,7 +11874,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -12587,7 +11883,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -12597,12 +11892,10 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -12611,7 +11904,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -12620,7 +11912,6 @@
                   "0": 15
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12652,7 +11943,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -12670,7 +11960,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -12682,7 +11971,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12726,7 +12014,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -12752,7 +12039,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -12768,7 +12054,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12779,10 +12064,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -12791,7 +12074,6 @@
                   "0": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -12800,7 +12082,6 @@
                   "0": 0
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12832,7 +12113,6 @@
                       "2": "hit_twisted3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -12850,7 +12130,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -12862,7 +12141,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12906,7 +12184,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -12932,7 +12209,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -12948,7 +12224,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -12966,7 +12241,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -12976,7 +12250,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -12986,7 +12259,6 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   },
                   "3": {
@@ -12996,7 +12268,6 @@
                       "1": 4
                     },
                     "associativeValues": {
-
                     }
                   },
                   "4": {
@@ -13006,7 +12277,6 @@
                       "1": 5
                     },
                     "associativeValues": {
-
                     }
                   },
                   "5": {
@@ -13016,12 +12286,10 @@
                       "1": 6
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -13033,7 +12301,6 @@
                   "3": 110
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -13043,7 +12310,6 @@
                   "1": 789
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13075,7 +12341,6 @@
                       "2": "hit_fel3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -13093,7 +12358,6 @@
                   "6": 676
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -13105,7 +12369,6 @@
                   "3": "F"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13149,7 +12412,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -13175,7 +12437,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -13191,7 +12452,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13209,12 +12469,10 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -13224,7 +12482,6 @@
                   "1": 524
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -13236,7 +12493,6 @@
                   "3": 795
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13268,7 +12524,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -13286,7 +12541,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -13298,7 +12552,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13342,7 +12595,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -13368,7 +12620,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -13384,7 +12635,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13395,10 +12645,8 @@
               "abs": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -13407,7 +12655,6 @@
                   "0": 727
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -13423,7 +12670,6 @@
                   "7": 9
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13455,7 +12701,6 @@
                       "2": "hit_doc3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -13473,7 +12718,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -13485,7 +12729,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13529,7 +12772,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -13555,7 +12797,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -13571,7 +12812,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13589,12 +12829,10 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -13603,7 +12841,6 @@
                   "0": 1
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -13617,7 +12854,6 @@
                   "5": 578
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13649,7 +12885,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -13667,7 +12902,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -13679,7 +12913,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13723,7 +12956,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -13749,7 +12981,6 @@
                   "7": 200
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -13765,7 +12996,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13783,7 +13013,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -13793,7 +13022,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -13803,12 +13031,10 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -13817,7 +13043,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -13828,7 +13053,6 @@
                   "2": 115
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13860,7 +13084,6 @@
                       "2": "hit_zpci3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -13878,7 +13101,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -13890,7 +13112,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13934,7 +13155,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -13960,7 +13180,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -13976,7 +13195,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -13994,7 +13212,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -14004,7 +13221,6 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   },
                   "2": {
@@ -14014,12 +13230,10 @@
                       "1": 3
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -14028,7 +13242,6 @@
                   "0": 9
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -14039,7 +13252,6 @@
                   "2": 132
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14071,7 +13283,6 @@
                       "2": "hit_twisted3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -14089,7 +13300,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -14101,7 +13311,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14145,7 +13354,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -14171,7 +13379,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -14187,7 +13394,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14205,12 +13411,10 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -14219,7 +13423,6 @@
                   "0": 2
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -14228,7 +13431,6 @@
                   "0": 802
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14260,7 +13462,6 @@
                       "2": "hit_fel3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -14278,7 +13479,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -14290,7 +13490,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14334,7 +13533,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -14360,7 +13558,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -14376,7 +13573,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14394,7 +13590,6 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   },
                   "1": {
@@ -14404,21 +13599,17 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -14427,7 +13618,6 @@
                   "0": 798
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14459,7 +13649,6 @@
                       "2": "hit_fel3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -14477,7 +13666,6 @@
                   "6": 0
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -14489,7 +13677,6 @@
                   "3": "M"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14533,7 +13720,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -14559,7 +13745,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -14575,7 +13760,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14593,21 +13777,17 @@
                       "1": 1
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
                 "type": "EcmaArray",
                 "denseValues": {
-
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -14616,7 +13796,6 @@
                   "0": 806
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14648,7 +13827,6 @@
                       "2": "hit_fel3"
                     },
                     "associativeValues": {
-
                     }
                   }
                 }
@@ -14666,7 +13844,6 @@
                   "6": 721
                 },
                 "associativeValues": {
-
                 }
               },
               "model": {
@@ -14678,7 +13855,6 @@
                   "3": "F"
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14722,7 +13898,6 @@
                   "4": 15
                 },
                 "associativeValues": {
-
                 }
               },
               "aggression": {
@@ -14748,7 +13923,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               },
               "PER": {
@@ -14764,7 +13938,6 @@
                   "7": 100
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14782,12 +13955,10 @@
                       "1": 2
                     },
                     "associativeValues": {
-
                     }
                   }
                 },
                 "associativeValues": {
-
                 }
               },
               "defense": {
@@ -14796,7 +13967,6 @@
                   "0": 1
                 },
                 "associativeValues": {
-
                 }
               },
               "attack": {
@@ -14805,7 +13975,6 @@
                   "0": 532
                 },
                 "associativeValues": {
-
                 }
               }
             }
@@ -14821,7 +13990,6 @@
       }
     },
     "associativeValues": {
-
     }
   }
 }

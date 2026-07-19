@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_labl0")
 id = 144
+looks = "NINJA"
 display_name = "Fanatical Sceptre"
 internal_name = "Fanatical Sceptre"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +5", "Instinct +13", "Strength +4", "Vitality +5", "Lightning Defense +11", "Earth Defense +11"]
 item_type = 7
 rarity = 1

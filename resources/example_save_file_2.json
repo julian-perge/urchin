@@ -54,7 +54,6 @@
 	  "0": 2
 	},
 	"associativeValues": {
-
 	}
   },
   "ExpSets": {
@@ -68,7 +67,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "friendArrayX": {
@@ -78,7 +76,6 @@
 	  "0": 1
 	},
 	"associativeValues": {
-
 	}
   },
   "StatSets4": {
@@ -91,7 +88,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "StatSets3": {
@@ -104,7 +100,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "StatSets2": {
@@ -117,7 +112,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "StatSets1": {
@@ -130,7 +124,6 @@
 	  "0": 20
 	},
 	"associativeValues": {
-
 	}
   },
   "StatSets0": {
@@ -143,7 +136,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "StatSets5": {
@@ -156,7 +148,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "DefSets5": {
@@ -172,7 +163,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "DefSets4": {
@@ -188,7 +178,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "DefSets3": {
@@ -204,7 +193,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "DefSets2": {
@@ -220,7 +208,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "DefSets1": {
@@ -236,7 +223,6 @@
 	  "0": 30
 	},
 	"associativeValues": {
-
 	}
   },
   "DefSets0": {
@@ -252,7 +238,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "PerSets5": {
@@ -268,7 +253,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "PerSets4": {
@@ -284,7 +268,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "PerSets3": {
@@ -300,7 +283,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "PerSets2": {
@@ -316,7 +298,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "PerSets1": {
@@ -332,7 +313,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "PerSets0": {
@@ -348,7 +328,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "equipArray5": {
@@ -363,7 +342,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "equipArray4": {
@@ -378,7 +356,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "equipArray3": {
@@ -393,7 +370,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "equipArray2": {
@@ -408,7 +384,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "equipArray1": {
@@ -423,7 +398,6 @@
 	  "0": 34
 	},
 	"associativeValues": {
-
 	}
   },
   "equipArray0": {
@@ -438,7 +412,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "LevelStats": {
@@ -452,7 +425,6 @@
 	  "0": 99
 	},
 	"associativeValues": {
-
 	}
   },
   "friendArray": {
@@ -466,7 +438,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "itemArray": {
@@ -511,7 +482,6 @@
 	  "0": 125
 	},
 	"associativeValues": {
-
 	}
   },
   "buffAdderMatrix": {
@@ -557,7 +527,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "skillAdderMatrixOld": {
@@ -603,7 +572,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "skillAdderMatrix": {
@@ -649,7 +617,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "talentMainArray": {
@@ -695,16 +662,13 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   },
   "moveMatrix2Limit": {
 	"type": "EcmaArray",
 	"denseValues": {
-
 	},
 	"associativeValues": {
-
 	}
   },
   "moveMatrix2": {
@@ -719,7 +683,6 @@
 	  "0": 69
 	},
 	"associativeValues": {
-
 	}
   },
   "moveMatrix": {
@@ -735,7 +698,6 @@
 	  "0": 68
 	},
 	"associativeValues": {
-
 	}
   },
   "agMode": {
@@ -749,7 +711,6 @@
 	  "0": 2
 	},
 	"associativeValues": {
-
 	}
   },
   "agArray5": {
@@ -761,7 +722,6 @@
 	  "0": 25
 	},
 	"associativeValues": {
-
 	}
   },
   "agArray4": {
@@ -773,7 +733,6 @@
 	  "0": 25
 	},
 	"associativeValues": {
-
 	}
   },
   "agArray3": {
@@ -785,7 +744,6 @@
 	  "0": 25
 	},
 	"associativeValues": {
-
 	}
   },
   "agArray2": {
@@ -797,7 +755,6 @@
 	  "0": 25
 	},
 	"associativeValues": {
-
 	}
   },
   "agArray1": {
@@ -809,7 +766,6 @@
 	  "0": 25
 	},
 	"associativeValues": {
-
 	}
   },
   "agArray0": {
@@ -821,7 +777,6 @@
 	  "0": 25
 	},
 	"associativeValues": {
-
 	}
   },
   "bgElementsInteracted": {
@@ -837,7 +792,6 @@
 	  "0": 0
 	},
 	"associativeValues": {
-
 	}
   }
 }

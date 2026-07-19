@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b6s5fh3mlhgli"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_joji3"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_oou4q"]
+[ext_resource type="Texture2D" uid="uid://dsyv7a5f3lljj" path="res://resources/sprites/M_HAND_NINJA.png" id="2_0wlwk"]
 
 [resource]
-script = ExtResource("1_joji3")
+script = ExtResource("1_oou4q")
 id = 167
+looks = "NINJA"
+sprite_image = ExtResource("2_0wlwk")
 display_name = "Toxic Gloves"
 internal_name = "Toxic Gloves"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +6", "Instinct +6", "Strength +9", "Vitality +6", "Lightning Defense +6", "Earth Defense +6"]
 item_type = 4
 class_type = 1

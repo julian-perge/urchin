@@ -1,14 +1,16 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b5kh3adoplkcw"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ty3x2"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_emagr"]
+[ext_resource type="Texture2D" uid="uid://cck36c57yk61p" path="res://resources/sprites/M_WEAPON_CROWBAR2.png" id="2_k7kjw"]
 
 [resource]
-script = ExtResource("1_ty3x2")
+script = ExtResource("1_emagr")
 id = 681
+looks = "CROWBAR2"
+sprite_image = ExtResource("2_k7kjw")
 name = "Golden Crowbar"
 display_name = "Golden Crowbar"
 internal_name = "GOLDEN CROWBAR"
-looks = "CROWBAR2"
 tooltipAlt = ["Strength +17", "Vitality +151"]
 item_type = 8
 rarity = 2

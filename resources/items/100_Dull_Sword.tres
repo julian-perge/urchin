@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_jnidv")
 id = 100
+looks = "NINJA"
 display_name = "Dull Sword"
 internal_name = "Dull Sword"
-looks = "NINJA"
 tooltipAlt = ["Speed +2", "Strength +5"]
 item_type = 7
 class_type = 1

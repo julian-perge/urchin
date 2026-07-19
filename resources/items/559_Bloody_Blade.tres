@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b4h1volisywq2"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5qq8l"]
-[ext_resource type="Texture2D" uid="uid://y4qo70bskdp7" path="res://assets/item_slot_icons/WEAPONS/Bloody_Blade.png" id="2_rod6s"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rod6s"]
+[ext_resource type="Texture2D" uid="uid://y4qo70bskdp7" path="res://assets/item_slot_icons/WEAPONS/Bloody_Blade.png" id="2_jsnei"]
+[ext_resource type="Texture2D" uid="uid://bf631i6tmw2ut" path="res://resources/sprites/M_WEAPON_FELKNIFE3.png" id="3_cmkdf"]
 
 [resource]
-script = ExtResource("1_5qq8l")
+script = ExtResource("1_rod6s")
 id = 559
-slot_image = ExtResource("2_rod6s")
+looks = "FELKNIFE3"
+sprite_image = ExtResource("3_cmkdf")
+slot_image = ExtResource("2_jsnei")
 name = "Bloody Blade"
 display_name = "Bloody Blade"
 internal_name = "Red 1"
-looks = "FELKNIFE3"
 tooltipAlt = ["Speed +4", "Physical Piercing +84"]
 item_type = 7
 class_type = 1

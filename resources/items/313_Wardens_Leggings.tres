@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://7a15keggdx73"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xdydk"]
-[ext_resource type="Texture2D" uid="uid://bwh1rcvrjy47p" path="res://assets/item_slot_icons/OTHER/Wardens_Leggings.png" id="2_v04ch"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_v04ch"]
+[ext_resource type="Texture2D" uid="uid://bwh1rcvrjy47p" path="res://assets/item_slot_icons/OTHER/Wardens_Leggings.png" id="2_woj1u"]
+[ext_resource type="Texture2D" uid="uid://ca5o005dvrbw4" path="res://resources/sprites/M_LEG2_JASON2.png" id="3_72eo6"]
 
 [resource]
-script = ExtResource("1_xdydk")
+script = ExtResource("1_v04ch")
 id = 313
-slot_image = ExtResource("2_v04ch")
+looks = "JASON2"
+sprite_image = ExtResource("3_72eo6")
+slot_image = ExtResource("2_woj1u")
 name = "Warden's Leggings"
 display_name = "Warden's Leggings"
 internal_name = "Warden's Leggings"
-looks = "JASON2"
 tooltipAlt = ["Speed +3", "Instinct +3", "Strength +3", "Vitality +2"]
 item_type = 5
 rarity = 1

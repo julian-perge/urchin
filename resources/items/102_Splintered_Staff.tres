@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_opc3w")
 id = 102
+looks = "NINJA"
 display_name = "Splintered Staff"
 internal_name = "Splintered Staff"
-looks = "NINJA"
 tooltipAlt = ["Speed +9", "Instinct +12", "Strength +4"]
 item_type = 9
 class_type = 1

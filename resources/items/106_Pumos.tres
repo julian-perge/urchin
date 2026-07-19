@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bhrefgrejy5ey"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tun83"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_p144r"]
+[ext_resource type="Texture2D" uid="uid://be6t7mp34xyqn" path="res://resources/sprites/M_FOOT_NINJA.png" id="2_dqklk"]
 
 [resource]
-script = ExtResource("1_tun83")
+script = ExtResource("1_p144r")
 id = 106
+looks = "NINJA"
+sprite_image = ExtResource("2_dqklk")
 display_name = "Pumos"
 internal_name = "Pumos"
-looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +2", "Strength +2", "Vitality +3"]
 item_type = 6
 class_type = 1

@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://sm00fbbaxh7j"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xpu5j"]
-[ext_resource type="Texture2D" uid="uid://cb0x0brww7s6r" path="res://assets/item_slot_icons/OTHER/Platinum_Legplates.png" id="2_jyyan"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jyyan"]
+[ext_resource type="Texture2D" uid="uid://cb0x0brww7s6r" path="res://assets/item_slot_icons/OTHER/Platinum_Legplates.png" id="2_fl4nk"]
+[ext_resource type="Texture2D" uid="uid://3j111u3n0ie0" path="res://resources/sprites/M_LEG2_JASON4.png" id="3_i5e78"]
 
 [resource]
-script = ExtResource("1_xpu5j")
+script = ExtResource("1_jyyan")
 id = 662
-slot_image = ExtResource("2_jyyan")
+looks = "JASON4"
+sprite_image = ExtResource("3_i5e78")
+slot_image = ExtResource("2_fl4nk")
 name = "Platinum Legplates"
 display_name = "Platinum Legplates"
 internal_name = "Drop WARDEN Legs"
-looks = "JASON4"
 tooltipAlt = ["Speed +15", "Instinct +5", "Strength +20", "Vitality +58"]
 item_type = 5
 class_type = 1

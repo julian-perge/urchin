@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cnxc1hj4oql70"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bpink"]
-[ext_resource type="Texture2D" uid="uid://b5ado4v35balg" path="res://assets/item_slot_icons/PANTS/Velocious_Legplates.png" id="2_ana25"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ana25"]
+[ext_resource type="Texture2D" uid="uid://b5ado4v35balg" path="res://assets/item_slot_icons/PANTS/Velocious_Legplates.png" id="2_wgtpf"]
+[ext_resource type="Texture2D" uid="uid://cm2nluj10k1gf" path="res://resources/sprites/M_LEG2_ULTI3.png" id="3_5iieb"]
 
 [resource]
-script = ExtResource("1_bpink")
+script = ExtResource("1_ana25")
 id = 692
-slot_image = ExtResource("2_ana25")
+looks = "ULTI3"
+sprite_image = ExtResource("3_5iieb")
+slot_image = ExtResource("2_wgtpf")
 name = "Velocious Legplates"
 display_name = "Velocious Legplates"
 internal_name = "Drop ULTI3 Legs"
-looks = "ULTI3"
 tooltipAlt = ["Speed +59", "Instinct +12", "Strength +12", "Vitality +36"]
 item_type = 5
 class_type = 1

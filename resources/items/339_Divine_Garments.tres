@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dw403iflrfh4t"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_w0w8d"]
-[ext_resource type="Texture2D" uid="uid://bactuek1hkq8a" path="res://assets/item_slot_icons/PANTS/Divine_Garments.png" id="2_3eii5"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3eii5"]
+[ext_resource type="Texture2D" uid="uid://bactuek1hkq8a" path="res://assets/item_slot_icons/PANTS/Divine_Garments.png" id="2_ye7fn"]
+[ext_resource type="Texture2D" uid="uid://coyip243mvi5w" path="res://resources/sprites/M_LEG2_PRIEST.png" id="3_wexy3"]
 
 [resource]
-script = ExtResource("1_w0w8d")
+script = ExtResource("1_3eii5")
 id = 339
-slot_image = ExtResource("2_3eii5")
+looks = "PRIEST"
+sprite_image = ExtResource("3_wexy3")
+slot_image = ExtResource("2_ye7fn")
 name = "Divine Garments"
 display_name = "Divine Garments"
 internal_name = "Divine Garments"
-looks = "PRIEST"
 tooltipAlt = ["Speed +3", "Instinct +1", "Strength +6", "Vitality +10"]
 item_type = 5
 class_type = 1

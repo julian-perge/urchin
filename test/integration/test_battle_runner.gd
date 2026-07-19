@@ -239,7 +239,7 @@ func _battle_from_json(battle_data: Dictionary) -> BattleFight:
 	battle.set_script(BattleFightScript)
 	battle.id = int(battle_data["id"])
 	battle.absolute_start = int(battle_data.get("absolute_start", 0))
-	battle.time_lock = battle_data.get("time_lock") == true
+	battle.time_lock = battle_data.get("time_lock")
 	battle.win_date = int(battle_data.get("win_date", -1))
 	battle.win_date_condition = int(battle_data.get("win_date_condition", 0))
 	battle.phases = battle_data.get("phases", {})

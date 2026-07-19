@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bul8bewnsuu10"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_d150c"]
-[ext_resource type="Texture2D" uid="uid://d0mkj8vqtgiky" path="res://assets/item_slot_icons/PANTS/DarkFiber_Leggings.png" id="2_s0368"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_s0368"]
+[ext_resource type="Texture2D" uid="uid://d0mkj8vqtgiky" path="res://assets/item_slot_icons/PANTS/DarkFiber_Leggings.png" id="2_cw601"]
+[ext_resource type="Texture2D" uid="uid://ddxwseygayp6l" path="res://resources/sprites/M_LEG2_TUNTAT.png" id="3_t5nyu"]
 
 [resource]
-script = ExtResource("1_d150c")
+script = ExtResource("1_s0368")
 id = 576
-slot_image = ExtResource("2_s0368")
+looks = "TUNTAT"
+sprite_image = ExtResource("3_t5nyu")
+slot_image = ExtResource("2_cw601")
 name = "DarkFiber Leggings"
 display_name = "DarkFiber Leggings"
 internal_name = "Drop BLACK OPS Legs"
-looks = "TUNTAT"
 tooltipAlt = ["Speed +6", "Strength +28", "Physical Piercing +40"]
 item_type = 5
 class_type = 1

@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bspvotcuv15mp"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n5qc0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j82mi"]
+[ext_resource type="Texture2D" uid="uid://be6t7mp34xyqn" path="res://resources/sprites/M_FOOT_NINJA.png" id="2_it8i8"]
 
 [resource]
-script = ExtResource("1_n5qc0")
+script = ExtResource("1_j82mi")
 id = 189
+looks = "NINJA"
+sprite_image = ExtResource("2_it8i8")
 display_name = "Steel Toe Boots"
 internal_name = "Steel Toe Boots"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +14", "Instinct +5", "Strength +12", "Vitality +19", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 6
 class_type = 1

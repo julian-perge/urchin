@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://rb3w5y1cwyp"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_03k7u"]
-[ext_resource type="Texture2D" uid="uid://byclwp6cfte20" path="res://assets/item_slot_icons/HELMS/Bone_Helm.png" id="2_grqso"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_grqso"]
+[ext_resource type="Texture2D" uid="uid://byclwp6cfte20" path="res://assets/item_slot_icons/HELMS/Bone_Helm.png" id="2_b7clx"]
+[ext_resource type="Texture2D" uid="uid://d2siaw3u0pgka" path="res://resources/sprites/M_HEAD_SAMURAI2.png" id="3_l6ntk"]
 
 [resource]
-script = ExtResource("1_03k7u")
+script = ExtResource("1_grqso")
 id = 543
-slot_image = ExtResource("2_grqso")
+looks = "SAMURAI2"
+sprite_image = ExtResource("3_l6ntk")
+slot_image = ExtResource("2_b7clx")
 name = "Bone Helm"
 display_name = "Bone Helm"
 internal_name = "Drop Samurai Head"
-looks = "SAMURAI2"
 tooltipAlt = ["Speed +3", "Instinct +3", "Strength +6", "Vitality +18"]
 item_type = 2
 class_type = 1

@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bhwbvxh5au5fj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sd1ie"]
-[ext_resource type="Texture2D" uid="uid://t44mmgq4u4dc" path="res://assets/item_slot_icons/HELMS/Old_ZPCI_Helm.png" id="2_ylmf3"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ylmf3"]
+[ext_resource type="Texture2D" uid="uid://t44mmgq4u4dc" path="res://assets/item_slot_icons/HELMS/Old_ZPCI_Helm.png" id="2_87d1h"]
+[ext_resource type="Texture2D" uid="uid://b06ncam6b8fjl" path="res://resources/sprites/M_HEAD_USA2.png" id="3_hw6s7"]
 
 [resource]
-script = ExtResource("1_sd1ie")
+script = ExtResource("1_ylmf3")
 id = 548
-slot_image = ExtResource("2_ylmf3")
+looks = "USA2"
+sprite_image = ExtResource("3_hw6s7")
+slot_image = ExtResource("2_87d1h")
 name = "Old ZPCI Helm"
 display_name = "Old ZPCI Helm"
 internal_name = "Drop ZPCI Head"
-looks = "USA2"
 tooltip = "This line of ZPCI armor is no longer being manufactured."
 tooltipAlt = ["Instinct +18", "Strength +2", "Vitality +11"]
 item_type = 2

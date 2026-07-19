@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bov33v8ug1okb"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_v8px7"]
-[ext_resource type="Texture2D" uid="uid://cw8ynmop4xjbo" path="res://assets/item_slot_icons/WEAPONS/Azure_Knife.png" id="2_d7me0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_d7me0"]
+[ext_resource type="Texture2D" uid="uid://cw8ynmop4xjbo" path="res://assets/item_slot_icons/WEAPONS/Azure_Knife.png" id="2_4pryi"]
+[ext_resource type="Texture2D" uid="uid://dspl6fpvml45t" path="res://resources/sprites/M_WEAPON_FELKNIFE5.png" id="3_i0f1a"]
 
 [resource]
-script = ExtResource("1_v8px7")
+script = ExtResource("1_d7me0")
 id = 676
-slot_image = ExtResource("2_d7me0")
+looks = "FELKNIFE5"
+sprite_image = ExtResource("3_i0f1a")
+slot_image = ExtResource("2_4pryi")
 name = "Azure Knife"
 display_name = "Azure Knife"
 internal_name = "KNIFE"
-looks = "FELKNIFE5"
 tooltipAlt = ["Strength +96", "Physical Piercing +45"]
 item_type = 7
 class_type = 1

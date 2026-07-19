@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cfdp3acvqnt3w"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_t8j7n"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_c5m4f"]
+[ext_resource type="Texture2D" uid="uid://dsyv7a5f3lljj" path="res://resources/sprites/M_HAND_NINJA.png" id="2_ypl4s"]
 
 [resource]
-script = ExtResource("1_t8j7n")
+script = ExtResource("1_c5m4f")
 id = 151
+looks = "NINJA"
+sprite_image = ExtResource("2_ypl4s")
 display_name = "Ghostly Gloves"
 internal_name = "Ghostly Gloves"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +6", "Instinct +6", "Strength +3", "Vitality +3", "Lightning Defense +5", "Earth Defense +5"]
 item_type = 4
 class_type = 1

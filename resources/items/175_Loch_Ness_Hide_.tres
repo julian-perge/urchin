@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bym3iawdk7enm"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e1pit"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xrs5e"]
+[ext_resource type="Texture2D" uid="uid://brxrs5bs6q2k0" path="res://resources/sprites/M_CHEST_NINJA.png" id="2_30kwy"]
 
 [resource]
-script = ExtResource("1_e1pit")
+script = ExtResource("1_xrs5e")
 id = 175
+looks = "NINJA"
+sprite_image = ExtResource("2_30kwy")
 display_name = "Loch Ness Hide "
 internal_name = "Loch Ness Hide "
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +5", "Instinct +10", "Strength +10", "Vitality +10", "Lightning Defense +9", "Earth Defense +9"]
 item_type = 3
 rarity = 1

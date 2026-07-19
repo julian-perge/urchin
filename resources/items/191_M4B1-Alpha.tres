@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_e1a7d")
 id = 191
+looks = "NINJA"
 display_name = "M4B1-Alpha"
 internal_name = "M4B1-Alpha"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +41", "Instinct +19", "Strength +55", "Vitality +33", "Lightning Defense +28", "Earth Defense +28"]
 item_type = 9
 rarity = 1

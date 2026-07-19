@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_qknfb")
 id = 719
+looks = "FLATBLADE2"
 display_name = "Guardian Sword"
 internal_name = "Guardian Sword"
-looks = "FLATBLADE2"
 item_type = 6
 class_type = 1
 required_level = 28

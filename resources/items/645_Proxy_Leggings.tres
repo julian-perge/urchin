@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dts1xlbpevp48"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_v8hfr"]
-[ext_resource type="Texture2D" uid="uid://bn8ondiv1fgdi" path="res://assets/item_slot_icons/PANTS/Proxy_Leggings.png" id="2_33pfq"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_33pfq"]
+[ext_resource type="Texture2D" uid="uid://bn8ondiv1fgdi" path="res://assets/item_slot_icons/PANTS/Proxy_Leggings.png" id="2_fh4sv"]
+[ext_resource type="Texture2D" uid="uid://c62teiqpomfv" path="res://resources/sprites/M_LEG2_PRIEST4.png" id="3_0sluq"]
 
 [resource]
-script = ExtResource("1_v8hfr")
+script = ExtResource("1_33pfq")
 id = 645
-slot_image = ExtResource("2_33pfq")
+looks = "PRIEST4"
+sprite_image = ExtResource("3_0sluq")
+slot_image = ExtResource("2_fh4sv")
 name = "Proxy Leggings"
 display_name = "Proxy Leggings"
 internal_name = "Drop MAYOR Legs"
-looks = "PRIEST4"
 tooltipAlt = ["Speed +17", "Instinct +33", "Vitality +33", "Fire Defense +44"]
 item_type = 5
 class_type = 1

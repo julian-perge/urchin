@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://caoegbhknmqki"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bfhej"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8wcih"]
+[ext_resource type="Texture2D" uid="uid://dsyv7a5f3lljj" path="res://resources/sprites/M_HAND_NINJA.png" id="2_526v8"]
 
 [resource]
-script = ExtResource("1_bfhej")
+script = ExtResource("1_8wcih")
 id = 133
+looks = "NINJA"
+sprite_image = ExtResource("2_526v8")
 display_name = "Hands of Justice"
 internal_name = "Hands of Justice"
-looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +4", "Strength +3", "Vitality +5", "Lightning Defense +5", "Earth Defense +5"]
 item_type = 4
 class_type = 1

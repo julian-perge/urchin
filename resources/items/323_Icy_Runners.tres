@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bq8yjg7eea5tq"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_nd03j"]
-[ext_resource type="Texture2D" uid="uid://8acbb41yiotk" path="res://assets/item_slot_icons/SHOES/Icy_Runners.png" id="2_0c3qq"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0c3qq"]
+[ext_resource type="Texture2D" uid="uid://8acbb41yiotk" path="res://assets/item_slot_icons/SHOES/Icy_Runners.png" id="2_eussi"]
+[ext_resource type="Texture2D" uid="uid://b0gjpdkl4fu4c" path="res://resources/sprites/M_FOOT_FROSTPLATE.png" id="3_2146u"]
 
 [resource]
-script = ExtResource("1_nd03j")
+script = ExtResource("1_0c3qq")
 id = 323
-slot_image = ExtResource("2_0c3qq")
+looks = "FROSTPLATE"
+sprite_image = ExtResource("3_2146u")
+slot_image = ExtResource("2_eussi")
 name = "Icy Runners"
 display_name = "Icy Runners"
 internal_name = "Icy Runners"
-looks = "FROSTPLATE"
 tooltipAlt = ["Speed +3", "Instinct +6", "Vitality +2", "Ice Piercing +4"]
 item_type = 6
 class_type = 1

@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_ioime")
 id = 152
+looks = "NINJA"
 display_name = "Ghostly Mace"
 internal_name = "Ghostly Mace"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +11", "Instinct +12", "Strength +6", "Vitality +5", "Lightning Defense +11", "Earth Defense +11"]
 item_type = 7
 class_type = 1

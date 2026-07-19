@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ddgcqvtbsk481"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6e6ts"]
-[ext_resource type="Texture2D" uid="uid://bivu1635qpq73" path="res://assets/item_slot_icons/ARMOR/Charged_Armor.png" id="2_h8yys"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_h8yys"]
+[ext_resource type="Texture2D" uid="uid://bivu1635qpq73" path="res://assets/item_slot_icons/ARMOR/Charged_Armor.png" id="2_m7j0q"]
+[ext_resource type="Texture2D" uid="uid://clcwram1s8mir" path="res://resources/sprites/M_CHEST_CLEMONS2.png" id="3_ila5w"]
 
 [resource]
-script = ExtResource("1_6e6ts")
+script = ExtResource("1_h8yys")
 id = 589
-slot_image = ExtResource("2_h8yys")
+looks = "CLEMONS2"
+sprite_image = ExtResource("3_ila5w")
+slot_image = ExtResource("2_m7j0q")
 name = "Charged Armor"
 display_name = "Charged Armor"
 internal_name = "Drop EMPEROR Chest"
-looks = "CLEMONS2"
 tooltipAlt = ["Speed +22", "Instinct +25", "Vitality +9", "Lightning Piercing +7"]
 item_type = 3
 class_type = 1

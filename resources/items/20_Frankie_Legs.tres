@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_nxk3f")
 id = 20
+looks = "FRANKEN2"
 display_name = "Frankie Legs"
 internal_name = "Frankie Legs"
-looks = "FRANKEN2"
 tooltipAlt = ["Strength +1", "Physical Piercing +2"]
 item_type = 5
 class_type = 1

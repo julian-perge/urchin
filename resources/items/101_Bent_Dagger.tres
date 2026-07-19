@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_td2hr")
 id = 101
+looks = "NINJA"
 display_name = "Bent Dagger"
 internal_name = "Bent Dagger"
-looks = "NINJA"
 tooltipAlt = ["Speed +5", "Strength +2"]
 item_type = 7
 class_type = 1

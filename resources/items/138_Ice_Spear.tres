@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_dl2om")
 id = 138
+looks = "NINJA"
 display_name = "Ice Spear"
 internal_name = "Ice Spear"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +28", "Instinct +17", "Strength +17", "Vitality +14", "Lightning Defense +20", "Earth Defense +20"]
 item_type = 9
 class_type = 1

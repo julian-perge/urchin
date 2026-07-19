@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cpxlg5hfa7iy7"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qb1c1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_r87oq"]
+[ext_resource type="Texture2D" uid="uid://be6t7mp34xyqn" path="res://resources/sprites/M_FOOT_NINJA.png" id="2_i5l2a"]
 
 [resource]
-script = ExtResource("1_qb1c1")
+script = ExtResource("1_r87oq")
 id = 180
+looks = "NINJA"
+sprite_image = ExtResource("2_i5l2a")
 display_name = "Uniform Boots"
 internal_name = "Uniform Boots"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +8", "Instinct +7", "Strength +8", "Vitality +4", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 6
 class_type = 1

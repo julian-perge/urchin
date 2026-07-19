@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bvqhkusw4qsrn"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_nreo4"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3kiuk"]
+[ext_resource type="Texture2D" uid="uid://dsyv7a5f3lljj" path="res://resources/sprites/M_HAND_NINJA.png" id="2_nu28b"]
 
 [resource]
-script = ExtResource("1_nreo4")
+script = ExtResource("1_3kiuk")
 id = 162
+looks = "NINJA"
+sprite_image = ExtResource("2_nu28b")
 display_name = "Hands of Insanity"
 internal_name = "Hands of Insanity"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +6", "Instinct +9", "Strength +3", "Vitality +5", "Lightning Defense +6", "Earth Defense +6"]
 item_type = 4
 rarity = 1

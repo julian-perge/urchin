@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://byrwk8o52mkx7"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j63po"]
-[ext_resource type="Texture2D" uid="uid://bgi6hy7t78bil" path="res://assets/item_slot_icons/GLOVES/Corrupted_Gloves.png" id="2_ep1lq"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ep1lq"]
+[ext_resource type="Texture2D" uid="uid://bgi6hy7t78bil" path="res://assets/item_slot_icons/GLOVES/Corrupted_Gloves.png" id="2_l7ii5"]
+[ext_resource type="Texture2D" uid="uid://c4i3gmbdvsi4c" path="res://resources/sprites/M_HAND_PURPLENIN.png" id="3_kno3k"]
 
 [resource]
-script = ExtResource("1_j63po")
+script = ExtResource("1_ep1lq")
 id = 716
-slot_image = ExtResource("2_ep1lq")
+looks = "PURPLENIN"
+sprite_image = ExtResource("3_kno3k")
+slot_image = ExtResource("2_l7ii5")
 name = "Corrupted Gloves"
 display_name = "Corrupted Gloves"
 internal_name = "Drop CORRUPTOR Hands"
-looks = "PURPLENIN"
 tooltipAlt = ["Physical Piercing +81", "Ice Piercing +81", "Lightning Piercing +81", "Shadow Piercing +81", "Poison Piercing +81"]
 item_type = 4
 class_type = 1

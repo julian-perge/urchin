@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b8nlt0v28t4ve"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yrher"]
-[ext_resource type="Texture2D" uid="uid://c3qp3xxxp2xx7" path="res://assets/item_slot_icons/GLOVES/Ancient_Grasp.png" id="2_glabd"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_glabd"]
+[ext_resource type="Texture2D" uid="uid://c3qp3xxxp2xx7" path="res://assets/item_slot_icons/GLOVES/Ancient_Grasp.png" id="2_0v15j"]
+[ext_resource type="Texture2D" uid="uid://b0q824ll1t0s" path="res://resources/sprites/M_HAND_SHAMAN1.png" id="3_x02wb"]
 
 [resource]
-script = ExtResource("1_yrher")
+script = ExtResource("1_glabd")
 id = 530
-slot_image = ExtResource("2_glabd")
+looks = "SHAMAN1"
+sprite_image = ExtResource("3_x02wb")
+slot_image = ExtResource("2_0v15j")
 name = "Ancient Grasp"
 display_name = "Ancient Grasp"
 internal_name = "Vendor Shaman Hands"
-looks = "SHAMAN1"
 tooltip = "It's made from human skin."
 tooltipAlt = ["Speed +4", "Vitality +6", "Physical Piercing +23"]
 item_type = 4

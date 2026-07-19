@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dirkt1mbhib7d"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ieqn3"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6tad7"]
+[ext_resource type="Texture2D" uid="uid://cc6yuekkdneqv" path="res://resources/sprites/M_HEAD_NINJA.png" id="2_mko33"]
 
 [resource]
-script = ExtResource("1_ieqn3")
+script = ExtResource("1_6tad7")
 id = 140
+looks = "NINJA"
+sprite_image = ExtResource("2_mko33")
 display_name = "Visor of Insanity"
 internal_name = "Visor of Insanity"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +6", "Instinct +6", "Strength +2", "Vitality +2", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 2
 class_type = 1

@@ -6,10 +6,10 @@
 [resource]
 script = ExtResource("1_1swaa")
 id = 188
+looks = "NINJA"
 slot_image = ExtResource("2_iogrh")
 display_name = "Riot Shield"
 internal_name = "Riot Shield"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +10", "Instinct +17", "Strength +24", "Vitality +37", "Lightning Defense +14", "Earth Defense +14"]
 item_type = 8
 rarity = 1

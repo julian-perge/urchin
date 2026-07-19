@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://4u2dikdc5hbk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_a24yy"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5tgn6"]
+[ext_resource type="Texture2D" uid="uid://kv70l0gjqn6b" path="res://resources/sprites/M_CHEST_SHIRT4.png" id="2_ehdig"]
 
 [resource]
-script = ExtResource("1_a24yy")
+script = ExtResource("1_5tgn6")
 id = 25
+looks = "SHIRT4"
+sprite_image = ExtResource("2_ehdig")
 display_name = "Magic DPS"
 internal_name = "Magic DPS"
-looks = "SHIRT4"
 tooltipAlt = ["Speed +20", "Instinct +97", "Vitality +78", "Ice Piercing +74", "Lightning Piercing +74", "Poison Piercing +74"]
 item_type = 3
 class_type = 1

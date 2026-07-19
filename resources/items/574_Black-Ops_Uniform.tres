@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://yi50wq56t2gy"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_c4uhf"]
-[ext_resource type="Texture2D" uid="uid://bt0h8roixr76c" path="res://assets/item_slot_icons/ARMOR/Black-Ops_Uniform.png" id="2_hyrfg"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hyrfg"]
+[ext_resource type="Texture2D" uid="uid://bt0h8roixr76c" path="res://assets/item_slot_icons/ARMOR/Black-Ops_Uniform.png" id="2_gup45"]
+[ext_resource type="Texture2D" uid="uid://58wxkloyq07w" path="res://resources/sprites/M_CHEST_TUNTAT2.png" id="3_4hmsr"]
 
 [resource]
-script = ExtResource("1_c4uhf")
+script = ExtResource("1_hyrfg")
 id = 574
-slot_image = ExtResource("2_hyrfg")
+looks = "TUNTAT2"
+sprite_image = ExtResource("3_4hmsr")
+slot_image = ExtResource("2_gup45")
 name = "Black-Ops Uniform"
 display_name = "Black-Ops Uniform"
 internal_name = "Drop BLACK OPS Chest"
-looks = "TUNTAT2"
 tooltipAlt = ["Speed +28", "Vitality +11", "Physical Piercing +32"]
 item_type = 3
 class_type = 1

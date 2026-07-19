@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://6m77iqob6fuy"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vneym"]
-[ext_resource type="Texture2D" uid="uid://cic4xcsv513tv" path="res://assets/item_slot_icons/SHOES/Bone_Shredders.png" id="2_q1w6e"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_q1w6e"]
+[ext_resource type="Texture2D" uid="uid://cic4xcsv513tv" path="res://assets/item_slot_icons/SHOES/Bone_Shredders.png" id="2_5015e"]
+[ext_resource type="Texture2D" uid="uid://bd5risvdmwbq2" path="res://resources/sprites/M_FOOT_TUNNELSET2.png" id="3_bly7j"]
 
 [resource]
-script = ExtResource("1_vneym")
+script = ExtResource("1_q1w6e")
 id = 582
-slot_image = ExtResource("2_q1w6e")
+looks = "TUNNELSET2"
+sprite_image = ExtResource("3_bly7j")
+slot_image = ExtResource("2_5015e")
 name = "Bone Shredders"
 display_name = "Bone Shredders"
 internal_name = "Drop VIKING Feet"
-looks = "TUNNELSET2"
 tooltipAlt = ["Speed +6", "Instinct +14", "Vitality +14", "Ice Piercing +5"]
 item_type = 6
 class_type = 1

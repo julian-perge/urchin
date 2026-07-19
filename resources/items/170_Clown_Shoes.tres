@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c4yd4g6njqsqh"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rnypq"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gkwjf"]
+[ext_resource type="Texture2D" uid="uid://be6t7mp34xyqn" path="res://resources/sprites/M_FOOT_NINJA.png" id="2_7maki"]
 
 [resource]
-script = ExtResource("1_rnypq")
+script = ExtResource("1_gkwjf")
 id = 170
+looks = "NINJA"
+sprite_image = ExtResource("2_7maki")
 display_name = "Clown Shoes"
 internal_name = "Clown Shoes"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +4", "Instinct +4", "Strength +11", "Vitality +11", "Lightning Defense +6", "Earth Defense +6"]
 item_type = 6
 class_type = 1

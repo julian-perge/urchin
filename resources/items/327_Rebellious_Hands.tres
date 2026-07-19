@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://csrp67hua5flf"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_m7oq2"]
-[ext_resource type="Texture2D" uid="uid://yb5wbeqlxw7u" path="res://assets/item_slot_icons/WEAPONS/Rebellious_Hands.png" id="2_kbna8"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kbna8"]
+[ext_resource type="Texture2D" uid="uid://yb5wbeqlxw7u" path="res://assets/item_slot_icons/WEAPONS/Rebellious_Hands.png" id="2_uyp4n"]
+[ext_resource type="Texture2D" uid="uid://4crqexwb4kef" path="res://resources/sprites/M_HAND_TAT.png" id="3_ftbx5"]
 
 [resource]
-script = ExtResource("1_m7oq2")
+script = ExtResource("1_kbna8")
 id = 327
-slot_image = ExtResource("2_kbna8")
+looks = "TAT"
+sprite_image = ExtResource("3_ftbx5")
+slot_image = ExtResource("2_uyp4n")
 name = "Rebellious Hands"
 display_name = "Rebellious Hands"
 internal_name = "Rebellious Hands"
-looks = "TAT"
 tooltipAlt = ["Speed +3", "Instinct +3", "Strength +3", "Vitality +3"]
 item_type = 4
 class_type = 1

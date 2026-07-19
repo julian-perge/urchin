@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://n5rv0fananyq"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rdmsi"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wlqw6"]
+[ext_resource type="Texture2D" uid="uid://6fivrdgf0de4" path="res://resources/sprites/M_WEAPON_FELKNIFE4.png" id="2_msjnt"]
 
 [resource]
-script = ExtResource("1_rdmsi")
+script = ExtResource("1_wlqw6")
 id = 721
+looks = "FELKNIFE4"
+sprite_image = ExtResource("2_msjnt")
 display_name = "Fire Sword"
 internal_name = "Fire Sword"
-looks = "FELKNIFE4"
 tooltipAlt = ["Speed +101", "Strength +134", "Vitality +101", "Fire Piercing +161"]
 item_type = 9
 class_type = 1

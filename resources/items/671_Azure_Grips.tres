@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://caspqd5qvxysu"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xht3o"]
-[ext_resource type="Texture2D" uid="uid://cryx2jux3e2al" path="res://assets/item_slot_icons/GLOVES/Azure_Grips.png" id="2_nemb5"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_nemb5"]
+[ext_resource type="Texture2D" uid="uid://cryx2jux3e2al" path="res://assets/item_slot_icons/GLOVES/Azure_Grips.png" id="2_ripa3"]
+[ext_resource type="Texture2D" uid="uid://bdqvdms7vkhmy" path="res://resources/sprites/M_HAND_BLUENIN.png" id="3_pleli"]
 
 [resource]
-script = ExtResource("1_xht3o")
+script = ExtResource("1_nemb5")
 id = 671
-slot_image = ExtResource("2_nemb5")
+looks = "BLUENIN"
+sprite_image = ExtResource("3_pleli")
+slot_image = ExtResource("2_ripa3")
 name = "Azure Grips"
 display_name = "Azure Grips"
 internal_name = "Drop BLUE NINJA Hands"
-looks = "BLUENIN"
 tooltipAlt = ["Speed +44", "Strength +15", "Vitality +15"]
 item_type = 4
 class_type = 1

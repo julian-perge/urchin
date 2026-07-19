@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_x7efb")
 id = 118
+looks = "NINJA"
 display_name = "Executioner's Axe"
 internal_name = "Executioner's Axe"
-looks = "NINJA"
 tooltipAlt = ["Speed +5", "Instinct +13", "Strength +12", "Vitality +5", "Lightning Defense +16", "Earth Defense +16"]
 item_type = 9
 rarity = 1

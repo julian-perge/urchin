@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d0cvsqx8yro"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_oiefj"]
-[ext_resource type="Texture2D" uid="uid://dpr2qxemsn6ln" path="res://assets/item_slot_icons/GLOVES/Reinforced_Grasp.png" id="2_t36vf"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_t36vf"]
+[ext_resource type="Texture2D" uid="uid://dpr2qxemsn6ln" path="res://assets/item_slot_icons/GLOVES/Reinforced_Grasp.png" id="2_kgpjg"]
+[ext_resource type="Texture2D" uid="uid://bjpv506ke0txq" path="res://resources/sprites/M_HAND_HUNT.png" id="3_k44f8"]
 
 [resource]
-script = ExtResource("1_oiefj")
+script = ExtResource("1_t36vf")
 id = 367
-slot_image = ExtResource("2_t36vf")
+looks = "HUNT"
+sprite_image = ExtResource("3_k44f8")
+slot_image = ExtResource("2_kgpjg")
 name = "Reinforced Grasp"
 display_name = "Reinforced Grasp"
 internal_name = "Reinforced Grasp"
-looks = "HUNT"
 tooltipAlt = ["Speed +3", "Instinct +1", "Strength +5", "Vitality +9"]
 item_type = 4
 rarity = 2

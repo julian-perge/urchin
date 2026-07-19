@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b6b3l6h4tay5y"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_nin2i"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_cmpa5"]
+[ext_resource type="Texture2D" uid="uid://dsyv7a5f3lljj" path="res://resources/sprites/M_HAND_NINJA.png" id="2_uqyrt"]
 
 [resource]
-script = ExtResource("1_nin2i")
+script = ExtResource("1_cmpa5")
 id = 181
+looks = "NINJA"
+sprite_image = ExtResource("2_uqyrt")
 display_name = "Sniper Gloves"
 internal_name = "Sniper Gloves"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +8", "Instinct +12", "Strength +8", "Vitality +4", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 4
 class_type = 1

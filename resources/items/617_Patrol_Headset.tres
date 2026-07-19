@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dm4h18pon50ew"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_aauxt"]
-[ext_resource type="Texture2D" uid="uid://p2r56ibtxfhv" path="res://assets/item_slot_icons/HELMS/Patrol_Headset.png" id="2_lebb6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lebb6"]
+[ext_resource type="Texture2D" uid="uid://p2r56ibtxfhv" path="res://assets/item_slot_icons/HELMS/Patrol_Headset.png" id="2_306e7"]
+[ext_resource type="Texture2D" uid="uid://13unwwc60la1" path="res://resources/sprites/M_HEAD_POLICE.png" id="3_7es3w"]
 
 [resource]
-script = ExtResource("1_aauxt")
+script = ExtResource("1_lebb6")
 id = 617
-slot_image = ExtResource("2_lebb6")
+looks = "POLICE"
+sprite_image = ExtResource("3_7es3w")
+slot_image = ExtResource("2_306e7")
 name = "Patrol Headset"
 display_name = "Patrol Headset"
 internal_name = "Drop POLICE Head"
-looks = "POLICE"
 tooltipAlt = ["Speed +4", "Instinct +16", "Strength +12", "Vitality +38"]
 item_type = 2
 class_type = 1

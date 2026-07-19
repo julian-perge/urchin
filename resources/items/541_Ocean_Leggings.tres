@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://uj1cn5ou0lq"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0fxuk"]
-[ext_resource type="Texture2D" uid="uid://bhduaol25f0o0" path="res://assets/item_slot_icons/PANTS/Ocean_Leggings.png" id="2_obyea"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_obyea"]
+[ext_resource type="Texture2D" uid="uid://bhduaol25f0o0" path="res://assets/item_slot_icons/PANTS/Ocean_Leggings.png" id="2_5edln"]
+[ext_resource type="Texture2D" uid="uid://dk6dr036cefxb" path="res://resources/sprites/M_LEG2_SHAMAN2.png" id="3_aijd5"]
 
 [resource]
-script = ExtResource("1_0fxuk")
+script = ExtResource("1_obyea")
 id = 541
-slot_image = ExtResource("2_obyea")
+looks = "SHAMAN2"
+sprite_image = ExtResource("3_aijd5")
+slot_image = ExtResource("2_5edln")
 name = "Ocean Leggings"
 display_name = "Ocean Leggings"
 internal_name = "Drop Shaman Legs"
-looks = "SHAMAN2"
 tooltipAlt = ["Speed +3", "Strength +6", "Vitality +6", "Physical Piercing +33"]
 item_type = 5
 class_type = 1

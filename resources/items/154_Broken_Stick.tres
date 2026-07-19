@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_d45if")
 id = 154
+looks = "NINJA"
 display_name = "Broken Stick"
 internal_name = "Broken Stick"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +2", "Instinct +14", "Strength +7", "Vitality +2", "Lightning Defense +11", "Earth Defense +11"]
 item_type = 7
 class_type = 1

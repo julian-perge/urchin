@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cvh2lko5kj5wg"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_35bq0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xgn1u"]
+[ext_resource type="Texture2D" uid="uid://brxrs5bs6q2k0" path="res://resources/sprites/M_CHEST_NINJA.png" id="2_rsmf0"]
 
 [resource]
-script = ExtResource("1_35bq0")
+script = ExtResource("1_xgn1u")
 id = 108
+looks = "NINJA"
+sprite_image = ExtResource("2_rsmf0")
 display_name = "Guard's Armour"
 internal_name = "Guard's Armour"
-looks = "NINJA"
 tooltipAlt = ["Speed +3", "Instinct +3", "Strength +3", "Vitality +3"]
 item_type = 3
 class_type = 1

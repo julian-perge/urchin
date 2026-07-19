@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_lgfmb")
 id = 121
+looks = "NINJA"
 display_name = "Stun Baton"
 internal_name = "Stun Baton"
-looks = "NINJA"
 tooltipAlt = ["Speed +3", "Instinct +3", "Strength +10", "Vitality +9", "Lightning Defense +9", "Earth Defense +9"]
 item_type = 7
 class_type = 1

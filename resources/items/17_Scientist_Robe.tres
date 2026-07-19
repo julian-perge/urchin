@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://fi746ca01bsl"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_teka6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xjcgg"]
+[ext_resource type="Texture2D" uid="uid://b6f7xkgs3vgct" path="res://resources/sprites/M_CHEST_MADSCI.png" id="2_ksq55"]
 
 [resource]
-script = ExtResource("1_teka6")
+script = ExtResource("1_xjcgg")
 id = 17
+looks = "MADSCI"
+sprite_image = ExtResource("2_ksq55")
 display_name = "Scientist Robe"
 internal_name = "Scientist Robe"
-looks = "MADSCI"
 tooltipAlt = ["Strength +1", "Vitality +1", "Physical Piercing +2"]
 item_type = 3
 class_type = 1

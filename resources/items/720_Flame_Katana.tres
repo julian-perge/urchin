@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b1fpfcpi1ok4c"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_30bwc"]
-[ext_resource type="Texture2D" uid="uid://bween54i1d0ut" path="res://assets/item_slot_icons/WEAPONS/Flame_Katana.png" id="2_qt8wo"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qt8wo"]
+[ext_resource type="Texture2D" uid="uid://bween54i1d0ut" path="res://assets/item_slot_icons/WEAPONS/Flame_Katana.png" id="2_sdcvf"]
+[ext_resource type="Texture2D" uid="uid://bhpxako70o00h" path="res://resources/sprites/M_WEAPON_KATANA2.png" id="3_sxs6c"]
 
 [resource]
-script = ExtResource("1_30bwc")
+script = ExtResource("1_qt8wo")
 id = 720
-slot_image = ExtResource("2_qt8wo")
+looks = "KATANA2"
+sprite_image = ExtResource("3_sxs6c")
+slot_image = ExtResource("2_sdcvf")
 name = "Flame Katana"
 display_name = "Flame Katana"
 internal_name = "Fire Sword"
-looks = "KATANA2"
 tooltipAlt = ["Speed +101", "Strength +134", "Vitality +101", "Fire Piercing +161"]
 item_type = 9
 class_type = 1

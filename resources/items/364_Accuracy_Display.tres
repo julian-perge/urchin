@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cuqn4sy8kenqw"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j6hv8"]
-[ext_resource type="Texture2D" uid="uid://cef4wpsivttah" path="res://assets/item_slot_icons/HELMS/Accuracy_Display.png" id="2_s2uuc"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_s2uuc"]
+[ext_resource type="Texture2D" uid="uid://cef4wpsivttah" path="res://assets/item_slot_icons/HELMS/Accuracy_Display.png" id="2_lqoc5"]
+[ext_resource type="Texture2D" uid="uid://b14j0lsl8a3qp" path="res://resources/sprites/M_HEAD_ZPCI2.png" id="3_5ilte"]
 
 [resource]
-script = ExtResource("1_j6hv8")
+script = ExtResource("1_s2uuc")
 id = 364
-slot_image = ExtResource("2_s2uuc")
+looks = "ZPCI2"
+sprite_image = ExtResource("3_5ilte")
+slot_image = ExtResource("2_lqoc5")
 name = "Accuracy Display"
 display_name = "Accuracy Display"
 internal_name = "Accuracy Display"
-looks = "ZPCI2"
 tooltip = "It even calculates wind speed."
 tooltipAlt = ["Speed +4", "Instinct +2", "Strength +7", "Vitality +12"]
 item_type = 2

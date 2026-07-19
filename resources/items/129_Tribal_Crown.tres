@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cxveyuk2bvia6"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rabp5"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_r8pul"]
+[ext_resource type="Texture2D" uid="uid://cc6yuekkdneqv" path="res://resources/sprites/M_HEAD_NINJA.png" id="2_d0p4u"]
 
 [resource]
-script = ExtResource("1_rabp5")
+script = ExtResource("1_r8pul")
 id = 129
+looks = "NINJA"
+sprite_image = ExtResource("2_d0p4u")
 display_name = "Tribal Crown"
 internal_name = "Tribal Crown"
-looks = "NINJA"
 tooltipAlt = ["Speed +7", "Instinct +2", "Strength +4", "Vitality +6", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 2
 class_type = 1

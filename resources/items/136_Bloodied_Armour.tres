@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://l7623fxwvu6a"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dp0je"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ew5qn"]
+[ext_resource type="Texture2D" uid="uid://brxrs5bs6q2k0" path="res://resources/sprites/M_CHEST_NINJA.png" id="2_a15j6"]
 
 [resource]
-script = ExtResource("1_dp0je")
+script = ExtResource("1_ew5qn")
 id = 136
+looks = "NINJA"
+sprite_image = ExtResource("2_a15j6")
 display_name = "Bloodied Armour"
 internal_name = "Bloodied Armour"
-looks = "NINJA"
 tooltipAlt = ["Speed +4", "Instinct +4", "Strength +5", "Vitality +4", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 3
 class_type = 1

@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://byatuf3bt2bvr"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dm2qr"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_o5spb"]
+[ext_resource type="Texture2D" uid="uid://be6t7mp34xyqn" path="res://resources/sprites/M_FOOT_NINJA.png" id="2_roggo"]
 
 [resource]
-script = ExtResource("1_dm2qr")
+script = ExtResource("1_o5spb")
 id = 145
+looks = "NINJA"
+sprite_image = ExtResource("2_roggo")
 display_name = "Stylin' Boots"
 internal_name = "Stylin' Boots"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +3", "Instinct +7", "Strength +7", "Vitality +2", "Lightning Defense +5", "Earth Defense +5"]
 item_type = 6
 rarity = 1

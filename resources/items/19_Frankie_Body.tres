@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://m84yyy3odrtc"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ngs6t"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vijay"]
+[ext_resource type="Texture2D" uid="uid://bfqutgvb7g5f" path="res://resources/sprites/M_CHEST_FRANKEN.png" id="2_4bkla"]
 
 [resource]
-script = ExtResource("1_ngs6t")
+script = ExtResource("1_vijay")
 id = 19
+looks = "FRANKEN"
+sprite_image = ExtResource("2_4bkla")
 display_name = "Frankie Body"
 internal_name = "Frankie Body"
-looks = "FRANKEN"
 tooltipAlt = ["Strength +1", "Physical Piercing +2"]
 item_type = 3
 class_type = 1

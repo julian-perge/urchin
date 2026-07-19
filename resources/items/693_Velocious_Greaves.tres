@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bkhitninlc05k"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hl8ja"]
-[ext_resource type="Texture2D" uid="uid://2affxrrmntc8" path="res://assets/item_slot_icons/SHOES/Velocious_Greaves.png" id="2_a1uee"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_a1uee"]
+[ext_resource type="Texture2D" uid="uid://2affxrrmntc8" path="res://assets/item_slot_icons/SHOES/Velocious_Greaves.png" id="2_7t75o"]
+[ext_resource type="Texture2D" uid="uid://d3qg3yt3lsiho" path="res://resources/sprites/M_FOOT_ULTI3.png" id="3_8bvgk"]
 
 [resource]
-script = ExtResource("1_hl8ja")
+script = ExtResource("1_a1uee")
 id = 693
-slot_image = ExtResource("2_a1uee")
+looks = "ULTI3"
+sprite_image = ExtResource("3_8bvgk")
+slot_image = ExtResource("2_7t75o")
 name = "Velocious Greaves"
 display_name = "Velocious Greaves"
 internal_name = "Drop ULTI3 Feet"
-looks = "ULTI3"
 tooltipAlt = ["Speed +42", "Instinct +9", "Strength +9", "Vitality +26"]
 item_type = 6
 class_type = 1

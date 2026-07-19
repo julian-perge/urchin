@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://f0yqm642oi8x"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tiya6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_325am"]
+[ext_resource type="Texture2D" uid="uid://bl3b0s2xk0hpj" path="res://resources/sprites/M_LEG2_NINJA.png" id="2_j24ea"]
 
 [resource]
-script = ExtResource("1_tiya6")
+script = ExtResource("1_325am")
 id = 111
+looks = "NINJA"
+sprite_image = ExtResource("2_j24ea")
 display_name = "Patterned Pants"
 internal_name = "Patterned Pants"
-looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +4", "Strength +4", "Vitality +4"]
 item_type = 5
 class_type = 1

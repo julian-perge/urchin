@@ -60,8 +60,37 @@ func _ready():
 		var button: Button = get_node("%" + button_name)
 		button.tooltip_text = "Coming soon"
 		button.modulate = Color(1, 1, 1, 0.5)
+	_build_quit_button()
 	_wire_screen_visibility.call_deferred()
 	_refresh(ZoneManager.current_zone)
+
+
+# The red X on the middle panel's top-right corner (next to the world map
+# button in the source) - quits to the save-select screen.
+func _build_quit_button() -> void:
+	var quit = Button.new()
+	quit.name = "QuitButton"
+	quit.text = "x"
+	quit.tooltip_text = "Quit\nClick here to return to the save select screen."
+	quit.position = Vector2(442, 4)
+	quit.size = Vector2(26, 26)
+	quit.add_theme_font_size_override("font_size", 14)
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.55, 0.1, 0.08)
+	style.set_border_width_all(2)
+	style.border_color = Color(0.8, 0.3, 0.25)
+	style.set_corner_radius_all(3)
+	quit.add_theme_stylebox_override("normal", style)
+	var hover = style.duplicate()
+	hover.bg_color = Color(0.75, 0.15, 0.1)
+	quit.add_theme_stylebox_override("hover", hover)
+	quit.pressed.connect(_on_quit_pressed)
+	add_child(quit)
+
+
+func _on_quit_pressed() -> void:
+	AudioManagerAuto.play_menu_music()
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 
 # Replaces the Button's built-in icon with two stacked TextureRects: a green

@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bsi014kpvyamk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_v3p3n"]
-[ext_resource type="Texture2D" uid="uid://bvtappkxmd4n5" path="res://assets/item_slot_icons/PANTS/Royal_Leggings.png" id="2_og1p0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_og1p0"]
+[ext_resource type="Texture2D" uid="uid://bvtappkxmd4n5" path="res://assets/item_slot_icons/PANTS/Royal_Leggings.png" id="2_jrsk5"]
+[ext_resource type="Texture2D" uid="uid://dpby6lba30vc1" path="res://resources/sprites/M_LEG2_IMPERIAL.png" id="3_bhyfr"]
 
 [resource]
-script = ExtResource("1_v3p3n")
+script = ExtResource("1_og1p0")
 id = 610
-slot_image = ExtResource("2_og1p0")
+looks = "IMPERIAL"
+sprite_image = ExtResource("3_bhyfr")
+slot_image = ExtResource("2_jrsk5")
 name = "Royal Leggings"
 display_name = "Royal Leggings"
 internal_name = "Drop IMPERIAL Legs"
-looks = "IMPERIAL"
 tooltipAlt = ["Speed +11", "Strength +57", "Vitality +4"]
 item_type = 5
 class_type = 1

@@ -1,22 +1,22 @@
 # main_menu.gd
 # The starting screen (scenes/main_menu.tscn): four save slots, then the
 # original two-step new-game flow (references/2026_07_18_flashpoint/6-8):
-#   1. "Please select a class:" - three tall class cards with glowing names
-#      (Psychological violet / Biological green / Hydraulic cyan), Back
+#   1. "Please select a class:" - the original sketch-art class cards
+#      (gray at rest, colored on hover - cropped from root frames 85/90)
 #   2. "Please configure your settings:" - Difficulty, Tutorial Level,
 #      Sound, Autosave (Effects/Graphics skipped), then Click here to START!
+# All screens sit on the original blue splatter background (root frame 65).
 extends Control
 
 const CLASS_NAMES = ["Biological", "Psychological", "Hydraulic"]
 # Card order matches the original screen: Psychological, Biological, Hydraulic.
 const CLASS_CARD_ORDER = [1, 0, 2]
-const CLASS_CARD_COLORS = {
-	1: Color(0.75, 0.5, 1.0),   # Psychological - violet
-	0: Color(0.5, 1.0, 0.45),   # Biological - green
-	2: Color(0.4, 0.9, 1.0),    # Hydraulic - cyan
+const CLASS_CARD_ART = {
+	1: "class_cards/psychological",
+	0: "class_cards/biological",
+	2: "class_cards/hydraulic",
 }
 const DIFFICULTY_NAMES = ["Easy", "Challenging", "Heroic"]
-const BG_COLOR = Color(0.09, 0.12, 0.18)
 
 var _selected_slot: int = 1
 var _selected_class: int = 0
@@ -139,27 +139,16 @@ func _build_class_screen() -> void:
 	new_game_panel.add_child(cancel_button)
 
 
-func _make_class_card(class_id: int) -> Button:
-	var card = Button.new()
+# The original card art: gray sketch at rest, colored on hover/press.
+func _make_class_card(class_id: int) -> TextureButton:
+	var card = TextureButton.new()
+	card.texture_normal = MenuTheme.texture(CLASS_CARD_ART[class_id] + "_gray.png")
+	card.texture_hover = MenuTheme.texture(CLASS_CARD_ART[class_id] + ".png")
+	card.texture_pressed = card.texture_hover
+	card.ignore_texture_size = true
+	card.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
 	card.custom_minimum_size = Vector2(180, 320)
-	var color: Color = CLASS_CARD_COLORS[class_id]
-	for state in ["normal", "hover", "pressed"]:
-		var style = StyleBoxFlat.new()
-		style.bg_color = Color(0.05, 0.05, 0.07) if state == "normal" else Color(0.09, 0.09, 0.12)
-		style.set_border_width_all(3)
-		style.border_color = Color(0.45, 0.45, 0.5) if state == "normal" else color
-		style.set_corner_radius_all(2)
-		card.add_theme_stylebox_override(state, style)
-	var name_label = Label.new()
-	name_label.text = CLASS_NAMES[class_id]
-	name_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	name_label.offset_top = -50
-	name_label.offset_bottom = -18
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.add_theme_font_size_override("font_size", 19)
-	name_label.add_theme_color_override("font_color", color)
-	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	card.add_child(name_label)
+	card.tooltip_text = CLASS_NAMES[class_id]
 	card.pressed.connect(_on_class_picked.bind(class_id))
 	return card
 
@@ -261,8 +250,10 @@ func _make_screen(screen_name: String) -> Control:
 	screen.name = screen_name
 	screen.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(screen)
-	var bg = ColorRect.new()
-	bg.color = BG_COLOR
+	var bg = TextureRect.new()
+	bg.texture = MenuTheme.texture("start_background.png")
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	bg.mouse_filter = Control.MOUSE_FILTER_STOP
 	screen.add_child(bg)

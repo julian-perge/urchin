@@ -6,11 +6,11 @@
 [resource]
 script = ExtResource("1_d474d")
 id = 701
+looks = "ULTI2"
 slot_image = ExtResource("2_80ch8")
 name = "Cryptic Handplates"
 display_name = "Cryptic Handplates"
 internal_name = "Drop ULTI2 Hands"
-looks = "ULTI2"
 tooltipAlt = ["Speed +9", "Instinct +42", "Strength +9", "Vitality +26"]
 item_type = 4
 class_type = 1

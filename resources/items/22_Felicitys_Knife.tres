@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dhxdh811revp1"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wb5np"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_t8n8x"]
+[ext_resource type="Texture2D" uid="uid://v8y56k0fgar3" path="res://resources/sprites/M_WEAPON_FELKNIFE.png" id="2_6jybl"]
 
 [resource]
-script = ExtResource("1_wb5np")
+script = ExtResource("1_t8n8x")
 id = 22
+looks = "FELKNIFE"
+sprite_image = ExtResource("2_6jybl")
 display_name = "Felicity's Knife"
 internal_name = "Felicity's Knife"
-looks = "FELKNIFE"
 tooltipAlt = ["Strength +1", "Physical Piercing +2"]
 item_type = 7
 class_type = 1

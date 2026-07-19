@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bilqdagftnxmh"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_o5rnb"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hiiww"]
+[ext_resource type="Texture2D" uid="uid://dsyv7a5f3lljj" path="res://resources/sprites/M_HAND_NINJA.png" id="2_0m7eq"]
 
 [resource]
-script = ExtResource("1_o5rnb")
+script = ExtResource("1_hiiww")
 id = 115
+looks = "NINJA"
+sprite_image = ExtResource("2_0m7eq")
 display_name = "Welder's Gloves"
 internal_name = "Welder's Gloves"
-looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +4", "Strength +3", "Vitality +2", "Lightning Defense +4"]
 item_type = 4
 class_type = 1

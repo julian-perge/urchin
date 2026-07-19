@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_jprqy")
 id = 139
+looks = "NINJA"
 display_name = "Ardor's Guard"
 internal_name = "Ardor's Guard"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +14", "Instinct +9", "Strength +4", "Vitality +11", "Lightning Defense +10", "Earth Defense +10"]
 item_type = 8
 class_type = 1

@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bb4ljois1i0uh"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_q8a2q"]
-[ext_resource type="Texture2D" uid="uid://c7n4q7yv2ukhm" path="res://assets/item_slot_icons/WEAPONS/Medic-B_Legs.png" id="2_owpm0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_owpm0"]
+[ext_resource type="Texture2D" uid="uid://c7n4q7yv2ukhm" path="res://assets/item_slot_icons/WEAPONS/Medic-B_Legs.png" id="2_nelol"]
+[ext_resource type="Texture2D" uid="uid://cvjxoekb6t58g" path="res://resources/sprites/M_LEG2_ZPCI3.png" id="3_rmenj"]
 
 [resource]
-script = ExtResource("1_q8a2q")
+script = ExtResource("1_owpm0")
 id = 35
-slot_image = ExtResource("2_owpm0")
+looks = "ZPCI3"
+sprite_image = ExtResource("3_rmenj")
+slot_image = ExtResource("2_nelol")
 name = "Medic-B Legs"
 display_name = "Medic-B Legs"
 internal_name = "Medic Legs"
-looks = "ZPCI3"
 tooltipAlt = ["Speed +1", "Instinct +2", "Strength +1", "Vitality +3", "Lightning Piercing +8"]
 item_type = 5
 class_type = 5

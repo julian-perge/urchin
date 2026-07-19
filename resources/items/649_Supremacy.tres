@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://048ixyx1omi6"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gtu4a"]
-[ext_resource type="Texture2D" uid="uid://wkf28jkh8nye" path="res://assets/item_slot_icons/WEAPONS/Supremacy.png" id="2_q0xyk"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_q0xyk"]
+[ext_resource type="Texture2D" uid="uid://wkf28jkh8nye" path="res://assets/item_slot_icons/WEAPONS/Supremacy.png" id="2_tggsy"]
+[ext_resource type="Texture2D" uid="uid://dkx2acqs6yq7j" path="res://resources/sprites/M_WEAPON_AK3.png" id="3_rts80"]
 
 [resource]
-script = ExtResource("1_gtu4a")
+script = ExtResource("1_q0xyk")
 id = 649
-slot_image = ExtResource("2_q0xyk")
+looks = "AK3"
+sprite_image = ExtResource("3_rts80")
+slot_image = ExtResource("2_tggsy")
 name = "Supremacy"
 display_name = "Supremacy"
 internal_name = "COLONEL GUN"
-looks = "AK3"
 tooltipAlt = ["Speed +66", "Instinct +109", "Strength +109"]
 item_type = 9
 rarity = 2

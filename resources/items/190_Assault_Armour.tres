@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dsft0lamqacma"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yix3p"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e3ie1"]
+[ext_resource type="Texture2D" uid="uid://brxrs5bs6q2k0" path="res://resources/sprites/M_CHEST_NINJA.png" id="2_li2qh"]
 
 [resource]
-script = ExtResource("1_yix3p")
+script = ExtResource("1_e3ie1")
 id = 190
+looks = "NINJA"
+sprite_image = ExtResource("2_li2qh")
 display_name = "Assault Armour"
 internal_name = "Assault Armour"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +15", "Instinct +7", "Strength +17", "Vitality +12", "Lightning Defense +10", "Earth Defense +10"]
 item_type = 3
 class_type = 1

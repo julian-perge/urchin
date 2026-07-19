@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_yegys")
 id = 147
+looks = "NINJA"
 display_name = "Standard Issue Assault Weapon"
 internal_name = "Standard Issue Assault Weapon"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +17", "Instinct +25", "Strength +20", "Vitality +13", "Lightning Defense +21", "Earth Defense +21"]
 item_type = 9
 class_type = 1

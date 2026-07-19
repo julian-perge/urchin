@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bcnjcfsxwx6wa"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tehh1"]
-[ext_resource type="Texture2D" uid="uid://x5omno574jtb" path="res://assets/item_slot_icons/OTHER/Metal_Sprinter.png" id="2_mqm4l"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mqm4l"]
+[ext_resource type="Texture2D" uid="uid://x5omno574jtb" path="res://assets/item_slot_icons/OTHER/Metal_Sprinter.png" id="2_8xtu8"]
+[ext_resource type="Texture2D" uid="uid://1wdvcy21af2s" path="res://resources/sprites/M_FOOT_JASON3.png" id="3_pyivo"]
 
 [resource]
-script = ExtResource("1_tehh1")
+script = ExtResource("1_mqm4l")
 id = 512
-slot_image = ExtResource("2_mqm4l")
+looks = "JASON3"
+sprite_image = ExtResource("3_pyivo")
+slot_image = ExtResource("2_8xtu8")
 name = "Metal Sprinter"
 display_name = "Metal Sprinter"
 internal_name = "Metal Sprinter"
-looks = "JASON3"
 tooltipAlt = ["Speed +1", "Physical Piercing +22"]
 item_type = 6
 class_type = 1

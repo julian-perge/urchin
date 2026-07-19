@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dhorebp0e51tk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jimlv"]
-[ext_resource type="Texture2D" uid="uid://65w80wh16ftc" path="res://assets/item_slot_icons/GLOVES/Rightful_Grasp.png" id="2_1snrv"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_1snrv"]
+[ext_resource type="Texture2D" uid="uid://65w80wh16ftc" path="res://assets/item_slot_icons/GLOVES/Rightful_Grasp.png" id="2_r0sxb"]
+[ext_resource type="Texture2D" uid="uid://cyk4oo5hewf8a" path="res://resources/sprites/M_HAND_XADER.png" id="3_pw8u8"]
 
 [resource]
-script = ExtResource("1_jimlv")
+script = ExtResource("1_1snrv")
 id = 331
-slot_image = ExtResource("2_1snrv")
+looks = "XADER"
+sprite_image = ExtResource("3_pw8u8")
+slot_image = ExtResource("2_r0sxb")
 name = "Rightful Grasp"
 display_name = "Rightful Grasp"
 internal_name = "Rightful Grasp"
-looks = "XADER"
 tooltipAlt = ["Speed +4", "Strength +6", "Vitality +3"]
 item_type = 4
 class_type = 1

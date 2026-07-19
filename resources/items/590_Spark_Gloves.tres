@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dvg6515fegwmm"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xdyg5"]
-[ext_resource type="Texture2D" uid="uid://do3xw0nwedrws" path="res://assets/item_slot_icons/GLOVES/Spark_Gloves.png" id="2_mihjx"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mihjx"]
+[ext_resource type="Texture2D" uid="uid://do3xw0nwedrws" path="res://assets/item_slot_icons/GLOVES/Spark_Gloves.png" id="2_l7gor"]
+[ext_resource type="Texture2D" uid="uid://fyss4r6jcjoh" path="res://resources/sprites/M_HAND_CLEMONS2.png" id="3_ypntn"]
 
 [resource]
-script = ExtResource("1_xdyg5")
+script = ExtResource("1_mihjx")
 id = 590
-slot_image = ExtResource("2_mihjx")
+looks = "CLEMONS2"
+sprite_image = ExtResource("3_ypntn")
+slot_image = ExtResource("2_l7gor")
 name = "Spark Gloves"
 display_name = "Spark Gloves"
 internal_name = "Drop EMPEROR Hands"
-looks = "CLEMONS2"
 tooltipAlt = ["Speed +7", "Instinct +26", "Lightning Piercing +4"]
 item_type = 4
 class_type = 1

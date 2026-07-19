@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://hmjdij6dd5bb"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_m1qnm"]
-[ext_resource type="Texture2D" uid="uid://dgpubxbq66gmb" path="res://assets/item_slot_icons/PANTS/Bloody_Leggings.png" id="2_ikg1d"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ikg1d"]
+[ext_resource type="Texture2D" uid="uid://dgpubxbq66gmb" path="res://assets/item_slot_icons/PANTS/Bloody_Leggings.png" id="2_l35cy"]
+[ext_resource type="Texture2D" uid="uid://ctrtme605hxr4" path="res://resources/sprites/M_LEG2_SINJID.png" id="3_ayd4l"]
 
 [resource]
-script = ExtResource("1_m1qnm")
+script = ExtResource("1_ikg1d")
 id = 630
-slot_image = ExtResource("2_ikg1d")
+looks = "SINJID"
+sprite_image = ExtResource("3_ayd4l")
+slot_image = ExtResource("2_l35cy")
 name = "Bloody Leggings"
 display_name = "Bloody Leggings"
 internal_name = "Drop SPECIALIST Legs"
-looks = "SINJID"
 tooltipAlt = ["Focus +5", "Speed +15", "Strength +22", "Physical Piercing +41"]
 item_type = 5
 class_type = 1

@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dsdg203xhh2xk"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6x7mr"]
-[ext_resource type="Texture2D" uid="uid://b2sovx5v1cckt" path="res://assets/item_slot_icons/WEAPONS/Sun_Struck_Horrors.png" id="2_3d4qm"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3d4qm"]
+[ext_resource type="Texture2D" uid="uid://b2sovx5v1cckt" path="res://assets/item_slot_icons/WEAPONS/Sun_Struck_Horrors.png" id="2_3pudj"]
+[ext_resource type="Texture2D" uid="uid://e3dljey3ggmg" path="res://resources/sprites/M_WEAPON_MOON.png" id="3_dyoxg"]
 
 [resource]
-script = ExtResource("1_6x7mr")
+script = ExtResource("1_3d4qm")
 id = 564
-slot_image = ExtResource("2_3d4qm")
+looks = "MOON"
+sprite_image = ExtResource("3_dyoxg")
+slot_image = ExtResource("2_3pudj")
 name = "Sun Struck Horrors"
 display_name = "Sun Struck Horrors"
 internal_name = "Sun Struck Horrors"
-looks = "MOON"
 tooltip = "You can hear twisted laughs..."
 tooltipAlt = ["Speed +28", "Instinct +28", "Strength +56", "Vitality +34", "Fire Piercing +211"]
 item_type = 9

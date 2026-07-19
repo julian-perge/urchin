@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bvwj1267drohm"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ym6j5"]
-[ext_resource type="Texture2D" uid="uid://kntopqq0ysvv" path="res://assets/item_slot_icons/WEAPONS/Hopes_Strength.png" id="2_8knji"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8knji"]
+[ext_resource type="Texture2D" uid="uid://kntopqq0ysvv" path="res://assets/item_slot_icons/WEAPONS/Hopes_Strength.png" id="2_l3eom"]
+[ext_resource type="Texture2D" uid="uid://drvlvuvnfrcxr" path="res://resources/sprites/M_LEG2_TAT.png" id="3_qaoii"]
 
 [resource]
-script = ExtResource("1_ym6j5")
+script = ExtResource("1_8knji")
 id = 329
-slot_image = ExtResource("2_8knji")
+looks = "TAT"
+sprite_image = ExtResource("3_qaoii")
+slot_image = ExtResource("2_l3eom")
 name = "Hope's Strength"
 display_name = "Hope's Strength"
 internal_name = "Hope's Strength"
-looks = "TAT"
 tooltip = "Cut together from pieces of salvaged military armor."
 tooltipAlt = ["Speed +5", "Strength +9", "Vitality +4"]
 item_type = 5

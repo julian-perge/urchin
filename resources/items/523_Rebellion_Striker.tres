@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b62aj452oqnca"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_smnp8"]
-[ext_resource type="Texture2D" uid="uid://bkebx0um4qxng" path="res://assets/item_slot_icons/WEAPONS/Rebellion_Striker.png" id="2_ibuao"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ibuao"]
+[ext_resource type="Texture2D" uid="uid://bkebx0um4qxng" path="res://assets/item_slot_icons/WEAPONS/Rebellion_Striker.png" id="2_2cjjg"]
+[ext_resource type="Texture2D" uid="uid://b4mdlwx5we0x3" path="res://resources/sprites/M_WEAPON_AK.png" id="3_1bekh"]
 
 [resource]
-script = ExtResource("1_smnp8")
+script = ExtResource("1_ibuao")
 id = 523
-slot_image = ExtResource("2_ibuao")
+looks = "AK"
+sprite_image = ExtResource("3_1bekh")
+slot_image = ExtResource("2_2cjjg")
 name = "Rebellion Striker"
 display_name = "Rebellion Striker"
 internal_name = "Rebellion Striker"
-looks = "AK"
 tooltip = "Seems to be modelled after the AK47."
 tooltipAlt = ["Speed +16", "Strength +16", "Fire Piercing +89", "Poison Piercing +89"]
 item_type = 9

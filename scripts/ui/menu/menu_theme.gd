@@ -14,9 +14,9 @@ const ORIGIN = Vector2(400.5, 222.4)
 
 # The red cracked backdrop (shape 2993 via sprite 2994 at (-2.1, 0.1)).
 const BACKDROP_RECT = Rect2(14.2, 14.9, 768.5, 425.1)
-# Close X (sprite 2855, art shape 2854) centered at (752.9, 48.0); drawn a
-# touch larger than the shape bounds - the original wears a glow filter.
-const CLOSE_RECT = Rect2(729.0, 24.5, 48.0, 47.0)
+# Close X (sprite 2855, art shape 2854) centered at (752.9, 48.0) at its
+# extracted size.
+const CLOSE_RECT = Rect2(734.5, 29.8, 36.7, 36.4)
 
 # 31x31 item/equip slots (buttons 2985/2981/3012 share frame art 2982),
 # laid out on a 38 px pitch everywhere.
@@ -82,11 +82,11 @@ static func add_texture_rect(parent: Node, file: String, rect: Rect2, stretch: b
 	return node
 
 
-static func add_label(parent: Node, text: String, rect: Rect2, font_size: int, color: Color = Color.WHITE, align: int = HORIZONTAL_ALIGNMENT_LEFT, wrap: bool = false) -> Label:
+static func add_label(parent: Node, text: String, rect: Rect2, font_size: int, color: Color = Color.WHITE, align: int = HORIZONTAL_ALIGNMENT_LEFT, wrap_text: bool = false) -> Label:
 	var label = Label.new()
 	# autowrap must be on BEFORE size: an unwrapped Label's minimum width is
 	# the full text width, which overrides a narrower size.
-	if wrap:
+	if wrap_text:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.text = text
 	label.position = rect.position

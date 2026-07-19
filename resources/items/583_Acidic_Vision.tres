@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bqggitmlmcerr"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_fdtco"]
-[ext_resource type="Texture2D" uid="uid://dhqctifcitjtg" path="res://assets/item_slot_icons/OTHER/Acidic_Vision.png" id="2_28mb3"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_28mb3"]
+[ext_resource type="Texture2D" uid="uid://dhqctifcitjtg" path="res://assets/item_slot_icons/OTHER/Acidic_Vision.png" id="2_aumqd"]
+[ext_resource type="Texture2D" uid="uid://lywjixp7fad2" path="res://resources/sprites/M_HEAD_TUNNELSET1.png" id="3_wplqc"]
 
 [resource]
-script = ExtResource("1_fdtco")
+script = ExtResource("1_28mb3")
 id = 583
-slot_image = ExtResource("2_28mb3")
+looks = "TUNNELSET1"
+sprite_image = ExtResource("3_wplqc")
+slot_image = ExtResource("2_aumqd")
 name = "Acidic Vision"
 display_name = "Acidic Vision"
 internal_name = "Drop IRONGUARD Head"
-looks = "TUNNELSET1"
 tooltipAlt = ["Strength +38", "Vitality +17", "Poison Piercing +7"]
 item_type = 2
 class_type = 1

@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ujnsdjejj7e5"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4kwmo"]
-[ext_resource type="Texture2D" uid="uid://b8rby04jx78u1" path="res://assets/item_slot_icons/HELMS/Concert_Wig.png" id="2_lna6r"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lna6r"]
+[ext_resource type="Texture2D" uid="uid://b8rby04jx78u1" path="res://assets/item_slot_icons/HELMS/Concert_Wig.png" id="2_galpr"]
+[ext_resource type="Texture2D" uid="uid://cirk27i8xwx7l" path="res://resources/sprites/M_HEAD_ROCKSTAR.png" id="3_n15w4"]
 
 [resource]
-script = ExtResource("1_4kwmo")
+script = ExtResource("1_lna6r")
 id = 593
-slot_image = ExtResource("2_lna6r")
+looks = "ROCKSTAR"
+sprite_image = ExtResource("3_n15w4")
+slot_image = ExtResource("2_galpr")
 name = "Concert Wig"
 display_name = "Concert Wig"
 internal_name = "Drop ROCKSTAR Head"
-looks = "ROCKSTAR"
 tooltip = "You ain't nothing but a hound dog..."
 tooltipAlt = ["Speed +6", "Instinct +17", "Strength +21", "Vitality +12"]
 item_type = 2

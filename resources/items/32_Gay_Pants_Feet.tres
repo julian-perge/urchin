@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bpuvdcka083gi"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mo5nj"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_w7fl6"]
+[ext_resource type="Texture2D" uid="uid://xpunassy0opq" path="res://resources/sprites/M_FOOT_GAY.png" id="2_j1v2a"]
 
 [resource]
-script = ExtResource("1_mo5nj")
+script = ExtResource("1_w7fl6")
 id = 32
+looks = "GAY"
+sprite_image = ExtResource("2_j1v2a")
 display_name = "Gay Pants/Feet"
 internal_name = "Gay Pants/Feet"
-looks = "GAY"
 tooltipAlt = ["Vitality +1"]
 item_type = 6
 class_type = 1

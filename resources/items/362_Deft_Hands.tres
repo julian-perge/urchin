@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cs8si3wrbweis"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_33cbk"]
-[ext_resource type="Texture2D" uid="uid://dfeoa7o44dpea" path="res://assets/item_slot_icons/GLOVES/Deft_Hands.png" id="2_evi7p"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_evi7p"]
+[ext_resource type="Texture2D" uid="uid://dfeoa7o44dpea" path="res://assets/item_slot_icons/GLOVES/Deft_Hands.png" id="2_15u4i"]
+[ext_resource type="Texture2D" uid="uid://bxbhwp3lm8si4" path="res://resources/sprites/M_HAND_ZPCI2.png" id="3_le4hy"]
 
 [resource]
-script = ExtResource("1_33cbk")
+script = ExtResource("1_evi7p")
 id = 362
-slot_image = ExtResource("2_evi7p")
+looks = "ZPCI2"
+sprite_image = ExtResource("3_le4hy")
+slot_image = ExtResource("2_15u4i")
 name = "Deft Hands"
 display_name = "Deft Hands"
 internal_name = "Deft Hands"
-looks = "ZPCI2"
 tooltipAlt = ["Speed +7", "Instinct +5", "Strength +5", "Vitality +2"]
 item_type = 4
 class_type = 1

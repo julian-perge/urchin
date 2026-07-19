@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cys7motghjk32"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_suxf0"]
-[ext_resource type="Texture2D" uid="uid://brlsn68blb6hi" path="res://assets/item_slot_icons/PANTS/Steadfast_Leggings.png" id="2_8alyj"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8alyj"]
+[ext_resource type="Texture2D" uid="uid://brlsn68blb6hi" path="res://assets/item_slot_icons/PANTS/Steadfast_Leggings.png" id="2_qwcbl"]
+[ext_resource type="Texture2D" uid="uid://bbsdj4p8jw0xu" path="res://resources/sprites/M_LEG2_ZPCI2.png" id="3_x636r"]
 
 [resource]
-script = ExtResource("1_suxf0")
+script = ExtResource("1_8alyj")
 id = 361
-slot_image = ExtResource("2_8alyj")
+looks = "ZPCI2"
+sprite_image = ExtResource("3_x636r")
+slot_image = ExtResource("2_qwcbl")
 name = "Steadfast Leggings"
 display_name = "Steadfast Leggings"
 internal_name = "Steadfast Leggings"
-looks = "ZPCI2"
 tooltipAlt = ["Speed +9", "Instinct +6", "Strength +6", "Vitality +2"]
 item_type = 5
 class_type = 1

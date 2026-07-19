@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cokdsue2c53wl"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_72nkm"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lbqmo"]
+[ext_resource type="Texture2D" uid="uid://be6t7mp34xyqn" path="res://resources/sprites/M_FOOT_NINJA.png" id="2_b7hyv"]
 
 [resource]
-script = ExtResource("1_72nkm")
+script = ExtResource("1_lbqmo")
 id = 126
+looks = "NINJA"
+sprite_image = ExtResource("2_b7hyv")
 display_name = "Frosted Boots"
 internal_name = "Frosted Boots"
-looks = "NINJA"
 tooltipAlt = ["Speed +5", "Instinct +4", "Strength +2", "Vitality +5", "Lightning Defense +4", "Earth Defense +4"]
 item_type = 6
 class_type = 1

@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bjcm1n2t7jg5i"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n8kan"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ywogu"]
+[ext_resource type="Texture2D" uid="uid://b358r1xx8tjfu" path="res://resources/sprites/M_CHEST_SHIRT3.png" id="2_djp70"]
 
 [resource]
-script = ExtResource("1_n8kan")
+script = ExtResource("1_ywogu")
 id = 24
+looks = "SHIRT3"
+sprite_image = ExtResource("2_djp70")
 display_name = "Physical DPS"
 internal_name = "Physical DPS"
-looks = "SHIRT3"
 tooltipAlt = ["Speed +78", "Strength +155", "Vitality +39"]
 item_type = 3
 class_type = 1

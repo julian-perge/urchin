@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://g0dad38xwn5f"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_72bp7"]
-[ext_resource type="Texture2D" uid="uid://chx4r0wainbtx" path="res://assets/item_slot_icons/PANTS/Lower_Rags.png" id="2_81x4s"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_81x4s"]
+[ext_resource type="Texture2D" uid="uid://chx4r0wainbtx" path="res://assets/item_slot_icons/PANTS/Lower_Rags.png" id="2_numr2"]
+[ext_resource type="Texture2D" uid="uid://durodo7yvcd52" path="res://resources/sprites/M_LEG2_HOBO.png" id="3_5eaav"]
 
 [resource]
-script = ExtResource("1_72bp7")
+script = ExtResource("1_81x4s")
 id = 373
-slot_image = ExtResource("2_81x4s")
+looks = "HOBO"
+sprite_image = ExtResource("3_5eaav")
+slot_image = ExtResource("2_numr2")
 name = "Lower Rags"
 display_name = "Lower Rags"
 internal_name = "Lower Rags"
-looks = "HOBO"
 tooltipAlt = ["Speed +8", "Instinct +8", "Strength +8", "Vitality +8"]
 item_type = 5
 class_type = 1

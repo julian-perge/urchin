@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_h2tgu")
 id = 165
+looks = "NINJA"
 display_name = "Infected Blade"
 internal_name = "Infected Blade"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +6", "Instinct +6", "Strength +18", "Vitality +6", "Lightning Defense +12", "Earth Defense +12"]
 item_type = 7
 class_type = 1

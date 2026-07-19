@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://u4ljewgdc62a"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_pluvv"]
-[ext_resource type="Texture2D" uid="uid://bt0d2oucyjq6o" path="res://assets/item_slot_icons/ARMOR/Tenacity_of_Clemons.png" id="2_ds2ty"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ds2ty"]
+[ext_resource type="Texture2D" uid="uid://bt0d2oucyjq6o" path="res://assets/item_slot_icons/ARMOR/Tenacity_of_Clemons.png" id="2_nk4lc"]
+[ext_resource type="Texture2D" uid="uid://dlouh5mrc6uhk" path="res://resources/sprites/M_CHEST_CLEMONS.png" id="3_2f5ti"]
 
 [resource]
-script = ExtResource("1_pluvv")
+script = ExtResource("1_ds2ty")
 id = 569
-slot_image = ExtResource("2_ds2ty")
+looks = "CLEMONS"
+sprite_image = ExtResource("3_2f5ti")
+slot_image = ExtResource("2_nk4lc")
 name = "Tenacity of Clemons"
 display_name = "Tenacity of Clemons"
 internal_name = "Drop CLEMONS Chest"
-looks = "CLEMONS"
 tooltip = "Legacy of the fallen magician..."
 tooltipAlt = ["Speed +12", "Vitality +27"]
 item_type = 3

@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://be51l6mul2sj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e4dec"]
-[ext_resource type="Texture2D" uid="uid://djcyojlc8uq4a" path="res://assets/item_slot_icons/WEAPONS/Shandors_Darkstaff.png" id="2_cy2ap"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_cy2ap"]
+[ext_resource type="Texture2D" uid="uid://djcyojlc8uq4a" path="res://assets/item_slot_icons/WEAPONS/Shandors_Darkstaff.png" id="2_5h4gc"]
+[ext_resource type="Texture2D" uid="uid://qb0syj8d00tj" path="res://resources/sprites/M_WEAPON_SPELLSTAFF.png" id="3_ldq8e"]
 
 [resource]
-script = ExtResource("1_e4dec")
+script = ExtResource("1_cy2ap")
 id = 567
-slot_image = ExtResource("2_cy2ap")
+looks = "SPELLSTAFF"
+sprite_image = ExtResource("3_ldq8e")
+slot_image = ExtResource("2_5h4gc")
 name = "Shandor's Darkstaff"
 display_name = "Shandor's Darkstaff"
 internal_name = "Spell Staff"
-looks = "SPELLSTAFF"
 tooltip = "Shandor!"
 tooltipAlt = ["Speed +45", "Instinct +56", "Vitality +45"]
 item_type = 9

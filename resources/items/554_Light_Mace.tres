@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b3p3b6qb84oso"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4i3n6"]
-[ext_resource type="Texture2D" uid="uid://dopxyuopb2mqq" path="res://assets/item_slot_icons/WEAPONS/Light_Mace.png" id="2_kvcfx"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kvcfx"]
+[ext_resource type="Texture2D" uid="uid://dopxyuopb2mqq" path="res://assets/item_slot_icons/WEAPONS/Light_Mace.png" id="2_uxxq1"]
+[ext_resource type="Texture2D" uid="uid://dtg1hf1im06nk" path="res://resources/sprites/M_WEAPON_SPELLMACE.png" id="3_04xj3"]
 
 [resource]
-script = ExtResource("1_4i3n6")
+script = ExtResource("1_kvcfx")
 id = 554
-slot_image = ExtResource("2_kvcfx")
+looks = "SPELLMACE"
+sprite_image = ExtResource("3_04xj3")
+slot_image = ExtResource("2_uxxq1")
 name = "Light Mace"
 display_name = "Light Mace"
 internal_name = "Magic Mace"
-looks = "SPELLMACE"
 tooltipAlt = ["Speed +15", "Instinct +22"]
 item_type = 7
 class_type = 1

@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bfu1ja6h70r0q"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j44nh"]
-[ext_resource type="Texture2D" uid="uid://btq4v1fod4he6" path="res://assets/item_slot_icons/OTHER/Sight_of_Pursuit.png" id="2_athbt"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_athbt"]
+[ext_resource type="Texture2D" uid="uid://btq4v1fod4he6" path="res://assets/item_slot_icons/OTHER/Sight_of_Pursuit.png" id="2_xve6g"]
+[ext_resource type="Texture2D" uid="uid://nnegedg34rl0" path="res://resources/sprites/M_HEAD_JASON4.png" id="3_m5g3h"]
 
 [resource]
-script = ExtResource("1_j44nh")
+script = ExtResource("1_athbt")
 id = 659
-slot_image = ExtResource("2_athbt")
+looks = "JASON4"
+sprite_image = ExtResource("3_m5g3h")
+slot_image = ExtResource("2_xve6g")
 name = "Sight of Pursuit"
 display_name = "Sight of Pursuit"
 internal_name = "Drop WARDEN Head"
-looks = "JASON4"
 tooltipAlt = ["Speed +6", "Strength +67", "Vitality +21", "Physical Defense +11"]
 item_type = 2
 class_type = 1

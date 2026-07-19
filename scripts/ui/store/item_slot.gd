@@ -12,6 +12,9 @@ const HIGHLIGHT_TEXTURE = preload("res://assets/ui/menu/slot_highlight.png")
 
 var item: GameItem = null
 var selected: bool = false
+# Price line in the tooltip - only store catalog slots show it (equipped/
+# inventory items don't price-tag themselves in the original).
+var show_price: bool = false
 
 var _highlight: TextureRect
 
@@ -56,9 +59,9 @@ func _refresh() -> void:
 		item_icon.texture = item.sprite_image
 	else:
 		item_icon.texture = null
-	# Name, price, stat bonus lines, flavor text - the original tooltip.
+	# Name, price (catalog only), stat bonus lines, flavor text.
 	var lines = [item.display_name]
-	if item.price > 0:
+	if show_price and item.price > 0:
 		lines.append("Cost: %d Euros" % int(item.price))
 	for stat_line in item.tooltipAlt:
 		lines.append(str(stat_line))

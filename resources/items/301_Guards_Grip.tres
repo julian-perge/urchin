@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bpj30r8hy88rc"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jjg83"]
-[ext_resource type="Texture2D" uid="uid://xkgxiix3uilc" path="res://assets/item_slot_icons/OTHER/Guards_Grip.png" id="2_0r3e5"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0r3e5"]
+[ext_resource type="Texture2D" uid="uid://xkgxiix3uilc" path="res://assets/item_slot_icons/OTHER/Guards_Grip.png" id="2_kruu2"]
+[ext_resource type="Texture2D" uid="uid://cgsu00y4n7t32" path="res://resources/sprites/M_HAND_JASON.png" id="3_dew3g"]
 
 [resource]
-script = ExtResource("1_jjg83")
+script = ExtResource("1_0r3e5")
 id = 301
-slot_image = ExtResource("2_0r3e5")
+looks = "JASON"
+sprite_image = ExtResource("3_dew3g")
+slot_image = ExtResource("2_kruu2")
 name = "Guard's Grip"
 display_name = "Guard's Grip"
 internal_name = "Guard's Grip"
-looks = "JASON"
 tooltipAlt = ["Speed +1", "Strength +2", "Vitality +1"]
 item_type = 4
 class_type = 1

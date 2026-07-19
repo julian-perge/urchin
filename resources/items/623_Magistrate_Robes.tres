@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cknguid0wm0qi"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_smwxq"]
-[ext_resource type="Texture2D" uid="uid://cfiqe8ea3d336" path="res://assets/item_slot_icons/ARMOR/Magistrate_Robes.png" id="2_15h1f"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_15h1f"]
+[ext_resource type="Texture2D" uid="uid://cfiqe8ea3d336" path="res://assets/item_slot_icons/ARMOR/Magistrate_Robes.png" id="2_by5eh"]
+[ext_resource type="Texture2D" uid="uid://c0ipfuwxu8b73" path="res://resources/sprites/M_CHEST_PRIEST3.png" id="3_c2fi6"]
 
 [resource]
-script = ExtResource("1_smwxq")
+script = ExtResource("1_15h1f")
 id = 623
-slot_image = ExtResource("2_15h1f")
+looks = "PRIEST3"
+sprite_image = ExtResource("3_c2fi6")
+slot_image = ExtResource("2_by5eh")
 name = "Magistrate Robes"
 display_name = "Magistrate Robes"
 internal_name = "Drop COUNCIL Chest"
-looks = "PRIEST3"
 tooltip = "Wear this! It'll make you feel important."
 tooltipAlt = ["Speed +17", "Instinct +58", "Vitality +25", "Lightning Defense +29"]
 item_type = 3

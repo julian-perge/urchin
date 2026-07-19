@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cme1mmqk57501"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mlcq4"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2awxf"]
+[ext_resource type="Texture2D" uid="uid://bwj23yl666m3x" path="res://resources/sprites/M_WEAPON_STICK.png" id="2_tw70l"]
 
 [resource]
-script = ExtResource("1_mlcq4")
+script = ExtResource("1_2awxf")
 id = 12
+looks = "STICK"
+sprite_image = ExtResource("2_tw70l")
 display_name = "Stick"
 internal_name = "Stick"
-looks = "STICK"
 item_type = 7
 class_type = 1
 required_level = 1

@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dhg1qxbluhi3d"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mikn6"]
-[ext_resource type="Texture2D" uid="uid://bholdy6n1hemm" path="res://assets/item_slot_icons/ARMOR/Elite_Armor.png" id="2_2wlf1"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2wlf1"]
+[ext_resource type="Texture2D" uid="uid://bholdy6n1hemm" path="res://assets/item_slot_icons/ARMOR/Elite_Armor.png" id="2_g8a6k"]
+[ext_resource type="Texture2D" uid="uid://bwj8tieqqin54" path="res://resources/sprites/M_CHEST_ZPCI.png" id="3_8r8o8"]
 
 [resource]
-script = ExtResource("1_mikn6")
+script = ExtResource("1_2wlf1")
 id = 320
-slot_image = ExtResource("2_2wlf1")
+looks = "ZPCI"
+sprite_image = ExtResource("3_8r8o8")
+slot_image = ExtResource("2_g8a6k")
 name = "Elite Armor"
 display_name = "Elite Armor"
 internal_name = "Elite Armour"
-looks = "ZPCI"
 tooltip = "'Property of Zombie Pest Control Inc.'"
 tooltipAlt = ["Speed +4", "Strength +6", "Vitality +3"]
 item_type = 3

@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://lgq6bc7bvglf"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_thwcd"]
-[ext_resource type="Texture2D" uid="uid://d0cwlrjkyuduy" path="res://assets/item_slot_icons/GLOVES/Runed_Gloves.png" id="2_84fb0"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_84fb0"]
+[ext_resource type="Texture2D" uid="uid://d0cwlrjkyuduy" path="res://assets/item_slot_icons/GLOVES/Runed_Gloves.png" id="2_lphyv"]
+[ext_resource type="Texture2D" uid="uid://devrffqssd1pp" path="res://resources/sprites/M_HAND_SAMURAI4.png" id="3_hc8qd"]
 
 [resource]
-script = ExtResource("1_thwcd")
+script = ExtResource("1_84fb0")
 id = 535
-slot_image = ExtResource("2_84fb0")
+looks = "SAMURAI4"
+sprite_image = ExtResource("3_hc8qd")
+slot_image = ExtResource("2_lphyv")
 name = "Runed Gloves"
 display_name = "Runed Gloves"
 internal_name = "Vendor Samurai Hands"
-looks = "SAMURAI4"
 tooltip = "...But the writings can read you."
 tooltipAlt = ["Strength +19"]
 item_type = 4

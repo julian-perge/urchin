@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dm7gw4ik6agxi"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qigsq"]
-[ext_resource type="Texture2D" uid="uid://bqkwi15cq1utf" path="res://assets/item_slot_icons/HELMS/Believers_Crown.png" id="2_3pi1s"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3pi1s"]
+[ext_resource type="Texture2D" uid="uid://bqkwi15cq1utf" path="res://assets/item_slot_icons/HELMS/Believers_Crown.png" id="2_jdnrf"]
+[ext_resource type="Texture2D" uid="uid://w63o5ihkwu0w" path="res://resources/sprites/M_HEAD_PRIEST.png" id="3_h2mae"]
 
 [resource]
-script = ExtResource("1_qigsq")
+script = ExtResource("1_3pi1s")
 id = 335
-slot_image = ExtResource("2_3pi1s")
+looks = "PRIEST"
+sprite_image = ExtResource("3_h2mae")
+slot_image = ExtResource("2_jdnrf")
 name = "Believer's Crown"
 display_name = "Believer's Crown"
 internal_name = "Believer's Crown"
-looks = "PRIEST"
 tooltip = "Wearing this, you could see things you didn't see before."
 tooltipAlt = ["Speed +6", "Instinct +11", "Vitality +3"]
 item_type = 2

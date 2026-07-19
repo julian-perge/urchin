@@ -275,7 +275,7 @@ func _refresh_tree(save: PlayerSave) -> void:
 		_tree_rank_labels[node_index].text = "%d/%d" % [rank, int(node["max_rank"])]
 
 
-func _node_color(save: PlayerSave, _node_index: int, node: Dictionary) -> Color:
+func _node_color(_save: PlayerSave, _node_index: int, node: Dictionary) -> Color:
 	var move_id = int(node["move_id"])
 	if move_id == 0:
 		return Color(0.7, 0.7, 0.4)  # passive - gold

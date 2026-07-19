@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_t01sx")
 id = 197
+looks = "NINJA"
 display_name = "Councillor's Staff"
 internal_name = "Councillor's Staff"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +64", "Instinct +72", "Strength +13", "Vitality +17", "Lightning Defense +29", "Earth Defense +29"]
 item_type = 9
 rarity = 2

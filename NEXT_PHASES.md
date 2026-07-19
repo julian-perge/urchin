@@ -31,8 +31,9 @@ button positions, and the asset tree reorganized (`assets/backgrounds/{hub,battl
   is exposed, nothing displays it), melee run-to-target motion, buff icons over units, a combat
   log panel, target highlighting, the original hotbar-style battle UI art
   (`assets/ui/battle/*.png` is extracted and waiting).
-- **Victory screen click-to-keep** - drops are currently auto-kept; the original let you choose
-  (`VICTORY[1]` "CLICK on the items that you wish to keep!").
+- **Item click-n-drag** (project owner request 2026-07-18): items should drag between slots;
+  dragging an item over the sell button shows the sell price in the tooltip before dropping.
+  Click-to-equip/click-to-keep stands in until then.
 - **Menu screens built 2026-07-18** from the original menu clip (DefineSprite 3142, stage
   origin 400.5/222.4; frame 1 = inventory, 16 = store, 25 = abilities, 45 = achievements):
   `scenes/ui/menu/inventory_window.tscn`, `abilities_window.tscn`, `achievements_window.tscn`,

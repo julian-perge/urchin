@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bjbels2adfprj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7j2qt"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_k7o5y"]
+[ext_resource type="Texture2D" uid="uid://bl3b0s2xk0hpj" path="res://resources/sprites/M_LEG2_NINJA.png" id="2_q1lye"]
 
 [resource]
-script = ExtResource("1_7j2qt")
+script = ExtResource("1_k7o5y")
 id = 187
+looks = "NINJA"
+sprite_image = ExtResource("2_q1lye")
 display_name = "Handler's Leggings"
 internal_name = "Handler's Leggings"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +7", "Instinct +12", "Strength +17", "Vitality +20", "Lightning Defense +10", "Earth Defense +10"]
 item_type = 5
 class_type = 1

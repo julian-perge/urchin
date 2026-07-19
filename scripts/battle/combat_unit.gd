@@ -153,7 +153,7 @@ static func get_stat(ratio: float, level: int, mode = null) -> float:
 		s_r = -0.01929824 * level + 0.7159600000000003
 	else:
 		s_r = 0.33000000000000007
-	if mode == true:
+	if mode:
 		s_a *= s_r / 2.0
 	elif mode == false:
 		s_a *= 1.0 - s_r
@@ -331,6 +331,11 @@ func apply_changes() -> void:
 # and it doesn't get recalculated at removal time).
 func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_index: int = -1, stored_buff_value: float = 0.0) -> void:
 	stun += direction * buff.stun_delta
+	# stun is checked with `!= 0` everywhere (the AS3 did the same on an
+	# int) - snap float residue so an expired stun can't wobble the doll or
+	# eat turns forever.
+	if absf(stun) < 0.001:
+		stun = 0.0
 	reflect += direction * buff.reflect_delta
 	heal_mod_plus += direction * buff.heal_mod_plus_delta
 	heal_mod_minus -= direction * buff.heal_mod_minus_delta

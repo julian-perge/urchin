@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bkfiqyj1xkug1"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tpmdj"]
-[ext_resource type="Texture2D" uid="uid://ntcndoqm0vu" path="res://assets/item_slot_icons/OTHER/Green_Fuel-Tank.png" id="2_n3xbp"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n3xbp"]
+[ext_resource type="Texture2D" uid="uid://ntcndoqm0vu" path="res://assets/item_slot_icons/OTHER/Green_Fuel-Tank.png" id="2_elv4b"]
+[ext_resource type="Texture2D" uid="uid://bfqutgvb7g5f" path="res://resources/sprites/M_CHEST_FRANKEN.png" id="3_sqmcc"]
 
 [resource]
-script = ExtResource("1_tpmdj")
+script = ExtResource("1_n3xbp")
 id = 315
-slot_image = ExtResource("2_n3xbp")
+looks = "FRANKEN"
+sprite_image = ExtResource("3_sqmcc")
+slot_image = ExtResource("2_elv4b")
 name = "Green Fuel-Tank"
 display_name = "Green Fuel-Tank"
 internal_name = "Frankie's Protection"
-looks = "FRANKEN"
 tooltip = "Model 44: Developed in New Alcatraz."
 tooltipAlt = ["Speed +2", "Instinct +1", "Strength +3", "Vitality +5"]
 item_type = 3

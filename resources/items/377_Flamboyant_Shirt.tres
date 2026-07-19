@@ -1,14 +1,16 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dbqrc1t5fb28v"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_u0kpi"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rtdyj"]
+[ext_resource type="Texture2D" uid="uid://ct6l3y8is4w1e" path="res://resources/sprites/M_CHEST_SHIRT5.png" id="2_dfccd"]
 
 [resource]
-script = ExtResource("1_u0kpi")
+script = ExtResource("1_rtdyj")
 id = 377
+looks = "SHIRT5"
+sprite_image = ExtResource("2_dfccd")
 name = "Flamboyant Shirt"
 display_name = "Flamboyant Shirt"
 internal_name = "Flamboyant Shirt"
-looks = "SHIRT5"
 tooltip = "It smells of perfume."
 tooltipAlt = ["Speed +22", "Instinct +15", "Strength +15", "Vitality +4"]
 item_type = 3

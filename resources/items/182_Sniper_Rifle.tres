@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_f314i")
 id = 182
+looks = "NINJA"
 display_name = "Sniper Rifle"
 internal_name = "Sniper Rifle"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +7", "Instinct +48", "Strength +10", "Vitality +16", "Lightning Defense +27", "Earth Defense +27"]
 item_type = 9
 rarity = 1

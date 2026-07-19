@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b5xdcf3hqj6k0"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_y7nc7"]
-[ext_resource type="Texture2D" uid="uid://b8jeswtu6elma" path="res://assets/item_slot_icons/SHOES/Shin_Guards.png" id="2_vipa7"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vipa7"]
+[ext_resource type="Texture2D" uid="uid://b8jeswtu6elma" path="res://assets/item_slot_icons/SHOES/Shin_Guards.png" id="2_raysw"]
+[ext_resource type="Texture2D" uid="uid://bu6kq5f1e8n2d" path="res://resources/sprites/M_FOOT_SHAMAN1.png" id="3_771io"]
 
 [resource]
-script = ExtResource("1_y7nc7")
+script = ExtResource("1_vipa7")
 id = 532
-slot_image = ExtResource("2_vipa7")
+looks = "SHAMAN1"
+sprite_image = ExtResource("3_771io")
+slot_image = ExtResource("2_raysw")
 name = "Shin Guards"
 display_name = "Shin Guards"
 internal_name = "Vendor Shaman Feet"
-looks = "SHAMAN1"
 tooltipAlt = ["Speed +3", "Strength +15", "Vitality +5"]
 item_type = 6
 class_type = 1

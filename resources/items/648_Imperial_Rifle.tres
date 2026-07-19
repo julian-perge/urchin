@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cbtqd2lqnh3a"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sk2c0"]
-[ext_resource type="Texture2D" uid="uid://cithvbuby605y" path="res://assets/item_slot_icons/WEAPONS/Imperial_Rifle.png" id="2_w6ttc"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_w6ttc"]
+[ext_resource type="Texture2D" uid="uid://cithvbuby605y" path="res://assets/item_slot_icons/WEAPONS/Imperial_Rifle.png" id="2_bpd5w"]
+[ext_resource type="Texture2D" uid="uid://c884wc4b8km7v" path="res://resources/sprites/M_WEAPON_IMPERIAL.png" id="3_d7j8u"]
 
 [resource]
-script = ExtResource("1_sk2c0")
+script = ExtResource("1_w6ttc")
 id = 648
-slot_image = ExtResource("2_w6ttc")
+looks = "IMPERIAL"
+sprite_image = ExtResource("3_d7j8u")
+slot_image = ExtResource("2_bpd5w")
 name = "Imperial Rifle"
 display_name = "Imperial Rifle"
 internal_name = "IMPERIAL GUN"
-looks = "IMPERIAL"
 tooltipAlt = ["Speed +51", "Strength +61", "Vitality +31", "Fire Piercing +197"]
 item_type = 9
 class_type = 1

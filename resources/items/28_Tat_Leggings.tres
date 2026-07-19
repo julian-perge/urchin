@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b6d5leujuu2t7"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_prjb6"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_px054"]
+[ext_resource type="Texture2D" uid="uid://drvlvuvnfrcxr" path="res://resources/sprites/M_LEG2_TAT.png" id="2_m1k6f"]
 
 [resource]
-script = ExtResource("1_prjb6")
+script = ExtResource("1_px054")
 id = 28
+looks = "TAT"
+sprite_image = ExtResource("2_m1k6f")
 display_name = "Tat Leggings"
 internal_name = "Tat Leggings"
-looks = "TAT"
 tooltipAlt = ["Speed +10", "Strength +10", "Vitality +20"]
 item_type = 5
 class_type = 1

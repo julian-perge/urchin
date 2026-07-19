@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dq76iig35e5sx"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0ghtq"]
-[ext_resource type="Texture2D" uid="uid://e1c810egulpj" path="res://assets/item_slot_icons/SHOES/Misted_Greaves.png" id="2_rqn32"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rqn32"]
+[ext_resource type="Texture2D" uid="uid://e1c810egulpj" path="res://assets/item_slot_icons/SHOES/Misted_Greaves.png" id="2_xpx68"]
+[ext_resource type="Texture2D" uid="uid://b3adqg1l4ruie" path="res://resources/sprites/M_FOOT_SAMURAI4.png" id="3_f68og"]
 
 [resource]
-script = ExtResource("1_0ghtq")
+script = ExtResource("1_rqn32")
 id = 537
-slot_image = ExtResource("2_rqn32")
+looks = "SAMURAI4"
+sprite_image = ExtResource("3_f68og")
+slot_image = ExtResource("2_xpx68")
 name = "Misted Greaves"
 display_name = "Misted Greaves"
 internal_name = "Vendor Samurai Feet"
-looks = "SAMURAI4"
 tooltipAlt = ["Instinct +3", "Strength +3", "Vitality +17"]
 item_type = 6
 class_type = 1

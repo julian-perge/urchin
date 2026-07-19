@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://da0feeeos360"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_i7f4u"]
-[ext_resource type="Texture2D" uid="uid://h5saphuxdbrq" path="res://assets/item_slot_icons/SHOES/Cryptic_Greaves.png" id="2_qx7ha"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qx7ha"]
+[ext_resource type="Texture2D" uid="uid://h5saphuxdbrq" path="res://assets/item_slot_icons/SHOES/Cryptic_Greaves.png" id="2_pbeud"]
+[ext_resource type="Texture2D" uid="uid://bkaj13l1vrw6w" path="res://resources/sprites/M_FOOT_ULTI2.png" id="3_tes28"]
 
 [resource]
-script = ExtResource("1_i7f4u")
+script = ExtResource("1_qx7ha")
 id = 703
-slot_image = ExtResource("2_qx7ha")
+looks = "ULTI2"
+sprite_image = ExtResource("3_tes28")
+slot_image = ExtResource("2_pbeud")
 name = "Cryptic Greaves"
 display_name = "Cryptic Greaves"
 internal_name = "Drop ULTI2 Feet"
-looks = "ULTI2"
 tooltipAlt = ["Speed +9", "Instinct +42", "Strength +9", "Vitality +26"]
 item_type = 6
 class_type = 1

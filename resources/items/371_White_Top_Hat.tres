@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b8jsbwcfid8dj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jd4cm"]
-[ext_resource type="Texture2D" uid="uid://dams76bgnovd1" path="res://assets/item_slot_icons/HELMS/White_Top_Hat.png" id="2_uiqrd"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_uiqrd"]
+[ext_resource type="Texture2D" uid="uid://dams76bgnovd1" path="res://assets/item_slot_icons/HELMS/White_Top_Hat.png" id="2_5imsj"]
+[ext_resource type="Texture2D" uid="uid://ciew27wjumwi6" path="res://resources/sprites/M_HEAD_TUX.png" id="3_mxsbh"]
 
 [resource]
-script = ExtResource("1_jd4cm")
+script = ExtResource("1_uiqrd")
 id = 371
-slot_image = ExtResource("2_uiqrd")
+looks = "TUX"
+sprite_image = ExtResource("3_mxsbh")
+slot_image = ExtResource("2_5imsj")
 name = "White Top Hat"
 display_name = "White Top Hat"
 internal_name = "White Top Hat"
-looks = "TUX"
 tooltipAlt = ["Speed +6", "Instinct +2", "Strength +11", "Vitality +17"]
 item_type = 2
 class_type = 1

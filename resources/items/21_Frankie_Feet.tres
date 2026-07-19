@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cox08dajaii7u"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_gil67"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wq0t0"]
+[ext_resource type="Texture2D" uid="uid://cp6cml7hr80wc" path="res://resources/sprites/M_FOOT_FRANKEN.png" id="2_o8v7q"]
 
 [resource]
-script = ExtResource("1_gil67")
+script = ExtResource("1_wq0t0")
 id = 21
+looks = "FRANKEN"
+sprite_image = ExtResource("2_o8v7q")
 display_name = "Frankie Feet"
 internal_name = "Frankie Feet"
-looks = "FRANKEN"
 tooltipAlt = ["Strength +1", "Physical Piercing +1"]
 item_type = 6
 class_type = 1

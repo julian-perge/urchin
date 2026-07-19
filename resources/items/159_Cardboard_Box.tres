@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ckll1o3tdbkyj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2f5d7"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_06i6t"]
+[ext_resource type="Texture2D" uid="uid://brxrs5bs6q2k0" path="res://resources/sprites/M_CHEST_NINJA.png" id="2_o1smv"]
 
 [resource]
-script = ExtResource("1_2f5d7")
+script = ExtResource("1_06i6t")
 id = 159
+looks = "NINJA"
+sprite_image = ExtResource("2_o1smv")
 display_name = "Cardboard Box"
 internal_name = "Cardboard Box"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +15", "Instinct +2", "Strength +5", "Vitality +2", "Lightning Defense +8", "Earth Defense +8"]
 item_type = 3
 class_type = 1

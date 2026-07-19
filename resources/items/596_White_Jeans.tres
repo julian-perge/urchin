@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://x31nv0mjvr0h"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_o0i3m"]
-[ext_resource type="Texture2D" uid="uid://j55x3rwvnhht" path="res://assets/item_slot_icons/PANTS/White_Jeans.png" id="2_1gjg7"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_1gjg7"]
+[ext_resource type="Texture2D" uid="uid://j55x3rwvnhht" path="res://assets/item_slot_icons/PANTS/White_Jeans.png" id="2_pirmv"]
+[ext_resource type="Texture2D" uid="uid://cxt018tyd6kio" path="res://resources/sprites/M_LEG2_ROCKSTAR.png" id="3_l3v1n"]
 
 [resource]
-script = ExtResource("1_o0i3m")
+script = ExtResource("1_1gjg7")
 id = 596
-slot_image = ExtResource("2_1gjg7")
+looks = "ROCKSTAR"
+sprite_image = ExtResource("3_l3v1n")
+slot_image = ExtResource("2_pirmv")
 name = "White Jeans"
 display_name = "White Jeans"
 internal_name = "Drop ROCKSTAR Legs"
-looks = "ROCKSTAR"
 tooltipAlt = ["Speed +15", "Instinct +5", "Strength +20", "Vitality +10"]
 item_type = 5
 class_type = 1

@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://51ug0kck888l"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_v73dx"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3vh6h"]
+[ext_resource type="Texture2D" uid="uid://dsyv7a5f3lljj" path="res://resources/sprites/M_HAND_NINJA.png" id="2_jwvxm"]
 
 [resource]
-script = ExtResource("1_v73dx")
+script = ExtResource("1_3vh6h")
 id = 116
+looks = "NINJA"
+sprite_image = ExtResource("2_jwvxm")
 display_name = "High Voltage Gloves"
 internal_name = "High Voltage Gloves"
-looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +4", "Strength +2", "Vitality +2", "Lightning Defense +4", "Earth Defense +4"]
 item_type = 4
 rarity = 1

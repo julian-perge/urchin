@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bcgicf7pmek71"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tx5pm"]
-[ext_resource type="Texture2D" uid="uid://cskrv72vr85em" path="res://assets/item_slot_icons/WEAPONS/Terror_Blade.png" id="2_tlh71"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tlh71"]
+[ext_resource type="Texture2D" uid="uid://cskrv72vr85em" path="res://assets/item_slot_icons/WEAPONS/Terror_Blade.png" id="2_yi425"]
+[ext_resource type="Texture2D" uid="uid://xl6tvg7p7obj" path="res://resources/sprites/M_WEAPON_UBER2.png" id="3_0aaaw"]
 
 [resource]
-script = ExtResource("1_tx5pm")
+script = ExtResource("1_tlh71")
 id = 503
-slot_image = ExtResource("2_tlh71")
+looks = "UBER2"
+sprite_image = ExtResource("3_0aaaw")
+slot_image = ExtResource("2_yi425")
 name = "Terror Blade"
 display_name = "Terror Blade"
 internal_name = "Terror Blade"
-looks = "UBER2"
 tooltip = "It smells of blood and poison."
 tooltipAlt = ["Strength +5", "Physical Piercing +15", "Poison Piercing +15"]
 item_type = 7

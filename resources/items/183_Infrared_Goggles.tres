@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d0rduu8v5u2fb"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yl6ea"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yvoet"]
+[ext_resource type="Texture2D" uid="uid://cc6yuekkdneqv" path="res://resources/sprites/M_HEAD_NINJA.png" id="2_k32qp"]
 
 [resource]
-script = ExtResource("1_yl6ea")
+script = ExtResource("1_yvoet")
 id = 183
+looks = "NINJA"
+sprite_image = ExtResource("2_k32qp")
 display_name = "Infrared Goggles"
 internal_name = "Infrared Goggles"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +12", "Instinct +12", "Strength +4", "Vitality +6", "Lightning Defense +9", "Earth Defense +9"]
 item_type = 2
 rarity = 1

@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b3i2saiui2nl5"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hwhhq"]
-[ext_resource type="Texture2D" uid="uid://bddn24ovrubrx" path="res://assets/item_slot_icons/WEAPONS/Medic-B_Gloves.png" id="2_muevg"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_muevg"]
+[ext_resource type="Texture2D" uid="uid://bddn24ovrubrx" path="res://assets/item_slot_icons/WEAPONS/Medic-B_Gloves.png" id="2_eq3qf"]
+[ext_resource type="Texture2D" uid="uid://dpjg30tmmdnlt" path="res://resources/sprites/M_HAND_ZPCI3.png" id="3_xk5uq"]
 
 [resource]
-script = ExtResource("1_hwhhq")
+script = ExtResource("1_muevg")
 id = 36
-slot_image = ExtResource("2_muevg")
+looks = "ZPCI3"
+sprite_image = ExtResource("3_xk5uq")
+slot_image = ExtResource("2_eq3qf")
 name = "Medic-B Gloves"
 display_name = "Medic-B Gloves"
 internal_name = "Medic Hands"
-looks = "ZPCI3"
 tooltipAlt = ["Speed +1", "Strength +2", "Vitality +1", "Lightning Piercing +6"]
 item_type = 4
 class_type = 5

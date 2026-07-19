@@ -7,7 +7,6 @@ script = ExtResource("1_k7tcj")
 id = 143
 display_name = "Chalice of Divinity"
 internal_name = "Chalice of Divinity"
-looks = ""
 rarity = 1
 class_type = 1
 required_level = 7

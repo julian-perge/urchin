@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_ktwux")
 id = 160
+looks = "NINJA"
 display_name = "Vodka Bottle"
 internal_name = "Vodka Bottle"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +9", "Instinct +11", "Strength +6", "Vitality +2", "Lightning Defense +11", "Earth Defense +11"]
 item_type = 7
 class_type = 1

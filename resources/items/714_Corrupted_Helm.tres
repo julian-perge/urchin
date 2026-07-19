@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://fyngn6206vfo"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_c3gax"]
-[ext_resource type="Texture2D" uid="uid://b7v8rv5abiihf" path="res://assets/item_slot_icons/HELMS/Corrupted_Helm.png" id="2_athxr"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_athxr"]
+[ext_resource type="Texture2D" uid="uid://b7v8rv5abiihf" path="res://assets/item_slot_icons/HELMS/Corrupted_Helm.png" id="2_4q2dy"]
+[ext_resource type="Texture2D" uid="uid://dd44w6cyfxkoe" path="res://resources/sprites/M_HEAD_PURPLENIN.png" id="3_cn24v"]
 
 [resource]
-script = ExtResource("1_c3gax")
+script = ExtResource("1_athxr")
 id = 714
-slot_image = ExtResource("2_athxr")
+looks = "PURPLENIN"
+sprite_image = ExtResource("3_cn24v")
+slot_image = ExtResource("2_4q2dy")
 name = "Corrupted Helm"
 display_name = "Corrupted Helm"
 internal_name = "Drop CORRUPTOR Head"
-looks = "PURPLENIN"
 tooltipAlt = ["Physical Piercing +113", "Ice Piercing +113", "Lightning Piercing +113", "Shadow Piercing +113", "Poison Piercing +113"]
 item_type = 2
 class_type = 1

@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://g2o2ei0kxc65"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ja5fo"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_b7kje"]
+[ext_resource type="Texture2D" uid="uid://c5dgsyq5lhqd1" path="res://resources/sprites/M_FOOT_TUX.png" id="2_482jv"]
 
 [resource]
-script = ExtResource("1_ja5fo")
+script = ExtResource("1_b7kje")
 id = 33
+looks = "TUX"
+sprite_image = ExtResource("2_482jv")
 display_name = "Gay Hat"
 internal_name = "Gay Hat"
-looks = "TUX"
 tooltipAlt = ["Vitality +1"]
 item_type = 6
 class_type = 1

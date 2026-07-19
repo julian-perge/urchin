@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d0xpu7tmhcabg"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mslfo"]
-[ext_resource type="Texture2D" uid="uid://cs8w2jruytvof" path="res://assets/item_slot_icons/WEAPONS/Runeblade.png" id="2_cnxah"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_cnxah"]
+[ext_resource type="Texture2D" uid="uid://cs8w2jruytvof" path="res://assets/item_slot_icons/WEAPONS/Runeblade.png" id="2_aa643"]
+[ext_resource type="Texture2D" uid="uid://yne8gf3cukbh" path="res://resources/sprites/M_WEAPON_XADER.png" id="3_mgtg4"]
 
 [resource]
-script = ExtResource("1_mslfo")
+script = ExtResource("1_cnxah")
 id = 521
-slot_image = ExtResource("2_cnxah")
+looks = "XADER"
+sprite_image = ExtResource("3_mgtg4")
+slot_image = ExtResource("2_aa643")
 name = "Runeblade"
 display_name = "Runeblade"
 internal_name = "Runeblade"
-looks = "XADER"
 tooltipAlt = ["Speed +18", "Instinct +11", "Strength +24", "Vitality +11", "Physical Piercing +53"]
 item_type = 9
 rarity = 2

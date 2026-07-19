@@ -146,3 +146,14 @@ Scoped-out edges from the playtest-feedback batch:
   Teco/Catelin (from the companion seeds) while the face-clip labels say Wolfgang(Rockstar)/
   Amber - naming not yet reconciled against the Steam build.
 - **Effects/Graphics options**: deliberately skipped per project owner.
+
+## Asset extraction round (2026-07-18, third pass)
+
+- **Item icons**: 325 original icons extracted from the icon clip (sprite 2064, labeled frames)
+  into `assets/ui/items/`; 311 item `.tres` files repointed. Items whose names have no icon
+  label (Golden Pipe/Crowbar/Axe, Tool, None) and ~135 others keep their previous
+  `assets/item_slot_icons/` art.
+- **Start background**: cropped from rendered root frame 65 with baked texts gradient-erased;
+  the horizontal deco bars mid-screen are part of the original art and intentionally kept.
+- **Zone progress bar**: renders correctly at 1/9 (verified) - training fights do not advance
+  story progress by design, which can read as "empty bar" after a training win.

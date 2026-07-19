@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dnw4ghd03rx2w"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2sydh"]
-[ext_resource type="Texture2D" uid="uid://xva316o1676j" path="res://assets/item_slot_icons/OTHER/Metal_Mask.png" id="2_uxc3e"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_uxc3e"]
+[ext_resource type="Texture2D" uid="uid://xva316o1676j" path="res://assets/item_slot_icons/OTHER/Metal_Mask.png" id="2_4fm3j"]
+[ext_resource type="Texture2D" uid="uid://chre6qg3mj8ek" path="res://resources/sprites/M_HEAD_JASON3.png" id="3_1gohq"]
 
 [resource]
-script = ExtResource("1_2sydh")
+script = ExtResource("1_uxc3e")
 id = 508
-slot_image = ExtResource("2_uxc3e")
+looks = "JASON3"
+sprite_image = ExtResource("3_1gohq")
+slot_image = ExtResource("2_4fm3j")
 name = "Metal Mask"
 display_name = "Metal Mask"
 internal_name = "Metal Mask"
-looks = "JASON3"
 tooltipAlt = ["Strength +2", "Vitality +4", "Physical Defense +8"]
 item_type = 2
 class_type = 1

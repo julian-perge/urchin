@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://sw08n2g5ty3y"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7sej2"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_18svu"]
+[ext_resource type="Texture2D" uid="uid://cc6yuekkdneqv" path="res://resources/sprites/M_HEAD_NINJA.png" id="2_vu5l2"]
 
 [resource]
-script = ExtResource("1_7sej2")
+script = ExtResource("1_18svu")
 id = 193
+looks = "NINJA"
+sprite_image = ExtResource("2_vu5l2")
 display_name = "Commander's Cap"
 internal_name = "Commander's Cap"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +23", "Instinct +24", "Strength +23", "Vitality +6", "Lightning Defense +10", "Earth Defense +10"]
 item_type = 2
 rarity = 2

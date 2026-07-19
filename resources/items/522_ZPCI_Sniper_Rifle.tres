@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://csjbe3iidq2fn"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hciq1"]
-[ext_resource type="Texture2D" uid="uid://xfdevyv5qrqm" path="res://assets/item_slot_icons/WEAPONS/ZPCI_Sniper_Rifle.png" id="2_vpirf"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vpirf"]
+[ext_resource type="Texture2D" uid="uid://xfdevyv5qrqm" path="res://assets/item_slot_icons/WEAPONS/ZPCI_Sniper_Rifle.png" id="2_sp0to"]
+[ext_resource type="Texture2D" uid="uid://byriobvfj4pkt" path="res://resources/sprites/M_WEAPON_UBER4.png" id="3_b5bn0"]
 
 [resource]
-script = ExtResource("1_hciq1")
+script = ExtResource("1_vpirf")
 id = 522
-slot_image = ExtResource("2_vpirf")
+looks = "UBER4"
+sprite_image = ExtResource("3_b5bn0")
+slot_image = ExtResource("2_sp0to")
 name = "ZPCI Sniper Rifle"
 display_name = "ZPCI Sniper Rifle"
 internal_name = "ZPCI Sniper Rifle"
-looks = "UBER4"
 tooltip = "An excellent gun, but the golden plating seems pointless."
 tooltipAlt = ["Speed +19", "Strength +19", "Vitality +16", "Fire Piercing +89"]
 item_type = 9

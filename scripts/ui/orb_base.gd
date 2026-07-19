@@ -30,7 +30,7 @@ func _ready():
 func _on_hit_box_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		interact()
-	
+
 func setup_orb():
 	print("Setting up orb color %s for %s" % [orb_color, name])
 	$bottom.modulate = orb_color

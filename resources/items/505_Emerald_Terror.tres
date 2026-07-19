@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cmkteqd7paoj6"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e4paa"]
-[ext_resource type="Texture2D" uid="uid://cl0yeav31566o" path="res://assets/item_slot_icons/WEAPONS/Emerald_Terror.png" id="2_is1vc"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_is1vc"]
+[ext_resource type="Texture2D" uid="uid://cl0yeav31566o" path="res://assets/item_slot_icons/WEAPONS/Emerald_Terror.png" id="2_vqaoy"]
+[ext_resource type="Texture2D" uid="uid://ck6rsw37pjpl4" path="res://resources/sprites/M_WEAPON_FRANKEN.png" id="3_lkpmb"]
 
 [resource]
-script = ExtResource("1_e4paa")
+script = ExtResource("1_is1vc")
 id = 505
-slot_image = ExtResource("2_is1vc")
+looks = "FRANKEN"
+sprite_image = ExtResource("3_lkpmb")
+slot_image = ExtResource("2_vqaoy")
 name = "Emerald Terror"
 display_name = "Emerald Terror"
 internal_name = "Green Terror"
-looks = "FRANKEN"
 tooltip = "It's actually made of titanium, so it's not as heavy as it looks."
 tooltipAlt = ["Strength +19", "Vitality +17"]
 item_type = 9

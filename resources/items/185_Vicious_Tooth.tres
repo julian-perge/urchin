@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_2eftg")
 id = 185
+looks = "NINJA"
 display_name = "Vicious Tooth"
 internal_name = "Vicious Tooth"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +10", "Instinct +17", "Strength +24", "Vitality +10", "Lightning Defense +14", "Earth Defense +14"]
 item_type = 7
 class_type = 1

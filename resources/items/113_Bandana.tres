@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dke1hjoco4tdl"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_chq4d"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0cu16"]
+[ext_resource type="Texture2D" uid="uid://cc6yuekkdneqv" path="res://resources/sprites/M_HEAD_NINJA.png" id="2_8gq0v"]
 
 [resource]
-script = ExtResource("1_chq4d")
+script = ExtResource("1_0cu16")
 id = 113
+looks = "NINJA"
+sprite_image = ExtResource("2_8gq0v")
 display_name = "Bandana"
 internal_name = "Bandana"
-looks = "NINJA"
 tooltipAlt = ["Speed +4", "Instinct +3", "Strength +4", "Vitality +2"]
 item_type = 2
 class_type = 1

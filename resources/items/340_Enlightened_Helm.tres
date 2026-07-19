@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://7lbc88mbanf"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_671pk"]
-[ext_resource type="Texture2D" uid="uid://tbnscah8e0d7" path="res://assets/item_slot_icons/HELMS/Enlightened_Helm.png" id="2_bk4ki"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bk4ki"]
+[ext_resource type="Texture2D" uid="uid://tbnscah8e0d7" path="res://assets/item_slot_icons/HELMS/Enlightened_Helm.png" id="2_dq2lg"]
+[ext_resource type="Texture2D" uid="uid://c0ll7prkm2ml3" path="res://resources/sprites/M_HEAD_PRIEST2.png" id="3_rh7be"]
 
 [resource]
-script = ExtResource("1_671pk")
+script = ExtResource("1_bk4ki")
 id = 340
-slot_image = ExtResource("2_bk4ki")
+looks = "PRIEST2"
+sprite_image = ExtResource("3_rh7be")
+slot_image = ExtResource("2_dq2lg")
 name = "Enlightened Helm"
 display_name = "Enlightened Helm"
 internal_name = "Enlightened Helm"
-looks = "PRIEST2"
 tooltipAlt = ["Speed +8", "Instinct +6", "Strength +6", "Vitality +2"]
 item_type = 2
 class_type = 1

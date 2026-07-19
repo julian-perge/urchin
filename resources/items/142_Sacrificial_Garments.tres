@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bo76jhxtj5p4t"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3iy5q"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7jchj"]
+[ext_resource type="Texture2D" uid="uid://brxrs5bs6q2k0" path="res://resources/sprites/M_CHEST_NINJA.png" id="2_6uc7q"]
 
 [resource]
-script = ExtResource("1_3iy5q")
+script = ExtResource("1_7jchj")
 id = 142
+looks = "NINJA"
+sprite_image = ExtResource("2_6uc7q")
 display_name = "Sacrificial Garments"
 internal_name = "Sacrificial Garments"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +2", "Instinct +8", "Strength +2", "Vitality +3", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 3
 class_type = 1

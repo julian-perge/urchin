@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cvdklewqjf16b"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ejedx"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_28a27"]
+[ext_resource type="Texture2D" uid="uid://cc6yuekkdneqv" path="res://resources/sprites/M_HEAD_NINJA.png" id="2_4l1sl"]
 
 [resource]
-script = ExtResource("1_ejedx")
+script = ExtResource("1_28a27")
 id = 112
+looks = "NINJA"
+sprite_image = ExtResource("2_4l1sl")
 display_name = "Headband"
 internal_name = "Headband"
-looks = "NINJA"
 tooltipAlt = ["Speed +4", "Instinct +4", "Strength +4", "Vitality +2"]
 item_type = 2
 class_type = 1

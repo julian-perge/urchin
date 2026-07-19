@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_db3k8")
 id = 123
+looks = "NINJA"
 display_name = "Overseer's Might"
 internal_name = "Overseer's Might"
-looks = "NINJA"
 tooltipAlt = ["Speed +2", "Instinct +8", "Strength +9", "Vitality +9", "Lightning Defense +9", "Earth Defense +9"]
 item_type = 7
 rarity = 1

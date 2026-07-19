@@ -222,11 +222,10 @@ func _animate_cast() -> void:
 		_reset_part_rotation(part_name, raise)
 
 
-# Held wobble - stays until set_state() flips it back (stun ends when the
-# turn does). Whole body tilts and jitters.
+# Held slump - stays until set_state() flips it back (stun ends when the
+# turn does). A fixed lean with the faintest sway, not a rocking wobble.
 func _animate_stun() -> void:
-	var tilt = 8.0 + sin(_state_time * 3.0) * 3.0
-	_body.rotation_degrees = tilt
+	_body.rotation_degrees = 6.0 + sin(_state_time * 1.2) * 0.8
 	_body.position.y = 2.0
 
 

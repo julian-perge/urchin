@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://doi5xxo8siu8u"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tpdpd"]
-[ext_resource type="Texture2D" uid="uid://chmorr3hyc25v" path="res://assets/item_slot_icons/HELMS/Bloody_Ambition.png" id="2_g2waj"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g2waj"]
+[ext_resource type="Texture2D" uid="uid://chmorr3hyc25v" path="res://assets/item_slot_icons/HELMS/Bloody_Ambition.png" id="2_5exs4"]
+[ext_resource type="Texture2D" uid="uid://c3tp7lpml5g46" path="res://resources/sprites/M_HEAD_SINJID.png" id="3_cnia7"]
 
 [resource]
-script = ExtResource("1_tpdpd")
+script = ExtResource("1_g2waj")
 id = 627
-slot_image = ExtResource("2_g2waj")
+looks = "SINJID"
+sprite_image = ExtResource("3_cnia7")
+slot_image = ExtResource("2_5exs4")
 name = "Bloody Ambition"
 display_name = "Bloody Ambition"
 internal_name = "Drop SPECIALIST Head"
-looks = "SINJID"
 tooltipAlt = ["Focus +5", "Speed +35", "Strength +4", "Physical Piercing +43"]
 item_type = 2
 class_type = 1

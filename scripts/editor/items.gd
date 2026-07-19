@@ -99,7 +99,7 @@ func _run():
 		item.tooltip = ""
 		if str(item_data["tool_tip"]) != "0":
 			item.tooltip = item_data["tool_tip"]
-		
+
 		if item.looks != "":
 			var png_item_type = GameItem.ItemType.keys()[item.item_type]
 			if (
@@ -113,9 +113,9 @@ func _run():
 			item.sprite_image = load("res://resources/sprites/M_%s_%s.png" % [png_item_type, item.looks])
 
 		item.slot_image = _find_slot_icon(item)
-		
+
 		var err = ResourceSaver.save(
-			item, 
+			item,
 			"res://resources/items/%s_%s.tres"
 			% [item.id, item.display_name.replace(" ", "_").replace("'", "").replace("/", "_")]
 		)

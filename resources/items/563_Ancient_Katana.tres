@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ddbm5pmr4j4pj"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_d5k5a"]
-[ext_resource type="Texture2D" uid="uid://nr876radkuc4" path="res://assets/item_slot_icons/WEAPONS/Ancient_Katana.png" id="2_27tlj"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_27tlj"]
+[ext_resource type="Texture2D" uid="uid://nr876radkuc4" path="res://assets/item_slot_icons/WEAPONS/Ancient_Katana.png" id="2_cijsv"]
+[ext_resource type="Texture2D" uid="uid://dv0eyfcgnjmud" path="res://resources/sprites/M_WEAPON_KATANA.png" id="3_0surl"]
 
 [resource]
-script = ExtResource("1_d5k5a")
+script = ExtResource("1_27tlj")
 id = 563
-slot_image = ExtResource("2_27tlj")
+looks = "KATANA"
+sprite_image = ExtResource("3_0surl")
+slot_image = ExtResource("2_cijsv")
 name = "Ancient Katana"
 display_name = "Ancient Katana"
 internal_name = "Gold Katana"
-looks = "KATANA"
 tooltipAlt = ["Speed +20", "Instinct +20", "Strength +49", "Vitality +10"]
 item_type = 9
 class_type = 1

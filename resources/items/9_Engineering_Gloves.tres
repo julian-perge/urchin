@@ -1,15 +1,17 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://24mwdnv8nxas"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wr1a5"]
-[ext_resource type="Texture2D" uid="uid://b38w52v5dltad" path="res://assets/item_slot_icons/OTHER/Engineering_Gloves.png" id="2_8eqd5"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8eqd5"]
+[ext_resource type="Texture2D" uid="uid://b38w52v5dltad" path="res://assets/item_slot_icons/OTHER/Engineering_Gloves.png" id="2_lmxug"]
+[ext_resource type="Texture2D" uid="uid://cylesn3u2hcg8" path="res://resources/sprites/M_HAND_ENGINEERINGGLOVES.png" id="3_vb3ja"]
 
 [resource]
-script = ExtResource("1_wr1a5")
+script = ExtResource("1_8eqd5")
 id = 9
-slot_image = ExtResource("2_8eqd5")
+looks = "ENGINEERINGGLOVES"
+sprite_image = ExtResource("3_vb3ja")
+slot_image = ExtResource("2_lmxug")
 display_name = "Engineering Gloves"
 internal_name = "Engineering Gloves"
-looks = "ENGINEERINGGLOVES"
 tooltipAlt = ["Strength +1", "Physical Piercing +6"]
 item_type = 4
 class_type = 1

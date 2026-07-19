@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://crsnuqcke2qs"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e7cp2"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hblvn"]
+[ext_resource type="Texture2D" uid="uid://dsyv7a5f3lljj" path="res://resources/sprites/M_HAND_NINJA.png" id="2_o0vbx"]
 
 [resource]
-script = ExtResource("1_e7cp2")
+script = ExtResource("1_hblvn")
 id = 192
+looks = "NINJA"
+sprite_image = ExtResource("2_o0vbx")
 display_name = "Commander's Grasp"
 internal_name = "Commander's Grasp"
-looks = "NINJA"
 tooltipAlt = ["Focus +5", "Speed +16", "Instinct +6", "Strength +16", "Vitality +6", "Lightning Defense +7", "Earth Defense +7"]
 item_type = 4
 rarity = 2

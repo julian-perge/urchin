@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://m3lc8c8tu8"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_1r03e"]
-[ext_resource type="Texture2D" uid="uid://5kol8w253vvn" path="res://assets/item_slot_icons/GLOVES/Furious_Handplates.png" id="2_qenie"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qenie"]
+[ext_resource type="Texture2D" uid="uid://5kol8w253vvn" path="res://assets/item_slot_icons/GLOVES/Furious_Handplates.png" id="2_ogaka"]
+[ext_resource type="Texture2D" uid="uid://dbfx06qvuvr52" path="res://resources/sprites/M_HAND_ULTI.png" id="3_d21jo"]
 
 [resource]
-script = ExtResource("1_1r03e")
+script = ExtResource("1_qenie")
 id = 696
-slot_image = ExtResource("2_qenie")
+looks = "ULTI"
+sprite_image = ExtResource("3_d21jo")
+slot_image = ExtResource("2_ogaka")
 name = "Furious Handplates"
 display_name = "Furious Handplates"
 internal_name = "Drop ULTI Hands"
-looks = "ULTI"
 tooltipAlt = ["Speed +9", "Instinct +9", "Strength +42", "Vitality +26"]
 item_type = 4
 class_type = 1

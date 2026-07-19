@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://8fr6rsqbbw3r"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_05w75"]
-[ext_resource type="Texture2D" uid="uid://b6fvbiyhy0ctg" path="res://assets/item_slot_icons/OTHER/Platinum_Cage.png" id="2_u5jtm"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_u5jtm"]
+[ext_resource type="Texture2D" uid="uid://b6fvbiyhy0ctg" path="res://assets/item_slot_icons/OTHER/Platinum_Cage.png" id="2_nhjyx"]
+[ext_resource type="Texture2D" uid="uid://cocquce06es36" path="res://resources/sprites/M_CHEST_JASON4.png" id="3_2e7nb"]
 
 [resource]
-script = ExtResource("1_05w75")
+script = ExtResource("1_u5jtm")
 id = 660
-slot_image = ExtResource("2_u5jtm")
+looks = "JASON4"
+sprite_image = ExtResource("3_2e7nb")
+slot_image = ExtResource("2_nhjyx")
 name = "Platinum Cage"
 display_name = "Platinum Cage"
 internal_name = "Drop WARDEN Chest"
-looks = "JASON4"
 tooltipAlt = ["Strength +77", "Vitality +33"]
 item_type = 3
 class_type = 1

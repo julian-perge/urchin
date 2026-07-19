@@ -1,14 +1,16 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://nhhkdd66xd7n"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4oq5a"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dykeq"]
+[ext_resource type="Texture2D" uid="uid://b8bp4m3a75psd" path="res://resources/sprites/M_CHEST_KLIMA.png" id="2_7ngtb"]
 
 [resource]
-script = ExtResource("1_4oq5a")
+script = ExtResource("1_dykeq")
 id = 685
+looks = "KLIMA"
+sprite_image = ExtResource("2_7ngtb")
 name = "Surgeon's Shelter"
 display_name = "Surgeon's Shelter"
 internal_name = "Drop KLIMA Chest"
-looks = "KLIMA"
 tooltipAlt = ["Speed +24", "Instinct +41", "Strength +36", "Vitality +30"]
 item_type = 3
 class_type = 5

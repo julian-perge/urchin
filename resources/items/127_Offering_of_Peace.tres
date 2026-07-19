@@ -7,7 +7,6 @@ script = ExtResource("1_o6an3")
 id = 127
 display_name = "Offering of Peace"
 internal_name = "Offering of Peace"
-looks = ""
 rarity = 2
 class_type = 1
 required_level = 5

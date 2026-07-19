@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://li4eoywjg6an"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kqbk0"]
-[ext_resource type="Texture2D" uid="uid://xorokuagkuq1" path="res://assets/item_slot_icons/HELMS/Surgeons_Visage.png" id="2_3ttcm"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3ttcm"]
+[ext_resource type="Texture2D" uid="uid://xorokuagkuq1" path="res://assets/item_slot_icons/HELMS/Surgeons_Visage.png" id="2_210jl"]
+[ext_resource type="Texture2D" uid="uid://bdw6v66bthu4p" path="res://resources/sprites/M_HEAD_KLIMA.png" id="3_on0u6"]
 
 [resource]
-script = ExtResource("1_kqbk0")
+script = ExtResource("1_3ttcm")
 id = 684
-slot_image = ExtResource("2_3ttcm")
+looks = "KLIMA"
+sprite_image = ExtResource("3_on0u6")
+slot_image = ExtResource("2_210jl")
 name = "Surgeon's Visage"
 display_name = "Surgeon's Visage"
 internal_name = "Drop KLIMA Head"
-looks = "KLIMA"
 tooltipAlt = ["Speed +24", "Instinct +41", "Strength +36", "Vitality +30"]
 item_type = 2
 class_type = 5

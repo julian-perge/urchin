@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ds7tr2bn1rn3i"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ujnog"]
-[ext_resource type="Texture2D" uid="uid://come5qdor5gs6" path="res://assets/item_slot_icons/OTHER/Fire_Axe.png" id="2_2pq64"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2pq64"]
+[ext_resource type="Texture2D" uid="uid://come5qdor5gs6" path="res://assets/item_slot_icons/OTHER/Fire_Axe.png" id="2_ieqm3"]
+[ext_resource type="Texture2D" uid="uid://0iu75qd7ljay" path="res://resources/sprites/M_WEAPON_FIREAXE.png" id="3_pklcd"]
 
 [resource]
-script = ExtResource("1_ujnog")
+script = ExtResource("1_2pq64")
 id = 6
-slot_image = ExtResource("2_2pq64")
+looks = "FIREAXE"
+sprite_image = ExtResource("3_pklcd")
+slot_image = ExtResource("2_ieqm3")
 name = "Fire Axe"
 display_name = "Fire Axe"
 internal_name = "Fire Axe"
-looks = "FIREAXE"
 tooltipAlt = ["Strength +6"]
 item_type = 7
 class_type = 1

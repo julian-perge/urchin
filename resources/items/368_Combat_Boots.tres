@@ -1,16 +1,18 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cyq6s80snctvt"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_trv37"]
-[ext_resource type="Texture2D" uid="uid://d1gwro881srxd" path="res://assets/item_slot_icons/SHOES/Combat_Boots.png" id="2_pknev"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_pknev"]
+[ext_resource type="Texture2D" uid="uid://d1gwro881srxd" path="res://assets/item_slot_icons/SHOES/Combat_Boots.png" id="2_qtwa4"]
+[ext_resource type="Texture2D" uid="uid://dio1qm16g5lba" path="res://resources/sprites/M_FOOT_HUNT.png" id="3_x6ob8"]
 
 [resource]
-script = ExtResource("1_trv37")
+script = ExtResource("1_pknev")
 id = 368
-slot_image = ExtResource("2_pknev")
+looks = "HUNT"
+sprite_image = ExtResource("3_x6ob8")
+slot_image = ExtResource("2_qtwa4")
 name = "Combat Boots"
 display_name = "Combat Boots"
 internal_name = "Combat Boots"
-looks = "HUNT"
 tooltipAlt = ["Speed +7", "Instinct +5", "Strength +5", "Vitality +4"]
 item_type = 6
 rarity = 2

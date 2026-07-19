@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cq5tmdln6lajd"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ir7qi"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_egxdy"]
+[ext_resource type="Texture2D" uid="uid://qdn812wh3ydn" path="res://resources/sprites/M_CHEST_SHIRT2.png" id="2_hfidq"]
 
 [resource]
-script = ExtResource("1_ir7qi")
+script = ExtResource("1_egxdy")
 id = 23
+looks = "SHIRT2"
+sprite_image = ExtResource("2_hfidq")
 display_name = "Tank"
 internal_name = "Tank"
-looks = "SHIRT2"
 tooltipAlt = ["Speed +39", "Strength +58", "Vitality +135", "Physical Defense +74"]
 item_type = 3
 class_type = 1
