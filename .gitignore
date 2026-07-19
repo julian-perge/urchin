@@ -15,3 +15,9 @@ mono_crash.*.json
 
 .idea
 .DS_Store
+
+# Original decompiled Flash source, not for distribution
+*.swf
+
+# Python (python_conversion_scripts)
+.venv/
