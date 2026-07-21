@@ -15,20 +15,9 @@ signal store_closed
 
 const ItemSlotScene = preload("res://scenes/ui/item_slot.tscn")
 
-# Panel alignment per the live game: every column tops out at 81.6 and
-# bottoms out at 409.1 (the inventory column's extent) - left panel full
-# height, middle split into doll (top) and catalog (bottom-aligned with the
-# money bar).
-const LEFT_PANEL = Rect2(22.9, 81.6, 249.1, 327.5)
-const SHOP_BACKDROP_RECT = Rect2(34.0, 92.0, 227.0, 150.0)
-const DIALOGUE_RECT = Rect2(36.0, 252.0, 223.0, 150.0)
-const MIDDLE_TOP_PANEL = Rect2(285.6, 81.6, 186.6, 133.4)
-const MIDDLE_BOTTOM_PANEL = Rect2(285.6, 225.0, 186.6, 184.1)
-const PURCHASE_HINT_RECT = Rect2(290.2, 237.6, 177.0, 30.0)
 const INVENTORY_AT = Vector2(503.5, 81.6)
-# dropSlot0-14 top-left corners (centers 305.1/291.9 on the 38 px pitch).
-const CATALOG_ORIGIN = Vector2(289.6, 276.4)
-const CATALOG_COLUMNS = 5
+# 15 catalog slots, 5 columns (3 rows) - keep in sync with StoreItems'
+# `columns` property in store_window.tscn.
 const CATALOG_SLOTS = 15
 # playerSlot0-6 centers from the frame-16 dump.
 const EQUIP_SLOT_CENTERS = {
@@ -43,20 +32,19 @@ const EQUIP_SLOT_CENTERS = {
 const DOLL_POSITION = Vector2(396.5, 162.4)
 const DOLL_SCALE = 0.85
 
-var store_items: Control
+@onready var shop_backdrop: TextureRect = $ShopBackdrop
+@onready var shop_dialogue: Label = $DescriptionLabel
+@onready var store_items: GridContainer = $StoreItems
+@onready var _status_label: Label = $StatusLabel
+
 var inventory_panel: InventoryPanel
-var shop_backdrop: TextureRect
-var shop_dialogue: Label
 var equip_view: EquipDollView
 
 var selected_store_slot: ItemSlot = null
-var _status_label: Label
 
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_build_chrome()
-	_build_left_panel()
 	_build_middle()
 	_build_inventory()
 	GameData.gold_changed.connect(func(_amount):
@@ -68,68 +56,15 @@ func _ready():
 	refresh_store()
 
 
-func _build_chrome() -> void:
-	var backdrop = MenuTheme.add_texture_rect(self, "menu_backdrop.png", MenuTheme.BACKDROP_RECT)
-	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
-	var close = TextureButton.new()
-	close.name = "CloseButton"
-	close.texture_normal = MenuTheme.texture("close_x.png")
-	close.ignore_texture_size = true
-	close.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-	close.position = MenuTheme.CLOSE_RECT.position
-	close.size = MenuTheme.CLOSE_RECT.size
-	close.pressed.connect(_on_exit_pressed)
-	add_child(close)
-	_status_label = MenuTheme.add_label(
-		self, "", Rect2(47.5, 414, 700, 20), 12, Color(1, 0.85, 0.3)
-	)
-
-
-func _build_left_panel() -> void:
-	MenuTheme.add_texture_rect(self, "panel_large.png", LEFT_PANEL)
-	shop_backdrop = TextureRect.new()
-	shop_backdrop.name = "ShopBackdrop"
-	shop_backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	# Natural crop, no squish - the backdrop bitmaps are wider than the
-	# viewport (the source masks them the same way).
-	shop_backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	shop_backdrop.clip_contents = true
-	shop_backdrop.position = SHOP_BACKDROP_RECT.position
-	shop_backdrop.size = SHOP_BACKDROP_RECT.size
-	shop_backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(shop_backdrop)
-	shop_dialogue = MenuTheme.add_label(
-		self, "...", Rect2(DIALOGUE_RECT.position, DIALOGUE_RECT.size), 11,
-		Color.WHITE, HORIZONTAL_ALIGNMENT_LEFT, true
-	)
-	shop_dialogue.name = "DescriptionLabel"
-
-
 func _build_middle() -> void:
-	MenuTheme.add_texture_rect(self, "panel_center.png", MIDDLE_TOP_PANEL)
 	equip_view = EquipDollView.new()
 	equip_view.name = "EquipDollView"
 	add_child(equip_view)
 	equip_view.setup(EQUIP_SLOT_CENTERS, DOLL_POSITION, DOLL_SCALE, true)
 	equip_view.equip_slot_clicked.connect(_on_equip_slot_clicked)
-	MenuTheme.add_texture_rect(self, "panel_center.png", MIDDLE_BOTTOM_PANEL)
-	MenuTheme.add_label(
-		self, "Click on the items to purchase them.",
-		Rect2(PURCHASE_HINT_RECT.position, PURCHASE_HINT_RECT.size), 10,
-		Color(0.6, 0.6, 0.6), HORIZONTAL_ALIGNMENT_CENTER, true
-	)
-	store_items = Control.new()
-	store_items.name = "StoreItems"
-	store_items.position = CATALOG_ORIGIN
-	store_items.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(store_items)
 	for i in CATALOG_SLOTS:
 		var slot: ItemSlot = ItemSlotScene.instantiate()
 		slot.show_price = true
-		slot.position = Vector2(
-			(i % CATALOG_COLUMNS) * MenuTheme.SLOT_STEP,
-			floorf(i / float(CATALOG_COLUMNS)) * MenuTheme.SLOT_STEP
-		)
 		slot.slot_clicked.connect(_on_store_slot_clicked)
 		store_items.add_child(slot)
 
