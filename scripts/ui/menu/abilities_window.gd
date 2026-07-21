@@ -33,7 +33,6 @@ const SOCKET_SIZE = Vector2(30, 30)
 
 const POOL_RECT = Rect2(523.6, 274.2, 214.0, 128.0)
 const POOL_VISIBLE_ROWS = 5
-const POOL_ROW_HEIGHT = 25.0
 
 const CLASS_NAMES = ["Biological", "Psychological", "Hydraulic"]
 
@@ -41,7 +40,9 @@ var _tree_buttons: Array[Button] = []
 var _tree_rank_labels: Array[Label] = []
 @onready var _tree_lines: Control = $TreeLines
 var _socket_buttons: Array[Button] = []
-var _pool_rows: Array[Button] = []
+@onready var _pool_rows: Array[Button] = [
+	$PoolRows/PoolRow0, $PoolRows/PoolRow1, $PoolRows/PoolRow2, $PoolRows/PoolRow3, $PoolRows/PoolRow4,
+]
 var _pool_scroll: int = 0
 var _pool_move_ids: Array = []
 
@@ -74,6 +75,11 @@ func _build_tree_panel() -> void:
 		_tree_rank_labels.append(node_button.get_node("RankLabel"))
 
 
+# The wheel's 8 sockets sit on a circular (non-uniform) pitch and their style
+# is 100% data-dependent - recomputed every refresh() from whichever move is
+# currently equipped, with no reusable child structure (a bare Button, no
+# label overlay) - unlike the talent tree nodes, there is no static content
+# here to extract into the scene, so this stays code-driven by design.
 func _build_wheel_panel() -> void:
 	for i in WHEEL_OFFSETS.size():
 		var socket = Button.new()
@@ -84,45 +90,6 @@ func _build_wheel_panel() -> void:
 		_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24))
 		add_child(socket)
 		_socket_buttons.append(socket)
-	var pool_backdrop = ColorRect.new()
-	pool_backdrop.color = Color(0.06, 0.06, 0.065)
-	pool_backdrop.position = POOL_RECT.position
-	pool_backdrop.size = POOL_RECT.size
-	pool_backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(pool_backdrop)
-	for i in POOL_VISIBLE_ROWS:
-		var row = Button.new()
-		row.custom_minimum_size = Vector2(POOL_RECT.size.x - 28, POOL_ROW_HEIGHT - 3)
-		row.size = row.custom_minimum_size
-		row.position = POOL_RECT.position + Vector2(3, 3 + i * POOL_ROW_HEIGHT)
-		row.add_theme_font_size_override("font_size", 11)
-		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		var style = StyleBoxFlat.new()
-		style.bg_color = Color(0.5, 0.5, 0.52)
-		style.set_corner_radius_all(9)
-		style.content_margin_left = 10
-		row.add_theme_stylebox_override("normal", style)
-		var hover_style = style.duplicate()
-		hover_style.bg_color = Color(0.65, 0.65, 0.67)
-		row.add_theme_stylebox_override("hover", hover_style)
-		row.add_theme_color_override("font_color", Color(0.08, 0.08, 0.08))
-		row.pressed.connect(_on_pool_row_pressed.bind(i))
-		add_child(row)
-		_pool_rows.append(row)
-	var scroll_up = _make_scroll_button("^", POOL_RECT.position + Vector2(POOL_RECT.size.x - 22, 3))
-	scroll_up.pressed.connect(_on_pool_scrolled.bind(-1))
-	var scroll_down = _make_scroll_button("v", POOL_RECT.position + Vector2(POOL_RECT.size.x - 22, POOL_RECT.size.y - 63))
-	scroll_down.pressed.connect(_on_pool_scrolled.bind(1))
-
-
-func _make_scroll_button(glyph: String, at: Vector2) -> Button:
-	var button = Button.new()
-	button.text = glyph
-	button.custom_minimum_size = Vector2(19, 60)
-	button.size = button.custom_minimum_size
-	button.position = at
-	add_child(button)
-	return button
 
 
 func _style_circle_button(button: Button, bg: Color, border: Color) -> void:

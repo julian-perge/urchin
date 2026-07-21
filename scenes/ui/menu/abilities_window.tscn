@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/menu/abilities_window.gd" id="1_abilwin"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
@@ -61,6 +61,22 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_poolrow"]
+bg_color = Color(0.5, 0.5, 0.52, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+content_margin_left = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_poolrow_hover"]
+bg_color = Color(0.65, 0.65, 0.67, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+content_margin_left = 10.0
 
 [node name="AbilitiesWindow" type="Control" groups=["abilities_window", "menu_screen"]]
 layout_mode = 3
@@ -403,6 +419,85 @@ theme_override_font_sizes/font_size = 14
 horizontal_alignment = 1
 text = "Ability Pool"
 
+[node name="PoolBackdrop" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 523.6
+offset_top = 274.2
+offset_right = 737.6
+offset_bottom = 402.2
+mouse_filter = 2
+color = Color(0.06, 0.06, 0.065, 1)
+
+[node name="PoolRows" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 526.6
+offset_top = 277.2
+offset_right = 712.6
+offset_bottom = 387.2
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="PoolRow0" type="Button" parent="PoolRows"]
+custom_minimum_size = Vector2(186, 22)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_poolrow")
+theme_override_styles/hover = SubResource("StyleBoxFlat_poolrow_hover")
+alignment = 0
+
+[node name="PoolRow1" type="Button" parent="PoolRows"]
+custom_minimum_size = Vector2(186, 22)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_poolrow")
+theme_override_styles/hover = SubResource("StyleBoxFlat_poolrow_hover")
+alignment = 0
+
+[node name="PoolRow2" type="Button" parent="PoolRows"]
+custom_minimum_size = Vector2(186, 22)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_poolrow")
+theme_override_styles/hover = SubResource("StyleBoxFlat_poolrow_hover")
+alignment = 0
+
+[node name="PoolRow3" type="Button" parent="PoolRows"]
+custom_minimum_size = Vector2(186, 22)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_poolrow")
+theme_override_styles/hover = SubResource("StyleBoxFlat_poolrow_hover")
+alignment = 0
+
+[node name="PoolRow4" type="Button" parent="PoolRows"]
+custom_minimum_size = Vector2(186, 22)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_poolrow")
+theme_override_styles/hover = SubResource("StyleBoxFlat_poolrow_hover")
+alignment = 0
+
+[node name="ScrollUpButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 715.6
+offset_top = 277.2
+offset_right = 734.6
+offset_bottom = 337.2
+text = "^"
+
+[node name="ScrollDownButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 715.6
+offset_top = 339.2
+offset_right = 734.6
+offset_bottom = 399.2
+text = "v"
+
 [node name="TreeLines" type="Control" parent="."]
 layout_mode = 0
 offset_right = 800.0
@@ -415,3 +510,10 @@ mouse_filter = 2
 [connection signal="pressed" from="InstinctPlus" to="." method="_on_attribute_plus_pressed" binds=[2]]
 [connection signal="pressed" from="SpeedPlus" to="." method="_on_attribute_plus_pressed" binds=[3]]
 [connection signal="draw" from="TreeLines" to="." method="_draw_tree_lines"]
+[connection signal="pressed" from="PoolRows/PoolRow0" to="." method="_on_pool_row_pressed" binds=[0]]
+[connection signal="pressed" from="PoolRows/PoolRow1" to="." method="_on_pool_row_pressed" binds=[1]]
+[connection signal="pressed" from="PoolRows/PoolRow2" to="." method="_on_pool_row_pressed" binds=[2]]
+[connection signal="pressed" from="PoolRows/PoolRow3" to="." method="_on_pool_row_pressed" binds=[3]]
+[connection signal="pressed" from="PoolRows/PoolRow4" to="." method="_on_pool_row_pressed" binds=[4]]
+[connection signal="pressed" from="ScrollUpButton" to="." method="_on_pool_scrolled" binds=[-1]]
+[connection signal="pressed" from="ScrollDownButton" to="." method="_on_pool_scrolled" binds=[1]]
