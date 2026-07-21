@@ -20,11 +20,6 @@ const TREE_COLUMNS_X = [41.4, 93.4, 145.4, 197.4]
 const TREE_ROWS_Y = [49.9, 89.8, 129.8, 169.8, 209.8, 249.8, 289.9]
 const NODE_SIZE = Vector2(32, 32)
 
-const LEFT_PANEL = Rect2(44.9, 112.9, 249.1, 267.1)
-const RIGHT_PANEL = Rect2(506.3, 112.9, 249.1, 267.1)
-const MIDDLE_TOP_PANEL = Rect2(308.6, 74.0, 183.1, 238.0)
-const MIDDLE_BOTTOM_PANEL = Rect2(308.6, 322.0, 183.1, 108.0)
-
 const WHEEL_CENTER = Vector2(630.6, 172.2)
 # thing0-7 offsets inside the 'selector' clip.
 const WHEEL_OFFSETS = [
@@ -38,13 +33,6 @@ const POOL_RECT = Rect2(523.6, 274.2, 214.0, 128.0)
 const POOL_VISIBLE_ROWS = 5
 const POOL_ROW_HEIGHT = 25.0
 
-const ATTRIBUTE_ROWS = [
-	{"label": "Vitality:", "stat": Leveling.Stat.LIFE},
-	{"label": "Strength:", "stat": Leveling.Stat.STRENGTH},
-	{"label": "Instinct:", "stat": Leveling.Stat.MAGIC},
-	{"label": "Speed:", "stat": Leveling.Stat.SPEED},
-]
-const ATTRIBUTE_ROWS_Y = [340.4, 357.9, 376.1, 394.2]
 const CLASS_NAMES = ["Biological", "Psychological", "Hydraulic"]
 
 var _tree_buttons: Array[Button] = []
@@ -55,48 +43,24 @@ var _pool_rows: Array[Button] = []
 var _pool_scroll: int = 0
 var _pool_move_ids: Array = []
 
-var _name_label: Label
-var _level_label: Label
-var _ability_points_value: Label
-var _attribute_points_value: Label
-var _attribute_values: Array[Label] = []
-var _status_label: Label
+@onready var _name_label: Label = $NameLabel
+@onready var _level_label: Label = $LevelLabel
+@onready var _ability_points_value: Label = $AbilityPointsValue
+@onready var _attribute_points_value: Label = $AttributePointsValue
+@onready var _attribute_values: Array[Label] = [$VitalityValue, $StrengthValue, $InstinctValue, $SpeedValue]
+@onready var _status_label: Label = $StatusLabel
 
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_build_chrome()
 	_build_tree_panel()
-	_build_middle()
 	_build_wheel_panel()
 	visibility_changed.connect(func():
 		if visible:
 			refresh())
 
 
-func _build_chrome() -> void:
-	var backdrop = MenuTheme.add_texture_rect(self, "menu_backdrop.png", MenuTheme.BACKDROP_RECT)
-	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
-	var close = TextureButton.new()
-	close.name = "CloseButton"
-	close.texture_normal = MenuTheme.texture("close_x.png")
-	close.ignore_texture_size = true
-	close.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-	close.position = MenuTheme.CLOSE_RECT.position
-	close.size = MenuTheme.CLOSE_RECT.size
-	close.pressed.connect(hide)
-	add_child(close)
-	_status_label = MenuTheme.add_label(
-		self, "", Rect2(44.9, 414, 700, 20), 12, Color(1, 0.85, 0.3)
-	)
-
-
 func _build_tree_panel() -> void:
-	MenuTheme.add_label(
-		self, "Ability Tree", Rect2(53.6, 80.1, 231.8, 22), 15,
-		Color(0.55, 0.55, 0.55), HORIZONTAL_ALIGNMENT_CENTER
-	)
-	MenuTheme.add_texture_rect(self, "panel_large.png", LEFT_PANEL)
 	_tree_lines = Control.new()
 	_tree_lines.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_tree_lines.draw.connect(_draw_tree_lines)
@@ -118,65 +82,7 @@ func _build_tree_panel() -> void:
 		_tree_rank_labels.append(rank)
 
 
-func _build_middle() -> void:
-	MenuTheme.add_texture_rect(self, "panel_center.png", MIDDLE_TOP_PANEL)
-	_name_label = MenuTheme.add_label(
-		self, "", Rect2(MIDDLE_TOP_PANEL.position.x, 79.7, MIDDLE_TOP_PANEL.size.x, 22),
-		16, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER
-	)
-	_level_label = MenuTheme.add_label(
-		self, "", Rect2(MIDDLE_TOP_PANEL.position.x, 99.5, MIDDLE_TOP_PANEL.size.x, 18),
-		12, Color(0.8, 0.8, 0.8), HORIZONTAL_ALIGNMENT_CENTER
-	)
-	MenuTheme.add_label(self, "Ability Points:", Rect2(314.3, 122.2, 110, 16), 12)
-	_ability_points_value = MenuTheme.add_label(
-		self, "0", Rect2(400, 122.2, 83, 16), 12, Color.WHITE, HORIZONTAL_ALIGNMENT_RIGHT
-	)
-	MenuTheme.add_label(self, "Attribute Points:", Rect2(314.3, 141.2, 110, 16), 12)
-	_attribute_points_value = MenuTheme.add_label(
-		self, "0", Rect2(400, 141.2, 83, 16), 12, Color.WHITE, HORIZONTAL_ALIGNMENT_RIGHT
-	)
-	MenuTheme.add_texture_rect(self, "panel_center.png", MIDDLE_BOTTOM_PANEL)
-	MenuTheme.add_label(
-		self, "Your Attributes", Rect2(MIDDLE_BOTTOM_PANEL.position.x, 324, MIDDLE_BOTTOM_PANEL.size.x, 16),
-		12, Color(0.55, 0.55, 0.55), HORIZONTAL_ALIGNMENT_CENTER
-	)
-	for i in ATTRIBUTE_ROWS.size():
-		var row: Dictionary = ATTRIBUTE_ROWS[i]
-		var y = ATTRIBUTE_ROWS_Y[i]
-		var plus = Button.new()
-		plus.text = "+"
-		plus.custom_minimum_size = Vector2(26, 14)
-		plus.size = Vector2(26, 14)
-		plus.position = Vector2(318, y + 1)
-		plus.add_theme_font_size_override("font_size", 11)
-		var style = StyleBoxFlat.new()
-		style.bg_color = MenuTheme.STAT_COLORS[i]
-		style.set_corner_radius_all(4)
-		plus.add_theme_stylebox_override("normal", style)
-		var hover_style = style.duplicate()
-		hover_style.bg_color = MenuTheme.STAT_COLORS[i].lightened(0.25)
-		plus.add_theme_stylebox_override("hover", hover_style)
-		plus.add_theme_color_override("font_color", Color.BLACK)
-		plus.pressed.connect(_on_attribute_plus_pressed.bind(int(row["stat"])))
-		add_child(plus)
-		MenuTheme.add_label(self, str(row["label"]), Rect2(352, y, 80, 16), 12, MenuTheme.STAT_COLORS[i])
-		var value = MenuTheme.add_label(
-			self, "0", Rect2(400, y, 80, 16), 12, MenuTheme.STAT_COLORS[i], HORIZONTAL_ALIGNMENT_RIGHT
-		)
-		_attribute_values.append(value)
-
-
 func _build_wheel_panel() -> void:
-	MenuTheme.add_label(
-		self, "Combat Action Bar", Rect2(516.3, 80.1, 231.8, 22), 15,
-		Color(0.55, 0.55, 0.55), HORIZONTAL_ALIGNMENT_CENTER
-	)
-	MenuTheme.add_texture_rect(self, "panel_large.png", RIGHT_PANEL)
-	MenuTheme.add_label(
-		self, "Ability Pool", Rect2(516.3, 250.1, 231.8, 20), 14,
-		Color(0.55, 0.55, 0.55), HORIZONTAL_ALIGNMENT_CENTER
-	)
 	for i in WHEEL_OFFSETS.size():
 		var socket = Button.new()
 		socket.custom_minimum_size = SOCKET_SIZE
