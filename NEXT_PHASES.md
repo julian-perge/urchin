@@ -128,10 +128,12 @@ Sequencing note: this is a large, cross-cutting change and nothing above blocks 
 self-contained starting point. Since the ability menu redesign above is new work rather than an existing screen, it's worth doing that phase in the NEW `.tscn`-plus-Container style directly, once
 the pattern is proven on the store, rather than building it flat now and re-migrating it later.
 
-**DONE (2026-07-21):** `scripts/ui/store/item_slot.gd`, `scripts/ui/store/store_window.gd`, and `scripts/ui/inventory_panel.gd` migrated - `item_slot.tscn` now owns the hover highlight
-as a real child node, `store_window.tscn` now owns every static chrome node (backdrop, close button, panels, labels) plus a `GridContainer` for the 15-slot catalog, and `inventory.tscn` now
-owns its panel/title/money-bar chrome plus a `GridContainer` for the 6x6 slot grid - each script keeps only the parts that genuinely need code (per-slot `PackedScene` instancing loops, the
-equip-doll helper). Everything else named in this phase (`abilities_window.gd`, `achievements_window.gd`, `hotbar.gd`, `battle_scene.gd`, `menu_theme.gd`'s helpers) is still pending.
+**DONE (2026-07-21):** `scripts/ui/store/item_slot.gd`, `scripts/ui/store/store_window.gd`, `scripts/ui/inventory_panel.gd`, and `scripts/ui/menu/abilities_window.gd` migrated - `item_slot.tscn` now owns
+the hover highlight as a real child node, `store_window.tscn` now owns every static chrome node plus a `GridContainer` for the 15-slot catalog, `inventory.tscn` now owns its panel/title/money-bar
+chrome plus a `GridContainer` for the 6x6 slot grid, and `abilities_window.tscn` now owns its static chrome/attribute panel plus a `VBoxContainer` for the 5-row ability pool - the 28-node talent
+tree keeps its irregular-pitch positions and fully data-dependent per-node styling in code (via a new reusable `talent_node.tscn`, the same instanced-`PackedScene` pattern as `ItemSlot`), and the
+8-socket wheel stays entirely code-driven by design (no static content or reusable child structure to extract). Everything else named in this phase (`achievements_window.gd`, `hotbar.gd`,
+`battle_scene.gd`, `menu_theme.gd`'s helpers) is still pending.
 
 ## Testing: GUT
 
