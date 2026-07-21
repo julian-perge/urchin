@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://1u4ekvqq8swk"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Johnson_s_Legacy.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_e7tpn"]
 [ext_resource type="Texture2D" uid="uid://ckgfq6m5a7w7s" path="res://assets/item_slot_icons/ARMOR/Johnsons_Legacy.png" id="2_batgw"]
 [ext_resource type="Texture2D" uid="uid://cfbthuu0prqsc" path="res://resources/sprites/M_CHEST_PRIEST4.png" id="3_eygcq"]
@@ -9,7 +10,7 @@ script = ExtResource("1_e7tpn")
 id = 643
 looks = "PRIEST4"
 sprite_image = ExtResource("3_eygcq")
-slot_image = ExtResource("2_batgw")
+slot_image = ExtResource("icon_slot")
 name = "Johnson's Legacy"
 display_name = "Johnson's Legacy"
 internal_name = "Drop MAYOR Chest"

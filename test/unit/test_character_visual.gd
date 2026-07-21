@@ -21,13 +21,15 @@ func _sprite_count(part_name: String) -> int:
 	return count
 
 
-func test_all_15_parts_built_at_rest_pose():
+func test_all_15_parts_built_on_stand_frame():
 	assert_eq(visual._parts.size(), 15)
+	# Animated dolls start on the stand label's first frame (the timeline's
+	# own rest pose - chest at 0.45/-16.85 px).
 	var chest: Node2D = visual._parts["chest"]
-	assert_almost_eq(chest.position.x, 0.5, 0.01, "MODEL1 rest matrix, twips converted")
-	assert_almost_eq(chest.position.y, -16.9, 0.01)
+	assert_almost_eq(chest.position.x, 0.45, 0.05, "MODEL1 stand frame 1, twips converted")
+	assert_almost_eq(chest.position.y, -16.85, 0.05)
 	var hand2: Node2D = visual._parts["hand2"]
-	assert_almost_eq(hand2.scale.x, -0.71, 0.01, "mirrored back hand preserved")
+	assert_lt(hand2.transform.x.x, 0.0, "mirrored back hand preserved")
 	# z-order: weapon2 (depth 7) draws behind chest (depth 21).
 	assert_lt(visual._parts["weapon2"].get_index(), visual._parts["chest"].get_index())
 
@@ -79,13 +81,48 @@ func test_resolve_equip_looks():
 	)
 
 
-func test_melee_state_fires_attack_and_returns_to_idle():
+func test_melee_runs_strikes_and_returns_home():
 	watch_signals(visual)
-	visual.set_state(CharacterVisual.State.MELEE)
-	for i in 40:
+	visual.position = Vector2(100, 100)
+	visual.play_melee(Vector2(80, 0))
+	# krinMelee: eased dash arrives ~0.47s in; impact 0.5s after arrival;
+	# runback starts 1.0s after arrival and eases home (~2.2s total).
+	for i in 6:
+		visual._process(0.05)
+	assert_gt(visual.position.x, 130.0, "mid-dash: moved toward the target")
+	for i in 8:
+		visual._process(0.05)
+	assert_almost_eq(visual.position.x, 180.0, 1.0, "arrived at the target")
+	for i in 46:
 		visual._process(0.05)
 	assert_signal_emitted(visual, "attack_connected")
-	assert_eq(visual._state, CharacterVisual.State.IDLE, "swing recovers to idle")
+	assert_signal_emitted(visual, "melee_finished")
+	assert_eq(visual._state, CharacterVisual.State.IDLE, "sequence recovers to idle")
+	assert_almost_eq(visual.position.x, 100.0, 0.1, "back home after runback")
+
+
+func test_attack_variants_and_in_place_strike():
+	watch_signals(visual)
+	# Attack_Upper is a 30-frame swing (1s) - the overhead Destroy strike.
+	visual.play_melee(Vector2(80, 0), "Attack_Upper")
+	assert_eq(visual._attack_label, "Attack_Upper")
+	for i in 60:
+		visual._process(0.05)
+	assert_signal_emitted(visual, "attack_connected")
+	assert_eq(visual._state, CharacterVisual.State.IDLE)
+	# Unknown labels fall back to the base swing.
+	visual.play_melee(Vector2.ZERO, "Krin.Firebolt")
+	assert_eq(visual._attack_label, "Attack")
+	visual.set_state(CharacterVisual.State.IDLE)
+	# In-place strike (Shock moves): strike + follow-through play where the
+	# unit stands (the original Shock casters do the same), never moving.
+	visual.position = Vector2(50, 50)
+	visual.play_strike("Attack_Stab")
+	for i in 45:
+		visual._process(0.05)
+	assert_signal_emitted(visual, "melee_finished")
+	assert_eq(visual.position, Vector2(50, 50), "in-place strike never moves")
+	assert_eq(visual._state, CharacterVisual.State.IDLE)
 
 
 func test_cast_and_hit_recover_death_holds():

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cfyhet68xigmb"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Riot_Gloves.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5nsqq"]
 [ext_resource type="Texture2D" uid="uid://crp8gj1ndc2ni" path="res://assets/item_slot_icons/GLOVES/Riot_Gloves.png" id="2_4e8um"]
 [ext_resource type="Texture2D" uid="uid://bgeh7le4uy2uw" path="res://resources/sprites/M_HAND_POLICE.png" id="3_8is80"]
@@ -9,7 +10,7 @@ script = ExtResource("1_5nsqq")
 id = 619
 looks = "POLICE"
 sprite_image = ExtResource("3_8is80")
-slot_image = ExtResource("2_4e8um")
+slot_image = ExtResource("icon_slot")
 name = "Riot Gloves"
 display_name = "Riot Gloves"
 internal_name = "Drop POLICE Hands"

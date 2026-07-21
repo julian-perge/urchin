@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://omx1bgmnf0oq"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Wrath_of_the_Council.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ya1ho"]
 [ext_resource type="Texture2D" uid="uid://bhoqk7ovl2bml" path="res://assets/item_slot_icons/WEAPONS/Wrath_of_the_Council.png" id="2_xkkrq"]
 [ext_resource type="Texture2D" uid="uid://bv8ltxg8xktw2" path="res://resources/sprites/M_WEAPON_TRIDENT2.png" id="3_7pss3"]
@@ -9,7 +10,7 @@ script = ExtResource("1_ya1ho")
 id = 655
 looks = "TRIDENT2"
 sprite_image = ExtResource("3_7pss3")
-slot_image = ExtResource("2_xkkrq")
+slot_image = ExtResource("icon_slot")
 name = "Wrath of the Council"
 display_name = "Wrath of the Council"
 internal_name = "TRIDENT"

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://gkjt4mydfo66"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Furious_Greaves.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0mnqj"]
 [ext_resource type="Texture2D" uid="uid://bi230vtmehpje" path="res://assets/item_slot_icons/SHOES/Furious_Greaves.png" id="2_kdgd6"]
 [ext_resource type="Texture2D" uid="uid://bwe0whvslk1mu" path="res://resources/sprites/M_FOOT_ULTI.png" id="3_cco6a"]
@@ -9,7 +10,7 @@ script = ExtResource("1_0mnqj")
 id = 698
 looks = "ULTI"
 sprite_image = ExtResource("3_cco6a")
-slot_image = ExtResource("2_kdgd6")
+slot_image = ExtResource("icon_slot")
 name = "Furious Greaves"
 display_name = "Furious Greaves"
 internal_name = "Drop ULTI Feet"

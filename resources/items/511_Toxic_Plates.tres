@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://blxe3rxompcdj"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Toxic_Plates.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_b66gt"]
 [ext_resource type="Texture2D" uid="uid://bv6yjpsymm8eo" path="res://assets/item_slot_icons/OTHER/Toxic_Plates.png" id="2_5dbg4"]
 [ext_resource type="Texture2D" uid="uid://cq682t2srux57" path="res://resources/sprites/M_LEG2_JASON3.png" id="3_bqk8w"]
@@ -9,7 +10,7 @@ script = ExtResource("1_b66gt")
 id = 511
 looks = "JASON3"
 sprite_image = ExtResource("3_bqk8w")
-slot_image = ExtResource("2_5dbg4")
+slot_image = ExtResource("icon_slot")
 name = "Toxic Plates"
 display_name = "Toxic Plates"
 internal_name = "Toxic Plates"

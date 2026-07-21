@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c8c7f554cvynf"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Crimson_Blade.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wu3ox"]
 [ext_resource type="Texture2D" uid="uid://kqgvl5c35y7k" path="res://assets/item_slot_icons/WEAPONS/Crimson_Blade.png" id="2_qsrpx"]
 [ext_resource type="Texture2D" uid="uid://bf631i6tmw2ut" path="res://resources/sprites/M_WEAPON_FELKNIFE3.png" id="3_ny21d"]
@@ -9,7 +10,7 @@ script = ExtResource("1_wu3ox")
 id = 651
 looks = "FELKNIFE3"
 sprite_image = ExtResource("3_ny21d")
-slot_image = ExtResource("2_qsrpx")
+slot_image = ExtResource("icon_slot")
 name = "Crimson Blade"
 display_name = "Crimson Blade"
 internal_name = "SMALL BLADE 1"

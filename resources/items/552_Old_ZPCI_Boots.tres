@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dijgesphxnb8r"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Old_ZPCI_Boots.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rucys"]
 [ext_resource type="Texture2D" uid="uid://cq55n5oo4jbvm" path="res://assets/item_slot_icons/SHOES/Old_ZPCI_Boots.png" id="2_6frxi"]
 [ext_resource type="Texture2D" uid="uid://cfhfluent884g" path="res://resources/sprites/M_FOOT_USA2.png" id="3_kx2lg"]
@@ -9,7 +10,7 @@ script = ExtResource("1_rucys")
 id = 552
 looks = "USA2"
 sprite_image = ExtResource("3_kx2lg")
-slot_image = ExtResource("2_6frxi")
+slot_image = ExtResource("icon_slot")
 name = "Old ZPCI Boots"
 display_name = "Old ZPCI Boots"
 internal_name = "Drop ZPCI Feet"

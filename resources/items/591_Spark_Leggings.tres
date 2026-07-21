@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://uh8b42r4pt43"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Spark_Leggings.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_b27cq"]
 [ext_resource type="Texture2D" uid="uid://bj7r3171l5x7r" path="res://assets/item_slot_icons/PANTS/Spark_Leggings.png" id="2_406em"]
 [ext_resource type="Texture2D" uid="uid://crff0f7i8cpsk" path="res://resources/sprites/M_LEG2_CLEMONS2.png" id="3_4x6re"]
@@ -9,7 +10,7 @@ script = ExtResource("1_b27cq")
 id = 591
 looks = "CLEMONS2"
 sprite_image = ExtResource("3_4x6re")
-slot_image = ExtResource("2_406em")
+slot_image = ExtResource("icon_slot")
 name = "Spark Leggings"
 display_name = "Spark Leggings"
 internal_name = "Drop EMPEROR Legs"

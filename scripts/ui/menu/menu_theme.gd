@@ -24,17 +24,20 @@ const SLOT_SIZE = Vector2(31, 31)
 const SLOT_STEP = 38.0
 
 # The element order every per/def array uses (CombatUnit.ELEMENT_ORDER) and
-# the original bar tints, sampled from the menu bar art.
+# the EXACT original colors (elementColorArray, frame_41/DoAction_2.as) -
+# used by the menu bars AND the floating damage numbers.
 const ELEMENT_COLORS = [
-	Color(0.85, 0.12, 0.12),  # Physical - red
-	Color(0.95, 0.55, 0.75),  # Magic - pink
-	Color(0.35, 0.8, 0.95),   # Ice - cyan
-	Color(0.95, 0.55, 0.1),   # Fire - orange
-	Color(0.95, 0.8, 0.15),   # Lightning - yellow
-	Color(0.76, 0.66, 0.5),   # Earth - tan
-	Color(0.6, 0.4, 0.85),    # Shadow - purple
-	Color(0.4, 0.8, 0.3),     # Poison - green
+	Color("C40000"),  # Physical
+	Color("FB95C8"),  # Magic
+	Color("68CBF4"),  # Ice
+	Color("FF6600"),  # Fire
+	Color("FFCC00"),  # Lightning
+	Color("856B47"),  # Earth
+	Color("664D80"),  # Shadow
+	Color("508349"),  # Poison
 ]
+# KrinNumberShow's HEAL color (0x66FF00).
+const HEAL_COLOR = Color("66FF00")
 
 const STAT_LABELS = ["Vitality:", "Strength:", "Instinct:", "Speed:", "Focus:"]
 const STAT_COLORS = [

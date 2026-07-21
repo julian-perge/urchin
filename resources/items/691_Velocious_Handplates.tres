@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bqr4jka0x5ipe"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Velocious_Handplates.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_uyptd"]
 [ext_resource type="Texture2D" uid="uid://dc5k2akik2qjm" path="res://assets/item_slot_icons/GLOVES/Velocious_Handplates.png" id="2_sk3tm"]
 
@@ -7,7 +8,7 @@
 script = ExtResource("1_uyptd")
 id = 691
 looks = "ULTI3"
-slot_image = ExtResource("2_sk3tm")
+slot_image = ExtResource("icon_slot")
 name = "Velocious Handplates"
 display_name = "Velocious Handplates"
 internal_name = "Drop ULTI3 Hands"

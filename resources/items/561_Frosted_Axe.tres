@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://r8m5rbde5xqm"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Frosted_Axe.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tto54"]
 [ext_resource type="Texture2D" uid="uid://bjflmch3ucqix" path="res://assets/item_slot_icons/WEAPONS/Frosted_Axe.png" id="2_d48hb"]
 [ext_resource type="Texture2D" uid="uid://8vcjch3ihdph" path="res://resources/sprites/M_WEAPON_SHAMANMED.png" id="3_m5hgb"]
@@ -9,7 +10,7 @@ script = ExtResource("1_tto54")
 id = 561
 looks = "SHAMANMED"
 sprite_image = ExtResource("3_m5hgb")
-slot_image = ExtResource("2_d48hb")
+slot_image = ExtResource("icon_slot")
 name = "Frosted Axe"
 display_name = "Frosted Axe"
 internal_name = "Blue Axe"

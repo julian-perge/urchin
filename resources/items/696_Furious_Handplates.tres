@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://m3lc8c8tu8"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Furious_Handplates.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qenie"]
 [ext_resource type="Texture2D" uid="uid://5kol8w253vvn" path="res://assets/item_slot_icons/GLOVES/Furious_Handplates.png" id="2_ogaka"]
 [ext_resource type="Texture2D" uid="uid://dbfx06qvuvr52" path="res://resources/sprites/M_HAND_ULTI.png" id="3_d21jo"]
@@ -9,7 +10,7 @@ script = ExtResource("1_qenie")
 id = 696
 looks = "ULTI"
 sprite_image = ExtResource("3_d21jo")
-slot_image = ExtResource("2_ogaka")
+slot_image = ExtResource("icon_slot")
 name = "Furious Handplates"
 display_name = "Furious Handplates"
 internal_name = "Drop ULTI Hands"

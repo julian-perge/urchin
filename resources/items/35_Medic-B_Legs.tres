@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bb4ljois1i0uh"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Medic_B_Legs.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_owpm0"]
 [ext_resource type="Texture2D" uid="uid://c7n4q7yv2ukhm" path="res://assets/item_slot_icons/WEAPONS/Medic-B_Legs.png" id="2_nelol"]
 [ext_resource type="Texture2D" uid="uid://cvjxoekb6t58g" path="res://resources/sprites/M_LEG2_ZPCI3.png" id="3_rmenj"]
@@ -9,7 +10,7 @@ script = ExtResource("1_owpm0")
 id = 35
 looks = "ZPCI3"
 sprite_image = ExtResource("3_rmenj")
-slot_image = ExtResource("2_nelol")
+slot_image = ExtResource("icon_slot")
 name = "Medic-B Legs"
 display_name = "Medic-B Legs"
 internal_name = "Medic Legs"

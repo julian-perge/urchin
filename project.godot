@@ -29,6 +29,7 @@ BuffManagerAuto="*res://scripts/autoload/buff_manager.gd"
 ZoneManager="*res://scripts/autoload/zone_manager.gd"
 GameData="*res://scripts/autoload/game_data.gd"
 AudioManagerAuto="*res://scripts/autoload/audio_manager.gd"
+LogManagerAuto="*res://scripts/autoload/log_manager.gd"
 
 [display]
 

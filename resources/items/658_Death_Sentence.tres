@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c1hit86xkmymx"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Death_Sentence.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tak1l"]
 [ext_resource type="Texture2D" uid="uid://exi83183j2jw" path="res://assets/item_slot_icons/WEAPONS/Death_Sentence.png" id="2_u6lfa"]
 [ext_resource type="Texture2D" uid="uid://5l863u70swkh" path="res://resources/sprites/M_WEAPON_SWORD2.png" id="3_vql57"]
@@ -9,7 +10,7 @@ script = ExtResource("1_tak1l")
 id = 658
 looks = "SWORD2"
 sprite_image = ExtResource("3_vql57")
-slot_image = ExtResource("2_u6lfa")
+slot_image = ExtResource("icon_slot")
 name = "Death Sentence"
 display_name = "Death Sentence"
 internal_name = "2H SWORD"

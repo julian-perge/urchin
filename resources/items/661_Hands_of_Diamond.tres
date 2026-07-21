@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d0s2la2uvk4um"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Hands_of_Diamond.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_p00c5"]
 [ext_resource type="Texture2D" uid="uid://b1iiw2aw3wbx6" path="res://assets/item_slot_icons/OTHER/Hands_of_Diamond.png" id="2_8jv86"]
 [ext_resource type="Texture2D" uid="uid://beob8meeyp41i" path="res://resources/sprites/M_HAND_JASON4.png" id="3_0dhim"]
@@ -9,7 +10,7 @@ script = ExtResource("1_p00c5")
 id = 661
 looks = "JASON4"
 sprite_image = ExtResource("3_0dhim")
-slot_image = ExtResource("2_8jv86")
+slot_image = ExtResource("icon_slot")
 name = "Hands of Diamond"
 display_name = "Hands of Diamond"
 internal_name = "Drop WARDEN Hands"

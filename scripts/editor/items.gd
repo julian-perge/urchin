@@ -49,7 +49,41 @@ const SLOT_ICON_CATEGORIES = {
 	GameItem.ItemType.TWOHAND: "WEAPONS",
 }
 
+# Items whose extracted icon-clip frame doesn't match the live game
+# (verified by side-by-side playtest) keep a hand-picked icon.
+const SLOT_ICON_OVERRIDES = {
+	11: "res://assets/item_slot_icons/OTHER/White_T_Shirt.png",  # White T-shirt
+}
+# Icons extracted from the original icon clip (sprite 2064) by
+# python_conversion_scripts/swf_extraction/extract_item_icons.py.
+const EXTRACTED_ICON_ROOT = "res://assets/ui/items"
+
+var _extracted_icons: Dictionary = {}  # lowercase file name -> actual file name
+
+
 func _find_slot_icon(item) -> Texture2D:
+	if SLOT_ICON_OVERRIDES.has(item.id):
+		return load(SLOT_ICON_OVERRIDES[item.id])
+	# Prefer the original icon sheet art (sanitized like the extractor:
+	# non-alphanumeric runs -> single underscore).
+	var extracted_name = ""
+	var last_was_underscore = true
+	for character in item.display_name:
+		if (character >= "a" and character <= "z") or (character >= "A" and character <= "Z") or (character >= "0" and character <= "9"):
+			extracted_name += character
+			last_was_underscore = false
+		elif not last_was_underscore:
+			extracted_name += "_"
+			last_was_underscore = true
+	extracted_name = extracted_name.trim_suffix("_")
+	# Case-insensitive match (labels capitalize differently than item names).
+	if _extracted_icons.is_empty():
+		for file_name in DirAccess.get_files_at(EXTRACTED_ICON_ROOT):
+			if file_name.ends_with(".png"):
+				_extracted_icons[file_name.to_lower()] = file_name
+	var extracted_file = _extracted_icons.get((extracted_name + ".png").to_lower(), "")
+	if extracted_file != "":
+		return load("%s/%s" % [EXTRACTED_ICON_ROOT, extracted_file])
 	var icon_name = item.display_name.replace(" ", "_").replace("'", "")
 	if icon_name == "":
 		return null

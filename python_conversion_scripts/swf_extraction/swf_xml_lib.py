@@ -14,25 +14,37 @@ from swf_models import (  # noqa: E402,F401
     STEAM_SWF_XML, WEB_SWF_XML,
 )
 
-MATRIX_RE = re.compile(
-    r'<matrix type="MATRIX"[^>]*?'
-    r'(?:rotateSkew0="(?P<r0>-?[\d.E-]+)")?[^>]*?'
-    r'(?:rotateSkew1="(?P<r1>-?[\d.E-]+)")?[^>]*?'
-    r'(?:scaleX="(?P<sx>-?[\d.E-]+)")?[^>]*?'
-    r'(?:scaleY="(?P<sy>-?[\d.E-]+)")?[^>]*?'
-    r'translateX="(?P<tx>-?\d+)" translateY="(?P<ty>-?\d+)"'
-)
+# NOTE: a single regex with optional named groups silently matched them all
+# empty (translate anchors the match on its own) and dropped every scale/
+# rotation - parse the tag's attributes individually instead.
+MATRIX_TAG_RE = re.compile(r'<matrix type="MATRIX"[^>]*>')
+_MATRIX_ATTR_RES = {
+    name: re.compile(r'%s="(-?[\d.eE+-]+)"' % name)
+    for name in ("scaleX", "scaleY", "rotateSkew0", "rotateSkew1", "translateX", "translateY")
+}
 
 IDENTITY = (1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 
 
-def matrix_from_match(mm) -> tuple:
-    if mm is None:
+def _matrix_attr(tag: str, name: str, default: float) -> float:
+    m = _MATRIX_ATTR_RES[name].search(tag)
+    return float(m.group(1)) if m else default
+
+
+def find_matrix(text: str) -> tuple:
+    """Parses the first <matrix .../> in text -> (a, b, c, d, tx, ty)
+    with translations in twips. Missing attributes mean identity/zero."""
+    tag_match = MATRIX_TAG_RE.search(text)
+    if tag_match is None:
         return IDENTITY
+    tag = tag_match.group(0)
     return (
-        float(mm.group("sx") or 1.0), float(mm.group("r0") or 0.0),
-        float(mm.group("r1") or 0.0), float(mm.group("sy") or 1.0),
-        float(mm.group("tx")), float(mm.group("ty")),
+        _matrix_attr(tag, "scaleX", 1.0),
+        _matrix_attr(tag, "rotateSkew0", 0.0),
+        _matrix_attr(tag, "rotateSkew1", 0.0),
+        _matrix_attr(tag, "scaleY", 1.0),
+        _matrix_attr(tag, "translateX", 0.0),
+        _matrix_attr(tag, "translateY", 0.0),
     )
 
 
@@ -68,7 +80,7 @@ def parse_swf_xml(path):
             body,
             re.S,
         ):
-            children.append((int(pm.group(1)), matrix_from_match(MATRIX_RE.search(pm.group(2)))))
+            children.append((int(pm.group(1)), find_matrix(pm.group(2))))
         sprite_children[sid] = children
     export_name_to_id = {}
     for m in re.finditer(
@@ -162,13 +174,13 @@ def snapshot_timeline(xml: str, sprite_id: int, wanted_frames: set[int]):
             continue
         cid = re.search(r'characterId="(\d+)"', attrs)
         name = re.search(r'name="([^"]*)"', attrs)
-        mm = MATRIX_RE.search(body[t.end():t.end() + 1200])
         entry = state.get(depth, {})
         if cid:
             entry["cid"] = int(cid.group(1))
         if name:
             entry["name"] = name.group(1)
-        if mm:
-            entry["mat"] = matrix_from_match(mm)
+        window = body[t.end():t.end() + 1200]
+        if MATRIX_TAG_RE.search(window):
+            entry["mat"] = find_matrix(window)
         state[depth] = entry
     return snaps, labels

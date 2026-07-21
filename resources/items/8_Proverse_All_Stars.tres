@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cgj38ivm21mdg"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Proverse_All_Stars.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qrm70"]
 [ext_resource type="Texture2D" uid="uid://dwty0kv7k3jcl" path="res://assets/item_slot_icons/OTHER/Proverse_All_Stars.png" id="2_qwoj3"]
 [ext_resource type="Texture2D" uid="uid://bttaifonhfjt7" path="res://resources/sprites/M_FOOT_JEANS.png" id="3_oo6ec"]
@@ -9,7 +10,7 @@ script = ExtResource("1_qrm70")
 id = 8
 looks = "JEANS"
 sprite_image = ExtResource("3_oo6ec")
-slot_image = ExtResource("2_qwoj3")
+slot_image = ExtResource("icon_slot")
 name = "Proverse All Stars"
 display_name = "Proverse All Stars"
 internal_name = "Converse All Stars"

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bvwj1267drohm"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Hope_s_Strength.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_8knji"]
 [ext_resource type="Texture2D" uid="uid://kntopqq0ysvv" path="res://assets/item_slot_icons/WEAPONS/Hopes_Strength.png" id="2_l3eom"]
 [ext_resource type="Texture2D" uid="uid://drvlvuvnfrcxr" path="res://resources/sprites/M_LEG2_TAT.png" id="3_qaoii"]
@@ -9,7 +10,7 @@ script = ExtResource("1_8knji")
 id = 329
 looks = "TAT"
 sprite_image = ExtResource("3_qaoii")
-slot_image = ExtResource("2_l3eom")
+slot_image = ExtResource("icon_slot")
 name = "Hope's Strength"
 display_name = "Hope's Strength"
 internal_name = "Hope's Strength"

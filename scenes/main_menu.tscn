@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://die6qi0mml08m"]
 
-[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/start_background.png" id="2_bg"]
+[ext_resource type="Script" uid="uid://spt23hpant17" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="Texture2D" uid="uid://be351g307gwtg" path="res://assets/ui/menu/start_background.png" id="2_bg"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=1116259692]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_menu")
 
-[node name="BackgroundFill" type="TextureRect" parent="."]
+[node name="BackgroundFill" type="TextureRect" parent="." unique_id=2076182326]
 z_index = -1
 layout_mode = 1
 anchors_preset = 15
@@ -24,7 +24,7 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Layout" type="VBoxContainer" parent="."]
+[node name="Layout" type="VBoxContainer" parent="." unique_id=452309352]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

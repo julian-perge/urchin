@@ -63,6 +63,15 @@ var _overlays: Dictionary = {}  # slot -> Control (bars/name/hover, unmirrored)
 var _health_bars: Dictionary = {}
 var _health_values: Dictionary = {}
 var _focus_bars: Dictionary = {}
+# Health as DISPLAYED: the runner pre-applies a whole half-turn's damage
+# mechanically, so bars must only move when each hit lands visually
+# (_show_move_result), then snap to the true values at half-turn end.
+var _display_hp: Dictionary = {}
+# krinBuff STUN running total per slot, last seen by _update_stun_visual - the
+# original re-triggers the stun-in animation on ANY increase and the
+# outofstun wake-up on ANY decrease (see DECODED_ALGORITHMS.md), so this has
+# to be tracked across calls rather than compared against a fixed threshold.
+var _last_stun: Dictionary = {}
 var _rings: Dictionary = {}  # slot -> ring Control (hover indicator)
 var _stance_rows: Dictionary = {}  # party_id -> Array[Button]
 var _selected_move: Dictionary = {}
@@ -92,6 +101,11 @@ func _ready():
 		ZoneManager.pending_battle = {}
 
 
+# Combat debug log -> user://logs/battle.log (see LogManagerAuto).
+func _log(message: String) -> void:
+	LogManagerAuto.log_to("battle", message)
+
+
 func start_battle(info: Dictionary) -> void:
 	battle_info = info
 	battle_manager = BattleManager.new()
@@ -100,11 +114,18 @@ func start_battle(info: Dictionary) -> void:
 	if battle == null:
 		push_warning("battle_scene: no battle %s" % info.get("battle_id"))
 		return
+	_log("=== battle %s start: %s ===" % [info.get("battle_id"), str(info)])
 	var save = GameData.current_save
 	units = BattleSetup.build_units(
 		battle, save, UnitManagerAuto.units_by_id, save.difficulty,
 		int(info.get("train_cap", BattleSetup.DEFAULT_TRAIN_CAP))
 	)
+	for slot in units:
+		var unit: CombatUnit = units[slot]
+		_log("unit slot=%d name=%s lvl=%d team=%d hp=%d/%d focus=%d" % [
+			slot, unit.player_name, unit.plevel, unit.team_side,
+			int(unit.life_n), int(unit.life_u), int(unit.focus_n),
+		])
 	runner = BattleRunner.new()
 	runner.setup(
 		units, battle, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id,
@@ -185,6 +206,8 @@ func _spawn_visuals() -> void:
 # Bars/name/hover live in an UNMIRRORED overlay at the slot position -
 # parenting them to a mirrored visual flipped their offsets on team 2.
 func _add_unit_overlay(slot: int, unit: CombatUnit, visual: CharacterVisual) -> void:
+	_display_hp[slot] = unit.life_n
+	_last_stun[slot] = unit.stun
 	var overlay = Control.new()
 	overlay.position = visual.position
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -560,6 +583,7 @@ func _battle_loop() -> void:
 		if runner.is_player_turn():
 			_player_action_pending = true
 			turn_label.text = "Your move"
+			_log("half-turn %d: waiting for player" % runner.turn_count)
 			_pass_ring.queue_redraw()
 			while _player_action_pending:
 				if not is_inside_tree():
@@ -567,18 +591,25 @@ func _battle_loop() -> void:
 				await get_tree().process_frame
 		else:
 			turn_label.text = "Enemy turn" if runner.team_move_now == 2 else "Ally turn"
+			_log("half-turn %d: AI side %d acts" % [runner.turn_count, runner.team_move_now])
 			await _pause(0.4)
 		if not is_inside_tree() or _finished:
 			return
 		_pass_ring.queue_redraw()
 		var action = _selected_move.duplicate()
 		_selected_move = {}
+		if not action.is_empty():
+			_log("player action: %s" % str(action))
 		_close_radial_menu()
 		var events = runner.advance_half_turn(action)
+		_log("advance_half_turn -> %d events" % events.size())
+		for event in events:
+			_log("  event: %s" % JSON.stringify(event))
 		await _play_events(events)
 		if not is_inside_tree() or _finished:
 			return
 		_refresh_bars()
+	_log("battle over: outcome=%d turns=%d" % [runner.win_condition, runner.turn_count])
 	_finish_battle()
 
 
@@ -626,7 +657,9 @@ func _play_events(events: Array) -> void:
 				AudioManagerAuto.play_battle_music(true)
 			"battle_ended":
 				pass
-		_refresh_bars()
+		# Mid-batch: redraw from DISPLAYED hp only - snapping here would
+		# reveal damage from hits that haven't animated yet.
+		_refresh_bars(false)
 
 
 func _play_move_event(event: Dictionary) -> void:
@@ -634,30 +667,139 @@ func _play_move_event(event: Dictionary) -> void:
 	var target_slot = int(event["target_slot"])
 	var move: Ability = MoveManagerAuto.get_move(int(event["move_id"]))
 	var caster_visual: CharacterVisual = _visuals.get(caster_slot)
+	# Only Melee moves run and swing; the original plays "cast" for both
+	# Missile and Shock (param 12 is the projectile clip for Missiles, and
+	# unused for Shock) - see DECODED_ALGORITHMS.md.
+	if caster_visual != null and move != null and move.attack_animation_type == "Melee":
+		# The original order: run to the target, swing, damage lands at the
+		# blow, THEN run back. Impact effects hook attack_connected.
+		var start_ms = Time.get_ticks_msec()
+		var on_impact = func():
+			_log("melee impact: caster=%d move=%s +%dms" % [
+				caster_slot, move.display_name, Time.get_ticks_msec() - start_ms,
+			])
+			AudioManagerAuto.play_effect(move.sound_effect_name)
+			_show_move_result(event, target_slot)
+		caster_visual.attack_connected.connect(on_impact, CONNECT_ONE_SHOT)
+		_log("melee start: caster=%d target=%d move=%s label=%s" % [
+			caster_slot, target_slot, move.display_name, move.animation_label,
+		])
+		caster_visual.play_melee(_melee_offset(caster_slot, target_slot), move.animation_label)
+		if animation_speed > 0.0:
+			await caster_visual.melee_finished
+			if not is_inside_tree():
+				return
+			_log("melee finished: caster=%d +%dms" % [caster_slot, Time.get_ticks_msec() - start_ms])
+		# Interrupted sequence (or instant mode, which never runs _process):
+		# the blow never fired - land the result anyway.
+		if caster_visual.attack_connected.is_connected(on_impact):
+			caster_visual.attack_connected.disconnect(on_impact)
+			_log("melee impact flushed late (interrupted/instant): caster=%d" % caster_slot)
+			on_impact.call()
+		await _pause(0.15)
+		return
 	if caster_visual != null and move != null:
-		if move.attack_animation_type == "Melee":
-			caster_visual.set_state(CharacterVisual.State.MELEE)
-		else:
-			caster_visual.set_state(CharacterVisual.State.CAST)
+		_log("cast start: caster=%d target=%d move=%s type=%s" % [
+			caster_slot, target_slot, move.display_name, move.attack_animation_type,
+		])
+		caster_visual.set_state(CharacterVisual.State.CAST)
+		# Approximates the original's colortobe glow tint (not decoded - see
+		# DECODED_ALGORITHMS.md) with the move's element color; set_state()
+		# resets modulate back to white when the cast label finishes.
+		caster_visual.modulate = _move_color(move).lerp(Color.WHITE, 0.4)
+		if move.attack_animation_type == "Shock":
+			# Shock: sound, the BOOM clip, and impact (BAMBAMBAM) all fire in
+			# the same tick as gotoAndPlay("cast") - the doll's cast animation
+			# plays out cosmetically but the hit lands immediately, no wait.
+			AudioManagerAuto.play_effect(move.sound_effect_name)
+			_show_move_result(event, target_slot)
+			await _pause(0.35)
+			return
+		if move.attack_animation_type == "Missile":
+			# Missile: sfx_cast plays at cast start, then a krinBoltMake bolt
+			# flies to the target - impact lands on ARRIVAL, not on a fixed
+			# cast-clip time (the bolt's own accel/arrival model decides it).
 			AudioManagerAuto.play_effect("sfx_cast")
+			await _fire_projectile(caster_slot, target_slot, move)
+			if not is_inside_tree():
+				return
+			AudioManagerAuto.play_effect(move.sound_effect_name)
+			_show_move_result(event, target_slot)
+			await _pause(0.2)
+			return
+		AudioManagerAuto.play_effect("sfx_cast")
 		await _pause(0.25)
 	if move != null:
 		AudioManagerAuto.play_effect(move.sound_effect_name)
+	_show_move_result(event, target_slot)
+	await _pause(0.35)
+
+
+# krinBoltMake port: an accelerating bolt (Projectile) that flies from the
+# caster to the target and self-destructs on arrival. Tests run with
+# animation_speed <= 0 - skip the visual flight entirely there (no _process
+# tick would ever advance it).
+func _fire_projectile(caster_slot: int, target_slot: int, move: Ability) -> void:
+	if animation_speed <= 0.0:
+		return
+	var from: Vector2 = SLOT_POSITIONS.get(caster_slot, Vector2(400, 300))
+	var to: Vector2 = SLOT_POSITIONS.get(target_slot, Vector2(400, 300))
+	var bolt := Projectile.new()
+	bolt.color = _move_color(move)
+	battlefield.add_child(bolt)
+	bolt.start(from, to)
+	await bolt.arrived
+
+
+func _show_move_result(event: Dictionary, target_slot: int) -> void:
 	var result: Dictionary = event.get("result", {})
 	var target_visual: CharacterVisual = _visuals.get(target_slot)
 	var target_unit: CombatUnit = units.get(target_slot)
+	var move: Ability = MoveManagerAuto.get_move(int(event.get("move_id", 0)))
+	if target_unit != null:
+		_log("result shown: %s target=%d (%s) hp=%d/%d" % [
+			JSON.stringify(result), target_slot, target_unit.player_name,
+			int(target_unit.life_n), int(target_unit.life_u),
+		])
 	match result.get("type", ""):
 		"damage":
-			_float_text(target_slot, str(int(result.get("amount", 0))), Color.RED if result.get("did_crit") else Color.WHITE)
+			# KrinNumberShow: numbers colored by the move's ELEMENT; crits
+			# play the bigger "critical" variant of the same color.
+			var color = Color.WHITE
+			if move != null:
+				var element_index = CombatUnit.ELEMENT_ORDER.find(move.damage_element_type)
+				if element_index != -1:
+					color = MenuTheme.ELEMENT_COLORS[element_index]
+			_float_text(target_slot, str(int(result.get("amount", 0))), color, result.get("did_crit", false))
+			# The bar drops exactly when the hit lands on screen.
+			_display_hp[target_slot] = maxf(
+				_display_hp.get(target_slot, 0.0) - float(result.get("amount", 0)), 0.0
+			)
 			if target_visual != null and not result.get("target_died", false):
 				target_visual.set_state(CharacterVisual.State.HIT)
 			if target_unit != null:
 				AudioManagerAuto.voice(target_unit.voice_hit)
 		"heal":
-			_float_text(target_slot, "+%d" % int(result.get("amount", 0)), Color.GREEN)
+			_float_text(target_slot, "+%d" % int(result.get("amount", 0)), MenuTheme.HEAL_COLOR)
+			if target_unit != null:
+				_display_hp[target_slot] = minf(
+					_display_hp.get(target_slot, 0.0) + float(result.get("amount", 0)),
+					target_unit.life_u
+				)
 		"focus":
 			_float_text(target_slot, "+%d FOCUS" % int(result.get("amount", 0)), Color.SKY_BLUE)
-	await _pause(0.35)
+	_refresh_bars(false)
+
+
+# Run-to-target offset for a melee strike: stop just short of the target,
+# on the caster's side of it.
+func _melee_offset(caster_slot: int, target_slot: int) -> Vector2:
+	var from: Vector2 = SLOT_POSITIONS.get(caster_slot, Vector2(400, 300))
+	var to: Vector2 = SLOT_POSITIONS.get(target_slot, Vector2(400, 300))
+	var offset = to - from
+	if offset.length() <= 60.0:
+		return Vector2.ZERO
+	return offset - offset.normalized() * 55.0
 
 
 func _play_death(slot: int) -> void:
@@ -684,27 +826,46 @@ func _speaker_name(slot: int) -> String:
 	return unit.player_name if unit != null else "???"
 
 
-func _refresh_bars() -> void:
+# snap = true syncs the displayed hp to the true values (half-turn
+# boundaries - covers DOTs, life costs, shields); snap = false only redraws
+# from the displayed values (mid-batch, so unplayed hits stay hidden).
+func _refresh_bars(snap: bool = true) -> void:
 	for slot in _visuals:
 		var unit: CombatUnit = units.get(slot)
 		if unit == null:
 			continue
+		if snap and int(_display_hp.get(slot, 0)) != int(unit.life_n):
+			_log("bar snap: slot=%d (%s) hp %d -> %d" % [
+				slot, unit.player_name, int(_display_hp.get(slot, 0)), int(unit.life_n),
+			])
+		if snap:
+			_display_hp[slot] = unit.life_n
 		var health: ProgressBar = _health_bars[slot]
 		health.max_value = unit.life_u
-		health.value = unit.life_n
-		_health_values[slot].text = str(int(unit.life_n))
+		health.value = _display_hp.get(slot, unit.life_n)
+		_health_values[slot].text = str(int(_display_hp.get(slot, unit.life_n)))
 		var focus: ProgressBar = _focus_bars[slot]
 		focus.max_value = max(unit.focus_u, 1)
 		focus.value = unit.focus_n
-		var visual: CharacterVisual = _visuals[slot]
-		# Stun state holds while the unit is stunned (and alive).
-		if unit.active and unit.stun != 0 and visual.is_idle():
-			visual.set_state(CharacterVisual.State.STUN)
-		elif unit.active and unit.stun == 0 and visual._state == CharacterVisual.State.STUN:
-			visual.set_state(CharacterVisual.State.IDLE)
+		_update_stun_visual(slot, unit, _visuals[slot])
 
 
-func _float_text(slot: int, text: String, color: Color) -> void:
+# krinBuff STUN is a running total across active stun-inflicting buffs -
+# replay "stun" on any increase (including stacking while already stunned),
+# "outofstun" on any decrease (even a partial one that leaves the unit still
+# stunned by a shorter-lived buff); both labels flow back to idle/stun2 on
+# their own once triggered (see DECODED_ALGORITHMS.md).
+func _update_stun_visual(slot: int, unit: CombatUnit, visual: CharacterVisual) -> void:
+	var current = unit.stun if unit.active else 0.0
+	var previous = _last_stun.get(slot, 0.0)
+	if current > previous:
+		visual.enter_stun()
+	elif current < previous:
+		visual.exit_stun()
+	_last_stun[slot] = current
+
+
+func _float_text(slot: int, text: String, color: Color, critical: bool = false) -> void:
 	var visual: CharacterVisual = _visuals.get(slot)
 	if visual == null:
 		return
@@ -713,6 +874,10 @@ func _float_text(slot: int, text: String, color: Color) -> void:
 	label.modulate = color
 	label.position = visual.position + Vector2(-15, -72)
 	label.scale = Vector2.ONE
+	if critical:
+		label.add_theme_font_size_override("font_size", 24)
+		label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
+		label.add_theme_constant_override("outline_size", 4)
 	battlefield.add_child(label)
 	if animation_speed <= 0.0:
 		label.queue_free()

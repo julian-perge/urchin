@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c81tthfp6jl6l"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Guardian_s_Cage.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_miaiq"]
 [ext_resource type="Texture2D" uid="uid://5ur2knrbp68k" path="res://assets/item_slot_icons/ARMOR/Guardians_Cage.png" id="2_vrxya"]
 [ext_resource type="Texture2D" uid="uid://v38a6spimf0h" path="res://resources/sprites/M_CHEST_ROBOT2.png" id="3_dmtto"]
@@ -9,7 +10,7 @@ script = ExtResource("1_miaiq")
 id = 705
 looks = "ROBOT2"
 sprite_image = ExtResource("3_dmtto")
-slot_image = ExtResource("2_vrxya")
+slot_image = ExtResource("icon_slot")
 name = "Guardian's Cage"
 display_name = "Guardian's Cage"
 internal_name = "Drop ROBOT2 Chest"

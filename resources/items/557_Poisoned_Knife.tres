@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bvmvjofke6gfv"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Poisoned_Knife.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ew8jn"]
 [ext_resource type="Texture2D" uid="uid://bpfjhw2vlhfsx" path="res://assets/item_slot_icons/WEAPONS/Poisoned_Knife.png" id="2_1s4jp"]
 [ext_resource type="Texture2D" uid="uid://cwociwd3fqon2" path="res://resources/sprites/M_WEAPON_FELKNIFE2.png" id="3_503pm"]
@@ -9,7 +10,7 @@ script = ExtResource("1_ew8jn")
 id = 557
 looks = "FELKNIFE2"
 sprite_image = ExtResource("3_503pm")
-slot_image = ExtResource("2_1s4jp")
+slot_image = ExtResource("icon_slot")
 name = "Poisoned Knife"
 display_name = "Poisoned Knife"
 internal_name = "Green 1"

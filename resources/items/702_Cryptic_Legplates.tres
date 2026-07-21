@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://djbsafk55usji"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Cryptic_Legplates.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_x6td0"]
 [ext_resource type="Texture2D" uid="uid://wjw3n24w24p4" path="res://assets/item_slot_icons/PANTS/Cryptic_Legplates.png" id="2_bdfrm"]
 [ext_resource type="Texture2D" uid="uid://d2msx4wmjru6g" path="res://resources/sprites/M_LEG2_ULTI2.png" id="3_7lm48"]
@@ -9,7 +10,7 @@ script = ExtResource("1_x6td0")
 id = 702
 looks = "ULTI2"
 sprite_image = ExtResource("3_7lm48")
-slot_image = ExtResource("2_bdfrm")
+slot_image = ExtResource("icon_slot")
 name = "Cryptic Legplates"
 display_name = "Cryptic Legplates"
 internal_name = "Drop ULTI2 Legs"

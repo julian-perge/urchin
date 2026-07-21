@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c150o0bg6dxnf"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Conviction.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ela3p"]
 [ext_resource type="Texture2D" uid="uid://bbmvb6yaksyyx" path="res://assets/item_slot_icons/HELMS/Conviction.png" id="2_bewcj"]
 [ext_resource type="Texture2D" uid="uid://dolaxutqkvkdt" path="res://resources/sprites/M_HEAD_BLUENIN.png" id="3_l5hxy"]
@@ -9,7 +10,7 @@ script = ExtResource("1_ela3p")
 id = 669
 looks = "BLUENIN"
 sprite_image = ExtResource("3_l5hxy")
-slot_image = ExtResource("2_bewcj")
+slot_image = ExtResource("icon_slot")
 name = "Conviction"
 display_name = "Conviction"
 internal_name = "Drop BLUE NINJA Head"

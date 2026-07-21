@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b35wdfhd6ieoi"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Furious_Helm.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_22tiy"]
 [ext_resource type="Texture2D" uid="uid://n7frn403rvvy" path="res://assets/item_slot_icons/HELMS/Furious_Helm.png" id="2_u4vwf"]
 [ext_resource type="Texture2D" uid="uid://c5o6flh23q6n1" path="res://resources/sprites/M_HEAD_ULTI.png" id="3_bvpkf"]
@@ -9,7 +10,7 @@ script = ExtResource("1_22tiy")
 id = 694
 looks = "ULTI"
 sprite_image = ExtResource("3_bvpkf")
-slot_image = ExtResource("2_u4vwf")
+slot_image = ExtResource("icon_slot")
 name = "Furious Helm"
 display_name = "Furious Helm"
 internal_name = "Drop ULTI Head"

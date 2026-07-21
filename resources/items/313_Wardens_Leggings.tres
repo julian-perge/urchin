@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://7a15keggdx73"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Warden_s_Leggings.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_v04ch"]
 [ext_resource type="Texture2D" uid="uid://bwh1rcvrjy47p" path="res://assets/item_slot_icons/OTHER/Wardens_Leggings.png" id="2_woj1u"]
 [ext_resource type="Texture2D" uid="uid://ca5o005dvrbw4" path="res://resources/sprites/M_LEG2_JASON2.png" id="3_72eo6"]
@@ -9,7 +10,7 @@ script = ExtResource("1_v04ch")
 id = 313
 looks = "JASON2"
 sprite_image = ExtResource("3_72eo6")
-slot_image = ExtResource("2_woj1u")
+slot_image = ExtResource("icon_slot")
 name = "Warden's Leggings"
 display_name = "Warden's Leggings"
 internal_name = "Warden's Leggings"

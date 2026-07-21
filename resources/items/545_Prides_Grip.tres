@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d2sxtgsj6in6o"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Pride_s_Grip.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mm3c6"]
 [ext_resource type="Texture2D" uid="uid://cjqnbudnrvrxk" path="res://assets/item_slot_icons/GLOVES/Prides_Grip.png" id="2_0uj7w"]
 [ext_resource type="Texture2D" uid="uid://chm7kti4v8k43" path="res://resources/sprites/M_HAND_SAMURAI2.png" id="3_2fegt"]
@@ -9,7 +10,7 @@ script = ExtResource("1_mm3c6")
 id = 545
 looks = "SAMURAI2"
 sprite_image = ExtResource("3_2fegt")
-slot_image = ExtResource("2_0uj7w")
+slot_image = ExtResource("icon_slot")
 name = "Pride's Grip"
 display_name = "Pride's Grip"
 internal_name = "Drop Samurai Hands"

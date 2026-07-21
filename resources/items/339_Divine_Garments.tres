@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dw403iflrfh4t"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Divine_Garments.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3eii5"]
 [ext_resource type="Texture2D" uid="uid://bactuek1hkq8a" path="res://assets/item_slot_icons/PANTS/Divine_Garments.png" id="2_ye7fn"]
 [ext_resource type="Texture2D" uid="uid://coyip243mvi5w" path="res://resources/sprites/M_LEG2_PRIEST.png" id="3_wexy3"]
@@ -9,7 +10,7 @@ script = ExtResource("1_3eii5")
 id = 339
 looks = "PRIEST"
 sprite_image = ExtResource("3_wexy3")
-slot_image = ExtResource("2_ye7fn")
+slot_image = ExtResource("icon_slot")
 name = "Divine Garments"
 display_name = "Divine Garments"
 internal_name = "Divine Garments"

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d37hnwk38pjeu"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Warden_s_Armor.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wx7ux"]
 [ext_resource type="Texture2D" uid="uid://by0xrqvjg6yip" path="res://assets/item_slot_icons/OTHER/Wardens_Armor.png" id="2_jhl1f"]
 [ext_resource type="Texture2D" uid="uid://efeq0onm7t8l" path="res://resources/sprites/M_CHEST_JASON2.png" id="3_4alue"]
@@ -9,7 +10,7 @@ script = ExtResource("1_wx7ux")
 id = 310
 looks = "JASON2"
 sprite_image = ExtResource("3_4alue")
-slot_image = ExtResource("2_jhl1f")
+slot_image = ExtResource("icon_slot")
 name = "Warden's Armor"
 display_name = "Warden's Armor"
 internal_name = "Warden's Body Armour"

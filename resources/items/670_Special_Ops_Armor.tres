@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://8eq1831sbwv0"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Special_Ops_Armor.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vcrgo"]
 [ext_resource type="Texture2D" uid="uid://c6erc73wjern2" path="res://assets/item_slot_icons/ARMOR/Special_Ops_Armor.png" id="2_syl0i"]
 [ext_resource type="Texture2D" uid="uid://btbfwlxj7eikr" path="res://resources/sprites/M_CHEST_BLUENIN.png" id="3_1h1uf"]
@@ -9,7 +10,7 @@ script = ExtResource("1_vcrgo")
 id = 670
 looks = "BLUENIN"
 sprite_image = ExtResource("3_1h1uf")
-slot_image = ExtResource("2_syl0i")
+slot_image = ExtResource("icon_slot")
 name = "Special Ops Armor"
 display_name = "Special Ops Armor"
 internal_name = "Drop BLUE NINJA Chest"

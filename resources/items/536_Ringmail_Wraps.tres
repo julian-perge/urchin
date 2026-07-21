@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dwt0rtkg0rapr"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Ringmail_Wraps.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_u5s1s"]
 [ext_resource type="Texture2D" uid="uid://cfc4kf60xls48" path="res://assets/item_slot_icons/PANTS/Ringmail_Wraps.png" id="2_6u3md"]
 [ext_resource type="Texture2D" uid="uid://dfapc0v6h3gcr" path="res://resources/sprites/M_LEG2_SAMURAI4.png" id="3_tj0r7"]
@@ -9,7 +10,7 @@ script = ExtResource("1_u5s1s")
 id = 536
 looks = "SAMURAI4"
 sprite_image = ExtResource("3_tj0r7")
-slot_image = ExtResource("2_6u3md")
+slot_image = ExtResource("icon_slot")
 name = "Ringmail Wraps"
 display_name = "Ringmail Wraps"
 internal_name = "Vendor Samurai Legs"

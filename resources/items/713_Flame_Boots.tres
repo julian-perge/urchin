@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c3kushu0irw8r"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Flame_Boots.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_wcst3"]
 [ext_resource type="Texture2D" uid="uid://ba6re1ixbq0yu" path="res://assets/item_slot_icons/SHOES/Flame_Boots.png" id="2_mcqmj"]
 [ext_resource type="Texture2D" uid="uid://lybpcj52voaw" path="res://resources/sprites/M_FOOT_FIRESAM.png" id="3_dr5ag"]
@@ -9,7 +10,7 @@ script = ExtResource("1_wcst3")
 id = 713
 looks = "FIRESAM"
 sprite_image = ExtResource("3_dr5ag")
-slot_image = ExtResource("2_mcqmj")
+slot_image = ExtResource("icon_slot")
 name = "Flame Boots"
 display_name = "Flame Boots"
 internal_name = "Drop FIRESAM Feet"

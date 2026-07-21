@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b3xuc6oqsrhqw"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Precision_Grips.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g3x4f"]
 [ext_resource type="Texture2D" uid="uid://d3r7x0oa6yiah" path="res://assets/item_slot_icons/GLOVES/Precision_Grips.png" id="2_nvata"]
 [ext_resource type="Texture2D" uid="uid://vkir5kitsteh" path="res://resources/sprites/M_HAND_ZPCI.png" id="3_0uhxc"]
@@ -9,7 +10,7 @@ script = ExtResource("1_g3x4f")
 id = 318
 looks = "ZPCI"
 sprite_image = ExtResource("3_0uhxc")
-slot_image = ExtResource("2_nvata")
+slot_image = ExtResource("icon_slot")
 name = "Precision Grips"
 display_name = "Precision Grips"
 internal_name = "Chosen Gloves"

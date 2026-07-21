@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bh28wfy2087uv"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Surgery_Blade.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g4su5"]
 [ext_resource type="Texture2D" uid="uid://of74rq6kdwl4" path="res://assets/item_slot_icons/WEAPONS/Surgery_Blade.png" id="2_fdcse"]
 [ext_resource type="Texture2D" uid="uid://c8dof0tjfi1ax" path="res://resources/sprites/M_WEAPON_DOCKNIFE.png" id="3_ken1d"]
@@ -9,7 +10,7 @@ script = ExtResource("1_g4su5")
 id = 501
 looks = "DOCKNIFE"
 sprite_image = ExtResource("3_ken1d")
-slot_image = ExtResource("2_fdcse")
+slot_image = ExtResource("icon_slot")
 name = "Surgery Blade"
 display_name = "Surgery Blade"
 internal_name = "Surgery Blade"

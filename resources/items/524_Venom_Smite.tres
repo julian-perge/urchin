@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://diddifv0yc3i2"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Venom_Smite.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vhne8"]
 [ext_resource type="Texture2D" uid="uid://bq5ved7ylfdr" path="res://assets/item_slot_icons/WEAPONS/Venom_Smite.png" id="2_2nw7r"]
 [ext_resource type="Texture2D" uid="uid://cgebv0eaqkln7" path="res://resources/sprites/M_WEAPON_BROAD.png" id="3_aahyr"]
@@ -9,7 +10,7 @@ script = ExtResource("1_vhne8")
 id = 524
 looks = "BROAD"
 sprite_image = ExtResource("3_aahyr")
-slot_image = ExtResource("2_2nw7r")
+slot_image = ExtResource("icon_slot")
 name = "Venom Smite"
 display_name = "Venom Smite"
 internal_name = "Venom Smite"

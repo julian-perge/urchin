@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://11bqlvm1t0ta"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Velocious_Armor.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3780h"]
 [ext_resource type="Texture2D" uid="uid://c1xk68prbj1c" path="res://assets/item_slot_icons/ARMOR/Velocious_Armor.png" id="2_vuvut"]
 [ext_resource type="Texture2D" uid="uid://dm3rg87igycib" path="res://resources/sprites/M_CHEST_ULTI3.png" id="3_yphu1"]
@@ -9,7 +10,7 @@ script = ExtResource("1_3780h")
 id = 690
 looks = "ULTI3"
 sprite_image = ExtResource("3_yphu1")
-slot_image = ExtResource("2_vuvut")
+slot_image = ExtResource("icon_slot")
 name = "Velocious Armor"
 display_name = "Velocious Armor"
 internal_name = "Drop ULTI3 Chest"

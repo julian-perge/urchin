@@ -30,6 +30,11 @@ ICON_HALF = 15.5
 # Shape 1913 is the green editor-backing square behind every icon frame -
 # never visible in game (the slot art sits behind the icon instead).
 SKIP_CIDS = {1913}
+# Items whose icon-clip frame does not match the live game (verified by
+# side-by-side playtest) keep a hand-picked icon instead.
+ICON_OVERRIDES = {
+    11: "res://assets/item_slot_icons/OTHER/White_T_Shirt.png",  # White T-shirt
+}
 
 
 def sanitize(label: str) -> str:
@@ -111,37 +116,46 @@ def main():
     # --- repoint the item .tres slot_image at the new icons -----------------
     # Labels and item names disagree on case/punctuation sometimes ("White
     # T-Shirt" vs "White T-shirt") - match on the sanitized lowercase form.
+    # Never touches other Texture2D ext_resources (sprite_image); adds the
+    # icon as its own ext_resource with a dedicated id.
     by_key = {sanitize(label).lower(): file_name for label, file_name in written.items()}
     patched, missing = 0, []
     for tres in ITEMS_DIR.glob("*.tres"):
+        item_id = int(tres.name.split("_", 1)[0])
         text = tres.read_text()
         name_match = re.search(r'^name = "(.*)"$', text, re.M)
         if name_match is None:
             continue
-        icon = by_key.get(sanitize(name_match.group(1)).lower())
-        if icon is None:
-            missing.append(name_match.group(1))
-            continue
-        new_path = "res://assets/ui/items/%s" % icon
-        if 'path="%s"' % new_path in text:
+        if item_id in ICON_OVERRIDES:
+            new_path = ICON_OVERRIDES[item_id]
+        else:
+            icon = by_key.get(sanitize(name_match.group(1)).lower())
+            if icon is None:
+                missing.append(name_match.group(1))
+                continue
+            new_path = "res://assets/ui/items/%s" % icon
+        if 'path="%s"' % new_path in text and 'slot_image = ExtResource("icon_slot")' in text:
             patched += 1
             continue
-        if re.search(r'^\[ext_resource type="Texture2D"', text, re.M):
+        # Drop any previous icon ext_resource/assignment of ours.
+        text = re.sub(r'^\[ext_resource type="Texture2D" path="[^"]*" id="(?:2_icon|icon_slot)"\]\n', "", text, flags=re.M)
+        text = re.sub(r'^slot_image = ExtResource\("(?:2_icon|icon_slot)"\)\n', "", text, flags=re.M)
+        # Insert the icon ext_resource before the Script one (always present).
+        text = re.sub(
+            r'^(\[ext_resource type="Script")',
+            '[ext_resource type="Texture2D" path="%s" id="icon_slot"]\n\\1' % new_path,
+            text, count=1, flags=re.M,
+        )
+        # Point slot_image at it (replace an existing assignment, else add
+        # right after the script line in the [resource] block).
+        if re.search(r"^slot_image = ", text, re.M):
+            text = re.sub(r'^slot_image = .*$', 'slot_image = ExtResource("icon_slot")', text, count=1, flags=re.M)
+        else:
             text = re.sub(
-                r'^\[ext_resource type="Texture2D"[^\n]*\]$',
-                '[ext_resource type="Texture2D" path="%s" id="2_icon"]' % new_path,
+                r'^(script = ExtResource\("[^"]*"\))$',
+                '\\1\nslot_image = ExtResource("icon_slot")',
                 text, count=1, flags=re.M,
             )
-            text = re.sub(r'^slot_image = ExtResource\("[^"]*"\)$',
-                          'slot_image = ExtResource("2_icon")', text, flags=re.M)
-        else:
-            text = text.replace(
-                '[ext_resource type="Script"',
-                '[ext_resource type="Texture2D" path="%s" id="2_icon"]\n[ext_resource type="Script"' % new_path,
-                1,
-            )
-            text = re.sub(r'^(script = ExtResource\("[^"]*"\))$',
-                          '\\1\nslot_image = ExtResource("2_icon")', text, count=1, flags=re.M)
         # load_steps count may now be off by one - Godot tolerates and fixes
         # it on the next editor save.
         tres.write_text(text)

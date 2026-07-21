@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bslafeigwcl3l"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Guard_s_Uniform.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ocjhi"]
 [ext_resource type="Texture2D" uid="uid://thyq8nfkfr82" path="res://assets/item_slot_icons/OTHER/Guards_Uniform.png" id="2_7e8k5"]
 [ext_resource type="Texture2D" uid="uid://cq7i58qsssmo8" path="res://resources/sprites/M_CHEST_JASON.png" id="3_vmotk"]
@@ -9,7 +10,7 @@ script = ExtResource("1_ocjhi")
 id = 303
 looks = "JASON"
 sprite_image = ExtResource("3_vmotk")
-slot_image = ExtResource("2_7e8k5")
+slot_image = ExtResource("icon_slot")
 name = "Guard's Uniform"
 display_name = "Guard's Uniform"
 internal_name = "Guard's Uniform"

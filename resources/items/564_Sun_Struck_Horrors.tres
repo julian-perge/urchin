@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dsdg203xhh2xk"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Sun_Struck_Horrors.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3d4qm"]
 [ext_resource type="Texture2D" uid="uid://b2sovx5v1cckt" path="res://assets/item_slot_icons/WEAPONS/Sun_Struck_Horrors.png" id="2_3pudj"]
 [ext_resource type="Texture2D" uid="uid://e3dljey3ggmg" path="res://resources/sprites/M_WEAPON_MOON.png" id="3_dyoxg"]
@@ -9,7 +10,7 @@ script = ExtResource("1_3d4qm")
 id = 564
 looks = "MOON"
 sprite_image = ExtResource("3_dyoxg")
-slot_image = ExtResource("2_3pudj")
+slot_image = ExtResource("icon_slot")
 name = "Sun Struck Horrors"
 display_name = "Sun Struck Horrors"
 internal_name = "Sun Struck Horrors"

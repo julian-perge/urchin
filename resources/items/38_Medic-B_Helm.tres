@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cikpmrmc63ra0"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Medic_B_Helm.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_h2sot"]
 [ext_resource type="Texture2D" uid="uid://cop0gyr66x6jr" path="res://assets/item_slot_icons/WEAPONS/Medic-B_Helm.png" id="2_8m434"]
 [ext_resource type="Texture2D" uid="uid://l5js4vlnr561" path="res://resources/sprites/M_HEAD_ZPCI3.png" id="3_bu73y"]
@@ -9,7 +10,7 @@ script = ExtResource("1_h2sot")
 id = 38
 looks = "ZPCI3"
 sprite_image = ExtResource("3_bu73y")
-slot_image = ExtResource("2_8m434")
+slot_image = ExtResource("icon_slot")
 name = "Medic-B Helm"
 display_name = "Medic-B Helm"
 internal_name = "Medic Head"

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ejo8rtgah07f"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Azure_Leggings.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_bx7id"]
 [ext_resource type="Texture2D" uid="uid://b8v55rttgf3yh" path="res://assets/item_slot_icons/PANTS/Azure_Leggings.png" id="2_45n0h"]
 [ext_resource type="Texture2D" uid="uid://t5y0syxe2mmg" path="res://resources/sprites/M_LEG2_BLUENIN.png" id="3_652dp"]
@@ -9,7 +10,7 @@ script = ExtResource("1_bx7id")
 id = 672
 looks = "BLUENIN"
 sprite_image = ExtResource("3_652dp")
-slot_image = ExtResource("2_45n0h")
+slot_image = ExtResource("icon_slot")
 name = "Azure Leggings"
 display_name = "Azure Leggings"
 internal_name = "Drop BLUE NINJA Legs"

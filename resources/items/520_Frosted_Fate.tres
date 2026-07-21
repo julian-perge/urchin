@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://12oi4ge7c424"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Frosted_Fate.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_nxtpq"]
 [ext_resource type="Texture2D" uid="uid://k1ljvvrt8244" path="res://assets/item_slot_icons/WEAPONS/Frosted_Fate.png" id="2_n5ich"]
 [ext_resource type="Texture2D" uid="uid://cyi06txm4hlh1" path="res://resources/sprites/M_WEAPON_FROSTAXE.png" id="3_ijpyx"]
@@ -9,7 +10,7 @@ script = ExtResource("1_nxtpq")
 id = 520
 looks = "FROSTAXE"
 sprite_image = ExtResource("3_ijpyx")
-slot_image = ExtResource("2_n5ich")
+slot_image = ExtResource("icon_slot")
 name = "Frosted Fate"
 display_name = "Frosted Fate"
 internal_name = "Frosted Fate"

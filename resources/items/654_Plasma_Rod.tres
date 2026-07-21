@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cp82xpu2depra"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Plasma_Rod.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_1y6i8"]
 [ext_resource type="Texture2D" uid="uid://5mftq28t6vn2" path="res://assets/item_slot_icons/WEAPONS/Plasma_Rod.png" id="2_klfxk"]
 [ext_resource type="Texture2D" uid="uid://bf3d406yy8c8c" path="res://resources/sprites/M_WEAPON_TASER3.png" id="3_7ypkt"]
@@ -9,7 +10,7 @@ script = ExtResource("1_1y6i8")
 id = 654
 looks = "TASER3"
 sprite_image = ExtResource("3_7ypkt")
-slot_image = ExtResource("2_klfxk")
+slot_image = ExtResource("icon_slot")
 name = "Plasma Rod"
 display_name = "Plasma Rod"
 internal_name = "SPELL BLADE"

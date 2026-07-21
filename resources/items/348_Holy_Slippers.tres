@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bgqotc3i4xhh5"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Holy_Slippers.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mcki4"]
 [ext_resource type="Texture2D" uid="uid://bhpast4jq5pqc" path="res://assets/item_slot_icons/SHOES/Holy_Slippers.png" id="2_gcqul"]
 [ext_resource type="Texture2D" uid="uid://huhugg8ppn66" path="res://resources/sprites/M_FOOT_XADER2.png" id="3_jvljs"]
@@ -9,7 +10,7 @@ script = ExtResource("1_mcki4")
 id = 348
 looks = "XADER2"
 sprite_image = ExtResource("3_jvljs")
-slot_image = ExtResource("2_gcqul")
+slot_image = ExtResource("icon_slot")
 name = "Holy Slippers"
 display_name = "Holy Slippers"
 internal_name = "Holy Slippers"

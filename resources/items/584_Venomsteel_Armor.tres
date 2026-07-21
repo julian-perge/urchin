@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://1g0lnf2tkhml"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Venomsteel_Armor.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7gb61"]
 [ext_resource type="Texture2D" uid="uid://0xm5prmlvslw" path="res://assets/item_slot_icons/OTHER/Venomsteel_Armor.png" id="2_o32lv"]
 [ext_resource type="Texture2D" uid="uid://donxc7msgdp0e" path="res://resources/sprites/M_CHEST_TUNNELSET1.png" id="3_kqxu4"]
@@ -9,7 +10,7 @@ script = ExtResource("1_7gb61")
 id = 584
 looks = "TUNNELSET1"
 sprite_image = ExtResource("3_kqxu4")
-slot_image = ExtResource("2_o32lv")
+slot_image = ExtResource("icon_slot")
 name = "Venomsteel Armor"
 display_name = "Venomsteel Armor"
 internal_name = "Drop IRONGUARD Chest"

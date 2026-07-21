@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://brcq07hvqgdww"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Frozen_Helm.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_p7sd7"]
 [ext_resource type="Texture2D" uid="uid://cs30kjc657ix2" path="res://assets/item_slot_icons/HELMS/Frozen_Helm.png" id="2_igsyq"]
 [ext_resource type="Texture2D" uid="uid://dhgbrljpib006" path="res://resources/sprites/M_HEAD_FROSTPLATE.png" id="3_owo88"]
@@ -9,7 +10,7 @@ script = ExtResource("1_p7sd7")
 id = 325
 looks = "FROSTPLATE"
 sprite_image = ExtResource("3_owo88")
-slot_image = ExtResource("2_igsyq")
+slot_image = ExtResource("icon_slot")
 name = "Frozen Helm"
 display_name = "Frozen Helm"
 internal_name = "Frozen Helm"

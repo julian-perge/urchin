@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cflf5y3rxopbu"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Corrupted_Leggings.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sdv6u"]
 [ext_resource type="Texture2D" uid="uid://bdcuoh5qo6vah" path="res://assets/item_slot_icons/PANTS/Corrupted_Leggings.png" id="2_yccte"]
 [ext_resource type="Texture2D" uid="uid://bb6a7yln675xd" path="res://resources/sprites/M_LEG2_PURPLENIN.png" id="3_5ey2g"]
@@ -9,7 +10,7 @@ script = ExtResource("1_sdv6u")
 id = 717
 looks = "PURPLENIN"
 sprite_image = ExtResource("3_5ey2g")
-slot_image = ExtResource("2_yccte")
+slot_image = ExtResource("icon_slot")
 name = "Corrupted Leggings"
 display_name = "Corrupted Leggings"
 internal_name = "Drop CORRUPTOR Legs"

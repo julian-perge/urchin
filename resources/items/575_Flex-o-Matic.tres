@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://conxeyo5xrxiu"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Flex_o_Matic.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lr53h"]
 [ext_resource type="Texture2D" uid="uid://be4vym7lkclir" path="res://assets/item_slot_icons/GLOVES/Flex-o-Matic.png" id="2_8jkqo"]
 [ext_resource type="Texture2D" uid="uid://cu30bj1pam3hp" path="res://resources/sprites/M_HAND_TUNTAT.png" id="3_6ec2f"]
@@ -9,7 +10,7 @@ script = ExtResource("1_lr53h")
 id = 575
 looks = "TUNTAT"
 sprite_image = ExtResource("3_6ec2f")
-slot_image = ExtResource("2_8jkqo")
+slot_image = ExtResource("icon_slot")
 name = "Flex-o-Matic"
 display_name = "Flex-o-Matic"
 internal_name = "Drop BLACK OPS Hands"

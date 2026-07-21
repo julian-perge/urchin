@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dhc21ldjeo36v"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Mending_Beacon.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_srlk5"]
 [ext_resource type="Texture2D" uid="uid://drhroue66w3jp" path="res://assets/item_slot_icons/WEAPONS/Mending_Beacon.png" id="2_pijbs"]
 [ext_resource type="Texture2D" uid="uid://dtg1hf1im06nk" path="res://resources/sprites/M_WEAPON_SPELLMACE.png" id="3_3ipmx"]
@@ -9,7 +10,7 @@ script = ExtResource("1_srlk5")
 id = 678
 looks = "SPELLMACE"
 sprite_image = ExtResource("3_3ipmx")
-slot_image = ExtResource("2_pijbs")
+slot_image = ExtResource("icon_slot")
 name = "Mending Beacon"
 display_name = "Mending Beacon"
 internal_name = "MACE"

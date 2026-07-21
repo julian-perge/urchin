@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ch11lyvwd3b8c"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Riot_Gun.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_f73dn"]
 [ext_resource type="Texture2D" uid="uid://dlgog6hp4m6fw" path="res://assets/item_slot_icons/WEAPONS/Riot_Gun.png" id="2_1adqv"]
 [ext_resource type="Texture2D" uid="uid://dja60skhf0cgv" path="res://resources/sprites/M_WEAPON_AK4.png" id="3_dtixw"]
@@ -9,7 +10,7 @@ script = ExtResource("1_f73dn")
 id = 647
 looks = "AK4"
 sprite_image = ExtResource("3_dtixw")
-slot_image = ExtResource("2_1adqv")
+slot_image = ExtResource("icon_slot")
 name = "Riot Gun"
 display_name = "Riot Gun"
 internal_name = "RIOT GUN"

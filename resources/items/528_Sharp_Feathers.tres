@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://1is1v36guiov"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Sharp_Feathers.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4t3f0"]
 [ext_resource type="Texture2D" uid="uid://dim7g2gme5c1k" path="res://assets/item_slot_icons/HELMS/Sharp_Feathers.png" id="2_re0sc"]
 [ext_resource type="Texture2D" uid="uid://cyqa5uhcnxjy8" path="res://resources/sprites/M_HEAD_SHAMAN1.png" id="3_hhd7t"]
@@ -9,7 +10,7 @@ script = ExtResource("1_4t3f0")
 id = 528
 looks = "SHAMAN1"
 sprite_image = ExtResource("3_hhd7t")
-slot_image = ExtResource("2_re0sc")
+slot_image = ExtResource("icon_slot")
 name = "Sharp Feathers"
 display_name = "Sharp Feathers"
 internal_name = "Vendor Shaman Head"

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dpao846uu8qbu"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Guardian_s_Leggings.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g2f6a"]
 [ext_resource type="Texture2D" uid="uid://cetvspvur0k4a" path="res://assets/item_slot_icons/PANTS/Guardians_Leggings.png" id="2_wnef4"]
 [ext_resource type="Texture2D" uid="uid://1q83eh6ydmql" path="res://resources/sprites/M_LEG2_ROBOT2.png" id="3_arq22"]
@@ -9,7 +10,7 @@ script = ExtResource("1_g2f6a")
 id = 707
 looks = "ROBOT2"
 sprite_image = ExtResource("3_arq22")
-slot_image = ExtResource("2_wnef4")
+slot_image = ExtResource("icon_slot")
 name = "Guardian's Leggings"
 display_name = "Guardian's Leggings"
 internal_name = "Drop ROBOT2 Legs"

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bq8yjg7eea5tq"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Icy_Runners.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0c3qq"]
 [ext_resource type="Texture2D" uid="uid://8acbb41yiotk" path="res://assets/item_slot_icons/SHOES/Icy_Runners.png" id="2_eussi"]
 [ext_resource type="Texture2D" uid="uid://b0gjpdkl4fu4c" path="res://resources/sprites/M_FOOT_FROSTPLATE.png" id="3_2146u"]
@@ -9,7 +10,7 @@ script = ExtResource("1_0c3qq")
 id = 323
 looks = "FROSTPLATE"
 sprite_image = ExtResource("3_2146u")
-slot_image = ExtResource("2_eussi")
+slot_image = ExtResource("icon_slot")
 name = "Icy Runners"
 display_name = "Icy Runners"
 internal_name = "Icy Runners"

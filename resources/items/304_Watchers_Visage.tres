@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://1f4gnw2pj6xw"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Watcher_s_Visage.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4hher"]
 [ext_resource type="Texture2D" uid="uid://xb6v6fxgxmvo" path="res://assets/item_slot_icons/OTHER/Watchers_Visage.png" id="2_xa8n2"]
 [ext_resource type="Texture2D" uid="uid://csw22l7wkvq2j" path="res://resources/sprites/M_HEAD_JASON.png" id="3_fs5bg"]
@@ -9,7 +10,7 @@ script = ExtResource("1_4hher")
 id = 304
 looks = "JASON"
 sprite_image = ExtResource("3_fs5bg")
-slot_image = ExtResource("2_xa8n2")
+slot_image = ExtResource("icon_slot")
 name = "Watcher's Visage"
 display_name = "Watcher's Visage"
 internal_name = "Watcher's Cap"

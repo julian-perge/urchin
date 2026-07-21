@@ -1,10 +1,12 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://nhhkdd66xd7n"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Surgeon_s_Shelter.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dykeq"]
 [ext_resource type="Texture2D" uid="uid://b8bp4m3a75psd" path="res://resources/sprites/M_CHEST_KLIMA.png" id="2_7ngtb"]
 
 [resource]
 script = ExtResource("1_dykeq")
+slot_image = ExtResource("icon_slot")
 id = 685
 looks = "KLIMA"
 sprite_image = ExtResource("2_7ngtb")

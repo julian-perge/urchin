@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cuqqcc2rkt3i0"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Ruby_Blade.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_k6lx6"]
 [ext_resource type="Texture2D" uid="uid://c2pi1v1qkx8ou" path="res://assets/item_slot_icons/WEAPONS/Ruby_Blade.png" id="2_3vcoy"]
 [ext_resource type="Texture2D" uid="uid://bf631i6tmw2ut" path="res://resources/sprites/M_WEAPON_FELKNIFE3.png" id="3_5lp37"]
@@ -9,7 +10,7 @@ script = ExtResource("1_k6lx6")
 id = 652
 looks = "FELKNIFE3"
 sprite_image = ExtResource("3_5lp37")
-slot_image = ExtResource("2_3vcoy")
+slot_image = ExtResource("icon_slot")
 name = "Ruby Blade"
 display_name = "Ruby Blade"
 internal_name = "SMALL BLADE 2"

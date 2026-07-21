@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://caod2fwlahngf"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Dexterity_of_Clemons.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_fi16u"]
 [ext_resource type="Texture2D" uid="uid://d0b2nnygq51y6" path="res://assets/item_slot_icons/GLOVES/Dexterity_of_Clemons.png" id="2_1aa6s"]
 [ext_resource type="Texture2D" uid="uid://dnd6gl6dra2o5" path="res://resources/sprites/M_HAND_CLEMONS.png" id="3_gdke6"]
@@ -9,7 +10,7 @@ script = ExtResource("1_fi16u")
 id = 570
 looks = "CLEMONS"
 sprite_image = ExtResource("3_gdke6")
-slot_image = ExtResource("2_1aa6s")
+slot_image = ExtResource("icon_slot")
 name = "Dexterity of Clemons"
 display_name = "Dexterity of Clemons"
 internal_name = "Drop CLEMONS Hands"

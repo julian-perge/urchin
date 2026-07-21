@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cmxyanqrnw15m"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Intensity_of_Clemons.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_04wii"]
 [ext_resource type="Texture2D" uid="uid://xesty74m0t1o" path="res://assets/item_slot_icons/SHOES/Intensity_of_Clemons.png" id="2_ex7rk"]
 [ext_resource type="Texture2D" uid="uid://dfhogkqp6sc1n" path="res://resources/sprites/M_FOOT_CLEMONS.png" id="3_m1u8s"]
@@ -9,7 +10,7 @@ script = ExtResource("1_04wii")
 id = 572
 looks = "CLEMONS"
 sprite_image = ExtResource("3_m1u8s")
-slot_image = ExtResource("2_ex7rk")
+slot_image = ExtResource("icon_slot")
 name = "Intensity of Clemons"
 display_name = "Intensity of Clemons"
 internal_name = "Drop CLEMONS Feet"

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bjp3wsqohatki"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Leather_Wraps.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_j8div"]
 [ext_resource type="Texture2D" uid="uid://d1akyhs4uv3yg" path="res://assets/item_slot_icons/PANTS/Leather_Wraps.png" id="2_8iqr4"]
 [ext_resource type="Texture2D" uid="uid://bkil57ssa8gqb" path="res://resources/sprites/M_LEG2_SHAMAN1.png" id="3_52ojx"]
@@ -9,7 +10,7 @@ script = ExtResource("1_j8div")
 id = 531
 looks = "SHAMAN1"
 sprite_image = ExtResource("3_52ojx")
-slot_image = ExtResource("2_8iqr4")
+slot_image = ExtResource("icon_slot")
 name = "Leather Wraps"
 display_name = "Leather Wraps"
 internal_name = "Vendor Shaman Legs"

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cuqn4sy8kenqw"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Accuracy_Display.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_s2uuc"]
 [ext_resource type="Texture2D" uid="uid://cef4wpsivttah" path="res://assets/item_slot_icons/HELMS/Accuracy_Display.png" id="2_lqoc5"]
 [ext_resource type="Texture2D" uid="uid://b14j0lsl8a3qp" path="res://resources/sprites/M_HEAD_ZPCI2.png" id="3_5ilte"]
@@ -9,7 +10,7 @@ script = ExtResource("1_s2uuc")
 id = 364
 looks = "ZPCI2"
 sprite_image = ExtResource("3_5ilte")
-slot_image = ExtResource("2_lqoc5")
+slot_image = ExtResource("icon_slot")
 name = "Accuracy Display"
 display_name = "Accuracy Display"
 internal_name = "Accuracy Display"

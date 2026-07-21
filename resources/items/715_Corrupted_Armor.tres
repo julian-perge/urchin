@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bc0xvnhdxs1fv"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Corrupted_Armor.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_r1ar2"]
 [ext_resource type="Texture2D" uid="uid://c6u05y1d4wtx5" path="res://assets/item_slot_icons/ARMOR/Corrupted_Armor.png" id="2_vhj8i"]
 [ext_resource type="Texture2D" uid="uid://daa3w2q2a3088" path="res://resources/sprites/M_CHEST_PURPLENIN.png" id="3_koxoh"]
@@ -9,7 +10,7 @@ script = ExtResource("1_r1ar2")
 id = 715
 looks = "PURPLENIN"
 sprite_image = ExtResource("3_koxoh")
-slot_image = ExtResource("2_vhj8i")
+slot_image = ExtResource("icon_slot")
 name = "Corrupted Armor"
 display_name = "Corrupted Armor"
 internal_name = "Drop CORRUPTOR Chest"

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://baggoy67g48jb"]
 
+[ext_resource type="Texture2D" path="res://assets/ui/items/Frozen_Runeblade.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yjxnm"]
 [ext_resource type="Texture2D" uid="uid://c6w0koi3ybxxi" path="res://assets/item_slot_icons/WEAPONS/Frozen_Runeblade.png" id="2_2lghg"]
 [ext_resource type="Texture2D" uid="uid://cm3atudyiin2" path="res://resources/sprites/M_WEAPON_XADER3.png" id="3_eo0s7"]
@@ -9,7 +10,7 @@ script = ExtResource("1_yjxnm")
 id = 600
 looks = "XADER3"
 sprite_image = ExtResource("3_eo0s7")
-slot_image = ExtResource("2_2lghg")
+slot_image = ExtResource("icon_slot")
 name = "Frozen Runeblade"
 display_name = "Frozen Runeblade"
 internal_name = "FROZEN RUNEBLADE"

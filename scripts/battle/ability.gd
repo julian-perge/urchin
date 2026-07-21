@@ -19,6 +19,14 @@ extends Resource
 @export var hotbar_slot_limit: int  # KRINABILITY[8] - max copies equippable on the 8-slot action bar
 @export var combat_speed_modifier: float
 @export var attack_animation_type: String
+# AS3 addNewMove param 12: for Melee moves the MODEL1 attack label to play
+# on the caster (Attack / Attack_Upper / Attack_Stab); for Missile moves the
+# projectile clip name (Krin.Firebolt etc.); unused for Shock (which casts).
+@export var animation_label: String
+# AS3 addNewMove param 13: the BOOM_* impact effect clip attached at the
+# target (on melee impact / shock cast / missile arrival). Not rendered yet
+# - see DECODED_ALGORITHMS.md.
+@export var impact_effect_name: String
 @export var effect_category: String  # "Full Damage" / "Heal" / "Focus" / "Attack" (unhandled, see execute_move)
 @export var health_cost_percentage: float
 @export var sound_effect_name: String
@@ -94,6 +102,8 @@ static func from_json(data: Dictionary) -> Ability:
 	ability.hotbar_slot_limit = int(_num(data.get("8_hotbar_slot_limit")))
 	ability.combat_speed_modifier = _num(data.get("9_combat_speed_modifier"))
 	ability.attack_animation_type = _text(data.get("10_attack_animation_type"))
+	ability.animation_label = _text(data.get("12_animation_model_name"))
+	ability.impact_effect_name = _text(data.get("13_impact_effect_name"))
 	ability.effect_category = _text(data.get("14_effect_category"))
 	ability.health_cost_percentage = _num(data.get("16_health_cost_percentage"))
 	ability.sound_effect_name = _text(data.get("18_sound_effect_name"))
