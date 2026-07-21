@@ -28,16 +28,16 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 	if caster == null or not caster.active:
 		return {}
 
-	var team = caster.team_side
-	var friend_slots = [team, team + 2, team + 4]
-	var enemy_slots = [7 - team, 5 - team, 3 - team]
+	var team: int = caster.team_side
+	var friend_slots: Array[Variant] = [team, team + 2, team + 4]
+	var enemy_slots: Array[Variant] = [7 - team, 5 - team, 3 - team]
 
 	# Living teammates other than the caster; track the one lowest on focus
 	# (focusCheck/playerFocusCheck/numberLockKrin).
-	var has_friends = false
-	var friend_lock_slot = 0  # numberLockKrin - last living friend found
+	var has_friends: bool = false
+	var friend_lock_slot: int = 0  # numberLockKrin - last living friend found
 	var lowest_focus = INF
-	var lowest_focus_slot = 0  # playerFocusCheck
+	var lowest_focus_slot: int = 0  # playerFocusCheck
 	for slot in friend_slots:
 		var friend: CombatUnit = units.get(slot)
 		if friend != null and friend.active and slot != caster_slot:
@@ -49,8 +49,8 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 
 	# --- Absolute (boss-priority) pool: if anything is available, it is used
 	# unconditionally and the attack/defense pools are ignored.
-	var absolute_ids = []
-	var absolute_indices = []
+	var absolute_ids: Array[Variant] = []
+	var absolute_indices: Array[Variant] = []
 	for i in caster.move_pool_absolute.size():
 		if caster.cooldowns_absolute[i] != 0:
 			continue
@@ -64,22 +64,22 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 			absolute_ids.append(entry["id"])
 			absolute_indices.append(i)
 
-	var use_absolute = not absolute_ids.is_empty()
+	var use_absolute: bool = not absolute_ids.is_empty()
 
 	# --- Attack pool (A0 -> A1 -> A2) + focus-move priority.
-	var attack_ids_cd = []  # A0: off cooldown
-	var attack_indices_cd = []
-	var attack_ids = []  # A2: fully filtered
-	var attack_indices = []
-	var focus_move = false
-	var focus_pick_index = -1  # indexes attack_ids_cd (A0), matching the original
-	var focus_target_slot = 0
+	var attack_ids_cd: Array[Variant] = []  # A0: off cooldown
+	var attack_indices_cd: Array[Variant] = []
+	var attack_ids: Array[Variant] = []  # A2: fully filtered
+	var attack_indices: Array[Variant] = []
+	var focus_move: bool = false
+	var focus_pick_index: int = -1  # indexes attack_ids_cd (A0), matching the original
+	var focus_target_slot: int = 0
 	# --- Defense pool (D0 -> D1 -> D2) + ally/self/enemy splits.
-	var defense_ids = []  # D2
-	var defense_indices = []
-	var defense_has_self = false  # D_Array_S nonempty
-	var defense_has_ally = false  # D_Array_F nonempty
-	var defense_has_enemy = false  # D_Array_E nonempty
+	var defense_ids: Array[Variant] = []  # D2
+	var defense_indices: Array[Variant] = []
+	var defense_has_self: bool = false  # D_Array_S nonempty
+	var defense_has_ally: bool = false  # D_Array_F nonempty
+	var defense_has_enemy: bool = false  # D_Array_E nonempty
 
 	if not use_absolute:
 		for i in caster.move_pool_attack.size():
@@ -90,8 +90,8 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 			var move: Ability = moves_by_id.get(attack_ids_cd[i])
 			if move == null or not _can_afford(caster, move):
 				continue
-			var restores_ally_focus = move.targets_allies and lowest_focus < caster.focus_regen_limit
-			var restores_own_focus = move.can_target_self and caster.focus_n < caster.focus_regen_limit
+			var restores_ally_focus: bool = move.targets_allies and lowest_focus < caster.focus_regen_limit
+			var restores_own_focus: bool = move.can_target_self and caster.focus_n < caster.focus_regen_limit
 			if move.effect_category != "Focus" or restores_ally_focus or restores_own_focus:
 				if restores_ally_focus and lowest_focus_slot != caster_slot and lowest_focus_slot != 0:
 					focus_move = true
@@ -123,17 +123,17 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 
 	# --- Heal-candidate scan (krinAITargetCheckedHEALTEST): the friendly unit
 	# (self included) lowest on predicted HP that the defense pool can target.
-	var heal_candidate_slot = 0
+	var heal_candidate_slot: int = 0
 	var first_friend: CombatUnit = units.get(friend_slots[0])
 	for slot_index in friend_slots.size():
 		var slot = friend_slots[slot_index]
 		var candidate: CombatUnit = units.get(slot)
 		if candidate == null or not candidate.active:
 			continue
-		var should_consider = true
+		var should_consider: bool = true
 		if slot_index > 0 and heal_candidate_slot != 0:
 			var current: CombatUnit = units[heal_candidate_slot]
-			var current_full = current.life_n == current.life_u
+			var current_full: bool = current.life_n == current.life_u
 			var candidate_ratio = (candidate.life_n + healed_this_turn.get(slot, 0.0)) / candidate.life_u
 			# AS3 quirk: the second slot compares against the FIRST friend
 			# slot's ratio, the third against the current candidate's.
@@ -152,11 +152,11 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 
 	# --- Attack vs defense mode (LifeBoundary1/2 + Aggression roll). Skipped
 	# (ScriptEnderKAIA) when either pool came up empty.
-	var attack_mode = not attack_ids.is_empty()
-	var boundary_check_applies = not attack_ids.is_empty() and not defense_ids.is_empty()
+	var attack_mode: bool = not attack_ids.is_empty()
+	var boundary_check_applies: bool = not attack_ids.is_empty() and not defense_ids.is_empty()
 	if boundary_check_applies and heal_candidate_slot != 0:
 		var candidate: CombatUnit = units[heal_candidate_slot]
-		var hp_percent = candidate.life_n / candidate.life_u * 100.0
+		var hp_percent: float = candidate.life_n / candidate.life_u * 100.0
 		if hp_percent <= caster.life_boundary_1:
 			if hp_percent <= caster.life_boundary_2:
 				attack_mode = false
@@ -164,11 +164,11 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 				attack_mode = caster.aggression >= randi_range(0, 99)
 
 	# --- Pick the move.
-	var move_id = 0
-	var pool = ""
-	var pool_index = -1
+	var move_id: int = 0
+	var pool: String = ""
+	var pool_index: int = -1
 	if use_absolute:
-		var pick = _uniform_pick(absolute_ids.size())
+		var pick: int = _uniform_pick(absolute_ids.size())
 		move_id = absolute_ids[pick]
 		pool = "absolute"
 		pool_index = absolute_indices[pick]
@@ -178,14 +178,14 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 			pool = "attack"
 			pool_index = attack_indices_cd[focus_pick_index]
 		elif not attack_ids.is_empty():
-			var pick = _uniform_pick(attack_ids.size())
+			var pick: int = _uniform_pick(attack_ids.size())
 			move_id = attack_ids[pick]
 			pool = "attack"
 			pool_index = attack_indices[pick]
 	else:
 		focus_move = false
-		var final_ids = defense_ids
-		var final_indices = defense_indices
+		var final_ids: Array[Variant] = defense_ids
+		var final_indices: Array[Variant] = defense_indices
 		if heal_candidate_slot != 0:
 			final_ids = []
 			final_indices = []
@@ -202,7 +202,7 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 					final_ids.append(defense_ids[i])
 					final_indices.append(defense_indices[i])
 		if not final_ids.is_empty():
-			var pick = _uniform_pick(final_ids.size())
+			var pick: int = _uniform_pick(final_ids.size())
 			move_id = final_ids[pick]
 			pool = "defense"
 			pool_index = final_indices[pick]
@@ -212,12 +212,12 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 	var chosen: Ability = moves_by_id.get(move_id)
 
 	# --- Pick the target.
-	var target_slot = 0
-	var alive_enemies = []
+	var target_slot: int = 0
+	var alive_enemies: Array[Variant] = []
 	if chosen.can_target_self:
 		target_slot = caster_slot
 	if chosen.can_target_others:
-		var weakest_slot = 0
+		var weakest_slot: int = 0
 		for slot in enemy_slots:
 			var enemy: CombatUnit = units.get(slot)
 			if enemy == null or not enemy.active:
@@ -238,7 +238,7 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 
 	if chosen.targets_allies and (target_slot == 0 or target_slot == caster_slot):
 		if heal_candidate_slot != 0:
-			var heal_guess = chosen.focus_effect_multiplier * (
+			var heal_guess: float = chosen.focus_effect_multiplier * (
 				(caster.strength_u + chosen.base_strength_bonus) * chosen.strength_damage_multiplier
 				+ (caster.magic_u + chosen.base_magic_bonus) * chosen.magic_damage_multiplier
 				+ (caster.speed_u + chosen.base_speed_bonus) * chosen.speed_damage_multiplier
@@ -278,6 +278,6 @@ static func _can_afford(caster: CombatUnit, move: Ability) -> bool:
 static func _uniform_pick(count: int) -> int:
 	if count <= 1:
 		return 0
-	var bits = 100.0 / count
-	var pick = int(ceil(randi_range(0, 99) / bits)) - 1
+	var bits: float = 100.0 / count
+	var pick: int = int(ceil(randi_range(0, 99) / bits)) - 1
 	return max(pick, 0)

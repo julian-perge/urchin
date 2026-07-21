@@ -14,12 +14,12 @@ func _ready():
 
 func load_data() -> void:
 	print("Loading all item data")
-	var dir = DirAccess.open(ITEMS_DIR)
+	var dir: DirAccess = DirAccess.open(ITEMS_DIR)
 	if dir == null:
 		print("Could not open ", ITEMS_DIR)
 		return
 	dir.list_dir_begin()
-	var file_name = dir.get_next()
+	var file_name: String = dir.get_next()
 	while file_name != "":
 		if file_name.ends_with(".tres"):
 			var item = load(ITEMS_DIR + file_name)

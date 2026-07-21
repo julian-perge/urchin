@@ -5,7 +5,7 @@ extends EditorScript
 const BattleFightScript = preload("res://scripts/battle/battle_fight.gd")
 
 func _run():
-	var file = FileAccess.open(
+	var file: FileAccess = FileAccess.open(
 		"res://python_conversion_scripts/converted_json/battles.json",
 		FileAccess.READ
 	)
@@ -13,13 +13,12 @@ func _run():
 	file.close()
 
 	for battle_data in json["battles"]:
-		var battle = Resource.new()
+		var battle: Resource = Resource.new()
 		battle.set_script(BattleFightScript)  # This line is crucial!
 
-		# JSON.parse_string() always returns float for numbers (no int type in
-		# JSON), and assigning through a generic Resource reference (rather than
-		# a statically-typed BattleFight one) skips the usual int coercion - cast
-		# explicitly wherever the field is declared as int.
+		# JSON.parse_string() always returns float for numbers (no int type in JSON),
+		# and assigning through a generic Resource reference (rather than a statically-typed BattleFight one)
+		# skips the usual int coercion - cast explicitly wherever the field is declared as int.
 		battle.id = int(battle_data["id"])
 		battle.id_name = battle_data["id_name"]
 		battle.absolute_start = int(battle_data["absolute_start"])
@@ -40,7 +39,7 @@ func _run():
 		battle.win_date_condition = int(battle_data["win_date_condition"])
 		battle.zone_background = battle_data["zone_background"]
 
-		var err = ResourceSaver.save(
+		var err: int = ResourceSaver.save(
 			battle,
 			"res://resources/battles/%s_%s.tres" % [battle.id, battle.id_name]
 		)

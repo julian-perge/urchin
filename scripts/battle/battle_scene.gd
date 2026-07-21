@@ -20,14 +20,14 @@ extends Control
 
 signal battle_finished(outcome: int)
 
-const CharacterVisualScene = preload("res://scenes/character_visual.tscn")
-const BACKGROUND_ROOT = "res://assets/backgrounds"
+const CharacterVisualScene: PackedScene = preload("res://scenes/character_visual.tscn")
+const BACKGROUND_ROOT: String = "res://assets/backgrounds"
 
 # Exact BATTLESCREEN placements from the SWF: BATTLESCREEN sits at
 # (400, 294.5); player1-6 offsets pulled from its PlaceObject matrices
 # (player3 mirrors player4, its twin on the other team). Team 2 clips carry
 # scaleX -1 in the source - mirrored via visual.scale.x below.
-const SLOT_POSITIONS = {
+const SLOT_POSITIONS: Dictionary[Variant, Variant] = {
 	1: Vector2(160.9, 297.4),
 	3: Vector2(220.9, 371.0),
 	5: Vector2(220.9, 218.5),
@@ -36,18 +36,18 @@ const SLOT_POSITIONS = {
 	6: Vector2(577.9, 218.5),
 }
 
-const RING_COLORS = {
+const RING_COLORS: Dictionary[Variant, Variant] = {
 	"player": Color(0.85, 0.85, 0.85),
 	"ally": Color(0.35, 0.9, 0.25),
 	"enemy": Color(0.95, 0.25, 0.15),
 }
-const ORB_RADIUS = 15.0
+const ORB_RADIUS: float = 15.0
 # Ability orbs fan out over the unit's head, like the source's floating orbs.
-const ORB_ARC_START = -2.4  # radians
-const ORB_ARC_STEP = 0.55
-const ORB_ARC_DISTANCE = 62.0
+const ORB_ARC_START: float = -2.4  # radians
+const ORB_ARC_STEP: float = 0.55
+const ORB_ARC_DISTANCE: float = 62.0
 
-const BOTTOM_BAR_TOP = 470.0
+const BOTTOM_BAR_TOP: float = 470.0
 
 # 1.0 = normal pacing; 0.0 = instant (tests).
 var animation_speed: float = 1.0
@@ -115,7 +115,7 @@ func start_battle(info: Dictionary) -> void:
 		push_warning("battle_scene: no battle %s" % info.get("battle_id"))
 		return
 	_log("=== battle %s start: %s ===" % [info.get("battle_id"), str(info)])
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	units = BattleSetup.build_units(
 		battle, save, UnitManagerAuto.units_by_id, save.difficulty,
 		int(info.get("train_cap", BattleSetup.DEFAULT_TRAIN_CAP))
@@ -144,15 +144,15 @@ func start_battle(info: Dictionary) -> void:
 # STRIP (~800x140 natural), not a full-screen image - it sits with its
 # bottom on the ground line, and the area above it is filled with the
 # strip's own top-edge color.
-const SKY_HORIZON_Y = 292.0
+const SKY_HORIZON_Y: float = 292.0
 
 func _load_background() -> void:
-	var key = battle.zone_background.replace(" ", "_")
-	var path = "%s/battle/%s.png" % [BACKGROUND_ROOT, key]
+	var key: String = battle.zone_background.replace(" ", "_")
+	var path: String = "%s/battle/%s.png" % [BACKGROUND_ROOT, key]
 	if ResourceLoader.exists(path):
 		background.texture = load(path)
-	var sky_key = key
-	var sky_path = "%s/sky/SKY_%s.png" % [BACKGROUND_ROOT, sky_key]
+	var sky_key: String = key
+	var sky_path: String = "%s/sky/SKY_%s.png" % [BACKGROUND_ROOT, sky_key]
 	if not ResourceLoader.exists(sky_path):
 		# STREETS2 -> SKY_STREETS, CHURCH2 -> SKY_CHURCH, JAIL3 -> SKY_JAIL...
 		sky_key = key.rstrip("0123456789")
@@ -167,12 +167,12 @@ func _load_background() -> void:
 	sky.stretch_mode = TextureRect.STRETCH_SCALE
 	# The scene anchors Sky full-rect; explicit sizing needs plain anchors.
 	sky.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	var strip_height = 800.0 * sky_texture.get_height() / sky_texture.get_width()
+	var strip_height: float = 800.0 * sky_texture.get_height() / sky_texture.get_width()
 	sky.position = Vector2(0, SKY_HORIZON_Y - strip_height)
 	sky.size = Vector2(800, strip_height)
 	# Solid fill above the strip, sampled from its top edge.
-	var image = sky_texture.get_image()
-	var top_color = image.get_pixel(int(image.get_width() / 2.0), 0)
+	var image: Image = sky_texture.get_image()
+	var top_color: Color = image.get_pixel(int(image.get_width() / 2.0), 0)
 	var fill: ColorRect = get_node_or_null("SkyFill")
 	if fill == null:
 		fill = ColorRect.new()
@@ -208,20 +208,20 @@ func _spawn_visuals() -> void:
 func _add_unit_overlay(slot: int, unit: CombatUnit, visual: CharacterVisual) -> void:
 	_display_hp[slot] = unit.life_n
 	_last_stun[slot] = unit.stun
-	var overlay = Control.new()
+	var overlay: Control = Control.new()
 	overlay.position = visual.position
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	battlefield.add_child(overlay)
 	_overlays[slot] = overlay
 
-	var ring = Control.new()
+	var ring: Control = Control.new()
 	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ring.visible = false
 	ring.draw.connect(_draw_ring.bind(ring, slot))
 	overlay.add_child(ring)
 	_rings[slot] = ring
 
-	var name_label = Label.new()
+	var name_label: Label = Label.new()
 	name_label.text = unit.player_name
 	name_label.position = Vector2(-52, -82)
 	name_label.size = Vector2(104, 14)
@@ -230,14 +230,14 @@ func _add_unit_overlay(slot: int, unit: CombatUnit, visual: CharacterVisual) -> 
 	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	overlay.add_child(name_label)
 
-	var health = ProgressBar.new()
+	var health: ProgressBar = ProgressBar.new()
 	health.custom_minimum_size = Vector2(52, 6)
 	health.position = Vector2(-26, -66)
 	health.show_percentage = false
 	health.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	overlay.add_child(health)
 	_health_bars[slot] = health
-	var health_value = Label.new()
+	var health_value: Label = Label.new()
 	health_value.position = Vector2(28, -69)
 	health_value.size = Vector2(46, 12)
 	health_value.add_theme_font_size_override("font_size", 9)
@@ -245,7 +245,7 @@ func _add_unit_overlay(slot: int, unit: CombatUnit, visual: CharacterVisual) -> 
 	overlay.add_child(health_value)
 	_health_values[slot] = health_value
 
-	var focus = ProgressBar.new()
+	var focus: ProgressBar = ProgressBar.new()
 	focus.custom_minimum_size = Vector2(52, 3)
 	focus.position = Vector2(-26, -58)
 	focus.show_percentage = false
@@ -255,7 +255,7 @@ func _add_unit_overlay(slot: int, unit: CombatUnit, visual: CharacterVisual) -> 
 	_focus_bars[slot] = focus
 
 	# Hover/click zone over the doll.
-	var hit = Button.new()
+	var hit: Button = Button.new()
 	hit.flat = true
 	hit.custom_minimum_size = Vector2(56, 100)
 	hit.size = hit.custom_minimum_size
@@ -275,7 +275,7 @@ func _draw_ring(ring: Control, slot: int) -> void:
 	ring.draw_arc(Vector2.ZERO, 34.0, 0.0, TAU, 48, Color(color, 0.55), 7.0, true)
 	ring.draw_arc(Vector2.ZERO, 40.0, 0.0, TAU, 48, Color(color, 0.25), 3.0, true)
 	for k in 4:
-		var angle = k * TAU / 4.0
+		var angle: float = k * TAU / 4.0
 		ring.draw_line(
 			Vector2.from_angle(angle) * 26.0, Vector2.from_angle(angle) * 44.0,
 			Color(color, 0.7), 3.0, true
@@ -297,11 +297,11 @@ func _on_unit_hovered(slot: int, entered: bool) -> void:
 	ring.visible = entered
 	ring.queue_redraw()
 	var overlay: Control = _overlays[slot]
-	var existing = overlay.get_node_or_null("HoverInfo")
+	var existing: Node = overlay.get_node_or_null("HoverInfo")
 	if existing:
 		existing.queue_free()
 	if entered:
-		var info = Label.new()
+		var info: Label = Label.new()
 		info.name = "HoverInfo"
 		info.text = "Lvl. %d" % unit.plevel
 		info.position = Vector2(-40, -8)
@@ -334,15 +334,15 @@ func _on_unit_clicked(slot: int) -> void:
 		var move: Ability = MoveManagerAuto.get_move(int(entry["move_id"]))
 		if move == null:
 			continue
-		var usable = _move_valid_for_target(move, slot)
-		var orb = Button.new()
+		var usable: bool = _move_valid_for_target(move, slot)
+		var orb: Button = Button.new()
 		orb.custom_minimum_size = Vector2(ORB_RADIUS * 2, ORB_RADIUS * 2)
 		orb.size = orb.custom_minimum_size
-		var angle = ORB_ARC_START + i * ORB_ARC_STEP
+		var angle: float = ORB_ARC_START + i * ORB_ARC_STEP
 		orb.position = Vector2.from_angle(angle) * ORB_ARC_DISTANCE - orb.size / 2.0
 		orb.text = _move_initials(move)
 		orb.tooltip_text = _move_tooltip(move)
-		var color = _move_color(move)
+		var color: Color = _move_color(move)
 		_style_orb(orb, color, usable)
 		if usable:
 			orb.pressed.connect(_on_radial_move_picked.bind(entry, slot))
@@ -359,8 +359,8 @@ func _move_valid_for_target(move: Ability, slot: int) -> bool:
 	var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
 	if player != null and move.focus_cost > 0 and player.focus_n < move.focus_cost:
 		return false
-	var is_ally = target.team_side == 1
-	var is_self = slot == BattleRunner.PLAYER_SLOT
+	var is_ally: bool = target.team_side == 1
+	var is_self: bool = slot == BattleRunner.PLAYER_SLOT
 	return (
 		(is_self and move.can_target_self)
 		or (not is_ally and move.can_target_others)
@@ -369,22 +369,22 @@ func _move_valid_for_target(move: Ability, slot: int) -> bool:
 
 
 func _move_tooltip(move: Ability) -> String:
-	var cost_line = "This move costs nothing"
+	var cost_line: String = "This move costs nothing"
 	if move.focus_cost > 0:
 		cost_line = "This move costs %d Focus" % int(move.focus_cost)
-	var lines = [move.display_name, cost_line]
+	var lines: Array[Variant] = [move.display_name, cost_line]
 	if move.cooldown_turns > 0:
 		lines.append("Cooldown: %d turns" % move.cooldown_turns)
 	return "\n".join(lines)
 
 
 func _move_color(move: Ability) -> Color:
-	var element_index = CombatUnit.ELEMENT_ORDER.find(move.damage_element_type)
+	var element_index: int = CombatUnit.ELEMENT_ORDER.find(move.damage_element_type)
 	return MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.5, 0.5, 0.5)
 
 
 func _move_initials(move: Ability) -> String:
-	var words = move.display_name.split(" ", false)
+	var words: PackedStringArray = move.display_name.split(" ", false)
 	if words.size() >= 2:
 		return words[0].substr(0, 1) + words[1].substr(0, 1)
 	return move.display_name.substr(0, 2)
@@ -392,8 +392,8 @@ func _move_initials(move: Ability) -> String:
 
 func _style_orb(orb: Button, color: Color, usable: bool) -> void:
 	for state in ["normal", "hover", "pressed", "disabled"]:
-		var style = StyleBoxFlat.new()
-		var bg = Color(0.08, 0.08, 0.1) if usable else Color(0.05, 0.05, 0.06)
+		var style: StyleBoxFlat = StyleBoxFlat.new()
+		var bg: Color = Color(0.08, 0.08, 0.1) if usable else Color(0.05, 0.05, 0.06)
 		style.bg_color = bg.lightened(0.1) if state == "hover" else bg
 		style.border_color = color if usable else Color(0.18, 0.18, 0.2)
 		style.set_border_width_all(2)
@@ -423,20 +423,20 @@ func _close_radial_menu() -> void:
 # --- bottom bar: stances + pass ring + retreat -----------------------------
 
 func _build_bottom_bar() -> void:
-	var bar = Control.new()
+	var bar: Control = Control.new()
 	bar.name = "BottomBar"
 	bar.position = Vector2(0, BOTTOM_BAR_TOP)
 	bar.size = Vector2(800, 600 - BOTTOM_BAR_TOP)
 	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bar)
-	var backdrop = ColorRect.new()
+	var backdrop: ColorRect = ColorRect.new()
 	backdrop.color = Color(0.04, 0.05, 0.06)
 	backdrop.size = bar.size
 	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
 	bar.add_child(backdrop)
 	var texture = load("res://assets/ui/hotbar/background.png")
 	for rect in [Rect2(12, 10, 320, 110), Rect2(340, 10, 120, 110), Rect2(468, 10, 320, 110)]:
-		var panel = TextureRect.new()
+		var panel: TextureRect = TextureRect.new()
 		panel.texture = texture
 		panel.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		panel.stretch_mode = TextureRect.STRETCH_SCALE
@@ -446,7 +446,7 @@ func _build_bottom_bar() -> void:
 		bar.add_child(panel)
 
 	# Stance rows fill in when the battle starts (companions known then).
-	var stance_host = Control.new()
+	var stance_host: Control = Control.new()
 	stance_host.name = "StanceHost"
 	stance_host.position = Vector2(24, 18)
 	stance_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -465,7 +465,7 @@ func _build_bottom_bar() -> void:
 	_pass_button.text = "!"
 	_pass_button.tooltip_text = "Pass your turn"
 	for state in ["normal", "hover", "pressed"]:
-		var style = StyleBoxFlat.new()
+		var style: StyleBoxFlat = StyleBoxFlat.new()
 		style.bg_color = Color(0.1, 0.1, 0.11) if state == "normal" else Color(0.16, 0.16, 0.18)
 		style.border_color = Color(0.3, 0.3, 0.32)
 		style.set_border_width_all(2)
@@ -476,18 +476,18 @@ func _build_bottom_bar() -> void:
 	_pass_button.pressed.connect(_on_pass_pressed)
 	bar.add_child(_pass_button)
 
-	var retreat = Button.new()
+	var retreat: Button = Button.new()
 	retreat.custom_minimum_size = Vector2(26, 26)
 	retreat.size = retreat.custom_minimum_size
 	retreat.position = Vector2(442, 12)
 	retreat.tooltip_text = "Retreat from battle"
-	var retreat_style = StyleBoxFlat.new()
+	var retreat_style: StyleBoxFlat = StyleBoxFlat.new()
 	retreat_style.bg_color = Color(0.55, 0.1, 0.08)
 	retreat_style.set_border_width_all(2)
 	retreat_style.border_color = Color(0.8, 0.3, 0.25)
 	retreat_style.set_corner_radius_all(3)
 	retreat.add_theme_stylebox_override("normal", retreat_style)
-	var retreat_hover = retreat_style.duplicate()
+	var retreat_hover: Resource = retreat_style.duplicate()
 	retreat_hover.bg_color = Color(0.75, 0.15, 0.1)
 	retreat.add_theme_stylebox_override("hover", retreat_hover)
 	retreat.text = "x"
@@ -496,8 +496,8 @@ func _build_bottom_bar() -> void:
 
 
 func _draw_pass_ring() -> void:
-	var active = _player_action_pending
-	var color = Color(0.4, 0.75, 1.0, 0.95) if active else Color(0.35, 0.35, 0.38, 0.7)
+	var active: bool = _player_action_pending
+	var color: Color = Color(0.4, 0.75, 1.0, 0.95) if active else Color(0.35, 0.35, 0.38, 0.7)
 	_pass_ring.draw_arc(Vector2.ZERO, 36.0, 0.0, TAU, 64, color, 5.0, true)
 	if active:
 		_pass_ring.draw_arc(Vector2.ZERO, 41.0, 0.0, TAU, 64, Color(0.4, 0.75, 1.0, 0.35), 7.0, true)
@@ -508,16 +508,16 @@ func _populate_stance_rows() -> void:
 	for child in host.get_children():
 		child.queue_free()
 	_stance_rows.clear()
-	var save = GameData.current_save
-	var row_y = 0.0
+	var save: PlayerSave = GameData.current_save
+	var row_y: float = 0.0
 	for slot in [3, 5]:
 		var unit: CombatUnit = units.get(slot)
 		if unit == null:
 			continue
-		var party_id = _party_id_for_unit(unit)
+		var party_id: int = _party_id_for_unit(unit)
 		if party_id <= 0:
 			continue
-		var name_label = Label.new()
+		var name_label: Label = Label.new()
 		name_label.text = unit.player_name
 		name_label.position = Vector2(0, row_y + 4)
 		name_label.size = Vector2(90, 20)
@@ -525,7 +525,7 @@ func _populate_stance_rows() -> void:
 		host.add_child(name_label)
 		var buttons: Array = []
 		for mode in Party.AGGRESSION_PRESETS.size():
-			var button = Button.new()
+			var button: Button = Button.new()
 			button.custom_minimum_size = Vector2(34, 26)
 			button.size = button.custom_minimum_size
 			button.position = Vector2(96 + mode * 40, row_y)
@@ -541,20 +541,20 @@ func _populate_stance_rows() -> void:
 # Stance tint runs green (hold back) to red (all in), like the original's
 # five icons.
 func _refresh_stance_row(party_id: int, selected_mode: int) -> void:
-	var colors = [
+	var colors: Array[Variant] = [
 		Color(0.25, 0.55, 0.3), Color(0.35, 0.55, 0.25), Color(0.6, 0.55, 0.2),
 		Color(0.65, 0.35, 0.15), Color(0.65, 0.15, 0.12),
 	]
 	var buttons: Array = _stance_rows.get(party_id, [])
 	for mode in buttons.size():
 		var button: Button = buttons[mode]
-		var style = StyleBoxFlat.new()
+		var style: StyleBoxFlat = StyleBoxFlat.new()
 		style.bg_color = colors[mode]
 		style.set_corner_radius_all(3)
 		style.set_border_width_all(2)
 		style.border_color = Color.WHITE if mode == selected_mode else Color(0.15, 0.15, 0.15)
 		button.add_theme_stylebox_override("normal", style)
-		var hover = style.duplicate()
+		var hover: Resource = style.duplicate()
 		hover.bg_color = colors[mode].lightened(0.2)
 		button.add_theme_stylebox_override("hover", hover)
 
@@ -567,7 +567,7 @@ func _party_id_for_unit(unit: CombatUnit) -> int:
 
 
 func _on_stance_pressed(party_id: int, mode: int, slot: int) -> void:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save != null:
 		Party.set_ag_mode(save, party_id, mode)
 	var unit: CombatUnit = units.get(slot)
@@ -596,12 +596,12 @@ func _battle_loop() -> void:
 		if not is_inside_tree() or _finished:
 			return
 		_pass_ring.queue_redraw()
-		var action = _selected_move.duplicate()
+		var action: Dictionary = _selected_move.duplicate()
 		_selected_move = {}
 		if not action.is_empty():
 			_log("player action: %s" % str(action))
 		_close_radial_menu()
-		var events = runner.advance_half_turn(action)
+		var events: Array = runner.advance_half_turn(action)
 		_log("advance_half_turn -> %d events" % events.size())
 		for event in events:
 			_log("  event: %s" % JSON.stringify(event))
@@ -663,8 +663,8 @@ func _play_events(events: Array) -> void:
 
 
 func _play_move_event(event: Dictionary) -> void:
-	var caster_slot = int(event["caster_slot"])
-	var target_slot = int(event["target_slot"])
+	var caster_slot: int = int(event["caster_slot"])
+	var target_slot: int = int(event["target_slot"])
 	var move: Ability = MoveManagerAuto.get_move(int(event["move_id"]))
 	var caster_visual: CharacterVisual = _visuals.get(caster_slot)
 	# Only Melee moves run and swing; the original plays "cast" for both
@@ -673,8 +673,8 @@ func _play_move_event(event: Dictionary) -> void:
 	if caster_visual != null and move != null and move.attack_animation_type == "Melee":
 		# The original order: run to the target, swing, damage lands at the
 		# blow, THEN run back. Impact effects hook attack_connected.
-		var start_ms = Time.get_ticks_msec()
-		var on_impact = func():
+		var start_ms: int = Time.get_ticks_msec()
+		var on_impact: Callable = func():
 			_log("melee impact: caster=%d move=%s +%dms" % [
 				caster_slot, move.display_name, Time.get_ticks_msec() - start_ms,
 			])
@@ -765,9 +765,9 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 		"damage":
 			# KrinNumberShow: numbers colored by the move's ELEMENT; crits
 			# play the bigger "critical" variant of the same color.
-			var color = Color.WHITE
+			var color: Color = Color.WHITE
 			if move != null:
-				var element_index = CombatUnit.ELEMENT_ORDER.find(move.damage_element_type)
+				var element_index: int = CombatUnit.ELEMENT_ORDER.find(move.damage_element_type)
 				if element_index != -1:
 					color = MenuTheme.ELEMENT_COLORS[element_index]
 			_float_text(target_slot, str(int(result.get("amount", 0))), color, result.get("did_crit", false))
@@ -796,7 +796,7 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 func _melee_offset(caster_slot: int, target_slot: int) -> Vector2:
 	var from: Vector2 = SLOT_POSITIONS.get(caster_slot, Vector2(400, 300))
 	var to: Vector2 = SLOT_POSITIONS.get(target_slot, Vector2(400, 300))
-	var offset = to - from
+	var offset: Vector2 = to - from
 	if offset.length() <= 60.0:
 		return Vector2.ZERO
 	return offset - offset.normalized() * 55.0
@@ -856,7 +856,7 @@ func _refresh_bars(snap: bool = true) -> void:
 # stunned by a shorter-lived buff); both labels flow back to idle/stun2 on
 # their own once triggered (see DECODED_ALGORITHMS.md).
 func _update_stun_visual(slot: int, unit: CombatUnit, visual: CharacterVisual) -> void:
-	var current = unit.stun if unit.active else 0.0
+	var current: float = unit.stun if unit.active else 0.0
 	var previous = _last_stun.get(slot, 0.0)
 	if current > previous:
 		visual.enter_stun()
@@ -869,7 +869,7 @@ func _float_text(slot: int, text: String, color: Color, critical: bool = false) 
 	var visual: CharacterVisual = _visuals.get(slot)
 	if visual == null:
 		return
-	var label = Label.new()
+	var label: Label = Label.new()
 	label.text = text
 	label.modulate = color
 	label.position = visual.position + Vector2(-15, -72)
@@ -882,7 +882,7 @@ func _float_text(slot: int, text: String, color: Color, critical: bool = false) 
 	if animation_speed <= 0.0:
 		label.queue_free()
 		return
-	var tween = create_tween()
+	var tween: Tween = create_tween()
 	tween.tween_property(label, "position:y", label.position.y - 40.0, 0.8)
 	tween.parallel().tween_property(label, "modulate:a", 0.0, 0.8)
 	tween.tween_callback(label.queue_free)
@@ -892,25 +892,25 @@ func _finish_battle() -> void:
 	if _finished:
 		return
 	_finished = true
-	var save = GameData.current_save
-	var outcome = runner.win_condition
+	var save: PlayerSave = GameData.current_save
+	var outcome: int = runner.win_condition
 	if outcome == BattleRunner.Outcome.WIN and save != null:
 		var was_story = battle_info.get("is_story_progress", false)
 		ZoneProgression.after_battle_won(save, battle.id, was_story)
-		var enemy_levels = BattleRewards.unit_levels_from_slots(units, [2, 4, 6])
-		var fighting_party = []
+		var enemy_levels: Array = BattleRewards.unit_levels_from_slots(units, [2, 4, 6])
+		var fighting_party: Array[Variant] = []
 		for marker in [-2, -1]:
-			var party_id = Party.deployed_party_id(save, marker)
+			var party_id: int = Party.deployed_party_id(save, marker)
 			if party_id > 0:
 				fighting_party.append(party_id)
-		var rewards = BattleRewards.apply_victory(save, enemy_levels, enemy_levels, fighting_party)
-		var drops = BattleRewards.roll_drops(battle)
-		var counters = Achievements.collect_battle_counters(runner, units)
+		var rewards: Dictionary = BattleRewards.apply_victory(save, enemy_levels, enemy_levels, fighting_party)
+		var drops: Array = BattleRewards.roll_drops(battle)
+		var counters: Dictionary = Achievements.collect_battle_counters(runner, units)
 		for achievement_id in Achievements.check_battle_victory(save, battle.id, was_story, counters):
 			Achievements.unlock(achievement_id)
 		# Drops are click-to-keep on the victory screen (VICTORY[1]); the
 		# autosave happens on Proceed, like the original.
-		var victory = preload("res://scripts/battle/victory_screen.gd").new()
+		var victory: VictoryScreen = preload("res://scripts/battle/victory_screen.gd").new()
 		victory.name = "VictoryScreen"
 		victory.set_anchors_preset(Control.PRESET_FULL_RECT)
 		add_child(victory)

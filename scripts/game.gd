@@ -23,7 +23,7 @@ func _load_zone(zone_id: int) -> void:
 	if _current_zone_scene != null:
 		_current_zone_scene.queue_free()
 		_current_zone_scene = null
-	var scene_path = str(ZoneManager.ZONES.get(zone_id, {}).get("scene", ""))
+	var scene_path: String = str(ZoneManager.ZONES.get(zone_id, {}).get("scene", ""))
 	if scene_path == "" or not ResourceLoader.exists(scene_path):
 		push_warning("game: no scene for zone %d" % zone_id)
 		return

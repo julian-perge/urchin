@@ -13,14 +13,14 @@
 class_name Achievements
 extends RefCounted
 
-const SAVE_PATH = "user://achievements.cfg"
-const ACHIEVEMENT_COUNT = 10
+const SAVE_PATH: String = "user://achievements.cfg"
+const ACHIEVEMENT_COUNT: int = 10
 
-const NAMES = [
+const NAMES: Array[Variant] = [
 	"The Tape", "Black Magic", "Pacifist", "Predator", "Legend",
 	"All Star", "Jail Break", "Doomsday", "Old Ghosts", "Over the Ashes",
 ]
-const DESCRIPTIONS = [
+const DESCRIPTIONS: Array[Variant] = [
 	"Retrieve the tape from Felicity.",
 	"Defeat Clemons for the first time, without using any team mates. This can only be done on Challenging or Heroic difficulty.",
 	"Defeat the Hydra for the first time, without dealing more than 2000 damage throughout the whole fight. This can only be done on Challenging or Heroic difficulty.",
@@ -39,7 +39,7 @@ const DESCRIPTIONS = [
 # Returns the achievement ids earned by this victory (unfiltered - the
 # caller unlocks them; already-unlocked ids are ignored by unlock()).
 static func check_battle_victory(save: PlayerSave, battle_id: int, was_story_progress: bool, counters: Dictionary) -> Array:
-	var earned = []
+	var earned: Array[Variant] = []
 	if was_story_progress:
 		if battle_id == 109:
 			earned.append(0)  # The Tape
@@ -68,7 +68,7 @@ static func check_battle_victory(save: PlayerSave, battle_id: int, was_story_pro
 # questProgress[5] > 13) on each of the 3 classes, scanned across every save
 # (pass all slot saves plus the live one).
 static func check_all_star(saves: Array) -> bool:
-	var classes_cleared = {}
+	var classes_cleared: Dictionary[Variant, Variant] = {}
 	for save in saves:
 		if save == null:
 			continue
@@ -81,14 +81,14 @@ static func check_all_star(saves: Array) -> bool:
 # PLAYER dealt (move events from slot 1, damage results, all-enemy splash
 # included), companion presence/count (slots 3/5), and the half-turn count.
 static func collect_battle_counters(runner: BattleRunner, units: Dictionary) -> Dictionary:
-	var player_damage = 0.0
+	var player_damage: float = 0.0
 	for event in runner.events:
 		if event.get("type") != "move" or int(event.get("caster_slot", 0)) != BattleRunner.PLAYER_SLOT:
 			continue
 		var result: Dictionary = event.get("result", {})
 		if result.get("type") == "damage":
 			player_damage += float(result.get("amount", 0.0)) + float(result.get("shielded_amount", 0.0))
-	var teammate_count = 0
+	var teammate_count: int = 0
 	for slot in [3, 5]:
 		if units.get(slot) != null:
 			teammate_count += 1
@@ -103,10 +103,10 @@ static func collect_battle_counters(runner: BattleRunner, units: Dictionary) -> 
 # --- Global persistence (the original's achSlot SharedObject) ---
 
 static func load_unlocked(path: String = SAVE_PATH) -> Array:
-	var unlocked = []
+	var unlocked: Array[Variant] = []
 	unlocked.resize(ACHIEVEMENT_COUNT)
 	unlocked.fill(false)
-	var config = ConfigFile.new()
+	var config: ConfigFile = ConfigFile.new()
 	if config.load(path) == OK:
 		for i in ACHIEVEMENT_COUNT:
 			unlocked[i] = config.get_value("achievements", str(i), false)
@@ -118,7 +118,7 @@ static func load_unlocked(path: String = SAVE_PATH) -> Array:
 static func unlock(achievement_id: int, path: String = SAVE_PATH) -> bool:
 	if achievement_id < 0 or achievement_id >= ACHIEVEMENT_COUNT:
 		return false
-	var config = ConfigFile.new()
+	var config: ConfigFile = ConfigFile.new()
 	config.load(path)  # missing file is fine - starts empty
 	if config.get_value("achievements", str(achievement_id), false):
 		return false

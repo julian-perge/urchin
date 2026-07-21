@@ -15,25 +15,25 @@
 # to send its ability back to the pool.
 extends Control
 
-const TalentNodeScene = preload("res://scenes/ui/menu/talent_node.tscn")
+const TalentNodeScene: PackedScene = preload("res://scenes/ui/menu/talent_node.tscn")
 
-const TREE_ORIGIN = Vector2(45.4, 74.2)
-const TREE_COLUMNS_X = [41.4, 93.4, 145.4, 197.4]
-const TREE_ROWS_Y = [49.9, 89.8, 129.8, 169.8, 209.8, 249.8, 289.9]
-const NODE_SIZE = Vector2(32, 32)
+const TREE_ORIGIN: Vector2 = Vector2(45.4, 74.2)
+const TREE_COLUMNS_X: Array[float] = [41.4, 93.4, 145.4, 197.4]
+const TREE_ROWS_Y: Array[float] = [49.9, 89.8, 129.8, 169.8, 209.8, 249.8, 289.9]
+const NODE_SIZE: Vector2 = Vector2(32, 32)
 
-const WHEEL_CENTER = Vector2(630.6, 172.2)
+const WHEEL_CENTER: Vector2 = Vector2(630.6, 172.2)
 # thing0-7 offsets inside the 'selector' clip.
-const WHEEL_OFFSETS = [
+const WHEEL_OFFSETS: Array[Vector2] = [
 	Vector2(0.0, -49.2), Vector2(34.8, -34.9), Vector2(49.5, 0.0),
 	Vector2(35.0, 35.3), Vector2(0.0, 49.8), Vector2(-35.2, 35.1),
 	Vector2(-49.5, 0.0), Vector2(-35.0, -34.7),
 ]
-const SOCKET_SIZE = Vector2(30, 30)
+const SOCKET_SIZE: Vector2 = Vector2(30, 30)
 
-const POOL_VISIBLE_ROWS = 5
+const POOL_VISIBLE_ROWS: int = 5
 
-const CLASS_NAMES = ["Biological", "Psychological", "Hydraulic"]
+const CLASS_NAMES: Array[String] = ["Biological", "Psychological", "Hydraulic"]
 
 var _tree_buttons: Array[Button] = []
 var _tree_rank_labels: Array[Label] = []
@@ -81,7 +81,7 @@ func _build_tree_panel() -> void:
 # here to extract into the scene, so this stays code-driven by design.
 func _build_wheel_panel() -> void:
 	for i in WHEEL_OFFSETS.size():
-		var socket = Button.new()
+		var socket: Button = Button.new()
 		socket.custom_minimum_size = SOCKET_SIZE
 		socket.size = SOCKET_SIZE
 		socket.position = WHEEL_CENTER + WHEEL_OFFSETS[i] - SOCKET_SIZE / 2.0
@@ -93,7 +93,7 @@ func _build_wheel_panel() -> void:
 
 func _style_circle_button(button: Button, bg: Color, border: Color) -> void:
 	for state in ["normal", "hover", "pressed"]:
-		var style = StyleBoxFlat.new()
+		var style: StyleBoxFlat = StyleBoxFlat.new()
 		style.bg_color = bg.lightened(0.12) if state != "normal" else bg
 		style.border_color = border
 		style.set_border_width_all(2)
@@ -103,7 +103,7 @@ func _style_circle_button(button: Button, bg: Color, border: Color) -> void:
 
 
 func refresh() -> void:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return
 	_status_label.text = ""
@@ -111,7 +111,7 @@ func refresh() -> void:
 	_level_label.text = "Lvl. %d %s" % [save.level, CLASS_NAMES[save.player_class]]
 	_ability_points_value.text = str(save.skill_points)
 	_attribute_points_value.text = str(save.stat_points)
-	var stats = [save.life, save.strength, save.magic, save.speed]
+	var stats: Array[Variant] = [save.life, save.strength, save.magic, save.speed]
 	for i in _attribute_values.size():
 		_attribute_values[i].text = str(int(stats[i]))
 	_refresh_tree(save)
@@ -126,10 +126,10 @@ func _refresh_tree(save: PlayerSave) -> void:
 		if node_index >= tree.size():
 			break
 		var node: Dictionary = tree[node_index]
-		var button = _tree_buttons[node_index]
-		var rank = TalentTree.get_rank(save, node_index)
-		var color = _node_color(save, node_index, node)
-		var learned = rank > 0
+		var button: Button = _tree_buttons[node_index]
+		var rank: int = TalentTree.get_rank(save, node_index)
+		var color: Color = _node_color(save, node_index, node)
+		var learned: bool = rank > 0
 		_style_circle_button(
 			button,
 			color.darkened(0.55) if learned else Color(0.1, 0.1, 0.11),
@@ -140,13 +140,13 @@ func _refresh_tree(save: PlayerSave) -> void:
 
 
 func _node_color(_save: PlayerSave, _node_index: int, node: Dictionary) -> Color:
-	var move_id = int(node["move_id"])
+	var move_id: int = int(node["move_id"])
 	if move_id == 0:
 		return Color(0.7, 0.7, 0.4)  # passive - gold
 	var move: Ability = MoveManagerAuto.get_move(move_id)
 	if move == null:
 		return Color(0.5, 0.5, 0.5)
-	var element_index = CombatUnit.ELEMENT_ORDER.find(move.damage_element_type)
+	var element_index: int = CombatUnit.ELEMENT_ORDER.find(move.damage_element_type)
 	if element_index == -1:
 		return Color(0.5, 0.5, 0.5)
 	return MenuTheme.ELEMENT_COLORS[element_index]
@@ -164,15 +164,15 @@ func _node_tooltip(node: Dictionary, rank: int) -> String:
 
 func _refresh_wheel(save: PlayerSave) -> void:
 	for i in _socket_buttons.size():
-		var socket = _socket_buttons[i]
-		var move_id = int(save.move_matrix[i]) if i < save.move_matrix.size() else 0
+		var socket: Button = _socket_buttons[i]
+		var move_id: int = int(save.move_matrix[i]) if i < save.move_matrix.size() else 0
 		if move_id == 0:
 			socket.text = ""
 			socket.tooltip_text = "Empty slot"
 			_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24))
 			continue
 		var move: Ability = MoveManagerAuto.get_move(move_id)
-		var color = _move_color(move)
+		var color: Color = _move_color(move)
 		socket.text = _move_initials(move)
 		socket.tooltip_text = move.display_name if move != null else str(move_id)
 		_style_circle_button(socket, color.darkened(0.45), color)
@@ -181,7 +181,7 @@ func _refresh_wheel(save: PlayerSave) -> void:
 func _refresh_pool(save: PlayerSave) -> void:
 	_pool_move_ids = []
 	# JSON-loaded saves hold floats - compare as ints.
-	var bar_ids = []
+	var bar_ids: Array[Variant] = []
 	for bar_move in save.move_matrix:
 		bar_ids.append(int(bar_move))
 	for move_id in save.move_matrix2:
@@ -189,8 +189,8 @@ func _refresh_pool(save: PlayerSave) -> void:
 			_pool_move_ids.append(int(move_id))
 	_pool_scroll = clamp(_pool_scroll, 0, max(0, _pool_move_ids.size() - POOL_VISIBLE_ROWS))
 	for i in _pool_rows.size():
-		var row = _pool_rows[i]
-		var pool_index = _pool_scroll + i
+		var row: Button = _pool_rows[i]
+		var pool_index: int = _pool_scroll + i
 		if pool_index >= _pool_move_ids.size():
 			row.visible = false
 			continue
@@ -203,28 +203,28 @@ func _refresh_pool(save: PlayerSave) -> void:
 func _move_color(move: Ability) -> Color:
 	if move == null:
 		return Color(0.5, 0.5, 0.5)
-	var element_index = CombatUnit.ELEMENT_ORDER.find(move.damage_element_type)
+	var element_index: int = CombatUnit.ELEMENT_ORDER.find(move.damage_element_type)
 	return MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.5, 0.5, 0.5)
 
 
 func _move_initials(move: Ability) -> String:
 	if move == null:
 		return "?"
-	var words = move.display_name.split(" ", false)
+	var words: PackedStringArray = move.display_name.split(" ", false)
 	if words.size() >= 2:
 		return words[0].substr(0, 1) + words[1].substr(0, 1)
 	return move.display_name.substr(0, 2)
 
 
 func _node_center(node_index: int) -> Vector2:
-	var column = node_index % TREE_COLUMNS_X.size()
-	var row = floori(node_index / float(TREE_COLUMNS_X.size()))
+	var column: int = node_index % TREE_COLUMNS_X.size()
+	var row: int = floori(node_index / float(TREE_COLUMNS_X.size()))
 	return TREE_ORIGIN + Vector2(TREE_COLUMNS_X[column], TREE_ROWS_Y[row])
 
 
 func _draw_tree_lines() -> void:
-	var save = GameData.current_save
-	var player_class = save.player_class if save != null else 0
+	var save: PlayerSave = GameData.current_save
+	var player_class: int = save.player_class if save != null else 0
 	var tree: Array = TalentTree.TREES.get(player_class, TalentTree.TREES[0])
 	for node_index in tree.size():
 		for prerequisite in tree[node_index]["prerequisites"]:
@@ -239,7 +239,7 @@ func _player_class() -> int:
 
 
 func _on_tree_node_pressed(node_index: int) -> void:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return
 	var result = TalentTree.learn(save, node_index)
@@ -249,7 +249,7 @@ func _on_tree_node_pressed(node_index: int) -> void:
 
 
 func _on_attribute_plus_pressed(stat_index: int) -> void:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return
 	if not Leveling.spend_stat_point(save, stat_index):
@@ -258,7 +258,7 @@ func _on_attribute_plus_pressed(stat_index: int) -> void:
 
 
 func _on_socket_pressed(socket_index: int) -> void:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return
 	if int(save.move_matrix[socket_index]) != 0:
@@ -267,13 +267,13 @@ func _on_socket_pressed(socket_index: int) -> void:
 
 
 func _on_pool_row_pressed(row_index: int) -> void:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return
-	var pool_index = _pool_scroll + row_index
+	var pool_index: int = _pool_scroll + row_index
 	if pool_index >= _pool_move_ids.size():
 		return
-	var empty_socket = save.move_matrix.find(0)
+	var empty_socket: int = save.move_matrix.find(0)
 	if empty_socket == -1:
 		_status_label.text = "Your Combat Action Bar is full."
 		return
@@ -286,6 +286,6 @@ func _on_pool_scrolled(direction: int) -> void:
 		_pool_scroll + direction, 0,
 		max(0, _pool_move_ids.size() - POOL_VISIBLE_ROWS)
 	)
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save != null:
 		_refresh_pool(save)

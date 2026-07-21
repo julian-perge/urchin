@@ -13,14 +13,14 @@ extends Control
 
 signal store_closed
 
-const ItemSlotScene = preload("res://scenes/ui/item_slot.tscn")
+const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
 
-const INVENTORY_AT = Vector2(503.5, 81.6)
+const INVENTORY_AT: Vector2 = Vector2(503.5, 81.6)
 # 15 catalog slots, 5 columns (3 rows) - keep in sync with StoreItems'
 # `columns` property in store_window.tscn.
-const CATALOG_SLOTS = 15
+const CATALOG_SLOTS: int = 15
 # playerSlot0-6 centers from the frame-16 dump.
-const EQUIP_SLOT_CENTERS = {
+const EQUIP_SLOT_CENTERS: Dictionary[int, Vector2] = {
 	0: Vector2(301.1, 117.6),
 	2: Vector2(301.1, 152.0),
 	6: Vector2(301.1, 186.4),
@@ -29,8 +29,8 @@ const EQUIP_SLOT_CENTERS = {
 	3: Vector2(456.7, 152.0),
 	4: Vector2(456.7, 186.4),
 }
-const DOLL_POSITION = Vector2(396.5, 162.4)
-const DOLL_SCALE = 0.85
+const DOLL_POSITION: Vector2 = Vector2(396.5, 162.4)
+const DOLL_SCALE: float = 0.85
 
 @onready var shop_backdrop: TextureRect = $ShopBackdrop
 @onready var shop_dialogue: Label = $DescriptionLabel
@@ -86,14 +86,14 @@ func open_store():
 
 func refresh_store():
 	_status_label.text = ""
-	var backdrop = StoreManager.get_current_shop_backdrop()
+	var backdrop: Texture2D = StoreManager.get_current_shop_backdrop()
 	if backdrop != null:
 		shop_backdrop.texture = backdrop
-	var dialogue = StoreManager.get_current_shop_dialogue()
+	var dialogue: String = StoreManager.get_current_shop_dialogue()
 	shop_dialogue.text = dialogue if dialogue != "" else "..."
 	inventory_panel.set_gold(GameData.get_player_gold())
 	_load_store_items()
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save != null:
 		inventory_panel.populate_from_save(save, ItemManagerAuto.items_by_id)
 		equip_view.refresh(save, ItemManagerAuto.items_by_id)
@@ -101,7 +101,7 @@ func refresh_store():
 
 func _load_store_items():
 	var catalog: Array[GameItem] = GameData.get_store_inventory()
-	var index = 0
+	var index: int = 0
 	for child in store_items.get_children():
 		if child is ItemSlot:
 			child.set_item(catalog[index] if index < catalog.size() else null)
@@ -126,7 +126,7 @@ func _on_inventory_item_selected(slot: ItemSlot) -> void:
 	_status_label.text = ""
 	if not slot.has_meta("save_index"):
 		return
-	var result = GameData.equip_from_inventory(int(slot.get_meta("save_index")))
+	var result: int = GameData.equip_from_inventory(int(slot.get_meta("save_index")))
 	if result != Equipment.EquipResult.OK:
 		_status_label.text = Equipment.EQUIP_RESULT_MESSAGES.get(result, "")
 
@@ -143,7 +143,7 @@ func _on_sell_pressed(slot: ItemSlot) -> void:
 
 
 func _on_delete_pressed(slot: ItemSlot) -> void:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null or not slot.has_meta("save_index"):
 		return
 	save.item_array[int(slot.get_meta("save_index"))] = 0

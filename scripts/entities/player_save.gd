@@ -91,7 +91,7 @@ extends Resource
 @export var autosave: bool = true
 
 static func new_game(player_name: String, new_player_class: int = 0) -> PlayerSave:
-	var save = PlayerSave.new()
+	var save: PlayerSave = PlayerSave.new()
 	save.name_user = player_name
 	save.player_class = new_player_class
 	save.skill_points = TalentTree.STARTING_SKILL_POINTS

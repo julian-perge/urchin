@@ -14,14 +14,14 @@ func _ready():
 
 func load_data() -> void:
 	print("Loading all buff data")
-	var file = FileAccess.open(BUFFS_FILE, FileAccess.READ)
+	var file: FileAccess = FileAccess.open(BUFFS_FILE, FileAccess.READ)
 	if file == null:
 		print("Could not open ", BUFFS_FILE)
 		return
 	var json = JSON.parse_string(file.get_as_text())
 	file.close()
 	for buff_data in json:
-		var buff = Buff.from_json(buff_data)
+		var buff: Buff = Buff.from_json(buff_data)
 		buffs_by_id[buff.id] = buff
 		buffs_by_internal_name[buff.internal_name] = buff
 

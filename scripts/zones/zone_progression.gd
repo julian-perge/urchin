@@ -56,15 +56,15 @@ static func quest_progress(save: PlayerSave, zone: int) -> int:
 # player's current zone. is_story_progress = winning advances quest_progress;
 # is_boss = this is (or repeats) the zone's final fight.
 static func pick_story_battle(save: PlayerSave) -> Dictionary:
-	var zone = save.section_in
+	var zone: int = save.section_in
 	var hub: Dictionary = QUEST_HUB.get(zone, {})
 	if hub.is_empty():
 		return {}
-	var progress = quest_progress(save, zone)
-	var progress_max = int(hub["progress_max"])
-	var battle_id = zone * 100 + progress
-	var is_story_progress = true
-	var is_boss = progress == progress_max
+	var progress: int = quest_progress(save, zone)
+	var progress_max: int = int(hub["progress_max"])
+	var battle_id: int = zone * 100 + progress
+	var is_story_progress: bool = true
+	var is_boss: bool = progress == progress_max
 	if progress > progress_max:
 		battle_id = zone * 100 + progress_max
 		is_story_progress = false
@@ -75,7 +75,7 @@ static func pick_story_battle(save: PlayerSave) -> Dictionary:
 # The training orb (DefineButton2_3242): battle ids currently unlocked in the
 # player's zone (unlock_progress strictly below current progress; -1 always).
 static func available_training_battle_ids(save: PlayerSave) -> Array:
-	var ids = []
+	var ids: Array[Variant] = []
 	for entry in TRAIN_FIGHTS.get(save.section_in, []):
 		if quest_progress(save, save.section_in) > entry[1]:
 			ids.append(entry[0])
@@ -85,7 +85,7 @@ static func available_training_battle_ids(save: PlayerSave) -> Array:
 # Uniform random pick from the unlocked pool, plus the zone's level cap for
 # "X"/"Z" enemy scaling. {} when the zone has nothing unlocked.
 static func pick_training_battle(save: PlayerSave) -> Dictionary:
-	var ids = available_training_battle_ids(save)
+	var ids: Array = available_training_battle_ids(save)
 	if ids.is_empty():
 		return {}
 	return {
@@ -102,7 +102,7 @@ static func is_zone_unlocked(save: PlayerSave, zone: int) -> bool:
 	var hub: Dictionary = QUEST_HUB.get(zone, {})
 	if hub.is_empty():
 		return false
-	var linked = int(hub["linked_zone"])
+	var linked: int = int(hub["linked_zone"])
 	var linked_hub: Dictionary = QUEST_HUB.get(linked, {})
 	if linked_hub.is_empty():
 		return false
@@ -125,13 +125,13 @@ static func max_zone(difficulty: int, has_all_star_achievement: bool = false) ->
 # the party roster. Call ONLY on victory. Returns
 # {progress_advanced, cutscene, roster_changed}.
 static func after_battle_won(save: PlayerSave, battle_id: int, was_story_progress: bool) -> Dictionary:
-	var cutscene = ""
-	var progress_advanced = false
+	var cutscene: String = ""
+	var progress_advanced: bool = false
 	if was_story_progress:
 		save.quest_progress[save.section_in] = quest_progress(save, save.section_in) + 1
 		progress_advanced = true
 		cutscene = CUTSCENE_BATTLES.get(battle_id, "")
-	var roster_changed = Party.update_roster_after_battle(save)
+	var roster_changed: bool = Party.update_roster_after_battle(save)
 	return {
 		"progress_advanced": progress_advanced,
 		"cutscene": cutscene,

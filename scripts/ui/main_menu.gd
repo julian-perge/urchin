@@ -8,15 +8,15 @@
 # All screens sit on the original blue splatter background (root frame 65).
 extends Control
 
-const CLASS_NAMES = ["Biological", "Psychological", "Hydraulic"]
+const CLASS_NAMES: Array[String] = ["Biological", "Psychological", "Hydraulic"]
 # Card order matches the original screen: Psychological, Biological, Hydraulic.
-const CLASS_CARD_ORDER = [1, 0, 2]
-const CLASS_CARD_ART = {
+const CLASS_CARD_ORDER: Array[int] = [1, 0, 2]
+const CLASS_CARD_ART: Dictionary[int, String] = {
 	1: "class_cards/psychological",
 	0: "class_cards/biological",
 	2: "class_cards/hydraulic",
 }
-const DIFFICULTY_NAMES = ["Easy", "Challenging", "Heroic"]
+const DIFFICULTY_NAMES: Array[String] = ["Easy", "Challenging", "Heroic"]
 
 var _selected_slot: int = 1
 var _selected_class: int = 0
@@ -48,13 +48,13 @@ func _ready():
 # --- screen 0: save slots ----------------------------------------------------
 
 func _build_slot_screen() -> void:
-	var layout = get_node_or_null("Layout")
+	var layout: Node = get_node_or_null("Layout")
 	if layout == null:
 		layout = VBoxContainer.new()
 		layout.name = "Layout"
 		layout.set_anchors_preset(Control.PRESET_CENTER)
 		add_child(layout)
-	var title = layout.get_node_or_null("Title")
+	var title: Node = layout.get_node_or_null("Title")
 	if title == null:
 		title = Label.new()
 		title.name = "Title"
@@ -74,7 +74,7 @@ func _refresh_slot_buttons() -> void:
 	for child in slot_buttons.get_children():
 		child.queue_free()
 	for slot in range(1, GameData.NUM_SLOTS + 1):
-		var button = Button.new()
+		var button: Button = Button.new()
 		button.custom_minimum_size = Vector2(320, 44)
 		button.text = _slot_label(slot)
 		button.pressed.connect(_on_slot_pressed.bind(slot))
@@ -84,7 +84,7 @@ func _refresh_slot_buttons() -> void:
 func _slot_label(slot: int) -> String:
 	if not GameData.has_save(slot):
 		return "Slot %d - New Game" % slot
-	var save = ResourceLoader.load(GameData._slot_path(slot))
+	var save: Resource = ResourceLoader.load(GameData._slot_path(slot))
 	if save is PlayerSave:
 		return "Slot %d - %s  Lv %d  (Zone %d)" % [slot, save.name_user, save.level, save.section_in]
 	return "Slot %d - (corrupted)" % slot
@@ -109,7 +109,7 @@ func _build_class_screen() -> void:
 		new_game_panel, "Please select a class:", Rect2(0, 60, 800, 40), 26,
 		Color(0.85, 0.5, 0.55), HORIZONTAL_ALIGNMENT_CENTER
 	)
-	var name_row = MenuTheme.add_label(
+	var name_row: Label = MenuTheme.add_label(
 		new_game_panel, "Name:", Rect2(250, 116, 80, 30), 15,
 		Color(0.8, 0.8, 0.8), HORIZONTAL_ALIGNMENT_RIGHT
 	)
@@ -141,7 +141,7 @@ func _build_class_screen() -> void:
 
 # The original card art: gray sketch at rest, colored on hover/press.
 func _make_class_card(class_id: int) -> TextureButton:
-	var card = TextureButton.new()
+	var card: TextureButton = TextureButton.new()
 	card.texture_normal = MenuTheme.texture(CLASS_CARD_ART[class_id] + "_gray.png")
 	card.texture_hover = MenuTheme.texture(CLASS_CARD_ART[class_id] + ".png")
 	card.texture_pressed = card.texture_hover
@@ -182,9 +182,9 @@ func _build_options_screen() -> void:
 	difficulty_picker.position = Vector2(410, 120)
 	difficulty_picker.add_theme_constant_override("separation", 8)
 	options_panel.add_child(difficulty_picker)
-	var group = ButtonGroup.new()
+	var group: ButtonGroup = ButtonGroup.new()
 	for i in DIFFICULTY_NAMES.size():
-		var button = Button.new()
+		var button: Button = Button.new()
 		button.toggle_mode = true
 		button.button_group = group
 		button.text = DIFFICULTY_NAMES[i]
@@ -196,7 +196,7 @@ func _build_options_screen() -> void:
 		_sound_enabled = on
 		AudioServer.set_bus_mute(0, not on))
 	_add_toggle_row("Autosave:", 270, "On", "Off", func(on): _autosave_enabled = on)
-	var note = MenuTheme.add_label(
+	var note: Label = MenuTheme.add_label(
 		options_panel, "If you turn Autosave on, your game will be saved when you press "
 		+ "'Proceed' after winning a battle. The difficulty level cannot be changed - "
 		+ "you must start a new game if you wish to play on a different mode.",
@@ -211,14 +211,14 @@ func _build_options_screen() -> void:
 	start_button.add_theme_font_size_override("font_size", 24)
 	start_button.add_theme_color_override("font_color", Color(0.35, 0.95, 0.25))
 	start_button.add_theme_color_override("font_hover_color", Color(0.6, 1.0, 0.5))
-	var style = StyleBoxFlat.new()
+	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = Color(0, 0, 0, 0)
 	start_button.add_theme_stylebox_override("normal", style)
 	start_button.add_theme_stylebox_override("hover", style)
 	start_button.add_theme_stylebox_override("pressed", style)
 	start_button.pressed.connect(_on_start_new_game)
 	options_panel.add_child(start_button)
-	var back = Button.new()
+	var back: Button = Button.new()
 	back.text = "Back"
 	back.position = Vector2(700, 545)
 	back.size = Vector2(80, 36)
@@ -233,7 +233,7 @@ func _add_toggle_row(label_text: String, y: float, on_text: String, off_text: St
 		options_panel, label_text, Rect2(140, y, 250, 26), 17,
 		Color(0.55, 0.85, 0.4), HORIZONTAL_ALIGNMENT_RIGHT
 	)
-	var button = Button.new()
+	var button: Button = Button.new()
 	button.toggle_mode = true
 	button.button_pressed = true
 	button.text = on_text
@@ -246,11 +246,11 @@ func _add_toggle_row(label_text: String, y: float, on_text: String, off_text: St
 
 
 func _make_screen(screen_name: String) -> Control:
-	var screen = Control.new()
+	var screen: Control = Control.new()
 	screen.name = screen_name
 	screen.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(screen)
-	var bg = TextureRect.new()
+	var bg: TextureRect = TextureRect.new()
 	bg.texture = MenuTheme.texture("start_background.png")
 	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
@@ -262,7 +262,7 @@ func _make_screen(screen_name: String) -> Control:
 
 
 func _on_start_new_game() -> void:
-	var player_name = name_input.text.strip_edges()
+	var player_name: String = name_input.text.strip_edges()
 	if player_name == "":
 		player_name = "Sonny"
 	GameData.new_game(_selected_slot, player_name, _selected_class)

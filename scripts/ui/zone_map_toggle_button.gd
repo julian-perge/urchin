@@ -7,6 +7,6 @@ extends BaseButton
 
 # BaseButton virtual - fires on press with no scene-side signal wiring.
 func _pressed() -> void:
-	var panel = get_tree().get_first_node_in_group("zone_map_panel")
+	var panel: Node = get_tree().get_first_node_in_group("zone_map_panel")
 	if panel:
 		panel.visible = not panel.visible

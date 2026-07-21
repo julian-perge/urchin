@@ -25,10 +25,10 @@ extends Node
 # directly from this script would break its compilation anywhere it's loaded
 # outside an actually-running game (EditorScript smoke tests included).
 func execute_move(ability: Ability, caster: CombatUnit, target: CombatUnit, buffs_by_name: Dictionary = {}) -> Dictionary:
-	var avg_num_c = 100 + 15 * caster.plevel
-	var speed_crit_calc = caster.speed_u / CombatUnit.get_stat(10, caster.plevel) - 1
+	var avg_num_c: int = 100 + 15 * caster.plevel
+	var speed_crit_calc: float = caster.speed_u / CombatUnit.get_stat(10, caster.plevel) - 1
 
-	var element = ability.damage_element_type
+	var element: String = ability.damage_element_type
 	var per_calc = caster.per_u.get(element, 0.0) / avg_num_c
 	var def_calc = target.def_u.get(element, 0.0) / avg_num_c
 	if def_calc <= 0:
@@ -37,7 +37,7 @@ func execute_move(ability: Ability, caster: CombatUnit, target: CombatUnit, buff
 		per_calc = 0.1
 
 	var crit_calc_x = min(per_calc / def_calc, 10.0)
-	var focus_coef = ability.focus_cost_multiplier + caster.focus_n / 100.0 * ability.focus_scaling_modifier
+	var focus_coef: float = ability.focus_cost_multiplier + caster.focus_n / 100.0 * ability.focus_scaling_modifier
 
 	var result: Dictionary
 	match ability.effect_category:
@@ -63,12 +63,12 @@ func _apply_status_effect(ability: Ability, caster: CombatUnit, target: CombatUn
 	if buff == null:
 		push_warning("execute_move: no buff def for status_effect_id '%s'" % ability.status_effect_id)
 		return ""
-	var buff_target = caster if ability.effect_target_is_self else target
+	var buff_target: CombatUnit = caster if ability.effect_target_is_self else target
 	# Unique ("cannot stack") buffs refresh the existing instance's duration
 	# instead of applying a second copy - ported from the buffUniqueCheck block
 	# in frame217_KRIN_BATTLE_SCENE/onClipEvent_enterFrame.txt.
 	if buff.is_unique:
-		var refreshed = false
+		var refreshed: bool = false
 		for slot in buff_target.buff_slots:
 			if slot["buff_id"] == buff.id and slot["cd"] != 0:
 				slot["cd"] = buff.duration_turns
@@ -91,18 +91,18 @@ func _crit_roll(per_calc: float, def_calc: float, speed_crit_calc: float, abilit
 	return randi_range(0, 99) < threshold
 
 func _execute_full_damage(ability: Ability, caster: CombatUnit, target: CombatUnit, per_calc: float, def_calc: float, crit_calc_x: float, focus_coef: float, speed_crit_calc: float) -> Dictionary:
-	var base_damage = (
+	var base_damage: float = (
 		(caster.strength_u + ability.base_strength_bonus) * ability.strength_damage_multiplier
 		+ (caster.magic_u + ability.base_magic_bonus) * ability.magic_damage_multiplier
 		+ (caster.speed_u + ability.base_speed_bonus) * ability.speed_damage_multiplier
 		+ ability.focus_amount_change
 	)
-	var crit_multiplier = ability.focus_effect_multiplier
+	var crit_multiplier: float = ability.focus_effect_multiplier
 
 	var element_multiplier: float
-	var did_crit = _crit_roll(per_calc, def_calc, speed_crit_calc, ability)
+	var did_crit: bool = _crit_roll(per_calc, def_calc, speed_crit_calc, ability)
 	if did_crit:
-		var x = crit_calc_x + 1
+		var x: float = crit_calc_x + 1
 		element_multiplier = max(0.016666667 * pow(x, 4) - 0.25 * pow(x, 3) + 1.233333 * pow(x, 2) - 1.9000000000000001 * x + 1.9000000000000001, 0.0)
 	else:
 		if crit_calc_x <= 1:
@@ -123,9 +123,9 @@ func _execute_full_damage(ability: Ability, caster: CombatUnit, target: CombatUn
 	return _apply_damage(target, damage, did_crit)
 
 func _apply_damage(target: CombatUnit, amount: float, did_crit: bool) -> Dictionary:
-	var shielded_amount = 0.0
+	var shielded_amount: float = 0.0
 	if target.shield > 0:
-		var difference = target.shield - amount
+		var difference: float = target.shield - amount
 		if difference > 0:
 			target.shield -= amount
 			return {"type": "damage", "amount": 0, "shielded_amount": amount, "did_crit": did_crit, "target_died": false}
@@ -153,7 +153,7 @@ func _apply_damage(target: CombatUnit, amount: float, did_crit: bool) -> Diction
 	}
 
 func _execute_heal(ability: Ability, caster: CombatUnit, target: CombatUnit, per_calc: float, focus_coef: float, speed_crit_calc: float) -> Dictionary:
-	var base_amount = (
+	var base_amount: float = (
 		(caster.strength_u + ability.base_strength_bonus) * ability.strength_damage_multiplier
 		+ (caster.magic_u + ability.base_magic_bonus) * ability.magic_damage_multiplier
 		+ (caster.speed_u + ability.base_speed_bonus) * ability.speed_damage_multiplier
@@ -161,8 +161,8 @@ func _execute_heal(ability: Ability, caster: CombatUnit, target: CombatUnit, per
 		+ ability.focus_amount_change
 	)
 	# The original passes a fixed def_calc of 1 here (perScript(PERCALK, 1, IDKM2)).
-	var did_crit = _crit_roll(per_calc, 1.0, speed_crit_calc, ability)
-	var element_multiplier = 1.5 if did_crit else 1.0
+	var did_crit: bool = _crit_roll(per_calc, 1.0, speed_crit_calc, ability)
+	var element_multiplier: float = 1.5 if did_crit else 1.0
 
 	var amount = ceil(base_amount * focus_coef * ability.focus_effect_multiplier * element_multiplier * caster.heal_mod * target.heal_mod_plus * target.heal_mod_minus)
 	if amount <= 0:

@@ -18,7 +18,7 @@ signal zone_unlocked(zone_id: int)
 signal battle_selected(info: Dictionary)
 
 func can_access_zone(zone_id: int) -> bool:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return zone_id == 1
 	if zone_id > ZoneProgression.max_zone(save.difficulty):
@@ -34,11 +34,11 @@ func change_zone(zone_id: int):
 
 # Story-fight orb handler: picks the next story battle in the current zone.
 func request_story_fight() -> Dictionary:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return {}
 	save.section_in = current_zone
-	var info = ZoneProgression.pick_story_battle(save)
+	var info: Dictionary = ZoneProgression.pick_story_battle(save)
 	if not info.is_empty():
 		info["train_cap"] = BattleSetup.DEFAULT_TRAIN_CAP
 		_launch_battle(info)
@@ -46,11 +46,11 @@ func request_story_fight() -> Dictionary:
 
 # Training orb handler: uniform pick from the zone's unlocked training pool.
 func request_training_fight() -> Dictionary:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return {}
 	save.section_in = current_zone
-	var info = ZoneProgression.pick_training_battle(save)
+	var info: Dictionary = ZoneProgression.pick_training_battle(save)
 	if not info.is_empty():
 		info["is_story_progress"] = false
 		info["is_boss"] = false
@@ -67,14 +67,14 @@ func _launch_battle(info: Dictionary) -> void:
 # Call on battle victory: advances story progress, may add companions, may
 # name a cutscene. Re-emits zone_unlocked for any newly reachable zones.
 func report_battle_won(battle_id: int, was_story_progress: bool) -> Dictionary:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return {}
-	var unlocked_before = []
+	var unlocked_before: Array[Variant] = []
 	for zone_id in ZONES:
 		if ZoneProgression.is_zone_unlocked(save, zone_id):
 			unlocked_before.append(zone_id)
-	var result = ZoneProgression.after_battle_won(save, battle_id, was_story_progress)
+	var result: Dictionary = ZoneProgression.after_battle_won(save, battle_id, was_story_progress)
 	for zone_id in ZONES:
 		if ZoneProgression.is_zone_unlocked(save, zone_id) and zone_id not in unlocked_before:
 			zone_unlocked.emit(zone_id)
@@ -125,7 +125,7 @@ func report_battle_won(battle_id: int, was_story_progress: bool) -> Dictionary:
 # use a second background (CHURCH) for a subset of their battles, and zone 7
 # (the last, thinnest zone in the original game) reuses zone 5's assets rather
 # than having its own.
-const ZONES = {
+const ZONES: Dictionary[Variant, Variant] = {
 	1: {
 		"name": "New Alcatraz",
 		"subtitle": "The Iron Prison",

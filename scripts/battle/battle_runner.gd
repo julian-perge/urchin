@@ -29,7 +29,7 @@ enum Outcome { LOSS = 0, WIN = 1, DRAW = 2, ONGOING = -1 }
 
 const BATTLE_TIME_LIMIT: float = 120.0
 const PLAYER_SLOT: int = 1
-const TEAM_SLOTS = {1: [1, 3, 5], 2: [2, 4, 6]}
+const TEAM_SLOTS: Dictionary[int, Array] = {1: [1, 3, 5], 2: [2, 4, 6]}
 
 var units: Dictionary = {}  # slot (1..6) -> CombatUnit
 var battle: BattleFight = null
@@ -103,9 +103,9 @@ func get_player_usable_moves() -> Array:
 	var player: CombatUnit = units.get(PLAYER_SLOT)
 	if player == null:
 		return []
-	var usable = []
+	var usable: Array[Variant] = []
 	for bar_index in player.equipped_moves.size():
-		var move_id = int(player.equipped_moves[bar_index])
+		var move_id: int = int(player.equipped_moves[bar_index])
 		if move_id == 0:
 			continue
 		if bar_index < player.ability_cooldowns.size() and player.ability_cooldowns[bar_index] > 0:
@@ -123,21 +123,21 @@ func get_player_usable_moves() -> Array:
 func advance_half_turn(player_action: Dictionary = {}) -> Array:
 	if is_over():
 		return []
-	var events_start = events.size()
+	var events_start: int = events.size()
 
 	for slot in TEAM_SLOTS[1] + TEAM_SLOTS[2]:
 		healed_this_turn[slot] = 0.0
 
-	var queue = []
+	var queue: Array[Variant] = []
 	for slot in _team_slots_in_order(team_move_now):
 		var unit: CombatUnit = units.get(slot)
 		if unit == null:
 			continue
-		var action = {"caster_slot": slot, "target_slot": slot, "move_id": 0}
+		var action: Dictionary[Variant, Variant] = {"caster_slot": slot, "target_slot": slot, "move_id": 0}
 		if unit.active:
 			if unit.ai_enabled:
 				_lower_pool_cooldowns(unit)
-				var choice = BattleAI.choose_move(slot, units, phase, healed_this_turn, moves_by_id)
+				var choice: Dictionary = BattleAI.choose_move(slot, units, phase, healed_this_turn, moves_by_id)
 				if not choice.is_empty():
 					action = {
 						"caster_slot": slot,
@@ -163,13 +163,13 @@ func advance_half_turn(player_action: Dictionary = {}) -> Array:
 
 
 func _team_slots_in_order(team: int) -> Array:
-	var slots = TEAM_SLOTS[team].duplicate()
+	var slots: Array = TEAM_SLOTS[team].duplicate()
 	# TeamSpeedAdder: speed descending, slot id descending on ties.
 	slots.sort_custom(func(a, b):
 		var unit_a: CombatUnit = units.get(a)
 		var unit_b: CombatUnit = units.get(b)
-		var speed_a = unit_a.speed_u if unit_a else -1.0
-		var speed_b = unit_b.speed_u if unit_b else -1.0
+		var speed_a: float = unit_a.speed_u if unit_a else -1.0
+		var speed_b: float = unit_b.speed_u if unit_b else -1.0
 		if speed_a == speed_b:
 			return a > b
 		return speed_a > speed_b)
@@ -187,7 +187,7 @@ func _execute_action(action: Dictionary) -> void:
 	var caster: CombatUnit = units.get(action["caster_slot"])
 	if caster == null:
 		return
-	var should_tick_buffs = caster.active  # usedBuff - dead units don't tick
+	var should_tick_buffs: bool = caster.active  # usedBuff - dead units don't tick
 
 	# The player's bar cooldowns tick down when their own action dispatches.
 	if not caster.ai_enabled and action["caster_slot"] == PLAYER_SLOT:
@@ -195,7 +195,7 @@ func _execute_action(action: Dictionary) -> void:
 			if caster.ability_cooldowns[i] > 0:
 				caster.ability_cooldowns[i] -= 1
 
-	var move_id = int(action["move_id"])
+	var move_id: int = int(action["move_id"])
 	var target: CombatUnit = units.get(action.get("target_slot", 0))
 	if move_id != 0 and caster.active:
 		if caster.stun != 0:
@@ -219,7 +219,7 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 
 	var life_cost = move.flat_life_cost + round(caster.life_u * move.health_cost_percentage)
 	if caster.focus_n < move.focus_cost or caster.life_n <= life_cost:
-		var reason = "focus" if caster.focus_n < move.focus_cost else "health"
+		var reason: String = "focus" if caster.focus_n < move.focus_cost else "health"
 		_log({"type": "move_failed", "caster_slot": caster.player_id, "move_id": move.id, "reason": reason})
 		return
 
@@ -245,7 +245,7 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 		_log({"type": "miss", "caster_slot": caster.player_id, "target_slot": target.player_id, "move_id": move.id})
 		return
 
-	var dispelled = _resolve_dispels(move, target)
+	var dispelled: Array = _resolve_dispels(move, target)
 	if not dispelled.is_empty():
 		_log({"type": "dispel", "caster_slot": caster.player_id, "target_slot": target.player_id, "removed": dispelled})
 
@@ -253,11 +253,11 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 		for slot in TEAM_SLOTS[2 if caster.team_side == 1 else 1]:
 			var enemy: CombatUnit = units.get(slot)
 			if enemy != null and enemy.active:
-				var result = battle_manager.execute_move(move, caster, enemy, buffs_by_name)
+				var result: Dictionary = battle_manager.execute_move(move, caster, enemy, buffs_by_name)
 				enemy.apply_changes()
 				_log_move_result(caster, enemy, move, result)
 	else:
-		var result = battle_manager.execute_move(move, caster, target, buffs_by_name)
+		var result: Dictionary = battle_manager.execute_move(move, caster, target, buffs_by_name)
 		target.apply_changes()
 		_log_move_result(caster, target, move, result)
 
@@ -268,11 +268,11 @@ func _accuracy_roll(caster: CombatUnit, target: CombatUnit, move: Ability) -> bo
 	if move.attack_animation_type == "Shock" or target.stun != 0:
 		return true
 	var miss_chance: float
-	var denominator = caster.speed_u * move.combat_speed_modifier
+	var denominator: float = caster.speed_u * move.combat_speed_modifier
 	if denominator <= 0:
 		miss_chance = 75.0
 	else:
-		var speed_ratio = target.speed_u / denominator
+		var speed_ratio: float = target.speed_u / denominator
 		miss_chance = speed_ratio * (speed_ratio * 3.0 + 3.0)
 		if miss_chance > 75.0:
 			miss_chance = 75.0
@@ -287,8 +287,8 @@ func _accuracy_roll(caster: CombatUnit, target: CombatUnit, move: Ability) -> bo
 func _resolve_dispels(move: Ability, target: CombatUnit) -> Array:
 	if move.dispel_count <= 0:
 		return []
-	var remaining = move.dispel_count
-	var removed = []
+	var remaining: int = move.dispel_count
+	var removed: Array[Variant] = []
 	for slot_index in target.buff_slots.size():
 		var slot = target.buff_slots[slot_index]
 		if slot["cd"] <= 0:
@@ -336,13 +336,13 @@ func _end_half_turn() -> void:
 
 
 func _check_phase_advance() -> void:
-	var entry = _phase_entry(phase)
+	var entry: Dictionary = _phase_entry(phase)
 	if entry.is_empty():
 		return
 	var watched: CombatUnit = units.get(int(entry.get("player", 0)))
 	if watched == null:
 		return
-	var advance = false
+	var advance: bool = false
 	if watched.life_n / watched.life_u <= float(entry.get("life", 0.0)):
 		advance = true
 	elif int(entry.get("teamLeft", 0)) > 0 and _team_active_count(watched.team_side) <= int(entry.get("teamLeft", 0)):
@@ -371,7 +371,7 @@ func _phase_entry(index: int) -> Dictionary:
 
 
 func _team_active_count(team: int) -> int:
-	var count = 0
+	var count: int = 0
 	for slot in TEAM_SLOTS[team]:
 		var unit: CombatUnit = units.get(slot)
 		if unit != null and unit.active:
@@ -380,10 +380,10 @@ func _team_active_count(team: int) -> int:
 
 
 func _check_win_lose() -> void:
-	var win_count = 0
-	var lose_count = 0
+	var win_count: int = 0
+	var lose_count: int = 0
 	var player: CombatUnit = units.get(PLAYER_SLOT)
-	var player_team = player.team_side if player else 1
+	var player_team: int = player.team_side if player else 1
 
 	# Tutorial-battle special case: losing your own unit in KBR2 is an
 	# immediate loss even though allies remain.
@@ -414,10 +414,10 @@ func _check_win_lose() -> void:
 # the round; ties go to team 1 in single player. absolute_start (from the
 # battle definition) force-picks the opener - once, unless time_lock holds it.
 func _team_select() -> void:
-	var averages = {1: 0.0, 2: 0.0}
+	var averages: Dictionary[int, float] = {1: 0.0, 2: 0.0}
 	for team in [1, 2]:
-		var total = 0.0
-		var count = 0
+		var total: float = 0.0
+		var count: int = 0
 		for slot in TEAM_SLOTS[team]:
 			var unit: CombatUnit = units.get(slot)
 			if unit != null and unit.active:
@@ -438,7 +438,7 @@ func _team_select() -> void:
 	team_move_now = team_move
 
 	for team in [1, 2]:
-		var ordered = _team_slots_in_order(team)
+		var ordered: Array = _team_slots_in_order(team)
 		for rank in ordered.size():
 			var unit: CombatUnit = units.get(ordered[rank])
 			if unit != null:
@@ -452,8 +452,8 @@ func _team_select() -> void:
 func _drain_speeches() -> void:
 	if battle == null or battle.speeches.is_empty():
 		return
-	var sequence = 0
-	var emitted = 0
+	var sequence: int = 0
+	var emitted: int = 0
 	while speech_cursor < battle.speeches.size():
 		var speech: Dictionary = battle.speeches[speech_cursor]
 		if int(speech.get("phase", 0)) != phase:
@@ -462,7 +462,7 @@ func _drain_speeches() -> void:
 			break
 		if int(speech.get("turnTime2", 0)) != sequence:
 			break
-		var speaker_slot = _speech_speaker_slot(speech.get("player", 0))
+		var speaker_slot: int = _speech_speaker_slot(speech.get("player", 0))
 		speech_cursor += 1
 		if speaker_slot == 0 or (units.get(speaker_slot) != null and units[speaker_slot].active):
 			sequence += 1
@@ -475,7 +475,7 @@ func _drain_speeches() -> void:
 				"voice_over": speech.get("voiceOver", ""),
 			})
 	if emitted == 0:
-		var passed_entry = _phase_entry(phase - 1)
+		var passed_entry: Dictionary = _phase_entry(phase - 1)
 		if not passed_entry.is_empty() and passed_entry.get("endGame", false):
 			win_condition = int(passed_entry.get("winOrLose", Outcome.WIN))
 
@@ -484,7 +484,7 @@ func _drain_speeches() -> void:
 # it's a unit name matched against the living roster.
 func _speech_speaker_slot(speaker) -> int:
 	if speaker is float or speaker is int:
-		var slot = int(speaker)
+		var slot: int = int(speaker)
 		return slot if slot < 7 else 0
 	for slot in units:
 		var unit: CombatUnit = units[slot]
@@ -494,7 +494,7 @@ func _speech_speaker_slot(speaker) -> int:
 
 
 func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, result: Dictionary) -> void:
-	var entry = {
+	var entry: Dictionary[Variant, Variant] = {
 		"type": "move",
 		"caster_slot": caster.player_id,
 		"target_slot": target.player_id,

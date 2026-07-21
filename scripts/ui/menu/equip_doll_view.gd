@@ -9,7 +9,7 @@ class_name EquipDollView
 
 signal equip_slot_clicked(equip_index: int)
 
-const ItemSlotScene = preload("res://scenes/ui/item_slot.tscn")
+const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
 const CharacterVisualScript = preload("res://scripts/entities/character_visual.gd")
 
 var _slots: Dictionary = {}  # equip index -> ItemSlot
@@ -39,9 +39,9 @@ func setup(slot_centers: Dictionary, doll_position: Vector2, doll_scale: float, 
 func refresh(save: PlayerSave, items_by_id: Dictionary) -> void:
 	for equip_index in _slots:
 		var slot: ItemSlot = _slots[equip_index]
-		var item_id = int(save.equip_array[equip_index]) if equip_index < save.equip_array.size() else 0
+		var item_id: int = int(save.equip_array[equip_index]) if equip_index < save.equip_array.size() else 0
 		slot.set_item(items_by_id.get(item_id) if item_id != 0 else null)
-	var unit = CombatUnit.from_player_save(save)
+	var unit: CombatUnit = CombatUnit.from_player_save(save)
 	_doll.dress_from_model(unit.model, CharacterVisual.resolve_equip_looks(unit, items_by_id))
 
 

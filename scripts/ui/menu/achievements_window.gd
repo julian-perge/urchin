@@ -8,10 +8,10 @@ extends Control
 # The Steam build widens this screen's panel and drops the heading inside
 # it in gold (see assets/references/sonny2_achievements_screen.png); the
 # plate grid itself matches the web SWF's extracted centers.
-const PANEL = Rect2(76.0, 86.0, 649.0, 311.0)
-const PLATE_SIZE = Vector2(140, 32)
-const PLATE_COLUMNS_X = [318.0, 483.0]
-const PLATE_ROWS_Y = [161.0, 207.0, 253.0, 299.0, 345.0]
+const PANEL: Rect2 = Rect2(76.0, 86.0, 649.0, 311.0)
+const PLATE_SIZE: Vector2 = Vector2(140, 32)
+const PLATE_COLUMNS_X: Array[float] = [318.0, 483.0]
+const PLATE_ROWS_Y: Array[float] = [161.0, 207.0, 253.0, 299.0, 345.0]
 
 var _plates: Array[PanelContainer] = []
 var _plate_labels: Array[Label] = []
@@ -19,9 +19,9 @@ var _plate_labels: Array[Label] = []
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var backdrop = MenuTheme.add_texture_rect(self, "menu_backdrop.png", MenuTheme.BACKDROP_RECT)
+	var backdrop: TextureRect = MenuTheme.add_texture_rect(self, "menu_backdrop.png", MenuTheme.BACKDROP_RECT)
 	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
-	var close = TextureButton.new()
+	var close: TextureButton = TextureButton.new()
 	close.name = "CloseButton"
 	close.texture_normal = MenuTheme.texture("close_x.png")
 	close.ignore_texture_size = true
@@ -36,7 +36,7 @@ func _ready():
 		Color(0.94, 0.73, 0.23), HORIZONTAL_ALIGNMENT_CENTER
 	)
 	for i in Achievements.ACHIEVEMENT_COUNT:
-		var plate = PanelContainer.new()
+		var plate: PanelContainer = PanelContainer.new()
 		plate.position = Vector2(
 			PLATE_COLUMNS_X[floori(i / float(PLATE_ROWS_Y.size()))],
 			PLATE_ROWS_Y[i % PLATE_ROWS_Y.size()]
@@ -46,7 +46,7 @@ func _ready():
 		plate.tooltip_text = Achievements.DESCRIPTIONS[i]
 		add_child(plate)
 		_plates.append(plate)
-		var label = Label.new()
+		var label: Label = Label.new()
 		label.text = Achievements.NAMES[i]
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -64,7 +64,7 @@ func refresh() -> void:
 	var unlocked: Array = Achievements.load_unlocked()
 	for i in _plates.size():
 		var got: bool = i < unlocked.size() and unlocked[i]
-		var style = StyleBoxFlat.new()
+		var style: StyleBoxFlat = StyleBoxFlat.new()
 		style.set_corner_radius_all(4)
 		style.set_border_width_all(2)
 		if got:

@@ -26,16 +26,16 @@ signal melee_finished  # run -> Attack -> runback sequence completed
 
 enum State { IDLE, MELEE, CAST, STUN, HIT, DEAD }
 
-const SPRITE_ROOT = "res://resources/sprites"
+const SPRITE_ROOT: String = "res://resources/sprites"
 # Per-art render bounds extracted from the SWF (extract_doll_offsets.py):
 # name -> {x, y, w, h} in px. The PNGs are exported at 2x design size;
 # each layer is positioned at (x, y) and scaled to w/h - without this every
 # part draws top-left-at-joint at export resolution (the giant-blob bug).
-const OFFSETS_FILE = SPRITE_ROOT + "/doll_offsets.json"
+const OFFSETS_FILE: String = SPRITE_ROOT + "/doll_offsets.json"
 # The original MODEL1 keyframe animations (extract_model1_animations.py):
 # per-frame full affine matrices per part, 30 fps, labeled segments
 # (stand/run/Attack/runback/hit/dead/... - see NEXT_PHASES).
-const ANIMATIONS_FILE = SPRITE_ROOT + "/model1_animations.json"
+const ANIMATIONS_FILE: String = SPRITE_ROOT + "/model1_animations.json"
 
 # krinMelee (frame_42/DoAction_4.as) movement model, converted from
 # per-frame steps at 30 fps to per-second rates:
@@ -47,9 +47,9 @@ const ANIMATIONS_FILE = SPRITE_ROOT + "/model1_animations.json"
 #   label starts; runback starts 15 more frames later (1.0 s) - which lands
 #   exactly on the clip's own runback frame for every attack label
 # - return eases home: coEF = min(1.45 * goRat, 1)
-const MELEE_RATE = 5.0
-const MELEE_IMPACT_TIME = 0.5   # krinMeleeAttackCD / 30
-const MELEE_RUNBACK_TIME = 1.0  # + krinMeleeAttackEndCD / 30
+const MELEE_RATE: float = 5.0
+const MELEE_IMPACT_TIME: float = 0.5   # krinMeleeAttackCD / 30
+const MELEE_RUNBACK_TIME: float = 1.0  # + krinMeleeAttackEndCD / 30
 
 static var _offsets: Dictionary = {}
 static var _offsets_loaded: bool = false
@@ -62,7 +62,7 @@ static var _animations_loaded: bool = false
 # base-skin part code (dollPartsCores2); equip_slot indexes the 7-slot
 # equip_array (dollPartsCores). Thighs (leg1/leg2) reuse the ARM art, exactly
 # as the original does.
-const REST_POSE = {
+const REST_POSE: Dictionary[Variant, Variant] = {
 	"arm2":     {"tx": 7.9,   "ty": -18.4, "sx": 0.80,  "sy": 0.80, "rot": -2,  "z": 3,  "skin_code": "ARM",      "equip_slot": 1},
 	"hand2":    {"tx": 11.6,  "ty": -8.5,  "sx": -0.71, "sy": 0.71, "rot": 153, "z": 5,  "skin_code": "HAND",     "equip_slot": 2},
 	"weapon2":  {"tx": 18.8,  "ty": -17.9, "sx": 0.76,  "sy": 0.76, "rot": 19,  "z": 7,  "skin_code": "WEAPON",   "equip_slot": 6},
@@ -115,11 +115,11 @@ func _ready():
 	_body = Node2D.new()
 	_body.name = "Body"
 	add_child(_body)
-	var ordered = REST_POSE.keys()
+	var ordered: Array = REST_POSE.keys()
 	ordered.sort_custom(func(a, b): return REST_POSE[a]["z"] < REST_POSE[b]["z"])
 	for part_name in ordered:
 		var pose = REST_POSE[part_name]
-		var part = Node2D.new()
+		var part: Node2D = Node2D.new()
 		part.name = part_name
 		part.position = Vector2(pose["tx"], pose["ty"])
 		part.scale = Vector2(pose["sx"], pose["sy"])
@@ -144,20 +144,20 @@ func dress(gender: String, skin: String, hair: String, equip: Array) -> void:
 		if pose["skin_code"] != "WEAPON":
 			_add_layer(part, "%s/%s_S%s_%s.png" % [SPRITE_ROOT, gender, pose["skin_code"], skin])
 		# Equipped-item layer.
-		var looks = _equip_looks(equip, pose["equip_slot"])
+		var looks: String = _equip_looks(equip, pose["equip_slot"])
 		if looks != "":
 			if pose["skin_code"] == "WEAPON":
 				_add_layer(part, "%s/M_WEAPON_%s.png" % [SPRITE_ROOT, looks])
 			else:
 				# Prefer gender-specific art, fall back to the male sheet
 				# (female characters share male equipment art in the original).
-				var path = "%s/%s_%s_%s.png" % [SPRITE_ROOT, gender, pose["skin_code"], looks]
+				var path: String = "%s/%s_%s_%s.png" % [SPRITE_ROOT, gender, pose["skin_code"], looks]
 				if not ResourceLoader.exists(path):
 					path = "%s/M_%s_%s.png" % [SPRITE_ROOT, pose["skin_code"], looks]
 				_add_layer(part, path)
 		# Hair sits on the head, above the skin - but only when no helmet is
 		# equipped (females always show hair; their helmets render over it).
-		var show_hair = _equip_looks(equip, 0) == "" or gender == "F"
+		var show_hair: bool = _equip_looks(equip, 0) == "" or gender == "F"
 		if part_name == "head" and show_hair and hair != "" and hair != "0":
 			_add_layer(part, "%s/HAIR_%s.png" % [SPRITE_ROOT, hair])
 
@@ -265,7 +265,7 @@ func exit_stun() -> void:
 
 
 func _valid_attack_label(label: String) -> String:
-	var animations = _load_animations()
+	var animations: Dictionary = _load_animations()
 	if animations.get("labels", {}).has(label):
 		return label
 	return "Attack"
@@ -312,7 +312,7 @@ func _start_label(label: String) -> void:
 
 
 func _label_duration(label: String) -> float:
-	var animations = _load_animations()
+	var animations: Dictionary = _load_animations()
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return 0.5
@@ -322,7 +322,7 @@ func _label_duration(label: String) -> float:
 
 func _advance_label(delta: float, loop: bool) -> void:
 	_label_time += delta
-	var duration = _label_duration(_label)
+	var duration: float = _label_duration(_label)
 	if loop:
 		_label_time = fmod(_label_time, duration)
 	elif _label_time >= duration:
@@ -334,13 +334,13 @@ func _advance_label(delta: float, loop: bool) -> void:
 # Applies the pose at `time` seconds into a labeled segment: every part gets
 # the original frame's full affine matrix (rotation, scale, AND skew).
 func _apply_label_frame(label: String, time: float) -> void:
-	var animations = _load_animations()
+	var animations: Dictionary = _load_animations()
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return
 	var fps: float = animations.get("fps", 30.0)
-	var start = int(segment["start"]) - 1
-	var end = int(segment["end"]) - 1
+	var start: int = int(segment["start"]) - 1
+	var end: int = int(segment["end"]) - 1
 	_apply_frame_index(clampi(start + int(time * fps), start, end))
 
 
@@ -376,7 +376,7 @@ func _label_end_frame(label: String) -> float:
 static func _load_animations() -> Dictionary:
 	if not _animations_loaded:
 		_animations_loaded = true
-		var file = FileAccess.open(ANIMATIONS_FILE, FileAccess.READ)
+		var file: FileAccess = FileAccess.open(ANIMATIONS_FILE, FileAccess.READ)
 		if file != null:
 			var parsed = JSON.parse_string(file.get_as_text())
 			if parsed is Dictionary:
@@ -393,7 +393,7 @@ func _animate_melee(delta: float) -> void:
 		0:  # dash out - run label plays but arrival is movement-driven
 			_playhead = minf(_playhead + delta * fps, _label_end_frame("run"))
 			_apply_frame_index(int(_playhead))
-			var out_coefficient = clampf(1.5 - 1.45 * _go_rat, 0.0, 1.0)
+			var out_coefficient: float = clampf(1.5 - 1.45 * _go_rat, 0.0, 1.0)
 			_go_rat += MELEE_RATE * out_coefficient * delta
 			position = _home_position + _melee_offset * minf(_go_rat, 1.0)
 			if _go_rat >= 1.0 or _melee_offset == Vector2.ZERO:
@@ -416,7 +416,7 @@ func _animate_melee(delta: float) -> void:
 		2:  # run home - eased return while the runback label plays out
 			_playhead = minf(_playhead + delta * fps, _label_end_frame("runback"))
 			_apply_frame_index(int(_playhead))
-			var back_coefficient = minf(1.45 * _go_rat, 1.0)
+			var back_coefficient: float = minf(1.45 * _go_rat, 1.0)
 			_go_rat -= MELEE_RATE * back_coefficient * delta
 			position = _home_position + _melee_offset * maxf(_go_rat, 0.0)
 			if _go_rat <= 0.01 and _playhead >= _label_end_frame("runback"):
@@ -450,11 +450,11 @@ func _add_layer(part: Node2D, path: String) -> void:
 	var entry: Dictionary = _load_offsets().get(path.get_file().get_basename(), {})
 	if entry.is_empty():
 		return  # 1x1 placeholder art (empty part in the original)
-	var sprite = Sprite2D.new()
+	var sprite: Sprite2D = Sprite2D.new()
 	sprite.texture = load(path)
 	sprite.centered = false
 	sprite.position = Vector2(entry["x"], entry["y"])
-	var texture_size = sprite.texture.get_size()
+	var texture_size: Vector2 = sprite.texture.get_size()
 	sprite.scale = Vector2(entry["w"] / texture_size.x, entry["h"] / texture_size.y)
 	part.add_child(sprite)
 
@@ -462,7 +462,7 @@ func _add_layer(part: Node2D, path: String) -> void:
 static func _load_offsets() -> Dictionary:
 	if not _offsets_loaded:
 		_offsets_loaded = true
-		var file = FileAccess.open(OFFSETS_FILE, FileAccess.READ)
+		var file: FileAccess = FileAccess.open(OFFSETS_FILE, FileAccess.READ)
 		if file != null:
 			var parsed = JSON.parse_string(file.get_as_text())
 			if parsed is Dictionary:
@@ -475,8 +475,8 @@ static func _load_offsets() -> Dictionary:
 # item id resolves to its GameItem.looks key. Returns the 7-slot looks array
 # dress() consumes. items_by_id is passed in (no autoload references here).
 static func resolve_equip_looks(unit: CombatUnit, items_by_id: Dictionary) -> Array:
-	var looks = ["", "", "", "", "", "", ""]
-	var start_slot = 0
+	var looks: Array[Variant] = ["", "", "", "", "", "", ""]
+	var start_slot: int = 0
 	if unit.skin_setter != "":
 		for i in 5:
 			looks[i] = unit.skin_setter
@@ -484,7 +484,7 @@ static func resolve_equip_looks(unit: CombatUnit, items_by_id: Dictionary) -> Ar
 	for i in range(start_slot, 7):
 		if i >= unit.equipment_ids.size():
 			break
-		var item_id = int(unit.equipment_ids[i])
+		var item_id: int = int(unit.equipment_ids[i])
 		if item_id == 0:
 			continue
 		var item = items_by_id.get(item_id)
@@ -501,7 +501,7 @@ func _equip_looks(equip: Array, slot: int) -> String:
 	var value = equip[slot]
 	if value == null:
 		return ""
-	var text = str(value)
+	var text: String = str(value)
 	if text == "" or text == "0":
 		return ""
 	return text

@@ -13,10 +13,10 @@ signal store_opened
 signal store_closed
 
 # Zone id -> shop id (from the store-orb button scripts).
-const ZONE_SHOP_IDS = {1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 6, 7: 5}
+const ZONE_SHOP_IDS: Dictionary[int, int] = {1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 6, 7: 5}
 
 # KrinLang.ENGLISH.SHOP[shopId].
-const SHOP_DIALOGUE = {
+const SHOP_DIALOGUE: Dictionary[int, String] = {
 	0: "I got what you need mate. Except soap. Someone's taken all the soap. That's why it always stinks around here. But don't worry mate, you'll get used to it.",
 	1: "Sssh! Keep your voices down, lads. We're amongst enemies here. In fact, I don't even know if I can trust you. Just buy what you need and leave.",
 	2: "Listen. I'm a collector of antique artifacts, and I usually don't sell what I find, but since we're in tough financial times... Consider yourself lucky.",
@@ -26,11 +26,11 @@ const SHOP_DIALOGUE = {
 	6: "",
 }
 
-const BACKDROP_PATH = "res://assets/ui/store/backdrops/shop%d.jpg"
+const BACKDROP_PATH: String = "res://assets/ui/store/backdrops/shop%d.jpg"
 
 # From krinSetShop() - 8 fixed 15-item catalogs. Shop 7 has no zone that
 # selects it (no store orb sets shopId 7) - kept since it's real source data.
-const KRIN_SHOP_ITEMS = {
+const KRIN_SHOP_ITEMS: Dictionary[int, Array] = {
 	0: [300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314],
 	1: [315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329],
 	2: [330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344],
@@ -51,7 +51,7 @@ func get_current_shop_items() -> Array[GameItem]:
 	var result: Array[GameItem] = []
 	for id in ids:
 		if id != 0:
-			var item = ItemManagerAuto.get_item(id)
+			var item: GameItem = ItemManagerAuto.get_item(id)
 			if item:
 				result.append(item)
 	return result
@@ -62,7 +62,7 @@ func get_current_shop_dialogue() -> String:
 
 
 func get_current_shop_backdrop() -> Texture2D:
-	var path = BACKDROP_PATH % get_current_shop_id()
+	var path: String = BACKDROP_PATH % get_current_shop_id()
 	if ResourceLoader.exists(path):
 		return load(path)
 	return null
@@ -73,7 +73,7 @@ func _store_window() -> Node:
 
 
 func open_store() -> void:
-	var window = _store_window()
+	var window: Node = _store_window()
 	if window:
 		# Only one menu overlay at a time (the original's single KRINMENU).
 		for screen in get_tree().get_nodes_in_group("menu_screen"):
@@ -83,7 +83,7 @@ func open_store() -> void:
 
 
 func close_store() -> void:
-	var window = _store_window()
+	var window: Node = _store_window()
 	if window:
 		window.hide()
 		store_closed.emit()

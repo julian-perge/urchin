@@ -166,7 +166,7 @@ static func get_nodes(player_class: int) -> Array:
 
 
 static func get_talent_node(player_class: int, node_index: int) -> Dictionary:
-	var nodes = get_nodes(player_class)
+	var nodes: Array = get_nodes(player_class)
 	if node_index < 0 or node_index >= nodes.size():
 		return {}
 	return nodes[node_index]
@@ -202,12 +202,12 @@ static func get_rank(save: PlayerSave, node_index: int) -> int:
 # Validation only - mirrors TALENTERROR1-4 in original check order
 # (points, max tier, level, prerequisites).
 static func can_learn(save: PlayerSave, node_index: int) -> LearnResult:
-	var node = get_talent_node(save.player_class, node_index)
+	var node: Dictionary = get_talent_node(save.player_class, node_index)
 	if node.is_empty():
 		return LearnResult.INVALID_NODE
 	if save.skill_points < SKILL_POINT_COST_PER_RANK:
 		return LearnResult.NOT_ENOUGH_POINTS
-	var rank = get_rank(save, node_index)
+	var rank: int = get_rank(save, node_index)
 	if rank >= node["max_rank"]:
 		return LearnResult.MAX_RANK
 	if save.level < required_level(node, rank):
@@ -225,8 +225,8 @@ static func learn(save: PlayerSave, node_index: int) -> LearnResult:
 	if result != LearnResult.OK:
 		return result
 	_ensure_talent_arrays(save)
-	var node = get_talent_node(save.player_class, node_index)
-	var new_rank = get_rank(save, node_index) + 1
+	var node: Dictionary = get_talent_node(save.player_class, node_index)
+	var new_rank: int = get_rank(save, node_index) + 1
 	save.skill_points -= SKILL_POINT_COST_PER_RANK
 	save.talent_main_array[node_index] = new_rank
 	if is_passive(node):
@@ -235,8 +235,8 @@ static func learn(save: PlayerSave, node_index: int) -> LearnResult:
 		# Source-faithful (talent learn button, DefineButton2_3096): upgrade
 		# the equipped bar in place, then REBUILD the known pool from
 		# skill_adder_matrix in node-index order.
-		var new_move_id = granted_move_id(node, new_rank)
-		var old_move_id = int(save.skill_adder_matrix[node_index])
+		var new_move_id: int = granted_move_id(node, new_rank)
+		var old_move_id: int = int(save.skill_adder_matrix[node_index])
 		if old_move_id != 0:
 			_replace_move_id(save.move_matrix, old_move_id, new_move_id)
 		save.skill_adder_matrix[node_index] = new_move_id
@@ -256,7 +256,7 @@ static func _rebuild_known_moves(save: PlayerSave) -> void:
 # Passive buff internal_names to apply to the player's CombatUnit at battle
 # load - the updateStat_Player buffAdderMatrix -> passiveBuffs port.
 static func get_passive_buff_names(save: PlayerSave) -> Array:
-	var names = []
+	var names: Array[Variant] = []
 	for entry in save.buff_adder_matrix:
 		if entry is String and entry != "":
 			names.append(entry)
@@ -266,7 +266,7 @@ static func get_passive_buff_names(save: PlayerSave) -> Array:
 # Move ids the character currently knows (starting moves + highest learned
 # rank per active node) - the move_matrix2 pool.
 static func get_known_move_ids(save: PlayerSave) -> Array:
-	var ids = []
+	var ids: Array[Variant] = []
 	for entry in save.move_matrix2:
 		if int(entry) != 0:
 			ids.append(int(entry))
@@ -301,7 +301,7 @@ static func _replace_move_id(move_ids: Array, old_move_id: int, new_move_id: int
 
 
 static func _zero_array(size: int) -> Array:
-	var result = []
+	var result: Array[Variant] = []
 	result.resize(size)
 	result.fill(0)
 	return result

@@ -12,15 +12,15 @@ extends RefCounted
 enum Difficulty { EASY, NORMAL, HARD }
 
 # modVar_1 (strength/magic), modVar_2 (life), modVar_3 (speed), per difficulty.
-const DIFFICULTY_MODIFIERS = {
+const DIFFICULTY_MODIFIERS: Dictionary[Difficulty, Dictionary] = {
 	Difficulty.EASY: {"strength_magic": 0.4, "life": 0.5, "speed": 0.9000000000000002},
 	Difficulty.NORMAL: {"strength_magic": 0.8, "life": 0.85, "speed": 1.0},
 	Difficulty.HARD: {"strength_magic": 1.0, "life": 1.0, "speed": 1.0},
 }
 
-const VIT_LIFE_FACTOR = 33
-const ELEMENT_ORDER = ["Physical", "Magic", "Ice", "Fire", "Lightning", "Earth", "Shadow", "Poison"]
-const MAX_BUFF_LIMIT = 40  # _root.maxBuffLimit
+const VIT_LIFE_FACTOR: int = 33
+const ELEMENT_ORDER: Array[String] = ["Physical", "Magic", "Ice", "Fire", "Lightning", "Earth", "Shadow", "Poison"]
+const MAX_BUFF_LIMIT: int = 40  # _root.maxBuffLimit
 
 var player_id: int
 var player_name: String
@@ -128,7 +128,7 @@ var skin_setter: String = ""
 # GDScript has no Python-style `[value] * n` array repetition - `*` isn't
 # defined on Array at all.
 static func _zero_array(size: int) -> Array:
-	var arr = []
+	var arr: Array[int] = []
 	arr.resize(size)
 	arr.fill(0.0)
 	return arr
@@ -160,7 +160,7 @@ static func get_stat(ratio: float, level: int, mode = null) -> float:
 	return s_a
 
 static func from_character(character: Character, level: int, difficulty: Difficulty, battle_slot: int) -> CombatUnit:
-	var unit = CombatUnit.new()
+	var unit: CombatUnit = CombatUnit.new()
 	unit.player_id = battle_slot
 	unit.player_name = character.name
 	unit.plevel = level
@@ -174,7 +174,7 @@ static func from_character(character: Character, level: int, difficulty: Difficu
 
 	var piercing = character.stats.get("piercing", [])
 	var defense = character.stats.get("defense", [])
-	var level_scale = 1.0 + level * 0.15
+	var level_scale: float = 1.0 + level * 0.15
 	for i in ELEMENT_ORDER.size():
 		var element = ELEMENT_ORDER[i]
 		unit.base_per[element] = (piercing[i] if i < piercing.size() else 0.0) * level_scale
@@ -187,7 +187,7 @@ static func from_character(character: Character, level: int, difficulty: Difficu
 	if visual_model.size() >= 4:
 		unit.model = visual_model.duplicate()
 	unit.equipment_ids = character.visuals.get("equipment", []).duplicate()
-	var skin = str(character.visuals.get("skin", "0"))
+	var skin: String = str(character.visuals.get("skin", "0"))
 	unit.skin_setter = "" if skin == "0" else skin
 
 	unit.ai_enabled = true
@@ -236,7 +236,7 @@ static func from_character(character: Character, level: int, difficulty: Difficu
 # passiveBuffs) are applied by BattleRunner at setup, since resolving buff
 # names needs the buff lookup this class deliberately doesn't hold.
 static func from_player_save(save: PlayerSave, battle_slot: int = 1) -> CombatUnit:
-	var unit = CombatUnit.new()
+	var unit: CombatUnit = CombatUnit.new()
 	unit.player_id = battle_slot
 	unit.player_name = save.name_user
 	unit.plevel = save.level
@@ -285,7 +285,7 @@ static func from_player_save(save: PlayerSave, battle_slot: int = 1) -> CombatUn
 # base stats plus whatever the active buffs have accumulated into
 # change_array/change_array_e*. Call after any apply_buff()/tick_buffs().
 func apply_changes() -> void:
-	var epy = change_array
+	var epy: Array = change_array
 	strength_u = max(ceil((base_strength + epy[0]) * (1 + epy[1])), 0)
 	magic_u = max(ceil((base_magic + epy[2]) * (1 + epy[3])), 0)
 	speed_u = max(ceil((base_speed + epy[4]) * (1 + epy[5])), 0)
@@ -296,8 +296,8 @@ func apply_changes() -> void:
 		focus_change = 0
 
 	var life_adder = ceil((base_life + epy[6]) * (1 + epy[7]) - life_u)
-	var was_alive = life_n > 0
-	var life_ratio = life_n / life_u
+	var was_alive: bool = life_n > 0
+	var life_ratio: float = life_n / life_u
 	life_u += life_adder
 	if life_u < 1:
 		life_u = 1
@@ -346,7 +346,7 @@ func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_inde
 	focus_change += direction * buff.focus_change_delta
 	silenced += direction * buff.silenced_delta
 
-	var applied_slot = slot_index
+	var applied_slot: int = slot_index
 	if direction == 1:
 		applied_slot = -1
 		for i in buff_slots.size():
@@ -360,7 +360,7 @@ func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_inde
 
 	sswitch += direction * buff.sswitch_delta
 
-	var deltas = [
+	var deltas: Array[Variant] = [
 		buff.change_strength_flat, buff.change_strength_percent,
 		buff.change_magic_flat, buff.change_magic_percent,
 		buff.change_speed_flat, buff.change_speed_percent,
@@ -394,7 +394,7 @@ func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_inde
 	if direction == 1:
 		shield += shield_amount
 	else:
-		var shield_void = shield_counter - shield
+		var shield_void: float = shield_counter - shield
 		if shield_void < shield_amount:
 			shield -= shield_amount - shield_void
 	shield_counter += direction * shield_amount
@@ -431,7 +431,7 @@ func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_inde
 		else:
 			change_value = -stored_buff_value
 
-		var signed_value = direction * change_value
+		var signed_value: float = direction * change_value
 		if signed_value < 0:
 			dot_ticker_array[8] += change_value
 		else:
@@ -450,7 +450,7 @@ func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_inde
 # (EditorScript, tests, ...), including for callers that never call this
 # function at all.
 func tick_buffs(buffs_by_id: Dictionary = {}) -> void:
-	var total_damage = 0.0
+	var total_damage: float = 0.0
 	var total_focus = dot_ticker_array[9]
 	total_damage += dot_ticker_array[8] * heal_mod_plus * heal_mod_minus * ihot
 	if total_damage > 0:
@@ -463,7 +463,7 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> void:
 		)
 		total_damage += element_damage
 
-	var expiring = []
+	var expiring: Array[int] = []
 	for i in buff_slots.size():
 		if buff_slots[i]["cd"] > 0:
 			buff_slots[i]["cd"] -= 1
@@ -478,7 +478,7 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> void:
 	if sswitch > 0:
 		total_damage *= -1
 
-	var shield_difference = 0.0
+	var shield_difference: float = 0.0
 	if shield > 0 and total_damage > 0:
 		shield_difference = shield - total_damage
 	if shield_difference > 0:

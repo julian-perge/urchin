@@ -16,8 +16,8 @@ signal item_selected(slot: ItemSlot)
 signal sell_pressed(slot: ItemSlot)
 signal delete_pressed(slot: ItemSlot)
 
-const ItemSlotScene = preload("res://scenes/ui/item_slot.tscn")
-const GRID_SLOTS = 36
+const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
+const GRID_SLOTS: int = 36
 
 @onready var inventory_grid: GridContainer = $InventoryGrid
 @onready var gold_label: Label = $GoldLabel
@@ -46,7 +46,7 @@ func _on_delete_pressed() -> void:
 
 # Fills the grid slots in order with the given items (extra slots cleared).
 func populate(items: Array) -> void:
-	var index = 0
+	var index: int = 0
 	for child in inventory_grid.get_children():
 		if child is ItemSlot:
 			child.set_item(items[index] if index < items.size() else null)
@@ -58,13 +58,13 @@ func populate(items: Array) -> void:
 # Index-preserving fill straight from the save: slot i <- item_array[i].
 # Each slot's "save_index" metadata points back at its item_array cell.
 func populate_from_save(save: PlayerSave, items_by_id: Dictionary) -> void:
-	var slots = inventory_grid.get_children()
+	var slots: Array[Node] = inventory_grid.get_children()
 	for i in slots.size():
-		var slot = slots[i]
+		var slot: Node = slots[i]
 		if not slot is ItemSlot:
 			continue
 		slot.set_meta("save_index", i)
-		var item_id = int(save.item_array[i]) if i < save.item_array.size() else 0
+		var item_id: int = int(save.item_array[i]) if i < save.item_array.size() else 0
 		slot.set_item(items_by_id.get(item_id) if item_id != 0 else null)
 		slot.set_selected(false)
 	selected_slot = null

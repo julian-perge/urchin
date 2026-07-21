@@ -13,14 +13,14 @@
 # slot to send the item back to the first free inventory cell.
 extends Control
 
-const CLASS_NAMES = ["Biological", "Psychological", "Hydraulic"]
+const CLASS_NAMES: Array[String] = ["Biological", "Psychological", "Hydraulic"]
 
-const LEFT_PANEL = Rect2(47.5, 86.6, 249.1, 267.1)
-const CENTER_PANEL = Rect2(309.0, 82.2, 183.1, 326.5)
-const PARTY_BAR = Rect2(47.5, 358.2, 249.1, 50.9)
-const INVENTORY_AT = Vector2(503.5, 81.6)
+const LEFT_PANEL: Rect2 = Rect2(47.5, 86.6, 249.1, 267.1)
+const CENTER_PANEL: Rect2 = Rect2(309.0, 82.2, 183.1, 326.5)
+const PARTY_BAR: Rect2 = Rect2(47.5, 358.2, 249.1, 50.9)
+const INVENTORY_AT: Vector2 = Vector2(503.5, 81.6)
 # playerSlot0-6 centers from the frame-1 dump.
-const EQUIP_SLOT_CENTERS = {
+const EQUIP_SLOT_CENTERS: Dictionary[int, Vector2] = {
 	0: Vector2(82.2, 172.2),
 	2: Vector2(82.2, 212.2),
 	6: Vector2(82.2, 252.2),
@@ -29,17 +29,17 @@ const EQUIP_SLOT_CENTERS = {
 	3: Vector2(263.1, 212.2),
 	4: Vector2(263.1, 252.2),
 }
-const DOLL_POSITION = Vector2(192.5, 214.4)
-const DOLL_SCALE = 1.2
-const STAT_ROWS_Y = [99.1, 116.6, 134.7, 152.9, 170.3]
-const BAR_BLOCK_CENTERS_Y = {"per": 256.0, "def": 360.5}
-const BAR_TRACK_HEIGHT = 78.0
-const BAR_WIDTH = 10.0
-const BAR_STEP = 17.1
+const DOLL_POSITION: Vector2 = Vector2(192.5, 214.4)
+const DOLL_SCALE: float = 1.2
+const STAT_ROWS_Y: Array[float] = [99.1, 116.6, 134.7, 152.9, 170.3]
+const BAR_BLOCK_CENTERS_Y: Dictionary[Variant, Variant] = {"per": 256.0, "def": 360.5}
+const BAR_TRACK_HEIGHT: float = 78.0
+const BAR_WIDTH: float = 10.0
+const BAR_STEP: float = 17.1
 # Experience row (texts 2869/2863, shapes 2864/2868, fill sprite 2867).
-const EXP_TRACK = Rect2(138.5, 283.2, 129.2, 19.0)
-const EXP_ZERO_BOX = Rect2(138.4, 282.9, 34.3, 18.7)
-const EXP_FILL = Rect2(172.6, 283.3, 95.1, 18.7)
+const EXP_TRACK: Rect2 = Rect2(138.5, 283.2, 129.2, 19.0)
+const EXP_ZERO_BOX: Rect2 = Rect2(138.4, 282.9, 34.3, 18.7)
+const EXP_FILL: Rect2 = Rect2(172.6, 283.3, 95.1, 18.7)
 
 var inventory_panel: InventoryPanel
 var equip_view: EquipDollView
@@ -70,9 +70,9 @@ func _ready():
 
 
 func _build_chrome() -> void:
-	var backdrop = MenuTheme.add_texture_rect(self, "menu_backdrop.png", MenuTheme.BACKDROP_RECT)
+	var backdrop: TextureRect = MenuTheme.add_texture_rect(self, "menu_backdrop.png", MenuTheme.BACKDROP_RECT)
 	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
-	var close = TextureButton.new()
+	var close: TextureButton = TextureButton.new()
 	close.name = "CloseButton"
 	close.texture_normal = MenuTheme.texture("close_x.png")
 	close.ignore_texture_size = true
@@ -122,7 +122,7 @@ func _build_center_panel() -> void:
 			self, MenuTheme.STAT_LABELS[i], Rect2(332, STAT_ROWS_Y[i], 80, 16),
 			12, MenuTheme.STAT_COLORS[i]
 		)
-		var value = MenuTheme.add_label(
+		var value: Label = MenuTheme.add_label(
 			self, "0", Rect2(388, STAT_ROWS_Y[i], 80, 16), 12,
 			MenuTheme.STAT_COLORS[i], HORIZONTAL_ALIGNMENT_RIGHT
 		)
@@ -137,16 +137,16 @@ func _build_center_panel() -> void:
 # bottom (heights set in refresh).
 func _build_bar_block(center_y: float) -> Array[ColorRect]:
 	var fills: Array[ColorRect] = []
-	var top = center_y - BAR_TRACK_HEIGHT / 2.0
+	var top: float = center_y - BAR_TRACK_HEIGHT / 2.0
 	for k in 8:
-		var x = 400.5 + (k - 3.5) * BAR_STEP - BAR_WIDTH / 2.0
-		var track = ColorRect.new()
+		var x: float = 400.5 + (k - 3.5) * BAR_STEP - BAR_WIDTH / 2.0
+		var track: ColorRect = ColorRect.new()
 		track.color = Color(0.07, 0.07, 0.08)
 		track.position = Vector2(x, top)
 		track.size = Vector2(BAR_WIDTH, BAR_TRACK_HEIGHT)
 		track.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		add_child(track)
-		var fill = ColorRect.new()
+		var fill: ColorRect = ColorRect.new()
 		fill.color = MenuTheme.ELEMENT_COLORS[k]
 		fill.position = Vector2(x, top + BAR_TRACK_HEIGHT)
 		fill.size = Vector2(BAR_WIDTH, 0)
@@ -159,7 +159,7 @@ func _build_bar_block(center_y: float) -> Array[ColorRect]:
 
 # Portrait face art extracted from the SWF face clip (DefineSprite 2978,
 # labeled frame per character). Party ids 1-5; index 0 is the player.
-const PORTRAIT_FILES = {
+const PORTRAIT_FILES: Dictionary[Variant, Variant] = {
 	0: "portraits/sonny.png",
 	1: "portraits/veradux.png",
 	2: "portraits/roald.png",
@@ -175,7 +175,7 @@ func _build_party_bar() -> void:
 		var frame: ItemSlot = preload("res://scenes/ui/item_slot.tscn").instantiate()
 		frame.position = Vector2(72.2 + 40.0 * i, 384.9) - MenuTheme.SLOT_SIZE / 2.0
 		add_child(frame)
-		var face = TextureRect.new()
+		var face: TextureRect = TextureRect.new()
 		face.texture = MenuTheme.texture(PORTRAIT_FILES[i])
 		face.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		face.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -200,13 +200,13 @@ func _build_inventory() -> void:
 
 
 func refresh() -> void:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return
 	_status_label.text = ""
 	_name_label.text = save.name_user
 	_level_label.text = "Lvl. %d %s" % [save.level, CLASS_NAMES[save.player_class]]
-	var stats = [save.life, save.strength, save.magic, save.speed, save.focus]
+	var stats: Array[Variant] = [save.life, save.strength, save.magic, save.speed, save.focus]
 	for i in _stat_values.size():
 		_stat_values[i].text = str(int(stats[i]))
 	for k in 8:
@@ -224,8 +224,8 @@ func refresh() -> void:
 
 # Fill grows upward from the track bottom, like the original bars.
 func _update_bar(fill: ColorRect, allocation: float, level: int, element: String, kind: String) -> void:
-	var value = MenuTheme.element_display_value(allocation, level)
-	var fraction = MenuTheme.bar_fill_fraction(float(value), level)
+	var value: int = MenuTheme.element_display_value(allocation, level)
+	var fraction: float = MenuTheme.bar_fill_fraction(float(value), level)
 	var bottom = BAR_BLOCK_CENTERS_Y["per" if kind == "piercing" else "def"] + BAR_TRACK_HEIGHT / 2.0
 	fill.size.y = BAR_TRACK_HEIGHT * fraction
 	fill.position.y = bottom - fill.size.y
@@ -234,14 +234,14 @@ func _update_bar(fill: ColorRect, allocation: float, level: int, element: String
 
 func _refresh_portraits(save: PlayerSave) -> void:
 	for i in _portrait_frames.size():
-		var frame = _portrait_frames[i]
+		var frame: ItemSlot = _portrait_frames[i]
 		if i == 0:
 			frame.tooltip_text = save.name_user
 			frame.modulate = Color(0.7, 1.1, 0.7)
 		else:
 			var companion: Dictionary = Party.COMPANIONS.get(i, {})
 			frame.tooltip_text = str(companion.get("name", ""))
-			var unlocked = Party.is_in_roster(save, i)
+			var unlocked: bool = Party.is_in_roster(save, i)
 			frame.modulate = Color(1, 1, 1) if unlocked else Color(0.45, 0.45, 0.45)
 
 
@@ -253,7 +253,7 @@ func _refresh_if_visible() -> void:
 func _on_inventory_item_selected(slot: ItemSlot) -> void:
 	if not slot.has_meta("save_index"):
 		return
-	var result = GameData.equip_from_inventory(int(slot.get_meta("save_index")))
+	var result: int = GameData.equip_from_inventory(int(slot.get_meta("save_index")))
 	if result != Equipment.EquipResult.OK:
 		_status_label.text = Equipment.EQUIP_RESULT_MESSAGES.get(result, "")
 	# success refreshes via GameData.inventory_changed
@@ -269,7 +269,7 @@ func _on_sell_pressed(slot: ItemSlot) -> void:
 
 
 func _on_delete_pressed(slot: ItemSlot) -> void:
-	var save = GameData.current_save
+	var save: PlayerSave = GameData.current_save
 	if save == null or not slot.has_meta("save_index"):
 		return
 	save.item_array[int(slot.get_meta("save_index"))] = 0

@@ -9,8 +9,8 @@
 #   ~/Library/Application Support/Godot/app_userdata/<project name>/logs/
 extends Node
 
-const LOG_DIR = "user://logs"
-const ECHO_TO_STDOUT = true
+const LOG_DIR: String = "user://logs"
+const ECHO_TO_STDOUT: bool = true
 
 var _files: Dictionary = {}  # channel -> FileAccess
 
@@ -29,7 +29,7 @@ func log_to(channel: String, message: String) -> void:
 			return
 		_files[channel] = file
 		file.store_line("=== %s session %s ===" % [channel, Time.get_datetime_string_from_system()])
-	var stamp = "%.3f" % (Time.get_ticks_msec() / 1000.0)
+	var stamp: String = "%.3f" % (Time.get_ticks_msec() / 1000.0)
 	file.store_line("[%s] %s" % [stamp, message])
 	file.flush()
 	if ECHO_TO_STDOUT:

@@ -13,14 +13,14 @@
 # The menu/battle rotation cycles soundPlayArray exactly like the original.
 extends Node
 
-const AUDIO_ROOT = "res://assets/audio"
-const EFFECT_PLAYER_COUNT = 3
+const AUDIO_ROOT: String = "res://assets/audio"
+const EFFECT_PLAYER_COUNT: int = 3
 # Original volumes are 0-80 on Flash's 0-100 scale.
-const FULL_VOLUME_DB = -2.0
-const CROSSFADE_SECONDS = 16.0 / 30.0  # 80 volume units at 5 per 30fps frame
+const FULL_VOLUME_DB: float = -2.0
+const CROSSFADE_SECONDS: float = 16.0 / 30.0  # 80 volume units at 5 per 30fps frame
 
 # soundPlayArray (frame41): the alternating menu/battle track rotation.
-const MUSIC_ROTATION = [
+const MUSIC_ROTATION: Array[Variant] = [
 	"_music_menu1", "_music_battle1", "_music_menu2", "_music_battle2",
 	"_music_menu1", "_music_battle3", "_music_menu2", "_music_battle1",
 	"_music_menu1", "_music_battle2", "_music_menu2", "_music_battle3",
@@ -43,12 +43,12 @@ var _fade_tween: Tween = null
 func _ready():
 	name = "AudioManager"
 	for i in EFFECT_PLAYER_COUNT:
-		var player = AudioStreamPlayer.new()
+		var player: AudioStreamPlayer = AudioStreamPlayer.new()
 		player.bus = "Master"
 		add_child(player)
 		_effect_players.append(player)
 	for i in 2:
-		var player = AudioStreamPlayer.new()
+		var player: AudioStreamPlayer = AudioStreamPlayer.new()
 		player.bus = "Master"
 		add_child(player)
 		_music_players.append(player)
@@ -57,10 +57,10 @@ func _ready():
 func play_effect(cue: String) -> void:
 	if not sound_enabled or cue == "":
 		return
-	var stream = _stream(cue)
+	var stream: AudioStream = _stream(cue)
 	if stream == null:
 		return
-	var player = _effect_players[_effect_counter]
+	var player: AudioStreamPlayer = _effect_players[_effect_counter]
 	_effect_counter = (_effect_counter + 1) % EFFECT_PLAYER_COUNT
 	player.stream = stream
 	player.volume_db = FULL_VOLUME_DB
@@ -80,7 +80,7 @@ func play_battle_music(is_boss: bool, hard_start: bool = false) -> void:
 	if _music_mode == MusicMode.BATTLE:
 		return
 	_music_mode = MusicMode.BATTLE
-	var cue = "_music_boss" if is_boss else _next_rotation_cue()
+	var cue: String = "_music_boss" if is_boss else _next_rotation_cue()
 	if is_boss:
 		_next_rotation_cue()  # the original advances the rotation either way
 	_start_music(cue, hard_start)
@@ -106,12 +106,12 @@ func _next_rotation_cue() -> String:
 func _start_music(cue: String, hard_start: bool) -> void:
 	if not sound_enabled:
 		return
-	var stream = _stream(cue)
+	var stream: AudioStream = _stream(cue)
 	if stream == null:
 		return
-	var old_player = _music_players[_active_music]
+	var old_player: AudioStreamPlayer = _music_players[_active_music]
 	_active_music = (_active_music + 1) % 2
-	var new_player = _music_players[_active_music]
+	var new_player: AudioStreamPlayer = _music_players[_active_music]
 	new_player.stream = stream
 	if _fade_tween != null:
 		_fade_tween.kill()
@@ -132,7 +132,7 @@ func _start_music(cue: String, hard_start: bool) -> void:
 func _stream(cue: String) -> AudioStream:
 	if _streams.has(cue):
 		return _streams[cue]
-	var path = "%s/%s.mp3" % [AUDIO_ROOT, cue]
+	var path: String = "%s/%s.mp3" % [AUDIO_ROOT, cue]
 	if not ResourceLoader.exists(path):
 		push_warning("AudioManager: no audio file for cue '%s'" % cue)
 		_streams[cue] = null

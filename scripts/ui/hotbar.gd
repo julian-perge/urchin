@@ -11,16 +11,16 @@
 extends Control
 
 # button unique name -> the menu-screen group it opens.
-const MENU_BUTTON_GROUPS = {
+const MENU_BUTTON_GROUPS: Dictionary[String, String] = {
 	"InventoryButton": "inventory_window",
 	"AbilitiesButton": "abilities_window",
 	"AchievementsButton": "achievements_window",
 }
-const GLOW_COLOR = Color(0.45, 1.0, 0.35, 0.9)
-const ACTIVE_ICON_COLOR = Color(0.7, 1.0, 0.6)
+const GLOW_COLOR: Color = Color(0.45, 1.0, 0.35, 0.9)
+const ACTIVE_ICON_COLOR: Color = Color(0.7, 1.0, 0.6)
 # Every button hovers in its own color, per the live-game captures in
 # references/hotbar/ (*_glow_with_tooltip.png).
-const HOVER_COLORS = {
+const HOVER_COLORS: Dictionary[String, Color] = {
 	"InventoryButton": Color(1.0, 0.4, 0.8),      # pink
 	"AbilitiesButton": Color(0.45, 1.0, 0.35),    # green
 	"SaveButton": Color(0.35, 0.6, 1.0),          # blue
@@ -28,7 +28,7 @@ const HOVER_COLORS = {
 	"RespecButton": Color(0.7, 0.4, 1.0),         # violet
 	"AchievementsButton": Color(1.0, 0.55, 0.2),  # burnt orange
 }
-const BUTTON_TOOLTIPS = {
+const BUTTON_TOOLTIPS: Dictionary[String, String] = {
 	"InventoryButton": "Inventory\nClick here to manage equipment.",
 	"AbilitiesButton": "Abilities\nClick here to manage abilities and attributes.",
 	"SaveButton": "Save Game\nClick here to save your progress.",
@@ -68,20 +68,20 @@ func _ready():
 # The red X on the middle panel's top-right corner (next to the world map
 # button in the source) - quits to the save-select screen.
 func _build_quit_button() -> void:
-	var quit = Button.new()
+	var quit: Button = Button.new()
 	quit.name = "QuitButton"
 	quit.text = "x"
 	quit.tooltip_text = "Quit\nClick here to return to the save select screen."
 	quit.position = Vector2(442, 4)
 	quit.size = Vector2(26, 26)
 	quit.add_theme_font_size_override("font_size", 14)
-	var style = StyleBoxFlat.new()
+	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = Color(0.55, 0.1, 0.08)
 	style.set_border_width_all(2)
 	style.border_color = Color(0.8, 0.3, 0.25)
 	style.set_corner_radius_all(3)
 	quit.add_theme_stylebox_override("normal", style)
-	var hover = style.duplicate()
+	var hover: Resource = style.duplicate()
 	hover.bg_color = Color(0.75, 0.15, 0.1)
 	quit.add_theme_stylebox_override("hover", hover)
 	quit.pressed.connect(_on_quit_pressed)
@@ -101,7 +101,7 @@ func _setup_icon_glow(button: Button) -> void:
 	if texture == null:
 		return
 	button.icon = null
-	var glow = TextureRect.new()
+	var glow: TextureRect = TextureRect.new()
 	glow.texture = texture
 	glow.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	glow.stretch_mode = TextureRect.STRETCH_SCALE
@@ -112,7 +112,7 @@ func _setup_icon_glow(button: Button) -> void:
 	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	glow.visible = false
 	button.add_child(glow)
-	var icon = TextureRect.new()
+	var icon: TextureRect = TextureRect.new()
 	icon.texture = texture
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_SCALE
@@ -138,7 +138,7 @@ func _setup_icon_glow(button: Button) -> void:
 # game scene, which finishes building after the hotbar.
 func _wire_screen_visibility() -> void:
 	for group in MENU_BUTTON_GROUPS.values():
-		var screen = get_tree().get_first_node_in_group(str(group))
+		var screen: Node = get_tree().get_first_node_in_group(str(group))
 		if screen != null:
 			screen.visibility_changed.connect(_update_glows)
 	_update_glows()
@@ -152,10 +152,10 @@ func _on_menu_button_pressed(group: String) -> void:
 # "menu_screen"); opening one closes the others, like the original's single
 # KRINMENU clip that could only show one frame at a time.
 func toggle_menu_screen(group: String) -> void:
-	var target = get_tree().get_first_node_in_group(group)
+	var target: Node = get_tree().get_first_node_in_group(group)
 	if target == null:
 		return
-	var opening = not target.visible
+	var opening: bool = not target.visible
 	for screen in get_tree().get_nodes_in_group("menu_screen"):
 		screen.visible = false
 	target.visible = opening
@@ -167,7 +167,7 @@ func _update_glows() -> void:
 		var parts: Dictionary = _button_glows.get(button_name, {})
 		if parts.is_empty():
 			continue
-		var screen = get_tree().get_first_node_in_group(str(MENU_BUTTON_GROUPS[button_name]))
+		var screen: Node = get_tree().get_first_node_in_group(str(MENU_BUTTON_GROUPS[button_name]))
 		var active: bool = screen != null and screen.visible
 		parts["glow"].visible = active
 		parts["icon"].modulate = ACTIVE_ICON_COLOR if active else Color.WHITE
@@ -181,8 +181,8 @@ func _refresh(zone_id: int) -> void:
 	var zone: Dictionary = ZoneManager.ZONES.get(zone_id, {})
 	zone_title.text = "Zone %d" % zone_id
 	zone_subtitle.text = "%s: %s" % [zone.get("name", "?"), zone.get("subtitle", "?")]
-	var progress = 0
-	var progress_max = int(ZoneProgression.QUEST_HUB.get(zone_id, {}).get("progress_max", 1))
+	var progress: int = 0
+	var progress_max: int = int(ZoneProgression.QUEST_HUB.get(zone_id, {}).get("progress_max", 1))
 	if GameData.current_save != null:
 		progress = ZoneProgression.quest_progress(GameData.current_save, zone_id)
 	progress_bar.max_value = progress_max

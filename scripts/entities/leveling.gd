@@ -48,11 +48,11 @@ static func respec_cost(level: int) -> int:
 # Fractional points accumulate in save.point_residue and carry over (the
 # original's i_e handling).
 static func points_for_level_up(save: PlayerSave, new_level: int) -> int:
-	var delta = (
+	var delta: float = (
 		CombatUnit.get_stat(STAT_POINT_RATIO, new_level, true)
 		- CombatUnit.get_stat(STAT_POINT_RATIO, new_level - 1, true)
 	)
-	var points = int(floor(delta))
+	var points: int = int(floor(delta))
 	save.point_residue += delta - points
 	if save.point_residue >= 1:
 		save.point_residue -= 1
@@ -63,8 +63,8 @@ static func points_for_level_up(save: PlayerSave, new_level: int) -> int:
 # givePoints(level, true): the full stat-point grant for a level, used by
 # respec and the new-game auto-spread. Resets the residue first.
 static func points_for_respec(save: PlayerSave, level: int) -> int:
-	var total = CombatUnit.get_stat(STAT_POINT_RATIO, level, true)
-	var points = int(floor(total))
+	var total: float = CombatUnit.get_stat(STAT_POINT_RATIO, level, true)
+	var points: int = int(floor(total))
 	save.point_residue = total - points
 	if save.point_residue >= 1:
 		save.point_residue -= 1
@@ -90,9 +90,9 @@ static func compute_stats(save: PlayerSave) -> void:
 # to just under a whole point (doubles), leaving ~1.0 in point_residue and
 # one fewer point spent - Flash did the same.
 static func assign_points_start(save: PlayerSave) -> void:
-	var free_points = points_for_respec(save, 1)
+	var free_points: int = points_for_respec(save, 1)
 	var ratios: Array = CLASS_BASE_RATIOS.get(save.player_class, CLASS_BASE_RATIOS[0])
-	var split = []
+	var split: Array[Variant] = []
 	for i in 4:
 		split.append({"val": ratios[i] / STAT_POINT_RATIO * free_points, "id": i})
 	for entry in split:
@@ -102,7 +102,7 @@ static func assign_points_start(save: PlayerSave) -> void:
 		if a["val"] == b["val"]:
 			return a["id"] < b["id"]
 		return a["val"] > b["val"])
-	var cycle = 0
+	var cycle: int = 0
 	while save.point_residue >= 1:
 		save.stat_allocated[split[cycle]["id"]] += 1
 		cycle += 1
@@ -124,8 +124,8 @@ static func spend_stat_point(save: PlayerSave, stat_index: int) -> bool:
 # (+1 skill point, +givePoints stat points). No XP accumulates at the cap.
 # Returns {levels_gained, new_level, stat_points_granted}.
 static func grant_experience(save: PlayerSave, xp_amount: float) -> Dictionary:
-	var levels_gained = 0
-	var stat_points_granted = 0
+	var levels_gained: int = 0
+	var stat_points_granted: int = 0
 	if save.level < MAX_LEVEL:
 		save.experience += xp_amount
 		while save.experience >= EXP_PER_LEVEL and save.level < MAX_LEVEL:
@@ -133,7 +133,7 @@ static func grant_experience(save: PlayerSave, xp_amount: float) -> Dictionary:
 			save.level += 1
 			levels_gained += 1
 			save.skill_points += 1
-			var granted = points_for_level_up(save, save.level)
+			var granted: int = points_for_level_up(save, save.level)
 			save.stat_points += granted
 			stat_points_granted += granted
 	if levels_gained > 0:
@@ -156,7 +156,7 @@ static func respec(save: PlayerSave, equipment_stat_bonuses: Array = [0, 0, 0, 0
 		today = Time.get_date_string_from_system()
 	if save.last_respec_day != today:
 		save.respec_set = RESPECS_PER_DAY
-	var cost = respec_cost(save.level)
+	var cost: int = respec_cost(save.level)
 	if save.euro < cost or save.respec_set <= 0:
 		return false
 	save.euro -= cost

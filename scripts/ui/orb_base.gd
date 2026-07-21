@@ -10,7 +10,7 @@ class_name OrbBase
 var original_scale: Vector2
 var is_hovering: bool = false
 
-var tooltip_scene = preload("res://scenes/ui/orb_tooltip.tscn")
+var tooltip_scene: PackedScene = preload("res://scenes/ui/orb_tooltip.tscn")
 
 func _ready():
 	original_scale = scale

@@ -27,7 +27,7 @@ enum EquipResult {
 }
 
 # Original English error strings (frame1/sonny2_static_strings...).
-const EQUIP_RESULT_MESSAGES: Dictionary = {
+const EQUIP_RESULT_MESSAGES: Dictionary[EquipResult, String] = {
 	EquipResult.OK: "",
 	EquipResult.LEVEL_TOO_LOW: "Your level is not high enough to use that item.",
 	EquipResult.WRONG_CLASS: "You cannot equip this item. It could be for another class.",
@@ -41,7 +41,7 @@ const MAIN_HAND_SLOT: int = 5
 const SECONDARY_SLOT: int = 6
 # equip_array index -> accepted GameItem.ItemType (the slot buttons' IPS
 # values; Two-Handed is the extra case on the main-hand slot).
-const EQUIP_SLOT_TYPES = [
+const EQUIP_SLOT_TYPES: Array[GameItem.ItemType] = [
 	GameItem.ItemType.HEAD,
 	GameItem.ItemType.CHEST,
 	GameItem.ItemType.HAND,
@@ -52,7 +52,7 @@ const EQUIP_SLOT_TYPES = [
 ]
 
 # stat attributes dict key -> stat_allocated index (Leveling.Stat order).
-const ATTRIBUTE_TO_STAT: Dictionary = {
+const ATTRIBUTE_TO_STAT: Dictionary[String, Leveling.Stat] = {
 	"health": Leveling.Stat.LIFE,
 	"strength": Leveling.Stat.STRENGTH,
 	"magic": Leveling.Stat.MAGIC,
@@ -78,7 +78,7 @@ static func can_equip(save: PlayerSave, item: GameItem, slot_index: int) -> Equi
 		return EquipResult.LEVEL_TOO_LOW
 	if item.required_unit_id != 0 and item.required_unit_id != save.player_class + 1:
 		return EquipResult.WRONG_CLASS
-	var is_two_handed_into_main = item.item_type == GameItem.ItemType.TWOHAND and slot_index == MAIN_HAND_SLOT
+	var is_two_handed_into_main: bool = item.item_type == GameItem.ItemType.TWOHAND and slot_index == MAIN_HAND_SLOT
 	if item.item_type != EQUIP_SLOT_TYPES[slot_index] and not is_two_handed_into_main:
 		return EquipResult.WRONG_SLOT
 	if is_two_handed_into_main and int(save.equip_array[SECONDARY_SLOT]) != 0:
@@ -106,7 +106,7 @@ static func equip(save: PlayerSave, item: GameItem, slot_index: int, items_by_id
 	var result = can_equip_with_lookup(save, item, slot_index, items_by_id)
 	if result != EquipResult.OK:
 		return {"result": result, "previous_item_id": 0}
-	var previous_item_id = int(save.equip_array[slot_index])
+	var previous_item_id: int = int(save.equip_array[slot_index])
 	if previous_item_id != 0:
 		_apply_item_stats(save, items_by_id.get(previous_item_id), -1)
 	save.equip_array[slot_index] = item.id
@@ -120,7 +120,7 @@ static func equip(save: PlayerSave, item: GameItem, slot_index: int, items_by_id
 static func unequip(save: PlayerSave, slot_index: int, items_by_id: Dictionary) -> int:
 	if slot_index < 0 or slot_index >= save.equip_array.size():
 		return 0
-	var item_id = int(save.equip_array[slot_index])
+	var item_id: int = int(save.equip_array[slot_index])
 	if item_id == 0:
 		return 0
 	_apply_item_stats(save, items_by_id.get(item_id), -1)
@@ -133,7 +133,7 @@ static func unequip(save: PlayerSave, slot_index: int, items_by_id: Dictionary) 
 # (Leveling.respec's equipment_stat_bonuses; the respec button recomputes
 # StatSets0 from equipArray0's statUpdater values).
 static func total_stat_bonuses(save: PlayerSave, items_by_id: Dictionary) -> Array:
-	var totals = [0, 0, 0, 0, 0]
+	var totals: Array[Variant] = [0, 0, 0, 0, 0]
 	for item_id in save.equip_array:
 		var item: GameItem = items_by_id.get(int(item_id))
 		if item == null:

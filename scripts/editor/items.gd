@@ -5,7 +5,7 @@ extends EditorScript
 const ItemScript = preload("res://scripts/entities/game_item.gd")
 
 # Add these to your conversion script
-var rarity_map = {
+var rarity_map: Dictionary[String, GameItem.Rarity] = {
 	"Common": GameItem.Rarity.COMMON,
 	"Uncommon": GameItem.Rarity.UNCOMMON,
 	"Rare": GameItem.Rarity.RARE,
@@ -13,7 +13,7 @@ var rarity_map = {
 	"Legendary": GameItem.Rarity.LEGENDARY
 }
 
-var class_type_map = {
+var class_type_map: Dictionary[String, GameItem.ClassType] = {
 	"None": GameItem.ClassType.NONE,
 	"Dreadnaught": GameItem.ClassType.DREADNAUGHT,
 	"Phantom": GameItem.ClassType.PHANTOM,
@@ -22,7 +22,7 @@ var class_type_map = {
 	"Phaser": GameItem.ClassType.PHASER
 }
 
-var item_type_map = {
+var item_type_map: Dictionary[String, GameItem.ItemType] = {
 	"None": GameItem.ItemType.NONE,
 	"Headwear": GameItem.ItemType.HEAD,
 	"Bodywear": GameItem.ItemType.CHEST,
@@ -37,8 +37,8 @@ var item_type_map = {
 # Inventory-slot icon lookup: assets/item_slot_icons/<CATEGORY>/<Name>.png,
 # where <Name> is the display name with spaces as underscores and apostrophes
 # stripped. Tries the type-mapped category first, then all categories.
-const SLOT_ICON_ROOT = "res://assets/item_slot_icons"
-const SLOT_ICON_CATEGORIES = {
+const SLOT_ICON_ROOT: String = "res://assets/item_slot_icons"
+const SLOT_ICON_CATEGORIES: Dictionary[GameItem.ItemType, String] = {
 	GameItem.ItemType.HEAD: "HELMS",
 	GameItem.ItemType.CHEST: "ARMOR",
 	GameItem.ItemType.HAND: "GLOVES",
@@ -51,12 +51,12 @@ const SLOT_ICON_CATEGORIES = {
 
 # Items whose extracted icon-clip frame doesn't match the live game
 # (verified by side-by-side playtest) keep a hand-picked icon.
-const SLOT_ICON_OVERRIDES = {
+const SLOT_ICON_OVERRIDES: Dictionary[int, String] = {
 	11: "res://assets/item_slot_icons/OTHER/White_T_Shirt.png",  # White T-shirt
 }
 # Icons extracted from the original icon clip (sprite 2064) by
 # python_conversion_scripts/swf_extraction/extract_item_icons.py.
-const EXTRACTED_ICON_ROOT = "res://assets/ui/items"
+const EXTRACTED_ICON_ROOT: String = "res://assets/ui/items"
 
 var _extracted_icons: Dictionary = {}  # lowercase file name -> actual file name
 
@@ -66,8 +66,8 @@ func _find_slot_icon(item) -> Texture2D:
 		return load(SLOT_ICON_OVERRIDES[item.id])
 	# Prefer the original icon sheet art (sanitized like the extractor:
 	# non-alphanumeric runs -> single underscore).
-	var extracted_name = ""
-	var last_was_underscore = true
+	var extracted_name: String = ""
+	var last_was_underscore: bool = true
 	for character in item.display_name:
 		if (character >= "a" and character <= "z") or (character >= "A" and character <= "Z") or (character >= "0" and character <= "9"):
 			extracted_name += character
@@ -87,20 +87,20 @@ func _find_slot_icon(item) -> Texture2D:
 	var icon_name = item.display_name.replace(" ", "_").replace("'", "")
 	if icon_name == "":
 		return null
-	var candidates = []
+	var candidates: Array[Variant] = []
 	if SLOT_ICON_CATEGORIES.has(item.item_type):
 		candidates.append(SLOT_ICON_CATEGORIES[item.item_type])
 	for category in ["OTHER", "HELMS", "ARMOR", "GLOVES", "PANTS", "SHOES", "WEAPONS"]:
 		if category not in candidates:
 			candidates.append(category)
 	for category in candidates:
-		var path = "%s/%s/%s.png" % [SLOT_ICON_ROOT, category, icon_name]
+		var path: String = "%s/%s/%s.png" % [SLOT_ICON_ROOT, category, icon_name]
 		if ResourceLoader.exists(path):
 			return load(path)
 	return null
 
 func _run():
-	var file = FileAccess.open(
+	var file: FileAccess = FileAccess.open(
 		"res://python_conversion_scripts/converted_json/items.json",
 		FileAccess.READ
 	)
@@ -108,7 +108,7 @@ func _run():
 	file.close()
 
 	for item_data in json["items"]:
-		var item = Resource.new()
+		var item: Resource = Resource.new()
 		item.set_script(ItemScript)  # This line is crucial!
 
 		# JSON.parse_string() always returns float for numbers (no int type in
@@ -148,7 +148,7 @@ func _run():
 
 		item.slot_image = _find_slot_icon(item)
 
-		var err = ResourceSaver.save(
+		var err: int = ResourceSaver.save(
 			item,
 			"res://resources/items/%s_%s.tres"
 			% [item.id, item.display_name.replace(" ", "_").replace("'", "").replace("/", "_")]

@@ -12,15 +12,15 @@ class_name VictoryScreen
 
 signal proceed_pressed
 
-const ItemSlotScene = preload("res://scenes/ui/item_slot.tscn")
+const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
 
-const LEFT_PANEL = Rect2(47.5, 86.6, 249.1, 267.1)
-const MIDDLE_PANEL = Rect2(309.0, 82.2, 183.1, 326.5)
-const INVENTORY_AT = Vector2(503.5, 81.6)
-const DROP_ORIGIN = Vector2(321.0, 130.0)
-const DROP_COLUMNS = 4
+const LEFT_PANEL: Rect2 = Rect2(47.5, 86.6, 249.1, 267.1)
+const MIDDLE_PANEL: Rect2 = Rect2(309.0, 82.2, 183.1, 326.5)
+const INVENTORY_AT: Vector2 = Vector2(503.5, 81.6)
+const DROP_ORIGIN: Vector2 = Vector2(321.0, 130.0)
+const DROP_COLUMNS: int = 4
 
-const PORTRAITS = {
+const PORTRAITS: Dictionary[int, String] = {
 	0: "portraits/sonny.png",
 	1: "portraits/veradux.png",
 	2: "portraits/roald.png",
@@ -38,7 +38,7 @@ var _exp_value: Label
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var backdrop = MenuTheme.add_texture_rect(self, "menu_backdrop.png", MenuTheme.BACKDROP_RECT)
+	var backdrop: TextureRect = MenuTheme.add_texture_rect(self, "menu_backdrop.png", MenuTheme.BACKDROP_RECT)
 	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
 	MenuTheme.add_texture_rect(self, "panel_large.png", LEFT_PANEL)
 	MenuTheme.add_label(
@@ -66,18 +66,18 @@ func _ready():
 		self, "Once you are finished, press below to proceed:",
 		Rect2(318, 318, 166, 40), 11, Color(0.6, 0.6, 0.6), HORIZONTAL_ALIGNMENT_CENTER, true
 	)
-	var proceed = Button.new()
+	var proceed: Button = Button.new()
 	proceed.text = "Proceed!"
 	proceed.position = Vector2(342, 362)
 	proceed.size = Vector2(118, 30)
 	proceed.add_theme_font_size_override("font_size", 17)
 	proceed.add_theme_color_override("font_color", Color(0.35, 0.95, 0.25))
 	proceed.add_theme_color_override("font_hover_color", Color(0.6, 1.0, 0.5))
-	var style = StyleBoxFlat.new()
+	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = Color(0.05, 0.05, 0.06)
 	style.set_corner_radius_all(4)
 	proceed.add_theme_stylebox_override("normal", style)
-	var hover_style = style.duplicate()
+	var hover_style: Resource = style.duplicate()
 	hover_style.bg_color = Color(0.1, 0.12, 0.1)
 	proceed.add_theme_stylebox_override("hover", hover_style)
 	proceed.pressed.connect(func(): proceed_pressed.emit())
@@ -101,12 +101,12 @@ func setup(save: PlayerSave, rewards: Dictionary, drops: Array, party_ids: Array
 
 
 func _build_experience_rows(save: PlayerSave, party_ids: Array) -> void:
-	var fighters = [0]
+	var fighters: Array[int] = [0]
 	for party_id in party_ids:
 		fighters.append(int(party_id))
-	var y = 120.0
+	var y: float = 120.0
 	for party_id in fighters:
-		var face = TextureRect.new()
+		var face: TextureRect = TextureRect.new()
 		face.texture = MenuTheme.texture(PORTRAITS.get(party_id, PORTRAITS[0]))
 		face.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		face.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -130,7 +130,7 @@ func _build_experience_rows(save: PlayerSave, party_ids: Array) -> void:
 		MenuTheme.add_texture_rect(self, "exp_track.png", Rect2(100, y + 32, 150, 12))
 		var fraction = clamp(experience / 100.0, 0.0, 1.0)
 		MenuTheme.add_texture_rect(self, "exp_fill.png", Rect2(100, y + 32, 150 * fraction, 12))
-		var percent = MenuTheme.add_label(
+		var percent: Label = MenuTheme.add_label(
 			self, "%d%%" % int(experience), Rect2(104, y + 31, 60, 13), 9
 		)
 		percent.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1))
@@ -153,7 +153,7 @@ func _build_drop_slots(save: PlayerSave, drops: Array) -> void:
 func _on_drop_clicked(slot: ItemSlot, save: PlayerSave) -> void:
 	if slot.item == null:
 		return
-	var empty = save.item_array.find(0)
+	var empty: int = save.item_array.find(0)
 	if empty == -1:
 		return  # inventory full - the drop stays claimable
 	save.item_array[empty] = slot.item.id

@@ -80,7 +80,7 @@ static func _text(value, default: String = "") -> String:
 
 
 static func from_json(data: Dictionary) -> Buff:
-	var buff = Buff.new()
+	var buff: Buff = Buff.new()
 	buff.id = int(data["id"])
 	buff.internal_name = _text(data["internal_name"])
 	buff.display_name = _text(data["0_display_name"])

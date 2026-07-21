@@ -50,7 +50,7 @@ func _refresh() -> void:
 	else:
 		item_icon.texture = null
 	# Name, price (catalog only), stat bonus lines, flavor text.
-	var lines = [item.display_name]
+	var lines: Array[Variant] = [item.display_name]
 	if show_price and item.price > 0:
 		lines.append("Cost: %d Euros" % int(item.price))
 	for stat_line in item.tooltipAlt:

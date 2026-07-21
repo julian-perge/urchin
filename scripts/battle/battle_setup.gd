@@ -20,7 +20,7 @@ const BATTLE_RESOURCE_PATH: String = "res://resources/battles/%d_KBR%d.tres"
 
 
 static func load_battle(battle_id: int) -> BattleFight:
-	var path = BATTLE_RESOURCE_PATH % [battle_id, battle_id]
+	var path: String = BATTLE_RESOURCE_PATH % [battle_id, battle_id]
 	if not ResourceLoader.exists(path):
 		push_warning("load_battle: no battle resource at " + path)
 		return null
@@ -31,22 +31,22 @@ static func load_battle(battle_id: int) -> BattleFight:
 # human-controlled (ai_enabled false); pass everything to the runner along
 # with TalentTree.get_passive_buff_names(save).
 static func build_units(battle: BattleFight, save: PlayerSave, unit_templates: Dictionary, difficulty: int, train_cap: int = DEFAULT_TRAIN_CAP) -> Dictionary:
-	var units = {}
+	var units: Dictionary[Variant, Variant] = {}
 	for i in battle.players.size():
 		var entry = battle.players[i]
-		var template_id = int(entry.get("id", 0)) if entry is Dictionary else int(entry)
-		var slot = i + 2
+		var template_id: int = int(entry.get("id", 0)) if entry is Dictionary else int(entry)
+		var slot: int = i + 2
 		if template_id > 0:
 			var template: Character = unit_templates.get(template_id)
 			if template == null:
 				push_warning("build_units: no unit template %d (battle %d)" % [template_id, battle.id])
 				continue
-			var level = resolve_level(_level_entry(battle.players_levels, i), save.level, train_cap)
+			var level: int = resolve_level(_level_entry(battle.players_levels, i), save.level, train_cap)
 			units[slot] = CombatUnit.from_character(template, level, difficulty, slot)
 		elif template_id < 0:
-			var party_id = Party.deployed_party_id(save, template_id)
+			var party_id: int = Party.deployed_party_id(save, template_id)
 			if party_id > 0:
-				var companion = Party.build_companion_unit(save, party_id, unit_templates, slot)
+				var companion: CombatUnit = Party.build_companion_unit(save, party_id, unit_templates, slot)
 				if companion != null:
 					units[slot] = companion
 	units[BattleRunner.PLAYER_SLOT] = CombatUnit.from_player_save(save, BattleRunner.PLAYER_SLOT)

@@ -7,26 +7,26 @@
 class_name MenuTheme
 extends RefCounted
 
-const ART = "res://assets/ui/menu"
+const ART: String = "res://assets/ui/menu"
 
 # KRINMENU's stage placement - all extracted coordinates below are stage px.
-const ORIGIN = Vector2(400.5, 222.4)
+const ORIGIN: Vector2 = Vector2(400.5, 222.4)
 
 # The red cracked backdrop (shape 2993 via sprite 2994 at (-2.1, 0.1)).
-const BACKDROP_RECT = Rect2(14.2, 14.9, 768.5, 425.1)
+const BACKDROP_RECT: Rect2 = Rect2(14.2, 14.9, 768.5, 425.1)
 # Close X (sprite 2855, art shape 2854) centered at (752.9, 48.0) at its
 # extracted size.
-const CLOSE_RECT = Rect2(734.5, 29.8, 36.7, 36.4)
+const CLOSE_RECT: Rect2 = Rect2(734.5, 29.8, 36.7, 36.4)
 
 # 31x31 item/equip slots (buttons 2985/2981/3012 share frame art 2982),
 # laid out on a 38 px pitch everywhere.
-const SLOT_SIZE = Vector2(31, 31)
-const SLOT_STEP = 38.0
+const SLOT_SIZE: Vector2 = Vector2(31, 31)
+const SLOT_STEP: float = 38.0
 
 # The element order every per/def array uses (CombatUnit.ELEMENT_ORDER) and
 # the EXACT original colors (elementColorArray, frame_41/DoAction_2.as) -
 # used by the menu bars AND the floating damage numbers.
-const ELEMENT_COLORS = [
+const ELEMENT_COLORS: Array[Color] = [
 	Color("C40000"),  # Physical
 	Color("FB95C8"),  # Magic
 	Color("68CBF4"),  # Ice
@@ -37,10 +37,10 @@ const ELEMENT_COLORS = [
 	Color("508349"),  # Poison
 ]
 # KrinNumberShow's HEAL color (0x66FF00).
-const HEAL_COLOR = Color("66FF00")
+const HEAL_COLOR: Color = Color("66FF00")
 
-const STAT_LABELS = ["Vitality:", "Strength:", "Instinct:", "Speed:", "Focus:"]
-const STAT_COLORS = [
+const STAT_LABELS: Array[String] = ["Vitality:", "Strength:", "Instinct:", "Speed:", "Focus:"]
+const STAT_COLORS: Array[Color] = [
 	Color(0.55, 0.85, 0.3),   # Vitality - green
 	Color(0.9, 0.35, 0.3),    # Strength - red
 	Color(0.95, 0.65, 0.2),   # Instinct - orange
@@ -53,8 +53,8 @@ const STAT_COLORS = [
 # of value / (100 + 15 * level), clamped to the bar. Base allocation fills
 # 30% of the track.
 static func bar_fill_fraction(value: float, level: int) -> float:
-	var x = value / (100.0 + 15.0 * level) + 1.0
-	var fraction = (
+	var x: float = value / (100.0 + 15.0 * level) + 1.0
+	var fraction: float = (
 		0.016666667 * pow(x, 4) - 0.25 * pow(x, 3)
 		+ 1.233333 * pow(x, 2) - 1.9 * x + 0.9
 	)
@@ -71,7 +71,7 @@ static func texture(file: String) -> Texture2D:
 
 
 static func add_texture_rect(parent: Node, file: String, rect: Rect2, stretch: bool = true) -> TextureRect:
-	var node = TextureRect.new()
+	var node: TextureRect = TextureRect.new()
 	node.texture = texture(file)
 	# expand_mode must be set BEFORE size: with the default EXPAND_KEEP_SIZE
 	# the texture's natural size acts as the minimum and wins over size.
@@ -86,7 +86,7 @@ static func add_texture_rect(parent: Node, file: String, rect: Rect2, stretch: b
 
 
 static func add_label(parent: Node, text: String, rect: Rect2, font_size: int, color: Color = Color.WHITE, align: int = HORIZONTAL_ALIGNMENT_LEFT, wrap_text: bool = false) -> Label:
-	var label = Label.new()
+	var label: Label = Label.new()
 	# autowrap must be on BEFORE size: an unwrapped Label's minimum width is
 	# the full text width, which overrides a narrower size.
 	if wrap_text:
@@ -103,9 +103,9 @@ static func add_label(parent: Node, text: String, rect: Rect2, font_size: int, c
 
 
 static func format_money(value: int) -> String:
-	var text = str(absi(value))
-	var out = ""
-	var count = 0
+	var text: String = str(absi(value))
+	var out: String = ""
+	var count: int = 0
 	for i in range(text.length() - 1, -1, -1):
 		out = text[i] + out
 		count += 1

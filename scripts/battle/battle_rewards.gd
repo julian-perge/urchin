@@ -30,7 +30,7 @@ const DROP_SLOTS: int = 15
 # shapes: item_drops entries are {chance, item: {id, name}}; the rare pools
 # hold {id, name} entries.
 static func roll_drops(battle: BattleFight) -> Array:
-	var drops = []
+	var drops: Array[Variant] = []
 	if battle == null:
 		return drops
 	for entry in battle.item_drops:
@@ -54,17 +54,17 @@ static func roll_drops(battle: BattleFight) -> Array:
 static func money_gain(spawned_unit_levels: Array) -> int:
 	if spawned_unit_levels.is_empty():
 		return 0
-	var total = 0.0
+	var total: float = 0.0
 	for level in spawned_unit_levels:
 		total += level
-	var average = total / spawned_unit_levels.size()
+	var average: float = total / spawned_unit_levels.size()
 	return int(round(0.7000000000000001 * Leveling.respec_value(average)))
 
 
 # expWorkOut(): XP for the 0-100 bar. Bonus/penalty scales with the level
 # difference (clamped 0..3x), and the base shrinks as your level grows.
 static func experience_gain(average_enemy_level: float, your_level: int) -> float:
-	var difference_multiplier = 1.0 + (average_enemy_level - your_level) * 0.1
+	var difference_multiplier: float = 1.0 + (average_enemy_level - your_level) * 0.1
 	difference_multiplier = clamp(difference_multiplier, 0.0, 3.0)
 	return 1.8000000000000005 * difference_multiplier * (100.0 / (1.0 + pow(your_level, 0.6)))
 
@@ -72,7 +72,7 @@ static func experience_gain(average_enemy_level: float, your_level: int) -> floa
 static func average_level(levels: Array) -> float:
 	if levels.is_empty():
 		return 0.0
-	var total = 0.0
+	var total: float = 0.0
 	for level in levels:
 		total += level
 	return total / levels.size()
@@ -81,7 +81,7 @@ static func average_level(levels: Array) -> float:
 # Extracts plevels from a BattleRunner units dictionary for the given slots
 # (e.g. [2, 4, 6] for the enemy team).
 static func unit_levels_from_slots(units: Dictionary, slots: Array) -> Array:
-	var levels = []
+	var levels: Array[Variant] = []
 	for slot in slots:
 		var unit: CombatUnit = units.get(slot)
 		if unit != null:
@@ -96,15 +96,15 @@ static func unit_levels_from_slots(units: Dictionary, slots: Array) -> Array:
 # {money_gained, xp_gained, levels_gained, new_level, stat_points_granted,
 #  companion_levels_gained}.
 static func apply_victory(save: PlayerSave, spawned_unit_levels: Array, enemy_levels: Array, fighting_party_ids: Array = []) -> Dictionary:
-	var money = money_gain(spawned_unit_levels)
+	var money: int = money_gain(spawned_unit_levels)
 	save.euro += money
-	var average_enemy = average_level(enemy_levels)
-	var xp = experience_gain(average_enemy, save.level)
-	var level_result = Leveling.grant_experience(save, xp)
-	var companion_levels_gained = {}
+	var average_enemy: float = average_level(enemy_levels)
+	var xp: float = experience_gain(average_enemy, save.level)
+	var level_result: Dictionary = Leveling.grant_experience(save, xp)
+	var companion_levels_gained: Dictionary[Variant, Variant] = {}
 	for party_id in fighting_party_ids:
-		var companion_level = int(save.party_levels[party_id])
-		var companion_xp = experience_gain(average_enemy, companion_level)
+		var companion_level: int = int(save.party_levels[party_id])
+		var companion_xp: float = experience_gain(average_enemy, companion_level)
 		companion_levels_gained[party_id] = Party.grant_companion_experience(save, party_id, companion_xp)
 	return {
 		"money_gained": money,

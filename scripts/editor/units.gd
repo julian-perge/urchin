@@ -20,11 +20,11 @@ const CharacterScript = preload("res://scripts/entities/character.gd")
 # Verified: LifeBoundary2 <= LifeBoundary1 holds for all 75 units in this order
 # (and fails for the alternative order). CombatUnit.from_character() reads these
 # positions.
-const AGGRESSION_ORDER = ["Phalanx", "Defensive", "Tactical", "Aggressive", "Relentless"]
-const ELEMENT_ORDER = ["Physical", "Magic", "Ice", "Fire", "Lightning", "Earth", "Shadow", "Poison"]
+const AGGRESSION_ORDER: Array[String] = ["Phalanx", "Defensive", "Tactical", "Aggressive", "Relentless"]
+const ELEMENT_ORDER: Array[String] = ["Physical", "Magic", "Ice", "Fire", "Lightning", "Earth", "Shadow", "Poison"]
 
 func _ids(move_list: Array) -> Array:
-	var ids = []
+	var ids: Array[int] = []
 	for move in move_list:
 		ids.append(int(move["id"]))
 	return ids
@@ -33,19 +33,19 @@ func _ids(move_list: Array) -> Array:
 # field is really the battle PHASE the move is restricted to (0 = usable in any
 # phase) - AImoveAdder checks moveArrayABS[i][1] == 0 || == _root.phase.
 func _absolute_moves(move_list: Array) -> Array:
-	var moves = []
+	var moves: Array[Dictionary] = []
 	for move in move_list:
 		moves.append({"id": int(move["id"]), "phase": int(move["turn"])})
 	return moves
 
 func _ordered(stat_dict: Dictionary, order: Array) -> Array:
-	var result = []
+	var result: Array[Variant] = []
 	for key in order:
 		result.append(stat_dict[key])
 	return result
 
 func _run():
-	var file = FileAccess.open(
+	var file: FileAccess = FileAccess.open(
 		"res://python_conversion_scripts/converted_json/units.json",
 		FileAccess.READ
 	)
@@ -53,7 +53,7 @@ func _run():
 	file.close()
 
 	for unit_data in json["units"]:
-		var unit = Resource.new()
+		var unit: Resource = Resource.new()
 		unit.set_script(CharacterScript)  # This line is crucial!
 
 		unit.id = int(unit_data["id"])
@@ -76,7 +76,7 @@ func _run():
 			"defense": _ordered(unit_data["stats"]["defense"], ELEMENT_ORDER),
 		}
 
-		var equipment_ids = []
+		var equipment_ids: Array[Variant] = []
 		for slot in unit_data["visuals"]["equipment"]:
 			equipment_ids.append(slot["id"])
 
@@ -93,7 +93,7 @@ func _run():
 		var file_name = unit.name.to_lower().replace(" ", "_").replace("'", "").replace("/", "_")
 		# JSON.parse_string() always returns float for numbers (no int type in
 		# JSON) - cast explicitly so the filename doesn't end up as "11.0_...".
-		var err = ResourceSaver.save(
+		var err: int = ResourceSaver.save(
 			unit,
 			"res://resources/units/%s_%s.tres" % [int(unit_data["id"]), file_name]
 		)

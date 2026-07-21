@@ -88,7 +88,7 @@ static func _text(value, default: String = "") -> String:
 	return value if value is String else default
 
 static func from_json(data: Dictionary) -> Ability:
-	var ability = Ability.new()
+	var ability: Ability = Ability.new()
 	var ability_two: Dictionary = data.get("ability_two", {})
 
 	ability.id = int(_num(data.get("1_id"), 0.0))

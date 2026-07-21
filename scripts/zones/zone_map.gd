@@ -11,7 +11,7 @@ func _ready():
 	add_to_group("zone_map_panel")
 	visible = false
 	for zone_button in $Zones.get_children():
-		var zone_id = int(zone_button.name.trim_prefix("Zone"))
+		var zone_id: int = int(zone_button.name.trim_prefix("Zone"))
 		zone_button.pressed.connect(_on_zone_selected.bind(zone_id))
 	if has_node("CloseButton"):
 		$CloseButton.pressed.connect(close_map)
@@ -33,7 +33,7 @@ func _on_visibility_changed() -> void:
 
 func _refresh_button_states():
 	for zone_button in $Zones.get_children():
-		var zone_id = int(zone_button.name.trim_prefix("Zone"))
+		var zone_id: int = int(zone_button.name.trim_prefix("Zone"))
 		zone_button.disabled = not ZoneManager.can_access_zone(zone_id)
 
 func _on_zone_selected(zone_id: int):

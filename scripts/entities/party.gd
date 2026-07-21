@@ -22,16 +22,16 @@ const PLAYER_PARTY_ID: int = 0
 # Tactical / Aggressive / Relentless. Rows: [Aggression, LifeBoundary1,
 # LifeBoundary2, FocusAggression, FocusRegenLimit]. The battle stance
 # buttons pick the column; PlayerSave.ag_mode persists it (default 2).
-const AGGRESSION_PRESETS = [
+const AGGRESSION_PRESETS: Array = [
 	[0.0, 95.0, 0.0, 0.0, 30.0],     # Phalanx
 	[30.0, 90.0, 65.0, 30.0, 30.0],  # Defensive
 	[50.0, 75.0, 35.0, 70.0, 30.0],  # Tactical
 	[70.0, 40.0, 15.0, 15.0, 5.0],   # Aggressive
 	[90.0, 2.0, 1.0, 100.0, 5.0],    # Relentless
 ]
-const AGGRESSION_NAMES = ["Phalanx", "Defensive", "Tactical", "Aggressive", "Relentless"]
+const AGGRESSION_NAMES: Array[String] = ["Phalanx", "Defensive", "Tactical", "Aggressive", "Relentless"]
 # agModeAr column 2 ("Tactical") - the default companion tuning.
-const COMPANION_AI_TUNING = [50.0, 75.0, 35.0, 70.0, 30.0]
+const COMPANION_AI_TUNING: Array[float] = [50.0, 75.0, 35.0, 70.0, 30.0]
 
 # Static companion definitions (frame_42/DoAction_17). stat_allocated is the
 # StatSets seed [life, strength, magic, speed, focus]; per/def_allocated are
@@ -106,7 +106,7 @@ static func initialize_save(save: PlayerSave) -> void:
 # story progress passes 1, Felicity once zone 5 story progress passes 4.
 # Returns true when the roster changed.
 static func update_roster_after_battle(save: PlayerSave) -> bool:
-	var before = save.party_roster.duplicate()
+	var before: Array = save.party_roster.duplicate()
 	if _quest_progress(save, 2) > 1:
 		save.party_roster = [0, 1, 2, -1, -1, -1]
 	if _quest_progress(save, 5) > 4:
@@ -122,10 +122,10 @@ static func is_in_roster(save: PlayerSave, party_id: int) -> bool:
 # the players[] values -2 (first deployed slot) and -1 (second). Returns -1
 # when that deployment points at a companion who hasn't joined yet.
 static func deployed_party_id(save: PlayerSave, slot_marker: int) -> int:
-	var deploy_index = slot_marker + 2  # -2 -> 0, -1 -> 1 (friendArrayX[players + 2])
+	var deploy_index: int = slot_marker + 2  # -2 -> 0, -1 -> 1 (friendArrayX[players + 2])
 	if deploy_index < 0 or deploy_index >= save.party_deployed.size():
 		return -1
-	var party_id = int(save.party_deployed[deploy_index])
+	var party_id: int = int(save.party_deployed[deploy_index])
 	if party_id <= 0 or not is_in_roster(save, party_id):
 		return -1
 	return party_id
@@ -165,10 +165,10 @@ static func build_companion_unit(save: PlayerSave, party_id: int, unit_templates
 	if template == null:
 		push_warning("build_companion_unit: no unit template %d" % definition["unit_id"])
 		return null
-	var level = int(save.party_levels[party_id])
+	var level: int = int(save.party_levels[party_id])
 	var allocated: Array = definition["stat_allocated"]
 
-	var unit = CombatUnit.new()
+	var unit: CombatUnit = CombatUnit.new()
 	unit.player_id = slot
 	unit.player_name = definition["name"]
 	unit.plevel = level
@@ -181,7 +181,7 @@ static func build_companion_unit(save: PlayerSave, party_id: int, unit_templates
 	for i in CombatUnit.ELEMENT_ORDER.size():
 		var element = CombatUnit.ELEMENT_ORDER[i]
 		unit.base_per[element] = 100.0 + level * 15.0 + definition["per_allocated"][i]
-		var defense_per_level = 5.0 if element == "Lightning" else 15.0
+		var defense_per_level: float = 5.0 if element == "Lightning" else 15.0
 		unit.base_def[element] = 100.0 + level * defense_per_level + definition["def_allocated"][i]
 
 	var voice = template.visuals.get("voice", {})
@@ -227,7 +227,7 @@ static func build_companion_unit(save: PlayerSave, party_id: int, unit_templates
 static func grant_companion_experience(save: PlayerSave, party_id: int, xp_amount: float) -> int:
 	if party_id <= 0 or party_id >= save.party_levels.size():
 		return 0
-	var levels_gained = 0
+	var levels_gained: int = 0
 	if save.party_levels[party_id] < Leveling.MAX_LEVEL:
 		save.party_exp[party_id] += xp_amount
 		while save.party_exp[party_id] >= Leveling.EXP_PER_LEVEL and save.party_levels[party_id] < Leveling.MAX_LEVEL:

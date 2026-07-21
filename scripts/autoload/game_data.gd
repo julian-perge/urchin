@@ -40,7 +40,7 @@ func has_save(slot: int) -> bool:
 
 # Sonny's starting outfit (frame_180: equipArray0 = [0,11,0,4,8,5,0]) -
 # White T-Shirt, Levo Jeans, Proverse All Stars, A Broken Pipe.
-const STARTING_EQUIPMENT = {1: 11, 3: 4, 4: 8, 5: 5}
+const STARTING_EQUIPMENT: Dictionary[int, int] = {1: 11, 3: 4, 4: 8, 5: 5}
 
 func new_game(slot: int, player_name: String, player_class: int = 0) -> void:
 	current_slot = slot
@@ -53,7 +53,7 @@ func new_game(slot: int, player_name: String, player_class: int = 0) -> void:
 func load_game(slot: int) -> bool:
 	if not has_save(slot):
 		return false
-	var save = ResourceLoader.load(_slot_path(slot))
+	var save: Resource = ResourceLoader.load(_slot_path(slot))
 	if not (save is PlayerSave):
 		push_warning("load_game: slot %d did not contain a PlayerSave" % slot)
 		return false
@@ -83,7 +83,7 @@ func get_player_inventory() -> Array[GameItem]:
 		return inventory
 	for item_id in current_save.item_array:
 		if item_id != 0:
-			var item = ItemManagerAuto.get_item(item_id)
+			var item: GameItem = ItemManagerAuto.get_item(item_id)
 			if item:
 				inventory.append(item)
 	return inventory
@@ -97,7 +97,7 @@ func can_afford_item(item: GameItem) -> bool:
 func purchase_item(item: GameItem) -> bool:
 	if not can_afford_item(item):
 		return false
-	var empty_slot = current_save.item_array.find(0)
+	var empty_slot: int = current_save.item_array.find(0)
 	if empty_slot == -1:
 		push_warning("purchase_item: inventory full")
 		return false
@@ -119,7 +119,7 @@ func equip_from_inventory(inventory_index: int, equip_slot: int = -1) -> int:
 		return Equipment.EquipResult.INVALID
 	if equip_slot == -1:
 		equip_slot = Equipment.slot_for_item(item)
-	var outcome = Equipment.equip(current_save, item, equip_slot, ItemManagerAuto.items_by_id)
+	var outcome: Dictionary = Equipment.equip(current_save, item, equip_slot, ItemManagerAuto.items_by_id)
 	if outcome["result"] == Equipment.EquipResult.OK:
 		current_save.item_array[inventory_index] = outcome["previous_item_id"]
 		inventory_changed.emit()
@@ -130,11 +130,11 @@ func equip_from_inventory(inventory_index: int, equip_slot: int = -1) -> int:
 func unequip_to_inventory(equip_slot: int) -> bool:
 	if current_save == null:
 		return false
-	var empty_slot = current_save.item_array.find(0)
+	var empty_slot: int = current_save.item_array.find(0)
 	if empty_slot == -1:
 		push_warning("unequip_to_inventory: inventory full")
 		return false
-	var item_id = Equipment.unequip(current_save, equip_slot, ItemManagerAuto.items_by_id)
+	var item_id: int = Equipment.unequip(current_save, equip_slot, ItemManagerAuto.items_by_id)
 	if item_id == 0:
 		return false
 	current_save.item_array[empty_slot] = item_id
@@ -147,7 +147,7 @@ func unequip_to_inventory(equip_slot: int) -> bool:
 func sell_item(item: GameItem) -> bool:
 	if current_save == null:
 		return false
-	var slot_index = current_save.item_array.find(item.id)
+	var slot_index: int = current_save.item_array.find(item.id)
 	if slot_index == -1:
 		return false
 	current_save.item_array[slot_index] = 0
