@@ -21,3 +21,6 @@ mono_crash.*.json
 
 # Python (python_conversion_scripts)
 .venv/
+
+# Local git worktrees (scratch, not for distribution)
+.worktrees/
