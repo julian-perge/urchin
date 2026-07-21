@@ -17,79 +17,21 @@ signal sell_pressed(slot: ItemSlot)
 signal delete_pressed(slot: ItemSlot)
 
 const ItemSlotScene = preload("res://scenes/ui/item_slot.tscn")
-
-const PANEL_RECT = Rect2(0, 0, 249.1, 267.1)
-const BAR_RECT = Rect2(0, 276.6, 249.1, 50.9)
-const GRID_POSITION = Vector2(14.1, 31.1)
-const GRID_COLUMNS = 6
 const GRID_SLOTS = 36
 
-var inventory_grid: Control
-var gold_label: Label
-var sell_button: Button
-var delete_button: Button
+@onready var inventory_grid: GridContainer = $InventoryGrid
+@onready var gold_label: Label = $GoldLabel
+@onready var sell_button: Button = $SellItemButton
+@onready var delete_button: Button = $DeleteItemButton
 
 var selected_slot: ItemSlot = null
 
 
 func _ready():
-	custom_minimum_size = Vector2(249.1, 327.5)
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	MenuTheme.add_texture_rect(self, "panel_large.png", PANEL_RECT)
-	MenuTheme.add_label(
-		self, "Your Inventory", Rect2(10, 6, 229, 20), 14,
-		Color(0.55, 0.55, 0.55), HORIZONTAL_ALIGNMENT_CENTER
-	)
-	inventory_grid = Control.new()
-	inventory_grid.name = "InventoryGrid"
-	inventory_grid.position = GRID_POSITION
-	inventory_grid.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(inventory_grid)
 	for i in GRID_SLOTS:
 		var slot: ItemSlot = ItemSlotScene.instantiate()
-		slot.position = Vector2(
-			(i % GRID_COLUMNS) * MenuTheme.SLOT_STEP,
-			floorf(i / float(GRID_COLUMNS)) * MenuTheme.SLOT_STEP
-		)
 		slot.slot_clicked.connect(_on_slot_clicked)
 		inventory_grid.add_child(slot)
-
-	MenuTheme.add_texture_rect(self, "panel_bar.png", BAR_RECT)
-	gold_label = MenuTheme.add_label(
-		self, "", Rect2(14, 285, 130, 34), 20, Color(1, 0.8, 0)
-	)
-	gold_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	sell_button = _add_icon_button("button_sell.png", Vector2(150.6, 287))
-	sell_button.name = "SellItemButton"
-	sell_button.tooltip_text = "Sell Item\nSelect an item, then click here to sell it for 15% of its price."
-	sell_button.pressed.connect(_on_sell_pressed)
-	delete_button = _add_icon_button("button_delete.png", Vector2(204.1, 287))
-	delete_button.name = "DeleteItemButton"
-	delete_button.tooltip_text = "Destroy Item\nSelect an item, then click here to destroy it permanently."
-	delete_button.pressed.connect(_on_delete_pressed)
-
-
-# Icon buttons hover with a white border, like the source's sell/delete
-# buttons (references: *_with_tooltip_and_white_corners.png).
-func _add_icon_button(art: String, at: Vector2) -> Button:
-	var button = Button.new()
-	button.icon = MenuTheme.texture(art)
-	button.expand_icon = true
-	button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	button.add_theme_constant_override("icon_max_width", 31)
-	button.position = at
-	button.custom_minimum_size = MenuTheme.SLOT_SIZE
-	button.size = MenuTheme.SLOT_SIZE
-	var empty = StyleBoxEmpty.new()
-	button.add_theme_stylebox_override("normal", empty)
-	button.add_theme_stylebox_override("pressed", empty)
-	var hover = StyleBoxFlat.new()
-	hover.draw_center = false
-	hover.set_border_width_all(2)
-	hover.border_color = Color.WHITE
-	button.add_theme_stylebox_override("hover", hover)
-	add_child(button)
-	return button
 
 
 func _on_sell_pressed() -> void:

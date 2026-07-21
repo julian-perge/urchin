@@ -1,6 +1,20 @@
-[gd_scene load_steps=2 format=3 uid="uid://bwra17qajnemg"]
+[gd_scene load_steps=8 format=3 uid="uid://bwra17qajnemg"]
 
 [ext_resource type="Script" path="res://scripts/ui/inventory_panel.gd" id="1_invpanel"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/panel_large.png" id="2_panellarge"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/panel_bar.png" id="3_panelbar"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/button_sell.png" id="4_sell"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/button_delete.png" id="5_delete"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_flat"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
 
 [node name="InventoryPanel" type="Control"]
 custom_minimum_size = Vector2(249.1, 327.5)
@@ -8,3 +22,91 @@ offset_right = 249.0
 offset_bottom = 328.0
 mouse_filter = 2
 script = ExtResource("1_invpanel")
+
+[node name="PanelBackground" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 249.1
+offset_bottom = 267.1
+mouse_filter = 2
+texture = ExtResource("2_panellarge")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 6.0
+offset_right = 239.0
+offset_bottom = 26.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+text = "Your Inventory"
+
+[node name="InventoryGrid" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 14.1
+offset_top = 31.1
+offset_right = 235.1
+offset_bottom = 252.2
+mouse_filter = 2
+theme_override_constants/h_separation = 7
+theme_override_constants/v_separation = 7
+columns = 6
+
+[node name="BarBackground" type="TextureRect" parent="."]
+layout_mode = 0
+offset_top = 276.6
+offset_right = 249.1
+offset_bottom = 327.5
+mouse_filter = 2
+texture = ExtResource("3_panelbar")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="GoldLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 285.0
+offset_right = 144.0
+offset_bottom = 319.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_font_sizes/font_size = 20
+vertical_alignment = 1
+
+[node name="SellItemButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 150.6
+offset_top = 287.0
+offset_right = 181.6
+offset_bottom = 318.0
+custom_minimum_size = Vector2(31, 31)
+theme_override_constants/icon_max_width = 31
+theme_override_styles/normal = SubResource("StyleBoxEmpty_flat")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_flat")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+icon = ExtResource("4_sell")
+expand_icon = true
+icon_alignment = 1
+tooltip_text = "Sell Item\nSelect an item, then click here to sell it for 15% of its price."
+
+[node name="DeleteItemButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 204.1
+offset_top = 287.0
+offset_right = 235.1
+offset_bottom = 318.0
+custom_minimum_size = Vector2(31, 31)
+theme_override_constants/icon_max_width = 31
+theme_override_styles/normal = SubResource("StyleBoxEmpty_flat")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_flat")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+icon = ExtResource("5_delete")
+expand_icon = true
+icon_alignment = 1
+tooltip_text = "Destroy Item\nSelect an item, then click here to destroy it permanently."
+
+[connection signal="pressed" from="SellItemButton" to="." method="_on_sell_pressed"]
+[connection signal="pressed" from="DeleteItemButton" to="." method="_on_delete_pressed"]
