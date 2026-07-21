@@ -6,9 +6,10 @@ class_name ItemSlot
 
 signal slot_clicked(slot: ItemSlot)
 
-const HIGHLIGHT_TEXTURE = preload("res://assets/ui/menu/slot_highlight.png")
-
 @onready var item_icon: TextureRect = $ItemIcon
+# The original slot buttons' hover state (shape 2857, a white frame) - now a
+# real scene child instead of built at runtime.
+@onready var _highlight: TextureRect = $Highlight
 
 var item: GameItem = null
 var selected: bool = false
@@ -16,20 +17,9 @@ var selected: bool = false
 # inventory items don't price-tag themselves in the original).
 var show_price: bool = false
 
-var _highlight: TextureRect
-
 
 func _ready():
 	gui_input.connect(_on_gui_input)
-	# The original slot buttons' hover state (shape 2857, a white frame).
-	_highlight = TextureRect.new()
-	_highlight.texture = HIGHLIGHT_TEXTURE
-	_highlight.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_highlight.stretch_mode = TextureRect.STRETCH_SCALE
-	_highlight.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_highlight.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_highlight.visible = false
-	add_child(_highlight)
 	mouse_entered.connect(func(): _highlight.visible = true)
 	mouse_exited.connect(func(): _highlight.visible = false)
 	_refresh()
