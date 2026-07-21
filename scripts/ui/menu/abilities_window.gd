@@ -31,7 +31,6 @@ const WHEEL_OFFSETS = [
 ]
 const SOCKET_SIZE = Vector2(30, 30)
 
-const POOL_RECT = Rect2(523.6, 274.2, 214.0, 128.0)
 const POOL_VISIBLE_ROWS = 5
 
 const CLASS_NAMES = ["Biological", "Psychological", "Hydraulic"]
