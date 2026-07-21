@@ -15,6 +15,8 @@
 # to send its ability back to the pool.
 extends Control
 
+const TalentNodeScene = preload("res://scenes/ui/menu/talent_node.tscn")
+
 const TREE_ORIGIN = Vector2(45.4, 74.2)
 const TREE_COLUMNS_X = [41.4, 93.4, 145.4, 197.4]
 const TREE_ROWS_Y = [49.9, 89.8, 129.8, 169.8, 209.8, 249.8, 289.9]
@@ -37,7 +39,7 @@ const CLASS_NAMES = ["Biological", "Psychological", "Hydraulic"]
 
 var _tree_buttons: Array[Button] = []
 var _tree_rank_labels: Array[Label] = []
-var _tree_lines: Control
+@onready var _tree_lines: Control = $TreeLines
 var _socket_buttons: Array[Button] = []
 var _pool_rows: Array[Button] = []
 var _pool_scroll: int = 0
@@ -61,25 +63,15 @@ func _ready():
 
 
 func _build_tree_panel() -> void:
-	_tree_lines = Control.new()
-	_tree_lines.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_tree_lines.draw.connect(_draw_tree_lines)
-	add_child(_tree_lines)
 	var tree: Array = TalentTree.TREES.get(_player_class(), TalentTree.TREES[0])
 	for node_index in tree.size():
-		var button = Button.new()
-		button.custom_minimum_size = NODE_SIZE
-		button.size = NODE_SIZE
-		button.position = _node_center(node_index) - NODE_SIZE / 2.0
-		button.pressed.connect(_on_tree_node_pressed.bind(node_index))
-		_style_circle_button(button, Color(0.1, 0.1, 0.11), Color(0.3, 0.3, 0.32))
-		add_child(button)
-		_tree_buttons.append(button)
-		var rank = MenuTheme.add_label(
-			self, "", Rect2(button.position + Vector2(18, 20), Vector2(30, 14)), 9,
-			Color(0.9, 0.9, 0.6)
-		)
-		_tree_rank_labels.append(rank)
+		var node_button: Button = TalentNodeScene.instantiate()
+		node_button.position = _node_center(node_index) - NODE_SIZE / 2.0
+		node_button.pressed.connect(_on_tree_node_pressed.bind(node_index))
+		_style_circle_button(node_button, Color(0.1, 0.1, 0.11), Color(0.3, 0.3, 0.32))
+		add_child(node_button)
+		_tree_buttons.append(node_button)
+		_tree_rank_labels.append(node_button.get_node("RankLabel"))
 
 
 func _build_wheel_panel() -> void:

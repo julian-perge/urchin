@@ -403,8 +403,15 @@ theme_override_font_sizes/font_size = 14
 horizontal_alignment = 1
 text = "Ability Pool"
 
+[node name="TreeLines" type="Control" parent="."]
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 600.0
+mouse_filter = 2
+
 [connection signal="pressed" from="CloseButton" to="." method="hide"]
 [connection signal="pressed" from="VitalityPlus" to="." method="_on_attribute_plus_pressed" binds=[0]]
 [connection signal="pressed" from="StrengthPlus" to="." method="_on_attribute_plus_pressed" binds=[1]]
 [connection signal="pressed" from="InstinctPlus" to="." method="_on_attribute_plus_pressed" binds=[2]]
 [connection signal="pressed" from="SpeedPlus" to="." method="_on_attribute_plus_pressed" binds=[3]]
+[connection signal="draw" from="TreeLines" to="." method="_draw_tree_lines"]
