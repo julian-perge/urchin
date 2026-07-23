@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/menu/inventory_window.gd" id="1_invwin"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
@@ -8,6 +8,14 @@
 [ext_resource type="Texture2D" path="res://assets/ui/menu/exp_track.png" id="6_exptrack"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/exp_fill.png" id="7_expfill"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/exp_zero_box.png" id="8_expzerobox"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/panel_bar.png" id="6_partybar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/item_slot.tscn" id="7_itemslot"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/sonny.png" id="8_sonny"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/veradux.png" id="9_veradux"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/roald.png" id="10_roald"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/felicity.png" id="11_felicity"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/wolfgang.png" id="12_wolfgang"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/amber.png" id="13_amber"]
 
 [node name="InventoryWindow" type="Control" groups=["inventory_window", "menu_screen"]]
 layout_mode = 3
@@ -576,5 +584,148 @@ offset_right = 465.35
 offset_bottom = 399.5
 mouse_filter = 2
 color = Color(0.31372550, 0.5137255, 0.28627452, 1)
+
+[node name="PartyBar" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 47.5
+offset_top = 358.2
+offset_right = 296.6
+offset_bottom = 409.1
+mouse_filter = 2
+texture = ExtResource("6_partybar")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Portrait0" parent="." instance=ExtResource("7_itemslot")]
+offset_left = 56.7
+offset_top = 369.4
+offset_right = 87.7
+offset_bottom = 400.4
+
+[node name="Face" type="TextureRect" parent="Portrait0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("8_sonny")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Portrait1" parent="." instance=ExtResource("7_itemslot")]
+offset_left = 96.7
+offset_top = 369.4
+offset_right = 127.7
+offset_bottom = 400.4
+
+[node name="Face" type="TextureRect" parent="Portrait1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("9_veradux")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Portrait2" parent="." instance=ExtResource("7_itemslot")]
+offset_left = 136.7
+offset_top = 369.4
+offset_right = 167.7
+offset_bottom = 400.4
+
+[node name="Face" type="TextureRect" parent="Portrait2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("10_roald")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Portrait3" parent="." instance=ExtResource("7_itemslot")]
+offset_left = 176.7
+offset_top = 369.4
+offset_right = 207.7
+offset_bottom = 400.4
+
+[node name="Face" type="TextureRect" parent="Portrait3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("11_felicity")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Portrait4" parent="." instance=ExtResource("7_itemslot")]
+offset_left = 216.7
+offset_top = 369.4
+offset_right = 247.7
+offset_bottom = 400.4
+
+[node name="Face" type="TextureRect" parent="Portrait4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("12_wolfgang")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Portrait5" parent="." instance=ExtResource("7_itemslot")]
+offset_left = 256.7
+offset_top = 369.4
+offset_right = 287.7
+offset_bottom = 400.4
+
+[node name="Face" type="TextureRect" parent="Portrait5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("13_amber")
+expand_mode = 1
+stretch_mode = 5
 
 [connection signal="pressed" from="CloseButton" to="." method="hide"]

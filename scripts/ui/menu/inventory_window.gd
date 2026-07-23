@@ -28,7 +28,6 @@ const EQUIP_SLOT_CENTERS: Dictionary[int, Vector2] = {
 }
 const DOLL_POSITION: Vector2 = Vector2(192.5, 214.4)
 const DOLL_SCALE: float = 1.2
-const PARTY_BAR: Rect2 = Rect2(47.5, 358.2, 249.1, 50.9)
 const BAR_BLOCK_CENTERS_Y: Dictionary[Variant, Variant] = {"per": 256.0, "def": 360.5}
 const BAR_TRACK_HEIGHT: float = 78.0
 # Experience row (texts 2869/2863, shapes 2864/2868, fill sprite 2867) - only
@@ -88,36 +87,8 @@ func _build_bar_block(center_y: float) -> Array[ColorRect]:
 	return fills
 
 
-# Portrait face art extracted from the SWF face clip (DefineSprite 2978,
-# labeled frame per character). Party ids 1-5; index 0 is the player.
-const PORTRAIT_FILES: Dictionary[Variant, Variant] = {
-	0: "portraits/sonny.png",
-	1: "portraits/veradux.png",
-	2: "portraits/roald.png",
-	3: "portraits/felicity.png",
-	4: "portraits/wolfgang.png",
-	5: "portraits/amber.png",
-}
-
-
 func _build_party_bar() -> void:
-	MenuTheme.add_texture_rect(self, "panel_bar.png", PARTY_BAR)
-	for i in 6:
-		var frame: ItemSlot = preload("res://scenes/ui/item_slot.tscn").instantiate()
-		frame.position = Vector2(72.2 + 40.0 * i, 384.9) - MenuTheme.SLOT_SIZE / 2.0
-		add_child(frame)
-		var face: TextureRect = TextureRect.new()
-		face.texture = MenuTheme.texture(PORTRAIT_FILES[i])
-		face.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		face.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		face.set_anchors_preset(Control.PRESET_FULL_RECT)
-		face.offset_left = 2
-		face.offset_top = 2
-		face.offset_right = -2
-		face.offset_bottom = -2
-		face.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		frame.add_child(face)
-		_portrait_frames.append(frame)
+	_portrait_frames = [$Portrait0, $Portrait1, $Portrait2, $Portrait3, $Portrait4, $Portrait5]
 
 
 func _build_inventory() -> void:
