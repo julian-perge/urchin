@@ -25,7 +25,7 @@ var _tutorial_enabled: bool = true
 var _sound_enabled: bool = true
 var _autosave_enabled: bool = true
 
-var slot_buttons: VBoxContainer
+@onready var slot_buttons: VBoxContainer = $Layout/SlotButtons
 var new_game_panel: Control  # class-select screen
 var options_panel: Control   # settings screen
 var name_input: LineEdit
@@ -36,7 +36,6 @@ var cancel_button: Button
 
 
 func _ready():
-	_build_slot_screen()
 	_build_class_screen()
 	_build_options_screen()
 	new_game_panel.hide()
@@ -46,29 +45,6 @@ func _ready():
 
 
 # --- screen 0: save slots ----------------------------------------------------
-
-func _build_slot_screen() -> void:
-	var layout: Node = get_node_or_null("Layout")
-	if layout == null:
-		layout = VBoxContainer.new()
-		layout.name = "Layout"
-		layout.set_anchors_preset(Control.PRESET_CENTER)
-		add_child(layout)
-	var title: Node = layout.get_node_or_null("Title")
-	if title == null:
-		title = Label.new()
-		title.name = "Title"
-		title.text = "Sonny 2"
-		title.add_theme_font_size_override("font_size", 34)
-		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		layout.add_child(title)
-	slot_buttons = layout.get_node_or_null("SlotButtons")
-	if slot_buttons == null:
-		slot_buttons = VBoxContainer.new()
-		slot_buttons.name = "SlotButtons"
-		slot_buttons.add_theme_constant_override("separation", 10)
-		layout.add_child(slot_buttons)
-
 
 func _refresh_slot_buttons() -> void:
 	for child in slot_buttons.get_children():
