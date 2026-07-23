@@ -136,6 +136,55 @@ the same instanced-`PackedScene` pattern as `ItemSlot`, and the 8-socket wheel s
 achievement plates - only each plate's locked/unlocked `StyleBoxFlat` and label color stay code-driven, since `refresh()` recomputes them from live save data. Everything else named in this phase
 (`hotbar.gd`, `battle_scene.gd`, `menu_theme.gd`'s helpers) is still pending.
 
+## Enum conversion audit
+
+Prompted by the project owner adding static typings across the codebase: several hardcoded `Array`/`Dictionary` constants represent a small, CLOSED set of named categories (not open-ended game
+data like item/move/zone names) and would read more safely as real GDScript `enum`s - both because a typo in a magic int/string currently fails silently, and because two of them are already
+duplicated verbatim across multiple files. No helper/wrapper class is warranted for this - the codebase already has an established, working convention (see below), and adding an abstraction layer
+on top of plain GDScript enums would be over-engineering for what's fundamentally a naming/typing problem, not a structural one.
+
+**Existing convention to match** (already used in 8+ places, don't invent a new style): `enum Name { A, B, C }` declared single-line for small sets (`BattleRunner.Outcome`, `CombatUnit.Difficulty`,
+`AudioManagerAuto.MusicMode`, `CharacterVisual.State`, `Leveling.Stat`) or one-value-per-line for bigger ones (`GameItem.ItemType`/`Rarity`/`ClassType`, `TalentTree.LearnResult`,
+`Equipment.EquipResult`), paired with an enum-keyed `Dictionary[EnumType, ValueType]` for lookup/message tables (`Equipment.EQUIP_RESULT_MESSAGES`, `TalentTree.LEARN_RESULT_MESSAGES`,
+`CombatUnit.DIFFICULTY_MODIFIERS`) or an `Array[EnumType]` for enum-typed ordered lists (`Equipment.EQUIP_SLOT_TYPES`). Persisted/exported fields stay plain `int` even when enum-valued
+(`PlayerSave.difficulty`, `BattleRunner.win_condition`) to keep `.tres`/save serialization simple; only function parameters/locals take the enum type directly. New enum work should follow this
+exact split, not introduce a different pattern.
+
+- **`PlayerClass` (Biological/Psychological/Hydraulic) - clear win, bigger than it first looked.** `CLASS_NAMES: Array[String]` is duplicated verbatim in `scripts/ui/main_menu.gd:11`,
+  `scripts/ui/menu/inventory_window.gd:16`, and `scripts/ui/menu/abilities_window.gd:36`. The same `0/1/2` domain is ALSO the raw dictionary key for `Leveling.CLASS_BASE_RATIOS`,
+  `TalentTree.STARTING_MOVES`, `TalentTree.TREES`, `main_menu.gd`'s `CLASS_CARD_ORDER`/`CLASS_CARD_ART`, and `Achievements.classes_cleared[save.player_class]` - `PlayerSave.player_class: int` is
+  the field threaded through all of them. Note `Equipment.required_unit_id != save.player_class + 1` (`equipment.gd:79`) - that `+1` offset to unit id must stay a documented offset, not get
+  folded into the enum's own values.
+- **Aggression stance (Phalanx/Defensive/Tactical/Aggressive/Relentless) - clear win**, exactly the case the project owner already flagged: `Party.AGGRESSION_NAMES`/`AGGRESSION_PRESETS`
+  (`party.gd:25,32`) duplicate the same 5-name domain as `scripts/editor/units.gd:23`'s `AGGRESSION_ORDER`. `get_ag_mode`/`set_ag_mode`/`apply_aggression_mode` all take a raw `mode: int`,
+  `clampi`'d against `AGGRESSION_PRESETS.size() - 1` in three places; the magic default `2` ("Tactical") is repeated in `party.gd`, `player_save.gd`, and `battle_scene.gd`.
+- **`MovePool` ("attack"/"defense"/"absolute") - clear win.** Currently a stringly-typed dictionary key/`match` target threaded through `battle_ai.gd` (assigns `pool = "attack"` etc., 4 sites) and
+  `battle_runner.gd`'s `match action["pool"]:` - mirrors `CombatUnit`'s already-parallel `move_pool_attack`/`_defense`/`_absolute` and `cooldowns_attack`/`_defense`/`_absolute` fields.
+- **`Team` (side 1/2) - clear win.** `CombatUnit.team_side: int` is compared/assigned as raw `1`/`2` across `battle_runner.gd`, `battle_scene.gd`, `battle_ai.gd`; `BattleRunner.TEAM_SLOTS` is
+  already keyed `{1: [...], 2: [...]}` - an `enum Team { ONE = 1, TWO = 2 }` matches those keys with zero renumbering. Smaller, single-file companion case: `battle_scene.gd`'s `RING_COLORS` dict
+  keyed by raw strings `"player"/"ally"/"enemy"` (from `_relation_to_player()`) could become `enum Relation { PLAYER, ALLY, ENEMY }` - not duplicated elsewhere, lower priority.
+- **Partial adoption to finish, not a duplication - `Difficulty` and `Leveling.Stat` already exist as enums but get bypassed with magic numbers/unlinked arrays elsewhere:**
+  - `CombatUnit.Difficulty` (`combat_unit.gd:12`) is used correctly in `from_character()`/`DIFFICULTY_MODIFIERS`, but `main_menu.gd:19` has its own unlinked `DIFFICULTY_NAMES: Array[String] =
+    ["Easy", "Challenging", "Heroic"]` (names don't even match the enum identifiers - `NORMAL` vs "Challenging"), and `PlayerSave.difficulty: int` gets raw-int-compared in
+    `zone_progression.gd:115-120` (`if difficulty <= 0: ... if difficulty == 1:`) and `achievements.gd:46,51,75` (`if save.difficulty == 2`).
+  - `Leveling.Stat` (`leveling.gd:25`) is used correctly by `Equipment.ATTRIBUTE_TO_STAT`, but `Leveling.spend_stat_point(save, stat_index: int)` takes a raw int (called with a raw loop var from
+    `abilities_window.gd:251,255`), and `MenuTheme.STAT_LABELS`/`STAT_COLORS` are separate parallel arrays aligned to `Stat` by convention only, with no reference to the enum itself.
+- **`ELEMENT_ORDER` (Physical/Magic/.../Poison) - borderline, bigger effort than it looks; dedupe the easy part now, defer the rest.** `scripts/editor/units.gd:24` duplicates
+  `CombatUnit.ELEMENT_ORDER` verbatim (clean one-line fix: reference the constant instead of restating it, same as that file already does for other constants). Converting the underlying
+  *concept* to an enum is a bigger lift: move/character data files carry the element as a bare string (`Ability.damage_element_type`), `CombatUnit.base_per`/`base_def` are `Dictionary` keyed by
+  that element NAME STRING (not position) across `combat_unit.gd`/`player_save.gd`/`party.gd`/`equipment.gd`, so an enum would need a string<->enum translation layer at data-load time before
+  touching any of those read/write sites. The existing `ELEMENT_ORDER` + `MenuTheme.ELEMENT_COLORS` parallel-array pattern is fine as-is in the meantime (Godot has no cheaper enum-to-typed-literal
+  shorthand); if `Element` becomes a real enum later, `ELEMENT_COLORS` could upgrade to `Dictionary[Element, Color]` for free extra safety.
+- **Equip slot index (0-6) - borderline, judgment call, don't convert the whole thing.** `Equipment.EQUIP_SLOT_TYPES`/`MAIN_HAND_SLOT`/`SECONDARY_SLOT` (`equipment.gd:44` and around) is where the
+  slot index genuinely means a "kind" (which body slot) - an `EquipSlot` enum there would remove the magic `5`/`6`. But `inventory_window.gd`/`store_window.gd`'s `EQUIP_SLOT_CENTERS` and
+  `equip_doll_view.gd`'s `equip_index` treat the same 0-6 range as purely structural/positional (never branch on "which kind of slot") - leave those as plain `int`, converting them adds no
+  safety.
+- **Trivial while touching this area:** `CharacterVisual.set_state(new_state: int)` (`character_visual.gd:174`) should take `State` instead of `int` - the enum already exists in the same file
+  and every call site already passes `State.X` values; this is a signature tightening, not a duplication fix.
+- **Explicitly NOT enum candidates** (open-ended/data-driven content, matches the project owner's own exclusion): zone/battle/shop/item id-keyed dictionaries (`ZoneManager.ZONES`,
+  `StoreManager.ZONE_SHOP_IDS`/`SHOP_DIALOGUE`/`KRIN_SHOP_ITEMS`, `GameData.STARTING_EQUIPMENT`, `ZoneProgression`'s battle-cap tables), `Achievements.NAMES`/`DESCRIPTIONS` (text content), and
+  `hotbar.gd`'s `MENU_BUTTON_GROUPS`/`HOVER_COLORS` (keyed by actual Godot scene-node names, not a portable "kind" concept).
+
 ## Testing: GUT
 
 GUT 9.6.1 is vendored at `addons/gut/`, tests in `test/unit/` + `test/integration/`, config in `.gutconfig.json`. Run headless (exits nonzero on failure):
