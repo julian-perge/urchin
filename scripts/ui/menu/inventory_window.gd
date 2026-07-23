@@ -56,6 +56,7 @@ func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_left_panel()
 	_build_center_panel()
+	_build_party_bar()
 	_build_inventory()
 	GameData.inventory_changed.connect(_refresh_if_visible)
 	GameData.gold_changed.connect(func(_amount): _refresh_if_visible())

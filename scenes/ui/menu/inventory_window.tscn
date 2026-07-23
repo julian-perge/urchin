@@ -1,10 +1,13 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/menu/inventory_window.gd" id="1_invwin"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/close_x.png" id="3_close"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/panel_large.png" id="4_panellarge"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/panel_center.png" id="5_panelcenter"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/exp_track.png" id="6_exptrack"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/exp_fill.png" id="7_expfill"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/exp_zero_box.png" id="8_expzerobox"]
 
 [node name="InventoryWindow" type="Control" groups=["inventory_window", "menu_screen"]]
 layout_mode = 3
@@ -99,7 +102,7 @@ offset_top = 283.2
 offset_right = 267.7
 offset_bottom = 302.2
 mouse_filter = 2
-texture = ExtResource("5_panelcenter")
+texture = ExtResource("6_exptrack")
 expand_mode = 1
 stretch_mode = 0
 
@@ -110,6 +113,7 @@ offset_top = 283.3
 offset_right = 267.7
 offset_bottom = 302.0
 mouse_filter = 2
+texture = ExtResource("7_expfill")
 expand_mode = 1
 stretch_mode = 0
 
@@ -120,6 +124,7 @@ offset_top = 282.9
 offset_right = 172.7
 offset_bottom = 301.6
 mouse_filter = 2
+texture = ExtResource("8_expzerobox")
 expand_mode = 1
 stretch_mode = 0
 
