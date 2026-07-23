@@ -81,26 +81,15 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
 
 ## Ability menu redesign
 
-`scripts/ui/menu/abilities_window.gd` currently shows a flat editable action bar (add/remove active moves) with no icon art and a bare-bones tooltip. The original abilities screen
-(`DefineSprite_3142` frame 25) is a richer, three-region layout that this phase should bring the Godot UI in line with:
+**DONE (2026-07-23).** `scripts/ui/menu/abilities_window.gd` and `scenes/ui/menu/abilities_window.tscn` now match the original's richer three-region layout: real icon art extracted from
+`DefineSprite 2427` (104 `FrameLabelTag`s, confirmed full coverage of every active move and every passive buff family actually used in `TalentTree.TREES`), a rich floating `AbilityTooltip`
+(icon + title + description + cost/cooldown + next-rank preview, backed by a pure `AbilityTooltipBuilder`) shown on hover over tree nodes, pool rows, and wheel sockets, prerequisite-colored
+connector lines drawn between talent-tree nodes, and the pool row migrated to a reusable `ability_pool_row.tscn` (icon + name `AbilityPoolRow` component, instanced 5x, `populate()`/`clear()`
+driven).
 
-- **Icon sheet to extract.** Every move icon (equipped bar, unequipped pool, AND skill-tree nodes) draws from ONE shared clip, **`DefineSprite 2427`** (web-build ID; frameCount 986, 104
-  `FrameLabelTag`s, one label per move display name plus utility labels `None`/`Empty`/`Empty2` to skip) - the exact same label-lookup shape as the item-icon sheet (sprite 2064) that
-  `python_conversion_scripts/swf_extraction/extract_item_icons.py` already handles, so that script is the template to adapt. Open question: confirm whether the 104 labels cover every player-learnable
-  move in `moves_abilities.json` or only a subset, before assuming every ability gets real art.
-- **Tooltip is richer than name/cost/description.** The original tooltip clip is `DefineSprite 2717` (`KrinToolTipper`, frameCount 19). Fields it actually populates: `inner2` = the move's icon
-  (sprite 2427, tinted per-element via `elementColorArray`), `tt` = title, `t` = description (rank-scaled for tree nodes), `t3` = cost/cooldown string, `tyut` = a NEXT-RANK PREVIEW string shown only
-  for tree nodes after a ~5-frame hover delay (frame label `GO7`), and a `bfilter` dim overlay when the talent is still unlearned (rank 0). The current Godot tooltip should grow to match: icon +
-  title + description + cost/cooldown + next-rank preview.
-- **Layout is a branching tree, not a flat list** - three coexisting sub-regions to rebuild:
-  1. `selector` (sprite 3109, `thing0..thing7`) - the flat 8-slot equipped-move loadout bar (already the closest match to what exists today).
-  2. `talentPool.talentPool2` (sprite 3120) - a scrollable 2-column zigzag list of every unlocked-but-unequipped move (`x = Math.pow(-1,n)*-40+45` alternates column, `y` advances `35`px every 2
-     entries) - the pool you drag from into the 8 hotbar slots.
-  3. **The actual per-class talent tree** (`PlaceObject3_3100_153`, sprite 3100, one frame per class) - 40 fixed-position nodes (`st0..st39`, sprite 3097 each) with a `PRESKILL` prerequisite-ID
-     array per node; `krinRemakeTree()` draws connector lines between each node and its prerequisites via the Drawing API, gold if the prerequisite is learned, dark gray/green if not. Nodes show
-     rank progress (current/max tier) and dim when unlearned. `TalentTree` (the logic-layer class) already enforces the all-prerequisites-required rule (see `KNOWN_GAPS.md`) - this phase is purely
-     about giving that existing logic a real node-and-edge graph visual instead of today's flat presentation. Open questions: exact `st0..st39` pixel coordinates per class weren't dumped (would
-     need a targeted per-node PlaceObject matrix extraction), and whether all 12 classes share one node topology or differ was not confirmed.
+Two known, deliberate gaps: passive-node tooltip descriptions render blank, because the source `buffs.json` has no tooltip text for any tree-passive buff (verified across all 53 rank-entries
+in all 14 buff families actually used - not a bug); and the original's ~5-frame hover delay before showing the next-rank preview text (frame label `GO7`) was not reproduced - the rich tooltip
+shows everything immediately on hover.
 
 ## UI architecture: native Godot Containers instead of code-built controls
 

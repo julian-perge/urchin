@@ -1226,17 +1226,17 @@ git commit -m "refactor: migrate the ability pool row to a reusable instanced sc
 
 **Interfaces:** none - this task is verification and documentation only.
 
-- [ ] **Step 1: Full regression run**
+- [x] **Step 1: Full regression run**
 
 Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, every test green, matching Task 6's ending count exactly.
 
-- [ ] **Step 2: Full manual walkthrough**
+- [x] **Step 2: Full manual walkthrough**
 
 Without `--headless`: open the abilities screen for each of the 3 classes, confirm tree icons/tooltip/connector-line colors, pool row icons/tooltips/scroll behavior, and wheel socket
 icons/tooltips all render and behave correctly. Learn a few nodes across a couple of prerequisite chains to confirm connector-line coloring updates live.
 
-- [ ] **Step 3: Update `NEXT_PHASES.md`**
+- [x] **Step 3: Update `NEXT_PHASES.md`**
 
 Find the "## Ability menu redesign" section. Replace its content with a `**DONE (<today's date>)**` note summarizing what landed: real icon art extracted from `DefineSprite 2427` (104 labels,
 confirmed full coverage of every active move and passive buff family actually used in `TalentTree.TREES`), the rich floating `AbilityTooltip` (icon + title + description + cost/cooldown +
@@ -1245,7 +1245,7 @@ next-rank preview, backed by a pure `AbilityTooltipBuilder`), prerequisite-color
 (verified, not a bug) - and the one deliberate simplification: the original's ~5-frame hover delay before showing the next-rank preview text (`GO7` frame label) was not reproduced, the rich
 tooltip shows everything immediately on hover.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add NEXT_PHASES.md
