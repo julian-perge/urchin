@@ -1,6 +1,55 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_scene.gd" id="1_battle"]
+[ext_resource type="Texture2D" path="res://assets/ui/hotbar/background.png" id="2_hotbarbg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pass_normal"]
+bg_color = Color(0.1, 0.1, 0.11, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.3, 0.32, 1)
+corner_radius_top_left = 99
+corner_radius_top_right = 99
+corner_radius_bottom_right = 99
+corner_radius_bottom_left = 99
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pass_hover"]
+bg_color = Color(0.16, 0.16, 0.18, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.3, 0.32, 1)
+corner_radius_top_left = 99
+corner_radius_top_right = 99
+corner_radius_bottom_right = 99
+corner_radius_bottom_left = 99
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_retreat_normal"]
+bg_color = Color(0.55, 0.1, 0.08, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.3, 0.25, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_retreat_hover"]
+bg_color = Color(0.75, 0.15, 0.1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.3, 0.25, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
 [node name="BattleScene" type="Control"]
 layout_mode = 3
@@ -35,6 +84,97 @@ stretch_mode = 6
 
 [node name="Battlefield" type="Node2D" parent="."]
 
+[node name="BottomBar" type="Control" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 470.0
+offset_right = 800.0
+offset_bottom = 600.0
+mouse_filter = 2
+
+[node name="Backdrop" type="ColorRect" parent="BottomBar"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 800.0
+offset_bottom = 130.0
+mouse_filter = 0
+color = Color(0.04, 0.05, 0.06, 1)
+
+[node name="Panel1" type="TextureRect" parent="BottomBar"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 10.0
+offset_right = 332.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("2_hotbarbg")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Panel2" type="TextureRect" parent="BottomBar"]
+layout_mode = 0
+offset_left = 340.0
+offset_top = 10.0
+offset_right = 460.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("2_hotbarbg")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Panel3" type="TextureRect" parent="BottomBar"]
+layout_mode = 0
+offset_left = 468.0
+offset_top = 10.0
+offset_right = 788.0
+offset_bottom = 120.0
+mouse_filter = 2
+texture = ExtResource("2_hotbarbg")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="StanceHost" type="Control" parent="BottomBar"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 18.0
+offset_right = 400.0
+offset_bottom = 130.0
+mouse_filter = 2
+
+[node name="PassRing" type="Control" parent="BottomBar"]
+layout_mode = 0
+offset_left = 400.0
+offset_top = 65.0
+offset_right = 400.0
+offset_bottom = 65.0
+mouse_filter = 2
+
+[node name="PassButton" type="Button" parent="BottomBar"]
+layout_mode = 0
+offset_left = 372.0
+offset_top = 37.0
+offset_right = 428.0
+offset_bottom = 93.0
+theme_override_colors/font_color = Color(0.95, 0.75, 0.2, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_pass_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pass_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pass_hover")
+text = "!"
+tooltip_text = "Pass your turn"
+
+[node name="RetreatButton" type="Button" parent="BottomBar"]
+layout_mode = 0
+offset_left = 442.0
+offset_top = 12.0
+offset_right = 468.0
+offset_bottom = 38.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_retreat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_retreat_hover")
+text = "x"
+tooltip_text = "Retreat from battle"
+
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="TurnLabel" type="Label" parent="UI"]
@@ -68,3 +208,7 @@ horizontal_alignment = 1
 [node name="ContinueButton" type="Button" parent="UI/ResultPanel/VBox"]
 layout_mode = 2
 text = "Continue"
+
+[connection signal="draw" from="BottomBar/PassRing" to="." method="_draw_pass_ring"]
+[connection signal="pressed" from="BottomBar/PassButton" to="." method="_on_pass_pressed"]
+[connection signal="pressed" from="BottomBar/RetreatButton" to="." method="_on_retreat_pressed"]

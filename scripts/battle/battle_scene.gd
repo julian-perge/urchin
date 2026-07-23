@@ -47,8 +47,6 @@ const ORB_ARC_START: float = -2.4  # radians
 const ORB_ARC_STEP: float = 0.55
 const ORB_ARC_DISTANCE: float = 62.0
 
-const BOTTOM_BAR_TOP: float = 470.0
-
 # 1.0 = normal pacing; 0.0 = instant (tests).
 var animation_speed: float = 1.0
 
@@ -78,8 +76,6 @@ var _selected_move: Dictionary = {}
 var _player_action_pending: bool = false
 var _finished: bool = false
 var _radial_menu: Control = null
-var _pass_ring: Control = null
-var _pass_button: Button = null
 
 @onready var background: TextureRect = $Background
 @onready var sky: TextureRect = $Sky
@@ -89,13 +85,14 @@ var _pass_button: Button = null
 @onready var result_panel: PanelContainer = $UI/ResultPanel
 @onready var result_label: Label = $UI/ResultPanel/VBox/ResultLabel
 @onready var continue_button: Button = $UI/ResultPanel/VBox/ContinueButton
+@onready var _pass_ring: Control = $BottomBar/PassRing
+@onready var stance_host: Control = $BottomBar/StanceHost
 
 
 func _ready():
 	result_panel.hide()
 	speech_label.text = ""
 	continue_button.pressed.connect(_on_continue_pressed)
-	_build_bottom_bar()
 	if not ZoneManager.pending_battle.is_empty():
 		start_battle(ZoneManager.pending_battle)
 		ZoneManager.pending_battle = {}
@@ -421,79 +418,6 @@ func _close_radial_menu() -> void:
 
 
 # --- bottom bar: stances + pass ring + retreat -----------------------------
-
-func _build_bottom_bar() -> void:
-	var bar: Control = Control.new()
-	bar.name = "BottomBar"
-	bar.position = Vector2(0, BOTTOM_BAR_TOP)
-	bar.size = Vector2(800, 600 - BOTTOM_BAR_TOP)
-	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(bar)
-	var backdrop: ColorRect = ColorRect.new()
-	backdrop.color = Color(0.04, 0.05, 0.06)
-	backdrop.size = bar.size
-	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
-	bar.add_child(backdrop)
-	var texture = load("res://assets/ui/hotbar/background.png")
-	for rect in [Rect2(12, 10, 320, 110), Rect2(340, 10, 120, 110), Rect2(468, 10, 320, 110)]:
-		var panel: TextureRect = TextureRect.new()
-		panel.texture = texture
-		panel.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		panel.stretch_mode = TextureRect.STRETCH_SCALE
-		panel.position = rect.position
-		panel.size = rect.size
-		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		bar.add_child(panel)
-
-	# Stance rows fill in when the battle starts (companions known then).
-	var stance_host: Control = Control.new()
-	stance_host.name = "StanceHost"
-	stance_host.position = Vector2(24, 18)
-	stance_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bar.add_child(stance_host)
-
-	# Pass ring: light blue while the player chooses, gray otherwise.
-	_pass_ring = Control.new()
-	_pass_ring.position = Vector2(400, 65)
-	_pass_ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_pass_ring.draw.connect(_draw_pass_ring)
-	bar.add_child(_pass_ring)
-	_pass_button = Button.new()
-	_pass_button.custom_minimum_size = Vector2(56, 56)
-	_pass_button.size = _pass_button.custom_minimum_size
-	_pass_button.position = Vector2(400 - 28, 65 - 28)
-	_pass_button.text = "!"
-	_pass_button.tooltip_text = "Pass your turn"
-	for state in ["normal", "hover", "pressed"]:
-		var style: StyleBoxFlat = StyleBoxFlat.new()
-		style.bg_color = Color(0.1, 0.1, 0.11) if state == "normal" else Color(0.16, 0.16, 0.18)
-		style.border_color = Color(0.3, 0.3, 0.32)
-		style.set_border_width_all(2)
-		style.set_corner_radius_all(99)
-		_pass_button.add_theme_stylebox_override(state, style)
-	_pass_button.add_theme_font_size_override("font_size", 22)
-	_pass_button.add_theme_color_override("font_color", Color(0.95, 0.75, 0.2))
-	_pass_button.pressed.connect(_on_pass_pressed)
-	bar.add_child(_pass_button)
-
-	var retreat: Button = Button.new()
-	retreat.custom_minimum_size = Vector2(26, 26)
-	retreat.size = retreat.custom_minimum_size
-	retreat.position = Vector2(442, 12)
-	retreat.tooltip_text = "Retreat from battle"
-	var retreat_style: StyleBoxFlat = StyleBoxFlat.new()
-	retreat_style.bg_color = Color(0.55, 0.1, 0.08)
-	retreat_style.set_border_width_all(2)
-	retreat_style.border_color = Color(0.8, 0.3, 0.25)
-	retreat_style.set_corner_radius_all(3)
-	retreat.add_theme_stylebox_override("normal", retreat_style)
-	var retreat_hover: Resource = retreat_style.duplicate()
-	retreat_hover.bg_color = Color(0.75, 0.15, 0.1)
-	retreat.add_theme_stylebox_override("hover", retreat_hover)
-	retreat.text = "x"
-	retreat.pressed.connect(_on_retreat_pressed)
-	bar.add_child(retreat)
-
 
 func _draw_pass_ring() -> void:
 	var active: bool = _player_action_pending
