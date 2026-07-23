@@ -21,6 +21,7 @@ extends Control
 signal battle_finished(outcome: int)
 
 const CharacterVisualScene: PackedScene = preload("res://scenes/character_visual.tscn")
+const UnitOverlayScene: PackedScene = preload("res://scenes/battle/unit_overlay.tscn")
 const BACKGROUND_ROOT: String = "res://assets/backgrounds"
 
 # Exact BATTLESCREEN placements from the SWF: BATTLESCREEN sits at
@@ -197,62 +198,19 @@ func _spawn_visuals() -> void:
 func _add_unit_overlay(slot: int, unit: CombatUnit, visual: CharacterVisual) -> void:
 	_display_hp[slot] = unit.life_n
 	_last_stun[slot] = unit.stun
-	var overlay: Control = Control.new()
+	var overlay: UnitOverlay = UnitOverlayScene.instantiate()
 	overlay.position = visual.position
-	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	battlefield.add_child(overlay)
+	overlay.setup(unit.player_name)
 	_overlays[slot] = overlay
-
-	var ring: Control = Control.new()
-	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	ring.visible = false
-	ring.draw.connect(_draw_ring.bind(ring, slot))
-	overlay.add_child(ring)
-	_rings[slot] = ring
-
-	var name_label: Label = Label.new()
-	name_label.text = unit.player_name
-	name_label.position = Vector2(-52, -82)
-	name_label.size = Vector2(104, 14)
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.add_theme_font_size_override("font_size", 10)
-	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	overlay.add_child(name_label)
-
-	var health: ProgressBar = ProgressBar.new()
-	health.custom_minimum_size = Vector2(52, 6)
-	health.position = Vector2(-26, -66)
-	health.show_percentage = false
-	health.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	overlay.add_child(health)
-	_health_bars[slot] = health
-	var health_value: Label = Label.new()
-	health_value.position = Vector2(28, -69)
-	health_value.size = Vector2(46, 12)
-	health_value.add_theme_font_size_override("font_size", 9)
-	health_value.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	overlay.add_child(health_value)
-	_health_values[slot] = health_value
-
-	var focus: ProgressBar = ProgressBar.new()
-	focus.custom_minimum_size = Vector2(52, 3)
-	focus.position = Vector2(-26, -58)
-	focus.show_percentage = false
-	focus.modulate = Color(0.5, 0.7, 1.0)
-	focus.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	overlay.add_child(focus)
-	_focus_bars[slot] = focus
-
-	# Hover/click zone over the doll.
-	var hit: Button = Button.new()
-	hit.flat = true
-	hit.custom_minimum_size = Vector2(56, 100)
-	hit.size = hit.custom_minimum_size
-	hit.position = Vector2(-28, -52)
-	hit.mouse_entered.connect(_on_unit_hovered.bind(slot, true))
-	hit.mouse_exited.connect(_on_unit_hovered.bind(slot, false))
-	hit.pressed.connect(_on_unit_clicked.bind(slot))
-	overlay.add_child(hit)
+	_rings[slot] = overlay.ring
+	overlay.ring.draw.connect(_draw_ring.bind(overlay.ring, slot))
+	_health_bars[slot] = overlay.health_bar
+	_health_values[slot] = overlay.health_value
+	_focus_bars[slot] = overlay.focus_bar
+	overlay.hit_button.mouse_entered.connect(_on_unit_hovered.bind(slot, true))
+	overlay.hit_button.mouse_exited.connect(_on_unit_hovered.bind(slot, false))
+	overlay.hit_button.pressed.connect(_on_unit_clicked.bind(slot))
 
 
 # The original's target ring: a thick circle with four tick marks.

@@ -1,0 +1,61 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/unit_overlay.gd" id="1_overlay"]
+
+[node name="UnitOverlay" type="Control"]
+mouse_filter = 2
+script = ExtResource("1_overlay")
+
+[node name="Ring" type="Control" parent="."]
+layout_mode = 0
+mouse_filter = 2
+visible = false
+
+[node name="NameLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = -52.0
+offset_top = -82.0
+offset_right = 52.0
+offset_bottom = -68.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 10
+horizontal_alignment = 1
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+layout_mode = 0
+offset_left = -26.0
+offset_top = -66.0
+offset_right = 26.0
+offset_bottom = -60.0
+custom_minimum_size = Vector2(52, 6)
+mouse_filter = 2
+show_percentage = false
+
+[node name="HealthValue" type="Label" parent="."]
+layout_mode = 0
+offset_left = 28.0
+offset_top = -69.0
+offset_right = 74.0
+offset_bottom = -57.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 9
+
+[node name="FocusBar" type="ProgressBar" parent="."]
+layout_mode = 0
+offset_left = -26.0
+offset_top = -58.0
+offset_right = 26.0
+offset_bottom = -55.0
+custom_minimum_size = Vector2(52, 3)
+mouse_filter = 2
+modulate = Color(0.5, 0.7, 1.0, 1)
+show_percentage = false
+
+[node name="HitButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = -28.0
+offset_top = -52.0
+offset_right = 28.0
+offset_bottom = 48.0
+custom_minimum_size = Vector2(56, 100)
+flat = true
