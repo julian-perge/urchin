@@ -910,9 +910,8 @@ func _finish_battle() -> void:
 			Achievements.unlock(achievement_id)
 		# Drops are click-to-keep on the victory screen (VICTORY[1]); the
 		# autosave happens on Proceed, like the original.
-		var victory: VictoryScreen = preload("res://scripts/battle/victory_screen.gd").new()
+		var victory: VictoryScreen = preload("res://scenes/battle/victory_screen.tscn").instantiate()
 		victory.name = "VictoryScreen"
-		victory.set_anchors_preset(Control.PRESET_FULL_RECT)
 		add_child(victory)
 		victory.setup(save, rewards, drops, fighting_party)
 		victory.proceed_pressed.connect(_on_victory_proceed)
