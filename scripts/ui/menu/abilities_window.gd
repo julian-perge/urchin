@@ -40,7 +40,7 @@ var _tree_buttons: Array[Button] = []
 var _tree_rank_labels: Array[Label] = []
 @onready var _tree_lines: Control = $TreeLines
 var _socket_buttons: Array[Button] = []
-@onready var _pool_rows: Array[Button] = [
+@onready var _pool_rows: Array[AbilityPoolRow] = [
 	$PoolRows/PoolRow0, $PoolRows/PoolRow1, $PoolRows/PoolRow2, $PoolRows/PoolRow3, $PoolRows/PoolRow4,
 ]
 var _pool_scroll: int = 0
@@ -60,6 +60,7 @@ func _ready():
 	_build_tree_panel()
 	_build_wheel_panel()
 	for i in _pool_rows.size():
+		_pool_rows[i].pressed.connect(_on_pool_row_pressed.bind(i))
 		_pool_rows[i].mouse_entered.connect(_on_pool_row_hovered.bind(i))
 		_pool_rows[i].mouse_exited.connect(_tooltip.hide)
 	visibility_changed.connect(func():
@@ -258,19 +259,14 @@ func _refresh_pool(save: PlayerSave) -> void:
 			_pool_move_ids.append(int(move_id))
 	_pool_scroll = clamp(_pool_scroll, 0, max(0, _pool_move_ids.size() - POOL_VISIBLE_ROWS))
 	for i in _pool_rows.size():
-		var row: Button = _pool_rows[i]
+		var row: AbilityPoolRow = _pool_rows[i]
 		var pool_index: int = _pool_scroll + i
 		if pool_index >= _pool_move_ids.size():
-			row.visible = false
+			row.clear()
 			continue
-		row.visible = true
 		var move: Ability = MoveManagerAuto.get_move(_pool_move_ids[pool_index])
-		row.text = move.display_name if move != null else str(_pool_move_ids[pool_index])
-		row.tooltip_text = ""
-		var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(row.text)]
-		row.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null
-		row.expand_icon = false
-		row.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		var icon_key: String = _sanitize_icon_key(move.display_name if move != null else "")
+		row.populate(move, "%s%s.png" % [ICON_DIR, icon_key])
 
 
 func _on_pool_row_hovered(row_index: int) -> void:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/menu/abilities_window.gd" id="1_abilwin"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" path="res://assets/ui/menu/panel_large.png" id="4_panellarge"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/panel_center.png" id="5_panelcenter"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/ability_tooltip.tscn" id="6_tooltip"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu/ability_pool_row.tscn" id="7_poolrow"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vitality"]
 bg_color = Color(0.55, 0.85, 0.3, 1)
@@ -62,22 +63,6 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_poolrow"]
-bg_color = Color(0.5, 0.5, 0.52, 1)
-corner_radius_top_left = 9
-corner_radius_top_right = 9
-corner_radius_bottom_right = 9
-corner_radius_bottom_left = 9
-content_margin_left = 10.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_poolrow_hover"]
-bg_color = Color(0.65, 0.65, 0.67, 1)
-corner_radius_top_left = 9
-corner_radius_top_right = 9
-corner_radius_bottom_right = 9
-corner_radius_bottom_left = 9
-content_margin_left = 10.0
 
 [node name="AbilitiesWindow" type="Control" groups=["abilities_window", "menu_screen"]]
 layout_mode = 3
@@ -438,50 +423,20 @@ offset_bottom = 387.2
 mouse_filter = 2
 theme_override_constants/separation = 3
 
-[node name="PoolRow0" type="Button" parent="PoolRows"]
-custom_minimum_size = Vector2(186, 22)
+[node name="PoolRow0" parent="PoolRows" instance=ExtResource("7_poolrow")]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
-theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_poolrow")
-theme_override_styles/hover = SubResource("StyleBoxFlat_poolrow_hover")
-alignment = 0
 
-[node name="PoolRow1" type="Button" parent="PoolRows"]
-custom_minimum_size = Vector2(186, 22)
+[node name="PoolRow1" parent="PoolRows" instance=ExtResource("7_poolrow")]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
-theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_poolrow")
-theme_override_styles/hover = SubResource("StyleBoxFlat_poolrow_hover")
-alignment = 0
 
-[node name="PoolRow2" type="Button" parent="PoolRows"]
-custom_minimum_size = Vector2(186, 22)
+[node name="PoolRow2" parent="PoolRows" instance=ExtResource("7_poolrow")]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
-theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_poolrow")
-theme_override_styles/hover = SubResource("StyleBoxFlat_poolrow_hover")
-alignment = 0
 
-[node name="PoolRow3" type="Button" parent="PoolRows"]
-custom_minimum_size = Vector2(186, 22)
+[node name="PoolRow3" parent="PoolRows" instance=ExtResource("7_poolrow")]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
-theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_poolrow")
-theme_override_styles/hover = SubResource("StyleBoxFlat_poolrow_hover")
-alignment = 0
 
-[node name="PoolRow4" type="Button" parent="PoolRows"]
-custom_minimum_size = Vector2(186, 22)
+[node name="PoolRow4" parent="PoolRows" instance=ExtResource("7_poolrow")]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
-theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_poolrow")
-theme_override_styles/hover = SubResource("StyleBoxFlat_poolrow_hover")
-alignment = 0
 
 [node name="ScrollUpButton" type="Button" parent="."]
 layout_mode = 0
@@ -514,10 +469,5 @@ layout_mode = 0
 [connection signal="pressed" from="InstinctPlus" to="." method="_on_attribute_plus_pressed" binds=[2]]
 [connection signal="pressed" from="SpeedPlus" to="." method="_on_attribute_plus_pressed" binds=[3]]
 [connection signal="draw" from="TreeLines" to="." method="_draw_tree_lines"]
-[connection signal="pressed" from="PoolRows/PoolRow0" to="." method="_on_pool_row_pressed" binds=[0]]
-[connection signal="pressed" from="PoolRows/PoolRow1" to="." method="_on_pool_row_pressed" binds=[1]]
-[connection signal="pressed" from="PoolRows/PoolRow2" to="." method="_on_pool_row_pressed" binds=[2]]
-[connection signal="pressed" from="PoolRows/PoolRow3" to="." method="_on_pool_row_pressed" binds=[3]]
-[connection signal="pressed" from="PoolRows/PoolRow4" to="." method="_on_pool_row_pressed" binds=[4]]
 [connection signal="pressed" from="ScrollUpButton" to="." method="_on_pool_scrolled" binds=[-1]]
 [connection signal="pressed" from="ScrollDownButton" to="." method="_on_pool_scrolled" binds=[1]]
