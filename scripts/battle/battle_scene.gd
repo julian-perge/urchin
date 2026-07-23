@@ -22,6 +22,7 @@ signal battle_finished(outcome: int)
 
 const CharacterVisualScene: PackedScene = preload("res://scenes/character_visual.tscn")
 const UnitOverlayScene: PackedScene = preload("res://scenes/battle/unit_overlay.tscn")
+const StanceRowScene: PackedScene = preload("res://scenes/battle/stance_row.tscn")
 const BACKGROUND_ROOT: String = "res://assets/backgrounds"
 
 # Exact BATTLESCREEN placements from the SWF: BATTLESCREEN sits at
@@ -378,8 +379,7 @@ func _draw_pass_ring() -> void:
 
 
 func _populate_stance_rows() -> void:
-	var host: Control = get_node("BottomBar/StanceHost")
-	for child in host.get_children():
+	for child in stance_host.get_children():
 		child.queue_free()
 	_stance_rows.clear()
 	var save: PlayerSave = GameData.current_save
@@ -391,22 +391,13 @@ func _populate_stance_rows() -> void:
 		var party_id: int = _party_id_for_unit(unit)
 		if party_id <= 0:
 			continue
-		var name_label: Label = Label.new()
-		name_label.text = unit.player_name
-		name_label.position = Vector2(0, row_y + 4)
-		name_label.size = Vector2(90, 20)
-		name_label.add_theme_font_size_override("font_size", 12)
-		host.add_child(name_label)
-		var buttons: Array = []
-		for mode in Party.AGGRESSION_PRESETS.size():
-			var button: Button = Button.new()
-			button.custom_minimum_size = Vector2(34, 26)
-			button.size = button.custom_minimum_size
-			button.position = Vector2(96 + mode * 40, row_y)
-			button.tooltip_text = Party.AGGRESSION_NAMES[mode]
-			button.pressed.connect(_on_stance_pressed.bind(party_id, mode, slot))
-			host.add_child(button)
-			buttons.append(button)
+		var row: StanceRow = StanceRowScene.instantiate()
+		row.position = Vector2(0, row_y)
+		stance_host.add_child(row)
+		row.setup(unit.player_name)
+		var buttons: Array = row.buttons
+		for mode in buttons.size():
+			buttons[mode].pressed.connect(_on_stance_pressed.bind(party_id, mode, slot))
 		_stance_rows[party_id] = buttons
 		_refresh_stance_row(party_id, Party.get_ag_mode(save, party_id) if save != null else 2)
 		row_y += 46.0

@@ -1,0 +1,59 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/stance_row.gd" id="1_row"]
+
+[node name="StanceRow" type="Control"]
+script = ExtResource("1_row")
+
+[node name="NameLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 4.0
+offset_right = 90.0
+offset_bottom = 24.0
+theme_override_font_sizes/font_size = 12
+
+[node name="Mode0" type="Button" parent="."]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 0.0
+offset_right = 130.0
+offset_bottom = 26.0
+custom_minimum_size = Vector2(34, 26)
+tooltip_text = "Phalanx"
+
+[node name="Mode1" type="Button" parent="."]
+layout_mode = 0
+offset_left = 136.0
+offset_top = 0.0
+offset_right = 170.0
+offset_bottom = 26.0
+custom_minimum_size = Vector2(34, 26)
+tooltip_text = "Defensive"
+
+[node name="Mode2" type="Button" parent="."]
+layout_mode = 0
+offset_left = 176.0
+offset_top = 0.0
+offset_right = 210.0
+offset_bottom = 26.0
+custom_minimum_size = Vector2(34, 26)
+tooltip_text = "Tactical"
+
+[node name="Mode3" type="Button" parent="."]
+layout_mode = 0
+offset_left = 216.0
+offset_top = 0.0
+offset_right = 250.0
+offset_bottom = 26.0
+custom_minimum_size = Vector2(34, 26)
+tooltip_text = "Aggressive"
+
+[node name="Mode4" type="Button" parent="."]
+layout_mode = 0
+offset_left = 256.0
+offset_top = 0.0
+offset_right = 290.0
+offset_bottom = 26.0
+custom_minimum_size = Vector2(34, 26)
+tooltip_text = "Relentless"
