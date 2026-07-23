@@ -16,7 +16,6 @@ const MENU_BUTTON_GROUPS: Dictionary[String, String] = {
 	"AbilitiesButton": "abilities_window",
 	"AchievementsButton": "achievements_window",
 }
-const GLOW_COLOR: Color = Color(0.45, 1.0, 0.35, 0.9)
 const ACTIVE_ICON_COLOR: Color = Color(0.7, 1.0, 0.6)
 # Every button hovers in its own color, per the live-game captures in
 # references/hotbar/ (*_glow_with_tooltip.png).
