@@ -31,8 +31,6 @@ const DOLL_SCALE: float = 1.2
 const PARTY_BAR: Rect2 = Rect2(47.5, 358.2, 249.1, 50.9)
 const BAR_BLOCK_CENTERS_Y: Dictionary[Variant, Variant] = {"per": 256.0, "def": 360.5}
 const BAR_TRACK_HEIGHT: float = 78.0
-const BAR_WIDTH: float = 10.0
-const BAR_STEP: float = 17.1
 # Experience row (texts 2869/2863, shapes 2864/2868, fill sprite 2867) - only
 # EXP_FILL survives here: refresh() still reads EXP_FILL.size.x as the full
 # width the fraction-scaled fill is computed against.
