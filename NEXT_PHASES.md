@@ -105,9 +105,9 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
 ## UI architecture: native Godot Containers instead of code-built controls
 
 Everything under `scripts/ui/` originally built its Control tree imperatively at runtime (`Button.new()`, `StyleBoxFlat.new()`, manual `.position`/`.size` assignment). `item_slot.gd`,
-`store_window.gd`, `inventory_panel.gd`, `abilities_window.gd`, `achievements_window.gd`, `hotbar.gd`, `inventory_window.gd`, `main_menu.gd`, and `victory_screen.gd` are all migrated now (see the
-**DONE** note below) - `menu_theme.gd`'s `add_texture_rect`/`add_label` helpers that this phase called out as a symptom are deleted entirely. **Only `battle_scene.gd`'s own overlay-building code
-(bottom bar, stance row, pass ring) is still imperative** - the last item left in this phase. The goal was to migrate toward declarative `.tscn` scenes with real Container
+`store_window.gd`, `inventory_panel.gd`, `abilities_window.gd`, `achievements_window.gd`, `hotbar.gd`, `inventory_window.gd`, `main_menu.gd`, `victory_screen.gd`, and now `battle_scene.gd` are all
+migrated (see the **DONE** notes below) - `menu_theme.gd`'s `add_texture_rect`/`add_label` helpers that this phase called out as a symptom are deleted entirely, and this phase is now fully
+complete. The goal was to migrate toward declarative `.tscn` scenes with real Container
 nodes, matching how Godot's own demo projects are built - reference clone at `/Users/julianperge/DEVELOPER/git_repos/godotengine/godot-demo-projects/2d/` (`dodge_the_creeps`, `platformer/gui`, and
 `role_playing_game/combat` were surveyed). Conventions worth adopting, in order of impact:
 
@@ -150,8 +150,14 @@ and each label depends on live save data). `scripts/ui/menu/inventory_window.gd`
 `scenes/battle/victory_screen.tscn` for its static chrome, plus a new reusable `scenes/battle/victory_experience_row.tscn` (instanced once per fighter, 1-3 depending on the deployed party) for
 what used to be raw per-row `MenuTheme` calls, matching the same instanced-`PackedScene` pattern as `ItemSlot`/`talent_node.tscn`. Only the drop slots (`ItemSlotScene`, count varies per battle)
 and the embedded `InventoryPanel` stay code-instanced, both already using the established `PackedScene` pattern from the start. `battle_scene.gd`'s instantiation call site was updated from
-`.new()` to `preload(...).instantiate()` accordingly. Everything else named in this phase (`battle_scene.gd`'s own bottom-bar/stance-row/pass-ring construction, a separate piece of work from the
-`MenuTheme` retirement) is still pending.
+`.new()` to `preload(...).instantiate()` accordingly.
+
+**DONE (2026-07-23):** `scripts/battle/battle_scene.gd` is also migrated, completing this phase entirely. `scenes/battle_scene.tscn` now owns the bottom bar's static chrome (backdrop, three
+panels, the Pass button, and the Retreat button - the Pass ring's `_draw()` callback stays code, its color depends on live turn state) and a static `SkyFill` node (only its color/size mutation,
+sampled from whichever zone background loads, stays code). Two new reusable scenes cover the two genuinely-variable-count-but-fixed-structure pieces: `scenes/battle/unit_overlay.tscn` (name,
+health/focus bars, hover ring, hit button - instanced once per battling unit, 2-6 depending on the roster) and `scenes/battle/stance_row.tscn` (name + 5 stance buttons - instanced once per
+deployed companion, 0-2), both matching the same instanced-`PackedScene` pattern as `ItemSlot`/`talent_node.tscn`/`VictoryExperienceRow`. The radial ability menu, floating combat text, and
+projectile bolts all stay fully code-driven, unchanged - each is transient, recomputed on every occurrence, with no reusable structure a static template would capture.
 
 ## Enum conversion audit
 
