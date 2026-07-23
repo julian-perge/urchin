@@ -135,7 +135,12 @@ static chrome/attribute panel plus a `VBoxContainer` for the 5-row ability pool 
 reusable `talent_node.tscn`, the same instanced-`PackedScene` pattern as `ItemSlot`, and the 8-socket wheel stays entirely code-driven by design), `achievements_window.tscn` now owns its chrome plus
 all 10 fixed-position achievement plates (only each plate's locked/unlocked `StyleBoxFlat` and label color stay code-driven), and `hotbar.tscn` - already the most declarative of the group, built
 with real `HBoxContainer`/`CenterContainer`/`VBoxContainer` layout from the start - now also owns the quit button and every button's glow/icon overlay children, with only the per-instance
-hover-tint wiring left in code. Everything else named in this phase (`battle_scene.gd`, `menu_theme.gd`'s helpers) is still pending.
+hover-tint wiring left in code. `scripts/ui/menu/inventory_window.gd` is also migrated - `inventory_window.tscn` now owns its static chrome (backdrop, close button, status label, left/center panel
+textures, name/level/experience-row content, all 5 stat rows, Piercing/Defense titles), all 16 element-bar tracks and fills (8 "per" + 8 "def"), the party bar background, and all 6 fixed portrait
+frames (each an instance of `item_slot.tscn` with a static `Face` child) - only the bars' fill height/position (`_update_bar()`) and the portraits' tooltip/dimming (`_refresh_portraits()`) stay
+code-driven, both genuinely live-save-dependent. `inventory_window.gd` is the first of three remaining `MenuTheme`-helper callers to migrate; `scripts/ui/main_menu.gd` and
+`scripts/battle/victory_screen.gd` (the latter has no `.tscn` yet at all - it's instantiated straight from the script via `.new()`) still call `add_texture_rect`/`add_label` and are separate
+follow-up phases - once both are migrated, those two helpers can be deleted from `menu_theme.gd` entirely. Everything else named in this phase (`battle_scene.gd`) is still pending.
 
 ## Enum conversion audit
 
