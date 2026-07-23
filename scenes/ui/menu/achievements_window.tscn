@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/menu/achievements_window.gd" id="1_achwin"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/close_x.png" id="3_close"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/panel_large.png" id="4_panellarge"]
 
 [node name="AchievementsWindow" type="Control" groups=["achievements_window", "menu_screen"]]
 layout_mode = 3
@@ -11,3 +14,219 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_achwin")
+
+[node name="Backdrop" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 14.2
+offset_top = 14.9
+offset_right = 782.7
+offset_bottom = 440.0
+mouse_filter = 0
+texture = ExtResource("2_backdrop")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="CloseButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 734.5
+offset_top = 29.8
+offset_right = 771.2
+offset_bottom = 66.2
+texture_normal = ExtResource("3_close")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="PanelBackground" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 76.0
+offset_top = 86.0
+offset_right = 725.0
+offset_bottom = 397.0
+mouse_filter = 2
+texture = ExtResource("4_panellarge")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 76.0
+offset_top = 105.0
+offset_right = 725.0
+offset_bottom = 133.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.94, 0.73, 0.23, 1)
+theme_override_font_sizes/font_size = 19
+horizontal_alignment = 1
+text = "Achievements"
+
+[node name="Plate0" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 248.0
+offset_top = 145.0
+offset_right = 388.0
+offset_bottom = 177.0
+custom_minimum_size = Vector2(140, 32)
+tooltip_text = "Retrieve the tape from Felicity."
+
+[node name="NameLabel" type="Label" parent="Plate0"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "The Tape"
+
+[node name="Plate1" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 248.0
+offset_top = 191.0
+offset_right = 388.0
+offset_bottom = 223.0
+custom_minimum_size = Vector2(140, 32)
+tooltip_text = "Defeat Clemons for the first time, without using any team mates. This can only be done on Challenging or Heroic difficulty."
+
+[node name="NameLabel" type="Label" parent="Plate1"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Black Magic"
+
+[node name="Plate2" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 248.0
+offset_top = 237.0
+offset_right = 388.0
+offset_bottom = 269.0
+custom_minimum_size = Vector2(140, 32)
+tooltip_text = "Defeat the Hydra for the first time, without dealing more than 2000 damage throughout the whole fight. This can only be done on Challenging or Heroic difficulty."
+
+[node name="NameLabel" type="Label" parent="Plate2"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Pacifist"
+
+[node name="Plate3" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 248.0
+offset_top = 283.0
+offset_right = 388.0
+offset_bottom = 315.0
+custom_minimum_size = Vector2(140, 32)
+tooltip_text = "Defeat Captain Hunt without using any training fights, and without repeating any defeated bosses. This can only be done on Heroic difficulty."
+
+[node name="NameLabel" type="Label" parent="Plate3"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Predator"
+
+[node name="Plate4" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 248.0
+offset_top = 329.0
+offset_right = 388.0
+offset_bottom = 361.0
+custom_minimum_size = Vector2(140, 32)
+tooltip_text = "Defeat the Mayor without using any training fights, and without repeating any defeated bosses. This can only be done on Heroic difficulty."
+
+[node name="NameLabel" type="Label" parent="Plate4"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Legend"
+
+[node name="Plate5" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 413.0
+offset_top = 145.0
+offset_right = 553.0
+offset_bottom = 177.0
+custom_minimum_size = Vector2(140, 32)
+tooltip_text = "Defeat the Mayor on Heroic difficulty with all three classes"
+
+[node name="NameLabel" type="Label" parent="Plate5"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "All Star"
+
+[node name="Plate6" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 413.0
+offset_top = 191.0
+offset_right = 553.0
+offset_bottom = 223.0
+custom_minimum_size = Vector2(140, 32)
+tooltip_text = "Defeat Metal Warden using only one team member."
+
+[node name="NameLabel" type="Label" parent="Plate6"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Jail Break"
+
+[node name="Plate7" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 413.0
+offset_top = 237.0
+offset_right = 553.0
+offset_bottom = 269.0
+custom_minimum_size = Vector2(140, 32)
+tooltip_text = "Defeat the Time Bomb in less than 40 turns."
+
+[node name="NameLabel" type="Label" parent="Plate7"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Doomsday"
+
+[node name="Plate8" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 413.0
+offset_top = 283.0
+offset_right = 553.0
+offset_bottom = 315.0
+custom_minimum_size = Vector2(140, 32)
+tooltip_text = "Defeat Nostalgia without using any team members."
+
+[node name="NameLabel" type="Label" parent="Plate8"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Old Ghosts"
+
+[node name="Plate9" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 413.0
+offset_top = 329.0
+offset_right = 553.0
+offset_bottom = 361.0
+custom_minimum_size = Vector2(140, 32)
+tooltip_text = "Defeat the Corruptor in Zone 7."
+
+[node name="NameLabel" type="Label" parent="Plate9"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Over the Ashes"
+
+[connection signal="pressed" from="CloseButton" to="." method="hide"]

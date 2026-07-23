@@ -5,55 +5,18 @@
 # frame 2 = unlocked) in two columns of five. Descriptions ride tooltips.
 extends Control
 
-# The Steam build widens this screen's panel and drops the heading inside
-# it in gold (see assets/references/sonny2_achievements_screen.png); the
-# plate grid itself matches the web SWF's extracted centers.
-const PANEL: Rect2 = Rect2(76.0, 86.0, 649.0, 311.0)
-const PLATE_SIZE: Vector2 = Vector2(140, 32)
-const PLATE_COLUMNS_X: Array[float] = [318.0, 483.0]
-const PLATE_ROWS_Y: Array[float] = [161.0, 207.0, 253.0, 299.0, 345.0]
-
-var _plates: Array[PanelContainer] = []
-var _plate_labels: Array[Label] = []
+@onready var _plates: Array[PanelContainer] = [
+	$Plate0, $Plate1, $Plate2, $Plate3, $Plate4,
+	$Plate5, $Plate6, $Plate7, $Plate8, $Plate9,
+]
+@onready var _plate_labels: Array[Label] = [
+	$Plate0/NameLabel, $Plate1/NameLabel, $Plate2/NameLabel, $Plate3/NameLabel, $Plate4/NameLabel,
+	$Plate5/NameLabel, $Plate6/NameLabel, $Plate7/NameLabel, $Plate8/NameLabel, $Plate9/NameLabel,
+]
 
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var backdrop: TextureRect = MenuTheme.add_texture_rect(self, "menu_backdrop.png", MenuTheme.BACKDROP_RECT)
-	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
-	var close: TextureButton = TextureButton.new()
-	close.name = "CloseButton"
-	close.texture_normal = MenuTheme.texture("close_x.png")
-	close.ignore_texture_size = true
-	close.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-	close.position = MenuTheme.CLOSE_RECT.position
-	close.size = MenuTheme.CLOSE_RECT.size
-	close.pressed.connect(hide)
-	add_child(close)
-	MenuTheme.add_texture_rect(self, "panel_large.png", PANEL)
-	MenuTheme.add_label(
-		self, "Achievements", Rect2(PANEL.position.x, 105, PANEL.size.x, 28), 19,
-		Color(0.94, 0.73, 0.23), HORIZONTAL_ALIGNMENT_CENTER
-	)
-	for i in Achievements.ACHIEVEMENT_COUNT:
-		var plate: PanelContainer = PanelContainer.new()
-		plate.position = Vector2(
-			PLATE_COLUMNS_X[floori(i / float(PLATE_ROWS_Y.size()))],
-			PLATE_ROWS_Y[i % PLATE_ROWS_Y.size()]
-		) - PLATE_SIZE / 2.0
-		plate.size = PLATE_SIZE
-		plate.custom_minimum_size = PLATE_SIZE
-		plate.tooltip_text = Achievements.DESCRIPTIONS[i]
-		add_child(plate)
-		_plates.append(plate)
-		var label: Label = Label.new()
-		label.text = Achievements.NAMES[i]
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		label.add_theme_font_size_override("font_size", 11)
-		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		plate.add_child(label)
-		_plate_labels.append(label)
 	visibility_changed.connect(func():
 		if visible:
 			refresh())
