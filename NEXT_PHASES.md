@@ -104,9 +104,10 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
 
 ## UI architecture: native Godot Containers instead of code-built controls
 
-Everything under `scripts/ui/` currently builds its Control tree imperatively at runtime (`Button.new()`, `StyleBoxFlat.new()`, manual `.position`/`.size` assignment) - `scripts/ui/store/item_slot.gd`
-and `scripts/ui/store/store_window.gd` are the two examples called out to start with, but the same pattern runs through `inventory_window.gd`, `abilities_window.gd`, `achievements_window.gd`,
-`hotbar.gd`, `menu_theme.gd`'s `add_texture_rect`/`add_label` helpers, and `battle_scene.gd`'s overlay-building code. The goal is to migrate toward declarative `.tscn` scenes with real Container
+Everything under `scripts/ui/` originally built its Control tree imperatively at runtime (`Button.new()`, `StyleBoxFlat.new()`, manual `.position`/`.size` assignment). `item_slot.gd`,
+`store_window.gd`, `inventory_panel.gd`, `abilities_window.gd`, `achievements_window.gd`, `hotbar.gd`, `inventory_window.gd`, `main_menu.gd`, and `victory_screen.gd` are all migrated now (see the
+**DONE** note below) - `menu_theme.gd`'s `add_texture_rect`/`add_label` helpers that this phase called out as a symptom are deleted entirely. **Only `battle_scene.gd`'s own overlay-building code
+(bottom bar, stance row, pass ring) is still imperative** - the last item left in this phase. The goal was to migrate toward declarative `.tscn` scenes with real Container
 nodes, matching how Godot's own demo projects are built - reference clone at `/Users/julianperge/DEVELOPER/git_repos/godotengine/godot-demo-projects/2d/` (`dodge_the_creeps`, `platformer/gui`, and
 `role_playing_game/combat` were surveyed). Conventions worth adopting, in order of impact:
 
@@ -121,8 +122,10 @@ nodes, matching how Godot's own demo projects are built - reference clone at `/U
   anchor preset plus manual offsets, no container needed.
   Store/inventory grids and the ability pool list are exactly the reflowing case containers are for.
 - **Centralize styling in Theme `.tres` resources, not code.** The demos define `Button`/`Panel`/`ProgressBar` styles once in a shared `theme.tres` (`StyleBoxTexture` or `StyleBoxFlat` per control
-  type), use `theme_type_variation` for one-off panel styles that share most of a base style, and reserve `theme_override_*` for genuine per-instance exceptions. `menu_theme.gd`'s current
-  `add_texture_rect`/`add_label` helpers exist BECAUSE nothing is theme-driven yet - once real `.tscn` scenes with an assigned Theme resource take over, most of that helper file becomes unnecessary.
+  type), use `theme_type_variation` for one-off panel styles that share most of a base style, and reserve `theme_override_*` for genuine per-instance exceptions. This project didn't go as far as a
+  shared `theme.tres` - each migrated `.tscn` bakes its own `theme_override_*` properties per node instead - but `menu_theme.gd`'s `add_texture_rect`/`add_label` runtime-construction helpers, which
+  existed only because nothing was theme-driven yet, are now deleted (zero remaining callers once `inventory_window.gd`/`main_menu.gd`/`victory_screen.gd` were migrated). `menu_theme.gd` itself
+  stays - its remaining members (`ELEMENT_COLORS`, `STAT_LABELS`/`STAT_COLORS`, `bar_fill_fraction()`, `texture()`, `format_money()`, etc.) are genuinely reusable non-construction utilities.
 
 Sequencing note: this is a large, cross-cutting change and nothing above blocks it from happening incrementally - `item_slot.gd`/`store_window.gd` are explicitly named as the smallest, most
 self-contained starting point. Since the ability menu redesign above is new work rather than an existing screen, it's worth doing that phase in the NEW `.tscn`-plus-Container style directly, once
@@ -207,5 +210,6 @@ GUT 9.6.1 is vendored at `addons/gut/`, tests in `test/unit/` + `test/integratio
 /Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .
 ```
 
-Compile-check a script without GUT: `Godot --headless --check-only -s <script.gd> --path .` (run `--headless --import` once after adding new `class_name` scripts, or the class cache is stale and
-reports false "not declared" errors).
+Compile-check a script without GUT: `Godot --headless --check-only -s <script.gd> --path .` (run `--headless --editor --quit --path .` once after adding new `class_name` scripts, or the class
+cache is stale and reports false "not declared" errors - this is per-checkout, so re-run it in any other worktree or the main checkout after merging in new `class_name` classes, even if the
+branch itself already verified green).
