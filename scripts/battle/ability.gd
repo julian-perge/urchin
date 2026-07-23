@@ -44,6 +44,16 @@ extends Resource
 @export var focus_scaling_modifier: float  # AS3 IDKM2[11] - scales with caster's current focus in focusCoEF
 @export var focus_cost_multiplier: float  # AS3 IDKM2[25] - base term of focusCoEF
 @export var heal_percent_max_health: float
+# Pre-formatted tooltip strings from the original game (ability_two[17]/[18]).
+# Read verbatim, no re-derivation - the source already bakes rank-specific
+# percentages/chances into tooltip_description (verified: moves 100-103, all
+# "Vicious Strike", have different tooltip_description text per rank even
+# though damage_element_type/cooldown/focus_cost are identical across the
+# family) - callers must resolve the SPECIFIC move id for the currently
+# granted rank, not just the tree node's base move_id, or the tooltip will
+# show stale rank-1 text forever. See TalentTree.granted_move_id().
+@export var tooltip_description: String
+@export var tooltip_cost: String
 
 # status_effect_id (ability_two[13]) is a Variant in the source JSON: int 0
 # when the move applies no buff, otherwise a String matching a Buff's
@@ -120,6 +130,8 @@ static func from_json(data: Dictionary) -> Ability:
 	ability.focus_scaling_modifier = _num(ability_two.get("11_focus_scaling_modifier"))
 	ability.focus_cost_multiplier = _num(ability_two.get("25_focus_cost_multiplier"))
 	ability.heal_percent_max_health = _num(ability_two.get("12_heal_percent_max_health"))
+	ability.tooltip_description = _text(ability_two.get("17_tooltip_description"))
+	ability.tooltip_cost = _text(ability_two.get("18_tooltip_cost"))
 
 	var raw_status_effect_id = ability_two.get("13_status_effect_id", 0)
 	ability.status_effect_id = raw_status_effect_id if raw_status_effect_id is String else ""
