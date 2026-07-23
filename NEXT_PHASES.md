@@ -138,9 +138,13 @@ with real `HBoxContainer`/`CenterContainer`/`VBoxContainer` layout from the star
 hover-tint wiring left in code. `scripts/ui/menu/inventory_window.gd` is also migrated - `inventory_window.tscn` now owns its static chrome (backdrop, close button, status label, left/center panel
 textures, name/level/experience-row content, all 5 stat rows, Piercing/Defense titles), all 16 element-bar tracks and fills (8 "per" + 8 "def"), the party bar background, and all 6 fixed portrait
 frames (each an instance of `item_slot.tscn` with a static `Face` child) - only the bars' fill height/position (`_update_bar()`) and the portraits' tooltip/dimming (`_refresh_portraits()`) stay
-code-driven, both genuinely live-save-dependent. `inventory_window.gd` is the first of three remaining `MenuTheme`-helper callers to migrate; `scripts/ui/main_menu.gd` and
-`scripts/battle/victory_screen.gd` (the latter has no `.tscn` yet at all - it's instantiated straight from the script via `.new()`) still call `add_texture_rect`/`add_label` and are separate
-follow-up phases - once both are migrated, those two helpers can be deleted from `menu_theme.gd` entirely. Everything else named in this phase (`battle_scene.gd`) is still pending.
+code-driven, both genuinely live-save-dependent. `scripts/ui/main_menu.gd` is also migrated - `scenes/main_menu.tscn` (already partially declarative before this pass) now owns the title label, the
+class-select screen's chrome and all 3 fixed-order class cards (Psychological/Biological/Hydraulic, each wired via a `[connection]` with the class id bound as a literal) plus its Cancel button,
+and the settings screen's chrome, difficulty picker (3 buttons sharing one `ButtonGroup` sub-resource), and 3 toggle rows (Tutorial/Sound/Autosave, each with its own named handler method since
+their side effects differ - Sound's also mutes an audio bus) plus its Start/Back buttons - only the save-slot button list stays code-driven (`_refresh_slot_buttons()`, count is `GameData.NUM_SLOTS`
+and each label depends on live save data). `inventory_window.gd` and `main_menu.gd` are the first two of three `MenuTheme`-helper callers to migrate; only `scripts/battle/victory_screen.gd`
+remains (it has no `.tscn` yet at all - it's instantiated straight from the script via `.new()`) - once that's migrated too, `add_texture_rect`/`add_label` can be deleted from `menu_theme.gd`
+entirely. Everything else named in this phase (`battle_scene.gd`) is still pending.
 
 ## Enum conversion audit
 
