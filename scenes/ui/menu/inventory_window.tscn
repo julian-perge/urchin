@@ -8,9 +8,9 @@
 [ext_resource type="Texture2D" path="res://assets/ui/menu/exp_track.png" id="6_exptrack"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/exp_fill.png" id="7_expfill"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/exp_zero_box.png" id="8_expzerobox"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/panel_bar.png" id="6_partybar"]
-[ext_resource type="PackedScene" path="res://scenes/ui/item_slot.tscn" id="7_itemslot"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/sonny.png" id="8_sonny"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/panel_bar.png" id="14_partybar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/item_slot.tscn" id="15_itemslot"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/sonny.png" id="16_sonny"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/veradux.png" id="9_veradux"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/roald.png" id="10_roald"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/felicity.png" id="11_felicity"]
@@ -592,11 +592,11 @@ offset_top = 358.2
 offset_right = 296.6
 offset_bottom = 409.1
 mouse_filter = 2
-texture = ExtResource("6_partybar")
+texture = ExtResource("14_partybar")
 expand_mode = 1
 stretch_mode = 0
 
-[node name="Portrait0" parent="." instance=ExtResource("7_itemslot")]
+[node name="Portrait0" parent="." instance=ExtResource("15_itemslot")]
 offset_left = 56.7
 offset_top = 369.4
 offset_right = 87.7
@@ -614,11 +614,11 @@ offset_bottom = -2.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("8_sonny")
+texture = ExtResource("16_sonny")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Portrait1" parent="." instance=ExtResource("7_itemslot")]
+[node name="Portrait1" parent="." instance=ExtResource("15_itemslot")]
 offset_left = 96.7
 offset_top = 369.4
 offset_right = 127.7
@@ -640,7 +640,7 @@ texture = ExtResource("9_veradux")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Portrait2" parent="." instance=ExtResource("7_itemslot")]
+[node name="Portrait2" parent="." instance=ExtResource("15_itemslot")]
 offset_left = 136.7
 offset_top = 369.4
 offset_right = 167.7
@@ -662,7 +662,7 @@ texture = ExtResource("10_roald")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Portrait3" parent="." instance=ExtResource("7_itemslot")]
+[node name="Portrait3" parent="." instance=ExtResource("15_itemslot")]
 offset_left = 176.7
 offset_top = 369.4
 offset_right = 207.7
@@ -684,7 +684,7 @@ texture = ExtResource("11_felicity")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Portrait4" parent="." instance=ExtResource("7_itemslot")]
+[node name="Portrait4" parent="." instance=ExtResource("15_itemslot")]
 offset_left = 216.7
 offset_top = 369.4
 offset_right = 247.7
@@ -706,7 +706,7 @@ texture = ExtResource("12_wolfgang")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Portrait5" parent="." instance=ExtResource("7_itemslot")]
+[node name="Portrait5" parent="." instance=ExtResource("15_itemslot")]
 offset_left = 256.7
 offset_top = 369.4
 offset_right = 287.7

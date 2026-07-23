@@ -66,6 +66,9 @@ func _build_left_panel() -> void:
 	equip_view = EquipDollView.new()
 	equip_view.name = "EquipDollView"
 	add_child(equip_view)
+	# Draw behind the experience bar, matching the original build order
+	# (doll added before the exp-bar nodes) now that the exp bar is static.
+	move_child(equip_view, $LevelLabel.get_index() + 1)
 	equip_view.setup(EQUIP_SLOT_CENTERS, DOLL_POSITION, DOLL_SCALE)
 	equip_view.equip_slot_clicked.connect(_on_equip_slot_clicked)
 
