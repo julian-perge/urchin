@@ -142,9 +142,13 @@ code-driven, both genuinely live-save-dependent. `scripts/ui/main_menu.gd` is al
 class-select screen's chrome and all 3 fixed-order class cards (Psychological/Biological/Hydraulic, each wired via a `[connection]` with the class id bound as a literal) plus its Cancel button,
 and the settings screen's chrome, difficulty picker (3 buttons sharing one `ButtonGroup` sub-resource), and 3 toggle rows (Tutorial/Sound/Autosave, each with its own named handler method since
 their side effects differ - Sound's also mutes an audio bus) plus its Start/Back buttons - only the save-slot button list stays code-driven (`_refresh_slot_buttons()`, count is `GameData.NUM_SLOTS`
-and each label depends on live save data). `inventory_window.gd` and `main_menu.gd` are the first two of three `MenuTheme`-helper callers to migrate; only `scripts/battle/victory_screen.gd`
-remains (it has no `.tscn` yet at all - it's instantiated straight from the script via `.new()`) - once that's migrated too, `add_texture_rect`/`add_label` can be deleted from `menu_theme.gd`
-entirely. Everything else named in this phase (`battle_scene.gd`) is still pending.
+and each label depends on live save data). `scripts/ui/menu/inventory_window.gd`, `scripts/ui/main_menu.gd`, and `scripts/battle/victory_screen.gd` are also migrated, completing the retirement of
+`menu_theme.gd`'s runtime `add_texture_rect`/`add_label` helpers (both deleted - zero remaining callers). `victory_screen.gd` didn't have a `.tscn` at all before this - it now has
+`scenes/battle/victory_screen.tscn` for its static chrome, plus a new reusable `scenes/battle/victory_experience_row.tscn` (instanced once per fighter, 1-3 depending on the deployed party) for
+what used to be raw per-row `MenuTheme` calls, matching the same instanced-`PackedScene` pattern as `ItemSlot`/`talent_node.tscn`. Only the drop slots (`ItemSlotScene`, count varies per battle)
+and the embedded `InventoryPanel` stay code-instanced, both already using the established `PackedScene` pattern from the start. `battle_scene.gd`'s instantiation call site was updated from
+`.new()` to `preload(...).instantiate()` accordingly. Everything else named in this phase (`battle_scene.gd`'s own bottom-bar/stance-row/pass-ring construction, a separate piece of work from the
+`MenuTheme` retirement) is still pending.
 
 ## Enum conversion audit
 

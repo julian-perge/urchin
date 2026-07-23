@@ -70,38 +70,6 @@ static func texture(file: String) -> Texture2D:
 	return load("%s/%s" % [ART, file])
 
 
-static func add_texture_rect(parent: Node, file: String, rect: Rect2, stretch: bool = true) -> TextureRect:
-	var node: TextureRect = TextureRect.new()
-	node.texture = texture(file)
-	# expand_mode must be set BEFORE size: with the default EXPAND_KEEP_SIZE
-	# the texture's natural size acts as the minimum and wins over size.
-	if stretch:
-		node.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		node.stretch_mode = TextureRect.STRETCH_SCALE
-	node.position = rect.position
-	node.size = rect.size
-	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	parent.add_child(node)
-	return node
-
-
-static func add_label(parent: Node, text: String, rect: Rect2, font_size: int, color: Color = Color.WHITE, align: int = HORIZONTAL_ALIGNMENT_LEFT, wrap_text: bool = false) -> Label:
-	var label: Label = Label.new()
-	# autowrap must be on BEFORE size: an unwrapped Label's minimum width is
-	# the full text width, which overrides a narrower size.
-	if wrap_text:
-		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.text = text
-	label.position = rect.position
-	label.size = rect.size
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
-	label.horizontal_alignment = align
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	parent.add_child(label)
-	return label
-
-
 static func format_money(value: int) -> String:
 	var text: String = str(absi(value))
 	var out: String = ""
