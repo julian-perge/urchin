@@ -79,6 +79,7 @@ var _radial_menu: Control = null
 
 @onready var background: TextureRect = $Background
 @onready var sky: TextureRect = $Sky
+@onready var sky_fill: ColorRect = $SkyFill
 @onready var battlefield: Node2D = $Battlefield
 @onready var turn_label: Label = $UI/TurnLabel
 @onready var speech_label: Label = $UI/SpeechLabel
@@ -162,24 +163,15 @@ func _load_background() -> void:
 	sky.texture = sky_texture
 	sky.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	sky.stretch_mode = TextureRect.STRETCH_SCALE
-	# The scene anchors Sky full-rect; explicit sizing needs plain anchors.
-	sky.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	var strip_height: float = 800.0 * sky_texture.get_height() / sky_texture.get_width()
 	sky.position = Vector2(0, SKY_HORIZON_Y - strip_height)
 	sky.size = Vector2(800, strip_height)
 	# Solid fill above the strip, sampled from its top edge.
 	var image: Image = sky_texture.get_image()
 	var top_color: Color = image.get_pixel(int(image.get_width() / 2.0), 0)
-	var fill: ColorRect = get_node_or_null("SkyFill")
-	if fill == null:
-		fill = ColorRect.new()
-		fill.name = "SkyFill"
-		fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(fill)
-		move_child(fill, 0)
-	fill.color = top_color
-	fill.position = Vector2.ZERO
-	fill.size = Vector2(800, SKY_HORIZON_Y - strip_height + 2)
+	sky_fill.color = top_color
+	sky_fill.position = Vector2.ZERO
+	sky_fill.size = Vector2(800, SKY_HORIZON_Y - strip_height + 2)
 
 
 func _spawn_visuals() -> void:
