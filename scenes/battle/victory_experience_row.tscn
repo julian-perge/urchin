@@ -1,0 +1,69 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/victory_experience_row.gd" id="1_row"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/exp_track.png" id="2_exptrack"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/exp_fill.png" id="3_expfill"]
+
+[node name="VictoryExperienceRow" type="Control"]
+script = ExtResource("1_row")
+
+[node name="Face" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 0.0
+offset_right = 92.0
+offset_bottom = 44.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 0.0
+offset_right = 250.0
+offset_bottom = 16.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 13
+
+[node name="LevelLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 16.0
+offset_right = 250.0
+offset_bottom = 30.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="ExpTrack" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 32.0
+offset_right = 250.0
+offset_bottom = 44.0
+mouse_filter = 2
+texture = ExtResource("2_exptrack")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="ExpFill" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 32.0
+offset_right = 100.0
+offset_bottom = 44.0
+mouse_filter = 2
+texture = ExtResource("3_expfill")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="PercentLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 31.0
+offset_right = 164.0
+offset_bottom = 44.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_font_sizes/font_size = 9
