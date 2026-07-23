@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://ce0fyqjs5nd5q"]
+[gd_scene load_steps=19 format=3 uid="uid://ce0fyqjs5nd5q"]
 
 [ext_resource type="Script" path="res://scripts/ui/hotbar.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/ui/hotbar/background.png" id="2_panel"]
@@ -74,6 +74,30 @@ font_color = Color(1, 1, 1, 1)
 shadow_size = 4
 shadow_color = Color(0, 0, 0, 0.6)
 
+[sub_resource type="StyleBoxFlat" id="quit_normal"]
+bg_color = Color(0.55, 0.1, 0.08, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.3, 0.25, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="quit_hover"]
+bg_color = Color(0.75, 0.15, 0.1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.3, 0.25, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [node name="Hotbar" type="Control" groups=["hotbar"]]
 layout_mode = 3
 anchors_preset = 12
@@ -119,84 +143,266 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 size_flags_vertical = 4
-tooltip_text = "Items"
+tooltip_text = "Inventory\nClick here to manage equipment."
 theme_override_styles/normal = SubResource("btn_normal")
 theme_override_styles/hover = SubResource("btn_hover")
 theme_override_styles/pressed = SubResource("btn_pressed")
-theme_override_constants/icon_max_width = 28
-icon = ExtResource("4_inv")
-icon_alignment = 1
-expand_icon = true
+
+[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/InventoryButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -19.0
+offset_top = -19.0
+offset_right = 19.0
+offset_bottom = 19.0
+mouse_filter = 2
+texture = ExtResource("4_inv")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.45, 1.0, 0.35, 0.9)
+visible = false
+
+[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/InventoryButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = ExtResource("4_inv")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="AbilitiesButton" type="Button" parent="LeftPanel/LeftButtons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 size_flags_vertical = 4
-tooltip_text = "Abilities"
+tooltip_text = "Abilities\nClick here to manage abilities and attributes."
 theme_override_styles/normal = SubResource("btn_normal")
 theme_override_styles/hover = SubResource("btn_hover")
 theme_override_styles/pressed = SubResource("btn_pressed")
-theme_override_constants/icon_max_width = 28
-icon = ExtResource("5_abil")
-icon_alignment = 1
-expand_icon = true
+
+[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/AbilitiesButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -19.0
+offset_top = -19.0
+offset_right = 19.0
+offset_bottom = 19.0
+mouse_filter = 2
+texture = ExtResource("5_abil")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.45, 1.0, 0.35, 0.9)
+visible = false
+
+[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/AbilitiesButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = ExtResource("5_abil")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="SaveButton" type="Button" parent="LeftPanel/LeftButtons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 size_flags_vertical = 4
-tooltip_text = "Save game"
+tooltip_text = "Save Game\nClick here to save your progress."
 theme_override_styles/normal = SubResource("btn_normal")
 theme_override_styles/hover = SubResource("btn_hover")
 theme_override_styles/pressed = SubResource("btn_pressed")
-theme_override_constants/icon_max_width = 28
-icon = ExtResource("6_save")
-icon_alignment = 1
-expand_icon = true
+
+[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/SaveButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -19.0
+offset_top = -19.0
+offset_right = 19.0
+offset_bottom = 19.0
+mouse_filter = 2
+texture = ExtResource("6_save")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.45, 1.0, 0.35, 0.9)
+visible = false
+
+[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/SaveButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = ExtResource("6_save")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="OptionsButton" type="Button" parent="LeftPanel/LeftButtons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 size_flags_vertical = 4
-tooltip_text = "Options"
+modulate = Color(1, 1, 1, 0.5)
+tooltip_text = "Coming soon"
 theme_override_styles/normal = SubResource("btn_normal")
 theme_override_styles/hover = SubResource("btn_hover")
 theme_override_styles/pressed = SubResource("btn_pressed")
-theme_override_constants/icon_max_width = 28
-icon = ExtResource("7_opt")
-icon_alignment = 1
-expand_icon = true
+
+[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/OptionsButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -19.0
+offset_top = -19.0
+offset_right = 19.0
+offset_bottom = 19.0
+mouse_filter = 2
+texture = ExtResource("7_opt")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.45, 1.0, 0.35, 0.9)
+visible = false
+
+[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/OptionsButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = ExtResource("7_opt")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="RespecButton" type="Button" parent="LeftPanel/LeftButtons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 size_flags_vertical = 4
-tooltip_text = "Respec"
+modulate = Color(1, 1, 1, 0.5)
+tooltip_text = "Coming soon"
 theme_override_styles/normal = SubResource("btn_normal")
 theme_override_styles/hover = SubResource("btn_hover")
 theme_override_styles/pressed = SubResource("btn_pressed")
-theme_override_constants/icon_max_width = 28
-icon = ExtResource("8_respec")
-icon_alignment = 1
-expand_icon = true
+
+[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/RespecButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -19.0
+offset_top = -19.0
+offset_right = 19.0
+offset_bottom = 19.0
+mouse_filter = 2
+texture = ExtResource("8_respec")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.45, 1.0, 0.35, 0.9)
+visible = false
+
+[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/RespecButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = ExtResource("8_respec")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="AchievementsButton" type="Button" parent="LeftPanel/LeftButtons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 size_flags_vertical = 4
-tooltip_text = "Achievements"
+tooltip_text = "Achievements\nClick here to view your achievements."
 theme_override_styles/normal = SubResource("btn_normal")
 theme_override_styles/hover = SubResource("btn_hover")
 theme_override_styles/pressed = SubResource("btn_pressed")
-theme_override_constants/icon_max_width = 28
-icon = ExtResource("9_ach")
-icon_alignment = 1
-expand_icon = true
+
+[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/AchievementsButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -19.0
+offset_top = -19.0
+offset_right = 19.0
+offset_bottom = 19.0
+mouse_filter = 2
+texture = ExtResource("9_ach")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.45, 1.0, 0.35, 0.9)
+visible = false
+
+[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/AchievementsButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+mouse_filter = 2
+texture = ExtResource("9_ach")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="MiddlePanel" type="TextureRect" parent="."]
 layout_mode = 0
@@ -280,3 +486,21 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Stage 1"
 horizontal_alignment = 2
+
+[node name="QuitButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 442.0
+offset_top = 4.0
+offset_right = 468.0
+offset_bottom = 30.0
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("quit_normal")
+theme_override_styles/hover = SubResource("quit_hover")
+tooltip_text = "Quit\nClick here to return to the save select screen."
+text = "x"
+
+[connection signal="pressed" from="LeftPanel/LeftButtons/InventoryButton" to="." method="_on_menu_button_pressed" binds=["inventory_window"]]
+[connection signal="pressed" from="LeftPanel/LeftButtons/AbilitiesButton" to="." method="_on_menu_button_pressed" binds=["abilities_window"]]
+[connection signal="pressed" from="LeftPanel/LeftButtons/AchievementsButton" to="." method="_on_menu_button_pressed" binds=["achievements_window"]]
+[connection signal="pressed" from="LeftPanel/LeftButtons/SaveButton" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="QuitButton" to="." method="_on_quit_pressed"]

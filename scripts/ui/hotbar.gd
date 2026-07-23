@@ -28,12 +28,6 @@ const HOVER_COLORS: Dictionary[String, Color] = {
 	"RespecButton": Color(0.7, 0.4, 1.0),         # violet
 	"AchievementsButton": Color(1.0, 0.55, 0.2),  # burnt orange
 }
-const BUTTON_TOOLTIPS: Dictionary[String, String] = {
-	"InventoryButton": "Inventory\nClick here to manage equipment.",
-	"AbilitiesButton": "Abilities\nClick here to manage abilities and attributes.",
-	"SaveButton": "Save Game\nClick here to save your progress.",
-	"AchievementsButton": "Achievements\nClick here to view your achievements.",
-}
 
 @onready var zone_title: Label = %ZoneTitle
 @onready var zone_subtitle: Label = %ZoneSubtitle
@@ -47,45 +41,10 @@ func _ready():
 	ZoneManager.zone_changed.connect(_on_zone_changed)
 	ZoneManager.zone_unlocked.connect(func(_zone): _refresh(ZoneManager.current_zone))
 	GameData.save_loaded.connect(func(_slot): _refresh(ZoneManager.current_zone))
-	%SaveButton.pressed.connect(_on_save_pressed)
 	for button_name in HOVER_COLORS:
-		var button: Button = get_node("%" + button_name)
-		_setup_icon_glow(button)
-		if BUTTON_TOOLTIPS.has(button_name):
-			button.tooltip_text = BUTTON_TOOLTIPS[button_name]
-	for button_name in MENU_BUTTON_GROUPS:
-		var button: Button = get_node("%" + button_name)
-		button.pressed.connect(_on_menu_button_pressed.bind(str(MENU_BUTTON_GROUPS[button_name])))
-	for button_name in ["OptionsButton", "RespecButton"]:
-		var button: Button = get_node("%" + button_name)
-		button.tooltip_text = "Coming soon"
-		button.modulate = Color(1, 1, 1, 0.5)
-	_build_quit_button()
+		_setup_icon_glow(get_node("%" + button_name))
 	_wire_screen_visibility.call_deferred()
 	_refresh(ZoneManager.current_zone)
-
-
-# The red X on the middle panel's top-right corner (next to the world map
-# button in the source) - quits to the save-select screen.
-func _build_quit_button() -> void:
-	var quit: Button = Button.new()
-	quit.name = "QuitButton"
-	quit.text = "x"
-	quit.tooltip_text = "Quit\nClick here to return to the save select screen."
-	quit.position = Vector2(442, 4)
-	quit.size = Vector2(26, 26)
-	quit.add_theme_font_size_override("font_size", 14)
-	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = Color(0.55, 0.1, 0.08)
-	style.set_border_width_all(2)
-	style.border_color = Color(0.8, 0.3, 0.25)
-	style.set_corner_radius_all(3)
-	quit.add_theme_stylebox_override("normal", style)
-	var hover: Resource = style.duplicate()
-	hover.bg_color = Color(0.75, 0.15, 0.1)
-	quit.add_theme_stylebox_override("hover", hover)
-	quit.pressed.connect(_on_quit_pressed)
-	add_child(quit)
 
 
 func _on_quit_pressed() -> void:
@@ -93,37 +52,13 @@ func _on_quit_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 
-# Replaces the Button's built-in icon with two stacked TextureRects: a green
-# oversized glow copy (hidden until active) under the white icon. Children
-# draw over the button's own icon, so the icon property has to move here.
+# Fetches the pre-built glow/icon overlay children (see hotbar.tscn) and
+# wires the per-button hover tint - the active (menu-open) state always
+# wins over hover, matching the original's single green-glow priority.
 func _setup_icon_glow(button: Button) -> void:
-	var texture: Texture2D = button.icon
-	if texture == null:
-		return
-	button.icon = null
-	var glow: TextureRect = TextureRect.new()
-	glow.texture = texture
-	glow.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	glow.stretch_mode = TextureRect.STRETCH_SCALE
-	glow.set_anchors_preset(Control.PRESET_CENTER)
-	glow.position = Vector2(-19, -19)
-	glow.size = Vector2(38, 38)
-	glow.modulate = GLOW_COLOR
-	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	glow.visible = false
-	button.add_child(glow)
-	var icon: TextureRect = TextureRect.new()
-	icon.texture = texture
-	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.stretch_mode = TextureRect.STRETCH_SCALE
-	icon.set_anchors_preset(Control.PRESET_CENTER)
-	icon.position = Vector2(-14, -14)
-	icon.size = Vector2(28, 28)
-	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	button.add_child(icon)
+	var glow: TextureRect = button.get_node("Glow")
+	var icon: TextureRect = button.get_node("Icon")
 	_button_glows[button.name] = {"glow": glow, "icon": icon}
-	# Per-button hover tint (references/hotbar/): the white icon takes the
-	# button's own color while hovered; the active green state wins.
 	var hover_color: Color = HOVER_COLORS.get(button.name, Color.WHITE)
 	button.mouse_entered.connect(func():
 		if not glow.visible:
