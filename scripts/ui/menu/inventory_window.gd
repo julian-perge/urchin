@@ -15,9 +15,6 @@ extends Control
 
 const CLASS_NAMES: Array[String] = ["Biological", "Psychological", "Hydraulic"]
 
-const LEFT_PANEL: Rect2 = Rect2(47.5, 86.6, 249.1, 267.1)
-const CENTER_PANEL: Rect2 = Rect2(309.0, 82.2, 183.1, 326.5)
-const PARTY_BAR: Rect2 = Rect2(47.5, 358.2, 249.1, 50.9)
 const INVENTORY_AT: Vector2 = Vector2(503.5, 81.6)
 # playerSlot0-6 centers from the frame-1 dump.
 const EQUIP_SLOT_CENTERS: Dictionary[int, Vector2] = {
@@ -31,36 +28,34 @@ const EQUIP_SLOT_CENTERS: Dictionary[int, Vector2] = {
 }
 const DOLL_POSITION: Vector2 = Vector2(192.5, 214.4)
 const DOLL_SCALE: float = 1.2
-const STAT_ROWS_Y: Array[float] = [99.1, 116.6, 134.7, 152.9, 170.3]
+const PARTY_BAR: Rect2 = Rect2(47.5, 358.2, 249.1, 50.9)
 const BAR_BLOCK_CENTERS_Y: Dictionary[Variant, Variant] = {"per": 256.0, "def": 360.5}
 const BAR_TRACK_HEIGHT: float = 78.0
 const BAR_WIDTH: float = 10.0
 const BAR_STEP: float = 17.1
-# Experience row (texts 2869/2863, shapes 2864/2868, fill sprite 2867).
-const EXP_TRACK: Rect2 = Rect2(138.5, 283.2, 129.2, 19.0)
-const EXP_ZERO_BOX: Rect2 = Rect2(138.4, 282.9, 34.3, 18.7)
+# Experience row (texts 2869/2863, shapes 2864/2868, fill sprite 2867) - only
+# EXP_FILL survives here: refresh() still reads EXP_FILL.size.x as the full
+# width the fraction-scaled fill is computed against.
 const EXP_FILL: Rect2 = Rect2(172.6, 283.3, 95.1, 18.7)
 
 var inventory_panel: InventoryPanel
 var equip_view: EquipDollView
 
-var _name_label: Label
-var _level_label: Label
-var _stat_values: Array[Label] = []
+@onready var _status_label: Label = $StatusLabel
+@onready var _name_label: Label = $NameLabel
+@onready var _level_label: Label = $LevelLabel
+@onready var _exp_fill: TextureRect = $ExpFill
+@onready var _exp_percent: Label = $ExpPercent
+@onready var _stat_values: Array[Label] = [$StatValue0, $StatValue1, $StatValue2, $StatValue3, $StatValue4]
 var _per_fills: Array[ColorRect] = []
 var _def_fills: Array[ColorRect] = []
-var _exp_fill: TextureRect
-var _exp_percent: Label
-var _status_label: Label
 var _portrait_frames: Array[ItemSlot] = []
 
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_build_chrome()
 	_build_left_panel()
 	_build_center_panel()
-	_build_party_bar()
 	_build_inventory()
 	GameData.inventory_changed.connect(_refresh_if_visible)
 	GameData.gold_changed.connect(func(_amount): _refresh_if_visible())
@@ -69,66 +64,15 @@ func _ready():
 			refresh())
 
 
-func _build_chrome() -> void:
-	var backdrop: TextureRect = MenuTheme.add_texture_rect(self, "menu_backdrop.png", MenuTheme.BACKDROP_RECT)
-	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
-	var close: TextureButton = TextureButton.new()
-	close.name = "CloseButton"
-	close.texture_normal = MenuTheme.texture("close_x.png")
-	close.ignore_texture_size = true
-	close.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-	close.position = MenuTheme.CLOSE_RECT.position
-	close.size = MenuTheme.CLOSE_RECT.size
-	close.pressed.connect(hide)
-	add_child(close)
-	_status_label = MenuTheme.add_label(
-		self, "", Rect2(47.5, 414, 700, 20), 12, Color(1, 0.85, 0.3)
-	)
-
-
 func _build_left_panel() -> void:
-	MenuTheme.add_texture_rect(self, "panel_large.png", LEFT_PANEL)
-	_name_label = MenuTheme.add_label(
-		self, "", Rect2(LEFT_PANEL.position.x, 92, LEFT_PANEL.size.x, 22), 17,
-		Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER
-	)
-	_level_label = MenuTheme.add_label(
-		self, "", Rect2(LEFT_PANEL.position.x, 114, LEFT_PANEL.size.x, 18), 12,
-		Color(0.8, 0.8, 0.8), HORIZONTAL_ALIGNMENT_CENTER
-	)
 	equip_view = EquipDollView.new()
 	equip_view.name = "EquipDollView"
 	add_child(equip_view)
 	equip_view.setup(EQUIP_SLOT_CENTERS, DOLL_POSITION, DOLL_SCALE)
 	equip_view.equip_slot_clicked.connect(_on_equip_slot_clicked)
-	MenuTheme.add_label(
-		self, "Experience:", Rect2(36, 285, 100, 16), 12,
-		Color(0.8, 0.8, 0.8), HORIZONTAL_ALIGNMENT_RIGHT
-	)
-	MenuTheme.add_texture_rect(self, "exp_track.png", EXP_TRACK)
-	_exp_fill = MenuTheme.add_texture_rect(self, "exp_fill.png", EXP_FILL)
-	MenuTheme.add_texture_rect(self, "exp_zero_box.png", EXP_ZERO_BOX)
-	_exp_percent = MenuTheme.add_label(
-		self, "0%", Rect2(EXP_ZERO_BOX.position, EXP_ZERO_BOX.size), 11,
-		Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER
-	)
-	_exp_percent.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 
 func _build_center_panel() -> void:
-	MenuTheme.add_texture_rect(self, "panel_center.png", CENTER_PANEL)
-	for i in MenuTheme.STAT_LABELS.size():
-		MenuTheme.add_label(
-			self, MenuTheme.STAT_LABELS[i], Rect2(332, STAT_ROWS_Y[i], 80, 16),
-			12, MenuTheme.STAT_COLORS[i]
-		)
-		var value: Label = MenuTheme.add_label(
-			self, "0", Rect2(388, STAT_ROWS_Y[i], 80, 16), 12,
-			MenuTheme.STAT_COLORS[i], HORIZONTAL_ALIGNMENT_RIGHT
-		)
-		_stat_values.append(value)
-	MenuTheme.add_label(self, "Piercing", Rect2(331.8, 198.8, 120, 16), 13, Color(0.6, 0.6, 0.6))
-	MenuTheme.add_label(self, "Defense", Rect2(331.8, 305.2, 120, 16), 13, Color(0.6, 0.6, 0.6))
 	_per_fills = _build_bar_block(BAR_BLOCK_CENTERS_Y["per"])
 	_def_fills = _build_bar_block(BAR_BLOCK_CENTERS_Y["def"])
 
