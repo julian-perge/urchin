@@ -2,6 +2,12 @@
 
 [ext_resource type="Script" uid="uid://spt23hpant17" path="res://scripts/ui/main_menu.gd" id="1_menu"]
 [ext_resource type="Texture2D" uid="uid://be351g307gwtg" path="res://assets/ui/menu/start_background.png" id="2_bg"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/class_cards/psychological_gray.png" id="3_psychgray"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/class_cards/psychological.png" id="4_psych"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/class_cards/biological_gray.png" id="5_biogray"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/class_cards/biological.png" id="6_bio"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/class_cards/hydraulic_gray.png" id="7_hydrogray"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/class_cards/hydraulic.png" id="8_hydro"]
 
 [node name="MainMenu" type="Control" unique_id=1116259692]
 layout_mode = 3
@@ -44,3 +50,110 @@ text = "Sonny 2"
 [node name="SlotButtons" type="VBoxContainer" parent="Layout"]
 layout_mode = 2
 theme_override_constants/separation = 10
+
+[node name="NewGamePanel" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="TextureRect" parent="NewGamePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="ClassLabel" type="Label" parent="NewGamePanel"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 60.0
+offset_right = 800.0
+offset_bottom = 100.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.85, 0.5, 0.55, 1)
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 1
+text = "Please select a class:"
+
+[node name="NameLabel" type="Label" parent="NewGamePanel"]
+layout_mode = 0
+offset_left = 250.0
+offset_top = 116.0
+offset_right = 330.0
+offset_bottom = 146.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 15
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "Name:"
+
+[node name="NameInput" type="LineEdit" parent="NewGamePanel"]
+layout_mode = 0
+offset_left = 340.0
+offset_top = 116.0
+offset_right = 550.0
+offset_bottom = 146.0
+text = "Sonny"
+max_length = 12
+
+[node name="ClassPicker" type="HBoxContainer" parent="NewGamePanel"]
+layout_mode = 0
+offset_left = 85.0
+offset_top = 170.0
+offset_right = 715.0
+offset_bottom = 500.0
+theme_override_constants/separation = 45
+
+[node name="Psychological" type="TextureButton" parent="NewGamePanel/ClassPicker"]
+layout_mode = 2
+custom_minimum_size = Vector2(180, 320)
+texture_normal = ExtResource("3_psychgray")
+texture_hover = ExtResource("4_psych")
+texture_pressed = ExtResource("4_psych")
+ignore_texture_size = true
+stretch_mode = 5
+tooltip_text = "Psychological"
+
+[node name="Biological" type="TextureButton" parent="NewGamePanel/ClassPicker"]
+layout_mode = 2
+custom_minimum_size = Vector2(180, 320)
+texture_normal = ExtResource("5_biogray")
+texture_hover = ExtResource("6_bio")
+texture_pressed = ExtResource("6_bio")
+ignore_texture_size = true
+stretch_mode = 5
+tooltip_text = "Biological"
+
+[node name="Hydraulic" type="TextureButton" parent="NewGamePanel/ClassPicker"]
+layout_mode = 2
+custom_minimum_size = Vector2(180, 320)
+texture_normal = ExtResource("7_hydrogray")
+texture_hover = ExtResource("8_hydro")
+texture_pressed = ExtResource("8_hydro")
+ignore_texture_size = true
+stretch_mode = 5
+tooltip_text = "Hydraulic"
+
+[node name="CancelButton" type="Button" parent="NewGamePanel"]
+layout_mode = 0
+offset_left = 700.0
+offset_top = 545.0
+offset_right = 780.0
+offset_bottom = 581.0
+theme_override_font_sizes/font_size = 18
+text = "Back"
+
+[connection signal="pressed" from="NewGamePanel/ClassPicker/Psychological" to="." method="_on_class_picked" binds=[1]]
+[connection signal="pressed" from="NewGamePanel/ClassPicker/Biological" to="." method="_on_class_picked" binds=[0]]
+[connection signal="pressed" from="NewGamePanel/ClassPicker/Hydraulic" to="." method="_on_class_picked" binds=[2]]
+[connection signal="pressed" from="NewGamePanel/CancelButton" to="." method="_on_cancel_new_game"]

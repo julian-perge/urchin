@@ -8,14 +8,6 @@
 # All screens sit on the original blue splatter background (root frame 65).
 extends Control
 
-const CLASS_NAMES: Array[String] = ["Biological", "Psychological", "Hydraulic"]
-# Card order matches the original screen: Psychological, Biological, Hydraulic.
-const CLASS_CARD_ORDER: Array[int] = [1, 0, 2]
-const CLASS_CARD_ART: Dictionary[int, String] = {
-	1: "class_cards/psychological",
-	0: "class_cards/biological",
-	2: "class_cards/hydraulic",
-}
 const DIFFICULTY_NAMES: Array[String] = ["Easy", "Challenging", "Heroic"]
 
 var _selected_slot: int = 1
@@ -26,17 +18,16 @@ var _sound_enabled: bool = true
 var _autosave_enabled: bool = true
 
 @onready var slot_buttons: VBoxContainer = $Layout/SlotButtons
-var new_game_panel: Control  # class-select screen
+@onready var new_game_panel: Control = $NewGamePanel  # class-select screen
 var options_panel: Control   # settings screen
-var name_input: LineEdit
-var class_picker: HBoxContainer
+@onready var name_input: LineEdit = $NewGamePanel/NameInput
+@onready var class_picker: HBoxContainer = $NewGamePanel/ClassPicker
 var difficulty_picker: HBoxContainer
 var start_button: Button
 var cancel_button: Button
 
 
 func _ready():
-	_build_class_screen()
 	_build_options_screen()
 	new_game_panel.hide()
 	options_panel.hide()
@@ -78,56 +69,6 @@ func _on_slot_pressed(slot: int) -> void:
 
 
 # --- screen 1: class select ---------------------------------------------------
-
-func _build_class_screen() -> void:
-	new_game_panel = _make_screen("NewGamePanel")
-	MenuTheme.add_label(
-		new_game_panel, "Please select a class:", Rect2(0, 60, 800, 40), 26,
-		Color(0.85, 0.5, 0.55), HORIZONTAL_ALIGNMENT_CENTER
-	)
-	var name_row: Label = MenuTheme.add_label(
-		new_game_panel, "Name:", Rect2(250, 116, 80, 30), 15,
-		Color(0.8, 0.8, 0.8), HORIZONTAL_ALIGNMENT_RIGHT
-	)
-	name_row.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	name_input = LineEdit.new()
-	name_input.name = "NameInput"
-	name_input.text = "Sonny"
-	name_input.max_length = 12
-	name_input.position = Vector2(340, 116)
-	name_input.size = Vector2(210, 30)
-	new_game_panel.add_child(name_input)
-	class_picker = HBoxContainer.new()
-	class_picker.name = "ClassPicker"
-	class_picker.position = Vector2(85, 170)
-	class_picker.size = Vector2(630, 330)
-	class_picker.add_theme_constant_override("separation", 45)
-	new_game_panel.add_child(class_picker)
-	for class_id in CLASS_CARD_ORDER:
-		class_picker.add_child(_make_class_card(class_id))
-	cancel_button = Button.new()
-	cancel_button.name = "CancelButton"
-	cancel_button.text = "Back"
-	cancel_button.position = Vector2(700, 545)
-	cancel_button.size = Vector2(80, 36)
-	cancel_button.add_theme_font_size_override("font_size", 18)
-	cancel_button.pressed.connect(_on_cancel_new_game)
-	new_game_panel.add_child(cancel_button)
-
-
-# The original card art: gray sketch at rest, colored on hover/press.
-func _make_class_card(class_id: int) -> TextureButton:
-	var card: TextureButton = TextureButton.new()
-	card.texture_normal = MenuTheme.texture(CLASS_CARD_ART[class_id] + "_gray.png")
-	card.texture_hover = MenuTheme.texture(CLASS_CARD_ART[class_id] + ".png")
-	card.texture_pressed = card.texture_hover
-	card.ignore_texture_size = true
-	card.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-	card.custom_minimum_size = Vector2(180, 320)
-	card.tooltip_text = CLASS_NAMES[class_id]
-	card.pressed.connect(_on_class_picked.bind(class_id))
-	return card
-
 
 func _on_class_picked(class_id: int) -> void:
 	_selected_class = class_id
