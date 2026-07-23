@@ -16,6 +16,7 @@
 extends Control
 
 const TalentNodeScene: PackedScene = preload("res://scenes/ui/menu/talent_node.tscn")
+const ICON_DIR: String = "res://assets/ui/abilities/"
 
 const TREE_ORIGIN: Vector2 = Vector2(45.4, 74.2)
 const TREE_COLUMNS_X: Array[float] = [41.4, 93.4, 145.4, 197.4]
@@ -51,6 +52,7 @@ var _pool_move_ids: Array = []
 @onready var _attribute_points_value: Label = $AttributePointsValue
 @onready var _attribute_values: Array[Label] = [$VitalityValue, $StrengthValue, $InstinctValue, $SpeedValue]
 @onready var _status_label: Label = $StatusLabel
+@onready var _tooltip: AbilityTooltip = $AbilityTooltip
 
 
 func _ready():
@@ -62,12 +64,27 @@ func _ready():
 			refresh())
 
 
+static func _sanitize_icon_key(label: String) -> String:
+	var result: String = ""
+	var last_was_sep: bool = false
+	for c in label:
+		if (c >= "A" and c <= "Z") or (c >= "a" and c <= "z") or (c >= "0" and c <= "9"):
+			result += c
+			last_was_sep = false
+		elif not last_was_sep:
+			result += "_"
+			last_was_sep = true
+	return result.strip_edges().lstrip("_").rstrip("_")
+
+
 func _build_tree_panel() -> void:
 	var tree: Array = TalentTree.TREES.get(_player_class(), TalentTree.TREES[0])
 	for node_index in tree.size():
 		var node_button: Button = TalentNodeScene.instantiate()
 		node_button.position = _node_center(node_index) - NODE_SIZE / 2.0
 		node_button.pressed.connect(_on_tree_node_pressed.bind(node_index))
+		node_button.mouse_entered.connect(_on_tree_node_hovered.bind(node_index))
+		node_button.mouse_exited.connect(_tooltip.hide)
 		_style_circle_button(node_button, Color(0.1, 0.1, 0.11), Color(0.3, 0.3, 0.32))
 		add_child(node_button)
 		_tree_buttons.append(node_button)
@@ -135,8 +152,10 @@ func _refresh_tree(save: PlayerSave) -> void:
 			color.darkened(0.55) if learned else Color(0.1, 0.1, 0.11),
 			color if learned else Color(0.3, 0.3, 0.32)
 		)
-		button.tooltip_text = _node_tooltip(node, rank)
 		_tree_rank_labels[node_index].text = "%d/%d" % [rank, int(node["max_rank"])]
+		var icon_rect: TextureRect = button.get_node("IconRect")
+		var icon_path: String = "%s%s.png" % [ICON_DIR, _tree_node_icon_key(node)]
+		icon_rect.texture = load(icon_path) if ResourceLoader.exists(icon_path) else null
 
 
 func _node_color(_save: PlayerSave, _node_index: int, node: Dictionary) -> Color:
@@ -152,14 +171,40 @@ func _node_color(_save: PlayerSave, _node_index: int, node: Dictionary) -> Color
 	return MenuTheme.ELEMENT_COLORS[element_index]
 
 
-func _node_tooltip(node: Dictionary, rank: int) -> String:
-	var title: String
-	if node["buff_family"] != "":
-		title = str(node["buff_family"]).capitalize()
+# Icon lookup key for a tree node: buff family name for passives (one icon
+# covers every rank of that family), the granted move's display name for
+# actives (shared across a move family's ranks - only the tooltip TEXT
+# differs by rank, not the icon or display name).
+func _tree_node_icon_key(node: Dictionary) -> String:
+	if TalentTree.is_passive(node):
+		return _sanitize_icon_key(str(node["buff_family"]))
+	var move: Ability = MoveManagerAuto.get_move(int(node["move_id"]))
+	return _sanitize_icon_key(move.display_name) if move != null else ""
+
+
+func _on_tree_node_hovered(node_index: int) -> void:
+	var save: PlayerSave = GameData.current_save
+	if save == null:
+		return
+	var tree: Array = TalentTree.TREES.get(save.player_class, TalentTree.TREES[0])
+	if node_index >= tree.size():
+		return
+	var node: Dictionary = tree[node_index].duplicate()
+	node["_node_index"] = node_index
+	var rank: int = TalentTree.get_rank(save, node_index)
+	var move: Ability = null
+	var buff: Buff = null
+	if TalentTree.is_passive(node):
+		if rank > 0:
+			buff = BuffManagerAuto.get_buff_by_name(TalentTree.granted_buff_name(node, rank))
 	else:
-		var move: Ability = MoveManagerAuto.get_move(int(node["move_id"]))
-		title = move.display_name if move != null else "?"
-	return "%s (%d/%d)" % [title, rank, int(node["max_rank"])]
+		# Rank-aware: show the CURRENTLY GRANTED move's text once learned,
+		# otherwise preview what learning rank 1 would grant.
+		move = MoveManagerAuto.get_move(TalentTree.granted_move_id(node, max(rank, 1)))
+	var button: Button = _tree_buttons[node_index]
+	_tooltip.populate(node, save, move, buff, _tree_node_icon_key(node))
+	_tooltip.position = button.global_position + Vector2(NODE_SIZE.x + 8.0, 0.0)
+	_tooltip.show()
 
 
 func _refresh_wheel(save: PlayerSave) -> void:
@@ -228,9 +273,11 @@ func _draw_tree_lines() -> void:
 	var tree: Array = TalentTree.TREES.get(player_class, TalentTree.TREES[0])
 	for node_index in tree.size():
 		for prerequisite in tree[node_index]["prerequisites"]:
+			var learned: bool = save != null and TalentTree.is_prerequisite_learned(save, int(prerequisite))
+			var color: Color = Color(0.85, 0.72, 0.2) if learned else Color(0.16, 0.16, 0.17)
 			_tree_lines.draw_line(
 				_node_center(node_index), _node_center(int(prerequisite)),
-				Color(0.16, 0.16, 0.17), 4.0
+				color, 4.0
 			)
 
 

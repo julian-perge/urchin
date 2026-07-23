@@ -62,6 +62,13 @@ func test_level_gates():
 	)
 
 
+func test_is_prerequisite_learned():
+	save.skill_points = 20
+	assert_false(TalentTree.is_prerequisite_learned(save, 0), "not learned yet")
+	TalentTree.learn(save, 0)
+	assert_true(TalentTree.is_prerequisite_learned(save, 0), "learned after spending a point")
+
+
 func test_prerequisite_gate():
 	save.skill_points = 20
 	save.level = 10

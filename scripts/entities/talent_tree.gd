@@ -199,6 +199,12 @@ static func get_rank(save: PlayerSave, node_index: int) -> int:
 	return int(save.talent_main_array[node_index])
 
 
+# Whether a specific prerequisite node has been learned at all (rank >= 1) -
+# used to color the tree's connector lines (gold = learned, gray = not).
+static func is_prerequisite_learned(save: PlayerSave, prereq_index: int) -> bool:
+	return get_rank(save, prereq_index) >= 1
+
+
 # Validation only - mirrors TALENTERROR1-4 in original check order
 # (points, max tier, level, prerequisites).
 static func can_learn(save: PlayerSave, node_index: int) -> LearnResult:
