@@ -120,9 +120,9 @@ text = "Ability Tree"
 [node name="LeftPanel" type="TextureRect" parent="."]
 layout_mode = 0
 offset_left = 44.9
-offset_top = 112.9
+offset_top = 104.1
 offset_right = 294.0
-offset_bottom = 380.0
+offset_bottom = 386.1
 mouse_filter = 2
 texture = ExtResource("4_panellarge")
 expand_mode = 1
@@ -373,9 +373,9 @@ text = "0"
 [node name="RightPanel" type="TextureRect" parent="."]
 layout_mode = 0
 offset_left = 506.3
-offset_top = 112.9
+offset_top = 104.0
 offset_right = 755.4
-offset_bottom = 380.0
+offset_bottom = 406.2
 mouse_filter = 2
 texture = ExtResource("4_panellarge")
 expand_mode = 1
@@ -462,6 +462,7 @@ mouse_filter = 2
 
 [node name="AbilityTooltip" parent="." instance=ExtResource("6_tooltip")]
 layout_mode = 0
+z_index = 100
 
 [connection signal="pressed" from="CloseButton" to="." method="hide"]
 [connection signal="pressed" from="VitalityPlus" to="." method="_on_attribute_plus_pressed" binds=[0]]
