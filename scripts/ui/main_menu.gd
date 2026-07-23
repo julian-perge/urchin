@@ -8,8 +8,6 @@
 # All screens sit on the original blue splatter background (root frame 65).
 extends Control
 
-const DIFFICULTY_NAMES: Array[String] = ["Easy", "Challenging", "Heroic"]
-
 var _selected_slot: int = 1
 var _selected_class: int = 0
 var _selected_difficulty: int = 0
@@ -19,16 +17,13 @@ var _autosave_enabled: bool = true
 
 @onready var slot_buttons: VBoxContainer = $Layout/SlotButtons
 @onready var new_game_panel: Control = $NewGamePanel  # class-select screen
-var options_panel: Control   # settings screen
+@onready var options_panel: Control = $OptionsPanel   # settings screen
 @onready var name_input: LineEdit = $NewGamePanel/NameInput
 @onready var class_picker: HBoxContainer = $NewGamePanel/ClassPicker
-var difficulty_picker: HBoxContainer
-var start_button: Button
-var cancel_button: Button
+@onready var difficulty_picker: HBoxContainer = $OptionsPanel/DifficultyPicker
 
 
 func _ready():
-	_build_options_screen()
 	new_game_panel.hide()
 	options_panel.hide()
 	_refresh_slot_buttons()
@@ -84,98 +79,29 @@ func _on_cancel_new_game() -> void:
 
 # --- screen 2: settings -------------------------------------------------------
 
-func _build_options_screen() -> void:
-	options_panel = _make_screen("OptionsPanel")
-	MenuTheme.add_label(
-		options_panel, "Please configure your settings:", Rect2(0, 50, 800, 34), 22,
-		Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER
-	)
-	MenuTheme.add_label(
-		options_panel, "Difficulty:", Rect2(140, 120, 250, 30), 22,
-		Color(0.95, 0.6, 0.15), HORIZONTAL_ALIGNMENT_RIGHT
-	)
-	difficulty_picker = HBoxContainer.new()
-	difficulty_picker.name = "DifficultyPicker"
-	difficulty_picker.position = Vector2(410, 120)
-	difficulty_picker.add_theme_constant_override("separation", 8)
-	options_panel.add_child(difficulty_picker)
-	var group: ButtonGroup = ButtonGroup.new()
-	for i in DIFFICULTY_NAMES.size():
-		var button: Button = Button.new()
-		button.toggle_mode = true
-		button.button_group = group
-		button.text = DIFFICULTY_NAMES[i]
-		button.button_pressed = i == 0
-		button.pressed.connect(func(): _selected_difficulty = i)
-		difficulty_picker.add_child(button)
-	_add_toggle_row("Tutorial Level:", 170, "Yeah, sure!", "No thanks", func(on): _tutorial_enabled = on)
-	_add_toggle_row("Sound:", 220, "On", "Off", func(on):
-		_sound_enabled = on
-		AudioServer.set_bus_mute(0, not on))
-	_add_toggle_row("Autosave:", 270, "On", "Off", func(on): _autosave_enabled = on)
-	var note: Label = MenuTheme.add_label(
-		options_panel, "If you turn Autosave on, your game will be saved when you press "
-		+ "'Proceed' after winning a battle. The difficulty level cannot be changed - "
-		+ "you must start a new game if you wish to play on a different mode.",
-		Rect2(120, 330, 560, 80), 13, Color(0.9, 0.9, 0.9), HORIZONTAL_ALIGNMENT_LEFT, true
-	)
-	note.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	start_button = Button.new()
-	start_button.name = "StartButton"
-	start_button.text = "Click here to START!"
-	start_button.position = Vector2(250, 460)
-	start_button.size = Vector2(300, 50)
-	start_button.add_theme_font_size_override("font_size", 24)
-	start_button.add_theme_color_override("font_color", Color(0.35, 0.95, 0.25))
-	start_button.add_theme_color_override("font_hover_color", Color(0.6, 1.0, 0.5))
-	var style: StyleBoxFlat = StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 0)
-	start_button.add_theme_stylebox_override("normal", style)
-	start_button.add_theme_stylebox_override("hover", style)
-	start_button.add_theme_stylebox_override("pressed", style)
-	start_button.pressed.connect(_on_start_new_game)
-	options_panel.add_child(start_button)
-	var back: Button = Button.new()
-	back.text = "Back"
-	back.position = Vector2(700, 545)
-	back.size = Vector2(80, 36)
-	back.pressed.connect(func():
-		options_panel.hide()
-		new_game_panel.show())
-	options_panel.add_child(back)
+func _on_difficulty_selected(index: int) -> void:
+	_selected_difficulty = index
 
 
-func _add_toggle_row(label_text: String, y: float, on_text: String, off_text: String, on_change: Callable) -> void:
-	MenuTheme.add_label(
-		options_panel, label_text, Rect2(140, y, 250, 26), 17,
-		Color(0.55, 0.85, 0.4), HORIZONTAL_ALIGNMENT_RIGHT
-	)
-	var button: Button = Button.new()
-	button.toggle_mode = true
-	button.button_pressed = true
-	button.text = on_text
-	button.position = Vector2(410, y)
-	button.size = Vector2(140, 28)
-	button.toggled.connect(func(pressed):
-		button.text = on_text if pressed else off_text
-		on_change.call(pressed))
-	options_panel.add_child(button)
+func _on_tutorial_toggled(pressed: bool) -> void:
+	$OptionsPanel/TutorialToggle.text = "Yeah, sure!" if pressed else "No thanks"
+	_tutorial_enabled = pressed
 
 
-func _make_screen(screen_name: String) -> Control:
-	var screen: Control = Control.new()
-	screen.name = screen_name
-	screen.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(screen)
-	var bg: TextureRect = TextureRect.new()
-	bg.texture = MenuTheme.texture("start_background.png")
-	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.mouse_filter = Control.MOUSE_FILTER_STOP
-	screen.add_child(bg)
-	screen.move_child(bg, 0)
-	return screen
+func _on_sound_toggled(pressed: bool) -> void:
+	$OptionsPanel/SoundToggle.text = "On" if pressed else "Off"
+	_sound_enabled = pressed
+	AudioServer.set_bus_mute(0, not pressed)
+
+
+func _on_autosave_toggled(pressed: bool) -> void:
+	$OptionsPanel/AutosaveToggle.text = "On" if pressed else "Off"
+	_autosave_enabled = pressed
+
+
+func _on_options_back_pressed() -> void:
+	options_panel.hide()
+	new_game_panel.show()
 
 
 func _on_start_new_game() -> void:

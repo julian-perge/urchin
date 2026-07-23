@@ -9,6 +9,11 @@
 [ext_resource type="Texture2D" path="res://assets/ui/menu/class_cards/hydraulic_gray.png" id="7_hydrogray"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/class_cards/hydraulic.png" id="8_hydro"]
 
+[sub_resource type="ButtonGroup" id="ButtonGroup_difficulty"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_transparent"]
+bg_color = Color(0, 0, 0, 0)
+
 [node name="MainMenu" type="Control" unique_id=1116259692]
 layout_mode = 3
 anchors_preset = 15
@@ -153,7 +158,187 @@ offset_bottom = 581.0
 theme_override_font_sizes/font_size = 18
 text = "Back"
 
+[node name="OptionsPanel" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="TextureRect" parent="OptionsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SettingsLabel" type="Label" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 50.0
+offset_right = 800.0
+offset_bottom = 84.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+text = "Please configure your settings:"
+
+[node name="DifficultyLabel" type="Label" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 140.0
+offset_top = 120.0
+offset_right = 390.0
+offset_bottom = 150.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.95, 0.6, 0.15, 1)
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 2
+text = "Difficulty:"
+
+[node name="DifficultyPicker" type="HBoxContainer" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 120.0
+offset_right = 710.0
+offset_bottom = 150.0
+theme_override_constants/separation = 8
+
+[node name="Easy" type="Button" parent="OptionsPanel/DifficultyPicker"]
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_difficulty")
+text = "Easy"
+
+[node name="Challenging" type="Button" parent="OptionsPanel/DifficultyPicker"]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_difficulty")
+text = "Challenging"
+
+[node name="Heroic" type="Button" parent="OptionsPanel/DifficultyPicker"]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_difficulty")
+text = "Heroic"
+
+[node name="TutorialLabel" type="Label" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 140.0
+offset_top = 170.0
+offset_right = 390.0
+offset_bottom = 196.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.55, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 17
+horizontal_alignment = 2
+text = "Tutorial Level:"
+
+[node name="TutorialToggle" type="Button" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 170.0
+offset_right = 550.0
+offset_bottom = 198.0
+toggle_mode = true
+button_pressed = true
+text = "Yeah, sure!"
+
+[node name="SoundLabel" type="Label" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 140.0
+offset_top = 220.0
+offset_right = 390.0
+offset_bottom = 246.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.55, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 17
+horizontal_alignment = 2
+text = "Sound:"
+
+[node name="SoundToggle" type="Button" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 220.0
+offset_right = 550.0
+offset_bottom = 248.0
+toggle_mode = true
+button_pressed = true
+text = "On"
+
+[node name="AutosaveLabel" type="Label" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 140.0
+offset_top = 270.0
+offset_right = 390.0
+offset_bottom = 296.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.55, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 17
+horizontal_alignment = 2
+text = "Autosave:"
+
+[node name="AutosaveToggle" type="Button" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 270.0
+offset_right = 550.0
+offset_bottom = 298.0
+toggle_mode = true
+button_pressed = true
+text = "On"
+
+[node name="NoteLabel" type="Label" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 330.0
+offset_right = 680.0
+offset_bottom = 410.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+autowrap_mode = 3
+text = "If you turn Autosave on, your game will be saved when you press 'Proceed' after winning a battle. The difficulty level cannot be changed - you must start a new game if you wish to play on a different mode."
+
+[node name="StartButton" type="Button" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 250.0
+offset_top = 460.0
+offset_right = 550.0
+offset_bottom = 510.0
+theme_override_colors/font_color = Color(0.35, 0.95, 0.25, 1)
+theme_override_colors/font_hover_color = Color(0.6, 1.0, 0.5, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_transparent")
+theme_override_styles/hover = SubResource("StyleBoxFlat_transparent")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_transparent")
+text = "Click here to START!"
+
+[node name="BackButton" type="Button" parent="OptionsPanel"]
+layout_mode = 0
+offset_left = 700.0
+offset_top = 545.0
+offset_right = 780.0
+offset_bottom = 581.0
+text = "Back"
+
 [connection signal="pressed" from="NewGamePanel/ClassPicker/Psychological" to="." method="_on_class_picked" binds=[1]]
 [connection signal="pressed" from="NewGamePanel/ClassPicker/Biological" to="." method="_on_class_picked" binds=[0]]
 [connection signal="pressed" from="NewGamePanel/ClassPicker/Hydraulic" to="." method="_on_class_picked" binds=[2]]
 [connection signal="pressed" from="NewGamePanel/CancelButton" to="." method="_on_cancel_new_game"]
+[connection signal="pressed" from="OptionsPanel/DifficultyPicker/Easy" to="." method="_on_difficulty_selected" binds=[0]]
+[connection signal="pressed" from="OptionsPanel/DifficultyPicker/Challenging" to="." method="_on_difficulty_selected" binds=[1]]
+[connection signal="pressed" from="OptionsPanel/DifficultyPicker/Heroic" to="." method="_on_difficulty_selected" binds=[2]]
+[connection signal="toggled" from="OptionsPanel/TutorialToggle" to="." method="_on_tutorial_toggled"]
+[connection signal="toggled" from="OptionsPanel/SoundToggle" to="." method="_on_sound_toggled"]
+[connection signal="toggled" from="OptionsPanel/AutosaveToggle" to="." method="_on_autosave_toggled"]
+[connection signal="pressed" from="OptionsPanel/StartButton" to="." method="_on_start_new_game"]
+[connection signal="pressed" from="OptionsPanel/BackButton" to="." method="_on_options_back_pressed"]
