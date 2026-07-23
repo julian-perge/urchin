@@ -78,27 +78,15 @@ func _build_center_panel() -> void:
 	_def_fills = _build_bar_block(BAR_BLOCK_CENTERS_Y["def"])
 
 
-# One row of 8 element bars: dark track, colored fill growing from the
-# bottom (heights set in refresh).
+# One block of 8 element bars (called once for "per", once for "def" - see
+# _build_center_panel()) - fetches the pre-built track/fill pairs for that
+# block instead of constructing them; fill heights/positions are set every
+# refresh() by _update_bar(), unchanged below.
 func _build_bar_block(center_y: float) -> Array[ColorRect]:
+	var prefix: String = "Per" if center_y == BAR_BLOCK_CENTERS_Y["per"] else "Def"
 	var fills: Array[ColorRect] = []
-	var top: float = center_y - BAR_TRACK_HEIGHT / 2.0
 	for k in 8:
-		var x: float = 400.5 + (k - 3.5) * BAR_STEP - BAR_WIDTH / 2.0
-		var track: ColorRect = ColorRect.new()
-		track.color = Color(0.07, 0.07, 0.08)
-		track.position = Vector2(x, top)
-		track.size = Vector2(BAR_WIDTH, BAR_TRACK_HEIGHT)
-		track.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(track)
-		var fill: ColorRect = ColorRect.new()
-		fill.color = MenuTheme.ELEMENT_COLORS[k]
-		fill.position = Vector2(x, top + BAR_TRACK_HEIGHT)
-		fill.size = Vector2(BAR_WIDTH, 0)
-		fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		fill.tooltip_text = CombatUnit.ELEMENT_ORDER[k]
-		add_child(fill)
-		fills.append(fill)
+		fills.append(get_node("%sFill%d" % [prefix, k]))
 	return fills
 
 

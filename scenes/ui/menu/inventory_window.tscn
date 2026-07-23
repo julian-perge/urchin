@@ -289,4 +289,292 @@ theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
 theme_override_font_sizes/font_size = 13
 text = "Defense"
 
+[node name="PerTrack0" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 335.65
+offset_top = 217.0
+offset_right = 345.65
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="PerFill0" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 335.65
+offset_top = 295.0
+offset_right = 345.65
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.75294119, 0, 0, 1)
+
+[node name="PerTrack1" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 352.75
+offset_top = 217.0
+offset_right = 362.75
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="PerFill1" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 352.75
+offset_top = 295.0
+offset_right = 362.75
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.98431373, 0.58431375, 0.78431374, 1)
+
+[node name="PerTrack2" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 369.85
+offset_top = 217.0
+offset_right = 379.85
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="PerFill2" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 369.85
+offset_top = 295.0
+offset_right = 379.85
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.40784314, 0.79607844, 0.95686275, 1)
+
+[node name="PerTrack3" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 386.95
+offset_top = 217.0
+offset_right = 396.95
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="PerFill3" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 386.95
+offset_top = 295.0
+offset_right = 396.95
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(1, 0.4, 0, 1)
+
+[node name="PerTrack4" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 404.05
+offset_top = 217.0
+offset_right = 414.05
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="PerFill4" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 404.05
+offset_top = 295.0
+offset_right = 414.05
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(1, 0.8, 0, 1)
+
+[node name="PerTrack5" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 421.15
+offset_top = 217.0
+offset_right = 431.15
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="PerFill5" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 421.15
+offset_top = 295.0
+offset_right = 431.15
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.52156866, 0.41960785, 0.2784314, 1)
+
+[node name="PerTrack6" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 438.25
+offset_top = 217.0
+offset_right = 448.25
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="PerFill6" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 438.25
+offset_top = 295.0
+offset_right = 448.25
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.4, 0.3019608, 0.5019608, 1)
+
+[node name="PerTrack7" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 455.35
+offset_top = 217.0
+offset_right = 465.35
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="PerFill7" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 455.35
+offset_top = 295.0
+offset_right = 465.35
+offset_bottom = 295.0
+mouse_filter = 2
+color = Color(0.31372550, 0.5137255, 0.28627452, 1)
+
+[node name="DefTrack0" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 335.65
+offset_top = 321.5
+offset_right = 345.65
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="DefFill0" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 335.65
+offset_top = 399.5
+offset_right = 345.65
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.75294119, 0, 0, 1)
+
+[node name="DefTrack1" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 352.75
+offset_top = 321.5
+offset_right = 362.75
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="DefFill1" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 352.75
+offset_top = 399.5
+offset_right = 362.75
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.98431373, 0.58431375, 0.78431374, 1)
+
+[node name="DefTrack2" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 369.85
+offset_top = 321.5
+offset_right = 379.85
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="DefFill2" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 369.85
+offset_top = 399.5
+offset_right = 379.85
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.40784314, 0.79607844, 0.95686275, 1)
+
+[node name="DefTrack3" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 386.95
+offset_top = 321.5
+offset_right = 396.95
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="DefFill3" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 386.95
+offset_top = 399.5
+offset_right = 396.95
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(1, 0.4, 0, 1)
+
+[node name="DefTrack4" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 404.05
+offset_top = 321.5
+offset_right = 414.05
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="DefFill4" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 404.05
+offset_top = 399.5
+offset_right = 414.05
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(1, 0.8, 0, 1)
+
+[node name="DefTrack5" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 421.15
+offset_top = 321.5
+offset_right = 431.15
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="DefFill5" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 421.15
+offset_top = 399.5
+offset_right = 431.15
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.52156866, 0.41960785, 0.2784314, 1)
+
+[node name="DefTrack6" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 438.25
+offset_top = 321.5
+offset_right = 448.25
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="DefFill6" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 438.25
+offset_top = 399.5
+offset_right = 448.25
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.4, 0.3019608, 0.5019608, 1)
+
+[node name="DefTrack7" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 455.35
+offset_top = 321.5
+offset_right = 465.35
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.07, 0.07, 0.08, 1)
+
+[node name="DefFill7" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 455.35
+offset_top = 399.5
+offset_right = 465.35
+offset_bottom = 399.5
+mouse_filter = 2
+color = Color(0.31372550, 0.5137255, 0.28627452, 1)
+
 [connection signal="pressed" from="CloseButton" to="." method="hide"]
