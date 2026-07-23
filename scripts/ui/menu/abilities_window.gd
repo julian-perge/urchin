@@ -59,6 +59,9 @@ func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_tree_panel()
 	_build_wheel_panel()
+	for i in _pool_rows.size():
+		_pool_rows[i].mouse_entered.connect(_on_pool_row_hovered.bind(i))
+		_pool_rows[i].mouse_exited.connect(_tooltip.hide)
 	visibility_changed.connect(func():
 		if visible:
 			refresh())
@@ -103,6 +106,8 @@ func _build_wheel_panel() -> void:
 		socket.size = SOCKET_SIZE
 		socket.position = WHEEL_CENTER + WHEEL_OFFSETS[i] - SOCKET_SIZE / 2.0
 		socket.pressed.connect(_on_socket_pressed.bind(i))
+		socket.mouse_entered.connect(_on_socket_hovered.bind(i))
+		socket.mouse_exited.connect(_tooltip.hide)
 		_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24))
 		add_child(socket)
 		_socket_buttons.append(socket)
@@ -212,15 +217,34 @@ func _refresh_wheel(save: PlayerSave) -> void:
 		var socket: Button = _socket_buttons[i]
 		var move_id: int = int(save.move_matrix[i]) if i < save.move_matrix.size() else 0
 		if move_id == 0:
-			socket.text = ""
+			socket.icon = null
 			socket.tooltip_text = "Empty slot"
 			_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24))
 			continue
 		var move: Ability = MoveManagerAuto.get_move(move_id)
 		var color: Color = _move_color(move)
-		socket.text = _move_initials(move)
-		socket.tooltip_text = move.display_name if move != null else str(move_id)
+		var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name if move != null else "")]
+		socket.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null
+		socket.expand_icon = true
+		socket.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		socket.tooltip_text = ""
 		_style_circle_button(socket, color.darkened(0.45), color)
+
+
+func _on_socket_hovered(socket_index: int) -> void:
+	var save: PlayerSave = GameData.current_save
+	if save == null:
+		return
+	var move_id: int = int(save.move_matrix[socket_index]) if socket_index < save.move_matrix.size() else 0
+	if move_id == 0:
+		return
+	var move: Ability = MoveManagerAuto.get_move(move_id)
+	if move == null:
+		return
+	var button: Button = _socket_buttons[socket_index]
+	_tooltip.populate({}, save, move, null, _sanitize_icon_key(move.display_name))
+	_tooltip.position = button.global_position + Vector2(SOCKET_SIZE.x + 8.0, 0.0)
+	_tooltip.show()
 
 
 func _refresh_pool(save: PlayerSave) -> void:
@@ -242,7 +266,25 @@ func _refresh_pool(save: PlayerSave) -> void:
 		row.visible = true
 		var move: Ability = MoveManagerAuto.get_move(_pool_move_ids[pool_index])
 		row.text = move.display_name if move != null else str(_pool_move_ids[pool_index])
-		row.tooltip_text = row.text
+		row.tooltip_text = ""
+		var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(row.text)]
+		row.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null
+		row.expand_icon = false
+		row.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+
+
+func _on_pool_row_hovered(row_index: int) -> void:
+	var pool_index: int = _pool_scroll + row_index
+	if pool_index >= _pool_move_ids.size():
+		return
+	var move: Ability = MoveManagerAuto.get_move(_pool_move_ids[pool_index])
+	if move == null:
+		return
+	var save: PlayerSave = GameData.current_save
+	var row: Button = _pool_rows[row_index]
+	_tooltip.populate({}, save, move, null, _sanitize_icon_key(move.display_name))
+	_tooltip.position = row.global_position + Vector2(row.size.x + 8.0, 0.0)
+	_tooltip.show()
 
 
 func _move_color(move: Ability) -> Color:
@@ -250,15 +292,6 @@ func _move_color(move: Ability) -> Color:
 		return Color(0.5, 0.5, 0.5)
 	var element_index: int = CombatUnit.ELEMENT_ORDER.find(move.damage_element_type)
 	return MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.5, 0.5, 0.5)
-
-
-func _move_initials(move: Ability) -> String:
-	if move == null:
-		return "?"
-	var words: PackedStringArray = move.display_name.split(" ", false)
-	if words.size() >= 2:
-		return words[0].substr(0, 1) + words[1].substr(0, 1)
-	return move.display_name.substr(0, 2)
 
 
 func _node_center(node_index: int) -> Vector2:
