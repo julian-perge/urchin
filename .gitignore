@@ -21,7 +21,7 @@ mono_crash.*.json
 # Original decompiled Flash source, not for distribution
 *.swf
 
-# Python (python_conversion_scripts)
+# Python
 .venv/
 
 # Local git worktrees (scratch, not for distribution)

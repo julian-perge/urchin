@@ -1,4 +1,3 @@
-
 [build-system]
 requires = ["uv_build>=0.10,<1"]
 build-backend = "uv_build"
@@ -12,10 +11,71 @@ authors = [{ name = "Julian Perge", email = "julianperge@gmail.com" }]
 readme = "README.md"
 
 dependencies = [
-    "msgspec>=0.21.1",
-    # portrait/face compositing in python_conversion_scripts/swf_extraction
-    "pillow>=11.0",
+  "msgspec>=0.21.1",
+  # portrait/face compositing in conversion_scripts/swf_extraction
+  "pillow>=11.0",
+  "ruff>=0.15.15",
 ]
 
 [tool.uv]
 package = false
+
+[tool.uv.build-backend]
+module-name = "conversion_scripts"
+module-root = ""
+
+[tool.ruff]
+fix = false
+preview = false
+indent-width = 4
+line-length = 88
+target-version = "py314"
+# Show fixes in output for transparency
+show-fixes = true
+# In addition to the standard set of exclusions, omit all tests, plus a specific file.
+extend-exclude = []
+
+[tool.ruff.format]
+# Enable reformatting of code snippets in docstrings.
+docstring-code-format = true
+skip-magic-trailing-comma = true
+indent-style = "space"
+quote-style = "double"
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+# Whether to allow rules to add from __future__ import annotations in cases where this
+# would simplify a fix or enable a new diagnostic.
+future-annotations = true
+
+extend-select = [
+  "I",
+]
+
+ignore = [
+  "E402",
+  # ---------- FORMATTER COMPATIBILITY ----------
+  # Rules that conflict with ruff formatter - per official recommendation
+  "W191", # Indentation contains tabs
+  "E111", # Indentation is not a multiple of 4
+  "E114", # Indentation is not a multiple of 4 (comment)
+  "E117", # Over-indented
+  "Q000", # Single quotes found but double quotes preferred
+  "Q001", # Single quote multiline found but double quotes preferred
+  "Q002", # Single quote docstring found but double quotes preferred
+  "Q003", # Change outer quotes to avoid escaping inner quotes
+  "COM812", # Missing trailing comma
+  "COM819", # Prohibited trailing comma
+  "E501", # Line too long (handled by formatter)
+
+  # ---------- LEGACY CODE COMPATIBILITY ----------
+  "B904", # Exception handlers without from clause (acceptable pattern)
+  "F841", # Variable assigned but never used (debugging artifacts)
+  "E402",
+]
+
+[tool.ruff.lint.isort]
+# Import sorting and organization
+required-imports = ["from __future__ import annotations"]
+combine-as-imports = true
+split-on-trailing-comma = false
