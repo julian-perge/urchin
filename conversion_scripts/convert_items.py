@@ -101,10 +101,10 @@ def convert_items_to_json(input_file, output_file):
     items = parse_items_with_stats(content.get("ITEMS", {}).get("denseValues"))
 
     # Write to JSON file
-    with open(output_file, "w") as f:
+    with output_file.open("w") as f:
         json.dump({"items": items}, f, indent=2)
 
-    with open(CONVERTED_JSON / "converted_item_by_id.json", "w") as f2:
+    with (CONVERTED_JSON / "converted_item_by_id.json").open("w") as f2:
         ids_objs = {}
         for _i in items:
             ids_objs.update({_i.get("id"): _i.get("display_name")})

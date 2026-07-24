@@ -135,10 +135,10 @@ def convert_to_json(input_file, output_file):
 
     all_moves = parse_move_block(content.get("ABILITIES").get("denseValues"))
     # Write to JSON file
-    with open(output_file, "w") as f:
+    with output_file.open("w") as f:
         json.dump(all_moves, f, indent=2)
 
-    with open(CONVERTED_JSON / "converted_moves_by_id.json", "w") as f2:
+    with (CONVERTED_JSON / "converted_moves_by_id.json").open("w") as f2:
         ids_objs = {}
         for _i in all_moves:
             _val = f"{_i.get('0_display_name')}_{_i.get('ability_two').get('13_status_effect_id')}"

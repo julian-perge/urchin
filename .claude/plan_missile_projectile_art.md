@@ -45,7 +45,7 @@ Godot runtime:
 
 ### Task 1: Extract bolt clips, `KrinTrail`, and `BOOM_*` impact clips from the SWF
 - Objective: produce sprite sheet PNGs + JSON sidecars for all 15 bolt clips, `KrinTrail`, and all referenced impact clips into `assets/vfx/bolts/` and `assets/vfx/impacts/`.
-- Create `python_conversion_scripts/swf_extraction/extract_vfx_sprites.py`.
+- Create `conversion_scripts/swf_extraction/extract_vfx_sprites.py`.
 - **Sprite ID resolution**: call `parse_swf_xml(WEB_SWF_XML)` to get `export_name_to_id`. Build the bolt target list from the 15 clip names above plus `"KrinTrail"`. Build the BOOM target list programmatically: read `moves_abilities.json`, collect every unique non-empty `13_impact_effect_name` string. This guarantees no impact name is missed.
 - **Per-clip extraction loop**:
   - `snapshot_timeline(xml, sprite_id, set(range(1, MAX_FRAMES + 1)))` — use `MAX_FRAMES = 60` as a safe upper bound.

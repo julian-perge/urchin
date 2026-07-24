@@ -3,7 +3,7 @@ extends Node2D
 
 class_name BuffManager
 
-const BUFFS_FILE: String = "res://python_conversion_scripts/converted_json/buffs.json"
+const BUFFS_FILE: String = "res://conversion_scripts/converted_json/buffs.json"
 
 var buffs_by_id: Dictionary = {}
 var buffs_by_internal_name: Dictionary = {}

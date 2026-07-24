@@ -3,8 +3,8 @@
 # (config in .gutconfig.json), or via the GUT panel in the editor.
 extends GutTest
 
-const MOVES_FILE = "res://python_conversion_scripts/converted_json/moves_abilities.json"
-const BUFFS_FILE = "res://python_conversion_scripts/converted_json/buffs.json"
+const MOVES_FILE = "res://conversion_scripts/converted_json/moves_abilities.json"
+const BUFFS_FILE = "res://conversion_scripts/converted_json/buffs.json"
 
 var save: PlayerSave
 

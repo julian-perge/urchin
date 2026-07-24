@@ -16,12 +16,11 @@ from pathlib import Path
 
 from PIL import Image
 
-from .. import REPO_ROOT, WEB_SWF_XML
+from .. import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
 from .swf_xml_lib import make_char_bounds, parse_swf_xml, snapshot_timeline
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "items"
 ITEMS_DIR = REPO_ROOT / "resources" / "items"
-FFDEC = Path.home() / ".local" / "bin" / "ffdec"
 ZOOM = 2.0
 ICON_SPRITE = 2064
 # The slot viewport is 31x31 design px; icons are drawn centered on (0,0).
@@ -83,7 +82,7 @@ def main():
                 "-export",
                 "shape",
                 str(shape_dir),
-                str(REPO_ROOT / "sonny-2-2900.swf"),
+                str(WEB_SWF),
             ],
             check=True,
             capture_output=True,
@@ -100,7 +99,7 @@ def main():
                 paste_char(canvas, child, combined, origin)
             return
         b = char_bounds(cid)
-        path = shape_dir / ("%d.png" % cid)
+        path = shape_dir / f"{cid:d}.png"
         if b is None or not path.exists():
             return
         img = Image.open(path).convert("RGBA")
@@ -142,7 +141,7 @@ def main():
     for tres in ITEMS_DIR.glob("*.tres"):
         item_id = int(tres.name.split("_", 1)[0])
         text = tres.read_text()
-        name_match = re.search(r'^name = "(.*)"$', text, re.M)
+        name_match = re.search(r'^name = "(.*)"$', text, re.MULTILINE)
         if name_match is None:
             continue
         if item_id in ICON_OVERRIDES:
@@ -152,9 +151,9 @@ def main():
             if icon is None:
                 missing.append(name_match.group(1))
                 continue
-            new_path = "res://assets/ui/items/%s" % icon
+            new_path = f"res://assets/ui/items/{icon}"
         if (
-            'path="%s"' % new_path in text
+            f'path="{new_path}"' in text
             and 'slot_image = ExtResource("icon_slot")' in text
         ):
             patched += 1
@@ -164,31 +163,31 @@ def main():
             r'^\[ext_resource type="Texture2D" path="[^"]*" id="(?:2_icon|icon_slot)"\]\n',
             "",
             text,
-            flags=re.M,
+            flags=re.MULTILINE,
         )
         text = re.sub(
             r'^slot_image = ExtResource\("(?:2_icon|icon_slot)"\)\n',
             "",
             text,
-            flags=re.M,
+            flags=re.MULTILINE,
         )
         # Insert the icon ext_resource before the Script one (always present).
         text = re.sub(
             r'^(\[ext_resource type="Script")',
-            '[ext_resource type="Texture2D" path="%s" id="icon_slot"]\n\\1' % new_path,
+            f'[ext_resource type="Texture2D" path="{new_path}" id="icon_slot"]\n\\1',
             text,
             count=1,
-            flags=re.M,
+            flags=re.MULTILINE,
         )
         # Point slot_image at it (replace an existing assignment, else add
         # right after the script line in the [resource] block).
-        if re.search(r"^slot_image = ", text, re.M):
+        if re.search(r"^slot_image = ", text, re.MULTILINE):
             text = re.sub(
                 r"^slot_image = .*$",
                 'slot_image = ExtResource("icon_slot")',
                 text,
                 count=1,
-                flags=re.M,
+                flags=re.MULTILINE,
             )
         else:
             text = re.sub(
@@ -196,7 +195,7 @@ def main():
                 '\\1\nslot_image = ExtResource("icon_slot")',
                 text,
                 count=1,
-                flags=re.M,
+                flags=re.MULTILINE,
             )
         # load_steps count may now be off by one - Godot tolerates and fixes
         # it on the next editor save.

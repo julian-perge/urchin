@@ -55,15 +55,17 @@ def main():
         tid = int(tres.name.split("_", 1)[0])
         look = looks.get(tid, "")
         text = tres.read_text()
-        if re.search(r"^looks = ", text, re.M):
-            text = re.sub(r'^looks = ".*"$', 'looks = "%s"' % look, text, flags=re.M)
+        if re.search(r"^looks = ", text, re.MULTILINE):
+            text = re.sub(
+                r'^looks = ".*"$', f'looks = "{look}"', text, flags=re.MULTILINE
+            )
         elif look:
             text = re.sub(
                 r'^(internal_name = ".*")$',
-                '\\1\nlooks = "%s"' % look,
+                f'\\1\nlooks = "{look}"',
                 text,
                 count=1,
-                flags=re.M,
+                flags=re.MULTILINE,
             )
         else:
             continue

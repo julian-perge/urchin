@@ -16,15 +16,11 @@ import tempfile
 from pathlib import Path
 
 from PIL import Image
-from swf_xml_lib import WEB_SWF_XML, make_char_bounds, parse_swf_xml
+from swf_xml_lib import make_char_bounds, parse_swf_xml
 
-from .. import STEAM_SWF_XML
+from .. import FFDEC, REPO_ROOT, STEAM_SWF, STEAM_SWF_XML, WEB_SWF, WEB_SWF_XML
 
-REPO = Path(__file__).resolve().parent.parent.parent
-SPRITES = REPO / "resources" / "sprites"
-FFDEC = Path.home() / ".local" / "bin" / "ffdec"
-WEB_SWF = REPO / "sonny-2-2900.swf"
-STEAM_SWF = REPO / "SONNY2.swf"
+SPRITES = REPO_ROOT / "resources" / "sprites"
 ZOOM = 2.0
 
 
@@ -72,7 +68,7 @@ def build_renderer(xml_path: Path, swf_path: Path):
                 paste_char(canvas, child, combined, origin)
             return
         b = char_bounds(cid)
-        path = shape_dir / ("%d.png" % cid)
+        path = shape_dir / f"{cid:d}.png"
         if b is None or not path.exists():
             return
         img = Image.open(path).convert("RGBA")

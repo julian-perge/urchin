@@ -143,7 +143,7 @@ def convert_to_json(input_file, output_file):
     items = parse_json(content.get("BATTLES", {}).get("denseValues"))
 
     # Write to JSON file
-    with open(output_file, "w") as f:
+    with output_file.open("w") as f:
         json.dump({"battles": items}, f, indent=2, sort_keys=True)
 
     return len(items)

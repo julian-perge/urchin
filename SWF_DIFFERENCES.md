@@ -1,7 +1,7 @@
 # Web SWF vs Steam SWF differences
 
 Tracking file for divergences found between the original web release (`sonny-2-2900.swf`, repo root) and the Steam rebundle (`SONNY2.swf`, repo root). The Steam release repackaged the original and
-modified the source layout; the raw dumps in `python_conversion_scripts/data_json/` come from the Steam structure, while the readable decompiled code in `source_files/action_script_curated/` is the
+modified the source layout; the raw dumps in `conversion_scripts/data_json/` come from the Steam structure, while the readable decompiled code in `source_files/action_script_curated/` is the
 web release's inline AS3 (the full ffdec export lives at `source_files/action_script/`). Both matter: the data pipeline consumes Steam-shaped dumps, but the web AS3 is the ground truth for semantics.
 
 ## Confirmed identical

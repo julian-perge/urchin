@@ -21,7 +21,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from .. import FFDEC, REPO_ROOT, WEB_SWF_XML
+from .. import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
 from .swf_xml_lib import make_char_bounds, parse_swf_xml, snapshot_timeline
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "abilities"
@@ -91,7 +91,7 @@ def main():
                 "-export",
                 "shape",
                 str(shape_dir),
-                str(REPO_ROOT / "sonny-2-2900.swf"),
+                str(WEB_SWF),
             ],
             check=True,
             capture_output=True,
@@ -108,7 +108,7 @@ def main():
                 paste_char(canvas, child, combined, origin)
             return
         b = char_bounds(cid)
-        path = shape_dir / ("%d.png" % cid)
+        path = shape_dir / f"{cid:d}.png"
         if b is None or not path.exists():
             return
         img = Image.open(path).convert("RGBA")

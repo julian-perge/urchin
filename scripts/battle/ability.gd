@@ -1,5 +1,5 @@
 # ability.gd
-# Move/ability data, loaded from python_conversion_scripts/converted_json/moves_abilities.json
+# Move/ability data, loaded from conversion_scripts/converted_json/moves_abilities.json
 # by MoveManager. Field names/values decoded from frame42/sonny2_moves.txt
 # (KRINABILITY short array) and frame42/sonny2_executeMove.txt (which fields
 # the damage formula actually reads). Only the fields execute_move() needs are

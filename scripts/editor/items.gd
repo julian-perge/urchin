@@ -55,7 +55,7 @@ const SLOT_ICON_OVERRIDES: Dictionary[int, String] = {
 	11: "res://assets/item_slot_icons/OTHER/White_T_Shirt.png",  # White T-shirt
 }
 # Icons extracted from the original icon clip (sprite 2064) by
-# python_conversion_scripts/swf_extraction/extract_item_icons.py.
+# conversion_scripts/swf_extraction/extract_item_icons.py.
 const EXTRACTED_ICON_ROOT: String = "res://assets/ui/items"
 
 var _extracted_icons: Dictionary = {}  # lowercase file name -> actual file name
@@ -101,7 +101,7 @@ func _find_slot_icon(item) -> Texture2D:
 
 func _run():
 	var file: FileAccess = FileAccess.open(
-		"res://python_conversion_scripts/converted_json/items.json",
+		"res://conversion_scripts/converted_json/items.json",
 		FileAccess.READ
 	)
 	var json = JSON.parse_string(file.get_as_text())

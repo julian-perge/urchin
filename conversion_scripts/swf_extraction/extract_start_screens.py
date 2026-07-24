@@ -43,7 +43,7 @@ ERASE_RECTS = [
 
 
 def crop(frame_number: int, rect, out_path: Path):
-    src = Image.open(FRAMES / ("%d.png" % frame_number)).convert("RGBA")
+    src = Image.open(FRAMES / f"{frame_number:d}.png").convert("RGBA")
     x, y, w, h = (v * ZOOM for v in rect)
     img = src.crop((int(x), int(y), int(x + w), int(y + h)))
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -72,8 +72,8 @@ def erase_rect(img: Image.Image, rect):
 
 def main():
     for name, rect in CARDS.items():
-        crop(85, rect, OUT_MENU / "class_cards" / ("%s_gray.png" % name))
-        crop(90, rect, OUT_MENU / "class_cards" / ("%s.png" % name))
+        crop(85, rect, OUT_MENU / "class_cards" / f"{name}_gray.png")
+        crop(90, rect, OUT_MENU / "class_cards" / f"{name}.png")
     background = Image.open(FRAMES / "65.png").convert("RGBA")
     for rect in ERASE_RECTS:
         erase_rect(background, rect)

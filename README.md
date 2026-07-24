@@ -4,13 +4,13 @@ Fan remake of an ArmorGames game.
 
 ## Python conversion scripts
 
-`python_conversion_scripts/` holds the AS3-decompile-to-JSON converters (`convert_items.py`,
+`conversion_scripts/` holds the AS3-decompile-to-JSON converters (`convert_items.py`,
 `convert_units.py`, `convert_moves.py`, `convert_buffs.py`, `convert_battles.py`) and the raw/converted
 data they read and produce. There's no `pyproject.toml` here on purpose - these scripts have no
 third-party dependencies, so there's nothing to lock. Run them directly with `uv`:
 
 ```sh
-cd python_conversion_scripts
+cd conversion_scripts
 uv run python3 convert_items.py
 ```
 
@@ -83,7 +83,7 @@ res://
 │   │                              #   (story/training battle selection, quest progress, zone unlocks)
 │   ├── ui/                        # UI behavior (orbs, hotbar, store slots, buttons)
 │   ├── editor/                    # @tool EditorScripts - regenerate resources/{items,units,battles}/*.tres
-│   │                              #   from python_conversion_scripts/converted_json/*.json. Run from
+│   │                              #   from conversion_scripts/converted_json/*.json. Run from
 │   │                              #   the Godot script editor (File > Run). Tests live in test/, not here.
 │   └── inventory.gd                # Inventory autoload (27-slot UI grid, separate from PlayerSave.item_array)
 ├── resources/                      # Generated/authored game DATA + the art tied to it
@@ -100,7 +100,7 @@ res://
 │   ├── fonts/, item_slot_icons/, references/  # (references/ = original-game screenshots)
 │   └── ui/
 │       ├── hotbar/, battle/, store/, zone_map/  # Grouped by which screen uses them
-├── python_conversion_scripts/        # AS3-decompile -> JSON pipeline (Python, run via `uv`, see above)
+├── conversion_scripts/        # AS3-decompile -> JSON pipeline (Python, run via `uv`, see above)
 │   ├── convert_items.py, convert_units.py, convert_moves.py, convert_buffs.py, convert_battles.py
 │   ├── swf_models.py                 # msgspec models/loaders for the AMF-style runtime dumps
 │   ├── swf_extraction/               # swf2xml/ActionScript analysis + asset extraction tooling

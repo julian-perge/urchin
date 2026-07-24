@@ -46,7 +46,7 @@ func _ordered(stat_dict: Dictionary, order: Array) -> Array:
 
 func _run():
 	var file: FileAccess = FileAccess.open(
-		"res://python_conversion_scripts/converted_json/units.json",
+		"res://conversion_scripts/converted_json/units.json",
 		FileAccess.READ
 	)
 	var json = JSON.parse_string(file.get_as_text())

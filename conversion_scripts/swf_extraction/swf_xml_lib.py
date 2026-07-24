@@ -12,7 +12,7 @@ from pathlib import Path
 # rotation - parse the tag's attributes individually instead.
 MATRIX_TAG_RE = re.compile(r'<matrix type="MATRIX"[^>]*>')
 _MATRIX_ATTR_RES = {
-    name: re.compile(r'%s="(-?[\d.eE+-]+)"' % name)
+    name: re.compile(rf'{name}="(-?[\d.eE+-]+)"')
     for name in (
         "scaleX",
         "scaleY",
@@ -80,7 +80,7 @@ def parse_swf_xml(path):
         for pm in re.finditer(
             r'<item type="PlaceObject2?3?Tag"[^>]*characterId="(\d+)"[^>]*>(.*?)</item>',
             body,
-            re.S,
+            re.DOTALL,
         ):
             children.append((int(pm.group(1)), find_matrix(pm.group(2))))
         sprite_children[sid] = children
@@ -88,7 +88,7 @@ def parse_swf_xml(path):
     for m in re.finditer(
         r'<item type="ExportAssetsTag"[^>]*>\s*<tags>\s*(.*?)</tags>\s*<names>\s*(.*?)</names>',
         xml,
-        re.S,
+        re.DOTALL,
     ):
         ids = re.findall(r"<item>(\d+)</item>", m.group(1))
         names = re.findall(r"<item>(.*?)</item>", m.group(2))
@@ -105,7 +105,7 @@ def transform_rect(mat, rect):
         # SWF matrix: x' = sx*x + r1*y + tx ; y' = r0*x + sy*y + ty
         xs.append(sx * x + r1 * y + tx)
         ys.append(r0 * x + sy * y + ty)
-    return (min(xs), min(ys), max(xs), max(ys))
+    return min(xs), min(ys), max(xs), max(ys)
 
 
 def make_char_bounds(shape_bounds, sprite_children):
@@ -145,10 +145,10 @@ def make_char_bounds(shape_bounds, sprite_children):
 
 def sprite_body(xml: str, sprite_id: int) -> str:
     m = re.search(
-        r'<item type="DefineSpriteTag"[^>]*spriteId="%d"[^>]*>' % sprite_id, xml
+        rf'<item type="DefineSpriteTag"[^>]*spriteId="{sprite_id:d}"[^>]*>', xml
     )
     if m is None:
-        raise KeyError("sprite %d not found" % sprite_id)
+        raise KeyError(f"sprite {sprite_id:d} not found")
     end = xml.find("</subTags>", m.end())
     return xml[m.end() : end]
 

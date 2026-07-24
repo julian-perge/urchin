@@ -119,10 +119,10 @@ def convert_units_to_json(input_file, output_file):
             units.append(unit)
 
     # Write to JSON file
-    with open(output_file, "w") as f3:
+    with output_file.open("w") as f3:
         json.dump({"units": units}, f3, indent=2)
 
-    with open(CONVERTED_JSON / "converted_units_by_id.json", "w") as f4:
+    with (CONVERTED_JSON / "converted_units_by_id.json").open("w") as f4:
         ids_objs = {}
         for _i in units:
             ids_objs.update({_i.get("id"): _i.get("name")})

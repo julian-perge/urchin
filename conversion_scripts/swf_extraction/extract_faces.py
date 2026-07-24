@@ -16,11 +16,9 @@ from pathlib import Path
 from PIL import Image
 from swf_xml_lib import make_char_bounds, parse_swf_xml, snapshot_timeline
 
-from .. import WEB_SWF_XML
+from .. import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
 
-REPO = Path(__file__).resolve().parent.parent.parent
-OUT_DIR = REPO / "assets" / "ui" / "menu" / "portraits"
-FFDEC = Path.home() / ".local" / "bin" / "ffdec"
+OUT_DIR = REPO_ROOT / "assets" / "ui" / "menu" / "portraits"
 ZOOM = 2.0
 
 FACE_CLIP = 2978
@@ -71,7 +69,7 @@ def main():
             "-export",
             "shape",
             str(shape_dir),
-            str(REPO / "sonny-2-2900.swf"),
+            str(WEB_SWF),
         ],
         check=True,
         capture_output=True,
@@ -86,7 +84,7 @@ def main():
                 paste_char(canvas, child, combined, origin)
             return
         b = char_bounds(cid)
-        path = shape_dir / ("%d.png" % cid)
+        path = shape_dir / f"{cid:d}.png"
         if b is None or not path.exists():
             return
         img = Image.open(path).convert("RGBA")
@@ -116,7 +114,7 @@ def main():
             )
         paste_char(canvas, CHROME[1], (1, 0, 0, 1, 0, 0), origin)
         paste_char(canvas, CHROME[2], (1, 0, 0, 1, 0, 0), origin)
-        out = OUT_DIR / ("%s.png" % name)
+        out = OUT_DIR / f"{name}.png"
         canvas.save(out)
         print("wrote", out, size, file=sys.stderr)
 

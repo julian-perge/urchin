@@ -113,7 +113,7 @@ def convert_to_json(input_file, output_file):
     content: dict = swf_models.load_json(input_file)
 
     all_buffs = parse_buff_block(content.get("BUFFS").get("denseValues"))
-    with open(output_file, "w") as f:
+    with output_file.open("w") as f:
         json.dump(all_buffs, f, indent=2)
 
     return len(all_buffs)
