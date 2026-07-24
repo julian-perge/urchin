@@ -8,7 +8,7 @@
 # where the matrix columns are Godot Transform2D's x=(a,b), y=(c,d),
 # origin=(tx,ty) - translations converted from twips to px.
 #
-# Run: uv run python3 conversion_scripts/swf_extraction/extract_model1_animations.py
+# Run: uv run extract_model1_animations
 from __future__ import annotations
 
 import json

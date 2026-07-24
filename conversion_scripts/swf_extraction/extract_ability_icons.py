@@ -10,7 +10,7 @@
 # fallback-art path is needed for anything currently in the trees.
 #
 # Requires ffdec for the shape exports.
-# Run: uv run python3 -m conversion_scripts.swf_extraction.extract_ability_icons
+# Run: uv run extract_ability_icons
 from __future__ import annotations
 
 import re

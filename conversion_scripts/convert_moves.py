@@ -1,15 +1,16 @@
+# Run: uv run convert_moves
 from __future__ import annotations
 
 import json
 
-import swf_models
+from . import CONVERTED_JSON, DATA_JSON, swf_models
 
 
 def parse_move_block(move_dict: dict):
     """Parse a move creation block into a dictionary."""
 
     moves = []
-    for idx, block in move_dict.items():
+    for block in move_dict.values():
         _move_block: dict[str, str | int | dict] = block.get("members")
 
         ability_two = _move_block.get("ability_two", {}).get("denseValues", {})
@@ -137,7 +138,7 @@ def convert_to_json(input_file, output_file):
     with open(output_file, "w") as f:
         json.dump(all_moves, f, indent=2)
 
-    with open("converted_json/converted_moves_by_id.json", "w") as f2:
+    with open(CONVERTED_JSON / "converted_moves_by_id.json", "w") as f2:
         ids_objs = {}
         for _i in all_moves:
             _val = f"{_i.get('0_display_name')}_{_i.get('ability_two').get('13_status_effect_id')}"
@@ -148,10 +149,12 @@ def convert_to_json(input_file, output_file):
     return len(all_moves)
 
 
-# Example usage:
-if __name__ == "__main__":
-    # Convert to JSON
+def main() -> None:
     moves_count = convert_to_json(
-        "data_json/swf_move_abilities.json", "converted_json/moves_abilities.json"
+        DATA_JSON / "swf_move_abilities.json", CONVERTED_JSON / "moves_abilities.json"
     )
     print(f"Converted {moves_count} moves to JSON")
+
+
+if __name__ == "__main__":
+    main()

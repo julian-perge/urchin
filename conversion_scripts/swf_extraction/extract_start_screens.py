@@ -11,7 +11,7 @@
 # Card rects come from the root-timeline placements (sprites 2746/2766/2755
 # at frame 85). Frames are 2x (1600x1150 for the 800x575 stage).
 #
-# Run: uv run python3 conversion_scripts/swf_extraction/extract_start_screens.py
+# Run: uv run extract_start_screens
 from __future__ import annotations
 
 import sys

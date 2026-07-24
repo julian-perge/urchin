@@ -1,8 +1,9 @@
+# Run: uv run convert_battles
 from __future__ import annotations
 
 import json
 
-import swf_models
+from . import CONVERTED_JSON, DATA_JSON, swf_models
 
 # ["EMPTY","PRISON","VILLAGE","TRAIN","TUNNELS","CITY","ROME","JAPAN","UTOPIA","JAPAN","STORM","EDEN","DOME","BETA"];
 # CHURCH
@@ -22,11 +23,11 @@ def parse_json(parsed_dict: dict):
     battles = []
 
     units_by_id: dict[str, str] = swf_models.load_json(
-        "converted_json/converted_units_by_id.json"
+        CONVERTED_JSON / "converted_units_by_id.json"
     )
 
     items_by_ids: dict = swf_models.load_json(
-        "converted_json/converted_item_by_id.json"
+        CONVERTED_JSON / "converted_item_by_id.json"
     )
 
     # Find all items in this block
@@ -148,10 +149,12 @@ def convert_to_json(input_file, output_file):
     return len(items)
 
 
-# Example usage:
-if __name__ == "__main__":
-    # Convert to JSON
+def main() -> None:
     _count = convert_to_json(
-        "data_json/swf_battles.json", "converted_json/battles.json"
+        DATA_JSON / "swf_battles.json", CONVERTED_JSON / "battles.json"
     )
     print(f"Converted {_count} converted_battles to JSON")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,12 +1,13 @@
+# Run: uv run convert_units
 from __future__ import annotations
 
 import json
 
-import swf_models
+from . import CONVERTED_JSON, DATA_JSON, swf_models
 
-moves_by_id = swf_models.load_json("converted_json/converted_moves_by_id.json")
+moves_by_id = swf_models.load_json(CONVERTED_JSON / "converted_moves_by_id.json")
 
-items_by_id = swf_models.load_json("converted_json/converted_item_by_id.json")
+items_by_id = swf_models.load_json(CONVERTED_JSON / "converted_item_by_id.json")
 
 
 def parse_moves(abs_moves: list[list[int]], attacks: list[int], defenses: list[int]):
@@ -112,7 +113,7 @@ def convert_units_to_json(input_file, output_file):
     unit_blocks = content.get("UNITS").get("denseValues")
 
     units = []
-    for idx, block in unit_blocks.items():  # Skip first empty split
+    for block in unit_blocks.values():  # Skip first empty split
         unit = parse_unit_block(block.get("members"))
         if unit:
             units.append(unit)
@@ -121,7 +122,7 @@ def convert_units_to_json(input_file, output_file):
     with open(output_file, "w") as f3:
         json.dump({"units": units}, f3, indent=2)
 
-    with open("converted_json/converted_units_by_id.json", "w") as f4:
+    with open(CONVERTED_JSON / "converted_units_by_id.json", "w") as f4:
         ids_objs = {}
         for _i in units:
             ids_objs.update({_i.get("id"): _i.get("name")})
@@ -131,9 +132,12 @@ def convert_units_to_json(input_file, output_file):
     return len(units)
 
 
-if __name__ == "__main__":
-    # Convert to JSON
+def main() -> None:
     unit_count = convert_units_to_json(
-        "data_json/swf_units.json", "converted_json/units.json"
+        DATA_JSON / "swf_units.json", CONVERTED_JSON / "units.json"
     )
     print(f"Converted {unit_count} units to JSON")
+
+
+if __name__ == "__main__":
+    main()

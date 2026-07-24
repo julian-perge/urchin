@@ -8,7 +8,7 @@
 # Writes converted_json/item_looks.json (merged by convert_items.py) and
 # patches resources/items/<id>_*.tres in place.
 #
-# Run: uv run python3 conversion_scripts/swf_extraction/extract_item_looks.py
+# Run: uv run extract_item_looks
 from __future__ import annotations
 
 import json

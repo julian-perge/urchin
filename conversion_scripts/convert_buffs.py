@@ -1,8 +1,9 @@
+# Run: uv run convert_buffs
 from __future__ import annotations
 
 import json
 
-import swf_models
+from . import CONVERTED_JSON, DATA_JSON, swf_models
 
 
 def parse_buff_block(buff_dict: dict):
@@ -118,8 +119,12 @@ def convert_to_json(input_file, output_file):
     return len(all_buffs)
 
 
-if __name__ == "__main__":
+def main() -> None:
     buffs_count = convert_to_json(
-        "data_json/swf_buffs.json", "converted_json/buffs.json"
+        DATA_JSON / "swf_buffs.json", CONVERTED_JSON / "buffs.json"
     )
     print(f"Converted {buffs_count} buffs to JSON")
+
+
+if __name__ == "__main__":
+    main()

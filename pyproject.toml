@@ -17,8 +17,28 @@ dependencies = [
   "ruff>=0.15.15",
 ]
 
+[project.scripts]
+convert_battles = "conversion_scripts.convert_battles:main"
+convert_buffs = "conversion_scripts.convert_buffs:main"
+convert_items = "conversion_scripts.convert_items:main"
+convert_moves = "conversion_scripts.convert_moves:main"
+convert_units = "conversion_scripts.convert_units:main"
+export_swf_sources = "conversion_scripts.swf_extraction.export_swf_sources:main"
+extract_ability_icons = "conversion_scripts.swf_extraction.extract_ability_icons:main"
+extract_doll_art = "conversion_scripts.swf_extraction.extract_doll_art:main"
+extract_doll_offsets = "conversion_scripts.swf_extraction.extract_doll_offsets:main"
+extract_faces = "conversion_scripts.swf_extraction.extract_faces:main"
+extract_item_icons = "conversion_scripts.swf_extraction.extract_item_icons:main"
+extract_item_looks = "conversion_scripts.swf_extraction.extract_item_looks:main"
+extract_model1_animations = "conversion_scripts.swf_extraction.extract_model1_animations:main"
+extract_start_screens = "conversion_scripts.swf_extraction.extract_start_screens:main"
+
 [tool.uv]
-package = false
+# A build system is declared above, so uv would package this project by
+# default anyway - explicit here because entry points (the uv run
+# <script-name> commands above) require it, and `false` would silently
+# disable them regardless of the build-system table.
+package = true
 
 [tool.uv.build-backend]
 module-name = "conversion_scripts"

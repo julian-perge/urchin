@@ -7,7 +7,7 @@
 # derives scale from bounds/png-size - regenerate it after this
 # (extract_doll_offsets.py).
 #
-# Run: uv run python3 conversion_scripts/swf_extraction/extract_doll_art.py
+# Run: uv run extract_doll_art
 from __future__ import annotations
 
 import subprocess

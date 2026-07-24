@@ -5,7 +5,7 @@
 # shapes 2895/2896). Renders assets/ui/menu/portraits/<name>.png at 2x.
 #
 # Requires ffdec (~/.local/bin/ffdec) for the shape PNG exports.
-# Run: uv run python3 conversion_scripts/swf_extraction/extract_faces.py
+# Run: uv run extract_faces
 from __future__ import annotations
 
 import subprocess

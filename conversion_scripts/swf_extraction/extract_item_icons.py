@@ -5,7 +5,7 @@
 # each resources/items/<id>_*.tres slot_image at the matching icon.
 #
 # Requires ffdec for the shape exports.
-# Run: uv run python3 conversion_scripts/swf_extraction/extract_item_icons.py
+# Run: uv run extract_item_icons
 from __future__ import annotations
 
 import re

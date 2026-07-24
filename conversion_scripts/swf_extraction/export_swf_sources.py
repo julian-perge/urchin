@@ -5,7 +5,7 @@
 #   source_files/swf_xml/        - swf2xml dumps of BOTH SWFs (the Steam
 #                                  dump fills asset gaps: DOG/WOLF art etc.)
 #
-# Run: uv run python3 conversion_scripts/swf_extraction/export_swf_sources.py
+# Run: uv run export_swf_sources
 from __future__ import annotations
 
 import subprocess

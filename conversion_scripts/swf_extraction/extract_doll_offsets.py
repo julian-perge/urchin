@@ -9,7 +9,7 @@
 # Writes resources/sprites/doll_offsets.json (consumed by
 # scripts/entities/character_visual.gd).
 #
-# Run: uv run python3 conversion_scripts/swf_extraction/extract_doll_offsets.py
+# Run: uv run extract_doll_offsets
 from __future__ import annotations
 
 import json

@@ -1,10 +1,9 @@
+# Run: uv run convert_items
 from __future__ import annotations
 
 import json
 
-import swf_models
-
-from . import CONVERTED_JSON
+from . import CONVERTED_JSON, DATA_JSON, swf_models
 
 # ["Physical","Magic","Ice","Fire","Lightning","Earth","Shadow","Poison"]
 
@@ -25,7 +24,7 @@ def parse_items_with_stats(parsed_dict: dict):
     items = []
 
     # Find all items in this block
-    for idx, item_dict in parsed_dict.items():
+    for item_dict in parsed_dict.values():
         _item = item_dict.get("members", {})
         _id: str = _item.get("id")
         _type: str = _item.get("type")
@@ -105,7 +104,7 @@ def convert_items_to_json(input_file, output_file):
     with open(output_file, "w") as f:
         json.dump({"items": items}, f, indent=2)
 
-    with open("converted_json/converted_item_by_id.json", "w") as f2:
+    with open(CONVERTED_JSON / "converted_item_by_id.json", "w") as f2:
         ids_objs = {}
         for _i in items:
             ids_objs.update({_i.get("id"): _i.get("display_name")})
@@ -115,10 +114,12 @@ def convert_items_to_json(input_file, output_file):
     return len(items)
 
 
-# Example usage:
-if __name__ == "__main__":
-    # Convert to JSON
+def main() -> None:
     item_count = convert_items_to_json(
-        "data_json/swf_items.json", "converted_json/items.json"
+        DATA_JSON / "swf_items.json", CONVERTED_JSON / "items.json"
     )
     print(f"Converted {item_count} items to JSON")
+
+
+if __name__ == "__main__":
+    main()
