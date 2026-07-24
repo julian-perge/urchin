@@ -70,6 +70,9 @@ future-annotations = true
 
 extend-select = [
   "I",
+  "FURB",
+  "PTH",
+  "UP",
 ]
 
 ignore = [
