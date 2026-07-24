@@ -1,0 +1,8462 @@
+{
+  "units": [
+    {
+      "id": 1,
+      "name": "Bio",
+      "health": 7,
+      "strength": 14,
+      "magic": 4,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 3,
+            "name": "Stun_0"
+          },
+          {
+            "id": 5,
+            "name": "Nuke_0"
+          }
+        ],
+        "defense": [
+          {
+            "id": 4,
+            "name": "Heal_0"
+          },
+          {
+            "id": 6,
+            "name": "Destroy_0"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 90,
+          "Aggressive": 40,
+          "Tactical": 60,
+          "Defensive": 90,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "ONE",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_sonny1",
+            "hit_sonny2",
+            "hit_sonny3"
+          ],
+          "die": "dead_sonny"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "name": "Psycho",
+      "health": 7,
+      "strength": 3,
+      "magic": 20,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN",
+            "turn": 0
+          },
+          {
+            "id": 5,
+            "name": "Nuke_0",
+            "turn": 1
+          },
+          {
+            "id": 3,
+            "name": "Stun_0",
+            "turn": 2
+          }
+        ],
+        "attack": [],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "METABII",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 6,
+            "name": "Fire Axe"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "ZPCI",
+        "voice": {
+          "hit": [
+            "hit_sonny1",
+            "hit_sonny2",
+            "hit_sonny3"
+          ],
+          "die": "dead_sonny"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "name": "Hydro",
+      "health": 15,
+      "strength": 10,
+      "magic": 8,
+      "speed": 7,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "METABII",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 12,
+            "name": "Stick"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_sonny1",
+            "hit_sonny2",
+            "hit_sonny3"
+          ],
+          "die": "dead_sonny"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "name": "Veradux",
+      "health": 20,
+      "strength": 20,
+      "magic": 20,
+      "speed": 20,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          },
+          {
+            "id": 10,
+            "name": "Dux Electro_0"
+          }
+        ],
+        "defense": [
+          {
+            "id": 8,
+            "name": "Dux Heal_0"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "METABII",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "ZPCI3",
+        "voice": {
+          "hit": [
+            "hit_dux1",
+            "hit_dux2",
+            "hit_dux3"
+          ],
+          "die": "dead_dux"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "name": "Prison Guard",
+      "health": 10,
+      "strength": 10,
+      "magic": 5,
+      "speed": 12,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 523,
+            "name": "Gouge_BREAK",
+            "turn": 0
+          },
+          {
+            "id": 15,
+            "name": "Heavy Punishment_HEAVYPUNISHMENT",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ],
+        "defense": [
+          {
+            "id": 506,
+            "name": "Block_BLOCK"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 35,
+          "Defensive": 60,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 14,
+            "name": "Metal Baton"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "JASON",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "name": "Doctor Leath",
+      "health": 8,
+      "strength": 11,
+      "magic": 11,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 528,
+            "name": "Mutate_MUTATION",
+            "turn": 2
+          }
+        ],
+        "attack": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 526,
+            "name": "Steroids_ANIMALISM4"
+          },
+          {
+            "id": 527,
+            "name": "Injection_BERSERK3"
+          }
+        ],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 17,
+            "name": "Scientist Robe"
+          },
+          {
+            "id": 18,
+            "name": "Scientist Sleeves"
+          },
+          {
+            "id": 4,
+            "name": "Levo Jeans"
+          },
+          {
+            "id": 8,
+            "name": "Proverse All Stars"
+          },
+          {
+            "id": 16,
+            "name": "Surgery Blade"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_doc1",
+            "hit_doc2",
+            "hit_doc3"
+          ],
+          "die": "dead_doc"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "name": "Frankie",
+      "health": 70,
+      "strength": 18,
+      "magic": 2,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 256,
+            "name": "Impair_IMPAIR4"
+          },
+          {
+            "id": 260,
+            "name": "Bloodshed_BLOODRUSH4"
+          },
+          {
+            "id": 267,
+            "name": "Wreck_WRECK"
+          },
+          {
+            "id": 271,
+            "name": "Demolish_DEMOLISH"
+          }
+        ],
+        "defense": [
+          {
+            "id": 510,
+            "name": "Guardian_GUARDIAN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "FIVE",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 19,
+            "name": "Frankie Body"
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 20,
+            "name": "Frankie Legs"
+          },
+          {
+            "id": 21,
+            "name": "Frankie Feet"
+          },
+          {
+            "id": 15,
+            "name": "Hans the Butcher"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "name": "ZPCI Elite",
+      "health": 25,
+      "strength": 25,
+      "magic": 1,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 16,
+            "name": "Aim For The Heart_HEART",
+            "turn": 0
+          },
+          {
+            "id": 17,
+            "name": "Poisoned Blade_POISONBLADE",
+            "turn": 0
+          },
+          {
+            "id": 18,
+            "name": "Bayonet Rush_ARTERY",
+            "turn": 0
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
+        ],
+        "defense": [
+          {
+            "id": 20,
+            "name": "Auxillary Power_AUXILLARY"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 13,
+            "name": "M4"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "ZPCI",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "name": "The Warden",
+      "health": 30,
+      "strength": 50,
+      "magic": 10,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 11,
+            "name": "Chains Of Justice_CHAINS",
+            "turn": 1
+          },
+          {
+            "id": 12,
+            "name": "Isolate_SOLITARY",
+            "turn": 2
+          },
+          {
+            "id": 13,
+            "name": "Drop A Soap_PICKTHESOAP",
+            "turn": 2
+          },
+          {
+            "id": 14,
+            "name": "Death Sentence_DEATHSENTENCE",
+            "turn": 3
+          }
+        ],
+        "attack": [
+          {
+            "id": 15,
+            "name": "Heavy Punishment_HEAVYPUNISHMENT"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 60,
+          "Defensive": 61,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 504,
+            "name": "Persecution"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "JASON2",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "name": "Brutal Convict",
+      "health": 12,
+      "strength": 19,
+      "magic": 1,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 267,
+            "name": "Wreck_WRECK"
+          },
+          {
+            "id": 103,
+            "name": "Vicious Strike_CANNIBALBLOOD"
+          }
+        ],
+        "defense": [
+          {
+            "id": 506,
+            "name": "Block_BLOCK"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 80,
+          "Tactical": 20,
+          "Defensive": 40,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 5,
+            "name": "A Broken Pipe"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "PRISON",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "name": "Felicity",
+      "health": 60,
+      "strength": 17,
+      "magic": 10,
+      "speed": 16,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 532,
+            "name": "Black Metal_COLDSTEEL",
+            "turn": 1
+          },
+          {
+            "id": 531,
+            "name": "Blade Shield_BLADESHIELD",
+            "turn": 1
+          },
+          {
+            "id": 530,
+            "name": "Serious Business_SERIOUS",
+            "turn": 2
+          },
+          {
+            "id": 163,
+            "name": "Shadow Blend_SHADOWBLEND1",
+            "turn": 3
+          },
+          {
+            "id": 136,
+            "name": "Acid Slash_IRRITATE4",
+            "turn": 3
+          }
+        ],
+        "attack": [
+          {
+            "id": 533,
+            "name": "Throw Knife_KNIFEFACE"
+          },
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ],
+        "defense": [
+          {
+            "id": 523,
+            "name": "Gouge_BREAK"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 10,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL4",
+          "FEL",
+          "",
+          "F"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 22,
+            "name": "Felicity's Knife"
+          },
+          {
+            "id": 22,
+            "name": "Felicity's Knife"
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "name": "Twisted Experiment",
+      "health": 20,
+      "strength": 30,
+      "magic": 5,
+      "speed": 12,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 149,
+            "name": "Infect_CONTAMINATE4"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 136,
+            "name": "Acid Slash_IRRITATE4"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          }
+        ],
+        "defense": [
+          {
+            "id": 534,
+            "name": "Withdrawl_REFORM4"
+          },
+          {
+            "id": 166,
+            "name": "Shadow Blend_SHADOWBLEND4"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 300,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "FIVE",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 503,
+            "name": "Terror Blade"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "PRISON2",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "name": "Agile Convict",
+      "health": 10,
+      "strength": 13,
+      "magic": 3,
+      "speed": 14,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 525,
+            "name": "Set-Up_EXPOSED3"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 275,
+            "name": "Decimate_DECIMATE4"
+          }
+        ],
+        "defense": [
+          {
+            "id": 122,
+            "name": "Adrenaline_ADRENALINE3"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 80,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN2",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 6,
+            "name": "Fire Axe"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "PRISON",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "name": "Cunning Convict",
+      "health": 7,
+      "strength": 11,
+      "magic": 11,
+      "speed": 11,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 256,
+            "name": "Impair_IMPAIR4"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ],
+        "defense": [
+          {
+            "id": 8,
+            "name": "Dux Heal_0"
+          },
+          {
+            "id": 122,
+            "name": "Adrenaline_ADRENALINE3"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 80,
+          "Tactical": 60,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN4",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 7,
+            "name": "Crow Bar"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "PRISON",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "name": "Doctor Hedger",
+      "health": 5,
+      "strength": 50,
+      "magic": 5,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 529,
+            "name": "Doctor's Watch_DOCSHELL",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 149,
+            "name": "Infect_CONTAMINATE4"
+          },
+          {
+            "id": 149,
+            "name": "Infect_CONTAMINATE4"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 5,
+          "Defensive": 10,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 17,
+            "name": "Scientist Robe"
+          },
+          {
+            "id": 18,
+            "name": "Scientist Sleeves"
+          },
+          {
+            "id": 4,
+            "name": "Levo Jeans"
+          },
+          {
+            "id": 8,
+            "name": "Proverse All Stars"
+          },
+          {
+            "id": 16,
+            "name": "Surgery Blade"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_doc1",
+            "hit_doc2",
+            "hit_doc3"
+          ],
+          "die": "dead_doc"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "name": "Knight",
+      "health": 21,
+      "strength": 12,
+      "magic": 1,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 507,
+            "name": "Blood of the Enemy_BLOODOFTHEENEMY"
+          },
+          {
+            "id": 508,
+            "name": "Aggravate_AGGRAVATE"
+          },
+          {
+            "id": 509,
+            "name": "Disarm_DISARM"
+          }
+        ],
+        "defense": [
+          {
+            "id": 505,
+            "name": "Sanctified Armor_SANCTIFIEDARMOUR"
+          },
+          {
+            "id": 506,
+            "name": "Block_BLOCK"
+          },
+          {
+            "id": 510,
+            "name": "Guardian_GUARDIAN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 40,
+          "Defensive": 70,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 130,
+          "Shadow": 130,
+          "Earth": 130,
+          "Lightning": 130,
+          "Fire": 130,
+          "Ice": 130,
+          "Magic": 130,
+          "Physical": 130
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 515,
+            "name": "Light's Blade"
+          },
+          {
+            "id": 516,
+            "name": "Metal Shield"
+          }
+        ],
+        "skin": "XADER",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 21,
+      "name": "Priest",
+      "health": 15,
+      "strength": 1,
+      "magic": 15,
+      "speed": 13,
+      "focus": 150,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 515,
+            "name": "Energy Drain_ENERGYDRAIN"
+          },
+          {
+            "id": 513,
+            "name": "Light's Will_LIGHTSWILL"
+          },
+          {
+            "id": 514,
+            "name": "Prayer_PRAYER"
+          }
+        ],
+        "defense": [
+          {
+            "id": 512,
+            "name": "Mend_MEND"
+          },
+          {
+            "id": 511,
+            "name": "Heal_ADRENALINE1"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 20,
+          "Aggressive": 50,
+          "Tactical": 70,
+          "Defensive": 90,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 518,
+            "name": "Frosted Light"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "PRIEST",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "name": "Mage",
+      "health": 13,
+      "strength": 1,
+      "magic": 16,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 516,
+            "name": "Zap_ZAP"
+          },
+          {
+            "id": 517,
+            "name": "Heavy Burns_HEAVYBURNS"
+          },
+          {
+            "id": 518,
+            "name": "Doom_DOOM"
+          },
+          {
+            "id": 520,
+            "name": "Medidtate_0"
+          }
+        ],
+        "defense": [
+          {
+            "id": 519,
+            "name": "Energy Phase_ENERGYPHASE"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 24,
+          "Defensive": 25,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 517,
+            "name": "Fiery Doom"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "PRIEST2",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "name": "Frost Zombie",
+      "health": 15,
+      "strength": 20,
+      "magic": 20,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 500,
+            "name": "Liquid Veins_LIQUIDVEINS"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 207,
+            "name": "Hypothermia_HYPO4"
+          }
+        ],
+        "defense": [
+          {
+            "id": 502,
+            "name": "Recuperate_RECUPERATE"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 40,
+          "Defensive": 70,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "FROST",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 519,
+            "name": "Icy Maul"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 24,
+      "name": "Wolf",
+      "health": 10,
+      "strength": 10,
+      "magic": 10,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 3,
+            "name": "Stun_0"
+          },
+          {
+            "id": 5,
+            "name": "Nuke_0"
+          }
+        ],
+        "defense": [
+          {
+            "id": 4,
+            "name": "Heal_0"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL5",
+          "WOLF",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 14,
+            "name": "Metal Baton"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 25,
+      "name": "Frost Terror",
+      "health": 20,
+      "strength": 13,
+      "magic": 3,
+      "speed": 14,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 501,
+            "name": "Icy Blood_ICYBLOOD"
+          },
+          {
+            "id": 504,
+            "name": "Icy Rage_ICYRAGE"
+          },
+          {
+            "id": 503,
+            "name": "Soul Strike_SOULSTRIKE"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 219,
+            "name": "Vascular Arrest_VASCULAR4"
+          },
+          {
+            "id": 521,
+            "name": "Shatter Bolt_SHATTERBOLT"
+          }
+        ],
+        "defense": [
+          {
+            "id": 502,
+            "name": "Recuperate_RECUPERATE"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "Frost",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "FROST",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 26,
+      "name": "ZPCI Medic",
+      "health": 20,
+      "strength": 20,
+      "magic": 20,
+      "speed": 10,
+      "focus": 150,
+      "moves": {
+        "absolute": [
+          {
+            "id": 544,
+            "name": "ZPCI Shell_ZPCISHELL",
+            "turn": 1
+          },
+          {
+            "id": 550,
+            "name": "Med Buff 1_CALMDOWN",
+            "turn": 2
+          },
+          {
+            "id": 551,
+            "name": "Med Buff 2_HEALBUFF",
+            "turn": 2
+          },
+          {
+            "id": 550,
+            "name": "Med Buff 1_CALMDOWN",
+            "turn": 3
+          },
+          {
+            "id": 551,
+            "name": "Med Buff 2_HEALBUFF",
+            "turn": 3
+          }
+        ],
+        "attack": [
+          {
+            "id": 547,
+            "name": "Shoot_0"
+          }
+        ],
+        "defense": [
+          {
+            "id": 549,
+            "name": "Heal_0"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 100,
+          "Defensive": 101,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 13,
+            "name": "M4"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "ZPCI3",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 27,
+      "name": "Armored Hound",
+      "health": 10,
+      "strength": 20,
+      "magic": 20,
+      "speed": 40,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 109,
+            "name": "Wound_WOUND2"
+          },
+          {
+            "id": 543,
+            "name": "Infecting Bite_INFECTBITE"
+          },
+          {
+            "id": 542,
+            "name": "Vicious Strike_CANNIBALBLOOD"
+          }
+        ],
+        "defense": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 75,
+          "Tactical": 1,
+          "Defensive": 10,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL5",
+          "WOLF",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 28,
+      "name": "Captain Hunt",
+      "health": 40,
+      "strength": 30,
+      "magic": 30,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 554,
+            "name": "ZPCI Shell_ZPCISHELL2",
+            "turn": 3
+          }
+        ],
+        "attack": [
+          {
+            "id": 545,
+            "name": "Mark For Fire_MARKFIRE"
+          },
+          {
+            "id": 157,
+            "name": "Anesthetic_NUMB4"
+          }
+        ],
+        "defense": [
+          {
+            "id": 546,
+            "name": "Mark For Death_MARKDEATH"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 49,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 523,
+            "name": "Rebellion Striker"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "HUNT",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 29,
+      "name": "Insurgent",
+      "health": 10,
+      "strength": 10,
+      "magic": 10,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 17,
+            "name": "Poisoned Blade_POISONBLADE",
+            "turn": 0
+          },
+          {
+            "id": 18,
+            "name": "Bayonet Rush_ARTERY",
+            "turn": 0
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
+        ],
+        "defense": [
+          {
+            "id": 20,
+            "name": "Auxillary Power_AUXILLARY"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN2TAT",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 31,
+            "name": "Tat Head"
+          },
+          {
+            "id": 27,
+            "name": "Tat Shirt"
+          },
+          {
+            "id": 29,
+            "name": "Tat Glove"
+          },
+          {
+            "id": 28,
+            "name": "Tat Leggings"
+          },
+          {
+            "id": 30,
+            "name": "Tat Feet"
+          },
+          {
+            "id": 523,
+            "name": "Rebellion Striker"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 30,
+      "name": "Cult Leader",
+      "health": 60,
+      "strength": 20,
+      "magic": 20,
+      "speed": 10,
+      "focus": 300,
+      "moves": {
+        "absolute": [
+          {
+            "id": 475,
+            "name": "Retrograde_RETROGRADED",
+            "turn": 1
+          },
+          {
+            "id": 537,
+            "name": "True Form_TRUEFORM",
+            "turn": 2
+          }
+        ],
+        "attack": [
+          {
+            "id": 275,
+            "name": "Decimate_DECIMATE4"
+          },
+          {
+            "id": 271,
+            "name": "Demolish_DEMOLISH"
+          },
+          {
+            "id": 267,
+            "name": "Wreck_WRECK"
+          }
+        ],
+        "defense": [
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 521,
+            "name": "Runeblade"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "XADER2",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 31,
+      "name": "Baron Brixius",
+      "health": 600,
+      "strength": 40,
+      "magic": 40,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 538,
+            "name": "Tick Tock_TICKTOCK",
+            "turn": 1
+          },
+          {
+            "id": 539,
+            "name": "Holy Scars_HOLYSCARS",
+            "turn": 3
+          },
+          {
+            "id": 541,
+            "name": "Dark Echoes Baron_ECHOEDSCREAMS4",
+            "turn": 1
+          }
+        ],
+        "attack": [
+          {
+            "id": 540,
+            "name": "Deep Burns_DEEPBURNING"
+          }
+        ],
+        "defense": [
+          {
+            "id": 403,
+            "name": "Dark Echoes_ECHOEDSCREAMS4"
+          },
+          {
+            "id": 451,
+            "name": "Electric Discharge_EARTHED4"
+          },
+          {
+            "id": 455,
+            "name": "Epiphany_EPIPHANY4"
+          },
+          {
+            "id": 459,
+            "name": "Nightmare_WAKINGUP4"
+          },
+          {
+            "id": 466,
+            "name": "Solitary Confinement_CONFINED4"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 10,
+          "Tactical": 50,
+          "Defensive": 51,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "ZOMBIE2",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 527,
+            "name": "Unholy Runeblade"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "BaronHit1",
+            "BaronHit2",
+            "BaronHit3"
+          ],
+          "die": "BaronDie"
+        }
+      }
+    },
+    {
+      "id": 32,
+      "name": "Roald",
+      "health": 26,
+      "strength": 13,
+      "magic": 4,
+      "speed": 20,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 535,
+            "name": "Thurman Impair_SUNDER"
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          },
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
+        ],
+        "defense": [
+          {
+            "id": 536,
+            "name": "Greater Purpose_GREATERPURPOSE"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 20,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MANTAT",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 382,
+            "name": "Cloaking Helm"
+          },
+          {
+            "id": 328,
+            "name": "Dissident's Crest"
+          },
+          {
+            "id": 327,
+            "name": "Rebellious Hands"
+          },
+          {
+            "id": 329,
+            "name": "Hope's Strength"
+          },
+          {
+            "id": 326,
+            "name": "Faith Runners"
+          },
+          {
+            "id": 523,
+            "name": "Rebellion Striker"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_roald1",
+            "hit_roald2",
+            "hit_roald3"
+          ],
+          "die": "dead_roald"
+        }
+      }
+    },
+    {
+      "id": 33,
+      "name": "Frost Lord",
+      "health": 30,
+      "strength": 40,
+      "magic": 20,
+      "speed": 14,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 522,
+            "name": "Icy Doom_ICYDOOM",
+            "turn": 2
+          }
+        ],
+        "attack": [
+          {
+            "id": 500,
+            "name": "Liquid Veins_LIQUIDVEINS"
+          },
+          {
+            "id": 501,
+            "name": "Icy Blood_ICYBLOOD"
+          },
+          {
+            "id": 503,
+            "name": "Soul Strike_SOULSTRIKE"
+          },
+          {
+            "id": 504,
+            "name": "Icy Rage_ICYRAGE"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 207,
+            "name": "Hypothermia_HYPO4"
+          },
+          {
+            "id": 219,
+            "name": "Vascular Arrest_VASCULAR4"
+          },
+          {
+            "id": 211,
+            "name": "Mind Freeze_MINDFREEZE4"
+          }
+        ],
+        "defense": [
+          {
+            "id": 502,
+            "name": "Recuperate_RECUPERATE"
+          },
+          {
+            "id": 234,
+            "name": "Reconstruct_RECONSTRUCT4"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "GUARDIAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 34,
+      "name": "ZPCI Sniper",
+      "health": 20,
+      "strength": 25,
+      "magic": 25,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 544,
+            "name": "ZPCI Shell_ZPCISHELL",
+            "turn": 1
+          },
+          {
+            "id": 552,
+            "name": "Snipe Buff 1_LOCKANDLOAD",
+            "turn": 2
+          },
+          {
+            "id": 553,
+            "name": "Snipe Buff 1_CROUCH",
+            "turn": 2
+          },
+          {
+            "id": 552,
+            "name": "Snipe Buff 1_LOCKANDLOAD",
+            "turn": 3
+          },
+          {
+            "id": 553,
+            "name": "Snipe Buff 1_CROUCH",
+            "turn": 3
+          }
+        ],
+        "attack": [
+          {
+            "id": 548,
+            "name": "Snipe_0"
+          }
+        ],
+        "defense": [
+          {
+            "id": 547,
+            "name": "Shoot_0"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 522,
+            "name": "ZPCI Sniper Rifle"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "ZPCI2",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 40,
+      "name": "Spectre",
+      "health": 20,
+      "strength": 25,
+      "magic": 25,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 573,
+            "name": "Faithless_FAITHLESS",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 260,
+            "name": "Bloodshed_BLOODRUSH4"
+          },
+          {
+            "id": 572,
+            "name": "Dull Senses_DULLSENSES"
+          },
+          {
+            "id": 574,
+            "name": "Midnight Oil_MIDNIGHTOIL"
+          },
+          {
+            "id": 575,
+            "name": "Shadow Infusion_SHADOWINFUSION"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "GHOST",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 41,
+      "name": "Phantom",
+      "health": 12,
+      "strength": 5,
+      "magic": 15,
+      "speed": 12,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 452,
+            "name": "Epiphany_EPIPHANY1",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 403,
+            "name": "Dark Echoes_ECHOEDSCREAMS4"
+          },
+          {
+            "id": 436,
+            "name": "Shock Therapy_0"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ],
+        "defense": [
+          {
+            "id": 576,
+            "name": "Dark Heal_DARKHEAL"
+          },
+          {
+            "id": 425,
+            "name": "Traumatize_SHOCKTRAUMA2"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 70,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "PSYCHO",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 42,
+      "name": "Beast",
+      "health": 15,
+      "strength": 15,
+      "magic": 5,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 166,
+            "name": "Shadow Blend_SHADOWBLEND4",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 103,
+            "name": "Vicious Strike_CANNIBALBLOOD"
+          },
+          {
+            "id": 578,
+            "name": "Disrupt_DISRUPT"
+          },
+          {
+            "id": 115,
+            "name": "Cripple_DEPLETE4"
+          }
+        ],
+        "defense": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "PREDATOR",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 43,
+      "name": "Antagonist",
+      "health": 20,
+      "strength": 5,
+      "magic": 17,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 211,
+            "name": "Mind Freeze_MINDFREEZE4"
+          },
+          {
+            "id": 219,
+            "name": "Vascular Arrest_VASCULAR4"
+          },
+          {
+            "id": 223,
+            "name": "Glacier_GLACIER4"
+          },
+          {
+            "id": 203,
+            "name": "Frost_FROST4"
+          },
+          {
+            "id": 207,
+            "name": "Hypothermia_HYPO4"
+          }
+        ],
+        "defense": [
+          {
+            "id": 276,
+            "name": "Vapour Cannon_VAPOUR"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 200,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "GUARDIAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 44,
+      "name": "The Hobo",
+      "health": 60,
+      "strength": 30,
+      "magic": 25,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 555,
+            "name": "Pity_PITY",
+            "turn": 0
+          },
+          {
+            "id": 556,
+            "name": "Bad Smell_BADSMELL",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 532,
+            "name": "Black Metal_COLDSTEEL"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          },
+          {
+            "id": 577,
+            "name": "Begging Tactics_BEGGINGTACTICS"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 20,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 5,
+            "name": "A Broken Pipe"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "HOBO",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 45,
+      "name": "The Real Hobo",
+      "health": 300,
+      "strength": 100,
+      "magic": 100,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 567,
+            "name": "Diseased_HOBODISEASED"
+          },
+          {
+            "id": 568,
+            "name": "Groggy_HOBOGROGGY"
+          },
+          {
+            "id": 569,
+            "name": "Drunk_HOBODRUNK"
+          },
+          {
+            "id": 570,
+            "name": "Life_HOBOSLIFE"
+          },
+          {
+            "id": 571,
+            "name": "Clumsy_HOBOCLUMSY"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 5,
+            "name": "A Broken Pipe"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "HOBO",
+        "voice": {
+          "hit": [
+            "hit_bug1",
+            "hit_bug2",
+            "hit_bug3"
+          ],
+          "die": "dead_bug"
+        }
+      }
+    },
+    {
+      "id": 46,
+      "name": "The Host",
+      "health": 40,
+      "strength": 25,
+      "magic": 25,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 557,
+            "name": "Dark Rage_DARKRAGE",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 109,
+            "name": "Wound_WOUND2"
+          },
+          {
+            "id": 558,
+            "name": "Overdose_OVERDOSE"
+          }
+        ],
+        "defense": [
+          {
+            "id": 520,
+            "name": "Medidtate_0"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 563,
+            "name": "Ancient Katana"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "TUX",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 47,
+      "name": "Clemons The Deceiver",
+      "health": 70,
+      "strength": 27,
+      "magic": 27,
+      "speed": 10,
+      "focus": 300,
+      "moves": {
+        "absolute": [
+          {
+            "id": 559,
+            "name": "Buff 1_BUFF1",
+            "turn": 1
+          },
+          {
+            "id": 563,
+            "name": "Void_INSECURE3",
+            "turn": 2
+          },
+          {
+            "id": 564,
+            "name": "Collapse_COLLAPSE",
+            "turn": 2
+          },
+          {
+            "id": 562,
+            "name": "Shadow State_SHADOWSTATE",
+            "turn": 2
+          },
+          {
+            "id": 566,
+            "name": "True Form_TRUEFORM2",
+            "turn": 3
+          },
+          {
+            "id": 578,
+            "name": "Disrupt_DISRUPT",
+            "turn": 3
+          },
+          {
+            "id": 565,
+            "name": "Decay_DECAY",
+            "turn": 3
+          }
+        ],
+        "attack": [
+          {
+            "id": 580,
+            "name": "Shadow Nuke_0"
+          },
+          {
+            "id": 459,
+            "name": "Nightmare_WAKINGUP4"
+          },
+          {
+            "id": 436,
+            "name": "Shock Therapy_0"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 130,
+          "Shadow": 130,
+          "Earth": 130,
+          "Lightning": 130,
+          "Fire": 130,
+          "Ice": 130,
+          "Magic": 130,
+          "Physical": 130
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "GHOST",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 565,
+            "name": "Devil Blade"
+          },
+          {
+            "id": 566,
+            "name": "Demon Blade"
+          }
+        ],
+        "skin": "CLEMONS",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 48,
+      "name": "Louis the Blind",
+      "health": 100,
+      "strength": 10,
+      "magic": 10,
+      "speed": 16,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 0,
+            "name": "None_0"
+          }
+        ],
+        "defense": [
+          {
+            "id": 0,
+            "name": "None_0"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "BART",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 11,
+            "name": "White T-shirt"
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 4,
+            "name": "Levo Jeans"
+          },
+          {
+            "id": 8,
+            "name": "Proverse All Stars"
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 49,
+      "name": "Metabii",
+      "health": 7,
+      "strength": 20,
+      "magic": 20,
+      "speed": 6,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 132,
+            "name": "Enrage_BERSERK3"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "METABII",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 12,
+            "name": "Stick"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_zombie1",
+            "hit_zombie2",
+            "hit_zombie3"
+          ],
+          "die": "dead_zombie"
+        }
+      }
+    },
+    {
+      "id": 50,
+      "name": "Tunnel Beast",
+      "health": 40,
+      "strength": 32,
+      "magic": 20,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 600,
+            "name": "Jugular Grasp_JUGULARGRASP",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 126,
+            "name": "Animalism_ANIMALISM1"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 542,
+            "name": "Vicious Strike_CANNIBALBLOOD"
+          },
+          {
+            "id": 424,
+            "name": "Traumatize_SHOCKTRAUMA1"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 150
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 150
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL6",
+          "BEAST",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 51,
+      "name": "Vivian Vixen",
+      "health": 2,
+      "strength": 45,
+      "magic": 45,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 613,
+            "name": "Vulpes Dolosus_VULPESDOLOSUS",
+            "turn": 1
+          },
+          {
+            "id": 617,
+            "name": "Lupine Recovery_FOXFORM",
+            "turn": 2
+          }
+        ],
+        "attack": [
+          {
+            "id": 616,
+            "name": "Cunning Gambit_CUNNINGGAMBIT"
+          },
+          {
+            "id": 615,
+            "name": "Infected Wound_INFECTEDWOUND"
+          },
+          {
+            "id": 614,
+            "name": "Lupine Bleed_LUPINEBLEED"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL4",
+          "VIV",
+          "",
+          "F"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 565,
+            "name": "Devil Blade"
+          },
+          {
+            "id": 566,
+            "name": "Demon Blade"
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 52,
+      "name": "Gregor",
+      "health": 23,
+      "strength": 35,
+      "magic": 35,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 603,
+            "name": "Roach Vitality_ROACHVITALITY",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 601,
+            "name": "Pity_PITY2"
+          },
+          {
+            "id": 602,
+            "name": "Apple Throw_APPLETHROW"
+          },
+          {
+            "id": 415,
+            "name": "Terrify_SCHADENFREUDE4"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL7",
+          "GREGOR",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_bug1",
+            "hit_bug2",
+            "hit_bug3"
+          ],
+          "die": "dead_bug"
+        }
+      }
+    },
+    {
+      "id": 53,
+      "name": "Shunny",
+      "health": 30,
+      "strength": 35,
+      "magic": 35,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 10,
+            "name": "Dux Electro_0"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 455,
+            "name": "Epiphany_EPIPHANY4"
+          },
+          {
+            "id": 223,
+            "name": "Glacier_GLACIER4"
+          },
+          {
+            "id": 542,
+            "name": "Vicious Strike_CANNIBALBLOOD"
+          },
+          {
+            "id": 415,
+            "name": "Terrify_SCHADENFREUDE4"
+          },
+          {
+            "id": 115,
+            "name": "Cripple_DEPLETE4"
+          },
+          {
+            "id": 578,
+            "name": "Disrupt_DISRUPT"
+          }
+        ],
+        "defense": [
+          {
+            "id": 125,
+            "name": "Reform_REFORM3"
+          },
+          {
+            "id": 534,
+            "name": "Withdrawl_REFORM4"
+          },
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 30,
+          "Tactical": 20,
+          "Defensive": 40,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "ONE",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 4,
+            "name": "Levo Jeans"
+          },
+          {
+            "id": 8,
+            "name": "Proverse All Stars"
+          },
+          {
+            "id": 5,
+            "name": "A Broken Pipe"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_sonny1",
+            "hit_sonny2",
+            "hit_sonny3"
+          ],
+          "die": "dead_sonny"
+        }
+      }
+    },
+    {
+      "id": 54,
+      "name": "The Magical Monkey",
+      "health": 30,
+      "strength": 50,
+      "magic": 50,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 611,
+            "name": "Banana Lure_BANANALURE"
+          },
+          {
+            "id": 612,
+            "name": "Spire_SPIRE"
+          },
+          {
+            "id": 547,
+            "name": "Shoot_0"
+          },
+          {
+            "id": 10,
+            "name": "Dux Electro_0"
+          }
+        ],
+        "defense": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 30,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL6",
+          "APE",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 55,
+      "name": "Mokoshotar",
+      "health": 210,
+      "strength": 37,
+      "magic": 37,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 623,
+            "name": "Werezombie_WEREWOLF",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 628,
+            "name": "Wicked Claws_WICKEDCLAWS"
+          },
+          {
+            "id": 624,
+            "name": "Rake_RAKE"
+          },
+          {
+            "id": 625,
+            "name": "Canine Instincts_CANINEINSTINCTS"
+          },
+          {
+            "id": 626,
+            "name": "Howl of the Ancestors_HOWLOFTHEANCESTORS"
+          },
+          {
+            "id": 627,
+            "name": "Iron Jaws_IRONJAWS"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 30,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 150,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL5",
+          "MOKO",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 56,
+      "name": "Bunny",
+      "health": 150,
+      "strength": 65,
+      "magic": 65,
+      "speed": 17,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 618,
+            "name": "Holy Hand Grenade of Antioch_HOLYHANDGRENADEOFANTIOCH",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 619,
+            "name": "Fuzzy Inside_FUZZYINSIDE"
+          },
+          {
+            "id": 620,
+            "name": "Vicious Paws_VICIOUSPAWS"
+          },
+          {
+            "id": 621,
+            "name": "Failing Courage_FAILINGCOURAGE"
+          },
+          {
+            "id": 622,
+            "name": "Inconspicious_VICIOUSPAWS"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 30,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL7",
+          "BUNNY",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [],
+          "die": {
+            "type": "Undefined"
+          }
+        }
+      }
+    },
+    {
+      "id": 57,
+      "name": "Flower Zombie",
+      "health": 30,
+      "strength": 35,
+      "magic": 35,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 604,
+            "name": "Flower Power_FLOWERPOWER"
+          },
+          {
+            "id": 605,
+            "name": "Perfume_PERFUME"
+          },
+          {
+            "id": 606,
+            "name": "Peace and Love_PEACEANDLOVE"
+          },
+          {
+            "id": 607,
+            "name": "Good Trip_GOODTRIP"
+          },
+          {
+            "id": 608,
+            "name": "Bad Trip_BADTRIP"
+          },
+          {
+            "id": 609,
+            "name": "Feel da Reggae_FEELDAREGGAE"
+          },
+          {
+            "id": 610,
+            "name": "Tie Dye_TIEDYE"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 30,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "ZOMBIE1",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 33,
+            "name": "Gay Hat"
+          },
+          {
+            "id": 26,
+            "name": "Piercing"
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 32,
+            "name": "Gay Pants/Feet"
+          },
+          {
+            "id": 32,
+            "name": "Gay Pants/Feet"
+          },
+          {
+            "id": 5,
+            "name": "A Broken Pipe"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_sonny1",
+            "hit_sonny2",
+            "hit_sonny3"
+          ],
+          "die": "dead_sonny"
+        }
+      }
+    },
+    {
+      "id": 58,
+      "name": "The Hydra",
+      "health": 52,
+      "strength": 32,
+      "magic": 32,
+      "speed": 13,
+      "focus": 130,
+      "moves": {
+        "absolute": [
+          {
+            "id": 630,
+            "name": "Burning Acid_BURNINGACID",
+            "turn": 1
+          },
+          {
+            "id": 631,
+            "name": "Potent Toxin_POTENTTOXIN",
+            "turn": 2
+          },
+          {
+            "id": 632,
+            "name": "Epinephrine_EPIN",
+            "turn": 3
+          },
+          {
+            "id": 633,
+            "name": "Heart Attack_HEARTATTACK",
+            "turn": 3
+          }
+        ],
+        "attack": [
+          {
+            "id": 141,
+            "name": "Corrosion_CAUTERIZE4"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 635,
+            "name": "Infect Hydra_CONTAMINATE2"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          }
+        ],
+        "defense": [
+          {
+            "id": 634,
+            "name": "Medidtate Hydra_0"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 25,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 250,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 320,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 320,
+          "Fire": 100,
+          "Ice": 320,
+          "Magic": 100,
+          "Physical": 75
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL8",
+          "HYDRA",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 59,
+      "name": "Fire Claw",
+      "health": 15,
+      "strength": 8,
+      "magic": 8,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 629,
+            "name": "Fireball_FIREBURN"
+          }
+        ],
+        "defense": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 15,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 150,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 15,
+          "Shadow": 450,
+          "Earth": 450,
+          "Lightning": 20,
+          "Fire": 450,
+          "Ice": 20,
+          "Magic": 450,
+          "Physical": 180
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL8",
+          "HYDRA2",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 60,
+      "name": "Tunnel Worker",
+      "health": 10,
+      "strength": 10,
+      "magic": 10,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ],
+        "defense": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 15,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 150,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 20,
+          "Shadow": 20,
+          "Earth": 450,
+          "Lightning": 450,
+          "Fire": 450,
+          "Ice": 20,
+          "Magic": 450,
+          "Physical": 450
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 380,
+            "name": "Mining Helmet"
+          },
+          {
+            "id": 381,
+            "name": "Mining Shirt"
+          },
+          {
+            "id": 9,
+            "name": "Engineering Gloves"
+          },
+          {
+            "id": 4,
+            "name": "Levo Jeans"
+          },
+          {
+            "id": 10,
+            "name": "Navy Boots"
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 61,
+      "name": "Police Colonel",
+      "health": 210,
+      "strength": 13,
+      "magic": 6,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 764,
+            "name": "Preparation_PREPARATION",
+            "turn": 1
+          },
+          {
+            "id": 763,
+            "name": "Planned Assault_PLANNEDASSAULT",
+            "turn": 2
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK",
+            "turn": 2
+          },
+          {
+            "id": 766,
+            "name": "Cover Fire_COVERFIRE2",
+            "turn": 2
+          },
+          {
+            "id": 755,
+            "name": "Honor and Duty_HONORDUTY",
+            "turn": 2
+          },
+          {
+            "id": 762,
+            "name": "Freeze Police_FREEZEPOLICE",
+            "turn": 2
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN",
+            "turn": 2
+          },
+          {
+            "id": 759,
+            "name": "Donuts_DONUTS",
+            "turn": 2
+          },
+          {
+            "id": 764,
+            "name": "Preparation_PREPARATION",
+            "turn": 4
+          }
+        ],
+        "attack": [
+          {
+            "id": 765,
+            "name": "Heavy Guns_HEAVYGUNS"
+          }
+        ],
+        "defense": [
+          {
+            "id": 759,
+            "name": "Donuts_DONUTS"
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK"
+          },
+          {
+            "id": 762,
+            "name": "Freeze Police_FREEZEPOLICE"
+          },
+          {
+            "id": 760,
+            "name": "Sweep Clean_SWEEPCLEAN"
+          },
+          {
+            "id": 767,
+            "name": "Seek and Destroy_SEEKDESTROY"
+          },
+          {
+            "id": 766,
+            "name": "Cover Fire_COVERFIRE2"
+          },
+          {
+            "id": 755,
+            "name": "Honor and Duty_HONORDUTY"
+          },
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 35,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 649,
+            "name": "Supremacy"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "IMPERIAL2",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 62,
+      "name": "Secret Police",
+      "health": 30,
+      "strength": 27,
+      "magic": 15,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 723,
+            "name": "Assault Tactics_SPASSAULTTACTICS"
+          },
+          {
+            "id": 725,
+            "name": "Forceful Entry_SPFORCEFULENTRY"
+          },
+          {
+            "id": 726,
+            "name": "Expose Enemy_SPEXPOSE"
+          },
+          {
+            "id": 728,
+            "name": "Surprise Shot_PSURPRISESHOT"
+          },
+          {
+            "id": 734,
+            "name": "Snipe_0"
+          },
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
+        ],
+        "defense": [
+          {
+            "id": 722,
+            "name": "Body Armour_SPBODYARMOUR"
+          },
+          {
+            "id": 735,
+            "name": "Recovery_SRECOVERY"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 30,
+          "Defensive": 65,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 648,
+            "name": "Imperial Rifle"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "IMPERIAL",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 63,
+      "name": "Riot Police",
+      "health": 25,
+      "strength": 28,
+      "magic": 20,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 732,
+            "name": "Perfect Aim_SPERFECTAIM"
+          },
+          {
+            "id": 733,
+            "name": "Shrapnel_SSHRAPNEL"
+          },
+          {
+            "id": 736,
+            "name": "Cover Fire_SCOVERFIRE"
+          },
+          {
+            "id": 731,
+            "name": "Setup_PSETUP"
+          },
+          {
+            "id": 730,
+            "name": "Night Stick_PNIGHTSTICK"
+          },
+          {
+            "id": 729,
+            "name": "Pepper Spray_PPEPPERSPRAY"
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK"
+          },
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
+        ],
+        "defense": [
+          {
+            "id": 727,
+            "name": "First Aid_PFIRSTAID"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 15,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 647,
+            "name": "Riot Gun"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "POLICE",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 64,
+      "name": "Specialist",
+      "health": 20,
+      "strength": 10,
+      "magic": 10,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 716,
+            "name": "Distract_DISTRACT"
+          },
+          {
+            "id": 717,
+            "name": "Chloroform_ICHLOROFORM"
+          },
+          {
+            "id": 718,
+            "name": "Digitalis_IDIGITALIS"
+          },
+          {
+            "id": 719,
+            "name": "Ricin_IRICIN"
+          },
+          {
+            "id": 720,
+            "name": "Cyanide_ICYANIDE"
+          },
+          {
+            "id": 532,
+            "name": "Black Metal_COLDSTEEL"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          },
+          {
+            "id": 523,
+            "name": "Gouge_BREAK"
+          },
+          {
+            "id": 721,
+            "name": "Antidote_IANTIDOTE"
+          }
+        ],
+        "defense": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 651,
+            "name": "Crimson Blade"
+          },
+          {
+            "id": 651,
+            "name": "Crimson Blade"
+          }
+        ],
+        "skin": "SINJID",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 65,
+      "name": "Blood Hound",
+      "health": 20,
+      "strength": 33,
+      "magic": 30,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 701,
+            "name": "Rabies_RABIES"
+          },
+          {
+            "id": 702,
+            "name": "Overexertion_OVEREXERTION"
+          },
+          {
+            "id": 703,
+            "name": "Debilitated_DEBILITATED"
+          },
+          {
+            "id": 107,
+            "name": "Wound_WOUND2"
+          }
+        ],
+        "defense": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          },
+          {
+            "id": 122,
+            "name": "Adrenaline_ADRENALINE3"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL5",
+          "DOG",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 66,
+      "name": "Care Taker",
+      "health": 20,
+      "strength": 12,
+      "magic": 12,
+      "speed": 10,
+      "focus": 120,
+      "moves": {
+        "absolute": [
+          {
+            "id": 704,
+            "name": "Caretaker_CARETAKER",
+            "turn": 0
+          },
+          {
+            "id": 705,
+            "name": "Sic_SIC",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 706,
+            "name": "Whiplash_WHIPLASH"
+          },
+          {
+            "id": 107,
+            "name": "Wound_WOUND2"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 647,
+            "name": "Riot Gun"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "POLICE2",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 67,
+      "name": "Android Guard",
+      "health": 17,
+      "strength": 12,
+      "magic": 25,
+      "speed": 10,
+      "focus": 250,
+      "moves": {
+        "absolute": [
+          {
+            "id": 710,
+            "name": "Strength Shield_SHIELDSTR",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 714,
+            "name": "Analysis_ANALYSIS"
+          },
+          {
+            "id": 713,
+            "name": "Spiritfist_SPIRITFIST"
+          },
+          {
+            "id": 712,
+            "name": "Ironfist_IRONFIST"
+          },
+          {
+            "id": 223,
+            "name": "Glacier_GLACIER4"
+          },
+          {
+            "id": 514,
+            "name": "Prayer_PRAYER"
+          }
+        ],
+        "defense": [
+          {
+            "id": 510,
+            "name": "Guardian_GUARDIAN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 49,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 70,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 656,
+            "name": "Azure Flatblade"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "ROBOT",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 68,
+      "name": "City Council",
+      "health": 15,
+      "strength": 19,
+      "magic": 28,
+      "speed": 10,
+      "focus": 2000,
+      "moves": {
+        "absolute": [
+          {
+            "id": 777,
+            "name": "Council Shield_VETO",
+            "turn": 1
+          },
+          {
+            "id": 778,
+            "name": "Coucil Enrage_AMEND",
+            "turn": 2
+          }
+        ],
+        "attack": [
+          {
+            "id": 779,
+            "name": "Coucil Nuke_PRESTIGE"
+          }
+        ],
+        "defense": [
+          {
+            "id": 738,
+            "name": "Be Seated_BESEATED"
+          },
+          {
+            "id": 742,
+            "name": "Force of Justice_FORCEOFJUSTICE"
+          },
+          {
+            "id": 743,
+            "name": "In Contempt_INCONTEMPT"
+          },
+          {
+            "id": 745,
+            "name": "Condemn_CONDEMN"
+          },
+          {
+            "id": 746,
+            "name": "Sentence_SENTENCE"
+          },
+          {
+            "id": 747,
+            "name": "Judge's Hammer_JUDGESHAMMER"
+          },
+          {
+            "id": 748,
+            "name": "Justice Done_JUSTICEDONE"
+          },
+          {
+            "id": 749,
+            "name": "Justice be Done_JUSTICEBEDONE"
+          },
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 35,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 650,
+            "name": "Law Binder"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "PRIEST3",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 69,
+      "name": "Mayor",
+      "health": 60,
+      "strength": 13,
+      "magic": 28,
+      "speed": 15,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED",
+            "turn": 1
+          },
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED",
+            "turn": 2
+          },
+          {
+            "id": 768,
+            "name": "Mayor Enrage_MAYORENRAGE",
+            "turn": 3
+          },
+          {
+            "id": 782,
+            "name": "Un-Enrage_0",
+            "turn": 4
+          },
+          {
+            "id": 770,
+            "name": "Block Healing_BLOCKHEALING",
+            "turn": 4
+          },
+          {
+            "id": 771,
+            "name": "Block Damage_BLOCKDAMAGE",
+            "turn": 4
+          },
+          {
+            "id": 769,
+            "name": "Team Sacrifice_TEAMSACRIFICE",
+            "turn": 4
+          },
+          {
+            "id": 475,
+            "name": "Retrograde_RETROGRADED",
+            "turn": 5
+          }
+        ],
+        "attack": [
+          {
+            "id": 773,
+            "name": "Justice_JUSTICE"
+          },
+          {
+            "id": 774,
+            "name": "Peace_PEACE"
+          },
+          {
+            "id": 775,
+            "name": "Unity_UNITY"
+          },
+          {
+            "id": 776,
+            "name": "Equality_EQUALITY"
+          }
+        ],
+        "defense": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          },
+          {
+            "id": 772,
+            "name": "Magistrate_MAGISTRATE"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 654,
+            "name": "Plasma Rod"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "PRIEST4",
+        "voice": {
+          "hit": [
+            "hit_mayor1",
+            "hit_mayor2",
+            "hit_mayor3"
+          ],
+          "die": "dead_mayor"
+        }
+      }
+    },
+    {
+      "id": 70,
+      "name": "Guardian Cannon",
+      "health": 15,
+      "strength": 15,
+      "magic": 15,
+      "speed": 5,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 781,
+            "name": "Robot Shield_VETO",
+            "turn": 1
+          },
+          {
+            "id": 780,
+            "name": "Robot Mana Bomb_NOMANALEFT",
+            "turn": 2
+          },
+          {
+            "id": 780,
+            "name": "Robot Mana Bomb_NOMANALEFT",
+            "turn": 3
+          },
+          {
+            "id": 780,
+            "name": "Robot Mana Bomb_NOMANALEFT",
+            "turn": 4
+          }
+        ],
+        "attack": [
+          {
+            "id": 276,
+            "name": "Vapour Cannon_VAPOUR"
+          }
+        ],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 35,
+          "Tactical": 0,
+          "Defensive": 1,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL8",
+          "HYDRA3",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_monster1",
+            "hit_monster2",
+            "hit_monster3"
+          ],
+          "die": "dead_monster"
+        }
+      }
+    },
+    {
+      "id": 71,
+      "name": "Felicity",
+      "health": 15,
+      "strength": 25,
+      "magic": 15,
+      "speed": 25,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 533,
+            "name": "Throw Knife_KNIFEFACE"
+          },
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          },
+          {
+            "id": 763,
+            "name": "Planned Assault_PLANNEDASSAULT"
+          },
+          {
+            "id": 136,
+            "name": "Acid Slash_IRRITATE4"
+          },
+          {
+            "id": 523,
+            "name": "Gouge_BREAK"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          }
+        ],
+        "defense": [
+          {
+            "id": 531,
+            "name": "Blade Shield_BLADESHIELD"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 10,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL4",
+          "FEL",
+          "",
+          "F"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 22,
+            "name": "Felicity's Knife"
+          },
+          {
+            "id": 22,
+            "name": "Felicity's Knife"
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 72,
+      "name": "ZPCI Ambassador",
+      "health": 25,
+      "strength": 25,
+      "magic": 1,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 16,
+            "name": "Aim For The Heart_HEART",
+            "turn": 0
+          },
+          {
+            "id": 17,
+            "name": "Poisoned Blade_POISONBLADE",
+            "turn": 0
+          },
+          {
+            "id": 18,
+            "name": "Bayonet Rush_ARTERY",
+            "turn": 0
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK",
+            "turn": 0
+          }
+        ],
+        "attack": [
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
+        ],
+        "defense": [
+          {
+            "id": 20,
+            "name": "Auxillary Power_AUXILLARY"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 50,
+          "Defensive": 80,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 13,
+            "name": "M4"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "ZPCI",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 73,
+      "name": "Metal Warden",
+      "health": 60,
+      "strength": 47,
+      "magic": 10,
+      "speed": 13,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 11,
+            "name": "Chains Of Justice_CHAINS",
+            "turn": 1
+          },
+          {
+            "id": 12,
+            "name": "Isolate_SOLITARY",
+            "turn": 2
+          },
+          {
+            "id": 785,
+            "name": "Drop A Soap2_PICKTHESOAP2",
+            "turn": 2
+          },
+          {
+            "id": 14,
+            "name": "Death Sentence_DEATHSENTENCE",
+            "turn": 3
+          }
+        ],
+        "attack": [
+          {
+            "id": 15,
+            "name": "Heavy Punishment_HEAVYPUNISHMENT"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 60,
+          "Defensive": 61,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 679,
+            "name": "Platinum Baton"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "JASON4",
+        "voice": {
+          "hit": [
+            "hit_human1",
+            "hit_human2",
+            "hit_human3"
+          ],
+          "die": "dead_human"
+        }
+      }
+    },
+    {
+      "id": 74,
+      "name": "The Bomb",
+      "health": 250,
+      "strength": 1,
+      "magic": 1,
+      "speed": 1,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 0,
+            "name": "None_0"
+          }
+        ],
+        "defense": [
+          {
+            "id": 0,
+            "name": "None_0"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 60,
+          "Defensive": 61,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL9",
+          "",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 75,
+      "name": "Nostalgia",
+      "health": 55,
+      "strength": 25,
+      "magic": 10,
+      "speed": 9,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 786,
+            "name": "Fate_FATE",
+            "turn": 1
+          },
+          {
+            "id": 787,
+            "name": "Shell Aura_SHELLAURA",
+            "turn": 2
+          },
+          {
+            "id": 788,
+            "name": "Dark Omen_DARKOMEN",
+            "turn": 3
+          },
+          {
+            "id": 782,
+            "name": "Un-Enrage_0",
+            "turn": 4
+          },
+          {
+            "id": 780,
+            "name": "Robot Mana Bomb_NOMANALEFT",
+            "turn": 5
+          },
+          {
+            "id": 791,
+            "name": "Big Heal_0",
+            "turn": 6
+          }
+        ],
+        "attack": [
+          {
+            "id": 790,
+            "name": "Pre Fate 2_PREFATE"
+          },
+          {
+            "id": 789,
+            "name": "Pre Fate_PREFATE"
+          }
+        ],
+        "defense": [
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          },
+          {
+            "id": 107,
+            "name": "Wound_WOUND2"
+          },
+          {
+            "id": 119,
+            "name": "Exposure_EXPOSED3"
+          },
+          {
+            "id": 110,
+            "name": "Disrupt_DISRUPT"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 55,
+          "Tactical": 75,
+          "Defensive": 76,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 675,
+            "name": "Temporal Blade"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "NOS",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 76,
+      "name": "The Judge",
+      "health": 35,
+      "strength": 35,
+      "magic": 10,
+      "speed": 8,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 792,
+            "name": "Apprehend_APPREHEND",
+            "turn": 1
+          }
+        ],
+        "attack": [
+          {
+            "id": 796,
+            "name": "Persecute_PERSECUTE"
+          },
+          {
+            "id": 793,
+            "name": "Pursuit_PURSUIT"
+          },
+          {
+            "id": 794,
+            "name": "Solid Evidence_SOLIDEVIDENCE"
+          },
+          {
+            "id": 795,
+            "name": "Investigate_INVESTIGATE"
+          }
+        ],
+        "defense": [
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL4",
+          "FIR",
+          "",
+          "F"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 676,
+            "name": "Azure Knife"
+          },
+          {
+            "id": 676,
+            "name": "Azure Knife"
+          }
+        ],
+        "skin": "FIR",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 77,
+      "name": "Peace Keeper",
+      "health": 8,
+      "strength": 12,
+      "magic": 12,
+      "speed": 7,
+      "focus": 100,
+      "moves": {
+        "absolute": [],
+        "attack": [
+          {
+            "id": 732,
+            "name": "Perfect Aim_SPERFECTAIM"
+          },
+          {
+            "id": 733,
+            "name": "Shrapnel_SSHRAPNEL"
+          },
+          {
+            "id": 736,
+            "name": "Cover Fire_SCOVERFIRE"
+          },
+          {
+            "id": 731,
+            "name": "Setup_PSETUP"
+          },
+          {
+            "id": 730,
+            "name": "Night Stick_PNIGHTSTICK"
+          },
+          {
+            "id": 729,
+            "name": "Pepper Spray_PPEPPERSPRAY"
+          },
+          {
+            "id": 19,
+            "name": "Shoot_SHELLSHOCK"
+          },
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
+        ],
+        "defense": [
+          {
+            "id": 727,
+            "name": "First Aid_PFIRSTAID"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 50,
+          "Tactical": 15,
+          "Defensive": 50,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "ONE",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 647,
+            "name": "Riot Gun"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "POLICE",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 78,
+      "name": "Doctor Klima",
+      "health": 5000,
+      "strength": 90,
+      "magic": 90,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 784,
+            "name": "Klima Heal_0",
+            "turn": 2
+          }
+        ],
+        "attack": [
+          {
+            "id": 455,
+            "name": "Epiphany_EPIPHANY4"
+          },
+          {
+            "id": 443,
+            "name": "Insecurity_INSECURE3"
+          },
+          {
+            "id": 145,
+            "name": "Envenom_POISON4"
+          },
+          {
+            "id": 149,
+            "name": "Infect_CONTAMINATE4"
+          },
+          {
+            "id": 141,
+            "name": "Corrosion_CAUTERIZE4"
+          },
+          {
+            "id": 578,
+            "name": "Disrupt_DISRUPT"
+          }
+        ],
+        "defense": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 70,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 681,
+            "name": "Golden Crowbar"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "KLIMA",
+        "voice": {
+          "hit": [
+            "hit_doc1",
+            "hit_doc2",
+            "hit_doc3"
+          ],
+          "die": "dead_doc"
+        }
+      }
+    },
+    {
+      "id": 79,
+      "name": "North Guardian",
+      "health": 25,
+      "strength": 17,
+      "magic": 17,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 800,
+            "name": "Guardian Shield_TWINGUARDIANS",
+            "turn": 1
+          },
+          {
+            "id": 798,
+            "name": "Super Heal_0",
+            "turn": 2
+          },
+          {
+            "id": 799,
+            "name": "Kill_0",
+            "turn": 3
+          }
+        ],
+        "attack": [
+          {
+            "id": 111,
+            "name": "Disrupt_DISRUPT"
+          },
+          {
+            "id": 524,
+            "name": "Garrote_SILENCED"
+          },
+          {
+            "id": 115,
+            "name": "Cripple_DEPLETE4"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 200,
+          "Shadow": 200,
+          "Earth": 200,
+          "Lightning": 200,
+          "Fire": 200,
+          "Ice": 200,
+          "Magic": 200,
+          "Physical": 200
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 719,
+            "name": "Guardian Sword"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "ROBOT2",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 80,
+      "name": "South Guardian",
+      "health": 25,
+      "strength": 17,
+      "magic": 17,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 800,
+            "name": "Guardian Shield_TWINGUARDIANS",
+            "turn": 1
+          },
+          {
+            "id": 797,
+            "name": "Super Nuke_0",
+            "turn": 2
+          },
+          {
+            "id": 799,
+            "name": "Kill_0",
+            "turn": 3
+          }
+        ],
+        "attack": [
+          {
+            "id": 256,
+            "name": "Impair_IMPAIR4"
+          },
+          {
+            "id": 260,
+            "name": "Bloodshed_BLOODRUSH4"
+          },
+          {
+            "id": 132,
+            "name": "Enrage_BERSERK3"
+          }
+        ],
+        "defense": [
+          {
+            "id": 9,
+            "name": "Dux Leading Strike_PREPARED_DUX"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 65,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 719,
+            "name": "Guardian Sword"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "ROBOT2",
+        "voice": {
+          "hit": [
+            "hit_zpci1",
+            "hit_zpci2",
+            "hit_zpci3"
+          ],
+          "die": "dead_zpci"
+        }
+      }
+    },
+    {
+      "id": 81,
+      "name": "Yosuke",
+      "health": 20,
+      "strength": 15,
+      "magic": 15,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 801,
+            "name": "Fire Shield_FIRESAM",
+            "turn": 1
+          }
+        ],
+        "attack": [
+          {
+            "id": 802,
+            "name": "Fire Strike_FIRESAM2"
+          }
+        ],
+        "defense": [
+          {
+            "id": 2,
+            "name": "Auto Swing_AUTOREGEN"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 60,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL1",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 720,
+            "name": "Flame Katana"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "FIRESAM",
+        "voice": {
+          "hit": [
+            "hit_twisted1",
+            "hit_twisted2",
+            "hit_twisted3"
+          ],
+          "die": "dead_twisted"
+        }
+      }
+    },
+    {
+      "id": 82,
+      "name": "Orb of Restraint",
+      "health": 51,
+      "strength": 15,
+      "magic": 15,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 803,
+            "name": "Flawed Design_FINAL_FLAWED",
+            "turn": 1
+          },
+          {
+            "id": 804,
+            "name": "Aura of Restraint_FINAL_RESTRAINT",
+            "turn": 2
+          }
+        ],
+        "attack": [
+          {
+            "id": 798,
+            "name": "Super Heal_0"
+          }
+        ],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 60,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL2",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 720,
+            "name": "Flame Katana"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 83,
+      "name": "Orb of Sanctuary",
+      "health": 14,
+      "strength": 15,
+      "magic": 15,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 805,
+            "name": "Salvation Aura_FINAL_SALV",
+            "turn": 1
+          }
+        ],
+        "attack": [
+          {
+            "id": 806,
+            "name": "Savlation Heal_GREATERPURPOSE"
+          }
+        ],
+        "defense": []
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 60,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL2",
+          "MAN",
+          "MAD",
+          "M"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 720,
+            "name": "Flame Katana"
+          },
+          {
+            "id": 0
+          }
+        ],
+        "skin": "0",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    },
+    {
+      "id": 84,
+      "name": "Versu the Corruptor",
+      "health": 40,
+      "strength": 10,
+      "magic": 5,
+      "speed": 10,
+      "focus": 100,
+      "moves": {
+        "absolute": [
+          {
+            "id": 807,
+            "name": "Wrath Aura_FINAL_WRATH",
+            "turn": 2
+          }
+        ],
+        "attack": [
+          {
+            "id": 532,
+            "name": "Black Metal_COLDSTEEL"
+          }
+        ],
+        "defense": [
+          {
+            "id": 1,
+            "name": "Leading Strike_PREPARED"
+          }
+        ]
+      },
+      "stats": {
+        "aggression": {
+          "Relentless": 15,
+          "Aggressive": 100,
+          "Tactical": 1,
+          "Defensive": 2,
+          "Phalanx": 50
+        },
+        "piercing": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        },
+        "defense": {
+          "Poison": 100,
+          "Shadow": 100,
+          "Earth": 100,
+          "Lightning": 100,
+          "Fire": 100,
+          "Ice": 100,
+          "Magic": 100,
+          "Physical": 100
+        }
+      },
+      "visuals": {
+        "model": [
+          "MODEL4",
+          "FIR2",
+          "",
+          "F"
+        ],
+        "equipment": [
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 0
+          },
+          {
+            "id": 721,
+            "name": "Fire Sword"
+          },
+          {
+            "id": 721,
+            "name": "Fire Sword"
+          }
+        ],
+        "skin": "FIR2",
+        "voice": {
+          "hit": [
+            "hit_fel1",
+            "hit_fel2",
+            "hit_fel3"
+          ],
+          "die": "dead_fel"
+        }
+      }
+    }
+  ]
+}

@@ -40,7 +40,6 @@ var _tree_buttons: Array[Button] = []
 var _tree_rank_labels: Array[Label] = []
 @onready var _tree_lines: Control = $TreeLines
 var _socket_buttons: Array[Button] = []
-var _socket_icons: Array[TextureRect] = []
 @onready var _pool_rows: Array[AbilityPoolRow] = [
 	$PoolRows/PoolRow0, $PoolRows/PoolRow1, $PoolRows/PoolRow2, $PoolRows/PoolRow3, $PoolRows/PoolRow4,
 ]
@@ -98,10 +97,9 @@ func _build_tree_panel() -> void:
 
 # The wheel's 8 sockets sit on a circular (non-uniform) pitch and their style
 # is 100% data-dependent - recomputed every refresh() from whichever move is
-# currently equipped - unlike the talent tree nodes, there is no static
-# content here to extract into the scene, so this stays code-driven by
-# design. The icon is a child TextureRect (not Button.icon) so it can carry
-# its own IconTint material independent of the button's own stylebox.
+# currently equipped, with no reusable child structure (a bare Button, no
+# label overlay) - unlike the talent tree nodes, there is no static content
+# here to extract into the scene, so this stays code-driven by design.
 func _build_wheel_panel() -> void:
 	for i in WHEEL_OFFSETS.size():
 		var socket: Button = Button.new()
@@ -112,19 +110,8 @@ func _build_wheel_panel() -> void:
 		socket.mouse_entered.connect(_on_socket_hovered.bind(i))
 		socket.mouse_exited.connect(_tooltip.hide)
 		_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24))
-		var icon_rect: TextureRect = TextureRect.new()
-		icon_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-		icon_rect.offset_left = 4.0
-		icon_rect.offset_top = 4.0
-		icon_rect.offset_right = -4.0
-		icon_rect.offset_bottom = -4.0
-		icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		socket.add_child(icon_rect)
 		add_child(socket)
 		_socket_buttons.append(socket)
-		_socket_icons.append(icon_rect)
 
 
 func _style_circle_button(button: Button, bg: Color, border: Color) -> void:
@@ -175,7 +162,6 @@ func _refresh_tree(save: PlayerSave) -> void:
 		var icon_rect: TextureRect = button.get_node("IconRect")
 		var icon_path: String = "%s%s.png" % [ICON_DIR, _tree_node_icon_key(node)]
 		icon_rect.texture = load(icon_path) if ResourceLoader.exists(icon_path) else null
-		icon_rect.material = IconTint.material(color)
 
 
 func _node_color(_save: PlayerSave, _node_index: int, node: Dictionary) -> Color:
@@ -230,18 +216,18 @@ func _on_tree_node_hovered(node_index: int) -> void:
 func _refresh_wheel(save: PlayerSave) -> void:
 	for i in _socket_buttons.size():
 		var socket: Button = _socket_buttons[i]
-		var icon_rect: TextureRect = _socket_icons[i]
 		var move_id: int = int(save.move_matrix[i]) if i < save.move_matrix.size() else 0
 		if move_id == 0:
-			icon_rect.texture = null
+			socket.icon = null
 			socket.tooltip_text = "Empty slot"
 			_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24))
 			continue
 		var move: Ability = MoveManagerAuto.get_move(move_id)
 		var color: Color = _move_color(move)
 		var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name if move != null else "")]
-		icon_rect.texture = load(icon_path) if ResourceLoader.exists(icon_path) else null
-		icon_rect.material = IconTint.material(color)
+		socket.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null
+		socket.expand_icon = true
+		socket.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		socket.tooltip_text = ""
 		_style_circle_button(socket, color.darkened(0.45), color)
 
@@ -280,7 +266,7 @@ func _refresh_pool(save: PlayerSave) -> void:
 			continue
 		var move: Ability = MoveManagerAuto.get_move(_pool_move_ids[pool_index])
 		var icon_key: String = _sanitize_icon_key(move.display_name if move != null else "")
-		row.populate(move, "%s%s.png" % [ICON_DIR, icon_key], _move_color(move))
+		row.populate(move, "%s%s.png" % [ICON_DIR, icon_key])
 
 
 func _on_pool_row_hovered(row_index: int) -> void:

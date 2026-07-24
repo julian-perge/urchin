@@ -29,4 +29,3 @@ func populate(node: Dictionary, save: PlayerSave, move: Ability, buff: Buff, ico
 	_icon_backing.color = fields["element_color"]
 	var icon_path: String = "%s%s.png" % [ICON_DIR, icon_key]
 	_icon.texture = load(icon_path) if ResourceLoader.exists(icon_path) else null
-	_icon.material = IconTint.material(fields["element_color"])
