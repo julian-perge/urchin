@@ -34,6 +34,7 @@ SKIP_CIDS = {1913}
 # Items whose icon-clip frame does not match the live game (verified by
 # side-by-side playtest) keep a hand-picked icon instead.
 ICON_OVERRIDES = {
+    5: "res://assets/item_slot_icons/OTHER/A_Broken_Pipe.png",
     11: "res://assets/item_slot_icons/OTHER/White_T_Shirt.png"  # White T-shirt
 }
 
@@ -156,7 +157,7 @@ def main():
                 continue
             new_path = f"res://assets/ui/items/{icon}"
         if (
-            f'path="{new_path}"' in text
+            f'path="{new_path}" id="icon_slot"]' in text
             and 'slot_image = ExtResource("icon_slot")' in text
         ):
             patched += 1

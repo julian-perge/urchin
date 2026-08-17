@@ -4,17 +4,16 @@ Fan remake of an ArmorGames game.
 
 ## Python conversion scripts
 
-`dev/` holds the AS3-decompile-to-JSON converters (`items.py`,
-`units.py`, `moves.py`, `buffs.py`, `battles.py`) and the raw/converted
-data they read and produce. There's no `pyproject.toml` here on purpose - these scripts have no
-third-party dependencies, so there's nothing to lock. Run them directly with `uv`:
+`dev/urchin_dev/` holds the AS3-decompile-to-JSON converters (`convert/items.py`,
+`convert/units.py`, `convert/moves.py`, `convert/buffs.py`, `convert/battles.py`) and the SWF
+asset-extraction tooling (`swf/`); `dev/data_json/` and `dev/converted_json/` hold the raw and
+converted data they read and produce. `pyproject.toml` at the repo root declares `dev` as the
+package's `module-root` and registers each script as a `[project.scripts]` entry point, so they
+run via `uv run`:
 
 ```sh
-uv run python3 convert_items
+uv run convert_items
 ```
-
-`uv run python3 <file>` works fine standalone with no project manifest present - it just runs the
-script with an ambient Python, no venv/lockfile needed.
 
 ## Tests
 
