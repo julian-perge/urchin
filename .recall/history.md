@@ -1148,3 +1148,20 @@ ffdec -zoom 2.0 -format shape:png -selectid 2241 -export shape ./test_disc sonny
   - `Bash: git add docs/item-icon-extraction.md dev/urchin_dev/swf/extract/item_icons.py resources/items/5_A_Broken_Pipe.tres assets/ui/items/ git status --short | awk '{p`
   - `Bash: git status --short | grep -v '^ M assets/ui/abilities' | head -20 echo "..." git status --short | grep '^ M' | wc -l echo "unstaged remaining (should be abiliti`
   - `Bash: git add README.md git status --short | grep -v '^ M' | wc -l git commit -F - << 'EOF' fix: item icon slot_image idempotency check, add extraction docs extract_i`
+
+**Claude:** Committed: `11109c8`, 330 files.
+
+Left unstaged, not mine to commit this round:
+```
+ M .recall/.capture.json .recall/context.md .recall/history.md
+ M assets/ui/abilities/*.png    (111 files - your recent ability-icon rerun)
+ M project.godot
+ M pyproject.toml
+ M scenes/ui/inventory.tscn
+```
+None of these came out of this conversation - looked like your own concurrent edits. Say the word if you want those committed too.
+
+**You:** commit those files
+  - `Bash: git diff project.godot; echo "=== pyproject.toml ==="; git diff pyproject.toml; echo "=== inventory.tscn ==="; git diff scenes/ui/inventory.tscn | head -80`
+  - `Bash: git add project.godot pyproject.toml scenes/ui/inventory.tscn assets/ui/abilities/ .recall/ git status --short | wc -l git commit -F - << 'EOF' chore: editor re`
+  - `Bash: git status --short`
