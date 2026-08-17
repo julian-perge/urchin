@@ -464,3 +464,687 @@ Nothing committed. `dev/data_json/` now shows `A` (staged) since your `.gitignor
 **Claude:** Now update the recall context memory with this finding.
   - `Read: /Users/sweetjp/Documents/godot/urchin/.recall/context.md`
   - `Edit: /Users/sweetjp/Documents/godot/urchin/.recall/context.md`
+
+**Claude:** Investigation complete. Bottom line: **zero content drift.**
+
+## Method
+
+Built a throwaway parser (scratchpad only, not committed) that walks the web SWF's decompiled ActionScript directly - `frame_42`'s `addNewMove`/`addNewBuffKrin`/`createNewUnitKrin`/`createNewBattle`/`createNewItemKrin` blocks plus every stateful follow-up line (`_root.hackMove[N] =`, `jesivie.field =`, `rengi.field.push(...)`, the `Krin.HealthUP`/`PIU`/`DIU` item-stat accumulators) - and diffed the result field-by-field against `dev/converted_json/*.json`.
+
+## Result, per table
+
+| Table | Match | Notes |
+|---|---|---|
+| moves | 479/479 | tooltip strings reconstructed via the `krinABC1/2/3` lookup arrays, exact match |
+| buffs | 470/470 | one field genuinely `Undefined` on both sides (see below) |
+| units | 75/75 | one field genuinely `Undefined` on both sides |
+| items | 449/449 | including the fully-derived stats - had to reimplement `getStat`/`respecValue` and the item price formula |
+| battles | 99/99 | matched by creation order; the `id` field numbering itself follows a non-obvious rule (below) |
+
+## Two things that looked like drift, weren't
+
+- **Buff id 416** references `_root.KrinLang[KLangChoosen].AUX[30]` - no `AUX` table exists, only `AUX1`/`AUX2`/`AUX3`. Genuine dead reference in the original web build; both the Steam dump and `converted_json` correctly show it as `Undefined`.
+- **`createNewItemKrin`'s tooltip-text loops enumerate in inconsistent order** - the 5-slot health/strength/magic/speed/focus loop goes descending, the 8-slot piercing/defense loop goes ascending. Legacy AS2 `Array` `for..in` quirk, not a bug, but had to be matched exactly to get `tool_tip_alt` sentence order right.
+
+## One real wrinkle, not drift
+
+Battle `id` isn't `battleCreationID`'s value at creation time. The nine `battleCreationID = N;` jump lines (reserving per-zone id blocks: 49, 99, 199...999) retroactively relabel the *previous* battle rather than the next one. Confirmed by comparing all 99 battles by creation-order position instead of by `id` - zero mismatches. A real regenerator would need this rule; this investigation didn't need to pin it down further since position-alignment already proved the data itself is untouched.
+
+## What I didn't check
+
+Item `looks` - the dump captures it as `Undefined` for every item; `convert_items.py` already sources it from a separate script (`dev/urchin_dev/swf/extract/item_looks.py`), not from `data_json` at all, so it was out of scope here.
+
+Written up in full in `SWF_DIFFERENCES.md`'s "Confirmed identical" section, and `.recall/context.md` updated. Nothing committed.
+
+**You:** commit this, and does any of the godot and python scripts need to change based on these findings?
+  - `Bash: python3 -c " import json d = json.load(open('dev/converted_json/buffs.json')) b = [x for x in d if x['id']==416][0] print(b['internal_name'], b['0_display_name'`
+  - `Bash: rg -n "FATALFLAW" /Users/sweetjp/Documents/godot/urchin/dev/converted_json/*.json /Users/sweetjp/Documents/godot/urchin/scripts/ 2>/dev/null`
+  - `Bash: git branch --show-current && git status --short | head -60`
+  - `Bash: git status --short | wc -l; git status --short | grep '^??' | head -20; echo "=== full status tail ==="; git status --short | tail -30`
+  - `Bash: git check-ignore -v .recall/context.md .recall/history.md .recall/.capture.json 2>&1 || echo "none ignored"; echo "---"; git status --short | awk '{print $1}' |`
+  - `Bash: git status --short | grep -E '^.M| M|^ D|^ A' | head -30; echo "count of second-column changes:"; git status --short | awk 'substr($0,2,1) != " "' | wc -l`
+  - `Bash: git check-ignore -v .DS_Store docs/.DS_Store docs/superpowers/.DS_Store 2>&1`
+
+**Claude:** Good, those are ignored. Staging and committing everything now.
+  - `Bash: git add -A && git status --short | awk '{print $1}' | sort | uniq -c`
+  - `Bash: git log --format='%s' -10`
+  - `Bash: git commit -F - << 'EOF' refactor: move conversion pipeline under dev/, restore data_json Finish the conversion_scripts/ -> dev/urchin_dev/ and source_files/ ->`
+
+**Claude:** Committed: `539401a`, 3453 files changed.
+  - `Bash: git status --short | head -5; echo "clean check done"`
+
+**Claude:** Working tree clean.
+
+## Do any scripts need changing?
+
+No. The whole point of the investigation was confirmatory - zero content drift means the converters, and everything downstream in Godot, are already correct.
+
+- **Godot scripts** - no. All five `converted_json` outputs already match the web build's ActionScript exactly. The one anomaly found (buff 416, `FATALFLAW`) I checked against every reference site in `scripts/` and `resources/` - nothing points to it. Dead data in the original game, invisible in-game, nothing to fix.
+- **Python converters** (`dev/urchin_dev/convert/*.py`) - no logic changes. They were already producing correct output; today's fixes were path/naming bugs from the mid-refactor move, not conversion bugs.
+- **One live loose end, unrelated to the drift check**: `dev/data_json/swf_krin_units.json` (69KB) has zero consumers - none of the five converters reference it. Found it while mapping which dump feeds which script. Not blocking anything; flagging in case you want it deleted or you know of a planned use.
+
+**You:** delete swf_krin_units.json
+  - `Bash: git rm dev/data_json/swf_krin_units.json && git commit -m "chore: remove unused swf_krin_units.json dump No converter references it - convert_units.py reads swf`
+
+**Claude:** Deleted and committed: `a59730e`.
+
+**You:** Generate (or overwrite) this project's `context.md` summary now, using Recall's
+local offline summarizer.
+
+Run with the Bash tool:
+
+```
+python3 "/Users/sweetjp/.claude/plugins/cache/recall/recall/0.4.0/scripts/make_context.py" || python "/Users/sweetjp/.claude/plugins/cache/recall/recall/0.4.0/scripts/make_context.py"
+```
+
+(`make_context.py` defaults to the current directory, so no `--cwd` is needed —
+and on Windows passing the shell's `$(pwd)` would hand it a `/c/...` path that
+doesn't match the transcript dir. The `|| python` fallback covers Windows, where
+the interpreter is normally `python`, not `python3`.)
+
+Then report back:
+
+- On success it prints the path it wrote and which summarizer path ran
+  (numpy-accelerated TextRank if numpy is present, otherwise the pure-Python
+  TextRank — both vendored, no install needed). Confirm the save and read back the
+  **Goal** and **Where we left off** lines from `.recall/context.md`.
+- If it errored, surface the exact message.
+
+**Claude:** Saved. `/Users/sweetjp/Documents/godot/urchin/.recall/context.md`, TextRank (numpy-accelerated).
+
+**Goal:** `recall 'where we last left off on this project for converting the flash game to godot'`
+
+**Where we left off:** `Deleted and committed: a59730e.`
+
+That line's thin (just my last sentence) - the useful state is git ground-truth plus the Summary bullets: two commits landed this session, `539401a` (dev/ reorg, path fixes, entry-point renames, `data_json` restored + `require_data_json()` guard, `SWF_DIFFERENCES.md` corrected) and `a59730e` (dropped the unused `swf_krin_units.json` dump). Tree is clean except the recall log files themselves.
+
+Two open threads only survive as raw pasted text in Summary, not clean bullets - worth knowing for next session: the two unstarted plans (`plan_missile_projectile_art.md`, `plan_item_drag_and_drop.md`) that I'd added to context.md last time got compressed away by this regeneration, since the summarizer works off this session's transcript, not the file's prior content. Want me to hand-restore those into Next Steps again before we close out?
+
+**You:** yes, add both back
+  - `Read: /Users/sweetjp/Documents/godot/urchin/.recall/context.md`
+  - `Edit: /Users/sweetjp/Documents/godot/urchin/.recall/context.md`
+
+**Claude:** Both back in Next Steps.
+
+**You:** Base directory for this skill: /Users/sweetjp/.claude/plugins/cache/humanizer/humanizer/2.9.1
+
+# Humanizer: Remove AI Writing Patterns
+
+You are a writing editor that identifies and removes signs of AI-generated text to make writing sound more natural and human. This guide is based on Wikipedia's "Signs of AI writing" page, maintained by WikiProject AI Cleanup.
+
+## Your Task
+
+When given text to humanize:
+
+1. **Identify AI patterns** - Scan for the patterns listed below.
+2. **Preserve the information, not the shape** - Every claim in the original survives into the rewrite, but depth doesn't have to be uniform: compress the dull parts, dwell where a human would, and merge or split paragraphs freely. When keeping the information and mirroring the original's structure pull in different directions, the information wins.
+3. **Never invent facts** - The rewrite must not contain any fact, name, number, date, quote, or citation that isn't in the source text. Swapping a vague claim for a specific one is allowed only when the specific comes from the source or from the user; if a sentence needs real-world detail to work, ask for it or write the plain version without it. Opinions and reactions are voice, not facts: where PERSONALITY AND SOUL applies you may add stance, but never new factual claims. (In fiction, invented detail is the job. This rule governs everything else.)
+4. **Match the voice** - Fit the intended tone (formal, casual, technical). Add personality only when the content and the author's voice call for it (see PERSONALITY AND SOUL).
+
+How you're invoked changes what you deliver (see Invocation Modes). The draft → audit → final loop itself is defined under Process and Output, below.
+
+## Voice Calibration
+
+If the user provides a writing sample (their own previous writing), analyze it before rewriting:
+
+1. Read the sample first. Note its sentence lengths, vocabulary, paragraph openings, punctuation, recurring phrases, and transitions.
+2. Match those habits instead of merely deleting AI patterns. Do not upgrade casual words or regularize deliberate quirks.
+3. Without a sample, use the default behavior below.
+
+A sample outranks this skill's style rules, including the em dash rule in §14: if the sample uses em dashes, keep them at roughly the sample's frequency. Matching the author beats scrubbing the tell.
+
+## PERSONALITY AND SOUL
+
+Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as obvious as slop. Good writing has a human behind it.
+
+**Apply this section only when the content and the author's voice call for it** - blog posts, essays, opinion, personal writing. For encyclopedic, technical, legal, or reference text, neutral and plain *is* the correct human voice; don't inject opinions or first person there.
+
+When voice is appropriate, avoid uniform sentence structures, bloodless neutrality, and perfect organization. Let the writer have opinions, uncertainty, mixed feelings, humor, asides, and uneven rhythm. Never add factual claims to create that personality.
+
+## CONTENT PATTERNS
+
+### 1. Undue Emphasis on Significance, Legacy, and Broader Trends
+
+**Words to watch:** stands/serves as, is a testament/reminder, a vital/significant/crucial/pivotal/key role/moment, underscores/highlights its importance/significance, reflects broader, symbolizing its ongoing/enduring/lasting, contributing to the, setting the stage for, marking/shaping the, represents/marks a shift, key turning point, evolving landscape, focal point, indelible mark, deeply rooted
+**Problem:** LLM writing puffs up importance by adding statements about how arbitrary aspects represent or contribute to a broader topic.
+**Before:**
+> The Statistical Institute of Catalonia was officially established in 1989, marking a pivotal moment in the evolution of regional statistics in Spain. This initiative was part of a broader movement across Spain to decentralize administrative functions and enhance regional governance.
+**After:**
+> The Statistical Institute of Catalonia was established in 1989, part of a wider decentralization of administrative functions in Spain.
+
+### 2. Undue Emphasis on Notability and Media Coverage
+
+**Words to watch:** independent coverage, local/regional/national media outlets, written by a leading expert, active social media presence
+**Problem:** LLMs hit readers over the head with claims of notability, often listing sources without context.
+**Before:**
+> Her views have been cited in The New York Times, BBC, Financial Times, and The Hindu. She maintains an active social media presence with over 500,000 followers.
+**After:**
+> Her views have been cited in The New York Times and the BBC.
+
+(If the source gives real context for one citation, what she said and where, keep that one and drop the rest of the list. Don't invent the context to make the trimmed version sound better.)
+
+### 3. Superficial Analyses with -ing Endings
+
+**Words to watch:** highlighting/underscoring/emphasizing..., ensuring..., reflecting/symbolizing..., contributing to..., cultivating/fostering..., encompassing..., showcasing...
+**Problem:** AI chatbots tack present participle ("-ing") phrases onto sentences to add fake depth.
+**Before:**
+> The temple's color palette of blue, green, and gold resonates with the region's natural beauty, symbolizing Texas bluebonnets, the Gulf of Mexico, and the diverse Texan landscapes, reflecting the community's deep connection to the land.
+**After:**
+> The temple is painted blue, green, and gold, colors meant to evoke Texas bluebonnets and the Gulf of Mexico.
+
+### 4. Promotional and Advertisement-like Language
+
+**Words to watch:** boasts a, vibrant, rich (figurative), profound, enhancing its, showcasing, exemplifies, commitment to, natural beauty, nestled, in the heart of, groundbreaking (figurative), renowned, breathtaking, must-visit, stunning
+**Problem:** LLMs have serious problems keeping a neutral tone, especially for "cultural heritage" topics.
+**Before:**
+> Nestled within the breathtaking region of Gonder in Ethiopia, Alamata Raya Kobo stands as a vibrant town with a rich cultural heritage and stunning natural beauty.
+**After:**
+> Alamata Raya Kobo is a town in the Gonder region of Ethiopia.
+
+### 5. Vague Attributions and Weasel Words
+
+**Words to watch:** Industry reports, Observers have cited, Experts argue, Some critics argue, several sources/publications (when few cited)
+**Problem:** AI chatbots attribute opinions to vague authorities without specific sources.
+**Before:**
+> Due to its unique characteristics, the Haolai River is of interest to researchers and conservationists. Experts believe it plays a crucial role in the regional ecosystem.
+**After:**
+> Researchers and conservationists study the Haolai River for its unusual characteristics.
+
+(If a real source exists, name it. Never invent one to make a sentence sound sourced; an unsupported claim gets cut, not decorated.)
+
+### 6. Outline-like "Challenges and Future Prospects" Sections
+
+**Words to watch:** Despite its... faces several challenges..., Despite these challenges, Challenges and Legacy, Future Outlook
+**Problem:** Many LLM-generated articles include formulaic "Challenges" sections.
+**Before:**
+> Despite its industrial prosperity, Korattur faces challenges typical of urban areas, including traffic congestion and water scarcity. Despite these challenges, with its strategic location and ongoing initiatives, Korattur continues to thrive as an integral part of Chennai's growth.
+**After:**
+> Korattur has recurring traffic congestion and water shortages.
+
+(The specifics you'd want here, like when the congestion worsened or what the city did about it, come from sources or the user, not from the rewrite.)
+
+## LANGUAGE AND GRAMMAR PATTERNS
+
+### 7. Overused "AI Vocabulary" Words
+
+**High-frequency AI words:** Actually, additionally, align with, crucial, delve, emphasizing, enduring, enhance, fostering, garner, highlight (verb), interplay, intricate/intricacies, key (adjective), landscape (abstract noun), pivotal, showcase, tapestry (abstract noun), testament, underscore (verb), valuable, vibrant
+**Problem:** These words appear far more frequently in post-2023 text. They often co-occur.
+**Before:**
+> Additionally, a distinctive feature of Somali cuisine is the incorporation of camel meat. An enduring testament to Italian colonial influence is the widespread adoption of pasta in the local culinary landscape, showcasing how these dishes have integrated into the traditional diet.
+**After:**
+> Somali cuisine also includes camel meat, which is considered a delicacy. Pasta dishes, introduced during Italian colonization, remain common, especially in the south.
+
+### 8. Avoidance of "is"/"are" (Copula Avoidance)
+
+**Words to watch:** serves as/stands as/marks/represents [a], boasts/features/offers [a]
+**Problem:** LLMs substitute elaborate constructions for simple copulas.
+**Before:**
+> Gallery 825 serves as LAAA's exhibition space for contemporary art. The gallery features four separate spaces and boasts over 3,000 square feet.
+**After:**
+> Gallery 825 is LAAA's exhibition space for contemporary art. The gallery has four rooms totaling 3,000 square feet.
+
+### 9. Negative Parallelisms and Tailing Negations
+**Problem:** Constructions like "Not only...but..." or "It's not just about..., it's..." are overused. So are clipped tailing-negation fragments such as "no guessing" or "no wasted motion" tacked onto the end of a sentence instead of written as a real clause.
+**Before:**
+> It's not just about the beat riding under the vocals; it's part of the aggression and atmosphere. It's not merely a song, it's a statement.
+**After:**
+> The heavy beat adds to the aggressive tone.
+**Before (tailing negation):**
+> The options come from the selected item, no guessing.
+**After:**
+> The options come from the selected item without forcing the user to guess.
+
+### 10. Rule of Three Overuse
+**Problem:** LLMs force ideas into groups of three to appear comprehensive.
+**Before:**
+> The event features keynote sessions, panel discussions, and networking opportunities. Attendees can expect innovation, inspiration, and industry insights.
+**After:**
+> The event includes talks and panels. There's also time for informal networking between sessions.
+
+### 11. Elegant Variation (Synonym Cycling)
+**Problem:** AI has repetition-penalty code causing excessive synonym substitution.
+**Before:**
+> The protagonist faces many challenges. The main character must overcome obstacles. The central figure eventually triumphs. The hero returns home.
+**After:**
+> The protagonist faces many challenges but eventually triumphs and returns home.
+
+### 12. False Ranges
+**Problem:** LLMs use "from X to Y" constructions where X and Y aren't on a meaningful scale.
+**Before:**
+> Our journey through the universe has taken us from the singularity of the Big Bang to the grand cosmic web, from the birth and death of stars to the enigmatic dance of dark matter.
+**After:**
+> The book covers the Big Bang, star formation, and current theories about dark matter.
+
+### 13. Passive Voice and Subjectless Fragments
+**Problem:** LLMs often hide the actor or drop the subject entirely with lines like "No configuration file needed" or "The results are preserved automatically." Rewrite these when active voice makes the sentence clearer and more direct.
+**Before:**
+> No configuration file needed. The results are preserved automatically.
+**After:**
+> You do not need a configuration file. The system preserves the results automatically.
+
+## STYLE PATTERNS
+
+### 14. Em Dashes (and En Dashes): Cut Them
+
+**Rule:** The final rewrite contains no em dashes (—) or en dashes (–). The em dash is one of the most reliable AI tells, so treat this as a hard constraint, not a "use sparingly" preference. Replace each one, in rough order of preference: a period (start a new sentence), a comma (a tight aside), a colon (introducing an explanation), parentheses (a true aside), or restructure the sentence. Also catch spaced em dashes (` — `) and double hyphens (` -- `) used the same way.
+**Before:**
+> The term is primarily promoted by Dutch institutions—not by the people themselves. You don't say "Netherlands, Europe" as an address—yet this mislabeling continues—even in official documents.
+**After:**
+> The term is primarily promoted by Dutch institutions, not by the people themselves. You don't say "Netherlands, Europe" as an address, yet this mislabeling continues in official documents.
+**Before:**
+> The new policy — announced without warning — affects thousands of workers. The changes -- long overdue according to critics -- will take effect immediately.
+**After:**
+> The new policy, announced without warning, affects thousands of workers. The changes, long overdue according to critics, will take effect immediately.
+
+Before returning the final rewrite, scan it for `—` and `–`. Any hit means the draft isn't done. One exception: a user-provided writing sample that uses em dashes overrides this rule (see Voice Calibration); match the sample's frequency instead of banning them.
+
+### 15. Overuse of Boldface
+**Problem:** AI chatbots emphasize phrases in boldface mechanically.
+**Before:**
+> It blends **OKRs (Objectives and Key Results)**, **KPIs (Key Performance Indicators)**, and visual strategy tools such as the **Business Model Canvas (BMC)** and **Balanced Scorecard (BSC)**.
+**After:**
+> It blends OKRs, KPIs, and visual strategy tools like the Business Model Canvas and Balanced Scorecard.
+
+### 16. Inline-Header Vertical Lists
+**Problem:** AI outputs lists where items start with bolded headers followed by colons.
+**Before:**
+> - **User Experience:** The user experience has been significantly improved with a new interface.
+> - **Performance:** Performance has been enhanced through optimized algorithms.
+> - **Security:** Security has been strengthened with end-to-end encryption.
+**After:**
+> The update improves the interface, speeds up load times through optimized algorithms, and adds end-to-end encryption.
+
+### 17. Title Case in Headings
+**Problem:** AI chatbots capitalize all main words in headings.
+**Before:**
+> ## Strategic Negotiations And Global Partnerships
+**After:**
+> ## Strategic negotiations and global partnerships
+
+### 18. Emojis
+**Problem:** AI chatbots often decorate headings or bullet points with emojis.
+**Before:**
+> 🚀 **Launch Phase:** The product launches in Q3
+> 💡 **Key Insight:** Users prefer simplicity
+> ✅ **Next Steps:** Schedule follow-up meeting
+**After:**
+> The product launches in Q3. User research showed a preference for simplicity. Next step: schedule a follow-up meeting.
+
+### 19. Curly Quotation Marks
+**Problem:** ChatGPT uses curly quotes (“...”) instead of straight quotes ("...").
+**Before:**
+> He said “the project is on track” but others disagreed.
+**After:**
+> He said "the project is on track" but others disagreed.
+
+## COMMUNICATION PATTERNS
+
+### 20. Collaborative Communication Artifacts
+
+**Words to watch:** I hope this helps, Of course!, Certainly!, You're absolutely right!, Would you like..., Want me to...?, Want me to give examples?, Should I continue?, let me know, here is a...
+**Problem:** Text meant as chatbot correspondence gets pasted as content.
+**Before:**
+> Here is an overview of the French Revolution. I hope this helps! Let me know if you'd like me to expand on any section.
+**After:**
+> The French Revolution began in 1789 when financial crisis and food shortages led to widespread unrest.
+
+### 21. Knowledge-Cutoff Disclaimers and Speculative Gap-Filling
+
+**Words to watch:** as of [date], Up to my last training update, While specific details are limited/scarce..., based on available information, not publicly available, maintains a low profile, keeps personal details private, prefers to stay out of the spotlight, likely [grew up/studied/began], it is believed that
+**Problem:** Two related tells. (a) Older models leave hard knowledge-cutoff disclaimers in the text. (b) When a model can't find a source, it writes a paragraph *about* not finding one and then invents plausible filler to cover the gap. For a private person the guess almost always lands on the same stock phrases ("maintains a low profile," "keeps personal details private"), none of it sourced. Say what isn't known, or cut the sentence; don't dress a guess up as fact.
+**Before (cutoff disclaimer):**
+> While specific details about the company's founding are not extensively documented in readily available sources, it appears to have been established sometime in the 1990s.
+**After:**
+> The company's founding date is not documented in the available sources. (Or cut the sentence. State a date only if a source provides one.)
+**Before (speculative gap-fill):**
+> Information about her early life is not publicly available, suggesting she maintains a low profile and keeps personal details private. She likely grew up in a middle-class household, which shaped her later interest in education reform.
+**After:**
+> Her early life is not documented in the available sources. (Or omit the section.)
+
+### 22. Sycophantic/Servile Tone
+**Problem:** Overly positive, people-pleasing language.
+**Before:**
+> Great question! You're absolutely right that this is a complex topic. That's an excellent point about the economic factors.
+**After:**
+> The economic factors you mentioned are relevant here.
+
+## FILLER AND HEDGING
+
+### 23. Filler Phrases
+
+**Before → After:**
+- "In order to achieve this goal" → "To achieve this"
+- "Due to the fact that it was raining" → "Because it was raining"
+- "At this point in time" → "Now"
+- "In the event that you need help" → "If you need help"
+- "The system has the ability to process" → "The system can process"
+- "It is important to note that the data shows" → "The data shows"
+
+### 24. Excessive Hedging
+**Problem:** Over-qualifying statements.
+**Before:**
+> It could potentially possibly be argued that the policy might have some effect on outcomes.
+**After:**
+> The policy may affect outcomes.
+
+### 25. Generic Positive Conclusions
+**Problem:** Vague upbeat endings.
+**Before:**
+> The future looks bright for the company. Exciting times lie ahead as they continue their journey toward excellence. This represents a major step in the right direction.
+**After:**
+> (Cut the paragraph. End on the last concrete fact instead of a send-off. If the source states real plans, use those.)
+
+### 26. Hyphenated Word Pair Overuse
+
+**Words to watch:** third-party, cross-functional, client-facing, data-driven, decision-making, well-known, high-quality, real-time, long-term, end-to-end
+**Problem:** AI hyphenates these uniformly, including in predicate position (`the report is high-quality`). Humans hyphenate inconsistently — typically only when the compound is attributive (`a high-quality report`) and often dropping the hyphen otherwise (`the report is high quality`). Keep attributive-position hyphens; drop them when the compound follows the noun.
+**Before:**
+> The cross-functional team delivered a high-quality, data-driven report. The team is cross-functional, the report is high-quality, and the methodology is data-driven.
+**After:**
+> The cross-functional team delivered a high-quality, data-driven report. The team is cross functional, the report is high quality, and the methodology is data driven.
+
+### 27. Persuasive Authority Tropes
+
+**Phrases to watch:** The real question is, at its core, in reality, what really matters, fundamentally, the deeper issue, the heart of the matter
+**Problem:** LLMs use these phrases to pretend they are cutting through noise to some deeper truth, when the sentence that follows usually just restates an ordinary point with extra ceremony.
+**Before:**
+> The real question is whether teams can adapt. At its core, what really matters is organizational readiness.
+**After:**
+> The question is whether teams can adapt. That mostly depends on whether the organization is ready to change its habits.
+
+### 28. Signposting and Announcements
+
+**Phrases to watch:** Let's dive in, let's explore, let's break this down, here's what you need to know, now let's look at, without further ado
+**Problem:** LLMs announce what they are about to do instead of doing it. This meta-commentary slows the writing down and gives it a tutorial-script feel.
+**Before:**
+> Let's dive into how caching works in Next.js. Here's what you need to know.
+**After:**
+> Next.js caches data at multiple layers, including request memoization, the data cache, and the router cache.
+
+### 29. Fragmented Headers
+
+**Signs to watch:** A heading followed by a one-line paragraph that simply restates the heading before the real content begins.
+**Problem:** LLMs often add a generic sentence after a heading as a rhetorical warm-up. It usually adds nothing and makes the prose feel padded.
+**Before:**
+> ## Performance
+>
+> Speed matters.
+>
+> When users hit a slow page, they leave.
+**After:**
+> ## Performance
+>
+> When users hit a slow page, they leave.
+
+### 30. Diff-Anchored Writing
+**Problem:** Documentation or comments written as if narrating a change rather than describing the thing as it is. Unless the document is inherently version-scoped (changelogs, release notes, migration guides), it should read coherently without knowing what changed in the last commit.
+**Before:**
+> This function was added to replace the previous approach of iterating through all items, which caused O(n²) performance.
+**After:**
+> This function uses a hash map for O(1) lookups, avoiding the O(n²) cost of naive iteration.
+
+### 31. Manufactured Punchlines and Staccato Drama
+**Problem:** LLMs often make every sentence land like a quotable closer, then stack short declarative fragments to manufacture drama. A single short sentence for emphasis is fine; a run of them starts to sound engineered.
+**Before:**
+> Then AlphaEvolve arrived. It had no preference for symmetry. No aesthetic prior. No nostalgia for human taste. The old rules were gone.
+**After:**
+> AlphaEvolve changed the search because it did not favor symmetry or human-looking designs. That made some of the older assumptions less useful.
+
+### 32. Aphorism Formulas
+
+**Words to watch:** X is the Y of Z, X becomes a trap, X is not a tool but a mirror, the language of, the currency of, the architecture of
+**Problem:** LLMs turn ordinary claims into reusable aphorisms that sound profound without adding precision. Replace the formula with the concrete claim it is gesturing at.
+**Before:**
+> Symmetry is the language of trust. Efficiency becomes a trap when teams forget the human layer.
+**After:**
+> Symmetric layouts often feel more predictable to users. Teams can over-optimize workflows and miss how people actually use them.
+
+### 33. Conversational Rhetorical Openers
+
+**Phrases to watch:** Honestly?, Look, Here's the thing, The thing is, Let's be honest, Real talk, when used as standalone hooks or fake-candid pauses before an ordinary point.
+**Problem:** LLMs open with a fake-candid hook to manufacture intimacy before delivering a routine claim. The tell is the theatrical pause-and-reveal: a one-word question or aside, then the "real" answer. A person being honest usually just says the thing.
+**Before:**
+> Is it worth the price? Honestly? It depends on how often you'll use it.
+**After:**
+> Whether it's worth the price depends on how often you'll use it.
+
+## DETECTION GUIDANCE
+
+### What NOT to flag (false positives)
+
+A clean human writer can hit several of the patterns above without any AI involvement. Before rewriting, sanity-check that you are not gutting legitimate prose. The following are *not* reliable indicators on their own:
+
+- **Perfect grammar and consistent style.** Many writers are professionals or have been edited. Polish does not equal AI.
+- **Mixed casual and formal registers.** This often signals a person in a technical field, a young writer, or someone with neurodivergent prose habits — not a chatbot.
+- **"Bland" or "robotic" prose.** AI prose has *specific* tells. Generic dryness without those tells is just dry writing.
+- **Formal or academic vocabulary.** AI overuses *specific* fancy words (see §7), not all fancy words. Don't flatten "ostensibly" or "constituent" just because they sound brainy.
+- **Letter-style opening or closing on a comment.** Salutations and sign-offs predate ChatGPT by centuries.
+- **Common transition words in isolation.** *Additionally*, *moreover*, *consequently* are AI-coded only when piled up. One *however* is not a tell.
+- **Curly quotes alone.** macOS, Word, Google Docs, and most CMSes auto-curl by default. Curly quotes only count when stacked with other tells.
+- **Em dashes alone.** Many editors and journalists use them often. Em dashes are evidence only when paired with formulaic sales-y rhythm.
+- **One short emphatic sentence.** Humans use clipped sentences to land a point. Flag staccato drama only when several short fragments appear in a row and inflate the tone.
+- **"Honestly" or "look" mid-sentence.** These are ordinary in casual writing. The tell is the standalone theatrical opener, not the word itself.
+- **Unsourced claims.** Most of the web is unsourced. Lack of citations doesn't prove anything.
+- **Correct, complex formatting.** Visual editors and templates produce clean output without any AI.
+- **Secondhand text.** Do not rewrite watched phrases inside quotations, titles, proper names, or examples where the phrase is being discussed rather than used.
+
+When in doubt, look for **clusters** of tells, not isolated ones. A single em dash means nothing; em dashes plus rule-of-three plus *vibrant tapestry* plus a "Conclusion" section is a confession.
+
+### Signs of human writing (preserve these)
+
+When you see these, lean toward leaving the prose alone — they are evidence of a real person writing, and over-editing will destroy what makes the piece sound human:
+
+- **Specific, unusual, hard-to-fabricate detail.** A real address. A weird quote. The phrase "the lawyer who used to work upstairs from my dentist." LLMs round off specifics; humans hoard them.
+- **Mixed feelings and unresolved tension.** "I think this is mostly good, but it bothers me, and I can't fully explain why." LLMs default to clean takes.
+- **Dated, era-bound references.** Slang, memes, or in-jokes that map to a specific year and subculture. Models lag by a year or more.
+- **First-person editorial choices the writer can defend.** If the writer can explain *why* they made a particular cut or used a particular word, that's a strong human signal.
+- **Variety in sentence length.** Real writing alternates short and long. AI writing tends toward an even, mid-length cadence.
+- **Genuine asides, parentheticals, or self-corrections.** "(I keep wanting to say 'almost' here, but it really was certain.)" Models rarely interrupt themselves like this.
+- **Edits made before November 30, 2022.** ChatGPT's public launch. Anything older than that is, with very rare exceptions, not AI-written.
+
+---
+
+## Invocation Modes
+
+**Pasted text (default).** The user gives text in the conversation. Run the full loop below and deliver the draft, the audit bullets, and the final rewrite.
+
+**File mode.** The user points at a file. Read it, run the draft → audit → final loop internally, then rewrite the file in place so it ends up containing only the final rewrite. Humanize the prose only: leave code blocks, frontmatter, data, and link targets untouched. In the conversation, report a short summary of what changed rather than pasting the whole rewrite back.
+
+**Embedded mode.** Another task or agent is using this skill as one step of a larger job (a PR description, a commit message, a doc). Run the loop internally and output only the final text. No draft, no audit bullets, no summary. The caller wants prose, not ceremony.
+
+## Process and Output
+
+1. Read the input carefully and identify every instance of the patterns above.
+2. Write a **draft rewrite**. Check that it reads naturally aloud, varies sentence length, prefers specific details and simple constructions (is/are/has), and keeps the appropriate register.
+3. Ask two questions: **"What makes the below so obviously AI generated?"** and **"Does the rewrite state any fact, name, number, date, or citation that isn't in the source?"** Answer briefly. A fabrication is a defect even when it sounds more human than the vague original.
+4. Revise into a **final rewrite** that addresses them and contains no em or en dashes (see §14).
+
+In pasted-text mode, deliver the draft, the brief "still-AI" bullets, the final rewrite, and (optionally) a short summary of changes. In file and embedded modes, run the same loop but deliver only what the mode calls for (see Invocation Modes).
+
+## Reference
+
+This skill is based on [Wikipedia:Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup. The patterns documented there come from observations of thousands of instances of AI-generated text on Wikipedia.
+
+Key insight from Wikipedia: "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
+
+
+ARGUMENTS: @SWF_DIFFERENCES.md @DECODED_ALGORITHMS.md @README.md
+  - `Bash: rg -c $'—|–' SWF_DIFFERENCES.md DECODED_ALGORITHMS.md README.md 2>/dev/null || echo "none found"`
+  - `Bash: rg -in "crucial|delve|align with|\benhance|fostering|garner|highlight|interplay|intricat|\bkey\b|landscape|pivotal|showcase|tapestry|testament|underscor|valuabl`
+  - `Bash: rg -n "^#{1,3} " SWF_DIFFERENCES.md DECODED_ALGORITHMS.md README.md`
+  - `Bash: rg -n $'‘|’|“|”' SWF_DIFFERENCES.md DECODED_ALGORITHMS.md README.md 2>/dev/null; rg -in "let me know|i hope this helps|would you like|as of my|up to my last tra`
+
+**Claude:** Checked all three (word list scan, em/en dash scan, curly quotes, heading case, chatbot artifacts). No hits. Files stay dense, technical, specific numbers/identifiers throughout - the opposite of AI slop. No edits made.
+
+One thing found while reading, unrelated to humanizer: `README.md` lines 5-17 ("Python conversion scripts" section) say "no `pyproject.toml` here on purpose... run directly with `uv run python3 convert_items`." Stale - repo has `pyproject.toml` with real `[project.scripts]` entry points (`convert_items = "urchin_dev.convert.items:main"`), fixed this session. Contradicts the tree diagram right below it in the same file. Want fixed?
+
+**You:** yes, fix it. Then list the plans/tasks
+  - `Edit: /Users/sweetjp/Documents/godot/urchin/README.md`
+
+**Claude:** README fixed. Plans/tasks list:
+
+## Missile projectile art (`.claude/plan_missile_projectile_art.md`, 5 tasks, zero code)
+1. Extract 15 bolt clips + `KrinTrail` + all `BOOM_*`/`ex_*` impact clips into `assets/vfx/{bolts,impacts}/` via `swf_xml_lib.snapshot_timeline`
+2. Add `Ability.visual_effect_color` (from `11_visual_effect_color`), wire it into the cast glow tint in `battle_scene.gd`
+3. Build `impact_effect.tscn`/`ImpactEffect` (one-shot `AnimatedSprite2D`, auto-`queue_free`)
+4. Upgrade `Projectile` to `projectile.tscn` - real sprite-sheet bolt + separate tinted `KrinTrail` node, `krinBoltMake` movement math untouched
+5. Wire `ImpactEffect` at the three hook points: missile arrival, melee `attack_connected`, shock cast tick
+
+## Item click-n-drag (`.claude/plan_item_drag_and_drop.md`, 5 tasks, zero code)
+1. `GameData.swap_inventory_slots(a, b)` and `GameData.unequip_to_slot(equip_slot, inventory_index)`
+2. `ItemSlot._get_drag_data` + drag preview (31x31 icon, 0.75 alpha)
+3. Drop targets on `ItemSlot` - inventory swap, equip/unequip
+4. Sell button as drop target, hover price tooltip (`ceil(price * 0.15)`)
+5. Verify store window unaffected, run full GUT suite
+
+Both untouched since last session. Want me to start one?
+
+**You:** so i re-ran @dev/urchin_dev/swf/extract/item_icons.py , and the pngs are different now. it looks like they got smaller. The most noticeable difference is @assets/ui/items/ZPCI_Sniper_Rifle.png . whats the ffdec command I can run locally to verify the export of that item, and investigate why the pngs changed after re-extracting
+  - `Bash: git log --oneline -5 -- assets/ui/items/ZPCI_Sniper_Rifle.png; echo "=== git diff stat for icons ==="; git status --short assets/ui/items/ | head -20; echo "===`
+  - `Bash: python3 -c " import subprocess from PIL import Image import io # old version from git HEAD old_bytes = subprocess.run(['git','show','HEAD:assets/ui/items/ZPCI_S`
+  - `Bash: uv run python3 -c " import subprocess from PIL import Image import io old_bytes = subprocess.run(['git','show','HEAD:assets/ui/items/ZPCI_Sniper_Rifle.png'], ca`
+  - `Bash: uv run python3 -c " import subprocess from PIL import Image import io old_bytes = subprocess.run(['git','show','HEAD:assets/ui/items/ZPCI_Sniper_Rifle.png'], ca`
+  - `Bash: mkdir -p /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scratchpad/icon_diff && git show HEAD:assets/ui/item`
+  - `Read: /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scratchpad/icon_diff/old_big.png`
+  - `Read: /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scratchpad/icon_diff/new_big.png`
+  - `Bash: uv run python3 -c " from PIL import Image, ImageChops old = Image.open('/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86`
+  - `Bash: ls -la /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scratchpad/icon_diff/old_ZPCI_Sniper_Rifle.png /privat`
+  - `Bash: git status --short assets/ui/items/ | awk '{print $2}' | shuf -n 15 --random-source=<(yes 42) > /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fd`
+  - `Bash: while read f; do git show HEAD:"$f" > /tmp/old.png 2>/dev/null uv run python3 -c " from PIL import Image, ImageChops try: old = Image.open('/tmp/old.png').conve`
+  - `Bash: git show HEAD:assets/ui/items/Broken_Emerald_Shard.png > /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scra`
+  - `Bash: git status --short assets/ui/items/ | awk '{print $2}' > /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scra`
+  - `Bash: uv run python3 << 'EOF' import subprocess, io from pathlib import Path from PIL import Image files = ["A_Broken_Pipe.png","A_Sword.png","Broken_Emerald_Shard.pn`
+  - `Read: /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scratchpad/icon_diff/cmp_A_Broken_Pipe.png`
+  - `Read: /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scratchpad/icon_diff/cmp_Levo_Jeans.png`
+  - `Bash: uv run python3 << 'EOF' from urchin_dev import WEB_SWF_XML from urchin_dev.swf import parse_swf_xml, snapshot_timeline, make_char_bounds xml = WEB_SWF_XML.read_`
+  - `Bash: rg -n "def make_char_bounds|def parse_swf_xml|def snapshot_timeline" -A3 /Users/sweetjp/Documents/godot/urchin/dev/urchin_dev/swf/xml_lib.py | head -30 echo "==`
+  - `Bash: uv run python3 << 'EOF' 2>&1 | tail -20 from urchin_dev import WEB_SWF_XML from urchin_dev.swf import parse_swf_xml, snapshot_timeline, make_char_bounds xml = W`
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scratchpad/icon_diff mkdir -p "$SCRATCH/run1" "$SCRAT`
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scratchpad/icon_diff uv run python3 -c " from urchin_`
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scratchpad/icon_diff mkdir -p "$SCRATCH/before_rerun"`
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scratchpad/icon_diff diff -rq "$SCRATCH/before_rerun"`
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/fda25f18-28d3-4ba7-bb76-86e3e63897f3/scratchpad/icon_diff diff -rq "$SCRATCH/before_rerun"`
+  - `Bash: git log --oneline -- dev/urchin_dev/swf/xml_lib.py conversion_scripts/swf_extraction/swf_xml_lib.py dev/urchin_dev/swf/extract/item_icons.py conversion_scripts/`
+  - `Bash: git show ccf7375 -- conversion_scripts/swf_extraction/extract_item_icons.py conversion_scripts/swf_extraction/swf_xml_lib.py`
+  - `Bash: git status --short assets/ui/items/ | wc -l; git status --short resources/items/ | wc -l`
+
+**Claude:** Same as before my test reruns - nothing extra disturbed.
+
+## The command
+
+```sh
+~/.local/bin/ffdec -zoom 2 -format shape:png -selectid 1912,1913,1900,1922 -export shape /tmp/icon_check ~/Documents/godot/urchin/sonny-2-2900.swf
+```
+
+(1900/1922 are `A Broken Pipe`'s own shapes; swap in whatever ids a given item uses - `WEB_SWF_XML`'s `DefineSpriteTag spriteId="2064"`, frame label = item name, gives you the id list the same way `item_icons.py` does.)
+
+## What I found
+
+**`ZPCI_Sniper_Rifle.png` didn't actually change.** Pixel-diffed old vs new: `bbox = None` - byte-for-byte identical pixels, just a smaller file (4.1K -> 3.5K). That's PNG re-encoding, not a content regression. Checked 14 more random files from the 325 flagged as "modified" - same story, 292 of 325 are pure recompression.
+
+**10 files did change for real**, all missing a background/vignette layer: `A_Broken_Pipe`, `A_Sword`, `Broken_Emerald_Shard`, `Crow_Bar`, `Dirty_31`, `Fire_Axe`, `Flamboyant_Trousers`, `Levo_Jeans`, `Nike_Head_Wear`, `Proverse_All_Stars`. Several are starting-gear items (`DECODED_ALGORITHMS.md`'s `equipArray0`).
+
+Every icon frame shares shape id 1912 as a background square (bounds `-310..310` twips, exactly the 31x31 slot). Reran `extract_item_icons` twice fresh, byte-identical both times, and exported shape 1912 alone vs. inside the full 400-id batch - also identical. So it's not flaky on this machine today. `ccf7375`'s edits to `extract_item_icons.py`/`swf_xml_lib.py` are pure lint (`re.M`->`re.MULTILINE`, `%`->f-strings) - zero behavior change, ruled out as the cause.
+
+Best-supported explanation left: whatever ffdec version generated the committed icons rasterized that shared background shape differently than the one on this machine now (`v26.2.1`) - gradient/vignette fills are the most common source of cross-version rendering drift in ffdec. Can't confirm without knowing which version produced the committed files.
+
+**You:** I need to regenerate the pngs in @assets/item_slot_icons/ , similar to how I recently regenned the ability icons to not have the black circle exported with the icon. recall how the ability icons were fixed so i can regen the item_slot_icons
+  - `Bash: git show ff6a028 --stat; echo "=== full diff ==="; git show ff6a028`
+  - `Bash: git show ff6a028 -- conversion_scripts/swf_extraction/extract_ability_icons.py`
+  - `Bash: rg -l "item_slot_icons" /Users/sweetjp/Documents/godot/urchin/dev/urchin_dev/ /Users/sweetjp/Documents/godot/urchin/scripts/ 2>/dev/null`
+  - `Bash: cat /Users/sweetjp/Documents/godot/urchin/dev/urchin_dev/swf/extract/item_looks.py`
+  - `Bash: git log --all --oneline -- 'assets/item_slot_icons/*' | tail -10 echo "=== search all history for scripts referencing item_slot_icons ===" git log --all -p -- '`
+  - `Bash: ls /Users/sweetjp/Documents/godot/urchin/assets/item_slot_icons/WEAPONS | head -10 echo "=== file sizes/dims ===" uv run python3 -c " from PIL import Image from`
+  - `Read: /Users/sweetjp/Documents/godot/urchin/assets/item_slot_icons/WEAPONS/Ancient_Katana.png`
+  - `Read: /Users/sweetjp/Documents/godot/urchin/assets/item_slot_icons/HELMS/797.png`
+  - `Bash: uv run python3 -c " from PIL import Image, ImageChops a = Image.open('assets/item_slot_icons/WEAPONS/Ancient_Katana.png').convert('RGBA') b = Image.open('assets`
+  - `Bash: rg -n "item_slot_icons" /Users/sweetjp/Documents/godot/urchin/NEXT_PHASES.md /Users/sweetjp/Documents/godot/urchin/KNOWN_GAPS.md /Users/sweetjp/Documents/godot/`
+  - `Read: /Users/sweetjp/Documents/godot/urchin/KNOWN_GAPS.md`
+
+**Claude:** Recap of the ability-icon fix (`ff6a028`): `extract_ability_icons.py` composites labeled frames from `DefineSprite 2427`. Found opaque black-disc shape (chid `2241`) parked at depth 11 on 103/104 frames, painting over the real per-label art underneath. Confirmed by exporting the per-label shape alone (clean colored icon) vs the full composited frame (black circle) via ffdec, before touching code. Fix: added `2241` to `SKIP_CIDS` alongside the existing `1913` editor-backing shape, reran extraction.
+
+Doesn't transfer to `item_slot_icons/`. Different situation, already dug into once (`KNOWN_GAPS.md`, "11 numeric-named asset stragglers are untraceable," 2026-07-18):
+
+- No extraction script for this dir exists anywhere in git history - checked full history, only ever referenced (read) by `items.gd`/`item_icons.py`, never written by anything. Present since the very first commit.
+- Confirmed just now: `item_slot_icons/WEAPONS/Ancient_Katana.png` and `assets/ui/items/Ancient_Katana.png` (the real sprite-2064 extraction) are completely different images despite matching name and 62x62 size - not the same pipeline, not a copy.
+- The prior investigation tried exactly this - re-extract `item_slot_icons/` from the SWF matching names like was done for audio - and hit a dead end: this art has no `ExportAssetsTag` linkage names, no frame-label timeline like sprites 2064/2427 have. Three files (`PANTS/356.png`, `SHOES/402.png`, `WEAPONS/797.png`) even got traced by raw chid and turned out to point at unrelated `DefineSound`/`DefineShape2` tags - the numbers aren't chids at all, just some disconnected old naming scheme.
+- Spot-checked `Ancient_Katana.png` visually - no black-disc/chrome artifact. Different bug class, if there's a bug at all.
+
+Net: `item_slot_icons/` is legacy fallback art, database-named, already superseded by `item_icons.py` (sprite 2064) for every item that has a real frame label there. `NEXT_PHASES.md` says only ~135 items still fall back to it. Nothing to regenerate the way ability icons were - there's no known source sprite to re-extract from.
+
+Want me to check whether any of those ~135 fallback items actually do have a sprite-2064 label that got missed, instead of chasing `item_slot_icons`'s origin further?
+
+**You:** yes. just for context, the broken pipe item slot icon should be @assets/item_slot_icons/OTHER/A_Broken_Pipe.png but ends up being @assets/ui/items/A_Broken_Pipe.png , similar to the white t-shirt
+  - `Bash: python3 -c " import json d = json.load(open('/Users/sweetjp/Documents/godot/urchin/dev/converted_json/items.json')) for it in d['items']: if it['internal_name']`
+  - `Read: /Users/sweetjp/Documents/godot/urchin/resources/items/5_A_Broken_Pipe.tres`
+  - `Read: /Users/sweetjp/Documents/godot/urchin/dev/urchin_dev/swf/extract/item_icons.py`
+  - `Read: /Users/sweetjp/Documents/godot/urchin/dev/urchin_dev/swf/extract/item_icons.py`
+
+**Claude:** Override for id 5 already in the script (you added it). Applying it now.
+  - `Bash: uv run extract_item_icons 2>&1 | tail -10`
+  - `Bash: rg -n "icon_slot|slot_image" resources/items/5_A_Broken_Pipe.tres`
+
+**Claude:** Found the real bug - the idempotency check is a false positive. Reading the file to fix it.
+  - `Read: /Users/sweetjp/Documents/godot/urchin/dev/urchin_dev/swf/extract/item_icons.py`
+  - `Edit: /Users/sweetjp/Documents/godot/urchin/dev/urchin_dev/swf/extract/item_icons.py`
+  - `Bash: uv run extract_item_icons 2>&1 | tail -5`
+  - `Bash: cat resources/items/5_A_Broken_Pipe.tres`
+
+**Claude:** `slot_image` now points at `id="icon_slot"` -> `res://assets/item_slot_icons/OTHER/A_Broken_Pipe.png`. Confirmed fixed.
+  - `Read: /Users/sweetjp/Documents/godot/urchin/assets/item_slot_icons/OTHER/A_Broken_Pipe.png`
+  - `Bash: rg -n "ext_resource type=\"Texture2D\"" resources/items/11_*.tres`
+  - `Bash: /Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path . 2>&1 | rg -i "Totals|Scripts +[0-9]|Asserts|All tests passed|f`
+
+**Claude:** Fixed and verified. GUT still green (17 scripts, 579 asserts).
+
+**Root cause**: `item_icons.py`'s idempotency check was two independent substring searches — `path="{new_path}"` present *anywhere* in the file, and `slot_image = ExtResource("icon_slot")` present *anywhere*. Item 5's `.tres` had both, just on unrelated lines: the correct path sat on an orphaned leftover `ext_resource` (`id="2_xwk5l"`, never wired to `slot_image`), while `icon_slot` still pointed at the wrong sprite-2064 icon. The check read that as "already patched" and skipped it every run — so your override in `ICON_OVERRIDES` was correct but silently never applied.
+
+**Fix**: tied the check to one atomic string, `path="{new_path}" id="icon_slot"]`, so it only short-circuits when the *icon_slot* resource itself carries the right path.
+
+`resources/items/5_A_Broken_Pipe.tres` now points `slot_image` at `item_slot_icons/OTHER/A_Broken_Pipe.png`. Left the orphaned `2_xwk5l` duplicate ext_resource in place (pre-existing, harmless, unique to this file — id 11 doesn't have it).
+
+Same false-positive would've blocked any *other* `ICON_OVERRIDES` entry too, so this fix generalizes past just item 5. Nothing committed.
+
+**You:** whats the ffdec cmd to extract all the item_slot_icons that I can run locally? write that command and the command for extracting all the item slot icons in a markdown file in @docs/
+  - `Bash: rg -n "ZOOM|ICON_SPRITE|FFDEC|WEB_SWF" /Users/sweetjp/Documents/godot/urchin/dev/urchin_dev/swf/extract/item_icons.py | head -10`
+  - `Write: /Users/sweetjp/Documents/godot/urchin/docs/item-icon-extraction.md`
+
+**Claude:** Wrote `docs/item-icon-extraction.md`.
+
+Note: `assets/item_slot_icons/` (the literal folder from your last message) has no known SWF source - already investigated, dead end. So I wrote this for what actually generates item slot icons in practice - `DefineSprite 2064` via `item_icons.py` - since that's the real pipeline behind `slot_image`. Doc has:
+
+1. **Wrapped command**: `uv run extract_item_icons`
+2. **Raw ffdec command** it wraps internally, for manual per-item verification
+3. A lookup snippet to get a specific item's shape ids by frame label (same query I ran for `ZPCI Sniper Rifle`/`A Broken Pipe` earlier)
+
+If you actually meant a command to try extracting the `item_slot_icons/` legacy directory itself, say so - but per the earlier investigation there isn't a valid one to give you.
+
+**You:** i meant a raw `ffdec` cmd like `ffdec -zoom 2.0 -format shape:png -selectid 2895 -export shape ./test_faces sonny-2-2900.swf` so I can run the commands locally. Like for example, what is the raw ffdec cmd that ended up fixing the ability slot icons to remove that black sphere?
+  - `Bash: uv run python3 -c " from urchin_dev import WEB_SWF_XML from urchin_dev.swf import parse_swf_xml, snapshot_timeline xml = WEB_SWF_XML.read_text() shapes, sprites`
+  - `Read: /Users/sweetjp/Documents/godot/urchin/docs/item-icon-extraction.md`
+  - `Bash: uv run python3 -c " from urchin_dev import WEB_SWF_XML from urchin_dev.swf import parse_swf_xml, snapshot_timeline xml = WEB_SWF_XML.read_text() shapes, sprites`
+  - `Edit: /Users/sweetjp/Documents/godot/urchin/docs/item-icon-extraction.md`
+
+**Claude:** Doc updated with runnable commands in your format.
+
+**Single-shape diagnostics** (their own layer, nothing composited):
+```sh
+ffdec -zoom 2.0 -format shape:png -selectid 1900 -export shape ./test_pipe sonny-2-2900.swf
+```
+`1900` = A Broken Pipe's own art in `DefineSprite 2064`.
+
+**The exact pair that found the ability-icon black disc** (`ff6a028`, sprite 2427):
+```sh
+ffdec -zoom 2.0 -format shape:png -selectid 2296 -export shape ./test_acidic sonny-2-2900.swf
+ffdec -zoom 2.0 -format shape:png -selectid 2241 -export shape ./test_disc sonny-2-2900.swf
+```
+`2296` = ACIDIC's real art (frame 228, depth 5). `2241` = the opaque disc sitting at depth 11 on top of it. Comparing those two PNGs is what confirmed it before `2241` went into `SKIP_CIDS`. Verified both ids directly against the current SWF dump before writing them down.
+
+**Full extraction** - the real 408-id list, split into the same two batches the script runs, dumping raw uncomposited shapes into `./all_item_shapes/`. Doesn't reassemble icons or touch `.tres` files - that's what `uv run extract_item_icons` is for.
+
+**You:** commit the files
+  - `Bash: git status --short`
+  - `Bash: git diff --stat project.godot pyproject.toml scenes/ui/inventory.tscn`
+  - `Bash: git add docs/item-icon-extraction.md dev/urchin_dev/swf/extract/item_icons.py resources/items/5_A_Broken_Pipe.tres assets/ui/items/ git status --short | awk '{p`
+  - `Bash: git status --short | grep -v '^ M assets/ui/abilities' | head -20 echo "..." git status --short | grep '^ M' | wc -l echo "unstaged remaining (should be abiliti`
+  - `Bash: git add README.md git status --short | grep -v '^ M' | wc -l git commit -F - << 'EOF' fix: item icon slot_image idempotency check, add extraction docs extract_i`

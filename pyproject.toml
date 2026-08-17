@@ -41,9 +41,8 @@ extract_start_screens = "urchin_dev.swf.extract.start_screens:main"
 package = true
 
 [tool.uv.build-backend]
-module-name = "urchin_dev"
 module-root = "dev"
-source-include = ["dev/**"]
+source-include = ["dev/urchin_dev/**"]
 
 [tool.ruff]
 fix = false
