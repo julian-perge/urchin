@@ -1,15 +1,19 @@
-# Top-most EditorConfig file.
+# Check http://editorconfig.org for more information
+# This is the main config file for this project:
 root = true
 
 # Unix-style newlines with a newline ending every file.
 [*]
 charset = utf-8
 end_of_line = lf
-insert_final_newline = true
+insert_final_newline = false
+trim_trailing_whitespace = true
 
 [*.toml]
 indent_size = 2
 
 [*.csproj]
-insert_final_newline = false
 indent_size = 2
+
+[Makefile]
+indent_style = space
