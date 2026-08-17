@@ -16,7 +16,7 @@ from pathlib import Path
 from PIL import Image
 from swf_xml_lib import make_char_bounds, parse_swf_xml, snapshot_timeline
 
-from .. import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
+from conversion_scripts import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "menu" / "portraits"
 ZOOM = 2.0
@@ -76,10 +76,10 @@ def main():
     )
 
     def paste_char(canvas, cid, mat, origin):
-        sx, r0, r1, sy, tx, ty = mat
+        sx, _r0, _r1, sy, tx, ty = mat
         if cid in sprites:
             for child, child_mat in sprites[cid]:
-                csx, cr0, cr1, csy, ctx, cty = child_mat
+                csx, _cr0, _cr1, csy, ctx, cty = child_mat
                 combined = (sx * csx, 0.0, 0.0, sy * csy, tx + ctx * sx, ty + cty * sy)
                 paste_char(canvas, child, combined, origin)
             return

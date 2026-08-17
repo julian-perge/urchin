@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 
-from . import CONVERTED_JSON, DATA_JSON, swf_models
+from conversion_scripts import CONVERTED_JSON, DATA_JSON, swf_models
 
 moves_by_id = swf_models.load_json(CONVERTED_JSON / "converted_moves_by_id.json")
 

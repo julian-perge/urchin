@@ -18,7 +18,14 @@ from pathlib import Path
 from PIL import Image
 from swf_xml_lib import make_char_bounds, parse_swf_xml
 
-from .. import FFDEC, REPO_ROOT, STEAM_SWF, STEAM_SWF_XML, WEB_SWF, WEB_SWF_XML
+from conversion_scripts import (
+    FFDEC,
+    REPO_ROOT,
+    STEAM_SWF,
+    STEAM_SWF_XML,
+    WEB_SWF,
+    WEB_SWF_XML,
+)
 
 SPRITES = REPO_ROOT / "resources" / "sprites"
 ZOOM = 2.0

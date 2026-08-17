@@ -19,7 +19,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from .. import REPO_ROOT, SOURCE_FILES
+from conversion_scripts import REPO_ROOT, SOURCE_FILES
 
 FRAMES = SOURCE_FILES / "exported_assets" / "frames"
 OUT_MENU = REPO_ROOT / "assets" / "ui" / "menu"
@@ -58,10 +58,13 @@ def erase_rect(img: Image.Image, rect):
     width = img.width
     left_x = max(x0 - 6, 0)
     right_x = min(x1 + 6, width - 1)
-    pixels = img.load()
+    pixels: Image.core.PixelAccess | None = img.load()
+    assert pixels is not None
     for y in range(y0, min(y1, img.height)):
         left = pixels[left_x, y]
         right = pixels[right_x, y]
+        assert isinstance(left, tuple)
+        assert isinstance(right, tuple)
         span = max(x1 - x0, 1)
         for x in range(x0, min(x1, width)):
             t = (x - x0) / span

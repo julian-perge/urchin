@@ -15,7 +15,7 @@ import json
 import re
 import sys
 
-from .. import ACTION_SCRIPT, CONVERTED_JSON, REPO_ROOT
+from conversion_scripts import ACTION_SCRIPT, CONVERTED_JSON, REPO_ROOT
 
 SRC = ACTION_SCRIPT / "frame_42" / "DoAction_16.as"
 ITEMS_DIR = REPO_ROOT / "resources" / "items"

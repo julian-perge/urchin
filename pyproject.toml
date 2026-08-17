@@ -76,6 +76,8 @@ extend-select = [
 ]
 
 ignore = [
+  "RUF046",
+
   "E402",
   # ---------- FORMATTER COMPATIBILITY ----------
   # Rules that conflict with ruff formatter - per official recommendation

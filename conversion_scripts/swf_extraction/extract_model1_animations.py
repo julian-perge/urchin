@@ -16,7 +16,7 @@ import sys
 
 from swf_xml_lib import snapshot_timeline
 
-from .. import REPO_ROOT, WEB_SWF_XML
+from conversion_scripts import REPO_ROOT, WEB_SWF_XML
 
 OUT = REPO_ROOT / "resources" / "sprites" / "model1_animations.json"
 MODEL_SPRITE = 166

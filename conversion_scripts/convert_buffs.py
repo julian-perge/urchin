@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 
-from . import CONVERTED_JSON, DATA_JSON, swf_models
+from conversion_scripts import CONVERTED_JSON, DATA_JSON, swf_models
 
 
 def parse_buff_block(buff_dict: dict):
@@ -13,7 +13,7 @@ def parse_buff_block(buff_dict: dict):
     addNewBuffKrin (array shape), applyBuffKrin (what each index does when a
     buff is applied/removed), and applyChangesKrin (how changeArray[0..11]
     gets folded into final stats). Indices 20/27/32/34 are defined in the
-    KRINBUFF array but never read by either of those two functions - likely
+    `KRINBUFF` array but never read by either of those two functions - likely
     consumed by a dispel/stacking function not present in the extracted
     frames, so they're kept as raw unknown_field_N rather than guessed at.
     """

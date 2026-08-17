@@ -11,7 +11,7 @@ from __future__ import annotations
 import subprocess
 import sys
 
-from .. import (
+from conversion_scripts import (
     ACTION_SCRIPT,
     FFDEC,
     STEAM_SWF,

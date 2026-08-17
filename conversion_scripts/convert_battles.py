@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 
-from . import CONVERTED_JSON, DATA_JSON, swf_models
+from conversion_scripts import CONVERTED_JSON, DATA_JSON, swf_models
 
 # ["EMPTY","PRISON","VILLAGE","TRAIN","TUNNELS","CITY","ROME","JAPAN","UTOPIA","JAPAN","STORM","EDEN","DOME","BETA"];
 # CHURCH

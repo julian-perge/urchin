@@ -28,10 +28,12 @@ def http_request(
     location,
     *,
     body: bytes | None = None,
-    headers={},
+    headers: dict[str, str] | None = None,
     timeout=None,
     wait_for_response=False,
 ) -> bytes:
+    if headers is None:
+        headers = {}
     with closing(HTTPConnection(host, port, timeout=timeout)) as connection:
         connection.request(method, location, body=body, headers=headers)
         if wait_for_response:

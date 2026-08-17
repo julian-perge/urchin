@@ -19,7 +19,7 @@ from pathlib import Path
 
 from swf_xml_lib import make_char_bounds, parse_swf_xml
 
-from .. import REPO_ROOT, STEAM_SWF_XML, WEB_SWF_XML
+from conversion_scripts import REPO_ROOT, STEAM_SWF_XML, WEB_SWF_XML
 
 SPRITES = REPO_ROOT / "resources" / "sprites"
 OUT = SPRITES / "doll_offsets.json"

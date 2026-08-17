@@ -16,8 +16,12 @@ from pathlib import Path
 
 from PIL import Image
 
-from .. import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from .swf_xml_lib import make_char_bounds, parse_swf_xml, snapshot_timeline
+from conversion_scripts import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
+from conversion_scripts.swf_extraction.swf_xml_lib import (
+    make_char_bounds,
+    parse_swf_xml,
+    snapshot_timeline,
+)
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "items"
 ITEMS_DIR = REPO_ROOT / "resources" / "items"
@@ -91,7 +95,7 @@ def main():
     def paste_char(canvas, cid, mat, origin):
         if cid in SKIP_CIDS:
             return
-        sx, r0, r1, sy, tx, ty = mat
+        sx, _r0, _r1, sy, tx, ty = mat
         if cid in sprites:
             for child, child_mat in sprites[cid]:
                 csx, _cr0, _cr1, csy, ctx, cty = child_mat

@@ -121,7 +121,7 @@ def make_char_bounds(shape_bounds, sprite_children):
             memo[cid] = shape_bounds[cid]
             return memo[cid]
         if cid in sprite_children:
-            acc = None
+            acc: list | None = None
             for child_id, mat in sprite_children[cid]:
                 cb = char_bounds(child_id, depth + 1)
                 if cb is None:
