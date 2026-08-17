@@ -1,0 +1,2277 @@
+{
+  "UNITS": {
+    "associativeValues": {},
+    "denseValues": {
+      "0": {
+        "members": {
+          "after_moneyConstGain": 1,
+          "after_totalEnemyGain": 1,
+          "beubUBv": {
+            "associativeValues": {
+              "4": 12,
+              "5": 100,
+              "6": {
+                "type": "Undefined"
+              },
+              "7": {
+                "type": "Undefined"
+              },
+              "8": {
+                "type": "Undefined"
+              },
+              "9": {
+                "type": "Undefined"
+              },
+              "equipment": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 14,
+                  "6": 0
+                },
+                "type": "EcmaArray"
+              },
+              "model": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": "MODEL1",
+                  "1": "MAN",
+                  "2": "",
+                  "3": "M"
+                },
+                "type": "EcmaArray"
+              },
+              "skinSetter": "JASON",
+              "voiceDie": "dead_human",
+              "voiceHit": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": "hit_human1",
+                  "1": "hit_human2",
+                  "2": "hit_human3"
+                },
+                "type": "EcmaArray"
+              }
+            },
+            "denseValues": {
+              "0": "Prison Guard",
+              "1": 10,
+              "2": 10,
+              "3": 5,
+              "DEF": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 100,
+                  "1": 100,
+                  "2": 100,
+                  "3": 100,
+                  "4": 100,
+                  "5": 100,
+                  "6": 100,
+                  "7": 100
+                },
+                "type": "EcmaArray"
+              },
+              "PER": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 100,
+                  "1": 100,
+                  "2": 100,
+                  "3": 100,
+                  "4": 100,
+                  "5": 100,
+                  "6": 100,
+                  "7": 100
+                },
+                "type": "EcmaArray"
+              },
+              "agressionArray": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 50,
+                  "1": 60,
+                  "2": 35,
+                  "3": 50,
+                  "4": 15
+                },
+                "type": "EcmaArray"
+              },
+              "movesA": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 2
+                },
+                "id": "obj69",
+                "type": "EcmaArray"
+              },
+              "movesABS": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": {
+                    "associativeValues": {},
+                    "denseValues": {
+                      "0": 523,
+                      "1": 0
+                    },
+                    "type": "EcmaArray"
+                  },
+                  "1": {
+                    "associativeValues": {},
+                    "denseValues": {
+                      "0": 15,
+                      "1": 0
+                    },
+                    "type": "EcmaArray"
+                  }
+                },
+                "type": "EcmaArray"
+              },
+              "movesD": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 506
+                },
+                "type": "EcmaArray"
+              }
+            },
+            "type": "EcmaArray"
+          },
+          "modVar_1": 0.29200000000000004,
+          "modVar_2": 0.275,
+          "modVar_3": 0.6570000000000003,
+          "plerBFEU": 5,
+          "poeHBeihv": 1,
+          "shtName": {
+            "members": {
+              "AIAD": false,
+              "AIGoER": 1,
+              "AION": true,
+              "AI_CD_ARR": "CDArrayABS",
+              "AI_CD_PUT": "0",
+              "Aggression": 50,
+              "BUFFARRAYK": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "1": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "2": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "3": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "4": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "5": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "6": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "7": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "8": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "9": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "10": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "11": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "12": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "13": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "14": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "15": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "16": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "17": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "18": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "19": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "20": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "21": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "22": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "23": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "24": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "25": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "26": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "27": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "28": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "29": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "30": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "31": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "32": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "33": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "34": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "35": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "36": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "37": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "38": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "39": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  }
+                },
+                "type": "EcmaArray"
+              },
+              "CDArrayA": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0
+                },
+                "type": "EcmaArray"
+              },
+              "CDArrayABS": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 2,
+                  "1": 2
+                },
+                "type": "EcmaArray"
+              },
+              "CDArrayD": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0
+                },
+                "type": "EcmaArray"
+              },
+              "DEF": {
+                "members": {
+                  "Earth": 114.99999999999999,
+                  "Fire": 114.99999999999999,
+                  "Ice": 114.99999999999999,
+                  "Lightning": 114.99999999999999,
+                  "Magic": 114.99999999999999,
+                  "Physical": 114.99999999999999,
+                  "Poison": 114.99999999999999,
+                  "Shadow": 114.99999999999999
+                },
+                "type": "Object"
+              },
+              "DEFU": {
+                "members": {
+                  "Earth": 114.99999999999999,
+                  "Fire": 114.99999999999999,
+                  "Ice": 114.99999999999999,
+                  "Lightning": 114.99999999999999,
+                  "Magic": 114.99999999999999,
+                  "Physical": 114.99999999999999,
+                  "Poison": 114.99999999999999,
+                  "Shadow": 114.99999999999999
+                },
+                "type": "Object"
+              },
+              "DMG": 0,
+              "DMG2": 0,
+              "DOTTICKERARRAY": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0
+                },
+                "type": "EcmaArray"
+              },
+              "FILTERSBUFFARRAY": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0,
+                  "10": 0,
+                  "11": 0,
+                  "12": 0,
+                  "13": 0,
+                  "14": 0,
+                  "15": 0,
+                  "16": 0,
+                  "17": 0,
+                  "18": 0,
+                  "19": 0,
+                  "20": 0
+                },
+                "type": "EcmaArray"
+              },
+              "FOCUS": 100,
+              "FOCUSCHANGE": 0,
+              "FOCUSN": 0,
+              "FOCUSU": 100,
+              "FocusAggression": 50,
+              "FocusRegenLimit": 15,
+              "HEALMOD": 1,
+              "HEALMOD_MINUS": 1,
+              "HEALMOD_PLUS": 1,
+              "IDMG": 0,
+              "IDMG2": 0,
+              "IDMGP": 0,
+              "IDMGP2": 1,
+              "IDOT": 1,
+              "IHOT": 1,
+              "LIFE": 125,
+              "LIFEN": 0,
+              "LIFEU": 125,
+              "LifeBoundary1": 60,
+              "LifeBoundary2": 35,
+              "MAGIC": 2,
+              "MAGICU": 2,
+              "ODOT": 1,
+              "PER": {
+                "members": {
+                  "Earth": 114.99999999999999,
+                  "Fire": 114.99999999999999,
+                  "Ice": 114.99999999999999,
+                  "Lightning": 114.99999999999999,
+                  "Magic": 114.99999999999999,
+                  "Physical": 114.99999999999999,
+                  "Poison": 114.99999999999999,
+                  "Shadow": 114.99999999999999
+                },
+                "type": "Object"
+              },
+              "PERU": {
+                "members": {
+                  "Earth": 114.99999999999999,
+                  "Fire": 114.99999999999999,
+                  "Ice": 114.99999999999999,
+                  "Lightning": 114.99999999999999,
+                  "Magic": 114.99999999999999,
+                  "Physical": 114.99999999999999,
+                  "Poison": 114.99999999999999,
+                  "Shadow": 114.99999999999999
+                },
+                "type": "Object"
+              },
+              "REFLECTDMG": 0,
+              "SHIELD": 0,
+              "SHIELDCOUNTER": 0,
+              "SILENCED": 0,
+              "SPEED": 11,
+              "SPEEDU": 11,
+              "SSWITCH": 0,
+              "STRENGTH": 4,
+              "STRENGTHU": 4,
+              "STUN": 0,
+              "STUNP": 0,
+              "active": false,
+              "agMode": 0,
+              "changeArray": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0,
+                  "10": 0,
+                  "11": 0,
+                  "12": 0,
+                  "13": 0,
+                  "14": 0,
+                  "15": 0,
+                  "16": 0,
+                  "17": 0,
+                  "18": 0,
+                  "19": 0,
+                  "20": 0
+                },
+                "id": "obj6",
+                "type": "EcmaArray"
+              },
+              "changeArrayED": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "changeArrayED2": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "changeArrayEP": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "changeArrayEP2": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "characterColorState": "Normal",
+              "characterFilterState": {
+                "associativeValues": {},
+                "denseValues": {},
+                "type": "EcmaArray"
+              },
+              "dressNow": "STANDARD",
+              "equip": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": "JASON",
+                  "1": "JASON",
+                  "2": "JASON",
+                  "3": "JASON",
+                  "4": "JASON",
+                  "5": "BATON",
+                  "6": 0
+                },
+                "type": "EcmaArray"
+              },
+              "model": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": "MODEL1",
+                  "1": "MAN",
+                  "2": "",
+                  "3": "M"
+                },
+                "type": "EcmaArray"
+              },
+              "moveArrayA": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 2
+                },
+                "type": "EcmaArray"
+              },
+              "moveArrayABS": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": {
+                    "associativeValues": {},
+                    "denseValues": {
+                      "0": 523,
+                      "1": 0
+                    },
+                    "type": "EcmaArray"
+                  },
+                  "1": {
+                    "associativeValues": {},
+                    "denseValues": {
+                      "0": 15,
+                      "1": 0
+                    },
+                    "type": "EcmaArray"
+                  }
+                },
+                "type": "EcmaArray"
+              },
+              "moveArrayD": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 506
+                },
+                "type": "EcmaArray"
+              },
+              "passiveBuffs": {
+                "associativeValues": {},
+                "denseValues": {},
+                "type": "EcmaArray"
+              },
+              "playerID": 2,
+              "playerName": "Prison Guard",
+              "plevel": 1,
+              "teamAdder": 1,
+              "teamSide": 2,
+              "voiceDie": "dead_human",
+              "voiceHit": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": "hit_human1",
+                  "1": "hit_human2",
+                  "2": "hit_human3"
+                },
+                "type": "EcmaArray"
+              }
+            },
+            "type": "Object"
+          },
+          "start_moneyConstGain": 0,
+          "start_poeHBeihv": "X",
+          "start_totalEnemyGain": 0
+        },
+        "type": "Object"
+      },
+      "1": {
+        "members": {
+          "after_moneyConstGain": 2,
+          "after_totalEnemyGain": 2,
+          "beubUBv": {
+            "type": "Undefined"
+          },
+          "modVar_1": 0.29200000000000004,
+          "modVar_2": 0.275,
+          "modVar_3": 0.6570000000000003,
+          "plerBFEU": -2,
+          "poeHBeihv": 1,
+          "shtName": {
+            "members": {
+              "AIAD": false,
+              "AIGoER": 0,
+              "AION": true,
+              "AI_CD_ARR": "CDArrayA",
+              "AI_CD_PUT": "0",
+              "Aggression": 90,
+              "BUFFARRAYK": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "PREPARED_DUX",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "1": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "2": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "3": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "4": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "5": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "6": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "7": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "8": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "9": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "10": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "11": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "12": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "13": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "14": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "15": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "16": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "17": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "18": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "19": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "20": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "21": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "22": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "23": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "24": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "25": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "26": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "27": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "28": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "29": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "30": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "31": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "32": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "33": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "34": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "35": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "36": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "37": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "38": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "39": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "PREPARED_DUX",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  }
+                },
+                "type": "EcmaArray"
+              },
+              "CDArrayA": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0
+                },
+                "type": "EcmaArray"
+              },
+              "CDArrayABS": {
+                "associativeValues": {},
+                "denseValues": {},
+                "type": "EcmaArray"
+              },
+              "CDArrayD": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0
+                },
+                "type": "EcmaArray"
+              },
+              "DEF": {
+                "members": {
+                  "Earth": 115,
+                  "Fire": 115,
+                  "Ice": 115,
+                  "Lightning": 105,
+                  "Magic": 115,
+                  "Physical": 115,
+                  "Poison": 115,
+                  "Shadow": 115
+                },
+                "type": "Object"
+              },
+              "DEFU": {
+                "members": {
+                  "Earth": 115,
+                  "Fire": 115,
+                  "Ice": 115,
+                  "Lightning": 105,
+                  "Magic": 115,
+                  "Physical": 115,
+                  "Poison": 115,
+                  "Shadow": 115
+                },
+                "type": "Object"
+              },
+              "DMG": 0,
+              "DMG2": 0,
+              "DOTTICKERARRAY": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0
+                },
+                "type": "EcmaArray"
+              },
+              "FILTERSBUFFARRAY": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0,
+                  "10": 0,
+                  "11": 0,
+                  "12": 0,
+                  "13": 0,
+                  "14": 0,
+                  "15": 0,
+                  "16": 0,
+                  "17": 0,
+                  "18": 0,
+                  "19": 0,
+                  "20": 0
+                },
+                "type": "EcmaArray"
+              },
+              "FOCUSCHANGE": 0,
+              "FOCUSN": 100,
+              "FOCUSU": 100,
+              "FocusAggression": 100,
+              "FocusRegenLimit": 5,
+              "HEALMOD": 1,
+              "HEALMOD_MINUS": 1,
+              "HEALMOD_PLUS": 1,
+              "IDMG": 0,
+              "IDMG2": 0,
+              "IDMGP": 0,
+              "IDMGP2": 1,
+              "IDOT": 1,
+              "IHOT": 1,
+              "LIFE": 627,
+              "LIFEN": 627,
+              "LIFEU": 627,
+              "LifeBoundary1": 2,
+              "LifeBoundary2": 1,
+              "MAGIC": 21,
+              "MAGICU": 21,
+              "ODOT": 1,
+              "PER": {
+                "members": {
+                  "Earth": 115,
+                  "Fire": 115,
+                  "Ice": 115,
+                  "Lightning": 197,
+                  "Magic": 115,
+                  "Physical": 115,
+                  "Poison": 115,
+                  "Shadow": 115
+                },
+                "type": "Object"
+              },
+              "PERU": {
+                "members": {
+                  "Earth": 115,
+                  "Fire": 115,
+                  "Ice": 115,
+                  "Lightning": 197,
+                  "Magic": 115,
+                  "Physical": 115,
+                  "Poison": 115,
+                  "Shadow": 115
+                },
+                "type": "Object"
+              },
+              "REFLECT": "",
+              "REFLECTDMG": 0,
+              "SHIELD": 0,
+              "SHIELDCOUNTER": 0,
+              "SILENCED": 0,
+              "SPEED": 19,
+              "SPEEDU": 19,
+              "SSWITCH": 0,
+              "STRENGTH": 22,
+              "STRENGTHU": 22,
+              "STUN": 0,
+              "STUNP": 0,
+              "active": true,
+              "agMode": 4,
+              "changeArray": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0,
+                  "10": 0,
+                  "11": 0,
+                  "12": 0,
+                  "13": 0,
+                  "14": 0,
+                  "15": 0,
+                  "16": 0,
+                  "17": 0,
+                  "18": 0,
+                  "19": 0,
+                  "20": 0
+                },
+                "type": "EcmaArray"
+              },
+              "changeArrayED": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "changeArrayED2": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "changeArrayEP": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "changeArrayEP2": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "characterColorState": "Normal",
+              "characterFilterState": {
+                "referencedId": "obj6",
+                "type": "Reference"
+              },
+              "dressNow": "STANDARD",
+              "equip": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": "ZPCI3",
+                  "1": "ZPCI3",
+                  "2": "ZPCI3",
+                  "3": "ZPCI3",
+                  "4": "ZPCI3",
+                  "5": "M4",
+                  "6": 0
+                },
+                "type": "EcmaArray"
+              },
+              "model": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": "MODEL1",
+                  "1": "TWO",
+                  "2": "TWO",
+                  "3": "M"
+                },
+                "type": "EcmaArray"
+              },
+              "moveArrayA": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 9,
+                  "1": 10
+                },
+                "type": "EcmaArray"
+              },
+              "moveArrayABS": {
+                "associativeValues": {},
+                "denseValues": {},
+                "type": "EcmaArray"
+              },
+              "moveArrayD": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 8
+                },
+                "type": "EcmaArray"
+              },
+              "passiveBuffs": {
+                "associativeValues": {},
+                "denseValues": {},
+                "type": "EcmaArray"
+              },
+              "playerID": 3,
+              "playerName": "Veradux",
+              "plevel": 1,
+              "teamAdder": 0,
+              "teamSide": 1,
+              "voiceDie": "dead_dux",
+              "voiceHit": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": "hit_dux1",
+                  "1": "hit_dux2",
+                  "2": "hit_dux3"
+                },
+                "type": "EcmaArray"
+              }
+            },
+            "type": "Object"
+          },
+          "start_moneyConstGain": 1,
+          "start_poeHBeihv": 1,
+          "start_totalEnemyGain": 1
+        },
+        "type": "Object"
+      },
+      "2": {
+        "members": {
+          "after_moneyConstGain": 3,
+          "after_totalEnemyGain": 3,
+          "beubUBv": {
+            "referencedId": "obj69",
+            "type": "Reference"
+          },
+          "modVar_1": 0.29200000000000004,
+          "modVar_2": 0.275,
+          "modVar_3": 0.6570000000000003,
+          "plerBFEU": 5,
+          "poeHBeihv": 1,
+          "shtName": {
+            "members": {
+              "AIAD": false,
+              "AIGoER": 1,
+              "AION": true,
+              "Aggression": 50,
+              "BUFFARRAYK": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "1": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "2": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "3": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "4": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "5": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "6": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "7": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "8": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "9": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "10": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "11": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "12": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "13": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "14": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "15": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "16": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "17": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "18": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "19": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "20": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "21": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "22": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "23": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "24": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "25": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "26": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "27": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "28": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "29": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "30": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "31": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "32": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "33": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "34": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "35": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "36": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "37": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "38": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  },
+                  "39": {
+                    "members": {
+                      "CD": 0,
+                      "buffId": "None",
+                      "buffValue": 0,
+                      "shieldBuffValue": 0
+                    },
+                    "type": "Object"
+                  }
+                },
+                "type": "EcmaArray"
+              },
+              "CDArrayA": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0
+                },
+                "type": "EcmaArray"
+              },
+              "CDArrayABS": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0
+                },
+                "type": "EcmaArray"
+              },
+              "CDArrayD": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0
+                },
+                "type": "EcmaArray"
+              },
+              "DEF": {
+                "members": {
+                  "Earth": 114.99999999999999,
+                  "Fire": 114.99999999999999,
+                  "Ice": 114.99999999999999,
+                  "Lightning": 114.99999999999999,
+                  "Magic": 114.99999999999999,
+                  "Physical": 114.99999999999999,
+                  "Poison": 114.99999999999999,
+                  "Shadow": 114.99999999999999
+                },
+                "type": "Object"
+              },
+              "DEFU": {
+                "members": {
+                  "Earth": 114.99999999999999,
+                  "Fire": 114.99999999999999,
+                  "Ice": 114.99999999999999,
+                  "Lightning": 114.99999999999999,
+                  "Magic": 114.99999999999999,
+                  "Physical": 114.99999999999999,
+                  "Poison": 114.99999999999999,
+                  "Shadow": 114.99999999999999
+                },
+                "type": "Object"
+              },
+              "DMG": 0,
+              "DMG2": 0,
+              "DOTTICKERARRAY": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0
+                },
+                "type": "EcmaArray"
+              },
+              "FILTERSBUFFARRAY": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0,
+                  "10": 0,
+                  "11": 0,
+                  "12": 0,
+                  "13": 0,
+                  "14": 0,
+                  "15": 0,
+                  "16": 0,
+                  "17": 0,
+                  "18": 0,
+                  "19": 0,
+                  "20": 0
+                },
+                "type": "EcmaArray"
+              },
+              "FOCUS": 100,
+              "FOCUSCHANGE": 0,
+              "FOCUSN": 0,
+              "FOCUSU": 100,
+              "FocusAggression": 50,
+              "FocusRegenLimit": 15,
+              "HEALMOD": 1,
+              "HEALMOD_MINUS": 1,
+              "HEALMOD_PLUS": 1,
+              "IDMG": 0,
+              "IDMG2": 0,
+              "IDMGP": 0,
+              "IDMGP2": 1,
+              "IDOT": 1,
+              "IHOT": 1,
+              "LIFE": 125,
+              "LIFEN": 0,
+              "LIFEU": 125,
+              "LifeBoundary1": 60,
+              "LifeBoundary2": 35,
+              "MAGIC": 2,
+              "MAGICU": 2,
+              "ODOT": 1,
+              "PER": {
+                "members": {
+                  "Earth": 114.99999999999999,
+                  "Fire": 114.99999999999999,
+                  "Ice": 114.99999999999999,
+                  "Lightning": 114.99999999999999,
+                  "Magic": 114.99999999999999,
+                  "Physical": 114.99999999999999,
+                  "Poison": 114.99999999999999,
+                  "Shadow": 114.99999999999999
+                },
+                "type": "Object"
+              },
+              "PERU": {
+                "members": {
+                  "Earth": 114.99999999999999,
+                  "Fire": 114.99999999999999,
+                  "Ice": 114.99999999999999,
+                  "Lightning": 114.99999999999999,
+                  "Magic": 114.99999999999999,
+                  "Physical": 114.99999999999999,
+                  "Poison": 114.99999999999999,
+                  "Shadow": 114.99999999999999
+                },
+                "type": "Object"
+              },
+              "REFLECTDMG": 0,
+              "SHIELD": 0,
+              "SHIELDCOUNTER": 0,
+              "SILENCED": 0,
+              "SPEED": 11,
+              "SPEEDU": 11,
+              "SSWITCH": 0,
+              "STRENGTH": 4,
+              "STRENGTHU": 4,
+              "STUN": 0,
+              "STUNP": 0,
+              "active": false,
+              "agMode": 0,
+              "changeArray": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0,
+                  "10": 0,
+                  "11": 0,
+                  "12": 0,
+                  "13": 0,
+                  "14": 0,
+                  "15": 0,
+                  "16": 0,
+                  "17": 0,
+                  "18": 0,
+                  "19": 0,
+                  "20": 0
+                },
+                "type": "EcmaArray"
+              },
+              "changeArrayED": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "changeArrayED2": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "changeArrayEP": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "changeArrayEP2": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 0,
+                  "1": 0,
+                  "2": 0,
+                  "3": 0,
+                  "4": 0,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0
+                },
+                "type": "EcmaArray"
+              },
+              "characterColorState": "Normal",
+              "characterFilterState": {
+                "referencedId": "obj6",
+                "type": "Reference"
+              },
+              "dressNow": "STANDARD",
+              "equip": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": "JASON",
+                  "1": "JASON",
+                  "2": "JASON",
+                  "3": "JASON",
+                  "4": "JASON",
+                  "5": "BATON",
+                  "6": 0
+                },
+                "type": "EcmaArray"
+              },
+              "model": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": "MODEL1",
+                  "1": "MAN",
+                  "2": "",
+                  "3": "M"
+                },
+                "type": "EcmaArray"
+              },
+              "moveArrayA": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 2
+                },
+                "type": "EcmaArray"
+              },
+              "moveArrayABS": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": {
+                    "associativeValues": {},
+                    "denseValues": {
+                      "0": 523,
+                      "1": 0
+                    },
+                    "type": "EcmaArray"
+                  },
+                  "1": {
+                    "associativeValues": {},
+                    "denseValues": {
+                      "0": 15,
+                      "1": 0
+                    },
+                    "type": "EcmaArray"
+                  }
+                },
+                "type": "EcmaArray"
+              },
+              "moveArrayD": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": 506
+                },
+                "type": "EcmaArray"
+              },
+              "passiveBuffs": {
+                "associativeValues": {},
+                "denseValues": {},
+                "type": "EcmaArray"
+              },
+              "playerID": 4,
+              "playerName": "Prison Guard",
+              "plevel": 1,
+              "teamAdder": 0,
+              "teamSide": 2,
+              "voiceDie": "dead_human",
+              "voiceHit": {
+                "associativeValues": {},
+                "denseValues": {
+                  "0": "hit_human1",
+                  "1": "hit_human2",
+                  "2": "hit_human3"
+                },
+                "type": "EcmaArray"
+              }
+            },
+            "type": "Object"
+          },
+          "start_moneyConstGain": 2,
+          "start_poeHBeihv": "X",
+          "start_totalEnemyGain": 2
+        },
+        "type": "Object"
+      }
+    },
+    "type": "EcmaArray"
+  }
+}

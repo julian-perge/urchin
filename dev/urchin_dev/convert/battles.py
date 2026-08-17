@@ -3,7 +3,9 @@ from __future__ import annotations
 
 import json
 
-from conversion_scripts import CONVERTED_JSON, DATA_JSON, swf_models
+from urchin_dev import CONVERTED_JSON, require_data_json
+from urchin_dev.swf import models
+
 
 # ["EMPTY","PRISON","VILLAGE","TRAIN","TUNNELS","CITY","ROME","JAPAN","UTOPIA","JAPAN","STORM","EDEN","DOME","BETA"];
 # CHURCH
@@ -22,11 +24,11 @@ def parse_json(parsed_dict: dict):
     """Parse the entire file handling stats that precede battle creation."""
     battles = []
 
-    units_by_id: dict[str, str] = swf_models.load_json(
+    units_by_id: dict[str, str] = models.load_json(
         CONVERTED_JSON / "converted_units_by_id.json"
     )
 
-    items_by_ids: dict = swf_models.load_json(
+    items_by_ids: dict = models.load_json(
         CONVERTED_JSON / "converted_item_by_id.json"
     )
 
@@ -138,7 +140,7 @@ def parse_json(parsed_dict: dict):
 
 def convert_to_json(input_file, output_file):
     """Convert full ActionScript item definitions to JSON."""
-    content: dict = swf_models.load_json(input_file)
+    content: dict = models.load_json(input_file)
 
     items = parse_json(content.get("BATTLES", {}).get("denseValues"))
 
@@ -151,7 +153,7 @@ def convert_to_json(input_file, output_file):
 
 def main() -> None:
     _count = convert_to_json(
-        DATA_JSON / "swf_battles.json", CONVERTED_JSON / "battles.json"
+        require_data_json("swf_battles.json"), CONVERTED_JSON / "battles.json"
     )
     print(f"Converted {_count} converted_battles to JSON")
 

@@ -3,7 +3,7 @@ extends Node2D
 
 class_name MoveManager
 
-const MOVES_FILE: String = "res://conversion_scripts/converted_json/moves_abilities.json"
+const MOVES_FILE: String = "res://dev/converted_json/moves_abilities.json"
 
 var moves_by_id: Dictionary = {}
 

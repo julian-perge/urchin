@@ -1,4 +1,3 @@
-# extract_ability_icons.py
 # The original ability/move icon sheet: DefineSprite 2427, one labeled frame
 # per move (equipped bar, unequipped pool, AND skill-tree nodes all draw
 # from this one clip) PLUS one labeled frame per passive-node buff family
@@ -21,8 +20,8 @@ from pathlib import Path
 
 from PIL import Image
 
-from conversion_scripts import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from conversion_scripts.swf_extraction.swf_xml_lib import (
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
+from urchin_dev.swf import (
     make_char_bounds,
     parse_swf_xml,
     snapshot_timeline,

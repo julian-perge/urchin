@@ -1,4 +1,3 @@
-# extract_doll_offsets.py
 # Per-art-clip render bounds (px) for every doll sprite PNG in
 # resources/sprites/, from the swf2xml dumps in source_files/swf_xml/.
 #
@@ -17,9 +16,9 @@ import struct
 import sys
 from pathlib import Path
 
-from swf_xml_lib import make_char_bounds, parse_swf_xml
+from urchin_dev.swf  import make_char_bounds, parse_swf_xml
 
-from conversion_scripts import REPO_ROOT, STEAM_SWF_XML, WEB_SWF_XML
+from urchin_dev import REPO_ROOT, STEAM_SWF_XML, WEB_SWF_XML
 
 SPRITES = REPO_ROOT / "resources" / "sprites"
 OUT = SPRITES / "doll_offsets.json"

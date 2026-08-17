@@ -3,7 +3,8 @@ from __future__ import annotations
 
 import json
 
-from conversion_scripts import CONVERTED_JSON, DATA_JSON, swf_models
+from urchin_dev import CONVERTED_JSON, require_data_json
+from urchin_dev.swf import models
 
 
 def parse_move_block(move_dict: dict):
@@ -131,7 +132,7 @@ def parse_move_block(move_dict: dict):
 
 def convert_to_json(input_file, output_file):
     """Convert full ActionScript move definitions to JSON."""
-    content: dict = swf_models.load_json(input_file)
+    content: dict = models.load_json(input_file)
 
     all_moves = parse_move_block(content.get("ABILITIES").get("denseValues"))
     # Write to JSON file
@@ -151,7 +152,8 @@ def convert_to_json(input_file, output_file):
 
 def main() -> None:
     moves_count = convert_to_json(
-        DATA_JSON / "swf_move_abilities.json", CONVERTED_JSON / "moves_abilities.json"
+        require_data_json("swf_move_abilities.json"),
+        CONVERTED_JSON / "moves_abilities.json",
     )
     print(f"Converted {moves_count} moves to JSON")
 

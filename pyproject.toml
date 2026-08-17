@@ -3,7 +3,7 @@ requires = ["uv_build>=0.10,<1"]
 build-backend = "uv_build"
 
 [project]
-name = "urchin"
+name = "urchin-dev"
 version = "0.1.0"
 description = ""
 requires-python = ">=3.14,<4"
@@ -12,26 +12,26 @@ readme = "README.md"
 
 dependencies = [
   "msgspec>=0.21.1",
-  # portrait/face compositing in conversion_scripts/swf_extraction
+  # portrait/face compositing in dev/urchin_dev/swf
   "pillow>=11.0",
   "ruff>=0.15.15",
 ]
 
 [project.scripts]
-convert_battles = "conversion_scripts.convert_battles:main"
-convert_buffs = "conversion_scripts.convert_buffs:main"
-convert_items = "conversion_scripts.convert_items:main"
-convert_moves = "conversion_scripts.convert_moves:main"
-convert_units = "conversion_scripts.convert_units:main"
-export_swf_sources = "conversion_scripts.swf_extraction.export_swf_sources:main"
-extract_ability_icons = "conversion_scripts.swf_extraction.extract_ability_icons:main"
-extract_doll_art = "conversion_scripts.swf_extraction.extract_doll_art:main"
-extract_doll_offsets = "conversion_scripts.swf_extraction.extract_doll_offsets:main"
-extract_faces = "conversion_scripts.swf_extraction.extract_faces:main"
-extract_item_icons = "conversion_scripts.swf_extraction.extract_item_icons:main"
-extract_item_looks = "conversion_scripts.swf_extraction.extract_item_looks:main"
-extract_model1_animations = "conversion_scripts.swf_extraction.extract_model1_animations:main"
-extract_start_screens = "conversion_scripts.swf_extraction.extract_start_screens:main"
+convert_battles = "urchin_dev.convert.battles:main"
+convert_buffs = "urchin_dev.convert.buffs:main"
+convert_items = "urchin_dev.convert.items:main"
+convert_moves = "urchin_dev.convert.moves:main"
+convert_units = "urchin_dev.convert.units:main"
+export_swf_sources = "urchin_dev.swf.export_swf_sources:main"
+extract_ability_icons = "urchin_dev.swf.extract.ability_icons:main"
+extract_doll_art = "urchin_dev.swf.extract.doll_art:main"
+extract_doll_offsets = "urchin_dev.swf.extract.doll_offsets:main"
+extract_faces = "urchin_dev.swf.extract.faces:main"
+extract_item_icons = "urchin_dev.swf.extract.item_icons:main"
+extract_item_looks = "urchin_dev.swf.extract.item_looks:main"
+extract_model1_animations = "urchin_dev.swf.extract.model1_animations:main"
+extract_start_screens = "urchin_dev.swf.extract.start_screens:main"
 
 [tool.uv]
 # A build system is declared above, so uv would package this project by
@@ -41,8 +41,9 @@ extract_start_screens = "conversion_scripts.swf_extraction.extract_start_screens
 package = true
 
 [tool.uv.build-backend]
-module-name = "conversion_scripts"
-module-root = ""
+module-name = "urchin_dev"
+module-root = "dev"
+source-include = ["dev/**"]
 
 [tool.ruff]
 fix = false

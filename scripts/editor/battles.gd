@@ -6,7 +6,7 @@ const BattleFightScript = preload("res://scripts/battle/battle_fight.gd")
 
 func _run():
 	var file: FileAccess = FileAccess.open(
-		"res://conversion_scripts/converted_json/battles.json",
+		"res://dev/converted_json/battles.json",
 		FileAccess.READ
 	)
 	var json = JSON.parse_string(file.get_as_text())

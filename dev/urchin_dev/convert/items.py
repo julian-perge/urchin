@@ -3,18 +3,19 @@ from __future__ import annotations
 
 import json
 
-from conversion_scripts import CONVERTED_JSON, DATA_JSON, swf_models
+from urchin_dev import CONVERTED_JSON, require_data_json
+from urchin_dev.swf import models
 
 # ["Physical","Magic","Ice","Fire","Lightning","Earth","Shadow","Poison"]
 
 # The runtime dump captured KRINITEM.looks as Undefined - the real values
 # are the `gghhjjuu.looks = "X"` assignments in
 # source_files/action_script/frame_42/DoAction_16.as (default "NINJA" for
-# wearables), extracted by swf_extraction/extract_item_looks.py.
+# wearables), extracted by swf/item_looks.py.
 _LOOKS_TABLE_PATH = CONVERTED_JSON / "item_looks.json"
 
 try:
-    LOOKS_BY_ID = swf_models.load_json(_LOOKS_TABLE_PATH)
+    LOOKS_BY_ID = models.load_json(_LOOKS_TABLE_PATH)
 except FileNotFoundError:
     LOOKS_BY_ID = {}
 
@@ -96,7 +97,7 @@ def parse_items_with_stats(parsed_dict: dict):
 
 def convert_items_to_json(input_file, output_file):
     """Convert full ActionScript item definitions to JSON."""
-    content: dict = swf_models.load_json(input_file)
+    content: dict = models.load_json(input_file)
 
     items = parse_items_with_stats(content.get("ITEMS", {}).get("denseValues"))
 
@@ -116,7 +117,7 @@ def convert_items_to_json(input_file, output_file):
 
 def main() -> None:
     item_count = convert_items_to_json(
-        DATA_JSON / "swf_items.json", CONVERTED_JSON / "items.json"
+        require_data_json("swf_items.json"), CONVERTED_JSON / "items.json"
     )
     print(f"Converted {item_count} items to JSON")
 

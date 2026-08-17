@@ -1,4 +1,3 @@
-# extract_start_screens.py
 # Start-menu art cropped from the RENDERED root frames in
 # source_files/exported_assets/frames/ (ffdec renders Flash blend modes and
 # masks correctly, which per-shape compositing cannot):
@@ -19,7 +18,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from conversion_scripts import REPO_ROOT, SOURCE_FILES
+from urchin_dev import REPO_ROOT, SOURCE_FILES
 
 FRAMES = SOURCE_FILES / "exported_assets" / "frames"
 OUT_MENU = REPO_ROOT / "assets" / "ui" / "menu"

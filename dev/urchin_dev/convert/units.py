@@ -3,11 +3,12 @@ from __future__ import annotations
 
 import json
 
-from conversion_scripts import CONVERTED_JSON, DATA_JSON, swf_models
+from urchin_dev import CONVERTED_JSON, require_data_json
+from urchin_dev.swf import models
 
-moves_by_id = swf_models.load_json(CONVERTED_JSON / "converted_moves_by_id.json")
+moves_by_id = models.load_json(CONVERTED_JSON / "converted_moves_by_id.json")
 
-items_by_id = swf_models.load_json(CONVERTED_JSON / "converted_item_by_id.json")
+items_by_id = models.load_json(CONVERTED_JSON / "converted_item_by_id.json")
 
 
 def parse_moves(abs_moves: list[list[int]], attacks: list[int], defenses: list[int]):
@@ -107,7 +108,7 @@ def parse_unit_block(parsed_unit: dict):
 
 def convert_units_to_json(input_file, output_file):
     """Convert full ActionScript unit definitions to JSON."""
-    content = swf_models.load_json(input_file)
+    content = models.load_json(input_file)
 
     # Split content into unit blocks
     unit_blocks = content.get("UNITS").get("denseValues")
@@ -134,7 +135,7 @@ def convert_units_to_json(input_file, output_file):
 
 def main() -> None:
     unit_count = convert_units_to_json(
-        DATA_JSON / "swf_units.json", CONVERTED_JSON / "units.json"
+        require_data_json("swf_units.json"), CONVERTED_JSON / "units.json"
     )
     print(f"Converted {unit_count} units to JSON")
 

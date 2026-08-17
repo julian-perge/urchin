@@ -14,7 +14,7 @@
 - No new third-party dependencies; Python extraction uses the existing `swf_xml_lib` + `ffdec` pipeline
 
 ## Background
-- The 15 bolt clips are `ExportAssetsTag`-named `DefineSprite`s — pure shape/tween content, no ActionScript. `snapshot_timeline` in `swf_xml_lib.py` iterates every frame of a sprite timeline; `extract_doll_art.py`'s `paste_char` + bulk shape export is the exact composite pattern needed.
+- The 15 bolt clips are `ExportAssetsTag`-named `DefineSprite`s — pure shape/tween content, no ActionScript. `snapshot_timeline` in `xml_lib.py` iterates every frame of a sprite timeline; `doll_art.py`'s `paste_char` + bulk shape export is the exact composite pattern needed.
 - `KrinTrail` (web sprite 3, Steam sprite 205) is structurally identical — short tween, same extraction path.
 - `BOOM_*` clips are also named `DefineSprite`s, shape/tween, no AS. Same extraction script handles them.
 - `11_visual_effect_color` is already in the JSON as a hex string (`"0xFF3366"`) for every non-None move. It is the `colortobe` value that tints both the cast glow subclips AND the `KrinTrail` trail.
@@ -45,12 +45,12 @@ Godot runtime:
 
 ### Task 1: Extract bolt clips, `KrinTrail`, and `BOOM_*` impact clips from the SWF
 - Objective: produce sprite sheet PNGs + JSON sidecars for all 15 bolt clips, `KrinTrail`, and all referenced impact clips into `assets/vfx/bolts/` and `assets/vfx/impacts/`.
-- Create `conversion_scripts/swf_extraction/extract_vfx_sprites.py`.
+- Create `dev/urchin_dev/swf/extract_vfx_sprites.py`.
 - **Sprite ID resolution**: call `parse_swf_xml(WEB_SWF_XML)` to get `export_name_to_id`. Build the bolt target list from the 15 clip names above plus `"KrinTrail"`. Build the BOOM target list programmatically: read `moves_abilities.json`, collect every unique non-empty `13_impact_effect_name` string. This guarantees no impact name is missed.
 - **Per-clip extraction loop**:
   - `snapshot_timeline(xml, sprite_id, set(range(1, MAX_FRAMES + 1)))` — use `MAX_FRAMES = 60` as a safe upper bound.
   - If resulting frame count > 15, downsample to every-other frame (`frames[::2]`).
-  - Collect all shape IDs across all frames of the clip, one bulk `ffdec -selectid` export per clip (cap at 400 IDs per call, same pattern as `extract_item_icons.py`).
+  - Collect all shape IDs across all frames of the clip, one bulk `ffdec -selectid` export per clip (cap at 400 IDs per call, same pattern as `item_icons.py`).
   - `paste_char` composite per frame using `make_char_bounds` for the canvas origin. Canvas size = the clip's own rendered bounds.
   - Pack frames into a horizontal sprite sheet PNG. Write a JSON sidecar: `{"frame_count": N, "frame_width": W, "frame_height": H, "fps": 30}`.
 - Print per-clip summary to stderr: `clip_name: N frames, WxH px`. Print a final `UNRESOLVED: [names]` list for any clip whose `ExportAssetsTag` name wasn't found in the web SWF export table.

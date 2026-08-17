@@ -6,9 +6,9 @@ extends GutTest
 
 const CharacterScript = preload("res://scripts/entities/character.gd")
 
-const MOVES_FILE = "res://conversion_scripts/converted_json/moves_abilities.json"
-const BUFFS_FILE = "res://conversion_scripts/converted_json/buffs.json"
-const UNITS_FILE = "res://conversion_scripts/converted_json/units.json"
+const MOVES_FILE = "res://dev/converted_json/moves_abilities.json"
+const BUFFS_FILE = "res://dev/converted_json/buffs.json"
+const UNITS_FILE = "res://dev/converted_json/units.json"
 
 const AGGRESSION_ORDER = ["Phalanx", "Defensive", "Tactical", "Aggressive", "Relentless"]
 const ELEMENT_ORDER = ["Physical", "Magic", "Ice", "Fire", "Lightning", "Earth", "Shadow", "Poison"]

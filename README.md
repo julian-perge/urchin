@@ -4,14 +4,13 @@ Fan remake of an ArmorGames game.
 
 ## Python conversion scripts
 
-`conversion_scripts/` holds the AS3-decompile-to-JSON converters (`convert_items.py`,
-`convert_units.py`, `convert_moves.py`, `convert_buffs.py`, `convert_battles.py`) and the raw/converted
+`dev/` holds the AS3-decompile-to-JSON converters (`items.py`,
+`units.py`, `moves.py`, `buffs.py`, `battles.py`) and the raw/converted
 data they read and produce. There's no `pyproject.toml` here on purpose - these scripts have no
 third-party dependencies, so there's nothing to lock. Run them directly with `uv`:
 
 ```sh
-cd conversion_scripts
-uv run python3 convert_items.py
+uv run python3 convert_items
 ```
 
 `uv run python3 <file>` works fine standalone with no project manifest present - it just runs the
@@ -26,7 +25,7 @@ the real converted data). Run headless:
 /Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .
 ```
 
-Exits nonzero on failure. Also runnable from the GUT panel inside the Godot editor.
+Exits nonzero on failure. Also, runnable from the GUT panel inside the Godot editor.
 
 ## Project layout
 
@@ -83,7 +82,7 @@ res://
 │   │                              #   (story/training battle selection, quest progress, zone unlocks)
 │   ├── ui/                        # UI behavior (orbs, hotbar, store slots, buttons)
 │   ├── editor/                    # @tool EditorScripts - regenerate resources/{items,units,battles}/*.tres
-│   │                              #   from conversion_scripts/converted_json/*.json. Run from
+│   │                              #   from dev/converted_json/*.json. Run from
 │   │                              #   the Godot script editor (File > Run). Tests live in test/, not here.
 │   └── inventory.gd                # Inventory autoload (27-slot UI grid, separate from PlayerSave.item_array)
 ├── resources/                      # Generated/authored game DATA + the art tied to it
@@ -100,16 +99,17 @@ res://
 │   ├── fonts/, item_slot_icons/, references/  # (references/ = original-game screenshots)
 │   └── ui/
 │       ├── hotbar/, battle/, store/, zone_map/  # Grouped by which screen uses them
-├── conversion_scripts/        # AS3-decompile -> JSON pipeline (Python, run via `uv`, see above)
-│   ├── convert_items.py, convert_units.py, convert_moves.py, convert_buffs.py, convert_battles.py
-│   ├── swf_models.py                 # msgspec models/loaders for the AMF-style runtime dumps
-│   ├── swf_extraction/               # swf2xml/ActionScript analysis + asset extraction tooling
-│   ├── data_json/                    # Raw JPEXS AVM2 dumps (converter input)
-│   └── converted_json/               # Clean converter output (consumed by scripts/editor/*.gd)
-├── source_files/                     # Decompiled SWF source material (see source_files/README.md)
-│   ├── action_script/                # Full ffdec script export - game-logic ground truth
-│   ├── action_script_curated/        # Hand-picked, commented excerpts (former action_script_files/)
-│   └── swf_xml/                      # ffdec -swf2xml dumps of both SWFs - geometry ground truth
+├── dev/                              # Everything that builds game data but never ships in the game
+│   ├── urchin_dev/                   # AS3-decompile -> JSON pipeline (Python, run via `uv`, see above)
+│   │   ├── convert/                  # items.py, units.py, moves.py, buffs.py, battles.py
+│   │   └── swf/                      # msgspec models (models.py), swf2xml analysis (xml_lib.py),
+│   │                                 #   and extract/ for asset extraction tooling
+│   ├── data_json/                    # Runtime _root capture, Steam build (converter input, not reproducible - see SWF_DIFFERENCES.md)
+│   ├── converted_json/               # Clean converter output (consumed by scripts/editor/*.gd)
+│   └── source_files/                 # Decompiled SWF source material (see dev/source_files/README.md)
+│       ├── action_script/            # Full ffdec script export - game-logic ground truth
+│       ├── action_script_curated/    # Hand-picked, commented excerpts (former action_script_files/)
+│       └── swf_xml/                  # ffdec -swf2xml dumps of both SWFs - geometry ground truth
 ├── KNOWN_GAPS.md                     # Specific defects/scoped-out edges in work already done
 ├── NEXT_PHASES.md                    # Priority-ordered roadmap of what's left
 └── SWF_DIFFERENCES.md                # Divergences found between the web SWF and the Steam rebundle

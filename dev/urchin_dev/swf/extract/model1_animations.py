@@ -1,4 +1,3 @@
-# extract_model1_animations.py
 # The original MODEL1 keyframe animations: per-frame full affine matrices
 # for the 15 named doll parts across all 371 timeline frames (classic
 # tweens are baked into per-frame PlaceObject matrices by the Flash
@@ -14,9 +13,9 @@ from __future__ import annotations
 import json
 import sys
 
-from swf_xml_lib import snapshot_timeline
+from urchin_dev.swf  import snapshot_timeline
 
-from conversion_scripts import REPO_ROOT, WEB_SWF_XML
+from urchin_dev import REPO_ROOT, WEB_SWF_XML
 
 OUT = REPO_ROOT / "resources" / "sprites" / "model1_animations.json"
 MODEL_SPRITE = 166

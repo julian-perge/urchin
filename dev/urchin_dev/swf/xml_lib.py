@@ -1,4 +1,4 @@
-# swf_xml_lib.py
+# xml_lib.py
 # Shared parsing for the ffdec -swf2xml dumps in source_files/swf_xml/:
 # shape bounds, sprite timelines, export names, matrices, and recursive
 # rendered-bounds math. Coordinates are SWF twips (divide by 20 for px).

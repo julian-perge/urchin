@@ -1,4 +1,3 @@
-# extract_faces.py
 # Portrait faces from the face clip (DefineSprite 2978 - one labeled frame
 # per character: party ids 1-5 are frames 1-5, the player is 'mainPlayer')
 # composited with the portrait chrome (sprite 2979: bg shape 333, frame
@@ -14,9 +13,9 @@ import tempfile
 from pathlib import Path
 
 from PIL import Image
-from swf_xml_lib import make_char_bounds, parse_swf_xml, snapshot_timeline
+from urchin_dev.swf  import make_char_bounds, parse_swf_xml, snapshot_timeline
 
-from conversion_scripts import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "menu" / "portraits"
 ZOOM = 2.0

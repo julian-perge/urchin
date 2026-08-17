@@ -1,4 +1,3 @@
-# extract_item_icons.py
 # The original item icon sheet: DefineSprite 2064, one labeled frame per
 # item (the game does itemSlot.inner.gotoAndStop(ITEMNAME[id])). Composites
 # every labeled frame at 2x into assets/ui/items/<label>.png and repoints
@@ -16,8 +15,8 @@ from pathlib import Path
 
 from PIL import Image
 
-from conversion_scripts import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from conversion_scripts.swf_extraction.swf_xml_lib import (
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
+from urchin_dev.swf import (
     make_char_bounds,
     parse_swf_xml,
     snapshot_timeline,

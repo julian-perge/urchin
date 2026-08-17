@@ -1,11 +1,10 @@
-# extract_item_looks.py
 # Item "looks" art keys from source_files/action_script/frame_42/DoAction_16.as:
 # createNewItemKrin() advances the id counter (with manual jumps
 # itemKrinIDnow = 99/299/499 between blocks); wearables (b > 1) default to
 # looks "NINJA" inside the function; a following `gghhjjuu.looks = "X"`
 # overrides the item just created.
 #
-# Writes converted_json/item_looks.json (merged by convert_items.py) and
+# Writes converted_json/item_looks.json (merged by items.py) and
 # patches resources/items/<id>_*.tres in place.
 #
 # Run: uv run extract_item_looks
@@ -15,7 +14,7 @@ import json
 import re
 import sys
 
-from conversion_scripts import ACTION_SCRIPT, CONVERTED_JSON, REPO_ROOT
+from urchin_dev import ACTION_SCRIPT, CONVERTED_JSON, REPO_ROOT
 
 SRC = ACTION_SCRIPT / "frame_42" / "DoAction_16.as"
 ITEMS_DIR = REPO_ROOT / "resources" / "items"

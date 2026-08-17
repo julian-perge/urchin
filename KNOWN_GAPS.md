@@ -9,7 +9,7 @@ The consuming code turned out to live in the per-frame battle conductor (`frame2
 Now ported as `BattleRunner._resolve_dispels()`: on a successful strike, before the damage/heal resolves, up to `Ability.dispel_count` of the target's active buffs are removed
 if their element is in `Ability.dispel_element_types` and their `Buff.polarity` matches `Ability.dispel_target_polarity`,
 each attempt gated by `randf() <= dispel_chance` and resisted by the buff's `dispel_resist_chance`.
-The formerly unknown buff fields 20/27/32 turned out to be polarity/is-unique/dispel-resist (renamed in `convert_buffs.py` + `buff.gd`).
+The formerly unknown buff fields 20/27/32 turned out to be polarity/is-unique/dispel-resist (renamed in `buffs.py` + `buff.gd`).
 
 ## "Attack" effect_category
 

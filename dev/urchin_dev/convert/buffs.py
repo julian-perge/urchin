@@ -3,7 +3,8 @@ from __future__ import annotations
 
 import json
 
-from conversion_scripts import CONVERTED_JSON, DATA_JSON, swf_models
+from urchin_dev import CONVERTED_JSON, require_data_json
+from urchin_dev.swf import models
 
 
 def parse_buff_block(buff_dict: dict):
@@ -110,7 +111,7 @@ def parse_buff_block(buff_dict: dict):
 
 def convert_to_json(input_file, output_file):
     """Convert full ActionScript buff definitions to JSON."""
-    content: dict = swf_models.load_json(input_file)
+    content: dict = models.load_json(input_file)
 
     all_buffs = parse_buff_block(content.get("BUFFS").get("denseValues"))
     with output_file.open("w") as f:
@@ -121,7 +122,7 @@ def convert_to_json(input_file, output_file):
 
 def main() -> None:
     buffs_count = convert_to_json(
-        DATA_JSON / "swf_buffs.json", CONVERTED_JSON / "buffs.json"
+        require_data_json("swf_buffs.json"), CONVERTED_JSON / "buffs.json"
     )
     print(f"Converted {buffs_count} buffs to JSON")
 

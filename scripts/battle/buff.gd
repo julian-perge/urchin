@@ -1,5 +1,5 @@
 # buff.gd
-# Buff/debuff data, loaded from conversion_scripts/converted_json/buffs.json
+# Buff/debuff data, loaded from dev/converted_json/buffs.json
 # by BuffManager. Field names decoded from frame42/sonny2_addNewBuffKrin.txt
 # (applyBuffKrin/buffTicker/applyChangesKrin) - see convert_buffs.py for the
 # full field-by-field notes. Application/tick logic lives on CombatUnit

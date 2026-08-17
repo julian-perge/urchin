@@ -1,6 +1,5 @@
-# swf_models.py
 # msgspec-backed models + loaders for the ffdec/AMF runtime dumps in
-# conversion_scripts/data_json/. The dumps wrap every AS value in one
+# dev/data_json/. The dumps wrap every AS value in one
 # of three shapes, modeled here as msgspec Structs (tagged on "type"):
 #
 #   {"type": "EcmaArray", "denseValues": {...}, "associativeValues": {...}}

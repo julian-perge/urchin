@@ -1,11 +1,10 @@
-# extract_doll_art.py
 # Re-renders every doll art sprite in resources/sprites/ at exactly 2x the
 # design size (the window's default scale), replacing the mixed-zoom
 # exports whose heavy downscale blurred the dolls. Composites each export
 # name's first frame from shape renders; the Steam SWF fills names the web
 # SWF lacks (DOG/WOLF/... art). doll_offsets.json keeps working because it
 # derives scale from bounds/png-size - regenerate it after this
-# (extract_doll_offsets.py).
+# (doll_offsets.py).
 #
 # Run: uv run extract_doll_art
 from __future__ import annotations
@@ -16,9 +15,9 @@ import tempfile
 from pathlib import Path
 
 from PIL import Image
-from swf_xml_lib import make_char_bounds, parse_swf_xml
+from urchin_dev.swf import make_char_bounds, parse_swf_xml
 
-from conversion_scripts import (
+from urchin_dev import (
     FFDEC,
     REPO_ROOT,
     STEAM_SWF,
