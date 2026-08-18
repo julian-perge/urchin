@@ -85,6 +85,19 @@ func test_missing_cutscene_id_emits_finished_instead_of_hanging():
 	assert_false(player.video.is_playing(), "never started playback for a missing stream")
 
 
+# Task 4 (cutscene plan) disk sanity check: the other tests in this file only
+# ever load CS_CUT4 (and CS_CUT5 in test_second_play_call_on_same_instance_is_ignored
+# below) through CutscenePlayer.play(). This confirms ResourceLoader resolves
+# all 4 committed clips - CS_CUT2/3/4/5 - to a real VideoStreamTheora, not
+# just the one Task 2's own test happened to cover.
+func test_all_four_cutscene_clips_load_as_video_stream_theora():
+	for cutscene_id in ["CS_CUT2", "CS_CUT3", "CS_CUT4", "CS_CUT5"]:
+		var stream = load("res://assets/cutscenes/%s.ogv" % cutscene_id)
+		assert_not_null(stream, "%s.ogv resolves via ResourceLoader" % cutscene_id)
+		if stream != null:
+			assert_eq(stream.get_class(), "VideoStreamTheora", "%s.ogv loads as a real Theora stream" % cutscene_id)
+
+
 func test_second_play_call_on_same_instance_is_ignored():
 	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
 	player.animation_speed = 0.0
