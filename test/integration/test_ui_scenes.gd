@@ -163,3 +163,10 @@ func test_zone_map_button_states_follow_unlocks():
 	ZoneManager.zone_unlocked.emit(2)
 	await get_tree().process_frame
 	assert_false(zones.get_node("Zone2").disabled, "zone 2 unlocks after the boss")
+
+	# Connectors._draw() only runs while the panel (and so the whole subtree)
+	# is visible - exercise it for real rather than just trusting the node
+	# paths it hardcodes (Zone%d under ../Zones) line up with zone_map.tscn.
+	map.visible = true
+	await get_tree().process_frame
+	assert_true(is_instance_valid(map.get_node("Connectors")), "connector lines node exists and drew without error")

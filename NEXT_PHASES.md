@@ -128,6 +128,12 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   the story orb, zone 2 never unlocking since quest progress could never pass `progress_max`. Fixed at the source (id corrected at conversion time, the 3 affected `.tres` regenerated,
   `CUTSCENE_BATTLES` back to the real ids).
 
+  A real playthrough of the fixed battle 109 then surfaced two more bugs, both fixed: `_on_continue_pressed()` always returned to the current zone hub after a
+  cutscene, when the original's `gotoSceneKrin` (frame_219) actually opens the zone map for CS_CUT2/CS_CUT4 (both unlock a new zone) and only stays on the hub for
+  CS_CUT3 - added `ZoneProgression.CUTSCENE_GOTO_SCENE`/`ZoneManager.open_zone_map_on_load` to thread that through. Separately, the zone map's connector lines
+  between zones had never been built at all (`frame_449`'s procedurally-drawn `krinMapper.lineMC`, colored by unlock state) - ported into a new
+  `scripts/zones/zone_map_connectors.gd`. GUT suite green: 104/104 tests, 629 asserts.
+
 - **Shatter Bolt**: the one `"Attack"`-category move - the original never handled it either.
 
 ## Ability menu redesign

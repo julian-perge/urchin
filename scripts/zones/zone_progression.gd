@@ -59,6 +59,20 @@ const TRAIN_FIGHT_CAPS: Dictionary = {1: 9, 2: 12, 3: 15, 4: 18, 5: 23, 6: 40, 7
 # the ids the original game actually checks.
 const CUTSCENE_BATTLES: Dictionary = {109: "CS_CUT2", 210: "CS_CUT3", 409: "CS_CUT4", 513: "CS_CUT5"}
 
+# Where each cutscene sends the player afterward (frame_219's gotoSceneKrin,
+# set alongside afterCut in the same battle_id checks above): "overMap" opens
+# the zone map on landing (CS_CUT2/CS_CUT4 both unlock a new zone - the
+# original shows it off immediately rather than dropping back into the same
+# hub), "Navigation" is the current zone hub (CS_CUT3 - zone 2's boss doesn't
+# unlock anything new). The original's CS_CUT5 destination is "endMenu" (an
+# ending/credits screen for what was the web build's last zone at the time);
+# no such screen exists in this port and zones 6/7 are real playable content
+# past it here, so it falls back to "overMap" like the other zone-unlocking
+# cutscenes rather than going nowhere.
+const CUTSCENE_GOTO_SCENE: Dictionary = {
+	"CS_CUT2": "overMap", "CS_CUT3": "Navigation", "CS_CUT4": "overMap", "CS_CUT5": "overMap",
+}
+
 
 static func quest_progress(save: PlayerSave, zone: int) -> int:
 	if zone < 0 or zone >= save.quest_progress.size():
@@ -138,17 +152,20 @@ static func max_zone(difficulty: int, has_all_star_achievement: bool = false) ->
 # Post-battle progression (frame_219): a won story-progress fight advances
 # quest_progress in the current zone, may trigger a cutscene, and may grow
 # the party roster. Call ONLY on victory. Returns
-# {progress_advanced, cutscene, roster_changed}.
+# {progress_advanced, cutscene, goto_scene, roster_changed}.
 static func after_battle_won(save: PlayerSave, battle_id: int, was_story_progress: bool) -> Dictionary:
 	var cutscene: String = ""
+	var goto_scene: String = ""
 	var progress_advanced: bool = false
 	if was_story_progress:
 		save.quest_progress[save.section_in] = quest_progress(save, save.section_in) + 1
 		progress_advanced = true
 		cutscene = CUTSCENE_BATTLES.get(battle_id, "")
+		goto_scene = CUTSCENE_GOTO_SCENE.get(cutscene, "")
 	var roster_changed: bool = Party.update_roster_after_battle(save)
 	return {
 		"progress_advanced": progress_advanced,
 		"cutscene": cutscene,
+		"goto_scene": goto_scene,
 		"roster_changed": roster_changed,
 	}

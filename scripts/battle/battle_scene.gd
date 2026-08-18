@@ -79,6 +79,7 @@ var _player_action_pending: bool = false
 var _finished: bool = false
 var _radial_menu: Control = null
 var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
+var _pending_goto_scene: String = ""  # ZoneProgression.CUTSCENE_GOTO_SCENE for that cutscene
 
 @onready var background: TextureRect = $Background
 @onready var sky: TextureRect = $Sky
@@ -786,6 +787,7 @@ func _finish_battle() -> void:
 		var was_story = battle_info.get("is_story_progress", false)
 		var battle_result: Dictionary = ZoneProgression.after_battle_won(save, battle.id, was_story)
 		_pending_cutscene = battle_result.get("cutscene", "")
+		_pending_goto_scene = battle_result.get("goto_scene", "")
 		var enemy_levels: Array = BattleRewards.unit_levels_from_slots(units, [2, 4, 6])
 		var fighting_party: Array[Variant] = []
 		for marker in [-2, -1]:
@@ -822,7 +824,9 @@ func _on_victory_proceed() -> void:
 		# more frame while the player is being built, and a second press must
 		# not start a second copy of the same clip on top of the first.
 		var cutscene_id: String = _pending_cutscene
+		var goto_scene: String = _pending_goto_scene
 		_pending_cutscene = ""
+		_pending_goto_scene = ""
 		# The original silences the battle track before jumping to a cutscene
 		# (DefineButton2_3004's release handler calls stopAllSounds); without
 		# this the battle music keeps playing under the cutscene's own audio
@@ -832,6 +836,10 @@ func _on_victory_proceed() -> void:
 		cutscene.animation_speed = animation_speed
 		add_child(cutscene)
 		await cutscene.play(cutscene_id)
+		# Matches gotoSceneKrin (frame_219): a cutscene that just unlocked a
+		# new zone opens the zone map on landing instead of the same hub.
+		if goto_scene == "overMap":
+			ZoneManager.open_zone_map_on_load = true
 	_on_continue_pressed()
 
 

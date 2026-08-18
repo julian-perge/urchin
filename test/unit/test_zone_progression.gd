@@ -101,6 +101,20 @@ func test_after_battle_won_returns_each_cutscene():
 		assert_eq(result["cutscene"], ZoneProgression.CUTSCENE_BATTLES[battle_id], "battle %s should trigger its cutscene" % battle_id)
 
 
+# gotoSceneKrin (frame_219): CS_CUT2/CS_CUT4 unlock a new zone and open the
+# map, CS_CUT3 doesn't unlock anything so it stays on the current hub.
+func test_after_battle_won_returns_goto_scene_per_cutscene():
+	var result = ZoneProgression.after_battle_won(save, 109, true)
+	assert_eq(result["goto_scene"], "overMap", "CS_CUT2 unlocks zone 2, opens the map")
+
+	save.section_in = 2
+	result = ZoneProgression.after_battle_won(save, 210, true)
+	assert_eq(result["goto_scene"], "Navigation", "CS_CUT3 doesn't unlock a new zone")
+
+	result = ZoneProgression.after_battle_won(save, 100, true)
+	assert_eq(result["goto_scene"], "", "non-cutscene wins don't carry a goto_scene")
+
+
 func _load_battle_ids() -> Dictionary:
 	var file := FileAccess.open(BATTLES_FILE, FileAccess.READ)
 	var parsed = JSON.parse_string(file.get_as_text())

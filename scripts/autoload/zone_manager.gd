@@ -12,6 +12,11 @@ extends Node2D
 var pending_battle: Dictionary = {}
 # Tests/headless flows set this false to keep request_* from switching scenes.
 var auto_start_battles: bool = true
+# Set by battle_scene.gd right before switching back to game.tscn when the
+# battle just won unlocked a new zone (ZoneProgression.CUTSCENE_GOTO_SCENE ==
+# "overMap") - game.gd's _ready() opens the zone map overlay on load and
+# clears this, matching the original's gotoSceneKrin == "overMap" (frame_219).
+var open_zone_map_on_load: bool = false
 
 signal zone_changed(zone_id: int)
 signal zone_unlocked(zone_id: int)

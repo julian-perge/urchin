@@ -17,6 +17,11 @@ func _ready():
 		ZoneManager.current_zone = GameData.current_save.section_in
 	_load_zone(ZoneManager.current_zone)
 	AudioManagerAuto.play_menu_music()
+	# A cutscene that just unlocked a new zone opens the map here instead of
+	# landing in the same hub (see battle_scene.gd's _on_victory_proceed()).
+	if ZoneManager.open_zone_map_on_load:
+		ZoneManager.open_zone_map_on_load = false
+		$ZoneMapOverlay.visible = true
 
 
 func _load_zone(zone_id: int) -> void:

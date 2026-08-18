@@ -90,3 +90,17 @@ Manual playthrough of zone 1's story battles surfaced two real bugs, both now fi
   deleted), `CUTSCENE_BATTLES` back to the real 109/210/409/513, tests updated to match.
 - The other 3 bugs found the same playthrough (second Leath battle's dialogue not playing, miss-animation/MISS-text placement, radial menu not closing on
   click-away, death animation timing) are unrelated to cutscene playback - logged in `NEXT_PHASES.md` ("Battle bugs found playtesting zone 1"), not fixed yet.
+
+**DONE (2026-08-18) — real playthrough of the fixed battle 109 surfaced one more bug, now fixed.** After the CUTSCENE_BATTLES fix above, winning battle 109 played
+CS_CUT2 and unlocked zone 2 correctly, but `_on_continue_pressed()` always sent the player back to `game.tscn`'s *current* zone hub - the original's `gotoSceneKrin`
+(frame_219, set alongside `afterCut` in the same per-battle checks) actually varies per cutscene: `"overMap"` for CS_CUT2/CS_CUT4 (both unlock a new zone - the
+original opens the map to show it off), `"Navigation"` for CS_CUT3 (zone 2's boss doesn't unlock anything new so it stays on the hub). Added
+`ZoneProgression.CUTSCENE_GOTO_SCENE`, threaded a `goto_scene` field through `after_battle_won()` → `battle_scene.gd`'s `_pending_goto_scene` → a new
+`ZoneManager.open_zone_map_on_load` flag → `game.gd`'s `_ready()` opening `$ZoneMapOverlay`. CS_CUT5's original destination (`"endMenu"`, a web-build-era ending
+screen that doesn't exist in this port and that zones 6/7 are real content past) falls back to `"overMap"` instead.
+
+Same playthrough also surfaced that the zone map's connector lines between zones were never built at all (not a rendering regression - `zone_map.gd`/`.tscn` had
+zero line-drawing code). Ported from `frame_449/DoAction.as`'s `krinMapper.lineMC` loop: a new `scripts/zones/zone_map_connectors.gd` on a `Connectors` node
+(sibling of `$ZoneMap`/`$Zones` in `zone_map.tscn`, drawn between them) draws each zone's line to its `linked_zone` - thick black backing plus a thinner overlay,
+blue if `ZoneProgression.is_zone_unlocked()` says the path is open, gray if not - reading the button nodes' own positions directly rather than duplicating their
+coordinates. GUT suite green: 104/104 tests, 629 asserts.

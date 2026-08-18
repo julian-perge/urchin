@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://de1ljqswptjjj"]
+[gd_scene load_steps=7 format=3 uid="uid://de1ljqswptjjj"]
 
 [ext_resource type="Texture2D" uid="uid://dms6vskl8ellq" path="res://assets/ui/zone_map/zone_map_full.png" id="1_mmn5b"]
 [ext_resource type="Script" uid="uid://b84a2vqgg4wr6" path="res://scripts/zones/zone_map.gd" id="2_script"]
+[ext_resource type="Script" path="res://scripts/zones/zone_map_connectors.gd" id="3_connectors"]
 [ext_resource type="Texture2D" uid="uid://bo71ayunmem66" path="res://assets/ui/zone_map/zone_map_button_inactive.png" id="4_8m3sq"]
 [ext_resource type="Texture2D" uid="uid://b6nq12eephq0s" path="res://assets/ui/zone_map/zone_map_button_active.png" id="4_aqs41"]
 [ext_resource type="Texture2D" uid="uid://o3qpict4ahil" path="res://resources/exit_screen.png" id="5_exit"]
@@ -25,6 +26,16 @@ grow_vertical = 2
 texture = ExtResource("1_mmn5b")
 expand_mode = 1
 stretch_mode = 6
+
+[node name="Connectors" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_connectors")
 
 [node name="Zones" type="Control" parent="."]
 layout_mode = 1
