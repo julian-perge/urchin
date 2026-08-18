@@ -78,6 +78,12 @@ var _rings: Dictionary = {}  # slot -> ring Control (hover indicator)
 var _stance_rows: Dictionary = {}  # party_id -> Array[Button]
 var _selected_move: Dictionary = {}
 var _player_action_pending: bool = false
+# Visual-only decision countdown - the original force-passed the turn at 0
+# (a real gameplay mechanic, frame217's onClipEvent(enterFrame)); this port
+# deliberately doesn't port that half, since the whole turn-based flow
+# already removed real-time pressure everywhere else. Ticks down only
+# while it's the player's own decision window.
+var _decision_timer: float = 0.0
 var _finished: bool = false
 var _radial_menu: Control = null
 var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
@@ -95,6 +101,7 @@ var _pending_setup_events: Array = []  # runner.setup()'s return - played first 
 @onready var continue_button: Button = $UI/ResultPanel/VBox/ContinueButton
 @onready var _pass_ring: Control = $BottomBar/PassRing
 @onready var stance_host: Control = $BottomBar/StanceHost
+@onready var _countdown_label: Label = $BottomBar/Panel3/CountdownLabel
 
 
 func _ready():
@@ -126,6 +133,16 @@ func _maybe_start_debug_battle() -> void:
 				"is_boss": false,
 			})
 			return
+
+
+func _process(delta: float) -> void:
+	if _player_action_pending:
+		_decision_timer = maxf(_decision_timer - delta, 0.0)
+	_countdown_label.text = str(int(ceil(_decision_timer)))
+
+
+func _reset_decision_timer() -> void:
+	_decision_timer = BattleRunner.BATTLE_TIME_LIMIT
 
 
 # Combat debug log -> user://logs/battle.log (see LogManagerAuto).
@@ -494,6 +511,7 @@ func _battle_loop() -> void:
 	while not runner.is_over():
 		if runner.is_player_turn():
 			_player_action_pending = true
+			_reset_decision_timer()
 			turn_label.text = "Your move"
 			_log("half-turn %d: waiting for player" % runner.turn_count)
 			_pass_ring.queue_redraw()

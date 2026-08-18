@@ -257,6 +257,49 @@ func test_death_plays_at_impact_not_after_caster_returns():
 	ZoneManager.auto_start_battles = true
 
 
+func test_decision_timer_ticks_down_while_player_is_deciding():
+	var save = PlayerSave.new_game("TimerTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	scene._player_action_pending = true
+	scene._reset_decision_timer()
+	assert_eq(scene._decision_timer, BattleRunner.BATTLE_TIME_LIMIT, "resets to the full 120s")
+
+	scene._process(10.0)
+	assert_almost_eq(scene._decision_timer, BattleRunner.BATTLE_TIME_LIMIT - 10.0, 0.001)
+
+	scene._process(9999.0)
+	assert_eq(scene._decision_timer, 0.0, "clamps at 0, never goes negative")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func test_decision_timer_does_not_tick_while_not_player_action_pending():
+	var save = PlayerSave.new_game("TimerTest2", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	scene._player_action_pending = false
+	scene._decision_timer = 50.0
+	scene._process(10.0)
+	assert_eq(scene._decision_timer, 50.0, "doesn't tick during an AI turn")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func test_bottom_bar_uses_extracted_backdrop_art():
 	var save = PlayerSave.new_game("BackdropTest", 0)
 	GameData.current_save = save

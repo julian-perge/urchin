@@ -69,7 +69,9 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
 
 - **Battle screen niceties**
 
-  - The 120-second decision countdown (`BattleRunner.BATTLE_TIME_LIMIT` is exposed, nothing displays it)
+  - The 120-second decision countdown - **DONE (2026-08-18)**. `battle_scene.gd`'s `_process()` ticks `_decision_timer` down from `BattleRunner.BATTLE_TIME_LIMIT` while
+    `_player_action_pending` is true, shown as a ring (`assets/ui/battle/battle_pbar_full.png`) + numeric label in the bottom bar's `Panel3`. Visual-only, deliberately does NOT
+    force-pass the turn at 0 like the original did - this port's turn-based flow already removed real-time pressure everywhere else, and reintroducing it here wasn't asked for.
   - Buff icons over units
   - A combat log panel
   - Target highlighting
