@@ -50,3 +50,84 @@ func test_drag_payload_defaults_to_inventory_source_with_no_host_meta():
 	var payload = slot._drag_payload()
 	assert_eq(payload["source"], "inventory")
 	assert_eq(payload["index"], -1)
+
+
+# Drop target (.claude/plan_item_drag_and_drop.md Task 3) - inventory<->
+# inventory swaps, inventory<->equip equips/unequips.
+func after_each():
+	GameData.current_save = null
+
+
+func _find_basic_equippable() -> GameItem:
+	var best: GameItem = null
+	for item in ItemManagerAuto.items_by_id.values():
+		if item.required_level > 1 or item.required_unit_id != 0:
+			continue
+		if Equipment.slot_for_item(item) == -1:
+			continue
+		if best == null or item.id < best.id:
+			best = item
+	return best
+
+
+func test_can_drop_data_inventory_accepts_inventory_and_equip_sources():
+	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	slot.set_meta("drag_source", "inventory")
+	assert_true(slot._can_drop_data(Vector2.ZERO, {"item": true, "source": "inventory", "index": 0}))
+	assert_true(slot._can_drop_data(Vector2.ZERO, {"item": true, "source": "equip", "index": 0}))
+
+
+func test_can_drop_data_equip_only_accepts_inventory_source():
+	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	slot.set_meta("drag_source", "equip")
+	assert_true(slot._can_drop_data(Vector2.ZERO, {"item": true, "source": "inventory", "index": 0}))
+	assert_false(slot._can_drop_data(Vector2.ZERO, {"item": true, "source": "equip", "index": 0}), "equip<->equip makes no sense")
+
+
+func test_can_drop_data_rejects_malformed_payload():
+	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	assert_false(slot._can_drop_data(Vector2.ZERO, "not a dictionary"))
+	assert_false(slot._can_drop_data(Vector2.ZERO, {}))
+
+
+func test_drop_data_inventory_to_inventory_swaps():
+	var save: PlayerSave = PlayerSave.new_game("DropTest", 0)
+	GameData.current_save = save
+	save.item_array[0] = 5
+	save.item_array[1] = 9
+	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	slot.set_meta("drag_source", "inventory")
+	slot.set_meta("drag_index", 0)
+	slot._drop_data(Vector2.ZERO, {"item": true, "source": "inventory", "index": 1})
+	assert_eq(int(save.item_array[0]), 9)
+	assert_eq(int(save.item_array[1]), 5)
+
+
+func test_drop_data_equip_source_to_inventory_slot_unequips_to_that_cell():
+	var save: PlayerSave = PlayerSave.new_game("DropTest", 0)
+	GameData.current_save = save
+	var item: GameItem = _find_basic_equippable()
+	assert_not_null(item, "an unrestricted level-1 equippable exists")
+	var equip_slot: int = Equipment.slot_for_item(item)
+	save.equip_array[equip_slot] = item.id
+	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	slot.set_meta("drag_source", "inventory")
+	slot.set_meta("drag_index", 3)
+	slot._drop_data(Vector2.ZERO, {"item": item, "source": "equip", "index": equip_slot})
+	assert_eq(int(save.item_array[3]), item.id, "landed at the destination cell, not the first free one")
+	assert_eq(int(save.equip_array[equip_slot]), 0)
+
+
+func test_drop_data_inventory_source_to_equip_slot_equips():
+	var save: PlayerSave = PlayerSave.new_game("DropTest", 0)
+	GameData.current_save = save
+	var item: GameItem = _find_basic_equippable()
+	assert_not_null(item)
+	save.item_array[2] = item.id
+	var equip_slot: int = Equipment.slot_for_item(item)
+	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	slot.set_meta("drag_source", "equip")
+	slot.set_meta("drag_index", equip_slot)
+	slot._drop_data(Vector2.ZERO, {"item": item, "source": "inventory", "index": 2})
+	assert_eq(int(save.equip_array[equip_slot]), item.id)
+	assert_eq(int(save.item_array[2]), 0)

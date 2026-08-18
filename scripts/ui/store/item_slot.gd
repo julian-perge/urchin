@@ -101,3 +101,33 @@ func _build_drag_preview() -> Control:
 	preview.modulate = Color(1, 1, 1, 0.75)
 	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return preview
+
+
+# Drop target: inventory<->inventory swaps, inventory<->equip
+# equips/unequips. An inventory slot accepts a drop from either kind of
+# source; an equip slot only accepts one from inventory (equip<->equip
+# makes no sense - a two-slot swap of different item kinds would just fail
+# both ways).
+func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
+	if not data is Dictionary or not data.has("item"):
+		return false
+	var source: String = str(data.get("source", ""))
+	var my_source: String = str(get_meta("drag_source", "inventory"))
+	if my_source == "inventory":
+		return source in ["inventory", "equip"]
+	if my_source == "equip":
+		return source == "inventory"
+	return false
+
+
+func _drop_data(_at_position: Vector2, data: Variant) -> void:
+	var source: String = str(data.get("source", ""))
+	var src_index: int = int(data.get("index", -1))
+	var my_source: String = str(get_meta("drag_source", "inventory"))
+	var my_index: int = int(get_meta("drag_index", -1))
+	if my_source == "inventory" and source == "inventory":
+		GameData.swap_inventory_slots(src_index, my_index)
+	elif my_source == "inventory" and source == "equip":
+		GameData.unequip_to_slot(src_index, my_index)
+	elif my_source == "equip" and source == "inventory":
+		GameData.equip_from_inventory(src_index, my_index)
