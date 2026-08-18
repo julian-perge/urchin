@@ -78,6 +78,7 @@ var _selected_move: Dictionary = {}
 var _player_action_pending: bool = false
 var _finished: bool = false
 var _radial_menu: Control = null
+var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
 
 @onready var background: TextureRect = $Background
 @onready var sky: TextureRect = $Sky
@@ -761,7 +762,8 @@ func _finish_battle() -> void:
 	var outcome: int = runner.win_condition
 	if outcome == BattleRunner.Outcome.WIN and save != null:
 		var was_story = battle_info.get("is_story_progress", false)
-		ZoneProgression.after_battle_won(save, battle.id, was_story)
+		var battle_result: Dictionary = ZoneProgression.after_battle_won(save, battle.id, was_story)
+		_pending_cutscene = battle_result.get("cutscene", "")
 		var enemy_levels: Array = BattleRewards.unit_levels_from_slots(units, [2, 4, 6])
 		var fighting_party: Array[Variant] = []
 		for marker in [-2, -1]:
@@ -793,6 +795,11 @@ func _on_victory_proceed() -> void:
 	# The original autosaves on Proceed (when the option is on).
 	if GameData.current_save != null and GameData.current_save.autosave:
 		GameData.save_game()
+	if not _pending_cutscene.is_empty():
+		var cutscene: CutscenePlayer = preload("res://scenes/cutscenes/cutscene_player.tscn").instantiate()
+		cutscene.animation_speed = animation_speed
+		add_child(cutscene)
+		await cutscene.play(_pending_cutscene)
 	_on_continue_pressed()
 
 

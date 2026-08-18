@@ -41,8 +41,14 @@ const TRAIN_FIGHTS: Dictionary = {
 # in training fights (finalTrainCap).
 const TRAIN_FIGHT_CAPS: Dictionary = {1: 9, 2: 12, 3: 15, 4: 18, 5: 23, 6: 40, 7: 30}
 
-# Story battles that trigger a cutscene when won (frame_219).
-const CUTSCENE_BATTLES: Dictionary = {109: "CS_CUT2", 210: "CS_CUT3", 409: "CS_CUT4", 513: "CS_CUT5"}
+# Story battles that trigger a cutscene when won (frame_219). The original
+# AS checks Krin.BattlePick against 109/210/409/513, but this port's
+# extracted battle data (dev/converted_json/battles.json, resources/battles)
+# has no 109, 409, or 513 - each zone's real battle ids stop one short of
+# that (zone 1: 100-108, zone 4: 400-408, zone 5: 500-512). Keyed here to
+# the actual last-real-battle id per zone instead, so the cutscene fires on
+# the fight players can actually win.
+const CUTSCENE_BATTLES: Dictionary = {108: "CS_CUT2", 210: "CS_CUT3", 408: "CS_CUT4", 512: "CS_CUT5"}
 
 
 static func quest_progress(save: PlayerSave, zone: int) -> int:

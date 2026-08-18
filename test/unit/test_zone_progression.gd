@@ -4,6 +4,8 @@
 # frame_42/DoAction_17 - see the class headers).
 extends GutTest
 
+const BATTLES_FILE = "res://dev/converted_json/battles.json"
+
 var save: PlayerSave
 
 
@@ -75,12 +77,38 @@ func test_after_battle_won_progression_and_cutscenes():
 	assert_true(result["progress_advanced"])
 	assert_eq(result["cutscene"], "")
 
-	save.quest_progress[1] = 9
-	result = ZoneProgression.after_battle_won(save, 109, true)
-	assert_eq(result["cutscene"], "CS_CUT2", "zone 1 boss win triggers the cutscene")
+	save.quest_progress[1] = 8
+	result = ZoneProgression.after_battle_won(save, 108, true)
+	assert_eq(result["cutscene"], "CS_CUT2", "zone 1's last real battle win triggers the cutscene")
 
-	result = ZoneProgression.after_battle_won(save, 109, false)
-	assert_eq(save.quest_progress[1], 10, "repeat boss wins do not advance further")
+	result = ZoneProgression.after_battle_won(save, 108, false)
+	assert_eq(save.quest_progress[1], 9, "repeat wins do not advance further")
+
+
+# Standing regression guard: this is the check that would have caught the
+# CUTSCENE_BATTLES 513/"CS_CUT5" bug (513 is one past zone 5's last real
+# battle, 512 - see the const's comment). Every key must resolve to an
+# actual battle so its cutscene is reachable in play.
+func test_cutscene_battles_keys_are_real_battle_ids():
+	var battle_ids: Dictionary = _load_battle_ids()
+	for battle_id in ZoneProgression.CUTSCENE_BATTLES:
+		assert_true(battle_ids.has(battle_id), "battle %s (%s) is not a real battle id" % [battle_id, ZoneProgression.CUTSCENE_BATTLES[battle_id]])
+
+
+func test_after_battle_won_returns_each_cutscene():
+	for battle_id in [108, 210, 408, 512]:
+		var result = ZoneProgression.after_battle_won(save, battle_id, true)
+		assert_eq(result["cutscene"], ZoneProgression.CUTSCENE_BATTLES[battle_id], "battle %s should trigger its cutscene" % battle_id)
+
+
+func _load_battle_ids() -> Dictionary:
+	var file := FileAccess.open(BATTLES_FILE, FileAccess.READ)
+	var parsed = JSON.parse_string(file.get_as_text())
+	file.close()
+	var ids: Dictionary = {}
+	for battle_data in parsed.get("battles", []):
+		ids[int(battle_data["id"])] = true
+	return ids
 
 
 func test_companions_join_at_thresholds():
