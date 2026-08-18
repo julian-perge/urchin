@@ -32,7 +32,11 @@ ICON_HALF = 15.5
 # never visible in game (the slot art sits behind the icon instead).
 SKIP_CIDS = {1913}
 # Items whose icon-clip frame does not match the live game (verified by
-# side-by-side playtest) keep a hand-picked icon instead.
+# side-by-side playtest) keep a hand-picked icon instead. Keep in sync with
+# scripts/editor/items.gd's SLOT_ICON_OVERRIDES - that script re-picks
+# slot_image from scratch whenever item .tres files are regenerated from
+# items.json, with its own independent copy of this table (2026-08-17: item
+# 5 fell out of sync here for a while - its fix never reached items.gd).
 ICON_OVERRIDES = {
     5: "res://assets/item_slot_icons/OTHER/A_Broken_Pipe.png",
     11: "res://assets/item_slot_icons/OTHER/White_T_Shirt.png"  # White T-shirt
