@@ -171,7 +171,7 @@ func dress_from_model(model: Array, equip_looks: Array) -> void:
 	dress(gender, skin, hair, equip_looks)
 
 
-func set_state(new_state: int) -> void:
+func set_state(new_state: State) -> void:
 	# Leaving an unfinished melee run: put the doll back home and release
 	# anything awaiting melee_finished (e.g. the caster died mid-swing).
 	if _state == State.MELEE and new_state != State.MELEE and _melee_phase != -1:
