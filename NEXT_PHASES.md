@@ -63,19 +63,47 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   - **Built (2026-07-18)** from the original menu clip (DefineSprite 3142, stage origin 400.5/222.4; frame 1 = inventory, 16 = store, 25 = abilities, 45 = achievements):
     `scenes/ui/menu/inventory_window.tscn`, `abilities_window.tscn`, `achievements_window.tscn`, plus the rebuilt `scenes/ui/store/store_window.tscn` - all wired to hotbar buttons with the green
     active-icon glow. Chrome art extracted at 2x into `assets/ui/menu/`.
-  - **Still missing on these screens:** party portrait faces (sprite 2979's frames - frames are placeholders), ability orb icons (original per-move icon art - orbs show initials + element colors), the
-    abilities tutorial callout box, and drag-to-socket placement (click-to-place stands in).
+  - **DONE (2026-08-17)** - party portrait faces. `dev/urchin_dev/swf/extract/faces.py` rewritten to export the face clip (`DefineSprite 2978`) directly via `ffdec`'s own sprite renderer instead
+    of reassembling it shape-by-shape - the old per-shape compositor only carried position/scale, silently dropping the filters/color transforms several characters' portraits depend on (e.g.
+    Veradux's glowing eyes), so every portrait rendered as a near-black silhouette. Also dropped the old chrome-compositing pass entirely (pasting sprites 333/2896/2895 onto the face) - confirmed
+    via `inventory_window.tscn` that the slot border already comes from `item_slot.tscn`, the same reusable bordered-slot scene used everywhere else; compositing it a second time onto the face was
+    both redundant and the source of a stray-artifact bug. Now extracts all 40 named portraits in the clip (5 companions + the player + every named story NPC - `Doctor Hedger`, `The Warden`,
+    `Clemons The Deceiver`, etc.), not just the 6 party-facing ones the old script hardcoded.
+  - **Still missing on these screens:** the abilities tutorial callout box and drag-to-socket placement (click-to-place stands in). (Ability orb icons are also done - see the ability menu redesign
+    phase below.)
 
 - **Screens not yet built** (hotbar buttons dimmed): options, respec button flow (logic in `Leveling.respec`), team-select (`PlayerSave.party_deployed` is ready), character appearance customization
   (SkinSet/HairSet/GSet persistence). References in `assets/references/`.
 
-- **Item icons**: 325 original icons extracted from the icon sheet (sprite 2064) into `assets/ui/items/` with 311 items repointed (2026-07-18); the ~135 items whose names have no icon-clip label still
-  use `assets/item_slot_icons/` art.
+- **Item icons**: 325 original icons extracted from the icon sheet (sprite 2064) into `assets/ui/items/` with 311 items repointed (2026-07-18).
+  - **DONE (2026-08-17)** - `extract_item_icons.py`'s `ICON_OVERRIDES` idempotency check tested two independent substrings (the override path anywhere in the file, `slot_image` pointing at
+    `icon_slot` anywhere in the file) instead of confirming they were the same `ext_resource`. A leftover duplicate resource on item 5 (A Broken Pipe) made both substrings true on unrelated lines,
+    so the check read "already patched" and silently skipped repointing it, run after run, even with a correct `ICON_OVERRIDES` entry present. Fixed (tie the check to one atomic string); item 5
+    now shows its real icon (`assets/item_slot_icons/OTHER/A_Broken_Pipe.png`) instead of sprite 2064's mismatched frame. See `docs/item-icon-extraction.md` for the extraction commands.
+  - **DONE (2026-08-17) - content audit.** The "~135 items with no icon-clip label" figure this bullet used to carry was stale - re-checked every item's sanitized name against all 327 real
+    (non-empty-snap) labels in sprite 2064 directly. Actual count today: **4** items with no match at all - `Tool` (id 1), `Golden Crowbar`/`Golden Pipe`/`Golden Axe` (ids 681-683, cosmetic
+    variants with no distinct icon frame in the original sheet either - fuzzy-matched against every label, no close candidate exists for any of the four) - plus item 0's `None` sentinel (the
+    empty-slot placeholder, correctly iconless, not a real item). All four already fall back to `assets/item_slot_icons/` correctly; no further fix needed for them.
+    Two other things this audit turned up:
+    - **Fixed**: `scripts/editor/items.gd`'s own `SLOT_ICON_OVERRIDES` (a second copy of the id-5/id-11 override table, used when regenerating `.tres` files from `items.json` from scratch) only
+      had id 11 - item 5's fix would have silently reverted the next time anyone ran that script. Added id 5; both files now cross-reference each other's override table so they don't drift again.
+    - **Not fixed, lower priority**: 4 pairs of items share a display name and so share one slot icon by the current sanitize-key lookup (`Surgery Blade` ids 16/501, `Frosted Leggings` ids
+      125/322, `Riot Shield` ids 188/653, `Metal Shield` ids 203/516). Two pairs (`Surgery Blade`, `Metal Shield`) already share the same equipped paper-doll art (`looks`), so sharing an icon is
+      correct. The other two (`Frosted Leggings`, `Riot Shield`) have *different* `looks` per id, meaning two visually-distinct equipped items currently show the same slot icon - a real but minor
+      content gap, not investigated further this pass.
+    Still worth a manual side-by-side pass against the live game for the 309 items that DO get an automatic sprite-2064 match, since id 5/11 prove a labeled frame can point at the wrong content
+    without tripping any of the checks above. Good place to start: the 10 icons whose pixels changed on the last re-extraction beyond plain PNG re-encoding (`A_Broken_Pipe`, `A_Sword`,
+    `Broken_Emerald_Shard`, `Crow_Bar`, `Dirty_31`, `Fire_Axe`, `Flamboyant_Trousers`, `Levo_Jeans`, `Nike_Head_Wear`, `Proverse_All_Stars` - likely a shared background/vignette shape rendering
+    differently under a newer `ffdec`, not yet root-caused), since they're already flagged as anomalous.
 
 - **Zone hub art for zones 6/7**: no dedicated hub art exists in the extracted assets - the scenes reuse the wide battle backdrops (`battle/CHURCH.png`, `battle/STREETS.png`), aspect-cropped. Zone 7's
   training orb position is also borrowed from zone 6 (the original Steam-only zone frame has no training orb placement).
 
-- **Cutscenes**: `ZoneProgression.after_battle_won()` reports the cutscene id (`CS_CUT2` etc.); nothing plays them. The original cutscene frames would need art extraction.
+- **Cutscenes** - plan written, zero code. `.claude/plan_cutscenes.md`: `ZoneProgression.after_battle_won()` already reports the cutscene id (`CS_CUT2` through `CS_CUT5`) but nothing consumes it
+  - the call site discards the result outright. Plan covers extracting all 4 as playable video (verified live: `ffdec -format sprite:avi -selectid <chid>` renders each cutscene's own timeline with
+  every filter/color-transform/blend-mode correctly baked in, plus stripping a per-cutscene guide-overlay artifact and pulling the embedded MP3 audio), a `CutscenePlayer` scene matching the
+  original's fade-in/fade-out, wiring it into the victory-screen Continue flow, and fixing a real bug found along the way: `CUTSCENE_BATTLES`'s `513: "CS_CUT5"` references a battle id that doesn't
+  exist (should be `512`), so CS_CUT5 can never currently trigger.
 
 - **Shatter Bolt**: the one `"Attack"`-category move - the original never handled it either.
 
