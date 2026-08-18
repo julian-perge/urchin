@@ -100,6 +100,28 @@ func _ready():
 	if not ZoneManager.pending_battle.is_empty():
 		start_battle(ZoneManager.pending_battle)
 		ZoneManager.pending_battle = {}
+	else:
+		_maybe_start_debug_battle()
+
+
+# Debug entry point: run a specific battle directly, skipping the zone-hub
+# grind - e.g. to verify a cutscene-triggering win (ZoneProgression.
+# CUTSCENE_BATTLES) without playing up to it normally.
+#   godot --path . res://scenes/battle_scene.tscn -- --battle=108
+# Builds a throwaway save at slot -1, never persisted (GameData.save_game()
+# no-ops when current_slot == -1), so a debug run can never clobber a real
+# save file. is_story_progress is forced true so a cutscene battle id
+# actually fires its cutscene on victory, matching the real story-fight path.
+func _maybe_start_debug_battle() -> void:
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--battle="):
+			GameData.new_game(-1, "Debug")
+			start_battle({
+				"battle_id": int(arg.trim_prefix("--battle=")),
+				"is_story_progress": true,
+				"is_boss": false,
+			})
+			return
 
 
 # Combat debug log -> user://logs/battle.log (see LogManagerAuto).

@@ -18,6 +18,12 @@ extends Node
 # zone_manager.gd/store_manager.gd pattern: no class_name, called by the
 # autoload name directly.
 
+# user:// resolves to a per-OS app-data dir named after config/name in project.godot ("urchin")
+# macOS: ~/Library/Application Support/Godot/app_userdata/urchin/saves/
+# Windows: %APPDATA%\Godot\app_userdata\urchin\saves\
+# Linux: ~/.local/share/godot/app_userdata/urchin/saves/
+# Delete a slotN.tres there to wipe that save,
+# or copy it out to back one up.
 const SAVE_DIR: String = "user://saves/"
 const NUM_SLOTS: int = 4
 

@@ -47,6 +47,13 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     `DefineSprite_152`/`157`'s own `onClipEvent(load)` `Color.setRGB`, while the trail is tinted inline inside `krinBoltMake` itself (`frame_42/DoAction_4.as:177-178`) against the attached
     `KrinTrail` instance directly.
 
+- **Battle bugs found playtesting zone 1 (2026-08-18)** - surfaced manually verifying the cutscene work above (see the debug battle-jump entry point in `.claude/plan_cutscenes.md`'s Task 4 note), not yet root-caused:
+
+  - The first Doctor Leath battle plays its scripted dialogue (`_play_speech`/`battle.speeches`); the second Leath-and-the-experiment battle doesn't. Unconfirmed whether the second battle's converted data has no `speeches` entries at all or whether they exist but never match `_drain_speeches()`'s phase/turnTime gating.
+  - A miss (attack roll resolves to a miss) skips the attack animation entirely, and the `MISS` text appears over the attacker instead of the target being missed.
+  - Clicking a character opens their radial ability menu, but clicking empty space (anywhere that isn't another character) doesn't close it - only clicking a different character does.
+  - A unit's death animation waits until the attacker has returned to its starting position before playing, instead of firing as soon as that unit's HP hits zero.
+
 - **Battle screen niceties**
 
   - The 120-second decision countdown (`BattleRunner.BATTLE_TIME_LIMIT` is exposed, nothing displays it)

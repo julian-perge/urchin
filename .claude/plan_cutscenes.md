@@ -74,3 +74,12 @@ Godot's only built-in video codec is Ogg Theora (confirmed via current Godot doc
 - Manually trigger each of the 4 story battles (or fast-path via save-state manipulation in a debug run) and confirm: fade-in, correct video, synced audio, fade-out, return to the zone hub, save state advances normally.
 - Run the full GUT headless suite — new tests from Tasks 1-3 plus the existing suite, all green.
 - Demo: end-to-end — win battle 109, watch `CS_CUT2` play with audio, land back in the zone hub with progress advanced, same for 210/409/512.
+
+**DONE (2026-08-18) — automated half.** All 4 `.ogv`s regenerated (see Task 1's file history), GUT suite green: 103/103 tests, 625 asserts. Added a debug entry point
+(`battle_scene.gd`'s `_maybe_start_debug_battle()`) so a specific battle can be jumped into directly instead of playing through the zone hub:
+`godot --path . res://scenes/battle_scene.tscn -- --battle=108` (108/210/408/512 are the real `CUTSCENE_BATTLES` ids — note the plan's table above says 109/409, that's stale
+against the actual constant, not re-verified here). Uses a throwaway slot -1 save (`GameData.new_game(-1, ...)`, never persisted) so it can't clobber a real save file.
+
+Manual playthrough of zone 1's story battles (not yet all 4 cutscene battles) surfaced 4 real bugs unrelated to cutscene playback itself — logged in `NEXT_PHASES.md`
+("Battle bugs found playtesting zone 1"): second Leath battle's dialogue doesn't play, miss-animation/MISS-text placement, radial menu not closing on click-away, and
+death animation timing tied to the attacker's return instead of the target's HP hitting zero. Not investigated or fixed yet.
