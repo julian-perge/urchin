@@ -1,18 +1,18 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://5de136fflhfs"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_ktbdc"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_ktbdc"]
 
 [resource]
 script = ExtResource("1_ktbdc")
 id = 304
 id_name = "KBR304"
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 374.0,
 "name": "Beard"
 }, {
 "id": 372.0,
 "name": "Upper Rags"
-}]
+}])
 item_rare_dropper = 1
 players = [{
 "id": 44.0,

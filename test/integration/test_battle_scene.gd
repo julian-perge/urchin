@@ -59,8 +59,8 @@ func test_full_battle_scene_run():
 	ZoneManager.auto_start_battles = true
 
 
-# Task 4 (cutscene plan): drives a real win of story battle 108 (zone 1's
-# last real battle, CUTSCENE_BATTLES -> CS_CUT2) through the actual game
+# Task 4 (cutscene plan): drives a real win of story battle 109 (zone 1's
+# boss, CUTSCENE_BATTLES -> CS_CUT2) through the actual game
 # code path - BattleSetup/BattleRunner combat, _finish_battle(),
 # ZoneProgression.after_battle_won(), and the VictoryScreen "Proceed" ->
 # CutscenePlayer wiring - and confirms the cutscene id is threaded through
@@ -83,7 +83,7 @@ func test_story_battle_win_threads_cutscene_id_through_victory_flow():
 	save.skill_points = 8
 	TalentTree.learn(save, 0)
 	TalentTree.learn(save, 0)
-	save.quest_progress[1] = 8  # battle 108 is zone 1's last real (pre-boss) battle
+	save.quest_progress[1] = 9  # battle 109 is zone 1's boss
 	# No slot is selected in this test (GameData.current_save is set directly
 	# below) - autosave defaulting true would make _on_victory_proceed() log a
 	# benign "no active save/slot" warning; off here since it's not what this
@@ -96,8 +96,8 @@ func test_story_battle_win_threads_cutscene_id_through_victory_flow():
 	var scene = add_child_autofree(BattleSceneRes.instantiate())
 	scene.animation_speed = 0.0
 	watch_signals(scene)
-	scene.start_battle({"battle_id": 108, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	assert_eq(scene.battle.id, 108, "loaded the intended story battle")
+	scene.start_battle({"battle_id": 109, "is_story_progress": true, "is_boss": true, "train_cap": 9})
+	assert_eq(scene.battle.id, 109, "loaded the intended story battle")
 
 	# Tilt the fight so the real sim reaches WIN deterministically: enemy
 	# dies on the first landed hit, player is unkillable within the turn cap.
@@ -119,7 +119,7 @@ func test_story_battle_win_threads_cutscene_id_through_victory_flow():
 	await wait_for_signal(scene.battle_finished, 30)
 	assert_signal_emitted(scene, "battle_finished")
 	assert_eq(scene.runner.win_condition, BattleRunner.Outcome.WIN, "tilted fight wins deterministically")
-	assert_eq(ZoneProgression.quest_progress(save, 1), 9, "story win advanced progress past 108")
+	assert_eq(ZoneProgression.quest_progress(save, 1), 10, "story win advanced progress past 109")
 	assert_eq(scene._pending_cutscene, "CS_CUT2", "battle_scene threaded ZoneProgression's cutscene id into _pending_cutscene")
 
 	var victory: VictoryScreen = scene.get_node_or_null("VictoryScreen")

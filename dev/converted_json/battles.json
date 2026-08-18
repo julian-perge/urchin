@@ -1334,8 +1334,8 @@
     },
     {
       "absolute_start": 0,
-      "id": 199,
-      "id_name": "KBR199",
+      "id": 109,
+      "id_name": "KBR109",
       "item_drops": [
         {
           "chance": 100,
@@ -4605,8 +4605,8 @@
     },
     {
       "absolute_start": 0,
-      "id": 499,
-      "id_name": "KBR499",
+      "id": 409,
+      "id_name": "KBR409",
       "item_drops": [
         {
           "chance": 100,
@@ -5768,8 +5768,8 @@
     },
     {
       "absolute_start": 2,
-      "id": 599,
-      "id_name": "KBR599",
+      "id": 513,
+      "id_name": "KBR513",
       "item_drops": [
         {
           "chance": 20,

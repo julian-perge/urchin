@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dtb423nbv804u"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_rgvbq"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_rgvbq"]
 
 [resource]
 script = ExtResource("1_rgvbq")
@@ -13,7 +13,7 @@ item_drops = [{
 "name": "Unholy Runeblade"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 347.0,
 "name": "Usurper's Chest"
 }, {
@@ -22,7 +22,7 @@ item_rare = [{
 }, {
 "id": 349.0,
 "name": "Pretender's Leggings"
-}]
+}])
 item_rare_dropper = 1
 phases = {
 "0": "EMPTY",
@@ -60,7 +60,7 @@ players = [{
 }]
 players_levels = [11.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 sky_background = "CHURCH"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": 2.0,
 "say": "Oh, it’s you! You always give me trouble! And here I was, having SUCH a good time.",
@@ -100,6 +100,6 @@ speeches = [{
 "turnTime": 0.0,
 "turnTime2": 0.0,
 "voiceOver": "v2_16"
-}]
+}])
 win_date = -1
 zone_background = "CHURCH"

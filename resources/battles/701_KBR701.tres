@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cm231t6ax2wei"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_5m5cd"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_5m5cd"]
 
 [resource]
 script = ExtResource("1_5m5cd")
@@ -106,7 +106,7 @@ players = [{
 }]
 players_levels = [30.0, 1.0, 30.0, 1.0, 30.0]
 sky_background = "TUNNEL"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": 6.0,
 "say": "Let them kill me, Dave! Let them kill me, and we will win.",
@@ -114,6 +114,6 @@ speeches = [{
 "turnTime": 0.0,
 "turnTime2": 0.0,
 "voiceOver": ""
-}]
+}])
 win_date = -1
 zone_background = "STREETS"

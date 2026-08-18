@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dcyabbfp6kwuy"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_0ffxt"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_0ffxt"]
 
 [resource]
 script = ExtResource("1_0ffxt")
@@ -13,13 +13,13 @@ item_drops = [{
 "name": "Runeblade"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 345.0,
 "name": "Supreme Grasp"
 }, {
 "id": 346.0,
 "name": "Demigod's Visage"
-}]
+}])
 item_rare_dropper = 1
 phases = {
 "0": "EMPTY",
@@ -51,7 +51,7 @@ players = [{
 }]
 players_levels = [11.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 sky_background = "CHURCH"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": "Roald",
 "say": "It's their leader! If we can take him out, their cult is finished!",
@@ -83,6 +83,6 @@ speeches = [{
 "turnTime": 0.0,
 "turnTime2": 0.0,
 "voiceOver": "v2_14"
-}]
+}])
 win_date = -1
 zone_background = "CHURCH"

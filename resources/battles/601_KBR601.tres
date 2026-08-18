@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dr740e17glj1w"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_psc8j"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_psc8j"]
 
 [resource]
 script = ExtResource("1_psc8j")
@@ -61,7 +61,7 @@ players = [{
 }]
 players_levels = [24.0, 1.0, 1.0, 1.0, 1.0]
 sky_background = "ROME"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": 2.0,
 "say": "60... 59...",
@@ -93,6 +93,6 @@ speeches = [{
 "turnTime": 55.0,
 "turnTime2": 0.0,
 "voiceOver": ""
-}]
+}])
 win_date = -1
 zone_background = "CHURCH"

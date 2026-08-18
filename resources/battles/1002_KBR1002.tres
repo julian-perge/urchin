@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dolnfldj32cvn"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_tfqmm"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_tfqmm"]
 
 [resource]
 script = ExtResource("1_tfqmm")
@@ -13,14 +13,14 @@ item_drops = [{
 "name": "Persecution"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 312.0,
 "name": "Shawshank Boots"
 }, {
 "id": 311.0,
 "name": "Punisher Gloves"
-}]
-item_rare2 = [{
+}])
+item_rare2 = Array[Dictionary]([{
 "id": 313.0,
 "name": "Warden's Leggings"
 }, {
@@ -29,7 +29,7 @@ item_rare2 = [{
 }, {
 "id": 310.0,
 "name": "Warden's Armor"
-}]
+}])
 item_rare_dropper = 1
 item_rare_dropper2 = 1
 phases = {

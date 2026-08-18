@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://b5cbdlrlv38nv"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_glsss"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_glsss"]
 
 [resource]
 script = ExtResource("1_glsss")
@@ -21,7 +21,7 @@ players = [{
 }]
 players_levels = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 sky_background = "JAIL"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": 4.0,
 "say": "Wake up Frankie, the guests are here. Wake up! And make Daddy proud!",
@@ -45,6 +45,6 @@ speeches = [{
 "turnTime": 0.0,
 "turnTime2": 2.0,
 "voiceOver": "v_"
-}]
+}])
 win_date = -1
 zone_background = "JAIL"

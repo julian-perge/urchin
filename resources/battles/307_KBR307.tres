@@ -1,12 +1,12 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://b1asskbmlb6do"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_u0wu0"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_u0wu0"]
 
 [resource]
 script = ExtResource("1_u0wu0")
 id = 307
 id_name = "KBR307"
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 538.0,
 "name": "Spirit Cover"
 }, {
@@ -21,8 +21,8 @@ item_rare = [{
 }, {
 "id": 542.0,
 "name": "Aura Treads"
-}]
-item_rare2 = [{
+}])
+item_rare2 = Array[Dictionary]([{
 "id": 543.0,
 "name": "Bone Helm"
 }, {
@@ -37,8 +37,8 @@ item_rare2 = [{
 }, {
 "id": 547.0,
 "name": "Ornate Greaves"
-}]
-item_rare3 = [{
+}])
+item_rare3 = Array[Dictionary]([{
 "id": 548.0,
 "name": "Old ZPCI Helm"
 }, {
@@ -53,7 +53,7 @@ item_rare3 = [{
 }, {
 "id": 552.0,
 "name": "Old ZPCI Boots"
-}]
+}])
 item_rare_dropper = 1
 item_rare_dropper2 = 1
 item_rare_dropper3 = 1

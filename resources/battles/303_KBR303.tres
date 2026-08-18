@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://ctkpf0g8kpraf"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_e5ht2"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_e5ht2"]
 
 [resource]
 script = ExtResource("1_e5ht2")
@@ -13,7 +13,7 @@ item_drops = [{
 "name": "Annihilation"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 553.0,
 "name": "Ancient Sword"
 }, {
@@ -22,8 +22,8 @@ item_rare = [{
 }, {
 "id": 561.0,
 "name": "Frosted Axe"
-}]
-item_rare2 = [{
+}])
+item_rare2 = Array[Dictionary]([{
 "id": 562.0,
 "name": "Charged Axe"
 }, {
@@ -32,7 +32,7 @@ item_rare2 = [{
 }, {
 "id": 566.0,
 "name": "Demon Blade"
-}]
+}])
 item_rare_dropper = 1
 item_rare_dropper2 = 1
 players = [{

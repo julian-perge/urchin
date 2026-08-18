@@ -1,18 +1,18 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bnfeegk05s1mt"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_t3vkn"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_t3vkn"]
 
 [resource]
 script = ExtResource("1_t3vkn")
 id = 100
 id_name = "KBR100"
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 300.0,
 "name": "Guard's Leggings"
 }, {
 "id": 301.0,
 "name": "Guard's Grip"
-}]
+}])
 item_rare_dropper = 1
 players = [{
 "id": 5.0,
@@ -28,7 +28,7 @@ players = [{
 }]
 players_levels = [1.0, 1.0, 1.0, 1.0, 1.0]
 sky_background = "JAIL"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": 2.0,
 "say": "More hostiles! You've made a big mistake by breaking in here.",
@@ -44,6 +44,6 @@ speeches = [{
 "turnTime": 0.0,
 "turnTime2": 1.0,
 "voiceOver": ""
-}]
+}])
 win_date = -1
 zone_background = "JAIL"

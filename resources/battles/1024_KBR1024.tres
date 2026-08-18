@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bvyq0v0hqmfsm"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_l0xrc"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_l0xrc"]
 
 [resource]
 script = ExtResource("1_l0xrc")
@@ -14,7 +14,7 @@ item_drops = [{
 "name": "Supremacy"
 }
 }]
-item_rare2 = [{
+item_rare2 = Array[Dictionary]([{
 "id": 637.0,
 "name": "Colonel's Helm"
 }, {
@@ -29,7 +29,7 @@ item_rare2 = [{
 }, {
 "id": 641.0,
 "name": "Palace Greaves"
-}]
+}])
 item_rare_dropper2 = 1
 phases = {
 "0": "EMPTY",

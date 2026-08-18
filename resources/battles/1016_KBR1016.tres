@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bd70k5ln1138g"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_bvjo7"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_bvjo7"]
 
 [resource]
 script = ExtResource("1_bvjo7")
@@ -13,7 +13,7 @@ item_drops = [{
 "name": "Poseidon's Fury"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 573.0,
 "name": "Night Vision"
 }, {
@@ -25,7 +25,7 @@ item_rare = [{
 }, {
 "id": 591.0,
 "name": "Spark Leggings"
-}]
+}])
 item_rare_dropper = 1
 players = [{
 "id": 50.0,

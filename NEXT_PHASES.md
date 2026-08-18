@@ -117,11 +117,16 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
 - **Zone hub art for zones 6/7**: no dedicated hub art exists in the extracted assets - the scenes reuse the wide battle backdrops (`battle/CHURCH.png`, `battle/STREETS.png`), aspect-cropped. Zone 7's
   training orb position is also borrowed from zone 6 (the original Steam-only zone frame has no training orb placement).
 
-- **Cutscenes** - plan written, zero code. `.claude/plan_cutscenes.md`: `ZoneProgression.after_battle_won()` already reports the cutscene id (`CS_CUT2` through `CS_CUT5`) but nothing consumes it
-  - the call site discards the result outright. Plan covers extracting all 4 as playable video (verified live: `ffdec -format sprite:avi -selectid <chid>` renders each cutscene's own timeline with
-  every filter/color-transform/blend-mode correctly baked in, plus stripping a per-cutscene guide-overlay artifact and pulling the embedded MP3 audio), a `CutscenePlayer` scene matching the
-  original's fade-in/fade-out, wiring it into the victory-screen Continue flow, and fixing a real bug found along the way: `CUTSCENE_BATTLES`'s `513: "CS_CUT5"` references a battle id that doesn't
-  exist (should be `512`), so CS_CUT5 can never currently trigger.
+- **Cutscenes** - **DONE (2026-08-18)**, see `.claude/plan_cutscenes.md` for the full task breakdown. All 4 cutscenes (`CS_CUT2`-`CS_CUT5`) extracted as `.ogv` with audio (via ffdec's own
+  sprite:avi renderer, every filter/color-transform/blend-mode baked in correctly), a `CutscenePlayer` scene matches the original's fade-in/fade-out, wired into the victory-screen Continue flow.
+  GUT suite green: 103/103 tests, 625 asserts.
+
+  Also fixed along the way, a real progression-blocking bug (found manually playtesting zone 1, not just a cutscene issue): `CUTSCENE_BATTLES` was keyed to 108/408/512 instead of the real
+  109/210/409/513, because `resources/battles/` was missing those three ids entirely (`dev/urchin_dev/convert/battles.py`'s raw input mislabels each zone's real final story battle with the
+  next block's seed id - 109 came through as 199, 409 as 499, 513 as 599; see that file's `MISLABELED_BATTLE_IDS` comment for the mechanism, confirmed via `SWF_DIFFERENCES.md`'s already-documented
+  `battleCreationID` reset-statement quirk). This meant CS_CUT2 fired one battle before zone 1's actual boss fight, and the boss fight itself (109) couldn't load at all - blank/white screen on
+  the story orb, zone 2 never unlocking since quest progress could never pass `progress_max`. Fixed at the source (id corrected at conversion time, the 3 affected `.tres` regenerated,
+  `CUTSCENE_BATTLES` back to the real ids).
 
 - **Shatter Bolt**: the one `"Attack"`-category move - the original never handled it either.
 

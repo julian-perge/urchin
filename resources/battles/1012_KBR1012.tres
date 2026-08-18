@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://b0c6ulupkj2k0"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_gvrk0"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_gvrk0"]
 
 [resource]
 script = ExtResource("1_gvrk0")
@@ -13,7 +13,7 @@ item_drops = [{
 "name": "Annihilation"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 548.0,
 "name": "Old ZPCI Helm"
 }, {
@@ -28,7 +28,7 @@ item_rare = [{
 }, {
 "id": 552.0,
 "name": "Old ZPCI Boots"
-}]
+}])
 item_rare_dropper = 2
 players = [{
 "id": 8.0,

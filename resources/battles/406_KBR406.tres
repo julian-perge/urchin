@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://b1gypd2ev3gnv"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_qpxpb"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_qpxpb"]
 
 [resource]
 script = ExtResource("1_qpxpb")
@@ -13,7 +13,7 @@ item_drops = [{
 "name": "Poseidon's Fury"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 573.0,
 "name": "Night Vision"
 }, {
@@ -25,8 +25,8 @@ item_rare = [{
 }, {
 "id": 591.0,
 "name": "Spark Leggings"
-}]
-item_rare3 = [{
+}])
+item_rare3 = Array[Dictionary]([{
 "id": 605.0,
 "name": "Amberstone Sword"
 }, {
@@ -38,7 +38,7 @@ item_rare3 = [{
 }, {
 "id": 596.0,
 "name": "White Jeans"
-}]
+}])
 item_rare_dropper = 1
 item_rare_dropper3 = 1
 players = [{
@@ -55,7 +55,7 @@ players = [{
 }]
 players_levels = [18.0, 0.0, 0.0, 0.0, 0.0]
 sky_background = "TUNNEL"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": "Veradux",
 "say": "You are my sunshine, my only sunshine...",
@@ -71,6 +71,6 @@ speeches = [{
 "turnTime": 4.0,
 "turnTime2": 1.0,
 "voiceOver": ""
-}]
+}])
 win_date = -1
 zone_background = "TUNNEL"

@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bl5omlbouwm4y"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_lkuf5"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_lkuf5"]
 
 [resource]
 script = ExtResource("1_lkuf5")
@@ -14,7 +14,7 @@ item_drops = [{
 "name": "Poseidon's Fury"
 }
 }]
-item_rare2 = [{
+item_rare2 = Array[Dictionary]([{
 "id": 575.0,
 "name": "Flex-o-Matic"
 }, {
@@ -26,7 +26,7 @@ item_rare2 = [{
 }, {
 "id": 595.0,
 "name": "Pink Sleeves"
-}]
+}])
 item_rare_dropper2 = 1
 phases = {
 "0": "EMPTY",
@@ -52,7 +52,7 @@ players = [{
 }]
 players_levels = [16.0, 0.0, 0.0, 0.0, 0.0]
 sky_background = "TUNNEL"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": "Roald",
 "say": "These tunnels should lead us to Hew. We need to head through it if we're to reach Utopia!",
@@ -60,6 +60,6 @@ speeches = [{
 "turnTime": 0.0,
 "turnTime2": 0.0,
 "voiceOver": "v4_3"
-}]
+}])
 win_date = -1
 zone_background = "TUNNEL"

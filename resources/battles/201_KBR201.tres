@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cthibbbfy6njj"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_oeoj2"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_oeoj2"]
 
 [resource]
 script = ExtResource("1_oeoj2")
@@ -31,7 +31,7 @@ players = [{
 }]
 players_levels = [9.0, 1.0, 9.0, 1.0, 1.0, 1.0]
 sky_background = "SNOW"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 2.0,
 "player": 4.0,
 "say": "Hey, wait! You're not like the rest of them! Who are you? Can you talk?",
@@ -127,6 +127,6 @@ speeches = [{
 "turnTime": 0.0,
 "turnTime2": 11.0,
 "voiceOver": ""
-}]
+}])
 win_date = -1
 zone_background = "SNOW"

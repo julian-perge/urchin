@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dsk3r52b2kr20"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_ds2c2"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_ds2c2"]
 
 [resource]
 script = ExtResource("1_ds2c2")
@@ -67,7 +67,7 @@ players = [{
 }]
 players_levels = [22.0, 1.0, 1.0, 1.0, 1.0]
 sky_background = "TUNNEL"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": 1.0,
 "say": "Hey! That suit would look really good on Veradux. Mind if we take it?",
@@ -75,6 +75,6 @@ speeches = [{
 "turnTime": 0.0,
 "turnTime2": 0.0,
 "voiceOver": ""
-}]
+}])
 win_date = -1
 zone_background = "STREETS"

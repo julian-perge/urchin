@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://dkdemc0eua0h5"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_ufyn2"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_ufyn2"]
 
 [resource]
 script = ExtResource("1_ufyn2")
@@ -13,7 +13,7 @@ item_drops = [{
 "name": "Annihilation"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 538.0,
 "name": "Spirit Cover"
 }, {
@@ -28,7 +28,7 @@ item_rare = [{
 }, {
 "id": 542.0,
 "name": "Aura Treads"
-}]
+}])
 item_rare_dropper = 1
 players = [{
 "id": 40.0,
@@ -44,7 +44,7 @@ players = [{
 }]
 players_levels = [12.0, 1.0, 1.0, 1.0, 1.0]
 sky_background = "TRAIN"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": "Roald",
 "say": "This train is old, we'll need more fuel to get out of their range! There should be more coal in the back of the train. Let's hurry!",
@@ -52,6 +52,6 @@ speeches = [{
 "turnTime": 0.0,
 "turnTime2": 0.0,
 "voiceOver": "v3_1"
-}]
+}])
 win_date = -1
 zone_background = "TRAIN"

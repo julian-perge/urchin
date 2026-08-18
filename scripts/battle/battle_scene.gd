@@ -107,7 +107,7 @@ func _ready():
 # Debug entry point: run a specific battle directly, skipping the zone-hub
 # grind - e.g. to verify a cutscene-triggering win (ZoneProgression.
 # CUTSCENE_BATTLES) without playing up to it normally.
-#   godot --path . res://scenes/battle_scene.tscn -- --battle=108
+#   godot --path . res://scenes/battle_scene.tscn -- --battle=109
 # Builds a throwaway save at slot -1, never persisted (GameData.save_game()
 # no-ops when current_slot == -1), so a debug run can never clobber a real
 # save file. is_story_progress is forced true so a cutscene battle id

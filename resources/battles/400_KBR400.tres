@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cokxxkcn44jng"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_id6tk"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_id6tk"]
 
 [resource]
 script = ExtResource("1_id6tk")
@@ -13,7 +13,7 @@ item_drops = [{
 "name": "Poseidon's Fury"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 573.0,
 "name": "Night Vision"
 }, {
@@ -25,7 +25,7 @@ item_rare = [{
 }, {
 "id": 591.0,
 "name": "Spark Leggings"
-}]
+}])
 item_rare_dropper = 1
 players = [{
 "id": 50.0,
@@ -41,7 +41,7 @@ players = [{
 }]
 players_levels = [16.0, 1.0, 1.0, 1.0, 1.0]
 sky_background = "TUNNEL"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": 1.0,
 "say": "Just our luck. Why does everything break around us?",
@@ -57,6 +57,6 @@ speeches = [{
 "turnTime": 3.0,
 "turnTime2": 0.0,
 "voiceOver": "v4_2"
-}]
+}])
 win_date = -1
 zone_background = "TUNNEL"

@@ -18,6 +18,26 @@ from urchin_dev.swf import models
 # TUNNEL
 # WHITE NOVEMBER
 
+# frame_42/DoAction_14.as's battleCreationID reset statements ("battleCreationID
+# = 199;" etc., nine of them, reserving per-zone id blocks) retroactively
+# relabel the battle whose properties were JUST finished being set, instead of
+# the next one about to be created (see SWF_DIFFERENCES.md's "Battle id is not
+# battleCreationID's value at creation time"). Three of the nine land exactly
+# one battle early, mislabeling each zone's real final story battle with the
+# next block's seed id: zone 1's 10th battle (should be 109) comes stamped
+# 199/KBR199, zone 4's (should be 409) comes stamped 499/KBR499, zone 5's
+# (should be 513) comes stamped 599/KBR599. Confirmed by creation-order
+# position against dev/data_json/swf_battles.json (zero content mismatches -
+# each mislabeled row's players/phases/speeches are that zone's boss fight,
+# not a stray battle from the next zone). Correct them back here so
+# resources/battles/ ends up with the ids the original game's own
+# BattlePick == 109/409/513 checks (frame_219) actually expect.
+MISLABELED_BATTLE_IDS: dict[int, tuple[int, str]] = {
+    199: (109, "KBR109"),
+    499: (409, "KBR409"),
+    599: (513, "KBR513"),
+}
+
 
 def parse_json(parsed_dict: dict):
     """Parse the entire file handling stats that precede battle creation."""
@@ -36,6 +56,8 @@ def parse_json(parsed_dict: dict):
         absolute_start: str = _root.get("absolute_start")
         _id: str = _root.get("id")
         id_name: str = _root.get("id_name")
+        if _id in MISLABELED_BATTLE_IDS:
+            _id, id_name = MISLABELED_BATTLE_IDS[_id]
 
         item_drops = []
         item_drops_obj = _root.get("item_drops", {}).get("denseValues", {})

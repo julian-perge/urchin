@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bv0l2oft4qpu4"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_kfv2f"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_kfv2f"]
 
 [resource]
 script = ExtResource("1_kfv2f")
@@ -13,7 +13,7 @@ item_drops = [{
 "name": "Poseidon's Fury"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 377.0,
 "name": "Flamboyant Shirt"
 }, {
@@ -22,8 +22,8 @@ item_rare = [{
 }, {
 "id": 379.0,
 "name": "Flamboyant Shoes"
-}]
-item_rare3 = [{
+}])
+item_rare3 = Array[Dictionary]([{
 "id": 605.0,
 "name": "Amberstone Sword"
 }, {
@@ -35,7 +35,7 @@ item_rare3 = [{
 }, {
 "id": 596.0,
 "name": "White Jeans"
-}]
+}])
 item_rare_dropper = 2
 item_rare_dropper3 = 1
 players = [{
@@ -52,7 +52,7 @@ players = [{
 }]
 players_levels = [19.0, 0.0, 0.0, 0.0, 0.0]
 sky_background = "TUNNEL"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": 1.0,
 "say": "I'm freaking out... man...",
@@ -60,6 +60,6 @@ speeches = [{
 "turnTime": 3.0,
 "turnTime2": 0.0,
 "voiceOver": "v4_7"
-}]
+}])
 win_date = -1
 zone_background = "TUNNEL"

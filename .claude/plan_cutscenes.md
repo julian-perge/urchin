@@ -77,9 +77,16 @@ Godot's only built-in video codec is Ogg Theora (confirmed via current Godot doc
 
 **DONE (2026-08-18) — automated half.** All 4 `.ogv`s regenerated (see Task 1's file history), GUT suite green: 103/103 tests, 625 asserts. Added a debug entry point
 (`battle_scene.gd`'s `_maybe_start_debug_battle()`) so a specific battle can be jumped into directly instead of playing through the zone hub:
-`godot --path . res://scenes/battle_scene.tscn -- --battle=108` (108/210/408/512 are the real `CUTSCENE_BATTLES` ids — note the plan's table above says 109/409, that's stale
-against the actual constant, not re-verified here). Uses a throwaway slot -1 save (`GameData.new_game(-1, ...)`, never persisted) so it can't clobber a real save file.
+`godot --path . res://scenes/battle_scene.tscn -- --battle=109`.
 
-Manual playthrough of zone 1's story battles (not yet all 4 cutscene battles) surfaced 4 real bugs unrelated to cutscene playback itself — logged in `NEXT_PHASES.md`
-("Battle bugs found playtesting zone 1"): second Leath battle's dialogue doesn't play, miss-animation/MISS-text placement, radial menu not closing on click-away, and
-death animation timing tied to the attacker's return instead of the target's HP hitting zero. Not investigated or fixed yet.
+Manual playthrough of zone 1's story battles surfaced two real bugs, both now fixed:
+- **CUTSCENE_BATTLES was keyed to the wrong ids (108/408/512 instead of 109/409/513), firing CS_CUT2 one battle before zone 1's real boss, and the real boss battle
+  (109) couldn't load at all** (blank/white screen on the story orb, zone 2 never unlocking since progress could never pass `progress_max`). Root cause was already
+  half-documented in this repo (`zone_progression.gd`'s old comment, `SWF_DIFFERENCES.md`'s "Battle id is not battleCreationID's value at creation time") but never
+  actually fixed: three of the AS's nine `battleCreationID = N;` reset statements retroactively relabel the *previous* battle instead of the next one, stamping each
+  zone's real final story battle with the next block's seed id (109→199, 409→499, 513→599 - confirmed by creation-order position against
+  `dev/data_json/swf_battles.json`, zero content mismatches). Fixed at the source: `dev/urchin_dev/convert/battles.py`'s `MISLABELED_BATTLE_IDS` corrects the id/id_name
+  at conversion time, `resources/battles/109_KBR109.tres`/`409_KBR409.tres`/`513_KBR513.tres` regenerated (the stale `199_KBR199.tres`/`499_KBR499.tres`/`599_KBR599.tres`
+  deleted), `CUTSCENE_BATTLES` back to the real 109/210/409/513, tests updated to match.
+- The other 3 bugs found the same playthrough (second Leath battle's dialogue not playing, miss-animation/MISS-text placement, radial menu not closing on
+  click-away, death animation timing) are unrelated to cutscene playback - logged in `NEXT_PHASES.md` ("Battle bugs found playtesting zone 1"), not fixed yet.

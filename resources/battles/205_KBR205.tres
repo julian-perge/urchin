@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://bboxd74kyoifb"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_3iytu"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_3iytu"]
 
 [resource]
 script = ExtResource("1_3iytu")
@@ -13,7 +13,7 @@ item_drops = [{
 "name": "Frosted Fate"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 321.0,
 "name": "Frosted Armor"
 }, {
@@ -22,8 +22,8 @@ item_rare = [{
 }, {
 "id": 322.0,
 "name": "Frosted Leggings"
-}]
-item_rare2 = [{
+}])
+item_rare2 = Array[Dictionary]([{
 "id": 323.0,
 "name": "Icy Runners"
 }, {
@@ -32,7 +32,7 @@ item_rare2 = [{
 }, {
 "id": 519.0,
 "name": "Icy Maul"
-}]
+}])
 item_rare_dropper = 1
 item_rare_dropper2 = 1
 players = [{
@@ -49,7 +49,7 @@ players = [{
 }]
 players_levels = [10.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 sky_background = "SNOW"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": "Veradux",
 "say": "What are the tattoos for? You all have them.",
@@ -73,6 +73,6 @@ speeches = [{
 "turnTime": 6.0,
 "turnTime2": 2.0,
 "voiceOver": ""
-}]
+}])
 win_date = -1
 zone_background = "SNOW"

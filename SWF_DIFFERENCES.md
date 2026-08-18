@@ -32,6 +32,10 @@ resolved the two bugs below.
     jumped value. Confirmed by comparing all 99 battles by creation-order position instead of by `id`: zero content mismatches. A real regenerator would need this rule; this investigation didn't need
     to fully pin it down since position-alignment already proved the underlying data has no drift.
 
+    **2026-08-18: pinned down and fixed** for the 3 of the 9 reset points that actually collide with a zone's real battle count (199/499/599, mislabeling zone 1/4/5's
+    true final story battle - 109/409/513 - as the next block's seed id instead). `dev/urchin_dev/convert/battles.py`'s `MISLABELED_BATTLE_IDS` corrects these at
+    conversion time; the other 6 reset points (49/99/299/399/699/999) don't land on a battle any current zone formula needs, so they're untouched.
+
 ## Bugs introduced by the Steam restructuring (fixed in the conversion pipeline)
 
 - **Two units carry wrong ids in the Steam data** (fixed in `dev/urchin_dev/convert/units.py` `ID_CORRECTIONS`, 2026-07-18). The web SWF assigns unit ids from a sequential counter that is manually jumped twice

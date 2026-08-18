@@ -1,12 +1,12 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://d3pjb4prdapdx"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_774jy"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_774jy"]
 
 [resource]
 script = ExtResource("1_774jy")
 id = 1006
 id_name = "KBR1006"
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 330.0,
 "name": "Justice Helm"
 }, {
@@ -27,7 +27,7 @@ item_rare = [{
 }, {
 "id": 516.0,
 "name": "Metal Shield"
-}]
+}])
 item_rare_dropper = 1
 phases = {
 "0": "EMPTY",

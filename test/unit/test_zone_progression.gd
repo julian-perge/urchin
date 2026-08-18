@@ -77,22 +77,18 @@ func test_after_battle_won_progression_and_cutscenes():
 	assert_true(result["progress_advanced"])
 	assert_eq(result["cutscene"], "")
 
-	save.quest_progress[1] = 8
-	result = ZoneProgression.after_battle_won(save, 108, true)
-	assert_eq(result["cutscene"], "CS_CUT2", "zone 1's last real battle win triggers the cutscene")
+	save.quest_progress[1] = 9
+	result = ZoneProgression.after_battle_won(save, 109, true)
+	assert_eq(result["cutscene"], "CS_CUT2", "zone 1's boss win triggers the cutscene")
 
-	result = ZoneProgression.after_battle_won(save, 108, false)
-	assert_eq(save.quest_progress[1], 9, "repeat wins do not advance further")
+	result = ZoneProgression.after_battle_won(save, 109, false)
+	assert_eq(save.quest_progress[1], 10, "repeat wins do not advance further")
 
 
 # Standing regression guard that CUTSCENE_BATTLES stays keyed to battles this
-# port can actually load, so every cutscene is reachable in play. It checks
-# the keys against battles.json as it stands today, which is not the same
-# thing as checking them against the original game's design - the original
-# triggers these cutscenes on 109/210/409/513, and battles.json is missing
-# three of those because of a converter-input bug described in the const's
-# own comment. Passing here means the cutscenes fire on some battle players
-# can reach, not that they fire on the battle the original chose.
+# port can actually load, matching the original game's own BattlePick checks
+# (109/210/409/513) now that battles.py corrects the mislabeled ids at
+# conversion time (see that file's MISLABELED_BATTLE_IDS comment).
 func test_cutscene_battles_keys_load_from_current_battle_data():
 	var battle_ids: Dictionary = _load_battle_ids()
 	for battle_id in ZoneProgression.CUTSCENE_BATTLES:
@@ -100,7 +96,7 @@ func test_cutscene_battles_keys_load_from_current_battle_data():
 
 
 func test_after_battle_won_returns_each_cutscene():
-	for battle_id in [108, 210, 408, 512]:
+	for battle_id in [109, 210, 409, 513]:
 		var result = ZoneProgression.after_battle_won(save, battle_id, true)
 		assert_eq(result["cutscene"], ZoneProgression.CUTSCENE_BATTLES[battle_id], "battle %s should trigger its cutscene" % battle_id)
 

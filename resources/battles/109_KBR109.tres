@@ -1,11 +1,11 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://034i7y3mlc63"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_jnhyn"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_t5qmb"]
 
 [resource]
-script = ExtResource("1_jnhyn")
-id = 199
-id_name = "KBR199"
+script = ExtResource("1_t5qmb")
+id = 109
+id_name = "KBR109"
 item_drops = [{
 "chance": 100.0,
 "item": {
@@ -48,7 +48,7 @@ players = [{
 }]
 players_levels = [7.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 sky_background = "JAIL"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 2.0,
 "player": 2.0,
 "say": "Don't start what you can't finish, boys.",
@@ -80,6 +80,6 @@ speeches = [{
 "turnTime": 0.0,
 "turnTime2": 1.0,
 "voiceOver": ""
-}]
+}])
 win_date = -1
 zone_background = "JAIL"

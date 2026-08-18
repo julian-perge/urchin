@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cc7wuux75mn6n"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_0bwfr"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_0bwfr"]
 
 [resource]
 script = ExtResource("1_0bwfr")
@@ -21,7 +21,7 @@ players = [{
 }]
 players_levels = [1.0, 1.0, 1.0, 1.0, 1.0]
 sky_background = "SEA"
-speeches = [{
+speeches = Array[Dictionary]([{
 "phase": 1.0,
 "player": 5.0,
 "say": "I may be blind, but there's no mistaking that smell. Can you take him out?",
@@ -94,6 +94,6 @@ speeches = [{
 "turnTime": 4.0,
 "turnTime2": 0.0,
 "voiceOver": "v_3"
-}]
+}])
 win_date = -1
 zone_background = "WHITE NOVEMBER"

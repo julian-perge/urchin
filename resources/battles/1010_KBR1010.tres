@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://cmhjed4k0ojl4"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_anl1w"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_anl1w"]
 
 [resource]
 script = ExtResource("1_anl1w")
@@ -13,7 +13,7 @@ item_drops = [{
 "name": "Unholy Runeblade"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 347.0,
 "name": "Usurper's Chest"
 }, {
@@ -22,7 +22,7 @@ item_rare = [{
 }, {
 "id": 349.0,
 "name": "Pretender's Leggings"
-}]
+}])
 item_rare_dropper = 1
 phases = {
 "0": "EMPTY",

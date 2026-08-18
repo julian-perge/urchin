@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BattleFight" format=3 uid="uid://xtl7bjvt1j6h"]
+[gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" uid="uid://loi8yo0h3j2y" path="res://scripts/battle/battle_fight.gd" id="1_fopwq"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_fopwq"]
 
 [resource]
 script = ExtResource("1_fopwq")
@@ -14,7 +14,7 @@ item_drops = [{
 "name": "Wrath of the Council"
 }
 }]
-item_rare = [{
+item_rare = Array[Dictionary]([{
 "id": 622.0,
 "name": "Council Vision"
 }, {
@@ -29,7 +29,7 @@ item_rare = [{
 }, {
 "id": 626.0,
 "name": "Council Shoes"
-}]
+}])
 item_rare_dropper = 2
 phases = {
 "0": "EMPTY",
