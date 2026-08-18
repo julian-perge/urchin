@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/battle/battle_scene.gd" id="1_battle"]
 [ext_resource type="Texture2D" path="res://assets/ui/hotbar/background.png" id="2_hotbarbg"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/hotbar_background.png" id="3_battlebar"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pass_normal"]
 bg_color = Color(0.1, 0.1, 0.11, 1)
@@ -96,14 +97,16 @@ offset_right = 800.0
 offset_bottom = 600.0
 mouse_filter = 2
 
-[node name="Backdrop" type="ColorRect" parent="BottomBar"]
+[node name="Backdrop" type="TextureRect" parent="BottomBar"]
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
 offset_right = 800.0
 offset_bottom = 130.0
 mouse_filter = 0
-color = Color(0.04, 0.05, 0.06, 1)
+texture = ExtResource("3_battlebar")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="Panel1" type="TextureRect" parent="BottomBar"]
 layout_mode = 0

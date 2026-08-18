@@ -255,3 +255,24 @@ func test_death_plays_at_impact_not_after_caster_returns():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+func test_bottom_bar_uses_extracted_backdrop_art():
+	var save = PlayerSave.new_game("BackdropTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var backdrop: TextureRect = scene.get_node("BottomBar/Backdrop")
+	assert_not_null(backdrop, "Backdrop is a TextureRect now")
+	assert_eq(
+		backdrop.texture.resource_path, "res://assets/ui/battle/hotbar_background.png",
+		"backdrop uses the extracted art"
+	)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
