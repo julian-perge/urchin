@@ -137,8 +137,8 @@ func _on_equip_slot_clicked(equip_index: int) -> void:
 		_status_label.text = "Inventory is full." if GameData.current_save != null else ""
 
 
-func _on_sell_pressed(slot: ItemSlot) -> void:
-	if GameData.sell_item(slot.item):
+func _on_sell_pressed(item: GameItem) -> void:
+	if GameData.sell_item(item):
 		refresh_store()
 
 

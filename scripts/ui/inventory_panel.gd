@@ -13,11 +13,21 @@ extends Control
 class_name InventoryPanel
 
 signal item_selected(slot: ItemSlot)
-signal sell_pressed(slot: ItemSlot)
+# Carries the item itself, not the slot - a drag-to-sell-button drop (see
+# _drop_data() below) has no ItemSlot to point at when the drag came from
+# the equip doll, only the item. Both the button click and the drag drop
+# go through this one signal, so whichever host owns this panel only needs
+# one place (its own _on_sell_pressed) to react - store_window.gd's also
+# calls refresh_store() after, which this panel has no business knowing
+# about, hence the signal instead of calling GameData.sell_item() directly.
+signal sell_pressed(item: GameItem)
 signal delete_pressed(slot: ItemSlot)
 
 const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
 const GRID_SLOTS: int = 36
+# Mirrors inventory.tscn's own SellItemButton.tooltip_text default - restored
+# after a drag-to-sell preview (_can_drop_data below) or a cancelled drag.
+const _DEFAULT_SELL_TOOLTIP: String = "Sell Item\nSelect an item, then click here to sell it for 15% of its price."
 
 @onready var inventory_grid: GridContainer = $InventoryGrid
 @onready var gold_label: Label = $GoldLabel
@@ -42,7 +52,7 @@ func _ready():
 
 func _on_sell_pressed() -> void:
 	if selected_slot != null and selected_slot.item != null:
-		sell_pressed.emit(selected_slot)
+		sell_pressed.emit(selected_slot.item)
 
 
 func _on_delete_pressed() -> void:
@@ -91,3 +101,35 @@ func _on_slot_clicked(slot: ItemSlot) -> void:
 	if selected_slot != null:
 		selected_slot.set_selected(true)
 		item_selected.emit(selected_slot)
+
+
+# Sell button as a drag-drop target (this panel's own mouse_filter is PASS,
+# not IGNORE, so it - not just its child slots - can be asked). Hovering an
+# item over the sell button previews the price in its tooltip; dropping
+# sells it through the same sell_pressed signal the button click uses, so
+# whichever host owns this panel reacts identically either way (see
+# sell_pressed's own comment above for why this isn't a direct
+# GameData.sell_item() call).
+func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+	if not data is Dictionary or not data.get("item"):
+		return false
+	if not sell_button.get_rect().has_point(at_position):
+		return false
+	var item: GameItem = data["item"]
+	sell_button.tooltip_text = "Sell for €%d" % int(ceil(item.price * 0.15))
+	return true
+
+
+func _drop_data(at_position: Vector2, data: Variant) -> void:
+	if not sell_button.get_rect().has_point(at_position):
+		return
+	var item: GameItem = data.get("item")
+	if item == null:
+		return
+	sell_pressed.emit(item)
+	sell_button.tooltip_text = _DEFAULT_SELL_TOOLTIP
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DRAG_END:
+		sell_button.tooltip_text = _DEFAULT_SELL_TOOLTIP
