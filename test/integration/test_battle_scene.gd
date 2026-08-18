@@ -223,3 +223,35 @@ func test_radial_menu_closes_on_click_away():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# Regression test: a move-caused death used to only play when the QUEUED
+# "death" event was reached in _play_events(), which only happens after the
+# caster's whole move await resolves - for melee, that's after the runback
+# finishes, not when the killing blow actually lands. _show_move_result()
+# is where the impact itself is shown (the damage number, the HIT flinch)
+# - death needs to fire there too, synchronously, not wait for a later,
+# separate event further down the same half-turn's list.
+func test_death_plays_at_impact_not_after_caster_returns():
+	var save = PlayerSave.new_game("DeathTiming", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var enemy_slot := 2  # battle 100's Prison Guard
+	scene._show_move_result(
+		{"type": "move", "caster_slot": 1, "target_slot": enemy_slot, "move_id": 100,
+			"result": {"type": "damage", "amount": 99999.0, "target_died": true}},
+		enemy_slot
+	)
+	assert_eq(
+		scene._visuals[enemy_slot]._state, CharacterVisual.State.DEAD,
+		"death played synchronously inside _show_move_result, not deferred to a later event"
+	)
+	assert_false(scene._overlays[enemy_slot].visible, "overlay hidden the same moment")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true

@@ -47,7 +47,7 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     `DefineSprite_152`/`157`'s own `onClipEvent(load)` `Color.setRGB`, while the trail is tinted inline inside `krinBoltMake` itself (`frame_42/DoAction_4.as:177-178`) against the attached
     `KrinTrail` instance directly.
 
-- **Battle bugs found playtesting zone 1 (2026-08-18)** - surfaced manually verifying the cutscene work above (see the debug battle-jump entry point in `.claude/plan_cutscenes.md`'s Task 4 note):
+- **Battle bugs found playtesting zone 1 (2026-08-18)** - **ALL 4 FIXED**, surfaced manually verifying the cutscene work above (see the debug battle-jump entry point in `.claude/plan_cutscenes.md`'s Task 4 note):
 
   - **FIXED** - the first Doctor Leath battle (104) played its scripted dialogue; the second (105, "Twisted Experiment") didn't. Root cause: `BattleRunner.setup()` calls `_drain_speeches()` once before any `advance_half_turn()` exists, to catch speeches scripted for `turnTime:0` (fire the instant the battle begins) - but `battle_scene.gd` never reads `runner.events` directly, only whatever each `advance_half_turn()` call returns (`events.slice(events_start)`, sliced from THAT call's own starting point). Anything appended during `setup()` sits before every future call's slice window and is never played - silently dropping any `turnTime:0` speech in every battle, not just 105 (104 has 3 speeches, 2 of which aren't `turnTime:0` and did play, masking that its first line was also lost). Fixed by having `setup()` return its own pre-loop events the same way `advance_half_turn()` does, and having `_battle_loop()` play them first. Covered at both layers: `test_battle_runner.gd`'s `test_setup_returns_its_own_turn_time_zero_speeches`, `test_battle_scene.gd`'s `test_setup_time_speech_plays_through_the_real_scene`.
   - **FIXED** - a miss skipped the attack animation entirely, showing only a floating `MISS` label. Root cause: `_execute_move_action()` logged a miss as its own bare `"miss"` event type instead
@@ -61,7 +61,11 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     `_close_radial_menu()` call). Root cause: there was no click-away handling at all. Added `_unhandled_input()` - a unit's `hit_button` and every orb are real `Button`s, so a click on either
     is consumed before it gets there; it only ever fires for a click that landed on neither, i.e. empty battlefield space. Covered by `test_battle_scene.gd`'s
     `test_radial_menu_closes_on_click_away`.
-  - A unit's death animation waits until the attacker has returned to its starting position before playing, instead of firing as soon as that unit's HP hits zero.
+  - **FIXED** - a unit's death animation waited until the attacker returned to its starting position, instead of firing as soon as HP hits zero. Root cause: the queued `"death"` event only
+    gets processed by `_play_events()` after the whole preceding `"move"` event's `await` resolves - for melee, that's after the caster's runback finishes, not when the killing blow lands.
+    `_show_move_result()` (the impact moment - damage number, HIT flinch) is where death needs to fire too. Fixed by playing death synchronously there when `result.target_died` is true (skipping
+    the HIT flinch in that case, as before), and skipping the later queued `"death"` event's own playback when its `cause` is `"move"` (already played) - `damage_over_time` deaths (buff ticks,
+    no impact moment to hook into) still play from the queued event as before. Covered by `test_battle_scene.gd`'s `test_death_plays_at_impact_not_after_caster_returns`.
 
 - **Battle screen niceties**
 

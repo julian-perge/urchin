@@ -555,7 +555,13 @@ func _play_events(events: Array) -> void:
 			"dispel":
 				_float_text(int(event["target_slot"]), "DISPEL", Color.CYAN)
 			"death":
-				_play_death(int(event["slot"]))
+				# A move-caused death already played at the killing blow's
+				# impact (see _show_move_result) - only the pacing pause
+				# still belongs here. damage_over_time deaths (buff ticks,
+				# not a move) have no impact moment to hook into, so they
+				# still play here, same as always.
+				if event.get("cause") != "move":
+					_play_death(int(event["slot"]))
 				await _pause(0.4)
 			"speech":
 				await _play_speech(event)
@@ -681,7 +687,14 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 			_display_hp[target_slot] = maxf(
 				_display_hp.get(target_slot, 0.0) - float(result.get("amount", 0)), 0.0
 			)
-			if target_visual != null and not result.get("target_died", false):
+			if result.get("target_died", false):
+				# Fires here, at the impact that actually kills - not on the
+				# later queued "death" event, which only reaches this loop
+				# after the caster's whole move (melee's runback included)
+				# finishes await-ing. That made death wait for the attacker
+				# to get home first instead of landing with the killing blow.
+				_play_death(target_slot)
+			elif target_visual != null:
 				target_visual.set_state(CharacterVisual.State.HIT)
 			if target_unit != null:
 				AudioManagerAuto.voice(target_unit.voice_hit)
