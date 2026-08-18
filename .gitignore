@@ -378,7 +378,8 @@ paket-files/
 # CodeRush personal settings
 .cr/personal
 
-# Python Tools for Visual Studio (PTVS)
+# Python Tools
+.ruff_cache/
 __pycache__/
 *.pyc
 
