@@ -191,3 +191,35 @@ func test_story_battle_win_threads_cutscene_id_through_victory_flow():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# Regression test: there was no click-away close at all before - only
+# _on_unit_clicked's own _close_radial_menu() call when a DIFFERENT unit is
+# clicked next. _unhandled_input() only ever fires for a click that landed
+# on neither a unit's hit_button nor an orb Button (both consume the event
+# themselves), so simulating one here is a faithful "clicked empty
+# battlefield space" repro, not a fake shortcut.
+func test_radial_menu_closes_on_click_away():
+	var save = PlayerSave.new_game("RadialTest", 0)
+	save.skill_points = 8
+	TalentTree.learn(save, 0)
+	TalentTree.learn(save, 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene._player_action_pending = true
+	scene._on_unit_clicked(2)  # battle 100's enemy slot (Prison Guard)
+	assert_not_null(scene._radial_menu, "menu opened on a unit click")
+
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	scene._unhandled_input(click)
+	assert_null(scene._radial_menu, "click on empty battlefield space closed the menu")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true

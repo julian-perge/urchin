@@ -397,6 +397,19 @@ func _close_radial_menu() -> void:
 		_radial_menu = null
 
 
+# A click on a unit's hit_button or an orb Button is consumed by that Button
+# before it ever gets here (both are real Buttons, not mouse_filter=IGNORE) -
+# _unhandled_input only ever fires for a click that landed on neither, i.e.
+# empty battlefield space. There was previously no close-on-click-away at
+# all (only _on_unit_clicked's own _close_radial_menu() when a DIFFERENT
+# unit is clicked next).
+func _unhandled_input(event: InputEvent) -> void:
+	if _radial_menu == null:
+		return
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_close_radial_menu()
+
+
 # --- bottom bar: stances + pass ring + retreat -----------------------------
 
 func _draw_pass_ring() -> void:

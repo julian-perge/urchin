@@ -57,7 +57,10 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     at the actual target instead of a damage number. Re the target-slot part of the report: read the old code and confirmed `target_slot` was always set to the real target, both in the event and
     in the `_float_text()` call that displayed it - not independently investigated further, so unconfirmed whether that was a real second bug or just how a frozen no-animation frame read visually;
     worth another look after this fix if `MISS` still seems to land on the wrong character. Covered by `test_battle_runner.gd`'s `test_misses_are_move_events_not_a_separate_type`.
-  - Clicking a character opens their radial ability menu, but clicking empty space (anywhere that isn't another character) doesn't close it - only clicking a different character does.
+  - **FIXED** - clicking a character opened their radial ability menu, but clicking empty space didn't close it (only clicking a different character did, via `_on_unit_clicked`'s own
+    `_close_radial_menu()` call). Root cause: there was no click-away handling at all. Added `_unhandled_input()` - a unit's `hit_button` and every orb are real `Button`s, so a click on either
+    is consumed before it gets there; it only ever fires for a click that landed on neither, i.e. empty battlefield space. Covered by `test_battle_scene.gd`'s
+    `test_radial_menu_closes_on_click_away`.
   - A unit's death animation waits until the attacker has returned to its starting position before playing, instead of firing as soon as that unit's HP hits zero.
 
 - **Battle screen niceties**
