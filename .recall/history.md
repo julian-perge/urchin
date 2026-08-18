@@ -1165,3 +1165,562 @@ None of these came out of this conversation - looked like your own concurrent ed
   - `Bash: git diff project.godot; echo "=== pyproject.toml ==="; git diff pyproject.toml; echo "=== inventory.tscn ==="; git diff scenes/ui/inventory.tscn | head -80`
   - `Bash: git add project.godot pyproject.toml scenes/ui/inventory.tscn assets/ui/abilities/ .recall/ git status --short | wc -l git commit -F - << 'EOF' chore: editor re`
   - `Bash: git status --short`
+
+**Claude:** Committed: `0bd7e6e`, 110 files. Working tree clean.
+
+**You:** commit the recall files
+  - `Bash: git status --short; echo "---"; git show --stat HEAD -- .recall/ | head -10`
+  - `Bash: git add .recall/ && git commit -m "chore: recall session log update"`
+
+**Claude:** Committed: `ba380b3`.
+
+**You:** read and update @NEXT_PHASES.md for any additional tasks that arent currently planned out
+  - `Bash: git log --oneline -3 -- resources/items/11_White_T_Shirt.tres git show HEAD~4:resources/items/11_White_T_Shirt.tres 2>/dev/null | rg "icon_slot|slot_image" echo`
+  - `Bash: fd -g "11_*.tres" resources/items/`
+  - `Bash: git log --oneline -5 -- 'resources/items/11_White_T-shirt.tres' git show ccf7375:resources/items/11_White_T-shirt.tres 2>/dev/null | rg "icon_slot|slot_image" e`
+  - `Edit: /Users/sweetjp/Documents/godot/urchin/NEXT_PHASES.md`
+
+**Claude:** Added to `NEXT_PHASES.md`'s "Item icons" bullet, dated DONE/Remaining like the rest of the doc:
+
+- **DONE**: the `ICON_OVERRIDES` idempotency-check bug (two independent substring checks instead of one atomic check) that silently blocked item 5's override every run.
+- **Remaining, new task**: content audit. Two items now confirmed with sprite-2064 frames that don't match the live item (White T-Shirt, A Broken Pipe) — the other 309 auto-repointed items were never individually verified. Named the 10 pixel-drifted icons from the ffdec-version investigation as the logical starting point, since they're already flagged as anomalous.
+
+Nothing else from this session rose to task level — the drift investigation, `data_json` restore, `swf_krin_units.json` deletion, and README fix are all closed, already documented in `SWF_DIFFERENCES.md`/committed, not open work. Not committed yet — say if you want it in.
+
+**You:** do a content audit of the ~135 items, or however many there are left now
+  - `Bash: uv run python3 << 'EOF' import re from pathlib import Path from urchin_dev import WEB_SWF_XML, REPO_ROOT from urchin_dev.swf import parse_swf_xml, snapshot_time`
+  - `Bash: uv run python3 -c " from urchin_dev import WEB_SWF_XML from urchin_dev.swf import parse_swf_xml, snapshot_timeline xml = WEB_SWF_XML.read_text() shapes, sprites`
+  - `Bash: uv run python3 -c " from urchin_dev import WEB_SWF_XML from urchin_dev.swf import parse_swf_xml, snapshot_timeline xml = WEB_SWF_XML.read_text() shapes, sprites`
+
+**Claude:** Confirmed frame-level bookkeeping first. Now checking whether the current 4 unmatched items have a near-miss label in sprite 2064, and whether the override mechanism is actually in sync with the editor's own icon lookup.
+  - `Bash: uv run python3 << 'EOF' import re, difflib from urchin_dev import WEB_SWF_XML from urchin_dev.swf import parse_swf_xml, snapshot_timeline def sanitize(label): r`
+  - `Bash: rg -n "SLOT_ICON_OVERRIDES" -A5 scripts/editor/items.gd`
+  - `Bash: uv run python3 << 'EOF' import re, json from urchin_dev import WEB_SWF_XML, REPO_ROOT from urchin_dev.swf import parse_swf_xml, snapshot_timeline def sanitize(l`
+  - `Bash: python3 -c " import json d = json.load(open('dev/converted_json/items.json'))['items'] by_id = {i['id']: i for i in d} for a,b in [(16,501),(125,322),(188,653),`
+
+**Claude:** Real audit findings, three things:
+
+1. **The "~135" figure is stale.** Actual current count of items with no sprite-2064 match: **4** (`Tool`, `Golden Crowbar`, `Golden Pipe`, `Golden Axe`) plus item 0's `None` sentinel (empty placeholder, not a real item). Fuzzy-matched all 4 against every real label in the sheet - no close candidates exist (`Golden Axe` closest to `Frosted Axe`/`Fire Axe`/`Charged Axe`, none of them a real match). Genuinely absent from the original icon sheet, not a lookup bug.
+
+2. **Found a real desync bug.** `items.gd`'s own `SLOT_ICON_OVERRIDES` (a second, independent override dict used when regenerating `.tres` files from scratch) only has `{11: ...}` - missing today's `A_Broken_Pipe` fix. If anyone reruns `items.gd` (File > Run), item 5 silently reverts to the wrong sprite-2064 icon. Fixing now.
+  - `Read: /Users/sweetjp/Documents/godot/urchin/scripts/editor/items.gd`
+  - `Edit: /Users/sweetjp/Documents/godot/urchin/scripts/editor/items.gd`
+  - `Read: /Users/sweetjp/Documents/godot/urchin/dev/urchin_dev/swf/extract/item_icons.py`
+  - `Edit: /Users/sweetjp/Documents/godot/urchin/dev/urchin_dev/swf/extract/item_icons.py`
+  - `Edit: /Users/sweetjp/Documents/godot/urchin/scripts/editor/items.gd`
+  - `Bash: /Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s res://scripts/editor/items.gd --path . 2>&1 | tail -10`
+
+**Claude:** Compiles clean. Now updating `NEXT_PHASES.md` with the corrected count and findings.
+  - `Read: /Users/sweetjp/Documents/godot/urchin/NEXT_PHASES.md`
+  - `Edit: /Users/sweetjp/Documents/godot/urchin/NEXT_PHASES.md`
+
+**Claude:** Ran GUT to confirm nothing broke from the `items.gd` edit.
+  - `Bash: /Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path . 2>&1 | rg -i "Totals|Scripts +[0-9]|Asserts|All tests passed"`
+
+**Claude:** GUT green. Summary:
+
+**The "~135" figure was stale.** Real count today: **4** items with no sprite-2064 match — `Tool`, `Golden Crowbar`, `Golden Pipe`, `Golden Axe`. Fuzzy-matched all four against every real label; nothing close exists for any of them, so this isn't a lookup bug — the golden variants and Tool genuinely have no distinct icon frame in the original sheet. Correctly falling back already.
+
+**Found and fixed a real bug while auditing.** `items.gd`'s own copy of the override table (used when regenerating `.tres` from `items.json` from scratch) only had item 11 — item 5's fix from earlier would've silently reverted the next time anyone regenerates resources. Added it, cross-referenced both files so they can't drift apart silently again. Compile-checked and GUT-verified.
+
+**One minor gap, not fixed:** 4 pairs of items share a display name → share a sanitize key → share one slot icon. Two pairs already share the same paper-doll `looks`, so that's correct. Two (`Frosted Leggings` 125/322, `Riot Shield` 188/653) have *different* equipped art but the same slot icon — real but small, left for later.
+
+`NEXT_PHASES.md` updated with all of this, `items.gd` fixed. Nothing committed yet.
+
+**You:** write a plan for implementing the cut-scenes like in the original game. Look at the real source code and extracted xml data when writing this plan.
+
+**Claude:** One-line recap: last session ended after the `dev/` reorg + `data_json` restore work (last commit `a59730e`, working tree otherwise clean bar `.recall/` logs) — separately, two feature plans (`plan_missile_projectile_art.md`, `plan_item_drag_and_drop.md`) are written but unstarted. Want me to resume from that, or just proceed with the cutscenes plan you're asking for now?
+
+Proceeding with the plan either way — checking for relevant process skills first.
+  - `Skill: superpowers:brainstorming`
+
+**You:** Base directory for this skill: /Users/sweetjp/.claude/plugins/cache/superpowers-marketplace/superpowers/6.3.0/skills/brainstorming
+
+# Brainstorming Ideas Into Designs
+
+Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
+
+Start by classifying how much process the request needs, then work
+through your path: understand the context, refine the idea, present a
+design, and get your human partner's approval.
+
+<HARD-GATE>
+Do NOT invoke any implementation skill, write any code, scaffold any
+project, or take any implementation action until you have told your
+human partner what you intend and they have approved it. This applies
+to EVERY task on EVERY path below — the ceremony scales with the task;
+the approval gate never does.
+</HARD-GATE>
+
+## Three Paths
+
+Before your first question, classify the request and say the
+classification out loud — "this looks bounded, so I'll present a short
+design here rather than write a spec" — so your human partner can
+override it:
+
+- **Spike** — a feasibility question ("can we...", "is it possible...",
+  "quick and dirty is fine") whose output is an answer, not code you
+  keep. Present the question and what you'll try in 2-3 sentences, get
+  a nod, then find out as cheaply as correctness allows. No design
+  doc, no spec file. Report findings as a recommendation; anything you
+  built stays labeled throwaway.
+- **Bounded** — a well-scoped change to code that already exists in
+  this repo: a new flag, a small endpoint, a one-file fix.
+  Understanding the kind of app is not enough — bounded means the flow
+  you are changing is already here to read. If there is no existing
+  flow to change, the task is not bounded. Ask the clarifying
+  questions that matter, present a short design IN CHAT (a few
+  sentences to a few short paragraphs), and STOP. Implementation
+  starts only after your human partner says yes to that design — a
+  bounded task's approval is as hard a gate as an architectural
+  one. No spec file, no implementation plan document.
+- **Architectural** — new projects, new subsystems, changes that
+  restructure how components fit together or alter interfaces others
+  depend on. Follow the full process: questions, approaches, sectioned
+  design, written spec, then the writing-plans skill.
+
+When in doubt between two paths, take the heavier one. The ratchet is
+one-way: hidden complexity discovered mid-task upgrades the path —
+stop, say so, and step up. Nothing downgrades mid-task.
+
+## Anti-Pattern: "Too Simple To Need Approval"
+
+Every path ends with your human partner approving your intent before
+implementation. A todo list, a single-function utility, a config
+change — the design may be two sentences in chat, but you MUST present
+it and get approval. "Simple" tasks are where unexamined assumptions
+cause the most wasted work. What scales with simplicity is the
+artifact, never the approval.
+
+## Red Flags
+
+| Thought | Reality |
+|---------|---------|
+| "This is too simple to need a design" | Simple means a short design, not no design. Two sentences in chat, then approval. |
+| "I'll call it bounded and skip the spec" | Reaching for a label to skip work IS the doubt — take the heavier path. |
+| "It's bounded and the design is obvious — I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop until you hear yes. |
+| "I understand this kind of app, so it's bounded" | Bounded measures the repo, not your familiarity. A new project has no existing flow — it is architectural. |
+| "The spike works, so I'll keep the code" | A spike's output is an answer. Keeping the code is a new request — classify it. |
+| "It grew, but I'm almost done — no need to re-classify" | Hidden complexity upgrades the path mid-task. Stop and say so. |
+| "They approved the spike, so the follow-up change is approved too" | Each task gets its own classification and its own approval. |
+
+## Checklist
+
+Classify first, announce the path, then create a task for each item on
+your path and complete them in order.
+
+**Spike:**
+1. **Explore project context** — enough to frame the probe
+2. **Present question + probe plan** — 2-3 sentences
+3. **Get approval** — a nod is enough
+4. **Investigate** — as cheaply as correctness allows
+5. **Report findings** — a recommendation; label anything built as throwaway
+
+**Bounded:**
+1. **Explore project context** — check files, docs, recent commits
+2. **Ask clarifying questions** — one at a time, the ones that matter
+3. **Present short design in chat** — approach, files touched, testing
+4. **Get approval** — STOP and wait for an explicit yes; presenting the design and starting in the same breath is skipping the gate
+5. **Implement** — proceed with the normal development workflow (TDD applies); no plan document
+
+**Architectural:**
+1. **Explore project context** — check files, docs, recent commits
+2. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
+3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
+4. **Propose 2-3 approaches** — with trade-offs and your recommendation
+5. **Present design** — in sections scaled to their complexity, get user approval after each section
+6. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
+7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
+8. **User reviews written spec** — ask user to review the spec file before proceeding
+9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+
+## Process Flow
+
+```dot
+digraph brainstorming {
+    "Classify: spike / bounded / architectural" [shape=diamond];
+    "Present question + probe (2-3 sentences)" [shape=box];
+    "Ask clarifying questions (bounded)" [shape=box];
+    "Present short design in chat" [shape=box];
+    "Human approves?" [shape=diamond];
+    "Investigate; report recommendation" [shape=doublecircle];
+    "Implement via normal workflow (no plan doc)" [shape=doublecircle];
+    "Explore project context" [shape=box];
+    "Ask clarifying questions" [shape=box];
+    "Propose 2-3 approaches" [shape=box];
+    "Present design sections" [shape=box];
+    "User approves design?" [shape=diamond];
+    "Write design doc" [shape=box];
+    "Spec self-review\n(fix inline)" [shape=box];
+    "User reviews spec?" [shape=diamond];
+    "Invoke writing-plans skill" [shape=doublecircle];
+    "Hidden complexity? Upgrade path" [shape=box];
+
+    "Classify: spike / bounded / architectural" -> "Present question + probe (2-3 sentences)" [label="spike"];
+    "Classify: spike / bounded / architectural" -> "Ask clarifying questions (bounded)" [label="bounded"];
+    "Classify: spike / bounded / architectural" -> "Explore project context" [label="architectural"];
+    "Present question + probe (2-3 sentences)" -> "Human approves?";
+    "Ask clarifying questions (bounded)" -> "Present short design in chat";
+    "Present short design in chat" -> "Human approves?";
+    "Human approves?" -> "Investigate; report recommendation" [label="spike: yes"];
+    "Human approves?" -> "Implement via normal workflow (no plan doc)" [label="bounded: yes"];
+    "Hidden complexity? Upgrade path" -> "Classify: spike / bounded / architectural";
+    "Explore project context" -> "Ask clarifying questions";
+    "Ask clarifying questions" -> "Propose 2-3 approaches";
+    "Propose 2-3 approaches" -> "Present design sections";
+    "Present design sections" -> "User approves design?";
+    "User approves design?" -> "Present design sections" [label="no, revise"];
+    "User approves design?" -> "Write design doc" [label="yes"];
+    "Write design doc" -> "Spec self-review\n(fix inline)";
+    "Spec self-review\n(fix inline)" -> "User reviews spec?";
+    "User reviews spec?" -> "Write design doc" [label="changes requested"];
+    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+}
+```
+
+**Terminal states are path-bound.** Architectural: the ONLY skill you
+invoke after brainstorming is writing-plans — never frontend-design,
+mcp-builder, or any other implementation skill. Bounded: after
+approval, implementation proceeds directly through the normal
+development workflow; no plan document. Spike: the terminal state is a
+reported recommendation.
+
+## The Process
+
+The subsections below serve the bounded and architectural paths (a
+spike stops at "present the probe, get a nod"). Sections from
+**Exploring approaches** onward are architectural-path depth — for
+bounded work, context plus a few questions plus a short in-chat design
+is the whole process.
+
+**Understanding the idea:**
+
+- Check out the current project state first (files, docs, recent commits)
+- Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
+- If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow. Each sub-project gets its own spec → plan → implementation cycle.
+- For appropriately-scoped projects, ask questions one at a time to refine the idea
+- Prefer multiple choice questions when possible, but open-ended is fine too
+- Only one question per message - if a topic needs more exploration, break it into multiple questions
+- Focus on understanding: purpose, constraints, success criteria
+
+**Exploring approaches:**
+
+- Propose 2-3 different approaches with trade-offs
+- Present options conversationally with your recommendation and reasoning
+- Lead with your recommended option and explain why
+- YAGNI ruthlessly - remove unnecessary features from every approach and design
+
+**Presenting the design:**
+
+- Once you believe you understand what you're building, present the design
+- Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
+- Ask after each section whether it looks right so far
+- Cover: architecture, components, data flow, error handling, testing
+- Be ready to go back and clarify if something doesn't make sense
+
+**Design for isolation and clarity:**
+
+- Break the system into smaller units that each have one clear purpose, communicate through well-defined interfaces, and can be understood and tested independently
+- For each unit, you should be able to answer: what does it do, how do you use it, and what does it depend on?
+- Can someone understand what a unit does without reading its internals? Can you change the internals without breaking consumers? If not, the boundaries need work.
+- Smaller, well-bounded units are also easier for you to work with - you reason better about code you can hold in context at once, and your edits are more reliable when files are focused. When a file grows large, that's often a signal that it's doing too much.
+
+**Working in existing codebases:**
+
+- Explore the current structure before proposing changes. Follow existing patterns.
+- Where existing code has problems that affect the work (e.g., a file that's grown too large, unclear boundaries, tangled responsibilities), include targeted improvements as part of the design - the way a good developer improves code they're working in.
+- Don't propose unrelated refactoring. Stay focused on what serves the current goal.
+
+## After the Design (architectural path)
+
+**Documentation:**
+
+- Write the validated design (spec) to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`
+  - (User preferences for spec location override this default)
+- Use elements-of-style:writing-clearly-and-concisely skill if available
+- Commit the design document to git
+
+**Spec Self-Review:**
+After writing the spec document, look at it with fresh eyes:
+
+1. **Placeholder scan:** Any "TBD", "TODO", incomplete sections, or vague requirements? Fix them.
+2. **Internal consistency:** Do any sections contradict each other? Does the architecture match the feature descriptions?
+3. **Scope check:** Is this focused enough for a single implementation plan, or does it need decomposition?
+4. **Ambiguity check:** Could any requirement be interpreted two different ways? If so, pick one and make it explicit.
+
+Fix any issues inline. No need to re-review — just fix and move on.
+
+**User Review Gate:**
+After the spec review loop passes, ask the user to review the written spec before proceeding:
+
+> "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
+
+Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
+
+**Implementation:**
+
+- Invoke the writing-plans skill to create a detailed implementation plan
+- Do NOT invoke any other skill. writing-plans is the next step.
+
+## Visual Companion
+
+A browser-based companion for showing mockups, diagrams, and visual options during brainstorming. Available as a tool — not a mode. Accepting the companion means it's available for questions that benefit from visual treatment; it does NOT mean every question goes through the browser.
+
+**Offering the companion (just-in-time):** Do NOT offer it upfront. Wait until a question would genuinely be clearer shown than told — a real mockup / layout / diagram question, not merely a UI *topic*. The first time that happens, offer it then, as its own message:
+> "This next part might be easier if I show you — I can put together mockups, diagrams, and comparisons in a browser tab as we go. It's still new and can be token-intensive. Want me to? I'll open it for you."
+
+**This offer MUST be its own message.** Only the offer — no clarifying question, summary, or other content. Wait for the user's response. If they accept, start the server with `--open` so their browser opens to the first screen automatically. If they decline, continue text-only and don't offer again unless they raise it.
+
+**Per-question decision:** Even after the user accepts, decide FOR EACH QUESTION whether to use the browser or the terminal. The test: **would the user understand this better by seeing it than reading it?**
+
+- **Use the browser** for content that IS visual — mockups, wireframes, layout comparisons, architecture diagrams, side-by-side visual designs
+- **Use the terminal** for content that is text — requirements questions, conceptual choices, tradeoff lists, A/B/C/D text options, scope decisions
+
+A question about a UI topic is not automatically a visual question. "What does personality mean in this context?" is a conceptual question — use the terminal. "Which wizard layout works better?" is a visual question — use the browser.
+
+If they agree to the companion, read the detailed guide before proceeding:
+`skills/brainstorming/visual-companion.md`
+
+
+ARGUMENTS: Plan implementing the original game's cutscenes in the Godot port. Need to investigate source ActionScript and extracted SWF XML data first to know what's actually there before scoping the plan.
+
+**Claude:** Classifying: **architectural**. There's no existing cutscene playback at all right now — `ZoneProgression.after_battle_won()` just reports a cutscene id (`CS_CUT2` etc.) and nothing consumes it, per `NEXT_PHASES.md`. No flow to extend, so this is new-subsystem work, not bounded.
+
+Investigating the source material first so my questions are grounded in what's actually there, not guesses.
+  - `Bash: rg -n "CS_CUT|cutscene" scripts/ dev/source_files/action_script_curated/ NEXT_PHASES.md KNOWN_GAPS.md SWF_DIFFERENCES.md 2>/dev/null | head -50`
+  - `Bash: rg -rn "CS_CUT" /Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script/ 2>/dev/null | head -30`
+  - `Bash: rg -rn "CS_CUT" -i /Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script/ 2>/dev/null | head -40 echo "=== frame 219 head ===" wc -l /Users/sweet`
+
+**Claude:** No literal "CS_CUT" string in the web AS export - must be frame labels, not string literals. Let's read frame_219 in full and check the swf_xml frame-label tags.
+  - `Read: /Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script/frame_219/DoAction.as`
+  - `Bash: cd /Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script && rg -rn "cutsceneSequence" . 2>/dev/null echo "=== afterCut ===" rg -rn "afterCut" . 2`
+  - `Bash: grep -n "afterCut\|gotoSceneKrin" /Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script/frame_219/DoAction.as`
+  - `Bash: grep -n "cutsceneSequence\|gotoAndStop\|Krin\.n\b" /Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script/frame_219/DoAction.as echo "=== frame_16`
+  - `Bash: grep -n "cutsceneSequence" /Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script/frame_41/DoAction_2.as /Users/sweetjp/Documents/godot/urchin/dev`
+  - `Bash: ls /Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script/ | grep -E "^frame_(2[0-3][0-9])$" | sort -t_ -k2 -n echo "=== check what sets cutsceneS`
+  - `Bash: rg -o 'name="(CS_CUT[0-9]|CS_INTRO[0-9]?)"' /Users/sweetjp/Documents/godot/urchin/dev/source_files/swf_xml/sonny-2-2900.xml | sort -u`
+  - `Bash: rg -n 'name="CS_CUT[0-9]"|name="CS_INTRO[0-9]?"' /Users/sweetjp/Documents/godot/urchin/dev/source_files/swf_xml/sonny-2-2900.xml`
+  - `Bash: sed -n '491170,491764p' /Users/sweetjp/Documents/godot/urchin/dev/source_files/swf_xml/sonny-2-2900.xml > /private/tmp/claude-501/-Users-sweetjp-Documents-godot`
+  - `Bash: grep -n "DefineEditTextTag\|PlaceObject2Tag\|PlaceObject3Tag\|DefineButton2Tag\|SoundStreamHead" /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/f`
+  - `Bash: cat "/Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script/frame_263/PlaceObject2_3466_80/CLIPACTIONRECORD onClipEvent(enterFrame).as"`
+  - `Bash: grep -rln "cutSceneEnd" /Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script/ 2>/dev/null`
+  - `Bash: for ln in 559740 739547 760301 764657 791169; do echo "=== line $ln context ===" sed -n "${ln},$((ln+15))p" /Users/sweetjp/Documents/godot/urchin/dev/source_fil`
+  - `Bash: for cid in 3810 3470 3643 4153 4038 3960 3928; do echo "=== characterId $cid placements (as PlaceObject, not Define) ===" rg -n "type=\"PlaceObject[23]Tag\" cha`
+  - `Bash: sed -n '852130,852180p' /Users/sweetjp/Documents/godot/urchin/dev/source_files/swf_xml/sonny-2-2900.xml | grep -n "FrameLabelTag\|PlaceObject"`
+  - `Bash: uv run python3 << 'EOF' from urchin_dev import WEB_SWF_XML from urchin_dev.swf.xml_lib import sprite_body import re xml = WEB_SWF_XML.read_text() for sid, name`
+  - `Bash: cat /Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script/DefineSprite_3643/frame_2084/DoAction.as echo "=== check for a SKIP button inside these`
+  - `Bash: uv run python3 << 'EOF' from urchin_dev import WEB_SWF_XML from urchin_dev.swf.xml_lib import sprite_body import re xml = WEB_SWF_XML.read_text() body = sprite_`
+  - `Bash: uv run python3 << 'EOF' from urchin_dev import WEB_SWF_XML from urchin_dev.swf.xml_lib import sprite_body import re xml = WEB_SWF_XML.read_text() body = sprite_`
+  - `Bash: grep -rn "Key.isDown\|onKeyDown\|Key\.ESCAPE" /Users/sweetjp/Documents/godot/urchin/dev/source_files/action_script/frame_263/ /Users/sweetjp/Documents/godot/urc`
+
+**Claude:** Investigation done. Key findings:
+
+- **4 cutscenes in scope** (`CS_CUT2`-`CS_CUT5`), matching `zone_progression.gd`'s existing `CUTSCENE_BATTLES` table exactly. Two more exist (`CS_INTRO`, `CS_CUT1`) but aren't wired to anything in this port — out of scope unless you want them too.
+- **Each is a self-contained `DefineSprite`** with its own linear timeline: 501-2084 frames (17-70s at 30fps). Confirmed via `sprite_body` + the `cutSceneEnd=true; stop()` trigger on each one's last frame.
+- **Not text-card slideshows.** `CS_INTRO` uses `DefineEditTextTag` caption cards (title-card style) — but the 4 real ones have zero text tags. They're fully animated: `CS_CUT2` alone places 85 distinct bespoke art assets across ~3900 `PlaceObject` calls. Comparable in shape to the `MODEL1` battle-doll timeline already ported, except unique art per cutscene, not one reusable rig.
+- **Embedded MP3 audio** streamed per-frame (`SoundStreamHeadTag`, `streamSoundCompression="2"`) — voice-over/music, extractable via ffdec.
+- **Trigger flow already traced**: battle ends → `frame_219` sets `afterCut`/`gotoSceneKrin` → player clicks Continue → fades to black → cutscene plays, unskippable, no skip button on any of these 4 → fades to black again → `gotoAndPlay(gotoSceneKrin)` back to the zone hub/map/end screen. `ZoneProgression.after_battle_won()` already reports the cutscene id; nothing consumes it yet.
+
+The real fork: full frame-accurate recreation is a lift on the scale of (or past) the `MODEL1` extraction work, times four bespoke assets sets. Before I propose approaches:
+  - `AskUserQuestion`
+  - `Bash: uv run python3 << 'EOF' from urchin_dev import WEB_SWF_XML from urchin_dev.swf.xml_lib import sprite_body import re xml = WEB_SWF_XML.read_text() for sid, name`
+  - `Bash: rg -n "colorTransform|filter|blendMode|ColorTransform" /Users/sweetjp/Documents/godot/urchin/dev/urchin_dev/swf/extract/model1_animations.py /Users/sweetjp/Docu`
+
+**Claude:** Checking one more thing before I propose approaches — whether `ffdec` can render these timelines directly to video, which would change the whole architecture question.
+  - `Bash: ~/.local/bin/ffdec 2>&1 | grep -iE "avi|video|export.*frame|screenshot"`
+  - `ToolSearch: select:TaskStop`
+  - `TaskStop: br2yryuwz`
+  - `Bash: timeout 20 ~/.local/bin/ffdec -help 2>&1 | grep -iE "avi|video|frame|screenshot|render" | head -30`
+  - `Bash: timeout 20 ~/.local/bin/ffdec -help 2>&1 | head -80`
+  - `Bash: timeout 20 ~/.local/bin/ffdec -help export 2>&1 | head -100`
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/tasks mkdir -p /private/tmp/claude-501/-Users-sweetjp`
+  - `Bash: find /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test -type f -exec ls -la {} \;`
+  - `Bash: which ffprobe ffmpeg 2>&1 ffprobe -v error -show_format -show_streams /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d1`
+  - `Bash: ffmpeg -y -i /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test/DefineSprite_3960/frame`
+  - `Bash: ffmpeg -y -i /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test/DefineSprite_3960/frame`
+  - `Read: /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test/frame250.png`
+  - `Bash: ls /Users/sweetjp/Documents/godot/urchin/addons/ rg -n "VideoStream|theora|webm" /Users/sweetjp/Documents/godot/urchin/ --include='*.gd' --include='*.tscn' --in`
+  - `Bash: ffmpeg -encoders 2>&1 | grep -i "ogg\|theora\|vpx\|vp9\|vp8"`
+  - `ToolSearch: select:WebSearch`
+  - `WebSearch: Godot 4.7 VideoStreamPlayer built-in codec Ogg Theora WebM support`
+
+**Claude:** Investigation just found something that changes the approach materially. Tested it live, not just read about it:
+  - `AskUserQuestion`
+
+**Claude:** Now nailing down the remaining technical pieces: audio extraction, the crop rectangle, and where this wires into the existing code.
+  - `Bash: rg -n "after_battle_won" /Users/sweetjp/Documents/godot/urchin/scripts/ 2>/dev/null`
+  - `Bash: sed -n '740,790p' /Users/sweetjp/Documents/godot/urchin/scripts/battle/battle_scene.gd echo "=== zone_manager.gd context ===" sed -n '60,90p' /Users/sweetjp/Doc`
+  - `Bash: rg -n "report_battle_won" /Users/sweetjp/Documents/godot/urchin/scripts/ 2>/dev/null echo "=== _on_victory_proceed ===" rg -n "_on_victory_proceed" -A15 /Users/`
+  - `Bash: rg -ln "ending\|credits\|end_menu\|EndMenu" -i /Users/sweetjp/Documents/godot/urchin/scripts/ /Users/sweetjp/Documents/godot/urchin/scenes/ 2>/dev/null echo "==`
+  - `Bash: python3 -c " import json d = json.load(open('/Users/sweetjp/Documents/godot/urchin/dev/converted_json/battles.json')) ids = sorted(b['id'] for b in d['battles']`
+
+**Claude:** One more real bug found while tracing the wiring, worth fixing alongside this feature: `zone_progression.gd`'s `CUTSCENE_BATTLES` maps `513: "CS_CUT5"`, but battle id 513 doesn't exist — the block tops out at 512 (already confirmed by the earlier zero-drift audit). CS_CUT5 can never currently trigger. Checking sound extraction next, then presenting the design.
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test timeout 60 ~/.local/bin/ffde`
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test timeout 20 ~/.local/bin/ffde`
+  - `Bash: uv run python3 << 'EOF' from urchin_dev import WEB_SWF_XML from urchin_dev.swf.xml_lib import sprite_body import re xml = WEB_SWF_XML.read_text() body = sprite_`
+
+**Claude:** Design ready. Presenting in sections.
+
+## Architecture
+
+Extraction happens once (offline, Python + `ffdec` + `ffmpeg`), producing plain video files the game just plays — no new SWF-parsing code ships in the game itself, matching how `assets/audio/`, `assets/ui/*` etc. already work.
+
+```
+sonny-2-2900.swf
+  ├─ ffdec -format sprite:avi -selectid <id>   →  lossless PNG-frame AVI (video, no audio)
+  ├─ new script: concatenate SoundStreamBlockTag →  raw MP3 (audio)
+  └─ ffmpeg: crop to stage rect, mux video+audio, encode Ogg Theora
+        → assets/cutscenes/CS_CUT2.ogv (+ CS_CUT3/4/5)
+```
+
+## Extraction pipeline (new: `dev/urchin_dev/swf/extract/cutscenes.py`)
+
+1. **Video**: `ffdec -format sprite:avi -selectid {3643,3928,3960,4038} -export sprite` — already tested live on CS_CUT4, confirmed correct (helicopters/sky rendered right, all filters/gradients baked in by ffdec's own renderer).
+2. **Crop**: the raw export includes an editor-only guide overlay (safe-frame border + color calibration strip, same pattern as the `1913`/`2241` skip-shapes already known from item/ability icon extraction) — crop to the actual stage rect before encoding. Need to pin down the exact crop rect against the known stage bounds; flagged as a task-1 detail, not a design blocker.
+3. **Audio**: `ffdec` has no CLI path for a sprite's own embedded streaming sound (`SoundStreamBlockTag`, confirmed by testing — both `sound:` and `movie:` exports produced nothing for these ids). But the XML dump exposes each block's raw MP3 bytes directly (`streamSoundData` hex, confirmed present). Small script concatenates them in frame order into a playable MP3 — a well-documented SWF-audio-ripping technique, not a new invention.
+4. **Mux + transcode**: `ffmpeg` combines cropped video + extracted audio, transcodes to Ogg Theora (Godot's only built-in video codec — confirmed via docs, WebM was dropped from core in 4.0). Local `ffmpeg` lacks a Theora encoder; plan needs to note installing one (`ffmpeg2theora` or a Theora-enabled `ffmpeg` build) as a one-time setup step.
+
+## Godot playback
+
+New `scenes/cutscenes/cutscene_player.tscn` + script: a `VideoStreamPlayer` plus the original's fade-to-black-in/fade-to-black-out (a `ColorRect`, tweened, matching the source's alpha±5-per-frame fade), no skip button (confirmed none of the 4 have one — unskippable in the original), `finished` signal on video end.
+
+**Wiring** (traced the real call path): `battle_scene.gd:764` calls `ZoneProgression.after_battle_won(...)` today and **discards the returned dict** — the `cutscene` key it already computes just gets thrown away. Capture it, stash it on `battle_scene`, and in `_on_victory_proceed()` (the exact equivalent of the original's Continue button check on `afterCut`), play the cutscene via the new player before `_on_continue_pressed()`'s `change_scene_to_file`.
+
+**Bug found and worth fixing alongside this**: `zone_progression.gd`'s `CUTSCENE_BATTLES` has `513: "CS_CUT5"` — battle 513 doesn't exist (confirmed against `battles.json`; the block tops out at 512, already verified zero-drift against the source AS). CS_CUT5 can never currently trigger. Should be `512`.
+
+## Testing
+
+GUT covers: `CUTSCENE_BATTLES` id validity (would have caught the 513 bug), the `after_battle_won` → cutscene-id plumbing, cutscene-player fade timing and `finished` signal. Can't unit-test actual video decode/playback under `--headless`, same limitation as the existing audio manager tests.
+
+Look right so far? Anything you want changed before I write this up as `.claude/plan_cutscenes.md`?
+
+**You:** Regarding the avi export, im a little confused and curious as to how the original swf is only around 20MB, but the test export of 3643 im doing in @test_cs/DefineSprite_3643/ is still exporting and is already over 250MB.
+  - `Bash: ls -la /Users/sweetjp/Documents/godot/urchin/test_cs/DefineSprite_3643/frames.avi 2>/dev/null ps aux | grep -i ffdec | grep -v grep`
+
+**Claude:** Expected, not a bug — the AVI export is lossless PNG-per-frame (confirmed earlier: `codec_name=png`, RGBA, no inter-frame compression at all). Every one of CS_CUT2's 2084 frames gets fully rasterized and stored as an independent full-resolution bitmap. Zero reuse of the SWF's vector shapes across frames, unlike the SWF itself.
+
+The 20MB SWF stays small because it stores each of those 85 distinct art assets **once** as compressed vector shapes plus a short compressed MP3 stream, then just points at them frame-to-frame with matrix transforms — a few bytes per placement, not a repainted bitmap. The AVI export throws that efficiency away entirely: it's the fully-rendered *result* of playing the timeline, saved frame-by-frame, matching the earlier CS_CUT4 test's ~70KB/frame at 739x636 (35MB / 501 frames). CS_CUT2 has 4x the frames and busier scenes, so 250-300MB+ tracks.
+
+This is purely an **intermediate** file, not what ships. The plan's last step transcodes it to Ogg Theora, a real inter-frame-compressed codec — final size should land near the original SWF's ballpark, not the AVI's. Practical note I'm adding to the plan: running all 4 cutscenes' AVI exports at once needs real scratch disk (likely several GB total for the raw intermediates), so the extraction script should transcode-then-delete each AVI immediately rather than keep all 4 raw exports around simultaneously.
+
+Let it keep running, or kill it — either's fine, we already confirmed the mechanism works from the CS_CUT4 test.
+
+**You:** hmm, more investigation will need to be done for the export, as the exported avis all contain a red box with a color stick(?) [Image #1]
+
+Beyond that, are there any settings that should be adjusted based on `ffdec -listconfigs` that could be useful? I also cloned the source repo here @/Users/sweetjp/DEV/git_repos/jpexs/ so browsing the docs is easier.
+
+**You:** [Image: source: /Users/sweetjp/.claude/image-cache/fda25f18-28d3-4ba7-bb76-86e3e63897f3/1.png]
+  - `Bash: timeout 30 ~/.local/bin/ffdec -listconfigs 2>&1 | grep -iE "guide|bound|frame|border|safe|debug|render|overlay|test|color.?bar|grid|display"`
+  - `Bash: timeout 30 ~/.local/bin/ffdec -help config 2>&1 | head -20 echo "=== try disabling guides/grid for a quick re-test on CS_CUT4 ===" SCRATCH=/private/tmp/claude-5`
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test find "$SCRATCH/noguides" -ty`
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test ffmpeg -y -i "$SCRATCH/nogui`
+  - `Bash: grep -rli "colorbar\|colourbar\|testcard\|test.card\|smpte" /Users/sweetjp/DEV/git_repos/jpexs/src/ 2>/dev/null | head -10 echo "=== check for 'missing image' /`
+  - `Bash: rg -n "frameRect|FrameSize|<header" /Users/sweetjp/Documents/godot/urchin/dev/source_files/swf_xml/sonny-2-2900.xml | head -5`
+  - `Bash: head -c 3000 /Users/sweetjp/Documents/godot/urchin/dev/source_files/swf_xml/sonny-2-2900.xml`
+  - `Bash: uv run python3 << 'EOF' from PIL import Image img = Image.open('/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb5`
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test ffmpeg -y -i "$SCRATCH/Defin`
+  - `Bash: grep -rli "safeframe\|safe.area\|titlesafe\|16:9\|widescreen\|aspectguide" /Users/sweetjp/DEV/git_repos/jpexs/src/ 2>/dev/null | head -10 echo "=== search for a`
+
+**Claude:** Confirmed: not an `ffdec` setting, not an export bug — this is real content baked into the sprite itself.
+
+**Evidence:**
+- Measured the red box's exact pixel bounds on two different frames (frame 50 and frame 250, both from `DefineSprite_3960`): identical, `x:[52,599] y:[211,519]`, pixel-for-pixel, 1761 red pixels both times. A moving/animated element wouldn't sit dead-static like that — it's a fixed overlay in the sprite's own display list, not something ffdec is drawing on top.
+- Checked `ffdec -listconfigs` fully and grepped the cloned source (`/Users/sweetjp/DEV/git_repos/jpexs/src/`) for `safeframe`, `testcard`, `colorbar`, `debugRect`, `GUIDE_COLOR` — zero hits anywhere. Nothing in `ffdec` itself generates a guide overlay like this; there's no setting to turn it off because it isn't ffdec's doing.
+- The box's aspect ratio: 547×308 ≈ 1.776 — that's 16:9, near-exact. Classic broadcast title-safe/color-bar reference slate. Whoever produced these cutscenes (an outsourced animation vendor, going by the style) embedded a QC/calibration layer directly in the sprite, expecting it to get cropped before final delivery — same category of thing as the ability-icon black-disc and the item-icon editor-backing shape, just baked in as a static overlay instead of a specific shape id to skip.
+- The SWF's own stage (`displayRect` in the XML header) is 800×575px — doesn't match the red box's 547×308, so the crop rectangle has to come from the box itself per cutscene, not from the stage size. `DefineSprite_3960`'s own frame canvas is 739×636 (its bounding box), unrelated to both.
+
+**Fix**: the extraction script should auto-detect this per cutscene — scan each sprite's first exported frame for that distinct red RGB run, take its bounding rect, crop every frame to it. Don't hardcode `52,211,599,519` — that's `DefineSprite_3960` specifically; the canvas size differs per sprite (`CS_CUT2`'s frames are a different size entirely), so the box likely sits at different offsets too.
+
+**On `-listconfigs` generally** — one real, useful knob: `msaaGridForExport[4]-integer` (anti-aliasing samples for exports, separate from the display-only `useMsaaForDisplay`). Worth trying a higher value for edge quality on the final frames before transcoding, if it doesn't cost too much export time. Everything else in the list (`showGuides`, `showGrid`, `svgRetainBounds`, `debugHalt`, etc.) is either GUI/authoring-only or format-specific to formats we're not using (SVG). None of it touches the red-box question.
+
+Want this folded into the plan as its own extraction sub-step (auto-detect-and-crop), or do you want to verify the crop math on the other 3 cutscenes' frames first before I write it up?
+
+**You:** it looks like the red box is sprite with chid 3812, and each frame has it as the first PlaceObject2 dpt:25 , and appears to be the only PlaceObject2 with colorTransform set as im looking at in the ffdec gui atm
+
+**Claude:** Good find — that's a cleaner fix than pixel-scanning. Let me verify against the data, then test removing it via `ffdec` directly instead of cropping.
+  - `Bash: uv run python3 << 'EOF' from urchin_dev import WEB_SWF_XML from urchin_dev.swf.xml_lib import sprite_body import re xml = WEB_SWF_XML.read_text() for sid, name`
+  - `Bash: uv run python3 << 'EOF' from urchin_dev import WEB_SWF_XML from urchin_dev.swf.xml_lib import sprite_body xml = WEB_SWF_XML.read_text() for sid, name in [(3643,`
+
+**Claude:** CS_CUT3 and CS_CUT4 both use chid `3812` (different depths — 33 and 33, 25 — so it moved between them, not a fixed slot). But CS_CUT2 and CS_CUT5 don't reference `3812` at all — each cutscene apparently embeds its own separate copy of a similar guide overlay, not one shared asset across all four. Finding their equivalents using the same signal you found (only placement with a `colorTransform`).
+  - `Bash: uv run python3 << 'EOF' from urchin_dev import WEB_SWF_XML from urchin_dev.swf.xml_lib import sprite_body import re xml = WEB_SWF_XML.read_text() for sid, name`
+
+**Claude:** The "only `colorTransform`" signal doesn't generalize — CS_CUT2 and CS_CUT5 both have dozens of legitimate elements using `colorTransform` too (normal fades/tints on real animated content), so it only worked for CS_CUT3/CS_CUT4 by coincidence. Their guide-overlay chid needs identifying some other way — your GUI approach (watching which depth/chid the box tracks to) is probably faster than me guessing via regex here.
+
+Once you have the id for each, the clean fix is removing it from a working copy before export, not cropping pixels:
+  - `Bash: timeout 20 ~/.local/bin/ffdec -help removeCharacterWithDependencies 2>&1 | head -30 echo "=== quick real test: strip 3812 from a copy, re-export CS_CUT4, confir`
+  - `Bash: ls -la ~/.local/bin/ffdec 2>&1 ls -la /Users/sweetjp/.local/bin/ffdec 2>&1 which ffdec 2>&1`
+  - `Bash: ls -la /Applications/FFDec.app/Contents/Resources/ffdec.sh 2>&1 ps aux | grep -i ffdec | grep -v grep`
+
+**Claude:** `/Applications/FFDec.app` is gone (your running GUI is from `~/Downloads/ffdec_26.2.1/ffdec.jar` instead — looks like you swapped to a standalone copy). Using that jar directly for now.
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+
+**Claude:** `-removeCharacterWithDependencies` backfired — it cascaded and deleted `3960` (CS_CUT4's own cutscene sprite) right along with `3812`, since `3960` places `3812` as a child and ffdec's dependency logic reads that as "3960 depends on 3812," not "3812 is disposable inside 3960." Confirmed by dumping the stripped SWF's tags — chid 3960 is just gone. Checking the non-cascading variant before giving up on this path.
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+
+**Claude:** Full 501-frame export succeeded. Checking the resulting frame.
+  - `Read: /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test/stripped2_frame250.png`
+
+**Claude:** Confirmed clean. `-removeCharacter` (not `-removeCharacterWithDependencies`) strips just the guide-overlay placement without touching the parent sprite — full 501-frame re-export succeeded, both helicopters and the gradient background render identically to before, box and color bar completely gone, nothing else changed.
+
+**Command that works:**
+```sh
+ffdec -removeCharacter sonny-2-2900.swf clean.swf 3812
+ffdec -format sprite:avi -selectid 3960 -export sprite <outdir> clean.swf
+```
+
+So the extraction pipeline gets one step cleaner than my original plan: strip the guide-overlay chid from a working copy *before* export, rather than pixel-cropping the rendered output after. No color-detection heuristics needed, no risk of over/under-cropping real content.
+
+Remaining gap: still need CS_CUT2 and CS_CUT5's own guide-overlay chids (confirmed `3812` doesn't appear in either — each cutscene embeds its own copy, not a shared asset). The `colorTransform`-only signal doesn't isolate it there. Once you spot the chid for those two in the GUI, same `-removeCharacter` command applies — just don't reach for `-removeCharacterWithDependencies`, that one cascades into the parent sprite (confirmed: it deleted chid 3960 right along with 3812 when I tested it).
+
+I'll fold this into the plan as its own step (strip guide-overlay chid per cutscene, then export) instead of the crop step. Want me to keep digging for CS_CUT2/CS_CUT5's chids in parallel, or wait on what you find?
+
+**You:** sprite 3643 is chid 3478, sprite 3928 is chid 3812, sprite 4038 is chid 3962.
+  - `Bash: uv run python3 << 'EOF' from urchin_dev import WEB_SWF_XML from urchin_dev.swf.xml_lib import sprite_body xml = WEB_SWF_XML.read_text() checks = [(3643,"CS_CUT2`
+
+**Claude:** Both confirmed. Verifying the strip-and-export actually produces clean frames for both before locking this into the plan.
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SWF=/Users/sweetjp/Documents/godot/urchin/sonny-2-2900.swf SCRATCH=/private/tmp/claude-501/-Users-swee`
+
+**Claude:** Both parent sprites survived (`3643` and `4038` still present). Exporting frames from each to confirm the overlay's gone and nothing else broke.
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+
+**Claude:** Parallel exports competed for CPU and both timed out. Running them sequentially instead.
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+
+**Claude:** Full 1237-frame export finished. Pulling a frame to check.
+  - `Bash: SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test ffmpeg -y -i "$SCRATCH/cs_cu`
+  - `Read: /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test/cs_cut5_frame600.png`
+
+**Claude:** CS_CUT5 confirmed clean (blood-splatter/face reveal shot, no overlay). Now CS_CUT2 alone.
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+
+**Claude:** Slower per-frame (more assets/filters in this one) — 1708/2084 done in ~9 min. Running the full export in the background rather than blocking further.
+  - `Bash: FFDEC_JAR=/Users/sweetjp/Downloads/ffdec_26.2.1/ffdec.jar SCRATCH=/private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efe`
+
+**Claude:** While CS_CUT2 finishes in the background, writing the plan now.
+  - `Bash: sed -n '1,60p' /Users/sweetjp/Documents/godot/urchin/.claude/plan_item_drag_and_drop.md | tail -20`
+  - `Bash: tail -60 /Users/sweetjp/Documents/godot/urchin/.claude/plan_item_drag_and_drop.md`
+  - `Bash: tail -5 /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/tasks/bxtzvez5l.output 2>/dev/null`
+  - `Bash: ls -la /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/tasks/ 2>&1 find /private/tmp -name "bxtzvez5l*" 2>/de`
+  - `Write: /Users/sweetjp/Documents/godot/urchin/.claude/plan_cutscenes.md`
+  - `Bash: tail -8 /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/tasks/bxtzvez5l.output 2>/dev/null; echo "---"; ps au`
+
+**Claude:** Plan written to `.claude/plan_cutscenes.md`. Status while CS_CUT2's full re-export finishes in the background (started fresh, ~9-11 min for 2084 frames, currently ~2 min in):
+
+**Confirmed clean** (full re-export + visual frame check): CS_CUT4 (chid 3812 stripped) and CS_CUT5 (chid 3962 stripped) — both render identically to the original content, guide overlay completely gone, nothing else broken.
+
+**High confidence, not yet re-verified**: CS_CUT3 (same chid 3812 as CS_CUT4, same mechanism already proven twice over) and CS_CUT2 (chid 3478, export in progress).
+
+The plan documents the full mechanism per cutscene: `-removeCharacter` (not `-removeCharacterWithDependencies` — confirmed that one cascades and deletes the parent sprite) → `sprite:avi` export → raw MP3 extraction from the `SoundStreamBlockTag`s directly (ffdec's CLI has no path to the sprite-embedded audio, tested both `sound:` and `movie:` export types) → `ffmpeg` mux + Theora transcode. Plus the wiring trace (`battle_scene.gd:764` discards the cutscene id today) and the `513`→`512` battle-id bug in `CUTSCENE_BATTLES`.
+
+I'll confirm once CS_CUT2 finishes and update the plan if anything's off.
+
+**You:** check on the CS_CUT2 export
+  - `Bash: tail -10 /private/tmp/claude-501/-Users-sweetjp-Documents-godot-urchin/7a705d2f-a50a-40f8-82ce-99d13efeb59a/scratchpad/cutscene_test/cs_cut2_export3.log 2>/dev/`
