@@ -42,12 +42,23 @@ const TRAIN_FIGHTS: Dictionary = {
 const TRAIN_FIGHT_CAPS: Dictionary = {1: 9, 2: 12, 3: 15, 4: 18, 5: 23, 6: 40, 7: 30}
 
 # Story battles that trigger a cutscene when won (frame_219). The original
-# AS checks Krin.BattlePick against 109/210/409/513, but this port's
-# extracted battle data (dev/converted_json/battles.json, resources/battles)
-# has no 109, 409, or 513 - each zone's real battle ids stop one short of
-# that (zone 1: 100-108, zone 4: 400-408, zone 5: 500-512). Keyed here to
-# the actual last-real-battle id per zone instead, so the cutscene fires on
-# the fight players can actually win.
+# AS checks Krin.BattlePick against 109/210/409/513, and all four of those
+# battles are real - frame_42/DoAction_14.as creates 100-109 for zone 1,
+# 400-409 for zone 4 and 500-513 for zone 5.
+#
+# Three of the four are unreachable in this port, for a reason that has
+# nothing to do with cutscenes: the raw AMF dump the battle converter reads,
+# dev/data_json/swf_battles.json, stamps the last battle of every story block
+# with the *next* block's seed id. Battle 109's row is labelled 199, 409's is
+# labelled 499, and 513's is labelled 599 (nine rows across the whole file are
+# wrong this way; each one's contents still line up with the AS row for row).
+# So nothing named 109/409/513 ever reaches resources/battles, and keying the
+# cutscenes to those ids would mean they never fire.
+#
+# Keyed to the last id that does exist per zone as a result. The real fix
+# belongs in dev/urchin_dev/convert/battles.py's input data and is separate
+# work from the cutscene feature - once the dump is corrected, these keys go
+# back to the original 109/409/513.
 const CUTSCENE_BATTLES: Dictionary = {108: "CS_CUT2", 210: "CS_CUT3", 408: "CS_CUT4", 512: "CS_CUT5"}
 
 

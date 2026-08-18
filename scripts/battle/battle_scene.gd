@@ -796,10 +796,20 @@ func _on_victory_proceed() -> void:
 	if GameData.current_save != null and GameData.current_save.autosave:
 		GameData.save_game()
 	if not _pending_cutscene.is_empty():
+		# Cleared before the await, not after: Proceed stays clickable for one
+		# more frame while the player is being built, and a second press must
+		# not start a second copy of the same clip on top of the first.
+		var cutscene_id: String = _pending_cutscene
+		_pending_cutscene = ""
+		# The original silences the battle track before jumping to a cutscene
+		# (DefineButton2_3004's release handler calls stopAllSounds); without
+		# this the battle music keeps playing under the cutscene's own audio
+		# until _on_continue_pressed() swaps in the menu track afterwards.
+		AudioManagerAuto.stop_music()
 		var cutscene: CutscenePlayer = preload("res://scenes/cutscenes/cutscene_player.tscn").instantiate()
 		cutscene.animation_speed = animation_speed
 		add_child(cutscene)
-		await cutscene.play(_pending_cutscene)
+		await cutscene.play(cutscene_id)
 	_on_continue_pressed()
 
 

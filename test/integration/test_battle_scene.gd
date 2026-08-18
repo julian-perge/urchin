@@ -70,8 +70,9 @@ func test_full_battle_scene_run():
 # miss, and turn order decision along the way is still the real combat sim.
 #
 # This intentionally stops short of letting the real cutscene finish:
-# CutscenePlayer.play() only ever suspends on `await video.finished` (real
-# .ogv decode, 16-70s, no skip mechanism - see cutscene_player.gd), and
+# CutscenePlayer.play() suspends until the clip ends or its failsafe timeout
+# fires (real .ogv decode, 16-70s, no skip mechanism - see
+# cutscene_player.gd), and
 # _on_continue_pressed() beyond it calls get_tree().change_scene_to_file(),
 # which would tear down whatever the GUT runner considers its own current
 # scene. Verifying playback actually starts with the right stream is as far
@@ -139,6 +140,17 @@ func test_story_battle_win_threads_cutscene_id_through_victory_flow():
 			cutscene.video.stream.resource_path, "res://assets/cutscenes/CS_CUT2.ogv",
 			"the cutscene id threaded all the way to CutscenePlayer.play() matches CS_CUT2"
 		)
+
+	# The original silences the battle track before jumping into a cutscene,
+	# so the clip's own audio isn't competing with it for the whole runtime.
+	assert_eq(
+		AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE,
+		"battle music stopped before the cutscene started"
+	)
+	# Consumed, not just read: a second Proceed press while the clip is
+	# playing must not find a cutscene id still waiting and start a second
+	# player on top of the first.
+	assert_eq(scene._pending_cutscene, "", "pending cutscene cleared once it was handed to the player")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

@@ -85,14 +85,18 @@ func test_after_battle_won_progression_and_cutscenes():
 	assert_eq(save.quest_progress[1], 9, "repeat wins do not advance further")
 
 
-# Standing regression guard: this is the check that would have caught the
-# CUTSCENE_BATTLES 513/"CS_CUT5" bug (513 is one past zone 5's last real
-# battle, 512 - see the const's comment). Every key must resolve to an
-# actual battle so its cutscene is reachable in play.
-func test_cutscene_battles_keys_are_real_battle_ids():
+# Standing regression guard that CUTSCENE_BATTLES stays keyed to battles this
+# port can actually load, so every cutscene is reachable in play. It checks
+# the keys against battles.json as it stands today, which is not the same
+# thing as checking them against the original game's design - the original
+# triggers these cutscenes on 109/210/409/513, and battles.json is missing
+# three of those because of a converter-input bug described in the const's
+# own comment. Passing here means the cutscenes fire on some battle players
+# can reach, not that they fire on the battle the original chose.
+func test_cutscene_battles_keys_load_from_current_battle_data():
 	var battle_ids: Dictionary = _load_battle_ids()
 	for battle_id in ZoneProgression.CUTSCENE_BATTLES:
-		assert_true(battle_ids.has(battle_id), "battle %s (%s) is not a real battle id" % [battle_id, ZoneProgression.CUTSCENE_BATTLES[battle_id]])
+		assert_true(battle_ids.has(battle_id), "battle %s (%s) is not in battles.json" % [battle_id, ZoneProgression.CUTSCENE_BATTLES[battle_id]])
 
 
 func test_after_battle_won_returns_each_cutscene():

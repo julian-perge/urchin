@@ -1,6 +1,7 @@
 ### Project
 .DS_Store
 .recall
+/test_*
 
 # Original decompiled Flash source, not for distribution
 *.swf
