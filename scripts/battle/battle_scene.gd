@@ -80,6 +80,7 @@ var _finished: bool = false
 var _radial_menu: Control = null
 var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
 var _pending_goto_scene: String = ""  # ZoneProgression.CUTSCENE_GOTO_SCENE for that cutscene
+var _pending_setup_events: Array = []  # runner.setup()'s return - played first by _battle_loop()
 
 @onready var background: TextureRect = $Background
 @onready var sky: TextureRect = $Sky
@@ -151,7 +152,11 @@ func start_battle(info: Dictionary) -> void:
 			int(unit.life_n), int(unit.life_u), int(unit.focus_n),
 		])
 	runner = BattleRunner.new()
-	runner.setup(
+	# setup()'s own return is events generated before any advance_half_turn()
+	# call exists (currently just a turnTime:0 speech, if the battle has
+	# one) - _battle_loop() plays these first, same as every other half-turn's
+	# events, instead of them sitting unplayed (see setup()'s own comment).
+	_pending_setup_events = runner.setup(
 		units, battle, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id,
 		BuffManagerAuto.buffs_by_internal_name, battle_manager,
 		TalentTree.get_passive_buff_names(save)
@@ -468,6 +473,9 @@ func _on_stance_pressed(party_id: int, mode: int, slot: int) -> void:
 # --- turn loop ---------------------------------------------------------------
 
 func _battle_loop() -> void:
+	if not _pending_setup_events.is_empty():
+		await _play_events(_pending_setup_events)
+		_pending_setup_events = []
 	while not runner.is_over():
 		if runner.is_player_turn():
 			_player_action_pending = true

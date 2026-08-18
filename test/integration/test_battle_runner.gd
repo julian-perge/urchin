@@ -120,6 +120,33 @@ func test_battle_104_boss_phases_and_speeches():
 	assert_gt(counts.get("speech", 0), 0, "scripted dialogue fired")
 
 
+# battle_scene.gd never reads runner.events directly - it only ever plays
+# whatever advance_half_turn() returns, which slices runner.events from that
+# specific call's own starting size. A turnTime:0 speech (meant to play the
+# instant the battle begins) gets drained by setup()'s own pre-loop
+# _drain_speeches() call, before any advance_half_turn() has run - so it
+# lands in runner.events ahead of every future call's slice window and is
+# never actually shown in play, even though runner.events (what
+# test_battle_104_boss_phases_and_speeches checks) does contain it. Battle
+# 105 (a Doctor Leath fight - "Twisted Experiment") has exactly one speech,
+# at turnTime:0, so it's a clean single-speech reproduction of the bug.
+func test_setup_returns_its_own_turn_time_zero_speeches():
+	var battle: BattleFight = battles.get(105)
+	assert_not_null(battle)
+	assert_eq(battle.speeches.size(), 1)
+	assert_eq(int(battle.speeches[0]["turnTime"]), 0, "the one speech fires at battle start, not mid-turn")
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	var setup_events: Array = runner.setup(
+		_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
+	)
+	var has_speech: bool = false
+	for event in setup_events:
+		if event["type"] == "speech":
+			has_speech = true
+	assert_true(has_speech, "the turnTime:0 speech is returned by setup(), not left stranded in runner.events")
+
+
 func test_battle_51_end_game_phase():
 	_assert_battle_runs(51)
 

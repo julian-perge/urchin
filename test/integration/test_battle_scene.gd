@@ -59,6 +59,43 @@ func test_full_battle_scene_run():
 	ZoneManager.auto_start_battles = true
 
 
+# Regression test for a turnTime:0 speech (one meant to play the instant the
+# battle begins) reaching the player through the real scene, not just
+# runner.events (see battle_runner.gd's setup() and its unit-level coverage
+# in test_battle_runner.gd). Battle 105 (Doctor Leath's "Twisted Experiment")
+# has exactly one speech, at turnTime:0.
+func test_setup_time_speech_plays_through_the_real_scene():
+	var save = PlayerSave.new_game("SpeechFlow", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 105, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	assert_false(scene._pending_setup_events.is_empty(), "setup() handed the scene its pre-loop speech event")
+
+	# Only the player needs driving - companions/enemies already come with
+	# their own real AI move pools from CombatUnit.from_character().
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	player.ai_enabled = true
+	player.move_pool_attack = TalentTree.STARTING_MOVES.get(save.player_class, [])
+	player.cooldowns_attack = []
+	for i in player.move_pool_attack.size():
+		player.cooldowns_attack.append(0)
+
+	await wait_for_signal(scene.battle_finished, 30)
+	assert_true(scene._pending_setup_events.is_empty(), "_battle_loop() played and cleared the pre-loop event")
+	var has_speech: bool = false
+	for event in scene.runner.events:
+		if event["type"] == "speech":
+			has_speech = true
+	assert_true(has_speech, "the speech is still in the real log too")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # Task 4 (cutscene plan): drives a real win of story battle 109 (zone 1's
 # boss, CUTSCENE_BATTLES -> CS_CUT2) through the actual game
 # code path - BattleSetup/BattleRunner combat, _finish_battle(),

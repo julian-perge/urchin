@@ -51,7 +51,17 @@ var speech_cursor: int = 0  # speechOn
 var events: Array = []  # full battle log; advance_half_turn() also returns its slice
 
 
-func setup(units_by_slot: Dictionary, battle_fight: BattleFight, moves: Dictionary, buffs_id: Dictionary, buffs_name: Dictionary, manager: BattleManager, player_passive_buff_names: Array = []) -> void:
+# Returns any events generated during setup itself (currently just a
+# turnTime:0 speech, if the battle has one) - the caller must play these the
+# same way it plays advance_half_turn()'s return value. advance_half_turn()
+# only ever returns events.slice(events_start) measured from that specific
+# call's own starting point, so anything _drain_speeches() appends here,
+# before the first such call exists, would otherwise sit in events ahead of
+# every future call's slice window and never reach whoever's actually
+# consuming play-by-play events (battle_scene.gd doesn't read runner.events
+# directly - only test code that inspects the full log after the fact does).
+func setup(units_by_slot: Dictionary, battle_fight: BattleFight, moves: Dictionary, buffs_id: Dictionary, buffs_name: Dictionary, manager: BattleManager, player_passive_buff_names: Array = []) -> Array:
+	var events_start: int = events.size()
 	units = units_by_slot
 	battle = battle_fight
 	moves_by_id = moves
@@ -79,6 +89,7 @@ func setup(units_by_slot: Dictionary, battle_fight: BattleFight, moves: Dictiona
 
 	_team_select()
 	_drain_speeches()
+	return events.slice(events_start)
 
 
 func is_over() -> bool:
