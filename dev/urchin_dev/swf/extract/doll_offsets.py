@@ -16,9 +16,8 @@ import struct
 import sys
 from pathlib import Path
 
-from urchin_dev.swf  import make_char_bounds, parse_swf_xml
-
 from urchin_dev import REPO_ROOT, STEAM_SWF_XML, WEB_SWF_XML
+from urchin_dev.swf import make_char_bounds, parse_swf_xml
 
 SPRITES = REPO_ROOT / "resources" / "sprites"
 OUT = SPRITES / "doll_offsets.json"

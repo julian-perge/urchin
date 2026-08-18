@@ -6,7 +6,6 @@ import json
 from urchin_dev import CONVERTED_JSON, require_data_json
 from urchin_dev.swf import models
 
-
 # ["EMPTY","PRISON","VILLAGE","TRAIN","TUNNELS","CITY","ROME","JAPAN","UTOPIA","JAPAN","STORM","EDEN","DOME","BETA"];
 # CHURCH
 # CHURCH2
@@ -28,9 +27,7 @@ def parse_json(parsed_dict: dict):
         CONVERTED_JSON / "converted_units_by_id.json"
     )
 
-    items_by_ids: dict = models.load_json(
-        CONVERTED_JSON / "converted_item_by_id.json"
-    )
+    items_by_ids: dict = models.load_json(CONVERTED_JSON / "converted_item_by_id.json")
 
     # Find all items in this block
     for json_block in parsed_dict.values():

@@ -90,6 +90,7 @@ extend-select = [
 
 ignore = [
   "RUF046",
+  "PLW1510",
   "E402",
   # ---------- FORMATTER COMPATIBILITY ----------
   # Rules that conflict with ruff formatter - per official recommendation

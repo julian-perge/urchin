@@ -21,11 +21,7 @@ from pathlib import Path
 from PIL import Image
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import (
-    make_char_bounds,
-    parse_swf_xml,
-    snapshot_timeline,
-)
+from urchin_dev.swf import make_char_bounds, parse_swf_xml, snapshot_timeline
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "abilities"
 

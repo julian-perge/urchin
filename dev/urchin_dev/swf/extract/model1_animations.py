@@ -13,9 +13,8 @@ from __future__ import annotations
 import json
 import sys
 
-from urchin_dev.swf  import snapshot_timeline
-
 from urchin_dev import REPO_ROOT, WEB_SWF_XML
+from urchin_dev.swf import snapshot_timeline
 
 OUT = REPO_ROOT / "resources" / "sprites" / "model1_animations.json"
 MODEL_SPRITE = 166

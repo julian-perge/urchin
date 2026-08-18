@@ -54,7 +54,10 @@ def main():
     xml = WEB_SWF_XML.read_text()
     _shapes, _sprites, _exports = parse_swf_xml(WEB_SWF_XML)
     _snaps, labels = snapshot_timeline(xml, FACE_CLIP, set(range(1, 400)))
-    print(f"labels found: {len(labels)}, unique frames: {len(set(labels.values()))}", file=sys.stderr)
+    print(
+        f"labels found: {len(labels)}, unique frames: {len(set(labels.values()))}",
+        file=sys.stderr,
+    )
 
     face_dir = Path(tempfile.mkdtemp(prefix="face_frames_"))
     subprocess.run(

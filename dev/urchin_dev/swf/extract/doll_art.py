@@ -15,16 +15,9 @@ import tempfile
 from pathlib import Path
 
 from PIL import Image
-from urchin_dev.swf import make_char_bounds, parse_swf_xml
 
-from urchin_dev import (
-    FFDEC,
-    REPO_ROOT,
-    STEAM_SWF,
-    STEAM_SWF_XML,
-    WEB_SWF,
-    WEB_SWF_XML,
-)
+from urchin_dev import FFDEC, REPO_ROOT, STEAM_SWF, STEAM_SWF_XML, WEB_SWF, WEB_SWF_XML
+from urchin_dev.swf import make_char_bounds, parse_swf_xml
 
 SPRITES = REPO_ROOT / "resources" / "sprites"
 ZOOM = 2.0
