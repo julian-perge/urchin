@@ -443,13 +443,13 @@ func _populate_stance_rows() -> void:
 		for mode in buttons.size():
 			buttons[mode].pressed.connect(_on_stance_pressed.bind(party_id, mode, slot))
 		_stance_rows[party_id] = buttons
-		_refresh_stance_row(party_id, Party.get_ag_mode(save, party_id) if save != null else 2)
+		_refresh_stance_row(party_id, Party.get_ag_mode(save, party_id) if save != null else Party.AggressionStance.TACTICAL)
 		row_y += 46.0
 
 
 # Stance tint runs green (hold back) to red (all in), like the original's
 # five icons.
-func _refresh_stance_row(party_id: int, selected_mode: int) -> void:
+func _refresh_stance_row(party_id: int, selected_mode: Party.AggressionStance) -> void:
 	var colors: Array[Variant] = [
 		Color(0.25, 0.55, 0.3), Color(0.35, 0.55, 0.25), Color(0.6, 0.55, 0.2),
 		Color(0.65, 0.35, 0.15), Color(0.65, 0.15, 0.12),
@@ -475,7 +475,7 @@ func _party_id_for_unit(unit: CombatUnit) -> int:
 	return -1
 
 
-func _on_stance_pressed(party_id: int, mode: int, slot: int) -> void:
+func _on_stance_pressed(party_id: int, mode: Party.AggressionStance, slot: int) -> void:
 	var save: PlayerSave = GameData.current_save
 	if save != null:
 		Party.set_ag_mode(save, party_id, mode)

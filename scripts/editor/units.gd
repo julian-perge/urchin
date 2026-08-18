@@ -20,8 +20,8 @@ const CharacterScript = preload("res://scripts/entities/character.gd")
 # Verified: LifeBoundary2 <= LifeBoundary1 holds for all 75 units in this order
 # (and fails for the alternative order). CombatUnit.from_character() reads these
 # positions.
-const AGGRESSION_ORDER: Array[String] = ["Phalanx", "Defensive", "Tactical", "Aggressive", "Relentless"]
-const ELEMENT_ORDER: Array[String] = ["Physical", "Magic", "Ice", "Fire", "Lightning", "Earth", "Shadow", "Poison"]
+const AGGRESSION_ORDER: Array[String] = Party.AGGRESSION_NAMES
+const ELEMENT_ORDER: Array[String] = CombatUnit.ELEMENT_ORDER
 
 func _ids(move_list: Array) -> Array:
 	var ids: Array[int] = []
