@@ -58,17 +58,17 @@ const LEARN_RESULT_MESSAGES: Dictionary = {
 
 # Krin.startSkill1/startSkill2 - the two moves every new character knows
 # before spending any points.
-const STARTING_MOVES: Dictionary = {
-	0: [1, 6],      # Leading Strike, Destroy
-	1: [478, 479],  # Dark Infusion, Corruption
-	2: [276, 277],  # Vapour Cannon, Slam
+const STARTING_MOVES: Dictionary[PlayerSave.PlayerClass, Array] = {
+	PlayerSave.PlayerClass.BIOLOGICAL: [1, 6],        # Leading Strike, Destroy
+	PlayerSave.PlayerClass.PSYCHOLOGICAL: [478, 479],  # Dark Infusion, Corruption
+	PlayerSave.PlayerClass.HYDRAULIC: [276, 277],      # Vapour Cannon, Slam
 }
 
 # Node fields: move_id (base move id, 0 for passives), level_min, level_scale,
 # max_rank (AS3 TIER), prerequisites (node indices, AS3 PRESKILL, [-1] -> []),
 # buff_family (AS3 BUFFNAME, "" for actives).
-const TREES: Dictionary = {
-	0: [
+const TREES: Dictionary[PlayerSave.PlayerClass, Array] = {
+	PlayerSave.PlayerClass.BIOLOGICAL: [
 		{"move_id": 100, "level_min": 1, "level_scale": 0, "max_rank": 4, "prerequisites": [], "buff_family": ""},
 		{"move_id": 0, "level_min": 1, "level_scale": 0, "max_rank": 4, "prerequisites": [], "buff_family": "INTEGRITY"},
 		{"move_id": 126, "level_min": 1, "level_scale": 0, "max_rank": 4, "prerequisites": [], "buff_family": ""},
@@ -98,7 +98,7 @@ const TREES: Dictionary = {
 		{"move_id": 173, "level_min": 10, "level_scale": 1, "max_rank": 1, "prerequisites": [], "buff_family": ""},
 		{"move_id": 170, "level_min": 10, "level_scale": 1, "max_rank": 3, "prerequisites": [22], "buff_family": ""},
 	],
-	1: [
+	PlayerSave.PlayerClass.PSYCHOLOGICAL: [
 		{"move_id": 400, "level_min": 1, "level_scale": 0, "max_rank": 4, "prerequisites": [], "buff_family": ""},
 		{"move_id": 404, "level_min": 1, "level_scale": 0, "max_rank": 4, "prerequisites": [], "buff_family": ""},
 		{"move_id": 408, "level_min": 1, "level_scale": 0, "max_rank": 4, "prerequisites": [], "buff_family": ""},
@@ -128,7 +128,7 @@ const TREES: Dictionary = {
 		{"move_id": 468, "level_min": 10, "level_scale": 1, "max_rank": 2, "prerequisites": [22], "buff_family": ""},
 		{"move_id": 473, "level_min": 10, "level_scale": 1, "max_rank": 2, "prerequisites": [], "buff_family": ""},
 	],
-	2: [
+	PlayerSave.PlayerClass.HYDRAULIC: [
 		{"move_id": 200, "level_min": 1, "level_scale": 0, "max_rank": 4, "prerequisites": [], "buff_family": ""},
 		{"move_id": 204, "level_min": 1, "level_scale": 0, "max_rank": 4, "prerequisites": [], "buff_family": ""},
 		{"move_id": 253, "level_min": 1, "level_scale": 0, "max_rank": 4, "prerequisites": [], "buff_family": ""},
@@ -161,11 +161,11 @@ const TREES: Dictionary = {
 }
 
 
-static func get_nodes(player_class: int) -> Array:
+static func get_nodes(player_class: PlayerSave.PlayerClass) -> Array:
 	return TREES.get(player_class, [])
 
 
-static func get_talent_node(player_class: int, node_index: int) -> Dictionary:
+static func get_talent_node(player_class: PlayerSave.PlayerClass, node_index: int) -> Dictionary:
 	var nodes: Array = get_nodes(player_class)
 	if node_index < 0 or node_index >= nodes.size():
 		return {}

@@ -68,7 +68,7 @@ static func check_battle_victory(save: PlayerSave, battle_id: int, was_story_pro
 # questProgress[5] > 13) on each of the 3 classes, scanned across every save
 # (pass all slot saves plus the live one).
 static func check_all_star(saves: Array) -> bool:
-	var classes_cleared: Dictionary[Variant, Variant] = {}
+	var classes_cleared: Dictionary[PlayerSave.PlayerClass, bool] = {}
 	for save in saves:
 		if save == null:
 			continue

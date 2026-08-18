@@ -13,7 +13,6 @@
 # slot to send the item back to the first free inventory cell.
 extends Control
 
-const CLASS_NAMES: Array[String] = ["Biological", "Psychological", "Hydraulic"]
 
 const INVENTORY_AT: Vector2 = Vector2(503.5, 81.6)
 # playerSlot0-6 centers from the frame-1 dump.
@@ -110,7 +109,7 @@ func refresh() -> void:
 		return
 	_status_label.text = ""
 	_name_label.text = save.name_user
-	_level_label.text = "Lvl. %d %s" % [save.level, CLASS_NAMES[save.player_class]]
+	_level_label.text = "Lvl. %d %s" % [save.level, PlayerSave.CLASS_NAMES[save.player_class]]
 	var stats: Array[Variant] = [save.life, save.strength, save.magic, save.speed, save.focus]
 	for i in _stat_values.size():
 		_stat_values[i].text = str(int(stats[i]))

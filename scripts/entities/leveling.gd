@@ -27,10 +27,10 @@ enum Stat { LIFE = 0, STRENGTH = 1, MAGIC = 2, SPEED = 3, FOCUS = 4 }
 # Class base-stat ratios = the class's own unit template (KNU 1/2/3:
 # Bio/Psycho/Hydro) [vitality, strength, magic, speed, focus]. Focus is a
 # flat value, not a getStat ratio.
-const CLASS_BASE_RATIOS: Dictionary = {
-	0: [7.0, 14.0, 4.0, 15.0, 100.0],
-	1: [7.0, 3.0, 20.0, 10.0, 100.0],
-	2: [15.0, 10.0, 8.0, 7.0, 100.0],
+const CLASS_BASE_RATIOS: Dictionary[PlayerSave.PlayerClass, Array] = {
+	PlayerSave.PlayerClass.BIOLOGICAL: [7.0, 14.0, 4.0, 15.0, 100.0],
+	PlayerSave.PlayerClass.PSYCHOLOGICAL: [7.0, 3.0, 20.0, 10.0, 100.0],
+	PlayerSave.PlayerClass.HYDRAULIC: [15.0, 10.0, 8.0, 7.0, 100.0],
 }
 
 
@@ -76,7 +76,7 @@ static func points_for_respec(save: PlayerSave, level: int) -> int:
 # FOCUS) from allocation + class curve. Call after anything that changes
 # level or stat_allocated.
 static func compute_stats(save: PlayerSave) -> void:
-	var ratios: Array = CLASS_BASE_RATIOS.get(save.player_class, CLASS_BASE_RATIOS[0])
+	var ratios: Array = CLASS_BASE_RATIOS.get(save.player_class, CLASS_BASE_RATIOS[PlayerSave.PlayerClass.BIOLOGICAL])
 	save.life = save.stat_allocated[Stat.LIFE] + ceil(CombatUnit.get_stat(ratios[Stat.LIFE], save.level, true))
 	save.strength = save.stat_allocated[Stat.STRENGTH] + ceil(CombatUnit.get_stat(ratios[Stat.STRENGTH], save.level, true))
 	save.magic = save.stat_allocated[Stat.MAGIC] + ceil(CombatUnit.get_stat(ratios[Stat.MAGIC], save.level, true))
@@ -91,7 +91,7 @@ static func compute_stats(save: PlayerSave) -> void:
 # one fewer point spent - Flash did the same.
 static func assign_points_start(save: PlayerSave) -> void:
 	var free_points: int = points_for_respec(save, 1)
-	var ratios: Array = CLASS_BASE_RATIOS.get(save.player_class, CLASS_BASE_RATIOS[0])
+	var ratios: Array = CLASS_BASE_RATIOS.get(save.player_class, CLASS_BASE_RATIOS[PlayerSave.PlayerClass.BIOLOGICAL])
 	var split: Array[Variant] = []
 	for i in 4:
 		split.append({"val": ratios[i] / STAT_POINT_RATIO * free_points, "id": i})

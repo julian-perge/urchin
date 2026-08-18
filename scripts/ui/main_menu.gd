@@ -9,7 +9,7 @@
 extends Control
 
 var _selected_slot: int = 1
-var _selected_class: int = 0
+var _selected_class: PlayerSave.PlayerClass = PlayerSave.PlayerClass.BIOLOGICAL
 var _selected_difficulty: int = 0
 var _tutorial_enabled: bool = true
 var _sound_enabled: bool = true
@@ -65,7 +65,7 @@ func _on_slot_pressed(slot: int) -> void:
 
 # --- screen 1: class select ---------------------------------------------------
 
-func _on_class_picked(class_id: int) -> void:
+func _on_class_picked(class_id: PlayerSave.PlayerClass) -> void:
 	_selected_class = class_id
 	new_game_panel.hide()
 	options_panel.show()

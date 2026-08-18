@@ -34,7 +34,6 @@ const SOCKET_SIZE: Vector2 = Vector2(30, 30)
 
 const POOL_VISIBLE_ROWS: int = 5
 
-const CLASS_NAMES: Array[String] = ["Biological", "Psychological", "Hydraulic"]
 
 var _tree_buttons: Array[Button] = []
 var _tree_rank_labels: Array[Label] = []
@@ -82,7 +81,7 @@ static func _sanitize_icon_key(label: String) -> String:
 
 
 func _build_tree_panel() -> void:
-	var tree: Array = TalentTree.TREES.get(_player_class(), TalentTree.TREES[0])
+	var tree: Array = TalentTree.TREES.get(_player_class(), TalentTree.TREES[PlayerSave.PlayerClass.BIOLOGICAL])
 	for node_index in tree.size():
 		var node_button: Button = TalentNodeScene.instantiate()
 		node_button.position = _node_center(node_index) - NODE_SIZE / 2.0
@@ -131,7 +130,7 @@ func refresh() -> void:
 		return
 	_status_label.text = ""
 	_name_label.text = save.name_user
-	_level_label.text = "Lvl. %d %s" % [save.level, CLASS_NAMES[save.player_class]]
+	_level_label.text = "Lvl. %d %s" % [save.level, PlayerSave.CLASS_NAMES[save.player_class]]
 	_ability_points_value.text = str(save.skill_points)
 	_attribute_points_value.text = str(save.stat_points)
 	var stats: Array[Variant] = [save.life, save.strength, save.magic, save.speed]
@@ -144,7 +143,7 @@ func refresh() -> void:
 
 
 func _refresh_tree(save: PlayerSave) -> void:
-	var tree: Array = TalentTree.TREES.get(save.player_class, TalentTree.TREES[0])
+	var tree: Array = TalentTree.TREES.get(save.player_class, TalentTree.TREES[PlayerSave.PlayerClass.BIOLOGICAL])
 	for node_index in _tree_buttons.size():
 		if node_index >= tree.size():
 			break
@@ -192,7 +191,7 @@ func _on_tree_node_hovered(node_index: int) -> void:
 	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return
-	var tree: Array = TalentTree.TREES.get(save.player_class, TalentTree.TREES[0])
+	var tree: Array = TalentTree.TREES.get(save.player_class, TalentTree.TREES[PlayerSave.PlayerClass.BIOLOGICAL])
 	if node_index >= tree.size():
 		return
 	var node: Dictionary = tree[node_index].duplicate()
@@ -298,8 +297,8 @@ func _node_center(node_index: int) -> Vector2:
 
 func _draw_tree_lines() -> void:
 	var save: PlayerSave = GameData.current_save
-	var player_class: int = save.player_class if save != null else 0
-	var tree: Array = TalentTree.TREES.get(player_class, TalentTree.TREES[0])
+	var player_class: PlayerSave.PlayerClass = save.player_class if save != null else PlayerSave.PlayerClass.BIOLOGICAL
+	var tree: Array = TalentTree.TREES.get(player_class, TalentTree.TREES[PlayerSave.PlayerClass.BIOLOGICAL])
 	for node_index in tree.size():
 		for prerequisite in tree[node_index]["prerequisites"]:
 			var learned: bool = save != null and TalentTree.is_prerequisite_learned(save, int(prerequisite))
@@ -310,8 +309,8 @@ func _draw_tree_lines() -> void:
 			)
 
 
-func _player_class() -> int:
-	return GameData.current_save.player_class if GameData.current_save != null else 0
+func _player_class() -> PlayerSave.PlayerClass:
+	return GameData.current_save.player_class if GameData.current_save != null else PlayerSave.PlayerClass.BIOLOGICAL
 
 
 func _on_tree_node_pressed(node_index: int) -> void:

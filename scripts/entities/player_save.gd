@@ -13,6 +13,9 @@
 class_name PlayerSave
 extends Resource
 
+enum PlayerClass { BIOLOGICAL, PSYCHOLOGICAL, HYDRAULIC }
+const CLASS_NAMES: Array[String] = ["Biological", "Psychological", "Hydraulic"]
+
 @export var name_user: String = "Sonny"
 @export var euro: float = 0.0
 @export var player_class: int = 0
@@ -90,7 +93,7 @@ extends Resource
 # New-game options screen: autosave on Proceed after victories.
 @export var autosave: bool = true
 
-static func new_game(player_name: String, new_player_class: int = 0) -> PlayerSave:
+static func new_game(player_name: String, new_player_class: PlayerClass = PlayerClass.BIOLOGICAL) -> PlayerSave:
 	var save: PlayerSave = PlayerSave.new()
 	save.name_user = player_name
 	save.player_class = new_player_class

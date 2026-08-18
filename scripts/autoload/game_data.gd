@@ -48,7 +48,7 @@ func has_save(slot: int) -> bool:
 # White T-Shirt, Levo Jeans, Proverse All Stars, A Broken Pipe.
 const STARTING_EQUIPMENT: Dictionary[int, int] = {1: 11, 3: 4, 4: 8, 5: 5}
 
-func new_game(slot: int, player_name: String, player_class: int = 0) -> void:
+func new_game(slot: int, player_name: String, player_class: PlayerSave.PlayerClass = PlayerSave.PlayerClass.BIOLOGICAL) -> void:
 	current_slot = slot
 	current_save = PlayerSave.new_game(player_name, player_class)
 	for equip_slot in STARTING_EQUIPMENT:
