@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bmlm4n7q6pbew"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Prison_Trousers_XL.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n0dcd"]
-[ext_resource type="Texture2D" uid="uid://dxdt5tv2kw4ho" path="res://assets/item_slot_icons/OTHER/Prison_Trousers_XL.png" id="2_8j4i7"]
+[ext_resource type="Texture2D" uid="uid://gcuxu7vhpss4" path="res://assets/ui/items/Prison_Trousers_XL.png" id="2_8j4i7"]
 [ext_resource type="Texture2D" uid="uid://bnh0ax7y43j6" path="res://resources/sprites/M_LEG2_PRISON.png" id="3_ctyvh"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_n0dcd")
 id = 305
 looks = "PRISON"
 sprite_image = ExtResource("3_ctyvh")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_8j4i7")
 name = "Prison Trousers XL"
 display_name = "Prison Trousers XL"
 internal_name = "Standard Trousers. XL"

@@ -1,14 +1,13 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bk6figoemlqm2"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Cryptic_Handplates.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_d474d"]
-[ext_resource type="Texture2D" uid="uid://dotjlrc6itvvq" path="res://assets/item_slot_icons/GLOVES/Cryptic_Handplates.png" id="2_80ch8"]
+[ext_resource type="Texture2D" uid="uid://u6eqi1csx2wq" path="res://assets/ui/items/Cryptic_Handplates.png" id="2_80ch8"]
 
 [resource]
 script = ExtResource("1_d474d")
 id = 701
 looks = "ULTI2"
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_80ch8")
 name = "Cryptic Handplates"
 display_name = "Cryptic Handplates"
 internal_name = "Drop ULTI2 Hands"

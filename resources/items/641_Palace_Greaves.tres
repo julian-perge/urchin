@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dpk7fjua044yj"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Palace_Greaves.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_oti0i"]
-[ext_resource type="Texture2D" uid="uid://bhkv3dm6c3rhj" path="res://assets/item_slot_icons/SHOES/Palace_Greaves.png" id="2_vxesd"]
+[ext_resource type="Texture2D" uid="uid://bjsj3nth68acw" path="res://assets/ui/items/Palace_Greaves.png" id="2_vxesd"]
 [ext_resource type="Texture2D" uid="uid://bamdhxyv17q63" path="res://resources/sprites/M_FOOT_IMPERIAL2.png" id="3_5vwdu"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_oti0i")
 id = 641
 looks = "IMPERIAL2"
 sprite_image = ExtResource("3_5vwdu")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_vxesd")
 name = "Palace Greaves"
 display_name = "Palace Greaves"
 internal_name = "Drop IMPERIAL2 Feet"

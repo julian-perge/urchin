@@ -1,14 +1,13 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d4nqcyct06jdt"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Aura_Treads.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hnr1s"]
-[ext_resource type="Texture2D" uid="uid://dr6lpomgvdpkd" path="res://assets/item_slot_icons/SHOES/Aura_Treads.png" id="2_83fiy"]
+[ext_resource type="Texture2D" uid="uid://d2rapd7dvq3vu" path="res://assets/ui/items/Aura_Treads.png" id="2_83fiy"]
 
 [resource]
 script = ExtResource("1_hnr1s")
 id = 542
 looks = "SHAMAN2"
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_83fiy")
 name = "Aura Treads"
 display_name = "Aura Treads"
 internal_name = "Drop Shaman Feet"

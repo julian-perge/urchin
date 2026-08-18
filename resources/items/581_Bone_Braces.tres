@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://6n0xcn6hphmm"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Bone_Braces.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_lspr4"]
-[ext_resource type="Texture2D" uid="uid://byuwdmn8abxtj" path="res://assets/item_slot_icons/PANTS/Bone_Braces.png" id="2_51tnt"]
+[ext_resource type="Texture2D" uid="uid://cxdci5cf4yoaj" path="res://assets/ui/items/Bone_Braces.png" id="2_51tnt"]
 [ext_resource type="Texture2D" uid="uid://s1dcm4bm30j7" path="res://resources/sprites/M_LEG2_TUNNELSET2.png" id="3_1rv6q"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_lspr4")
 id = 581
 looks = "TUNNELSET2"
 sprite_image = ExtResource("3_1rv6q")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_51tnt")
 name = "Bone Braces"
 display_name = "Bone Braces"
 internal_name = "Drop VIKING Legs"

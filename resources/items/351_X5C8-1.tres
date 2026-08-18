@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://48p8iisgxo1f"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/X5C8_1.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_r03s0"]
-[ext_resource type="Texture2D" uid="uid://bbi7q8opcjnf2" path="res://assets/item_slot_icons/HELMS/X5C8-1.png" id="2_8h5n1"]
+[ext_resource type="Texture2D" uid="uid://bygqu1ckwrpyn" path="res://assets/ui/items/X5C8_1.png" id="2_8h5n1"]
 [ext_resource type="Texture2D" uid="uid://bxe0hr005cx0g" path="res://resources/sprites/M_HEAD_ARCTIC.png" id="3_vdsj8"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_r03s0")
 id = 351
 looks = "ARCTIC"
 sprite_image = ExtResource("3_vdsj8")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_8h5n1")
 name = "X5C8-1"
 display_name = "X5C8-1"
 internal_name = "X5C8-1"

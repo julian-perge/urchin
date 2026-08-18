@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://wul2f4b8g605"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/MedPak_Leggings.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_viesj"]
-[ext_resource type="Texture2D" uid="uid://bmki334git0wi" path="res://assets/item_slot_icons/WEAPONS/MedPak_Leggings.png" id="2_anckf"]
+[ext_resource type="Texture2D" uid="uid://dfmima2twdneg" path="res://assets/ui/items/MedPak_Leggings.png" id="2_anckf"]
 [ext_resource type="Texture2D" uid="uid://cvjxoekb6t58g" path="res://resources/sprites/M_LEG2_ZPCI3.png" id="3_8453p"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_viesj")
 id = 359
 looks = "ZPCI3"
 sprite_image = ExtResource("3_8453p")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_anckf")
 name = "MedPak Leggings"
 display_name = "MedPak Leggings"
 internal_name = "MedPak Leggings"

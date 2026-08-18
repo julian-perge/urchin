@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dk3x05xvruux2"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Justice_Helm.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_mcnpb"]
-[ext_resource type="Texture2D" uid="uid://bqcr40upwrrit" path="res://assets/item_slot_icons/HELMS/Justice_Helm.png" id="2_g56iu"]
+[ext_resource type="Texture2D" uid="uid://b4sm73f77bfka" path="res://assets/ui/items/Justice_Helm.png" id="2_g56iu"]
 [ext_resource type="Texture2D" uid="uid://uaj2s2e68pfa" path="res://resources/sprites/M_HEAD_XADER.png" id="3_vymgf"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_mcnpb")
 id = 330
 looks = "XADER"
 sprite_image = ExtResource("3_vymgf")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_g56iu")
 name = "Justice Helm"
 display_name = "Justice Helm"
 internal_name = "Justice Helm"

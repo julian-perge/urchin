@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bffvefq8ryn0f"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Punisher_Gloves.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_44uvs"]
-[ext_resource type="Texture2D" uid="uid://dm1j61inafudf" path="res://assets/item_slot_icons/OTHER/Punisher_Gloves.png" id="2_5bchx"]
+[ext_resource type="Texture2D" uid="uid://ck0nwmgmu6pgd" path="res://assets/ui/items/Punisher_Gloves.png" id="2_5bchx"]
 [ext_resource type="Texture2D" uid="uid://bqdiaj67swu6p" path="res://resources/sprites/M_HAND_JASON2.png" id="3_gj6j7"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_44uvs")
 id = 311
 looks = "JASON2"
 sprite_image = ExtResource("3_gj6j7")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_5bchx")
 name = "Punisher Gloves"
 display_name = "Punisher Gloves"
 internal_name = "Warden's Grasp"

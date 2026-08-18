@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://jb6rab2u1vr4"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Flamboyant_Shoes.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3e65f"]
-[ext_resource type="Texture2D" uid="uid://bmqby4mgvdn78" path="res://assets/item_slot_icons/OTHER/Flamboyant_Shoes.png" id="2_y5suy"]
+[ext_resource type="Texture2D" uid="uid://ewa7fn40quhl" path="res://assets/ui/items/Flamboyant_Shoes.png" id="2_y5suy"]
 [ext_resource type="Texture2D" uid="uid://xpunassy0opq" path="res://resources/sprites/M_FOOT_GAY.png" id="3_56gf5"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_3e65f")
 id = 379
 looks = "GAY"
 sprite_image = ExtResource("3_56gf5")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_y5suy")
 name = "Flamboyant Shoes"
 display_name = "Flamboyant Shoes"
 internal_name = "Flamboyant Shoes"

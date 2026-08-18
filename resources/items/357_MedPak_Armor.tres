@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://xu3paef71f6l"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/MedPak_Armor.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_feo6n"]
-[ext_resource type="Texture2D" uid="uid://b24ukeqnx7c5x" path="res://assets/item_slot_icons/WEAPONS/MedPak_Armor.png" id="2_nw04u"]
+[ext_resource type="Texture2D" uid="uid://bkubg7vmicxtj" path="res://assets/ui/items/MedPak_Armor.png" id="2_nw04u"]
 [ext_resource type="Texture2D" uid="uid://bfgi3ei52dlus" path="res://resources/sprites/M_CHEST_ZPCI3.png" id="3_3lldq"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_feo6n")
 id = 357
 looks = "ZPCI3"
 sprite_image = ExtResource("3_3lldq")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_nw04u")
 name = "MedPak Armor"
 display_name = "MedPak Armor"
 internal_name = "MedPak Armor"

@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://deqka71g2mhyt"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Voltage_Cage.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_y78xh"]
-[ext_resource type="Texture2D" uid="uid://cvt2vohfo6cp1" path="res://assets/item_slot_icons/OTHER/Voltage_Cage.png" id="2_bah25"]
+[ext_resource type="Texture2D" uid="uid://diq7166bfwtpr" path="res://assets/ui/items/Voltage_Cage.png" id="2_bah25"]
 [ext_resource type="Texture2D" uid="uid://dqfddsa3a64si" path="res://resources/sprites/M_CHEST_JASON3.png" id="3_v7mom"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_y78xh")
 id = 509
 looks = "JASON3"
 sprite_image = ExtResource("3_v7mom")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_bah25")
 name = "Voltage Cage"
 display_name = "Voltage Cage"
 internal_name = "Voltage Cage"

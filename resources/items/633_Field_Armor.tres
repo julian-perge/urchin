@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://mo8gcups0u2i"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Field_Armor.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6dov7"]
-[ext_resource type="Texture2D" uid="uid://7fpnl75dg8pr" path="res://assets/item_slot_icons/ARMOR/Field_Armor.png" id="2_5bjwn"]
+[ext_resource type="Texture2D" uid="uid://rl0g7g7p042a" path="res://assets/ui/items/Field_Armor.png" id="2_5bjwn"]
 [ext_resource type="Texture2D" uid="uid://b6cfev6j2knio" path="res://resources/sprites/M_CHEST_POLICE2.png" id="3_phliu"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_6dov7")
 id = 633
 looks = "POLICE2"
 sprite_image = ExtResource("3_phliu")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_5bjwn")
 name = "Field Armor"
 display_name = "Field Armor"
 internal_name = "Drop POLICE2 Chest"

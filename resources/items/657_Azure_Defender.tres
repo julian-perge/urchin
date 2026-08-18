@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bdko2ch8u48mm"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Azure_Defender.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_fyrll"]
-[ext_resource type="Texture2D" uid="uid://d78syu3xjrj8" path="res://assets/item_slot_icons/WEAPONS/Azure_Defender.png" id="2_ru85c"]
+[ext_resource type="Texture2D" uid="uid://dol3wrshe5c8o" path="res://assets/ui/items/Azure_Defender.png" id="2_ru85c"]
 [ext_resource type="Texture2D" uid="uid://c4u6grh0t4rd1" path="res://resources/sprites/M_WEAPON_FLATBLADE.png" id="3_7tsa7"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_fyrll")
 id = 657
 looks = "FLATBLADE"
 sprite_image = ExtResource("3_7tsa7")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_ru85c")
 name = "Azure Defender"
 display_name = "Azure Defender"
 internal_name = "BLUE SWORD 2"

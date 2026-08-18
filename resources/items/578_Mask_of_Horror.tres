@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bmyhph7xtqmft"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Mask_of_Horror.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vcwnc"]
-[ext_resource type="Texture2D" uid="uid://buqnr00ewxn5r" path="res://assets/item_slot_icons/HELMS/Mask_of_Horror.png" id="2_olv01"]
+[ext_resource type="Texture2D" uid="uid://ct22uhjrda7mj" path="res://assets/ui/items/Mask_of_Horror.png" id="2_olv01"]
 [ext_resource type="Texture2D" uid="uid://cshu3vjw65em0" path="res://resources/sprites/M_HEAD_TUNNELSET2.png" id="3_7yjkf"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_vcwnc")
 id = 578
 looks = "TUNNELSET2"
 sprite_image = ExtResource("3_7yjkf")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_olv01")
 name = "Mask of Horror"
 display_name = "Mask of Horror"
 internal_name = "Drop VIKING Head"

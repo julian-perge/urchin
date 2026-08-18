@@ -1,15 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cra7lty5ptadn"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Surgeon_s_Dexterity.png" id="icon_slot"]
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ppm7n"]
-[ext_resource type="Texture2D" uid="uid://cp77hleech702" path="res://resources/sprites/M_HAND_KLIMA.png" id="2_tt1v2"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tt1v2"]
+[ext_resource type="Texture2D" uid="uid://c4tpr4s2f7tiq" path="res://assets/ui/items/Surgeon_s_Dexterity.png" id="2_ghiu4"]
+[ext_resource type="Texture2D" uid="uid://cp77hleech702" path="res://resources/sprites/M_HAND_KLIMA.png" id="3_wbvof"]
 
 [resource]
-script = ExtResource("1_ppm7n")
-slot_image = ExtResource("icon_slot")
+script = ExtResource("1_tt1v2")
 id = 686
 looks = "KLIMA"
-sprite_image = ExtResource("2_tt1v2")
+sprite_image = ExtResource("3_wbvof")
+slot_image = ExtResource("2_ghiu4")
 name = "Surgeon's Dexterity"
 display_name = "Surgeon's Dexterity"
 internal_name = "Drop KLIMA Hands"

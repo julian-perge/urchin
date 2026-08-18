@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dbvy5oxq3bplk"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Riot_Armor.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_5qtsf"]
-[ext_resource type="Texture2D" uid="uid://bior7y6t2snfy" path="res://assets/item_slot_icons/ARMOR/Riot_Armor.png" id="2_wguom"]
+[ext_resource type="Texture2D" uid="uid://du8nve6uhj54x" path="res://assets/ui/items/Riot_Armor.png" id="2_wguom"]
 [ext_resource type="Texture2D" uid="uid://cigk6fkic8vep" path="res://resources/sprites/M_CHEST_POLICE.png" id="3_kb4g5"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_5qtsf")
 id = 618
 looks = "POLICE"
 sprite_image = ExtResource("3_kb4g5")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_wguom")
 name = "Riot Armor"
 display_name = "Riot Armor"
 internal_name = "Drop POLICE Chest"

@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cso5j36bmjbpb"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Poseidon_s_Fury.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g2x6b"]
-[ext_resource type="Texture2D" uid="uid://cnenlube8ga5h" path="res://assets/item_slot_icons/WEAPONS/Poseidons_Fury.png" id="2_ufefo"]
+[ext_resource type="Texture2D" uid="uid://buvo3hotw55w8" path="res://assets/ui/items/Poseidon_s_Fury.png" id="2_ufefo"]
 [ext_resource type="Texture2D" uid="uid://u23jdxkh4mc1" path="res://resources/sprites/M_WEAPON_TRIDENT.png" id="3_tligg"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_g2x6b")
 id = 602
 looks = "TRIDENT"
 sprite_image = ExtResource("3_tligg")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_ufefo")
 name = "Poseidon's Fury"
 display_name = "Poseidon's Fury"
 internal_name = "TRIDENT"

@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b4kfonx54c2dp"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Old_ZPCI_Armor.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_utygq"]
-[ext_resource type="Texture2D" uid="uid://y0q3patg2sko" path="res://assets/item_slot_icons/ARMOR/Old_ZPCI_Armor.png" id="2_8lnts"]
+[ext_resource type="Texture2D" uid="uid://dqwa162f678ia" path="res://assets/ui/items/Old_ZPCI_Armor.png" id="2_8lnts"]
 [ext_resource type="Texture2D" uid="uid://bhc3d1mujl8km" path="res://resources/sprites/M_CHEST_USA2.png" id="3_dec6d"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_utygq")
 id = 549
 looks = "USA2"
 sprite_image = ExtResource("3_dec6d")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_8lnts")
 name = "Old ZPCI Armor"
 display_name = "Old ZPCI Armor"
 internal_name = "Drop ZPCI Chest"

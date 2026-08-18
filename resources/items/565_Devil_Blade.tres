@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://btolk7at7w8i"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Devil_Blade.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xa1o6"]
-[ext_resource type="Texture2D" uid="uid://bcjjbd8ftlbiu" path="res://assets/item_slot_icons/WEAPONS/Devil_Blade.png" id="2_3mfit"]
+[ext_resource type="Texture2D" uid="uid://cfsvhqdt0dhnr" path="res://assets/ui/items/Devil_Blade.png" id="2_3mfit"]
 [ext_resource type="Texture2D" uid="uid://cl88hq1jl4oyb" path="res://resources/sprites/M_WEAPON_SHANK.png" id="3_5uwcc"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_xa1o6")
 id = 565
 looks = "SHANK"
 sprite_image = ExtResource("3_5uwcc")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_3mfit")
 name = "Devil Blade"
 display_name = "Devil Blade"
 internal_name = "Devil Blade"

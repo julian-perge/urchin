@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cnwot5rinupll"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Lavastone_Sword.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_2eqxd"]
-[ext_resource type="Texture2D" uid="uid://c86u2vovhe0he" path="res://assets/item_slot_icons/WEAPONS/Lavastone_Sword.png" id="2_k4w8s"]
+[ext_resource type="Texture2D" uid="uid://37n1yinrg5c3" path="res://assets/ui/items/Lavastone_Sword.png" id="2_k4w8s"]
 [ext_resource type="Texture2D" uid="uid://b1x2qufhf8x07" path="res://resources/sprites/M_WEAPON_UBER11.png" id="3_qlr6k"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_2eqxd")
 id = 604
 looks = "UBER11"
 sprite_image = ExtResource("3_qlr6k")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_k4w8s")
 name = "Lavastone Sword"
 display_name = "Lavastone Sword"
 internal_name = "SMALL SWORD"

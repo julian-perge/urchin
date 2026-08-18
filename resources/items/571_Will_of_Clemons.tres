@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://k3rjm5dr6s6r"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Will_of_Clemons.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xk7uy"]
-[ext_resource type="Texture2D" uid="uid://uit0k42fgg4j" path="res://assets/item_slot_icons/PANTS/Will_of_Clemons.png" id="2_wf34c"]
+[ext_resource type="Texture2D" uid="uid://b2y2g8v8km1mb" path="res://assets/ui/items/Will_of_Clemons.png" id="2_wf34c"]
 [ext_resource type="Texture2D" uid="uid://dojcl1akyqi4x" path="res://resources/sprites/M_LEG2_CLEMONS.png" id="3_xgmq8"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_xk7uy")
 id = 571
 looks = "CLEMONS"
 sprite_image = ExtResource("3_xgmq8")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_wf34c")
 name = "Will of Clemons"
 display_name = "Will of Clemons"
 internal_name = "Drop CLEMONS Legs"

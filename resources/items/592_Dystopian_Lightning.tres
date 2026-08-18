@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c1afe2kqv1b67"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Dystopian_Lightning.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kaowt"]
-[ext_resource type="Texture2D" uid="uid://bat7i53vfemoc" path="res://assets/item_slot_icons/SHOES/Dystopian_Lightning.png" id="2_631j4"]
+[ext_resource type="Texture2D" uid="uid://dp1x8avn3xxmf" path="res://assets/ui/items/Dystopian_Lightning.png" id="2_631j4"]
 [ext_resource type="Texture2D" uid="uid://bnstbjwqbu12r" path="res://resources/sprites/M_FOOT_CLEMONS2.png" id="3_anoau"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_kaowt")
 id = 592
 looks = "CLEMONS2"
 sprite_image = ExtResource("3_anoau")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_631j4")
 name = "Dystopian Lightning"
 display_name = "Dystopian Lightning"
 internal_name = "Drop EMPEROR Feet"

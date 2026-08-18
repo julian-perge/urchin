@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://vn7bo7c7od15"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Pink_Sleeves.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tss4l"]
-[ext_resource type="Texture2D" uid="uid://b2ajxt6l0keiq" path="res://assets/item_slot_icons/GLOVES/Pink_Sleeves.png" id="2_trl6x"]
+[ext_resource type="Texture2D" uid="uid://ebekfue37ho3" path="res://assets/ui/items/Pink_Sleeves.png" id="2_trl6x"]
 [ext_resource type="Texture2D" uid="uid://01uw25jxnqo0" path="res://resources/sprites/M_HAND_ROCKSTAR.png" id="3_18vv1"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_tss4l")
 id = 595
 looks = "ROCKSTAR"
 sprite_image = ExtResource("3_18vv1")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_trl6x")
 name = "Pink Sleeves"
 display_name = "Pink Sleeves"
 internal_name = "Drop ROCKSTAR Hands"

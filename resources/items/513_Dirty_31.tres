@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ugah4faojv6s"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Dirty_31.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hp7oc"]
-[ext_resource type="Texture2D" uid="uid://b5l8g1vip3auo" path="res://assets/item_slot_icons/OTHER/Dirty_31.png" id="2_0pjj3"]
+[ext_resource type="Texture2D" uid="uid://dmtyqbgfuk721" path="res://assets/ui/items/Dirty_31.png" id="2_0pjj3"]
 [ext_resource type="Texture2D" uid="uid://b2gvog2oeckqe" path="res://resources/sprites/M_LEG2_JEANS.png" id="3_a6dc4"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_hp7oc")
 id = 513
 looks = "JEANS"
 sprite_image = ExtResource("3_a6dc4")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_0pjj3")
 name = "Dirty 31"
 display_name = "Dirty 31"
 internal_name = "Dirty 31"

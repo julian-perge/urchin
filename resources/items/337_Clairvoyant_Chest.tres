@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bhd65d2t2fu3t"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Clairvoyant_Chest.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_hf045"]
-[ext_resource type="Texture2D" uid="uid://cdkcc7jpka6ls" path="res://assets/item_slot_icons/ARMOR/Clairvoyant_Chest.png" id="2_gbik1"]
+[ext_resource type="Texture2D" uid="uid://cen0p36tfc1cj" path="res://assets/ui/items/Clairvoyant_Chest.png" id="2_gbik1"]
 [ext_resource type="Texture2D" uid="uid://c3k8a4l1qirco" path="res://resources/sprites/M_CHEST_PRIEST.png" id="3_veq4e"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_hf045")
 id = 337
 looks = "PRIEST"
 sprite_image = ExtResource("3_veq4e")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_gbik1")
 name = "Clairvoyant Chest"
 display_name = "Clairvoyant Chest"
 internal_name = "Clairvoyant Chest"

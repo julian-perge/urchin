@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cyqc6i1smx65j"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Ancient_Sword.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n46ds"]
-[ext_resource type="Texture2D" uid="uid://blhcyyjs85nrm" path="res://assets/item_slot_icons/WEAPONS/Ancient_Sword.png" id="2_u0jlp"]
+[ext_resource type="Texture2D" uid="uid://bvejtuvbfn3gx" path="res://assets/ui/items/Ancient_Sword.png" id="2_u0jlp"]
 [ext_resource type="Texture2D" uid="uid://bcfbe1if8mh1x" path="res://resources/sprites/M_WEAPON_SHAMANKNIFE.png" id="3_5sofs"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_n46ds")
 id = 553
 looks = "SHAMANKNIFE"
 sprite_image = ExtResource("3_5sofs")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_u0jlp")
 name = "Ancient Sword"
 display_name = "Ancient Sword"
 internal_name = "Tank Sword"

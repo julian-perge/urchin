@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dy2smlt5rph7s"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Medic_Treads.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_i4ly8"]
-[ext_resource type="Texture2D" uid="uid://cljpvu2ashjuy" path="res://assets/item_slot_icons/WEAPONS/Medic_Treads.png" id="2_g7wba"]
+[ext_resource type="Texture2D" uid="uid://dhrcvc7yin35p" path="res://assets/ui/items/Medic_Treads.png" id="2_g7wba"]
 [ext_resource type="Texture2D" uid="uid://cm4nga2q8f0vv" path="res://resources/sprites/M_FOOT_ZPCI3.png" id="3_ckqir"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_i4ly8")
 id = 358
 looks = "ZPCI3"
 sprite_image = ExtResource("3_ckqir")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_g7wba")
 name = "Medic Treads"
 display_name = "Medic Treads"
 internal_name = "Medic Treads"

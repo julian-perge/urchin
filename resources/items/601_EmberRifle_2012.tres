@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cbrymgle4fh3g"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/EmberRifle_2012.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_0rrdw"]
-[ext_resource type="Texture2D" uid="uid://dx7j0paqidbhe" path="res://assets/item_slot_icons/WEAPONS/EmberRifle_2012.png" id="2_pqscy"]
+[ext_resource type="Texture2D" uid="uid://3tqmtwbm2ktk" path="res://assets/ui/items/EmberRifle_2012.png" id="2_pqscy"]
 [ext_resource type="Texture2D" uid="uid://www888llv4ss" path="res://resources/sprites/M_WEAPON_AK2.png" id="3_bp4pe"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_0rrdw")
 id = 601
 looks = "AK2"
 sprite_image = ExtResource("3_bp4pe")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_pqscy")
 name = "EmberRifle 2012"
 display_name = "EmberRifle 2012"
 internal_name = "GUN"

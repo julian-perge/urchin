@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d26luf00nl5c3"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Light_s_Blade.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rvquc"]
-[ext_resource type="Texture2D" uid="uid://cdpra0xt6ij5s" path="res://assets/item_slot_icons/WEAPONS/Lights_Blade.png" id="2_7l5q7"]
+[ext_resource type="Texture2D" uid="uid://cxv468qbn2kr7" path="res://assets/ui/items/Light_s_Blade.png" id="2_7l5q7"]
 [ext_resource type="Texture2D" uid="uid://cw3he64d411rh" path="res://resources/sprites/M_WEAPON_PALADINSWORD.png" id="3_bklkg"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_rvquc")
 id = 515
 looks = "PALADINSWORD"
 sprite_image = ExtResource("3_bklkg")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_7l5q7")
 name = "Light's Blade"
 display_name = "Light's Blade"
 internal_name = "Light's Blade"

@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d3ilgonuhix57"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Furious_Legplates.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_uy1hq"]
-[ext_resource type="Texture2D" uid="uid://b1l6orcjy4g4j" path="res://assets/item_slot_icons/PANTS/Furious_Legplates.png" id="2_eq7xm"]
+[ext_resource type="Texture2D" uid="uid://bt8b7a0yv32k" path="res://assets/ui/items/Furious_Legplates.png" id="2_eq7xm"]
 [ext_resource type="Texture2D" uid="uid://bjd8xsctomnd3" path="res://resources/sprites/M_LEG2_ULTI.png" id="3_7r6j5"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_uy1hq")
 id = 697
 looks = "ULTI"
 sprite_image = ExtResource("3_7r6j5")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_eq7xm")
 name = "Furious Legplates"
 display_name = "Furious Legplates"
 internal_name = "Drop ULTI Legs"

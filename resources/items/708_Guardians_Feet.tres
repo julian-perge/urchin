@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cms8crvimeo4m"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Guardian_s_Feet.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g3waa"]
-[ext_resource type="Texture2D" uid="uid://djj442glunspc" path="res://assets/item_slot_icons/SHOES/Guardians_Feet.png" id="2_ac2ra"]
+[ext_resource type="Texture2D" uid="uid://ciq8uaj5bf16g" path="res://assets/ui/items/Guardian_s_Feet.png" id="2_ac2ra"]
 [ext_resource type="Texture2D" uid="uid://mep7vo4aqavn" path="res://resources/sprites/M_FOOT_ROBOT2.png" id="3_gaqxn"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_g3waa")
 id = 708
 looks = "ROBOT2"
 sprite_image = ExtResource("3_gaqxn")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_ac2ra")
 name = "Guardian's Feet"
 display_name = "Guardian's Feet"
 internal_name = "Drop ROBOT2 Feet"

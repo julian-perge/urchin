@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dgopmfsorw4be"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Blast_Shield.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_itpby"]
-[ext_resource type="Texture2D" uid="uid://d4i6xaaq2ox2k" path="res://assets/item_slot_icons/WEAPONS/Blast_Shield.png" id="2_v0myp"]
+[ext_resource type="Texture2D" uid="uid://bcegugnjsilxe" path="res://assets/ui/items/Blast_Shield.png" id="2_v0myp"]
 [ext_resource type="Texture2D" uid="uid://bkl404wj1qkbu" path="res://resources/sprites/M_WEAPON_SHIELD2.png" id="3_fkd78"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_itpby")
 id = 680
 looks = "SHIELD2"
 sprite_image = ExtResource("3_fkd78")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_v0myp")
 name = "Blast Shield"
 display_name = "Blast Shield"
 internal_name = "SHIELD"

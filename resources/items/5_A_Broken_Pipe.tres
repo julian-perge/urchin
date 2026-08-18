@@ -1,16 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cc4ncj4gyd32l"]
 
-[ext_resource type="Texture2D" path="res://assets/item_slot_icons/OTHER/A_Broken_Pipe.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_31d6o"]
-[ext_resource type="Texture2D" uid="uid://b8lfouoo8cj7k" path="res://assets/item_slot_icons/OTHER/A_Broken_Pipe.png" id="2_xwk5l"]
+[ext_resource type="Texture2D" uid="uid://chjgt3xyi3q5s" path="res://assets/item_slot_icons/OTHER/A_Broken_Pipe.png" id="2_xwk5l"]
 [ext_resource type="Texture2D" uid="uid://be8s38i3t773y" path="res://resources/sprites/M_WEAPON_PIPE.png" id="3_s4j31"]
 
 [resource]
 script = ExtResource("1_31d6o")
-slot_image = ExtResource("icon_slot")
 id = 5
 looks = "PIPE"
 sprite_image = ExtResource("3_s4j31")
+slot_image = ExtResource("2_xwk5l")
 name = "A Broken Pipe"
 display_name = "A Broken Pipe"
 internal_name = "A Broken Pipe"

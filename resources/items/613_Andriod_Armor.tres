@@ -1,15 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cvf4wgjn84n2e"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Andriod_Armor.png" id="icon_slot"]
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_3oay7"]
-[ext_resource type="Texture2D" uid="uid://ce6myot5qroq8" path="res://resources/sprites/M_CHEST_ROBOT.png" id="2_rkp0b"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rkp0b"]
+[ext_resource type="Texture2D" uid="uid://dywkeq2jwriuu" path="res://assets/ui/items/Andriod_Armor.png" id="2_0ifnf"]
+[ext_resource type="Texture2D" uid="uid://ce6myot5qroq8" path="res://resources/sprites/M_CHEST_ROBOT.png" id="3_npr3m"]
 
 [resource]
-script = ExtResource("1_3oay7")
-slot_image = ExtResource("icon_slot")
+script = ExtResource("1_rkp0b")
 id = 613
 looks = "ROBOT"
-sprite_image = ExtResource("2_rkp0b")
+sprite_image = ExtResource("3_npr3m")
+slot_image = ExtResource("2_0ifnf")
 name = "Andriod Armor"
 display_name = "Andriod Armor"
 internal_name = "Drop ROBOT Chest"

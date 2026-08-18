@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dlgd4m3010b7x"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Council_Shoes.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tmpvt"]
-[ext_resource type="Texture2D" uid="uid://dcwy4fn47qyoe" path="res://assets/item_slot_icons/SHOES/Council_Shoes.png" id="2_110x4"]
+[ext_resource type="Texture2D" uid="uid://bqa32lxk1kbg7" path="res://assets/ui/items/Council_Shoes.png" id="2_110x4"]
 [ext_resource type="Texture2D" uid="uid://c6poiomboxnjn" path="res://resources/sprites/M_FOOT_PRIEST3.png" id="3_acpbo"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_tmpvt")
 id = 626
 looks = "PRIEST3"
 sprite_image = ExtResource("3_acpbo")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_110x4")
 name = "Council Shoes"
 display_name = "Council Shoes"
 internal_name = "Drop COUNCIL Feet"

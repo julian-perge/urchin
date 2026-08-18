@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bnaikyodqvb67"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Acidic_Edge.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_fnnq1"]
-[ext_resource type="Texture2D" uid="uid://iolkf1misywe" path="res://assets/item_slot_icons/WEAPONS/Acidic_Edge.png" id="2_anor3"]
+[ext_resource type="Texture2D" uid="uid://d1ublbs3dp3rh" path="res://assets/ui/items/Acidic_Edge.png" id="2_anor3"]
 [ext_resource type="Texture2D" uid="uid://cwociwd3fqon2" path="res://resources/sprites/M_WEAPON_FELKNIFE2.png" id="3_i8mtu"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_fnnq1")
 id = 558
 looks = "FELKNIFE2"
 sprite_image = ExtResource("3_i8mtu")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_anor3")
 name = "Acidic Edge"
 display_name = "Acidic Edge"
 internal_name = "Green 2"

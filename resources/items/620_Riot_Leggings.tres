@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ko36nq7udps6"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Riot_Leggings.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_eeype"]
-[ext_resource type="Texture2D" uid="uid://brb3vglyft1h0" path="res://assets/item_slot_icons/PANTS/Riot_Leggings.png" id="2_pcpqf"]
+[ext_resource type="Texture2D" uid="uid://dd1utixfhk61e" path="res://assets/ui/items/Riot_Leggings.png" id="2_pcpqf"]
 [ext_resource type="Texture2D" uid="uid://dxf0flac442vq" path="res://resources/sprites/M_LEG2_POLICE.png" id="3_1s4lk"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_eeype")
 id = 620
 looks = "POLICE"
 sprite_image = ExtResource("3_1s4lk")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_pcpqf")
 name = "Riot Leggings"
 display_name = "Riot Leggings"
 internal_name = "Drop POLICE Legs"

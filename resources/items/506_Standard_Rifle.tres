@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d156frbhtxr1f"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Standard_Rifle.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_548ko"]
-[ext_resource type="Texture2D" uid="uid://b508ycd1w6ly8" path="res://assets/item_slot_icons/WEAPONS/Standard_Rifle.png" id="2_2ylfi"]
+[ext_resource type="Texture2D" uid="uid://63r7u7mdfpkx" path="res://assets/ui/items/Standard_Rifle.png" id="2_2ylfi"]
 [ext_resource type="Texture2D" uid="uid://cysnyk6cnluj4" path="res://resources/sprites/M_WEAPON_M4.png" id="3_mej22"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_548ko")
 id = 506
 looks = "M4"
 sprite_image = ExtResource("3_mej22")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_2ylfi")
 name = "Standard Rifle"
 display_name = "Standard Rifle"
 internal_name = "Standard Rifle"

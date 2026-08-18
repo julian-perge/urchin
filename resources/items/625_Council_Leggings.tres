@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://cqy16nt8hnclh"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Council_Leggings.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_omk74"]
-[ext_resource type="Texture2D" uid="uid://c6w4547mrlmxc" path="res://assets/item_slot_icons/PANTS/Council_Leggings.png" id="2_gb5d7"]
+[ext_resource type="Texture2D" uid="uid://bmlprgwo5tobn" path="res://assets/ui/items/Council_Leggings.png" id="2_gb5d7"]
 [ext_resource type="Texture2D" uid="uid://cqt6s68kj38y7" path="res://resources/sprites/M_LEG2_PRIEST3.png" id="3_r72n7"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_omk74")
 id = 625
 looks = "PRIEST3"
 sprite_image = ExtResource("3_r72n7")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_gb5d7")
 name = "Council Leggings"
 display_name = "Council Leggings"
 internal_name = "Drop COUNCIL Legs"

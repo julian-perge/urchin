@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c1imxukls2csn"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Memory_Plates.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_4isfe"]
-[ext_resource type="Texture2D" uid="uid://coa57ty5yit2c" path="res://assets/item_slot_icons/ARMOR/Memory_Plates.png" id="2_dhuuc"]
+[ext_resource type="Texture2D" uid="uid://caki5efj78o6m" path="res://assets/ui/items/Memory_Plates.png" id="2_dhuuc"]
 [ext_resource type="Texture2D" uid="uid://gmsbnb310u2a" path="res://resources/sprites/M_CHEST_NOS.png" id="3_wuv2e"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_4isfe")
 id = 665
 looks = "NOS"
 sprite_image = ExtResource("3_wuv2e")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_dhuuc")
 name = "Memory Plates"
 display_name = "Memory Plates"
 internal_name = "Drop NOS Chest"

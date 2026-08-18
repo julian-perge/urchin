@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://pqv8d0khd61k"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Usurper_s_Chest.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_aaxbj"]
-[ext_resource type="Texture2D" uid="uid://b35qm1qemcr44" path="res://assets/item_slot_icons/ARMOR/Usurpers_Chest.png" id="2_mc7o4"]
+[ext_resource type="Texture2D" uid="uid://dlxtjextbb4r1" path="res://assets/ui/items/Usurper_s_Chest.png" id="2_mc7o4"]
 [ext_resource type="Texture2D" uid="uid://uxlswfm2hf73" path="res://resources/sprites/M_CHEST_XADER2.png" id="3_3lvp2"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_aaxbj")
 id = 347
 looks = "XADER2"
 sprite_image = ExtResource("3_3lvp2")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_mc7o4")
 name = "Usurper's Chest"
 display_name = "Usurper's Chest"
 internal_name = "Usurper's Chest"

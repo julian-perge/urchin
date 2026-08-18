@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bkfiqyj1xkug1"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Green_Fuel_Tank.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_n3xbp"]
-[ext_resource type="Texture2D" uid="uid://ntcndoqm0vu" path="res://assets/item_slot_icons/OTHER/Green_Fuel-Tank.png" id="2_elv4b"]
+[ext_resource type="Texture2D" uid="uid://k5yxc8e71n47" path="res://assets/ui/items/Green_Fuel_Tank.png" id="2_elv4b"]
 [ext_resource type="Texture2D" uid="uid://bfqutgvb7g5f" path="res://resources/sprites/M_CHEST_FRANKEN.png" id="3_sqmcc"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_n3xbp")
 id = 315
 looks = "FRANKEN"
 sprite_image = ExtResource("3_sqmcc")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_elv4b")
 name = "Green Fuel-Tank"
 display_name = "Green Fuel-Tank"
 internal_name = "Frankie's Protection"

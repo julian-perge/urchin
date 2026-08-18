@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://048ixyx1omi6"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Supremacy.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_q0xyk"]
-[ext_resource type="Texture2D" uid="uid://wkf28jkh8nye" path="res://assets/item_slot_icons/WEAPONS/Supremacy.png" id="2_tggsy"]
+[ext_resource type="Texture2D" uid="uid://cfyk0f5j0vurq" path="res://assets/ui/items/Supremacy.png" id="2_tggsy"]
 [ext_resource type="Texture2D" uid="uid://dkx2acqs6yq7j" path="res://resources/sprites/M_WEAPON_AK3.png" id="3_rts80"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_q0xyk")
 id = 649
 looks = "AK3"
 sprite_image = ExtResource("3_rts80")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_tggsy")
 name = "Supremacy"
 display_name = "Supremacy"
 internal_name = "COLONEL GUN"

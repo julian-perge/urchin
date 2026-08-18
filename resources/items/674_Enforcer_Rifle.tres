@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bw24iwkeh2603"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Enforcer_Rifle.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_t7eh1"]
-[ext_resource type="Texture2D" uid="uid://2ixvqjbsi5m6" path="res://assets/item_slot_icons/WEAPONS/Enforcer_Rifle.png" id="2_jolqm"]
+[ext_resource type="Texture2D" uid="uid://d1mob13fn778m" path="res://assets/ui/items/Enforcer_Rifle.png" id="2_jolqm"]
 [ext_resource type="Texture2D" uid="uid://www888llv4ss" path="res://resources/sprites/M_WEAPON_AK2.png" id="3_7kgiv"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_t7eh1")
 id = 674
 looks = "AK2"
 sprite_image = ExtResource("3_7kgiv")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_jolqm")
 name = "Enforcer Rifle"
 display_name = "Enforcer Rifle"
 internal_name = "GUN"

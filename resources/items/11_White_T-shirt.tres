@@ -1,15 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://01551w84rvhh"]
 
-[ext_resource type="Texture2D" path="res://assets/item_slot_icons/OTHER/White_T_Shirt.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_b2wbf"]
 [ext_resource type="Texture2D" uid="uid://60582holpd5b" path="res://resources/sprites/M_CHEST_SHIRT.png" id="2_10eqf"]
+[ext_resource type="Texture2D" uid="uid://bmabe8p8u1xlo" path="res://assets/item_slot_icons/OTHER/White_T_Shirt.png" id="icon_slot"]
 
 [resource]
 script = ExtResource("1_b2wbf")
-slot_image = ExtResource("icon_slot")
 id = 11
 looks = "SHIRT"
 sprite_image = ExtResource("2_10eqf")
+slot_image = ExtResource("icon_slot")
 name = "White T-shirt"
 display_name = "White T-shirt"
 internal_name = "White T-Shirt"

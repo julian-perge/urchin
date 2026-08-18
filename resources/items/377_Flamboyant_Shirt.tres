@@ -1,15 +1,15 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dbqrc1t5fb28v"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Flamboyant_Shirt.png" id="icon_slot"]
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_rtdyj"]
-[ext_resource type="Texture2D" uid="uid://ct6l3y8is4w1e" path="res://resources/sprites/M_CHEST_SHIRT5.png" id="2_dfccd"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_dfccd"]
+[ext_resource type="Texture2D" uid="uid://bdtyft7pj0dk1" path="res://assets/ui/items/Flamboyant_Shirt.png" id="2_8nivq"]
+[ext_resource type="Texture2D" uid="uid://ct6l3y8is4w1e" path="res://resources/sprites/M_CHEST_SHIRT5.png" id="3_g1s1p"]
 
 [resource]
-script = ExtResource("1_rtdyj")
-slot_image = ExtResource("icon_slot")
+script = ExtResource("1_dfccd")
 id = 377
 looks = "SHIRT5"
-sprite_image = ExtResource("2_dfccd")
+sprite_image = ExtResource("3_g1s1p")
+slot_image = ExtResource("2_8nivq")
 name = "Flamboyant Shirt"
 display_name = "Flamboyant Shirt"
 internal_name = "Flamboyant Shirt"

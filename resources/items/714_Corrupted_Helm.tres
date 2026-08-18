@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://fyngn6206vfo"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Corrupted_Helm.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_athxr"]
-[ext_resource type="Texture2D" uid="uid://b7v8rv5abiihf" path="res://assets/item_slot_icons/HELMS/Corrupted_Helm.png" id="2_4q2dy"]
+[ext_resource type="Texture2D" uid="uid://cq4f03eft55o" path="res://assets/ui/items/Corrupted_Helm.png" id="2_4q2dy"]
 [ext_resource type="Texture2D" uid="uid://dd44w6cyfxkoe" path="res://resources/sprites/M_HEAD_PURPLENIN.png" id="3_cn24v"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_athxr")
 id = 714
 looks = "PURPLENIN"
 sprite_image = ExtResource("3_cn24v")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_4q2dy")
 name = "Corrupted Helm"
 display_name = "Corrupted Helm"
 internal_name = "Drop CORRUPTOR Head"

@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bdv4qmkvdmx4"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Law_Binder.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_6ac2p"]
-[ext_resource type="Texture2D" uid="uid://sf5kqs710o1f" path="res://assets/item_slot_icons/WEAPONS/Law_Binder.png" id="2_krj7b"]
+[ext_resource type="Texture2D" uid="uid://m8ljcyrwfo3n" path="res://assets/ui/items/Law_Binder.png" id="2_krj7b"]
 [ext_resource type="Texture2D" uid="uid://qkmvuf5y2u5x" path="res://resources/sprites/M_WEAPON_COUNCILSTAFF.png" id="3_ireb2"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_6ac2p")
 id = 650
 looks = "COUNCILSTAFF"
 sprite_image = ExtResource("3_ireb2")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_krj7b")
 name = "Law Binder"
 display_name = "Law Binder"
 internal_name = "STAFF"

@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://d1mjsevrskjv4"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Heavenly_Helm.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_fj4pj"]
-[ext_resource type="Texture2D" uid="uid://g4ytnrd6ixav" path="res://assets/item_slot_icons/HELMS/Heavenly_Helm.png" id="2_txmej"]
+[ext_resource type="Texture2D" uid="uid://c408cq7mhvxj0" path="res://assets/ui/items/Heavenly_Helm.png" id="2_txmej"]
 [ext_resource type="Texture2D" uid="uid://drdi32qtyktdn" path="res://resources/sprites/M_HEAD_SAMURAI4.png" id="3_2pxbg"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_fj4pj")
 id = 533
 looks = "SAMURAI4"
 sprite_image = ExtResource("3_2pxbg")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_txmej")
 name = "Heavenly Helm"
 display_name = "Heavenly Helm"
 internal_name = "Vendor Samurai Head"

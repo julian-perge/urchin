@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c8hvbqj4gyd61"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Platinum_Baton.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_s4xjk"]
-[ext_resource type="Texture2D" uid="uid://0jjfbx8f55l0" path="res://assets/item_slot_icons/WEAPONS/Platinum_Baton.png" id="2_d5bes"]
+[ext_resource type="Texture2D" uid="uid://d1u0bp2rpjjln" path="res://assets/ui/items/Platinum_Baton.png" id="2_d5bes"]
 [ext_resource type="Texture2D" uid="uid://b8nt2p16vu5qs" path="res://resources/sprites/M_WEAPON_BATON2.png" id="3_omw8q"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_s4xjk")
 id = 679
 looks = "BATON2"
 sprite_image = ExtResource("3_omw8q")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_d5bes")
 name = "Platinum Baton"
 display_name = "Platinum Baton"
 internal_name = "BATON"

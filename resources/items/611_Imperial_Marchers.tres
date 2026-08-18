@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dwlxv1lmuiycq"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Imperial_Marchers.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_g8i4p"]
-[ext_resource type="Texture2D" uid="uid://csjw14wfa6k38" path="res://assets/item_slot_icons/SHOES/Imperial_Marchers.png" id="2_yx46n"]
+[ext_resource type="Texture2D" uid="uid://x0kr1ft4tduo" path="res://assets/ui/items/Imperial_Marchers.png" id="2_yx46n"]
 [ext_resource type="Texture2D" uid="uid://cmr2r8uj7tlk5" path="res://resources/sprites/M_FOOT_IMPERIAL.png" id="3_2e5be"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_g8i4p")
 id = 611
 looks = "IMPERIAL"
 sprite_image = ExtResource("3_2e5be")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_yx46n")
 name = "Imperial Marchers"
 display_name = "Imperial Marchers"
 internal_name = "Drop IMPERIAL Feet"

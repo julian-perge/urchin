@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ccdhedmi7nhal"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Ancient_Shield.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_s4c1e"]
-[ext_resource type="Texture2D" uid="uid://cbbu81ghoh8wt" path="res://assets/item_slot_icons/WEAPONS/Ancient_Shield.png" id="2_avvp8"]
+[ext_resource type="Texture2D" uid="uid://dxo17pqkly0gf" path="res://assets/ui/items/Ancient_Shield.png" id="2_avvp8"]
 [ext_resource type="Texture2D" uid="uid://chardvjwrf4m1" path="res://resources/sprites/M_WEAPON_UBER7.png" id="3_gf720"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_s4c1e")
 id = 556
 looks = "UBER7"
 sprite_image = ExtResource("3_gf720")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_avvp8")
 name = "Ancient Shield"
 display_name = "Ancient Shield"
 internal_name = "Shield"

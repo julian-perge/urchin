@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dstf0jdguqt5v"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Surgeon_Gloves.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_kwpd0"]
-[ext_resource type="Texture2D" uid="uid://b1j64gy0306am" path="res://assets/item_slot_icons/WEAPONS/Surgeon_Gloves.png" id="2_sa2ul"]
+[ext_resource type="Texture2D" uid="uid://dp6gay3y3cwy0" path="res://assets/ui/items/Surgeon_Gloves.png" id="2_sa2ul"]
 [ext_resource type="Texture2D" uid="uid://dpjg30tmmdnlt" path="res://resources/sprites/M_HAND_ZPCI3.png" id="3_lbuch"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_kwpd0")
 id = 356
 looks = "ZPCI3"
 sprite_image = ExtResource("3_lbuch")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_sa2ul")
 name = "Surgeon Gloves"
 display_name = "Surgeon Gloves"
 internal_name = "Surgeon Gloves"

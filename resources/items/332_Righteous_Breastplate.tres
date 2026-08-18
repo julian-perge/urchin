@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://brlisxsdibf2p"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Righteous_Breastplate.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_tpt40"]
-[ext_resource type="Texture2D" uid="uid://dm4ipjg5ni1wn" path="res://assets/item_slot_icons/ARMOR/Righteous_Breastplate.png" id="2_siwvm"]
+[ext_resource type="Texture2D" uid="uid://bikyk8qb1ugnq" path="res://assets/ui/items/Righteous_Breastplate.png" id="2_siwvm"]
 [ext_resource type="Texture2D" uid="uid://264qn323a12v" path="res://resources/sprites/M_CHEST_XADER.png" id="3_smx5l"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_tpt40")
 id = 332
 looks = "XADER"
 sprite_image = ExtResource("3_smx5l")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_siwvm")
 name = "Righteous Breastplate"
 display_name = "Righteous Breastplate"
 internal_name = "Righteous Breastplate"

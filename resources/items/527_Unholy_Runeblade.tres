@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://ckg1eaghctoax"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Unholy_Runeblade.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jsoee"]
-[ext_resource type="Texture2D" uid="uid://nskqrqll266q" path="res://assets/item_slot_icons/WEAPONS/Unholy_Runeblade.png" id="2_saxas"]
+[ext_resource type="Texture2D" uid="uid://lsdudb5styik" path="res://assets/ui/items/Unholy_Runeblade.png" id="2_saxas"]
 [ext_resource type="Texture2D" uid="uid://c78q4wtmfvbmo" path="res://resources/sprites/M_WEAPON_XADER2.png" id="3_h5eye"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_jsoee")
 id = 527
 looks = "XADER2"
 sprite_image = ExtResource("3_h5eye")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_saxas")
 name = "Unholy Runeblade"
 display_name = "Unholy Runeblade"
 internal_name = "Unholy Runeblade"

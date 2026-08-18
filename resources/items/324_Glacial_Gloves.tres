@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dwy4qma2bvhei"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Glacial_Gloves.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ph0wi"]
-[ext_resource type="Texture2D" uid="uid://lb34ye825c2c" path="res://assets/item_slot_icons/GLOVES/Glacial_Gloves.png" id="2_c8mod"]
+[ext_resource type="Texture2D" uid="uid://rmgibbd2ubmb" path="res://assets/ui/items/Glacial_Gloves.png" id="2_c8mod"]
 [ext_resource type="Texture2D" uid="uid://cbfr4v3jltq4l" path="res://resources/sprites/M_HAND_FROSTPLATE.png" id="3_buwsp"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_ph0wi")
 id = 324
 looks = "FROSTPLATE"
 sprite_image = ExtResource("3_buwsp")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_c8mod")
 name = "Glacial Gloves"
 display_name = "Glacial Gloves"
 internal_name = "Glacial Gloves"

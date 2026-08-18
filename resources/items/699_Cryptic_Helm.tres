@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://7nvn68f3q0hk"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Cryptic_Helm.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_a1x2b"]
-[ext_resource type="Texture2D" uid="uid://btmm5pb0vix6b" path="res://assets/item_slot_icons/HELMS/Cryptic_Helm.png" id="2_nhn70"]
+[ext_resource type="Texture2D" uid="uid://c6bcofv3u7ynw" path="res://assets/ui/items/Cryptic_Helm.png" id="2_nhn70"]
 [ext_resource type="Texture2D" uid="uid://xx43r3myfuer" path="res://resources/sprites/M_HEAD_ULTI2.png" id="3_r62ms"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_a1x2b")
 id = 699
 looks = "ULTI2"
 sprite_image = ExtResource("3_r62ms")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_nhn70")
 name = "Cryptic Helm"
 display_name = "Cryptic Helm"
 internal_name = "Drop ULTI2 Head"

@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://fbeowo3w4r8j"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Persecution.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_o07v4"]
-[ext_resource type="Texture2D" uid="uid://22t3gjflri86" path="res://assets/item_slot_icons/WEAPONS/Persecution.png" id="2_add2h"]
+[ext_resource type="Texture2D" uid="uid://ceu0mkqt5sg7q" path="res://assets/ui/items/Persecution.png" id="2_add2h"]
 [ext_resource type="Texture2D" uid="uid://b8nt2p16vu5qs" path="res://resources/sprites/M_WEAPON_BATON2.png" id="3_3fh35"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_o07v4")
 id = 504
 looks = "BATON2"
 sprite_image = ExtResource("3_3fh35")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_add2h")
 name = "Persecution"
 display_name = "Persecution"
 internal_name = "Persecution"

@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://37c06b328woi"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Fiery_Doom.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_elais"]
-[ext_resource type="Texture2D" uid="uid://cnentp5rhbuvc" path="res://assets/item_slot_icons/WEAPONS/Fiery_Doom.png" id="2_jt4d8"]
+[ext_resource type="Texture2D" uid="uid://dl1ehr4bwyd2x" path="res://assets/ui/items/Fiery_Doom.png" id="2_jt4d8"]
 [ext_resource type="Texture2D" uid="uid://1uwp1mmnj1dy" path="res://resources/sprites/M_WEAPON_MAGESTAFF.png" id="3_1e38d"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_elais")
 id = 517
 looks = "MAGESTAFF"
 sprite_image = ExtResource("3_1e38d")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_jt4d8")
 name = "Fiery Doom"
 display_name = "Fiery Doom"
 internal_name = "Fiery Doom"

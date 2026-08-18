@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dfqumi2qyn51"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Frosted_Light.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ym6jl"]
-[ext_resource type="Texture2D" uid="uid://t8h4gr8y6sfd" path="res://assets/item_slot_icons/WEAPONS/Frosted_Light.png" id="2_y1iep"]
+[ext_resource type="Texture2D" uid="uid://dx3xp8b7kv1xy" path="res://assets/ui/items/Frosted_Light.png" id="2_y1iep"]
 [ext_resource type="Texture2D" uid="uid://cq3e74ya6776w" path="res://resources/sprites/M_WEAPON_PRIESTSTAFF.png" id="3_jw4yp"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_ym6jl")
 id = 518
 looks = "PRIESTSTAFF"
 sprite_image = ExtResource("3_jw4yp")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_y1iep")
 name = "Frosted Light"
 display_name = "Frosted Light"
 internal_name = "Frosted Light"

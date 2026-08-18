@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://kbo2qi1kc35a"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Calf_Hooks.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_7bo6o"]
-[ext_resource type="Texture2D" uid="uid://cura3qxkahthi" path="res://assets/item_slot_icons/SHOES/Calf_Hooks.png" id="2_r6f2y"]
+[ext_resource type="Texture2D" uid="uid://yrrhme1u761w" path="res://assets/ui/items/Calf_Hooks.png" id="2_r6f2y"]
 [ext_resource type="Texture2D" uid="uid://duyxateqsqtqj" path="res://resources/sprites/M_FOOT_NOS.png" id="3_83uqd"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_7bo6o")
 id = 668
 looks = "NOS"
 sprite_image = ExtResource("3_83uqd")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_r6f2y")
 name = "Calf Hooks"
 display_name = "Calf Hooks"
 internal_name = "Drop NOS Feet"

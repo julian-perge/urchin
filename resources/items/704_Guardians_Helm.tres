@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://citei4ge71a25"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Guardian_s_Helm.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xodvc"]
-[ext_resource type="Texture2D" uid="uid://bms177xwaxm3i" path="res://assets/item_slot_icons/HELMS/Guardians_Helm.png" id="2_65e3n"]
+[ext_resource type="Texture2D" uid="uid://duv8y41nu3sxq" path="res://assets/ui/items/Guardian_s_Helm.png" id="2_65e3n"]
 [ext_resource type="Texture2D" uid="uid://da7b2gopf5hfq" path="res://resources/sprites/M_HEAD_ROBOT2.png" id="3_o7aqu"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_xodvc")
 id = 704
 looks = "ROBOT2"
 sprite_image = ExtResource("3_o7aqu")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_65e3n")
 name = "Guardian's Helm"
 display_name = "Guardian's Helm"
 internal_name = "Drop ROBOT2 Head"

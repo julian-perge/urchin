@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://b0c0pog6pykf2"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Venomsteel_Greaves.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_vgk05"]
-[ext_resource type="Texture2D" uid="uid://u0ndie0vdhiu" path="res://assets/item_slot_icons/OTHER/Venomsteel_Greaves.png" id="2_dqaq7"]
+[ext_resource type="Texture2D" uid="uid://bj540lstflhug" path="res://assets/ui/items/Venomsteel_Greaves.png" id="2_dqaq7"]
 [ext_resource type="Texture2D" uid="uid://r108q0ipwojh" path="res://resources/sprites/M_FOOT_TUNNELSET1.png" id="3_xe3a2"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_vgk05")
 id = 587
 looks = "TUNNELSET1"
 sprite_image = ExtResource("3_xe3a2")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_dqaq7")
 name = "Venomsteel Greaves"
 display_name = "Venomsteel Greaves"
 internal_name = "Drop IRONGUARD Feet"

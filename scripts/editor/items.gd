@@ -49,12 +49,15 @@ const SLOT_ICON_CATEGORIES: Dictionary[GameItem.ItemType, String] = {
 	GameItem.ItemType.TWOHAND: "WEAPONS",
 }
 
-# Items whose extracted icon-clip frame doesn't match the live game
-# (verified by side-by-side playtest) keep a hand-picked icon. Keep in sync
-# with dev/urchin_dev/swf/extract/item_icons.py's ICON_OVERRIDES - that
-# script repoints slot_image on existing .tres files, this one sets it when
-# regenerating .tres from items.json from scratch, and they don't share a
-# single source of truth.
+# Items whose extracted icon-clip frame doesn't match the live game keep a
+# hand-picked icon. dev/urchin_dev/swf/extract/item_icons.py used to carry
+# a matching ICON_OVERRIDES table for the same two items, needed while its
+# extraction rendered icon-clip content wrong (dropped filters/colorTransforms,
+# then an unapplied clip mask - see that script's history); removed there
+# once the extraction itself was fixed (2026-08-18), since both sources now
+# agree. Left here since a hand-picked icon is still a reasonable thing to
+# want when regenerating .tres from items.json from scratch, independent of
+# whether the extraction is currently correct.
 const SLOT_ICON_OVERRIDES: Dictionary[int, String] = {
 	5: "res://assets/item_slot_icons/OTHER/A_Broken_Pipe.png",  # A Broken Pipe
 	11: "res://assets/item_slot_icons/OTHER/White_T_Shirt.png",  # White T-shirt

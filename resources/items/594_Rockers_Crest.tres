@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://blt3d35qlcxc0"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Rocker_s_Crest.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_ost2y"]
-[ext_resource type="Texture2D" uid="uid://hiw0g77nlbqo" path="res://assets/item_slot_icons/ARMOR/Rockers_Crest.png" id="2_7vkta"]
+[ext_resource type="Texture2D" uid="uid://dvsmgxxau6faa" path="res://assets/ui/items/Rocker_s_Crest.png" id="2_7vkta"]
 [ext_resource type="Texture2D" uid="uid://31faehrfval3" path="res://resources/sprites/M_CHEST_ROCKSTAR.png" id="3_oenxg"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_ost2y")
 id = 594
 looks = "ROCKSTAR"
 sprite_image = ExtResource("3_oenxg")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_7vkta")
 name = "Rocker's Crest"
 display_name = "Rocker's Crest"
 internal_name = "Drop ROCKSTAR Chest"

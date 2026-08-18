@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://duurmxj1hrydb"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Titanium_Cranium.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_66525"]
-[ext_resource type="Texture2D" uid="uid://dmykesgd5t8m3" path="res://assets/item_slot_icons/HELMS/Titanium_Cranium.png" id="2_7wqyq"]
+[ext_resource type="Texture2D" uid="uid://wbadkwrut868" path="res://assets/ui/items/Titanium_Cranium.png" id="2_7wqyq"]
 [ext_resource type="Texture2D" uid="uid://cr4r1ddbe2pak" path="res://resources/sprites/M_HEAD_ROBOT.png" id="3_actjo"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_66525")
 id = 612
 looks = "ROBOT"
 sprite_image = ExtResource("3_actjo")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_7wqyq")
 name = "Titanium Cranium"
 display_name = "Titanium Cranium"
 internal_name = "Drop ROBOT Head"

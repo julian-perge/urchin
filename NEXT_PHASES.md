@@ -92,9 +92,20 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
       correct. The other two (`Frosted Leggings`, `Riot Shield`) have *different* `looks` per id, meaning two visually-distinct equipped items currently show the same slot icon - a real but minor
       content gap, not investigated further this pass.
     Still worth a manual side-by-side pass against the live game for the 309 items that DO get an automatic sprite-2064 match, since id 5/11 prove a labeled frame can point at the wrong content
-    without tripping any of the checks above. Good place to start: the 10 icons whose pixels changed on the last re-extraction beyond plain PNG re-encoding (`A_Broken_Pipe`, `A_Sword`,
-    `Broken_Emerald_Shard`, `Crow_Bar`, `Dirty_31`, `Fire_Axe`, `Flamboyant_Trousers`, `Levo_Jeans`, `Nike_Head_Wear`, `Proverse_All_Stars` - likely a shared background/vignette shape rendering
-    differently under a newer `ffdec`, not yet root-caused), since they're already flagged as anomalous.
+    without tripping any of the checks above.
+  - **DONE (2026-08-18)** - `item_icons.py` rewritten the same way `faces.py` was: every frame now exported directly via ffdec's own sprite renderer (`-format sprite:png -selectid 2064`) instead
+    of reassembled shape-by-shape. The old per-shape compositor only carried position/scale off each PlaceObject, silently dropping any colorTransform/filter - confirmed on item 592 "Ancient Cage",
+    whose old icon was missing the glowing yellow ward markings the live game shows. All 327 icons re-extracted; likely also the explanation for the 10 icons flagged above as changing pixels under
+    a newer `ffdec` (that bullet's anomaly list predates this rewrite and is superseded by it).
+    Took two passes to get the crop right. `DefineShape 1913`, present in every frame, looked at first like a stray editor-bounds guide (same shape of bug as the old `SKIP_CIDS`, which had
+    excluded it from compositing on that same assumption) - stripping it via `-removeCharacter` seemed to fix things, until a wider check showed most icons had grown far past their old size (item
+    69 "A Broken Pipe" alone went from a correct 63x63px to 101x140). 1913 turned out to be a real SWF clip mask (`clipDepth="15"` on its own placement, depth 2) - the same clipping mechanic
+    `cutscenes.py`'s wrapper sprites use, just within one timeline instead of split across a wrapper/inner pair - and stripping it let ffdec render everything the mask normally hides. Left in
+    place, every frame comes back correctly masked to ~62x62px regardless of that item's own art size, and just needs trimming off the mostly-transparent full-timeline export canvas (`ffdec` sizes
+    every frame's PNG to the whole 856-frame timeline's union bounds) - no fixed-box math needed, same as `faces.py`. Item 0's `None` placeholder now gets a real (blank, 1x1) icon too, a side
+    effect of no longer skipping frames with an empty PlaceObject snapshot. `ICON_OVERRIDES` (items 5/11's hand-picked-icon table) removed from this script now that the fixed extraction agrees with
+    the fallback art those two items were pointed at - `scripts/editor/items.gd`'s independent `SLOT_ICON_OVERRIDES` copy still exists and still applies to those two when regenerating `.tres` from
+    scratch, which is fine since both sources now render the same icon either way.
 
 - **Zone hub art for zones 6/7**: no dedicated hub art exists in the extracted assets - the scenes reuse the wide battle backdrops (`battle/CHURCH.png`, `battle/STREETS.png`), aspect-cropped. Zone 7's
   training orb position is also borrowed from zone 6 (the original Steam-only zone frame has no training orb placement).

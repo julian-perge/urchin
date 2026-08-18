@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bkmmby55jmxg7"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Ken_s_Legacy.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_xge6e"]
-[ext_resource type="Texture2D" uid="uid://dg0yy26wkshd8" path="res://assets/item_slot_icons/GLOVES/Kens_Legacy.png" id="2_s0yum"]
+[ext_resource type="Texture2D" uid="uid://cu8kyqox1oey2" path="res://assets/ui/items/Ken_s_Legacy.png" id="2_s0yum"]
 [ext_resource type="Texture2D" uid="uid://djxw4wracel0c" path="res://resources/sprites/M_HAND_PRIEST4.png" id="3_5mjkf"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_xge6e")
 id = 644
 looks = "PRIEST4"
 sprite_image = ExtResource("3_5mjkf")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_s0yum")
 name = "Ken's Legacy"
 display_name = "Ken's Legacy"
 internal_name = "Drop MAYOR Hands"

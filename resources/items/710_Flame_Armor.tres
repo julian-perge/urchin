@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://c8jnja2fi1kgp"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Flame_Armor.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_o1lj8"]
-[ext_resource type="Texture2D" uid="uid://bcc8iwqaymie4" path="res://assets/item_slot_icons/ARMOR/Flame_Armor.png" id="2_5ptcb"]
+[ext_resource type="Texture2D" uid="uid://ib8chmnr7pwa" path="res://assets/ui/items/Flame_Armor.png" id="2_5ptcb"]
 [ext_resource type="Texture2D" uid="uid://db22kfr4gwj40" path="res://resources/sprites/M_CHEST_FIRESAM.png" id="3_rnxqt"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_o1lj8")
 id = 710
 looks = "FIRESAM"
 sprite_image = ExtResource("3_rnxqt")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_5ptcb")
 name = "Flame Armor"
 display_name = "Flame Armor"
 internal_name = "Drop FIRESAM Chest"

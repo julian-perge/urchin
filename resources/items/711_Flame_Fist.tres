@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://874m3sg00k1f"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Flame_Fist.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_to4x1"]
-[ext_resource type="Texture2D" uid="uid://cwo7yba01dpev" path="res://assets/item_slot_icons/GLOVES/Flame_Fist.png" id="2_mcyi7"]
+[ext_resource type="Texture2D" uid="uid://cn5axrsy0oxo8" path="res://assets/ui/items/Flame_Fist.png" id="2_mcyi7"]
 [ext_resource type="Texture2D" uid="uid://dn2a7sxnmyygx" path="res://resources/sprites/M_HAND_FIRESAM.png" id="3_xerh4"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_to4x1")
 id = 711
 looks = "FIRESAM"
 sprite_image = ExtResource("3_xerh4")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_mcyi7")
 name = "Flame Fist"
 display_name = "Flame Fist"
 internal_name = "Drop FIRESAM Hands"

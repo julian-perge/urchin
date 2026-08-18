@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://03fkfo6u5rp1"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Icy_Maul.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_sc6o3"]
-[ext_resource type="Texture2D" uid="uid://bw5raebnq75jb" path="res://assets/item_slot_icons/WEAPONS/Icy_Maul.png" id="2_tacth"]
+[ext_resource type="Texture2D" uid="uid://bvhtbxxlw86um" path="res://assets/ui/items/Icy_Maul.png" id="2_tacth"]
 [ext_resource type="Texture2D" uid="uid://d4fiy357bl3kd" path="res://resources/sprites/M_WEAPON_ICESTICK.png" id="3_wcrs1"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_sc6o3")
 id = 519
 looks = "ICESTICK"
 sprite_image = ExtResource("3_wcrs1")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_tacth")
 name = "Icy Maul"
 display_name = "Icy Maul"
 internal_name = "Icy Maul"

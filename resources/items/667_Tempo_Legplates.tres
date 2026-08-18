@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dgugn6bcyw2la"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Tempo_Legplates.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_c2gdk"]
-[ext_resource type="Texture2D" uid="uid://dj711f8fdtiyr" path="res://assets/item_slot_icons/PANTS/Tempo_Legplates.png" id="2_n874i"]
+[ext_resource type="Texture2D" uid="uid://cfxlvmlqk140s" path="res://assets/ui/items/Tempo_Legplates.png" id="2_n874i"]
 [ext_resource type="Texture2D" uid="uid://61uu8w361b0a" path="res://resources/sprites/M_LEG2_NOS.png" id="3_66aiy"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_c2gdk")
 id = 667
 looks = "NOS"
 sprite_image = ExtResource("3_66aiy")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_n874i")
 name = "Tempo Legplates"
 display_name = "Tempo Legplates"
 internal_name = "Drop NOS Legs"

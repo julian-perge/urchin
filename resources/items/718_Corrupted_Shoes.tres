@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bhx27jo7pluhb"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Corrupted_Shoes.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_jpedy"]
-[ext_resource type="Texture2D" uid="uid://cfioynijtb62k" path="res://assets/item_slot_icons/SHOES/Corrupted_Shoes.png" id="2_pmd4k"]
+[ext_resource type="Texture2D" uid="uid://dayr68hyam3bg" path="res://assets/ui/items/Corrupted_Shoes.png" id="2_pmd4k"]
 [ext_resource type="Texture2D" uid="uid://buh15bp7nur00" path="res://resources/sprites/M_FOOT_PURPLENIN.png" id="3_glljf"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_jpedy")
 id = 718
 looks = "PURPLENIN"
 sprite_image = ExtResource("3_glljf")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_pmd4k")
 name = "Corrupted Shoes"
 display_name = "Corrupted Shoes"
 internal_name = "Drop CORRUPTOR Feet"

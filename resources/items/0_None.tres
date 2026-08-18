@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://dl7blc46hji4"]
 
-[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_a04ck"]
+[ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_1kdi2"]
+[ext_resource type="Texture2D" uid="uid://n3aecetyi7n6" path="res://assets/ui/items/None.png" id="2_c3qq7"]
 
 [resource]
-script = ExtResource("1_a04ck")
+script = ExtResource("1_1kdi2")
+slot_image = ExtResource("2_c3qq7")
 name = "None"
 display_name = "None"
 internal_name = "None"

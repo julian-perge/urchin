@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://bbn070gunsy47"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Acidic_Leggings.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_yhq4q"]
-[ext_resource type="Texture2D" uid="uid://bnkfynique12j" path="res://assets/item_slot_icons/OTHER/Acidic_Leggings.png" id="2_1o342"]
+[ext_resource type="Texture2D" uid="uid://bcndjmn2skfkb" path="res://assets/ui/items/Acidic_Leggings.png" id="2_1o342"]
 [ext_resource type="Texture2D" uid="uid://ymkb4vrctpk2" path="res://resources/sprites/M_LEG2_TUNNELSET1.png" id="3_cutq0"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_yhq4q")
 id = 586
 looks = "TUNNELSET1"
 sprite_image = ExtResource("3_cutq0")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_1o342")
 name = "Acidic Leggings"
 display_name = "Acidic Leggings"
 internal_name = "Drop IRONGUARD Legs"

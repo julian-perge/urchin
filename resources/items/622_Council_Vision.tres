@@ -1,8 +1,7 @@
 [gd_resource type="Resource" script_class="GameItem" format=3 uid="uid://7g8rcx4lnt2"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/items/Council_Vision.png" id="icon_slot"]
 [ext_resource type="Script" uid="uid://db4pa4mrjruuc" path="res://scripts/entities/game_item.gd" id="1_qlbl2"]
-[ext_resource type="Texture2D" uid="uid://dpyua5xqnx8jw" path="res://assets/item_slot_icons/HELMS/Council_Vision.png" id="2_rhhjw"]
+[ext_resource type="Texture2D" uid="uid://dvjadka6y3bgr" path="res://assets/ui/items/Council_Vision.png" id="2_rhhjw"]
 [ext_resource type="Texture2D" uid="uid://crs8nv5f7hfkc" path="res://resources/sprites/M_HEAD_PRIEST3.png" id="3_0s2nn"]
 
 [resource]
@@ -10,7 +9,7 @@ script = ExtResource("1_qlbl2")
 id = 622
 looks = "PRIEST3"
 sprite_image = ExtResource("3_0s2nn")
-slot_image = ExtResource("icon_slot")
+slot_image = ExtResource("2_rhhjw")
 name = "Council Vision"
 display_name = "Council Vision"
 internal_name = "Drop COUNCIL Head"
