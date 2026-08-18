@@ -9,7 +9,7 @@ script = ExtResource("1_overlay")
 [node name="Ring" type="Control" parent="."]
 layout_mode = 0
 mouse_filter = 2
-visible = false
+modulate = Color(1, 1, 1, 0)
 
 [node name="NameLabel" type="Label" parent="."]
 layout_mode = 0

@@ -50,6 +50,11 @@ const ORB_RADIUS: float = 15.0
 const ORB_ARC_START: float = -2.4  # radians
 const ORB_ARC_STEP: float = 0.55
 const ORB_ARC_DISTANCE: float = 62.0
+# Source-verified (frame_217/PlaceObject3_3394_450 and 5 sibling files):
+# the hover ring fades in at +20/frame and out at -5/frame at the
+# original's 30fps - a ~4x faster fade-in than fade-out.
+const RING_FADE_IN_TIME: float = 0.17
+const RING_FADE_OUT_TIME: float = 0.67
 
 # 1.0 = normal pacing; 0.0 = instant (tests).
 var animation_speed: float = 1.0
@@ -75,6 +80,7 @@ var _display_hp: Dictionary = {}
 # to be tracked across calls rather than compared against a fixed threshold.
 var _last_stun: Dictionary = {}
 var _rings: Dictionary = {}  # slot -> ring Control (hover indicator)
+var _ring_fade_tweens: Dictionary = {}  # slot -> in-flight fade Tween
 var _stance_rows: Dictionary = {}  # party_id -> Array[Button]
 var _selected_move: Dictionary = {}
 var _player_action_pending: bool = false
@@ -290,13 +296,18 @@ func _on_unit_hovered(slot: int, entered: bool) -> void:
 	var unit: CombatUnit = units.get(slot)
 	if ring == null or unit == null or not unit.active:
 		return
-	ring.visible = entered
 	ring.queue_redraw()
+	var showing: bool = entered and _player_action_pending
+	if _ring_fade_tweens.has(slot):
+		_ring_fade_tweens[slot].kill()
+	var tween: Tween = create_tween()
+	tween.tween_property(ring, "modulate:a", 1.0 if showing else 0.0, RING_FADE_IN_TIME if showing else RING_FADE_OUT_TIME)
+	_ring_fade_tweens[slot] = tween
 	var overlay: Control = _overlays[slot]
 	var existing: Node = overlay.get_node_or_null("HoverInfo")
 	if existing:
 		existing.queue_free()
-	if entered:
+	if showing:
 		var info: Label = Label.new()
 		info.name = "HoverInfo"
 		info.text = "Lvl. %d" % unit.plevel

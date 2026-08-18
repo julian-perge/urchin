@@ -319,3 +319,38 @@ func test_bottom_bar_uses_extracted_backdrop_art():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+func test_hover_ring_fades_in_only_during_player_decision_window():
+	var save = PlayerSave.new_game("RingFadeTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var ring: Control = scene._rings[2]  # battle 100's enemy slot (Prison Guard)
+	assert_eq(ring.modulate.a, 0.0, "starts invisible")
+
+	# Not the player's turn - hovering must not start a fade-in.
+	scene._player_action_pending = false
+	scene._on_unit_hovered(2, true)
+	await scene.get_tree().create_timer(0.3).timeout
+	assert_eq(ring.modulate.a, 0.0, "no fade-in outside the player's decision window")
+
+	# The player's turn - hovering fades it in.
+	scene._player_action_pending = true
+	scene._on_unit_hovered(2, true)
+	await scene.get_tree().create_timer(0.3).timeout
+	assert_almost_eq(ring.modulate.a, 1.0, 0.05, "faded in during the decision window")
+
+	# Fade-out is never gated, even outside the decision window.
+	scene._player_action_pending = false
+	scene._on_unit_hovered(2, false)
+	await scene.get_tree().create_timer(0.8).timeout
+	assert_almost_eq(ring.modulate.a, 0.0, 0.05, "fades back out regardless of turn state")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
