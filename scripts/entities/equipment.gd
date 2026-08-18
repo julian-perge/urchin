@@ -37,10 +37,17 @@ const EQUIP_RESULT_MESSAGES: Dictionary[EquipResult, String] = {
 	EquipResult.INVALID: "Invalid item or slot.",
 }
 
-const MAIN_HAND_SLOT: int = 5
-const SECONDARY_SLOT: int = 6
-# equip_array index -> accepted GameItem.ItemType (the slot buttons' IPS
-# values; Two-Handed is the extra case on the main-hand slot).
+# PlayerSave.equip_array index -> "kind" of slot - unlike the UI's own 0-6
+# equip-slot indices (inventory_window.gd/store_window.gd's
+# EQUIP_SLOT_CENTERS, equip_doll_view.gd's equip_index), which never branch
+# on which slot it is and stay plain int, this file constantly checks WHICH
+# slot (EQUIP_SLOT_TYPES[slot], MAIN_HAND_SLOT/SECONDARY_SLOT's special
+# casing), so it earns a real enum.
+enum EquipSlot { HEAD, CHEST, HAND, LEGS, FOOT, MAINHAND, OFFHAND }
+const MAIN_HAND_SLOT: EquipSlot = EquipSlot.MAINHAND
+const SECONDARY_SLOT: EquipSlot = EquipSlot.OFFHAND
+# EquipSlot -> accepted GameItem.ItemType (the slot buttons' IPS values;
+# Two-Handed is the extra case on the main-hand slot).
 const EQUIP_SLOT_TYPES: Array[GameItem.ItemType] = [
 	GameItem.ItemType.HEAD,
 	GameItem.ItemType.CHEST,
@@ -71,7 +78,7 @@ static func slot_for_item(item: GameItem) -> int:
 
 
 # Validation only - failure order mirrors the original's error priority.
-static func can_equip(save: PlayerSave, item: GameItem, slot_index: int) -> EquipResult:
+static func can_equip(save: PlayerSave, item: GameItem, slot_index: EquipSlot) -> EquipResult:
 	if item == null or slot_index < 0 or slot_index >= EQUIP_SLOT_TYPES.size():
 		return EquipResult.INVALID
 	if item.required_level > save.level:
@@ -88,7 +95,7 @@ static func can_equip(save: PlayerSave, item: GameItem, slot_index: int) -> Equi
 
 # Full check including the two-handed exclusion on the secondary slot (needs
 # the item lookup to inspect the equipped weapon).
-static func can_equip_with_lookup(save: PlayerSave, item: GameItem, slot_index: int, items_by_id: Dictionary) -> EquipResult:
+static func can_equip_with_lookup(save: PlayerSave, item: GameItem, slot_index: EquipSlot, items_by_id: Dictionary) -> EquipResult:
 	var result = can_equip(save, item, slot_index)
 	if result != EquipResult.OK:
 		return result
@@ -102,7 +109,7 @@ static func can_equip_with_lookup(save: PlayerSave, item: GameItem, slot_index: 
 # Equips item into slot_index, transferring stat bonuses. Returns
 # {result, previous_item_id} - the caller decides where the displaced item
 # goes (inventory/cursor). save untouched on failure.
-static func equip(save: PlayerSave, item: GameItem, slot_index: int, items_by_id: Dictionary) -> Dictionary:
+static func equip(save: PlayerSave, item: GameItem, slot_index: EquipSlot, items_by_id: Dictionary) -> Dictionary:
 	var result = can_equip_with_lookup(save, item, slot_index, items_by_id)
 	if result != EquipResult.OK:
 		return {"result": result, "previous_item_id": 0}
@@ -117,7 +124,7 @@ static func equip(save: PlayerSave, item: GameItem, slot_index: int, items_by_id
 
 # Removes the item in slot_index, reverting its stat bonuses. Returns the
 # removed item id (0 if the slot was empty).
-static func unequip(save: PlayerSave, slot_index: int, items_by_id: Dictionary) -> int:
+static func unequip(save: PlayerSave, slot_index: EquipSlot, items_by_id: Dictionary) -> int:
 	if slot_index < 0 or slot_index >= save.equip_array.size():
 		return 0
 	var item_id: int = int(save.equip_array[slot_index])
