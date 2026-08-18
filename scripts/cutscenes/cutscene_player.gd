@@ -16,12 +16,31 @@ const FADE_SECONDS: float = 20.0 / 30.0
 # battle_scene.gd's animation_speed / _pause convention.
 var animation_speed: float = 1.0
 
+# Set once play() starts, so a second call can't stack another coroutine
+# driving the same fade_rect/queue_free.
+var _started: bool = false
+
 @onready var video: VideoStreamPlayer = $Video
 @onready var fade_rect: ColorRect = $FadeRect
 
 
 func play(cutscene_id: String) -> void:
-	video.stream = load("res://assets/cutscenes/%s.ogv" % cutscene_id)
+	if _started:
+		push_warning("CutscenePlayer.play() called again on an instance already playing %s - ignored." % cutscene_id)
+		return
+	_started = true
+
+	var stream: VideoStream = load("res://assets/cutscenes/%s.ogv" % cutscene_id)
+	if stream == null:
+		# Missing/misspelled cutscene id: a caller awaiting our finished
+		# signal (the battle-victory flow) must not hang forever waiting on
+		# a video that will never start.
+		push_warning("CutscenePlayer.play(): no video stream for '%s' - skipping playback." % cutscene_id)
+		finished.emit()
+		queue_free()
+		return
+
+	video.stream = stream
 	fade_rect.color.a = 1.0
 	await _fade(0.0)
 	video.play()

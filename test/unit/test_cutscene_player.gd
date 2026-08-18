@@ -64,3 +64,42 @@ func test_animation_speed_zero_skips_fades_instantly():
 	player.video.finished.emit()
 	assert_signal_emitted(player, "finished")
 	assert_eq(player.fade_rect.color.a, 1.0, "fade-out also resolved instantly")
+
+
+func test_missing_cutscene_id_emits_finished_instead_of_hanging():
+	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
+	watch_signals(player)
+
+	# load() returns null for an id with no matching .ogv (confirmed via a
+	# throwaway script: it logs an engine ERROR but does not throw). A caller
+	# (the battle-victory flow) awaits our finished signal, so a bad id must
+	# resolve that await rather than leaving play() parked forever on
+	# `await video.finished` for a video that never starts. The engine error
+	# is expected here, not a bug - mark it handled so it doesn't also fail
+	# the test.
+	player.play("NONEXISTENT_ID")
+	for err in get_errors():
+		err.handled = true
+
+	assert_signal_emitted(player, "finished")
+	assert_false(player.video.is_playing(), "never started playback for a missing stream")
+
+
+func test_second_play_call_on_same_instance_is_ignored():
+	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
+	player.animation_speed = 0.0
+
+	player.play("CS_CUT4")
+	assert_true(player.video.is_playing(), "first play() started the video")
+
+	# A second call must not stack another fade/video coroutine on the same
+	# fade_rect and eventually double queue_free() the node.
+	player.play("CS_CUT5")
+	assert_eq(
+		player.video.stream.resource_path,
+		"res://assets/cutscenes/CS_CUT4.ogv",
+		"second play() call was ignored - stream from the first call is untouched"
+	)
+
+	player.video.finished.emit()
+	assert_eq(player.fade_rect.color.a, 1.0, "first call's sequence still completes normally")
