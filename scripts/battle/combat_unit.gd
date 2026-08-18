@@ -17,6 +17,11 @@ enum Difficulty { EASY, NORMAL, HARD }
 # invalid sentinel rather than aliasing a real team.
 enum Team { ONE = 1, TWO = 2 }
 
+# Mirrors move_pool_attack/_defense/_absolute and cooldowns_attack/_defense/
+# _absolute below - which parallel array/cooldown pair an AI-chosen move
+# came from (BattleAI.choose_move's "pool", BattleRunner's cooldown lookup).
+enum MovePool { ATTACK, DEFENSE, ABSOLUTE }
+
 # modVar_1 (strength/magic), modVar_2 (life), modVar_3 (speed), per difficulty.
 const DIFFICULTY_MODIFIERS: Dictionary[Difficulty, Dictionary] = {
 	Difficulty.EASY: {"strength_magic": 0.4, "life": 0.5, "speed": 0.9000000000000002},

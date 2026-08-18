@@ -243,11 +243,11 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 	if caster.ai_enabled and action.has("pool"):
 		var cooldowns: Array = []
 		match action["pool"]:
-			"attack":
+			CombatUnit.MovePool.ATTACK:
 				cooldowns = caster.cooldowns_attack
-			"defense":
+			CombatUnit.MovePool.DEFENSE:
 				cooldowns = caster.cooldowns_defense
-			"absolute":
+			CombatUnit.MovePool.ABSOLUTE:
 				cooldowns = caster.cooldowns_absolute
 		if action["pool_index"] >= 0 and action["pool_index"] < cooldowns.size():
 			cooldowns[action["pool_index"]] = move.cooldown_turns

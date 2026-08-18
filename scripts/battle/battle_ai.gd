@@ -20,7 +20,7 @@ extends RefCounted
 
 # Chooses a move for the unit in caster_slot. Returns {} to pass the turn
 # (queue move 0), else:
-#   {move_id, target_slot, pool ("attack"/"defense"/"absolute"), pool_index}
+#   {move_id, target_slot, pool: CombatUnit.MovePool, pool_index}
 # pool/pool_index tell BattleRunner which cooldown counter to set when the
 # move actually starts (AI_CD_ARR/AI_CD_PUT).
 static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_this_turn: Dictionary, moves_by_id: Dictionary) -> Dictionary:
@@ -165,22 +165,24 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 
 	# --- Pick the move.
 	var move_id: int = 0
-	var pool: String = ""
+	# Never read unless a move is actually chosen below - move_id == 0
+	# returns {} first in every other path.
+	var pool: CombatUnit.MovePool = CombatUnit.MovePool.ATTACK
 	var pool_index: int = -1
 	if use_absolute:
 		var pick: int = _uniform_pick(absolute_ids.size())
 		move_id = absolute_ids[pick]
-		pool = "absolute"
+		pool = CombatUnit.MovePool.ABSOLUTE
 		pool_index = absolute_indices[pick]
 	elif attack_mode:
 		if focus_move:
 			move_id = attack_ids_cd[focus_pick_index]
-			pool = "attack"
+			pool = CombatUnit.MovePool.ATTACK
 			pool_index = attack_indices_cd[focus_pick_index]
 		elif not attack_ids.is_empty():
 			var pick: int = _uniform_pick(attack_ids.size())
 			move_id = attack_ids[pick]
-			pool = "attack"
+			pool = CombatUnit.MovePool.ATTACK
 			pool_index = attack_indices[pick]
 	else:
 		focus_move = false
@@ -204,7 +206,7 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 		if not final_ids.is_empty():
 			var pick: int = _uniform_pick(final_ids.size())
 			move_id = final_ids[pick]
-			pool = "defense"
+			pool = CombatUnit.MovePool.DEFENSE
 			pool_index = final_indices[pick]
 
 	if move_id == 0:
