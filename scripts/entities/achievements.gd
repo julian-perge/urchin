@@ -43,12 +43,12 @@ static func check_battle_victory(save: PlayerSave, battle_id: int, was_story_pro
 	if was_story_progress:
 		if battle_id == 109:
 			earned.append(0)  # The Tape
-		if save.difficulty > 0:
+		if save.difficulty > CombatUnit.Difficulty.EASY:
 			if battle_id == 308 and not counters.get("had_teammates", false):
 				earned.append(1)  # Black Magic
 			if battle_id == 408 and counters.get("player_damage_dealt", 0.0) < 2000:
 				earned.append(2)  # Pacifist
-		if save.difficulty == 2 and not save.used_training:
+		if save.difficulty == CombatUnit.Difficulty.HARD and not save.used_training:
 			if battle_id == 212:
 				earned.append(3)  # Predator
 			if battle_id == 513:
@@ -72,7 +72,7 @@ static func check_all_star(saves: Array) -> bool:
 	for save in saves:
 		if save == null:
 			continue
-		if save.difficulty == 2 and _quest_progress(save, 5) > 13:
+		if save.difficulty == CombatUnit.Difficulty.HARD and _quest_progress(save, 5) > 13:
 			classes_cleared[save.player_class] = true
 	return classes_cleared.size() >= 3
 

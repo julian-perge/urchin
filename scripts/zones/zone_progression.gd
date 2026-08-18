@@ -141,10 +141,10 @@ static func is_zone_unlocked(save: PlayerSave, zone: int) -> bool:
 # frame_449's difficulty gate on how much of the map exists at all:
 # easy = zones 1-5, normal = 1-6, hard = 1-7 (zone 7 additionally requires
 # the all-star achievement in the original).
-static func max_zone(difficulty: int, has_all_star_achievement: bool = false) -> int:
-	if difficulty <= 0:
+static func max_zone(difficulty: CombatUnit.Difficulty, has_all_star_achievement: bool = false) -> int:
+	if difficulty <= CombatUnit.Difficulty.EASY:
 		return 5
-	if difficulty == 1:
+	if difficulty == CombatUnit.Difficulty.NORMAL:
 		return 6
 	return 7 if has_all_star_achievement else 6
 

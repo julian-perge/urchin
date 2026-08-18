@@ -10,7 +10,7 @@ extends Control
 
 var _selected_slot: int = 1
 var _selected_class: PlayerSave.PlayerClass = PlayerSave.PlayerClass.BIOLOGICAL
-var _selected_difficulty: int = 0
+var _selected_difficulty: CombatUnit.Difficulty = CombatUnit.Difficulty.EASY
 var _tutorial_enabled: bool = true
 var _sound_enabled: bool = true
 var _autosave_enabled: bool = true
@@ -79,7 +79,7 @@ func _on_cancel_new_game() -> void:
 
 # --- screen 2: settings -------------------------------------------------------
 
-func _on_difficulty_selected(index: int) -> void:
+func _on_difficulty_selected(index: CombatUnit.Difficulty) -> void:
 	_selected_difficulty = index
 
 

@@ -323,7 +323,7 @@ func _on_tree_node_pressed(node_index: int) -> void:
 	refresh()
 
 
-func _on_attribute_plus_pressed(stat_index: int) -> void:
+func _on_attribute_plus_pressed(stat_index: Leveling.Stat) -> void:
 	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return

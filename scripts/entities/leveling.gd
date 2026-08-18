@@ -111,7 +111,7 @@ static func assign_points_start(save: PlayerSave) -> void:
 
 
 # One stat point -> +1 allocation (the stat-screen plus buttons).
-static func spend_stat_point(save: PlayerSave, stat_index: int) -> bool:
+static func spend_stat_point(save: PlayerSave, stat_index: Stat) -> bool:
 	if save.stat_points <= 0 or stat_index < 0 or stat_index >= save.stat_allocated.size():
 		return false
 	save.stat_points -= 1
