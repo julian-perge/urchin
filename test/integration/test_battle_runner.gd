@@ -151,6 +151,32 @@ func test_battle_51_end_game_phase():
 	_assert_battle_runs(51)
 
 
+# A miss used to be logged as its own bare "miss" event, which
+# battle_scene.gd played as a standalone floating label with no animation -
+# _play_move_event() (the run/swing/cast presentation) only ever triggers on
+# a "move" event. Battle 51 reliably produces several misses over a full
+# run (confirmed via battle_51's real miss_chance formula, not forced) -
+# assert every one of them is shaped like every other move result (type
+# "move", a real result.type of "miss") instead of the old standalone shape.
+func test_misses_are_move_events_not_a_separate_type():
+	var battle: BattleFight = battles.get(51)
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	runner.setup(_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	_run_to_completion(runner)
+	var miss_count: int = 0
+	for event in runner.events:
+		if event.get("type") == "miss":
+			fail_test("a bare top-level \"miss\" event type still exists")
+		if event.get("type") == "move" and event.get("result", {}).get("type") == "miss":
+			miss_count += 1
+			assert_ne(
+				int(event["caster_slot"]), int(event["target_slot"]),
+				"miss still names the real target, not the attacker"
+			)
+	assert_gt(miss_count, 0, "battle 51 produces at least one miss")
+
+
 # Runs a full battle with AI on both sides; returns event-type counts.
 func _assert_battle_runs(battle_id: int) -> Dictionary:
 	var battle: BattleFight = battles.get(battle_id)

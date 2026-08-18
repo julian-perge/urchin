@@ -253,7 +253,14 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 		caster.ability_cooldowns[action["bar_index"]] = move.cooldown_turns
 
 	if not _accuracy_roll(caster, target, move):
-		_log({"type": "miss", "caster_slot": caster.player_id, "target_slot": target.player_id, "move_id": move.id})
+		# A miss is still a "move" event, not its own separate one - the
+		# original always plays the caster's run/swing/cast animation for
+		# the move's own type (dispatched on addNewMove param 10, gated by
+		# nothing else - see DECODED_ALGORITHMS.md's "Battle presentation
+		# per animation type") and only the impact-time damage NUMBER swaps
+		# to a special miss frame. Logging a bare "miss" type here instead
+		# skipped straight to a floating MISS label with no animation at all.
+		_log_move_result(caster, target, move, {"type": "miss"})
 		return
 
 	var dispelled: Array = _resolve_dispels(move, target)

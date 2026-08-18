@@ -533,10 +533,6 @@ func _play_events(events: Array) -> void:
 		match event["type"]:
 			"move":
 				await _play_move_event(event)
-			"miss":
-				_float_text(int(event["target_slot"]), "MISS", Color.GRAY)
-				AudioManagerAuto.play_effect("sfx_magicmiss")
-				await _pause(0.3)
 			"stunned":
 				_float_text(int(event["caster_slot"]), "STUNNED", Color.YELLOW)
 				await _pause(0.3)
@@ -685,6 +681,12 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 				)
 		"focus":
 			_float_text(target_slot, "+%d FOCUS" % int(result.get("amount", 0)), Color.SKY_BLUE)
+		"miss":
+			# The special miss frame KrinNumberShow swaps to at impact,
+			# instead of a damage number - the caster's own animation still
+			# played in full to get here (see _execute_move_action's comment).
+			_float_text(target_slot, "MISS", Color.GRAY)
+			AudioManagerAuto.play_effect("sfx_magicmiss")
 	_refresh_bars(false)
 
 
