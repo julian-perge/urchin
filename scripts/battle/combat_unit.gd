@@ -31,6 +31,16 @@ const DIFFICULTY_MODIFIERS: Dictionary[Difficulty, Dictionary] = {
 
 const VIT_LIFE_FACTOR: int = 33
 const ELEMENT_ORDER: Array[String] = ["Physical", "Magic", "Ice", "Fire", "Lightning", "Earth", "Shadow", "Poison"]
+# Positional companion to ELEMENT_ORDER above - Element.FIRE == ELEMENT_ORDER.find("Fire")
+# by construction. per_u/def_u (below) and Ability.damage_element_type/Buff.
+# element_type stay plain String - they're either @export-persisted
+# (PlayerSave.per/def) or loaded straight from JSON data (same exclusion as
+# Ability.effect_category), and retyping either would mean a save-format
+# migration, out of scope here. This enum exists for the OTHER thing those
+# strings were doing: getting turned into a positional lookup index
+# (MenuTheme.ELEMENT_COLORS[...]) by hand at half a dozen call sites via a
+# bare ELEMENT_ORDER.find(name) - see element_from_name() below.
+enum Element { PHYSICAL, MAGIC, ICE, FIRE, LIGHTNING, EARTH, SHADOW, POISON }
 const MAX_BUFF_LIMIT: int = 40  # _root.maxBuffLimit
 
 var player_id: int
@@ -143,6 +153,15 @@ static func _zero_array(size: int) -> Array:
 	arr.resize(size)
 	arr.fill(0.0)
 	return arr
+
+# Resolves a data-sourced element name (Ability.damage_element_type,
+# Buff.element_type) to the enum, for the several call sites that turn the
+# name into a positional lookup index (MenuTheme.ELEMENT_COLORS[...]) -
+# replaces the bare ELEMENT_ORDER.find(name) idiom each of those used to
+# spell out by hand. Returns -1, same as ELEMENT_ORDER.find() itself, when
+# name isn't a real element - callers already checked for that.
+static func element_from_name(name: String) -> Element:
+	return ELEMENT_ORDER.find(name)
 
 static func get_stat(ratio: float, level: int, mode = null) -> float:
 	if level <= 0:

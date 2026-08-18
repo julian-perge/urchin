@@ -64,6 +64,13 @@ func test_all_battles_built():
 	assert_eq(battles.size(), 99)
 
 
+func test_element_from_name_matches_element_order_position():
+	assert_eq(CombatUnit.element_from_name("Physical"), CombatUnit.Element.PHYSICAL)
+	assert_eq(CombatUnit.element_from_name("Fire"), CombatUnit.Element.FIRE)
+	assert_eq(CombatUnit.element_from_name("Poison"), CombatUnit.Element.POISON)
+	assert_eq(CombatUnit.element_from_name("NotAnElement"), -1, "unknown name returns -1, same as ELEMENT_ORDER.find()")
+
+
 func test_from_character_populates_ai_fields():
 	var veradux = CombatUnit.from_character(unit_templates[4], 5, CombatUnit.Difficulty.HARD, 5)
 	assert_true(veradux.ai_enabled)
