@@ -77,13 +77,13 @@ func test_equip_transfers_stats_and_swaps():
 	var outcome = Equipment.equip(save, sword, Equipment.MAIN_HAND_SLOT, items_by_id)
 	assert_eq(outcome["result"], Equipment.EquipResult.OK)
 	assert_eq(save.strength, strength_before + 5, "attribute bonus lands in the derived stat")
-	assert_eq(save.per["Fire"], 10.0, "piercing bonus lands in the allocation")
+	assert_eq(save.per[CombatUnit.Element.FIRE], 10.0, "piercing bonus lands in the allocation")
 
 	var better_sword = _make_item(2, GameItem.ItemType.MAINHAND, 1, 0, {"strength": 8})
 	outcome = Equipment.equip(save, better_sword, Equipment.MAIN_HAND_SLOT, items_by_id)
 	assert_eq(outcome["previous_item_id"], 1, "displaced item returned")
 	assert_eq(save.strength, strength_before + 8, "old bonus reverted, new applied")
-	assert_eq(save.per["Fire"], 0.0)
+	assert_eq(save.per[CombatUnit.Element.FIRE], 0.0)
 
 	var removed = Equipment.unequip(save, Equipment.MAIN_HAND_SLOT, items_by_id)
 	assert_eq(removed, 2)

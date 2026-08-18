@@ -36,11 +36,11 @@ const CLASS_NAMES: Array[String] = ["Biological", "Psychological", "Hydraulic"]
 @export var speed: float = 0.0
 @export var focus: float = 0.0
 @export var life: float = 0.0
-# Element name -> allocated piercing/defense points (AS3 PerSets0/DefSets0).
+# Element -> allocated piercing/defense points (AS3 PerSets0/DefSets0).
 # Derived battle values are allocation + 100 + 15 * level
 # (CombatUnit.from_player_save). Raised by gear, not level-up points.
-@export var per: Dictionary = {}
-@export var def: Dictionary = {}
+@export var per: Dictionary[CombatUnit.Element, float] = {}
+@export var def: Dictionary[CombatUnit.Element, float] = {}
 
 # Respec daily limit (AS3 respecSet/lastDay2): 5 per day.
 @export var respec_set: int = 5
@@ -102,7 +102,7 @@ static func new_game(player_name: String, new_player_class: PlayerClass = Player
 	for i in 37:
 		save.item_array.append(0)
 	save.equip_array = [0, 0, 0, 0, 0, 0, 0]
-	for element in CombatUnit.ELEMENT_ORDER:
+	for element in CombatUnit.ELEMENT_ORDER.size():
 		save.per[element] = 0.0
 		save.def[element] = 0.0
 	save.section_in = 1

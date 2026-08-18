@@ -221,8 +221,8 @@ projectile bolts all stay fully code-driven, unchanged - each is transient, reco
 ## Enum conversion audit
 
 **DONE (2026-08-18).** Prompted by the project owner adding static typings across the codebase, then asked to also reduce copy-paste and re-audit for anything the first pass missed. 9 enums
-landed across 4 commits (plus a fresh re-audit before starting, since a few of this section's own file:line citations had gone stale - see below), each with GUT coverage and a green suite verified
-after every step:
+landed one commit at a time (plus a fresh re-audit before starting, since a few of this section's own file:line citations had gone stale - see below), each with GUT coverage and a green suite
+verified after every step:
 
 - **`PlayerClass`** (`PlayerSave.PlayerClass`) - `CLASS_NAMES` deduped down to one copy (`PlayerSave.CLASS_NAMES`), used by `Leveling.CLASS_BASE_RATIOS`, `TalentTree.STARTING_MOVES`/`TREES`,
   `Achievements.classes_cleared`, `main_menu.gd`/`abilities_window.gd`'s class-select flow.
@@ -236,10 +236,15 @@ after every step:
   `Leveling.spend_stat_point`/`abilities_window.gd`'s attribute-plus handler.
 - **`Equipment.EquipSlot`** - only `MAIN_HAND_SLOT`/`SECONDARY_SLOT` and the slot-kind params (`can_equip`/`equip`/`unequip`) - the UI's purely positional 0-6 equip-slot indices
   (`EQUIP_SLOT_CENTERS`, `equip_doll_view.gd`'s `equip_index`) correctly stay plain `int`, per this section's own original judgment call.
-- **`CombatUnit.Element`** - scoped down from the original proposal. Added the enum plus `element_from_name()` (replacing the hand-rolled `ELEMENT_ORDER.find(name)` idiom at 5 call sites turning
-  an element name into a `MenuTheme.ELEMENT_COLORS` lookup index), but deliberately left `CombatUnit.per_u`/`def_u` and `PlayerSave.per`/`def` String-keyed, and `Ability.damage_element_type`/
-  `Buff.element_type` plain `String` - converting those means a real save-format migration (`PlayerSave.per`/`def` are `@export`-persisted; retyping their keys changes every existing save file's
-  `.tres` shape on disk), exactly the risk this section's original text flagged. A full conversion of the persisted dictionaries is separate, real work if still wanted.
+- **`CombatUnit.Element`** - initially scoped down to just the enum + `element_from_name()` lookup helper, over save-format migration risk (`PlayerSave.per`/`def` are `@export`-persisted -
+  retyping their keys changes every existing save file's `.tres` shape on disk). Finished properly the same day once the project owner confirmed there are no live users yet to worry about:
+  `CombatUnit.per_u`/`def_u`/`base_per`/`base_def` and `PlayerSave.per`/`def` are now `Dictionary[Element, float]`, and `Ability.damage_element_type`/`dispel_element_types`/`Buff.element_type`
+  are `Element`/`Array[Element]`, converted once at JSON-load time via `element_from_name()` (the one place a String survives, since the source data is text) - every downstream consumer
+  (`battle_manager.gd`'s per/def lookups, `combat_unit.gd`'s buff-element matching, the 5 `MenuTheme.ELEMENT_COLORS` lookup sites) now reads/writes the enum directly, no more find()-by-name at
+  render time. `item.stats`'s own `"piercing"/"defense"` sub-dicts stay String-keyed in `equipment.gd`/`combat_unit.gd`'s `from_character()` reads - those are parsed straight from JSON, which
+  can't have non-string object keys, so there's no equivalent conversion available there; read by name, write into the now-Element-keyed `base_per`/`per`/etc. by position.
+  **This DOES break old save files' `.tres` shape** (confirmed live: loading a pre-existing local save with the old String-keyed `per`/`def` threw "Unable to convert key from String to int" -
+  exactly the risk flagged above) - acceptable now, not once this ships to real players.
 - **`CharacterVisual.set_state()`** now takes `State` directly (signature tightening, zero behavior change - every call site already passed `State.X`).
 
 **Stale citations found re-auditing** (worth remembering for next time an old audit gets acted on late): this section's `main_menu.gd:11`/`main_menu.gd:19` citations for `CLASS_NAMES`/

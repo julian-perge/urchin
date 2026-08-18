@@ -114,9 +114,9 @@ func refresh() -> void:
 	for i in _stat_values.size():
 		_stat_values[i].text = str(int(stats[i]))
 	for k in 8:
-		var element = CombatUnit.ELEMENT_ORDER[k]
-		_update_bar(_per_fills[k], float(save.per.get(element, 0.0)), save.level, element, "piercing")
-		_update_bar(_def_fills[k], float(save.def.get(element, 0.0)), save.level, element, "defense")
+		var element_name: String = CombatUnit.ELEMENT_ORDER[k]
+		_update_bar(_per_fills[k], float(save.per.get(k, 0.0)), save.level, element_name, "piercing")
+		_update_bar(_def_fills[k], float(save.def.get(k, 0.0)), save.level, element_name, "defense")
 	var exp_fraction = clamp(save.experience / 100.0, 0.0, 1.0)
 	_exp_fill.size.x = EXP_FILL.size.x * exp_fraction
 	_exp_percent.text = "%d%%" % int(save.experience)

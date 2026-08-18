@@ -32,7 +32,7 @@ extends Resource
 @export var sound_effect_name: String
 
 # ability_two fields consumed by execute_move()'s damage/heal/focus formulas.
-@export var damage_element_type: String
+@export var damage_element_type: CombatUnit.Element
 @export var base_strength_bonus: float
 @export var strength_damage_multiplier: float
 @export var base_magic_bonus: float
@@ -73,7 +73,7 @@ extends Resource
 # dispel_element_types and whose Buff.polarity == dispel_target_polarity; each
 # candidate needs randf() <= dispel_chance and randf() >= the buff's
 # dispel_resist_chance. Resolution lives in BattleRunner._resolve_dispels().
-@export var dispel_element_types: Array  # element name Strings
+@export var dispel_element_types: Array[CombatUnit.Element] = []
 @export var dispel_count: int
 @export var dispel_target_polarity: int  # matched against Buff.polarity (1 = buffs, -1 = debuffs)
 @export var dispel_chance: float  # 0..1 per-buff attempt chance
@@ -118,7 +118,7 @@ static func from_json(data: Dictionary) -> Ability:
 	ability.health_cost_percentage = _num(data.get("16_health_cost_percentage"))
 	ability.sound_effect_name = _text(data.get("18_sound_effect_name"))
 
-	ability.damage_element_type = _text(ability_two.get("0_damage_element_type"))
+	ability.damage_element_type = CombatUnit.element_from_name(_text(ability_two.get("0_damage_element_type")))
 	ability.base_strength_bonus = _num(ability_two.get("1_base_strength_bonus"))
 	ability.strength_damage_multiplier = _num(ability_two.get("2_strength_damage_multiplier"))
 	ability.base_magic_bonus = _num(ability_two.get("3_base_magic_bonus"))
@@ -139,7 +139,10 @@ static func from_json(data: Dictionary) -> Ability:
 	ability.effect_target_is_self = int(_num(ability_two.get("21_effect_target"))) == 1
 
 	var raw_dispel_elements = ability_two.get("15_element_types_affected", [])
-	ability.dispel_element_types = raw_dispel_elements if raw_dispel_elements is Array else []
+	ability.dispel_element_types = []
+	if raw_dispel_elements is Array:
+		for raw_name in raw_dispel_elements:
+			ability.dispel_element_types.append(CombatUnit.element_from_name(str(raw_name)))
 	ability.dispel_count = int(_num(ability_two.get("16_dispel_buff_count")))
 	ability.dispel_target_polarity = int(_num(ability_two.get("19_status_effect_tick_rate"), 1.0))
 	ability.dispel_chance = _num(ability_two.get("22_buff_application_chance"), 1.0)

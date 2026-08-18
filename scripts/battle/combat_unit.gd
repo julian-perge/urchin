@@ -32,14 +32,14 @@ const DIFFICULTY_MODIFIERS: Dictionary[Difficulty, Dictionary] = {
 const VIT_LIFE_FACTOR: int = 33
 const ELEMENT_ORDER: Array[String] = ["Physical", "Magic", "Ice", "Fire", "Lightning", "Earth", "Shadow", "Poison"]
 # Positional companion to ELEMENT_ORDER above - Element.FIRE == ELEMENT_ORDER.find("Fire")
-# by construction. per_u/def_u (below) and Ability.damage_element_type/Buff.
-# element_type stay plain String - they're either @export-persisted
-# (PlayerSave.per/def) or loaded straight from JSON data (same exclusion as
-# Ability.effect_category), and retyping either would mean a save-format
-# migration, out of scope here. This enum exists for the OTHER thing those
-# strings were doing: getting turned into a positional lookup index
-# (MenuTheme.ELEMENT_COLORS[...]) by hand at half a dozen call sites via a
-# bare ELEMENT_ORDER.find(name) - see element_from_name() below.
+# by construction. per_u/def_u/base_per/base_def (below), PlayerSave.per/def,
+# Ability.damage_element_type/dispel_element_types, and Buff.element_type are
+# all Element-keyed/typed now - element_from_name() converts the one place
+# that's still a raw String at the boundary: the JSON field text itself
+# (Ability.from_json()/Buff.from_json()), same as any other data-loading
+# conversion. ELEMENT_ORDER itself stays a String array - it's still needed
+# for display (tooltips, the stat screen) and as element_from_name()'s own
+# lookup table.
 enum Element { PHYSICAL, MAGIC, ICE, FIRE, LIGHTNING, EARTH, SHADOW, POISON }
 const MAX_BUFF_LIMIT: int = 40  # _root.maxBuffLimit
 
@@ -82,8 +82,8 @@ var base_magic: float
 var base_speed: float
 var base_life: float
 var base_focus: float
-var base_per: Dictionary = {}
-var base_def: Dictionary = {}
+var base_per: Dictionary[Element, float] = {}
+var base_def: Dictionary[Element, float] = {}
 
 # Derived (post-buff) stats - what execute_move() and everything else reads.
 # Recomputed by apply_changes() any time a buff is applied/removed/ticks.
@@ -94,8 +94,8 @@ var life_u: float
 var life_n: float
 var focus_u: float
 var focus_n: float
-var per_u: Dictionary = {}
-var def_u: Dictionary = {}
+var per_u: Dictionary[Element, float] = {}
+var def_u: Dictionary[Element, float] = {}
 
 var dmg: float = 0.0
 var dmg2: float = 0.0
@@ -154,12 +154,11 @@ static func _zero_array(size: int) -> Array:
 	arr.fill(0.0)
 	return arr
 
-# Resolves a data-sourced element name (Ability.damage_element_type,
-# Buff.element_type) to the enum, for the several call sites that turn the
-# name into a positional lookup index (MenuTheme.ELEMENT_COLORS[...]) -
-# replaces the bare ELEMENT_ORDER.find(name) idiom each of those used to
-# spell out by hand. Returns -1, same as ELEMENT_ORDER.find() itself, when
-# name isn't a real element - callers already checked for that.
+# Resolves a raw element name (as it appears in the JSON move/buff data,
+# e.g. Ability.from_json()'s "0_damage_element_type" field) to the enum -
+# the one conversion boundary Element can't skip, since the source data is
+# text. Returns -1, same as ELEMENT_ORDER.find() itself, when name isn't a
+# real element.
 static func element_from_name(name: String) -> Element:
 	return ELEMENT_ORDER.find(name)
 
@@ -206,9 +205,8 @@ static func from_character(character: Character, level: int, difficulty: Difficu
 	var defense = character.stats.get("defense", [])
 	var level_scale: float = 1.0 + level * 0.15
 	for i in ELEMENT_ORDER.size():
-		var element = ELEMENT_ORDER[i]
-		unit.base_per[element] = (piercing[i] if i < piercing.size() else 0.0) * level_scale
-		unit.base_def[element] = (defense[i] if i < defense.size() else 0.0) * level_scale
+		unit.base_per[i] = (piercing[i] if i < piercing.size() else 0.0) * level_scale
+		unit.base_def[i] = (defense[i] if i < defense.size() else 0.0) * level_scale
 
 	var voice = character.visuals.get("voice", {})
 	unit.voice_hit = voice.get("hit", [])
@@ -279,9 +277,9 @@ static func from_player_save(save: PlayerSave, battle_slot: int = 1) -> CombatUn
 
 	# PER/DEF = allocated points + 100 + 15 per level (the same formula the
 	# original uses for companions, arena players, and the stat screen).
-	for element in ELEMENT_ORDER:
-		unit.base_per[element] = save.per.get(element, 0.0) + 100.0 + 15.0 * save.level
-		unit.base_def[element] = save.def.get(element, 0.0) + 100.0 + 15.0 * save.level
+	for i in ELEMENT_ORDER.size():
+		unit.base_per[i] = save.per.get(i, 0.0) + 100.0 + 15.0 * save.level
+		unit.base_def[i] = save.def.get(i, 0.0) + 100.0 + 15.0 * save.level
 
 	unit.voice_hit = ["hit_sonny1", "hit_sonny2", "hit_sonny3"]
 	unit.voice_die = "dead_sonny"
@@ -347,9 +345,8 @@ func apply_changes() -> void:
 	idmgp2 = max(1 - idmgp, 0)
 
 	for i in ELEMENT_ORDER.size():
-		var element = ELEMENT_ORDER[i]
-		per_u[element] = max((base_per[element] + change_array_ep[i]) * (change_array_ep2[i] + 1), 1)
-		def_u[element] = max((base_def[element] + change_array_ed[i]) * (change_array_ed2[i] + 1), 1)
+		per_u[i] = max((base_per[i] + change_array_ep[i]) * (change_array_ep2[i] + 1), 1)
+		def_u[i] = max((base_def[i] + change_array_ed[i]) * (change_array_ed2[i] + 1), 1)
 
 # Ported from applyBuffKrin(). `direction` is +1 to apply, -1 to remove (the AS3
 # `iftbc`). `caster` is only read when direction == +1 (fresh application) - the
@@ -435,7 +432,7 @@ func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_inde
 	dot_ticker_array[9] += direction * buff.focus_per_turn
 
 	for i in ELEMENT_ORDER.size():
-		if ELEMENT_ORDER[i] != buff.element_type:
+		if i != buff.element_type:
 			continue
 		change_array_ep[i] += direction * buff.change_element_piercing
 		change_array_ep2[i] += direction * buff.change_element_piercing_percent
@@ -489,7 +486,7 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> void:
 	for i in ELEMENT_ORDER.size():
 		var element_damage = ceil(
 			(1 + idmg2) * idmgp2 * idot
-			* (dot_ticker_array[i] * ((100 + plevel * 15) / def_u[ELEMENT_ORDER[i]]))
+			* (dot_ticker_array[i] * ((100 + plevel * 15) / def_u[i]))
 		)
 		total_damage += element_damage
 

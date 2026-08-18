@@ -10,7 +10,7 @@ extends Resource
 @export var id: int
 @export var internal_name: String
 @export var display_name: String
-@export var element_type: String
+@export var element_type: CombatUnit.Element
 @export var duration_turns: int
 
 @export var change_strength_flat: float
@@ -84,7 +84,7 @@ static func from_json(data: Dictionary) -> Buff:
 	buff.id = int(data["id"])
 	buff.internal_name = _text(data["internal_name"])
 	buff.display_name = _text(data["0_display_name"])
-	buff.element_type = _text(data["1_element_type"])
+	buff.element_type = CombatUnit.element_from_name(_text(data["1_element_type"]))
 	buff.duration_turns = int(data["16_duration_turns"])
 
 	buff.change_strength_flat = data["2_change_strength_flat"]

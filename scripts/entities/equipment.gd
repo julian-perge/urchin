@@ -157,8 +157,12 @@ static func _apply_item_stats(save: PlayerSave, item: GameItem, direction: int) 
 	var attributes: Dictionary = item.stats.get("attributes", {})
 	for key in ATTRIBUTE_TO_STAT:
 		save.stat_allocated[ATTRIBUTE_TO_STAT[key]] += direction * int(attributes.get(key, 0))
+	# item.stats is parsed straight from JSON, so its "piercing"/"defense" sub-
+	# dicts are necessarily String-keyed (JSON object keys are always text) -
+	# read by element NAME here, write into save.per/def by Element below.
 	var piercing: Dictionary = item.stats.get("piercing", {})
 	var defense: Dictionary = item.stats.get("defense", {})
-	for element in CombatUnit.ELEMENT_ORDER:
-		save.per[element] = save.per.get(element, 0.0) + direction * float(piercing.get(element, 0))
-		save.def[element] = save.def.get(element, 0.0) + direction * float(defense.get(element, 0))
+	for i in CombatUnit.ELEMENT_ORDER.size():
+		var element_name: String = CombatUnit.ELEMENT_ORDER[i]
+		save.per[i] = save.per.get(i, 0.0) + direction * float(piercing.get(element_name, 0))
+		save.def[i] = save.def.get(i, 0.0) + direction * float(defense.get(element_name, 0))

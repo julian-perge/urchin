@@ -358,7 +358,7 @@ func _move_tooltip(move: Ability) -> String:
 
 
 func _move_color(move: Ability) -> Color:
-	var element_index: CombatUnit.Element = CombatUnit.element_from_name(move.damage_element_type)
+	var element_index: CombatUnit.Element = move.damage_element_type
 	return MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.5, 0.5, 0.5)
 
 
@@ -681,7 +681,7 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 			# play the bigger "critical" variant of the same color.
 			var color: Color = Color.WHITE
 			if move != null:
-				var element_index: CombatUnit.Element = CombatUnit.element_from_name(move.damage_element_type)
+				var element_index: CombatUnit.Element = move.damage_element_type
 				if element_index != -1:
 					color = MenuTheme.ELEMENT_COLORS[element_index]
 			_float_text(target_slot, str(int(result.get("amount", 0))), color, result.get("did_crit", false))

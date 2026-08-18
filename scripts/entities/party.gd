@@ -183,10 +183,9 @@ static func build_companion_unit(save: PlayerSave, party_id: int, unit_templates
 	unit.base_focus = round(allocated[4] + ceil(template.focus))
 
 	for i in CombatUnit.ELEMENT_ORDER.size():
-		var element = CombatUnit.ELEMENT_ORDER[i]
-		unit.base_per[element] = 100.0 + level * 15.0 + definition["per_allocated"][i]
-		var defense_per_level: float = 5.0 if element == "Lightning" else 15.0
-		unit.base_def[element] = 100.0 + level * defense_per_level + definition["def_allocated"][i]
+		unit.base_per[i] = 100.0 + level * 15.0 + definition["per_allocated"][i]
+		var defense_per_level: float = 5.0 if i == CombatUnit.Element.LIGHTNING else 15.0
+		unit.base_def[i] = 100.0 + level * defense_per_level + definition["def_allocated"][i]
 
 	var voice = template.visuals.get("voice", {})
 	unit.voice_hit = voice.get("hit", [])

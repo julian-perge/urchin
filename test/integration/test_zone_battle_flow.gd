@@ -63,9 +63,9 @@ func test_companion_stat_model():
 	var curve = ceil(CombatUnit.get_stat(20, 1, true))
 	assert_eq(veradux.base_life, round(9 + curve) * 33)
 	assert_eq(veradux.base_strength, round(12 + curve))
-	assert_eq(veradux.base_per["Lightning"], 100.0 + 15.0 + 82.0, "PerSets seed applies")
-	assert_eq(veradux.base_def["Lightning"], 100.0 + 5.0, "faithful Lightning-defense 5/level quirk")
-	assert_eq(veradux.base_def["Physical"], 100.0 + 15.0)
+	assert_eq(veradux.base_per[CombatUnit.Element.LIGHTNING], 100.0 + 15.0 + 82.0, "PerSets seed applies")
+	assert_eq(veradux.base_def[CombatUnit.Element.LIGHTNING], 100.0 + 5.0, "faithful Lightning-defense 5/level quirk")
+	assert_eq(veradux.base_def[CombatUnit.Element.PHYSICAL], 100.0 + 15.0)
 
 
 func test_full_zone_battle_loop():

@@ -170,7 +170,7 @@ func _node_color(_save: PlayerSave, _node_index: int, node: Dictionary) -> Color
 	var move: Ability = MoveManagerAuto.get_move(move_id)
 	if move == null:
 		return Color(0.5, 0.5, 0.5)
-	var element_index: CombatUnit.Element = CombatUnit.element_from_name(move.damage_element_type)
+	var element_index: CombatUnit.Element = move.damage_element_type
 	if element_index == -1:
 		return Color(0.5, 0.5, 0.5)
 	return MenuTheme.ELEMENT_COLORS[element_index]
@@ -285,7 +285,7 @@ func _on_pool_row_hovered(row_index: int) -> void:
 func _move_color(move: Ability) -> Color:
 	if move == null:
 		return Color(0.5, 0.5, 0.5)
-	var element_index: CombatUnit.Element = CombatUnit.element_from_name(move.damage_element_type)
+	var element_index: CombatUnit.Element = move.damage_element_type
 	return MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.5, 0.5, 0.5)
 
 

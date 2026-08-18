@@ -93,7 +93,7 @@ func test_player_from_save_with_talent_passives():
 	var player = CombatUnit.from_player_save(save)
 	assert_eq(player.life_u, round(save.life * 33), "player stats absolute, not getStat curves")
 	assert_eq(
-		player.base_per["Physical"], 100.0 + 15.0 * save.level,
+		player.base_per[CombatUnit.Element.PHYSICAL], 100.0 + 15.0 * save.level,
 		"PER = allocation + 100 + 15 per level"
 	)
 	assert_has(TalentTree.get_known_move_ids(save), 101, "upgraded rank in known moves")

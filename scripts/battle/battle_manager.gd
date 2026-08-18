@@ -37,7 +37,7 @@ func execute_move(ability: Ability, caster: CombatUnit, target: CombatUnit, buff
 	var avg_num_c: int = 100 + 15 * caster.plevel
 	var speed_crit_calc: float = caster.speed_u / CombatUnit.get_stat(10, caster.plevel) - 1
 
-	var element: String = ability.damage_element_type
+	var element: CombatUnit.Element = ability.damage_element_type
 	var per_calc = caster.per_u.get(element, 0.0) / avg_num_c
 	var def_calc = target.def_u.get(element, 0.0) / avg_num_c
 	if def_calc <= 0:

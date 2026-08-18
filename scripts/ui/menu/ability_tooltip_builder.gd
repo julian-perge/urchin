@@ -39,7 +39,7 @@ static func build_fields(node: Dictionary, save: PlayerSave, move: Ability, buff
 			next_rank_text = "Next Tier (Lvl. %d)" % TalentTree.required_level(node, rank)
 	var element_index: CombatUnit.Element = -1
 	if not is_passive and move != null:
-		element_index = CombatUnit.element_from_name(move.damage_element_type)
+		element_index = move.damage_element_type
 	var element_color: Color = MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.6, 0.6, 0.4)
 	return {
 		"title": title,
