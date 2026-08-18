@@ -148,6 +148,47 @@ func unequip_to_inventory(equip_slot: int) -> bool:
 	return true
 
 
+# Swaps item_array[slot_a] and item_array[slot_b] in place - the drag-drop
+# inventory<->inventory move (click never needed this; it only ever equips
+# or unequips one slot at a time).
+func swap_inventory_slots(slot_a: int, slot_b: int) -> bool:
+	if current_save == null:
+		return false
+	if slot_a < 0 or slot_a >= current_save.item_array.size():
+		return false
+	if slot_b < 0 or slot_b >= current_save.item_array.size():
+		return false
+	var tmp: int = int(current_save.item_array[slot_a])
+	current_save.item_array[slot_a] = current_save.item_array[slot_b]
+	current_save.item_array[slot_b] = tmp
+	inventory_changed.emit()
+	return true
+
+
+# Like unequip_to_inventory, but into a specific cell rather than always the
+# first free one (dragging equipment onto a particular inventory slot).
+# Whatever was already in inventory_index gets displaced to the first free
+# cell instead (or just stays put if inventory_index was already empty).
+func unequip_to_slot(equip_slot: int, inventory_index: int) -> bool:
+	if current_save == null:
+		return false
+	if inventory_index < 0 or inventory_index >= current_save.item_array.size():
+		return false
+	var item_id: int = Equipment.unequip(current_save, equip_slot, ItemManagerAuto.items_by_id)
+	if item_id == 0:
+		return false
+	var displaced_id: int = int(current_save.item_array[inventory_index])
+	current_save.item_array[inventory_index] = item_id
+	if displaced_id != 0:
+		var free_cell: int = current_save.item_array.find(0)
+		if free_cell != -1:
+			current_save.item_array[free_cell] = displaced_id
+		else:
+			push_warning("unequip_to_slot: inventory full, displaced item %d lost" % displaced_id)
+	inventory_changed.emit()
+	return true
+
+
 # Sells back at 15% of list price - the shop sell button's handler
 # (DefineButton2_3015): Euro += Math.ceil(KRINITEM[5] * 0.15).
 func sell_item(item: GameItem) -> bool:
