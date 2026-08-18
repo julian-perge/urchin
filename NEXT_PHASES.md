@@ -75,7 +75,12 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   - Target highlighting
   - The original hotbar-style battle UI art (`assets/ui/battle/*.png` is extracted and waiting)
 
-- **Item click-n-drag** (project owner request 2026-07-18): items should drag between slots; dragging an item over the sell button shows the sell price in the tooltip before dropping.
+- **Item click-n-drag** - **DONE (2026-08-18)**, project owner request 2026-07-18. See `.claude/plan_item_drag_and_drop.md` for the full task breakdown. `ItemSlot` is both drag source
+  (`_get_drag_data`, a semi-transparent 31x31 preview) and drop target (`_can_drop_data`/`_drop_data`) via Godot's built-in Control drag API - inventory<->inventory swaps, inventory<->equip
+  equips/unequips, and dropping on the sell button sells (hover previews the price in its tooltip). New `GameData.swap_inventory_slots`/`unequip_to_slot` back the two operations click never
+  needed. Click-to-equip/click-to-keep is untouched, both interaction modes work simultaneously. One real deviation from the plan found while executing it: `InventoryPanel.sell_pressed` now
+  carries the `GameItem` directly (not an `ItemSlot`) and the sell-button drop emits that signal rather than calling `GameData.sell_item()` directly - `store_window.gd`'s handler also calls
+  `refresh_store()` afterward, which `InventoryPanel` has no way to know about, so routing both the click and the drag-drop through one signal keeps that behavior identical either way.
   Click-to-equip/click-to-keep stands in until then.
 
 - **Menu screens**
