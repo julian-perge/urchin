@@ -31,6 +31,12 @@ func _ready():
 	for i in GRID_SLOTS:
 		var slot: ItemSlot = ItemSlotScene.instantiate()
 		slot.slot_clicked.connect(_on_slot_clicked)
+		# Drag source/target identity (ItemSlot._get_drag_data/_drop_data) -
+		# grid position never changes once instantiated, so this is set
+		# once here rather than repeated every populate_from_save() alongside
+		# the equivalent save_index meta.
+		slot.set_meta("drag_source", "inventory")
+		slot.set_meta("drag_index", i)
 		inventory_grid.add_child(slot)
 
 

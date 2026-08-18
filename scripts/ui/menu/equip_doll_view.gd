@@ -31,6 +31,8 @@ func setup(slot_centers: Dictionary, doll_position: Vector2, doll_scale: float, 
 		var slot: ItemSlot = ItemSlotScene.instantiate()
 		slot.position = slot_centers[equip_index] - MenuTheme.SLOT_SIZE / 2.0
 		slot.set_meta("equip_index", equip_index)
+		slot.set_meta("drag_source", "equip")
+		slot.set_meta("drag_index", equip_index)
 		slot.slot_clicked.connect(_on_slot_clicked)
 		add_child(slot)
 		_slots[equip_index] = slot

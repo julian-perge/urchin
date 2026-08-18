@@ -63,3 +63,41 @@ func _refresh() -> void:
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		slot_clicked.emit(self)
+
+
+# Drag source (Godot's built-in Control drag API - see
+# .claude/plan_item_drag_and_drop.md). "drag_source"/"drag_index" are set
+# by whichever host owns this slot (inventory_panel.gd: "inventory" +
+# save_index; equip_doll_view.gd: "equip" + equip_index) - ItemSlot itself
+# has no opinion on which kind of slot it is. A dragged-from empty slot
+# (item == null) starts no drag at all, same as Godot's default when this
+# isn't overridden.
+func _get_drag_data(_at_position: Vector2) -> Variant:
+	if item == null:
+		return null
+	set_drag_preview(_build_drag_preview())
+	return _drag_payload()
+
+
+# Split out from _get_drag_data() so it's callable in a test without hitting
+# set_drag_preview()'s "must be called during an active drag" engine
+# precondition - Godot itself only ever invokes _get_drag_data() when a real
+# drag is already in progress, but a direct test call isn't a real drag.
+func _drag_payload() -> Dictionary:
+	return {
+		"item": item,
+		"source": str(get_meta("drag_source", "inventory")),
+		"index": int(get_meta("drag_index", -1)),
+	}
+
+
+func _build_drag_preview() -> Control:
+	var preview := TextureRect.new()
+	preview.texture = item_icon.texture
+	preview.custom_minimum_size = MenuTheme.SLOT_SIZE
+	preview.size = MenuTheme.SLOT_SIZE
+	preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	preview.modulate = Color(1, 1, 1, 0.75)
+	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return preview
