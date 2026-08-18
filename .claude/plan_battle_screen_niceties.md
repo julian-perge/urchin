@@ -6,8 +6,8 @@
 ## Requirements
 - **Hotbar battle art**: `assets/ui/battle/*.png` (4 files, already extracted, currently zero references anywhere) replace the `BottomBar`'s `ColorRect`/`StyleBoxFlat` chrome and `unit_overlay.tscn`'s default-themed `ProgressBar`s. No new extraction, no behavior change.
 - **Decision countdown**: a visible timer counts down from `BattleRunner.BATTLE_TIME_LIMIT` (120s) while the player is deciding their move. Display-only — does NOT force-pass the turn on expiry (see Background for why this deliberately diverges from the original).
-- **Target highlighting**: the existing hover ring fades in/out via tween instead of an instant `visible` toggle. The radial menu's dismissal switches from "click elsewhere closes it" (this session's earlier fix, made without confirming original behavior) to "fades out when the mouse leaves the unit+fanned-orbs area" — matching the original, confirmed by the project owner directly against the live game.
-- **Buff icons over units**: `unit_overlay.tscn` gains a small icon row showing each active buff in `CombatUnit.buff_slots`. A buff resolves to a real icon when its name matches one of the 15 talent-tree `buff_family` values already used by the abilities screen; everything else (the other ~455 of 470 buffs) falls back to a colored dot by polarity, with a tooltip carrying the buff's name and remaining duration.
+- **Target highlighting**: the existing hover ring fades in **fast** and out **slow** (matching the original's asymmetric `_alpha += 20`/`-= 5` per-frame rates) instead of an instant `visible` toggle, and only while it's actually the player's decision window (the original gates this on `InBattle == false`; the current port shows it on any hover regardless of turn - a real gap this fixes). The radial menu's dismissal switches from "click elsewhere closes it" (this session's earlier fix, made without confirming original behavior) to "fades out when the mouse leaves the unit+fanned-orbs area" — matching the original, confirmed by the project owner directly against the live game (the menu's own fade timing lives inside a shared symbol's internal timeline in the source, not reachable in the root-timeline AS export, so this half is taken as directly-verified fact rather than decompiled and cited).
+- **Buff icons over units**: `unit_overlay.tscn` gains a small icon row (up to 7, sorted by remaining duration descending, matching the original) showing each active buff in `CombatUnit.buff_slots` - a real per-buff icon extracted from the original's own buff-icon sheet (`DefineSprite 100`, 400 frames, one per buff via frame-label lookup - see Background), tinted by the buff's element color, with the remaining-turns count and a name/description tooltip, all matching the original's `KrinBuffShower` mechanism exactly.
 - **Combat log panel**: a new toggleable hotbar button shows/hides a scrolling text panel (off by default) that narrates `BattleRunner` events live as they play — the first `RichTextLabel`/`ScrollContainer` panel in the project, no existing pattern to copy.
 - Every item ships with GUT coverage matching what's actually testable (pure logic and structural pieces get direct tests; anything requiring real animation timing or literal pixel rendering is spot-checked manually instead, same restraint already established elsewhere in this codebase for `CharacterVisual` state).
 
@@ -34,18 +34,53 @@ The original (`dev/source_files/action_script_curated/frame217_KRIN_BATTLE_SCENE
 `BattleRunner` is a `RefCounted`, not a `Node` — it has no `_process()` and can't drive a timer itself. The timer lives on `battle_scene.gd`, which already has a scene tree.
 
 ### Task 3: Target highlighting
-Two independent, small changes to existing working code in `battle_scene.gd`:
-- The hover ring (`_rings`, `RING_COLORS`, `_on_unit_hovered`, `_draw_ring`) currently toggles `Ring.visible` instantly on `mouse_entered`/`mouse_exited`. Replace with a tween fading `Ring.modulate.a` between 0 and 1.
-- The radial menu (`_radial_menu`, opened by `_on_unit_clicked`) currently closes via `_unhandled_input()` on any click outside it (added this session, before the project owner had confirmed the original's actual behavior against the live game). The project owner has now confirmed directly against the original: it fades out when the mouse leaves the unit-plus-fanned-orbs area, not on a click elsewhere. Remove the `_unhandled_input()` click-away handler; replace with hover-leave detection that checks whether the mouse is still over the unit's own hit area OR any one of the radial menu's orb `Button`s (not just the unit alone — the orbs fan out well outside the unit's own clickable region, so a naive "left the unit" check would close the menu the instant the player moves toward an orb to click it).
+Verified directly against the decompiled source, `frame_217/PlaceObject3_3394_450/CLIPACTIONRECORD onClipEvent(enterFrame).as` and 5 sibling files (`_455`/`_460`/`_465`/`_470`/`_475` - one per battle slot):
+```
+onClipEvent(enterFrame){
+   if(this.hitter.hitTest(_root._xmouse,_root._ymouse)) {
+      if(_alpha < 100 && _root.InBattle == false) { _alpha = _alpha + 20; }
+      _root.hitTarget[2] = 1; _root.HTX = _X; _root.HTY = _Y;
+   } else {
+      if(_alpha > 0) { _alpha = _alpha - 5; }
+      _root.hitTarget[2] = 0;
+   }
+}
+```
+Each unit polls its own invisible `hitter` shape against the mouse position every frame (the era's usual technique - functionally the same thing Godot's `mouse_entered`/`mouse_exited` signals already give us more cheaply). Two concrete, previously-unknown facts this fixes:
+- **The fade is asymmetric** - `+20`/frame fade-in (~5 frames to fully show), `-5`/frame fade-out (~20 frames to fully hide) - not a single symmetric tween duration.
+- **The ring only fades in during the player's own decision window** (`_root.InBattle == false`) - `battle_scene.gd`'s current `_on_unit_hovered` shows the ring on ANY hover regardless of whose turn it is, a real behavioral gap from source, not just a missing-polish item.
+
+`frame_217/DoAction_3.as`'s `onMouseDown` confirms the radial menu (`selector`) still opens on an actual click (matching `_on_unit_clicked`'s current design), gated on the same per-unit hit array (`hitTarget[i]`), and spawns at `_alpha = 0` before something fades it in - but that fade-in/out timing lives inside the shared `selector` symbol's OWN internal timeline (the same "selector" clip the abilities screen's wheel already reuses per `abilities_window.gd`'s header comment), not in any root-timeline AS file this investigation could reach. The project owner has directly verified against the live game that moving the mouse away from the unit-plus-fanned-orbs area fades both the ring and the menu out - taken as ground truth for that half, layered on top of the concretely-sourced ring-fade-rate/turn-gating facts above.
+
+Two changes to `battle_scene.gd`:
+- Replace `Ring.visible` instant toggling with a tween on `Ring.modulate.a`, asymmetric rates (fast in, slow out, matching the `+20`/`-5` ratio above), gated so it only plays while `_player_action_pending` is true.
+- Remove the `_unhandled_input()` click-away handler (added this session before this investigation happened) entirely; replace with hover-leave detection that checks whether the mouse is still over the unit's own hit area OR any one of the radial menu's orb `Button`s (not just the unit alone - the orbs fan out well outside the unit's own clickable region, so a naive "left the unit" check would close the menu the instant the player moves toward an orb to click it), fading `_radial_menu` out the same way the ring does.
 
 ### Task 4: Buff icons over units
-`CombatUnit.buff_slots` (`combat_unit.gd:132`) already carries everything needed per active buff: `{"cd": int, "buff_id": int, "buff_value": float, "shield_buff_value": float}` — `cd` is remaining duration in turns, `buff_id` resolves through `buffs_by_id` to the `Buff` resource for its name/polarity.
+`CombatUnit.buff_slots` (`combat_unit.gd:132`) already carries everything needed per active buff: `{"cd": int, "buff_id": int, "buff_value": float, "shield_buff_value": float}` - `cd` is remaining duration in turns, `buff_id` resolves through `buffs_by_id` to the `Buff` resource.
 
-Icon coverage is the real gap. `assets/ui/abilities/*.png` (104 files) covers the abilities screen's talent-tree nodes via `abilities_window.gd`'s `_tree_node_icon_key()` → `_sanitize_icon_key(buff_family)` → `"%s%s.png"` lookup, but `buff_family` is a field on *talent-tree nodes* (`talent_tree.gd`), not on `Buff` itself, and only 15 distinct `buff_family` values exist against 470 total buffs in `dev/converted_json/buffs.json`. A buff applied by a move in combat (poison, a debuff, a shield) generally has no icon association today. New `BuffIcons.icon_for(buff: Buff) -> Texture2D`-style helper: strip a trailing rank digit off `buff.internal_name` and try the same `assets/ui/abilities/` lookup first (covers the 15 known families when they happen to apply); fall back to a small colored dot by `buff.polarity` (1 = beneficial = green, -1 = harmful = red, 0 = neutral = gray, reusing `MenuTheme`'s existing palette) with a tooltip carrying `buff.display_name`/`internal_name` and `cd`.
+Verified directly against `frame42/sonny2_addNewBuffKrin.txt` (lines ~355-374) - the original's real mechanism, not a fallback scheme:
+```
+ukcb.BUFFARRAYK.sortOn("CD", Array.DESCENDING | Array.NUMERIC);
+h = 0;
+while (h < 7) {
+   if (ukcb.BUFFARRAYK[h].CD != 0) {
+      _root["p"+ukcb.playerID+"BAR"].attachMovie("KrinBuffShower", "bshr"+h, h);
+      ...["bshr"+h]._x = (buffOffsetGF + buffSpaceGF*h) * buffMultiGF;   // buffOffsetGF=110, buffSpaceGF=17, buffMultiGF = 1 or -1 by team side
+      ...["bshr"+h].buffCounter = ukcb.BUFFARRAYK[h].CD;
+      ...["bshr"+h].buffIcon.gotoAndStop(ukcb.BUFFARRAYK[h].buffId);
+      // buffColor tinted via Color.setRGB() looked up by the buff's element against elementColorArray
+      ...["bshr"+h].toolTipTitle = _root["KRINBUFF"+buffId][0];  // display name
+      ...["bshr"+h].toolTip = _root["KRINBUFF"+buffId][25];       // tooltip_description
+   }
+   h++;
+}
+```
+Up to 7 buff-icon slots per unit, sorted by remaining duration descending, positioned on a 17px pitch from a 110px offset (direction flipped by team side), each showing: a real per-buff icon (`buffIcon`, `DefineSprite 104`'s nested `characterId="100"` child), tinted by the buff's element color (the same `elementColorArray` lookup already ported as `MenuTheme.ELEMENT_COLORS`/`CombatUnit.ELEMENT_ORDER`), a remaining-turns counter, and a name+description tooltip.
 
-`unit_overlay.tscn` (`Ring`, `NameLabel`, `HealthBar`, `HealthValue`, `FocusBar`, `HitButton` today) gains a new small `HBoxContainer` row for these icons, refreshed alongside the existing bar updates.
+`DefineSprite 100` is confirmed (`sprite_body()`) to be exactly the same class of asset as the item-icon sheet (2064) and ability-icon sheet (2427) already extracted this project: 400 `ShowFrameTag`s, **419 `FrameLabelTag`s named by the buff's own `internal_name`** (e.g. frame label `"FIRESAM"` matches buff id 1's `internal_name` in `buffs.json` exactly). This means extraction uses the identical label-lookup technique `item_icons.py`/`faces.py` already use (`ffdec` sprite:png export, trim to opaque bounds per frame) - not a numeric-offset guess, and not a fallback/generic-icon scheme. A new `dev/urchin_dev/swf/extract/buff_icons.py` (matching the shape of `item_icons.py`) writes `assets/ui/buffs/<internal_name>.png`; note 419 labels against 400 frames means some frames carry more than one label (aliases) - the existing `snapshot_timeline()` label-lookup helper already tolerates this, same as it does for the other icon sheets.
 
-Full icon extraction/art for all 470 buffs is out of scope here — same shape as the already-deferred missile-projectile-art backlog item, a separate follow-up if wanted later.
+`unit_overlay.tscn` (`Ring`, `NameLabel`, `HealthBar`, `HealthValue`, `FocusBar`, `HitButton` today) gains a new small `HBoxContainer` row of up to 7 icon slots, refreshed from the owning `CombatUnit.buff_slots` alongside the existing bar updates, each icon `modulate`-tinted by element color (Godot can tint at runtime - no need to bake per-element-color variants into the extracted art), the remaining-turns count as a small overlaid label, and `tooltip_text` set from the buff's display name + description.
 
 ### Task 5: Combat log panel
 `LogManagerAuto` (`scripts/autoload/log_manager.gd`) is confirmed file-only (`user://logs/<channel>.log`) — no in-memory buffer, no signal, purely a developer diagnostic `battle_scene.gd:_log()` already writes to. This task is a separate, new, player-facing panel, not a reuse of that logger.
@@ -73,20 +108,21 @@ Toggleable via a new hotbar-style button, matching the existing menu-button conv
 - Demo: starting your turn shows the timer counting down; letting it hit 0 does nothing but sit at 0 (no forced pass, no error).
 
 ### Task 3: Fade-based target highlighting + radial menu dismissal
-- Objective: match the original's confirmed hover/fade behavior exactly, correcting this session's earlier click-away guess.
-- Replace `Ring.visible` toggling with a tween on `Ring.modulate.a` (0 <-> 1) in `_on_unit_hovered`.
+- Objective: match the original's confirmed hover/fade behavior exactly (asymmetric fade rate, turn-gated), correcting this session's earlier click-away guess.
+- Replace `Ring.visible` toggling with a tween on `Ring.modulate.a` in `_on_unit_hovered`: fast fade-in (~0.15-0.2s), slower fade-out (~0.6-0.7s, matching the source's 4x ratio), only triggered while `_player_action_pending` is true.
 - Remove `_unhandled_input()`'s click-away handler entirely.
 - Add hover-leave detection for the radial menu: track whether the mouse is over the clicked unit's hit area or any radial-menu orb; when it's over none of them, fade `_radial_menu` out (tween) then free it, matching the ring's own fade treatment.
 - Existing regression test `test_radial_menu_closes_on_click_away` gets rewritten to `test_radial_menu_fades_out_on_hover_leave` (or similar), asserting the new mechanic; the old click-away path is deliberately gone.
-- GUT test: ring fade - assert modulate.a animates toward 1/0 across a few frames rather than snapping. Radial menu - open it, simulate mouse position moving off both the unit and every orb, assert it fades out and is eventually freed; simulate hovering an orb (not the unit) and assert it stays open.
-- Demo: hovering a unit fades its ring in smoothly; clicking opens the radial menu; moving toward one of its orbs keeps it open; moving away from the whole cluster fades both out together.
+- GUT test: ring fade - assert modulate.a animates toward 1/0 across a few frames rather than snapping, and that hovering during an AI turn (`_player_action_pending == false`) does not fade it in. Radial menu - open it, simulate mouse position moving off both the unit and every orb, assert it fades out and is eventually freed; simulate hovering an orb (not the unit) and assert it stays open.
+- Demo: hovering a unit fades its ring in fast, out slow, only during your own decision window; clicking opens the radial menu; moving toward one of its orbs keeps it open; moving away from the whole cluster fades both out together.
 
 ### Task 4: Buff icons over units
-- Objective: every active buff on a unit shows an icon (real when available, a polarity-colored fallback otherwise) with a duration tooltip.
-- New `BuffIcons.icon_for(buff: Buff) -> Texture2D` (or similar small helper/autoload-free class) implementing the strip-rank-digit-then-lookup-then-fallback logic described in Background.
-- `unit_overlay.tscn`: new `HBoxContainer` row of small icon slots; `unit_overlay.gd` refreshes it from the owning `CombatUnit.buff_slots` alongside the existing health/focus bar refresh.
-- GUT test: `BuffIcons.icon_for()` returns the real icon texture for a buff whose name matches one of the 15 known families, and a valid fallback (non-null, distinguishable by polarity) for one that doesn't. `unit_overlay.gd`'s refresh populates the correct count of icon slots for a unit's current `buff_slots`, clears them when a buff expires.
-- Demo: applying a buff in battle shows its icon (or fallback dot) over the unit immediately, with a tooltip naming the buff and remaining turns; it disappears when the buff expires.
+- Objective: every active buff on a unit shows its real icon (extracted from `DefineSprite 100`), tinted by element, with a duration counter and name+description tooltip - matching `KrinBuffShower` exactly.
+- New `dev/urchin_dev/swf/extract/buff_icons.py` (mirrors `item_icons.py`): exports `DefineSprite 100` via `ffdec`'s sprite:png renderer, one PNG per `FrameLabelTag` (named by the buff's `internal_name`) into `assets/ui/buffs/<internal_name>.png`, trimmed to opaque bounds per frame. Verify frame-label-to-`buffs.json`-`internal_name` correspondence on a handful of buffs before running the full batch (same diligence as every prior icon-sheet extraction this project has done).
+- New `BuffIcons.icon_for(buff: Buff) -> Texture2D` helper resolving `assets/ui/buffs/<internal_name>.png` (handling the family-of-ranked-buffs case the same way the existing extraction scripts already handle label variance).
+- `unit_overlay.tscn`: new `HBoxContainer` row of up to 7 icon slots (17px pitch, matching `buffSpaceGF`); `unit_overlay.gd` refreshes it from the owning `CombatUnit.buff_slots`, sorted by `cd` descending, alongside the existing health/focus bar refresh - each icon `modulate`-tinted by `CombatUnit.ELEMENT_ORDER`/`MenuTheme.ELEMENT_COLORS` for the buff's element, an overlaid small label for `cd`, and `tooltip_text` from the buff's display name + description.
+- GUT test: `BuffIcons.icon_for()` returns a real, non-null texture for a real buff id. `unit_overlay.gd`'s refresh populates the correct count/order of icon slots (sorted by `cd` descending, capped at 7) for a unit's current `buff_slots`, tints correctly by element, and clears a slot when its buff expires.
+- Demo: applying a buff in battle shows its real icon over the unit immediately, tinted by element, with a tooltip naming the buff + remaining turns; it disappears when the buff expires; a unit with more than 7 active buffs shows only the 7 longest-remaining.
 
 ### Task 5: Combat log panel
 - Objective: a togglable, live-narrated combat log, first of its kind in the project.
