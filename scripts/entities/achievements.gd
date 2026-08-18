@@ -83,10 +83,10 @@ static func check_all_star(saves: Array) -> bool:
 static func collect_battle_counters(runner: BattleRunner, units: Dictionary) -> Dictionary:
 	var player_damage: float = 0.0
 	for event in runner.events:
-		if event.get("type") != "move" or int(event.get("caster_slot", 0)) != BattleRunner.PLAYER_SLOT:
+		if event.get("type") != BattleRunner.EventType.MOVE or int(event.get("caster_slot", 0)) != BattleRunner.PLAYER_SLOT:
 			continue
 		var result: Dictionary = event.get("result", {})
-		if result.get("type") == "damage":
+		if result.get("type") == BattleManager.ResultType.DAMAGE:
 			player_damage += float(result.get("amount", 0.0)) + float(result.get("shielded_amount", 0.0))
 	var teammate_count: int = 0
 	for slot in [3, 5]:

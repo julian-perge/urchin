@@ -546,30 +546,30 @@ func _on_retreat_pressed() -> void:
 func _play_events(events: Array) -> void:
 	for event in events:
 		match event["type"]:
-			"move":
+			BattleRunner.EventType.MOVE:
 				await _play_move_event(event)
-			"stunned":
+			BattleRunner.EventType.STUNNED:
 				_float_text(int(event["caster_slot"]), "STUNNED", Color.YELLOW)
 				await _pause(0.3)
-			"move_failed":
+			BattleRunner.EventType.MOVE_FAILED:
 				_float_text(int(event["caster_slot"]), "NOT ENOUGH %s" % str(event.get("reason", "")).to_upper(), Color.ORANGE)
 				await _pause(0.3)
-			"dispel":
+			BattleRunner.EventType.DISPEL:
 				_float_text(int(event["target_slot"]), "DISPEL", Color.CYAN)
-			"death":
+			BattleRunner.EventType.DEATH:
 				# A move-caused death already played at the killing blow's
 				# impact (see _show_move_result) - only the pacing pause
 				# still belongs here. damage_over_time deaths (buff ticks,
 				# not a move) have no impact moment to hook into, so they
 				# still play here, same as always.
-				if event.get("cause") != "move":
+				if event.get("cause") != BattleRunner.DeathCause.MOVE:
 					_play_death(int(event["slot"]))
 				await _pause(0.4)
-			"speech":
+			BattleRunner.EventType.SPEECH:
 				await _play_speech(event)
-			"phase_advanced":
+			BattleRunner.EventType.PHASE_ADVANCED:
 				AudioManagerAuto.play_battle_music(true)
-			"battle_ended":
+			BattleRunner.EventType.BATTLE_ENDED:
 				pass
 		# Mid-batch: redraw from DISPLAYED hp only - snapping here would
 		# reveal damage from hits that haven't animated yet.
@@ -675,8 +675,8 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 			JSON.stringify(result), target_slot, target_unit.player_name,
 			int(target_unit.life_n), int(target_unit.life_u),
 		])
-	match result.get("type", ""):
-		"damage":
+	match result.get("type"):
+		BattleManager.ResultType.DAMAGE:
 			# KrinNumberShow: numbers colored by the move's ELEMENT; crits
 			# play the bigger "critical" variant of the same color.
 			var color: Color = Color.WHITE
@@ -700,16 +700,16 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 				target_visual.set_state(CharacterVisual.State.HIT)
 			if target_unit != null:
 				AudioManagerAuto.voice(target_unit.voice_hit)
-		"heal":
+		BattleManager.ResultType.HEAL:
 			_float_text(target_slot, "+%d" % int(result.get("amount", 0)), MenuTheme.HEAL_COLOR)
 			if target_unit != null:
 				_display_hp[target_slot] = minf(
 					_display_hp.get(target_slot, 0.0) + float(result.get("amount", 0)),
 					target_unit.life_u
 				)
-		"focus":
+		BattleManager.ResultType.FOCUS:
 			_float_text(target_slot, "+%d FOCUS" % int(result.get("amount", 0)), Color.SKY_BLUE)
-		"miss":
+		BattleManager.ResultType.MISS:
 			# The special miss frame KrinNumberShow swaps to at impact,
 			# instead of a damage number - the caster's own animation still
 			# played in full to get here (see _execute_move_action's comment).

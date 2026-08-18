@@ -27,6 +27,20 @@ extends RefCounted
 
 enum Outcome { LOSS = 0, WIN = 1, DRAW = 2, ONGOING = -1 }
 
+# Every _log()'d entry's own "type" key - what battle_scene.gd's
+# _play_events() matches on to decide how to present a half-turn's worth of
+# events. A typo previously failed silently (a plain match on a bare string
+# with no `_:` default just does nothing for an unrecognized case).
+enum EventType {
+	MOVE, STUNNED, MOVE_FAILED, DISPEL, DEATH, SPEECH, PHASE_ADVANCED, BATTLE_ENDED,
+}
+
+# A DEATH event's own "cause" key - MOVE plays at the killing blow's impact
+# (see battle_scene.gd's _show_move_result), DAMAGE_OVER_TIME (a buff tick,
+# not a move) has no impact moment to hook into so it plays from the queued
+# event instead, same as always.
+enum DeathCause { MOVE, DAMAGE_OVER_TIME }
+
 const BATTLE_TIME_LIMIT: float = 120.0
 const PLAYER_SLOT: int = 1
 const TEAM_SLOTS: Dictionary[CombatUnit.Team, Array] = {
@@ -212,7 +226,7 @@ func _execute_action(action: Dictionary) -> void:
 	var target: CombatUnit = units.get(action.get("target_slot", 0))
 	if move_id != 0 and caster.active:
 		if caster.stun != 0:
-			_log({"type": "stunned", "caster_slot": action["caster_slot"]})
+			_log({"type": EventType.STUNNED, "caster_slot": action["caster_slot"]})
 		elif target != null and target.active:
 			_execute_move_action(action, caster, target)
 		# Target already dead and caster not stunned: the move silently
@@ -221,7 +235,7 @@ func _execute_action(action: Dictionary) -> void:
 	if should_tick_buffs and caster.active:
 		caster.tick_buffs(buffs_by_id)
 		if not caster.active:
-			_log({"type": "death", "slot": action["caster_slot"], "cause": "damage_over_time"})
+			_log({"type": EventType.DEATH, "slot": action["caster_slot"], "cause": DeathCause.DAMAGE_OVER_TIME})
 
 
 func _execute_move_action(action: Dictionary, caster: CombatUnit, target: CombatUnit) -> void:
@@ -233,7 +247,7 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 	var life_cost = move.flat_life_cost + round(caster.life_u * move.health_cost_percentage)
 	if caster.focus_n < move.focus_cost or caster.life_n <= life_cost:
 		var reason: String = "focus" if caster.focus_n < move.focus_cost else "health"
-		_log({"type": "move_failed", "caster_slot": caster.player_id, "move_id": move.id, "reason": reason})
+		_log({"type": EventType.MOVE_FAILED, "caster_slot": caster.player_id, "move_id": move.id, "reason": reason})
 		return
 
 	caster.focus_n -= move.focus_cost
@@ -262,12 +276,12 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 		# per animation type") and only the impact-time damage NUMBER swaps
 		# to a special miss frame. Logging a bare "miss" type here instead
 		# skipped straight to a floating MISS label with no animation at all.
-		_log_move_result(caster, target, move, {"type": "miss"})
+		_log_move_result(caster, target, move, {"type": BattleManager.ResultType.MISS})
 		return
 
 	var dispelled: Array = _resolve_dispels(move, target)
 	if not dispelled.is_empty():
-		_log({"type": "dispel", "caster_slot": caster.player_id, "target_slot": target.player_id, "removed": dispelled})
+		_log({"type": EventType.DISPEL, "caster_slot": caster.player_id, "target_slot": target.player_id, "removed": dispelled})
 
 	if move.hits_all_enemies:
 		for slot in TEAM_SLOTS[CombatUnit.Team.TWO if caster.team_side == CombatUnit.Team.ONE else CombatUnit.Team.ONE]:
@@ -341,7 +355,7 @@ func _end_half_turn() -> void:
 
 	_check_win_lose()
 	if is_over():
-		_log({"type": "battle_ended", "outcome": win_condition, "turns": turn_count})
+		_log({"type": EventType.BATTLE_ENDED, "outcome": win_condition, "turns": turn_count})
 		return
 
 	turn_time -= 1
@@ -352,7 +366,7 @@ func _end_half_turn() -> void:
 
 	_drain_speeches()
 	if is_over():
-		_log({"type": "battle_ended", "outcome": win_condition, "turns": turn_count})
+		_log({"type": EventType.BATTLE_ENDED, "outcome": win_condition, "turns": turn_count})
 
 
 func _check_phase_advance() -> void:
@@ -372,7 +386,7 @@ func _check_phase_advance() -> void:
 	if advance:
 		phase += 1
 		turns_in_phase = 0
-		_log({"type": "phase_advanced", "phase": phase})
+		_log({"type": EventType.PHASE_ADVANCED, "phase": phase})
 
 
 # battle.phases keys are String indices; entry "0" is the "EMPTY" placeholder.
@@ -488,7 +502,7 @@ func _drain_speeches() -> void:
 			sequence += 1
 			emitted += 1
 			_log({
-				"type": "speech",
+				"type": EventType.SPEECH,
 				"speaker_slot": speaker_slot,
 				"say": speech.get("say", ""),
 				"time_to_say": speech.get("timeToSay", 0.0),
@@ -515,7 +529,7 @@ func _speech_speaker_slot(speaker) -> int:
 
 func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, result: Dictionary) -> void:
 	var entry: Dictionary[Variant, Variant] = {
-		"type": "move",
+		"type": EventType.MOVE,
 		"caster_slot": caster.player_id,
 		"target_slot": target.player_id,
 		"move_id": move.id,
@@ -524,7 +538,7 @@ func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, res
 	}
 	_log(entry)
 	if result.get("target_died", false):
-		_log({"type": "death", "slot": target.player_id, "cause": "move"})
+		_log({"type": EventType.DEATH, "slot": target.player_id, "cause": DeathCause.MOVE})
 
 
 func _log(entry: Dictionary) -> void:

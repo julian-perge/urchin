@@ -117,7 +117,7 @@ func test_battle_100_simple_fight():
 
 func test_battle_104_boss_phases_and_speeches():
 	var counts = _assert_battle_runs(104)
-	assert_gt(counts.get("speech", 0), 0, "scripted dialogue fired")
+	assert_gt(counts.get(BattleRunner.EventType.SPEECH, 0), 0, "scripted dialogue fired")
 
 
 # battle_scene.gd never reads runner.events directly - it only ever plays
@@ -142,7 +142,7 @@ func test_setup_returns_its_own_turn_time_zero_speeches():
 	)
 	var has_speech: bool = false
 	for event in setup_events:
-		if event["type"] == "speech":
+		if event["type"] == BattleRunner.EventType.SPEECH:
 			has_speech = true
 	assert_true(has_speech, "the turnTime:0 speech is returned by setup(), not left stranded in runner.events")
 
@@ -166,9 +166,7 @@ func test_misses_are_move_events_not_a_separate_type():
 	_run_to_completion(runner)
 	var miss_count: int = 0
 	for event in runner.events:
-		if event.get("type") == "miss":
-			fail_test("a bare top-level \"miss\" event type still exists")
-		if event.get("type") == "move" and event.get("result", {}).get("type") == "miss":
+		if event.get("type") == BattleRunner.EventType.MOVE and event.get("result", {}).get("type") == BattleManager.ResultType.MISS:
 			miss_count += 1
 			assert_ne(
 				int(event["caster_slot"]), int(event["target_slot"]),
@@ -192,10 +190,10 @@ func _assert_battle_runs(battle_id: int) -> Dictionary:
 	var counts = {}
 	for event in runner.events:
 		counts[event["type"]] = counts.get(event["type"], 0) + 1
-	assert_gt(counts.get("move", 0), 0, "moves were executed")
+	assert_gt(counts.get(BattleRunner.EventType.MOVE, 0), 0, "moves were executed")
 	if not battle.phases.is_empty():
 		assert_true(
-			counts.get("phase_advanced", 0) > 0 or runner.is_over(),
+			counts.get(BattleRunner.EventType.PHASE_ADVANCED, 0) > 0 or runner.is_over(),
 			"phase advanced or battle ended early"
 		)
 	gut.p("battle %d: outcome=%d turns=%d events=%s" % [battle_id, runner.win_condition, runner.turn_count, counts])

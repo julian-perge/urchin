@@ -2,6 +2,15 @@
 class_name BattleManager
 extends Node
 
+# What kind of result executing a move produced - carried in a move's
+# "result" dict (the "type" key) all the way out to battle_scene.gd's
+# _show_move_result(), which matches on it to pick the right display (a
+# damage/heal number, a MISS label, etc). MISS itself is logged by
+# BattleRunner, not this file (the accuracy roll happens before
+# execute_move() is ever called), but shares this enum since it's the same
+# "what happened" domain the other three already occupy.
+enum ResultType { DAMAGE, HEAL, FOCUS, MISS }
+
 # Ported from frame42/sonny2_executeMove.txt, with buff application from
 # frame42/sonny2_addNewBuffKrin.txt's applyBuffKrin() wired in afterward (the
 # original interleaves them per move-type branch; this applies uniformly to
@@ -128,7 +137,7 @@ func _apply_damage(target: CombatUnit, amount: float, did_crit: bool) -> Diction
 		var difference: float = target.shield - amount
 		if difference > 0:
 			target.shield -= amount
-			return {"type": "damage", "amount": 0, "shielded_amount": amount, "did_crit": did_crit, "target_died": false}
+			return {"type": ResultType.DAMAGE, "amount": 0, "shielded_amount": amount, "did_crit": did_crit, "target_died": false}
 		shielded_amount = target.shield
 		amount -= target.shield
 		target.shield = 0
@@ -145,7 +154,7 @@ func _apply_damage(target: CombatUnit, amount: float, did_crit: bool) -> Diction
 			target.life_n = target.life_u
 
 	return {
-		"type": "damage",
+		"type": ResultType.DAMAGE,
 		"amount": amount,
 		"shielded_amount": shielded_amount,
 		"did_crit": did_crit,
@@ -168,22 +177,22 @@ func _execute_heal(ability: Ability, caster: CombatUnit, target: CombatUnit, per
 	if amount <= 0:
 		amount = 0
 	if amount <= 0:
-		return {"type": "heal", "amount": 0, "did_crit": did_crit, "target_died": false}
+		return {"type": ResultType.HEAL, "amount": 0, "did_crit": did_crit, "target_died": false}
 
 	if target.sswitch == 0:
 		target.life_n += amount
 		if target.life_n > target.life_u:
 			target.life_n = target.life_u
-		return {"type": "heal", "amount": amount, "did_crit": did_crit, "target_died": false}
+		return {"type": ResultType.HEAL, "amount": amount, "did_crit": did_crit, "target_died": false}
 	else:
 		target.life_n -= amount
 		if target.life_n <= 0:
 			target.life_n = 0
 			target.focus_n = 0
 			target.active = false
-		return {"type": "heal", "amount": amount, "did_crit": did_crit, "target_died": not target.active}
+		return {"type": ResultType.HEAL, "amount": amount, "did_crit": did_crit, "target_died": not target.active}
 
 func _execute_focus(ability: Ability, target: CombatUnit) -> Dictionary:
 	target.focus_n += ability.focus_amount_change
 	target.focus_n = clamp(target.focus_n, 0, target.focus_u)
-	return {"type": "focus", "amount": ability.focus_amount_change}
+	return {"type": ResultType.FOCUS, "amount": ability.focus_amount_change}

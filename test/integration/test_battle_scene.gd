@@ -88,7 +88,7 @@ func test_setup_time_speech_plays_through_the_real_scene():
 	assert_true(scene._pending_setup_events.is_empty(), "_battle_loop() played and cleared the pre-loop event")
 	var has_speech: bool = false
 	for event in scene.runner.events:
-		if event["type"] == "speech":
+		if event["type"] == BattleRunner.EventType.SPEECH:
 			has_speech = true
 	assert_true(has_speech, "the speech is still in the real log too")
 
@@ -243,8 +243,8 @@ func test_death_plays_at_impact_not_after_caster_returns():
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	var enemy_slot := 2  # battle 100's Prison Guard
 	scene._show_move_result(
-		{"type": "move", "caster_slot": 1, "target_slot": enemy_slot, "move_id": 100,
-			"result": {"type": "damage", "amount": 99999.0, "target_died": true}},
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": enemy_slot, "move_id": 100,
+			"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 99999.0, "target_died": true}},
 		enemy_slot
 	)
 	assert_eq(
