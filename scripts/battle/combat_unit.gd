@@ -11,6 +11,12 @@ extends RefCounted
 
 enum Difficulty { EASY, NORMAL, HARD }
 
+# Matches BattleRunner.TEAM_SLOTS' keys and CombatUnit.team_side's own values
+# (odd slots 1/3/5 = ONE, even slots 2/4/6 = TWO) - deliberately not
+# zero-based so team_side's un-assigned-yet default of 0 stays a visibly
+# invalid sentinel rather than aliasing a real team.
+enum Team { ONE = 1, TWO = 2 }
+
 # modVar_1 (strength/magic), modVar_2 (life), modVar_3 (speed), per difficulty.
 const DIFFICULTY_MODIFIERS: Dictionary[Difficulty, Dictionary] = {
 	Difficulty.EASY: {"strength_magic": 0.4, "life": 0.5, "speed": 0.9000000000000002},

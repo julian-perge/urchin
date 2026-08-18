@@ -29,7 +29,9 @@ enum Outcome { LOSS = 0, WIN = 1, DRAW = 2, ONGOING = -1 }
 
 const BATTLE_TIME_LIMIT: float = 120.0
 const PLAYER_SLOT: int = 1
-const TEAM_SLOTS: Dictionary[int, Array] = {1: [1, 3, 5], 2: [2, 4, 6]}
+const TEAM_SLOTS: Dictionary[CombatUnit.Team, Array] = {
+	CombatUnit.Team.ONE: [1, 3, 5], CombatUnit.Team.TWO: [2, 4, 6],
+}
 
 var units: Dictionary = {}  # slot (1..6) -> CombatUnit
 var battle: BattleFight = null
@@ -136,7 +138,7 @@ func advance_half_turn(player_action: Dictionary = {}) -> Array:
 		return []
 	var events_start: int = events.size()
 
-	for slot in TEAM_SLOTS[1] + TEAM_SLOTS[2]:
+	for slot in TEAM_SLOTS[CombatUnit.Team.ONE] + TEAM_SLOTS[CombatUnit.Team.TWO]:
 		healed_this_turn[slot] = 0.0
 
 	var queue: Array[Variant] = []
@@ -173,7 +175,7 @@ func advance_half_turn(player_action: Dictionary = {}) -> Array:
 	return events.slice(events_start)
 
 
-func _team_slots_in_order(team: int) -> Array:
+func _team_slots_in_order(team: CombatUnit.Team) -> Array:
 	var slots: Array = TEAM_SLOTS[team].duplicate()
 	# TeamSpeedAdder: speed descending, slot id descending on ties.
 	slots.sort_custom(func(a, b):
@@ -268,7 +270,7 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 		_log({"type": "dispel", "caster_slot": caster.player_id, "target_slot": target.player_id, "removed": dispelled})
 
 	if move.hits_all_enemies:
-		for slot in TEAM_SLOTS[2 if caster.team_side == 1 else 1]:
+		for slot in TEAM_SLOTS[CombatUnit.Team.TWO if caster.team_side == CombatUnit.Team.ONE else CombatUnit.Team.ONE]:
 			var enemy: CombatUnit = units.get(slot)
 			if enemy != null and enemy.active:
 				var result: Dictionary = battle_manager.execute_move(move, caster, enemy, buffs_by_name)
@@ -346,7 +348,7 @@ func _end_half_turn() -> void:
 	if turn_time == 0:
 		_team_select()
 	else:
-		team_move_now = 2 if team_move_now == 1 else 1
+		team_move_now = CombatUnit.Team.TWO if team_move_now == CombatUnit.Team.ONE else CombatUnit.Team.ONE
 
 	_drain_speeches()
 	if is_over():
@@ -388,7 +390,7 @@ func _phase_entry(index: int) -> Dictionary:
 	return {}
 
 
-func _team_active_count(team: int) -> int:
+func _team_active_count(team: CombatUnit.Team) -> int:
 	var count: int = 0
 	for slot in TEAM_SLOTS[team]:
 		var unit: CombatUnit = units.get(slot)
@@ -401,20 +403,20 @@ func _check_win_lose() -> void:
 	var win_count: int = 0
 	var lose_count: int = 0
 	var player: CombatUnit = units.get(PLAYER_SLOT)
-	var player_team: int = player.team_side if player else 1
+	var player_team: CombatUnit.Team = player.team_side if player else CombatUnit.Team.ONE
 
 	# Tutorial-battle special case: losing your own unit in KBR2 is an
 	# immediate loss even though allies remain.
 	if (player == null or not player.active) and battle and battle.id == 2:
 		lose_count += 1
 
-	if _team_active_count(1) == 0:
-		if player_team == 1:
+	if _team_active_count(CombatUnit.Team.ONE) == 0:
+		if player_team == CombatUnit.Team.ONE:
 			lose_count += 1
 		else:
 			win_count += 1
-	if _team_active_count(2) == 0:
-		if player_team == 2:
+	if _team_active_count(CombatUnit.Team.TWO) == 0:
+		if player_team == CombatUnit.Team.TWO:
 			lose_count += 1
 		else:
 			win_count += 1
@@ -432,8 +434,8 @@ func _check_win_lose() -> void:
 # the round; ties go to team 1 in single player. absolute_start (from the
 # battle definition) force-picks the opener - once, unless time_lock holds it.
 func _team_select() -> void:
-	var averages: Dictionary[int, float] = {1: 0.0, 2: 0.0}
-	for team in [1, 2]:
+	var averages: Dictionary[CombatUnit.Team, float] = {CombatUnit.Team.ONE: 0.0, CombatUnit.Team.TWO: 0.0}
+	for team in [CombatUnit.Team.ONE, CombatUnit.Team.TWO]:
 		var total: float = 0.0
 		var count: int = 0
 		for slot in TEAM_SLOTS[team]:
@@ -448,14 +450,14 @@ func _team_select() -> void:
 		if battle == null or not battle.time_lock:
 			absolute_start = 0
 
-	if averages[1] >= averages[2]:
-		team_move = 1
+	if averages[CombatUnit.Team.ONE] >= averages[CombatUnit.Team.TWO]:
+		team_move = CombatUnit.Team.ONE
 	else:
-		team_move = 2
+		team_move = CombatUnit.Team.TWO
 	turn_time = 2
 	team_move_now = team_move
 
-	for team in [1, 2]:
+	for team in [CombatUnit.Team.ONE, CombatUnit.Team.TWO]:
 		var ordered: Array = _team_slots_in_order(team)
 		for rank in ordered.size():
 			var unit: CombatUnit = units.get(ordered[rank])

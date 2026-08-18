@@ -38,10 +38,12 @@ const SLOT_POSITIONS: Dictionary[Variant, Variant] = {
 	6: Vector2(577.9, 218.5),
 }
 
-const RING_COLORS: Dictionary[Variant, Variant] = {
-	"player": Color(0.85, 0.85, 0.85),
-	"ally": Color(0.35, 0.9, 0.25),
-	"enemy": Color(0.95, 0.25, 0.15),
+enum Relation { PLAYER, ALLY, ENEMY }
+
+const RING_COLORS: Dictionary[Relation, Color] = {
+	Relation.PLAYER: Color(0.85, 0.85, 0.85),
+	Relation.ALLY: Color(0.35, 0.9, 0.25),
+	Relation.ENEMY: Color(0.95, 0.25, 0.15),
 }
 const ORB_RADIUS: float = 15.0
 # Ability orbs fan out over the unit's head, like the source's floating orbs.
@@ -210,7 +212,7 @@ func _spawn_visuals() -> void:
 		var unit: CombatUnit = units[slot]
 		var visual: CharacterVisual = CharacterVisualScene.instantiate()
 		visual.position = SLOT_POSITIONS.get(slot, Vector2(400, 300))
-		if unit.team_side == 2:
+		if unit.team_side == CombatUnit.Team.TWO:
 			visual.scale.x = -1  # mirrored, facing left
 		# dressChar's MODEL5 quirk: 0.8x scale, 10px lower.
 		if not unit.model.is_empty() and str(unit.model[0]) == "MODEL5":
@@ -259,11 +261,11 @@ func _draw_ring(ring: Control, slot: int) -> void:
 		)
 
 
-func _relation_to_player(slot: int) -> String:
+func _relation_to_player(slot: int) -> Relation:
 	if slot == BattleRunner.PLAYER_SLOT:
-		return "player"
+		return Relation.PLAYER
 	var unit: CombatUnit = units.get(slot)
-	return "ally" if unit != null and unit.team_side == 1 else "enemy"
+	return Relation.ALLY if unit != null and unit.team_side == CombatUnit.Team.ONE else Relation.ENEMY
 
 
 func _on_unit_hovered(slot: int, entered: bool) -> void:
@@ -336,7 +338,7 @@ func _move_valid_for_target(move: Ability, slot: int) -> bool:
 	var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
 	if player != null and move.focus_cost > 0 and player.focus_n < move.focus_cost:
 		return false
-	var is_ally: bool = target.team_side == 1
+	var is_ally: bool = target.team_side == CombatUnit.Team.ONE
 	var is_self: bool = slot == BattleRunner.PLAYER_SLOT
 	return (
 		(is_self and move.can_target_self)
