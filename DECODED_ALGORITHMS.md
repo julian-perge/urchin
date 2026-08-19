@@ -55,10 +55,7 @@ Sequence:
    clears the battlescreen bounds (`|x| > 500`), rather than stopping at the target.
 4. **Multi-target.** `ability_two[20]` (`is_multi_target`) fires one independent bolt per living enemy on the opposing side, each targeting its own unit.
 
-The Godot port always fires a single bolt per `_play_move_event` call and always resolves as a hit on arrival (2026-08-18: a miss DOES still reach `_play_move_event` and fire the bolt - see the
-Battle presentation section below and `battle_runner.gd`'s `_execute_move_action` - only the original's miss-flies-past-and-self-destructs behavior specifically isn't ported, since the bolt always
-resolves as an on-target hit once it arrives, whatever the roll said). Distinct clip art per `projectileModel` name (e.g. `Krin.Firebolt`) isn't extracted - the bolt/trail are a generic tinted
-circle+line colored by the move's element (see the audit table below).
+The Godot port fires a single bolt per `_play_move_event` call (multi-target per `ability_two[20]` isn't ported - see the audit table below). **DONE (2026-08-19)**, see `.superpowers/sdd/2026-08-18-missile-projectile-art/`: distinct clip art per `projectileModel` name (e.g. `Krin.Firebolt`) is extracted and rendered untinted via `Projectile`'s `Bolt` `AnimatedSprite2D`; `KrinTrail`'s real 33-frame fade-in/fade-out pulse (not a generic tinted circle+line) plays via a second `AnimatedSprite2D`, tinted by the move's real `colortobe` value; and a miss now flies the bolt fully past the target off-screen instead of always resolving as a hit on arrival, matching `strikeSuccess`'s hit/miss branch (`Projectile.did_hit` gates whether `reached_target` frees the bolt immediately or lets it keep flying).
 
 ## "cast" label dispatch and timing (frame_217/PlaceObject2_3389_480 enterFrame, ~line 400-469)
 
@@ -139,9 +136,6 @@ Everything below still stands in for original behavior; the ActionScript truth i
 
 | Piece | Current stand-in | Original truth lives in |
 |---|---|---|
-| Impact effect clips | none rendered (`Ability.impact_effect_name` now imported) | BOOM_* clips attached as "b1" at the target: `frame_42/DoAction_4.as` (melee, at impact) + enterFrame engine line ~452 (shock, at once) |
-| Missile projectile art | generic tinted circle+line, bolt always resolves as an on-target hit on arrival (2026-08-18: a miss still fires the bolt, see the section above) | `krinBoltMake` clip is `projectileModel` (e.g. `Krin.Firebolt`); miss-flies-past-target unreachable |
-| Cast glow tint | reuses the move's element color (no distinct `colortobe` decode) | `colortobe` recolors glow subclips: `DefineSprite_152/157 .../onClipEvent(load).as` (`my_color.setRGB`) |
 | Camera zoom + shake | none | `GridZoomer` "KrinZoomGo" (zoom to target center * `-zoomRatioNEW` + 400/300; pause 2xCD melee / 5 missile / 1 shock), `GridShaker` (shock + crits) |
 | Target hit flash | HIT recoil label only | `BATTLEFLASH` with `characterColorState/FilterState`: `frame_42/DoAction_8.as` ~line 199 |
 | Damage number art | Labels with exact colors + bigger crit font | NumberFixer/NumberSetter digit clips, miss/shield variants: `frame_42/DoAction_7.as` |
