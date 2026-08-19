@@ -34,6 +34,7 @@ extract_item_icons = "urchin_dev.swf.extract.item_icons:main"
 extract_item_looks = "urchin_dev.swf.extract.item_looks:main"
 extract_model1_animations = "urchin_dev.swf.extract.model1_animations:main"
 extract_start_screens = "urchin_dev.swf.extract.start_screens:main"
+extract_vfx = "urchin_dev.swf.extract.vfx:main"
 
 [tool.uv]
 # A build system is declared above, so uv would package this project by
