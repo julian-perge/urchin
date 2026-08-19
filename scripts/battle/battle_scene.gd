@@ -93,6 +93,7 @@ var _decision_timer: float = 0.0
 var _finished: bool = false
 var _radial_menu: Control = null
 var _radial_menu_owner_slot: int = -1
+var _radial_menu_fade_tween: Tween = null  # in-flight fade-out, if any - see Task 3's _ring_fade_tweens
 var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
 var _pending_goto_scene: String = ""  # ZoneProgression.CUTSCENE_GOTO_SCENE for that cutscene
 var _pending_setup_events: Array = []  # runner.setup()'s return - played first by _battle_loop()
@@ -148,11 +149,26 @@ func _process(delta: float) -> void:
 		_decision_timer = maxf(_decision_timer - delta, 0.0)
 	_countdown_label.text = str(int(ceil(_decision_timer)))
 	if _radial_menu != null:
-		if _is_point_over_radial_menu_area(get_global_mouse_position()):
-			_radial_menu_leave_timer.stop()
-			_radial_menu.modulate.a = 1.0
-		elif _radial_menu_leave_timer.is_stopped():
-			_radial_menu_leave_timer.start()
+		_update_radial_menu_fade(get_global_mouse_position())
+
+
+# Split out from _process() so a test can simulate "the mouse returned" with
+# a known point instead of warping the real (headless) mouse cursor - same
+# reasoning as _is_point_over_radial_menu_area(). Guards against both the
+# mouse returning mid-fade (kill the in-flight tween, or its tween_callback
+# would still free the menu once it finishes) and the leave timer re-firing
+# while a fade is already running (would start a second tween racing the
+# first on the same modulate:a property).
+func _update_radial_menu_fade(mouse_global_pos: Vector2) -> void:
+	var fading: bool = _radial_menu_fade_tween != null and _radial_menu_fade_tween.is_valid()
+	if _is_point_over_radial_menu_area(mouse_global_pos):
+		_radial_menu_leave_timer.stop()
+		if fading:
+			_radial_menu_fade_tween.kill()
+			_radial_menu_fade_tween = null
+		_radial_menu.modulate.a = 1.0
+	elif _radial_menu_leave_timer.is_stopped() and not fading:
+		_radial_menu_leave_timer.start()
 
 
 func _reset_decision_timer() -> void:
@@ -435,6 +451,7 @@ func _close_radial_menu() -> void:
 		_radial_menu.queue_free()
 		_radial_menu = null
 	_radial_menu_owner_slot = -1
+	_radial_menu_fade_tween = null
 
 
 # Pure predicate (no engine side effects) so it's directly testable - see
@@ -457,9 +474,12 @@ func _is_point_over_radial_menu_area(global_point: Vector2) -> bool:
 func _start_radial_menu_fade_out() -> void:
 	if _radial_menu == null:
 		return
+	if _radial_menu_fade_tween != null and _radial_menu_fade_tween.is_valid():
+		return  # already fading - the leave timer re-fired, don't race a second tween
 	var tween: Tween = create_tween()
 	tween.tween_property(_radial_menu, "modulate:a", 0.0, RING_FADE_OUT_TIME)
 	tween.tween_callback(_close_radial_menu)
+	_radial_menu_fade_tween = tween
 
 
 # --- bottom bar: stances + pass ring + retreat -----------------------------

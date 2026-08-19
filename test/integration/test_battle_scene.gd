@@ -250,6 +250,44 @@ func test_radial_menu_fades_out_on_hover_leave():
 	ZoneManager.auto_start_battles = true
 
 
+func test_radial_menu_hover_return_cancels_fade_out():
+	var save = PlayerSave.new_game("MenuCancelFadeTest", 0)
+	save.skill_points = 8
+	TalentTree.learn(save, 0)
+	TalentTree.learn(save, 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene._player_action_pending = true
+	scene._on_unit_clicked(2)
+	assert_not_null(scene._radial_menu)
+
+	var overlay: Control = scene._overlays[2]
+	var unit_center: Vector2 = overlay.hit_button.get_global_rect().get_center()
+
+	# Start the fade, let it run partway, then simulate the mouse landing
+	# back on the unit - the same call _process() makes every frame, with a
+	# point _is_point_over_radial_menu_area() reports as "over the menu".
+	scene._start_radial_menu_fade_out()
+	await scene.get_tree().create_timer(scene.RING_FADE_OUT_TIME * 0.3).timeout
+	scene._update_radial_menu_fade(unit_center)
+	assert_not_null(scene._radial_menu, "mouse returned before the fade finished - menu must stay open")
+	assert_eq(scene._radial_menu.modulate.a, 1.0, "snapped back to fully visible")
+	# The in-flight tween must actually be killed (not merely overridden for
+	# one frame) - otherwise its tween_callback(_close_radial_menu) would
+	# still free the menu once the original fade duration elapses, even
+	# though the mouse came back. A killed Tween never fires its remaining
+	# steps, so nulling the field here is proof, not a guess.
+	assert_null(scene._radial_menu_fade_tween, "in-flight fade tween was killed, not left running")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # Regression test: a move-caused death used to only play when the QUEUED
 # "death" event was reached in _play_events(), which only happens after the
 # caster's whole move await resolves - for melee, that's after the runback
