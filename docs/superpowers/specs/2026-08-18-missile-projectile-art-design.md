@@ -120,7 +120,7 @@ func play(clip_name: String) -> void:
 	anim_sprite.animation_finished.connect(queue_free)
 	anim_sprite.play("default")
 ```
-(`_sanitize` mirrors `BuffIcons._sanitize()`/`vfx.py`'s own `sanitize()` exactly — the same cross-language contract already established for buffs. Corrected after the whole-branch review: `ImpactEffect` and `Projectile` had ended up with a copy each, so the transform moved to `VfxFrames.sanitize()`, the shared home both already depend on. `BuffIcons` keeps its own copy for its own unrelated icon-name convention.)
+(`VfxFrames.sanitize()` mirrors `BuffIcons._sanitize()`/`vfx.py`'s own `sanitize()` exactly — the same cross-language contract already established for buffs. Corrected after the whole-branch review: `ImpactEffect` and `Projectile` had ended up with a copy each, so the transform moved to `VfxFrames.sanitize()`, the shared home both already depend on. `BuffIcons` keeps its own copy for its own unrelated icon-name convention.)
 
 `impact_effect.tscn`: `Node2D` root, one `AnimatedSprite2D` child named `Anim` (`autoplay = ""`, `centered = true`), with `play()` setting `Anim.scale` to `VfxFrames.VFX_SCALE` alongside its frames.
 
