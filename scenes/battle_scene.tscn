@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_scene.gd" id="1_battle"]
 [ext_resource type="Texture2D" path="res://assets/ui/hotbar/background.png" id="2_hotbarbg"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/hotbar_background.png" id="3_battlebar"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/battle_pbar_full.png" id="4_countdownring"]
+[ext_resource type="PackedScene" path="res://scenes/battle/combat_log_panel.tscn" id="5_combatlog"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pass_normal"]
 bg_color = Color(0.1, 0.1, 0.11, 1)
@@ -94,6 +95,13 @@ stretch_mode = 6
 wait_time = 0.15
 one_shot = true
 
+[node name="CombatLogPanel" parent="." instance=ExtResource("5_combatlog")]
+layout_mode = 1
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 260.0
+offset_bottom = 180.0
+
 [node name="BottomBar" type="Control" parent="."]
 layout_mode = 0
 offset_left = 0.0
@@ -167,6 +175,15 @@ mouse_filter = 2
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.9, 0.9, 0.85, 1)
+
+[node name="LogToggleButton" type="Button" parent="BottomBar/Panel3"]
+layout_mode = 0
+offset_left = 260.0
+offset_top = 20.0
+offset_right = 300.0
+offset_bottom = 60.0
+text = "Log"
+tooltip_text = "Toggle the combat log"
 
 [node name="StanceHost" type="Control" parent="BottomBar"]
 layout_mode = 0
@@ -247,3 +264,4 @@ text = "Continue"
 [connection signal="timeout" from="RadialMenuLeaveTimer" to="." method="_start_radial_menu_fade_out"]
 [connection signal="pressed" from="BottomBar/PassButton" to="." method="_on_pass_pressed"]
 [connection signal="pressed" from="BottomBar/RetreatButton" to="." method="_on_retreat_pressed"]
+[connection signal="pressed" from="BottomBar/Panel3/LogToggleButton" to="." method="_on_log_toggle_pressed"]

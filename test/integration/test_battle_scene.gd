@@ -417,3 +417,35 @@ func test_hover_ring_fades_in_only_during_player_decision_window():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+func test_combat_log_toggle_and_live_narration():
+	var save = PlayerSave.new_game("LogTest", 0)
+	save.skill_points = 8
+	TalentTree.learn(save, 0)
+	TalentTree.learn(save, 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	assert_false(scene._combat_log.visible, "off by default")
+	scene._on_log_toggle_pressed()
+	assert_true(scene._combat_log.visible, "toggled on")
+	scene._on_log_toggle_pressed()
+	assert_false(scene._combat_log.visible, "toggled back off")
+
+	var player: CombatUnit = scene.units[1]
+	player.ai_enabled = true
+	player.move_pool_attack = TalentTree.get_known_move_ids(save)
+	player.cooldowns_attack = []
+	for i in player.move_pool_attack.size():
+		player.cooldowns_attack.append(0)
+
+	await wait_for_signal(scene.battle_finished, 30)
+	assert_ne(scene._combat_log._log_text.text, "", "narrated at least one line over the course of a real battle")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true

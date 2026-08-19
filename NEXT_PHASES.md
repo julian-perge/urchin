@@ -67,15 +67,25 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     the HIT flinch in that case, as before), and skipping the later queued `"death"` event's own playback when its `cause` is `"move"` (already played) - `damage_over_time` deaths (buff ticks,
     no impact moment to hook into) still play from the queued event as before. Covered by `test_battle_scene.gd`'s `test_death_plays_at_impact_not_after_caster_returns`.
 
-- **Battle screen niceties**
+- **Battle screen niceties** - **DONE (2026-08-18)**, see `.claude/plan_battle_screen_niceties.md` for the full task breakdown. All 5 items shipped:
 
-  - The 120-second decision countdown - **DONE (2026-08-18)**. `battle_scene.gd`'s `_process()` ticks `_decision_timer` down from `BattleRunner.BATTLE_TIME_LIMIT` while
-    `_player_action_pending` is true, shown as a ring (`assets/ui/battle/battle_pbar_full.png`) + numeric label in the bottom bar's `Panel3`. Visual-only, deliberately does NOT
-    force-pass the turn at 0 like the original did - this port's turn-based flow already removed real-time pressure everywhere else, and reintroducing it here wasn't asked for.
-  - Buff icons over units
-  - A combat log panel
-  - Target highlighting
-  - The original hotbar-style battle UI art (`assets/ui/battle/*.png` is extracted and waiting)
+  - The original hotbar-style battle UI art - `BottomBar/Backdrop` now renders `assets/ui/battle/hotbar_background.png` (a `TextureRect`, was a plain `ColorRect`), instead of leaving the
+    extracted art unused.
+  - The 120-second decision countdown - `battle_scene.gd`'s `_process()` ticks `_decision_timer` down from `BattleRunner.BATTLE_TIME_LIMIT` while `_player_action_pending` is true, shown as
+    a ring (`assets/ui/battle/battle_pbar_full.png`) + numeric label in the bottom bar's `Panel3`. Visual-only, deliberately does NOT force-pass the turn at 0 like the original did - this
+    port's turn-based flow already removed real-time pressure everywhere else, and reintroducing it here wasn't asked for.
+  - Target highlighting - a hover ring around each unit fades in over ~0.17s and out over ~0.67s (source-verified 30fps timing), but only fades in during the player's own decision
+    window (fade-out always plays, ungated). Alongside this, the radial ability menu's dismissal was corrected to match the live original game: moving the mouse away from the clicked
+    unit and its fanned-out orbs fades the menu out, replacing this port's earlier click-away guess, which the project owner confirmed doesn't match the real game.
+  - Buff icons over units - `unit_overlay.gd` shows up to 7 active buff icons per unit, sorted by remaining duration descending, using icon art extracted from `DefineSprite 2427`'s
+    family. 8 of 419 extracted icons (about 2%, including FIRESAM/TWINGUARDIANS) render as a generic blank rounded rectangle because their `FrameLabelTag` precedes the sprite's first
+    `ShowFrameTag` in the source SWF - a genuine, faithful property of the source, not a script bug. Also fixed along the way: buff id 0 (TWINGUARDIANS) is a real buff, not an
+    empty-slot sentinel (the sentinel used everywhere else in the codebase is `buff_id: -1`) - the original filter silently dropped it.
+  - A combat log panel - `CombatLogPanel` (the project's first `RichTextLabel`/`ScrollContainer` panel), off/hidden by default and toggled via a new "Log" button in the bottom bar's
+    `Panel3`, per the project owner's explicit choice. `_format_line()` mirrors `battle_scene.gd`'s `_play_events()` event-type match exactly, so every event type that already drives
+    animation/audio also gets a readable line, appended live as the fight plays rather than after the fact.
+
+  GUT suite green: 147/147 tests (assert counts vary run to run since several integration tests drive a real RNG/AI battle to completion - one clean run: 731 asserts).
 
 - **Item click-n-drag** - **DONE (2026-08-18)**, project owner request 2026-07-18. See `.claude/plan_item_drag_and_drop.md` for the full task breakdown. `ItemSlot` is both drag source
   (`_get_drag_data`, a semi-transparent 31x31 preview) and drop target (`_can_drop_data`/`_drop_data`) via Godot's built-in Control drag API - inventory<->inventory swaps, inventory<->equip

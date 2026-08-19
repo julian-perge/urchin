@@ -111,6 +111,7 @@ var _pending_setup_events: Array = []  # runner.setup()'s return - played first 
 @onready var _radial_menu_leave_timer: Timer = $RadialMenuLeaveTimer
 @onready var stance_host: Control = $BottomBar/StanceHost
 @onready var _countdown_label: Label = $BottomBar/Panel3/CountdownLabel
+@onready var _combat_log: CombatLogPanel = $CombatLogPanel
 
 
 func _ready():
@@ -604,6 +605,10 @@ func _on_pass_pressed() -> void:
 	_player_action_pending = false
 
 
+func _on_log_toggle_pressed() -> void:
+	_combat_log.toggle()
+
+
 # Retreat abandons the fight and returns to the save-select screen.
 func _on_retreat_pressed() -> void:
 	if _finished:
@@ -616,6 +621,7 @@ func _on_retreat_pressed() -> void:
 # Replays a half-turn's event log with animation + audio pacing.
 func _play_events(events: Array) -> void:
 	for event in events:
+		_combat_log.append_event(event, units)
 		match event["type"]:
 			BattleRunner.EventType.MOVE:
 				await _play_move_event(event)
