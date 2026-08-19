@@ -90,6 +90,10 @@ stretch_mode = 6
 
 [node name="Battlefield" type="Node2D" parent="."]
 
+[node name="RadialMenuLeaveTimer" type="Timer" parent="."]
+wait_time = 0.15
+one_shot = true
+
 [node name="BottomBar" type="Control" parent="."]
 layout_mode = 0
 offset_left = 0.0
@@ -240,5 +244,6 @@ layout_mode = 2
 text = "Continue"
 
 [connection signal="draw" from="BottomBar/PassRing" to="." method="_draw_pass_ring"]
+[connection signal="timeout" from="RadialMenuLeaveTimer" to="." method="_start_radial_menu_fade_out"]
 [connection signal="pressed" from="BottomBar/PassButton" to="." method="_on_pass_pressed"]
 [connection signal="pressed" from="BottomBar/RetreatButton" to="." method="_on_retreat_pressed"]

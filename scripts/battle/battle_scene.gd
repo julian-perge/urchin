@@ -92,6 +92,7 @@ var _player_action_pending: bool = false
 var _decision_timer: float = 0.0
 var _finished: bool = false
 var _radial_menu: Control = null
+var _radial_menu_owner_slot: int = -1
 var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
 var _pending_goto_scene: String = ""  # ZoneProgression.CUTSCENE_GOTO_SCENE for that cutscene
 var _pending_setup_events: Array = []  # runner.setup()'s return - played first by _battle_loop()
@@ -106,6 +107,7 @@ var _pending_setup_events: Array = []  # runner.setup()'s return - played first 
 @onready var result_label: Label = $UI/ResultPanel/VBox/ResultLabel
 @onready var continue_button: Button = $UI/ResultPanel/VBox/ContinueButton
 @onready var _pass_ring: Control = $BottomBar/PassRing
+@onready var _radial_menu_leave_timer: Timer = $RadialMenuLeaveTimer
 @onready var stance_host: Control = $BottomBar/StanceHost
 @onready var _countdown_label: Label = $BottomBar/Panel3/CountdownLabel
 
@@ -145,6 +147,12 @@ func _process(delta: float) -> void:
 	if _player_action_pending:
 		_decision_timer = maxf(_decision_timer - delta, 0.0)
 	_countdown_label.text = str(int(ceil(_decision_timer)))
+	if _radial_menu != null:
+		if _is_point_over_radial_menu_area(get_global_mouse_position()):
+			_radial_menu_leave_timer.stop()
+			_radial_menu.modulate.a = 1.0
+		elif _radial_menu_leave_timer.is_stopped():
+			_radial_menu_leave_timer.start()
 
 
 func _reset_decision_timer() -> void:
@@ -335,6 +343,7 @@ func _on_unit_clicked(slot: int) -> void:
 	_radial_menu = Control.new()
 	_radial_menu.position = SLOT_POSITIONS.get(slot, Vector2(400, 300))
 	_radial_menu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_radial_menu_owner_slot = slot
 	battlefield.add_child(_radial_menu)
 	for i in entries.size():
 		var entry: Dictionary = entries[i]
@@ -425,19 +434,32 @@ func _close_radial_menu() -> void:
 	if _radial_menu != null:
 		_radial_menu.queue_free()
 		_radial_menu = null
+	_radial_menu_owner_slot = -1
 
 
-# A click on a unit's hit_button or an orb Button is consumed by that Button
-# before it ever gets here (both are real Buttons, not mouse_filter=IGNORE) -
-# _unhandled_input only ever fires for a click that landed on neither, i.e.
-# empty battlefield space. There was previously no close-on-click-away at
-# all (only _on_unit_clicked's own _close_radial_menu() when a DIFFERENT
-# unit is clicked next).
-func _unhandled_input(event: InputEvent) -> void:
+# Pure predicate (no engine side effects) so it's directly testable - see
+# ItemSlot._drag_payload() for the same "split for testability" reasoning.
+# The orbs fan out ~62px from the unit's own hit area, well outside it, so
+# checking the unit alone would close the menu the instant the player
+# moves toward an orb to click it.
+func _is_point_over_radial_menu_area(global_point: Vector2) -> bool:
+	if _radial_menu == null:
+		return false
+	var overlay: Control = _overlays.get(_radial_menu_owner_slot)
+	if overlay != null and overlay.hit_button.get_global_rect().has_point(global_point):
+		return true
+	for orb in _radial_menu.get_children():
+		if orb is Control and orb.get_global_rect().has_point(global_point):
+			return true
+	return false
+
+
+func _start_radial_menu_fade_out() -> void:
 	if _radial_menu == null:
 		return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_close_radial_menu()
+	var tween: Tween = create_tween()
+	tween.tween_property(_radial_menu, "modulate:a", 0.0, RING_FADE_OUT_TIME)
+	tween.tween_callback(_close_radial_menu)
 
 
 # --- bottom bar: stances + pass ring + retreat -----------------------------

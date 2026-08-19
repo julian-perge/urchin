@@ -193,14 +193,8 @@ func test_story_battle_win_threads_cutscene_id_through_victory_flow():
 	ZoneManager.auto_start_battles = true
 
 
-# Regression test: there was no click-away close at all before - only
-# _on_unit_clicked's own _close_radial_menu() call when a DIFFERENT unit is
-# clicked next. _unhandled_input() only ever fires for a click that landed
-# on neither a unit's hit_button nor an orb Button (both consume the event
-# themselves), so simulating one here is a faithful "clicked empty
-# battlefield space" repro, not a fake shortcut.
-func test_radial_menu_closes_on_click_away():
-	var save = PlayerSave.new_game("RadialTest", 0)
+func test_is_point_over_radial_menu_area():
+	var save = PlayerSave.new_game("MenuAreaTest", 0)
 	save.skill_points = 8
 	TalentTree.learn(save, 0)
 	TalentTree.learn(save, 0)
@@ -213,13 +207,44 @@ func test_radial_menu_closes_on_click_away():
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	scene._player_action_pending = true
 	scene._on_unit_clicked(2)  # battle 100's enemy slot (Prison Guard)
-	assert_not_null(scene._radial_menu, "menu opened on a unit click")
+	assert_not_null(scene._radial_menu, "menu opened")
 
-	var click := InputEventMouseButton.new()
-	click.button_index = MOUSE_BUTTON_LEFT
-	click.pressed = true
-	scene._unhandled_input(click)
-	assert_null(scene._radial_menu, "click on empty battlefield space closed the menu")
+	var overlay: Control = scene._overlays[2]
+	var unit_center: Vector2 = overlay.hit_button.get_global_rect().get_center()
+	assert_true(scene._is_point_over_radial_menu_area(unit_center), "over the unit's own hit area")
+
+	var orb: Control = scene._radial_menu.get_child(0)
+	var orb_center: Vector2 = orb.get_global_rect().get_center()
+	assert_true(scene._is_point_over_radial_menu_area(orb_center), "over an orb, well outside the unit's hit area")
+
+	assert_false(scene._is_point_over_radial_menu_area(Vector2(-1000, -1000)), "nowhere near either")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func test_radial_menu_fades_out_on_hover_leave():
+	var save = PlayerSave.new_game("MenuFadeTest", 0)
+	save.skill_points = 8
+	TalentTree.learn(save, 0)
+	TalentTree.learn(save, 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene._player_action_pending = true
+	scene._on_unit_clicked(2)
+	assert_not_null(scene._radial_menu)
+
+	# Directly invoke the same handler _process() would call once the
+	# leave-grace timer fires - avoids waiting on real timer duration in
+	# the test while still exercising the real fade-then-free logic.
+	scene._start_radial_menu_fade_out()
+	await scene.get_tree().create_timer(scene.RING_FADE_OUT_TIME + 0.1).timeout
+	assert_null(scene._radial_menu, "faded out and freed")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
