@@ -6,5 +6,6 @@
 script = ExtResource("1_projectile")
 
 [node name="Trail" type="AnimatedSprite2D" parent="."]
+top_level = true
 
 [node name="Bolt" type="AnimatedSprite2D" parent="."]
