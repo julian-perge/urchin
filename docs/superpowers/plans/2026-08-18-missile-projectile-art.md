@@ -677,6 +677,27 @@ func test_start_loads_the_trail_as_a_non_looping_tinted_pulse():
 	assert_almost_eq(trail_sprite.modulate.r, 1.0, 0.01, "RGB tint only")
 	assert_almost_eq(trail_sprite.modulate.g, 0.2, 0.01)
 	assert_almost_eq(trail_sprite.modulate.b, 0.4, 0.01)
+
+
+func test_trail_stays_anchored_at_its_spawn_point_as_the_bolt_flies_on():
+	# Confirmed empirically (a real running scene): a normal Node2D child
+	# keeps inheriting its parent's transform every frame - without
+	# top_level=true on Trail, it would be dragged along as Projectile's
+	# own position keeps advancing, instead of staying anchored at the
+	# point it was given on the first tick, defeating the whole point of
+	# a streak that bridges a growing gap as the bolt flies away.
+	var bolt: Projectile = add_child_autofree(ProjectileScene.instantiate())
+	bolt.clip_name = "Krin.Firebolt"
+	bolt.trail_color = Color.WHITE
+	bolt.start(Vector2(100, 100), Vector2(300, 100))
+
+	var trail_sprite: AnimatedSprite2D = bolt.get_node("Trail")
+	bolt._process(1.0 / 30.0)  # first tick - spawns the trail at the bolt's current position
+	var spawn_pos: Vector2 = trail_sprite.global_position
+	for i in 10:
+		bolt._process(1.0 / 30.0)  # the bolt keeps advancing
+	assert_eq(trail_sprite.global_position, spawn_pos, "trail stays put while the bolt flies on")
+	assert_gt(bolt.global_position.x, spawn_pos.x, "the bolt itself really did move away from that point")
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -696,6 +717,7 @@ Create `scenes/battle/projectile.tscn`:
 script = ExtResource("1_projectile")
 
 [node name="Trail" type="AnimatedSprite2D" parent="."]
+top_level = true
 
 [node name="Bolt" type="AnimatedSprite2D" parent="."]
 ```
@@ -860,7 +882,11 @@ not a static frame) is tinted by trail_color (RGB only - its own frames
 already carry the alpha), played once non-looping, spawned once at the
 bolt's position, rotated to the flight angle, and grows scale.x every
 tick independent of its own animation, mirroring krinBoltMake's
-inner._xscale growth formula exactly.
+inner._xscale growth formula exactly. Trail is top_level=true so it
+stays anchored at its spawn point as the bolt (its parent) keeps
+moving on - confirmed empirically that a normal (non-top-level) child
+would otherwise be dragged along with the parent's transform every
+tick, defeating the whole point of a streak bridging a growing gap.
 
 All existing movement/timing math (BOLT_TIME/BOLT_INCREASE/BOLT_FPS)
 unchanged. An unresolvable clip_name falls back to the original tinted
