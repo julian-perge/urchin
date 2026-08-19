@@ -8,7 +8,7 @@
 
 **Tech Stack:** Godot 4.7 GDScript, GUT 9.6.1 test framework, Python 3 + `uv` + `ffdec` for extraction (mirrors `dev/urchin_dev/swf/extract/item_icons.py`/`buff_icons.py`).
 
-**Spec:** `docs/superpowers/specs/2026-08-18-missile-projectile-art-design.md` - read it first for the *why* behind every mechanic here (source citations for the bolt/trail tint split, `KrinTrail`'s single-frame nature, the `strikeSuccess` impact gate, and the re-derived clip lists); this plan covers the *how*.
+**Spec:** `docs/superpowers/specs/2026-08-18-missile-projectile-art-design.md` - read it first for the *why* behind every mechanic here (source citations for the bolt/trail tint split, `KrinTrail`'s real 33-frame fade-pulse nature, the `strikeSuccess` impact gate, and the re-derived clip lists); this plan covers the *how*.
 
 ## Global Constraints
 
@@ -58,7 +58,8 @@ Create `dev/urchin_dev/swf/extract/vfx.py`:
 # Battle VFX extraction: 15 Missile bolt clips + KrinTrail + every real
 # BOOM_*/ex_* impact clip referenced by moves_abilities.json's
 # 13_impact_effect_name (frame_42/DoAction_4.as's krinBoltMake) - all
-# shape/tween DefineSprites with no ActionScript of their own.
+# shape/tween DefineSprites with no ActionScript of their own (except
+# KrinTrail's inner clip - see TRAIL_SPRITE_ID below).
 #
 # Every frame of a clip renders onto ffdec's own consistent per-clip
 # canvas (confirmed: a real 25-frame BOOM_SPARKBLUE export came back as
@@ -109,7 +110,14 @@ BOLT_NAMES = [
     "Krin.Electrobolt", "Krin.Electrobolt2", "Krin.Firebolt", "Krin.Iceball",
     "Krin.Iceblade", "Krin.Icebolt", "Krin.Magicbolt", "Krin.Poisonbolt",
 ]
-TRAIL_NAMES = ["KrinTrail"]
+TRAIL_CLIP_NAME = "KrinTrail"
+# "KrinTrail" (the export-table name) resolves to sprite id 3 - a 1-frame
+# wrapper whose single frame only ever shows its child's (sprite id 2)
+# own alpha=0 starting keyframe. The real 33-frame fade-in/fade-out
+# content is sprite id 2 itself, which has no export name of its own
+# (only reachable by id, not by name) - fetched directly rather than
+# through resolve(), since this is the only clip needing that.
+TRAIL_SPRITE_ID = 2
 
 
 def sanitize(label: str) -> str:
@@ -155,8 +163,15 @@ def _extract_clip(name: str, cid: int, work_dir: Path, out_dir: Path) -> bool:
             str(WEB_SWF),
         ]
     )
-    sprite_dir = frames_dir / f"DefineSprite_{cid}"
-    frame_files = sorted(sprite_dir.glob("*.png"), key=lambda p: int(p.stem))
+    # ffdec names the export directory DefineSprite_<id>_<export-name>
+    # when the sprite has one - every clip here does, unlike
+    # item_icons.py/buff_icons.py/faces.py's unnamed sprite ids (which
+    # get no suffix) - so this must glob rather than assume the bare
+    # DefineSprite_<id> form.
+    sprite_dirs = list(frames_dir.glob(f"DefineSprite_{cid}*"))
+    if not sprite_dirs:
+        return False
+    frame_files = sorted(sprite_dirs[0].glob("*.png"), key=lambda p: int(p.stem))
     if not frame_files:
         return False
     first = Image.open(frame_files[0])
@@ -193,17 +208,14 @@ def main():
         return hit[1] if hit else None
 
     work_dir = Path(tempfile.mkdtemp(prefix="vfx_"))
-    categories = [
-        (BOLT_NAMES, REPO_ROOT / "assets" / "vfx" / "bolts"),
-        (TRAIL_NAMES, REPO_ROOT / "assets" / "vfx" / "trail"),
-        (_impact_names(), REPO_ROOT / "assets" / "vfx" / "impacts"),
-    ]
     unresolved = []
     written = 0
-    for names, out_dir in categories:
+
+    def extract_category(names, out_dir, resolve_id=resolve):
+        nonlocal written
         seen_ids: dict[int, str] = {}
         for name in names:
-            cid = resolve(name)
+            cid = resolve_id(name)
             if cid is None:
                 unresolved.append(name)
                 continue
@@ -218,6 +230,15 @@ def main():
                 written += 1
             else:
                 unresolved.append(name)
+
+    extract_category(BOLT_NAMES, REPO_ROOT / "assets" / "vfx" / "bolts")
+    extract_category(
+        [TRAIL_CLIP_NAME],
+        REPO_ROOT / "assets" / "vfx" / "trail",
+        resolve_id=lambda _name: TRAIL_SPRITE_ID,
+    )
+    extract_category(_impact_names(), REPO_ROOT / "assets" / "vfx" / "impacts")
+
     print(f"clips written: {written}", file=sys.stderr)
     if unresolved:
         print(f"unresolved: {unresolved}", file=sys.stderr)
@@ -241,12 +262,13 @@ Expected: prints `clips written: 51` and `unresolved: ['BOOM_DARK2', 'BOOM_DOWN_
 ```sh
 file assets/vfx/bolts/krin_firebolt.png assets/vfx/trail/krintrail.png assets/vfx/impacts/boom_sparkblue.png
 cat assets/vfx/bolts/krin_firebolt.json
+cat assets/vfx/trail/krintrail.json
 ```
-Expected: all three PNGs exist, non-zero-byte; the JSON shows a real `frame_count`/`frame_width`/`frame_height`.
+Expected: all three PNGs exist, non-zero-byte; both JSON sidecars show a real `frame_count`/`frame_width`/`frame_height` - `krintrail.json`'s `frame_count` must be `33` (sprite id 2's real content), not `1` (sprite id 3's blank wrapper frame - if you see `1` here, `TRAIL_SPRITE_ID`'s special-case wiring isn't taking effect).
 
-- [ ] **Step 5: Visually spot-check a couple of clips**
+- [ ] **Step 5: Visually spot-check clips, including `krintrail.png` specifically**
 
-Open 2-3 of the extracted spritesheets (Read tool or an image viewer) - confirm each shows a real horizontal strip of distinct animation frames (not blank, not a single frame repeated), same due diligence `item_icons.py`'s Ancient Cage check used.
+Open `assets/vfx/trail/krintrail.png` (Read tool or an image viewer) - confirm it shows a real 33-frame horizontal strip that fades in then out (not a single blank/transparent frame - this exact clip was found fully blank once already this session, from extracting the wrong sprite id, so this check matters more here than elsewhere). Also open 2-3 bolt/impact spritesheets - confirm each shows a real horizontal strip of distinct animation frames, same due diligence `item_icons.py`'s Ancient Cage check used.
 
 - [ ] **Step 6: Commit**
 
@@ -267,6 +289,12 @@ sanitize()+lower() filenames. 5 impact_effect_name values referenced by
 real moves don't exist in this SWF's export table at all (BOOM_DARK2,
 BOOM_DOWN_BLUE, BOOM_DOWN_PURPLE, BOOM_PURPLE, BOOM_SUN) - a real
 content gap, printed as unresolved and skipped.
+
+KrinTrail's export name resolves to a 1-frame wrapper sprite whose
+single frame only shows its child's own alpha=0 starting keyframe -
+the real 33-frame fade-in/fade-out content is that child (sprite id 2,
+TRAIL_SPRITE_ID), fetched directly since it has no export name of its
+own.
 
 Run via: uv run extract_vfx"
 ```
@@ -562,6 +590,21 @@ func test_start_with_unknown_clip_falls_back_to_the_tinted_circle():
 
 	var bolt_sprite: AnimatedSprite2D = bolt.get_node("Bolt")
 	assert_null(bolt_sprite.sprite_frames, "no matching asset - falls back to the _draw() circle guard")
+
+
+func test_start_loads_the_trail_as_a_non_looping_tinted_pulse():
+	var bolt: Projectile = add_child_autofree(ProjectileScene.instantiate())
+	bolt.clip_name = "Krin.Firebolt"
+	bolt.trail_color = Color(1.0, 0.2, 0.4)
+	bolt.start(Vector2(100, 100), Vector2(300, 100))
+
+	var trail_sprite: AnimatedSprite2D = bolt.get_node("Trail")
+	assert_not_null(trail_sprite.sprite_frames, "loaded the real 33-frame KrinTrail spritesheet")
+	assert_eq(trail_sprite.sprite_frames.get_frame_count("pulse"), 33, "the real animated content, not sprite 3's 1-frame wrapper")
+	assert_false(trail_sprite.sprite_frames.get_animation_loop("pulse"), "plays once - its own frames already carry the fade in/out")
+	assert_almost_eq(trail_sprite.modulate.r, 1.0, 0.01, "RGB tint only")
+	assert_almost_eq(trail_sprite.modulate.g, 0.2, 0.01)
+	assert_almost_eq(trail_sprite.modulate.b, 0.4, 0.01)
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -580,7 +623,7 @@ Create `scenes/battle/projectile.tscn`:
 [node name="Projectile" type="Node2D"]
 script = ExtResource("1_projectile")
 
-[node name="Trail" type="Sprite2D" parent="."]
+[node name="Trail" type="AnimatedSprite2D" parent="."]
 
 [node name="Bolt" type="AnimatedSprite2D" parent="."]
 ```
@@ -601,10 +644,14 @@ Replace the whole file with:
 # Bolt art (Bolt, AnimatedSprite2D) is the real per-clip spritesheet
 # (dev/urchin_dev/swf/extract/vfx.py), shown UNTINTED - the source's own
 # krinBoltMake never colors the bolt clip itself, only the separate
-# KrinTrail streak (Trail, a plain Sprite2D - KrinTrail is a single static
-# frame in the source, not animated). Trail is spawned once at the bolt's
-# position on the first tick, tinted by trail_color, rotated once to the
-# flight angle, and grows scale.x every tick - see docs/superpowers/specs/
+# KrinTrail streak (Trail, also an AnimatedSprite2D - KrinTrail's real
+# content is a genuine 33-frame fade-in/fade-out pulse baked into its own
+# timeline, not a static frame this script fades manually). Trail is
+# spawned once at the bolt's position on the first tick, played once
+# (non-looping - its own frames already carry the fade), tinted by
+# trail_color (RGB only - alpha comes from the frames), rotated once to
+# the flight angle, and grows scale.x every tick, independent of its own
+# internal animation - see docs/superpowers/specs/
 # 2026-08-18-missile-projectile-art-design.md.
 class_name Projectile
 extends Node2D
@@ -629,7 +676,7 @@ var trail_color: Color = Color.WHITE
 var color: Color = Color.WHITE  # fallback tinted-circle color when clip_name has no real asset
 
 @onready var _bolt_sprite: AnimatedSprite2D = $Bolt
-@onready var _trail_sprite: Sprite2D = $Trail
+@onready var _trail_sprite: AnimatedSprite2D = $Trail
 
 var _step: Vector2
 var _checker: float = 1.0
@@ -677,12 +724,32 @@ func _load_bolt_sprite() -> void:
 	_bolt_sprite.play("fly")
 
 
+# KrinTrail's real content (dev/urchin_dev/swf/extract/vfx.py's
+# TRAIL_SPRITE_ID) is a genuine 33-frame fade-in/fade-out pulse, not a
+# static frame - the animation itself carries the alpha; this script only
+# ever sets the RGB tint, never touches trail alpha manually.
 func _load_trail_sprite() -> void:
 	var sheet_path: String = "%skrintrail.png" % TRAIL_DIR
+	var json_path: String = "%skrintrail.json" % TRAIL_DIR
 	if not ResourceLoader.exists(sheet_path):
 		return
-	_trail_sprite.texture = load(sheet_path)
-	_trail_sprite.modulate = Color(trail_color, 0.0)
+	var meta: Dictionary = JSON.parse_string(FileAccess.open(json_path, FileAccess.READ).get_as_text())
+	var texture: Texture2D = load(sheet_path)
+	var frame_count: int = int(meta["frame_count"])
+	var frame_width: int = int(meta["frame_width"])
+	var frame_height: int = int(meta["frame_height"])
+	var fps: float = float(meta.get("fps", 30.0))
+	var sprite_frames := SpriteFrames.new()
+	sprite_frames.add_animation("pulse")
+	sprite_frames.set_animation_speed("pulse", fps)
+	sprite_frames.set_animation_loop("pulse", false)
+	for i in frame_count:
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(i * frame_width, 0, frame_width, frame_height)
+		sprite_frames.add_frame("pulse", atlas)
+	_trail_sprite.sprite_frames = sprite_frames
+	_trail_sprite.modulate = trail_color  # RGB tint only - alpha comes from the frames themselves
 	_trail_sprite.visible = false
 
 
@@ -696,11 +763,12 @@ func _process(delta: float) -> void:
 			_trail_spawned = true
 			_trail_sprite.global_position = global_position
 			_trail_sprite.rotation = _step.angle()
-			_trail_sprite.visible = _trail_sprite.texture != null
+			if _trail_sprite.sprite_frames != null:
+				_trail_sprite.visible = true
+				_trail_sprite.play("pulse")
 		if _bolt_sprite.sprite_frames != null:
 			_bolt_sprite.modulate.a = _alpha
 		if _trail_sprite.visible:
-			_trail_sprite.modulate = Color(trail_color, _alpha * 0.6)
 			_trail_sprite.scale.x += 0.083 * _step.length() * _speed_const
 		_speed_const *= BOLT_INCREASE
 		if (_target_x - position.x) * _checker <= 0.0:
@@ -744,10 +812,13 @@ git commit -m "feat: Projectile renders real bolt/trail art, not a tinted circle
 Bolt (AnimatedSprite2D) loads the move's own spritesheet
 (dev/urchin_dev/swf/extract/vfx.py), shown untinted - the source's
 krinBoltMake never colors the bolt clip, only the separate KrinTrail
-streak. Trail (a plain Sprite2D - KrinTrail is a single static frame in
-the source, not animated) is tinted by trail_color, spawned once at the
-bolt's position, rotated to the flight angle, and grows scale.x every
-tick, mirroring krinBoltMake's inner._xscale growth formula exactly.
+streak. Trail (also an AnimatedSprite2D - KrinTrail's real content is a
+genuine 33-frame fade-in/fade-out pulse, not a static frame) is tinted
+by trail_color (RGB only - its own frames already carry the alpha),
+played once non-looping, spawned once at the bolt's position, rotated
+to the flight angle, and grows scale.x every tick independent of its
+own animation, mirroring krinBoltMake's inner._xscale growth formula
+exactly.
 
 All existing movement/timing math (BOLT_TIME/BOLT_INCREASE/BOLT_FPS)
 unchanged. An unresolvable clip_name falls back to the original tinted
