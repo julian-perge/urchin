@@ -1,10 +1,35 @@
 # The original per-buff icon sheet: DefineSprite 100 (nested inside
 # DefineSprite 104, "KrinBuffShower", at depth 4 named "buffIcon" -
-# frame42/sonny2_addNewBuffKrin.txt's buffIcon.gotoAndStop(buffId)), one
-# labeled frame per buff, labeled by the buff's own internal_name (e.g.
-# frame label "FIRESAM" matches buff id 1's internal_name in buffs.json
-# exactly - confirmed by hand before writing this script). Writes
+# frame42/sonny2_addNewBuffKrin.txt:365's buffIcon.gotoAndStop(buffId)),
+# labeled by the buff's own internal_name. Writes
 # assets/ui/buffs/<internal_name>.png.
+#
+# The buffId handed to that gotoAndStop() is a name string, so Flash
+# resolves it as a frame label. It is not a frame number, and buffs.json's
+# numeric `id` never reaches the sheet at all - that id is only the order
+# the game's 470 addNewBuffKrin calls run in. Three citations, since the
+# call reads like a numeric one:
+#   1. Buffs are registered under their name -
+#      addNewBuffKrin("TWINGUARDIANS", ...) at
+#      frame42/sonny2_addNewBuffKrin.txt:543 and 469 more calls like it,
+#      each doing _root["KRINBUFF" + a] = new Array().
+#   2. Moves hand that same string to applyBuffKrin - frame217's
+#      applyBuffKrin(mToBeBuffed, mAry2[13], 1, mCaster), where mAry2[13]
+#      is 13_status_effect_id in converted_json/moves_abilities.json: a
+#      buff internal_name for 453 of 479 moves, plain 0 (no buff) for the
+#      remaining 26.
+#   3. applyBuffKrin stores it verbatim (buffId = bn, line 161), and every
+#      later read concatenates instead of indexing -
+#      _root["KRINBUFF" + buffId][0] is the tooltip title, [1] the element
+#      (lines 368-376).
+#
+# The sheet's own shape agrees: 400 frames hold 33 distinct drawings, 144
+# frames carry labels, and every frame where the drawing changes is one of
+# the labeled ones. The author labeled the buffs that share each drawing
+# (8 share frame 1) rather than drawing 470 separate icons. Reading the id
+# as a frame number instead lands on the same drawing the author's own
+# label picked for 9 of 410 buffs, which is chance, and sends every id past
+# 400 to the last frame, a "?" placeholder.
 #
 # Same rendering approach as item_icons.py/faces.py: export the sprite
 # directly via ffdec's own renderer (not reassembled shape-by-shape), then

@@ -77,11 +77,14 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   - Target highlighting - a hover ring around each unit fades in over ~0.17s and out over ~0.67s (source-verified 30fps timing), but only fades in during the player's own decision
     window (fade-out always plays, ungated). Alongside this, the radial ability menu's dismissal was corrected to match the live original game: moving the mouse away from the clicked
     unit and its fanned-out orbs fades the menu out, replacing this port's earlier click-away guess, which the project owner confirmed doesn't match the real game.
-  - Buff icons over units - `unit_overlay.gd` shows up to 7 active buff icons per unit, sorted by remaining duration descending, using icon art extracted from `DefineSprite 2427`'s
-    family. 8 of 419 extracted icons (about 2%, including FIRESAM/TWINGUARDIANS) render as a generic blank rounded rectangle because their `FrameLabelTag` precedes the sprite's first
-    `ShowFrameTag` in the source SWF - a genuine, faithful property of the source, not a script bug. Also fixed along the way: buff id 0 (TWINGUARDIANS) is a real buff, not an
-    empty-slot sentinel (the sentinel used everywhere else in the codebase is `buff_id: -1`) - the original filter silently dropped it.
-  - A combat log panel - `CombatLogPanel` (the project's first `RichTextLabel`/`ScrollContainer` panel), off/hidden by default and toggled via a new "Log" button in the bottom bar's
+  - Buff icons over units - `unit_overlay.gd` shows up to 7 active buff icons per unit, sorted by remaining duration descending, using art from the buff icon sheet, `DefineSprite 100`
+    (`DefineSprite 2427` is the ability sheet, a different clip). The original picks a buff's icon by frame label: buffs are registered under their name
+    (`addNewBuffKrin("TWINGUARDIANS", ...)`, `frame42/sonny2_addNewBuffKrin.txt:543`) and moves name the buff they apply as a string, so `buffIcon.gotoAndStop(buffId)` gets that name
+    and Flash resolves it as a label. `buffs.json`'s numeric `id` is only the order those 470 registration calls run in; it never reaches the sheet. The sheet holds 33 distinct
+    drawings across 400 frames and labels several buffs onto each, so 8 of the 419 extracted icons (about 2%, including FIRESAM and TWINGUARDIANS) share frame 1, a plain filled
+    rounded rectangle. The source itself groups them that way. Also fixed along the way: buff id 0 (TWINGUARDIANS) is a real buff, not an empty-slot sentinel (the sentinel used
+    everywhere else in the codebase is `buff_id: -1`) - the original filter silently dropped it.
+  - A combat log panel - `CombatLogPanel` (the project's first `RichTextLabel` panel), off/hidden by default and toggled via a new "Log" button in the bottom bar's
     `Panel3`, per the project owner's explicit choice. `_format_line()` mirrors `battle_scene.gd`'s `_play_events()` event-type match exactly, so every event type that already drives
     animation/audio also gets a readable line, appended live as the fight plays rather than after the fact.
 
