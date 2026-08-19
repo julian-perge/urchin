@@ -31,8 +31,12 @@ func setup(unit_name: String) -> void:
 # + the 7-slot cap exactly. Each icon is modulate-tinted by the buff's
 # element color (Godot tints at runtime - no per-element art baked into
 # the extracted PNGs), with the remaining-turns count and a
-# name+description tooltip. Buffs with no cd (expired/inactive slots,
-# buff_id == 0) are skipped entirely.
+# name+description tooltip. A slot is active purely by cd > 0, same as
+# every other buff_slots consumer (CombatUnit.tick_buffs(),
+# BattleRunner._resolve_dispels()) - buff_id 0 is a real buff
+# (TWINGUARDIANS, dev/converted_json/buffs.json), not an empty-slot
+# sentinel; empty slots use buff_id -1 (see CombatUnit's slot init) but
+# always carry cd == 0 too, so checking cd alone already excludes them.
 func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
 	for child in buff_row.get_children():
 		child.queue_free()
@@ -40,7 +44,7 @@ func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
 		return
 	var active_slots: Array = []
 	for slot in unit.buff_slots:
-		if int(slot.get("cd", 0)) > 0 and int(slot.get("buff_id", 0)) != 0:
+		if int(slot.get("cd", 0)) > 0:
 			active_slots.append(slot)
 	active_slots.sort_custom(func(a, b): return int(a["cd"]) > int(b["cd"]))
 	for i in mini(active_slots.size(), MAX_BUFF_ICONS):
