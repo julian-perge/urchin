@@ -846,6 +846,7 @@ func _refresh_bars(snap: bool = true) -> void:
 		focus.max_value = max(unit.focus_u, 1)
 		focus.value = unit.focus_n
 		_update_stun_visual(slot, unit, _visuals[slot])
+		_overlays[slot].refresh_buffs(unit, BuffManagerAuto.buffs_by_id)
 
 
 # krinBuff STUN is a running total across active stun-inflicting buffs -
