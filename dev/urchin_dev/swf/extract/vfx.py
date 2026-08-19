@@ -4,48 +4,50 @@
 # shape/tween DefineSprites with no ActionScript of their own (except
 # KrinTrail's inner clip - see TRAIL_SPRITE_ID below).
 #
-# Every frame of a clip renders onto ffdec's own consistent per-clip
-# canvas (confirmed: a real 25-frame BOOM_SPARKBLUE export came back as
-# 382x317 on every single frame), so packing is pure relocation - paste
-# each already-identical-size frame side by side into one wider strip.
-# No cropping, no resizing, no recoloring of any frame's pixel content.
+# Each clip's frames are copied as-is into their own per-clip folder
+# (1.png, 2.png, ..., N.png, exactly as ffdec names them) - no packing,
+# no cropping, no resizing, no recoloring. Packing into one spritesheet
+# per clip was tried first and abandoned: BOOM1 (36 frames, 1225px wide)
+# and BOOM2 (36 frames, 956px wide) would pack to 44100px/34416px wide
+# images, past Godot's texture importer's 32768px width cap, which
+# silently rescales the whole image on import and desyncs every packed
+# frame's region from its own recorded size. Per-clip folders of
+# individually-sized frames can't hit that limit for any clip.
 #
 # Clip names are resolved against the SWF's ExportAssetsTag table
 # case-insensitively - two of the 15 bolt names (KRIN.MAGICBOLT,
 # KRIN.POISONBOLT) are just differently-cased references to
 # Krin.Magicbolt/Krin.Poisonbolt (Flash's attachMovie linkage lookup is
 # case-insensitive; both variants resolve to the same sprite id).
-# sanitize()+lower() collapses both casings onto one output file -
+# sanitize()+lower() collapses both casings onto one output folder -
 # BuffIcons._sanitize()'s exact GDScript mirror of this convention is
-# the template; Projectile/ImpactEffect apply the identical transform
-# at runtime so a move's own (possibly differently-cased)
-# animation_label/impact_effect_name string always resolves to the
-# file this script wrote.
+# the template; Projectile/ImpactEffect (via the shared VfxFrames
+# helper) apply the identical transform at runtime so a move's own
+# (possibly differently-cased) animation_label/impact_effect_name
+# string always resolves to the folder this script wrote.
 #
 # 5 impact_effect_name values referenced by real moves don't exist in
 # this SWF's export table at all: BOOM_DARK2, BOOM_DOWN_BLUE,
 # BOOM_DOWN_PURPLE, BOOM_PURPLE, BOOM_SUN. A real content gap in the
 # source, not a bug here - printed as unresolved and skipped; those
 # moves simply show no impact effect (ImpactEffect.play() already
-# no-ops on a missing file).
+# no-ops on a missing folder).
 #
 # Requires ffdec (~/.local/bin/ffdec). Run: uv run extract_vfx
 from __future__ import annotations
 
 import json
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
-from PIL import Image
-
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
 from urchin_dev.swf import parse_swf_xml
 
 ZOOM = 2.0
-FPS = 30.0
 
 BOLT_NAMES = [
     "KRIN.BLADEWHITE", "KRIN.POISONBOLT2", "KRIN.REDBLADE", "KRIN.REDBOLT",
@@ -89,7 +91,7 @@ def _impact_names() -> list[str]:
     return sorted(names)
 
 
-def _extract_clip(name: str, cid: int, work_dir: Path, out_dir: Path) -> bool:
+def _extract_clip(name: str, cid: int, work_dir: Path, category_dir: Path) -> bool:
     frames_dir = work_dir / f"frames_{cid}"
     run(
         [
@@ -106,34 +108,21 @@ def _extract_clip(name: str, cid: int, work_dir: Path, out_dir: Path) -> bool:
             str(WEB_SWF),
         ]
     )
+    # ffdec names the export directory DefineSprite_<id>_<export-name>
+    # when the sprite has one - every clip here does, unlike
+    # item_icons.py/buff_icons.py/faces.py's unnamed sprite ids (which
+    # get no suffix) - so this must glob rather than assume the bare
+    # DefineSprite_<id> form.
     sprite_dirs = list(frames_dir.glob(f"DefineSprite_{cid}*"))
     if not sprite_dirs:
         return False
     frame_files = sorted(sprite_dirs[0].glob("*.png"), key=lambda p: int(p.stem))
     if not frame_files:
         return False
-    first = Image.open(frame_files[0])
-    frame_width, frame_height = first.size
-    sheet = Image.new(
-        "RGBA", (frame_width * len(frame_files), frame_height), (0, 0, 0, 0)
-    )
-    for i, path in enumerate(frame_files):
-        frame = Image.open(path).convert("RGBA")
-        sheet.paste(frame, (i * frame_width, 0))
+    out_dir = category_dir / sanitize(name)
     out_dir.mkdir(parents=True, exist_ok=True)
-    key = sanitize(name)
-    sheet.save(out_dir / f"{key}.png")
-    (out_dir / f"{key}.json").write_text(
-        json.dumps(
-            {
-                "frame_count": len(frame_files),
-                "frame_width": frame_width,
-                "frame_height": frame_height,
-                "fps": FPS,
-            },
-            indent=2,
-        )
-    )
+    for i, path in enumerate(frame_files, start=1):
+        shutil.copyfile(path, out_dir / f"{i}.png")
     return True
 
 
