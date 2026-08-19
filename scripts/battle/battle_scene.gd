@@ -447,12 +447,19 @@ func _on_radial_move_picked(entry: Dictionary, target_slot: int) -> void:
 	_player_action_pending = false
 
 
+# Killing the fade tween here matters even though the menu it targets is about
+# to be freed: a Tween outlives its freed target and still runs the trailing
+# tween_callback(_close_radial_menu), which would then close whatever menu was
+# opened in the meantime. Killing a tween from inside its own callback is safe.
 func _close_radial_menu() -> void:
+	if _radial_menu_fade_tween != null and _radial_menu_fade_tween.is_valid():
+		_radial_menu_fade_tween.kill()
+	_radial_menu_fade_tween = null
+	_radial_menu_leave_timer.stop()
 	if _radial_menu != null:
 		_radial_menu.queue_free()
 		_radial_menu = null
 	_radial_menu_owner_slot = -1
-	_radial_menu_fade_tween = null
 
 
 # Pure predicate (no engine side effects) so it's directly testable - see

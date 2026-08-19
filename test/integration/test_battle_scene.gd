@@ -288,6 +288,52 @@ func test_radial_menu_hover_return_cancels_fade_out():
 	ZoneManager.auto_start_battles = true
 
 
+# Regression test: clicking a second unit while the first unit's menu is
+# fading out used to close the SECOND menu a moment later. _close_radial_menu()
+# nulled its reference to the in-flight fade tween without killing the tween
+# itself, and a Godot Tween whose target node is freed keeps running - its
+# trailing tween_callback(_close_radial_menu) still fired and took the newly
+# opened menu with it.
+func test_opening_a_second_menu_survives_the_first_menus_fade():
+	var save = PlayerSave.new_game("MenuStaleTweenTest", 0)
+	save.skill_points = 8
+	TalentTree.learn(save, 0)
+	TalentTree.learn(save, 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	# The headless mouse sits nowhere near the menu, so _process() keeps
+	# restarting the leave-grace timer on the second menu. Stretching the
+	# grace period keeps that legitimate fade-out from firing inside the
+	# window this test measures, leaving the stale tween as the only thing
+	# that could close the second menu.
+	scene._radial_menu_leave_timer.wait_time = 30.0
+	scene._player_action_pending = true
+
+	scene._on_unit_clicked(2)
+	assert_not_null(scene._radial_menu, "first menu opened on the enemy slot")
+	scene._start_radial_menu_fade_out()
+	await scene.get_tree().create_timer(scene.RING_FADE_OUT_TIME * 0.3).timeout
+
+	# Player clicks a different unit partway through the first menu's fade.
+	scene._on_unit_clicked(BattleRunner.PLAYER_SLOT)
+	assert_not_null(scene._radial_menu, "second menu opened")
+	assert_eq(scene._radial_menu_owner_slot, BattleRunner.PLAYER_SLOT, "second menu belongs to the newly clicked slot")
+
+	# Well past the point where the first menu's fade would have completed
+	# and run its trailing callback.
+	await scene.get_tree().create_timer(scene.RING_FADE_OUT_TIME + 0.2).timeout
+	assert_not_null(scene._radial_menu, "second menu outlived the first menu's fade tween")
+	assert_eq(scene._radial_menu_owner_slot, BattleRunner.PLAYER_SLOT, "and it is still the second menu, not a leftover")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # Regression test: a move-caused death used to only play when the QUEUED
 # "death" event was reached in _play_events(), which only happens after the
 # caster's whole move await resolves - for melee, that's after the runback
