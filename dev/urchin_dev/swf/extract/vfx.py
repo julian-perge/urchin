@@ -52,7 +52,14 @@ BOLT_NAMES = [
     "Krin.Electrobolt", "Krin.Electrobolt2", "Krin.Firebolt", "Krin.Iceball",
     "Krin.Iceblade", "Krin.Icebolt", "Krin.Magicbolt", "Krin.Poisonbolt",
 ]
-TRAIL_NAMES = ["KrinTrail"]
+TRAIL_CLIP_NAME = "KrinTrail"
+# "KrinTrail" (the export-table name) resolves to sprite id 3 - a 1-frame
+# wrapper whose single frame only ever shows its child's (sprite id 2)
+# own alpha=0 starting keyframe. The real 33-frame fade-in/fade-out
+# content is sprite id 2 itself, which has no export name of its own
+# (only reachable by id, not by name) - fetched directly rather than
+# through resolve(), since this is the only clip needing that.
+TRAIL_SPRITE_ID = 2
 
 
 def sanitize(label: str) -> str:
@@ -138,17 +145,14 @@ def main():
         return hit[1] if hit else None
 
     work_dir = Path(tempfile.mkdtemp(prefix="vfx_"))
-    categories = [
-        (BOLT_NAMES, REPO_ROOT / "assets" / "vfx" / "bolts"),
-        (TRAIL_NAMES, REPO_ROOT / "assets" / "vfx" / "trail"),
-        (_impact_names(), REPO_ROOT / "assets" / "vfx" / "impacts"),
-    ]
     unresolved = []
     written = 0
-    for names, out_dir in categories:
+
+    def extract_category(names, out_dir, resolve_id=resolve):
+        nonlocal written
         seen_ids: dict[int, str] = {}
         for name in names:
-            cid = resolve(name)
+            cid = resolve_id(name)
             if cid is None:
                 unresolved.append(name)
                 continue
@@ -163,6 +167,15 @@ def main():
                 written += 1
             else:
                 unresolved.append(name)
+
+    extract_category(BOLT_NAMES, REPO_ROOT / "assets" / "vfx" / "bolts")
+    extract_category(
+        [TRAIL_CLIP_NAME],
+        REPO_ROOT / "assets" / "vfx" / "trail",
+        resolve_id=lambda _name: TRAIL_SPRITE_ID,
+    )
+    extract_category(_impact_names(), REPO_ROOT / "assets" / "vfx" / "impacts")
+
     print(f"clips written: {written}", file=sys.stderr)
     if unresolved:
         print(f"unresolved: {unresolved}", file=sys.stderr)
