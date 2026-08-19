@@ -16,3 +16,11 @@ func test_visual_effect_color_defaults_to_white_for_none_move():
 	var move: Ability = MoveManagerAuto.get_move(0)  # "None" - Undefined sentinel
 	assert_not_null(move)
 	assert_eq(move.visual_effect_color, Color.WHITE)
+
+
+func test_visual_effect_color_pads_a_short_hex_string():
+	var move: Ability = MoveManagerAuto.get_move(261)  # Regulate, "0x066FF" - one digit short
+	assert_not_null(move, "move id 261 (Regulate) exists")
+	assert_almost_eq(move.visual_effect_color.r, 0.0, 0.01)
+	assert_almost_eq(move.visual_effect_color.g, 0.4, 0.01)
+	assert_almost_eq(move.visual_effect_color.b, 1.0, 0.01)

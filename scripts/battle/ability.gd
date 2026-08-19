@@ -121,7 +121,13 @@ static func from_json(data: Dictionary) -> Ability:
 	ability.animation_label = _text(data.get("12_animation_model_name"))
 	ability.impact_effect_name = _text(data.get("13_impact_effect_name"))
 	var raw_color = data.get("11_visual_effect_color")
-	ability.visual_effect_color = Color.html(raw_color.substr(2)) if raw_color is String else Color.WHITE
+	if raw_color is String:
+		var hex_digits = raw_color.substr(2)
+		while hex_digits.length() < 6:
+			hex_digits = "0" + hex_digits
+		ability.visual_effect_color = Color.html(hex_digits)
+	else:
+		ability.visual_effect_color = Color.WHITE
 	ability.effect_category = _text(data.get("14_effect_category"))
 	ability.health_cost_percentage = _num(data.get("16_health_cost_percentage"))
 	ability.sound_effect_name = _text(data.get("18_sound_effect_name"))
