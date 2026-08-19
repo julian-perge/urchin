@@ -37,7 +37,7 @@ Traced directly against `dev/source_files/action_script/frame_42/DoAction_4.as` 
 
 ## Requirements
 
-- Extract all 51 clips into packed spritesheets with zero per-pixel modification (no cropping, no resizing, no recoloring — frames are relocated whole into one wider canvas).
+- Extract all 51 clips as **per-frame PNG files** (one file per animation frame, in a per-clip subfolder — `1.png, 2.png, ..., N.png`, exactly as ffdec itself names them) with zero pixel modification (no cropping, no resizing, no recoloring, no packing into a shared canvas). Adopted after discovering, mid-implementation, that two real impact clips (`BOOM1`: 36 frames at 1225px wide, `BOOM2`: 36 frames at 956px wide) pack into spritesheets 44100px/34416px wide — Godot's texture importer silently caps texture width at 32768px and rescales the whole image on import, which would desync every packed clip's frame regions from its own recorded dimensions once that cap is hit. Per-clip folders of individually-sized frames have no shared-canvas width to overflow, so this failure mode can't recur for any clip, not just these two.
 - `Ability.visual_effect_color: Color`, parsed from `11_visual_effect_color`.
 - `Projectile` renders the real bolt clip via `AnimatedSprite2D` (untinted, alpha-only fade) and `KrinTrail`'s real 33-frame content via a second `AnimatedSprite2D` (tinted by `visual_effect_color`, played once non-looping - its own frames already carry the fade-in/fade-out, no external alpha tracking needed - plus a separately-growing `scale.x`, rotated once to the flight angle) — all existing `krinBoltMake` movement math (`BOLT_TIME`/`BOLT_INCREASE`/`BOLT_FPS`) untouched.
 - A hit stops the bolt at the target and shows its impact clip, exactly as today. **A miss (in scope per project owner)**: the bolt and trail keep moving/growing past the target until they exit this port's own screen bounds, instead of stopping — turn pacing (audio, the damage/MISS floatie) still lands at the same coordinate-cross moment as today, decoupled from the bolt's own cleanup.
@@ -53,10 +53,9 @@ One script covering all three categories (bolts, `KrinTrail`, impacts), register
 
 - Resolve each clip name to a sprite id via `parse_swf_xml`'s export table, **case-insensitively** (build a lowercase-keyed lookup once; this is the only clip category with real casing variance in the source data — impacts happen to already match case-exactly except the one `ex_DownBlue`/`ex_DOWNBLUE` fold, handled the same way).
 - `KrinTrail` is the one exception to name-based resolution: its export name ("KrinTrail") only resolves to sprite id 3, a 1-frame wrapper whose single frame captures its un-named child's (sprite id 2) own alpha=0 starting keyframe — extracting id 3 produces a fully blank asset. The real 33-frame fade-pulse content is sprite id 2 itself, which has no export name of its own (only reachable by number, not by the export table) — the script fetches it via a hardcoded id override for this one clip, not a general recursion rule (it's the only entry in the trail category).
-- Per clip: `ffdec -zoom 2.0 -format sprite:png -selectid <id> -export sprite <dir> <swf>` (same invocation shape as `item_icons.py`/`buff_icons.py`), collect the resulting `1.png, 2.png, ...` frames in order. ffdec names the export directory `DefineSprite_<id>_<export-name>` when the sprite has one (unlike `item_icons.py`/`buff_icons.py`/`faces.py`'s unnamed sprite ids, which get no suffix) — every bolt/impact clip here has an export name, so directory resolution must glob rather than assume the bare `DefineSprite_<id>` form.
-- Pack frames left-to-right into one spritesheet canvas (`frame_width * frame_count` wide, `frame_height` tall — both taken directly from the first frame's own dimensions, since every frame in a clip shares one canvas size). No `getchannel("A").getbbox()` trim step here (unlike `item_icons.py`/`buff_icons.py`) — trimming would misalign frames of an animation against each other; the whole point of the sprite:png export's consistent per-clip canvas is that every frame already lines up.
-- Write a JSON sidecar per clip: `{"frame_count": N, "frame_width": W, "frame_height": H, "fps": 30.0}` (30fps matches every other timeline-derived asset in this project — `model1_animations.json`, the buff/ability sheets' own frame-rate assumption).
-- Output paths: `assets/vfx/bolts/<name>.png`/`.json` (15), `assets/vfx/trail/krintrail.png`/`.json` (1, 33 real frames), `assets/vfx/impacts/<name>.png`/`.json` (35, after the `ex_DOWNBLUE`/`ex_DownBlue` case-fold dedup - 36 resolve, one collides). Filenames use the same `sanitize()` convention as `item_icons.py`/`buff_icons.py` (`re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_")`), **lowercased** (matching `faces.py`'s own lowercase convention) — this is what makes the two differently-cased bolt names collapse onto one output file instead of writing duplicates, and what lets the GDScript consumer resolve a clip name to a file without needing a case-insensitive dictionary at runtime (lowercase both sides, symmetrically — the same lesson just applied to `buff_icons.py`/`BuffIcons._sanitize()`'s cross-language contract).
+- Per clip: `ffdec -zoom 2.0 -format sprite:png -selectid <id> -export sprite <dir> <swf>` (same invocation shape as `item_icons.py`/`buff_icons.py`), then **copy** the resulting `1.png, 2.png, ..., N.png` frames as-is into `assets/vfx/<category>/<sanitized_name>/` — no packing, no per-frame modification (matching `faces.py`'s own "just copy the exported frame" precedent, extended here to every frame of a clip instead of one representative frame per label). ffdec names the export directory `DefineSprite_<id>_<export-name>` when the sprite has one (unlike `item_icons.py`/`buff_icons.py`/`faces.py`'s unnamed sprite ids, which get no suffix) — every bolt/impact clip here has an export name, so directory resolution must glob rather than assume the bare `DefineSprite_<id>` form.
+- No JSON sidecar: every clip in this project runs at 30fps (matching `model1_animations.json`, the buff/ability sheets' own frame-rate assumption), so the GDScript consumer hardcodes that constant rather than reading it back out of a per-clip file; frame count is discovered at load time by probing for `1.png`, `2.png`, ... until one is missing, so it can never drift out of sync with the files actually present.
+- Output paths: `assets/vfx/bolts/<name>/*.png` (15 folders), `assets/vfx/trail/krintrail/*.png` (1 folder, 33 real frames), `assets/vfx/impacts/<name>/*.png` (35 folders, after the `ex_DOWNBLUE`/`ex_DownBlue` case-fold dedup - 36 resolve, one collides). Folder names use the same `sanitize()` convention as `item_icons.py`/`buff_icons.py` (`re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_")`), **lowercased** (matching `faces.py`'s own lowercase convention) — this is what makes the two differently-cased bolt names collapse onto one output folder instead of writing duplicates, and what lets the GDScript consumer resolve a clip name to a folder without needing a case-insensitive dictionary at runtime (lowercase both sides, symmetrically — the same lesson just applied to `buff_icons.py`/`BuffIcons._sanitize()`'s cross-language contract).
 - The 5 unresolvable impact names print a warning (`unresolved: [...]`) and are skipped, matching `item_icons.py`'s/`buff_icons.py`'s existing tolerance for names with no real content.
 
 ### Data model — `scripts/battle/ability.gd`
@@ -84,8 +83,8 @@ New/changed fields on `Projectile`:
 - `var did_hit: bool = true` — set by `battle_scene.gd` before `start()`, from `result.get("type") != BattleManager.ResultType.MISS`.
 - `signal reached_target` — replaces `arrived`; fires once, at the coordinate-cross tick, **regardless of hit or miss**. `_fire_projectile()` awaits this (not the bolt's full lifecycle), so turn pacing, `sound_effect_name`, and `_show_move_result()`'s floatie land at the same moment they do today, whether it's a hit or a miss.
 - On the `reached_target` tick: if `did_hit`, `queue_free()` immediately (same as today's behavior). If not `did_hit`, keep ticking — the existing per-tick movement/trail-growth code already runs identically whether or not the bolt has passed the target (confirmed from source: `inner._xscale` grows on literally every tick, arrival or not) — until `position.x` exits `[-20.0, 820.0]` (this port's own small margin past its 800-wide canvas; not the source's unrelated `±500`), then `queue_free()` itself, unawaited by the caller.
-- `_bolt_sprite.sprite_frames` built at `start()` time from the clip's spritesheet + JSON sidecar (same `AtlasTexture` slicing shape as `ImpactEffect`, below) — a looping `"fly"` animation. Fallback: if the sheet doesn't exist (`clip_name` empty or unresolvable), skip sprite setup and keep the existing tinted-circle `_draw()` as a visible fallback rather than showing nothing — same tolerance this project already extends to unresolved buff icons.
-- `_trail_sprite.sprite_frames` built the same way from `krintrail.png`/`.json` (33 frames) — a **non-looping** `"pulse"` animation, played once when the trail is first spawned. No manual alpha tracking: the source's own fade-in/fade-out is already baked into the 33 frames, so `modulate` only ever carries the RGB tint (alpha stays 1.0).
+- `_bolt_sprite.sprite_frames` built at `start()` time by loading each numbered frame file directly from `assets/vfx/bolts/<sanitized_clip_name>/` (same per-frame-folder shape as `ImpactEffect`, below) — a looping `"fly"` animation. Fallback: if the folder doesn't exist (`clip_name` empty or unresolvable), skip sprite setup and keep the existing tinted-circle `_draw()` as a visible fallback rather than showing nothing — same tolerance this project already extends to unresolved buff icons.
+- `_trail_sprite.sprite_frames` built the same way from `assets/vfx/trail/krintrail/` (33 frames) — a **non-looping** `"pulse"` animation, played once when the trail is first spawned. No manual alpha tracking: the source's own fade-in/fade-out is already baked into the 33 frames, so `modulate` only ever carries the RGB tint (alpha stays 1.0).
 - `Trail`'s rotation is set once (matching source: computed from `atan(yLength/xLength)`, adjusted +180° if flying leftward - `Vector2.angle()` is the direct Godot equivalent, already quadrant-correct without the manual +180 fixup) and its `scale.x` grows every tick (`clampf` isn't in source — the original never bounds `_xscale`'s growth, so this port doesn't invent a cap either, matching the "reference the source, don't invent design" principle this session has repeatedly enforced) - independent of, and layered on top of, its own internal alpha animation.
 
 ### `ImpactEffect` — new `scenes/battle/impact_effect.tscn` + `scripts/battle/impact_effect.gd`
@@ -95,32 +94,17 @@ class_name ImpactEffect
 extends Node2D
 
 const VFX_DIR := "res://assets/vfx/impacts/"
+const FPS := 30.0
 
 func play(clip_name: String) -> void:
 	if clip_name.is_empty():
 		queue_free()
 		return
-	var key := _sanitize(clip_name)
-	var sheet_path := "%s%s.png" % [VFX_DIR, key]
-	var json_path := "%s%s.json" % [VFX_DIR, key]
-	if not ResourceLoader.exists(sheet_path):
+	var dir: String = "%s%s/" % [VFX_DIR, _sanitize(clip_name)]
+	var sprite_frames: SpriteFrames = VfxFrames.load_frames(dir, "default", false, FPS)
+	if sprite_frames == null:
 		queue_free()
 		return
-	var meta: Dictionary = JSON.parse_string(FileAccess.open(json_path, FileAccess.READ).get_as_text())
-	var texture: Texture2D = load(sheet_path)
-	var frame_count: int = int(meta["frame_count"])
-	var frame_width: int = int(meta["frame_width"])
-	var frame_height: int = int(meta["frame_height"])
-	var fps: float = float(meta.get("fps", 30.0))
-	var sprite_frames := SpriteFrames.new()
-	sprite_frames.add_animation("default")
-	sprite_frames.set_animation_speed("default", fps)
-	sprite_frames.set_animation_loop("default", false)
-	for i in frame_count:
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = Rect2(i * frame_width, 0, frame_width, frame_height)
-		sprite_frames.add_frame("default", atlas)
 	var anim_sprite: AnimatedSprite2D = $Anim
 	anim_sprite.sprite_frames = sprite_frames
 	anim_sprite.animation_finished.connect(queue_free)
@@ -135,6 +119,42 @@ static func _sanitize(name: String) -> String:
 (`_sanitize` mirrors `BuffIcons._sanitize()`/`vfx.py`'s own `sanitize()` exactly — the same cross-language contract already established for buffs.)
 
 `impact_effect.tscn`: `Node2D` root, one `AnimatedSprite2D` child named `Anim` (`autoplay = ""`, `centered = true`).
+
+### `VfxFrames` — new `scripts/entities/vfx_frames.gd`, shared by `ImpactEffect` and `Projectile`
+
+Both consumers need the identical "load a per-clip folder of numbered frame files into a `SpriteFrames` animation" logic, so it's a small shared static helper rather than duplicated in both scripts:
+
+```gdscript
+class_name VfxFrames
+extends RefCounted
+
+# Loads a per-clip folder of individually-sized frame files
+# (dev/urchin_dev/swf/extract/vfx.py's own output - 1.png, 2.png, ...,
+# copied as-is with no packing) into a SpriteFrames animation. Frame
+# count is discovered by probing for consecutively-numbered files
+# rather than reading it from a sidecar, so it can never drift out of
+# sync with what's actually on disk. Returns null if the folder doesn't
+# exist or holds no frames - callers fall back accordingly.
+static func load_frames(dir: String, anim_name: String, loop: bool, fps: float) -> SpriteFrames:
+	if not DirAccess.dir_exists_absolute(dir):
+		return null
+	var sprite_frames := SpriteFrames.new()
+	if not sprite_frames.has_animation(anim_name):
+		sprite_frames.add_animation(anim_name)
+	sprite_frames.set_animation_speed(anim_name, fps)
+	sprite_frames.set_animation_loop(anim_name, loop)
+	var i := 1
+	while true:
+		var path: String = "%s%d.png" % [dir, i]
+		if not ResourceLoader.exists(path):
+			break
+		sprite_frames.add_frame(anim_name, load(path))
+		i += 1
+	if sprite_frames.get_frame_count(anim_name) == 0:
+		return null
+	return sprite_frames
+```
+`SpriteFrames.new()` ships with a pre-existing `"default"` animation already registered (confirmed empirically - `add_animation("default")` throws `"SpriteFrames already has animation 'default'."`), which is why this checks `has_animation()` first rather than calling `add_animation()` unconditionally - `ImpactEffect` uses the name `"default"` (colliding with the built-in slot) while `Projectile`'s `"fly"`/`"pulse"` animations don't collide, but one shared helper needs to handle both cases correctly.
 
 ### Wiring — `scripts/battle/battle_scene.gd`
 
