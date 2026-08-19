@@ -17,22 +17,15 @@ func play(clip_name: String) -> void:
 	if clip_name.is_empty():
 		queue_free()
 		return
-	var dir: String = "%s%s/" % [VFX_DIR, _sanitize(clip_name)]
+	var dir: String = "%s%s/" % [VFX_DIR, VfxFrames.sanitize(clip_name)]
 	var sprite_frames: SpriteFrames = VfxFrames.load_frames(dir, "default", false, FPS)
 	if sprite_frames == null:
 		queue_free()
 		return
 	_anim_sprite.sprite_frames = sprite_frames
+	# The frames come off disk at the extractor's 2x density - see
+	# VfxFrames.VFX_SCALE for why they have to be halved to land at the
+	# size the source clip covered.
+	_anim_sprite.scale = Vector2(VfxFrames.VFX_SCALE, VfxFrames.VFX_SCALE)
 	_anim_sprite.animation_finished.connect(queue_free)
 	_anim_sprite.play("default")
-
-
-# Mirrors dev/urchin_dev/swf/extract/vfx.py's own sanitize() exactly
-# (re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_").lower()) and
-# BuffIcons._sanitize()'s identical GDScript mirror of that same
-# contract, so a clip name with a character the folder name can't hold
-# resolves to the folder the extractor actually wrote.
-static func _sanitize(name: String) -> String:
-	var regex := RegEx.new()
-	regex.compile("[^A-Za-z0-9]+")
-	return regex.sub(name, "_", true).lstrip("_").rstrip("_").to_lower()

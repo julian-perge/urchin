@@ -88,6 +88,14 @@ New/changed fields on `Projectile`:
 - `Trail`'s rotation is set once (matching source: computed from `atan(yLength/xLength)`, adjusted +180° if flying leftward - `Vector2.angle()` is the direct Godot equivalent, already quadrant-correct without the manual +180 fixup) and its `scale.x` grows every tick (`clampf` isn't in source — the original never bounds `_xscale`'s growth, so this port doesn't invent a cap either, matching the "reference the source, don't invent design" principle this session has repeatedly enforced) - independent of, and layered on top of, its own internal alpha animation.
 - `Trail` needs `top_level = true` (set in the `.tscn`, not at runtime) — confirmed empirically: a normal (non-top-level) `Node2D` child keeps inheriting its parent's transform every frame, so without this, `Trail` would be dragged along as `Projectile.position` keeps advancing every tick, rather than staying anchored at the world position it was given on the first tick. `top_level` makes `Trail`'s `global_position`/`rotation`/`scale` its own, set-once values, independent of whatever `Projectile` (the bolt) does afterward — which is the whole point of a streak that bridges a *growing* gap as the bolt flies away from where the trail was spawned.
 
+Corrected after the whole-branch review, once all six tasks were in:
+
+- Every VFX asset needs `scale = Vector2(0.5, 0.5)`, held as `VfxFrames.VFX_SCALE`. `vfx.py` renders at `ZOOM = 2.0`, the same double density every other extractor in this project uses so art stays crisp in the 1600x1200 window that `project.godot`'s `canvas_items` stretch maps back onto the 800x600 design stage. Drawn at scale 1.0, every bolt, trail, and impact covered twice the design-space area its source clip did. `character_visual.gd` already applies the identical compensation to `doll_art.py`'s own 2x output. The trail's growth is tracked in its own `_trail_growth` field so the rendered scale stays `VFX_SCALE * growth`, keeping the source's growth rate relative to a 1.0 baseline instead of letting the increments cancel the compensation out.
+- The bolt clip needs its own `rotation`, not just the trail's. `krinBoltMake` rotates the bolt and then copies that rotation onto the trail; only the trail's half had been ported. The flight direction is fixed at spawn, so `start()` sets it once.
+- `Trail` needs `centered = false` with `offset = Vector2(0, -7)`. `KrinTrail`'s real inner sprite (id 2) places its shape at design x 0..10, y -3.5..3.5 - its origin is the streak's LEFT edge, vertically centered - and the extracted frames are 20x14 px at `ZOOM = 2.0`. Left centered, a growing `scale.x` stretched the streak equally in both directions, sending half of it backwards past the caster.
+- The trail is reparented to the bolt's own parent the moment it is placed, and connects `animation_finished` to its own `queue_free`. As `Projectile`'s child it was torn down mid-fade every time a hit freed the bolt, roughly 17 ticks into a 33-frame fade. The source has the same separation: the trail is attached to `BATTLESCREEN`, a sibling of the bolt clip. `top_level` is already set, so reparenting changes nothing about where it draws.
+- The miss fly-past is capped at `MAX_FLIGHT_TICKS = 300`. A caster and target sharing an x coordinate would give a zero x-step, so the off-screen test could never become true and the tick loop would spin forever. No `SLOT_POSITIONS` pairing does that today.
+
 ### `ImpactEffect` — new `scenes/battle/impact_effect.tscn` + `scripts/battle/impact_effect.gd`
 
 ```gdscript
@@ -101,25 +109,20 @@ func play(clip_name: String) -> void:
 	if clip_name.is_empty():
 		queue_free()
 		return
-	var dir: String = "%s%s/" % [VFX_DIR, _sanitize(clip_name)]
+	var dir: String = "%s%s/" % [VFX_DIR, VfxFrames.sanitize(clip_name)]
 	var sprite_frames: SpriteFrames = VfxFrames.load_frames(dir, "default", false, FPS)
 	if sprite_frames == null:
 		queue_free()
 		return
 	var anim_sprite: AnimatedSprite2D = $Anim
 	anim_sprite.sprite_frames = sprite_frames
+	anim_sprite.scale = Vector2(VfxFrames.VFX_SCALE, VfxFrames.VFX_SCALE)
 	anim_sprite.animation_finished.connect(queue_free)
 	anim_sprite.play("default")
-
-
-static func _sanitize(name: String) -> String:
-	var regex := RegEx.new()
-	regex.compile("[^A-Za-z0-9]+")
-	return regex.sub(name, "_", true).lstrip("_").rstrip("_").to_lower()
 ```
-(`_sanitize` mirrors `BuffIcons._sanitize()`/`vfx.py`'s own `sanitize()` exactly — the same cross-language contract already established for buffs.)
+(`_sanitize` mirrors `BuffIcons._sanitize()`/`vfx.py`'s own `sanitize()` exactly — the same cross-language contract already established for buffs. Corrected after the whole-branch review: `ImpactEffect` and `Projectile` had ended up with a copy each, so the transform moved to `VfxFrames.sanitize()`, the shared home both already depend on. `BuffIcons` keeps its own copy for its own unrelated icon-name convention.)
 
-`impact_effect.tscn`: `Node2D` root, one `AnimatedSprite2D` child named `Anim` (`autoplay = ""`, `centered = true`).
+`impact_effect.tscn`: `Node2D` root, one `AnimatedSprite2D` child named `Anim` (`autoplay = ""`, `centered = true`), with `play()` setting `Anim.scale` to `VfxFrames.VFX_SCALE` alongside its frames.
 
 ### `VfxFrames` — new `scripts/entities/vfx_frames.gd`, shared by `ImpactEffect` and `Projectile`
 
