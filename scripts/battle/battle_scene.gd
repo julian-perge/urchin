@@ -23,6 +23,8 @@ signal battle_finished(outcome: int)
 const CharacterVisualScene: PackedScene = preload("res://scenes/character_visual.tscn")
 const UnitOverlayScene: PackedScene = preload("res://scenes/battle/unit_overlay.tscn")
 const StanceRowScene: PackedScene = preload("res://scenes/battle/stance_row.tscn")
+const ProjectileScene: PackedScene = preload("res://scenes/battle/projectile.tscn")
+const ImpactEffectScene: PackedScene = preload("res://scenes/battle/impact_effect.tscn")
 const BACKGROUND_ROOT: String = "res://assets/backgrounds"
 
 # Exact BATTLESCREEN placements from the SWF: BATTLESCREEN sits at
@@ -416,6 +418,20 @@ func _move_color(move: Ability) -> Color:
 	return MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.5, 0.5, 0.5)
 
 
+# BOOM_*/ex_* impact clip at the target, gated on result.type != MISS -
+# matching frame_42/DoAction_4.as's krinBoltMake, which only attaches its
+# impact clip if(_root.strikeSuccess).
+func _spawn_impact(target_slot: int, move: Ability, result: Dictionary) -> void:
+	if move == null or move.impact_effect_name.is_empty():
+		return
+	if result.get("type") == BattleManager.ResultType.MISS:
+		return
+	var effect: ImpactEffect = ImpactEffectScene.instantiate()
+	effect.position = SLOT_POSITIONS.get(target_slot, Vector2(400, 300))
+	battlefield.add_child(effect)
+	effect.play(move.impact_effect_name)
+
+
 func _move_initials(move: Ability) -> String:
 	var words: PackedStringArray = move.display_name.split(" ", false)
 	if words.size() >= 2:
@@ -677,6 +693,7 @@ func _play_move_event(event: Dictionary) -> void:
 				caster_slot, move.display_name, Time.get_ticks_msec() - start_ms,
 			])
 			AudioManagerAuto.play_effect(move.sound_effect_name)
+			_spawn_impact(target_slot, move, event.get("result", {}))
 			_show_move_result(event, target_slot)
 		caster_visual.attack_connected.connect(on_impact, CONNECT_ONE_SHOT)
 		_log("melee start: caster=%d target=%d move=%s label=%s" % [
@@ -701,24 +718,27 @@ func _play_move_event(event: Dictionary) -> void:
 			caster_slot, target_slot, move.display_name, move.attack_animation_type,
 		])
 		caster_visual.set_state(CharacterVisual.State.CAST)
-		# Approximates the original's colortobe glow tint (not decoded - see
-		# DECODED_ALGORITHMS.md) with the move's element color; set_state()
-		# resets modulate back to white when the cast label finishes.
-		caster_visual.modulate = _move_color(move).lerp(Color.WHITE, 0.4)
+		# The real colortobe glow tint (frame217/onClipEvent(enterFrame).as:
+		# 417,450) - the move's own color, not an element-color
+		# approximation. set_state() resets modulate back to white when the
+		# cast label finishes.
+		caster_visual.modulate = move.visual_effect_color.lerp(Color.WHITE, 0.4)
 		if move.attack_animation_type == "Shock":
 			# Shock: sound, the BOOM clip, and impact (BAMBAMBAM) all fire in
 			# the same tick as gotoAndPlay("cast") - the doll's cast animation
 			# plays out cosmetically but the hit lands immediately, no wait.
 			AudioManagerAuto.play_effect(move.sound_effect_name)
+			_spawn_impact(target_slot, move, event.get("result", {}))
 			_show_move_result(event, target_slot)
 			await _pause(0.35)
 			return
 		if move.attack_animation_type == "Missile":
 			# Missile: sfx_cast plays at cast start, then a krinBoltMake bolt
-			# flies to the target - impact lands on ARRIVAL, not on a fixed
-			# cast-clip time (the bolt's own accel/arrival model decides it).
+			# flies to the target - impact lands when the bolt REACHES the
+			# target, not on a fixed cast-clip time (the bolt's own
+			# accel/arrival model decides it).
 			AudioManagerAuto.play_effect("sfx_cast")
-			await _fire_projectile(caster_slot, target_slot, move)
+			await _fire_projectile(caster_slot, target_slot, move, event.get("result", {}))
 			if not is_inside_tree():
 				return
 			AudioManagerAuto.play_effect(move.sound_effect_name)
@@ -737,16 +757,20 @@ func _play_move_event(event: Dictionary) -> void:
 # caster to the target and self-destructs on arrival. Tests run with
 # animation_speed <= 0 - skip the visual flight entirely there (no _process
 # tick would ever advance it).
-func _fire_projectile(caster_slot: int, target_slot: int, move: Ability) -> void:
+func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result: Dictionary) -> void:
 	if animation_speed <= 0.0:
 		return
 	var from: Vector2 = SLOT_POSITIONS.get(caster_slot, Vector2(400, 300))
 	var to: Vector2 = SLOT_POSITIONS.get(target_slot, Vector2(400, 300))
-	var bolt := Projectile.new()
-	bolt.color = _move_color(move)
+	var bolt: Projectile = ProjectileScene.instantiate()
+	bolt.color = _move_color(move)  # fallback tinted-circle color if clip_name has no real asset
+	bolt.clip_name = move.animation_label
+	bolt.trail_color = move.visual_effect_color
+	bolt.did_hit = result.get("type") != BattleManager.ResultType.MISS
 	battlefield.add_child(bolt)
 	bolt.start(from, to)
-	await bolt.arrived
+	await bolt.reached_target
+	_spawn_impact(target_slot, move, result)
 
 
 func _show_move_result(event: Dictionary, target_slot: int) -> void:

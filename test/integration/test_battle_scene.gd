@@ -495,3 +495,92 @@ func test_combat_log_toggle_and_live_narration():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# Counts ImpactEffect instances specifically, not battlefield.get_child_count()
+# as a whole - _show_move_result's pre-existing _float_text() call parents a
+# damage-number (or "MISS") Label under battlefield on every hit AND every
+# miss, so a raw child-count comparison can't tell an ImpactEffect apart from
+# that floatie.
+func _count_impact_effects(scene) -> int:
+	var count: int = 0
+	for child in scene.battlefield.get_children():
+		if child is ImpactEffect:
+			count += 1
+	return count
+
+
+func test_melee_hit_spawns_an_impact_effect_at_the_target():
+	var save = PlayerSave.new_game("ImpactMeleeTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var before: int = _count_impact_effects(scene)
+	var event: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_id": 1, "move_name": "Leading Strike",  # Melee, impact_effect_name BOOM_SPARK
+		"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 10.0, "did_crit": false, "target_died": false},
+	}
+	await scene._play_move_event(event)
+
+	assert_gt(_count_impact_effects(scene), before, "an ImpactEffect was added to the battlefield")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func test_melee_miss_does_not_spawn_an_impact_effect():
+	var save = PlayerSave.new_game("ImpactMissTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var before: int = _count_impact_effects(scene)
+	var event: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_id": 1, "move_name": "Leading Strike",
+		"result": {"type": BattleManager.ResultType.MISS},
+	}
+	await scene._play_move_event(event)
+
+	assert_eq(_count_impact_effects(scene), before, "a miss shows no impact effect, matching strikeSuccess")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func test_shock_cast_tints_with_the_moves_own_visual_effect_color():
+	var save = PlayerSave.new_game("CastTintTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var move: Ability = MoveManagerAuto.get_move(4)  # Heal, Shock, "0x33FF00"
+	var caster_visual: CharacterVisual = scene._visuals[1]
+	var event: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_id": 4, "move_name": move.display_name,
+		"result": {"type": BattleManager.ResultType.HEAL, "amount": 10.0, "did_crit": false, "target_died": false},
+	}
+	scene._play_move_event(event)  # not awaited - modulate is set synchronously before the Shock branch's pause
+
+	var expected: Color = move.visual_effect_color.lerp(Color.WHITE, 0.4)
+	assert_almost_eq(caster_visual.modulate.r, expected.r, 0.01)
+	assert_almost_eq(caster_visual.modulate.g, expected.g, 0.01)
+	assert_almost_eq(caster_visual.modulate.b, expected.b, 0.01)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true

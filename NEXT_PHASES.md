@@ -29,23 +29,26 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     fixed `!= 0` toggle - see `DECODED_ALGORITHMS.md`.
   - **Remaining:** the MODEL4 (female) timeline.
 
-- **Missile projectile art** - `scripts/battle/projectile.gd` (`Projectile`) currently draws a generic tinted circle+line for every bolt (see `DECODED_ALGORITHMS.md`'s krinBoltMake section); the real
-  clip art needs extracting and either rendered as sprites or reimplemented in GDScript to closely match the original per-element bolt animations. Asset pointers below are WEB-BUILD sprite IDs
-  (`sonny-2-2900.xml`) - the Steam SWF's `SONNY2_steam.xml` assigns different IDs to the same export names (spot-checked: `KrinTrail` is web 3 / Steam 205, `Krin.Firebolt` is web 2448 / Steam 2198),
-  so re-resolve from whichever SWF's own `swf_xml` dump is actually used for extraction, don't reuse these against the other build:
+- **Missile projectile art** - **DONE (2026-08-19)**, see `.superpowers/sdd/2026-08-18-missile-projectile-art/` for the full 6-task breakdown. `Projectile` no longer draws a generic tinted
+  circle+line for every bolt - it plays the real per-element clip art, and impact effects land at the target on every hit, matching `DECODED_ALGORITHMS.md`'s krinBoltMake section:
 
-  - **15 distinct bolt clips**, one per element/move family - the `12_animation_model_name` value on every `moves_abilities.json` row where `10_attack_animation_type == "Missile"`: `Krin.Magicbolt`
-    (2446), `Krin.Electrobolt` (2451), `Krin.Electrobolt2` (2450), `Krin.Poisonbolt` (2443), `KRIN.POISONBOLT2` (2442), `Krin.Iceball` (2449), `Krin.Iceblade` (2447), `Krin.Icebolt` (1373),
-    `KRIN.SHADOWSHOCK` (2433), `KRIN.YELLOWBLADE` (1161), `KRIN.SHADOWBLADE` (1258), `Krin.Firebolt` (2448), `KRIN.BLADEWHITE` (1104), `KRIN.REDBLADE` (1065), `KRIN.REDBOLT` (1062) - all
-    `ExportAssetsTag`-named `DefineSprite`s. None has an ffdec ActionScript export folder under `source_files/action_script/` (they're pure shape/tween content, no clip-events) - extract via
-    `ffdec -export image/shape` against the sprite ID, not by grepping the AS export tree.
-  - **`KrinTrail`** (the streak effect spawned alongside every bolt) - web sprite 3, Steam sprite 205. Spawned at `frame_42/DoAction_4.as:176`.
-  - **BOOM_\* impact clips** (`13_impact_effect_name`, shared with Shock impacts - not projectile-exclusive) fire on bolt arrival: `BOOM1/2/3`, `BOOM_ANAS`, `BOOM_DARK`, `BOOM_RED`,
-    `BOOM_SLASHBLUE/GREEN/ORANGE/PURPLE`, `BOOM_SPARK`, `BOOM_STAR_PURPLE`, `ex_SPRBLUE` (sample web IDs: `BOOM1` 1794, `BOOM2` 118, `BOOM3` 2428, `BOOM_ANAS` 1375, `BOOM_DARK` 1714, `BOOM_RED` 1711,
-    `BOOM_SPARK` 1712, `BOOM_STAR_PURPLE` 1167, `ex_SPRBLUE` 1281 - the `BOOM_SLASH*` variants weren't individually resolved yet).
-  - The cast-glow tint (`colortobe`) and the bolt-trail tint are TWO SEPARATE mechanisms that only share the same color VALUE, not code - don't conflate them when porting: cast glow runs through
-    `DefineSprite_152`/`157`'s own `onClipEvent(load)` `Color.setRGB`, while the trail is tinted inline inside `krinBoltMake` itself (`frame_42/DoAction_4.as:177-178`) against the attached
-    `KrinTrail` instance directly.
+  - All 51 clips (15 bolts, `KrinTrail`, 35 `BOOM_*`/`ex_*` impacts) extracted from the web-build SWF into `assets/vfx/{bolts,trail,impacts}/<clip>/<frame>.png` - per-frame folders, not
+    packed spritesheets, a deliberate architecture change made mid-plan: two impact clips (`BOOM1`, `BOOM2`) pack wider than Godot's 32768px texture-import cap, which silently rescales the
+    whole sheet and desyncs every packed frame's region. `VfxFrames` (shared by `Projectile` and `ImpactEffect`) builds a `SpriteFrames` resource from a clip's own frame folder at load time.
+  - `Ability.visual_effect_color` parses the `11_visual_effect_color` hex column (the real `colortobe` glow value), replacing the cast glow's earlier element-color approximation for both
+    Missile and Shock moves - Melee is untouched, it never sets `colortobe`.
+  - `ImpactEffect` - a one-shot `BOOM_*`/`ex_*` clip player that frees itself when its animation finishes. One genuine deviation from source: the original never explicitly removes its own
+    equivalent clips (`"bbb"+counter` in `frame_42/DoAction_4.as`'s krinBoltMake) - a deliberate improvement, not an unfaithful port.
+  - `Projectile` rewritten from a bare script into a real `.tscn` with `Bolt`/`Trail` `AnimatedSprite2D` children: the bolt plays its real clip untinted (alpha-only fade-in), the trail is a
+    genuine 33-frame fade-in/fade-out pulse baked into its own timeline (not manually faded), RGB-tinted by `trail_color`, spawned once at the bolt's position and grown via `scale.x` every
+    tick. Its `arrived` signal was renamed `reached_target`. A miss now flies the bolt fully past the target off this port's own screen bounds instead of stopping at it (`did_hit` gates
+    whether `reached_target` frees the bolt immediately or lets it keep flying), matching `strikeSuccess`'s hit/miss branch.
+  - `battle_scene.gd` wires `_spawn_impact()` at all three impact hook points - melee's `on_impact` lambda, the Shock branch, and missile's `_fire_projectile` (after `reached_target`) -
+    gated on `result.type != MISS` exactly like krinBoltMake's own `strikeSuccess` check, and `_fire_projectile` now instances the real `Projectile` scene instead of a bare `Projectile.new()`
+    (dormant breakage left over from the scene-conversion task, since no existing test drove a live Missile move far enough to reach it - fixed here).
+
+  GUT suite green: 169/169 tests, 844 asserts. Manual visual check (a live Missile move showing real bolt/trail art, a miss flying past, the cast glow tinted by the move's own color) was not
+  completed - this environment has no interactive/screenshot tooling for a native (non-browser) Godot window, worth a project owner eyes-on pass.
 
 - **Battle bugs found playtesting zone 1 (2026-08-18)** - **ALL 4 FIXED**, surfaced manually verifying the cutscene work above (see the debug battle-jump entry point in `.claude/plan_cutscenes.md`'s Task 4 note):
 
