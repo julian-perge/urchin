@@ -6,7 +6,12 @@
 extends PanelContainer
 class_name CombatLogPanel
 
-@onready var _log_text: RichTextLabel = $Scroll/LogText
+# The label is the panel's only child and does its own scrolling
+# (scroll_following keeps the newest line in view). An outer ScrollContainer
+# used to wrap it, and the two fought: the label scrolled inside its own
+# oversized viewport while the container stayed parked at the top, so the
+# player never saw a new line without dragging the scrollbar.
+@onready var _log_text: RichTextLabel = $LogText
 
 
 func toggle() -> void:
