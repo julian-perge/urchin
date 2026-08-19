@@ -51,6 +51,24 @@ func test_refresh_buffs_caps_at_seven_icons():
 	assert_eq(overlay.buff_row.get_child_count(), 7, "8 active buffs capped at MAX_BUFF_ICONS (7)")
 
 
+func test_refresh_buffs_skips_rebuild_when_state_is_unchanged():
+	# Called after every combat event, not only when buffs actually change -
+	# rebuilding an identical row would flicker and drop an open tooltip out
+	# from under a hovering player for no reason.
+	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var unit := CombatUnit.new()
+	var buff_fire: Buff = _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)
+	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
+
+	overlay.refresh_buffs(unit, {1: buff_fire})
+	var icon_id: int = overlay.buff_row.get_child(0).get_instance_id()
+
+	overlay.refresh_buffs(unit, {1: buff_fire})  # identical state
+
+	assert_eq(overlay.buff_row.get_child_count(), 1, "row still shows the one buff")
+	assert_eq(overlay.buff_row.get_child(0).get_instance_id(), icon_id, "same node - no rebuild happened")
+
+
 func test_refresh_buffs_clears_expired_buffs():
 	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
 	var unit := CombatUnit.new()

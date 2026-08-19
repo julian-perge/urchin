@@ -48,6 +48,23 @@ func test_format_speech_line():
 	assert_eq(panel._format_line(event, units), "Veradux: Watch out!")
 
 
+func test_log_caps_at_max_lines_dropping_oldest():
+	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
+	var total: int = CombatLogPanel.MAX_LINES + 20
+	for i in total:
+		var event: Dictionary = {
+			"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+			"move_name": "Acid Slash",
+			"result": {"type": BattleManager.ResultType.DAMAGE, "amount": float(i), "did_crit": false, "target_died": false},
+		}
+		panel.append_event(event, units)
+
+	var lines: PackedStringArray = panel._log_text.text.split("\n")
+	assert_eq(lines.size(), CombatLogPanel.MAX_LINES, "capped at MAX_LINES, not left to grow unbounded")
+	assert_string_contains(lines[0], "for 20", "the oldest 20 lines were dropped")
+	assert_string_contains(lines[lines.size() - 1], "for %d" % (total - 1), "the newest line survives")
+
+
 # Regression test: the label used to sit inside a ScrollContainer, which
 # stayed parked at the top while the label scrolled inside its own oversized
 # viewport - the newest line was written but never visible. With the label as

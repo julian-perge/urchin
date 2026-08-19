@@ -13,6 +13,13 @@ class_name CombatLogPanel
 # player never saw a new line without dragging the scrollbar.
 @onready var _log_text: RichTextLabel = $LogText
 
+# A long boss fight can run hundreds of events; capping the backing line
+# array (rather than letting `text +=` grow forever) bounds both the
+# string-reallocation cost and the RichTextLabel's own line cache.
+const MAX_LINES: int = 200
+
+var _lines: Array[String] = []
+
 
 func toggle() -> void:
 	visible = not visible
@@ -25,9 +32,10 @@ func append_event(event: Dictionary, units: Dictionary) -> void:
 	var line: String = _format_line(event, units)
 	if line.is_empty():
 		return
-	if _log_text.text != "":
-		_log_text.text += "\n"
-	_log_text.text += line
+	_lines.append(line)
+	if _lines.size() > MAX_LINES:
+		_lines.pop_front()
+	_log_text.text = "\n".join(_lines)
 
 
 func _unit_name(units: Dictionary, slot: int) -> String:

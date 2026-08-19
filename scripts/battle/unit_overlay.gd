@@ -20,6 +20,13 @@ const MAX_BUFF_ICONS: int = 7
 @onready var hit_button: Button = $HitButton
 @onready var buff_row: HBoxContainer = $BuffRow
 
+# The rendered active-slot set as of the last refresh_buffs() call, so a
+# refresh that lands with the same buffs/durations as last time (this is
+# called after every combat event, not only when buffs actually change) can
+# skip tearing down and rebuilding the row - which would otherwise flicker
+# and kill an open tooltip out from under a player mid-hover for no reason.
+var _last_signature: Array = []
+
 
 func setup(unit_name: String) -> void:
 	name_label.text = unit_name
@@ -38,17 +45,24 @@ func setup(unit_name: String) -> void:
 # sentinel; empty slots use buff_id -1 (see CombatUnit's slot init) but
 # always carry cd == 0 too, so checking cd alone already excludes them.
 func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
-	for child in buff_row.get_children():
-		child.queue_free()
 	if unit == null:
+		_clear_row()
 		return
 	var active_slots: Array = []
 	for slot in unit.buff_slots:
 		if int(slot.get("cd", 0)) > 0:
 			active_slots.append(slot)
 	active_slots.sort_custom(func(a, b): return int(a["cd"]) > int(b["cd"]))
-	for i in mini(active_slots.size(), MAX_BUFF_ICONS):
-		var slot: Dictionary = active_slots[i]
+	active_slots = active_slots.slice(0, mini(active_slots.size(), MAX_BUFF_ICONS))
+	var signature: Array = []
+	for slot in active_slots:
+		signature.append({"buff_id": int(slot["buff_id"]), "cd": int(slot["cd"])})
+	if signature == _last_signature:
+		return
+	_last_signature = signature
+	for child in buff_row.get_children():
+		child.queue_free()
+	for slot in active_slots:
 		var buff: Buff = buffs_by_id.get(int(slot["buff_id"]))
 		if buff == null:
 			continue
@@ -71,3 +85,11 @@ func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
 		counter.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		icon_rect.add_child(counter)
 		buff_row.add_child(icon_rect)
+
+
+func _clear_row() -> void:
+	if _last_signature.is_empty():
+		return
+	for child in buff_row.get_children():
+		child.queue_free()
+	_last_signature = []

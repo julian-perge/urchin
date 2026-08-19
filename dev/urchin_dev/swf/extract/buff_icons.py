@@ -58,6 +58,13 @@ BUFF_ICON_SPRITE = 100
 ZOOM = 2.0
 
 
+# Same sanitize step as item_icons.py's own sanitize() - named here (it used
+# to be inlined) so buff_icons.gd's BuffIcons._sanitize() has one place to
+# cite as the source of truth instead of two languages agreeing by luck.
+def sanitize(label: str) -> str:
+    return re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_")
+
+
 def run(cmd: list[str]) -> subprocess.CompletedProcess:
     proc = subprocess.run(cmd, capture_output=True, text=True)
     if proc.returncode != 0:
@@ -101,7 +108,7 @@ def main():
             if not src.exists():
                 missing.append((label, frame))
                 continue
-            file_name = re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_") + ".png"
+            file_name = sanitize(label) + ".png"
             img = Image.open(src)
             bbox = img.getchannel("A").getbbox()
             img = (
