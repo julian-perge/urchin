@@ -27,6 +27,12 @@ extends Resource
 # target (on melee impact / shock cast / missile arrival). Not rendered yet
 # - see DECODED_ALGORITHMS.md.
 @export var impact_effect_name: String
+# AS3 addNewMove param 11 ("colortobe"): tints the caster's own cast-glow
+# clip for both Missile and Shock (frame217/onClipEvent(enterFrame).as:
+# 417,450), and the KrinTrail streak for Missile bolts - NOT the bolt
+# clip itself, which is shown untinted (its own art is pre-colored per
+# element). Melee never sets colortobe.
+@export var visual_effect_color: Color = Color.WHITE
 @export var effect_category: String  # "Full Damage" / "Heal" / "Focus" / "Attack" (unhandled, see execute_move)
 @export var health_cost_percentage: float
 @export var sound_effect_name: String
@@ -114,6 +120,8 @@ static func from_json(data: Dictionary) -> Ability:
 	ability.attack_animation_type = _text(data.get("10_attack_animation_type"))
 	ability.animation_label = _text(data.get("12_animation_model_name"))
 	ability.impact_effect_name = _text(data.get("13_impact_effect_name"))
+	var raw_color = data.get("11_visual_effect_color")
+	ability.visual_effect_color = Color.html(raw_color.substr(2)) if raw_color is String else Color.WHITE
 	ability.effect_category = _text(data.get("14_effect_category"))
 	ability.health_cost_percentage = _num(data.get("16_health_cost_percentage"))
 	ability.sound_effect_name = _text(data.get("18_sound_effect_name"))
