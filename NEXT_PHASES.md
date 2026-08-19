@@ -90,6 +90,17 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
 
   GUT suite green: 147/147 tests (assert counts vary run to run since several integration tests drive a real RNG/AI battle to completion - one clean run: 731 asserts).
 
+  Final-review fix wave (2026-08-18): a stale radial-menu fade tween could silently close a brand-new menu opened on a different unit while an earlier one was still fading out - fixed by killing
+  the in-flight tween in `_close_radial_menu()`. The combat log's `RichTextLabel` used to sit inside a `ScrollContainer`, and the two scroll mechanisms fought - the label auto-scrolled inside its
+  own oversized viewport while the outer container stayed parked at the top, so new lines never actually became visible; fixed by making the label the panel's direct child. Four smaller items were
+  also cleaned up: `refresh_buffs()` now skips rebuilding the buff row when nothing changed (it was rebuilding on every combat event, dropping an open tooltip mid-hover for no reason); the combat
+  log caps at 200 lines instead of growing unbounded over a long fight; `buff_icons.py`'s inline sanitize regex is now a named `sanitize()` matching `item_icons.py`'s own convention, mirrored
+  exactly by `BuffIcons._sanitize()` in GDScript; `pyproject.toml`'s `extract_buff_icons` entry moved to its alphabetical position.
+
+  **Deferred, not fixed** (all cosmetic, low-value): the hover-ring's fade tween still fires (a 0-length no-op) on every mouse enter/exit during an AI turn, harmless but wasteful; the combat log
+  panel, when toggled on, can visually overlap and swallow clicks on slot 5's unit overlay (low impact since the log is off by default); `BottomBar/Backdrop`'s texture is stretched slightly larger
+  than the Panel1-3 region it was measured against - worth an eyes-on check, not a code fix.
+
 - **Item click-n-drag** - **DONE (2026-08-18)**, project owner request 2026-07-18. See `.claude/plan_item_drag_and_drop.md` for the full task breakdown. `ItemSlot` is both drag source
   (`_get_drag_data`, a semi-transparent 31x31 preview) and drop target (`_can_drop_data`/`_drop_data`) via Godot's built-in Control drag API - inventory<->inventory swaps, inventory<->equip
   equips/unequips, and dropping on the sell button sells (hover previews the price in its tooltip). New `GameData.swap_inventory_slots`/`unequip_to_slot` back the two operations click never
