@@ -558,6 +558,54 @@ func test_melee_miss_does_not_spawn_an_impact_effect():
 	ZoneManager.auto_start_battles = true
 
 
+func test_missile_fire_spawns_a_bolt_and_its_impact_on_arrival():
+	# The one test that runs _fire_projectile for real. Every other test on
+	# this scene uses animation_speed 0, which returns from the top of that
+	# function before it touches anything - the gap that hid a stale
+	# Projectile.new() call through five tasks of this plan.
+	var save = PlayerSave.new_game("MissileFireTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var move: Ability = MoveManagerAuto.get_move(5)  # Nuke: Missile, Krin.Magicbolt, BOOM_SLASHORANGE
+	var result: Dictionary = {
+		"type": BattleManager.ResultType.DAMAGE, "amount": 10.0,
+		"did_crit": false, "target_died": false,
+	}
+	var impacts_before: int = _count_impact_effects(scene)
+	# Deliberately not awaited: _fire_projectile suspends on the bolt's
+	# reached_target, and the bolt has to be hand-driven from out here to
+	# get there, exactly as test_projectile.gd drives it.
+	scene.animation_speed = 1.0
+	scene._fire_projectile(1, 2, move, result)
+
+	var bolt: Projectile = null
+	for child in scene.battlefield.get_children():
+		if child is Projectile:
+			bolt = child
+	assert_not_null(bolt, "a real Projectile was added to the battlefield")
+	assert_eq(bolt.clip_name, "Krin.Magicbolt", "the move's own bolt clip was threaded through")
+	assert_eq(bolt.trail_color, move.visual_effect_color, "the move's own trail color was threaded through")
+	assert_true(bolt.did_hit, "a DAMAGE result is a hit, not a miss")
+
+	for i in 200:
+		bolt._process(1.0 / 30.0)
+		if bolt.is_queued_for_deletion():
+			break
+	assert_true(bolt.is_queued_for_deletion(), "the bolt reached the target and freed itself")
+	assert_gt(_count_impact_effects(scene), impacts_before,
+		"_fire_projectile resumed past its await and spawned the impact effect")
+
+	scene.animation_speed = 0.0
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func test_shock_cast_tints_with_the_moves_own_visual_effect_color():
 	var save = PlayerSave.new_game("CastTintTest", 0)
 	GameData.current_save = save
