@@ -754,9 +754,11 @@ func _play_move_event(event: Dictionary) -> void:
 
 
 # krinBoltMake port: an accelerating bolt (Projectile) that flies from the
-# caster to the target and self-destructs on arrival. Tests run with
-# animation_speed <= 0 - skip the visual flight entirely there (no _process
-# tick would ever advance it).
+# caster to the target, then spawns the move's impact effect there. On a
+# hit the bolt destroys itself the moment it arrives; on a miss it keeps
+# flying past the target and only frees once it leaves the canvas. Tests
+# run with animation_speed <= 0 - skip the visual flight entirely there
+# (no _process tick would ever advance it).
 func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result: Dictionary) -> void:
 	if animation_speed <= 0.0:
 		return

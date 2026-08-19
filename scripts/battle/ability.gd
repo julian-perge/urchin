@@ -24,8 +24,11 @@ extends Resource
 # projectile clip name (Krin.Firebolt etc.); unused for Shock (which casts).
 @export var animation_label: String
 # AS3 addNewMove param 13: the BOOM_* impact effect clip attached at the
-# target (on melee impact / shock cast / missile arrival). Not rendered yet
-# - see DECODED_ALGORITHMS.md.
+# target (on melee impact / shock cast / missile arrival). Rendered by
+# ImpactEffect, which resolves this name to the folder
+# dev/urchin_dev/swf/extract/vfx.py wrote. Five of the names real moves
+# reference are missing from the source SWF's own export table, so those
+# moves show nothing - see that extractor's header.
 @export var impact_effect_name: String
 # AS3 addNewMove param 11 ("colortobe"): tints the caster's own cast-glow
 # clip for both Missile and Shock (frame217/onClipEvent(enterFrame).as:
