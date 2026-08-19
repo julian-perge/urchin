@@ -1,7 +1,8 @@
 # Battle VFX extraction: 15 Missile bolt clips + KrinTrail + every real
 # BOOM_*/ex_* impact clip referenced by moves_abilities.json's
 # 13_impact_effect_name (frame_42/DoAction_4.as's krinBoltMake) - all
-# shape/tween DefineSprites with no ActionScript of their own.
+# shape/tween DefineSprites with no ActionScript of their own (except
+# KrinTrail's inner clip - see TRAIL_SPRITE_ID below).
 #
 # Every frame of a clip renders onto ffdec's own consistent per-clip
 # canvas (confirmed: a real 25-frame BOOM_SPARKBLUE export came back as
