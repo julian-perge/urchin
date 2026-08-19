@@ -39,6 +39,14 @@ const OFF_SCREEN_MAX_X := 820.0
 
 var clip_name: String = ""
 var trail_color: Color = Color.WHITE
+# Set by battle_scene.gd before start(), from result.type != MISS. A hit
+# frees the bolt the instant it reaches the target (matching source: the
+# bolt is destroyed the same tick its impact clip appears). A miss keeps
+# the bolt (and its growing trail) moving past the target until it exits
+# this port's own screen bounds - reached_target still fires at the same
+# coordinate-cross tick either way, so turn pacing/audio/the floatie land
+# exactly where they do on a hit.
+var did_hit: bool = true
 var color: Color = Color.WHITE  # fallback tinted-circle color when clip_name has no real asset
 
 @onready var _bolt_sprite: AnimatedSprite2D = $Bolt
@@ -52,6 +60,7 @@ var _alpha: float = 0.0
 var _frame_accum: float = 0.0
 var _trail_start: Vector2
 var _trail_spawned: bool = false
+var _reached: bool = false  # reached_target already fired - only matters for the miss fly-past
 
 
 func start(origin: Vector2, target: Vector2) -> void:
@@ -107,8 +116,13 @@ func _process(delta: float) -> void:
 		if _trail_sprite.visible:
 			_trail_sprite.scale.x += 0.083 * _step.length() * _speed_const
 		_speed_const *= BOLT_INCREASE
-		if (_target_x - position.x) * _checker <= 0.0:
+		if not _reached and (_target_x - position.x) * _checker <= 0.0:
+			_reached = true
 			reached_target.emit()
+			if did_hit:
+				queue_free()
+				return
+		if _reached and (position.x < OFF_SCREEN_MIN_X or position.x > OFF_SCREEN_MAX_X):
 			queue_free()
 			return
 	queue_redraw()

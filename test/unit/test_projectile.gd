@@ -62,3 +62,53 @@ func test_trail_stays_anchored_at_its_spawn_point_as_the_bolt_flies_on():
 		bolt._process(1.0 / 30.0)  # the bolt keeps advancing
 	assert_eq(trail_sprite.global_position, spawn_pos, "trail stays put while the bolt flies on")
 	assert_gt(bolt.global_position.x, spawn_pos.x, "the bolt itself really did move away from that point")
+
+
+func test_hit_frees_immediately_on_reaching_target():
+	var bolt: Projectile = add_child_autofree(ProjectileScene.instantiate())
+	bolt.clip_name = "Krin.Firebolt"
+	bolt.trail_color = Color.WHITE
+	bolt.did_hit = true
+	bolt.start(Vector2(100, 100), Vector2(103, 100))  # short hop - reaches fast
+	# A Dictionary is used (not a bare local) because GDScript lambdas
+	# capture plain locals by value, not by reference - see
+	# test_cutscene_player.gd's identical note.
+	var result := {"reached": false}
+	bolt.reached_target.connect(func(): result.reached = true)
+
+	for i in 200:
+		bolt._process(1.0 / 30.0)
+		if bolt.is_queued_for_deletion():
+			break
+
+	assert_true(result.reached, "reached_target fired")
+	assert_true(bolt.is_queued_for_deletion(), "hit - frees right at the coordinate-cross tick")
+
+
+func test_miss_keeps_flying_past_the_target_until_off_screen():
+	var bolt: Projectile = add_child_autofree(ProjectileScene.instantiate())
+	bolt.clip_name = "Krin.Firebolt"
+	bolt.trail_color = Color.WHITE
+	bolt.did_hit = false
+	bolt.start(Vector2(100, 100), Vector2(103, 100))
+	# A Dictionary is used (not a bare local) because GDScript lambdas
+	# capture plain locals by value, not by reference - see
+	# test_cutscene_player.gd's identical note.
+	var result := {"reached": false}
+	bolt.reached_target.connect(func(): result.reached = true)
+
+	# Advance a handful of ticks - reached_target should have already fired
+	# (same coordinate-cross tick a hit would use), but the bolt must still
+	# be alive, still past the target, not yet off-screen.
+	for i in 30:
+		bolt._process(1.0 / 30.0)
+	assert_true(result.reached, "reached_target fires on a miss too, at the same tick a hit would")
+	assert_false(bolt.is_queued_for_deletion(), "miss - doesn't free at the coordinate-cross tick")
+	assert_true(bolt.position.x > 103.0, "kept moving past the target")
+
+	# Let it keep flying until it exits this port's own screen bounds.
+	for i in 2000:
+		bolt._process(1.0 / 30.0)
+		if bolt.is_queued_for_deletion():
+			break
+	assert_true(bolt.is_queued_for_deletion(), "eventually frees once off-screen")
