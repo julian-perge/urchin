@@ -1,0 +1,35 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/1.png" id="frame_1"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/2.png" id="frame_2"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/3.png" id="frame_3"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/4.png" id="frame_4"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/5.png" id="frame_5"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/6.png" id="frame_6"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/7.png" id="frame_7"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/8.png" id="frame_8"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/9.png" id="frame_9"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/10.png" id="frame_10"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/11.png" id="frame_11"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/12.png" id="frame_12"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/13.png" id="frame_13"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/14.png" id="frame_14"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/15.png" id="frame_15"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_powerup/16.png" id="frame_16"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("frame_1")}, {"duration": 1.0, "texture": ExtResource("frame_2")}, {"duration": 1.0, "texture": ExtResource("frame_3")}, {"duration": 1.0, "texture": ExtResource("frame_4")}, {"duration": 1.0, "texture": ExtResource("frame_5")}, {"duration": 1.0, "texture": ExtResource("frame_6")}, {"duration": 1.0, "texture": ExtResource("frame_7")}, {"duration": 1.0, "texture": ExtResource("frame_8")}, {"duration": 1.0, "texture": ExtResource("frame_9")}, {"duration": 1.0, "texture": ExtResource("frame_10")}, {"duration": 1.0, "texture": ExtResource("frame_11")}, {"duration": 1.0, "texture": ExtResource("frame_12")}, {"duration": 1.0, "texture": ExtResource("frame_13")}, {"duration": 1.0, "texture": ExtResource("frame_14")}, {"duration": 1.0, "texture": ExtResource("frame_15")}, {"duration": 1.0, "texture": ExtResource("frame_16")}],
+"loop": false,
+"name": &"default",
+"speed": 30.0
+}]
+
+[node name="Impact" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-69.0, -69.0)
+scale = Vector2(0.5, 0.5)
+centered = false
+sprite_frames = SubResource("SpriteFrames_1")
+animation = &"default"

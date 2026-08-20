@@ -1,0 +1,24 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/vfx/bolts/krin_magicbolt/1.png" id="frame_1"]
+[ext_resource type="Texture2D" path="res://assets/vfx/bolts/krin_magicbolt/2.png" id="frame_2"]
+[ext_resource type="Texture2D" path="res://assets/vfx/bolts/krin_magicbolt/3.png" id="frame_3"]
+[ext_resource type="Texture2D" path="res://assets/vfx/bolts/krin_magicbolt/4.png" id="frame_4"]
+[ext_resource type="Texture2D" path="res://assets/vfx/bolts/krin_magicbolt/5.png" id="frame_5"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("frame_1")}, {"duration": 1.0, "texture": ExtResource("frame_2")}, {"duration": 1.0, "texture": ExtResource("frame_3")}, {"duration": 1.0, "texture": ExtResource("frame_4")}, {"duration": 1.0, "texture": ExtResource("frame_5")}],
+"loop": true,
+"name": &"fly",
+"speed": 30.0
+}]
+
+[node name="Bolt" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-81.5, -46.88)
+scale = Vector2(0.5, 0.5)
+centered = false
+sprite_frames = SubResource("SpriteFrames_1")
+animation = &"fly"

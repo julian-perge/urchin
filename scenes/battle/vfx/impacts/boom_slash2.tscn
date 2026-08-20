@@ -1,0 +1,44 @@
+[gd_scene load_steps=27 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/1.png" id="frame_1"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/2.png" id="frame_2"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/3.png" id="frame_3"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/4.png" id="frame_4"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/5.png" id="frame_5"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/6.png" id="frame_6"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/7.png" id="frame_7"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/8.png" id="frame_8"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/9.png" id="frame_9"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/10.png" id="frame_10"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/11.png" id="frame_11"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/12.png" id="frame_12"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/13.png" id="frame_13"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/14.png" id="frame_14"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/15.png" id="frame_15"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/16.png" id="frame_16"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/17.png" id="frame_17"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/18.png" id="frame_18"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/19.png" id="frame_19"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/20.png" id="frame_20"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/21.png" id="frame_21"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/22.png" id="frame_22"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/23.png" id="frame_23"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/24.png" id="frame_24"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impacts/boom_slash2/25.png" id="frame_25"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("frame_1")}, {"duration": 1.0, "texture": ExtResource("frame_2")}, {"duration": 1.0, "texture": ExtResource("frame_3")}, {"duration": 1.0, "texture": ExtResource("frame_4")}, {"duration": 1.0, "texture": ExtResource("frame_5")}, {"duration": 1.0, "texture": ExtResource("frame_6")}, {"duration": 1.0, "texture": ExtResource("frame_7")}, {"duration": 1.0, "texture": ExtResource("frame_8")}, {"duration": 1.0, "texture": ExtResource("frame_9")}, {"duration": 1.0, "texture": ExtResource("frame_10")}, {"duration": 1.0, "texture": ExtResource("frame_11")}, {"duration": 1.0, "texture": ExtResource("frame_12")}, {"duration": 1.0, "texture": ExtResource("frame_13")}, {"duration": 1.0, "texture": ExtResource("frame_14")}, {"duration": 1.0, "texture": ExtResource("frame_15")}, {"duration": 1.0, "texture": ExtResource("frame_16")}, {"duration": 1.0, "texture": ExtResource("frame_17")}, {"duration": 1.0, "texture": ExtResource("frame_18")}, {"duration": 1.0, "texture": ExtResource("frame_19")}, {"duration": 1.0, "texture": ExtResource("frame_20")}, {"duration": 1.0, "texture": ExtResource("frame_21")}, {"duration": 1.0, "texture": ExtResource("frame_22")}, {"duration": 1.0, "texture": ExtResource("frame_23")}, {"duration": 1.0, "texture": ExtResource("frame_24")}, {"duration": 1.0, "texture": ExtResource("frame_25")}],
+"loop": false,
+"name": &"default",
+"speed": 30.0
+}]
+
+[node name="Impact" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-125.73, -117.3)
+scale = Vector2(0.5, 0.5)
+centered = false
+sprite_frames = SubResource("SpriteFrames_1")
+animation = &"default"
