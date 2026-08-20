@@ -417,7 +417,7 @@ func _check_win_lose() -> void:
 	var win_count: int = 0
 	var lose_count: int = 0
 	var player: CombatUnit = units.get(PLAYER_SLOT)
-	var player_team: CombatUnit.Team = player.team_side if player else CombatUnit.Team.ONE
+	var player_team: CombatUnit.Team = player.team_side as CombatUnit.Team if player else CombatUnit.Team.ONE
 
 	# Tutorial-battle special case: losing your own unit in KBR2 is an
 	# immediate loss even though allies remain.

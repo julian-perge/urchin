@@ -160,7 +160,7 @@ static func _zero_array(size: int) -> Array:
 # text. Returns -1, same as ELEMENT_ORDER.find() itself, when name isn't a
 # real element.
 static func element_from_name(name: String) -> Element:
-	return ELEMENT_ORDER.find(name)
+	return ELEMENT_ORDER.find(name) as Element
 
 static func get_stat(ratio: float, level: int, mode = null) -> float:
 	if level <= 0:

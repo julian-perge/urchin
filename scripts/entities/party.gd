@@ -138,7 +138,7 @@ static func deployed_party_id(save: PlayerSave, slot_marker: int) -> int:
 static func get_ag_mode(save: PlayerSave, party_id: int) -> AggressionStance:
 	if party_id < 0 or party_id >= save.ag_mode.size():
 		return AggressionStance.TACTICAL
-	return clampi(int(save.ag_mode[party_id]), 0, AGGRESSION_PRESETS.size() - 1)
+	return clampi(int(save.ag_mode[party_id]), 0, AGGRESSION_PRESETS.size() - 1) as AggressionStance
 
 
 static func set_ag_mode(save: PlayerSave, party_id: int, mode: AggressionStance) -> void:

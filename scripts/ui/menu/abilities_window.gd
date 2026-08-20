@@ -297,7 +297,7 @@ func _node_center(node_index: int) -> Vector2:
 
 func _draw_tree_lines() -> void:
 	var save: PlayerSave = GameData.current_save
-	var player_class: PlayerSave.PlayerClass = save.player_class if save != null else PlayerSave.PlayerClass.BIOLOGICAL
+	var player_class: PlayerSave.PlayerClass = save.player_class as PlayerSave.PlayerClass if save != null else PlayerSave.PlayerClass.BIOLOGICAL
 	var tree: Array = TalentTree.TREES.get(player_class, TalentTree.TREES[PlayerSave.PlayerClass.BIOLOGICAL])
 	for node_index in tree.size():
 		for prerequisite in tree[node_index]["prerequisites"]:
@@ -310,7 +310,7 @@ func _draw_tree_lines() -> void:
 
 
 func _player_class() -> PlayerSave.PlayerClass:
-	return GameData.current_save.player_class if GameData.current_save != null else PlayerSave.PlayerClass.BIOLOGICAL
+	return GameData.current_save.player_class as PlayerSave.PlayerClass if GameData.current_save != null else PlayerSave.PlayerClass.BIOLOGICAL
 
 
 func _on_tree_node_pressed(node_index: int) -> void:
