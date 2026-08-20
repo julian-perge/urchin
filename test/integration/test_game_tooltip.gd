@@ -1,4 +1,9 @@
 # test_game_tooltip.gd
+# NOTE: If running this test fails with "Identifier 'TooltipTheme' not declared
+# in the current scope" after adding the tooltip_theme.gd file, the Godot
+# global_script_class_cache.cfg is stale. Run:
+#   /Applications/Godot.app/Contents/MacOS/Godot --headless --import .
+# from the project root to regenerate the class cache, then retry.
 extends GutTest
 
 
@@ -6,23 +11,17 @@ func after_each():
 	GameTooltip.hide_tooltip()
 
 
-func _get_tooltip_theme() -> Script:
-	return load("res://scripts/ui/tooltip_theme.gd")
-
-
 func _sections_fixture() -> Array:
-	var theme: Script = _get_tooltip_theme()
 	return [
-		{"bg_color": theme.BG_HEADER, "lines": [{"text": "Title", "color": theme.TEXT_TITLE}]},
-		{"bg_color": theme.BG_BODY, "lines": [
-			{"text": "Line one", "color": theme.TEXT_BODY},
-			{"text": "Line two", "color": theme.TEXT_STAT},
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": "Title", "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_BODY, "lines": [
+			{"text": "Line one", "color": TooltipTheme.TEXT_BODY},
+			{"text": "Line two", "color": TooltipTheme.TEXT_STAT},
 		]},
 	]
 
 
 func test_show_sections_builds_one_panel_per_section_with_right_colors_and_lines():
-	var theme: Script = _get_tooltip_theme()
 	var anchor: Control = add_child_autofree(Control.new())
 	anchor.position = Vector2(100, 100)
 	anchor.size = Vector2(30, 30)
@@ -32,26 +31,25 @@ func test_show_sections_builds_one_panel_per_section_with_right_colors_and_lines
 	assert_eq(GameTooltip._sections.get_child_count(), 2, "one PanelContainer per section")
 	var header_panel: PanelContainer = GameTooltip._sections.get_child(0)
 	var header_style: StyleBoxFlat = header_panel.get_theme_stylebox("panel")
-	assert_eq(header_style.bg_color, theme.BG_HEADER)
+	assert_eq(header_style.bg_color, TooltipTheme.BG_HEADER)
 	var header_label: Label = header_panel.get_child(0).get_child(0)
 	assert_eq(header_label.text, "Title")
-	assert_eq(header_label.get_theme_color("font_color"), theme.TEXT_TITLE)
+	assert_eq(header_label.get_theme_color("font_color"), TooltipTheme.TEXT_TITLE)
 
 	var body_panel: PanelContainer = GameTooltip._sections.get_child(1)
 	var body_style: StyleBoxFlat = body_panel.get_theme_stylebox("panel")
-	assert_eq(body_style.bg_color, theme.BG_BODY)
+	assert_eq(body_style.bg_color, TooltipTheme.BG_BODY)
 	var body_lines: VBoxContainer = body_panel.get_child(0)
 	assert_eq(body_lines.get_child_count(), 2)
 	assert_eq(body_lines.get_child(0).text, "Line one")
-	assert_eq(body_lines.get_child(1).get_theme_color("font_color"), theme.TEXT_STAT)
+	assert_eq(body_lines.get_child(1).get_theme_color("font_color"), TooltipTheme.TEXT_STAT)
 
 
 func test_show_sections_clears_previous_sections_on_a_second_call():
-	var theme: Script = _get_tooltip_theme()
 	var anchor: Control = add_child_autofree(Control.new())
 	GameTooltip.show_sections(_sections_fixture(), anchor)
 	GameTooltip.show_sections(
-		[{"bg_color": theme.BG_BODY, "lines": [{"text": "Only", "color": theme.TEXT_BODY}]}], anchor
+		[{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": "Only", "color": TooltipTheme.TEXT_BODY}]}], anchor
 	)
 	assert_eq(GameTooltip._sections.get_child_count(), 1, "old sections cleared, not accumulated")
 
