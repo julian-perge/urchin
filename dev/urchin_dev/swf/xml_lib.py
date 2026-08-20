@@ -168,7 +168,12 @@ def make_timeline_bounds(shape_bounds, xml):
         if cid in shape_bounds:
             memo[cid] = shape_bounds[cid]
             return memo[cid]
-        fc = frame_count(cid)
+        try:
+            fc = frame_count(cid)
+        except KeyError:
+            # cid is not a sprite (e.g., placed shape, text, button)
+            memo[cid] = None
+            return None
         if fc == 0:
             memo[cid] = None
             return None
