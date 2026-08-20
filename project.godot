@@ -30,6 +30,7 @@ ZoneManager="*res://scripts/autoload/zone_manager.gd"
 GameData="*res://scripts/autoload/game_data.gd"
 AudioManagerAuto="*res://scripts/autoload/audio_manager.gd"
 LogManagerAuto="*res://scripts/autoload/log_manager.gd"
+GameTooltip="*res://scenes/ui/game_tooltip.tscn"
 
 [display]
 
