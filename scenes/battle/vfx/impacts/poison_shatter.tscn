@@ -48,7 +48,7 @@ animations = [{
 [node name="Impact" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(-227.25, -182.17)
+position = Vector2(-215.15, -131.91)
 scale = Vector2(0.5, 0.5)
 centered = false
 sprite_frames = SubResource("SpriteFrames_1")
