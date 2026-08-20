@@ -27,6 +27,20 @@ const HOVER_COLORS: Dictionary[String, Color] = {
 	"RespecButton": Color(0.7, 0.4, 1.0),         # violet
 	"AchievementsButton": Color(1.0, 0.55, 0.2),  # burnt orange
 }
+# Tooltip captions per button: [title] for a single-line caption, or
+# [title, body] for a 2-section tooltip. These are the same strings the
+# scene file used to carry as plain tooltip_text - kept here now that
+# GameTooltip needs sections, not a joined string.
+const TOOLTIP_CAPTIONS: Dictionary[String, Array] = {
+	"InventoryButton": ["Inventory", "Click here to manage equipment."],
+	"AbilitiesButton": ["Abilities", "Click here to manage abilities and attributes."],
+	"SaveButton": ["Save Game", "Click here to save your progress."],
+	"OptionsButton": ["Coming soon"],
+	"RespecButton": ["Coming soon"],
+	"AchievementsButton": ["Achievements", "Click here to view your achievements."],
+	"ZoneMapButton": ["World map"],
+	"QuitButton": ["Quit", "Click here to return to the save select screen."],
+}
 
 @onready var zone_title: Label = %ZoneTitle
 @onready var zone_subtitle: Label = %ZoneSubtitle
@@ -42,6 +56,8 @@ func _ready():
 	GameData.save_loaded.connect(func(_slot): _refresh(ZoneManager.current_zone))
 	for button_name in HOVER_COLORS:
 		_setup_icon_glow(get_node("%" + button_name))
+	for button_name in TOOLTIP_CAPTIONS:
+		_setup_tooltip(get_node("%" + button_name), TOOLTIP_CAPTIONS[button_name])
 	_wire_screen_visibility.call_deferred()
 	_refresh(ZoneManager.current_zone)
 
@@ -65,6 +81,16 @@ func _setup_icon_glow(button: Button) -> void:
 	button.mouse_exited.connect(func():
 		if not glow.visible:
 			icon.modulate = Color.WHITE)
+
+
+func _setup_tooltip(button: Button, caption: Array) -> void:
+	var sections: Array = [
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": caption[0], "color": TooltipTheme.TEXT_TITLE}]},
+	]
+	if caption.size() > 1:
+		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": caption[1], "color": TooltipTheme.TEXT_BODY}]})
+	button.mouse_entered.connect(func(): GameTooltip.show_sections(sections, button))
+	button.mouse_exited.connect(GameTooltip.hide_tooltip)
 
 
 # The screens can close themselves (their X button) - follow their
