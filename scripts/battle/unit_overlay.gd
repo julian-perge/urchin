@@ -77,7 +77,16 @@ func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
 		var element_index: CombatUnit.Element = buff.element_type
 		if element_index != -1:
 			icon_rect.modulate = MenuTheme.ELEMENT_COLORS[element_index]
-		icon_rect.tooltip_text = "%s (%d turns)\n%s" % [buff.display_name, int(slot["cd"]), buff.tooltip_description]
+		var sections: Array = [
+			{"bg_color": TooltipTheme.BG_HEADER, "lines": [{
+				"text": "%s (%d turns)" % [buff.display_name, int(slot["cd"])],
+				"color": TooltipTheme.TEXT_TITLE,
+			}]},
+		]
+		if not buff.tooltip_description.is_empty():
+			sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": buff.tooltip_description, "color": TooltipTheme.TEXT_BODY}]})
+		icon_rect.mouse_entered.connect(func(): GameTooltip.show_sections(sections, icon_rect))
+		icon_rect.mouse_exited.connect(GameTooltip.hide_tooltip)
 		var counter: Label = Label.new()
 		counter.text = str(int(slot["cd"]))
 		counter.add_theme_font_size_override("font_size", 8)

@@ -5,6 +5,10 @@ extends GutTest
 const UnitOverlayScene = preload("res://scenes/battle/unit_overlay.tscn")
 
 
+func after_each():
+	GameTooltip.hide_tooltip()
+
+
 func _make_buff(internal_name: String, display_name: String, element: CombatUnit.Element) -> Buff:
 	var buff := Buff.new()
 	buff.internal_name = internal_name
@@ -34,8 +38,16 @@ func test_refresh_buffs_includes_buff_id_zero_and_sorts_by_duration_descending()
 	assert_eq(overlay.buff_row.get_child_count(), 2, "both real active buffs shown, the empty slot skipped")
 	var first: TextureRect = overlay.buff_row.get_child(0)
 	var second: TextureRect = overlay.buff_row.get_child(1)
-	assert_string_contains(first.tooltip_text, "Twin Guardians", "higher cd (7) sorts first")
-	assert_string_contains(second.tooltip_text, "The Immortal Flame", "lower cd (3) sorts second")
+
+	first.mouse_entered.emit()
+	var first_title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	assert_string_contains(first_title.text, "Twin Guardians", "higher cd (7) sorts first")
+	first.mouse_exited.emit()
+
+	second.mouse_entered.emit()
+	var second_title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	assert_string_contains(second_title.text, "The Immortal Flame", "lower cd (3) sorts second")
+	second.mouse_exited.emit()
 
 
 func test_refresh_buffs_caps_at_seven_icons():
