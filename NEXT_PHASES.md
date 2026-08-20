@@ -34,21 +34,44 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
 
   - All 51 clips (15 bolts, `KrinTrail`, 35 `BOOM_*`/`ex_*` impacts) extracted from the web-build SWF into `assets/vfx/{bolts,trail,impacts}/<clip>/<frame>.png` - per-frame folders, not
     packed spritesheets, a deliberate architecture change made mid-plan: two impact clips (`BOOM1`, `BOOM2`) pack wider than Godot's 32768px texture-import cap, which silently rescales the
-    whole sheet and desyncs every packed frame's region. `VfxFrames` (shared by `Projectile` and `ImpactEffect`) builds a `SpriteFrames` resource from a clip's own frame folder at load time.
+    whole sheet and desyncs every packed frame's region. Those folders are still where every clip's frames live, but nothing reads them by folder path at run time any more - see the VFX
+    registration scenes entry below.
   - `Ability.visual_effect_color` parses the `11_visual_effect_color` hex column (the real `colortobe` glow value), replacing the cast glow's earlier element-color approximation for both
     Missile and Shock moves - Melee is untouched, it never sets `colortobe`.
   - `ImpactEffect` - a one-shot `BOOM_*`/`ex_*` clip player that frees itself when its animation finishes. One genuine deviation from source: the original never explicitly removes its own
     equivalent clips (`"bbb"+counter` in `frame_42/DoAction_4.as`'s krinBoltMake) - a deliberate improvement, not an unfaithful port.
-  - `Projectile` rewritten from a bare script into a real `.tscn` with `Bolt`/`Trail` `AnimatedSprite2D` children: the bolt plays its real clip untinted (alpha-only fade-in), the trail is a
-    genuine 33-frame fade-in/fade-out pulse baked into its own timeline (not manually faded), RGB-tinted by `trail_color`, spawned once at the bolt's position and grown via `scale.x` every
-    tick. Its `arrived` signal was renamed `reached_target`. A miss now flies the bolt fully past the target off this port's own screen bounds instead of stopping at it (`did_hit` gates
-    whether `reached_target` frees the bolt immediately or lets it keep flying), matching `strikeSuccess`'s hit/miss branch.
+  - `Projectile` rewritten from a bare script into a real `.tscn`: the bolt plays its real clip untinted (alpha-only fade-in), the trail is a genuine 33-frame fade-in/fade-out pulse baked
+    into its own timeline (not manually faded), RGB-tinted by `trail_color`, spawned once at the bolt's position and grown via `scale.x` every tick. Its `arrived` signal was renamed
+    `reached_target`. A miss now flies the bolt fully past the target off this port's own screen bounds instead of stopping at it (`did_hit` gates whether `reached_target` frees the bolt
+    immediately or lets it keep flying), matching `strikeSuccess`'s hit/miss branch. The `Bolt`/`Trail` `AnimatedSprite2D` children this task gave it were replaced a day later by a generated
+    scene per clip - see the entry below.
   - `battle_scene.gd` wires `_spawn_impact()` at all three impact hook points - melee's `on_impact` lambda, the Shock branch, and missile's `_fire_projectile` (after `reached_target`) -
     gated on `result.type != MISS` exactly like krinBoltMake's own `strikeSuccess` check, and `_fire_projectile` now instances the real `Projectile` scene instead of a bare `Projectile.new()`
     (dormant breakage left over from the scene-conversion task, since no existing test drove a live Missile move far enough to reach it - fixed here).
 
   GUT suite green: 169/169 tests, 844 asserts. Manual visual check (a live Missile move showing real bolt/trail art, a miss flying past, the cast glow tinted by the move's own color) was not
   completed - this environment has no interactive/screenshot tooling for a native (non-browser) Godot window, worth a project owner eyes-on pass.
+
+- **VFX registration scenes** - **DONE (2026-08-20)**, see `.superpowers/sdd/2026-08-19-vfx-registration-scenes/` for the full 6-task breakdown. Closes the registration-point mismatch parked at
+  the end of the missile projectile art work above: bolts and impacts drew with Godot's default `centered = true`, which centers a clip on its own bounding box instead of on the origin the
+  source SWF drew it around, and a rotating bolt swings visibly wide of a pivot that far off. Every clip now has a generated scene of its own with its real registration point baked in:
+
+  - `make_timeline_bounds()` (`dev/urchin_dev/swf/xml_lib.py`) unions a sprite's rendered bounds across every frame of its own timeline, recursing the same way into nested children - some
+    clips' children are independently-animating sub-timelines of their own. The existing `make_char_bounds()` (first frame only) is untouched; the doll-art pipeline depends on it.
+  - `extract_vfx_offsets` writes `assets/vfx/vfx_offsets.json`: one real `x`/`y`/`w`/`h` per clip in natural unzoomed px, the same convention `resources/sprites/doll_offsets.json` uses. Sizes
+    come from the extracted PNG's own pixel dimensions, because ffdec's PNG exporter bakes a glow filter's footprint into the canvas and no bounds tag in the XML can see it.
+  - `extract_vfx_scenes` bakes each clip's frames and its offset into a scene of its own under `scenes/battle/vfx/{bolts,trail,impacts}/<clip>.tscn` - `centered = false`, the real `position`,
+    and the `scale` that undoes the extractor's 2x zoom. Both scripts are one-time generators: run, output reviewed and committed, not part of the normal build.
+  - `Projectile` and `ImpactEffect` instantiate the resolved clip's scene by name instead of scanning a PNG folder, so nothing computes a position or a scale correction at play time.
+    `battle_scene.gd` is unchanged. `VfxFrames.load_frames()` and `VfxFrames.VFX_SCALE` are retired; `sanitize()` (clip name -> scene filename) is all that is left of that class.
+  - The final review caught 13 of the 51 clips landing on wrong bounds, from two separate causes. `snapshot_timeline()`'s matrix search covers a fixed 1200-character slice after each
+    `PlaceObject` tag, which can reach past a tag carrying no matrix of its own and borrow the next tag's. And `DefineMorphShapeTag` children were dropped as if they held no art, which
+    shrank `BOOM_STAR`'s whole computed footprint to 22.2x23.25 px against a real 169.5x161.75. Both are fixed inside `make_timeline_bounds()` and private helpers only it calls, leaving
+    `snapshot_timeline()` alone for the five other extractors already built on its current behavior. `extract_vfx_offsets` now also reports any clip whose horizontal and vertical glow
+    padding disagree by more than 1 px, which is how all 13 of these would have shown up at extraction time.
+
+  GUT suite green: 178/178 tests. All 51 clips' computed bounds were checked against ffdec's own SVG-per-frame export, an independent renderer, and every edge agrees to within 0.05 px. Still
+  no visual check: this environment has no screenshot tooling for a native Godot window, so a project owner eyes-on pass on a live Missile move remains worth doing.
 
 - **Battle bugs found playtesting zone 1 (2026-08-18)** - **ALL 4 FIXED**, surfaced manually verifying the cutscene work above (see the debug battle-jump entry point in `.claude/plan_cutscenes.md`'s Task 4 note):
 
