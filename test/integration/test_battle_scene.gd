@@ -334,6 +334,112 @@ func test_opening_a_second_menu_survives_the_first_menus_fade():
 	ZoneManager.auto_start_battles = true
 
 
+func test_radial_orb_tooltip_includes_the_moves_description():
+	var save = PlayerSave.new_game("OrbDescTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene._player_action_pending = true
+	scene._on_unit_clicked(2)  # battle 100's enemy slot (Prison Guard)
+
+	var move: Ability = MoveManagerAuto.get_move(1)  # Leading Strike, battle 100's bar slot 0
+	assert_false(move.tooltip_description.is_empty(), "sanity: the move actually has description text")
+	var orb: Button = scene._radial_menu.get_child(0)
+	assert_string_contains(
+		orb.tooltip_text, move.tooltip_description,
+		"the orb's tooltip carries the move's real description, not just name+cost"
+	)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func test_radial_orb_shows_the_moves_icon_art_not_initials():
+	var save = PlayerSave.new_game("OrbIconTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene._player_action_pending = true
+	scene._on_unit_clicked(2)
+
+	var orb: Button = scene._radial_menu.get_child(0)  # bar slot 0: Leading Strike
+	assert_not_null(orb.icon, "loaded the move's real extracted icon art")
+	assert_eq(orb.icon.resource_path, "res://assets/ui/abilities/Leading_Strike.png")
+	assert_eq(orb.text, "", "no more 2-letter initials now that real art is shown")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Regression test: bar slot 0 (Leading Strike) locked on cooldown used to
+# vanish from the menu entirely, shifting bar slot 1's move (Destroy) into
+# slot 0's own arc position - the source only hides a truly empty ("None")
+# slot, it never renumbers around a temporarily-unusable one.
+func test_radial_orb_position_is_keyed_by_bar_index_not_by_a_compacted_list_position():
+	var save = PlayerSave.new_game("OrbPositionTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	# battle 100's default bar: [Leading Strike, Destroy, 0, 0, 0, 0, 0, 0].
+	player.ability_cooldowns[0] = 5
+
+	scene._player_action_pending = true
+	scene._on_unit_clicked(2)
+
+	assert_eq(scene._radial_menu.get_child_count(), 2, "both equipped slots still show - cooldown darkens, it doesn't hide")
+	var orb0: Button = scene._radial_menu.get_child(0)
+	var orb1: Button = scene._radial_menu.get_child(1)
+	assert_true(orb0.disabled, "slot 0's move is on cooldown - darkened, not clickable")
+	assert_false(orb1.disabled, "slot 1's move is untouched - still usable")
+	assert_eq(
+		orb1.position, scene.ORB_OFFSETS[1] - orb1.size / 2.0,
+		"slot 1 sits at its own real position, not shifted into slot 0's because slot 0 got skipped"
+	)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func test_radial_menu_still_opens_when_every_equipped_move_is_on_cooldown():
+	var save = PlayerSave.new_game("OrbAllCooldownTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	player.ability_cooldowns[0] = 5
+	player.ability_cooldowns[1] = 5
+
+	scene._player_action_pending = true
+	scene._on_unit_clicked(2)
+
+	assert_not_null(scene._radial_menu, "menu still opens showing darkened orbs - the source only hides empty slots")
+	assert_eq(scene._radial_menu.get_child_count(), 2)
+	for orb in scene._radial_menu.get_children():
+		assert_true(orb.disabled, "every equipped slot is on cooldown")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # Regression test: a move-caused death used to only play when the QUEUED
 # "death" event was reached in _play_events(), which only happens after the
 # caster's whole move await resolves - for melee, that's after the runback

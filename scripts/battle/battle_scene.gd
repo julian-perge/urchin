@@ -48,10 +48,18 @@ const RING_COLORS: Dictionary[Relation, Color] = {
 	Relation.ENEMY: Color(0.95, 0.25, 0.15),
 }
 const ORB_RADIUS: float = 15.0
-# Ability orbs fan out over the unit's head, like the source's floating orbs.
-const ORB_ARC_START: float = -2.4  # radians
-const ORB_ARC_STEP: float = 0.55
-const ORB_ARC_DISTANCE: float = 62.0
+const ICON_DIR: String = "res://assets/ui/abilities/"
+# The 8 fixed positions of the original's "selector" clip (thing0-7) - the
+# same real extracted offsets as abilities_window.gd's WHEEL_OFFSETS (that
+# clip is placed on the battle scene itself too, per
+# frame_217/PlaceObject3_3382_500/.../onClipEvent(load).as's refreshOrbs()).
+# Duplicated here rather than imported since abilities_window.gd has no
+# class_name to reach its consts from.
+const ORB_OFFSETS: Array[Vector2] = [
+	Vector2(0.0, -49.2), Vector2(34.8, -34.9), Vector2(49.5, 0.0),
+	Vector2(35.0, 35.3), Vector2(0.0, 49.8), Vector2(-35.2, 35.1),
+	Vector2(-49.5, 0.0), Vector2(-35.0, -34.7),
+]
 # Source-verified (frame_217/PlaceObject3_3394_450 and 5 sibling files):
 # the hover ring fades in at +20/frame and out at -5/frame at the
 # original's 30fps - a ~4x faster fade-in than fade-out.
@@ -356,34 +364,58 @@ func _on_unit_clicked(slot: int) -> void:
 	if target == null or not target.active:
 		return
 	_close_radial_menu()
-	var entries: Array = runner.get_player_usable_moves()
-	if entries.is_empty():
+	var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
+	if player == null:
 		return
 	_radial_menu = Control.new()
 	_radial_menu.position = SLOT_POSITIONS.get(slot, Vector2(400, 300))
 	_radial_menu.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_radial_menu_owner_slot = slot
-	battlefield.add_child(_radial_menu)
-	for i in entries.size():
-		var entry: Dictionary = entries[i]
-		var move: Ability = MoveManagerAuto.get_move(int(entry["move_id"]))
+	for bar_index in player.equipped_moves.size():
+		var move_id: int = int(player.equipped_moves[bar_index])
+		# An empty ("None") slot is the only thing that hides an orb - the
+		# source's refreshOrbs() never renumbers around a temporarily-unusable
+		# one, it only hides move id 0.
+		if move_id == 0 or bar_index >= ORB_OFFSETS.size():
+			continue
+		var move: Ability = MoveManagerAuto.get_move(move_id)
 		if move == null:
 			continue
-		var usable: bool = _move_valid_for_target(move, slot)
+		var usable: bool = _move_usable_on_bar(move, player, bar_index) and _move_valid_for_target(move, slot)
 		var orb: Button = Button.new()
 		orb.custom_minimum_size = Vector2(ORB_RADIUS * 2, ORB_RADIUS * 2)
 		orb.size = orb.custom_minimum_size
-		var angle: float = ORB_ARC_START + i * ORB_ARC_STEP
-		orb.position = Vector2.from_angle(angle) * ORB_ARC_DISTANCE - orb.size / 2.0
-		orb.text = _move_initials(move)
+		orb.position = ORB_OFFSETS[bar_index] - orb.size / 2.0
 		orb.tooltip_text = _move_tooltip(move)
+		var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
+		orb.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null
+		orb.expand_icon = true
+		orb.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		var color: Color = _move_color(move)
 		_style_orb(orb, color, usable)
 		if usable:
-			orb.pressed.connect(_on_radial_move_picked.bind(entry, slot))
+			orb.pressed.connect(_on_radial_move_picked.bind({"bar_index": bar_index, "move_id": move_id}, slot))
 		else:
 			orb.disabled = true
 		_radial_menu.add_child(orb)
+	if _radial_menu.get_child_count() == 0:
+		_radial_menu.queue_free()
+		_radial_menu = null
+		_radial_menu_owner_slot = -1
+		return
+	battlefield.add_child(_radial_menu)
+
+
+# Cooldown/silence gating, kept here rather than in battle_runner.gd for the
+# same reason _move_valid_for_target already lives here: this is
+# display-only gating, the runner re-validates for real when the move is
+# actually submitted.
+func _move_usable_on_bar(move: Ability, player: CombatUnit, bar_index: int) -> bool:
+	if bar_index < player.ability_cooldowns.size() and player.ability_cooldowns[bar_index] > 0:
+		return false
+	if player.silenced != 0 and move.focus_cost > 0:
+		return false
+	return true
 
 
 func _move_valid_for_target(move: Ability, slot: int) -> bool:
@@ -408,6 +440,8 @@ func _move_tooltip(move: Ability) -> String:
 	if move.focus_cost > 0:
 		cost_line = "This move costs %d Focus" % int(move.focus_cost)
 	var lines: Array[Variant] = [move.display_name, cost_line]
+	if not move.tooltip_description.is_empty():
+		lines.append(move.tooltip_description)
 	if move.cooldown_turns > 0:
 		lines.append("Cooldown: %d turns" % move.cooldown_turns)
 	return "\n".join(lines)
@@ -432,11 +466,20 @@ func _spawn_impact(target_slot: int, move: Ability, result: Dictionary) -> void:
 	effect.play(move.impact_effect_name)
 
 
-func _move_initials(move: Ability) -> String:
-	var words: PackedStringArray = move.display_name.split(" ", false)
-	if words.size() >= 2:
-		return words[0].substr(0, 1) + words[1].substr(0, 1)
-	return move.display_name.substr(0, 2)
+# Mirrors abilities_window.gd's own _sanitize_icon_key() - the same
+# assets/ui/abilities/ lookup key, built the same way, so a display name
+# with punctuation resolves to the file the extractor actually wrote.
+func _sanitize_icon_key(label: String) -> String:
+	var result: String = ""
+	var last_was_sep: bool = false
+	for c in label:
+		if (c >= "A" and c <= "Z") or (c >= "a" and c <= "z") or (c >= "0" and c <= "9"):
+			result += c
+			last_was_sep = false
+		elif not last_was_sep:
+			result += "_"
+			last_was_sep = true
+	return result.strip_edges().lstrip("_").rstrip("_")
 
 
 func _style_orb(orb: Button, color: Color, usable: bool) -> void:

@@ -96,7 +96,7 @@ Scoped-out edges from the playtest-feedback batch:
 
 - **Top battle bar panel**: the original shows every fighter's health/focus with numbers in a panel across the top of the battle screen (reference `9_inbattle_start...png`).
   Noted, not built - the in-field bars carry the health number instead.
-- **Ability orb art**: radial-menu and abilities-screen orbs draw initials + element colors; the original's per-move orb icon art is not extracted yet.
+- **Ability orb art - RESOLVED**: both the radial-menu and abilities-screen orbs now show the real extracted per-move icon art (`assets/ui/abilities/`) with element-colored borders, instead of text initials.
 - **Radial menu is click-to-cast**: the original picks up the ability with the cursor; here a usable orb casts on click directly. Unusable orbs darken, matching the source.
 - **Class-select card art - RESOLVED**: the original sketch art has been extracted and wired - gray rest / colored hover textures in `assets/ui/menu/class_cards/`,
   cropped from rendered root frames 85/90 (reference `6_start_screen...png`).
