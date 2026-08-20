@@ -4,6 +4,3 @@
 
 [node name="ImpactEffect" type="Node2D"]
 script = ExtResource("1_impact")
-
-[node name="Anim" type="AnimatedSprite2D" parent="."]
-centered = true
