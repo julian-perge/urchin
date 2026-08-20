@@ -51,7 +51,6 @@ var _pool_move_ids: Array = []
 @onready var _attribute_points_value: Label = $AttributePointsValue
 @onready var _attribute_values: Array[Label] = [$VitalityValue, $StrengthValue, $InstinctValue, $SpeedValue]
 @onready var _status_label: Label = $StatusLabel
-@onready var _tooltip: AbilityTooltip = $AbilityTooltip
 
 
 func _ready():
@@ -61,7 +60,7 @@ func _ready():
 	for i in _pool_rows.size():
 		_pool_rows[i].pressed.connect(_on_pool_row_pressed.bind(i))
 		_pool_rows[i].mouse_entered.connect(_on_pool_row_hovered.bind(i))
-		_pool_rows[i].mouse_exited.connect(_tooltip.hide)
+		_pool_rows[i].mouse_exited.connect(GameTooltip.hide_tooltip)
 	visibility_changed.connect(func():
 		if visible:
 			refresh())
@@ -87,7 +86,7 @@ func _build_tree_panel() -> void:
 		node_button.position = _node_center(node_index) - NODE_SIZE / 2.0
 		node_button.pressed.connect(_on_tree_node_pressed.bind(node_index))
 		node_button.mouse_entered.connect(_on_tree_node_hovered.bind(node_index))
-		node_button.mouse_exited.connect(_tooltip.hide)
+		node_button.mouse_exited.connect(GameTooltip.hide_tooltip)
 		_style_circle_button(node_button, Color(0.1, 0.1, 0.11), Color(0.3, 0.3, 0.32))
 		add_child(node_button)
 		_tree_buttons.append(node_button)
@@ -107,7 +106,7 @@ func _build_wheel_panel() -> void:
 		socket.position = WHEEL_CENTER + WHEEL_OFFSETS[i] - SOCKET_SIZE / 2.0
 		socket.pressed.connect(_on_socket_pressed.bind(i))
 		socket.mouse_entered.connect(_on_socket_hovered.bind(i))
-		socket.mouse_exited.connect(_tooltip.hide)
+		socket.mouse_exited.connect(GameTooltip.hide_tooltip)
 		_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24))
 		add_child(socket)
 		_socket_buttons.append(socket)
@@ -207,9 +206,10 @@ func _on_tree_node_hovered(node_index: int) -> void:
 		# otherwise preview what learning rank 1 would grant.
 		move = MoveManagerAuto.get_move(TalentTree.granted_move_id(node, max(rank, 1)))
 	var button: Button = _tree_buttons[node_index]
-	_tooltip.populate(node, save, move, buff, _tree_node_icon_key(node))
-	_tooltip.position = button.global_position + Vector2(NODE_SIZE.x + 8.0, 0.0)
-	_tooltip.show()
+	var result: Dictionary = AbilityTooltipBuilder.build_sections(node, save, move, buff)
+	var icon_path: String = "%s%s.png" % [ICON_DIR, _tree_node_icon_key(node)]
+	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
+	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"])
 
 
 func _refresh_wheel(save: PlayerSave) -> void:
@@ -242,9 +242,10 @@ func _on_socket_hovered(socket_index: int) -> void:
 	if move == null:
 		return
 	var button: Button = _socket_buttons[socket_index]
-	_tooltip.populate({}, save, move, null, _sanitize_icon_key(move.display_name))
-	_tooltip.position = button.global_position + Vector2(SOCKET_SIZE.x + 8.0, 0.0)
-	_tooltip.show()
+	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move, null)
+	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
+	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
+	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"])
 
 
 func _refresh_pool(save: PlayerSave) -> void:
@@ -277,9 +278,10 @@ func _on_pool_row_hovered(row_index: int) -> void:
 		return
 	var save: PlayerSave = GameData.current_save
 	var row: Button = _pool_rows[row_index]
-	_tooltip.populate({}, save, move, null, _sanitize_icon_key(move.display_name))
-	_tooltip.position = row.global_position + Vector2(row.size.x + 8.0, 0.0)
-	_tooltip.show()
+	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move, null)
+	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
+	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
+	GameTooltip.show_sections(result["sections"], row, icon, result["icon_color"])
 
 
 func _move_color(move: Ability) -> Color:

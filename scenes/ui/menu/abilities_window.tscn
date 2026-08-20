@@ -1,11 +1,10 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/menu/abilities_window.gd" id="1_abilwin"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/close_x.png" id="3_close"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/panel_large.png" id="4_panellarge"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/panel_center.png" id="5_panelcenter"]
-[ext_resource type="PackedScene" path="res://scenes/ui/menu/ability_tooltip.tscn" id="6_tooltip"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/ability_pool_row.tscn" id="7_poolrow"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vitality"]
@@ -459,10 +458,6 @@ layout_mode = 0
 offset_right = 800.0
 offset_bottom = 600.0
 mouse_filter = 2
-
-[node name="AbilityTooltip" parent="." instance=ExtResource("6_tooltip")]
-layout_mode = 0
-z_index = 100
 
 [connection signal="pressed" from="CloseButton" to="." method="hide"]
 [connection signal="pressed" from="VitalityPlus" to="." method="_on_attribute_plus_pressed" binds=[0]]
