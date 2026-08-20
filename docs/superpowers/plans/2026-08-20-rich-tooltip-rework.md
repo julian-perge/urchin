@@ -492,9 +492,15 @@ func test_tooltip_skips_the_type_line_for_a_none_type_item():
 	item.item_type = GameItem.ItemType.NONE
 	slot.set_item(item)
 	slot.mouse_entered.emit()
-	for section in GameTooltip._sections.get_children():
-		var style: StyleBoxFlat = section.get_theme_stylebox("panel")
-		assert_ne(style.bg_color, TooltipTheme.BG_COST, "no type line for a NONE-type item")
+	# This item has no tooltipAlt/tooltip/price content either, so a correct
+	# build produces exactly one section (the header) - the type line and
+	# the body both use TooltipAlt/tooltip/price data this item doesn't
+	# have, so counting sections is the real assertion here, not checking
+	# for a specific missing bg_color (the type line uses BG_HEADER, same
+	# as the title section it'd sit next to - checking "no BG_COST section"
+	# would pass even if the skip were broken, since BG_COST is never used
+	# by item tooltips at all).
+	assert_eq(GameTooltip._sections.get_child_count(), 1, "just the header - no type line for NONE, no body with nothing to show")
 ```
 
 The existing `func after_each(): GameData.current_save = null` at line 57
