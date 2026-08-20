@@ -75,11 +75,21 @@ func test_show_sections_makes_the_tooltip_visible_and_hide_tooltip_hides_it():
 	assert_false(GameTooltip._root.visible)
 
 
+func test_position_lands_beside_the_anchor_when_there_is_room():
+	var anchor: Control = add_child_autofree(Control.new())
+	anchor.position = Vector2(100, 100)
+	anchor.size = Vector2(30, 30)
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	await wait_process_frames(1)
+	assert_eq(GameTooltip._root.position, anchor.global_position + Vector2(anchor.size.x + 8.0, 0.0))
+
+
 func test_position_clamps_at_the_right_and_bottom_edges():
 	var anchor: Control = add_child_autofree(Control.new())
 	anchor.position = Vector2(790, 590)
 	anchor.size = Vector2(30, 30)
 	GameTooltip.show_sections(_sections_fixture(), anchor)
+	await wait_process_frames(1)
 	var viewport_size: Vector2 = GameTooltip.get_viewport().get_visible_rect().size
 	assert_true(
 		GameTooltip._root.position.x + GameTooltip._root.size.x <= viewport_size.x,
@@ -96,5 +106,6 @@ func test_position_clamps_at_the_left_and_top_edges():
 	anchor.position = Vector2(-50, -50)
 	anchor.size = Vector2(10, 10)
 	GameTooltip.show_sections(_sections_fixture(), anchor)
+	await wait_process_frames(1)
 	assert_true(GameTooltip._root.position.x >= 0.0, "never positioned off the left edge")
 	assert_true(GameTooltip._root.position.y >= 0.0, "never positioned off the top edge")

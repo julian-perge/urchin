@@ -209,10 +209,11 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
 ## Ability menu redesign
 
 **DONE (2026-07-23).** `scripts/ui/menu/abilities_window.gd` and `scenes/ui/menu/abilities_window.tscn` now match the original's richer three-region layout: real icon art extracted from
-`DefineSprite 2427` (104 `FrameLabelTag`s, confirmed full coverage of every active move and every passive buff family actually used in `TalentTree.TREES`), a rich floating `AbilityTooltip`
-(icon + title + description + cost/cooldown + next-rank preview, backed by a pure `AbilityTooltipBuilder`) shown on hover over tree nodes, pool rows, and wheel sockets, prerequisite-colored
+`DefineSprite 2427` (104 `FrameLabelTag`s, confirmed full coverage of every active move and every passive buff family actually used in `TalentTree.TREES`), a rich floating tooltip
+(icon + title + description + cost/cooldown + next-rank preview) shown on hover over tree nodes, pool rows, and wheel sockets, prerequisite-colored
 connector lines drawn between talent-tree nodes, and the pool row migrated to a reusable `ability_pool_row.tscn` (icon + name `AbilityPoolRow` component, instanced 5x, `populate()`/`clear()`
-driven).
+driven). The tooltip's data is still built by a pure `AbilityTooltipBuilder` (`build_sections()`, renamed from `build_fields()`), but it's now rendered by the shared `GameTooltip` autoload
+rather than a dedicated `AbilityTooltip` scene - see the **Rich tooltip rework** section below.
 
 Two known, deliberate gaps: passive-node tooltip descriptions render blank, because the source `buffs.json` has no tooltip text for any tree-passive buff (verified across all 53 rank-entries
 in all 14 buff families actually used - not a bug); and the original's ~5-frame hover delay before showing the next-rank preview text (frame label `GO7`) was not reproduced - the rich tooltip
@@ -317,6 +318,14 @@ function parameters/locals/match targets take the enum type directly. New enum w
 - **Explicitly NOT enum candidates** (open-ended/data-driven content, matches the project owner's own exclusion): zone/battle/shop/item id-keyed dictionaries (`ZoneManager.ZONES`,
   `StoreManager.ZONE_SHOP_IDS`/`SHOP_DIALOGUE`/`KRIN_SHOP_ITEMS`, `GameData.STARTING_EQUIPMENT`, `ZoneProgression`'s battle-cap tables), `Achievements.NAMES`/`DESCRIPTIONS` (text content), and
   `hotbar.gd`'s `MENU_BUTTON_GROUPS`/`HOVER_COLORS` (keyed by actual Godot scene-node names, not a portable "kind" concept).
+
+## Rich tooltip rework
+
+**DONE (2026-08-20).** A shared `GameTooltip` autoload (`scripts/ui/game_tooltip.gd` + `scenes/ui/game_tooltip.tscn`, a `CanvasLayer` rendering a stack of independently-colored,
+independently-backgrounded sections) replaces both the ability screen's old single-panel `AbilityTooltip` and every other screen's plain Godot `tooltip_text` (which can only show one
+uniform box in one text color). Its palette lives in `scripts/ui/tooltip_theme.gd` (`TooltipTheme`), recovered from the original's own `KrinToolTipper` clip data rather than guessed.
+5 call sites now build sections and hand them to `GameTooltip`: item slots (`item_slot.gd`), hotbar buttons (`hotbar.gd`), the abilities screen (`abilities_window.gd`), in-battle
+ability orbs (`battle_scene.gd`), and buff icons (`unit_overlay.gd`).
 
 ## Testing: GUT
 
