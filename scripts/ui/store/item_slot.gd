@@ -20,8 +20,13 @@ var show_price: bool = false
 
 func _ready():
 	gui_input.connect(_on_gui_input)
-	mouse_entered.connect(func(): _highlight.visible = true)
-	mouse_exited.connect(func(): _highlight.visible = false)
+	mouse_entered.connect(func():
+		_highlight.visible = true
+		if item != null:
+			GameTooltip.show_sections(_tooltip_sections(), self))
+	mouse_exited.connect(func():
+		_highlight.visible = false
+		GameTooltip.hide_tooltip())
 	_refresh()
 
 
@@ -41,7 +46,6 @@ func _refresh() -> void:
 		return
 	if item == null:
 		item_icon.texture = null
-		tooltip_text = ""
 		return
 	if item.slot_image != null:
 		item_icon.texture = item.slot_image
@@ -49,15 +53,32 @@ func _refresh() -> void:
 		item_icon.texture = item.sprite_image
 	else:
 		item_icon.texture = null
-	# Name, price (catalog only), stat bonus lines, flavor text.
-	var lines: Array[Variant] = [item.display_name]
+
+
+# Built fresh on hover rather than kept in sync on every _refresh() - the
+# tooltip only needs to exist while the mouse is actually over this slot.
+func _tooltip_sections() -> Array:
+	var sections: Array = [
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": item.display_name, "color": TooltipTheme.TEXT_TITLE}]},
+	]
+	if item.item_type != GameItem.ItemType.NONE:
+		sections.append({
+			"bg_color": TooltipTheme.BG_HEADER,
+			"lines": [{
+				"text": "Lvl. %d %s" % [item.required_level, item.slot_type_display_name()],
+				"color": TooltipTheme.TEXT_SUBHEADER,
+			}],
+		})
+	var body_lines: Array = []
 	if show_price and item.price > 0:
-		lines.append("Cost: %d Euros" % int(item.price))
+		body_lines.append({"text": "Cost: %d Euros" % int(item.price), "color": TooltipTheme.TEXT_STAT})
 	for stat_line in item.tooltipAlt:
-		lines.append(str(stat_line))
+		body_lines.append({"text": str(stat_line), "color": TooltipTheme.TEXT_STAT})
 	if item.tooltip is String and str(item.tooltip) != "":
-		lines.append(str(item.tooltip))
-	tooltip_text = "\n".join(lines)
+		body_lines.append({"text": str(item.tooltip), "color": TooltipTheme.TEXT_FLAVOR})
+	if not body_lines.is_empty():
+		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": body_lines})
+	return sections
 
 
 func _on_gui_input(event: InputEvent) -> void:

@@ -58,3 +58,23 @@ enum ClassType {
 @export var price: int
 @export var price_modifier: float
 @export var stats: Dictionary
+
+
+# Display name for this item's equip slot, mirroring
+# scripts/editor/items.gd's item_type_map (reversed). "" for NONE - no
+# slot line is shown for those items (see item_slot.gd).
+const _SLOT_TYPE_NAMES: Dictionary[ItemType, String] = {
+	ItemType.TOOL: "Tool",
+	ItemType.HEAD: "Headwear",
+	ItemType.CHEST: "Bodywear",
+	ItemType.HAND: "Gloves",
+	ItemType.LEGS: "Leggings",
+	ItemType.FOOT: "Footwear",
+	ItemType.MAINHAND: "Primary Arms",
+	ItemType.OFFHAND: "Secondary Arms",
+	ItemType.TWOHAND: "Two-Handed Arms",
+}
+
+
+func slot_type_display_name() -> String:
+	return _SLOT_TYPE_NAMES.get(item_type, "")

@@ -56,6 +56,7 @@ func test_drag_payload_defaults_to_inventory_source_with_no_host_meta():
 # inventory swaps, inventory<->equip equips/unequips.
 func after_each():
 	GameData.current_save = null
+	GameTooltip.hide_tooltip()
 
 
 func _find_basic_equippable() -> GameItem:
@@ -131,3 +132,46 @@ func test_drop_data_inventory_source_to_equip_slot_equips():
 	slot._drop_data(Vector2.ZERO, {"item": item, "source": "inventory", "index": 2})
 	assert_eq(int(save.equip_array[equip_slot]), item.id)
 	assert_eq(int(save.item_array[2]), 0)
+
+
+func test_hover_shows_a_tooltip_for_a_filled_slot():
+	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	var item: GameItem = ItemManagerAuto.items_by_id.values()[0]
+	slot.set_item(item)
+	slot.mouse_entered.emit()
+	assert_true(GameTooltip._root.visible, "tooltip shown for a real item")
+	var header_label: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	assert_eq(header_label.text, item.display_name)
+
+
+func test_hover_on_an_empty_slot_shows_no_tooltip():
+	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	slot.mouse_entered.emit()
+	assert_false(GameTooltip._root.visible, "nothing to show for an empty slot")
+
+
+func test_hover_exit_hides_the_tooltip():
+	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	var item: GameItem = ItemManagerAuto.items_by_id.values()[0]
+	slot.set_item(item)
+	slot.mouse_entered.emit()
+	slot.mouse_exited.emit()
+	assert_false(GameTooltip._root.visible, "hidden on mouse exit")
+
+
+func test_tooltip_skips_the_type_line_for_a_none_type_item():
+	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	var item: GameItem = GameItem.new()
+	item.display_name = "Test Consumable"
+	item.item_type = GameItem.ItemType.NONE
+	slot.set_item(item)
+	slot.mouse_entered.emit()
+	# This item has no tooltipAlt/tooltip/price content either, so a correct
+	# build produces exactly one section (the header) - the type line and
+	# the body both use TooltipAlt/tooltip/price data this item doesn't
+	# have, so counting sections is the real assertion here, not checking
+	# for a specific missing bg_color (the type line uses BG_HEADER, same
+	# as the title section it'd sit next to - checking "no BG_COST section"
+	# would pass even if the skip were broken, since BG_COST is never used
+	# by item tooltips at all).
+	assert_eq(GameTooltip._sections.get_child_count(), 1, "just the header - no type line for NONE, no body with nothing to show")
