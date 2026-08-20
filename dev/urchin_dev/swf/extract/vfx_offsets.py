@@ -39,8 +39,22 @@ from urchin_dev.swf.extract.vfx import (
 VFX_DIR = REPO_ROOT / "assets" / "vfx"
 OUT = VFX_DIR / "vfx_offsets.json"
 
+# How far apart the horizontal and the vertical half-padding may fall, in
+# natural px, before a clip is reported as an outlier. The padding is the
+# glow footprint ffdec baked into the canvas, and a glow spreads the same
+# distance on both axes, so the two halves should agree; when they don't,
+# the computed bounds are wrong for that clip rather than the padding
+# being lopsided. Every clip agrees to within 0.14 px today, so 1.0 px is
+# well clear of the rounding noise - and it would have caught the 13 clips
+# whose bounds came out wrong before make_timeline_bounds learned to read
+# morph shapes and to stop borrowing the next tag's matrix (those 13
+# diverged by 4.3 to 38.0 px).
+PAD_SYMMETRY_TOLERANCE = 1.0
 
-def _clip_offset(bounds_fn, name: str, cid: int, category: str) -> dict | None:
+
+def _clip_offset(bounds_fn, name: str, cid: int, category: str):
+    """-> ({"x", "y", "w", "h"}, pad_x, pad_y) or None. The two paddings
+    are the symmetry self-check's input, not part of the written record."""
     bounds = bounds_fn(cid)
     if bounds is None:
         return None
@@ -50,14 +64,17 @@ def _clip_offset(bounds_fn, name: str, cid: int, category: str) -> dict | None:
     real_w_px, real_h_px = Image.open(frame1).size
     real_w = real_w_px / ZOOM
     real_h = real_h_px / ZOOM
+    computed_w = (bounds[2] - bounds[0]) / 20.0
+    computed_h = (bounds[3] - bounds[1]) / 20.0
     computed_cx = (bounds[0] + bounds[2]) / 2.0 / 20.0
     computed_cy = (bounds[1] + bounds[3]) / 2.0 / 20.0
-    return {
+    offset = {
         "x": round(computed_cx - real_w / 2.0, 2),
         "y": round(computed_cy - real_h / 2.0, 2),
         "w": round(real_w, 2),
         "h": round(real_h, 2),
     }
+    return offset, (real_w - computed_w) / 2.0, (real_h - computed_h) / 2.0
 
 
 def main():
@@ -71,7 +88,18 @@ def main():
 
     result = {}
     unresolved = []
+    outliers = []
     seen_ids: dict[int, str] = {}
+
+    def record(name: str, cid: int, category: str) -> bool:
+        computed = _clip_offset(bounds_fn, name, cid, category)
+        if computed is None:
+            return False
+        offset, pad_x, pad_y = computed
+        if abs(pad_x - pad_y) > PAD_SYMMETRY_TOLERANCE:
+            outliers.append(f"{sanitize(name)} (pad_x={pad_x:.2f}, pad_y={pad_y:.2f})")
+        result[sanitize(name)] = offset
+        return True
 
     for name in BOLT_NAMES:
         cid = resolve(name)
@@ -81,16 +109,10 @@ def main():
         if cid in seen_ids:
             continue  # KRIN.MAGICBOLT/Krin.Magicbolt etc. - same clip, already recorded
         seen_ids[cid] = name
-        offset = _clip_offset(bounds_fn, name, cid, "bolts")
-        if offset is None:
+        if not record(name, cid, "bolts"):
             unresolved.append(name)
-            continue
-        result[sanitize(name)] = offset
 
-    trail_offset = _clip_offset(bounds_fn, TRAIL_CLIP_NAME, TRAIL_SPRITE_ID, "trail")
-    if trail_offset is not None:
-        result[sanitize(TRAIL_CLIP_NAME)] = trail_offset
-    else:
+    if not record(TRAIL_CLIP_NAME, TRAIL_SPRITE_ID, "trail"):
         unresolved.append(TRAIL_CLIP_NAME)
 
     for name in _impact_names():
@@ -101,16 +123,18 @@ def main():
         if cid in seen_ids:
             continue
         seen_ids[cid] = name
-        offset = _clip_offset(bounds_fn, name, cid, "impacts")
-        if offset is None:
+        if not record(name, cid, "impacts"):
             unresolved.append(name)
-            continue
-        result[sanitize(name)] = offset
 
     OUT.write_text(json.dumps(result, indent=1, sort_keys=True))
     print(f"clips resolved: {len(result)}", file=sys.stderr)
     if unresolved:
         print(f"unresolved: {unresolved}", file=sys.stderr)
+    if outliers:
+        print(
+            f"asymmetric glow padding - computed bounds look wrong for: {outliers}",
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":

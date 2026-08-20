@@ -38,7 +38,9 @@ def _frame_paths(clip_dir: Path) -> list[Path]:
     return sorted(clip_dir.glob("*.png"), key=lambda p: int(p.stem))
 
 
-def _build_scene(frame_paths, res_prefix, offset, texture_size, anim_name, loop, node_name, top_level):
+def _build_scene(
+    frame_paths, res_prefix, offset, texture_size, anim_name, loop, node_name, top_level
+):
     real_w_px, real_h_px = texture_size
     scale_x = round(offset["w"] / real_w_px, 6)
     scale_y = round(offset["h"] / real_h_px, 6)
@@ -47,7 +49,9 @@ def _build_scene(frame_paths, res_prefix, offset, texture_size, anim_name, loop,
     frame_entries = []
     for i, path in enumerate(frame_paths, start=1):
         eid = f"frame_{i}"
-        ext_lines.append(f'[ext_resource type="Texture2D" path="{res_prefix}{path.name}" id="{eid}"]')
+        ext_lines.append(
+            f'[ext_resource type="Texture2D" path="{res_prefix}{path.name}" id="{eid}"]'
+        )
         frame_entries.append(f'{{"duration": 1.0, "texture": ExtResource("{eid}")}}')
 
     load_steps = len(frame_paths) + 2  # N textures + 1 SpriteFrames + the scene itself
@@ -67,7 +71,7 @@ def _build_scene(frame_paths, res_prefix, offset, texture_size, anim_name, loop,
         lines.append("top_level = true")
     lines.append("")
     lines.append('[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]')
-    lines.append(f'position = Vector2({offset["x"]}, {offset["y"]})')
+    lines.append(f"position = Vector2({offset['x']}, {offset['y']})")
     lines.append(f"scale = Vector2({scale_x}, {scale_y})")
     lines.append("centered = false")
     lines.append('sprite_frames = SubResource("SpriteFrames_1")')
@@ -97,8 +101,14 @@ def main():
             texture_size = Image.open(frame_paths[0]).size
             res_prefix = f"res://assets/vfx/{category}/{name}/"
             text = _build_scene(
-                frame_paths, res_prefix, offset, texture_size,
-                anim_name, loop, node_name, category == "trail",
+                frame_paths,
+                res_prefix,
+                offset,
+                texture_size,
+                anim_name,
+                loop,
+                node_name,
+                category == "trail",
             )
             (out_dir / f"{name}.tscn").write_text(text)
             written += 1

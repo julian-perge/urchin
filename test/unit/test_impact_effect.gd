@@ -41,3 +41,15 @@ func test_impact_is_not_centered_on_its_own_bounding_box():
 	var effect: ImpactEffect = add_child_autofree(ImpactEffectScene.instantiate())
 	effect.play("BOOM_SPARK")
 	assert_false(effect._anim_sprite.centered, "positioned at its real registration point, not centered on its texture")
+
+
+func test_impact_sits_at_the_offset_recorded_for_its_clip():
+	# BOOM_SPARK's own entry in assets/vfx/vfx_offsets.json, the audit trail
+	# extract_vfx_offsets wrote for these scenes. Pinning a real impact's
+	# number here is what would have caught the 13 clips that shipped on
+	# wrong bounds during this branch: the trail's position was the only one
+	# any test checked, and the trail is the one clip with no glow filter
+	# and no multi-frame placement, so it stayed correct throughout.
+	var effect: ImpactEffect = add_child_autofree(ImpactEffectScene.instantiate())
+	effect.play("BOOM_SPARK")
+	assert_eq(effect._anim_sprite.position, Vector2(-91.88, -79.12), "baked from vfx_offsets.json's boom_spark entry")

@@ -32,7 +32,8 @@ own timeline data.
     `KRIN.SHADOWSHOCK` (21 distinct matrices across 22 frames),
     `Krin.Electrobolt` (21/22), `Krin.Iceball` (3/5).
   - Same check across the 41 distinct `impact_effect_name` values (36
-    resolvable to a real sprite): 5 move, including `BOOM1`/`BOOM2`, the
+    resolve to a real sprite, 35 distinct ones - `ex_DownBlue` and
+    `ex_DOWNBLUE` name the same clip): 5 move, including `BOOM1`/`BOOM2`, the
     same two clips that caused the earlier packed-spritesheet width-cap
     bug.
   - Proved this matters concretely, not just in theory: `KRIN.SHADOWSHOCK`'s
@@ -128,7 +129,7 @@ own timeline data.
   to have a static top-level placement. `parse_swf_xml`/`make_char_bounds`
   stay exactly as they are (the doll-art pipeline depends on their current
   first-frame-only behavior); this is a new, additive function.
-- Generate one `.tscn` per clip (15 bolts + 1 trail + 36 impacts, 52 total)
+- Generate one `.tscn` per clip (15 bolts + 1 trail + 35 impacts, 51 total)
   with the correct frames and baked transform, via a one-time script.
   Not part of the normal build once committed.
 - Keep a checked-in `assets/vfx/vfx_offsets.json` as the durable,
@@ -149,7 +150,7 @@ own timeline data.
 - Fold `Trail`'s already-shipped, already-correct fix into the same
   generated-scene mechanism as every other clip, so there is one
   consistent pipeline instead of one clip living differently from the
-  other 51.
+  other 50.
 
 ## Architecture
 
@@ -165,23 +166,45 @@ def make_timeline_bounds(shape_bounds, xml):
     treatment at every nesting level, not just the top sprite - confirmed
     necessary: KRIN.SHADOWSHOCK's placed child (sprite id 2432) has its own
     independent 3-frame timeline, and first-frame-only recursion for it
-    (this design's original assumption) missed 2 of its 3 frames. Reuses
-    the existing snapshot_timeline() (already used by item_icons.py,
-    ability_icons.py, buff_icons.py, faces.py, model1_animations.py) rather
-    than duplicating its PlaceObject/RemoveObject tag-walking: for a given
-    sprite_id, counts its own frames (sprite_body(xml, sprite_id).count(
-    "ShowFrameTag")), calls snapshot_timeline(xml, sprite_id, set(range(1,
-    frame_count + 1))) for a full-timeline depth-state snapshot per frame,
-    and for every {cid, mat} entry in every frame's snapshot, recurses into
-    this same function for cid (memoized), transforms the result by mat
-    (transform_rect(), already in xml_lib.py), and unions across every
-    entry in every frame - the same min/max accumulation make_char_bounds
-    already uses for its own (first-frame-only) recursive union. Validated
-    against ffdec's own SVG-per-frame export for KRIN.SHADOWSHOCK (an
-    independent renderer): 219.37x218.76 px computed vs. 219.2x218.7 px
-    from the SVG's own width/height, agreeing to within rounding.
+    (this design's original assumption) missed 2 of its 3 frames. For a
+    given sprite_id, counts its own frames (sprite_body(xml, sprite_id
+    ).count("ShowFrameTag")), walks its timeline for a depth-state snapshot
+    per frame, and for every {cid, mat} entry in every frame's snapshot,
+    recurses into this same function for cid (memoized), transforms the
+    result by mat (transform_rect(), already in xml_lib.py), and unions
+    across every entry in every frame - the same min/max accumulation
+    make_char_bounds already uses for its own (first-frame-only) recursive
+    union. Validated against ffdec's own SVG-per-frame export for
+    KRIN.SHADOWSHOCK (an independent renderer): 219.37x218.76 px computed
+    vs. 219.2x218.7 px from the SVG's own width/height, agreeing to within
+    rounding.
     """
 ```
+
+The timeline walk is a private variant of `snapshot_timeline()` rather than
+that function itself. Reusing it directly was the first cut, and it read 13
+of the 51 clips wrong: its matrix search covers a fixed 1200-character
+slice after each `PlaceObject` tag, which can reach past a tag that carries
+no matrix of its own and borrow the next tag's - a placement whose depth is
+supposed to keep the matrix it already had instead gets shrunk and rotated
+by an unrelated one. `snapshot_timeline()` stays exactly as it is, because
+`item_icons.py`, `buff_icons.py`, `faces.py`, `ability_icons.py`, and
+`model1_animations.py` all already depend on its current behavior and none
+of them is in this design's scope to re-validate. The private variant is
+the same walk with its matrix search bounded by where the next timeline tag
+starts.
+
+Placed `DefineMorphShapeTag` children are real art and count toward the
+union, which `parse_swf_xml()`'s `shape_bounds` doesn't cover - it reads
+`DefineShapeTag` only. A morph shape carries a rectangle per endpoint of
+the tween (`startBounds` and `endBounds`; `DefineMorphShape2Tag` puts
+stroke-only `startEdgeBounds`/`endEdgeBounds` ahead of them), and which
+endpoint a placement renders depends on its own ratio, so both are unioned.
+`make_timeline_bounds` merges these into a combined dict of its own and
+leaves the caller's `shape_bounds` untouched. Skipping them undercounted
+`BOOM_STAR`, whose sprite 1166 places three morph shapes next to one plain
+shape: only the plain one's 22.2x23.25 px was counted, against a real
+169.5x161.75 px.
 
 ### `dev/urchin_dev/swf/extract/vfx_offsets.py` (new, registered `extract_vfx_offsets`)
 
@@ -189,9 +212,10 @@ Computes and writes `assets/vfx/vfx_offsets.json`:
 
 - Resolves every VFX clip name (the 15 bolt names, `KrinTrail` (sprite id
   2, same hardcoded override `vfx.py` already uses), and the 36 resolvable
-  `impact_effect_name` values from `moves_abilities.json`), using the same
-  resolution logic `vfx.py` already has (import and reuse it rather than
-  duplicating the export-table lookup a second time).
+  `impact_effect_name` values from `moves_abilities.json`, which land on 35
+  distinct clips), using the same resolution logic `vfx.py` already has
+  (import and reuse it rather than duplicating the export-table lookup a
+  second time).
 - For each, calls the new `make_timeline_bounds` to get `bounds` (twips),
   then corrects for glow-filter padding by measuring the real exported
   canvas directly from frame 1 of the clip's already-extracted PNG folder
@@ -237,7 +261,7 @@ under `assets/vfx/`, and writes one `.tscn` per clip:
 
 - `scenes/battle/vfx/bolts/<sanitized_name>.tscn` (15)
 - `scenes/battle/vfx/trail/krintrail.tscn` (1)
-- `scenes/battle/vfx/impacts/<sanitized_name>.tscn` (36)
+- `scenes/battle/vfx/impacts/<sanitized_name>.tscn` (35)
 
 Each generated scene:
 
@@ -247,7 +271,7 @@ Each generated scene:
 [ext_resource type="Texture2D" path="res://assets/vfx/bolts/<name>/1.png" id="1"]
 ... one ext_resource per frame, no uid= attribute (Godot assigns/tolerates
     its absence on a plain path-based ext_resource - verify with one
-    hand-generated file loaded in the editor before generating the other 51)
+    hand-generated file loaded in the editor before generating the other 50)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1"]
 animations = [{
@@ -266,14 +290,17 @@ animations = [{
 position = Vector2(<x>, <y>)      # from vfx_offsets.json, natural units
 scale = Vector2(<w/tex_w>, <h/tex_h>)  # from vfx_offsets.json vs. the
                                         # actual loaded texture size -
-                                        # collapses to ~0.5 for the common
-                                        # case, but computed per clip
+                                        # always exactly (0.5, 0.5): "w"/"h"
+                                        # are themselves that same texture's
+                                        # size divided by ZOOM, so the ratio
+                                        # is 1/ZOOM for every clip, filter
+                                        # padding included
 centered = false
 sprite_frames = SubResource("SpriteFrames_1")
 animation = &"<fly | pulse | default>"
 ```
 
-The child node is always literally named `AnimatedSprite2D` across all 52
+The child node is always literally named `AnimatedSprite2D` across all 51
 files, so `Projectile`/`ImpactEffect` can reach it the same way regardless
 of category (`.get_node("AnimatedSprite2D")`).
 

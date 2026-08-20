@@ -13,7 +13,7 @@
 ## Global Constraints
 
 - `ZOOM = 2.0` - imported from `dev/urchin_dev/swf/extract/vfx.py`, never redefined elsewhere.
-- 52 total clips: 15 bolts + 1 trail (`KrinTrail`) + 36 resolvable impacts.
+- 51 total clips: 15 bolts + 1 trail (`KrinTrail`) + 35 resolvable impacts. 36 `impact_effect_name` values resolve to a real sprite, but `ex_DownBlue` and `ex_DOWNBLUE` name the same clip.
 - Position values (in `assets/vfx/vfx_offsets.json` and baked into generated scenes' `AnimatedSprite2D.position`) are **natural, unzoomed units** - the same convention `resources/sprites/doll_offsets.json` already uses. This is NOT the same convention the already-shipped `Trail.offset = Vector2(0, -7)` used (that was `.offset`, pre-scale texture-pixel/zoomed units, on a since-retired shared node) - the same real position, expressed differently because `.position` and `.offset` are consumed differently by Godot.
 - `VfxFrames.sanitize()` stays; it is still how a `clip_name` (`Ability.animation_label`/`impact_effect_name`) resolves to a generated scene's filename. `VfxFrames.load_frames()` and `VfxFrames.VFX_SCALE` are retired - fully superseded by the generated scenes.
 - No pytest suite exists anywhere in this project (`dev/` has no test files, no pytest config) - Python-side verification for this plan follows the same established convention as `item_icons.py`/`buff_icons.py`/`vfx.py`: a diagnostic run whose printed output is inspected directly, not a persisted test file.
@@ -339,7 +339,7 @@ git commit -m "feat: compute real per-clip VFX registration offsets"
 - Modify: `pyproject.toml`
 - Create: `scenes/battle/vfx/bolts/*.tscn` (15, generated)
 - Create: `scenes/battle/vfx/trail/krintrail.tscn` (generated)
-- Create: `scenes/battle/vfx/impacts/*.tscn` (36, generated)
+- Create: `scenes/battle/vfx/impacts/*.tscn` (35, generated)
 - Delete: `scenes/battle/krin_electrobolt.tscn` (the hand-made prototype, superseded by `scenes/battle/vfx/bolts/krin_electrobolt.tscn`)
 
 **Interfaces:**
