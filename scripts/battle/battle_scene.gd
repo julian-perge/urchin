@@ -386,7 +386,9 @@ func _on_unit_clicked(slot: int) -> void:
 		orb.custom_minimum_size = Vector2(ORB_RADIUS * 2, ORB_RADIUS * 2)
 		orb.size = orb.custom_minimum_size
 		orb.position = ORB_OFFSETS[bar_index] - orb.size / 2.0
-		orb.tooltip_text = _move_tooltip(move)
+		var sections: Array = _move_tooltip_sections(move)
+		orb.mouse_entered.connect(func(): GameTooltip.show_sections(sections, orb))
+		orb.mouse_exited.connect(GameTooltip.hide_tooltip)
 		var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
 		orb.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null
 		orb.expand_icon = true
@@ -435,16 +437,22 @@ func _move_valid_for_target(move: Ability, slot: int) -> bool:
 	)
 
 
-func _move_tooltip(move: Ability) -> String:
+func _move_tooltip_sections(move: Ability) -> Array:
 	var cost_line: String = "This move costs nothing"
 	if move.focus_cost > 0:
 		cost_line = "This move costs %d Focus" % int(move.focus_cost)
-	var lines: Array[Variant] = [move.display_name, cost_line]
+	var sections: Array = [
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": move.display_name, "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_COST, "lines": [{"text": cost_line, "color": TooltipTheme.TEXT_SUBHEADER}]},
+	]
+	var body_lines: Array = []
 	if not move.tooltip_description.is_empty():
-		lines.append(move.tooltip_description)
+		body_lines.append({"text": move.tooltip_description, "color": TooltipTheme.TEXT_BODY})
 	if move.cooldown_turns > 0:
-		lines.append("Cooldown: %d turns" % move.cooldown_turns)
-	return "\n".join(lines)
+		body_lines.append({"text": "Cooldown: %d turns" % move.cooldown_turns, "color": TooltipTheme.TEXT_BODY})
+	if not body_lines.is_empty():
+		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": body_lines})
+	return sections
 
 
 func _move_color(move: Ability) -> Color:

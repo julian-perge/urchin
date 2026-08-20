@@ -349,11 +349,14 @@ func test_radial_orb_tooltip_includes_the_moves_description():
 	var move: Ability = MoveManagerAuto.get_move(1)  # Leading Strike, battle 100's bar slot 0
 	assert_false(move.tooltip_description.is_empty(), "sanity: the move actually has description text")
 	var orb: Button = scene._radial_menu.get_child(0)
-	assert_string_contains(
-		orb.tooltip_text, move.tooltip_description,
-		"the orb's tooltip carries the move's real description, not just name+cost"
-	)
+	orb.mouse_entered.emit()
+	var texts: Array = []
+	for section in GameTooltip._sections.get_children():
+		for label in section.get_child(0).get_children():
+			texts.append(label.text)
+	assert_has(texts, move.tooltip_description, "the orb's tooltip carries the move's real description, not just name+cost")
 
+	GameTooltip.hide_tooltip()
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
 
