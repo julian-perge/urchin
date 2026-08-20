@@ -143,6 +143,62 @@ def make_char_bounds(shape_bounds, sprite_children):
     return char_bounds
 
 
+def make_timeline_bounds(shape_bounds, xml):
+    """Recursive FULL-TIMELINE rendered bounds (twips), memoized per sprite
+    id. Unlike make_char_bounds (first frame only), this walks every frame
+    of a sprite's own timeline via snapshot_timeline(), and recurses with
+    the SAME full-timeline treatment for whatever's placed at each depth -
+    not just the first frame of nested children. Needed because some
+    clips' placed children are themselves independently-animating
+    sub-timelines: KRIN.SHADOWSHOCK's placed child (sprite id 2432) has
+    its own 3-frame timeline, and first-frame-only recursion for it missed
+    2 of those 3 frames - confirmed by cross-checking against ffdec's own
+    SVG-per-frame export (an independent renderer), which agreed with the
+    corrected computation to within rounding."""
+    memo = {}
+
+    def frame_count(cid):
+        return sprite_body(xml, cid).count("ShowFrameTag")
+
+    def timeline_bounds(cid, depth=0):
+        if cid in memo:
+            return memo[cid]
+        if depth > 12:
+            return None
+        if cid in shape_bounds:
+            memo[cid] = shape_bounds[cid]
+            return memo[cid]
+        fc = frame_count(cid)
+        if fc == 0:
+            memo[cid] = None
+            return None
+        snaps, _labels = snapshot_timeline(xml, cid, set(range(1, fc + 1)))
+        acc: list | None = None
+        for frame_state in snaps.values():
+            for entry in frame_state.values():
+                child_cid = entry.get("cid")
+                if child_cid is None:
+                    continue
+                cb = timeline_bounds(child_cid, depth + 1)
+                if cb is None:
+                    continue
+                mat = entry.get("mat", IDENTITY)
+                tb = transform_rect(mat, cb)
+                if acc is None:
+                    acc = list(tb)
+                else:
+                    acc = [
+                        min(acc[0], tb[0]),
+                        min(acc[1], tb[1]),
+                        max(acc[2], tb[2]),
+                        max(acc[3], tb[3]),
+                    ]
+        memo[cid] = tuple(acc) if acc else None
+        return memo[cid]
+
+    return timeline_bounds
+
+
 def sprite_body(xml: str, sprite_id: int) -> str:
     m = re.search(
         rf'<item type="DefineSpriteTag"[^>]*spriteId="{sprite_id:d}"[^>]*>', xml
