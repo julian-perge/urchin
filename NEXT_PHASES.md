@@ -329,7 +329,7 @@ ability orbs (`battle_scene.gd`), and buff icons (`unit_overlay.gd`).
 
 ## Testing: GUT
 
-GUT 9.6.1 is vendored at `addons/gut/`, tests in `test/unit/` + `test/integration/`, config in `.gutconfig.json`. Run headless (exits nonzero on failure):
+GUT 9.7.1 is vendored at `addons/gut/`, tests in `test/unit/` + `test/integration/`, config in `.gutconfig.json`. Run headless (exits nonzero on failure):
 
 ```sh
 /Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .
