@@ -1,11 +1,24 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEV_ROOT = Path(__file__).resolve().parents[1]
 
 FFDEC = Path.home() / ".local" / "bin" / "ffdec"
+
+# Force every ffdec run headless. Its launcher script adds
+# "-Xdock:name=FFDec -Xdock:icon=icon.png" on macOS and sets no headless
+# property, so each export registers a Dock application that can take focus
+# mid-run. Setting the property wins over those flags (verified: with -Xdock
+# alone GraphicsEnvironment.isHeadless() is false, with both it is true), and
+# it does not change what ffdec draws - sprite PNG exports come back
+# byte-identical, glyph rendering included. Set here because the launcher
+# reads no variable for extra JVM options, so there is nowhere closer to the
+# call sites to put it; subprocesses inherit it. Only Java processes read it,
+# so the Godot test runs are unaffected. setdefault, to stay overridable.
+os.environ.setdefault("JAVA_TOOL_OPTIONS", "-Djava.awt.headless=true")
 
 CONVERTED_JSON = DEV_ROOT / "converted_json"
 DATA_JSON = DEV_ROOT / "data_json"
