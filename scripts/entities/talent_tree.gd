@@ -182,6 +182,156 @@ static func required_level(node: Dictionary, current_rank: int) -> int:
 	return node["level_min"] + node["level_scale"] * current_rank
 
 
+# A passive talent's display name and per-rank description, from the original's
+# KrinLang.ENGLISH.BUFFSAY (frame1/DoAction.as). The Buff records carry none of
+# this: every passive family's 25_tooltip_description is 0 in the source data,
+# so this table is the only place the text exists. Keys are the buff_family the
+# nodes above use, and "name" is the title the original shows, which often is
+# not the family name - MARATHON is "Endurance", STIFFUPPER is "Stiff Upper
+# Lip". "ranks" is indexed from 0 for rank 1, keeping BUFFSAY's own numbering.
+const BUFF_TEXT: Dictionary[String, Dictionary] = {
+	"SAVAGERY": {
+		"name": "Savagery",
+		"ranks": [
+			"Passively increases your direct damage and Physical Piercing by 3%.",
+			"Passively increases your direct damage and Physical Piercing by 6%.",
+			"Passively increases your direct damage and Physical Piercing by 9%.",
+			"Passively increases your direct damage and Physical Piercing by 12%.",
+		],
+	},
+	"INTEGRITY": {
+		"name": "Integrity",
+		"ranks": [
+			"Passively restores 10 Focus every turn.",
+			"Passively restores 15 Focus and 1% of your Life every turn.",
+			"Passively restores 20 Focus and 2% of your Life every turn.",
+			"Passively restores 25 Focus and 3% of your Life every turn.",
+		],
+	},
+	"MARATHON": {
+		"name": "Endurance",
+		"ranks": [
+			"Passively increases your Life by 4%.",
+			"Passively increases your Life by 8%.",
+			"Passively increases your Life by 12%.",
+			"Passively increases your Life by 16%.",
+		],
+	},
+	"EVOLUTION": {
+		"name": "Evolution",
+		"ranks": [
+			"Passively increases your Strength, Instinct, Speed, and Life by 2%.",
+			"Passively increases your Strength, Instinct, Speed, and Life by 4%.",
+			"Passively increases your Strength, Instinct, Speed, and Life by 6%.",
+		],
+	},
+	"ACIDIC": {
+		"name": "Acidic Blood",
+		"ranks": [
+			"Passively increases your Poison Piercing by 150% and an additional 40.",
+			"Passively increases your Poison Piercing by 200% and an additional 60.",
+			"Passively increases your Poison Piercing by 250% and an additional 80.",
+			"Passively increases your Poison Piercing by 300% and an additional 100.",
+		],
+	},
+	"STIFFUPPER": {
+		"name": "Stiff Upper Lip",
+		"ranks": [
+			"Passively increases your Health by 4% and Healing received by 7%.",
+			"Passively increases your Health by 8% and Healing received by 14%.",
+			"Passively increases your Health by 12% and Healing received by 21%.",
+			"Passively increases your Health by 16% and Healing received by 28%.",
+			"Passively increases your Health by 20% and Healing received by 35%.",
+		],
+	},
+	"HOTBLOOD": {
+		"name": "Hot Blooded",
+		"ranks": [
+			"Passively increases your Strength by 50%. As a result of de-hydration, however, you lose 10 Focus every turn.",
+		],
+	},
+	"CRYSTALICE": {
+		"name": "Crystal Ice",
+		"ranks": [
+			"Passively increases your Ice Piercing by 40%.",
+			"Passively increases your Ice Piercing by 80%.",
+			"Passively increases your Ice Piercing by 120%.",
+			"Passively increases your Ice Piercing by 160%.",
+			"Passively increases your Ice Piercing by 200%.",
+		],
+	},
+	"COLDNEU": {
+		"name": "Cold Neurology",
+		"ranks": [
+			"Decreases the damage you receive by 5%, but also decreases your maximum Focus by 10.",
+			"Decreases the damage you receive by 10%, but also decreases your maximum Focus by 20.",
+			"Decreases the damage you receive by 15%, but also decreases your maximum Focus by 30.",
+			"Decreases the damage you receive by 20%, but also decreases your maximum Focus by 40.",
+		],
+	},
+	"WARMNEU": {
+		"name": "Warm Neurology",
+		"ranks": [
+			"Increases your maximum Focus by 10, but also increases the damage you receive by 5%.",
+			"Increases your maximum Focus by 20, but also increases the damage you receive by 10%.",
+			"Increases your maximum Focus by 30, but also increases the damage you receive by 15%.",
+			"Increases your maximum Focus by 40, but also increases the damage you receive by 20%.",
+		],
+	},
+	"LASTINGPAIN": {
+		"name": "Lasting Pain",
+		"ranks": [
+			"Increase all the damage dealt by your 'Damage Over Time' effects by 60%.",
+			"Increase all the damage dealt by your 'Damage Over Time' effects by 80%.",
+			"Increase all the damage dealt by your 'Damage Over Time' effects by 100%.",
+			"Increase all the damage dealt by your 'Damage Over Time' effects by 120%.",
+		],
+	},
+	"TENACITY": {
+		"name": "Tenacity",
+		"ranks": [
+			"Increases Health by 20% and Physical Defense by 20%.",
+			"Increases Health by 30% and Physical Defense by 40%.",
+			"Increases Health by 40% and Physical Defense by 60%.",
+			"Increases Health by 50% and Physical Defense by 80%.",
+			"Increases Health by 60% and Physical Defense by 100%.",
+		],
+	},
+	"CHARGEDBLOOD": {
+		"name": "Charged Blood",
+		"ranks": [
+			"Increases your Lightning Piercing by 40%.",
+			"Increases your Lightning Piercing by 80%.",
+			"Increases your Lightning Piercing by 120%.",
+			"Increases your Lightning Piercing by 160%.",
+			"Increases your Lightning Piercing by 200%.",
+		],
+	},
+	"OVERDRIVE": {
+		"name": "Overdrive",
+		"ranks": [
+			"Damages you for 10% of your Health each round, but doubles the power of your Damage-Over-Time and Healing-Over-Time abilities.",
+		],
+	},
+}
+
+
+# Title the original shows above a passive node's tooltip.
+static func buff_display_name(node: Dictionary) -> String:
+	var text: Dictionary = BUFF_TEXT.get(node.get("buff_family", ""), {})
+	return str(text.get("name", ""))
+
+
+# The description a passive node's tooltip shows at a given rank. Rank 0 and
+# rank 1 both read the first entry, which is how the original previews an
+# unlearned passive (its bobJimJohn is the rank clamped up from -1 to 0).
+static func buff_rank_description(node: Dictionary, rank: int) -> String:
+	var ranks: Array = BUFF_TEXT.get(node.get("buff_family", ""), {}).get("ranks", [])
+	if ranks.is_empty():
+		return ""
+	return str(ranks[clampi(rank - 1, 0, ranks.size() - 1)])
+
+
 # Move id granted at a given rank of an active node.
 static func granted_move_id(node: Dictionary, rank: int) -> int:
 	return node["move_id"] + rank - 1

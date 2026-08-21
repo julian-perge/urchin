@@ -195,18 +195,15 @@ func _on_tree_node_hovered(node_index: int) -> void:
 		return
 	var node: Dictionary = tree[node_index].duplicate()
 	node["_node_index"] = node_index
-	var rank: int = TalentTree.get_rank(save, node_index)
 	var move: Ability = null
-	var buff: Buff = null
-	if TalentTree.is_passive(node):
-		if rank > 0:
-			buff = BuffManagerAuto.get_buff_by_name(TalentTree.granted_buff_name(node, rank))
-	else:
+	if not TalentTree.is_passive(node):
 		# Rank-aware: show the CURRENTLY GRANTED move's text once learned,
-		# otherwise preview what learning rank 1 would grant.
+		# otherwise preview what learning rank 1 would grant. A passive needs
+		# no lookup here - the builder reads its text from TalentTree.
+		var rank: int = TalentTree.get_rank(save, node_index)
 		move = MoveManagerAuto.get_move(TalentTree.granted_move_id(node, max(rank, 1)))
 	var button: Button = _tree_buttons[node_index]
-	var result: Dictionary = AbilityTooltipBuilder.build_sections(node, save, move, buff)
+	var result: Dictionary = AbilityTooltipBuilder.build_sections(node, save, move)
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _tree_node_icon_key(node)]
 	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
 	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"])
@@ -242,7 +239,7 @@ func _on_socket_hovered(socket_index: int) -> void:
 	if move == null:
 		return
 	var button: Button = _socket_buttons[socket_index]
-	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move, null)
+	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move)
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
 	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
 	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"])
@@ -278,7 +275,7 @@ func _on_pool_row_hovered(row_index: int) -> void:
 		return
 	var save: PlayerSave = GameData.current_save
 	var row: Button = _pool_rows[row_index]
-	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move, null)
+	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move)
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
 	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
 	GameTooltip.show_sections(result["sections"], row, icon, result["icon_color"])

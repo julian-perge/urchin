@@ -215,9 +215,17 @@ connector lines drawn between talent-tree nodes, and the pool row migrated to a 
 driven). The tooltip's data is still built by a pure `AbilityTooltipBuilder` (`build_sections()`, renamed from `build_fields()`), but it's now rendered by the shared `GameTooltip` autoload
 rather than a dedicated `AbilityTooltip` scene - see the **Rich tooltip rework** section below.
 
-Two known, deliberate gaps: passive-node tooltip descriptions render blank, because the source `buffs.json` has no tooltip text for any tree-passive buff (verified across all 53 rank-entries
-in all 14 buff families actually used - not a bug); and the original's ~5-frame hover delay before showing the next-rank preview text (frame label `GO7`) was not reproduced - the rich tooltip
-shows everything immediately on hover.
+One known gap remains: the original's ~5-frame hover delay before showing the next-rank preview text (frame label `GO7`) has no equivalent here, so the rich tooltip shows everything
+immediately on hover.
+
+**Passive-node descriptions fixed (2026-08-21).** They used to render blank, and this file blamed the source `buffs.json`, which has no tooltip text for any tree-passive buff. That reading of
+the data was right but the conclusion was wrong: the original never reads the buff record for this text. `krinRemakeTree` (`DefineSprite_3142/frame_25`) branches on `CLASSIFY == 1` and pulls a
+passive node's title and per-rank description from `KrinLang.ENGLISH.BUFFSAY`, a table the port had skipped. It now lives in `TalentTree.BUFF_TEXT`. Two smaller defects came from the same
+root: the header capitalized the `buff_family`, printing "Marathon" where the original says "Endurance" (9 of the 14 families have a title that is not their family name), and the cost line read
+"Passive" instead of the original's `SKILLAURA`, "Passive Combat Effect".
+
+Still missing on both passive and active nodes: the original appends the NEXT rank's description to the "Next Tier (Lvl. N)" line (`BUFFSAY[family + rank]` for passives,
+`KRINABILITYB[id + rank][17]` for actives). Godot shows the level line alone.
 
 ## UI architecture: native Godot Containers instead of code-built controls
 

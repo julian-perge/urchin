@@ -27,12 +27,14 @@ tooltip resolution, and the true state of passive-node tooltip descriptions). Ev
   specific move id is currently granted must be looked up, not always the tree node's base `move_id`. Concretely: for an active node at `rank > 0`, resolve
   `TalentTree.granted_move_id(node, rank)`; at `rank == 0` (not yet learned), resolve `TalentTree.granted_move_id(node, 1)` to preview what learning rank 1 would grant. Getting this wrong means
   a fully-upgraded ability shows its RANK 1 tooltip text forever, which is a real, visible bug, not a cosmetic nit.
-- **Passive-node tooltip descriptions render blank today - this is a verified data fact, not a bug to fix here.** Checked every rank of every one of the 14 buff families actually used in
-  `TalentTree.TREES` against `dev/converted_json/buffs.json`'s `25_tooltip_description` field: **all 53 entries are empty** (AS3's `undefined` coerced to `0`/`""` by
-  `Buff._text()`, per that file's own header comment - "55 buffs have 0 for display_name/tooltip"). Wire `Buff.tooltip_description` into the passive-node tooltip path anyway (Task 3) for
-  architectural consistency and in case the source data is ever corrected upstream, but do NOT write a GUT test asserting non-empty description text for a passive node - assert it resolves to
-  `""` cleanly instead, matching the real data. The tooltip still shows a real icon, title (buff family name, capitalized), cost ("Passive"), and next-rank preview for passives even with a blank
-  description line.
+- **CORRECTED 2026-08-21 - the guidance below was wrong and the code that followed it shipped a bug.** The data check was accurate: all 53 `25_tooltip_description` entries across the 14 buff
+  families in `TalentTree.TREES` really are empty in `dev/converted_json/buffs.json`. The conclusion it drew was not, because the original never reads the buff record for this text.
+  `krinRemakeTree` (`DefineSprite_3142/frame_25`) branches on `CLASSIFY == 1` and takes a passive node's title from `KrinLang.ENGLISH.BUFFSAY[BUFFNAME]` and its description from
+  `BUFFSAY[BUFFNAME + rank]`. That table now lives in `TalentTree.BUFF_TEXT`, and `AbilityTooltipBuilder` reads it instead of `Buff.tooltip_description`. The original guidance stays below,
+  struck through, because it explains why the tooltip shipped blank and why a test asserted that blank as correct.
+- ~~Passive-node tooltip descriptions render blank today - this is a verified data fact, not a bug to fix here. Wire `Buff.tooltip_description` into the passive-node tooltip path anyway (Task 3)
+  for architectural consistency, but do NOT write a GUT test asserting non-empty description text for a passive node - assert it resolves to `""` cleanly instead, matching the real data. The
+  tooltip still shows a real icon, title (buff family name, capitalized), cost ("Passive"), and next-rank preview for passives even with a blank description line.~~
 - `test/integration/test_ui_scenes.gd`'s `test_abilities_window_edits_action_bar` must keep passing unchanged - it reads `window._pool_move_ids`, calls `window._on_socket_pressed(0)` and
   `window._on_pool_row_pressed(0)`, none of which this plan changes the signature or behavior of (Task 6 changes pool ROW CONSTRUCTION, not `_on_pool_row_pressed`'s logic).
   `test/integration/test_ui_scenes.gd`'s `test_hotbar_menu_toggle_is_exclusive_and_glows` only checks `game.get_node("AbilitiesWindow").visible` - unaffected. No test file needs modification

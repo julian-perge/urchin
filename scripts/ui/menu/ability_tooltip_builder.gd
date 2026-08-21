@@ -7,33 +7,40 @@ class_name AbilityTooltipBuilder
 extends RefCounted
 
 
+# The original's SKILLAURA, the cost line every passive node shows in place of
+# an active's focus/cooldown costs.
+const PASSIVE_COST: String = "Passive Combat Effect"
+
+
 # node: a TalentTree node dict, or {} for a pool-row/wheel-socket hover
 #   (no rank progress to show - no next-rank section in that case).
 # save: used to read the node's current rank (ignored when node is {}).
 # move: the resolved Ability for this hover - for a TREE node hover, the
 #   CALLER must resolve the rank-specific move id first (see
 #   TalentTree.granted_move_id()) - this builder does not do that
-#   resolution itself, it only formats whatever move it's given.
-# buff: the resolved Buff for a passive node hover, or null for an active
-#   node / pool row / wheel socket hover.
+#   resolution itself, it only formats whatever move it's given. A passive
+#   node takes null: its title and description come from TalentTree.BUFF_TEXT,
+#   since neither the Buff records nor the moves carry a passive's text.
 # Returns {"sections": Array, "icon_color": Color} - icon_color is kept
 # separate from the section list since the icon isn't itself a section.
-static func build_sections(node: Dictionary, save: PlayerSave, move: Ability, buff: Buff) -> Dictionary:
+static func build_sections(node: Dictionary, save: PlayerSave, move: Ability) -> Dictionary:
 	var is_passive: bool = not node.is_empty() and TalentTree.is_passive(node)
+	var rank: int = 0
+	if not node.is_empty() and save != null:
+		rank = TalentTree.get_rank(save, node.get("_node_index", -1))
 	var title: String
 	var description: String
 	var cost: String
 	if is_passive:
-		title = str(node["buff_family"]).capitalize()
-		description = buff.tooltip_description if buff != null else ""
-		cost = "Passive"
+		title = TalentTree.buff_display_name(node)
+		description = TalentTree.buff_rank_description(node, rank)
+		cost = PASSIVE_COST
 	else:
 		title = move.display_name if move != null else "?"
 		description = move.tooltip_description if move != null else ""
 		cost = move.tooltip_cost if move != null else ""
 	var next_rank_text: String = ""
 	if not node.is_empty():
-		var rank: int = TalentTree.get_rank(save, node.get("_node_index", -1)) if save != null else 0
 		var max_rank: int = int(node.get("max_rank", 0))
 		if rank >= max_rank:
 			next_rank_text = "MAX"
