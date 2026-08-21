@@ -224,8 +224,11 @@ passive node's title and per-rank description from `KrinLang.ENGLISH.BUFFSAY`, a
 root: the header capitalized the `buff_family`, printing "Marathon" where the original says "Endurance" (9 of the 14 families have a title that is not their family name), and the cost line read
 "Passive" instead of the original's `SKILLAURA`, "Passive Combat Effect".
 
-Still missing on both passive and active nodes: the original appends the NEXT rank's description to the "Next Tier (Lvl. N)" line (`BUFFSAY[family + rank]` for passives,
-`KRINABILITYB[id + rank][17]` for actives). Godot shows the level line alone.
+**Tree-node tooltip lines matched to the original (2026-08-21).** `krinRemakeTree` builds four lines and Godot now builds the same four. The header carries the rank over the max rank
+(`"(2/4)  Vicious Strike"`). The bottom line names the next tier's level and then what that tier grants, read from `BUFFSAY[family + rank]` for a passive and `KRINABILITYB[id + rank][17]` for an
+active. Once a node is maxed that line reads `SKILLTALENTTIP3`, "This ability is at its maximum tier.", where Godot used to print a bare "MAX". An unlearned node describes itself with
+`SKILLTALENTTIP2`, "You have no points in this ability yet.", and leaves rank 1's text to the bottom line, which is where the original puts it. Godot briefly showed rank 1's description in the
+body instead.
 
 ## UI architecture: native Godot Containers instead of code-built controls
 

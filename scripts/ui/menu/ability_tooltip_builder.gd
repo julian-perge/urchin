@@ -10,6 +10,12 @@ extends RefCounted
 # The original's SKILLAURA, the cost line every passive node shows in place of
 # an active's focus/cooldown costs.
 const PASSIVE_COST: String = "Passive Combat Effect"
+# The original's SKILLTALENTTIP/2/3, the three states of a tree node's bottom
+# line. SKILLTALENTTIP2 replaces the DESCRIPTION on an unlearned node, not the
+# bottom line - see build_sections().
+const NEXT_TIER_PREFIX: String = "Next Tier (Lvl. %d): %s"
+const UNLEARNED_DESCRIPTION: String = "You have no points in this ability yet."
+const MAX_TIER: String = "This ability is at its maximum tier."
 
 
 # node: a TalentTree node dict, or {} for a pool-row/wheel-socket hover
@@ -21,9 +27,15 @@ const PASSIVE_COST: String = "Passive Combat Effect"
 #   resolution itself, it only formats whatever move it's given. A passive
 #   node takes null: its title and description come from TalentTree.BUFF_TEXT,
 #   since neither the Buff records nor the moves carry a passive's text.
+# next_move: the Ability one rank above `move`, for the bottom line's preview
+#   of what the next rank grants. Resolved by the caller for the same reason
+#   `move` is, and null for a passive node (TalentTree.BUFF_TEXT again), for a
+#   maxed node, and for a pool-row/wheel-socket hover.
 # Returns {"sections": Array, "icon_color": Color} - icon_color is kept
 # separate from the section list since the icon isn't itself a section.
-static func build_sections(node: Dictionary, save: PlayerSave, move: Ability) -> Dictionary:
+static func build_sections(
+	node: Dictionary, save: PlayerSave, move: Ability, next_move: Ability = null
+) -> Dictionary:
 	var is_passive: bool = not node.is_empty() and TalentTree.is_passive(node)
 	var rank: int = 0
 	if not node.is_empty() and save != null:
@@ -42,10 +54,27 @@ static func build_sections(node: Dictionary, save: PlayerSave, move: Ability) ->
 	var next_rank_text: String = ""
 	if not node.is_empty():
 		var max_rank: int = int(node.get("max_rank", 0))
+		# The rank a node is at, over the rank it can reach, ahead of its name.
+		title = "(%d/%d)  %s" % [rank, max_rank, title]
 		if rank >= max_rank:
-			next_rank_text = "MAX"
+			next_rank_text = MAX_TIER
 		else:
-			next_rank_text = "Next Tier (Lvl. %d)" % TalentTree.required_level(node, rank)
+			# BUFF_TEXT is indexed from 0 for rank 1, so the CURRENT rank
+			# indexes the NEXT rank's text. Actives get the same one-rank-up
+			# move resolved by the caller.
+			var next_description: String = ""
+			if is_passive:
+				next_description = TalentTree.buff_rank_description(node, rank + 1)
+			elif next_move != null:
+				next_description = next_move.tooltip_description
+			next_rank_text = NEXT_TIER_PREFIX % [
+				TalentTree.required_level(node, rank), next_description
+			]
+		# Last, so it wins over the rank-specific text set above: an unlearned
+		# node describes itself as unlearned and leaves its own text to the
+		# bottom line's preview, which is already showing rank 1's.
+		if rank == 0:
+			description = UNLEARNED_DESCRIPTION
 	var element_index: CombatUnit.Element = -1
 	if not is_passive and move != null:
 		element_index = move.damage_element_type

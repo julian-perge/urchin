@@ -196,14 +196,17 @@ func _on_tree_node_hovered(node_index: int) -> void:
 	var node: Dictionary = tree[node_index].duplicate()
 	node["_node_index"] = node_index
 	var move: Ability = null
+	var next_move: Ability = null
 	if not TalentTree.is_passive(node):
 		# Rank-aware: show the CURRENTLY GRANTED move's text once learned,
-		# otherwise preview what learning rank 1 would grant. A passive needs
-		# no lookup here - the builder reads its text from TalentTree.
+		# otherwise the move rank 1 would grant. A passive needs no lookup
+		# here - the builder reads its text from TalentTree.
 		var rank: int = TalentTree.get_rank(save, node_index)
 		move = MoveManagerAuto.get_move(TalentTree.granted_move_id(node, max(rank, 1)))
+		if rank < int(node["max_rank"]):
+			next_move = MoveManagerAuto.get_move(TalentTree.granted_move_id(node, rank + 1))
 	var button: Button = _tree_buttons[node_index]
-	var result: Dictionary = AbilityTooltipBuilder.build_sections(node, save, move)
+	var result: Dictionary = AbilityTooltipBuilder.build_sections(node, save, move, next_move)
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _tree_node_icon_key(node)]
 	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
 	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"])
