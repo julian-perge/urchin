@@ -324,8 +324,8 @@ function parameters/locals/match targets take the enum type directly. New enum w
 **DONE (2026-08-20).** A shared `GameTooltip` autoload (`scripts/ui/game_tooltip.gd` + `scenes/ui/game_tooltip.tscn`, a `CanvasLayer` rendering a stack of independently-colored,
 independently-backgrounded sections) replaces both the ability screen's old single-panel `AbilityTooltip` and every other screen's plain Godot `tooltip_text` (which can only show one
 uniform box in one text color). Its palette lives in `scripts/ui/tooltip_theme.gd` (`TooltipTheme`), recovered from the original's own `KrinToolTipper` clip data rather than guessed.
-5 call sites now build sections and hand them to `GameTooltip`: item slots (`item_slot.gd`), hotbar buttons (`hotbar.gd`), the abilities screen (`abilities_window.gd`), in-battle
-ability orbs (`battle_scene.gd`), and buff icons (`unit_overlay.gd`).
+6 call sites now build sections and hand them to `GameTooltip`: item slots (`item_slot.gd`), hotbar buttons (`hotbar.gd`), the abilities screen (`abilities_window.gd`), in-battle
+ability orbs (`battle_scene.gd`), buff icons (`unit_overlay.gd`), and the class-select cards (`main_menu.gd`), which also crossfade their gray and colored art on hover.
 
 ## Testing: GUT
 

@@ -9,6 +9,7 @@
 extends CanvasLayer
 
 const EDGE_MARGIN: float = 4.0
+const ANCHOR_GAP: float = 8.0
 
 @onready var _root: HBoxContainer = $Root
 @onready var _icon_backing: ColorRect = $Root/IconBacking
@@ -72,7 +73,6 @@ func _position_near(anchor) -> void:
 	if not _root.visible or not is_instance_valid(anchor):
 		return
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	var pos: Vector2 = anchor.global_position + Vector2(anchor.size.x + 8.0, 0.0)
 	# get_combined_minimum_size(), not _root.size: a Control only ever grows
 	# to fit a bigger minimum size, it never shrinks back down on its own -
 	# so after a long tooltip, _root.size stays stuck at that old, larger
@@ -84,6 +84,16 @@ func _position_near(anchor) -> void:
 	# at whatever the largest tooltip shown so far needed.
 	var tooltip_size: Vector2 = _root.get_combined_minimum_size()
 	_root.size = tooltip_size
+	var pos: Vector2 = anchor.global_position + Vector2(anchor.size.x + ANCHOR_GAP, 0.0)
+	# To the anchor's right is the first choice. Clamping a tooltip that
+	# overruns the right edge slides it back over the very thing it describes,
+	# which is what the rightmost class-select card hit, so flip to the
+	# anchor's left side when the right does not fit and the left does. The
+	# clamp below still catches an anchor with room on neither side.
+	if pos.x + tooltip_size.x > viewport_size.x - EDGE_MARGIN:
+		var flipped: float = anchor.global_position.x - tooltip_size.x - ANCHOR_GAP
+		if flipped >= EDGE_MARGIN:
+			pos.x = flipped
 	pos.x = clampf(pos.x, EDGE_MARGIN, maxf(EDGE_MARGIN, viewport_size.x - tooltip_size.x - EDGE_MARGIN))
 	pos.y = clampf(pos.y, EDGE_MARGIN, maxf(EDGE_MARGIN, viewport_size.y - tooltip_size.y - EDGE_MARGIN))
 	_root.position = pos

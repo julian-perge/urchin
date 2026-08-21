@@ -99,7 +99,8 @@ Scoped-out edges from the playtest-feedback batch:
 - **Ability orb art - RESOLVED**: both the radial-menu and abilities-screen orbs now show the real extracted per-move icon art (`assets/ui/abilities/`) with element-colored borders, instead of text initials.
 - **Radial menu is click-to-cast**: the original picks up the ability with the cursor; here a usable orb casts on click directly. Unusable orbs darken, matching the source.
 - **Class-select card art - RESOLVED**: the original sketch art has been extracted and wired - gray rest / colored hover textures in `assets/ui/menu/class_cards/`,
-  cropped from rendered root frames 85/90 (reference `6_start_screen...png`).
+  each card at the position and size the original places it at (reference `6_start_screen...png`). The class name under each card is a Godot Label, because the
+  original fills a separate text field from `KrinLang` at runtime. Hovering a card shows that class's description through the shared `GameTooltip`, the way the original's `KrinToolTipper` shows it.
 - **Tutorial Level option**: stored on the options screen, but no tutorial system exists.
 - **Wolfgang/Amber portraits**: the web SWF's face-clip frames for party ids 4/5 are empty at their labels; the extracted portraits are blank frames.
   Party data also names them Teco/Catelin (from the companion seeds) while the face-clip labels say Wolfgang(Rockstar)/Amber - naming not yet reconciled against the Steam build.
@@ -109,5 +110,6 @@ Scoped-out edges from the playtest-feedback batch:
 
 - **Item icons**: 325 original icons extracted from the icon clip (sprite 2064, labeled frames) into `assets/ui/items/`; 311 item `.tres` files repointed.
   Items whose names have no icon label (Golden Pipe/Crowbar/Axe, Tool, None) and ~135 others keep their previous `assets/item_slot_icons/` art.
-- **Start background**: cropped from rendered root frame 65 with baked texts gradient-erased; the horizontal deco bars mid-screen are part of the original art and intentionally kept.
+- **Start background**: rendered from a copy of the SWF with every foreground character deleted, so there is no baked text to erase afterwards.
+  The horizontal bars an earlier pass left across the middle of the image were not original art - they came from that pass interpolating the baked texts away.
 - **Zone progress bar**: renders correctly at 1/9 (verified) - training fights do not advance story progress by design, which can read as "empty bar" after a training win.

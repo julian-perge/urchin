@@ -15,6 +15,15 @@ extends Resource
 
 enum PlayerClass { BIOLOGICAL, PSYCHOLOGICAL, HYDRAULIC }
 const CLASS_NAMES: Array[String] = ["Biological", "Psychological", "Hydraulic"]
+# The class-select blurbs, verbatim from the original's KrinLang.ENGLISH
+# CLASSDESCRIPT (frame_1/DoAction.as), indexed to match CLASS_NAMES above.
+# The original's fourth entry is the ArmorGames upsell it shows in place of
+# the Psychological text when gameLimited is set, which does not apply here.
+const CLASS_DESCRIPTIONS: Array[String] = [
+	"Wild and animalistic, the Biological line harnesses its power from strength and speed. You have the choice of ripping your prey apart with advanced physical combat, or melting them down with your toxic arsenal of poisons. This is probably the most straightforward class to play. Recommended for beginners.",
+	"If insanity were a weapon, then this would be its form. The Psychological line is heavily based on directly attacking the enemy's mind. The abilities you have available are often quite situational, but some of the most powerful. You may betray or even sacrifice your friends if you let the darkness consume you.",
+	"Strong and stable, the Hydraulic line derives its power from its mastery of water. You can use it to bolster your physical strength, or channel it against the enemy to bring about their icy doom. Wielding such powers allows you greater control over the battle, as well as powerful survival and team support options.",
+]
 
 @export var name_user: String = "Sonny"
 @export var euro: float = 0.0

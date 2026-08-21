@@ -33,7 +33,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_bg")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 0
 
 [node name="Layout" type="VBoxContainer" parent="." unique_id=452309352]
 layout_mode = 1
@@ -75,16 +75,16 @@ grow_vertical = 2
 mouse_filter = 0
 texture = ExtResource("2_bg")
 expand_mode = 1
-stretch_mode = 6
+stretch_mode = 0
 
 [node name="ClassLabel" type="Label" parent="NewGamePanel"]
 layout_mode = 0
-offset_left = 0.0
-offset_top = 60.0
-offset_right = 800.0
-offset_bottom = 100.0
+offset_left = 175.2
+offset_top = 107.9
+offset_right = 624.8
+offset_bottom = 140.95
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.85, 0.5, 0.55, 1)
+theme_override_colors/font_color = Color(0.803922, 0.529412, 0.529412, 1)
 theme_override_font_sizes/font_size = 26
 horizontal_alignment = 1
 text = "Please select a class:"
@@ -92,9 +92,9 @@ text = "Please select a class:"
 [node name="NameLabel" type="Label" parent="NewGamePanel"]
 layout_mode = 0
 offset_left = 250.0
-offset_top = 116.0
+offset_top = 60.0
 offset_right = 330.0
-offset_bottom = 146.0
+offset_bottom = 90.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/font_size = 15
@@ -105,49 +105,139 @@ text = "Name:"
 [node name="NameInput" type="LineEdit" parent="NewGamePanel"]
 layout_mode = 0
 offset_left = 340.0
-offset_top = 116.0
+offset_top = 60.0
 offset_right = 550.0
-offset_bottom = 146.0
+offset_bottom = 90.0
 text = "Sonny"
 max_length = 12
 
-[node name="ClassPicker" type="HBoxContainer" parent="NewGamePanel"]
-layout_mode = 0
-offset_left = 85.0
-offset_top = 170.0
-offset_right = 715.0
-offset_bottom = 500.0
-theme_override_constants/separation = 45
+; Card rects and name-label rects both come from the original placements, which
+; extract_start_screens prints. The card textures are the same rects rendered at
+; 5x, so scaling each one back into its rect here restores the original layout.
+; A name label's colors are the two glow filters the original stacks on its
+; text: the tight one reads as the letter color, the wide one as the halo.
+[node name="ClassPicker" type="Control" parent="NewGamePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="Psychological" type="TextureButton" parent="NewGamePanel/ClassPicker"]
-layout_mode = 2
-custom_minimum_size = Vector2(180, 320)
+layout_mode = 0
+offset_left = 68.4
+offset_top = 159.33
+offset_right = 259.8
+offset_bottom = 463.93
 texture_normal = ExtResource("3_psychgray")
-texture_hover = ExtResource("4_psych")
-texture_pressed = ExtResource("4_psych")
 ignore_texture_size = true
-stretch_mode = 5
-tooltip_text = "Psychological"
+stretch_mode = 0
+
+[node name="Color" type="TextureRect" parent="NewGamePanel/ClassPicker/Psychological"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_psych")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="Biological" type="TextureButton" parent="NewGamePanel/ClassPicker"]
-layout_mode = 2
-custom_minimum_size = Vector2(180, 320)
+layout_mode = 0
+offset_left = 308.38
+offset_top = 159.58
+offset_right = 499.78
+offset_bottom = 463.78
 texture_normal = ExtResource("5_biogray")
-texture_hover = ExtResource("6_bio")
-texture_pressed = ExtResource("6_bio")
 ignore_texture_size = true
-stretch_mode = 5
-tooltip_text = "Biological"
+stretch_mode = 0
+
+[node name="Color" type="TextureRect" parent="NewGamePanel/ClassPicker/Biological"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("6_bio")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="Hydraulic" type="TextureButton" parent="NewGamePanel/ClassPicker"]
-layout_mode = 2
-custom_minimum_size = Vector2(180, 320)
+layout_mode = 0
+offset_left = 548.42
+offset_top = 159.58
+offset_right = 739.82
+offset_bottom = 463.78
 texture_normal = ExtResource("7_hydrogray")
-texture_hover = ExtResource("8_hydro")
-texture_pressed = ExtResource("8_hydro")
 ignore_texture_size = true
-stretch_mode = 5
-tooltip_text = "Hydraulic"
+stretch_mode = 0
+
+[node name="Color" type="TextureRect" parent="NewGamePanel/ClassPicker/Hydraulic"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("8_hydro")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="PsychologicalName" type="Label" parent="NewGamePanel/ClassPicker"]
+layout_mode = 0
+offset_left = 56.05
+offset_top = 420.65
+offset_right = 274.1
+offset_bottom = 446.65
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.4, 1, 1)
+theme_override_colors/font_outline_color = Color(0.4, 0.2, 1, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 19
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Psychological"
+
+[node name="BiologicalName" type="Label" parent="NewGamePanel/ClassPicker"]
+layout_mode = 0
+offset_left = 296.05
+offset_top = 420.65
+offset_right = 514.1
+offset_bottom = 446.65
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.2, 1, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 19
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Biological"
+
+[node name="HydraulicName" type="Label" parent="NewGamePanel/ClassPicker"]
+layout_mode = 0
+offset_left = 536.05
+offset_top = 420.65
+offset_right = 754.1
+offset_bottom = 446.65
+mouse_filter = 2
+theme_override_colors/font_color = Color(0, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0.6, 1, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 19
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Hydraulic"
 
 [node name="CancelButton" type="Button" parent="NewGamePanel"]
 layout_mode = 0
@@ -177,7 +267,7 @@ grow_vertical = 2
 mouse_filter = 0
 texture = ExtResource("2_bg")
 expand_mode = 1
-stretch_mode = 6
+stretch_mode = 0
 
 [node name="SettingsLabel" type="Label" parent="OptionsPanel"]
 layout_mode = 0

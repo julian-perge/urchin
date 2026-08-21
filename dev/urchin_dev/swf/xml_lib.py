@@ -345,3 +345,78 @@ def _snapshot_timeline_bounded(xml: str, sprite_id: int, wanted_frames: set[int]
             entry["mat"] = find_matrix(window)
         state[depth] = entry
     return snaps
+
+
+_ITEM_TOKEN_RE = re.compile(r"<item\b[^>]*?(/?)>|</item>")
+_ITEM_TYPE_RE = re.compile(r'type="([^"]+)"')
+
+
+def root_placements(xml: str, frame_label: str):
+    """-> (frame number, {depth: {cid, name, mat}}) for the main-timeline
+    frame carrying `frame_label`.
+
+    This is snapshot_timeline's depth-state walk applied to the main timeline
+    instead of a sprite. It needs its own implementation because a sprite's
+    tags all sit inside one <subTags> element, so a flat slice of the dump
+    contains that sprite's timeline and nothing else, while the main
+    timeline's tags are siblings of every DefineSprite tag in the file. So
+    this tracks <item> nesting and acts only on the outermost level.
+    """
+    state: dict[int, dict] = {}
+    frame = 1
+    nesting = 0
+    at_label = False
+    open_place: tuple[int, int] | None = None
+    for token in _ITEM_TOKEN_RE.finditer(xml):
+        text = token.group(0)
+        if text == "</item>":
+            nesting -= 1
+            if nesting == 0 and open_place is not None:
+                depth, start = open_place
+                _place(state, depth, xml[start : token.end()])
+                open_place = None
+            continue
+        self_closing = bool(token.group(1))
+        if nesting == 0:
+            kind = _ITEM_TYPE_RE.search(text)
+            kind = kind.group(1) if kind else ""
+            if kind == "FrameLabelTag":
+                name = re.search(r'name="([^"]*)"', text)
+                # The label tag precedes its own frame's placements, so the
+                # answer is the state at the next ShowFrame, not this one.
+                at_label = name is not None and name.group(1) == frame_label
+            elif kind == "ShowFrameTag":
+                if at_label:
+                    return frame, state
+                frame += 1
+            elif kind.startswith("RemoveObject"):
+                depth = re.search(r'depth="(\d+)"', text)
+                if depth:
+                    state.pop(int(depth.group(1)), None)
+            elif kind.startswith("PlaceObject"):
+                depth = re.search(r'depth="(\d+)"', text)
+                if depth:
+                    if self_closing:
+                        _place(state, int(depth.group(1)), text)
+                    else:
+                        open_place = (int(depth.group(1)), token.start())
+        if not self_closing:
+            nesting += 1
+    raise KeyError(f"main-timeline frame label {frame_label!r} not found")
+
+
+def _place(state: dict[int, dict], depth: int, element: str) -> None:
+    """Fold one PlaceObject element into the display list. A placement that
+    carries no character, name or matrix of its own keeps whatever the depth
+    already had, which is how the SWF tweens work."""
+    entry = state.get(depth, {})
+    cid = re.search(r'characterId="(\d+)"', element)
+    name = re.search(r'name="([^"]*)"', element)
+    if cid:
+        entry["cid"] = int(cid.group(1))
+    if name:
+        entry["name"] = name.group(1)
+    matrix = MATRIX_TAG_RE.search(element)
+    if matrix:
+        entry["mat"] = find_matrix(element)
+    state[depth] = entry

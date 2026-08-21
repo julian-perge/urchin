@@ -37,8 +37,82 @@ func test_main_menu_builds_slot_buttons():
 	var buttons = menu.slot_buttons.get_children()
 	assert_eq(buttons.size(), GameData.NUM_SLOTS, "one button per save slot")
 	assert_false(menu.new_game_panel.visible, "new-game panel starts hidden")
-	assert_eq(menu.class_picker.get_child_count(), 3, "three classes")
+	# Count the cards, not every child - the picker also holds a name label per card.
+	var cards = menu.class_picker.get_children().filter(func(c): return c is TextureButton)
+	assert_eq(cards.size(), 3, "three class cards")
 	assert_eq(menu.difficulty_picker.get_child_count(), 3, "three difficulties")
+
+
+func test_class_cards_show_the_shared_tooltip_on_hover():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	for class_id in PlayerSave.CLASS_NAMES.size():
+		var name: String = PlayerSave.CLASS_NAMES[class_id]
+		menu.class_picker.get_node(name).mouse_entered.emit()
+		await get_tree().process_frame
+		assert_true(GameTooltip._root.visible, "%s card shows the tooltip" % name)
+		assert_eq(GameTooltip._sections.get_child_count(), 2, "%s: header plus blurb" % name)
+		var header: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+		assert_eq(header.text, name, "header names the class")
+		var body: Label = GameTooltip._sections.get_child(1).get_child(0).get_child(0)
+		assert_eq(body.text, PlayerSave.CLASS_DESCRIPTIONS[class_id], "body is the class blurb")
+		# The rightmost card has no room for its tooltip on the right, and the
+		# tooltip has to flip rather than land back over the art it describes.
+		var card: TextureButton = menu.class_picker.get_node(name)
+		assert_false(
+			Rect2(card.global_position, card.size).intersects(
+				Rect2(GameTooltip._root.position, GameTooltip._root.size)
+			),
+			"%s tooltip clears its own card" % name
+		)
+		menu.class_picker.get_node(name).mouse_exited.emit()
+		assert_false(GameTooltip._root.visible, "%s card hides it again" % name)
+
+
+# The fades are stepped by hand rather than waited on: wait_seconds() races the
+# tween against wall clock, and headless runs overshoot it enough to sail past a
+# midpoint sample. pause() plus custom_step() advances a fade by an exact delta.
+func test_class_cards_fade_their_color_copy_in_and_back_out_on_hover():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	var card: TextureButton = menu.class_picker.get_node("Biological")
+	var overlay: TextureRect = card.get_node("Color")
+	assert_eq(overlay.modulate.a, 0.0, "the colored copy starts hidden")
+
+	card.mouse_entered.emit()
+	var fade_in: Tween = menu._card_fades["Biological"]
+	fade_in.pause()
+	fade_in.custom_step(menu.CARD_FADE_IN * 0.5)
+	assert_almost_eq(overlay.modulate.a, 0.5, 0.01, "half faded in at the halfway point")
+	fade_in.custom_step(menu.CARD_FADE_IN * 0.5)
+	assert_almost_eq(overlay.modulate.a, 1.0, 0.001, "reaches full color")
+
+	card.mouse_exited.emit()
+	var fade_out: Tween = menu._card_fades["Biological"]
+	fade_out.pause()
+	fade_out.custom_step(menu.CARD_FADE_OUT * 0.5)
+	assert_almost_eq(overlay.modulate.a, 0.5, 0.01, "half faded back at the halfway point")
+	fade_out.custom_step(menu.CARD_FADE_OUT * 0.5)
+	assert_almost_eq(overlay.modulate.a, 0.0, 0.001, "returns to gray")
+
+
+func test_hovering_a_card_again_mid_fade_replaces_the_running_fade():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	var card: TextureButton = menu.class_picker.get_node("Hydraulic")
+	var overlay: TextureRect = card.get_node("Color")
+	card.mouse_entered.emit()
+	var interrupted: Tween = menu._card_fades["Hydraulic"]
+	interrupted.pause()
+	interrupted.custom_step(menu.CARD_FADE_IN * 0.5)
+
+	card.mouse_exited.emit()
+	assert_false(interrupted.is_valid(), "the interrupted fade is killed, not left running")
+	card.mouse_entered.emit()
+	var latest: Tween = menu._card_fades["Hydraulic"]
+	latest.pause()
+	latest.custom_step(menu.CARD_FADE_IN)
+	assert_almost_eq(overlay.modulate.a, 1.0, 0.001, "the last hover wins outright")
 
 
 func test_all_zone_scenes_have_source_accurate_orbs():

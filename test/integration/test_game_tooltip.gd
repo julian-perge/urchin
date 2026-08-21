@@ -81,7 +81,28 @@ func test_position_lands_beside_the_anchor_when_there_is_room():
 	anchor.size = Vector2(30, 30)
 	GameTooltip.show_sections(_sections_fixture(), anchor)
 	await wait_process_frames(1)
-	assert_eq(GameTooltip._root.position, anchor.global_position + Vector2(anchor.size.x + 8.0, 0.0))
+	assert_eq(
+		GameTooltip._root.position,
+		anchor.global_position + Vector2(anchor.size.x + GameTooltip.ANCHOR_GAP, 0.0)
+	)
+
+
+func test_position_flips_to_the_left_instead_of_covering_its_anchor():
+	var anchor: Control = add_child_autofree(Control.new())
+	# Far enough right that the tooltip cannot fit beside it, but with room to
+	# spare on the left - the rightmost class-select card's situation.
+	anchor.position = Vector2(600, 100)
+	anchor.size = Vector2(180, 300)
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	await wait_process_frames(1)
+	var tooltip_right: float = GameTooltip._root.position.x + GameTooltip._root.size.x
+	assert_almost_eq(
+		GameTooltip._root.position.x,
+		anchor.global_position.x - GameTooltip._root.size.x - GameTooltip.ANCHOR_GAP,
+		0.01,
+		"sits just left of the anchor"
+	)
+	assert_lt(tooltip_right, anchor.global_position.x, "clears the anchor entirely")
 
 
 func test_position_clamps_at_the_right_and_bottom_edges():
