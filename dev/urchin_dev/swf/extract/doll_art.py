@@ -21,15 +21,27 @@
 # to the maximums, so the growth is symmetric on both axes (verified in
 # ffdec's own Timeline.java). Symmetric growth means the canvas keeps the
 # displayRect's centre, which is what recover_rect() below relies on - it
-# needs no filter math of its own, only a centre that make_timeline_bounds
-# already computes and the canvas size ffdec actually produced. Deriving the
-# centre this way also survives multi-frame sprites, where the displayRect is
-# the union over every frame and frame 1 alone does not reach its edges.
+# needs no filter math of its own, only that centre and the canvas size ffdec
+# actually produced.
+#
+# The displayRect comes from a second ffdec pass in SVG, whose root element
+# carries it directly:
+#
+#     <svg height="38.9px" width="24.1px" ...>
+#       <g transform="matrix(2.0, 0.0, 0.0, 2.0, 12.2, 29.2)">
+#
+# so Xmin is -tx/ZOOM and width/height give the size. xml_lib's
+# make_timeline_bounds() computes the same rect in Python and was used here
+# first; the two agree on all 780 sprites to within 0.06 design px, but the
+# SVG pass takes 4.1s against 28.2s and is what ffdec itself will use when it
+# sizes the PNG canvas, so it cannot drift from the render the way a
+# reimplementation can.
 #
 # Run: uv run extract_doll_art
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -39,7 +51,7 @@ from pathlib import Path
 from PIL import Image
 
 from urchin_dev import FFDEC, REPO_ROOT, STEAM_SWF, STEAM_SWF_XML, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import make_timeline_bounds, parse_swf_xml
+from urchin_dev.swf import parse_swf_xml
 
 SPRITES = REPO_ROOT / "resources" / "sprites"
 OFFSETS = SPRITES / "doll_offsets.json"
@@ -50,6 +62,15 @@ ZOOM = 2.0
 ROUNDING_SLACK_PX = 0.75
 # Keep each ffdec command line a sane length; there are 789 names in total.
 BATCH = 400
+
+# The first matrix() in an exported SVG is the root group's, which carries the
+# displayRect's negated minimums scaled by the export zoom.
+_ROOT_MATRIX = re.compile(
+    r'<g transform="matrix\('
+    r"[-0-9.]+, [-0-9.]+, [-0-9.]+, [-0-9.]+, ([-0-9.]+), ([-0-9.]+)\)\""
+)
+_SVG_WIDTH = re.compile(r'\bwidth="([0-9.]+)px"')
+_SVG_HEIGHT = re.compile(r'\bheight="([0-9.]+)px"')
 
 
 def run(cmd: list[str]) -> subprocess.CompletedProcess:
@@ -62,12 +83,14 @@ def run(cmd: list[str]) -> subprocess.CompletedProcess:
     return proc
 
 
-def export_sprites(swf_path: Path, cids: list[int], out_root: Path) -> dict[int, Path]:
-    """-> {characterId: the PNG of that sprite's first frame}."""
+def export_first_frames(
+    swf_path: Path, cids: list[int], out_root: Path, fmt: str, suffix: str
+) -> dict[int, Path]:
+    """-> {characterId: that sprite's exported first frame, in `fmt`}."""
     found: dict[int, Path] = {}
     for start in range(0, len(cids), BATCH):
         chunk = cids[start : start + BATCH]
-        out_dir = out_root / f"batch_{start}"
+        out_dir = out_root / f"{suffix}_{start}"
         # "<characterId>:1" per sprite renders only the first frame of each.
         # The prefix is required: a bare "1" selects main-timeline frames and
         # every sprite then renders in full. Do not use the documented "all:"
@@ -79,7 +102,7 @@ def export_sprites(swf_path: Path, cids: list[int], out_root: Path) -> dict[int,
                 "-zoom",
                 str(ZOOM),
                 "-format",
-                "sprite:png",
+                f"sprite:{fmt}",
                 "-selectid",
                 ",".join(str(c) for c in chunk),
                 "-select",
@@ -96,10 +119,26 @@ def export_sprites(swf_path: Path, cids: list[int], out_root: Path) -> dict[int,
             parts = child.name.split("_")
             if len(parts) < 2 or not parts[1].isdigit():
                 continue
-            png = child / "1.png"
-            if png.exists():
-                found[int(parts[1])] = png
+            frame = child / f"1.{suffix}"
+            if frame.exists():
+                found[int(parts[1])] = frame
     return found
+
+
+def read_display_rect(svg_path: Path):
+    """-> (x, y, w, h) of the sprite's displayRect in design px, or None."""
+    head = svg_path.read_text()[:2000]
+    matrix = _ROOT_MATRIX.search(head)
+    width = _SVG_WIDTH.search(head)
+    height = _SVG_HEIGHT.search(head)
+    if matrix is None or width is None or height is None:
+        return None
+    return (
+        -float(matrix.group(1)) / ZOOM,
+        -float(matrix.group(2)) / ZOOM,
+        float(width.group(1)) / ZOOM,
+        float(height.group(1)) / ZOOM,
+    )
 
 
 def recover_rect(centre: tuple[float, float], canvas: tuple[int, int], bbox):
@@ -118,20 +157,16 @@ def recover_rect(centre: tuple[float, float], canvas: tuple[int, int], bbox):
 
 def render_swf(xml_path: Path, swf_path: Path, names: list[str]):
     """-> (rects, unresolved, grown). rects maps name to its design-px rect."""
-    shapes, sprites, exports = parse_swf_xml(xml_path)
-    timeline_bounds = make_timeline_bounds(shapes, xml_path.read_text())
+    _shapes, sprites, exports = parse_swf_xml(xml_path)
 
     wanted: dict[int, str] = {}
-    spans: dict[int, tuple[float, float, float, float]] = {}
     unresolved: list[str] = []
     for name in names:
         cid = exports.get(name)
-        bounds = timeline_bounds(cid) if cid is not None else None
-        if cid is None or bounds is None:
+        if cid is None or cid not in sprites:
             unresolved.append(name)
             continue
         wanted[cid] = name
-        spans[cid] = tuple(v / 20.0 for v in bounds)
 
     if not wanted:
         return {}, unresolved, []
@@ -140,9 +175,21 @@ def render_swf(xml_path: Path, swf_path: Path, names: list[str]):
     grown: list[str] = []
     work = Path(tempfile.mkdtemp(prefix="doll_art_"))
     try:
-        rendered = export_sprites(swf_path, sorted(wanted), work)
-        for cid, name in wanted.items():
-            png = rendered.get(cid)
+        cids = sorted(wanted)
+        svgs = export_first_frames(swf_path, cids, work, "svg", "svg")
+        spans: dict[int, tuple[float, float, float, float]] = {}
+        for cid in cids:
+            svg = svgs.get(cid)
+            span = read_display_rect(svg) if svg is not None else None
+            if span is None:
+                unresolved.append(wanted[cid])
+                continue
+            spans[cid] = span
+
+        pngs = export_first_frames(swf_path, sorted(spans), work, "png", "png")
+        for cid, span in spans.items():
+            name = wanted[cid]
+            png = pngs.get(cid)
             if png is None:
                 unresolved.append(name)
                 continue
@@ -154,27 +201,25 @@ def render_swf(xml_path: Path, swf_path: Path, names: list[str]):
                 # character_visual.gd's _add_layer() detects and skips one.
                 unresolved.append(name)
                 continue
-            x0, y0, x1, y1 = spans[cid]
+            x0, y0, w, h = span
             if (
-                img.width / ZOOM - (x1 - x0) > ROUNDING_SLACK_PX
-                or img.height / ZOOM - (y1 - y0) > ROUNDING_SLACK_PX
+                img.width / ZOOM - w > ROUNDING_SLACK_PX
+                or img.height / ZOOM - h > ROUNDING_SLACK_PX
             ):
                 grown.append(name)
             elif (
-                img.width / ZOOM - (x1 - x0) < -ROUNDING_SLACK_PX
-                or img.height / ZOOM - (y1 - y0) < -ROUNDING_SLACK_PX
+                img.width / ZOOM - w < -ROUNDING_SLACK_PX
+                or img.height / ZOOM - h < -ROUNDING_SLACK_PX
             ):
-                # Filters only ever grow the canvas. A canvas SMALLER than its
-                # own displayRect means make_timeline_bounds and ffdec disagree
-                # about this sprite, so the recovered centre cannot be trusted.
+                # Filters only ever grow the canvas, so a canvas smaller than
+                # its own displayRect means the SVG and the PNG disagree about
+                # this sprite and the recovered centre cannot be trusted.
                 raise RuntimeError(
                     f"{name} (cid {cid}): canvas "
                     f"{img.width / ZOOM:.2f}x{img.height / ZOOM:.2f} is smaller "
-                    f"than its displayRect {x1 - x0:.2f}x{y1 - y0:.2f} design px"
+                    f"than its displayRect {w:.2f}x{h:.2f} design px"
                 )
-            rects[name] = recover_rect(
-                ((x0 + x1) / 2, (y0 + y1) / 2), img.size, bbox
-            )
+            rects[name] = recover_rect((x0 + w / 2, y0 + h / 2), img.size, bbox)
             img.crop(bbox).save(SPRITES / (name + ".png"))
     finally:
         shutil.rmtree(work, ignore_errors=True)
@@ -186,8 +231,10 @@ def main():
     print(f"doll sprites on disk: {len(names)}", file=sys.stderr)
 
     rects, unresolved, grown = render_swf(WEB_SWF_XML, WEB_SWF, names)
-    print(f"web SWF: {len(rects)} rendered, {len(grown)} grown by a filter",
-          file=sys.stderr)
+    print(
+        f"web SWF: {len(rects)} rendered, {len(grown)} grown by a filter",
+        file=sys.stderr,
+    )
 
     if unresolved:
         steam_rects, unresolved, steam_grown = render_swf(
@@ -195,8 +242,11 @@ def main():
         )
         rects.update(steam_rects)
         grown.extend(steam_grown)
-        print(f"steam SWF: {len(steam_rects)} rendered, "
-              f"{len(steam_grown)} grown by a filter", file=sys.stderr)
+        print(
+            f"steam SWF: {len(steam_rects)} rendered, "
+            f"{len(steam_grown)} grown by a filter",
+            file=sys.stderr,
+        )
 
     OFFSETS.write_text(
         json.dumps(
@@ -214,8 +264,10 @@ def main():
         )
     )
     print(f"wrote {OFFSETS} ({len(rects)} entries)", file=sys.stderr)
-    print(f"skipped (placeholders / not in either SWF): {len(unresolved)}",
-          file=sys.stderr)
+    print(
+        f"skipped (placeholders / not in either SWF): {len(unresolved)}",
+        file=sys.stderr,
+    )
     if unresolved:
         print(f"skipped: {sorted(unresolved)}", file=sys.stderr)
 
