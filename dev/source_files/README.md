@@ -20,7 +20,7 @@ uv run python3 export_swf_sources
 Analysis and extraction tooling lives in `dev/urchin_dev/swf/`:
 
 - `xml_lib.py` - shared swf2xml parsing (bounds, timelines, matrices)
-- `doll_offsets.py` - regenerates `resources/sprites/doll_offsets.json`
+- `prepare_extract_swf.py` - builds the stripped SWF the icon renders use
 - `item_looks.py` - regenerates `converted_json/item_looks.json` + patches item `.tres` looks
 - `faces.py` - regenerates `assets/ui/menu/portraits/*.png`
 - `export_swf_sources.py` - regenerates this directory

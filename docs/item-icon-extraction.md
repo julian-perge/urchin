@@ -37,10 +37,14 @@ colorTransform or filter set on that same tag, so any icon depending on one
 silently lost it. Confirmed on item 592 "Ancient Cage": the old composited
 icon was missing the glowing yellow ward markings the live game shows.
 
-`DefineShape 1913` - a solid square marking the nominal 31x31 editor bounds,
-present behind every frame and never meant to render - is stripped from a
-working copy of the SWF via `-removeCharacter` before the export, the same
-technique `cutscenes.py` uses for its guide overlays.
+`DefineShape 1913` is a real clip mask, not the editor scaffolding it looks
+like, and is left in place. Every frame places it at depth 2 with
+`clipDepth="15"`. An earlier version of this script read it as scaffolding and
+stripped it from a working copy via `-removeCharacter`, which let ffdec render
+depths 2 through 15 unclipped and ballooned item 69 "A Broken Pipe" from a
+correctly masked 63x63px to 101x140. Restoring the mask brought it straight
+back. Before stripping any character to clean up an export, check whether its
+placements carry a `clipDepth`.
 
 Each frame is then trimmed to its own opaque bounds (`Image.getbbox()`), not
 forced into a fixed 31x31 crop - a fixed crop was tried first and rejected:
@@ -75,10 +79,8 @@ crop to the opaque bounds (`Image.open(...).getchannel("A").getbbox()`) to
 see what actually ships.
 
 **The worked precedent this generalizes from - the exact pair of commands
-that found and confirmed the ability-icon black-disc bug** (commit
-`ff6a028`; ability icons live in `DefineSprite 2427`, not 2064, and that
-script still composites per-shape rather than exporting the sprite
-directly):
+that found the ability-icon black-disc bug** (commit `ff6a028`; ability icons
+live in `DefineSprite 2427`, not 2064):
 
 ```sh
 # The real per-label art for the "ACIDIC" ability (frame 228, depth 5) -
@@ -90,12 +92,14 @@ ffdec -zoom 2.0 -format shape:png -selectid 2296 -export shape ./test_acidic son
 ffdec -zoom 2.0 -format shape:png -selectid 2241 -export shape ./test_disc sonny-2-2900.swf
 ```
 
-Comparing those two PNGs (real art vs. opaque disc) is what confirmed that
-root cause before `2241` was added to `extract_ability_icons.py`'s
-`SKIP_CIDS`. `item_icons.py` no longer needs an equivalent `SKIP_CIDS` list
-for 2064, since `-removeCharacter` drops the one shape that needed it (1913)
-before the render happens at all, instead of trying to skip it during a
-compositing pass that no longer exists.
+Comparing those two PNGs, real art against opaque disc, is what confirmed the
+root cause. `ability_icons.py` skipped the disc during compositing for a while,
+which removed it but could not carry the sheet's clip mask, glow filters, or
+gradient fills. It renders through ffdec now, like this script does, and
+`dev/urchin_dev/swf/prepare_extract_swf.py` deletes the disc from a prepared
+copy of the SWF instead, along with the cooldown counter text beside it. Both
+are opaque in the tag data but hidden by ActionScript at runtime, and no static
+renderer can know that.
 
 ## Finding an item's frame number
 

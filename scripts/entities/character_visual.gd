@@ -27,8 +27,11 @@ signal melee_finished  # run -> Attack -> runback sequence completed
 enum State { IDLE, MELEE, CAST, STUN, HIT, DEAD }
 
 const SPRITE_ROOT: String = "res://resources/sprites"
-# Per-art render bounds extracted from the SWF (extract_doll_offsets.py):
-# name -> {x, y, w, h} in px. The PNGs are exported at 2x design size;
+# Per-art render bounds extracted from the SWF (extract_doll_art writes this
+# alongside the PNGs, because only the renderer knows how far a part's filters
+# grew it): name -> {x, y, w, h} in px. A name absent from the file is
+# placeholder art for a part the original left empty.
+# The PNGs are exported at 2x design size;
 # each layer is positioned at (x, y) and scaled to w/h - without this every
 # part draws top-left-at-joint at export resolution (the giant-blob bug).
 const OFFSETS_FILE: String = SPRITE_ROOT + "/doll_offsets.json"

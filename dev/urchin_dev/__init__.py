@@ -21,6 +21,11 @@ STEAM_SWF_XML = SWF_XML / "SONNY2_steam.xml"
 WEB_SWF = REPO_ROOT / "sonny-2-2900.swf"
 STEAM_SWF = REPO_ROOT / "SONNY2.swf"
 
+# The web SWF with every runtime-hidden overlay character deleted, so ffdec's
+# own renderer draws what the game draws. Built by prepare_extract_swf.py,
+# which explains what is stripped and why. Gitignored like every other .swf.
+WEB_SWF_EXTRACT = REPO_ROOT / "sonny-2-2900.extract.swf"
+
 
 def require_data_json(file_name: str) -> Path:
     """Resolve a converter input in data_json/, failing with a usable message.
