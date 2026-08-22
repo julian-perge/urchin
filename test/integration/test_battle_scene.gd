@@ -541,6 +541,17 @@ func test_battle_layout_json_carries_real_stage_rects():
 	assert_almost_eq(float(church["w"]), 884.50, 0.01, "CHURCH hall width")
 	assert_almost_eq(float(church["h"]), 420.00, 0.01, "CHURCH hall height")
 
+	# TUNNEL is one of the hall labels whose rect only comes out right when the
+	# fighter rig (2676) is stripped before recovery runs: the rig's
+	# placeholder figure pokes above TUNNEL's own opaque art, so measuring
+	# against the unstripped SWF would inflate y and h past what TUNNEL.png
+	# was actually cropped to.
+	var tunnel: Dictionary = layout["halls"]["TUNNEL"]
+	assert_almost_eq(float(tunnel["x"]), -22.07, 0.01, "TUNNEL hall left")
+	assert_almost_eq(float(tunnel["y"]), 154.27, 0.01, "TUNNEL hall top")
+	assert_almost_eq(float(tunnel["w"]), 844.00, 0.01, "TUNNEL hall width")
+	assert_almost_eq(float(tunnel["h"]), 349.00, 0.01, "TUNNEL hall height")
+
 
 # The battle frame places four chrome characters the port had never extracted:
 # the shared bottom bar (3317, which the Navigation frame places too), the top

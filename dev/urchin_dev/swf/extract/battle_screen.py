@@ -284,6 +284,15 @@ def main():
         render_labels(stripped, HALL_SPRITE, halls, HALL_DIR, "")
         print(f"skies ({len(skies)}):", file=sys.stderr)
         render_labels(stripped, SKY_SPRITE, skies, SKY_DIR, "SKY_")
+        # The layout recovery has to run against this same stripped copy,
+        # while it still exists: the fighter rig's placeholder figure pokes
+        # above the hall's own opaque art on 5 of the 10 hall labels, so
+        # measuring against the unstripped SWF would inflate their y and h
+        # past what the PNGs above were actually cropped to.
+        layout = {
+            "halls": layout_rects(stripped, xml, HALL_SPRITE, halls),
+            "skies": layout_rects(stripped, xml, SKY_SPRITE, skies),
+        }
     finally:
         shutil.rmtree(work, ignore_errors=True)
 
@@ -292,10 +301,6 @@ def main():
     print(f"chrome ({len(CHROME)}):", file=sys.stderr)
     render_chrome(WEB_SWF)
 
-    layout = {
-        "halls": layout_rects(WEB_SWF, xml, HALL_SPRITE, halls),
-        "skies": layout_rects(WEB_SWF, xml, SKY_SPRITE, skies),
-    }
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
     print(f"wrote {LAYOUT_JSON}", file=sys.stderr)
 
