@@ -164,10 +164,12 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     Two other things this audit turned up:
     - **Fixed**: `scripts/editor/items.gd`'s own `SLOT_ICON_OVERRIDES` (a second copy of the id-5/id-11 override table, used when regenerating `.tres` files from `items.json` from scratch) only
       had id 11 - item 5's fix would have silently reverted the next time anyone ran that script. Added id 5; both files now cross-reference each other's override table so they don't drift again.
-    - **Not fixed, lower priority**: 4 pairs of items share a display name and so share one slot icon by the current sanitize-key lookup (`Surgery Blade` ids 16/501, `Frosted Leggings` ids
-      125/322, `Riot Shield` ids 188/653, `Metal Shield` ids 203/516). Two pairs (`Surgery Blade`, `Metal Shield`) already share the same equipped paper-doll art (`looks`), so sharing an icon is
-      correct. The other two (`Frosted Leggings`, `Riot Shield`) have *different* `looks` per id, meaning two visually-distinct equipped items currently show the same slot icon - a real but minor
-      content gap, not investigated further this pass.
+    - **Withdrawn (2026-08-22): the shared-slot-icon claim was wrong.** It reported 4 pairs of items sharing one icon through the sanitize-key lookup, naming ids 16/501, 125/322, 188/653 and
+      203/516. Those pairs collide in `swf_items.json`'s `internal_name`, which is a dev-facing field the icon path never reads, and which disagrees with the real names anyway - id 311 is
+      "Punisher Gloves" there but "Warden's Grasp" in `internal_name`, and 653 is "Riot Shield" against "SHIELD". The display name the game uses is `KrinLang.ENGLISH.ITEMNAME[id]`
+      (frame1/DoAction.as), which `frame_42/DoAction_16.as:23` writes over the item record's own name field at load. All 316 of its entries are unique, the 316 `.tres` files that carry a `name`
+      match them one to one, and none of their sanitized keys collide. Keying icons by name is also what the original does - `itemSlot.inner.gotoAndStop(ITEMNAME[id])` - so there is nothing to
+      fix. The remaining 133 `.tres` files have no `name` because the original gives those ids no `ITEMNAME` either, so it cannot draw their icons either.
     Still worth a manual side-by-side pass against the live game for the 309 items that DO get an automatic sprite-2064 match, since id 5/11 prove a labeled frame can point at the wrong content
     without tripping any of the checks above.
   - **DONE (2026-08-18)** - `item_icons.py` rewritten the same way `faces.py` was: every frame now exported directly via ffdec's own sprite renderer (`-format sprite:png -selectid 2064`) instead
