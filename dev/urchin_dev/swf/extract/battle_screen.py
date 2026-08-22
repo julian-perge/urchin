@@ -34,6 +34,7 @@ from urchin_dev.swf import snapshot_timeline
 
 HALL_DIR = REPO_ROOT / "assets" / "backgrounds" / "battle"
 SKY_DIR = REPO_ROOT / "assets" / "backgrounds" / "sky"
+BATTLE_UI_DIR = REPO_ROOT / "assets" / "ui" / "battle"
 
 HALL_SPRITE = 3435
 SKY_SPRITE = 3454
@@ -43,6 +44,16 @@ FIGHTER_RIG = 2676
 # These fill the window behind everything else, so they are rendered well above
 # the window's 2x default scale.
 ZOOM = 4.0
+
+# The four chrome characters the battle frame places, named for what they are.
+# 3317 sits at depth 1 on the Navigation frame too, so the bottom bar is one
+# shared asset rather than the two copies the repo keeps.
+CHROME: dict[int, str] = {
+    3317: "bottom_bar",
+    3465: "top_panel",
+    3460: "alert_icon",
+    3455: "stage_rect",
+}
 
 
 def run(cmd: list[str]) -> subprocess.CompletedProcess:
@@ -108,6 +119,41 @@ def render_labels(
         shutil.rmtree(work, ignore_errors=True)
 
 
+def render_chrome(swf: Path) -> None:
+    """Render each chrome character's first frame, trimmed to its content."""
+    work = Path(tempfile.mkdtemp(prefix="battle_chrome_"))
+    try:
+        ids = ",".join(str(c) for c in CHROME)
+        run(
+            [
+                str(FFDEC),
+                "-zoom",
+                str(ZOOM),
+                "-format",
+                "sprite:png",
+                "-selectid",
+                ids,
+                "-select",
+                ",".join(f"{c}:1" for c in CHROME),
+                "-export",
+                "sprite",
+                str(work),
+                str(swf),
+            ]
+        )
+        BATTLE_UI_DIR.mkdir(parents=True, exist_ok=True)
+        for cid, name in sorted(CHROME.items()):
+            image = Image.open(work / f"DefineSprite_{cid}" / "1.png").convert("RGBA")
+            bbox = image.getchannel("A").getbbox()
+            if bbox is None:
+                raise RuntimeError(f"chrome {cid} ({name}) rendered empty")
+            cropped = image.crop(bbox)
+            cropped.save(BATTLE_UI_DIR / f"{name}.png")
+            print(f"  {cid} -> {name}.png {cropped.size}", file=sys.stderr)
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
 def main():
     xml = WEB_SWF_XML.read_text()
     halls = sprite_label_frames(xml, HALL_SPRITE)
@@ -131,6 +177,11 @@ def main():
         render_labels(stripped, SKY_SPRITE, skies, SKY_DIR, "SKY_")
     finally:
         shutil.rmtree(work, ignore_errors=True)
+
+    # The chrome characters sit outside 2676, so the fighter-rig strip above
+    # never touches them and they render straight off the original SWF.
+    print(f"chrome ({len(CHROME)}):", file=sys.stderr)
+    render_chrome(WEB_SWF)
 
 
 if __name__ == "__main__":

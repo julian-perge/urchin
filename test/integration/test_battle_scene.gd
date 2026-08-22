@@ -518,6 +518,17 @@ func test_decision_timer_does_not_tick_while_not_player_action_pending():
 	ZoneManager.auto_start_battles = true
 
 
+# The battle frame places four chrome characters the port had never extracted:
+# the shared bottom bar (3317, which the Navigation frame places too), the top
+# panel frame (3465), the alert icon (3460) and the stage rect (3455).
+func test_battle_chrome_art_is_extracted():
+	for name in ["bottom_bar", "top_panel", "alert_icon", "stage_rect"]:
+		var path := "res://assets/ui/battle/%s.png" % name
+		assert_true(ResourceLoader.exists(path), "%s extracted" % name)
+		var texture: Texture2D = load(path)
+		assert_gt(texture.get_width(), 0, "%s is not empty" % name)
+
+
 # The halls place DefineSprite 2676 six times as the character rig. Rendered
 # without stripping it, each background bakes in six placeholder fighters, so
 # the art has to be wider than the six slots they would occupy and must not
