@@ -250,12 +250,9 @@ func _load_background() -> void:
 	var sky_key: String = battle.sky_background.replace(" ", "_")
 	var sky_path: String = "%s/sky/SKY_%s.png" % [BACKGROUND_ROOT, sky_key]
 	if not ResourceLoader.exists(sky_path):
-		# Only SEA has no art extracted yet, so this catches that one battle.
-		sky_key = sky_key.rstrip("0123456789")
-		sky_path = "%s/sky/SKY_%s.png" % [BACKGROUND_ROOT, sky_key]
-	if not ResourceLoader.exists(sky_path):
-		sky_path = "%s/sky/SKY_JAIL.png" % BACKGROUND_ROOT  # generic city glow
-	if not ResourceLoader.exists(sky_path):
+		# All nine sky labels the battle records use have art, so a miss here
+		# is a real gap rather than something to substitute around.
+		push_error("no sky art for %s (battle %d)" % [sky_key, battle.id])
 		return
 	var sky_texture: Texture2D = load(sky_path)
 	sky.texture = sky_texture

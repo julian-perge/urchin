@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dk4q6mfuyfefe"
-path="res://.godot/imported/SEA.png-2f7bb0dd881f1902d4a296107dd0c710.ctex"
+path="res://.godot/imported/SKY_SEA.png-a248e557cb4fb701c6499e884b11612d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/backgrounds/battle/SEA.png"
-dest_files=["res://.godot/imported/SEA.png-2f7bb0dd881f1902d4a296107dd0c710.ctex"]
+source_file="res://assets/backgrounds/sky/SKY_SEA.png"
+dest_files=["res://.godot/imported/SKY_SEA.png-a248e557cb4fb701c6499e884b11612d.ctex"]
 
 [params]
 

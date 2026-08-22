@@ -518,6 +518,24 @@ func test_decision_timer_does_not_tick_while_not_player_action_pending():
 	ZoneManager.auto_start_battles = true
 
 
+# Every battle's hall and sky must resolve to real art. The two are separate
+# fields, so a missing sky no longer falls back to a substitute - it errors.
+func test_every_battle_resolves_its_hall_and_sky_art():
+	var dir := DirAccess.open("res://resources/battles")
+	assert_not_null(dir, "battle resources directory opens")
+	var checked := 0
+	for file in dir.get_files():
+		if not file.ends_with(".tres"):
+			continue
+		var battle: BattleFight = load("res://resources/battles/%s" % file)
+		var hall := "res://assets/backgrounds/battle/%s.png" % battle.zone_background.replace(" ", "_")
+		var sky := "res://assets/backgrounds/sky/SKY_%s.png" % battle.sky_background.replace(" ", "_")
+		assert_true(ResourceLoader.exists(hall), "%s hall %s" % [file, hall])
+		assert_true(ResourceLoader.exists(sky), "%s sky %s" % [file, sky])
+		checked += 1
+	assert_gt(checked, 90, "checked the whole battle set")
+
+
 # Battle 600 is one of the five zone-6 fights the original runs in the CHURCH
 # hall under the ROME sky (Krin.ZoneBG and Krin.SkyBG are separate fields, and
 # 16 of the 99 battles set them to different labels). Deriving the sky from the

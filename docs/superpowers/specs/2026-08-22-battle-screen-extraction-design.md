@@ -53,6 +53,24 @@ Those bars are the "top battle bar panel" `KNOWN_GAPS.md` scoped out. This work
 extracts the frame's art and stops there; building the bars stays a separate
 feature.
 
+### The halls carry six fighter rigs that have to be stripped
+
+Every label in `3435` places DefineSprite `2676` six times, at depths 40, 80,
+120, 160, 200 and 240. It is the character rig: three slots per side, the right
+side mirrored with `scaleX = -1`. Rendered as-is, each hall bakes in six
+placeholder fighters holding swords under "!" speech bubbles, authoring
+scaffolding the game never draws. `2676` joins the `-removeCharacter` list, the
+same way the orb comes out of the zone hubs.
+
+Those six placements are also where `battle_scene.gd`'s `SLOT_POSITIONS` came
+from, and they still agree with it exactly, so nothing downstream moves:
+
+```
+slot 5 (220.9, 218.5)   slot 6 (577.9, 218.5)
+slot 1 (160.9, 297.4)   slot 2 (637.9, 297.4)
+slot 3 (220.9, 371.0)   slot 4 (577.9, 371.0)
+```
+
 ### The hall and the sky are chosen independently
 
 `3435` (halls) carries 10 labels and `3454` (skies) carries 9, and they are not
@@ -87,8 +105,11 @@ So `ROME` and `SEA` are not orphans, they are the skies zone 6 and the
 `_load_background()` was ignoring it and deriving the sky from the hall name.
 Fixed separately from this extraction, since the data was already there.
 
-`SKY_SEA` is the one sky no asset exists for, and `SKY_TRAIN2` is an asset no
-battle asks for.
+`SKY_TRAIN2` is an asset no battle asks for. This spec listed `SKY_SEA` as
+missing, but it was only misfiled: `assets/backgrounds/battle/SEA.png` is the
+SEA sky, matching a render of `3454` at that label to within a pixel. It now
+sits in `sky/`, so all nine sky labels the battle records use resolve, and
+`_load_background()` errors on a miss instead of substituting.
 
 `assets/backgrounds/battle/` also holds six files named after raw character ids
 (`3423`, `3424`, `3438`, `3440`, `3450`, `3452`) and two labels the sprite does
@@ -159,9 +180,14 @@ positions:
 - `KrinSelector` (`3394`), `battleClocker` (`3389`), `selector` (`3382`),
   `moveSelectBoomer` (`3373`). Hand-built and working; re-extracting them is a
   separate pass with its own risk.
-- The eight unexplained files in `assets/backgrounds/battle/`. The script will
-  reveal whether each has a label behind it; deciding what to do with any that
-  do not is a follow-up.
+- Six hand-exported sub-shapes in `assets/backgrounds/battle/`. Composed label
+  renders replace all of them: `3438` and `3440` are the shapes inside cloud
+  sprites `3439` and `3441`, `3424` sits inside `3425` (a JAIL layer), `3423`
+  is a JAIL layer `3435` places directly, and `3450`/`3452` are the STREETS and
+  STREETS3 foreground shapes. Deleting them is a follow-up once those renders
+  land.
+- `JAIL3.png`, the one file with no label behind it in either sprite, still
+  unaccounted for.
 
 ## What each sky is made of
 
