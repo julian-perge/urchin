@@ -518,6 +518,27 @@ func test_decision_timer_does_not_tick_while_not_player_action_pending():
 	ZoneManager.auto_start_battles = true
 
 
+# Battle 600 runs the CHURCH hall under the ROME sky. The sky is a horizon
+# strip whose bottom sits on the ground line, and the layout JSON says that
+# line is y = 306.0 for ROME - not the 292.0 the old constant used.
+func test_sky_is_placed_from_the_layout_json():
+	var save = PlayerSave.new_game("SkyRectTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 600, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	assert_almost_eq(scene.sky.position.y + scene.sky.size.y, 306.0, 0.5,
+		"sky bottom sits where the SWF puts it")
+	assert_almost_eq(scene.sky.size.y, 176.0, 0.5, "sky strip height from the JSON")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The layout JSON carries where each hall and sky actually sits on the stage,
 # recovered from the SWF placement rather than tuned by hand. The ROME sky's
 # bottom edge lands at y = 306.0, which is what SKY_HORIZON_Y = 292.0 was

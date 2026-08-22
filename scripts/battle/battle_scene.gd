@@ -229,18 +229,35 @@ func start_battle(info: Dictionary) -> void:
 
 
 # The original composites a sky layer behind the hall art; the hall PNGs have a
-# transparent sky region. The sky art is a wide horizon STRIP (~800x140
-# natural), not a full-screen image - it sits with its bottom on the ground
-# line, and the area above it is filled with the strip's own top-edge color.
+# transparent sky region. The sky art is a wide horizon STRIP, not a
+# full-screen image - it sits with its bottom on the ground line, and the area
+# above it is filled with the strip's own top-edge color.
 #
 # The hall and the sky are two independent per-battle fields, not one key: the
 # original drives DefineSprite 3435 from Krin.ZoneBG and DefineSprite 3454 from
 # Krin.SkyBG, and 16 of its 99 battles set them to different labels. Zone 6
 # fights in the CHURCH hall under the ROME sky, one STREETS fight uses the
-# TUNNEL sky, and WHITE NOVEMBER uses SEA. Deriving the sky from the hall name
-# gets all of those wrong, so read battle.sky_background - the .tres files
-# already carry it, straight from frame_42/DoAction_14.as.
-const SKY_HORIZON_Y: float = 292.0
+# TUNNEL sky, and WHITE NOVEMBER uses SEA.
+#
+# Where the strip sits comes from battle_layout.json, which extract_battle_screen
+# writes out of the SWF's own placements. A tuned constant used to stand in for
+# it and put every sky's ground line at y = 292.0; the real line differs per
+# label, and ROME's is at 306.0.
+const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
+
+var _battle_layout: Dictionary = {}
+
+
+# -> {x, y, w, h} for one sky label, or {} when the JSON has no entry for it.
+func _sky_rect(sky_key: String) -> Dictionary:
+	if _battle_layout.is_empty():
+		var file := FileAccess.open(BATTLE_LAYOUT_PATH, FileAccess.READ)
+		if file == null:
+			push_error("missing %s" % BATTLE_LAYOUT_PATH)
+			return {}
+		_battle_layout = JSON.parse_string(file.get_as_text())
+	return _battle_layout.get("skies", {}).get(sky_key, {})
+
 
 func _load_background() -> void:
 	var key: String = battle.zone_background.replace(" ", "_")
@@ -255,18 +272,21 @@ func _load_background() -> void:
 		push_error("no sky art for %s (battle %d)" % [sky_key, battle.id])
 		return
 	var sky_texture: Texture2D = load(sky_path)
+	var rect: Dictionary = _sky_rect(sky_key)
+	if rect.is_empty():
+		push_error("no layout entry for sky %s (battle %d)" % [sky_key, battle.id])
+		return
 	sky.texture = sky_texture
 	sky.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	sky.stretch_mode = TextureRect.STRETCH_SCALE
-	var strip_height: float = 800.0 * sky_texture.get_height() / sky_texture.get_width()
-	sky.position = Vector2(0, SKY_HORIZON_Y - strip_height)
-	sky.size = Vector2(800, strip_height)
+	sky.position = Vector2(float(rect["x"]), float(rect["y"]))
+	sky.size = Vector2(float(rect["w"]), float(rect["h"]))
 	# Solid fill above the strip, sampled from its top edge.
 	var image: Image = sky_texture.get_image()
 	var top_color: Color = image.get_pixel(int(image.get_width() / 2.0), 0)
 	sky_fill.color = top_color
 	sky_fill.position = Vector2.ZERO
-	sky_fill.size = Vector2(800, SKY_HORIZON_Y - strip_height + 2)
+	sky_fill.size = Vector2(800, float(rect["y"]) + 2.0)
 
 
 func _spawn_visuals() -> void:
