@@ -55,13 +55,26 @@ func test_gold_formatting():
 	assert_eq(window.inventory_panel.gold_label.text, "€ 0")
 
 
+# The catalogs are real source data that gets corrected from time to time (see
+# KRIN_SHOP_ITEMS and the commented-out debug set beside it), so these tests
+# read the expected id out of the table rather than hardcoding one. What is
+# being tested is that a zone reaches its own shop's catalog, not what that
+# catalog contains. A shop pads its 15 slots with 0 for the items it does not
+# stock, and get_current_shop_items() drops those.
+func _first_stocked_id(shop_id: int) -> int:
+	for id in StoreManager.KRIN_SHOP_ITEMS[shop_id]:
+		if int(id) != 0:
+			return int(id)
+	return 0
+
+
 func test_zone_to_shop_mapping_matches_source():
 	# From the SWF store-orb buttons: zones 6 and 7 are SWAPPED versus the
 	# naive zone-1 ordering.
 	assert_eq(StoreManager.ZONE_SHOP_IDS[1], 0)
 	assert_eq(StoreManager.ZONE_SHOP_IDS[5], 4)
-	assert_eq(StoreManager.ZONE_SHOP_IDS[6], 6, "zone 6 sells the 507-521 catalog")
-	assert_eq(StoreManager.ZONE_SHOP_IDS[7], 5, "zone 7 sells the 375-506 catalog")
+	assert_eq(StoreManager.ZONE_SHOP_IDS[6], 6, "zone 6 sells shop 6's catalog")
+	assert_eq(StoreManager.ZONE_SHOP_IDS[7], 5, "zone 7 sells shop 5's catalog")
 
 
 func test_store_refreshes_per_zone():
@@ -77,7 +90,11 @@ func test_store_refreshes_per_zone():
 		if child is ItemSlot:
 			first_zone1_item = child
 			break
-	assert_eq(first_zone1_item.item.id, 300, "zone 1 catalog starts at 300")
+	assert_eq(
+		first_zone1_item.item.id,
+		_first_stocked_id(0),
+		"zone 1 shows shop 0's first stocked item"
+	)
 
 	ZoneManager.current_zone = 6
 	window.refresh_store()
@@ -88,6 +105,14 @@ func test_store_refreshes_per_zone():
 		if child is ItemSlot:
 			first_zone6_item = child
 			break
-	assert_eq(first_zone6_item.item.id, 507, "zone 6 uses shop 6's catalog, not shop 5's")
+	assert_ne(
+		_first_stocked_id(6), _first_stocked_id(5),
+		"the two catalogs differ, so the next assert can tell them apart"
+	)
+	assert_eq(
+		first_zone6_item.item.id,
+		_first_stocked_id(6),
+		"zone 6 uses shop 6's catalog, not shop 5's"
+	)
 	ZoneManager.current_zone = 1
 	GameData.current_save = null
