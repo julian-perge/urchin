@@ -21,6 +21,8 @@
 # Run: uv run extract_battle_screen
 from __future__ import annotations
 
+import json
+import re
 import shutil
 import subprocess
 import sys
@@ -30,7 +32,7 @@ from pathlib import Path
 from PIL import Image
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import snapshot_timeline
+from urchin_dev.swf import root_placements, snapshot_timeline
 
 HALL_DIR = REPO_ROOT / "assets" / "backgrounds" / "battle"
 SKY_DIR = REPO_ROOT / "assets" / "backgrounds" / "sky"
@@ -54,6 +56,18 @@ CHROME: dict[int, str] = {
     3460: "alert_icon",
     3455: "stage_rect",
 }
+
+LAYOUT_JSON = HALL_DIR / "battle_layout.json"
+FRAME_LABEL = "KRINBATTLESCENE"
+
+# The first matrix() in an exported SVG is the root group's, which carries the
+# displayRect's negated minimums scaled by the export zoom.
+_ROOT_MATRIX = re.compile(
+    r'<g transform="matrix\('
+    r"[-0-9.]+, [-0-9.]+, [-0-9.]+, [-0-9.]+, ([-0-9.]+), ([-0-9.]+)\)\""
+)
+_SVG_WIDTH = re.compile(r'\bwidth="([0-9.]+)px"')
+_SVG_HEIGHT = re.compile(r'\bheight="([0-9.]+)px"')
 
 
 def run(cmd: list[str]) -> subprocess.CompletedProcess:
@@ -154,6 +168,101 @@ def render_chrome(swf: Path) -> None:
         shutil.rmtree(work, ignore_errors=True)
 
 
+def read_display_rect(svg_path: Path):
+    """-> (x, y, w, h) of the sprite's displayRect in design px, relative to
+    the sprite's own origin."""
+    head = svg_path.read_text()[:2000]
+    matrix = _ROOT_MATRIX.search(head)
+    width = _SVG_WIDTH.search(head)
+    height = _SVG_HEIGHT.search(head)
+    if matrix is None or width is None or height is None:
+        raise RuntimeError(f"no displayRect in {svg_path}")
+    return (
+        -float(matrix.group(1)) / ZOOM,
+        -float(matrix.group(2)) / ZOOM,
+        float(width.group(1)) / ZOOM,
+        float(height.group(1)) / ZOOM,
+    )
+
+
+def content_rect(origin, display_rect, canvas, bbox):
+    """The trimmed render's rect on the stage in design px, given where the
+    main timeline places the sprite, its displayRect, the canvas ffdec
+    produced and the canvas-pixel bbox of what it drew there.
+
+    ffdec grows a canvas by the filter dimension on both sides of the
+    displayRect, so the growth is symmetric and the canvas keeps the
+    displayRect's centre. That centre plus the canvas size locates every
+    rendered pixel without any filter math here.
+    """
+    centre_x = origin[0] + display_rect[0] + display_rect[2] / 2
+    centre_y = origin[1] + display_rect[1] + display_rect[3] / 2
+    canvas_x = centre_x - canvas[0] / ZOOM / 2
+    canvas_y = centre_y - canvas[1] / ZOOM / 2
+    return (
+        canvas_x + bbox[0] / ZOOM,
+        canvas_y + bbox[1] / ZOOM,
+        (bbox[2] - bbox[0]) / ZOOM,
+        (bbox[3] - bbox[1]) / ZOOM,
+    )
+
+
+def layout_rects(swf: Path, xml: str, sprite: int, frames: dict[str, int]) -> dict:
+    """-> {label: {x, y, w, h}} on the 800x575 stage, in design px."""
+    _frame, placements = root_placements(xml, FRAME_LABEL)
+    placed = [e for e in placements.values() if e.get("cid") == sprite]
+    if len(placed) != 1:
+        raise RuntimeError(
+            f"sprite {sprite} placed {len(placed)} times on {FRAME_LABEL}"
+        )
+    matrix = placed[0]["mat"]
+    origin = (matrix[4] / 20.0, matrix[5] / 20.0)
+
+    work = Path(tempfile.mkdtemp(prefix="battle_layout_"))
+    try:
+        wanted = sorted(set(frames.values()))
+        select = ",".join(f"{sprite}:{f}" for f in wanted)
+        for fmt in ("png", "svg"):
+            run(
+                [
+                    str(FFDEC),
+                    "-zoom",
+                    str(ZOOM),
+                    "-format",
+                    f"sprite:{fmt}",
+                    "-selectid",
+                    str(sprite),
+                    "-select",
+                    select,
+                    "-export",
+                    "sprite",
+                    str(work / fmt),
+                    str(swf),
+                ]
+            )
+        out = {}
+        for label, frame in sorted(frames.items()):
+            image = Image.open(
+                work / "png" / f"DefineSprite_{sprite}" / f"{frame}.png"
+            ).convert("RGBA")
+            bbox = image.getchannel("A").getbbox()
+            if bbox is None:
+                raise RuntimeError(f"sprite {sprite} label {label} rendered empty")
+            display_rect = read_display_rect(
+                work / "svg" / f"DefineSprite_{sprite}" / f"{frame}.svg"
+            )
+            rect = content_rect(origin, display_rect, image.size, bbox)
+            out[label.replace(" ", "_")] = {
+                "x": round(rect[0], 2),
+                "y": round(rect[1], 2),
+                "w": round(rect[2], 2),
+                "h": round(rect[3], 2),
+            }
+        return out
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
 def main():
     xml = WEB_SWF_XML.read_text()
     halls = sprite_label_frames(xml, HALL_SPRITE)
@@ -182,6 +291,13 @@ def main():
     # never touches them and they render straight off the original SWF.
     print(f"chrome ({len(CHROME)}):", file=sys.stderr)
     render_chrome(WEB_SWF)
+
+    layout = {
+        "halls": layout_rects(WEB_SWF, xml, HALL_SPRITE, halls),
+        "skies": layout_rects(WEB_SWF, xml, SKY_SPRITE, skies),
+    }
+    LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
+    print(f"wrote {LAYOUT_JSON}", file=sys.stderr)
 
 
 if __name__ == "__main__":

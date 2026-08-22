@@ -518,6 +518,30 @@ func test_decision_timer_does_not_tick_while_not_player_action_pending():
 	ZoneManager.auto_start_battles = true
 
 
+# The layout JSON carries where each hall and sky actually sits on the stage,
+# recovered from the SWF placement rather than tuned by hand. The ROME sky's
+# bottom edge lands at y = 306.0, which is what SKY_HORIZON_Y = 292.0 was
+# approximating.
+func test_battle_layout_json_carries_real_stage_rects():
+	var file := FileAccess.open("res://assets/backgrounds/battle/battle_layout.json", FileAccess.READ)
+	assert_not_null(file, "battle_layout.json exists")
+	var layout: Dictionary = JSON.parse_string(file.get_as_text())
+	assert_not_null(layout, "battle_layout.json parses")
+	assert_eq(layout["halls"].size(), 10, "one entry per hall label")
+	assert_eq(layout["skies"].size(), 9, "one entry per sky label")
+
+	var rome: Dictionary = layout["skies"]["ROME"]
+	assert_almost_eq(float(rome["y"]), 130.0, 0.01, "ROME sky top")
+	assert_almost_eq(float(rome["h"]), 176.0, 0.01, "ROME sky height")
+	assert_almost_eq(float(rome["y"]) + float(rome["h"]), 306.0, 0.01, "ROME sky bottom")
+
+	var church: Dictionary = layout["halls"]["CHURCH"]
+	assert_almost_eq(float(church["x"]), -45.32, 0.01, "CHURCH hall left")
+	assert_almost_eq(float(church["y"]), 86.52, 0.01, "CHURCH hall top")
+	assert_almost_eq(float(church["w"]), 884.50, 0.01, "CHURCH hall width")
+	assert_almost_eq(float(church["h"]), 420.00, 0.01, "CHURCH hall height")
+
+
 # The battle frame places four chrome characters the port had never extracted:
 # the shared bottom bar (3317, which the Navigation frame places too), the top
 # panel frame (3465), the alert icon (3460) and the stage rect (3455).
