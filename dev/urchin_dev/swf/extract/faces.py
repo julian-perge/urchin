@@ -1,7 +1,7 @@
 # Portrait faces from the face clip (DefineSprite 2978 - one labeled frame
 # per named character; 40 labels total, covering the 5 companions + the
 # player plus every named story NPC, e.g. "Doctor Hedger", "The Warden").
-# Renders assets/ui/menu/portraits/<name>.png at 2x.
+# Renders assets/ui/menu/portraits/<name>.png at 5x.
 #
 # Each frame is exported directly via ffdec's own sprite renderer
 # (`-format sprite:png -selectid 2978`), not reassembled shape-by-shape.
@@ -27,27 +27,57 @@
 # "Doctor Leath" both sit at frame 86, holding until the next label) - each
 # gets its own output file, duplicated from the same source frame.
 #
+# ffdec sizes the export canvas to the clip's whole-timeline bounds, so a face
+# lands in the middle of a canvas that is mostly transparent - at 2x that was
+# a 56x76 face inside 247x237, about 93% empty. Every portrait is cropped to
+# the union of all 40 frames' opaque bounds, not to its own, so all of them
+# come out the same size and one slot rect renders every face at one scale.
+# The scenes showing them stretch to fill (stretch_mode 0), which only holds
+# while the outputs share a size.
+#
 # Requires ffdec (~/.local/bin/ffdec) for the sprite PNG export.
 # Run: uv run extract_faces
 from __future__ import annotations
 
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
+from PIL import Image
+
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
 from urchin_dev.swf import parse_swf_xml, snapshot_timeline
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "menu" / "portraits"
-ZOOM = 2.0
+ZOOM = 5.0
 FACE_CLIP = 2978
 
 
 def sanitize(label: str) -> str:
     return re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_").lower()
+
+
+def union_bbox(images):
+    """-> the smallest box holding every image's opaque pixels, or None when
+    they are all fully transparent."""
+    box = None
+    for image in images:
+        found = image.getchannel("A").getbbox()
+        if found is None:
+            continue
+        box = (
+            found
+            if box is None
+            else (
+                min(box[0], found[0]),
+                min(box[1], found[1]),
+                max(box[2], found[2]),
+                max(box[3], found[3]),
+            )
+        )
+    return box
 
 
 def main():
@@ -79,16 +109,26 @@ def main():
     )
     face_frames_dir = face_dir / f"DefineSprite_{FACE_CLIP}"
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    written, missing = 0, []
+    faces, missing = {}, []
     for label, frame in labels.items():
         src = face_frames_dir / f"{frame}.png"
         if not src.exists():
             missing.append((label, frame))
             continue
-        shutil.copyfile(src, OUT_DIR / f"{sanitize(label)}.png")
-        written += 1
-    print(f"wrote {written} portraits", file=sys.stderr)
+        faces[label] = Image.open(src).convert("RGBA")
+
+    crop = union_bbox(faces.values())
+    if crop is None:
+        raise RuntimeError("every exported face frame is fully transparent")
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    for label, image in faces.items():
+        image.crop(crop).save(OUT_DIR / f"{sanitize(label)}.png")
+    print(
+        f"wrote {len(faces)} portraits, cropped to {crop[2] - crop[0]}x"
+        f"{crop[3] - crop[1]} from {next(iter(faces.values())).size}",
+        file=sys.stderr,
+    )
     if missing:
         print(f"missing source frames: {missing}", file=sys.stderr)
 

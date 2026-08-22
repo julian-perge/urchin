@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://scripts/zones/zone_map_connectors.gd" id="3_connectors"]
 [ext_resource type="Texture2D" uid="uid://bo71ayunmem66" path="res://assets/ui/zone_map/zone_map_button_inactive.png" id="4_8m3sq"]
 [ext_resource type="Texture2D" uid="uid://b6nq12eephq0s" path="res://assets/ui/zone_map/zone_map_button_active.png" id="4_aqs41"]
-[ext_resource type="Texture2D" uid="uid://o3qpict4ahil" path="res://resources/exit_screen.png" id="5_exit"]
+[ext_resource type="Texture2D" uid="uid://o3qpict4ahil" path="res://assets/ui/zone_map/exit_screen.png" id="5_exit"]
 
 [node name="ZoneMapControl" type="Control"]
 layout_mode = 3
