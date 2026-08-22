@@ -53,7 +53,7 @@ Those bars are the "top battle bar panel" `KNOWN_GAPS.md` scoped out. This work
 extracts the frame's art and stops there; building the bars stays a separate
 feature.
 
-### The two label sets differ
+### The hall and the sky are chosen independently
 
 `3435` (halls) carries 10 labels and `3454` (skies) carries 9, and they are not
 the same set:
@@ -63,11 +63,32 @@ the same set:
 3454  CHURCH           JAIL  SNOW  STREETS            STREETS3  TRAIN  TUNNEL                  ROME  SEA
 ```
 
-So `CHURCH2`, `STREETS2` and `WHITE NOVEMBER` genuinely have no sky of their
-own, while `ROME` and `SEA` are skies with no hall. The current code hides that
-by stripping digits and then defaulting to `SKY_JAIL`. The extraction names
-files after the real labels and leaves the gap visible, so a missing sky is a
-fact about the source rather than a silent substitution.
+That is not a gap. The two sprites read two separate variables, set per battle
+in `frame_42/DoAction_14.as`:
+
+```actionscript
+onClipEvent(load){ this.gotoAndStop(_root.Krin.ZoneBG); }   // 3435, the hall
+onClipEvent(load){ this.gotoAndStop(_root.Krin.SkyBG);  }   // 3454, the sky
+```
+
+16 of the 99 battles set them to different labels:
+
+| battles | hall | sky |
+|---|---|---|
+| 5 | `STREETS2` | `STREETS` |
+| 5 | `CHURCH` | `ROME` |
+| 4 | `STREETS` | `TUNNEL` |
+| 1 | `WHITE NOVEMBER` | `SEA` |
+| 1 | `CHURCH2` | `CHURCH` |
+
+So `ROME` and `SEA` are not orphans, they are the skies zone 6 and the
+`WHITE NOVEMBER` fight run under. The `.tres` files already carry
+`sky_background` per battle, correct against the source; only
+`_load_background()` was ignoring it and deriving the sky from the hall name.
+Fixed separately from this extraction, since the data was already there.
+
+`SKY_SEA` is the one sky no asset exists for, and `SKY_TRAIN2` is an asset no
+battle asks for.
 
 `assets/backgrounds/battle/` also holds six files named after raw character ids
 (`3423`, `3424`, `3438`, `3440`, `3450`, `3452`) and two labels the sprite does
@@ -142,10 +163,28 @@ positions:
   reveal whether each has a label behind it; deciding what to do with any that
   do not is a follow-up.
 
-## Open question
+## What each sky is made of
 
-Zones 6 and 7 currently point their battle art at `CHURCH` and `STREETS`. The
-zone-hub pass showed that kind of reuse was sometimes a wrong assumption rather
-than a real gap, so it is worth checking whether `ROME` and `SEA` (skies with
-no hall today) indicate halls that exist somewhere else in the SWF before
-accepting the reuse.
+Every label in `3454` is one base shape plus the same two cloud sprites, placed
+at x positions that never change between labels:
+
+```
+cloud 3439  x = -316.70,    9.30,  349.25
+cloud 3441  x = -163.15,  189.35
+```
+
+Only the y offsets and the base shape differ per label, and `STREETS` and
+`STREETS3` add one foreground shape each (`3450`, `3452`). Base shapes are
+`3437` SEA, `3442` JAIL, `3443` SNOW, `3444` CHURCH, `3446`+`3447` TRAIN,
+`3448` TUNNEL, `3449` ROME, `3451` STREETS, `3453` STREETS3.
+
+The clouds hold still: their matrices are identical across all nine frames of a
+label, and both cloud sprites have `frameCount=1`. Nothing drifts, so rendering
+`3454` once per label flattens the whole rig without losing motion. That is
+what the design above does, and it is why no per-cloud extraction is needed.
+
+## Settled
+
+Zones 6 and 7 point their battle art at `CHURCH` and `STREETS`, and that is
+correct rather than a reuse gap: the battle records say so directly, zone 6 in
+4 battles and zone 7 in 3.

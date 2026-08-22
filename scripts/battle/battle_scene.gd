@@ -228,11 +228,18 @@ func start_battle(info: Dictionary) -> void:
 	_battle_loop.call_deferred()
 
 
-# The original composites a sky layer (SKY_<key>) behind the hall art; the
-# hall PNGs have a transparent sky region. The sky art is a wide horizon
-# STRIP (~800x140 natural), not a full-screen image - it sits with its
-# bottom on the ground line, and the area above it is filled with the
-# strip's own top-edge color.
+# The original composites a sky layer behind the hall art; the hall PNGs have a
+# transparent sky region. The sky art is a wide horizon STRIP (~800x140
+# natural), not a full-screen image - it sits with its bottom on the ground
+# line, and the area above it is filled with the strip's own top-edge color.
+#
+# The hall and the sky are two independent per-battle fields, not one key: the
+# original drives DefineSprite 3435 from Krin.ZoneBG and DefineSprite 3454 from
+# Krin.SkyBG, and 16 of its 99 battles set them to different labels. Zone 6
+# fights in the CHURCH hall under the ROME sky, one STREETS fight uses the
+# TUNNEL sky, and WHITE NOVEMBER uses SEA. Deriving the sky from the hall name
+# gets all of those wrong, so read battle.sky_background - the .tres files
+# already carry it, straight from frame_42/DoAction_14.as.
 const SKY_HORIZON_Y: float = 292.0
 
 func _load_background() -> void:
@@ -240,11 +247,11 @@ func _load_background() -> void:
 	var path: String = "%s/battle/%s.png" % [BACKGROUND_ROOT, key]
 	if ResourceLoader.exists(path):
 		background.texture = load(path)
-	var sky_key: String = key
+	var sky_key: String = battle.sky_background.replace(" ", "_")
 	var sky_path: String = "%s/sky/SKY_%s.png" % [BACKGROUND_ROOT, sky_key]
 	if not ResourceLoader.exists(sky_path):
-		# STREETS2 -> SKY_STREETS, CHURCH2 -> SKY_CHURCH, JAIL3 -> SKY_JAIL...
-		sky_key = key.rstrip("0123456789")
+		# Only SEA has no art extracted yet, so this catches that one battle.
+		sky_key = sky_key.rstrip("0123456789")
 		sky_path = "%s/sky/SKY_%s.png" % [BACKGROUND_ROOT, sky_key]
 	if not ResourceLoader.exists(sky_path):
 		sky_path = "%s/sky/SKY_JAIL.png" % BACKGROUND_ROOT  # generic city glow

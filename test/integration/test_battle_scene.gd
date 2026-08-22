@@ -518,6 +518,39 @@ func test_decision_timer_does_not_tick_while_not_player_action_pending():
 	ZoneManager.auto_start_battles = true
 
 
+# Battle 600 is one of the five zone-6 fights the original runs in the CHURCH
+# hall under the ROME sky (Krin.ZoneBG and Krin.SkyBG are separate fields, and
+# 16 of the 99 battles set them to different labels). Deriving the sky from the
+# hall name would load SKY_CHURCH here.
+func test_sky_comes_from_sky_background_not_the_hall_name():
+	var battle: BattleFight = load("res://resources/battles/600_KBR600.tres")
+	assert_eq(battle.zone_background, "CHURCH", "fixture still has the mismatched pair")
+	assert_eq(battle.sky_background, "ROME")
+
+	var save = PlayerSave.new_game("SkyTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 600, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	assert_eq(
+		scene.background.texture.resource_path,
+		"res://assets/backgrounds/battle/CHURCH.png",
+		"hall comes from zone_background"
+	)
+	assert_eq(
+		scene.sky.texture.resource_path,
+		"res://assets/backgrounds/sky/SKY_ROME.png",
+		"sky comes from sky_background, not from the hall"
+	)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func test_bottom_bar_uses_extracted_backdrop_art():
 	var save = PlayerSave.new_game("BackdropTest", 0)
 	GameData.current_save = save
