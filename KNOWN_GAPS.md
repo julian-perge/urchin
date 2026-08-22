@@ -53,10 +53,10 @@ Given that, the current naming schemes are already the best available:
 
 11 files remain numeric-named and were investigated individually via the raw SWF tag dump (`ffdec -dumpSWF`):
 
-- `assets/backgrounds/3032.png`, `3034.png`, `assets/backgrounds/zone/3423.png`/`3424.png`/`3438.png`/`3440.png`/`3450.png`/`3452.png` -
+- `assets/backgrounds/3032.png`, `3034.png`, `assets/backgrounds/battle/3423.png`/`3424.png`/`3438.png`/`3440.png`/`3450.png`/`3452.png` -
   these numbers **are** the real SWF chid (confirmed: genuine `DefineBits`/`DefineShape` tags at those exact ids), just never given an export name.
   The numeric name is factually accurate here, not a placeholder - there's nothing better to recover.
-  (The `zone/` ones were also visually confirmed back in phase 2 to be gradient/vignette overlay shapes, not full zone backgrounds.)
+  (The `battle/` ones were also visually confirmed back in phase 2 to be gradient/vignette overlay shapes, not full zone backgrounds.)
 - `assets/item_slot_icons/PANTS/356.png`, `SHOES/402.png`, `WEAPONS/797.png` - these numbers are **not** chids at all
   (chid 356 is an unrelated `DefineSound`, 402 another unrelated `DefineSound`, 797 an unrelated `DefineShape2`) - some other, disconnected indexing scheme, genuinely untraceable.
   Per the user: leave these numeric rather than guess a name that could be confidently wrong (2026-07-18).

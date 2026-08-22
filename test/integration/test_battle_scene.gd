@@ -565,10 +565,10 @@ func test_sky_fill_is_opaque_over_a_sky_whose_top_row_is_transparent():
 	ZoneManager.auto_start_battles = true
 
 
-# The layout JSON carries where each hall and sky actually sits on the stage,
-# recovered from the SWF placement rather than tuned by hand. The ROME sky's
-# bottom edge lands at y = 306.0, which is what SKY_HORIZON_Y = 292.0 was
-# approximating.
+# The layout JSON carries where each hall, sky and chrome character actually
+# sits on the stage, recovered from the SWF placement rather than tuned by
+# hand. The ROME sky's bottom edge lands at y = 306.0, which is what
+# SKY_HORIZON_Y = 292.0 was approximating.
 func test_battle_layout_json_carries_real_stage_rects():
 	var file := FileAccess.open("res://assets/backgrounds/battle/battle_layout.json", FileAccess.READ)
 	assert_not_null(file, "battle_layout.json exists")
@@ -576,6 +576,7 @@ func test_battle_layout_json_carries_real_stage_rects():
 	assert_not_null(layout, "battle_layout.json parses")
 	assert_eq(layout["halls"].size(), 10, "one entry per hall label")
 	assert_eq(layout["skies"].size(), 9, "one entry per sky label")
+	assert_eq(layout["chrome"].size(), 4, "one entry per chrome character")
 
 	var rome: Dictionary = layout["skies"]["ROME"]
 	assert_almost_eq(float(rome["y"]), 130.0, 0.01, "ROME sky top")
@@ -598,6 +599,22 @@ func test_battle_layout_json_carries_real_stage_rects():
 	assert_almost_eq(float(tunnel["y"]), 154.27, 0.01, "TUNNEL hall top")
 	assert_almost_eq(float(tunnel["w"]), 844.00, 0.01, "TUNNEL hall width")
 	assert_almost_eq(float(tunnel["h"]), 349.00, 0.01, "TUNNEL hall height")
+
+	# The stage rect (3455) is the black rect the frame draws under the sky, so
+	# its top edge is where SKY_FILL_COLOR starts showing.
+	var stage_rect: Dictionary = layout["chrome"]["stage_rect"]
+	assert_almost_eq(float(stage_rect["x"]), 15.03, 0.01, "stage rect left")
+	assert_almost_eq(float(stage_rect["y"]), 130.00, 0.01, "stage rect top")
+	assert_almost_eq(float(stage_rect["w"]), 770.00, 0.01, "stage rect width")
+	assert_almost_eq(float(stage_rect["h"]), 314.00, 0.01, "stage rect height")
+
+	# Every rect is design px against art rendered at 4x, so each PNG comes out
+	# exactly four times its recorded width.
+	for name in ["bottom_bar", "top_panel", "alert_icon", "stage_rect"]:
+		var rect: Dictionary = layout["chrome"][name]
+		var texture: Texture2D = load("res://assets/ui/battle/%s.png" % name)
+		assert_eq(texture.get_width(), int(float(rect["w"]) * 4), "%s width" % name)
+		assert_eq(texture.get_height(), int(float(rect["h"]) * 4), "%s height" % name)
 
 
 # The battle frame places four chrome characters the port had never extracted:

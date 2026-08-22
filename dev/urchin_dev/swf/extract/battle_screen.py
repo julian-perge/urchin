@@ -1,8 +1,10 @@
 # Art for the battle screen (main-timeline frame label "KRINBATTLESCENE", root
 # frame 217):
 #
-#   assets/backgrounds/battle/<LABEL>.png  - one hall per label of 3435
-#   assets/backgrounds/sky/SKY_<LABEL>.png - one sky per label of 3454
+#   assets/backgrounds/battle/<LABEL>.png        - one hall per label of 3435
+#   assets/backgrounds/sky/SKY_<LABEL>.png       - one sky per label of 3454
+#   assets/ui/battle/<NAME>.png                  - the four chrome characters
+#   assets/backgrounds/battle/battle_layout.json - where those sit on the stage
 #
 # THE HALL AND THE SKY ARE INDEPENDENT. The original drives DefineSprite 3435
 # from Krin.ZoneBG and DefineSprite 3454 from Krin.SkyBG, two separate
@@ -207,16 +209,31 @@ def content_rect(origin, display_rect, canvas, bbox):
     )
 
 
-def layout_rects(swf: Path, xml: str, sprite: int, frames: dict[str, int]) -> dict:
-    """-> {label: {x, y, w, h}} on the 800x575 stage, in design px."""
+def placement_origin(xml: str, character: int) -> tuple[float, float]:
+    """-> where the battle frame places one character, in design px."""
     _frame, placements = root_placements(xml, FRAME_LABEL)
-    placed = [e for e in placements.values() if e.get("cid") == sprite]
+    placed = [e for e in placements.values() if e.get("cid") == character]
     if len(placed) != 1:
         raise RuntimeError(
-            f"sprite {sprite} placed {len(placed)} times on {FRAME_LABEL}"
+            f"character {character} placed {len(placed)} times on {FRAME_LABEL}"
         )
     matrix = placed[0]["mat"]
-    origin = (matrix[4] / 20.0, matrix[5] / 20.0)
+    return (matrix[4] / 20.0, matrix[5] / 20.0)
+
+
+def rect_entry(rect) -> dict[str, float]:
+    """-> one (x, y, w, h) tuple as the JSON file records it."""
+    return {
+        "x": round(rect[0], 2),
+        "y": round(rect[1], 2),
+        "w": round(rect[2], 2),
+        "h": round(rect[3], 2),
+    }
+
+
+def layout_rects(swf: Path, xml: str, sprite: int, frames: dict[str, int]) -> dict:
+    """-> {label: {x, y, w, h}} on the 800x575 stage, in design px."""
+    origin = placement_origin(xml, sprite)
 
     work = Path(tempfile.mkdtemp(prefix="battle_layout_"))
     try:
@@ -252,12 +269,54 @@ def layout_rects(swf: Path, xml: str, sprite: int, frames: dict[str, int]) -> di
                 work / "svg" / f"DefineSprite_{sprite}" / f"{frame}.svg"
             )
             rect = content_rect(origin, display_rect, image.size, bbox)
-            out[label.replace(" ", "_")] = {
-                "x": round(rect[0], 2),
-                "y": round(rect[1], 2),
-                "w": round(rect[2], 2),
-                "h": round(rect[3], 2),
-            }
+            out[label.replace(" ", "_")] = rect_entry(rect)
+        return out
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def chrome_rects(swf: Path, xml: str) -> dict:
+    """-> {name: {x, y, w, h}} on the 800x575 stage, in design px.
+
+    The chrome characters carry no frame labels and hold a single frame each,
+    so this renders them at frame 1 instead of walking a label list the way
+    layout_rects does.
+    """
+    origins = {cid: placement_origin(xml, cid) for cid in CHROME}
+    work = Path(tempfile.mkdtemp(prefix="battle_chrome_layout_"))
+    try:
+        for fmt in ("png", "svg"):
+            run(
+                [
+                    str(FFDEC),
+                    "-zoom",
+                    str(ZOOM),
+                    "-format",
+                    f"sprite:{fmt}",
+                    "-selectid",
+                    ",".join(str(c) for c in CHROME),
+                    "-select",
+                    ",".join(f"{c}:1" for c in CHROME),
+                    "-export",
+                    "sprite",
+                    str(work / fmt),
+                    str(swf),
+                ]
+            )
+        out = {}
+        for cid, name in sorted(CHROME.items()):
+            image = Image.open(work / "png" / f"DefineSprite_{cid}" / "1.png").convert(
+                "RGBA"
+            )
+            bbox = image.getchannel("A").getbbox()
+            if bbox is None:
+                raise RuntimeError(f"chrome {cid} ({name}) rendered empty")
+            display_rect = read_display_rect(
+                work / "svg" / f"DefineSprite_{cid}" / "1.svg"
+            )
+            out[name] = rect_entry(
+                content_rect(origins[cid], display_rect, image.size, bbox)
+            )
         return out
     finally:
         shutil.rmtree(work, ignore_errors=True)
@@ -300,6 +359,7 @@ def main():
     # never touches them and they render straight off the original SWF.
     print(f"chrome ({len(CHROME)}):", file=sys.stderr)
     render_chrome(WEB_SWF)
+    layout["chrome"] = chrome_rects(WEB_SWF, xml)
 
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
     print(f"wrote {LAYOUT_JSON}", file=sys.stderr)

@@ -112,10 +112,9 @@ sits in `sky/`, so all nine sky labels the battle records use resolve, and
 `_load_background()` errors on a miss instead of substituting.
 
 `assets/backgrounds/battle/` also holds six files named after raw character ids
-(`3423`, `3424`, `3438`, `3440`, `3450`, `3452`) and two labels the sprite does
-not have (`JAIL3`, `SEA`). Those are hand exports. Once the script runs, each
-one either matches a label it can regenerate or has no source behind it and
-goes.
+(`3423`, `3424`, `3438`, `3440`, `3450`, `3452`) and one label the sprite does
+not have (`JAIL3`). Those are hand exports. Once the script runs, each one
+either matches a label it can regenerate or has no source behind it and goes.
 
 ## Design
 
