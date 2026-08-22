@@ -191,6 +191,11 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   that render empty are `CASINO`, `UTOPIA`, `EDEN` and `STORM`, which no zone reaches. The script deletes the orb and its buttons from a working copy so the background comes out bare, the same
   way `start_screens.py` handles the menu background. Zone 7's training orb position is still borrowed from zone 6.
 
+- **Battle screen art - DONE (2026-08-22)**, `uv run extract_battle_screen`. The halls (`3435`, 10 labels), the skies (`3454`, 9 labels) and four chrome
+  characters now render from the SWF instead of being cut by hand. `2676`, the character rig every hall places six times, is stripped first, so the
+  backgrounds no longer carry six placeholder fighters. `battle_layout.json` records each label's stage rect, which retires `SKY_HORIZON_Y = 292.0` - the
+  real ground line differs per sky and ROME's is at 306.0.
+
 - **Cutscenes** - **DONE (2026-08-18)**, see `.claude/plan_cutscenes.md` for the full task breakdown. All 4 cutscenes (`CS_CUT2`-`CS_CUT5`) extracted as `.ogv` with audio (via ffdec's own
   sprite:avi renderer, every filter/color-transform/blend-mode baked in correctly), a `CutscenePlayer` scene matches the original's fade-in/fade-out, wired into the victory-screen Continue flow.
   GUT suite green: 103/103 tests, 625 asserts.

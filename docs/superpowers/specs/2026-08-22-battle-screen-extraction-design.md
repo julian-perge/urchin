@@ -4,7 +4,7 @@
 renders from the SWF, and record the stage positions the layout code currently
 guesses at.
 
-**Status:** design, not yet implemented.
+**Status:** implemented 2026-08-22.
 
 ## Why now
 

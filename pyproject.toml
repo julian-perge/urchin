@@ -12,6 +12,8 @@ readme = "README.md"
 
 dependencies = [
   "msgspec>=0.21.1",
+  # percentile comparison in verify_battle_screen
+  "numpy>=2.1",
   # portrait/face compositing in dev/urchin_dev/swf
   "pillow>=11.0",
   "ruff>=0.15.15",
