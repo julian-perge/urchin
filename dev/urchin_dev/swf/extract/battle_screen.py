@@ -64,7 +64,7 @@ def sprite_label_frames(xml: str, sprite: int) -> dict[str, int]:
 
 
 def render_labels(
-        swf: Path, sprite: int, frames: dict[str, int], out_dir: Path, prefix: str
+    swf: Path, sprite: int, frames: dict[str, int], out_dir: Path, prefix: str
 ) -> None:
     """Render one sprite at each of its labelled frames, trim each to its own
     opaque content, and write <prefix><LABEL>.png into out_dir."""
@@ -116,7 +116,15 @@ def main():
     work = Path(tempfile.mkdtemp(prefix="battle_screen_swf_"))
     try:
         stripped = work / "battle.swf"
-        run([str(FFDEC), "-removeCharacter", str(WEB_SWF), str(stripped), str(FIGHTER_RIG)])
+        run(
+            [
+                str(FFDEC),
+                "-removeCharacter",
+                str(WEB_SWF),
+                str(stripped),
+                str(FIGHTER_RIG),
+            ]
+        )
         print(f"halls ({len(halls)}):", file=sys.stderr)
         render_labels(stripped, HALL_SPRITE, halls, HALL_DIR, "")
         print(f"skies ({len(skies)}):", file=sys.stderr)
