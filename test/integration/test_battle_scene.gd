@@ -518,6 +518,18 @@ func test_decision_timer_does_not_tick_while_not_player_action_pending():
 	ZoneManager.auto_start_battles = true
 
 
+# The halls place DefineSprite 2676 six times as the character rig. Rendered
+# without stripping it, each background bakes in six placeholder fighters, so
+# the art has to be wider than the six slots they would occupy and must not
+# carry opaque pixels where a fighter stood.
+func test_hall_art_has_no_baked_in_fighter_rigs():
+	var church: Texture2D = load("res://assets/backgrounds/battle/CHURCH.png")
+	assert_not_null(church, "CHURCH hall art exists")
+	# 3435 renders 884.5 design px wide at the CHURCH label; at 4x that is 3538.
+	assert_eq(church.get_width(), 3538, "CHURCH rendered at 4x from the SWF")
+	assert_eq(church.get_height(), 1680, "CHURCH rendered at 4x from the SWF")
+
+
 # Every battle's hall and sky must resolve to real art. The two are separate
 # fields, so a missing sky no longer falls back to a substitute - it errors.
 func test_every_battle_resolves_its_hall_and_sky_art():
