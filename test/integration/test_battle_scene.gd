@@ -539,6 +539,32 @@ func test_sky_is_placed_from_the_layout_json():
 	ZoneManager.auto_start_battles = true
 
 
+# The fill covers everything above the sky strip, so it has to be opaque. The
+# sky art cannot supply that colour: the SWF renders are trimmed to their own
+# soft top edge, so five of the nine skies read alpha 0 at row 0 centre. Battle
+# 201 runs the SNOW sky, one of the five.
+func test_sky_fill_is_opaque_over_a_sky_whose_top_row_is_transparent():
+	var art: Image = load("res://assets/backgrounds/sky/SKY_SNOW.png").get_image()
+	assert_eq(art.get_pixel(int(art.get_width() / 2.0), 0).a, 0.0,
+		"SNOW's top row centre is transparent, which is what broke the old fill")
+
+	var save = PlayerSave.new_game("SkyFillTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 201, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	assert_eq(scene.sky_fill.color.a, 1.0, "the fill above the strip is opaque")
+	assert_eq(scene.sky_fill.color, Color.BLACK, "and is the black the original paints there")
+	assert_gt(scene.sky_fill.size.y, 0.0, "the fill actually covers something")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The layout JSON carries where each hall and sky actually sits on the stage,
 # recovered from the SWF placement rather than tuned by hand. The ROME sky's
 # bottom edge lands at y = 306.0, which is what SKY_HORIZON_Y = 292.0 was

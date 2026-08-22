@@ -231,7 +231,7 @@ func start_battle(info: Dictionary) -> void:
 # The original composites a sky layer behind the hall art; the hall PNGs have a
 # transparent sky region. The sky art is a wide horizon STRIP, not a
 # full-screen image - it sits with its bottom on the ground line, and the area
-# above it is filled with the strip's own top-edge color.
+# above it is filled with SKY_FILL_COLOR.
 #
 # The hall and the sky are two independent per-battle fields, not one key: the
 # original drives DefineSprite 3435 from Krin.ZoneBG and DefineSprite 3454 from
@@ -244,6 +244,14 @@ func start_battle(info: Dictionary) -> void:
 # it and put every sky's ground line at y = 292.0; the real line differs per
 # label, and ROME's is at 306.0.
 const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
+
+# What the original shows above the strip. The battle frame places DefineShape
+# 333, a solid black rect, under the sky, and a render of the frame reads
+# (0, 0, 0) at every pixel between that rect's top edge at y = 130 and the sky.
+# Do not sample the sky art for it instead: the SWF renders are trimmed to their
+# own soft top edge, so five of the nine skies read alpha 0 at row 0 centre and
+# SEA reads 0.37.
+const SKY_FILL_COLOR: Color = Color.BLACK
 
 var _battle_layout: Dictionary = {}
 
@@ -281,10 +289,7 @@ func _load_background() -> void:
 	sky.stretch_mode = TextureRect.STRETCH_SCALE
 	sky.position = Vector2(float(rect["x"]), float(rect["y"]))
 	sky.size = Vector2(float(rect["w"]), float(rect["h"]))
-	# Solid fill above the strip, sampled from its top edge.
-	var image: Image = sky_texture.get_image()
-	var top_color: Color = image.get_pixel(int(image.get_width() / 2.0), 0)
-	sky_fill.color = top_color
+	sky_fill.color = SKY_FILL_COLOR
 	sky_fill.position = Vector2.ZERO
 	sky_fill.size = Vector2(800, float(rect["y"]) + 2.0)
 
