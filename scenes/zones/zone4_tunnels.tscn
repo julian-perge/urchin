@@ -29,15 +29,15 @@ stretch_mode = 6
 
 [node name="StoryFight" parent="." instance=ExtResource("3_orb")]
 position = Vector2(420.6, 210.2)
-scale = Vector2(0.4, 0.4)
+scale = Vector2(1, 1)
 script = ExtResource("4_story")
 
 [node name="ItemStore" parent="." instance=ExtResource("3_orb")]
 position = Vector2(117.1, 279.3)
-scale = Vector2(0.4, 0.4)
+scale = Vector2(1, 1)
 script = ExtResource("5_store")
 
 [node name="TrainingFight" parent="." instance=ExtResource("3_orb")]
 position = Vector2(736.4, 269.4)
-scale = Vector2(0.4, 0.4)
+scale = Vector2(1, 1)
 script = ExtResource("6_train")

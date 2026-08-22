@@ -23,6 +23,8 @@ Analysis and extraction tooling lives in `dev/urchin_dev/swf/`:
 - `prepare_extract_swf.py` - builds the stripped SWF the icon renders use
 - `item_looks.py` - regenerates `converted_json/item_looks.json` + patches item `.tres` looks
 - `faces.py` - regenerates `assets/ui/menu/portraits/*.png`
+- `extract/zone_hub.py` - regenerates the zone-hub backgrounds and the orb's arc shapes
+- `extract/store_art.py` - regenerates the per-shop keeper scenes
 - `export_swf_sources.py` - regenerates this directory
 
 JSON parsing across `dev/` goes through

@@ -184,8 +184,10 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     the fallback art those two items were pointed at - `scripts/editor/items.gd`'s independent `SLOT_ICON_OVERRIDES` copy still exists and still applies to those two when regenerating `.tres` from
     scratch, which is fine since both sources now render the same icon either way.
 
-- **Zone hub art for zones 6/7**: no dedicated hub art exists in the extracted assets - the scenes reuse the wide battle backdrops (`battle/CHURCH.png`, `battle/STREETS.png`), aspect-cropped. Zone 7's
-  training orb position is also borrowed from zone 6 (the original Steam-only zone frame has no training orb placement).
+- **Zone hub art - DONE (2026-08-22)**, `uv run extract_zone_hub`. Every zone including 6 and 7 now has its own art. The claim that none existed for those two was wrong. `Krin.zoneName`
+  (frame_41/DoAction_2.as) maps a zone onto one of DefineSprite 3287's labels by name rather than by order, which puts zone 6 on `ROME` and zone 7 on `JAPAN`. Both draw real scenes. The labels
+  that render empty are `CASINO`, `UTOPIA`, `EDEN` and `STORM`, which no zone reaches. The script deletes the orb and its buttons from a working copy so the background comes out bare, the same
+  way `start_screens.py` handles the menu background. Zone 7's training orb position is still borrowed from zone 6.
 
 - **Cutscenes** - **DONE (2026-08-18)**, see `.claude/plan_cutscenes.md` for the full task breakdown. All 4 cutscenes (`CS_CUT2`-`CS_CUT5`) extracted as `.ogv` with audio (via ffdec's own
   sprite:avi renderer, every filter/color-transform/blend-mode baked in correctly), a `CutscenePlayer` scene matches the original's fade-in/fade-out, wired into the victory-screen Continue flow.

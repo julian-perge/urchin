@@ -26,7 +26,7 @@ const SHOP_DIALOGUE: Dictionary[int, String] = {
 	6: "",
 }
 
-const BACKDROP_PATH: String = "res://assets/ui/store/backdrops/shop%d.jpg"
+const BACKDROP_PATH: String = "res://assets/ui/store/backdrops/shop%d.png"
 
 # From krinSetShop() - 8 fixed 15-item catalogs. Shop 7 has no zone that
 # selects it (no store orb sets shopId 7) - kept since it's real source data.

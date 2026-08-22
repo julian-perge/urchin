@@ -92,7 +92,7 @@ res://
 ├── assets/                          # Hand/AI-sourced art not tied to a generated Resource
 │   ├── audio/ (147 files)           # Extracted from the original SWF, named to match AS3 sound-cue keys
 │   ├── backgrounds/
-│   │   ├── hub/                     # Zone-hub art (764x414 stage space; upscale_variants/ = originals)
+│   │   ├── hub/                     # Zone-hub art, one per zone label (extract_zone_hub, 4x)
 │   │   ├── battle/                  # Wide battle backdrops, keyed by BattleFight.zone_background
 │   │   └── sky/                     # Battle sky layers (extracted, not yet rendered)
 │   ├── fonts/, item_slot_icons/, references/  # (references/ = original-game screenshots)
