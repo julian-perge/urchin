@@ -602,7 +602,10 @@ func _populate_stance_rows() -> void:
 	_stance_rows.clear()
 	var save: PlayerSave = GameData.current_save
 	var row_y: float = 0.0
-	for slot in [3, 5]:
+	# Slot 5 first: the original's member bar container places its "p5" copy
+	# above its "p3" copy (DefineSprite 3312, y 12.60 vs y 50.10), matching the
+	# battlefield where slot 5 is the upper fighter and slot 3 the lower one.
+	for slot in [5, 3]:
 		var unit: CombatUnit = units.get(slot)
 		if unit == null:
 			continue
@@ -616,7 +619,10 @@ func _populate_stance_rows() -> void:
 		for mode in row.buttons.size():
 			row.buttons[mode].pressed.connect(_on_stance_pressed.bind(party_id, mode, slot))
 		_stance_rows[party_id] = row
-		row.set_selected(Party.get_ag_mode(save, party_id) if save != null else Party.AggressionStance.TACTICAL)
+		var initial_mode: Party.AggressionStance = (
+			Party.get_ag_mode(save, party_id) if save != null else Party.AggressionStance.TACTICAL
+		)
+		_refresh_stance_row(party_id, initial_mode)
 		row_y += StanceRow.row_pitch()
 
 

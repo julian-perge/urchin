@@ -617,6 +617,44 @@ func test_battle_layout_json_carries_real_stage_rects():
 		assert_eq(texture.get_height(), int(float(rect["h"]) * 4), "%s height" % name)
 
 
+# DefineSprite 3312 places "p5" above "p3" (y 12.60 vs y 50.10), matching the
+# battlefield where slot 5 is the upper fighter and slot 3 the lower one
+# (SLOT_POSITIONS). Battle 100 (resources/battles/100_KBR100.tres) deploys a
+# companion into both: players[1].id == -2 fills slot 3 and players[3].id ==
+# -1 fills slot 5. A fresh save only has Veradux (party id 1) in the roster,
+# so Roald (party id 2) is added here the way update_roster_after_battle would
+# once zone 2's story clears, to get a companion into both slots at once.
+func test_stance_rows_stack_with_slot_5_on_top():
+	var save = PlayerSave.new_game("StanceOrderTest", 0)
+	save.party_roster = [0, 1, 2, -1, -1, -1]
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	assert_eq(scene.units[3].player_name, "Veradux", "battle 100 deploys Veradux into slot 3")
+	assert_eq(scene.units[5].player_name, "Roald", "battle 100 deploys Roald into slot 5")
+
+	var slot3_row: StanceRow = null
+	var slot5_row: StanceRow = null
+	for child in scene.stance_host.get_children():
+		if child is StanceRow:
+			if child.name_label.text == "Veradux":
+				slot3_row = child
+			elif child.name_label.text == "Roald":
+				slot5_row = child
+	assert_not_null(slot3_row, "slot 3's row (Veradux) was built")
+	assert_not_null(slot5_row, "slot 5's row (Roald) was built")
+	assert_lt(slot5_row.position.y, slot3_row.position.y,
+		"slot 5's row sits above slot 3's row, matching the SWF's p5/p3 stack")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # One WHITE cover among five BLACK ones is how the original shows the picked
 # stance: setAG sets every b<i>.COVER to BLACK and then one to WHITE.
 func test_stance_row_marks_exactly_one_button_selected():

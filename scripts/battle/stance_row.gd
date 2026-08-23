@@ -27,7 +27,9 @@ static var _layout: Dictionary = {}
 # -> the stance_row section of battle_layout.json. _layout is a static var, so
 # this file is read once per process, not once per battle: the parsed result
 # is cached and reused by every battle scene and every test script that runs
-# in the same invocation.
+# in the same invocation. The returned Dictionary is the cache itself, not a
+# copy, so callers must treat it as read-only; mutating it would corrupt the
+# layout for every other row and battle in the process.
 static func layout() -> Dictionary:
 	if _layout.is_empty():
 		var file := FileAccess.open(BATTLE_LAYOUT_PATH, FileAccess.READ)
@@ -41,7 +43,7 @@ static func layout() -> Dictionary:
 
 # -> how far apart two rows sit, so battle_scene.gd does not carry its own copy.
 static func row_pitch() -> float:
-	return float(layout().get("row_pitch", 37.5))
+	return float(layout()["row_pitch"])
 
 
 func _ready() -> void:
@@ -79,7 +81,7 @@ func setup(unit_name: String) -> void:
 # button and the BLACK cover on the other four (setAG, in DefineSprite 3312's
 # own onClipEvent(load)).
 func set_selected(mode: int) -> void:
-	var zoom: float = float(layout().get("art_zoom", 4.0))
+	var zoom: float = float(layout()["art_zoom"])
 	for index in buttons.size():
 		var path: String = COVER_SELECTED if index == mode else COVER_UNSELECTED
 		_place_cover(buttons[index], load(path), zoom)
