@@ -617,6 +617,43 @@ func test_battle_layout_json_carries_real_stage_rects():
 		assert_eq(texture.get_height(), int(float(rect["h"]) * 4), "%s height" % name)
 
 
+# One stance button stacks an icon from DefineSprite 3305 under an overlay
+# from 3293. 3305's frame labels are _root.agModeNames verbatim, which is also
+# the order of Party.AggressionStance, so the file names and the enum line up
+# without a translation table.
+func test_stance_button_art_is_extracted():
+	for label in ["Phalanx", "Defensive", "Tactical", "Aggressive", "Relentless"]:
+		var path := "res://assets/ui/battle/stance/%s.png" % label
+		assert_true(ResourceLoader.exists(path), "%s icon extracted" % label)
+		var texture: Texture2D = load(path)
+		assert_eq(texture.get_width(), 113, "%s icon is 28.25 design px at 4x" % label)
+	for state in ["BLACK", "WHITE"]:
+		var path := "res://assets/ui/battle/stance/cover_%s.png" % state
+		assert_true(ResourceLoader.exists(path), "cover_%s extracted" % state)
+	assert_true(ResourceLoader.exists("res://assets/ui/battle/member_bar_panel.png"),
+		"member bar backing extracted")
+
+
+# The member bar's internal layout is measured off the SWF rather than typed
+# into the scene by hand. Offsets are from the bar's own top-left corner.
+func test_battle_layout_json_carries_the_stance_row_layout():
+	var file := FileAccess.open("res://assets/backgrounds/battle/battle_layout.json", FileAccess.READ)
+	assert_not_null(file, "battle_layout.json exists")
+	var layout: Dictionary = JSON.parse_string(file.get_as_text())
+	var row: Dictionary = layout["stance_row"]
+	assert_almost_eq(float(row["bar_size"]["w"]), 285.0, 0.01, "member bar width")
+	assert_almost_eq(float(row["bar_size"]["h"]), 31.5, 0.01, "member bar height")
+	assert_almost_eq(float(row["button_pitch"]), 32.0, 0.01, "button pitch")
+	assert_almost_eq(float(row["row_pitch"]), 37.5, 0.01, "row pitch")
+	assert_almost_eq(float(row["button_size"]["w"]), 28.25, 0.01, "button width")
+	assert_almost_eq(float(row["button_size"]["h"]), 13.75, 0.01, "button height")
+	assert_almost_eq(float(row["first_button"]["x"]), 121.38, 0.01, "first button x")
+	assert_almost_eq(float(row["first_button"]["y"]), 8.35, 0.01, "first button y")
+	assert_almost_eq(float(row["name_offset"]["x"]), 8.0, 0.01, "name field x")
+	assert_almost_eq(float(row["name_offset"]["y"]), 9.75, 0.01, "name field y")
+	assert_almost_eq(float(row["art_zoom"]), 4.0, 0.01, "art zoom")
+
+
 # The bottom bar is a render of DefineSprite 3317, which places the member bar
 # container at depth 7. Each member bar carries the SWF author's placeholder
 # name in a DefineEditText the game fills at runtime, so a bar rendered with

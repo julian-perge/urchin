@@ -35,6 +35,7 @@ from PIL import Image
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
 from urchin_dev.swf import root_placements, snapshot_timeline
+from urchin_dev.swf.xml_lib import find_matrix, sprite_body
 
 HALL_DIR = REPO_ROOT / "assets" / "backgrounds" / "battle"
 SKY_DIR = REPO_ROOT / "assets" / "backgrounds" / "sky"
@@ -65,6 +66,33 @@ CHROME: dict[int, str] = {
     3455: "stage_rect",
 }
 
+STANCE_DIR = BATTLE_UI_DIR / "stance"
+
+# The pieces one team member bar is built from. The port draws the bar itself
+# out of these rather than extracting it whole, because a faithful texture
+# would need one render per stance per selection state and still could not
+# carry the player-supplied name. See
+# docs/superpowers/specs/2026-08-23-battle-bottom-bar-and-stance-rows.md.
+#
+# 3305 labels its five frames Phalanx, Defensive, Tactical, Aggressive and
+# Relentless, which is _root.agModeNames verbatim and also the order of
+# Party.AggressionStance in the port. 3293 labels its two BLACK, for a button
+# the player has not picked, and WHITE for the one they have; setAG sets all
+# five to BLACK and then one to WHITE.
+MEMBER_BAR = 3311
+STANCE_BUTTON = 3306
+STANCE_ICONS = 3305
+STANCE_COVER = 3293
+MEMBER_BAR_PANEL = 3309
+
+# The DefineEditText the bar shows the companion's name in. Its initialText is
+# the author's placeholder, so only its position is wanted here.
+NAME_FIELD = 3308
+
+# Matches the whole tag or its closing partner, so a walk can tell a
+# self-closing PlaceObject from one wrapping child elements.
+_ITEM_TOKENS = re.compile(r"<item\b[^>]*?(/?)>|</item>")
+
 LAYOUT_JSON = HALL_DIR / "battle_layout.json"
 FRAME_LABEL = "KRINBATTLESCENE"
 
@@ -94,6 +122,50 @@ def sprite_label_frames(xml: str, sprite: int) -> dict[str, int]:
     if not labels:
         raise RuntimeError(f"sprite {sprite} has no frame labels")
     return labels
+
+
+def frame_one_placements(
+    xml: str, sprite: int
+) -> dict[int, tuple[int, str, float, float]]:
+    """-> {depth: (characterId, instance name, x, y)} for one sprite's first
+    frame, with the translate converted from twips to design px.
+
+    This is the same walk zone_hub.py's orb_layers does. It is written out
+    again rather than shared, because the two want different things back and a
+    little repetition reads better here than a parameterised helper.
+    """
+    body = sprite_body(xml, sprite)
+    out: dict[int, tuple[int, str, float, float]] = {}
+    depth = 0
+    start = None
+    for token in _ITEM_TOKENS.finditer(body):
+        text = token.group(0)
+        if text == "</item>":
+            depth -= 1
+            if depth == 0 and start is not None:
+                element = body[start : token.end()]
+                cid = re.search(r'characterId="(\d+)"', element)
+                place_depth = re.search(r'depth="(\d+)"', element)
+                if cid is not None and place_depth is not None:
+                    name = re.search(r'name="([^"]*)"', element)
+                    matrix = find_matrix(element)
+                    out[int(place_depth.group(1))] = (
+                        int(cid.group(1)),
+                        name.group(1) if name else "",
+                        matrix[4] / 20.0,
+                        matrix[5] / 20.0,
+                    )
+                start = None
+            continue
+        self_closing = bool(token.group(1))
+        if depth == 0:
+            if 'type="ShowFrameTag"' in text:
+                break
+            if "PlaceObject" in text and not self_closing:
+                start = token.start()
+        if not self_closing:
+            depth += 1
+    return out
 
 
 def render_labels(
@@ -176,6 +248,42 @@ def render_chrome(swf: Path) -> None:
         shutil.rmtree(work, ignore_errors=True)
 
 
+def render_member_bar_panel(swf: Path) -> None:
+    """Draw the dark rounded backing one member bar sits on, trimmed to its
+    content. It is a DefineShape rather than a sprite, so this exports a shape
+    the way zone_hub.py exports the orb's arcs."""
+    work = Path(tempfile.mkdtemp(prefix="battle_member_panel_"))
+    try:
+        run(
+            [
+                str(FFDEC),
+                "-zoom",
+                str(ZOOM),
+                "-format",
+                "shape:png",
+                "-selectid",
+                str(MEMBER_BAR_PANEL),
+                "-export",
+                "shape",
+                str(work),
+                str(swf),
+            ]
+        )
+        image = Image.open(work / f"{MEMBER_BAR_PANEL}.png").convert("RGBA")
+        bbox = image.getchannel("A").getbbox()
+        if bbox is None:
+            raise RuntimeError(f"member bar panel {MEMBER_BAR_PANEL} rendered empty")
+        cropped = image.crop(bbox)
+        BATTLE_UI_DIR.mkdir(parents=True, exist_ok=True)
+        cropped.save(BATTLE_UI_DIR / "member_bar_panel.png")
+        print(
+            f"  {MEMBER_BAR_PANEL} -> member_bar_panel.png {cropped.size}",
+            file=sys.stderr,
+        )
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
 def read_display_rect(svg_path: Path):
     """-> (x, y, w, h) of the sprite's displayRect in design px, relative to
     the sprite's own origin."""
@@ -213,6 +321,48 @@ def content_rect(origin, display_rect, canvas, bbox):
         (bbox[2] - bbox[0]) / ZOOM,
         (bbox[3] - bbox[1]) / ZOOM,
     )
+
+
+def local_content_rect(swf: Path, sprite: int) -> tuple[float, float, float, float]:
+    """-> (x, y, w, h) of a sprite's first frame in design px, relative to
+    the sprite's own origin.
+
+    Same recovery as content_rect with the placement origin left at zero,
+    because these sprites are nested inside another sprite rather than placed
+    on the main timeline, so there is no root placement to read.
+    """
+    work = Path(tempfile.mkdtemp(prefix="battle_local_rect_"))
+    try:
+        for fmt in ("png", "svg"):
+            run(
+                [
+                    str(FFDEC),
+                    "-zoom",
+                    str(ZOOM),
+                    "-format",
+                    f"sprite:{fmt}",
+                    "-selectid",
+                    str(sprite),
+                    "-select",
+                    f"{sprite}:1",
+                    "-export",
+                    "sprite",
+                    str(work / fmt),
+                    str(swf),
+                ]
+            )
+        image = Image.open(work / "png" / f"DefineSprite_{sprite}" / "1.png").convert(
+            "RGBA"
+        )
+        bbox = image.getchannel("A").getbbox()
+        if bbox is None:
+            raise RuntimeError(f"sprite {sprite} rendered empty")
+        display_rect = read_display_rect(
+            work / "svg" / f"DefineSprite_{sprite}" / "1.svg"
+        )
+        return content_rect((0.0, 0.0), display_rect, image.size, bbox)
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
 
 
 def placement_origin(xml: str, character: int) -> tuple[float, float]:
@@ -328,6 +478,52 @@ def chrome_rects(swf: Path, xml: str) -> dict:
         shutil.rmtree(work, ignore_errors=True)
 
 
+def stance_row_layout(swf: Path, xml: str) -> dict:
+    """-> one member bar's internal layout in design px, measured off the SWF.
+
+    Offsets are from the bar's own top-left corner, which is what StanceRow
+    needs to place its children. The bar's position on the stage is not
+    recorded, because the port puts its rows in BottomBar/StanceHost rather
+    than where the original puts them.
+    """
+    bar = local_content_rect(swf, MEMBER_BAR)
+    icon = local_content_rect(swf, STANCE_ICONS)
+    inside_bar = frame_one_placements(xml, MEMBER_BAR)
+    inside_button = frame_one_placements(xml, STANCE_BUTTON)
+    inside_container = frame_one_placements(xml, MEMBER_BARS)
+
+    buttons = sorted(
+        (x, y) for cid, _name, x, y in inside_bar.values() if cid == STANCE_BUTTON
+    )
+    if len(buttons) != 5:
+        raise RuntimeError(f"{MEMBER_BAR} places {len(buttons)} stance buttons, want 5")
+    names = [(x, y) for c, _n, x, y in inside_bar.values() if c == NAME_FIELD]
+    if len(names) != 1:
+        raise RuntimeError(f"{MEMBER_BAR} places {len(names)} name fields, want 1")
+    pics = [(x, y) for c, _n, x, y in inside_button.values() if c == STANCE_ICONS]
+    if len(pics) != 1:
+        raise RuntimeError(f"{STANCE_BUTTON} places {len(pics)} icons, want 1")
+    rows = sorted(y for c, _n, _x, y in inside_container.values() if c == MEMBER_BAR)
+    if len(rows) != 2:
+        raise RuntimeError(f"{MEMBER_BARS} places {len(rows)} member bars, want 2")
+
+    return {
+        "art_zoom": ZOOM,
+        "bar_size": {"w": round(bar[2], 2), "h": round(bar[3], 2)},
+        "button_pitch": round(buttons[1][0] - buttons[0][0], 2),
+        "button_size": {"w": round(icon[2], 2), "h": round(icon[3], 2)},
+        "first_button": {
+            "x": round(buttons[0][0] + pics[0][0] + icon[0] - bar[0], 2),
+            "y": round(buttons[0][1] + pics[0][1] + icon[1] - bar[1], 2),
+        },
+        "name_offset": {
+            "x": round(names[0][0] - bar[0], 2),
+            "y": round(names[0][1] - bar[1], 2),
+        },
+        "row_pitch": round(rows[1] - rows[0], 2),
+    }
+
+
 def main():
     xml = WEB_SWF_XML.read_text()
     halls = sprite_label_frames(xml, HALL_SPRITE)
@@ -365,6 +561,24 @@ def main():
         print(f"chrome ({len(CHROME)}):", file=sys.stderr)
         render_chrome(stripped)
         layout["chrome"] = chrome_rects(stripped, xml)
+
+        print("stance button art:", file=sys.stderr)
+        render_labels(
+            stripped,
+            STANCE_ICONS,
+            sprite_label_frames(xml, STANCE_ICONS),
+            STANCE_DIR,
+            "",
+        )
+        render_labels(
+            stripped,
+            STANCE_COVER,
+            sprite_label_frames(xml, STANCE_COVER),
+            STANCE_DIR,
+            "cover_",
+        )
+        render_member_bar_panel(stripped)
+        layout["stance_row"] = stance_row_layout(stripped, xml)
     finally:
         shutil.rmtree(work, ignore_errors=True)
 

@@ -142,5 +142,26 @@
    "x": -37.75,
    "y": 130.0
   }
+ },
+ "stance_row": {
+  "art_zoom": 4.0,
+  "bar_size": {
+   "h": 31.5,
+   "w": 285.0
+  },
+  "button_pitch": 32.0,
+  "button_size": {
+   "h": 13.75,
+   "w": 28.25
+  },
+  "first_button": {
+   "x": 121.38,
+   "y": 8.35
+  },
+  "name_offset": {
+   "x": 8.0,
+   "y": 9.75
+  },
+  "row_pitch": 37.5
  }
 }
