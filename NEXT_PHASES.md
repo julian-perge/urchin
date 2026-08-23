@@ -215,10 +215,11 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   to that strip - letter-box it, extend the hall, or move the whole stage. That choice changes how every battle looks, which is why this is a spec rather
   than a fix. Found by the whole-branch review of the battle screen extraction, 2026-08-22.
 
-  Two smaller things found alongside it, both pre-existing and neither blocking. `test_battle_runner.gd`'s
-  `test_misses_are_move_events_not_a_separate_type` runs battle 51 with unseeded RNG and asserts once per miss, which is why the suite's total assert
-  count drifts run to run; its `assert_gt(miss_count, 0)` would fail outright on a zero-miss run. And `extract_battle_screen` runs ffdec six times where
-  three would do, because `render_labels` and `layout_rects` each render the same sprite at the same frames, costing about 37 seconds a run.
+  Two smaller things found alongside it, both pre-existing. `test_battle_runner.gd`'s
+  `test_misses_are_move_events_not_a_separate_type` ran battle 51 with unseeded RNG and asserted once per miss, which drifted the suite's total assert
+  count and failed outright on a zero-miss run. Fixed 2026-08-23: the test seeds the global RNG and hands it back afterwards, giving 11 misses over 55
+  half-turns every run. Still open: `extract_battle_screen` runs ffdec six times where three would do, because `render_labels` and `layout_rects` each
+  render the same sprite at the same frames, costing about 37 seconds a run.
 
 - **Cutscenes** - **DONE (2026-08-18)**, see `.claude/plan_cutscenes.md` for the full task breakdown. All 4 cutscenes (`CS_CUT2`-`CS_CUT5`) extracted as `.ogv` with audio (via ffdec's own
   sprite:avi renderer, every filter/color-transform/blend-mode baked in correctly), a `CutscenePlayer` scene matches the original's fade-in/fade-out, wired into the victory-screen Continue flow.

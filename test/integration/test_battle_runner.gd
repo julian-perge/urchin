@@ -161,11 +161,18 @@ func test_battle_51_end_game_phase():
 # A miss used to be logged as its own bare "miss" event, which
 # battle_scene.gd played as a standalone floating label with no animation -
 # _play_move_event() (the run/swing/cast presentation) only ever triggers on
-# a "move" event. Battle 51 reliably produces several misses over a full
-# run (confirmed via battle_51's real miss_chance formula, not forced) -
-# assert every one of them is shaped like every other move result (type
-# "move", a real result.type of "miss") instead of the old standalone shape.
+# a "move" event. This asserts every miss is shaped like every other move
+# result (type "move", a real result.type of "miss") instead of the old
+# standalone shape.
+#
+# The run is seeded because battle 51's misses come from the real miss_chance
+# formula and its AI picks moves with randi_range, so an unseeded run produced
+# a different number of misses every time and occasionally none at all, which
+# failed the count assert below and drifted the whole suite's assert total.
+# This seed gives 11 misses over 55 half-turns, the same every run. The global
+# RNG is handed back at the end so the tests after this one are unaffected.
 func test_misses_are_move_events_not_a_separate_type():
+	seed(20260823)
 	var battle: BattleFight = battles.get(51)
 	var runner = BattleRunner.new()
 	var manager: BattleManager = autofree(BattleManager.new())
@@ -180,6 +187,7 @@ func test_misses_are_move_events_not_a_separate_type():
 				"miss still names the real target, not the attacker"
 			)
 	assert_gt(miss_count, 0, "battle 51 produces at least one miss")
+	randomize()
 
 
 # Runs a full battle with AI on both sides; returns event-type counts.

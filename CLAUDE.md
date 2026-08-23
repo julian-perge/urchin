@@ -190,10 +190,18 @@ entry names its evidence so you can check it instead of trusting it.
 - GDScript `==` throws on an int/String comparison rather than returning false,
   which is useful: it catches leftover string checks after an enum conversion
   (`02f61b1`).
-- The suite's total assert count drifts run to run because
-  `test_battle_runner.gd::test_misses_are_move_events_not_a_separate_type` runs
-  battle 51 with unseeded RNG and asserts once per miss. Pass and fail counts
-  are stable; ignore the assert drift.
+- The suite's total assert count is stable. It used to drift because
+  `test_battle_runner.gd::test_misses_are_move_events_not_a_separate_type` ran
+  battle 51 with unseeded RNG and asserted once per miss, which also failed
+  outright on a zero-miss run. That test calls `seed()` now and hands the
+  global RNG back with `randomize()` when it finishes. A drifting assert count
+  means a new test has reintroduced unseeded RNG, so track it down rather than
+  ignoring it.
+- GUT has no seeding support, so a test that needs a deterministic run seeds
+  Godot's global RNG itself. `partial_double` plus `stub()` is the other option
+  and its stubs do intercept calls an object makes on itself, but stubbing one
+  roll leaves every other `randi_range` in the run free, so it settles a single
+  branch rather than making a whole battle repeatable.
 
 ## Conventions
 
