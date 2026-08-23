@@ -617,6 +617,42 @@ func test_battle_layout_json_carries_real_stage_rects():
 		assert_eq(texture.get_height(), int(float(rect["h"]) * 4), "%s height" % name)
 
 
+# One WHITE cover among five BLACK ones is how the original shows the picked
+# stance: setAG sets every b<i>.COVER to BLACK and then one to WHITE.
+func test_stance_row_marks_exactly_one_button_selected():
+	var row = load("res://scenes/battle/stance_row.tscn").instantiate()
+	add_child_autofree(row)
+	row.setup("Veradux")
+	row.set_selected(Party.AggressionStance.TACTICAL)
+
+	var selected := 0
+	for mode in row.buttons.size():
+		var cover: TextureRect = row.buttons[mode].get_node("Cover")
+		assert_not_null(cover.texture, "button %d has a cover" % mode)
+		if cover.texture.resource_path.ends_with("cover_WHITE.png"):
+			selected += 1
+			assert_eq(mode, int(Party.AggressionStance.TACTICAL), "the picked one is white")
+		else:
+			assert_true(cover.texture.resource_path.ends_with("cover_BLACK.png"),
+				"button %d is black" % mode)
+	assert_eq(selected, 1, "exactly one button reads as selected")
+
+
+# Each button carries its own stance icon, in Party.AggressionStance order.
+func test_stance_row_buttons_carry_the_five_icons():
+	var row = load("res://scenes/battle/stance_row.tscn").instantiate()
+	add_child_autofree(row)
+	row.setup("Veradux")
+
+	var expected := ["Phalanx", "Defensive", "Tactical", "Aggressive", "Relentless"]
+	assert_eq(row.buttons.size(), expected.size(), "five stance buttons")
+	for mode in expected.size():
+		var texture: Texture2D = row.buttons[mode].texture_normal
+		assert_not_null(texture, "button %d has an icon" % mode)
+		assert_true(texture.resource_path.ends_with("%s.png" % expected[mode]),
+			"button %d shows %s" % [mode, expected[mode]])
+
+
 # One stance button stacks an icon from DefineSprite 3305 under an overlay
 # from 3293. 3305's frame labels are _root.agModeNames verbatim, which is also
 # the order of Party.AggressionStance, so the file names and the enum line up

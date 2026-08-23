@@ -1,59 +1,90 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/stance_row.gd" id="1_row"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/member_bar_panel.png" id="2_panel"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/stance/Phalanx.png" id="3_m0"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/stance/Defensive.png" id="4_m1"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/stance/Tactical.png" id="5_m2"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/stance/Aggressive.png" id="6_m3"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/stance/Relentless.png" id="7_m4"]
 
 [node name="StanceRow" type="Control"]
+mouse_filter = 2
 script = ExtResource("1_row")
+
+[node name="Panel" type="TextureRect" parent="."]
+layout_mode = 0
+texture = ExtResource("2_panel")
+expand_mode = 1
+stretch_mode = 0
+mouse_filter = 2
 
 [node name="NameLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 0.0
-offset_top = 4.0
-offset_right = 90.0
-offset_bottom = 24.0
 theme_override_font_sizes/font_size = 12
+mouse_filter = 2
 
-[node name="Mode0" type="Button" parent="."]
+[node name="Mode0" type="TextureButton" parent="."]
 layout_mode = 0
-offset_left = 96.0
-offset_top = 0.0
-offset_right = 130.0
-offset_bottom = 26.0
-custom_minimum_size = Vector2(34, 26)
+texture_normal = ExtResource("3_m0")
+ignore_texture_size = true
+stretch_mode = 0
 tooltip_text = "Phalanx"
 
-[node name="Mode1" type="Button" parent="."]
+[node name="Cover" type="TextureRect" parent="Mode0"]
 layout_mode = 0
-offset_left = 136.0
-offset_top = 0.0
-offset_right = 170.0
-offset_bottom = 26.0
-custom_minimum_size = Vector2(34, 26)
+expand_mode = 1
+stretch_mode = 0
+mouse_filter = 2
+
+[node name="Mode1" type="TextureButton" parent="."]
+layout_mode = 0
+texture_normal = ExtResource("4_m1")
+ignore_texture_size = true
+stretch_mode = 0
 tooltip_text = "Defensive"
 
-[node name="Mode2" type="Button" parent="."]
+[node name="Cover" type="TextureRect" parent="Mode1"]
 layout_mode = 0
-offset_left = 176.0
-offset_top = 0.0
-offset_right = 210.0
-offset_bottom = 26.0
-custom_minimum_size = Vector2(34, 26)
+expand_mode = 1
+stretch_mode = 0
+mouse_filter = 2
+
+[node name="Mode2" type="TextureButton" parent="."]
+layout_mode = 0
+texture_normal = ExtResource("5_m2")
+ignore_texture_size = true
+stretch_mode = 0
 tooltip_text = "Tactical"
 
-[node name="Mode3" type="Button" parent="."]
+[node name="Cover" type="TextureRect" parent="Mode2"]
 layout_mode = 0
-offset_left = 216.0
-offset_top = 0.0
-offset_right = 250.0
-offset_bottom = 26.0
-custom_minimum_size = Vector2(34, 26)
+expand_mode = 1
+stretch_mode = 0
+mouse_filter = 2
+
+[node name="Mode3" type="TextureButton" parent="."]
+layout_mode = 0
+texture_normal = ExtResource("6_m3")
+ignore_texture_size = true
+stretch_mode = 0
 tooltip_text = "Aggressive"
 
-[node name="Mode4" type="Button" parent="."]
+[node name="Cover" type="TextureRect" parent="Mode3"]
 layout_mode = 0
-offset_left = 256.0
-offset_top = 0.0
-offset_right = 290.0
-offset_bottom = 26.0
-custom_minimum_size = Vector2(34, 26)
+expand_mode = 1
+stretch_mode = 0
+mouse_filter = 2
+
+[node name="Mode4" type="TextureButton" parent="."]
+layout_mode = 0
+texture_normal = ExtResource("7_m4")
+ignore_texture_size = true
+stretch_mode = 0
 tooltip_text = "Relentless"
+
+[node name="Cover" type="TextureRect" parent="Mode4"]
+layout_mode = 0
+expand_mode = 1
+stretch_mode = 0
+mouse_filter = 2

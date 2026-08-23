@@ -91,7 +91,7 @@ var _display_hp: Dictionary = {}
 var _last_stun: Dictionary = {}
 var _rings: Dictionary = {}  # slot -> ring Control (hover indicator)
 var _ring_fade_tweens: Dictionary = {}  # slot -> in-flight fade Tween
-var _stance_rows: Dictionary = {}  # party_id -> Array[Button]
+var _stance_rows: Dictionary = {}  # party_id -> StanceRow
 var _selected_move: Dictionary = {}
 var _player_action_pending: bool = false
 # Visual-only decision countdown - the original force-passed the turn at 0
@@ -613,33 +613,17 @@ func _populate_stance_rows() -> void:
 		row.position = Vector2(0, row_y)
 		stance_host.add_child(row)
 		row.setup(unit.player_name)
-		var buttons: Array = row.buttons
-		for mode in buttons.size():
-			buttons[mode].pressed.connect(_on_stance_pressed.bind(party_id, mode, slot))
-		_stance_rows[party_id] = buttons
-		_refresh_stance_row(party_id, Party.get_ag_mode(save, party_id) if save != null else Party.AggressionStance.TACTICAL)
-		row_y += 46.0
+		for mode in row.buttons.size():
+			row.buttons[mode].pressed.connect(_on_stance_pressed.bind(party_id, mode, slot))
+		_stance_rows[party_id] = row
+		row.set_selected(Party.get_ag_mode(save, party_id) if save != null else Party.AggressionStance.TACTICAL)
+		row_y += StanceRow.row_pitch()
 
 
-# Stance tint runs green (hold back) to red (all in), like the original's
-# five icons.
 func _refresh_stance_row(party_id: int, selected_mode: Party.AggressionStance) -> void:
-	var colors: Array[Variant] = [
-		Color(0.25, 0.55, 0.3), Color(0.35, 0.55, 0.25), Color(0.6, 0.55, 0.2),
-		Color(0.65, 0.35, 0.15), Color(0.65, 0.15, 0.12),
-	]
-	var buttons: Array = _stance_rows.get(party_id, [])
-	for mode in buttons.size():
-		var button: Button = buttons[mode]
-		var style: StyleBoxFlat = StyleBoxFlat.new()
-		style.bg_color = colors[mode]
-		style.set_corner_radius_all(3)
-		style.set_border_width_all(2)
-		style.border_color = Color.WHITE if mode == selected_mode else Color(0.15, 0.15, 0.15)
-		button.add_theme_stylebox_override("normal", style)
-		var hover: Resource = style.duplicate()
-		hover.bg_color = colors[mode].lightened(0.2)
-		button.add_theme_stylebox_override("hover", hover)
+	var row: StanceRow = _stance_rows.get(party_id)
+	if row != null:
+		row.set_selected(selected_mode)
 
 
 func _party_id_for_unit(unit: CombatUnit) -> int:
