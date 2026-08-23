@@ -45,6 +45,12 @@ SKY_SPRITE = 3454
 # The character rig each hall label places six times, deleted so the halls
 # render as bare scene art.
 FIGHTER_RIG = 2676
+# The team member bar container, which 3317 places at depth 7. It holds two
+# copies of one member bar, each carrying the SWF author's placeholder name
+# "Thurman McPown" in a DefineEditText the game fills at runtime from
+# playerKrin<n>.playerName. Rendered as-is the bar bakes in two dead rows. The
+# port rebuilds them from scenes/battle/stance_row.tscn instead.
+MEMBER_BARS = 3312
 # These fill the window behind everything else, so they are rendered well above
 # the window's 2x default scale.
 ZOOM = 4.0
@@ -337,6 +343,7 @@ def main():
                 str(WEB_SWF),
                 str(stripped),
                 str(FIGHTER_RIG),
+                str(MEMBER_BARS),
             ]
         )
         print(f"halls ({len(halls)}):", file=sys.stderr)
@@ -352,14 +359,14 @@ def main():
             "halls": layout_rects(stripped, xml, HALL_SPRITE, halls),
             "skies": layout_rects(stripped, xml, SKY_SPRITE, skies),
         }
+        # The chrome renders from this same stripped copy. 2676 sits nowhere in
+        # the four chrome characters' trees so it changes nothing for them, and
+        # 3312 has to be gone or the bottom bar bakes in the member bars.
+        print(f"chrome ({len(CHROME)}):", file=sys.stderr)
+        render_chrome(stripped)
+        layout["chrome"] = chrome_rects(stripped, xml)
     finally:
         shutil.rmtree(work, ignore_errors=True)
-
-    # The chrome characters sit outside 2676, so the fighter-rig strip above
-    # never touches them and they render straight off the original SWF.
-    print(f"chrome ({len(CHROME)}):", file=sys.stderr)
-    render_chrome(WEB_SWF)
-    layout["chrome"] = chrome_rects(WEB_SWF, xml)
 
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
     print(f"wrote {LAYOUT_JSON}", file=sys.stderr)

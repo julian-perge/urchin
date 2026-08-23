@@ -617,6 +617,24 @@ func test_battle_layout_json_carries_real_stage_rects():
 		assert_eq(texture.get_height(), int(float(rect["h"]) * 4), "%s height" % name)
 
 
+# The bottom bar is a render of DefineSprite 3317, which places the member bar
+# container at depth 7. Each member bar carries the SWF author's placeholder
+# name in a DefineEditText the game fills at runtime, so a bar rendered with
+# them in has two rows of white "Thurman McPown" text burned into it. The port
+# draws those rows itself with StanceRow, so the art must carry none. White
+# text is the only thing on this bar brighter than 0.8 on every channel.
+func test_bottom_bar_art_has_no_baked_in_member_bars():
+	var texture: Texture2D = load("res://assets/ui/battle/bottom_bar.png")
+	var image: Image = texture.get_image()
+	var bright := 0
+	for y in range(0, image.get_height(), 4):
+		for x in range(0, image.get_width(), 4):
+			var pixel: Color = image.get_pixel(x, y)
+			if pixel.r > 0.8 and pixel.g > 0.8 and pixel.b > 0.8:
+				bright += 1
+	assert_eq(bright, 0, "no placeholder text baked into the bottom bar")
+
+
 # The battle frame places four chrome characters the port had never extracted:
 # the shared bottom bar (3317, which the Navigation frame places too), the top
 # panel frame (3465), the alert icon (3460) and the stage rect (3455).
