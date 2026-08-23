@@ -196,6 +196,23 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   backgrounds no longer carry six placeholder fighters. `battle_layout.json` records each label's stage rect, which retires `SKY_HORIZON_Y = 292.0` - the
   real ground line differs per sky and ROME's is at 306.0.
 
+- **Battle hall coordinate system - TO BE SPECCED.** The battle screen is now half on the SWF stage and half not, and the two halves disagree by about
+  35px. The sky is placed from `battle_layout.json` in true stage coordinates, and `SLOT_POSITIONS` in `battle_scene.gd` is also in true stage
+  coordinates - it was checked against the six `2676` placements at all ten hall labels and matches to the decimal. The hall art is not. `Background` in
+  `scenes/battle_scene.tscn` is a full-canvas `TextureRect` (`anchors_preset = 15`, `STRETCH_KEEP_ASPECT_COVERED`) that ignores the hall rects, so the art
+  is stretched to fill 800x600 while the fighters standing on it are not. For CHURCH, the stage point (220.9, 371.0) where player3 stands lands at
+  (186.5, 406.4) once the hall is stretched, 34px right and 35px down of the fighter. SNOW errs about 40px the other way.
+
+  The data to fix it already exists: `battle_layout.json` records every hall's rect and nothing reads the `halls` section yet. What needs deciding first
+  is the 25px difference between the SWF's 800x575 stage and the 800x600 viewport, because placing the hall at its true rect means choosing what happens
+  to that strip - letter-box it, extend the hall, or move the whole stage. That choice changes how every battle looks, which is why this is a spec rather
+  than a fix. Found by the whole-branch review of the battle screen extraction, 2026-08-22.
+
+  Two smaller things found alongside it, both pre-existing and neither blocking. `test_battle_runner.gd`'s
+  `test_misses_are_move_events_not_a_separate_type` runs battle 51 with unseeded RNG and asserts once per miss, which is why the suite's total assert
+  count drifts run to run; its `assert_gt(miss_count, 0)` would fail outright on a zero-miss run. And `extract_battle_screen` runs ffdec six times where
+  three would do, because `render_labels` and `layout_rects` each render the same sprite at the same frames, costing about 37 seconds a run.
+
 - **Cutscenes** - **DONE (2026-08-18)**, see `.claude/plan_cutscenes.md` for the full task breakdown. All 4 cutscenes (`CS_CUT2`-`CS_CUT5`) extracted as `.ogv` with audio (via ffdec's own
   sprite:avi renderer, every filter/color-transform/blend-mode baked in correctly), a `CutscenePlayer` scene matches the original's fade-in/fade-out, wired into the victory-screen Continue flow.
   GUT suite green: 103/103 tests, 625 asserts.
