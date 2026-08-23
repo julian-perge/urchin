@@ -44,9 +44,10 @@ what this work does.
 
 ### The member bar
 
-3312 holds two copies of DefineSprite 3311, named `p3` and `p5`, at local
-(142.65, 12.60) and (142.65, 50.10). 3312 itself has frame labels `SHOW` (1)
-and `HIDE` (6).
+3312 holds two copies of DefineSprite 3311, named `p5` and `p3`, at local
+(142.65, 12.60) and (142.65, 50.10). `p5` is the top row and `p3` is the
+bottom row, matching the battlefield where slot 5 is the upper fighter. 3312
+itself has frame labels `SHOW` (1) and `HIDE` (6).
 
 3311 is one member bar, 285.00 x 31.50 design px, with labels `active` (1) and
 `inactive` (9). On the active frame it places:
@@ -162,8 +163,9 @@ Three differences from the source, all of them small:
 - `assets/ui/battle/stance/<Label>.png`, five files, from 3305 at its own
   labelled frames. Labels keep the SWF's spelling, which is also
   `agModeNames` and also the port's `Party.AggressionStance` order.
-- `assets/ui/battle/stance/cover_black.png` and `cover_white.png` from 3293 at
-  its two labels.
+- `assets/ui/battle/stance/cover_BLACK.png` and `cover_WHITE.png` from 3293 at
+  its two labels, keeping the SWF's own frame label spelling the way the icons
+  do.
 - `assets/ui/battle/member_bar_panel.png` from 3309, the row backing.
 
 Zoom stays 4.0, matching the rest of the file. Every output crops to its alpha
@@ -182,7 +184,7 @@ right, and gains the art:
 - Each button becomes a `TextureButton` (or keeps `Button` with a texture
   stylebox, whichever reads cleaner against the existing theme) showing its
   stance icon, at the source's 32.00 px pitch.
-- Selection swaps the cover texture between `cover_black` and `cover_white`
+- Selection swaps the cover texture between `cover_BLACK` and `cover_WHITE`
   rather than recolouring a border, matching `setAG`. That replaces the colour
   table in `_refresh_stance_row()`.
 - The row sits on `member_bar_panel.png` and rows stack 37.50 px apart.

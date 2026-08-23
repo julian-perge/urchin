@@ -200,7 +200,8 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   McPown" baked into it, because DefineSprite 3317 places the container at depth 7 and nothing stripped it. It renders bare now, and the five aggression
   icons (`3305`), their two overlay states (`3293`) and the row backing (`3309`) come out as separate art that `StanceRow` arranges, replacing the five
   hand-picked `StyleBoxFlat` colours it drew before. `battle_layout.json` carries the bar's internal layout so the scene does not hold a second copy of
-  the measurements.
+  the measurements. `BottomBar/Backdrop` in `scenes/battle_scene.tscn` still renders the older hand-made `assets/ui/battle/hotbar_background.png`, not
+  the regenerated `bottom_bar.png` this extraction writes; repointing it is its own change.
 
 - **Battle hall coordinate system - TO BE SPECCED.** The battle screen is now half on the SWF stage and half not, and the two halves disagree by about
   35px. The sky is placed from `battle_layout.json` in true stage coordinates, and `SLOT_POSITIONS` in `battle_scene.gd` is also in true stage

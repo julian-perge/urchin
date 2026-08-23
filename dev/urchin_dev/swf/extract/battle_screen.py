@@ -4,6 +4,8 @@
 #   assets/backgrounds/battle/<LABEL>.png        - one hall per label of 3435
 #   assets/backgrounds/sky/SKY_<LABEL>.png       - one sky per label of 3454
 #   assets/ui/battle/<NAME>.png                  - the four chrome characters
+#   assets/ui/battle/stance/<NAME>.png           - 5 stance icons + 2 covers
+#   assets/ui/battle/member_bar_panel.png        - the member bar's dark backing
 #   assets/backgrounds/battle/battle_layout.json - where those sit on the stage
 #
 # THE HALL AND THE SKY ARE INDEPENDENT. The original drives DefineSprite 3435
@@ -13,11 +15,13 @@
 # not the same, which is why each sprite is rendered against its own labels
 # rather than one shared list.
 #
-# WHY 2676 IS STRIPPED. Every hall label places DefineSprite 2676 six times, at
-# depths 40 through 240. It is the character rig: three slots per side, the
-# right side mirrored. Rendered as-is, each hall bakes in six placeholder
-# fighters holding swords under "!" speech bubbles, authoring scaffolding the
-# game never draws. Deleting it from a working copy leaves ffdec drawing the
+# WHY 2676 AND 3312 ARE STRIPPED. Every hall label places DefineSprite 2676 six
+# times, at depths 40 through 240. It is the character rig: three slots per
+# side, the right side mirrored. Rendered as-is, each hall bakes in six
+# placeholder fighters holding swords under "!" speech bubbles, authoring
+# scaffolding the game never draws. DefineSprite 3312 is the bottom bar's
+# member bar container; see the MEMBER_BARS constant below for why it is
+# stripped too. Deleting both from a working copy leaves ffdec drawing the
 # scene art alone, the same approach zone_hub.py uses for the orb.
 #
 # Run: uv run extract_battle_screen
