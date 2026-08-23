@@ -36,7 +36,7 @@ what exists and `NEXT_PHASES.md` for what hasn't been built yet.
 res://
 ├── project.godot                  # Autoloads: StoreManager, UnitManagerAuto, ItemManagerAuto,
 │                                  #   MoveManagerAuto, BuffManagerAuto, Inventory, ZoneManager, GameData
-├── addons/gut/                    # GUT 9.6.1 test framework (vendored)
+├── addons/gut/                    # GUT 9.7.1 test framework (vendored)
 ├── .gutconfig.json                # GUT config - test dirs, exit-on-finish
 ├── test/
 │   ├── unit/                      # Pure-logic tests (talent tree rules, ...)
