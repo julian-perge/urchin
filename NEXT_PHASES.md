@@ -196,6 +196,12 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   backgrounds no longer carry six placeholder fighters. `battle_layout.json` records each label's stage rect, which retires `SKY_HORIZON_Y = 292.0` - the
   real ground line differs per sky and ROME's is at 306.0.
 
+- **Battle bottom bar and stance rows - DONE (2026-08-23)**, `uv run extract_battle_screen`. The bar had two placeholder member bars reading "Thurman
+  McPown" baked into it, because DefineSprite 3317 places the container at depth 7 and nothing stripped it. It renders bare now, and the five aggression
+  icons (`3305`), their two overlay states (`3293`) and the row backing (`3309`) come out as separate art that `StanceRow` arranges, replacing the five
+  hand-picked `StyleBoxFlat` colours it drew before. `battle_layout.json` carries the bar's internal layout so the scene does not hold a second copy of
+  the measurements.
+
 - **Battle hall coordinate system - TO BE SPECCED.** The battle screen is now half on the SWF stage and half not, and the two halves disagree by about
   35px. The sky is placed from `battle_layout.json` in true stage coordinates, and `SLOT_POSITIONS` in `battle_scene.gd` is also in true stage
   coordinates - it was checked against the six `2676` placements at all ten hall labels and matches to the decimal. The hall art is not. `Background` in

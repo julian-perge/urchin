@@ -5,7 +5,7 @@ into it, extract the stance button art the member bars are made of, and give
 the port's existing `StanceRow` that art instead of the coloured rectangles it
 draws today.
 
-**Status:** design, not yet implemented.
+**Status:** implemented 2026-08-23.
 
 ## Why now
 
@@ -223,12 +223,10 @@ general rule this case is an instance of, recorded in `CLAUDE.md`.
 - The six `p1BAR` to `p6BAR` fighter bars in the top panel, still unbuilt and
   already scoped out in `KNOWN_GAPS.md`.
 
-## Open questions
+## Settled
 
-- Whether the buttons become `TextureButton` or keep `Button` with a texture
-  stylebox. The second keeps the existing hover and focus handling; the first
-  is less code. Decide against the theme when implementing.
-- Whether to extract 3309 at all, or draw the backing with a `StyleBoxFlat`. It
-  is a plain dark rounded rectangle. Extracting it is nearly free and keeps the
-  art source-true, which is why this spec proposes it, but it is the one output
-  here that a Godot primitive could match closely.
+The buttons are `TextureButton`s, matching the class cards in
+`main_menu.tscn` and the zone buttons in `zone_map.tscn`, which are the
+project's existing art-backed buttons. 3309 is extracted rather than drawn
+with a `StyleBoxFlat`, on the same rule as the rest of this work: if the SWF
+has it, the script takes it.

@@ -97,7 +97,8 @@ Scoped-out edges from the playtest-feedback batch:
 - **Top battle bar panel**: the original shows every fighter's health/focus with numbers in a panel across the top of the battle screen (reference `9_inbattle_start...png`).
   Noted, not built - the in-field bars carry the health number instead.
 - **Battle top panel frame extracted, bars not built**: `assets/ui/battle/top_panel.png` is the frame the original's six `p1BAR`-`p6BAR` fighter bars sit
-  inside. The bars themselves (`3414`) are still unbuilt, so the frame is not placed in the scene yet.
+  inside. The bars themselves (`3414`) are still unbuilt, so the frame is not placed in the scene yet. The bottom bar's own team member bars are a
+  different thing and are built, as Godot nodes, in `scenes/battle/stance_row.tscn`.
 - **Ability orb art - RESOLVED**: both the radial-menu and abilities-screen orbs now show the real extracted per-move icon art (`assets/ui/abilities/`) with element-colored borders, instead of text initials.
 - **Radial menu is click-to-cast**: the original picks up the ability with the cursor; here a usable orb casts on click directly. Unusable orbs darken, matching the source.
 - **Class-select card art - RESOLVED**: the original sketch art has been extracted and wired - gray rest / colored hover textures in `assets/ui/menu/class_cards/`,

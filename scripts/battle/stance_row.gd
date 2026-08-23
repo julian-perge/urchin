@@ -24,7 +24,10 @@ const COVER_SELECTED: String = "res://assets/ui/battle/stance/cover_WHITE.png"
 static var _layout: Dictionary = {}
 
 
-# -> the stance_row section of battle_layout.json, read once per run.
+# -> the stance_row section of battle_layout.json. _layout is a static var, so
+# this file is read once per process, not once per battle: the parsed result
+# is cached and reused by every battle scene and every test script that runs
+# in the same invocation.
 static func layout() -> Dictionary:
 	if _layout.is_empty():
 		var file := FileAccess.open(BATTLE_LAYOUT_PATH, FileAccess.READ)
