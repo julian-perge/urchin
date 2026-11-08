@@ -115,12 +115,31 @@ func test_respec_equipment_bonuses_reapplied():
 	assert_eq(save.strength, 5 + ceil(CombatUnit.get_stat(14, 5, true)))
 
 
-func test_respec_daily_limit_and_cost_gate():
+func test_respec_cost_gate():
+	# The respec button checks that Euro covers
+	# round(0.7 * respecValue(Level)), which is 78 at level 5
+	# (DefineButton2_3179 on(release) line 6). A refused respec runs none of
+	# lines 8-14, so it leaves the money, the day counter and its date alone.
+	save.level = 5
+	save.euro = 77.0
+	save.respec_set = 3
+	save.last_respec_day = "2026-07-18"
+	assert_false(Leveling.respec(save, [0, 0, 0, 0, 0], "2026-07-19"), "one short of the 78 cost")
+	assert_eq(save.euro, 77.0, "a refused respec costs nothing")
+	assert_eq(save.respec_set, 3, "a refused respec leaves the counter alone")
+	assert_eq(save.last_respec_day, "2026-07-18", "a refused respec leaves the date alone")
+	save.euro = 78.0
+	assert_true(Leveling.respec(save, [0, 0, 0, 0, 0], "2026-07-19"), "exactly the cost is enough")
+	assert_eq(save.euro, 0.0)
+
+
+func test_respec_has_no_daily_limit():
+	# The respec button resets respecSet to 5 on a new day and takes one off
+	# per respec, but never checks it (DefineButton2_3179 on(release) lines
+	# 9-14), so a sixth respec in one day goes through and leaves it at -1.
 	save.level = 1
 	save.euro = 1000.0
-	for i in 5:
-		assert_true(Leveling.respec(save, [0, 0, 0, 0, 0], "2026-07-18"), "respec %d of 5" % (i + 1))
-	assert_false(Leveling.respec(save, [0, 0, 0, 0, 0], "2026-07-18"), "6th same-day respec blocked")
-	assert_true(Leveling.respec(save, [0, 0, 0, 0, 0], "2026-07-19"), "new day resets the limit")
-	save.euro = 0.0
-	assert_false(Leveling.respec(save, [0, 0, 0, 0, 0], "2026-07-19"), "cannot afford")
+	for i in 6:
+		assert_true(Leveling.respec(save, [0, 0, 0, 0, 0], "2026-07-18"), "respec %d of 6 in one day" % (i + 1))
+	assert_eq(save.euro, 958.0, "six respecs at round(0.7 * 10 * 1^1.5) = 7 each")
+	assert_eq(save.respec_set, -1)

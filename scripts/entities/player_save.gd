@@ -54,8 +54,9 @@ const CLASS_DESCRIPTIONS: Array[String] = [
 
 # Respec daily counter (AS3 respecSet/lastDay2). The original resets it to 5
 # on a new day and counts it down, but never refuses a respec when it runs out
-# (DefineButton2_3179 on(release) lines 6-14). The 5 per day limit that
-# Leveling.respec enforces is this port's own.
+# (DefineButton2_3179 on(release) lines 6-14). Leveling.respec does the same,
+# so the count drops below zero from the sixth respec in a day, and it is
+# only ever saved and loaded.
 @export var respec_set: int = 5
 @export var last_respec_day: String = ""
 
