@@ -22,16 +22,20 @@ from urchin_dev.swf import models
 # = 199;" etc., nine of them, reserving per-zone id blocks) retroactively
 # relabel the battle whose properties were JUST finished being set, instead of
 # the next one about to be created (see SWF_DIFFERENCES.md's "Battle id is not
-# battleCreationID's value at creation time"). Three of the nine land exactly
-# one battle early, mislabeling each zone's real final story battle with the
-# next block's seed id: zone 1's 10th battle (should be 109) comes stamped
+# battleCreationID's value at creation time"). All nine do this, so each one
+# stamps the battle before it with the next block's seed id: AS battles 2,
+# 55, 109, 212, 308, 409, 513, 603 and 703 come through as 49, 99, 199, 299,
+# 399, 499, 599, 699 and 999. The three corrected below are zone 1, 4 and 5's
+# real final story battles: zone 1's 10th battle (should be 109) comes stamped
 # 199/KBR199, zone 4's (should be 409) comes stamped 499/KBR499, zone 5's
 # (should be 513) comes stamped 599/KBR599. Confirmed by creation-order
 # position against dev/data_json/swf_battles.json (zero content mismatches -
 # each mislabeled row's players/phases/speeches are that zone's boss fight,
 # not a stray battle from the next zone). Correct them back here so
 # resources/battles/ ends up with the ids the original game's own
-# BattlePick == 109/409/513 checks (frame_219) actually expect.
+# BattlePick == 109/409/513 checks (frame_219) actually expect. The other six
+# are not corrected yet, so the zone 2, 3, 6 and 7 bosses and the tutorial
+# are still stored under the wrong ids.
 MISLABELED_BATTLE_IDS: dict[int, tuple[int, str]] = {
     199: (109, "KBR109"),
     499: (409, "KBR409"),

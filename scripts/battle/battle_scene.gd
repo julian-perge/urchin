@@ -437,10 +437,13 @@ func _on_unit_clicked(slot: int) -> void:
 	battlefield.add_child(_radial_menu)
 
 
-# Cooldown/silence gating, kept here rather than in battle_runner.gd for the
-# same reason _move_valid_for_target already lives here: this is
-# display-only gating, the runner re-validates for real when the move is
-# actually submitted.
+# Cooldown and silence gating. This is the only place either is checked: the
+# runner never re-checks them when the move executes, where it checks focus
+# and life (BattleRunner._execute_move_action). The original does the same.
+# It checks cooldown and silence when the player picks
+# (frame_42/DoAction_11.as:70-79) and not again at dispatch, where the
+# conductor checks focus and life (frame_217/PlaceObject2_3389_480
+# enterFrame, lines 350-355).
 func _move_usable_on_bar(move: Ability, player: CombatUnit, bar_index: int) -> bool:
 	if bar_index < player.ability_cooldowns.size() and player.ability_cooldowns[bar_index] > 0:
 		return false
@@ -453,7 +456,12 @@ func _move_valid_for_target(move: Ability, slot: int) -> bool:
 	var target: CombatUnit = units.get(slot)
 	if target == null or not target.active:
 		return false
-	# Not enough focus darkens the orb (picking it would waste the turn).
+	# Not enough focus darkens the orb, because picking it would waste the
+	# turn when the runner rejects it at execution. That is a port choice. The
+	# original darkens an orb only for a bad target or a cooldown
+	# (frame_217/PlaceObject3_3382_500 enterFrame, lines 15-29) and refuses a
+	# short-focus pick at the click with a message instead
+	# (frame_42/DoAction_11.as:65-69).
 	var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
 	if player != null and move.focus_cost > 0 and player.focus_n < move.focus_cost:
 		return false

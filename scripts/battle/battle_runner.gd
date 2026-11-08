@@ -15,10 +15,13 @@
 # player_action), executes them, ticks buffs, then does the end-of-half-turn
 # bookkeeping (boss phases, win/lose, speeches, team rotation).
 #
-# The original ran real-time with a 120-second decision countdown
-# (BattleTime/BattleTimeLimit, frame217/1_loading_battle_properties.txt); this
-# port is the turn-based flow (difficulty 0/1 - turnBasedKrin). The countdown
-# is a UI-layer concern (BATTLE_TIME_LIMIT is exposed for it).
+# The original's decision countdown (BattleTime/BattleTimeLimit,
+# frame_217/DoAction.as) is 120 frames, which is 4 seconds at 30 fps, and it
+# only runs on Heroic, where the half-turn starts when it runs out. Easy and
+# Normal set turnBasedKrin and wait for the player instead, and this port is
+# that turn-based flow on every difficulty. The countdown is a UI-layer
+# concern: BATTLE_TIME_LIMIT is exposed for it, and battle_scene.gd counts it
+# down as seconds.
 #
 # No autoload references (same rule as CombatUnit/BattleAI) - every lookup is
 # injected via setup().

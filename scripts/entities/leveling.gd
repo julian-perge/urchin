@@ -7,7 +7,8 @@
 #   givePoints(level) stat points; level cap 30
 # - respec button: DefineButton2_3179 on(release) - cost
 #   round(0.7 * respecValue(level)), full talent/bar/stat reset, equipment
-#   stat bonuses re-applied, 5 respecs per day
+#   stat bonuses re-applied. The button counts respecs per day but never
+#   refuses one (lines 6-14), so the 5 per day limit is this port's own.
 # - player stat model: menu screens compute stat = allocated points
 #   (StatSets0) + ceil(getStat(class_base_ratio, level, true)); piercing and
 #   defense = allocation (PerSets0/DefSets0) + 100 + 15 * level
@@ -146,7 +147,8 @@ static func grant_experience(save: PlayerSave, xp_amount: float) -> Dictionary:
 
 
 # Full respec (DefineButton2_3179): costs round(0.7 * respecValue(level)),
-# limited to 5 per day. Resets talents/action bar/allocation; skill points
+# and this port limits it to 5 per day, which the original never enforced
+# (see the header). Resets talents/action bar/allocation; skill points
 # back to level - 1 + the 5 starting points; stat points to the full grant.
 # equipment_stat_bonuses = the summed statUpdater values of equipped items
 # (StatSets0 re-seed) - pass zeros until the equip system exists. `today`
@@ -166,8 +168,10 @@ static func respec(save: PlayerSave, equipment_stat_bonuses: Array = [0, 0, 0, 0
 	save.skill_points = save.level - 1 + TalentTree.STARTING_SKILL_POINTS
 	save.stat_points = points_for_respec(save, save.level)
 	TalentTree.initialize_save(save)
-	# Respec puts the two starting moves back ON the action bar (new_game
-	# only puts them in the known pool).
+	# TalentTree.initialize_save only puts the starting moves in the known
+	# pool, so respec puts them back on the action bar here, the same way
+	# PlayerSave.new_game and the original's respec button do
+	# (DefineButton2_3179 on(release) lines 23-26).
 	var starting_moves: Array = TalentTree.STARTING_MOVES.get(save.player_class, [])
 	for i in starting_moves.size():
 		save.move_matrix[i] = starting_moves[i]
