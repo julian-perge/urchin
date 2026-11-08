@@ -7,8 +7,9 @@
 #   givePoints(level) stat points; level cap 30
 # - respec button: DefineButton2_3179 on(release) - cost
 #   round(0.7 * respecValue(level)), full talent/bar/stat reset, equipment
-#   stat bonuses re-applied. The button counts respecs per day but never
-#   refuses one (lines 6-14), so the 5 per day limit is this port's own.
+#   stat bonuses re-applied. The button refuses a respec the player cannot
+#   afford (line 6), and it counts respecs per day (lines 9-14) but never
+#   checks the count, so respec updates the same count without checking it.
 # - player stat model: menu screens compute stat = allocated points
 #   (StatSets0) + ceil(getStat(class_base_ratio, level, true)); piercing and
 #   defense = allocation (PerSets0/DefSets0) + 100 + 15 * level
@@ -147,7 +148,7 @@ static func grant_experience(save: PlayerSave, xp_amount: float) -> Dictionary:
 
 
 # Full respec (DefineButton2_3179): costs round(0.7 * respecValue(level)),
-# and this port limits it to 5 per day, which the original never enforced
+# and refuses only when euro is short of that, never for a daily count
 # (see the header). Resets talents/action bar/allocation; skill points
 # back to level - 1 + the 5 starting points; stat points to the full grant.
 # equipment_stat_bonuses = the summed statUpdater values of equipped items
@@ -156,12 +157,12 @@ static func grant_experience(save: PlayerSave, xp_amount: float) -> Dictionary:
 static func respec(save: PlayerSave, equipment_stat_bonuses: Array = [0, 0, 0, 0, 0], today: String = "") -> bool:
 	if today == "":
 		today = Time.get_date_string_from_system()
-	if save.last_respec_day != today:
-		save.respec_set = RESPECS_PER_DAY
 	var cost: int = respec_cost(save.level)
-	if save.euro < cost or save.respec_set <= 0:
+	if save.euro < cost:
 		return false
 	save.euro -= cost
+	if save.last_respec_day != today:
+		save.respec_set = RESPECS_PER_DAY
 	save.respec_set -= 1
 	save.last_respec_day = today
 
