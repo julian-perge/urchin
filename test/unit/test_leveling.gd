@@ -10,20 +10,31 @@ func before_each():
 	save = PlayerSave.new_game("Test", 0)
 
 
-func test_new_game_auto_spread_class_0():
-	# free points at level 1 = floor(getStat(40, 1, true)) = 19, spread by
-	# Bio ratios [7,14,4,15]/40 -> floors [3,6,1,7]. givePoints leaves the
-	# 0.158 grant fraction in point_residue, the split fractions add 1.9999..
-	# more, so TWO leftover points distribute (speed then strength, largest
-	# splits first) and 0.158 stays - all 19 points spent.
-	assert_eq(save.stat_allocated, [3, 7, 1, 8, 0], "life/strength/magic/speed/focus allocation")
-	assert_almost_eq(save.point_residue, 0.158, 0.001)
-	assert_eq(save.life, 7.0, "3 allocated + ceil(3.35) class base")
-	assert_eq(save.strength, 14.0, "7 + ceil(6.71)")
-	assert_eq(save.magic, 3.0, "1 + ceil(1.92)")
-	assert_eq(save.speed, 16.0, "8 + ceil(7.19)")
-	assert_eq(save.focus, 100.0)
-	assert_eq(save.stat_points, 0, "starting grant is auto-spent")
+func test_new_game_holds_only_the_starting_gear_bonuses():
+	# The class buttons spread the 19 level-1 points, then
+	# frame_180/DoAction.as:8 resets StatSets0 to the starting gear's bonuses,
+	# so every class starts on [5, 6, 5, 3, 0] and keeps only the split's 0.158
+	# residue. Each stat is that allocation plus
+	# ceil(getStat(class ratio, 1, true)), the menu formula in
+	# DefineButton2_3179 on(release) lines 47-50.
+	var expected_stats: Dictionary[PlayerSave.PlayerClass, Array] = {
+		PlayerSave.PlayerClass.BIOLOGICAL: [9.0, 13.0, 7.0, 11.0],
+		PlayerSave.PlayerClass.PSYCHOLOGICAL: [9.0, 8.0, 15.0, 8.0],
+		PlayerSave.PlayerClass.HYDRAULIC: [13.0, 11.0, 9.0, 7.0],
+	}
+	for player_class in expected_stats:
+		GameData.new_game(-1, "Test", player_class)
+		var new_save: PlayerSave = GameData.current_save
+		var label: String = PlayerSave.CLASS_NAMES[player_class]
+		assert_eq(new_save.stat_allocated, [5, 6, 5, 3, 0], "%s allocation" % label)
+		assert_eq(
+			[new_save.life, new_save.strength, new_save.magic, new_save.speed],
+			expected_stats[player_class],
+			"%s life/strength/magic/speed" % label
+		)
+		assert_eq(new_save.stat_points, 0, "%s free stat points" % label)
+		assert_almost_eq(new_save.point_residue, 0.158, 0.001, "%s point residue" % label)
+	GameData.current_save = null
 
 
 func test_point_grant_consistency_across_30_levels():
