@@ -29,7 +29,8 @@ entry names its evidence so you can check it instead of trusting it.
   `rg '^extract_|^convert_' pyproject.toml` for the list.
 - Tests: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s
   res://addons/gut/gut_cmdln.gd --path .` Add `-gunit_test_name=<name>` for one
-  test.
+  test. The Python package's tests are `uv run pytest`, under `dev/tests/`.
+  They never read the SWF or the XML dump, so they pass on a fresh checkout.
 - After writing anything under `assets/`, run
   `/Applications/Godot.app/Contents/MacOS/Godot --headless --import --path .`
   or tests fail with "No loader found for resource".

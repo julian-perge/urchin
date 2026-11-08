@@ -34,6 +34,7 @@ extract_doll_art = "urchin_dev.swf.extract.doll_art:main"
 extract_faces = "urchin_dev.swf.extract.faces:main"
 extract_item_icons = "urchin_dev.swf.extract.item_icons:main"
 extract_item_looks = "urchin_dev.swf.extract.item_looks:main"
+extract_label_xref = "urchin_dev.swf.label_xref:main"
 extract_model1_animations = "urchin_dev.swf.extract.model1_animations:main"
 extract_start_screens = "urchin_dev.swf.extract.start_screens:main"
 extract_zone_hub = "urchin_dev.swf.extract.zone_hub:main"
@@ -53,6 +54,9 @@ package = true
 [tool.uv.build-backend]
 module-root = "dev"
 source-include = ["dev/urchin_dev/**"]
+
+[tool.pytest.ini_options]
+testpaths = ["dev/tests"]
 
 [tool.ruff]
 fix = false
@@ -126,3 +130,8 @@ ignore = [
 required-imports = ["from __future__ import annotations"]
 combine-as-imports = true
 split-on-trailing-comma = false
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
