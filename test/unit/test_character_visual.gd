@@ -155,6 +155,9 @@ func test_matrixless_placement_keeps_its_depths_matrix():
 	# and no matrix, so foot2 keeps frame 122's matrix: scale 0.8 at (216, 654)
 	# twips. The extractor once took weapon2's matrix from the next placement.
 	var file: FileAccess = FileAccess.open(CharacterVisual.ANIMATIONS_FILE, FileAccess.READ)
+	assert_not_null(file, CharacterVisual.ANIMATIONS_FILE)
+	if file == null:
+		return
 	var frames: Array = JSON.parse_string(file.get_as_text())["frames"]
 	assert_eq(frames[121]["foot2"], [0.8, 0.0, 0.0, 0.8, 10.8, 32.7], "frame 122")
 	assert_eq(frames[122]["foot2"], [0.8, 0.0, 0.0, 0.8, 10.8, 32.7], "frame 123")

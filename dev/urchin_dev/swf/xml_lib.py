@@ -264,14 +264,12 @@ def snapshot_timeline(xml: str, sprite_id: int, wanted_frames: set[int]):
     """Simulate a sprite's timeline (PlaceObject/RemoveObject by depth) and
     return {frame: {depth: {cid, name, mat}}} snapshots plus {label: frame}.
 
-    A PlaceObject that carries no matrix of its own keeps the matrix its
-    depth already had, so a placement's matrix is searched for only up to
-    the start of the next timeline tag. A fixed 1200-character search used
-    to run past the end of such a tag and take a later placement's matrix
-    instead, which put BOOM_SLASH's inner sprite 1269 (19b7c18) and 38 part
-    matrices of MODEL1 (sprite 166) on the wrong transform. On every sprite
-    placement in the web dump, this bound finds a matrix exactly when the
-    tag's own placeFlagHasMatrix attribute is true.
+    A PlaceObject whose placeFlagHasMatrix is false keeps the matrix its
+    depth already had, and one that has a matrix carries it before the next
+    timeline tag starts. A fixed 1200-character search with no flag check
+    used to run past the end of a matrix-less tag and take a later
+    placement's matrix, which put BOOM_SLASH's inner sprite 1269 (19b7c18)
+    and 38 part matrices of MODEL1 (sprite 166) on the wrong transform.
     """
     body = sprite_body(xml, sprite_id)
     tags = list(_TIMELINE_TAG_RE.finditer(body))
@@ -300,10 +298,9 @@ def snapshot_timeline(xml: str, sprite_id: int, wanted_frames: set[int]):
             entry["cid"] = int(cid.group(1))
         if name:
             entry["name"] = name.group(1)
-        stop = tags[i + 1].start() if i + 1 < len(tags) else len(body)
-        window = body[t.end() : stop]
-        if MATRIX_TAG_RE.search(window):
-            entry["mat"] = find_matrix(window)
+        if 'placeFlagHasMatrix="true"' in attrs:
+            stop = tags[i + 1].start() if i + 1 < len(tags) else len(body)
+            entry["mat"] = find_matrix(body[t.end() : stop])
         state[depth] = entry
     return snaps, labels
 
