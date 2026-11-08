@@ -13,6 +13,36 @@ func test_money_gain():
 	assert_eq(BattleRewards.money_gain([]), 0, "no spawned units, no money")
 
 
+# Battle 109 puts Felicity at level 7 beside both companion markers at level 1.
+# A fresh save deploys Veradux and Roald, and the original counts both markers
+# even though Roald has not joined yet (frame_42/DoAction_14.as:25, 86-92), so
+# it averages 3 and pays 36. Felicity alone would pay 130.
+func test_money_levels_count_both_companion_markers():
+	var save = PlayerSave.new_game("Test", 0)
+	assert_eq(save.party_deployed, [1, 2], "a fresh save deploys Veradux and Roald")
+	assert_false(Party.is_in_roster(save, 2), "Roald has not joined yet")
+	var levels = BattleRewards.money_levels(BattleSetup.load_battle(109), save, 9)
+	assert_eq(levels, [7, 1, 1], "Felicity and both markers")
+	assert_eq(BattleRewards.money_gain(levels), 36)
+	var story_levels = BattleRewards.money_levels(BattleSetup.load_battle(105), save, 9)
+	assert_eq(BattleRewards.money_gain(story_levels), 25, "a level 5 enemy and both markers")
+	save.level = 7
+	var training_levels = BattleRewards.money_levels(BattleSetup.load_battle(1001), save, 9)
+	assert_eq(BattleRewards.money_gain(training_levels), 25, "X resolves to 7 - 2 = 5 under train cap 9")
+
+
+# The original skips a slot whose level is 0 (frame_42/DoAction_14.as:88), and
+# battles 401 to 408 give their markers level 0, so 401 counts only its level
+# 16 enemy. A marker whose deployment slot holds 0 fails the spawn gate at line
+# 25 of the same file. The party screen leaves that 0 behind when it takes a
+# companion out of the team (DefineButton2_2895 on(press) line 11).
+func test_money_levels_skip_zero_levels_and_empty_deployment_slots():
+	var save = PlayerSave.new_game("Test", 0)
+	assert_eq(BattleRewards.money_levels(BattleSetup.load_battle(401), save, 30), [16])
+	save.party_deployed = [1, 0]
+	assert_eq(BattleRewards.money_levels(BattleSetup.load_battle(109), save, 30), [7, 1])
+
+
 func test_experience_gain():
 	assert_almost_eq(BattleRewards.experience_gain(1.0, 1), 90.0, 0.001, "equal levels at 1")
 	assert_almost_eq(BattleRewards.experience_gain(5.0, 1), 126.0, 0.001, "higher enemies boost xp")

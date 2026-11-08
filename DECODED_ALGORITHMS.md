@@ -174,7 +174,7 @@ Implemented in `scripts/battle/combat_unit.gd` (`from_character`).
 
 ## Victory money (frame_42/DoAction_14.as `krinAddNewUnit`, DefineSprite_3142/frame_9)
 
-Implemented in `scripts/battle/battle_rewards.gd` (`money_gain`), but `battle_scene.gd`'s `_finish_battle` feeds it different slots.
+Implemented in `scripts/battle/battle_rewards.gd`: `money_levels` picks the slots and levels, and `battle_scene.gd`'s `_finish_battle` hands them to `money_gain`.
 
 - `krinAddNewUnit` runs once per battle slot 2-6. A slot passes the spawn gate when its template id is positive, or when it is a companion marker whose deployment entry is set,
   `friendArrayX[players[a - 2] + 2] > 0` (line 25). The markers are -2 and -1, so with the default `friendArrayX = [1, 2]` (`frame_42/DoAction_17.as:18`) both pass even before that companion
@@ -183,8 +183,8 @@ Implemented in `scripts/battle/battle_rewards.gd` (`money_gain`), but `battle_sc
   the slot, after `"X"`/`"Z"` resolution, not the spawned unit's, and markers usually carry level 1.
 - The victory screen pays `round(0.7 * respecValue(moneyConstGain / totalEnemyGain))` with `respecValue(L) = 10 * L^1.5` (`DefineSprite_3142/frame_9/DoAction.as:39-43`,
   `frame_42/DoAction_16.as:1-4`).
-- The port averages only the enemy slots 2, 4 and 6. Computed from the battle records, that changes the pay of 50 story battles, for example 109 (36 in the original, 130 in the port) and 513
-  (309 against 823), and of training fights too: 1001 at player level 7 pays 25 against 78.
+- Averaging only the enemy slots 2, 4 and 6 would change the pay of 50 story battles, for example 109 (36 instead of 130) and 513 (309 instead of 823), and of training fights too: 1001
+  at player level 7 pays 25 instead of 78.
 
 ## Required target buffs (frame_42/DoAction_11.as)
 

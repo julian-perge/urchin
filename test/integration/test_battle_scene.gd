@@ -193,6 +193,28 @@ func test_story_battle_win_threads_cutscene_id_through_victory_flow():
 	ZoneManager.auto_start_battles = true
 
 
+# A win of battle 109 pays 36, because the original averages Felicity's level
+# 7 with the level 1 of both companion markers. Paying for Felicity alone
+# would give 130. The win is set before the battle loop starts, so the loop
+# goes straight to _finish_battle() and no fight is played.
+func test_victory_money_counts_the_companion_markers():
+	var save = PlayerSave.new_game("MoneyFlow", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 109, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_not_null(scene.get_node_or_null("VictoryScreen"), "victory screen shown on win")
+	assert_eq(save.euro, 36.0, "round(0.7 * respecValue((7 + 1 + 1) / 3))")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func test_is_point_over_radial_menu_area():
 	var save = PlayerSave.new_game("MenuAreaTest", 0)
 	save.skill_points = 8

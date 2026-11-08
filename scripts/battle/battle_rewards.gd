@@ -17,9 +17,10 @@
 # each companion marker whose deployment entry is set, which with the default
 # deployment is both markers, even before that companion has joined. Each
 # slot adds the level its battle record gives it, and markers usually carry
-# level 1. The XP input (EnemyXP/EnemyXP3) only counts enemy-team units. Both
-# helpers take level arrays so the caller controls that distinction;
-# unit_levels_from_slots() extracts them from a BattleRunner-style units
+# level 1. The XP input (EnemyXP/EnemyXP3) only counts enemy-team units.
+# apply_victory() takes the two inputs as separate level arrays:
+# money_levels() builds the money one from the battle record, and
+# unit_levels_from_slots() builds the XP one from a BattleRunner-style units
 # dictionary.
 #
 # No autoload references - keeping/kept drops go through the inventory layer
@@ -65,6 +66,30 @@ static func money_gain(spawned_unit_levels: Array) -> int:
 		total += level
 	var average: float = total / spawned_unit_levels.size()
 	return int(round(0.7000000000000001 * Leveling.respec_value(average)))
+
+
+# Lists the battle-record levels that the original averages into victory
+# money, one for each slot that the spawn gate in the header admits. It reads
+# save.party_deployed directly instead of Party.deployed_party_id, because the
+# original counts a deployed marker even when that companion has not joined
+# yet. A level of 0 is dropped before resolve_level runs, because
+# resolve_level would raise it to 1 and the original skips it.
+static func money_levels(battle: BattleFight, save: PlayerSave, train_cap: int) -> Array:
+	var levels: Array[Variant] = []
+	for i in battle.players.size():
+		var entry = battle.players[i]
+		var template_id: int = int(entry.get("id", 0)) if entry is Dictionary else int(entry)
+		var raw_level = battle.players_levels[i] if i < battle.players_levels.size() else 1
+		if template_id == 0 or (raw_level is not String and int(raw_level) == 0):
+			continue
+		if template_id < 0:
+			var deploy_index: int = template_id + 2
+			if deploy_index < 0 or deploy_index >= save.party_deployed.size():
+				continue
+			if int(save.party_deployed[deploy_index]) <= 0:
+				continue
+		levels.append(BattleSetup.resolve_level(raw_level, save.level, train_cap))
+	return levels
 
 
 # expWorkOut(): XP for the 0-100 bar. Bonus/penalty scales with the level
