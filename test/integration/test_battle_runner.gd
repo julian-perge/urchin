@@ -83,6 +83,25 @@ func test_from_character_populates_ai_fields():
 	assert_eq(veradux.move_pool_defense.size(), 1)
 
 
+# The expected values are what krinAddNewUnit (frame_42/DoAction_14.as) gives
+# Prison Guard on Normal. Below level 10 the original shrinks the difficulty
+# multipliers further, and level 10 is the first level where it does not.
+func test_from_character_shrinks_stats_below_level_10():
+	var expected_by_level: Dictionary = {
+		1: {"life": 212.0, "strength": 8.0, "magic": 4.0, "speed": 12.0},
+		5: {"life": 484.0, "strength": 16.0, "magic": 8.0, "speed": 23.0},
+		9: {"life": 986.0, "strength": 29.0, "magic": 14.0, "speed": 43.0},
+		10: {"life": 1193.0, "strength": 34.0, "magic": 17.0, "speed": 51.0},
+	}
+	for level in expected_by_level:
+		var expected: Dictionary = expected_by_level[level]
+		var guard: CombatUnit = CombatUnit.from_character(unit_templates[5], level, CombatUnit.Difficulty.NORMAL, 2)
+		assert_eq(guard.base_life, expected["life"], "life at level %d" % level)
+		assert_eq(guard.base_strength, expected["strength"], "strength at level %d" % level)
+		assert_eq(guard.base_magic, expected["magic"], "magic at level %d" % level)
+		assert_eq(guard.base_speed, expected["speed"], "speed at level %d" % level)
+
+
 func test_player_from_save_with_talent_passives():
 	var save = PlayerSave.new_game("Smoke", 0)
 	save.level = 5
@@ -169,7 +188,7 @@ func test_battle_51_end_game_phase():
 # formula and its AI picks moves with randi_range, so an unseeded run produced
 # a different number of misses every time and occasionally none at all, which
 # failed the count assert below and drifted the whole suite's assert total.
-# This seed gives 11 misses over 55 half-turns, the same every run. The global
+# This seed gives 6 misses over 45 half-turns, the same every run. The global
 # RNG is handed back at the end so the tests after this one are unaffected.
 func test_misses_are_move_events_not_a_separate_type():
 	seed(20260823)

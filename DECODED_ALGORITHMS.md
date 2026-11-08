@@ -135,8 +135,9 @@ Persisting the stance as `PlayerSave.ag_mode` is the port's choice, not the orig
 - `equipArray0 = [0, 11, 0, 4, 8, 5, 0]` (frame_180): White T-Shirt, Levo Jeans, Proverse All Stars, A Broken Pipe.
 - The same frame also resets `StatSets0 = [5, 6, 5, 3, 0]` (`frame_180/DoAction.as:8`), which is exactly that gear's bonuses (life 5, strength 6, magic 5, speed 3). The class buttons had already
   added the 19 level-1 points, split by class ratio, onto `StatSets0` through `assignPointsStart` (`frame_42/DoAction_15.as:57-78`), and `statPoints` stays 0 (`frame_41/DoAction_2.as:79`), so
-  the class split is thrown away and a new character holds only its gear bonuses. Every route from class select passes through frame 180 before the first battle. The port's
-  `PlayerSave.new_game` keeps the split.
+  the class split is thrown away and a new character holds only its gear bonuses. Every route from class select passes through frame 180 before battle 100, and the tutorial route
+  fights battle 2 on the way (`frame_165/DoAction.as`), still holding the class split because frame 180 has not run yet. The port's `PlayerSave.new_game` keeps only the split's rounding residue, and `GameData.new_game` equips the gear onto a zeroed
+  allocation.
 - Sell-back = `ceil(price * 0.15)` (DefineButton2_3015).
 
 ## Battle presentation per animation type (frame_217/PlaceObject2_3389_480 enterFrame, ~line 400)
@@ -162,14 +163,14 @@ identical numbers and an sswitch hit shows a green number over an element-colore
 
 ## Unit stats below level 10 (frame_42/DoAction_14.as `krinAddNewUnit`)
 
-Not ported: `CombatUnit.from_character` applies only the difficulty multipliers.
+Implemented in `scripts/battle/combat_unit.gd` (`from_character`).
 
 - Every unit built from a positive template id, enemies and guests alike, starts from the difficulty multipliers (lines 35-52): strength and magic x0.4 / 0.8 / 1, life x0.5 / 0.85 / 1 and
   speed x0.9 / 1 / 1 on Easy / Normal / Heroic.
 - Below level 10, lines 80-85 shrink them further, with `L` the battle-data level after `"X"`/`"Z"` resolution (lines 56-79): strength, magic and speed by `0.7 + 0.03 * L`, life by
   `0.5 + 0.05 * L`. Lines 135-138 then apply them to `getStat(ratio, L)`, and life also takes `vitLifeFactor`.
 - Companions (the -2/-1 markers) take the other branch and get neither multiplier (lines 216-220).
-- Prison Guard (ratios 10/10/5/12, `frame_42/DoAction_13.as:71`) on Normal at level 1 has life/strength/speed 212/8/12 in the original and 386/11/17 in the port.
+- Prison Guard (ratios 10/10/5/12, `frame_42/DoAction_13.as:71`) on Normal at level 1 has life/strength/speed 212/8/12, where the difficulty multipliers alone give 386/11/17.
 
 ## Victory money (frame_42/DoAction_14.as `krinAddNewUnit`, DefineSprite_3142/frame_9)
 
@@ -187,7 +188,7 @@ Implemented in `scripts/battle/battle_rewards.gd` (`money_gain`), but `battle_sc
 
 ## Required target buffs (frame_42/DoAction_11.as)
 
-Not ported: `ability.gd` does not read fields 23 and 24, and nothing gates on them.
+Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 23 and 24, and `battle_scene.gd`'s `_move_valid_for_target` darkens the orb when the target falls short.
 
 - When the player picks a move, the original refuses it with "The target's status does not meet the requirements of this move." if the target has fewer than `KRINABILITYB[24]` active buffs
   of element `KRINABILITYB[23]` (lines 60-64, counted by `checkBuffsOnUnit` at 129-146).

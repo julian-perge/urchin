@@ -169,6 +169,7 @@ func _apply_damage(target: CombatUnit, amount: float, did_crit: bool) -> Diction
 		"shielded_amount": shielded_amount,
 		"did_crit": did_crit,
 		"target_died": not target.active,
+		"sswitched": target.sswitch != 0,
 	}
 
 func _execute_heal(ability: Ability, caster: CombatUnit, target: CombatUnit, per_calc: float, focus_coef: float, speed_crit_calc: float) -> Dictionary:
@@ -200,7 +201,7 @@ func _execute_heal(ability: Ability, caster: CombatUnit, target: CombatUnit, per
 			target.life_n = 0
 			target.focus_n = 0
 			target.active = false
-		return {"type": ResultType.HEAL, "amount": amount, "did_crit": did_crit, "target_died": not target.active}
+		return {"type": ResultType.HEAL, "amount": amount, "did_crit": did_crit, "target_died": not target.active, "sswitched": true}
 
 func _execute_focus(ability: Ability, target: CombatUnit) -> Dictionary:
 	target.focus_n += ability.focus_amount_change

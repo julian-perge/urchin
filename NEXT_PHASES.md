@@ -113,8 +113,8 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     rounded rectangle. The source itself groups them that way. Also fixed along the way: buff id 0 (TWINGUARDIANS) is a real buff, not an empty-slot sentinel (the sentinel used
     everywhere else in the codebase is `buff_id: -1`) - the original filter silently dropped it.
   - A combat log panel - `CombatLogPanel` (the project's first `RichTextLabel` panel), off/hidden by default and toggled via a new "Log" button in the bottom bar's
-    `Panel3`, per the project owner's explicit choice. `_format_line()` mirrors `battle_scene.gd`'s `_play_events()` event-type match exactly, so every event type that already drives
-    animation/audio also gets a readable line, appended live as the fight plays rather than after the fact.
+    `Panel3`, per the project owner's explicit choice. `_format_line()` follows `battle_scene.gd`'s `_play_events()` event-type match, appending each line live as the fight plays rather
+    than after the fact. Not every event that drives audio gets a line: `PHASE_ADVANCED` plays music and writes nothing.
 
   GUT suite green: 147/147 tests (assert counts vary run to run since several integration tests drive a real RNG/AI battle to completion - one clean run: 731 asserts).
 
@@ -237,6 +237,9 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   **Corrected (2026-11-07):** the id fix covered 109, 409 and 513 only. All nine `battleCreationID` resets relabel the battle before them, so the same defect still hides 212, 308, 603 and 703,
   the zone 2, 3, 6 and 7 bosses, which `resources/battles/` holds as 299, 399, 699 and 999, plus the tutorial, battle 2, held as 49 (see `SWF_DIFFERENCES.md`). From the code, the zone 2 boss
   therefore cannot load and zone 3 never unlocks, the same way zone 2 did not before this fix.
+
+  **DONE (2026-11-07):** `MISLABELED_BATTLE_IDS` corrects all nine now, and `test_zone_progression.gd`'s `test_every_story_battle_and_the_tutorial_load` loads every story battle and the
+  tutorial.
 
   A real playthrough of the fixed battle 109 then surfaced two more bugs, both fixed: `_on_continue_pressed()` always returned to the current zone hub after a
   cutscene, when the original's `gotoSceneKrin` (frame_219) actually opens the zone map for CS_CUT2/CS_CUT4 (both unlock a new zone) and only stays on the hub for
