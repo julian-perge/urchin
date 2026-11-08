@@ -134,8 +134,14 @@ static func new_game(player_name: String, new_player_class: PlayerClass = Player
 	for i in starting_moves.size():
 		save.move_matrix[i] = starting_moves[i]
 	Party.initialize_save(save)
-	# Level-1 stat grant auto-spread across the class's ratio profile
-	# (assignPointsStart), which also fills the cached base stats.
+	# The class buttons spread the 19 level-1 stat points by class ratio
+	# (assignPointsStart), but frame_180/DoAction.as:7-8 then overwrites
+	# StatSets0 with the starting gear's bonuses before battle 100. So the
+	# spread is dropped here and only its rounding residue is kept, and
+	# GameData.new_game then equips that gear, which adds its bonuses onto the
+	# zeroed allocation.
 	save.stat_allocated = [0, 0, 0, 0, 0]
 	Leveling.assign_points_start(save)
+	save.stat_allocated = [0, 0, 0, 0, 0]
+	Leveling.compute_stats(save)
 	return save
