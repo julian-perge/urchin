@@ -27,6 +27,20 @@ func _counters(damage: float = 0.0, teammates: int = 0, turns: int = 10) -> Dict
 	}
 
 
+# The original adds to AchVal1 only when the target has no sswitch buff
+# (frame_42/DoAction_8.as:84-93), because damage under sswitch heals it.
+func test_damage_that_healed_under_sswitch_is_not_damage_dealt():
+	var runner := BattleRunner.new()
+	runner.events = [
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+			"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 10.0}},
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+			"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 7.0, "sswitched": true}},
+	]
+	var counters: Dictionary = Achievements.collect_battle_counters(runner, {})
+	assert_eq(counters["player_damage_dealt"], 10.0, "the hit that healed the target is left out")
+
+
 func test_the_tape():
 	assert_has(Achievements.check_battle_victory(save, 109, true, _counters()), 0)
 	assert_eq(Achievements.check_battle_victory(save, 109, false, _counters()), [], "repeat boss win does not count")

@@ -875,6 +875,16 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 			int(target_unit.life_n), int(target_unit.life_u),
 		])
 	match result.get("type"):
+		BattleManager.ResultType.DAMAGE when result.get("sswitched", false):
+			# Under sswitch this damage healed the target. The original draws its
+			# number in heal green and plays no hit animation or hit voice
+			# (frame_42/DoAction_8.as:133-149).
+			_float_text(target_slot, str(int(result.get("amount", 0))), MenuTheme.HEAL_COLOR, result.get("did_crit", false))
+			if target_unit != null:
+				_display_hp[target_slot] = minf(
+					_display_hp.get(target_slot, 0.0) + float(result.get("amount", 0)),
+					target_unit.life_u
+				)
 		BattleManager.ResultType.DAMAGE:
 			# KrinNumberShow: numbers colored by the move's ELEMENT; crits
 			# play the bigger "critical" variant of the same color.
@@ -895,10 +905,28 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 				# finishes await-ing. That made death wait for the attacker
 				# to get home first instead of landing with the killing blow.
 				_play_death(target_slot)
-			elif target_visual != null:
+			elif target_visual != null and target_unit != null and target_unit.stun == 0:
+				# The original skips the hit animation on a stunned target
+				# (frame_42/DoAction_8.as:101-104).
 				target_visual.set_state(CharacterVisual.State.HIT)
 			if target_unit != null:
 				AudioManagerAuto.voice(target_unit.voice_hit)
+		BattleManager.ResultType.HEAL when result.get("sswitched", false):
+			# Under sswitch this heal hurt the target. The original draws its
+			# number in the Shadow color, plays the hit animation unless the
+			# target is stunned, plays no hit voice, and plays the death at the
+			# impact when the heal kills (frame_42/DoAction_8.as:189-229).
+			_float_text(
+				target_slot, str(int(result.get("amount", 0))),
+				MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], result.get("did_crit", false)
+			)
+			_display_hp[target_slot] = maxf(
+				_display_hp.get(target_slot, 0.0) - float(result.get("amount", 0)), 0.0
+			)
+			if result.get("target_died", false):
+				_play_death(target_slot)
+			elif target_visual != null and target_unit != null and target_unit.stun == 0:
+				target_visual.set_state(CharacterVisual.State.HIT)
 		BattleManager.ResultType.HEAL:
 			_float_text(target_slot, "+%d" % int(result.get("amount", 0)), MenuTheme.HEAL_COLOR)
 			if target_unit != null:

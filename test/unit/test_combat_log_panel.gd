@@ -26,6 +26,28 @@ func test_format_damage_move_line():
 	assert_eq(panel._format_line(event, units), "Veradux hits Grulnak with Acid Slash for 42")
 
 
+func test_format_sswitched_damage_line_reads_as_a_heal():
+	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
+	var event: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_name": "Acid Slash",
+		"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 42.0, "did_crit": false, "target_died": false, "sswitched": true},
+	}
+	var line: String = panel._format_line(event, units)
+	assert_false(line.contains("hits"), "damage under sswitch healed the target, so the line can't say it hit")
+	assert_eq(line, "Veradux's Acid Slash heals Grulnak for 42", "the line still names the attack that did it")
+
+
+func test_format_sswitched_heal_line_reads_as_a_hit():
+	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
+	var event: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_name": "Heal",
+		"result": {"type": BattleManager.ResultType.HEAL, "amount": 42.0, "did_crit": false, "target_died": false, "sswitched": true},
+	}
+	assert_eq(panel._format_line(event, units), "Veradux hits Grulnak with Heal for 42")
+
+
 func test_format_miss_move_line():
 	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
 	var event: Dictionary = {

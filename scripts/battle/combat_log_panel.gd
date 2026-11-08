@@ -72,7 +72,11 @@ func _format_move_line(event: Dictionary, units: Dictionary) -> String:
 	var move_name: String = str(event.get("move_name", "a move"))
 	var result: Dictionary = event.get("result", {})
 	match result.get("type"):
+		BattleManager.ResultType.DAMAGE when result.get("sswitched", false):
+			return "%s's %s heals %s for %d" % [caster_name, move_name, target_name, int(result.get("amount", 0))]
 		BattleManager.ResultType.DAMAGE:
+			return "%s hits %s with %s for %d" % [caster_name, target_name, move_name, int(result.get("amount", 0))]
+		BattleManager.ResultType.HEAL when result.get("sswitched", false):
 			return "%s hits %s with %s for %d" % [caster_name, target_name, move_name, int(result.get("amount", 0))]
 		BattleManager.ResultType.HEAL:
 			return "%s heals %s for %d" % [caster_name, target_name, int(result.get("amount", 0))]
