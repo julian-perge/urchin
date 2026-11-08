@@ -93,3 +93,10 @@ def test_a_copy_refuses_before_it_runs_ffdec(tmp_path, monkeypatch):
     monkeypatch.setattr(strip, "run", lambda cmd: pytest.fail("ffdec ran"))
     with pytest.raises(StripError), strip.stripped_copy(path, {10: "a mask"}):
         pass
+
+
+def test_a_hide_list_refuses_a_clip_mask(tmp_path):
+    path = tmp_path / "movie.swf"
+    path.write_bytes(movie())
+    with pytest.raises(StripError, match="character 10 .*clip mask"):
+        strip.hide_list(path, {10: "a mask"})

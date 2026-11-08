@@ -180,10 +180,11 @@ entry names its evidence so you can check it instead of trusting it.
 - **Prove a check can fail.** The recomposition verifier was only trusted after
   shifting a rect 20px and pointing it at the wrong label and watching both
   push p99 from 8 to 69 and 182.
-- **Compare against a full-frame ffdec render**, masked to the pixels the
+- **Compare against an ffdec render**, masked to the pixels the
   recomposition actually draws and read at a percentile rather than a maximum.
-  The reference paints the stage behind everything, so about 29% of the frame
-  is background the recomposition never covers.
+  A whole-frame reference paints the stage behind everything, about 29% of the
+  battle frame, and its exact matches dilute the edges that matter, so
+  `verify_battle_screen.py` only counts pixels inside 333's box.
 - **Say whether you measured a causal claim or guessed it.** Withdraw a wrong
   claim rather than fixing it: `dc4c5b2` and `f068f87` are both corrections of
   earlier commits in this repo that had reasoned instead of measured.
