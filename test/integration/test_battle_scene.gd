@@ -443,6 +443,96 @@ func test_radial_menu_still_opens_when_every_equipped_move_is_on_cooldown():
 	ZoneManager.auto_start_battles = true
 
 
+# Corruption needs one Shadow buff on its target
+# (frame_42/DoAction_6.as:1613-1614), and the original refuses the pick until
+# the target holds one (frame_42/DoAction_11.as:60-64). It is a Psychological
+# starting move, so a new Psychological player could otherwise open every
+# battle with it.
+func test_corruption_needs_a_shadow_buff_on_its_target():
+	var save = PlayerSave.new_game("CorruptionGate", PlayerSave.PlayerClass.PSYCHOLOGICAL)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	var enemy: CombatUnit = scene.units[2]  # battle 100's Prison Guard
+	var corruption: Ability = MoveManagerAuto.get_move(479)
+	assert_eq(int(player.equipped_moves[1]), corruption.id, "Corruption is on bar slot 1")
+
+	scene._player_action_pending = true
+	scene._on_unit_clicked(2)
+	assert_true(scene._radial_menu.get_child(1).disabled, "Corruption is darkened on a target with no Shadow buff")
+
+	var shadow_debuff: Buff = BuffManagerAuto.get_buff_by_name("SHADOWINFUSION")
+	assert_eq(shadow_debuff.element_type, CombatUnit.Element.SHADOW)
+	enemy.apply_buff(shadow_debuff, 1, player)
+	assert_true(scene._move_valid_for_target(corruption, 2), "one active Shadow buff meets the requirement")
+
+	for buff_slot in enemy.buff_slots:
+		buff_slot["cd"] = 0
+	assert_false(scene._move_valid_for_target(corruption, 2), "an expired Shadow buff does not count")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Shatter needs three Ice buffs on its target (frame_42/DoAction_6.as:852-892).
+func test_shatter_needs_three_ice_buffs_on_its_target():
+	var save = PlayerSave.new_game("ShatterGate", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	var enemy: CombatUnit = scene.units[2]  # battle 100's Prison Guard
+	var shatter: Ability = MoveManagerAuto.get_move(224)
+	var ice_debuff: Buff = BuffManagerAuto.get_buff_by_name("FRAGILE")
+	var shadow_debuff: Buff = BuffManagerAuto.get_buff_by_name("SHADOWINFUSION")
+	assert_eq(ice_debuff.element_type, CombatUnit.Element.ICE)
+	assert_eq(shadow_debuff.element_type, CombatUnit.Element.SHADOW)
+
+	enemy.apply_buff(ice_debuff, 1, player)
+	enemy.apply_buff(ice_debuff, 1, player)
+	enemy.apply_buff(shadow_debuff, 1, player)
+	assert_false(scene._move_valid_for_target(shatter, 2), "two Ice buffs and a Shadow buff are one Ice buff short")
+	enemy.apply_buff(ice_debuff, 1, player)
+	assert_true(scene._move_valid_for_target(shatter, 2), "the third Ice buff meets the requirement")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Bloodshed costs 8% of total life (frame_42/DoAction_6.as:1029), and the
+# original refuses the pick unless life is above that cost
+# (frame_42/DoAction_11.as:80-84).
+func test_bloodshed_needs_more_life_than_its_cost():
+	var save = PlayerSave.new_game("BloodshedGate", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	var bloodshed: Ability = MoveManagerAuto.get_move(257)
+	assert_eq(bloodshed.health_cost_percentage, 0.08)
+
+	player.life_n = round(player.life_u * 0.08)
+	assert_false(scene._move_valid_for_target(bloodshed, 2), "life equal to the cost is refused")
+	player.life_n += 1
+	assert_true(scene._move_valid_for_target(bloodshed, 2), "one point above the cost is allowed")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # Regression test: a move-caused death used to only play when the QUEUED
 # "death" event was reached in _play_events(), which only happens after the
 # caster's whole move await resolves - for melee, that's after the runback

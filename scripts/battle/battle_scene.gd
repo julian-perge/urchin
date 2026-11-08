@@ -457,14 +457,24 @@ func _move_valid_for_target(move: Ability, slot: int) -> bool:
 	var target: CombatUnit = units.get(slot)
 	if target == null or not target.active:
 		return false
-	# Not enough focus darkens the orb, because picking it would waste the
-	# turn when the runner rejects it at execution. That is a port choice. The
-	# original darkens an orb only for a bad target or a cooldown
-	# (frame_217/PlaceObject3_3382_500 enterFrame, lines 15-29) and refuses a
-	# short-focus pick at the click with a message instead
-	# (frame_42/DoAction_11.as:65-69).
+	# Too little focus or life, or a target without the move's required
+	# buffs, darkens the orb. That is a port choice. The original darkens an
+	# orb only for a bad target or a cooldown (frame_217/PlaceObject3_3382_500
+	# enterFrame, lines 15-29) and refuses these picks at the click with a
+	# message instead (frame_42/DoAction_11.as:60-69 and 80-84).
 	var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
 	if player != null and move.focus_cost > 0 and player.focus_n < move.focus_cost:
+		return false
+	if player != null and player.life_n <= move.flat_life_cost + round(player.life_u * move.health_cost_percentage):
+		return false
+	var matching_buffs: int = 0
+	for buff_slot in target.buff_slots:
+		if buff_slot["cd"] <= 0:
+			continue
+		var buff: Buff = BuffManagerAuto.buffs_by_id.get(buff_slot["buff_id"])
+		if buff != null and buff.element_type == move.required_buff_element:
+			matching_buffs += 1
+	if matching_buffs < move.required_buff_count:
 		return false
 	var is_ally: bool = target.team_side == CombatUnit.Team.ONE
 	var is_self: bool = slot == BattleRunner.PLAYER_SLOT
