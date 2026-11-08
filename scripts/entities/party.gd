@@ -23,9 +23,11 @@ enum AggressionStance { PHALANX, DEFENSIVE, TACTICAL, AGGRESSIVE, RELENTLESS }
 
 # agModeAr (sonny2_agression.txt): stance columns 0-4 = Phalanx / Defensive /
 # Tactical / Aggressive / Relentless. Rows: [Aggression, LifeBoundary1,
-# LifeBoundary2, FocusAggression, FocusRegenLimit]. The battle stance
-# buttons pick the column; PlayerSave.ag_mode persists it (default
-# AggressionStance.TACTICAL).
+# LifeBoundary2, FocusAggression, FocusRegenLimit]. Every companion starts
+# each battle on Tactical, and a battle stance button applies its column to
+# that battle's unit only, so a pick never carries into the next battle. The
+# original does the same (frame_42/DoAction_14.as:208-213 and
+# DefineButton2_3289 on(press), lines 9-14).
 const AGGRESSION_PRESETS: Array = [
 	[0.0, 95.0, 0.0, 0.0, 30.0],     # Phalanx
 	[30.0, 90.0, 65.0, 30.0, 30.0],  # Defensive
@@ -140,19 +142,6 @@ static func deployed_party_id(save: PlayerSave, slot_marker: int) -> int:
 	return party_id
 
 
-static func get_ag_mode(save: PlayerSave, party_id: int) -> AggressionStance:
-	if party_id < 0 or party_id >= save.ag_mode.size():
-		return AggressionStance.TACTICAL
-	return clampi(int(save.ag_mode[party_id]), 0, AGGRESSION_PRESETS.size() - 1) as AggressionStance
-
-
-static func set_ag_mode(save: PlayerSave, party_id: int, mode: AggressionStance) -> void:
-	while save.ag_mode.size() < 6:
-		save.ag_mode.append(AggressionStance.TACTICAL)
-	if party_id >= 0 and party_id < save.ag_mode.size():
-		save.ag_mode[party_id] = clampi(mode, 0, AGGRESSION_PRESETS.size() - 1)
-
-
 static func apply_aggression_mode(unit: CombatUnit, mode: AggressionStance) -> void:
 	var preset: Array = AGGRESSION_PRESETS[clampi(mode, 0, AGGRESSION_PRESETS.size() - 1)]
 	unit.aggression = preset[0]
@@ -199,7 +188,7 @@ static func build_companion_unit(save: PlayerSave, party_id: int, unit_templates
 	unit.equipment_ids = definition["equipment"].duplicate()
 
 	unit.ai_enabled = true
-	apply_aggression_mode(unit, get_ag_mode(save, party_id))
+	apply_aggression_mode(unit, AggressionStance.TACTICAL)
 	unit.move_pool_attack = template.moves.get("attack", []).duplicate()
 	unit.move_pool_defense = template.moves.get("defense", []).duplicate()
 	unit.move_pool_absolute = []

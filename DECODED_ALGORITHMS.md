@@ -125,9 +125,11 @@ x^2 - 1.9 x + 0.9` of `value / (100 + 15 * level) + 1`, clamped to the track (ba
 Implemented in `scripts/entities/party.gd` (`AGGRESSION_PRESETS`). Columns 0-4 = Phalanx/Defensive/Tactical/Aggressive/Relentless; rows = [Aggression, LifeBoundary1, LifeBoundary2, FocusAggression,
 FocusRegenLimit]: `[0,30,50,70,90] / [95,90,75,40,2] / [0,65,35,15,1] / [0,30,70,15,100] / [30,30,30,5,5]` (read column-wise). Default stance 2 (Tactical).
 
-Persisting the stance as `PlayerSave.ag_mode` is the port's choice, not the original's. The original spawns every companion in Tactical at the start of every battle
-(`frame_42/DoAction_14.as:208-213`), the stance button writes only the live battle unit (`DefineButton2_3289` on(press), lines 9-14), and the saved `Krin.agMode` (seeded to 2 at
-`frame_42/DoAction_17.as:42`) is never read when a unit is created.
+The stance lasts one battle. The original spawns every companion in Tactical at the start of every battle (`frame_42/DoAction_14.as:208-213`), the stance button writes only the
+live battle unit (`DefineButton2_3289` on(press), lines 9-14), and the stance row highlights that unit's `agMode` through `setAG` (lines 12-14 of both copies in `DefineSprite_3312`),
+which runs when the row loads and again at each of the player's half-turns (`frame_217/PlaceObject2_3389_480` enterFrame, lines 725-726). The saved `Krin.agMode` (seeded to 2 at
+`frame_42/DoAction_17.as:42`, saved through `frame_42/DoAction_20.as:297`) is never read. The port does the same: `Party.build_companion_unit` applies Tactical, the stance row starts
+on Tactical, and `PlayerSave.ag_mode` stays in the save unread. The port used to save the pick there and build companions with it.
 
 ## Starting state (new game)
 

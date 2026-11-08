@@ -629,7 +629,6 @@ func _populate_stance_rows() -> void:
 	for child in stance_host.get_children():
 		child.queue_free()
 	_stance_rows.clear()
-	var save: PlayerSave = GameData.current_save
 	var row_y: float = 0.0
 	# Slot 5 first: the original's member bar container places its "p5" copy
 	# above its "p3" copy (DefineSprite 3312, y 12.60 vs y 50.10), matching the
@@ -648,10 +647,9 @@ func _populate_stance_rows() -> void:
 		for mode in row.buttons.size():
 			row.buttons[mode].pressed.connect(_on_stance_pressed.bind(party_id, mode, slot))
 		_stance_rows[party_id] = row
-		var initial_mode: Party.AggressionStance = (
-			Party.get_ag_mode(save, party_id) if save != null else Party.AggressionStance.TACTICAL
-		)
-		_refresh_stance_row(party_id, initial_mode)
+		# Party.build_companion_unit starts every companion on Tactical, so
+		# that is the stance each row shows until a button is pressed.
+		_refresh_stance_row(party_id, Party.AggressionStance.TACTICAL)
 		row_y += StanceRow.row_pitch()
 
 
@@ -669,9 +667,6 @@ func _party_id_for_unit(unit: CombatUnit) -> int:
 
 
 func _on_stance_pressed(party_id: int, mode: Party.AggressionStance, slot: int) -> void:
-	var save: PlayerSave = GameData.current_save
-	if save != null:
-		Party.set_ag_mode(save, party_id, mode)
 	var unit: CombatUnit = units.get(slot)
 	if unit != null:
 		Party.apply_aggression_mode(unit, mode)
