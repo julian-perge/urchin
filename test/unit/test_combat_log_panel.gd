@@ -58,6 +58,18 @@ func test_format_miss_move_line():
 	assert_eq(panel._format_line(event, units), "Veradux's Acid Slash misses Grulnak")
 
 
+func test_format_status_only_move_line():
+	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
+	var event: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_name": "Shatter Bolt",
+		"result": {"type": BattleManager.ResultType.STATUS_ONLY, "buff_applied": "SHATTERBOLT"},
+	}
+	assert_eq(panel._format_line(event, units), "Veradux hits Grulnak with Shatter Bolt")
+	event["result"]["buff_applied"] = ""
+	assert_eq(panel._format_line(event, units), "Veradux's Shatter Bolt has no effect on Grulnak", "no status landed, so nothing happened to the target")
+
+
 func test_format_death_line():
 	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
 	var event: Dictionary = {"type": BattleRunner.EventType.DEATH, "slot": 2}

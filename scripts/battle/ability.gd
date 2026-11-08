@@ -36,7 +36,7 @@ extends Resource
 # clip itself, which is shown untinted (its own art is pre-colored per
 # element). Melee never sets colortobe.
 @export var visual_effect_color: Color = Color.WHITE
-@export var effect_category: String  # "Full Damage" / "Heal" / "Focus" / "Attack" (unhandled, see execute_move)
+@export var effect_category: String  # "Full Damage" / "Heal" / "Focus" / "Attack" (status effect only, see execute_move)
 @export var health_cost_percentage: float
 @export var sound_effect_name: String
 

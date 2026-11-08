@@ -247,8 +247,9 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   between zones had never been built at all (`frame_449`'s procedurally-drawn `krinMapper.lineMC`, colored by unlock state) - ported into a new
   `scripts/zones/zone_map_connectors.gd`. GUT suite green: 104/104 tests, 629 asserts.
 
-- **Shatter Bolt**: the one `"Attack"`-category move. **Corrected (2026-11-07):** this used to say the original never handled it either. The original's `executeMove` has no `"Attack"`
-  branch, but its conductor still applies the move's status effect, so Shatter Bolt stuns its target in the original and does nothing in the port (see `KNOWN_GAPS.md`).
+- **Shatter Bolt** - **DONE (2026-11-07)**: the one `"Attack"`-category move. **Corrected (2026-11-07):** this used to say the original never handled it either. The original's
+  `executeMove` has no `"Attack"` branch, but its conductor still applies the move's status effect, so Shatter Bolt stuns its target. The port now does the same:
+  `BattleManager.execute_move()` returns a `STATUS_ONLY` result with no amount and still applies the status (see `KNOWN_GAPS.md`).
 
 ## Ability menu redesign
 

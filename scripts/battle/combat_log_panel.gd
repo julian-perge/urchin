@@ -84,5 +84,9 @@ func _format_move_line(event: Dictionary, units: Dictionary) -> String:
 			return "%s restores %s's focus by %d" % [caster_name, target_name, int(result.get("amount", 0))]
 		BattleManager.ResultType.MISS:
 			return "%s's %s misses %s" % [caster_name, move_name, target_name]
+		BattleManager.ResultType.STATUS_ONLY:
+			if str(result.get("buff_applied", "")) == "":
+				return "%s's %s has no effect on %s" % [caster_name, move_name, target_name]
+			return "%s hits %s with %s" % [caster_name, target_name, move_name]
 		_:
 			return ""

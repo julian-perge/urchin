@@ -14,7 +14,7 @@ Two differences from the original remain. The original removes the buffs with th
 (`frame_42/DoAction_10.as:344`) and the dispel walks the slots in array order, while `_resolve_dispels()` walks `buff_slots` in insertion order. And the original recomputes the target's stats
 once, after the hit (line 103 of the conductor, `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as`), while `_resolve_dispels()` recomputes them before it.
 
-## "Attack" effect_category
+## "Attack" effect_category - RESOLVED (2026-11-07)
 
 One move in the entire dataset (479 total) has `effect_category == "Attack"`: **Shatter Bolt** (has a status effect, `SHATTERBOLT`).
 The original AS3 `executeMove()` only branches on `"Full Damage"`/`"Heal"`/`"Focus"`, so Shatter Bolt deals no damage in the source game either.
@@ -23,8 +23,9 @@ The original AS3 `executeMove()` only branches on `"Full Damage"`/`"Heal"`/`"Foc
 move's status effect after `executeMove()` whatever its category (conductor lines 70-102). Shatter Bolt's proc chance is 2.4, so every hit applies `SHATTERBOLT`, a unique Ice debuff with stun
 contribution 1 and duration 2 (`frame_42/DoAction_6.as:1716-1719`, `frame_42/DoAction_10.as:1629-1636`): in the original the move stuns its target. Frost Terror is the unit that uses it.
 
-`BattleManager.execute_move()` currently `push_warning()`s and returns `{}` for any unhandled category, before it reaches `_apply_status_effect()`, so in the port the stun never lands. It
-affects exactly one move.
+`BattleManager.execute_move()` used to `push_warning()` and return `{}` for any category it doesn't compute, before it reached `_apply_status_effect()`, so in the port the stun never
+landed. Such a category now returns a `STATUS_ONLY` result with no amount, and the status effect is applied after it the way the conductor does. Shatter Bolt stuns its target, the battle
+scene draws no number for it, and the combat log names the move and target (`test_shatter_bolt_stuns_its_target`, `test_shatter_bolt_impact_starts_the_stun_and_draws_no_number`).
 
 ## Stun / Silence / Reflect - ALL RESOLVED (2026-07-18)
 

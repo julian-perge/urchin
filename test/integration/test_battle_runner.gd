@@ -209,6 +209,29 @@ func test_misses_are_move_events_not_a_separate_type():
 	randomize()
 
 
+# Shatter Bolt (move 521) is the one move whose effect_category is "Attack",
+# and the original's executeMove() has no branch for that category. The
+# conductor still applies the move's status effect after executeMove(), and a
+# proc chance of 2.4 means every hit lands SHATTERBOLT, a unique Ice debuff with
+# stun 1 and duration 2 (frame_42/DoAction_6.as:1716-1719,
+# frame_42/DoAction_10.as:1629-1636).
+func test_shatter_bolt_stuns_its_target():
+	var frost_terror: CombatUnit = CombatUnit.from_character(unit_templates[25], 9, CombatUnit.Difficulty.HARD, 2)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var manager: BattleManager = autofree(BattleManager.new())
+	var result: Dictionary = manager.execute_move(moves_by_id[521], frost_terror, target, buffs_by_name)
+
+	assert_false(result.has("amount"), "Shatter Bolt deals no damage, so its result carries no amount")
+	var shatterbolt: Buff = buffs_by_name["SHATTERBOLT"]
+	var turns_left: Array = []
+	for slot in target.buff_slots:
+		if slot["buff_id"] == shatterbolt.id:
+			turns_left.append(slot["cd"])
+	assert_eq(turns_left, [2], "the target holds one SHATTERBOLT with its full duration of 2")
+	assert_eq(target.stun, 1.0, "SHATTERBOLT stuns by 1")
+	assert_push_warning_count(0, "execute_move takes move 521 without a warning")
+
+
 # Runs a full battle with AI on both sides; returns event-type counts.
 func _assert_battle_runs(battle_id: int) -> Dictionary:
 	var battle: BattleFight = battles.get(battle_id)
