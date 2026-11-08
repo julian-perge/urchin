@@ -47,8 +47,9 @@ from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import parse_swf_xml, snapshot_timeline
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev.swf import timeline
+from urchin_dev.swf.swf_index import read_swf
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "menu" / "portraits"
 ZOOM = 5.0
@@ -81,9 +82,7 @@ def union_bbox(images):
 
 
 def main():
-    xml = WEB_SWF_XML.read_text()
-    _shapes, _sprites, _exports = parse_swf_xml(WEB_SWF_XML)
-    _snaps, labels = snapshot_timeline(xml, FACE_CLIP, set(range(1, 400)))
+    labels = timeline.labels(read_swf(WEB_SWF), FACE_CLIP)
     print(
         f"labels found: {len(labels)}, unique frames: {len(set(labels.values()))}",
         file=sys.stderr,

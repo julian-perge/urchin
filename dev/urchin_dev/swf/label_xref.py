@@ -296,18 +296,17 @@ class Resolver:
         self.placers: dict[int, set[int]] = defaultdict(set)
         for p in index.placements:
             if p.character_id is None:
+                # Neither SWF has a move that names a depth, so this raises
+                # on one rather than resolving it through code nothing runs.
+                if p.name is not None:
+                    raise ValueError(
+                        f"timeline {p.owner} frame {p.frame} depth {p.depth}:"
+                        f" move naming its depth {p.name!r}"
+                    )
                 continue
             self.placers[p.character_id].add(p.owner)
             if p.name is not None:
                 self.names[p.owner][p.name].add(p.character_id)
-        # A name placed by a move-only PlaceObject keeps the character
-        # already at that depth, so resolve those through the depth.
-        at_depth: dict[tuple[int, int], int] = {}
-        for p in index.placements:
-            if p.character_id is not None:
-                at_depth[(p.owner, p.depth)] = p.character_id
-            elif p.name is not None and (p.owner, p.depth) in at_depth:
-                self.names[p.owner][p.name].add(at_depth[(p.owner, p.depth)])
         self.labels: dict[int, dict[str, tuple[str, int]]] = defaultdict(dict)
         self.label_at: dict[int, dict[int, str]] = defaultdict(dict)
         for label in index.labels:

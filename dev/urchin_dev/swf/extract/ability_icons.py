@@ -52,9 +52,10 @@ from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF_XML
-from urchin_dev.swf import snapshot_timeline
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev.swf import timeline
 from urchin_dev.swf.prepare_extract_swf import require_extract_swf
+from urchin_dev.swf.swf_index import read_swf
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "abilities"
 
@@ -80,8 +81,7 @@ def run(cmd: list[str]) -> subprocess.CompletedProcess:
 
 def main():
     swf = require_extract_swf()
-    xml = WEB_SWF_XML.read_text()
-    _snaps, labels = snapshot_timeline(xml, ICON_SPRITE, set())
+    labels = timeline.labels(read_swf(WEB_SWF), ICON_SPRITE)
     print(f"icon labels: {len(labels)}", file=sys.stderr)
 
     size = (int(ICON_HALF * 2 * ZOOM), int(ICON_HALF * 2 * ZOOM))
@@ -152,10 +152,7 @@ def main():
                     )
                 canvas.alpha_composite(
                     content,
-                    (
-                        (size[0] - content.width) // 2,
-                        (size[1] - content.height) // 2,
-                    ),
+                    ((size[0] - content.width) // 2, (size[1] - content.height) // 2),
                 )
             file_name = sanitize(label) + ".png"
             canvas.save(OUT_DIR / file_name)

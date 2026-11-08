@@ -37,9 +37,9 @@ from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import root_placements, snapshot_timeline
-from urchin_dev.swf.xml_lib import find_matrix, sprite_body
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev.swf import timeline
+from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
 HALL_DIR = REPO_ROOT / "assets" / "backgrounds" / "battle"
 SKY_DIR = REPO_ROOT / "assets" / "backgrounds" / "sky"
@@ -93,10 +93,6 @@ MEMBER_BAR_PANEL = 3309
 # the author's placeholder, so only its position is wanted here.
 NAME_FIELD = 3308
 
-# Matches the whole tag or its closing partner, so a walk can tell a
-# self-closing PlaceObject from one wrapping child elements.
-_ITEM_TOKENS = re.compile(r"<item\b[^>]*?(/?)>|</item>")
-
 LAYOUT_JSON = HALL_DIR / "battle_layout.json"
 FRAME_LABEL = "KRINBATTLESCENE"
 
@@ -120,56 +116,24 @@ def run(cmd: list[str]) -> subprocess.CompletedProcess:
     return proc
 
 
-def sprite_label_frames(xml: str, sprite: int) -> dict[str, int]:
+def sprite_label_frames(index: SwfIndex, sprite: int) -> dict[str, int]:
     """-> {frame label: frame number} for one sprite's own timeline."""
-    _snaps, labels = snapshot_timeline(xml, sprite, set())
+    labels = timeline.labels(index, sprite)
     if not labels:
         raise RuntimeError(f"sprite {sprite} has no frame labels")
     return labels
 
 
-def frame_one_placements(
-    xml: str, sprite: int
-) -> dict[int, tuple[int, str, float, float]]:
-    """-> {depth: (characterId, instance name, x, y)} for one sprite's first
-    frame, with the translate converted from twips to design px.
-
-    This is the same walk zone_hub.py's orb_layers does. It is written out
-    again rather than shared, because the two want different things back and a
-    little repetition reads better here than a parameterised helper.
-    """
-    body = sprite_body(xml, sprite)
-    out: dict[int, tuple[int, str, float, float]] = {}
-    depth = 0
-    start = None
-    for token in _ITEM_TOKENS.finditer(body):
-        text = token.group(0)
-        if text == "</item>":
-            depth -= 1
-            if depth == 0 and start is not None:
-                element = body[start : token.end()]
-                cid = re.search(r'characterId="(\d+)"', element)
-                place_depth = re.search(r'depth="(\d+)"', element)
-                if cid is not None and place_depth is not None:
-                    name = re.search(r'name="([^"]*)"', element)
-                    matrix = find_matrix(element)
-                    out[int(place_depth.group(1))] = (
-                        int(cid.group(1)),
-                        name.group(1) if name else "",
-                        matrix[4] / 20.0,
-                        matrix[5] / 20.0,
-                    )
-                start = None
-            continue
-        self_closing = bool(token.group(1))
-        if depth == 0:
-            if 'type="ShowFrameTag"' in text:
-                break
-            if "PlaceObject" in text and not self_closing:
-                start = token.start()
-        if not self_closing:
-            depth += 1
-    return out
+def first_frame_offsets(
+    index: SwfIndex, sprite: int, character: int
+) -> list[tuple[float, float]]:
+    """-> where one sprite's first frame places `character`, one (x, y) in
+    design px per placement, sorted."""
+    return sorted(
+        (layer.matrix[4] / 20.0, layer.matrix[5] / 20.0)
+        for layer in timeline.frames(index, sprite)[0].values()
+        if layer.character_id == character
+    )
 
 
 def render_labels(
@@ -369,15 +333,15 @@ def local_content_rect(swf: Path, sprite: int) -> tuple[float, float, float, flo
         shutil.rmtree(work, ignore_errors=True)
 
 
-def placement_origin(xml: str, character: int) -> tuple[float, float]:
+def placement_origin(index: SwfIndex, character: int) -> tuple[float, float]:
     """-> where the battle frame places one character, in design px."""
-    _frame, placements = root_placements(xml, FRAME_LABEL)
-    placed = [e for e in placements.values() if e.get("cid") == character]
+    frame = timeline.frames(index, 0)[timeline.frame_of(index, 0, FRAME_LABEL) - 1]
+    placed = [layer for layer in frame.values() if layer.character_id == character]
     if len(placed) != 1:
         raise RuntimeError(
             f"character {character} placed {len(placed)} times on {FRAME_LABEL}"
         )
-    matrix = placed[0]["mat"]
+    matrix = placed[0].matrix
     return (matrix[4] / 20.0, matrix[5] / 20.0)
 
 
@@ -391,9 +355,11 @@ def rect_entry(rect) -> dict[str, float]:
     }
 
 
-def layout_rects(swf: Path, xml: str, sprite: int, frames: dict[str, int]) -> dict:
+def layout_rects(
+    swf: Path, index: SwfIndex, sprite: int, frames: dict[str, int]
+) -> dict:
     """-> {label: {x, y, w, h}} on the 800x575 stage, in design px."""
-    origin = placement_origin(xml, sprite)
+    origin = placement_origin(index, sprite)
 
     work = Path(tempfile.mkdtemp(prefix="battle_layout_"))
     try:
@@ -435,14 +401,14 @@ def layout_rects(swf: Path, xml: str, sprite: int, frames: dict[str, int]) -> di
         shutil.rmtree(work, ignore_errors=True)
 
 
-def chrome_rects(swf: Path, xml: str) -> dict:
+def chrome_rects(swf: Path, index: SwfIndex) -> dict:
     """-> {name: {x, y, w, h}} on the 800x575 stage, in design px.
 
     The chrome characters carry no frame labels and hold a single frame each,
     so this renders them at frame 1 instead of walking a label list the way
     layout_rects does.
     """
-    origins = {cid: placement_origin(xml, cid) for cid in CHROME}
+    origins = {cid: placement_origin(index, cid) for cid in CHROME}
     work = Path(tempfile.mkdtemp(prefix="battle_chrome_layout_"))
     try:
         for fmt in ("png", "svg"):
@@ -482,7 +448,7 @@ def chrome_rects(swf: Path, xml: str) -> dict:
         shutil.rmtree(work, ignore_errors=True)
 
 
-def stance_row_layout(swf: Path, xml: str) -> dict:
+def stance_row_layout(swf: Path, index: SwfIndex) -> dict:
     """-> one member bar's internal layout in design px, measured off the SWF.
 
     Offsets are from the bar's own top-left corner, which is what StanceRow
@@ -492,22 +458,17 @@ def stance_row_layout(swf: Path, xml: str) -> dict:
     """
     bar = local_content_rect(swf, MEMBER_BAR)
     icon = local_content_rect(swf, STANCE_ICONS)
-    inside_bar = frame_one_placements(xml, MEMBER_BAR)
-    inside_button = frame_one_placements(xml, STANCE_BUTTON)
-    inside_container = frame_one_placements(xml, MEMBER_BARS)
 
-    buttons = sorted(
-        (x, y) for cid, _name, x, y in inside_bar.values() if cid == STANCE_BUTTON
-    )
+    buttons = first_frame_offsets(index, MEMBER_BAR, STANCE_BUTTON)
     if len(buttons) != 5:
         raise RuntimeError(f"{MEMBER_BAR} places {len(buttons)} stance buttons, want 5")
-    names = [(x, y) for c, _n, x, y in inside_bar.values() if c == NAME_FIELD]
+    names = first_frame_offsets(index, MEMBER_BAR, NAME_FIELD)
     if len(names) != 1:
         raise RuntimeError(f"{MEMBER_BAR} places {len(names)} name fields, want 1")
-    pics = [(x, y) for c, _n, x, y in inside_button.values() if c == STANCE_ICONS]
+    pics = first_frame_offsets(index, STANCE_BUTTON, STANCE_ICONS)
     if len(pics) != 1:
         raise RuntimeError(f"{STANCE_BUTTON} places {len(pics)} icons, want 1")
-    rows = sorted(y for c, _n, _x, y in inside_container.values() if c == MEMBER_BAR)
+    rows = sorted(y for _x, y in first_frame_offsets(index, MEMBER_BARS, MEMBER_BAR))
     if len(rows) != 2:
         raise RuntimeError(f"{MEMBER_BARS} places {len(rows)} member bars, want 2")
 
@@ -529,9 +490,9 @@ def stance_row_layout(swf: Path, xml: str) -> dict:
 
 
 def main():
-    xml = WEB_SWF_XML.read_text()
-    halls = sprite_label_frames(xml, HALL_SPRITE)
-    skies = sprite_label_frames(xml, SKY_SPRITE)
+    index = read_swf(WEB_SWF)
+    halls = sprite_label_frames(index, HALL_SPRITE)
+    skies = sprite_label_frames(index, SKY_SPRITE)
 
     work = Path(tempfile.mkdtemp(prefix="battle_screen_swf_"))
     try:
@@ -556,33 +517,33 @@ def main():
         # measuring against the unstripped SWF would inflate their y and h
         # past what the PNGs above were actually cropped to.
         layout = {
-            "halls": layout_rects(stripped, xml, HALL_SPRITE, halls),
-            "skies": layout_rects(stripped, xml, SKY_SPRITE, skies),
+            "halls": layout_rects(stripped, index, HALL_SPRITE, halls),
+            "skies": layout_rects(stripped, index, SKY_SPRITE, skies),
         }
         # The chrome renders from this same stripped copy. 2676 sits nowhere in
         # the four chrome characters' trees so it changes nothing for them, and
         # 3312 has to be gone or the bottom bar bakes in the member bars.
         print(f"chrome ({len(CHROME)}):", file=sys.stderr)
         render_chrome(stripped)
-        layout["chrome"] = chrome_rects(stripped, xml)
+        layout["chrome"] = chrome_rects(stripped, index)
 
         print("stance button art:", file=sys.stderr)
         render_labels(
             stripped,
             STANCE_ICONS,
-            sprite_label_frames(xml, STANCE_ICONS),
+            sprite_label_frames(index, STANCE_ICONS),
             STANCE_DIR,
             "",
         )
         render_labels(
             stripped,
             STANCE_COVER,
-            sprite_label_frames(xml, STANCE_COVER),
+            sprite_label_frames(index, STANCE_COVER),
             STANCE_DIR,
             "cover_",
         )
         render_member_bar_panel(stripped)
-        layout["stance_row"] = stance_row_layout(stripped, xml)
+        layout["stance_row"] = stance_row_layout(stripped, index)
     finally:
         shutil.rmtree(work, ignore_errors=True)
 

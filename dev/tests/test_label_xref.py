@@ -4,18 +4,27 @@
 from __future__ import annotations
 
 import json
+import struct
 from pathlib import Path
 
 import pytest
+from test_swf_index import place2, swf, tag
 from urchin_dev import ACTION_SCRIPT
 from urchin_dev.swf.label_xref import (
     BATTLES_JSON,
     OUT,
+    Resolver,
     goto_calls,
     load_value_sets,
     parse_script_path,
     receiver_segments,
     unescape,
+)
+from urchin_dev.swf.swf_index import (
+    TAG_DEFINE_SHAPE,
+    TAG_PLACE_OBJECT2,
+    TAG_SHOW_FRAME,
+    parse_swf,
 )
 
 
@@ -197,3 +206,11 @@ def test_gotos_inside_a_function_are_marked():
 
 def test_unescape_undoes_ffdec_quotes():
     assert unescape(r"Guard\'s Leggings") == "Guard's Leggings"
+
+
+def test_the_resolver_refuses_a_move_that_names_its_depth():
+    shape = tag(TAG_DEFINE_SHAPE, struct.pack("<H", 10) + b"\0\0\0\0\0")
+    named_move = tag(TAG_PLACE_OBJECT2, bytes([0x21]) + struct.pack("<H", 1) + b"b1\0")
+    index = parse_swf(swf(shape, place2(1, cid=10), named_move, tag(TAG_SHOW_FRAME)))
+    with pytest.raises(ValueError, match="timeline 0 frame 1 depth 1: move naming"):
+        Resolver(index)

@@ -50,8 +50,8 @@ from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, STEAM_SWF, STEAM_SWF_XML, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import parse_swf_xml
+from urchin_dev import FFDEC, REPO_ROOT, STEAM_SWF, WEB_SWF
+from urchin_dev.swf.swf_index import read_swf
 
 SPRITES = REPO_ROOT / "resources" / "sprites"
 OFFSETS = SPRITES / "doll_offsets.json"
@@ -155,15 +155,15 @@ def recover_rect(centre: tuple[float, float], canvas: tuple[int, int], bbox):
     )
 
 
-def render_swf(xml_path: Path, swf_path: Path, names: list[str]):
+def render_swf(swf_path: Path, names: list[str]):
     """-> (rects, unresolved, grown). rects maps name to its design-px rect."""
-    _shapes, sprites, exports = parse_swf_xml(xml_path)
+    index = read_swf(swf_path)
 
     wanted: dict[int, str] = {}
     unresolved: list[str] = []
     for name in names:
-        cid = exports.get(name)
-        if cid is None or cid not in sprites:
+        cid = index.exports.get(name)
+        if cid is None or cid not in index.sprite_frames:
             unresolved.append(name)
             continue
         wanted[cid] = name
@@ -230,16 +230,14 @@ def main():
     names = sorted(p.stem for p in SPRITES.glob("*.png"))
     print(f"doll sprites on disk: {len(names)}", file=sys.stderr)
 
-    rects, unresolved, grown = render_swf(WEB_SWF_XML, WEB_SWF, names)
+    rects, unresolved, grown = render_swf(WEB_SWF, names)
     print(
         f"web SWF: {len(rects)} rendered, {len(grown)} grown by a filter",
         file=sys.stderr,
     )
 
     if unresolved:
-        steam_rects, unresolved, steam_grown = render_swf(
-            STEAM_SWF_XML, STEAM_SWF, sorted(unresolved)
-        )
+        steam_rects, unresolved, steam_grown = render_swf(STEAM_SWF, sorted(unresolved))
         rects.update(steam_rects)
         grown.extend(steam_grown)
         print(

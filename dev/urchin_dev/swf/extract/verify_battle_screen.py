@@ -26,8 +26,8 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from urchin_dev import FFDEC, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import root_placements
+from urchin_dev import FFDEC, WEB_SWF
+from urchin_dev.swf import timeline
 from urchin_dev.swf.extract.battle_screen import (
     FIGHTER_RIG,
     FRAME_LABEL,
@@ -37,6 +37,7 @@ from urchin_dev.swf.extract.battle_screen import (
     ZOOM,
     run,
 )
+from urchin_dev.swf.swf_index import read_swf
 
 # Every character the battle frame places except the hall (3435) and the sky
 # (3454), so the reference render shows those two alone.
@@ -75,8 +76,7 @@ TOLERANCE = 8
 
 
 def main():
-    xml = WEB_SWF_XML.read_text()
-    frame, _placements = root_placements(xml, FRAME_LABEL)
+    frame = timeline.frame_of(read_swf(WEB_SWF), 0, FRAME_LABEL)
     layout = json.loads(LAYOUT_JSON.read_text())
 
     work = Path(tempfile.mkdtemp(prefix="verify_battle_"))

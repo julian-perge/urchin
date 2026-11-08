@@ -62,8 +62,9 @@ from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import root_placements
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev.swf import timeline
+from urchin_dev.swf.swf_index import read_swf
 
 OUT_MENU = REPO_ROOT / "assets" / "ui" / "menu"
 CARDS_DIR = OUT_MENU / "class_cards"
@@ -151,10 +152,10 @@ def stage_origins(placements) -> dict[str, tuple[float, float]]:
     """-> {class: (x, y)} where the main timeline places each card sprite."""
     origins = {}
     for name, cid in CARDS.items():
-        placed = [e for e in placements.values() if e.get("cid") == cid]
+        placed = [p for p in placements.values() if p.character_id == cid]
         if len(placed) != 1:
             raise RuntimeError(f"{name} (cid {cid}) placed {len(placed)} times")
-        matrix = placed[0]["mat"]
+        matrix = placed[0].matrix
         origins[name] = (matrix[4] / 20.0, matrix[5] / 20.0)
     return origins
 
@@ -219,9 +220,9 @@ def render_background(placements, frame_number: int, out_path: Path) -> None:
     character deleted, leaving the background the menu screens share."""
     foreground = sorted(
         {
-            entry["cid"]
-            for depth, entry in placements.items()
-            if depth > BACKGROUND_MAX_DEPTH and "cid" in entry
+            layer.character_id
+            for depth, layer in placements.items()
+            if depth > BACKGROUND_MAX_DEPTH
         }
     )
     work = Path(tempfile.mkdtemp(prefix="start_background_"))
@@ -259,8 +260,9 @@ def render_background(placements, frame_number: int, out_path: Path) -> None:
 
 
 def main():
-    xml = WEB_SWF_XML.read_text()
-    frame_number, placements = root_placements(xml, FRAME_LABEL)
+    index = read_swf(WEB_SWF)
+    frame_number = timeline.frame_of(index, 0, FRAME_LABEL)
+    placements = timeline.frames(index, 0)[frame_number - 1]
     print(f"{FRAME_LABEL}: main-timeline frame {frame_number}", file=sys.stderr)
 
     render_background(placements, frame_number, OUT_MENU / "start_background.png")

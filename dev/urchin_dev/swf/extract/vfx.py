@@ -44,16 +44,27 @@ import sys
 import tempfile
 from pathlib import Path
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import parse_swf_xml
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev.swf.swf_index import read_swf
 
 ZOOM = 2.0
 
 BOLT_NAMES = [
-    "KRIN.BLADEWHITE", "KRIN.POISONBOLT2", "KRIN.REDBLADE", "KRIN.REDBOLT",
-    "KRIN.SHADOWBLADE", "KRIN.SHADOWSHOCK", "KRIN.YELLOWBLADE",
-    "Krin.Electrobolt", "Krin.Electrobolt2", "Krin.Firebolt", "Krin.Iceball",
-    "Krin.Iceblade", "Krin.Icebolt", "Krin.Magicbolt", "Krin.Poisonbolt",
+    "KRIN.BLADEWHITE",
+    "KRIN.POISONBOLT2",
+    "KRIN.REDBLADE",
+    "KRIN.REDBOLT",
+    "KRIN.SHADOWBLADE",
+    "KRIN.SHADOWSHOCK",
+    "KRIN.YELLOWBLADE",
+    "Krin.Electrobolt",
+    "Krin.Electrobolt2",
+    "Krin.Firebolt",
+    "Krin.Iceball",
+    "Krin.Iceblade",
+    "Krin.Icebolt",
+    "Krin.Magicbolt",
+    "Krin.Poisonbolt",
 ]
 TRAIL_CLIP_NAME = "KrinTrail"
 # "KrinTrail" (the export-table name) resolves to sprite id 3 - a 1-frame
@@ -127,7 +138,7 @@ def _extract_clip(name: str, cid: int, work_dir: Path, category_dir: Path) -> bo
 
 
 def main():
-    _shapes, _sprites, exports = parse_swf_xml(WEB_SWF_XML)
+    exports = read_swf(WEB_SWF).exports
     ci_exports = {k.lower(): (k, v) for k, v in exports.items()}
 
     def resolve(name: str):

@@ -28,14 +28,13 @@
 # THE ORB ITSELF is two shapes, not three: 3196 places DefineShape3 3195 twice
 # (a large arc pair, once upright and once turned a quarter turn) and 3194
 # once (a smaller arc pair) on top. scenes/orb.tscn had the two shapes the
-# wrong way round; ORB_LAYERS below records what the SWF actually does, and
-# main() prints it so the scene can be checked against the source.
+# wrong way round, so main() prints 3196's first frame and the scene can be
+# checked against the source.
 #
 # Run: uv run extract_zone_hub
 from __future__ import annotations
 
 import math
-import re
 import shutil
 import subprocess
 import sys
@@ -44,9 +43,9 @@ from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import snapshot_timeline
-from urchin_dev.swf.xml_lib import find_matrix, sprite_body
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev.swf import timeline
+from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
 HUB_DIR = REPO_ROOT / "assets" / "backgrounds" / "hub"
 ORB_DIR = REPO_ROOT / "assets" / "ui" / "orbs"
@@ -79,13 +78,6 @@ ORB_BUTTONS = tuple(range(3186, 3194))
 # in scenes/orb.tscn.
 ORB_SHAPES: dict[int, str] = {3194: "orb_arc_inner", 3195: "orb_arc_outer"}
 
-_ITEM_TOKENS = re.compile(r"<item\b[^>]*?(/?)>|</item>")
-
-
-def attribute(name: str, element: str) -> str | None:
-    found = re.search(rf'{name}="([^"]*)"', element)
-    return found.group(1) if found else None
-
 
 def run(cmd: list[str]) -> subprocess.CompletedProcess:
     proc = subprocess.run(cmd, capture_output=True, text=True)
@@ -97,13 +89,12 @@ def run(cmd: list[str]) -> subprocess.CompletedProcess:
     return proc
 
 
-def zone_frames(xml: str) -> dict[int, int]:
+def zone_frames(index: SwfIndex) -> dict[int, int]:
     """-> {zone number: the frame of 3287 that zone's label sits on}."""
-    _snaps, labels = snapshot_timeline(xml, HUB_SPRITE, set())
-    missing = sorted(set(ZONE_LABELS.values()) - set(labels))
-    if missing:
-        raise RuntimeError(f"3287 has no frame labelled {missing}")
-    return {zone: labels[label] for zone, label in ZONE_LABELS.items()}
+    return {
+        zone: timeline.frame_of(index, HUB_SPRITE, label)
+        for zone, label in ZONE_LABELS.items()
+    }
 
 
 def render_hubs(frames: dict[int, int]) -> None:
@@ -158,36 +149,6 @@ def render_hubs(frames: dict[int, int]) -> None:
         shutil.rmtree(work, ignore_errors=True)
 
 
-def orb_layers(xml: str) -> list[tuple[int, int, tuple]]:
-    """-> [(depth, characterId, matrix)] for the orb's own shapes, bottom
-    layer first, read off 3196's first frame."""
-    body = sprite_body(xml, ORB_SPRITE)
-    layers = []
-    depth = 0
-    start = None
-    for token in _ITEM_TOKENS.finditer(body):
-        text = token.group(0)
-        if text == "</item>":
-            depth -= 1
-            if depth == 0 and start is not None:
-                element = body[start : token.end()]
-                cid = attribute("characterId", element)
-                place_depth = attribute("depth", element)
-                if cid is not None and place_depth is not None:
-                    layers.append((int(place_depth), int(cid), find_matrix(element)))
-                start = None
-            continue
-        self_closing = bool(token.group(1))
-        if depth == 0:
-            if 'type="ShowFrameTag"' in text:
-                break
-            if "PlaceObject" in text and not self_closing:
-                start = token.start()
-        if not self_closing:
-            depth += 1
-    return sorted(layers)
-
-
 def export_orb_shapes() -> None:
     work = Path(tempfile.mkdtemp(prefix="zone_orb_"))
     try:
@@ -220,12 +181,13 @@ def export_orb_shapes() -> None:
 
 
 def main():
-    xml = WEB_SWF_XML.read_text()
-    render_hubs(zone_frames(xml))
+    index = read_swf(WEB_SWF)
+    render_hubs(zone_frames(index))
     export_orb_shapes()
 
     print("\norb layers, bottom first (scenes/orb.tscn must match):", file=sys.stderr)
-    for depth, cid, matrix in orb_layers(xml):
+    for depth, layer in sorted(timeline.frames(index, ORB_SPRITE)[0].items()):
+        cid, matrix = layer.character_id, layer.matrix
         scale = (matrix[0] ** 2 + matrix[1] ** 2) ** 0.5
         print(
             f"  depth {depth}  {ORB_SHAPES[cid]:<14} scale {scale:.4f}  "
