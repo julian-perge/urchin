@@ -113,8 +113,8 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     rounded rectangle. The source itself groups them that way. Also fixed along the way: buff id 0 (TWINGUARDIANS) is a real buff, not an empty-slot sentinel (the sentinel used
     everywhere else in the codebase is `buff_id: -1`) - the original filter silently dropped it.
   - A combat log panel - `CombatLogPanel` (the project's first `RichTextLabel` panel), off/hidden by default and toggled via a new "Log" button in the bottom bar's
-    `Panel3`, per the project owner's explicit choice. `_format_line()` mirrors `battle_scene.gd`'s `_play_events()` event-type match exactly, so every event type that already drives
-    animation/audio also gets a readable line, appended live as the fight plays rather than after the fact.
+    `Panel3`, per the project owner's explicit choice. `_format_line()` follows `battle_scene.gd`'s `_play_events()` event-type match, appending each line live as the fight plays rather
+    than after the fact. Not every event that drives audio gets a line: `PHASE_ADVANCED` plays music and writes nothing.
 
   GUT suite green: 147/147 tests (assert counts vary run to run since several integration tests drive a real RNG/AI battle to completion - one clean run: 731 asserts).
 
