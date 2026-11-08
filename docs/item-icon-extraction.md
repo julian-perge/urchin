@@ -43,8 +43,8 @@ like, and is left in place. Every frame places it at depth 2 with
 stripped it from a working copy via `-removeCharacter`, which let ffdec render
 depths 2 through 15 unclipped and ballooned item 69 "A Broken Pipe" from a
 correctly masked 63x63px to 101x140. Restoring the mask brought it straight
-back. Before stripping any character to clean up an export, check whether its
-placements carry a `clipDepth`.
+back. Strip characters through `dev/urchin_dev/swf/strip.py`, which refuses
+any id placed with a `clipDepth`.
 
 Each frame is then trimmed to its own opaque bounds (`Image.getbbox()`), not
 forced into a fixed 31x31 crop - a fixed crop was tried first and rejected:
@@ -96,8 +96,8 @@ Comparing those two PNGs, real art against opaque disc, is what confirmed the
 root cause. `ability_icons.py` skipped the disc during compositing for a while,
 which removed it but could not carry the sheet's clip mask, glow filters, or
 gradient fills. It renders through ffdec now, like this script does, and
-`dev/urchin_dev/swf/prepare_extract_swf.py` deletes the disc from a prepared
-copy of the SWF instead, along with the cooldown counter text beside it. Both
+it deletes the disc from a copy of the SWF through `strip.py` instead, along
+with the cooldown counter text beside it (`COOLDOWN_DISPLAY`). Both
 are opaque in the tag data but hidden by ActionScript at runtime, and no static
 renderer can know that.
 

@@ -119,6 +119,7 @@ from pathlib import Path
 from PIL import Image, ImageChops, ImageFilter, ImageStat
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev.swf import strip
 from urchin_dev.swf.swf_index import (
     SHAPE_TAGS,
     SwfIndex,
@@ -569,22 +570,20 @@ def process_cutscene(
     )
     work_dir = Path(tempfile.mkdtemp(prefix=f"cutscene_{label}_"))
     try:
-        strip_cids = {overlay_chid} | find_broken_bitmap_fill_cids(index, chid)
-        extra = sorted(strip_cids - {overlay_chid})
+        extra = sorted(find_broken_bitmap_fill_cids(index, chid) - {overlay_chid})
         if extra:
             print(
                 f"{label}: also stripping suspected dangling bitmap-fill shape(s) {extra}",
                 file=sys.stderr,
             )
-
-        current_swf = WEB_SWF
-        for i, cid in enumerate(sorted(strip_cids)):
-            dest = work_dir / f"stripped_{i}.swf"
-            run([str(FFDEC), "-removeCharacter", str(current_swf), str(dest), str(cid)])
-            current_swf = dest
+        strip_ids = {overlay_chid: "the camera clip, which hides itself on frame 1"}
+        strip_ids |= {
+            cid: "its first fill is the missing bitmap 65535" for cid in extra
+        }
 
         animated_swf = work_dir / "animated_wrapper.swf"
-        patch_sprite_frame_count(current_swf, animated_swf, wrapper_chid, frames)
+        with strip.stripped_copy(WEB_SWF, strip_ids) as stripped:
+            patch_sprite_frame_count(stripped, animated_swf, wrapper_chid, frames)
 
         avi_dir = work_dir / "avi"
         run(

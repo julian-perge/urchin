@@ -38,7 +38,7 @@ from pathlib import Path
 from PIL import Image
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
-from urchin_dev.swf import timeline
+from urchin_dev.swf import strip, timeline
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
 HALL_DIR = REPO_ROOT / "assets" / "backgrounds" / "battle"
@@ -56,6 +56,11 @@ FIGHTER_RIG = 2676
 # playerKrin<n>.playerName. Rendered as-is the bar bakes in two dead rows. The
 # port rebuilds them from scenes/battle/stance_row.tscn instead.
 MEMBER_BARS = 3312
+# What every battle render here and in verify_battle_screen.py goes without.
+BATTLE_STRIP: dict[int, str] = {
+    FIGHTER_RIG: "the placeholder fighter rig each hall label places six times",
+    MEMBER_BARS: "the member bars, with the author's placeholder name in them",
+}
 # These fill the window behind everything else, so they are rendered well above
 # the window's 2x default scale.
 ZOOM = 4.0
@@ -494,19 +499,7 @@ def main():
     halls = sprite_label_frames(index, HALL_SPRITE)
     skies = sprite_label_frames(index, SKY_SPRITE)
 
-    work = Path(tempfile.mkdtemp(prefix="battle_screen_swf_"))
-    try:
-        stripped = work / "battle.swf"
-        run(
-            [
-                str(FFDEC),
-                "-removeCharacter",
-                str(WEB_SWF),
-                str(stripped),
-                str(FIGHTER_RIG),
-                str(MEMBER_BARS),
-            ]
-        )
+    with strip.stripped_copy(WEB_SWF, BATTLE_STRIP) as stripped:
         print(f"halls ({len(halls)}):", file=sys.stderr)
         render_labels(stripped, HALL_SPRITE, halls, HALL_DIR, "")
         print(f"skies ({len(skies)}):", file=sys.stderr)
@@ -544,8 +537,6 @@ def main():
         )
         render_member_bar_panel(stripped)
         layout["stance_row"] = stance_row_layout(stripped, index)
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
 
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
     print(f"wrote {LAYOUT_JSON}", file=sys.stderr)
