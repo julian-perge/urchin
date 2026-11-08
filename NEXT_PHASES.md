@@ -66,8 +66,8 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     `battle_scene.gd` is unchanged. `VfxFrames.load_frames()` and `VfxFrames.VFX_SCALE` are retired; `sanitize()` (clip name -> scene filename) is all that is left of that class.
   - The final review caught 13 of the 51 clips landing on wrong bounds, from two separate causes. `snapshot_timeline()`'s matrix search covers a fixed 1200-character slice after each
     `PlaceObject` tag, which can reach past a tag carrying no matrix of its own and borrow the next tag's. And `DefineMorphShapeTag` children were dropped as if they held no art, which
-    shrank `BOOM_STAR`'s whole computed footprint to 22.2x23.25 px against a real 169.5x161.75. Both are fixed inside `make_timeline_bounds()` and private helpers only it calls, leaving
-    `snapshot_timeline()` alone for the five other extractors already built on its current behavior. `extract_vfx_offsets` now also reports any clip whose horizontal and vertical glow
+    shrank `BOOM_STAR`'s whole computed footprint to 22.2x23.25 px against a real 169.5x161.75. Both were fixed inside `make_timeline_bounds()` at first. The matrix fix later moved into
+    `snapshot_timeline()` itself, which now reads each tag's `placeFlagHasMatrix`, since the other extractors only read its labels and `model1_animations.py` had the same bug (#6). `extract_vfx_offsets` now also reports any clip whose horizontal and vertical glow
     padding disagree by more than 1 px, which is how all 13 of these would have shown up at extraction time.
 
   GUT suite green: 178/178 tests. All 51 clips' computed bounds were checked against ffdec's own SVG-per-frame export, an independent renderer, and every edge agrees to within 0.05 px. Still
