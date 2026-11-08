@@ -5,6 +5,7 @@
 extends GutTest
 
 const BATTLES_FILE = "res://dev/converted_json/battles.json"
+const ACHIEVEMENTS_FILE = "user://test_zone_progression_achievements.cfg"
 
 var save: PlayerSave
 
@@ -113,8 +114,35 @@ func test_zone_unlock_rules():
 	assert_false(ZoneProgression.is_zone_unlocked(save, 3), "each zone needs its own link")
 	assert_eq(ZoneProgression.max_zone(0), 5, "easy caps the map at zone 5")
 	assert_eq(ZoneProgression.max_zone(1), 6)
-	assert_eq(ZoneProgression.max_zone(2), 6, "zone 7 needs the all-star achievement")
+	assert_eq(ZoneProgression.max_zone(2), 6, "zone 7 needs Legend")
 	assert_eq(ZoneProgression.max_zone(2, true), 7)
+
+
+# frame_449/DoAction.as:4-16 opens zone 7 only on Heroic with achGet[4], Legend,
+# set. achGet belongs to no save (frame_46/DoAction_2.as:12-31), so the port
+# reads it from the achievements file.
+func test_zone_7_opens_on_heroic_once_legend_is_earned():
+	var previous_save: PlayerSave = GameData.current_save
+	var previous_path: String = ZoneManager.achievements_path
+	if FileAccess.file_exists(ACHIEVEMENTS_FILE):
+		DirAccess.remove_absolute(ACHIEVEMENTS_FILE)
+	ZoneManager.achievements_path = ACHIEVEMENTS_FILE
+	GameData.current_save = save
+	save.difficulty = CombatUnit.Difficulty.HARD
+	save.quest_progress[6] = 4
+	assert_false(ZoneManager.can_access_zone(7), "zone 7 stays closed on Heroic without Legend")
+
+	Achievements.unlock(4, ACHIEVEMENTS_FILE)
+	assert_true(ZoneManager.can_access_zone(7), "Legend opens zone 7 on Heroic once zone 6's boss is beaten")
+	save.quest_progress[6] = 3
+	assert_false(ZoneManager.can_access_zone(7), "Legend does not skip zone 6's boss")
+	save.quest_progress[6] = 4
+	save.difficulty = CombatUnit.Difficulty.NORMAL
+	assert_false(ZoneManager.can_access_zone(7), "zone 7 stays closed on Normal with Legend")
+
+	GameData.current_save = previous_save
+	ZoneManager.achievements_path = previous_path
+	DirAccess.remove_absolute(ACHIEVEMENTS_FILE)
 
 
 func test_after_battle_won_progression_and_cutscenes():

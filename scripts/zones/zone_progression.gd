@@ -147,14 +147,13 @@ static func is_zone_unlocked(save: PlayerSave, zone: int) -> bool:
 
 # frame_449's difficulty gate on how much of the map exists at all:
 # easy = zones 1-5, normal = 1-6, hard = 1-7. On hard, zone 7 additionally
-# needs achievement 4, Legend, in the original (frame_449/DoAction.as:5 tests
-# achGet[4]), not All Star as the parameter name says.
-static func max_zone(difficulty: CombatUnit.Difficulty, has_all_star_achievement: bool = false) -> int:
+# needs achievement 4, Legend (frame_449/DoAction.as:5 tests achGet[4]).
+static func max_zone(difficulty: CombatUnit.Difficulty, has_legend_achievement: bool = false) -> int:
 	if difficulty <= CombatUnit.Difficulty.EASY:
 		return 5
 	if difficulty == CombatUnit.Difficulty.NORMAL:
 		return 6
-	return 7 if has_all_star_achievement else 6
+	return 7 if has_legend_achievement else 6
 
 
 # Post-battle progression (frame_219): a won story-progress fight advances

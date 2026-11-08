@@ -17,6 +17,9 @@ var auto_start_battles: bool = true
 # "overMap") - game.gd's _ready() opens the zone map overlay on load and
 # clears this, matching the original's gotoSceneKrin == "overMap" (frame_219).
 var open_zone_map_on_load: bool = false
+# Tests point this at a temp file so they can grant Legend without touching the
+# player's real achievements.
+var achievements_path: String = Achievements.SAVE_PATH
 
 signal zone_changed(zone_id: int)
 signal zone_unlocked(zone_id: int)
@@ -26,9 +29,18 @@ func can_access_zone(zone_id: int) -> bool:
 	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return zone_id == 1
-	if zone_id > ZoneProgression.max_zone(save.difficulty):
+	if zone_id > max_zone():
 		return false
 	return ZoneProgression.is_zone_unlocked(save, zone_id)
+
+# Legend comes from the achievements file rather than the save, because the
+# original keeps achGet global across saves (frame_46/DoAction_2.as:12-31).
+func max_zone() -> int:
+	var save: PlayerSave = GameData.current_save
+	if save == null:
+		return 1
+	var has_legend: bool = Achievements.load_unlocked(achievements_path)[4]
+	return ZoneProgression.max_zone(save.difficulty, has_legend)
 
 func change_zone(zone_id: int):
 	if can_access_zone(zone_id):
