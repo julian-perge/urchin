@@ -1055,12 +1055,14 @@ func _finish_battle() -> void:
 		_pending_cutscene = battle_result.get("cutscene", "")
 		_pending_goto_scene = battle_result.get("goto_scene", "")
 		var enemy_levels: Array = BattleRewards.unit_levels_from_slots(units, [2, 4, 6])
+		var train_cap: int = int(battle_info.get("train_cap", BattleSetup.DEFAULT_TRAIN_CAP))
+		var money_levels: Array = BattleRewards.money_levels(battle, save, train_cap)
 		var fighting_party: Array[Variant] = []
 		for marker in [-2, -1]:
 			var party_id: int = Party.deployed_party_id(save, marker)
 			if party_id > 0:
 				fighting_party.append(party_id)
-		var rewards: Dictionary = BattleRewards.apply_victory(save, enemy_levels, enemy_levels, fighting_party)
+		var rewards: Dictionary = BattleRewards.apply_victory(save, money_levels, enemy_levels, fighting_party)
 		var drops: Array = BattleRewards.roll_drops(battle)
 		var counters: Dictionary = Achievements.collect_battle_counters(runner, units)
 		for achievement_id in Achievements.check_battle_victory(save, battle.id, was_story, counters):
