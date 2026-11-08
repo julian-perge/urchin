@@ -97,9 +97,11 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
 
   - The original hotbar-style battle UI art - `BottomBar/Backdrop` now renders `assets/ui/battle/hotbar_background.png` (a `TextureRect`, was a plain `ColorRect`), instead of leaving the
     extracted art unused.
-  - The 120-second decision countdown - `battle_scene.gd`'s `_process()` ticks `_decision_timer` down from `BattleRunner.BATTLE_TIME_LIMIT` while `_player_action_pending` is true, shown as
+  - The decision countdown - `battle_scene.gd`'s `_process()` ticks `_decision_timer` down from `BattleRunner.BATTLE_TIME_LIMIT` while `_player_action_pending` is true, shown as
     a ring (`assets/ui/battle/battle_pbar_full.png`) + numeric label in the bottom bar's `Panel3`. Visual-only, deliberately does NOT force-pass the turn at 0 like the original did - this
-    port's turn-based flow already removed real-time pressure everywhere else, and reintroducing it here wasn't asked for.
+    port's turn-based flow already removed real-time pressure everywhere else, and reintroducing it here wasn't asked for. **Corrected (2026-11-07):** this entry called it a 120-second
+    countdown, which is how the port counts it. The original's `BattleTimeLimit` is 120 frames, 4 s at 30 fps, and it only runs on Heroic, where the half-turn starts when it runs out whether
+    or not the player has picked; Easy and Normal wait for the player (see `DECODED_ALGORITHMS.md`'s Heroic decision timer).
   - Target highlighting - a hover ring around each unit fades in over ~0.17s and out over ~0.67s (source-verified 30fps timing), but only fades in during the player's own decision
     window (fade-out always plays, ungated). Alongside this, the radial ability menu's dismissal was corrected to match the live original game: moving the mouse away from the clicked
     unit and its fanned-out orbs fades the menu out, replacing this port's earlier click-away guess, which the project owner confirmed doesn't match the real game.
@@ -232,13 +234,18 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   the story orb, zone 2 never unlocking since quest progress could never pass `progress_max`. Fixed at the source (id corrected at conversion time, the 3 affected `.tres` regenerated,
   `CUTSCENE_BATTLES` back to the real ids).
 
+  **Corrected (2026-11-07):** the id fix covered 109, 409 and 513 only. All nine `battleCreationID` resets relabel the battle before them, so the same defect still hides 212, 308, 603 and 703,
+  the zone 2, 3, 6 and 7 bosses, which `resources/battles/` holds as 299, 399, 699 and 999, plus the tutorial, battle 2, held as 49 (see `SWF_DIFFERENCES.md`). From the code, the zone 2 boss
+  therefore cannot load and zone 3 never unlocks, the same way zone 2 did not before this fix.
+
   A real playthrough of the fixed battle 109 then surfaced two more bugs, both fixed: `_on_continue_pressed()` always returned to the current zone hub after a
   cutscene, when the original's `gotoSceneKrin` (frame_219) actually opens the zone map for CS_CUT2/CS_CUT4 (both unlock a new zone) and only stays on the hub for
   CS_CUT3 - added `ZoneProgression.CUTSCENE_GOTO_SCENE`/`ZoneManager.open_zone_map_on_load` to thread that through. Separately, the zone map's connector lines
   between zones had never been built at all (`frame_449`'s procedurally-drawn `krinMapper.lineMC`, colored by unlock state) - ported into a new
   `scripts/zones/zone_map_connectors.gd`. GUT suite green: 104/104 tests, 629 asserts.
 
-- **Shatter Bolt**: the one `"Attack"`-category move - the original never handled it either.
+- **Shatter Bolt**: the one `"Attack"`-category move. **Corrected (2026-11-07):** this used to say the original never handled it either. The original's `executeMove` has no `"Attack"`
+  branch, but its conductor still applies the move's status effect, so Shatter Bolt stuns its target in the original and does nothing in the port (see `KNOWN_GAPS.md`).
 
 ## Ability menu redesign
 

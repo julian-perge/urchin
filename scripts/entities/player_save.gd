@@ -18,7 +18,8 @@ const CLASS_NAMES: Array[String] = ["Biological", "Psychological", "Hydraulic"]
 # The class-select blurbs, verbatim from the original's KrinLang.ENGLISH
 # CLASSDESCRIPT (frame_1/DoAction.as), indexed to match CLASS_NAMES above.
 # The original's fourth entry is the ArmorGames upsell it shows in place of
-# the Psychological text when gameLimited is set, which does not apply here.
+# the Hydraulic text when gameLimited is set (DefineButton2_2736 on(rollOver)
+# lines 4-12), which does not apply here.
 const CLASS_DESCRIPTIONS: Array[String] = [
 	"Wild and animalistic, the Biological line harnesses its power from strength and speed. You have the choice of ripping your prey apart with advanced physical combat, or melting them down with your toxic arsenal of poisons. This is probably the most straightforward class to play. Recommended for beginners.",
 	"If insanity were a weapon, then this would be its form. The Psychological line is heavily based on directly attacking the enemy's mind. The abilities you have available are often quite situational, but some of the most powerful. You may betray or even sacrifice your friends if you let the darkness consume you.",
@@ -51,14 +52,21 @@ const CLASS_DESCRIPTIONS: Array[String] = [
 @export var per: Dictionary[CombatUnit.Element, float] = {}
 @export var def: Dictionary[CombatUnit.Element, float] = {}
 
-# Respec daily limit (AS3 respecSet/lastDay2): 5 per day.
+# Respec daily counter (AS3 respecSet/lastDay2). The original resets it to 5
+# on a new day and counts it down, but never refuses a respec when it runs out
+# (DefineButton2_3179 on(release) lines 6-14). The 5 per day limit that
+# Leveling.respec enforces is this port's own.
 @export var respec_set: int = 5
 @export var last_respec_day: String = ""
 
 # Current zone (Krin.sectionIn, 1-based) and story progress per zone
 # (Krin.questProgress; slot 0 holds the original's "EMPTY" placeholder).
 # Managed by ZoneProgression. progress_level_on is persisted for save
-# compatibility (frame41 seeds it to 2); its consumer hasn't been located.
+# compatibility (frame41 seeds it to 2). The original reads it in two places:
+# the boss music check plays the boss track when it is 24, 30 or 36
+# (frame_42/DoAction.as:59-70), and the legacy story button
+# DefineButton2_3181 picks its battle from it (on(press) lines 5-16). Nothing
+# in the port reads it.
 @export var section_in: int = 1
 @export var progress_level_on: int = 2
 @export var quest_progress: Array = []

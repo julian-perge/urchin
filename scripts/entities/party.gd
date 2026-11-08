@@ -39,8 +39,13 @@ const COMPANION_AI_TUNING: Array[float] = [50.0, 75.0, 35.0, 70.0, 30.0]
 
 # Static companion definitions (frame_42/DoAction_17). stat_allocated is the
 # StatSets seed [life, strength, magic, speed, focus]; per/def_allocated are
-# elemental point seeds in ELEMENT_ORDER; equipment is cosmetic until the
-# equip system lands. Companion allocations never change - only level/exp do.
+# elemental point seeds in ELEMENT_ORDER; equipment is the seed gear, which
+# here only dresses the doll. The original lets the player equip companions
+# under the same rules as the player, stats included: a plain click on a
+# party member selects them (DefineButton2_2895 on(press) lines 30-37) and
+# DefineButton2_2981 on(press) swaps the item and adds and removes its stat,
+# piercing and defense bonuses. The port has no companion equipping yet, so
+# here the allocations never change - only level/exp do.
 const COMPANIONS: Dictionary = {
 	1: {
 		"name": "Veradux",

@@ -1,8 +1,10 @@
 # cutscene_player.gd
 # Reusable full-screen cutscene player: fades in from black, plays an .ogv
 # clip with audio, fades back to black on completion, then frees itself.
-# None of the 4 in-scope cutscenes (CS_CUT2-5) have a skip mechanism in the
-# original, so this deliberately has no input handling.
+# The original does have a skip: button 3468, labelled by the "SKIP" text
+# 3469, sits on every cutscene frame and stops all sounds and sets
+# cutSceneEnd when released (DefineButton2_3468/BUTTONCONDACTION
+# on(release).as). This player has no input handling, so it has no skip yet.
 #
 # Two things in cutscene_player.tscn exist to keep the rest of the game out
 # of the way while the clip runs, and both matter:

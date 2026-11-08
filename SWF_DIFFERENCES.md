@@ -32,9 +32,13 @@ resolved the two bugs below.
     jumped value. Confirmed by comparing all 99 battles by creation-order position instead of by `id`: zero content mismatches. A real regenerator would need this rule; this investigation didn't need
     to fully pin it down since position-alignment already proved the underlying data has no drift.
 
-    **2026-08-18: pinned down and fixed** for the 3 of the 9 reset points that actually collide with a zone's real battle count (199/499/599, mislabeling zone 1/4/5's
-    true final story battle - 109/409/513 - as the next block's seed id instead). `dev/urchin_dev/convert/battles.py`'s `MISLABELED_BATTLE_IDS` corrects these at
-    conversion time; the other 6 reset points (49/99/299/399/699/999) don't land on a battle any current zone formula needs, so they're untouched.
+    **2026-08-18: pinned down and fixed** for 3 of the 9 reset points (199/499/599, mislabeling zone 1/4/5's true final story battle - 109/409/513 - as the next block's
+    seed id instead). `dev/urchin_dev/convert/battles.py`'s `MISLABELED_BATTLE_IDS` corrects these at conversion time.
+
+    **Corrected (2026-11-07): the other 6 reset points matter too.** This note used to say they don't land on a battle any current zone formula needs. Each of them stamps the battle
+    populated just before it, so 49/99/299/399/699/999 are AS battles 2/55/212/308/603/703 (`frame_42/DoAction_14.as:325, 365, 750, 884, 1301, 1368`). 299, 399, 699 and 999 are the zone
+    2, 3, 6 and 7 bosses under `zone * 100 + progress`, and 49 is the tutorial, battle 2 (`frame_165/DoAction.as:2`). Only 99, AS battle 55, is unreachable: its only launcher sits on the zone
+    hub's `BETA` frame, which needs `Krin.betaMode`, and nothing sets that to true (`frame_41/DoAction_2.as:15, 33-36`). `MISLABELED_BATTLE_IDS` does not correct these six yet.
 
 ## Bugs introduced by the Steam restructuring (fixed in the conversion pipeline)
 
@@ -42,7 +46,7 @@ resolved the two bugs below.
   (`createUnitKrinCount = 19` immediately after creating Doctor Hedger, `createUnitKrinCount = 39` immediately after ZPCI Sniper - `frame42/sonny2_createNewUnitKrin.txt`). The Steam data recorded the
   POST-jump counter value as those two units' `id` fields:
   - Doctor Hedger: Steam says 19, true id is **15** (battles 54/107 reference 15).
-  - ZPCI Sniper: Steam says 39, true id is **34** (battle 299 references 34).
+  - ZPCI Sniper: Steam says 39, true id is **34** (battle 212 references 34; the converted data still stores that battle as 299, see the `battleCreationID` note above).
 
   No battle references 19 or 39 anywhere, so the correction is unambiguous. Ids 16-19 and 35-39 are genuinely unused in both releases.
 - **Aggression scalars carry misleading labels in the Steam data.** The web SWF stores each unit's AI tuning as a positional `agressionArray` = `[Aggression, LifeBoundary1, LifeBoundary2,

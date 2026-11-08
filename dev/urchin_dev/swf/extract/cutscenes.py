@@ -35,21 +35,28 @@
 # frame per frame - the same nested-clip behaviour faces.py relies on - so the
 # export comes out correctly framed *and* correctly animated.
 #
-# Every animation sprite has a "guide overlay" clip placed as a direct child:
-# a red bounding box + center crosshair + color-bar swatch the original
-# animators used while blocking out the scene, left in the shipped SWF but
-# never meant to be visible (confirmed by diffing a rendered frame with and
-# without the strip - see task-1-report.md). ffdec's
-# -removeCharacterWithDependencies was tried first and rejected: it cascades
-# and deletes the *parent* cutscene sprite too, because the parent places
-# the overlay as a child of itself. Plain -removeCharacter only drops that
-# one placement.
+# Every animation sprite places a virtual camera clip as a direct child
+# (3478, 3645, 3812, 3962 and 4041 all run the same frame script,
+# DefineSprite_3478/frame_1/DoAction.as). Its own art is a red bounding box,
+# a center crosshair and a color-bar swatch, which the original never shows:
+# the script hides the clip on its first frame, then every frame it moves,
+# scales and tints the parent animation so that the camera's box fills the
+# 533x300 view. ffdec does not run ActionScript, so its export draws the box
+# unless this script strips the clip (task-1-report.md diffs a rendered frame
+# with and without the strip), and it never applies the camera's pan, zoom or
+# tint either way. ffdec's -removeCharacterWithDependencies was tried first
+# and rejected: it cascades and deletes the *parent* cutscene sprite too,
+# because the parent places the camera clip as a child of itself. Plain
+# -removeCharacter only drops that one placement.
 #
-# Sprite ids, frame counts, and guide-overlay ids in CUTSCENES below were
+# Sprite ids, frame counts, and camera clip ids in CUTSCENES below were
 # read directly out of dev/source_files/swf_xml/sonny-2-2900.xml (frameCount
-# attributes on each DefineSpriteTag, cross-checked against the FrameLabelTag
-# names) - see .superpowers/sdd/plan_cutscenes/task-1-brief.md's Background
-# table for the original battle-id survey that found these.
+# attributes on each DefineSpriteTag) - see
+# .superpowers/sdd/plan_cutscenes/task-1-brief.md's Background table for the
+# original battle-id survey that found these. Each label was matched to the
+# wrapper placed just before it in the XML, which is the previous label's, so
+# CS_CUT2 to CS_CUT5 below ship the footage of CS_INTRO2, CS_CUT1, CS_CUT3
+# and CS_CUT4 (GitHub issue #34 has the corrected table).
 #
 # ffdec's sprite:avi export renders video only (no audio track) - each
 # cutscene's dialogue/music is a SoundStreamBlockTag-per-frame MP3 stream
@@ -85,10 +92,10 @@
 # ffdec's renderer fills the gap with visual noise instead of leaving it
 # blank. find_broken_bitmap_fill_cids() below scans every cutscene sprite's
 # directly-placed shapes for this exact pattern and strips any it finds
-# alongside the guide overlay, so a similar dangling reference in another
+# alongside the camera clip, so a similar dangling reference in another
 # cutscene gets caught automatically instead of silently shipping noise
 # again. (Scoped to each sprite's directly-placed children, same as the
-# guide-overlay strip - does not recurse into nested sprites.)
+# camera clip strip - does not recurse into nested sprites.)
 #
 # Requires ffdec (~/.local/bin/ffdec) for the character-strip and video
 # export, and ffmpeg2theora (`brew install ffmpeg2theora`) for the final
@@ -136,7 +143,7 @@ FFMPEG2THEORA = _require_tool(
 )
 
 # label -> (animation sprite chid, wrapper sprite chid, frame count,
-# guide-overlay chid to strip). The frame count is the *animation* sprite's;
+# camera clip chid to strip). The frame count is the *animation* sprite's;
 # the wrapper always declares 1 and gets patched up to this (see file header).
 CUTSCENES: dict[str, tuple[int, int, int, int]] = {
     "CS_CUT2": (3643, 3644, 2084, 3478),
