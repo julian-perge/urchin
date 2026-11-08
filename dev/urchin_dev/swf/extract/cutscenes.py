@@ -64,15 +64,17 @@
 # header from every block in frame order and concatenating gives a valid,
 # playable MP3.
 #
-# The exported AVI stores frames as PNG-in-AVI. Muxing that directly against
-# ffmpeg2theora (whose bundled ffmpeg misreads the color matrix as GBR
-# instead of RGB) produces a psychedelic, channel-swapped mess - confirmed
-# by a visual diff. Re-encoding the video through a well-defined
-# yuv420p/libx264 intermediate before handing it to ffmpeg2theora avoids
-# that entirely and keeps the intermediate small (~1-2% the size of the raw
-# PNG-per-frame AVI, several hundred MB per cutscene at 2000+ frames).
+# The exported AVI stores frames as PNG-in-AVI, and one ffmpeg pass crops
+# and pads them, encodes them as Theora and the MP3 as Vorbis, and writes the
+# Ogg file. ffmpeg needs libtheora and libvorbis for that, which Homebrew's
+# ffmpeg-full has. The settings match what the Theora and Vorbis
+# identification headers of the clips this replaced carry: Theora quality 38
+# of 63, a keyframe at least every 64 frames, and Vorbis at a nominal
+# 80 kbps. Those clips went through ffmpeg2theora, which Homebrew deprecated,
+# by way of an x264 intermediate that only worked around ffmpeg2theora's
+# bundled ffmpeg misreading the color matrix as GBR.
 #
-# No -shortest trim on the mux: a couple of these cutscenes' audio streams
+# No -shortest trim on the encode: a couple of these cutscenes' audio streams
 # run somewhat short of their frame count (trailing silent frames with no
 # new sound block), and trimming to the shorter stream would clip the tail
 # of the video instead of just leaving it silent.
@@ -96,11 +98,8 @@
 # guide-overlay strip - does not recurse into nested sprites.)
 #
 # Requires ffdec (~/.local/bin/ffdec) for the character-strip and video
-# export, and ffmpeg2theora (`brew install ffmpeg2theora`) for the final
-# Theora/Vorbis transcode - this machine's plain ffmpeg build has no Theora
-# encoder (libvpx/VP8/VP9 only), confirmed via `ffmpeg -encoders`. ffmpeg
-# itself is used only for the intermediate mux/re-encode step, not for the
-# final transcode.
+# export, and an ffmpeg with libtheora and libvorbis (`brew install
+# ffmpeg-full`) for the encode and the checks.
 # Run: uv run extract_cutscenes
 from __future__ import annotations
 
@@ -122,9 +121,8 @@ OUT_DIR = REPO_ROOT / "assets" / "cutscenes"
 
 
 _TOOL_HINTS = {
-    "ffmpeg": "used for the mux/re-encode step",
+    "ffmpeg": "needs libtheora and libvorbis, e.g. `brew install ffmpeg-full`",
     "ffprobe": "used for post-generation verification",
-    "ffmpeg2theora": "install with `brew install ffmpeg2theora`",
 }
 
 
@@ -612,48 +610,40 @@ def process_cutscene(
             file=sys.stderr,
         )
 
-        muxed_path = work_dir / "muxed.mkv"
-        mux_cmd = [str(tool("ffmpeg")), "-y", "-v", "error", "-i", str(avi_path)]
+        ogv_path = work_dir / f"{label}.ogv"
+        encode_cmd = [str(tool("ffmpeg")), "-y", "-v", "error", "-i", str(avi_path)]
         if n_blocks:
-            mux_cmd += ["-i", str(mp3_path), "-map", "0:v", "-map", "1:a"]
-        mux_cmd += [
+            encode_cmd += ["-i", str(mp3_path), "-map", "0:v", "-map", "1:a"]
+        encode_cmd += [
             # Crop to the wrapper's clip mask, then re-center that box in an
             # OUT_W x OUT_H frame the way the original centers it on the
-            # stage. Re-encoding through libx264/yuv420p (not -c:v copy) is
-            # what avoids ffmpeg2theora's color-matrix misdetection on the raw
-            # PNG-in-AVI frames (see file header).
+            # stage.
             "-vf",
             f"crop={MASK_W}:{MASK_H}:{crop_x}:{crop_y},pad={OUT_W}:{OUT_H}:{CONTENT_X}:{CONTENT_Y}:black",
-            "-c:v",
-            "libx264",
-            "-crf",
-            "10",
             "-pix_fmt",
             "yuv420p",
+            "-c:v",
+            "libtheora",
+            # libtheora's quality is q * 6.3 truncated to an integer, so 6.1
+            # gives the 38 the replaced clips carry, where 6 would give 37.
+            "-q:v",
+            "6.1",
+            "-g",
+            "64",
         ]
-        if n_blocks:
-            mux_cmd += ["-c:a", "copy"]
-        mux_cmd += [str(muxed_path)]
-        run(mux_cmd)
-
-        ogv_path = OUT_DIR / f"{label}.ogv"
-        theora_cmd = [str(tool("ffmpeg2theora")), str(muxed_path), "-o", str(ogv_path)]
-        if not n_blocks:
-            theora_cmd.append("--noaudio")
-        run(theora_cmd)
+        encode_cmd += ["-c:a", "libvorbis", "-q:a", "1"] if n_blocks else ["-an"]
+        encode_cmd += [str(ogv_path)]
+        run(encode_cmd)
         print(
             f"{label}: wrote {ogv_path} ({ogv_path.stat().st_size} bytes) - verifying...",
             file=sys.stderr,
         )
 
-        try:
-            resolution = verify_output(
-                label, ogv_path, frames, bool(n_blocks), work_dir
-            )
-        except Exception:
-            ogv_path.unlink(missing_ok=True)  # don't leave a known-bad file behind
-            raise
-        print(f"{label}: verified OK", file=sys.stderr)
+        # Verified in scratch first, so a failed encode or check leaves the
+        # committed clip in assets/ untouched.
+        resolution = verify_output(label, ogv_path, frames, bool(n_blocks), work_dir)
+        shutil.copyfile(ogv_path, OUT_DIR / ogv_path.name)
+        print(f"{label}: verified OK, copied to {OUT_DIR}", file=sys.stderr)
         return resolution
     finally:
         # Never hold more than one cutscene's raw AVI/stripped-SWF copy/
@@ -665,6 +655,12 @@ def process_cutscene(
 def main():
     for name in _TOOL_HINTS:
         tool(name)
+    encoders = run([str(tool("ffmpeg")), "-hide_banner", "-encoders"]).stdout
+    for encoder in ("libtheora", "libvorbis"):
+        if encoder not in encoders:
+            raise SystemExit(
+                f"ffmpeg has no {encoder} encoder ({_TOOL_HINTS['ffmpeg']})"
+            )
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     xml = WEB_SWF_XML.read_text()
 
