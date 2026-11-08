@@ -600,6 +600,40 @@ func test_heal_on_a_stunned_sswitch_target_keeps_it_stunned():
 	ZoneManager.auto_start_battles = true
 
 
+# The original skips the hit animation on a stunned target for plain damage
+# too (frame_42/DoAction_8.as:101-104), so a hit that doesn't kill leaves the
+# doll in its stun.
+func test_damage_on_a_stunned_target_keeps_it_stunned():
+	var save = PlayerSave.new_game("StunnedDamage", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var caster: CombatUnit = scene.units[1]
+	var target_slot := 2  # battle 100's Prison Guard, at full life
+	var target: CombatUnit = scene.units[target_slot]
+	target.apply_buff(BuffManagerAuto.get_buff_by_name("BADTRIP"), 1, caster)
+	target.apply_changes()
+	scene._refresh_bars()
+
+	var move: Ability = MoveManagerAuto.get_move(5)  # Nuke: Full Damage, no status effect
+	var result: Dictionary = scene.battle_manager.execute_move(move, caster, target, BuffManagerAuto.buffs_by_internal_name)
+	assert_false(result["target_died"], "the hit leaves the target alive")
+	scene._show_move_result(
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": target_slot,
+			"move_id": move.id, "move_name": move.display_name, "result": result},
+		target_slot
+	)
+
+	assert_eq(scene._visuals[target_slot]._state, CharacterVisual.State.STUN, "no hit animation on a stunned target")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # A heal bigger than an sswitch target's life kills it, and the original plays
 # the death at that impact (frame_42/DoAction_8.as:208-228). The events come
 # from the runner, because _play_events() only pauses on a DEATH event caused

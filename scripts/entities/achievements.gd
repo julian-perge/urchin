@@ -86,7 +86,9 @@ static func collect_battle_counters(runner: BattleRunner, units: Dictionary) -> 
 		if event.get("type") != BattleRunner.EventType.MOVE or int(event.get("caster_slot", 0)) != BattleRunner.PLAYER_SLOT:
 			continue
 		var result: Dictionary = event.get("result", {})
-		if result.get("type") == BattleManager.ResultType.DAMAGE:
+		# Damage under sswitch healed its target, and the original leaves it out
+		# of AchVal1 (frame_42/DoAction_8.as:84-93).
+		if result.get("type") == BattleManager.ResultType.DAMAGE and not result.get("sswitched", false):
 			player_damage += float(result.get("amount", 0.0)) + float(result.get("shielded_amount", 0.0))
 	var teammate_count: int = 0
 	for slot in [3, 5]:

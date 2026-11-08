@@ -35,7 +35,7 @@ func test_format_sswitched_damage_line_reads_as_a_heal():
 	}
 	var line: String = panel._format_line(event, units)
 	assert_false(line.contains("hits"), "damage under sswitch healed the target, so the line can't say it hit")
-	assert_eq(line, "Veradux heals Grulnak for 42")
+	assert_eq(line, "Veradux's Acid Slash heals Grulnak for 42", "the line still names the attack that did it")
 
 
 func test_format_sswitched_heal_line_reads_as_a_hit():

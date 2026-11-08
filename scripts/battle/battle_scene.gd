@@ -895,7 +895,9 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 				# finishes await-ing. That made death wait for the attacker
 				# to get home first instead of landing with the killing blow.
 				_play_death(target_slot)
-			elif target_visual != null:
+			elif target_visual != null and target_unit != null and target_unit.stun == 0:
+				# The original skips the hit animation on a stunned target
+				# (frame_42/DoAction_8.as:101-104).
 				target_visual.set_state(CharacterVisual.State.HIT)
 			if target_unit != null:
 				AudioManagerAuto.voice(target_unit.voice_hit)
