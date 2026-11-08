@@ -1,8 +1,13 @@
 # combat_log_panel.gd
-# A toggleable, live-narrated combat log - the first scrollable-text panel
-# in the project. Mirrors battle_scene.gd's _play_events() event-type
-# match exactly, so every event type that already drives animation/audio
-# also gets a readable line here. Off/hidden by default.
+# This panel is a combat log the original game never had. It starts hidden,
+# and the Log button (LogToggleButton in battle_scene.tscn) shows and hides
+# it. _play_events() in battle_scene.gd calls append_event() with each event
+# just before playing it, whether or not the panel is showing.
+# docs/adr/0001-keep-the-combat-log.md records why the port keeps it and the
+# rule that each line says what a move did to its target. Under an sswitch
+# buff this file still breaks that rule, because it words a move by its
+# result type: damage that healed the target reads as a hit, and a heal that
+# hurt it reads as a heal. Issue #24 tracks the fix.
 extends PanelContainer
 class_name CombatLogPanel
 
