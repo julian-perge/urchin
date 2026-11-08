@@ -193,11 +193,7 @@ def make_timeline_bounds(shape_bounds, xml):
 
     Placed morph shapes count as real content here, so this works from
     shape_bounds plus _morph_shape_bounds() combined into a dict of its
-    own - the caller's shape_bounds is never touched. Walking is done by
-    _snapshot_timeline_bounded() rather than snapshot_timeline() so a
-    placement with no matrix of its own keeps its depth's previous matrix
-    instead of borrowing a nearby one; see that function for why the
-    shared snapshot_timeline stays as it is."""
+    own - the caller's shape_bounds is never touched."""
     memo = {}
     bounds = {**shape_bounds, **_morph_shape_bounds(xml)}
 
@@ -221,7 +217,7 @@ def make_timeline_bounds(shape_bounds, xml):
         if fc == 0:
             memo[cid] = None
             return None
-        snaps = _snapshot_timeline_bounded(xml, cid, set(range(1, fc + 1)))
+        snaps, _labels = snapshot_timeline(xml, cid, set(range(1, fc + 1)))
         acc: list | None = None
         for frame_state in snaps.values():
             for entry in frame_state.values():
@@ -258,15 +254,29 @@ def sprite_body(xml: str, sprite_id: int) -> str:
     return xml[m.end() : end]
 
 
+_TIMELINE_TAG_RE = re.compile(
+    r'<item type="(PlaceObject2Tag|PlaceObject3Tag|RemoveObject2Tag'
+    r'|RemoveObjectTag|ShowFrameTag|FrameLabelTag)"([^>]*?)>'
+)
+
+
 def snapshot_timeline(xml: str, sprite_id: int, wanted_frames: set[int]):
     """Simulate a sprite's timeline (PlaceObject/RemoveObject by depth) and
-    return {frame: {depth: {cid, name, mat}}} snapshots plus {label: frame}."""
+    return {frame: {depth: {cid, name, mat}}} snapshots plus {label: frame}.
+
+    A PlaceObject that carries no matrix of its own keeps the matrix its
+    depth already had, so a placement's matrix is searched for only up to
+    the start of the next timeline tag. A fixed 1200-character search used
+    to run past the end of such a tag and take a later placement's matrix
+    instead, which put BOOM_SLASH's inner sprite 1269 (19b7c18) and 38 part
+    matrices of MODEL1 (sprite 166) on the wrong transform. On every sprite
+    placement in the web dump, this bound finds a matrix exactly when the
+    tag's own placeFlagHasMatrix attribute is true.
+    """
     body = sprite_body(xml, sprite_id)
+    tags = list(_TIMELINE_TAG_RE.finditer(body))
     frame, state, snaps, labels = 1, {}, {}, {}
-    for t in re.finditer(
-        r'<item type="(PlaceObject2Tag|PlaceObject3Tag|RemoveObject2Tag|RemoveObjectTag|ShowFrameTag|FrameLabelTag)"([^>]*?)>',
-        body,
-    ):
+    for i, t in enumerate(tags):
         tag, attrs = t.group(1), t.group(2)
         if tag == "ShowFrameTag":
             if frame in wanted_frames:
@@ -290,61 +300,12 @@ def snapshot_timeline(xml: str, sprite_id: int, wanted_frames: set[int]):
             entry["cid"] = int(cid.group(1))
         if name:
             entry["name"] = name.group(1)
-        window = body[t.end() : t.end() + 1200]
-        if MATRIX_TAG_RE.search(window):
-            entry["mat"] = find_matrix(window)
-        state[depth] = entry
-    return snaps, labels
-
-
-_TIMELINE_TAG_RE = re.compile(
-    r'<item type="(PlaceObject2Tag|PlaceObject3Tag|RemoveObject2Tag'
-    r'|RemoveObjectTag|ShowFrameTag|FrameLabelTag)"([^>]*?)>'
-)
-
-
-def _snapshot_timeline_bounded(xml: str, sprite_id: int, wanted_frames: set[int]):
-    """-> {frame: {depth: {cid, mat}}}, the same depth-state walk
-    snapshot_timeline does, with one difference that matters for bounds
-    math: a placement's matrix is searched for only up to the start of the
-    next timeline tag, instead of a fixed 1200-character slice.
-
-    SWF semantics say a PlaceObject that carries no matrix of its own keeps
-    whatever matrix its depth already had. The fixed slice can reach past
-    the end of such a tag and borrow a LATER tag's matrix - confirmed in
-    BOOM_SLASH's inner sprite 1269, where a matrix-less depth-1 placement
-    picked up the shrinking, rotating matrix belonging to depth 2 on the
-    next frame. snapshot_timeline is deliberately left as it is: five other
-    extraction scripts already depend on its exact current behavior, and
-    only make_timeline_bounds needs the stricter reading.
-    """
-    body = sprite_body(xml, sprite_id)
-    tags = list(_TIMELINE_TAG_RE.finditer(body))
-    frame, state, snaps = 1, {}, {}
-    for i, t in enumerate(tags):
-        tag, attrs = t.group(1), t.group(2)
-        if tag == "ShowFrameTag":
-            if frame in wanted_frames:
-                snaps[frame] = {d: dict(v) for d, v in state.items()}
-            frame += 1
-            continue
-        if tag == "FrameLabelTag":
-            continue  # matched only so it can end the window before it
-        d = re.search(r'depth="(\d+)"', attrs)
-        depth = int(d.group(1)) if d else -1
-        if tag.startswith("RemoveObject"):
-            state.pop(depth, None)
-            continue
-        cid = re.search(r'characterId="(\d+)"', attrs)
-        entry = state.get(depth, {})
-        if cid:
-            entry["cid"] = int(cid.group(1))
         stop = tags[i + 1].start() if i + 1 < len(tags) else len(body)
         window = body[t.end() : stop]
         if MATRIX_TAG_RE.search(window):
             entry["mat"] = find_matrix(window)
         state[depth] = entry
-    return snaps
+    return snaps, labels
 
 
 _ITEM_TOKEN_RE = re.compile(r"<item\b[^>]*?(/?)>|</item>")
