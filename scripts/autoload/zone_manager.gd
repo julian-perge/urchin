@@ -58,6 +58,8 @@ func request_story_fight() -> Dictionary:
 	var info: Dictionary = ZoneProgression.pick_story_battle(save)
 	if not info.is_empty():
 		info["train_cap"] = BattleSetup.DEFAULT_TRAIN_CAP
+		if info["counts_as_training"]:
+			save.used_training = true
 		_launch_battle(info)
 	return info
 
