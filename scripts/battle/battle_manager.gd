@@ -8,14 +8,18 @@ extends Node
 # damage/heal number, a MISS label, etc). MISS itself is logged by
 # BattleRunner, not this file (the accuracy roll happens before
 # execute_move() is ever called), but shares this enum since it's the same
-# "what happened" domain the other three already occupy.
-enum ResultType { DAMAGE, HEAL, FOCUS, MISS }
+# "what happened" domain the others already occupy. STATUS_ONLY is a hit that
+# computes no amount, so only the move's status effect lands and no number
+# shows.
+enum ResultType { DAMAGE, HEAL, FOCUS, MISS, STATUS_ONLY }
 
 # Ported from frame42/sonny2_executeMove.txt, with buff application from
-# frame42/sonny2_addNewBuffKrin.txt's applyBuffKrin() wired in afterward (the
-# original interleaves them per move-type branch; this applies uniformly to
-# whichever branch ran, which is equivalent since status_effect_id/
-# effect_proc_chance/effect_target_is_self aren't branch-specific in the data).
+# frame42/sonny2_addNewBuffKrin.txt's applyBuffKrin() wired in afterward. The
+# original applies a move's status effect in one place, after executeMove()
+# returns, whatever the move's category (the conductor,
+# frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as
+# lines 70-102), so _apply_status_effect() runs after the match below for
+# every category.
 # Visual/audio side effects (BATTLEFLASH, BATTLESCREEN, addSound, ...) are left
 # out entirely; this returns a result Dictionary and the UI layer reacts to it.
 #
@@ -23,10 +27,12 @@ enum ResultType { DAMAGE, HEAL, FOCUS, MISS }
 # with the PvP checksum system, which we're not porting - crit/proc rolls here
 # use plain randi_range()/randf() instead.
 #
-# Not wired up: dispel (ability_two[15]/[16], removing the target's existing
-# buffs) and the single move whose effect_category is "Attack" ("Shatter
-# Bolt") - the original executeMove() doesn't handle that category either, so
-# this matches source behavior, not a gap introduced here.
+# executeMove() computes nothing for a category other than "Full Damage",
+# "Heal" and "Focus", so a move with any other category returns a STATUS_ONLY
+# result with no amount. Shatter Bolt is the one move whose category is
+# "Attack": it deals no damage and stuns its target through its status effect
+# alone. Dispel runs before this, in BattleRunner._resolve_dispels(), the same
+# order as the conductor.
 #
 # `buffs_by_name` (Buff.internal_name -> Buff, e.g.
 # BuffManagerAuto.buffs_by_internal_name) is a parameter for the same reason
@@ -56,9 +62,13 @@ func execute_move(ability: Ability, caster: CombatUnit, target: CombatUnit, buff
 			result = _execute_heal(ability, caster, target, per_calc, focus_coef, speed_crit_calc)
 		"Focus":
 			result = _execute_focus(ability, target)
+		"Attack":
+			result = {"type": ResultType.STATUS_ONLY}
 		_:
-			push_warning("execute_move: unhandled effect_category '%s' on move %s" % [ability.effect_category, ability.display_name])
-			return {}
+			# The original also lands only the status here, but no move in the
+			# data has another category, so one showing up means a converter bug.
+			push_warning("execute_move: unknown effect_category '%s' on move %s" % [ability.effect_category, ability.display_name])
+			result = {"type": ResultType.STATUS_ONLY}
 
 	result["buff_applied"] = _apply_status_effect(ability, caster, target, buffs_by_name)
 	return result
@@ -159,6 +169,7 @@ func _apply_damage(target: CombatUnit, amount: float, did_crit: bool) -> Diction
 		"shielded_amount": shielded_amount,
 		"did_crit": did_crit,
 		"target_died": not target.active,
+		"sswitched": target.sswitch != 0,
 	}
 
 func _execute_heal(ability: Ability, caster: CombatUnit, target: CombatUnit, per_calc: float, focus_coef: float, speed_crit_calc: float) -> Dictionary:
@@ -190,7 +201,7 @@ func _execute_heal(ability: Ability, caster: CombatUnit, target: CombatUnit, per
 			target.life_n = 0
 			target.focus_n = 0
 			target.active = false
-		return {"type": ResultType.HEAL, "amount": amount, "did_crit": did_crit, "target_died": not target.active}
+		return {"type": ResultType.HEAL, "amount": amount, "did_crit": did_crit, "target_died": not target.active, "sswitched": true}
 
 func _execute_focus(ability: Ability, target: CombatUnit) -> Dictionary:
 	target.focus_n += ability.focus_amount_change

@@ -23,9 +23,9 @@ func _run():
 		battle.id_name = battle_data["id_name"]
 		battle.absolute_start = int(battle_data["absolute_start"])
 		battle.item_drops = battle_data["item_drops"]
-		battle.item_rare = battle_data["item_rare"]
-		battle.item_rare2 = battle_data["item_rare2"]
-		battle.item_rare3 = battle_data["item_rare3"]
+		battle.item_rare = _dicts(battle_data["item_rare"])
+		battle.item_rare2 = _dicts(battle_data["item_rare2"])
+		battle.item_rare3 = _dicts(battle_data["item_rare3"])
 		battle.item_rare_dropper = int(battle_data["item_rare_dropper"])
 		battle.item_rare_dropper2 = int(battle_data["item_rare_dropper2"])
 		battle.item_rare_dropper3 = int(battle_data["item_rare_dropper3"])
@@ -33,7 +33,7 @@ func _run():
 		battle.players = battle_data["players"]
 		battle.players_levels = battle_data["players_levels"]
 		battle.sky_background = battle_data["sky_background"]
-		battle.speeches = battle_data["speeches"]
+		battle.speeches = _dicts(battle_data["speeches"])
 		battle.time_lock = battle_data["time_lock"]
 		battle.win_date = int(battle_data["win_date"])
 		battle.win_date_condition = int(battle_data["win_date_condition"])
@@ -45,3 +45,12 @@ func _run():
 		)
 		if err != OK:
 			print("Failed to save battle: %s, err %s" % [battle.id_name, err])
+
+
+# Godot 4.7.2 refuses to assign an untyped Array to an Array[Dictionary] field
+# through a plain Resource reference, so the JSON arrays are copied into typed
+# ones first.
+func _dicts(values: Array) -> Array[Dictionary]:
+	var typed: Array[Dictionary] = []
+	typed.assign(values)
+	return typed

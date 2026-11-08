@@ -235,7 +235,9 @@ func test_radial_menu_fades_out_on_hover_leave():
 	var scene = add_child_autofree(BattleSceneRes.instantiate())
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	scene._player_action_pending = true
+	# The battle loop closes any open menu before an AI turn, so the test waits
+	# until the loop hands the player the turn, whichever side opens battle 100.
+	await wait_until(func(): return scene._player_action_pending, 5)
 	scene._on_unit_clicked(2)
 	assert_not_null(scene._radial_menu)
 
@@ -262,7 +264,9 @@ func test_radial_menu_hover_return_cancels_fade_out():
 	var scene = add_child_autofree(BattleSceneRes.instantiate())
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	scene._player_action_pending = true
+	# The battle loop closes any open menu before an AI turn, so the test waits
+	# until the loop hands the player the turn, whichever side opens battle 100.
+	await wait_until(func(): return scene._player_action_pending, 5)
 	scene._on_unit_clicked(2)
 	assert_not_null(scene._radial_menu)
 
@@ -312,7 +316,9 @@ func test_opening_a_second_menu_survives_the_first_menus_fade():
 	# window this test measures, leaving the stale tween as the only thing
 	# that could close the second menu.
 	scene._radial_menu_leave_timer.wait_time = 30.0
-	scene._player_action_pending = true
+	# The battle loop closes any open menu before an AI turn, so the test waits
+	# until the loop hands the player the turn, whichever side opens battle 100.
+	await wait_until(func(): return scene._player_action_pending, 5)
 
 	scene._on_unit_clicked(2)
 	assert_not_null(scene._radial_menu, "first menu opened on the enemy slot")
@@ -443,6 +449,96 @@ func test_radial_menu_still_opens_when_every_equipped_move_is_on_cooldown():
 	ZoneManager.auto_start_battles = true
 
 
+# Corruption needs one Shadow buff on its target
+# (frame_42/DoAction_6.as:1613-1614), and the original refuses the pick until
+# the target holds one (frame_42/DoAction_11.as:60-64). It is a Psychological
+# starting move, so a new Psychological player could otherwise open every
+# battle with it.
+func test_corruption_needs_a_shadow_buff_on_its_target():
+	var save = PlayerSave.new_game("CorruptionGate", PlayerSave.PlayerClass.PSYCHOLOGICAL)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	var enemy: CombatUnit = scene.units[2]  # battle 100's Prison Guard
+	var corruption: Ability = MoveManagerAuto.get_move(479)
+	assert_eq(int(player.equipped_moves[1]), corruption.id, "Corruption is on bar slot 1")
+
+	scene._player_action_pending = true
+	scene._on_unit_clicked(2)
+	assert_true(scene._radial_menu.get_child(1).disabled, "Corruption is darkened on a target with no Shadow buff")
+
+	var shadow_debuff: Buff = BuffManagerAuto.get_buff_by_name("SHADOWINFUSION")
+	assert_eq(shadow_debuff.element_type, CombatUnit.Element.SHADOW)
+	enemy.apply_buff(shadow_debuff, 1, player)
+	assert_true(scene._move_valid_for_target(corruption, 2), "one active Shadow buff meets the requirement")
+
+	for buff_slot in enemy.buff_slots:
+		buff_slot["cd"] = 0
+	assert_false(scene._move_valid_for_target(corruption, 2), "an expired Shadow buff does not count")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Shatter needs three Ice buffs on its target (frame_42/DoAction_6.as:852-892).
+func test_shatter_needs_three_ice_buffs_on_its_target():
+	var save = PlayerSave.new_game("ShatterGate", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	var enemy: CombatUnit = scene.units[2]  # battle 100's Prison Guard
+	var shatter: Ability = MoveManagerAuto.get_move(224)
+	var ice_debuff: Buff = BuffManagerAuto.get_buff_by_name("FRAGILE")
+	var shadow_debuff: Buff = BuffManagerAuto.get_buff_by_name("SHADOWINFUSION")
+	assert_eq(ice_debuff.element_type, CombatUnit.Element.ICE)
+	assert_eq(shadow_debuff.element_type, CombatUnit.Element.SHADOW)
+
+	enemy.apply_buff(ice_debuff, 1, player)
+	enemy.apply_buff(ice_debuff, 1, player)
+	enemy.apply_buff(shadow_debuff, 1, player)
+	assert_false(scene._move_valid_for_target(shatter, 2), "two Ice buffs and a Shadow buff are one Ice buff short")
+	enemy.apply_buff(ice_debuff, 1, player)
+	assert_true(scene._move_valid_for_target(shatter, 2), "the third Ice buff meets the requirement")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Bloodshed costs 8% of total life (frame_42/DoAction_6.as:1029), and the
+# original refuses the pick unless life is above that cost
+# (frame_42/DoAction_11.as:80-84).
+func test_bloodshed_needs_more_life_than_its_cost():
+	var save = PlayerSave.new_game("BloodshedGate", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	var bloodshed: Ability = MoveManagerAuto.get_move(257)
+	assert_eq(bloodshed.health_cost_percentage, 0.08)
+
+	player.life_n = round(player.life_u * 0.08)
+	assert_false(scene._move_valid_for_target(bloodshed, 2), "life equal to the cost is refused")
+	player.life_n += 1
+	assert_true(scene._move_valid_for_target(bloodshed, 2), "one point above the cost is allowed")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # Regression test: a move-caused death used to only play when the QUEUED
 # "death" event was reached in _play_events(), which only happens after the
 # caster's whole move await resolves - for melee, that's after the runback
@@ -470,6 +566,236 @@ func test_death_plays_at_impact_not_after_caster_returns():
 		"death played synchronously inside _show_move_result, not deferred to a later event"
 	)
 	assert_false(scene._overlays[enemy_slot].visible, "overlay hidden the same moment")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Shatter Bolt only applies a status effect, and at its impact the original
+# draws no number and plays no hit flinch. The target's stun animation still
+# starts there, because the conductor runs applyChangesKrin on the target right
+# after the status lands (conductor line 103).
+func test_shatter_bolt_impact_starts_the_stun_and_draws_no_number():
+	var save = PlayerSave.new_game("ShatterBoltImpact", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var result: Dictionary = scene.battle_manager.execute_move(
+		MoveManagerAuto.get_move(521), scene.units[2], scene.units[1], BuffManagerAuto.buffs_by_internal_name
+	)
+	var labels_before: int = scene.battlefield.get_children().filter(func(child): return child is Label).size()
+	scene._show_move_result(
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 2, "target_slot": 1, "move_id": 521, "result": result}, 1
+	)
+
+	assert_eq(
+		scene.battlefield.get_children().filter(func(child): return child is Label).size(), labels_before,
+		"no number floats up, so the damage branch and its hit flinch never ran"
+	)
+	assert_eq(scene._visuals[1]._state, CharacterVisual.State.STUN, "the target's stun animation starts at the impact")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Returns the label _float_text() drew last. With animation_speed 0 that label
+# is only queued for deletion, so it is still a child of the battlefield when a
+# test reads it.
+func _last_float_text(scene) -> Label:
+	var last: Label = null
+	for child in scene.battlefield.get_children():
+		if child is Label:
+			last = child
+	return last
+
+
+# Damage on a target under an sswitch buff heals it. The original draws the
+# number in heal green, raises life capped at max, and plays no hit animation
+# (frame_42/DoAction_8.as:133-149).
+func test_damage_on_a_tiedye_target_shows_as_a_heal():
+	var save = PlayerSave.new_game("TieDyeDamage", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var caster: CombatUnit = scene.units[1]
+	var target_slot := 2  # battle 100's Prison Guard
+	var target: CombatUnit = scene.units[target_slot]
+	target.apply_buff(BuffManagerAuto.get_buff_by_name("TIEDYE"), 1, caster)
+	target.apply_changes()
+	target.life_n = floorf(target.life_u / 2.0)
+	scene._refresh_bars()
+	var hp_before: float = scene._display_hp[target_slot]
+
+	var move: Ability = MoveManagerAuto.get_move(5)  # Nuke: Full Damage, no status effect
+	var result: Dictionary = scene.battle_manager.execute_move(move, caster, target, BuffManagerAuto.buffs_by_internal_name)
+	scene._show_move_result(
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": target_slot,
+			"move_id": move.id, "move_name": move.display_name, "result": result},
+		target_slot
+	)
+
+	assert_gt(scene._display_hp[target_slot], hp_before, "the bar rises, because the damage healed the target")
+	assert_eq(scene._display_hp[target_slot], target.life_n, "the bar shows the life the target really has")
+	assert_ne(scene._visuals[target_slot]._state, CharacterVisual.State.HIT, "no hit animation")
+	var number: Label = _last_float_text(scene)
+	assert_eq(number.text, str(int(result["amount"])), "the number is the amount the damage healed")
+	assert_eq(number.modulate, MenuTheme.HEAL_COLOR, "the number is drawn in heal green")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A heal on a target under an sswitch buff hurts it. The original draws the
+# number in the Shadow color, lowers life and plays the hit animation
+# (frame_42/DoAction_8.as:189-207).
+func test_heal_on_an_sswitch_target_shows_as_damage():
+	var save = PlayerSave.new_game("RetrogradeHurt", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var caster: CombatUnit = scene.units[1]
+	var target_slot := 2  # battle 100's Prison Guard, at full life
+	var target: CombatUnit = scene.units[target_slot]
+	target.apply_buff(BuffManagerAuto.get_buff_by_name("RETROGRADED"), 1, caster)
+	target.apply_changes()
+	scene._refresh_bars()
+	var hp_before: float = scene._display_hp[target_slot]
+
+	var move: Ability = MoveManagerAuto.get_move(4)  # Heal: no status effect
+	var result: Dictionary = scene.battle_manager.execute_move(move, caster, target, BuffManagerAuto.buffs_by_internal_name)
+	scene._show_move_result(
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": target_slot,
+			"move_id": move.id, "move_name": move.display_name, "result": result},
+		target_slot
+	)
+
+	assert_lt(scene._display_hp[target_slot], hp_before, "the bar falls, because the heal hurt the target")
+	assert_eq(scene._display_hp[target_slot], target.life_n, "the bar shows the life the target really has")
+	assert_eq(scene._visuals[target_slot]._state, CharacterVisual.State.HIT, "the hit animation plays")
+	var number: Label = _last_float_text(scene)
+	assert_eq(number.text, str(int(result["amount"])), "no plus sign")
+	assert_eq(number.modulate, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], "the number is drawn in the Shadow color")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original skips the hit animation while the target is stunned, so a heal
+# that hurts a stunned target leaves its doll in the stun
+# (frame_42/DoAction_8.as:204-207).
+func test_heal_on_a_stunned_sswitch_target_keeps_it_stunned():
+	var save = PlayerSave.new_game("TieDyeStun", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var caster: CombatUnit = scene.units[1]
+	var target_slot := 2  # battle 100's Prison Guard, at full life
+	var target: CombatUnit = scene.units[target_slot]
+	# The Flower Zombie casts both of these: Tie Dye (610) and Bad Trip (608).
+	target.apply_buff(BuffManagerAuto.get_buff_by_name("TIEDYE"), 1, caster)
+	target.apply_buff(BuffManagerAuto.get_buff_by_name("BADTRIP"), 1, caster)
+	target.apply_changes()
+	scene._refresh_bars()
+
+	var move: Ability = MoveManagerAuto.get_move(4)  # Heal: no status effect
+	var result: Dictionary = scene.battle_manager.execute_move(move, caster, target, BuffManagerAuto.buffs_by_internal_name)
+	scene._show_move_result(
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": target_slot,
+			"move_id": move.id, "move_name": move.display_name, "result": result},
+		target_slot
+	)
+
+	assert_eq(scene._visuals[target_slot]._state, CharacterVisual.State.STUN, "no hit animation on a stunned target")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original skips the hit animation on a stunned target for plain damage
+# too (frame_42/DoAction_8.as:101-104), so a hit that doesn't kill leaves the
+# doll in its stun.
+func test_damage_on_a_stunned_target_keeps_it_stunned():
+	var save = PlayerSave.new_game("StunnedDamage", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var caster: CombatUnit = scene.units[1]
+	var target_slot := 2  # battle 100's Prison Guard, at full life
+	var target: CombatUnit = scene.units[target_slot]
+	target.apply_buff(BuffManagerAuto.get_buff_by_name("BADTRIP"), 1, caster)
+	target.apply_changes()
+	scene._refresh_bars()
+
+	var move: Ability = MoveManagerAuto.get_move(5)  # Nuke: Full Damage, no status effect
+	var result: Dictionary = scene.battle_manager.execute_move(move, caster, target, BuffManagerAuto.buffs_by_internal_name)
+	assert_false(result["target_died"], "the hit leaves the target alive")
+	scene._show_move_result(
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": target_slot,
+			"move_id": move.id, "move_name": move.display_name, "result": result},
+		target_slot
+	)
+
+	assert_eq(scene._visuals[target_slot]._state, CharacterVisual.State.STUN, "no hit animation on a stunned target")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A heal bigger than an sswitch target's life kills it, and the original plays
+# the death at that impact (frame_42/DoAction_8.as:208-228). The events come
+# from the runner, because _play_events() only pauses on a DEATH event caused
+# by a move and leaves the death itself to _show_move_result().
+func test_heal_that_kills_an_sswitch_target_plays_the_death():
+	var save = PlayerSave.new_game("RetrogradeKill", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var caster: CombatUnit = scene.units[1]
+	var target_slot := 2  # battle 100's Prison Guard
+	var target: CombatUnit = scene.units[target_slot]
+	target.apply_buff(BuffManagerAuto.get_buff_by_name("RETROGRADED"), 1, caster)
+	target.apply_changes()
+	target.life_n = 1.0
+	scene._refresh_bars()
+
+	var move: Ability = MoveManagerAuto.get_move(4)  # Heal: a Shock move, so it can't miss
+	var first_event: int = scene.runner.events.size()
+	scene.runner._execute_move_action({"caster_slot": 1, "target_slot": target_slot, "move_id": move.id}, caster, target)
+	var events: Array = scene.runner.events.slice(first_event)
+	await scene._play_events(events)
+
+	assert_eq(scene._visuals[target_slot]._state, CharacterVisual.State.DEAD, "the heal killed the target, so its doll plays the death")
+	assert_false(scene._overlays[target_slot].visible, "its overlay is hidden with it")
+	assert_eq(scene._display_hp[target_slot], 0.0, "the bar drops to empty")
+	assert_eq(
+		scene._combat_log._log_text.text,
+		"%s hits Prison Guard with Heal for %d\nPrison Guard falls" % [caster.player_name, int(events[0]["result"]["amount"])],
+		"the log calls the heal a hit, then the fall"
+	)
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

@@ -44,8 +44,13 @@ const ANIMATIONS_FILE: String = SPRITE_ROOT + "/model1_animations.json"
 # per-frame steps at 30 fps to per-second rates:
 # - base step = distance / krinBoltTime(60) * krinBodyMove(10) = distance/6
 #   per frame -> goRat rate = 5.0 / s at full speed
-# - run out eases OUT: coEF = clamp(1.5 - 1.45 * goRat, 0, 1); the run label
-#   is INTERRUPTED by arrival (~0.47 s regardless of distance)
+# - run out eases OUT: coEF = min(1.5 - 1.45 * goRat, 1); the run label
+#   is INTERRUPTED by arrival. In the original, the step scales with the
+#   distance to the target's center but the dash stops short of it by both
+#   half-widths, so arrival takes 13 frames with zero half-widths, 11 at
+#   300 px with 60 px of half-widths and 4 at 150 px with 100 px. MELEE_RATE
+#   fixes the goRat rate instead, so here arrival time does not depend on
+#   distance.
 # - impact fires krinMeleeAttackCD(15) frames = 0.5 s after the strike
 #   label starts; runback starts 15 more frames later (1.0 s) - which lands
 #   exactly on the clip's own runback frame for every attack label

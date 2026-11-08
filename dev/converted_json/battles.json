@@ -45,8 +45,8 @@
     },
     {
       "absolute_start": 0,
-      "id": 49,
-      "id_name": "KBR49",
+      "id": 2,
+      "id_name": "KBR2",
       "item_drops": [],
       "item_rare": [],
       "item_rare2": [],
@@ -454,8 +454,8 @@
     },
     {
       "absolute_start": 0,
-      "id": 99,
-      "id_name": "KBR99",
+      "id": 55,
+      "id_name": "KBR55",
       "item_drops": [],
       "item_rare": [],
       "item_rare2": [],
@@ -2821,8 +2821,8 @@
     },
     {
       "absolute_start": 2,
-      "id": 299,
-      "id_name": "KBR299",
+      "id": 212,
+      "id_name": "KBR212",
       "item_drops": [
         {
           "chance": 15,
@@ -3651,8 +3651,8 @@
     },
     {
       "absolute_start": 0,
-      "id": 399,
-      "id_name": "KBR399",
+      "id": 308,
+      "id_name": "KBR308",
       "item_drops": [],
       "item_rare": [],
       "item_rare2": [
@@ -6337,8 +6337,8 @@
     },
     {
       "absolute_start": 0,
-      "id": 699,
-      "id_name": "KBR699",
+      "id": 603,
+      "id_name": "KBR603",
       "item_drops": [
         {
           "chance": 100,
@@ -6811,8 +6811,8 @@
     },
     {
       "absolute_start": 2,
-      "id": 999,
-      "id_name": "KBR999",
+      "id": 703,
+      "id_name": "KBR703",
       "item_drops": [
         {
           "chance": 100,

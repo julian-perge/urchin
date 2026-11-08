@@ -51,7 +51,7 @@ entry names its evidence so you can check it instead of trusting it.
 - **Two fields that look like one usually are two.** The hall and the sky are
   `Krin.ZoneBG` and `Krin.SkyBG`, set independently per battle; 16 of 99
   battles differ. A digit-stripping heuristic derived one from the other and
-  got 10 of 12 wrong (`8c293c8`).
+  got 10 of those 16 wrong (`8c293c8`).
 - **A blank data field does not mean the game shows nothing.** Check whether
   the original reads that field at all. Every tree passive's
   `25_tooltip_description` is 0, which was recorded as a data fact and asserted
@@ -76,10 +76,13 @@ entry names its evidence so you can check it instead of trusting it.
   one-frame wrapper whose only frame shows its child's alpha-0 keyframe, which
   is why that clip extracted fully blank. The real 33-frame content is sprite
   2, which has no export name and is only reachable by id (`4ddee5c`).
-- **Battle ids in the raw dump are not all correct.** Three of nine
+- **Battle ids in the raw dump are not all correct.** All nine
   `battleCreationID` resets relabel the battle just populated instead of the
-  next one, so 109, 409 and 513 were stored as 199, 499 and 599. Corrected at
-  conversion time in `battles.py`'s `MISLABELED_BATTLE_IDS` (`c13cff0`).
+  next one, so 2, 55, 109, 212, 308, 409, 513, 603 and 703 came through as
+  49, 99, 199, 299, 399, 499, 599, 699 and 999. `battles.py`'s
+  `MISLABELED_BATTLE_IDS` corrects all nine at conversion time. `c13cff0`
+  corrected only 109, 409 and 513, which left the zone 2, 3, 6 and 7 bosses
+  and the tutorial unable to load.
 
 ## Extracting art
 
@@ -123,10 +126,10 @@ entry names its evidence so you can check it instead of trusting it.
 - **Recover positions, never invent them.** ffdec grows the export canvas by
   the filter dimension symmetrically around the timeline displayRect, so the
   canvas keeps the displayRect's centre and the stage rect follows from that
-  centre plus the canvas size with no filter math. `doll_art.py`, `zone_hub.py`
-  and `battle_screen.py` all do this. Inventing them instead drew the zone orb
-  at twice its real size, which every zone scene then cancelled with
-  `scale = 0.4` (`8ef2139`).
+  centre plus the canvas size with no filter math. `doll_art.py`,
+  `start_screens.py` and `battle_screen.py` all do this. Inventing them
+  instead drew the zone orb at twice its real size, which every zone scene
+  then cancelled with `scale = 0.4` (`8ef2139`).
 - **Read the displayRect from ffdec's own SVG pass, not a Python re-walk.** The
   SVG root element states it outright: `xmin` is `-tx/ZOOM` and `width`/
   `height` give the size. The Python recursion cost 28.2s of a 34s run and can
@@ -222,3 +225,17 @@ entry names its evidence so you can check it instead of trusting it.
   test (`f435959`).
 - A Rider editor hook on this machine reformats Python on save. Re-run
   `uv run ruff format --check <file>` as the last thing before committing.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues for julian-perge/urchin, managed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five default triage labels, each label string the same as its role name. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.

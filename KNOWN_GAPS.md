@@ -10,20 +10,28 @@ Now ported as `BattleRunner._resolve_dispels()`: on a successful strike, before 
 if their element is in `Ability.dispel_element_types` and their `Buff.polarity` matches `Ability.dispel_target_polarity`,
 each attempt gated by `randf() <= dispel_chance` and resisted by the buff's `dispel_resist_chance`.
 The formerly unknown buff fields 20/27/32 turned out to be polarity/is-unique/dispel-resist (renamed in `buffs.py` + `buff.gd`).
+Two differences from the original remain. The original removes the buffs with the most turns left first, because `applyChangesKrin` re-sorts `BUFFARRAYK` by CD descending on every call
+(`frame_42/DoAction_10.as:344`) and the dispel walks the slots in array order, while `_resolve_dispels()` walks `buff_slots` in insertion order. And the original recomputes the target's stats
+once, after the hit (line 103 of the conductor, `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as`), while `_resolve_dispels()` recomputes them before it.
 
-## "Attack" effect_category
+## "Attack" effect_category - RESOLVED (2026-11-07)
 
 One move in the entire dataset (479 total) has `effect_category == "Attack"`: **Shatter Bolt** (has a status effect, `SHATTERBOLT`).
-The original AS3 `executeMove()` only branches on `"Full Damage"`/`"Heal"`/`"Focus"` - it does **not** handle `"Attack"` either, so this move does nothing via that function in the source game too.
-This is not a gap introduced by the port; whatever `"Attack"` moves are supposed to do lives in code outside the extracted frames (or the category is legacy/dead).
+The original AS3 `executeMove()` only branches on `"Full Damage"`/`"Heal"`/`"Focus"`, so Shatter Bolt deals no damage in the source game either.
 
-`BattleManager.execute_move()` currently `push_warning()`s and returns `{}` for any unhandled category. Low priority - affects exactly one move.
+**Corrected (2026-11-07): the original does not ignore it.** This entry used to say the move does nothing in the source game too, reasoning from `executeMove()` alone. The conductor applies a
+move's status effect after `executeMove()` whatever its category (conductor lines 70-102). Shatter Bolt's proc chance is 2.4, so every hit applies `SHATTERBOLT`, a unique Ice debuff with stun
+contribution 1 and duration 2 (`frame_42/DoAction_6.as:1716-1719`, `frame_42/DoAction_10.as:1629-1636`): in the original the move stuns its target. Frost Terror is the unit that uses it.
+
+`BattleManager.execute_move()` used to `push_warning()` and return `{}` for any category it doesn't compute, before it reached `_apply_status_effect()`, so in the port the stun never
+landed. Such a category now returns a `STATUS_ONLY` result with no amount, and the status effect is applied after it the way the conductor does. Shatter Bolt stuns its target, the battle
+scene draws no number for it, and the combat log names the move and target (`test_shatter_bolt_stuns_its_target`, `test_shatter_bolt_impact_starts_the_stun_and_draws_no_number`).
 
 ## Stun / Silence / Reflect - ALL RESOLVED (2026-07-18)
 
 - **Stun**: a unit with `stun != 0` can't act on its turn at all - gated in `BattleRunner._execute_action()` ("you are stunned this round", no partial effect).
   Attacks against stunned targets also always hit (`_accuracy_roll()`).
-- **Silence**: blocks any move with a focus cost (`cost * SILENCED == 0`). Applied in `BattleAI._can_afford()` for AI units and `BattleRunner.get_player_usable_moves()` for the player -
+- **Silence**: blocks any move with a focus cost (`cost * SILENCED == 0`). Applied in `BattleAI._can_afford()` for AI units and `battle_scene.gd`'s `_move_usable_on_bar()` for the player -
   the player-side gate was confirmed from source via the full SWF script export (`frame_42/DoAction_11.as` uses the identical check in the move-pick UI).
 - **Reflect is dead code in the original game - nothing to implement.** The full 869-script export contains exactly one `REFLECTDMG` reference (the initializer to 0 in frame 201),
   and none of the 470 buffs carries a nonzero reflect delta (checked). The stat exists on `CombatUnit` for completeness and does nothing, faithfully.
@@ -100,19 +108,24 @@ Scoped-out edges from the playtest-feedback batch:
   inside. The bars themselves (`3414`) are still unbuilt, so the frame is not placed in the scene yet. The bottom bar's own team member bars are a
   different thing and are built, as Godot nodes, in `scenes/battle/stance_row.tscn`.
 - **Ability orb art - RESOLVED**: both the radial-menu and abilities-screen orbs now show the real extracted per-move icon art (`assets/ui/abilities/`) with element-colored borders, instead of text initials.
-- **Radial menu is click-to-cast**: the original picks up the ability with the cursor; here a usable orb casts on click directly. Unusable orbs darken, matching the source.
+- **Radial menu is click-to-cast**: the original picks up the ability with the cursor; here a usable orb casts on click directly. Unusable orbs darken, which only partly matches the source: the original darkens an orb for a bad target or a cooldown (`frame_217/PlaceObject3_3382_500/CLIPACTIONRECORD onClipEvent(enterFrame).as:15-29`), and refuses low focus, low life, silence and a target without the move's required buffs at the click with a combat text message instead (`frame_42/DoAction_11.as:60-74` and `80-84`).
 - **Class-select card art - RESOLVED**: the original sketch art has been extracted and wired - gray rest / colored hover textures in `assets/ui/menu/class_cards/`,
   each card at the position and size the original places it at (reference `6_start_screen...png`). The class name under each card is a Godot Label, because the
   original fills a separate text field from `KrinLang` at runtime. Hovering a card shows that class's description through the shared `GameTooltip`, the way the original's `KrinToolTipper` shows it.
-- **Tutorial Level option**: stored on the options screen, but no tutorial system exists.
+- **Tutorial Level option**: stored on the options screen, but no tutorial system exists. The original's tutorial is battle 2 (`frame_165/DoAction.as:2`). It loads under that id
+  since the `battleCreationID` relabels in `SWF_DIFFERENCES.md` were corrected, but nothing in the port launches it, so `BattleRunner`'s `battle.id == 2` tutorial loss rule never matches in play. The tutorial also swaps the action bar to moves 21 and 22 for that fight
+  (`frame_165/DoAction.as`), and `frame_219/DoAction.as:65-69` puts the class starting skills back after it, which the port doesn't do either.
 - **Wolfgang/Amber portraits**: the web SWF's face-clip frames for party ids 4/5 are empty at their labels; the extracted portraits are blank frames.
   Party data also names them Teco/Catelin (from the companion seeds) while the face-clip labels say Wolfgang(Rockstar)/Amber - naming not yet reconciled against the Steam build.
+  Both points are moot in the web build, because party ids 4 and 5 never join: the only roster writes are `frame_42/DoAction_17.as:10` and `frame_219/DoAction.as:59, 63`, and the last of
+  them stops at party id 3.
 - **Effects/Graphics options**: deliberately skipped per project owner.
 
 ## Asset extraction round (2026-07-18, third pass)
 
 - **Item icons**: 325 original icons extracted from the icon clip (sprite 2064, labeled frames) into `assets/ui/items/`; 311 item `.tres` files repointed.
-  Items whose names have no icon label (Golden Pipe/Crowbar/Axe, Tool, None) and ~135 others keep their previous `assets/item_slot_icons/` art.
+  Only four items have no icon label, Tool and Golden Crowbar/Pipe/Axe, and they keep their previous `assets/item_slot_icons/` art (see `NEXT_PHASES.md`'s item icon content audit). This line
+  used to list `None` among them along with "~135 others", but `None` does have a label on 2064, a blank frame.
 - **Start background**: rendered from a copy of the SWF with every foreground character deleted, so there is no baked text to erase afterwards.
   The horizontal bars an earlier pass left across the middle of the image were not original art - they came from that pass interpolating the baked texts away.
 - **Zone progress bar**: renders correctly at 1/9 (verified) - training fights do not advance story progress by design, which can read as "empty bar" after a training win.

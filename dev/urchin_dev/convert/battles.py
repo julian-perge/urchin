@@ -18,24 +18,29 @@ from urchin_dev.swf import models
 # TUNNEL
 # WHITE NOVEMBER
 
-# frame_42/DoAction_14.as's battleCreationID reset statements ("battleCreationID
-# = 199;" etc., nine of them, reserving per-zone id blocks) retroactively
-# relabel the battle whose properties were JUST finished being set, instead of
-# the next one about to be created (see SWF_DIFFERENCES.md's "Battle id is not
-# battleCreationID's value at creation time"). Three of the nine land exactly
-# one battle early, mislabeling each zone's real final story battle with the
-# next block's seed id: zone 1's 10th battle (should be 109) comes stamped
-# 199/KBR199, zone 4's (should be 409) comes stamped 499/KBR499, zone 5's
-# (should be 513) comes stamped 599/KBR599. Confirmed by creation-order
-# position against dev/data_json/swf_battles.json (zero content mismatches -
-# each mislabeled row's players/phases/speeches are that zone's boss fight,
-# not a stray battle from the next zone). Correct them back here so
-# resources/battles/ ends up with the ids the original game's own
-# BattlePick == 109/409/513 checks (frame_219) actually expect.
+# dev/data_json/swf_battles.json gives the battle populated right before each
+# "battleCreationID = N" jump in frame_42/DoAction_14.as the id N and the name
+# KBR<N>, instead of the id createNewBattle gave it. There are nine jumps, at
+# lines 325, 365, 503, 750, 884, 1035, 1230, 1301 and 1368. Each one starts a
+# new block of ids, so the battle it relabels is the last one of the block
+# before it: the tutorial (2), the BETA zone's last battle (55) and the seven
+# zone bosses (109, 212, 308, 409, 513, 603 and 703), which arrive as 49, 99,
+# 199, 299, 399, 499, 599, 699 and 999. Lining the 99 capture rows up with the
+# 99 createNewBattle calls by position matches every row's players, levels,
+# backgrounds and speech and phase counts, so only the ids are wrong. Story
+# battles are looked up as zone * 100 + progress (DefineButton2_3188) and the
+# tutorial as battle 2 (frame_165/DoAction.as:2), so this map puts each of the
+# nine back under the id the original gives it.
 MISLABELED_BATTLE_IDS: dict[int, tuple[int, str]] = {
+    49: (2, "KBR2"),
+    99: (55, "KBR55"),
     199: (109, "KBR109"),
+    299: (212, "KBR212"),
+    399: (308, "KBR308"),
     499: (409, "KBR409"),
     599: (513, "KBR513"),
+    699: (603, "KBR603"),
+    999: (703, "KBR703"),
 }
 
 

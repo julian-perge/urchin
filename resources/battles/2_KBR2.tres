@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_0bwfr"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_l5qe8"]
 
 [resource]
-script = ExtResource("1_0bwfr")
-id = 49
-id_name = "KBR49"
+script = ExtResource("1_l5qe8")
+id = 2
+id_name = "KBR2"
 players = [{
 "id": 49.0,
 "name": "Metabii"

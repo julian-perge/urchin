@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="BattleFight" format=3]
 
-[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_8oxe2"]
+[ext_resource type="Script" path="res://scripts/battle/battle_fight.gd" id="1_580x5"]
 
 [resource]
-script = ExtResource("1_8oxe2")
-id = 699
-id_name = "KBR699"
+script = ExtResource("1_580x5")
+id = 603
+id_name = "KBR603"
 item_drops = [{
 "chance": 100.0,
 "item": {

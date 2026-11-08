@@ -5,17 +5,22 @@
 #   load: itemDrops are per-item % chances, itemRare/2/3 are guaranteed
 #   uniform pulls, 15 drop slots total)
 # - money: victory screen (DefineSprite_3142/frame_9) -
-#   round(0.7 * respecValue(average spawned-unit level))
+#   round(0.7 * respecValue(average level of the slots described below))
 # - experience: expWorkOut(averageEnemyLevel, yourLevel)
 #   (frame42/sonny2_expWorkOut.txt), fed into the 0-100 XP bar
 #   (Leveling.grant_experience)
 #
 # The original accumulates the money input (moneyConstGain/totalEnemyGain)
-# over EVERY unit spawned from a positive template id - including allied
-# guest units like tutorial Louis - while the XP input (EnemyXP/EnemyXP3)
-# only counts enemy-team units. Both helpers take level arrays so the caller
-# controls that distinction; unit_levels_from_slots() extracts them from a
-# BattleRunner-style units dictionary.
+# over every battle slot that passes krinAddNewUnit's spawn gate and has a
+# non-zero level (frame_42/DoAction_14.as:25, 86-92). The gate admits every
+# positive template id, allied guests like tutorial Louis included, and also
+# each companion marker whose deployment entry is set, which with the default
+# deployment is both markers, even before that companion has joined. Each
+# slot adds the level its battle record gives it, and markers usually carry
+# level 1. The XP input (EnemyXP/EnemyXP3) only counts enemy-team units. Both
+# helpers take level arrays so the caller controls that distinction;
+# unit_levels_from_slots() extracts them from a BattleRunner-style units
+# dictionary.
 #
 # No autoload references - keeping/kept drops go through the inventory layer
 # (GameData) at the UI level, not here.
@@ -50,7 +55,8 @@ static func roll_drops(battle: BattleFight) -> Array:
 	return drops
 
 
-# moneyGain = round(0.7 * respecValue(average level of spawned units)).
+# moneyGain = round(0.7 * respecValue(average of the given levels)). The
+# header says which slots' levels the original averages.
 static func money_gain(spawned_unit_levels: Array) -> int:
 	if spawned_unit_levels.is_empty():
 		return 0

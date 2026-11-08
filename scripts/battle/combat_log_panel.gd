@@ -1,8 +1,11 @@
 # combat_log_panel.gd
-# A toggleable, live-narrated combat log - the first scrollable-text panel
-# in the project. Mirrors battle_scene.gd's _play_events() event-type
-# match exactly, so every event type that already drives animation/audio
-# also gets a readable line here. Off/hidden by default.
+# This panel is a combat log the original game never had. It starts hidden,
+# and the Log button (LogToggleButton in battle_scene.tscn) shows and hides
+# it. _play_events() in battle_scene.gd calls append_event() with each event
+# just before playing it, whether or not the panel is showing.
+# docs/adr/0001-keep-the-combat-log.md records why the port keeps it and the
+# rule that each line says what a move did to its target, which matters
+# under an sswitch buff, where damage heals and a heal hurts.
 extends PanelContainer
 class_name CombatLogPanel
 
@@ -69,7 +72,11 @@ func _format_move_line(event: Dictionary, units: Dictionary) -> String:
 	var move_name: String = str(event.get("move_name", "a move"))
 	var result: Dictionary = event.get("result", {})
 	match result.get("type"):
+		BattleManager.ResultType.DAMAGE when result.get("sswitched", false):
+			return "%s's %s heals %s for %d" % [caster_name, move_name, target_name, int(result.get("amount", 0))]
 		BattleManager.ResultType.DAMAGE:
+			return "%s hits %s with %s for %d" % [caster_name, target_name, move_name, int(result.get("amount", 0))]
+		BattleManager.ResultType.HEAL when result.get("sswitched", false):
 			return "%s hits %s with %s for %d" % [caster_name, target_name, move_name, int(result.get("amount", 0))]
 		BattleManager.ResultType.HEAL:
 			return "%s heals %s for %d" % [caster_name, target_name, int(result.get("amount", 0))]
@@ -77,5 +84,9 @@ func _format_move_line(event: Dictionary, units: Dictionary) -> String:
 			return "%s restores %s's focus by %d" % [caster_name, target_name, int(result.get("amount", 0))]
 		BattleManager.ResultType.MISS:
 			return "%s's %s misses %s" % [caster_name, move_name, target_name]
+		BattleManager.ResultType.STATUS_ONLY:
+			if str(result.get("buff_applied", "")) == "":
+				return "%s's %s has no effect on %s" % [caster_name, move_name, target_name]
+			return "%s hits %s with %s" % [caster_name, target_name, move_name]
 		_:
 			return ""

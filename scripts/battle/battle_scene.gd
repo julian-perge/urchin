@@ -437,10 +437,14 @@ func _on_unit_clicked(slot: int) -> void:
 	battlefield.add_child(_radial_menu)
 
 
-# Cooldown/silence gating, kept here rather than in battle_runner.gd for the
-# same reason _move_valid_for_target already lives here: this is
-# display-only gating, the runner re-validates for real when the move is
-# actually submitted.
+# Cooldown and silence gating for the player's picks. BattleAI._can_afford
+# checks silence for the AI's own picks, and the runner never re-checks
+# either when the move executes, where it checks focus and life
+# (BattleRunner._execute_move_action). The original does the same.
+# It checks cooldown and silence when the player picks
+# (frame_42/DoAction_11.as:70-79) and not again at dispatch, where the
+# conductor checks focus and life (frame_217/PlaceObject2_3389_480
+# enterFrame, lines 350-355).
 func _move_usable_on_bar(move: Ability, player: CombatUnit, bar_index: int) -> bool:
 	if bar_index < player.ability_cooldowns.size() and player.ability_cooldowns[bar_index] > 0:
 		return false
@@ -453,9 +457,24 @@ func _move_valid_for_target(move: Ability, slot: int) -> bool:
 	var target: CombatUnit = units.get(slot)
 	if target == null or not target.active:
 		return false
-	# Not enough focus darkens the orb (picking it would waste the turn).
+	# Too little focus or life, or a target without the move's required
+	# buffs, darkens the orb. That is a port choice. The original darkens an
+	# orb only for a bad target or a cooldown (frame_217/PlaceObject3_3382_500
+	# enterFrame, lines 15-29) and refuses these picks at the click with a
+	# message instead (frame_42/DoAction_11.as:60-69 and 80-84).
 	var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
 	if player != null and move.focus_cost > 0 and player.focus_n < move.focus_cost:
+		return false
+	if player != null and player.life_n <= move.flat_life_cost + round(player.life_u * move.health_cost_percentage):
+		return false
+	var matching_buffs: int = 0
+	for buff_slot in target.buff_slots:
+		if buff_slot["cd"] <= 0:
+			continue
+		var buff: Buff = BuffManagerAuto.buffs_by_id.get(buff_slot["buff_id"])
+		if buff != null and buff.element_type == move.required_buff_element:
+			matching_buffs += 1
+	if matching_buffs < move.required_buff_count:
 		return false
 	var is_ally: bool = target.team_side == CombatUnit.Team.ONE
 	var is_self: bool = slot == BattleRunner.PLAYER_SLOT
@@ -856,6 +875,16 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 			int(target_unit.life_n), int(target_unit.life_u),
 		])
 	match result.get("type"):
+		BattleManager.ResultType.DAMAGE when result.get("sswitched", false):
+			# Under sswitch this damage healed the target. The original draws its
+			# number in heal green and plays no hit animation or hit voice
+			# (frame_42/DoAction_8.as:133-149).
+			_float_text(target_slot, str(int(result.get("amount", 0))), MenuTheme.HEAL_COLOR, result.get("did_crit", false))
+			if target_unit != null:
+				_display_hp[target_slot] = minf(
+					_display_hp.get(target_slot, 0.0) + float(result.get("amount", 0)),
+					target_unit.life_u
+				)
 		BattleManager.ResultType.DAMAGE:
 			# KrinNumberShow: numbers colored by the move's ELEMENT; crits
 			# play the bigger "critical" variant of the same color.
@@ -876,10 +905,28 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 				# finishes await-ing. That made death wait for the attacker
 				# to get home first instead of landing with the killing blow.
 				_play_death(target_slot)
-			elif target_visual != null:
+			elif target_visual != null and target_unit != null and target_unit.stun == 0:
+				# The original skips the hit animation on a stunned target
+				# (frame_42/DoAction_8.as:101-104).
 				target_visual.set_state(CharacterVisual.State.HIT)
 			if target_unit != null:
 				AudioManagerAuto.voice(target_unit.voice_hit)
+		BattleManager.ResultType.HEAL when result.get("sswitched", false):
+			# Under sswitch this heal hurt the target. The original draws its
+			# number in the Shadow color, plays the hit animation unless the
+			# target is stunned, plays no hit voice, and plays the death at the
+			# impact when the heal kills (frame_42/DoAction_8.as:189-229).
+			_float_text(
+				target_slot, str(int(result.get("amount", 0))),
+				MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], result.get("did_crit", false)
+			)
+			_display_hp[target_slot] = maxf(
+				_display_hp.get(target_slot, 0.0) - float(result.get("amount", 0)), 0.0
+			)
+			if result.get("target_died", false):
+				_play_death(target_slot)
+			elif target_visual != null and target_unit != null and target_unit.stun == 0:
+				target_visual.set_state(CharacterVisual.State.HIT)
 		BattleManager.ResultType.HEAL:
 			_float_text(target_slot, "+%d" % int(result.get("amount", 0)), MenuTheme.HEAL_COLOR)
 			if target_unit != null:

@@ -5,7 +5,8 @@
 # unlock rules (frame_449), and the frame41 questHub/trainFight data.
 #
 # Story battles: id = zone * 100 + quest_progress[zone]. Reaching progress_max
-# is the zone boss; past it the boss is repeatable (no more progression).
+# is the zone boss; past it the boss is repeatable (no more progression),
+# except that zone 4 replays the fight before it, the Hydra.
 # Training battles: per-zone [battle_id, unlock_progress] pools, available
 # once quest_progress[zone] > unlock_progress (-1 = always).
 #
@@ -63,12 +64,13 @@ const CUTSCENE_BATTLES: Dictionary = {109: "CS_CUT2", 210: "CS_CUT3", 409: "CS_C
 # set alongside afterCut in the same battle_id checks above): "overMap" opens
 # the zone map on landing (CS_CUT2/CS_CUT4 both unlock a new zone - the
 # original shows it off immediately rather than dropping back into the same
-# hub), "Navigation" is the current zone hub (CS_CUT3 - zone 2's boss doesn't
-# unlock anything new). The original's CS_CUT5 destination is "endMenu" (an
-# ending/credits screen for what was the web build's last zone at the time);
-# no such screen exists in this port and zones 6/7 are real playable content
-# past it here, so it falls back to "overMap" like the other zone-unlocking
-# cutscenes rather than going nowhere.
+# hub), "Navigation" is the current zone hub (CS_CUT3 follows battle 210, two
+# fights before zone 2's boss, 212 at progressMax 12 in
+# frame_41/DoAction_2.as:47, so nothing new is unlocked yet). The original's
+# CS_CUT5 destination is "endMenu" (an ending/credits screen for what was the
+# web build's last zone at the time); no such screen exists in this port and
+# zones 6/7 are real playable content past it here, so it falls back to
+# "overMap" like the other zone-unlocking cutscenes rather than going nowhere.
 const CUTSCENE_GOTO_SCENE: Dictionary = {
 	"CS_CUT2": "overMap", "CS_CUT3": "Navigation", "CS_CUT4": "overMap", "CS_CUT5": "overMap",
 }
@@ -83,7 +85,7 @@ static func quest_progress(save: PlayerSave, zone: int) -> int:
 
 # The story-fight orb (DefineButton2_3204): the next story battle in the
 # player's current zone. is_story_progress = winning advances quest_progress;
-# is_boss = this is (or repeats) the zone's final fight.
+# is_boss = this is the zone's final fight or a beaten zone's boss replay.
 static func pick_story_battle(save: PlayerSave) -> Dictionary:
 	var zone: int = save.section_in
 	var hub: Dictionary = QUEST_HUB.get(zone, {})
@@ -96,6 +98,11 @@ static func pick_story_battle(save: PlayerSave) -> Dictionary:
 	var is_boss: bool = progress == progress_max
 	if progress > progress_max:
 		battle_id = zone * 100 + progress_max
+		if zone == 4:
+			# The TUNNELS orb replays progressMax - 1 (DefineButton2_3239
+			# on(press) line 9), so a beaten zone 4 replays the Hydra in 408
+			# instead of 409, the scripted Tunnel Worker fight before CS_CUT4.
+			battle_id = zone * 100 + progress_max - 1
 		is_story_progress = false
 		is_boss = true
 	return {"battle_id": battle_id, "is_story_progress": is_story_progress, "is_boss": is_boss}
@@ -139,8 +146,9 @@ static func is_zone_unlocked(save: PlayerSave, zone: int) -> bool:
 
 
 # frame_449's difficulty gate on how much of the map exists at all:
-# easy = zones 1-5, normal = 1-6, hard = 1-7 (zone 7 additionally requires
-# the all-star achievement in the original).
+# easy = zones 1-5, normal = 1-6, hard = 1-7. On hard, zone 7 additionally
+# needs achievement 4, Legend, in the original (frame_449/DoAction.as:5 tests
+# achGet[4]), not All Star as the parameter name says.
 static func max_zone(difficulty: CombatUnit.Difficulty, has_all_star_achievement: bool = false) -> int:
 	if difficulty <= CombatUnit.Difficulty.EASY:
 		return 5
