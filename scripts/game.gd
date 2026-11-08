@@ -10,11 +10,17 @@ extends Control
 var _current_zone_scene: Node = null
 
 
-func _ready():
-	ZoneManager.zone_changed.connect(_load_zone)
-	# Returning from a battle (or the menu): restore the save's zone.
+# Every time the hub opens, after a load or on the return from a battle, this
+# restores the save's zone. It has to run here and not in _ready(), because
+# Godot runs the children's _ready() first, and the hotbar and the store window
+# read ZoneManager.current_zone in theirs.
+func _enter_tree():
 	if GameData.current_save != null:
 		ZoneManager.current_zone = GameData.current_save.section_in
+
+
+func _ready():
+	ZoneManager.zone_changed.connect(_load_zone)
 	_load_zone(ZoneManager.current_zone)
 	AudioManagerAuto.play_menu_music()
 	# A cutscene that just unlocked a new zone opens the map here instead of
