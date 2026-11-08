@@ -24,7 +24,7 @@ Analysis and extraction tooling lives in `dev/urchin_dev/swf/`:
 - `swf_index.py` - reads tags, placements, labels, shape bounds and sound streams straight from a SWF
 - `timeline.py` - folds the placements into one display list per frame
 - `xml_lib.py` - what `vfx_offsets.py` still reads from the web dump
-- `prepare_extract_swf.py` - builds the stripped SWF the icon renders use
+- `strip.py` - builds the stripped copies and hide lists the extractors render from, refusing clip masks
 - `item_looks.py` - regenerates `converted_json/item_looks.json` + patches item `.tres` looks
 - `faces.py` - regenerates `assets/ui/menu/portraits/*.png`
 - `extract/zone_hub.py` - regenerates the zone-hub backgrounds and the orb's arc shapes

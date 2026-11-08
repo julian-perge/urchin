@@ -44,7 +44,7 @@ from pathlib import Path
 from PIL import Image
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
-from urchin_dev.swf import timeline
+from urchin_dev.swf import strip, timeline
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
 HUB_DIR = REPO_ROOT / "assets" / "backgrounds" / "hub"
@@ -73,6 +73,10 @@ ZONE_LABELS: dict[int, str] = {
 # The orb and the buttons sitting on each of its spots. Deleted from the
 # working copy so the hub renders as bare scene art.
 ORB_BUTTONS = tuple(range(3186, 3194))
+HUB_STRIP: dict[int, str] = {
+    ORB_SPRITE: "the spinning orb, which scenes/orb.tscn draws instead",
+    **{cid: "the button on an orb spot" for cid in ORB_BUTTONS},
+}
 
 # The two shapes 3196 stacks, bottom layer first, named for what they become
 # in scenes/orb.tscn.
@@ -102,31 +106,26 @@ def render_hubs(frames: dict[int, int]) -> None:
     buttons deleted, trimmed to the scene art."""
     work = Path(tempfile.mkdtemp(prefix="zone_hub_"))
     try:
-        stripped = work / "hub.swf"
-        run(
-            [str(FFDEC), "-removeCharacter", str(WEB_SWF), str(stripped)]
-            + [str(ORB_SPRITE)]
-            + [str(c) for c in ORB_BUTTONS]
-        )
         wanted = sorted(set(frames.values()))
         out = work / "frames"
-        run(
-            [
-                str(FFDEC),
-                "-zoom",
-                str(HUB_ZOOM),
-                "-format",
-                "sprite:png",
-                "-selectid",
-                str(HUB_SPRITE),
-                "-select",
-                ",".join(f"{HUB_SPRITE}:{f}" for f in wanted),
-                "-export",
-                "sprite",
-                str(out),
-                str(stripped),
-            ]
-        )
+        with strip.stripped_copy(WEB_SWF, HUB_STRIP) as stripped:
+            run(
+                [
+                    str(FFDEC),
+                    "-zoom",
+                    str(HUB_ZOOM),
+                    "-format",
+                    "sprite:png",
+                    "-selectid",
+                    str(HUB_SPRITE),
+                    "-select",
+                    ",".join(f"{HUB_SPRITE}:{f}" for f in wanted),
+                    "-export",
+                    "sprite",
+                    str(out),
+                    str(stripped),
+                ]
+            )
 
         HUB_DIR.mkdir(parents=True, exist_ok=True)
         rendered = out / f"DefineSprite_{HUB_SPRITE}"

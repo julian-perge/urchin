@@ -113,22 +113,25 @@ entry names its evidence so you can check it instead of trusting it.
      game because AS hides it. ffdec draws it and ruins the export. This is the
      black disc over the ability icons: DefineSprite 2241 "bfilter" hides
      itself in `onLoad`, with DefineEditText 2245 the "00" counter on top of
-     it. `prepare_extract_swf.py` deletes both from a working copy, and its
-     header carries the decoded bytecode.
-  2. **Never add a clip mask to `STRIPPED_CHARACTERS`.** A mask looks exactly
-     like an unwanted shape on top of the art, and removing one unclips
-     everything it covered. DefineShape 1913 was stripped on that assumption
-     and item 69 "A Broken Pipe" went from a correct 63x63 to 101x140. Confirm
-     an id's placements carry no `clipDepth` first.
-  3. `gotoAndStop` handlers never fire, so a root-frame render shows every
-     nested sprite at its own frame 1, not the label the game would select.
-     The battle recomposition check has to compare WHITE NOVEMBER over SEA
-     because those are frame 1 of the hall and sky sprites (`8785f25`).
-- **Strip authoring-only characters from a working copy with
-  `-removeCharacter`.** Every battle hall places DefineSprite 2676 six times as
-  the character rig, so unstripped each background bakes in six placeholder
-  fighters holding swords under "!" speech bubbles (`d80a9c4`). The zone hubs
-  place the orb 3196 and buttons 3186-3193 the same way (`8ef2139`).
+     it. `ability_icons.py` deletes both from a working copy, and its
+     `COOLDOWN_DISPLAY` carries the decoded bytecode.
+  2. **Never strip or hide a clip mask.** A mask looks exactly like an
+     unwanted shape on top of the art, and removing one unclips everything it
+     covered. DefineShape 1913 was stripped on that assumption and item 69 "A
+     Broken Pipe" went from a correct 63x63 to 101x140. `strip.py` refuses
+     any id placed with a `clipDepth`, so go through it.
+  3. `gotoAndStop` handlers never fire, so a CLI render shows every nested
+     sprite at its own frame 1, not the label the game would select. That's
+     why the battle check used to compare only WHITE NOVEMBER over SEA, frame
+     1 of the hall and sky (`8785f25`). `verify_battle_screen.py` moves them
+     through `ffdec_lib.py`'s `goto` now.
+- **Strip authoring-only characters through `dev/urchin_dev/swf/strip.py`.**
+  Each extractor keeps its own `{characterId: reason}` and renders and
+  measures from the one copy or hide list it gets back. Every battle hall
+  places DefineSprite 2676 six times as the character rig, so unstripped each
+  background bakes in six placeholder fighters holding swords under "!"
+  speech bubbles (`d80a9c4`). The zone hubs place the orb 3196 and buttons
+  3186-3193 the same way (`8ef2139`).
 - **A render can carry the author's placeholder text.** A DefineEditText with
   an `initialText` and a `variableName` is filled at runtime, so its baked
   string is scaffolding. The battle bottom bar shipped with two rows reading

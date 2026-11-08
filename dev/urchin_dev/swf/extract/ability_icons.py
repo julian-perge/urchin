@@ -26,10 +26,10 @@
 # Same root cause and fix as item_icons.py and faces.py, both of which were
 # converted away from hand-compositing for exactly these reasons.
 #
-# Renders against the prepared extraction SWF rather than the original,
-# because two characters on this sheet are opaque in the tag data but hidden
-# by ActionScript at runtime and would otherwise paint over every icon. See
-# prepare_extract_swf.py for which ones and the evidence.
+# Renders from a copy of the SWF with two characters deleted, because both
+# are opaque in the tag data but hidden by ActionScript at runtime and would
+# otherwise paint over every icon. COOLDOWN_DISPLAY below has which ones and
+# the evidence.
 #
 # ffdec sizes every exported frame to the whole sprite timeline's union
 # bounding box, so each frame comes back as a large, mostly-transparent canvas
@@ -39,7 +39,7 @@
 # every consumer already expects (scripts/ui/menu/abilities_window.gd and
 # scripts/battle/battle_scene.gd load these by name).
 #
-# Requires ffdec, and the prepared SWF: uv run prepare_extract_swf
+# Requires ffdec.
 # Run: uv run extract_ability_icons
 from __future__ import annotations
 
@@ -53,8 +53,7 @@ from pathlib import Path
 from PIL import Image
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
-from urchin_dev.swf import timeline
-from urchin_dev.swf.prepare_extract_swf import require_extract_swf
+from urchin_dev.swf import strip, timeline
 from urchin_dev.swf.swf_index import read_swf
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "abilities"
@@ -63,6 +62,30 @@ ZOOM = 2.0
 ICON_SPRITE = 2427
 # The slot viewport is 31x31 design px; icons are drawn centered on (0,0).
 ICON_HALF = 15.5
+
+# characterId -> why the running game never shows it.
+#
+# Both of these are the move-cooldown display: a black disc with a turn
+# counter on it, drawn over the icon art while an ability is cooling down.
+# Neither is visible on a ready ability, which is the state every icon is
+# extracted in.
+COOLDOWN_DISPLAY: dict[int, str] = {
+    # DefineSprite 2241, placed at depth 11 and named "bfilter" - a fully
+    # opaque black disc covering nearly all of the icon art beneath it. Its
+    # onLoad clip handler is `if (_parent.dontHide != true) this._visible =
+    # false;`, so it hides itself the moment it loads unless the parent asked
+    # for the darkened cooldown look. Decoded from the placement's
+    # clipActions bytecode: ActionPush "_parent", GetVariable, ActionPush
+    # "dontHide", GetMember, Equals2, ActionIf, then ActionPush ("", 7,
+    # false) into SetProperty - where property index 7 is _visible.
+    2241: "cooldown darkener, hides itself in onLoad",
+    # DefineEditText 2245, placed at depth 13, initialText "00", grey
+    # (153,153,153). The cooldown turn counter that sits on the disc above.
+    # It survives a shape-by-shape compositor only by accident, because an
+    # edit text carries `bounds` where a shape carries `shapeBounds` and the
+    # bounds lookup returns nothing for it.
+    2245: "cooldown turn counter, hidden with its disc",
+}
 
 
 def sanitize(label: str) -> str:
@@ -80,7 +103,6 @@ def run(cmd: list[str]) -> subprocess.CompletedProcess:
 
 
 def main():
-    swf = require_extract_swf()
     labels = timeline.labels(read_swf(WEB_SWF), ICON_SPRITE)
     print(f"icon labels: {len(labels)}", file=sys.stderr)
 
@@ -96,23 +118,24 @@ def main():
         # Selection.contains unboxes a null prefix before its own null check
         # can run).
         wanted = ",".join(f"{ICON_SPRITE}:{frame}" for frame in sorted(labels.values()))
-        run(
-            [
-                str(FFDEC),
-                "-zoom",
-                str(ZOOM),
-                "-format",
-                "sprite:png",
-                "-selectid",
-                str(ICON_SPRITE),
-                "-select",
-                wanted,
-                "-export",
-                "sprite",
-                str(frames_dir),
-                str(swf),
-            ]
-        )
+        with strip.stripped_copy(WEB_SWF, COOLDOWN_DISPLAY) as swf:
+            run(
+                [
+                    str(FFDEC),
+                    "-zoom",
+                    str(ZOOM),
+                    "-format",
+                    "sprite:png",
+                    "-selectid",
+                    str(ICON_SPRITE),
+                    "-select",
+                    wanted,
+                    "-export",
+                    "sprite",
+                    str(frames_dir),
+                    str(swf),
+                ]
+            )
         sprite_frames_dir = frames_dir / f"DefineSprite_{ICON_SPRITE}"
 
         OUT_DIR.mkdir(parents=True, exist_ok=True)

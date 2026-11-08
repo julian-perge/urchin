@@ -63,7 +63,7 @@ from pathlib import Path
 from PIL import Image
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
-from urchin_dev.swf import timeline
+from urchin_dev.swf import strip, timeline
 from urchin_dev.swf.swf_index import read_swf
 
 OUT_MENU = REPO_ROOT / "assets" / "ui" / "menu"
@@ -218,36 +218,30 @@ def write_cards(placements) -> dict[str, tuple[float, float, float, float]]:
 def render_background(placements, frame_number: int, out_path: Path) -> None:
     """Draw the classMenu frame from a copy of the SWF with every foreground
     character deleted, leaving the background the menu screens share."""
-    foreground = sorted(
-        {
-            layer.character_id
-            for depth, layer in placements.items()
-            if depth > BACKGROUND_MAX_DEPTH
-        }
-    )
+    foreground = {
+        layer.character_id: f"classMenu foreground at depth {depth}"
+        for depth, layer in sorted(placements.items())
+        if depth > BACKGROUND_MAX_DEPTH
+    }
     work = Path(tempfile.mkdtemp(prefix="start_background_"))
     try:
-        stripped = work / "background.swf"
-        run(
-            [str(FFDEC), "-removeCharacter", str(WEB_SWF), str(stripped)]
-            + [str(c) for c in foreground]
-        )
         frames = work / "frames"
-        run(
-            [
-                str(FFDEC),
-                "-zoom",
-                str(BACKGROUND_ZOOM),
-                "-format",
-                "frame:png",
-                "-select",
-                str(frame_number),
-                "-export",
-                "frame",
-                str(frames),
-                str(stripped),
-            ]
-        )
+        with strip.stripped_copy(WEB_SWF, foreground) as stripped:
+            run(
+                [
+                    str(FFDEC),
+                    "-zoom",
+                    str(BACKGROUND_ZOOM),
+                    "-format",
+                    "frame:png",
+                    "-select",
+                    str(frame_number),
+                    "-export",
+                    "frame",
+                    str(frames),
+                    str(stripped),
+                ]
+            )
         image = Image.open(frames / f"{frame_number}.png").convert("RGBA")
         image.save(out_path)
         print(
