@@ -98,7 +98,14 @@ def parse_unit_block(parsed_unit: dict):
                     .get("denseValues")
                     .values()
                 ),
-                "die": visuals.get("voice").get("members").get("die"),
+                # Bunny's record never sets voiceDie
+                # (frame_42/DoAction_13.as:543-551), so the capture holds
+                # Undefined there. The original's addSound plays nothing for
+                # an undefined cue (frame_42/DoAction.as:7), and
+                # AudioManager.play_effect plays nothing for an empty one.
+                "die": models.coerce_text(
+                    visuals.get("voice").get("members").get("die")
+                ),
             },
         },
     }

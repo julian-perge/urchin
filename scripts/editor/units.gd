@@ -23,8 +23,11 @@ const CharacterScript = preload("res://scripts/entities/character.gd")
 const AGGRESSION_ORDER: Array[String] = Party.AGGRESSION_NAMES
 const ELEMENT_ORDER: Array[String] = CombatUnit.ELEMENT_ORDER
 
+# This and _absolute_moves build untyped arrays on purpose. A typed array saves
+# into a .tres wrapped as Array[int]([...]) or Array[Dictionary]([...]), so
+# typing them makes this script rewrite every committed unit file.
 func _ids(move_list: Array) -> Array:
-	var ids: Array[int] = []
+	var ids: Array = []
 	for move in move_list:
 		ids.append(int(move["id"]))
 	return ids
@@ -33,7 +36,7 @@ func _ids(move_list: Array) -> Array:
 # field is really the battle PHASE the move is restricted to (0 = usable in any
 # phase) - AImoveAdder checks moveArrayABS[i][1] == 0 || == _root.phase.
 func _absolute_moves(move_list: Array) -> Array:
-	var moves: Array[Dictionary] = []
+	var moves: Array = []
 	for move in move_list:
 		moves.append({"id": int(move["id"]), "phase": int(move["turn"])})
 	return moves

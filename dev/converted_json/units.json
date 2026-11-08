@@ -5177,9 +5177,7 @@
         "skin": "0",
         "voice": {
           "hit": [],
-          "die": {
-            "type": "Undefined"
-          }
+          "die": ""
         }
       }
     },
