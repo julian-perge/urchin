@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="PlayerSave" format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/player_save.gd" id="1_player_save"]
+
+[resource]
+script = ExtResource("1_player_save")
+name_user = "weak"
+euro = 1000.0
+skill_points = 5
+point_residue = 0.15819840000000607
+stat_allocated = [5, 6, 5, 3, 0]
+strength = 13.0
+magic = 7.0
+speed = 11.0
+focus = 100.0
+life = 9.0
+per = Dictionary[int, float]({
+0: 0.0,
+1: 0.0,
+2: 0.0,
+3: 0.0,
+4: 0.0,
+5: 0.0,
+6: 0.0,
+7: 0.0
+})
+def = Dictionary[int, float]({
+0: 0.0,
+1: 0.0,
+2: 0.0,
+3: 0.0,
+4: 0.0,
+5: 0.0,
+6: 0.0,
+7: 0.0
+})
+section_in = 5
+quest_progress = ["EMPTY", 10, 13, 9, 10, 13, 0, 0, 0, 0, 0, 0, 0, 0]
+party_roster = [0, 1, 2, 3, -1, -1]
+party_deployed = [1, 2]
+party_levels = [0, 1, 11, 22, 12, 12]
+party_exp = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+item_array = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+equip_array = [0, 11, 0, 4, 8, 5, 0]
+talent_main_array = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+skill_adder_matrix = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+buff_adder_matrix = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+move_matrix = [1, 6, 0, 0, 0, 0, 0, 0]
+move_matrix2 = [1, 6]

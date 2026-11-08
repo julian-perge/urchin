@@ -34,6 +34,17 @@ entry names its evidence so you can check it instead of trusting it.
 - After writing anything under `assets/`, run
   `/Applications/Godot.app/Contents/MacOS/Godot --headless --import --path .`
   or tests fail with "No loader found for resource".
+- QA save presets are in `dev/save_presets/`, one `.tres` per known game state.
+  Copy one into a slot before launching the game, because a running game keeps
+  the slot it already loaded: `dev/save_presets/apply.sh zone3_boss 3`. `--list`
+  names them. A preset that depends on Legend also replaces `achievements.cfg`
+  and keeps the first original as `achievements.cfg.bak`, which
+  `--restore-achievements` puts back. Level 99 presets carry set stats, and
+  changing equipment recomputes them from a curve that is negative by level 55,
+  so use `rich` for equip checks. Rebuild them after `PlayerSave` changes with
+  `/Applications/Godot.app/Contents/MacOS/Godot --headless --path . -s
+  res://dev/save_presets/generate.gd --quit-after 30`, then check the output for
+  `SCRIPT ERROR`, because a script error still exits 0.
 - ffdec must be at `~/.local/bin/ffdec` and built from the jpexs **master**
   branch. Nightly build 3544 mis-renders bevel-over-clip-mask, which silently
   shrank the biological class card from 191 to 136 design px (`fd755b3`).
