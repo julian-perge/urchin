@@ -75,7 +75,7 @@ static func build_sections(
 		# bottom line's preview, which is already showing rank 1's.
 		if rank == 0:
 			description = UNLEARNED_DESCRIPTION
-	var element_index: CombatUnit.Element = -1
+	var element_index: int = -1
 	if not is_passive and move != null:
 		element_index = move.damage_element_type
 	var element_color: Color = MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.6, 0.6, 0.4)
