@@ -437,9 +437,10 @@ func _on_unit_clicked(slot: int) -> void:
 	battlefield.add_child(_radial_menu)
 
 
-# Cooldown and silence gating. This is the only place either is checked: the
-# runner never re-checks them when the move executes, where it checks focus
-# and life (BattleRunner._execute_move_action). The original does the same.
+# Cooldown and silence gating for the player's picks. BattleAI._can_afford
+# checks silence for the AI's own picks, and the runner never re-checks
+# either when the move executes, where it checks focus and life
+# (BattleRunner._execute_move_action). The original does the same.
 # It checks cooldown and silence when the player picks
 # (frame_42/DoAction_11.as:70-79) and not again at dispatch, where the
 # conductor checks focus and life (frame_217/PlaceObject2_3389_480

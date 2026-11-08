@@ -44,7 +44,7 @@ const ANIMATIONS_FILE: String = SPRITE_ROOT + "/model1_animations.json"
 # per-frame steps at 30 fps to per-second rates:
 # - base step = distance / krinBoltTime(60) * krinBodyMove(10) = distance/6
 #   per frame -> goRat rate = 5.0 / s at full speed
-# - run out eases OUT: coEF = clamp(1.5 - 1.45 * goRat, 0, 1); the run label
+# - run out eases OUT: coEF = min(1.5 - 1.45 * goRat, 1); the run label
 #   is INTERRUPTED by arrival. In the original, the step scales with the
 #   distance to the target's center but the dash stops short of it by both
 #   half-widths, so arrival takes 13 frames with zero half-widths, 11 at

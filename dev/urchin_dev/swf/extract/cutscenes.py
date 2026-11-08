@@ -51,9 +51,12 @@
 #
 # Sprite ids, frame counts, and camera clip ids in CUTSCENES below were
 # read directly out of dev/source_files/swf_xml/sonny-2-2900.xml (frameCount
-# attributes on each DefineSpriteTag, cross-checked against the FrameLabelTag
-# names) - see .superpowers/sdd/plan_cutscenes/task-1-brief.md's Background
-# table for the original battle-id survey that found these.
+# attributes on each DefineSpriteTag) - see
+# .superpowers/sdd/plan_cutscenes/task-1-brief.md's Background table for the
+# original battle-id survey that found these. Each label was matched to the
+# wrapper placed just before it in the XML, which is the previous label's, so
+# CS_CUT2 to CS_CUT5 below ship the footage of CS_INTRO2, CS_CUT1, CS_CUT3
+# and CS_CUT4 (GitHub issue #34 has the corrected table).
 #
 # ffdec's sprite:avi export renders video only (no audio track) - each
 # cutscene's dialogue/music is a SoundStreamBlockTag-per-frame MP3 stream
