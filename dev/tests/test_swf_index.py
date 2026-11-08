@@ -6,7 +6,6 @@ import struct
 from urchin_dev.swf.swf_index import (
     TAG_DEFINE_SHAPE,
     TAG_DEFINE_SHAPE3,
-    TAG_DEFINE_SHAPE4,
     TAG_DEFINE_SPRITE,
     TAG_DO_ACTION,
     TAG_END,
@@ -17,7 +16,6 @@ from urchin_dev.swf.swf_index import (
     TAG_SOUND_STREAM_BLOCK,
     Placement,
     Removal,
-    bitmap_fill_ids,
     first_fill_bitmap_id,
     parse_swf,
     shape_bounds,
@@ -216,36 +214,6 @@ def test_shape_bounds_reads_the_rect_in_twips():
     assert shape_bounds(index, 30) == (-20, 0, 300, 40)
 
 
-def test_bitmap_fill_ids_skip_gradients_and_follow_new_styles():
-    # Two gradient records, each a ratio byte and an RGBA colour.
-    gradient = bytes([0x10]) + IDENTITY_MATRIX + bytes([0x02]) + b"\0" * 10
-    bitmap = bytes([0x41]) + struct.pack("<H", 7) + IDENTITY_MATRIX
-    later = bytes([0x40]) + struct.pack("<H", 65535) + IDENTITY_MATRIX
-    # One style change record: StateNewStyles and StateFillStyle0, then fill
-    # style 1 in one bit. Its new arrays start on the next byte.
-    record = bits((0, 1), (1, 1), (0, 1), (0, 1), (1, 1), (0, 1), (1, 1))
-    shapes = (
-        b"\0" + bytes([2]) + gradient + bitmap + b"\0" + bytes([0x10])
-        + record
-        + bytes([1]) + later + b"\0" + bytes([0x10])
-        + b"\0"  # EndShapeRecord
-    )  # fmt: skip
-    body = struct.pack("<H", 31) + shapes
-    index = parse_swf(swf(tag(TAG_DEFINE_SHAPE3, body), tag(TAG_SHOW_FRAME)))
-    assert bitmap_fill_ids(index, 31) == {7, 65535}
-
-
-def test_bitmap_fill_ids_read_a_define_shape4_line_fill():
-    # LINESTYLE2 with HasFillFlag set in its first flag byte, then a bitmap
-    # fill in place of the colour.
-    line = struct.pack("<H", 20) + bytes([0x08, 0x00])
-    line += bytes([0x42]) + struct.pack("<H", 9) + IDENTITY_MATRIX
-    shapes = b"\0" + bytes([1]) + line + bytes([0x01]) + b"\0"
-    body = struct.pack("<H", 40) + b"\0\0\0" + shapes  # two RECTs, then flags
-    index = parse_swf(swf(tag(TAG_DEFINE_SHAPE4, body), tag(TAG_SHOW_FRAME)))
-    assert bitmap_fill_ids(index, 40) == {9}
-
-
 def test_first_fill_bitmap_id_reads_only_the_first_fill_style():
     solid = bytes([0x00]) + b"\0\0\0\xff"
     missing = bytes([0x40]) + struct.pack("<H", 65535) + IDENTITY_MATRIX
@@ -263,4 +231,3 @@ def test_first_fill_bitmap_id_reads_only_the_first_fill_style():
         )
     )
     assert [first_fill_bitmap_id(index, cid) for cid in (1, 2, 3)] == [None, 7, None]
-    assert bitmap_fill_ids(index, 1) == {65535}

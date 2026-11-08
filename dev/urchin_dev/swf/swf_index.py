@@ -5,8 +5,8 @@
 # much of each tag as it needs to reach the fields it records. timeline.py
 # folds the placements and removals into each frame's display list.
 #
-# Shapes are only read for their bounds and for the bitmap ids their fills
-# use, on demand from the bytes the index keeps. Art is rendered through
+# Shapes are only read for their bounds and for the bitmap their first fill
+# style uses, on demand from the bytes the index keeps. Art is rendered through
 # ffdec and never composited in Python (CLAUDE.md).
 #
 # Owner ids: 0 is the root timeline, any other id is the DefineSprite whose
@@ -165,8 +165,8 @@ class SwfIndex:
     """display holds each timeline's placements and removals in tag order,
     which is the order timeline.py applies them in. characters maps each
     character id to its defining tag's code and the start and end of that
-    tag's body in data, so shape_bounds() and bitmap_fill_ids() can parse a
-    shape later. sound_blocks holds the body spans of each timeline's
+    tag's body in data, so shape_bounds() and first_fill_bitmap_id() can parse
+    a shape later. sound_blocks holds the body spans of each timeline's
     SoundStreamBlock tags."""
 
     version: int
@@ -545,50 +545,14 @@ def sound_stream(index: SwfIndex, owner: int) -> list[bytes]:
     return [index.data[start:end] for start, end in index.sound_blocks.get(owner, [])]
 
 
-def bitmap_fill_ids(index: SwfIndex, cid: int) -> set[int]:
-    """-> every bitmap id a DefineShape's fill styles point at, including the
-    fills of DefineShape4 line styles and the style arrays a StateNewStyles
-    record brings in partway through the shape."""
-    code, pos = _fill_style_array(index, cid)
-    data, ids = index.data, set()
-    pos = _line_styles(data, _fill_styles(data, pos, code, ids), code, ids)
-    bits = _Bits(data, pos)
-    fill_bits, line_bits = bits.ub(4), bits.ub(4)
-    while True:
-        if bits.ub(1):  # an edge record
-            straight = bits.ub(1)
-            n = bits.ub(4) + 2
-            if not straight:
-                bits.ub(4 * n)
-            elif bits.ub(1):  # a general line has both deltas
-                bits.ub(2 * n)
-            else:
-                bits.ub(1 + n)  # VertLineFlag, then one delta
-            continue
-        flags = bits.ub(5)
-        if flags == 0:
-            return ids
-        if flags & 0x01:  # StateMoveTo
-            bits.ub(2 * bits.ub(5))
-        bits.ub(fill_bits * (((flags >> 1) & 1) + ((flags >> 2) & 1)))
-        bits.ub(line_bits * ((flags >> 3) & 1))
-        if flags & 0x10:  # StateNewStyles, whose arrays start on a byte
-            pos = _fill_styles(data, bits.align(), code, ids)
-            pos = _line_styles(data, pos, code, ids)
-            bits = _Bits(data, pos)
-            fill_bits, line_bits = bits.ub(4), bits.ub(4)
-
-
 def first_fill_bitmap_id(index: SwfIndex, cid: int) -> int | None:
     """-> the bitmap id a DefineShape's first fill style points at, or None
     when the shape has no fill styles or its first one isn't a bitmap."""
     code, pos = _fill_style_array(index, cid)
     count, pos = _fill_style_count(index.data, pos, code)
-    if count == 0:
+    if count == 0 or index.data[pos] not in BITMAP_FILL_TYPES:
         return None
-    ids: set[int] = set()
-    _fill_style(index.data, pos, code, ids)
-    return next(iter(ids), None)
+    return struct.unpack_from("<H", index.data, pos + 1)[0]
 
 
 def _fill_style_array(index: SwfIndex, cid: int) -> tuple[int, int]:
@@ -607,48 +571,3 @@ def _fill_style_count(data: bytes, pos: int, code: int) -> tuple[int, int]:
     if count == 0xFF and code != TAG_DEFINE_SHAPE:
         return struct.unpack_from("<H", data, pos + 1)[0], pos + 3
     return count, pos + 1
-
-
-def _fill_styles(data: bytes, pos: int, code: int, ids: set[int]) -> int:
-    count, pos = _fill_style_count(data, pos, code)
-    for _ in range(count):
-        pos = _fill_style(data, pos, code, ids)
-    return pos
-
-
-def _fill_style(data: bytes, pos: int, code: int, ids: set[int]) -> int:
-    kind = data[pos]
-    pos += 1
-    color = 4 if code in (TAG_DEFINE_SHAPE3, TAG_DEFINE_SHAPE4) else 3
-    if kind == 0x00:
-        return pos + color
-    if kind in (0x10, 0x12, 0x13):
-        pos = _skip_matrix(data, pos)
-        records = data[pos] & 0x0F  # under SpreadMode and InterpolationMode
-        pos += 1 + records * (1 + color)
-        return pos + 2 if kind == 0x13 else pos  # the focal point
-    if kind in BITMAP_FILL_TYPES:
-        (bitmap,) = struct.unpack_from("<H", data, pos)
-        ids.add(bitmap)
-        return _skip_matrix(data, pos + 2)
-    raise ValueError(f"unknown fill style type {kind:#x}")
-
-
-def _line_styles(data: bytes, pos: int, code: int, ids: set[int]) -> int:
-    count = data[pos]
-    pos += 1
-    if count == 0xFF:
-        (count,) = struct.unpack_from("<H", data, pos)
-        pos += 2
-    for _ in range(count):
-        if code != TAG_DEFINE_SHAPE4:
-            pos += 2 + (4 if code == TAG_DEFINE_SHAPE3 else 3)
-            continue
-        # LINESTYLE2: the width, then two bytes of flags whose first holds
-        # JoinStyle in bits 4-5 and HasFillFlag in bit 3.
-        flags = data[pos + 2]
-        pos += 4
-        if (flags >> 4) & 3 == 2:
-            pos += 2  # the miter limit
-        pos = _fill_style(data, pos, code, ids) if flags & 0x08 else pos + 4
-    return pos
