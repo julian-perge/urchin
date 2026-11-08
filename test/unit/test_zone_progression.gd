@@ -43,6 +43,22 @@ func test_story_battle_selection():
 	assert_false(pick["is_story_progress"], "repeat wins do not advance progress")
 
 
+func test_story_orb_replays_once_the_zone_is_done():
+	save.section_in = 4
+	save.quest_progress[4] = 10
+	var pick = ZoneProgression.pick_story_battle(save)
+	assert_eq(pick["battle_id"], 408, "the TUNNELS orb replays progressMax - 1, the Hydra")
+	assert_false(pick["is_story_progress"], "the replay does not advance progress")
+	assert_true(pick["is_boss"], "the replay is a boss fight")
+
+	var replays = {1: 109, 2: 212, 3: 308, 5: 513, 6: 603, 7: 703}
+	for zone in replays:
+		save.section_in = zone
+		save.quest_progress[zone] = ZoneProgression.QUEST_HUB[zone]["progress_max"] + 1
+		pick = ZoneProgression.pick_story_battle(save)
+		assert_eq(pick["battle_id"], replays[zone], "zone %d's orb replays its progressMax fight" % zone)
+
+
 func test_training_battle_unlocks():
 	assert_eq(ZoneProgression.available_training_battle_ids(save), [1000], "-1 entries always unlocked")
 	save.quest_progress[1] = 6
