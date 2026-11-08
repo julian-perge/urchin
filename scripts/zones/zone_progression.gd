@@ -5,7 +5,8 @@
 # unlock rules (frame_449), and the frame41 questHub/trainFight data.
 #
 # Story battles: id = zone * 100 + quest_progress[zone]. Reaching progress_max
-# is the zone boss; past it the boss is repeatable (no more progression).
+# is the zone boss; past it the boss is repeatable (no more progression),
+# except that zone 4 replays the fight before it, the Hydra.
 # Training battles: per-zone [battle_id, unlock_progress] pools, available
 # once quest_progress[zone] > unlock_progress (-1 = always).
 #
@@ -84,7 +85,7 @@ static func quest_progress(save: PlayerSave, zone: int) -> int:
 
 # The story-fight orb (DefineButton2_3204): the next story battle in the
 # player's current zone. is_story_progress = winning advances quest_progress;
-# is_boss = this is (or repeats) the zone's final fight.
+# is_boss = this is the zone's final fight or a beaten zone's boss replay.
 static func pick_story_battle(save: PlayerSave) -> Dictionary:
 	var zone: int = save.section_in
 	var hub: Dictionary = QUEST_HUB.get(zone, {})
@@ -97,6 +98,11 @@ static func pick_story_battle(save: PlayerSave) -> Dictionary:
 	var is_boss: bool = progress == progress_max
 	if progress > progress_max:
 		battle_id = zone * 100 + progress_max
+		if zone == 4:
+			# The TUNNELS orb replays progressMax - 1 (DefineButton2_3239
+			# on(press) line 9), so a beaten zone 4 replays the Hydra in 408
+			# instead of 409, the scripted Tunnel Worker fight before CS_CUT4.
+			battle_id = zone * 100 + progress_max - 1
 		is_story_progress = false
 		is_boss = true
 	return {"battle_id": battle_id, "is_story_progress": is_story_progress, "is_boss": is_boss}
