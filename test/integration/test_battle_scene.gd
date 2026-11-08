@@ -475,6 +475,37 @@ func test_death_plays_at_impact_not_after_caster_returns():
 	ZoneManager.auto_start_battles = true
 
 
+# Shatter Bolt only applies a status effect, and at its impact the original
+# draws no number and plays no hit flinch. The target's stun animation still
+# starts there, because the conductor runs applyChangesKrin on the target right
+# after the status lands (conductor line 103).
+func test_shatter_bolt_impact_starts_the_stun_and_draws_no_number():
+	var save = PlayerSave.new_game("ShatterBoltImpact", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var result: Dictionary = scene.battle_manager.execute_move(
+		MoveManagerAuto.get_move(521), scene.units[2], scene.units[1], BuffManagerAuto.buffs_by_internal_name
+	)
+	var labels_before: int = scene.battlefield.get_children().filter(func(child): return child is Label).size()
+	scene._show_move_result(
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 2, "target_slot": 1, "move_id": 521, "result": result}, 1
+	)
+
+	assert_eq(
+		scene.battlefield.get_children().filter(func(child): return child is Label).size(), labels_before,
+		"no number floats up, so the damage branch and its hit flinch never ran"
+	)
+	assert_eq(scene._visuals[1]._state, CharacterVisual.State.STUN, "the target's stun animation starts at the impact")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func test_decision_timer_ticks_down_while_player_is_deciding():
 	var save = PlayerSave.new_game("TimerTest", 0)
 	GameData.current_save = save
