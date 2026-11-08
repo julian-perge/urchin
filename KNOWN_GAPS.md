@@ -111,8 +111,8 @@ Scoped-out edges from the playtest-feedback batch:
 - **Class-select card art - RESOLVED**: the original sketch art has been extracted and wired - gray rest / colored hover textures in `assets/ui/menu/class_cards/`,
   each card at the position and size the original places it at (reference `6_start_screen...png`). The class name under each card is a Godot Label, because the
   original fills a separate text field from `KrinLang` at runtime. Hovering a card shows that class's description through the shared `GameTooltip`, the way the original's `KrinToolTipper` shows it.
-- **Tutorial Level option**: stored on the options screen, but no tutorial system exists. The original's tutorial is battle 2 (`frame_165/DoAction.as:2`), and the converted data stores it
-  as battle 49, one of the `battleCreationID` relabels in `SWF_DIFFERENCES.md`, so `BattleRunner`'s `battle.id == 2` tutorial loss rule cannot match either.
+- **Tutorial Level option**: stored on the options screen, but no tutorial system exists. The original's tutorial is battle 2 (`frame_165/DoAction.as:2`). It loads under that id
+  since the `battleCreationID` relabels in `SWF_DIFFERENCES.md` were corrected, but nothing in the port launches it, so `BattleRunner`'s `battle.id == 2` tutorial loss rule never matches in play.
 - **Wolfgang/Amber portraits**: the web SWF's face-clip frames for party ids 4/5 are empty at their labels; the extracted portraits are blank frames.
   Party data also names them Teco/Catelin (from the companion seeds) while the face-clip labels say Wolfgang(Rockstar)/Amber - naming not yet reconciled against the Steam build.
   Both points are moot in the web build, because party ids 4 and 5 never join: the only roster writes are `frame_42/DoAction_17.as:10` and `frame_219/DoAction.as:59, 63`, and the last of

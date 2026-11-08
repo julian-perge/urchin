@@ -79,8 +79,9 @@ entry names its evidence so you can check it instead of trusting it.
   `battleCreationID` resets relabel the battle just populated instead of the
   next one, so 2, 55, 109, 212, 308, 409, 513, 603 and 703 came through as
   49, 99, 199, 299, 399, 499, 599, 699 and 999. `battles.py`'s
-  `MISLABELED_BATTLE_IDS` corrects only 109, 409 and 513 at conversion time
-  (`c13cff0`).
+  `MISLABELED_BATTLE_IDS` corrects all nine at conversion time. `c13cff0`
+  corrected only 109, 409 and 513, which left the zone 2, 3, 6 and 7 bosses
+  and the tutorial unable to load.
 
 ## Extracting art
 

@@ -38,7 +38,9 @@ resolved the two bugs below.
     **Corrected (2026-11-07): the other 6 reset points matter too.** This note used to say they don't land on a battle any current zone formula needs. Each of them stamps the battle
     populated just before it, so 49/99/299/399/699/999 are AS battles 2/55/212/308/603/703 (`frame_42/DoAction_14.as:325, 365, 750, 884, 1301, 1368`). 299, 399, 699 and 999 are the zone
     2, 3, 6 and 7 bosses under `zone * 100 + progress`, and 49 is the tutorial, battle 2 (`frame_165/DoAction.as:2`). Only 99, AS battle 55, is unreachable: its only launcher sits on the zone
-    hub's `BETA` frame, which needs `Krin.betaMode`, and nothing sets that to true (`frame_41/DoAction_2.as:15, 33-36`). `MISLABELED_BATTLE_IDS` does not correct these six yet.
+    hub's `BETA` frame, which needs `Krin.betaMode`, and nothing sets that to true (`frame_41/DoAction_2.as:15, 33-36`).
+
+    **Fixed (2026-11-07):** `MISLABELED_BATTLE_IDS` corrects these six too, so all 99 converted battles carry the id `createNewBattle` gives them.
 
 ## Bugs introduced by the Steam restructuring (fixed in the conversion pipeline)
 
@@ -46,7 +48,7 @@ resolved the two bugs below.
   (`createUnitKrinCount = 19` immediately after creating Doctor Hedger, `createUnitKrinCount = 39` immediately after ZPCI Sniper - `frame42/sonny2_createNewUnitKrin.txt`). The Steam data recorded the
   POST-jump counter value as those two units' `id` fields:
   - Doctor Hedger: Steam says 19, true id is **15** (battles 54/107 reference 15).
-  - ZPCI Sniper: Steam says 39, true id is **34** (battle 212 references 34; the converted data still stores that battle as 299, see the `battleCreationID` note above).
+  - ZPCI Sniper: Steam says 39, true id is **34** (battle 212 references 34; the Steam data labels that battle 299, see the `battleCreationID` note above).
 
   No battle references 19 or 39 anywhere, so the correction is unambiguous. Ids 16-19 and 35-39 are genuinely unused in both releases.
 - **Aggression scalars carry misleading labels in the Steam data.** The web SWF stores each unit's AI tuning as a positional `agressionArray` = `[Aggression, LifeBoundary1, LifeBoundary2,

@@ -238,6 +238,9 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   the zone 2, 3, 6 and 7 bosses, which `resources/battles/` holds as 299, 399, 699 and 999, plus the tutorial, battle 2, held as 49 (see `SWF_DIFFERENCES.md`). From the code, the zone 2 boss
   therefore cannot load and zone 3 never unlocks, the same way zone 2 did not before this fix.
 
+  **DONE (2026-11-07):** `MISLABELED_BATTLE_IDS` corrects all nine now, and `test_zone_progression.gd`'s `test_every_story_battle_and_the_tutorial_load` loads every story battle and the
+  tutorial.
+
   A real playthrough of the fixed battle 109 then surfaced two more bugs, both fixed: `_on_continue_pressed()` always returned to the current zone hub after a
   cutscene, when the original's `gotoSceneKrin` (frame_219) actually opens the zone map for CS_CUT2/CS_CUT4 (both unlock a new zone) and only stays on the hub for
   CS_CUT3 - added `ZoneProgression.CUTSCENE_GOTO_SCENE`/`ZoneManager.open_zone_map_on_load` to thread that through. Separately, the zone map's connector lines
