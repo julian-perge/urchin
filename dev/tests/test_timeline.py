@@ -99,6 +99,13 @@ def test_a_frame_with_no_tags_repeats_the_one_before_and_remove_empties():
             ),
             "move carrying a name",
         ),
+        (
+            (
+                place2(1, cid=10),
+                tag(TAG_PLACE_OBJECT2, bytes([0x41]) + struct.pack("<HH", 1, 3)),
+            ),
+            "move carrying a name, clipDepth",
+        ),
         ((place2(1, cid=10), place2(1, move=True, cid=20)), "involves a shape/sprite"),
         (
             (tag(TAG_PLACE_OBJECT, struct.pack("<HH", 10, 1) + translate(0, 0)),),
@@ -109,6 +116,11 @@ def test_a_frame_with_no_tags_repeats_the_one_before_and_remove_empties():
 def test_the_walk_refuses_what_neither_swf_contains(tags, message):
     with pytest.raises(TimelineError, match=message):
         walk(shape(10), sprite(20), *tags, SHOW, frames=1)
+
+
+def test_a_tag_after_the_last_frame_is_refused():
+    with pytest.raises(TimelineError, match="after the last of the timeline's 1"):
+        walk(shape(10), SHOW, place2(1, cid=10), frames=1)
 
 
 def test_the_error_names_the_timeline_frame_and_depth():

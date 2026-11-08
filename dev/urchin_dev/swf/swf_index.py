@@ -549,13 +549,8 @@ def bitmap_fill_ids(index: SwfIndex, cid: int) -> set[int]:
     """-> every bitmap id a DefineShape's fill styles point at, including the
     fills of DefineShape4 line styles and the style arrays a StateNewStyles
     record brings in partway through the shape."""
-    code, body, _end = index.characters[cid]
-    if code not in SHAPE_TAGS:
-        raise ValueError(f"character {cid} is not a DefineShape")
+    code, pos = _fill_style_array(index, cid)
     data, ids = index.data, set()
-    pos = _skip_rect(data, body + 2)
-    if code == TAG_DEFINE_SHAPE4:
-        pos = _skip_rect(data, pos) + 1  # EdgeBounds, then a byte of flags
     pos = _line_styles(data, _fill_styles(data, pos, code, ids), code, ids)
     bits = _Bits(data, pos)
     fill_bits, line_bits = bits.ub(4), bits.ub(4)
@@ -587,30 +582,35 @@ def bitmap_fill_ids(index: SwfIndex, cid: int) -> set[int]:
 def first_fill_bitmap_id(index: SwfIndex, cid: int) -> int | None:
     """-> the bitmap id a DefineShape's first fill style points at, or None
     when the shape has no fill styles or its first one isn't a bitmap."""
-    code, body, _end = index.characters[cid]
-    if code not in SHAPE_TAGS:
-        raise ValueError(f"character {cid} is not a DefineShape")
-    data, ids = index.data, set()
-    pos = _skip_rect(data, body + 2)
-    if code == TAG_DEFINE_SHAPE4:
-        pos = _skip_rect(data, pos) + 1  # EdgeBounds, then a byte of flags
-    count = data[pos]
-    pos += 1
-    if count == 0xFF and code != TAG_DEFINE_SHAPE:
-        (count,) = struct.unpack_from("<H", data, pos)
-        pos += 2
+    code, pos = _fill_style_array(index, cid)
+    count, pos = _fill_style_count(index.data, pos, code)
     if count == 0:
         return None
-    _fill_style(data, pos, code, ids)
+    ids: set[int] = set()
+    _fill_style(index.data, pos, code, ids)
     return next(iter(ids), None)
 
 
-def _fill_styles(data: bytes, pos: int, code: int, ids: set[int]) -> int:
+def _fill_style_array(index: SwfIndex, cid: int) -> tuple[int, int]:
+    """-> (tag code, offset of the shape's first FILLSTYLEARRAY)."""
+    code, body, _end = index.characters[cid]
+    if code not in SHAPE_TAGS:
+        raise ValueError(f"character {cid} is not a DefineShape")
+    pos = _skip_rect(index.data, body + 2)
+    if code == TAG_DEFINE_SHAPE4:
+        pos = _skip_rect(index.data, pos) + 1  # EdgeBounds, then a byte of flags
+    return code, pos
+
+
+def _fill_style_count(data: bytes, pos: int, code: int) -> tuple[int, int]:
     count = data[pos]
-    pos += 1
     if count == 0xFF and code != TAG_DEFINE_SHAPE:
-        (count,) = struct.unpack_from("<H", data, pos)
-        pos += 2
+        return struct.unpack_from("<H", data, pos + 1)[0], pos + 3
+    return count, pos + 1
+
+
+def _fill_styles(data: bytes, pos: int, code: int, ids: set[int]) -> int:
+    count, pos = _fill_style_count(data, pos, code)
     for _ in range(count):
         pos = _fill_style(data, pos, code, ids)
     return pos
