@@ -33,13 +33,16 @@ signal inventory_changed
 
 var current_slot: int = -1
 var current_save: PlayerSave = null
+# Tests point this at a folder of their own so they can write a slot without
+# touching the player's real saves.
+var save_dir: String = SAVE_DIR
 
 func _ready():
 	name = "GameData"
 	DirAccess.make_dir_recursive_absolute(SAVE_DIR)
 
 func _slot_path(slot: int) -> String:
-	return SAVE_DIR + "slot%d.tres" % slot
+	return save_dir + "slot%d.tres" % slot
 
 func has_save(slot: int) -> bool:
 	return FileAccess.file_exists(_slot_path(slot))
@@ -59,7 +62,10 @@ func new_game(slot: int, player_name: String, player_class: PlayerSave.PlayerCla
 func load_game(slot: int) -> bool:
 	if not has_save(slot):
 		return false
-	var save: Resource = ResourceLoader.load(_slot_path(slot))
+	# CACHE_MODE_IGNORE reads the file every time. The default mode hands back
+	# the PlayerSave already in memory whenever this slot was loaded before, so a
+	# Re-Load after a game over would keep everything done since the last save.
+	var save: Resource = ResourceLoader.load(_slot_path(slot), "", ResourceLoader.CACHE_MODE_IGNORE)
 	if not (save is PlayerSave):
 		push_warning("load_game: slot %d did not contain a PlayerSave" % slot)
 		return false
