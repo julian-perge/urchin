@@ -198,7 +198,8 @@ Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 2
 
 ## Heroic decision timer (frame_217/DoAction.as, the conductor)
 
-Not ported as such: the port's countdown counts `BattleRunner.BATTLE_TIME_LIMIT` (120) down as seconds on every difficulty, for display only.
+Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / 30.0` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
+and on Heroic once a half-turn ends with the player's unit dead, it waits for the player and hides the countdown label.
 
 - `BattleTime = BattleTimeLimit = 120` (`frame_217/DoAction.as:1-3`). The conductor adds 1 to `BattleTimeNow` once per frame, and only while `turnBasedKrin` is false and the player's team is
   moving (conductor lines 593-596), so the window is 120 frames, 4 s at 30 fps.
@@ -207,6 +208,10 @@ Not ported as such: the port's countdown counts `BattleRunner.BATTLE_TIME_LIMIT`
 - At `BattleTimeLimit - 1` the AI allies decide (conductor lines 674-698), and at `BattleTimeLimit` the half-turn starts whether or not the player has picked (conductor lines 769-792).
 - Picking a move jumps the clock to `BattleTimeLimit - 5` (`frame_42/DoAction_11.as:98-101`), and once the player's unit dies the conductor sets `turnBasedKrin = true` (conductor lines
   200-202).
+- Running out is a pass. Every slot starts the battle holding move 0 (`frame_217/DoAction_2.as:313-318`) and each dispatch writes move 0 back for its caster (conductor lines 470-473), so
+  a player who never picked passes. The pass button, DefineButton2_3383 (`krinToMove2` on the root timeline), also jumps the clock to `BattleTimeLimit - 5` (release lines 9-12).
+- The clock is `battleClocker` (DefineSprite 3389), placed at (400, 507.25) behind the pass button. Its two half-dials in DefineSprite 3386 turn with
+  `BattleTimeNow / (BattleTimeLimit / 2)` (`DefineSprite_3386/frame_1/PlaceObject2_3385_2` and `PlaceObject2_3385_6`, line 2), and none of its sprites holds a text field, so it shows no number.
 
 ## Approximation audit (2026-07-21) - port pieces NOT yet source-faithful
 
@@ -228,4 +233,4 @@ Everything below still stands in for original behavior, except the rows marked D
 | Abilities tutorial callout | skipped | texts 3063 + glow box sprite 3059 (frame 25) |
 | Sky horizon | **DONE (2026-08-22)**: the strip position comes from `battle_layout.json` (`BATTLE_LAYOUT_PATH` in `battle_scene.gd`), no longer an empirical y = 292 | background clips' own art timelines (sky placement baked per zone) |
 | Start-menu flow | slot -> name+class -> options | original: PLAY -> name entry (root ~65) -> slot select (~75) -> class (~85) -> options (~95) |
-| Battle countdown | displayed, but it counts `BATTLE_TIME_LIMIT` (120) down as seconds on every difficulty and never starts the half-turn | 120 frames (4 s at 30 fps) on Heroic only, and the half-turn starts when it runs out: see "Heroic decision timer" above |
+| Battle countdown | **DONE (2026-11-08)** for the timing: 4 s on Heroic only, running out passes the turn, and Easy and Normal wait with the label hidden. The display is still a number in the bottom bar's `Panel3` | 120 frames (4 s at 30 fps) on Heroic only, and the half-turn starts when it runs out: see "Heroic decision timer" above. The original shows no number: `battleClocker` (DefineSprite 3389) sits behind the pass button and fills the two half-dials of DefineSprite 3386 from `BattleTimeNow` |

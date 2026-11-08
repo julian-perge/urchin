@@ -803,6 +803,7 @@ func test_heal_that_kills_an_sswitch_target_plays_the_death():
 
 func test_decision_timer_ticks_down_while_player_is_deciding():
 	var save = PlayerSave.new_game("TimerTest", 0)
+	save.difficulty = CombatUnit.Difficulty.HARD
 	GameData.current_save = save
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -813,10 +814,10 @@ func test_decision_timer_ticks_down_while_player_is_deciding():
 
 	scene._player_action_pending = true
 	scene._reset_decision_timer()
-	assert_eq(scene._decision_timer, BattleRunner.BATTLE_TIME_LIMIT, "resets to the full 120s")
+	assert_eq(scene._decision_timer, 4.0, "resets to 120 frames at the SWF's 30 fps")
 
-	scene._process(10.0)
-	assert_almost_eq(scene._decision_timer, BattleRunner.BATTLE_TIME_LIMIT - 10.0, 0.001)
+	scene._process(1.5)
+	assert_almost_eq(scene._decision_timer, 2.5, 0.001)
 
 	scene._process(9999.0)
 	assert_eq(scene._decision_timer, 0.0, "clamps at 0, never goes negative")
@@ -827,6 +828,7 @@ func test_decision_timer_ticks_down_while_player_is_deciding():
 
 func test_decision_timer_does_not_tick_while_not_player_action_pending():
 	var save = PlayerSave.new_game("TimerTest2", 0)
+	save.difficulty = CombatUnit.Difficulty.HARD
 	GameData.current_save = save
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -836,9 +838,108 @@ func test_decision_timer_does_not_tick_while_not_player_action_pending():
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 
 	scene._player_action_pending = false
-	scene._decision_timer = 50.0
+	scene._decision_timer = 2.0
 	scene._process(10.0)
-	assert_eq(scene._decision_timer, 50.0, "doesn't tick during an AI turn")
+	assert_eq(scene._decision_timer, 2.0, "doesn't tick during an AI turn")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# On Heroic the original's conductor adds 1 to BattleTimeNow every frame while
+# the player's team decides, and starts the half-turn when it reaches
+# BattleTimeLimit whether or not the player picked
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 593-596 and 769-792).
+# BattleTimeLimit is 120 (frame_217/DoAction.as:2) and the SWF runs at 30 fps,
+# so the window is 4 seconds. The player's slot still holds the pass that every
+# dispatch leaves behind (lines 470-473), so running out is a pass.
+func test_heroic_decision_passes_the_turn_when_the_window_runs_out():
+	var save = PlayerSave.new_game("HeroicWindow", 0)
+	save.difficulty = CombatUnit.Difficulty.HARD
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	# The test steps _process by hand, so the time the engine spends loading the
+	# battle never counts against the window.
+	scene.set_process(false)
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene._player_action_pending, 5)
+	var turn: int = scene.runner.turn_count
+	var first_event: int = scene.runner.events.size()
+
+	scene._process(3.9)
+	assert_true(scene._player_action_pending, "the player can still pick just before 4 seconds")
+	scene._process(0.2)
+	assert_false(scene._player_action_pending, "4 seconds without a pick ends the decision")
+
+	await wait_until(func(): return scene.runner.turn_count > turn, 5)
+	assert_gt(scene.runner.turn_count, turn, "the player's half-turn ran")
+	var player_events: Array = scene.runner.events.slice(first_event).filter(
+		func(event): return event["turn"] == turn and int(event.get("caster_slot", 0)) == BattleRunner.PLAYER_SLOT
+	)
+	assert_eq(player_events, [], "the player passed")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Easy and Normal set turnBasedKrin (frame_201/DoAction.as:65-79). There the
+# conductor holds the clock just under the limit until the player picks (lines
+# 639-642), so the decision never runs out and the clock never moves.
+func test_normal_decision_waits_for_the_player_with_no_countdown():
+	var save = PlayerSave.new_game("NormalWindow", 0)
+	save.difficulty = CombatUnit.Difficulty.NORMAL
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene._player_action_pending, 5)
+	var time_left: float = scene._decision_timer
+
+	for second in 10:
+		scene._process(1.0)
+	assert_true(scene._player_action_pending, "10 seconds without a pick still waits for the player")
+	assert_eq(scene._decision_timer, time_left, "nothing counts down")
+	assert_false(scene._countdown_label.visible, "Normal shows no countdown")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The conductor sets turnBasedKrin at the end of any half-turn that finds the
+# player's unit dead (lines 200-202) and nothing clears it, so on Heroic the
+# clock stops for the rest of the battle.
+func test_heroic_countdown_stops_once_the_player_is_dead():
+	var save = PlayerSave.new_game("HeroicDeath", 0)
+	save.difficulty = CombatUnit.Difficulty.HARD
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	# Real frames must not run the 4 second window out before the test kills the
+	# player, so the test steps _process by hand here too.
+	scene.set_process(false)
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene._player_action_pending, 5)
+	scene._process(0.0)
+	assert_true(scene._countdown_label.visible, "Heroic shows the countdown while the player is alive")
+
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	player.life_n = 0.0
+	player.active = false
+	scene._on_pass_pressed()
+	var finished: bool = await wait_for_signal(scene.battle_finished, 30)
+	assert_true(finished, "the rest of the battle never waits on the dead player")
+	scene._process(0.0)
+	assert_false(scene._countdown_label.visible, "the countdown is gone for the rest of the battle")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

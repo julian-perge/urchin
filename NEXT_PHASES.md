@@ -97,11 +97,13 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
 
   - The original hotbar-style battle UI art - `BottomBar/Backdrop` now renders `assets/ui/battle/hotbar_background.png` (a `TextureRect`, was a plain `ColorRect`), instead of leaving the
     extracted art unused.
-  - The decision countdown - `battle_scene.gd`'s `_process()` ticks `_decision_timer` down from `BattleRunner.BATTLE_TIME_LIMIT` while `_player_action_pending` is true, shown as
-    a ring (`assets/ui/battle/battle_pbar_full.png`) + numeric label in the bottom bar's `Panel3`. Visual-only, deliberately does NOT force-pass the turn at 0 like the original did - this
-    port's turn-based flow already removed real-time pressure everywhere else, and reintroducing it here wasn't asked for. **Corrected (2026-11-07):** this entry called it a 120-second
-    countdown, which is how the port counts it. The original's `BattleTimeLimit` is 120 frames, 4 s at 30 fps, and it only runs on Heroic, where the half-turn starts when it runs out whether
-    or not the player has picked; Easy and Normal wait for the player (see `DECODED_ALGORITHMS.md`'s Heroic decision timer).
+  - The decision countdown - `battle_scene.gd`'s `_process()` ticks `_decision_timer` down while `_player_action_pending` is true, shown as a ring
+    (`assets/ui/battle/battle_pbar_full.png`) + numeric label in the bottom bar's `Panel3`. **Fixed (2026-11-08):** it first counted `BattleRunner.BATTLE_TIME_LIMIT` down as 120
+    seconds on every difficulty and never passed the turn. The original's `BattleTimeLimit` is 120 frames, 4 s at 30 fps, and it only runs on Heroic, where the half-turn starts when it
+    runs out whether or not the player has picked; Easy and Normal wait for the player (see `DECODED_ALGORITHMS.md`'s Heroic decision timer). The countdown now runs for 4 s on Heroic
+    only and passes for the player at 0, and the label is hidden on Easy and Normal and once the player's unit is dead. Covered by `test_battle_scene.gd`'s
+    `test_heroic_decision_passes_the_turn_when_the_window_runs_out`, `test_normal_decision_waits_for_the_player_with_no_countdown` and
+    `test_heroic_countdown_stops_once_the_player_is_dead`.
   - Target highlighting - a hover ring around each unit fades in over ~0.17s and out over ~0.67s (source-verified 30fps timing), but only fades in during the player's own decision
     window (fade-out always plays, ungated). Alongside this, the radial ability menu's dismissal was corrected to match the live original game: moving the mouse away from the clicked
     unit and its fanned-out orbs fades the menu out, replacing this port's earlier click-away guess, which the project owner confirmed doesn't match the real game.

@@ -94,12 +94,18 @@ var _ring_fade_tweens: Dictionary = {}  # slot -> in-flight fade Tween
 var _stance_rows: Dictionary = {}  # party_id -> StanceRow
 var _selected_move: Dictionary = {}
 var _player_action_pending: bool = false
-# Visual-only decision countdown - the original force-passed the turn at 0
-# (a real gameplay mechanic, frame217's onClipEvent(enterFrame)); this port
-# deliberately doesn't port that half, since the whole turn-based flow
-# already removed real-time pressure everywhere else. Ticks down only
-# while it's the player's own decision window.
+# How many seconds the player has left to pick on Heroic. The original's
+# conductor adds 1 to BattleTimeNow every frame while the player's team decides
+# and starts the half-turn when it reaches BattleTimeLimit, whether or not the
+# player picked (frame_217/PlaceObject2_3389_480 enterFrame, lines 593-596 and
+# 769-792), so _process passes for the player when this reaches 0.
 var _decision_timer: float = 0.0
+# Mirrors the original's turnBasedKrin, which is true on Easy and Normal
+# (frame_201/DoAction.as:65-79) and becomes true for the rest of the battle once
+# a half-turn ends with the player's unit dead (conductor lines 200-202). While
+# it is true the decision waits for the player and the countdown label is
+# hidden, because the original's clock does not move then.
+var _turn_based: bool = true
 var _finished: bool = false
 var _radial_menu: Control = null
 var _radial_menu_owner_slot: int = -1
@@ -156,8 +162,11 @@ func _maybe_start_debug_battle() -> void:
 
 
 func _process(delta: float) -> void:
-	if _player_action_pending:
+	if _player_action_pending and not _turn_based:
 		_decision_timer = maxf(_decision_timer - delta, 0.0)
+		if _decision_timer == 0.0:
+			_on_pass_pressed()
+	_countdown_label.visible = not _turn_based
 	_countdown_label.text = str(int(ceil(_decision_timer)))
 	if _radial_menu != null:
 		_update_radial_menu_fade(get_global_mouse_position())
@@ -183,7 +192,7 @@ func _update_radial_menu_fade(mouse_global_pos: Vector2) -> void:
 
 
 func _reset_decision_timer() -> void:
-	_decision_timer = BattleRunner.BATTLE_TIME_LIMIT
+	_decision_timer = BattleRunner.BATTLE_TIME_LIMIT / 30.0
 
 
 # Combat debug log -> user://logs/battle.log (see LogManagerAuto).
@@ -201,6 +210,7 @@ func start_battle(info: Dictionary) -> void:
 		return
 	_log("=== battle %s start: %s ===" % [info.get("battle_id"), str(info)])
 	var save: PlayerSave = GameData.current_save
+	_turn_based = save.difficulty != CombatUnit.Difficulty.HARD
 	units = BattleSetup.build_units(
 		battle, save, UnitManagerAuto.units_by_id, save.difficulty,
 		int(info.get("train_cap", BattleSetup.DEFAULT_TRAIN_CAP))
@@ -705,6 +715,9 @@ func _battle_loop() -> void:
 		if not is_inside_tree() or _finished:
 			return
 		_refresh_bars()
+		var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
+		if player == null or not player.active:
+			_turn_based = true
 	_log("battle over: outcome=%d turns=%d" % [runner.win_condition, runner.turn_count])
 	_finish_battle()
 

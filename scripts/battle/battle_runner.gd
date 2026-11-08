@@ -17,11 +17,11 @@
 #
 # The original's decision countdown (BattleTime/BattleTimeLimit,
 # frame_217/DoAction.as) is 120 frames, which is 4 seconds at 30 fps, and it
-# only runs on Heroic, where the half-turn starts when it runs out. Easy and
-# Normal set turnBasedKrin and wait for the player instead, and this port is
-# that turn-based flow on every difficulty. The countdown is a UI-layer
-# concern: BATTLE_TIME_LIMIT is exposed for it, and battle_scene.gd counts it
-# down as seconds.
+# only runs on Heroic, where the half-turn starts when it runs out whether or
+# not the player picked. Easy and Normal set turnBasedKrin and wait for the
+# player instead. The runner keeps no clock of its own: battle_scene.gd counts
+# the Heroic window down, and when it runs out it passes for the player by
+# calling advance_half_turn() with no player action.
 #
 # No autoload references (same rule as CombatUnit/BattleAI) - every lookup is
 # injected via setup().
@@ -44,6 +44,8 @@ enum EventType {
 # event instead, same as always.
 enum DeathCause { MOVE, DAMAGE_OVER_TIME }
 
+# The original's BattleTimeLimit (frame_217/DoAction.as:2). It counts frames of
+# the SWF's 30 fps, not seconds, so the Heroic decision window is 4 seconds.
 const BATTLE_TIME_LIMIT: float = 120.0
 const PLAYER_SLOT: int = 1
 const TEAM_SLOTS: Dictionary[CombatUnit.Team, Array] = {
