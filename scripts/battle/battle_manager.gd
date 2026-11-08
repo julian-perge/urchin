@@ -62,7 +62,12 @@ func execute_move(ability: Ability, caster: CombatUnit, target: CombatUnit, buff
 			result = _execute_heal(ability, caster, target, per_calc, focus_coef, speed_crit_calc)
 		"Focus":
 			result = _execute_focus(ability, target)
+		"Attack":
+			result = {"type": ResultType.STATUS_ONLY}
 		_:
+			# The original also lands only the status here, but no move in the
+			# data has another category, so one showing up means a converter bug.
+			push_warning("execute_move: unknown effect_category '%s' on move %s" % [ability.effect_category, ability.display_name])
 			result = {"type": ResultType.STATUS_ONLY}
 
 	result["buff_applied"] = _apply_status_effect(ability, caster, target, buffs_by_name)
