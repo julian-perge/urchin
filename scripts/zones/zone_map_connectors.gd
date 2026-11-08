@@ -1,7 +1,8 @@
 # zone_map_connectors.gd
-# Draws the connector line between each zone and the zone that unlocks it
-# (frame_449/DoAction.as's krinMapper.lineMC loop) - was never ported at all,
-# not a rendering regression. Per zone (i > 1 in the original, zone 1 has no
+# Draws the connector line between each zone the map shows and the zone that
+# unlocks it (frame_449/DoAction.as's krinMapper.lineMC loop, which stops at
+# the same zone cap that hides the buttons) - was never ported at all, not a
+# rendering regression. Per zone (i > 1 in the original, zone 1 has no
 # incoming link): a thick black backing line, then a thinner line on top -
 # blue if the path is open (ZoneProgression.is_zone_unlocked), gray if it's
 # still locked. Sibling of $ZoneMap (background) and $Zones (the buttons
@@ -24,9 +25,10 @@ func _ready() -> void:
 
 func _draw() -> void:
 	var save: PlayerSave = GameData.current_save
+	var max_zone: int = ZoneManager.max_zone()
 	for zone_id in ZoneProgression.QUEST_HUB:
 		var linked: int = int(ZoneProgression.QUEST_HUB[zone_id]["linked_zone"])
-		if linked <= 0:
+		if linked <= 0 or zone_id > max_zone:
 			continue
 		var from_button: Control = get_node("../Zones/Zone%d" % zone_id)
 		var to_button: Control = get_node("../Zones/Zone%d" % linked)

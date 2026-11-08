@@ -32,8 +32,12 @@ func _on_visibility_changed() -> void:
 		hotbar.visible = not visible
 
 func _refresh_button_states():
+	var max_zone: int = ZoneManager.max_zone()
 	for zone_button in $Zones.get_children():
 		var zone_id: int = int(zone_button.name.trim_prefix("Zone"))
+		# Like the original's mb6 and mb7, which hide themselves on load
+		# (DefineSprite_4173), a zone past the cap is hidden rather than shown locked.
+		zone_button.visible = zone_id <= max_zone
 		zone_button.disabled = not ZoneManager.can_access_zone(zone_id)
 
 func _on_zone_selected(zone_id: int):

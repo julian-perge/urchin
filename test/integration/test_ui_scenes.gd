@@ -5,6 +5,7 @@ extends GutTest
 
 const MainMenuScene = preload("res://scenes/main_menu.tscn")
 const GameScene = preload("res://scenes/game.tscn")
+const ACHIEVEMENTS_FILE = "user://test_ui_scenes_achievements.cfg"
 
 # Story-orb positions extracted from the original SWF's zone-hub sprite
 # (sprite 3287) - the scenes must match the source exactly.
@@ -223,6 +224,49 @@ func _find_basic_equippable() -> GameItem:
 		if best == null or item.id < best.id:
 			best = item
 	return best
+
+
+# The map hides the zones past its cap rather than locking them. mb6 hides
+# itself on Easy, and mb7 unless the save is Heroic with Legend earned
+# (DefineSprite_4173/frame_1, the onClipEvent(load) handlers of
+# PlaceObject3_4160_85 and PlaceObject3_4160_91).
+func test_zone_map_hides_zone_6_on_easy_and_zone_7_without_heroic_legend():
+	var previous_path: String = ZoneManager.achievements_path
+	if FileAccess.file_exists(ACHIEVEMENTS_FILE):
+		DirAccess.remove_absolute(ACHIEVEMENTS_FILE)
+	ZoneManager.achievements_path = ACHIEVEMENTS_FILE
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var map = game.get_node("ZoneMapOverlay")
+	var save: PlayerSave = GameData.current_save
+
+	save.difficulty = CombatUnit.Difficulty.EASY
+	assert_eq(_shown_zones(map), [1, 2, 3, 4, 5], "Easy hides zones 6 and 7")
+	save.difficulty = CombatUnit.Difficulty.NORMAL
+	assert_eq(_shown_zones(map), [1, 2, 3, 4, 5, 6], "Normal hides zone 7")
+	save.difficulty = CombatUnit.Difficulty.HARD
+	assert_eq(_shown_zones(map), [1, 2, 3, 4, 5, 6], "Heroic hides zone 7 without Legend")
+
+	Achievements.unlock(4, ACHIEVEMENTS_FILE)
+	assert_eq(_shown_zones(map), [1, 2, 3, 4, 5, 6, 7], "Heroic shows zone 7 with Legend")
+	save.difficulty = CombatUnit.Difficulty.NORMAL
+	assert_eq(_shown_zones(map), [1, 2, 3, 4, 5, 6], "Normal hides zone 7 with Legend")
+	save.difficulty = CombatUnit.Difficulty.EASY
+	assert_eq(_shown_zones(map), [1, 2, 3, 4, 5], "Easy hides zones 6 and 7 with Legend")
+
+	ZoneManager.achievements_path = previous_path
+	DirAccess.remove_absolute(ACHIEVEMENTS_FILE)
+
+
+# Reopens the map so it refreshes its buttons, then lists the zones it shows.
+func _shown_zones(map: Control) -> Array:
+	map.visible = false
+	map.visible = true
+	var shown: Array = []
+	for button in map.get_node("Zones").get_children():
+		if button.visible:
+			shown.append(int(button.name.trim_prefix("Zone")))
+	return shown
 
 
 func test_zone_map_button_states_follow_unlocks():
