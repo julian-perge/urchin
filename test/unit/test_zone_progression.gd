@@ -57,6 +57,22 @@ func test_every_story_battle_and_the_tutorial_load():
 	assert_eq(players, [49, 0, 0, 48, 0], "battle 2 is the tutorial")
 
 
+# Each converted battle is saved as <id>_<id_name>.tres, so a file whose id
+# disagrees with its name is a battle stored under the wrong id.
+func test_every_battle_file_holds_the_battle_its_name_says():
+	var dir_path := "res://resources/battles/"
+	var seen: Dictionary = {}
+	for file_name in DirAccess.get_files_at(dir_path):
+		if not file_name.ends_with(".tres"):
+			continue
+		var battle: BattleFight = load(dir_path + file_name)
+		assert_eq(file_name, "%d_KBR%d.tres" % [battle.id, battle.id], "%s holds battle %d" % [file_name, battle.id])
+		assert_eq(battle.id_name, "KBR%d" % battle.id, "%s id_name" % file_name)
+		assert_false(seen.has(battle.id), "battle %d is stored once" % battle.id)
+		seen[battle.id] = true
+	assert_eq(seen.size(), 99, "every converted battle has a file")
+
+
 func test_training_battle_unlocks():
 	assert_eq(ZoneProgression.available_training_battle_ids(save), [1000], "-1 entries always unlocked")
 	save.quest_progress[1] = 6
