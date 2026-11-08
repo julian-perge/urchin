@@ -43,6 +43,36 @@ func test_story_battle_selection():
 	assert_false(pick["is_story_progress"], "repeat wins do not advance progress")
 
 
+# The tutorial is battle 2 (frame_165/DoAction.as:2), and
+# frame_42/DoAction_14.as:311 puts Metabii (49) against Sonny with Louis the
+# Blind (48) beside him.
+func test_every_story_battle_and_the_tutorial_load():
+	for zone in ZoneProgression.QUEST_HUB:
+		for progress in range(int(ZoneProgression.QUEST_HUB[zone]["progress_max"]) + 1):
+			var battle_id: int = zone * 100 + progress
+			assert_not_null(BattleSetup.load_battle(battle_id), "story battle %d loads" % battle_id)
+
+	var tutorial: BattleFight = BattleSetup.load_battle(2)
+	var players: Array = tutorial.players.map(func(player): return int(player["id"])) if tutorial else []
+	assert_eq(players, [49, 0, 0, 48, 0], "battle 2 is the tutorial")
+
+
+# Each converted battle is saved as <id>_<id_name>.tres, so a file whose id
+# disagrees with its name is a battle stored under the wrong id.
+func test_every_battle_file_holds_the_battle_its_name_says():
+	var dir_path := "res://resources/battles/"
+	var seen: Dictionary = {}
+	for file_name in DirAccess.get_files_at(dir_path):
+		if not file_name.ends_with(".tres"):
+			continue
+		var battle: BattleFight = load(dir_path + file_name)
+		assert_eq(file_name, "%d_KBR%d.tres" % [battle.id, battle.id], "%s holds battle %d" % [file_name, battle.id])
+		assert_eq(battle.id_name, "KBR%d" % battle.id, "%s id_name" % file_name)
+		assert_false(seen.has(battle.id), "battle %d is stored once" % battle.id)
+		seen[battle.id] = true
+	assert_eq(seen.size(), 99, "every converted battle has a file")
+
+
 func test_story_orb_replays_once_the_zone_is_done():
 	save.section_in = 4
 	save.quest_progress[4] = 10
