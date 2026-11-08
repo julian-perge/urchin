@@ -129,7 +129,7 @@ public class Render {
     void run(JsonObject job) throws Exception {
         long start = System.nanoTime();
         int timelineId = job.getInt("timeline", 0);
-        int frameIndex = job.getInt("frame", 1) - 1;
+        int frameIndex = job.get("frame").asInt() - 1;
         Timeline tim = timeline(timelineId);
         if (frameIndex < 0 || frameIndex >= tim.getFrameCount()) {
             throw new IllegalArgumentException("timeline " + timelineId + " has no frame " + (frameIndex + 1));

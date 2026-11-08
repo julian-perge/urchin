@@ -13,6 +13,12 @@
 # 333 stays visible because it is the clip mask over both (clipDepth 340 at
 # depth 72), and hiding a mask unclips what it covers. The extracted hall and
 # sky PNGs are unclipped, so the diff only counts pixels inside 333's box.
+# That box holds the edges where the hall's windows meet the sky, which the
+# whole-frame diff of verify_battle_screen.py dilutes with exact matches
+# outside it. Inside the box, WHITE NOVEMBER over SEA scores p99 9 against
+# the CLI's stripped reference and 10 against this one, so it fails the bar of
+# 8 either way, while the other 11 pairs score 1. The two references differ on
+# under 0.03% of the box's pixels.
 #
 # Run: uv run python -m urchin_dev.swf.extract.verify_battle_screen_lib
 #   --wrong-hall renders each hall at a different label than the one
@@ -20,6 +26,8 @@
 from __future__ import annotations
 
 import json
+import math
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -28,7 +36,7 @@ import numpy as np
 from PIL import Image
 
 from urchin_dev import CONVERTED_JSON, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import parse_swf_xml, root_placements, transform_rect
+from urchin_dev.swf import root_placements, transform_rect
 from urchin_dev.swf.extract.battle_screen import (
     FIGHTER_RIG,
     FRAME_LABEL,
@@ -55,9 +63,15 @@ def battle_pairs() -> list[tuple[str, str]]:
 
 def mask_box(xml: str, placements: dict) -> tuple[float, float, float, float]:
     """333's stage rect in design px, from its shape bounds and placement."""
-    shape_bounds, _sprites, _exports = parse_swf_xml(WEB_SWF_XML)
+    bounds = re.search(
+        rf'<item type="DefineShape\d?Tag"[^>]*shapeId="{MASK_SHAPE}"[^>]*>\s*'
+        r'<shapeBounds type="RECT" Xmax="(-?\d+)" Xmin="(-?\d+)" '
+        r'Ymax="(-?\d+)" Ymin="(-?\d+)"',
+        xml,
+    )
+    xmax, xmin, ymax, ymin = (int(g) for g in bounds.groups())
     (entry,) = [e for e in placements.values() if e.get("cid") == MASK_SHAPE]
-    xmin, ymin, xmax, ymax = transform_rect(entry["mat"], shape_bounds[MASK_SHAPE])
+    xmin, ymin, xmax, ymax = transform_rect(entry["mat"], (xmin, ymin, xmax, ymax))
     return xmin / 20, ymin / 20, xmax / 20, ymax / 20
 
 
@@ -82,7 +96,9 @@ def composite(size, layout, hall: str, sky: str) -> Image.Image:
 def p99_inside(canvas: Image.Image, reference: Image.Image, box) -> tuple[int, float]:
     drawn = np.asarray(canvas.getchannel("A")) == 255
     inside = np.zeros_like(drawn)
-    x0, y0, x1, y1 = (round(v * ZOOM) for v in box)
+    # Round the box inward, so pixels the mask's edge only partly covers stay out.
+    x0, y0 = (math.ceil(v * ZOOM) for v in box[:2])
+    x1, y1 = (math.floor(v * ZOOM) for v in box[2:])
     inside[y0:y1, x0:x1] = True
     mask = drawn & inside
     difference = np.abs(

@@ -33,7 +33,8 @@ def render(swf: Path, jobs: list[dict]) -> list[dict]:
             f"{' '.join(command)} exited {proc.returncode}\n"
             f"stdout:\n{proc.stdout}\nstderr:\n{proc.stderr}"
         )
-    results = [json.loads(line) for line in proc.stdout.splitlines() if line]
+    lines = proc.stdout.splitlines()
+    results = [json.loads(line) for line in lines if line.startswith("{")]
     if len(results) != len(jobs):
         raise RuntimeError(f"{len(jobs)} jobs but {len(results)} results")
     return results
