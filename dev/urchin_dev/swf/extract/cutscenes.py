@@ -49,14 +49,15 @@
 # because the parent places the camera clip as a child of itself. Plain
 # -removeCharacter only drops that one placement.
 #
-# Sprite ids, frame counts, and camera clip ids in CUTSCENES below were
-# read directly out of dev/source_files/swf_xml/sonny-2-2900.xml (frameCount
-# attributes on each DefineSpriteTag) - see
-# .superpowers/sdd/plan_cutscenes/task-1-brief.md's Background table for the
-# original battle-id survey that found these. Each label was matched to the
-# wrapper placed just before it in the XML, which is the previous label's, so
-# CS_CUT2 to CS_CUT5 below ship the footage of CS_INTRO2, CS_CUT1, CS_CUT3
-# and CS_CUT4 (GitHub issue #34 has the corrected table).
+# Each label's wrapper is the one sprite the root timeline places on that
+# label's own frame, which label_xref.json records as the label's "places" and
+# dev/tests/test_cutscenes.py checks. A label shares its root frame with the
+# placement written after it in the file, so the placement just above a label
+# belongs to the label before it. Reading it the other way shipped CS_CUT2 to
+# CS_CUT5 one label early: the intro played after battle 109, CS_CUT1 after
+# 210, and the real CS_CUT2 (3810) and CS_CUT5 (4153) were never extracted.
+# The frame counts are each animation sprite's own frameCount, and each camera
+# clip is a sprite the animation places directly on its frame 1.
 #
 # ffdec's sprite:avi export renders video only (no audio track) - each
 # cutscene's dialogue/music is a SoundStreamBlockTag-per-frame MP3 stream
@@ -67,21 +68,24 @@
 # header from every block in frame order and concatenating gives a valid,
 # playable MP3.
 #
-# The exported AVI stores frames as PNG-in-AVI. Muxing that directly against
-# ffmpeg2theora (whose bundled ffmpeg misreads the color matrix as GBR
-# instead of RGB) produces a psychedelic, channel-swapped mess - confirmed
-# by a visual diff. Re-encoding the video through a well-defined
-# yuv420p/libx264 intermediate before handing it to ffmpeg2theora avoids
-# that entirely and keeps the intermediate small (~1-2% the size of the raw
-# PNG-per-frame AVI, several hundred MB per cutscene at 2000+ frames).
+# The exported AVI stores frames as PNG-in-AVI, and one ffmpeg pass crops
+# and pads them, encodes them as Theora and the MP3 as Vorbis, and writes the
+# Ogg file. ffmpeg needs libtheora and libvorbis for that, which Homebrew's
+# ffmpeg-full has. The settings match what the Theora and Vorbis
+# identification headers of the clips this replaced carry: Theora quality 38
+# of 63, a keyframe at least every 64 frames, and Vorbis at a nominal
+# 80 kbps. Those clips went through ffmpeg2theora, which Homebrew deprecated,
+# by way of an x264 intermediate that only worked around ffmpeg2theora's
+# bundled ffmpeg misreading the color matrix as GBR.
 #
-# No -shortest trim on the mux: a couple of these cutscenes' audio streams
+# No -shortest trim on the encode: a couple of these cutscenes' audio streams
 # run somewhat short of their frame count (trailing silent frames with no
 # new sound block), and trimming to the shorter stream would clip the tail
 # of the video instead of just leaving it silent.
 #
-# CS_CUT4 originally shipped with ~11 frames of rendered static/noise near
-# its tail (frames ~467-477 of 501, confirmed present in ffdec's export of
+# Animation sprite 3960 (CS_CUT3, shipped as CS_CUT4 under the old mapping)
+# originally came out with ~11 frames of rendered static/noise near its tail
+# (frames ~467-477 of 501, confirmed present in ffdec's export of
 # both the stripped AND unstripped source, so it wasn't something this
 # script's own processing introduced). Root cause: those frames place
 # shapes (chids 3951/3953/3955/3957) whose fill references bitmapId "65535"
@@ -98,14 +102,12 @@
 # camera clip strip - does not recurse into nested sprites.)
 #
 # Requires ffdec (~/.local/bin/ffdec) for the character-strip and video
-# export, and ffmpeg2theora (`brew install ffmpeg2theora`) for the final
-# Theora/Vorbis transcode - this machine's plain ffmpeg build has no Theora
-# encoder (libvpx/VP8/VP9 only), confirmed via `ffmpeg -encoders`. ffmpeg
-# itself is used only for the intermediate mux/re-encode step, not for the
-# final transcode.
+# export, and an ffmpeg with libtheora and libvorbis (`brew install
+# ffmpeg-full`) for the encode and the checks.
 # Run: uv run extract_cutscenes
 from __future__ import annotations
 
+import functools
 import re
 import shutil
 import subprocess
@@ -122,34 +124,37 @@ from urchin_dev.swf import sprite_body
 OUT_DIR = REPO_ROOT / "assets" / "cutscenes"
 
 
-def _require_tool(name: str, hint: str) -> Path:
+_TOOL_HINTS = {
+    "ffmpeg": "needs libtheora and libvorbis, e.g. `brew install ffmpeg-full`",
+    "ffprobe": "used for post-generation verification",
+}
+
+
+@functools.cache
+def tool(name: str) -> Path:
     """Resolve a tool on PATH instead of hardcoding a Homebrew-on-Apple-
     Silicon path - the previous version of this script fell back to a bare
     "/opt/homebrew/bin/ffmpeg2theora" string with no existence check, which
-    breaks silently on Intel Homebrew (/usr/local) or Linux.
+    breaks silently on Intel Homebrew (/usr/local) or Linux. Resolved on first
+    use rather than at import, so the tests can read CUTSCENES on a machine
+    without these tools.
     """
     found = shutil.which(name)
     if found is None:
-        raise SystemExit(f"required tool '{name}' not found on PATH ({hint})")
+        raise SystemExit(
+            f"required tool '{name}' not found on PATH ({_TOOL_HINTS[name]})"
+        )
     return Path(found)
 
-
-FFMPEG = _require_tool("ffmpeg", "used for the mux/re-encode step")
-FFPROBE = _require_tool("ffprobe", "used for post-generation verification")
-FFMPEG2THEORA = _require_tool(
-    "ffmpeg2theora",
-    "install with `brew install ffmpeg2theora` - this machine's ffmpeg has "
-    "no Theora encoder",
-)
 
 # label -> (animation sprite chid, wrapper sprite chid, frame count,
 # camera clip chid to strip). The frame count is the *animation* sprite's;
 # the wrapper always declares 1 and gets patched up to this (see file header).
 CUTSCENES: dict[str, tuple[int, int, int, int]] = {
-    "CS_CUT2": (3643, 3644, 2084, 3478),
-    "CS_CUT3": (3928, 3929, 621, 3812),
-    "CS_CUT4": (3960, 3961, 501, 3812),  # same overlay clip as CS_CUT3
-    "CS_CUT5": (4038, 4039, 1237, 3962),
+    "CS_CUT2": (3810, 3811, 1795, 3645),
+    "CS_CUT3": (3960, 3961, 501, 3812),
+    "CS_CUT4": (4038, 4039, 1237, 3962),
+    "CS_CUT5": (4153, 4154, 2424, 4041),
 }
 
 # The wrapper's clip mask (DefineShape 2870) is a rectangle 10660x6000 twips
@@ -172,8 +177,9 @@ DURATION_TOLERANCE_S = 2.0
 NOISE_RESIDUAL_THRESHOLD = 20.0
 NOISE_RATIO_THRESHOLD = 0.35
 NOISE_SAMPLE_INTERVAL_S = 1.0
-# CS_CUT4's real corruption hit 11/478 sampled frames - a wide, contiguous
-# run. CS_CUT2 has 2 isolated flagged frames (~67.5-68.5s) that weren't
+# Sprite 3960's real corruption hit 11/478 sampled frames - a wide, contiguous
+# run. Sprite 3643 (CS_INTRO2, which this script extracted as CS_CUT2 under
+# the old mapping) had 2 isolated flagged frames (~67.5-68.5s) that weren't
 # root-caused (not the same dangling-bitmap-fill pattern
 # find_broken_bitmap_fill_cids() catches) - tolerated rather than blocking
 # the whole export on a sub-second glitch. Anything past this still fails
@@ -305,7 +311,7 @@ def find_broken_bitmap_fill_cids(xml: str, sprite_id: int) -> set[int]:
     bitmapId "65535" (SWF's sentinel for "no such bitmap character") with no
     matching DefineBits* tag anywhere in the file - a dangling bitmap-fill
     reference that ffdec's renderer fills in with visual static/noise
-    instead of leaving it blank. Confirmed as the root cause of CS_CUT4's
+    instead of leaving it blank. Confirmed as the root cause of sprite 3960's
     corrupted tail frames (chids 3951/3953/3955/3957) - see
     task-1-report.md. Auto-detected here rather than hardcoded so the same
     class of bug in another cutscene gets caught and stripped too.
@@ -368,7 +374,7 @@ def mask_crop_origin(
     probe = Image.open(probe_png)
     avi_size = run(
         [
-            str(FFPROBE),
+            str(tool("ffprobe")),
             "-v",
             "error",
             "-select_streams",
@@ -414,7 +420,7 @@ def _frame_noise(png_path: Path) -> tuple[float, float]:
     there.
 
     Both numbers are needed, because either one alone misreads these frames.
-    Measured on CS_CUT4's cropped 533x300 box: ffdec's rendered static for
+    Measured on sprite 3960's cropped 533x300 box: ffdec's rendered static for
     the broken tail frames reads (43.6, 0.48), while the fixed version of
     those same frames - a nearly flat dark gradient - reads (2.8, 0.50). The
     ratios are indistinguishable, because a frame with barely any variance to
@@ -446,7 +452,7 @@ def verify_output(
     that would have caught the whole first round of exports, which shipped
     four different aspect ratios, none of them the stage's - the container's
     reported duration is within tolerance of expected_frames/30fps, and - the
-    check that would have actually caught CS_CUT4's corrupted tail before it
+    check that would have actually caught sprite 3960's corrupted tail before it
     shipped - a sweep of frames sampled roughly once per second across the
     FULL duration (not just a start/midpoint spot check) for suspiciously
     high-frequency noise via _frame_noise().
@@ -457,7 +463,7 @@ def verify_output(
     """
     probe = run(
         [
-            str(FFPROBE),
+            str(tool("ffprobe")),
             "-v",
             "error",
             "-show_entries",
@@ -510,7 +516,7 @@ def verify_output(
         frame_path = sample_dir / f"{i:03d}.png"
         run(
             [
-                str(FFMPEG),
+                str(tool("ffmpeg")),
                 "-y",
                 "-v",
                 "error",
@@ -608,57 +614,57 @@ def process_cutscene(
             file=sys.stderr,
         )
 
-        muxed_path = work_dir / "muxed.mkv"
-        mux_cmd = [str(FFMPEG), "-y", "-v", "error", "-i", str(avi_path)]
+        ogv_path = work_dir / f"{label}.ogv"
+        encode_cmd = [str(tool("ffmpeg")), "-y", "-v", "error", "-i", str(avi_path)]
         if n_blocks:
-            mux_cmd += ["-i", str(mp3_path), "-map", "0:v", "-map", "1:a"]
-        mux_cmd += [
+            encode_cmd += ["-i", str(mp3_path), "-map", "0:v", "-map", "1:a"]
+        encode_cmd += [
             # Crop to the wrapper's clip mask, then re-center that box in an
             # OUT_W x OUT_H frame the way the original centers it on the
-            # stage. Re-encoding through libx264/yuv420p (not -c:v copy) is
-            # what avoids ffmpeg2theora's color-matrix misdetection on the raw
-            # PNG-in-AVI frames (see file header).
+            # stage.
             "-vf",
             f"crop={MASK_W}:{MASK_H}:{crop_x}:{crop_y},pad={OUT_W}:{OUT_H}:{CONTENT_X}:{CONTENT_Y}:black",
-            "-c:v",
-            "libx264",
-            "-crf",
-            "10",
             "-pix_fmt",
             "yuv420p",
+            "-c:v",
+            "libtheora",
+            # libtheora's quality is q * 6.3 truncated to an integer, so 6.1
+            # gives the 38 the replaced clips carry, where 6 would give 37.
+            "-q:v",
+            "6.1",
+            "-g",
+            "64",
         ]
-        if n_blocks:
-            mux_cmd += ["-c:a", "copy"]
-        mux_cmd += [str(muxed_path)]
-        run(mux_cmd)
-
-        ogv_path = OUT_DIR / f"{label}.ogv"
-        theora_cmd = [str(FFMPEG2THEORA), str(muxed_path), "-o", str(ogv_path)]
-        if not n_blocks:
-            theora_cmd.append("--noaudio")
-        run(theora_cmd)
+        encode_cmd += ["-c:a", "libvorbis", "-q:a", "1"] if n_blocks else ["-an"]
+        encode_cmd += [str(ogv_path)]
+        run(encode_cmd)
         print(
             f"{label}: wrote {ogv_path} ({ogv_path.stat().st_size} bytes) - verifying...",
             file=sys.stderr,
         )
 
-        try:
-            resolution = verify_output(
-                label, ogv_path, frames, bool(n_blocks), work_dir
-            )
-        except Exception:
-            ogv_path.unlink(missing_ok=True)  # don't leave a known-bad file behind
-            raise
-        print(f"{label}: verified OK", file=sys.stderr)
+        # Verified in scratch first, so a failed encode or check leaves the
+        # committed clip in assets/ untouched.
+        resolution = verify_output(label, ogv_path, frames, bool(n_blocks), work_dir)
+        shutil.copyfile(ogv_path, OUT_DIR / ogv_path.name)
+        print(f"{label}: verified OK, copied to {OUT_DIR}", file=sys.stderr)
         return resolution
     finally:
         # Never hold more than one cutscene's raw AVI/stripped-SWF copy/
         # extracted MP3 in scratch space at once - each is several hundred
-        # MB (CS_CUT2 alone: ~412MB for the raw AVI).
+        # MB (the 2084-frame sprite 3643 alone: ~412MB for the raw AVI).
         shutil.rmtree(work_dir, ignore_errors=True)
 
 
 def main():
+    for name in _TOOL_HINTS:
+        tool(name)
+    encoders = run([str(tool("ffmpeg")), "-hide_banner", "-encoders"]).stdout
+    for encoder in ("libtheora", "libvorbis"):
+        if encoder not in encoders:
+            raise SystemExit(
+                f"ffmpeg has no {encoder} encoder ({_TOOL_HINTS['ffmpeg']})"
+            )
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     xml = WEB_SWF_XML.read_text()
 
