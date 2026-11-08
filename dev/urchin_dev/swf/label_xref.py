@@ -1,7 +1,7 @@
 # label_xref.py
 # Writes dev/converted_json/label_xref.json: every frame label in the web SWF,
-# with the sprite and frame it lives on and every goto in the ActionScript
-# that can select it. It reads the SWF through swf_index.py and the goto calls
+# with the sprite and frame it lives on, the characters that frame places, and
+# every goto in the ActionScript that can select it. It reads the SWF through swf_index.py and the goto calls
 # from ffdec's script export in dev/source_files/action_script/, and calls
 # neither ffdec nor the XML dump.
 #
@@ -523,12 +523,17 @@ def build(index: SwfIndex, action_script: Path, battles_json: Path) -> dict:
     exports = defaultdict(list)
     for name, cid in index.exports.items():
         exports[cid].append(name)
+    placed = defaultdict(set)
+    for p in index.placements:
+        if p.character_id is not None:
+            placed[(p.owner, p.frame)].add(p.character_id)
     labels = [
         {
             "sprite": label.owner,
             "export": sorted(exports.get(label.owner, [])),
             "label": label.name,
             "frame": label.frame,
+            "places": sorted(placed.get((label.owner, label.frame), ())),
             "gotos": selected.get((label.owner, label.name), []),
         }
         for label in sorted(index.labels, key=lambda lb: (lb.owner, lb.frame, lb.name))
