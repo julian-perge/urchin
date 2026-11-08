@@ -90,6 +90,43 @@ func test_story_orb_replays_once_the_zone_is_done():
 		assert_eq(pick["battle_id"], replays[zone], "zone %d's orb replays its progressMax fight" % zone)
 
 
+# Zones 6 and 7 share the ROME and JAPAN story orb, DefineButton2_3243, the only
+# story orb that replays a beaten boss without setting usedTraining.
+func test_boss_replay_counts_as_training_in_zones_1_to_5():
+	save.section_in = 2
+	save.quest_progress[2] = 12
+	var pick = ZoneProgression.pick_story_battle(save)
+	assert_eq(pick.get("counts_as_training"), false, "the first fight against zone 2's boss is not training")
+
+	var counts_as_training = {1: true, 2: true, 3: true, 4: true, 5: true, 6: false, 7: false}
+	for zone in counts_as_training:
+		save.section_in = zone
+		save.quest_progress[zone] = ZoneProgression.QUEST_HUB[zone]["progress_max"] + 1
+		pick = ZoneProgression.pick_story_battle(save)
+		assert_eq(pick.get("counts_as_training"), counts_as_training[zone], "zone %d's boss replay" % zone)
+
+
+func test_boss_replay_from_the_story_orb_sets_used_training():
+	var previous_save: PlayerSave = GameData.current_save
+	var previous_zone: int = ZoneManager.current_zone
+	var previous_auto_start: bool = ZoneManager.auto_start_battles
+	var previous_pending: Dictionary = ZoneManager.pending_battle
+	GameData.current_save = save
+	ZoneManager.current_zone = 2
+	ZoneManager.auto_start_battles = false
+	save.quest_progress[2] = 12
+	ZoneManager.request_story_fight()
+	assert_false(save.used_training, "the first fight against zone 2's boss leaves used_training alone")
+	save.quest_progress[2] = 13
+	ZoneManager.request_story_fight()
+	assert_true(save.used_training, "replaying zone 2's boss sets used_training")
+
+	ZoneManager.pending_battle = previous_pending
+	ZoneManager.auto_start_battles = previous_auto_start
+	ZoneManager.current_zone = previous_zone
+	GameData.current_save = previous_save
+
+
 func test_training_battle_unlocks():
 	assert_eq(ZoneProgression.available_training_battle_ids(save), [1000], "-1 entries always unlocked")
 	save.quest_progress[1] = 6

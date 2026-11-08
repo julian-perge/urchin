@@ -86,6 +86,7 @@ static func quest_progress(save: PlayerSave, zone: int) -> int:
 # The story-fight orb (DefineButton2_3204): the next story battle in the
 # player's current zone. is_story_progress = winning advances quest_progress;
 # is_boss = this is the zone's final fight or a beaten zone's boss replay.
+# counts_as_training tells ZoneManager to set the save's used_training.
 static func pick_story_battle(save: PlayerSave) -> Dictionary:
 	var zone: int = save.section_in
 	var hub: Dictionary = QUEST_HUB.get(zone, {})
@@ -96,6 +97,7 @@ static func pick_story_battle(save: PlayerSave) -> Dictionary:
 	var battle_id: int = zone * 100 + progress
 	var is_story_progress: bool = true
 	var is_boss: bool = progress == progress_max
+	var counts_as_training: bool = false
 	if progress > progress_max:
 		battle_id = zone * 100 + progress_max
 		if zone == 4:
@@ -105,7 +107,19 @@ static func pick_story_battle(save: PlayerSave) -> Dictionary:
 			battle_id = zone * 100 + progress_max - 1
 		is_story_progress = false
 		is_boss = true
-	return {"battle_id": battle_id, "is_story_progress": is_story_progress, "is_boss": is_boss}
+		# The original counts a boss replay in zones 1 to 5 as training, so the
+		# save can no longer earn Predator or Legend. The PRISON orb sets
+		# usedTraining at DefineButton2_3188 on(press) line 9, and the VILLAGE,
+		# TRAIN, TUNNELS and CITY orbs set it at line 12 of DefineButton2_3213,
+		# 3220, 3239 and 3204. Zones 6 and 7 share the ROME and JAPAN orb,
+		# DefineButton2_3243, which replays without setting it.
+		counts_as_training = zone <= 5
+	return {
+		"battle_id": battle_id,
+		"is_story_progress": is_story_progress,
+		"is_boss": is_boss,
+		"counts_as_training": counts_as_training,
+	}
 
 
 # The training orb (DefineButton2_3242): battle ids currently unlocked in the
