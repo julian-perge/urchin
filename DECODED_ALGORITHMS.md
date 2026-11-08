@@ -187,7 +187,7 @@ Implemented in `scripts/battle/battle_rewards.gd` (`money_gain`), but `battle_sc
 
 ## Required target buffs (frame_42/DoAction_11.as)
 
-Not ported: `ability.gd` does not read fields 23 and 24, and nothing gates on them.
+Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 23 and 24, and `battle_scene.gd`'s `_move_valid_for_target` darkens the orb when the target falls short.
 
 - When the player picks a move, the original refuses it with "The target's status does not meet the requirements of this move." if the target has fewer than `KRINABILITYB[24]` active buffs
   of element `KRINABILITYB[23]` (lines 60-64, counted by `checkBuffsOnUnit` at 129-146).

@@ -91,6 +91,13 @@ extends Resource
 # one target (executeMove runs once per enemy in the conductor).
 @export var hits_all_enemies: bool
 
+# The player cannot pick this move on a target that holds fewer than
+# required_buff_count active buffs of required_buff_element
+# (frame_42/DoAction_11.as:60-64). The original's AI never checks them, so
+# BattleAI does not either.
+@export var required_buff_element: CombatUnit.Element
+@export var required_buff_count: int
+
 @export var ability_two_raw: Dictionary
 
 # The raw JSON encodes AS3 `undefined` as {"type": "Undefined"} - any field can
@@ -164,6 +171,8 @@ static func from_json(data: Dictionary) -> Ability:
 	ability.dispel_target_polarity = int(_num(ability_two.get("19_status_effect_tick_rate"), 1.0))
 	ability.dispel_chance = _num(ability_two.get("22_buff_application_chance"), 1.0)
 	ability.hits_all_enemies = ability_two.get("20_is_multi_target")
+	ability.required_buff_element = CombatUnit.element_from_name(_text(ability_two.get("23_secondary_element_type")))
+	ability.required_buff_count = int(_num(ability_two.get("24_required_buff_count")))
 
 	ability.ability_two_raw = ability_two
 	return ability
