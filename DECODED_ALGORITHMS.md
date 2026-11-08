@@ -215,6 +215,24 @@ and on Heroic once a half-turn ends with the player's unit dead, it waits for th
 - The clock is `battleClocker` (DefineSprite 3389), placed at (400, 507.25) behind the pass button. Its two half-dials in DefineSprite 3386 turn with
   `BattleTimeNow / (BattleTimeLimit / 2)` (`DefineSprite_3386/frame_1/PlaceObject2_3385_2` and `PlaceObject2_3385_6`, line 2), and none of its sprites holds a text field, so it shows no number.
 
+## Battle end and game over (DefineSprite 3355 `blacker5`, root frames 229-241 and 104)
+
+Ported: `battle_scene.gd`'s `_finish_battle` opens `GameOverScreen` (`scripts/battle/game_over_screen.gd`) on a defeat or a draw. The port shows it, and the victory screen too, without the
+original's fade to black.
+
+- Once `winCondition` is set, the conductor plays `blacker5` (conductor lines 257-261). DefineSprite 3355 fades its black shape 333 in over frames 32-81, about 1.7 s at 30 fps, and its frame 85
+  sends the root to `loseCombat`, `winCombat` or `drawCombat` for `winCondition` 0, 1 or 2 (`DefineSprite_3355/frame_85/DoAction.as:5-16`).
+- `drawCombat` (root frame 240) plays into frame 241, which jumps to `loseCombat` (`frame_241/DoAction.as:1-2`), so a draw ends the game like a defeat. `loseCombat` (frame 229) plays into
+  frame 230, which sets `gameoverKrin`, keeps `Krin.slotInUse` in `slotSaveGO` and jumps to `resetHere` (`frame_230/DoAction.as:1-5`).
+- `resetHere` (frame 41) runs `stopAllSounds()` and recreates `Krin` (`frame_41/DoAction_2.as:7` and 13), so the game in memory is gone. Frame 43 then jumps to `gameOverMenu`, root frame 104
+  (`frame_43/DoAction.as:21-25`).
+- Frame 104 fills `whatToSay111` with `MENU[50]` "You're dead, Sonny...", `whatToSay222` with "< Click here to Re-Load >" and `tipTextGO` with `GOTIP[0]` (`frame_104/DoAction.as:1-3`). Its
+  Back caption, DefineEditText 2703, shows `whatToSayX`, which `frame_46/DoAction.as:1` sets to `MENU[26]` "Back" whenever the main menu runs.
+- Re-Load (`DefineButton2_2791` on(release), lines 2-12) loads `slotSaveGO` and goes to `Navigation` when that slot holds a save, or to `mainMenu` when it does not. Back
+  (`DefineButton2_2702` on(release), line 2) goes to `mainMenu`. The menu music starts again at `Navigation` (`frame_181/DoAction.as:15`).
+- The frame's backdrop is the three characters every menu screen places at depths 1, 2 and 5, which `assets/ui/menu/start_background.png` already is. Its Armor Games logo, copyright line and
+  "Play MORE Games!" link are left out, see `docs/adr/0002-leave-out-the-armor-games-branding.md`.
+
 ## Approximation audit (2026-07-21) - port pieces NOT yet source-faithful
 
 Everything below still stands in for original behavior, except the rows marked DONE; the ActionScript truth is already located, so no re-decoding is needed:

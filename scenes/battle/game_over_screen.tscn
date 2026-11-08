@@ -1,0 +1,108 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/game_over_screen.gd" id="1_gameover"]
+[ext_resource type="Texture2D" uid="uid://be351g307gwtg" path="res://assets/ui/menu/start_background.png" id="2_bg"]
+
+[node name="GameOverScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gameover")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 0
+
+; Every rect below is the rect of an edit text or a hit button in root frame
+; 104, read from the web build's swf_xml dump. The black outline stands for
+; the glow filter the original puts on each of these texts.
+[node name="DeadLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 193.1
+offset_top = 93.75
+offset_right = 606.95
+offset_bottom = 139.1
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+autowrap_mode = 3
+text = "You're dead, Sonny..."
+
+[node name="ReloadLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 250.9
+offset_top = 172.4
+offset_right = 549.1
+offset_bottom = 205.45
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+text = "< Click here to Re-Load >"
+
+[node name="ReloadButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 255.54
+offset_top = 173.0
+offset_right = 544.46
+offset_bottom = 203.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="TipLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 114.15
+offset_top = 231.65
+offset_right = 684.95
+offset_bottom = 347.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_constants/line_spacing = 6
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+text = "Having problems winning a fight? Observe your enemies carefully and try to find a weakness. Being victorious in Sonny is about having a successful strategy, so you may need to re-evaluate your ability configuration and execution. If you want guides on how to beat a specific stage, I recommend you to check out the ArmorGames or KrinLabs forums for some help."
+
+[node name="BackLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 488.15
+offset_top = 532.15
+offset_right = 792.25
+offset_bottom = 563.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 2
+text = "Back"
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 604.44
+offset_top = 534.45
+offset_right = 792.56
+offset_bottom = 561.25
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[connection signal="pressed" from="ReloadButton" to="." method="_on_reload_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="_on_back_pressed"]

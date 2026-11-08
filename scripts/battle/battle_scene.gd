@@ -120,9 +120,6 @@ var _pending_setup_events: Array = []  # runner.setup()'s return - played first 
 @onready var battlefield: Node2D = $Battlefield
 @onready var turn_label: Label = $UI/TurnLabel
 @onready var speech_label: Label = $UI/SpeechLabel
-@onready var result_panel: PanelContainer = $UI/ResultPanel
-@onready var result_label: Label = $UI/ResultPanel/VBox/ResultLabel
-@onready var continue_button: Button = $UI/ResultPanel/VBox/ContinueButton
 @onready var _pass_ring: Control = $BottomBar/PassRing
 @onready var _radial_menu_leave_timer: Timer = $RadialMenuLeaveTimer
 @onready var stance_host: Control = $BottomBar/StanceHost
@@ -131,9 +128,7 @@ var _pending_setup_events: Array = []  # runner.setup()'s return - played first 
 
 
 func _ready():
-	result_panel.hide()
 	speech_label.text = ""
-	continue_button.pressed.connect(_on_continue_pressed)
 	if not ZoneManager.pending_battle.is_empty():
 		start_battle(ZoneManager.pending_battle)
 		ZoneManager.pending_battle = {}
@@ -1082,12 +1077,15 @@ func _finish_battle() -> void:
 		add_child(victory)
 		victory.setup(save, rewards, drops, fighting_party)
 		victory.proceed_pressed.connect(_on_victory_proceed)
-	elif outcome == BattleRunner.Outcome.LOSS:
-		result_label.text = "Defeat..."
-		result_panel.show()
-	else:
-		result_label.text = "Draw."
-		result_panel.show()
+	elif outcome == BattleRunner.Outcome.LOSS or outcome == BattleRunner.Outcome.DRAW:
+		# A draw ends the game the same as a defeat: the original sends both to
+		# loseCombat (DefineSprite_3355/frame_85/DoAction.as:5-16,
+		# frame_241/DoAction.as:1), which resets the game and opens gameOverMenu
+		# (frame_230/DoAction.as:1-5, frame_43/DoAction.as:21-25). The screen goes
+		# on the UI layer so the turn label there can't draw over it.
+		var game_over: GameOverScreen = preload("res://scenes/battle/game_over_screen.tscn").instantiate()
+		game_over.name = "GameOverScreen"
+		$UI.add_child(game_over)
 	battle_finished.emit(outcome)
 
 

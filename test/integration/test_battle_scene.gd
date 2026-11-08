@@ -4,6 +4,9 @@
 extends GutTest
 
 const BattleSceneRes = preload("res://scenes/battle_scene.tscn")
+# Every checkout of the project shares one user:// folder, the player's real
+# saves included, so the Re-Load test writes its slot in a folder of its own.
+const TEST_SAVE_DIR: String = "user://test_battle_scene_saves/"
 
 
 func test_full_battle_scene_run():
@@ -53,7 +56,7 @@ func test_full_battle_scene_run():
 				victory._on_drop_clicked(drop, save)
 				assert_has(save.item_array, item_id, "claimed drop landed in the inventory")
 	else:
-		assert_true(scene.result_panel.visible, "result panel shown on loss/draw")
+		assert_not_null(scene.get_node_or_null("UI/GameOverScreen"), "game over screen shown on loss/draw")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -213,6 +216,130 @@ func test_victory_money_counts_the_companion_markers():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# Battle 100 with its outcome set before the battle loop starts, so the loop
+# goes straight to _finish_battle() and no fight is played.
+func _finish_battle_100_with(outcome: BattleRunner.Outcome) -> Control:
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = outcome
+	await wait_for_signal(scene.battle_finished, 5)
+	ZoneManager.auto_start_battles = true
+	return scene
+
+
+# The original's end clip sends a draw to loseCombat as well
+# (DefineSprite_3355/frame_85/DoAction.as:5-16, frame_241/DoAction.as:1), and
+# loseCombat resets the game and opens gameOverMenu, root frame 104
+# (frame_230/DoAction.as:1-5, frame_43/DoAction.as:21-25). Frame 104 fills its
+# texts from KrinLang.ENGLISH (frame_104/DoAction.as:1-3, with the strings at
+# frame_1/DoAction.as:258-259 and 2239), and its Back caption shows MENU[26]
+# (frame_46/DoAction.as:1, frame_1/DoAction.as:234). The reset also runs
+# stopAllSounds() (frame_41/DoAction_2.as:13).
+func _assert_game_over_screen(scene: Control) -> void:
+	assert_null(scene.get_node_or_null("VictoryScreen"), "no victory screen")
+	var texts: Array = scene.find_children("*", "Label", true, false).map(func(label): return label.text)
+	assert_false("Defeat..." in texts or "Draw." in texts, "the port's old result text is gone")
+	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "the music stops")
+	var game_over = scene.get_node_or_null("UI/GameOverScreen")
+	assert_not_null(game_over, "the game over screen is up")
+	if game_over == null:
+		return
+	assert_true(game_over.is_visible_in_tree(), "and showing")
+	assert_eq(game_over.get_node("DeadLabel").text, "You're dead, Sonny...", "MENU[50]")
+	assert_eq(game_over.get_node("ReloadLabel").text, "< Click here to Re-Load >", "MENU[51] between angle brackets")
+	assert_eq(
+		game_over.get_node("TipLabel").text,
+		"Having problems winning a fight? Observe your enemies carefully and try to find a weakness. Being victorious in Sonny is about having a successful strategy, so you may need to re-evaluate your ability configuration and execution. If you want guides on how to beat a specific stage, I recommend you to check out the ArmorGames or KrinLabs forums for some help.",
+		"GOTIP[0]"
+	)
+	assert_eq(game_over.get_node("BackLabel").text, "Back", "MENU[26]")
+
+
+func test_a_loss_ends_the_game_on_the_game_over_screen():
+	GameData.current_save = PlayerSave.new_game("LossFlow", 0)
+	var scene = await _finish_battle_100_with(BattleRunner.Outcome.LOSS)
+	_assert_game_over_screen(scene)
+	GameData.current_save = null
+
+
+func test_a_draw_ends_the_game_on_the_game_over_screen():
+	GameData.current_save = PlayerSave.new_game("DrawFlow", 0)
+	var scene = await _finish_battle_100_with(BattleRunner.Outcome.DRAW)
+	_assert_game_over_screen(scene)
+	GameData.current_save = null
+
+
+# The texts sit at the rects of edit texts 2794, 2793, 2792 and 2703 in root
+# frame 104, and the Re-Load and Back hit areas at the rects of buttons 2791 and
+# 2702, whose only state is shape 291, a 30 px square. Heights are left out for
+# the texts, because a Label grows to fit Godot's font where it is taller than
+# Flash's.
+func test_game_over_screen_uses_the_frame_104_rects():
+	var game_over = add_child_autofree(load("res://scenes/battle/game_over_screen.tscn").instantiate())
+	var texts: Dictionary = {
+		"DeadLabel": Rect2(193.1, 93.75, 413.85, 45.35),
+		"ReloadLabel": Rect2(250.9, 172.4, 298.2, 33.05),
+		"TipLabel": Rect2(114.15, 231.65, 570.8, 115.35),
+		"BackLabel": Rect2(488.15, 532.15, 304.1, 30.85),
+	}
+	for node_name in texts:
+		var label: Label = game_over.get_node(node_name)
+		assert_almost_eq(label.position, texts[node_name].position, Vector2(0.01, 0.01), "%s position" % node_name)
+		assert_almost_eq(label.size.x, texts[node_name].size.x, 0.01, "%s width" % node_name)
+	var hit_areas: Dictionary = {
+		"ReloadButton": Rect2(255.54, 173.0, 288.92, 30.0),
+		"BackButton": Rect2(604.44, 534.45, 188.12, 26.8),
+	}
+	for node_name in hit_areas:
+		var button: Button = game_over.get_node(node_name)
+		assert_almost_eq(button.position, hit_areas[node_name].position, Vector2(0.01, 0.01), "%s position" % node_name)
+		assert_almost_eq(button.size, hit_areas[node_name].size, Vector2(0.01, 0.01), "%s size" % node_name)
+
+
+# Re-Load has to read the slot back from disk. The test saves a slot holding
+# 100 euro in a folder of its own, loads it the way the main menu does, then
+# sets the euro in memory to 999. Loading the slot again through Godot's
+# resource cache would hand back that same PlayerSave, 999 euro and all.
+func test_reload_brings_back_the_last_save():
+	GameData.save_dir = TEST_SAVE_DIR
+	DirAccess.make_dir_recursive_absolute(TEST_SAVE_DIR)
+	GameData.new_game(1, "ReloadFlow")
+	GameData.current_save.euro = 100.0
+	assert_true(GameData.save_game(), "the test slot was written")
+	assert_true(GameData.load_game(1), "and loaded back")
+	GameData.current_save.euro = 999.0
+
+	var scene = await _finish_battle_100_with(BattleRunner.Outcome.LOSS)
+	var game_over = scene.get_node_or_null("UI/GameOverScreen")
+	assert_not_null(game_over, "the loss shows the game over screen")
+	if game_over != null:
+		assert_eq(game_over.reload_last_save(), "res://scenes/game.tscn", "a saved slot reloads into the hub")
+		assert_eq(GameData.current_slot, 1, "the same slot")
+		assert_eq(GameData.current_save.euro, 100.0, "the saved euro, not the 999 spent since")
+
+	GameData.current_save = null
+	GameData.current_slot = -1
+	DirAccess.remove_absolute(TEST_SAVE_DIR + "slot1.tres")
+	DirAccess.remove_absolute(TEST_SAVE_DIR)
+	GameData.save_dir = GameData.SAVE_DIR
+
+
+# The debug battle's throwaway save sits in slot -1, which save_game() never
+# writes, so Re-Load finds no save there and goes to the main menu, the way the
+# original does for an empty slot (DefineButton2_2791 on(release), lines 9-12).
+func test_reload_without_a_save_goes_to_the_main_menu():
+	GameData.new_game(-1, "Debug")
+	var scene = await _finish_battle_100_with(BattleRunner.Outcome.LOSS)
+	var game_over = scene.get_node_or_null("UI/GameOverScreen")
+	assert_not_null(game_over, "the loss shows the game over screen")
+	if game_over != null:
+		assert_eq(game_over.reload_last_save(), "res://scenes/main_menu.tscn", "no save, so the main menu")
+	GameData.current_save = null
 
 
 func test_is_point_over_radial_menu_area():

@@ -242,23 +242,6 @@ offset_bottom = 466.0
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ResultPanel" type="PanelContainer" parent="UI"]
-offset_left = 280.0
-offset_top = 180.0
-offset_right = 520.0
-offset_bottom = 340.0
-
-[node name="VBox" type="VBoxContainer" parent="UI/ResultPanel"]
-layout_mode = 2
-
-[node name="ResultLabel" type="Label" parent="UI/ResultPanel/VBox"]
-layout_mode = 2
-horizontal_alignment = 1
-
-[node name="ContinueButton" type="Button" parent="UI/ResultPanel/VBox"]
-layout_mode = 2
-text = "Continue"
-
 [connection signal="draw" from="BottomBar/PassRing" to="." method="_draw_pass_ring"]
 [connection signal="timeout" from="RadialMenuLeaveTimer" to="." method="_start_radial_menu_fade_out"]
 [connection signal="pressed" from="BottomBar/PassButton" to="." method="_on_pass_pressed"]
