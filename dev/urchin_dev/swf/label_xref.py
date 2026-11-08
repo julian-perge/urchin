@@ -24,6 +24,7 @@
 # function is scoped by the script that defines it, which is wrong when the
 # function runs on another object: krinMelee in frame_42/DoAction_4.as is a
 # root frame script, so its this.inner resolves to the root's own "inner".
+# Those gotos carry a flag saying so.
 #
 # AVM1 matches frame labels case-insensitively ("In AVM1, frame labels are
 # case insensitive (ASCII).", Ruffle core/src/display_object/movie_clip.rs),
@@ -142,6 +143,39 @@ def unescape(text: str) -> str:
     return re.sub(r"\\(.)", lambda m: escapes.get(m.group(1), m.group(1)), text)
 
 
+def _escaped(text: str, i: int) -> bool:
+    """True when text[i] follows an odd run of backslashes."""
+    run = 0
+    while i - run - 1 >= 0 and text[i - run - 1] == "\\":
+        run += 1
+    return run % 2 == 1
+
+
+def _function_spans(text: str) -> list[tuple[int, int]]:
+    """-> (start, end) of every function body in a decompiled script."""
+    spans = []
+    for m in re.finditer(r"\bfunction\b", text):
+        i = text.find("{", m.end())
+        if i == -1:
+            continue
+        start, depth = i, 0
+        while i < len(text):
+            ch = text[i]
+            if ch == '"':
+                i += 1
+                while text[i] != '"':
+                    i += 2 if text[i] == "\\" else 1
+            elif ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    spans.append((start, i))
+                    break
+            i += 1
+    return spans
+
+
 def _skip_back(text: str, i: int, close: str) -> int:
     """-> index of the bracket opening the one closing at text[i]."""
     opener = {"]": "[", ")": "("}[close]
@@ -150,7 +184,7 @@ def _skip_back(text: str, i: int, close: str) -> int:
         ch = text[i]
         if ch == '"':
             i -= 1
-            while i >= 0 and not (text[i] == '"' and text[i - 1] != "\\"):
+            while i >= 0 and not (text[i] == '"' and not _escaped(text, i)):
                 i -= 1
         elif ch in "])":
             depth += 1
@@ -202,10 +236,12 @@ class GotoCall:
     method: str
     receiver: str | None
     argument: str
+    in_function: bool = False
 
 
 def goto_calls(text: str) -> list[GotoCall]:
     calls = []
+    functions = _function_spans(text)
     for m in _GOTO.finditer(text):
         start = m.start()
         receiver = None
@@ -217,6 +253,7 @@ def goto_calls(text: str) -> list[GotoCall]:
                 "gotoAnd" + m.group(1),
                 receiver,
                 _argument_after(text, m.end() - 1),
+                any(a < start < b for a, b in functions),
             )
         )
     return calls
@@ -253,7 +290,6 @@ def receiver_segments(receiver: str) -> list[tuple[str, str]]:
 
 class Resolver:
     def __init__(self, index: SwfIndex):
-        self.index = index
         self.names: dict[int, dict[str, set[int]]] = defaultdict(
             lambda: defaultdict(set)
         )
@@ -414,6 +450,8 @@ def resolve_goto(resolver, values, script, call) -> dict:
         "argument": call.argument,
     }
     targets, flags = resolver.walk(script, call.receiver)
+    if call.in_function:
+        flags.append("inside a function, which may run on another object")
     string = re.fullmatch(r'"((?:[^"\\]|\\.)*)"', call.argument)
     if string:
         wanted = unescape(string.group(1))
@@ -478,9 +516,10 @@ def build(index: SwfIndex, action_script: Path, battles_json: Path) -> dict:
 
     selected = defaultdict(list)
     for goto in gotos:
-        if goto["status"] == "label":
+        if goto["status"] in ("label", "frame"):
             for sprite, label in goto["selects"]:
-                selected[(sprite, label)].append(goto["id"])
+                if label is not None:
+                    selected[(sprite, label)].append(goto["id"])
     exports = defaultdict(list)
     for name, cid in index.exports.items():
         exports[cid].append(name)

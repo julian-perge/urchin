@@ -28,7 +28,6 @@ from pathlib import Path
 TAG_END = 0
 TAG_SHOW_FRAME = 1
 TAG_PLACE_OBJECT = 4
-TAG_DEFINE_BUTTON = 7
 TAG_DO_ACTION = 12
 TAG_PLACE_OBJECT2 = 26
 TAG_DEFINE_BUTTON2 = 34
@@ -151,12 +150,11 @@ def _skip_matrix(data: bytes, pos: int) -> int:
     return bits.align()
 
 
-def _skip_cxform(data: bytes, pos: int, with_alpha: bool) -> int:
+def _skip_cxform_with_alpha(data: bytes, pos: int) -> int:
     bits = _Bits(data, pos)
     has_add, has_mult = bits.ub(1), bits.ub(1)
     n = bits.ub(4)
-    channels = 4 if with_alpha else 3
-    bits.ub(n * channels * (has_add + has_mult))
+    bits.ub(n * 4 * (has_add + has_mult))
     return bits.align()
 
 
@@ -316,7 +314,7 @@ class _Walker:
         if flags & 0x04:
             p = _skip_matrix(data, p)
         if flags & 0x08:
-            p = _skip_cxform(data, p, with_alpha=True)
+            p = _skip_cxform_with_alpha(data, p)
         if flags & 0x10:
             p += 2  # ratio
         name = None

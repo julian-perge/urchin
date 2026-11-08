@@ -81,6 +81,14 @@ def test_item_names_without_an_icon_label(xref, values):
     ]
 
 
+def test_recorded_misses_match_the_sources(xref, values):
+    sprites = {"zone_background": 3435, "sky_background": 3454}
+    sprites |= {"item_name": 2064, "zone_name": 3287}
+    for name, sprite in sprites.items():
+        recorded = [(m["key"], m["value"]) for m in xref["value_sets"][name]["misses"]]
+        assert recorded == sorted(set(missing(values[name], labels_of(xref, sprite))))
+
+
 def test_zone_names_without_a_hub_label(xref, values):
     assert missing(values["zone_name"], labels_of(xref, 3287)) == [
         (0, "EMPTY"),
@@ -178,6 +186,13 @@ def test_goto_calls_split_receiver_and_argument():
         ("index", '"p" + a[0]'),
         ("name", "inner"),
     ]
+
+
+def test_gotos_inside_a_function_are_marked():
+    text = 'function f()\n{\n   this.inner.gotoAndStop("a\\\\");\n}\ngotoAndStop(2);\n'
+    inside, outside = goto_calls(text)
+    assert (inside.in_function, inside.argument) == (True, '"a\\\\"')
+    assert (outside.in_function, outside.receiver) == (False, None)
 
 
 def test_unescape_undoes_ffdec_quotes():
