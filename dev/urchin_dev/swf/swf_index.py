@@ -584,6 +584,27 @@ def bitmap_fill_ids(index: SwfIndex, cid: int) -> set[int]:
             fill_bits, line_bits = bits.ub(4), bits.ub(4)
 
 
+def first_fill_bitmap_id(index: SwfIndex, cid: int) -> int | None:
+    """-> the bitmap id a DefineShape's first fill style points at, or None
+    when the shape has no fill styles or its first one isn't a bitmap."""
+    code, body, _end = index.characters[cid]
+    if code not in SHAPE_TAGS:
+        raise ValueError(f"character {cid} is not a DefineShape")
+    data, ids = index.data, set()
+    pos = _skip_rect(data, body + 2)
+    if code == TAG_DEFINE_SHAPE4:
+        pos = _skip_rect(data, pos) + 1  # EdgeBounds, then a byte of flags
+    count = data[pos]
+    pos += 1
+    if count == 0xFF and code != TAG_DEFINE_SHAPE:
+        (count,) = struct.unpack_from("<H", data, pos)
+        pos += 2
+    if count == 0:
+        return None
+    _fill_style(data, pos, code, ids)
+    return next(iter(ids), None)
+
+
 def _fill_styles(data: bytes, pos: int, code: int, ids: set[int]) -> int:
     count = data[pos]
     pos += 1

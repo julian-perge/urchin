@@ -18,6 +18,7 @@ from urchin_dev.swf.swf_index import (
     Placement,
     Removal,
     bitmap_fill_ids,
+    first_fill_bitmap_id,
     parse_swf,
     shape_bounds,
     sound_stream,
@@ -243,3 +244,23 @@ def test_bitmap_fill_ids_read_a_define_shape4_line_fill():
     body = struct.pack("<H", 40) + b"\0\0\0" + shapes  # two RECTs, then flags
     index = parse_swf(swf(tag(TAG_DEFINE_SHAPE4, body), tag(TAG_SHOW_FRAME)))
     assert bitmap_fill_ids(index, 40) == {9}
+
+
+def test_first_fill_bitmap_id_reads_only_the_first_fill_style():
+    solid = bytes([0x00]) + b"\0\0\0\xff"
+    missing = bytes([0x40]) + struct.pack("<H", 65535) + IDENTITY_MATRIX
+    bitmap = bytes([0x41]) + struct.pack("<H", 7) + IDENTITY_MATRIX
+    # A RECT, the fill styles, no line styles, zero style bits, EndShapeRecord.
+    second = b"\0" + bytes([2]) + solid + missing + b"\0\0\0"
+    first = b"\0" + bytes([1]) + bitmap + b"\0\0\0"
+    none = b"\0\0\0\0\0"
+    index = parse_swf(
+        swf(
+            tag(TAG_DEFINE_SHAPE3, struct.pack("<H", 1) + second),
+            tag(TAG_DEFINE_SHAPE3, struct.pack("<H", 2) + first),
+            tag(TAG_DEFINE_SHAPE3, struct.pack("<H", 3) + none),
+            tag(TAG_SHOW_FRAME),
+        )
+    )
+    assert [first_fill_bitmap_id(index, cid) for cid in (1, 2, 3)] == [None, 7, None]
+    assert bitmap_fill_ids(index, 1) == {65535}
