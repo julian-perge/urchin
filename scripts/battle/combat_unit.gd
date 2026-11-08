@@ -195,10 +195,19 @@ static func from_character(character: Character, level: int, difficulty: Difficu
 	unit.plevel = level
 
 	var mods = DIFFICULTY_MODIFIERS[difficulty]
-	unit.base_life = round(mods["life"] * get_stat(character.vitality, level) * VIT_LIFE_FACTOR)
-	unit.base_strength = round(mods["strength_magic"] * get_stat(character.strength, level))
-	unit.base_magic = round(mods["strength_magic"] * get_stat(character.magic, level))
-	unit.base_speed = round(mods["speed"] * get_stat(character.speed, level))
+	var strength_magic_mod: float = mods["strength_magic"]
+	var life_mod: float = mods["life"]
+	var speed_mod: float = mods["speed"]
+	# The original shrinks the difficulty multipliers again for a unit below
+	# level 10, in krinAddNewUnit (frame_42/DoAction_14.as:80-85).
+	if level < 10:
+		strength_magic_mod *= 0.7000000000000001 + level * 0.03
+		speed_mod *= 0.7000000000000001 + level * 0.03
+		life_mod *= 0.5 + level * 0.05
+	unit.base_life = round(life_mod * get_stat(character.vitality, level) * VIT_LIFE_FACTOR)
+	unit.base_strength = round(strength_magic_mod * get_stat(character.strength, level))
+	unit.base_magic = round(strength_magic_mod * get_stat(character.magic, level))
+	unit.base_speed = round(speed_mod * get_stat(character.speed, level))
 	unit.base_focus = character.focus
 
 	var piercing = character.stats.get("piercing", [])
