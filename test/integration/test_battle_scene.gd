@@ -235,7 +235,9 @@ func test_radial_menu_fades_out_on_hover_leave():
 	var scene = add_child_autofree(BattleSceneRes.instantiate())
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	scene._player_action_pending = true
+	# The battle loop closes any open menu before an AI turn, so the test waits
+	# until the loop hands the player the turn, whichever side opens battle 100.
+	await wait_until(func(): return scene._player_action_pending, 5)
 	scene._on_unit_clicked(2)
 	assert_not_null(scene._radial_menu)
 
@@ -262,7 +264,9 @@ func test_radial_menu_hover_return_cancels_fade_out():
 	var scene = add_child_autofree(BattleSceneRes.instantiate())
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	scene._player_action_pending = true
+	# The battle loop closes any open menu before an AI turn, so the test waits
+	# until the loop hands the player the turn, whichever side opens battle 100.
+	await wait_until(func(): return scene._player_action_pending, 5)
 	scene._on_unit_clicked(2)
 	assert_not_null(scene._radial_menu)
 
@@ -312,7 +316,9 @@ func test_opening_a_second_menu_survives_the_first_menus_fade():
 	# window this test measures, leaving the stale tween as the only thing
 	# that could close the second menu.
 	scene._radial_menu_leave_timer.wait_time = 30.0
-	scene._player_action_pending = true
+	# The battle loop closes any open menu before an AI turn, so the test waits
+	# until the loop hands the player the turn, whichever side opens battle 100.
+	await wait_until(func(): return scene._player_action_pending, 5)
 
 	scene._on_unit_clicked(2)
 	assert_not_null(scene._radial_menu, "first menu opened on the enemy slot")
