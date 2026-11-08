@@ -1,6 +1,6 @@
 # Keep the combat log the original never had
 
-The original Sonny 2 has no combat log, and the port's battle screen has one: `CombatLogPanel` (`scripts/battle/combat_log_panel.gd`), added in `e5e0b06`. We keep it as a deliberate departure, so a fidelity pass should not remove it. It can stay because it only narrates. It starts hidden, nothing but the player's own press opens it, it changes no battle rule, and every line reports an event the battle screen already plays. The one condition is that each line says what a move did to its target, not what kind of move it was.
+The original Sonny 2 has no combat log, and the port's battle screen has one: `CombatLogPanel` (`scripts/battle/combat_log_panel.gd`), added in `e5e0b06`. We keep it as a deliberate departure, because it makes a fight easy to follow and to debug, so a fidelity pass should not remove it. That is safe because it only narrates. It starts hidden, nothing but the player's own press opens it, it changes no battle rule, and every line reports an event the battle screen already plays. The one condition is that each line says what a move did to its target, not what kind of move it was.
 
 AS paths below are relative to `dev/source_files/action_script/`, and character ids are the web build's, from `dev/source_files/swf_xml/sonny-2-2900.xml`. The research behind this is sections 2.26 and 4(d) of `docs/research/2026-11-07-original-logic-vs-port.md`.
 
