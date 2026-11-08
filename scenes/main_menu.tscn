@@ -35,7 +35,161 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 0
 
-[node name="Layout" type="VBoxContainer" parent="." unique_id=452309352]
+; Every rect on the choice and name screens, and the slot list's Back, is read
+; from the original's root frames 56 (subMenu), 64 (nameMenu) and 74
+; (dataMenu). A Label takes its edit text's rect and a flat Button its hit
+; button's, and the black outline stands for the glow filter the original puts
+; on each of these texts. Title stands in for the logo, sprite 321, at that
+; sprite's rect. NameInput fills the name box that shape 2713 draws, in the
+; color, size and alignment of the name text 2712 inside it. The slot buttons
+; are the port's own and keep their centered column.
+[node name="ModePanel" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="ModePanel"]
+layout_mode = 0
+offset_left = 123.2
+offset_top = 119.8
+offset_right = 672.75
+offset_bottom = 217.5
+mouse_filter = 2
+theme_override_font_sizes/font_size = 34
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Sonny 2"
+
+[node name="NewGameLabel" type="Label" parent="ModePanel"]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 290.1
+offset_right = 545.1
+offset_bottom = 335.7
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 36
+horizontal_alignment = 1
+text = "New Game"
+
+[node name="NewGameButton" type="Button" parent="ModePanel"]
+layout_mode = 0
+offset_left = 241.0629
+offset_top = 290.7001
+offset_right = 543.3371
+offset_bottom = 330.6999
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="LoadGameLabel" type="Label" parent="ModePanel"]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 350.1
+offset_right = 545.1
+offset_bottom = 395.7
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 36
+horizontal_alignment = 1
+text = "Load Game"
+
+[node name="LoadGameButton" type="Button" parent="ModePanel"]
+layout_mode = 0
+offset_left = 241.0629
+offset_top = 350.7001
+offset_right = 543.3371
+offset_bottom = 390.6999
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="NamePanel" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NameInput" type="LineEdit" parent="NamePanel"]
+layout_mode = 0
+offset_left = 185.55
+offset_top = 252.2
+offset_right = 611.65
+offset_bottom = 297.45
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_font_sizes/font_size = 26
+text = "Sonny"
+alignment = 1
+max_length = 12
+
+[node name="OkLabel" type="Label" parent="NamePanel"]
+layout_mode = 0
+offset_left = 339.4
+offset_top = 330.1
+offset_right = 460.65
+offset_bottom = 381.4
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 36
+horizontal_alignment = 1
+text = "OK!"
+
+[node name="OkButton" type="Button" parent="NamePanel"]
+layout_mode = 0
+offset_left = 368.3342
+offset_top = 336.6
+offset_right = 430.1657
+offset_bottom = 366.6
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="BackLabel" type="Label" parent="NamePanel"]
+layout_mode = 0
+offset_left = 488.15
+offset_top = 532.15
+offset_right = 792.25
+offset_bottom = 563.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 2
+text = "Back"
+
+[node name="BackButton" type="Button" parent="NamePanel"]
+layout_mode = 0
+offset_left = 604.4392
+offset_top = 534.4501
+offset_right = 792.5608
+offset_bottom = 561.2499
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="SlotPanel" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="SlotPanel" unique_id=452309352]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -44,17 +198,34 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 24
 
-[node name="Title" type="Label" parent="Layout"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 34
-horizontal_alignment = 1
-text = "Sonny 2"
-
-[node name="SlotButtons" type="VBoxContainer" parent="Layout"]
+[node name="SlotButtons" type="VBoxContainer" parent="SlotPanel/Layout"]
 layout_mode = 2
 theme_override_constants/separation = 10
+
+[node name="BackLabel" type="Label" parent="SlotPanel"]
+layout_mode = 0
+offset_left = 488.15
+offset_top = 532.15
+offset_right = 792.25
+offset_bottom = 563.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 2
+text = "Back"
+
+[node name="BackButton" type="Button" parent="SlotPanel"]
+layout_mode = 0
+offset_left = 604.4392
+offset_top = 534.4501
+offset_right = 792.5608
+offset_bottom = 561.2499
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
 
 [node name="NewGamePanel" type="Control" parent="."]
 visible = false
@@ -88,28 +259,6 @@ theme_override_colors/font_color = Color(0.803922, 0.529412, 0.529412, 1)
 theme_override_font_sizes/font_size = 26
 horizontal_alignment = 1
 text = "Please select a class:"
-
-[node name="NameLabel" type="Label" parent="NewGamePanel"]
-layout_mode = 0
-offset_left = 250.0
-offset_top = 60.0
-offset_right = 330.0
-offset_bottom = 90.0
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
-theme_override_font_sizes/font_size = 15
-horizontal_alignment = 2
-vertical_alignment = 1
-text = "Name:"
-
-[node name="NameInput" type="LineEdit" parent="NewGamePanel"]
-layout_mode = 0
-offset_left = 340.0
-offset_top = 60.0
-offset_right = 550.0
-offset_bottom = 90.0
-text = "Sonny"
-max_length = 12
 
 ; Card rects and name-label rects both come from the original placements, which
 ; extract_start_screens prints. The card textures are the same rects rendered at
@@ -420,10 +569,15 @@ offset_right = 780.0
 offset_bottom = 581.0
 text = "Back"
 
+[connection signal="pressed" from="ModePanel/NewGameButton" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="ModePanel/LoadGameButton" to="." method="_on_load_game_pressed"]
+[connection signal="pressed" from="NamePanel/OkButton" to="." method="_on_name_confirmed"]
+[connection signal="pressed" from="NamePanel/BackButton" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="SlotPanel/BackButton" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="NewGamePanel/ClassPicker/Psychological" to="." method="_on_class_picked" binds=[1]]
 [connection signal="pressed" from="NewGamePanel/ClassPicker/Biological" to="." method="_on_class_picked" binds=[0]]
 [connection signal="pressed" from="NewGamePanel/ClassPicker/Hydraulic" to="." method="_on_class_picked" binds=[2]]
-[connection signal="pressed" from="NewGamePanel/CancelButton" to="." method="_on_cancel_new_game"]
+[connection signal="pressed" from="NewGamePanel/CancelButton" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="OptionsPanel/DifficultyPicker/Easy" to="." method="_on_difficulty_selected" binds=[0]]
 [connection signal="pressed" from="OptionsPanel/DifficultyPicker/Challenging" to="." method="_on_difficulty_selected" binds=[1]]
 [connection signal="pressed" from="OptionsPanel/DifficultyPicker/Heroic" to="." method="_on_difficulty_selected" binds=[2]]

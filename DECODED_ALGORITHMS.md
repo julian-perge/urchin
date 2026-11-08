@@ -131,6 +131,26 @@ which runs when the row loads and again at each of the player's half-turns (`fra
 `frame_42/DoAction_17.as:42`, saved through `frame_42/DoAction_20.as:297`) is never read. The port does the same: `Party.build_companion_unit` applies Tactical, the stance row starts
 on Tactical, and `PlayerSave.ag_mode` stays in the save unread. The port used to save the pick there and build companions with it.
 
+## New Game and Load Game (root frames 56, 64 and 74, `Krin.dataMode`)
+
+Ported: `main_menu.gd` opens on New Game and Load Game, asks for the name before the slot list, lets New Game use any slot with the hover warning, and doesn't save when the game starts.
+
+- `subMenu`, root frame 56, captions its buttons with `MENU[21]` "New Game", `MENU[22]` "Load Game" and `MENU[85]` "PvP Arena" (`frame_56/DoAction.as:1-3`). New Game (`DefineButton2_2707`
+  on(release), lines 2-3) goes to `nameMenu` and sets `Krin.dataMode` to "save". Load Game (`DefineButton2_2706` on(release), lines 2-3) goes to `dataMenu` and sets it to "load". The port
+  leaves PvP Arena out with the rest of the arena.
+- `nameMenu`, root frame 64, sets `krinNameUser` to `SYSTEM[34]` "< Enter Name Here >" (`frame_64/DoAction.as:1`), which the editable text 2712 shows, and OK! (`DefineButton2_2710`) goes to
+  `dataMenu`. The port's name field starts at "Sonny" instead.
+- `dataMenu`, root frame 74, shows each slot's saved `nameUser`, or "< Empty Slot >" for an empty one (`frame_74/DoAction.as:1-11`). `DefineButton2_2722`, 2721, 2720 and 2719 are slots 1
+  to 4. With `dataMode` "save" a slot copies `krinNameUser` into `Krin.nameUser` and goes to `classMenu`, used or empty and without asking (on(release), lines 3-11), and hovering it shows
+  `MENU[21]` over `MENU[25]`, the warning that a new game removes the old data (on(rollOver), lines 2-8). Otherwise a slot loads only when its `data.nameUser` is defined (on(release), lines
+  12-34), so an empty slot does nothing.
+- Only `krinHandleData` in save mode writes a slot (`frame_42/DoAction_20.as:58-126`). The calls a player can reach are the Save button (`DefineButton2_3183` on(release), lines 6-7) and the
+  victory screen's Proceed with `autoSaver` on (`DefineButton2_3004` on(release), lines 4-7), whose frame sets `dataMode` to "save" first (`DefineSprite_3142/frame_9/DoAction.as:3`). The
+  class buttons and Start (`DefineButton2_2735` to 2737, `DefineButton2_2770`) only change `Krin` in memory. `DefineButton2_3182` saves too, always to slot 1, but `Navigation` places it off
+  the stage at x -86 to -44, and the KRINMENU frame holding the last caller, `DefineButton2_3121`, is only opened by 3182.
+- So a new game in a used slot leaves the old save on disk until its first save, and a game over before then reloads the old save, because Re-Load reads the slot back
+  (`DefineButton2_2791` on(release), lines 2-7).
+
 ## Starting state (new game)
 
 - Class-select buttons (DefineButton2_2735/2736/2737 = Bio/Hydro/Psycho) seed `moveMatrix[0..1]` and `moveMatrix2[0..1]` with the class starting moves.
