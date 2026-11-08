@@ -22,6 +22,8 @@ func test_new_game_holds_only_the_starting_gear_bonuses():
 		PlayerSave.PlayerClass.PSYCHOLOGICAL: [9.0, 8.0, 15.0, 8.0],
 		PlayerSave.PlayerClass.HYDRAULIC: [13.0, 11.0, 9.0, 7.0],
 	}
+	var previous_slot: int = GameData.current_slot
+	var previous_save: PlayerSave = GameData.current_save
 	for player_class in expected_stats:
 		GameData.new_game(-1, "Test", player_class)
 		var new_save: PlayerSave = GameData.current_save
@@ -34,7 +36,8 @@ func test_new_game_holds_only_the_starting_gear_bonuses():
 		)
 		assert_eq(new_save.stat_points, 0, "%s free stat points" % label)
 		assert_almost_eq(new_save.point_residue, 0.158, 0.001, "%s point residue" % label)
-	GameData.current_save = null
+	GameData.current_slot = previous_slot
+	GameData.current_save = previous_save
 
 
 func test_point_grant_consistency_across_30_levels():
