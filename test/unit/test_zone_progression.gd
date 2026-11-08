@@ -43,6 +43,20 @@ func test_story_battle_selection():
 	assert_false(pick["is_story_progress"], "repeat wins do not advance progress")
 
 
+# The tutorial is battle 2 (frame_165/DoAction.as:2), and
+# frame_42/DoAction_14.as:311 puts Metabii (49) against Sonny with Louis the
+# Blind (48) beside him.
+func test_every_story_battle_and_the_tutorial_load():
+	for zone in ZoneProgression.QUEST_HUB:
+		for progress in range(int(ZoneProgression.QUEST_HUB[zone]["progress_max"]) + 1):
+			var battle_id: int = zone * 100 + progress
+			assert_not_null(BattleSetup.load_battle(battle_id), "story battle %d loads" % battle_id)
+
+	var tutorial: BattleFight = BattleSetup.load_battle(2)
+	var players: Array = tutorial.players.map(func(player): return int(player["id"])) if tutorial else []
+	assert_eq(players, [49, 0, 0, 48, 0], "battle 2 is the tutorial")
+
+
 func test_training_battle_unlocks():
 	assert_eq(ZoneProgression.available_training_battle_ids(save), [1000], "-1 entries always unlocked")
 	save.quest_progress[1] = 6
