@@ -72,7 +72,7 @@ ffdec -zoom 2.0 -select 2064:592 -format sprite:png -selectid 2064 -export sprit
 
 Writes `./test_cage/DefineSprite_2064/592.png` - frame 592 is item 592
 "Ancient Cage"; find another item's frame number the same way the script
-does, via `snapshot_timeline`'s `labels` dict (see the lookup script below).
+does, via `timeline.labels()` (see the lookup script below).
 This is the full frame as ffdec renders it, `DefineShape 1913`'s backing
 square included and the mostly-transparent full-timeline canvas untrimmed -
 crop to the opaque bounds (`Image.open(...).getchannel("A").getbbox()`) to
@@ -105,11 +105,11 @@ renderer can know that.
 
 ```sh
 uv run python3 -c '
-from urchin_dev import WEB_SWF_XML
-from urchin_dev.swf import snapshot_timeline
+from urchin_dev import WEB_SWF
+from urchin_dev.swf import timeline
+from urchin_dev.swf.swf_index import read_swf
 
-xml = WEB_SWF_XML.read_text()
-_snaps, labels = snapshot_timeline(xml, 2064, set())
-print(labels["A Broken Pipe"])  # exact frame label, case-sensitive
+# Matched case-insensitively, the way the game resolves gotoAndStop labels.
+print(timeline.frame_of(read_swf(WEB_SWF), 2064, "A Broken Pipe"))
 '
 ```

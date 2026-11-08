@@ -101,14 +101,14 @@ res://
 ├── dev/                              # Everything that builds game data but never ships in the game
 │   ├── urchin_dev/                   # AS3-decompile -> JSON pipeline (Python, run via `uv`, see above)
 │   │   ├── convert/                  # items.py, units.py, moves.py, buffs.py, battles.py
-│   │   └── swf/                      # msgspec models (models.py), swf2xml analysis (xml_lib.py),
+│   │   └── swf/                      # msgspec models (models.py), the SWF parser (swf_index.py, timeline.py),
 │   │                                 #   and extract/ for asset extraction tooling
 │   ├── data_json/                    # Runtime _root capture, Steam build (converter input, not reproducible - see SWF_DIFFERENCES.md)
 │   ├── converted_json/               # Clean converter output (consumed by scripts/editor/*.gd)
 │   └── source_files/                 # Decompiled SWF source material (see dev/source_files/README.md)
 │       ├── action_script/            # Full ffdec script export - game-logic ground truth
 │       ├── action_script_curated/    # Hand-picked, commented excerpts (former action_script_files/)
-│       └── swf_xml/                  # ffdec -swf2xml dumps of both SWFs - geometry ground truth
+│       └── swf_xml/                  # ffdec -swf2xml dumps of both SWFs, kept for grepping
 ├── KNOWN_GAPS.md                     # Specific defects/scoped-out edges in work already done
 ├── NEXT_PHASES.md                    # Priority-ordered roadmap of what's left
 └── SWF_DIFFERENCES.md                # Divergences found between the web SWF and the Steam rebundle

@@ -28,7 +28,6 @@ from __future__ import annotations
 
 import json
 import math
-import re
 import sys
 import tempfile
 from pathlib import Path
@@ -36,8 +35,8 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from urchin_dev import CONVERTED_JSON, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import root_placements, transform_rect
+from urchin_dev import CONVERTED_JSON, WEB_SWF
+from urchin_dev.swf import timeline, transform_rect
 from urchin_dev.swf.extract.battle_screen import (
     FIGHTER_RIG,
     FRAME_LABEL,
@@ -50,6 +49,7 @@ from urchin_dev.swf.extract.battle_screen import (
     ZOOM,
 )
 from urchin_dev.swf.ffdec_lib import render
+from urchin_dev.swf.swf_index import SwfIndex, read_swf, shape_bounds
 
 MASK_SHAPE = 333
 FIRST_PAIR = ("WHITE NOVEMBER", "SEA")
@@ -62,22 +62,17 @@ def battle_pairs() -> list[tuple[str, str]]:
     return [FIRST_PAIR] + [p for p in pairs if p != FIRST_PAIR]
 
 
-def mask_box(xml: str, placements: dict) -> tuple[float, float, float, float]:
+def mask_box(
+    index: SwfIndex, placements: dict[int, timeline.Layer]
+) -> tuple[float, float, float, float]:
     """333's stage rect in design px, from its shape bounds and placement."""
-    bounds = re.search(
-        rf'<item type="DefineShape\d?Tag"[^>]*shapeId="{MASK_SHAPE}"[^>]*>\s*'
-        r'<shapeBounds type="RECT" Xmax="(-?\d+)" Xmin="(-?\d+)" '
-        r'Ymax="(-?\d+)" Ymin="(-?\d+)"',
-        xml,
-    )
-    xmax, xmin, ymax, ymin = (int(g) for g in bounds.groups())
-    (entry,) = [e for e in placements.values() if e.get("cid") == MASK_SHAPE]
-    xmin, ymin, xmax, ymax = transform_rect(entry["mat"], (xmin, ymin, xmax, ymax))
-    return xmin / 20, ymin / 20, xmax / 20, ymax / 20
+    (layer,) = [p for p in placements.values() if p.character_id == MASK_SHAPE]
+    rect = transform_rect(layer.matrix, shape_bounds(index, MASK_SHAPE))
+    return tuple(v / 20 for v in rect)
 
 
-def depth_of(placements: dict, character: int) -> int:
-    (depth,) = [d for d, e in placements.items() if e.get("cid") == character]
+def depth_of(placements: dict[int, timeline.Layer], character: int) -> int:
+    (depth,) = [d for d, p in placements.items() if p.character_id == character]
     return depth
 
 
@@ -111,9 +106,10 @@ def p99_inside(canvas: Image.Image, reference: Image.Image, box) -> tuple[int, f
 
 def main():
     wrong_hall = "--wrong-hall" in sys.argv[1:]
-    xml = WEB_SWF_XML.read_text()
-    frame, placements = root_placements(xml, FRAME_LABEL)
-    box = mask_box(xml, placements)
+    index = read_swf(WEB_SWF)
+    frame = timeline.frame_of(index, 0, FRAME_LABEL)
+    placements = timeline.frames(index, 0)[frame - 1]
+    box = mask_box(index, placements)
     keep = [depth_of(placements, c) for c in (MASK_SHAPE, SKY_SPRITE, HALL_SPRITE)]
     hall_depth, sky_depth = keep[2], keep[1]
     layout = json.loads(LAYOUT_JSON.read_text())

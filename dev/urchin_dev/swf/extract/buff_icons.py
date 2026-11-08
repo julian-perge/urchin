@@ -50,8 +50,9 @@ from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import snapshot_timeline
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev.swf import timeline
+from urchin_dev.swf.swf_index import read_swf
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "buffs"
 BUFF_ICON_SPRITE = 100
@@ -76,8 +77,7 @@ def run(cmd: list[str]) -> subprocess.CompletedProcess:
 
 
 def main():
-    xml = WEB_SWF_XML.read_text()
-    _snaps, labels = snapshot_timeline(xml, BUFF_ICON_SPRITE, set())
+    labels = timeline.labels(read_swf(WEB_SWF), BUFF_ICON_SPRITE)
     print(f"buff icon labels: {len(labels)}", file=sys.stderr)
 
     work_dir = Path(tempfile.mkdtemp(prefix="buff_icons_"))

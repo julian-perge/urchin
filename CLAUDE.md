@@ -11,9 +11,13 @@ entry names its evidence so you can check it instead of trusting it.
 
 - `dev/source_files/action_script/` is the full ffdec script export and the
   authority for game logic. `action_script_curated/` holds commented excerpts.
-- `dev/source_files/swf_xml/` is the authority for geometry: placement
-  matrices, shape bounds, sprite timelines, export names. Matrices are in
-  twips, so divide by 20 for design px. The web dump is about 143 MB.
+- The SWFs themselves are the authority for geometry, read through
+  `dev/urchin_dev/swf/swf_index.py` and `timeline.py`: placement matrices,
+  shape bounds, sprite timelines, export names. `timeline.frames()` is the one
+  display list walk. Matrix translates are in twips, so divide by 20 for
+  design px. The ffdec `-swf2xml` dumps in `dev/source_files/swf_xml/` stay in
+  LFS for grepping, and only `vfx_offsets.py` still reads one, until #43.
+  `uv run export_swf_sources --xml` rewrites them, which adds ~284 MB to LFS.
 - `dev/data_json/` is a runtime capture of the Steam build's live `_root`
   arrays, not an export. No script produces it and none can. See
   `SWF_DIFFERENCES.md`.

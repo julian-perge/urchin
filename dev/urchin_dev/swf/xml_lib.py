@@ -1,56 +1,19 @@
 # xml_lib.py
-# Shared parsing for the ffdec -swf2xml dumps in source_files/swf_xml/:
-# shape bounds, sprite timelines, export names, matrices, and recursive
-# rendered-bounds math. Coordinates are SWF twips (divide by 20 for px).
+# What vfx_offsets.py still reads from the ffdec -swf2xml dump in
+# source_files/swf_xml/, until julian-perge/urchin#43 moves it onto the
+# render: shape and morph shape bounds, export names, and the full-timeline
+# bounds walk, which takes each frame's display list from timeline.py.
+# Coordinates are SWF twips (divide by 20 for px).
 from __future__ import annotations
 
 import re
 from pathlib import Path
 
-# NOTE: a single regex with optional named groups silently matched them all
-# empty (translate anchors the match on its own) and dropped every scale/
-# rotation - parse the tag's attributes individually instead.
-MATRIX_TAG_RE = re.compile(r'<matrix type="MATRIX"[^>]*>')
-_MATRIX_ATTR_RES = {
-    name: re.compile(rf'{name}="(-?[\d.eE+-]+)"')
-    for name in (
-        "scaleX",
-        "scaleY",
-        "rotateSkew0",
-        "rotateSkew1",
-        "translateX",
-        "translateY",
-    )
-}
-
-IDENTITY = (1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-
-
-def _matrix_attr(tag: str, name: str, default: float) -> float:
-    m = _MATRIX_ATTR_RES[name].search(tag)
-    return float(m.group(1)) if m else default
-
-
-def find_matrix(text: str) -> tuple:
-    """Parses the first <matrix .../> in text -> (a, b, c, d, tx, ty)
-    with translations in twips. Missing attributes mean identity/zero."""
-    tag_match = MATRIX_TAG_RE.search(text)
-    if tag_match is None:
-        return IDENTITY
-    tag = tag_match.group(0)
-    return (
-        _matrix_attr(tag, "scaleX", 1.0),
-        _matrix_attr(tag, "rotateSkew0", 0.0),
-        _matrix_attr(tag, "rotateSkew1", 0.0),
-        _matrix_attr(tag, "scaleY", 1.0),
-        _matrix_attr(tag, "translateX", 0.0),
-        _matrix_attr(tag, "translateY", 0.0),
-    )
+from urchin_dev.swf import timeline
 
 
 def parse_swf_xml(path):
     """-> (shape_bounds {id: (xmin,ymin,xmax,ymax) twips},
-    sprite_children {id: [(childId, matrix), ...]} (first frame only),
     export_name_to_id {name: id})"""
     xml = Path(path).read_text()
     shape_bounds = {}
@@ -64,26 +27,6 @@ def parse_swf_xml(path):
     ):
         sid, xmax, xmin, ymax, ymin = (int(g) for g in m.groups())
         shape_bounds[sid] = (xmin, ymin, xmax, ymax)
-    sprite_children = {}
-    for m in re.finditer(
-        r'<item type="DefineSpriteTag"[^>]*spriteId="(\d+)"[^>]*>', xml
-    ):
-        sid = int(m.group(1))
-        end = xml.find("</subTags>", m.end())
-        body = xml[m.end() : end if end != -1 else m.end() + 200000]
-        # ffdec exports render the FIRST frame - ignore later placements
-        # (animated clips would otherwise union all frames' bounds).
-        first_frame_end = body.find('<item type="ShowFrameTag"')
-        if first_frame_end != -1:
-            body = body[:first_frame_end]
-        children = []
-        for pm in re.finditer(
-            r'<item type="PlaceObject2?3?Tag"[^>]*characterId="(\d+)"[^>]*>(.*?)</item>',
-            body,
-            re.DOTALL,
-        ):
-            children.append((int(pm.group(1)), find_matrix(pm.group(2))))
-        sprite_children[sid] = children
     export_name_to_id = {}
     for m in re.finditer(
         r'<item type="ExportAssetsTag"[^>]*>\s*<tags>\s*(.*?)</tags>\s*<names>\s*(.*?)</names>',
@@ -94,7 +37,7 @@ def parse_swf_xml(path):
         names = re.findall(r"<item>(.*?)</item>", m.group(2))
         for cid, name in zip(ids, names):
             export_name_to_id[name] = int(cid)
-    return shape_bounds, sprite_children, export_name_to_id
+    return shape_bounds, export_name_to_id
 
 
 # DefineMorphShape2 puts its stroke-only edge bounds before the real ones,
@@ -143,62 +86,24 @@ def transform_rect(mat, rect):
     return min(xs), min(ys), max(xs), max(ys)
 
 
-def make_char_bounds(shape_bounds, sprite_children):
-    """Recursive first-frame rendered bounds (twips) with memoization."""
-    memo = {}
-
-    def char_bounds(cid, depth=0):
-        if cid in memo:
-            return memo[cid]
-        if depth > 12:
-            return None
-        if cid in shape_bounds:
-            memo[cid] = shape_bounds[cid]
-            return memo[cid]
-        if cid in sprite_children:
-            acc: list | None = None
-            for child_id, mat in sprite_children[cid]:
-                cb = char_bounds(child_id, depth + 1)
-                if cb is None:
-                    continue
-                tb = transform_rect(mat, cb)
-                if acc is None:
-                    acc = list(tb)
-                else:
-                    acc = [
-                        min(acc[0], tb[0]),
-                        min(acc[1], tb[1]),
-                        max(acc[2], tb[2]),
-                        max(acc[3], tb[3]),
-                    ]
-            memo[cid] = tuple(acc) if acc else None
-            return memo[cid]
-        return None
-
-    return char_bounds
-
-
-def make_timeline_bounds(shape_bounds, xml):
+def make_timeline_bounds(shape_bounds, xml, index):
     """Recursive FULL-TIMELINE rendered bounds (twips), memoized per sprite
-    id. Unlike make_char_bounds (first frame only), this walks every frame
-    of a sprite's own timeline via snapshot_timeline(), and recurses with
-    the SAME full-timeline treatment for whatever's placed at each depth -
-    not just the first frame of nested children. Needed because some
-    clips' placed children are themselves independently-animating
-    sub-timelines: KRIN.SHADOWSHOCK's placed child (sprite id 2432) has
-    its own 3-frame timeline, and first-frame-only recursion for it missed
-    2 of those 3 frames - confirmed by cross-checking against ffdec's own
-    SVG-per-frame export (an independent renderer), which agreed with the
-    corrected computation to within rounding.
+    id. It walks every frame of a sprite's own timeline through
+    timeline.frames(), and recurses with the SAME full-timeline treatment
+    for whatever's placed at each depth - not just the first frame of
+    nested children. Needed because some clips' placed children are
+    themselves independently-animating sub-timelines: KRIN.SHADOWSHOCK's
+    placed child (sprite id 2432) has its own 3-frame timeline, and
+    first-frame-only recursion for it missed 2 of those 3 frames -
+    confirmed by cross-checking against ffdec's own SVG-per-frame export
+    (an independent renderer), which agreed with the corrected computation
+    to within rounding.
 
     Placed morph shapes count as real content here, so this works from
     shape_bounds plus _morph_shape_bounds() combined into a dict of its
     own - the caller's shape_bounds is never touched."""
     memo = {}
     bounds = {**shape_bounds, **_morph_shape_bounds(xml)}
-
-    def frame_count(cid):
-        return sprite_body(xml, cid).count("ShowFrameTag")
 
     def timeline_bounds(cid, depth=0):
         if cid in memo:
@@ -208,27 +113,17 @@ def make_timeline_bounds(shape_bounds, xml):
         if cid in bounds:
             memo[cid] = bounds[cid]
             return memo[cid]
-        try:
-            fc = frame_count(cid)
-        except KeyError:
+        if cid not in index.sprite_frames:
             # cid is not a sprite (e.g., placed text or button)
             memo[cid] = None
             return None
-        if fc == 0:
-            memo[cid] = None
-            return None
-        snaps, _labels = snapshot_timeline(xml, cid, set(range(1, fc + 1)))
         acc: list | None = None
-        for frame_state in snaps.values():
-            for entry in frame_state.values():
-                child_cid = entry.get("cid")
-                if child_cid is None:
-                    continue
-                cb = timeline_bounds(child_cid, depth + 1)
+        for frame_state in timeline.frames(index, cid):
+            for layer in frame_state.values():
+                cb = timeline_bounds(layer.character_id, depth + 1)
                 if cb is None:
                     continue
-                mat = entry.get("mat", IDENTITY)
-                tb = transform_rect(mat, cb)
+                tb = transform_rect(layer.matrix, cb)
                 if acc is None:
                     acc = list(tb)
                 else:
@@ -242,139 +137,3 @@ def make_timeline_bounds(shape_bounds, xml):
         return memo[cid]
 
     return timeline_bounds
-
-
-def sprite_body(xml: str, sprite_id: int) -> str:
-    m = re.search(
-        rf'<item type="DefineSpriteTag"[^>]*spriteId="{sprite_id:d}"[^>]*>', xml
-    )
-    if m is None:
-        raise KeyError(f"sprite {sprite_id:d} not found")
-    end = xml.find("</subTags>", m.end())
-    return xml[m.end() : end]
-
-
-_TIMELINE_TAG_RE = re.compile(
-    r'<item type="(PlaceObject2Tag|PlaceObject3Tag|RemoveObject2Tag'
-    r'|RemoveObjectTag|ShowFrameTag|FrameLabelTag)"([^>]*?)>'
-)
-
-
-def snapshot_timeline(xml: str, sprite_id: int, wanted_frames: set[int]):
-    """Simulate a sprite's timeline (PlaceObject/RemoveObject by depth) and
-    return {frame: {depth: {cid, name, mat}}} snapshots plus {label: frame}.
-
-    A PlaceObject whose placeFlagHasMatrix is false keeps the matrix its
-    depth already had, and one that has a matrix carries it before the next
-    timeline tag starts. A fixed 1200-character search with no flag check
-    used to run past the end of a matrix-less tag and take a later
-    placement's matrix, which put BOOM_SLASH's inner sprite 1269 (19b7c18)
-    and 38 part matrices of MODEL1 (sprite 166) on the wrong transform.
-    """
-    body = sprite_body(xml, sprite_id)
-    tags = list(_TIMELINE_TAG_RE.finditer(body))
-    frame, state, snaps, labels = 1, {}, {}, {}
-    for i, t in enumerate(tags):
-        tag, attrs = t.group(1), t.group(2)
-        if tag == "ShowFrameTag":
-            if frame in wanted_frames:
-                snaps[frame] = {d: dict(v) for d, v in state.items()}
-            frame += 1
-            continue
-        if tag == "FrameLabelTag":
-            nm = re.search(r'name="([^"]*)"', attrs)
-            if nm:
-                labels[nm.group(1)] = frame
-            continue
-        d = re.search(r'depth="(\d+)"', attrs)
-        depth = int(d.group(1)) if d else -1
-        if tag.startswith("RemoveObject"):
-            state.pop(depth, None)
-            continue
-        cid = re.search(r'characterId="(\d+)"', attrs)
-        name = re.search(r'name="([^"]*)"', attrs)
-        entry = state.get(depth, {})
-        if cid:
-            entry["cid"] = int(cid.group(1))
-        if name:
-            entry["name"] = name.group(1)
-        if 'placeFlagHasMatrix="true"' in attrs:
-            stop = tags[i + 1].start() if i + 1 < len(tags) else len(body)
-            entry["mat"] = find_matrix(body[t.end() : stop])
-        state[depth] = entry
-    return snaps, labels
-
-
-_ITEM_TOKEN_RE = re.compile(r"<item\b[^>]*?(/?)>|</item>")
-_ITEM_TYPE_RE = re.compile(r'type="([^"]+)"')
-
-
-def root_placements(xml: str, frame_label: str):
-    """-> (frame number, {depth: {cid, name, mat}}) for the main-timeline
-    frame carrying `frame_label`.
-
-    This is snapshot_timeline's depth-state walk applied to the main timeline
-    instead of a sprite. It needs its own implementation because a sprite's
-    tags all sit inside one <subTags> element, so a flat slice of the dump
-    contains that sprite's timeline and nothing else, while the main
-    timeline's tags are siblings of every DefineSprite tag in the file. So
-    this tracks <item> nesting and acts only on the outermost level.
-    """
-    state: dict[int, dict] = {}
-    frame = 1
-    nesting = 0
-    at_label = False
-    open_place: tuple[int, int] | None = None
-    for token in _ITEM_TOKEN_RE.finditer(xml):
-        text = token.group(0)
-        if text == "</item>":
-            nesting -= 1
-            if nesting == 0 and open_place is not None:
-                depth, start = open_place
-                _place(state, depth, xml[start : token.end()])
-                open_place = None
-            continue
-        self_closing = bool(token.group(1))
-        if nesting == 0:
-            kind = _ITEM_TYPE_RE.search(text)
-            kind = kind.group(1) if kind else ""
-            if kind == "FrameLabelTag":
-                name = re.search(r'name="([^"]*)"', text)
-                # The label tag precedes its own frame's placements, so the
-                # answer is the state at the next ShowFrame, not this one.
-                at_label = name is not None and name.group(1) == frame_label
-            elif kind == "ShowFrameTag":
-                if at_label:
-                    return frame, state
-                frame += 1
-            elif kind.startswith("RemoveObject"):
-                depth = re.search(r'depth="(\d+)"', text)
-                if depth:
-                    state.pop(int(depth.group(1)), None)
-            elif kind.startswith("PlaceObject"):
-                depth = re.search(r'depth="(\d+)"', text)
-                if depth:
-                    if self_closing:
-                        _place(state, int(depth.group(1)), text)
-                    else:
-                        open_place = (int(depth.group(1)), token.start())
-        if not self_closing:
-            nesting += 1
-    raise KeyError(f"main-timeline frame label {frame_label!r} not found")
-
-
-def _place(state: dict[int, dict], depth: int, element: str) -> None:
-    """Fold one PlaceObject element into the display list. A placement that
-    carries no character, name or matrix of its own keeps whatever the depth
-    already had, which is how the SWF tweens work."""
-    entry = state.get(depth, {})
-    cid = re.search(r'characterId="(\d+)"', element)
-    name = re.search(r'name="([^"]*)"', element)
-    if cid:
-        entry["cid"] = int(cid.group(1))
-    if name:
-        entry["name"] = name.group(1)
-    matrix = MATRIX_TAG_RE.search(element)
-    if matrix:
-        entry["mat"] = find_matrix(element)
-    state[depth] = entry

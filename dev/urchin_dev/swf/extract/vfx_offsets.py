@@ -25,7 +25,7 @@ import sys
 
 from PIL import Image
 
-from urchin_dev import REPO_ROOT, WEB_SWF_XML
+from urchin_dev import REPO_ROOT, WEB_SWF, WEB_SWF_XML
 from urchin_dev.swf import make_timeline_bounds, parse_swf_xml
 from urchin_dev.swf.extract.vfx import (
     BOLT_NAMES,
@@ -35,6 +35,7 @@ from urchin_dev.swf.extract.vfx import (
     _impact_names,
     sanitize,
 )
+from urchin_dev.swf.swf_index import read_swf
 
 VFX_DIR = REPO_ROOT / "assets" / "vfx"
 OUT = VFX_DIR / "vfx_offsets.json"
@@ -79,8 +80,8 @@ def _clip_offset(bounds_fn, name: str, cid: int, category: str):
 
 def main():
     xml = WEB_SWF_XML.read_text()
-    shape_bounds, _sprites, exports = parse_swf_xml(WEB_SWF_XML)
-    bounds_fn = make_timeline_bounds(shape_bounds, xml)
+    shape_bounds, exports = parse_swf_xml(WEB_SWF_XML)
+    bounds_fn = make_timeline_bounds(shape_bounds, xml, read_swf(WEB_SWF))
     ci_exports = {k.lower(): v for k, v in exports.items()}
 
     def resolve(name: str):

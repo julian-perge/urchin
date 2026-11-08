@@ -13,12 +13,12 @@ from __future__ import annotations
 import json
 import sys
 
-from urchin_dev import REPO_ROOT, WEB_SWF_XML
-from urchin_dev.swf import snapshot_timeline
+from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev.swf import timeline
+from urchin_dev.swf.swf_index import read_swf
 
 OUT = REPO_ROOT / "resources" / "sprites" / "model1_animations.json"
 MODEL_SPRITE = 166
-TOTAL_FRAMES = 371
 FPS = 30.0
 
 PART_NAMES = {
@@ -41,11 +41,10 @@ PART_NAMES = {
 
 
 def main():
-    xml = WEB_SWF_XML.read_text()
-    snaps, labels = snapshot_timeline(
-        xml, MODEL_SPRITE, set(range(1, TOTAL_FRAMES + 1))
-    )
-    frame_count = max(snaps)
+    index = read_swf(WEB_SWF)
+    snaps = timeline.frames(index, MODEL_SPRITE)
+    labels = timeline.labels(index, MODEL_SPRITE)
+    frame_count = len(snaps)
     print("frames:", frame_count, "labels:", labels, file=sys.stderr)
 
     ordered = sorted(labels.items(), key=lambda kv: kv[1])
@@ -55,14 +54,13 @@ def main():
         label_ranges[name] = {"start": start, "end": end}
 
     frames = []
-    for frame in range(1, frame_count + 1):
-        snap = snaps.get(frame, {})
+    for snap in snaps:
         pose = {}
-        for entry in snap.values():
-            part = entry.get("name", "")
+        for layer in snap.values():
+            part = layer.name
             if part not in PART_NAMES:
                 continue
-            a, b, c, d, tx, ty = entry.get("mat", (1.0, 0.0, 0.0, 1.0, 0.0, 0.0))
+            a, b, c, d, tx, ty = layer.matrix
             pose[part] = [
                 round(a, 4),
                 round(b, 4),

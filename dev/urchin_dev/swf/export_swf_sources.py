@@ -2,10 +2,14 @@
 # Regenerates everything in source_files/ from the two SWFs at the repo
 # root, using ffdec (JPEXS decompiler CLI at ~/.local/bin/ffdec):
 #   source_files/action_script/  - full script export of the web SWF (~2s)
-#   source_files/swf_xml/        - swf2xml dumps of BOTH SWFs (the Steam
-#                                  dump fills asset gaps: DOG/WOLF art etc.)
+#   source_files/swf_xml/        - swf2xml dumps of BOTH SWFs, only with --xml
 #
-# Run: uv run export_swf_sources
+# The extractors read geometry from the SWFs through swf_index.py and
+# timeline.py, and only vfx_offsets.py still reads the web dump. The dumps
+# stay in LFS so they can be grepped, but a rewrite after any ffdec update
+# adds ~284 MB to LFS, so it only happens when asked for.
+#
+# Run: uv run export_swf_sources [--xml]
 from __future__ import annotations
 
 import subprocess
@@ -38,8 +42,9 @@ def main():
         subprocess.run(["rm", "-rf", str(ACTION_SCRIPT)], check=True)
     (tmp / "scripts").rename(ACTION_SCRIPT)
     subprocess.run(["rm", "-rf", str(tmp)], check=True)
-    run([FFDEC, "-swf2xml", WEB_SWF, WEB_SWF_XML])
-    run([FFDEC, "-swf2xml", STEAM_SWF, STEAM_SWF_XML])
+    if "--xml" in sys.argv[1:]:
+        run([FFDEC, "-swf2xml", WEB_SWF, WEB_SWF_XML])
+        run([FFDEC, "-swf2xml", STEAM_SWF, STEAM_SWF_XML])
     # Every image asset: raw bitmaps, shape renders (2x), full frame renders
     # (2x) - the frame renders are the ground truth for screen layouts.
     assets = SWF_XML.parent / "exported_assets"

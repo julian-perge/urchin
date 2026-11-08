@@ -118,8 +118,14 @@ from pathlib import Path
 
 from PIL import Image, ImageChops, ImageFilter, ImageStat
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, WEB_SWF_XML
-from urchin_dev.swf import sprite_body
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev.swf.swf_index import (
+    SHAPE_TAGS,
+    SwfIndex,
+    first_fill_bitmap_id,
+    read_swf,
+    sound_stream,
+)
 
 OUT_DIR = REPO_ROOT / "assets" / "cutscenes"
 
@@ -185,6 +191,8 @@ NOISE_SAMPLE_INTERVAL_S = 1.0
 # the whole export on a sub-second glitch. Anything past this still fails
 # loudly, so a real widespread corruption run still gets caught.
 MAX_TOLERATED_NOISE_FRAMES = 2
+
+MISSING_BITMAP = 65535
 
 # SWF tag encoding, used by patch_sprite_frame_count().
 DEFINE_SPRITE_TAG = 39
@@ -289,44 +297,36 @@ def patch_sprite_frame_count(
     raise RuntimeError(f"DefineSprite {sprite_id} not found in {src}")
 
 
-def extract_mp3(xml: str, sprite_id: int, out_path: Path) -> int:
+def extract_mp3(index: SwfIndex, sprite_id: int, out_path: Path) -> int:
     """Reconstruct the sprite's dialogue/music track from its
     SoundStreamBlockTags and write it as a raw MP3 to out_path.
 
     Returns the number of blocks concatenated (0 means no audio stream).
     """
-    body = sprite_body(xml, sprite_id)
-    blocks = re.findall(
-        r'<item type="SoundStreamBlockTag"[^>]*streamSoundData="([0-9a-fA-F]*)"', body
-    )
+    blocks = sound_stream(index, sprite_id)
     with out_path.open("wb") as f:
-        for hex_data in blocks:
-            raw = bytes.fromhex(hex_data)
+        for raw in blocks:
             f.write(raw[4:])  # drop the 4-byte sample-count/seek-samples header
     return len(blocks)
 
 
-def find_broken_bitmap_fill_cids(xml: str, sprite_id: int) -> set[int]:
-    """Shapes placed directly in this cutscene sprite whose fill references
-    bitmapId "65535" (SWF's sentinel for "no such bitmap character") with no
-    matching DefineBits* tag anywhere in the file - a dangling bitmap-fill
-    reference that ffdec's renderer fills in with visual static/noise
-    instead of leaving it blank. Confirmed as the root cause of sprite 3960's
-    corrupted tail frames (chids 3951/3953/3955/3957) - see
+def find_broken_bitmap_fill_cids(index: SwfIndex, sprite_id: int) -> set[int]:
+    """Shapes placed directly in this cutscene sprite whose first fill style
+    references bitmapId 65535, SWF's sentinel for "no such bitmap
+    character" - a dangling bitmap-fill reference that ffdec's renderer
+    fills in with visual static/noise instead of leaving it blank. Confirmed as the root cause of
+    sprite 3960's corrupted tail frames (chids 3951/3953/3955/3957) - see
     task-1-report.md. Auto-detected here rather than hardcoded so the same
     class of bug in another cutscene gets caught and stripped too.
     """
-    body = sprite_body(xml, sprite_id)
-    placed_cids = {int(c) for c in re.findall(r'characterId="(\d+)"', body)}
-    bad = set()
-    for cid in placed_cids:
-        m = re.search(rf'<item type="DefineShape\d?Tag"[^>]*shapeId="{cid}"[^>]*>', xml)
-        if m is None:
-            continue
-        end = xml.find("</item>", m.end())
-        if 'bitmapId="65535"' in xml[m.start() : end]:
-            bad.add(cid)
-    return bad
+    placed = {p.character_id for p in index.placements if p.owner == sprite_id}
+    return {
+        cid
+        for cid in placed
+        if cid is not None
+        and index.characters[cid][0] in SHAPE_TAGS
+        and first_fill_bitmap_id(index, cid) == MISSING_BITMAP
+    }
 
 
 def mask_crop_origin(
@@ -555,7 +555,12 @@ def verify_output(
 
 
 def process_cutscene(
-    label: str, chid: int, wrapper_chid: int, frames: int, overlay_chid: int, xml: str
+    label: str,
+    chid: int,
+    wrapper_chid: int,
+    frames: int,
+    overlay_chid: int,
+    index: SwfIndex,
 ) -> tuple[int, int]:
     print(
         f"--- {label}: sprite {chid} in wrapper {wrapper_chid}, {frames} frames, "
@@ -564,7 +569,7 @@ def process_cutscene(
     )
     work_dir = Path(tempfile.mkdtemp(prefix=f"cutscene_{label}_"))
     try:
-        strip_cids = {overlay_chid} | find_broken_bitmap_fill_cids(xml, chid)
+        strip_cids = {overlay_chid} | find_broken_bitmap_fill_cids(index, chid)
         extra = sorted(strip_cids - {overlay_chid})
         if extra:
             print(
@@ -608,7 +613,7 @@ def process_cutscene(
         )
 
         mp3_path = work_dir / "audio.mp3"
-        n_blocks = extract_mp3(xml, chid, mp3_path)
+        n_blocks = extract_mp3(index, chid, mp3_path)
         print(
             f"{label}: {n_blocks} sound blocks -> {mp3_path.stat().st_size} bytes",
             file=sys.stderr,
@@ -666,12 +671,12 @@ def main():
                 f"ffmpeg has no {encoder} encoder ({_TOOL_HINTS['ffmpeg']})"
             )
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    xml = WEB_SWF_XML.read_text()
+    index = read_swf(WEB_SWF)
 
     resolutions: dict[str, tuple[int, int]] = {}
     for label, (chid, wrapper_chid, frames, overlay_chid) in CUTSCENES.items():
         resolutions[label] = process_cutscene(
-            label, chid, wrapper_chid, frames, overlay_chid, xml
+            label, chid, wrapper_chid, frames, overlay_chid, index
         )
 
     # Every cutscene is masked by the same 533x300 rectangle and centered on
