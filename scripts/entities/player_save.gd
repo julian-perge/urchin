@@ -5,8 +5,8 @@
 # exists for the arena/friend-battle system (friendArray, friendArrayX,
 # ClassStats, LevelStats, equipArray1-5, PerSets0-5, DefSets0-5, StatSets0-5,
 # ExpSets, skillAdderMatrixOld), since PvP/arena is out of scope for this
-# project. agMode (companion aggression stance, 0-4, default 2 Tactical)
-# came back with the battle stance buttons - see ag_mode below.
+# project. agMode (the companion aggression stance) is kept as ag_mode
+# below even though nothing reads it, the same as in the original.
 # (buffAdderMatrix was originally on the dropped list by mistake - it's the
 # passive-talent store, required in single player. Re-added 2026-07-18 with
 # the talent system, see talent_tree.gd.)
@@ -80,9 +80,11 @@ const CLASS_DESCRIPTIONS: Array[String] = [
 @export var party_deployed: Array = []
 @export var party_levels: Array = []
 @export var party_exp: Array = []
-# Companion aggression stance (AS3 agMode), indexed by party id 1-5:
-# 0 Phalanx / 1 Defensive / 2 Tactical (default) / 3 Aggressive /
-# 4 Relentless. Index 0 (the player) is unused.
+# The original's Krin.agMode holds one companion aggression stance per party
+# id. It seeds every entry to 2, Tactical (frame_42/DoAction_17.as:42), and
+# carries it through save and load, but nothing else reads it, since each
+# companion starts every battle on Tactical (see Party). The port keeps it in
+# the save the same way and never reads it either.
 @export var ag_mode: Array = [2, 2, 2, 2, 2, 2]
 
 @export var item_array: Array = []  # 37-slot inventory, item ids

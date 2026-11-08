@@ -981,6 +981,51 @@ func test_stance_rows_stack_with_slot_5_on_top():
 	ZoneManager.auto_start_battles = true
 
 
+# The original builds each companion fresh at the start of every battle on
+# Tactical, with agMode 2 (frame_42/DoAction_14.as:208-213). Its stance button
+# writes only that battle's unit (DefineButton2_3289 on(press), lines 9-14),
+# and the stance row highlights that unit's agMode (setAG, lines 12-14 of both
+# copies in DefineSprite 3312). So a pick retunes the companion at once and is
+# gone by the next battle. The expected numbers are columns 3 (Aggressive) and
+# 2 (Tactical) of agModeAr1 to agModeAr5 (frame_42/DoAction_12.as:2-6), and
+# party id 1 is Veradux.
+func test_a_stance_pick_does_not_carry_into_the_next_battle():
+	var save = PlayerSave.new_game("StanceResetTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var info := {"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9}
+
+	var first = add_child_autofree(BattleSceneRes.instantiate())
+	first.animation_speed = 0.0
+	first.start_battle(info)
+	var veradux: CombatUnit = first.units[3]
+	assert_eq(veradux.player_name, "Veradux", "battle 100 deploys Veradux into slot 3")
+	var row: StanceRow = first._stance_rows[1]
+	row.buttons[Party.AggressionStance.AGGRESSIVE].pressed.emit()
+	assert_eq(
+		[veradux.aggression, veradux.life_boundary_1, veradux.life_boundary_2,
+			veradux.focus_aggression, veradux.focus_regen_limit],
+		[70.0, 40.0, 15.0, 15.0, 5.0], "the press puts Veradux on Aggressive at once")
+	assert_eq(row.buttons[Party.AggressionStance.AGGRESSIVE].get_node("Cover").texture.resource_path,
+		StanceRow.COVER_SELECTED, "the row highlights Aggressive")
+
+	var second = add_child_autofree(BattleSceneRes.instantiate())
+	second.animation_speed = 0.0
+	second.start_battle(info)
+	veradux = second.units[3]
+	assert_eq(
+		[veradux.aggression, veradux.life_boundary_1, veradux.life_boundary_2,
+			veradux.focus_aggression, veradux.focus_regen_limit],
+		[50.0, 75.0, 35.0, 70.0, 30.0], "Veradux starts the next battle on Tactical")
+	row = second._stance_rows[1]
+	assert_eq(row.buttons[Party.AggressionStance.TACTICAL].get_node("Cover").texture.resource_path,
+		StanceRow.COVER_SELECTED, "the next battle's row highlights Tactical")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # One WHITE cover among five BLACK ones is how the original shows the picked
 # stance: setAG sets every b<i>.COVER to BLACK and then one to WHITE.
 func test_stance_row_marks_exactly_one_button_selected():
