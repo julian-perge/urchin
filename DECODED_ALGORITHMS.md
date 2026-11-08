@@ -162,14 +162,14 @@ identical numbers and an sswitch hit shows a green number over an element-colore
 
 ## Unit stats below level 10 (frame_42/DoAction_14.as `krinAddNewUnit`)
 
-Not ported: `CombatUnit.from_character` applies only the difficulty multipliers.
+Implemented in `scripts/battle/combat_unit.gd` (`from_character`).
 
 - Every unit built from a positive template id, enemies and guests alike, starts from the difficulty multipliers (lines 35-52): strength and magic x0.4 / 0.8 / 1, life x0.5 / 0.85 / 1 and
   speed x0.9 / 1 / 1 on Easy / Normal / Heroic.
 - Below level 10, lines 80-85 shrink them further, with `L` the battle-data level after `"X"`/`"Z"` resolution (lines 56-79): strength, magic and speed by `0.7 + 0.03 * L`, life by
   `0.5 + 0.05 * L`. Lines 135-138 then apply them to `getStat(ratio, L)`, and life also takes `vitLifeFactor`.
 - Companions (the -2/-1 markers) take the other branch and get neither multiplier (lines 216-220).
-- Prison Guard (ratios 10/10/5/12, `frame_42/DoAction_13.as:71`) on Normal at level 1 has life/strength/speed 212/8/12 in the original and 386/11/17 in the port.
+- Prison Guard (ratios 10/10/5/12, `frame_42/DoAction_13.as:71`) on Normal at level 1 has life/strength/speed 212/8/12, where the difficulty multipliers alone give 386/11/17.
 
 ## Victory money (frame_42/DoAction_14.as `krinAddNewUnit`, DefineSprite_3142/frame_9)
 
