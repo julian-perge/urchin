@@ -30,6 +30,10 @@ _Avoid_: Window, decision window
 The ring of orbs, one per bar slot, that opens around a clicked unit during a Decision.
 _Avoid_: Selector
 
+**Fighter presenter**:
+The node that owns one battle slot's on-screen state: its doll, bars, displayed health, hover ring, floating numbers, stun and death.
+_Avoid_: Unit view
+
 **Stage**:
 The 800x575 area the original game draws on, which every position recorded from the SWF is measured in.
 _Avoid_: Viewport, canvas

@@ -1,0 +1,12 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/fighter_presenter.gd" id="1_presenter"]
+[ext_resource type="PackedScene" path="res://scenes/character_visual.tscn" id="2_doll"]
+[ext_resource type="PackedScene" path="res://scenes/battle/unit_overlay.tscn" id="3_overlay"]
+
+[node name="FighterPresenter" type="Node2D"]
+script = ExtResource("1_presenter")
+
+[node name="Doll" parent="." instance=ExtResource("2_doll")]
+
+[node name="Overlay" parent="." instance=ExtResource("3_overlay")]

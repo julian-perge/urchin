@@ -656,6 +656,45 @@ func test_a_dispelled_sswitch_no_longer_turns_the_hit_into_healing():
 	assert_lt(target.life_n, life_before, "so the target loses life")
 
 
+# Damage on a target under an sswitch buff heals it, capped at max life
+# (frame_42/DoAction_8.as:133-149). FighterPresenter raises the bar by this
+# result's amount, so the amount has to be what the target really gained.
+func test_damage_under_sswitch_heals_the_target_by_the_result_amount():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
+	var manager: BattleManager = autofree(BattleManager.new())
+	target.apply_buff(buffs_by_name["TIEDYE"], 1, caster)
+	target.apply_changes()
+	target.life_n = floorf(target.life_u / 2.0)
+	var life_before: float = target.life_n
+
+	var result: Dictionary = manager.execute_move(moves_by_id[5], caster, target, buffs_by_name)  # Nuke
+
+	assert_eq(result.get("type"), BattleManager.ResultType.DAMAGE, "the result is still damage")
+	assert_true(result.get("sswitched", false), "and says the damage healed")
+	assert_gt(target.life_n, life_before, "the target gains life")
+	assert_eq(target.life_n, minf(life_before + result["amount"], target.life_u), "by the amount the result reports")
+
+
+# A heal on a target under an sswitch buff hurts it
+# (frame_42/DoAction_8.as:189-207). FighterPresenter lowers the bar by this
+# result's amount, so the amount has to be what the target really lost.
+func test_a_heal_under_sswitch_hurts_the_target_by_the_result_amount():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
+	var manager: BattleManager = autofree(BattleManager.new())
+	target.apply_buff(buffs_by_name["RETROGRADED"], 1, caster)
+	target.apply_changes()
+	var life_before: float = target.life_n
+
+	var result: Dictionary = manager.execute_move(moves_by_id[4], caster, target, buffs_by_name)  # Heal
+
+	assert_eq(result.get("type"), BattleManager.ResultType.HEAL, "the result is still a heal")
+	assert_true(result.get("sswitched", false), "and says the heal hurt")
+	assert_lt(target.life_n, life_before, "the target loses life")
+	assert_eq(target.life_n, maxf(life_before - result["amount"], 0.0), "by the amount the result reports")
+
+
 # A move can send its status buff to its own caster (ability_two[21],
 # conductor lines 76-83), but the conductor's only applyChangesKrin after a hit
 # is on the target (line 103), so the caster's stats and slot order wait for
