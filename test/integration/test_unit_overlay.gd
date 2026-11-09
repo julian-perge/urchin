@@ -89,7 +89,8 @@ func test_refresh_buffs_shows_the_first_seven_slots_in_slot_order():
 	overlay.refresh_buffs(unit, buffs_by_id)
 
 	var shown: Array = []
-	for icon in overlay.buff_row.get_children():
+	for shower in overlay.buff_row.get_children():
+		var icon: TextureRect = shower.get_node("Icon")
 		shown.append(icon.texture.resource_path.get_file().get_basename())
 	assert_eq(shown, names.slice(0, 7), "the row shows slots 0 to 6 in slot order")
 
