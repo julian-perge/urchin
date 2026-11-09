@@ -36,13 +36,15 @@ const TEXT_FLAVOR: Color = Color("b8fe4e")
 # The clip builds every field of a layout at one width: 170 px for a plain
 # tooltip (frame_4/DoAction.as:33), 150 for an ability
 # (frame_17/DoAction.as:21) and 200 for an item (frame_13/DoAction.as:25),
-# and Flash keeps a 2 px gutter on each side of the text. The port's default
-# font sets the same words about 9% wider than Flash's _sans, so each width
-# below is the label width at which the port wraps the most fields onto as
-# many lines as the original. That was measured against Arial at 12 px, which
-# reproduces every line break of the tooltips in the reference captures. The
-# line counts then agree for 98% of the plain, 96% of the ability and 99.9%
-# of the item fields the port can show.
-const TEXT_WIDTH_PLAIN: float = 182.0
-const TEXT_WIDTH_ABILITY: float = 160.0
-const TEXT_WIDTH_ITEM: float = 211.0
+# and Flash keeps a 2 px gutter on each side of the text. Each width below is
+# that field width less both gutters, plus the 3.34 px of one 12 px space,
+# because Godot counts the space after a line's last word when it wraps and the
+# reference captures wrap as if Flash does not. The sum is rounded down to a
+# whole pixel, because a Label only wraps at whole pixels and GameTooltip's
+# containers would round a fraction up. Measured over the 3596 different
+# tooltip fields the port can show, 3562 then wrap onto as many lines as a wrap
+# that ignores trailing spaces at the field's own width less both gutters, and
+# the other 34 are one line off.
+const TEXT_WIDTH_PLAIN: float = 169.0
+const TEXT_WIDTH_ABILITY: float = 149.0
+const TEXT_WIDTH_ITEM: float = 199.0

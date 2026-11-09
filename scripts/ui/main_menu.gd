@@ -59,6 +59,15 @@ var _card_fades: Dictionary = {}  # card node name -> its running color fade
 
 
 func _ready():
+	# TeX Gyre Heros is 38 px tall at this field's 26 px, so the default 4 px of
+	# padding above and below would make the box taller than the 45.25 px of
+	# edit text 2712. Half a pixel less on each side keeps the original's rect,
+	# and LineEdit takes its minimum height from the tallest of these styles.
+	for style_name in ["normal", "focus", "read_only"]:
+		var style: StyleBox = name_input.get_theme_stylebox(style_name).duplicate()
+		style.set_content_margin(SIDE_TOP, 3.5)
+		style.set_content_margin(SIDE_BOTTOM, 3.5)
+		name_input.add_theme_stylebox_override(style_name, style)
 	_show_screen(mode_panel)
 	_refresh_slot_buttons()
 	_setup_class_cards()

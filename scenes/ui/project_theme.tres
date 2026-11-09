@@ -1,13 +1,14 @@
-[gd_resource type="Theme" format=3 uid="uid://drhvt4xw6rw7f"]
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://drhvt4xw6rw7f"]
 
-[sub_resource type="FontVariation" id="FontVariation_bold"]
-variation_embolden = 1.2
-
-[sub_resource type="FontVariation" id="FontVariation_regular"]
+[ext_resource type="FontFile" uid="uid://4ywirvsmhfgm" path="res://assets/fonts/texgyreheros-bold.otf" id="1_bold"]
+[ext_resource type="FontFile" uid="uid://bdh7n3ujt1vju" path="res://assets/fonts/texgyreheros-regular.otf" id="2_regular"]
+[ext_resource type="FontFile" uid="uid://b0fm64b4yp4us" path="res://assets/fonts/texgyreheros-bolditalic.otf" id="3_bolditalic"]
 
 [resource]
-default_font = SubResource("FontVariation_bold")
+default_font = ExtResource("1_bold")
+BoldItalicLabel/base_type = &"Label"
+BoldItalicLabel/fonts/font = ExtResource("3_bolditalic")
 RegularLabel/base_type = &"Label"
-RegularLabel/fonts/font = SubResource("FontVariation_regular")
-TooltipLabel/fonts/font = SubResource("FontVariation_regular")
+RegularLabel/fonts/font = ExtResource("2_regular")
+TooltipLabel/fonts/font = ExtResource("2_regular")
 TooltipLabel/font_sizes/font_size = 12

@@ -24,7 +24,7 @@ offset_top = 0.0
 offset_right = 250.0
 offset_bottom = 16.0
 mouse_filter = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 12
 
 [node name="LevelLabel" type="Label" parent="."]
 layout_mode = 0
@@ -34,7 +34,7 @@ offset_right = 250.0
 offset_bottom = 30.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 12
 
 [node name="ExpTrack" type="TextureRect" parent="."]
 layout_mode = 0
@@ -66,4 +66,4 @@ offset_right = 164.0
 offset_bottom = 44.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
-theme_override_font_sizes/font_size = 9
+theme_override_font_sizes/font_size = 10
