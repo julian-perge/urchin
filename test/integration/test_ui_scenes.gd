@@ -116,6 +116,336 @@ func test_hovering_a_card_again_mid_fade_replaces_the_running_fade():
 	assert_almost_eq(overlay.modulate.a, 1.0, 0.001, "the last hover wins outright")
 
 
+# The slot tests write saves, and every checkout shares one user:// folder with
+# the player's real saves, so they write to a folder of their own.
+const MENU_SAVE_DIR: String = "user://test_main_menu_saves/"
+
+
+# The original opens on New Game and Load Game, MENU[21] and MENU[22]
+# (frame_56/DoAction.as:1-2), with the slot list behind both.
+func test_main_menu_opens_on_new_game_and_load_game():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	assert_true(menu.get_node("ModePanel").visible, "the menu opens on the choice")
+	assert_eq(menu.get_node("ModePanel/NewGameLabel").text, "New Game")
+	assert_eq(menu.get_node("ModePanel/LoadGameLabel").text, "Load Game")
+	assert_false(menu.get_node("NamePanel").visible, "the name screen starts hidden")
+	assert_false(menu.get_node("SlotPanel").visible, "the slot list starts hidden")
+
+
+# Each rect is an edit text, a hit button or a shape that root frame 56
+# (subMenu), 64 (nameMenu) or 74 (dataMenu) places, and Title's is the logo,
+# sprite 321.
+func test_main_menu_screens_use_the_frame_56_64_and_74_rects():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	var texts: Dictionary = {
+		"ModePanel/Title": Rect2(123.2, 119.8, 549.55, 97.7),
+		"ModePanel/NewGameLabel": Rect2(241.0, 290.1, 304.1, 45.6),
+		"ModePanel/LoadGameLabel": Rect2(241.0, 350.1, 304.1, 45.6),
+		"NamePanel/OkLabel": Rect2(339.4, 330.1, 121.25, 51.3),
+		"NamePanel/BackLabel": Rect2(488.15, 532.15, 304.1, 30.85),
+		"SlotPanel/BackLabel": Rect2(488.15, 532.15, 304.1, 30.85),
+	}
+	for path in texts:
+		var label: Label = menu.get_node(path)
+		assert_almost_eq(label.position, texts[path].position, Vector2(0.01, 0.01), "%s position" % path)
+		assert_almost_eq(label.size.x, texts[path].size.x, 0.01, "%s width" % path)
+	var boxes: Dictionary = {
+		"ModePanel/NewGameButton": Rect2(241.06, 290.7, 302.27, 40.0),
+		"ModePanel/LoadGameButton": Rect2(241.06, 350.7, 302.27, 40.0),
+		"NamePanel/NameInput": Rect2(185.55, 252.2, 426.1, 45.25),
+		"NamePanel/OkButton": Rect2(368.33, 336.6, 61.83, 30.0),
+		"NamePanel/BackButton": Rect2(604.44, 534.45, 188.12, 26.8),
+		"SlotPanel/BackButton": Rect2(604.44, 534.45, 188.12, 26.8),
+	}
+	for path in boxes:
+		var box: Control = menu.get_node(path)
+		assert_almost_eq(box.position, boxes[path].position, Vector2(0.01, 0.01), "%s position" % path)
+		assert_almost_eq(box.size, boxes[path].size, Vector2(0.01, 0.01), "%s size" % path)
+
+
+# New Game asks for the name before the slot list (DefineButton2_2707 goes to
+# nameMenu and its OK!, DefineButton2_2710, goes to dataMenu), and Back returns
+# to the choice from either screen.
+func test_new_game_asks_for_the_name_before_the_slot_list():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	assert_true(menu.get_node("NamePanel").visible, "New Game opens the name screen")
+	assert_false(menu.get_node("ModePanel").visible, "in place of the choice")
+	assert_false(menu.get_node("SlotPanel").visible, "before the slot list")
+	assert_false(menu.new_game_panel.has_node("NameInput"), "class select no longer asks for the name")
+	menu.get_node("NamePanel/BackButton").pressed.emit()
+	assert_true(menu.get_node("ModePanel").visible, "Back on the name screen returns to the choice")
+	assert_false(menu.get_node("NamePanel").visible)
+
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	assert_true(menu.get_node("SlotPanel").visible, "OK! opens the slot list")
+	assert_false(menu.get_node("NamePanel").visible)
+	menu.get_node("SlotPanel/BackButton").pressed.emit()
+	assert_true(menu.get_node("ModePanel").visible, "Back on the slot list returns to the choice")
+	assert_false(menu.get_node("SlotPanel").visible)
+
+
+# In New Game mode every slot goes straight on to class select with the typed
+# name, used or not, and asks nothing (DefineButton2_2719 to 2722 on(release),
+# lines 3-11). Only the Save button and a victory's autosave write a slot
+# (krinHandleData, frame_42/DoAction_20.as:58-126), so the old save stays on
+# disk until the new game first saves.
+func test_new_game_starts_in_any_used_slot_and_keeps_its_save_until_the_first_save():
+	_write_test_slots([1, 2, 3, 4])
+	for slot in range(1, GameData.NUM_SLOTS + 1):
+		var menu = await _menu_without_scene_change()
+		menu.get_node("ModePanel/NewGameButton").pressed.emit()
+		menu.name_input.text = "Fresh%d" % slot
+		menu.get_node("NamePanel/OkButton").pressed.emit()
+		var loaded_before: PlayerSave = GameData.current_save
+		menu.slot_buttons.get_child(slot - 1).pressed.emit()
+		assert_true(menu.new_game_panel.visible, "used slot %d goes on to class select" % slot)
+		assert_false(menu.get_node("SlotPanel").visible, "slot %d leaves the slot list" % slot)
+		assert_same(GameData.current_save, loaded_before, "slot %d loads nothing" % slot)
+		assert_not_called(menu, "_enter_game")
+
+		menu.class_picker.get_node("Hydraulic").pressed.emit()
+		menu.get_node("OptionsPanel/StartButton").pressed.emit()
+		assert_called(menu, "_enter_game")
+		assert_eq(GameData.current_slot, slot, "the new game plays in slot %d" % slot)
+		assert_eq(GameData.current_save.name_user, "Fresh%d" % slot, "under the typed name")
+		assert_eq(GameData.current_save.player_class, PlayerSave.PlayerClass.HYDRAULIC, "as the picked class")
+		assert_eq(_saved_name(slot), "Old%d" % slot, "slot %d still holds the old save after START" % slot)
+		assert_true(GameData.save_game(), "the first save of slot %d" % slot)
+		assert_eq(_saved_name(slot), "Fresh%d" % slot, "replaces the old save in slot %d" % slot)
+	_clear_test_slots()
+
+
+# Starting a new game in an empty slot writes nothing either, so a game that
+# never saves leaves the slot empty.
+func test_starting_a_new_game_in_an_empty_slot_writes_no_save():
+	_write_test_slots([])
+	var menu = await _menu_without_scene_change()
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(2).pressed.emit()
+	menu.class_picker.get_node("Biological").pressed.emit()
+	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+	assert_called(menu, "_enter_game")
+	assert_eq(GameData.current_slot, 3, "the new game plays in slot 3")
+	assert_false(GameData.has_save(3), "and slot 3 stays empty until it saves")
+	_clear_test_slots()
+
+
+# Load Game skips the name screen (DefineButton2_2706 goes to dataMenu) and a
+# slot only loads when it holds a save, the data.nameUser check in
+# DefineButton2_2719 to 2722 on(release), line 12. An empty slot does nothing,
+# and shows the original's "< Empty Slot >" (frame_74/DoAction.as:8).
+func test_load_game_loads_a_used_slot_and_ignores_an_empty_one():
+	_write_test_slots([1])
+	var menu = await _menu_without_scene_change()
+	menu.get_node("ModePanel/LoadGameButton").pressed.emit()
+	assert_true(menu.get_node("SlotPanel").visible, "Load Game opens the slot list")
+	assert_false(menu.get_node("NamePanel").visible, "without asking for a name")
+	assert_eq(menu.slot_buttons.get_child(2).text, "Slot 3 - < Empty Slot >")
+
+	var loaded_before: PlayerSave = GameData.current_save
+	menu.slot_buttons.get_child(2).pressed.emit()
+	assert_not_called(menu, "_enter_game")
+	assert_same(GameData.current_save, loaded_before, "the empty slot loads nothing")
+	assert_true(menu.get_node("SlotPanel").visible, "and the slot list stays up")
+	assert_false(menu.new_game_panel.visible, "and no new game starts")
+
+	menu.slot_buttons.get_child(0).pressed.emit()
+	assert_called(menu, "_enter_game")
+	assert_eq(GameData.current_slot, 1, "the used slot loads")
+	assert_eq(GameData.current_save.name_user, "Old1", "with its own save")
+	_clear_test_slots()
+
+
+# In New Game mode a slot warns on hover with MENU[21] over MENU[25]
+# (frame_1/DoAction.as:229 and 233), and in Load Game mode it shows nothing
+# (DefineButton2_2719 to 2722 on(rollOver)).
+func test_new_game_slots_warn_that_a_new_game_replaces_the_save():
+	const WARNING: String = "Warning! Starting a new game in a saved slot will remove your old data! Saved games are stored relative to where you play this game."
+	GameTooltip.hide_tooltip()
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node("ModePanel/LoadGameButton").pressed.emit()
+	var slot: Button = menu.slot_buttons.get_child(0)
+	slot.mouse_entered.emit()
+	assert_false(GameTooltip._root.visible, "a Load Game slot doesn't warn")
+	slot.mouse_exited.emit()
+
+	menu.get_node("SlotPanel/BackButton").pressed.emit()
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	slot.mouse_entered.emit()
+	assert_true(GameTooltip._root.visible, "a New Game slot warns")
+	assert_eq(GameTooltip._sections.get_child_count(), 2, "header plus warning")
+	var header: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	assert_eq(header.text, "New Game")
+	var body: Label = GameTooltip._sections.get_child(1).get_child(0).get_child(0)
+	assert_eq(body.text, WARNING)
+	slot.mouse_exited.emit()
+	assert_false(GameTooltip._root.visible, "leaving the slot hides the warning")
+
+
+# The name field starts at SYSTEM[34], "< Enter Name Here >", each time the name
+# screen opens (frame_64/DoAction.as:1, frame_1/DoAction.as:101), and edit text
+# 2712 has no HasMaxLength flag, so nothing caps the name's length.
+func test_new_game_starts_the_name_at_the_original_prompt_with_no_length_limit():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	assert_eq(menu.name_input.text, "< Enter Name Here >", "the field starts at the prompt")
+	assert_eq(menu.name_input.max_length, 0, "with no limit on the name's length")
+	menu.name_input.text = "Typed then dropped"
+	menu.get_node("NamePanel/BackButton").pressed.emit()
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	assert_eq(menu.name_input.text, "< Enter Name Here >", "opening the name screen again resets it")
+
+
+# OK! goes on without reading the name (DefineButton2_2710 on(release), line
+# 2), and the slot button copies it as it is into Krin.nameUser
+# (DefineButton2_2722 on(release), line 5), so an untouched field starts a game
+# named after the prompt and an emptied one a game with no name.
+func test_new_game_keeps_the_name_as_typed_even_untouched_or_empty():
+	_write_test_slots([])
+	var untouched = await _menu_without_scene_change()
+	untouched.get_node("ModePanel/NewGameButton").pressed.emit()
+	_start_from_the_name_screen(untouched)
+	assert_eq(GameData.current_save.name_user, "< Enter Name Here >", "an untouched field names the game after the prompt")
+
+	var emptied = await _menu_without_scene_change()
+	emptied.get_node("ModePanel/NewGameButton").pressed.emit()
+	emptied.name_input.text = ""
+	_start_from_the_name_screen(emptied)
+	assert_eq(GameData.current_save.name_user, "", "an emptied field starts a game with no name")
+
+	var spaced = await _menu_without_scene_change()
+	spaced.get_node("ModePanel/NewGameButton").pressed.emit()
+	spaced.name_input.text = " Newbie "
+	_start_from_the_name_screen(spaced)
+	assert_eq(GameData.current_save.name_user, " Newbie ", "and a typed name keeps its spaces")
+	_clear_test_slots()
+
+
+# The original calls the player "Sonny" everywhere in the game, Krin.NameSets[0]
+# (frame_42/DoAction_17.as:45), which no save carries: the victory screen's
+# player row (DefineSprite_3142/frame_9/PlaceObject3_3002_1197
+# onClipEvent(load), lines 2 and 15), the abilities screen
+# (DefineSprite_3142/frame_25/DoAction.as:7 and 16), the inventory screen
+# (DefineSprite_3142/frame_1/DoAction.as:89 and 250) and the player's portrait
+# tooltip there (DefineButton2_2895 on(rollOver), line 13). Only the slot list
+# shows the typed name.
+func test_the_game_calls_the_player_sonny_whatever_the_save_is_named():
+	var save: PlayerSave = PlayerSave.new_game("< Enter Name Here >", 0)
+	GameData.current_save = save
+	var victory = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
+	victory.setup(save, {}, [], [])
+	var rows: Array = victory.get_children().filter(func(child): return child is VictoryExperienceRow)
+	assert_eq(rows.size(), 1, "one experience row, the player's")
+	if rows.size() == 1:
+		assert_eq(rows[0].name_label.text, "Sonny", "the victory screen's player row")
+
+	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())
+	abilities.refresh()
+	assert_eq(abilities._name_label.text, "Sonny", "the abilities window")
+
+	var inventory = add_child_autofree(load("res://scenes/ui/menu/inventory_window.tscn").instantiate())
+	inventory.refresh()
+	assert_eq(inventory._name_label.text, "Sonny", "the inventory window")
+	assert_eq(inventory._portrait_frames[0].tooltip_text, "Sonny", "the player's portrait in the inventory window")
+
+
+# Class select and settings place the same Back as the other menu frames, edit
+# text 2703 over hit button 2702 at depths 35 and 36 of root frames 84
+# (classMenu) and 93 (optionsMenu), captioned MENU[26] (frame_46/DoAction.as:1).
+func test_class_select_and_settings_back_use_the_frame_84_and_93_rects():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	for panel in ["NewGamePanel", "OptionsPanel"]:
+		var label: Label = menu.get_node("%s/BackLabel" % panel)
+		assert_eq(label.text, "Back", "%s Back caption" % panel)
+		assert_almost_eq(label.position, Vector2(488.15, 532.15), Vector2(0.01, 0.01), "%s Back text position" % panel)
+		assert_almost_eq(label.size.x, 304.1, 0.01, "%s Back text width" % panel)
+		var button: Button = menu.get_node("%s/BackButton" % panel)
+		assert_true(button.flat, "%s Back is a bare hit area under its text" % panel)
+		assert_almost_eq(button.position, Vector2(604.44, 534.45), Vector2(0.01, 0.01), "%s Back hit area position" % panel)
+		assert_almost_eq(button.size, Vector2(188.12, 26.8), Vector2(0.01, 0.01), "%s Back hit area size" % panel)
+
+
+# Back on class select and on settings goes to mainMenu in the original
+# (DefineButton2_2702 on(release), line 2), so both return to the first screen.
+func test_back_on_class_select_and_settings_returns_to_the_first_screen():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(0).pressed.emit()
+	menu.get_node("NewGamePanel/BackButton").pressed.emit()
+	assert_true(menu.get_node("ModePanel").visible, "Back on class select returns to the first screen")
+	assert_false(menu.new_game_panel.visible)
+
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(0).pressed.emit()
+	menu.class_picker.get_node("Psychological").pressed.emit()
+	menu.get_node("OptionsPanel/BackButton").pressed.emit()
+	assert_true(menu.get_node("ModePanel").visible, "Back on settings returns to the first screen")
+	assert_false(menu.options_panel.visible)
+	assert_false(menu.new_game_panel.visible, "rather than to class select")
+
+
+# Clicks OK!, slot 1, the Biological card and START, the way a player finishes
+# starting a new game from the name screen.
+func _start_from_the_name_screen(menu: Control) -> void:
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(0).pressed.emit()
+	menu.class_picker.get_node("Biological").pressed.emit()
+	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+
+
+# A partial double of the menu whose _enter_game does nothing, because the real
+# one changes the scene and would take the test runner down with it.
+func _menu_without_scene_change() -> Control:
+	var menu = partial_double(MainMenuScene).instantiate()
+	stub(menu, "_enter_game").to_do_nothing()
+	add_child_autofree(menu)
+	await get_tree().process_frame
+	return menu
+
+
+# Points GameData at the test folder, empties it and saves "Old<slot>" into each
+# listed slot, so a menu built afterwards finds those slots used and the rest
+# empty.
+func _write_test_slots(slots: Array) -> void:
+	GameData.save_dir = MENU_SAVE_DIR
+	DirAccess.make_dir_recursive_absolute(MENU_SAVE_DIR)
+	for slot in range(1, GameData.NUM_SLOTS + 1):
+		DirAccess.remove_absolute(MENU_SAVE_DIR + "slot%d.tres" % slot)
+	for slot in slots:
+		GameData.new_game(slot, "Old%d" % slot)
+		assert_true(GameData.save_game(), "test slot %d written" % slot)
+	GameData.current_save = PlayerSave.new_game("UiTest", 0)
+	GameData.current_slot = -1
+
+
+# Reads the slot file itself rather than Godot's resource cache, so the name is
+# what is on disk.
+func _saved_name(slot: int) -> String:
+	var save: Resource = ResourceLoader.load(MENU_SAVE_DIR + "slot%d.tres" % slot, "", ResourceLoader.CACHE_MODE_IGNORE)
+	return save.name_user if save is PlayerSave else ""
+
+
+func _clear_test_slots() -> void:
+	for slot in range(1, GameData.NUM_SLOTS + 1):
+		DirAccess.remove_absolute(MENU_SAVE_DIR + "slot%d.tres" % slot)
+	DirAccess.remove_absolute(MENU_SAVE_DIR)
+	GameData.save_dir = GameData.SAVE_DIR
+	GameData.current_slot = -1
+
+
 func test_all_zone_scenes_have_source_accurate_orbs():
 	for zone_id in range(1, 8):
 		var path = str(ZoneManager.ZONES[zone_id]["scene"])

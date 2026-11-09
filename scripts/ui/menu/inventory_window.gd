@@ -108,7 +108,7 @@ func refresh() -> void:
 	if save == null:
 		return
 	_status_label.text = ""
-	_name_label.text = save.name_user
+	_name_label.text = Party.PLAYER_NAME
 	_level_label.text = "Lvl. %d %s" % [save.level, PlayerSave.CLASS_NAMES[save.player_class]]
 	var stats: Array[Variant] = [save.life, save.strength, save.magic, save.speed, save.focus]
 	for i in _stat_values.size():
@@ -140,7 +140,7 @@ func _refresh_portraits(save: PlayerSave) -> void:
 	for i in _portrait_frames.size():
 		var frame: ItemSlot = _portrait_frames[i]
 		if i == 0:
-			frame.tooltip_text = save.name_user
+			frame.tooltip_text = Party.PLAYER_NAME
 			frame.modulate = Color(0.7, 1.1, 0.7)
 		else:
 			var companion: Dictionary = Party.COMPANIONS.get(i, {})

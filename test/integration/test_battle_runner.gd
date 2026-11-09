@@ -148,6 +148,28 @@ func test_player_from_save_with_talent_passives():
 	assert_true(runner.is_over(), "skirmish terminates (took %d half-turns)" % half_turns)
 
 
+# The original names the player's battle unit "Sonny" whatever the save is
+# called (frame_201/DoAction.as:201), so battle 100's "Sonny" line finds the
+# player as its speaker instead of falling back to the narrator's slot 0.
+func test_the_players_battle_unit_is_sonny_whatever_the_save_is_named():
+	var save = PlayerSave.new_game("< Enter Name Here >", 0)
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	assert_eq(player.player_name, "Sonny", "the player's battle unit")
+
+	var battle: BattleFight = battles.get(100)
+	var units: Dictionary = _build_battle_units(battle)
+	units[BattleRunner.PLAYER_SLOT] = player
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	var setup_events: Array = runner.setup(units, battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	var doorbell: Dictionary = {}
+	for event in setup_events:
+		if event["type"] == BattleRunner.EventType.SPEECH and event["say"] == "Sorry about the gate, I couldn't find the doorbell.":
+			doorbell = event
+	assert_false(doorbell.is_empty(), "battle 100's Sonny line plays as the battle starts")
+	assert_eq(doorbell.get("speaker_slot", -1), BattleRunner.PLAYER_SLOT, "and the player says it")
+
+
 func test_battle_100_simple_fight():
 	_assert_battle_runs(100)
 

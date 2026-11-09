@@ -275,7 +275,7 @@ static func from_character(character: Character, level: int, difficulty: Difficu
 static func from_player_save(save: PlayerSave, battle_slot: int = 1) -> CombatUnit:
 	var unit: CombatUnit = CombatUnit.new()
 	unit.player_id = battle_slot
-	unit.player_name = save.name_user
+	unit.player_name = Party.PLAYER_NAME
 	unit.plevel = save.level
 
 	unit.base_strength = save.strength

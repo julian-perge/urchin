@@ -18,6 +18,11 @@ class_name Party
 extends RefCounted
 
 const PLAYER_PARTY_ID: int = 0
+# What the original calls the player in battle and on every menu, whatever the
+# save is named: the battle unit's name (frame_201/DoAction.as:201) and
+# Krin.NameSets[0] (frame_42/DoAction_17.as:45), which no save carries. The
+# typed name, PlayerSave.name_user, only shows on the main menu's slot list.
+const PLAYER_NAME: String = "Sonny"
 
 enum AggressionStance { PHALANX, DEFENSIVE, TACTICAL, AGGRESSIVE, RELENTLESS }
 
