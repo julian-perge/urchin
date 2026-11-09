@@ -11,6 +11,7 @@
 #   play_menu_music()            <- addSound("Music", 1)
 #   play_battle_music(is_boss)   <- addSound("Music", 2)
 #   stop_all_sounds()            <- stopAllSounds()
+#   stop_effects()               <- my_sound1.stop() to my_sound3.stop()
 #   reset_music_rotation()       <- soundPlayCounter = 0 and soundModeKrin = 0
 # The menu/battle rotation cycles soundPlayArray exactly like the original.
 extends Node
