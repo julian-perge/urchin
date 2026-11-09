@@ -64,5 +64,8 @@ resolved the two bugs below.
 
 ## Dropped on purpose (not differences, but scoped out from both)
 
-- The PvP share-code and anti-cheat system (deterministic `KRS`/`KRSO`/`KRRR()` RNG array, save-code checksums) exists in both releases and is deliberately not being ported (project decision,
-  2026-07-18). Battle rolls use fresh `randi_range()`/`randf()` instead.
+- The PvP share-code and anti-cheat system (the arena's character codes and their save-code checksums) exists in both releases and is deliberately not being ported (project decision, 2026-07-18).
+
+  **Corrected (2026-11-08): the battle roll table was never part of it.** This entry used to list a deterministic `KRS`/`KRSO`/`KRRR()` RNG array with the PvP system and say battle rolls use fresh
+  `randi_range()`/`randf()` instead. Neither `exportPvPCode` nor `loadPvPCode` (`frame_42/DoAction_20.as:127-289`) reads `KRS`, and the table is refilled from unseeded `random(100)` every time a
+  battle loads, so no two games ever share one. The port still rolls fresh instead of porting the table, and `docs/adr/0003-keep-fresh-battle-rolls.md` records that decision on its own.
