@@ -10,15 +10,24 @@ extends CanvasLayer
 
 const EDGE_MARGIN: float = 4.0
 const ANCHOR_GAP: float = 8.0
-# A Flash text field keeps 2 px between its edges and its text, and
-# KrinToolTipper sizes each section's backer to its text field, so every
-# section pads its text by 2 px on each side.
+# A Flash text field keeps 2 px between its edges and its text. Each line
+# stands in for one of KrinToolTipper's text fields, so every line pads its
+# own text by 2 px on each side and a section's backing adds nothing around
+# its lines.
 const TEXT_GUTTER: float = 2.0
+# KrinToolTipper starts each text field 2 px below the one above it
+# (DefineSprite_2717/frame_13/DoAction.as:48 and frame_17/DoAction.as:38), so
+# lines sit 2 px apart whether or not they share a section.
+const FIELD_SPACING: int = 2
 
 @onready var _root: HBoxContainer = $Root
 @onready var _icon_backing: ColorRect = $Root/IconBacking
 @onready var _icon: TextureRect = $Root/IconBacking/Icon
 @onready var _sections: VBoxContainer = $Root/Sections
+
+
+func _ready() -> void:
+	_sections.add_theme_constant_override("separation", FIELD_SPACING)
 
 
 # sections: Array[Dictionary], each {"bg_color": Color, "lines":
@@ -37,19 +46,26 @@ func show_sections(
 	for child in _sections.get_children():
 		child.free()
 	_sections.custom_minimum_size.x = text_width + 2.0 * TEXT_GUTTER
+	var gutter: StyleBoxEmpty = StyleBoxEmpty.new()
+	gutter.set_content_margin_all(TEXT_GUTTER)
 	for section_index in sections.size():
 		var section: Dictionary = sections[section_index]
 		var panel: PanelContainer = PanelContainer.new()
 		var style: StyleBoxFlat = StyleBoxFlat.new()
 		style.bg_color = section["bg_color"]
-		style.set_content_margin_all(TEXT_GUTTER)
 		panel.add_theme_stylebox_override("panel", style)
 		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var lines_box: VBoxContainer = VBoxContainer.new()
 		lines_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		lines_box.add_theme_constant_override("separation", FIELD_SPACING)
 		for line in section["lines"]:
 			var label: Label = Label.new()
 			label.text = line["text"]
+			# The original also indents the first line of every field, the
+			# title by 3 px and the rest by 2 (frame_4/DoAction.as:44 and 63).
+			# Label has no first-line indent, so the port leaves it out.
+			label.add_theme_stylebox_override("normal", gutter)
+
 			# The original's tooltip clip, DefineSprite 2717, makes only its
 			# title field bold and draws every other field in regular _sans
 			# (frame_4/DoAction.as:40-64). Every caller puts the title in the
