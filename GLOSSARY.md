@@ -25,3 +25,7 @@ _Avoid_: Overlay, battle UI
 **Stage**:
 The 800x575 area the original game draws on, which every position recorded from the SWF is measured in.
 _Avoid_: Viewport, canvas
+
+**Quest progress**:
+How far the player has got through a zone's story battles, which the Hub labels "Stage 11".
+_Avoid_: Stage

@@ -200,8 +200,10 @@ entry names its evidence so you can check it instead of trusting it.
 ## Godot specifics
 
 - Base resolution is 800x600 with `canvas_items` stretch, so SWF coordinates
-  drop in 1:1. The SWF's own stage is 800x575, and that 25px difference is
-  still unresolved for the battle hall (see `NEXT_PHASES.md`).
+  drop in 1:1. The SWF's own stage is 800x575, and julian-perge/urchin#111
+  decided the base resolution becomes 800x575 too. Build new layouts for the
+  800x575 stage, because that change is the UI overhaul's first implementation
+  issue and has not landed yet.
 - `.png.import` and `.uid` sidecars must be committed. Forgetting them has
   broken a fresh checkout at least six times (`54ff0b9`, `9e72d69`, `ec53f69`,
   `011cb96`, `18cf5c3`, `37de6ed`).
