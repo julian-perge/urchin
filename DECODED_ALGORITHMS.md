@@ -260,9 +260,32 @@ Implemented in `scripts/battle/battle_rewards.gd`: `money_levels` picks the slot
 - Averaging only the enemy slots 2, 4 and 6 would change the pay of 50 story battles, for example 109 (36 instead of 130) and 513 (309 instead of 823), and of training fights too: 1001
   at player level 7 pays 25 instead of 78.
 
+## Which moves can be picked (frame_42/DoAction_11.as, frame_42/DoAction_9.as)
+
+Ported: `MoveLegality`. `refusal` is the player's rule and `can_afford` is the part the AI shares.
+
+- The player's pick runs six checks in order: target buffs (line 60), focus (65), silence (70), bar cooldown (75), life (80) and target relation (85). Each failure overwrites one message
+  and `KrinCombatText` plays after all six, so the last failure is the one shown. A bad target beats everything, and a missing target buff only shows when nothing else failed.
+- The AI's filter (lines 52, 87 and 128 of `DoAction_9.as`) is `cost * SILENCED == 0 && FOCUSN >= cost && LIFEN > flat + round(LIFEU * percent)`. The player's focus, silence and life checks
+  are those same three tests, including the strict `>` on life.
+- The AI has no bar slot. Its cooldowns are per pool and filtered first, and its focus move picks from that cooldown-filtered list, so cooldown stays in `BattleAI`. It chooses its own target
+  and never checks the target's buffs.
+- Neither re-checks silence or cooldown when the move runs. The conductor re-checks only focus and life there (line 355).
+
+## The orb ring's hover and fade (frame_217/PlaceObject3_3382_500 enterFrame)
+
+Not ported: `RadialMenu` keeps the port's own numbers, 0.15 s of grace and a 0.67 s fade, tested against each orb and the unit's hit button.
+
+- A click shows the clip at alpha 0 (`frame_217/DoAction_3.as:46-48`), and it gains 50 per frame (enterFrame lines 32-35).
+- While `this.hitTest(_root._xmouse, _root._ymouse)` is false the clip loses 10 alpha per frame and hides at 0, so the fade takes 10 frames, 0.33 s at 30 fps, with no grace (lines 48-61).
+  `hitTest` with no shape flag tests the clip's bounding box, so the gaps between orbs and the unit inside the ring count as over it.
+- While it is true, alpha goes straight back to 100 (line 64).
+- An orb darkens only for a bad target or a cooldown (lines 15-29). The buttons on the orbs, `DefineButton2_3374` to `3381`, call `addMoveForPlayer` with no gate of their own, so a darkened orb
+  still answers a click with its refusal message.
+
 ## Required target buffs (frame_42/DoAction_11.as)
 
-Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 23 and 24, and `battle_scene.gd`'s `_move_valid_for_target` darkens the orb when the target falls short.
+Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 23 and 24, and `MoveLegality.refusal` returns `TARGET_STATUS` when the target falls short, which darkens the orb.
 
 - When the player picks a move, the original refuses it with "The target's status does not meet the requirements of this move." if the target has fewer than `KRINABILITYB[24]` active buffs
   of element `KRINABILITYB[23]` (lines 60-64, counted by `checkBuffsOnUnit` at 129-146).
