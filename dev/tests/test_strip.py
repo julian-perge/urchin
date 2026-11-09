@@ -63,10 +63,10 @@ def test_an_id_nothing_places_is_refused():
         strip.check(parse_swf(movie()), {12: "a stale entry"})
 
 
-def test_a_hide_list_is_every_id_once_they_pass(tmp_path):
+def test_a_strip_list_is_every_id_once_they_pass(tmp_path):
     path = tmp_path / "movie.swf"
     path.write_bytes(movie())
-    assert strip.hide_list(path, {20: "the sprite", 11: "the plain shape"}) == [11, 20]
+    assert strip.strip_list(path, {20: "the sprite", 11: "the plain shape"}) == [11, 20]
 
 
 def test_a_copy_strips_every_id_in_one_ffdec_call(tmp_path, monkeypatch):
@@ -95,8 +95,8 @@ def test_a_copy_refuses_before_it_runs_ffdec(tmp_path, monkeypatch):
         pass
 
 
-def test_a_hide_list_refuses_a_clip_mask(tmp_path):
+def test_a_strip_list_refuses_a_clip_mask(tmp_path):
     path = tmp_path / "movie.swf"
     path.write_bytes(movie())
     with pytest.raises(StripError, match="character 10 .*clip mask"):
-        strip.hide_list(path, {10: "a mask"})
+        strip.strip_list(path, {10: "a mask"})

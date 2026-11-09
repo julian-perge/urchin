@@ -1,24 +1,33 @@
-// Renders SWF frames through ffdec's own Java library, with the two overrides
-// the ffdec CLI cannot apply: hiding layers the game hides from ActionScript,
-// and moving a nested sprite to the frame a gotoAndStop would select.
+// Renders SWF frames through ffdec's own Java library, with what the ffdec CLI
+// cannot do in one run: delete characters in memory instead of writing a
+// stripped copy, hide layers the game hides from ActionScript, and move a
+// nested sprite to the frame a gotoAndStop would select.
 //
 // Run with no build step, as Java's single-file source launcher:
 //   java -cp "<jpexs>/dist/lib/*" Render.java job.json
-// ffdec_lib.py writes the job and reads the PNGs back. The SWF loads once per
-// run and every job in the file renders from it.
+// ffdec_lib.py writes the job and reads the PNGs back. The SWF's bytes are
+// read once, and each load parses them again, deletes its characters and
+// renders its jobs.
 //
 // Job file:
-//   {"swf": path, "jobs": [{
-//     "timeline": 0 for the root or a DefineSprite id,
-//     "frame": 1-based frame of that timeline,
-//     "zoom": 4.0, "out": PNG path, "background": "swf" or "none",
-//     "only_depths": [72, 73, 89]          hide every other depth on the frame
-//     "hide_depths": [{"owner": id, "depth": d}]  hide a depth on every frame
-//     "hide_characters": [2676]            hide every placement of these, in
-//                                          every timeline including the root
-//     "goto": [{"depth": 89, "label": "CHURCH"}]  move the sprite at that depth
-//                                          of the rendered frame to the label
+//   {"swf": path, "loads": [{
+//     "strip_characters": [2676, 3312]     delete these before rendering
+//     "jobs": [{
+//       "timeline": 0 for the root or a DefineSprite id,
+//       "frame": 1-based frame of that timeline,
+//       "zoom": 4.0, "out": PNG path, "background": "swf" or "none",
+//       "only_depths": [72, 73, 89]        hide every other depth on the frame
+//       "hide_depths": [{"owner": id, "depth": d}]  hide a depth on every frame
+//       "goto": [{"depth": 89, "label": "CHURCH"}]  move the sprite at that
+//                                          depth of the rendered frame to the
+//                                          label
+//     }]
 //   }]}
+//
+// A load deletes its characters the way the CLI's -removeCharacter does, with
+// SWF.removeTag, then saves to a buffer and parses that back. Without the
+// reparse a timeline keeps the displayRect it had before the delete, so the
+// canvas comes out sized for characters that are gone.
 //
 // A goto sets the layer's DepthState.time to the label's 0-based frame. A
 // child renders frame `time % frameCount` (Timeline.java:1161 at 792d2c2), so
@@ -26,13 +35,15 @@
 // case-insensitively, as AVM1 matches them, and the first frame carrying the
 // label wins. A missing label fails the job instead of rendering frame 0.
 //
-// Every override refuses a layer with clipDepth > -1. Timeline.toImage skips an
-// invisible layer before it builds that layer's clip, so hiding a mask unclips
-// everything under it, the same as stripping one (6622d79).
+// Every override and every delete refuses a layer with clipDepth > -1.
+// Timeline.toImage skips an invisible layer before it builds that layer's
+// clip, so hiding a mask unclips everything under it, the same as stripping
+// one (6622d79). strip.py refuses the same ids first.
 //
-// Overrides are undone after each job, so jobs in one file do not leak into
-// each other. Each job prints one JSON line with the canvas size and the
-// displayRect it rendered, in twips.
+// Overrides are undone after each job, so jobs in one load do not leak into
+// each other. Each job prints one JSON line with the canvas size, the rect the
+// canvas was sized from (xmin to ymax) and the displayRect without the filter
+// margin ("display"), all in twips.
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
@@ -48,8 +59,9 @@ import com.jpexs.decompiler.flash.timeline.Timeline;
 import com.jpexs.decompiler.flash.types.RECT;
 import com.jpexs.helpers.SerializableImage;
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -58,6 +70,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.imageio.ImageIO;
 
 public class Render {
@@ -71,16 +84,51 @@ public class Render {
 
     public static void main(String[] args) throws Exception {
         JsonObject spec = Json.parse(Files.readString(Path.of(args[0]))).asObject();
-        long start = System.nanoTime();
-        SWF swf;
-        try (FileInputStream in = new FileInputStream(spec.get("swf").asString())) {
-            swf = new SWF(in, false);
+        byte[] data = Files.readAllBytes(Path.of(spec.get("swf").asString()));
+        for (JsonValue value : spec.get("loads").asArray()) {
+            JsonObject load = value.asObject();
+            long start = System.nanoTime();
+            Set<Integer> strip = new TreeSet<>();
+            for (JsonValue id : array(load, "strip_characters")) {
+                strip.add(id.asInt());
+            }
+            Render render = new Render(load(data, strip));
+            System.err.printf("loaded %s without %s in %.2fs%n", spec.get("swf").asString(), strip,
+                    (System.nanoTime() - start) / 1e9);
+            for (JsonValue job : load.get("jobs").asArray()) {
+                render.run(job.asObject());
+            }
         }
-        System.err.printf("loaded %s in %.2fs%n", spec.get("swf").asString(), (System.nanoTime() - start) / 1e9);
-        Render render = new Render(swf);
-        for (JsonValue job : spec.get("jobs").asArray()) {
-            render.run(job.asObject());
+    }
+
+    static SWF load(byte[] data, Set<Integer> strip) throws Exception {
+        SWF swf = new SWF(new ByteArrayInputStream(data), false);
+        if (strip.isEmpty()) {
+            return swf;
         }
+        for (Timeline t : new Render(swf).allTimelines()) {
+            List<Frame> frames = t.getFrames();
+            for (int i = 0; i < frames.size(); i++) {
+                for (var entry : frames.get(i).layers.entrySet()) {
+                    DepthState layer = entry.getValue();
+                    if (strip.contains(layer.characterId) && layer.clipDepth > -1) {
+                        throw new IllegalArgumentException("refusing to strip clip mask " + layer.characterId
+                                + " at timeline " + t.id + " frame " + (i + 1) + " depth " + entry.getKey()
+                                + " (clipDepth " + layer.clipDepth + ")");
+                    }
+                }
+            }
+        }
+        for (int id : strip) {
+            CharacterTag character = swf.getCharacter(id);
+            if (character == null) {
+                throw new IllegalArgumentException("no character " + id + " to strip");
+            }
+            swf.removeTag(character, false, null);
+        }
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        swf.saveTo(buffer);
+        return new SWF(new ByteArrayInputStream(buffer.toByteArray()), false);
     }
 
     Timeline timeline(int id) {
@@ -166,29 +214,6 @@ public class Render {
                     throw new IllegalArgumentException("timeline " + owner + " has nothing at depth " + depth);
                 }
             }
-            Set<Integer> hideIds = new HashSet<>();
-            for (JsonValue id : array(job, "hide_characters")) {
-                hideIds.add(id.asInt());
-            }
-            if (!hideIds.isEmpty()) {
-                Set<Integer> seen = new HashSet<>();
-                for (Timeline t : allTimelines()) {
-                    List<Frame> frames = t.getFrames();
-                    for (int i = 0; i < frames.size(); i++) {
-                        for (var entry : frames.get(i).layers.entrySet()) {
-                            DepthState layer = entry.getValue();
-                            if (hideIds.contains(layer.characterId)) {
-                                hide(layer, "timeline " + t.id + " frame " + (i + 1) + " depth " + entry.getKey());
-                                seen.add(layer.characterId);
-                            }
-                        }
-                    }
-                }
-                hideIds.removeAll(seen);
-                if (!hideIds.isEmpty()) {
-                    throw new IllegalArgumentException("no placement of characters " + hideIds);
-                }
-            }
             for (JsonValue value : array(job, "goto")) {
                 JsonObject target = value.asObject();
                 int depth = target.get("depth").asInt();
@@ -217,6 +242,7 @@ public class Render {
             File out = new File(job.get("out").asString());
             out.getParentFile().mkdirs();
             ImageIO.write(image.getBufferedImage(), "png", out);
+            RECT display = tim.displayRect;
             JsonObject result = new JsonObject()
                     .add("out", out.getPath())
                     .add("width", image.getWidth())
@@ -225,6 +251,7 @@ public class Render {
                     .add("ymin", rect.Ymin)
                     .add("xmax", rect.Xmax)
                     .add("ymax", rect.Ymax)
+                    .add("display", Json.array(display.Xmin, display.Ymin, display.Xmax, display.Ymax))
                     .add("seconds", (System.nanoTime() - start) / 1e9);
             System.out.println(result);
         } finally {
