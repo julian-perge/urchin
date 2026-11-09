@@ -1128,7 +1128,7 @@ func _on_victory_proceed() -> void:
 		# landing instead of the same hub. The original starts no music for the
 		# ending screen (frame_263/PlaceObject2_3466_80 enterFrame, lines 15-19),
 		# so the menu track waits until its OK! reaches the hub. The screen goes
-		# on the UI layer, like the game over screen, so the turn label there
+		# on the UI layer, like the game over screen, so the speech label there
 		# can't draw over it.
 		if goto_scene == "endMenu":
 			var ending: EndingScreen = preload("res://scenes/battle/ending_screen.tscn").instantiate()

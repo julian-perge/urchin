@@ -325,6 +325,48 @@ func test_the_first_513_win_ends_on_the_ending_screen_after_cs_cut5():
 	ZoneManager.auto_start_battles = true
 
 
+# For endMenu the end of CS_CUT5 sets soundPlayCounter and soundModeKrin back
+# to 0 and starts no music (frame_263/PlaceObject2_3466_80 enterFrame, lines
+# 15-19), so the ending screen is silent and the Navigation frame that OK! opens
+# starts the rotation over on its first menu track (frame_181/DoAction.as:15).
+# The test plays Sonny's death cry and leaves the rotation on _music_menu2,
+# where one menu track and one battle track leave it, before Proceed.
+func test_the_ending_screen_stays_silent_and_ok_starts_the_first_menu_track():
+	var save = PlayerSave.new_game("EndingSound", 0)
+	save.section_in = 5
+	save.quest_progress[5] = 13
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 513, "is_story_progress": true, "is_boss": true, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	AudioManagerAuto._rotation_counter = 2
+	AudioManagerAuto.play_effect(scene.units[BattleRunner.PLAYER_SLOT].voice_die)
+	assert_true(_an_effect_is_playing(), "Sonny's death cry is playing when Proceed is pressed")
+	_proceed_and_play_cs_cut5_to_its_end(scene)
+
+	var ending = scene.get_node_or_null("UI/EndingScreen")
+	assert_not_null(ending, "the ending screen is up")
+	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "no music plays on it")
+	assert_false(_an_effect_is_playing(), "and no effect either")
+	if ending != null:
+		ending.get_node("OkButton").pressed.emit()
+	assert_called(scene, "_on_continue_pressed")
+	assert_eq(_hub_menu_track(), "_music_menu1", "the hub that OK! opens starts on the first menu track")
+
+	AudioManagerAuto.stop_music()
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # Presses Proceed on the victory screen and has CS_CUT5 report that it ended,
 # which with animation_speed 0 runs the rest of _on_victory_proceed() at once.
 func _proceed_and_play_cs_cut5_to_its_end(scene: Control) -> void:
