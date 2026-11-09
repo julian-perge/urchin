@@ -198,8 +198,10 @@ entry names its evidence so you can check it instead of trusting it.
   `Filtering.boxBlurSingleIterationTwoPass` shrinks both box widths until
   `boxX * boxY * width * height` fits `boxBlurPixelsLimit * 100000`, which cut
   a battle hall's glow box from 116 texels to 6. `Render.java` lifts the limit
-  in memory for every driver render, and the cutscene AVI export, which goes
-  through the CLI, still has the default.
+  in memory for every driver render. `cutscenes.py` lifts it for the AVI export,
+  which goes through the CLI, by passing `-config boxBlurPixelsLimit=2147483647`
+  ahead of its other arguments. ffdec only saves a `-config` to its `config.bin`
+  when nothing follows it.
 - **Do not run ffdec concurrently.** It renders all 780 sprites in 2.64s
   serial against 2.79, 3.47 and 4.80s at 2, 4 and 6 processes (`94ae2b1`).
 - **Leave the headless setting alone.** `dev/urchin_dev/__init__.py` sets

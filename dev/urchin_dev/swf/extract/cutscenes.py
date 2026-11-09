@@ -572,6 +572,14 @@ def process_cutscene(
         run(
             [
                 str(FFDEC),
+                # ffdec narrows a filter's blur box until boxX * boxY * width *
+                # height fits under this limit times 100000, so a large filtered
+                # object comes out with a thinner blur than the SWF asks for. The
+                # largest int means no frame reaches the limit, and ffdec only
+                # saves a -config to its own configuration when nothing follows
+                # it on the command line.
+                "-config",
+                "boxBlurPixelsLimit=2147483647",
                 "-format",
                 "sprite:avi",
                 "-selectid",
