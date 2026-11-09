@@ -30,6 +30,7 @@ func after_each():
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
 	ZoneManager.pending_battle = {}
+	GameTooltip.hide_tooltip()
 
 
 func test_main_menu_builds_slot_buttons():
@@ -610,6 +611,34 @@ func test_inventory_window_equips_from_grid_click():
 	window._on_equip_slot_clicked(equip_slot)
 	assert_eq(int(GameData.current_save.equip_array[equip_slot]), 0, "equip slot click unequips")
 	assert_eq(int(GameData.current_save.item_array[0]), item.id, "item returns to the first free cell")
+
+
+# An empty equip slot holds item 0, so the original titles its tooltip with
+# item 0's name, ITEMNAME[0] "None" (frame_1/DoAction.as:1606), over the
+# slot's own type, ITEMSS[IPS - 2] (DefineButton2_2981 on(rollOver), lines
+# 4-9). The head slot's IPS is 2, which makes its type "Headwear".
+func test_an_empty_equip_slot_names_its_slot_type():
+	var window = add_child_autofree(load("res://scenes/ui/menu/inventory_window.tscn").instantiate())
+	window.refresh()
+	var head_slot: ItemSlot = null
+	for child in window.equip_view.get_children():
+		if child is ItemSlot and int(child.get_meta("equip_index")) == Equipment.EquipSlot.HEAD:
+			head_slot = child
+	assert_not_null(head_slot, "the inventory has a head slot")
+	assert_null(head_slot.item, "and a new game leaves it empty")
+	head_slot.mouse_entered.emit()
+	assert_eq(_tooltip_texts(), ["None", "Headwear"], "item 0's name over the slot's type")
+	head_slot.mouse_exited.emit()
+
+
+func _tooltip_texts() -> Array:
+	var texts: Array = []
+	if not GameTooltip._root.visible:
+		return texts
+	for section in GameTooltip._sections.get_children():
+		for label in section.get_child(0).get_children():
+			texts.append(label.text)
+	return texts
 
 
 func test_abilities_window_edits_action_bar():

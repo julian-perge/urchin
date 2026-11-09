@@ -77,4 +77,8 @@ const _SLOT_TYPE_NAMES: Dictionary[ItemType, String] = {
 
 
 func slot_type_display_name() -> String:
-	return _SLOT_TYPE_NAMES.get(item_type, "")
+	return type_display_name(item_type)
+
+
+static func type_display_name(type: ItemType) -> String:
+	return _SLOT_TYPE_NAMES.get(type, "")

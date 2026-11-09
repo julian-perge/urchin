@@ -16,6 +16,9 @@ var selected: bool = false
 # Whether the tooltip's title leads with the item's price, which only the
 # shop's catalog does (DefineButton2_3012 on(rollOver), lines 12 and 25).
 var show_price: bool = false
+# The type an empty equip slot names in its tooltip. EquipDollView sets it on
+# its slots, and every other slot keeps NONE and shows nothing while empty.
+var empty_slot_type: GameItem.ItemType = GameItem.ItemType.NONE
 
 
 func _ready():
@@ -23,7 +26,9 @@ func _ready():
 	mouse_entered.connect(func():
 		_highlight.visible = true
 		if item != null:
-			GameTooltip.show_sections(_tooltip_sections(), self, null, Color.WHITE, _tooltip_width()))
+			GameTooltip.show_sections(_tooltip_sections(), self, null, Color.WHITE, _tooltip_width())
+		elif empty_slot_type != GameItem.ItemType.NONE:
+			GameTooltip.show_sections(_empty_slot_sections(), self))
 	mouse_exited.connect(func():
 		_highlight.visible = false
 		GameTooltip.hide_tooltip())
@@ -96,6 +101,16 @@ func _tooltip_sections() -> Array:
 	if not body_lines.is_empty():
 		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": body_lines})
 	return sections
+
+
+# An empty equip slot holds item 0, so the original titles its tooltip with
+# item 0's name and puts the slot's type, ITEMSS[IPS - 2], in the body
+# (DefineButton2_2981 on(rollOver), lines 4-9).
+func _empty_slot_sections() -> Array:
+	return [
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": ItemManagerAuto.get_item(0).display_name, "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": GameItem.type_display_name(empty_slot_type), "color": TooltipTheme.TEXT_BODY}]},
+	]
 
 
 func _on_gui_input(event: InputEvent) -> void:
