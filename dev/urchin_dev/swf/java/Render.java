@@ -49,6 +49,7 @@ import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import com.jpexs.decompiler.flash.SWF;
+import com.jpexs.decompiler.flash.configuration.Configuration;
 import com.jpexs.decompiler.flash.exporters.commonshape.Matrix;
 import com.jpexs.decompiler.flash.tags.DefineSpriteTag;
 import com.jpexs.decompiler.flash.tags.SetBackgroundColorTag;
@@ -83,6 +84,12 @@ public class Render {
     }
 
     public static void main(String[] args) throws Exception {
+        // ffdec narrows a filter's blur box until boxX * boxY * width * height fits
+        // under this limit times 100000, so a large filtered object comes out with a
+        // thinner blur than the SWF asks for. The largest int means no render here
+        // reaches the limit, and setting it in memory leaves ffdec's saved
+        // configuration alone.
+        Configuration.boxBlurPixelsLimit.set(Integer.MAX_VALUE);
         JsonObject spec = Json.parse(Files.readString(Path.of(args[0]))).asObject();
         byte[] data = Files.readAllBytes(Path.of(spec.get("swf").asString()));
         for (JsonValue value : spec.get("loads").asArray()) {
