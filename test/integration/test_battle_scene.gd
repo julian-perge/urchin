@@ -182,8 +182,11 @@ func test_story_battle_win_threads_cutscene_id_through_victory_flow():
 			"the cutscene id threaded all the way to CutscenePlayer.play() matches CS_CUT2"
 		)
 
-	# The original silences the battle track before jumping into a cutscene,
-	# so the clip's own audio isn't competing with it for the whole runtime.
+	# The original stops every sound before it jumps into a cutscene
+	# (DefineButton2_3004 on(release), line 10), so the clip's own audio isn't
+	# competing with the music for the whole runtime. By then the original is
+	# playing the hub's menu track (frame_181/DoAction.as:15), while the port is
+	# still playing the battle track.
 	assert_eq(
 		AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE,
 		"battle music stopped before the cutscene started"
@@ -193,6 +196,82 @@ func test_story_battle_win_threads_cutscene_id_through_victory_flow():
 	# player on top of the first.
 	assert_eq(scene._pending_cutscene, "", "pending cutscene cleared once it was handed to the player")
 
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func _an_effect_is_playing() -> bool:
+	return AudioManagerAuto._effect_players.any(func(player): return player.is_playing())
+
+
+# The victory screen's Proceed calls stopAllSounds() before it goes to a
+# cutscene (DefineButton2_3004 on(release), lines 8-11), which stops the effects
+# as well as the music. The win of story battle 109 is set before the battle
+# loop starts, so no fight is played and the test plays Felicity's death cry
+# itself. Autosave is off so Proceed never writes a save slot.
+func test_proceeding_into_a_cutscene_stops_sound_effects_too():
+	var save = PlayerSave.new_game("CutsceneEffects", 0)
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 109, "is_story_progress": true, "is_boss": true, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_eq(scene._pending_cutscene, "CS_CUT2", "the win queued zone 1's cutscene")
+
+	AudioManagerAuto.play_effect(scene.units[2].voice_die)
+	assert_true(_an_effect_is_playing(), "Felicity's death cry is playing when Proceed is pressed")
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	assert_not_null(scene.get_node_or_null("CutscenePlayer"), "the cutscene started")
+	assert_false(_an_effect_is_playing(), "and no effect plays on into it")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Starts the menu music the way the hub does when it opens (game.gd's _ready())
+# and returns the cue it picked.
+func _hub_menu_track() -> String:
+	AudioManagerAuto.play_menu_music()
+	var player: AudioStreamPlayer = AudioManagerAuto._music_players[AudioManagerAuto._active_music]
+	return player.stream.resource_path.get_file().get_basename()
+
+
+# When a cutscene ends, the original's cutscene clip sets soundPlayCounter and
+# soundModeKrin back to 0 before it starts the menu music
+# (frame_263/PlaceObject2_3466_80 enterFrame, lines 15-31), so the hub comes back
+# on the rotation's first menu track. The test leaves the rotation on
+# _music_menu2, where one menu track and one battle track leave it. The scene is
+# a partial double whose _on_continue_pressed() does nothing, because the real
+# one changes the scene and would take the test runner down with it, and the
+# test ends the clip by emitting its video's own finished signal.
+func test_a_cutscene_starts_the_menu_rotation_over():
+	var save = PlayerSave.new_game("CutsceneRotation", 0)
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 109, "is_story_progress": true, "is_boss": true, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	AudioManagerAuto._rotation_counter = 2
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	scene.get_node("CutscenePlayer").video.finished.emit()
+	assert_called(scene, "_on_continue_pressed")
+	assert_eq(_hub_menu_track(), "_music_menu1", "the hub comes back on the first menu track")
+
+	# CS_CUT2 ends on the zone map, so this clears the flag its end sets before
+	# a later test opens the hub.
+	ZoneManager.open_zone_map_on_load = false
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
 
@@ -214,6 +293,31 @@ func test_victory_money_counts_the_companion_markers():
 	await wait_for_signal(scene.battle_finished, 5)
 	assert_not_null(scene.get_node_or_null("VictoryScreen"), "victory screen shown on win")
 	assert_eq(save.euro, 36.0, "round(0.7 * respecValue((7 + 1 + 1) / 3))")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original has no turn label. A win leaves its battle frame for Navigation
+# (frame_219/DoAction.as:78-81), where KRINMENU draws the victory screen
+# (frame_181/PlaceObject3_3142_175 onClipEvent(load), lines 3-7), so nothing is
+# written across the top of that screen. The win is set while the battle waits
+# on the player, which is when the turn label reads "Your move".
+func test_the_victory_screen_shows_no_turn_label():
+	GameData.current_save = PlayerSave.new_game("VictoryTurnLabel", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene._player_action_pending, 5)
+	assert_eq(scene.turn_label.text, "Your move", "the battle is waiting on the player")
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	scene._on_pass_pressed()
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_not_null(scene.get_node_or_null("VictoryScreen"), "the win shows the victory screen")
+	assert_false(scene.turn_label.is_visible_in_tree(), "with no turn label over it")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -273,6 +377,52 @@ func test_a_draw_ends_the_game_on_the_game_over_screen():
 	var scene = await _finish_battle_100_with(BattleRunner.Outcome.DRAW)
 	_assert_game_over_screen(scene)
 	GameData.current_save = null
+
+
+# The reset that runs before gameOverMenu calls stopAllSounds()
+# (frame_41/DoAction_2.as:13), which stops the effects as well as the music. The
+# loss is set before the battle loop starts, so no fight is played and the test
+# plays Sonny's death cry itself.
+func test_the_game_over_screen_stops_sound_effects_too():
+	GameData.current_save = PlayerSave.new_game("LossEffects", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.LOSS
+	AudioManagerAuto.play_effect(scene.units[BattleRunner.PLAYER_SLOT].voice_die)
+	assert_true(_an_effect_is_playing(), "Sonny's death cry is playing when the battle ends")
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_not_null(scene.get_node_or_null("UI/GameOverScreen"), "the loss shows the game over screen")
+	assert_false(_an_effect_is_playing(), "and no effect plays on over it")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The reset before gameOverMenu also sets soundPlayCounter and soundModeKrin back
+# to 0 (frame_41/DoAction_2.as:12-14), so the hub that Re-Load opens starts the
+# rotation over on its first menu track (frame_181/DoAction.as:15). The test
+# leaves the rotation on _music_menu2, where one menu track and one battle track
+# leave it.
+func test_the_game_over_screen_starts_the_menu_rotation_over():
+	GameData.current_save = PlayerSave.new_game("LossRotation", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.LOSS
+	AudioManagerAuto._rotation_counter = 2
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_not_null(scene.get_node_or_null("UI/GameOverScreen"), "the loss shows the game over screen")
+	assert_eq(_hub_menu_track(), "_music_menu1", "and the hub Re-Load opens starts on the first menu track")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
 
 
 # Re-Load has to read the slot back from disk. The test saves a slot holding
