@@ -90,9 +90,11 @@ func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
 			sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": buff.tooltip_description, "color": TooltipTheme.TEXT_BODY}]})
 		icon_rect.mouse_entered.connect(func(): GameTooltip.show_sections(sections, icon_rect))
 		icon_rect.mouse_exited.connect(GameTooltip.hide_tooltip)
+		# The counter is KrinBuffShower's edit text 66, which sets the turns
+		# left in 10 px bold _sans, the face the project theme gives Labels.
 		var counter: Label = Label.new()
 		counter.text = str(int(slot["cd"]))
-		counter.add_theme_font_size_override("font_size", 8)
+		counter.add_theme_font_size_override("font_size", 10)
 		counter.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 		counter.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		icon_rect.add_child(counter)

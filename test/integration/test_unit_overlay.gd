@@ -97,6 +97,19 @@ func test_refresh_buffs_clears_expired_buffs():
 	assert_eq(overlay.buff_row.get_child_count(), 0, "cleared once the buff is gone")
 
 
+# The counter is edit text 66, which is 10 px bold _sans in white.
+func test_buff_counter_matches_edit_text_66():
+	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var unit := CombatUnit.new()
+	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
+	overlay.refresh_buffs(unit, {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
+	var counter: Label = overlay.buff_row.get_child(0).get_child(0)
+	assert_eq(counter.get_theme_font_size("font_size"), 10, "10 px")
+	var font: Font = counter.get_theme_font("font")
+	assert_true(font is FontVariation and font.variation_embolden > 0.0, "bold")
+	assert_eq(counter.get_theme_color("font_color"), Color("ffffff"), "white")
+
+
 # The original's buff icon tooltip takes its title from the buff's name alone
 # (frame_42/DoAction_10.as:375), and the icon's own counter, edit text 66,
 # shows the turns left (line 364). With no turn count after it, a name like
