@@ -29,3 +29,13 @@ _Avoid_: Viewport, canvas
 **Quest progress**:
 How far the player has got through a zone's story battles, which the Hub labels "Stage 11".
 _Avoid_: Stage
+
+### Fonts
+
+**Device font**:
+A font the SWF names without embedding it, so the player's machine supplied it.
+_Avoid_: System font
+
+**Stand-in font**:
+The font the port ships in place of a Device font.
+_Avoid_: Fallback font
