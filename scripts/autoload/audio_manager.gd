@@ -10,6 +10,7 @@
 #   play_effect("sfx_hit2")      <- addSound("Effects", cue)
 #   play_menu_music()            <- addSound("Music", 1)
 #   play_battle_music(is_boss)   <- addSound("Music", 2)
+#   stop_all_sounds()            <- stopAllSounds()
 # The menu/battle rotation cycles soundPlayArray exactly like the original.
 extends Node
 
@@ -89,6 +90,12 @@ func play_battle_music(is_boss: bool, hard_start: bool = false) -> void:
 func stop_music() -> void:
 	_music_mode = MusicMode.NONE
 	for player in _music_players:
+		player.stop()
+
+
+func stop_all_sounds() -> void:
+	stop_music()
+	for player in _effect_players:
 		player.stop()
 
 

@@ -17,7 +17,7 @@ const MAIN_MENU_SCENE: String = "res://scenes/main_menu.tscn"
 # stops every sound (frame_41/DoAction_2.as:13). The menu music starts again
 # once Re-Load reaches the hub.
 func _ready() -> void:
-	AudioManagerAuto.stop_music()
+	AudioManagerAuto.stop_all_sounds()
 
 
 # Returns the scene to open instead of opening it, so a test can run the real
