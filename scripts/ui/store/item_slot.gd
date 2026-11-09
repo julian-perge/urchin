@@ -13,8 +13,8 @@ signal slot_clicked(slot: ItemSlot)
 
 var item: GameItem = null
 var selected: bool = false
-# Price line in the tooltip - only store catalog slots show it (equipped/
-# inventory items don't price-tag themselves in the original).
+# Whether the tooltip's title leads with the item's price, which only the
+# shop's catalog does (DefineButton2_3012 on(rollOver), lines 12 and 25).
 var show_price: bool = false
 
 
@@ -56,10 +56,9 @@ func _refresh() -> void:
 
 
 # The original shows equipment in its item tooltip layout and every other
-# item, whose KRINITEM[1] type is under 2, in its plain layout, which has no
-# level line and draws the flavor text as its white body
-# (DefineButton2_3012 on(rollOver), lines 4-15). The port still lists such an
-# item's stat lines, which the plain layout leaves out.
+# item, whose KRINITEM[1] type is under 2, in its plain layout, which fills
+# only a title and a white body from the item's name and flavor text
+# (DefineButton2_3012 on(rollOver), lines 4-15).
 func _is_equipment() -> bool:
 	return item.item_type >= GameItem.ItemType.HEAD
 
@@ -71,25 +70,29 @@ func _tooltip_width() -> float:
 # Built fresh on hover rather than kept in sync on every _refresh() - the
 # tooltip only needs to exist while the mouse is actually over this slot.
 func _tooltip_sections() -> Array:
+	var title: String = item.display_name
+	if show_price:
+		title = "€%d - %s" % [int(item.price), item.display_name]
 	var sections: Array = [
-		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": item.display_name, "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": title, "color": TooltipTheme.TEXT_TITLE}]},
 	]
-	if _is_equipment():
-		sections.append({
-			"bg_color": TooltipTheme.BG_HEADER,
-			"lines": [{
-				"text": "Lvl. %d %s" % [item.required_level, item.slot_type_display_name()],
-				"color": TooltipTheme.TEXT_REQUIREMENT,
-			}],
-		})
+	var has_flavor: bool = item.tooltip is String and str(item.tooltip) != ""
+	if not _is_equipment():
+		if has_flavor:
+			sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": str(item.tooltip), "color": TooltipTheme.TEXT_BODY}]})
+		return sections
+	sections.append({
+		"bg_color": TooltipTheme.BG_HEADER,
+		"lines": [{
+			"text": "Lvl. %d %s" % [item.required_level, item.slot_type_display_name()],
+			"color": TooltipTheme.TEXT_REQUIREMENT,
+		}],
+	})
 	var body_lines: Array = []
-	if show_price and item.price > 0:
-		body_lines.append({"text": "Cost: %d Euros" % int(item.price), "color": TooltipTheme.TEXT_STAT})
 	for stat_line in item.tooltipAlt:
 		body_lines.append({"text": str(stat_line), "color": TooltipTheme.TEXT_STAT})
-	if item.tooltip is String and str(item.tooltip) != "":
-		var flavor_color: Color = TooltipTheme.TEXT_FLAVOR if _is_equipment() else TooltipTheme.TEXT_BODY
-		body_lines.append({"text": str(item.tooltip), "color": flavor_color})
+	if has_flavor:
+		body_lines.append({"text": str(item.tooltip), "color": TooltipTheme.TEXT_FLAVOR})
 	if not body_lines.is_empty():
 		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": body_lines})
 	return sections
