@@ -11,9 +11,17 @@ A full-window state the player navigates to, such as Title, Hub, Battle, Victory
 _Avoid_: Scene, page, menu
 
 **Window**:
-A panel opened over the Hub, such as Inventory, Store or Abilities.
+A set of Panels opened over the Hub, such as Inventory, Store or Abilities.
 _Avoid_: Screen, popup, dialog
+
+**Panel**:
+One of the flat rectangles a Screen or Window is built on.
+_Avoid_: Box, column
 
 **HUD**:
 The Battle screen's status elements drawn over the hall: unit overlays, member bars, the top status bar and the speech box.
 _Avoid_: Overlay, battle UI
+
+**Stage**:
+The 800x575 area the original game draws on, which every position recorded from the SWF is measured in.
+_Avoid_: Viewport, canvas
