@@ -83,7 +83,7 @@ Implemented in `scripts/entities/character_visual.gd` (real MODEL1 label playbac
 
 ## Stun family labels (frame_42/DoAction_10.as `applyChangesKrin`/`applyBuffKrin`, ~line 135-481)
 
-Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/`_animate_stun`) and `scripts/battle/battle_scene.gd` (`_update_stun_visual`).
+Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/`_animate_stun`) and `scripts/battle/fighter_presenter.gd` (`_play_stun_change`).
 
 - **`STUN` is a running total**, not a flag: `applyBuffKrin` does `ukcb2.STUN += iftbc * bffker[17]` where `bffker[17]` is the buff's stun contribution and `iftbc` is +1 on apply / -1 on the buff's own
   expiry (via `buffTicker`'s `autoDebuffer`, when a buff's `CD` hits 0). Multiple stacked stun buffs sum their contributions; the doll only fully un-stuns once every contributing buff has expired.
@@ -106,7 +106,7 @@ Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/
   clip, a still-stunned unit is snapped straight back into the `stun2` loop instead of showing an idle pose. Not ported (form-changing buffs aren't implemented yet).
 - **`outofstun` ends** via MODEL1 frame 295's own `gotoAndStop("stand"); play()` - a one-shot that always falls back to idle, same pattern as `cast`.
 - No numeric timing constants gate any of this (unlike `krinBoltTime`/`krinMeleeAttackCD`) - it's a value-comparison state machine that runs on every `applyChangesKrin` call; the Godot port
-  evaluates it in `_refresh_bars` (called after every event and at half-turn boundaries). This note used to call that finer-grained than the original, from the same misreading as the trigger
+  evaluates it in `FighterPresenter.redraw` (called after every event and at half-turn boundaries). This note used to call that finer-grained than the original, from the same misreading as the trigger
   above: the original also evaluates it at every successful hit, so both start the stun animation at the impact. The comparison only fires when the value has changed, so extra evaluations in
   between change nothing.
 

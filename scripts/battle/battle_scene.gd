@@ -1,7 +1,7 @@
 # battle_scene.gd
 # The playable battle screen - glues the headless stack (BattleSetup ->
 # BattleRunner -> BattleRewards/ZoneProgression/Achievements) to visuals
-# (CharacterVisual paper dolls), input, and audio.
+# (one FighterPresenter per slot), input, and audio.
 #
 # Interaction model matches the original (frame 217 KRIN_BATTLE_SCENE):
 # - hover a unit: a target ring glows under it (white = you, green = ally,
@@ -20,8 +20,7 @@ extends Control
 
 signal battle_finished(outcome: int)
 
-const CharacterVisualScene: PackedScene = preload("res://scenes/character_visual.tscn")
-const UnitOverlayScene: PackedScene = preload("res://scenes/battle/unit_overlay.tscn")
+const FighterPresenterScene: PackedScene = preload("res://scenes/battle/fighter_presenter.tscn")
 const StanceRowScene: PackedScene = preload("res://scenes/battle/stance_row.tscn")
 const ProjectileScene: PackedScene = preload("res://scenes/battle/projectile.tscn")
 const ImpactEffectScene: PackedScene = preload("res://scenes/battle/impact_effect.tscn")
@@ -40,19 +39,6 @@ const SLOT_POSITIONS: Dictionary[Variant, Variant] = {
 	6: Vector2(577.9, 218.5),
 }
 
-enum Relation { PLAYER, ALLY, ENEMY }
-
-const RING_COLORS: Dictionary[Relation, Color] = {
-	Relation.PLAYER: Color(0.85, 0.85, 0.85),
-	Relation.ALLY: Color(0.35, 0.9, 0.25),
-	Relation.ENEMY: Color(0.95, 0.25, 0.15),
-}
-# Source-verified (frame_217/PlaceObject3_3394_450 and 5 sibling files):
-# the hover ring fades in at +20/frame and out at -5/frame at the
-# original's 30fps - a ~4x faster fade-in than fade-out.
-const RING_FADE_IN_TIME: float = 0.17
-const RING_FADE_OUT_TIME: float = 0.67
-
 # 1.0 = normal pacing; 0.0 = instant (tests).
 var animation_speed: float = 1.0
 
@@ -62,22 +48,7 @@ var battle: BattleFight
 var units: Dictionary = {}
 var battle_info: Dictionary = {}
 
-var _visuals: Dictionary = {}  # slot -> CharacterVisual
-var _overlays: Dictionary = {}  # slot -> Control (bars/name/hover, unmirrored)
-var _health_bars: Dictionary = {}
-var _health_values: Dictionary = {}
-var _focus_bars: Dictionary = {}
-# Health as DISPLAYED: the runner pre-applies a whole half-turn's damage
-# mechanically, so bars must only move when each hit lands visually
-# (_show_move_result), then snap to the true values at half-turn end.
-var _display_hp: Dictionary = {}
-# krinBuff STUN running total per slot, last seen by _update_stun_visual - the
-# original re-triggers the stun-in animation on ANY increase and the
-# outofstun wake-up on ANY decrease (see DECODED_ALGORITHMS.md), so this has
-# to be tracked across calls rather than compared against a fixed threshold.
-var _last_stun: Dictionary = {}
-var _rings: Dictionary = {}  # slot -> ring Control (hover indicator)
-var _ring_fade_tweens: Dictionary = {}  # slot -> in-flight fade Tween
+var _presenters: Dictionary = {}  # slot -> FighterPresenter
 var _stance_rows: Dictionary = {}  # party_id -> StanceRow
 var _selected_move: Dictionary = {}
 # True while the turn loop waits for the player's pick. The menu follows it
@@ -289,94 +260,20 @@ func _load_background() -> void:
 
 func _spawn_visuals() -> void:
 	for slot in units:
-		var unit: CombatUnit = units[slot]
-		var visual: CharacterVisual = CharacterVisualScene.instantiate()
-		visual.position = SLOT_POSITIONS.get(slot, Vector2(400, 300))
-		if unit.team_side == CombatUnit.Team.TWO:
-			visual.scale.x = -1  # mirrored, facing left
-		# dressChar's MODEL5 quirk: 0.8x scale, 10px lower.
-		if not unit.model.is_empty() and str(unit.model[0]) == "MODEL5":
-			visual.scale *= 0.8
-			visual.position.y += 10
-		battlefield.add_child(visual)
-		visual.dress_from_model(unit.model, CharacterVisual.resolve_equip_looks(unit, ItemManagerAuto.items_by_id))
-		_visuals[slot] = visual
-		_add_unit_overlay(slot, unit, visual)
-	_refresh_bars()
-
-
-# Bars/name/hover live in an UNMIRRORED overlay at the slot position -
-# parenting them to a mirrored visual flipped their offsets on team 2.
-func _add_unit_overlay(slot: int, unit: CombatUnit, visual: CharacterVisual) -> void:
-	_display_hp[slot] = unit.life_n
-	_last_stun[slot] = unit.stun
-	var overlay: UnitOverlay = UnitOverlayScene.instantiate()
-	overlay.position = visual.position
-	battlefield.add_child(overlay)
-	overlay.setup(unit.player_name)
-	_overlays[slot] = overlay
-	_rings[slot] = overlay.ring
-	overlay.ring.draw.connect(_draw_ring.bind(overlay.ring, slot))
-	_health_bars[slot] = overlay.health_bar
-	_health_values[slot] = overlay.health_value
-	_focus_bars[slot] = overlay.focus_bar
-	overlay.hit_button.mouse_entered.connect(_on_unit_hovered.bind(slot, true))
-	overlay.hit_button.mouse_exited.connect(_on_unit_hovered.bind(slot, false))
-	overlay.hit_button.pressed.connect(
-		radial_menu.open.bind(slot, SLOT_POSITIONS.get(slot, Vector2(400, 300)), overlay.hit_button)
-	)
-
-
-# The original's target ring: a thick circle with four tick marks.
-func _draw_ring(ring: Control, slot: int) -> void:
-	var unit: CombatUnit = units.get(slot)
-	if unit == null:
-		return
-	var color: Color = RING_COLORS[_relation_to_player(slot)]
-	ring.draw_arc(Vector2.ZERO, 34.0, 0.0, TAU, 48, Color(color, 0.55), 7.0, true)
-	ring.draw_arc(Vector2.ZERO, 40.0, 0.0, TAU, 48, Color(color, 0.25), 3.0, true)
-	for k in 4:
-		var angle: float = k * TAU / 4.0
-		ring.draw_line(
-			Vector2.from_angle(angle) * 26.0, Vector2.from_angle(angle) * 44.0,
-			Color(color, 0.7), 3.0, true
-		)
-
-
-func _relation_to_player(slot: int) -> Relation:
-	if slot == BattleRunner.PLAYER_SLOT:
-		return Relation.PLAYER
-	var unit: CombatUnit = units.get(slot)
-	return Relation.ALLY if unit != null and unit.team_side == CombatUnit.Team.ONE else Relation.ENEMY
+		var home: Vector2 = SLOT_POSITIONS.get(slot, Vector2(400, 300))
+		var presenter: FighterPresenter = FighterPresenterScene.instantiate()
+		battlefield.add_child(presenter)
+		presenter.setup(units[slot], home, ItemManagerAuto.items_by_id, BuffManagerAuto.buffs_by_id, battlefield)
+		presenter.voice_cue.connect(AudioManagerAuto.voice)
+		presenter.effect_cue.connect(AudioManagerAuto.play_effect)
+		presenter.hit_area.mouse_entered.connect(_on_unit_hovered.bind(slot, true))
+		presenter.hit_area.mouse_exited.connect(_on_unit_hovered.bind(slot, false))
+		presenter.hit_area.pressed.connect(radial_menu.open.bind(slot, home, presenter.hit_area))
+		_presenters[slot] = presenter
 
 
 func _on_unit_hovered(slot: int, entered: bool) -> void:
-	var ring: Control = _rings.get(slot)
-	var unit: CombatUnit = units.get(slot)
-	if ring == null or unit == null or not unit.active:
-		return
-	ring.queue_redraw()
-	var showing: bool = entered and decision_open
-	if _ring_fade_tweens.has(slot):
-		_ring_fade_tweens[slot].kill()
-	var tween: Tween = create_tween()
-	tween.tween_property(ring, "modulate:a", 1.0 if showing else 0.0, RING_FADE_IN_TIME if showing else RING_FADE_OUT_TIME)
-	_ring_fade_tweens[slot] = tween
-	var overlay: Control = _overlays[slot]
-	var existing: Node = overlay.get_node_or_null("HoverInfo")
-	if existing:
-		existing.queue_free()
-	if showing:
-		var info: Label = Label.new()
-		info.name = "HoverInfo"
-		info.text = "Lvl. %d" % unit.plevel
-		info.position = Vector2(-40, -8)
-		info.size = Vector2(80, 16)
-		info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		info.add_theme_font_size_override("font_size", 11)
-		info.add_theme_color_override("font_color", RING_COLORS[_relation_to_player(slot)])
-		info.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		overlay.add_child(info)
+	_presenters[slot].show_hover(entered and decision_open)
 
 
 func _move_color(move: Ability) -> Color:
@@ -545,21 +442,21 @@ func _play_events(events: Array) -> void:
 			BattleRunner.EventType.MOVE:
 				await _play_move_event(event)
 			BattleRunner.EventType.STUNNED:
-				_float_text(int(event["caster_slot"]), "STUNNED", Color.YELLOW)
+				_presenters[int(event["caster_slot"])].float_text("STUNNED", Color.YELLOW)
 				await _pause(0.3)
 			BattleRunner.EventType.MOVE_FAILED:
-				_float_text(int(event["caster_slot"]), "NOT ENOUGH %s" % str(event.get("reason", "")).to_upper(), Color.ORANGE)
+				_presenters[int(event["caster_slot"])].float_text("NOT ENOUGH %s" % str(event.get("reason", "")).to_upper(), Color.ORANGE)
 				await _pause(0.3)
 			BattleRunner.EventType.DISPEL:
-				_float_text(int(event["target_slot"]), "DISPEL", Color.CYAN)
+				_presenters[int(event["target_slot"])].float_text("DISPEL", Color.CYAN)
 			BattleRunner.EventType.DEATH:
 				# A move-caused death already played at the killing blow's
-				# impact (see _show_move_result) - only the pacing pause
-				# still belongs here. damage_over_time deaths (buff ticks,
-				# not a move) have no impact moment to hook into, so they
-				# still play here, same as always.
+				# impact (see FighterPresenter.show_result) - only the pacing
+				# pause still belongs here. damage_over_time deaths (buff
+				# ticks, not a move) have no impact moment to hook into, so
+				# they still play here, same as always.
 				if event.get("cause") != BattleRunner.DeathCause.MOVE:
-					_play_death(int(event["slot"]))
+					_presenters[int(event["slot"])].die()
 				await _pause(0.4)
 			BattleRunner.EventType.SPEECH:
 				await _play_speech(event)
@@ -576,13 +473,13 @@ func _play_move_event(event: Dictionary) -> void:
 	var caster_slot: int = int(event["caster_slot"])
 	var target_slot: int = int(event["target_slot"])
 	var move: Ability = MoveManagerAuto.get_move(int(event["move_id"]))
-	var caster_visual: CharacterVisual = _visuals.get(caster_slot)
+	var caster: FighterPresenter = _presenters.get(caster_slot)
 	# Only Melee moves run and swing; the original plays "cast" for both
 	# Missile and Shock (param 12 is the projectile clip for Missiles, and
 	# unused for Shock) - see DECODED_ALGORITHMS.md.
-	if caster_visual != null and move != null and move.attack_animation_type == "Melee":
+	if caster != null and move != null and move.attack_animation_type == "Melee":
 		# The original order: run to the target, swing, damage lands at the
-		# blow, THEN run back. Impact effects hook attack_connected.
+		# blow, THEN run back.
 		var start_ms: int = Time.get_ticks_msec()
 		var on_impact: Callable = func():
 			_log("melee impact: caster=%d move=%s +%dms" % [
@@ -591,34 +488,23 @@ func _play_move_event(event: Dictionary) -> void:
 			AudioManagerAuto.play_effect(move.sound_effect_name)
 			_spawn_impact(target_slot, move, event.get("result", {}))
 			_show_move_result(event, target_slot)
-		caster_visual.attack_connected.connect(on_impact, CONNECT_ONE_SHOT)
 		_log("melee start: caster=%d target=%d move=%s label=%s" % [
 			caster_slot, target_slot, move.display_name, move.animation_label,
 		])
-		caster_visual.play_melee(_melee_offset(caster_slot, target_slot), move.animation_label)
+		var flushed: bool = await caster.melee(_melee_offset(caster_slot, target_slot), move.animation_label, on_impact, animation_speed > 0.0)
+		if not is_inside_tree():
+			return
 		if animation_speed > 0.0:
-			await caster_visual.melee_finished
-			if not is_inside_tree():
-				return
 			_log("melee finished: caster=%d +%dms" % [caster_slot, Time.get_ticks_msec() - start_ms])
-		# Interrupted sequence (or instant mode, which never runs _process):
-		# the blow never fired - land the result anyway.
-		if caster_visual.attack_connected.is_connected(on_impact):
-			caster_visual.attack_connected.disconnect(on_impact)
+		if flushed:
 			_log("melee impact flushed late (interrupted/instant): caster=%d" % caster_slot)
-			on_impact.call()
 		await _pause(0.15)
 		return
-	if caster_visual != null and move != null:
+	if caster != null and move != null:
 		_log("cast start: caster=%d target=%d move=%s type=%s" % [
 			caster_slot, target_slot, move.display_name, move.attack_animation_type,
 		])
-		caster_visual.set_state(CharacterVisual.State.CAST)
-		# The real colortobe glow tint (frame217/onClipEvent(enterFrame).as:
-		# 417,450) - the move's own color, not an element-color
-		# approximation. set_state() resets modulate back to white when the
-		# cast label finishes.
-		caster_visual.modulate = move.visual_effect_color.lerp(Color.WHITE, 0.4)
+		caster.cast(move)
 		if move.attack_animation_type == "Shock":
 			# Shock: sound, the BOOM clip, and impact (BAMBAMBAM) all fire in
 			# the same tick as gotoAndPlay("cast") - the doll's cast animation
@@ -673,82 +559,12 @@ func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result:
 
 func _show_move_result(event: Dictionary, target_slot: int) -> void:
 	var result: Dictionary = event.get("result", {})
-	var target_visual: CharacterVisual = _visuals.get(target_slot)
-	var target_unit: CombatUnit = units.get(target_slot)
-	var move: Ability = MoveManagerAuto.get_move(int(event.get("move_id", 0)))
-	if target_unit != null:
-		_log("result shown: %s target=%d (%s) hp=%d/%d" % [
-			JSON.stringify(result), target_slot, target_unit.player_name,
-			int(target_unit.life_n), int(target_unit.life_u),
-		])
-	match result.get("type"):
-		BattleManager.ResultType.DAMAGE when result.get("sswitched", false):
-			# Under sswitch this damage healed the target. The original draws its
-			# number in heal green and plays no hit animation or hit voice
-			# (frame_42/DoAction_8.as:133-149).
-			_float_text(target_slot, str(int(result.get("amount", 0))), MenuTheme.HEAL_COLOR, result.get("did_crit", false))
-			if target_unit != null:
-				_display_hp[target_slot] = minf(
-					_display_hp.get(target_slot, 0.0) + float(result.get("amount", 0)),
-					target_unit.life_u
-				)
-		BattleManager.ResultType.DAMAGE:
-			# KrinNumberShow: numbers colored by the move's ELEMENT; crits
-			# play the bigger "critical" variant of the same color.
-			var color: Color = Color.WHITE
-			if move != null:
-				var element_index: CombatUnit.Element = move.damage_element_type
-				if element_index != -1:
-					color = MenuTheme.ELEMENT_COLORS[element_index]
-			_float_text(target_slot, str(int(result.get("amount", 0))), color, result.get("did_crit", false))
-			# The bar drops exactly when the hit lands on screen.
-			_display_hp[target_slot] = maxf(
-				_display_hp.get(target_slot, 0.0) - float(result.get("amount", 0)), 0.0
-			)
-			if result.get("target_died", false):
-				# Fires here, at the impact that actually kills - not on the
-				# later queued "death" event, which only reaches this loop
-				# after the caster's whole move (melee's runback included)
-				# finishes await-ing. That made death wait for the attacker
-				# to get home first instead of landing with the killing blow.
-				_play_death(target_slot)
-			elif target_visual != null and target_unit != null and target_unit.stun == 0:
-				# The original skips the hit animation on a stunned target
-				# (frame_42/DoAction_8.as:101-104).
-				target_visual.set_state(CharacterVisual.State.HIT)
-			if target_unit != null:
-				AudioManagerAuto.voice(target_unit.voice_hit)
-		BattleManager.ResultType.HEAL when result.get("sswitched", false):
-			# Under sswitch this heal hurt the target. The original draws its
-			# number in the Shadow color, plays the hit animation unless the
-			# target is stunned, plays no hit voice, and plays the death at the
-			# impact when the heal kills (frame_42/DoAction_8.as:189-229).
-			_float_text(
-				target_slot, str(int(result.get("amount", 0))),
-				MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], result.get("did_crit", false)
-			)
-			_display_hp[target_slot] = maxf(
-				_display_hp.get(target_slot, 0.0) - float(result.get("amount", 0)), 0.0
-			)
-			if result.get("target_died", false):
-				_play_death(target_slot)
-			elif target_visual != null and target_unit != null and target_unit.stun == 0:
-				target_visual.set_state(CharacterVisual.State.HIT)
-		BattleManager.ResultType.HEAL:
-			_float_text(target_slot, "+%d" % int(result.get("amount", 0)), MenuTheme.HEAL_COLOR)
-			if target_unit != null:
-				_display_hp[target_slot] = minf(
-					_display_hp.get(target_slot, 0.0) + float(result.get("amount", 0)),
-					target_unit.life_u
-				)
-		BattleManager.ResultType.FOCUS:
-			_float_text(target_slot, "+%d FOCUS" % int(result.get("amount", 0)), Color.SKY_BLUE)
-		BattleManager.ResultType.MISS:
-			# The special miss frame KrinNumberShow swaps to at impact,
-			# instead of a damage number - the caster's own animation still
-			# played in full to get here (see _execute_move_action's comment).
-			_float_text(target_slot, "MISS", Color.GRAY)
-			AudioManagerAuto.play_effect("sfx_magicmiss")
+	var target_unit: CombatUnit = units[target_slot]
+	_log("result shown: %s target=%d (%s) hp=%d/%d" % [
+		JSON.stringify(result), target_slot, target_unit.player_name,
+		int(target_unit.life_n), int(target_unit.life_u),
+	])
+	_presenters[target_slot].show_result(result, MoveManagerAuto.get_move(int(event.get("move_id", 0))))
 	_refresh_bars(false)
 
 
@@ -761,18 +577,6 @@ func _melee_offset(caster_slot: int, target_slot: int) -> Vector2:
 	if offset.length() <= 60.0:
 		return Vector2.ZERO
 	return offset - offset.normalized() * 55.0
-
-
-func _play_death(slot: int) -> void:
-	var visual: CharacterVisual = _visuals.get(slot)
-	if visual != null:
-		visual.set_state(CharacterVisual.State.DEAD)
-	var overlay: Control = _overlays.get(slot)
-	if overlay != null:
-		overlay.visible = false
-	var unit: CombatUnit = units.get(slot)
-	if unit != null:
-		AudioManagerAuto.play_effect(unit.voice_die)
 
 
 # A line stays up for its whole timeToSay seconds, unless Space cuts it short
@@ -813,68 +617,17 @@ func _input(event: InputEvent) -> void:
 # boundaries - covers DOTs, life costs, shields); snap = false only redraws
 # from the displayed values (mid-batch, so unplayed hits stay hidden).
 func _refresh_bars(snap: bool = true) -> void:
-	for slot in _visuals:
-		var unit: CombatUnit = units.get(slot)
-		if unit == null:
+	for slot in _presenters:
+		var presenter: FighterPresenter = _presenters[slot]
+		if not snap:
+			presenter.redraw()
 			continue
-		if snap and int(_display_hp.get(slot, 0)) != int(unit.life_n):
+		var unit: CombatUnit = units[slot]
+		if int(presenter.displayed_hp) != int(unit.life_n):
 			_log("bar snap: slot=%d (%s) hp %d -> %d" % [
-				slot, unit.player_name, int(_display_hp.get(slot, 0)), int(unit.life_n),
+				slot, unit.player_name, int(presenter.displayed_hp), int(unit.life_n),
 			])
-		if snap:
-			_display_hp[slot] = unit.life_n
-		var health: ProgressBar = _health_bars[slot]
-		health.max_value = unit.life_u
-		health.value = _display_hp.get(slot, unit.life_n)
-		_health_values[slot].text = str(int(_display_hp.get(slot, unit.life_n)))
-		var focus: ProgressBar = _focus_bars[slot]
-		focus.max_value = max(unit.focus_u, 1)
-		focus.value = unit.focus_n
-		_update_stun_visual(slot, unit, _visuals[slot])
-		_overlays[slot].refresh_buffs(unit, BuffManagerAuto.buffs_by_id)
-
-
-# krinBuff STUN is a running total across active stun-inflicting buffs -
-# replay "stun" on any increase (including stacking while already stunned),
-# "outofstun" on any decrease (even a partial one that leaves the unit still
-# stunned by a shorter-lived buff); both labels flow back to idle/stun2 on
-# their own once triggered (see DECODED_ALGORITHMS.md).
-func _update_stun_visual(slot: int, unit: CombatUnit, visual: CharacterVisual) -> void:
-	var current: float = unit.stun if unit.active else 0.0
-	var previous = _last_stun.get(slot, 0.0)
-	if current > previous:
-		visual.enter_stun()
-	elif current < previous:
-		visual.exit_stun()
-	_last_stun[slot] = current
-
-
-func _float_text(slot: int, text: String, color: Color, critical: bool = false) -> void:
-	var visual: CharacterVisual = _visuals.get(slot)
-	if visual == null:
-		return
-	var label: Label = Label.new()
-	label.text = text
-	# The original draws these numbers with the digit shapes of its
-	# NumberSetter clip (frame_42/DoAction_7.as), not in a font, so they use
-	# RegularLabel and keep the regular face instead of the project theme's
-	# bold default.
-	label.theme_type_variation = &"RegularLabel"
-	label.modulate = color
-	label.position = visual.position + Vector2(-15, -72)
-	label.scale = Vector2.ONE
-	if critical:
-		label.add_theme_font_size_override("font_size", 24)
-		label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
-		label.add_theme_constant_override("outline_size", 4)
-	battlefield.add_child(label)
-	if animation_speed <= 0.0:
-		label.queue_free()
-		return
-	var tween: Tween = create_tween()
-	tween.tween_property(label, "position:y", label.position.y - 40.0, 0.8)
-	tween.parallel().tween_property(label, "modulate:a", 0.0, 0.8)
-	tween.tween_callback(label.queue_free)
+		presenter.snap_to_unit()
 
 
 func _finish_battle() -> void:

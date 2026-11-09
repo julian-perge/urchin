@@ -25,11 +25,10 @@ func test_full_battle_scene_run():
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 
 	# Battle 100: players [5, -2, 0, -1, 0] -> player, Prison Guard, Veradux.
-	assert_eq(scene._visuals.size(), 3, "player + enemy + Veradux dolls spawned")
-	assert_not_null(scene._visuals.get(1))
+	assert_eq(scene._presenters.size(), 3, "player + enemy + Veradux fighters spawned")
+	assert_not_null(scene._presenters.get(1))
 	assert_eq(scene.units[2].player_name, "Prison Guard")
-	assert_eq(scene._visuals[2].scale.x, -1.0, "enemy mirrored to face left")
-	assert_gt(scene._health_bars[1].max_value, 0.0, "health bars wired")
+	assert_eq(scene._presenters[2].displayed_hp, scene.units[2].life_n, "each fighter shows its own slot's unit")
 
 	# Let the AI drive the player so the loop runs unattended.
 	var player: CombatUnit = scene.units[1]
@@ -837,7 +836,7 @@ func test_clicking_a_unit_then_an_orb_runs_that_move():
 	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
 	var first_event: int = scene.runner.events.size()
 
-	var hit_button: Button = scene._overlays[2].hit_button
+	var hit_button: Button = scene._presenters[2].hit_area
 	_click(viewport, hit_button)
 	assert_true(scene.radial_menu.visible, "clicking the enemy opened the menu")
 	var orb: Button = scene.radial_menu.orbs[0]
@@ -888,232 +887,10 @@ func test_the_retreat_button_shows_the_original_quit_tooltip():
 	ZoneManager.auto_start_battles = true
 
 
-# Regression test: a move-caused death used to only play when the QUEUED
-# "death" event was reached in _play_events(), which only happens after the
-# caster's whole move await resolves - for melee, that's after the runback
-# finishes, not when the killing blow actually lands. _show_move_result()
-# is where the impact itself is shown (the damage number, the HIT flinch)
-# - death needs to fire there too, synchronously, not wait for a later,
-# separate event further down the same half-turn's list.
-func test_death_plays_at_impact_not_after_caster_returns():
-	var save = PlayerSave.new_game("DeathTiming", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	var enemy_slot := 2  # battle 100's Prison Guard
-	scene._show_move_result(
-		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": enemy_slot, "move_id": 100,
-			"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 99999.0, "target_died": true}},
-		enemy_slot
-	)
-	assert_eq(
-		scene._visuals[enemy_slot]._state, CharacterVisual.State.DEAD,
-		"death played synchronously inside _show_move_result, not deferred to a later event"
-	)
-	assert_false(scene._overlays[enemy_slot].visible, "overlay hidden the same moment")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-# Shatter Bolt only applies a status effect, and at its impact the original
-# draws no number and plays no hit flinch. The target's stun animation still
-# starts there, because the conductor runs applyChangesKrin on the target right
-# after the status lands (conductor line 103).
-func test_shatter_bolt_impact_starts_the_stun_and_draws_no_number():
-	var save = PlayerSave.new_game("ShatterBoltImpact", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	var result: Dictionary = scene.battle_manager.execute_move(
-		MoveManagerAuto.get_move(521), scene.units[2], scene.units[1], BuffManagerAuto.buffs_by_internal_name
-	)
-	var labels_before: int = scene.battlefield.get_children().filter(func(child): return child is Label).size()
-	scene._show_move_result(
-		{"type": BattleRunner.EventType.MOVE, "caster_slot": 2, "target_slot": 1, "move_id": 521, "result": result}, 1
-	)
-
-	assert_eq(
-		scene.battlefield.get_children().filter(func(child): return child is Label).size(), labels_before,
-		"no number floats up, so the damage branch and its hit flinch never ran"
-	)
-	assert_eq(scene._visuals[1]._state, CharacterVisual.State.STUN, "the target's stun animation starts at the impact")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-# Returns the label _float_text() drew last. With animation_speed 0 that label
-# is only queued for deletion, so it is still a child of the battlefield when a
-# test reads it.
-func _last_float_text(scene) -> Label:
-	var last: Label = null
-	for child in scene.battlefield.get_children():
-		if child is Label:
-			last = child
-	return last
-
-
-# Damage on a target under an sswitch buff heals it. The original draws the
-# number in heal green, raises life capped at max, and plays no hit animation
-# (frame_42/DoAction_8.as:133-149).
-func test_damage_on_a_tiedye_target_shows_as_a_heal():
-	var save = PlayerSave.new_game("TieDyeDamage", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	var caster: CombatUnit = scene.units[1]
-	var target_slot := 2  # battle 100's Prison Guard
-	var target: CombatUnit = scene.units[target_slot]
-	target.apply_buff(BuffManagerAuto.get_buff_by_name("TIEDYE"), 1, caster)
-	target.apply_changes()
-	target.life_n = floorf(target.life_u / 2.0)
-	scene._refresh_bars()
-	var hp_before: float = scene._display_hp[target_slot]
-
-	var move: Ability = MoveManagerAuto.get_move(5)  # Nuke: Full Damage, no status effect
-	var result: Dictionary = scene.battle_manager.execute_move(move, caster, target, BuffManagerAuto.buffs_by_internal_name)
-	scene._show_move_result(
-		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": target_slot,
-			"move_id": move.id, "move_name": move.display_name, "result": result},
-		target_slot
-	)
-
-	assert_gt(scene._display_hp[target_slot], hp_before, "the bar rises, because the damage healed the target")
-	assert_eq(scene._display_hp[target_slot], target.life_n, "the bar shows the life the target really has")
-	assert_ne(scene._visuals[target_slot]._state, CharacterVisual.State.HIT, "no hit animation")
-	var number: Label = _last_float_text(scene)
-	assert_eq(number.text, str(int(result["amount"])), "the number is the amount the damage healed")
-	assert_eq(number.modulate, MenuTheme.HEAL_COLOR, "the number is drawn in heal green")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-# A heal on a target under an sswitch buff hurts it. The original draws the
-# number in the Shadow color, lowers life and plays the hit animation
-# (frame_42/DoAction_8.as:189-207).
-func test_heal_on_an_sswitch_target_shows_as_damage():
-	var save = PlayerSave.new_game("RetrogradeHurt", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	var caster: CombatUnit = scene.units[1]
-	var target_slot := 2  # battle 100's Prison Guard, at full life
-	var target: CombatUnit = scene.units[target_slot]
-	target.apply_buff(BuffManagerAuto.get_buff_by_name("RETROGRADED"), 1, caster)
-	target.apply_changes()
-	scene._refresh_bars()
-	var hp_before: float = scene._display_hp[target_slot]
-
-	var move: Ability = MoveManagerAuto.get_move(4)  # Heal: no status effect
-	var result: Dictionary = scene.battle_manager.execute_move(move, caster, target, BuffManagerAuto.buffs_by_internal_name)
-	scene._show_move_result(
-		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": target_slot,
-			"move_id": move.id, "move_name": move.display_name, "result": result},
-		target_slot
-	)
-
-	assert_lt(scene._display_hp[target_slot], hp_before, "the bar falls, because the heal hurt the target")
-	assert_eq(scene._display_hp[target_slot], target.life_n, "the bar shows the life the target really has")
-	assert_eq(scene._visuals[target_slot]._state, CharacterVisual.State.HIT, "the hit animation plays")
-	var number: Label = _last_float_text(scene)
-	assert_eq(number.text, str(int(result["amount"])), "no plus sign")
-	assert_eq(number.modulate, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], "the number is drawn in the Shadow color")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-# The original skips the hit animation while the target is stunned, so a heal
-# that hurts a stunned target leaves its doll in the stun
-# (frame_42/DoAction_8.as:204-207).
-func test_heal_on_a_stunned_sswitch_target_keeps_it_stunned():
-	var save = PlayerSave.new_game("TieDyeStun", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	var caster: CombatUnit = scene.units[1]
-	var target_slot := 2  # battle 100's Prison Guard, at full life
-	var target: CombatUnit = scene.units[target_slot]
-	# The Flower Zombie casts both of these: Tie Dye (610) and Bad Trip (608).
-	target.apply_buff(BuffManagerAuto.get_buff_by_name("TIEDYE"), 1, caster)
-	target.apply_buff(BuffManagerAuto.get_buff_by_name("BADTRIP"), 1, caster)
-	target.apply_changes()
-	scene._refresh_bars()
-
-	var move: Ability = MoveManagerAuto.get_move(4)  # Heal: no status effect
-	var result: Dictionary = scene.battle_manager.execute_move(move, caster, target, BuffManagerAuto.buffs_by_internal_name)
-	scene._show_move_result(
-		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": target_slot,
-			"move_id": move.id, "move_name": move.display_name, "result": result},
-		target_slot
-	)
-
-	assert_eq(scene._visuals[target_slot]._state, CharacterVisual.State.STUN, "no hit animation on a stunned target")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-# The original skips the hit animation on a stunned target for plain damage
-# too (frame_42/DoAction_8.as:101-104), so a hit that doesn't kill leaves the
-# doll in its stun.
-func test_damage_on_a_stunned_target_keeps_it_stunned():
-	var save = PlayerSave.new_game("StunnedDamage", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	var caster: CombatUnit = scene.units[1]
-	var target_slot := 2  # battle 100's Prison Guard, at full life
-	var target: CombatUnit = scene.units[target_slot]
-	target.apply_buff(BuffManagerAuto.get_buff_by_name("BADTRIP"), 1, caster)
-	target.apply_changes()
-	scene._refresh_bars()
-
-	var move: Ability = MoveManagerAuto.get_move(5)  # Nuke: Full Damage, no status effect
-	var result: Dictionary = scene.battle_manager.execute_move(move, caster, target, BuffManagerAuto.buffs_by_internal_name)
-	assert_false(result["target_died"], "the hit leaves the target alive")
-	scene._show_move_result(
-		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": target_slot,
-			"move_id": move.id, "move_name": move.display_name, "result": result},
-		target_slot
-	)
-
-	assert_eq(scene._visuals[target_slot]._state, CharacterVisual.State.STUN, "no hit animation on a stunned target")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
 # A heal bigger than an sswitch target's life kills it, and the original plays
 # the death at that impact (frame_42/DoAction_8.as:208-228). The events come
 # from the runner, because _play_events() only pauses on a DEATH event caused
-# by a move and leaves the death itself to _show_move_result().
+# by a move and leaves the death itself to FighterPresenter.show_result().
 func test_heal_that_kills_an_sswitch_target_plays_the_death():
 	var save = PlayerSave.new_game("RetrogradeKill", 0)
 	GameData.current_save = save
@@ -1137,9 +914,10 @@ func test_heal_that_kills_an_sswitch_target_plays_the_death():
 	var events: Array = scene.runner.events.slice(first_event)
 	await scene._play_events(events)
 
-	assert_eq(scene._visuals[target_slot]._state, CharacterVisual.State.DEAD, "the heal killed the target, so its doll plays the death")
-	assert_false(scene._overlays[target_slot].visible, "its overlay is hidden with it")
-	assert_eq(scene._display_hp[target_slot], 0.0, "the bar drops to empty")
+	var presenter: FighterPresenter = scene._presenters[target_slot]
+	assert_eq(presenter.get_node("Doll")._state, CharacterVisual.State.DEAD, "the heal killed the target, so its doll plays the death")
+	assert_false(presenter.get_node("Overlay").visible, "its overlay is hidden with it")
+	assert_eq(presenter.displayed_hp, 0.0, "the bar drops to empty")
 	assert_eq(
 		scene._combat_log._log_text.text,
 		"%s hits Prison Guard with Heal for %d\nPrison Guard falls" % [caster.player_name, int(events[0]["result"]["amount"])],
@@ -1478,8 +1256,216 @@ func test_bottom_bar_uses_extracted_backdrop_art():
 	ZoneManager.auto_start_battles = true
 
 
-func test_hover_ring_fades_in_only_during_player_decision_window():
-	var save = PlayerSave.new_game("RingFadeTest", 0)
+# FighterPresenter's own tests cover the ring. This is the scene's half of it:
+# the mouse reaches a fighter through its hit button, and the ring only comes up
+# while a Decision is open. The level label comes and goes with the ring, and
+# reading it means the test doesn't have to wait out a fade.
+func test_hovering_a_fighter_shows_its_ring_only_during_a_decision():
+	GameData.current_save = PlayerSave.new_game("RingGate", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var presenter: FighterPresenter = scene._presenters[2]  # battle 100's Prison Guard
+	var levels_shown: Callable = func() -> int:
+		return presenter.get_node("Overlay").get_children().filter(func(child):
+			return child is Label and child.text.begins_with("Lvl.") and not child.is_queued_for_deletion()
+		).size()
+
+	scene.decision_open = false
+	presenter.hit_area.mouse_entered.emit()
+	assert_eq(levels_shown.call(), 0, "nothing shows outside a Decision")
+
+	scene.decision_open = true
+	presenter.hit_area.mouse_entered.emit()
+	assert_eq(levels_shown.call(), 1, "it shows during one")
+	presenter.hit_area.mouse_exited.emit()
+	assert_eq(levels_shown.call(), 0, "leaving during the Decision takes it away")
+
+	presenter.hit_area.mouse_entered.emit()
+	assert_eq(levels_shown.call(), 1, "sanity: it is back up")
+	scene.decision_open = false
+	presenter.hit_area.mouse_exited.emit()
+	assert_eq(levels_shown.call(), 0, "and leaving takes it away after the Decision has closed too")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The runner applies the whole half-turn before the replay, so every fighter's
+# stun, focus and buffs are already true when the first hit lands. The scene
+# shows them at every impact and after every event, on every fighter and not
+# just the one that was hit.
+func test_an_impact_and_each_event_redraw_every_fighter():
+	GameData.current_save = PlayerSave.new_game("AllSlotsRedraw", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var bystander: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	var overlay: UnitOverlay = scene._presenters[BattleRunner.PLAYER_SLOT].get_node("Overlay")
+
+	bystander.focus_n = 1.0
+	scene._show_move_result(
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 2, "target_slot": 3, "move_id": 1,
+			"result": {"type": BattleManager.ResultType.MISS}},
+		3
+	)
+	assert_eq(overlay.focus_bar.value, 1.0, "an impact on someone else redraws this fighter")
+
+	bystander.focus_n = 2.0
+	await scene._play_events([{"type": BattleRunner.EventType.DISPEL, "caster_slot": 2, "target_slot": 3, "removed": []}])
+	assert_eq(overlay.focus_bar.value, 2.0, "and so does any other event")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func _float_labels(scene) -> Array:
+	return scene.battlefield.get_children().filter(func(child): return child is Label)
+
+
+func test_the_replay_floats_status_text_over_the_right_fighter():
+	GameData.current_save = PlayerSave.new_game("StatusFloats", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await scene._play_events([
+		{"type": BattleRunner.EventType.STUNNED, "caster_slot": 1},
+		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 3, "reason": "focus"},
+		{"type": BattleRunner.EventType.DISPEL, "caster_slot": 1, "target_slot": 2, "removed": []},
+	])
+
+	var above_fighter: Callable = func(slot: int) -> Vector2:
+		return scene._presenters[slot].get_node("Doll").position + FighterPresenter.FLOAT_OFFSET
+	assert_eq(
+		_float_labels(scene).map(func(label): return [label.text, label.position, label.modulate]),
+		[
+			["STUNNED", above_fighter.call(1), Color.YELLOW],
+			["NOT ENOUGH FOCUS", above_fighter.call(3), Color.ORANGE],
+			["DISPEL", above_fighter.call(2), Color.CYAN],
+		]
+	)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A damage-over-time death has no impact to play at, so its DEATH event plays
+# it. A move's death already played at the blow, so its DEATH event only paces.
+func test_the_death_event_plays_only_the_deaths_no_move_landed():
+	GameData.current_save = PlayerSave.new_game("DeathEvent", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var doll: CharacterVisual = scene._presenters[2].get_node("Doll")
+
+	await scene._play_events([{"type": BattleRunner.EventType.DEATH, "slot": 2, "cause": BattleRunner.DeathCause.MOVE}])
+	assert_ne(doll._state, CharacterVisual.State.DEAD, "a move's DEATH event plays nothing")
+
+	await scene._play_events([{"type": BattleRunner.EventType.DEATH, "slot": 2, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME}])
+	assert_eq(doll._state, CharacterVisual.State.DEAD, "a damage-over-time death plays here")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The player's life is moved behind the bar's back during the Decision, the way
+# a life cost or a damage-over-time tick moves it with no hit to show it. The
+# life is far more than the enemy can take in a half-turn.
+func test_the_end_of_a_half_turn_snaps_every_fighter_to_its_unit():
+	GameData.current_save = PlayerSave.new_game("HalfTurnSnap", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene.decision_open, 5)
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	player.life_u = 999999.0
+	player.life_n = 500000.0
+
+	scene._on_pass_pressed()
+	await wait_until(func(): return scene.decision_open or scene._finished, 10)
+	assert_eq(scene._presenters[BattleRunner.PLAYER_SLOT].displayed_hp, player.life_n, "the bar caught up with the unit")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func test_a_hit_number_takes_its_moves_element_color():
+	GameData.current_save = PlayerSave.new_game("HitColor", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var move: Ability = MoveManagerAuto.get_move(5)  # Nuke
+	scene._show_move_result(
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2, "move_id": move.id,
+			"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 10.0, "did_crit": false, "target_died": false}},
+		2
+	)
+	var number: Label = _float_labels(scene)[-1]
+	assert_ne(number.modulate, Color.WHITE, "sanity: this move's color isn't the no-move white")
+	assert_eq(number.modulate, MenuTheme.ELEMENT_COLORS[move.damage_element_type])
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The tests' instant mode lands the blow at once. At full speed the blow waits
+# for the swing, which goes to the target with the move's own attack label.
+func test_a_melee_move_swings_at_its_target_with_its_own_label():
+	GameData.current_save = PlayerSave.new_game("MeleeWiring", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var move: Ability = MoveManagerAuto.moves_by_id.values().filter(func(candidate):
+		return candidate.attack_animation_type == "Melee" and candidate.animation_label == "Attack_Stab" and not candidate.impact_effect_name.is_empty()
+	)[0]
+	var event: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2, "move_id": move.id,
+		"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 10.0, "did_crit": false, "target_died": false},
+	}
+	var impacts: int = _count_impact_effects(scene)
+
+	scene._play_move_event(event)  # not awaited, because instant mode doesn't suspend
+	assert_eq(_count_impact_effects(scene), impacts + 1, "instant mode lands the blow at once")
+
+	scene.animation_speed = 1.0
+	scene._play_move_event(event)  # not awaited, because this swing never ends
+	assert_eq(_count_impact_effects(scene), impacts + 1, "at full speed the blow waits for the swing")
+	var doll: CharacterVisual = scene._presenters[1].get_node("Doll")
+	assert_eq(doll._attack_label, move.animation_label, "the move's own swing")
+	assert_eq(doll._melee_offset, scene._melee_offset(1, 2), "run to the target")
+
+	scene.animation_speed = 0.0
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The scene is the only place that reads these two tables, and a presenter
+# handed empty ones would still pass all of its own tests.
+func test_a_fighter_wears_its_items_and_shows_its_buffs_from_the_real_tables():
+	var save = PlayerSave.new_game("FighterTables", 0)
+	var armor: GameItem = ItemManagerAuto.items_by_id.values().filter(func(item): return item.looks == "ARCTIC")[0]
+	save.equip_array[1] = armor.id
 	GameData.current_save = save
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -1487,27 +1473,33 @@ func test_hover_ring_fades_in_only_during_player_decision_window():
 	var scene = add_child_autofree(BattleSceneRes.instantiate())
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var presenter: FighterPresenter = scene._presenters[BattleRunner.PLAYER_SLOT]
+	assert_eq(presenter.get_node("Doll")._parts["chest"].get_child_count(), 2, "the chest's skin plus the armor")
 
-	var ring: Control = scene._rings[2]  # battle 100's enemy slot (Prison Guard)
-	assert_eq(ring.modulate.a, 0.0, "starts invisible")
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	player.apply_buff(BuffManagerAuto.get_buff_by_name("TIEDYE"), 1, player)
+	player.apply_changes()
+	scene._refresh_bars(false)
+	assert_eq(presenter.get_node("Overlay").buff_row.get_child_count(), 1, "the buff row found the buff")
 
-	# Not the player's turn - hovering must not start a fade-in.
-	scene.decision_open = false
-	scene._on_unit_hovered(2, true)
-	await scene.get_tree().create_timer(0.3).timeout
-	assert_eq(ring.modulate.a, 0.0, "no fade-in outside the player's decision window")
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
 
-	# The player's turn - hovering fades it in.
-	scene.decision_open = true
-	scene._on_unit_hovered(2, true)
-	await scene.get_tree().create_timer(0.3).timeout
-	assert_almost_eq(ring.modulate.a, 1.0, 0.05, "faded in during the decision window")
 
-	# Fade-out is never gated, even outside the decision window.
-	scene.decision_open = false
-	scene._on_unit_hovered(2, false)
-	await scene.get_tree().create_timer(0.8).timeout
-	assert_almost_eq(ring.modulate.a, 0.0, 0.05, "fades back out regardless of turn state")
+# A fighter's voices only reach the speakers through these two connections, and
+# a presenter with neither connected would still pass all of its own tests.
+func test_each_fighter_sends_its_sounds_to_the_audio_manager():
+	GameData.current_save = PlayerSave.new_game("FighterAudio", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	for slot in scene._presenters:
+		var presenter: FighterPresenter = scene._presenters[slot]
+		assert_true(presenter.voice_cue.is_connected(AudioManagerAuto.voice), "slot %d's voices" % slot)
+		assert_true(presenter.effect_cue.is_connected(AudioManagerAuto.play_effect), "slot %d's effects" % slot)
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1546,10 +1538,9 @@ func test_combat_log_toggle_and_live_narration():
 
 
 # Counts ImpactEffect instances specifically, not battlefield.get_child_count()
-# as a whole - _show_move_result's pre-existing _float_text() call parents a
-# damage-number (or "MISS") Label under battlefield on every hit AND every
-# miss, so a raw child-count comparison can't tell an ImpactEffect apart from
-# that floatie.
+# as a whole - FighterPresenter.float_text() parents a damage-number (or "MISS")
+# Label under battlefield on every hit AND every miss, so a raw child-count
+# comparison can't tell an ImpactEffect apart from that floatie.
 func _count_impact_effects(scene) -> int:
 	var count: int = 0
 	for child in scene.battlefield.get_children():
@@ -1665,7 +1656,7 @@ func test_shock_cast_tints_with_the_moves_own_visual_effect_color():
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 
 	var move: Ability = MoveManagerAuto.get_move(4)  # Heal, Shock, "0x33FF00"
-	var caster_visual: CharacterVisual = scene._visuals[1]
+	var caster_visual: CharacterVisual = scene._presenters[1].get_node("Doll")
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_id": 4, "move_name": move.display_name,

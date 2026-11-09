@@ -1,12 +1,9 @@
 # unit_overlay.gd
 # The unmirrored per-unit HUD overlay shown over each battling character's
 # paper doll: name, health bar + value, focus bar, and a hover/click zone.
-# battle_scene.gd instances one per unit slot, positions it at the unit's
-# world position, and wires the hover/click signals itself (the slot each
-# instance represents is only known at instance time, not authoring time).
-# The hover ring's actual `_draw()` callback also stays in battle_scene.gd
-# (its color depends on the unit's live relation to the player) - this
-# script only exposes the ring node for that connection.
+# FighterPresenter owns one per fighter, positions it at the doll and draws the
+# hover ring onto its Ring node, whose color depends on the unit's relation to
+# the player. show_status() is the one place the bars are written.
 extends Control
 class_name UnitOverlay
 
@@ -36,6 +33,18 @@ var _last_signature: Array = []
 
 func setup(unit_name: String) -> void:
 	name_label.text = unit_name
+
+
+# displayed_hp comes from the caller because the health bar only follows the
+# unit's life as each hit lands on screen. Focus and buffs show the unit's true
+# state every time.
+func show_status(unit: CombatUnit, displayed_hp: float, buffs_by_id: Dictionary) -> void:
+	health_bar.max_value = unit.life_u
+	health_bar.value = displayed_hp
+	health_value.text = str(int(displayed_hp))
+	focus_bar.max_value = max(unit.focus_u, 1)
+	focus_bar.value = unit.focus_n
+	refresh_buffs(unit, buffs_by_id)
 
 
 # Refreshes the buff-icon row the way the original draws it at the end of
