@@ -16,7 +16,7 @@ entry names its evidence so you can check it instead of trusting it.
   shape bounds, sprite timelines, export names. `timeline.frames()` is the one
   display list walk. Matrix translates are in twips, so divide by 20 for
   design px. The ffdec `-swf2xml` dumps in `dev/source_files/swf_xml/` stay in
-  LFS for grepping, and only `vfx_offsets.py` still reads one, until #43.
+  LFS for grepping, and nothing reads them anymore.
   `uv run export_swf_sources --xml` rewrites them, which adds ~284 MB to LFS.
 - `dev/data_json/` is a runtime capture of the Steam build's live `_root`
   arrays, not an export. No script produces it and none can. See
@@ -143,18 +143,24 @@ entry names its evidence so you can check it instead of trusting it.
 - **UI chrome is full of clip masks.** DefineSprite 3317 alone places two, at
   `clipDepth` 57 and 4, and the first is what keeps the member bars inside
   their panel. Strip the content, never the mask.
+- **Render PNG frames through `dev/urchin_dev/swf/render.py`.** It runs the
+  ffdec_lib driver once per SWF per extractor, deletes each strip list in
+  memory, and hands back every canvas with the rects it was sized from, so a
+  crop and its stage rect always come from the same render. The CLI is left
+  for the cutscene AVI and its probe frame, the two shape exports and
+  `export_swf_sources.py`. Every external command goes through
+  `dev/urchin_dev/run.py`.
 - **Recover positions, never invent them.** ffdec grows the export canvas by
   the filter dimension symmetrically around the timeline displayRect, so the
   canvas keeps the displayRect's centre and the stage rect follows from that
-  centre plus the canvas size with no filter math. `doll_art.py`,
-  `start_screens.py` and `battle_screen.py` all do this. Inventing them
-  instead drew the zone orb at twice its real size, which every zone scene
-  then cancelled with `scale = 0.4` (`8ef2139`).
-- **Read the displayRect from ffdec's own SVG pass, not a Python re-walk.** The
-  SVG root element states it outright: `xmin` is `-tx/ZOOM` and `width`/
-  `height` give the size. The Python recursion cost 28.2s of a 34s run and can
-  drift from the render; the SVG cannot, because it is the same rect ffdec
-  sizes the PNG canvas with (`94ae2b1`).
+  centre plus the canvas size with no filter math. `render.py` does this for
+  every extractor. Inventing them instead drew the zone orb at twice its real
+  size, which every zone scene then cancelled with `scale = 0.4` (`8ef2139`).
+- **Read the displayRect from the render, not a Python re-walk.** The driver
+  reports the rect it sized each canvas from, with and without the filter
+  margin. The Python recursion cost 28.2s of a 34s run and can drift from the
+  render, and the driver's rect cannot, because it is the rect ffdec sizes
+  the canvas with (`94ae2b1`).
 - **ffdec's canvas is the whole timeline's union bounds**, so a single frame
   lands in a mostly transparent canvas. Portraits were 56x76 of art inside
   247x237. Crop to the alpha bbox, and when several frames must share one size,

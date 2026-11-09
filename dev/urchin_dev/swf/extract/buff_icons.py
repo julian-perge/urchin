@@ -42,16 +42,12 @@
 from __future__ import annotations
 
 import re
-import shutil
-import subprocess
 import sys
-import tempfile
-from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
-from urchin_dev.swf import timeline
+from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev.swf import render, timeline
 from urchin_dev.swf.swf_index import read_swf
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "buffs"
@@ -66,63 +62,26 @@ def sanitize(label: str) -> str:
     return re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_")
 
 
-def run(cmd: list[str]) -> subprocess.CompletedProcess:
-    proc = subprocess.run(cmd, capture_output=True, text=True)
-    if proc.returncode != 0:
-        raise RuntimeError(
-            f"command failed (exit {proc.returncode}): {' '.join(cmd)}\n"
-            f"--- stdout ---\n{proc.stdout}\n--- stderr ---\n{proc.stderr}"
-        )
-    return proc
-
-
 def main():
     labels = timeline.labels(read_swf(WEB_SWF), BUFF_ICON_SPRITE)
     print(f"buff icon labels: {len(labels)}", file=sys.stderr)
 
-    work_dir = Path(tempfile.mkdtemp(prefix="buff_icons_"))
-    try:
-        frames_dir = work_dir / "frames"
-        run(
-            [
-                str(FFDEC),
-                "-zoom",
-                str(ZOOM),
-                "-format",
-                "sprite:png",
-                "-selectid",
-                str(BUFF_ICON_SPRITE),
-                "-export",
-                "sprite",
-                str(frames_dir),
-                str(WEB_SWF),
-            ]
-        )
-        sprite_frames_dir = frames_dir / f"DefineSprite_{BUFF_ICON_SPRITE}"
-
-        OUT_DIR.mkdir(parents=True, exist_ok=True)
-        written: dict[str, str] = {}
-        missing = []
+    jobs = [render.Job(BUFF_ICON_SPRITE, f, ZOOM) for f in sorted(set(labels.values()))]
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    written: dict[str, str] = {}
+    with render.frames(WEB_SWF, jobs) as rendered:
+        by_frame = {frame.job.frame: frame for frame in rendered}
         for label, frame in labels.items():
-            src = sprite_frames_dir / f"{frame}.png"
-            if not src.exists():
-                missing.append((label, frame))
-                continue
             file_name = sanitize(label) + ".png"
-            img = Image.open(src)
-            bbox = img.getchannel("A").getbbox()
+            trimmed = render.trim(by_frame[frame])
             img = (
-                img.crop(bbox)
-                if bbox is not None
+                trimmed.image
+                if trimmed is not None
                 else Image.new("RGBA", (1, 1), (0, 0, 0, 0))
             )
             img.save(OUT_DIR / file_name)
             written[label] = file_name
-        print(f"buff icons written: {len(written)}", file=sys.stderr)
-        if missing:
-            print(f"missing source frames: {missing}", file=sys.stderr)
-    finally:
-        shutil.rmtree(work_dir, ignore_errors=True)
+    print(f"buff icons written: {len(written)}", file=sys.stderr)
 
 
 if __name__ == "__main__":

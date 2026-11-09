@@ -110,7 +110,6 @@ from __future__ import annotations
 import functools
 import re
 import shutil
-import subprocess
 import sys
 import tempfile
 import zlib
@@ -119,6 +118,7 @@ from pathlib import Path
 from PIL import Image, ImageChops, ImageFilter, ImageStat
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev.run import run
 from urchin_dev.swf import strip
 from urchin_dev.swf.swf_index import (
     SHAPE_TAGS,
@@ -199,23 +199,6 @@ MISSING_BITMAP = 65535
 DEFINE_SPRITE_TAG = 39
 SHOW_FRAME_TAG = b"\x40\x00"  # UI16 0x0040 - tag code 1, body length 0
 END_TAG = b"\x00\x00"
-
-
-def run(cmd: list[str]) -> subprocess.CompletedProcess:
-    """subprocess.run wrapper that always captures output and surfaces it in
-    a raised error's message - not just a bare CalledProcessError with the
-    exit code and nothing else. This pipeline's failure mode is exactly
-    "silently produces garbage output", so swallowing ffdec/ffmpeg's own
-    stdout/stderr on failure (the previous version's check=True,
-    capture_output=True with no re-raise message) is exactly backwards.
-    """
-    proc = subprocess.run(cmd, capture_output=True, text=True)
-    if proc.returncode != 0:
-        raise RuntimeError(
-            f"command failed (exit {proc.returncode}): {' '.join(cmd)}\n"
-            f"--- stdout ---\n{proc.stdout}\n--- stderr ---\n{proc.stderr}"
-        )
-    return proc
 
 
 def _swf_body(path: Path) -> tuple[int, bytes]:

@@ -3,8 +3,8 @@
 # assets/ui/items/<label>.png and repoints each resources/items/<id>_*.tres
 # slot_image at the matching icon.
 #
-# Each frame is exported directly via ffdec's own sprite renderer
-# (`-format sprite:png -selectid 2064`), not reassembled shape-by-shape. An
+# Each frame is rendered by ffdec's own renderer through render.py, not
+# reassembled shape-by-shape. An
 # earlier version of this script pasted each frame's shapes onto a canvas by
 # hand, reading only characterId/matrix off every PlaceObject tag - so any
 # effect that lives on the PlaceObject instead of the raw shape (a
@@ -25,7 +25,7 @@
 # across a wrapper/inner pair. Left untouched here so ffdec's own renderer
 # applies it like every other placement.
 #
-# ffdec still sizes every frame's exported PNG to the whole sprite
+# ffdec still sizes every frame's canvas to the whole sprite
 # timeline's union bounding box (856 frames), so each frame comes back as
 # an ~identical, mostly-transparent canvas with the masked icon - always
 # ~62x62px at ZOOM=2, since the mask constrains every frame to the same
@@ -33,21 +33,17 @@
 # bounds before saving, same as faces.py does for its own (much smaller)
 # per-frame canvas.
 #
-# Requires ffdec (~/.local/bin/ffdec) for the sprite PNG export.
+# Requires ffdec (~/.local/bin/ffdec), whose jars render.py's driver runs on.
 # Run: uv run extract_item_icons
 from __future__ import annotations
 
 import re
-import shutil
-import subprocess
 import sys
-import tempfile
-from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
-from urchin_dev.swf import timeline
+from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev.swf import render, timeline
 from urchin_dev.swf.swf_index import read_swf
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "items"
@@ -60,68 +56,31 @@ def sanitize(label: str) -> str:
     return re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_")
 
 
-def run(cmd: list[str]) -> subprocess.CompletedProcess:
-    proc = subprocess.run(cmd, capture_output=True, text=True)
-    if proc.returncode != 0:
-        raise RuntimeError(
-            f"command failed (exit {proc.returncode}): {' '.join(cmd)}\n"
-            f"--- stdout ---\n{proc.stdout}\n--- stderr ---\n{proc.stderr}"
-        )
-    return proc
-
-
 def main():
     labels = timeline.labels(read_swf(WEB_SWF), ICON_SPRITE)
     print(f"icon labels: {len(labels)}", file=sys.stderr)
 
-    work_dir = Path(tempfile.mkdtemp(prefix="item_icons_"))
-    try:
-        frames_dir = work_dir / "frames"
-        run(
-            [
-                str(FFDEC),
-                "-zoom",
-                str(ZOOM),
-                "-format",
-                "sprite:png",
-                "-selectid",
-                str(ICON_SPRITE),
-                "-export",
-                "sprite",
-                str(frames_dir),
-                str(WEB_SWF),
-            ]
-        )
-        sprite_frames_dir = frames_dir / f"DefineSprite_{ICON_SPRITE}"
-
-        OUT_DIR.mkdir(parents=True, exist_ok=True)
-        written: dict[str, str] = {}
-        missing = []
+    jobs = [render.Job(ICON_SPRITE, f, ZOOM) for f in sorted(set(labels.values()))]
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    written: dict[str, str] = {}
+    with render.frames(WEB_SWF, jobs) as rendered:
+        by_frame = {frame.job.frame: frame for frame in rendered}
         for label, frame in labels.items():
-            src = sprite_frames_dir / f"{frame}.png"
-            if not src.exists():
-                missing.append((label, frame))
-                continue
             file_name = sanitize(label) + ".png"
-            img = Image.open(src)
-            bbox = img.getchannel("A").getbbox()
-            # Trim the mostly-transparent export canvas down to this frame's
-            # own content (see file header) - a couple of labels ("Nichts"/
+            trimmed = render.trim(by_frame[frame])
+            # Trim the mostly-transparent canvas down to this frame's own
+            # content (see file header) - a couple of labels ("Nichts"/
             # "None") are the deliberately blank empty-slot icon and have no
             # content at all, so keep those as a minimal 1x1 transparent
             # pixel instead of the full untrimmed canvas.
             img = (
-                img.crop(bbox)
-                if bbox is not None
+                trimmed.image
+                if trimmed is not None
                 else Image.new("RGBA", (1, 1), (0, 0, 0, 0))
             )
             img.save(OUT_DIR / file_name)
             written[label] = file_name
-        print(f"icons written: {len(written)}", file=sys.stderr)
-        if missing:
-            print(f"missing source frames: {missing}", file=sys.stderr)
-    finally:
-        shutil.rmtree(work_dir, ignore_errors=True)
+    print(f"icons written: {len(written)}", file=sys.stderr)
 
     # --- repoint the item .tres slot_image at the new icons -----------------
     # Labels and item names disagree on case/punctuation sometimes ("White

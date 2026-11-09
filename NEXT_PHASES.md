@@ -222,8 +222,9 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   Two smaller things found alongside it, both pre-existing. `test_battle_runner.gd`'s
   `test_misses_are_move_events_not_a_separate_type` ran battle 51 with unseeded RNG and asserted once per miss, which drifted the suite's total assert
   count and failed outright on a zero-miss run. Fixed 2026-08-23: the test seeds the global RNG and hands it back afterwards, giving 11 misses over 55
-  half-turns every run. Still open: `extract_battle_screen` runs ffdec six times where three would do, because `render_labels` and `layout_rects` each
-  render the same sprite at the same frames, costing about 37 seconds a run.
+  half-turns every run. `extract_battle_screen` also used to render every hall, sky and chrome frame twice, once for the PNG and once for its rect, 17
+  ffdec calls in 61.3s. Fixed by julian-perge/urchin#43: one driver run renders each frame once and the PNG and its rect come from it, so a run is one
+  driver run plus one CLI shape export in 18.7s.
 
 - **Cutscenes** - **DONE (2026-08-18)**, see `.claude/plan_cutscenes.md` for the full task breakdown. All 4 cutscenes (`CS_CUT2`-`CS_CUT5`) extracted as `.ogv` with audio (via ffdec's own
   sprite:avi renderer, every filter/color-transform/blend-mode baked in correctly), a `CutscenePlayer` scene matches the original's fade-in/fade-out, wired into the victory-screen Continue flow.

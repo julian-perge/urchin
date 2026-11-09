@@ -1,11 +1,12 @@
 # strip.py
-# The one place that deletes or hides characters before ffdec renders, for
-# characters the game never shows: ones ActionScript hides at runtime, the
-# author's placeholder rigs and the overlays an extractor wants the art
-# without. Each extractor keeps its own {characterId: reason} and hands it
-# here. stripped_copy() gives back one copy of the SWF with every id deleted
-# by a single ffdec -removeCharacter call, and hide_list() gives the ids for
-# a ffdec_lib.render job's hide_characters.
+# The one place that decides which characters get deleted before ffdec
+# renders, for characters the game never shows: ones ActionScript hides at
+# runtime, the author's placeholder rigs and the overlays an extractor wants
+# the art without. Each extractor keeps its own {characterId: reason} and
+# hands it here. stripped_copy() gives back one copy of the SWF with every id
+# deleted by a single ffdec -removeCharacter call, and strip_list() gives the
+# ids for a ffdec_lib.render job's strip_characters, which the driver deletes
+# in memory the same way.
 #
 # Both refuse first. A clip mask looks just like an unwanted shape on top of
 # the art, but deleting or hiding one unclips everything it covered:
@@ -20,7 +21,6 @@
 # were cropped from the stripped one.
 from __future__ import annotations
 
-import subprocess
 import sys
 import tempfile
 from collections.abc import Iterator
@@ -28,20 +28,12 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from urchin_dev import FFDEC
+from urchin_dev.run import run
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
 
 class StripError(ValueError):
     pass
-
-
-def run(cmd: list[str]) -> None:
-    proc = subprocess.run(cmd, capture_output=True, text=True)
-    if proc.returncode != 0:
-        raise RuntimeError(
-            f"command failed (exit {proc.returncode}): {' '.join(cmd)}\n"
-            f"--- stdout ---\n{proc.stdout}\n--- stderr ---\n{proc.stderr}"
-        )
 
 
 def check(index: SwfIndex, characters: dict[int, str]) -> None:
@@ -72,11 +64,11 @@ def check(index: SwfIndex, characters: dict[int, str]) -> None:
         raise StripError("\n".join(problems))
 
 
-def hide_list(swf: Path, characters: dict[int, str]) -> list[int]:
-    """-> the ids, sorted, for a ffdec_lib.render job's hide_characters."""
+def strip_list(swf: Path, characters: dict[int, str]) -> list[int]:
+    """-> the ids, sorted, for a ffdec_lib.render job's strip_characters."""
     check(read_swf(swf), characters)
     for cid, reason in sorted(characters.items()):
-        print(f"hiding {cid}: {reason}", file=sys.stderr)
+        print(f"stripped {cid}: {reason}", file=sys.stderr)
     return sorted(characters)
 
 

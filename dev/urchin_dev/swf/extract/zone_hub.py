@@ -21,7 +21,7 @@
 # spinning orb, once per interactive spot, plus a DefineButton2 for each one.
 # Godot draws those as its own orb.tscn nodes at positions the zone scenes
 # already carry, so the background has to come out without them. Deleting the
-# orb and its buttons from a working copy of the SWF leaves ffdec drawing the
+# orb and its buttons before the render leaves ffdec drawing the
 # scene art alone - the same approach start_screens.py uses for the menu
 # background.
 #
@@ -36,7 +36,6 @@ from __future__ import annotations
 
 import math
 import shutil
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -44,7 +43,8 @@ from pathlib import Path
 from PIL import Image
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
-from urchin_dev.swf import strip, timeline
+from urchin_dev.run import run
+from urchin_dev.swf import render, strip, timeline
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
 HUB_DIR = REPO_ROOT / "assets" / "backgrounds" / "hub"
@@ -71,7 +71,7 @@ ZONE_LABELS: dict[int, str] = {
 }
 
 # The orb and the buttons sitting on each of its spots. Deleted from the
-# working copy so the hub renders as bare scene art.
+# render so the hub comes out as bare scene art.
 ORB_BUTTONS = tuple(range(3186, 3194))
 HUB_STRIP: dict[int, str] = {
     ORB_SPRITE: "the spinning orb, which scenes/orb.tscn draws instead",
@@ -83,16 +83,6 @@ HUB_STRIP: dict[int, str] = {
 ORB_SHAPES: dict[int, str] = {3194: "orb_arc_inner", 3195: "orb_arc_outer"}
 
 
-def run(cmd: list[str]) -> subprocess.CompletedProcess:
-    proc = subprocess.run(cmd, capture_output=True, text=True)
-    if proc.returncode != 0:
-        raise RuntimeError(
-            f"command failed (exit {proc.returncode}): {' '.join(cmd)}\n"
-            f"--- stdout ---\n{proc.stdout}\n--- stderr ---\n{proc.stderr}"
-        )
-    return proc
-
-
 def zone_frames(index: SwfIndex) -> dict[int, int]:
     """-> {zone number: the frame of 3287 that zone's label sits on}."""
     return {
@@ -102,50 +92,27 @@ def zone_frames(index: SwfIndex) -> dict[int, int]:
 
 
 def render_hubs(frames: dict[int, int]) -> None:
-    """Draw each zone's hub frame from a copy of the SWF with the orb and its
-    buttons deleted, trimmed to the scene art."""
-    work = Path(tempfile.mkdtemp(prefix="zone_hub_"))
-    try:
-        wanted = sorted(set(frames.values()))
-        out = work / "frames"
-        with strip.stripped_copy(WEB_SWF, HUB_STRIP) as stripped:
-            run(
-                [
-                    str(FFDEC),
-                    "-zoom",
-                    str(HUB_ZOOM),
-                    "-format",
-                    "sprite:png",
-                    "-selectid",
-                    str(HUB_SPRITE),
-                    "-select",
-                    ",".join(f"{HUB_SPRITE}:{f}" for f in wanted),
-                    "-export",
-                    "sprite",
-                    str(out),
-                    str(stripped),
-                ]
-            )
-
-        HUB_DIR.mkdir(parents=True, exist_ok=True)
-        rendered = out / f"DefineSprite_{HUB_SPRITE}"
+    """Draw each zone's hub frame with the orb and its buttons deleted,
+    trimmed to the scene art."""
+    stripped = tuple(strip.strip_list(WEB_SWF, HUB_STRIP))
+    wanted = sorted(set(frames.values()))
+    jobs = [render.Job(HUB_SPRITE, frame, HUB_ZOOM, strip=stripped) for frame in wanted]
+    HUB_DIR.mkdir(parents=True, exist_ok=True)
+    with render.frames(WEB_SWF, jobs) as rendered:
+        by_frame = dict(zip(wanted, rendered, strict=True))
         for zone, frame in sorted(frames.items()):
-            image = Image.open(rendered / f"{frame}.png").convert("RGBA")
-            bbox = image.getchannel("A").getbbox()
-            if bbox is None:
+            trimmed = render.trim(by_frame[frame])
+            if trimmed is None:
                 raise RuntimeError(
                     f"zone {zone} ({ZONE_LABELS[zone]}, frame {frame}) rendered empty"
                 )
-            cropped = image.crop(bbox)
             path = HUB_DIR / f"{ZONE_LABELS[zone]}.png"
-            cropped.save(path)
+            trimmed.image.save(path)
             print(
                 f"zone {zone} {ZONE_LABELS[zone]:<8} frame {frame:>3} -> "
-                f"{path.name} {cropped.size}",
+                f"{path.name} {trimmed.image.size}",
                 file=sys.stderr,
             )
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
 
 
 def export_orb_shapes() -> None:

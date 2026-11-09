@@ -5,14 +5,14 @@
 #   source_files/swf_xml/        - swf2xml dumps of BOTH SWFs, only with --xml
 #
 # The extractors read geometry from the SWFs through swf_index.py and
-# timeline.py, and only vfx_offsets.py still reads the web dump. The dumps
-# stay in LFS so they can be grepped, but a rewrite after any ffdec update
-# adds ~284 MB to LFS, so it only happens when asked for.
+# timeline.py, and nothing reads the dumps. They stay in LFS so they can be
+# grepped, but a rewrite after any ffdec update adds ~284 MB to LFS, so it
+# only happens when asked for.
 #
 # Run: uv run export_swf_sources [--xml]
 from __future__ import annotations
 
-import subprocess
+import shutil
 import sys
 
 from urchin_dev import (
@@ -24,11 +24,12 @@ from urchin_dev import (
     WEB_SWF,
     WEB_SWF_XML,
 )
+from urchin_dev.run import run as run_command
 
 
 def run(args):
     print("$", " ".join(str(a) for a in args), file=sys.stderr)
-    subprocess.run([str(a) for a in args], check=True)
+    run_command(args)
 
 
 def main():
@@ -39,9 +40,9 @@ def main():
     tmp = ACTION_SCRIPT.parent / "_action_script_export"
     run([FFDEC, "-export", "script", tmp, WEB_SWF])
     if ACTION_SCRIPT.exists():
-        subprocess.run(["rm", "-rf", str(ACTION_SCRIPT)], check=True)
+        shutil.rmtree(ACTION_SCRIPT)
     (tmp / "scripts").rename(ACTION_SCRIPT)
-    subprocess.run(["rm", "-rf", str(tmp)], check=True)
+    shutil.rmtree(tmp)
     if "--xml" in sys.argv[1:]:
         run([FFDEC, "-swf2xml", WEB_SWF, WEB_SWF_XML])
         run([FFDEC, "-swf2xml", STEAM_SWF, STEAM_SWF_XML])

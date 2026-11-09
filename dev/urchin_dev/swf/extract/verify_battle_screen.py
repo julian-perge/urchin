@@ -4,10 +4,10 @@
 # ffdec_lib.py from the unmodified SWF, so nothing is written to a SWF.
 #
 # The reference is root frame KRINBATTLESCENE at the same zoom, with every
-# depth hidden except the hall, the sky and DefineShape 333, every nested
-# placement of battle_screen.BATTLE_STRIP's ids hidden through strip.py, and
-# the hall and the sky moved to the labels being checked, the way the game's
-# two gotoAndStop handlers move them. The CLI could only ever render WHITE
+# depth hidden except the hall, the sky and DefineShape 333, the ids in
+# battle_screen.BATTLE_STRIP deleted through strip.py, and the hall and the
+# sky moved to the labels being checked, the way the game's two gotoAndStop
+# handlers move them. The CLI could only ever render WHITE
 # NOVEMBER over SEA, the frame 1 of each, which is all the check it replaced
 # covered.
 #
@@ -37,7 +37,7 @@ import numpy as np
 from PIL import Image
 
 from urchin_dev import CONVERTED_JSON, WEB_SWF
-from urchin_dev.swf import strip, timeline, transform_rect
+from urchin_dev.swf import strip, timeline
 from urchin_dev.swf.extract.battle_screen import (
     BATTLE_STRIP,
     FRAME_LABEL,
@@ -60,6 +60,19 @@ def battle_pairs() -> list[tuple[str, str]]:
     battles = json.loads((CONVERTED_JSON / "battles.json").read_text())["battles"]
     pairs = sorted({(b["zone_background"], b["sky_background"]) for b in battles})
     return [FIRST_PAIR] + [p for p in pairs if p != FIRST_PAIR]
+
+
+def transform_rect(matrix, rect):
+    """-> the bounding box (xmin, ymin, xmax, ymax) of `rect` after `matrix`,
+    which is (scaleX, rotateSkew0, rotateSkew1, scaleY, tx, ty) as the SWF
+    stores it: x' = scaleX*x + rotateSkew1*y + tx, y' = rotateSkew0*x +
+    scaleY*y + ty."""
+    sx, r0, r1, sy, tx, ty = matrix
+    xmin, ymin, xmax, ymax = rect
+    corners = ((xmin, ymin), (xmax, ymin), (xmin, ymax), (xmax, ymax))
+    xs = [sx * x + r1 * y + tx for x, y in corners]
+    ys = [r0 * x + sy * y + ty for x, y in corners]
+    return min(xs), min(ys), max(xs), max(ys)
 
 
 def mask_box(
@@ -121,7 +134,7 @@ def main():
         file=sys.stderr,
     )
 
-    hidden = strip.hide_list(WEB_SWF, BATTLE_STRIP)
+    stripped = strip.strip_list(WEB_SWF, BATTLE_STRIP)
     work = Path(tempfile.mkdtemp(prefix="verify_battle_"))
     jobs = []
     for n, (hall, sky) in enumerate(pairs):
@@ -136,7 +149,7 @@ def main():
                 "out": str(work / f"{n}.png"),
                 "background": "swf",
                 "only_depths": keep,
-                "hide_characters": hidden,
+                "strip_characters": stripped,
                 "goto": [
                     {"depth": hall_depth, "label": rendered_hall},
                     {"depth": sky_depth, "label": sky},

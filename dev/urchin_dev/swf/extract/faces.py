@@ -40,15 +40,10 @@
 from __future__ import annotations
 
 import re
-import subprocess
 import sys
-import tempfile
-from pathlib import Path
 
-from PIL import Image
-
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
-from urchin_dev.swf import timeline
+from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev.swf import render, timeline
 from urchin_dev.swf.swf_index import read_swf
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "menu" / "portraits"
@@ -60,27 +55,6 @@ def sanitize(label: str) -> str:
     return re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_").lower()
 
 
-def union_bbox(images):
-    """-> the smallest box holding every image's opaque pixels, or None when
-    they are all fully transparent."""
-    box = None
-    for image in images:
-        found = image.getchannel("A").getbbox()
-        if found is None:
-            continue
-        box = (
-            found
-            if box is None
-            else (
-                min(box[0], found[0]),
-                min(box[1], found[1]),
-                max(box[2], found[2]),
-                max(box[3], found[3]),
-            )
-        )
-    return box
-
-
 def main():
     labels = timeline.labels(read_swf(WEB_SWF), FACE_CLIP)
     print(
@@ -88,48 +62,24 @@ def main():
         file=sys.stderr,
     )
 
-    face_dir = Path(tempfile.mkdtemp(prefix="face_frames_"))
-    subprocess.run(
-        [
-            str(FFDEC),
-            "-zoom",
-            str(ZOOM),
-            "-format",
-            "sprite:png",
-            "-selectid",
-            str(FACE_CLIP),
-            "-export",
-            "sprite",
-            str(face_dir),
-            str(WEB_SWF),
-        ],
-        check=True,
-        capture_output=True,
-    )
-    face_frames_dir = face_dir / f"DefineSprite_{FACE_CLIP}"
-
-    faces, missing = {}, []
-    for label, frame in labels.items():
-        src = face_frames_dir / f"{frame}.png"
-        if not src.exists():
-            missing.append((label, frame))
-            continue
-        faces[label] = Image.open(src).convert("RGBA")
-
-    crop = union_bbox(faces.values())
-    if crop is None:
+    frames = sorted(set(labels.values()))
+    jobs = [render.Job(FACE_CLIP, frame, ZOOM) for frame in frames]
+    with render.frames(WEB_SWF, jobs) as rendered:
+        cut = render.trim_union(rendered)
+        canvas = rendered[0].size if rendered else None
+    if cut is None:
         raise RuntimeError("every exported face frame is fully transparent")
 
+    by_frame = dict(zip(frames, cut, strict=True))
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    for label, image in faces.items():
-        image.crop(crop).save(OUT_DIR / f"{sanitize(label)}.png")
+    for label, frame in labels.items():
+        by_frame[frame].image.save(OUT_DIR / f"{sanitize(label)}.png")
+    crop = cut[0].bbox
     print(
-        f"wrote {len(faces)} portraits, cropped to {crop[2] - crop[0]}x"
-        f"{crop[3] - crop[1]} from {next(iter(faces.values())).size}",
+        f"wrote {len(labels)} portraits, cropped to {crop[2] - crop[0]}x"
+        f"{crop[3] - crop[1]} from {canvas}",
         file=sys.stderr,
     )
-    if missing:
-        print(f"missing source frames: {missing}", file=sys.stderr)
 
 
 if __name__ == "__main__":
