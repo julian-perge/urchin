@@ -110,6 +110,36 @@ Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/
   above: the original also evaluates it at every successful hit, so both start the stun animation at the impact. The comparison only fires when the value has changed, so extra evaluations in
   between change nothing.
 
+## Dispel order and timing (frame_217/PlaceObject2_3389_480 enterFrame, lines 22-103)
+
+Ported: `BattleRunner._resolve_dispels` takes slots in `CombatUnit.buff_slots` order, `CombatUnit.apply_changes` sorts `buff_slots` the way `applyChangesKrin` sorts `BUFFARRAYK`
+(`_sort_buff_slots`), and `_execute_move_action` recomputes the target's stats after the hit.
+
+- On a successful strike, before `executeMove`, the conductor walks the target's 40 `BUFFARRAYK` slots (`maxBuffLimit`, `frame_42/DoAction_10.as:538`) in array order. A slot is a
+  candidate when its CD is above 0 and its buff's element is in the move's `[15]` list (line 30). While any of the move's `[16]` dispels are left, each candidate whose buff polarity `[20]`
+  matches the move's `[19]` spends one, and then goes only if `Math.random() <= [22]` and `Math.random() >=` the buff's `[32]` (lines 32-46), so a failed roll still spends a dispel. A
+  removal sets CD to 0 and calls `applyBuffKrin` with -1 (lines 43-44). 37 moves dispel, and none lists an element twice.
+- The array order is what the unit's last `applyChangesKrin` left, because line 344 of `frame_42/DoAction_10.as` runs `BUFFARRAYK.sortOn("CD", Array.DESCENDING | Array.NUMERIC)` on every
+  call. It runs after every hit on the unit (conductor line 103), at the end of the unit's own `buffTicker` (`frame_42/DoAction_10.as:135`) and at battle start for a unit with passive buffs
+  (`frame_217/DoAction_4.as:13`). So the slots with the most turns left come first, and passives, at CD -1, sort after the empty slots. A new buff takes the first slot with CD 0
+  (`frame_42/DoAction_10.as:152-166`).
+- The sort doesn't keep tied slots in order. Ruffle's AVM1 `qsort` (`core/src/avm1/globals/array.rs` in ruffle-rs/ruffle) is a quicksort that splits each range on its first element, and it
+  makes the same comparisons and gives the same result that Flash Player logged for `tests/tests/swfs/avm1/array_sort_random`, a sort with a random comparator (passing since Ruffle commit
+  `763616d33b`). For `sortOn` with `DESCENDING`, Ruffle flips each comparison inside that quicksort (`sort_compare`), where for `sort` it reverses the sorted result. No Flash Player log in
+  Ruffle's tests has tied keys under `sortOn` with `DESCENDING`, so that part rests on Ruffle's code. avmplus, Flash Player's AS3 engine, also flips the comparison for `DESCENDING`
+  (`DescendingCompareFunc`, `core/ArrayClass.cpp:326` in adobe/avmplus). Dispelling slot 0 of three slots holding 5, 3 and 3 turns leaves the two 3s swapped, and Godot's `sort_custom`
+  ordered the slots with turns left differently from this quicksort in 2,592 of 3,000 random 40-slot arrays.
+- Sorting slots that are already in order moves nothing. The port also calls `apply_changes` where the original doesn't call `applyChangesKrin`: when it builds a unit, on empty slots,
+  and in `BattleManager._apply_status_effect` after a move lands its status buff. When that buff lands on the target, the call that matches line 103 follows with nothing in between. When it
+  lands on the caster of a move aimed at someone else, the original only sorts at the caster's tick. In 40,000 random runs of hits, self-buffs, ticks and dispels on one unit, sorting at the
+  port's points removed the same buffs as sorting at the original's, while sorting a copy at each dispel removed different ones in 11,577.
+- `applyBuffKrin` changes a removed buff's STUN, REFLECT, HEALMOD_PLUS, HEALMOD_MINUS, HEALMOD, IDOT, IHOT, ODOT, FOCUSCHANGE and SILENCED at once (`frame_42/DoAction_10.as:140-149`), and
+  its SSWITCH (171), SHIELD (205-222) and DoT and focus ticks (223, 243-251). Its stat changes only go into `changeArray` and `IDMGP` (172-191) and the per-element arrays (229-232), and
+  only `applyChangesKrin` turns those into STRENGTHU, MAGICU, SPEEDU, LIFEU, DMG, DMG2, IDMG, IDMG2, IDMGP2, PERU and DEFU (259-339), the fields `executeMove` reads
+  (`frame_42/DoAction_8.as:3-60`). The conductor runs `executeMove` (lines 54-69) and the status effect (70-102) before that `applyChangesKrin` (103). So the hit that removes a buff lands
+  without the buff's direct fields but with its stat changes: a Shatter that dispels SHATTERBOLT hits a target that is no longer stunned but still takes half damage.
+- The port used to walk `buff_slots` in the order the buffs landed, since nothing sorted it, and `_resolve_dispels` recomputed the target's stats before the hit.
+
 ## Menu piercing/defense bars (DefineSprite_3142/frame_1)
 
 Implemented in `scripts/ui/menu/menu_theme.gd` (`bar_fill_fraction`). Display value = allocation + ceil(100 + 15 * level); fill fraction = the crit-curve quartic `0.016666667 x^4 - 0.25 x^3 + 1.233333
