@@ -302,7 +302,18 @@ func _accuracy_roll(caster: CombatUnit, target: CombatUnit, move: Ability) -> bo
 		return true
 	var miss_chance: float
 	var denominator: float = caster.speed_u * move.combat_speed_modifier
+	# Every non-Shock move a unit can cast has a speed modifier of at least
+	# 0.5, and apply_changes() keeps speed_u at 0 or above, so this branch runs
+	# only when the caster's speed debuffs stack to 100% or more, such as two
+	# Surprise Shots in battle 502. With the change arrays holding floats, a
+	# seeded scan of 300 runs each of battles 502 and 305 reached it 597 times.
+	# The original divides here with no guard (conductor:362), so a caster
+	# speed of 0 gives it Infinity, which its cap turns into this same 75. If
+	# the target's speed is 0 as well, it divides 0 by 0 and the result fails
+	# every comparison, so the move always misses, as it does here.
 	if denominator <= 0:
+		if target.speed_u == 0:
+			return false
 		miss_chance = 75.0
 	else:
 		var speed_ratio: float = target.speed_u / denominator

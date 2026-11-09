@@ -23,9 +23,11 @@ enum ResultType { DAMAGE, HEAL, FOCUS, MISS, STATUS_ONLY }
 # Visual/audio side effects (BATTLEFLASH, BATTLESCREEN, addSound, ...) are left
 # out entirely; this returns a result Dictionary and the UI layer reacts to it.
 #
-# Original used a pre-rolled deterministic RNG array (KRS/KRSC/KRRR) shared
-# with the PvP checksum system, which we're not porting - crit/proc rolls here
-# use plain randi_range()/randf() instead.
+# _crit_roll() calls randi_range(0, 99) where the original's perScript() reads
+# KRS, a table of 100 random(100) values that it refills every time a battle
+# loads, and docs/adr/0003-keep-fresh-battle-rolls.md says why the port rolls
+# fresh. The status effect proc in _apply_status_effect() calls randf(), as the
+# original calls Math.random() there (the conductor, line 72).
 #
 # executeMove() computes nothing for a category other than "Full Damage",
 # "Heal" and "Focus", so a move with any other category returns a STATUS_ONLY
