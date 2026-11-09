@@ -367,6 +367,75 @@ func test_the_ending_screen_stays_silent_and_ok_starts_the_first_menu_track():
 	ZoneManager.auto_start_battles = true
 
 
+# The original's Proceed can't be pressed twice, because its release always
+# leaves the frame of DefineSprite 3142 that the victory screen is drawn on, for
+# the cutscene, the map or 3142's skills or hide frame (DefineButton2_3004
+# on(release), lines 8-29). The test clicks the port's Proceed the way a player
+# does, which leaves the keyboard focus on it, and then presses Enter and Space
+# under CS_CUT5 and again under the ending screen.
+func test_enter_and_space_after_clicking_proceed_press_nothing_under_the_cutscene_or_the_ending():
+	var save = PlayerSave.new_game("ProceedFocus", 0)
+	save.section_in = 5
+	save.quest_progress[5] = 13
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	# The scene gets a viewport of its own, because GUT's window sits above
+	# everything in the root viewport and would take the click.
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 600)
+	add_child_autofree(viewport)
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	viewport.add_child(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 513, "is_story_progress": true, "is_boss": true, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	var proceed: Button = scene.get_node("VictoryScreen/ProceedButton")
+	_click(viewport, proceed)
+	assert_eq(get_call_count(scene, "_on_victory_proceed"), 1, "the click pressed Proceed")
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "CS_CUT5 is playing")
+	for key in [KEY_ENTER, KEY_SPACE]:
+		_press(viewport, key)
+		assert_eq(get_call_count(scene, "_on_victory_proceed"), 1, "%s under the cutscene presses nothing" % OS.get_keycode_string(key))
+	if cutscene != null:
+		cutscene.video.finished.emit()
+	assert_not_null(scene.get_node_or_null("UI/EndingScreen"), "the ending screen is up")
+	for key in [KEY_ENTER, KEY_SPACE]:
+		_press(viewport, key)
+		assert_eq(get_call_count(scene, "_on_victory_proceed"), 1, "%s under the ending screen presses nothing" % OS.get_keycode_string(key))
+	assert_not_called(scene, "_on_continue_pressed")
+
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A left click on the control's center, pushed through the viewport's GUI input.
+func _click(viewport: Viewport, control: Control) -> void:
+	for pressed in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.pressed = pressed
+		event.position = control.get_global_rect().get_center()
+		event.global_position = event.position
+		viewport.push_input(event, true)
+
+
+# Presses and releases the key, because a focused button acts on the release.
+func _press(viewport: Viewport, key: Key) -> void:
+	for pressed in [true, false]:
+		var event := InputEventKey.new()
+		event.keycode = key
+		event.physical_keycode = key
+		event.pressed = pressed
+		viewport.push_input(event, true)
+
+
 # Presses Proceed on the victory screen and has CS_CUT5 report that it ended,
 # which with animation_speed 0 runs the rest of _on_victory_proceed() at once.
 func _proceed_and_play_cs_cut5_to_its_end(scene: Control) -> void:
