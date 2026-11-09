@@ -103,10 +103,11 @@ func stop_effects() -> void:
 		player.stop()
 
 
+# This is the original's stopAllSounds(), which stops the music and all three
+# effect channels.
 func stop_all_sounds() -> void:
 	stop_music()
-	for player in _effect_players:
-		player.stop()
+	stop_effects()
 
 
 func reset_music_rotation() -> void:
