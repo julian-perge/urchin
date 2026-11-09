@@ -122,6 +122,22 @@ func test_position_clamps_at_the_right_and_bottom_edges():
 	)
 
 
+# A Flash text field keeps 2 px between its edges and its text, and
+# KrinToolTipper sizes each backer bar to its text field, so every section
+# pads its text by 2 px and the box is its layout's text width plus 4.
+func test_sections_keep_the_flash_text_field_gutter():
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections(_sections_fixture(), anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ITEM)
+	await wait_process_frames(2)
+	for panel in GameTooltip._sections.get_children():
+		var style: StyleBox = panel.get_theme_stylebox("panel")
+		for side in [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]:
+			assert_eq(style.get_content_margin(side), 2.0, "a 2 px gutter on side %d" % side)
+	assert_eq(GameTooltip._sections.size.x, TooltipTheme.TEXT_WIDTH_ITEM + 4.0, "the box is the text width plus both gutters")
+	var title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	assert_eq(title.size.x, TooltipTheme.TEXT_WIDTH_ITEM, "the text still wraps at the layout's width")
+
+
 func test_position_clamps_at_the_left_and_top_edges():
 	var anchor: Control = add_child_autofree(Control.new())
 	anchor.position = Vector2(-50, -50)

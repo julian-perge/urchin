@@ -10,8 +10,10 @@ extends CanvasLayer
 
 const EDGE_MARGIN: float = 4.0
 const ANCHOR_GAP: float = 8.0
-const TEXT_MARGIN_X: float = 8.0
-const TEXT_MARGIN_Y: float = 4.0
+# A Flash text field keeps 2 px between its edges and its text, and
+# KrinToolTipper sizes each section's backer to its text field, so every
+# section pads its text by 2 px on each side.
+const TEXT_GUTTER: float = 2.0
 
 @onready var _root: HBoxContainer = $Root
 @onready var _icon_backing: ColorRect = $Root/IconBacking
@@ -34,16 +36,13 @@ func show_sections(
 ) -> void:
 	for child in _sections.get_children():
 		child.free()
-	_sections.custom_minimum_size.x = text_width + 2.0 * TEXT_MARGIN_X
+	_sections.custom_minimum_size.x = text_width + 2.0 * TEXT_GUTTER
 	for section_index in sections.size():
 		var section: Dictionary = sections[section_index]
 		var panel: PanelContainer = PanelContainer.new()
 		var style: StyleBoxFlat = StyleBoxFlat.new()
 		style.bg_color = section["bg_color"]
-		style.content_margin_left = TEXT_MARGIN_X
-		style.content_margin_right = TEXT_MARGIN_X
-		style.content_margin_top = TEXT_MARGIN_Y
-		style.content_margin_bottom = TEXT_MARGIN_Y
+		style.set_content_margin_all(TEXT_GUTTER)
 		panel.add_theme_stylebox_override("panel", style)
 		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var lines_box: VBoxContainer = VBoxContainer.new()
