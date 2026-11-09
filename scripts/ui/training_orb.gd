@@ -5,7 +5,10 @@ signal training_requested
 
 func _ready():
 	orb_color = Color.html("FFCC00")
-	tooltip_text = "Training Fight\nClick here to fight a practice battle for experience."
+	# DefineButton2_3186 on(rollOver) shows SYSTEM[29] over SYSTEM[30]
+	# (frame_1/DoAction.as:96-97).
+	tooltip_title = "Training Fight"
+	tooltip_body = "Click here to fight an enemy for training."
 	super._ready()
 
 func interact():

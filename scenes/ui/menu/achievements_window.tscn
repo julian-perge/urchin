@@ -66,7 +66,6 @@ offset_top = 145.0
 offset_right = 388.0
 offset_bottom = 177.0
 custom_minimum_size = Vector2(140, 32)
-tooltip_text = "Retrieve the tape from Felicity."
 
 [node name="NameLabel" type="Label" parent="Plate0"]
 layout_mode = 2
@@ -83,7 +82,6 @@ offset_top = 191.0
 offset_right = 388.0
 offset_bottom = 223.0
 custom_minimum_size = Vector2(140, 32)
-tooltip_text = "Defeat Clemons for the first time, without using any team mates. This can only be done on Challenging or Heroic difficulty."
 
 [node name="NameLabel" type="Label" parent="Plate1"]
 layout_mode = 2
@@ -100,7 +98,6 @@ offset_top = 237.0
 offset_right = 388.0
 offset_bottom = 269.0
 custom_minimum_size = Vector2(140, 32)
-tooltip_text = "Defeat the Hydra for the first time, without dealing more than 2000 damage throughout the whole fight. This can only be done on Challenging or Heroic difficulty."
 
 [node name="NameLabel" type="Label" parent="Plate2"]
 layout_mode = 2
@@ -117,7 +114,6 @@ offset_top = 283.0
 offset_right = 388.0
 offset_bottom = 315.0
 custom_minimum_size = Vector2(140, 32)
-tooltip_text = "Defeat Captain Hunt without using any training fights, and without repeating any defeated bosses. This can only be done on Heroic difficulty."
 
 [node name="NameLabel" type="Label" parent="Plate3"]
 layout_mode = 2
@@ -134,7 +130,6 @@ offset_top = 329.0
 offset_right = 388.0
 offset_bottom = 361.0
 custom_minimum_size = Vector2(140, 32)
-tooltip_text = "Defeat the Mayor without using any training fights, and without repeating any defeated bosses. This can only be done on Heroic difficulty."
 
 [node name="NameLabel" type="Label" parent="Plate4"]
 layout_mode = 2
@@ -151,7 +146,6 @@ offset_top = 145.0
 offset_right = 553.0
 offset_bottom = 177.0
 custom_minimum_size = Vector2(140, 32)
-tooltip_text = "Defeat the Mayor on Heroic difficulty with all three classes"
 
 [node name="NameLabel" type="Label" parent="Plate5"]
 layout_mode = 2
@@ -168,7 +162,6 @@ offset_top = 191.0
 offset_right = 553.0
 offset_bottom = 223.0
 custom_minimum_size = Vector2(140, 32)
-tooltip_text = "Defeat Metal Warden using only one team member."
 
 [node name="NameLabel" type="Label" parent="Plate6"]
 layout_mode = 2
@@ -185,7 +178,6 @@ offset_top = 237.0
 offset_right = 553.0
 offset_bottom = 269.0
 custom_minimum_size = Vector2(140, 32)
-tooltip_text = "Defeat the Time Bomb in less than 40 turns."
 
 [node name="NameLabel" type="Label" parent="Plate7"]
 layout_mode = 2
@@ -202,7 +194,6 @@ offset_top = 283.0
 offset_right = 553.0
 offset_bottom = 315.0
 custom_minimum_size = Vector2(140, 32)
-tooltip_text = "Defeat Nostalgia without using any team members."
 
 [node name="NameLabel" type="Label" parent="Plate8"]
 layout_mode = 2
@@ -219,7 +210,6 @@ offset_top = 329.0
 offset_right = 553.0
 offset_bottom = 361.0
 custom_minimum_size = Vector2(140, 32)
-tooltip_text = "Defeat the Corruptor in Zone 7."
 
 [node name="NameLabel" type="Label" parent="Plate9"]
 layout_mode = 2

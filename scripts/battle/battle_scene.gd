@@ -129,6 +129,18 @@ var _pending_setup_events: Array = []  # runner.setup()'s return - played first 
 
 func _ready():
 	speech_label.text = ""
+	# The retreat button is the original's battle Quit button,
+	# DefineButton2_3356, which shows SYSTEM[25] over SYSTEM[26]
+	# (frame_1/DoAction.as:92-93). The pass button, DefineButton2_3383, shows
+	# no tooltip in the original and the original has no log toggle, so both
+	# keep the port's own native tooltips.
+	var retreat: Button = $BottomBar/RetreatButton
+	var quit_sections: Array = [
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": "Quit", "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": "Click here to exit. Warning! All unsaved progress will be lost!", "color": TooltipTheme.TEXT_BODY}]},
+	]
+	retreat.mouse_entered.connect(func(): GameTooltip.show_sections(quit_sections, retreat))
+	retreat.mouse_exited.connect(GameTooltip.hide_tooltip)
 	if not ZoneManager.pending_battle.is_empty():
 		start_battle(ZoneManager.pending_battle)
 		ZoneManager.pending_battle = {}

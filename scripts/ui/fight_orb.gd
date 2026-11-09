@@ -5,7 +5,10 @@ signal fight_requested
 
 func _ready():
 	orb_color = Color.html("C40000")
-	tooltip_text = "Story Battle\nClick here to take on the next story fight."
+	# DefineButton2_3188 on(rollOver) shows SYSTEM[13] over SYSTEM[14]
+	# (frame_1/DoAction.as:80-81).
+	tooltip_title = "Next Battle"
+	tooltip_body = "Click here to enter the next progress battle of this zone."
 	super._ready()
 
 func interact():

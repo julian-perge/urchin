@@ -631,6 +631,39 @@ func test_an_empty_equip_slot_names_its_slot_type():
 	head_slot.mouse_exited.emit()
 
 
+# Plate n shows ACH[n] over ACHDESC[n] (DefineButton2_3137 on(rollOver),
+# lines 5-7, and DefineSprite_3142/frame_45/DoAction.as:4) in place of a
+# native tooltip.
+func test_achievement_plates_show_the_name_over_the_description():
+	var window = add_child_autofree(load("res://scenes/ui/menu/achievements_window.tscn").instantiate())
+	var plate: Control = window._plates[1]
+	assert_eq(plate.tooltip_text, "", "no native tooltip")
+	plate.mouse_entered.emit()
+	assert_eq(_tooltip_texts(), [Achievements.NAMES[1], Achievements.DESCRIPTIONS[1]], "Black Magic over its description")
+	plate.mouse_exited.emit()
+	assert_false(GameTooltip._root.visible, "leaving the plate hides it")
+
+
+# The hub's orbs show the original's titles over their descriptions: Next
+# Battle, SYSTEM[13] and [14] (DefineButton2_3188 on(rollOver)), Training
+# Fight, SYSTEM[29] and [30] (DefineButton2_3186), and Item Store, SYSTEM[15]
+# and [16] (DefineButton2_3187), from frame_1/DoAction.as:80-97.
+func test_zone_orbs_show_the_original_titles_over_their_descriptions():
+	var zone = add_child_autofree(load(str(ZoneManager.ZONES[1]["scene"])).instantiate())
+	await get_tree().process_frame
+	var expected: Dictionary = {
+		"StoryFight": ["Next Battle", "Click here to enter the next progress battle of this zone."],
+		"TrainingFight": ["Training Fight", "Click here to fight an enemy for training."],
+		"ItemStore": ["Item Store", "Click here to buy and sell items."],
+	}
+	for orb_name in expected:
+		var hit_box: Control = zone.get_node(orb_name).get_node("Control")
+		assert_eq(hit_box.tooltip_text, "", "%s has no native tooltip" % orb_name)
+		hit_box.mouse_entered.emit()
+		assert_eq(_tooltip_texts(), expected[orb_name], orb_name)
+		hit_box.mouse_exited.emit()
+
+
 func _tooltip_texts() -> Array:
 	var texts: Array = []
 	if not GameTooltip._root.visible:
