@@ -102,6 +102,17 @@ func test_from_character_shrinks_stats_below_level_10():
 		assert_eq(guard.base_speed, expected["speed"], "speed at level %d" % level)
 
 
+# Bunny's record never sets voiceDie (frame_42/DoAction_13.as:543-551), and the
+# original's addSound plays nothing for an undefined cue
+# (frame_42/DoAction.as:7), so the port gives Bunny an empty die voice, which
+# AudioManager.play_effect skips. Battle 406 fields Bunny at level 18 in slot 2.
+func test_from_character_gives_bunny_an_empty_die_voice():
+	var bunny: Character = load("res://resources/units/56_bunny.tres")
+	var unit: CombatUnit = CombatUnit.from_character(bunny, 18, CombatUnit.Difficulty.NORMAL, 2)
+	assert_not_null(unit, "from_character finished building Bunny")
+	assert_eq(unit.voice_die, "")
+
+
 func test_player_from_save_with_talent_passives():
 	var save = PlayerSave.new_game("Smoke", 0)
 	save.level = 5

@@ -1,4 +1,15 @@
-# Run this as an Editor script when you need to update resources
+# Rebuilds every resources/units/*.tres from dev/converted_json/units.json.
+#
+# Run it inside a headless editor so each file keeps its uid and ext_resource
+# id. Start a throwaway SceneTree script with
+#   godot --headless -e --path . -s <script>
+# and have its _process wait 30 frames, load every .tres in resources/units/,
+# then call load("res://scripts/editor/units.gd").new()._run(). In a scratch
+# run that saved to paths it had not loaded, every file got a new random
+# ext_resource id. Without -e, Godot refuses to instantiate an EditorScript,
+# and a copy of this script run that way saved every file with no uid at all.
+# Run the -e way on Godot 4.7.2, all 75 files kept their uids and
+# ext_resource ids, and git diff showed only the change the converter had made.
 @tool
 extends EditorScript
 
@@ -23,8 +34,11 @@ const CharacterScript = preload("res://scripts/entities/character.gd")
 const AGGRESSION_ORDER: Array[String] = Party.AGGRESSION_NAMES
 const ELEMENT_ORDER: Array[String] = CombatUnit.ELEMENT_ORDER
 
+# This and _absolute_moves build untyped arrays on purpose. A typed array saves
+# into a .tres wrapped as Array[int]([...]) or Array[Dictionary]([...]), so
+# typing them makes this script rewrite every committed unit file.
 func _ids(move_list: Array) -> Array:
-	var ids: Array[int] = []
+	var ids: Array = []
 	for move in move_list:
 		ids.append(int(move["id"]))
 	return ids
@@ -33,7 +47,7 @@ func _ids(move_list: Array) -> Array:
 # field is really the battle PHASE the move is restricted to (0 = usable in any
 # phase) - AImoveAdder checks moveArrayABS[i][1] == 0 || == _root.phase.
 func _absolute_moves(move_list: Array) -> Array:
-	var moves: Array[Dictionary] = []
+	var moves: Array = []
 	for move in move_list:
 		moves.append({"id": int(move["id"]), "phase": int(move["turn"])})
 	return moves

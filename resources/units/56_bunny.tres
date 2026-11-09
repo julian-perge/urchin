@@ -29,9 +29,7 @@ visuals = {
 "model": ["MODEL7", "BUNNY", "", "M"],
 "skin": "0",
 "voice": {
-"die": {
-"type": "Undefined"
-},
+"die": "",
 "hit": []
 }
 }
