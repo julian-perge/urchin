@@ -22,6 +22,14 @@ _Avoid_: Box, column
 The Battle screen's status elements drawn over the hall: unit overlays, member bars, the top status bar and the speech box.
 _Avoid_: Overlay, battle UI
 
+**Decision**:
+The part of the player's half-turn when the turn loop waits for a pick or a pass.
+_Avoid_: Window, decision window
+
+**Radial menu**:
+The ring of orbs, one per bar slot, that opens around a clicked unit during a Decision.
+_Avoid_: Selector
+
 **Stage**:
 The 800x575 area the original game draws on, which every position recorded from the SWF is measured in.
 _Avoid_: Viewport, canvas

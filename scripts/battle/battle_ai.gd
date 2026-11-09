@@ -58,7 +58,7 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 		if entry["phase"] != 0 and entry["phase"] != phase:
 			continue
 		var move: Ability = moves_by_id.get(entry["id"])
-		if move == null or not _can_afford(caster, move):
+		if move == null or not MoveLegality.can_afford(caster, move):
 			continue
 		if move.can_target_self or move.can_target_others or has_friends:
 			absolute_ids.append(entry["id"])
@@ -88,7 +88,7 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 				attack_indices_cd.append(i)
 		for i in attack_ids_cd.size():
 			var move: Ability = moves_by_id.get(attack_ids_cd[i])
-			if move == null or not _can_afford(caster, move):
+			if move == null or not MoveLegality.can_afford(caster, move):
 				continue
 			var restores_ally_focus: bool = move.targets_allies and lowest_focus < caster.focus_regen_limit
 			var restores_own_focus: bool = move.can_target_self and caster.focus_n < caster.focus_regen_limit
@@ -109,7 +109,7 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 			if caster.cooldowns_defense[i] != 0:
 				continue
 			var move: Ability = moves_by_id.get(caster.move_pool_defense[i])
-			if move == null or not _can_afford(caster, move):
+			if move == null or not MoveLegality.can_afford(caster, move):
 				continue
 			if move.can_target_self or move.can_target_others or has_friends:
 				defense_ids.append(caster.move_pool_defense[i])
@@ -270,17 +270,6 @@ static func heal_guess(caster: CombatUnit, move: Ability) -> float:
 		+ caster.focus_n * move.focus_scaling_modifier
 		+ move.focus_amount_change
 	)
-
-
-# Silence blocks any move with a focus cost (cost * SILENCED == 0 gate in the
-# original - this is the confirmed silence rule). Life check: strictly MORE
-# life than the total cost, so a move can never kill its own caster.
-static func _can_afford(caster: CombatUnit, move: Ability) -> bool:
-	if caster.silenced != 0 and move.focus_cost > 0:
-		return false
-	if caster.focus_n < move.focus_cost:
-		return false
-	return caster.life_n > move.flat_life_cost + round(caster.life_u * move.health_cost_percentage)
 
 
 # The original's uniform list pick: KRSO roll 0..99 through

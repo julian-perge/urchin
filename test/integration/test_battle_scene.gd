@@ -227,7 +227,7 @@ func _pauses_to_first_decision(battle_id: int, difficulty: CombatUnit.Difficulty
 	var scene = partial_double(BattleSceneRes).instantiate()
 	var pauses: Array = []
 	stub(scene, "_pause").to_call(func(seconds: float):
-		var pause: Array = [scene.speech_label.text, seconds, scene._player_action_pending]
+		var pause: Array = [scene.speech_label.text, seconds, scene.decision_open]
 		pauses.append(pause)
 		if during_pause.is_valid():
 			during_pause.call(scene, pause)
@@ -235,7 +235,7 @@ func _pauses_to_first_decision(battle_id: int, difficulty: CombatUnit.Difficulty
 	add_child_autofree(scene)
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": battle_id, "is_story_progress": false, "is_boss": false, "train_cap": 9})
-	await wait_until(func(): return scene._player_action_pending or scene._finished, 5)
+	await wait_until(func(): return scene.decision_open or scene._finished, 5)
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -660,7 +660,7 @@ func test_the_victory_screen_shows_no_turn_label():
 	var scene = add_child_autofree(BattleSceneRes.instantiate())
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": false, "is_boss": false, "train_cap": 9})
-	await wait_until(func(): return scene._player_action_pending, 5)
+	await wait_until(func(): return scene.decision_open, 5)
 	assert_eq(scene.turn_label.text, "Your move", "the battle is waiting on the player")
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	scene._on_pass_pressed()
@@ -815,176 +815,46 @@ func test_reload_without_a_save_goes_to_the_main_menu():
 	GameData.current_save = null
 
 
-func test_is_point_over_radial_menu_area():
-	var save = PlayerSave.new_game("MenuAreaTest", 0)
-	save.skill_points = 8
-	TalentTree.learn(save, 0)
-	TalentTree.learn(save, 0)
-	GameData.current_save = save
+# RadialMenu's own tests cover the menu. This is the scene's half of it, through
+# real clicks: a unit's hit button opens the menu and a pick reaches the runner.
+# Orb 0's centre sits inside that same hit button, so the pick only lands while
+# the menu is above the overlays in the tree.
+func test_clicking_a_unit_then_an_orb_runs_that_move():
+	GameData.current_save = PlayerSave.new_game("MenuWiring", 0)
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
 
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	# GUT's window sits above everything in the root viewport and would take
+	# the clicks, so the scene gets a viewport of its own.
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 600)
+	add_child_autofree(viewport)
+	var scene = BattleSceneRes.instantiate()
+	viewport.add_child(scene)
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	scene._player_action_pending = true
-	scene._on_unit_clicked(2)  # battle 100's enemy slot (Prison Guard)
-	assert_not_null(scene._radial_menu, "menu opened")
+	await wait_until(func(): return scene.decision_open, 5)
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	var first_event: int = scene.runner.events.size()
 
-	var overlay: Control = scene._overlays[2]
-	var unit_center: Vector2 = overlay.hit_button.get_global_rect().get_center()
-	assert_true(scene._is_point_over_radial_menu_area(unit_center), "over the unit's own hit area")
+	var hit_button: Button = scene._overlays[2].hit_button
+	_click(viewport, hit_button)
+	assert_true(scene.radial_menu.visible, "clicking the enemy opened the menu")
+	var orb: Button = scene.radial_menu.orbs[0]
+	assert_true(hit_button.get_global_rect().has_point(orb.get_global_rect().get_center()), "sanity: the orb overlaps the hit button")
+	_click(viewport, orb)
+	assert_false(scene.decision_open, "the click on the orb ended the decision")
+	assert_false(scene.radial_menu.visible, "and closed the menu")
 
-	var orb: Control = scene._radial_menu.get_child(0)
-	var orb_center: Vector2 = orb.get_global_rect().get_center()
-	assert_true(scene._is_point_over_radial_menu_area(orb_center), "over an orb, well outside the unit's hit area")
+	await wait_until(func(): return scene.runner.events.size() > first_event, 5)
+	var player_moves: Array = scene.runner.events.slice(first_event).filter(
+		func(event): return event["type"] == BattleRunner.EventType.MOVE and int(event["caster_slot"]) == BattleRunner.PLAYER_SLOT
+	)
+	assert_eq(player_moves.size(), 1, "the player's half-turn ran one move")
+	if player_moves.size() == 1:
+		assert_eq(int(player_moves[0]["move_id"]), int(player.equipped_moves[0]), "the move on the picked orb")
+		assert_eq(int(player_moves[0]["target_slot"]), 2, "on the clicked unit")
 
-	assert_false(scene._is_point_over_radial_menu_area(Vector2(-1000, -1000)), "nowhere near either")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-func test_radial_menu_fades_out_on_hover_leave():
-	var save = PlayerSave.new_game("MenuFadeTest", 0)
-	save.skill_points = 8
-	TalentTree.learn(save, 0)
-	TalentTree.learn(save, 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	# The battle loop closes any open menu before an AI turn, so the test waits
-	# until the loop hands the player the turn, whichever side opens battle 100.
-	await wait_until(func(): return scene._player_action_pending, 5)
-	scene._on_unit_clicked(2)
-	assert_not_null(scene._radial_menu)
-
-	# Directly invoke the same handler _process() would call once the
-	# leave-grace timer fires - avoids waiting on real timer duration in
-	# the test while still exercising the real fade-then-free logic.
-	scene._start_radial_menu_fade_out()
-	await scene.get_tree().create_timer(scene.RING_FADE_OUT_TIME + 0.1).timeout
-	assert_null(scene._radial_menu, "faded out and freed")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-func test_radial_menu_hover_return_cancels_fade_out():
-	var save = PlayerSave.new_game("MenuCancelFadeTest", 0)
-	save.skill_points = 8
-	TalentTree.learn(save, 0)
-	TalentTree.learn(save, 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	# The battle loop closes any open menu before an AI turn, so the test waits
-	# until the loop hands the player the turn, whichever side opens battle 100.
-	await wait_until(func(): return scene._player_action_pending, 5)
-	scene._on_unit_clicked(2)
-	assert_not_null(scene._radial_menu)
-
-	var overlay: Control = scene._overlays[2]
-	var unit_center: Vector2 = overlay.hit_button.get_global_rect().get_center()
-
-	# Start the fade, let it run partway, then simulate the mouse landing
-	# back on the unit - the same call _process() makes every frame, with a
-	# point _is_point_over_radial_menu_area() reports as "over the menu".
-	scene._start_radial_menu_fade_out()
-	await scene.get_tree().create_timer(scene.RING_FADE_OUT_TIME * 0.3).timeout
-	scene._update_radial_menu_fade(unit_center)
-	assert_not_null(scene._radial_menu, "mouse returned before the fade finished - menu must stay open")
-	assert_eq(scene._radial_menu.modulate.a, 1.0, "snapped back to fully visible")
-	# The in-flight tween must actually be killed (not merely overridden for
-	# one frame) - otherwise its tween_callback(_close_radial_menu) would
-	# still free the menu once the original fade duration elapses, even
-	# though the mouse came back. A killed Tween never fires its remaining
-	# steps, so nulling the field here is proof, not a guess.
-	assert_null(scene._radial_menu_fade_tween, "in-flight fade tween was killed, not left running")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-# Regression test: clicking a second unit while the first unit's menu is
-# fading out used to close the SECOND menu a moment later. _close_radial_menu()
-# nulled its reference to the in-flight fade tween without killing the tween
-# itself, and a Godot Tween whose target node is freed keeps running - its
-# trailing tween_callback(_close_radial_menu) still fired and took the newly
-# opened menu with it.
-func test_opening_a_second_menu_survives_the_first_menus_fade():
-	var save = PlayerSave.new_game("MenuStaleTweenTest", 0)
-	save.skill_points = 8
-	TalentTree.learn(save, 0)
-	TalentTree.learn(save, 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	# The headless mouse sits nowhere near the menu, so _process() keeps
-	# restarting the leave-grace timer on the second menu. Stretching the
-	# grace period keeps that legitimate fade-out from firing inside the
-	# window this test measures, leaving the stale tween as the only thing
-	# that could close the second menu.
-	scene._radial_menu_leave_timer.wait_time = 30.0
-	# The battle loop closes any open menu before an AI turn, so the test waits
-	# until the loop hands the player the turn, whichever side opens battle 100.
-	await wait_until(func(): return scene._player_action_pending, 5)
-
-	scene._on_unit_clicked(2)
-	assert_not_null(scene._radial_menu, "first menu opened on the enemy slot")
-	scene._start_radial_menu_fade_out()
-	await scene.get_tree().create_timer(scene.RING_FADE_OUT_TIME * 0.3).timeout
-
-	# Player clicks a different unit partway through the first menu's fade.
-	scene._on_unit_clicked(BattleRunner.PLAYER_SLOT)
-	assert_not_null(scene._radial_menu, "second menu opened")
-	assert_eq(scene._radial_menu_owner_slot, BattleRunner.PLAYER_SLOT, "second menu belongs to the newly clicked slot")
-
-	# Well past the point where the first menu's fade would have completed
-	# and run its trailing callback.
-	await scene.get_tree().create_timer(scene.RING_FADE_OUT_TIME + 0.2).timeout
-	assert_not_null(scene._radial_menu, "second menu outlived the first menu's fade tween")
-	assert_eq(scene._radial_menu_owner_slot, BattleRunner.PLAYER_SLOT, "and it is still the second menu, not a leftover")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-func test_radial_orb_tooltip_includes_the_moves_description():
-	var save = PlayerSave.new_game("OrbDescTest", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	scene._player_action_pending = true
-	scene._on_unit_clicked(2)  # battle 100's enemy slot (Prison Guard)
-
-	var move: Ability = MoveManagerAuto.get_move(1)  # Leading Strike, battle 100's bar slot 0
-	assert_false(move.tooltip_description.is_empty(), "sanity: the move actually has description text")
-	var orb: Button = scene._radial_menu.get_child(0)
-	orb.mouse_entered.emit()
-	var texts: Array = []
-	for section in GameTooltip._sections.get_children():
-		for label in section.get_child(0).get_children():
-			texts.append(label.text)
-	assert_has(texts, move.tooltip_description, "the orb's tooltip carries the move's real description, not just name+cost")
-
-	GameTooltip.hide_tooltip()
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
 
@@ -1014,178 +884,6 @@ func test_the_retreat_button_shows_the_original_quit_tooltip():
 	assert_false(GameTooltip._root.visible, "leaving the button hides it")
 
 	GameTooltip.hide_tooltip()
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-func test_radial_orb_shows_the_moves_icon_art_not_initials():
-	var save = PlayerSave.new_game("OrbIconTest", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	scene._player_action_pending = true
-	scene._on_unit_clicked(2)
-
-	var orb: Button = scene._radial_menu.get_child(0)  # bar slot 0: Leading Strike
-	assert_not_null(orb.icon, "loaded the move's real extracted icon art")
-	assert_eq(orb.icon.resource_path, "res://assets/ui/abilities/Leading_Strike.png")
-	assert_eq(orb.text, "", "no more 2-letter initials now that real art is shown")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-# Regression test: bar slot 0 (Leading Strike) locked on cooldown used to
-# vanish from the menu entirely, shifting bar slot 1's move (Destroy) into
-# slot 0's own arc position - the source only hides a truly empty ("None")
-# slot, it never renumbers around a temporarily-unusable one.
-func test_radial_orb_position_is_keyed_by_bar_index_not_by_a_compacted_list_position():
-	var save = PlayerSave.new_game("OrbPositionTest", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-
-	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
-	# battle 100's default bar: [Leading Strike, Destroy, 0, 0, 0, 0, 0, 0].
-	player.ability_cooldowns[0] = 5
-
-	scene._player_action_pending = true
-	scene._on_unit_clicked(2)
-
-	assert_eq(scene._radial_menu.get_child_count(), 2, "both equipped slots still show - cooldown darkens, it doesn't hide")
-	var orb0: Button = scene._radial_menu.get_child(0)
-	var orb1: Button = scene._radial_menu.get_child(1)
-	assert_true(orb0.disabled, "slot 0's move is on cooldown - darkened, not clickable")
-	assert_false(orb1.disabled, "slot 1's move is untouched - still usable")
-	assert_eq(
-		orb1.position, scene.ORB_OFFSETS[1] - orb1.size / 2.0,
-		"slot 1 sits at its own real position, not shifted into slot 0's because slot 0 got skipped"
-	)
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-func test_radial_menu_still_opens_when_every_equipped_move_is_on_cooldown():
-	var save = PlayerSave.new_game("OrbAllCooldownTest", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-
-	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
-	player.ability_cooldowns[0] = 5
-	player.ability_cooldowns[1] = 5
-
-	scene._player_action_pending = true
-	scene._on_unit_clicked(2)
-
-	assert_not_null(scene._radial_menu, "menu still opens showing darkened orbs - the source only hides empty slots")
-	assert_eq(scene._radial_menu.get_child_count(), 2)
-	for orb in scene._radial_menu.get_children():
-		assert_true(orb.disabled, "every equipped slot is on cooldown")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-# Corruption needs one Shadow buff on its target
-# (frame_42/DoAction_6.as:1613-1614), and the original refuses the pick until
-# the target holds one (frame_42/DoAction_11.as:60-64). It is a Psychological
-# starting move, so a new Psychological player could otherwise open every
-# battle with it.
-func test_corruption_needs_a_shadow_buff_on_its_target():
-	var save = PlayerSave.new_game("CorruptionGate", PlayerSave.PlayerClass.PSYCHOLOGICAL)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
-	var enemy: CombatUnit = scene.units[2]  # battle 100's Prison Guard
-	var corruption: Ability = MoveManagerAuto.get_move(479)
-	assert_eq(int(player.equipped_moves[1]), corruption.id, "Corruption is on bar slot 1")
-
-	scene._player_action_pending = true
-	scene._on_unit_clicked(2)
-	assert_true(scene._radial_menu.get_child(1).disabled, "Corruption is darkened on a target with no Shadow buff")
-
-	var shadow_debuff: Buff = BuffManagerAuto.get_buff_by_name("SHADOWINFUSION")
-	assert_eq(shadow_debuff.element_type, CombatUnit.Element.SHADOW)
-	enemy.apply_buff(shadow_debuff, 1, player)
-	assert_true(scene._move_valid_for_target(corruption, 2), "one active Shadow buff meets the requirement")
-
-	for buff_slot in enemy.buff_slots:
-		buff_slot["cd"] = 0
-	assert_false(scene._move_valid_for_target(corruption, 2), "an expired Shadow buff does not count")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-# Shatter needs three Ice buffs on its target (frame_42/DoAction_6.as:852-892).
-func test_shatter_needs_three_ice_buffs_on_its_target():
-	var save = PlayerSave.new_game("ShatterGate", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
-	var enemy: CombatUnit = scene.units[2]  # battle 100's Prison Guard
-	var shatter: Ability = MoveManagerAuto.get_move(224)
-	var ice_debuff: Buff = BuffManagerAuto.get_buff_by_name("FRAGILE")
-	var shadow_debuff: Buff = BuffManagerAuto.get_buff_by_name("SHADOWINFUSION")
-	assert_eq(ice_debuff.element_type, CombatUnit.Element.ICE)
-	assert_eq(shadow_debuff.element_type, CombatUnit.Element.SHADOW)
-
-	enemy.apply_buff(ice_debuff, 1, player)
-	enemy.apply_buff(ice_debuff, 1, player)
-	enemy.apply_buff(shadow_debuff, 1, player)
-	assert_false(scene._move_valid_for_target(shatter, 2), "two Ice buffs and a Shadow buff are one Ice buff short")
-	enemy.apply_buff(ice_debuff, 1, player)
-	assert_true(scene._move_valid_for_target(shatter, 2), "the third Ice buff meets the requirement")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
-# Bloodshed costs 8% of total life (frame_42/DoAction_6.as:1029), and the
-# original refuses the pick unless life is above that cost
-# (frame_42/DoAction_11.as:80-84).
-func test_bloodshed_needs_more_life_than_its_cost():
-	var save = PlayerSave.new_game("BloodshedGate", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
-	var bloodshed: Ability = MoveManagerAuto.get_move(257)
-	assert_eq(bloodshed.health_cost_percentage, 0.08)
-
-	player.life_n = round(player.life_u * 0.08)
-	assert_false(scene._move_valid_for_target(bloodshed, 2), "life equal to the cost is refused")
-	player.life_n += 1
-	assert_true(scene._move_valid_for_target(bloodshed, 2), "one point above the cost is allowed")
-
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
 
@@ -1463,7 +1161,7 @@ func test_decision_timer_ticks_down_while_player_is_deciding():
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 
-	scene._player_action_pending = true
+	scene.decision_open = true
 	scene._reset_decision_timer()
 	assert_eq(scene._decision_timer, 4.0, "resets to 120 frames at the SWF's 30 fps")
 
@@ -1477,7 +1175,7 @@ func test_decision_timer_ticks_down_while_player_is_deciding():
 	ZoneManager.auto_start_battles = true
 
 
-func test_decision_timer_does_not_tick_while_not_player_action_pending():
+func test_decision_timer_does_not_tick_while_the_decision_is_closed():
 	var save = PlayerSave.new_game("TimerTest2", 0)
 	save.difficulty = CombatUnit.Difficulty.HARD
 	GameData.current_save = save
@@ -1488,7 +1186,7 @@ func test_decision_timer_does_not_tick_while_not_player_action_pending():
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 
-	scene._player_action_pending = false
+	scene.decision_open = false
 	scene._decision_timer = 2.0
 	scene._process(10.0)
 	assert_eq(scene._decision_timer, 2.0, "doesn't tick during an AI turn")
@@ -1517,14 +1215,14 @@ func test_heroic_decision_passes_the_turn_when_the_window_runs_out():
 	# battle never counts against the window.
 	scene.set_process(false)
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	await wait_until(func(): return scene._player_action_pending, 5)
+	await wait_until(func(): return scene.decision_open, 5)
 	var turn: int = scene.runner.turn_count
 	var first_event: int = scene.runner.events.size()
 
 	scene._process(3.9)
-	assert_true(scene._player_action_pending, "the player can still pick just before 4 seconds")
+	assert_true(scene.decision_open, "the player can still pick just before 4 seconds")
 	scene._process(0.2)
-	assert_false(scene._player_action_pending, "4 seconds without a pick ends the decision")
+	assert_false(scene.decision_open, "4 seconds without a pick ends the decision")
 
 	await wait_until(func(): return scene.runner.turn_count > turn, 5)
 	assert_gt(scene.runner.turn_count, turn, "the player's half-turn ran")
@@ -1550,12 +1248,12 @@ func test_normal_decision_waits_for_the_player_with_no_countdown():
 	var scene = add_child_autofree(BattleSceneRes.instantiate())
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	await wait_until(func(): return scene._player_action_pending, 5)
+	await wait_until(func(): return scene.decision_open, 5)
 	var time_left: float = scene._decision_timer
 
 	for second in 10:
 		scene._process(1.0)
-	assert_true(scene._player_action_pending, "10 seconds without a pick still waits for the player")
+	assert_true(scene.decision_open, "10 seconds without a pick still waits for the player")
 	assert_eq(scene._decision_timer, time_left, "nothing counts down")
 	assert_false(scene._countdown_label.visible, "Normal shows no countdown")
 
@@ -1579,7 +1277,7 @@ func test_heroic_countdown_stops_once_the_player_is_dead():
 	# player, so the test steps _process by hand here too.
 	scene.set_process(false)
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	await wait_until(func(): return scene._player_action_pending, 5)
+	await wait_until(func(): return scene.decision_open, 5)
 	scene._process(0.0)
 	assert_true(scene._countdown_label.visible, "Heroic shows the countdown while the player is alive")
 
@@ -1794,19 +1492,19 @@ func test_hover_ring_fades_in_only_during_player_decision_window():
 	assert_eq(ring.modulate.a, 0.0, "starts invisible")
 
 	# Not the player's turn - hovering must not start a fade-in.
-	scene._player_action_pending = false
+	scene.decision_open = false
 	scene._on_unit_hovered(2, true)
 	await scene.get_tree().create_timer(0.3).timeout
 	assert_eq(ring.modulate.a, 0.0, "no fade-in outside the player's decision window")
 
 	# The player's turn - hovering fades it in.
-	scene._player_action_pending = true
+	scene.decision_open = true
 	scene._on_unit_hovered(2, true)
 	await scene.get_tree().create_timer(0.3).timeout
 	assert_almost_eq(ring.modulate.a, 1.0, 0.05, "faded in during the decision window")
 
 	# Fade-out is never gated, even outside the decision window.
-	scene._player_action_pending = false
+	scene.decision_open = false
 	scene._on_unit_hovered(2, false)
 	await scene.get_tree().create_timer(0.8).timeout
 	assert_almost_eq(ring.modulate.a, 0.0, 0.05, "fades back out regardless of turn state")
