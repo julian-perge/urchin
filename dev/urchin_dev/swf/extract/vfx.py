@@ -33,21 +33,34 @@
 # moves simply show no impact effect (ImpactEffect.play() already
 # no-ops on a missing folder).
 #
-# Requires ffdec (~/.local/bin/ffdec). Run: uv run extract_vfx
+# OFFSETS. The same render also writes assets/vfx/vfx_offsets.json: one
+# {"x", "y", "w", "h"} entry per clip in natural, unzoomed px (the
+# convention resources/sprites/doll_offsets.json uses), keyed by the same
+# sanitize()d name as the clip's folder. A glow filter's footprint is baked
+# into ffdec's canvas, so w and h are the canvas size, and x and y put that
+# canvas around the centre of the clip's whole-timeline displayRect, which
+# the driver reports with the canvas. The padding is symmetric: Krin.Firebolt's
+# opaque core has its centroid at (97.9, 98.0) in a 196x196 canvas centred on
+# (98.0, 98.0). Until julian-perge/urchin#43 the bounds came from
+# make_timeline_bounds, a Python walk of the XML dump, and the frames had to
+# be extracted before a separate script could measure them.
+#
+# Requires ffdec (~/.local/bin/ffdec), whose jars render.py's driver runs on.
+# Run: uv run extract_vfx
 from __future__ import annotations
 
 import json
 import re
 import shutil
-import subprocess
 import sys
-import tempfile
-from pathlib import Path
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev.swf import render
 from urchin_dev.swf.swf_index import read_swf
 
 ZOOM = 2.0
+VFX_DIR = REPO_ROOT / "assets" / "vfx"
+OFFSETS = VFX_DIR / "vfx_offsets.json"
 
 BOLT_NAMES = [
     "KRIN.BLADEWHITE",
@@ -76,18 +89,18 @@ TRAIL_CLIP_NAME = "KrinTrail"
 TRAIL_SPRITE_ID = 2
 
 
+# How far apart the horizontal and the vertical half-padding may fall, in
+# natural px, before a clip is reported as an outlier. The padding is the
+# glow footprint ffdec baked into the canvas, and a glow spreads the same
+# distance on both axes, so the two halves should agree; when they don't,
+# the clip's bounds are wrong rather than the padding being lopsided. 13
+# clips diverged by 4.3 to 38.0 px before make_timeline_bounds learned to
+# read morph shapes and to stop borrowing the next tag's matrix.
+PAD_SYMMETRY_TOLERANCE = 1.0
+
+
 def sanitize(label: str) -> str:
     return re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_").lower()
-
-
-def run(cmd: list[str]) -> subprocess.CompletedProcess:
-    proc = subprocess.run(cmd, capture_output=True, text=True)
-    if proc.returncode != 0:
-        raise RuntimeError(
-            f"command failed (exit {proc.returncode}): {' '.join(cmd)}\n"
-            f"--- stdout ---\n{proc.stdout}\n--- stderr ---\n{proc.stderr}"
-        )
-    return proc
 
 
 def _impact_names() -> list[str]:
@@ -102,84 +115,101 @@ def _impact_names() -> list[str]:
     return sorted(names)
 
 
-def _extract_clip(name: str, cid: int, work_dir: Path, category_dir: Path) -> bool:
-    frames_dir = work_dir / f"frames_{cid}"
-    run(
-        [
-            str(FFDEC),
-            "-zoom",
-            str(ZOOM),
-            "-format",
-            "sprite:png",
-            "-selectid",
-            str(cid),
-            "-export",
-            "sprite",
-            str(frames_dir),
-            str(WEB_SWF),
-        ]
-    )
-    # ffdec names the export directory DefineSprite_<id>_<export-name>
-    # when the sprite has one - every clip here does, unlike
-    # item_icons.py/buff_icons.py/faces.py's unnamed sprite ids (which
-    # get no suffix) - so this must glob rather than assume the bare
-    # DefineSprite_<id> form.
-    sprite_dirs = list(frames_dir.glob(f"DefineSprite_{cid}*"))
-    if not sprite_dirs:
-        return False
-    frame_files = sorted(sprite_dirs[0].glob("*.png"), key=lambda p: int(p.stem))
-    if not frame_files:
-        return False
-    out_dir = category_dir / sanitize(name)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    for i, path in enumerate(frame_files, start=1):
-        shutil.copyfile(path, out_dir / f"{i}.png")
-    return True
+def clip_offset(frame: render.Frame):
+    """-> ({"x", "y", "w", "h"}, pad_x, pad_y) for a clip from its frame 1,
+    or None when its displayRect is empty. The two paddings are the symmetry
+    self-check's input, not part of the written record."""
+    x0, y0, x1, y1 = frame.display_rect
+    if x1 == x0 or y1 == y0:
+        return None
+    real_w = frame.size[0] / ZOOM
+    real_h = frame.size[1] / ZOOM
+    computed_w = (x1 - x0) / 20.0
+    computed_h = (y1 - y0) / 20.0
+    computed_cx = (x0 + x1) / 2.0 / 20.0
+    computed_cy = (y0 + y1) / 2.0 / 20.0
+    offset = {
+        "x": round(computed_cx - real_w / 2.0, 2),
+        "y": round(computed_cy - real_h / 2.0, 2),
+        "w": round(real_w, 2),
+        "h": round(real_h, 2),
+    }
+    return offset, (real_w - computed_w) / 2.0, (real_h - computed_h) / 2.0
 
 
 def main():
-    exports = read_swf(WEB_SWF).exports
-    ci_exports = {k.lower(): (k, v) for k, v in exports.items()}
+    index = read_swf(WEB_SWF)
+    ci_exports = {k.lower(): (k, v) for k, v in index.exports.items()}
 
     def resolve(name: str):
         hit = ci_exports.get(name.lower())
         return hit[1] if hit else None
 
-    work_dir = Path(tempfile.mkdtemp(prefix="vfx_"))
+    clips: list[tuple[str, int, str]] = []
     unresolved = []
-    written = 0
 
-    def extract_category(names, out_dir, resolve_id=resolve):
-        nonlocal written
+    def collect(names, category, resolve_id=resolve):
         seen_ids: dict[int, str] = {}
         for name in names:
             cid = resolve_id(name)
-            if cid is None:
+            if cid is None or not index.sprite_frames.get(cid):
                 unresolved.append(name)
                 continue
             if cid in seen_ids:
-                # Same clip already extracted this run under a different
-                # casing (e.g. KRIN.MAGICBOLT after Krin.Magicbolt) -
-                # sanitize()+lower() would write the same filename anyway,
-                # so re-running ffdec on it is wasted work, not a bug.
+                # Same clip already listed under a different casing (e.g.
+                # KRIN.MAGICBOLT after Krin.Magicbolt) - sanitize()+lower()
+                # would write the same folder anyway.
                 continue
             seen_ids[cid] = name
-            if _extract_clip(name, cid, work_dir, out_dir):
-                written += 1
-            else:
+            clips.append((name, cid, category))
+
+    collect(BOLT_NAMES, "bolts")
+    collect([TRAIL_CLIP_NAME], "trail", resolve_id=lambda _name: TRAIL_SPRITE_ID)
+    collect(_impact_names(), "impacts")
+
+    jobs = [
+        render.Job(cid, frame, ZOOM)
+        for cid in dict.fromkeys(cid for _name, cid, _category in clips)
+        for frame in range(1, index.sprite_frames[cid] + 1)
+    ]
+    offsets = {}
+    outliers = []
+    offset_ids: set[int] = set()
+    with render.frames(WEB_SWF, jobs) as rendered:
+        by_clip: dict[int, list[render.Frame]] = {}
+        for frame in rendered:
+            by_clip.setdefault(frame.job.timeline, []).append(frame)
+        for name, cid, category in clips:
+            out_dir = VFX_DIR / category / sanitize(name)
+            out_dir.mkdir(parents=True, exist_ok=True)
+            for n, frame in enumerate(by_clip[cid], start=1):
+                shutil.copyfile(frame.path, out_dir / f"{n}.png")
+            # vfx_scenes.py reads one offset per clip id, so a clip both a
+            # bolt and an impact name resolve to keeps its first record.
+            if cid in offset_ids and category != "trail":
+                continue
+            offset_ids.add(cid)
+            computed = clip_offset(by_clip[cid][0])
+            if computed is None:
                 unresolved.append(name)
+                continue
+            offset, pad_x, pad_y = computed
+            if abs(pad_x - pad_y) > PAD_SYMMETRY_TOLERANCE:
+                outliers.append(
+                    f"{sanitize(name)} (pad_x={pad_x:.2f}, pad_y={pad_y:.2f})"
+                )
+            offsets[sanitize(name)] = offset
 
-    extract_category(BOLT_NAMES, REPO_ROOT / "assets" / "vfx" / "bolts")
-    extract_category(
-        [TRAIL_CLIP_NAME],
-        REPO_ROOT / "assets" / "vfx" / "trail",
-        resolve_id=lambda _name: TRAIL_SPRITE_ID,
-    )
-    extract_category(_impact_names(), REPO_ROOT / "assets" / "vfx" / "impacts")
-
-    print(f"clips written: {written}", file=sys.stderr)
+    OFFSETS.write_text(json.dumps(offsets, indent=1, sort_keys=True))
+    print(f"clips written: {len(clips)}", file=sys.stderr)
+    print(f"clip offsets: {len(offsets)}", file=sys.stderr)
     if unresolved:
         print(f"unresolved: {unresolved}", file=sys.stderr)
+    if outliers:
+        print(
+            f"asymmetric glow padding - the clip bounds look wrong for: {outliers}",
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":

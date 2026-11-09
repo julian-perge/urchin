@@ -1,5 +1,5 @@
 # One-time generator: bakes each VFX clip's frames + real registration
-# offset (assets/vfx/vfx_offsets.json, from extract_vfx_offsets) into a
+# offset (assets/vfx/vfx_offsets.json, from extract_vfx) into a
 # dedicated Godot scene under scenes/battle/vfx/<category>/<name>.tscn.
 # Not meant to be re-run as part of the normal build once its output is
 # committed - the source SWF is fixed, so there is no new content to

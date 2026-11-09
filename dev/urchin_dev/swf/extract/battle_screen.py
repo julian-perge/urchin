@@ -21,16 +21,14 @@
 # placeholder fighters holding swords under "!" speech bubbles, authoring
 # scaffolding the game never draws. DefineSprite 3312 is the bottom bar's
 # member bar container; see the MEMBER_BARS constant below for why it is
-# stripped too. Deleting both from a working copy leaves ffdec drawing the
+# stripped too. Deleting both before the render leaves ffdec drawing the
 # scene art alone, the same approach zone_hub.py uses for the orb.
 #
 # Run: uv run extract_battle_screen
 from __future__ import annotations
 
 import json
-import re
 import shutil
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -38,7 +36,8 @@ from pathlib import Path
 from PIL import Image
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
-from urchin_dev.swf import strip, timeline
+from urchin_dev.run import run
+from urchin_dev.swf import render, strip, timeline
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
 HALL_DIR = REPO_ROOT / "assets" / "backgrounds" / "battle"
@@ -101,25 +100,6 @@ NAME_FIELD = 3308
 LAYOUT_JSON = HALL_DIR / "battle_layout.json"
 FRAME_LABEL = "KRINBATTLESCENE"
 
-# The first matrix() in an exported SVG is the root group's, which carries the
-# displayRect's negated minimums scaled by the export zoom.
-_ROOT_MATRIX = re.compile(
-    r'<g transform="matrix\('
-    r"[-0-9.]+, [-0-9.]+, [-0-9.]+, [-0-9.]+, ([-0-9.]+), ([-0-9.]+)\)\""
-)
-_SVG_WIDTH = re.compile(r'\bwidth="([0-9.]+)px"')
-_SVG_HEIGHT = re.compile(r'\bheight="([0-9.]+)px"')
-
-
-def run(cmd: list[str]) -> subprocess.CompletedProcess:
-    proc = subprocess.run(cmd, capture_output=True, text=True)
-    if proc.returncode != 0:
-        raise RuntimeError(
-            f"command failed (exit {proc.returncode}): {' '.join(cmd)}\n"
-            f"--- stdout ---\n{proc.stdout}\n--- stderr ---\n{proc.stderr}"
-        )
-    return proc
-
 
 def sprite_label_frames(index: SwfIndex, sprite: int) -> dict[str, int]:
     """-> {frame label: frame number} for one sprite's own timeline."""
@@ -141,95 +121,58 @@ def first_frame_offsets(
     )
 
 
-def render_labels(
-    swf: Path, sprite: int, frames: dict[str, int], out_dir: Path, prefix: str
-) -> None:
-    """Render one sprite at each of its labelled frames, trim each to its own
-    opaque content, and write <prefix><LABEL>.png into out_dir."""
-    work = Path(tempfile.mkdtemp(prefix="battle_screen_"))
-    try:
-        wanted = sorted(set(frames.values()))
-        run(
-            [
-                str(FFDEC),
-                "-zoom",
-                str(ZOOM),
-                "-format",
-                "sprite:png",
-                "-selectid",
-                str(sprite),
-                "-select",
-                ",".join(f"{sprite}:{f}" for f in wanted),
-                "-export",
-                "sprite",
-                str(work),
-                str(swf),
-            ]
-        )
-        rendered = work / f"DefineSprite_{sprite}"
-        out_dir.mkdir(parents=True, exist_ok=True)
-        for label, frame in sorted(frames.items()):
-            image = Image.open(rendered / f"{frame}.png").convert("RGBA")
-            bbox = image.getchannel("A").getbbox()
-            if bbox is None:
-                raise RuntimeError(
-                    f"sprite {sprite} label {label} (frame {frame}) rendered empty"
-                )
-            cropped = image.crop(bbox)
-            name = f"{prefix}{label.replace(' ', '_')}.png"
-            cropped.save(out_dir / name)
-            print(
-                f"  {label:<16} frame {frame:>3} -> {name} {cropped.size}",
-                file=sys.stderr,
+def write_labels(
+    rendered: dict[int, render.Frame],
+    frames: dict[str, int],
+    out_dir: Path,
+    prefix: str,
+) -> dict[str, dict[str, float]]:
+    """Trim each labelled frame to its own opaque content, write
+    <prefix><LABEL>.png into out_dir and return {LABEL: rect} on the stage."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    rects = {}
+    for label, frame in sorted(frames.items()):
+        trimmed = render.trim(rendered[frame])
+        if trimmed is None:
+            raise RuntimeError(
+                f"sprite {rendered[frame].job.timeline} label {label}"
+                f" (frame {frame}) rendered empty"
             )
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
-
-
-def render_chrome(swf: Path) -> None:
-    """Render each chrome character's first frame, trimmed to its content."""
-    work = Path(tempfile.mkdtemp(prefix="battle_chrome_"))
-    try:
-        ids = ",".join(str(c) for c in CHROME)
-        run(
-            [
-                str(FFDEC),
-                "-zoom",
-                str(ZOOM),
-                "-format",
-                "sprite:png",
-                "-selectid",
-                ids,
-                "-select",
-                ",".join(f"{c}:1" for c in CHROME),
-                "-export",
-                "sprite",
-                str(work),
-                str(swf),
-            ]
+        name = f"{prefix}{label.replace(' ', '_')}.png"
+        trimmed.image.save(out_dir / name)
+        print(
+            f"  {label:<16} frame {frame:>3} -> {name} {trimmed.image.size}",
+            file=sys.stderr,
         )
-        BATTLE_UI_DIR.mkdir(parents=True, exist_ok=True)
-        for cid, name in sorted(CHROME.items()):
-            image = Image.open(work / f"DefineSprite_{cid}" / "1.png").convert("RGBA")
-            bbox = image.getchannel("A").getbbox()
-            if bbox is None:
-                raise RuntimeError(f"chrome {cid} ({name}) rendered empty")
-            cropped = image.crop(bbox)
-            cropped.save(BATTLE_UI_DIR / f"{name}.png")
-            print(f"  {cid} -> {name}.png {cropped.size}", file=sys.stderr)
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
+        rects[label.replace(" ", "_")] = rect_entry(trimmed.rect)
+    return rects
 
 
-def render_member_bar_panel(swf: Path) -> None:
+def write_chrome(rendered: dict[int, render.Frame]) -> dict[str, dict[str, float]]:
+    """Trim each chrome character's first frame to its content, write it and
+    return {name: rect} on the stage. The chrome carries no frame labels and
+    holds a single frame each."""
+    BATTLE_UI_DIR.mkdir(parents=True, exist_ok=True)
+    rects = {}
+    for cid, name in sorted(CHROME.items()):
+        trimmed = render.trim(rendered[cid])
+        if trimmed is None:
+            raise RuntimeError(f"chrome {cid} ({name}) rendered empty")
+        trimmed.image.save(BATTLE_UI_DIR / f"{name}.png")
+        print(f"  {cid} -> {name}.png {trimmed.image.size}", file=sys.stderr)
+        rects[name] = rect_entry(trimmed.rect)
+    return rects
+
+
+def render_member_bar_panel() -> None:
     """Draw the dark rounded backing one member bar sits on, trimmed to its
     content. It is a DefineShape rather than a sprite, so this exports a shape
-    the way zone_hub.py exports the orb's arcs."""
+    through the CLI the way zone_hub.py exports the orb's arcs."""
     work = Path(tempfile.mkdtemp(prefix="battle_member_panel_"))
     try:
         run(
             [
-                str(FFDEC),
+                FFDEC,
                 "-zoom",
                 str(ZOOM),
                 "-format",
@@ -238,8 +181,8 @@ def render_member_bar_panel(swf: Path) -> None:
                 str(MEMBER_BAR_PANEL),
                 "-export",
                 "shape",
-                str(work),
-                str(swf),
+                work,
+                WEB_SWF,
             ]
         )
         image = Image.open(work / f"{MEMBER_BAR_PANEL}.png").convert("RGBA")
@@ -257,99 +200,6 @@ def render_member_bar_panel(swf: Path) -> None:
         shutil.rmtree(work, ignore_errors=True)
 
 
-def read_display_rect(svg_path: Path):
-    """-> (x, y, w, h) of the sprite's displayRect in design px, relative to
-    the sprite's own origin."""
-    head = svg_path.read_text()[:2000]
-    matrix = _ROOT_MATRIX.search(head)
-    width = _SVG_WIDTH.search(head)
-    height = _SVG_HEIGHT.search(head)
-    if matrix is None or width is None or height is None:
-        raise RuntimeError(f"no displayRect in {svg_path}")
-    return (
-        -float(matrix.group(1)) / ZOOM,
-        -float(matrix.group(2)) / ZOOM,
-        float(width.group(1)) / ZOOM,
-        float(height.group(1)) / ZOOM,
-    )
-
-
-def content_rect(origin, display_rect, canvas, bbox):
-    """The trimmed render's rect on the stage in design px, given where the
-    main timeline places the sprite, its displayRect, the canvas ffdec
-    produced and the canvas-pixel bbox of what it drew there.
-
-    ffdec grows a canvas by the filter dimension on both sides of the
-    displayRect, so the growth is symmetric and the canvas keeps the
-    displayRect's centre. That centre plus the canvas size locates every
-    rendered pixel without any filter math here.
-    """
-    centre_x = origin[0] + display_rect[0] + display_rect[2] / 2
-    centre_y = origin[1] + display_rect[1] + display_rect[3] / 2
-    canvas_x = centre_x - canvas[0] / ZOOM / 2
-    canvas_y = centre_y - canvas[1] / ZOOM / 2
-    return (
-        canvas_x + bbox[0] / ZOOM,
-        canvas_y + bbox[1] / ZOOM,
-        (bbox[2] - bbox[0]) / ZOOM,
-        (bbox[3] - bbox[1]) / ZOOM,
-    )
-
-
-def local_content_rect(swf: Path, sprite: int) -> tuple[float, float, float, float]:
-    """-> (x, y, w, h) of a sprite's first frame in design px, relative to
-    the sprite's own origin.
-
-    Same recovery as content_rect with the placement origin left at zero,
-    because these sprites are nested inside another sprite rather than placed
-    on the main timeline, so there is no root placement to read.
-    """
-    work = Path(tempfile.mkdtemp(prefix="battle_local_rect_"))
-    try:
-        for fmt in ("png", "svg"):
-            run(
-                [
-                    str(FFDEC),
-                    "-zoom",
-                    str(ZOOM),
-                    "-format",
-                    f"sprite:{fmt}",
-                    "-selectid",
-                    str(sprite),
-                    "-select",
-                    f"{sprite}:1",
-                    "-export",
-                    "sprite",
-                    str(work / fmt),
-                    str(swf),
-                ]
-            )
-        image = Image.open(work / "png" / f"DefineSprite_{sprite}" / "1.png").convert(
-            "RGBA"
-        )
-        bbox = image.getchannel("A").getbbox()
-        if bbox is None:
-            raise RuntimeError(f"sprite {sprite} rendered empty")
-        display_rect = read_display_rect(
-            work / "svg" / f"DefineSprite_{sprite}" / "1.svg"
-        )
-        return content_rect((0.0, 0.0), display_rect, image.size, bbox)
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
-
-
-def placement_origin(index: SwfIndex, character: int) -> tuple[float, float]:
-    """-> where the battle frame places one character, in design px."""
-    frame = timeline.frames(index, 0)[timeline.frame_of(index, 0, FRAME_LABEL) - 1]
-    placed = [layer for layer in frame.values() if layer.character_id == character]
-    if len(placed) != 1:
-        raise RuntimeError(
-            f"character {character} placed {len(placed)} times on {FRAME_LABEL}"
-        )
-    matrix = placed[0].matrix
-    return (matrix[4] / 20.0, matrix[5] / 20.0)
-
-
 def rect_entry(rect) -> dict[str, float]:
     """-> one (x, y, w, h) tuple as the JSON file records it."""
     return {
@@ -360,100 +210,9 @@ def rect_entry(rect) -> dict[str, float]:
     }
 
 
-def layout_rects(
-    swf: Path, index: SwfIndex, sprite: int, frames: dict[str, int]
+def stance_row_layout(
+    index: SwfIndex, bar_frame: render.Frame, icon_frame: render.Frame
 ) -> dict:
-    """-> {label: {x, y, w, h}} on the 800x575 stage, in design px."""
-    origin = placement_origin(index, sprite)
-
-    work = Path(tempfile.mkdtemp(prefix="battle_layout_"))
-    try:
-        wanted = sorted(set(frames.values()))
-        select = ",".join(f"{sprite}:{f}" for f in wanted)
-        for fmt in ("png", "svg"):
-            run(
-                [
-                    str(FFDEC),
-                    "-zoom",
-                    str(ZOOM),
-                    "-format",
-                    f"sprite:{fmt}",
-                    "-selectid",
-                    str(sprite),
-                    "-select",
-                    select,
-                    "-export",
-                    "sprite",
-                    str(work / fmt),
-                    str(swf),
-                ]
-            )
-        out = {}
-        for label, frame in sorted(frames.items()):
-            image = Image.open(
-                work / "png" / f"DefineSprite_{sprite}" / f"{frame}.png"
-            ).convert("RGBA")
-            bbox = image.getchannel("A").getbbox()
-            if bbox is None:
-                raise RuntimeError(f"sprite {sprite} label {label} rendered empty")
-            display_rect = read_display_rect(
-                work / "svg" / f"DefineSprite_{sprite}" / f"{frame}.svg"
-            )
-            rect = content_rect(origin, display_rect, image.size, bbox)
-            out[label.replace(" ", "_")] = rect_entry(rect)
-        return out
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
-
-
-def chrome_rects(swf: Path, index: SwfIndex) -> dict:
-    """-> {name: {x, y, w, h}} on the 800x575 stage, in design px.
-
-    The chrome characters carry no frame labels and hold a single frame each,
-    so this renders them at frame 1 instead of walking a label list the way
-    layout_rects does.
-    """
-    origins = {cid: placement_origin(index, cid) for cid in CHROME}
-    work = Path(tempfile.mkdtemp(prefix="battle_chrome_layout_"))
-    try:
-        for fmt in ("png", "svg"):
-            run(
-                [
-                    str(FFDEC),
-                    "-zoom",
-                    str(ZOOM),
-                    "-format",
-                    f"sprite:{fmt}",
-                    "-selectid",
-                    ",".join(str(c) for c in CHROME),
-                    "-select",
-                    ",".join(f"{c}:1" for c in CHROME),
-                    "-export",
-                    "sprite",
-                    str(work / fmt),
-                    str(swf),
-                ]
-            )
-        out = {}
-        for cid, name in sorted(CHROME.items()):
-            image = Image.open(work / "png" / f"DefineSprite_{cid}" / "1.png").convert(
-                "RGBA"
-            )
-            bbox = image.getchannel("A").getbbox()
-            if bbox is None:
-                raise RuntimeError(f"chrome {cid} ({name}) rendered empty")
-            display_rect = read_display_rect(
-                work / "svg" / f"DefineSprite_{cid}" / "1.svg"
-            )
-            out[name] = rect_entry(
-                content_rect(origins[cid], display_rect, image.size, bbox)
-            )
-        return out
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
-
-
-def stance_row_layout(swf: Path, index: SwfIndex) -> dict:
     """-> one member bar's internal layout in design px, measured off the SWF.
 
     Offsets are from the bar's own top-left corner, which is what StanceRow
@@ -461,8 +220,10 @@ def stance_row_layout(swf: Path, index: SwfIndex) -> dict:
     recorded, because the port puts its rows in BottomBar/StanceHost rather
     than where the original puts them.
     """
-    bar = local_content_rect(swf, MEMBER_BAR)
-    icon = local_content_rect(swf, STANCE_ICONS)
+    bar_trim, icon_trim = render.trim(bar_frame), render.trim(icon_frame)
+    if bar_trim is None or icon_trim is None:
+        raise RuntimeError(f"{MEMBER_BAR} or {STANCE_ICONS} rendered empty")
+    bar, icon = bar_trim.rect, icon_trim.rect
 
     buttons = first_frame_offsets(index, MEMBER_BAR, STANCE_BUTTON)
     if len(buttons) != 5:
@@ -498,45 +259,54 @@ def main():
     index = read_swf(WEB_SWF)
     halls = sprite_label_frames(index, HALL_SPRITE)
     skies = sprite_label_frames(index, SKY_SPRITE)
+    icons = sprite_label_frames(index, STANCE_ICONS)
+    covers = sprite_label_frames(index, STANCE_COVER)
+    battle_frame = timeline.frame_of(index, 0, FRAME_LABEL)
+    stripped = tuple(strip.strip_list(WEB_SWF, BATTLE_STRIP))
 
-    with strip.stripped_copy(WEB_SWF, BATTLE_STRIP) as stripped:
+    def placed(cid: int) -> tuple[float, float]:
+        return render.placement_origin(index, 0, battle_frame, cid)
+
+    # Each sprite's frames, and where the battle frame puts the sprite. The
+    # stance icons and the member bar are nested in the bottom bar rather
+    # than placed on the root, so their rects stay relative to their own
+    # origin, and the stance row's icon size reads 3305's frame 1, which its
+    # labels render anyway.
+    wanted = {
+        HALL_SPRITE: (set(halls.values()), placed(HALL_SPRITE)),
+        SKY_SPRITE: (set(skies.values()), placed(SKY_SPRITE)),
+        **{cid: ({1}, placed(cid)) for cid in CHROME},
+        STANCE_ICONS: (set(icons.values()) | {1}, (0.0, 0.0)),
+        STANCE_COVER: (set(covers.values()), (0.0, 0.0)),
+        MEMBER_BAR: ({1}, (0.0, 0.0)),
+    }
+    jobs = [
+        render.Job(cid, frame, ZOOM, origin=origin, strip=stripped)
+        for cid, (frames, origin) in wanted.items()
+        for frame in sorted(frames)
+    ]
+    # Every PNG and every rect below comes out of this one render, so no rect
+    # can be measured off a different copy of the SWF than the PNG it
+    # describes, which is how 5 of 10 hall rects went wrong in ecf28fd.
+    with render.frames(WEB_SWF, jobs) as rendered:
+        by_sprite: dict[int, dict[int, render.Frame]] = {}
+        for frame in rendered:
+            by_sprite.setdefault(frame.job.timeline, {})[frame.job.frame] = frame
+
         print(f"halls ({len(halls)}):", file=sys.stderr)
-        render_labels(stripped, HALL_SPRITE, halls, HALL_DIR, "")
+        layout = {"halls": write_labels(by_sprite[HALL_SPRITE], halls, HALL_DIR, "")}
         print(f"skies ({len(skies)}):", file=sys.stderr)
-        render_labels(stripped, SKY_SPRITE, skies, SKY_DIR, "SKY_")
-        # The layout recovery has to run against this same stripped copy,
-        # while it still exists: the fighter rig's placeholder figure pokes
-        # above the hall's own opaque art on 5 of the 10 hall labels, so
-        # measuring against the unstripped SWF would inflate their y and h
-        # past what the PNGs above were actually cropped to.
-        layout = {
-            "halls": layout_rects(stripped, index, HALL_SPRITE, halls),
-            "skies": layout_rects(stripped, index, SKY_SPRITE, skies),
-        }
-        # The chrome renders from this same stripped copy. 2676 sits nowhere in
-        # the four chrome characters' trees so it changes nothing for them, and
-        # 3312 has to be gone or the bottom bar bakes in the member bars.
+        layout["skies"] = write_labels(by_sprite[SKY_SPRITE], skies, SKY_DIR, "SKY_")
         print(f"chrome ({len(CHROME)}):", file=sys.stderr)
-        render_chrome(stripped)
-        layout["chrome"] = chrome_rects(stripped, index)
+        layout["chrome"] = write_chrome({cid: by_sprite[cid][1] for cid in CHROME})
 
         print("stance button art:", file=sys.stderr)
-        render_labels(
-            stripped,
-            STANCE_ICONS,
-            sprite_label_frames(index, STANCE_ICONS),
-            STANCE_DIR,
-            "",
+        write_labels(by_sprite[STANCE_ICONS], icons, STANCE_DIR, "")
+        write_labels(by_sprite[STANCE_COVER], covers, STANCE_DIR, "cover_")
+        render_member_bar_panel()
+        layout["stance_row"] = stance_row_layout(
+            index, by_sprite[MEMBER_BAR][1], by_sprite[STANCE_ICONS][1]
         )
-        render_labels(
-            stripped,
-            STANCE_COVER,
-            sprite_label_frames(index, STANCE_COVER),
-            STANCE_DIR,
-            "cover_",
-        )
-        render_member_bar_panel(stripped)
-        layout["stance_row"] = stance_row_layout(stripped, index)
 
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
     print(f"wrote {LAYOUT_JSON}", file=sys.stderr)

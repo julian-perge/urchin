@@ -40,7 +40,7 @@
 # and ffdec grows the canvas by the filter's dimension on both sides of the
 # timeline's displayRect. Symmetric growth means the canvas keeps the
 # displayRect's centre, so the centre plus the canvas size locates every
-# rendered pixel without any filter math here - the same recovery doll_art.py
+# rendered pixel without any filter math here - the recovery render.py
 # does. Each PNG is then trimmed to its own opaque content and the printed
 # rect says where that trimmed image belongs on the 800x575 stage.
 #
@@ -53,17 +53,11 @@
 from __future__ import annotations
 
 import json
-import re
-import shutil
-import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
-from PIL import Image
-
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
-from urchin_dev.swf import strip, timeline
+from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev.swf import render, strip, timeline
 from urchin_dev.swf.swf_index import read_swf
 
 OUT_MENU = REPO_ROOT / "assets" / "ui" / "menu"
@@ -89,168 +83,39 @@ CARDS = {"psychological": 2746, "biological": 2766, "hydraulic": 2755}
 # and everything above depth 5 is that screen's own foreground.
 BACKGROUND_MAX_DEPTH = 5
 
-# The first matrix() in an exported SVG is the root group's, which carries the
-# displayRect's negated minimums scaled by the export zoom.
-_ROOT_MATRIX = re.compile(
-    r'<g transform="matrix\('
-    r"[-0-9.]+, [-0-9.]+, [-0-9.]+, [-0-9.]+, ([-0-9.]+), ([-0-9.]+)\)\""
-)
-_SVG_WIDTH = re.compile(r'\bwidth="([0-9.]+)px"')
-_SVG_HEIGHT = re.compile(r'\bheight="([0-9.]+)px"')
 
-
-def run(cmd: list[str]) -> subprocess.CompletedProcess:
-    proc = subprocess.run(cmd, capture_output=True, text=True)
-    if proc.returncode != 0:
-        raise RuntimeError(
-            f"command failed (exit {proc.returncode}): {' '.join(cmd)}\n"
-            f"--- stdout ---\n{proc.stdout}\n--- stderr ---\n{proc.stderr}"
-        )
-    return proc
-
-
-def export_cards(out_root: Path, fmt: str, frames) -> Path:
-    ids = ",".join(str(c) for c in CARDS.values())
-    run(
-        [
-            str(FFDEC),
-            "-zoom",
-            str(CARD_ZOOM),
-            "-format",
-            f"sprite:{fmt}",
-            "-selectid",
-            ids,
-            "-select",
-            ",".join(f"{c}:{f}" for c in CARDS.values() for f in frames),
-            "-export",
-            "sprite",
-            str(out_root),
-            str(WEB_SWF),
-        ]
-    )
-    return out_root
-
-
-def read_display_rect(svg_path: Path):
-    """-> (x, y, w, h) of the sprite's displayRect in design px, relative to
-    the sprite's own origin."""
-    head = svg_path.read_text()[:2000]
-    matrix = _ROOT_MATRIX.search(head)
-    width = _SVG_WIDTH.search(head)
-    height = _SVG_HEIGHT.search(head)
-    if matrix is None or width is None or height is None:
-        raise RuntimeError(f"no displayRect in {svg_path}")
-    return (
-        -float(matrix.group(1)) / CARD_ZOOM,
-        -float(matrix.group(2)) / CARD_ZOOM,
-        float(width.group(1)) / CARD_ZOOM,
-        float(height.group(1)) / CARD_ZOOM,
+def write_background(frame: render.Frame, stripped: int, out_path: Path) -> None:
+    """Save the classMenu frame, drawn with every foreground character
+    deleted, as the background the menu screens share."""
+    image = frame.image()
+    image.save(out_path)
+    print(
+        f"wrote {out_path} {image.size} ({stripped} foreground characters stripped)",
+        file=sys.stderr,
     )
 
 
-def stage_origins(placements) -> dict[str, tuple[float, float]]:
-    """-> {class: (x, y)} where the main timeline places each card sprite."""
-    origins = {}
-    for name, cid in CARDS.items():
-        placed = [p for p in placements.values() if p.character_id == cid]
-        if len(placed) != 1:
-            raise RuntimeError(f"{name} (cid {cid}) placed {len(placed)} times")
-        matrix = placed[0].matrix
-        origins[name] = (matrix[4] / 20.0, matrix[5] / 20.0)
-    return origins
-
-
-def content_rect(origin, display_rect, canvas, bbox):
-    """The trimmed card's rect on the stage in design px, given where the sprite
-    is placed, its displayRect, the canvas ffdec produced and the canvas-pixel
-    bbox of what it drew there."""
-    centre_x = origin[0] + display_rect[0] + display_rect[2] / 2
-    centre_y = origin[1] + display_rect[1] + display_rect[3] / 2
-    canvas_x = centre_x - canvas[0] / CARD_ZOOM / 2
-    canvas_y = centre_y - canvas[1] / CARD_ZOOM / 2
-    return (
-        canvas_x + bbox[0] / CARD_ZOOM,
-        canvas_y + bbox[1] / CARD_ZOOM,
-        (bbox[2] - bbox[0]) / CARD_ZOOM,
-        (bbox[3] - bbox[1]) / CARD_ZOOM,
-    )
-
-
-def write_cards(placements) -> dict[str, tuple[float, float, float, float]]:
+def write_cards(
+    cards: dict[tuple[str, int], render.Frame],
+) -> dict[str, tuple[float, float, float, float]]:
     """Write both states of all three cards, trimmed to the card itself, and
     return each one's rect on the stage."""
-    origins = stage_origins(placements)
-    work = Path(tempfile.mkdtemp(prefix="class_cards_"))
-    try:
-        frames = (BASE_CARD_FRAME, HOVER_CARD_FRAME)
-        export_cards(work / "svg", "svg", (BASE_CARD_FRAME,))
-        export_cards(work / "png", "png", frames)
-
-        CARDS_DIR.mkdir(parents=True, exist_ok=True)
-        rects = {}
-        for name, cid in sorted(CARDS.items()):
-            display_rect = read_display_rect(
-                work / "svg" / f"DefineSprite_{cid}" / f"{BASE_CARD_FRAME}.svg"
-            )
-            # Both states draw the same card through the same filters, so one
-            # bbox keeps the two PNGs the same size and the same rect.
-            source = {
-                frame: Image.open(
-                    work / "png" / f"DefineSprite_{cid}" / f"{frame}.png"
-                ).convert("RGBA")
-                for frame in frames
-            }
-            base = source[BASE_CARD_FRAME]
-            bbox = base.getchannel("A").getbbox()
-            if bbox is None:
-                raise RuntimeError(f"{name} (cid {cid}) rendered empty")
-            rects[name] = content_rect(origins[name], display_rect, base.size, bbox)
-            for frame, suffix in ((BASE_CARD_FRAME, "_gray"), (HOVER_CARD_FRAME, "")):
-                out = CARDS_DIR / f"{name}{suffix}.png"
-                image = source[frame].crop(bbox)
-                image.save(out)
-                print(f"wrote {out} {image.size}", file=sys.stderr)
-        return rects
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
-
-
-def render_background(placements, frame_number: int, out_path: Path) -> None:
-    """Draw the classMenu frame from a copy of the SWF with every foreground
-    character deleted, leaving the background the menu screens share."""
-    foreground = {
-        layer.character_id: f"classMenu foreground at depth {depth}"
-        for depth, layer in sorted(placements.items())
-        if depth > BACKGROUND_MAX_DEPTH
-    }
-    work = Path(tempfile.mkdtemp(prefix="start_background_"))
-    try:
-        frames = work / "frames"
-        with strip.stripped_copy(WEB_SWF, foreground) as stripped:
-            run(
-                [
-                    str(FFDEC),
-                    "-zoom",
-                    str(BACKGROUND_ZOOM),
-                    "-format",
-                    "frame:png",
-                    "-select",
-                    str(frame_number),
-                    "-export",
-                    "frame",
-                    str(frames),
-                    str(stripped),
-                ]
-            )
-        image = Image.open(frames / f"{frame_number}.png").convert("RGBA")
-        image.save(out_path)
-        print(
-            f"wrote {out_path} {image.size} "
-            f"({len(foreground)} foreground characters stripped)",
-            file=sys.stderr,
-        )
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
+    CARDS_DIR.mkdir(parents=True, exist_ok=True)
+    rects = {}
+    for name in sorted(CARDS):
+        # Both states draw the same card through the same filters, so the
+        # resting state's bbox keeps the two PNGs the same size and the same
+        # rect.
+        base = render.trim(cards[(name, BASE_CARD_FRAME)])
+        if base is None:
+            raise RuntimeError(f"{name} (cid {CARDS[name]}) rendered empty")
+        rects[name] = base.rect
+        for frame, suffix in ((BASE_CARD_FRAME, "_gray"), (HOVER_CARD_FRAME, "")):
+            out = CARDS_DIR / f"{name}{suffix}.png"
+            image = render.crop(cards[(name, frame)], base.bbox).image
+            image.save(out)
+            print(f"wrote {out} {image.size}", file=sys.stderr)
+    return rects
 
 
 def main():
@@ -259,8 +124,30 @@ def main():
     placements = timeline.frames(index, 0)[frame_number - 1]
     print(f"{FRAME_LABEL}: main-timeline frame {frame_number}", file=sys.stderr)
 
-    render_background(placements, frame_number, OUT_MENU / "start_background.png")
-    rects = write_cards(placements)
+    foreground = {
+        layer.character_id: f"classMenu foreground at depth {depth}"
+        for depth, layer in sorted(placements.items())
+        if depth > BACKGROUND_MAX_DEPTH
+    }
+    stripped = tuple(strip.strip_list(WEB_SWF, foreground))
+    background = render.Job(
+        0, frame_number, BACKGROUND_ZOOM, strip=stripped, background=True
+    )
+    card_jobs = {
+        (name, frame): render.Job(
+            cid,
+            frame,
+            CARD_ZOOM,
+            origin=render.placement_origin(index, 0, frame_number, cid),
+        )
+        for name, cid in sorted(CARDS.items())
+        for frame in (BASE_CARD_FRAME, HOVER_CARD_FRAME)
+    }
+    with render.frames(WEB_SWF, [background, *card_jobs.values()]) as rendered:
+        write_background(
+            rendered[0], len(foreground), OUT_MENU / "start_background.png"
+        )
+        rects = write_cards(dict(zip(card_jobs, rendered[1:], strict=True)))
 
     print("card rects on the 800x575 stage, in design px:", file=sys.stderr)
     print(
