@@ -44,10 +44,13 @@
 # does. Each PNG is then trimmed to its own opaque content and the printed
 # rect says where that trimmed image belongs on the 800x575 stage.
 #
-# This needs an ffdec built from the jpexs master branch. Nightly build 3544
-# mis-renders exactly these sprites: the biological card comes out 136 design
-# px wide instead of 191 with its art leaking past its clip mask, which is a
-# bevel-over-clip-mask bug rather than anything about this SWF.
+# These renders need java/Render.java. Each card's art sits behind a clip mask
+# inside the sprite that carries the filters, and since jpexs afbe4fa33 ffdec
+# puts such a mask in the wrong place, which the driver corrects. Without it the
+# biological card comes out 159 design px wide instead of 194 with its art past
+# its mask, and the other two shift. Nightly build 3544 showed the same symptom,
+# at 136 wide. write_cards refuses cards of different sizes, because all three
+# draw the same mask through the same filters.
 #
 # Run: uv run extract_start_screens
 from __future__ import annotations
@@ -101,14 +104,19 @@ def write_cards(
     """Write both states of all three cards, trimmed to the card itself, and
     return each one's rect on the stage."""
     CARDS_DIR.mkdir(parents=True, exist_ok=True)
-    rects = {}
+    rests = {}
     for name in sorted(CARDS):
         # Both states draw the same card through the same filters, so the
         # resting state's bbox keeps the two PNGs the same size and the same
         # rect.
-        base = render.trim(cards[(name, BASE_CARD_FRAME)])
-        if base is None:
+        rests[name] = render.trim(cards[(name, BASE_CARD_FRAME)])
+        if rests[name] is None:
             raise RuntimeError(f"{name} (cid {CARDS[name]}) rendered empty")
+    sizes = {name: rest.image.size for name, rest in rests.items()}
+    if len(set(sizes.values())) != 1:
+        raise RuntimeError(f"the three cards came out different sizes: {sizes}")
+    rects = {}
+    for name, base in rests.items():
         rects[name] = base.rect
         for frame, suffix in ((BASE_CARD_FRAME, "_gray"), (HOVER_CARD_FRAME, "")):
             out = CARDS_DIR / f"{name}{suffix}.png"

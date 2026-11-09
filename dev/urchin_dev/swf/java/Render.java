@@ -40,6 +40,15 @@
 // clip, so hiding a mask unclips everything under it, the same as stripping
 // one (6622d79). strip.py refuses the same ids first.
 //
+// ffdec draws a sprite with a filter or a blend mode into its own image and then
+// composites that image onto its parent. Since jpexs afbe4fa33 ("use outline for
+// clipping"), a clip mask inside such a sprite is placed with the absolute matrix,
+// which leaves out where that image sits in its parent, so the mask lands off by
+// exactly that offset. That cut 51 design px off the left of the biological class
+// card and let art through on its right. ClipPlacedTimeline passes each sprite's
+// own matrix as the absolute matrix, and the only other readers of that matrix are
+// cursor hit tests, which a render here never has.
+//
 // Overrides are undone after each job, so jobs in one load do not leak into
 // each other. Each job prints one JSON line with the canvas size, the rect the
 // canvas was sized from (xmin to ymax) and the displayRect without the filter
@@ -50,19 +59,23 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import com.jpexs.decompiler.flash.SWF;
 import com.jpexs.decompiler.flash.configuration.Configuration;
+import com.jpexs.decompiler.flash.exporters.commonshape.ExportRectangle;
 import com.jpexs.decompiler.flash.exporters.commonshape.Matrix;
 import com.jpexs.decompiler.flash.tags.DefineSpriteTag;
 import com.jpexs.decompiler.flash.tags.SetBackgroundColorTag;
 import com.jpexs.decompiler.flash.tags.base.CharacterTag;
+import com.jpexs.decompiler.flash.tags.base.RenderContext;
 import com.jpexs.decompiler.flash.timeline.DepthState;
 import com.jpexs.decompiler.flash.timeline.Frame;
 import com.jpexs.decompiler.flash.timeline.Timeline;
+import com.jpexs.decompiler.flash.types.ColorTransform;
 import com.jpexs.decompiler.flash.types.RECT;
 import com.jpexs.helpers.SerializableImage;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -99,7 +112,7 @@ public class Render {
             for (JsonValue id : array(load, "strip_characters")) {
                 strip.add(id.asInt());
             }
-            Render render = new Render(load(data, strip));
+            Render render = new Render(placeClipsOnTheirOwnImage(load(data, strip)));
             System.err.printf("loaded %s without %s in %.2fs%n", spec.get("swf").asString(), strip,
                     (System.nanoTime() - start) / 1e9);
             for (JsonValue job : load.get("jobs").asArray()) {
@@ -136,6 +149,34 @@ public class Render {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         swf.saveTo(buffer);
         return new SWF(new ByteArrayInputStream(buffer.toByteArray()), false);
+    }
+
+    static SWF placeClipsOnTheirOwnImage(SWF swf) throws Exception {
+        Field field = DefineSpriteTag.class.getDeclaredField("timeline");
+        field.setAccessible(true);
+        for (CharacterTag character : swf.getCharacters(false).values()) {
+            if (character instanceof DefineSpriteTag sprite) {
+                field.set(sprite, new ClipPlacedTimeline(swf, sprite, sprite.getTimeline()));
+            }
+        }
+        return swf;
+    }
+
+    static final class ClipPlacedTimeline extends Timeline {
+        ClipPlacedTimeline(SWF swf, DefineSpriteTag sprite, Timeline original) {
+            super(swf, sprite, original.id, original.displayRect, original.filterDimension);
+        }
+
+        @Override
+        public void toImage(int frame, int time, RenderContext renderContext, SerializableImage image,
+                SerializableImage fullImage, boolean isClip, Matrix transformation, Matrix strokeTransformation,
+                Matrix absoluteTransformation, ColorTransform colorTransform, double unzoom, boolean sameImage,
+                ExportRectangle viewRect, ExportRectangle viewRectRaw, Matrix fullTransformation, boolean scaleStrokes,
+                int drawMode, int blendMode, boolean canUseSmoothing, List<Integer> ignoreDepths, int aaScale) {
+            super.toImage(frame, time, renderContext, image, fullImage, isClip, transformation, strokeTransformation,
+                    transformation, colorTransform, unzoom, sameImage, viewRect, viewRectRaw, fullTransformation,
+                    scaleStrokes, drawMode, blendMode, canUseSmoothing, ignoreDepths, aaScale);
+        }
     }
 
     Timeline timeline(int id) {
