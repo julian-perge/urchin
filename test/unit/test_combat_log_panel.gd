@@ -78,7 +78,7 @@ func test_format_death_line():
 
 func test_format_speech_line():
 	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
-	var event: Dictionary = {"type": BattleRunner.EventType.SPEECH, "speaker_slot": 1, "say": "Watch out!"}
+	var event: Dictionary = {"type": BattleRunner.EventType.SPEECH, "speaker_slot": 1, "speaker_name": "Veradux", "say": "Watch out!"}
 	assert_eq(panel._format_line(event, units), "Veradux: Watch out!")
 
 

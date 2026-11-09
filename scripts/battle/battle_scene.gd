@@ -113,6 +113,12 @@ var _radial_menu_fade_tween: Tween = null  # in-flight fade-out, if any - see Ta
 var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
 var _pending_goto_scene: String = ""  # ZoneProgression.CUTSCENE_GOTO_SCENE for that cutscene
 var _pending_setup_events: Array = []  # runner.setup()'s return - played first by _battle_loop()
+# The SPEECH event _play_speech has on screen, or {} when no line is up.
+var _line_on_screen: Dictionary = {}
+# The original's hardSkip. Space sets it during a line, and _play_events then
+# drops the rest of that batch's lines, until its next call clears it.
+var _hard_skip: bool = false
+var _pause_timer: SceneTreeTimer = null  # the running _pause's timer, which Space runs out during a line
 
 @onready var background: TextureRect = $Background
 @onready var sky: TextureRect = $Sky
@@ -670,7 +676,17 @@ func _on_stance_pressed(party_id: int, mode: Party.AggressionStance, slot: int) 
 
 # --- turn loop ---------------------------------------------------------------
 
+# The conductor starts every battle with timerWait at 30 and counts it down a
+# frame at a time, and its whole decision block waits for 0, the opening lines
+# included (frame_217/PlaceObject2_3389_480 onClipEvent(load), line 6, and
+# enterFrame, lines 5-8 and 589). That is a second at the SWF's 30 fps.
+const START_WAIT_SECONDS: float = 30.0 / 30.0
+
+
 func _battle_loop() -> void:
+	await _pause(START_WAIT_SECONDS)
+	if not is_inside_tree() or _finished:
+		return
 	if not _pending_setup_events.is_empty():
 		await _play_events(_pending_setup_events)
 		_pending_setup_events = []
@@ -735,7 +751,10 @@ func _on_retreat_pressed() -> void:
 
 # Replays a half-turn's event log with animation + audio pacing.
 func _play_events(events: Array) -> void:
+	_hard_skip = false
 	for event in events:
+		if _hard_skip and event["type"] == BattleRunner.EventType.SPEECH:
+			continue
 		_combat_log.append_event(event, units)
 		match event["type"]:
 			BattleRunner.EventType.MOVE:
@@ -971,16 +990,38 @@ func _play_death(slot: int) -> void:
 		AudioManagerAuto.play_effect(unit.voice_die)
 
 
+# A line stays up for its whole timeToSay seconds, unless Space cuts it short
+# (see _input). The original's speech box adds 30 / fps to a counter every frame
+# and lets the next line through once it reaches timeToSay * 30
+# (frame_217/PlaceObject2_3389_480 enterFrame, line 841, and
+# frame_217/PlaceObject2_3367_634 enterFrame, lines 13-17).
 func _play_speech(event: Dictionary) -> void:
-	speech_label.text = "%s: %s" % [_speaker_name(int(event.get("speaker_slot", 0))), event.get("say", "")]
+	speech_label.text = "%s: %s" % [event["speaker_name"], event.get("say", "")]
 	AudioManagerAuto.play_effect(str(event.get("voice_over", "")))
-	await _pause(min(float(event.get("time_to_say", 2.0)), 4.0))
+	_line_on_screen = event
+	await _pause(float(event.get("time_to_say", 2.0)))
+	_line_on_screen = {}
 	speech_label.text = ""
 
 
-func _speaker_name(slot: int) -> String:
-	var unit: CombatUnit = units.get(slot)
-	return unit.player_name if unit != null else "???"
+# The original's speech box answers Space all through a battle
+# (frame_217/PlaceObject2_3367_634 onClipEvent(keyDown), lines 2-9). It stops
+# the three effect channels, and while a line is up it ends that line and sets
+# hardSkip, which drops the rest of the conversation (BattleRunner.hard_skip).
+# The project has no input action for it, and Godot's ui_accept and ui_select
+# also fire on Enter or a gamepad button, so this checks the key itself, as
+# Key.isDown(32) does.
+func _input(event: InputEvent) -> void:
+	if _finished or not (event is InputEventKey and event.pressed and event.keycode == KEY_SPACE):
+		return
+	AudioManagerAuto.stop_effects()
+	if _line_on_screen.is_empty():
+		return
+	_hard_skip = true
+	runner.hard_skip(int(_line_on_screen["speech_index"]))
+	if _pause_timer != null:
+		_pause_timer.time_left = 0.0
+	get_viewport().set_input_as_handled()
 
 
 # snap = true syncs the displayed hp to the true values (half-turn
@@ -1149,4 +1190,5 @@ func _on_continue_pressed() -> void:
 func _pause(seconds: float) -> void:
 	if animation_speed <= 0.0:
 		return
-	await get_tree().create_timer(seconds / animation_speed).timeout
+	_pause_timer = get_tree().create_timer(seconds / animation_speed)
+	await _pause_timer.timeout

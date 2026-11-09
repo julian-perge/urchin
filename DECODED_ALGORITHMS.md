@@ -147,7 +147,7 @@ save when the game starts, and sends every Back to its first screen. In the game
   `Krin.NameSets[0]`, seeded to "Sonny" (`frame_42/DoAction_17.as:45`) and in neither save array, so no save changes it. That covers the victory screen's player row
   (`DefineSprite_3142/frame_9/PlaceObject3_3002_1197` onClipEvent(load), `prx = 0` on line 2 and `namerI` on line 15), the abilities screen (`DefineSprite_3142/frame_25/DoAction.as:7` and
   16), the inventory screen (`DefineSprite_3142/frame_1/DoAction.as:250` and 89) and the title of the player's portrait tooltip there (`DefineButton2_2895` on(rollOver), line 13). The
-  port uses `Party.PLAYER_NAME` in all five places, so battle 100's "Sonny" line finds the player as its speaker instead of falling back to the narrator's slot 0.
+  port uses `Party.PLAYER_NAME` in all five places, so battle 100's "Sonny" line finds the player as its speaker instead of finding nobody and being skipped.
 - Back is edit text 2703 over hit button 2702, at depths 35 and 36 of every frame from `subMenu` to `optionsMenu` (93). It goes to `mainMenu` from all of them (`DefineButton2_2702`
   on(release), line 2). The port has no `mainMenu`, so each Back goes to its New Game and Load Game screen.
 - `dataMenu`, root frame 74, shows each slot's saved `nameUser`, or "< Empty Slot >" for an empty one (`frame_74/DoAction.as:1-11`). `DefineButton2_2722`, 2721, 2720 and 2719 are slots 1
@@ -244,6 +244,39 @@ and on Heroic once a half-turn ends with the player's unit dead, it waits for th
   a player who never picked passes. The pass button, DefineButton2_3383 (`krinToMove2` on the root timeline), also jumps the clock to `BattleTimeLimit - 5` (release lines 9-12).
 - The clock is `battleClocker` (DefineSprite 3389), placed at (400, 507.25) behind the pass button. Its two half-dials in DefineSprite 3386 turn with
   `BattleTimeNow / (BattleTimeLimit / 2)` (`DefineSprite_3386/frame_1/PlaceObject2_3385_2` and `PlaceObject2_3385_6`, line 2), and none of its sprites holds a text field, so it shows no number.
+
+## Battle speeches (frame_217/PlaceObject2_3389_480 enterFrame, lines 794-870)
+
+Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with `BattleRunner.NARRATOR_NAME` for slot 0, and makes the endGame check after each batch.
+`battle_scene.gd` waits `START_WAIT_SECONDS` before the opening lines, `_play_speech` shows each line for its `timeToSay` seconds, and `_input` handles Space through
+`BattleRunner.hard_skip` and `AudioManager.stop_effects`. The port shows a plain label, without the box's placement or fade.
+
+- Each battle record's `speeches` entries carry `player`, `phase`, `turnTime`, `turnTime2`, `say`, `timeToSay` and sometimes `voiceOver` (`frame_42/DoAction_14.as`, 149 lines in 50
+  battles). Between half-turns the conductor shows the line at `speechOn` when its `phase` is the current one, its `turnTime` is the half-turns since that phase began (`turnTimeKKK2`) and
+  its `turnTime2` is the number of lines shown since the half-turn ended (lines 809-813). That count is the conductor's own `turnTime`, reset at line 146 and stepped at 818.
+- `getPNum` (`frame_42/DoAction_14.as:285-302`) turns `player` into a slot. A number under 7 is the slot, and anything else is a name, matched against `playerName` in slots 1 to 6 in
+  order, alive or not. With no match it returns NaN. The only names in the records are Veradux (17 lines), Roald (10) and Sonny (1, in battle 100).
+- A line shows only when that slot's `playerKrin` is active (line 815). The narrator, `playerKrin0`, is set up active and named "Information" in every battle
+  (`frame_201/DoAction.as:113-115`), so its lines always show, and the box names the speaker by `playerName` (line 830). No `playerKrinNaN` exists, so a name nobody on the field has is
+  skipped like a dead speaker. The `== NaN` test at line 805 is never true.
+- A skipped line moves `speechOn` on without stepping `turnTime` (lines 852-856). All 71 conversations in the records number their lines from 0 with no gaps, so when the next line has
+  the same `phase` and `turnTime`, its `turnTime2` is one too high, it never matches, and `speechOn` stays on it for the rest of the battle, so no later line plays.
+- A shown line sets `timeSpeechKKKUP = timeToSay * 30` (line 841). The speech box, `combatScript` (character 3367 at depth 634, `PlaceObject2_3367_634`), adds `30 / frameRateNowKrin` to
+  `timeX` every frame and lets the next line through once `timeX` reaches it (enterFrame lines 13-17), so a line stays up `timeToSay` seconds at any frame rate. 55 of the 149 lines run
+  past 4 s, and the longest are 15 s, the opening lines of battles 104 and 105 (`frame_42/DoAction_14.as:423` and 443).
+- `speechDone` stays false until the last line ends, and the whole decision block waits for it (conductor lines 591-793), so neither the clock nor the AI's picks nor the half-turn start
+  move. Target clicks wait too (`frame_217/DoAction_3.as:18`), and the pass button queues the pass but only commits it once speech is done (`DefineButton2_3383` on(release), lines 4-7).
+  A click meanwhile shows `MENU[37]`, "You cannot move yet..." (`frame_217/DoAction.as:19-26`). The block also waits for `timerWait`, which starts at 30 frames when the battle loads
+  (onClipEvent(load), line 6), so the opening lines start a second in.
+- A pass that shows nothing sets `speechDone` and checks the phase entry just passed, `phases[phase - 1]`, for `endGame`, taking its `winOrLose` (lines 862-870). That happens
+  once the last line of each batch is done, or straight away when none plays. A battle with no lines at all never gets the check (lines 794-796), but every battle with an endGame
+  entry has lines. 210, 409, 504 and 508 push their only phase entry, flagged endGame, as `phases[0]` (`frame_42/DoAction_14.as:1093` for 504), so each is won as soon as its
+  opening lines are done, before anyone fights. 109, 201 and 212 flag `phases[3]`, `phases[1]` and `phases[3]`, so each is won once the next phase's opening lines are done.
+- The box sits at x 473.3 for a team 2 speaker and at x 21.8 otherwise (lines 819-828), sends a child clip to the frame named after the speaker (831) and plays the speaker's own `speech`
+  clip (842). It fades in and out by 5 alpha a frame (speech box enterFrame lines 5-12 and 19-22).
+- Space ends the current line and sets `hardSkip` (`PlaceObject2_3367_634` onClipEvent(keyDown), lines 2-9). Line 815 then skips the next line too, which strands the line after it as
+  above. `hardSkip` clears once the box has faded out (enterFrame line 25) or the decision starts (conductor line 701), so outside a line Space only does the rest of what the
+  handler does: it stops `my_sound1` to `my_sound3` (lines 6-8), the three channels `addSound("Effects")` plays every cue on in turn (`frame_42/DoAction.as:5-15` and 119-121).
 
 ## Battle end and game over (DefineSprite 3355 `blacker5`, root frames 229-241 and 104)
 

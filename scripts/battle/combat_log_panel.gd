@@ -61,7 +61,7 @@ func _format_line(event: Dictionary, units: Dictionary) -> String:
 		BattleRunner.EventType.DEATH:
 			return "%s falls" % _unit_name(units, int(event["slot"]))
 		BattleRunner.EventType.SPEECH:
-			return "%s: %s" % [_unit_name(units, int(event.get("speaker_slot", 0))), str(event.get("say", ""))]
+			return "%s: %s" % [str(event["speaker_name"]), str(event.get("say", ""))]
 		_:
 			return ""
 

@@ -42,6 +42,18 @@ func test_music_modes_idempotent():
 	assert_ne(manager._rotation_counter, rotation_after_first, "mode switch advances")
 
 
+# The original's Space handler in battle stops my_sound1 to my_sound3
+# (frame_217/PlaceObject2_3367_634 onClipEvent(keyDown), lines 6-8), the three
+# channels addSound("Effects") plays every cue on in turn
+# (frame_42/DoAction.as:5-15 and 119-121).
+func test_stop_effects_stops_every_effect_channel():
+	for cue in ["hit_sonny1", "hit_sonny2", "hit_sonny3"]:
+		manager.play_effect(cue)
+	assert_true(manager._effect_players.all(func(player): return player.playing), "each channel is playing a cue")
+	manager.stop_effects()
+	assert_false(manager._effect_players.any(func(player): return player.playing), "and none is after stop_effects")
+
+
 func test_real_cue_loads():
 	var stream = manager._stream("_music_battle1")
 	assert_not_null(stream, "extracted audio file resolves")

@@ -150,7 +150,7 @@ func test_player_from_save_with_talent_passives():
 
 # The original names the player's battle unit "Sonny" whatever the save is
 # called (frame_201/DoAction.as:201), so battle 100's "Sonny" line finds the
-# player as its speaker instead of falling back to the narrator's slot 0.
+# player as its speaker instead of finding nobody and being skipped.
 func test_the_players_battle_unit_is_sonny_whatever_the_save_is_named():
 	var save = PlayerSave.new_game("< Enter Name Here >", 0)
 	var player: CombatUnit = CombatUnit.from_player_save(save)
@@ -204,6 +204,111 @@ func test_setup_returns_its_own_turn_time_zero_speeches():
 		if event["type"] == BattleRunner.EventType.SPEECH:
 			has_speech = true
 	assert_true(has_speech, "the turnTime:0 speech is returned by setup(), not left stranded in runner.events")
+
+
+# getPNum looks a named speaker up in slots 1 to 6 and returns NaN when no unit
+# there has that name (frame_42/DoAction_14.as:285-302). The conductor skips
+# such a line, because no playerKrinNaN exists to be active, and it only moves
+# on to the next line of a conversation after showing one, so the line after a
+# skipped one never plays either (frame_217/PlaceObject2_3389_480 enterFrame,
+# lines 813-818 and 852-856). The harness puts Veradux in both companion slots,
+# so battle 403 has no Roald: Veradux's opening line plays, Roald's reply is
+# skipped, and Sonny's answer to Roald never plays.
+func test_a_line_whose_speaker_is_not_on_the_field_is_skipped():
+	var battle: BattleFight = battles.get(403)
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	var setup_events: Array = runner.setup(
+		_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
+	)
+	var lines: Array = []
+	for event in setup_events:
+		if event["type"] == BattleRunner.EventType.SPEECH:
+			lines.append([event["speaker_slot"], event["say"]])
+	assert_eq(
+		lines, [[3, "That one looks just like Sonny! Haha!"]],
+		"only Veradux speaks, and neither Roald's line nor the answer to it plays"
+	)
+
+
+# Once a batch of lines is done, or straight away when none plays, the conductor
+# checks the phase entry it has just passed for endGame and takes its winOrLose
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 862-870). Battles 210, 409,
+# 504 and 508 push their only phase entry, flagged endGame, as phases[0]
+# (frame_42/DoAction_14.as:1093 for 504), and phase starts at 1, so each is won
+# as soon as its opening lines are done, before anyone fights.
+func test_a_battle_whose_first_phase_ends_it_is_won_after_its_opening_lines():
+	var opening_lines: Dictionary = {210: 4, 409: 2, 504: 2, 508: 4}
+	for battle_id in opening_lines:
+		var battle: BattleFight = battles.get(battle_id)
+		var runner = BattleRunner.new()
+		var manager: BattleManager = autofree(BattleManager.new())
+		var setup_events: Array = runner.setup(
+			_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
+		)
+		var said: Array = setup_events.filter(func(event): return event["type"] == BattleRunner.EventType.SPEECH)
+		assert_eq(said.size(), opening_lines[battle_id], "battle %d plays its opening lines" % battle_id)
+		assert_eq(runner.win_condition, BattleRunner.Outcome.WIN, "and battle %d is won before a half-turn" % battle_id)
+
+
+# 109, 201 and 212 flag a later phase entry instead, so each is won once the
+# phase after it opens and that phase's lines are done: 109 and 212 at phase 4,
+# when the watched boss falls to 10% and 15% life, and 201 at phase 2. Every
+# phase advance moves the phase on and sets turnTimeKKK2 back to 0 before the
+# speech pass looks for lines (lines 176-193), which is the walk below. Battle
+# 212's phase 4 opens with Roald, so he stands in slot 5 here.
+func test_the_phase_after_an_end_game_entry_ends_the_battle_after_its_lines():
+	var lines_at_the_end: Dictionary = {109: 2, 201: 12, 212: 2}
+	var last_phase: Dictionary = {109: 4, 201: 2, 212: 4}
+	for battle_id in lines_at_the_end:
+		var battle: BattleFight = battles.get(battle_id)
+		var units: Dictionary = _build_battle_units(battle)
+		if battle_id == 212:
+			units[5] = CombatUnit.from_character(unit_templates[32], 1, CombatUnit.Difficulty.HARD, 5)
+		var runner = BattleRunner.new()
+		var manager: BattleManager = autofree(BattleManager.new())
+		runner.setup(units, battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+		var said: Array = []
+		var over_early: bool = false
+		for next_phase in range(2, last_phase[battle_id] + 1):
+			over_early = over_early or runner.is_over()
+			runner.phase = next_phase
+			runner.turns_in_phase = 0
+			var start: int = runner.events.size()
+			runner._drain_speeches()
+			said = runner.events.slice(start).filter(func(event): return event["type"] == BattleRunner.EventType.SPEECH)
+		assert_false(over_early, "battle %d is still on before its last phase" % battle_id)
+		assert_eq(said.size(), lines_at_the_end[battle_id], "battle %d plays the lines that open its last phase" % battle_id)
+		assert_eq(runner.win_condition, BattleRunner.Outcome.WIN, "and battle %d is won after them" % battle_id)
+
+
+# Space ends the line on screen and sets hardSkip
+# (frame_217/PlaceObject2_3367_634 onClipEvent(keyDown), lines 2-9). While it
+# holds, the conductor skips the next line of the conversation without counting
+# it (frame_217/PlaceObject2_3389_480 enterFrame, lines 815 and 852-856), so if
+# the conversation goes on, the line after that never matches and no later line
+# plays. Cut during Sonny's reply, the tutorial skips its third line and never
+# reaches its turnTime 2 conversation. Cut during the opening's fourth line, the
+# skip takes the fifth and last, and cut during that last line nothing is left
+# to skip, so in both the turnTime 2 conversation still plays.
+func test_space_skips_the_next_line_and_strands_the_rest():
+	assert_eq(_tutorial_turn_2_lines_after_space_on(1), [], "cut on Sonny's reply, nothing more plays")
+	assert_eq(_tutorial_turn_2_lines_after_space_on(3).size(), 4, "cut on the fourth line, the next conversation plays")
+	assert_eq(_tutorial_turn_2_lines_after_space_on(4).size(), 4, "cut on the last line, the next conversation plays")
+
+
+# Runs the tutorial's opening, has Space cut the given line, and returns the
+# SPEECH events the turnTime 2 conversation plays when its time comes.
+func _tutorial_turn_2_lines_after_space_on(speech_index: int) -> Array:
+	var battle: BattleFight = battles.get(2)
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	runner.setup(_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.hard_skip(speech_index)
+	runner.turns_in_phase = 2
+	var start: int = runner.events.size()
+	runner._drain_speeches()
+	return runner.events.slice(start).filter(func(event): return event["type"] == BattleRunner.EventType.SPEECH)
 
 
 func test_battle_51_end_game_phase():

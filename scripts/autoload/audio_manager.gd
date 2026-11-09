@@ -11,6 +11,7 @@
 #   play_menu_music()            <- addSound("Music", 1)
 #   play_battle_music(is_boss)   <- addSound("Music", 2)
 #   stop_all_sounds()            <- stopAllSounds()
+#   stop_effects()               <- my_sound1.stop() to my_sound3.stop()
 #   reset_music_rotation()       <- soundPlayCounter = 0 and soundModeKrin = 0
 # The menu/battle rotation cycles soundPlayArray exactly like the original.
 extends Node
@@ -94,10 +95,20 @@ func stop_music() -> void:
 		player.stop()
 
 
-func stop_all_sounds() -> void:
-	stop_music()
+# The original's my_sound1.stop() to my_sound3.stop(), which its battle Space
+# handler calls (frame_217/PlaceObject2_3367_634 onClipEvent(keyDown), lines
+# 6-8). Those are the three channels addSound("Effects") plays every cue on in
+# turn (frame_42/DoAction.as:5-15 and 119-121), so this stops any voice-over too.
+func stop_effects() -> void:
 	for player in _effect_players:
 		player.stop()
+
+
+# This is the original's stopAllSounds(), which stops the music and all three
+# effect channels.
+func stop_all_sounds() -> void:
+	stop_music()
+	stop_effects()
 
 
 func reset_music_rotation() -> void:
