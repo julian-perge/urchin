@@ -35,6 +35,8 @@ entry names its evidence so you can check it instead of trusting it.
   res://addons/gut/gut_cmdln.gd --path .` Add `-gunit_test_name=<name>` for one
   test. The Python package's tests are `uv run pytest`, under `dev/tests/`.
   They never read the SWF or the XML dump, so they pass on a fresh checkout.
+- One test file needs `-gdir= -gtest=res://<path>`. GUT 9.7.1 adds `-gtest` to
+  `.gutconfig.json`'s dirs, so on its own it runs the whole suite.
 - After writing anything under `assets/`, run
   `/Applications/Godot.app/Contents/MacOS/Godot --headless --import --path .`
   or tests fail with "No loader found for resource".

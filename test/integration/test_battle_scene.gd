@@ -1,6 +1,7 @@
-# Integration test for the playable battle scene: real save + real battle 100
-# through BattleSetup/BattleRunner with paper-doll visuals, run to completion
-# headless (animation_speed 0, player driven by the AI).
+# Every test here builds battle_scene.tscn and starts a battle from
+# resources/battles on a save made for that test. The checks on the battle
+# screen's extracted art and layout JSON never build the scene, so they are in
+# test_battle_assets.gd.
 extends GutTest
 
 const BattleSceneRes = preload("res://scenes/battle_scene.tscn")
