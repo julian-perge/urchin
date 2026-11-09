@@ -18,10 +18,6 @@ _Avoid_: Screen, popup, dialog
 The Battle screen's status elements drawn over the hall: unit overlays, member bars, the top status bar and the speech box.
 _Avoid_: Overlay, battle UI
 
-**Stage**:
-The original's 800x575 drawing area, the surface every position read from the SWF is measured on.
-_Avoid_: Canvas, viewport
-
 **Quest progress**:
 How far the player has got through a zone's story battles, which the Hub labels "Stage 11".
 _Avoid_: Stage
