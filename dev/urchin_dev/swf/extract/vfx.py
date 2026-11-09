@@ -184,8 +184,9 @@ def main():
             out_dir.mkdir(parents=True, exist_ok=True)
             for n, frame in enumerate(by_clip[cid], start=1):
                 shutil.copyfile(frame.path, out_dir / f"{n}.png")
-            # vfx_scenes.py reads one offset per clip id, so a clip both a
-            # bolt and an impact name resolve to keeps its first record.
+            # A clip that a bolt name and an impact name both resolve to gets
+            # an offset under its first name only, as vfx_offsets.py did, so
+            # vfx_scenes.py skips the second folder.
             if cid in offset_ids and category != "trail":
                 continue
             offset_ids.add(cid)
