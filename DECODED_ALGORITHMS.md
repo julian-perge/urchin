@@ -141,6 +141,17 @@ Ported: `BattleRunner._resolve_dispels` takes slots in `CombatUnit.buff_slots` o
   without the buff's direct fields but with its stat changes: a Shatter that dispels SHATTERBOLT hits a target that is no longer stunned but still takes half damage.
 - The port used to walk `buff_slots` in the order the buffs landed, since nothing sorted it, and `_resolve_dispels` recomputed the target's stats before the hit.
 
+## Buff icon row (frame_42/DoAction_10.as `applyChangesKrin`, lines 345-379)
+
+Ported: `UnitOverlay.refresh_buffs` (`scripts/battle/unit_overlay.gd`).
+
+- `applyChangesKrin` redraws a unit's row right after its sort. For each of slots 0 to 6 of `BUFFARRAYK` whose CD isn't 0, it attaches a `KrinBuffShower` (DefineSprite 104) to
+  `p<playerID>BAR` at x = (110 + 17 * slot) times 1 for team 1 or -1 for team 2. It sets the clip's `buffCounter` text (edit text 66) to the CD, sends `buffIcon` to the frame named by
+  the buff id and tints `buffColor` with the buff element's color. The tooltip title is the buff's `[0]` and its text the buff's `[25]` (the enterFrame handler on `buffColor` inside
+  DefineSprite 104). Nothing sorts the row itself, so it shows the first 7 slots in the order the sort left them, and it only changes when `applyChangesKrin` runs for that unit.
+- The port's row used to sort the slots with turns left again with `sort_custom`, which moved tied buffs once a unit held more than 16 of them and changed the 7 icons it showed in 212
+  of 20,000 sorted states. The port's tooltip title also adds the turns left, which the original's doesn't.
+
 ## Menu piercing/defense bars (DefineSprite_3142/frame_1)
 
 Implemented in `scripts/ui/menu/menu_theme.gd` (`bar_fill_fraction`). Display value = allocation + ceil(100 + 15 * level); fill fraction = the crit-curve quartic `0.016666667 x^4 - 0.25 x^3 + 1.233333
