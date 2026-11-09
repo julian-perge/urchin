@@ -204,6 +204,12 @@ entry names its evidence so you can check it instead of trusting it.
   decided the base resolution becomes 800x575 too. Build new layouts for the
   800x575 stage, because that change is the UI overhaul's first implementation
   issue and has not landed yet.
+- Pixel snapping is off so a piece is drawn at its layout position and SWF
+  fractions reach the screen. `gui/common/snap_controls_to_pixels` and
+  `rendering/2d/snap/snap_2d_transforms_to_pixel` both have to stay off, because
+  the 2D snap alone rounds every Control again. Text stays crisp at fractional
+  positions only under the default NEAREST texture filter, so a filter change
+  has to recheck it (julian-perge/urchin#128).
 - `.png.import` and `.uid` sidecars must be committed. Forgetting them has
   broken a fresh checkout at least six times (`54ff0b9`, `9e72d69`, `ec53f69`,
   `011cb96`, `18cf5c3`, `37de6ed`).
