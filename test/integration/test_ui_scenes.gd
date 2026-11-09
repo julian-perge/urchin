@@ -229,6 +229,42 @@ func test_hotbar_shows_the_saved_zone_after_a_game_over_reload():
 	GameData.save_dir = GameData.SAVE_DIR
 
 
+# The original caps the bar at the zone's progressMax but not the stage text,
+# which adds one to the raw quest progress (frame_181/DoAction.as:7-14). So a
+# beaten zone 1, at progress 10, shows a full bar and Stage 11.
+func test_hotbar_stage_keeps_counting_past_a_beaten_zone():
+	GameData.current_save.quest_progress[1] = 10
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var hotbar = game.get_node("Hotbar")
+	assert_eq(hotbar.progress_bar.value, 9.0, "the bar stops at zone 1's progress_max")
+	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 1 progress_max")
+	assert_eq(hotbar.stage_label.text, "Stage 11")
+
+
+# The panel's name line is ZONES[zone], then ": ", then ZONES2[zone]
+# (frame_181/DoAction.as:13), and these are those strings from
+# frame_41/DoAction.as:123-136. Zone 3's name there is "Ivory Line " with a
+# trailing space, so its line reads "Ivory Line : The Train".
+func test_hotbar_names_every_zone_with_the_original_strings():
+	var expected: Dictionary = {
+		1: "New Alcatraz: The Iron Prison",
+		2: "Oberursel: The Frozen Village",
+		3: "Ivory Line : The Train",
+		4: "Labyrinth: Tunnel of Illusions",
+		5: "Hew: The Dystopia",
+		6: "Il Sanctus: The Supreme Court",
+		7: "Sho'Tul Shelf: The Divided Cliff",
+	}
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var hotbar = game.get_node("Hotbar")
+	for zone_id in expected:
+		ZoneManager.current_zone = zone_id
+		ZoneManager.zone_changed.emit(zone_id)
+		assert_eq(hotbar.zone_subtitle.text, expected[zone_id], "zone %d" % zone_id)
+
+
 func test_inventory_window_equips_from_grid_click():
 	var item = _find_basic_equippable()
 	assert_not_null(item, "an unrestricted level-1 equippable exists")

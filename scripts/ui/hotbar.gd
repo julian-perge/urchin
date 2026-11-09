@@ -1,10 +1,12 @@
 # hotbar.gd
 # The bottom hotbar (scenes/ui/hotbar.tscn), matching the original layout:
 # left panel = menu buttons, middle = world-map toggle, right = zone name +
-# story progress bar + stage counter. Zone info follows
-# ZoneManager.zone_changed; progress reads the live save's quest progress
-# (ZoneProgression) and refreshes after battles via GameData.save_loaded and
-# ZoneManager.zone_unlocked.
+# story progress bar + stage counter. The hub builds a new hotbar every time it
+# opens, after a load and after every battle, so _ready() paints the right
+# panel from the save's zone, which game.gd's _enter_tree() has just restored.
+# After that, picking a zone on the world map repaints it through
+# ZoneManager.zone_changed, and so does the Save button once its "Game saved."
+# message is gone.
 #
 # Menu buttons open the full-screen overlays (group "menu_screen"); while a
 # screen is open, its button's white icon glows green like the original.
@@ -53,7 +55,6 @@ var _button_glows: Dictionary = {}  # button name -> {glow, icon}
 func _ready():
 	ZoneManager.zone_changed.connect(_on_zone_changed)
 	ZoneManager.zone_unlocked.connect(func(_zone): _refresh(ZoneManager.current_zone))
-	GameData.save_loaded.connect(func(_slot): _refresh(ZoneManager.current_zone))
 	for button_name in HOVER_COLORS:
 		_setup_icon_glow(get_node("%" + button_name))
 	for button_name in TOOLTIP_CAPTIONS:
@@ -147,7 +148,9 @@ func _refresh(zone_id: int) -> void:
 		progress = ZoneProgression.quest_progress(GameData.current_save, zone_id)
 	progress_bar.max_value = progress_max
 	progress_bar.value = min(progress, progress_max)
-	stage_label.text = "Stage %d" % (min(progress, progress_max) + 1)
+	# The original caps the bar at progress_max but not the stage text
+	# (frame_181/DoAction.as:7-14), so a beaten zone reads one stage past its boss.
+	stage_label.text = "Stage %d" % (progress + 1)
 
 
 func _on_save_pressed() -> void:

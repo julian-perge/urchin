@@ -233,6 +233,26 @@ original's fade to black.
 - The frame's backdrop is the three characters every menu screen places at depths 1, 2 and 5, which `assets/ui/menu/start_background.png` already is. Its Armor Games logo, copyright line and
   "Play MORE Games!" link are left out, see `docs/adr/0002-leave-out-the-armor-games-branding.md`.
 
+## Hub panel on the Navigation frame (root frame 181)
+
+Ported: `scripts/ui/hotbar.gd`'s `_refresh` builds the right panel, and `scripts/game.gd`'s `_enter_tree` restores the save's zone before the hotbar's `_ready` first reads it.
+
+- `frame_181/DoAction.as:5-14` is the only code that writes the panel (`klt1`, `klt2`, `klt3` and the `krinXbarPro` bar), and it runs each time the root enters `Navigation`. That is a
+  slot load (`DefineButton2_2719` to `2722` on(release), lines 15 and 32), Re-Load (`DefineButton2_2791` on(release), lines 4-7), a zone picked on the world map, which sets `Krin.sectionIn`
+  first (`DefineButton2_4155` on(release), lines 4-5), the return from a won battle with no cutscene queued (`frame_219/DoAction.as:73-81`), the end of a cutscene whose `gotoSceneKrin` is
+  `Navigation` (`frame_263/PlaceObject2_3466_80` enterFrame, lines 26-33), and the end menu's button (`DefineButton2_2797` on(release), root frame 116). Every value comes from
+  `Krin.sectionIn`, which a load restores from the slot (`frame_42/DoAction_20.as:93`, with `sectionIn` in `saveArray1` at line 296).
+- Zone line: `klt1 = SYSTEM[9] + sectionIn`, and `SYSTEM[9]` is "Zone " (`frame_41/DoAction.as:76`), so zone 4 reads "Zone 4".
+- Name line: `klt2 = ZONES[sectionIn] + ": " + ZONES2[sectionIn]`, with the strings at `frame_41/DoAction.as:123-136`. `ZONES[3]` is "Ivory Line " with a trailing space, so zone 3 reads
+  "Ivory Line : The Train". The other six names and all seven subtitles match the port's `ZoneManager.ZONES` character for character.
+- Bar: `levelMinProgress` is `questProgress[sectionIn]`, capped at `questHub[sectionIn].progressMax`, and the bar's width is `levelMinProgress / progressMax` of its full width (lines 5-11).
+- Stage line: `klt3 = SYSTEM[10] + (questProgress[sectionIn] + 1)` with no cap, and `SYSTEM[10]` is "Stage " (`frame_41/DoAction.as:77`). So a beaten zone 1, at progress 10, shows a full bar
+  and "Stage 11".
+- The hub art picks its frame from the same variable on the same frame, through `Krin.zoneName[sectionIn]` (line 2 of `frame_181/PlaceObject3_3287_59`'s onClipEvent(load)), so the panel
+  always names the hub on screen.
+- The world map's zone buttons are the only other readers of these strings. They show `ZONES[sectionID]` and `ZONES2[sectionID]` as their tooltip's title and body (`DefineButton2_4155`
+  on(rollOver), lines 3-4), and the port's map has no tooltips yet.
+
 ## Approximation audit (2026-07-21) - port pieces NOT yet source-faithful
 
 Everything below still stands in for original behavior, except the rows marked DONE; the ActionScript truth is already located, so no re-decoding is needed:
