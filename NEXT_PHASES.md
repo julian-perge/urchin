@@ -189,6 +189,11 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     effect of no longer skipping frames with an empty PlaceObject snapshot. `ICON_OVERRIDES` (items 5/11's hand-picked-icon table) removed from this script now that the fixed extraction agrees with
     the fallback art those two items were pointed at - `scripts/editor/items.gd`'s independent `SLOT_ICON_OVERRIDES` copy still exists and still applies to those two when regenerating `.tres` from
     scratch, which is fine since both sources now render the same icon either way.
+  - **DONE (2026-11-09)** - `item_icons.py` no longer writes `resources/items/*.tres`. Its repoint step's clean-up regex missed lines carrying `uid=`, so every run rewrote 312 editor-saved files
+    to its own `icon_slot` form and gave item 11 two `id="icon_slot"` lines, and 310 of those already pointed at the right art. `scripts/editor/items.gd` does the same lookup when it regenerates
+    those files, so the step had nothing left to do. Items 5 and 11 use the extracted `assets/ui/items/` icons now and `SLOT_ICON_OVERRIDES` is gone, which supersedes the note above.
+    `A_Broken_Pipe.png.import` had said `importer="image"` since `63efb0a4`, the only such sidecar in the repo, and a `Texture2D` export loads null from an `Image`, so it is back on the texture
+    importer. `dev/tests/test_item_icons.py` checks every committed item against the icon extracted for its name, by path, uid and importer.
 
 - **Zone hub art - DONE (2026-08-22)**, `uv run extract_zone_hub`. Every zone including 6 and 7 now has its own art. The claim that none existed for those two was wrong. `Krin.zoneName`
   (frame_41/DoAction_2.as) maps a zone onto one of DefineSprite 3287's labels by name rather than by order, which puts zone 6 on `ROME` and zone 7 on `JAPAN`. Both draw real scenes. The labels

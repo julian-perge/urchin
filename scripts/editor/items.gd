@@ -49,19 +49,6 @@ const SLOT_ICON_CATEGORIES: Dictionary[GameItem.ItemType, String] = {
 	GameItem.ItemType.TWOHAND: "WEAPONS",
 }
 
-# Items whose extracted icon-clip frame doesn't match the live game keep a
-# hand-picked icon. dev/urchin_dev/swf/extract/item_icons.py used to carry
-# a matching ICON_OVERRIDES table for the same two items, needed while its
-# extraction rendered icon-clip content wrong (dropped filters/colorTransforms,
-# then an unapplied clip mask - see that script's history); removed there
-# once the extraction itself was fixed (2026-08-18), since both sources now
-# agree. Left here since a hand-picked icon is still a reasonable thing to
-# want when regenerating .tres from items.json from scratch, independent of
-# whether the extraction is currently correct.
-const SLOT_ICON_OVERRIDES: Dictionary[int, String] = {
-	5: "res://assets/item_slot_icons/OTHER/A_Broken_Pipe.png",  # A Broken Pipe
-	11: "res://assets/item_slot_icons/OTHER/White_T_Shirt.png",  # White T-shirt
-}
 # Icons extracted from the original icon clip (sprite 2064) by
 # dev/urchin_dev/swf/extract/item_icons.py.
 const EXTRACTED_ICON_ROOT: String = "res://assets/ui/items"
@@ -70,8 +57,6 @@ var _extracted_icons: Dictionary = {}  # lowercase file name -> actual file name
 
 
 func _find_slot_icon(item) -> Texture2D:
-	if SLOT_ICON_OVERRIDES.has(item.id):
-		return load(SLOT_ICON_OVERRIDES[item.id])
 	# Prefer the original icon sheet art (sanitized like the extractor:
 	# non-alphanumeric runs -> single underscore).
 	var extracted_name: String = ""

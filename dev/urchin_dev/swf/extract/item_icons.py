@@ -1,7 +1,8 @@
 # The original item icon sheet: DefineSprite 2064, one labeled frame per
 # item (the game does itemSlot.inner.gotoAndStop(ITEMNAME[id])). Writes
-# assets/ui/items/<label>.png and repoints each resources/items/<id>_*.tres
-# slot_image at the matching icon.
+# assets/ui/items/<label>.png and nothing else. The Godot editor saves
+# resources/items/*.tres in its own form, and scripts/editor/items.gd points
+# each slot_image at these icons when it regenerates those files.
 #
 # Each frame is rendered by ffdec's own renderer through render.py, not
 # reassembled shape-by-shape. An
@@ -47,7 +48,6 @@ from urchin_dev.swf import render, timeline
 from urchin_dev.swf.swf_index import read_swf
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "items"
-ITEMS_DIR = REPO_ROOT / "resources" / "items"
 ZOOM = 2.0
 ICON_SPRITE = 2064
 
@@ -62,11 +62,9 @@ def main():
 
     jobs = [render.Job(ICON_SPRITE, f, ZOOM) for f in sorted(set(labels.values()))]
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    written: dict[str, str] = {}
     with render.frames(WEB_SWF, jobs) as rendered:
         by_frame = {frame.job.frame: frame for frame in rendered}
         for label, frame in labels.items():
-            file_name = sanitize(label) + ".png"
             trimmed = render.trim(by_frame[frame])
             # Trim the mostly-transparent canvas down to this frame's own
             # content (see file header) - a couple of labels ("Nichts"/
@@ -78,80 +76,8 @@ def main():
                 if trimmed is not None
                 else Image.new("RGBA", (1, 1), (0, 0, 0, 0))
             )
-            img.save(OUT_DIR / file_name)
-            written[label] = file_name
-    print(f"icons written: {len(written)}", file=sys.stderr)
-
-    # --- repoint the item .tres slot_image at the new icons -----------------
-    # Labels and item names disagree on case/punctuation sometimes ("White
-    # T-Shirt" vs "White T-shirt") - match on the sanitized lowercase form.
-    # Never touches other Texture2D ext_resources (sprite_image); adds the
-    # icon as its own ext_resource with a dedicated id.
-    by_key = {
-        sanitize(label).lower(): file_name for label, file_name in written.items()
-    }
-    patched, no_icon = 0, []
-    for tres in ITEMS_DIR.glob("*.tres"):
-        text = tres.read_text()
-        name_match = re.search(r'^name = "(.*)"$', text, re.MULTILINE)
-        if name_match is None:
-            continue
-        else:
-            icon = by_key.get(sanitize(name_match.group(1)).lower())
-            if icon is None:
-                no_icon.append(name_match.group(1))
-                continue
-            new_path = f"res://assets/ui/items/{icon}"
-        if (
-            f'path="{new_path}" id="icon_slot"]' in text
-            and 'slot_image = ExtResource("icon_slot")' in text
-        ):
-            patched += 1
-            continue
-        # Drop any previous icon ext_resource/assignment of ours.
-        text = re.sub(
-            r'^\[ext_resource type="Texture2D" path="[^"]*" id="(?:2_icon|icon_slot)"\]\n',
-            "",
-            text,
-            flags=re.MULTILINE,
-        )
-        text = re.sub(
-            r'^slot_image = ExtResource\("(?:2_icon|icon_slot)"\)\n',
-            "",
-            text,
-            flags=re.MULTILINE,
-        )
-        # Insert the icon ext_resource before the Script one (always present).
-        text = re.sub(
-            r'^(\[ext_resource type="Script")',
-            f'[ext_resource type="Texture2D" path="{new_path}" id="icon_slot"]\n\\1',
-            text,
-            count=1,
-            flags=re.MULTILINE,
-        )
-        # Point slot_image at it (replace an existing assignment, else add
-        # right after the script line in the [resource] block).
-        if re.search(r"^slot_image = ", text, re.MULTILINE):
-            text = re.sub(
-                r"^slot_image = .*$",
-                'slot_image = ExtResource("icon_slot")',
-                text,
-                count=1,
-                flags=re.MULTILINE,
-            )
-        else:
-            text = re.sub(
-                r'^(script = ExtResource\("[^"]*"\))$',
-                '\\1\nslot_image = ExtResource("icon_slot")',
-                text,
-                count=1,
-                flags=re.MULTILINE,
-            )
-        # load_steps count may now be off by one - Godot tolerates and fixes
-        # it on the next editor save.
-        tres.write_text(text)
-        patched += 1
-    print(f"tres repointed: {patched}, no icon for: {no_icon[:10]}", file=sys.stderr)
+            img.save(OUT_DIR / (sanitize(label) + ".png"))
+    print(f"icons written: {len(labels)}", file=sys.stderr)
 
 
 if __name__ == "__main__":
