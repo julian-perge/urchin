@@ -247,8 +247,9 @@ and on Heroic once a half-turn ends with the player's unit dead, it waits for th
 
 ## Battle speeches (frame_217/PlaceObject2_3389_480 enterFrame, lines 794-870)
 
-Ported: `BattleRunner._drain_speeches` picks the lines and names each speaker, with `BattleRunner.NARRATOR_NAME` for slot 0, and `battle_scene.gd`'s `_play_speech` shows each one for
-its `timeToSay` seconds. The port shows a plain label, without the box's placement, fade or Space skip, and plays the opening lines without the 30 frame wait.
+Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with `BattleRunner.NARRATOR_NAME` for slot 0, and makes the endGame check after each batch.
+`battle_scene.gd` waits `START_WAIT_SECONDS` before the opening lines, `_play_speech` shows each line for its `timeToSay` seconds, and `_input` handles Space through
+`BattleRunner.hard_skip` and `AudioManager.stop_effects`. The port shows a plain label, without the box's placement or fade.
 
 - Each battle record's `speeches` entries carry `player`, `phase`, `turnTime`, `turnTime2`, `say`, `timeToSay` and sometimes `voiceOver` (`frame_42/DoAction_14.as`, 149 lines in 50
   battles). Between half-turns the conductor shows the line at `speechOn` when its `phase` is the current one, its `turnTime` is the half-turns since that phase began (`turnTimeKKK2`) and
@@ -267,10 +268,15 @@ its `timeToSay` seconds. The port shows a plain label, without the box's placeme
   move. Target clicks wait too (`frame_217/DoAction_3.as:18`), and the pass button queues the pass but only commits it once speech is done (`DefineButton2_3383` on(release), lines 4-7).
   A click meanwhile shows `MENU[37]`, "You cannot move yet..." (`frame_217/DoAction.as:19-26`). The block also waits for `timerWait`, which starts at 30 frames when the battle loads
   (onClipEvent(load), line 6), so the opening lines start a second in.
+- A pass that shows nothing sets `speechDone` and checks the phase entry just passed, `phases[phase - 1]`, for `endGame`, taking its `winOrLose` (lines 862-870). That happens
+  once the last line of each batch is done, or straight away when none plays. A battle with no lines at all never gets the check (lines 794-796), but every battle with an endGame
+  entry has lines. 210, 409, 504 and 508 push their only phase entry, flagged endGame, as `phases[0]` (`frame_42/DoAction_14.as:1093` for 504), so each is won as soon as its
+  opening lines are done, before anyone fights. 109, 201 and 212 flag `phases[3]`, `phases[1]` and `phases[3]`, so each is won once the next phase's opening lines are done.
 - The box sits at x 473.3 for a team 2 speaker and at x 21.8 otherwise (lines 819-828), sends a child clip to the frame named after the speaker (831) and plays the speaker's own `speech`
   clip (842). It fades in and out by 5 alpha a frame (speech box enterFrame lines 5-12 and 19-22).
 - Space ends the current line and sets `hardSkip` (`PlaceObject2_3367_634` onClipEvent(keyDown), lines 2-9). Line 815 then skips the next line too, which strands the line after it as
-  above. `hardSkip` clears once the box has faded out (enterFrame line 25) or the decision starts (conductor line 701).
+  above. `hardSkip` clears once the box has faded out (enterFrame line 25) or the decision starts (conductor line 701), so outside a line Space only does the rest of what the
+  handler does: it stops `my_sound1` to `my_sound3` (lines 6-8), the three channels `addSound("Effects")` plays every cue on in turn (`frame_42/DoAction.as:5-15` and 119-121).
 
 ## Battle end and game over (DefineSprite 3355 `blacker5`, root frames 229-241 and 104)
 

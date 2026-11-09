@@ -478,13 +478,14 @@ const NARRATOR_NAME: String = "Information"
 # the battle plays. The original does the same, because its conductor only
 # advances the count when it shows a line (frame_217/PlaceObject2_3389_480
 # enterFrame, lines 813-818 and 852-856).
-# After a drain that emitted nothing new, an endGame-flagged phase entry that
-# was just passed ends the battle (winOrLose).
+# After every drain, a just-passed phase entry flagged endGame ends the battle
+# with its winOrLose. The conductor makes the same check once the last line of
+# a batch is done, or straight away when none plays (lines 862-870), and
+# battle_scene.gd plays the queued lines before it acts on the result.
 func _drain_speeches() -> void:
 	if battle == null or battle.speeches.is_empty():
 		return
 	var sequence: int = 0
-	var emitted: int = 0
 	while speech_cursor < battle.speeches.size():
 		var speech: Dictionary = battle.speeches[speech_cursor]
 		if int(speech.get("phase", 0)) != phase:
@@ -494,22 +495,22 @@ func _drain_speeches() -> void:
 		if int(speech.get("turnTime2", 0)) != sequence:
 			break
 		var speaker_slot: int = _speech_speaker_slot(speech.get("player", 0))
+		var speech_index: int = speech_cursor
 		speech_cursor += 1
 		if speaker_slot == 0 or (units.get(speaker_slot) != null and units[speaker_slot].active):
 			sequence += 1
-			emitted += 1
 			_log({
 				"type": EventType.SPEECH,
+				"speech_index": speech_index,
 				"speaker_slot": speaker_slot,
 				"speaker_name": NARRATOR_NAME if speaker_slot == 0 else units[speaker_slot].player_name,
 				"say": speech.get("say", ""),
 				"time_to_say": speech.get("timeToSay", 0.0),
 				"voice_over": speech.get("voiceOver", ""),
 			})
-	if emitted == 0:
-		var passed_entry: Dictionary = _phase_entry(phase - 1)
-		if not passed_entry.is_empty() and passed_entry.get("endGame", false):
-			win_condition = int(passed_entry.get("winOrLose", Outcome.WIN))
+	var passed_entry: Dictionary = _phase_entry(phase - 1)
+	if not passed_entry.is_empty() and passed_entry.get("endGame", false):
+		win_condition = int(passed_entry.get("winOrLose", Outcome.WIN))
 
 
 # getPNum (frame_42/DoAction_14.as:285-302): a number under 7 is a slot, 0 being
@@ -528,6 +529,28 @@ func _speech_speaker_slot(speaker) -> int:
 		if unit != null and unit.player_name == str(speaker):
 			return slot
 	return -1
+
+
+# Space in the original ends the line on screen and sets hardSkip
+# (frame_217/PlaceObject2_3367_634 onClipEvent(keyDown), lines 2-9). While it
+# holds, the conductor skips the next line of the conversation without counting
+# it (frame_217/PlaceObject2_3389_480 enterFrame, lines 815 and 852-856). If the
+# conversation goes on past that line, the line after it never matches, and
+# neither it nor any later line in the battle plays. A cut on the last line of a
+# conversation leaves nothing to skip. battle_scene.gd calls this with the line
+# it cut, after _drain_speeches has already queued the rest of the
+# conversation, so this puts speech_cursor where the conductor's speechOn ends
+# up.
+func hard_skip(speech_index: int) -> void:
+	speech_cursor = speech_index + 1
+	if speech_cursor >= battle.speeches.size():
+		return
+	var next: Dictionary = battle.speeches[speech_cursor]
+	if int(next.get("phase", 0)) != phase or int(next.get("turnTime", 0)) != turns_in_phase:
+		return
+	if int(next.get("turnTime2", 0)) != int(battle.speeches[speech_index].get("turnTime2", 0)) + 1:
+		return
+	speech_cursor += 1
 
 
 func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, result: Dictionary) -> void:

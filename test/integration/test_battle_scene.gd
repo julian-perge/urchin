@@ -129,11 +129,91 @@ func test_a_line_stays_up_for_its_whole_time_to_say():
 	assert_eq(shown.map(func(line): return line[2]), [false], "and the player can't act while it does")
 
 
+# The conductor starts every battle with timerWait at 30 and counts it down a
+# frame at a time (frame_217/PlaceObject2_3389_480 onClipEvent(load), line 6,
+# and enterFrame, lines 5-8), and its whole decision block waits for 0 (line
+# 589). At the SWF's 30 fps the opening lines start a second in, and the first
+# decision, with its Heroic clock, opens only once that second and the lines
+# are done.
+func test_the_battle_waits_a_second_before_its_opening_lines():
+	var run: Dictionary = await _pauses_to_first_decision(105, CombatUnit.Difficulty.HARD)
+	var first_two: Array = run["pauses"].slice(0, 2).map(func(pause): return [pause[0] != "", pause[1], pause[2]])
+	assert_eq(first_two, [[false, 1.0, false], [true, 15.0, false]],
+		"a second with nothing on screen, then the 15 second line, and no pick open during either")
+	assert_almost_eq(run["scene"]._decision_timer, 4.0, 0.25, "the Heroic window is whole when the first decision opens")
+
+
+# Space during the tutorial's second line ends it, and the conductor then skips
+# the third without counting it, so the fourth never matches and the fifth sits
+# behind it (frame_217/PlaceObject2_3367_634 onClipEvent(keyDown), lines 2-9,
+# and frame_217/PlaceObject2_3389_480 enterFrame, lines 815 and 852-856). The
+# runner is left on the fourth line, so nothing later in the battle plays.
+func test_space_during_a_line_ends_it_and_skips_the_rest():
+	var run: Dictionary = await _pauses_to_first_decision(2, CombatUnit.Difficulty.NORMAL, func(scene, pause):
+		if pause[0].begins_with("Sonny: "):
+			scene._input(_space_press())
+	)
+	var shown: Array = run["pauses"].filter(func(pause): return pause[0] != "").map(func(pause): return pause[0])
+	assert_eq(shown, [
+		"Louis the Blind: I may be blind, but there's no mistaking that smell. Can you take him out?",
+		"Sonny: Yes, I...I suppose I can. Ugh...I don't feel too well.",
+	], "the opening stops at Sonny's line")
+	assert_eq(run["scene"].runner.speech_cursor, 3, "and the runner is left on the fourth line")
+
+
+# With the cap gone, Space is the only way to take a long line down early. The
+# original ends it on the next frame, since Space sets nextSpeechKKK (keyDown,
+# line 4) and the conductor moves on as soon as that is set. The battle loop is
+# stubbed out so the line plays on its own real 15 second timer.
+func test_space_takes_a_long_line_down_at_once():
+	var save = PlayerSave.new_game("SpaceCut", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_battle_loop").to_do_nothing()
+	add_child_autofree(scene)
+	scene.start_battle({"battle_id": 105, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	var line: Dictionary = scene._pending_setup_events[0]
+	var done: Array = [false]
+	var show_line: Callable = func():
+		await scene._play_speech(line)
+		done[0] = true
+	show_line.call()
+
+	await wait_process_frames(2)
+	assert_eq(scene.speech_label.text.left(20), "Twisted Experiment: ", "the 15 second line is up")
+	scene._input(_space_press())
+	await wait_process_frames(2)
+	assert_true(done[0], "Space took it down within two frames")
+	assert_eq(scene.speech_label.text, "", "and the speech box is empty")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func _space_press() -> InputEventKey:
+	var event: InputEventKey = InputEventKey.new()
+	event.keycode = KEY_SPACE
+	event.pressed = true
+	return event
+
+
 # Starts a battle in a scene whose _pause records every line the speech box
 # shows: its text, how many seconds it stays up and whether the player could act
 # meanwhile. It returns them at the player's first decision, so they hold every
 # line that plays before it.
 func _speech_box_lines(battle_id: int, difficulty: CombatUnit.Difficulty) -> Array:
+	var run: Dictionary = await _pauses_to_first_decision(battle_id, difficulty)
+	return run["pauses"].filter(func(pause): return pause[0] != "")
+
+
+# Starts a battle in a scene whose _pause only records each wait it is asked
+# for: the speech box's text, the seconds, and whether the player could act
+# meanwhile. during_pause, when given, runs inside each wait with the scene and
+# that record, the way a key pressed mid-wait would land. Returns the scene and
+# the records at the player's first decision.
+func _pauses_to_first_decision(battle_id: int, difficulty: CombatUnit.Difficulty, during_pause: Callable = Callable()) -> Dictionary:
 	var save = PlayerSave.new_game("SpeechBox", 0)
 	save.difficulty = difficulty
 	GameData.current_save = save
@@ -141,10 +221,12 @@ func _speech_box_lines(battle_id: int, difficulty: CombatUnit.Difficulty) -> Arr
 	ZoneManager.pending_battle = {}
 
 	var scene = partial_double(BattleSceneRes).instantiate()
-	var shown: Array = []
+	var pauses: Array = []
 	stub(scene, "_pause").to_call(func(seconds: float):
-		if scene.speech_label.text != "":
-			shown.append([scene.speech_label.text, seconds, scene._player_action_pending])
+		var pause: Array = [scene.speech_label.text, seconds, scene._player_action_pending]
+		pauses.append(pause)
+		if during_pause.is_valid():
+			during_pause.call(scene, pause)
 	)
 	add_child_autofree(scene)
 	scene.animation_speed = 0.0
@@ -153,7 +235,7 @@ func _speech_box_lines(battle_id: int, difficulty: CombatUnit.Difficulty) -> Arr
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
-	return shown
+	return {"scene": scene, "pauses": pauses}
 
 
 # Task 4 (cutscene plan): drives a real win of story battle 109 (zone 1's

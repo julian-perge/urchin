@@ -92,6 +92,15 @@ func stop_music() -> void:
 		player.stop()
 
 
+# The original's my_sound1.stop() to my_sound3.stop(), which its battle Space
+# handler calls (frame_217/PlaceObject2_3367_634 onClipEvent(keyDown), lines
+# 6-8). Those are the three channels addSound("Effects") plays every cue on in
+# turn (frame_42/DoAction.as:5-15 and 119-121), so this stops any voice-over too.
+func stop_effects() -> void:
+	for player in _effect_players:
+		player.stop()
+
+
 func voice(unit_cues: Array) -> void:
 	if not unit_cues.is_empty():
 		play_effect(unit_cues[randi_range(0, unit_cues.size() - 1)])
