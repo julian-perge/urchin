@@ -193,7 +193,8 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
 - **Zone hub art - DONE (2026-08-22)**, `uv run extract_zone_hub`. Every zone including 6 and 7 now has its own art. The claim that none existed for those two was wrong. `Krin.zoneName`
   (frame_41/DoAction_2.as) maps a zone onto one of DefineSprite 3287's labels by name rather than by order, which puts zone 6 on `ROME` and zone 7 on `JAPAN`. Both draw real scenes. The labels
   that render empty are `CASINO`, `UTOPIA`, `EDEN` and `STORM`, which no zone reaches. The script deletes the orb and its buttons from a working copy so the background comes out bare, the same
-  way `start_screens.py` handles the menu background. Zone 7's training orb position is still borrowed from zone 6.
+  way `start_screens.py` handles the menu background. Zone 7 has no training orb, because every frame under `JAPAN` places only the story orb (`DefineButton2_3243`) and the shop orb
+  (`DefineButton2_3256`), so the orb its scene used to borrow from zone 6's position is gone (#85).
 
 - **Battle screen art - DONE (2026-08-22)**, `uv run extract_battle_screen`. The halls (`3435`, 10 labels), the skies (`3454`, 9 labels) and four chrome
   characters now render from the SWF instead of being cut by hand. `2676`, the character rig every hall places six times, is stripped first, so the

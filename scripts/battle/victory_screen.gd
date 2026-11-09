@@ -43,7 +43,13 @@ func _ready():
 	inventory_panel.show_sell_button(false)
 
 
+# The original's Proceed works once, because its release always leaves the
+# frame the victory screen is drawn on (DefineButton2_3004 on(release), lines
+# 8-29). This screen stays under the cutscene and the ending screen, and a click
+# leaves the keyboard focus on the button, so it is disabled once pressed and
+# Enter or Space can't press it a second time.
 func _on_proceed_pressed() -> void:
+	$ProceedButton.disabled = true
 	proceed_pressed.emit()
 
 

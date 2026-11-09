@@ -276,6 +276,213 @@ func test_a_cutscene_starts_the_menu_rotation_over():
 	ZoneManager.auto_start_battles = true
 
 
+# The first win of battle 513 queues CS_CUT5 with gotoSceneKrin "endMenu"
+# (frame_219/DoAction.as:51-55), and the cutscene's end goes to endMenu, root
+# frame 116, without starting any music (frame_263/PlaceObject2_3466_80
+# enterFrame, lines 15-19 and 33). Frame 116 fills its text with
+# KrinLang.ENGLISH.ENDING (frame_116/DoAction.as:1, frame_1/DoAction.as:2240)
+# above the static OK! caption, and only OK! goes on to the hub
+# (DefineButton2_2797 on(release), line 2). The scene is a partial double with
+# _on_continue_pressed stubbed, because the real one changes the scene and
+# takes the test runner down with it.
+func test_the_first_513_win_ends_on_the_ending_screen_after_cs_cut5():
+	var save = PlayerSave.new_game("EndingFlow", 0)
+	save.section_in = 5
+	save.quest_progress[5] = 13
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 513, "is_story_progress": true, "is_boss": true, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	_proceed_and_play_cs_cut5_to_its_end(scene)
+
+	assert_not_called(scene, "_on_continue_pressed")
+	assert_false(ZoneManager.open_zone_map_on_load, "the zone map stays shut")
+	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "no music plays on the ending screen")
+	var ending = scene.get_node_or_null("UI/EndingScreen")
+	assert_not_null(ending, "the ending screen is up")
+	if ending != null:
+		assert_true(ending.is_visible_in_tree(), "and showing")
+		assert_eq(
+			ending.get_node("EndingLabel").text,
+			"Congratulations! You've beaten the game. So what now? If you haven't already, I recommend you to try the game on 'Heroic' difficulty, the way that it was designed to be played! Or perhaps pitch your own character against a friend's, using the 'PvP Arena' option. Visit www.ArmorGames.com for more games (including the first chapter of Sonny) and check for updates, in case we add some new Zones for you to play in. Seeya next time!",
+			"ENDING"
+		)
+		assert_eq(ending.get_node("OkLabel").text, "OK!", "static text 2799")
+		ending.get_node("OkButton").pressed.emit()
+		assert_called(scene, "_on_continue_pressed")
+
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# For endMenu the end of CS_CUT5 sets soundPlayCounter and soundModeKrin back
+# to 0 and starts no music (frame_263/PlaceObject2_3466_80 enterFrame, lines
+# 15-19), so the ending screen is silent and the Navigation frame that OK! opens
+# starts the rotation over on its first menu track (frame_181/DoAction.as:15).
+# The test plays Sonny's death cry and leaves the rotation on _music_menu2,
+# where one menu track and one battle track leave it, before Proceed.
+func test_the_ending_screen_stays_silent_and_ok_starts_the_first_menu_track():
+	var save = PlayerSave.new_game("EndingSound", 0)
+	save.section_in = 5
+	save.quest_progress[5] = 13
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 513, "is_story_progress": true, "is_boss": true, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	AudioManagerAuto._rotation_counter = 2
+	AudioManagerAuto.play_effect(scene.units[BattleRunner.PLAYER_SLOT].voice_die)
+	assert_true(_an_effect_is_playing(), "Sonny's death cry is playing when Proceed is pressed")
+	_proceed_and_play_cs_cut5_to_its_end(scene)
+
+	var ending = scene.get_node_or_null("UI/EndingScreen")
+	assert_not_null(ending, "the ending screen is up")
+	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "no music plays on it")
+	assert_false(_an_effect_is_playing(), "and no effect either")
+	if ending != null:
+		ending.get_node("OkButton").pressed.emit()
+	assert_called(scene, "_on_continue_pressed")
+	assert_eq(_hub_menu_track(), "_music_menu1", "the hub that OK! opens starts on the first menu track")
+
+	AudioManagerAuto.stop_music()
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original's Proceed can't be pressed twice, because its release always
+# leaves the frame of DefineSprite 3142 that the victory screen is drawn on, for
+# the cutscene, the map or 3142's skills or hide frame (DefineButton2_3004
+# on(release), lines 8-29). The test clicks the port's Proceed the way a player
+# does, which leaves the keyboard focus on it, and then presses Enter and Space
+# under CS_CUT5 and again under the ending screen.
+func test_enter_and_space_after_clicking_proceed_press_nothing_under_the_cutscene_or_the_ending():
+	var save = PlayerSave.new_game("ProceedFocus", 0)
+	save.section_in = 5
+	save.quest_progress[5] = 13
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	# The scene gets a viewport of its own, because GUT's window sits above
+	# everything in the root viewport and would take the click.
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 600)
+	add_child_autofree(viewport)
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	viewport.add_child(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 513, "is_story_progress": true, "is_boss": true, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	var proceed: Button = scene.get_node("VictoryScreen/ProceedButton")
+	_click(viewport, proceed)
+	assert_eq(get_call_count(scene, "_on_victory_proceed"), 1, "the click pressed Proceed")
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "CS_CUT5 is playing")
+	for key in [KEY_ENTER, KEY_SPACE]:
+		_press(viewport, key)
+		assert_eq(get_call_count(scene, "_on_victory_proceed"), 1, "%s under the cutscene presses nothing" % OS.get_keycode_string(key))
+	if cutscene != null:
+		cutscene.video.finished.emit()
+	assert_not_null(scene.get_node_or_null("UI/EndingScreen"), "the ending screen is up")
+	for key in [KEY_ENTER, KEY_SPACE]:
+		_press(viewport, key)
+		assert_eq(get_call_count(scene, "_on_victory_proceed"), 1, "%s under the ending screen presses nothing" % OS.get_keycode_string(key))
+	assert_not_called(scene, "_on_continue_pressed")
+
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A left click on the control's center, pushed through the viewport's GUI input.
+func _click(viewport: Viewport, control: Control) -> void:
+	for pressed in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.pressed = pressed
+		event.position = control.get_global_rect().get_center()
+		event.global_position = event.position
+		viewport.push_input(event, true)
+
+
+# Presses and releases the key, because a focused button acts on the release.
+func _press(viewport: Viewport, key: Key) -> void:
+	for pressed in [true, false]:
+		var event := InputEventKey.new()
+		event.keycode = key
+		event.physical_keycode = key
+		event.pressed = pressed
+		viewport.push_input(event, true)
+
+
+# Presses Proceed on the victory screen and has CS_CUT5 report that it ended,
+# which with animation_speed 0 runs the rest of _on_victory_proceed() at once.
+func _proceed_and_play_cs_cut5_to_its_end(scene: Control) -> void:
+	var victory: VictoryScreen = scene.get_node_or_null("VictoryScreen")
+	assert_not_null(victory, "victory screen shown on win")
+	if victory == null:
+		return
+	victory.proceed_pressed.emit()
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "CS_CUT5 plays after Proceed")
+	if cutscene == null:
+		return
+	assert_eq(cutscene.video.stream.resource_path, "res://assets/cutscenes/CS_CUT5.ogv")
+	cutscene.video.finished.emit()
+
+
+# The TUNNELS story orb compares the first fight at 409 against progressMax1,
+# which questHub never defines, so bossFight stays false (DefineButton2_3239
+# on(press), line 14) and addSound("Music", 2) plays the rotation's next track
+# instead of _music_boss (frame_42/DoAction.as:55-77). A replay of the beaten
+# zone sets bossFight at line 11, so the Hydra at 408 gets _music_boss.
+func test_the_first_409_fight_plays_the_rotation_track_and_the_replay_the_boss_track():
+	var save = PlayerSave.new_game("TunnelsMusic", 0)
+	save.section_in = 4
+	GameData.current_save = save
+	var previous_zone: int = ZoneManager.current_zone
+	ZoneManager.current_zone = 4
+	ZoneManager.auto_start_battles = false
+	for progress in [9, 10]:
+		save.quest_progress[4] = progress
+		AudioManagerAuto.stop_music()
+		var cue: String = "_music_boss" if progress == 10 else AudioManagerAuto.MUSIC_ROTATION[AudioManagerAuto._rotation_counter]
+		var info: Dictionary = ZoneManager.request_story_fight()
+		ZoneManager.pending_battle = {}
+		assert_eq(info.get("battle_id"), 409 if progress == 9 else 408, "the orb's pick at progress %d" % progress)
+		var scene = add_child_autofree(BattleSceneRes.instantiate())
+		scene.animation_speed = 0.0
+		scene.start_battle(info)
+		var music: AudioStreamPlayer = AudioManagerAuto._music_players[AudioManagerAuto._active_music]
+		assert_eq(music.stream.resource_path, "res://assets/audio/%s.mp3" % cue, "battle %d's track" % info.get("battle_id"))
+
+	AudioManagerAuto.stop_music()
+	ZoneManager.current_zone = previous_zone
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # A win of battle 109 pays 36, because the original averages Felicity's level
 # 7 with the level 1 of both companion markers. Paying for Felicity alone
 # would give 130. The win is set before the battle loop starts, so the loop

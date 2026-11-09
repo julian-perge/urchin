@@ -1101,9 +1101,9 @@ func _on_victory_proceed() -> void:
 	if GameData.current_save != null and GameData.current_save.autosave:
 		GameData.save_game()
 	if not _pending_cutscene.is_empty():
-		# Cleared before the await, not after: Proceed stays clickable for one
-		# more frame while the player is being built, and a second press must
-		# not start a second copy of the same clip on top of the first.
+		# Cleared before the await, not after, so a second call can't start a
+		# second copy of the same clip on top of the first. VictoryScreen
+		# disables Proceed once it's pressed, so the button can't make that call.
 		var cutscene_id: String = _pending_cutscene
 		var goto_scene: String = _pending_goto_scene
 		_pending_cutscene = ""
@@ -1123,8 +1123,19 @@ func _on_victory_proceed() -> void:
 		# enterFrame, lines 15-31), so _on_continue_pressed() plays the first menu
 		# track.
 		AudioManagerAuto.reset_music_rotation()
-		# Matches gotoSceneKrin (frame_219): a cutscene that just unlocked a
-		# new zone opens the zone map on landing instead of the same hub.
+		# Matches gotoSceneKrin (frame_219): CS_CUT5 ends on the ending screen,
+		# and a cutscene that just unlocked a new zone opens the zone map on
+		# landing instead of the same hub. The original starts no music for the
+		# ending screen (frame_263/PlaceObject2_3466_80 enterFrame, lines 15-19),
+		# so the menu track waits until its OK! reaches the hub. The screen goes
+		# on the UI layer, like the game over screen, so the speech label there
+		# can't draw over it.
+		if goto_scene == "endMenu":
+			var ending: EndingScreen = preload("res://scenes/battle/ending_screen.tscn").instantiate()
+			ending.name = "EndingScreen"
+			ending.ok_pressed.connect(_on_continue_pressed)
+			$UI.add_child(ending)
+			return
 		if goto_scene == "overMap":
 			ZoneManager.open_zone_map_on_load = true
 	_on_continue_pressed()

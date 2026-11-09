@@ -263,6 +263,41 @@ original's fade to black.
 - The frame's backdrop is the three characters every menu screen places at depths 1, 2 and 5, which `assets/ui/menu/start_background.png` already is. Its Armor Games logo, copyright line and
   "Play MORE Games!" link are left out, see `docs/adr/0002-leave-out-the-armor-games-branding.md`.
 
+## End menu after CS_CUT5 (root frame 116, `endMenu`)
+
+Ported: once CS_CUT5 ends, `battle_scene.gd`'s `_on_victory_proceed` opens `EndingScreen` (`scripts/battle/ending_screen.gd`), and its OK! goes to the hub through
+`_on_continue_pressed`.
+
+- The first win of 513 sets `afterCut = "CS_CUT5"` and `gotoSceneKrin = "endMenu"` (`frame_219/DoAction.as:51-55`). Proceed autosaves when autosave is on, stops every sound and plays the
+  cutscene (`DefineButton2_3004` on(release), lines 4-11).
+- When the cutscene ends, its fade clip sets `soundModeKrin` and `soundPlayCounter` to 0 and goes to `endMenu` without starting any music (`frame_263/PlaceObject2_3466_80` enterFrame, lines
+  15-19 and 33). Only `overMap` and `Navigation` get `addSound("Music", 1)` there (lines 20-31). The port's `_on_victory_proceed` calls `AudioManager.reset_music_rotation()` when any
+  cutscene ends, so the ending screen stays silent and the hub that OK! opens starts on `_music_menu1`, the same as the original.
+- Frame 116 fills `enderText`, edit text 2796, with `ENDING` (`frame_116/DoAction.as:1`, the string at `frame_1/DoAction.as:2240`). It also sets `whatToSay1` to `MENU[18]` "Start!" (line 2),
+  which no text field on the frame shows, and `whatToSay3` to `MENU[19]` "Play MORE Games!" (line 3), the caption of edit text 2798 under a copy of the Armor Games link 2688.
+- OK! is static text 2799 with hit button 2797 over it, and the button's release goes to `Navigation` (`DefineButton2_2797` on(release), line 2). That frame starts the menu music
+  (`frame_181/DoAction.as:15`) and shows the hub of `Krin.sectionIn`, still zone 5. Nothing from the win to the hub sets a flag, since the cutscene's own clip only sets `cutSceneEnd`
+  (`DefineSprite_4153/frame_2424/DoAction.as:1`), so the world map opens zones 6 and 7 by its usual rule (`frame_449/DoAction.as:4-16` and 29).
+- Depths 1, 2 and 5 hold the same three characters with the same matrices as frame 104 and the class-select frame that `assets/ui/menu/start_background.png` is rendered from, so the port
+  reuses that PNG. Outside the texts, the logo and the copyright line, it matches ffdec's export of frame 116 at a 99th percentile channel difference of 0, and shifting it one pixel right
+  at the export's 2x raises that to 17. The logo, the copyright line and the "Play MORE Games!" link are left out like the game over screen's, see
+  `docs/adr/0002-leave-out-the-armor-games-branding.md`.
+
+## Zone hub orbs (DefineSprite 3287)
+
+Ported: `ZoneProgression.pick_story_battle` and `pick_training_battle` carry each orb's flags, and `scenes/zones/zone*.tscn` place the orbs.
+
+- Zones 1 to 5 each have their own story orb, `DefineButton2_3188`, 3213, 3220, 3239 and 3204, and share one training orb, `DefineButton2_3186`. Zones 6 and 7 share the story orb
+  `DefineButton2_3243`. ROME's training orb is `DefineButton2_3242`, at depth 56, and frame 86 (`CASINO`) removes it. Every frame under `JAPAN` (110-122) places only the story orb and the
+  shop orb, `DefineButton2_3256`, so zone 7 has no training orb. The Steam build's hub, DefineSprite 2908, has the same layout under its own ids.
+- Each story orb sets `bossFight` for the fight at its zone's `progressMax`, and for a replay once the zone is beaten. The TUNNELS orb compares against `progressMax1` instead (`DefineButton2_3239`
+  on(press), line 14), a field no `questHub` entry has, in both builds' bytecode. So the first fight at 409 isn't a boss fight and plays the rotation's next track instead of `_music_boss`
+  (`frame_42/DoAction.as:55-77`). The flag's only other effect goes through `bossJustPwned2` (`frame_219/DoAction.as:9-16`), which sends a won boss fight to the map (`DefineButton2_3004`
+  on(release), line 13), and the first win at 409 queues CS_CUT4 ahead of that check, which goes to the map anyway.
+- `usedTraining` is set by the zones 1 to 5 training orb (`DefineButton2_3186` on(press), line 15) and by the boss replays of the zones 1 to 5 story orbs (`DefineButton2_3188` line 9, the
+  others line 12). The ROME training orb and the ROME and JAPAN story orb never set it. Predator and Legend are decided on the first wins of 212 and 513, before zone 6 opens, so neither
+  award changes.
+
 ## Hub panel on the Navigation frame (root frame 181)
 
 Ported: `scripts/ui/hotbar.gd`'s `_refresh` builds the right panel, and `scripts/game.gd`'s `_enter_tree` restores the save's zone before the hotbar's `_ready` first reads it.

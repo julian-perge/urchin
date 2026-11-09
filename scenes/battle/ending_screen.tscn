@@ -1,0 +1,70 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/ending_screen.gd" id="1_ending"]
+[ext_resource type="Texture2D" uid="uid://be351g307gwtg" path="res://assets/ui/menu/start_background.png" id="2_bg"]
+
+[node name="EndingScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ending")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 0
+
+; Every rect below is read from root frame 116 in the web build's SWF.
+; EndingLabel is edit text 2796, OkLabel is static text 2799 and OkButton is
+; hit button 2797, and each Label takes its text's rect, size, color and
+; alignment, with 2796's 8 px leading as the line spacing. The black outline
+; stands for the glow filter the original puts on both texts.
+[node name="EndingLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 195.3
+offset_top = 109.45
+offset_right = 613.35
+offset_bottom = 384.65
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_constants/line_spacing = 8
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+text = "Congratulations! You've beaten the game. So what now? If you haven't already, I recommend you to try the game on 'Heroic' difficulty, the way that it was designed to be played! Or perhaps pitch your own character against a friend's, using the 'PvP Arena' option. Visit www.ArmorGames.com for more games (including the first chapter of Sonny) and check for updates, in case we add some new Zones for you to play in. Seeya next time!"
+
+[node name="OkLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 221.0
+offset_top = 410.1
+offset_right = 563.1
+offset_bottom = 461.4
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 36
+horizontal_alignment = 1
+text = "OK!"
+
+[node name="OkButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 340.43
+offset_top = 412.4
+offset_right = 444.47
+offset_bottom = 452.4
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[connection signal="pressed" from="OkButton" to="." method="_on_ok_pressed"]

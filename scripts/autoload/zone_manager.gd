@@ -73,7 +73,8 @@ func request_training_fight() -> Dictionary:
 	if not info.is_empty():
 		info["is_story_progress"] = false
 		info["is_boss"] = false
-		save.used_training = true  # the Predator/Legend achievement tracker
+		if info["counts_as_training"]:
+			save.used_training = true
 		_launch_battle(info)
 	return info
 

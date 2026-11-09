@@ -74,6 +74,21 @@ func test_every_battle_file_holds_the_battle_its_name_says():
 	assert_eq(seen.size(), 99, "every converted battle has a file")
 
 
+# Every story orb flags the fight at its zone's progressMax as a boss fight
+# except the TUNNELS orb, which compares the progress against progressMax1, a
+# field no questHub entry has (DefineButton2_3239 on(press), line 14). So the
+# first fight at 409 isn't a boss fight in the original.
+func test_the_first_fight_at_409_is_the_only_progress_max_fight_without_the_boss_flag():
+	for zone in ZoneProgression.QUEST_HUB:
+		var progress_max: int = int(ZoneProgression.QUEST_HUB[zone]["progress_max"])
+		save.section_in = zone
+		save.quest_progress[zone] = progress_max
+		var pick = ZoneProgression.pick_story_battle(save)
+		assert_eq(pick["battle_id"], zone * 100 + progress_max, "zone %d's progressMax fight" % zone)
+		assert_true(pick["is_story_progress"], "zone %d's first fight at its progressMax advances the story" % zone)
+		assert_eq(pick["is_boss"], zone != 4, "zone %d's first fight at its progressMax" % zone)
+
+
 func test_story_orb_replays_once_the_zone_is_done():
 	save.section_in = 4
 	save.quest_progress[4] = 10
@@ -120,6 +135,38 @@ func test_boss_replay_from_the_story_orb_sets_used_training():
 	save.quest_progress[2] = 13
 	ZoneManager.request_story_fight()
 	assert_true(save.used_training, "replaying zone 2's boss sets used_training")
+
+	ZoneManager.pending_battle = previous_pending
+	ZoneManager.auto_start_battles = previous_auto_start
+	ZoneManager.current_zone = previous_zone
+	GameData.current_save = previous_save
+
+
+# Zones 1 to 5 share one training orb, DefineButton2_3186, which sets
+# usedTraining (on(press), line 15). The ROME orb, DefineButton2_3242, doesn't,
+# and the JAPAN frame of the hub has no training orb at all.
+func test_only_the_training_orb_of_zones_1_to_5_counts_as_training():
+	for zone in ZoneProgression.QUEST_HUB:
+		save.section_in = zone
+		var pick = ZoneProgression.pick_training_battle(save)
+		assert_eq(pick.get("counts_as_training"), zone <= 5, "zone %d's training fight" % zone)
+
+
+func test_training_in_rome_leaves_used_training_alone():
+	var previous_save: PlayerSave = GameData.current_save
+	var previous_zone: int = ZoneManager.current_zone
+	var previous_auto_start: bool = ZoneManager.auto_start_battles
+	var previous_pending: Dictionary = ZoneManager.pending_battle
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	save.quest_progress[5] = 14
+	save.quest_progress[6] = 1
+	ZoneManager.current_zone = 6
+	assert_eq(ZoneManager.request_training_fight().get("battle_id"), 1026, "ROME's only training fight")
+	assert_false(save.used_training, "a training fight in ROME leaves used_training alone")
+	ZoneManager.current_zone = 5
+	ZoneManager.request_training_fight()
+	assert_true(save.used_training, "a training fight in CITY sets used_training")
 
 	ZoneManager.pending_battle = previous_pending
 	ZoneManager.auto_start_battles = previous_auto_start
@@ -212,8 +259,9 @@ func test_after_battle_won_returns_each_cutscene():
 		assert_eq(result["cutscene"], ZoneProgression.CUTSCENE_BATTLES[battle_id], "battle %s should trigger its cutscene" % battle_id)
 
 
-# gotoSceneKrin (frame_219): CS_CUT2/CS_CUT4 unlock a new zone and open the
-# map, CS_CUT3 doesn't unlock anything so it stays on the current hub.
+# gotoSceneKrin (frame_219/DoAction.as:36-55): CS_CUT2 and CS_CUT4 unlock a
+# new zone and open the map, CS_CUT3 doesn't unlock anything so it stays on the
+# current hub, and CS_CUT5 goes to endMenu, the ending screen.
 func test_after_battle_won_returns_goto_scene_per_cutscene():
 	var result = ZoneProgression.after_battle_won(save, 109, true)
 	assert_eq(result["goto_scene"], "overMap", "CS_CUT2 unlocks zone 2, opens the map")
@@ -221,6 +269,15 @@ func test_after_battle_won_returns_goto_scene_per_cutscene():
 	save.section_in = 2
 	result = ZoneProgression.after_battle_won(save, 210, true)
 	assert_eq(result["goto_scene"], "Navigation", "CS_CUT3 doesn't unlock a new zone")
+
+	save.section_in = 4
+	result = ZoneProgression.after_battle_won(save, 409, true)
+	assert_eq(result["goto_scene"], "overMap", "CS_CUT4 unlocks zone 5, opens the map")
+
+	save.section_in = 5
+	result = ZoneProgression.after_battle_won(save, 513, true)
+	assert_eq(result["cutscene"], "CS_CUT5")
+	assert_eq(result["goto_scene"], "endMenu", "CS_CUT5 ends on the ending screen")
 
 	result = ZoneProgression.after_battle_won(save, 100, true)
 	assert_eq(result["goto_scene"], "", "non-cutscene wins don't carry a goto_scene")
