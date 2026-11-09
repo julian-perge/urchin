@@ -160,6 +160,111 @@ func test_hotbar_shows_progress_from_save():
 	assert_eq(hotbar.stage_label.text, "Stage 4")
 
 
+# Each slot button loads its slot and goes to the Navigation frame
+# (DefineButton2_2719 to 2722 on(release), lines 15 and 32), and that frame
+# builds the panel's three strings and its bar from the loaded save's zone
+# (frame_181/DoAction.as:5-14). So right after a load the panel names the saved
+# zone, whatever zone the game showed before.
+func test_hotbar_shows_the_saved_zone_right_after_a_load():
+	GameData.current_save.section_in = 4
+	GameData.current_save.quest_progress[1] = 3
+	GameData.current_save.quest_progress[4] = 6
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	assert_eq(game.zone_host.get_child(0).zone_id, 4, "the hub opened on the saved zone")
+	var hotbar = game.get_node("Hotbar")
+	assert_eq(hotbar.zone_title.text, "Zone 4")
+	assert_eq(hotbar.zone_subtitle.text, "Labyrinth: Tunnel of Illusions")
+	assert_eq(hotbar.progress_bar.value, 6.0, "zone 4's progress, not zone 1's")
+	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 4 progress_max")
+	assert_eq(hotbar.stage_label.text, "Stage 7")
+
+
+func test_hotbar_ignores_the_zone_another_slot_left_behind():
+	ZoneManager.current_zone = 2
+	GameData.current_save.section_in = 4
+	GameData.current_save.quest_progress[1] = 3
+	GameData.current_save.quest_progress[4] = 6
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	assert_eq(game.zone_host.get_child(0).zone_id, 4, "the hub opened on the saved zone")
+	var hotbar = game.get_node("Hotbar")
+	assert_eq(hotbar.zone_title.text, "Zone 4")
+	assert_eq(hotbar.zone_subtitle.text, "Labyrinth: Tunnel of Illusions")
+	assert_eq(hotbar.progress_bar.value, 6.0, "zone 4's progress, not zone 2's")
+	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 4 progress_max")
+	assert_eq(hotbar.stage_label.text, "Stage 7")
+
+
+# Re-Load after a game over reads the slot back from disk while ZoneManager
+# still holds the zone the fight was lost in. The original's Re-Load goes to
+# the same Navigation frame as a load from the menu (DefineButton2_2791
+# on(release), lines 4-7), so its panel names the saved zone too.
+func test_hotbar_shows_the_saved_zone_after_a_game_over_reload():
+	var save_dir: String = "user://test_ui_scenes_reload_saves/"
+	GameData.save_dir = save_dir
+	DirAccess.make_dir_recursive_absolute(save_dir)
+	GameData.new_game(1, "ReloadZone")
+	GameData.current_save.section_in = 4
+	GameData.current_save.quest_progress[4] = 6
+	assert_true(GameData.save_game(), "the test slot was written")
+	GameData.current_save.section_in = 2
+	ZoneManager.current_zone = 2
+
+	var game_over: GameOverScreen = autofree(load("res://scenes/battle/game_over_screen.tscn").instantiate())
+	assert_eq(game_over.reload_last_save(), "res://scenes/game.tscn", "Re-Load opens the hub")
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	assert_eq(game.zone_host.get_child(0).zone_id, 4, "the hub opened on the saved zone")
+	var hotbar = game.get_node("Hotbar")
+	assert_eq(hotbar.zone_title.text, "Zone 4")
+	assert_eq(hotbar.zone_subtitle.text, "Labyrinth: Tunnel of Illusions")
+	assert_eq(hotbar.progress_bar.value, 6.0, "zone 4's progress, not zone 2's")
+	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 4 progress_max")
+	assert_eq(hotbar.stage_label.text, "Stage 7")
+
+	GameData.current_slot = -1
+	DirAccess.remove_absolute(save_dir + "slot1.tres")
+	DirAccess.remove_absolute(save_dir)
+	GameData.save_dir = GameData.SAVE_DIR
+
+
+# The original caps the bar at the zone's progressMax but not the stage text,
+# which adds one to the raw quest progress (frame_181/DoAction.as:7-14). So a
+# beaten zone 1, at progress 10, shows a full bar and Stage 11.
+func test_hotbar_stage_keeps_counting_past_a_beaten_zone():
+	GameData.current_save.quest_progress[1] = 10
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var hotbar = game.get_node("Hotbar")
+	assert_eq(hotbar.progress_bar.value, 9.0, "the bar stops at zone 1's progress_max")
+	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 1 progress_max")
+	assert_eq(hotbar.stage_label.text, "Stage 11")
+
+
+# The panel's name line is ZONES[zone], then ": ", then ZONES2[zone]
+# (frame_181/DoAction.as:13), and these are those strings from
+# frame_41/DoAction.as:123-136. Zone 3's name there is "Ivory Line " with a
+# trailing space, so its line reads "Ivory Line : The Train".
+func test_hotbar_names_every_zone_with_the_original_strings():
+	var expected: Dictionary = {
+		1: "New Alcatraz: The Iron Prison",
+		2: "Oberursel: The Frozen Village",
+		3: "Ivory Line : The Train",
+		4: "Labyrinth: Tunnel of Illusions",
+		5: "Hew: The Dystopia",
+		6: "Il Sanctus: The Supreme Court",
+		7: "Sho'Tul Shelf: The Divided Cliff",
+	}
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var hotbar = game.get_node("Hotbar")
+	for zone_id in expected:
+		ZoneManager.current_zone = zone_id
+		ZoneManager.zone_changed.emit(zone_id)
+		assert_eq(hotbar.zone_subtitle.text, expected[zone_id], "zone %d" % zone_id)
+
+
 func test_inventory_window_equips_from_grid_click():
 	var item = _find_basic_equippable()
 	assert_not_null(item, "an unrestricted level-1 equippable exists")

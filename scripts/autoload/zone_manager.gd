@@ -164,7 +164,10 @@ const ZONES: Dictionary[Variant, Variant] = {
 		"scene": "res://scenes/zones/zone2_village.tscn",
 	},
 	3: {
-		"name": "Ivory Line",
+		# The original's name carries this trailing space
+		# (frame_41/DoAction.as:127), so the hotbar reads "Ivory Line : The Train"
+		# the way the original does.
+		"name": "Ivory Line ",
 		"subtitle": "The Train",
 		"zone_background": "TRAIN",
 		"sky_background": "SKY_TRAIN",
