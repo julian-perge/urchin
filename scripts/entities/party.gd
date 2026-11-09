@@ -202,9 +202,9 @@ static func build_companion_unit(save: PlayerSave, party_id: int, unit_templates
 			unit.move_pool_absolute.append({"id": int(absolute_entry["id"]), "phase": int(absolute_entry["phase"])})
 		else:
 			unit.move_pool_absolute.append({"id": int(absolute_entry), "phase": 0})
-	unit.cooldowns_attack = CombatUnit._zero_array(unit.move_pool_attack.size())
-	unit.cooldowns_defense = CombatUnit._zero_array(unit.move_pool_defense.size())
-	unit.cooldowns_absolute = CombatUnit._zero_array(unit.move_pool_absolute.size())
+	unit.cooldowns_attack = CombatUnit._zero_int_array(unit.move_pool_attack.size())
+	unit.cooldowns_defense = CombatUnit._zero_int_array(unit.move_pool_defense.size())
+	unit.cooldowns_absolute = CombatUnit._zero_int_array(unit.move_pool_absolute.size())
 
 	unit.change_array = CombatUnit._zero_array(12)
 	unit.change_array_ep = CombatUnit._zero_array(8)

@@ -170,6 +170,92 @@ func test_the_players_battle_unit_is_sonny_whatever_the_save_is_named():
 	assert_eq(doorbell.get("speaker_slot", -1), BattleRunner.PLAYER_SLOT, "and the player says it")
 
 
+# FROST1 takes 30% off speed. Its field 7 is -0.3, applyBuffKrin adds that to
+# changeArray[5], and applyChangesKrin sets SPEEDU to
+# ceil((SPEED + changeArray[4]) * (1 + changeArray[5]))
+# (frame_42/DoAction_10.as:188, 261). The player, enemies and companions each
+# build their change arrays in their own constructor, so the test covers one of
+# each, and runs FROST1's 12 turns out to check that speed comes back.
+func test_frost_takes_30_percent_off_speed_for_a_player_an_enemy_and_a_companion():
+	var save: PlayerSave = PlayerSave.new_game("Frost", PlayerSave.PlayerClass.BIOLOGICAL)
+	save.level = 10
+	Leveling.compute_stats(save)
+	var frost: Buff = buffs_by_name["FROST1"]
+	var cases: Array = [
+		["the level 10 player", CombatUnit.from_player_save(save), 17.0, 12.0],
+		["a level 10 Prison Guard", CombatUnit.from_character(unit_templates[5], 10, CombatUnit.Difficulty.NORMAL, 2), 51.0, 36.0],
+		["Veradux at level 1", Party.build_companion_unit(save, 1, unit_templates, 3), 19.0, 14.0],
+	]
+	for case in cases:
+		var unit: CombatUnit = case[1]
+		assert_eq(unit.speed_u, case[2], "%s before FROST1" % case[0])
+		unit.apply_buff(frost, 1, unit)
+		unit.apply_changes()
+		assert_eq(unit.speed_u, case[3], "%s under FROST1 is ceil(%d * 0.7)" % [case[0], case[2]])
+		for turn in frost.duration_turns:
+			unit.tick_buffs(buffs_by_id)
+		assert_eq(unit.speed_u, case[2], "%s once FROST1 runs out" % case[0])
+
+
+# Surprise Shot takes 70% off speed and is not unique, so a second one stacks
+# and leaves 1 - 1.4 = -0.4 of the unit's speed. applyChangesKrin rounds that up
+# and then clamps SPEEDU at 0 (frame_42/DoAction_10.as:261, 270-273).
+func test_two_surprise_shots_leave_speed_at_0_not_below():
+	var save: PlayerSave = PlayerSave.new_game("Shot", PlayerSave.PlayerClass.BIOLOGICAL)
+	save.level = 10
+	Leveling.compute_stats(save)
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	var surprise_shot: Buff = buffs_by_name["PSURPRISESHOT"]
+	assert_false(surprise_shot.is_unique, "a second Surprise Shot stacks instead of refreshing the first")
+	player.apply_buff(surprise_shot, 1, player)
+	player.apply_changes()
+	assert_eq(player.speed_u, 6.0, "one Surprise Shot leaves ceil(17 * 0.3)")
+	player.apply_buff(surprise_shot, 1, player)
+	player.apply_changes()
+	assert_eq(player.speed_u, 0.0, "two leave ceil(17 * -0.4) = -6, clamped to 0")
+
+
+# Assault Tactics gives the Secret Police "25% more damage". SPASSAULTTACTICS
+# field 11 is 0.25, applyBuffKrin adds it to changeArray[9], applyChangesKrin
+# copies that to DMG2, and executeMove multiplies the hit by 1 + DMG2
+# (frame_42/DoAction_10.as:188, 310; frame_42/DoAction_8.as:60). Both hits run
+# on the same seed, so they make the same crit roll. The plain hit is some x
+# rounded up and the buffed hit is 1.25 * x rounded up, which puts the buffed
+# hit between ceil(1.25 * (plain - 1)) and ceil(1.25 * plain).
+func test_assault_tactics_makes_the_secret_police_hit_25_percent_harder():
+	var manager: BattleManager = autofree(BattleManager.new())
+	var secret_police: CombatUnit = CombatUnit.from_character(unit_templates[62], 21, CombatUnit.Difficulty.HARD, 2)
+	var snipe: Ability = moves_by_id[734]
+	assert_eq(snipe.status_effect_id, "", "Snipe applies no buff of its own")
+	seed(20261108)
+	var plain_target: CombatUnit = CombatUnit.from_character(unit_templates[5], 21, CombatUnit.Difficulty.HARD, 1)
+	var plain: float = manager.execute_move(snipe, secret_police, plain_target, buffs_by_name)["amount"]
+	secret_police.apply_buff(buffs_by_name["SPASSAULTTACTICS"], 1, secret_police)
+	secret_police.apply_changes()
+	assert_eq(secret_police.dmg2, 0.25, "DMG2 holds the buff's 0.25")
+	seed(20261108)
+	var buffed_target: CombatUnit = CombatUnit.from_character(unit_templates[5], 21, CombatUnit.Difficulty.HARD, 1)
+	var buffed: float = manager.execute_move(snipe, secret_police, buffed_target, buffs_by_name)["amount"]
+	assert_between(buffed, ceil(1.25 * (plain - 1)), ceil(1.25 * plain), "Snipe hit for %d without the buff" % plain)
+	randomize()
+
+
+# Burning Acid lowers "Fire Defense by 20%". BURNINGACID field 24 is -0.2,
+# applyBuffKrin adds it to changeArrayED2 at the buff's own element only, and
+# applyChangesKrin sets DEFU to (DEF + changeArrayED) * (changeArrayED2 + 1)
+# (frame_42/DoAction_10.as:227-232, 332-333). A level 10 player's defense is
+# 100 + 15 * 10 = 250 in every element, so Fire drops to 200 and Physical
+# stays at 250.
+func test_burning_acid_takes_20_percent_off_fire_defense_only():
+	var save: PlayerSave = PlayerSave.new_game("Acid", PlayerSave.PlayerClass.BIOLOGICAL)
+	save.level = 10
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	player.apply_buff(buffs_by_name["BURNINGACID"], 1, player)
+	player.apply_changes()
+	assert_eq(player.def_u[CombatUnit.Element.FIRE], 200.0, "Fire defense is 250 * 0.8")
+	assert_eq(player.def_u[CombatUnit.Element.PHYSICAL], 250.0, "Physical defense is untouched")
+
+
 func test_battle_100_simple_fight():
 	_assert_battle_runs(100)
 
