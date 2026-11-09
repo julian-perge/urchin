@@ -1157,6 +1157,52 @@ func test_stance_rows_stack_with_slot_5_on_top():
 	ZoneManager.auto_start_battles = true
 
 
+# Battle 508 places unit template 71, whose name is Felicity, on the player's
+# team in slot 3, while the save's companion Felicity (party id 3) hasn't joined.
+# The port used to give that guest the companion's stance row by matching the
+# name.
+func test_a_guest_with_a_companions_name_gets_no_stance_row():
+	var save = PlayerSave.new_game("GuestRowTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 508, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	assert_eq(scene.units[3].player_name, "Felicity", "battle 508 fields Felicity in slot 3")
+	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "the guest gets no stance row")
+	assert_true(scene._stance_rows.is_empty(), "and nothing keeps a row for the guest")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The companion Felicity, deployed into the same slot as the guest above, does
+# get a row, and its buttons retune slot 3's unit and not the companion in slot 5.
+func test_a_deployed_companion_gets_the_row_the_guest_does_not():
+	var save = PlayerSave.new_game("CompanionRowTest", 0)
+	save.party_roster = [0, 1, 2, 3, -1, -1]
+	save.party_deployed = [3, 1]
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var row: StanceRow = scene._stance_rows[3]
+	assert_eq(row.name_label.text, "Felicity", "party id 3's row carries the name Felicity")
+	row.buttons[Party.AggressionStance.RELENTLESS].pressed.emit()
+	assert_eq(scene.units[3].aggression, 90.0, "the press puts slot 3's Felicity on Relentless")
+	assert_eq(scene.units[5].aggression, 50.0, "and leaves slot 5's Veradux on Tactical")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The original builds each companion fresh at the start of every battle on
 # Tactical, with agMode 2 (frame_42/DoAction_14.as:208-213). Its stance button
 # writes only that battle's unit (DefineButton2_3289 on(press), lines 9-14),

@@ -42,6 +42,24 @@ _Avoid_: Viewport, canvas
 How far the player has got through a zone's story battles, which the Hub labels "Stage 11".
 _Avoid_: Stage
 
+### Battle
+
+**Battle roster**:
+The units placed in one battle, one per slot, as `BattleSetup.build_units` returns them.
+_Avoid_: Party roster, which is the save's list of companions who have joined
+
+**Origin**:
+Where a unit in a Battle roster came from: the player, a Companion, a Guest or an enemy.
+_Avoid_: Source, type
+
+**Companion**:
+A member of the player's party, identified by a party id, who fights when deployed.
+_Avoid_: Ally, friend
+
+**Guest**:
+A unit built from a template that fights on the player's team, such as Felicity in battle 508.
+_Avoid_: Companion
+
 ### Fonts
 
 **Device font**:
