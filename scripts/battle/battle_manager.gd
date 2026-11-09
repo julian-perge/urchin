@@ -94,8 +94,12 @@ func _apply_status_effect(ability: Ability, caster: CombatUnit, target: CombatUn
 				refreshed = true
 		if refreshed:
 			return buff.internal_name
+	# This deliberately leaves apply_changes() out. The conductor's status block
+	# never runs applyChangesKrin, and the one after the hit (line 103) is on the
+	# target only, which BattleRunner._execute_move_action() matches. A buff
+	# that lands on the caster waits for the caster's tick_buffs(), like the
+	# original's buffTicker (frame_42/DoAction_10.as:135).
 	buff_target.apply_buff(buff, 1, caster)
-	buff_target.apply_changes()
 	return buff.internal_name
 
 func _crit_roll(per_calc: float, def_calc: float, speed_crit_calc: float, ability: Ability) -> bool:

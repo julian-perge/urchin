@@ -38,28 +38,26 @@ func setup(unit_name: String) -> void:
 	name_label.text = unit_name
 
 
-# Refreshes the buff-icon row from the unit's own buff_slots, sorted by
-# remaining duration (cd) descending, capped at MAX_BUFF_ICONS - matches
-# frame42/sonny2_addNewBuffKrin.txt's BUFFARRAYK.sortOn("CD", DESCENDING)
-# + the 7-slot cap exactly. Each icon is modulate-tinted by the buff's
-# element color (Godot tints at runtime - no per-element art baked into
-# the extracted PNGs), with the remaining-turns count and a
-# name+description tooltip. A slot is active purely by cd > 0, same as
-# every other buff_slots consumer (CombatUnit.tick_buffs(),
-# BattleRunner._resolve_dispels()) - buff_id 0 is a real buff
-# (TWINGUARDIANS, dev/converted_json/buffs.json), not an empty-slot
-# sentinel; empty slots use buff_id -1 (see CombatUnit's slot init) but
-# always carry cd == 0 too, so checking cd alone already excludes them.
+# Refreshes the buff-icon row the way the original draws it at the end of
+# applyChangesKrin (frame_42/DoAction_10.as:355-379): one KrinBuffShower for
+# each of slots 0 to MAX_BUFF_ICONS - 1 whose cd isn't 0, in slot order. The
+# row deliberately doesn't sort, because CombatUnit.apply_changes() already
+# keeps buff_slots in the order applyChangesKrin's sortOn leaves them (line
+# 344), and sort_custom would move tied buffs once more than 16 have turns
+# left. Each icon is modulate-tinted by the buff's element color (Godot tints
+# at runtime - no per-element art baked into the extracted PNGs), with the
+# remaining-turns count and the tooltip built below. buff_id 0 is a real buff
+# (TWINGUARDIANS, dev/converted_json/buffs.json), not an empty-slot sentinel;
+# empty slots use buff_id -1 (see CombatUnit's slot init) but always carry
+# cd == 0 too, so checking cd alone already excludes them.
 func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
 	if unit == null:
 		_clear_row()
 		return
 	var active_slots: Array = []
-	for slot in unit.buff_slots:
-		if int(slot.get("cd", 0)) > 0:
+	for slot in unit.buff_slots.slice(0, MAX_BUFF_ICONS):
+		if int(slot.get("cd", 0)) != 0:
 			active_slots.append(slot)
-	active_slots.sort_custom(func(a, b): return int(a["cd"]) > int(b["cd"]))
-	active_slots = active_slots.slice(0, mini(active_slots.size(), MAX_BUFF_ICONS))
 	var signature: Array = []
 	for slot in active_slots:
 		signature.append({"buff_id": int(slot["buff_id"]), "cd": int(slot["cd"])})

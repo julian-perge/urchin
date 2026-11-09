@@ -320,7 +320,8 @@ static func from_player_save(save: PlayerSave, battle_slot: int = 1) -> CombatUn
 
 # Ported from applyChangesKrin() - recomputes every derived (_u) stat from the
 # base stats plus whatever the active buffs have accumulated into
-# change_array/change_array_e*. Call after any apply_buff()/tick_buffs().
+# change_array/change_array_e*, then sorts buff_slots like the original (see
+# _sort_buff_slots()). Call after any apply_buff()/tick_buffs().
 func apply_changes() -> void:
 	var epy: Array = change_array
 	strength_u = max(ceil((base_strength + epy[0]) * (1 + epy[1])), 0)
@@ -356,6 +357,45 @@ func apply_changes() -> void:
 	for i in ELEMENT_ORDER.size():
 		per_u[i] = max((base_per[i] + change_array_ep[i]) * (change_array_ep2[i] + 1), 1)
 		def_u[i] = max((base_def[i] + change_array_ed[i]) * (change_array_ed2[i] + 1), 1)
+
+	_sort_buff_slots()
+
+# The original ends every applyChangesKrin by sorting its 40 buff slots by
+# turns left, most first, with sortOn("CD", Array.DESCENDING | Array.NUMERIC)
+# (frame_42/DoAction_10.as:344), and a dispel takes matching slots in that
+# order. Flash Player's sort can move slots that hold the same number of turns
+# past each other, and only its own steps decide which, so this repeats those
+# steps instead of calling sort_custom. It follows Ruffle's reimplementation
+# (qsort and sort_compare in core/src/avm1/globals/array.rs): a quicksort that
+# always splits a range on its first slot, where DESCENDING flips each
+# comparison instead of reversing the sorted result. DECODED_ALGORITHMS.md has
+# the evidence.
+func _sort_buff_slots() -> void:
+	var ranges: Array[Vector2i] = [Vector2i(0, buff_slots.size() - 1)]
+	while not ranges.is_empty():
+		var bounds: Vector2i = ranges.pop_back()
+		var low: int = bounds.x
+		var high: int = bounds.y
+		if low >= high:
+			continue
+		var pivot_cd: int = buff_slots[low]["cd"]
+		var left: int = low + 1
+		var right: int = high
+		while true:
+			while left < right and buff_slots[left]["cd"] > pivot_cd:
+				left += 1
+			while right > low and buff_slots[right]["cd"] <= pivot_cd:
+				right -= 1
+			if left >= right:
+				break
+			var swapped: Dictionary = buff_slots[left]
+			buff_slots[left] = buff_slots[right]
+			buff_slots[right] = swapped
+		var pivot: Dictionary = buff_slots[low]
+		buff_slots[low] = buff_slots[right]
+		buff_slots[right] = pivot
+		ranges.append(Vector2i(right + 1, high))
+		ranges.append(Vector2i(low, right - 1))
 
 # Ported from applyBuffKrin(). `direction` is +1 to apply, -1 to remove (the AS3
 # `iftbc`). `caster` is only read when direction == +1 (fresh application) - the

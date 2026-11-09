@@ -10,9 +10,11 @@ Now ported as `BattleRunner._resolve_dispels()`: on a successful strike, before 
 if their element is in `Ability.dispel_element_types` and their `Buff.polarity` matches `Ability.dispel_target_polarity`,
 each attempt gated by `randf() <= dispel_chance` and resisted by the buff's `dispel_resist_chance`.
 The formerly unknown buff fields 20/27/32 turned out to be polarity/is-unique/dispel-resist (renamed in `buffs.py` + `buff.gd`).
-Two differences from the original remain. The original removes the buffs with the most turns left first, because `applyChangesKrin` re-sorts `BUFFARRAYK` by CD descending on every call
-(`frame_42/DoAction_10.as:344`) and the dispel walks the slots in array order, while `_resolve_dispels()` walks `buff_slots` in insertion order. And the original recomputes the target's stats
-once, after the hit (line 103 of the conductor, `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as`), while `_resolve_dispels()` recomputes them before it.
+Two differences from the original remained until 2026-11-08. The original removes the buffs with the most turns left first, because `applyChangesKrin` re-sorts `BUFFARRAYK` by CD
+descending on every call (`frame_42/DoAction_10.as:344`) and the dispel walks the slots in array order, while `_resolve_dispels()` walked `buff_slots` in the order the buffs landed. And the
+original recomputes the target's stats once, after the hit (line 103 of the conductor, `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as`), while
+`_resolve_dispels()` recomputed them before it. Both match now: `CombatUnit.apply_changes()` sorts `buff_slots` the way `applyChangesKrin` sorts `BUFFARRAYK`, ties included, and only
+`_execute_move_action()` recomputes the stats, after the hit. The dispel section of `DECODED_ALGORITHMS.md` has the details.
 
 ## "Attack" effect_category - RESOLVED (2026-11-07)
 
