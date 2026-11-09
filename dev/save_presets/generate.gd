@@ -116,11 +116,16 @@ func _save_past_every_open_zone(preset_name: String, difficulty: CombatUnit.Diff
 	return save
 
 
+# The boss a preset stops at is the fight at the zone's progress_max. The
+# pick's is_boss can't say where that is, because zone 4's first fight there,
+# 409, isn't flagged as a boss fight.
 func _win_story_fights(save: PlayerSave, zone: int, stop_at_boss: bool) -> void:
 	save.section_in = zone
+	var progress_max: int = int(ZoneProgression.QUEST_HUB[zone]["progress_max"])
 	while true:
 		var pick: Dictionary = ZoneProgression.pick_story_battle(save)
-		if not pick["is_story_progress"] or (stop_at_boss and pick["is_boss"]):
+		var at_boss: bool = ZoneProgression.quest_progress(save, zone) == progress_max
+		if not pick["is_story_progress"] or (stop_at_boss and at_boss):
 			return
 		ZoneProgression.after_battle_won(save, pick["battle_id"], true)
 

@@ -155,6 +155,10 @@ func test_fresh_normal_is_a_new_game_on_normal():
 	assert_eq(ZoneProgression.pick_story_battle(save)["battle_id"], 100)
 
 
+# The boss each preset stops at is the fight at its zone's progress_max. The
+# original flags that fight as a boss fight in every zone but zone 4, whose
+# story orb compares against an undefined progressMax1 (DefineButton2_3239
+# on(press), line 14).
 func test_each_zone_boss_preset_has_that_boss_next():
 	for zone: int in ZoneProgression.QUEST_HUB:
 		var preset_name: String = "zone%d_boss" % zone
@@ -166,7 +170,7 @@ func test_each_zone_boss_preset_has_that_boss_next():
 		assert_false(save.used_training, preset_name)
 		var pick: Dictionary = ZoneProgression.pick_story_battle(save)
 		assert_eq(pick["battle_id"], zone * 100 + _progress_max(zone), preset_name)
-		assert_true(pick["is_boss"], preset_name)
+		assert_eq(pick["is_boss"], zone != 4, preset_name)
 		assert_true(pick["is_story_progress"], "%s has not beaten the boss yet" % preset_name)
 		assert_true(ZoneProgression.is_zone_unlocked(save, zone), "%s can reach its zone" % preset_name)
 

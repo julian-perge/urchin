@@ -31,6 +31,24 @@ func test_game_over_screen_uses_the_frame_104_rects():
 		assert_almost_eq(button.size, hit_areas[node_name].size, Vector2(0.01, 0.01), "%s size" % node_name)
 
 
+# The ending's two texts sit at the rects of edit text 2796 and static text 2799
+# in root frame 116, and OK! is clickable over the rect of button 2797, whose
+# only state is shape 291, the same 30 px square the game over buttons use.
+func test_ending_screen_uses_the_frame_116_rects():
+	var ending = add_child_autofree(load("res://scenes/battle/ending_screen.tscn").instantiate())
+	var texts: Dictionary = {
+		"EndingLabel": Rect2(195.3, 109.45, 418.05, 275.2),
+		"OkLabel": Rect2(221.0, 410.1, 342.1, 51.3),
+	}
+	for node_name in texts:
+		var label: Label = ending.get_node(node_name)
+		assert_almost_eq(label.position, texts[node_name].position, Vector2(0.01, 0.01), "%s position" % node_name)
+		assert_almost_eq(label.size.x, texts[node_name].size.x, 0.01, "%s width" % node_name)
+	var button: Button = ending.get_node("OkButton")
+	assert_almost_eq(button.position, Vector2(340.43, 412.4), Vector2(0.01, 0.01), "OkButton position")
+	assert_almost_eq(button.size, Vector2(104.04, 40.0), Vector2(0.01, 0.01), "OkButton size")
+
+
 # The layout JSON carries where each hall, sky and chrome character actually
 # sits on the stage, recovered from the SWF placement rather than tuned by
 # hand. The ROME sky's bottom edge lands at y = 306.0, which is what

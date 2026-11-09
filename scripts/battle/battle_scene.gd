@@ -1110,8 +1110,19 @@ func _on_victory_proceed() -> void:
 		cutscene.animation_speed = animation_speed
 		add_child(cutscene)
 		await cutscene.play(cutscene_id)
-		# Matches gotoSceneKrin (frame_219): a cutscene that just unlocked a
-		# new zone opens the zone map on landing instead of the same hub.
+		# Matches gotoSceneKrin (frame_219): CS_CUT5 ends on the ending screen,
+		# and a cutscene that just unlocked a new zone opens the zone map on
+		# landing instead of the same hub. The original starts no music for the
+		# ending screen (frame_263/PlaceObject2_3466_80 enterFrame, lines 15-19),
+		# so the menu track waits until its OK! reaches the hub. The screen goes
+		# on the UI layer, like the game over screen, so the turn label there
+		# can't draw over it.
+		if goto_scene == "endMenu":
+			var ending: EndingScreen = preload("res://scenes/battle/ending_screen.tscn").instantiate()
+			ending.name = "EndingScreen"
+			ending.ok_pressed.connect(_on_continue_pressed)
+			$UI.add_child(ending)
+			return
 		if goto_scene == "overMap":
 			ZoneManager.open_zone_map_on_load = true
 	_on_continue_pressed()

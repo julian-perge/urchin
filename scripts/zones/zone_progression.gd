@@ -66,13 +66,12 @@ const CUTSCENE_BATTLES: Dictionary = {109: "CS_CUT2", 210: "CS_CUT3", 409: "CS_C
 # original shows it off immediately rather than dropping back into the same
 # hub), "Navigation" is the current zone hub (CS_CUT3 follows battle 210, two
 # fights before zone 2's boss, 212 at progressMax 12 in
-# frame_41/DoAction_2.as:47, so nothing new is unlocked yet). The original's
-# CS_CUT5 destination is "endMenu" (an ending/credits screen for what was the
-# web build's last zone at the time); no such screen exists in this port and
-# zones 6/7 are real playable content past it here, so it falls back to
-# "overMap" like the other zone-unlocking cutscenes rather than going nowhere.
+# frame_41/DoAction_2.as:47, so nothing new is unlocked yet), and "endMenu" is
+# the ending screen, root frame 116, whose OK! goes to the hub
+# (DefineButton2_2797 on(release), line 2). The world map still opens zones 6
+# and 7 after it, because the original sets no flag on the way.
 const CUTSCENE_GOTO_SCENE: Dictionary = {
-	"CS_CUT2": "overMap", "CS_CUT3": "Navigation", "CS_CUT4": "overMap", "CS_CUT5": "overMap",
+	"CS_CUT2": "overMap", "CS_CUT3": "Navigation", "CS_CUT4": "overMap", "CS_CUT5": "endMenu",
 }
 
 
@@ -85,7 +84,9 @@ static func quest_progress(save: PlayerSave, zone: int) -> int:
 
 # The story-fight orb (DefineButton2_3204): the next story battle in the
 # player's current zone. is_story_progress = winning advances quest_progress;
-# is_boss = this is the zone's final fight or a beaten zone's boss replay.
+# is_boss is the original's bossFight, which plays _music_boss
+# (frame_42/DoAction.as:55-74). The orbs set it for a beaten zone's boss replay
+# and for the fight at the zone's progress_max, apart from zone 4's.
 # counts_as_training tells ZoneManager to set the save's used_training.
 static func pick_story_battle(save: PlayerSave) -> Dictionary:
 	var zone: int = save.section_in
@@ -96,7 +97,10 @@ static func pick_story_battle(save: PlayerSave) -> Dictionary:
 	var progress_max: int = int(hub["progress_max"])
 	var battle_id: int = zone * 100 + progress
 	var is_story_progress: bool = true
-	var is_boss: bool = progress == progress_max
+	# The TUNNELS orb compares the progress against progressMax1 instead of
+	# progressMax (DefineButton2_3239 on(press), line 14). No questHub entry has
+	# that field, so the first fight at 409 isn't a boss fight.
+	var is_boss: bool = progress == progress_max and zone != 4
 	var counts_as_training: bool = false
 	if progress > progress_max:
 		battle_id = zone * 100 + progress_max
@@ -122,8 +126,9 @@ static func pick_story_battle(save: PlayerSave) -> Dictionary:
 	}
 
 
-# The training orb (DefineButton2_3242): battle ids currently unlocked in the
-# player's zone (unlock_progress strictly below current progress; -1 always).
+# The training orbs (DefineButton2_3186 in zones 1 to 5, 3242 in zone 6) build
+# the same pool: battle ids currently unlocked in the player's zone
+# (unlock_progress strictly below current progress; -1 always).
 static func available_training_battle_ids(save: PlayerSave) -> Array:
 	var ids: Array[Variant] = []
 	for entry in TRAIN_FIGHTS.get(save.section_in, []):
@@ -134,6 +139,9 @@ static func available_training_battle_ids(save: PlayerSave) -> Array:
 
 # Uniform random pick from the unlocked pool, plus the zone's level cap for
 # "X"/"Z" enemy scaling. {} when the zone has nothing unlocked.
+# counts_as_training tells ZoneManager to set the save's used_training, which
+# only the zones 1 to 5 orb does (DefineButton2_3186 on(press), line 15). The
+# ROME orb leaves it alone, and the JAPAN hub has no training orb.
 static func pick_training_battle(save: PlayerSave) -> Dictionary:
 	var ids: Array = available_training_battle_ids(save)
 	if ids.is_empty():
@@ -141,6 +149,7 @@ static func pick_training_battle(save: PlayerSave) -> Dictionary:
 	return {
 		"battle_id": ids[randi_range(0, ids.size() - 1)],
 		"train_cap": int(TRAIN_FIGHT_CAPS.get(save.section_in, 30)),
+		"counts_as_training": save.section_in <= 5,
 	}
 
 
