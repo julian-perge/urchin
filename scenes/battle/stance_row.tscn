@@ -21,6 +21,7 @@ mouse_filter = 2
 
 [node name="NameLabel" type="Label" parent="."]
 layout_mode = 0
+theme_type_variation = &"RegularLabel"
 theme_override_font_sizes/font_size = 12
 mouse_filter = 2
 

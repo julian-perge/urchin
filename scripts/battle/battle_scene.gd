@@ -1029,6 +1029,11 @@ func _float_text(slot: int, text: String, color: Color, critical: bool = false) 
 		return
 	var label: Label = Label.new()
 	label.text = text
+	# The original draws these numbers with the digit shapes of its
+	# NumberSetter clip (frame_42/DoAction_7.as), not in a font, so they use
+	# RegularLabel and keep the regular face instead of the project theme's
+	# bold default.
+	label.theme_type_variation = &"RegularLabel"
 	label.modulate = color
 	label.position = visual.position + Vector2(-15, -72)
 	label.scale = Vector2.ONE

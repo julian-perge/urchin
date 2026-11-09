@@ -24,7 +24,8 @@ const ANCHOR_GAP: float = 8.0
 func show_sections(sections: Array, anchor: Control, icon: Texture2D = null, icon_color: Color = Color.WHITE) -> void:
 	for child in _sections.get_children():
 		child.free()
-	for section in sections:
+	for section_index in sections.size():
+		var section: Dictionary = sections[section_index]
 		var panel: PanelContainer = PanelContainer.new()
 		var style: StyleBoxFlat = StyleBoxFlat.new()
 		style.bg_color = section["bg_color"]
@@ -39,6 +40,13 @@ func show_sections(sections: Array, anchor: Control, icon: Texture2D = null, ico
 		for line in section["lines"]:
 			var label: Label = Label.new()
 			label.text = line["text"]
+			# The original's tooltip clip, DefineSprite 2717, makes only its
+			# title field bold and draws every other field in regular _sans
+			# (frame_4/DoAction.as:40-64). Every caller puts the title in the
+			# first section, so that section keeps the project theme's bold
+			# face and every later section switches to RegularLabel.
+			if section_index > 0:
+				label.theme_type_variation = &"RegularLabel"
 			label.add_theme_color_override("font_color", line["color"])
 			label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			lines_box.add_child(label)
