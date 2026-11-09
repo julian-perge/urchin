@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_scene.gd" id="1_battle"]
 [ext_resource type="Texture2D" path="res://assets/ui/hotbar/background.png" id="2_hotbarbg"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/hotbar_background.png" id="3_battlebar"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/battle_pbar_full.png" id="4_countdownring"]
 [ext_resource type="PackedScene" path="res://scenes/battle/combat_log_panel.tscn" id="5_combatlog"]
+[ext_resource type="PackedScene" path="res://scenes/battle/radial_menu.tscn" id="6_radial"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pass_normal"]
 bg_color = Color(0.1, 0.1, 0.11, 1)
@@ -90,9 +91,8 @@ stretch_mode = 6
 
 [node name="Battlefield" type="Node2D" parent="."]
 
-[node name="RadialMenuLeaveTimer" type="Timer" parent="."]
-wait_time = 0.15
-one_shot = true
+[node name="RadialMenu" parent="." instance=ExtResource("6_radial")]
+layout_mode = 0
 
 [node name="CombatLogPanel" parent="." instance=ExtResource("5_combatlog")]
 layout_mode = 1
@@ -243,7 +243,7 @@ horizontal_alignment = 1
 autowrap_mode = 2
 
 [connection signal="draw" from="BottomBar/PassRing" to="." method="_draw_pass_ring"]
-[connection signal="timeout" from="RadialMenuLeaveTimer" to="." method="_start_radial_menu_fade_out"]
+[connection signal="move_picked" from="RadialMenu" to="." method="_on_radial_move_picked"]
 [connection signal="pressed" from="BottomBar/PassButton" to="." method="_on_pass_pressed"]
 [connection signal="pressed" from="BottomBar/RetreatButton" to="." method="_on_retreat_pressed"]
 [connection signal="pressed" from="BottomBar/Panel3/LogToggleButton" to="." method="_on_log_toggle_pressed"]

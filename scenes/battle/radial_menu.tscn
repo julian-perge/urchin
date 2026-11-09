@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/radial_menu.gd" id="1_menu"]
+
+[node name="RadialMenu" type="Control"]
+visible = false
+mouse_filter = 2
+script = ExtResource("1_menu")
+
+[node name="Orb0" type="Button" parent="."]
+layout_mode = 0
+
+[node name="Orb1" type="Button" parent="."]
+layout_mode = 0
+
+[node name="Orb2" type="Button" parent="."]
+layout_mode = 0
+
+[node name="Orb3" type="Button" parent="."]
+layout_mode = 0
+
+[node name="Orb4" type="Button" parent="."]
+layout_mode = 0
+
+[node name="Orb5" type="Button" parent="."]
+layout_mode = 0
+
+[node name="Orb6" type="Button" parent="."]
+layout_mode = 0
+
+[node name="Orb7" type="Button" parent="."]
+layout_mode = 0

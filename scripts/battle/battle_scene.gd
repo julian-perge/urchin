@@ -7,7 +7,7 @@
 # - hover a unit: a target ring glows under it (white = you, green = ally,
 #   red = enemy) with "Lvl. N" and the name
 # - click a unit on your turn: your bar's abilities fan out around it as
-#   orbs; unusable ones (wrong target, focus, cooldown) are darkened;
+#   orbs (RadialMenu); unusable ones (wrong target, focus, cooldown) are darkened;
 #   orb tooltips carry name/cost/description
 # - the bottom bar: companion stance buttons (agModeAr presets) on the
 #   left, the Pass ring in the center (light blue while waiting for your
@@ -47,19 +47,6 @@ const RING_COLORS: Dictionary[Relation, Color] = {
 	Relation.ALLY: Color(0.35, 0.9, 0.25),
 	Relation.ENEMY: Color(0.95, 0.25, 0.15),
 }
-const ORB_RADIUS: float = 15.0
-const ICON_DIR: String = "res://assets/ui/abilities/"
-# The 8 fixed positions of the original's "selector" clip (thing0-7) - the
-# same real extracted offsets as abilities_window.gd's WHEEL_OFFSETS (that
-# clip is placed on the battle scene itself too, per
-# frame_217/PlaceObject3_3382_500/.../onClipEvent(load).as's refreshOrbs()).
-# Duplicated here rather than imported since abilities_window.gd has no
-# class_name to reach its consts from.
-const ORB_OFFSETS: Array[Vector2] = [
-	Vector2(0.0, -49.2), Vector2(34.8, -34.9), Vector2(49.5, 0.0),
-	Vector2(35.0, 35.3), Vector2(0.0, 49.8), Vector2(-35.2, 35.1),
-	Vector2(-49.5, 0.0), Vector2(-35.0, -34.7),
-]
 # Source-verified (frame_217/PlaceObject3_3394_450 and 5 sibling files):
 # the hover ring fades in at +20/frame and out at -5/frame at the
 # original's 30fps - a ~4x faster fade-in than fade-out.
@@ -93,7 +80,13 @@ var _rings: Dictionary = {}  # slot -> ring Control (hover indicator)
 var _ring_fade_tweens: Dictionary = {}  # slot -> in-flight fade Tween
 var _stance_rows: Dictionary = {}  # party_id -> StanceRow
 var _selected_move: Dictionary = {}
-var _player_action_pending: bool = false
+# True while the turn loop waits for the player's pick. The menu follows it
+# through this setter, so a pick, a pass and the Heroic timeout all close the
+# menu by clearing it.
+var decision_open: bool = false:
+	set(value):
+		decision_open = value
+		radial_menu.decision_open = value
 # How many seconds the player has left to pick on Heroic. The original's
 # conductor adds 1 to BattleTimeNow every frame while the player's team decides
 # and starts the half-turn when it reaches BattleTimeLimit, whether or not the
@@ -107,9 +100,6 @@ var _decision_timer: float = 0.0
 # hidden, because the original's clock does not move then.
 var _turn_based: bool = true
 var _finished: bool = false
-var _radial_menu: Control = null
-var _radial_menu_owner_slot: int = -1
-var _radial_menu_fade_tween: Tween = null  # in-flight fade-out, if any - see Task 3's _ring_fade_tweens
 var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
 var _pending_goto_scene: String = ""  # ZoneProgression.CUTSCENE_GOTO_SCENE for that cutscene
 var _pending_setup_events: Array = []  # runner.setup()'s return - played first by _battle_loop()
@@ -127,7 +117,7 @@ var _pause_timer: SceneTreeTimer = null  # the running _pause's timer, which Spa
 @onready var turn_label: Label = $UI/TurnLabel
 @onready var speech_label: Label = $UI/SpeechLabel
 @onready var _pass_ring: Control = $BottomBar/PassRing
-@onready var _radial_menu_leave_timer: Timer = $RadialMenuLeaveTimer
+@onready var radial_menu: RadialMenu = $RadialMenu
 @onready var stance_host: Control = $BottomBar/StanceHost
 @onready var _countdown_label: Label = $BottomBar/Panel3/CountdownLabel
 @onready var _combat_log: CombatLogPanel = $CombatLogPanel
@@ -175,33 +165,12 @@ func _maybe_start_debug_battle() -> void:
 
 
 func _process(delta: float) -> void:
-	if _player_action_pending and not _turn_based:
+	if decision_open and not _turn_based:
 		_decision_timer = maxf(_decision_timer - delta, 0.0)
 		if _decision_timer == 0.0:
 			_on_pass_pressed()
 	_countdown_label.visible = not _turn_based
 	_countdown_label.text = str(int(ceil(_decision_timer)))
-	if _radial_menu != null:
-		_update_radial_menu_fade(get_global_mouse_position())
-
-
-# Split out from _process() so a test can simulate "the mouse returned" with
-# a known point instead of warping the real (headless) mouse cursor - same
-# reasoning as _is_point_over_radial_menu_area(). Guards against both the
-# mouse returning mid-fade (kill the in-flight tween, or its tween_callback
-# would still free the menu once it finishes) and the leave timer re-firing
-# while a fade is already running (would start a second tween racing the
-# first on the same modulate:a property).
-func _update_radial_menu_fade(mouse_global_pos: Vector2) -> void:
-	var fading: bool = _radial_menu_fade_tween != null and _radial_menu_fade_tween.is_valid()
-	if _is_point_over_radial_menu_area(mouse_global_pos):
-		_radial_menu_leave_timer.stop()
-		if fading:
-			_radial_menu_fade_tween.kill()
-			_radial_menu_fade_tween = null
-		_radial_menu.modulate.a = 1.0
-	elif _radial_menu_leave_timer.is_stopped() and not fading:
-		_radial_menu_leave_timer.start()
 
 
 func _reset_decision_timer() -> void:
@@ -244,6 +213,7 @@ func start_battle(info: Dictionary) -> void:
 		BuffManagerAuto.buffs_by_internal_name, battle_manager,
 		TalentTree.get_passive_buff_names(save)
 	)
+	radial_menu.setup(units, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id)
 	_load_background()
 	_spawn_visuals()
 	_populate_stance_rows()
@@ -352,7 +322,9 @@ func _add_unit_overlay(slot: int, unit: CombatUnit, visual: CharacterVisual) -> 
 	_focus_bars[slot] = overlay.focus_bar
 	overlay.hit_button.mouse_entered.connect(_on_unit_hovered.bind(slot, true))
 	overlay.hit_button.mouse_exited.connect(_on_unit_hovered.bind(slot, false))
-	overlay.hit_button.pressed.connect(_on_unit_clicked.bind(slot))
+	overlay.hit_button.pressed.connect(
+		radial_menu.open.bind(slot, SLOT_POSITIONS.get(slot, Vector2(400, 300)), overlay.hit_button)
+	)
 
 
 # The original's target ring: a thick circle with four tick marks.
@@ -384,7 +356,7 @@ func _on_unit_hovered(slot: int, entered: bool) -> void:
 	if ring == null or unit == null or not unit.active:
 		return
 	ring.queue_redraw()
-	var showing: bool = entered and _player_action_pending
+	var showing: bool = entered and decision_open
 	if _ring_fade_tweens.has(slot):
 		_ring_fade_tweens[slot].kill()
 	var tween: Tween = create_tween()
@@ -407,127 +379,6 @@ func _on_unit_hovered(slot: int, entered: bool) -> void:
 		overlay.add_child(info)
 
 
-# --- radial ability menu ---------------------------------------------------
-
-func _on_unit_clicked(slot: int) -> void:
-	if not _player_action_pending:
-		return
-	var target: CombatUnit = units.get(slot)
-	if target == null or not target.active:
-		return
-	_close_radial_menu()
-	var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
-	if player == null:
-		return
-	_radial_menu = Control.new()
-	_radial_menu.position = SLOT_POSITIONS.get(slot, Vector2(400, 300))
-	_radial_menu.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_radial_menu_owner_slot = slot
-	for bar_index in player.equipped_moves.size():
-		var move_id: int = int(player.equipped_moves[bar_index])
-		# An empty ("None") slot is the only thing that hides an orb - the
-		# source's refreshOrbs() never renumbers around a temporarily-unusable
-		# one, it only hides move id 0.
-		if move_id == 0 or bar_index >= ORB_OFFSETS.size():
-			continue
-		var move: Ability = MoveManagerAuto.get_move(move_id)
-		if move == null:
-			continue
-		var usable: bool = _move_usable_on_bar(move, player, bar_index) and _move_valid_for_target(move, slot)
-		var orb: Button = Button.new()
-		orb.custom_minimum_size = Vector2(ORB_RADIUS * 2, ORB_RADIUS * 2)
-		orb.size = orb.custom_minimum_size
-		orb.position = ORB_OFFSETS[bar_index] - orb.size / 2.0
-		var sections: Array = _move_tooltip_sections(move)
-		orb.mouse_entered.connect(func(): GameTooltip.show_sections(
-			sections, orb, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY
-		))
-		orb.mouse_exited.connect(GameTooltip.hide_tooltip)
-		var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
-		orb.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null
-		orb.expand_icon = true
-		orb.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		var color: Color = _move_color(move)
-		_style_orb(orb, color, usable)
-		if usable:
-			orb.pressed.connect(_on_radial_move_picked.bind({"bar_index": bar_index, "move_id": move_id}, slot))
-		else:
-			orb.disabled = true
-		_radial_menu.add_child(orb)
-	if _radial_menu.get_child_count() == 0:
-		_radial_menu.queue_free()
-		_radial_menu = null
-		_radial_menu_owner_slot = -1
-		return
-	battlefield.add_child(_radial_menu)
-
-
-# Cooldown and silence gating for the player's picks. BattleAI._can_afford
-# checks silence for the AI's own picks, and the runner never re-checks
-# either when the move executes, where it checks focus and life
-# (BattleRunner._execute_move_action). The original does the same.
-# It checks cooldown and silence when the player picks
-# (frame_42/DoAction_11.as:70-79) and not again at dispatch, where the
-# conductor checks focus and life (frame_217/PlaceObject2_3389_480
-# enterFrame, lines 350-355).
-func _move_usable_on_bar(move: Ability, player: CombatUnit, bar_index: int) -> bool:
-	if bar_index < player.ability_cooldowns.size() and player.ability_cooldowns[bar_index] > 0:
-		return false
-	if player.silenced != 0 and move.focus_cost > 0:
-		return false
-	return true
-
-
-func _move_valid_for_target(move: Ability, slot: int) -> bool:
-	var target: CombatUnit = units.get(slot)
-	if target == null or not target.active:
-		return false
-	# Too little focus or life, or a target without the move's required
-	# buffs, darkens the orb. That is a port choice. The original darkens an
-	# orb only for a bad target or a cooldown (frame_217/PlaceObject3_3382_500
-	# enterFrame, lines 15-29) and refuses these picks at the click with a
-	# message instead (frame_42/DoAction_11.as:60-69 and 80-84).
-	var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
-	if player != null and move.focus_cost > 0 and player.focus_n < move.focus_cost:
-		return false
-	if player != null and player.life_n <= move.flat_life_cost + round(player.life_u * move.health_cost_percentage):
-		return false
-	var matching_buffs: int = 0
-	for buff_slot in target.buff_slots:
-		if buff_slot["cd"] <= 0:
-			continue
-		var buff: Buff = BuffManagerAuto.buffs_by_id.get(buff_slot["buff_id"])
-		if buff != null and buff.element_type == move.required_buff_element:
-			matching_buffs += 1
-	if matching_buffs < move.required_buff_count:
-		return false
-	var is_ally: bool = target.team_side == CombatUnit.Team.ONE
-	var is_self: bool = slot == BattleRunner.PLAYER_SLOT
-	return (
-		(is_self and move.can_target_self)
-		or (not is_ally and move.can_target_others)
-		or (is_ally and not is_self and move.targets_allies)
-	)
-
-
-func _move_tooltip_sections(move: Ability) -> Array:
-	var cost_line: String = "This move costs nothing"
-	if move.focus_cost > 0:
-		cost_line = "This move costs %d Focus" % int(move.focus_cost)
-	var sections: Array = [
-		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": move.display_name, "color": TooltipTheme.TEXT_TITLE}]},
-		{"bg_color": TooltipTheme.BG_COST, "lines": [{"text": cost_line, "color": TooltipTheme.TEXT_SUBHEADER}]},
-	]
-	var body_lines: Array = []
-	if not move.tooltip_description.is_empty():
-		body_lines.append({"text": move.tooltip_description, "color": TooltipTheme.TEXT_BODY})
-	if move.cooldown_turns > 0:
-		body_lines.append({"text": "Cooldown: %d turns" % move.cooldown_turns, "color": TooltipTheme.TEXT_BODY})
-	if not body_lines.is_empty():
-		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": body_lines})
-	return sections
-
-
 func _move_color(move: Ability) -> Color:
 	var element_index: CombatUnit.Element = move.damage_element_type
 	return MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.5, 0.5, 0.5)
@@ -547,93 +398,15 @@ func _spawn_impact(target_slot: int, move: Ability, result: Dictionary) -> void:
 	effect.play(move.impact_effect_name)
 
 
-# Mirrors abilities_window.gd's own _sanitize_icon_key() - the same
-# assets/ui/abilities/ lookup key, built the same way, so a display name
-# with punctuation resolves to the file the extractor actually wrote.
-func _sanitize_icon_key(label: String) -> String:
-	var result: String = ""
-	var last_was_sep: bool = false
-	for c in label:
-		if (c >= "A" and c <= "Z") or (c >= "a" and c <= "z") or (c >= "0" and c <= "9"):
-			result += c
-			last_was_sep = false
-		elif not last_was_sep:
-			result += "_"
-			last_was_sep = true
-	return result.strip_edges().lstrip("_").rstrip("_")
-
-
-func _style_orb(orb: Button, color: Color, usable: bool) -> void:
-	for state in ["normal", "hover", "pressed", "disabled"]:
-		var style: StyleBoxFlat = StyleBoxFlat.new()
-		var bg: Color = Color(0.08, 0.08, 0.1) if usable else Color(0.05, 0.05, 0.06)
-		style.bg_color = bg.lightened(0.1) if state == "hover" else bg
-		style.border_color = color if usable else Color(0.18, 0.18, 0.2)
-		style.set_border_width_all(2)
-		style.set_corner_radius_all(99)
-		orb.add_theme_stylebox_override(state, style)
-	orb.add_theme_font_size_override("font_size", 9)
-	orb.add_theme_color_override("font_color", Color.WHITE if usable else Color(0.35, 0.35, 0.35))
-	orb.add_theme_color_override("font_disabled_color", Color(0.3, 0.3, 0.32))
-
-
-func _on_radial_move_picked(entry: Dictionary, target_slot: int) -> void:
-	_selected_move = {
-		"bar_index": entry["bar_index"],
-		"move_id": entry["move_id"],
-		"target_slot": target_slot,
-	}
-	_close_radial_menu()
-	_player_action_pending = false
-
-
-# Killing the fade tween here matters even though the menu it targets is about
-# to be freed: a Tween outlives its freed target and still runs the trailing
-# tween_callback(_close_radial_menu), which would then close whatever menu was
-# opened in the meantime. Killing a tween from inside its own callback is safe.
-func _close_radial_menu() -> void:
-	if _radial_menu_fade_tween != null and _radial_menu_fade_tween.is_valid():
-		_radial_menu_fade_tween.kill()
-	_radial_menu_fade_tween = null
-	_radial_menu_leave_timer.stop()
-	if _radial_menu != null:
-		_radial_menu.queue_free()
-		_radial_menu = null
-	_radial_menu_owner_slot = -1
-
-
-# Pure predicate (no engine side effects) so it's directly testable - see
-# ItemSlot._drag_payload() for the same "split for testability" reasoning.
-# The orbs fan out ~62px from the unit's own hit area, well outside it, so
-# checking the unit alone would close the menu the instant the player
-# moves toward an orb to click it.
-func _is_point_over_radial_menu_area(global_point: Vector2) -> bool:
-	if _radial_menu == null:
-		return false
-	var overlay: Control = _overlays.get(_radial_menu_owner_slot)
-	if overlay != null and overlay.hit_button.get_global_rect().has_point(global_point):
-		return true
-	for orb in _radial_menu.get_children():
-		if orb is Control and orb.get_global_rect().has_point(global_point):
-			return true
-	return false
-
-
-func _start_radial_menu_fade_out() -> void:
-	if _radial_menu == null:
-		return
-	if _radial_menu_fade_tween != null and _radial_menu_fade_tween.is_valid():
-		return  # already fading - the leave timer re-fired, don't race a second tween
-	var tween: Tween = create_tween()
-	tween.tween_property(_radial_menu, "modulate:a", 0.0, RING_FADE_OUT_TIME)
-	tween.tween_callback(_close_radial_menu)
-	_radial_menu_fade_tween = tween
+func _on_radial_move_picked(bar_index: int, move_id: int, target_slot: int) -> void:
+	_selected_move = {"bar_index": bar_index, "move_id": move_id, "target_slot": target_slot}
+	decision_open = false
 
 
 # --- bottom bar: stances + pass ring + retreat -----------------------------
 
 func _draw_pass_ring() -> void:
-	var active: bool = _player_action_pending
+	var active: bool = decision_open
 	var color: Color = Color(0.4, 0.75, 1.0, 0.95) if active else Color(0.35, 0.35, 0.38, 0.7)
 	_pass_ring.draw_arc(Vector2.ZERO, 36.0, 0.0, TAU, 64, color, 5.0, true)
 	if active:
@@ -706,12 +479,12 @@ func _battle_loop() -> void:
 		_pending_setup_events = []
 	while not runner.is_over():
 		if runner.is_player_turn():
-			_player_action_pending = true
+			decision_open = true
 			_reset_decision_timer()
 			turn_label.text = "Your move"
 			_log("half-turn %d: waiting for player" % runner.turn_count)
 			_pass_ring.queue_redraw()
-			while _player_action_pending:
+			while decision_open:
 				if not is_inside_tree():
 					return  # retreat freed the scene mid-wait
 				await get_tree().process_frame
@@ -726,7 +499,6 @@ func _battle_loop() -> void:
 		_selected_move = {}
 		if not action.is_empty():
 			_log("player action: %s" % str(action))
-		_close_radial_menu()
 		var events: Array = runner.advance_half_turn(action)
 		_log("advance_half_turn -> %d events" % events.size())
 		for event in events:
@@ -743,11 +515,10 @@ func _battle_loop() -> void:
 
 
 func _on_pass_pressed() -> void:
-	if not _player_action_pending:
+	if not decision_open:
 		return
 	_selected_move = {}
-	_close_radial_menu()
-	_player_action_pending = false
+	decision_open = false
 
 
 func _on_log_toggle_pressed() -> void:
