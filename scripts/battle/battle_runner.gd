@@ -327,7 +327,14 @@ func _accuracy_roll(caster: CombatUnit, target: CombatUnit, move: Ability) -> bo
 
 # Ported from the dispel block that runs on a successful strike, before the
 # damage/heal resolves. The dispel budget is consumed by every
-# polarity-matched candidate, even when the chance/resist rolls fail.
+# polarity-matched candidate, even when the chance/resist rolls fail. Slots
+# are taken in buff_slots order, which CombatUnit.apply_changes() keeps the
+# same as the original's. apply_buff() takes a removed buff's stun, sswitch,
+# heal mods, idot and silenced off the target straight away, like the
+# original's applyBuffKrin. This deliberately leaves apply_changes() to
+# _execute_move_action(), which calls it after the hit where the conductor
+# calls applyChangesKrin (line 103 of its enterFrame handler), so the hit that
+# removes a buff still lands with that buff's stat changes.
 func _resolve_dispels(move: Ability, target: CombatUnit) -> Array:
 	if move.dispel_count <= 0:
 		return []
@@ -349,8 +356,6 @@ func _resolve_dispels(move: Ability, target: CombatUnit) -> Array:
 			slot["cd"] = 0
 			target.apply_buff(buff, -1, null, slot_index, slot["buff_value"])
 			removed.append(buff.internal_name)
-	if not removed.is_empty():
-		target.apply_changes()
 	return removed
 
 

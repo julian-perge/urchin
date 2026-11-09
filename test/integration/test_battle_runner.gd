@@ -552,6 +552,145 @@ func test_shatter_bolt_stuns_its_target():
 	assert_push_warning_count(0, "execute_move takes move 521 without a warning")
 
 
+# The original sorts a unit's 40 buff slots by turns left, most first, at the
+# end of every applyChangesKrin (frame_42/DoAction_10.as:344), which runs after
+# every hit on the unit, and a dispel takes matching slots in that order (lines
+# 22-53 of the conductor's enterFrame handler). Flash Player's sort can move
+# slots that hold the same number of turns past each other, so tied buffs don't
+# always keep the order they landed in. Here the target holds Liquid Veins with
+# 4 turns left, then Iron Jaws and Apprehend with 3 each, all Ice debuffs, and
+# Dux Heal (move 8) dispels one Ice debuff per cast. The first cast takes Liquid
+# Veins from slot 0, and the sort after that hit puts Apprehend ahead of Iron
+# Jaws, so the second cast takes Apprehend.
+func test_dispel_takes_tied_buffs_in_the_order_the_original_sorts_them():
+	var veradux: CombatUnit = CombatUnit.from_character(unit_templates[4], 9, CombatUnit.Difficulty.HARD, 3)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 5)
+	var enemy: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	runner.setup({2: enemy, 3: veradux, 5: target}, null, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	for buff_name in ["LIQUIDVEINS", "IRONJAWS", "APPREHEND"]:
+		target.apply_buff(buffs_by_name[buff_name], 1, enemy)
+		target.apply_changes()
+
+	var removed: Array = []
+	for _cast in 2:
+		var events_start: int = runner.events.size()
+		runner._execute_action({"caster_slot": 3, "target_slot": 5, "move_id": 8})
+		for event in runner.events.slice(events_start):
+			if event["type"] == BattleRunner.EventType.DISPEL:
+				removed.append_array(event["removed"])
+	assert_eq(removed, ["LIQUIDVEINS", "APPREHEND"], "the second Dux Heal takes Apprehend, which the sort moved ahead of Iron Jaws")
+	assert_true(_has_active_buff(target, "IRONJAWS"), "Iron Jaws is still on the target")
+
+
+# Keeps the target's stun and incoming damage multiplier as they are when
+# execute_move resolves the hit.
+class HitWatcher extends BattleManager:
+	var stun_at_hit: float = -1.0
+	var idmgp2_at_hit: float = -1.0
+
+	func execute_move(ability: Ability, caster: CombatUnit, target: CombatUnit, buffs_by_name: Dictionary = {}) -> Dictionary:
+		stun_at_hit = target.stun
+		idmgp2_at_hit = target.idmgp2
+		return super.execute_move(ability, caster, target, buffs_by_name)
+
+
+# The original resolves the hit in executeMove (conductor lines 54-69) and only
+# then recomputes the target's stats with applyChangesKrin (line 103). The
+# dispel's applyBuffKrin call takes a removed buff's STUN off straight away
+# (frame_42/DoAction_10.as:140), but IDMGP2, the multiplier on the damage the
+# target takes, is only worked out in applyChangesKrin (line 313). SHATTERBOLT
+# stuns by 1 and halves the damage its holder takes, and Shatter (move 224)
+# dispels Ice debuffs, so the Shatter hit that removes SHATTERBOLT lands on a
+# target that is no longer stunned and still takes half damage.
+func test_a_dispelled_buffs_stats_still_count_for_the_hit_that_removes_it():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
+	var runner = BattleRunner.new()
+	var watcher: HitWatcher = autofree(HitWatcher.new())
+	runner.setup({1: caster, 2: target}, null, moves_by_id, buffs_by_id, buffs_by_name, watcher, [])
+	target.apply_buff(buffs_by_name["SHATTERBOLT"], 1, caster)
+	target.apply_changes()
+
+	runner._execute_action({"caster_slot": 1, "target_slot": 2, "move_id": 224})
+
+	var removed: Array = []
+	for event in runner.events:
+		if event["type"] == BattleRunner.EventType.DISPEL:
+			removed.append_array(event["removed"])
+	assert_eq(removed, ["SHATTERBOLT"], "Shatter dispels SHATTERBOLT")
+	assert_eq(watcher.stun_at_hit, 0.0, "the stun is gone before the hit lands")
+	assert_eq(watcher.idmgp2_at_hit, 0.5, "the hit still takes SHATTERBOLT's halving")
+	assert_eq(target.idmgp2, 1.0, "the halving is gone once the move resolves")
+
+
+# The dispel takes a removed buff's SSWITCH off straight away too
+# (frame_42/DoAction_10.as:171), and executeMove reads SSWITCH when the hit
+# lands to decide whether the damage heals instead (frame_42/DoAction_8.as:82).
+# RETROGRADED is a beneficial Shadow buff with SSWITCH, and Shock Therapy (move
+# 434) dispels one beneficial Shadow buff, so its hit on a target holding
+# RETROGRADED takes RETROGRADED off and then deals damage.
+func test_a_dispelled_sswitch_no_longer_turns_the_hit_into_healing():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	runner.setup({1: caster, 2: target}, null, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	target.apply_buff(buffs_by_name["RETROGRADED"], 1, target)
+	target.apply_changes()
+	var life_before: float = target.life_n
+
+	runner._execute_action({"caster_slot": 1, "target_slot": 2, "move_id": 434})
+
+	var removed: Array = []
+	var result: Dictionary = {}
+	for event in runner.events:
+		if event["type"] == BattleRunner.EventType.DISPEL:
+			removed.append_array(event["removed"])
+		elif event["type"] == BattleRunner.EventType.MOVE:
+			result = event["result"]
+	assert_eq(removed, ["RETROGRADED"], "Shock Therapy dispels RETROGRADED")
+	assert_eq(result.get("type"), BattleManager.ResultType.DAMAGE, "the hit is damage")
+	assert_false(result.get("sswitched", true), "and isn't turned into healing")
+	assert_lt(target.life_n, life_before, "so the target loses life")
+
+
+# A move can send its status buff to its own caster (ability_two[21],
+# conductor lines 76-83), but the conductor's only applyChangesKrin after a hit
+# is on the target (line 103), so the caster's stats and slot order wait for
+# its own buffTicker. That tick works out its DoT damage
+# (frame_42/DoAction_10.as:31) before it calls applyChangesKrin (line 135), so
+# it still reads the caster's old stats. Honor and Duty (move 755) hits someone
+# else and lands HONORDUTY on the Police Colonel, which cuts the damage he takes
+# by 20%. He holds Cold Justice, a 500-a-turn Ice DoT, and his Ice defense is
+# 100 + 15 per level, so with the old IDMGP2 of 1 that tick takes exactly 500.
+# The test calls the two halves of _execute_action, the move and the tick, one
+# at a time to look in between.
+func test_a_buff_a_move_lands_on_its_caster_waits_for_the_casters_tick():
+	var colonel: CombatUnit = CombatUnit.from_character(unit_templates[61], 22, CombatUnit.Difficulty.HARD, 2)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[1], 22, CombatUnit.Difficulty.HARD, 1)
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	runner.setup({1: target, 2: colonel}, null, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	for buff_name in ["PERSECUTE", "CHAINS"]:
+		colonel.apply_buff(buffs_by_name[buff_name], 1, target)
+		colonel.apply_changes()
+	# A stunned target can't dodge the Melee hit (conductor lines 360-386).
+	target.apply_buff(buffs_by_name["APPREHEND"], 1, colonel)
+	target.apply_changes()
+
+	runner._execute_move_action({"caster_slot": 2, "target_slot": 1, "move_id": 755}, colonel, target)
+	assert_eq(_live_buff_names(colonel), ["PERSECUTE", "CHAINS", "HONORDUTY"], "HONORDUTY waits in the slot it landed in")
+	assert_eq(colonel.idmgp2, 1.0, "the damage the colonel takes doesn't change yet")
+
+	var life_before_tick: float = colonel.life_n
+	colonel.tick_buffs(buffs_by_id)
+	assert_eq(life_before_tick - colonel.life_n, 500.0, "Cold Justice's tick still reads the old IDMGP2")
+	assert_almost_eq(colonel.idmgp2, 0.8, 0.000001, "the tick's own recompute brings HONORDUTY in")
+	assert_eq(_live_buff_names(colonel), ["PERSECUTE", "HONORDUTY", "CHAINS"], "and sorts it ahead of Chains of Justice")
+
+
 # Runs a full battle with AI on both sides; returns event-type counts.
 func _assert_battle_runs(battle_id: int) -> Dictionary:
 	var battle: BattleFight = battles.get(battle_id)
@@ -674,6 +813,14 @@ func _has_active_buff(unit: CombatUnit, buff_name: String) -> bool:
 		if slot["buff_id"] == buff.id and slot["cd"] != 0:
 			return true
 	return false
+
+
+func _live_buff_names(unit: CombatUnit) -> Array:
+	var names: Array = []
+	for slot in unit.buff_slots:
+		if slot["cd"] > 0:
+			names.append(buffs_by_id[slot["buff_id"]].internal_name)
+	return names
 
 
 func _character_from_json(unit_data: Dictionary) -> Character:
