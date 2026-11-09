@@ -228,23 +228,6 @@ Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 2
   the fields at 1613-1614). In the converted JSON they are `ability_two`'s `23_secondary_element_type` and `24_required_buff_count`.
 - The AI never checks them: `checkBuffsOnUnit` is only called from the player's pick.
 
-## Heroic decision timer (frame_217/DoAction.as, the conductor)
-
-Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / 30.0` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
-and on Heroic once a half-turn ends with the player's unit dead, it waits for the player and hides the countdown label.
-
-- `BattleTime = BattleTimeLimit = 120` (`frame_217/DoAction.as:1-3`). The conductor adds 1 to `BattleTimeNow` once per frame, and only while `turnBasedKrin` is false and the player's team is
-  moving (conductor lines 593-596), so the window is 120 frames, 4 s at 30 fps.
-- `turnBasedKrin` is true on Easy and Normal (`frame_201/DoAction.as:65-79`), so only Heroic has the timer. On the other two the clock waits at `BattleTimeLimit - 0.000001` until the player
-  picks (conductor lines 639-642).
-- At `BattleTimeLimit - 1` the AI allies decide (conductor lines 674-698), and at `BattleTimeLimit` the half-turn starts whether or not the player has picked (conductor lines 769-792).
-- Picking a move jumps the clock to `BattleTimeLimit - 5` (`frame_42/DoAction_11.as:98-101`), and once the player's unit dies the conductor sets `turnBasedKrin = true` (conductor lines
-  200-202).
-- Running out is a pass. Every slot starts the battle holding move 0 (`frame_217/DoAction_2.as:313-318`) and each dispatch writes move 0 back for its caster (conductor lines 470-473), so
-  a player who never picked passes. The pass button, DefineButton2_3383 (`krinToMove2` on the root timeline), also jumps the clock to `BattleTimeLimit - 5` (release lines 9-12).
-- The clock is `battleClocker` (DefineSprite 3389), placed at (400, 507.25) behind the pass button. Its two half-dials in DefineSprite 3386 turn with
-  `BattleTimeNow / (BattleTimeLimit / 2)` (`DefineSprite_3386/frame_1/PlaceObject2_3385_2` and `PlaceObject2_3385_6`, line 2), and none of its sprites holds a text field, so it shows no number.
-
 ## Turn order and queued heals (frame_217/DoAction_2.as, frame_42/DoAction_4.as and DoAction_11.as, the conductor)
 
 Ported: `BattleRunner._team_select` writes each unit's `team_adder` once per full turn, and `advance_half_turn` builds the queue and runs the AI in `team_adder` order. It also adds the
@@ -292,6 +275,23 @@ Three Heroic cases, read from the code but not run, and not ported, since the po
 - When the window runs out, nothing files the player's move, so the player's slot keeps what the full-turn shift left there (conductor lines 265-281). If `TeamSpeedAdder` moved the player
   to a new position at the start of that full turn, that is the move 0 a teammate left in that position, so the teammate's buffs tick a second time (the move 0 path, lines 534-584) and the
   player's buffs and bar cooldowns (338-349) don't tick that half-turn.
+
+## Heroic decision timer (frame_217/DoAction.as, the conductor)
+
+Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / 30.0` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
+and on Heroic once a half-turn ends with the player's unit dead, it waits for the player and hides the countdown label.
+
+- `BattleTime = BattleTimeLimit = 120` (`frame_217/DoAction.as:1-3`). The conductor adds 1 to `BattleTimeNow` once per frame, and only while `turnBasedKrin` is false and the player's team is
+  moving (conductor lines 593-596), so the window is 120 frames, 4 s at 30 fps.
+- `turnBasedKrin` is true on Easy and Normal (`frame_201/DoAction.as:65-79`), so only Heroic has the timer. On the other two the clock waits at `BattleTimeLimit - 0.000001` until the player
+  picks (conductor lines 639-642).
+- At `BattleTimeLimit - 1` the AI allies decide (conductor lines 674-698), and at `BattleTimeLimit` the half-turn starts whether or not the player has picked (conductor lines 769-792).
+- Picking a move jumps the clock to `BattleTimeLimit - 5` (`frame_42/DoAction_11.as:98-101`), and once the player's unit dies the conductor sets `turnBasedKrin = true` (conductor lines
+  200-202).
+- Running out is a pass. Every slot starts the battle holding move 0 (`frame_217/DoAction_2.as:313-318`) and each dispatch writes move 0 back for its caster (conductor lines 470-473), so
+  a player who never picked passes. The pass button, DefineButton2_3383 (`krinToMove2` on the root timeline), also jumps the clock to `BattleTimeLimit - 5` (release lines 9-12).
+- The clock is `battleClocker` (DefineSprite 3389), placed at (400, 507.25) behind the pass button. Its two half-dials in DefineSprite 3386 turn with
+  `BattleTimeNow / (BattleTimeLimit / 2)` (`DefineSprite_3386/frame_1/PlaceObject2_3385_2` and `PlaceObject2_3385_6`, line 2), and none of its sprites holds a text field, so it shows no number.
 
 ## Battle end and game over (DefineSprite 3355 `blacker5`, root frames 229-241 and 104)
 
