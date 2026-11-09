@@ -142,17 +142,13 @@ var model: Array = ["MODEL1", "ONE", "ONE", "M"]
 var equipment_ids: Array = []
 var skin_setter: String = ""
 
-# getStat(), ported exactly from sonny2_extra_stat_calcs.txt. `mode` is a
-# Variant on purpose - the AS3 checks `== true` / `== false` as distinct cases
-# and leaves s_a unscaled when the caller passes neither (e.g. plain damage
-# stat lookups vs. the point-allocation curve, which always passes a bool).
-# GDScript has no Python-style `[value] * n` array repetition - `*` isn't
-# defined on Array at all.
-# Every array built here holds floats, because buffs add fractions to the change
+# GDScript has no Python-style `[value] * n` array repetition, so this helper
+# and _zero_int_array below both resize an empty typed array and fill it.
+# This helper builds float arrays, because buffs add fractions to the change
 # arrays, such as the -0.3 that FROST1 adds to speed. Godot silently drops the
-# fraction of a float stored in an Array[int], which turned every percent change
-# between -100% and +100% into no change at all. The cooldown arrays count whole
-# turns and use _zero_int_array below.
+# fraction of a float stored in an Array[int], so an int array here would turn
+# every percent change between -100% and +100% into no change. The cooldown
+# arrays count whole turns, so they use _zero_int_array instead.
 static func _zero_array(size: int) -> Array:
 	var arr: Array[float] = []
 	arr.resize(size)
@@ -173,6 +169,10 @@ static func _zero_int_array(size: int) -> Array:
 static func element_from_name(name: String) -> Element:
 	return ELEMENT_ORDER.find(name) as Element
 
+# getStat(), ported exactly from sonny2_extra_stat_calcs.txt. `mode` is a
+# Variant on purpose - the AS3 checks `== true` / `== false` as distinct cases
+# and leaves s_a unscaled when the caller passes neither (e.g. plain damage
+# stat lookups vs. the point-allocation curve, which always passes a bool).
 static func get_stat(ratio: float, level: int, mode = null) -> float:
 	if level <= 0:
 		return 0.0

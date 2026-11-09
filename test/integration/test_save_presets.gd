@@ -14,8 +14,10 @@ const ACHIEVEMENT_VARIANTS: Array[String] = [
 ]
 const STRONG_LEVEL: int = 99
 const STRONG_EURO: float = 999999.0
-# The generator's strong stats won every boss in at most five moves over twenty
-# seeds, and the weak preset lost battle 513 in at most eleven half-turns.
+# Over seeds 1 to 20, each set once before all nine strong fights in this
+# test's order, the generator's strong stats won every boss in at most seven
+# moves, and only no_training_legend took seven. The weak preset lost battle
+# 513 in at most eleven half-turns.
 const MAX_STRONG_MOVES: int = 8
 const MAX_WEAK_HALF_TURNS: int = 20
 const MAX_HALF_TURNS: int = 400
