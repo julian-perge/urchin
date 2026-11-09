@@ -10,3 +10,4 @@ default_font = SubResource("FontVariation_bold")
 RegularLabel/base_type = &"Label"
 RegularLabel/fonts/font = SubResource("FontVariation_regular")
 TooltipLabel/fonts/font = SubResource("FontVariation_regular")
+TooltipLabel/font_sizes/font_size = 12

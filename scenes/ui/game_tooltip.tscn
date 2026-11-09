@@ -33,7 +33,6 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="Sections" type="VBoxContainer" parent="Root"]
-custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 0

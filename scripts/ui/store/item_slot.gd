@@ -23,7 +23,7 @@ func _ready():
 	mouse_entered.connect(func():
 		_highlight.visible = true
 		if item != null:
-			GameTooltip.show_sections(_tooltip_sections(), self))
+			GameTooltip.show_sections(_tooltip_sections(), self, null, Color.WHITE, _tooltip_width()))
 	mouse_exited.connect(func():
 		_highlight.visible = false
 		GameTooltip.hide_tooltip())
@@ -55,18 +55,31 @@ func _refresh() -> void:
 		item_icon.texture = null
 
 
+# The original shows equipment in its item tooltip layout and every other
+# item, whose KRINITEM[1] type is under 2, in its plain layout, which has no
+# level line and draws the flavor text as its white body
+# (DefineButton2_3012 on(rollOver), lines 4-15). The port still lists such an
+# item's stat lines, which the plain layout leaves out.
+func _is_equipment() -> bool:
+	return item.item_type >= GameItem.ItemType.HEAD
+
+
+func _tooltip_width() -> float:
+	return TooltipTheme.TEXT_WIDTH_ITEM if _is_equipment() else TooltipTheme.TEXT_WIDTH_PLAIN
+
+
 # Built fresh on hover rather than kept in sync on every _refresh() - the
 # tooltip only needs to exist while the mouse is actually over this slot.
 func _tooltip_sections() -> Array:
 	var sections: Array = [
 		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": item.display_name, "color": TooltipTheme.TEXT_TITLE}]},
 	]
-	if item.item_type != GameItem.ItemType.NONE:
+	if _is_equipment():
 		sections.append({
 			"bg_color": TooltipTheme.BG_HEADER,
 			"lines": [{
 				"text": "Lvl. %d %s" % [item.required_level, item.slot_type_display_name()],
-				"color": TooltipTheme.TEXT_SUBHEADER,
+				"color": TooltipTheme.TEXT_REQUIREMENT,
 			}],
 		})
 	var body_lines: Array = []
@@ -75,7 +88,8 @@ func _tooltip_sections() -> Array:
 	for stat_line in item.tooltipAlt:
 		body_lines.append({"text": str(stat_line), "color": TooltipTheme.TEXT_STAT})
 	if item.tooltip is String and str(item.tooltip) != "":
-		body_lines.append({"text": str(item.tooltip), "color": TooltipTheme.TEXT_FLAVOR})
+		var flavor_color: Color = TooltipTheme.TEXT_FLAVOR if _is_equipment() else TooltipTheme.TEXT_BODY
+		body_lines.append({"text": str(item.tooltip), "color": flavor_color})
 	if not body_lines.is_empty():
 		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": body_lines})
 	return sections

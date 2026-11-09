@@ -10,6 +10,8 @@ extends CanvasLayer
 
 const EDGE_MARGIN: float = 4.0
 const ANCHOR_GAP: float = 8.0
+const TEXT_MARGIN_X: float = 8.0
+const TEXT_MARGIN_Y: float = 4.0
 
 @onready var _root: HBoxContainer = $Root
 @onready var _icon_backing: ColorRect = $Root/IconBacking
@@ -21,18 +23,27 @@ const ANCHOR_GAP: float = 8.0
 # Array[Dictionary]} where a line is {"text": String, "color": Color}.
 # anchor: the hovered control, used to position this tooltip beside it.
 # icon/icon_color are optional - only the abilities screen uses them today.
-func show_sections(sections: Array, anchor: Control, icon: Texture2D = null, icon_color: Color = Color.WHITE) -> void:
+# text_width: the width every line wraps at, one of TooltipTheme's
+# TEXT_WIDTH_* for the original layout the tooltip stands in for.
+func show_sections(
+	sections: Array,
+	anchor: Control,
+	icon: Texture2D = null,
+	icon_color: Color = Color.WHITE,
+	text_width: float = TooltipTheme.TEXT_WIDTH_PLAIN
+) -> void:
 	for child in _sections.get_children():
 		child.free()
+	_sections.custom_minimum_size.x = text_width + 2.0 * TEXT_MARGIN_X
 	for section_index in sections.size():
 		var section: Dictionary = sections[section_index]
 		var panel: PanelContainer = PanelContainer.new()
 		var style: StyleBoxFlat = StyleBoxFlat.new()
 		style.bg_color = section["bg_color"]
-		style.content_margin_left = 8
-		style.content_margin_right = 8
-		style.content_margin_top = 4
-		style.content_margin_bottom = 4
+		style.content_margin_left = TEXT_MARGIN_X
+		style.content_margin_right = TEXT_MARGIN_X
+		style.content_margin_top = TEXT_MARGIN_Y
+		style.content_margin_bottom = TEXT_MARGIN_Y
 		panel.add_theme_stylebox_override("panel", style)
 		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var lines_box: VBoxContainer = VBoxContainer.new()
@@ -47,6 +58,7 @@ func show_sections(sections: Array, anchor: Control, icon: Texture2D = null, ico
 			# face and every later section switches to RegularLabel.
 			if section_index > 0:
 				label.theme_type_variation = &"RegularLabel"
+			label.add_theme_font_size_override("font_size", TooltipTheme.FONT_SIZE)
 			label.add_theme_color_override("font_color", line["color"])
 			label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			lines_box.add_child(label)

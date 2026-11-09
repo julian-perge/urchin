@@ -421,7 +421,9 @@ func _on_unit_clicked(slot: int) -> void:
 		orb.size = orb.custom_minimum_size
 		orb.position = ORB_OFFSETS[bar_index] - orb.size / 2.0
 		var sections: Array = _move_tooltip_sections(move)
-		orb.mouse_entered.connect(func(): GameTooltip.show_sections(sections, orb))
+		orb.mouse_entered.connect(func(): GameTooltip.show_sections(
+			sections, orb, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY
+		))
 		orb.mouse_exited.connect(GameTooltip.hide_tooltip)
 		var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
 		orb.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null

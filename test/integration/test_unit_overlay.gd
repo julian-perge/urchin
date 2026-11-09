@@ -95,3 +95,21 @@ func test_refresh_buffs_clears_expired_buffs():
 	overlay.refresh_buffs(unit, {1: buff_a})
 	await wait_process_frames(1)  # queue_free() defers actual removal to the next frame
 	assert_eq(overlay.buff_row.get_child_count(), 0, "cleared once the buff is gone")
+
+
+# The original's buff icon tooltip takes its title from the buff's name alone
+# (frame_42/DoAction_10.as:375), and the icon's own counter, edit text 66,
+# shows the turns left (line 364). With no turn count after it, a name like
+# "Seek and Destroy" fits the title on one line.
+func test_buff_tooltip_title_is_the_name_alone_and_the_icon_counts_the_turns():
+	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var unit := CombatUnit.new()
+	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
+	overlay.refresh_buffs(unit, {1: _make_buff("FIRESAM", "Seek and Destroy", CombatUnit.Element.FIRE)})
+	var icon: TextureRect = overlay.buff_row.get_child(0)
+	assert_eq(icon.get_child(0).text, "3", "the icon's counter shows the turns left")
+	icon.mouse_entered.emit()
+	await wait_process_frames(2)
+	var title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	assert_eq(title.text, "Seek and Destroy", "the title is the name alone")
+	assert_eq(title.get_line_count(), 1, "and fits on one line")

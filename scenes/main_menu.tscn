@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" path="res://assets/ui/menu/class_cards/biological.png" id="6_bio"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/class_cards/hydraulic_gray.png" id="7_hydrogray"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/class_cards/hydraulic.png" id="8_hydro"]
+[ext_resource type="FontFile" uid="uid://bjuuak0xaaiav" path="res://assets/fonts/2738_Rockwell.ttf" id="9_rockwell"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_difficulty"]
 
@@ -351,10 +352,10 @@ offset_top = 420.65
 offset_right = 274.1
 offset_bottom = 446.65
 mouse_filter = 2
-theme_type_variation = &"RegularLabel"
 theme_override_colors/font_color = Color(1, 0.4, 1, 1)
 theme_override_colors/font_outline_color = Color(0.4, 0.2, 1, 1)
 theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("9_rockwell")
 theme_override_font_sizes/font_size = 19
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -367,10 +368,10 @@ offset_top = 420.65
 offset_right = 514.1
 offset_bottom = 446.65
 mouse_filter = 2
-theme_type_variation = &"RegularLabel"
 theme_override_colors/font_color = Color(0.4, 0.8, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0.2, 1, 0, 1)
 theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("9_rockwell")
 theme_override_font_sizes/font_size = 19
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -383,10 +384,10 @@ offset_top = 420.65
 offset_right = 754.1
 offset_bottom = 446.65
 mouse_filter = 2
-theme_type_variation = &"RegularLabel"
 theme_override_colors/font_color = Color(0, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0.6, 1, 1)
 theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("9_rockwell")
 theme_override_font_sizes/font_size = 19
 horizontal_alignment = 1
 vertical_alignment = 1

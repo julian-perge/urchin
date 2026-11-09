@@ -31,11 +31,15 @@ const EQUIP_SLOT_CENTERS: Dictionary[int, Vector2] = {
 }
 const DOLL_POSITION: Vector2 = Vector2(396.5, 162.4)
 const DOLL_SCALE: float = 0.85
+# MENU[6] (frame_1/DoAction.as:214), which the shop frame puts in its vb1
+# field over the catalog (DefineSprite_3142/frame_16/DoAction.as:96).
+const PURCHASE_HINT: String = "Click on items to purchase:"
 
 @onready var shop_backdrop: TextureRect = $ShopBackdrop
 @onready var shop_dialogue: Label = $DescriptionLabel
 @onready var store_items: GridContainer = $StoreItems
 @onready var _status_label: Label = $StatusLabel
+@onready var _purchase_hint: Label = $PurchaseHintLabel
 
 var inventory_panel: InventoryPanel
 var equip_view: EquipDollView
@@ -45,6 +49,7 @@ var selected_store_slot: ItemSlot = null
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_purchase_hint.text = PURCHASE_HINT
 	_build_middle()
 	_build_inventory()
 	GameData.gold_changed.connect(func(_amount):

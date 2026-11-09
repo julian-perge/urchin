@@ -77,9 +77,12 @@ func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
 		var element_index: CombatUnit.Element = buff.element_type
 		if element_index != -1:
 			icon_rect.modulate = MenuTheme.ELEMENT_COLORS[element_index]
+		# The original titles a buff's tooltip with its name alone and shows
+		# the turns left only on the icon's counter below
+		# (frame_42/DoAction_10.as:364 and 375).
 		var sections: Array = [
 			{"bg_color": TooltipTheme.BG_HEADER, "lines": [{
-				"text": "%s (%d turns)" % [buff.display_name, int(slot["cd"])],
+				"text": buff.display_name,
 				"color": TooltipTheme.TEXT_TITLE,
 			}]},
 		]

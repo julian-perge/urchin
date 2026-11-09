@@ -209,7 +209,7 @@ func _on_tree_node_hovered(node_index: int) -> void:
 	var result: Dictionary = AbilityTooltipBuilder.build_sections(node, save, move, next_move)
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _tree_node_icon_key(node)]
 	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
-	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"])
+	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY)
 
 
 func _refresh_wheel(save: PlayerSave) -> void:
@@ -245,7 +245,7 @@ func _on_socket_hovered(socket_index: int) -> void:
 	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move)
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
 	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
-	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"])
+	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY)
 
 
 func _refresh_pool(save: PlayerSave) -> void:
@@ -281,7 +281,7 @@ func _on_pool_row_hovered(row_index: int) -> void:
 	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move)
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
 	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
-	GameTooltip.show_sections(result["sections"], row, icon, result["icon_color"])
+	GameTooltip.show_sections(result["sections"], row, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY)
 
 
 func _move_color(move: Ability) -> Color:
