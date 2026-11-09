@@ -191,8 +191,10 @@ entry names its evidence so you can check it instead of trusting it.
   247x237. Crop to the alpha bbox, and when several frames must share one size,
   crop to the union of all their bboxes rather than each frame's own
   (`5045c5c`, `8ef2139`).
-- **Export at 4x or 5x and let Godot scale down.** Backgrounds go at 4x,
-  small or spinning art at 5x.
+- **Export at 2x, 4x or 5x and let Godot scale down.** Halls, skies, hub art,
+  battle chrome and store art go at 4x, and orbs, faces and class cards at 5x.
+  Dolls, VFX, the item, buff and ability icons and the start screen backgrounds
+  go at 2x.
 - **ffdec thins the blur on large filtered objects, at any zoom.**
   `Filtering.boxBlurSingleIterationTwoPass` shrinks both box widths until
   `boxX * boxY * width * height` fits `boxBlurPixelsLimit * 100000`, which cut
@@ -240,9 +242,10 @@ entry names its evidence so you can check it instead of trusting it.
 - Pixel snapping is off so a piece is drawn at its layout position and SWF
   fractions reach the screen. `gui/common/snap_controls_to_pixels` and
   `rendering/2d/snap/snap_2d_transforms_to_pixel` both have to stay off, because
-  the 2D snap alone rounds every Control again. Text stays crisp at fractional
-  positions only under the default NEAREST texture filter, so a filter change
-  has to recheck it (julian-perge/urchin#128).
+  the 2D snap alone rounds every Control again. Art draws LINEAR and the
+  `NearestText` autoload keeps text NEAREST, so text stays crisp at fractional
+  positions and a filter change has to recheck it (julian-perge/urchin#128,
+  julian-perge/urchin#130).
 - `.png.import` and `.uid` sidecars must be committed. Forgetting them has
   broken a fresh checkout at least six times (`54ff0b9`, `9e72d69`, `ec53f69`,
   `011cb96`, `18cf5c3`, `37de6ed`).
