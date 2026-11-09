@@ -228,6 +228,54 @@ Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 2
   the fields at 1613-1614). In the converted JSON they are `ability_two`'s `23_secondary_element_type` and `24_required_buff_count`.
 - The AI never checks them: `checkBuffsOnUnit` is only called from the player's pick.
 
+## Turn order and queued heals (frame_217/DoAction_2.as, frame_42/DoAction_4.as and DoAction_11.as, the conductor)
+
+Ported: `BattleRunner._team_select` writes each unit's `team_adder` once per full turn, and `advance_half_turn` builds the queue and runs the AI in `team_adder` order. It also adds the
+player's Heal estimate through `BattleAI.heal_guess` before any AI unit decides. `battle_scene.gd` calls `advance_half_turn` once the player picks, or with `{}` on a pass or when the Heroic
+window runs out.
+
+- `TeamSelect` runs once at battle start (`frame_217/DoAction_2.as:311`) and then only when `TurnTime` reaches 0 (conductor lines 147 and 262-264). It sets `TurnTime = 2` (line 142), so it
+  runs once per full turn, and the other half-turn only flips `TeamMoveNow` (conductor lines 283-311). It averages SPEEDU over each team's active units (lines 70-93), lets `absoluteStart`
+  force the opener (94-108), and opens with the higher average, team 1 on a tie in single player (109-141).
+- `TeamSpeedAdder` (lines 284-310) pushes all three slots of each team whether or not they are active (287-289 and 295-297) and sorts them by SPEEDU, then slot id, both descending (290 and
+  298). It writes `teamAdder` 0 to 2 in that order (291-293 and 299-301), and `AITeamMoveOrder` with the opener's three ids first (302-309, with `s1tm` and `s2tm` from 109-141). `TeamSelect`
+  then sets `AIGoER` to 1 for the active units of the team moving and to 0 for the other active units (145-160), and `AIGoERSwitch` flips it for all six slots after each decision (268-283).
+- `krinAddMove` (`frame_42/DoAction_4.as:1-35`) files a move at `MoveArrayFINAL[adder + teamAdder]` (lines 28 and 33). `adder` is 0 for the opener's team in its own half-turn, 6 for the
+  opener's team otherwise or when the conductor files the move (`autoMoveK`), and 3 for the other team (3-27). The conductor dispatches `MoveArrayFINAL[PlayerToMove]` from 0 (conductor
+  lines 324-329), three per half-turn (`Cycler = 3`, line 791), files move 0 in each caster's slot after its dispatch (470-473, 490-493 and 553-556), and moves slots 6-8, or 3-8, down at each
+  full turn (265-281). So units act, and the AI decides, in the order `TeamSpeedAdder` picked when the full turn started.
+- On the enemy's half-turn the AI decides at once, with the clock set to `BattleTimeLimit` (conductor lines 597-622).
+- On Easy and Normal the clock waits just under `BattleTimeLimit` until the player picks or passes (639-642). The allies decide on the conductor's next frame, and the half-turn starts in the
+  same frame (643-672 and 769-792).
+- On Heroic the clock counts frames (593-596), and a pick or a pass jumps it to `BattleTimeLimit - 5` (`frame_42/DoAction_11.as:98-101`, `DefineButton2_3383` on(release), lines 9-12). The
+  allies decide at `BattleTimeLimit - 1` (674-698), 4 frames after the pick, or on frame 119 when the player never picks.
+- Each decision loop walks `AITeamMoveOrder` and runs `LowerCD` and `AImoveAdder` for every active AI unit with `AIGoER` set, and files move 0 for an inactive one (603-617, 648-664 and
+  679-692).
+- When a pick passes `addMoveForPlayer`'s checks (`frame_42/DoAction_11.as:56-90`) and the move's category (`KRINABILITY[14]`) is "Heal" or its animation type (`[10]`) is "DispelF", the
+  original adds `KRINABILITYB[10] * ((STRENGTHU + [1]) * [2] + (MAGICU + [3]) * [4] + (SPEEDU + [5]) * [6] + FOCUSN * [11] + [9])`, read off the player, to `healedThisTurn[target]` (lines
+  92-95). No move has the animation type "DispelF".
+- `AImoveAdder` adds the same formula, read off its own caster, to its heal candidate when its move targets allies (`[4] == 1`) and its target is still 0 or itself
+  (`frame_42/DoAction_9.as:393-400`).
+- The heal candidate scan compares `LIFEN + healedThisTurn` (lines 181-247), but the life boundary check reads the candidate's plain `LIFEN / LIFEU` (248-271). So a queued heal changes
+  which unit an ally heals, and changes whether it heals at all only through which unit that is.
+- `healedThisTurn` starts at 0 for every slot (`frame_217/DoAction_2.as:195-201`) and is reset when each half-turn starts (conductor lines 769-776), after that half-turn's decisions. The pass
+  button files move 0 and adds nothing (`DefineButton2_3383` on(release), line 4).
+- Counted from `TalentTree.TREES` and `STARTING_MOVES` against the move data, 66 of the 231 move ids a player can learn or start with are Heals, and only Restore (228-230) has an estimate
+  above 0: strength and magic times 1, 1.75 and 2.5 (`frame_42/DoAction_6.as:899-920`). Every term of the other 63 is 0, so they queue nothing.
+
+Three Heroic cases, read from the code but not run, and not ported, since the port takes one action per unit per half-turn:
+
+- Every pick that passes the checks adds its estimate, and nothing takes it back (`frame_42/DoAction_11.as:92-95`). After a pick the player has until the allies decide at
+  `BattleTimeLimit - 1`, about 4 frames, to pick again or pass, and a heal picked first still counts when they decide. The port only sees the last pick.
+- A pick or a pass that lands after the allies decided at `BattleTimeLimit - 1` but before the half-turn starts puts the clock back to `BattleTimeLimit - 5`, so the `BattleTimeLimit - 1`
+  branch runs a second time. `AIGoERSwitch` already flipped `AIGoER` after the first run, so the second one runs `LowerCD` and `AImoveAdder` for the other team's AI units and flips `AIGoER`
+  back. In the first half-turn of a full turn, the other team then skips its own decision in the second half-turn (conductor lines 597-622 only run units with `AIGoER` set) and acts on
+  the moves it picked a half-turn early, while the player's AI allies decide in its place. `TeamSelect` resets `AIGoER` for active units at the next full turn
+  (`frame_217/DoAction_2.as:145-160`).
+- When the window runs out, nothing files the player's move, so the player's slot keeps what the full-turn shift left there (conductor lines 265-281). If `TeamSpeedAdder` moved the player
+  to a new position at the start of that full turn, that is the move 0 a teammate left in that position, so the teammate's buffs tick a second time (the move 0 path, lines 534-584) and the
+  player's buffs and bar cooldowns (338-349) don't tick that half-turn.
+
 ## Heroic decision timer (frame_217/DoAction.as, the conductor)
 
 Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / 30.0` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,

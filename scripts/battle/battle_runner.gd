@@ -8,9 +8,10 @@
 # Slot 1 is the human player in single-player; slots 3/5 are allies, 2/4/6
 # enemies. Empty slots simply have no entry in `units`.
 #
-# Flow per round: the team with the higher average derived speed acts first
-# (re-evaluated every full round). A half-turn = one team's (up to) 3 units
-# acting in speed order. advance_half_turn() runs one half-turn: it collects
+# Flow per round: at the start of every full round, the team with the higher
+# average derived speed is picked to act first and each team's units are put
+# in speed order, fastest first. A half-turn = one team's (up to) 3 units
+# acting in that order. advance_half_turn() runs one half-turn: it collects
 # moves (AI units choose via BattleAI; the human's move comes in as
 # player_action), executes them, ticks buffs, then does the end-of-half-turn
 # bookkeeping (boss phases, win/lose, speeches, team rotation).
@@ -139,11 +140,25 @@ func advance_half_turn(player_action: Dictionary = {}) -> Array:
 	for slot in TEAM_SLOTS[CombatUnit.Team.ONE] + TEAM_SLOTS[CombatUnit.Team.TWO]:
 		healed_this_turn[slot] = 0.0
 
+	# The original adds a Heal's estimate to healedThisTurn the moment the player
+	# picks it (frame_42/DoAction_11.as:92-95), and the allies decide after the
+	# pick, so they see that target as already being healed. It also counts a
+	# move whose animation type is "DispelF", but no move has one.
+	var player_move: Ability = moves_by_id.get(int(player_action.get("move_id", 0)))
+	if is_player_turn() and player_move != null and player_move.effect_category == "Heal":
+		var heal_target: int = int(player_action.get("target_slot", PLAYER_SLOT))
+		var estimate: float = BattleAI.heal_guess(units[PLAYER_SLOT], player_move)
+		healed_this_turn[heal_target] = healed_this_turn.get(heal_target, 0.0) + estimate
+
+	# TeamSpeedAdder fixes both the acting order and the order the AI decides in
+	# when a full turn starts, inactive units included
+	# (frame_217/DoAction_2.as:284-310), so a speed change in the first half-turn
+	# only reorders a team from the next full turn.
+	var slots: Array = TEAM_SLOTS[team_move_now].filter(func(slot): return units.get(slot) != null)
+	slots.sort_custom(func(a, b): return units[a].team_adder < units[b].team_adder)
 	var queue: Array[Variant] = []
-	for slot in _team_slots_in_order(team_move_now):
-		var unit: CombatUnit = units.get(slot)
-		if unit == null:
-			continue
+	for slot in slots:
+		var unit: CombatUnit = units[slot]
 		var action: Dictionary[Variant, Variant] = {"caster_slot": slot, "target_slot": slot, "move_id": 0}
 		if unit.active:
 			if unit.ai_enabled:

@@ -148,6 +148,64 @@ func test_player_from_save_with_talent_passives():
 	assert_true(runner.is_over(), "skirmish terminates (took %d half-turns)" % half_turns)
 
 
+# The original adds the player's heal to healedThisTurn when the pick is made
+# (frame_42/DoAction_11.as:92-95), and the AI allies decide after that: once
+# the pick is in on Easy and Normal, and one frame before the half-turn starts
+# on Heroic (frame_217/PlaceObject2_3389_480 enterFrame, lines 643-670 and
+# 674-698). Restore rank 1 multiplies strength and magic by 1
+# (frame_42/DoAction_6.as:899-902), so Sonny's 100 strength and 100 magic queue
+# 200 on Veradux. That lifts Veradux from 40% to a predicted 80%, above Sonny's
+# 60%, so Veradux heals Sonny instead of himself.
+func test_an_ally_heals_someone_else_when_the_player_already_heals_it():
+	var runner: BattleRunner = _queued_heal_runner()
+	var events: Array = runner.advance_half_turn({"target_slot": 3, "move_id": 228})
+	assert_eq(runner.healed_this_turn[3], 200.0, "Sonny's Restore is queued on Veradux")
+	assert_eq(_move_target(events, 3), BattleRunner.PLAYER_SLOT, "so Veradux heals Sonny")
+
+
+# The same fight with Sonny passing, which queues nothing, so Veradux at 40% is
+# below Sonny's 60% and heals himself. It shows that the choice in the test
+# above comes from Sonny's queued heal.
+func test_an_ally_heals_itself_when_the_player_passes():
+	var runner: BattleRunner = _queued_heal_runner()
+	var events: Array = runner.advance_half_turn({})
+	assert_eq(_move_target(events, 3), 3, "Veradux heals himself")
+
+
+# TeamSelect fixes who acts in what order once per full turn. It runs only when
+# TurnTime reaches 0 (frame_217/PlaceObject2_3389_480 enterFrame, lines 147
+# and 262-264), its TeamSpeedAdder writes each unit's teamAdder
+# (frame_217/DoAction_2.as:284-310), and krinAddMove files the unit's move at
+# that position (frame_42/DoAction_4.as:28-33). Slot 2 starts faster than slot
+# 4, and after the first half-turn it loses 20 speed, the way a speed debuff
+# landing in that half-turn would lower it, which drops it below slot 4. Slot 2
+# still acts first in the second half-turn, and slot 4 only goes first from the
+# next full turn.
+func test_a_speed_change_reorders_a_team_from_the_next_full_turn():
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	save.life = 1000.0
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	var bio: CombatUnit = CombatUnit.from_character(unit_templates[1], 10, CombatUnit.Difficulty.HARD, 2)
+	var guard: CombatUnit = CombatUnit.from_character(unit_templates[5], 10, CombatUnit.Difficulty.HARD, 4)
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	runner.setup({1: player, 2: bio, 4: guard}, null, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	assert_true(runner.is_player_turn(), "Sonny's team opens")
+	assert_gt(bio.speed_u, guard.speed_u, "slot 2 starts faster than slot 4")
+
+	runner.advance_half_turn()
+	bio.change_array[4] -= 20
+	bio.apply_changes()
+	assert_lt(bio.speed_u, guard.speed_u, "slot 2 is now slower than slot 4")
+	var second_half: Array = runner.advance_half_turn()
+	assert_eq(_acting_order(second_half), [2, 4], "the second half-turn keeps the order the full turn started with")
+
+	runner.advance_half_turn()
+	var next_full_turn: Array = runner.advance_half_turn()
+	assert_eq(_acting_order(next_full_turn), [4, 2], "the next full turn sorts by the new speeds")
+
+
 # The original names the player's battle unit "Sonny" whatever the save is
 # called (frame_201/DoAction.as:201), so battle 100's "Sonny" line finds the
 # player as its speaker instead of finding nobody and being skipped.
@@ -401,6 +459,48 @@ func _run_to_completion(runner: BattleRunner) -> int:
 		runner.advance_half_turn()
 		half_turns += 1
 	return half_turns
+
+
+# Sonny and Veradux against a Prison Guard, with Sonny at 60% life and Veradux
+# at 40%. Veradux keeps only Dux Heal, so with no attack to choose from he
+# always heals (frame_42/DoAction_9.as:170-178).
+func _queued_heal_runner() -> BattleRunner:
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.strength = 100.0
+	save.magic = 100.0
+	save.speed = 100.0
+	save.life = 30.0
+	save.focus = 100.0
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	var veradux: CombatUnit = CombatUnit.from_character(unit_templates[4], 1, CombatUnit.Difficulty.HARD, 3)
+	veradux.move_pool_attack = []
+	veradux.cooldowns_attack = []
+	var guard: CombatUnit = CombatUnit.from_character(unit_templates[5], 1, CombatUnit.Difficulty.HARD, 2)
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	runner.setup({1: player, 2: guard, 3: veradux}, null, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	player.life_n = round(player.life_u * 0.6)
+	veradux.life_n = round(veradux.life_u * 0.4)
+	assert_true(runner.is_player_turn(), "Sonny's team opens")
+	return runner
+
+
+func _move_target(events: Array, caster_slot: int) -> int:
+	for event in events:
+		if event["type"] == BattleRunner.EventType.MOVE and int(event["caster_slot"]) == caster_slot:
+			return int(event["target_slot"])
+	return 0
+
+
+# Every event from a unit's own turn names that unit as caster_slot, so the
+# first time each slot appears gives the order the units acted in.
+func _acting_order(events: Array) -> Array:
+	var order: Array = []
+	for event in events:
+		var slot = event.get("caster_slot")
+		if slot != null and not order.has(slot):
+			order.append(slot)
+	return order
 
 
 # players[i] -> slot i+2; positive ids are unit templates, negative are story

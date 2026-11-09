@@ -240,15 +240,8 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 
 	if chosen.targets_allies and (target_slot == 0 or target_slot == caster_slot):
 		if heal_candidate_slot != 0:
-			var heal_guess: float = chosen.focus_effect_multiplier * (
-				(caster.strength_u + chosen.base_strength_bonus) * chosen.strength_damage_multiplier
-				+ (caster.magic_u + chosen.base_magic_bonus) * chosen.magic_damage_multiplier
-				+ (caster.speed_u + chosen.base_speed_bonus) * chosen.speed_damage_multiplier
-				+ caster.focus_n * chosen.focus_scaling_modifier
-				+ chosen.focus_amount_change
-			)
 			target_slot = heal_candidate_slot
-			healed_this_turn[target_slot] = healed_this_turn.get(target_slot, 0.0) + heal_guess
+			healed_this_turn[target_slot] = healed_this_turn.get(target_slot, 0.0) + heal_guess(caster, chosen)
 	if chosen.targets_allies and not chosen.can_target_self and friend_lock_slot != 0:
 		target_slot = friend_lock_slot
 	if focus_move and focus_target_slot != 0:
@@ -262,6 +255,21 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 		"pool": pool,
 		"pool_index": pool_index,
 	}
+
+
+# The healing a move is expected to do. The original adds it to the target's
+# healedThisTurn entry when an AI unit picks a move that targets allies
+# (frame_42/DoAction_9.as:393-400) and when the player picks a Heal
+# (frame_42/DoAction_11.as:92-95), so a unit that decides later in the
+# half-turn sees what is already queued.
+static func heal_guess(caster: CombatUnit, move: Ability) -> float:
+	return move.focus_effect_multiplier * (
+		(caster.strength_u + move.base_strength_bonus) * move.strength_damage_multiplier
+		+ (caster.magic_u + move.base_magic_bonus) * move.magic_damage_multiplier
+		+ (caster.speed_u + move.base_speed_bonus) * move.speed_damage_multiplier
+		+ caster.focus_n * move.focus_scaling_modifier
+		+ move.focus_amount_change
+	)
 
 
 # Silence blocks any move with a focus cost (cost * SILENCED == 0 gate in the
