@@ -369,6 +369,41 @@ func test_a_dispelled_sswitch_no_longer_turns_the_hit_into_healing():
 	assert_lt(target.life_n, life_before, "so the target loses life")
 
 
+# A move can send its status buff to its own caster (ability_two[21],
+# conductor lines 76-83), but the conductor's only applyChangesKrin after a hit
+# is on the target (line 103), so the caster's stats and slot order wait for
+# its own buffTicker. That tick works out its DoT damage
+# (frame_42/DoAction_10.as:31) before it calls applyChangesKrin (line 135), so
+# it still reads the caster's old stats. Honor and Duty (move 755) hits someone
+# else and lands HONORDUTY on the Police Colonel, which cuts the damage he takes
+# by 20%. He holds Cold Justice, a 500-a-turn Ice DoT, and his Ice defense is
+# 100 + 15 per level, so with the old IDMGP2 of 1 that tick takes exactly 500.
+# The test calls the two halves of _execute_action, the move and the tick, one
+# at a time to look in between.
+func test_a_buff_a_move_lands_on_its_caster_waits_for_the_casters_tick():
+	var colonel: CombatUnit = CombatUnit.from_character(unit_templates[61], 22, CombatUnit.Difficulty.HARD, 2)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[1], 22, CombatUnit.Difficulty.HARD, 1)
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	runner.setup({1: target, 2: colonel}, null, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	for buff_name in ["PERSECUTE", "CHAINS"]:
+		colonel.apply_buff(buffs_by_name[buff_name], 1, target)
+		colonel.apply_changes()
+	# A stunned target can't dodge the Melee hit (conductor lines 360-386).
+	target.apply_buff(buffs_by_name["APPREHEND"], 1, colonel)
+	target.apply_changes()
+
+	runner._execute_move_action({"caster_slot": 2, "target_slot": 1, "move_id": 755}, colonel, target)
+	assert_eq(_live_buff_names(colonel), ["PERSECUTE", "CHAINS", "HONORDUTY"], "HONORDUTY waits in the slot it landed in")
+	assert_eq(colonel.idmgp2, 1.0, "the damage the colonel takes doesn't change yet")
+
+	var life_before_tick: float = colonel.life_n
+	colonel.tick_buffs(buffs_by_id)
+	assert_eq(life_before_tick - colonel.life_n, 500.0, "Cold Justice's tick still reads the old IDMGP2")
+	assert_almost_eq(colonel.idmgp2, 0.8, 0.000001, "the tick's own recompute brings HONORDUTY in")
+	assert_eq(_live_buff_names(colonel), ["PERSECUTE", "HONORDUTY", "CHAINS"], "and sorts it ahead of Chains of Justice")
+
+
 # Runs a full battle with AI on both sides; returns event-type counts.
 func _assert_battle_runs(battle_id: int) -> Dictionary:
 	var battle: BattleFight = battles.get(battle_id)
@@ -449,6 +484,14 @@ func _has_active_buff(unit: CombatUnit, buff_name: String) -> bool:
 		if slot["buff_id"] == buff.id and slot["cd"] != 0:
 			return true
 	return false
+
+
+func _live_buff_names(unit: CombatUnit) -> Array:
+	var names: Array = []
+	for slot in unit.buff_slots:
+		if slot["cd"] > 0:
+			names.append(buffs_by_id[slot["buff_id"]].internal_name)
+	return names
 
 
 func _character_from_json(unit_data: Dictionary) -> Character:

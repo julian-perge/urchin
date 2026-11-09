@@ -129,10 +129,11 @@ Ported: `BattleRunner._resolve_dispels` takes slots in `CombatUnit.buff_slots` o
   Ruffle's tests has tied keys under `sortOn` with `DESCENDING`, so that part rests on Ruffle's code. avmplus, Flash Player's AS3 engine, also flips the comparison for `DESCENDING`
   (`DescendingCompareFunc`, `core/ArrayClass.cpp:326` in adobe/avmplus). Dispelling slot 0 of three slots holding 5, 3 and 3 turns leaves the two 3s swapped, and Godot's `sort_custom`
   ordered the slots with turns left differently from this quicksort in 2,592 of 3,000 random 40-slot arrays.
-- Sorting slots that are already in order moves nothing. The port also calls `apply_changes` where the original doesn't call `applyChangesKrin`: when it builds a unit, on empty slots,
-  and in `BattleManager._apply_status_effect` after a move lands its status buff. When that buff lands on the target, the call that matches line 103 follows with nothing in between. When it
-  lands on the caster of a move aimed at someone else, the original only sorts at the caster's tick. In 40,000 random runs of hits, self-buffs, ticks and dispels on one unit, sorting at the
-  port's points removed the same buffs as sorting at the original's, while sorting a copy at each dispel removed different ones in 11,577.
+- Sorting slots that are already in order moves nothing, so the port's `apply_changes` when it builds a unit, on empty slots, changes nothing. Sorting a copy at each dispel instead
+  doesn't match: in 40,000 random runs of hits, self-buffs, ticks and dispels on one unit it removed different buffs from the original in 11,577.
+- A move can land its status buff on its own caster (`[21]`, conductor lines 76-83), and line 103 still recomputes only the target, so a buff that lands on the caster of a move aimed at
+  someone else waits for the caster's `buffTicker`, stats and sort both. That tick works out its DoT damage (`frame_42/DoAction_10.as:31`) before its own `applyChangesKrin` (135), so it
+  reads the caster's stats from before the buff. `BattleManager._apply_status_effect` leaves `apply_changes` to `_execute_move_action` for the target and to `tick_buffs` for the caster.
 - `applyBuffKrin` changes a removed buff's STUN, REFLECT, HEALMOD_PLUS, HEALMOD_MINUS, HEALMOD, IDOT, IHOT, ODOT, FOCUSCHANGE and SILENCED at once (`frame_42/DoAction_10.as:140-149`), and
   its SSWITCH (171), SHIELD (205-222) and DoT and focus ticks (223, 243-251). Its stat changes only go into `changeArray` and `IDMGP` (172-191) and the per-element arrays (229-232), and
   only `applyChangesKrin` turns those into STRENGTHU, MAGICU, SPEEDU, LIFEU, DMG, DMG2, IDMG, IDMG2, IDMGP2, PERU and DEFU (259-339), the fields `executeMove` reads
