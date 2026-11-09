@@ -1,0 +1,18 @@
+config_version=5
+
+[application]
+
+config/name="panel art big"
+
+[display]
+
+window/size/viewport_width=800
+window/size/viewport_height=575
+window/size/window_width_override=4112
+window/size/window_height_override=2658
+window/stretch/mode="canvas_items"
+window/stretch/aspect="ignore"
+
+[gui]
+
+common/snap_controls_to_pixels=false
