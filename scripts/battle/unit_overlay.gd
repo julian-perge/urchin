@@ -11,6 +11,12 @@ extends Control
 class_name UnitOverlay
 
 const MAX_BUFF_ICONS: int = 7
+const BUFF_ICON_SIZE: Vector2 = Vector2(16, 16)
+# The counter is KrinBuffShower's edit text 66, placed at (-10.3, -0.8) from
+# the icon's center. Inside its 2 px gutter its text runs 20.55 px wide and
+# centered, which centers the turns left over the lower half of the icon.
+const BUFF_COUNTER_OFFSET: Vector2 = Vector2(-10.3, -0.8)
+const BUFF_COUNTER_WIDTH: float = 20.55
 
 @onready var ring: Control = $Ring
 @onready var name_label: Label = $NameLabel
@@ -69,14 +75,24 @@ func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
 		var icon_texture: Texture2D = BuffIcons.icon_for(buff)
 		if icon_texture == null:
 			continue
+		# KrinBuffShower, DefineSprite 104, places buffColor, the icon and the
+		# counter as siblings at depths 1, 4 and 8, and tints only buffColor
+		# (frame_42/DoAction_10.as:373-374). The port has no buffColor and
+		# tints the icon instead, so the counter is the icon's sibling here
+		# and keeps its own white.
+		var shower: Control = Control.new()
+		shower.custom_minimum_size = BUFF_ICON_SIZE
 		var icon_rect: TextureRect = TextureRect.new()
+		icon_rect.name = "Icon"
 		icon_rect.texture = icon_texture
-		icon_rect.custom_minimum_size = Vector2(16, 16)
+		icon_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var element_index: CombatUnit.Element = buff.element_type
 		if element_index != -1:
 			icon_rect.modulate = MenuTheme.ELEMENT_COLORS[element_index]
+		shower.add_child(icon_rect)
 		# The original titles a buff's tooltip with its name alone and shows
 		# the turns left only on the icon's counter below
 		# (frame_42/DoAction_10.as:364 and 375).
@@ -88,17 +104,20 @@ func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
 		]
 		if not buff.tooltip_description.is_empty():
 			sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": buff.tooltip_description, "color": TooltipTheme.TEXT_BODY}]})
-		icon_rect.mouse_entered.connect(func(): GameTooltip.show_sections(sections, icon_rect))
-		icon_rect.mouse_exited.connect(GameTooltip.hide_tooltip)
-		# The counter is KrinBuffShower's edit text 66, which sets the turns
-		# left in 10 px bold _sans, the face the project theme gives Labels.
+		shower.mouse_entered.connect(func(): GameTooltip.show_sections(sections, shower))
+		shower.mouse_exited.connect(GameTooltip.hide_tooltip)
+		# Edit text 66 sets the turns left in 10 px bold _sans, the face the
+		# project theme gives Labels.
 		var counter: Label = Label.new()
+		counter.name = "Counter"
 		counter.text = str(int(slot["cd"]))
 		counter.add_theme_font_size_override("font_size", 10)
-		counter.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+		counter.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		counter.position = BUFF_ICON_SIZE / 2.0 + BUFF_COUNTER_OFFSET
+		counter.size.x = BUFF_COUNTER_WIDTH
 		counter.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		icon_rect.add_child(counter)
-		buff_row.add_child(icon_rect)
+		shower.add_child(counter)
+		buff_row.add_child(shower)
 
 
 func _clear_row() -> void:

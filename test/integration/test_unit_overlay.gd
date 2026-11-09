@@ -36,8 +36,8 @@ func test_refresh_buffs_includes_buff_id_zero_and_sorts_by_duration_descending()
 	overlay.refresh_buffs(unit, buffs_by_id)
 
 	assert_eq(overlay.buff_row.get_child_count(), 2, "both real active buffs shown, the empty slot skipped")
-	var first: TextureRect = overlay.buff_row.get_child(0)
-	var second: TextureRect = overlay.buff_row.get_child(1)
+	var first: Control = overlay.buff_row.get_child(0)
+	var second: Control = overlay.buff_row.get_child(1)
 
 	first.mouse_entered.emit()
 	var first_title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
@@ -97,13 +97,52 @@ func test_refresh_buffs_clears_expired_buffs():
 	assert_eq(overlay.buff_row.get_child_count(), 0, "cleared once the buff is gone")
 
 
+func _find(node: Node, type: String) -> Node:
+	if node.is_class(type):
+		return node
+	for child in node.get_children():
+		var found: Node = _find(child, type)
+		if found != null:
+			return found
+	return null
+
+
+# KrinBuffShower, DefineSprite 104, places buffColor, the icon and the
+# counter, edit text 66, as siblings, and tints only buffColor
+# (frame_42/DoAction_10.as:373-374), so the counter keeps its own white. Edit
+# text 66 is placed at (-10.3, -0.8) from the icon's center, and inside its
+# 2 px gutter its centered text runs 20.55 px wide, which centers the turns
+# left over the lower half of the icon.
+func test_buff_counter_is_untinted_and_centered_over_the_icon():
+	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var unit := CombatUnit.new()
+	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
+	overlay.refresh_buffs(unit, {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
+	await wait_process_frames(2)
+	var buff: Node = overlay.buff_row.get_child(0)
+	var counter: Label = _find(buff, "Label")
+	var icon: TextureRect = _find(buff, "TextureRect")
+	var tint: Color = counter.self_modulate
+	var node: Node = counter
+	while node != overlay.buff_row:
+		tint *= node.modulate
+		node = node.get_parent()
+	assert_eq(tint, Color.WHITE, "no element tint reaches the counter")
+	assert_eq(icon.modulate, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.FIRE], "the icon carries the tint")
+	var from_icon_center: Vector2 = counter.get_global_rect().position - icon.get_global_rect().get_center()
+	assert_almost_eq(from_icon_center.x, -10.3, 0.01, "edit text 66's x from the icon's center")
+	assert_almost_eq(from_icon_center.y, -0.8, 0.01, "and its y")
+	assert_almost_eq(counter.size.x, 20.55, 0.01, "its text width")
+	assert_eq(counter.horizontal_alignment, HORIZONTAL_ALIGNMENT_CENTER, "and its centered text")
+
+
 # The counter is edit text 66, which is 10 px bold _sans in white.
 func test_buff_counter_matches_edit_text_66():
 	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
 	overlay.refresh_buffs(unit, {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
-	var counter: Label = overlay.buff_row.get_child(0).get_child(0)
+	var counter: Label = _find(overlay.buff_row.get_child(0), "Label")
 	assert_eq(counter.get_theme_font_size("font_size"), 10, "10 px")
 	var font: Font = counter.get_theme_font("font")
 	assert_true(font is FontVariation and font.variation_embolden > 0.0, "bold")
@@ -119,9 +158,9 @@ func test_buff_tooltip_title_is_the_name_alone_and_the_icon_counts_the_turns():
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
 	overlay.refresh_buffs(unit, {1: _make_buff("FIRESAM", "Seek and Destroy", CombatUnit.Element.FIRE)})
-	var icon: TextureRect = overlay.buff_row.get_child(0)
-	assert_eq(icon.get_child(0).text, "3", "the icon's counter shows the turns left")
-	icon.mouse_entered.emit()
+	var buff: Control = overlay.buff_row.get_child(0)
+	assert_eq(_find(buff, "Label").text, "3", "the icon's counter shows the turns left")
+	buff.mouse_entered.emit()
 	await wait_process_frames(2)
 	var title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
 	assert_eq(title.text, "Seek and Destroy", "the title is the name alone")

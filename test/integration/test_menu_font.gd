@@ -191,7 +191,8 @@ func test_battle_text_keeps_the_original_fonts():
 	overlay.refresh_buffs(unit, {1: buff})
 	assert_eq(overlay.buff_row.get_child_count(), 1, "the buff shows")
 	if overlay.buff_row.get_child_count() == 1:
-		_assert_font(overlay.buff_row.get_child(0).get_child(0), 65, "the buff counter (edit text 66)")
+		var counter: Label = overlay.buff_row.get_child(0).find_children("*", "Label", true, false)[0]
+		_assert_font(counter, 65, "the buff counter (edit text 66)")
 	var row = add_child_autofree(load("res://scenes/battle/stance_row.tscn").instantiate())
 	_assert_fonts(row, {"NameLabel": [3308, 3307]})
 	var battle = add_child_autofree(load("res://scenes/battle_scene.tscn").instantiate())
