@@ -40,11 +40,10 @@ func setup(unit_name: String) -> void:
 # 344), and sort_custom would move tied buffs once more than 16 have turns
 # left. Each icon is modulate-tinted by the buff's element color (Godot tints
 # at runtime - no per-element art baked into the extracted PNGs), with the
-# remaining-turns count and a tooltip with its name, turns left and
-# description. buff_id 0 is a real buff (TWINGUARDIANS,
-# dev/converted_json/buffs.json), not an empty-slot sentinel; empty slots use
-# buff_id -1 (see CombatUnit's slot init) but always carry cd == 0 too, so
-# checking cd alone already excludes them.
+# remaining-turns count and the tooltip built below. buff_id 0 is a real buff
+# (TWINGUARDIANS, dev/converted_json/buffs.json), not an empty-slot sentinel;
+# empty slots use buff_id -1 (see CombatUnit's slot init) but always carry
+# cd == 0 too, so checking cd alone already excludes them.
 func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
 	if unit == null:
 		_clear_row()
