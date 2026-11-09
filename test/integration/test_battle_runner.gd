@@ -242,6 +242,44 @@ func test_misses_are_move_events_not_a_separate_type():
 	randomize()
 
 
+# The original's hit roll divides the target's speed by the caster's speed
+# times the move's speed modifier with no guard (the conductor, line 362).
+# With both speeds at 0 that is 0 divided by 0, and the result fails every
+# comparison after it, so the move always misses. The test sets both speeds
+# directly, because in play only stacked speed debuffs take a unit to 0.
+func test_accuracy_roll_always_misses_when_both_speeds_are_0():
+	var runner = BattleRunner.new()
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[5], 10, CombatUnit.Difficulty.HARD, 2)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 10, CombatUnit.Difficulty.HARD, 1)
+	caster.speed_u = 0.0
+	target.speed_u = 0.0
+	var hits: int = 0
+	for attempt in 200:
+		if runner._accuracy_roll(caster, target, moves_by_id[1]):
+			hits += 1
+	assert_eq(hits, 0, "Leading Strike never hits when both speeds are 0")
+
+
+# With only the caster's speed at 0 the same division gives Infinity, which the
+# original caps at a miss chance of 75, so the move hits on any roll above 75.
+# Each seed runs twice, once to read the roll it gives and once through
+# _accuracy_roll, and the global RNG is handed back at the end.
+func test_accuracy_roll_keeps_a_75_miss_chance_when_only_the_casters_speed_is_0():
+	var runner = BattleRunner.new()
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[5], 10, CombatUnit.Difficulty.HARD, 2)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 10, CombatUnit.Difficulty.HARD, 1)
+	caster.speed_u = 0.0
+	var mismatches: int = 0
+	for roll_seed in 200:
+		seed(roll_seed)
+		var roll: int = randi_range(0, 99)
+		seed(roll_seed)
+		if runner._accuracy_roll(caster, target, moves_by_id[1]) != (roll > 75):
+			mismatches += 1
+	assert_eq(mismatches, 0, "Leading Strike hits exactly when the roll is above 75")
+	randomize()
+
+
 # Shatter Bolt (move 521) is the one move whose effect_category is "Attack",
 # and the original's executeMove() has no branch for that category. The
 # conductor still applies the move's status effect after executeMove(), and a
