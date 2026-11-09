@@ -1101,9 +1101,9 @@ func _on_victory_proceed() -> void:
 	if GameData.current_save != null and GameData.current_save.autosave:
 		GameData.save_game()
 	if not _pending_cutscene.is_empty():
-		# Cleared before the await, not after: Proceed stays clickable for one
-		# more frame while the player is being built, and a second press must
-		# not start a second copy of the same clip on top of the first.
+		# Cleared before the await, not after, so a second call can't start a
+		# second copy of the same clip on top of the first. VictoryScreen
+		# disables Proceed once it's pressed, so the button can't make that call.
 		var cutscene_id: String = _pending_cutscene
 		var goto_scene: String = _pending_goto_scene
 		_pending_cutscene = ""

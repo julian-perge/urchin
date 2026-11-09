@@ -271,8 +271,8 @@ Ported: once CS_CUT5 ends, `battle_scene.gd`'s `_on_victory_proceed` opens `Endi
 - The first win of 513 sets `afterCut = "CS_CUT5"` and `gotoSceneKrin = "endMenu"` (`frame_219/DoAction.as:51-55`). Proceed autosaves when autosave is on, stops every sound and plays the
   cutscene (`DefineButton2_3004` on(release), lines 4-11).
 - When the cutscene ends, its fade clip sets `soundModeKrin` and `soundPlayCounter` to 0 and goes to `endMenu` without starting any music (`frame_263/PlaceObject2_3466_80` enterFrame, lines
-  15-19 and 33). Only `overMap` and `Navigation` get `addSound("Music", 1)` there (lines 20-31). The port doesn't reset its music rotation the way `soundPlayCounter = 0` does, after this
-  cutscene or any other.
+  15-19 and 33). Only `overMap` and `Navigation` get `addSound("Music", 1)` there (lines 20-31). The port's `_on_victory_proceed` calls `AudioManager.reset_music_rotation()` when any
+  cutscene ends, so the ending screen stays silent and the hub that OK! opens starts on `_music_menu1`, the same as the original.
 - Frame 116 fills `enderText`, edit text 2796, with `ENDING` (`frame_116/DoAction.as:1`, the string at `frame_1/DoAction.as:2240`). It also sets `whatToSay1` to `MENU[18]` "Start!" (line 2),
   which no text field on the frame shows, and `whatToSay3` to `MENU[19]` "Play MORE Games!" (line 3), the caption of edit text 2798 under a copy of the Armor Games link 2688.
 - OK! is static text 2799 with hit button 2797 over it, and the button's release goes to `Navigation` (`DefineButton2_2797` on(release), line 2). That frame starts the menu music
