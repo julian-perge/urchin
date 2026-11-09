@@ -128,7 +128,7 @@ func refresh() -> void:
 	if save == null:
 		return
 	_status_label.text = ""
-	_name_label.text = save.name_user
+	_name_label.text = Party.PLAYER_NAME
 	_level_label.text = "Lvl. %d %s" % [save.level, PlayerSave.CLASS_NAMES[save.player_class]]
 	_ability_points_value.text = str(save.skill_points)
 	_attribute_points_value.text = str(save.stat_points)

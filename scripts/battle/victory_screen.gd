@@ -71,7 +71,7 @@ func _build_experience_rows(save: PlayerSave, party_ids: Array) -> void:
 		var level: int
 		var experience: float
 		if party_id == 0:
-			display_name = save.name_user
+			display_name = Party.PLAYER_NAME
 			level = save.level
 			experience = save.experience
 		else:

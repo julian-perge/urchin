@@ -330,6 +330,34 @@ func test_new_game_keeps_the_name_as_typed_even_untouched_or_empty():
 	_clear_test_slots()
 
 
+# The original calls the player "Sonny" everywhere in the game, Krin.NameSets[0]
+# (frame_42/DoAction_17.as:45), which no save carries: the victory screen's
+# player row (DefineSprite_3142/frame_9/PlaceObject3_3002_1197
+# onClipEvent(load), lines 2 and 15), the abilities screen
+# (DefineSprite_3142/frame_25/DoAction.as:7 and 16), the inventory screen
+# (DefineSprite_3142/frame_1/DoAction.as:89 and 250) and the player's portrait
+# tooltip there (DefineButton2_2895 on(rollOver), line 13). Only the slot list
+# shows the typed name.
+func test_the_game_calls_the_player_sonny_whatever_the_save_is_named():
+	var save: PlayerSave = PlayerSave.new_game("< Enter Name Here >", 0)
+	GameData.current_save = save
+	var victory = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
+	victory.setup(save, {}, [], [])
+	var rows: Array = victory.get_children().filter(func(child): return child is VictoryExperienceRow)
+	assert_eq(rows.size(), 1, "one experience row, the player's")
+	if rows.size() == 1:
+		assert_eq(rows[0].name_label.text, "Sonny", "the victory screen's player row")
+
+	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())
+	abilities.refresh()
+	assert_eq(abilities._name_label.text, "Sonny", "the abilities window")
+
+	var inventory = add_child_autofree(load("res://scenes/ui/menu/inventory_window.tscn").instantiate())
+	inventory.refresh()
+	assert_eq(inventory._name_label.text, "Sonny", "the inventory window")
+	assert_eq(inventory._portrait_frames[0].tooltip_text, "Sonny", "the player's portrait in the inventory window")
+
+
 # Class select and settings place the same Back as the other menu frames, edit
 # text 2703 over hit button 2702 at depths 35 and 36 of root frames 84
 # (classMenu) and 93 (optionsMenu), captioned MENU[26] (frame_46/DoAction.as:1).
