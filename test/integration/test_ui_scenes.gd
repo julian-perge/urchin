@@ -454,14 +454,34 @@ func test_all_zone_scenes_have_source_accurate_orbs():
 		assert_eq(zone.zone_id, zone_id, "zone_id wired")
 		var story: Node2D = zone.get_node("StoryFight")
 		var store: Node2D = zone.get_node("ItemStore")
-		var training: Node2D = zone.get_node("TrainingFight")
 		assert_not_null(story)
 		assert_not_null(store)
-		assert_not_null(training)
+		assert_eq(zone.has_node("TrainingFight"), zone_id != 7, "zone %d training orb" % zone_id)
 		var expected: Vector2 = EXPECTED_STORY_POSITIONS[zone_id]
 		assert_almost_eq(story.position.x, expected.x, 0.1, "zone %d story orb x" % zone_id)
 		assert_almost_eq(story.position.y, expected.y, 0.1, "zone %d story orb y" % zone_id)
 		assert_not_null(zone.get_node("HubArt").texture, "zone %d hub art loads" % zone_id)
+
+
+# Zone 7 is the JAPAN frame of the hub sprite 3287 (Krin.zoneName,
+# frame_41/DoAction_2.as:25), and every frame under that label places two
+# orbs, the story orb under DefineButton2_3243 and the shop orb under 3256,
+# each at its button's position with the sprite at (400, 222.9). It places no
+# training orb at any depth, because the ROME training orb, 3242 at depth 56,
+# is removed at frame 86 and nothing replaces it.
+func test_zone_7_has_only_the_orbs_the_japan_frame_places():
+	var zone = add_child_autofree(load(str(ZoneManager.ZONES[7]["scene"])).instantiate())
+	var orbs: Dictionary = {}
+	for child in zone.get_children():
+		if child is OrbBase:
+			orbs[str(child.name)] = child
+	assert_eq(orbs.keys(), ["StoryFight", "ItemStore"], "the story and shop orbs and nothing else")
+	assert_true(orbs.get("StoryFight") is StoryFightOrb, "the story orb fights the next story battle")
+	assert_true(orbs.get("ItemStore") is ItemStoreOrb, "the shop orb opens the store")
+	var positions: Dictionary = {"StoryFight": Vector2(526.8, 202.55), "ItemStore": Vector2(139.65, 264.8)}
+	for orb_name in positions:
+		if orbs.has(orb_name):
+			assert_almost_eq(orbs[orb_name].position, positions[orb_name], Vector2(0.1, 0.1), "%s position" % orb_name)
 
 
 func test_game_shell_hosts_current_zone():
