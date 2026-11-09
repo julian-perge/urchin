@@ -150,7 +150,7 @@ func test_player_from_save_with_talent_passives():
 
 # The original names the player's battle unit "Sonny" whatever the save is
 # called (frame_201/DoAction.as:201), so battle 100's "Sonny" line finds the
-# player as its speaker instead of falling back to the narrator's slot 0.
+# player as its speaker instead of finding nobody and being skipped.
 func test_the_players_battle_unit_is_sonny_whatever_the_save_is_named():
 	var save = PlayerSave.new_game("< Enter Name Here >", 0)
 	var player: CombatUnit = CombatUnit.from_player_save(save)
@@ -204,6 +204,31 @@ func test_setup_returns_its_own_turn_time_zero_speeches():
 		if event["type"] == BattleRunner.EventType.SPEECH:
 			has_speech = true
 	assert_true(has_speech, "the turnTime:0 speech is returned by setup(), not left stranded in runner.events")
+
+
+# getPNum looks a named speaker up in slots 1 to 6 and returns NaN when no unit
+# there has that name (frame_42/DoAction_14.as:285-302). The conductor skips
+# such a line, because no playerKrinNaN exists to be active, and it only moves
+# on to the next line of a conversation after showing one, so the line after a
+# skipped one never plays either (frame_217/PlaceObject2_3389_480 enterFrame,
+# lines 813-818 and 852-856). The harness puts Veradux in both companion slots,
+# so battle 403 has no Roald: Veradux's opening line plays, Roald's reply is
+# skipped, and Sonny's answer to Roald never plays.
+func test_a_line_whose_speaker_is_not_on_the_field_is_skipped():
+	var battle: BattleFight = battles.get(403)
+	var runner = BattleRunner.new()
+	var manager: BattleManager = autofree(BattleManager.new())
+	var setup_events: Array = runner.setup(
+		_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
+	)
+	var lines: Array = []
+	for event in setup_events:
+		if event["type"] == BattleRunner.EventType.SPEECH:
+			lines.append([event["speaker_slot"], event["say"]])
+	assert_eq(
+		lines, [[3, "That one looks just like Sonny! Haha!"]],
+		"only Veradux speaks, and neither Roald's line nor the answer to it plays"
+	)
 
 
 func test_battle_51_end_game_phase():

@@ -463,10 +463,23 @@ func _team_select() -> void:
 				unit.team_adder = rank
 
 
+# The narrator is the original's playerKrin0, which every battle sets up active
+# and named "Information" (frame_201/DoAction.as:113-115). The speech box shows
+# the speaker's playerName (frame_217/PlaceObject2_3389_480 enterFrame, line
+# 830), so the narrator's lines show under that name.
+const NARRATOR_NAME: String = "Information"
+
+
 # Scripted dialogue: emit every speech matching the current phase/timing, in
-# turnTime2 sequence, skipping dead speakers. Narrator lines (player 0) always
-# show. After a drain that emitted nothing new, an endGame-flagged phase entry
-# that was just passed ends the battle (winOrLose).
+# turnTime2 sequence. Narrator lines (player 0) always show, and a line is
+# skipped when its speaker is dead or not on the field. A skipped line doesn't
+# advance the turnTime2 count, so if lines with the same phase and turnTime
+# follow it, the next one never matches, and neither it nor any later line in
+# the battle plays. The original does the same, because its conductor only
+# advances the count when it shows a line (frame_217/PlaceObject2_3389_480
+# enterFrame, lines 813-818 and 852-856).
+# After a drain that emitted nothing new, an endGame-flagged phase entry that
+# was just passed ends the battle (winOrLose).
 func _drain_speeches() -> void:
 	if battle == null or battle.speeches.is_empty():
 		return
@@ -488,6 +501,7 @@ func _drain_speeches() -> void:
 			_log({
 				"type": EventType.SPEECH,
 				"speaker_slot": speaker_slot,
+				"speaker_name": NARRATOR_NAME if speaker_slot == 0 else units[speaker_slot].player_name,
 				"say": speech.get("say", ""),
 				"time_to_say": speech.get("timeToSay", 0.0),
 				"voice_over": speech.get("voiceOver", ""),
@@ -498,17 +512,22 @@ func _drain_speeches() -> void:
 			win_condition = int(passed_entry.get("winOrLose", Outcome.WIN))
 
 
-# getPNum(): numeric speaker < 7 is a slot number (0 = narrator); otherwise
-# it's a unit name matched against the living roster.
+# getPNum (frame_42/DoAction_14.as:285-302): a number under 7 is a slot, 0 being
+# the narrator, and anything else is a name, matched against slots 1 to 6 in
+# order whether that unit is alive or not. With no match getPNum returns NaN,
+# and the conductor skips the line because no playerKrinNaN exists to be active
+# (frame_217/PlaceObject2_3389_480 enterFrame, line 815). This returns -1 where
+# getPNum returns NaN, which includes a number of 7 or more, because getPNum
+# looks one up as a name and no unit is named after a number.
 func _speech_speaker_slot(speaker) -> int:
 	if speaker is float or speaker is int:
 		var slot: int = int(speaker)
-		return slot if slot < 7 else 0
-	for slot in units:
-		var unit: CombatUnit = units[slot]
+		return slot if slot < 7 else -1
+	for slot in range(1, 7):
+		var unit: CombatUnit = units.get(slot)
 		if unit != null and unit.player_name == str(speaker):
 			return slot
-	return 0
+	return -1
 
 
 func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, result: Dictionary) -> void:

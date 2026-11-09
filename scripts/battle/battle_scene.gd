@@ -971,16 +971,15 @@ func _play_death(slot: int) -> void:
 		AudioManagerAuto.play_effect(unit.voice_die)
 
 
+# A line stays up for its whole timeToSay seconds. The original's speech box
+# adds 30 / fps to a counter every frame and lets the next line through once it
+# reaches timeToSay * 30 (frame_217/PlaceObject2_3389_480 enterFrame, line 841,
+# and frame_217/PlaceObject2_3367_634 enterFrame, lines 13-17).
 func _play_speech(event: Dictionary) -> void:
-	speech_label.text = "%s: %s" % [_speaker_name(int(event.get("speaker_slot", 0))), event.get("say", "")]
+	speech_label.text = "%s: %s" % [event["speaker_name"], event.get("say", "")]
 	AudioManagerAuto.play_effect(str(event.get("voice_over", "")))
-	await _pause(min(float(event.get("time_to_say", 2.0)), 4.0))
+	await _pause(float(event.get("time_to_say", 2.0)))
 	speech_label.text = ""
-
-
-func _speaker_name(slot: int) -> String:
-	var unit: CombatUnit = units.get(slot)
-	return unit.player_name if unit != null else "???"
 
 
 # snap = true syncs the displayed hp to the true values (half-turn

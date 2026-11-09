@@ -100,6 +100,62 @@ func test_setup_time_speech_plays_through_the_real_scene():
 	ZoneManager.auto_start_battles = true
 
 
+# The tutorial's fourth and fifth lines are the narrator's. The narrator is
+# playerKrin0, which every battle names "Information"
+# (frame_201/DoAction.as:113-115), and the speech box shows the speaker's
+# playerName (frame_217/PlaceObject2_3389_480 enterFrame, line 830).
+func test_the_narrator_speaks_as_information():
+	var shown: Array = await _speech_box_lines(2, CombatUnit.Difficulty.NORMAL)
+	var texts: Array = shown.map(func(line): return line[0])
+	assert_eq(texts.slice(3, 5), [
+		"Information: Notice the grey 'ring' in the lower middle panel, around the exclamation mark. Wait until it turns blue.",
+		"Information: Once the ring is blue, click on the enemy to target him. Your abilities will appear around him.",
+	])
+
+
+# Battle 105 opens with one of the game's two longest lines, 15 seconds
+# (frame_42/DoAction_14.as:443). The speech box keeps a line up for
+# timeToSay * 30 frames at the SWF's 30 fps (frame_217/PlaceObject2_3389_480
+# enterFrame, line 841). Until the lines finish, the conductor neither runs the
+# Heroic clock nor takes a pick, because its whole decision block waits for
+# speechDone (lines 591-793 there), and so do target clicks
+# (frame_217/DoAction_3.as:18).
+func test_a_line_stays_up_for_its_whole_time_to_say():
+	var shown: Array = await _speech_box_lines(105, CombatUnit.Difficulty.HARD)
+	assert_eq(shown.map(func(line): return line[0]), [
+		"Twisted Experiment: Oh the horrors! I can't take it anymore! Please. Let me... taste your... blood water.",
+	], "battle 105 opens with Twisted Experiment's one line")
+	assert_eq(shown.map(func(line): return line[1]), [15.0], "the line stays up for 15 seconds")
+	assert_eq(shown.map(func(line): return line[2]), [false], "and the player can't act while it does")
+
+
+# Starts a battle in a scene whose _pause records every line the speech box
+# shows: its text, how many seconds it stays up and whether the player could act
+# meanwhile. It returns them at the player's first decision, so they hold every
+# line that plays before it.
+func _speech_box_lines(battle_id: int, difficulty: CombatUnit.Difficulty) -> Array:
+	var save = PlayerSave.new_game("SpeechBox", 0)
+	save.difficulty = difficulty
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	var shown: Array = []
+	stub(scene, "_pause").to_call(func(seconds: float):
+		if scene.speech_label.text != "":
+			shown.append([scene.speech_label.text, seconds, scene._player_action_pending])
+	)
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": battle_id, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene._player_action_pending, 5)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+	return shown
+
+
 # Task 4 (cutscene plan): drives a real win of story battle 109 (zone 1's
 # boss, CUTSCENE_BATTLES -> CS_CUT2) through the actual game
 # code path - BattleSetup/BattleRunner combat, _finish_battle(),
