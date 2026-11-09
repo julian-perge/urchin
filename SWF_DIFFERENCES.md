@@ -62,6 +62,14 @@ resolved the two bugs below.
   gear - the only restricted items in the game); the Steam data labeled it with `krinClassArray` names by index, so every unrestricted item read "Dreadnaught" and Veradux's gear read "Phaser". No item
   restricts by player class at all.
 
+## Presentation differences
+
+- **Only the web build draws menu text bold.** The web SWF has two `_sans` device fonts: DefineFont3 65 with `fontFlagsBold` set, used by 190 of its 223 DefineEditText tags, and
+  DefineFont3 295 without it, used by 23. The Steam SWF has one, DefineFont3 1987 with the bold flag clear, used by 203 of its 224, so the hub panel, the menus and the victory screen
+  that are bold in the web build are regular there. The port follows the web build (#87). The `references/sonny2_*_screen.png` captures checked (abilities, inventory,
+  achievements) show regular menu text and no armorgames.com bar, which matches the Steam build, so compare text weight against `references/2026_07_18_flashpoint/`, a capture of
+  the web build.
+
 ## Dropped on purpose (not differences, but scoped out from both)
 
 - The PvP share-code and anti-cheat system (the arena's character codes and their save-code checksums) exists in both releases and is deliberately not being ported (project decision, 2026-07-18).

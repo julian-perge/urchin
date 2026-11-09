@@ -88,5 +88,5 @@ static func build_sections(
 	if not description.is_empty():
 		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": description, "color": TooltipTheme.TEXT_BODY}]})
 	if not next_rank_text.is_empty():
-		sections.append({"bg_color": TooltipTheme.BG_NEXT_RANK, "lines": [{"text": next_rank_text, "color": TooltipTheme.TEXT_STAT}]})
+		sections.append({"bg_color": TooltipTheme.BG_NEXT_RANK, "lines": [{"text": next_rank_text, "color": TooltipTheme.TEXT_NEXT_RANK}]})
 	return {"sections": sections, "icon_color": element_color}

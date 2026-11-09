@@ -989,6 +989,35 @@ func test_radial_orb_tooltip_includes_the_moves_description():
 	ZoneManager.auto_start_battles = true
 
 
+# The retreat button is the original's battle Quit button,
+# DefineButton2_3356, which shows SYSTEM[25] over SYSTEM[26]
+# (frame_1/DoAction.as:92-93) in place of a native tooltip.
+func test_the_retreat_button_shows_the_original_quit_tooltip():
+	var save = PlayerSave.new_game("QuitTooltipTest", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var retreat: Button = scene.get_node("BottomBar/RetreatButton")
+	assert_eq(retreat.tooltip_text, "", "no native tooltip")
+	retreat.mouse_entered.emit()
+	var texts: Array = []
+	if GameTooltip._root.visible:
+		for section in GameTooltip._sections.get_children():
+			for label in section.get_child(0).get_children():
+				texts.append(label.text)
+	assert_eq(texts, ["Quit", "Click here to exit. Warning! All unsaved progress will be lost!"])
+	retreat.mouse_exited.emit()
+	assert_false(GameTooltip._root.visible, "leaving the button hides it")
+
+	GameTooltip.hide_tooltip()
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func test_radial_orb_shows_the_moves_icon_art_not_initials():
 	var save = PlayerSave.new_game("OrbIconTest", 0)
 	GameData.current_save = save

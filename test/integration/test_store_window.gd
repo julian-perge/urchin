@@ -47,6 +47,13 @@ func test_inventory_panel_populate_and_selection():
 	assert_true(first_slot.selected)
 
 
+# The shop frame fills its vb1 field with MENU[6]
+# (DefineSprite_3142/frame_16/DoAction.as:96, frame_1/DoAction.as:214).
+func test_purchase_hint_is_the_original_string():
+	var window = add_child_autofree(StoreWindowScene.instantiate())
+	assert_eq(window.get_node("PurchaseHintLabel").text, "Click on items to purchase:")
+
+
 func test_gold_formatting():
 	var window = add_child_autofree(StoreWindowScene.instantiate())
 	window.inventory_panel.set_gold(1234567.0)

@@ -76,6 +76,7 @@ offset_top = 252.0
 offset_right = 259.0
 offset_bottom = 402.0
 mouse_filter = 2
+theme_type_variation = &"RegularLabel"
 theme_override_font_sizes/font_size = 11
 autowrap_mode = 3
 text = "..."
@@ -109,11 +110,12 @@ offset_top = 237.6
 offset_right = 467.2
 offset_bottom = 267.6
 mouse_filter = 2
+theme_type_variation = &"RegularLabel"
 theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
 theme_override_font_sizes/font_size = 10
 horizontal_alignment = 1
 autowrap_mode = 3
-text = "Click on the items to purchase them."
+text = "Click on items to purchase:"
 
 [node name="StoreItems" type="GridContainer" parent="."]
 layout_mode = 0

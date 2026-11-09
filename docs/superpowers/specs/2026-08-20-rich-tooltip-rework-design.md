@@ -57,11 +57,12 @@ frame labels:
 | `GO7` (next-rank header) | (-31, -6, 0), reused | same steel-blue gloss |
 | `GO7` (next-rank body, separate `fontBacker4` instance) | (50, 40, 53) on black | dark plum body (50,40,53) |
 
-Text colors are literal `TextFormat.color` values pushed inside raw AS2
-bytecode that ffdec couldn't decompile to readable pseudocode for this
-tag - decoding those by hand wasn't worth it for what pixel-sampling the
-reference captures already gave cleanly (see below). This spec uses
-source-derived colors for backgrounds and pixel-sampled colors for text.
+Text colors are literal `TextFormat.color` values in the same frame
+scripts, and ffdec decompiles them to readable code
+(`DefineSprite_2717/frame_4`, `frame_13` and `frame_17`, each `DoAction.as`).
+This spec sampled them from the reference captures instead (see below), and
+`scripts/ui/tooltip_theme.gd` has since replaced those samples with the frame
+scripts' own values.
 
 ### Colors, pixel-sampled from reference captures
 

@@ -1,7 +1,10 @@
 extends Area2D
 class_name OrbBase
 
-@export var tooltip_text: String = ""
+# Each orb's script sets these from its button's on(rollOver) strings, which
+# the tooltip shows as a title over a body.
+var tooltip_title: String = ""
+var tooltip_body: String = ""
 
 @export var orb_color: Color = Color.WHITE
 @export var hover_scale: float = 1.2
@@ -24,8 +27,13 @@ func _ready():
 	var hit_box: Control = $Control
 	hit_box.position = Vector2(-60, -60)
 	hit_box.size = Vector2(120, 120)
-	hit_box.tooltip_text = tooltip_text
 	hit_box.gui_input.connect(_on_hit_box_input)
+	var sections: Array = [
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": tooltip_title, "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": tooltip_body, "color": TooltipTheme.TEXT_BODY}]},
+	]
+	hit_box.mouse_entered.connect(func(): GameTooltip.show_sections(sections, hit_box))
+	hit_box.mouse_exited.connect(GameTooltip.hide_tooltip)
 
 func _on_hit_box_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:

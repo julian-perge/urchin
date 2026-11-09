@@ -122,6 +122,38 @@ func test_position_clamps_at_the_right_and_bottom_edges():
 	)
 
 
+# A Flash text field keeps 2 px between its edges and its text, and each line
+# stands in for one of KrinToolTipper's text fields, so every line pads its
+# text by 2 px and the box is its layout's text width plus 4.
+func test_lines_keep_the_flash_text_field_gutter():
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections(_sections_fixture(), anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ITEM)
+	await wait_process_frames(2)
+	for panel in GameTooltip._sections.get_children():
+		for label in panel.get_child(0).get_children():
+			var gutter: StyleBox = label.get_theme_stylebox("normal")
+			for side in [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]:
+				assert_eq(gutter.get_content_margin(side), 2.0, "%s has a 2 px gutter on side %d" % [label.text, side])
+	assert_eq(GameTooltip._sections.size.x, TooltipTheme.TEXT_WIDTH_ITEM + 4.0, "the box is the text width plus both gutters")
+	var title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	assert_eq(title.size.x - 4.0, TooltipTheme.TEXT_WIDTH_ITEM, "the text still wraps at the layout's width")
+
+
+# KrinToolTipper starts each text field 2 px below the one above it
+# (DefineSprite_2717/frame_13/DoAction.as:48 and frame_17/DoAction.as:38), so
+# the lines sit 2 px apart whether or not they share a section.
+func test_fields_stack_2_px_apart():
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	await wait_process_frames(2)
+	var title: Control = GameTooltip._sections.get_child(0)
+	var body: Control = GameTooltip._sections.get_child(1)
+	assert_eq(body.position.y - title.position.y - title.size.y, 2.0, "2 px between sections")
+	assert_eq(body.get_child(0).position.y, 0.0, "a section adds nothing above its first line")
+	var lines: Array = body.get_child(0).get_children()
+	assert_eq(lines[1].position.y - lines[0].position.y - lines[0].size.y, 2.0, "2 px between the lines of a section")
+
+
 func test_position_clamps_at_the_left_and_top_edges():
 	var anchor: Control = add_child_autofree(Control.new())
 	anchor.position = Vector2(-50, -50)

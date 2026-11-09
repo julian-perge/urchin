@@ -20,6 +20,16 @@ func _ready():
 	visibility_changed.connect(func():
 		if visible:
 			refresh())
+	# Plate n shows ACH[n] over ACHDESC[n] (DefineButton2_3137 on(rollOver),
+	# lines 5-7, and DefineSprite_3142/frame_45/DoAction.as:4).
+	for i in _plates.size():
+		var plate: PanelContainer = _plates[i]
+		var sections: Array = [
+			{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": Achievements.NAMES[i], "color": TooltipTheme.TEXT_TITLE}]},
+			{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": Achievements.DESCRIPTIONS[i], "color": TooltipTheme.TEXT_BODY}]},
+		]
+		plate.mouse_entered.connect(func(): GameTooltip.show_sections(sections, plate))
+		plate.mouse_exited.connect(GameTooltip.hide_tooltip)
 	refresh()
 
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/stance_row.gd" id="1_row"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/member_bar_panel.png" id="2_panel"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://assets/ui/battle/stance/Tactical.png" id="5_m2"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/stance/Aggressive.png" id="6_m3"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/stance/Relentless.png" id="7_m4"]
+[ext_resource type="FontFile" uid="uid://dxyeb3ydck803" path="res://assets/fonts/3307_copy 10_65.ttf" id="8_pixelfont"]
 
 [node name="StanceRow" type="Control"]
 mouse_filter = 2
@@ -21,7 +22,9 @@ mouse_filter = 2
 
 [node name="NameLabel" type="Label" parent="."]
 layout_mode = 0
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("8_pixelfont")
+theme_override_font_sizes/font_size = 6
 mouse_filter = 2
 
 [node name="Mode0" type="TextureButton" parent="."]

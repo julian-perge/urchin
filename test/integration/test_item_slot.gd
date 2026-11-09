@@ -175,3 +175,57 @@ func test_tooltip_skips_the_type_line_for_a_none_type_item():
 	# would pass even if the skip were broken, since BG_COST is never used
 	# by item tooltips at all).
 	assert_eq(GameTooltip._sections.get_child_count(), 1, "just the header - no type line for NONE, no body with nothing to show")
+
+
+func _tooltip_texts() -> Array:
+	var texts: Array = []
+	for section in GameTooltip._sections.get_children():
+		for label in section.get_child(0).get_children():
+			texts.append(label.text)
+	return texts
+
+
+# The original shows an item that isn't equipment in its plain tooltip layout,
+# which fills only a title and a body from the item's name and flavor text
+# (DefineButton2_3012 on(rollOver), lines 4-15). The stat line here is one the
+# original never builds for such an item (frame_42/DoAction_16.as:57), so it
+# proves the layout leaves stat lines out rather than that the data has none.
+func test_a_non_equipment_item_shows_only_its_name_and_flavor_text():
+	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	var item: GameItem = GameItem.new()
+	item.display_name = "Broken Emerald Shard"
+	item.item_type = GameItem.ItemType.NONE
+	item.tooltipAlt = ["Focus +5"]
+	item.tooltip = "It's probably worth quite a bit of money."
+	slot.set_item(item)
+	slot.mouse_entered.emit()
+	assert_eq(_tooltip_texts(), [item.display_name, item.tooltip], "the name over the flavor text, and nothing else")
+	assert_eq(
+		GameTooltip._sections.get_child(1).get_child(0).get_child(0).get_theme_color("font_color"),
+		Color("ffffff"),
+		"in the plain layout's white body"
+	)
+	slot.mouse_exited.emit()
+
+
+# The shop titles a catalog item with a euro sign, its price, KRINITEM[5], and
+# its name, and shows the price nowhere else. A victory drop and an inventory
+# item take the name alone (DefineButton2_3012 on(rollOver), lines 6-13 and
+# 19-26, DefineButton2_2985 on(rollOver), lines 6 and 12). Metal Mask is the
+# first item zone 1's shop sells, and the reference capture
+# zone1_itemshop_menu_on_store_item_hover shows its title as "€22 - Metal Mask".
+func test_a_shop_slot_titles_the_item_with_its_price_and_other_slots_with_its_name():
+	var item: GameItem = ItemManagerAuto.items_by_id[508]
+	var shop_slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	shop_slot.show_price = true
+	shop_slot.set_item(item)
+	shop_slot.mouse_entered.emit()
+	var shop_texts: Array = _tooltip_texts()
+	assert_eq(shop_texts[0], "€22 - Metal Mask", "the shop's title carries the price")
+	assert_eq(shop_texts.filter(func(text): return text.contains("22")).size(), 1, "and no other line repeats it")
+	shop_slot.mouse_exited.emit()
+	var inventory_slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
+	inventory_slot.set_item(item)
+	inventory_slot.mouse_entered.emit()
+	assert_eq(_tooltip_texts()[0], "Metal Mask", "an inventory or victory slot's title is the name alone")
+	inventory_slot.mouse_exited.emit()

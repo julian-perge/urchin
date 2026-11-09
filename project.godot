@@ -49,6 +49,10 @@ enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 game_window=""
 store_window=""
 
+[gui]
+
+theme/custom="res://scenes/ui/project_theme.tres"
+
 [importer_defaults]
 
 animation_library={

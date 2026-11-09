@@ -1,0 +1,13 @@
+[gd_resource type="Theme" format=3 uid="uid://drhvt4xw6rw7f"]
+
+[sub_resource type="FontVariation" id="FontVariation_bold"]
+variation_embolden = 1.2
+
+[sub_resource type="FontVariation" id="FontVariation_regular"]
+
+[resource]
+default_font = SubResource("FontVariation_bold")
+RegularLabel/base_type = &"Label"
+RegularLabel/fonts/font = SubResource("FontVariation_regular")
+TooltipLabel/fonts/font = SubResource("FontVariation_regular")
+TooltipLabel/font_sizes/font_size = 12
