@@ -8,14 +8,9 @@ Note: this is a different asset tree from `assets/item_slot_icons/`. That
 directory has no known SWF source - investigated and confirmed a dead end
 (`KNOWN_GAPS.md`, "11 numeric-named asset stragglers are untraceable",
 2026-07-18): no `ExportAssetsTag` linkage name, no frame-label timeline like
-`DefineSprite 2064` has. It's legacy database-named fallback art, only still
-used for the handful of items with no matching frame label in 2064.
-`scripts/editor/items.gd`'s `SLOT_ICON_OVERRIDES` can still hand-pick one of
-these for a specific item when regenerating `.tres` files from `items.json`
-from scratch; `item_icons.py` itself no longer has an equivalent override
-table (removed 2026-08-18 once the clip-mask fix below made the 2064
-extraction agree with this fallback art for the two items that had needed
-one).
+`DefineSprite 2064` has. It's legacy database-named fallback art. No committed
+item references it, and `scripts/editor/items.gd` only looks there when an item
+has no matching frame label in 2064.
 
 ## The wrapped command
 
@@ -25,10 +20,13 @@ uv run extract_item_icons
 
 Runs `dev/urchin_dev/swf/extract/item_icons.py`. Exports every frame of
 `DefineSprite 2064` (the game's own `itemSlot.inner.gotoAndStop(ITEMNAME[id])`
-sheet) directly via ffdec's own sprite renderer, trims each labeled frame down
-to its own opaque content at 2x into `assets/ui/items/<sanitized label>.png`,
-then repoints every matching `resources/items/<id>_*.tres`'s `slot_image` at
-the new icon.
+sheet) directly via ffdec's own sprite renderer and trims each labeled frame
+down to its own opaque content at 2x into
+`assets/ui/items/<sanitized label>.png`. That is all it writes. The Godot editor
+saves `resources/items/*.tres` in its own form, and `scripts/editor/items.gd`
+points each `slot_image` at these icons when it regenerates those files.
+`dev/tests/test_item_icons.py` checks every committed item's `slot_image`
+against the icon extracted for its name.
 
 Rendered directly rather than reassembled shape-by-shape (2026-08-18, same
 fix as `faces.py`'s portrait rewrite) - a hand-rolled compositor that reads

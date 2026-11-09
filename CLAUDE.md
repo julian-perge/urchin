@@ -65,11 +65,10 @@ entry names its evidence so you can check it instead of trusting it.
   the biological class card from 191 to 136 design px (`fd755b3`).
 - On that build every extractor that renders through ffdec, apart from
   `extract_cutscenes`, reproduces its committed files byte for byte, so the diff
-  after a run is what the run changed. Two exceptions are expected, and both go
-  back with `git checkout`: `extract_item_icons` rewrites the editor-saved
-  `resources/items/*.tres`, and `extract_battle_screen` rewrites `STREETS.png`
-  and `STREETS3.png`, where 5 pixels are 1 level off and no build reproduces
-  the committed file.
+  after a run is what the run changed. One exception is expected and goes back
+  with `git checkout`: `extract_battle_screen` rewrites `STREETS.png` and
+  `STREETS3.png`, where 5 pixels are 1 level off and no build reproduces the
+  committed file.
 
 ## Reading the ActionScript
 
