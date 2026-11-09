@@ -134,12 +134,15 @@ func test_a_line_stays_up_for_its_whole_time_to_say():
 # and enterFrame, lines 5-8), and its whole decision block waits for 0 (line
 # 589). At the SWF's 30 fps the opening lines start a second in, and the first
 # decision, with its Heroic clock, opens only once that second and the lines
-# are done.
+# are done. The tutorial runs it because its first half-turn is the player's:
+# TeamSelect hands it to team 1 on speed alone, with no roll and no
+# absolute_start in the record, so no hit can kill Sonny before that decision
+# opens.
 func test_the_battle_waits_a_second_before_its_opening_lines():
-	var run: Dictionary = await _pauses_to_first_decision(105, CombatUnit.Difficulty.HARD)
+	var run: Dictionary = await _pauses_to_first_decision(2, CombatUnit.Difficulty.HARD)
 	var first_two: Array = run["pauses"].slice(0, 2).map(func(pause): return [pause[0] != "", pause[1], pause[2]])
-	assert_eq(first_two, [[false, 1.0, false], [true, 15.0, false]],
-		"a second with nothing on screen, then the 15 second line, and no pick open during either")
+	assert_eq(first_two, [[false, 1.0, false], [true, 4.5, false]],
+		"a second with nothing on screen, then Louis the Blind's 4.5 second line, and no pick open during either")
 	assert_almost_eq(run["scene"]._decision_timer, 4.0, 0.25, "the Heroic window is whole when the first decision opens")
 
 
@@ -201,8 +204,8 @@ func _space_press() -> InputEventKey:
 
 # Starts a battle in a scene whose _pause records every line the speech box
 # shows: its text, how many seconds it stays up and whether the player could act
-# meanwhile. It returns them at the player's first decision, so they hold every
-# line that plays before it.
+# meanwhile. It returns them at the player's first decision, or at the end of a
+# battle that never reaches one, so they hold every line that plays before it.
 func _speech_box_lines(battle_id: int, difficulty: CombatUnit.Difficulty) -> Array:
 	var run: Dictionary = await _pauses_to_first_decision(battle_id, difficulty)
 	return run["pauses"].filter(func(pause): return pause[0] != "")
@@ -212,7 +215,8 @@ func _speech_box_lines(battle_id: int, difficulty: CombatUnit.Difficulty) -> Arr
 # for: the speech box's text, the seconds, and whether the player could act
 # meanwhile. during_pause, when given, runs inside each wait with the scene and
 # that record, the way a key pressed mid-wait would land. Returns the scene and
-# the records at the player's first decision.
+# the records at the player's first decision, or once the battle is over when a
+# hit kills Sonny before he gets one, as battle 105's opening crit can.
 func _pauses_to_first_decision(battle_id: int, difficulty: CombatUnit.Difficulty, during_pause: Callable = Callable()) -> Dictionary:
 	var save = PlayerSave.new_game("SpeechBox", 0)
 	save.difficulty = difficulty
@@ -231,7 +235,7 @@ func _pauses_to_first_decision(battle_id: int, difficulty: CombatUnit.Difficulty
 	add_child_autofree(scene)
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": battle_id, "is_story_progress": false, "is_boss": false, "train_cap": 9})
-	await wait_until(func(): return scene._player_action_pending, 5)
+	await wait_until(func(): return scene._player_action_pending or scene._finished, 5)
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
