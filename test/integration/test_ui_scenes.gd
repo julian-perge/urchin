@@ -290,6 +290,94 @@ func test_new_game_slots_warn_that_a_new_game_replaces_the_save():
 	assert_false(GameTooltip._root.visible, "leaving the slot hides the warning")
 
 
+# The name field starts at SYSTEM[34], "< Enter Name Here >", each time the name
+# screen opens (frame_64/DoAction.as:1, frame_1/DoAction.as:101), and edit text
+# 2712 has no HasMaxLength flag, so nothing caps the name's length.
+func test_new_game_starts_the_name_at_the_original_prompt_with_no_length_limit():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	assert_eq(menu.name_input.text, "< Enter Name Here >", "the field starts at the prompt")
+	assert_eq(menu.name_input.max_length, 0, "with no limit on the name's length")
+	menu.name_input.text = "Typed then dropped"
+	menu.get_node("NamePanel/BackButton").pressed.emit()
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	assert_eq(menu.name_input.text, "< Enter Name Here >", "opening the name screen again resets it")
+
+
+# OK! goes on without reading the name (DefineButton2_2710 on(release), line
+# 2), and the slot button copies it as it is into Krin.nameUser
+# (DefineButton2_2722 on(release), line 5), so an untouched field starts a game
+# named after the prompt and an emptied one a game with no name.
+func test_new_game_keeps_the_name_as_typed_even_untouched_or_empty():
+	_write_test_slots([])
+	var untouched = await _menu_without_scene_change()
+	untouched.get_node("ModePanel/NewGameButton").pressed.emit()
+	_start_from_the_name_screen(untouched)
+	assert_eq(GameData.current_save.name_user, "< Enter Name Here >", "an untouched field names the game after the prompt")
+
+	var emptied = await _menu_without_scene_change()
+	emptied.get_node("ModePanel/NewGameButton").pressed.emit()
+	emptied.name_input.text = ""
+	_start_from_the_name_screen(emptied)
+	assert_eq(GameData.current_save.name_user, "", "an emptied field starts a game with no name")
+
+	var spaced = await _menu_without_scene_change()
+	spaced.get_node("ModePanel/NewGameButton").pressed.emit()
+	spaced.name_input.text = " Newbie "
+	_start_from_the_name_screen(spaced)
+	assert_eq(GameData.current_save.name_user, " Newbie ", "and a typed name keeps its spaces")
+	_clear_test_slots()
+
+
+# Class select and settings place the same Back as the other menu frames, edit
+# text 2703 over hit button 2702 at depths 35 and 36 of root frames 84
+# (classMenu) and 93 (optionsMenu), captioned MENU[26] (frame_46/DoAction.as:1).
+func test_class_select_and_settings_back_use_the_frame_84_and_93_rects():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	for panel in ["NewGamePanel", "OptionsPanel"]:
+		var label: Label = menu.get_node("%s/BackLabel" % panel)
+		assert_eq(label.text, "Back", "%s Back caption" % panel)
+		assert_almost_eq(label.position, Vector2(488.15, 532.15), Vector2(0.01, 0.01), "%s Back text position" % panel)
+		assert_almost_eq(label.size.x, 304.1, 0.01, "%s Back text width" % panel)
+		var button: Button = menu.get_node("%s/BackButton" % panel)
+		assert_true(button.flat, "%s Back is a bare hit area under its text" % panel)
+		assert_almost_eq(button.position, Vector2(604.44, 534.45), Vector2(0.01, 0.01), "%s Back hit area position" % panel)
+		assert_almost_eq(button.size, Vector2(188.12, 26.8), Vector2(0.01, 0.01), "%s Back hit area size" % panel)
+
+
+# Back on class select and on settings goes to mainMenu in the original
+# (DefineButton2_2702 on(release), line 2), so both return to the first screen.
+func test_back_on_class_select_and_settings_returns_to_the_first_screen():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(0).pressed.emit()
+	menu.get_node("NewGamePanel/BackButton").pressed.emit()
+	assert_true(menu.get_node("ModePanel").visible, "Back on class select returns to the first screen")
+	assert_false(menu.new_game_panel.visible)
+
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(0).pressed.emit()
+	menu.class_picker.get_node("Psychological").pressed.emit()
+	menu.get_node("OptionsPanel/BackButton").pressed.emit()
+	assert_true(menu.get_node("ModePanel").visible, "Back on settings returns to the first screen")
+	assert_false(menu.options_panel.visible)
+	assert_false(menu.new_game_panel.visible, "rather than to class select")
+
+
+# Clicks OK!, slot 1, the Biological card and START, the way a player finishes
+# starting a new game from the name screen.
+func _start_from_the_name_screen(menu: Control) -> void:
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(0).pressed.emit()
+	menu.class_picker.get_node("Biological").pressed.emit()
+	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+
+
 # A partial double of the menu whose _enter_game does nothing, because the real
 # one changes the scene and would take the test runner down with it.
 func _menu_without_scene_change() -> Control:

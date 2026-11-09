@@ -34,6 +34,10 @@ const CARD_FADE_OUT: float = 0.633
 const NEW_GAME_WARNING_TITLE: String = "New Game"
 const NEW_GAME_WARNING_TEXT: String = "Warning! Starting a new game in a saved slot will remove your old data! Saved games are stored relative to where you play this game."
 
+# SYSTEM[34] (frame_1/DoAction.as:101), which the original puts in the name
+# field each time the name screen opens (frame_64/DoAction.as:1).
+const NAME_PROMPT: String = "< Enter Name Here >"
+
 var _slot_mode: SlotMode = SlotMode.LOAD_GAME
 var _selected_slot: int = 1
 var _selected_class: PlayerSave.PlayerClass = PlayerSave.PlayerClass.BIOLOGICAL
@@ -66,9 +70,10 @@ func _show_screen(screen: Control) -> void:
 		panel.visible = panel == screen
 
 
-# Back on the name, slot and class-select screens returns to the first screen.
-# The original's Back goes to mainMenu (DefineButton2_2702 on(release)), the
-# title screen in front of New Game and Load Game, which the port doesn't have.
+# Every screen's Back returns to the first screen. The original's Back,
+# DefineButton2_2702, goes to mainMenu from all of them (on(release), line 2),
+# the title screen in front of New Game and Load Game, which the port doesn't
+# have.
 func _on_back_pressed() -> void:
 	GameTooltip.hide_tooltip()
 	_show_screen(mode_panel)
@@ -78,7 +83,7 @@ func _on_back_pressed() -> void:
 
 func _on_new_game_pressed() -> void:
 	_slot_mode = SlotMode.NEW_GAME
-	name_input.text = "Sonny"
+	name_input.text = NAME_PROMPT
 	_show_screen(name_panel)
 
 
@@ -217,21 +222,16 @@ func _on_autosave_toggled(pressed: bool) -> void:
 	_autosave_enabled = pressed
 
 
-func _on_options_back_pressed() -> void:
-	options_panel.hide()
-	new_game_panel.show()
-
-
 # The new game is not saved here. In the original only the Save button
 # (DefineButton2_3183) and the autosave on a victory's Proceed
 # (DefineButton2_3004) write a slot, through krinHandleData
 # (frame_42/DoAction_20.as:58-126), so a used slot keeps its old save until the
-# new game is first saved.
+# new game is first saved. The name goes in exactly as typed, the untouched
+# prompt and an empty field included, because OK! never reads it
+# (DefineButton2_2710 on(release)) and the slot button copies it unchanged
+# (DefineButton2_2722 on(release), line 5).
 func _on_start_new_game() -> void:
-	var player_name: String = name_input.text.strip_edges()
-	if player_name == "":
-		player_name = "Sonny"
-	GameData.new_game(_selected_slot, player_name, _selected_class)
+	GameData.new_game(_selected_slot, name_input.text, _selected_class)
 	GameData.current_save.difficulty = _selected_difficulty
 	GameData.current_save.autosave = _autosave_enabled
 	_enter_game()

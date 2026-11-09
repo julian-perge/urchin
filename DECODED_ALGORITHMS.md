@@ -131,15 +131,22 @@ which runs when the row loads and again at each of the player's half-turns (`fra
 `frame_42/DoAction_17.as:42`, saved through `frame_42/DoAction_20.as:297`) is never read. The port does the same: `Party.build_companion_unit` applies Tactical, the stance row starts
 on Tactical, and `PlayerSave.ag_mode` stays in the save unread. The port used to save the pick there and build companions with it.
 
-## New Game and Load Game (root frames 56, 64 and 74, `Krin.dataMode`)
+## New Game and Load Game (root frames 56 to 93, `Krin.dataMode`)
 
-Ported: `main_menu.gd` opens on New Game and Load Game, asks for the name before the slot list, lets New Game use any slot with the hover warning, and doesn't save when the game starts.
+Ported: `main_menu.gd` opens on New Game and Load Game, asks for the name before the slot list, lets New Game use any slot with the hover warning, takes the name as typed, doesn't
+save when the game starts, and sends every Back to its first screen.
 
 - `subMenu`, root frame 56, captions its buttons with `MENU[21]` "New Game", `MENU[22]` "Load Game" and `MENU[85]` "PvP Arena" (`frame_56/DoAction.as:1-3`). New Game (`DefineButton2_2707`
   on(release), lines 2-3) goes to `nameMenu` and sets `Krin.dataMode` to "save". Load Game (`DefineButton2_2706` on(release), lines 2-3) goes to `dataMenu` and sets it to "load". The port
   leaves PvP Arena out with the rest of the arena.
-- `nameMenu`, root frame 64, sets `krinNameUser` to `SYSTEM[34]` "< Enter Name Here >" (`frame_64/DoAction.as:1`), which the editable text 2712 shows, and OK! (`DefineButton2_2710`) goes to
-  `dataMenu`. The port's name field starts at "Sonny" instead.
+- `nameMenu`, root frame 64, sets `krinNameUser` to `SYSTEM[34]` "< Enter Name Here >" (`frame_64/DoAction.as:1`) each time it opens, and the editable text 2712 shows it. 2712 has no
+  HasMaxLength flag and no script sets `maxChars`, so the name has no length limit. OK! (`DefineButton2_2710` on(release), line 2) goes to `dataMenu` without reading the name, and the slot
+  button copies it unchanged into `Krin.nameUser` (line 5 of each slot's on(release)). An untouched field starts a game named "< Enter Name Here >" and an emptied one a game named "".
+  Outside the PvP arena the name is only saved and shown on the slot list (`frame_74/DoAction.as:4`), and an empty one still counts as a save there, since "" is not undefined. In the
+  game itself the player is always "Sonny": the battle unit (`frame_201/DoAction.as:201`) and the menus' `Krin.NameSets[0]` (`frame_42/DoAction_17.as:45`). The port shows `name_user` in
+  battle, on the victory screen and in the abilities and inventory windows instead, see #10 for the battle side.
+- Back is edit text 2703 over hit button 2702, at depths 35 and 36 of every frame from `subMenu` to `optionsMenu` (93). It goes to `mainMenu` from all of them (`DefineButton2_2702`
+  on(release), line 2). The port has no `mainMenu`, so each Back goes to its New Game and Load Game screen.
 - `dataMenu`, root frame 74, shows each slot's saved `nameUser`, or "< Empty Slot >" for an empty one (`frame_74/DoAction.as:1-11`). `DefineButton2_2722`, 2721, 2720 and 2719 are slots 1
   to 4. With `dataMode` "save" a slot copies `krinNameUser` into `Krin.nameUser` and goes to `classMenu`, used or empty and without asking (on(release), lines 3-11), and hovering it shows
   `MENU[21]` over `MENU[25]`, the warning that a new game removes the old data (on(rollOver), lines 2-8). Otherwise a slot loads only when its `data.nameUser` is defined (on(release), lines
