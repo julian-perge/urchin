@@ -15,8 +15,12 @@ A set of Panels opened over the Hub, such as Inventory, Store or Abilities.
 _Avoid_: Screen, popup, dialog
 
 **Panel**:
-One of the flat rectangles a Screen or Window is built on.
+A flat rectangle a Screen or Window is built on: one solid fill and at most one stroke.
 _Avoid_: Box, column
+
+**Backdrop**:
+The art behind a Window's Panels.
+_Avoid_: Background
 
 **HUD**:
 The Battle screen's status elements drawn over the hall: unit overlays, member bars, the top status bar and the speech box.
