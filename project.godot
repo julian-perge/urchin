@@ -21,6 +21,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+NearestText="*res://scripts/autoload/nearest_text.gd"
 StoreManager="*res://scripts/autoload/store_manager.gd"
 UnitManagerAuto="*res://scripts/autoload/unit_manager.gd"
 ItemManagerAuto="*res://scripts/autoload/item_manager.gd"
@@ -59,7 +60,3 @@ theme/custom="res://scenes/ui/project_theme.tres"
 animation_library={
 &"animation/fps": 60.0
 }
-
-[rendering]
-
-textures/canvas_textures/default_texture_filter=0
