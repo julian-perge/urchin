@@ -1,0 +1,19 @@
+variant                  frame 1x (compare.py style)                panel rects 2x                            
+flat                     p50   0.0  p90   0.0  p99  30.0  mean  1.10 p50   0.0  p90   0.0  p99  43.0  mean  1.27
+baked                    p50   0.0  p90   0.0  p99   7.0  mean  0.27 p50   0.0  p90   0.0  p99   6.0  mean  0.16
+shader5                  p50   0.0  p90   0.0  p99  12.0  mean  0.37 p50   0.0  p90   0.0  p99   3.0  mean  0.20
+shader45                 p50   0.0  p90   0.0  p99  13.0  mean  0.38 p50   0.0  p90   0.0  p99   4.0  mean  0.21
+
+Shadow band only (14 device px at left/top of each panel, outer 3 device px skipped), 2x
+variant                  vs ffdec 2x                                vs real Flash                             
+(ffdec itself)           -                                          p50   1.0  p90   4.0  p99   7.0  mean  1.84
+flat                     p50  15.0  p90  43.0  p99  53.0  mean 17.64 p50  13.0  p90  43.0  p99  50.0  mean 16.43
+baked                    p50   0.0  p90   6.0  p99  11.0  mean  1.76 p50   2.0  p90   7.0  p99  12.0  mean  2.91
+shader5                  p50   1.0  p90   3.0  p99   3.0  mean  1.29 p50   1.0  p90   4.0  p99   6.0  mean  1.40
+shader45                 p50   1.0  p90   4.0  p99   6.0  mean  1.59 p50   1.0  p90   3.0  p99   5.0  mean  1.22
+
+Per-panel band vs real Flash, p99
+flat                     left  49.0  centre  24.0  right  49.0  bar  57.0
+baked                    left  12.0  centre   5.0  right   4.0  bar  12.0
+shader5                  left   3.0  centre   2.0  right   6.0  bar   7.0
+shader45                 left   2.0  centre   2.0  right   5.0  bar   8.0
