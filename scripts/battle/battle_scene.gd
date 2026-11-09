@@ -1118,6 +1118,11 @@ func _on_victory_proceed() -> void:
 		cutscene.animation_speed = animation_speed
 		add_child(cutscene)
 		await cutscene.play(cutscene_id)
+		# The original's cutscene clip starts the music rotation over when the clip
+		# ends, before it starts the menu music (frame_263/PlaceObject2_3466_80
+		# enterFrame, lines 15-31), so _on_continue_pressed() plays the first menu
+		# track.
+		AudioManagerAuto.reset_music_rotation()
 		# Matches gotoSceneKrin (frame_219): a cutscene that just unlocked a
 		# new zone opens the zone map on landing instead of the same hub.
 		if goto_scene == "overMap":

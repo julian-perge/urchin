@@ -11,6 +11,7 @@
 #   play_menu_music()            <- addSound("Music", 1)
 #   play_battle_music(is_boss)   <- addSound("Music", 2)
 #   stop_all_sounds()            <- stopAllSounds()
+#   reset_music_rotation()       <- soundPlayCounter = 0 and soundModeKrin = 0
 # The menu/battle rotation cycles soundPlayArray exactly like the original.
 extends Node
 
@@ -97,6 +98,11 @@ func stop_all_sounds() -> void:
 	stop_music()
 	for player in _effect_players:
 		player.stop()
+
+
+func reset_music_rotation() -> void:
+	_music_mode = MusicMode.NONE
+	_rotation_counter = 0
 
 
 func voice(unit_cues: Array) -> void:

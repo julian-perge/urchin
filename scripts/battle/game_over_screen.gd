@@ -14,10 +14,12 @@ const MAIN_MENU_SCENE: String = "res://scenes/main_menu.tscn"
 
 
 # The original resets the whole game before it shows this screen, and the reset
-# stops every sound (frame_41/DoAction_2.as:13). The menu music starts again
-# once Re-Load reaches the hub.
+# stops every sound and starts the music rotation over
+# (frame_41/DoAction_2.as:12-14). The menu music starts again on the rotation's
+# first track once Re-Load reaches the hub.
 func _ready() -> void:
 	AudioManagerAuto.stop_all_sounds()
+	AudioManagerAuto.reset_music_rotation()
 
 
 # Returns the scene to open instead of opening it, so a test can run the real
