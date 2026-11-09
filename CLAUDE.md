@@ -53,7 +53,9 @@ entry names its evidence so you can check it instead of trusting it.
   `SCRIPT ERROR`, because a script error still exits 0.
 - ffdec must be at `~/.local/bin/ffdec` and built from the jpexs **master**
   branch. Nightly build 3544 mis-renders bevel-over-clip-mask, which silently
-  shrank the biological class card from 191 to 136 design px (`fd755b3`).
+  shrank the biological class card from 191 to 136 design px (`fd755b3`). Master
+  has had the same symptom since jpexs `afbe4fa33`, and `Render.java` corrects it
+  (see Extracting art).
 
 ## Reading the ActionScript
 
@@ -140,6 +142,16 @@ entry names its evidence so you can check it instead of trusting it.
   "Thurman McPown" because DefineSprite 3317 places the member bar container at
   depth 7 and nothing stripped it. Before accepting a UI render, grep the
   sprite's descendants for `initialText`.
+- **A clip mask inside a sprite with a filter lands in the wrong place on ffdec
+  since jpexs `afbe4fa33`.** ffdec draws that sprite into its own image and then
+  positions the mask with a matrix that leaves out where that image sits, so the
+  mask is off by that offset. Measured on the three class cards, it is 51, 12
+  and 1 design px, which shrank the biological card to 159 px wide and moved the
+  other two. `Render.java`'s `ClipPlacedTimeline` corrects it, pixel-identical to
+  changing `absMat` to `mat` at that line of `Timeline.java`. Of the 3,893
+  generated files only the six cards change, because every other extractor renders
+  the filtered sprite itself rather than its parent. The ffdec CLI still has the
+  bug, and none of the four extracted cutscenes reach a case it would change.
 - **UI chrome is full of clip masks.** DefineSprite 3317 alone places two, at
   `clipDepth` 57 and 4, and the first is what keeps the member bars inside
   their panel. Strip the content, never the mask.
