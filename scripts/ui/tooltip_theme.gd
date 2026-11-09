@@ -37,13 +37,14 @@ const TEXT_FLAVOR: Color = Color("b8fe4e")
 # tooltip (frame_4/DoAction.as:33), 150 for an ability
 # (frame_17/DoAction.as:21) and 200 for an item (frame_13/DoAction.as:25),
 # and Flash keeps a 2 px gutter on each side of the text. Each width below is
-# that field width less both gutters, plus 3.34 px for one 12 px space, because
-# Godot counts the space after a line's last word when it wraps and the
-# reference captures wrap as if Flash does not. GameTooltip's containers round
-# the width up to a whole pixel, so the text wraps at 170, 150 and 200 px.
-# Measured over the 3596 different tooltip fields the port can show, 3550 wrap
-# onto as many lines as a wrap that ignores trailing spaces at the field's own
-# width less both gutters, and the other 46 come out one line shorter.
-const TEXT_WIDTH_PLAIN: float = 169.34
-const TEXT_WIDTH_ABILITY: float = 149.34
-const TEXT_WIDTH_ITEM: float = 199.34
+# that field width less both gutters, plus the 3.34 px of one 12 px space,
+# because Godot counts the space after a line's last word when it wraps and the
+# reference captures wrap as if Flash does not. The sum is rounded down to a
+# whole pixel, because a Label only wraps at whole pixels and GameTooltip's
+# containers would round a fraction up. Measured over the 3596 different
+# tooltip fields the port can show, 3562 then wrap onto as many lines as a wrap
+# that ignores trailing spaces at the field's own width less both gutters, and
+# the other 34 are one line off.
+const TEXT_WIDTH_PLAIN: float = 169.0
+const TEXT_WIDTH_ABILITY: float = 149.0
+const TEXT_WIDTH_ITEM: float = 199.0

@@ -124,8 +124,7 @@ func test_position_clamps_at_the_right_and_bottom_edges():
 
 # A Flash text field keeps 2 px between its edges and its text, and each line
 # stands in for one of KrinToolTipper's text fields, so every line pads its
-# text by 2 px and the box is its layout's text width plus 4. The containers
-# round that width up to a whole pixel, which is the width the text wraps at.
+# text by 2 px and the box is its layout's text width plus 4.
 func test_lines_keep_the_flash_text_field_gutter():
 	var anchor: Control = add_child_autofree(Control.new())
 	GameTooltip.show_sections(_sections_fixture(), anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ITEM)
@@ -135,9 +134,9 @@ func test_lines_keep_the_flash_text_field_gutter():
 			var gutter: StyleBox = label.get_theme_stylebox("normal")
 			for side in [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]:
 				assert_eq(gutter.get_content_margin(side), 2.0, "%s has a 2 px gutter on side %d" % [label.text, side])
-	assert_eq(GameTooltip._sections.size.x, ceilf(TooltipTheme.TEXT_WIDTH_ITEM + 4.0), "the box is the text width plus both gutters")
+	assert_eq(GameTooltip._sections.size.x, TooltipTheme.TEXT_WIDTH_ITEM + 4.0, "the box is the text width plus both gutters")
 	var title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
-	assert_eq(title.size.x - 4.0, ceilf(TooltipTheme.TEXT_WIDTH_ITEM), "the text still wraps at the layout's width")
+	assert_eq(title.size.x - 4.0, TooltipTheme.TEXT_WIDTH_ITEM, "the text still wraps at the layout's width")
 
 
 # KrinToolTipper starts each text field 2 px below the one above it
