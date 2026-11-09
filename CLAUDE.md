@@ -51,11 +51,25 @@ entry names its evidence so you can check it instead of trusting it.
   `/Applications/Godot.app/Contents/MacOS/Godot --headless --path . -s
   res://dev/save_presets/generate.gd --quit-after 30`, then check the output for
   `SCRIPT ERROR`, because a script error still exits 0.
-- ffdec must be at `~/.local/bin/ffdec` and built from the jpexs **master**
-  branch. Nightly build 3544 mis-renders bevel-over-clip-mask, which silently
-  shrank the biological class card from 191 to 136 design px (`fd755b3`). Master
-  has had the same symptom since jpexs `afbe4fa33`, and `Render.java` corrects it
-  (see Extracting art).
+- ffdec must be at `~/.local/bin/ffdec`, built from jpexs `cde1cc21a`. That
+  build rendered the committed art on JDK 25.0.4, and
+  `unzip -p ~/DEV/git_repos/jpexs/dist/lib/ffdec_lib.jar project.properties`
+  prints the commit yours was built from. The render driver always passes
+  `aaScale` 1, and CLI exports read `useMsaaForExport` from
+  `~/Library/Application Support/FFDec/config.toml`, where it has to stay
+  `false` and a GUI session can change it. Another build redraws art by itself,
+  so change builds in a PR of their own that regenerates and measures every
+  family: `e3cd93397` moved tiled bitmap fills, `afbe4fa33` moved clip mask rims
+  and broke the class cards until `Render.java` corrected it (see Extracting
+  art), and nightly 3544 mis-renders bevel-over-clip-mask, which silently shrank
+  the biological class card from 191 to 136 design px (`fd755b3`).
+- On that build every extractor that renders through ffdec, apart from
+  `extract_cutscenes`, reproduces its committed files byte for byte, so the diff
+  after a run is what the run changed. Two exceptions are expected, and both go
+  back with `git checkout`: `extract_item_icons` rewrites the editor-saved
+  `resources/items/*.tres`, and `extract_battle_screen` rewrites `STREETS.png`
+  and `STREETS3.png`, where 5 pixels are 1 level off and no build reproduces
+  the committed file.
 
 ## Reading the ActionScript
 

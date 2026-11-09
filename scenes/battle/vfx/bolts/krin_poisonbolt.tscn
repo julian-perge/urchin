@@ -13,7 +13,7 @@ animations = [{
 [node name="Bolt" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(-106.4, -21.0)
+position = Vector2(-106.42, -21.0)
 scale = Vector2(0.5, 0.5)
 centered = false
 sprite_frames = SubResource("SpriteFrames_1")
