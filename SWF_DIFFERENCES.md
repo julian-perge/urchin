@@ -69,6 +69,9 @@ resolved the two bugs below.
   that are bold in the web build are regular there. The port follows the web build (#87). The `references/sonny2_*_screen.png` captures checked (abilities, inventory,
   achievements) show regular menu text and no armorgames.com bar, which matches the Steam build, so compare text weight against `references/2026_07_18_flashpoint/`, a capture of
   the web build.
+- **`_sans` is a device font, so the SWF only names it.** Flash drew every `_sans` field in whatever the player's machine mapped that name to, and the SWF holds no glyphs for it, so neither
+  build carries one look to reproduce. The `references/2026_07_18_flashpoint/` captures were taken on a Mac and show Helvetica. The port ships TeX Gyre Heros in its place, a free Helvetica clone
+  under the GUST Font License, with real regular, bold and bold italic faces (#118, #127).
 
 ## Dropped on purpose (not differences, but scoped out from both)
 

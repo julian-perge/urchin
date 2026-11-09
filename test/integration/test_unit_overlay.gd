@@ -176,8 +176,7 @@ func test_buff_counter_matches_edit_text_66():
 	overlay.refresh_buffs(unit, {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
 	var counter: Label = _find(overlay.buff_row.get_child(0), "Label")
 	assert_eq(counter.get_theme_font_size("font_size"), 10, "10 px")
-	var font: Font = counter.get_theme_font("font")
-	assert_true(font is FontVariation and font.variation_embolden > 0.0, "bold")
+	assert_eq(counter.get_theme_font("font").resource_path, "res://assets/fonts/texgyreheros-bold.otf", "bold")
 	assert_eq(counter.get_theme_color("font_color"), Color("ffffff"), "white")
 
 

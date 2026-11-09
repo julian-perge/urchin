@@ -1,15 +1,18 @@
 # The original draws its menu text in DefineFont3 65, the device font _sans
 # with fontFlagsBold set, and 190 of the 223 DefineEditText tags in
 # sonny-2-2900.swf use it. Most of the rest use DefineFont3 295, the same
-# _sans without the bold flag. The port draws font 65 text in a bold face of
-# its own default font, which the project theme sets once for every Control,
-# and gives font 295 text the RegularLabel type variation. Two fonts the SWF
-# embeds, Rockwell Bold (2738) and the pixel font "copy 10_65" (3307), come
-# from the TTFs ffdec extracted. Each case pairs a port node with the edit
-# text it stands in for and that edit text's font id.
+# _sans without the bold flag. The port draws _sans in TeX Gyre Heros: font 65
+# text in its bold face, which the project theme sets once for every Control,
+# and font 295 text in its regular face through the RegularLabel type
+# variation. Two fonts the SWF embeds, Rockwell Bold (2738) and the pixel font
+# "copy 10_65" (3307), come from the TTFs ffdec extracted. Each case pairs a
+# port node with the edit text it stands in for and that edit text's font id.
 extends GutTest
 
 const BOLD_FONT_ID: int = 65
+const HEROS_BOLD_PATH: String = "res://assets/fonts/texgyreheros-bold.otf"
+const HEROS_REGULAR_PATH: String = "res://assets/fonts/texgyreheros-regular.otf"
+const HEROS_BOLD_ITALIC_PATH: String = "res://assets/fonts/texgyreheros-bolditalic.otf"
 const ROCKWELL_PATH: String = "res://assets/fonts/2738_Rockwell.ttf"
 const PIXEL_FONT_PATH: String = "res://assets/fonts/3307_copy 10_65.ttf"
 const EMBEDDED_FONTS: Dictionary = {2738: ROCKWELL_PATH, 3307: PIXEL_FONT_PATH}
@@ -25,23 +28,15 @@ func after_each():
 	GameTooltip.hide_tooltip()
 
 
-# Godot's own default theme bolds its default font for RichTextLabel's [b] by
-# wrapping it in a FontVariation, so that is the bold the menu text uses too.
-func _engine_bold() -> float:
-	var bold: FontVariation = ThemeDB.get_default_theme().get_font("bold_font", "RichTextLabel")
-	return bold.variation_embolden
-
-
 func _assert_font(control: Control, font_id: int, what: String) -> void:
 	var font: Font = control.get_theme_font("font")
 	if EMBEDDED_FONTS.has(font_id):
 		assert_eq(font.resource_path, EMBEDDED_FONTS[font_id], "%s uses the font the SWF embeds as font %d" % [what, font_id])
 		return
-	var embolden: float = font.variation_embolden if font is FontVariation else 0.0
 	if font_id == BOLD_FONT_ID:
-		assert_eq(embolden, _engine_bold(), "%s is bold like font 65" % what)
+		assert_eq(font.resource_path, HEROS_BOLD_PATH, "%s draws in the bold face like font 65" % what)
 	else:
-		assert_eq(embolden, 0.0, "%s stays regular like font %d" % [what, font_id])
+		assert_eq(font.resource_path, HEROS_REGULAR_PATH, "%s draws in the regular face like font %d" % [what, font_id])
 
 
 # Each case maps a node path to [edit text id, font id].
@@ -51,30 +46,59 @@ func _assert_fonts(root: Node, cases: Dictionary) -> void:
 		_assert_font(root.get_node(path), case[1], "%s (edit text %d)" % [path, case[0]])
 
 
-func test_the_project_theme_bolds_the_default_font_the_way_the_engine_does():
+func test_the_project_theme_draws_sans_in_the_three_heros_faces():
 	var theme: Theme = ThemeDB.get_project_theme()
 	assert_not_null(theme, "project.godot sets a project theme")
 	if theme == null:
 		return
 	var bold: Font = theme.default_font
-	assert_true(bold is FontVariation, "the bold face is a variation of a font, not a font file")
-	if not bold is FontVariation:
-		return
-	assert_eq(bold.variation_embolden, _engine_bold(), "as bold as the engine's own bold")
-	assert_eq(bold.get_font_name(), ThemeDB.fallback_font.get_font_name(), "of the port's default font")
-	var sample: String = "CLICK on the items that you wish to keep!"
-	var plain: float = ThemeDB.fallback_font.get_string_size(sample, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
-	assert_gt(bold.get_string_size(sample, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x, plain, "bold sets wider")
 	var regular: Font = theme.get_font("font", "RegularLabel")
-	assert_eq(
+	var bold_italic: Font = theme.get_font("font", "BoldItalicLabel")
+	assert_eq(bold.resource_path, HEROS_BOLD_PATH, "the default font is the bold face")
+	assert_eq(regular.resource_path, HEROS_REGULAR_PATH, "RegularLabel is the regular face")
+	assert_eq(bold_italic.resource_path, HEROS_BOLD_ITALIC_PATH, "BoldItalicLabel is the bold italic face")
+	assert_eq(bold.get_font_style(), TextServer.FONT_BOLD, "the bold file is a bold face")
+	assert_eq(regular.get_font_style(), 0, "the regular file is an upright regular face")
+	assert_eq(bold_italic.get_font_style(), TextServer.FONT_BOLD | TextServer.FONT_ITALIC, "the bold italic file is both")
+	assert_eq(theme.get_type_variation_base("BoldItalicLabel"), &"Label", "BoldItalicLabel varies Label")
+	var sample: String = "CLICK on the items that you wish to keep!"
+	assert_gt(
+		bold.get_string_size(sample, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x,
 		regular.get_string_size(sample, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x,
-		plain,
-		"RegularLabel sets exactly as the default font did"
+		"bold sets wider"
 	)
 	# Native tooltips stand in for KrinToolTipper's body text, which is never
 	# bold and is 12 px (DefineSprite_2717/frame_4/DoAction.as:40-45).
 	assert_eq(theme.get_font("font", "TooltipLabel"), regular, "native tooltips stay regular")
 	assert_eq(theme.get_font_size("font_size", "TooltipLabel"), 12, "native tooltips are 12 px")
+
+
+func _text_files(directory: String) -> Array[String]:
+	var found: Array[String] = []
+	for file_name in DirAccess.get_files_at(directory):
+		if file_name.get_extension() in ["gd", "tscn", "tres"]:
+			found.append(directory.path_join(file_name))
+	for child in DirAccess.get_directories_at(directory):
+		found.append_array(_text_files(directory.path_join(child)))
+	return found
+
+
+# Every string the port draws comes from one of these files or is built at
+# runtime from them, which is why scanning the files covers the item, ability
+# and buff text the converters brought in from KrinLang. The name a player
+# types is the one exception, because any character can be typed there.
+func test_every_character_the_port_can_show_exists_in_all_three_faces():
+	var characters: Dictionary = {}
+	for directory in ["res://resources", "res://scenes", "res://scripts"]:
+		for path in _text_files(directory):
+			for code in FileAccess.get_file_as_string(path).to_utf32_buffer().to_int32_array():
+				if code >= 0x20 and code != 0x7f:
+					characters[code] = true
+	assert_gt(characters.size(), 90, "the scan found the port's text")
+	for face_path in [HEROS_BOLD_PATH, HEROS_REGULAR_PATH, HEROS_BOLD_ITALIC_PATH]:
+		var face: Font = load(face_path)
+		var missing: Array = characters.keys().filter(func(code): return not face.has_char(code))
+		assert_eq(missing, [], "%s has every character the port can show" % face_path.get_file())
 
 
 # These nodes stand in for edit texts on root frames 64 (nameMenu), 74
