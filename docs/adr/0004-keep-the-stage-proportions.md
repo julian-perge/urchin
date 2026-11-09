@@ -1,0 +1,5 @@
+# Keep the Stage's proportions when the window is a different shape
+
+The original's `frame_1/DoAction.as:4515` sets `Stage.scaleMode = "exactFit"`, so Flash stretches the 800x575 Stage to fill whatever window it gets, and a window of any other shape distorts all of its art and text. The port's base resolution becomes 800x575 ([Where should the original's 800x575 stage sit in the port's 800x600 window?](https://github.com/julian-perge/urchin/issues/111)), and a window of any other shape shows the whole Stage at its own proportions with black bars filling the rest, which is what `window/stretch/aspect` does at its `keep` default, where `project.godot` leaves it. The two look the same at the default window shape, and a player who resizes the window or goes fullscreen will notice bars where the original stretched. Keeping the proportions was the project owner's call, so art and text are never distorted.
+
+The AS path is relative to `dev/source_files/action_script/`. The claim about the original comes from the ActionScript and what Flash documents `exactFit` to do, not from running the game.

@@ -12,7 +12,7 @@ scene. See `KNOWN_GAPS.md` for the handful of deliberate approximations and `SWF
 
 The UI/scene layer was rebuilt 2026-07-18: main menu (save slots + new-game flow), 7 per-zone hub scenes with SWF-exact orb positions (`scenes/zones/`), the zone-hub shell (`game.tscn` + `game.gd`),
 the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exact button positions, and the asset tree reorganized (`assets/backgrounds/{hub,battle,sky}`,
-`assets/ui/{hotbar,battle,store,zone_map}`). Base resolution is the original 800x600 stage (canvas_items stretch), so every SWF-extracted coordinate drops in 1:1.
+`assets/ui/{hotbar,battle,store,zone_map}`). Base resolution is 800x600 (canvas_items stretch) against the original's 800x575 stage, so every SWF-extracted coordinate drops in 1:1.
 
 - **Timeline-accurate animations**
 
@@ -215,10 +215,10 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   is stretched to fill 800x600 while the fighters standing on it are not. For CHURCH, the stage point (220.9, 371.0) where player3 stands lands at
   (186.5, 406.4) once the hall is stretched, 34px right and 35px down of the fighter. SNOW errs about 40px the other way.
 
-  The data to fix it already exists: `battle_layout.json` records every hall's rect and nothing reads the `halls` section yet. What needs deciding first
-  is the 25px difference between the SWF's 800x575 stage and the 800x600 viewport, because placing the hall at its true rect means choosing what happens
-  to that strip - letter-box it, extend the hall, or move the whole stage. That choice changes how every battle looks, which is why this is a spec rather
-  than a fix. Found by the whole-branch review of the battle screen extraction, 2026-08-22.
+  The data to fix it already exists: `battle_layout.json` records every hall's rect and nothing reads the `halls` section yet. Placing the hall at its true
+  rect needed a decision on the 25px difference between the SWF's 800x575 stage and the 800x600 viewport, and julian-perge/urchin#111 settled it: the base
+  resolution becomes 800x575, so there is no strip to fill. The hall placement itself is part of the battle layout in the UI overhaul, julian-perge/urchin#107.
+  Found by the whole-branch review of the battle screen extraction, 2026-08-22.
 
   Two smaller things found alongside it, both pre-existing. `test_battle_runner.gd`'s
   `test_misses_are_move_events_not_a_separate_type` ran battle 51 with unseeded RNG and asserted once per miss, which drifted the suite's total assert
