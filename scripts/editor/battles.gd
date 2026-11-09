@@ -1,4 +1,17 @@
-# Run this as an Editor script when you need to update resources
+# Rebuilds every resources/battles/*.tres from
+# dev/converted_json/battles.json.
+#
+# Run it inside a headless editor, the same way as scripts/editor/units.gd.
+# Start a throwaway SceneTree script with
+#   godot --headless -e --path . -s <script>
+# and have its _process wait 30 frames, load every .tres in
+# resources/battles/, then call
+# load("res://scripts/editor/battles.gd").new()._run(). Without -e, Godot
+# refuses to instantiate an EditorScript, and a plain -s save writes no uid at
+# all. The committed battle files carry no uid, so the -e run adds one to each
+# file's header and to its script line. Run that way on Godot 4.7.2, those two
+# lines were the only change in all 99 files, and every ext_resource id came
+# through unchanged.
 @tool
 extends EditorScript
 

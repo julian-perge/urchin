@@ -1,4 +1,15 @@
-# Run this as an Editor script when you need to update resources
+# Rebuilds every resources/units/*.tres from dev/converted_json/units.json.
+#
+# Run it inside a headless editor so each file keeps its uid and ext_resource
+# id. Start a throwaway SceneTree script with
+#   godot --headless -e --path . -s <script>
+# and have its _process wait 30 frames, load every .tres in resources/units/,
+# then call load("res://scripts/editor/units.gd").new()._run(). In a scratch
+# run that saved to paths it had not loaded, every file got a new random
+# ext_resource id. Without -e, Godot refuses to instantiate an EditorScript,
+# and a copy of this script run that way saved every file with no uid at all.
+# Run the -e way on Godot 4.7.2, all 75 files kept their uids and
+# ext_resource ids, and git diff showed only the change the converter had made.
 @tool
 extends EditorScript
 
