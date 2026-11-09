@@ -1077,6 +1077,13 @@ func _finish_battle() -> void:
 		add_child(victory)
 		victory.setup(save, rewards, drops, fighting_party)
 		victory.proceed_pressed.connect(_on_victory_proceed)
+		# The original never had a turn label, and it draws its victory screen on
+		# Navigation, the hub's frame, once a win has left the battle's frame
+		# (frame_219/DoAction.as:78-81, frame_181/PlaceObject3_3142_175
+		# onClipEvent(load), lines 3-7). The turn label sits on the UI layer above
+		# this screen, so it is hidden here instead of still showing whose turn it
+		# was across the top of the screen.
+		turn_label.hide()
 	elif outcome == BattleRunner.Outcome.LOSS or outcome == BattleRunner.Outcome.DRAW:
 		# A draw ends the game the same as a defeat: the original sends both to
 		# loseCombat (DefineSprite_3355/frame_85/DoAction.as:5-16,
@@ -1101,15 +1108,21 @@ func _on_victory_proceed() -> void:
 		var goto_scene: String = _pending_goto_scene
 		_pending_cutscene = ""
 		_pending_goto_scene = ""
-		# The original silences the battle track before jumping to a cutscene
-		# (DefineButton2_3004's release handler calls stopAllSounds); without
+		# The original stops every sound before it jumps to a cutscene
+		# (DefineButton2_3004's release handler calls stopAllSounds). Without
 		# this the battle music keeps playing under the cutscene's own audio
-		# until _on_continue_pressed() swaps in the menu track afterwards.
-		AudioManagerAuto.stop_music()
+		# until _on_continue_pressed() swaps in the menu track, and an effect
+		# still playing, such as the last death cry, plays over the clip's start.
+		AudioManagerAuto.stop_all_sounds()
 		var cutscene: CutscenePlayer = preload("res://scenes/cutscenes/cutscene_player.tscn").instantiate()
 		cutscene.animation_speed = animation_speed
 		add_child(cutscene)
 		await cutscene.play(cutscene_id)
+		# The original's cutscene clip starts the music rotation over when the clip
+		# ends, before it starts the menu music (frame_263/PlaceObject2_3466_80
+		# enterFrame, lines 15-31), so _on_continue_pressed() plays the first menu
+		# track.
+		AudioManagerAuto.reset_music_rotation()
 		# Matches gotoSceneKrin (frame_219): CS_CUT5 ends on the ending screen,
 		# and a cutscene that just unlocked a new zone opens the zone map on
 		# landing instead of the same hub. The original starts no music for the
