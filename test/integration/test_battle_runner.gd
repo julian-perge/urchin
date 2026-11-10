@@ -1266,6 +1266,61 @@ func test_sswitch_turns_a_buff_tick_around_and_a_tick_with_no_damage_element_is_
 	)
 
 
+# A shield bigger than the whole tick takes all of it. The unit loses no life,
+# and buffTicker draws SHIELDED (frame_42/DoAction_10.as:64-73).
+func test_a_shield_bigger_than_a_buff_tick_soaks_all_of_it():
+	var runner: BattleRunner = _sonny_holding(["FATE"])  # 666 Physical damage
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	player.shield = 1000.0
+	var life_before: float = player.life_n
+
+	var tick: BuffTick = _tick_after_passing(runner)
+
+	assert_true(tick.shield_took_all, "the shield soaked the whole tick")
+	assert_eq(tick.amount, 0.0, "so nothing got through")
+	assert_eq(tick.direction, MoveResult.Direction.HARM, "though the tick still pushed down")
+	assert_true(tick.did_something(), "and the original counts it as a tick that did something")
+	assert_eq(player.life_n, life_before, "Sonny lost no life")
+	assert_eq(player.shield, 334.0, "and the shield paid the 666")
+
+
+# A shield smaller than the tick takes its own value off the tick and empties,
+# and what is left comes off the unit's life, which is what the number shows
+# (frame_42/DoAction_10.as:76-97).
+func test_a_buff_tick_bigger_than_the_shield_takes_what_got_through():
+	var runner: BattleRunner = _sonny_holding(["FATE"])  # 666 Physical damage
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	player.shield = 100.0
+	var life_before: float = player.life_n
+
+	var tick: BuffTick = _tick_after_passing(runner)
+
+	assert_false(tick.shield_took_all, "a shield smaller than the tick doesn't soak all of it")
+	assert_eq([tick.direction, tick.amount], [MoveResult.Direction.HARM, 566.0], "what got through")
+	assert_eq(life_before - player.life_n, 566.0, "comes off Sonny's life")
+	assert_eq(player.shield, 0.0, "and the shield is used up")
+
+
+# A shield exactly as big as the tick is not soaking all of it, because
+# buffTicker only takes that branch for a shield that is strictly bigger (line
+# 68). The other branch subtracts the shield and leaves a total of 0, so the
+# tick draws nothing and does not count as doing something. ADR 0005 keeps this
+# Quirk, as it keeps the same case for a Shield block.
+func test_a_shield_exactly_as_big_as_a_buff_tick_leaves_a_tick_that_did_nothing():
+	var runner: BattleRunner = _sonny_holding(["FATE"])  # 666 Physical damage
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	player.shield = 666.0
+	var life_before: float = player.life_n
+
+	var tick: BuffTick = _tick_after_passing(runner)
+
+	assert_false(tick.shield_took_all, "a shield exactly as big isn't soaking it all")
+	assert_eq([tick.direction, tick.amount], [MoveResult.Direction.NONE, 0.0], "and nothing is left of the tick")
+	assert_false(tick.did_something(), "so the tick did nothing")
+	assert_eq(player.life_n, life_before, "Sonny lost no life")
+	assert_eq(player.shield, 0.0, "and the shield is used up")
+
+
 # Runs a full battle with AI on both sides; returns event-type counts.
 func _assert_battle_runs(battle_id: int) -> Dictionary:
 	var battle: BattleFight = BattleSetup.load_battle(battle_id)

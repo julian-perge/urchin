@@ -568,6 +568,8 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> BuffTick:
 		shield_difference = shield - total_damage
 	if shield_difference > 0:
 		shield -= total_damage
+		tick.shield_took_all = true
+		tick.direction = MoveResult.Direction.HARM
 	else:
 		if total_damage > 0:
 			total_damage -= shield
