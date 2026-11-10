@@ -275,6 +275,13 @@ func test_a_heal_raises_the_bar_with_a_plus_number_and_stops_at_full():
 	assert_eq(_presenter.displayed_hp, 100.0, "and it stops at full")
 
 
+# The original's whole heal branch is inside DamageOutputKrinFinal > 0
+# (frame_42/DoAction_8.as:172), so a heal of 0 draws nothing.
+func test_a_heal_of_zero_draws_no_number():
+	_presenter.show_result(_heal(0.0, 100.0), null)
+	assert_eq(_numbers().size(), 0)
+
+
 # KrinNumberShow colors a number by the move's element.
 func test_a_damage_number_takes_the_moves_element_color():
 	_presenter.show_result(_damage(12.0, 88.0), _fire_move())
