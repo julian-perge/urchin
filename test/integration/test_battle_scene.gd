@@ -1901,25 +1901,27 @@ func test_the_death_event_plays_only_the_deaths_no_move_landed():
 	ZoneManager.auto_start_battles = true
 
 
-# The player's life is moved behind the bar's back during the Decision, the way a
-# change that no event states would move it. The life is far more than the enemy
-# can take in a half-turn.
+# The test moves the player's life by hand, as a change that no event states. It
+# does so after the player's own events have played, while the replay of the
+# half-turn waits for its last frames. Only the end of the half-turn then shows the
+# new life. The replay ends 2 frames later, and the guard's half-turn starts 2
+# frames after that (see
+# test_an_ai_half_turn_dispatches_2_frames_after_the_last_half_turn_ends).
 func test_the_end_of_a_half_turn_snaps_every_fighter_to_its_unit():
-	GameData.current_save = PlayerSave.new_game("HalfTurnSnap", 0)
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	await wait_until(func(): return scene.decision_open, 5)
+	var scene = await _battle_100_on_a_stepped_clock("HalfTurnSnap")
 	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	scene.units[3].ai_enabled = false  # Veradux passes too, so the replay is two passes and their ticks.
+	scene._on_pass_pressed()
+	await wait_process_frames(1)  # The turn loop takes the pass on the next frame.
 	player.life_u = 999999.0
 	player.life_n = 500000.0
+	var presenter: FighterPresenter = scene._presenters[BattleRunner.PLAYER_SLOT]
+	assert_ne(presenter.displayed.life, player.life_n, "sanity: no event has shown the new life")
 
-	scene._on_pass_pressed()
-	await wait_until(func(): return scene.decision_open or scene._finished, 10)
-	assert_eq(scene._presenters[BattleRunner.PLAYER_SLOT].displayed.life, player.life_n, "the bar caught up with the unit")
+	for frame in 3:
+		_step_frame(scene)
+
+	assert_eq(presenter.displayed.life, player.life_n, "the bar caught up with the unit")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
