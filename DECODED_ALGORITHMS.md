@@ -5,7 +5,8 @@ timeline.
 
 ## krinMelee - the melee run/strike/runback (frame_42/DoAction_4.as)
 
-Implemented in `scripts/entities/character_visual.gd` (`play_melee`, `_animate_melee`).
+Implemented in `scripts/entities/character_visual.gd` (`play_melee`, `_animate_melee`). `FighterPresenter.melee` (`scripts/battle/fighter_presenter.gd`) gives the doll the target's
+rig position on every frame and the target's half-width.
 
 Constants (frame 42 globals):
 
@@ -14,7 +15,7 @@ Constants (frame 42 globals):
 | `krinBoltTime` | 60 | base step divisor: step = distance / 60 per frame |
 | `krinBodyMove` | 10 | melee movement multiplier on that step |
 | `krinMeleeAttackCD` | 15 | frames from strike start to impact (0.5 s) |
-| `krinMeleeAttackEndCD` | 15 | frames from impact to the runback goto (total 1.0 s) |
+| `krinMeleeAttackEndCD` | 15 | frames the end counter counts before the runback goto, the impact frame included, so the goto comes 14 frames after impact |
 
 Sequence:
 
@@ -30,13 +31,15 @@ Sequence:
    miss too (`frame_42/DoAction_4.as:80`); only the BOOM clip waits on `strikeSuccess`. The conductor (`frame_217/PlaceObject2_3389_480` enterFrame) resets `AttackEndCounter` to 0 when it sees
    the flag and dispatches the next action once the counter has run past `AttackEndCounterLimit = 25` (lines 112-138, with the limit set at line 7 of the same clip's `onClipEvent(load)`). That
    is 26 frames after impact, so the next action starts in the middle of the runback.
-3. **Runback.** 15 frames after impact (1.0 s after strike start - exactly the clip's own runback boundary for every label) the code forces `gotoAndPlay("runback")` (168-188, ends in
-   `gotoAndStop("stand")`) and reverses movement with an eased return: `spdXCoEFFER = min(1.45 * goRat, 1)` - fast leave, exponential settle home; position snaps to home once `relX` falls to
-   0.000001 or less. The settle has no fixed length (this note used to say ~18 frames): the same four cases as the dash simulation, with the zero half-width case taken at 300 px, put the
+3. **Runback.** 14 frames after impact the code forces `gotoAndPlay("runback")` (168-188, ends in `gotoAndStop("stand")`) and reverses movement with an eased return:
+   `spdXCoEFFER = min(1.45 * goRat, 1)` - fast leave, exponential settle home; position snaps to home once `relX` falls to 0.000001 or less. This note used to say 15 frames. The end counter
+   runs on the impact frame itself, because lines 87-95 come after the block that raises the flag, so its count of 15 ends 14 frames later. That is 29 frames after strike start, the frame on
+   which the last frame of `Attack_Upper` and of `Attack_Stab` jumps to `runback` by its own script (`DefineSprite_166_MODEL1/frame_107` and `frame_137`). `Attack` has no such script at
+   frame 167 and would reach `runback` through `attack2` one frame later. The movement runs in the fighter clip's own `onEnterFrame` while `inner` plays the labels (lines 67-135), so a hit, a
+   stun or a death on the doll during the runback doesn't stop it sliding home. The settle has no fixed length (this note used to say ~18 frames): the same four cases as the dash simulation, with the zero half-width case taken at 300 px, put the
    doll within 1 px of home after 4 to 22 frames of runback, and snap it home after 15 to 72.
 
-Attack label selection: each move's `addNewMove` param 12 (`Ability.animation_label`). Shock moves play "cast" instead (param 12 is unused for them); `play_strike()` exists for in-place strikes but is
-not used by Shock.
+Attack label selection: each move's `addNewMove` param 12 (`Ability.animation_label`). Shock moves play "cast" instead (param 12 is unused for them).
 
 ## krinBoltMake - the missile projectile (frame_42/DoAction_4.as, ~line 137)
 
@@ -105,9 +108,9 @@ Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/
   clip, a still-stunned unit is snapped straight back into the `stun2` loop instead of showing an idle pose. Not ported (form-changing buffs aren't implemented yet).
 - **`outofstun` ends** via MODEL1 frame 295's own `gotoAndStop("stand"); play()` - a one-shot that always falls back to idle, same pattern as `cast`.
 - No numeric timing constants gate any of this (unlike `krinBoltTime`/`krinMeleeAttackCD`). It is a value comparison that runs on every `applyChangesKrin` call, for an active unit only
-  (line 468). The port compares in `FighterPresenter._show_stun`, against the stun a `MoveResult` states (`stun_after`) at its impact and against the unit's own stun at the half-turn's end,
-  and a dead doll keeps its death. It never compares at the redraws in between, because the runner resolves the whole half-turn before the replay, so the unit's own stun can already hold a
-  stun from later in it. This note used to say those extra comparisons changed nothing. They started a later stun early, and the flinch at the hit that landed it then left the doll idle for
+  (line 468). The port compares in `FighterPresenter._show_stun`, against the stun in the `UnitSnapshot` an event states (a `MoveResult`'s `target_after` at its impact, a MOVE event's
+  `caster_after_dispatch` when it starts) and against the unit's own stun at the half-turn's end, and a dead doll keeps its death. It never compares with the unit's own stun before then,
+  because the runner resolves the whole half-turn before the replay, so the unit's own stun can already hold a stun from later in it. This note used to say those extra comparisons changed nothing. They started a later stun early, and the flinch at the hit that landed it then left the doll idle for
   the whole stun.
 
 ## Dispel order and timing (frame_217/PlaceObject2_3389_480 enterFrame, lines 22-103)
@@ -149,6 +152,9 @@ Ported: `UnitOverlay.refresh_buffs` (`scripts/battle/unit_overlay.gd`).
   `p<playerID>BAR` at x = (110 + 17 * slot) times 1 for team 1 or -1 for team 2. It sets the clip's `buffCounter` text (edit text 66) to the CD, sends `buffIcon` to the frame named by
   the buff id and tints `buffColor` with the buff element's color. The tooltip title is the buff's `[0]` and its text the buff's `[25]` (the enterFrame handler on `buffColor` inside
   DefineSprite 104). Nothing sorts the row itself, so it shows the first 7 slots in the order the sort left them, and it only changes when `applyChangesKrin` runs for that unit.
+- The port draws the row from the `UnitSnapshot` of the last event shown on the unit, so it changes at the impact of each result on the unit, when the unit's own MOVE event starts, and at
+  the half-turn's end. A buff that a move lands on its own caster waits for the caster's `buffTicker` in the original (`frame_42/DoAction_10.as:135`), which the port shows at the
+  half-turn's end until julian-perge/urchin#151 gives the Buff tick an event of its own.
 - The port's row used to sort the slots with turns left again with `sort_custom`, which moved tied buffs once a unit held more than 16 of them and changed the 7 icons it showed in 212
   of 20,000 sorted states. The port's tooltip title also adds the turns left, which the original's doesn't.
 
@@ -236,13 +242,23 @@ The battle engine dispatches on `addNewMove` param 10:
   (`zoomPause = 1`), the screen shakes (`GridShaker`, when param 9 speed modifier >= 0), and impact (`BAMBAMBAM`) is instant. Shock also sets `missToMake` to undefined (conductor line
   447), so its miss would be silent too, but a Shock move never misses: the hit roll is skipped for Shock and `strikeSuccess` is set true (conductor lines 360 and 385).
 
-Element colors (`elementColorArray`, frame_41/DoAction_2.as - menu bars AND damage numbers): Physical `C40000`, Magic `FB95C8`, Ice `68CBF4`, Fire `FF6600`, Lightning `FFCC00`, Earth `856B47`, Shadow
+Element colors (`elementColorArray`, frame_41/DoAction_2.as - menu bars AND Floating numbers): Physical `C40000`, Magic `FB95C8`, Ice `68CBF4`, Fire `FF6600`, Lightning `FFCC00`, Earth `856B47`, Shadow
 `664D80`, Poison `508349`; heals `66FF00`.
 
-Damage numbers (`KrinNumberShow`, frame_42/DoAction_7.as): digit sprites (NumberFixer/NumberSetter clips) colored by the move's ELEMENT, `gotoAndPlay("critical")` variant on crits (`perKSuccess`),
+Floating numbers (`KrinNumberShow`, frame_42/DoAction_7.as): digit sprites (NumberFixer/NumberSetter clips) colored by the move's ELEMENT, `gotoAndPlay("critical")` variant on crits (`perKSuccess`),
 special "miss"/"shield" frames. Crits also fire `GridShaker` (frame_42/DoAction_8.as). Every damage hit that gets past the shield draws its number twice: `executeMove` calls `KrinNumberShow` at
 `frame_42/DoAction_8.as:80` and again at 84, or at 137 in heal green under sswitch. Each call attaches a new clip at the next depth (`frame_42/DoAction_7.as:37`, 75-79), so a normal hit shows two
 identical numbers and an sswitch hit shows a green number over an element-colored one.
+
+Ported: `FloatingNumberLayer` is `KrinNumberShow` and `FloatingNumber` is one `NumberFixer`, played from what `extract_floating_numbers` writes. The details the port keeps:
+
+- The number sits on the target rig's `_x`/`_y` with no offset (lines 38-39). `dressChar` lowers only a MODEL5 unit's doll inside its rig, so its number stays on the rig.
+- `KrinNumberShow` attaches the number to BATTLESCREEN (line 37), so it zooms and shakes with the fighters. The port's layer is a child of `BattleScreenClip`, next to `Battlefield`.
+- The digits sit 19 apart in the holder's own units, the first at `-19 * (digits - 2) / 2 - 10` (lines 3, 34-35 and 56), which leaves them half a unit left of the rig's origin.
+- Only the digits' and the MISS word's `KN` fill takes the color, through `setRGB` (58-59 and 66-67). SHIELDED has no `KN` child and is never tinted.
+- A number of 0 or less draws nothing (line 8). The digit loop drops any fraction, so a number between 0 and 1 attaches a `NumberFixer` that plays its label with no digits.
+- The depth cycles over 20 depths, 1620 to 1639, so a 21st number replaces the one still at its depth.
+- The port draws one number per result, in the color the original leaves on top (ADR 0005).
 
 ## What executeMove does on each branch (frame_42/DoAction_8.as)
 
@@ -250,11 +266,12 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
 `Achievements.collect_battle_counters` read that instead of working it out again.
 
 - **Full Damage** works out the hit (lines 24-64) and compares it with the target's SHIELD (65-70).
-  - A shield bigger than the hit takes all of it. SHIELD goes down by the hit, the target's `shield` clip and `sfx_shield` play, and `KrinNumberShow` draws its `shield` frame (70-76).
-    Nothing after the shield check runs: no flash, no `hit` label, no hit voice, no life bar update and no AchVal1. A crit has already shaken the grid by then, and played `Angry_Dux` or
-    `Angry_Roald` when Veradux or Roald is the caster (28-43). The result is HARM with amount 0 and `shield_took_all` set.
-  - Otherwise the shield's value comes off the hit and the shield empties (79-81). A shield exactly as big as the hit soaks it this way, so the rest of the branch plays a hit for 0, and
-    `KrinNumberShow` only draws a number above 0 (`frame_42/DoAction_7.as:8`).
+  - A shield bigger than the hit takes all of it, which is a Shield block. SHIELD goes down by the hit, the target's `shield` clip and `sfx_shield` play, and `KrinNumberShow` draws
+    its `shield` frame (70-76). Nothing after the shield check runs: no flash, no `hit` label, no hit voice, no life bar update and no AchVal1. A crit has already shaken the grid by
+    then, and played `Angry_Dux` or `Angry_Roald` when Veradux or Roald is the caster (28-43). The result is HARM with amount 0 and `shield_took_all` set, and
+    `FighterPresenter.show_result` plays the clip and `sfx_shield` and draws SHIELDED for it (see "The Shield clip" below).
+  - Otherwise the shield's value comes off the hit and the shield empties (79-81). A shield exactly as big as the hit soaks it this way, which is not a Shield block. The rest of
+    the branch plays a hit that did nothing, with no number, because `KrinNumberShow` only draws a number above 0 (`frame_42/DoAction_7.as:8`).
   - With no SSWITCH (82-131) the hit comes off LIFEN, which stops at 0 with FOCUSN set to 0. The number is drawn twice (80 and 84). AchVal1 grows by the hit, which is what got past the
     shield, when the caster's playerName is "Sonny" (91-93). BATTLEFLASH plays `hit` (99), the target plays `hit` unless STUN is set (100-103), and at LIFEN 0 it plays `dead` and goes
     inactive (104-107), or else a hit voice plays (130). The `lifeBarUpdate` after either branch (150) plays the target's `voiceDie` when LIFEN is 0, unless its bar already read 0%
@@ -268,10 +285,55 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
 - **Focus** adds `[9]` to FOCUSN, kept between 0 and FOCUSU, and plays the `focus` flash. It draws no number (232-249).
 - Any other category does nothing in `executeMove`. Shatter Bolt is the only such move, and its status effect still lands after it (`KNOWN_GAPS.md`, the "Attack" entry).
 - The life bar redraws in `executeMove` (150, 187, 198 and 248) and again in `applyChangesKrin` (`frame_42/DoAction_10.as:342`), which the conductor runs on the target after the
-  move's status effect (conductor line 103). So a move leaves the bar on the life after that recompute, which is the life `MoveResult.life_after` holds. The recompute moves life when the
+  move's status effect (conductor line 103). So a move leaves the bar on the life after that recompute, which is the life `MoveResult.target_after` holds. The recompute moves life when the
   move lands, or dispels, a buff that changes max life: Edge Of Death's EDGEOFDEATH takes 85% off.
 - The STUN checks for the `hit` label read the target as the hit lands, before the move's own status effect, so `MoveResult.target_stunned` is read then too. Shatter Bolt's stun comes
-  after its own hit. The stun pose changes in the recompute after the strike (`frame_42/DoAction_10.as:468-481`), so `MoveResult.stun_after` is read after that recompute, with the life.
+  after its own hit. The stun pose changes in the recompute after the strike (`frame_42/DoAction_10.as:468-481`), so `MoveResult.target_after` is taken after that recompute, with the life.
+
+## The Result flash (DefineSprite 3416 `BATTLEFLASH`)
+
+Ported: each `FighterPresenter` plays its own `ResultFlash` (`scripts/battle/result_flash.gd`), and `scenes/doll_body.gdshader` draws its filter over the doll's CanvasGroup body.
+
+- The clip has 46 frames at 30 fps, places nothing and is all frame scripts. Its labels are `none` on frame 1, which stops, `hit` on 2, `heal` on 17 and `focus` on 32. Each label puts its
+  filter on at its first frame and 4, 8 and 12 frames after it, takes it off 2 frames after each, and 14 frames after it takes it off and stops on `none`
+  (`DefineSprite_3416/frame_2` to `frame_46`). So the filter shows on the impact's frame and the next, 4 times over 14 frames.
+- On means `krinChangeColor(inner, "Hit")`, a color transform that changes nothing and so clears a buff tint such as Poison, and `inner.filters` set to the label's filter. Off puts back
+  `DFTC` and `DFTF`, the unit's `characterColorState` and `characterFilterState` when the flash started. The last frame puts back the unit's color state at that moment instead. The port
+  draws neither state, so off is the doll's plain look.
+- Every label's filter is a white inner glow (blur 100, strength 10) and then an outer and an inner glow (blur 10, strength 1) in the label's color, all at quality 1: 16763904 (#FFCC00)
+  for `hit`, 10092288 (#99FF00) for `heal` and 3407871 (#33FFFF) for `focus` (`frame_42/DoAction_3.as:117-130` and 162-168). The white glow covers a px fully wherever at most 90% of the
+  100 px box around it is doll, which is every px of a doll, so the doll draws white with a rim and a halo in the label's color.
+- Only `executeMove` calls it (see the branches above), so a Shield block, a heal of 0, a miss, a status-only move and a Buff tick never flash. Each call points the one clip at its own
+  target, so a move that hits several units flashes only the last, an Original bug that ADR 0005 has the port fix.
+
+## The Shield clip (DefineSprite 2675)
+
+Ported: `extract_rig_clips` renders every frame of the clip into `assets/ui/battle/rig/shield/`, and each `FighterPresenter` plays its own `RigClip` (`scripts/battle/rig_clip.gd`)
+through `play_shield_clip()`.
+
+- The fighter rig, DefineSprite 2676, places the clip as `shield` at its origin. The clip's `onClipEvent(load)` runs `this.swapDepths(1000)`, which puts it over the `inner` doll
+  that `dressChar` attaches at depth 0 (`frame_217/DoAction_2.as:18`). BATTLEFLASH filters `inner` alone, so a Result flash never covers the clip, and `dressChar` scales and lowers a
+  MODEL5 `inner` alone (19-24), so the clip keeps the rig's size and origin. The halls place the right side's rigs with an x scale of -1, so the clip mirrors with them.
+- The clip has 20 frames at 30 fps. Frame 1 runs `stop()` and shows nothing. Frame 2 places the bubble, sprite 1709, a circle of radius 50 px with a #66FFFF glow, at the rig's
+  origin, and BOOM_SPARK, sprite 1712, at (40.55, 3.65). A color transform turns the bubble white on frames 3, 5 to 6 and 8 to 9, and its alpha falls from 230/256 on frame 11
+  to 0 on frame 20, so frame 20 shows nothing. The spark draws on frames 2 to 18.
+- `play()` leaves the playhead on frame 1 until the next frame, so the bubble shows one frame after the impact. That reads AVM1 as stepping every timeline before a frame's scripts
+  run, and no player has measured it. After frame 20 the playhead wraps to frame 1, and its `stop()` holds it there. A `play()` while the clip plays changes nothing.
+- `executeMove` plays it on a Shield block with `sfx_shield` (`frame_42/DoAction_8.as:73-74`). `buffTicker` plays it with no sound when a shield soaks a whole Buff tick, but on
+  the unit `IDKT` names (`frame_42/DoAction_10.as:72`), an Original bug that ADR 0005 has the port fix.
+
+## A death (MODEL1's `dead` label and LifeBarSmoother, DefineSprite 57)
+
+Ported: `CharacterVisual._play_death` and `FighterPresenter.die`. Frame counts below start at the death, which is the Impact that kills or the Buff tick that kills.
+
+- The doll plays MODEL1's `dead` label, frames 313 to 371 (`frame_42/DoAction_8.as:104-107` and 208-211 for a move, `frame_42/DoAction_10.as:113` for a Buff tick). Frames 313 to 360 draw at
+  full alpha. On 361 to 371 the label's own colour transforms fade every part from 233/256 to 0, and frame 371's script removes the doll before that frame is drawn
+  (`DefineSprite_166_MODEL1/frame_371/DoAction.as`), 58 frames after the death. Frame 360 hides the player clip's `shadower`, which the port has no counterpart for.
+- `lifeBarUpdate` plays the death voice and attaches LifeBarSmoother to the unit's bar with `deadNow` set (`frame_42/DoAction_8.as:345-347`). The clip's frame 18, 17 frames after the
+  death, removes the buff icons `bshr0` to `bshr9` and sends the bar's `inner` clip (DefineSprite 3407, the name and the life and focus numbers) to its empty `third` frame. From the next
+  frame, its frame 38 takes 5 off the whole bar's `_alpha` every frame, so the bar is at 0 on frame 37 and hidden on frame 38.
+- `lifeBarUpdate` does none of that when the bar's rounded percent hasn't changed (295-298), so a unit killed from under 0.5% life dies with no voice and no fade. ADR 0005 counts that as
+  an Original bug, and the port plays both on every death.
 
 ## Unit stats below level 10 (frame_42/DoAction_14.as `krinAddNewUnit`)
 
@@ -429,7 +491,7 @@ Three Heroic cases, read from the code but not run, and not ported, since the po
 
 ## Heroic decision timer (frame_217/DoAction.as, the conductor)
 
-Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / 30.0` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
+Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / BattleScreenClip.fps()` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
 and on Heroic once a half-turn ends with the player's unit dead, it waits for the player and hides the countdown label.
 
 - `BattleTime = BattleTimeLimit = 120` (`frame_217/DoAction.as:1-3`). The conductor adds 1 to `BattleTimeNow` once per frame, and only while `turnBasedKrin` is false and the player's team is
@@ -447,7 +509,7 @@ and on Heroic once a half-turn ends with the player's unit dead, it waits for th
 ## Battle speeches (frame_217/PlaceObject2_3389_480 enterFrame, lines 794-870)
 
 Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with `BattleRunner.NARRATOR_NAME` for slot 0, and makes the endGame check after each batch.
-`battle_scene.gd` waits `START_WAIT_SECONDS` before the opening lines, `_play_speech` shows each line for its `timeToSay` seconds, and `_input` handles Space through
+`battle_scene.gd` waits `START_WAIT_FRAMES` before the opening lines, `_play_speech` shows each line for its `timeToSay` seconds, and `_input` handles Space through
 `BattleRunner.hard_skip` and `AudioManager.stop_effects`. The port shows a plain label, without the box's placement or fade.
 
 - Each battle record's `speeches` entries carry `player`, `phase`, `turnTime`, `turnTime2`, `say`, `timeToSay` and sometimes `voiceOver` (`frame_42/DoAction_14.as`, 149 lines in 50
@@ -566,12 +628,12 @@ Everything below still stands in for original behavior, except the rows marked D
 
 | Piece | Current stand-in | Original truth lives in |
 |---|---|---|
-| Camera zoom + shake | none | `GridZoomer` "KrinZoomGo" (zoom to target center * `-zoomRatioNEW` + 400/300; pause 2xCD melee / 5 missile / 1 shock), `GridShaker` (shock + crits) |
-| Target hit flash | HIT recoil label only | `BATTLEFLASH` with `characterColorState/FilterState`: `frame_42/DoAction_8.as` ~line 199 |
-| Damage number art | Labels with exact colors + bigger crit font | NumberFixer/NumberSetter digit clips, miss/shield variants: `frame_42/DoAction_7.as` |
+| Camera zoom + shake | **DONE (2026-11-10)** for every move's zoom and a Shock's shake: `BattleScreenClip` (`scripts/battle/battle_screen_clip.gd`) runs both clips' frame scripts from `assets/ui/battle/battle_screen_motion.json`. A crit's shake is [#174](https://github.com/julian-perge/urchin/issues/174) | `GridZoomer` "KrinZoomGo" (zoom to target center * `-zoomRatioNEW`, or -0.3 for a Shock, + 400/300; pause 2xCD melee / 5 missile / 1 shock), `GridShaker` (shock + crits) |
+| Result flash | **DONE (2026-11-10)**: each Fighter presenter pulses its own Result flash on the doll, no longer the HIT recoil label only. See "The Result flash" above | `BATTLEFLASH` with `characterColorState/FilterState`: `frame_42/DoAction_8.as` ~line 199 |
+| Floating number art | **DONE (2026-11-10)**: `extract_floating_numbers` renders the digit, MISS and SHIELDED clips and NumberFixer's four labels, and `FloatingNumber` plays them | NumberFixer/NumberSetter digit clips, miss/shield variants: `frame_42/DoAction_7.as` |
 | Top battle HP/focus bars | in-field bars with numbers | `lifeBarUpdate` + bar clips, layout in frame 217 placements |
 | Doll ground shadow | none | player clip "shadower" (hidden on death, MODEL1 frame 360 script) |
-| Melee end point | fixed 55 px short | target/shooter half-widths: `krinMelee` endPoint |
+| Melee end point | **DONE (2026-11-10)**: `CharacterVisual.play_melee` stops the caster at the target's x less both half-widths, measured from the dolls' drawn bounds as the swing starts, and steps toward the target's live position on the original's dash and Runback steps. The part PNGs carry their filters' glow and Flash's bounds don't, so a half-width can come out a few px wider than the original's | target/shooter half-widths: `krinMelee` endPoint |
 | Swing whoosh | impact sound only | `sfx_swing` cues baked at MODEL1 clip frames 88/118/146 |
 | Stun/cast animations | **DONE (2026-07-21)**: the port plays the real labels (see the stun family section above), no longer a code-driven slump/raise | labels `cast` 189-219, `stun` 220-239 -> `stun2` 240-279 loop (frame 279 goto), `outofstun` 280-295 -> stand |
 | Hover ring / radial menu / pass ring | modern inventions (kept by design) | original UX: `KrinSelector` clips + `KrinToolTipper` tooltip system |

@@ -1,0 +1,35 @@
+{
+ "clips": {
+  "shield": {
+   "frames": [
+    "shield/1.png",
+    "shield/2.png",
+    "shield/3.png",
+    "shield/4.png",
+    "shield/5.png",
+    "shield/6.png",
+    "shield/7.png",
+    "shield/8.png",
+    "shield/9.png",
+    "shield/10.png",
+    "shield/11.png",
+    "shield/12.png",
+    "shield/13.png",
+    "shield/14.png",
+    "shield/15.png",
+    "shield/16.png",
+    "shield/17.png",
+    "shield/18.png",
+    "shield/19.png",
+    "shield/20.png"
+   ],
+   "rect": {
+    "h": 138.5,
+    "w": 187.5,
+    "x": -62.72,
+    "y": -70.47
+   }
+  }
+ },
+ "fps": 30.0
+}

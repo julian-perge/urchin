@@ -9,11 +9,12 @@ extends RefCounted
 # frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as
 # lines 70-102), so _apply_status_effect() runs after the match below for
 # every category. The conductor then recomputes the target's stats with
-# applyChangesKrin (line 103), which redraws its life bar and its stun pose
-# (frame_42/DoAction_10.as:342 and 468-481), so execute_move() ends with that
-# recompute and reads the life and stun the result ends on after it.
-# Visual/audio side effects (BATTLEFLASH, BATTLESCREEN, addSound, ...) are left
-# out entirely. This returns a MoveResult and the battle screen reacts to it.
+# applyChangesKrin (line 103), which redraws its bars, its buff icons and its
+# stun pose (frame_42/DoAction_10.as:342-379 and 468-481), so execute_move()
+# ends with that recompute and takes the snapshot the result ends on after it.
+# The visual and audio side effects (BATTLEFLASH, BATTLESCREEN, addSound, ...)
+# are not here. This returns a MoveResult, and the battle screen plays them from
+# it. FighterPresenter plays BATTLEFLASH as the Result flash, for example.
 #
 # _crit_roll() calls randi_range(0, 99) where the original's perScript() reads
 # KRS, a table of 100 random(100) values that it refills every time a battle
@@ -70,21 +71,19 @@ static func execute_move(ability: Ability, caster: CombatUnit, target: CombatUni
 
 	result.buff_applied = _apply_status_effect(ability, caster, target, buffs_by_name)
 	target.apply_changes()
-	result.life_after = target.life_n
-	result.stun_after = target.stun
+	result.target_after = UnitSnapshot.of(target)
 	result.killed = was_active and not target.active
 	return result
 
 
-# BattleRunner's hit roll failed, so the result only states the target's life
-# and stun, which nothing changed.
+# BattleRunner's hit roll failed, so the result only states the target as it
+# was, which nothing changed.
 static func miss(target: CombatUnit) -> MoveResult:
 	var result := MoveResult.new()
 	result.kind = MoveResult.Kind.MISS
 	result.life_before = target.life_n
-	result.life_after = target.life_n
 	result.target_stunned = target.stun != 0
-	result.stun_after = target.stun
+	result.target_after = UnitSnapshot.of(target)
 	return result
 
 

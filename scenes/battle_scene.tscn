@@ -1,12 +1,14 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_scene.gd" id="1_battle"]
+[ext_resource type="Script" path="res://scripts/battle/battle_screen_clip.gd" id="8_screen"]
 [ext_resource type="Texture2D" path="res://assets/ui/hotbar/background.png" id="2_hotbarbg"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/hotbar_background.png" id="3_battlebar"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/battle_pbar_full.png" id="4_countdownring"]
 [ext_resource type="PackedScene" path="res://scenes/battle/combat_log_panel.tscn" id="5_combatlog"]
 [ext_resource type="PackedScene" path="res://scenes/battle/radial_menu.tscn" id="6_radial"]
 [ext_resource type="PackedScene" path="res://scenes/battle/combat_text_banner.tscn" id="7_banner"]
+[ext_resource type="Script" path="res://scripts/battle/floating_number_layer.gd" id="8_floatingnumbers"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pass_normal"]
 bg_color = Color(0.1, 0.1, 0.11, 1)
@@ -79,7 +81,17 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="BattleScreenClip" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_screen")
+
+[node name="Background" type="TextureRect" parent="BattleScreenClip"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -90,7 +102,10 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Battlefield" type="Node2D" parent="."]
+[node name="Battlefield" type="Node2D" parent="BattleScreenClip"]
+
+[node name="FloatingNumbers" type="Node2D" parent="BattleScreenClip"]
+script = ExtResource("8_floatingnumbers")
 
 [node name="RadialMenu" parent="." instance=ExtResource("6_radial")]
 layout_mode = 0

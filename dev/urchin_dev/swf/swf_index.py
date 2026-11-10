@@ -15,8 +15,9 @@
 #
 # Code blocks are what ffdec's script export writes one file each for:
 # DoAction, DoInitAction, each DefineButton2 condition action and each clip
-# action record. Each block keeps the strings it pushes or pools and its
-# GotoLabel and GotoFrame opcodes. A goto with a receiver, like
+# action record. Each block keeps the strings it pushes or pools, its
+# GotoLabel and GotoFrame opcodes, and where its bytes are, which avm1.py
+# reads the numbers and assignments from. A goto with a receiver, like
 # `inner.gotoAndStop("GO")`, compiles to a method call instead, so for those
 # the decompiled text is the only readable form (see label_xref.py).
 #
@@ -151,7 +152,9 @@ class CodeBlock:
     """kind is "frame" (DoAction), "init" (DoInitAction), "button" or
     "clip". owner is the timeline holding the tag, except for "init", whose
     owner is the sprite the init code belongs to, and "button", whose owner is
-    the button. placed_id and depth are set for clip actions only."""
+    the button. placed_id and depth are set for clip actions only. span is
+    where the block's action records start and end in SwfIndex.data, which
+    avm1.py decodes."""
 
     kind: str
     owner: int
@@ -162,6 +165,7 @@ class CodeBlock:
     placed_id: int | None = None
     depth: int | None = None
     events: int | None = None
+    span: tuple[int, int] = (0, 0)
 
 
 @dataclass(frozen=True)
@@ -446,7 +450,9 @@ class _Walker:
     def _code(self, kind, owner, frame, start, end, **extra) -> None:
         strings, labels, frames = _scan_actions(self.data, start, end)
         self.index.code.append(
-            CodeBlock(kind, owner, frame, strings, labels, frames, **extra)
+            CodeBlock(
+                kind, owner, frame, strings, labels, frames, span=(start, end), **extra
+            )
         )
 
     def _button2(self, body: int, end: int) -> None:

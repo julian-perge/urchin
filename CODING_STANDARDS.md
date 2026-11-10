@@ -17,6 +17,18 @@ this project already got wrong once and names its evidence.
 - **Tests assert against source-derived values.** A test that pins a
   placeholder breaks when the real data lands, which is what happened to the
   store catalog test (`f435959`).
+- **Read every value from the original out of extracted data.** A number the
+  diff cites from the AS or the SWF, such as a frame count, a ratio, a
+  coordinate or a limit, comes from an extractor's output, and the test reads
+  the same output. When the AS computes a value, extract the inputs and the
+  operation. Three of #150's six tickets typed such values in by hand, and
+  only review caught them (`3f50df8a`).
+- **A comment passes three tests or goes.** It is necessary, because the code
+  alone can't say it: a reason, a link to another file, or an intentional
+  absence. It is skimmable, as a full sentence that stands on its own, with no
+  fragments. It is complete, because it says what actually happens and nothing
+  else in the file contradicts it. #150's review rewrote or deleted a dozen
+  fragment comments (`3053a675`).
 
 ## Verifying
 
@@ -30,6 +42,14 @@ this project already got wrong once and names its evidence.
 - **Prove a check can fail.** The recomposition verifier was only trusted after
   shifting a rect 20px and pointing it at the wrong label and watching both
   push p99 from 8 to 69 and 182.
+  - A test that needs a new signal or method can't compile on the old code,
+    so a compile error proves nothing. Commit the new API alone first, then
+    show the test fail on behavior, then add the fix, as #146 did with
+    `AudioManager.effect_played` (`2628f3e2`).
+  - Run Python mutation checks with `PYTHONDONTWRITEBYTECODE=1`. In #148, a
+    restored file kept its size and landed in the same second as the mutated
+    `.pyc`, so the next extractor run used the mutated bytecode and wrote red
+    multipliers where alphas belonged.
 - **Compare against an ffdec render**, masked to the pixels the
   recomposition actually draws and read at a percentile rather than a maximum.
   A whole-frame reference paints the stage behind everything, about 29% of the

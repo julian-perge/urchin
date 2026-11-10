@@ -717,8 +717,8 @@ func test_a_hit_states_the_life_it_took_and_the_life_it_left():
 	assert_eq(result.kind, MoveResult.Kind.DAMAGE, "Nuke is damage")
 	assert_eq(result.direction, MoveResult.Direction.HARM, "and it harmed its target")
 	assert_eq(result.life_before, target.life_u, "which started at full life")
-	assert_eq(result.life_after, target.life_n, "the result states the life the target has now")
-	assert_eq(result.life_before - result.life_after, result.amount, "which is the amount less")
+	assert_eq(result.target_after.life, target.life_n, "the result states the life the target has now")
+	assert_eq(result.life_before - result.target_after.life, result.amount, "which is the amount less")
 	assert_false(result.killed, "and the target lives")
 	randomize()
 
@@ -742,6 +742,42 @@ func test_a_killing_blow_logs_the_death_after_its_move():
 	assert_eq([events[1].get("slot"), events[1].get("cause")], [2, BattleRunner.DeathCause.MOVE], "and the death is the guard's, caused by the move")
 
 
+# Sonny's team opens against a level 9 Prison Guard in slot 2, with a dead
+# Prison Guard on Sonny's side in slot 3.
+func _sonny_with_a_dead_ally() -> BattleRunner:
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	var ally: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 3)
+	var runner := BattleRunner.new()
+	runner.setup({1: CombatUnit.from_player_save(save), 2: _guard_holding(""), 3: ally}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
+	ally.life_n = 0.0
+	ally.active = false
+	assert_true(runner.is_player_turn(), "sanity: Sonny's team opens")
+	return runner
+
+
+func _passing_slots(events: Array) -> Array:
+	return events.filter(func(event): return event["type"] == BattleRunner.EventType.PASSED).map(
+		func(event): return event["caster_slot"]
+	)
+
+
+# The conductor runs a pass, a move at a target that is already dead and the
+# turn of a caster that is dead down the path a stun takes, and that path holds
+# the next action back a frame (frame_217/PlaceObject2_3389_480 enterFrame,
+# lines 350 and 534-585). The runner logs each as a PASSED event, so the scene
+# can give it that frame.
+func test_a_pass_a_move_at_a_dead_target_and_a_dead_caster_each_log_a_pass():
+	var passing: BattleRunner = _sonny_with_a_dead_ally()
+	assert_eq(_passing_slots(passing.advance_half_turn({})), [1, 3], "Sonny passes, and his dead ally takes its turn")
+
+	var at_the_dead: BattleRunner = _sonny_with_a_dead_ally()
+	at_the_dead.units[2].life_n = 0.0
+	at_the_dead.units[2].active = false
+	var events: Array = at_the_dead.advance_half_turn({"target_slot": 2, "move_id": 434})  # Move 434 is Shock Therapy.
+	assert_eq(_passing_slots(events), [1, 3], "Sonny's move at the dead guard passes too")
+
+
 # Edge Of Death lands EDGEOFDEATH on its target, which takes 85% off max life,
 # and the stat recompute after the hit scales life down along with max life
 # (apply_changes in combat_unit.gd, from applyChangesKrin). The original redraws
@@ -755,8 +791,8 @@ func test_a_result_states_the_life_left_after_the_recompute_that_follows_the_hit
 	var result: MoveResult = BattleManager.execute_move(moves_by_id[579], caster, target, buffs_by_name)  # Edge Of Death
 
 	assert_eq(result.buff_applied, "EDGEOFDEATH", "the hit lands its buff")
-	assert_lt(result.life_after, result.life_before - result.amount, "and the lower max life takes life with it")
-	assert_eq(result.life_after, target.life_n, "the result states the life the target has once that is done")
+	assert_lt(result.target_after.life, result.life_before - result.amount, "and the lower max life takes life with it")
+	assert_eq(result.target_after.life, target.life_n, "the result states the life the target has once that is done")
 	randomize()
 
 
@@ -768,7 +804,7 @@ func test_a_hit_that_takes_the_last_of_its_targets_life_kills_it():
 	var result: MoveResult = BattleManager.execute_move(moves_by_id[5], caster, target, buffs_by_name)  # Nuke
 
 	assert_true(result.killed, "the result says the hit killed")
-	assert_eq(result.life_after, 0.0, "and left no life")
+	assert_eq(result.target_after.life, 0.0, "and left no life")
 	assert_false(target.active, "the target is down")
 
 
@@ -784,7 +820,7 @@ func test_a_focus_move_moves_focus_and_no_life():
 	assert_eq(result.kind, MoveResult.Kind.FOCUS, "the move is a Focus move")
 	assert_eq(result.direction, MoveResult.Direction.NONE, "it pushes life neither way")
 	assert_eq(result.amount, 30.0, "its amount is the focus it gives")
-	assert_eq(result.life_after, result.life_before, "and the target's life doesn't move")
+	assert_eq(result.target_after.life, result.life_before, "and the target's life doesn't move")
 
 
 # Damage on a target under an sswitch buff heals it, capped at max life
@@ -802,8 +838,8 @@ func test_damage_under_sswitch_heals_the_target():
 	assert_eq(result.kind, MoveResult.Kind.DAMAGE, "the move is still damage")
 	assert_eq(result.direction, MoveResult.Direction.HEAL, "and the result says it healed")
 	assert_eq(result.life_before, life_before, "from the life the target had")
-	assert_eq(result.life_after, minf(life_before + result.amount, target.life_u), "by the amount, up to max life")
-	assert_eq(result.life_after, target.life_n, "which is the life the target has now")
+	assert_eq(result.target_after.life, minf(life_before + result.amount, target.life_u), "by the amount, up to max life")
+	assert_eq(result.target_after.life, target.life_n, "which is the life the target has now")
 
 
 # A heal on a target under an sswitch buff hurts it
@@ -820,8 +856,8 @@ func test_a_heal_under_sswitch_hurts_the_target():
 	assert_eq(result.kind, MoveResult.Kind.HEAL, "the move is still a heal")
 	assert_eq(result.direction, MoveResult.Direction.HARM, "and the result says it hurt")
 	assert_eq(result.life_before, life_before, "from the life the target had")
-	assert_eq(result.life_after, maxf(life_before - result.amount, 0.0), "by the amount, down to 0")
-	assert_eq(result.life_after, target.life_n, "which is the life the target has now")
+	assert_eq(result.target_after.life, maxf(life_before - result.amount, 0.0), "by the amount, down to 0")
+	assert_eq(result.target_after.life, target.life_n, "which is the life the target has now")
 
 
 # A heal that hurts can kill. The original stops life at 0, empties focus and
@@ -835,7 +871,7 @@ func test_a_heal_under_sswitch_that_takes_the_last_of_its_targets_life_kills_it(
 
 	assert_eq(result.direction, MoveResult.Direction.HARM, "the heal hurt the target")
 	assert_true(result.killed, "the result says it killed")
-	assert_eq(result.life_after, 0.0, "and left no life")
+	assert_eq(result.target_after.life, 0.0, "and left no life")
 	assert_eq(target.focus_n, 0.0, "the target's focus is gone")
 	assert_false(target.active, "and the target is down")
 
@@ -860,11 +896,11 @@ func test_a_heal_of_0_stays_a_heal_under_sswitch():
 	assert_eq(caster.heal_mod, 0.0, "the caster heals for nothing")
 	assert_eq(result.amount, 0.0, "so the heal comes to 0")
 	assert_eq(result.direction, MoveResult.Direction.HEAL, "and stays a heal under sswitch")
-	assert_eq(result.life_after, result.life_before, "leaving the target's life where it was")
+	assert_eq(result.target_after.life, result.life_before, "leaving the target's life where it was")
 
 
 # A shield bigger than the hit takes all of it, and the original plays that as a
-# shield block, with no hit and no life lost (frame_42/DoAction_8.as:70-76).
+# Shield block, with no hit and no life lost (frame_42/DoAction_8.as:70-76).
 func test_a_shield_bigger_than_the_hit_takes_all_of_it():
 	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
 	var target: CombatUnit = _guard_holding("")
@@ -875,7 +911,7 @@ func test_a_shield_bigger_than_the_hit_takes_all_of_it():
 	assert_true(result.shield_took_all, "the result says the shield took the whole hit")
 	assert_eq(result.amount, 0.0, "nothing got through")
 	assert_eq(result.direction, MoveResult.Direction.HARM, "though the hit still pushed down")
-	assert_eq(result.life_after, result.life_before, "so no life was lost")
+	assert_eq(result.target_after.life, result.life_before, "so no life was lost")
 	assert_lt(target.shield, 100000.0, "and the shield paid for it")
 
 
@@ -894,8 +930,32 @@ func test_a_shield_exactly_as_big_as_the_hit_is_a_hit_for_0():
 
 	var result: MoveResult = BattleManager.execute_move(moves_by_id[5], second_caster, target, buffs_by_name)
 
-	assert_false(result.shield_took_all, "a shield as big as the hit isn't a block")
+	assert_false(result.shield_took_all, "a shield as big as the hit isn't a Shield block")
 	assert_eq(result.amount, 0.0, "but nothing gets through")
+	assert_eq(target.shield, 0.0, "and the shield is used up")
+	randomize()
+
+
+# A hit bigger than the shield takes the shield's value off the hit, empties the
+# shield and takes the rest off the target's life, and the battle screen draws
+# that rest (frame_42/DoAction_8.as:79-85). Both hits run on the same seed, so the
+# first one shows how big the hit is.
+func test_a_hit_bigger_than_the_shield_takes_what_got_through():
+	var first_caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var second_caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var unshielded: CombatUnit = _guard_holding("")
+	var target: CombatUnit = _guard_holding("")
+	seed(20261109)
+	var plain: MoveResult = BattleManager.execute_move(moves_by_id[5], first_caster, unshielded, buffs_by_name)  # Nuke
+	assert_gt(plain.amount, 10.0, "sanity: the hit is bigger than a shield of 10")
+	target.shield = 10.0
+	seed(20261109)
+
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[5], second_caster, target, buffs_by_name)
+
+	assert_false(result.shield_took_all, "a shield smaller than the hit isn't a Shield block")
+	assert_eq(result.amount, plain.amount - 10.0, "only what got through is the hit's amount")
+	assert_eq(result.life_before - result.target_after.life, result.amount, "and comes off the target's life")
 	assert_eq(target.shield, 0.0, "and the shield is used up")
 	randomize()
 
@@ -912,10 +972,10 @@ func test_a_result_states_whether_its_target_was_stunned_when_the_hit_landed():
 	var bolt: MoveResult = BattleManager.execute_move(moves_by_id[521], frost_terror, bolted, buffs_by_name)  # Shatter Bolt
 
 	assert_true(hit_while_stunned.target_stunned, "a target holding a stun was stunned when the hit landed")
-	assert_eq(hit_while_stunned.stun_after, 1.0, "and still is afterwards")
+	assert_eq(hit_while_stunned.target_after.stun, 1.0, "and still is afterwards")
 	assert_false(bolt.target_stunned, "Shatter Bolt's own stun comes after its hit")
 	assert_eq(bolted.stun, 1.0, "though it leaves its target stunned")
-	assert_eq(bolt.stun_after, 1.0, "and its result says so")
+	assert_eq(bolt.target_after.stun, 1.0, "and its result says so")
 
 
 # A move fails as it dispatches when its caster can't pay for it, and the
@@ -968,6 +1028,41 @@ func test_a_caster_short_of_both_life_and_focus_fails_naming_the_health_cost():
 	)
 
 
+# A caster pays its move's costs as the move dispatches, and the original
+# redraws the caster's bars right there (the conductor, lines 357-359), before
+# the move lands and before the caster's own Buff tick. So the MOVE event states
+# the caster as its costs left it. Here Nuke costs 20 Focus, with a life cost
+# of 10 added, and Sonny holds Cold Justice, whose tick after his move takes
+# more of his life.
+func test_a_move_event_states_its_caster_as_the_costs_left_it():
+	var nuke_costing_life: Ability = moves_by_id[5].duplicate()
+	nuke_costing_life.flat_life_cost = 10
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	save.focus = 100.0
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	var guard: CombatUnit = _guard_holding("")
+	var runner = BattleRunner.new()
+	runner.setup({1: player, 2: guard}, null, {5: nuke_costing_life}, buffs_by_id, buffs_by_name, [])
+	player.apply_buff(buffs_by_name["PERSECUTE"], 1, guard)
+	player.apply_changes()
+	var life_before: float = player.life_n
+	var focus_before: float = player.focus_n
+	assert_true(runner.is_player_turn(), "Sonny's team opens")
+
+	var move: Dictionary = runner.advance_half_turn({"target_slot": 2, "move_id": 5}).filter(
+		func(event): return event["type"] == BattleRunner.EventType.MOVE
+	)[0]
+
+	var dispatched: UnitSnapshot = move.get("caster_after_dispatch")
+	assert_not_null(dispatched, "the MOVE event states its caster")
+	if dispatched == null:
+		return
+	assert_eq(dispatched.focus, focus_before - 20.0, "with the Focus its cost left")
+	assert_eq(dispatched.life, life_before - 10.0, "and the life")
+	assert_lt(player.life_n, dispatched.life, "which the tick after the move took further down")
+
+
 # While one team acts, only its moves change the other team's life and stun:
 # costs and buff ticks land on the casters, and the end of a half-turn changes
 # no one. So for every target on the team that isn't acting, each result starts
@@ -997,10 +1092,10 @@ func test_every_result_states_the_life_and_stun_its_target_has_afterwards():
 			var result: MoveResult = event["result"]
 			if result.life_before != life[slot]:
 				mismatches.append("half-turn %d, slot %d starts at %s, not %s" % [half_turns, slot, result.life_before, life[slot]])
-			life[slot] = result.life_after
-			if result.stun_after > stun[slot]:
+			life[slot] = result.target_after.life
+			if result.target_after.stun > stun[slot]:
 				stuns_landed += 1
-			stun[slot] = result.stun_after
+			stun[slot] = result.target_after.stun
 			checked += 1
 		for slot in life:
 			if life[slot] != runner.units[slot].life_n:
@@ -1042,7 +1137,7 @@ func test_a_result_on_a_target_under_sswitch_states_the_life_it_has_afterwards()
 
 		assert_eq(result.direction, case[2], "%s turns the move around" % case[0])
 		assert_eq(result.life_before, life_before, "from the life the target had")
-		assert_eq(result.life_after, guard.life_n, "to the life it has afterwards")
+		assert_eq(result.target_after.life, guard.life_n, "to the life it has afterwards")
 
 
 # A move can send its status buff to its own caster (ability_two[21],

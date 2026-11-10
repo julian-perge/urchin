@@ -46,8 +46,12 @@ _Avoid_: Floating text, damage number, popup
 The glow that pulses on a unit's doll when a hit, a heal or a Focus change lands on it, in one color for each. It is the original's `BATTLEFLASH`.
 _Avoid_: Glow, hit flash
 
+**Shield clip**:
+The bubble and spark that play on a unit on a Shield block, or when its shield soaks a whole Buff tick. It is the original's `shield` clip on the fighter rig.
+_Avoid_: Shield bubble, shield effect
+
 **Fighter presenter**:
-The node that owns one battle slot's on-screen state: its doll, bars, displayed health, hover ring, floating numbers, stun and death.
+The node that owns one battle slot's on-screen state: its doll, bars, displayed health, hover ring, Floating numbers, Result flash, Shield clip, stun and death.
 _Avoid_: Unit view
 
 **Stage**:
@@ -97,7 +101,7 @@ The reason the player may not pick a move on a target right now: a bad target, t
 _Avoid_: Failure, which is a move that was picked but could not run
 
 **Move result**:
-What one move did to its target, as `BattleManager` resolved it: what kind of move it was, which way it pushed the target's life once sswitch had its say, how much damage, heal or focus change it made, the target's life before and after, and its stun when the move landed and after it.
+What one move did to its target, as `BattleManager` resolved it: what kind of move it was, which way it pushed the target's life once sswitch had its say, how much damage, heal or focus change it made, the target's life before it and whether the target was stunned when it landed, and the target's life, Focus, stun and buffs after it.
 _Avoid_: Hit, outcome
 
 **Shield block**:

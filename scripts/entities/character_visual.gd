@@ -20,11 +20,14 @@
 class_name CharacterVisual
 extends Node2D
 
-signal attack_connected  # emitted mid-swing, when a melee/cast should deal its damage
+# Emitted at the swing's Impact.
+signal attack_connected
 signal state_finished(state: int)
-signal melee_finished  # run -> Attack -> runback sequence completed
+# Emitted once the Runback has brought the doll home.
+signal melee_finished
 
 enum State { IDLE, MELEE, CAST, STUN, HIT, DEAD }
+enum MeleePhase { NONE, DASH, STRIKE, RUNBACK }
 
 const SPRITE_ROOT: String = "res://resources/sprites"
 # Per-art render bounds extracted from the SWF (extract_doll_art writes this
@@ -40,24 +43,41 @@ const OFFSETS_FILE: String = SPRITE_ROOT + "/doll_offsets.json"
 # (stand/run/Attack/runback/hit/dead/... - see NEXT_PHASES).
 const ANIMATIONS_FILE: String = SPRITE_ROOT + "/model1_animations.json"
 
-# krinMelee (frame_42/DoAction_4.as) movement model, converted from
-# per-frame steps at 30 fps to per-second rates:
-# - base step = distance / krinBoltTime(60) * krinBodyMove(10) = distance/6
-#   per frame -> goRat rate = 5.0 / s at full speed
-# - run out eases OUT: coEF = min(1.5 - 1.45 * goRat, 1); the run label
-#   is INTERRUPTED by arrival. In the original, the step scales with the
-#   distance to the target's center but the dash stops short of it by both
-#   half-widths, so arrival takes 13 frames with zero half-widths, 11 at
-#   300 px with 60 px of half-widths and 4 at 150 px with 100 px. MELEE_RATE
-#   fixes the goRat rate instead, so here arrival time does not depend on
-#   distance.
-# - impact fires krinMeleeAttackCD(15) frames = 0.5 s after the strike
-#   label starts; runback starts 15 more frames later (1.0 s) - which lands
-#   exactly on the clip's own runback frame for every attack label
-# - return eases home: coEF = min(1.45 * goRat, 1)
-const MELEE_RATE: float = 5.0
-const MELEE_IMPACT_TIME: float = 0.5   # krinMeleeAttackCD / 30
-const MELEE_RUNBACK_TIME: float = 1.0  # + krinMeleeAttackEndCD / 30
+# krinMelee (frame_42/DoAction_4.as:36-135) moves the fighter on every frame of
+# its swing:
+# - Each step moves the fighter a sixth of the way from where it stood when the
+#   swing started to where the target stands that frame, times a coefficient.
+#   The sixth is krinBodyMove (10) over krinBoltTime (60) (lines 38-39, 112-116
+#   and 213-216).
+# - The dash's coefficient is min(1.5 - 1.45 * goRat, 1), where goRat is the
+#   share of the dash's x distance covered so far. The dash ends on the first
+#   frame that covers it all, and the strike label cuts the run label off. The
+#   dash runs to the target's x less both fighters' half-widths, read once when
+#   the swing starts (lines 46-56). So it takes 13 frames with no half-widths,
+#   11 at 300 px with 60 px of half-widths and 4 at 150 px with 100 px.
+# - Impact comes krinMeleeAttackCD (15) frames after the strike label starts.
+#   krinMeleeAttackEndCD is 15 too, but its count starts on the frame that
+#   raised the impact flag (lines 87-95), so the Runback starts 14 frames
+#   after Impact.
+# - The Runback steps back toward home with the coefficient min(1.45 * goRat,
+#   1). It puts the fighter home on the first frame that leaves it no more
+#   than MELEE_HOME_TOLERANCE px from home along x, on the target's side
+#   (lines 117-123). The original's home is where the swing started. The
+#   port's is the doll's own, and the port measures the Runback from it (see
+#   play_melee).
+const MELEE_STEP_SHARE: float = 10.0 / 60.0
+const MELEE_IMPACT_FRAMES: float = 15.0
+const MELEE_RUNBACK_FRAMES: float = 14.0
+const MELEE_HOME_TOLERANCE: float = 0.000001
+
+const BODY_SHADER: Shader = preload("res://scenes/doll_body.gdshader")
+# The Result flash's margins in stage px. Its colored glows are 10 px wide, so
+# the body draws 6 px past the doll to hold the 5 px they reach past it. Its
+# white glow reads a box 100 px wide around each px the body draws, so the body
+# clears the screen texture 50 px past that, which is where a CanvasGroup
+# measures clear_margin from.
+const RESULT_FLASH_FIT_MARGIN: float = 6.0
+const RESULT_FLASH_CLEAR_MARGIN: float = 50.0
 
 static var _offsets: Dictionary = {}
 static var _offsets_loaded: bool = false
@@ -93,26 +113,42 @@ const REST_POSE: Dictionary[Variant, Variant] = {
 @export var animate: bool = true
 
 var _parts: Dictionary = {}  # name -> Node2D holding the layered sprites
-var _body: Node2D
+var _body: CanvasGroup
+var _body_material: ShaderMaterial
 var _state: int = State.IDLE
-var _state_time: float = 0.0
 var _attack_fired: bool = false
 
 # Timeline playback (labels from model1_animations.json).
 var _label: String = ""
 var _label_time: float = 0.0
 var _label_finished: bool = false
-# Melee sequence: -1 none, 0 run (out), 1 strike, 2 runback (home).
-# The strike/runback phases play the timeline CONTINUOUSLY from a start
-# frame (the original clip flows Attack -> attack2 -> runback on its own),
-# driven by _playhead instead of a clamped label.
-var _melee_phase: int = -1
-var _melee_offset: Vector2 = Vector2.ZERO
+# These run the melee swing. krinMelee moves the fighter's clip whatever its
+# inner doll plays (frame_42/DoAction_4.as:67-135), so the swing goes on through
+# any set_state(), and the doll shows the swing's labels only while its state is
+# MELEE. The strike and runback play the timeline continuously from _playhead,
+# because the original clip flows Attack -> attack2 -> runback on its own.
+# _strike_frames counts the SWF frames since the strike started.
+var _melee_phase: MeleePhase = MeleePhase.NONE
 var _home_position: Vector2 = Vector2.ZERO
 var _attack_label: String = "Attack"
 var _playhead: float = 0.0  # continuous 0-based frame position
-var _phase_time: float = 0.0
-var _go_rat: float = 0.0  # krinMelee relX / slowPoint (0 home, 1 target)
+var _strike_frames: float = 0.0
+var _impact_fired: bool = false
+# These hold krinMelee's targetMC, faceing, endPoint, boltx and bolty,
+# slowPoint and relX. _target_spot returns where the target stands now, as a
+# spot for this doll. _facing is 1 when the target is to the right of where the
+# swing started, and _end_x is where the dash ends. The swing measures itself
+# from _origin, which is where the doll stood when the swing started, and the
+# doll's home once the Runback starts. _slow_point is the x distance from
+# _origin to _end_x, and _rel_x and _rel_y are how far the doll stands from
+# _origin.
+var _target_spot: Callable = Callable()
+var _facing: float = 1.0
+var _end_x: float = 0.0
+var _origin: Vector2 = Vector2.ZERO
+var _slow_point: float = 0.0
+var _rel_x: float = 0.0
+var _rel_y: float = 0.0
 # Stun sub-phase: 0 "stun" entry (one-shot), 1 "stun2" hold (loop, entered
 # automatically when the entry finishes - baked into the clip itself, no
 # code needed), 2 "outofstun" exit (one-shot, ends back at idle).
@@ -120,8 +156,15 @@ var _stun_phase: int = 0
 
 
 func _ready():
-	_body = Node2D.new()
+	# The parts draw into one picture, so a filter can read the whole doll at
+	# once, the way Flash filters the original's whole `inner` clip. The body
+	# keeps its shader on at all times, because a CanvasGroup's own shader would
+	# apply the doll's modulate a second time (see doll_body.gdshader).
+	_body = CanvasGroup.new()
 	_body.name = "Body"
+	_body_material = ShaderMaterial.new()
+	_body_material.shader = BODY_SHADER
+	_body.material = _body_material
 	add_child(_body)
 	var ordered: Array = REST_POSE.keys()
 	ordered.sort_custom(func(a, b): return REST_POSE[a]["z"] < REST_POSE[b]["z"])
@@ -180,26 +223,17 @@ func dress_from_model(model: Array, equip_looks: Array) -> void:
 
 
 func set_state(new_state: State) -> void:
-	# Leaving an unfinished melee run: put the doll back home and release
-	# anything awaiting melee_finished (e.g. the caster died mid-swing).
-	if _state == State.MELEE and new_state != State.MELEE and _melee_phase != -1:
-		position = _home_position
-		_melee_phase = -1
-		melee_finished.emit()
 	_state = new_state
-	_state_time = 0.0
 	_attack_fired = false
 	_label_time = 0.0
 	_label_finished = false
-	_melee_phase = -1
 	# Reset the transient transforms the previous state left behind (hit
 	# recoil x-offset, stun tilt, cast tint) - without this the doll keeps
 	# rocking/tilting after the state ends.
 	if _body != null:
 		_body.position = Vector2.ZERO
 		_body.rotation = 0.0
-	if new_state != State.DEAD:
-		modulate = Color.WHITE
+	modulate = Color.WHITE
 	match new_state:
 		State.IDLE:
 			_start_label("stand")
@@ -207,41 +241,54 @@ func set_state(new_state: State) -> void:
 			_start_label("hit")
 		State.DEAD:
 			_start_label("dead")
-		State.MELEE:
-			_home_position = position
-			_melee_phase = 0
-			_melee_offset = Vector2.ZERO  # play_melee() overrides after
-			_phase_time = 0.0
-			_go_rat = 0.0
-			_playhead = _label_start_frame("run")
-			_apply_frame_index(int(_playhead))
+			_playhead = _label_start_frame("dead")
 		State.CAST:
 			_start_label("cast")
 		State.STUN:
 			_enter_stun_animation()
 
 
-# Melee with the original run -> strike -> runback motion. target_offset is
-# where to run to, relative to the current position; attack_label picks the
-# swing (Attack / Attack_Upper / Attack_Stab / attack2, per the move's
-# addNewMove param 12). Emits attack_connected at the blow and
-# melee_finished at the end.
-func play_melee(target_offset: Vector2 = Vector2.ZERO, attack_label: String = "Attack") -> void:
+# Melee with the original run -> strike -> runback motion. target_spot returns
+# where the target stands now, as a spot for this doll, and the swing reads it
+# on every frame of the run there and back. The dash stops short of where the
+# target stands as the swing starts by target_half_width plus half this doll's
+# own width in its run pose, because the conductor sends the doll to its run
+# label just before krinMelee reads both widths (frame_217/PlaceObject2_3389_480
+# enterFrame, lines 409-410). attack_label picks the swing (Attack /
+# Attack_Upper / Attack_Stab / attack2, per the move's addNewMove param 12).
+# Emits attack_connected at Impact and melee_finished once the Runback has
+# brought the doll home.
+func play_melee(target_spot: Callable, target_half_width: float, attack_label: String = "Attack") -> void:
+	# A swing that starts while the doll is still in its Runback keeps the doll's
+	# home. The original takes the clip's position at that moment as its new
+	# home (krinMelee's boltx, frame_42/DoAction_4.as:38-39), which leaves the
+	# fighter short of its slot for the rest of the battle. ADR 0005 counts that
+	# as an Original bug. The dash still starts from where the doll stands, as
+	# the original's does.
+	if _melee_phase != MeleePhase.RUNBACK:
+		_home_position = position
 	set_state(State.MELEE)
-	_melee_offset = target_offset
+	_melee_phase = MeleePhase.DASH
 	_attack_label = _valid_attack_label(attack_label)
+	_strike_frames = 0.0
+	_impact_fired = false
+	_playhead = _label_start_frame("run")
+	_apply_frame_index(int(_playhead))
+	_target_spot = target_spot
+	var target_x: float = target_spot.call().x
+	var reach: float = target_half_width + get_bounds().size.x / 2.0
+	_facing = 1.0 if position.x < target_x else -1.0
+	_end_x = target_x - _facing * reach
+	_measure_from(position)
 
 
-# A strike without the run (the original's "Shock" moves): plays the attack
-# label in place (flowing through the clip's own follow-through frames,
-# exactly like the original). Same signals as play_melee.
-func play_strike(attack_label: String = "Attack") -> void:
-	set_state(State.MELEE)
-	_melee_offset = Vector2.ZERO
-	_attack_label = _valid_attack_label(attack_label)
-	_melee_phase = 1
-	_phase_time = 0.0
-	_playhead = _label_start_frame(_attack_label)
+# Measures the swing from `origin`, as krinMelee measures it from boltx and
+# bolty.
+func _measure_from(origin: Vector2) -> void:
+	_origin = origin
+	_rel_x = position.x - origin.x
+	_rel_y = position.y - origin.y
+	_slow_point = _end_x - origin.x
 
 
 # krinBuff STUN is a running total across active stun-inflicting buffs (see
@@ -283,15 +330,52 @@ func is_idle() -> bool:
 	return _state == State.IDLE
 
 
+# Puts the Result flash's filter on the whole doll in `color`. Flash measures a
+# blur in stage px, and the window can draw the stage at any size, so this reads
+# the stage's scale on screen each time. A CanvasGroup's margins are in screen
+# px too.
+func show_result_flash(color: Color) -> void:
+	var stage_scale: float = get_viewport().get_final_transform().get_scale().x
+	_body_material.set_shader_parameter("result_flash", true)
+	_body_material.set_shader_parameter("color", color)
+	_body_material.set_shader_parameter("stage_scale", stage_scale)
+	_body.fit_margin = RESULT_FLASH_FIT_MARGIN * stage_scale
+	_body.clear_margin = RESULT_FLASH_CLEAR_MARGIN * stage_scale
+
+
+# BATTLEFLASH puts back the filter the unit's buffs give its doll, and the port
+# draws no such filter, so the doll goes back to its plain look.
+func hide_result_flash() -> void:
+	_body_material.set_shader_parameter("result_flash", false)
+
+
+# The box around every part the doll draws in its current pose, in its parent's
+# space, which is where Flash measures a clip's _width and _height. Flash
+# measures the parts' shapes without their filters, and some part PNGs carry a
+# filter's glow, so this box can come out bigger than the original's.
+func get_bounds() -> Rect2:
+	var bounds := Rect2()
+	var found: bool = false
+	for part in _parts.values():
+		if not part.visible:
+			continue
+		for layer in part.get_children():
+			if not layer is Sprite2D or layer.is_queued_for_deletion():
+				continue
+			var to_parent: Transform2D = transform * _body.transform * part.transform * layer.transform
+			var rect: Rect2 = to_parent * layer.get_rect()
+			bounds = bounds.merge(rect) if found else rect
+			found = true
+	return bounds
+
+
 func _process(delta: float) -> void:
 	if not animate:
 		return
-	_state_time += delta
+	_animate_melee(delta)
 	match _state:
 		State.IDLE:
 			_advance_label(delta, true)
-		State.MELEE:
-			_animate_melee(delta)
 		State.CAST:
 			_advance_label(delta, false)
 			if _label_finished:
@@ -303,11 +387,7 @@ func _process(delta: float) -> void:
 			if _label_finished:
 				set_state(State.IDLE)
 		State.DEAD:
-			_advance_label(delta, false)
-			modulate = Color(1, 1, 1, lerp(1.0, 0.55, min(_state_time / 2.0, 1.0)))
-			if _label_finished and not _attack_fired:
-				_attack_fired = true
-				state_finished.emit(State.DEAD)
+			_play_death(delta)
 
 
 # --- timeline playback (model1_animations.json) ------------------------------
@@ -324,8 +404,7 @@ func _label_duration(label: String) -> float:
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return 0.5
-	var fps: float = animations.get("fps", 30.0)
-	return (float(segment["end"]) - float(segment["start"]) + 1.0) / fps
+	return (float(segment["end"]) - float(segment["start"]) + 1.0) / BattleScreenClip.fps()
 
 
 func _advance_label(delta: float, loop: bool) -> void:
@@ -346,17 +425,19 @@ func _apply_label_frame(label: String, time: float) -> void:
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return
-	var fps: float = animations.get("fps", 30.0)
 	var start: int = int(segment["start"]) - 1
 	var end: int = int(segment["end"]) - 1
-	_apply_frame_index(clampi(start + int(time * fps), start, end))
+	_apply_frame_index(clampi(start + int(time * BattleScreenClip.fps()), start, end))
 
 
 func _apply_frame_index(index: int) -> void:
-	var frames: Array = _load_animations().get("frames", [])
+	var animations: Dictionary = _load_animations()
+	var frames: Array = animations.get("frames", [])
 	if frames.is_empty():
 		return
-	var pose: Dictionary = frames[clampi(index, 0, frames.size() - 1)]
+	var frame: int = clampi(index, 0, frames.size() - 1)
+	var pose: Dictionary = frames[frame]
+	var alphas: Dictionary = animations["alphas"][frame]
 	for part_name in _parts:
 		var part: Node2D = _parts[part_name]
 		var matrix = pose.get(part_name)
@@ -369,6 +450,7 @@ func _apply_frame_index(index: int) -> void:
 			Vector2(matrix[2], matrix[3]),
 			Vector2(matrix[4], matrix[5])
 		)
+		part.modulate.a = alphas.get(part_name, 1.0)
 
 
 func _label_start_frame(label: String) -> float:
@@ -392,46 +474,105 @@ static func _load_animations() -> Dictionary:
 	return _animations
 
 
-# The faithful krinMelee: ease-out dash (the run label freezes on its glide
-# and gets interrupted by arrival), strike playing straight through the
-# clip's follow-through frames (impact at 0.5 s), then the eased run home.
+# Moves the doll through one frame of krinMelee's swing. The dash eases out
+# while the run label plays, and the label holds its last frame if the doll has
+# not arrived by then. The strike plays straight through the clip's
+# follow-through frames, and the Runback eases the doll home. The Runback takes its first step on the
+# frame it starts, because the original turns the clip round and moves it in
+# the same onEnterFrame (frame_42/DoAction_4.as:87-116).
 func _animate_melee(delta: float) -> void:
-	var fps: float = _load_animations().get("fps", 30.0)
+	var frames: float = delta * BattleScreenClip.fps()
 	match _melee_phase:
-		0:  # dash out - run label plays but arrival is movement-driven
-			_playhead = minf(_playhead + delta * fps, _label_end_frame("run"))
-			_apply_frame_index(int(_playhead))
-			var out_coefficient: float = clampf(1.5 - 1.45 * _go_rat, 0.0, 1.0)
-			_go_rat += MELEE_RATE * out_coefficient * delta
-			position = _home_position + _melee_offset * minf(_go_rat, 1.0)
-			if _go_rat >= 1.0 or _melee_offset == Vector2.ZERO:
-				position = _home_position + _melee_offset
-				_melee_phase = 1
-				_phase_time = 0.0
-				_playhead = _label_start_frame(_attack_label)
-		1:  # strike - continuous playback through the follow-through
-			_phase_time += delta
-			_playhead += delta * fps
-			_apply_frame_index(int(_playhead))
-			if not _attack_fired and _phase_time >= MELEE_IMPACT_TIME:
-				_attack_fired = true
+		MeleePhase.DASH:
+			if _state == State.MELEE:
+				_playhead = minf(_playhead + frames, _label_end_frame("run"))
+				_apply_frame_index(int(_playhead))
+			_step_toward_target(minf(1.5 - 1.45 * _go_rat(), 1.0), frames)
+			if _go_rat() >= 1.0:
+				_melee_phase = MeleePhase.STRIKE
+				_strike_frames = 0.0
+				_show_swing_frame(_label_start_frame(_attack_label))
+		MeleePhase.STRIKE:
+			_strike_frames += frames
+			_show_swing_frame(_playhead + frames)
+			if not _impact_fired and _strike_frames >= MELEE_IMPACT_FRAMES:
+				_impact_fired = true
 				attack_connected.emit()
-			if _phase_time >= MELEE_RUNBACK_TIME:
-				_melee_phase = 2
-				_phase_time = 0.0
-				_playhead = _label_start_frame("runback")
-				_go_rat = 1.0
-		2:  # run home - eased return while the runback label plays out
-			_playhead = minf(_playhead + delta * fps, _label_end_frame("runback"))
-			_apply_frame_index(int(_playhead))
-			var back_coefficient: float = minf(1.45 * _go_rat, 1.0)
-			_go_rat -= MELEE_RATE * back_coefficient * delta
-			position = _home_position + _melee_offset * maxf(_go_rat, 0.0)
-			if _go_rat <= 0.01 and _playhead >= _label_end_frame("runback"):
-				position = _home_position
-				_melee_phase = -1
-				melee_finished.emit()
-				set_state(State.IDLE)
+			if _strike_frames >= MELEE_IMPACT_FRAMES + MELEE_RUNBACK_FRAMES:
+				_melee_phase = MeleePhase.RUNBACK
+				_measure_from(_home_position)
+				_show_swing_frame(_label_start_frame("runback"))
+				_step_home(frames)
+		MeleePhase.RUNBACK:
+			_play_runback_label(frames)
+			_step_home(frames)
+		MeleePhase.NONE:
+			_play_runback_label(frames)
+
+
+# Returns krinMelee's goRat, the share of the x distance from _origin to the
+# dash's end that the doll has covered.
+func _go_rat() -> float:
+	return _rel_x / _slow_point
+
+
+# Moves the doll `coefficient` steps toward where its target stands now, over
+# `frames` SWF frames. A step is a sixth of the way from _origin to the target,
+# so it grows when the target moves away from _origin. A negative coefficient
+# steps back toward _origin.
+func _step_toward_target(coefficient: float, frames: float) -> void:
+	var target: Vector2 = _target_spot.call()
+	var share: float = coefficient * MELEE_STEP_SHARE * frames
+	_rel_x += share * (target.x - _origin.x)
+	_rel_y += share * (target.y - _origin.y)
+	position = _origin + Vector2(_rel_x, _rel_y)
+
+
+# Shows the swing's `frame` while the doll's state is MELEE. In any other state
+# it leaves _playhead alone, because _play_death plays the dead label on the
+# same playhead.
+func _show_swing_frame(frame: float) -> void:
+	if _state == State.MELEE:
+		_playhead = frame
+		_apply_frame_index(int(_playhead))
+
+
+# The runback label plays to its end and then falls into stand, as its last
+# frame's script does (DefineSprite_166_MODEL1/frame_188), whether or not the
+# doll is home yet.
+func _play_runback_label(frames: float) -> void:
+	if _state != State.MELEE:
+		return
+	_playhead += frames
+	if _playhead > _label_end_frame("runback"):
+		set_state(State.IDLE)
+	else:
+		_apply_frame_index(int(_playhead))
+
+
+func _step_home(frames: float) -> void:
+	_step_toward_target(-minf(1.45 * _go_rat(), 1.0), frames)
+	if _rel_x * _facing <= MELEE_HOME_TOLERANCE:
+		position = _home_position
+		_melee_phase = MeleePhase.NONE
+		melee_finished.emit()
+
+
+# The dead label plays through once, and the script on its last frame, 371,
+# removes the doll before Flash draws that frame
+# (DefineSprite_166_MODEL1/frame_371/DoAction.as). The playhead counts frames,
+# not seconds, because a sum of 1/30 s steps drifts off whole frames and would
+# remove the doll a frame early or late.
+func _play_death(delta: float) -> void:
+	if _label_finished:
+		return
+	_playhead += delta * BattleScreenClip.fps()
+	if _playhead >= _label_end_frame("dead"):
+		_label_finished = true
+		visible = false
+		state_finished.emit(State.DEAD)
+		return
+	_apply_frame_index(int(_playhead))
 
 
 # stun(220-239, one-shot) -> stun2(240-279, loop - the clip flows into this

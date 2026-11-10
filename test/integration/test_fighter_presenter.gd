@@ -1,6 +1,7 @@
 # FighterPresenter on its own, with a hand-made unit and hand-made results and
-# no battle scene or save behind it. Fades are stepped with custom_step() and
-# the doll's swing with its own _process(), so nothing here waits on real time.
+# no battle scene or save behind it. Fades are stepped with custom_step(), the
+# doll's swing with its own _process() and Floating numbers with their layer's
+# advance(), so nothing here waits on real time.
 extends GutTest
 
 const FighterPresenterScene = preload("res://scenes/battle/fighter_presenter.tscn")
@@ -13,11 +14,21 @@ const STUN: CharacterVisual.State = CharacterVisual.State.STUN
 const HIT: CharacterVisual.State = CharacterVisual.State.HIT
 const DEAD: CharacterVisual.State = CharacterVisual.State.DEAD
 const ENEMY_COLOR: Color = FighterPresenter.RING_COLORS[FighterPresenter.Relation.ENEMY]
+# The colors of the Result flash's two colored glows in each of BATTLEFLASH's
+# labels, 16763904, 10092288 and 3407871 in frame_42/DoAction_3.as:117-130 and
+# 162-168.
+const HIT_FLASH: Color = Color("#ffcc00")
+const HEAL_FLASH: Color = Color("#99ff00")
+const FOCUS_FLASH: Color = Color("#33ffff")
+# Frame n of the shield clip, as extract_rig_clips writes it.
+const SHIELD_CLIP_ART: String = "res://assets/ui/battle/rig/shield/%d.png"
 
 var _presenter: FighterPresenter
 var _doll: CharacterVisual
 var _overlay: UnitOverlay
-var _layer: Node2D
+var _flash: ResultFlash
+var _shield_clip: RigClip
+var _layer: FloatingNumberLayer
 var _unit: CombatUnit
 var _cues: Array = []
 
@@ -42,17 +53,36 @@ func _make_unit(team: CombatUnit.Team, slot: int) -> CombatUnit:
 	return unit
 
 
-# Builds a presenter the way battle_scene.gd does, on a float layer of its own,
-# and records every cue it asks for in order in _cues.
+# Builds a presenter the way battle_scene.gd does, on a Floating number layer of
+# its own that only steps when a test steps it, and records every cue it asks
+# for in order in _cues.
 func _present(unit: CombatUnit, items_by_id: Dictionary = {}, buffs_by_id: Dictionary = {}) -> void:
-	_layer = add_child_autofree(Node2D.new())
+	_layer = add_child_autofree(FloatingNumberLayer.new())
+	_layer.set_process(false)
 	_presenter = add_child_autofree(FighterPresenterScene.instantiate())
 	_presenter.setup(unit, HOME, items_by_id, buffs_by_id, _layer)
 	_doll = _presenter.get_node("Doll")
 	_overlay = _presenter.get_node("Overlay")
+	# The tests step the Result flash and the shield clip themselves through
+	# advance().
+	_flash = _presenter.get_node("ResultFlash")
+	_flash.set_process(false)
+	_shield_clip = _presenter.get_node("ShieldClip")
+	_shield_clip.set_process(false)
 	_cues = []
 	_presenter.voice_cue.connect(func(cues): _cues.append(cues))
 	_presenter.effect_cue.connect(func(cue): _cues.append(cue))
+
+
+# What a hand-made event leaves on the unit: the unit as _make_unit builds it,
+# at the given life, with no stun and no buffs.
+func _state(life: float) -> UnitSnapshot:
+	var state := UnitSnapshot.new()
+	state.life = life
+	state.life_max = 100.0
+	state.focus = 50.0
+	state.focus_max = 50.0
+	return state
 
 
 func _result(kind: MoveResult.Kind, direction: MoveResult.Direction, amount: float, life_after: float) -> MoveResult:
@@ -60,7 +90,7 @@ func _result(kind: MoveResult.Kind, direction: MoveResult.Direction, amount: flo
 	result.kind = kind
 	result.direction = direction
 	result.amount = amount
-	result.life_after = life_after
+	result.target_after = _state(life_after)
 	return result
 
 
@@ -94,12 +124,12 @@ func _killing(result: MoveResult) -> MoveResult:
 
 func _stunned_at_hit(result: MoveResult) -> MoveResult:
 	result.target_stunned = true
-	result.stun_after = 1.0
+	result.target_after.stun = 1.0
 	return result
 
 
 func _stunning(result: MoveResult) -> MoveResult:
-	result.stun_after = 1.0
+	result.target_after.stun = 1.0
 	return result
 
 
@@ -109,8 +139,42 @@ func _fire_move() -> Ability:
 	return move
 
 
-func _numbers() -> Array:
-	return _layer.get_children().filter(func(child): return child is Label)
+func _numbers() -> Array[FloatingNumber]:
+	return _layer.numbers()
+
+
+# Shows `result` on a fresh fighter and returns the labels of the Floating
+# numbers it draws, oldest first.
+func _labels_drawn_by(result: MoveResult, move: Ability = null) -> Array:
+	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+	_presenter.show_result(result, move)
+	return _numbers().map(func(number): return number.label)
+
+
+# Where a Floating number's holder draws each of its glyphs, from the left, in
+# the holder's own units.
+func _glyph_offsets(number: FloatingNumber) -> Array:
+	return number.flasher.get_children().map(func(glyph): return glyph.position.x)
+
+
+# Every layer sprite of a Floating number, glyph by glyph from the left and
+# bottom first within a glyph.
+func _layer_sprites(number: FloatingNumber) -> Array:
+	var sprites: Array = []
+	for glyph in number.flasher.get_children():
+		sprites.append_array(glyph.get_children())
+	return sprites
+
+
+# The shares of white a Floating number's layer sprites are drawn with, each
+# share once.
+func _whites(number: FloatingNumber) -> Array:
+	var whites: Array = []
+	for sprite in _layer_sprites(number):
+		var white: float = (sprite.material as ShaderMaterial).get_shader_parameter("white")
+		if not whites.has(white):
+			whites.append(white)
+	return whites
 
 
 func _stun() -> void:
@@ -122,6 +186,38 @@ func _stun() -> void:
 func _play_out_the_hit() -> void:
 	for frame in 60:
 		_doll._process(1.0 / 30.0)
+
+
+# Steps the presenter and its doll by `count` frames at the original's 30 fps.
+func _step_frames(count: int) -> void:
+	for frame in count:
+		_presenter._process(1.0 / 30.0)
+		_doll._process(1.0 / 30.0)
+
+
+func _present_with_a_buff() -> void:
+	var buff := Buff.new()
+	buff.internal_name = "FIRESAM"
+	_unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
+	_present(_unit, {}, {1: buff})
+
+
+# A hit that kills the unit _present_with_a_buff built. The unit keeps its buff
+# through its death, so the result states it.
+func _killing_hit_on_the_buffed_unit() -> MoveResult:
+	var result: MoveResult = _killing(_damage(100.0, 0.0))
+	result.target_after.buff_slots = _unit.buff_slots.duplicate(true)
+	return result
+
+
+# Returns what the overlay draws besides its two bars.
+func _overlay_shows() -> Dictionary:
+	var icons: Array = _overlay.buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
+	return {
+		"icons": icons.size() if _overlay.buff_row.is_visible_in_tree() else 0,
+		"name": _overlay.name_label.is_visible_in_tree(),
+		"number": _overlay.health_value.is_visible_in_tree(),
+	}
 
 
 func test_setup_draws_the_unit():
@@ -188,14 +284,13 @@ func test_setup_dresses_the_doll_from_the_item_table():
 # already at 40 here while the hit that took it there has not been shown.
 func test_the_bars_only_move_when_the_hit_lands():
 	_unit.life_n = 40.0
-	_presenter.redraw()
-	assert_eq(_overlay.health_bar.value, 100.0, "a redraw before the hit leaves the bar alone")
+	assert_eq(_overlay.health_bar.value, 100.0, "before the hit the bar is where it was")
 	assert_eq(_overlay.health_value.text, "100", "and the number beside it")
 
 	_presenter.show_result(_damage(60.0, 40.0), null)
 	assert_eq(_overlay.health_bar.value, 40.0, "the bar drops when the hit lands")
 	assert_eq(_overlay.health_value.text, "40", "and so does the number")
-	assert_eq(_presenter.displayed_hp, 40.0, "and the health it displays")
+	assert_eq(_presenter.displayed.life, 40.0, "and the health it displays")
 
 
 func test_each_hit_of_a_half_turn_shows_the_life_it_left():
@@ -206,13 +301,11 @@ func test_each_hit_of_a_half_turn_shows_the_life_it_left():
 	assert_eq(_overlay.health_bar.value, 40.0, "and the second reaches the unit's life")
 
 
-# A unit pays its own move's life cost when it acts, and the runner resolves the
-# whole half-turn before the replay, so a result on the unit later in that
-# half-turn starts from the life left after the cost. Here the cost was 40 and
-# the move moved 10 either way. The bar shows the life each result states, so
-# the cost reaches it at that result, where the original drew it when the cost
-# was paid (the conductor, line 359).
-func test_a_result_shows_the_life_it_states_with_an_earlier_cost_in_it():
+# A result states the target's whole life, so the bar shows that life even when
+# the unit also lost life to something the screen has not shown yet. Here that
+# was 40, as a damage-over-time tick earlier in the half-turn can take, and the
+# move moved 10 either way.
+func test_a_result_shows_the_life_it_states_with_an_earlier_loss_in_it():
 	for result in [
 		_damage(10.0, 50.0),
 		_damage_that_heals(10.0, 70.0),
@@ -222,84 +315,152 @@ func test_a_result_shows_the_life_it_states_with_an_earlier_cost_in_it():
 		var label: String = "%s that pushed %s" % [MoveResult.Kind.find_key(result.kind), MoveResult.Direction.find_key(result.direction)]
 		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 		_presenter.show_result(result, null)
-		assert_eq(_presenter.displayed_hp, result.life_after, "a %s takes the cost along with it" % label)
-		assert_eq(_overlay.health_value.text, str(int(result.life_after)), "and so does the number beside the bar")
+		assert_eq(_presenter.displayed.life, result.target_after.life, "a %s takes the earlier loss along with it" % label)
+		assert_eq(_overlay.health_value.text, str(int(result.target_after.life)), "and so does the number beside the bar")
 
 
-# A damage-over-time tick or a life cost with no later result on the unit only
-# reaches the bar when the half-turn ends.
+# A damage-over-time tick with no later event on the unit only reaches the bar
+# when the half-turn ends.
 func test_the_bars_snap_to_the_unit_at_half_turn_end():
 	_unit.life_n = 63.0
-	_presenter.redraw()
 	assert_eq(_overlay.health_bar.value, 100.0, "still held back before the snap")
 
 	_presenter.snap_to_unit()
 	assert_eq(_overlay.health_bar.value, 63.0, "the bar shows the unit's life")
 	assert_eq(_overlay.health_value.text, "63", "and so does the number")
-	assert_eq(_presenter.displayed_hp, 63.0, "and the health it displays")
+	assert_eq(_presenter.displayed.life, 63.0, "and the health it displays")
 
 
-func test_focus_shows_the_unit_true_value_while_health_is_held_back():
-	_unit.life_n = 40.0
+# A unit pays its move's costs as the move dispatches, and the original redraws
+# its bars right there (the conductor, lines 357-359). The runner has already
+# taken the unit to its Focus at the half-turn's end, so the bar waits for the
+# move to start.
+func test_a_focus_cost_shows_when_the_move_starts_and_not_before():
+	_unit.life_n = 70.0
 	_unit.focus_n = 12.0
-	_presenter.redraw()
-	assert_eq(_overlay.focus_bar.value, 12.0, "focus is never held back")
-	assert_eq(_overlay.health_bar.value, 100.0, "only health is")
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	assert_eq(_overlay.focus_bar.value, 50.0, "a hit before the move leaves the Focus it states")
+
+	var dispatched: UnitSnapshot = _state(80.0)
+	dispatched.focus = 30.0
+	_presenter.show_state(dispatched)
+	assert_eq(_overlay.focus_bar.value, 30.0, "the move's start shows the Focus its cost left")
+	assert_eq(_overlay.health_bar.value, 80.0, "and the life its cost left")
 
 
-func test_a_redraw_shows_the_units_buffs():
+func _buff_icons() -> Array:
+	return _overlay.buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
+
+
+# The runner resolves the whole half-turn before the replay, so a buff that a
+# later hit lands is already on the unit when an earlier hit plays. The original
+# draws a unit's buff icons in applyChangesKrin, which the conductor runs on the
+# target after each strike that lands (line 103), so the icon waits for the hit
+# that lands it.
+func test_a_buff_landed_late_in_a_half_turn_shows_only_once_its_result_plays():
 	var buff := Buff.new()
 	buff.internal_name = "FIRESAM"
 	_present(_unit, {}, {1: buff})
-	assert_eq(_overlay.buff_row.get_child_count(), 0, "no buffs yet")
-	_unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
-	_presenter.redraw()
-	assert_eq(_overlay.buff_row.get_child_count(), 1, "the buff table reaches the row")
+	var slot: Dictionary = {"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_unit.buff_slots[0] = slot.duplicate()
+
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	assert_eq(_buff_icons().size(), 0, "a hit before the one that lands the buff shows no icon")
+
+	var landing: MoveResult = _damage(10.0, 80.0)
+	landing.target_after.buff_slots = [slot.duplicate()]
+	_presenter.show_result(landing, null)
+	assert_eq(_buff_icons().size(), 1, "the hit that lands it shows it, from the buff table")
+
+
+# Shatter Bolt lands its stun as a buff, so its target shows the stun pose and
+# the buff's icon. Both wait for the hit that lands them, where the original's
+# applyChangesKrin draws them (the conductor, line 103).
+func test_a_stun_icon_shows_only_at_the_hit_that_lands_it():
+	var buff := Buff.new()
+	buff.internal_name = "SHATTERBOLT"
+	_present(_unit, {}, {1: buff})
+	var slot: Dictionary = {"cd": 2, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_unit.buff_slots[0] = slot.duplicate()
+	_unit.stun = 1.0
+
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	_play_out_the_hit()
+	assert_eq(_buff_icons().size(), 0, "a hit before the stun shows no icon")
+	assert_ne(_doll._state, STUN, "and no stun")
+
+	var stunning: MoveResult = _stunning(_result(MoveResult.Kind.STATUS_ONLY, MoveResult.Direction.NONE, 0.0, 90.0))
+	stunning.target_after.buff_slots = [slot.duplicate()]
+	_presenter.show_result(stunning, null)
+	assert_eq(_buff_icons().size(), 1, "the hit that lands the stun shows its icon")
+	assert_eq(_doll._state, STUN, "and starts the stun")
 
 
 func test_a_hit_bigger_than_the_displayed_health_stops_the_bar_at_empty():
 	_presenter.show_result(_damage(250.0, 0.0), null)
-	assert_eq(_presenter.displayed_hp, 0.0, "the displayed health stops at zero")
+	assert_eq(_presenter.displayed.life, 0.0, "the displayed health stops at zero")
 	assert_eq(_overlay.health_value.text, "0", "and so does the number")
 
 
-func test_a_heal_raises_the_bar_with_a_plus_number_and_stops_at_full():
+# KrinNumberShow draws a heal in its HEAL color, 0x66FF00, with the same digits
+# as any other number (frame_42/DoAction_7.as:10-13).
+func test_a_heal_raises_the_bar_with_a_green_number_and_no_plus():
 	_unit.life_n = 40.0
 	_presenter.snap_to_unit()
-	_presenter.show_result(_heal(10.0, 50.0), null)
-	assert_eq(_overlay.health_bar.value, 50.0, "the bar rises by the heal")
-	assert_eq(_numbers()[-1].text, "+10", "the number carries a plus")
-	assert_eq(_numbers()[-1].modulate, MenuTheme.HEAL_COLOR, "in heal green")
+	_presenter.show_result(_heal(12.0, 52.0), null)
+	assert_eq(_overlay.health_bar.value, 52.0, "the bar rises by the heal")
+	var number: FloatingNumber = _numbers()[-1]
+	assert_eq(number.label, "normal", "the normal label")
+	assert_eq(number.glyphs, ["1", "2"], "12 with no plus")
+	assert_eq(number.tint, Color("66FF00"), "in heal green")
 	assert_eq(_cues, [], "a heal plays no voice")
 	_presenter.show_result(_heal(500.0, 100.0), null)
-	assert_eq(_presenter.displayed_hp, 100.0, "and it stops at full")
+	assert_eq(_presenter.displayed.life, 100.0, "and it stops at full")
 
 
-# KrinNumberShow colors a number by the move's element.
+# The original's whole heal branch is inside DamageOutputKrinFinal > 0
+# (frame_42/DoAction_8.as:172), so a heal of 0 draws nothing.
+func test_a_heal_of_zero_draws_no_number():
+	_presenter.show_result(_heal(0.0, 100.0), null)
+	assert_eq(_numbers().size(), 0)
+
+
+# KrinNumberShow colors a number by the move's element, from elementColorArray
+# (frame_42/DoAction_7.as:14-22 and frame_41/DoAction_2.as:2).
 func test_a_damage_number_takes_the_moves_element_color():
-	_presenter.show_result(_damage(12.0, 88.0), _fire_move())
-	assert_eq(_numbers()[-1].text, "12")
-	assert_eq(_numbers()[-1].modulate, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.FIRE])
+	assert_eq(_labels_drawn_by(_damage(12.0, 88.0), _fire_move()), ["normal"], "one number")
+	assert_eq(_numbers()[0].glyphs, ["1", "2"], "12")
+	assert_eq(_numbers()[0].tint, Color("FF6600"), "in the Fire color")
 
 
 func test_a_damage_number_without_an_element_is_white():
 	_presenter.show_result(_damage(5.0, 95.0), null)
-	assert_eq(_numbers()[-1].modulate, Color.WHITE, "no move")
+	assert_eq(_numbers()[-1].tint, Color.WHITE, "no move")
 	var elementless := Ability.new()
 	elementless.damage_element_type = -1 as CombatUnit.Element
 	_presenter.show_result(_damage(5.0, 90.0), elementless)
-	assert_eq(_numbers()[-1].modulate, Color.WHITE, "a move with no element")
+	assert_eq(_numbers()[-1].tint, Color.WHITE, "a move with no element")
 
 
-func test_a_critical_number_is_bigger_and_outlined():
+# KrinNumberShow plays the critical label for any number while perKSuccess is
+# set (frame_42/DoAction_7.as:42-49), so a crit heal plays it too. That label
+# starts at 2.84x and flickers white every other frame over its frames 7 to 18
+# (DefineSprite 53, frames 75-86).
+func test_a_crit_plays_the_critical_label_for_a_heal_as_well_as_damage():
 	for result in [
 		_critical(_damage(12.0, 88.0)),
 		_critical(_damage_that_heals(12.0, 100.0)),
 		_critical(_heal_that_hurts(12.0, 88.0)),
+		_critical(_heal(12.0, 100.0)),
 	]:
-		_presenter.show_result(result, null)
-		assert_eq(_numbers()[-1].get_theme_font_size("font_size"), 24, "the critical size")
-		assert_eq(_numbers()[-1].get_theme_constant("outline_size"), 4, "with an outline")
+		var kind: String = "%s that pushed %s" % [MoveResult.Kind.find_key(result.kind), MoveResult.Direction.find_key(result.direction)]
+		assert_eq(_labels_drawn_by(result), ["critical"], "a crit %s" % kind)
+	var heal: FloatingNumber = _numbers()[0]
+	assert_almost_eq(heal.flasher.scale.x, 2.842, 0.001, "2.84x on its first frame")
+	_step(6)
+	assert_eq(_whites(heal), [1.0], "white on frame 7")
+	_step(1)
+	assert_eq(_whites(heal), [0.0], "in its own color on frame 8")
 
 
 func test_a_hit_flinches_the_doll_and_plays_the_hit_voice():
@@ -310,37 +471,127 @@ func test_a_hit_flinches_the_doll_and_plays_the_hit_voice():
 
 # A move-caused death used to play only when the queued DEATH event was reached,
 # which for a melee hit is after the caster has run back.
-func test_a_killing_blow_plays_the_death_at_the_impact():
+func test_a_move_result_that_kills_plays_the_death_at_its_impact():
 	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
 	assert_eq(_doll._state, DEAD, "the doll plays its death at the impact")
-	assert_false(_overlay.visible, "the overlay goes the same moment")
-	assert_eq(_cues, [VOICE_DIE, VOICE_HIT], "the death cry, then the hit voice")
+
+
+# The original plays the hit voice only when the target survives, in the else
+# of IDKT.LIFEN == 0 (frame_42/DoAction_8.as:104-131).
+func test_a_move_result_that_kills_plays_the_death_voice_and_not_the_hit_voice():
+	_presenter.show_result(_killing(_damage(500.0, 0.0)), null)
+	assert_eq(_cues, [VOICE_DIE])
+
+
+# The original attaches LifeBarSmoother to the bar at the death, and the clip's
+# frame 18, 17 frames later, removes the buff icons and sends the bar's inner
+# clip to its empty "third" frame, which takes the name and the numbers away
+# (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as).
+func test_the_buff_icons_name_and_number_clear_17_frames_after_a_killing_impact():
+	_present_with_a_buff()
+	_presenter.show_result(_killing_hit_on_the_buffed_unit(), null)
+	_step_frames(16)
+	var before_the_clear: Dictionary = _overlay_shows()
+	_step_frames(1)
+	assert_eq([before_the_clear, _overlay_shows()], [
+		{"icons": 1, "name": true, "number": true},
+		{"icons": 0, "name": false, "number": false},
+	])
+
+
+# Returns the alpha the overlay is drawn at, which is 0 once it is hidden.
+func _overlay_alpha() -> float:
+	return _overlay.modulate.a if _overlay.is_visible_in_tree() else 0.0
+
+
+# From the frame after the clear, LifeBarSmoother takes 5 off the bar's alpha
+# every frame (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as).
+func test_the_bar_fades_5_alpha_a_frame_after_the_clear():
+	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
+	var alphas: Array = [_overlay_alpha()]
+	for frame in 37:
+		_step_frames(1)
+		alphas.append(_overlay_alpha())
+	for expected in [[16, 1.0], [17, 1.0], [18, 0.95], [27, 0.5], [37, 0.0]]:
+		assert_almost_eq(alphas[expected[0]], expected[1], 0.001, "frame %d after the impact" % expected[0])
+
+
+# The scene snaps every fighter at the half-turn's end, and the bar's name,
+# number and icons stay cleared through it.
+func test_a_redraw_after_the_clear_leaves_the_overlay_cleared():
+	_present_with_a_buff()
+	_presenter.show_result(_killing_hit_on_the_buffed_unit(), null)
+	_step_frames(20)
+	_presenter.snap_to_unit()
+	assert_eq(_overlay_shows(), {"icons": 0, "name": false, "number": false})
+
+
+# LifeBarSmoother hides the bar the frame after its alpha reaches 0
+# (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as), and the doll removes
+# itself when its dead label ends. The Shield clip stays on the rig, as the
+# original's does, but it rests on its frame 1, which is blank, so it counts as
+# drawn only while it plays.
+func test_a_dead_units_slot_shows_nothing_for_the_rest_of_the_battle():
+	_present_with_a_buff()
+	_presenter.show_result(_killing_hit_on_the_buffed_unit(), null)
+	_step_frames(90)
+	_presenter.snap_to_unit()
+	var drawn: Array = _presenter.get_children().filter(func(child):
+		if child is RigClip and not child.is_playing():
+			return false
+		return child is CanvasItem and child.is_visible_in_tree()
+	)
+	assert_eq(drawn.map(func(child): return child.name), [])
+
+
+# lifeBarUpdate plays the death voice and starts the fade only when the bar's
+# rounded percent changes (frame_42/DoAction_8.as:295-298 and 345-347), so the
+# original kills a unit from under 0.5% life with neither. ADR 0005 counts that
+# as an Original bug, and the port plays both on every death.
+func test_a_unit_killed_from_under_half_a_percent_life_still_plays_its_death_voice_and_fade():
+	_unit.life_u = 1000.0
+	_unit.life_n = 4.0
+	_present(_unit)
+	_presenter.show_result(_killing(_damage(4.0, 0.0)), null)
+	_step_frames(27)
+	assert_eq(_cues, [VOICE_DIE], "the death voice")
+	assert_almost_eq(_overlay_alpha(), 0.5, 0.001, "and the bar halfway through its fade")
+
+
+# A damage-over-time death has no result to move the bar. The original empties
+# the bar on the tick that kills (frame_42/DoAction_10.as:108-114 and 135, and
+# applyChangesKrin's lifeBarUpdate at 342), so the bar fades from empty.
+func test_a_death_with_no_result_empties_the_bar_before_it_fades():
+	_unit.life_n = 0.0
+	_presenter.die()
+	assert_eq(_overlay.health_bar.value, 0.0)
 
 
 func test_die_plays_the_death_with_no_hit():
 	_presenter.die()
 	assert_eq(_doll._state, DEAD, "the doll plays its death")
-	assert_false(_overlay.visible, "the overlay goes with it")
 	assert_eq(_cues, [VOICE_DIE], "with the death cry alone")
 
 
-# Damage on a target under an sswitch buff heals it. The original draws the
-# number in heal green, raises life capped at max, and plays no hit animation
-# (frame_42/DoAction_8.as:133-149).
+# Damage on a target under an sswitch buff heals it. The original raises life
+# capped at max and plays no hit animation (frame_42/DoAction_8.as:133-149). It
+# leaves a heal green number on top (line 137), and the port draws only that
+# one (ADR 0005).
 func test_damage_on_a_sswitch_target_shows_as_a_heal():
 	_unit.life_n = 50.0
 	_presenter.snap_to_unit()
 	_presenter.show_result(_damage_that_heals(15.0, 65.0), _fire_move())
 	assert_eq(_overlay.health_bar.value, 65.0, "the bar rises, because the damage healed the target")
-	assert_eq(_numbers()[-1].text, "15", "the number is the amount the damage healed")
-	assert_eq(_numbers()[-1].modulate, MenuTheme.HEAL_COLOR, "drawn in heal green")
+	assert_eq(_numbers().size(), 1, "one number")
+	assert_eq(_numbers()[0].glyphs, ["1", "5"], "the amount the damage healed")
+	assert_eq(_numbers()[0].tint, Color("66FF00"), "drawn in heal green")
 	assert_ne(_doll._state, HIT, "no hit animation")
 	assert_eq(_cues, [], "and no hit voice")
 
 
 func test_damage_on_a_sswitch_target_stops_the_bar_at_full():
 	_presenter.show_result(_damage_that_heals(15.0, 100.0), null)
-	assert_eq(_presenter.displayed_hp, 100.0)
+	assert_eq(_presenter.displayed.life, 100.0)
 
 
 # A heal on a target under an sswitch buff hurts it. The original draws the
@@ -349,8 +600,8 @@ func test_damage_on_a_sswitch_target_stops_the_bar_at_full():
 func test_heal_on_a_sswitch_target_shows_as_damage():
 	_presenter.show_result(_heal_that_hurts(20.0, 80.0), null)
 	assert_eq(_overlay.health_bar.value, 80.0, "the bar falls, because the heal hurt the target")
-	assert_eq(_numbers()[-1].text, "20", "no plus sign")
-	assert_eq(_numbers()[-1].modulate, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], "drawn in the Shadow color")
+	assert_eq(_numbers()[-1].glyphs, ["2", "0"], "the amount the heal took")
+	assert_eq(_numbers()[-1].tint, Color("664D80"), "drawn in the Shadow color")
 	assert_eq(_doll._state, HIT, "the hit animation plays")
 	assert_eq(_cues, [], "but no hit voice")
 
@@ -360,8 +611,7 @@ func test_heal_on_a_sswitch_target_shows_as_damage():
 func test_heal_that_kills_a_sswitch_target_plays_the_death():
 	_presenter.show_result(_killing(_heal_that_hurts(150.0, 0.0)), null)
 	assert_eq(_doll._state, DEAD, "the doll plays its death")
-	assert_false(_overlay.visible, "its overlay is hidden with it")
-	assert_eq(_presenter.displayed_hp, 0.0, "the bar drops to empty")
+	assert_eq(_presenter.displayed.life, 0.0, "the bar drops to empty")
 	assert_eq(_cues, [VOICE_DIE], "with the death cry and no hit voice")
 
 
@@ -391,8 +641,7 @@ func test_heal_on_a_stunned_sswitch_target_keeps_it_stunned():
 # result states.
 func test_a_stun_from_later_in_the_half_turn_waits_for_the_hit_that_lands_it():
 	_unit.stun = 1.0
-	_presenter.redraw()
-	assert_ne(_doll._state, STUN, "a redraw before the stun lands doesn't start it")
+	assert_ne(_doll._state, STUN, "the unit's stun doesn't show before the hit that lands it")
 	_presenter.show_result(_damage(10.0, 90.0), null)
 	assert_eq(_doll._state, HIT, "a hit before it flinches")
 	_play_out_the_hit()
@@ -404,21 +653,19 @@ func test_a_stun_from_later_in_the_half_turn_waits_for_the_hit_that_lands_it():
 	assert_ne(_doll._state, HIT, "a stun that has worn off by the half-turn's end still stops the flinch")
 
 
-# Every event redraws every fighter, so a redraw comes between the start of a
-# half-turn and the hit that lands a stun. The original plays that hit's flinch
-# and starts the stun at the same strike, so the doll ends up stunned.
+# The original plays a hit's flinch and starts the stun it lands at the same
+# strike, so the doll ends up stunned.
 func test_a_hit_that_lands_a_stun_leaves_the_doll_stunned():
-	_unit.stun = 1.0
-	_presenter.redraw()
 	_presenter.show_result(_stunning(_damage(10.0, 90.0)), null)
 	_play_out_the_hit()
 	assert_eq(_doll._state, STUN)
 
 
-func test_a_focus_result_floats_its_amount():
+# The original's Focus branch draws no number, only the focus flash
+# (frame_42/DoAction_8.as:232-249).
+func test_a_focus_result_draws_no_number():
 	_presenter.show_result(_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 8.0, 100.0), null)
-	assert_eq(_numbers()[-1].text, "+8 FOCUS")
-	assert_eq(_numbers()[-1].modulate, Color.SKY_BLUE)
+	assert_eq(_numbers().size(), 0)
 
 
 # A focus move can dispel a buff that holds up max life, and the recompute after
@@ -436,11 +683,17 @@ func test_every_result_but_a_miss_moves_the_bar_to_the_life_it_states():
 	assert_eq(_overlay.health_bar.value, 100.0, "a miss leaves it")
 
 
-func test_a_miss_floats_miss_and_plays_the_miss_sound():
-	_presenter.show_result(_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 100.0), null)
-	assert_eq(_numbers()[-1].text, "MISS")
-	assert_eq(_numbers()[-1].modulate, Color.GRAY)
-	assert_eq(_cues, ["sfx_magicmiss"], "the miss sound")
+# The conductor passes a miss the move's element (line 108), and KrinNumberShow
+# gives the MISS word's KN fill that element's color (frame_42/DoAction_7.as:63-68).
+# The miss sound depends on the move's type, so battle_scene.gd plays it and
+# test_battle_scene.gd checks it.
+func test_a_miss_shows_the_miss_word_in_the_moves_element_color_and_plays_nothing():
+	var miss: MoveResult = _result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 100.0)
+	assert_eq(_labels_drawn_by(miss, _fire_move()), ["miss"], "the miss label")
+	var number: FloatingNumber = _numbers()[0]
+	assert_eq(number.glyphs, ["miss"], "the MISS word")
+	assert_eq(number.tint, Color("FF6600"), "in the Fire color")
+	assert_eq(_cues, [], "no sound and no voice")
 	assert_ne(_doll._state, HIT, "and no flinch")
 
 
@@ -467,11 +720,11 @@ func test_any_rise_in_stun_replays_the_stun_animation():
 	assert_eq(_doll._label_time, 0.0, "from its start")
 
 
-func test_a_redraw_with_no_change_in_stun_leaves_the_animation_alone():
+func test_a_result_with_no_change_in_stun_leaves_the_animation_alone():
 	_stun()
 	_doll._process(0.1)
 	var time_into_label: float = _doll._label_time
-	_presenter.redraw()
+	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
 	assert_eq(_doll._label_time, time_into_label)
 
 
@@ -490,11 +743,10 @@ func test_any_fall_in_stun_plays_the_wake_up_even_while_still_stunned():
 func test_a_stunned_unit_stays_stunned_until_its_death_plays():
 	_stun()
 	_unit.active = false
-	_presenter.redraw()
 	assert_eq(_doll._state, STUN, "the doll is still stunned")
 	assert_ne(_doll._label, "outofstun", "and doesn't wake up first")
 	var killing_stun: MoveResult = _stunned_at_hit(_killing(_damage(100.0, 0.0)))
-	killing_stun.stun_after = 2.0
+	killing_stun.target_after.stun = 2.0
 	_presenter.show_result(killing_stun, null)
 	assert_eq(_doll._state, DEAD, "the hit that kills it plays the death, though it lands another stun")
 	_unit.stun = 2.0
@@ -586,77 +838,234 @@ func test_hovering_a_dead_fighter_does_nothing():
 	assert_eq(_level_labels().size(), 0, "and no level shows")
 
 
-func test_floating_text_goes_on_the_float_layer_above_the_doll():
-	_presenter.float_text("DISPEL", Color.CYAN)
-	var label: Label = _numbers()[-1]
-	assert_eq(label.get_parent(), _layer, "on the layer, so it draws over every fighter")
-	assert_eq(label.text, "DISPEL", "the text")
-	assert_eq(label.modulate, Color.CYAN, "the color")
-	assert_eq(label.position, HOME + FighterPresenter.FLOAT_OFFSET, "above the doll")
+# KrinNumberShow puts a number on the target rig's own spot with no offset
+# (frame_42/DoAction_7.as:38-39). It sets the digits 19 apart along the holder,
+# the first at -19 * (digits - 2) / 2 - 10 (lines 3, 34-35 and 56), so three
+# digits sit at -19.5, -0.5 and 18.5: around the rig's origin, half a unit to the
+# left because half a spacing is 9.5.
+func test_a_three_digit_number_draws_three_digits_19_apart_around_the_rig():
+	_presenter.show_result(_damage(123.0, 0.0), null)
+	var number: FloatingNumber = _numbers()[-1]
+	assert_eq(number.position, HOME, "on the target rig's origin")
+	assert_eq(number.glyphs, ["1", "2", "3"], "the digits from the left")
+	assert_eq(_glyph_offsets(number), [-19.5, -0.5, 18.5], "19 apart around the origin")
 
 
-func test_floating_text_rises_fades_and_frees_itself():
-	var running: Array = get_tree().get_processed_tweens()
-	_presenter.float_text("12", Color.WHITE)
-	var rise: Tween = get_tree().get_processed_tweens().filter(func(tween): return not running.has(tween))[0]
-	var label: Label = _numbers()[-1]
-	var start_y: float = label.position.y
-	rise.pause()
-	rise.custom_step(0.4)
-	assert_almost_eq(label.position.y, start_y - 20.0, 0.01, "halfway up after 0.4 s")
-	assert_almost_eq(label.modulate.a, 0.5, 0.01, "and half faded")
-	rise.custom_step(0.5)
-	assert_true(label.is_queued_for_deletion(), "and gone once the 0.8 s are up")
+# dressChar lowers only a MODEL5 unit's doll inside its rig
+# (frame_217/DoAction_2.as:19-24), and KrinNumberShow puts the number on the
+# rig itself.
+func test_a_model5_units_number_stays_on_the_rig_above_its_lowered_doll():
+	var unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+	unit.model = ["MODEL5", "ONE", "ONE", "M"]
+	_present(unit)
+	_presenter.show_result(_damage(5.0, 95.0), null)
+	assert_eq(_numbers()[-1].position, HOME)
 
 
-# Starts a melee whose swing the test steps by hand. The returned array holds
-# what melee() returned once it has returned.
-func _start_melee(on_blow: Callable) -> Array:
+# KrinNumberShow attaches each number one depth above the last and goes from
+# depth 1639 back to 1620 (frame_42/DoAction_7.as:4 and 75-79), and a clip
+# attached at a depth that is in use replaces the clip there.
+func test_a_21st_live_number_replaces_the_oldest():
+	_presenter.show_result(_damage(1.0, 99.0), null)
+	var oldest: FloatingNumber = _numbers()[0]
+	for amount in range(2, 22):
+		_presenter.show_result(_damage(amount, 100.0 - amount), null)
+	var shown: Array = _numbers().map(func(number): return "".join(number.glyphs))
+	assert_eq(shown.size(), 20, "20 numbers at most")
+	assert_eq([shown[0], shown[-1]], ["2", "21"], "from the second number to the 21st")
+	assert_true(oldest.is_queued_for_deletion(), "and the first one is freed")
+
+
+# A shield can leave less than 1 of a hit. KrinNumberShow still attaches a
+# number for anything above 0, but its digit loop starts below the ones digit
+# and draws no digit (frame_42/DoAction_7.as:8 and 26-61).
+func test_a_hit_under_one_plays_a_number_with_no_digits():
+	assert_eq(_labels_drawn_by(_damage(0.5, 99.5)), ["normal"], "a number")
+	assert_eq(_numbers()[0].glyphs, [], "with no digits")
+
+
+# Steps every Floating number on by `frames` frames of the SWF's 30 fps.
+func _step(frames: int) -> void:
+	for frame in frames:
+		_layer.advance(1.0 / 30.0)
+
+
+# The color each layer sprite of a Floating number replaces its own with, or
+# null for a sprite that keeps its own.
+func _layer_tints(number: FloatingNumber) -> Array:
+	return _layer_sprites(number).map(func(sprite):
+		var material: ShaderMaterial = sprite.material
+		return material.get_shader_parameter("tint") if material.get_shader_parameter("tinted") else null
+	)
+
+
+# KrinNumberShow's setRGB colors only the KN fill of each digit, the middle of
+# its three layers, and leaves the outline and the shine alone
+# (frame_42/DoAction_7.as:58-59).
+func test_only_each_digits_kn_fill_takes_the_numbers_color():
+	_presenter.show_result(_damage(12.0, 88.0), _fire_move())
+	var fire: Color = Color("FF6600")
+	assert_eq(_layer_tints(_numbers()[-1]), [null, fire, null, null, fire, null])
+
+
+# SHIELDED (DefineSprite 52) is one layer with no KN child, so it takes no color.
+func test_shielded_takes_no_color():
+	_layer.show_shield(HOME)
+	assert_eq(_layer_tints(_numbers()[-1]), [null])
+
+
+# NumberFixer's normal label pops the number in all white at 1.78x, settles it
+# at 1x in its own color by frame 6, lifts it 27.5 px by frame 45 and fades it
+# out over frames 53 to 67 (DefineSprite 53).
+func test_a_normal_number_pops_in_white_settles_rises_and_fades():
+	_presenter.show_result(_damage(12.0, 88.0), _fire_move())
+	var number: FloatingNumber = _numbers()[-1]
+	assert_almost_eq(number.flasher.scale.x, 1.776, 0.001, "1.78x on frame 1")
+	assert_eq(_whites(number), [1.0], "all white on frame 1")
+	_step(5)
+	assert_eq(number.flasher.scale, Vector2.ONE, "1x on frame 6")
+	assert_eq(_whites(number), [0.0], "in its own color on frame 6")
+	_step(39)
+	assert_eq(number.flasher.position.y, -27.5, "27.5 px up on frame 45")
+	assert_eq(number.flasher.modulate.a, 1.0, "and not faded yet")
+	_step(22)
+	assert_eq(number.flasher.modulate.a, 0.0, "faded out on frame 67")
+
+
+# NumberFixer's labels run frames 1-67, 69-129, 131-181 and 183-233, and the
+# frame after each one runs removeMovieClip(this) (DefineSprite 53).
+func test_each_label_runs_its_swf_frame_count_and_frees_itself():
+	for case in [
+		["normal", 67, func(): _layer.show_number(HOME, 12.0, Color.WHITE, false)],
+		["critical", 61, func(): _layer.show_number(HOME, 12.0, Color.WHITE, true)],
+		["miss", 51, func(): _layer.show_miss(HOME, Color.WHITE)],
+		["shield", 51, func(): _layer.show_shield(HOME)],
+	]:
+		case[2].call()
+		var number: FloatingNumber = _numbers()[-1]
+		assert_eq(number.label, case[0], "the label")
+		_step(case[1] - 1)
+		assert_true(_numbers().has(number), "%s still shows on frame %d" % [case[0], case[1]])
+		_step(1)
+		assert_false(_numbers().has(number), "%s is gone after frame %d" % [case[0], case[1]])
+		assert_true(number.is_queued_for_deletion(), "and %s has freed itself" % case[0])
+
+
+# Starts a melee at a fighter on the player's team, 200 px to the left. The
+# test steps the swing by hand. The returned array holds true once melee() has
+# returned.
+func _start_melee(on_impact: Callable) -> Array:
 	_doll.set_process(false)
+	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT), HOME - Vector2(200, 0))
 	var returned: Array = []
 	var run: Callable = func():
-		returned.append(await _presenter.melee(Vector2(100, 0), "Attack", on_blow))
+		await _presenter.melee(target, "Attack", on_impact)
+		returned.append(true)
 	run.call()
 	return returned
 
 
-func test_melee_lands_the_blow_once_and_returns_when_the_doll_is_home():
-	var blows: Array = []
-	var returned: Array = _start_melee(func(): blows.append(_doll.position))
-	assert_eq(blows.size(), 0, "nothing lands as the run starts")
+# krinMelee hands the battle back at Impact and runs the fighter home on its
+# own afterwards (frame_42/DoAction_4.as:73-135), so melee() returns at
+# Impact, with the doll still where it struck.
+func test_melee_reaches_impact_once_and_returns_at_it():
+	var impacts: Array = []
+	var returned: Array = _start_melee(func(): impacts.append(_doll.position))
+	assert_eq(impacts.size(), 0, "nothing lands as the run starts")
 	for frame in 600:
 		if not returned.is_empty():
 			break
 		_doll._process(1.0 / 30.0)
-	assert_eq(blows.size(), 1, "the blow lands once")
-	if blows.size() == 1:
-		assert_almost_eq(blows[0].x, HOME.x + 100.0, 0.01, "at the target, before the run back")
-	assert_eq(_doll.position, HOME, "the doll is home")
-	assert_eq(returned, [false], "and nothing was landed late")
+	assert_eq(impacts.size(), 1, "Impact comes once")
+	if impacts.size() == 1:
+		assert_lt(impacts[0].x, HOME.x - 100.0, "after a run toward the target")
+		assert_eq(_doll.position, impacts[0], "while the doll still stands where it struck")
+	assert_eq(returned, [true], "melee returns at Impact")
+	for frame in 120:
+		_doll._process(1.0 / 30.0)
+	assert_eq(_doll.position, HOME, "and the doll then runs home on its own")
+	assert_eq(impacts.size(), 1, "with no second Impact")
 
 
-func test_an_interrupted_melee_still_lands_the_blow():
-	var blows: Array = []
-	var returned: Array = _start_melee(func(): blows.append(true))
-	_doll.set_state(CharacterVisual.State.DEAD)
-	assert_eq(blows.size(), 1, "the blow never fired, so it lands late")
-	assert_eq(returned, [true], "and melee says so")
-
-
-func test_melee_without_waiting_lands_the_blow_at_once():
-	var blows: Array = []
-	var landed_late: bool = await _presenter.melee(Vector2(100, 0), "Attack", func(): blows.append(true), false)
-	assert_eq(blows.size(), 1, "the blow lands without the swing being played")
-	assert_true(landed_late)
+func test_melee_without_waiting_reaches_impact_at_once():
+	var impacts: Array = []
+	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT), HOME - Vector2(200, 0))
+	await _presenter.melee(target, "Attack", func(): impacts.append(true), false)
+	assert_eq(impacts.size(), 1, "Impact comes without the swing being played")
 
 
 func test_a_melee_whose_presenter_left_the_tree_lands_nothing():
-	var blows: Array = []
-	var returned: Array = _start_melee(func(): blows.append(true))
+	var impacts: Array = []
+	var returned: Array = _start_melee(func(): impacts.append(true))
 	remove_child(_presenter)
-	_doll.melee_finished.emit()
-	assert_eq(blows.size(), 0, "no blow on a fighter that is gone")
-	assert_eq(returned, [false])
+	_doll.attack_connected.emit()
+	assert_eq(impacts.size(), 0, "no Impact on a fighter that is gone")
+	assert_eq(returned, [true], "and melee returns")
+
+
+# Builds a second presenter for `unit` at `home`, on the same Floating number layer, and
+# stops its doll's own processing so that the test steps the doll itself.
+func _fighter_at(unit: CombatUnit, home: Vector2, items_by_id: Dictionary = {}) -> FighterPresenter:
+	var presenter: FighterPresenter = add_child_autofree(FighterPresenterScene.instantiate())
+	presenter.setup(unit, home, items_by_id, {}, _layer)
+	presenter.get_node("Doll").set_process(false)
+	return presenter
+
+
+# Puts a weapon whose art is `looks` in both of `unit`'s hands, and returns the
+# item table that holds it. Empty looks leave the unit bare.
+func _armed(unit: CombatUnit, looks: String) -> Dictionary:
+	var weapon := GameItem.new()
+	weapon.looks = looks
+	unit.equipment_ids = [0, 0, 0, 0, 0, 7, 7]
+	return {7: weapon}
+
+
+# Swings `caster` at `target`, steps the caster's doll until Impact, and
+# returns where the caster's doll stands then.
+func _impact_spot(caster: FighterPresenter, target: FighterPresenter) -> Vector2:
+	var doll: CharacterVisual = caster.get_node("Doll")
+	var spots: Array = []
+	# Nothing awaits the swing, because the test steps it.
+	caster.melee(target, "Attack", func(): spots.append(doll.position))
+	for frame in 60:
+		if not spots.is_empty():
+			break
+		doll._process(1.0 / 30.0)
+	return spots[0] if not spots.is_empty() else Vector2.INF
+
+
+# krinMelee stops the caster at the target's x less half of each fighter's
+# width, the caster's in its run pose and the target's as it stands
+# (frame_42/DoAction_4.as:46-56). A wide weapon widens a fighter, so two
+# fighters with wide weapons stop further apart than two bare fighters.
+func test_two_fighters_in_wide_gear_stop_further_apart_than_two_bare_fighters():
+	var gaps: Dictionary = {}
+	for looks in ["", "UBER1"]:
+		var caster_unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+		var target_unit: CombatUnit = _make_unit(CombatUnit.Team.TWO, ENEMY_SLOT)
+		var caster: FighterPresenter = _fighter_at(caster_unit, Vector2(160, 300), _armed(caster_unit, looks))
+		var target: FighterPresenter = _fighter_at(target_unit, Vector2(640, 300), _armed(target_unit, looks))
+		gaps[looks] = target.get_node("Doll").position.x - _impact_spot(caster, target).x
+	assert_gt(gaps[""], 0.0, "sanity: two bare fighters stop short of each other")
+	assert_gt(gaps["UBER1"], gaps[""], "two fighters with UBER1 in both hands stop further apart")
+
+
+# dressChar draws a MODEL5 doll 10 px lower inside its rig, and krinMelee runs
+# the rig toward the target's rig (frame_217/DoAction_2.as:19-24 and
+# frame_42/DoAction_4.as:112-116). So a MODEL5 fighter runs level at a target
+# whose rig stands level with its own.
+func test_a_model5_fighter_runs_level_at_a_target_level_with_it():
+	var caster_unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+	caster_unit.model = ["MODEL5", "ONE", "ONE", "M"]
+	var caster: FighterPresenter = _fighter_at(caster_unit, Vector2(160, 300))
+	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT), Vector2(640, 300))
+	var doll: CharacterVisual = caster.get_node("Doll")
+	var start: Vector2 = doll.position
+	assert_eq(start.y, 310.0, "sanity: the MODEL5 doll stands 10 px lower")
+	var impact: Vector2 = _impact_spot(caster, target)
+	assert_gt(impact.x, start.x + 300.0, "sanity: the doll ran most of the way")
+	assert_eq(impact.y, start.y, "and stayed level")
 
 
 # The real colortobe glow tint (frame217/onClipEvent(enterFrame).as: 417,450).
@@ -669,3 +1078,256 @@ func test_cast_plays_the_cast_state_tinted_with_the_moves_color():
 	assert_almost_eq(_doll.modulate.r, expected.r, 0.01, "tinted red")
 	assert_almost_eq(_doll.modulate.g, expected.g, 0.01, "tinted green")
 	assert_almost_eq(_doll.modulate.b, expected.b, 0.01, "tinted blue")
+
+
+# The color of the Result flash the doll shows, or null while it shows none. The
+# flash is a filter in the shader that draws the doll's body, so this reads
+# whether that filter is on and the color it draws.
+func _flash_color_on(doll: CharacterVisual) -> Variant:
+	var body_shader: ShaderMaterial = doll.get_node("Body").material
+	if not body_shader.get_shader_parameter("result_flash"):
+		return null
+	return body_shader.get_shader_parameter("color")
+
+
+func _flash_color() -> Variant:
+	return _flash_color_on(_doll)
+
+
+func _advance_flash(frames: int) -> void:
+	for frame in frames:
+		_flash.advance(1.0 / 30.0)
+
+
+# executeMove plays BATTLEFLASH's `hit` label on a hit
+# (frame_42/DoAction_8.as:95-99) and on a heal that hurts under sswitch
+# (199-203), its `heal` label on damage that heals under sswitch (144-148) and on
+# a heal (182-186), and its `focus` label on every focus result, a drain
+# included (232-249).
+func test_each_result_starts_the_result_flash_in_its_color():
+	for case in [
+		[_damage(10.0, 90.0), HIT_FLASH, "a hit"],
+		[_heal_that_hurts(10.0, 90.0), HIT_FLASH, "a heal that hurts under sswitch"],
+		[_damage_that_heals(10.0, 100.0), HEAL_FLASH, "damage that heals under sswitch"],
+		[_heal(10.0, 100.0), HEAL_FLASH, "a heal"],
+		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 8.0, 100.0), FOCUS_FLASH, "a focus result"],
+		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, -8.0, 100.0), FOCUS_FLASH, "a focus drain"],
+	]:
+		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+		_presenter.show_result(case[0], null)
+		assert_eq(_flash_color(), case[1], case[2])
+
+
+func _shield_block() -> MoveResult:
+	var result: MoveResult = _damage(0.0, 100.0)
+	result.shield_took_all = true
+	return result
+
+
+# A Shield block takes the hit off the shield and then plays the shield's own
+# label, sound and clip, and nothing of the hit: no flinch and no hit voice
+# (frame_42/DoAction_8.as:70-76). The label is the same on a crit, because
+# KrinNumberShow only checks perKSuccess for a number (frame_42/DoAction_7.as:40-49).
+func test_a_shield_block_draws_shielded_and_plays_its_sound_with_no_flinch_or_hit_voice():
+	assert_eq(_labels_drawn_by(_critical(_shield_block()), _fire_move()), ["shield"], "the shield label")
+	assert_eq(_numbers()[0].glyphs, ["shield"], "SHIELDED and no digits")
+	assert_eq(_cues, ["sfx_shield"], "the shield sound and no hit voice")
+	assert_ne(_doll._state, HIT, "and no flinch")
+
+
+# The art the shield clip shows now.
+func _shield_clip_art() -> String:
+	return _shield_clip.sprite.texture.resource_path
+
+
+func _step_shield_clip(frames: int) -> void:
+	for frame in frames:
+		_shield_clip.advance(1.0 / 30.0)
+
+
+# executeMove plays the target rig's shield clip, DefineSprite 2675, on a Shield
+# block (frame_42/DoAction_8.as:73). The clip rests on its frame 1, which shows
+# nothing and runs stop(). play() leaves the playhead there until the next frame
+# of the SWF, and the clip then runs frames 2 to 20, loops back to frame 1 and
+# stops again.
+func test_a_shield_block_plays_the_shield_clip_once_from_its_extracted_frames():
+	assert_false(_shield_clip.is_playing(), "the clip rests before the block")
+	_presenter.show_result(_shield_block(), null)
+	var shown: Array = [_shield_clip_art()]
+	for step in 21:
+		_step_shield_clip(1)
+		shown.append(_shield_clip_art())
+	var frames: Array = [1]
+	frames.append_array(range(2, 21))
+	frames.append_array([1, 1])
+	assert_eq(shown, frames.map(func(frame): return SHIELD_CLIP_ART % frame), "frames 2 to 20 once, then frame 1")
+	assert_false(_shield_clip.is_playing(), "and the clip rests again")
+
+
+# buffTicker plays the shield clip too, when a shield soaks a whole Buff tick,
+# and draws SHIELDED but plays no sound (frame_42/DoAction_10.as:68-73). A tick
+# has no Move result, so the presenter plays the clip on its own.
+func test_the_shield_clip_plays_on_its_own_with_no_number_or_sound():
+	_presenter.play_shield_clip()
+	_step_shield_clip(1)
+	assert_eq(_shield_clip_art(), SHIELD_CLIP_ART % 2, "the clip plays")
+	assert_eq(_numbers().size(), 0, "with no number")
+	assert_eq(_cues, [], "and no sound")
+
+
+# The shield clip is a child of the rig, placed at its origin, and the halls
+# mirror the right side's rigs (DefineSprite 2676's placements in 3435), so the
+# spark the clip draws at x 40.55 goes to the side the doll faces. Its
+# onClipEvent(load) runs swapDepths(1000), which puts it over the doll that
+# dressChar attaches at depth 0 (frame_217/DoAction_2.as:18). The Result flash
+# filters only that doll, so the flash never covers the clip.
+func test_the_shield_clip_sits_on_the_rig_over_the_doll_and_mirrors_with_team_2():
+	assert_eq(_shield_clip.position, HOME, "on the rig's origin")
+	assert_eq(_shield_clip.scale, Vector2(-1, 1), "mirrored on team 2")
+	assert_gt(_shield_clip.get_index(), _doll.get_index(), "over the doll, outside its body")
+	_present(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT))
+	assert_eq(_shield_clip.scale, Vector2.ONE, "and not mirrored on team 1")
+
+
+# A shield exactly as big as the hit soaks it, but executeMove takes the hit's
+# branch for it, a Quirk that ADR 0005 keeps. KrinNumberShow draws no number for
+# 0 (frame_42/DoAction_7.as:8), and the flinch and the hit voice play with no
+# shield clip or sound (frame_42/DoAction_8.as:79-131).
+func test_a_hit_exactly_as_big_as_the_shield_draws_nothing_and_plays_as_a_hit():
+	_presenter.show_result(_damage(0.0, 100.0), null)
+	assert_eq(_numbers().size(), 0, "no number")
+	assert_eq(_doll._state, HIT, "the flinch")
+	assert_eq(_cues, [VOICE_HIT], "the hit voice and no shield sound")
+	assert_false(_shield_clip.is_playing(), "and no shield clip")
+
+
+# A hit bigger than the shield takes the shield's value off the hit and empties
+# it, and executeMove draws what got through as a hit (frame_42/DoAction_8.as:79-131).
+func test_a_hit_bigger_than_the_shield_draws_what_got_through_and_flinches():
+	_presenter.show_result(_damage(15.0, 85.0), _fire_move())
+	assert_eq(_numbers()[-1].glyphs, ["1", "5"], "what got through")
+	assert_eq(_numbers()[-1].tint, Color("FF6600"), "in the move's element color")
+	assert_eq(_doll._state, HIT, "the flinch")
+	assert_eq(_cues, [VOICE_HIT], "the hit voice and no shield sound")
+	assert_false(_shield_clip.is_playing(), "and no shield clip")
+
+
+# dressChar shrinks and lowers only a MODEL5 unit's doll inside its rig
+# (frame_217/DoAction_2.as:19-24), and the shield clip is the rig's own.
+func test_a_model5_units_shield_clip_stays_on_the_rig_at_full_size():
+	var unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+	unit.model = ["MODEL5", "ONE", "ONE", "M"]
+	_present(unit)
+	assert_eq(_shield_clip.position, HOME, "on the rig's origin")
+	assert_eq(_shield_clip.scale, Vector2.ONE, "at full size")
+
+
+# A Shield block stops short of executeMove's call to BATTLEFLASH
+# (frame_42/DoAction_8.as:70-76). A hit exactly as big as the shield is not a
+# Shield block, and ADR 0005 keeps it as a Quirk: it plays the hit's flash with
+# no number (79-99).
+func test_a_shield_block_plays_no_flash_but_a_hit_the_shield_soaks_exactly_does():
+	_presenter.show_result(_shield_block(), null)
+	assert_null(_flash_color(), "a Shield block")
+	_presenter.show_result(_damage(0.0, 100.0), null)
+	assert_eq(_flash_color(), HIT_FLASH, "a hit the shield soaked exactly")
+
+
+# The original's whole heal branch, its calls to BATTLEFLASH included, is inside
+# DamageOutputKrinFinal > 0 (frame_42/DoAction_8.as:172), so a heal of 0 plays
+# no flash, under sswitch too.
+func test_a_heal_of_0_plays_no_flash():
+	_presenter.show_result(_heal(0.0, 100.0), null)
+	assert_null(_flash_color())
+
+
+# The conductor runs executeMove only on a strike that lands, and a miss takes
+# its else branch (lines 19 and 105-109). Shatter Bolt's "Attack" category has
+# no branch in executeMove.
+func test_a_miss_and_a_status_only_result_play_no_flash():
+	_presenter.show_result(_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 100.0), null)
+	assert_null(_flash_color(), "a miss")
+	_presenter.show_result(_result(MoveResult.Kind.STATUS_ONLY, MoveResult.Direction.NONE, 0.0, 100.0), null)
+	assert_null(_flash_color(), "a status-only result")
+
+
+# Only executeMove calls BATTLEFLASH, so buffTicker draws a Buff tick with no
+# flash (frame_42/DoAction_10.as:14-136). A tick reaches the fighter through
+# show_state(), or through snap_to_unit() at the half-turn's end.
+func test_a_buff_tick_plays_no_flash():
+	_presenter.show_state(_state(80.0))
+	assert_null(_flash_color(), "a tick shown when it happens")
+	_unit.life_n = 70.0
+	_presenter.snap_to_unit()
+	assert_null(_flash_color(), "a tick shown at the half-turn's end")
+
+
+# Each of BATTLEFLASH's labels puts its filter on at its first frame and on the
+# 4th, 8th and 12th frames after it, takes it off 2 frames after each, and takes
+# it off for good and stops on the 14th frame after it (DefineSprite_3416/frame_2
+# to frame_46). The doll shows that filter from the frame the result lands on.
+func test_the_flash_pulses_4_times_over_14_frames_then_stops():
+	for case in [
+		[_damage(10.0, 90.0), HIT_FLASH],
+		[_heal(10.0, 100.0), HEAL_FLASH],
+		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 8.0, 100.0), FOCUS_FLASH],
+	]:
+		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+		_presenter.show_result(case[0], null)
+		var shown: Array = [_flash_color()]
+		for frame in 15:
+			_advance_flash(1)
+			shown.append(_flash_color())
+		var on: Color = case[1]
+		assert_eq(shown, [on, on, null, null, on, on, null, null, on, on, null, null, on, on, null, null], str(on))
+
+
+# The flash only puts its filter on the doll's body and takes it off, so the doll
+# ends it looking the way it did before. A caster that heals itself keeps the
+# cast tint it had when its heal landed, and a stunned doll keeps its stun pose.
+func test_the_doll_looks_the_same_after_the_flash():
+	var heal_move := Ability.new()
+	heal_move.visual_effect_color = Color(0.2, 1.0, 0.0)
+	_presenter.cast(heal_move)
+	var tint: Color = _doll.modulate
+	_presenter.show_result(_heal(10.0, 100.0), heal_move)
+	assert_eq(_flash_color(), HEAL_FLASH, "a heal flashes the caster it lands on")
+	_advance_flash(14)
+	assert_null(_flash_color(), "the flash is over")
+	assert_eq(_doll.modulate, tint, "and the cast tint is still on")
+
+	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+	_stun()
+	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
+	assert_eq(_flash_color(), HIT_FLASH, "a hit flashes a stunned doll")
+	_advance_flash(14)
+	assert_null(_flash_color(), "the flash is over")
+	assert_eq(_doll._state, STUN, "and the doll is still in its stun")
+	assert_eq(_doll._label, "stun", "on the same label")
+
+
+# executeMove's gotoAndPlay() starts BATTLEFLASH's label over, so a result that
+# lands during a flash starts a new one in its own color, which runs all 14
+# frames.
+func test_a_result_during_a_flash_starts_it_over_in_its_own_color():
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	_advance_flash(2)
+	_presenter.show_result(_heal(10.0, 100.0), null)
+	assert_eq(_flash_color(), HEAL_FLASH, "the new flash shows at once")
+	_advance_flash(13)
+	assert_eq(_flash_color(), HEAL_FLASH, "it still pulses 13 frames later")
+	_advance_flash(1)
+	assert_null(_flash_color(), "and stops 14 frames after it started")
+
+
+# The original has one BATTLEFLASH for the whole battle, so a move that hits
+# several units flashes only the last one, an Original bug that ADR 0005 has the
+# port fix. Each Fighter presenter runs its own Result flash.
+func test_every_target_of_a_move_flashes():
+	var first_target: FighterPresenter = _presenter
+	var first_doll: CharacterVisual = _doll
+	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT + 2))
+	first_target.show_result(_damage(10.0, 90.0), null)
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	assert_eq(_flash_color_on(first_doll), HIT_FLASH, "the first target")
+	assert_eq(_flash_color(), HIT_FLASH, "the second target")
