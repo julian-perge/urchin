@@ -6,11 +6,8 @@
 # battle, which flashes only the last of them, an Original bug that ADR 0005 has
 # the port fix.
 #
-# BATTLEFLASH's labels are `hit` on frame 2, `heal` on 17 and `focus` on 32. Each
-# one puts its filter on at its first frame and on the 4th, 8th and 12th frames
-# after it, takes it off 2 frames after each, and takes it off for good and stops
-# on the 14th frame after it (DefineSprite_3416/frame_2 to frame_46). So the
-# doll shows the flash for 2 frames 4 times over 14 frames.
+# PULSE_FRAMES, FRAMES_ON and LENGTH are the timeline of BATTLEFLASH's labels,
+# which DECODED_ALGORITHMS.md records under "The Result flash".
 #
 # The playhead is one number that advance() steps at the SWF's frame rate,
 # rather than a Timer or a Tween, so nothing can outlive the doll.
