@@ -41,11 +41,14 @@ TAG_PLACE_OBJECT2 = 26
 TAG_REMOVE_OBJECT2 = 28
 TAG_DEFINE_SHAPE3 = 32
 TAG_DEFINE_BUTTON2 = 34
+TAG_DEFINE_EDIT_TEXT = 37
 TAG_DEFINE_SPRITE = 39
 TAG_FRAME_LABEL = 43
+TAG_DEFINE_FONT2 = 48
 TAG_EXPORT_ASSETS = 56
 TAG_DO_INIT_ACTION = 59
 TAG_PLACE_OBJECT3 = 70
+TAG_DEFINE_FONT3 = 75
 TAG_DEFINE_SHAPE4 = 83
 
 SHAPE_TAGS = (TAG_DEFINE_SHAPE, TAG_DEFINE_SHAPE2, TAG_DEFINE_SHAPE3, TAG_DEFINE_SHAPE4)
@@ -161,13 +164,53 @@ class CodeBlock:
     events: int | None = None
 
 
+@dataclass(frozen=True)
+class EditText:
+    """One DefineEditText. bounds is (xmin, ymin, xmax, ymax) in twips, and
+    font_height, the margins, indent and leading are in twips too. color is
+    (r, g, b, a). align is 0 left, 1 right, 2 center or 3 justify. A field
+    the tag doesn't carry is None."""
+
+    bounds: tuple[int, int, int, int]
+    font_id: int | None
+    font_height: int | None
+    color: tuple[int, int, int, int] | None
+    align: int | None
+    left_margin: int | None
+    right_margin: int | None
+    indent: int | None
+    leading: int | None
+    multiline: bool
+    word_wrap: bool
+    html: bool
+    variable_name: str
+    initial_text: str | None
+
+
+@dataclass(frozen=True)
+class Font:
+    """One DefineFont2 or DefineFont3, read only as far as its glyph count."""
+
+    name: str
+    bold: bool
+    italic: bool
+    glyphs: int
+
+    @property
+    def device(self) -> bool:
+        """A font with no glyphs only names a font, so the player's machine
+        drew its text."""
+        return self.glyphs == 0
+
+
 @dataclass
 class SwfIndex:
     """display holds each timeline's placements and removals in tag order,
     which is the order timeline.py applies them in. characters maps each
     character id to its defining tag's code and the start and end of that
     tag's body in data, so shape_bounds() and first_fill_bitmap_id() can parse
-    a shape later. sound_blocks holds the body spans of each timeline's
+    a shape later. fonts does the same for each DefineFont2 and DefineFont3,
+    keyed by font id. sound_blocks holds the body spans of each timeline's
     SoundStreamBlock tags. stage is the header's FrameSize in twips, as
     (xmin, ymin, xmax, ymax), and frame_rate is the header's frames a second."""
 
@@ -182,6 +225,7 @@ class SwfIndex:
     exports: dict[str, int] = field(default_factory=dict)
     display: dict[int, list[Placement | Removal]] = field(default_factory=dict)
     characters: dict[int, tuple[int, int, int]] = field(default_factory=dict)
+    fonts: dict[int, tuple[int, int, int]] = field(default_factory=dict)
     sound_blocks: dict[int, list[tuple[int, int]]] = field(default_factory=dict)
     data: bytes = field(default=b"", repr=False)
 
@@ -355,6 +399,9 @@ class _Walker:
             if code in CHARACTER_KINDS:
                 (cid,) = struct.unpack_from("<H", data, body)
                 self.index.characters[cid] = (code, body, after)
+            elif code in (TAG_DEFINE_FONT2, TAG_DEFINE_FONT3):
+                (font_id,) = struct.unpack_from("<H", data, body)
+                self.index.fonts[font_id] = (code, body, after)
             if code == TAG_SHOW_FRAME:
                 frame += 1
             elif code == TAG_FRAME_LABEL:
@@ -548,6 +595,70 @@ def shape_bounds(index: SwfIndex, cid: int) -> tuple[int, int, int, int]:
     if code not in SHAPE_TAGS:
         raise ValueError(f"character {cid} is not a DefineShape")
     return _read_rect(index.data, body + 2)
+
+
+def edit_text(index: SwfIndex, cid: int) -> EditText:
+    """-> a DefineEditText's fields, read in the order the spec lays them out."""
+    code, body, _end = index.characters[cid]
+    if code != TAG_DEFINE_EDIT_TEXT:
+        raise ValueError(f"character {cid} is not a DefineEditText")
+    data = index.data
+    bounds = _read_rect(data, body + 2)
+    p = _skip_rect(data, body + 2)
+    flags, more = data[p], data[p + 1]
+    p += 2
+    font_id = font_height = color = None
+    if flags & 0x01:  # HasFont
+        (font_id,) = struct.unpack_from("<H", data, p)
+        p += 2
+    if more & 0x80:  # HasFontClass
+        _, p = _cstring(data, p)
+    if flags & 0x01 or more & 0x80:
+        (font_height,) = struct.unpack_from("<H", data, p)
+        p += 2
+    if flags & 0x04:  # HasTextColor
+        color = tuple(data[p : p + 4])
+        p += 4
+    if flags & 0x02:  # HasMaxLength
+        p += 2
+    align = left_margin = right_margin = indent = leading = None
+    if more & 0x20:  # HasLayout
+        align = data[p]
+        left_margin, right_margin, indent, leading = struct.unpack_from(
+            "<HHHh", data, p + 1
+        )
+        p += 9
+    variable_name, p = _cstring(data, p)
+    initial_text = _cstring(data, p)[0] if flags & 0x80 else None  # HasText
+    return EditText(
+        bounds=bounds,
+        font_id=font_id,
+        font_height=font_height,
+        color=color,
+        align=align,
+        left_margin=left_margin,
+        right_margin=right_margin,
+        indent=indent,
+        leading=leading,
+        multiline=bool(flags & 0x20),
+        word_wrap=bool(flags & 0x40),
+        html=bool(more & 0x02),
+        variable_name=variable_name,
+        initial_text=initial_text,
+    )
+
+
+def font(index: SwfIndex, font_id: int) -> Font:
+    """-> a DefineFont2 or DefineFont3's name, style flags and glyph count. The
+    name drops the NUL the web build's fonts end it with."""
+    _code, body, _end = index.fonts[font_id]
+    data = index.data
+    flags, _language, length = data[body + 2 : body + 5]
+    name = data[body + 5 : body + 5 + length].decode("latin-1").rstrip("\0")
+    (glyphs,) = struct.unpack_from("<H", data, body + 5 + length)
+    return Font(
+        name=name, bold=bool(flags & 0x01), italic=bool(flags & 0x02), glyphs=glyphs
+    )
 
 
 def sound_stream(index: SwfIndex, owner: int) -> list[bytes]:

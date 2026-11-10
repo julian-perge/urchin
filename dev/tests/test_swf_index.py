@@ -4,6 +4,8 @@ from __future__ import annotations
 import struct
 
 from urchin_dev.swf.swf_index import (
+    TAG_DEFINE_EDIT_TEXT,
+    TAG_DEFINE_FONT3,
     TAG_DEFINE_SHAPE,
     TAG_DEFINE_SHAPE3,
     TAG_DEFINE_SPRITE,
@@ -14,9 +16,13 @@ from urchin_dev.swf.swf_index import (
     TAG_REMOVE_OBJECT2,
     TAG_SHOW_FRAME,
     TAG_SOUND_STREAM_BLOCK,
+    EditText,
+    Font,
     Placement,
     Removal,
+    edit_text,
     first_fill_bitmap_id,
+    font,
     parse_swf,
     shape_bounds,
     sound_stream,
@@ -138,17 +144,21 @@ def test_clip_action_belongs_to_its_placement_and_skips_the_key_code():
     assert block.goto_labels == ("hit",)
 
 
-def place2(depth: int, *, move=False, cid=None, matrix=b"", cxform=b"", ratio=None):
+def place2(
+    depth: int, *, move=False, cid=None, matrix=b"", cxform=b"", ratio=None, name=None
+):
     """A PlaceObject2 body carrying only the fields given."""
     flags = (0x01 if move else 0) | (0x02 if cid is not None else 0)
     flags |= (0x04 if matrix else 0) | (0x08 if cxform else 0)
-    flags |= 0x10 if ratio is not None else 0
+    flags |= (0x10 if ratio is not None else 0) | (0x20 if name is not None else 0)
     body = bytes([flags]) + struct.pack("<H", depth)
     if cid is not None:
         body += struct.pack("<H", cid)
     body += matrix + cxform
     if ratio is not None:
         body += struct.pack("<H", ratio)
+    if name is not None:
+        body += name.encode() + b"\0"
     return tag(TAG_PLACE_OBJECT2, body)
 
 
@@ -231,3 +241,62 @@ def test_first_fill_bitmap_id_reads_only_the_first_fill_style():
         )
     )
     assert [first_fill_bitmap_id(index, cid) for cid in (1, 2, 3)] == [None, 7, None]
+
+
+def test_edit_text_reads_its_bounds_font_colour_and_layout():
+    # Edit text 2849 as the web build stores it. Its flags are HasText,
+    # ReadOnly, HasTextColor and HasFont, then HasLayout and NoSelect.
+    rect = bits((15, 5), (-40, 15), (14939, 15), (-40, 15), (352, 15))
+    body = (
+        struct.pack("<H", 2849) + rect + bytes([0x8D, 0x30])
+        + struct.pack("<HH", 65, 240) + bytes([0, 0, 0, 255])
+        + bytes([2]) + struct.pack("<HHHh", 0, 0, 0, 40)
+        + b"combatText\0" + b"combat text goes here\0"
+    )  # fmt: skip
+    index = parse_swf(swf(tag(TAG_DEFINE_EDIT_TEXT, body), tag(TAG_SHOW_FRAME)))
+    assert edit_text(index, 2849) == EditText(
+        bounds=(-40, -40, 14939, 352),
+        font_id=65,
+        font_height=240,
+        color=(0, 0, 0, 255),
+        align=2,
+        left_margin=0,
+        right_margin=0,
+        indent=0,
+        leading=40,
+        multiline=False,
+        word_wrap=False,
+        html=False,
+        variable_name="combatText",
+        initial_text="combat text goes here",
+    )
+
+
+def test_edit_text_without_its_optional_fields_reads_them_as_none():
+    rect = bits((5, 5), (0, 5), (10, 5), (0, 5), (10, 5))
+    body = struct.pack("<H", 7) + rect + bytes([0x60, 0x00]) + b"name\0"
+    index = parse_swf(swf(tag(TAG_DEFINE_EDIT_TEXT, body), tag(TAG_SHOW_FRAME)))
+    field = edit_text(index, 7)
+    assert (field.font_id, field.font_height, field.color) == (None, None, None)
+    assert (field.align, field.leading, field.initial_text) == (None, None, None)
+    assert (field.multiline, field.word_wrap) == (True, True)
+    assert field.variable_name == "name"
+
+
+def test_a_font_with_no_glyphs_is_a_device_font():
+    # DefineFont3 65 as the web build stores it: WideCodes and Bold set,
+    # language 1, the name "_sans" with a NUL inside its length, no glyphs.
+    sans = struct.pack("<H", 65) + bytes([0x05, 1, 6]) + b"_sans\0" + b"\0\0"
+    # The same header with two glyphs, followed by whatever their tables hold.
+    embedded = struct.pack("<H", 66) + bytes([0x06, 1, 5]) + b"Arial" + b"\2\0"
+    index = parse_swf(
+        swf(
+            tag(TAG_DEFINE_FONT3, sans),
+            tag(TAG_DEFINE_FONT3, embedded + b"\0" * 12),
+            tag(TAG_SHOW_FRAME),
+        )
+    )
+    assert font(index, 65) == Font(name="_sans", bold=True, italic=False, glyphs=0)
+    assert font(index, 65).device
+    assert font(index, 66) == Font(name="Arial", bold=False, italic=True, glyphs=2)
+    assert not font(index, 66).device

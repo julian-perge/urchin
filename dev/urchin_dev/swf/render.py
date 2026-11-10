@@ -44,7 +44,10 @@ class Job:
     """One frame to render. timeline is 0 for the root or a DefineSprite id,
     frame is 1-based, and origin is where that timeline's own (0, 0) sits on
     the stage in design px. strip holds ids for the driver to delete first,
-    as strip.strip_list() returns them."""
+    as strip.strip_list() returns them. only_depths, when set, hides every
+    other depth of the rendered frame, and each (depth, frame) in goto shows
+    the sprite at that depth on its own 1-based frame, the way a gotoAndStop
+    would."""
 
     timeline: int
     frame: int
@@ -52,6 +55,8 @@ class Job:
     origin: tuple[float, float] = (0.0, 0.0)
     strip: tuple[int, ...] = ()
     background: bool = False
+    only_depths: tuple[int, ...] = ()
+    goto: tuple[tuple[int, int], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -90,17 +95,7 @@ def frames(swf: Path, jobs: list[Job]) -> Iterator[list[Frame]]:
     """Render every job from `swf` in one driver run and yield the frames in
     the order of `jobs`. Their PNGs are deleted when the block exits."""
     with tempfile.TemporaryDirectory(prefix="render_") as tmp:
-        requests = [
-            {
-                "timeline": job.timeline,
-                "frame": job.frame,
-                "zoom": job.zoom,
-                "out": str(Path(tmp) / f"{n}.png"),
-                "background": "swf" if job.background else "none",
-                "strip_characters": list(job.strip),
-            }
-            for n, job in enumerate(jobs)
-        ]
+        requests = [_request(job, Path(tmp) / f"{n}.png") for n, job in enumerate(jobs)]
         results = ffdec_lib.render(swf, requests) if jobs else []
         rendered = []
         for job, result in zip(jobs, results, strict=True):
@@ -119,6 +114,25 @@ def frames(swf: Path, jobs: list[Job]) -> Iterator[list[Frame]]:
             check_canvas(frame)
             rendered.append(frame)
         yield rendered
+
+
+def _request(job: Job, out: Path) -> dict:
+    """-> the driver's job for `job`. Render.java reads any only_depths list
+    as the depths to keep, an empty one included, so the key is left out
+    unless the job keeps some."""
+    request = {
+        "timeline": job.timeline,
+        "frame": job.frame,
+        "zoom": job.zoom,
+        "out": str(out),
+        "background": "swf" if job.background else "none",
+        "strip_characters": list(job.strip),
+    }
+    if job.only_depths:
+        request["only_depths"] = list(job.only_depths)
+    if job.goto:
+        request["goto"] = [{"depth": d, "frame": f} for d, f in job.goto]
+    return request
 
 
 def check_canvas(frame: Frame) -> None:
