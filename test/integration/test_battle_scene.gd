@@ -918,6 +918,23 @@ func test_clicking_a_unit_then_an_orb_runs_that_move():
 	ZoneManager.auto_start_battles = true
 
 
+# A pick that fails addMoveForPlayer's checks plays KrinCombatText with the
+# message and leaves the decision open (frame_42/DoAction_11.as:60-125).
+func test_a_refused_pick_says_why_in_the_combat_text_banner():
+	var scene = _battle_100_in_its_own_viewport("RefusedPick")
+	await wait_until(func(): return scene.decision_open, 5)
+	scene.units[BattleRunner.PLAYER_SLOT].ability_cooldowns[0] = 2
+	_pick_the_first_move_on_the_enemy(scene)
+
+	assert_true(scene.combat_text_banner.is_up(), "the banner is up")
+	assert_eq(scene.combat_text_banner.label.text, "This move is not ready yet.")
+	assert_true(scene.radial_menu.visible, "the menu stays open")
+	assert_true(scene.decision_open, "and so does the decision")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The retreat button is the original's battle Quit button,
 # DefineButton2_3356, which shows SYSTEM[25] over SYSTEM[26]
 # (frame_1/DoAction.as:92-93) in place of a native tooltip.

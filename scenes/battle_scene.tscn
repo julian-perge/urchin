@@ -262,6 +262,7 @@ color = Color(0, 0, 0, 0)
 
 [connection signal="draw" from="BottomBar/PassRing" to="." method="_draw_pass_ring"]
 [connection signal="move_picked" from="RadialMenu" to="." method="_on_radial_move_picked"]
+[connection signal="pick_refused" from="RadialMenu" to="CombatTextBanner" method="show_text"]
 [connection signal="pressed" from="BottomBar/PassButton" to="." method="_on_pass_pressed"]
 [connection signal="pressed" from="BottomBar/RetreatButton" to="." method="_on_retreat_pressed"]
 [connection signal="pressed" from="BottomBar/Panel3/LogToggleButton" to="." method="_on_log_toggle_pressed"]

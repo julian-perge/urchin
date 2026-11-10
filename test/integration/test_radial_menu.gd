@@ -67,6 +67,16 @@ func _orb_centre(bar_index: int) -> Vector2:
 	return _menu.orbs[bar_index].get_global_rect().get_center()
 
 
+# The black disc the original lays over a darkened orb, its "bfilter".
+func _cover(bar_index: int) -> TextureRect:
+	return _menu.orbs[bar_index].get_node("Cover")
+
+
+# The turns left on a cooldown, the original's "ACD" field.
+func _count(bar_index: int) -> Label:
+	return _menu.orbs[bar_index].get_node("Count")
+
+
 func _tooltip_lines() -> Array:
 	var texts: Array = []
 	for section in GameTooltip._sections.get_children():
@@ -94,21 +104,13 @@ func test_an_orb_sits_at_its_own_bar_slots_offset():
 	assert_eq(orb.position, RadialMenu.ORB_OFFSETS[1] - orb.size / 2.0)
 
 
-func test_a_refused_orb_is_shown_darkened_and_the_rest_stay_usable():
-	_player.ability_cooldowns[0] = 5
-	_open()
-	assert_true(_menu.orbs[0].visible, "a refused orb is still shown")
-	assert_true(_menu.orbs[0].disabled, "and cannot be clicked")
-	assert_false(_menu.orbs[1].disabled, "the other slot is untouched")
-
-
 func test_the_menu_opens_when_every_equipped_move_is_refused():
 	_player.ability_cooldowns[0] = 5
 	_player.ability_cooldowns[1] = 5
 	_open()
 	assert_true(_menu.visible, "the source only hides empty slots")
-	assert_true(_menu.orbs[0].disabled)
-	assert_true(_menu.orbs[1].disabled)
+	assert_true(_cover(0).visible)
+	assert_true(_cover(1).visible)
 
 
 func test_an_empty_or_unknown_slot_shows_no_orb():
@@ -136,11 +138,13 @@ func test_a_bar_with_no_orb_at_all_opens_nothing():
 func test_reopening_dresses_the_orbs_for_the_current_bar():
 	_player.ability_cooldowns[0] = 5
 	_open()
-	assert_true(_menu.orbs[0].disabled)
+	assert_true(_cover(0).visible)
+	assert_eq(_count(0).text, "5")
 	_player.ability_cooldowns[0] = 0
 	_player.equipped_moves[1] = 0
 	_open()
-	assert_false(_menu.orbs[0].disabled, "the cooldown ended")
+	assert_false(_cover(0).visible, "the cooldown ended")
+	assert_eq(_count(0).text, "", "and its count is cleared")
 	assert_false(_menu.orbs[1].visible, "the slot was emptied")
 
 
@@ -180,6 +184,123 @@ func test_a_pick_reports_the_slot_move_and_target_after_the_menu_has_closed():
 	_menu.move_picked.connect(func(bar_index, move_id, target_slot): picks.append([bar_index, move_id, target_slot, _menu.visible]))
 	_menu.orbs[1].pressed.emit()
 	assert_eq(picks, [[1, DESTROY_ID, ENEMY_SLOT, false]])
+
+
+# Clicks the orb and returns what the menu said back: every pick_refused
+# message and every move_picked bar slot, in the order they came.
+func _click_orb(bar_index: int) -> Dictionary:
+	var said: Dictionary = {"refused": [], "picked": []}
+	_menu.pick_refused.connect(func(message): said["refused"].append(message))
+	_menu.move_picked.connect(func(picked_bar_index, _move_id, _target_slot): said["picked"].append(picked_bar_index))
+	_menu.orbs[bar_index].pressed.emit()
+	return said
+
+
+# The original's orb buttons call addMoveForPlayer with no gate of their own, so
+# every orb takes the click. A pick that fails a check shows that check's
+# message in the Combat text banner, and only a pick that passes closes the
+# menu (frame_42/DoAction_11.as:60-104). Only a bad target or a cooldown
+# darkens the orb (frame_217/PlaceObject3_3382_500 enterFrame, lines 15-29).
+func _assert_lit_and_refused(bar_index: int, message: String) -> void:
+	assert_false(_cover(bar_index).visible, "the orb is not darkened")
+	assert_eq(_count(bar_index).text, "", "and shows no count")
+	var said: Dictionary = _click_orb(bar_index)
+	assert_eq(said["refused"], [message], "the click says why")
+	assert_eq(said["picked"], [], "nothing is picked")
+	assert_true(_menu.visible, "and the menu stays open")
+
+
+func _assert_darkened_and_refused(bar_index: int, count: String, message: String) -> void:
+	assert_true(_cover(bar_index).visible, "the orb is darkened")
+	assert_eq(_count(bar_index).text, count, "the count is the turns left")
+	var said: Dictionary = _click_orb(bar_index)
+	assert_eq(said["refused"], [message], "the click says why")
+	assert_eq(said["picked"], [], "nothing is picked")
+	assert_true(_menu.visible, "and the menu stays open")
+
+
+func test_an_orb_short_of_focus_stays_lit_and_says_why_when_clicked():
+	_moves[LEADING_STRIKE_ID].focus_cost = 10.0
+	_open()
+	_assert_lit_and_refused(0, "You cannot use this move because you don't have enough Focus.")
+
+
+func test_a_silenced_orb_stays_lit_and_says_why_when_clicked():
+	_player.focus_n = 100.0
+	_player.silenced = 1.0
+	_moves[LEADING_STRIKE_ID].focus_cost = 10.0
+	_open()
+	_assert_lit_and_refused(0, "You cannot use moves that require Focus this turn.")
+
+
+func test_an_orb_short_of_life_stays_lit_and_says_why_when_clicked():
+	_moves[LEADING_STRIKE_ID].flat_life_cost = 1000.0
+	_open()
+	_assert_lit_and_refused(0, "You cannot use this move because you don't have enough Health.")
+
+
+func test_an_orb_whose_target_lacks_its_buffs_stays_lit_and_says_why_when_clicked():
+	_moves[LEADING_STRIKE_ID].required_buff_count = 1
+	_open()
+	_assert_lit_and_refused(0, "The target's status does not meet the requirements of this move.")
+
+
+func test_an_orb_for_a_bad_target_is_darkened_and_says_why_when_clicked():
+	_moves[LEADING_STRIKE_ID].can_target_others = false
+	_open()
+	_assert_darkened_and_refused(0, "", "You cannot use this move on that target.")
+
+
+func test_an_orb_on_cooldown_is_darkened_shows_its_turns_left_and_says_why_when_clicked():
+	_player.ability_cooldowns[0] = 3
+	_open()
+	_assert_darkened_and_refused(0, "3", "This move is not ready yet.")
+	assert_false(_cover(1).visible, "the other slot is untouched")
+	assert_eq(_count(1).text, "")
+
+
+# addMoveForPlayer writes a message for every check that fails and shows the
+# last one written, so a cooldown outranks Focus and life outranks a cooldown.
+# The orb darkens for its cooldown whichever message wins, because the ring's
+# enterFrame tests the cooldown on its own.
+func test_when_two_checks_fail_the_click_says_the_one_the_original_shows():
+	_moves[LEADING_STRIKE_ID].focus_cost = 10.0
+	_player.ability_cooldowns[0] = 2
+	_moves[DESTROY_ID].flat_life_cost = 1000.0
+	_player.ability_cooldowns[1] = 4
+	_open()
+	_assert_darkened_and_refused(0, "2", "This move is not ready yet.")
+	_assert_darkened_and_refused(1, "4", "You cannot use this move because you don't have enough Health.")
+
+
+func test_a_refused_pick_leaves_the_next_orb_free_to_pick_the_move_and_close_the_menu():
+	_moves[LEADING_STRIKE_ID].focus_cost = 10.0
+	_open()
+	_click_orb(0)
+	var said: Dictionary = _click_orb(1)
+	assert_eq(said["refused"], [], "a pick with no Refusal is not refused")
+	assert_eq(said["picked"], [1], "it picks the move")
+	assert_false(_menu.visible, "and closes the menu")
+
+
+# The cover is DefineSprite 2241, a black disc 23 px across on the orb's centre,
+# which the ring's enterFrame sets to 85% alpha once it has faded in (line 42).
+# The count is edit text 2245, 12 px grey and centred, laid out 2 px inside
+# bounds that the orb places 17.2 px left of and 8.65 px above its centre.
+func test_a_darkened_orb_takes_the_originals_cover_and_count():
+	_player.ability_cooldowns[0] = 3
+	_open()
+	var centre: Vector2 = _orb_centre(0)
+	var cover: TextureRect = _cover(0)
+	assert_almost_eq(cover.get_global_rect().position - centre, Vector2(-11.5, -11.5), Vector2(0.5, 0.5), "the disc sits on the centre")
+	assert_almost_eq(cover.size, Vector2(23, 23), Vector2(0.5, 0.5), "23 px across")
+	assert_almost_eq(cover.modulate.a, 0.85, 0.001, "at 85% alpha")
+	var count: Label = _count(0)
+	assert_almost_eq(count.get_global_rect().position - centre, Vector2(-15.2, -6.65), Vector2(0.001, 0.001), "where the count starts")
+	assert_almost_eq(count.size.x, 30.35, 0.001, "how wide it is")
+	assert_eq(count.get_theme_font_size("font_size"), 12, "12 px")
+	assert_eq(count.get_theme_color("font_color"), Color8(153, 153, 153), "grey")
+	assert_eq(count.horizontal_alignment, HORIZONTAL_ALIGNMENT_CENTER, "centred")
 
 
 func test_the_menu_is_whole_through_the_grace_period():

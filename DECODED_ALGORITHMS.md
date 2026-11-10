@@ -336,10 +336,14 @@ Not ported: `RadialMenu` keeps the port's own numbers, 0.15 s of grace and a 0.6
 - While it is true, alpha goes straight back to 100 (line 64).
 - An orb darkens only for a bad target or a cooldown (lines 15-29). The buttons on the orbs, `DefineButton2_3374` to `3381`, call `addMoveForPlayer` with no gate of their own, so a darkened orb
   still answers a click with its refusal message.
+- The darkening is the orb's `bfilter`, DefineSprite 2241, a black disc 23 px across. It is at 75 alpha on the two frames the ring fades in and 85 from then on (lines 16 and 42). A cooldown
+  also writes its turns left to the orb's `ACD` field, edit text 2245, and an empty string once it is 0 (lines 23-28). Ported: `RadialMenu` draws the disc at 85 alpha and the count, both
+  from `extract_ability_icons`, and a click on any refused orb shows `MoveLegality.message()` in the Combat text banner. Not ported: the ring also empties every `ACD` while the mouse is
+  away (lines 52-56).
 
 ## Required target buffs (frame_42/DoAction_11.as)
 
-Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 23 and 24, and `MoveLegality.refusal` returns `TARGET_STATUS` when the target falls short, which darkens the orb.
+Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 23 and 24, and `MoveLegality.refusal` returns `TARGET_STATUS` when the target falls short, so a click on the orb says so in the Combat text banner.
 
 - When the player picks a move, the original refuses it with "The target's status does not meet the requirements of this move." if the target has fewer than `KRINABILITYB[24]` active buffs
   of element `KRINABILITYB[23]` (lines 60-64, counted by `checkBuffsOnUnit` at 129-146).

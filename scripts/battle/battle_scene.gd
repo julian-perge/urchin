@@ -7,8 +7,9 @@
 # - hover a unit: a target ring glows under it (white = you, green = ally,
 #   red = enemy) with "Lvl. N" and the name
 # - click a unit on your turn: your bar's abilities fan out around it as
-#   orbs (RadialMenu); unusable ones (wrong target, focus, cooldown) are darkened;
-#   orb tooltips carry name/cost/description
+#   orbs (RadialMenu); a wrong target or a cooldown darkens an orb, a click on
+#   an orb you cannot use says why in the Combat text banner, and orb tooltips
+#   carry name/cost/description
 # - when your own move fails as it dispatches, the Combat text banner says why.
 #   An AI unit's or a Companion's failure shows nothing
 # - the bottom bar: companion stance buttons (agModeAr presets) on the
