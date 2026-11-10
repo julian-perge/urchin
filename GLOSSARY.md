@@ -46,8 +46,12 @@ _Avoid_: Floating text, damage number, popup
 The glow that pulses on a unit's doll when a hit, a heal or a Focus change lands on it, in one color for each. It is the original's `BATTLEFLASH`.
 _Avoid_: Glow, hit flash
 
+**Shield clip**:
+The bubble and spark that play on a unit on a Shield block, or when its shield soaks a whole Buff tick. It is the original's `shield` clip on the fighter rig.
+_Avoid_: Shield bubble, shield effect
+
 **Fighter presenter**:
-The node that owns one battle slot's on-screen state: its doll, bars, displayed health, hover ring, Floating numbers, Result flash, shield clip, stun and death.
+The node that owns one battle slot's on-screen state: its doll, bars, displayed health, hover ring, Floating numbers, Result flash, Shield clip, stun and death.
 _Avoid_: Unit view
 
 **Stage**:

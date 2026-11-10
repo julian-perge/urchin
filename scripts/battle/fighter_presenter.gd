@@ -64,7 +64,7 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	_home = home
 	displayed = UnitSnapshot.of(unit)
 	_doll.position = home
-	# The shield clip is the rig's own, so the MODEL5 quirk below leaves it alone.
+	# The Shield clip is the rig's own, so the MODEL5 quirk below leaves it alone.
 	_shield_clip.position = home
 	if unit.team_side == CombatUnit.Team.TWO:
 		_doll.scale.x = -1  # mirrored, facing left
@@ -84,7 +84,7 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 
 # Shows one move's result at the moment it lands on this fighter: the number
 # and the Result flash, then the death or flinch, then the voice, or for a
-# Shield block the shield clip, its sound and SHIELDED. Then comes the update of
+# Shield block the Shield clip, its sound and SHIELDED. Then comes the update of
 # the bars, the buff icons and the stun pose. Every result but a miss shows the
 # target it states, because the original recomputes and redraws its target
 # after every strike that lands (the conductor, line 103) and runs nothing on a
@@ -97,7 +97,7 @@ func show_result(result: MoveResult, move: Ability) -> void:
 	match result.kind:
 		MoveResult.Kind.DAMAGE when result.shield_took_all:
 			# A Shield block. The original checks the shield before it checks
-			# sswitch, plays the shield clip and sfx_shield, draws SHIELDED, and
+			# sswitch, plays the Shield clip and sfx_shield, draws SHIELDED, and
 			# runs nothing else of the hit: no Result flash, no flinch and no hit
 			# voice (frame_42/DoAction_8.as:70-76).
 			play_shield_clip()
@@ -151,7 +151,7 @@ func show_result(result: MoveResult, move: Ability) -> void:
 		show_state(result.target_after)
 
 
-# Plays the shield clip once on this fighter's rig. It takes no Move result,
+# Plays the Shield clip once on this fighter's rig. It takes no Move result,
 # because buffTicker also plays it, with no sound, when a shield soaks a whole
 # Buff tick (frame_42/DoAction_10.as:68-73).
 func play_shield_clip() -> void:
