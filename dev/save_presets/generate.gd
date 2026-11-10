@@ -1,8 +1,8 @@
 # Rebuilds every QA save preset in this folder. Each one starts from the same
 # steps as the main menu's new game and wins its story fights through
 # ZoneProgression, so companions, unlocks and quest_progress match a real run.
-# CLAUDE.md has the command that runs this and the one that copies a preset
-# into a slot.
+# docs/agents/godot.md has the command that runs this and the one that copies a
+# preset into a slot.
 extends SceneTree
 
 const OUTPUT_DIR: String = "res://dev/save_presets/"

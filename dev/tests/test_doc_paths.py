@@ -1,5 +1,5 @@
-# doc_paths.py's verdicts on Markdown and index listings built by hand, with
-# the home folder pointed at pytest's tmp_path for paths under ~/.
+# These tests hand doc_paths.py Markdown and index listings built by hand, and
+# point the home folder at pytest's tmp_path for the paths under ~/.
 from __future__ import annotations
 
 from urchin_dev.checks.doc_paths import broken_paths, code_spans
@@ -12,7 +12,9 @@ INDEX = {
     "dev/source_files/action_script/frame_41/DoAction_2.as",
     "dev/source_files/action_script_curated/frame_42/DoAction_8.as",
     "dev/urchin_dev/swf/render.py",
+    "pyproject.toml",
     "scripts/a.gd.uid",
+    "test/integration/test_battle_runner.gd",
 }
 
 
@@ -52,12 +54,20 @@ def test_a_path_matches_whole_components_only():
     ]
 
 
-def test_only_a_commands_words_with_a_slash_are_paths():
+def test_each_word_of_a_command_is_judged_on_its_own():
     text = (
         "`godot -s res://addons/gut/gut_cmdln.gd --path .`,"
-        " `rg x missing.toml` and `godot -s res://addons/gut/gone.gd`"
+        " `rg x pyproject.toml missing.toml` and `godot -s res://addons/gut/gone.gd`"
     )
-    assert broken_paths(text, INDEX, []) == [(1, "res://addons/gut/gone.gd")]
+    assert broken_paths(text, INDEX, []) == [
+        (1, "missing.toml"),
+        (1, "res://addons/gut/gone.gd"),
+    ]
+
+
+def test_a_gdscript_test_id_stands_for_its_file():
+    text = "`test_battle_runner.gd::test_misses` and `test_gone.gd::test_hits`"
+    assert broken_paths(text, INDEX, []) == [(1, "test_gone.gd")]
 
 
 def test_words_that_only_look_like_paths_are_skipped():

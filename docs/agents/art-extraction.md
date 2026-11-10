@@ -49,8 +49,8 @@ extracting it.
      game because AS hides it. ffdec draws it and ruins the export. This is the
      black disc over the ability icons: DefineSprite 2241 "bfilter" hides
      itself in `onLoad`, with DefineEditText 2245 the "00" counter on top of
-     it. `ability_icons.py` deletes both from a working copy, and its
-     `COOLDOWN_DISPLAY` carries the decoded bytecode.
+     it. `ability_icons.py` hands both to `render.py`, which deletes them in
+     memory, and its `COOLDOWN_DISPLAY` carries the decoded bytecode.
   2. **Never strip or hide a clip mask.** A mask looks exactly like an
      unwanted shape on top of the art, and removing one unclips everything it
      covered. DefineShape 1913 was stripped on that assumption and item 69 "A

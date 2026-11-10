@@ -35,6 +35,5 @@ this project already got wrong once and names its evidence.
   A whole-frame reference paints the stage behind everything, about 29% of the
   battle frame, and its exact matches dilute the edges that matter, so
   `verify_battle_screen.py` only counts pixels inside 333's box.
-- **Withdraw a wrong claim rather than fixing it.** `dc4c5b2` and `f068f87` are
-  both corrections of earlier commits in this repo that had reasoned instead of
-  measured.
+- **Withdraw a wrong claim rather than fixing it.** `dc4c5b2` withdrew a claim
+  an earlier commit in this repo had reasoned instead of measured.

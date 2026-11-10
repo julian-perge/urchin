@@ -19,7 +19,7 @@ import sys
 from collections.abc import Collection, Iterator, Sequence
 from pathlib import Path, PurePosixPath
 
-from urchin_dev.checks.godot_sidecars import indexed_paths
+from urchin_dev.checks import indexed_paths
 
 FENCE = re.compile(r" {0,3}(```|~~~)")
 CODE_SPAN = re.compile(
@@ -30,8 +30,10 @@ SLASH_COMMAND = re.compile(r"/[\w-]+")
 
 
 def code_spans(text: str) -> Iterator[tuple[int, str]]:
-    """Every inline code span outside a fenced block, as the line it starts on
-    and its text with its line breaks folded into spaces."""
+    """A code span can wrap across lines inside a paragraph, as the Godot test
+    command in AGENTS.md does, so spans are matched over the whole text with its
+    fenced blocks blanked out. Each one comes back with the line it starts on
+    and its line breaks folded into spaces."""
     lines = text.split("\n")
     fenced = False
     for number, line in enumerate(lines):
@@ -46,10 +48,11 @@ def code_spans(text: str) -> Iterator[tuple[int, str]]:
 
 
 def is_path(word: str, extensions: Collection[str]) -> bool:
-    """Whether a word reads as a path: it has a slash, or it ends in an
-    extension some indexed file has. Flags, placeholders, code, slash commands
-    and bare extensions such as `.png.import` do not, and of the URLs only
-    Godot's `res://`, which points into the repo, does."""
+    """A word reads as a path when it has a slash or ends in an extension some
+    indexed file has, which keeps names such as `Krin.zoneName` out. Flags,
+    placeholders, code, slash commands and bare extensions such as `.png.import`
+    never read as paths, and of the URLs only Godot's `res://` does, because it
+    points into the repo."""
     if "://" in word:
         scheme, _, rest = word.partition("://")
         return scheme == "res" and is_path(rest, extensions)
@@ -66,50 +69,46 @@ def on_disk(path: str) -> bool:
 
 
 def path_words(span: str, extensions: Collection[str]) -> list[str]:
-    """The words of a code span that read as paths. A span with spaces is a
-    command, so only its words with a slash count, unless the whole span is a
-    path under ~/ or / that exists spaces and all, such as a folder under
-    ~/Library/Application Support."""
-    words = span.split(" ")
-    if len(words) == 1:
-        return [span] if is_path(span, extensions) else []
-    if span.startswith(("~/", "/")) and on_disk(span):
+    """A span with spaces is usually a command, so each of its words is judged
+    on its own, unless the whole span is a path under ~/ or / that exists spaces
+    and all, such as the FFDec config under ~/Library/Application Support. A
+    GDScript test id such as `a.gd::test_b` stands for its file."""
+    if " " in span and span.startswith(("~/", "/")) and on_disk(span):
         return [span]
-    return [word for word in words if "/" in word and is_path(word, extensions)]
+    words = (word.split("::", 1)[0] for word in span.split(" "))
+    return [word for word in words if is_path(word, extensions)]
 
 
-def resolves(word: str, wrapped_index: Collection[str]) -> bool:
-    """Whether a path names something. `wrapped_index` holds each indexed path
-    between slashes, so a run of whole components matches as a substring."""
+def resolves(word: str, slashed_paths: Collection[str]) -> bool:
+    """Each indexed path arrives with a slash at both ends, so a run of whole
+    components matches as a substring and `der.py` does not match `render.py`."""
     if word.startswith(("~/", "/")):
         return on_disk(word)
-    run = "/" + word.removeprefix("res://").strip("/") + "/"
-    return any(run in path for path in wrapped_index)
+    slashed_word = "/" + word.removeprefix("res://").strip("/") + "/"
+    return any(slashed_word in path for path in slashed_paths)
 
 
 def broken_paths(
     text: str, index: Collection[str], not_a_path: Collection[str]
 ) -> list[tuple[int, str]]:
-    """Each path in a Markdown text that names nothing, with the line it is on."""
     extensions = {PurePosixPath(path).suffix[1:] for path in index} - {""}
-    wrapped_index = ["/" + path + "/" for path in index]
+    slashed_paths = ["/" + path + "/" for path in index]
     return [
         (line, word)
         for line, span in code_spans(text)
         for word in path_words(span, extensions)
-        if word not in not_a_path and not resolves(word, wrapped_index)
+        if word not in not_a_path and not resolves(word, slashed_paths)
     ]
 
 
 def doc_files(docs: Sequence[str]) -> list[Path]:
-    """The Markdown files the arguments name, reading a folder as its .md files."""
     files = []
     for doc in map(Path, docs):
         files += sorted(doc.glob("*.md")) if doc.is_dir() else [doc]
     return files
 
 
-def main(argv: Sequence[str] | None = None) -> int:
+def main() -> int:
     parser = argparse.ArgumentParser(
         description="Fail when a backticked path in Markdown names nothing."
     )
@@ -121,7 +120,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         metavar="SPAN",
         help="a span that reads as a path but names something outside the repo",
     )
-    args = parser.parse_args(argv)
+    args = parser.parse_args()
     index = indexed_paths()
     failures = []
     for doc in doc_files(args.docs):

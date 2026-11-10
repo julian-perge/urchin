@@ -7,7 +7,7 @@
 #
 # Shapes are only read for their bounds and for the bitmap their first fill
 # style uses, on demand from the bytes the index keeps. Art is rendered through
-# ffdec and never composited in Python (CLAUDE.md).
+# ffdec and never composited in Python (docs/agents/art-extraction.md).
 #
 # Owner ids: 0 is the root timeline, any other id is the DefineSprite whose
 # subtags hold the tag. Frames are 1-based and counted by ShowFrame tags, and

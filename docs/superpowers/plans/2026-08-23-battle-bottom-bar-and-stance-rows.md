@@ -36,7 +36,7 @@ five plain `Button`s for `TextureButton`s with a cover child, and
   render, matching `render_labels` and `render_chrome`.
 - Never add a clip mask to any strip list. `3317` places two, `3288` at
   `clipDepth="57"` and `3314` at `clipDepth="4"`. Only `3312`, the content, is
-  stripped. See the clip mask rule in `CLAUDE.md`.
+  stripped. See the clip mask rule in `docs/agents/art-extraction.md`.
 - After writing anything under `assets/`, run the Godot import pass:
   `/Applications/Godot.app/Contents/MacOS/Godot --headless --import --path .`
   Without it, tests fail with "No loader found for resource".

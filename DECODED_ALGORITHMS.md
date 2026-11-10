@@ -160,7 +160,7 @@ x^2 - 1.9 x + 0.9` of `value / (100 + 15 * level) + 1`, clamped to the track (ba
 ## Item looks and icons
 
 - `looks` art keys: `gghhjjuu.looks = "X"` assignments in frame_42/DoAction_16.as after each `createNewItemKrin` (wearable default "NINJA"; id counter jumps at 99/299/499).
-- Slot icons: the icon clip (DefineSprite 2064) has one labeled frame per item name; shape 1913 is a clip mask: its first placement, on frame 16 at depth 2, carries clipDepth 15, so stripping it unclips every icon under it (item 69 went from 63x63 to 101x140, see CLAUDE.md). It is placed once more later in the clip at depth 1 without a clip. `gotoAndStop(ITEMNAME[id])`.
+- Slot icons: the icon clip (DefineSprite 2064) has one labeled frame per item name; shape 1913 is a clip mask: its first placement, on frame 16 at depth 2, carries clipDepth 15, so stripping it unclips every icon under it (item 69 went from 63x63 to 101x140, see docs/agents/art-extraction.md). It is placed once more later in the clip at depth 1 without a clip. `gotoAndStop(ITEMNAME[id])`.
 
 ## Companion aggression stances (agModeAr)
 
