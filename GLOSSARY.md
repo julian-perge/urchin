@@ -47,7 +47,7 @@ The glow that pulses on a unit's doll when a hit, a heal or a Focus change lands
 _Avoid_: Glow, hit flash
 
 **Fighter presenter**:
-The node that owns one battle slot's on-screen state: its doll, bars, displayed health, hover ring, Floating numbers, stun and death.
+The node that owns one battle slot's on-screen state: its doll, bars, displayed health, hover ring, Floating numbers, Result flash, stun and death.
 _Avoid_: Unit view
 
 **Stage**:

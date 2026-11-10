@@ -26,6 +26,19 @@ testing the game by hand.
   applying but callbacks still fire. Kill it explicitly (`08dc6a7`).
 - A Control never shrinks its own `.size` back down once grown. Resize to
   `get_combined_minimum_size()` (`cbc2257`).
+- A CanvasGroup applies its ancestors' modulate twice. Its children carry the
+  modulate into the screen texture, and its built-in shader multiplies by
+  `COLOR`, which carries it again. So `scenes/doll_body.gdshader` leaves `COLOR`
+  out. Measured on Godot 4.7.2 for julian-perge/urchin#152: with `COLOR` in, a
+  cast-tinted doll drew as the plain doll times the tint again, and a doll faded
+  to 0.55 drew at 0.56 of the plain doll's alpha.
+- A CanvasGroup's `fit_margin` and `clear_margin` are in screen px, so they
+  cover half as much of the stage in the 2x window, and `clear_margin` grows the
+  rect that `fit_margin` already grew (Godot's renderer_canvas_cull.cpp).
+- A headless run draws nothing, so a test cannot see what a shader draws. Check
+  it with a SceneTree script run without `--headless` that saves
+  `root.get_texture().get_image()`. That script has to `load()` the scenes it
+  uses, because autoloads such as `GameTooltip` don't exist yet when it compiles.
 - Test tweens with `pause()` plus `custom_step(delta)`. `wait_seconds()` races
   the tween in headless and overshoots.
 - GDScript `==` throws on an int/String comparison rather than returning false,
