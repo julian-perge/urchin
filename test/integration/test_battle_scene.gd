@@ -2149,7 +2149,7 @@ func test_an_ai_half_turn_dispatches_2_frames_after_the_last_half_turn_ends():
 func test_a_buff_tick_that_kills_its_caster_holds_the_next_action_to_frame_51():
 	var scene = await _battle_100_on_a_stepped_clock("TickDeathFrames")
 	var shock: Ability = _first_move_of_type("Shock")
-	var caster: FighterPresenter = scene._presenters[3]
+	var doll: CharacterVisual = scene._presenters[3].get_node("Doll")
 	var killing: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 5.0)
 	killing["tick"].killed = true
 	killing["tick"].after.life = 0.0
@@ -2162,7 +2162,7 @@ func test_a_buff_tick_that_kills_its_caster_holds_the_next_action_to_frame_51():
 	])
 	var frames: Dictionary = {}
 	for frame in 300:
-		if caster.displayed.life == 0.0 and not frames.has("death"):
+		if doll._state == CharacterVisual.State.DEAD and not frames.has("death"):
 			frames["death"] = frame
 		for text in _floating_texts(scene):
 			if not frames.has(text):
@@ -2170,7 +2170,8 @@ func test_a_buff_tick_that_kills_its_caster_holds_the_next_action_to_frame_51():
 		if frames.has("12"):
 			break
 		_step_frame(scene)
-	assert_eq(frames.get("death", -1) - frames.get("11", -1), 25, "the tick kills its caster 25 frames after the Impact")
+	assert_eq(frames.get("death", -1) - frames.get("11", -1), 25, "the caster's doll dies 25 frames after the Impact")
+	assert_eq(frames.get("death", -1), frames.get("5", -2), "on the frame the tick's number shows")
 	assert_eq(frames.get("12", -1) - frames.get("11", -1), 51, "and the next action dispatches 26 frames after the tick")
 
 	GameData.current_save = null
