@@ -82,15 +82,15 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	_draw_status()
 
 
-# Shows one move's result at the moment it lands on this fighter: the number,
-# then the death or flinch, then the voice, or for a Shield block the shield
-# clip, its sound and SHIELDED. Then comes the Result flash, and then the bars,
-# the buff icons and the stun pose. Every result but a miss shows the target it
-# states, because the original recomputes and redraws its target after every
-# strike that lands (the conductor, line 103) and runs nothing on a miss. That
-# target already holds any damage-over-time tick the unit took earlier in the
-# half-turn. The original drew a tick when it happened, and here it reaches the
-# screen with the next result on the unit.
+# Shows one move's result at the moment it lands on this fighter: the number
+# and the Result flash, then the death or flinch, then the voice, or for a
+# Shield block the shield clip, its sound and SHIELDED. Then comes the update of
+# the bars, the buff icons and the stun pose. Every result but a miss shows the
+# target it states, because the original recomputes and redraws its target
+# after every strike that lands (the conductor, line 103) and runs nothing on a
+# miss. That target already holds any damage-over-time tick the unit took
+# earlier in the half-turn. The original drew a tick when it happened, and here
+# it reaches the screen with the next result on the unit.
 func show_result(result: MoveResult, move: Ability) -> void:
 	var amount: float = result.amount
 	var critical: bool = result.critical
@@ -98,47 +98,55 @@ func show_result(result: MoveResult, move: Ability) -> void:
 		MoveResult.Kind.DAMAGE when result.shield_took_all:
 			# A Shield block. The original checks the shield before it checks
 			# sswitch, plays the shield clip and sfx_shield, draws SHIELDED, and
-			# runs nothing else of the hit: no flinch and no hit voice
-			# (frame_42/DoAction_8.as:70-76).
+			# runs nothing else of the hit: no Result flash, no flinch and no hit
+			# voice (frame_42/DoAction_8.as:70-76).
 			play_shield_clip()
 			effect_cue.emit("sfx_shield")
 			_floating_numbers.show_shield(_home)
 		MoveResult.Kind.DAMAGE when result.direction == MoveResult.Direction.HEAL:
-			# Under sswitch this damage healed the target. The original plays no
-			# hit animation or hit voice (frame_42/DoAction_8.as:133-149). It
-			# draws the number in the move's element color and then a heal green
-			# one over it (lines 80 and 137), and ADR 0005 has the port draw one
-			# number, in heal green.
+			# Under sswitch this damage healed the target. The original plays the
+			# `heal` flash and no hit animation or hit voice
+			# (frame_42/DoAction_8.as:133-149). It draws the number in the move's
+			# element color and then a heal green one over it (lines 80 and 137),
+			# and ADR 0005 has the port draw one number, in heal green.
 			_floating_numbers.show_number(_home, amount, MenuTheme.HEAL_COLOR, critical)
+			_flash.play(ResultFlash.Kind.HEAL)
 		MoveResult.Kind.DAMAGE:
 			# The original draws this number twice (frame_42/DoAction_8.as:80 and
-			# 84), and ADR 0005 has the port draw it once.
+			# 84), and ADR 0005 has the port draw it once. Then it plays the `hit`
+			# flash (95-99).
 			_floating_numbers.show_number(_home, amount, _element_color(move), critical)
+			_flash.play(ResultFlash.Kind.HIT)
 			_die_or_flinch(result)
 			voice_cue.emit(_unit.voice_hit)
 		MoveResult.Kind.HEAL when result.direction == MoveResult.Direction.HARM:
 			# Under sswitch this heal hurt the target. The original draws its
-			# number in the Shadow color, plays the hit animation unless the
-			# target is stunned, plays no hit voice, and plays the death at the
-			# impact when the heal kills (frame_42/DoAction_8.as:189-229).
+			# number in the Shadow color, plays the `hit` flash, plays the hit
+			# animation unless the target is stunned, plays no hit voice, and
+			# plays the death at the impact when the heal kills
+			# (frame_42/DoAction_8.as:189-229).
 			_floating_numbers.show_number(_home, amount, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], critical)
+			_flash.play(ResultFlash.Kind.HIT)
 			_die_or_flinch(result)
 		MoveResult.Kind.HEAL:
-			# A heal of 0 draws nothing, because the original's whole heal branch
-			# sits inside DamageOutputKrinFinal > 0 (frame_42/DoAction_8.as:172).
+			# A heal of 0 draws nothing and plays no flash, because the
+			# original's whole heal branch sits inside DamageOutputKrinFinal > 0
+			# (frame_42/DoAction_8.as:172). A heal above 0 plays the `heal` flash
+			# (182-186).
 			if amount > 0:
 				_floating_numbers.show_number(_home, amount, MenuTheme.HEAL_COLOR, critical)
+				_flash.play(ResultFlash.Kind.HEAL)
 		MoveResult.Kind.FOCUS:
-			# The original draws no number for a focus result, only its Result
+			# The original draws no number for a focus result, only its `focus`
 			# flash (frame_42/DoAction_8.as:232-249).
-			pass
+			_flash.play(ResultFlash.Kind.FOCUS)
 		MoveResult.Kind.MISS:
 			# The conductor shows a miss as the MISS word in the move's element
-			# color (line 108). The caster's own animation still played in full
-			# to get here (see _execute_move_action's comment).
+			# color (line 108), and no Result flash. The caster's own animation
+			# still played in full to get here (see _execute_move_action's
+			# comment).
 			_floating_numbers.show_miss(_home, _element_color(move))
 			effect_cue.emit("sfx_magicmiss")
-	_play_result_flash(result)
 	if result.kind != MoveResult.Kind.MISS:
 		show_state(result.target_after)
 
@@ -148,22 +156,6 @@ func show_result(result: MoveResult, move: Ability) -> void:
 # Buff tick (frame_42/DoAction_10.as:68-73).
 func play_shield_clip() -> void:
 	_shield_clip.play()
-
-
-# Plays the Result flash where executeMove plays BATTLEFLASH: `hit` on a result
-# that harms and `heal` on one that heals, once sswitch has had its say, and
-# `focus` on a focus result (frame_42/DoAction_8.as:95-99, 144-148, 182-186,
-# 199-203 and 243-247). A Shield block (70-76) and a heal of 0 (172) stop short of
-# those calls, and a miss and a status-only result never reach them.
-func _play_result_flash(result: MoveResult) -> void:
-	var life_flash: ResultFlash.Kind = ResultFlash.Kind.HIT if result.direction == MoveResult.Direction.HARM else ResultFlash.Kind.HEAL
-	match result.kind:
-		MoveResult.Kind.DAMAGE when not result.shield_took_all:
-			_flash.play(life_flash)
-		MoveResult.Kind.HEAL when result.amount > 0:
-			_flash.play(life_flash)
-		MoveResult.Kind.FOCUS:
-			_flash.play(ResultFlash.Kind.FOCUS)
 
 
 func _element_color(move: Ability) -> Color:
