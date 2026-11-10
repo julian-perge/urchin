@@ -920,15 +920,24 @@ func test_a_result_states_whether_its_target_was_stunned_when_the_hit_landed():
 
 # A move fails as it dispatches when its caster can't pay for it, and the
 # failure says which cost it couldn't pay (the conductor, lines 477-488). Nuke
-# costs 20 focus, and Predator Form costs 15% of max life and no focus.
+# costs 20 focus, and Predator Form costs 15% of max life and no focus. A caster
+# short of both fails with the Health reason, as the original overwrites its
+# Focus message with the Health one. No shipped move costs both, so the third
+# case is Nuke with a life cost added.
 func test_a_move_its_caster_cannot_pay_for_fails_naming_the_cost():
-	var cases: Array = [[5, BattleRunner.FailReason.FOCUS], [116, BattleRunner.FailReason.HEALTH]]
+	var nuke_costing_life: Ability = moves_by_id[5].duplicate()
+	nuke_costing_life.flat_life_cost = 10
+	var cases: Array = [
+		[5, BattleRunner.FailReason.FOCUS, moves_by_id],
+		[116, BattleRunner.FailReason.HEALTH, moves_by_id],
+		[5, BattleRunner.FailReason.HEALTH, {5: nuke_costing_life}],
+	]
 	for case in cases:
 		var save: PlayerSave = PlayerSave.new_game("Sonny")
 		save.speed = 100.0
 		var player: CombatUnit = CombatUnit.from_player_save(save)
 		var runner = BattleRunner.new()
-		runner.setup({1: player, 2: _guard_holding("")}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
+		runner.setup({1: player, 2: _guard_holding("")}, null, case[2], buffs_by_id, buffs_by_name, [])
 		player.focus_n = 0.0
 		player.life_n = 1.0
 
@@ -938,6 +947,12 @@ func test_a_move_its_caster_cannot_pay_for_fails_naming_the_cost():
 
 		assert_eq(failed.size(), 1, "move %d fails" % case[0])
 		assert_eq(failed[0]["reason"], case[1], "and names the cost Sonny couldn't pay")
+		if case[2] != moves_by_id:
+			assert_eq(
+				MoveLegality.refusal(player, case[2][5], 99, runner.units[2], buffs_by_id),
+				MoveLegality.Refusal.LIFE,
+				"and the legality check puts life first too",
+			)
 
 
 # While one team acts, only its moves change the other team's life and stun:
