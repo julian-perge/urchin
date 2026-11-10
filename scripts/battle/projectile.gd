@@ -28,6 +28,9 @@ class_name Projectile
 extends Node2D
 
 signal reached_target
+# Emitted on the tick the bolt removes itself: at the crossing on a hit, and
+# once it is far enough past the target on a miss.
+signal flight_ended
 
 const BOLT_TIME := 60.0       # krinBoltTime: step = distance / 60, fixed at spawn
 const BOLT_INCREASE := 1.15   # krinBoltIncrease: SpeedConst *= 1.15 every original frame
@@ -36,13 +39,14 @@ const BOLT_FPS := 30.0        # the original ticks this once per SWF frame - dri
                                 # playback speed is baked into its generated scene instead
 const BOLT_SCENE_DIR := "res://scenes/battle/vfx/bolts/"
 const TRAIL_SCENE: PackedScene = preload("res://scenes/battle/vfx/trail/krintrail.tscn")
-# This port's own canvas is 800x600, top-left origin (SLOT_POSITIONS range
-# x=161..638) - a different coordinate convention from the source's
-# centered AS2 stage, so its own off-screen bounds don't transfer
-# literally. A small margin past the 800-wide canvas is this port's
-# equivalent, used only by the miss-fly-past logic below.
-const OFF_SCREEN_MIN_X := -20.0
-const OFF_SCREEN_MAX_X := 820.0
+# krinBoltMake removes a missed bolt once its x is more than 500 px either side
+# of the origin of BATTLESCREEN, the clip it flies in
+# (frame_42/DoAction_4.as:201). The battle frame's PlaceObject2 of BATTLESCREEN
+# (characterId 3435) puts that origin at x 400 on the stage, translateX 8000
+# twips, which is also where battle_scene.gd's SLOT_POSITIONS are measured
+# from.
+const BATTLE_SCREEN_X := 400.0
+const MISS_RANGE := 500.0
 # Safety net for the miss fly-past below. A move whose caster and target
 # share an x coordinate would give the bolt a zero x-step, so its x would
 # never change and the off-screen test could never become true - the
@@ -58,10 +62,10 @@ var trail_color: Color = Color.WHITE
 # Set by battle_scene.gd before start(), from result.type != MISS. A hit
 # frees the bolt the instant it reaches the target (matching source: the
 # bolt is destroyed the same tick its impact clip appears). A miss keeps
-# the bolt (and its growing trail) moving past the target until it exits
-# this port's own screen bounds - reached_target still fires at the same
-# coordinate-cross tick either way, so turn pacing/audio/the floatie land
-# exactly where they do on a hit.
+# the bolt (and its growing trail) moving past the target until it is
+# MISS_RANGE from BATTLE_SCREEN_X. reached_target fires at the same
+# coordinate-cross tick either way, so the audio and the floatie land where
+# they do on a hit, and flight_ended fires when the bolt is gone.
 var did_hit: bool = true
 var color: Color = Color.WHITE  # fallback tinted-circle color when clip_name has no real asset
 
@@ -161,16 +165,17 @@ func _process(delta: float) -> void:
 			_reached = true
 			reached_target.emit()
 			if did_hit:
-				queue_free()
+				_end_flight()
 				return
-		if _reached and (
-			position.x < OFF_SCREEN_MIN_X
-			or position.x > OFF_SCREEN_MAX_X
-			or _ticks >= MAX_FLIGHT_TICKS
-		):
-			queue_free()
+		if _reached and (absf(position.x - BATTLE_SCREEN_X) > MISS_RANGE or _ticks >= MAX_FLIGHT_TICKS):
+			_end_flight()
 			return
 	queue_redraw()
+
+
+func _end_flight() -> void:
+	queue_free()
+	flight_ended.emit()
 
 
 # Places the trail at the point the bolt is passing through right now,

@@ -140,8 +140,9 @@ func test_hit_frees_immediately_on_reaching_target():
 	# A Dictionary is used (not a bare local) because GDScript lambdas
 	# capture plain locals by value, not by reference - see
 	# test_cutscene_player.gd's identical note.
-	var result := {"reached": false}
+	var result := {"reached": false, "ended": false}
 	bolt.reached_target.connect(func(): result.reached = true)
+	bolt.flight_ended.connect(func(): result.ended = result.reached)
 
 	for i in 200:
 		bolt._process(1.0 / 30.0)
@@ -150,6 +151,7 @@ func test_hit_frees_immediately_on_reaching_target():
 
 	assert_true(result.reached, "reached_target fired")
 	assert_true(bolt.is_queued_for_deletion(), "hit - frees right at the coordinate-cross tick")
+	assert_true(result.ended, "and its flight ends then, after reached_target")
 
 
 func test_trail_outlives_the_bolt_so_its_own_fade_can_finish():
@@ -201,12 +203,21 @@ func test_miss_keeps_flying_past_the_target_until_off_screen():
 	assert_false(bolt.is_queued_for_deletion(), "miss - doesn't free at the coordinate-cross tick")
 	assert_true(bolt.position.x > 103.0, "kept moving past the target")
 
-	# Let it keep flying until it exits this port's own screen bounds.
+	# krinBoltMake removes a missed bolt once it is more than 500 px from the
+	# origin of BATTLESCREEN (frame_42/DoAction_4.as:201), which the battle frame
+	# places at x 400 on the stage.
+	var ended: Array = []
+	bolt.flight_ended.connect(func(): ended.append(bolt.position.x))
+	var last_x: float = bolt.position.x
 	for i in 2000:
+		last_x = bolt.position.x
 		bolt._process(1.0 / 30.0)
 		if bolt.is_queued_for_deletion():
 			break
-	assert_true(bolt.is_queued_for_deletion(), "eventually frees once off-screen")
+	assert_true(bolt.is_queued_for_deletion(), "eventually frees")
+	assert_lte(last_x, 900.0, "not while it was within 500 px of x 400")
+	assert_gt(bolt.position.x, 900.0, "but on the tick it got further")
+	assert_eq(ended.size(), 1, "and its flight ends then")
 
 
 func test_a_miss_with_no_horizontal_travel_still_ends():
