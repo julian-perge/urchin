@@ -285,6 +285,26 @@ func is_idle() -> bool:
 	return _state == State.IDLE
 
 
+# The box around every part the doll draws in its current pose, in its parent's
+# space, which is where Flash measures a clip's _width and _height. Flash
+# measures the parts' shapes without their filters, and some part PNGs carry a
+# filter's glow, so this box can come out bigger than the original's.
+func get_bounds() -> Rect2:
+	var bounds := Rect2()
+	var found: bool = false
+	for part in _parts.values():
+		if not part.visible:
+			continue
+		for layer in part.get_children():
+			if not layer is Sprite2D or layer.is_queued_for_deletion():
+				continue
+			var to_parent: Transform2D = transform * _body.transform * part.transform * layer.transform
+			var rect: Rect2 = to_parent * layer.get_rect()
+			bounds = bounds.merge(rect) if found else rect
+			found = true
+	return bounds
+
+
 func _process(delta: float) -> void:
 	if not animate:
 		return

@@ -582,7 +582,7 @@ Everything below still stands in for original behavior, except the rows marked D
 
 | Piece | Current stand-in | Original truth lives in |
 |---|---|---|
-| Camera zoom + shake | none | `GridZoomer` "KrinZoomGo" (zoom to target center * `-zoomRatioNEW` + 400/300; pause 2xCD melee / 5 missile / 1 shock), `GridShaker` (shock + crits) |
+| Camera zoom + shake | **DONE (2026-11-10)** for every move's zoom and a Shock's shake: `BattleScreenClip` (`scripts/battle/battle_screen_clip.gd`) runs both clips' frame scripts from `assets/ui/battle/battle_screen_motion.json`. A crit's shake is [#174](https://github.com/julian-perge/urchin/issues/174) | `GridZoomer` "KrinZoomGo" (zoom to target center * `-zoomRatioNEW`, or -0.3 for a Shock, + 400/300; pause 2xCD melee / 5 missile / 1 shock), `GridShaker` (shock + crits) |
 | Target hit flash | HIT recoil label only | `BATTLEFLASH` with `characterColorState/FilterState`: `frame_42/DoAction_8.as` ~line 199 |
 | Damage number art | Labels with exact colors + bigger crit font | NumberFixer/NumberSetter digit clips, miss/shield variants: `frame_42/DoAction_7.as` |
 | Top battle HP/focus bars | in-field bars with numbers | `lifeBarUpdate` + bar clips, layout in frame 217 placements |
