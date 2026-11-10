@@ -124,6 +124,30 @@ func _play_out_the_hit() -> void:
 		_doll._process(1.0 / 30.0)
 
 
+# Steps the presenter and its doll by `count` frames at the original's 30 fps.
+func _step_frames(count: int) -> void:
+	for frame in count:
+		_presenter._process(1.0 / 30.0)
+		_doll._process(1.0 / 30.0)
+
+
+func _present_with_a_buff() -> void:
+	var buff := Buff.new()
+	buff.internal_name = "FIRESAM"
+	_unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
+	_present(_unit, {}, {1: buff})
+
+
+# What the overlay draws besides its two bars.
+func _overlay_shows() -> Dictionary:
+	var icons: Array = _overlay.buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
+	return {
+		"icons": icons.size() if _overlay.buff_row.is_visible_in_tree() else 0,
+		"name": _overlay.name_label.is_visible_in_tree(),
+		"number": _overlay.health_value.is_visible_in_tree(),
+	}
+
+
 func test_setup_draws_the_unit():
 	_unit.life_u = 250.0
 	_unit.life_n = 180.0
@@ -313,7 +337,6 @@ func test_a_hit_flinches_the_doll_and_plays_the_hit_voice():
 func test_a_killing_blow_plays_the_death_at_the_impact():
 	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
 	assert_eq(_doll._state, DEAD, "the doll plays its death at the impact")
-	assert_false(_overlay.visible, "the overlay goes the same moment")
 
 
 # The original plays the hit voice only when the target survives, in the else
@@ -323,10 +346,89 @@ func test_a_killing_blow_plays_the_death_voice_and_not_the_hit_voice():
 	assert_eq(_cues, [VOICE_DIE])
 
 
+# The original attaches LifeBarSmoother to the bar at the death, and the clip's
+# frame 18, 17 frames later, removes the buff icons and sends the bar's inner
+# clip to its empty "third" frame, which takes the name and the numbers away
+# (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as).
+func test_the_buff_icons_name_and_number_clear_17_frames_after_a_killing_impact():
+	_present_with_a_buff()
+	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
+	_step_frames(16)
+	var before_the_clear: Dictionary = _overlay_shows()
+	_step_frames(1)
+	assert_eq([before_the_clear, _overlay_shows()], [
+		{"icons": 1, "name": true, "number": true},
+		{"icons": 0, "name": false, "number": false},
+	])
+
+
+# The alpha the overlay is drawn at, which is 0 once it is hidden.
+func _overlay_alpha() -> float:
+	return _overlay.modulate.a if _overlay.is_visible_in_tree() else 0.0
+
+
+# From the frame after the clear, LifeBarSmoother takes 5 off the bar's alpha
+# every frame (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as).
+func test_the_bar_fades_5_alpha_a_frame_after_the_clear():
+	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
+	var alphas: Array = [_overlay_alpha()]
+	for frame in 37:
+		_step_frames(1)
+		alphas.append(_overlay_alpha())
+	for expected in [[16, 1.0], [17, 1.0], [18, 0.95], [27, 0.5], [37, 0.0]]:
+		assert_almost_eq(alphas[expected[0]], expected[1], 0.001, "frame %d after the impact" % expected[0])
+
+
+# The scene redraws every fighter after every event and snaps them all at the
+# half-turn's end, and the bar's name, number and icons stay cleared through it.
+func test_a_redraw_after_the_clear_leaves_the_overlay_cleared():
+	_present_with_a_buff()
+	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
+	_step_frames(20)
+	_presenter.redraw()
+	_presenter.snap_to_unit()
+	assert_eq(_overlay_shows(), {"icons": 0, "name": false, "number": false})
+
+
+# LifeBarSmoother hides the bar the frame after its alpha reaches 0
+# (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as), and the doll removes
+# itself when its dead label ends.
+func test_a_dead_units_slot_shows_nothing_for_the_rest_of_the_battle():
+	_present_with_a_buff()
+	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
+	_step_frames(90)
+	_presenter.redraw()
+	_presenter.snap_to_unit()
+	var drawn: Array = _presenter.get_children().filter(func(child): return child is CanvasItem and child.is_visible_in_tree())
+	assert_eq(drawn.map(func(child): return child.name), [])
+
+
+# lifeBarUpdate plays the death voice and starts the fade only when the bar's
+# rounded percent changes (frame_42/DoAction_8.as:295-298 and 345-347), so the
+# original kills a unit from under 0.5% life with neither. ADR 0005 counts that
+# as an Original bug, and the port plays both on every death.
+func test_a_unit_killed_from_under_half_a_percent_life_still_plays_its_death_voice_and_fade():
+	_unit.life_u = 1000.0
+	_unit.life_n = 4.0
+	_present(_unit)
+	_presenter.show_result(_killing(_damage(4.0, 0.0)), null)
+	_step_frames(27)
+	assert_eq(_cues, [VOICE_DIE], "the death voice")
+	assert_almost_eq(_overlay_alpha(), 0.5, 0.001, "and the bar halfway through its fade")
+
+
+# A damage-over-time death has no result to move the bar. The original empties
+# the bar on the tick that kills (frame_42/DoAction_10.as:108-114 and 135, and
+# applyChangesKrin's lifeBarUpdate at 342), so the bar fades from empty.
+func test_a_death_with_no_result_empties_the_bar_before_it_fades():
+	_unit.life_n = 0.0
+	_presenter.die()
+	assert_eq(_overlay.health_bar.value, 0.0)
+
+
 func test_die_plays_the_death_with_no_hit():
 	_presenter.die()
 	assert_eq(_doll._state, DEAD, "the doll plays its death")
-	assert_false(_overlay.visible, "the overlay goes with it")
 	assert_eq(_cues, [VOICE_DIE], "with the death cry alone")
 
 
@@ -366,7 +468,6 @@ func test_heal_on_a_sswitch_target_shows_as_damage():
 func test_heal_that_kills_a_sswitch_target_plays_the_death():
 	_presenter.show_result(_killing(_heal_that_hurts(150.0, 0.0)), null)
 	assert_eq(_doll._state, DEAD, "the doll plays its death")
-	assert_false(_overlay.visible, "its overlay is hidden with it")
 	assert_eq(_presenter.displayed_hp, 0.0, "the bar drops to empty")
 	assert_eq(_cues, [VOICE_DIE], "with the death cry and no hit voice")
 

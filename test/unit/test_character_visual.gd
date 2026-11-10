@@ -125,7 +125,7 @@ func test_attack_variants_and_in_place_strike():
 	assert_eq(visual._state, CharacterVisual.State.IDLE)
 
 
-func test_cast_and_hit_recover_death_holds():
+func test_cast_and_hit_recover_to_idle():
 	visual.set_state(CharacterVisual.State.CAST)
 	for i in 40:
 		visual._process(0.05)
@@ -134,11 +134,51 @@ func test_cast_and_hit_recover_death_holds():
 	for i in 20:
 		visual._process(0.05)
 	assert_eq(visual._state, CharacterVisual.State.IDLE)
+
+
+# The alpha each part is drawn at: its own modulate times every ancestor's, up
+# to the doll.
+func _drawn_alphas() -> Array:
+	var alphas: Array = []
+	for part in visual._parts.values():
+		var alpha: float = 1.0
+		var node: Node = part
+		while node != visual.get_parent():
+			alpha *= (node as CanvasItem).modulate.a
+			node = node.get_parent()
+		alphas.append(alpha)
+	return alphas
+
+
+# MODEL1's dead label is frames 313 to 371. The fall plays at full alpha, and
+# the label's own colour transforms then fade every part, from 233/256 on frame
+# 361 to 23/256 on frame 370 (DefineSprite 166).
+func test_the_death_falls_at_full_alpha_then_fades_on_its_own_timeline():
+	var expected: Array = []
+	expected.resize(48)
+	expected.fill(256)
+	expected.append_array([233, 209, 186, 163, 140, 116, 93, 70, 47, 23])
+	var mismatches: Array = []
 	visual.set_state(CharacterVisual.State.DEAD)
-	for i in 40:
-		visual._process(0.05)
-	assert_eq(visual._state, CharacterVisual.State.DEAD, "death holds")
-	assert_lt(visual.modulate.a, 1.0, "faded")
+	for frame in expected.size():
+		if frame > 0:
+			visual._process(1.0 / 30.0)
+		for alpha in _drawn_alphas():
+			if absf(alpha - expected[frame] / 256.0) > 0.0001:
+				mismatches.append("frame %d drew alpha %.4f" % [313 + frame, alpha])
+				break
+	assert_eq(mismatches, [], "every part on every frame of the fall and the fade")
+
+
+# The script on frame 371 removes the doll before Flash draws that frame
+# (DefineSprite_166_MODEL1/frame_371/DoAction.as).
+func test_the_doll_is_not_drawn_once_dead_reaches_its_last_frame():
+	visual.set_state(CharacterVisual.State.DEAD)
+	for frame in 57:
+		visual._process(1.0 / 30.0)
+	assert_true(visual.is_visible_in_tree(), "frame 370 is drawn")
+	visual._process(1.0 / 30.0)
+	assert_false(visual.is_visible_in_tree(), "frame 371 is not")
 
 
 func test_stun_holds_until_cleared():
