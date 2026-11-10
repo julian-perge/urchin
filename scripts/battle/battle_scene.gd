@@ -411,12 +411,15 @@ func _battle_loop() -> void:
 	_finish_battle()
 
 
-# A MOVE event's result is an object, which JSON.stringify would print as its id,
-# so battle.log gets the result's fields instead.
+# battle.log gets a MOVE event's result as its fields and a MOVE_FAILED event's
+# reason as its name, because JSON.stringify would print the result as its id
+# and the reason as its number.
 func _event_log_text(event: Dictionary) -> String:
 	var logged: Dictionary = event.duplicate()
 	if logged.get("result") is MoveResult:
 		logged["result"] = logged["result"].to_dict()
+	if logged.get("type") == BattleRunner.EventType.MOVE_FAILED:
+		logged["reason"] = BattleRunner.FailReason.find_key(logged["reason"])
 	return JSON.stringify(logged)
 
 

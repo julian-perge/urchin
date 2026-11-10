@@ -94,6 +94,12 @@ func _killing(result: MoveResult) -> MoveResult:
 
 func _stunned_at_hit(result: MoveResult) -> MoveResult:
 	result.target_stunned = true
+	result.stun_after = 1.0
+	return result
+
+
+func _stunning(result: MoveResult) -> MoveResult:
+	result.stun_after = 1.0
 	return result
 
 
@@ -109,7 +115,13 @@ func _numbers() -> Array:
 
 func _stun() -> void:
 	_unit.stun = 1.0
-	_presenter.redraw()
+	_presenter.snap_to_unit()
+
+
+# Steps the doll for two seconds, which outlasts its hit label.
+func _play_out_the_hit() -> void:
+	for frame in 60:
+		_doll._process(1.0 / 30.0)
 
 
 func test_setup_draws_the_unit():
@@ -197,8 +209,9 @@ func test_each_hit_of_a_half_turn_shows_the_life_it_left():
 # A unit pays its own move's life cost when it acts, and the runner resolves the
 # whole half-turn before the replay, so a result on the unit later in that
 # half-turn starts from the life left after the cost. Here the cost was 40 and
-# the move moved 10 either way. The bar shows the life each result states, as
-# the original's bar reads LIFEN at the hit.
+# the move moved 10 either way. The bar shows the life each result states, so
+# the cost reaches it at that result, where the original drew it when the cost
+# was paid (the conductor, line 359).
 func test_a_result_shows_the_life_it_states_with_an_earlier_cost_in_it():
 	for result in [
 		_damage(10.0, 50.0),
@@ -213,8 +226,8 @@ func test_a_result_shows_the_life_it_states_with_an_earlier_cost_in_it():
 		assert_eq(_overlay.health_value.text, str(int(result.life_after)), "and so does the number beside the bar")
 
 
-# A damage-over-time tick, a life cost or a shield changes the unit with no hit
-# to show it, so the bar only catches up when the half-turn ends.
+# A damage-over-time tick or a life cost with no later result on the unit only
+# reaches the bar when the half-turn ends.
 func test_the_bars_snap_to_the_unit_at_half_turn_end():
 	_unit.life_n = 63.0
 	_presenter.redraw()
@@ -371,24 +384,56 @@ func test_heal_on_a_stunned_sswitch_target_keeps_it_stunned():
 
 
 # The runner resolves the whole half-turn before the replay, so the unit's stun
-# is already the one it ends the half-turn with when an earlier hit plays. The
-# original reads the stun when the hit lands (frame_42/DoAction_8.as:100-103),
-# so the flinch goes by the stun the result states.
-func test_a_hit_flinches_by_the_stun_its_target_had_when_it_landed():
-	_stun()
+# is already the one it ends the half-turn with when an earlier event plays. The
+# original reads the stun when a hit lands to decide the flinch
+# (frame_42/DoAction_8.as:100-103), and starts the stun pose at the strike that
+# lands the stun (the conductor, line 103), so the doll goes by the stun each
+# result states.
+func test_a_stun_from_later_in_the_half_turn_waits_for_the_hit_that_lands_it():
+	_unit.stun = 1.0
+	_presenter.redraw()
+	assert_ne(_doll._state, STUN, "a redraw before the stun lands doesn't start it")
 	_presenter.show_result(_damage(10.0, 90.0), null)
-	assert_eq(_doll._state, HIT, "a stun from later in the half-turn doesn't stop this hit's flinch")
+	assert_eq(_doll._state, HIT, "a hit before it flinches")
+	_play_out_the_hit()
+	_presenter.show_result(_stunning(_damage(10.0, 80.0)), null)
+	assert_eq(_doll._state, STUN, "and the hit that lands it starts the stun")
 
 	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
-	assert_ne(_doll._state, HIT, "and a stun that has worn off since still stops it")
+	assert_ne(_doll._state, HIT, "a stun that has worn off by the half-turn's end still stops the flinch")
 
 
-func test_a_focus_result_floats_its_amount_and_leaves_the_health_alone():
+# Every event redraws every fighter, so a redraw comes between the start of a
+# half-turn and the hit that lands a stun. The original plays that hit's flinch
+# and starts the stun at the same strike, so the doll ends up stunned.
+func test_a_hit_that_lands_a_stun_leaves_the_doll_stunned():
+	_unit.stun = 1.0
+	_presenter.redraw()
+	_presenter.show_result(_stunning(_damage(10.0, 90.0)), null)
+	_play_out_the_hit()
+	assert_eq(_doll._state, STUN)
+
+
+func test_a_focus_result_floats_its_amount():
 	_presenter.show_result(_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 8.0, 100.0), null)
 	assert_eq(_numbers()[-1].text, "+8 FOCUS")
 	assert_eq(_numbers()[-1].modulate, Color.SKY_BLUE)
-	assert_eq(_overlay.health_bar.value, 100.0, "health doesn't move")
+
+
+# A focus move can dispel a buff that holds up max life, and the recompute after
+# it then moves life. The original redraws the bar after every strike that lands
+# (the conductor, line 103) and runs nothing on a miss, so every result but a
+# miss moves the bar to the life it states.
+func test_every_result_but_a_miss_moves_the_bar_to_the_life_it_states():
+	for kind in [MoveResult.Kind.FOCUS, MoveResult.Kind.STATUS_ONLY]:
+		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+		_presenter.show_result(_result(kind, MoveResult.Direction.NONE, 0.0, 25.0), null)
+		assert_eq(_overlay.health_bar.value, 25.0, "a %s result moves the bar" % MoveResult.Kind.find_key(kind))
+
+	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+	_presenter.show_result(_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 25.0), null)
+	assert_eq(_overlay.health_bar.value, 100.0, "a miss leaves it")
 
 
 func test_a_miss_floats_miss_and_plays_the_miss_sound():
@@ -405,7 +450,7 @@ func test_a_miss_floats_miss_and_plays_the_miss_sound():
 # after the status lands (conductor line 103).
 func test_a_status_only_result_starts_the_stun_and_draws_no_number():
 	_unit.stun = 1.0
-	_presenter.show_result(_result(MoveResult.Kind.STATUS_ONLY, MoveResult.Direction.NONE, 0.0, 100.0), null)
+	_presenter.show_result(_stunning(_result(MoveResult.Kind.STATUS_ONLY, MoveResult.Direction.NONE, 0.0, 100.0)), null)
 	assert_eq(_numbers().size(), 0, "no number floats up")
 	assert_eq(_doll._state, STUN, "the target's stun animation starts at the impact")
 	assert_eq(_cues, [], "and nothing plays")
@@ -417,7 +462,7 @@ func test_any_rise_in_stun_replays_the_stun_animation():
 	_doll._process(0.1)
 	assert_gt(_doll._label_time, 0.0, "sanity: the animation has moved on")
 	_unit.stun = 2.0
-	_presenter.redraw()
+	_presenter.snap_to_unit()
 	assert_eq(_doll._label, "stun", "a second stun plays the stun-in label")
 	assert_eq(_doll._label_time, 0.0, "from its start")
 
@@ -432,17 +477,29 @@ func test_a_redraw_with_no_change_in_stun_leaves_the_animation_alone():
 
 func test_any_fall_in_stun_plays_the_wake_up_even_while_still_stunned():
 	_unit.stun = 2.0
-	_presenter.redraw()
+	_presenter.snap_to_unit()
 	_unit.stun = 1.0
-	_presenter.redraw()
+	_presenter.snap_to_unit()
 	assert_eq(_doll._label, "outofstun", "a partial fall still plays the wake-up")
 
 
-func test_a_dead_unit_counts_as_not_stunned():
+# A unit stunned when its half-turn starts can fall to a later hit in it, so the
+# runner has it inactive before the replay reaches that hit. The original keeps
+# it in its stun until the hit that kills it, and changes no dead unit's stun
+# pose (frame_42/DoAction_10.as:468).
+func test_a_stunned_unit_stays_stunned_until_its_death_plays():
 	_stun()
 	_unit.active = false
 	_presenter.redraw()
-	assert_eq(_doll._label, "outofstun")
+	assert_eq(_doll._state, STUN, "the doll is still stunned")
+	assert_ne(_doll._label, "outofstun", "and doesn't wake up first")
+	var killing_stun: MoveResult = _stunned_at_hit(_killing(_damage(100.0, 0.0)))
+	killing_stun.stun_after = 2.0
+	_presenter.show_result(killing_stun, null)
+	assert_eq(_doll._state, DEAD, "the hit that kills it plays the death, though it lands another stun")
+	_unit.stun = 2.0
+	_presenter.snap_to_unit()
+	assert_eq(_doll._state, DEAD, "and the half-turn's end leaves the death alone")
 
 
 # The ring fades in at +20 a frame at the original's 30 fps

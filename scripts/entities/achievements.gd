@@ -77,9 +77,9 @@ static func check_all_star(saves: Array) -> bool:
 	return classes_cleared.size() >= 3
 
 
-# Derives the original AchVal1-4 from a finished battle: total damage the
-# PLAYER dealt (move events from slot 1), companion presence/count (slots 3/5),
-# and the half-turn count.
+# Derives the original AchVal1 to AchVal4 from a finished battle: the total
+# damage the PLAYER dealt (move events from slot 1), whether any companion
+# fought and how many did (slots 3 and 5), and the half-turn count.
 static func collect_battle_counters(runner: BattleRunner, units: Dictionary) -> Dictionary:
 	var player_damage: float = 0.0
 	for event in runner.events:

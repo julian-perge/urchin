@@ -1400,9 +1400,9 @@ func test_hovering_a_fighter_shows_its_ring_only_during_a_decision():
 
 
 # The runner applies the whole half-turn before the replay, so every fighter's
-# stun, focus and buffs are already true when the first hit lands. The scene
-# shows them at every impact and after every event, on every fighter and not
-# just the one that was hit.
+# focus and buffs are already true when the first hit lands. The scene shows
+# them at every impact and after every event, on every fighter and not just the
+# one that was hit.
 func test_an_impact_and_each_event_redraw_every_fighter():
 	GameData.current_save = PlayerSave.new_game("AllSlotsRedraw", 0)
 	ZoneManager.auto_start_battles = false
@@ -1428,6 +1428,53 @@ func test_an_impact_and_each_event_redraw_every_fighter():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# A stun that a later hit lands is already on its target when the replay
+# starts, but the doll takes it at the hit that lands it, the way the original's
+# applyChangesKrin does after that strike, and keeps it once the hit's flinch
+# has played.
+func test_a_stun_starts_at_the_hit_that_lands_it_and_outlasts_its_flinch():
+	GameData.current_save = PlayerSave.new_game("StunAtItsHit", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var doll: CharacterVisual = scene._presenters[2].get_node("Doll")
+	scene.units[2].stun = 1.0
+
+	await scene._play_events([{"type": BattleRunner.EventType.DISPEL, "caster_slot": 1, "target_slot": 3, "removed": []}])
+	assert_ne(doll._state, CharacterVisual.State.STUN, "an earlier event doesn't start the stun")
+
+	var stunning_hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)
+	stunning_hit.life_after = scene.units[2].life_n
+	stunning_hit.stun_after = 1.0
+	scene._show_move_result({"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2, "move_id": 434, "result": stunning_hit}, 2)
+	for frame in 60:
+		doll._process(1.0 / 30.0)
+	assert_eq(doll._state, CharacterVisual.State.STUN, "the hit that lands it leaves the doll stunned")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# battle.log is the debug record of every event. It is written with
+# JSON.stringify, which prints an object as its id and an enum as its number.
+func test_battle_log_names_a_results_fields_and_a_failed_moves_cost():
+	var scene = autofree(BattleSceneRes.instantiate())
+	var hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 12.0)
+	var move_line: Dictionary = JSON.parse_string(scene._event_log_text({"type": BattleRunner.EventType.MOVE, "result": hit}))
+	var failed_line: Dictionary = JSON.parse_string(scene._event_log_text(
+		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 1, "reason": BattleRunner.FailReason.HEALTH}
+	))
+	assert_eq(
+		[move_line["result"]["kind"], move_line["result"]["direction"], move_line["result"]["amount"]],
+		["DAMAGE", "HARM", 12.0],
+		"a result's fields, with its enums by name"
+	)
+	assert_eq(failed_line["reason"], "HEALTH", "and a failed move's cost by name")
 
 
 func _float_labels(scene) -> Array:

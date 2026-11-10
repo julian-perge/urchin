@@ -9,9 +9,9 @@ extends RefCounted
 # frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as
 # lines 70-102), so _apply_status_effect() runs after the match below for
 # every category. The conductor then recomputes the target's stats with
-# applyChangesKrin (line 103), which redraws its life bar
-# (frame_42/DoAction_10.as:342), so execute_move() ends with that recompute and
-# only then reads the target's life for the result.
+# applyChangesKrin (line 103), which redraws its life bar and its stun pose
+# (frame_42/DoAction_10.as:342 and 468-481), so execute_move() ends with that
+# recompute and reads the life and stun the result ends on after it.
 # Visual/audio side effects (BATTLEFLASH, BATTLESCREEN, addSound, ...) are left
 # out entirely. This returns a MoveResult and the battle screen reacts to it.
 #
@@ -71,6 +71,7 @@ static func execute_move(ability: Ability, caster: CombatUnit, target: CombatUni
 	result.buff_applied = _apply_status_effect(ability, caster, target, buffs_by_name)
 	target.apply_changes()
 	result.life_after = target.life_n
+	result.stun_after = target.stun
 	result.killed = was_active and not target.active
 	return result
 
@@ -83,6 +84,7 @@ static func miss(target: CombatUnit) -> MoveResult:
 	result.life_before = target.life_n
 	result.life_after = target.life_n
 	result.target_stunned = target.stun != 0
+	result.stun_after = target.stun
 	return result
 
 

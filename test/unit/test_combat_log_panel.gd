@@ -66,6 +66,39 @@ func test_format_sswitched_heal_line_reads_as_a_hit():
 	assert_eq(panel._format_line(event, units), "Veradux hits Grulnak with Heal for 42")
 
 
+# A heal of 0 moves no life, which is all a buff-only Heal move like Block ever
+# heals, and the original draws nothing for it (frame_42/DoAction_8.as:172).
+func test_format_heal_of_0_line_says_what_landed_instead():
+	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
+	var event: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_name": "Block",
+		"result": _result(MoveResult.Kind.HEAL, MoveResult.Direction.HEAL, 0.0),
+	}
+	event["result"].buff_applied = "BLOCK"
+	assert_eq(panel._format_line(event, units), "Veradux uses Block on Grulnak")
+	event["result"].buff_applied = ""
+	assert_eq(panel._format_line(event, units), "Veradux's Block has no effect on Grulnak", "no buff landed, so nothing happened to the target")
+
+
+# A Focus move's amount is the change in focus it asks for, and Regulate and
+# Disrupt ask for a negative one, which drains the target's focus.
+func test_format_focus_move_line_says_whether_it_gave_or_drained():
+	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
+	var gift: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_name": "Aim For The Heart",
+		"result": _result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 30.0),
+	}
+	var drain: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_name": "Regulate",
+		"result": _result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, -30.0),
+	}
+	assert_eq(panel._format_line(gift, units), "Veradux restores Grulnak's focus by 30")
+	assert_eq(panel._format_line(drain, units), "Veradux drains Grulnak's focus by 30")
+
+
 func test_format_miss_move_line():
 	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
 	var event: Dictionary = {

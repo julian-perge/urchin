@@ -22,9 +22,11 @@ var kind: Kind = Kind.STATUS_ONLY
 # misses are NONE.
 var direction: Direction = Direction.NONE
 
-# The number the original draws over the target: the damage that got past the
-# shield with any overkill included, the heal before max life caps it, or the
-# change in focus.
+# The damage that got past the shield, overkill included, or the heal before max
+# life caps it. The original draws it over the target when it is above 0. A full
+# shield block leaves it 0, and the original draws its shield frame instead. On a
+# focus move it is the focus change the move asks for, negative for a drain,
+# which the original never draws (frame_42/DoAction_8.as:232-249).
 var amount: float = 0.0
 
 # True when the target's shield was bigger than the hit, which the original
@@ -52,6 +54,13 @@ var buff_applied: String = ""
 # unit's own stun can already include a stun from later in that half-turn.
 var target_stunned: bool = false
 
+# The target's stun once the move finished, after its status effect landed. The
+# battle screen starts or ends the target's stun pose from this at the impact,
+# the way the original's applyChangesKrin compares STUN after every strike that
+# lands (frame_42/DoAction_10.as:468-481), because the unit's own stun at replay
+# time can already include a stun from later in the half-turn.
+var stun_after: float = 0.0
+
 
 # battle_scene.gd writes events to battle.log with JSON.stringify, which prints
 # an object as its id, so the scene writes this dictionary in its place.
@@ -67,4 +76,5 @@ func to_dict() -> Dictionary:
 		"critical": critical,
 		"buff_applied": buff_applied,
 		"target_stunned": target_stunned,
+		"stun_after": stun_after,
 	}

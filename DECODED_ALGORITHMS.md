@@ -82,7 +82,7 @@ Implemented in `scripts/entities/character_visual.gd` (real MODEL1 label playbac
 
 ## Stun family labels (frame_42/DoAction_10.as `applyChangesKrin`/`applyBuffKrin`, ~line 135-481)
 
-Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/`_animate_stun`) and `scripts/battle/fighter_presenter.gd` (`_play_stun_change`).
+Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/`_animate_stun`) and `scripts/battle/fighter_presenter.gd` (`_show_stun`).
 
 - **`STUN` is a running total**, not a flag: `applyBuffKrin` does `ukcb2.STUN += iftbc * bffker[17]` where `bffker[17]` is the buff's stun contribution and `iftbc` is +1 on apply / -1 on the buff's own
   expiry (via `buffTicker`'s `autoDebuffer`, when a buff's `CD` hits 0). Multiple stacked stun buffs sum their contributions; the doll only fully un-stuns once every contributing buff has expired.
@@ -104,10 +104,11 @@ Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/
 - **One extra code-driven trigger:** `changeForm()` (model/skin swap mid-battle, e.g. transformation buffs) ends with `if (STUN) inner.gotoAndPlay("stun2")` - after a form change resets the doll's
   clip, a still-stunned unit is snapped straight back into the `stun2` loop instead of showing an idle pose. Not ported (form-changing buffs aren't implemented yet).
 - **`outofstun` ends** via MODEL1 frame 295's own `gotoAndStop("stand"); play()` - a one-shot that always falls back to idle, same pattern as `cast`.
-- No numeric timing constants gate any of this (unlike `krinBoltTime`/`krinMeleeAttackCD`) - it's a value-comparison state machine that runs on every `applyChangesKrin` call; the Godot port
-  evaluates it in `FighterPresenter.redraw` (called after every event and at half-turn boundaries). This note used to call that finer-grained than the original, from the same misreading as the trigger
-  above: the original also evaluates it at every successful hit, so both start the stun animation at the impact. The comparison only fires when the value has changed, so extra evaluations in
-  between change nothing.
+- No numeric timing constants gate any of this (unlike `krinBoltTime`/`krinMeleeAttackCD`). It is a value comparison that runs on every `applyChangesKrin` call, for an active unit only
+  (line 468). The port compares in `FighterPresenter._show_stun`, against the stun a `MoveResult` states (`stun_after`) at its impact and against the unit's own stun at the half-turn's end,
+  and a dead doll keeps its death. It never compares at the redraws in between, because the runner resolves the whole half-turn before the replay, so the unit's own stun can already hold a
+  stun from later in it. This note used to say those extra comparisons changed nothing. They started a later stun early, and the flinch at the hit that landed it then left the doll idle for
+  the whole stun.
 
 ## Dispel order and timing (frame_217/PlaceObject2_3389_480 enterFrame, lines 22-103)
 
@@ -250,23 +251,27 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
 
 - **Full Damage** works out the hit (lines 24-64) and compares it with the target's SHIELD (65-70).
   - A shield bigger than the hit takes all of it. SHIELD goes down by the hit, the target's `shield` clip and `sfx_shield` play, and `KrinNumberShow` draws its `shield` frame (70-76).
-    Nothing else runs: no flash, no `hit` label, no voice, no life bar update and no AchVal1. The result is HARM with amount 0 and `shield_took_all` set.
+    Nothing after the shield check runs: no flash, no `hit` label, no hit voice, no life bar update and no AchVal1. A crit has already shaken the grid by then, and played `Angry_Dux` or
+    `Angry_Roald` when Veradux or Roald is the caster (28-43). The result is HARM with amount 0 and `shield_took_all` set.
   - Otherwise the shield's value comes off the hit and the shield empties (79-81). A shield exactly as big as the hit soaks it this way, so the rest of the branch plays a hit for 0, and
     `KrinNumberShow` only draws a number above 0 (`frame_42/DoAction_7.as:8`).
   - With no SSWITCH (82-131) the hit comes off LIFEN, which stops at 0 with FOCUSN set to 0. The number is drawn twice (80 and 84). AchVal1 grows by the hit, which is what got past the
     shield, when the caster's playerName is "Sonny" (91-93). BATTLEFLASH plays `hit` (99), the target plays `hit` unless STUN is set (100-103), and at LIFEN 0 it plays `dead` and goes
-    inactive (104-107), or else a hit voice plays (130).
+    inactive (104-107), or else a hit voice plays (130). The `lifeBarUpdate` after either branch (150) plays the target's `voiceDie` when LIFEN is 0, unless its bar already read 0%
+    (328, 344-347).
   - With SSWITCH (133-149) the hit is added to LIFEN, which stops at LIFEU. The second number is heal green and BATTLEFLASH plays `heal`. No `hit` label, voice or AchVal1.
-- **Heal** works out the heal (153-171) and does nothing at all when it comes to 0 or less (172), before it looks at SSWITCH (174). So a heal of 0 is HEAL with amount 0 under SSWITCH too.
+- **Heal** works out the heal (153-171), shaking the grid on a crit (158-160), and does nothing more when it comes to 0 or less (172), before it looks at SSWITCH (174). So a heal of 0 is
+  HEAL with amount 0 under SSWITCH too.
   With no SSWITCH, LIFEN rises to at most LIFEU with a heal-green number and the `heal` flash (174-187). With SSWITCH, LIFEN falls instead, with a Shadow-colored number (191), the `hit`
-  flash (203), the `hit` label unless STUN is set (204-207) and `dead` at 0 (208-211). That branch plays no voice.
+  flash (203), the `hit` label unless STUN is set (204-207) and `dead` at 0 (208-211). It plays no hit voice, but its `lifeBarUpdate` (198) plays the target's `voiceDie` when LIFEN
+  reaches 0, as the one at 150 does.
 - **Focus** adds `[9]` to FOCUSN, kept between 0 and FOCUSU, and plays the `focus` flash. It draws no number (232-249).
 - Any other category does nothing in `executeMove`. Shatter Bolt is the only such move, and its status effect still lands after it (`KNOWN_GAPS.md`, the "Attack" entry).
 - The life bar redraws in `executeMove` (150, 187, 198 and 248) and again in `applyChangesKrin` (`frame_42/DoAction_10.as:342`), which the conductor runs on the target after the
   move's status effect (conductor line 103). So a move leaves the bar on the life after that recompute, which is the life `MoveResult.life_after` holds. The recompute moves life when the
   move lands, or dispels, a buff that changes max life: Edge Of Death's EDGEOFDEATH takes 85% off.
 - The STUN checks for the `hit` label read the target as the hit lands, before the move's own status effect, so `MoveResult.target_stunned` is read then too. Shatter Bolt's stun comes
-  after its own hit.
+  after its own hit. The stun pose changes in the recompute after the strike (`frame_42/DoAction_10.as:468-481`), so `MoveResult.stun_after` is read after that recompute, with the life.
 
 ## Unit stats below level 10 (frame_42/DoAction_14.as `krinAddNewUnit`)
 

@@ -65,7 +65,7 @@ A unit built from a template that fights on the player's team, such as Felicity 
 _Avoid_: Companion
 
 **Move result**:
-What one move did to its target, as `BattleManager` resolved it: what kind of move it was, which way it pushed the target's life once sswitch had its say, the number the original draws, and the target's life before and after.
+What one move did to its target, as `BattleManager` resolved it: what kind of move it was, which way it pushed the target's life once sswitch had its say, how much damage, heal or focus change it made, the target's life before and after, and its stun when the move landed and after it.
 _Avoid_: Hit, outcome
 
 **Settlement**:

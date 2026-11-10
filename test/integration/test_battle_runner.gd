@@ -345,8 +345,7 @@ func test_battle_100_simple_fight():
 
 
 # Battle 104's one phase entry watches Doctor Leath in slot 2 and moves the
-# battle to phase 2 once he falls to 30% life. The run is seeded so it is the
-# same fight every time, and the global RNG is handed back at the end.
+# battle to phase 2 once he falls to 30% life.
 func test_battle_104_boss_phases_and_speeches():
 	seed(20261109)
 	var counts = _assert_battle_runs(104)
@@ -825,6 +824,22 @@ func test_a_heal_under_sswitch_hurts_the_target():
 	assert_eq(result.life_after, target.life_n, "which is the life the target has now")
 
 
+# A heal that hurts can kill. The original stops life at 0, empties focus and
+# takes the target down (frame_42/DoAction_8.as:193-197 and 208-211).
+func test_a_heal_under_sswitch_that_takes_the_last_of_its_targets_life_kills_it():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = _guard_holding("RETROGRADED")
+	target.life_n = 1.0
+
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[4], caster, target, buffs_by_name)  # Heal
+
+	assert_eq(result.direction, MoveResult.Direction.HARM, "the heal hurt the target")
+	assert_true(result.killed, "the result says it killed")
+	assert_eq(result.life_after, 0.0, "and left no life")
+	assert_eq(target.focus_n, 0.0, "the target's focus is gone")
+	assert_false(target.active, "and the target is down")
+
+
 # Two Block Healing debuffs take 0.5 each off the caster's heal modifier
 # (BLOCKHEALING field 37), so its heals come to 0. The original only checks
 # sswitch inside its DamageOutputKrinFinal > 0 branch
@@ -897,8 +912,10 @@ func test_a_result_states_whether_its_target_was_stunned_when_the_hit_landed():
 	var bolt: MoveResult = BattleManager.execute_move(moves_by_id[521], frost_terror, bolted, buffs_by_name)  # Shatter Bolt
 
 	assert_true(hit_while_stunned.target_stunned, "a target holding a stun was stunned when the hit landed")
+	assert_eq(hit_while_stunned.stun_after, 1.0, "and still is afterwards")
 	assert_false(bolt.target_stunned, "Shatter Bolt's own stun comes after its hit")
 	assert_eq(bolted.stun, 1.0, "though it leaves its target stunned")
+	assert_eq(bolt.stun_after, 1.0, "and its result says so")
 
 
 # A move fails as it dispatches when its caster can't pay for it, and the
@@ -923,26 +940,28 @@ func test_a_move_its_caster_cannot_pay_for_fails_naming_the_cost():
 		assert_eq(failed[0]["reason"], case[1], "and names the cost Sonny couldn't pay")
 
 
-# While one team acts, only its moves change the other team's life: costs and
-# buff ticks land on the casters, and the end of a half-turn changes no one's
-# life. So for every target on the team that isn't acting, each result starts
-# from the life the result before it left, and the last one leaves the life the
-# unit has once the half-turn is over. The run is seeded so it is the same fight
-# every time, and the global RNG is handed back at the end.
-func test_every_result_states_the_life_its_target_has_afterwards():
+# While one team acts, only its moves change the other team's life and stun:
+# costs and buff ticks land on the casters, and the end of a half-turn changes
+# no one. So for every target on the team that isn't acting, each result starts
+# from the life the result before it left, and the last one leaves the life and
+# the stun the unit has once the half-turn is over.
+func test_every_result_states_the_life_and_stun_its_target_has_afterwards():
 	seed(20261109)
 	var battle: BattleFight = BattleSetup.load_battle(104)
 	var runner = BattleRunner.new()
 	runner.setup(_ai_driven_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, [])
 	var checked: int = 0
+	var stuns_landed: int = 0
 	var mismatches: Array = []
 	var half_turns: int = 0
 	while not runner.is_over() and half_turns < MAX_HALF_TURNS:
 		var resting_team: CombatUnit.Team = CombatUnit.Team.TWO if runner.team_move_now == CombatUnit.Team.ONE else CombatUnit.Team.ONE
 		var life: Dictionary = {}
+		var stun: Dictionary = {}
 		for slot in BattleRunner.TEAM_SLOTS[resting_team]:
 			if runner.units.has(slot):
 				life[slot] = runner.units[slot].life_n
+				stun[slot] = runner.units[slot].stun
 		for event in runner.advance_half_turn():
 			if event["type"] != BattleRunner.EventType.MOVE or not life.has(int(event["target_slot"])):
 				continue
@@ -951,11 +970,17 @@ func test_every_result_states_the_life_its_target_has_afterwards():
 			if result.life_before != life[slot]:
 				mismatches.append("half-turn %d, slot %d starts at %s, not %s" % [half_turns, slot, result.life_before, life[slot]])
 			life[slot] = result.life_after
+			if result.stun_after > stun[slot]:
+				stuns_landed += 1
+			stun[slot] = result.stun_after
 			checked += 1
 		for slot in life:
 			if life[slot] != runner.units[slot].life_n:
 				mismatches.append("half-turn %d, slot %d ends at %s, not %s" % [half_turns, slot, life[slot], runner.units[slot].life_n])
+			if stun[slot] != runner.units[slot].stun:
+				mismatches.append("half-turn %d, slot %d ends with stun %s, not %s" % [half_turns, slot, stun[slot], runner.units[slot].stun])
 		half_turns += 1
+	gut.p("battle 104: %d results checked, %d of them landed a stun" % [checked, stuns_landed])
 	assert_true(runner.is_over(), "battle 104 finishes")
 	assert_gt(checked, 0, "results on the team that wasn't acting were checked")
 	assert_eq(mismatches, [], "and every one agrees with its target")

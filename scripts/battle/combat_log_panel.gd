@@ -28,9 +28,8 @@ func toggle() -> void:
 	visible = not visible
 
 
-# Appends one line for an event, if that event type produces a readable
-# line at all (phase_advanced/battle_ended don't - same events
-# _play_events() plays a sound/does nothing visible for, respectively).
+# Appends one line for an event, if that event type produces a readable line at
+# all.
 func append_event(event: Dictionary, units: Dictionary) -> void:
 	var line: String = _format_line(event, units)
 	if line.is_empty():
@@ -72,15 +71,23 @@ func _format_move_line(event: Dictionary, units: Dictionary) -> String:
 	var move_name: String = str(event.get("move_name", "a move"))
 	var result: MoveResult = event["result"]
 	# ADR 0001 has each line say what the move did to its target, so a line is
-	# worded by which way the move pushed the target's life, and only a move that
-	# pushed it neither way is worded by its kind.
+	# worded by which way the move pushed the target's life. A move that pushed it
+	# neither way is worded by its kind, and so is a heal of 0, which keeps the
+	# HEAL direction only because the original checks a heal's amount before it
+	# checks sswitch.
 	match result.direction:
 		MoveResult.Direction.HARM:
 			return "%s hits %s with %s for %d" % [caster_name, target_name, move_name, int(result.amount)]
-		MoveResult.Direction.HEAL:
+		MoveResult.Direction.HEAL when result.kind != MoveResult.Kind.HEAL or result.amount > 0:
 			return "%s heals %s with %s for %d" % [caster_name, target_name, move_name, int(result.amount)]
 	match result.kind:
+		MoveResult.Kind.HEAL:
+			if result.buff_applied.is_empty():
+				return "%s's %s has no effect on %s" % [caster_name, move_name, target_name]
+			return "%s uses %s on %s" % [caster_name, move_name, target_name]
 		MoveResult.Kind.FOCUS:
+			if result.amount < 0:
+				return "%s drains %s's focus by %d" % [caster_name, target_name, -int(result.amount)]
 			return "%s restores %s's focus by %d" % [caster_name, target_name, int(result.amount)]
 		MoveResult.Kind.MISS:
 			return "%s's %s misses %s" % [caster_name, move_name, target_name]
