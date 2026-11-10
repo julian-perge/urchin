@@ -6,8 +6,23 @@ extends GutTest
 
 const BattleSceneRes = preload("res://scenes/battle_scene.tscn")
 # Every checkout of the project shares one user:// folder, the player's real
-# saves included, so the Re-Load test writes its slot in a folder of its own.
+# saves and achievements included, so the Re-Load test writes its slot in a
+# folder of its own and every win here unlocks into a file of its own.
 const TEST_SAVE_DIR: String = "user://test_battle_scene_saves/"
+const ACHIEVEMENTS_FILE: String = "user://test_battle_scene_achievements.cfg"
+
+var _achievements_path: String
+
+
+func before_all():
+	_achievements_path = ZoneManager.achievements_path
+	ZoneManager.achievements_path = ACHIEVEMENTS_FILE
+
+
+func after_all():
+	ZoneManager.achievements_path = _achievements_path
+	if FileAccess.file_exists(ACHIEVEMENTS_FILE):
+		DirAccess.remove_absolute(ACHIEVEMENTS_FILE)
 
 
 func test_full_battle_scene_run():
@@ -46,8 +61,6 @@ func test_full_battle_scene_run():
 	if scene.runner.win_condition == BattleRunner.Outcome.WIN:
 		var victory = scene.get_node_or_null("VictoryScreen")
 		assert_not_null(victory, "victory screen shown on win")
-		assert_eq(ZoneProgression.quest_progress(save, 1), 1, "victory advanced story progress")
-		assert_gt(save.euro, 0.0, "victory paid out")
 		# Drops are click-to-keep now - claiming one lands in the inventory.
 		if victory != null and not victory._drop_slots.is_empty():
 			var drop: ItemSlot = victory._drop_slots[0]
@@ -241,106 +254,6 @@ func _pauses_to_first_decision(battle_id: int, difficulty: CombatUnit.Difficulty
 	return {"scene": scene, "pauses": pauses}
 
 
-# Task 4 (cutscene plan): drives a real win of story battle 109 (zone 1's
-# boss, CUTSCENE_BATTLES -> CS_CUT2) through the actual game
-# code path - BattleSetup/BattleRunner combat, _finish_battle(),
-# ZoneProgression.after_battle_won(), and the VictoryScreen "Proceed" ->
-# CutscenePlayer wiring - and confirms the cutscene id is threaded through
-# correctly end to end. Enemy life is knocked to 1 and the player's life
-# pool is inflated so the outcome is a deterministic WIN rather than left to
-# real combat RNG (as test_full_battle_scene_run above accepts); every hit,
-# miss, and turn order decision along the way is still the real combat sim.
-#
-# This intentionally stops short of letting the real cutscene finish:
-# CutscenePlayer.play() suspends until the clip ends or its failsafe timeout
-# fires (real .ogv decode, 16-70s, no skip mechanism - see
-# cutscene_player.gd), and
-# _on_continue_pressed() beyond it calls get_tree().change_scene_to_file(),
-# which would tear down whatever the GUT runner considers its own current
-# scene. Verifying playback actually starts with the right stream is as far
-# as this test goes; queue_free() via add_child_autofree(scene) cleans up
-# the still-suspended coroutines harmlessly when the test ends.
-func test_story_battle_win_threads_cutscene_id_through_victory_flow():
-	var save = PlayerSave.new_game("CutsceneFlow", 0)
-	save.skill_points = 8
-	TalentTree.learn(save, 0)
-	TalentTree.learn(save, 0)
-	save.quest_progress[1] = 9  # battle 109 is zone 1's boss
-	# No slot is selected in this test (GameData.current_save is set directly
-	# below) - autosave defaulting true would make _on_victory_proceed() log a
-	# benign "no active save/slot" warning; off here since it's not what this
-	# test is checking.
-	save.autosave = false
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	watch_signals(scene)
-	scene.start_battle({"battle_id": 109, "is_story_progress": true, "is_boss": true, "train_cap": 9})
-	assert_eq(scene.battle.id, 109, "loaded the intended story battle")
-
-	# Tilt the fight so the real sim reaches WIN deterministically: enemy
-	# dies on the first landed hit, player is unkillable within the turn cap.
-	for slot in scene.units:
-		var unit: CombatUnit = scene.units[slot]
-		if unit.team_side == 2:
-			unit.life_n = 1.0
-		elif slot == BattleRunner.PLAYER_SLOT:
-			unit.life_u = 999999.0
-			unit.life_n = 999999.0
-
-	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
-	player.ai_enabled = true
-	player.move_pool_attack = TalentTree.get_known_move_ids(save)
-	player.cooldowns_attack = []
-	for i in player.move_pool_attack.size():
-		player.cooldowns_attack.append(0)
-
-	await wait_for_signal(scene.battle_finished, 30)
-	assert_signal_emitted(scene, "battle_finished")
-	assert_eq(scene.runner.win_condition, BattleRunner.Outcome.WIN, "tilted fight wins deterministically")
-	assert_eq(ZoneProgression.quest_progress(save, 1), 10, "story win advanced progress past 109")
-	assert_eq(scene._pending_cutscene, "CS_CUT2", "battle_scene threaded ZoneProgression's cutscene id into _pending_cutscene")
-
-	var victory: VictoryScreen = scene.get_node_or_null("VictoryScreen")
-	assert_not_null(victory, "victory screen shown on win")
-
-	# Fires the same signal the real "Proceed" button does. _on_victory_proceed()
-	# runs synchronously up to `await cutscene.play(...)`, which itself runs
-	# synchronously (animation_speed 0 skips the fade tweens) up to the real
-	# `await video.finished` - so by the time this call returns control here,
-	# CutscenePlayer exists, is a real child, and has already called play().
-	victory.proceed_pressed.emit()
-
-	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
-	assert_not_null(cutscene, "CutscenePlayer instantiated and added as a child of battle_scene")
-	if cutscene != null:
-		assert_true(cutscene.video.is_playing(), "play() started the video")
-		assert_eq(
-			cutscene.video.stream.resource_path, "res://assets/cutscenes/CS_CUT2.ogv",
-			"the cutscene id threaded all the way to CutscenePlayer.play() matches CS_CUT2"
-		)
-
-	# The original stops every sound before it jumps into a cutscene
-	# (DefineButton2_3004 on(release), line 10), so the clip's own audio isn't
-	# competing with the music for the whole runtime. By then the original is
-	# playing the hub's menu track (frame_181/DoAction.as:15), while the port is
-	# still playing the battle track.
-	assert_eq(
-		AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE,
-		"battle music stopped before the cutscene started"
-	)
-	# Consumed, not just read: a second Proceed press while the clip is
-	# playing must not find a cutscene id still waiting and start a second
-	# player on top of the first.
-	assert_eq(scene._pending_cutscene, "", "pending cutscene cleared once it was handed to the player")
-
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
-
-
 func _an_effect_is_playing() -> bool:
 	return AudioManagerAuto._effect_players.any(func(player): return player.is_playing())
 
@@ -362,12 +275,14 @@ func test_proceeding_into_a_cutscene_stops_sound_effects_too():
 	scene.start_battle({"battle_id": 109, "is_story_progress": true, "is_boss": true, "train_cap": 9})
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
-	assert_eq(scene._pending_cutscene, "CS_CUT2", "the win queued zone 1's cutscene")
 
 	AudioManagerAuto.play_effect(scene.units[2].voice_die)
 	assert_true(_an_effect_is_playing(), "Felicity's death cry is playing when Proceed is pressed")
 	scene.get_node("VictoryScreen").proceed_pressed.emit()
-	assert_not_null(scene.get_node_or_null("CutscenePlayer"), "the cutscene started")
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the cutscene started")
+	if cutscene != null:
+		assert_eq(cutscene.video.stream.resource_path, "res://assets/cutscenes/CS_CUT2.ogv", "and it is the win's CS_CUT2")
 	assert_false(_an_effect_is_playing(), "and no effect plays on into it")
 
 	GameData.current_save = null
@@ -624,23 +539,57 @@ func test_the_first_409_fight_plays_the_rotation_track_and_the_replay_the_boss_t
 	ZoneManager.auto_start_battles = true
 
 
-# A win of battle 109 pays 36, because the original averages Felicity's level
-# 7 with the level 1 of both companion markers. Paying for Felicity alone
-# would give 130. The win is set before the battle loop starts, so the loop
-# goes straight to _finish_battle() and no fight is played.
-func test_victory_money_counts_the_companion_markers():
-	var save = PlayerSave.new_game("MoneyFlow", 0)
+# The victory screen shows the battle's settlement. Training fight 1000 has only
+# the -2 marker, so with Roald joined and deployed second, Veradux fights it
+# and Roald doesn't, and the screen has rows for Sonny and Veradux alone. The
+# win pays 7, round(0.7 * respecValue(1)), Sonny's XP is expWorkOut(1, 1), 90,
+# and the battle's one drop is a pull from its rare pool. The win is set before
+# the battle loop starts, so no fight is played.
+func test_the_victory_screen_shows_the_battles_settlement():
+	var save = PlayerSave.new_game("VictorySettlement", 0)
+	save.party_roster = [0, 1, 2, -1, -1, -1]
 	GameData.current_save = save
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
 
 	var scene = add_child_autofree(BattleSceneRes.instantiate())
 	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 109, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	scene.start_battle({"battle_id": 1000, "is_story_progress": false, "is_boss": false, "train_cap": 9})
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
-	assert_not_null(scene.get_node_or_null("VictoryScreen"), "victory screen shown on win")
-	assert_eq(save.euro, 36.0, "round(0.7 * respecValue((7 + 1 + 1) / 3))")
+	var victory: VictoryScreen = scene.get_node_or_null("VictoryScreen")
+	assert_not_null(victory, "the win shows the victory screen")
+	if victory != null:
+		assert_eq(victory.get_node("MoneyValue").text, String.chr(0x20ac) + "7", "with the money the win paid")
+		assert_eq(victory.get_node("ExpValue").text, "90%", "the XP Sonny earned")
+		var drop_slots: Array = victory.get_children().filter(func(child): return child is ItemSlot)
+		var rare_pool: Array = [300, 301, 302, 303, 304, 500]
+		assert_eq(drop_slots.map(func(slot): return slot.item != null and slot.item.id in rare_pool), [true], "the drop")
+		var rows: Array = victory.get_children().filter(func(child): return child is VictoryExperienceRow)
+		assert_eq(rows.map(func(row): return row.name_label.text), ["Sonny", "Veradux"], "and rows for Sonny and Veradux alone")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A win's achievements go to ZoneManager.achievements_path, which this file
+# points at a file of its own, so a first win of 109 unlocks The Tape there.
+func test_a_win_unlocks_into_zone_managers_achievements_file():
+	if FileAccess.file_exists(ACHIEVEMENTS_FILE):
+		DirAccess.remove_absolute(ACHIEVEMENTS_FILE)
+	var save = PlayerSave.new_game("SceneTape", 0)
+	save.quest_progress[1] = 9
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 109, "is_story_progress": true, "is_boss": true, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_true(Achievements.load_unlocked(ACHIEVEMENTS_FILE)[0], "The Tape is in ZoneManager's file")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

@@ -22,7 +22,6 @@ var open_zone_map_on_load: bool = false
 var achievements_path: String = Achievements.SAVE_PATH
 
 signal zone_changed(zone_id: int)
-signal zone_unlocked(zone_id: int)
 signal battle_selected(info: Dictionary)
 
 func can_access_zone(zone_id: int) -> bool:
@@ -83,22 +82,6 @@ func _launch_battle(info: Dictionary) -> void:
 	battle_selected.emit(info)
 	if auto_start_battles:
 		get_tree().change_scene_to_file.call_deferred("res://scenes/battle_scene.tscn")
-
-# Call on battle victory: advances story progress, may add companions, may
-# name a cutscene. Re-emits zone_unlocked for any newly reachable zones.
-func report_battle_won(battle_id: int, was_story_progress: bool) -> Dictionary:
-	var save: PlayerSave = GameData.current_save
-	if save == null:
-		return {}
-	var unlocked_before: Array[Variant] = []
-	for zone_id in ZONES:
-		if ZoneProgression.is_zone_unlocked(save, zone_id):
-			unlocked_before.append(zone_id)
-	var result: Dictionary = ZoneProgression.after_battle_won(save, battle_id, was_story_progress)
-	for zone_id in ZONES:
-		if ZoneProgression.is_zone_unlocked(save, zone_id) and zone_id not in unlocked_before:
-			zone_unlocked.emit(zone_id)
-	return result
 
 # Zone definitions stored as resource
 # Krin.zoneName = ["EMPTY","PRISON","VILLAGE","TRAIN","TUNNELS","CITY","ROME","JAPAN","UTOPIA","JAPAN","STORM","EDEN","DOME","BETA"];

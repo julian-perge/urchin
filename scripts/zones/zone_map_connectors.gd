@@ -19,7 +19,6 @@ const LINE_WIDTH: float = 2.0
 
 
 func _ready() -> void:
-	ZoneManager.zone_unlocked.connect(func(_zone_id): queue_redraw())
 	visibility_changed.connect(queue_redraw)
 
 

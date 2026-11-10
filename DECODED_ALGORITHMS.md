@@ -257,7 +257,8 @@ Implemented in `scripts/battle/combat_unit.gd` (`from_character`).
 
 ## Victory money (frame_42/DoAction_14.as `krinAddNewUnit`, DefineSprite_3142/frame_9)
 
-Implemented in `scripts/battle/battle_rewards.gd`: `money_levels` picks the slots and levels, and `battle_scene.gd`'s `_finish_battle` hands them to `money_gain`.
+Implemented in `scripts/battle/battle_rewards.gd`: `money_levels` picks the slots and levels, and `BattleSettlement.settle` (`scripts/battle/battle_settlement.gd`) hands them to
+`money_gain` through `BattleRewards.apply_victory`.
 
 - `krinAddNewUnit` runs once per battle slot 2-6. A slot passes the spawn gate when its template id is positive, or when it is a companion marker whose deployment entry is set,
   `friendArrayX[players[a - 2] + 2] > 0` (line 25). The markers are -2 and -1, so with the default `friendArrayX = [1, 2]` (`frame_42/DoAction_17.as:18`) both pass even before that companion
@@ -268,6 +269,21 @@ Implemented in `scripts/battle/battle_rewards.gd`: `money_levels` picks the slot
   `frame_42/DoAction_16.as:1-4`).
 - Averaging only the enemy slots 2, 4 and 6 would change the pay of 50 story battles, for example 109 (36 instead of 130) and 513 (309 instead of 823), and of training fights too: 1001
   at player level 7 pays 25 instead of 78.
+
+## Companion XP (frame_42/DoAction_14.as `krinAddNewUnit`, DefineSprite_3142/frame_9)
+
+Implemented in `scripts/battle/battle_settlement.gd`: `_fighting_party` lists the companions `BattleSetup.build_units` placed, in slot order, and `BattleRewards.apply_victory` pays
+each of them.
+
+- Frame 201 empties `Krin.friendlySlotsFFTT` at every battle load (`frame_201/DoAction.as:116`) and then spawns slots 1 to 6 in order (lines 125 and 206).
+- `krinAddNewUnit`'s companion branch pushes the companion's party id onto that list when the marker's deployment entry names a companion who has joined (`frame_42/DoAction_14.as:187-192`).
+  The same block sets `AchVal2` and adds 1 to `AchVal3`, the teammate counters. Nothing takes an entry back out, so a companion who dies in the fight stays on the list.
+- The victory screen's two companion bars read `friendlySlotsFFTT[0]` and `[1]` and hide themselves when the entry is undefined (`DefineSprite_3142/frame_9/PlaceObject3_3002_1111` and
+  `PlaceObject3_3002_1154`, `onClipEvent(load)` lines 2-6). Each runs `expWorkOut(EnemyXPFinal, LevelStats[prx])` against its companion's own level.
+- So battles 2 and 508, which have no marker, pay no companion, and training fight 1000, whose only marker is -2, pays only the companion deployed first. A guest never counts, because it
+  comes from the template branch.
+- 95 of the 99 stored battles put the -2 marker in slot 3 and the -1 marker in slot 5. The only battle with markers in the other team's slots is battle 1, the PvP arena's
+  (`DefineButton2_3339` on(release), line 7), which the port leaves out.
 
 ## Which moves can be picked (frame_42/DoAction_11.as, frame_42/DoAction_9.as)
 
@@ -402,8 +418,8 @@ Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with
 
 ## Battle end and game over (DefineSprite 3355 `blacker5`, root frames 229-241 and 104)
 
-Ported: `battle_scene.gd`'s `_finish_battle` opens `GameOverScreen` (`scripts/battle/game_over_screen.gd`) on a defeat or a draw. The port shows it, and the victory screen too, without the
-original's fade to black.
+Ported: `BattleSettlement.settle` reports a defeat or a draw as `game_over`, and `battle_scene.gd`'s `_finish_battle` then opens `GameOverScreen` (`scripts/battle/game_over_screen.gd`).
+The port shows it, and the victory screen too, without the original's fade to black.
 
 - Once `winCondition` is set, the conductor plays `blacker5` (conductor lines 257-261). DefineSprite 3355 fades its black shape 333 in over frames 32-81, about 1.7 s at 30 fps, and its frame 85
   sends the root to `loseCombat`, `winCombat` or `drawCombat` for `winCondition` 0, 1 or 2 (`DefineSprite_3355/frame_85/DoAction.as:5-16`).

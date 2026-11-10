@@ -1,10 +1,14 @@
 # Integration test for the full zone-driven battle loop: story battle picked
 # from progression -> battle .tres loaded -> roster built (player + deployed
-# companion + enemies) -> fight runs to completion -> victory advances quest
-# progress and pays out rewards including companion XP.
+# companion + enemies) -> fight runs to completion -> BattleSettlement settles
+# the win, which advances quest progress and pays out rewards including
+# companion XP.
 extends GutTest
 
 const MAX_HALF_TURNS = 300
+# Every checkout of the project shares one user:// folder with the player's
+# real achievements, so a settled win unlocks into a file of its own.
+const ACHIEVEMENTS_FILE: String = "user://test_zone_battle_flow_achievements.cfg"
 
 var unit_templates: Dictionary = {}
 
@@ -136,13 +140,11 @@ func test_full_zone_battle_loop():
 	assert_true(runner.is_over(), "zone-driven battle terminates")
 	gut.p("battle 100 outcome=%d turns=%d" % [runner.win_condition, runner.turn_count])
 
+	var settlement := BattleSettlement.settle(runner, save, pick, ACHIEVEMENTS_FILE)
+	if FileAccess.file_exists(ACHIEVEMENTS_FILE):
+		DirAccess.remove_absolute(ACHIEVEMENTS_FILE)
 	if runner.win_condition == BattleRunner.Outcome.WIN:
-		var progression = ZoneProgression.after_battle_won(save, pick["battle_id"], pick["is_story_progress"])
 		assert_eq(ZoneProgression.quest_progress(save, 1), 1, "story win advanced progress")
-		assert_true(progression["progress_advanced"])
-		var enemy_levels = BattleRewards.unit_levels_from_slots(units, [2, 4, 6])
-		var spawned_levels = enemy_levels  # battle 100's only positive-id unit is the enemy
-		var rewards = BattleRewards.apply_victory(save, spawned_levels, enemy_levels, [1])
-		assert_gt(rewards["money_gained"], 0)
-		assert_true(save.party_exp[1] > 0.0 or save.party_levels[1] > 1, "Veradux earned XP")
-		gut.p("rewards: %s" % [rewards])
+		assert_eq(settlement.money_gained, 7, "round(0.7 * respecValue(1)) over the Prison Guard and both markers")
+		assert_eq(Array(settlement.fighting_party), [1], "Veradux fought")
+		assert_true(save.party_exp[1] > 0.0 or save.party_levels[1] > 1, "and earned XP")
