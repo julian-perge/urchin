@@ -3,11 +3,12 @@
 # save - the port of the unit-placement half of LOAD_BATTLE_SCENE +
 # krinAddNewUnit (frame42/sonny2_createNewBattle.txt).
 #
-# Slot layout: battle.players[i] fills slot i + 2. Positive values are enemy
-# unit template ids, 0 is an empty slot, and the -2/-1 markers are the two
-# deployed companions (see Party.deployed_party_id). Slot 1 is always the
-# player. players_levels entries can be "X" (player level - 2) or "Z"
-# (player level + 5), both clamped to [1, train_cap] (finalTrainCap).
+# Slot layout: battle.players[i] fills slot i + 2. Positive values are unit
+# template ids, which place a guest on the player's team and an enemy on the
+# other, 0 is an empty slot, and the -2/-1 markers are the two deployed
+# companions (see Party.deployed_party_id). Slot 1 is always the player.
+# players_levels entries can be "X" (player level - 2) or "Z" (player level
+# + 5), both clamped to [1, train_cap] (finalTrainCap).
 #
 # No autoload references - unit templates and the battle resource come in as
 # parameters. load_battle() is the one filesystem touch (the generated

@@ -22,8 +22,8 @@ enum Team { ONE = 1, TWO = 2 }
 # came from (BattleAI.choose_move's "pool", BattleRunner's cooldown lookup).
 enum MovePool { ATTACK, DEFENSE, ABSOLUTE }
 
-# Where a unit in a battle came from. BattleSetup.build_units is the only writer,
-# so a unit built any other way, as tests and the equip doll do, stays at NONE.
+# BattleSetup.build_units is the only writer of a unit's origin, so a unit built
+# any other way, as tests and the equip doll do, stays at NONE.
 enum Origin { NONE, PLAYER, COMPANION, GUEST, ENEMY }
 
 # modVar_1 (strength/magic), modVar_2 (life), modVar_3 (speed), per difficulty.
@@ -53,7 +53,7 @@ var plevel: int
 var active: bool = true
 
 var origin: Origin = Origin.NONE
-var party_id: int = -1  # The companion's id in Party for a COMPANION unit, -1 for every other origin.
+var party_id: int = -1  # Only a COMPANION unit has a Party id here, and every other origin keeps -1.
 
 # Battle-slot layout (playerKrin1..6): odd slots = team 1, even = team 2.
 # Slot 1 is the human player. Set by BattleRunner at setup.
@@ -301,15 +301,13 @@ static func from_player_save(save: PlayerSave, battle_slot: int = 1) -> CombatUn
 	unit.start_at_full()
 	return unit
 
-# The moveArray and CDArray copies in krinAddNewUnit, which its template branch
-# and its companion branch make the same way (frame_42/DoAction_14.as:114-128
-# and 193-207). Every move starts off cooldown.
+# krinAddNewUnit copies a unit's move arrays and zeroes their cooldowns the same
+# way in its template branch and its companion branch
+# (frame_42/DoAction_14.as:114-128 and 193-207), so both factories share this.
 func load_moves_from(template: Character) -> void:
 	move_pool_attack = template.moves.get("attack", []).duplicate()
 	move_pool_defense = template.moves.get("defense", []).duplicate()
-	move_pool_absolute = []
-	for entry in template.moves.get("absolute", []):
-		move_pool_absolute.append({"id": int(entry["id"]), "phase": int(entry["phase"])})
+	move_pool_absolute = template.moves.get("absolute", []).duplicate(true)
 	cooldowns_attack = _zero_int_array(move_pool_attack.size())
 	cooldowns_defense = _zero_int_array(move_pool_defense.size())
 	cooldowns_absolute = _zero_int_array(move_pool_absolute.size())

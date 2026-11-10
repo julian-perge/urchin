@@ -6,16 +6,10 @@ extends GutTest
 
 const MAX_HALF_TURNS = 300
 
-var moves_by_id: Dictionary = {}
-var buffs_by_id: Dictionary = {}
-var buffs_by_name: Dictionary = {}
 var unit_templates: Dictionary = {}
 
 
 func before_all():
-	moves_by_id = MoveManagerAuto.moves_by_id
-	buffs_by_id = BuffManagerAuto.buffs_by_id
-	buffs_by_name = BuffManagerAuto.buffs_by_internal_name
 	unit_templates = UnitManagerAuto.units_by_id
 
 
@@ -68,6 +62,24 @@ func test_roster_tells_a_guest_from_an_enemy_with_the_same_template():
 	assert_eq(enemy.party_id, -1, "and neither is the enemy")
 
 
+# The account in DECODED_ALGORITHMS.md of why no guest ever shows a stance row
+# rests on these being the only guests in the game.
+func test_only_battles_2_and_508_put_a_guest_on_the_field():
+	var save = PlayerSave.new_game("Flow", 0)
+	var battle_ids: Array = []
+	for file in DirAccess.get_files_at("res://resources/battles"):
+		if file.ends_with(".tres"):
+			battle_ids.append(int(file.get_slice("_", 0)))
+	battle_ids.sort()
+	var guests: Array = []
+	for battle_id in battle_ids:
+		var units = BattleSetup.build_units(BattleSetup.load_battle(battle_id), save, unit_templates, CombatUnit.Difficulty.HARD)
+		for slot in units:
+			if units[slot].origin == CombatUnit.Origin.GUEST:
+				guests.append([battle_id, slot])
+	assert_eq(guests, [[2, 5], [508, 3]])
+
+
 # A marker names a deployment position rather than a companion, so swapping the
 # deployed pair has to swap the party ids too.
 func test_roster_takes_a_companions_party_id_from_the_deployment():
@@ -113,7 +125,10 @@ func test_full_zone_battle_loop():
 
 	var runner = BattleRunner.new()
 	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup(units, battle, moves_by_id, buffs_by_id, buffs_by_name, manager, TalentTree.get_passive_buff_names(save))
+	runner.setup(
+		units, battle, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id,
+		BuffManagerAuto.buffs_by_internal_name, manager, TalentTree.get_passive_buff_names(save)
+	)
 	var half_turns = 0
 	while not runner.is_over() and half_turns < MAX_HALF_TURNS:
 		runner.advance_half_turn()

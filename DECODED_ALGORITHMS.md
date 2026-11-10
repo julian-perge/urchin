@@ -178,7 +178,9 @@ slots 3 and 5, by whether each unit is active (`frame_217/PlaceObject2_3389_480`
 guest's row would work. Only battles 2 and 508 put a guest on the player's team (measured over the 99 battles in `resources/battles`). Battle 2 hides the bar outright
 (`DefineSprite_3317/frame_1/PlaceObject2_3312_7` onClipEvent(load), lines 5-8). Battle 508's only phase entry is flagged endGame, so it is won the moment its opening lines finish (lines
 862-868), and the block at line 703 needs `speechDone` true with `winCondition` still below 0 (lines 589-591), so it never runs. The bar starts hidden (`gotoAndStop("HIDE")` in that same
-onClipEvent). This is read from the AS, not seen in a live run of the SWF. The port gives a row only to a unit whose `origin` is COMPANION, which comes to the same screen on every battle.
+onClipEvent). This is read from the AS, not seen in a live run of the SWF. The port gives a row only to a unit whose `origin` is COMPANION, so no guest gets one there either. When the rows
+show still differs: the port keeps a companion's row up for the whole battle, while the original shows the bar only at Decisions, so it never appears in the four battles won during their
+opening lines (210, 409, 504 and 508).
 
 ## New Game and Load Game (root frames 56 to 93, `Krin.dataMode`)
 

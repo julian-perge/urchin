@@ -1179,8 +1179,6 @@ func test_a_guest_with_a_companions_name_gets_no_stance_row():
 	ZoneManager.auto_start_battles = true
 
 
-# The companion Felicity, deployed into the same slot as the guest above, does
-# get a row, and its buttons retune slot 3's unit and not the companion in slot 5.
 func test_a_deployed_companion_gets_the_row_the_guest_does_not():
 	var save = PlayerSave.new_game("CompanionRowTest", 0)
 	save.party_roster = [0, 1, 2, 3, -1, -1]

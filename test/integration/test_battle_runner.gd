@@ -42,11 +42,6 @@ func test_unit_id_corrections_applied():
 	assert_eq(unit_templates[34].name, "ZPCI Sniper", "Steam dump said 39, true id 34")
 
 
-func test_all_battles_built():
-	var battle_files: Array = Array(DirAccess.get_files_at("res://resources/battles")).filter(func(file): return file.ends_with(".tres"))
-	assert_eq(battle_files.size(), 99)
-
-
 # All three factories start from CombatUnit.new(), so each unit has to get its
 # own arrays and buff slots from it, and the change arrays have to keep the
 # fractions buffs add to them.
@@ -86,10 +81,11 @@ func test_every_factory_starts_its_unit_at_full_life_and_focus():
 
 
 # Unit 11 is the Felicity boss, whose record holds five absolute moves with
-# phase locks, and Veradux the companion takes his pools from unit 4.
+# phase locks, and the companion Veradux uses the pools of unit 4.
 func test_a_units_moves_come_from_its_template_with_every_cooldown_at_zero():
 	var boss: CombatUnit = CombatUnit.from_character(unit_templates[11], 7, CombatUnit.Difficulty.HARD, 2)
 	assert_eq(boss.move_pool_absolute[2], {"id": 530, "phase": 2})
+	assert_not_same(boss.move_pool_absolute[2], unit_templates[11].moves["absolute"][2], "each absolute entry is the unit's own copy")
 	assert_eq(boss.cooldowns_absolute, [0, 0, 0, 0, 0])
 	assert_eq(boss.cooldowns_attack.size(), boss.move_pool_attack.size())
 	assert_eq(boss.cooldowns_defense.size(), boss.move_pool_defense.size())
@@ -98,7 +94,7 @@ func test_a_units_moves_come_from_its_template_with_every_cooldown_at_zero():
 	var veradux: CombatUnit = Party.build_companion_unit(save, 1, unit_templates, 3)
 	var template_moves: Array = unit_templates[4].moves["attack"]
 	assert_eq(veradux.move_pool_attack, template_moves)
-	assert_false(is_same(veradux.move_pool_attack, template_moves), "the unit's pool is its own copy")
+	assert_not_same(veradux.move_pool_attack, template_moves, "the unit's pool is its own copy")
 	assert_eq(veradux.cooldowns_attack, [0, 0])
 
 
@@ -838,11 +834,12 @@ func _acting_order(events: Array) -> Array:
 	return order
 
 
-# A fresh save with Sonny and Veradux at the level of the battle's strongest
-# enemy, so that a fight run to its end is a real one.
+# This puts Sonny and Veradux at the level of the battle's strongest enemy, so
+# that a fight run to its end is a real one. A training battle's "X" and "Z"
+# levels are worked out from the player's level, so they can't set it.
 func _save_for(battle: BattleFight) -> PlayerSave:
 	var save: PlayerSave = PlayerSave.new_game("Runner")
-	save.level = int(battle.players_levels.max())
+	save.level = int(battle.players_levels.filter(func(level): return not level is String).max())
 	Leveling.compute_stats(save)
 	save.party_levels[1] = save.level
 	return save
