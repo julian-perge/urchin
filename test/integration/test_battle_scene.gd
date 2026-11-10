@@ -676,6 +676,109 @@ func test_a_draw_ends_the_game_on_the_game_over_screen():
 	GameData.current_save = null
 
 
+const SWF_FRAME_SECONDS: float = 1.0 / 30.0
+
+
+# Battle 100 decided as `outcome` before its loop has run, then finished the way
+# the loop finishes it once the runner is over. The fade runs at full speed, and
+# its tween is paused before its first step so each test steps it itself.
+func _decide_battle_100(outcome: BattleRunner.Outcome) -> Control:
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = outcome
+	scene.animation_speed = 1.0
+	scene._finish_battle()
+	var fade: Tween = scene.get("_fade_tween")
+	if fade != null:
+		fade.pause()
+	ZoneManager.auto_start_battles = true
+	return scene
+
+
+# Once winCondition is set, the conductor plays blacker5, DefineSprite 3355, on
+# from the stop() on its frame 31 (frame_217/PlaceObject2_3389_480 enterFrame,
+# lines 257-261, and DefineSprite_3355/frame_31/DoAction.as). Its frames 32 to 82
+# fade black shape 333 in, and its frame 85 takes the shape away and sends the
+# result (DefineSprite_3355/frame_85/DoAction.as:5-16), 54 frames or 1.8 s after
+# the battle was decided. Each step ends halfway through a frame, so a check reads
+# the alpha the SWF gives that frame.
+func _assert_fades_to_black_before(scene: Control, screen_path: String) -> void:
+	var fade: Tween = scene.get("_fade_tween")
+	assert_not_null(fade, "the decided battle starts a fade")
+	if fade == null:
+		return
+	var black: ColorRect = scene.get_node("Fade/Black")
+	fade.custom_step(SWF_FRAME_SECONDS * 0.5)
+	assert_eq(black.color.a, 0.0, "frame 31 shows no black")
+	fade.custom_step(SWF_FRAME_SECONDS * 2.0)
+	assert_eq(black.color.a, 10.0 / 256.0, "frame 33 shows the first black")
+	fade.custom_step(SWF_FRAME_SECONDS * 49.0)
+	assert_eq(black.color.a, 1.0, "frame 82 is full black")
+	fade.custom_step(SWF_FRAME_SECONDS * 2.0)
+	assert_eq(black.color.a, 1.0, "and frame 84 still is")
+	assert_null(scene.get_node_or_null(screen_path), "with no result screen up yet")
+	fade.custom_step(SWF_FRAME_SECONDS)
+	assert_not_null(scene.get_node_or_null(screen_path), "frame 85 shows the result screen")
+	assert_eq(black.color.a, 0.0, "and takes the black away")
+
+
+# The original pays a win on winCombat and on the victory screen's own frame, and
+# both come after blacker5's frame 85 (frame_219/DoAction.as and
+# DefineSprite_3142/frame_9).
+func test_a_win_fades_to_black_before_the_victory_screen():
+	var save = PlayerSave.new_game("FadeWin", 0)
+	GameData.current_save = save
+	var euro: float = save.euro
+	var scene = _decide_battle_100(BattleRunner.Outcome.WIN)
+	assert_eq(save.euro, euro, "the win pays nothing when the fade starts")
+	_assert_fades_to_black_before(scene, "VictoryScreen")
+	assert_gt(save.euro, euro, "and pays once the victory screen is up")
+	GameData.current_save = null
+
+
+func test_a_loss_fades_to_black_before_the_game_over_screen():
+	GameData.current_save = PlayerSave.new_game("FadeLoss", 0)
+	var scene = _decide_battle_100(BattleRunner.Outcome.LOSS)
+	_assert_fades_to_black_before(scene, "UI/GameOverScreen")
+	GameData.current_save = null
+
+
+func test_a_draw_fades_to_black_before_the_game_over_screen():
+	GameData.current_save = PlayerSave.new_game("FadeDraw", 0)
+	var scene = _decide_battle_100(BattleRunner.Outcome.DRAW)
+	_assert_fades_to_black_before(scene, "UI/GameOverScreen")
+	GameData.current_save = null
+
+
+# The battle frame opens on blacker5's frame 1, and its frames 1 to 28 fade black
+# shape 333 out before the stop() on its frame 31, so every battle fades in from
+# black. The clip sits on the battle frame's top depth, and the shape covers the
+# whole stage.
+func test_a_battle_fades_in_from_black():
+	GameData.current_save = PlayerSave.new_game("FadeIn", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.start_battle({"battle_id": 100, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	var fade: Tween = scene.get("_fade_tween")
+	assert_not_null(fade, "the battle starts a fade")
+	if fade != null:
+		fade.pause()
+		var black: ColorRect = scene.get_node("Fade/Black")
+		assert_eq(black.color, Color.BLACK, "the battle opens on full black")
+		assert_eq(black.get_global_rect(), scene.get_viewport_rect(), "over the whole window")
+		assert_gt(scene.get_node("Fade").layer, scene.get_node("UI").layer, "and over the turn and speech labels")
+		fade.custom_step(SWF_FRAME_SECONDS * 27.5)
+		assert_eq(black.color.a, 1.0 / 256.0, "frame 28 shows the last black")
+		fade.custom_step(SWF_FRAME_SECONDS)
+		assert_eq(black.color.a, 0.0, "and frame 29 none")
+	ZoneManager.auto_start_battles = true
+	GameData.current_save = null
+
+
 # The reset that runs before gameOverMenu calls stopAllSounds()
 # (frame_41/DoAction_2.as:13), which stops the effects as well as the music. The
 # loss is set before the battle loop starts, so no fight is played and the test

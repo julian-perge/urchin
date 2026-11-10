@@ -80,6 +80,7 @@ var _line_on_screen: Dictionary = {}
 # drops the rest of that batch's lines, until its next call clears it.
 var _hard_skip: bool = false
 var _pause_timer: SceneTreeTimer = null  # the running _pause's timer, which Space runs out during a line
+var _fade_tween: Tween = null  # the running _play_fade's tween, which the next fade kills
 
 @onready var background: TextureRect = $Background
 @onready var sky: TextureRect = $Sky
@@ -92,6 +93,7 @@ var _pause_timer: SceneTreeTimer = null  # the running _pause's timer, which Spa
 @onready var stance_host: Control = $BottomBar/StanceHost
 @onready var _countdown_label: Label = $BottomBar/Panel3/CountdownLabel
 @onready var _combat_log: CombatLogPanel = $CombatLogPanel
+@onready var _fade_black: ColorRect = $Fade/Black
 
 
 func _ready():
@@ -189,6 +191,10 @@ func start_battle(info: Dictionary) -> void:
 	_spawn_visuals()
 	_populate_stance_rows()
 	AudioManagerAuto.play_battle_music(info.get("is_boss", false))
+	# The battle frame opens on blacker5's frame 1, which fades the battle in
+	# from black until the stop() on its frame 31
+	# (DefineSprite_3355/frame_31/DoAction.as).
+	_play_fade(1, int(_layout()["fade"]["stop_frame"]))
 	_battle_loop.call_deferred()
 
 
@@ -220,15 +226,19 @@ const SKY_FILL_COLOR: Color = Color.BLACK
 var _battle_layout: Dictionary = {}
 
 
-# -> {x, y, w, h} for one sky label, or {} when the JSON has no entry for it.
-func _sky_rect(sky_key: String) -> Dictionary:
+func _layout() -> Dictionary:
 	if _battle_layout.is_empty():
 		var file := FileAccess.open(BATTLE_LAYOUT_PATH, FileAccess.READ)
 		if file == null:
 			push_error("missing %s" % BATTLE_LAYOUT_PATH)
 			return {}
 		_battle_layout = JSON.parse_string(file.get_as_text())
-	return _battle_layout.get("skies", {}).get(sky_key, {})
+	return _battle_layout
+
+
+# -> {x, y, w, h} for one sky label, or {} when the JSON has no entry for it.
+func _sky_rect(sky_key: String) -> Dictionary:
+	return _layout().get("skies", {}).get(sky_key, {})
 
 
 func _load_background() -> void:
@@ -628,6 +638,12 @@ func _finish_battle() -> void:
 	if _finished:
 		return
 	_finished = true
+	# The original settles a win on winCombat and on the victory screen's own
+	# frame, which both come after blacker5's frame 85 sends the result
+	# (frame_219/DoAction.as, DefineSprite_3142/frame_9), so nothing is paid
+	# until the fade has played.
+	var fade: Dictionary = _layout()["fade"]
+	await _play_fade(int(fade["stop_frame"]), int(fade["result_frame"]))
 	var save: PlayerSave = GameData.current_save
 	var settlement := BattleSettlement.settle(runner, save, battle_info, ZoneManager.achievements_path)
 	if settlement.outcome == BattleRunner.Outcome.WIN:
@@ -711,3 +727,33 @@ func _pause(seconds: float) -> void:
 		return
 	_pause_timer = get_tree().create_timer(seconds / animation_speed)
 	await _pause_timer.timeout
+
+
+# Plays blacker5, DefineSprite 3355, from frame `from_frame` to frame `to_frame`
+# at the SWF's frame rate, over the whole window. The original places it on the
+# battle frame's top depth, and its black shape covers the whole stage, so the
+# Fade layer draws over the UI layer too. Its colour, frame rate and the alpha
+# of every frame come from battle_layout.json, which extract_battle_screen reads
+# out of the SWF. At animation_speed 0 it shows `to_frame` at once, the way
+# _pause() returns at once.
+func _play_fade(from_frame: int, to_frame: int) -> void:
+	if _fade_tween != null:
+		_fade_tween.kill()
+	var fade: Dictionary = _layout()["fade"]
+	_fade_black.color = Color(fade["color"])
+	if animation_speed <= 0.0:
+		_show_fade_frame(to_frame)
+		return
+	_show_fade_frame(from_frame)
+	_fade_tween = create_tween()
+	_fade_tween.tween_method(
+		_show_fade_frame, float(from_frame), float(to_frame),
+		(to_frame - from_frame) / float(fade["fps"]) / animation_speed
+	)
+	await _fade_tween.finished
+
+
+# Shows blacker5's frame `frame`. The tween passes it as a float, and each SWF
+# frame holds its alpha until the next one starts.
+func _show_fade_frame(frame: float) -> void:
+	_fade_black.color.a = float(_layout()["fade"]["alphas"][int(frame) - 1])

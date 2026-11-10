@@ -419,10 +419,20 @@ Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with
 ## Battle end and game over (DefineSprite 3355 `blacker5`, root frames 229-241 and 104)
 
 Ported: `BattleSettlement.settle` reports a defeat or a draw as `game_over`, and `battle_scene.gd`'s `_finish_battle` then opens `GameOverScreen` (`scripts/battle/game_over_screen.gd`).
-The port shows it, and the victory screen too, without the original's fade to black.
+Every battle fades in from black, and a win, a loss and a draw all fade to black before their result screen, through `_play_fade`, from the frames `extract_battle_screen` writes into
+`battle_layout.json`'s `fade` section.
 
-- Once `winCondition` is set, the conductor plays `blacker5` (conductor lines 257-261). DefineSprite 3355 fades its black shape 333 in over frames 32-81, about 1.7 s at 30 fps, and its frame 85
-  sends the root to `loseCombat`, `winCombat` or `drawCombat` for `winCondition` 0, 1 or 2 (`DefineSprite_3355/frame_85/DoAction.as:5-16`).
+- `blacker5` is DefineSprite 3355, which root frame 217 places on its top depth, 686, at (398.1, 287.05). It shows one shape, the solid black DefineShape2 333, which covers (-6.0, -4.0) to
+  (802.2, 578.2), the whole 800x575 stage, on every frame that shows it, and its colour transform only ever scales the alpha. Its SoundStreamHead2 has no blocks and it has no StartSound, so it
+  plays no sound.
+- The battle frame opens on its frame 1 at full black, frames 2 to 28 fade the shape out from 239/256 to 1/256, and frames 29 and 30 show it at alpha 0. Frame 31 removes it and runs `stop()`
+  (`DefineSprite_3355/frame_31/DoAction.as`), 1.0 s in at 30 fps, the same second the conductor's `timerWait` holds the battle for.
+- Once `winCondition` is set, the conductor plays `blacker5` on (conductor lines 257-261), and so does a phase with `endGame` once its lines are done (lines 862-868). Frame 32 shows the shape at
+  alpha 0, frames 33 to 82 fade it in from 10/256 to full black, frames 83 and 84 hold it, and frame 85 removes it and sends the root to `loseCombat`, `winCombat` or `drawCombat` for
+  `winCondition` 0, 1 or 2 (`DefineSprite_3355/frame_85/DoAction.as:5-16`). That is 54 frames, 1.8 s, after the battle was decided.
+- Nothing else happens during the fade. The conductor's decision and speech block waits for `winCondition < 0` (line 589), and so does Quit (`DefineButton2_3356` on(release), line 2), while the
+  battle music plays on. The root frames a result passes through, 218 and 219, 229 and 230, 240 and 241, and 41, show shape 333 at full black over the stage until the result screen is up.
+- The original pays a win after the fade, on `winCombat` (`frame_219/DoAction.as`) and on the victory screen's frame (`DefineSprite_3142/frame_9`), so `_finish_battle` settles after it too.
 - `drawCombat` (root frame 240) plays into frame 241, which jumps to `loseCombat` (`frame_241/DoAction.as:1-2`), so a draw ends the game like a defeat. `loseCombat` (frame 229) plays into
   frame 230, which sets `gameoverKrin`, keeps `Krin.slotInUse` in `slotSaveGO` and jumps to `resetHere` (`frame_230/DoAction.as:1-5`).
 - `resetHere` (frame 41) runs `stopAllSounds()` and recreates `Krin` (`frame_41/DoAction_2.as:7` and 13), so the game in memory is gone. Frame 43 then jumps to `gameOverMenu`, root frame 104

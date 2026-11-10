@@ -6,7 +6,8 @@
 #   assets/ui/battle/<NAME>.png                  - the four chrome characters
 #   assets/ui/battle/stance/<NAME>.png           - 5 stance icons + 2 covers
 #   assets/ui/battle/member_bar_panel.png        - the member bar's dark backing
-#   assets/backgrounds/battle/battle_layout.json - where those sit on the stage
+#   assets/backgrounds/battle/battle_layout.json - where those sit on the stage,
+#                                                  and blacker5's fade timing
 #
 # THE HALL AND THE SKY ARE INDEPENDENT. The original drives DefineSprite 3435
 # from Krin.ZoneBG and DefineSprite 3454 from Krin.SkyBG, two separate
@@ -38,7 +39,7 @@ from PIL import Image
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
 from urchin_dev.run import run
 from urchin_dev.swf import render, strip, timeline
-from urchin_dev.swf.swf_index import SwfIndex, read_swf
+from urchin_dev.swf.swf_index import SwfIndex, first_fill_color, read_swf, shape_bounds
 
 HALL_DIR = REPO_ROOT / "assets" / "backgrounds" / "battle"
 SKY_DIR = REPO_ROOT / "assets" / "backgrounds" / "sky"
@@ -96,6 +97,20 @@ MEMBER_BAR_PANEL = 3309
 # The DefineEditText the bar shows the companion's name in. Its initialText is
 # the author's placeholder, so only its position is wanted here.
 NAME_FIELD = 3308
+
+# blacker5, the clip the battle frame places on its top depth. Every battle
+# opens on its frame 1, which fades the battle in from black, and its frame 31
+# runs stop() (DefineSprite_3355/frame_31/DoAction.as). Once winCondition is set,
+# the conductor's blacker5.play() resumes it from there
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 257-261), and it fades back
+# to black before its frame 85 sends the result
+# (DefineSprite_3355/frame_85/DoAction.as:5-16).
+FADE_CLIP = 3355
+FADE_STOP_FRAME = 31
+FADE_RESULT_FRAME = 85
+# A colour transform that leaves a shape as it is: four multiply terms of 1.0,
+# which the SWF stores as 256, and four add terms of 0.
+IDENTITY_COLOR_TRANSFORM = (256, 256, 256, 256, 0, 0, 0, 0)
 
 LAYOUT_JSON = HALL_DIR / "battle_layout.json"
 FRAME_LABEL = "KRINBATTLESCENE"
@@ -255,6 +270,96 @@ def stance_row_layout(
     }
 
 
+def placed_rect(outer, inner, bounds) -> tuple[float, float, float, float]:
+    """-> bounds as `inner` places them inside a clip that `outer` places on
+    the stage, as (xmin, ymin, xmax, ymax) in twips. Both matrices may only
+    scale and translate."""
+    for matrix in (outer, inner):
+        if matrix[1] or matrix[2]:
+            raise RuntimeError(f"matrix {matrix} rotates or skews")
+    xs = [
+        outer[4] + outer[0] * (inner[4] + inner[0] * x) for x in (bounds[0], bounds[2])
+    ]
+    ys = [
+        outer[5] + outer[3] * (inner[5] + inner[3] * y) for y in (bounds[1], bounds[3])
+    ]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def fade_layout(index: SwfIndex, battle_frame: int) -> dict:
+    """-> what the port needs to play blacker5: the SWF's frame rate, the clip's
+    stop and result frames, the colour of its shape, and the alpha that shape
+    shows on each of the clip's frames, 0.0 on a frame without it.
+
+    The port draws that one colour over its whole window and changes only the
+    alpha, so this refuses a clip that shows a second shape, a shape that is not
+    one opaque colour, a frame that leaves part of the stage uncovered, or a
+    colour transform that does more than scale the alpha.
+    """
+    scripted = sorted(
+        block.frame
+        for block in index.code
+        if block.kind == "frame" and block.owner == FADE_CLIP
+    )
+    if scripted != [FADE_STOP_FRAME, FADE_RESULT_FRAME]:
+        raise RuntimeError(
+            f"{FADE_CLIP} runs code on frames {scripted},"
+            f" want {FADE_STOP_FRAME} and {FADE_RESULT_FRAME}"
+        )
+    placed = [
+        layer.matrix
+        for layer in timeline.frames(index, 0)[battle_frame - 1].values()
+        if layer.character_id == FADE_CLIP
+    ]
+    if len(placed) != 1:
+        raise RuntimeError(
+            f"the battle frame places {FADE_CLIP} {len(placed)} times, want 1"
+        )
+    stage = index.stage
+    shapes = set()
+    alphas = []
+    for number, layers in enumerate(timeline.frames(index, FADE_CLIP), start=1):
+        if not layers:
+            alphas.append(0.0)
+            continue
+        if len(layers) != 1:
+            raise RuntimeError(f"{FADE_CLIP} frame {number} shows {len(layers)} layers")
+        (layer,) = layers.values()
+        shapes.add(layer.character_id)
+        rect = placed_rect(
+            placed[0], layer.matrix, shape_bounds(index, layer.character_id)
+        )
+        if (
+            rect[0] > stage[0]
+            or rect[1] > stage[1]
+            or rect[2] < stage[2]
+            or rect[3] < stage[3]
+        ):
+            raise RuntimeError(
+                f"{FADE_CLIP} frame {number} covers {rect} of the stage {stage}"
+            )
+        transform = layer.color_transform or IDENTITY_COLOR_TRANSFORM
+        if transform[:3] != (256, 256, 256) or transform[4:] != (0, 0, 0, 0):
+            raise RuntimeError(
+                f"{FADE_CLIP} frame {number} transforms more than the alpha: {transform}"
+            )
+        alphas.append(max(0, min(transform[3], 256)) / 256)
+    if len(shapes) != 1:
+        raise RuntimeError(f"{FADE_CLIP} shows shapes {sorted(shapes)}, want one")
+    color = first_fill_color(index, shapes.pop())
+    if color is None or color[3] != 255:
+        raise RuntimeError(
+            f"{FADE_CLIP}'s shape fills with {color}, want one opaque colour"
+        )
+    return {
+        "alphas": alphas,
+        "color": "#{:02x}{:02x}{:02x}".format(*color[:3]),
+        "fps": index.frame_rate,
+        "result_frame": FADE_RESULT_FRAME,
+        "stop_frame": FADE_STOP_FRAME,
+    }
+
+
 def main():
     index = read_swf(WEB_SWF)
     halls = sprite_label_frames(index, HALL_SPRITE)
@@ -308,6 +413,7 @@ def main():
             index, by_sprite[MEMBER_BAR][1], by_sprite[STANCE_ICONS][1]
         )
 
+    layout["fade"] = fade_layout(index, battle_frame)
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
     print(f"wrote {LAYOUT_JSON}", file=sys.stderr)
 
