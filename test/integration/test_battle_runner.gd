@@ -1375,6 +1375,25 @@ func test_every_living_casters_action_logs_a_buff_tick_even_one_that_changes_not
 	assert_eq(ticked, [BattleRunner.PLAYER_SLOT], "Sonny's tick is the only one, because his dead ally takes its turn and doesn't tick")
 
 
+# A caster that its own move killed has no Buff tick, because the conductor ticks
+# a caster only while it is still active when its tick comes due
+# (frame_217/PlaceObject2_3389_480 enterFrame, line 118). Under sswitch a heal
+# hurts its target, so Sonny kills himself by healing himself at 1 life, and his
+# action logs the move's death and no tick or second death after it.
+func test_a_caster_its_own_move_killed_logs_no_buff_tick_and_no_second_death():
+	var runner: BattleRunner = _sonny_holding(["RETROGRADED"])
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	player.life_n = 1.0
+
+	var events: Array = runner.advance_half_turn({"target_slot": BattleRunner.PLAYER_SLOT, "move_id": 4})  # Heal
+
+	assert_eq(events[0]["type"], BattleRunner.EventType.MOVE, "sanity: Sonny's action is his move")
+	assert_true(events[0]["result"].killed, "sanity: and the move killed him")
+	assert_eq(_ticks_in(events), [], "so his action logs no Buff tick")
+	var causes: Array = events.filter(func(event): return event["type"] == BattleRunner.EventType.DEATH).map(func(event): return event["cause"])
+	assert_eq(causes, [BattleRunner.DeathCause.MOVE], "and the only death is the move's")
+
+
 # A tick that takes the unit's last life states it dead, and its DEATH event
 # follows the tick, because the tick is what kills it (frame_42/DoAction_10.as:109-134).
 func test_a_buff_tick_that_takes_the_last_life_states_the_unit_dead_and_logs_its_death_after_it():
