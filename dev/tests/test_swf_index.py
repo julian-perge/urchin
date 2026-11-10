@@ -120,6 +120,22 @@ def test_do_action_records_goto_label_goto_frame_and_pushed_strings():
     assert block.strings == ("GO", "stand")
 
 
+def test_do_action_records_each_action_code_in_order():
+    # stop(); unloadMovie(_parent);, the bytes of the last frame of KrinTrail's
+    # inner clip (DefineSprite_2/frame_33): Stop, Push "" and "_parent",
+    # GetVariable, GetURL2, then the end flag.
+    actions = (
+        bytes([0x07])
+        + bytes([0x96]) + struct.pack("<H", 11) + b"\0\0" + b"\0_parent\0"
+        + bytes([0x1C])
+        + bytes([0x9A]) + struct.pack("<H", 1) + b"\x40"
+        + b"\0"
+    )  # fmt: skip
+    index = parse_swf(swf(tag(TAG_DO_ACTION, actions), tag(TAG_SHOW_FRAME)))
+    (block,) = index.code
+    assert block.actions == (0x07, 0x96, 0x1C, 0x9A)
+
+
 def test_clip_action_belongs_to_its_placement_and_skips_the_key_code():
     key_press = 1 << 17
     record_actions = bytes([0x8C]) + struct.pack("<H", 4) + b"hit\0" + b"\0"
