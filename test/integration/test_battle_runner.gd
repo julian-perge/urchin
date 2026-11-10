@@ -1245,6 +1245,7 @@ func test_a_buff_tick_nets_its_healing_against_its_damage_into_one_total():
 func test_a_buff_ticks_element_is_the_one_with_the_most_damage_and_the_first_of_a_tie():
 	var ice_over_fire: BuffTick = _sonnys_tick_holding(["FIRESAM2", "PERSECUTE"])
 	assert_eq([ice_over_fire.amount, ice_over_fire.element], [550.0, CombatUnit.Element.ICE], "Ice has 500 of the 550, and Fire has 50")
+	assert_true(ice_over_fire.element_dealt_damage, "and an element dealt the damage")
 
 	var runner: BattleRunner = _sonny_holding([])
 	runner.units[BattleRunner.PLAYER_SLOT].dot_ticker_array[CombatUnit.Element.FIRE] = 50.0
@@ -1256,7 +1257,8 @@ func test_a_buff_ticks_element_is_the_one_with_the_most_damage_and_the_first_of_
 # (frame_42/DoAction_10.as:59-62), so damage heals and healing hurts. The color
 # looks only at the damage each element dealt, so a tick that hurts through
 # healing alone has no element to take it from, and colorToBe stays Physical.
-func test_sswitch_turns_a_buff_tick_around_and_a_tick_with_no_damage_element_is_physical():
+# The tick records that no element dealt damage, so the combat log names none.
+func test_sswitch_turns_a_buff_tick_around_and_a_tick_that_only_healing_hurts_has_no_damage_element():
 	var healed: BuffTick = _sonnys_tick_holding(["RETROGRADED", "FATE"])
 	assert_eq([healed.direction, healed.amount], [MoveResult.Direction.HEAL, 666.0], "666 damage heals Sonny")
 
@@ -1264,8 +1266,9 @@ func test_sswitch_turns_a_buff_tick_around_and_a_tick_with_no_damage_element_is_
 	assert_eq(
 		[hurt.direction, hurt.amount, hurt.element],
 		[MoveResult.Direction.HARM, 300.0, CombatUnit.Element.PHYSICAL],
-		"300 healing hurts Sonny, and no element dealt it"
+		"300 healing hurts Sonny, and the number stays Physical"
 	)
+	assert_false(hurt.element_dealt_damage, "but no element dealt it")
 
 
 # Energized "is recovering 7 Focus per turn", and Energy Drain "is losing 8 Focus

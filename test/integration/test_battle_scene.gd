@@ -1605,6 +1605,7 @@ func test_battle_log_names_a_buff_ticks_fields():
 	tick.direction = MoveResult.Direction.HARM
 	tick.amount = 12.0
 	tick.element = CombatUnit.Element.POISON
+	tick.element_dealt_damage = true
 	tick.after.life = 88.0
 
 	var line: Dictionary = JSON.parse_string(scene._event_log_text({"type": BattleRunner.EventType.BUFF_TICK, "caster_slot": 3, "tick": tick}))
@@ -1612,7 +1613,11 @@ func test_battle_log_names_a_buff_ticks_fields():
 	if not line["tick"] is Dictionary:
 		fail_test("the tick is written as %s, not as its fields" % line["tick"])
 		return
-	assert_eq([line["tick"]["direction"], line["tick"]["amount"], line["tick"]["element"]], ["HARM", 12.0, "Poison"], "what the tick did")
+	assert_eq(
+		[line["tick"]["direction"], line["tick"]["amount"], line["tick"]["element"], line["tick"]["element_dealt_damage"]],
+		["HARM", 12.0, "Poison", true],
+		"what the tick did"
+	)
 	assert_eq(line["tick"]["after"]["life"], 88.0, "and the unit it left")
 
 
@@ -1624,10 +1629,15 @@ func test_the_combat_log_has_a_line_for_a_buff_tick_that_did_something_and_none_
 	var unit_name: String = scene.units[3].player_name
 	var poison: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 12.0)
 	poison["tick"].element = CombatUnit.Element.POISON
+	poison["tick"].element_dealt_damage = true
 	var soaked: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 0.0)
 	soaked["tick"].shield_took_all = true
+	# No element dealt the damage of this tick, so its line names none. That is the
+	# tick of a unit that sswitch hurts through its healing.
+	var no_element: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 300.0)
 	var cases: Array = [
 		[poison, "%s takes 12 Poison damage from buffs" % unit_name],
+		[no_element, "%s takes 300 damage from buffs" % unit_name],
 		[_tick_event(scene, 3, MoveResult.Direction.HEAL, 30.0), "%s regains 30 life from buffs" % unit_name],
 		[soaked, "%s's shield soaks the damage from buffs" % unit_name],
 		[_tick_event(scene, 3, MoveResult.Direction.NONE, 0.0), ""],
@@ -1640,6 +1650,25 @@ func test_the_combat_log_has_a_line_for_a_buff_tick_that_did_something_and_none_
 		lines.append(scene._combat_log._log_text.text.trim_prefix(before).strip_edges())
 
 	assert_eq(lines, cases.map(func(case): return case[1]), "a line for each tick that did something, and none for the one that did nothing")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original draws a Floating number for any total above 0, and its digit loop
+# drops the fraction, so a total between 0 and 1 draws a number with no digits
+# (frame_42/DoAction_7.as:8 and 27-61). The log has no digits to word there, so it
+# writes no line (ADR 0001).
+func test_the_combat_log_has_no_line_for_a_buff_tick_with_a_total_under_1():
+	var scene = _battle_100("TickUnderOne")
+	var before: String = scene._combat_log._log_text.text
+
+	await scene._play_events([
+		_tick_event(scene, 3, MoveResult.Direction.HARM, 0.4),
+		_tick_event(scene, 3, MoveResult.Direction.HEAL, 0.4),
+	])
+
+	assert_eq(scene._combat_log._log_text.text, before, "a harmful total and a healing total under 1 add no line")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

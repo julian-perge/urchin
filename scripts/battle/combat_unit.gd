@@ -549,6 +549,7 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> BuffTick:
 		if element_damage > strongest_damage:
 			strongest_damage = element_damage
 			tick.element = i as Element
+			tick.element_dealt_damage = true
 
 	var expiring: Array[int] = []
 	for i in buff_slots.size():

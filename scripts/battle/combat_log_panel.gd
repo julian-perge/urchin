@@ -67,22 +67,25 @@ func _format_line(event: Dictionary, units: Dictionary) -> String:
 			return ""
 
 
-# A Buff tick gets a line when it did something, worded by what it did to the
-# unit: ADR 0001 has each line say what happened to its target. A tick that did
-# nothing gets none, and neither does a tick that only moved Focus or ran a buff
-# out, because the original draws nothing for those either. A tick that kills its
-# unit is followed by a DEATH event, which has its own line.
+# Words a Buff tick by what it did to its unit, as ADR 0001 has each line do. A
+# total under 1 gets no line, because the original draws a number with no digits
+# for it. A tick that kills its unit is followed by a DEATH event, which has its
+# own line.
 func _format_tick_line(event: Dictionary, units: Dictionary) -> String:
 	var tick: BuffTick = event["tick"]
+	if not tick.did_something():
+		return ""
 	var unit_name: String = _unit_name(units, int(event["caster_slot"]))
 	if tick.shield_took_all:
 		return "%s's shield soaks the damage from buffs" % unit_name
-	match tick.direction:
-		MoveResult.Direction.HARM when tick.amount > 0:
-			return "%s takes %d %s damage from buffs" % [unit_name, int(tick.amount), CombatUnit.ELEMENT_ORDER[tick.element]]
-		MoveResult.Direction.HEAL when tick.amount > 0:
-			return "%s regains %d life from buffs" % [unit_name, int(tick.amount)]
-	return ""
+	var amount: int = int(tick.amount)
+	if amount == 0:
+		return ""
+	if tick.direction == MoveResult.Direction.HEAL:
+		return "%s regains %d life from buffs" % [unit_name, amount]
+	if tick.element_dealt_damage:
+		return "%s takes %d %s damage from buffs" % [unit_name, amount, CombatUnit.ELEMENT_ORDER[tick.element]]
+	return "%s takes %d damage from buffs" % [unit_name, amount]
 
 
 func _format_move_line(event: Dictionary, units: Dictionary) -> String:

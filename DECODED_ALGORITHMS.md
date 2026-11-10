@@ -346,7 +346,7 @@ Conductor lines below are in `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD o
 - **The wait.** `buffTickChecker` ends as the total, a soaked total included (99). The conductor then raises `BAMBAMBAM` again and restarts its `AttackEndCounter` (lines 122-127), so the next Dispatch
   comes 26 frames after the tick, which is 51 after the Impact of a move, instead of 1 frame after it. A caster that did not move waits 26 frames after its Dispatch frame (511-521 and 565-575),
   unless the tick killed it, which sends the next action on at once. A tick that only moved Focus or only ran a buff out leaves `buffTickChecker` at 0 and holds nothing back. `BuffTick.did_something`
-  is that test, and the number, the wait and the line in the combat log all use it.
+  is that test, and the port's wait and its line in the combat log use it.
 - **Focus** moves by `DOTTICKERARRAY[9]` and stays between 0 and `FOCUSU` (100-108). It draws no number and does not count towards the wait, so a buff such as Re-Focusing ticks with no number.
 - **A death** (109-134) sets LIFEN and FOCUSN to 0 and plays `dead`. The port logs a DEATH event after the tick's event, and the death plays on the tick's frame.
 - **The unit afterwards.** `BuffTick.after` is taken after `applyChangesKrin`, so it states max life, life, Focus, stun and the buff slots once the buffs that ran out have come off. A buff that cuts
