@@ -347,8 +347,7 @@ func _label_duration(label: String) -> float:
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return 0.5
-	var fps: float = animations.get("fps", 30.0)
-	return (float(segment["end"]) - float(segment["start"]) + 1.0) / fps
+	return (float(segment["end"]) - float(segment["start"]) + 1.0) / BattleScreenClip.fps()
 
 
 func _advance_label(delta: float, loop: bool) -> void:
@@ -369,10 +368,9 @@ func _apply_label_frame(label: String, time: float) -> void:
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return
-	var fps: float = animations.get("fps", 30.0)
 	var start: int = int(segment["start"]) - 1
 	var end: int = int(segment["end"]) - 1
-	_apply_frame_index(clampi(start + int(time * fps), start, end))
+	_apply_frame_index(clampi(start + int(time * BattleScreenClip.fps()), start, end))
 
 
 func _apply_frame_index(index: int) -> void:
@@ -425,7 +423,7 @@ static func _load_animations() -> Dictionary:
 # first step on the frame it starts, because the original turns the clip round
 # and moves it in the same onEnterFrame (frame_42/DoAction_4.as:87-116).
 func _animate_melee(delta: float) -> void:
-	var frames: float = delta * _load_animations().get("fps", 30.0)
+	var frames: float = delta * BattleScreenClip.fps()
 	match _melee_phase:
 		MeleePhase.DASH:  # run label plays but arrival is movement-driven
 			if _state == State.MELEE:
@@ -507,7 +505,7 @@ func _step_home(frames: float) -> void:
 func _play_death(delta: float) -> void:
 	if _label_finished:
 		return
-	_playhead += delta * _load_animations().get("fps", 30.0)
+	_playhead += delta * BattleScreenClip.fps()
 	if _playhead >= _label_end_frame("dead"):
 		_label_finished = true
 		visible = false

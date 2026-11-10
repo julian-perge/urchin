@@ -463,7 +463,7 @@ and on Heroic once a half-turn ends with the player's unit dead, it waits for th
 ## Battle speeches (frame_217/PlaceObject2_3389_480 enterFrame, lines 794-870)
 
 Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with `BattleRunner.NARRATOR_NAME` for slot 0, and makes the endGame check after each batch.
-`battle_scene.gd` waits `START_WAIT_SECONDS` before the opening lines, `_play_speech` shows each line for its `timeToSay` seconds, and `_input` handles Space through
+`battle_scene.gd` waits `START_WAIT_FRAMES` before the opening lines, `_play_speech` shows each line for its `timeToSay` seconds, and `_input` handles Space through
 `BattleRunner.hard_skip` and `AudioManager.stop_effects`. The port shows a plain label, without the box's placement or fade.
 
 - Each battle record's `speeches` entries carry `player`, `phase`, `turnTime`, `turnTime2`, `say`, `timeToSay` and sometimes `voiceOver` (`frame_42/DoAction_14.as`, 149 lines in 50

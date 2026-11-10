@@ -60,9 +60,6 @@ const COST_FAILURE_MESSAGES: Dictionary[BattleRunner.FailReason, String] = {
 # in the Combat text banner.
 const CANNOT_MOVE_YET_MESSAGE: String = "You cannot move yet. Please wait until the 'ring' is blue, then click on a target."
 
-# The SWF's frame rate. The battle clock counts the original's frames at it.
-const SWF_FPS: float = 30.0
-
 # 1.0 = normal pacing; 0.0 = instant (tests). It scales the battle clock.
 var animation_speed: float = 1.0
 
@@ -186,12 +183,12 @@ func _process(delta: float) -> void:
 	_countdown_label.visible = not _turn_based
 	_countdown_label.text = str(int(ceil(_decision_timer)))
 	if animation_speed > 0.0:
-		_clock += delta * SWF_FPS * animation_speed
+		_clock += delta * BattleScreenClip.fps() * animation_speed
 	clock_ticked.emit()
 
 
 func _reset_decision_timer() -> void:
-	_decision_timer = BattleRunner.BATTLE_TIME_LIMIT / 30.0
+	_decision_timer = BattleRunner.BATTLE_TIME_LIMIT / BattleScreenClip.fps()
 
 
 # Combat debug log -> user://logs/battle.log (see LogManagerAuto).
@@ -409,7 +406,7 @@ func _on_stance_pressed(party_id: int, mode: Party.AggressionStance, slot: int) 
 # frame at a time, and its whole decision block waits for 0, the opening lines
 # included (frame_217/PlaceObject2_3389_480 onClipEvent(load), line 6, and
 # enterFrame, lines 5-8 and 589). That is a second at the SWF's 30 fps.
-const START_WAIT_SECONDS: float = 30.0 / 30.0
+const START_WAIT_FRAMES: float = 30.0
 # The conductor's AttackEndCounterLimit (frame_217/PlaceObject2_3389_480
 # onClipEvent(load), line 7). _count_from_impact has what it decides.
 const ATTACK_END_COUNTER_LIMIT: int = 25
@@ -421,7 +418,7 @@ const TEAM_SWITCH_FRAMES: int = 2
 
 
 func _battle_loop() -> void:
-	await _pause(START_WAIT_SECONDS)
+	await _pause(START_WAIT_FRAMES / BattleScreenClip.fps())
 	if not is_inside_tree() or _finished:
 		return
 	if not _pending_setup_events.is_empty():
@@ -755,6 +752,7 @@ func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result:
 	bolt.clip_name = move.animation_label
 	bolt.trail_color = move.visual_effect_color
 	bolt.did_hit = result.kind != MoveResult.Kind.MISS
+	bolt.battle_screen_x = battle_screen_clip.rest.x
 	battlefield.add_child(bolt)
 	bolt.start(from, to)
 	await bolt.reached_target
@@ -931,7 +929,7 @@ func _on_continue_pressed() -> void:
 # Waits `seconds` on the battle clock, for the waits the battle data gives in
 # seconds.
 func _pause(seconds: float) -> void:
-	await _wait_frames(seconds * SWF_FPS)
+	await _wait_frames(seconds * BattleScreenClip.fps())
 
 
 # Waits `frames` frames on the battle clock, and returns at once while

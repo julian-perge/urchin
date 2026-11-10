@@ -17,6 +17,8 @@ extends Control
 
 const MOTION_PATH: String = "res://assets/ui/battle/battle_screen_motion.json"
 const TWIPS: float = 20.0
+
+static var _motion: Dictionary = {}
 # The _xscale and _yscale of a clip placed at its own size, as Flash counts
 # them.
 const FULL_SCALE: float = 100.0
@@ -43,19 +45,32 @@ var _x_twips: int = 0
 var _y_twips: int = 0
 var _zoomer: GridZoomer
 var _shaker: GridShaker
-var _fps: float = 30.0
 var _frames_due: float = 0.0
 
 
 func _ready() -> void:
-	var motion: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(MOTION_PATH))
-	_fps = float(motion["fps"])
-	rest = Vector2(float(motion["rest"]["x"]), float(motion["rest"]["y"]))
+	var data: Dictionary = motion()
+	rest = Vector2(float(data["rest"]["x"]), float(data["rest"]["y"]))
 	clip_x = rest.x
 	clip_y = rest.y
-	_zoomer = GridZoomer.new(self, motion["zoomer"])
-	_shaker = GridShaker.new(self, motion["shaker"])
+	_zoomer = GridZoomer.new(self, data["zoomer"])
+	_shaker = GridShaker.new(self, data["shaker"])
 	_show()
+
+
+# Returns what battle_screen_motion.json holds. It reads the file once, the
+# first time anything asks.
+static func motion() -> Dictionary:
+	if _motion.is_empty():
+		_motion = JSON.parse_string(FileAccess.get_file_as_string(MOTION_PATH))
+	return _motion
+
+
+# Returns the SWF's frame rate, which the extractor reads from the SWF's header.
+# Every clip in the original plays at it, so the port counts the battle's
+# frames at it.
+static func fps() -> float:
+	return float(motion()["fps"])
 
 
 # What the conductor does to zoom: it sets _root.zoomPointX and zoomPointY to
@@ -71,7 +86,7 @@ func shake() -> void:
 
 # Plays both clips on by `seconds` at the SWF's frame rate.
 func advance(seconds: float) -> void:
-	_frames_due += seconds * _fps
+	_frames_due += seconds * fps()
 	while _frames_due >= 1.0:
 		_frames_due -= 1.0
 		advance_frame()

@@ -187,6 +187,8 @@ func test_miss_keeps_flying_past_the_target_until_off_screen():
 	bolt.clip_name = "Krin.Firebolt"
 	bolt.trail_color = Color.WHITE
 	bolt.did_hit = false
+	var rest_x: float = float(BattleScreenClip.motion()["rest"]["x"])
+	bolt.battle_screen_x = rest_x
 	bolt.start(Vector2(100, 100), Vector2(103, 100))
 	# A Dictionary is used (not a bare local) because GDScript lambdas
 	# capture plain locals by value, not by reference - see
@@ -204,8 +206,8 @@ func test_miss_keeps_flying_past_the_target_until_off_screen():
 	assert_true(bolt.position.x > 103.0, "kept moving past the target")
 
 	# krinBoltMake removes a missed bolt once it is more than 500 px from the
-	# origin of BATTLESCREEN (frame_42/DoAction_4.as:201), which the battle frame
-	# places at x 400 on the stage.
+	# origin of BATTLESCREEN (frame_42/DoAction_4.as:201), which sits where the
+	# battle frame places BATTLESCREEN.
 	var ended: Array = []
 	bolt.flight_ended.connect(func(): ended.append(bolt.position.x))
 	var last_x: float = bolt.position.x
@@ -215,8 +217,8 @@ func test_miss_keeps_flying_past_the_target_until_off_screen():
 		if bolt.is_queued_for_deletion():
 			break
 	assert_true(bolt.is_queued_for_deletion(), "eventually frees")
-	assert_lte(last_x, 900.0, "not while it was within 500 px of x 400")
-	assert_gt(bolt.position.x, 900.0, "but on the tick it got further")
+	assert_lte(last_x, rest_x + 500.0, "not while it was within 500 px of BATTLESCREEN's origin")
+	assert_gt(bolt.position.x, rest_x + 500.0, "but on the tick it got further")
 	assert_eq(ended.size(), 1, "and its flight ends then")
 
 

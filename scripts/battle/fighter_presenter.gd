@@ -27,8 +27,6 @@ const RING_COLORS: Dictionary[Relation, Color] = {
 const RING_FADE_IN_TIME: float = 0.17
 const RING_FADE_OUT_TIME: float = 0.67
 const FLOAT_OFFSET: Vector2 = Vector2(-15, -72)
-# The SWF's frame rate, which the overlay's death is counted in.
-const FPS: float = 30.0
 # LifeBarSmoother starts at the death, and its frame 18 clears the overlay 17
 # frames later (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as). From the
 # next frame on, its frame 38 takes this much off the bar's alpha, out of 100,
@@ -197,7 +195,7 @@ func die() -> void:
 func _process(delta: float) -> void:
 	if not _dead:
 		return
-	_frames_since_death += delta * FPS
+	_frames_since_death += delta * BattleScreenClip.fps()
 	var frames_since_clear: int = int(_frames_since_death) - DEATH_CLEAR_FRAME
 	if frames_since_clear < 0:
 		return
