@@ -469,13 +469,13 @@ func _battle_loop() -> void:
 	_finish_battle()
 
 
-# battle.log gets an event's result and unit snapshots as their fields and a
-# MOVE_FAILED event's reason as its name, because JSON.stringify would print an
-# object as its id and the reason as its number.
+# battle.log gets an event's result, Buff tick and unit snapshots as their fields
+# and a MOVE_FAILED event's reason as its name, because JSON.stringify would print
+# an object as its id and the reason as its number.
 func _event_log_text(event: Dictionary) -> String:
 	var logged: Dictionary = event.duplicate()
 	for key in logged:
-		if logged[key] is MoveResult or logged[key] is UnitSnapshot:
+		if logged[key] is MoveResult or logged[key] is BuffTick or logged[key] is UnitSnapshot:
 			logged[key] = logged[key].to_dict()
 	if logged.get("type") == BattleRunner.EventType.MOVE_FAILED:
 		logged["reason"] = BattleRunner.FailReason.find_key(logged["reason"])

@@ -1597,6 +1597,54 @@ func test_battle_log_names_a_results_fields_and_a_failed_moves_cost():
 	assert_eq(failed_line["reason"], "HEALTH", "and a failed move's cost by name")
 
 
+# battle.log writes a Buff tick's fields the same way, with its direction and
+# element by name.
+func test_battle_log_names_a_buff_ticks_fields():
+	var scene = autofree(BattleSceneRes.instantiate())
+	var tick := BuffTick.new()
+	tick.direction = MoveResult.Direction.HARM
+	tick.amount = 12.0
+	tick.element = CombatUnit.Element.POISON
+	tick.after.life = 88.0
+
+	var line: Dictionary = JSON.parse_string(scene._event_log_text({"type": BattleRunner.EventType.BUFF_TICK, "caster_slot": 3, "tick": tick}))
+
+	if not line["tick"] is Dictionary:
+		fail_test("the tick is written as %s, not as its fields" % line["tick"])
+		return
+	assert_eq([line["tick"]["direction"], line["tick"]["amount"], line["tick"]["element"]], ["HARM", 12.0, "Poison"], "what the tick did")
+	assert_eq(line["tick"]["after"]["life"], 88.0, "and the unit it left")
+
+
+# ADR 0001 has the combat log write a line for each Buff tick that did something,
+# worded by what it did to the unit, and none for a tick that did nothing, which
+# draws nothing on the screen either.
+func test_the_combat_log_has_a_line_for_a_buff_tick_that_did_something_and_none_for_one_that_did_nothing():
+	var scene = _battle_100("TickLog")
+	var unit_name: String = scene.units[3].player_name
+	var poison: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 12.0)
+	poison["tick"].element = CombatUnit.Element.POISON
+	var soaked: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 0.0)
+	soaked["tick"].shield_took_all = true
+	var cases: Array = [
+		[poison, "%s takes 12 Poison damage from buffs" % unit_name],
+		[_tick_event(scene, 3, MoveResult.Direction.HEAL, 30.0), "%s regains 30 life from buffs" % unit_name],
+		[soaked, "%s's shield soaks the damage from buffs" % unit_name],
+		[_tick_event(scene, 3, MoveResult.Direction.NONE, 0.0), ""],
+	]
+
+	var lines: Array = []
+	for case in cases:
+		var before: String = scene._combat_log._log_text.text
+		await scene._play_events([case[0]])
+		lines.append(scene._combat_log._log_text.text.trim_prefix(before).strip_edges())
+
+	assert_eq(lines, cases.map(func(case): return case[1]), "a line for each tick that did something, and none for the one that did nothing")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func _floating_numbers(scene) -> Array[FloatingNumber]:
 	return scene.floating_numbers.numbers()
 
@@ -2194,6 +2242,67 @@ func test_a_buff_tick_that_did_something_holds_the_next_action_to_frame_51_and_o
 			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(second)),
 		], [first, second])
 		assert_eq(shown.get(second, -1) - shown.get(first, -1), cases[index][2], "after %s the next action dispatches %d frames after the Impact" % [cases[index][0], cases[index][2]])
+		for frame in 120:
+			_step_frame(scene)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# buffTicker plays the Shield clip through IDKT, the unit the last move hit
+# (frame_42/DoAction_10.as:72), which ADR 0005 counts as an Original bug. The tick
+# lands on the unit whose buffs ticked: its number draws on that unit's rig, and its
+# Shield clip plays there and nowhere else.
+func test_a_buff_tick_lands_on_the_unit_that_ticked_and_not_on_the_last_unit_hit():
+	var scene = await _battle_100_on_a_stepped_clock("TickOnItsUnit")
+	var soaked: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 0.0)
+	soaked["tick"].shield_took_all = true
+	# Nothing awaits this, because the test steps the frames.
+	scene._play_events([_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Shock"), 11.0), soaked])
+	for frame in 25:
+		_step_frame(scene)
+
+	assert_eq(_floating_texts(scene), ["11", "shield"], "the hit's number, then SHIELDED")
+	assert_eq(_floating_numbers(scene)[-1].position, scene.SLOT_POSITIONS[3], "on the unit that ticked")
+	assert_true(scene._presenters[3].get_node("ShieldClip").is_playing(), "its Shield clip plays")
+	assert_false(scene._presenters[2].get_node("ShieldClip").is_playing(), "and the unit the last move hit has none")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Judge's Hammer takes 15% off max life and Iricin takes 25%. The unit already
+# holds the max and the life that the buff's running out gives back when the replay
+# starts, but its bar keeps the max and the fill it had until the tick that does it.
+func test_a_bar_keeps_the_max_life_and_fill_a_buff_cut_until_the_tick_that_runs_it_out():
+	for buff_name in ["JUDGESHAMMER", "IRICIN"]:
+		var scene = await _battle_100_on_a_stepped_clock("TickMaxLife")
+		var unit: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+		var presenter: FighterPresenter = scene._presenters[BattleRunner.PLAYER_SLOT]
+		var health_bar: ProgressBar = presenter.get_node("Overlay").health_bar
+		unit.apply_buff(BuffManagerAuto.get_buff_by_name(buff_name), 1, scene.units[2])
+		unit.apply_changes()
+		for slot in unit.buff_slots:
+			if slot["cd"] > 0:
+				slot["cd"] = 1
+		presenter.snap_to_unit()
+		var cut: Array = [health_bar.max_value, health_bar.value]
+		var tick: BuffTick = unit.tick_buffs(BuffManagerAuto.buffs_by_id)
+		var restored: Array = [unit.life_u, unit.life_n]
+		assert_gt(restored[0], cut[0], "sanity: %s's running out gives max life back" % buff_name)
+
+		# Nothing awaits this, because the test steps the frames.
+		scene._play_events([
+			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Shock"), 11.0),
+			{"type": BattleRunner.EventType.BUFF_TICK, "caster_slot": BattleRunner.PLAYER_SLOT, "tick": tick},
+		])
+		var bars: Array = []
+		for frame in 26:
+			bars.append([health_bar.max_value, health_bar.value])
+			_step_frame(scene)
+
+		assert_eq(bars.slice(0, 25), range(25).map(func(_frame): return cut), "%s: the bar keeps its cut max and fill until the tick" % buff_name)
+		assert_eq(bars[25], restored, "%s: and the tick gives it both back" % buff_name)
 		for frame in 120:
 			_step_frame(scene)
 
