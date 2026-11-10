@@ -43,7 +43,7 @@ extracting it.
   fills, colorTransforms. 159 of 789 doll sprites carry a filter and 56 carry a
   colorTransform, and ability icons visibly spilled outside their orb without
   the mask (`6928366`).
-- **ffdec does not run ActionScript.** Three consequences, all of which have
+- **ffdec does not run ActionScript.** Four consequences, all of which have
   bitten:
   1. A character can be fully opaque in the tag data and never visible in the
      game because AS hides it. ffdec draws it and ruins the export. This is the
@@ -61,6 +61,15 @@ extracting it.
      why the battle check used to compare only WHITE NOVEMBER over SEA, frame
      1 of the hall and sky (`8785f25`). `verify_battle_screen.py` moves them
      through `ffdec_lib.py`'s `goto` now.
+  4. A clip plays on past its `stop()`. ffdec draws every frame of a sprite
+     and draws a nested clip on its age modulo its frame count, so a nested
+     clip that ran `stop()` loops round. 18 impact clips replayed part of
+     their effect that way: BOOM_SPARK drew its spark again on frames 21 to
+     24, where the game holds sprite 884 on its empty frame 20 (`b3f2159`).
+     Pick the frames of a clip the game plays through `render.py`'s
+     `played_frames()`. When a `gotoAndPlay()` or a `play()` starts the clip
+     past a `stop()`, as the Shield clip's `play()` does, pass that frame as
+     `start`.
 - **Strip authoring-only characters through `dev/urchin_dev/swf/strip.py`.**
   Each extractor keeps its own `{characterId: reason}` and renders and
   measures from the one copy or hide list it gets back. Every battle hall
