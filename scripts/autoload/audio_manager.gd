@@ -16,9 +16,9 @@
 # The menu/battle rotation cycles soundPlayArray exactly like the original.
 extends Node
 
-# Every cue that starts on an effect channel, voices included. The battle scene
-# and each fighter play their sounds straight through this node, so the battle
-# scene tests listen here to hear what a move plays.
+# Emitted for every cue that starts on an effect channel, voices included. The
+# battle scene and each fighter play their sounds straight through this node,
+# so the battle scene tests listen here to hear what a move plays.
 signal effect_played(cue: String)
 
 const AUDIO_ROOT: String = "res://assets/audio"

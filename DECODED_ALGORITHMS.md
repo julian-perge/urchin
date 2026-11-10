@@ -39,8 +39,7 @@ Sequence:
    stun or a death on the doll during the runback doesn't stop it sliding home. The settle has no fixed length (this note used to say ~18 frames): the same four cases as the dash simulation, with the zero half-width case taken at 300 px, put the
    doll within 1 px of home after 4 to 22 frames of runback, and snap it home after 15 to 72.
 
-Attack label selection: each move's `addNewMove` param 12 (`Ability.animation_label`). Shock moves play "cast" instead (param 12 is unused for them); `play_strike()` exists for in-place strikes but is
-not used by Shock.
+Attack label selection: each move's `addNewMove` param 12 (`Ability.animation_label`). Shock moves play "cast" instead (param 12 is unused for them).
 
 ## krinBoltMake - the missile projectile (frame_42/DoAction_4.as, ~line 137)
 
@@ -446,7 +445,7 @@ Three Heroic cases, read from the code but not run, and not ported, since the po
 
 ## Heroic decision timer (frame_217/DoAction.as, the conductor)
 
-Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / 30.0` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
+Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / BattleScreenClip.fps()` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
 and on Heroic once a half-turn ends with the player's unit dead, it waits for the player and hides the countdown label.
 
 - `BattleTime = BattleTimeLimit = 120` (`frame_217/DoAction.as:1-3`). The conductor adds 1 to `BattleTimeNow` once per frame, and only while `turnBasedKrin` is false and the player's team is
@@ -464,7 +463,7 @@ and on Heroic once a half-turn ends with the player's unit dead, it waits for th
 ## Battle speeches (frame_217/PlaceObject2_3389_480 enterFrame, lines 794-870)
 
 Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with `BattleRunner.NARRATOR_NAME` for slot 0, and makes the endGame check after each batch.
-`battle_scene.gd` waits `START_WAIT_SECONDS` before the opening lines, `_play_speech` shows each line for its `timeToSay` seconds, and `_input` handles Space through
+`battle_scene.gd` waits `START_WAIT_FRAMES` before the opening lines, `_play_speech` shows each line for its `timeToSay` seconds, and `_input` handles Space through
 `BattleRunner.hard_skip` and `AudioManager.stop_effects`. The port shows a plain label, without the box's placement or fade.
 
 - Each battle record's `speeches` entries carry `player`, `phase`, `turnTime`, `turnTime2`, `say`, `timeToSay` and sometimes `voiceOver` (`frame_42/DoAction_14.as`, 149 lines in 50

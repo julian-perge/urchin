@@ -20,9 +20,11 @@
 class_name CharacterVisual
 extends Node2D
 
-signal attack_connected  # the swing's Impact, when the blow lands
+# Emitted at the swing's Impact.
+signal attack_connected
 signal state_finished(state: int)
-signal melee_finished  # the Runback has brought the doll home
+# Emitted once the Runback has brought the doll home.
+signal melee_finished
 
 enum State { IDLE, MELEE, CAST, STUN, HIT, DEAD }
 enum MeleePhase { NONE, DASH, STRIKE, RUNBACK }
@@ -43,9 +45,10 @@ const ANIMATIONS_FILE: String = SPRITE_ROOT + "/model1_animations.json"
 
 # krinMelee (frame_42/DoAction_4.as:36-135) moves the fighter on every frame of
 # its swing:
-# - Each step moves the fighter a sixth of the way from its home to where the
-#   target stands that frame, times a coefficient. The sixth is krinBodyMove
-#   (10) over krinBoltTime (60) (lines 112-116 and 213-216).
+# - Each step moves the fighter a sixth of the way from where it stood when the
+#   swing started to where the target stands that frame, times a coefficient.
+#   The sixth is krinBodyMove (10) over krinBoltTime (60) (lines 38-39, 112-116
+#   and 213-216).
 # - The dash's coefficient is min(1.5 - 1.45 * goRat, 1), where goRat is the
 #   share of the dash's x distance covered so far. The dash ends on the first
 #   frame that covers it all, and the strike label cuts the run label off. The
@@ -59,7 +62,9 @@ const ANIMATIONS_FILE: String = SPRITE_ROOT + "/model1_animations.json"
 # - The Runback steps back toward home with the coefficient min(1.45 * goRat,
 #   1). It puts the fighter home on the first frame that leaves it no more
 #   than MELEE_HOME_TOLERANCE px from home along x, on the target's side
-#   (lines 117-123).
+#   (lines 117-123). The original's home is where the swing started. The
+#   port's is the doll's own, and the port measures the Runback from it (see
+#   play_melee).
 const MELEE_STEP_SHARE: float = 10.0 / 60.0
 const MELEE_IMPACT_FRAMES: float = 15.0
 const MELEE_RUNBACK_FRAMES: float = 14.0
@@ -107,24 +112,30 @@ var _attack_fired: bool = false
 var _label: String = ""
 var _label_time: float = 0.0
 var _label_finished: bool = false
-# The melee swing. krinMelee moves the fighter's clip whatever its inner doll
-# plays (frame_42/DoAction_4.as:67-135), so the swing goes on through any
-# set_state(), and the doll shows the swing's labels only while its state is
+# These run the melee swing. krinMelee moves the fighter's clip whatever its
+# inner doll plays (frame_42/DoAction_4.as:67-135), so the swing goes on through
+# any set_state(), and the doll shows the swing's labels only while its state is
 # MELEE. The strike and runback play the timeline continuously from _playhead,
 # because the original clip flows Attack -> attack2 -> runback on its own.
+# _strike_frames counts the SWF frames since the strike started.
 var _melee_phase: MeleePhase = MeleePhase.NONE
 var _home_position: Vector2 = Vector2.ZERO
 var _attack_label: String = "Attack"
 var _playhead: float = 0.0  # continuous 0-based frame position
-var _strike_frames: float = 0.0  # SWF frames since the strike started
+var _strike_frames: float = 0.0
 var _impact_fired: bool = false
-# krinMelee's targetMC, faceing, slowPoint and relX. _target_spot returns where
-# the target stands now, as a spot for this doll, and an in-place strike has
-# none. _facing is 1 when the target is to the right of home. _slow_point is
-# the dash's x distance from home, and _rel_x and _rel_y are how far the doll
-# stands from home.
+# These hold krinMelee's targetMC, faceing, endPoint, boltx and bolty,
+# slowPoint and relX. _target_spot returns where the target stands now, as a
+# spot for this doll. _facing is 1 when the target is to the right of where the
+# swing started, and _end_x is where the dash ends. The swing measures itself
+# from _origin, which is where the doll stood when the swing started, and the
+# doll's home once the Runback starts. _slow_point is the x distance from
+# _origin to _end_x, and _rel_x and _rel_y are how far the doll stands from
+# _origin.
 var _target_spot: Callable = Callable()
 var _facing: float = 1.0
+var _end_x: float = 0.0
+var _origin: Vector2 = Vector2.ZERO
 var _slow_point: float = 0.0
 var _rel_x: float = 0.0
 var _rel_y: float = 0.0
@@ -231,42 +242,36 @@ func set_state(new_state: State) -> void:
 # Emits attack_connected at Impact and melee_finished once the Runback has
 # brought the doll home.
 func play_melee(target_spot: Callable, target_half_width: float, attack_label: String = "Attack") -> void:
-	_start_swing(MeleePhase.DASH, attack_label)
+	# A swing that starts while the doll is still in its Runback keeps the doll's
+	# home. The original takes the clip's position at that moment as its new
+	# home (krinMelee's boltx, frame_42/DoAction_4.as:38-39), which leaves the
+	# fighter short of its slot for the rest of the battle. ADR 0005 counts that
+	# as an Original bug. The dash still starts from where the doll stands, as
+	# the original's does.
+	if _melee_phase != MeleePhase.RUNBACK:
+		_home_position = position
+	set_state(State.MELEE)
+	_melee_phase = MeleePhase.DASH
+	_attack_label = _valid_attack_label(attack_label)
+	_strike_frames = 0.0
+	_impact_fired = false
 	_playhead = _label_start_frame("run")
 	_apply_frame_index(int(_playhead))
 	_target_spot = target_spot
 	var target_x: float = target_spot.call().x
 	var reach: float = target_half_width + get_bounds().size.x / 2.0
-	_facing = 1.0 if _home_position.x < target_x else -1.0
-	_slow_point = target_x - _facing * reach - _home_position.x
+	_facing = 1.0 if position.x < target_x else -1.0
+	_end_x = target_x - _facing * reach
+	_measure_from(position)
 
 
-# A strike without the run: plays the attack label where the doll stands,
-# flowing through the clip's own follow-through frames, and its Runback ends
-# at once. Same signals as play_melee. Nothing in the battle calls it, because
-# the original's Shock moves play "cast".
-func play_strike(attack_label: String = "Attack") -> void:
-	_start_swing(MeleePhase.STRIKE, attack_label)
-	_playhead = _label_start_frame(_attack_label)
-	_target_spot = Callable()
-	_slow_point = 0.0
-
-
-# A swing that starts while the doll is still in its Runback keeps the doll's
-# home and starts from where the doll stands. The original takes the clip's
-# position at that moment as its new home (krinMelee's boltx,
-# frame_42/DoAction_4.as:38-39), which leaves the fighter short of its slot
-# for the rest of the battle. ADR 0005 counts that as an Original bug.
-func _start_swing(phase: MeleePhase, attack_label: String) -> void:
-	if _melee_phase != MeleePhase.RUNBACK:
-		_home_position = position
-	set_state(State.MELEE)
-	_melee_phase = phase
-	_attack_label = _valid_attack_label(attack_label)
-	_strike_frames = 0.0
-	_impact_fired = false
-	_rel_x = position.x - _home_position.x
-	_rel_y = position.y - _home_position.y
+# Measures the swing from `origin`, as krinMelee measures it from boltx and
+# bolty.
+func _measure_from(origin: Vector2) -> void:
+	_origin = origin
+	_rel_x = position.x - origin.x
+	_rel_y = position.y - origin.y
+	_slow_point = _end_x - origin.x
 
 
 # krinBuff STUN is a running total across active stun-inflicting buffs (see
@@ -363,8 +368,7 @@ func _label_duration(label: String) -> float:
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return 0.5
-	var fps: float = animations.get("fps", 30.0)
-	return (float(segment["end"]) - float(segment["start"]) + 1.0) / fps
+	return (float(segment["end"]) - float(segment["start"]) + 1.0) / BattleScreenClip.fps()
 
 
 func _advance_label(delta: float, loop: bool) -> void:
@@ -385,10 +389,9 @@ func _apply_label_frame(label: String, time: float) -> void:
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return
-	var fps: float = animations.get("fps", 30.0)
 	var start: int = int(segment["start"]) - 1
 	var end: int = int(segment["end"]) - 1
-	_apply_frame_index(clampi(start + int(time * fps), start, end))
+	_apply_frame_index(clampi(start + int(time * BattleScreenClip.fps()), start, end))
 
 
 func _apply_frame_index(index: int) -> void:
@@ -435,15 +438,16 @@ static func _load_animations() -> Dictionary:
 	return _animations
 
 
-# The faithful krinMelee: ease-out dash (the run label freezes on its glide
-# and gets interrupted by arrival), strike playing straight through the
-# clip's follow-through frames, then the eased run home. The Runback takes its
-# first step on the frame it starts, because the original turns the clip round
-# and moves it in the same onEnterFrame (frame_42/DoAction_4.as:87-116).
+# Moves the doll through one frame of krinMelee's swing. The dash eases out
+# while the run label plays, and the label holds its last frame if the doll has
+# not arrived by then. The strike plays straight through the clip's
+# follow-through frames, and the Runback eases the doll home. The Runback takes its first step on the
+# frame it starts, because the original turns the clip round and moves it in
+# the same onEnterFrame (frame_42/DoAction_4.as:87-116).
 func _animate_melee(delta: float) -> void:
-	var frames: float = delta * _load_animations().get("fps", 30.0)
+	var frames: float = delta * BattleScreenClip.fps()
 	match _melee_phase:
-		MeleePhase.DASH:  # run label plays but arrival is movement-driven
+		MeleePhase.DASH:
 			if _state == State.MELEE:
 				_playhead = minf(_playhead + frames, _label_end_frame("run"))
 				_apply_frame_index(int(_playhead))
@@ -452,7 +456,7 @@ func _animate_melee(delta: float) -> void:
 				_melee_phase = MeleePhase.STRIKE
 				_strike_frames = 0.0
 				_show_swing_frame(_label_start_frame(_attack_label))
-		MeleePhase.STRIKE:  # continuous playback through the follow-through
+		MeleePhase.STRIKE:
 			_strike_frames += frames
 			_show_swing_frame(_playhead + frames)
 			if not _impact_fired and _strike_frames >= MELEE_IMPACT_FRAMES:
@@ -460,37 +464,37 @@ func _animate_melee(delta: float) -> void:
 				attack_connected.emit()
 			if _strike_frames >= MELEE_IMPACT_FRAMES + MELEE_RUNBACK_FRAMES:
 				_melee_phase = MeleePhase.RUNBACK
+				_measure_from(_home_position)
 				_show_swing_frame(_label_start_frame("runback"))
 				_step_home(frames)
-		MeleePhase.RUNBACK:  # eased return while the runback label plays out
+		MeleePhase.RUNBACK:
 			_play_runback_label(frames)
 			_step_home(frames)
 		MeleePhase.NONE:
 			_play_runback_label(frames)
 
 
-# krinMelee's goRat: the share of the dash's x distance the doll has covered.
-# An in-place strike has no distance, so it has covered none.
+# Returns krinMelee's goRat, the share of the x distance from _origin to the
+# dash's end that the doll has covered.
 func _go_rat() -> float:
-	return _rel_x / _slow_point if _slow_point != 0.0 else 0.0
+	return _rel_x / _slow_point
 
 
 # Moves the doll `coefficient` steps toward where its target stands now, over
-# `frames` SWF frames. A step is a sixth of the way from the doll's home to the
-# target, so it grows when the target moves away from that home. A negative
-# coefficient steps back toward home.
+# `frames` SWF frames. A step is a sixth of the way from _origin to the target,
+# so it grows when the target moves away from _origin. A negative coefficient
+# steps back toward _origin.
 func _step_toward_target(coefficient: float, frames: float) -> void:
-	if not _target_spot.is_valid():
-		return
 	var target: Vector2 = _target_spot.call()
 	var share: float = coefficient * MELEE_STEP_SHARE * frames
-	_rel_x += share * (target.x - _home_position.x)
-	_rel_y += share * (target.y - _home_position.y)
-	position = _home_position + Vector2(_rel_x, _rel_y)
+	_rel_x += share * (target.x - _origin.x)
+	_rel_y += share * (target.y - _origin.y)
+	position = _origin + Vector2(_rel_x, _rel_y)
 
 
-# Shows the swing's `frame` while the doll plays its swing. Any other state
-# keeps the playhead, which the dead label also plays on.
+# Shows the swing's `frame` while the doll's state is MELEE. In any other state
+# it leaves _playhead alone, because _play_death plays the dead label on the
+# same playhead.
 func _show_swing_frame(frame: float) -> void:
 	if _state == State.MELEE:
 		_playhead = frame
@@ -526,7 +530,7 @@ func _step_home(frames: float) -> void:
 func _play_death(delta: float) -> void:
 	if _label_finished:
 		return
-	_playhead += delta * _load_animations().get("fps", 30.0)
+	_playhead += delta * BattleScreenClip.fps()
 	if _playhead >= _label_end_frame("dead"):
 		_label_finished = true
 		visible = false

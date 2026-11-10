@@ -17,11 +17,18 @@
 # _y when the shake stops. Every script is checked against what the port
 # expects to find on that frame, so a SWF laid out differently raises here.
 #
+# The conductor, the clip that runs the battle (frame_217/PlaceObject2_3389_480),
+# starts GridZoomer at each Dispatch. The JSON gives the zoom each move type
+# starts, from the scripts that set it up, and the conductor's
+# AttackEndCounterLimit, which paces the actions.
+#
 # Run: uv run extract_battle_screen_motion
 from __future__ import annotations
 
 import json
 import sys
+from collections import Counter
+from dataclasses import dataclass
 
 from urchin_dev import REPO_ROOT, WEB_SWF
 from urchin_dev.swf import avm1, render, timeline
@@ -32,20 +39,37 @@ MOTION_JSON = REPO_ROOT / "assets" / "ui" / "battle" / "battle_screen_motion.jso
 
 ZOOMER = 3419
 SHAKER = 3420
-# The onClipEvent(load) bit of a clip action record's event flags.
+CONDUCTOR = 3389
+# A clip action record sets these bits of its event flags for onClipEvent(load)
+# and onClipEvent(enterFrame).
 CLIP_EVENT_LOAD = 1
+CLIP_EVENT_ENTER_FRAME = 2
+# The conductor compares mAry1[10] with each of these before it starts a move of
+# that type.
+MOVE_TYPES = ("Melee", "Missile", "Shock")
+# A script sets up a zoom by setting these, in this order.
+ZOOM_TARGETS = ("_root.zoomPointX", "_root.zoomPointY", "_root.zoomPause")
 
 
-def frame_scripts(index: SwfIndex, sprite: int) -> dict[int, CodeBlock]:
-    """-> {frame: the DoAction that frame runs} for one sprite."""
+@dataclass(frozen=True)
+class FrameScript:
+    """The DoAction that runs on one frame of a sprite."""
+
+    sprite: int
+    frame: int
+    block: CodeBlock
+
+
+def frame_scripts(index: SwfIndex, sprite: int) -> dict[int, FrameScript]:
+    """-> {frame: the script that frame runs} for one sprite."""
     return {
-        block.frame: block
+        block.frame: FrameScript(sprite, block.frame, block)
         for block in index.code
         if block.kind == "frame" and block.owner == sprite
     }
 
 
-def first_script_from(scripts: dict[int, CodeBlock], frame: int, sprite: int) -> int:
+def first_script_from(scripts: dict[int, FrameScript], frame: int, sprite: int) -> int:
     """-> the first frame from `frame` on that runs a script."""
     later = [f for f in scripts if f >= frame]
     if not later:
@@ -53,9 +77,10 @@ def first_script_from(scripts: dict[int, CodeBlock], frame: int, sprite: int) ->
     return min(later)
 
 
-def load_variables(index: SwfIndex, battle_frame: int, sprite: int) -> dict:
-    """-> the variables the onClipEvent(load) that the battle frame gives
-    `sprite` sets, with the values it sets them to."""
+def clip_script(
+    index: SwfIndex, battle_frame: int, sprite: int, event: int
+) -> CodeBlock:
+    """-> the clip action that the battle frame gives `sprite` for `event`."""
     (block,) = [
         block
         for block in index.code
@@ -63,25 +88,37 @@ def load_variables(index: SwfIndex, battle_frame: int, sprite: int) -> dict:
         and block.owner == 0
         and block.frame == battle_frame
         and block.placed_id == sprite
-        and block.events == CLIP_EVENT_LOAD
+        and block.events == event
     ]
-    return avm1.assignments(index, block)
+    return block
 
 
-def check(sprite: int, frame: int, block: CodeBlock, strings: set, gotos: tuple):
-    """Raise unless `block` pushes every one of `strings` and makes exactly
+def load_variables(index: SwfIndex, battle_frame: int, sprite: int) -> dict:
+    """-> the variables the onClipEvent(load) that the battle frame gives
+    `sprite` sets, with the values it sets them to."""
+    return avm1.assignments(
+        index, clip_script(index, battle_frame, sprite, CLIP_EVENT_LOAD)
+    )
+
+
+def check_strings_and_jumps(script: FrameScript, strings: set, gotos: tuple) -> None:
+    """Raise unless `script` pushes every one of `strings` and makes exactly
     the GotoLabel jumps in `gotos`, in that order."""
+    block = script.block
     missing = strings - set(block.strings)
     if missing or block.goto_labels != gotos:
         raise RuntimeError(
-            f"{sprite} frame {frame} pushes {block.strings} and jumps to"
-            f" {block.goto_labels}, want {sorted(strings)} and {gotos}"
+            f"{script.sprite} frame {script.frame} pushes {block.strings} and jumps"
+            f" to {block.goto_labels}, want {sorted(strings)} and {gotos}"
         )
 
 
-def check_stop(index: SwfIndex, sprite: int, frame: int, block: CodeBlock) -> None:
-    if avm1.actions(index, block) != [avm1.Action(avm1.ACTION_STOP)]:
-        raise RuntimeError(f"{sprite} frame {frame} does more than stop()")
+def check_stop(index: SwfIndex, script: FrameScript) -> None:
+    """Raise unless `script` does nothing but stop()."""
+    if avm1.actions(index, script.block) != [avm1.Action(avm1.ACTION_STOP)]:
+        raise RuntimeError(
+            f"{script.sprite} frame {script.frame} does more than stop()"
+        )
 
 
 def zoomer_motion(index: SwfIndex, battle_frame: int) -> dict:
@@ -99,24 +136,18 @@ def zoomer_motion(index: SwfIndex, battle_frame: int) -> dict:
     }
     if roles["go"] != labels["KrinZoomGo"] or sorted(scripts) != sorted(roles.values()):
         raise RuntimeError(f"{ZOOMER} runs scripts on {sorted(scripts)}, want {roles}")
-    check_stop(index, ZOOMER, roles["stop"], scripts[roles["stop"]])
-    check(
-        ZOOMER,
-        roles["go"],
+    check_stop(index, scripts[roles["stop"]])
+    check_strings_and_jumps(
         scripts[roles["go"]],
         {"zoomPointX", "zoomPointY", "saverX", "saverY", "zoomFactor", "scaleChange"},
         (),
     )
-    check(
-        ZOOMER,
-        roles["step"],
+    check_strings_and_jumps(
         scripts[roles["step"]],
         {"_x", "_y", "_xscale", "_yscale", "saverX", "saverY"},
         ("KrinZoomPlay", "KrinZoomPause", "KrinZoomStop"),
     )
-    check(
-        ZOOMER,
-        roles["hold"],
+    check_strings_and_jumps(
         scripts[roles["hold"]],
         {"zoomPause", "zoomPauseCounter"},
         ("KrinZoomPlay", "KrinZoomPause"),
@@ -148,19 +179,18 @@ def shaker_motion(index: SwfIndex, battle_frame: int) -> dict:
     }
     if sorted(scripts) != sorted(roles.values()):
         raise RuntimeError(f"{SHAKER} runs scripts on {sorted(scripts)}, want {roles}")
-    check_stop(index, SHAKER, stop, scripts[stop])
-    check(SHAKER, roles["open"], scripts[roles["open"]], {"_y", "shakeValue"}, ())
-    check(SHAKER, up, scripts[up], {"_y", "shakeValue", "shakeMinus"}, ())
+    check_stop(index, scripts[stop])
+    check_strings_and_jumps(scripts[roles["open"]], {"_y", "shakeValue"}, ())
+    check_strings_and_jumps(scripts[up], {"_y", "shakeValue", "shakeMinus"}, ())
     down = scripts[roles["down"]]
-    check(
-        SHAKER,
-        roles["down"],
+    check_strings_and_jumps(
         down,
         {"_y", "shakeValue", "shakeMinus", "shakeOriginal"},
         ("KrinShakeplayHere", "KrinShakestopHere"),
     )
-    # The 0 that shakeValue is compared with, then the number added to _y.
-    pushed = avm1.numbers(index, down)
+    # The down frame pushes the 0 that it compares shakeValue with, and then the
+    # number that it adds to _y.
+    pushed = avm1.numbers(index, down.block)
     if len(pushed) != 2 or pushed[0] != 0:
         raise RuntimeError(f"{SHAKER} frame {roles['down']} pushes {pushed}")
     return {
@@ -175,25 +205,146 @@ def shaker_motion(index: SwfIndex, battle_frame: int) -> dict:
 def rest(index: SwfIndex, battle_frame: int) -> dict:
     """-> where the battle frame places BATTLESCREEN, which is where its
     onClipEvent(load) saves saverX and saverY from."""
-    (block,) = [
-        block
-        for block in index.code
-        if block.kind == "clip" and block.placed_id == HALL_SPRITE
-    ]
+    block = clip_script(index, battle_frame, HALL_SPRITE, CLIP_EVENT_LOAD)
     if not {"saverX", "saverY"} <= set(block.strings):
         raise RuntimeError(f"{HALL_SPRITE}'s clip action sets {block.strings}")
     x, y = render.placement_origin(index, 0, battle_frame, HALL_SPRITE)
     return {"x": x, "y": y}
 
 
+def constants(index: SwfIndex, block: CodeBlock) -> dict:
+    """-> {path: number} for every path that `block` sets exactly once, to a
+    number."""
+    assigned = avm1.statements(index, block)
+    counts = Counter(assignment.target for assignment in assigned)
+    return {
+        assignment.target: assignment.value
+        for assignment in assigned
+        if counts[assignment.target] == 1
+        and isinstance(assignment.value, (int, float))
+        and not isinstance(assignment.value, bool)
+    }
+
+
+def defining_block(index: SwfIndex, path: str) -> CodeBlock:
+    """-> the one DoAction on the root timeline that sets `path`."""
+    (block,) = [
+        block
+        for block in index.code
+        if block.kind == "frame"
+        and block.owner == 0
+        and path.rsplit(".", 1)[-1] in block.strings
+        and any(a.target == path for a in avm1.statements(index, block))
+    ]
+    return block
+
+
+def zoom_setups(index: SwfIndex, block: CodeBlock) -> list[tuple]:
+    """-> each zoom `block` sets up, in order, as its assignments to
+    ZOOM_TARGETS."""
+    found = [a for a in avm1.statements(index, block) if a.target in ZOOM_TARGETS]
+    setups = [tuple(found[i : i + 3]) for i in range(0, len(found), 3)]
+    for setup in setups:
+        if tuple(a.target for a in setup) != ZOOM_TARGETS:
+            raise RuntimeError(f"a zoom sets {[a.target for a in setup]}")
+    return setups
+
+
+def zoom(setup: tuple, variables: dict) -> dict:
+    """-> the factor and the center that a zoom works its point out with, and
+    its hold. Its script sets _root.zoomPointX to _root.xPoint1 times the
+    factor, plus the center's x, _root.zoomPointY the same way from
+    _root.yPoint1, and _root.zoomPause to the hold."""
+    x, y, pause = setup
+    factor, center_x = point_terms(x.value, "_root.xPoint1", variables)
+    y_factor, center_y = point_terms(y.value, "_root.yPoint1", variables)
+    if y_factor != factor:
+        raise RuntimeError(f"a zoom's factors are {factor} for x and {y_factor} for y")
+    return {
+        "center": {"x": center_x, "y": center_y},
+        "factor": factor,
+        "hold": avm1.evaluate(pause.value, variables),
+    }
+
+
+def point_terms(value, point: str, variables: dict) -> tuple:
+    """-> (factor, center) of a zoom point that is `point` times the factor,
+    plus the center."""
+    match value:
+        case avm1.Arithmetic(
+            avm1.ACTION_ADD2,
+            avm1.Arithmetic(avm1.ACTION_MULTIPLY, avm1.Read(path), factor),
+            center,
+        ) if path == point:
+            return avm1.evaluate(factor, variables), avm1.evaluate(center, variables)
+    raise RuntimeError(f"a zoom point is {value}, not {point} * factor + center")
+
+
+def functions_around(acts: list[avm1.Action], at: int) -> list[str]:
+    """-> the names of the functions whose bodies hold the action `at`."""
+    return [
+        action.args[0]
+        for start, action in enumerate(acts[:at])
+        if action.code in (avm1.ACTION_DEFINE_FUNCTION, avm1.ACTION_DEFINE_FUNCTION2)
+        and at <= start + action.args[2]
+    ]
+
+
+def move_type_before(acts: list[avm1.Action], at: int) -> str | None:
+    """-> the last move type that the script pushes before the action `at`."""
+    pushed = [
+        value
+        for action in acts[:at]
+        if action.code == avm1.ACTION_PUSH
+        for value in action.args
+        if value in MOVE_TYPES
+    ]
+    return pushed[-1] if pushed else None
+
+
+def zooms(index: SwfIndex, battle_frame: int) -> dict:
+    """-> {move type: zoom} for the zoom each move type starts at Dispatch. The
+    conductor sets up a Missile's and a Shock's zoom once it has compared
+    mAry1[10] with their type (enterFrame, lines 412-428 and 445-462), and
+    krinMelee sets up a Melee move's (frame_42/DoAction_4.as:58-65). They read
+    zoomRatioNEW and krinMeleeAttackCD, which krinMelee's DoAction sets."""
+    library = defining_block(index, "krinMeleeAttackCD")
+    variables = constants(index, library)
+    found = []
+    library_actions = avm1.actions(index, library)
+    for setup in zoom_setups(index, library):
+        if functions_around(library_actions, setup[0].at) != ["krinMelee"]:
+            raise RuntimeError(
+                f"frame {library.frame} sets up a zoom outside krinMelee"
+            )
+        found.append(("Melee", zoom(setup, variables)))
+    script = clip_script(index, battle_frame, CONDUCTOR, CLIP_EVENT_ENTER_FRAME)
+    script_actions = avm1.actions(index, script)
+    for setup in zoom_setups(index, script):
+        move_type = move_type_before(script_actions, setup[0].at)
+        found.append((move_type, zoom(setup, variables)))
+    if sorted(move_type for move_type, _ in found) != sorted(MOVE_TYPES):
+        raise RuntimeError(f"zooms are set up for {[t for t, _ in found]}")
+    return dict(found)
+
+
+def conductor(index: SwfIndex, battle_frame: int) -> dict:
+    """-> the conductor's AttackEndCounterLimit, which its onClipEvent(load)
+    sets (frame_217/PlaceObject2_3389_480, line 7)."""
+    load = clip_script(index, battle_frame, CONDUCTOR, CLIP_EVENT_LOAD)
+    return {"AttackEndCounterLimit": constants(index, load)["AttackEndCounterLimit"]}
+
+
 def main():
     index = read_swf(WEB_SWF)
     battle_frame = timeline.frame_of(index, 0, FRAME_LABEL)
     motion = {
+        "conductor": conductor(index, battle_frame),
         "fps": index.frame_rate,
         "rest": rest(index, battle_frame),
         "shaker": shaker_motion(index, battle_frame),
         "zoomer": zoomer_motion(index, battle_frame),
+        "zooms": zooms(index, battle_frame),
     }
     MOTION_JSON.parent.mkdir(parents=True, exist_ok=True)
     MOTION_JSON.write_text(json.dumps(motion, indent=1, sort_keys=True) + "\n")

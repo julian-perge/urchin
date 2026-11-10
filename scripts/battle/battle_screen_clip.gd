@@ -17,17 +17,17 @@ extends Control
 
 const MOTION_PATH: String = "res://assets/ui/battle/battle_screen_motion.json"
 const TWIPS: float = 20.0
-# The _xscale and _yscale of a clip placed at its own size, as Flash counts
-# them.
+# Flash counts a clip placed at its own size as this _xscale and _yscale.
 const FULL_SCALE: float = 100.0
 
-# Where the battle frame places BATTLESCREEN, which its onClipEvent(load) saves
-# as saverX and saverY.
+static var _motion: Dictionary = {}
+
+# rest is where the battle frame places BATTLESCREEN, which its
+# onClipEvent(load) saves as saverX and saverY.
 var rest: Vector2 = Vector2.ZERO
-# BATTLESCREEN's _xscale and _yscale.
+# These are BATTLESCREEN's _xscale and _yscale, and its _x and _y.
 var clip_xscale: float = FULL_SCALE
 var clip_yscale: float = FULL_SCALE
-# BATTLESCREEN's _x and _y.
 var clip_x: float:
 	get:
 		return _x_twips / TWIPS
@@ -43,35 +43,50 @@ var _x_twips: int = 0
 var _y_twips: int = 0
 var _zoomer: GridZoomer
 var _shaker: GridShaker
-var _fps: float = 30.0
 var _frames_due: float = 0.0
 
 
 func _ready() -> void:
-	var motion: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(MOTION_PATH))
-	_fps = float(motion["fps"])
-	rest = Vector2(float(motion["rest"]["x"]), float(motion["rest"]["y"]))
+	var data: Dictionary = motion()
+	rest = Vector2(float(data["rest"]["x"]), float(data["rest"]["y"]))
 	clip_x = rest.x
 	clip_y = rest.y
-	_zoomer = GridZoomer.new(self, motion["zoomer"])
-	_shaker = GridShaker.new(self, motion["shaker"])
+	_zoomer = GridZoomer.new(self, data["zoomer"])
+	_shaker = GridShaker.new(self, data["shaker"])
 	_show()
 
 
-# What the conductor does to zoom: it sets _root.zoomPointX and zoomPointY to
-# `point`, plays GridZoomer from KrinZoomGo, and sets _root.zoomPause to `hold`.
+# Returns what battle_screen_motion.json holds. It reads the file once, the
+# first time anything asks.
+static func motion() -> Dictionary:
+	if _motion.is_empty():
+		_motion = JSON.parse_string(FileAccess.get_file_as_string(MOTION_PATH))
+	return _motion
+
+
+# Returns the SWF's frame rate, which the extractor reads from the SWF's header.
+# Every clip in the original plays at it, so the port counts the battle's
+# frames at it.
+static func fps() -> float:
+	return float(motion()["fps"])
+
+
+# Does what the conductor does to zoom: it sets _root.zoomPointX and zoomPointY
+# to `point`, plays GridZoomer from KrinZoomGo, and sets _root.zoomPause to
+# `hold`.
 func zoom(point: Vector2, hold: int) -> void:
 	_zoomer.zoom(point, hold)
 
 
-# _root.GridShaker.play(). A shake that is already playing carries on.
+# Does what the conductor's _root.GridShaker.play() does. A shake that is
+# already playing carries on.
 func shake() -> void:
 	_shaker.play()
 
 
 # Plays both clips on by `seconds` at the SWF's frame rate.
 func advance(seconds: float) -> void:
-	_frames_due += seconds * _fps
+	_frames_due += seconds * fps()
 	while _frames_due >= 1.0:
 		_frames_due -= 1.0
 		advance_frame()
@@ -89,8 +104,9 @@ func _show() -> void:
 	position = Vector2(clip_x, clip_y) - rest
 
 
-# A clip's playhead. Flash runs the script of each frame the playhead lands on,
-# whether it plays onto it or jumps there, and a jump to a label stops the clip.
+# Clip is a clip's playhead. Flash runs the script of each frame the playhead
+# lands on, whether it plays onto it or jumps there, and a jump to a label stops
+# the clip.
 class Clip:
 	var _frames: int
 	var _labels: Dictionary
@@ -127,22 +143,23 @@ class Clip:
 			_scripts[_frame].call()
 
 
-# GridZoomer, DefineSprite 3419, with its frame scripts ported.
+# This is GridZoomer, DefineSprite 3419, with its frame scripts ported.
 class GridZoomer extends Clip:
 	var _screen: BattleScreenClip
-	# What its onClipEvent(load) sets (frame_217/PlaceObject2_3419_332).
+	# Its onClipEvent(load) sets these (frame_217/PlaceObject2_3419_332).
 	var _zoom_time: float
 	var _scale_change: float
 	var _zoom_factor: float
 	var _zoom_point: float
-	# What its KrinZoomGo frame works out, and its count of frames held.
+	# Its KrinZoomGo frame works these out, and the last one counts the frames
+	# it has held.
 	var _zoom_point_x: float = 0.0
 	var _zoom_point_y: float = 0.0
 	var _zoom_scale_x: float = 0.0
 	var _zoom_scale_y: float = 0.0
 	var _zoom_reverse: float = 0.0
 	var _zoom_pause_counter: int = 0
-	# _root.zoomPointX and zoomPointY, and _root.zoomPause.
+	# These stand for _root.zoomPointX and zoomPointY, and _root.zoomPause.
 	var _point: Vector2 = Vector2.ZERO
 	var _hold_frames: int = 0
 
@@ -161,9 +178,9 @@ class GridZoomer extends Clip:
 		play()
 		_hold_frames = hold
 
-	# DefineSprite_3419/frame_2. The blur and the drop in quality it can start
-	# never run, because frame_201/DoAction.as:87-100 sets SFX2 false and SFX3
-	# true for both Graphics settings.
+	# This ports DefineSprite_3419/frame_2. The blur and the drop in quality it
+	# can start never run, because frame_201/DoAction.as:87-100 sets SFX2 false
+	# and SFX3 true for both Graphics settings.
 	func _go() -> void:
 		_zoom_point_x = (_point.x - _screen.rest.x) / _zoom_factor
 		_zoom_point_y = (_point.y - _screen.rest.y) / _zoom_factor
@@ -172,12 +189,12 @@ class GridZoomer extends Clip:
 		_zoom_point = _zoom_time
 		_zoom_reverse = 1
 
-	# DefineSprite_3419/frame_4. The original's last step puts _x and _y back
-	# where BATTLESCREEN rests and leaves the scale to come back by itself. It
-	# does unless a second zoom starts before the first ends, and then the
-	# screen stays zoomed for the rest of the battle. The port puts the scale
-	# back too, which ADR 0005 lists. It leaves out the original's reset of
-	# zoomPoint to 0 when zoomPoint is zoomTime + 1, which a count down from
+	# This ports DefineSprite_3419/frame_4. The original's last step puts _x
+	# and _y back where BATTLESCREEN rests and leaves the scale to come back by
+	# itself. It does unless a second zoom starts before the first ends, and
+	# then the screen stays zoomed for the rest of the battle. The port puts the
+	# scale back too, which ADR 0005 lists. It leaves out the original's reset
+	# of zoomPoint to 0 when zoomPoint is zoomTime + 1, which a count down from
 	# zoomTime never reaches.
 	func _step() -> void:
 		var x_go: float = _zoom_point_x * _zoom_point
@@ -205,7 +222,7 @@ class GridZoomer extends Clip:
 			_screen.clip_yscale = FULL_SCALE
 			goto_and_stop("KrinZoomStop")
 
-	# DefineSprite_3419/frame_6.
+	# This ports DefineSprite_3419/frame_6.
 	func _hold() -> void:
 		_zoom_pause_counter += 1
 		if _zoom_pause_counter == _hold_frames:
@@ -215,14 +232,14 @@ class GridZoomer extends Clip:
 		play()
 
 
-# GridShaker, DefineSprite 3420, with its frame scripts ported.
+# This is GridShaker, DefineSprite 3420, with its frame scripts ported.
 class GridShaker extends Clip:
 	var _screen: BattleScreenClip
-	# What its onClipEvent(load) sets (frame_217/PlaceObject2_3420_330).
+	# Its onClipEvent(load) sets these (frame_217/PlaceObject2_3420_330).
 	var _shake_original: float
 	var _shake_value: float
 	var _shake_minus: float
-	# What its last frame adds to _y when it stops.
+	# Its last frame adds this to _y when it stops.
 	var _settle: float
 
 	func _init(screen: BattleScreenClip, timeline: Dictionary) -> void:
@@ -234,16 +251,16 @@ class GridShaker extends Clip:
 		_shake_minus = float(variables["shakeMinus"])
 		_settle = float(timeline["settle"])
 
-	# DefineSprite_3420/frame_2.
+	# This ports DefineSprite_3420/frame_2.
 	func _open() -> void:
 		_screen.clip_y += _shake_value / 2
 
-	# DefineSprite_3420/frame_4.
+	# This ports DefineSprite_3420/frame_4.
 	func _up() -> void:
 		_screen.clip_y -= _shake_value
 		_shake_value -= _shake_minus
 
-	# DefineSprite_3420/frame_5.
+	# This ports DefineSprite_3420/frame_5.
 	func _down() -> void:
 		_screen.clip_y += _shake_value
 		_shake_value -= _shake_minus

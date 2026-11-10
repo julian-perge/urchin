@@ -18,8 +18,8 @@ func _animations() -> Dictionary:
 	return JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.ANIMATIONS_FILE))
 
 
-# The MODEL1 frame the doll's parts show, numbered from 1 like the SWF's, or 0
-# when the pose matches no frame.
+# Returns the MODEL1 frame the doll's parts show, numbered from 1 like the
+# SWF's, or 0 when the pose matches no frame.
 func _shown_frame() -> int:
 	var frames: Array = _animations()["frames"]
 	for index in frames.size():
@@ -109,8 +109,8 @@ func test_resolve_equip_looks():
 	)
 
 
-# A doll with no art standing at `spot`. It has no width, so a swing it makes
-# stops short of its target by the target's half-width alone.
+# Returns a doll with no art standing at `spot`. It has no width, so a swing it
+# makes stops short of its target by the target's half-width alone.
 func _bare_doll(spot: Vector2) -> CharacterVisual:
 	var doll: CharacterVisual = add_child_autofree(CharacterVisualScene.instantiate())
 	doll.position = spot
@@ -247,7 +247,7 @@ func test_a_caster_hit_in_its_runback_keeps_sliding_home_while_it_plays_hit():
 			break
 		visual._process(SWF_FRAME_SECONDS)
 	var strike_spot: Vector2 = visual.position
-	assert_almost_eq(strike_spot, Vector2(180, 100), Vector2(0.1, 0.0), "sanity: the blow lands at the target")
+	assert_almost_eq(strike_spot, Vector2(180, 100), Vector2(0.1, 0.0), "sanity: Impact comes at the target")
 	for frame in 13:
 		visual._process(SWF_FRAME_SECONDS)
 	assert_eq(visual.position, strike_spot, "13 frames after Impact the caster still stands where it struck")
@@ -289,7 +289,35 @@ func test_a_swing_that_starts_during_the_runback_still_ends_at_home():
 	assert_eq(visual.position, Vector2(100, 100), "and its Runback ends at the doll's own home")
 
 
-func test_attack_variants_and_in_place_strike():
+# krinMelee starts every swing with relX at 0 and works its dash out from where
+# the fighter stands (frame_42/DoAction_4.as:38-57 and 97-133). So a swing that
+# starts during the Runback dashes frame for frame the way a swing from that
+# spot does, and only its Runback differs, because it ends at the doll's home.
+func test_a_swing_that_starts_during_the_runback_dashes_as_one_from_that_spot():
+	var target: Vector2 = Vector2(400, 100)
+	var doll: CharacterVisual = _bare_doll(Vector2(100, 100))
+	watch_signals(doll)
+	doll.play_melee(func(): return target, 0.0)
+	for frame in 120:
+		doll._process(SWF_FRAME_SECONDS)
+		if get_signal_emit_count(doll, "attack_connected") > 0 and doll.position.x < 200.0:
+			break
+	var spot: Vector2 = doll.position
+	assert_between(spot.x, 100.5, 200.0, "sanity: the doll is partway home")
+
+	var fresh: CharacterVisual = _bare_doll(spot)
+	doll.play_melee(func(): return target, 0.0)
+	fresh.play_melee(func(): return target, 0.0)
+	var dashes: Array = [[], []]
+	for frame in 20:
+		doll._process(SWF_FRAME_SECONDS)
+		fresh._process(SWF_FRAME_SECONDS)
+		dashes[0].append(doll.position)
+		dashes[1].append(fresh.position)
+	assert_eq(dashes[0], dashes[1], "the dash and its arrival match a swing from that spot")
+
+
+func test_a_swing_plays_its_attack_label_and_an_unknown_label_plays_attack():
 	watch_signals(visual)
 	# Attack_Upper is a 30-frame swing (1s) - the overhead Destroy strike.
 	visual.play_melee(func(): return Vector2(80, 0), 0.0, "Attack_Upper")
@@ -301,16 +329,6 @@ func test_attack_variants_and_in_place_strike():
 	# Unknown labels fall back to the base swing.
 	visual.play_melee(func(): return Vector2(80, 0), 0.0, "Krin.Firebolt")
 	assert_eq(visual._attack_label, "Attack")
-	visual.set_state(CharacterVisual.State.IDLE)
-	# An in-place strike plays the swing and its follow-through where the doll
-	# stands, and the doll never moves.
-	visual.position = Vector2(50, 50)
-	visual.play_strike("Attack_Stab")
-	for i in 45:
-		visual._process(0.05)
-	assert_signal_emitted(visual, "melee_finished")
-	assert_eq(visual.position, Vector2(50, 50), "in-place strike never moves")
-	assert_eq(visual._state, CharacterVisual.State.IDLE)
 
 
 func test_cast_and_hit_recover_to_idle():
@@ -324,8 +342,8 @@ func test_cast_and_hit_recover_to_idle():
 	assert_eq(visual._state, CharacterVisual.State.IDLE)
 
 
-# The alpha each part is drawn at: its own modulate times every ancestor's, up
-# to the doll.
+# Returns the alpha each part is drawn at, which is its own modulate times every
+# ancestor's, up to the doll.
 func _drawn_alphas() -> Array:
 	var alphas: Array = []
 	for part in visual._parts.values():

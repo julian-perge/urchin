@@ -138,7 +138,7 @@ func _present_with_a_buff() -> void:
 	_present(_unit, {}, {1: buff})
 
 
-# What the overlay draws besides its two bars.
+# Returns what the overlay draws besides its two bars.
 func _overlay_shows() -> Dictionary:
 	var icons: Array = _overlay.buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
 	return {
@@ -334,14 +334,14 @@ func test_a_hit_flinches_the_doll_and_plays_the_hit_voice():
 
 # A move-caused death used to play only when the queued DEATH event was reached,
 # which for a melee hit is after the caster has run back.
-func test_a_killing_blow_plays_the_death_at_the_impact():
+func test_a_move_result_that_kills_plays_the_death_at_its_impact():
 	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
 	assert_eq(_doll._state, DEAD, "the doll plays its death at the impact")
 
 
 # The original plays the hit voice only when the target survives, in the else
 # of IDKT.LIFEN == 0 (frame_42/DoAction_8.as:104-131).
-func test_a_killing_blow_plays_the_death_voice_and_not_the_hit_voice():
+func test_a_move_result_that_kills_plays_the_death_voice_and_not_the_hit_voice():
 	_presenter.show_result(_killing(_damage(500.0, 0.0)), null)
 	assert_eq(_cues, [VOICE_DIE])
 
@@ -362,7 +362,7 @@ func test_the_buff_icons_name_and_number_clear_17_frames_after_a_killing_impact(
 	])
 
 
-# The alpha the overlay is drawn at, which is 0 once it is hidden.
+# Returns the alpha the overlay is drawn at, which is 0 once it is hidden.
 func _overlay_alpha() -> float:
 	return _overlay.modulate.a if _overlay.is_visible_in_tree() else 0.0
 
@@ -720,52 +720,52 @@ func test_floating_text_rises_fades_and_frees_itself():
 
 # Starts a melee at an ally 200 px to the left, whose swing the test steps by
 # hand. The returned array holds true once melee() has returned.
-func _start_melee(on_blow: Callable) -> Array:
+func _start_melee(on_impact: Callable) -> Array:
 	_doll.set_process(false)
 	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT), HOME - Vector2(200, 0))
 	var returned: Array = []
 	var run: Callable = func():
-		await _presenter.melee(target, "Attack", on_blow)
+		await _presenter.melee(target, "Attack", on_impact)
 		returned.append(true)
 	run.call()
 	return returned
 
 
 # krinMelee hands the battle back at Impact and runs the fighter home on its
-# own afterwards (frame_42/DoAction_4.as:73-135), so melee() returns at the
-# blow, with the doll still where it struck.
-func test_melee_lands_the_blow_once_and_returns_at_it():
-	var blows: Array = []
-	var returned: Array = _start_melee(func(): blows.append(_doll.position))
-	assert_eq(blows.size(), 0, "nothing lands as the run starts")
+# own afterwards (frame_42/DoAction_4.as:73-135), so melee() returns at
+# Impact, with the doll still where it struck.
+func test_melee_reaches_impact_once_and_returns_at_it():
+	var impacts: Array = []
+	var returned: Array = _start_melee(func(): impacts.append(_doll.position))
+	assert_eq(impacts.size(), 0, "nothing lands as the run starts")
 	for frame in 600:
 		if not returned.is_empty():
 			break
 		_doll._process(1.0 / 30.0)
-	assert_eq(blows.size(), 1, "the blow lands once")
-	if blows.size() == 1:
-		assert_lt(blows[0].x, HOME.x - 100.0, "after a run toward the target")
-		assert_eq(_doll.position, blows[0], "while the doll still stands where it struck")
-	assert_eq(returned, [true], "melee returns at the blow")
+	assert_eq(impacts.size(), 1, "Impact comes once")
+	if impacts.size() == 1:
+		assert_lt(impacts[0].x, HOME.x - 100.0, "after a run toward the target")
+		assert_eq(_doll.position, impacts[0], "while the doll still stands where it struck")
+	assert_eq(returned, [true], "melee returns at Impact")
 	for frame in 120:
 		_doll._process(1.0 / 30.0)
 	assert_eq(_doll.position, HOME, "and the doll then runs home on its own")
-	assert_eq(blows.size(), 1, "with no second blow")
+	assert_eq(impacts.size(), 1, "with no second Impact")
 
 
-func test_melee_without_waiting_lands_the_blow_at_once():
-	var blows: Array = []
+func test_melee_without_waiting_reaches_impact_at_once():
+	var impacts: Array = []
 	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT), HOME - Vector2(200, 0))
-	await _presenter.melee(target, "Attack", func(): blows.append(true), false)
-	assert_eq(blows.size(), 1, "the blow lands without the swing being played")
+	await _presenter.melee(target, "Attack", func(): impacts.append(true), false)
+	assert_eq(impacts.size(), 1, "Impact comes without the swing being played")
 
 
 func test_a_melee_whose_presenter_left_the_tree_lands_nothing():
-	var blows: Array = []
-	var returned: Array = _start_melee(func(): blows.append(true))
+	var impacts: Array = []
+	var returned: Array = _start_melee(func(): impacts.append(true))
 	remove_child(_presenter)
 	_doll.attack_connected.emit()
-	assert_eq(blows.size(), 0, "no blow on a fighter that is gone")
+	assert_eq(impacts.size(), 0, "no Impact on a fighter that is gone")
 	assert_eq(returned, [true], "and melee returns")
 
 
@@ -787,12 +787,13 @@ func _armed(unit: CombatUnit, looks: String) -> Dictionary:
 	return {7: weapon}
 
 
-# Swings `caster` at `target`, steps the caster's doll until the blow lands,
-# and returns where the caster's doll stands then.
-func _blow_spot(caster: FighterPresenter, target: FighterPresenter) -> Vector2:
+# Swings `caster` at `target`, steps the caster's doll until Impact, and
+# returns where the caster's doll stands then.
+func _impact_spot(caster: FighterPresenter, target: FighterPresenter) -> Vector2:
 	var doll: CharacterVisual = caster.get_node("Doll")
 	var spots: Array = []
-	caster.melee(target, "Attack", func(): spots.append(doll.position))  # not awaited, because the test steps the swing
+	# Nothing awaits the swing, because the test steps it.
+	caster.melee(target, "Attack", func(): spots.append(doll.position))
 	for frame in 60:
 		if not spots.is_empty():
 			break
@@ -811,7 +812,7 @@ func test_two_fighters_in_wide_gear_stop_further_apart_than_two_bare_fighters():
 		var target_unit: CombatUnit = _make_unit(CombatUnit.Team.TWO, ENEMY_SLOT)
 		var caster: FighterPresenter = _fighter_at(caster_unit, Vector2(160, 300), _armed(caster_unit, looks))
 		var target: FighterPresenter = _fighter_at(target_unit, Vector2(640, 300), _armed(target_unit, looks))
-		gaps[looks] = target.get_node("Doll").position.x - _blow_spot(caster, target).x
+		gaps[looks] = target.get_node("Doll").position.x - _impact_spot(caster, target).x
 	assert_gt(gaps[""], 0.0, "sanity: two bare fighters stop short of each other")
 	assert_gt(gaps["UBER1"], gaps[""], "two fighters with UBER1 in both hands stop further apart")
 
@@ -828,9 +829,9 @@ func test_a_model5_fighter_runs_level_at_a_target_level_with_it():
 	var doll: CharacterVisual = caster.get_node("Doll")
 	var start: Vector2 = doll.position
 	assert_eq(start.y, 310.0, "sanity: the MODEL5 doll stands 10 px lower")
-	var blow: Vector2 = _blow_spot(caster, target)
-	assert_gt(blow.x, start.x + 300.0, "sanity: the doll ran most of the way")
-	assert_eq(blow.y, start.y, "and stayed level")
+	var impact: Vector2 = _impact_spot(caster, target)
+	assert_gt(impact.x, start.x + 300.0, "sanity: the doll ran most of the way")
+	assert_eq(impact.y, start.y, "and stayed level")
 
 
 # The real colortobe glow tint (frame217/onClipEvent(enterFrame).as: 417,450).
