@@ -276,6 +276,22 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
 - The STUN checks for the `hit` label read the target as the hit lands, before the move's own status effect, so `MoveResult.target_stunned` is read then too. Shatter Bolt's stun comes
   after its own hit. The stun pose changes in the recompute after the strike (`frame_42/DoAction_10.as:468-481`), so `MoveResult.target_after` is taken after that recompute, with the life.
 
+## The Result flash (DefineSprite 3416 `BATTLEFLASH`)
+
+Ported: each `FighterPresenter` plays its own `ResultFlash` (`scripts/battle/result_flash.gd`), and `scenes/doll_body.gdshader` draws its filter over the doll's CanvasGroup body.
+
+- The clip has 46 frames at 30 fps, places nothing and is all frame scripts. Its labels are `none` on frame 1, which stops, `hit` on 2, `heal` on 17 and `focus` on 32. Each label puts its
+  filter on at its first frame and 4, 8 and 12 frames after it, takes it off 2 frames after each, and 14 frames after it takes it off and stops on `none`
+  (`DefineSprite_3416/frame_2` to `frame_46`). So the filter shows on the impact's frame and the next, 4 times over 14 frames.
+- On means `krinChangeColor(inner, "Hit")`, a color transform that changes nothing and so clears a buff tint such as Poison, and `inner.filters` set to the label's filter. Off puts back
+  `DFTC` and `DFTF`, the unit's `characterColorState` and `characterFilterState` when the flash started. The last frame puts back the unit's color state at that moment instead. The port
+  draws neither state, so off is the doll's plain look.
+- Every label's filter is a white inner glow (blur 100, strength 10) and then an outer and an inner glow (blur 10, strength 1) in the label's color, all at quality 1: 16763904 (#FFCC00)
+  for `hit`, 10092288 (#99FF00) for `heal` and 3407871 (#33FFFF) for `focus` (`frame_42/DoAction_3.as:117-130` and 162-168). The white glow covers a px fully wherever at most 90% of the
+  100 px box around it is doll, which is every px of a doll, so the doll draws white with a rim and a halo in the label's color.
+- Only `executeMove` calls it (see the branches above), so a Shield block, a heal of 0, a miss, a status-only move and a Buff tick never flash. Each call points the one clip at its own
+  target, so a move that hits several units flashes only the last, an Original bug that ADR 0005 has the port fix.
+
 ## Unit stats below level 10 (frame_42/DoAction_14.as `krinAddNewUnit`)
 
 Implemented in `scripts/battle/combat_unit.gd` (`from_character`).
@@ -570,7 +586,7 @@ Everything below still stands in for original behavior, except the rows marked D
 | Piece | Current stand-in | Original truth lives in |
 |---|---|---|
 | Camera zoom + shake | none | `GridZoomer` "KrinZoomGo" (zoom to target center * `-zoomRatioNEW` + 400/300; pause 2xCD melee / 5 missile / 1 shock), `GridShaker` (shock + crits) |
-| Target hit flash | HIT recoil label only | `BATTLEFLASH` with `characterColorState/FilterState`: `frame_42/DoAction_8.as` ~line 199 |
+| Result flash | **DONE (2026-11-10)**: each Fighter presenter pulses its own Result flash on the doll, no longer the HIT recoil label only. See "The Result flash" above | `BATTLEFLASH` with `characterColorState/FilterState`: `frame_42/DoAction_8.as` ~line 199 |
 | Damage number art | Labels with exact colors + bigger crit font | NumberFixer/NumberSetter digit clips, miss/shield variants: `frame_42/DoAction_7.as` |
 | Top battle HP/focus bars | in-field bars with numbers | `lifeBarUpdate` + bar clips, layout in frame 217 placements |
 | Doll ground shadow | none | player clip "shadower" (hidden on death, MODEL1 frame 360 script) |
