@@ -21,7 +21,8 @@
 # frame of the clip. ffdec runs no script, and none would change a frame here:
 # the spark's scripts, a stop() on frame 20 of the sprite 884 inside it and an
 # unloadMovie(this) on frame 25 of sprite 1712, come after the clip has looped
-# back to its frame 1. The port then plays the frames one after the other.
+# back to its frame 1. rig_clip() checks that through render.played_frames().
+# The port then plays the frames one after the other.
 #
 # The art is rendered at 2x, the window's default scale, as the doll is.
 #
@@ -45,11 +46,11 @@ CLIPS = ("shield",)
 
 def rig_clip(index: SwfIndex, rig: int, name: str) -> int:
     """-> the sprite that `rig`'s frame 1 places under the instance name
-    `name`. Raises unless that sprite's frame 1 shows nothing and holds its
-    only frame script, one with no strings and no jumps. That is how the index
-    sees the stop() each rig clip runs there. The port relies on it: it rests
-    the clip on frame 1 until play(), runs it to its last frame, and stops it
-    again when it loops back to frame 1."""
+    `name`. Raises unless that sprite's frame 1 shows nothing, its frame 1
+    alone runs stop(), and render.played_frames() renders it from frame 2
+    through its last frame. The port relies on it: it rests the clip on frame
+    1 until play(), runs it to its last frame, and stops it again when it
+    loops back to frame 1."""
     placed = [
         layer.character_id
         for layer in timeline.frames(index, rig)[0].values()
@@ -63,19 +64,21 @@ def rig_clip(index: SwfIndex, rig: int, name: str) -> int:
     shown = len(timeline.frames(index, sprite)[0])
     if shown:
         raise RuntimeError(f"{sprite} frame 1 shows {shown} layer(s), want none")
-    scripts = [
-        block for block in index.code if block.kind == "frame" and block.owner == sprite
+    count = index.sprite_frames[sprite]
+    stops = [
+        frame for frame in range(1, count + 1) if render.runs_stop(index, sprite, frame)
     ]
-    for block in scripts:
-        if block.frame != 1:
-            raise RuntimeError(f"{sprite} frame {block.frame} runs a script")
-        if block.strings or block.goto_labels or block.goto_frames:
-            raise RuntimeError(
-                f"{sprite} frame 1 jumps to {block.goto_labels or block.goto_frames}"
-                f" or pushes {block.strings}, where a rig clip runs stop() alone"
-            )
-    if not scripts:
-        raise RuntimeError(f"{sprite} runs no stop() on frame 1")
+    if stops != [1]:
+        raise RuntimeError(
+            f"{sprite} runs stop() on frames {stops}, where a rig clip runs it on"
+            " frame 1 alone"
+        )
+    played = render.played_frames(index, sprite, start=2)
+    if played != list(range(2, count + 1)):
+        raise RuntimeError(
+            f"{sprite} plays frames {played} after play(), where a rig clip plays"
+            f" through its last frame, {count}"
+        )
     return sprite
 
 
