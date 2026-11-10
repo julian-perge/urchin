@@ -1,0 +1,128 @@
+# Extracting art
+
+How art comes out of the SWF: where its geometry is recorded, the ffdec build
+every render depends on, and the mistakes this project has already made
+extracting it.
+
+## Where the geometry comes from
+
+- The SWFs themselves are the authority for geometry, read through
+  `dev/urchin_dev/swf/swf_index.py` and `timeline.py`: placement matrices,
+  shape bounds, sprite timelines, export names. `timeline.frames()` is the one
+  display list walk. Matrix translates are in twips, so divide by 20 for
+  design px. The ffdec `-swf2xml` dumps in `dev/source_files/swf_xml/` stay in
+  LFS for grepping, and nothing reads them anymore.
+  `uv run export_swf_sources --xml` rewrites them, which adds ~284 MB to LFS.
+
+## The ffdec build
+
+- ffdec must be at `~/.local/bin/ffdec`, built from jpexs `cde1cc21a`. That
+  build rendered the committed art on JDK 25.0.4, and
+  `unzip -p ~/git/jindrapetrik/jpexs-decompiler/dist/lib/ffdec_lib.jar project.properties`
+  prints the commit yours was built from. The render driver always passes
+  `aaScale` 1, and CLI exports read `useMsaaForExport` from
+  `~/Library/Application Support/FFDec/config.toml`, where it has to stay
+  `false` and a GUI session can change it. Another build redraws art by itself,
+  so change builds in a PR of their own that regenerates and measures every
+  family: `e3cd93397` moved tiled bitmap fills, `afbe4fa33` moved clip mask rims
+  and broke the class cards until `Render.java` corrected it (see Extracting
+  art), and nightly 3544 mis-renders bevel-over-clip-mask, which silently shrank
+  the biological class card from 191 to 136 design px (`fd755b3`).
+- On that build every extractor that renders through ffdec, apart from
+  `extract_cutscenes`, reproduces its committed files byte for byte, so the diff
+  after a run is what the run changed. One exception is expected and goes back
+  with `git checkout`: `extract_battle_screen` rewrites `STREETS.png` and
+  `STREETS3.png`, where 5 pixels are 1 level off and no build reproduces the
+  committed file.
+
+## Extracting art
+
+- **Never composite shape by shape in Python. Render through ffdec.**
+  Reassembling from each PlaceObject's characterId and matrix carries position
+  and scale and drops everything else: clip masks, surface filters, gradient
+  fills, colorTransforms. 159 of 789 doll sprites carry a filter and 56 carry a
+  colorTransform, and ability icons visibly spilled outside their orb without
+  the mask (`6928366`).
+- **ffdec does not run ActionScript.** Three consequences, all of which have
+  bitten:
+  1. A character can be fully opaque in the tag data and never visible in the
+     game because AS hides it. ffdec draws it and ruins the export. This is the
+     black disc over the ability icons: DefineSprite 2241 "bfilter" hides
+     itself in `onLoad`, with DefineEditText 2245 the "00" counter on top of
+     it. `ability_icons.py` deletes both from a working copy, and its
+     `COOLDOWN_DISPLAY` carries the decoded bytecode.
+  2. **Never strip or hide a clip mask.** A mask looks exactly like an
+     unwanted shape on top of the art, and removing one unclips everything it
+     covered. DefineShape 1913 was stripped on that assumption and item 69 "A
+     Broken Pipe" went from a correct 63x63 to 101x140. `strip.py` refuses
+     any id placed with a `clipDepth`, so go through it.
+  3. `gotoAndStop` handlers never fire, so a CLI render shows every nested
+     sprite at its own frame 1, not the label the game would select. That's
+     why the battle check used to compare only WHITE NOVEMBER over SEA, frame
+     1 of the hall and sky (`8785f25`). `verify_battle_screen.py` moves them
+     through `ffdec_lib.py`'s `goto` now.
+- **Strip authoring-only characters through `dev/urchin_dev/swf/strip.py`.**
+  Each extractor keeps its own `{characterId: reason}` and renders and
+  measures from the one copy or hide list it gets back. Every battle hall
+  places DefineSprite 2676 six times as the character rig, so unstripped each
+  background bakes in six placeholder fighters holding swords under "!"
+  speech bubbles (`d80a9c4`). The zone hubs place the orb 3196 and buttons
+  3186-3193 the same way (`8ef2139`).
+- **A render can carry the author's placeholder text.** A DefineEditText with
+  an `initialText` and a `variableName` is filled at runtime, so its baked
+  string is scaffolding. The battle bottom bar shipped with two rows reading
+  "Thurman McPown" because DefineSprite 3317 places the member bar container at
+  depth 7 and nothing stripped it. Before accepting a UI render, grep the
+  sprite's descendants for `initialText`.
+- **A clip mask inside a sprite with a filter lands in the wrong place on ffdec
+  since jpexs `afbe4fa33`.** ffdec draws that sprite into its own image and then
+  positions the mask with a matrix that leaves out where that image sits, so the
+  mask is off by that offset. Measured on the three class cards, it is 51, 12
+  and 1 design px, which shrank the biological card to 159 px wide and moved the
+  other two. `Render.java`'s `ClipPlacedTimeline` corrects it, pixel-identical to
+  changing `absMat` to `mat` at that line of `Timeline.java`. Of the 3,893
+  generated files only the six cards change, because every other extractor renders
+  the filtered sprite itself rather than its parent. The ffdec CLI still has the
+  bug, and none of the four extracted cutscenes reach a case it would change.
+- **Render PNG frames through `dev/urchin_dev/swf/render.py`.** It runs the
+  ffdec_lib driver once per SWF per extractor, deletes each strip list in
+  memory, and hands back every canvas with the rects it was sized from, so a
+  crop and its stage rect always come from the same render. The CLI is left
+  for the cutscene AVI and its probe frame, the two shape exports and
+  `export_swf_sources.py`. Every external command goes through
+  `dev/urchin_dev/run.py`.
+- **Recover positions, never invent them.** ffdec grows the export canvas by
+  the filter dimension symmetrically around the timeline displayRect, so the
+  canvas keeps the displayRect's centre and the stage rect follows from that
+  centre plus the canvas size with no filter math. `render.py` does this for
+  every extractor. Inventing them instead drew the zone orb at twice its real
+  size, which every zone scene then cancelled with `scale = 0.4` (`8ef2139`).
+- **Read the displayRect from the render, not a Python re-walk.** The driver
+  reports the rect it sized each canvas from, with and without the filter
+  margin. The Python recursion cost 28.2s of a 34s run and can drift from the
+  render, and the driver's rect cannot, because it is the rect ffdec sizes
+  the canvas with (`94ae2b1`).
+- **ffdec's canvas is the whole timeline's union bounds**, so a single frame
+  lands in a mostly transparent canvas. Portraits were 56x76 of art inside
+  247x237. Crop to the alpha bbox, and when several frames must share one size,
+  crop to the union of all their bboxes rather than each frame's own
+  (`5045c5c`, `8ef2139`).
+- **Export at 2x, 4x or 5x and let Godot scale down.** Halls, skies, hub art,
+  battle chrome and store art go at 4x, and orbs, faces and class cards at 5x.
+  Dolls, VFX, the item, buff and ability icons and the start screen backgrounds
+  go at 2x.
+- **ffdec thins the blur on large filtered objects, at any zoom.**
+  `Filtering.boxBlurSingleIterationTwoPass` shrinks both box widths until
+  `boxX * boxY * width * height` fits `boxBlurPixelsLimit * 100000`, which cut
+  a battle hall's glow box from 116 texels to 6. `Render.java` lifts the limit
+  in memory for every driver render. `cutscenes.py` lifts it for the AVI export,
+  which goes through the CLI, by passing `-config boxBlurPixelsLimit=2147483647`
+  ahead of its other arguments. ffdec only saves a `-config` to its `config.bin`
+  when nothing follows it.
+- **Do not run ffdec concurrently.** It renders all 780 sprites in 2.64s
+  serial against 2.79, 3.47 and 4.80s at 2, 4 and 6 processes (`94ae2b1`).
+- **Leave the headless setting alone.** `dev/urchin_dev/__init__.py` sets
+  `JAVA_TOOL_OPTIONS=-Djava.awt.headless=true` because ffdec's launcher adds
+  `-Xdock` flags that register a macOS Dock app which can steal focus mid-run.
+  It lives there rather than in the app bundle, which is not version controlled
+  (`53e24ac`).
