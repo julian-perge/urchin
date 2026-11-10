@@ -864,7 +864,7 @@ func test_a_heal_of_0_stays_a_heal_under_sswitch():
 
 
 # A shield bigger than the hit takes all of it, and the original plays that as a
-# shield block, with no hit and no life lost (frame_42/DoAction_8.as:70-76).
+# Shield block, with no hit and no life lost (frame_42/DoAction_8.as:70-76).
 func test_a_shield_bigger_than_the_hit_takes_all_of_it():
 	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
 	var target: CombatUnit = _guard_holding("")
@@ -894,8 +894,32 @@ func test_a_shield_exactly_as_big_as_the_hit_is_a_hit_for_0():
 
 	var result: MoveResult = BattleManager.execute_move(moves_by_id[5], second_caster, target, buffs_by_name)
 
-	assert_false(result.shield_took_all, "a shield as big as the hit isn't a block")
+	assert_false(result.shield_took_all, "a shield as big as the hit isn't a Shield block")
 	assert_eq(result.amount, 0.0, "but nothing gets through")
+	assert_eq(target.shield, 0.0, "and the shield is used up")
+	randomize()
+
+
+# A hit bigger than the shield takes the shield's value off the hit, empties the
+# shield and takes the rest off the target's life, and the battle screen draws
+# that rest (frame_42/DoAction_8.as:79-85). Both hits run on the same seed, so the
+# first one shows how big the hit is.
+func test_a_hit_bigger_than_the_shield_takes_what_got_through():
+	var first_caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var second_caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var unshielded: CombatUnit = _guard_holding("")
+	var target: CombatUnit = _guard_holding("")
+	seed(20261109)
+	var plain: MoveResult = BattleManager.execute_move(moves_by_id[5], first_caster, unshielded, buffs_by_name)  # Nuke
+	assert_gt(plain.amount, 10.0, "sanity: the hit is bigger than a shield of 10")
+	target.shield = 10.0
+	seed(20261109)
+
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[5], second_caster, target, buffs_by_name)
+
+	assert_false(result.shield_took_all, "a shield smaller than the hit isn't a Shield block")
+	assert_eq(result.amount, plain.amount - 10.0, "only what got through is the hit's amount")
+	assert_eq(result.life_before - result.target_after.life, result.amount, "and comes off the target's life")
 	assert_eq(target.shield, 0.0, "and the shield is used up")
 	randomize()
 

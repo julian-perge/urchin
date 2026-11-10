@@ -20,11 +20,14 @@ const ENEMY_COLOR: Color = FighterPresenter.RING_COLORS[FighterPresenter.Relatio
 const HIT_FLASH: Color = Color("#ffcc00")
 const HEAL_FLASH: Color = Color("#99ff00")
 const FOCUS_FLASH: Color = Color("#33ffff")
+# Frame n of the shield clip, as extract_rig_clips writes it.
+const SHIELD_CLIP_ART: String = "res://assets/ui/battle/rig/shield/%d.png"
 
 var _presenter: FighterPresenter
 var _doll: CharacterVisual
 var _overlay: UnitOverlay
 var _flash: ResultFlash
+var _shield_clip: RigClip
 var _layer: FloatingNumberLayer
 var _unit: CombatUnit
 var _cues: Array = []
@@ -60,9 +63,12 @@ func _present(unit: CombatUnit, items_by_id: Dictionary = {}, buffs_by_id: Dicti
 	_presenter.setup(unit, HOME, items_by_id, buffs_by_id, _layer)
 	_doll = _presenter.get_node("Doll")
 	_overlay = _presenter.get_node("Overlay")
-	# The tests step the Result flash themselves through advance().
+	# The tests step the Result flash and the shield clip themselves through
+	# advance().
 	_flash = _presenter.get_node("ResultFlash")
 	_flash.set_process(false)
+	_shield_clip = _presenter.get_node("ShieldClip")
+	_shield_clip.set_process(false)
 	_cues = []
 	_presenter.voice_cue.connect(func(cues): _cues.append(cues))
 	_presenter.effect_cue.connect(func(cue): _cues.append(cue))
@@ -928,6 +934,104 @@ func _shield_block() -> MoveResult:
 	var result: MoveResult = _damage(0.0, 100.0)
 	result.shield_took_all = true
 	return result
+
+
+# A Shield block takes the hit off the shield and then plays the shield's own
+# label, sound and clip, and nothing of the hit: no flinch and no hit voice
+# (frame_42/DoAction_8.as:70-76). The label is the same on a crit, because
+# KrinNumberShow only checks perKSuccess for a number (frame_42/DoAction_7.as:40-49).
+func test_a_shield_block_draws_shielded_and_plays_its_sound_with_no_flinch_or_hit_voice():
+	assert_eq(_labels_drawn_by(_critical(_shield_block()), _fire_move()), ["shield"], "the shield label")
+	assert_eq(_numbers()[0].glyphs, ["shield"], "SHIELDED and no digits")
+	assert_eq(_cues, ["sfx_shield"], "the shield sound and no hit voice")
+	assert_ne(_doll._state, HIT, "and no flinch")
+
+
+# The art the shield clip shows now.
+func _shield_clip_art() -> String:
+	return _shield_clip.sprite.texture.resource_path
+
+
+func _step_shield_clip(frames: int) -> void:
+	for frame in frames:
+		_shield_clip.advance(1.0 / 30.0)
+
+
+# executeMove plays the target rig's shield clip, DefineSprite 2675, on a Shield
+# block (frame_42/DoAction_8.as:73). The clip rests on its frame 1, which shows
+# nothing and runs stop(). play() leaves the playhead there until the next frame
+# of the SWF, and the clip then runs frames 2 to 20, loops back to frame 1 and
+# stops again.
+func test_a_shield_block_plays_the_shield_clip_once_from_its_extracted_frames():
+	assert_false(_shield_clip.is_playing(), "the clip rests before the block")
+	_presenter.show_result(_shield_block(), null)
+	var shown: Array = [_shield_clip_art()]
+	for step in 21:
+		_step_shield_clip(1)
+		shown.append(_shield_clip_art())
+	var frames: Array = [1]
+	frames.append_array(range(2, 21))
+	frames.append_array([1, 1])
+	assert_eq(shown, frames.map(func(frame): return SHIELD_CLIP_ART % frame), "frames 2 to 20 once, then frame 1")
+	assert_false(_shield_clip.is_playing(), "and the clip rests again")
+
+
+# buffTicker plays the shield clip too, when a shield soaks a whole Buff tick,
+# and draws SHIELDED but plays no sound (frame_42/DoAction_10.as:68-73). A tick
+# has no Move result, so the presenter plays the clip on its own.
+func test_the_shield_clip_plays_on_its_own_with_no_number_or_sound():
+	_presenter.play_shield_clip()
+	_step_shield_clip(1)
+	assert_eq(_shield_clip_art(), SHIELD_CLIP_ART % 2, "the clip plays")
+	assert_eq(_numbers().size(), 0, "with no number")
+	assert_eq(_cues, [], "and no sound")
+
+
+# The shield clip is a child of the rig, placed at its origin, and the halls
+# mirror the right side's rigs (DefineSprite 2676's placements in 3435), so the
+# spark the clip draws at x 40.55 goes to the side the doll faces. Its
+# onClipEvent(load) runs swapDepths(1000), which puts it over the doll that
+# dressChar attaches at depth 0 (frame_217/DoAction_2.as:18). The Result flash
+# filters only that doll, so the flash never covers the clip.
+func test_the_shield_clip_sits_on_the_rig_over_the_doll_and_mirrors_with_team_2():
+	assert_eq(_shield_clip.position, HOME, "on the rig's origin")
+	assert_eq(_shield_clip.scale, Vector2(-1, 1), "mirrored on team 2")
+	assert_gt(_shield_clip.get_index(), _doll.get_index(), "over the doll, outside its body")
+	_present(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT))
+	assert_eq(_shield_clip.scale, Vector2.ONE, "and not mirrored on team 1")
+
+
+# A shield exactly as big as the hit soaks it, but executeMove takes the hit's
+# branch for it, a Quirk that ADR 0005 keeps. KrinNumberShow draws no number for
+# 0 (frame_42/DoAction_7.as:8), and the flinch and the hit voice play with no
+# shield clip or sound (frame_42/DoAction_8.as:79-131).
+func test_a_hit_exactly_as_big_as_the_shield_draws_nothing_and_plays_as_a_hit():
+	_presenter.show_result(_damage(0.0, 100.0), null)
+	assert_eq(_numbers().size(), 0, "no number")
+	assert_eq(_doll._state, HIT, "the flinch")
+	assert_eq(_cues, [VOICE_HIT], "the hit voice and no shield sound")
+	assert_false(_shield_clip.is_playing(), "and no shield clip")
+
+
+# A hit bigger than the shield takes the shield's value off the hit and empties
+# it, and executeMove draws what got through as a hit (frame_42/DoAction_8.as:79-131).
+func test_a_hit_bigger_than_the_shield_draws_what_got_through_and_flinches():
+	_presenter.show_result(_damage(15.0, 85.0), _fire_move())
+	assert_eq(_numbers()[-1].glyphs, ["1", "5"], "what got through")
+	assert_eq(_numbers()[-1].tint, Color("FF6600"), "in the move's element color")
+	assert_eq(_doll._state, HIT, "the flinch")
+	assert_eq(_cues, [VOICE_HIT], "the hit voice and no shield sound")
+	assert_false(_shield_clip.is_playing(), "and no shield clip")
+
+
+# dressChar shrinks and lowers only a MODEL5 unit's doll inside its rig
+# (frame_217/DoAction_2.as:19-24), and the shield clip is the rig's own.
+func test_a_model5_units_shield_clip_stays_on_the_rig_at_full_size():
+	var unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+	unit.model = ["MODEL5", "ONE", "ONE", "M"]
+	_present(unit)
+	assert_eq(_shield_clip.position, HOME, "on the rig's origin")
+	assert_eq(_shield_clip.scale, Vector2.ONE, "at full size")
 
 
 # A Shield block stops short of executeMove's call to BATTLEFLASH
