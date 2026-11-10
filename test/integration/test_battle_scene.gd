@@ -1924,6 +1924,13 @@ func _damage_event(scene, caster_slot: int, target_slot: int, move: Ability, amo
 	return _move_event(scene, caster_slot, target_slot, move.id, _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, amount))
 
 
+# The conductor's AttackEndCounterLimit, which battle_screen_motion.json reads out
+# of the SWF. A move's Buff tick comes due that many frames after its Impact, and
+# the next Dispatch comes one frame more after any tick or Impact it counts from.
+func _attack_end_counter_limit() -> int:
+	return int(BattleScreenClip.motion()["conductor"]["AttackEndCounterLimit"])
+
+
 # A BUFF_TICK event the way the runner logs one. The tick left its unit as it
 # stands now, so a test that wants the bars to move changes the tick's `after`.
 func _tick_event(scene, slot: int, direction: MoveResult.Direction, amount: float) -> Dictionary:
@@ -2210,7 +2217,7 @@ func test_a_buff_tick_shows_its_number_and_moves_the_bars_25_frames_after_the_im
 		if frames.has("77") and frames.has("bar"):
 			break
 		_step_frame(scene)
-	assert_eq(frames.get("77", -1) - frames.get("11", -1), 25, "the tick's number shows 25 frames after the Impact")
+	assert_eq(frames.get("77", -1) - frames.get("11", -1), _attack_end_counter_limit(), "the tick's number shows 25 frames after the Impact")
 	assert_eq(frames.get("bar", -1), frames.get("77", -2), "and the bar moves on that same frame, not before")
 
 	GameData.current_save = null
@@ -2227,11 +2234,13 @@ func test_a_buff_tick_that_did_something_holds_the_next_action_to_frame_51_and_o
 	var shock: Ability = _first_move_of_type("Shock")
 	var soaked: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 0.0)
 	soaked["tick"].shield_took_all = true
+	var limit: int = _attack_end_counter_limit()
+	var held: int = limit + (limit + 1)  # the tick, then the count from it
 	var cases: Array = [
-		["a damage tick", _tick_event(scene, 3, MoveResult.Direction.HARM, 5.0), 51],
-		["a heal tick", _tick_event(scene, 3, MoveResult.Direction.HEAL, 5.0), 51],
-		["a tick a shield soaked whole", soaked, 51],
-		["a tick that did nothing", _tick_event(scene, 3, MoveResult.Direction.NONE, 0.0), 26],
+		["a damage tick", _tick_event(scene, 3, MoveResult.Direction.HARM, 5.0), held],
+		["a heal tick", _tick_event(scene, 3, MoveResult.Direction.HEAL, 5.0), held],
+		["a tick a shield soaked whole", soaked, held],
+		["a tick that did nothing", _tick_event(scene, 3, MoveResult.Direction.NONE, 0.0), limit + 1],
 	]
 	for index in cases.size():
 		var first: String = str(11 + 10 * index)
@@ -2300,7 +2309,7 @@ func test_a_buff_tick_lands_on_the_unit_that_ticked_and_not_on_the_last_unit_hit
 	soaked["tick"].shield_took_all = true
 	# Nothing awaits this, because the test steps the frames.
 	scene._play_events([_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Shock"), 11.0), soaked])
-	for frame in 25:
+	for frame in _attack_end_counter_limit():
 		_step_frame(scene)
 
 	assert_eq(_floating_texts(scene), ["11", "shield"], "the hit's number, then SHIELDED")
@@ -2337,13 +2346,14 @@ func test_a_bar_keeps_the_max_life_and_fill_a_buff_cut_until_the_tick_that_runs_
 			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Shock"), 11.0),
 			{"type": BattleRunner.EventType.BUFF_TICK, "caster_slot": BattleRunner.PLAYER_SLOT, "tick": tick},
 		])
+		var limit: int = _attack_end_counter_limit()
 		var bars: Array = []
-		for frame in 26:
+		for frame in limit + 1:
 			bars.append([health_bar.max_value, health_bar.value])
 			_step_frame(scene)
 
-		assert_eq(bars.slice(0, 25), range(25).map(func(_frame): return cut), "%s: the bar keeps its cut max and fill until the tick" % buff_name)
-		assert_eq(bars[25], restored, "%s: and the tick gives it both back" % buff_name)
+		assert_eq(bars.slice(0, limit), range(limit).map(func(_frame): return cut), "%s: the bar keeps its cut max and fill until the tick" % buff_name)
+		assert_eq(bars[limit], restored, "%s: and the tick gives it both back" % buff_name)
 		for frame in 120:
 			_step_frame(scene)
 
@@ -2361,11 +2371,14 @@ func test_a_buff_tick_after_a_pass_or_a_stun_holds_the_next_action_26_frames_unl
 	var killing: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 5.0)
 	killing["tick"].killed = true
 	killing["tick"].after.life = 0.0
+	# The pass or the stun dispatches a count after the move's Impact. Its tick holds
+	# the next action a count more, and without that it holds it 1 frame.
+	var count: int = _attack_end_counter_limit() + 1
 	var cases: Array = [
-		["a pass and a tick that did something", [{"type": BattleRunner.EventType.PASSED, "caster_slot": 3}, _tick_event(scene, 3, MoveResult.Direction.HARM, 5.0)], 26 + 26],
-		["a stun and a tick that did something", [{"type": BattleRunner.EventType.STUNNED, "caster_slot": 3}, _tick_event(scene, 3, MoveResult.Direction.HEAL, 5.0)], 26 + 26],
-		["a stun and a tick that did nothing", [{"type": BattleRunner.EventType.STUNNED, "caster_slot": 3}, _tick_event(scene, 3, MoveResult.Direction.NONE, 0.0)], 26 + 1],
-		["a pass and a tick that kills", [{"type": BattleRunner.EventType.PASSED, "caster_slot": 3}, killing, {"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME}], 26 + 1],
+		["a pass and a tick that did something", [{"type": BattleRunner.EventType.PASSED, "caster_slot": 3}, _tick_event(scene, 3, MoveResult.Direction.HARM, 5.0)], count + count],
+		["a stun and a tick that did something", [{"type": BattleRunner.EventType.STUNNED, "caster_slot": 3}, _tick_event(scene, 3, MoveResult.Direction.HEAL, 5.0)], count + count],
+		["a stun and a tick that did nothing", [{"type": BattleRunner.EventType.STUNNED, "caster_slot": 3}, _tick_event(scene, 3, MoveResult.Direction.NONE, 0.0)], count + 1],
+		["a pass and a tick that kills", [{"type": BattleRunner.EventType.PASSED, "caster_slot": 3}, killing, {"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME}], count + 1],
 	]
 	for index in cases.size():
 		var first: String = str(11 + 10 * index)

@@ -1267,6 +1267,24 @@ func test_sswitch_turns_a_buff_tick_around_and_a_tick_with_no_damage_element_is_
 	)
 
 
+# Energized "is recovering 7 Focus per turn", and Energy Drain "is losing 8 Focus
+# per turn". buffTicker moves Focus by DOTTICKERARRAY[9] and draws no number for
+# it, and buffTickChecker only reads the life total (frame_42/DoAction_10.as:99-108).
+# So a tick that only moves Focus states the new Focus and did nothing that the
+# original draws or waits for.
+func test_a_buff_tick_that_only_moves_focus_states_the_new_focus_and_did_nothing():
+	for case in [["ZAP", 7.0], ["ENERGYDRAIN", -8.0]]:
+		var runner: BattleRunner = _sonny_holding([case[0]])
+		var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+		player.focus_n = floorf(player.focus_u / 2.0)
+		var focus_before: float = player.focus_n
+
+		var tick: BuffTick = _tick_after_passing(runner)
+
+		assert_eq(tick.after.focus, focus_before + case[1], "%s moves Focus by %d" % [case[0], int(case[1])])
+		assert_false(tick.did_something(), "and the tick did nothing else")
+
+
 # A shield bigger than the whole tick takes all of it. The unit loses no life,
 # and buffTicker draws SHIELDED (frame_42/DoAction_10.as:64-73).
 func test_a_shield_bigger_than_a_buff_tick_soaks_all_of_it():
