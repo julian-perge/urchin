@@ -719,17 +719,21 @@ func test_floating_text_rises_fades_and_frees_itself():
 
 
 # Starts a melee whose swing the test steps by hand. The returned array holds
-# what melee() returned once it has returned.
+# true once melee() has returned.
 func _start_melee(on_blow: Callable) -> Array:
 	_doll.set_process(false)
 	var returned: Array = []
 	var run: Callable = func():
-		returned.append(await _presenter.melee(Vector2(100, 0), "Attack", on_blow))
+		await _presenter.melee(Vector2(100, 0), "Attack", on_blow)
+		returned.append(true)
 	run.call()
 	return returned
 
 
-func test_melee_lands_the_blow_once_and_returns_when_the_doll_is_home():
+# krinMelee hands the battle back at Impact and runs the fighter home on its
+# own afterwards (frame_42/DoAction_4.as:73-135), so melee() returns at the
+# blow, with the doll still where it struck.
+func test_melee_lands_the_blow_once_and_returns_at_it():
 	var blows: Array = []
 	var returned: Array = _start_melee(func(): blows.append(_doll.position))
 	assert_eq(blows.size(), 0, "nothing lands as the run starts")
@@ -739,33 +743,28 @@ func test_melee_lands_the_blow_once_and_returns_when_the_doll_is_home():
 		_doll._process(1.0 / 30.0)
 	assert_eq(blows.size(), 1, "the blow lands once")
 	if blows.size() == 1:
-		assert_almost_eq(blows[0].x, HOME.x + 100.0, 0.01, "at the target, before the run back")
-	assert_eq(_doll.position, HOME, "the doll is home")
-	assert_eq(returned, [false], "and nothing was landed late")
-
-
-func test_an_interrupted_melee_still_lands_the_blow():
-	var blows: Array = []
-	var returned: Array = _start_melee(func(): blows.append(true))
-	_doll.set_state(CharacterVisual.State.DEAD)
-	assert_eq(blows.size(), 1, "the blow never fired, so it lands late")
-	assert_eq(returned, [true], "and melee says so")
+		assert_almost_eq(blows[0].x, HOME.x + 100.0, 0.01, "at the target")
+	assert_eq(returned, [true], "melee returns at the blow")
+	assert_eq(_doll.position, HOME + Vector2(100, 0), "while the doll still stands where it struck")
+	for frame in 120:
+		_doll._process(1.0 / 30.0)
+	assert_eq(_doll.position, HOME, "and the doll then runs home on its own")
+	assert_eq(blows.size(), 1, "with no second blow")
 
 
 func test_melee_without_waiting_lands_the_blow_at_once():
 	var blows: Array = []
-	var landed_late: bool = await _presenter.melee(Vector2(100, 0), "Attack", func(): blows.append(true), false)
+	await _presenter.melee(Vector2(100, 0), "Attack", func(): blows.append(true), false)
 	assert_eq(blows.size(), 1, "the blow lands without the swing being played")
-	assert_true(landed_late)
 
 
 func test_a_melee_whose_presenter_left_the_tree_lands_nothing():
 	var blows: Array = []
 	var returned: Array = _start_melee(func(): blows.append(true))
 	remove_child(_presenter)
-	_doll.melee_finished.emit()
+	_doll.attack_connected.emit()
 	assert_eq(blows.size(), 0, "no blow on a fighter that is gone")
-	assert_eq(returned, [false])
+	assert_eq(returned, [true], "and melee returns")
 
 
 # The real colortobe glow tint (frame217/onClipEvent(enterFrame).as: 417,450).

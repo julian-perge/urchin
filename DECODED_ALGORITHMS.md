@@ -14,7 +14,7 @@ Constants (frame 42 globals):
 | `krinBoltTime` | 60 | base step divisor: step = distance / 60 per frame |
 | `krinBodyMove` | 10 | melee movement multiplier on that step |
 | `krinMeleeAttackCD` | 15 | frames from strike start to impact (0.5 s) |
-| `krinMeleeAttackEndCD` | 15 | frames from impact to the runback goto (total 1.0 s) |
+| `krinMeleeAttackEndCD` | 15 | frames the end counter counts before the runback goto, the impact frame included, so the goto comes 14 frames after impact |
 
 Sequence:
 
@@ -30,9 +30,12 @@ Sequence:
    miss too (`frame_42/DoAction_4.as:80`); only the BOOM clip waits on `strikeSuccess`. The conductor (`frame_217/PlaceObject2_3389_480` enterFrame) resets `AttackEndCounter` to 0 when it sees
    the flag and dispatches the next action once the counter has run past `AttackEndCounterLimit = 25` (lines 112-138, with the limit set at line 7 of the same clip's `onClipEvent(load)`). That
    is 26 frames after impact, so the next action starts in the middle of the runback.
-3. **Runback.** 15 frames after impact (1.0 s after strike start - exactly the clip's own runback boundary for every label) the code forces `gotoAndPlay("runback")` (168-188, ends in
-   `gotoAndStop("stand")`) and reverses movement with an eased return: `spdXCoEFFER = min(1.45 * goRat, 1)` - fast leave, exponential settle home; position snaps to home once `relX` falls to
-   0.000001 or less. The settle has no fixed length (this note used to say ~18 frames): the same four cases as the dash simulation, with the zero half-width case taken at 300 px, put the
+3. **Runback.** 14 frames after impact the code forces `gotoAndPlay("runback")` (168-188, ends in `gotoAndStop("stand")`) and reverses movement with an eased return:
+   `spdXCoEFFER = min(1.45 * goRat, 1)` - fast leave, exponential settle home; position snaps to home once `relX` falls to 0.000001 or less. This note used to say 15 frames. The end counter
+   runs on the impact frame itself, because lines 87-95 come after the block that raises the flag, so its count of 15 ends 14 frames later. That is 29 frames after strike start, the frame on
+   which the last frame of `Attack_Upper` and of `Attack_Stab` jumps to `runback` by its own script (`DefineSprite_166_MODEL1/frame_107` and `frame_137`). `Attack` has no such script at
+   frame 167 and would reach `runback` through `attack2` one frame later. The movement runs in the fighter clip's own `onEnterFrame` while `inner` plays the labels (lines 67-135), so a hit, a
+   stun or a death on the doll during the runback doesn't stop it sliding home. The settle has no fixed length (this note used to say ~18 frames): the same four cases as the dash simulation, with the zero half-width case taken at 300 px, put the
    doll within 1 px of home after 4 to 22 frames of runback, and snap it home after 15 to 72.
 
 Attack label selection: each move's `addNewMove` param 12 (`Ability.animation_label`). Shock moves play "cast" instead (param 12 is unused for them); `play_strike()` exists for in-place strikes but is
