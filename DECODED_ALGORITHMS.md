@@ -351,7 +351,7 @@ Conductor lines below are in `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD o
 - **A death** (109-134) sets LIFEN and FOCUSN to 0 and plays `dead`. The port logs a DEATH event after the tick's event, and the death plays on the tick's frame.
 - **The unit afterwards.** `BuffTick.after` is taken after `applyChangesKrin`, so it states max life, life, Focus, stun and the buff slots once the buffs that ran out have come off. A buff that cuts
   max life, such as Judge's Hammer or Iricin, gives max life and life back together when it runs out (`frame_42/DoAction_10.as:280-296`). The bar keeps the max and the fill it had until the tick and
-  takes both from it.
+  takes both from it. That recompute also gives life back to a unit that the same tick killed, and the original leaves the unit that life. The port does the same, but a tick that killed states life 0.
 
 ## A death (MODEL1's `dead` label and LifeBarSmoother, DefineSprite 57)
 

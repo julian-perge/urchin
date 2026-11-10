@@ -594,5 +594,11 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> BuffTick:
 		tick.killed = true
 
 	apply_changes()
+	# The recompute gives life back to a unit that this tick just killed when a buff
+	# that cut max life runs out, and the original leaves the unit that life
+	# (frame_42/DoAction_10.as:280-296). The unit keeps it here too, but the tick
+	# states the unit dead, so that it agrees with its own killed flag.
 	tick.after = UnitSnapshot.of(self)
+	if tick.killed:
+		tick.after = tick.after.with_life(0.0)
 	return tick

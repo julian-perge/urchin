@@ -318,8 +318,8 @@ func test_a_result_shows_the_life_it_states_with_an_earlier_loss_in_it():
 		assert_eq(_overlay.health_value.text, str(int(result.target_after.life)), "and so does the number beside the bar")
 
 
-# The snap at the half-turn's end is the backstop for a change that no event
-# states, so it shows the unit as it is.
+# A change that no event stated reaches the bars when the half-turn ends, because
+# the snap shows the unit as it is.
 func test_the_bars_snap_to_the_unit_at_half_turn_end():
 	_unit.life_n = 63.0
 	assert_eq(_overlay.health_bar.value, 100.0, "still held back before the snap")
@@ -523,6 +523,20 @@ func test_a_redraw_after_the_clear_leaves_the_overlay_cleared():
 	_step_frames(20)
 	_presenter.snap_to_unit()
 	assert_eq(_overlay_shows(), {"icons": 0, "name": false, "number": false})
+
+
+# The scene snaps every fighter at the half-turn's end, and a dead fighter's bar
+# stays empty through it. The unit can hold life again after the tick that killed
+# it, when a buff that cut max life runs out on that tick (see
+# CombatUnit.tick_buffs).
+func test_the_snap_at_half_turn_end_leaves_a_dead_fighters_bar_empty():
+	_presenter.die()
+	_unit.life_n = 40.0
+
+	_presenter.snap_to_unit()
+
+	assert_eq(_overlay.health_bar.value, 0.0, "the bar stays empty")
+	assert_eq(_presenter.displayed.life, 0.0, "and the fighter still displays no life")
 
 
 # LifeBarSmoother hides the bar the frame after its alpha reaches 0

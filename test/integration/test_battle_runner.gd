@@ -1413,6 +1413,25 @@ func test_a_buff_tick_that_takes_the_last_life_states_the_unit_dead_and_logs_its
 	assert_eq([events[2]["slot"], events[2]["cause"]], [BattleRunner.PLAYER_SLOT, BattleRunner.DeathCause.DAMAGE_OVER_TIME], "the death is Sonny's, caused by the tick")
 
 
+# The recompute that ends buffTicker gives max life and life back when a buff that
+# cut max life runs out (frame_42/DoAction_10.as:280-296), and it does so for a
+# unit that the same tick has just killed. The original leaves the unit that life,
+# so the port does too, but the tick states the unit dead, because it says it
+# killed. Judge's Hammer runs out on the tick where Fate takes Sonny's last 600
+# life.
+func test_a_tick_that_kills_states_no_life_even_when_a_buff_running_out_gives_life_back():
+	var runner: BattleRunner = _sonny_holding(["JUDGESHAMMER", "FATE"])
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	player.life_n = 600.0
+	_run_buffs_out_at_the_next_tick(player)
+
+	var tick: BuffTick = _tick_after_passing(runner)
+
+	assert_true(tick.killed, "the tick killed Sonny")
+	assert_gt(player.life_n, 0.0, "sanity: the recompute gave the dead unit life back, as the original does")
+	assert_eq(tick.after.life, 0.0, "and the tick still states him with no life")
+
+
 # Runs a full battle with AI on both sides; returns event-type counts.
 func _assert_battle_runs(battle_id: int) -> Dictionary:
 	var battle: BattleFight = BattleSetup.load_battle(battle_id)

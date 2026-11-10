@@ -257,10 +257,14 @@ func _draw_status() -> void:
 	_overlay.show_status(displayed, _buffs_by_id)
 
 
-# The backstop for the half-turn's end. Every change to a unit has an event that
-# states it, and each shows when it plays, so this only catches a change that no
-# event states.
+# Shows this fighter's unit as it is now. The scene calls this when the replay of a
+# half-turn ends, so a change that no event stated still reaches the bars. A dead
+# fighter is skipped, so its bar keeps the empty fill that its death left, even when
+# the unit holds life again after the tick that killed it (see
+# CombatUnit.tick_buffs).
 func snap_to_unit() -> void:
+	if _dead:
+		return
 	show_state(UnitSnapshot.of(_unit))
 
 
