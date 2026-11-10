@@ -20,6 +20,7 @@ dependencies = [
 ]
 
 [project.scripts]
+check_avoid_terms = "urchin_dev.checks.avoid_terms:main"
 check_doc_paths = "urchin_dev.checks.doc_paths:main"
 check_godot_sidecars = "urchin_dev.checks.godot_sidecars:main"
 convert_battles = "urchin_dev.convert.battles:main"
