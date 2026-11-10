@@ -530,18 +530,23 @@ func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_inde
 # (EditorScript, tests, ...), including for callers that never call this
 # function at all.
 func tick_buffs(buffs_by_id: Dictionary = {}) -> BuffTick:
+	var tick := BuffTick.new()
 	var total_damage: float = 0.0
 	var total_focus = dot_ticker_array[9]
 	total_damage += dot_ticker_array[8] * heal_mod_plus * heal_mod_minus * ihot
 	if total_damage > 0:
 		total_damage = 0
 
+	var strongest_damage: float = 0.0
 	for i in ELEMENT_ORDER.size():
 		var element_damage = ceil(
 			(1 + idmg2) * idmgp2 * idot
 			* (dot_ticker_array[i] * ((100 + plevel * 15) / def_u[i]))
 		)
 		total_damage += element_damage
+		if element_damage > strongest_damage:
+			strongest_damage = element_damage
+			tick.element = i as Element
 
 	var expiring: Array[int] = []
 	for i in buff_slots.size():
@@ -570,6 +575,11 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> BuffTick:
 				total_damage = 0
 			shield = 0
 		life_n -= total_damage
+		tick.amount = absf(total_damage)
+		if total_damage > 0:
+			tick.direction = MoveResult.Direction.HARM
+		elif total_damage < 0:
+			tick.direction = MoveResult.Direction.HEAL
 
 	focus_n = clamp(focus_n - total_focus, 0, focus_u)
 
@@ -579,4 +589,4 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> BuffTick:
 		active = false
 
 	apply_changes()
-	return BuffTick.new()
+	return tick

@@ -242,7 +242,8 @@ func _execute_action(action: Dictionary) -> void:
 		_log({"type": EventType.PASSED, "caster_slot": action["caster_slot"]})
 
 	if should_tick_buffs and caster.active:
-		caster.tick_buffs(buffs_by_id)
+		var tick: BuffTick = caster.tick_buffs(buffs_by_id)
+		_log({"type": EventType.BUFF_TICK, "caster_slot": action["caster_slot"], "tick": tick})
 		if not caster.active:
 			_log({"type": EventType.DEATH, "slot": action["caster_slot"], "cause": DeathCause.DAMAGE_OVER_TIME})
 

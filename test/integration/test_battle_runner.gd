@@ -1174,6 +1174,44 @@ func test_a_buff_a_move_lands_on_its_caster_waits_for_the_casters_tick():
 	assert_eq(_live_buff_names(colonel), ["PERSECUTE", "HONORDUTY", "CHAINS"], "and sorts it ahead of Chains of Justice")
 
 
+# The conductor ticks a caster's buffs once after its action, and buffTicker nets
+# the unit's healing and every element's damage into one total
+# (frame_42/DoAction_10.as:14-40). Digitalis is Poison, and it deals "damage equal
+# to 100% of the enemy's Speed" each turn. A level 1 Sonny with no points in
+# Poison defense has the 100 + 15 per level that the tick divides by, so the
+# tick deals exactly the guard's Speed.
+func test_a_poisoned_caster_logs_a_buff_tick_after_its_own_move_with_its_amount_and_element():
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	save.focus = 100.0
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	var guard: CombatUnit = _guard_holding("")
+	var runner = BattleRunner.new()
+	runner.setup({1: player, 2: guard}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
+	player.apply_buff(buffs_by_name["IDIGITALIS"], 1, guard)
+	player.apply_changes()
+	assert_true(runner.is_player_turn(), "Sonny's team opens")
+
+	var events: Array = runner.advance_half_turn({"target_slot": 2, "move_id": 434})  # Shock Therapy, which can't miss
+
+	assert_eq(
+		events.slice(0, 2).map(func(event): return event["type"]),
+		[BattleRunner.EventType.MOVE, BattleRunner.EventType.BUFF_TICK],
+		"Sonny's move, then his Buff tick"
+	)
+	var ticks: Array = _ticks_in(events)
+	if ticks.size() != 1:
+		fail_test("expected one Buff tick, got %d" % ticks.size())
+		return
+	var tick: BuffTick = ticks[0]["tick"]
+	var life_after_move: float = events[0]["caster_after_dispatch"].life
+	assert_eq(ticks[0]["caster_slot"], BattleRunner.PLAYER_SLOT, "the tick is Sonny's")
+	assert_eq(tick.direction, MoveResult.Direction.HARM, "it harmed him")
+	assert_eq(tick.amount, guard.speed_u, "for 100% of the guard's Speed")
+	assert_eq(tick.element, CombatUnit.Element.POISON, "in Poison")
+	assert_eq(life_after_move - player.life_n, tick.amount, "which is the life it took from him")
+
+
 # Runs a full battle with AI on both sides; returns event-type counts.
 func _assert_battle_runs(battle_id: int) -> Dictionary:
 	var battle: BattleFight = BattleSetup.load_battle(battle_id)
@@ -1331,6 +1369,10 @@ func _sure_crit_caster() -> CombatUnit:
 	caster.base_per[CombatUnit.Element.ICE] = 100000.0
 	caster.apply_changes()
 	return caster
+
+
+func _ticks_in(events: Array) -> Array:
+	return events.filter(func(event): return event["type"] == BattleRunner.EventType.BUFF_TICK)
 
 
 func _live_buff_names(unit: CombatUnit) -> Array:
