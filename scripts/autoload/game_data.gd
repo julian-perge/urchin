@@ -25,7 +25,6 @@ extends Node
 # Delete a slotN.tres there to wipe that save,
 # or copy it out to back one up.
 const SAVE_DIR: String = "user://saves/"
-const SLOT_COUNT: int = 4
 const NUM_SLOTS: int = 4
 
 signal save_loaded(slot: int)
@@ -81,12 +80,12 @@ func load_game(slot: int) -> bool:
 	save_loaded.emit(slot)
 	return true
 
-# The saves in the four slot files (SLOT_COUNT), read without touching the
+# The saves in the four slot files, read without touching the
 # live game, so a caller can scan them the way the original's checkIfAllStar
 # scans _root.slot1 to slot4. An empty slot is left out.
 func slot_saves() -> Array:
 	var saves: Array = []
-	for slot in range(1, SLOT_COUNT + 1):
+	for slot in range(1, NUM_SLOTS + 1):
 		if not has_save(slot):
 			continue
 		var slot_save: Resource = ResourceLoader.load(_slot_path(slot), "", ResourceLoader.CACHE_MODE_IGNORE)
