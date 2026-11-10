@@ -2,7 +2,12 @@
 # so none of them needs a git repository.
 from __future__ import annotations
 
-from urchin_dev.checks.avoid_terms import added_lines, avoid_terms, avoided_uses
+from urchin_dev.checks.avoid_terms import (
+    added_lines,
+    avoid_terms,
+    avoided_uses,
+    fenced_lines,
+)
 
 GLOSSARY = """\
 **Shield block**:
@@ -49,3 +54,17 @@ def test_only_added_lines_are_read_from_a_diff_with_their_new_line_numbers():
         (4, "new two"),
         (11, "new three"),
     ]
+
+
+def test_text_in_backticks_is_skipped_and_the_prose_around_it_is_checked():
+    text = "Intro absorb.\n```\nabsorb\n```\nThe `absorb` clip, an absorb.\n"
+    added = list(enumerate(text.split("\n"), 1))
+    assert avoided_uses("a.md", added, ["Absorb"], fenced_lines(text)) == [
+        (1, "absorb"),
+        (5, "absorb"),
+    ]
+
+
+def test_a_backticked_name_in_a_gdscript_comment_is_skipped():
+    added = [(1, "# The original's `absorb` clip.")]
+    assert avoided_uses("a.gd", added, ["Absorb"]) == []
