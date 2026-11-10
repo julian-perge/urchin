@@ -47,9 +47,9 @@ def rig_clip(index: SwfIndex, rig: int, name: str) -> int:
     """-> the sprite that `rig`'s frame 1 places under the instance name
     `name`. Raises unless that sprite's frame 1 shows nothing and holds its
     only frame script, one with no strings and no jumps. That is how the index
-    sees the stop() each rig clip runs there, and the port plays a clip on the
-    strength of it: the clip rests on frame 1 until play(), runs to its last
-    frame, and stops again when it loops back to frame 1."""
+    sees the stop() each rig clip runs there. The port relies on it: it rests
+    the clip on frame 1 until play(), runs it to its last frame, and stops it
+    again when it loops back to frame 1."""
     placed = [
         layer.character_id
         for layer in timeline.frames(index, rig)[0].values()
@@ -84,8 +84,9 @@ def main():
     sprites = {name: rig_clip(index, FIGHTER_RIG, name) for name in CLIPS}
     jobs: list[render.Job] = []
     for sprite in sprites.values():
-        # The rect then holds the clip's own coordinates, plus where the rig
-        # places it, which raises unless that is a translation alone.
+        # The rect comes out around the rig's origin, which is where the port
+        # puts the clip's node. placement_origin() raises if the rig scales or
+        # turns the clip, because a rect can't carry that.
         origin = render.placement_origin(index, FIGHTER_RIG, 1, sprite)
         jobs.extend(
             render.Job(sprite, frame, ZOOM, origin=origin)
