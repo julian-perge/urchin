@@ -1944,6 +1944,56 @@ func test_melee_miss_does_not_spawn_an_impact_effect():
 	ZoneManager.auto_start_battles = true
 
 
+# Plays one move by the player on battle 100's enemy and returns every effect
+# that starts while it plays, voices included, in the order they start.
+func _effects_heard_during(move: Ability, result: MoveResult) -> Array:
+	GameData.current_save = PlayerSave.new_game("MoveSounds", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var heard: Array = []
+	var listen: Callable = func(cue: String): heard.append(cue)
+	AudioManagerAuto.effect_played.connect(listen)
+	await scene._play_move_event({
+		"type": BattleRunner.EventType.MOVE, "caster_slot": BattleRunner.PLAYER_SLOT, "target_slot": 2,
+		"move_id": move.id, "result": result,
+	})
+	AudioManagerAuto.effect_played.disconnect(listen)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+	return heard
+
+
+# The original plays a move's own sound only when the move lands (the conductor,
+# lines 19-21). A miss plays missToMake instead (lines 105-108), which a Melee
+# move sets to undefined on purpose (line 407), and addSound plays nothing for
+# undefined (frame_42/DoAction.as:7).
+func test_a_melee_miss_is_silent():
+	var move: Ability = MoveManagerAuto.get_move(1)  # Leading Strike, a Melee move
+	var heard: Array = await _effects_heard_during(move, _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0))
+	assert_eq(heard, [], "neither the move's sound nor sfx_magicmiss")
+
+
+# A Missile sets missToMake to sfx_magicmiss (the conductor, line 415). Its
+# sfx_cast plays at Dispatch either way (line 414).
+func test_a_missile_miss_plays_only_the_miss_sound():
+	var move: Ability = MoveManagerAuto.get_move(5)  # Nuke, a Missile
+	var heard: Array = await _effects_heard_during(move, _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0))
+	assert_eq(heard, ["sfx_cast", "sfx_magicmiss"])
+
+
+func test_a_hit_plays_the_moves_own_sound():
+	for id in [1, 5]:  # Leading Strike, a Melee move, and Nuke, a Missile
+		var move: Ability = MoveManagerAuto.get_move(id)
+		var heard: Array = await _effects_heard_during(move, _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0))
+		assert_has(heard, move.sound_effect_name, "a %s hit plays its sound" % move.attack_animation_type)
+		assert_does_not_have(heard, "sfx_magicmiss", "and not the miss sound")
+
+
 func test_missile_fire_spawns_a_bolt_and_its_impact_on_arrival():
 	# The one test that runs _fire_projectile for real. Every other test on
 	# this scene uses animation_speed 0, which returns from the top of that

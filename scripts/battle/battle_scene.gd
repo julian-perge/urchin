@@ -526,7 +526,7 @@ func _play_move_event(event: Dictionary) -> void:
 			_log("melee impact: caster=%d move=%s +%dms" % [
 				caster_slot, move.display_name, Time.get_ticks_msec() - start_ms,
 			])
-			AudioManagerAuto.play_effect(move.sound_effect_name)
+			_play_landing_sound(move, event["result"])
 			_spawn_impact(target_slot, move, event["result"])
 			_show_move_result(event, target_slot)
 		_log("melee start: caster=%d target=%d move=%s label=%s" % [
@@ -564,7 +564,7 @@ func _play_move_event(event: Dictionary) -> void:
 			await _fire_projectile(caster_slot, target_slot, move, event["result"])
 			if not is_inside_tree():
 				return
-			AudioManagerAuto.play_effect(move.sound_effect_name)
+			_play_landing_sound(move, event["result"])
 			_show_move_result(event, target_slot)
 			await _pause(0.2)
 			return
@@ -574,6 +574,18 @@ func _play_move_event(event: Dictionary) -> void:
 		AudioManagerAuto.play_effect(move.sound_effect_name)
 	_show_move_result(event, target_slot)
 	await _pause(0.35)
+
+
+# The original plays a move's own sound only when the move lands (the conductor,
+# lines 19-21). A miss plays missToMake instead (lines 105-108), which a Missile
+# sets to sfx_magicmiss (line 415). A Melee move sets missToMake to undefined on
+# purpose (line 407), and addSound plays nothing for undefined
+# (frame_42/DoAction.as:7), so a Melee miss is silent.
+func _play_landing_sound(move: Ability, result: MoveResult) -> void:
+	if result.kind != MoveResult.Kind.MISS:
+		AudioManagerAuto.play_effect(move.sound_effect_name)
+	elif move.attack_animation_type == "Missile":
+		AudioManagerAuto.play_effect("sfx_magicmiss")
 
 
 # krinBoltMake port: an accelerating bolt (Projectile) that flies from the

@@ -110,8 +110,9 @@ func show_result(result: MoveResult, move: Ability) -> void:
 			# The special miss frame KrinNumberShow swaps to at impact,
 			# instead of a damage number - the caster's own animation still
 			# played in full to get here (see _execute_move_action's comment).
+			# battle_scene.gd plays the miss sound, because the move's type
+			# decides it.
 			float_text("MISS", Color.GRAY)
-			effect_cue.emit("sfx_magicmiss")
 	if result.kind != MoveResult.Kind.MISS:
 		displayed_hp = result.life_after
 		_show_stun(result.stun_after)
