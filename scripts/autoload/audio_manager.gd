@@ -16,6 +16,11 @@
 # The menu/battle rotation cycles soundPlayArray exactly like the original.
 extends Node
 
+# Every cue that starts on an effect channel, voices included. The battle scene
+# and each fighter play their sounds straight through this node, so the battle
+# scene tests listen here to hear what a move plays.
+signal effect_played(cue: String)
+
 const AUDIO_ROOT: String = "res://assets/audio"
 const EFFECT_PLAYER_COUNT: int = 3
 # Original volumes are 0-80 on Flash's 0-100 scale.
@@ -68,6 +73,7 @@ func play_effect(cue: String) -> void:
 	player.stream = stream
 	player.volume_db = FULL_VOLUME_DB
 	player.play()
+	effect_played.emit(cue)
 
 
 func play_menu_music() -> void:
