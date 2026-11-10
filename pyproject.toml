@@ -20,6 +20,7 @@ dependencies = [
 ]
 
 [project.scripts]
+check_avoid_terms = "urchin_dev.checks.avoid_terms:main"
 check_doc_paths = "urchin_dev.checks.doc_paths:main"
 check_godot_sidecars = "urchin_dev.checks.godot_sidecars:main"
 setup_worktree = "urchin_dev.setup_worktree:main"
@@ -46,6 +47,7 @@ extract_zone_hub = "urchin_dev.swf.extract.zone_hub:main"
 extract_store_art = "urchin_dev.swf.extract.store_art:main"
 extract_vfx = "urchin_dev.swf.extract.vfx:main"
 extract_vfx_scenes = "urchin_dev.swf.extract.vfx_scenes:main"
+merge_ticket = "urchin_dev.merge_ticket:main"
 
 [tool.uv]
 # A build system is declared above, so uv would package this project by
