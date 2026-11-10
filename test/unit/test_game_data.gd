@@ -85,3 +85,24 @@ func test_unequip_to_slot_empty_slot_returns_false():
 func test_unequip_to_slot_no_save_returns_false():
 	GameData.current_save = null
 	assert_false(GameData.unequip_to_slot(0, 3))
+
+
+# checkIfAllStar reads the four save slots without loading any of them
+# (frame_42/DoAction_20.as:6-29), so scanning must leave the live game alone.
+func test_slot_saves_reads_each_saved_slot_and_leaves_the_live_game_alone():
+	var scan_dir: String = "user://test_game_data_slot_scan/"
+	DirAccess.make_dir_recursive_absolute(scan_dir)
+	var previous_dir: String = GameData.save_dir
+	GameData.save_dir = scan_dir
+	var first := PlayerSave.new_game("ScanOne", 1)
+	var fourth := PlayerSave.new_game("ScanFour", 2)
+	ResourceSaver.save(first, scan_dir + "slot1.tres")
+	ResourceSaver.save(fourth, scan_dir + "slot4.tres")
+	var saves: Array = GameData.slot_saves()
+	GameData.save_dir = previous_dir
+	DirAccess.remove_absolute(scan_dir + "slot1.tres")
+	DirAccess.remove_absolute(scan_dir + "slot4.tres")
+	DirAccess.remove_absolute(scan_dir)
+	assert_eq(saves.size(), 2, "the two used slots, not the empty ones")
+	assert_eq(saves.map(func(slot_save): return slot_save.name_user), ["ScanOne", "ScanFour"])
+	assert_eq(GameData.current_save, save, "the live game is still the one loaded")

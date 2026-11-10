@@ -844,7 +844,7 @@ func _finish_battle() -> void:
 	var fade: Dictionary = _layout()["fade"]
 	await _play_fade(int(fade["stop_frame"]), int(fade["result_frame"]))
 	var save: PlayerSave = GameData.current_save
-	var settlement := BattleSettlement.settle(runner, save, battle_info, ZoneManager.achievements_path)
+	var settlement := BattleSettlement.settle(runner, save, battle_info, ZoneManager.achievements_path, GameData.slot_saves())
 	if settlement.outcome == BattleRunner.Outcome.WIN:
 		_pending_cutscene = settlement.cutscene
 		_pending_goto_scene = settlement.goto_scene

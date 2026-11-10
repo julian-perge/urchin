@@ -31,7 +31,9 @@ var achievements_unlocked: Array[int] = []
 # hands the battle scene: is_story_progress says whether a win moves the zone
 # on, and train_cap clamps the "X" and "Z" levels the victory money averages.
 # Settling a battle that isn't over reports an error and changes nothing.
-static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, achievements_path: String) -> BattleSettlement:
+# slot_saves are the saves in the four slot files, which All Star scans together
+# with the live save.
+static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, achievements_path: String, slot_saves: Array = []) -> BattleSettlement:
 	var settlement := BattleSettlement.new()
 	settlement.outcome = runner.win_condition as BattleRunner.Outcome
 	if settlement.outcome == BattleRunner.Outcome.ONGOING:
@@ -62,6 +64,11 @@ static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, ach
 	for achievement_id in Achievements.check_battle_victory(save, runner.battle.id, was_story_progress, counters):
 		if Achievements.unlock(achievement_id, achievements_path):
 			settlement.achievements_unlocked.append(achievement_id)
+	# Every win asks checkIfAllStar, which scans the slot saves and the live game
+	# (DefineSprite_3142/frame_9/DoAction_2.as:64-67).
+	var all_star_id: int = Achievements.NAMES.find("All Star")
+	if Achievements.check_all_star(slot_saves + [save]) and Achievements.unlock(all_star_id, achievements_path):
+		settlement.achievements_unlocked.append(all_star_id)
 	return settlement
 
 

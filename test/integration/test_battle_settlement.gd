@@ -237,3 +237,29 @@ func test_a_companion_who_died_still_earns_xp():
 	var settlement := BattleSettlement.settle(runner, save, {}, ACHIEVEMENTS_FILE)
 	assert_eq(Array(settlement.fighting_party), [1], "Veradux fought")
 	assert_almost_eq(save.party_exp[1], 90.0, 0.001, "and earned expWorkOut(1, 1) though he fell")
+
+
+func _heroic_clear(player_class: int) -> PlayerSave:
+	var clear := PlayerSave.new_game("AllStar%d" % player_class, player_class)
+	clear.difficulty = CombatUnit.Difficulty.HARD
+	clear.quest_progress[5] = 14
+	return clear
+
+
+# The victory screen runs checkIfAllStar after every win
+# (DefineSprite_3142/frame_9/DoAction_2.as:64-67). It scans the four slots and
+# the live game. The original's live branch reads Krin.data.Class, which nothing
+# assigns (frame_42/DoAction_20.as:34-44), so the port counts the live game
+# whatever it has saved (docs/adr/0005-fix-original-bugs-keep-quirks.md).
+func test_all_star_goes_to_a_win_that_completes_the_three_classes_with_the_live_game():
+	var live := _heroic_clear(2)
+	var others: Array = [_heroic_clear(0), _heroic_clear(1)]
+	var runner := _runner(1000, live, {})
+	runner.win_condition = BattleRunner.Outcome.WIN
+	var settlement := BattleSettlement.settle(runner, live, {}, ACHIEVEMENTS_FILE, others)
+	assert_has(settlement.achievements_unlocked, Achievements.NAMES.find("All Star"), "any win awards it, a training fight included")
+	var short_runner := _runner(1000, live, {})
+	short_runner.win_condition = BattleRunner.Outcome.WIN
+	DirAccess.remove_absolute(ACHIEVEMENTS_FILE)
+	settlement = BattleSettlement.settle(short_runner, live, {}, ACHIEVEMENTS_FILE, [_heroic_clear(0)])
+	assert_does_not_have(settlement.achievements_unlocked, Achievements.NAMES.find("All Star"), "two classes are not enough")

@@ -72,6 +72,22 @@ func test_only_damage_that_got_past_a_shield_is_damage_dealt():
 	assert_eq(counters["player_damage_dealt"], 10.0, "what the shields took is left out")
 
 
+# The original counts a teammate in AchVal2 and AchVal3 only when
+# krinAddNewUnit spawns a companion (frame_42/DoAction_14.as:190-191). A guest
+# in the same slots is not a companion, so it adds nothing.
+func test_a_guest_in_a_teammate_slot_is_not_a_teammate():
+	var companion := CombatUnit.new()
+	companion.origin = CombatUnit.Origin.COMPANION
+	var guest := CombatUnit.new()
+	guest.origin = CombatUnit.Origin.GUEST
+	var counters: Dictionary = Achievements.collect_battle_counters(BattleRunner.new(), {3: companion, 5: guest})
+	assert_eq(counters["teammate_count"], 1, "only the companion counts")
+	assert_true(counters["had_teammates"])
+	counters = Achievements.collect_battle_counters(BattleRunner.new(), {3: guest, 5: guest})
+	assert_eq(counters["teammate_count"], 0)
+	assert_false(counters["had_teammates"], "a battle with only guests has no teammates")
+
+
 func test_the_tape():
 	assert_has(Achievements.check_battle_victory(save, 109, true, _counters()), 0)
 	assert_eq(Achievements.check_battle_victory(save, 109, false, _counters()), [], "repeat boss win does not count")

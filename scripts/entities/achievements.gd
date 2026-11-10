@@ -79,7 +79,7 @@ static func check_all_star(saves: Array) -> bool:
 
 # Derives the original AchVal1 to AchVal4 from a finished battle: the total
 # damage the PLAYER dealt (move events from slot 1), whether any companion
-# fought and how many did (slots 3 and 5), and the half-turn count.
+# fought and how many did (the companions in slots 3 and 5, never a guest), and the half-turn count.
 static func collect_battle_counters(runner: BattleRunner, units: Dictionary) -> Dictionary:
 	var player_damage: float = 0.0
 	for event in runner.events:
@@ -94,7 +94,8 @@ static func collect_battle_counters(runner: BattleRunner, units: Dictionary) -> 
 			player_damage += result.amount
 	var teammate_count: int = 0
 	for slot in [3, 5]:
-		if units.get(slot) != null:
+		var unit: CombatUnit = units.get(slot)
+		if unit != null and unit.origin == CombatUnit.Origin.COMPANION:
 			teammate_count += 1
 	return {
 		"player_damage_dealt": player_damage,
