@@ -103,9 +103,14 @@ func show_result(result: MoveResult, move: Ability) -> void:
 			float_text(str(int(amount)), MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], critical)
 			_die_or_flinch(result)
 		MoveResult.Kind.HEAL:
-			float_text("+%d" % int(amount), MenuTheme.HEAL_COLOR)
+			# A heal of 0 draws nothing, because the original's whole heal branch
+			# sits inside DamageOutputKrinFinal > 0 (frame_42/DoAction_8.as:172).
+			if amount > 0:
+				float_text("+%d" % int(amount), MenuTheme.HEAL_COLOR)
 		MoveResult.Kind.FOCUS:
-			float_text("+%d FOCUS" % int(amount), Color.SKY_BLUE)
+			# The original draws no number for a focus result, only the focus
+			# flash (frame_42/DoAction_8.as:232-249).
+			pass
 		MoveResult.Kind.MISS:
 			# The special miss frame KrinNumberShow swaps to at impact,
 			# instead of a damage number - the caster's own animation still
