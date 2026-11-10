@@ -1,17 +1,6 @@
 # battle_manager.gd
 class_name BattleManager
-extends Node
-
-# What kind of result executing a move produced - carried in a move's
-# "result" dict (the "type" key) all the way out to battle_scene.gd's
-# _show_move_result(), which matches on it to pick the right display (a
-# damage/heal number, a MISS label, etc). MISS itself is logged by
-# BattleRunner, not this file (the accuracy roll happens before
-# execute_move() is ever called), but shares this enum since it's the same
-# "what happened" domain the others already occupy. STATUS_ONLY is a hit that
-# computes no amount, so only the move's status effect lands and no number
-# shows.
-enum ResultType { DAMAGE, HEAL, FOCUS, MISS, STATUS_ONLY }
+extends RefCounted
 
 # Ported from frame42/sonny2_executeMove.txt, with buff application from
 # frame42/sonny2_addNewBuffKrin.txt's applyBuffKrin() wired in afterward. The
@@ -19,9 +8,12 @@ enum ResultType { DAMAGE, HEAL, FOCUS, MISS, STATUS_ONLY }
 # returns, whatever the move's category (the conductor,
 # frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as
 # lines 70-102), so _apply_status_effect() runs after the match below for
-# every category.
+# every category. The conductor then recomputes the target's stats with
+# applyChangesKrin (line 103), which redraws its life bar
+# (frame_42/DoAction_10.as:342), so execute_move() ends with that recompute and
+# only then reads the target's life for the result.
 # Visual/audio side effects (BATTLEFLASH, BATTLESCREEN, addSound, ...) are left
-# out entirely; this returns a result Dictionary and the UI layer reacts to it.
+# out entirely. This returns a MoveResult and the battle screen reacts to it.
 #
 # _crit_roll() calls randi_range(0, 99) where the original's perScript() reads
 # KRS, a table of 100 random(100) values that it refills every time a battle
@@ -30,7 +22,7 @@ enum ResultType { DAMAGE, HEAL, FOCUS, MISS, STATUS_ONLY }
 # original calls Math.random() there (the conductor, line 72).
 #
 # executeMove() computes nothing for a category other than "Full Damage",
-# "Heal" and "Focus", so a move with any other category returns a STATUS_ONLY
+# "Heal" and "Focus", so a move with any other category gives a STATUS_ONLY
 # result with no amount. Shatter Bolt is the one move whose category is
 # "Attack": it deals no damage and stuns its target through its status effect
 # alone. Dispel runs before this, in BattleRunner._resolve_dispels(), the same
@@ -41,7 +33,12 @@ enum ResultType { DAMAGE, HEAL, FOCUS, MISS, STATUS_ONLY }
 # CombatUnit.tick_buffs() takes one - referencing an autoload singleton
 # directly from this script would break its compilation anywhere it's loaded
 # outside an actually-running game (EditorScript smoke tests included).
-func execute_move(ability: Ability, caster: CombatUnit, target: CombatUnit, buffs_by_name: Dictionary = {}) -> Dictionary:
+static func execute_move(ability: Ability, caster: CombatUnit, target: CombatUnit, buffs_by_name: Dictionary = {}) -> MoveResult:
+	var result := MoveResult.new()
+	result.life_before = target.life_n
+	result.target_stunned = target.stun != 0
+	var was_active: bool = target.active
+
 	var avg_num_c: int = 100 + 15 * caster.plevel
 	var speed_crit_calc: float = caster.speed_u / CombatUnit.get_stat(10, caster.plevel) - 1
 
@@ -56,26 +53,40 @@ func execute_move(ability: Ability, caster: CombatUnit, target: CombatUnit, buff
 	var crit_calc_x = min(per_calc / def_calc, 10.0)
 	var focus_coef: float = ability.focus_cost_multiplier + caster.focus_n / 100.0 * ability.focus_scaling_modifier
 
-	var result: Dictionary
 	match ability.effect_category:
 		"Full Damage":
-			result = _execute_full_damage(ability, caster, target, per_calc, def_calc, crit_calc_x, focus_coef, speed_crit_calc)
+			_execute_full_damage(result, ability, caster, target, per_calc, def_calc, crit_calc_x, focus_coef, speed_crit_calc)
 		"Heal":
-			result = _execute_heal(ability, caster, target, per_calc, focus_coef, speed_crit_calc)
+			_execute_heal(result, ability, caster, target, per_calc, focus_coef, speed_crit_calc)
 		"Focus":
-			result = _execute_focus(ability, target)
+			_execute_focus(result, ability, target)
 		"Attack":
-			result = {"type": ResultType.STATUS_ONLY}
+			result.kind = MoveResult.Kind.STATUS_ONLY
 		_:
 			# The original also lands only the status here, but no move in the
 			# data has another category, so one showing up means a converter bug.
 			push_warning("execute_move: unknown effect_category '%s' on move %s" % [ability.effect_category, ability.display_name])
-			result = {"type": ResultType.STATUS_ONLY}
+			result.kind = MoveResult.Kind.STATUS_ONLY
 
-	result["buff_applied"] = _apply_status_effect(ability, caster, target, buffs_by_name)
+	result.buff_applied = _apply_status_effect(ability, caster, target, buffs_by_name)
+	target.apply_changes()
+	result.life_after = target.life_n
+	result.killed = was_active and not target.active
 	return result
 
-func _apply_status_effect(ability: Ability, caster: CombatUnit, target: CombatUnit, buffs_by_name: Dictionary) -> String:
+
+# BattleRunner's hit roll failed, so the result only states the target's life
+# and stun, which nothing changed.
+static func miss(target: CombatUnit) -> MoveResult:
+	var result := MoveResult.new()
+	result.kind = MoveResult.Kind.MISS
+	result.life_before = target.life_n
+	result.life_after = target.life_n
+	result.target_stunned = target.stun != 0
+	return result
+
+
+static func _apply_status_effect(ability: Ability, caster: CombatUnit, target: CombatUnit, buffs_by_name: Dictionary) -> String:
 	if ability.status_effect_id.is_empty():
 		return ""
 	if randf() > ability.effect_proc_chance:
@@ -98,13 +109,14 @@ func _apply_status_effect(ability: Ability, caster: CombatUnit, target: CombatUn
 			return buff.internal_name
 	# This deliberately leaves apply_changes() out. The conductor's status block
 	# never runs applyChangesKrin, and the one after the hit (line 103) is on the
-	# target only, which BattleRunner._execute_move_action() matches. A buff
-	# that lands on the caster waits for the caster's tick_buffs(), like the
-	# original's buffTicker (frame_42/DoAction_10.as:135).
+	# target only, which execute_move() matches. A buff that lands on the caster
+	# waits for the caster's tick_buffs(), like the original's buffTicker
+	# (frame_42/DoAction_10.as:135).
 	buff_target.apply_buff(buff, 1, caster)
 	return buff.internal_name
 
-func _crit_roll(per_calc: float, def_calc: float, speed_crit_calc: float, ability: Ability) -> bool:
+
+static func _crit_roll(per_calc: float, def_calc: float, speed_crit_calc: float, ability: Ability) -> bool:
 	# GGG[7]/GGG[8] in the original perScript() - read by raw numeric slot since
 	# the JSON converter's field labels ("effect_duration_turns"/
 	# "base_damage_multiplier") describe their meaning elsewhere, not their use
@@ -115,7 +127,8 @@ func _crit_roll(per_calc: float, def_calc: float, speed_crit_calc: float, abilit
 	var threshold = (per_calc + crit_chance_bonus + speed_term) * crit_chance_scalar / def_calc * 15
 	return randi_range(0, 99) < threshold
 
-func _execute_full_damage(ability: Ability, caster: CombatUnit, target: CombatUnit, per_calc: float, def_calc: float, crit_calc_x: float, focus_coef: float, speed_crit_calc: float) -> Dictionary:
+
+static func _execute_full_damage(result: MoveResult, ability: Ability, caster: CombatUnit, target: CombatUnit, per_calc: float, def_calc: float, crit_calc_x: float, focus_coef: float, speed_crit_calc: float) -> void:
 	var base_damage: float = (
 		(caster.strength_u + ability.base_strength_bonus) * ability.strength_damage_multiplier
 		+ (caster.magic_u + ability.base_magic_bonus) * ability.magic_damage_multiplier
@@ -145,19 +158,24 @@ func _execute_full_damage(ability: Ability, caster: CombatUnit, target: CombatUn
 	if damage <= 0 or is_nan(damage):
 		damage = 1
 
-	return _apply_damage(target, damage, did_crit)
+	result.kind = MoveResult.Kind.DAMAGE
+	result.critical = did_crit
+	_apply_damage(result, target, damage)
 
-func _apply_damage(target: CombatUnit, amount: float, did_crit: bool) -> Dictionary:
-	var shielded_amount: float = 0.0
+
+static func _apply_damage(result: MoveResult, target: CombatUnit, amount: float) -> void:
+	result.direction = MoveResult.Direction.HARM
 	if target.shield > 0:
 		var difference: float = target.shield - amount
 		if difference > 0:
 			target.shield -= amount
-			return {"type": ResultType.DAMAGE, "amount": 0, "shielded_amount": amount, "did_crit": did_crit, "target_died": false}
-		shielded_amount = target.shield
+			result.amount = 0
+			result.shield_took_all = true
+			return
 		amount -= target.shield
 		target.shield = 0
 
+	result.amount = amount
 	if target.sswitch == 0:
 		target.life_n -= amount
 		if target.life_n <= 0:
@@ -165,20 +183,13 @@ func _apply_damage(target: CombatUnit, amount: float, did_crit: bool) -> Diction
 			target.focus_n = 0
 			target.active = false
 	else:
+		result.direction = MoveResult.Direction.HEAL
 		target.life_n += amount
 		if target.life_n > target.life_u:
 			target.life_n = target.life_u
 
-	return {
-		"type": ResultType.DAMAGE,
-		"amount": amount,
-		"shielded_amount": shielded_amount,
-		"did_crit": did_crit,
-		"target_died": not target.active,
-		"sswitched": target.sswitch != 0,
-	}
 
-func _execute_heal(ability: Ability, caster: CombatUnit, target: CombatUnit, per_calc: float, focus_coef: float, speed_crit_calc: float) -> Dictionary:
+static func _execute_heal(result: MoveResult, ability: Ability, caster: CombatUnit, target: CombatUnit, per_calc: float, focus_coef: float, speed_crit_calc: float) -> void:
 	var base_amount: float = (
 		(caster.strength_u + ability.base_strength_bonus) * ability.strength_damage_multiplier
 		+ (caster.magic_u + ability.base_magic_bonus) * ability.magic_damage_multiplier
@@ -193,23 +204,29 @@ func _execute_heal(ability: Ability, caster: CombatUnit, target: CombatUnit, per
 	var amount = ceil(base_amount * focus_coef * ability.focus_effect_multiplier * element_multiplier * caster.heal_mod * target.heal_mod_plus * target.heal_mod_minus)
 	if amount <= 0:
 		amount = 0
+
+	result.kind = MoveResult.Kind.HEAL
+	result.direction = MoveResult.Direction.HEAL
+	result.critical = did_crit
+	result.amount = amount
 	if amount <= 0:
-		return {"type": ResultType.HEAL, "amount": 0, "did_crit": did_crit, "target_died": false}
+		return
 
 	if target.sswitch == 0:
 		target.life_n += amount
 		if target.life_n > target.life_u:
 			target.life_n = target.life_u
-		return {"type": ResultType.HEAL, "amount": amount, "did_crit": did_crit, "target_died": false}
 	else:
+		result.direction = MoveResult.Direction.HARM
 		target.life_n -= amount
 		if target.life_n <= 0:
 			target.life_n = 0
 			target.focus_n = 0
 			target.active = false
-		return {"type": ResultType.HEAL, "amount": amount, "did_crit": did_crit, "target_died": not target.active, "sswitched": true}
 
-func _execute_focus(ability: Ability, target: CombatUnit) -> Dictionary:
+
+static func _execute_focus(result: MoveResult, ability: Ability, target: CombatUnit) -> void:
 	target.focus_n += ability.focus_amount_change
 	target.focus_n = clamp(target.focus_n, 0, target.focus_u)
-	return {"type": ResultType.FOCUS, "amount": ability.focus_amount_change}
+	result.kind = MoveResult.Kind.FOCUS
+	result.amount = ability.focus_amount_change

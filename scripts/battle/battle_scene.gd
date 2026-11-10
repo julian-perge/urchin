@@ -43,7 +43,6 @@ const SLOT_POSITIONS: Dictionary[Variant, Variant] = {
 var animation_speed: float = 1.0
 
 var runner: BattleRunner
-var battle_manager: BattleManager
 var battle: BattleFight
 var units: Dictionary = {}
 var battle_info: Dictionary = {}
@@ -157,8 +156,6 @@ func _log(message: String) -> void:
 
 func start_battle(info: Dictionary) -> void:
 	battle_info = info
-	battle_manager = BattleManager.new()
-	add_child(battle_manager)
 	battle = BattleSetup.load_battle(int(info["battle_id"]))
 	if battle == null:
 		push_warning("battle_scene: no battle %s" % info.get("battle_id"))
@@ -183,8 +180,7 @@ func start_battle(info: Dictionary) -> void:
 	# events, instead of them sitting unplayed (see setup()'s own comment).
 	_pending_setup_events = runner.setup(
 		units, battle, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id,
-		BuffManagerAuto.buffs_by_internal_name, battle_manager,
-		TalentTree.get_passive_buff_names(save)
+		BuffManagerAuto.buffs_by_internal_name, TalentTree.get_passive_buff_names(save)
 	)
 	radial_menu.setup(units, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id)
 	_load_background()
@@ -291,13 +287,13 @@ func _move_color(move: Ability) -> Color:
 	return MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.5, 0.5, 0.5)
 
 
-# BOOM_*/ex_* impact clip at the target, gated on result.type != MISS -
+# BOOM_*/ex_* impact clip at the target, gated on result.kind != MISS -
 # matching frame_42/DoAction_4.as's krinBoltMake, which only attaches its
 # impact clip if(_root.strikeSuccess).
-func _spawn_impact(target_slot: int, move: Ability, result: Dictionary) -> void:
+func _spawn_impact(target_slot: int, move: Ability, result: MoveResult) -> void:
 	if move == null or move.impact_effect_name.is_empty():
 		return
-	if result.get("type") == BattleManager.ResultType.MISS:
+	if result.kind == MoveResult.Kind.MISS:
 		return
 	var effect: ImpactEffect = ImpactEffectScene.instantiate()
 	effect.position = SLOT_POSITIONS.get(target_slot, Vector2(400, 300))
@@ -403,7 +399,7 @@ func _battle_loop() -> void:
 		var events: Array = runner.advance_half_turn(action)
 		_log("advance_half_turn -> %d events" % events.size())
 		for event in events:
-			_log("  event: %s" % JSON.stringify(event))
+			_log("  event: %s" % _event_log_text(event))
 		await _play_events(events)
 		if not is_inside_tree() or _finished:
 			return
@@ -413,6 +409,15 @@ func _battle_loop() -> void:
 			_turn_based = true
 	_log("battle over: outcome=%d turns=%d" % [runner.win_condition, runner.turn_count])
 	_finish_battle()
+
+
+# A MOVE event's result is an object, which JSON.stringify would print as its id,
+# so battle.log gets the result's fields instead.
+func _event_log_text(event: Dictionary) -> String:
+	var logged: Dictionary = event.duplicate()
+	if logged.get("result") is MoveResult:
+		logged["result"] = logged["result"].to_dict()
+	return JSON.stringify(logged)
 
 
 func _on_pass_pressed() -> void:
@@ -449,7 +454,7 @@ func _play_events(events: Array) -> void:
 				_presenters[int(event["caster_slot"])].float_text("STUNNED", Color.YELLOW)
 				await _pause(0.3)
 			BattleRunner.EventType.MOVE_FAILED:
-				_presenters[int(event["caster_slot"])].float_text("NOT ENOUGH %s" % str(event.get("reason", "")).to_upper(), Color.ORANGE)
+				_presenters[int(event["caster_slot"])].float_text("NOT ENOUGH %s" % BattleRunner.FailReason.find_key(event["reason"]), Color.ORANGE)
 				await _pause(0.3)
 			BattleRunner.EventType.DISPEL:
 				_presenters[int(event["target_slot"])].float_text("DISPEL", Color.CYAN)
@@ -490,7 +495,7 @@ func _play_move_event(event: Dictionary) -> void:
 				caster_slot, move.display_name, Time.get_ticks_msec() - start_ms,
 			])
 			AudioManagerAuto.play_effect(move.sound_effect_name)
-			_spawn_impact(target_slot, move, event.get("result", {}))
+			_spawn_impact(target_slot, move, event["result"])
 			_show_move_result(event, target_slot)
 		_log("melee start: caster=%d target=%d move=%s label=%s" % [
 			caster_slot, target_slot, move.display_name, move.animation_label,
@@ -514,7 +519,7 @@ func _play_move_event(event: Dictionary) -> void:
 			# the same tick as gotoAndPlay("cast") - the doll's cast animation
 			# plays out cosmetically but the hit lands immediately, no wait.
 			AudioManagerAuto.play_effect(move.sound_effect_name)
-			_spawn_impact(target_slot, move, event.get("result", {}))
+			_spawn_impact(target_slot, move, event["result"])
 			_show_move_result(event, target_slot)
 			await _pause(0.35)
 			return
@@ -524,7 +529,7 @@ func _play_move_event(event: Dictionary) -> void:
 			# target, not on a fixed cast-clip time (the bolt's own
 			# accel/arrival model decides it).
 			AudioManagerAuto.play_effect("sfx_cast")
-			await _fire_projectile(caster_slot, target_slot, move, event.get("result", {}))
+			await _fire_projectile(caster_slot, target_slot, move, event["result"])
 			if not is_inside_tree():
 				return
 			AudioManagerAuto.play_effect(move.sound_effect_name)
@@ -545,7 +550,7 @@ func _play_move_event(event: Dictionary) -> void:
 # flying past the target and only frees once it leaves the canvas. Tests
 # run with animation_speed <= 0 - skip the visual flight entirely there
 # (no _process tick would ever advance it).
-func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result: Dictionary) -> void:
+func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result: MoveResult) -> void:
 	if animation_speed <= 0.0:
 		return
 	var from: Vector2 = SLOT_POSITIONS.get(caster_slot, Vector2(400, 300))
@@ -554,7 +559,7 @@ func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result:
 	bolt.color = _move_color(move)  # fallback tinted-circle color if clip_name has no real asset
 	bolt.clip_name = move.animation_label
 	bolt.trail_color = move.visual_effect_color
-	bolt.did_hit = result.get("type") != BattleManager.ResultType.MISS
+	bolt.did_hit = result.kind != MoveResult.Kind.MISS
 	battlefield.add_child(bolt)
 	bolt.start(from, to)
 	await bolt.reached_target
@@ -562,10 +567,10 @@ func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result:
 
 
 func _show_move_result(event: Dictionary, target_slot: int) -> void:
-	var result: Dictionary = event.get("result", {})
+	var result: MoveResult = event["result"]
 	var target_unit: CombatUnit = units[target_slot]
 	_log("result shown: %s target=%d (%s) hp=%d/%d" % [
-		JSON.stringify(result), target_slot, target_unit.player_name,
+		JSON.stringify(result.to_dict()), target_slot, target_unit.player_name,
 		int(target_unit.life_n), int(target_unit.life_u),
 	])
 	_presenters[target_slot].show_result(result, MoveManagerAuto.get_move(int(event.get("move_id", 0))))

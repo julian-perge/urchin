@@ -72,38 +72,42 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 
 
 # Shows one move's result at the moment it lands on this fighter: the number,
-# then the bar, then the death or flinch, then the voice.
-func show_result(result: Dictionary, move: Ability) -> void:
-	var amount: float = float(result.get("amount", 0))
-	var critical: bool = result.get("did_crit", false)
-	match result.get("type"):
-		BattleManager.ResultType.DAMAGE when result.get("sswitched", false):
+# then the bar, then the death or flinch, then the voice. A damage or heal
+# result moves the bar to the life it states, which already holds any life cost
+# or damage-over-time tick the unit took earlier in the half-turn, the way the
+# original's bar reads LIFEN at each hit. Focus, status-only and miss results
+# leave the bar where it is.
+func show_result(result: MoveResult, move: Ability) -> void:
+	var amount: float = result.amount
+	var critical: bool = result.critical
+	match result.kind:
+		MoveResult.Kind.DAMAGE when result.direction == MoveResult.Direction.HEAL:
 			# Under sswitch this damage healed the target. The original draws its
 			# number in heal green and plays no hit animation or hit voice
 			# (frame_42/DoAction_8.as:133-149).
 			float_text(str(int(amount)), MenuTheme.HEAL_COLOR, critical)
-			displayed_hp = minf(displayed_hp + amount, _unit.life_u)
-		BattleManager.ResultType.DAMAGE:
+			displayed_hp = result.life_after
+		MoveResult.Kind.DAMAGE:
 			# KrinNumberShow: numbers colored by the move's ELEMENT; crits
 			# play the bigger "critical" variant of the same color.
 			float_text(str(int(amount)), _damage_color(move), critical)
-			displayed_hp = maxf(displayed_hp - amount, 0.0)
+			displayed_hp = result.life_after
 			_die_or_flinch(result)
 			voice_cue.emit(_unit.voice_hit)
-		BattleManager.ResultType.HEAL when result.get("sswitched", false):
+		MoveResult.Kind.HEAL when result.direction == MoveResult.Direction.HARM:
 			# Under sswitch this heal hurt the target. The original draws its
 			# number in the Shadow color, plays the hit animation unless the
 			# target is stunned, plays no hit voice, and plays the death at the
 			# impact when the heal kills (frame_42/DoAction_8.as:189-229).
 			float_text(str(int(amount)), MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], critical)
-			displayed_hp = maxf(displayed_hp - amount, 0.0)
+			displayed_hp = result.life_after
 			_die_or_flinch(result)
-		BattleManager.ResultType.HEAL:
+		MoveResult.Kind.HEAL:
 			float_text("+%d" % int(amount), MenuTheme.HEAL_COLOR)
-			displayed_hp = minf(displayed_hp + amount, _unit.life_u)
-		BattleManager.ResultType.FOCUS:
+			displayed_hp = result.life_after
+		MoveResult.Kind.FOCUS:
 			float_text("+%d FOCUS" % int(amount), Color.SKY_BLUE)
-		BattleManager.ResultType.MISS:
+		MoveResult.Kind.MISS:
 			# The special miss frame KrinNumberShow swaps to at impact,
 			# instead of a damage number - the caster's own animation still
 			# played in full to get here (see _execute_move_action's comment).
@@ -118,15 +122,15 @@ func _damage_color(move: Ability) -> Color:
 	return MenuTheme.ELEMENT_COLORS[move.damage_element_type]
 
 
-func _die_or_flinch(result: Dictionary) -> void:
-	if result.get("target_died", false):
+func _die_or_flinch(result: MoveResult) -> void:
+	if result.killed:
 		# The death plays at the impact that actually kills, because the queued
 		# DEATH event only reaches the replay after the caster's whole move,
 		# melee runback included, has finished.
 		die()
-	elif _unit.stun == 0:
-		# The original skips the hit animation on a stunned target
-		# (frame_42/DoAction_8.as:101-104).
+	elif not result.target_stunned:
+		# The original skips the hit animation on a target that is stunned when
+		# the hit lands (frame_42/DoAction_8.as:100-103 and 204-207).
 		_doll.set_state(CharacterVisual.State.HIT)
 
 
@@ -165,8 +169,8 @@ func redraw() -> void:
 	_play_stun_change()
 
 
-# For the half-turn's end, which is where damage-over-time ticks, life costs and
-# shields reach the bar, since no hit shows them.
+# For the half-turn's end, which is where a damage-over-time tick or a life cost
+# with no later hit on the unit reaches the bar.
 func snap_to_unit() -> void:
 	displayed_hp = _unit.life_n
 	redraw()

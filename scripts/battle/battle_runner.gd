@@ -45,6 +45,10 @@ enum EventType {
 # event instead, same as always.
 enum DeathCause { MOVE, DAMAGE_OVER_TIME }
 
+# A MOVE_FAILED event's own "reason" key: the cost its caster couldn't pay when
+# the move dispatched.
+enum FailReason { FOCUS, HEALTH }
+
 # The original's BattleTimeLimit (frame_217/DoAction.as:2). It counts frames of
 # the SWF's 30 fps, not seconds, so the Heroic decision window is 4 seconds.
 const BATTLE_TIME_LIMIT: float = 120.0
@@ -58,7 +62,6 @@ var battle: BattleFight = null
 var moves_by_id: Dictionary = {}
 var buffs_by_id: Dictionary = {}
 var buffs_by_name: Dictionary = {}
-var battle_manager: BattleManager = null
 
 var phase: int = 1
 var turn_count: int = 0  # turnTimeKKK - half-turns elapsed
@@ -82,14 +85,13 @@ var events: Array = []  # full battle log; advance_half_turn() also returns its 
 # every future call's slice window and never reach whoever's actually
 # consuming play-by-play events (battle_scene.gd doesn't read runner.events
 # directly - only test code that inspects the full log after the fact does).
-func setup(units_by_slot: Dictionary, battle_fight: BattleFight, moves: Dictionary, buffs_id: Dictionary, buffs_name: Dictionary, manager: BattleManager, player_passive_buff_names: Array = []) -> Array:
+func setup(units_by_slot: Dictionary, battle_fight: BattleFight, moves: Dictionary, buffs_id: Dictionary, buffs_name: Dictionary, player_passive_buff_names: Array = []) -> Array:
 	var events_start: int = events.size()
 	units = units_by_slot
 	battle = battle_fight
 	moves_by_id = moves
 	buffs_by_id = buffs_id
 	buffs_by_name = buffs_name
-	battle_manager = manager
 	absolute_start = battle.absolute_start if battle else 0
 
 	for slot in units:
@@ -245,7 +247,7 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 
 	var life_cost = move.flat_life_cost + round(caster.life_u * move.health_cost_percentage)
 	if caster.focus_n < move.focus_cost or caster.life_n <= life_cost:
-		var reason: String = "focus" if caster.focus_n < move.focus_cost else "health"
+		var reason: FailReason = FailReason.FOCUS if caster.focus_n < move.focus_cost else FailReason.HEALTH
 		_log({"type": EventType.MOVE_FAILED, "caster_slot": caster.player_id, "move_id": move.id, "reason": reason})
 		return
 
@@ -275,24 +277,14 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 		# per animation type") and only the impact-time damage NUMBER swaps
 		# to a special miss frame. Logging a bare "miss" type here instead
 		# skipped straight to a floating MISS label with no animation at all.
-		_log_move_result(caster, target, move, {"type": BattleManager.ResultType.MISS})
+		_log_move_result(caster, target, move, BattleManager.miss(target))
 		return
 
 	var dispelled: Array = _resolve_dispels(move, target)
 	if not dispelled.is_empty():
 		_log({"type": EventType.DISPEL, "caster_slot": caster.player_id, "target_slot": target.player_id, "removed": dispelled})
 
-	if move.hits_all_enemies:
-		for slot in TEAM_SLOTS[CombatUnit.Team.TWO if caster.team_side == CombatUnit.Team.ONE else CombatUnit.Team.ONE]:
-			var enemy: CombatUnit = units.get(slot)
-			if enemy != null and enemy.active:
-				var result: Dictionary = battle_manager.execute_move(move, caster, enemy, buffs_by_name)
-				enemy.apply_changes()
-				_log_move_result(caster, enemy, move, result)
-	else:
-		var result: Dictionary = battle_manager.execute_move(move, caster, target, buffs_by_name)
-		target.apply_changes()
-		_log_move_result(caster, target, move, result)
+	_log_move_result(caster, target, move, BattleManager.execute_move(move, caster, target, buffs_by_name))
 
 
 # The hit/miss roll, separate from the crit roll inside execute_move().
@@ -332,7 +324,7 @@ func _accuracy_roll(caster: CombatUnit, target: CombatUnit, move: Ability) -> bo
 # same as the original's. apply_buff() takes a removed buff's stun, sswitch,
 # heal mods, idot and silenced off the target straight away, like the
 # original's applyBuffKrin. This deliberately leaves apply_changes() to
-# _execute_move_action(), which calls it after the hit where the conductor
+# BattleManager.execute_move(), which calls it after the hit where the conductor
 # calls applyChangesKrin (line 103 of its enterFrame handler), so the hit that
 # removes a buff still lands with that buff's stat changes.
 func _resolve_dispels(move: Ability, target: CombatUnit) -> Array:
@@ -584,7 +576,7 @@ func hard_skip(speech_index: int) -> void:
 	speech_cursor += 1
 
 
-func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, result: Dictionary) -> void:
+func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, result: MoveResult) -> void:
 	var entry: Dictionary[Variant, Variant] = {
 		"type": EventType.MOVE,
 		"caster_slot": caster.player_id,
@@ -594,7 +586,7 @@ func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, res
 		"result": result,
 	}
 	_log(entry)
-	if result.get("target_died", false):
+	if result.killed:
 		_log({"type": EventType.DEATH, "slot": target.player_id, "cause": DeathCause.MOVE})
 
 

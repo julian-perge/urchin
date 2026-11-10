@@ -28,8 +28,7 @@ func _runner(battle_id: int, save: PlayerSave, pick: Dictionary) -> BattleRunner
 	var runner := BattleRunner.new()
 	runner.setup(
 		units, battle, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id,
-		BuffManagerAuto.buffs_by_internal_name, autofree(BattleManager.new()),
-		TalentTree.get_passive_buff_names(save)
+		BuffManagerAuto.buffs_by_internal_name, TalentTree.get_passive_buff_names(save)
 	)
 	return runner
 
