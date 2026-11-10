@@ -1163,10 +1163,10 @@ func test_a_shield_block_plays_the_shield_clip_once_from_its_extracted_frames():
 	assert_false(_shield_clip.is_playing(), "and the clip rests again")
 
 
-# buffTicker plays the shield clip too, when a shield soaks a whole Buff tick,
-# and draws SHIELDED but plays no sound (frame_42/DoAction_10.as:68-73). A tick
-# has no Move result, so the clip plays on its own, and show_tick() plays it
-# this way.
+# A Buff tick has no Move result, so show_tick() plays the clip on its own, with no
+# sound, for a tick that a shield soaked whole. The original draws SHIELDED for
+# such a tick and plays no clip (frame_42/DoAction_10.as:68-73), and ADR 0005 has
+# the port play it.
 func test_the_shield_clip_plays_on_its_own_with_no_number_or_sound():
 	_presenter.play_shield_clip()
 	_step_shield_clip(1)
@@ -1252,8 +1252,9 @@ func test_a_miss_and_a_status_only_result_play_no_flash():
 
 
 # Only executeMove calls BATTLEFLASH, and buffTicker plays no sound
-# (frame_42/DoAction_10.as:14-136). The one clip a tick plays is the Shield clip,
-# and only when a shield soaks the whole of it (lines 68-73).
+# (frame_42/DoAction_10.as:14-136). The one clip the port plays for a tick is the
+# Shield clip, and only when a shield soaks the whole of it (lines 68-73 and
+# ADR 0005).
 func test_a_buff_tick_plays_no_flash_and_no_sound_and_the_shield_clip_only_when_soaked_whole():
 	for case in [[_damage_tick(10.0, 90.0), false, "a damage tick"], [_heal_tick(10.0, 100.0), false, "a heal tick"], [_soaked_tick(), true, "a soaked tick"]]:
 		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
@@ -1394,10 +1395,11 @@ func test_a_heal_tick_draws_its_amount_in_heal_green_with_no_plus():
 	assert_eq(numbers[0].tint, Color("66FF00"), "in heal green")
 
 
-# A shield that soaks a whole Buff tick draws SHIELDED and plays the Shield clip,
-# and plays no sound and no flinch (frame_42/DoAction_10.as:68-73). The clip plays
-# on the unit whose shield soaked the tick. The original plays it on IDKT, the
-# unit the last move hit, which ADR 0005 counts as an Original bug.
+# A shield that soaks a whole Buff tick draws SHIELDED, and plays no sound and no
+# flinch (frame_42/DoAction_10.as:68-73). The port also plays the Shield clip on
+# the unit whose shield soaked the tick. The original's call for the clip names
+# IDKT, which buffTicker never declares, so it plays none, and ADR 0005 counts
+# that as an Original bug.
 func test_a_tick_that_a_shield_soaked_whole_draws_shielded_and_plays_the_shield_clip_with_no_sound():
 	_presenter.show_tick(_soaked_tick())
 	var numbers: Array[FloatingNumber] = _numbers()

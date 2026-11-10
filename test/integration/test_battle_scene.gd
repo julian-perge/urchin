@@ -2262,11 +2262,12 @@ func test_a_buff_tick_that_did_something_holds_the_next_action_to_frame_51_and_o
 
 
 # In the scene, a damage tick draws in the color of its strongest element, a heal
-# tick draws in heal green, a tick that a shield soaked whole draws SHIELDED and
-# plays the Shield clip, and a tick of nothing draws nothing
-# (frame_42/DoAction_10.as:64-98). The Prison Guard in slot 2 ticks for real here,
-# so the numbers are the ones tick_buffs works out. Cold Justice deals Ice damage,
-# whose color is #68CBF4, and The Immortal Flame heals.
+# tick draws in heal green, a tick that a shield soaked whole draws SHIELDED, and a
+# tick of nothing draws nothing (frame_42/DoAction_10.as:64-98). The port also plays
+# the Shield clip for the soaked tick, which the original does not (ADR 0005). The
+# Prison Guard in slot 2 ticks for real here, so the numbers are the ones
+# tick_buffs works out. Cold Justice deals Ice damage, whose color is #68CBF4, and
+# The Immortal Flame heals.
 func test_a_buff_tick_draws_in_the_scene_by_what_it_did():
 	var cases: Array = [
 		["a damage tick", ["PERSECUTE"], 0.0],
@@ -2303,11 +2304,11 @@ func test_a_buff_tick_draws_in_the_scene_by_what_it_did():
 	ZoneManager.auto_start_battles = true
 
 
-# buffTicker plays the Shield clip through IDKT, the unit the last move hit
-# (frame_42/DoAction_10.as:72), which ADR 0005 counts as an Original bug. The tick
-# lands on the unit whose buffs ticked: its number draws on that unit's rig, and its
-# Shield clip plays there and nowhere else.
-func test_a_buff_tick_lands_on_the_unit_that_ticked_and_not_on_the_last_unit_hit():
+# A Buff tick lands on the unit whose buffs ticked: its number draws on that unit's
+# rig, and its Shield clip plays there and nowhere else. The original's call for the
+# clip names IDKT, which buffTicker never declares (frame_42/DoAction_10.as:72), so
+# it plays none, and ADR 0005 counts that as an Original bug.
+func test_a_buff_tick_draws_its_number_and_plays_its_shield_clip_on_the_unit_that_ticked():
 	var scene = await _battle_100_on_a_stepped_clock("TickOnItsUnit")
 	var soaked: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 0.0)
 	soaked["tick"].shield_took_all = true

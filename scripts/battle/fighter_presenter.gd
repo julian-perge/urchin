@@ -165,19 +165,21 @@ func show_result(result: MoveResult, move: Ability) -> void:
 		show_state(result.target_after)
 
 
-# Plays the Shield clip once on this fighter's rig. A Shield block plays it with
-# a sound, and a Buff tick that a shield soaks whole plays it with none
-# (frame_42/DoAction_10.as:68-73), so it takes no Move result.
+# Plays the Shield clip once on this fighter's rig. show_result() plays it with a
+# sound for a Shield block, and show_tick() plays it with none for a Buff tick that
+# a shield soaks whole, so it takes no Move result.
 func play_shield_clip() -> void:
 	_shield_clip.play()
 
 
 # Shows one Buff tick at the moment it comes due on this fighter. buffTicker
 # draws one Floating number in `normal` for the whole total: heal green for
-# healing, the color of the strongest element for damage, SHIELDED with the
-# Shield clip for a tick that a shield soaked whole, and nothing for a total of 0
-# (frame_42/DoAction_10.as:64-98). A tick plays no Result flash and no sound.
-# Then comes the update of the bars, the buff icons and the stun pose, because the
+# healing, the color of the strongest element for damage, SHIELDED for a tick that
+# a shield soaked whole, and nothing for a total of 0 (frame_42/DoAction_10.as:64-98).
+# A tick plays no Result flash and no sound. The original also plays no Shield clip
+# for a soaked tick, because its call names IDKT, which buffTicker never declares
+# (line 72). ADR 0005 has the port play the clip on this fighter. Then comes the
+# update of the bars, the buff icons and the stun pose, because the
 # applyChangesKrin that ends buffTicker redraws the unit (line 135). A tick that
 # kills the unit is followed by a DEATH event, which plays the death.
 func show_tick(tick: BuffTick) -> void:

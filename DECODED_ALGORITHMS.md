@@ -320,8 +320,9 @@ through `play_shield_clip()`.
   to 0 on frame 20, so frame 20 shows nothing. The spark draws on frames 2 to 18.
 - `play()` leaves the playhead on frame 1 until the next frame, so the bubble shows one frame after the impact. That reads AVM1 as stepping every timeline before a frame's scripts
   run, and no player has measured it. After frame 20 the playhead wraps to frame 1, and its `stop()` holds it there. A `play()` while the clip plays changes nothing.
-- `executeMove` plays it on a Shield block with `sfx_shield` (`frame_42/DoAction_8.as:73-74`). `buffTicker` plays it with no sound when a shield soaks a whole Buff tick, but on
-  the unit `IDKT` names (`frame_42/DoAction_10.as:72`), an Original bug that ADR 0005 has the port fix. The port plays it on the unit that ticked, through `FighterPresenter.show_tick`.
+- `executeMove` plays it on a Shield block with `sfx_shield` (`frame_42/DoAction_8.as:73-74`). When a shield soaks a whole Buff tick, `buffTicker` calls `play()` on the clip of `IDKT`,
+  with no sound (`frame_42/DoAction_10.as:72`). Only `executeMove` declares `IDKT`, as a parameter, and no script assigns it. In `buffTicker` it is undefined, so the call reaches no clip,
+  and the original draws SHIELDED with no bubble. ADR 0005 counts that as an Original bug, and the port plays the clip on the unit that ticked, through `FighterPresenter.show_tick`.
 
 ## The Buff tick (`buffTicker`, frame_42/DoAction_10.as:14-136)
 
@@ -336,8 +337,9 @@ Conductor lines below are in `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD o
   `ceil((1 + IDMG2) * IDMGP2 * IDOT * (DOTTICKERARRAY[i] * (100 + plevel * 15) / DEFU[i]))` (17-40). So healing and damage net: 666 damage and 300 healing make a total of 366. Then each buff's `CD`
   counts down, and each buff that reaches 0 comes off (41-58). That is after the total is worked out, so the damage of a buff that runs out at this tick still counts. Then SSWITCH flips the sign
   of the total (59-62). A total above 0 hurts and a total below 0 heals.
-- **The shield.** The shield only reads a total above 0. A shield strictly bigger than the total takes all of it: SHIELD falls by the total, SHIELDED draws and the Shield clip plays (64-73). Otherwise
-  the shield comes off the total and empties (76-84). A shield exactly as big as the total takes the second branch and leaves a total of 0, a Quirk that ADR 0005 keeps.
+- **The shield.** The shield only reads a total above 0. A shield strictly bigger than the total takes all of it: SHIELD falls by the total and SHIELDED draws (64-71). The call that would play
+  the Shield clip (72) reaches no clip, so the original shows no bubble (see "The Shield clip" above). Otherwise the shield comes off the total and empties (76-84). A shield exactly as big as the
+  total takes the second branch and leaves a total of 0, a Quirk that ADR 0005 keeps.
 - **The number.** One Floating number for a total that is not 0 (85-96): the total in heal green when it is below 0, and otherwise in the color of the element with the strictly largest damage, which
   starts as Physical (25-40). A heal draws before `applyChangesKrin` caps life at its max (305-308), so a unit at full life still draws it. `buffTicker` resets `perKSuccess` first (24), so the label
   is always `normal`. A tick plays no flash and no sound.
