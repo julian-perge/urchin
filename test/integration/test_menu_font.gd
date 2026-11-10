@@ -212,7 +212,7 @@ func test_battle_text_keeps_the_original_fonts():
 	buff.internal_name = "FIRESAM"
 	buff.display_name = "The Immortal Flame"
 	buff.element_type = CombatUnit.Element.FIRE
-	overlay.refresh_buffs(unit, {1: buff})
+	overlay.refresh_buffs(unit.buff_slots, {1: buff})
 	assert_eq(overlay.buff_row.get_child_count(), 1, "the buff shows")
 	if overlay.buff_row.get_child_count() == 1:
 		var counter: Label = overlay.buff_row.get_child(0).find_children("*", "Label", true, false)[0]

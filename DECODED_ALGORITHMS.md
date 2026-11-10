@@ -105,9 +105,9 @@ Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/
   clip, a still-stunned unit is snapped straight back into the `stun2` loop instead of showing an idle pose. Not ported (form-changing buffs aren't implemented yet).
 - **`outofstun` ends** via MODEL1 frame 295's own `gotoAndStop("stand"); play()` - a one-shot that always falls back to idle, same pattern as `cast`.
 - No numeric timing constants gate any of this (unlike `krinBoltTime`/`krinMeleeAttackCD`). It is a value comparison that runs on every `applyChangesKrin` call, for an active unit only
-  (line 468). The port compares in `FighterPresenter._show_stun`, against the stun a `MoveResult` states (`stun_after`) at its impact and against the unit's own stun at the half-turn's end,
-  and a dead doll keeps its death. It never compares at the redraws in between, because the runner resolves the whole half-turn before the replay, so the unit's own stun can already hold a
-  stun from later in it. This note used to say those extra comparisons changed nothing. They started a later stun early, and the flinch at the hit that landed it then left the doll idle for
+  (line 468). The port compares in `FighterPresenter._show_stun`, against the stun in the `UnitSnapshot` an event states (a `MoveResult`'s `target_after` at its impact, a MOVE event's
+  `caster_after_dispatch` when it starts) and against the unit's own stun at the half-turn's end, and a dead doll keeps its death. It never compares with the unit's own stun before then,
+  because the runner resolves the whole half-turn before the replay, so the unit's own stun can already hold a stun from later in it. This note used to say those extra comparisons changed nothing. They started a later stun early, and the flinch at the hit that landed it then left the doll idle for
   the whole stun.
 
 ## Dispel order and timing (frame_217/PlaceObject2_3389_480 enterFrame, lines 22-103)
@@ -149,6 +149,9 @@ Ported: `UnitOverlay.refresh_buffs` (`scripts/battle/unit_overlay.gd`).
   `p<playerID>BAR` at x = (110 + 17 * slot) times 1 for team 1 or -1 for team 2. It sets the clip's `buffCounter` text (edit text 66) to the CD, sends `buffIcon` to the frame named by
   the buff id and tints `buffColor` with the buff element's color. The tooltip title is the buff's `[0]` and its text the buff's `[25]` (the enterFrame handler on `buffColor` inside
   DefineSprite 104). Nothing sorts the row itself, so it shows the first 7 slots in the order the sort left them, and it only changes when `applyChangesKrin` runs for that unit.
+- The port draws the row from the `UnitSnapshot` of the last event shown on the unit, so it changes at the impact of each result on the unit, when the unit's own MOVE event starts, and at
+  the half-turn's end. A buff that a move lands on its own caster waits for the caster's `buffTicker` in the original (`frame_42/DoAction_10.as:135`), which the port shows at the
+  half-turn's end until julian-perge/urchin#151 gives the Buff tick an event of its own.
 - The port's row used to sort the slots with turns left again with `sort_custom`, which moved tied buffs once a unit held more than 16 of them and changed the 7 icons it showed in 212
   of 20,000 sorted states. The port's tooltip title also adds the turns left, which the original's doesn't.
 
@@ -268,10 +271,10 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
 - **Focus** adds `[9]` to FOCUSN, kept between 0 and FOCUSU, and plays the `focus` flash. It draws no number (232-249).
 - Any other category does nothing in `executeMove`. Shatter Bolt is the only such move, and its status effect still lands after it (`KNOWN_GAPS.md`, the "Attack" entry).
 - The life bar redraws in `executeMove` (150, 187, 198 and 248) and again in `applyChangesKrin` (`frame_42/DoAction_10.as:342`), which the conductor runs on the target after the
-  move's status effect (conductor line 103). So a move leaves the bar on the life after that recompute, which is the life `MoveResult.life_after` holds. The recompute moves life when the
+  move's status effect (conductor line 103). So a move leaves the bar on the life after that recompute, which is the life `MoveResult.target_after` holds. The recompute moves life when the
   move lands, or dispels, a buff that changes max life: Edge Of Death's EDGEOFDEATH takes 85% off.
 - The STUN checks for the `hit` label read the target as the hit lands, before the move's own status effect, so `MoveResult.target_stunned` is read then too. Shatter Bolt's stun comes
-  after its own hit. The stun pose changes in the recompute after the strike (`frame_42/DoAction_10.as:468-481`), so `MoveResult.stun_after` is read after that recompute, with the life.
+  after its own hit. The stun pose changes in the recompute after the strike (`frame_42/DoAction_10.as:468-481`), so `MoveResult.target_after` is taken after that recompute, with the life.
 
 ## Unit stats below level 10 (frame_42/DoAction_14.as `krinAddNewUnit`)
 

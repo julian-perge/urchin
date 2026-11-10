@@ -55,12 +55,23 @@ func _present(unit: CombatUnit, items_by_id: Dictionary = {}, buffs_by_id: Dicti
 	_presenter.effect_cue.connect(func(cue): _cues.append(cue))
 
 
+# What a hand-made event leaves on the unit: the unit as _make_unit builds it,
+# at the given life, with no stun and no buffs.
+func _state(life: float) -> UnitSnapshot:
+	var state := UnitSnapshot.new()
+	state.life = life
+	state.life_max = 100.0
+	state.focus = 50.0
+	state.focus_max = 50.0
+	return state
+
+
 func _result(kind: MoveResult.Kind, direction: MoveResult.Direction, amount: float, life_after: float) -> MoveResult:
 	var result := MoveResult.new()
 	result.kind = kind
 	result.direction = direction
 	result.amount = amount
-	result.life_after = life_after
+	result.target_after = _state(life_after)
 	return result
 
 
@@ -94,12 +105,12 @@ func _killing(result: MoveResult) -> MoveResult:
 
 func _stunned_at_hit(result: MoveResult) -> MoveResult:
 	result.target_stunned = true
-	result.stun_after = 1.0
+	result.target_after.stun = 1.0
 	return result
 
 
 func _stunning(result: MoveResult) -> MoveResult:
-	result.stun_after = 1.0
+	result.target_after.stun = 1.0
 	return result
 
 
@@ -188,14 +199,13 @@ func test_setup_dresses_the_doll_from_the_item_table():
 # already at 40 here while the hit that took it there has not been shown.
 func test_the_bars_only_move_when_the_hit_lands():
 	_unit.life_n = 40.0
-	_presenter.redraw()
-	assert_eq(_overlay.health_bar.value, 100.0, "a redraw before the hit leaves the bar alone")
+	assert_eq(_overlay.health_bar.value, 100.0, "before the hit the bar is where it was")
 	assert_eq(_overlay.health_value.text, "100", "and the number beside it")
 
 	_presenter.show_result(_damage(60.0, 40.0), null)
 	assert_eq(_overlay.health_bar.value, 40.0, "the bar drops when the hit lands")
 	assert_eq(_overlay.health_value.text, "40", "and so does the number")
-	assert_eq(_presenter.displayed_hp, 40.0, "and the health it displays")
+	assert_eq(_presenter.displayed.life, 40.0, "and the health it displays")
 
 
 func test_each_hit_of_a_half_turn_shows_the_life_it_left():
@@ -206,13 +216,11 @@ func test_each_hit_of_a_half_turn_shows_the_life_it_left():
 	assert_eq(_overlay.health_bar.value, 40.0, "and the second reaches the unit's life")
 
 
-# A unit pays its own move's life cost when it acts, and the runner resolves the
-# whole half-turn before the replay, so a result on the unit later in that
-# half-turn starts from the life left after the cost. Here the cost was 40 and
-# the move moved 10 either way. The bar shows the life each result states, so
-# the cost reaches it at that result, where the original drew it when the cost
-# was paid (the conductor, line 359).
-func test_a_result_shows_the_life_it_states_with_an_earlier_cost_in_it():
+# A result states the target's whole life, so the bar shows that life even when
+# the unit also lost life to something the screen has not shown yet. Here that
+# was 40, as a damage-over-time tick earlier in the half-turn can take, and the
+# move moved 10 either way.
+func test_a_result_shows_the_life_it_states_with_an_earlier_loss_in_it():
 	for result in [
 		_damage(10.0, 50.0),
 		_damage_that_heals(10.0, 70.0),
@@ -222,44 +230,90 @@ func test_a_result_shows_the_life_it_states_with_an_earlier_cost_in_it():
 		var label: String = "%s that pushed %s" % [MoveResult.Kind.find_key(result.kind), MoveResult.Direction.find_key(result.direction)]
 		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 		_presenter.show_result(result, null)
-		assert_eq(_presenter.displayed_hp, result.life_after, "a %s takes the cost along with it" % label)
-		assert_eq(_overlay.health_value.text, str(int(result.life_after)), "and so does the number beside the bar")
+		assert_eq(_presenter.displayed.life, result.target_after.life, "a %s takes the earlier loss along with it" % label)
+		assert_eq(_overlay.health_value.text, str(int(result.target_after.life)), "and so does the number beside the bar")
 
 
-# A damage-over-time tick or a life cost with no later result on the unit only
-# reaches the bar when the half-turn ends.
+# A damage-over-time tick with no later event on the unit only reaches the bar
+# when the half-turn ends.
 func test_the_bars_snap_to_the_unit_at_half_turn_end():
 	_unit.life_n = 63.0
-	_presenter.redraw()
 	assert_eq(_overlay.health_bar.value, 100.0, "still held back before the snap")
 
 	_presenter.snap_to_unit()
 	assert_eq(_overlay.health_bar.value, 63.0, "the bar shows the unit's life")
 	assert_eq(_overlay.health_value.text, "63", "and so does the number")
-	assert_eq(_presenter.displayed_hp, 63.0, "and the health it displays")
+	assert_eq(_presenter.displayed.life, 63.0, "and the health it displays")
 
 
-func test_focus_shows_the_unit_true_value_while_health_is_held_back():
-	_unit.life_n = 40.0
+# A unit pays its move's costs as the move dispatches, and the original redraws
+# its bars right there (the conductor, lines 357-359). The runner has already
+# taken the unit to its Focus at the half-turn's end, so the bar waits for the
+# move to start.
+func test_a_focus_cost_shows_when_the_move_starts_and_not_before():
+	_unit.life_n = 70.0
 	_unit.focus_n = 12.0
-	_presenter.redraw()
-	assert_eq(_overlay.focus_bar.value, 12.0, "focus is never held back")
-	assert_eq(_overlay.health_bar.value, 100.0, "only health is")
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	assert_eq(_overlay.focus_bar.value, 50.0, "a hit before the move leaves the Focus it states")
+
+	var dispatched: UnitSnapshot = _state(80.0)
+	dispatched.focus = 30.0
+	_presenter.show_state(dispatched)
+	assert_eq(_overlay.focus_bar.value, 30.0, "the move's start shows the Focus its cost left")
+	assert_eq(_overlay.health_bar.value, 80.0, "and the life its cost left")
 
 
-func test_a_redraw_shows_the_units_buffs():
+func _buff_icons() -> Array:
+	return _overlay.buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
+
+
+# The runner resolves the whole half-turn before the replay, so a buff that a
+# later hit lands is already on the unit when an earlier hit plays. The original
+# draws a unit's buff icons in applyChangesKrin, which the conductor runs on the
+# target after each strike that lands (line 103), so the icon waits for the hit
+# that lands it.
+func test_a_buff_landed_late_in_a_half_turn_shows_only_once_its_result_plays():
 	var buff := Buff.new()
 	buff.internal_name = "FIRESAM"
 	_present(_unit, {}, {1: buff})
-	assert_eq(_overlay.buff_row.get_child_count(), 0, "no buffs yet")
-	_unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
-	_presenter.redraw()
-	assert_eq(_overlay.buff_row.get_child_count(), 1, "the buff table reaches the row")
+	var slot: Dictionary = {"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_unit.buff_slots[0] = slot.duplicate()
+
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	assert_eq(_buff_icons().size(), 0, "a hit before the one that lands the buff shows no icon")
+
+	var landing: MoveResult = _damage(10.0, 80.0)
+	landing.target_after.buff_slots = [slot.duplicate()]
+	_presenter.show_result(landing, null)
+	assert_eq(_buff_icons().size(), 1, "the hit that lands it shows it, from the buff table")
+
+
+# Shatter Bolt lands its stun as a buff, so its target shows the stun pose and
+# the buff's icon. Both wait for the hit that lands them, where the original's
+# applyChangesKrin draws them (the conductor, line 103).
+func test_a_stun_icon_shows_only_at_the_hit_that_lands_it():
+	var buff := Buff.new()
+	buff.internal_name = "SHATTERBOLT"
+	_present(_unit, {}, {1: buff})
+	var slot: Dictionary = {"cd": 2, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_unit.buff_slots[0] = slot.duplicate()
+	_unit.stun = 1.0
+
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	_play_out_the_hit()
+	assert_eq(_buff_icons().size(), 0, "a hit before the stun shows no icon")
+	assert_ne(_doll._state, STUN, "and no stun")
+
+	var stunning: MoveResult = _stunning(_result(MoveResult.Kind.STATUS_ONLY, MoveResult.Direction.NONE, 0.0, 90.0))
+	stunning.target_after.buff_slots = [slot.duplicate()]
+	_presenter.show_result(stunning, null)
+	assert_eq(_buff_icons().size(), 1, "the hit that lands the stun shows its icon")
+	assert_eq(_doll._state, STUN, "and starts the stun")
 
 
 func test_a_hit_bigger_than_the_displayed_health_stops_the_bar_at_empty():
 	_presenter.show_result(_damage(250.0, 0.0), null)
-	assert_eq(_presenter.displayed_hp, 0.0, "the displayed health stops at zero")
+	assert_eq(_presenter.displayed.life, 0.0, "the displayed health stops at zero")
 	assert_eq(_overlay.health_value.text, "0", "and so does the number")
 
 
@@ -272,7 +326,7 @@ func test_a_heal_raises_the_bar_with_a_plus_number_and_stops_at_full():
 	assert_eq(_numbers()[-1].modulate, MenuTheme.HEAL_COLOR, "in heal green")
 	assert_eq(_cues, [], "a heal plays no voice")
 	_presenter.show_result(_heal(500.0, 100.0), null)
-	assert_eq(_presenter.displayed_hp, 100.0, "and it stops at full")
+	assert_eq(_presenter.displayed.life, 100.0, "and it stops at full")
 
 
 # KrinNumberShow colors a number by the move's element.
@@ -340,7 +394,7 @@ func test_damage_on_a_sswitch_target_shows_as_a_heal():
 
 func test_damage_on_a_sswitch_target_stops_the_bar_at_full():
 	_presenter.show_result(_damage_that_heals(15.0, 100.0), null)
-	assert_eq(_presenter.displayed_hp, 100.0)
+	assert_eq(_presenter.displayed.life, 100.0)
 
 
 # A heal on a target under an sswitch buff hurts it. The original draws the
@@ -361,7 +415,7 @@ func test_heal_that_kills_a_sswitch_target_plays_the_death():
 	_presenter.show_result(_killing(_heal_that_hurts(150.0, 0.0)), null)
 	assert_eq(_doll._state, DEAD, "the doll plays its death")
 	assert_false(_overlay.visible, "its overlay is hidden with it")
-	assert_eq(_presenter.displayed_hp, 0.0, "the bar drops to empty")
+	assert_eq(_presenter.displayed.life, 0.0, "the bar drops to empty")
 	assert_eq(_cues, [VOICE_DIE], "with the death cry and no hit voice")
 
 
@@ -391,8 +445,7 @@ func test_heal_on_a_stunned_sswitch_target_keeps_it_stunned():
 # result states.
 func test_a_stun_from_later_in_the_half_turn_waits_for_the_hit_that_lands_it():
 	_unit.stun = 1.0
-	_presenter.redraw()
-	assert_ne(_doll._state, STUN, "a redraw before the stun lands doesn't start it")
+	assert_ne(_doll._state, STUN, "the unit's stun doesn't show before the hit that lands it")
 	_presenter.show_result(_damage(10.0, 90.0), null)
 	assert_eq(_doll._state, HIT, "a hit before it flinches")
 	_play_out_the_hit()
@@ -404,12 +457,9 @@ func test_a_stun_from_later_in_the_half_turn_waits_for_the_hit_that_lands_it():
 	assert_ne(_doll._state, HIT, "a stun that has worn off by the half-turn's end still stops the flinch")
 
 
-# Every event redraws every fighter, so a redraw comes between the start of a
-# half-turn and the hit that lands a stun. The original plays that hit's flinch
-# and starts the stun at the same strike, so the doll ends up stunned.
+# The original plays a hit's flinch and starts the stun it lands at the same
+# strike, so the doll ends up stunned.
 func test_a_hit_that_lands_a_stun_leaves_the_doll_stunned():
-	_unit.stun = 1.0
-	_presenter.redraw()
 	_presenter.show_result(_stunning(_damage(10.0, 90.0)), null)
 	_play_out_the_hit()
 	assert_eq(_doll._state, STUN)
@@ -467,11 +517,11 @@ func test_any_rise_in_stun_replays_the_stun_animation():
 	assert_eq(_doll._label_time, 0.0, "from its start")
 
 
-func test_a_redraw_with_no_change_in_stun_leaves_the_animation_alone():
+func test_a_result_with_no_change_in_stun_leaves_the_animation_alone():
 	_stun()
 	_doll._process(0.1)
 	var time_into_label: float = _doll._label_time
-	_presenter.redraw()
+	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
 	assert_eq(_doll._label_time, time_into_label)
 
 
@@ -490,11 +540,10 @@ func test_any_fall_in_stun_plays_the_wake_up_even_while_still_stunned():
 func test_a_stunned_unit_stays_stunned_until_its_death_plays():
 	_stun()
 	_unit.active = false
-	_presenter.redraw()
 	assert_eq(_doll._state, STUN, "the doll is still stunned")
 	assert_ne(_doll._label, "outofstun", "and doesn't wake up first")
 	var killing_stun: MoveResult = _stunned_at_hit(_killing(_damage(100.0, 0.0)))
-	killing_stun.stun_after = 2.0
+	killing_stun.target_after.stun = 2.0
 	_presenter.show_result(killing_stun, null)
 	assert_eq(_doll._state, DEAD, "the hit that kills it plays the death, though it lands another stun")
 	_unit.stun = 2.0
