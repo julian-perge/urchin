@@ -30,9 +30,9 @@ SLASH_COMMAND = re.compile(r"/[\w-]+")
 
 
 def code_spans(text: str) -> Iterator[tuple[int, str]]:
-    """A code span can wrap across lines inside a paragraph, as the Godot test
-    command in AGENTS.md does, so spans are matched over the whole text with its
-    fenced blocks blanked out. Each one comes back with the line it starts on
+    """A code span can wrap across lines inside a paragraph, as the save preset
+    command in docs/agents/godot.md does, so spans are matched over the whole
+    text with its fenced blocks blanked out. Each one comes back with the line it starts on
     and its line breaks folded into spaces."""
     lines = text.split("\n")
     fenced = False
