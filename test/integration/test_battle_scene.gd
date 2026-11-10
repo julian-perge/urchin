@@ -1481,7 +1481,10 @@ func _float_labels(scene) -> Array:
 	return scene.battlefield.get_children().filter(func(child): return child is Label)
 
 
-func test_the_replay_floats_status_text_over_the_right_fighter():
+# A stun or a failed move floats nothing over its fighter. The original only
+# tells the player about their own, in the Combat text banner. A dispel still
+# floats over its target.
+func test_the_replay_floats_a_dispel_but_not_a_stun_or_a_failed_move():
 	GameData.current_save = PlayerSave.new_game("StatusFloats", 0)
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -1499,15 +1502,190 @@ func test_the_replay_floats_status_text_over_the_right_fighter():
 		return scene._presenters[slot].get_node("Doll").position + FighterPresenter.FLOAT_OFFSET
 	assert_eq(
 		_float_labels(scene).map(func(label): return [label.text, label.position, label.modulate]),
-		[
-			["STUNNED", above_fighter.call(1), Color.YELLOW],
-			["NOT ENOUGH FOCUS", above_fighter.call(3), Color.ORANGE],
-			["DISPEL", above_fighter.call(2), Color.CYAN],
-		]
+		[["DISPEL", above_fighter.call(2), Color.CYAN]]
 	)
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# Battle 100 in a viewport of its own, because GUT's window sits above
+# everything in the root viewport and would take the clicks.
+func _battle_100_in_its_own_viewport(save_name: String) -> Control:
+	GameData.current_save = PlayerSave.new_game(save_name, 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 600)
+	add_child_autofree(viewport)
+	var scene = BattleSceneRes.instantiate()
+	viewport.add_child(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	return scene
+
+
+# Picks the move on the first orb against the enemy in slot 2, the way the
+# player does: a click on the enemy, then a click on the orb.
+func _pick_the_first_move_on_the_enemy(scene: Control) -> void:
+	_click(scene.get_viewport(), scene._presenters[2].hit_area)
+	_click(scene.get_viewport(), scene.radial_menu.orbs[0])
+
+
+# The conductor tells the player their move failed only when the caster is
+# the player (frame_217/PlaceObject2_3389_480 enterFrame, lines 536-543).
+func test_a_stunned_player_is_told_in_the_combat_text_banner():
+	var scene = _battle_100_in_its_own_viewport("StunnedPlayer")
+	await wait_until(func(): return scene.decision_open, 5)
+	scene.units[BattleRunner.PLAYER_SLOT].stun = 1.0
+	_pick_the_first_move_on_the_enemy(scene)
+	await wait_until(func(): return scene.combat_text_banner.is_up(), 5)
+
+	assert_true(scene.combat_text_banner.is_up(), "the banner is up")
+	assert_eq(
+		scene.combat_text_banner.label.text,
+		"You failed to use your ability because you are stunned this round."
+	)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func test_a_stunned_enemy_leaves_the_combat_text_banner_down():
+	var scene = _battle_100_in_its_own_viewport("StunnedEnemy")
+	await wait_until(func(): return scene.decision_open, 5)
+	scene.units[2].stun = 1.0
+	var first_event: int = scene.runner.events.size()
+	_click(scene.get_viewport(), scene.get_node("BottomBar/PassButton"))
+	await wait_until(func(): return scene.decision_open, 5)
+
+	var enemy_stuns: Array = scene.runner.events.slice(first_event).filter(
+		func(event): return event["type"] == BattleRunner.EventType.STUNNED and int(event["caster_slot"]) == 2
+	)
+	assert_eq(enemy_stuns.size(), 1, "sanity: the enemy's move met its stun")
+	assert_false(scene.combat_text_banner.is_up(), "the banner stays down")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func _battle_100(save_name: String) -> Control:
+	GameData.current_save = PlayerSave.new_game(save_name, 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	return scene
+
+
+# The conductor writes the Focus message when the player's move fails for its
+# cost as it dispatches, and then the Health one if life is short too
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 477-488). The runner
+# already names Health when both are short.
+func test_a_players_move_that_fails_for_its_cost_names_the_cost_in_the_banner():
+	var scene = _battle_100("FailedPlayerMove")
+	var banner: CombatTextBanner = scene.combat_text_banner
+
+	await scene._play_events([
+		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 1, "reason": BattleRunner.FailReason.FOCUS},
+	])
+	assert_eq(banner.label.text, "You failed to use your ability because you don't have enough Focus.")
+	await scene._play_events([
+		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 1, "reason": BattleRunner.FailReason.HEALTH},
+	])
+	assert_eq(banner.label.text, "You failed to use your ability because you don't have enough Health.")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func test_an_enemys_or_companions_failed_move_leaves_the_banner_down():
+	var scene = _battle_100("FailedOtherMoves")
+	assert_eq(scene.units[3].origin, CombatUnit.Origin.COMPANION, "sanity: slot 3 holds a Companion")
+
+	await scene._play_events([
+		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 2, "reason": BattleRunner.FailReason.FOCUS},
+		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 3, "reason": BattleRunner.FailReason.HEALTH},
+	])
+	assert_false(scene.combat_text_banner.is_up(), "the banner stays down")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The Battle screen's banner with no battle started and its clock stopped, so
+# a test steps it through advance().
+func _banner_on_a_stopped_clock() -> CombatTextBanner:
+	ZoneManager.pending_battle = {}
+	var banner: CombatTextBanner = add_child_autofree(BattleSceneRes.instantiate()).combat_text_banner
+	banner.set_process(false)
+	return banner
+
+
+# Edit text 2849 is 12 px, black and centered, and Flash lays its line out 2 px
+# inside its bounds, which the inner clip places 372.5 px left of the banner's
+# origin and 7.8 px above it.
+func test_the_banners_text_takes_edit_text_2849s_rect_size_colour_and_alignment():
+	var label: Label = _banner_on_a_stopped_clock().label
+	assert_almost_eq(label.position, Vector2(-372.5, -7.8), Vector2(0.001, 0.001), "where the line starts")
+	assert_almost_eq(label.size.x, 744.95, 0.001, "how wide it is")
+	assert_eq(label.get_theme_font_size("font_size"), 12, "12 px")
+	assert_eq(label.get_theme_color("font_color"), Color.BLACK, "black")
+	assert_eq(label.horizontal_alignment, HORIZONTAL_ALIGNMENT_CENTER, "centered")
+
+
+# KrinCombatText sits at (400, 148.5) on the battle frame. Its GO frame places
+# the inner clip 10 px down and clear, by frame 12 it has slid up into place at
+# full alpha, frame 125 empties the text, and frame 136 has it back down and
+# clear (DefineSprite 2852 in dev/source_files/swf_xml/sonny-2-2900.xml).
+func test_the_banner_slides_and_fades_where_the_original_draws_it():
+	var banner := _banner_on_a_stopped_clock()
+	banner.show_text("You cannot use this move on that target.")
+	assert_almost_eq(banner.position, Vector2(400, 158.5), Vector2(0.001, 0.001), "the GO frame is 10 px down")
+	assert_eq(banner.modulate.a, 0.0, "and clear")
+
+	banner.advance(10.5 / 30.0)
+	assert_almost_eq(banner.position, Vector2(400, 148.5), Vector2(0.001, 0.001), "frame 12 is in place")
+	assert_eq(banner.modulate.a, 1.0, "at full alpha")
+
+	banner.advance(113.0 / 30.0)
+	assert_eq(banner.label.text, "", "frame 125 empties the text")
+	assert_true(banner.is_up(), "while the banner is still up")
+
+	banner.advance(11.0 / 30.0)
+	assert_almost_eq(banner.position, Vector2(400, 158.5), Vector2(0.001, 0.001), "frame 136 is 10 px down again")
+	assert_eq(banner.modulate.a, 0.0, "and clear")
+	banner.advance(1.0 / 30.0)
+	assert_false(banner.is_up(), "and then the clip stops on its empty frame 1")
+
+
+# The original's gotoAndPlay("GO") starts KrinCombatText over with the new
+# text, so a banner shown again late in its run stays up for a whole run more.
+func test_a_new_message_replaces_the_banners_text_and_starts_it_over():
+	var banner := _banner_on_a_stopped_clock()
+	banner.show_text("You cannot use this move on that target.")
+	banner.advance(100.5 / 30.0)
+	banner.show_text("This move is not ready yet.")
+	assert_eq(banner.label.text, "This move is not ready yet.", "the new message replaces the old")
+	banner.advance(100.0 / 30.0)
+	assert_true(banner.is_up(), "and is still up 200 frames after the first")
+
+
+# The original's click listener calls a bare play(), which leaves a
+# KrinCombatText that is already playing alone (frame_217/DoAction.as:19-26).
+func test_an_idle_only_message_changes_nothing_while_the_banner_is_up():
+	var banner := _banner_on_a_stopped_clock()
+	banner.show_text("You cannot use this move on that target.")
+	banner.advance(100.5 / 30.0)
+	banner.show_if_idle("You cannot move yet.")
+	assert_eq(banner.label.text, "You cannot use this move on that target.", "the message stays")
+	banner.advance(40.0 / 30.0)
+	assert_false(banner.is_up(), "and the banner ends when the first run does")
+
+	banner.show_if_idle("You cannot move yet.")
+	assert_eq(banner.label.text, "You cannot move yet.", "once it is down, the message shows")
+	assert_true(banner.is_up(), "and the banner is up")
 
 
 # A damage-over-time death has no impact to play at, so its DEATH event plays

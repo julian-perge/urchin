@@ -587,11 +587,11 @@ func test_hovering_a_dead_fighter_does_nothing():
 
 
 func test_floating_text_goes_on_the_float_layer_above_the_doll():
-	_presenter.float_text("STUNNED", Color.YELLOW)
+	_presenter.float_text("DISPEL", Color.CYAN)
 	var label: Label = _numbers()[-1]
 	assert_eq(label.get_parent(), _layer, "on the layer, so it draws over every fighter")
-	assert_eq(label.text, "STUNNED", "the text")
-	assert_eq(label.modulate, Color.YELLOW, "the color")
+	assert_eq(label.text, "DISPEL", "the text")
+	assert_eq(label.modulate, Color.CYAN, "the color")
 	assert_eq(label.position, HOME + FighterPresenter.FLOAT_OFFSET, "above the doll")
 
 

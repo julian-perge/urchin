@@ -30,6 +30,7 @@ Analysis and extraction tooling lives in `dev/urchin_dev/swf/`:
 - `extract/zone_hub.py` - regenerates the zone-hub backgrounds and the orb's arc shapes
 - `extract/store_art.py` - regenerates the per-shop keeper scenes
 - `extract/battle_screen.py` - regenerates the battle halls, skies, chrome and stance button art, plus `battle_layout.json`
+- `extract/combat_text.py` - regenerates the Combat text banner's band and `combat_text.json`
 - `export_swf_sources.py` - regenerates this directory
 
 JSON parsing across `dev/` goes through

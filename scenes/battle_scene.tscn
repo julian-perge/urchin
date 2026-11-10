@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_scene.gd" id="1_battle"]
 [ext_resource type="Texture2D" path="res://assets/ui/hotbar/background.png" id="2_hotbarbg"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" path="res://assets/ui/battle/battle_pbar_full.png" id="4_countdownring"]
 [ext_resource type="PackedScene" path="res://scenes/battle/combat_log_panel.tscn" id="5_combatlog"]
 [ext_resource type="PackedScene" path="res://scenes/battle/radial_menu.tscn" id="6_radial"]
+[ext_resource type="PackedScene" path="res://scenes/battle/combat_text_banner.tscn" id="7_banner"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pass_normal"]
 bg_color = Color(0.1, 0.1, 0.11, 1)
@@ -223,6 +224,11 @@ offset_bottom = 38.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_retreat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_retreat_hover")
 text = "x"
+
+; The battle frame places KrinCombatText at depth 630, above the orb ring at
+; 500 and below the speech box at 634, so it draws over the Radial menu here.
+[node name="CombatTextBanner" parent="." instance=ExtResource("7_banner")]
+layout_mode = 0
 
 [node name="UI" type="CanvasLayer" parent="."]
 

@@ -347,6 +347,25 @@ Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 2
   the fields at 1613-1614). In the converted JSON they are `ability_two`'s `23_secondary_element_type` and `24_required_buff_count`.
 - The AI never checks them: `checkBuffsOnUnit` is only called from the player's pick.
 
+## The Combat text banner (DefineSprite 2852 `KrinCombatText`)
+
+Ported: `CombatTextBanner` (`scripts/battle/combat_text_banner.gd`) plays it from `assets/ui/battle/combat_text.json`, which `extract_combat_text` writes, and `battle_scene.gd` shows the
+player's own failed moves in it.
+
+- Root frame 217 places it at depth 630, at (400, 148.5), above the orb ring at 500 and below the speech box at 634, with a red Glow filter (blur 10 by 5, strength 1) that turns its
+  translucent white band pink and haloes its text. Root frame 181 places the same clip at (400, 48.95) for the hub, which the port does not show yet.
+- Frame 1 runs `stop()` and shows nothing. `gotoAndPlay("GO")` jumps to frame 2, which copies `combatTexter` into the text field through `inner.combatText`
+  (`DefineSprite_2852/frame_2/DoAction.as`). Frames 2 to 12 slide the inner clip up from 10 px below its place and fade it in from 0 to full, frames 13 to 125 hold it, frame 125 empties the
+  text (`DefineSprite_2852/frame_125/DoAction.as`), and frames 126 to 136 slide it back down as it fades out. The clip then loops to frame 1 and stops, 4.5 s after the GO frame at 30 fps.
+- A pick with a Refusal (`frame_42/DoAction_11.as:125`) and the player's own failed move call `gotoAndPlay("GO")`, which starts the banner over with the new text. The click listener's
+  "You cannot move yet" calls a bare `play()` instead (`frame_217/DoAction.as:19-26`), which changes nothing while the clip is playing, because only frame 2 copies the text.
+- The conductor writes its failure strings only when `mCaster.playerID == Krin.playerNumber`: Focus and then Health, so Health wins when both fall short (lines 477-488), and the stun
+  (lines 538-542). AI units and Companions never show one.
+- The text field is edit text 2849, one line of 12 px black centered text in DefineFont3 65, the bold `_sans` Device font. Flash lays the line out 2 px inside the field's bounds, which the
+  inner clip places at (-374.5, -9.8), so the line starts at (-372.5, -7.8) and runs 744.95 px.
+- Not ported: the text's own share of the glow. A Label cannot blur one, and the outline other screens use in place of a glow reads far heavier than the faint halo around 12 px text, so the
+  port draws the text plain. The band's share is baked into its art.
+
 ## Turn order and queued heals (frame_217/DoAction_2.as, frame_42/DoAction_4.as and DoAction_11.as, the conductor)
 
 Ported: `BattleRunner._team_select` writes each unit's `team_adder` once per full turn, and `advance_half_turn` builds the queue and runs the AI in `team_adder` order. It also adds the

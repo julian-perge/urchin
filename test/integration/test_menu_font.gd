@@ -202,7 +202,7 @@ func test_tooltips_bold_the_title_and_keep_the_body_regular():
 
 # These nodes stand in for edit texts on root frame 217 (KRINBATTLESCENE). The
 # unit bars and the battle speech use font 295, the member bar's name uses the
-# pixel font 3307, and the buff counter uses font 65.
+# pixel font 3307, and the buff counter and the Combat text banner use font 65.
 func test_battle_text_keeps_the_original_fonts():
 	var overlay: UnitOverlay = add_child_autofree(load("res://scenes/battle/unit_overlay.tscn").instantiate())
 	_assert_fonts(overlay, {"NameLabel": [3395, 295], "HealthValue": [3398, 295]})
@@ -220,7 +220,7 @@ func test_battle_text_keeps_the_original_fonts():
 	var row = add_child_autofree(load("res://scenes/battle/stance_row.tscn").instantiate())
 	_assert_fonts(row, {"NameLabel": [3308, 3307]})
 	var battle = add_child_autofree(load("res://scenes/battle_scene.tscn").instantiate())
-	_assert_fonts(battle, {"UI/SpeechLabel": [3361, 295]})
+	_assert_fonts(battle, {"UI/SpeechLabel": [3361, 295], "CombatTextBanner/Label": [2849, 65]})
 
 
 # The class names are edit texts 2739, 2747 and 2756 at 19 px. The member

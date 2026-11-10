@@ -9,6 +9,8 @@
 # - click a unit on your turn: your bar's abilities fan out around it as
 #   orbs (RadialMenu); unusable ones (wrong target, focus, cooldown) are darkened;
 #   orb tooltips carry name/cost/description
+# - when your own move fails as it dispatches, the Combat text banner says why.
+#   An AI unit's or a Companion's failure shows nothing
 # - the bottom bar: companion stance buttons (agModeAr presets) on the
 #   left, the Pass ring in the center (light blue while waiting for your
 #   choice, gray during the fight loop) with the retreat X beside it
@@ -37,6 +39,15 @@ const SLOT_POSITIONS: Dictionary[Variant, Variant] = {
 	2: Vector2(637.9, 297.4),
 	4: Vector2(577.9, 371.0),
 	6: Vector2(577.9, 218.5),
+}
+
+# What the Combat text banner says when the player's own move fails as it
+# dispatches. The conductor writes these only when the caster is the player
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 477-488 and 538-542).
+const STUNNED_MESSAGE: String = "You failed to use your ability because you are stunned this round."
+const COST_FAILURE_MESSAGES: Dictionary[BattleRunner.FailReason, String] = {
+	BattleRunner.FailReason.FOCUS: "You failed to use your ability because you don't have enough Focus.",
+	BattleRunner.FailReason.HEALTH: "You failed to use your ability because you don't have enough Health.",
 }
 
 # 1.0 = normal pacing; 0.0 = instant (tests).
@@ -89,6 +100,7 @@ var _fade_tween: Tween = null  # the running _play_fade's tween, which the next 
 @onready var speech_label: Label = $UI/SpeechLabel
 @onready var _pass_ring: Control = $BottomBar/PassRing
 @onready var radial_menu: RadialMenu = $RadialMenu
+@onready var combat_text_banner: CombatTextBanner = $CombatTextBanner
 @onready var stance_host: Control = $BottomBar/StanceHost
 @onready var _countdown_label: Label = $BottomBar/Panel3/CountdownLabel
 @onready var _combat_log: CombatLogPanel = $CombatLogPanel
@@ -454,10 +466,12 @@ func _play_events(events: Array) -> void:
 			BattleRunner.EventType.MOVE:
 				await _play_move_event(event)
 			BattleRunner.EventType.STUNNED:
-				_presenters[int(event["caster_slot"])].float_text("STUNNED", Color.YELLOW)
+				if int(event["caster_slot"]) == BattleRunner.PLAYER_SLOT:
+					combat_text_banner.show_text(STUNNED_MESSAGE)
 				await _pause(0.3)
 			BattleRunner.EventType.MOVE_FAILED:
-				_presenters[int(event["caster_slot"])].float_text("NOT ENOUGH %s" % BattleRunner.FailReason.find_key(event["reason"]), Color.ORANGE)
+				if int(event["caster_slot"]) == BattleRunner.PLAYER_SLOT:
+					combat_text_banner.show_text(COST_FAILURE_MESSAGES[event["reason"]])
 				await _pause(0.3)
 			BattleRunner.EventType.DISPEL:
 				_presenters[int(event["target_slot"])].float_text("DISPEL", Color.CYAN)
