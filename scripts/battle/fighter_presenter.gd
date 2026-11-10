@@ -94,7 +94,10 @@ func show_result(result: MoveResult, move: Ability) -> void:
 			# play the bigger "critical" variant of the same color.
 			float_text(str(int(amount)), _damage_color(move), critical)
 			_die_or_flinch(result)
-			voice_cue.emit(_unit.voice_hit)
+			# The original plays the hit voice only when the target survives, and
+			# plays it on a stunned target too (frame_42/DoAction_8.as:104-131).
+			if not result.killed:
+				voice_cue.emit(_unit.voice_hit)
 		MoveResult.Kind.HEAL when result.direction == MoveResult.Direction.HARM:
 			# Under sswitch this heal hurt the target. The original draws its
 			# number in the Shadow color, plays the hit animation unless the
