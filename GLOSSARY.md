@@ -54,6 +54,14 @@ _Avoid_: Shield bubble, shield effect
 The node that owns one battle slot's on-screen state: its doll, bars, displayed health, hover ring, Floating numbers, Result flash, Shield clip, stun and death.
 _Avoid_: Unit view
 
+**Buff look**:
+What a doll shows from the buffs it holds: its color, its glow and its form. It is separate from the buff icons.
+_Avoid_: Buff visual, buff filter
+
+**Ground shadow**:
+The shadow under a doll. It is the original's `shadower` clip, and it hides when the unit dies.
+_Avoid_: Drop shadow
+
 **Stage**:
 The 800x575 area the original game draws on, which every position recorded from the SWF is measured in.
 _Avoid_: Viewport, canvas
