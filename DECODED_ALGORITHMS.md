@@ -5,7 +5,8 @@ timeline.
 
 ## krinMelee - the melee run/strike/runback (frame_42/DoAction_4.as)
 
-Implemented in `scripts/entities/character_visual.gd` (`play_melee`, `_animate_melee`).
+Implemented in `scripts/entities/character_visual.gd` (`play_melee`, `_animate_melee`). `FighterPresenter.melee` (`scripts/battle/fighter_presenter.gd`) gives the doll the target's
+rig position on every frame and the target's half-width.
 
 Constants (frame 42 globals):
 
@@ -14,7 +15,7 @@ Constants (frame 42 globals):
 | `krinBoltTime` | 60 | base step divisor: step = distance / 60 per frame |
 | `krinBodyMove` | 10 | melee movement multiplier on that step |
 | `krinMeleeAttackCD` | 15 | frames from strike start to impact (0.5 s) |
-| `krinMeleeAttackEndCD` | 15 | frames from impact to the runback goto (total 1.0 s) |
+| `krinMeleeAttackEndCD` | 15 | frames the end counter counts before the runback goto, the impact frame included, so the goto comes 14 frames after impact |
 
 Sequence:
 
@@ -30,13 +31,15 @@ Sequence:
    miss too (`frame_42/DoAction_4.as:80`); only the BOOM clip waits on `strikeSuccess`. The conductor (`frame_217/PlaceObject2_3389_480` enterFrame) resets `AttackEndCounter` to 0 when it sees
    the flag and dispatches the next action once the counter has run past `AttackEndCounterLimit = 25` (lines 112-138, with the limit set at line 7 of the same clip's `onClipEvent(load)`). That
    is 26 frames after impact, so the next action starts in the middle of the runback.
-3. **Runback.** 15 frames after impact (1.0 s after strike start - exactly the clip's own runback boundary for every label) the code forces `gotoAndPlay("runback")` (168-188, ends in
-   `gotoAndStop("stand")`) and reverses movement with an eased return: `spdXCoEFFER = min(1.45 * goRat, 1)` - fast leave, exponential settle home; position snaps to home once `relX` falls to
-   0.000001 or less. The settle has no fixed length (this note used to say ~18 frames): the same four cases as the dash simulation, with the zero half-width case taken at 300 px, put the
+3. **Runback.** 14 frames after impact the code forces `gotoAndPlay("runback")` (168-188, ends in `gotoAndStop("stand")`) and reverses movement with an eased return:
+   `spdXCoEFFER = min(1.45 * goRat, 1)` - fast leave, exponential settle home; position snaps to home once `relX` falls to 0.000001 or less. This note used to say 15 frames. The end counter
+   runs on the impact frame itself, because lines 87-95 come after the block that raises the flag, so its count of 15 ends 14 frames later. That is 29 frames after strike start, the frame on
+   which the last frame of `Attack_Upper` and of `Attack_Stab` jumps to `runback` by its own script (`DefineSprite_166_MODEL1/frame_107` and `frame_137`). `Attack` has no such script at
+   frame 167 and would reach `runback` through `attack2` one frame later. The movement runs in the fighter clip's own `onEnterFrame` while `inner` plays the labels (lines 67-135), so a hit, a
+   stun or a death on the doll during the runback doesn't stop it sliding home. The settle has no fixed length (this note used to say ~18 frames): the same four cases as the dash simulation, with the zero half-width case taken at 300 px, put the
    doll within 1 px of home after 4 to 22 frames of runback, and snap it home after 15 to 72.
 
-Attack label selection: each move's `addNewMove` param 12 (`Ability.animation_label`). Shock moves play "cast" instead (param 12 is unused for them); `play_strike()` exists for in-place strikes but is
-not used by Shock.
+Attack label selection: each move's `addNewMove` param 12 (`Ability.animation_label`). Shock moves play "cast" instead (param 12 is unused for them).
 
 ## krinBoltMake - the missile projectile (frame_42/DoAction_4.as, ~line 137)
 
@@ -273,6 +276,19 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
 - The STUN checks for the `hit` label read the target as the hit lands, before the move's own status effect, so `MoveResult.target_stunned` is read then too. Shatter Bolt's stun comes
   after its own hit. The stun pose changes in the recompute after the strike (`frame_42/DoAction_10.as:468-481`), so `MoveResult.stun_after` is read after that recompute, with the life.
 
+## A death (MODEL1's `dead` label and LifeBarSmoother, DefineSprite 57)
+
+Ported: `CharacterVisual._play_death` and `FighterPresenter.die`. Frame counts below start at the death, which is the Impact that kills or the Buff tick that kills.
+
+- The doll plays MODEL1's `dead` label, frames 313 to 371 (`frame_42/DoAction_8.as:104-107` and 208-211 for a move, `frame_42/DoAction_10.as:113` for a Buff tick). Frames 313 to 360 draw at
+  full alpha. On 361 to 371 the label's own colour transforms fade every part from 233/256 to 0, and frame 371's script removes the doll before that frame is drawn
+  (`DefineSprite_166_MODEL1/frame_371/DoAction.as`), 58 frames after the death. Frame 360 hides the player clip's `shadower`, which the port has no counterpart for.
+- `lifeBarUpdate` plays the death voice and attaches LifeBarSmoother to the unit's bar with `deadNow` set (`frame_42/DoAction_8.as:345-347`). The clip's frame 18, 17 frames after the
+  death, removes the buff icons `bshr0` to `bshr9` and sends the bar's `inner` clip (DefineSprite 3407, the name and the life and focus numbers) to its empty `third` frame. From the next
+  frame, its frame 38 takes 5 off the whole bar's `_alpha` every frame, so the bar is at 0 on frame 37 and hidden on frame 38.
+- `lifeBarUpdate` does none of that when the bar's rounded percent hasn't changed (295-298), so a unit killed from under 0.5% life dies with no voice and no fade. ADR 0005 counts that as
+  an Original bug, and the port plays both on every death.
+
 ## Unit stats below level 10 (frame_42/DoAction_14.as `krinAddNewUnit`)
 
 Implemented in `scripts/battle/combat_unit.gd` (`from_character`).
@@ -429,7 +445,7 @@ Three Heroic cases, read from the code but not run, and not ported, since the po
 
 ## Heroic decision timer (frame_217/DoAction.as, the conductor)
 
-Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / 30.0` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
+Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / BattleScreenClip.fps()` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
 and on Heroic once a half-turn ends with the player's unit dead, it waits for the player and hides the countdown label.
 
 - `BattleTime = BattleTimeLimit = 120` (`frame_217/DoAction.as:1-3`). The conductor adds 1 to `BattleTimeNow` once per frame, and only while `turnBasedKrin` is false and the player's team is
@@ -447,7 +463,7 @@ and on Heroic once a half-turn ends with the player's unit dead, it waits for th
 ## Battle speeches (frame_217/PlaceObject2_3389_480 enterFrame, lines 794-870)
 
 Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with `BattleRunner.NARRATOR_NAME` for slot 0, and makes the endGame check after each batch.
-`battle_scene.gd` waits `START_WAIT_SECONDS` before the opening lines, `_play_speech` shows each line for its `timeToSay` seconds, and `_input` handles Space through
+`battle_scene.gd` waits `START_WAIT_FRAMES` before the opening lines, `_play_speech` shows each line for its `timeToSay` seconds, and `_input` handles Space through
 `BattleRunner.hard_skip` and `AudioManager.stop_effects`. The port shows a plain label, without the box's placement or fade.
 
 - Each battle record's `speeches` entries carry `player`, `phase`, `turnTime`, `turnTime2`, `say`, `timeToSay` and sometimes `voiceOver` (`frame_42/DoAction_14.as`, 149 lines in 50
@@ -566,12 +582,12 @@ Everything below still stands in for original behavior, except the rows marked D
 
 | Piece | Current stand-in | Original truth lives in |
 |---|---|---|
-| Camera zoom + shake | none | `GridZoomer` "KrinZoomGo" (zoom to target center * `-zoomRatioNEW` + 400/300; pause 2xCD melee / 5 missile / 1 shock), `GridShaker` (shock + crits) |
+| Camera zoom + shake | **DONE (2026-11-10)** for every move's zoom and a Shock's shake: `BattleScreenClip` (`scripts/battle/battle_screen_clip.gd`) runs both clips' frame scripts from `assets/ui/battle/battle_screen_motion.json`. A crit's shake is [#174](https://github.com/julian-perge/urchin/issues/174) | `GridZoomer` "KrinZoomGo" (zoom to target center * `-zoomRatioNEW`, or -0.3 for a Shock, + 400/300; pause 2xCD melee / 5 missile / 1 shock), `GridShaker` (shock + crits) |
 | Target hit flash | HIT recoil label only | `BATTLEFLASH` with `characterColorState/FilterState`: `frame_42/DoAction_8.as` ~line 199 |
 | Damage number art | Labels with exact colors + bigger crit font | NumberFixer/NumberSetter digit clips, miss/shield variants: `frame_42/DoAction_7.as` |
 | Top battle HP/focus bars | in-field bars with numbers | `lifeBarUpdate` + bar clips, layout in frame 217 placements |
 | Doll ground shadow | none | player clip "shadower" (hidden on death, MODEL1 frame 360 script) |
-| Melee end point | fixed 55 px short | target/shooter half-widths: `krinMelee` endPoint |
+| Melee end point | **DONE (2026-11-10)**: `CharacterVisual.play_melee` stops the caster at the target's x less both half-widths, measured from the dolls' drawn bounds as the swing starts, and steps toward the target's live position on the original's dash and Runback steps. The part PNGs carry their filters' glow and Flash's bounds don't, so a half-width can come out a few px wider than the original's | target/shooter half-widths: `krinMelee` endPoint |
 | Swing whoosh | impact sound only | `sfx_swing` cues baked at MODEL1 clip frames 88/118/146 |
 | Stun/cast animations | **DONE (2026-07-21)**: the port plays the real labels (see the stun family section above), no longer a code-driven slump/raise | labels `cast` 189-219, `stun` 220-239 -> `stun2` 240-279 loop (frame 279 goto), `outofstun` 280-295 -> stand |
 | Hover ring / radial menu / pass ring | modern inventions (kept by design) | original UX: `KrinSelector` clips + `KrinToolTipper` tooltip system |

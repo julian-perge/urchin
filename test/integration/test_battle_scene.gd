@@ -994,7 +994,6 @@ func test_heal_that_kills_an_sswitch_target_plays_the_death():
 
 	var presenter: FighterPresenter = scene._presenters[target_slot]
 	assert_eq(presenter.get_node("Doll")._state, CharacterVisual.State.DEAD, "the heal killed the target, so its doll plays the death")
-	assert_false(presenter.get_node("Overlay").visible, "its overlay is hidden with it")
 	assert_eq(presenter.displayed_hp, 0.0, "the bar drops to empty")
 	assert_eq(
 		scene._combat_log._log_text.text,
@@ -1085,7 +1084,7 @@ func test_heroic_decision_passes_the_turn_when_the_window_runs_out():
 	var player_events: Array = scene.runner.events.slice(first_event).filter(
 		func(event): return event["turn"] == turn and int(event.get("caster_slot", 0)) == BattleRunner.PLAYER_SLOT
 	)
-	assert_eq(player_events, [], "the player passed")
+	assert_eq(player_events.map(func(event): return event["type"]), [BattleRunner.EventType.PASSED], "the player passed")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1751,6 +1750,273 @@ func test_the_end_of_a_half_turn_snaps_every_fighter_to_its_unit():
 	ZoneManager.auto_start_battles = true
 
 
+# Battle 100 at the player's first Decision, with the scene's processing
+# stopped and animation_speed back at 1, so the test steps the battle's frames
+# itself through _step_frame().
+func _battle_100_on_a_stepped_clock(save_name: String) -> Control:
+	var scene = _battle_100(save_name)
+	await wait_until(func(): return scene.decision_open, 5)
+	scene.process_mode = Node.PROCESS_MODE_DISABLED
+	scene.animation_speed = 1.0
+	return scene
+
+
+# One SWF frame of a battle on a stepped clock. The scene runs first, as the
+# engine runs a parent before its children, and then every doll and bolt that
+# was on the battlefield when the frame began.
+func _step_frame(scene: Control) -> void:
+	var movers: Array = scene.battlefield.find_children("*", "", true, false).filter(
+		func(node): return node is CharacterVisual or node is Projectile
+	)
+	scene._process(SWF_FRAME_SECONDS)
+	for mover in movers:
+		if is_instance_valid(mover) and not mover.is_queued_for_deletion():
+			mover._process(SWF_FRAME_SECONDS)
+
+
+func _damage_event(caster_slot: int, target_slot: int, move: Ability, amount: float) -> Dictionary:
+	return {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": caster_slot, "target_slot": target_slot,
+		"move_id": move.id, "result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, amount),
+	}
+
+
+func _first_move_of_type(animation_type: String) -> Ability:
+	return MoveManagerAuto.moves_by_id.values().filter(func(move): return move.attack_animation_type == animation_type)[0]
+
+
+# Starts playing `events` on a battle on a stepped clock and steps it until
+# every text in `wanted` has floated over a fighter. Returns the frame each
+# floating text first showed on, by its text, where frame 0 is the one the
+# events start on.
+func _frames_texts_float(scene: Control, events: Array, wanted: Array) -> Dictionary:
+	var shown: Dictionary = {}
+	scene._play_events(events)  # Nothing awaits this, because the test steps the frames.
+	for frame in 300:
+		for label in _float_labels(scene):
+			if not shown.has(label.text):
+				shown[label.text] = frame
+		if wanted.all(func(text): return shown.has(text)):
+			break
+		_step_frame(scene)
+	return shown
+
+
+# The conductor restarts its AttackEndCounter at every Impact and dispatches the
+# next action once the counter runs past AttackEndCounterLimit = 25, which is 26
+# frames after the Impact whatever the move's type (frame_217/PlaceObject2_3389_480
+# enterFrame, lines 12-15 and 112-138). A Shock lands on the frame it dispatches
+# on, so its number shows the next Dispatch.
+func test_the_next_action_dispatches_26_frames_after_each_kind_of_impact():
+	var scene = await _battle_100_on_a_stepped_clock("ImpactToDispatch")
+	var shock: Ability = _first_move_of_type("Shock")
+	var kinds: Array = ["Melee", "Shock", "Missile"]
+	for index in kinds.size():
+		var kind: String = kinds[index]
+		var first: String = str(11 + 10 * index)
+		var second: String = str(12 + 10 * index)
+		var shown: Dictionary = _frames_texts_float(scene, [
+			_damage_event(BattleRunner.PLAYER_SLOT, 2, _first_move_of_type(kind), float(first)),
+			_damage_event(3, 2, shock, float(second)),
+		], [first, second])
+		assert_true(shown.has(first) and shown.has(second), "sanity: both %s's number and the next move's show" % kind)
+		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26, "the next action dispatches 26 frames after a %s's Impact" % kind)
+		for frame in 120:
+			_step_frame(scene)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A melee caster starts its Runback 14 frames after Impact and the next action
+# dispatches 26 frames after it, so the original starts the next action while
+# the caster is still running home.
+func test_a_melee_caster_is_still_in_its_runback_when_the_next_action_dispatches():
+	var scene = await _battle_100_on_a_stepped_clock("RunbackAtDispatch")
+	var doll: CharacterVisual = scene._presenters[BattleRunner.PLAYER_SLOT].get_node("Doll")
+	var home: Vector2 = doll.position
+	var shown: Dictionary = _frames_texts_float(scene, [
+		_damage_event(BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Melee"), 11.0),
+		_damage_event(3, 2, _first_move_of_type("Shock"), 12.0),
+	], ["11", "12"])
+	assert_true(shown.has("12"), "sanity: the next action dispatched")
+	var at_dispatch: Vector2 = doll.position
+	assert_gt(at_dispatch.x, home.x, "the caster isn't home when the next action dispatches")
+	_step_frame(scene)
+	assert_lt(doll.position.x, at_dispatch.x, "and is still running home")
+	for frame in 120:
+		_step_frame(scene)
+	assert_eq(doll.position, home, "until it gets there")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A missed bolt flies on past its target and raises the impact flag again on
+# every frame until it is more than 500 px from the battle screen's center
+# (frame_42/DoAction_4.as:188-205). Each raise starts the conductor's count
+# again, so the next action dispatches 26 frames after the bolt is gone.
+func test_the_next_action_dispatches_26_frames_after_a_missed_bolt_is_gone():
+	var scene = await _battle_100_on_a_stepped_clock("MissedBolt")
+	var miss: Dictionary = _damage_event(BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Missile"), 0.0)
+	miss["result"] = _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0)
+	# Nothing awaits this, because the test steps the frames.
+	scene._play_events([miss, _damage_event(3, 2, _first_move_of_type("Shock"), 12.0)])
+	var bolt: Projectile = scene.battlefield.get_children().filter(func(child): return child is Projectile)[0]
+	var frames: Dictionary = {}
+	for frame in 300:
+		if bolt.is_queued_for_deletion() and not frames.has("gone"):
+			frames["gone"] = frame
+		for label in _float_labels(scene):
+			if not frames.has(label.text):
+				frames[label.text] = frame
+		if frames.has("12"):
+			break
+		_step_frame(scene)
+	assert_true(frames.has("MISS") and frames.has("gone"), "sanity: the bolt missed and then left")
+	assert_lt(frames.get("MISS", -1), frames.get("gone", -1), "sanity: it missed before it left")
+	assert_eq(frames.get("12", -1) - frames.get("gone", -1), 26, "the next action dispatches 26 frames after the bolt is gone")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A caster that is stunned or can't pay for its move ticks its buffs on its
+# Dispatch frame, and when the tick does nothing the next action dispatches on
+# the frame after (frame_217/PlaceObject2_3389_480 enterFrame, lines 511-530
+# and 565-584).
+func test_a_stunned_caster_or_a_failed_cost_holds_the_next_action_1_frame():
+	var scene = await _battle_100_on_a_stepped_clock("StoppedCasterFrames")
+	var shock: Ability = _first_move_of_type("Shock")
+	var stopped_actions: Array = [
+		{"type": BattleRunner.EventType.STUNNED, "caster_slot": 3},
+		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 3, "move_id": shock.id, "reason": BattleRunner.FailReason.FOCUS},
+	]
+	for index in stopped_actions.size():
+		var first: String = str(11 + 10 * index)
+		var second: String = str(12 + 10 * index)
+		var shown: Dictionary = _frames_texts_float(scene, [
+			_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, float(first)),
+			stopped_actions[index],
+			_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, float(second)),
+		], [first, second])
+		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26 + 1,
+			"%s dispatches 26 frames after the Impact, and the next action 1 frame after it" % BattleRunner.EventType.find_key(stopped_actions[index]["type"]))
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A pass takes the path a stun takes in the conductor. It ticks the caster's
+# buffs on its Dispatch frame, and the next action dispatches on the frame
+# after, both when the tick does nothing and when it kills the caster
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 557-584).
+func test_a_pass_holds_the_next_action_1_frame_whether_or_not_its_buff_tick_kills():
+	var scene = await _battle_100_on_a_stepped_clock("PassFrames")
+	var shock: Ability = _first_move_of_type("Shock")
+	var passes: Array = [
+		[{"type": BattleRunner.EventType.PASSED, "caster_slot": 3}],
+		[
+			{"type": BattleRunner.EventType.PASSED, "caster_slot": 3},
+			{"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME},
+		],
+	]
+	for index in passes.size():
+		var first: String = str(11 + 10 * index)
+		var second: String = str(12 + 10 * index)
+		var events: Array = [_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, float(first))]
+		events.append_array(passes[index])
+		events.append(_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, float(second)))
+		var shown: Dictionary = _frames_texts_float(scene, events, [first, second])
+		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26 + 1,
+			"the pass dispatches 26 frames after the Impact, and the next action 1 frame after it, %s" % [
+				"with a tick that kills" if index == 1 else "with a tick that does nothing",
+			])
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The conductor ends a Half-turn on the frame its last action's count runs out.
+# On the next frame the AI picks its moves at once, and on the frame after that
+# the first of them dispatches (frame_217/PlaceObject2_3389_480 enterFrame,
+# lines 139-312 and 589-792). Here the player passes and Veradux is off AI, so
+# both of them pass, and each pass holds the next action 1 frame (lines
+# 557-584). The guard's only move is a Shock, which lands on the frame it
+# dispatches on.
+func test_an_ai_half_turn_dispatches_2_frames_after_the_last_half_turn_ends():
+	var scene = await _battle_100_on_a_stepped_clock("AiHalfTurnStart")
+	var shock: Ability = MoveManagerAuto.moves_by_id.values().filter(func(move):
+		return move.attack_animation_type == "Shock" and move.can_target_others and not move.targets_allies and move.focus_cost == 0
+	)[0]
+	var guard: CombatUnit = scene.units[2]
+	guard.move_pool_absolute = [{"id": shock.id, "phase": 0}]
+	guard.cooldowns_absolute = [0]
+	scene.units[3].ai_enabled = false
+	scene._on_pass_pressed()
+	await wait_process_frames(1)  # The turn loop takes the pass on the next frame.
+	assert_eq(scene.runner.team_move_now, 2, "sanity: the guard's Half-turn is next")
+	var numbers: int = _float_labels(scene).size()
+	var frames: int = 0
+	while _float_labels(scene).size() == numbers and frames < 60:
+		_step_frame(scene)
+		frames += 1
+	assert_eq(frames, 2 + 2, "the guard's move dispatches 2 frames after the two passes end the player's Half-turn")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The caster's Buff tick comes due 25 frames after its Impact. A tick that did
+# something, as one that kills its caster has, raises the impact flag again, so
+# the next action dispatches 26 frames after the tick, 51 after the Impact
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 116-127).
+func test_a_buff_tick_that_kills_its_caster_holds_the_next_action_to_frame_51():
+	var scene = await _battle_100_on_a_stepped_clock("TickDeathFrames")
+	var shock: Ability = _first_move_of_type("Shock")
+	var caster: FighterPresenter = scene._presenters[3]
+	# Nothing awaits this, because the test steps the frames.
+	scene._play_events([
+		_damage_event(3, 2, shock, 11.0),
+		{"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME},
+		_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, 12.0),
+	])
+	var frames: Dictionary = {}
+	for frame in 300:
+		if caster.displayed_hp == 0.0 and not frames.has("death"):
+			frames["death"] = frame
+		for label in _float_labels(scene):
+			if not frames.has(label.text):
+				frames[label.text] = frame
+		if frames.has("12"):
+			break
+		_step_frame(scene)
+	assert_eq(frames.get("death", -1) - frames.get("11", -1), 25, "the tick kills its caster 25 frames after the Impact")
+	assert_eq(frames.get("12", -1) - frames.get("11", -1), 51, "and the next action dispatches 26 frames after the tick")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A caster its own move killed has no Buff tick at frame 25, and the conductor
+# dispatches the next action on that frame instead (frame_217/PlaceObject2_3389_480
+# enterFrame, lines 116-137).
+func test_a_caster_its_own_move_killed_holds_the_next_action_25_frames():
+	var scene = await _battle_100_on_a_stepped_clock("SelfKillFrames")
+	var shock: Ability = _first_move_of_type("Shock")
+	var kills_its_caster: Dictionary = _damage_event(3, 3, shock, 11.0)
+	kills_its_caster["result"].killed = true
+	var shown: Dictionary = _frames_texts_float(scene, [
+		kills_its_caster,
+		{"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.MOVE},
+		_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, 12.0),
+	], ["11", "12"])
+	assert_eq(shown.get("12", -1) - shown.get("11", -1), 25, "the next action dispatches on frame 25")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func test_a_hit_number_takes_its_moves_element_color():
 	GameData.current_save = PlayerSave.new_game("HitColor", 0)
 	ZoneManager.auto_start_battles = false
@@ -1773,8 +2039,9 @@ func test_a_hit_number_takes_its_moves_element_color():
 	ZoneManager.auto_start_battles = true
 
 
-# The tests' instant mode lands the blow at once. At full speed the blow waits
-# for the swing, which goes to the target with the move's own attack label.
+# In the tests' instant mode a Melee move reaches Impact at once. At full speed
+# Impact waits for the swing, which goes to the target with the move's own
+# attack label.
 func test_a_melee_move_swings_at_its_target_with_its_own_label():
 	GameData.current_save = PlayerSave.new_game("MeleeWiring", 0)
 	ZoneManager.auto_start_battles = false
@@ -1792,15 +2059,20 @@ func test_a_melee_move_swings_at_its_target_with_its_own_label():
 	}
 	var impacts: int = _count_impact_effects(scene)
 
-	scene._play_move_event(event)  # not awaited, because instant mode doesn't suspend
-	assert_eq(_count_impact_effects(scene), impacts + 1, "instant mode lands the blow at once")
+	scene._play_move_event(event)  # Nothing awaits this, because instant mode doesn't suspend.
+	assert_eq(_count_impact_effects(scene), impacts + 1, "instant mode reaches Impact at once")
 
 	scene.animation_speed = 1.0
-	scene._play_move_event(event)  # not awaited, because this swing never ends
-	assert_eq(_count_impact_effects(scene), impacts + 1, "at full speed the blow waits for the swing")
+	scene._play_move_event(event)  # Nothing awaits this, because the test steps the swing.
+	assert_eq(_count_impact_effects(scene), impacts + 1, "at full speed Impact waits for the swing")
 	var doll: CharacterVisual = scene._presenters[1].get_node("Doll")
 	assert_eq(doll._attack_label, move.animation_label, "the move's own swing")
-	assert_eq(doll._melee_offset, scene._melee_offset(1, 2), "run to the target")
+	for frame in 60:
+		if _count_impact_effects(scene) > impacts + 1:
+			break
+		doll._process(1.0 / 30.0)
+	var guard: CharacterVisual = scene._presenters[2].get_node("Doll")
+	assert_between(guard.position.x - doll.position.x, 0.0, 120.0, "Impact comes just short of the target")
 
 	scene.animation_speed = 0.0
 	GameData.current_save = null
@@ -1942,6 +2214,56 @@ func test_melee_miss_does_not_spawn_an_impact_effect():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# Plays one move by the player on battle 100's enemy and returns every effect
+# that starts while it plays, voices included, in the order they start.
+func _effects_heard_during(move: Ability, result: MoveResult) -> Array:
+	GameData.current_save = PlayerSave.new_game("MoveSounds", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var heard: Array = []
+	var listen: Callable = func(cue: String): heard.append(cue)
+	AudioManagerAuto.effect_played.connect(listen)
+	await scene._play_move_event({
+		"type": BattleRunner.EventType.MOVE, "caster_slot": BattleRunner.PLAYER_SLOT, "target_slot": 2,
+		"move_id": move.id, "result": result,
+	})
+	AudioManagerAuto.effect_played.disconnect(listen)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+	return heard
+
+
+# The original plays a move's own sound only when the move lands (the conductor,
+# lines 19-21). A miss plays missToMake instead (lines 105-108), which a Melee
+# move sets to undefined on purpose (line 407), and addSound plays nothing for
+# undefined (frame_42/DoAction.as:7).
+func test_a_melee_miss_is_silent():
+	var move: Ability = MoveManagerAuto.get_move(1)  # Move 1 is Leading Strike, a Melee move.
+	var heard: Array = await _effects_heard_during(move, _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0))
+	assert_eq(heard, [], "neither the move's sound nor sfx_magicmiss")
+
+
+# A Missile sets missToMake to sfx_magicmiss (the conductor, line 415). Its
+# sfx_cast plays at Dispatch either way (line 414).
+func test_a_missile_miss_plays_only_the_miss_sound():
+	var move: Ability = MoveManagerAuto.get_move(5)  # Move 5 is Nuke, a Missile.
+	var heard: Array = await _effects_heard_during(move, _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0))
+	assert_eq(heard, ["sfx_cast", "sfx_magicmiss"])
+
+
+func test_a_hit_plays_the_moves_own_sound():
+	for id in [1, 5]:  # Moves 1 and 5 are Leading Strike, a Melee move, and Nuke, a Missile.
+		var move: Ability = MoveManagerAuto.get_move(id)
+		var heard: Array = await _effects_heard_during(move, _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0))
+		assert_has(heard, move.sound_effect_name, "a %s hit plays its sound" % move.attack_animation_type)
+		assert_does_not_have(heard, "sfx_magicmiss", "and not the miss sound")
 
 
 func test_missile_fire_spawns_a_bolt_and_its_impact_on_arrival():
@@ -2123,5 +2445,195 @@ func test_a_click_while_the_deciding_half_turn_plays_leaves_the_banner_down():
 
 	scene.animation_speed = 0.0
 	await wait_for_signal(scene.battle_finished, 5)
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Battle 100 at animation_speed 0, so nothing but the test moves its hall and
+# fighters. The player is in slot 1 and the Prison Guard in slot 2.
+func _battle_100_for_the_camera(graphics: bool) -> Control:
+	var save: PlayerSave = PlayerSave.new_game("Camera", 0)
+	save.graphics = graphics
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	return scene
+
+
+# Plays the player's move `move_id` on the Prison Guard, then steps the
+# BATTLESCREEN clip one SWF frame at a time and returns, for each frame, the
+# transform the player sees the fighters through.
+func _screen_after_dispatch(scene: Control, move_id: int, frames: int) -> Array[Transform2D]:
+	await scene._play_move_event({
+		"type": BattleRunner.EventType.MOVE, "caster_slot": BattleRunner.PLAYER_SLOT, "target_slot": 2,
+		"move_id": move_id, "result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0),
+	})
+	var seen: Array[Transform2D] = []
+	for frame in frames:
+		scene.battle_screen_clip.advance_frame()
+		seen.append(scene.battlefield.get_global_transform())
+	return seen
+
+
+# GridZoomer, DefineSprite 3419, steps on the frame after its KrinZoomPlay label
+# with zoomPoint counting down from zoomTime, 9, and each step moves the screen
+# zoomPoint / zoomFactor, 70ths, of the way to the point the conductor gave it,
+# so it gets 45/70 of the way there. Its scale grows by scaleChange, 30%, times
+# the same share. After the last step in it holds for _root.zoomPause frames,
+# then steps back out the same way and snaps back to where BATTLESCREEN rests
+# (frame_217/PlaceObject2_3419_332 onClipEvent(load), and DefineSprite_3419's
+# frames 2, 4 and 6). Its first step comes on the second frame after Dispatch,
+# because Dispatch sends it to KrinZoomGo, frame 2, and its step is on frame 4.
+const ZOOM_IN_SEVENTIETHS: Array = [9, 17, 24, 30, 35, 39, 42, 44, 45]
+const ZOOM_OUT_SEVENTIETHS: Array = [36, 28, 21, 15, 10, 6, 3, 1, 0]
+
+
+# Each frame's scale for a zoom that holds for `hold` frames, from the frame
+# after Dispatch to two frames after the zoom is back at rest.
+func _zoom_scales(hold: int) -> Array:
+	var seventieths: Array = [0] + ZOOM_IN_SEVENTIETHS
+	for frame in hold:
+		seventieths.append(45)
+	seventieths.append_array(ZOOM_OUT_SEVENTIETHS + [0, 0])
+	return seventieths.map(func(share): return 1.0 + 0.3 * share / 70.0)
+
+
+# The conductor aims the zoom at the target's rig: its x plus half its width and
+# its y plus half its height, measured from where BATTLESCREEN rests. Each move
+# type's zoom sets zoomPointX to that x times the type's factor, plus its
+# center's x, sets zoomPointY the same way, and holds for the type's hold.
+# battle_screen_motion.json has those from the conductor, lines 419-428 and
+# 455-462, and from krinMelee in frame_42/DoAction_4.as:58-65. GridZoomer grows
+# the scale by 30% of the share, so a Shock's factor of -0.3 grows the screen
+# around that point, which stays put but for 3.5 px down at the peak, since the
+# conductor aims at y 300 and BATTLESCREEN rests at 294.5. A factor of -0.4 also
+# pulls it 6.4% of the way toward where BATTLESCREEN rests. A Shock also shakes
+# the screen, which puts it 0.8 px lower on the peak's first frame. Flash drops
+# a fraction of a twip on each step of either, up to 0.45 px over the zoom's 9
+# steps in and 0.15 px over the shake.
+func test_each_move_type_zooms_toward_its_target_for_9_frames_its_hold_and_9_more():
+	var moves: Dictionary = {
+		14: {"type": "Shock", "shaken": SHAKE_OFFSETS[9]},  # Move 14 is Death Sentence.
+		5: {"type": "Missile", "shaken": 0.0},  # Move 5 is Nuke.
+		1: {"type": "Melee", "shaken": 0.0},  # Move 1 is Leading Strike.
+	}
+	for move_id in moves:
+		var expected: Dictionary = moves[move_id]
+		var zoom: Dictionary = BattleScreenClip.motion()["zooms"][expected["type"]]
+		assert_eq(MoveManagerAuto.get_move(move_id).attack_animation_type, expected["type"], "sanity: move %d" % move_id)
+		var scene: Control = _battle_100_for_the_camera(true)
+		var target: FighterPresenter = scene._presenters[2]
+		var anchor: Vector2 = target.rig_position() + target.rig_size() / 2.0
+		var scales: Array = _zoom_scales(int(zoom["hold"]))
+		var seen: Array[Transform2D] = await _screen_after_dispatch(scene, move_id, scales.size())
+		for frame in scales.size():
+			assert_almost_eq(seen[frame].get_scale().x, scales[frame], 0.00001, "%s frame %d" % [expected["type"], frame + 1])
+		assert_eq(seen[-1], Transform2D.IDENTITY, "a %s's zoom ends back at rest" % expected["type"])
+		var at_peak: Vector2 = seen[ZOOM_IN_SEVENTIETHS.size()] * anchor
+		var share: float = 45.0 / 70.0
+		var rest: Vector2 = scene.battle_screen_clip.rest
+		var center := Vector2(float(zoom["center"]["x"]), float(zoom["center"]["y"]))
+		var pulled: Vector2 = share * (0.3 + float(zoom["factor"])) * (anchor - rest)
+		var aimed: Vector2 = share * (center - rest) + Vector2(0, expected["shaken"])
+		assert_almost_eq(at_peak, anchor + aimed + pulled, Vector2(0.6, 0.6),
+			"a %s zooms toward the Prison Guard" % expected["type"])
+		GameData.current_save = null
+		ZoneManager.auto_start_battles = true
+
+
+# GridShaker, DefineSprite 3420, plays from the stop on its frame 1. Its frame 2
+# moves _y down by half of shakeValue, 8. Then a frame moves it up by
+# shakeValue and the next down by it, each taking shakeMinus, 0.8, off it,
+# until shakeValue runs out, and the last adds back the 0.9 px that Flash drops
+# along the way (frame_217/PlaceObject2_3420_330 onClipEvent(load), and
+# DefineSprite_3420's frames 2, 4 and 5). This is how far that puts the screen
+# below where it would be on each frame after Dispatch.
+const SHAKE_OFFSETS: Array = [4.0, 4.0, -4.0, 3.2, -3.2, 2.4, -2.4, 1.6, -1.6, 0.8, -0.8, 0.0, 0.0, 0.0, 0.0]
+# An id no move in the game has, for a copy of a move that a test changes.
+const TEST_MOVE_ID: int = 99999
+
+
+# The conductor plays GridShaker with a Shock whose speed modifier, mAry1[9],
+# is 0 or more (line 464), which is every Shock in the game. A copy of the same
+# Shock with a speed modifier below 0 gives the zoom without the shake. Both
+# drop fractions of a twip from _y on each step, so they can drift up to three
+# twips, 0.15 px, apart over the shake, which a simulation of the two clips at
+# 40,000 target heights measured.
+func test_a_shock_with_a_speed_modifier_of_0_or_more_shakes_the_screen():
+	var shock: Ability = MoveManagerAuto.get_move(14)  # Move 14 is Death Sentence.
+	assert_eq(shock.combat_speed_modifier, 1.0, "sanity: Death Sentence's speed modifier")
+	var unshaken: Ability = shock.duplicate()
+	unshaken.id = TEST_MOVE_ID
+	unshaken.combat_speed_modifier = -1.0
+	MoveManagerAuto.moves_by_id[unshaken.id] = unshaken
+	var shaken: Array[Transform2D] = await _screen_after_dispatch(_battle_100_for_the_camera(true), shock.id, SHAKE_OFFSETS.size())
+	var still: Array[Transform2D] = await _screen_after_dispatch(_battle_100_for_the_camera(true), unshaken.id, SHAKE_OFFSETS.size())
+	MoveManagerAuto.moves_by_id.erase(unshaken.id)
+	for frame in SHAKE_OFFSETS.size():
+		assert_almost_eq(shaken[frame].origin.y - still[frame].origin.y, SHAKE_OFFSETS[frame], 0.16, "frame %d" % (frame + 1))
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The conductor zooms toward a Missile's target only when the Missile hits one
+# target, mAry2[20] (line 419). No move in the game hits every enemy, so this
+# plays a copy of Nuke that does.
+func test_a_missile_that_hits_every_enemy_does_not_zoom():
+	var every_enemy: Ability = MoveManagerAuto.get_move(5).duplicate()  # Move 5 is Nuke.
+	every_enemy.id = TEST_MOVE_ID
+	every_enemy.hits_all_enemies = true
+	MoveManagerAuto.moves_by_id[every_enemy.id] = every_enemy
+	var seen: Array[Transform2D] = await _screen_after_dispatch(_battle_100_for_the_camera(true), every_enemy.id, 30)
+	MoveManagerAuto.moves_by_id.erase(every_enemy.id)
+	assert_eq(seen.filter(func(frame): return frame != Transform2D.IDENTITY), [])
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Melee move's zoom is still stepping out 45 frames after its Dispatch, when
+# the next move can start one of its own. GridZoomer's last step puts _x and _y
+# back where BATTLESCREEN rests, but the original leaves the scale to come back
+# by itself, so the second zoom ends on the scale the first had when it was cut
+# off, and the screen stays zoomed (DefineSprite_3419/frame_4). The port puts
+# the scale back too, as ADR 0005 lists.
+func test_a_zoom_that_starts_before_the_last_one_ends_still_ends_at_rest():
+	var scene: Control = _battle_100_for_the_camera(true)
+	await _screen_after_dispatch(scene, 1, 45)  # Move 1 is Leading Strike.
+	var seen: Array[Transform2D] = await _screen_after_dispatch(scene, 14, 30)  # Move 14 is Death Sentence.
+	assert_eq(seen[-1], Transform2D.IDENTITY)
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The conductor zooms and shakes only while KrinSettings.SFX is set, which
+# frame_201/DoAction.as:87-100 copies from the Graphics option. A Melee move's
+# zoom, the longest, is over 50 frames after Dispatch.
+func test_with_graphics_off_nothing_zooms_or_shakes():
+	for move_id in [14, 5, 1]:  # These are Death Sentence, Nuke and Leading Strike.
+		var seen: Array[Transform2D] = await _screen_after_dispatch(_battle_100_for_the_camera(false), move_id, 60)
+		assert_eq(seen.filter(func(frame): return frame != Transform2D.IDENTITY), [], "move %d" % move_id)
+		GameData.current_save = null
+		ZoneManager.auto_start_battles = true
+
+
+# Nothing waits for the zoom, so the next action dispatches on the same frame
+# with the zoom on or off. A Melee move's zoom is the longest. A Shock lands on
+# its Dispatch frame, so the frame its number shows is the frame it dispatched
+# on.
+func test_the_next_action_dispatches_on_the_same_frame_with_the_zoom_on_or_off():
+	var dispatched: Array = []
+	for graphics in [true, false]:
+		var scene = await _battle_100_on_a_stepped_clock("CameraTiming")
+		GameData.current_save.graphics = graphics
+		var shown: Dictionary = _frames_texts_float(scene, [
+			_damage_event(BattleRunner.PLAYER_SLOT, 2, MoveManagerAuto.get_move(1), 11.0),  # Move 1 is Leading Strike.
+			_damage_event(3, 2, MoveManagerAuto.get_move(14), 12.0),  # Move 14 is Death Sentence.
+		], ["11", "12"])
+		dispatched.append(shown.get("12", -1))
+	assert_gt(dispatched[0], 0, "sanity: the Shock dispatched")
+	assert_eq(dispatched[0], dispatched[1], "the Shock dispatches on the same frame")
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

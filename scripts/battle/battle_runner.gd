@@ -35,8 +35,11 @@ enum Outcome { LOSS = 0, WIN = 1, DRAW = 2, ONGOING = -1 }
 # _play_events() matches on to decide how to present a half-turn's worth of
 # events. A typo previously failed silently (a plain match on a bare string
 # with no `_:` default just does nothing for an unrecognized case).
+#
+# PASSED is an action that dispatched with nothing to do: its caster passed,
+# chose a move at a target that was already dead, or was dead itself.
 enum EventType {
-	MOVE, STUNNED, MOVE_FAILED, DISPEL, DEATH, SPEECH, PHASE_ADVANCED, BATTLE_ENDED,
+	MOVE, STUNNED, MOVE_FAILED, DISPEL, DEATH, SPEECH, PHASE_ADVANCED, BATTLE_ENDED, PASSED,
 }
 
 # A DEATH event's own "cause" key - MOVE plays at the killing blow's impact
@@ -225,13 +228,15 @@ func _execute_action(action: Dictionary) -> void:
 
 	var move_id: int = int(action["move_id"])
 	var target: CombatUnit = units.get(action.get("target_slot", 0))
-	if move_id != 0 and caster.active:
-		if caster.stun != 0:
-			_log({"type": EventType.STUNNED, "caster_slot": action["caster_slot"]})
-		elif target != null and target.active:
-			_execute_move_action(action, caster, target)
-		# Target already dead and caster not stunned: the move silently
-		# fizzles with no cost, matching the original's dispatch condition.
+	if move_id != 0 and caster.active and caster.stun != 0:
+		_log({"type": EventType.STUNNED, "caster_slot": action["caster_slot"]})
+	elif move_id != 0 and caster.active and target != null and target.active:
+		_execute_move_action(action, caster, target)
+	else:
+		# A move at a target that is already dead costs nothing, because the
+		# original pays for a move only once it finds the target alive (the
+		# conductor, line 350).
+		_log({"type": EventType.PASSED, "caster_slot": action["caster_slot"]})
 
 	if should_tick_buffs and caster.active:
 		caster.tick_buffs(buffs_by_id)

@@ -124,6 +124,30 @@ func _play_out_the_hit() -> void:
 		_doll._process(1.0 / 30.0)
 
 
+# Steps the presenter and its doll by `count` frames at the original's 30 fps.
+func _step_frames(count: int) -> void:
+	for frame in count:
+		_presenter._process(1.0 / 30.0)
+		_doll._process(1.0 / 30.0)
+
+
+func _present_with_a_buff() -> void:
+	var buff := Buff.new()
+	buff.internal_name = "FIRESAM"
+	_unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
+	_present(_unit, {}, {1: buff})
+
+
+# Returns what the overlay draws besides its two bars.
+func _overlay_shows() -> Dictionary:
+	var icons: Array = _overlay.buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
+	return {
+		"icons": icons.size() if _overlay.buff_row.is_visible_in_tree() else 0,
+		"name": _overlay.name_label.is_visible_in_tree(),
+		"number": _overlay.health_value.is_visible_in_tree(),
+	}
+
+
 func test_setup_draws_the_unit():
 	_unit.life_u = 250.0
 	_unit.life_n = 180.0
@@ -310,17 +334,101 @@ func test_a_hit_flinches_the_doll_and_plays_the_hit_voice():
 
 # A move-caused death used to play only when the queued DEATH event was reached,
 # which for a melee hit is after the caster has run back.
-func test_a_killing_blow_plays_the_death_at_the_impact():
+func test_a_move_result_that_kills_plays_the_death_at_its_impact():
 	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
 	assert_eq(_doll._state, DEAD, "the doll plays its death at the impact")
-	assert_false(_overlay.visible, "the overlay goes the same moment")
-	assert_eq(_cues, [VOICE_DIE, VOICE_HIT], "the death cry, then the hit voice")
+
+
+# The original plays the hit voice only when the target survives, in the else
+# of IDKT.LIFEN == 0 (frame_42/DoAction_8.as:104-131).
+func test_a_move_result_that_kills_plays_the_death_voice_and_not_the_hit_voice():
+	_presenter.show_result(_killing(_damage(500.0, 0.0)), null)
+	assert_eq(_cues, [VOICE_DIE])
+
+
+# The original attaches LifeBarSmoother to the bar at the death, and the clip's
+# frame 18, 17 frames later, removes the buff icons and sends the bar's inner
+# clip to its empty "third" frame, which takes the name and the numbers away
+# (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as).
+func test_the_buff_icons_name_and_number_clear_17_frames_after_a_killing_impact():
+	_present_with_a_buff()
+	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
+	_step_frames(16)
+	var before_the_clear: Dictionary = _overlay_shows()
+	_step_frames(1)
+	assert_eq([before_the_clear, _overlay_shows()], [
+		{"icons": 1, "name": true, "number": true},
+		{"icons": 0, "name": false, "number": false},
+	])
+
+
+# Returns the alpha the overlay is drawn at, which is 0 once it is hidden.
+func _overlay_alpha() -> float:
+	return _overlay.modulate.a if _overlay.is_visible_in_tree() else 0.0
+
+
+# From the frame after the clear, LifeBarSmoother takes 5 off the bar's alpha
+# every frame (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as).
+func test_the_bar_fades_5_alpha_a_frame_after_the_clear():
+	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
+	var alphas: Array = [_overlay_alpha()]
+	for frame in 37:
+		_step_frames(1)
+		alphas.append(_overlay_alpha())
+	for expected in [[16, 1.0], [17, 1.0], [18, 0.95], [27, 0.5], [37, 0.0]]:
+		assert_almost_eq(alphas[expected[0]], expected[1], 0.001, "frame %d after the impact" % expected[0])
+
+
+# The scene redraws every fighter after every event and snaps them all at the
+# half-turn's end, and the bar's name, number and icons stay cleared through it.
+func test_a_redraw_after_the_clear_leaves_the_overlay_cleared():
+	_present_with_a_buff()
+	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
+	_step_frames(20)
+	_presenter.redraw()
+	_presenter.snap_to_unit()
+	assert_eq(_overlay_shows(), {"icons": 0, "name": false, "number": false})
+
+
+# LifeBarSmoother hides the bar the frame after its alpha reaches 0
+# (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as), and the doll removes
+# itself when its dead label ends.
+func test_a_dead_units_slot_shows_nothing_for_the_rest_of_the_battle():
+	_present_with_a_buff()
+	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
+	_step_frames(90)
+	_presenter.redraw()
+	_presenter.snap_to_unit()
+	var drawn: Array = _presenter.get_children().filter(func(child): return child is CanvasItem and child.is_visible_in_tree())
+	assert_eq(drawn.map(func(child): return child.name), [])
+
+
+# lifeBarUpdate plays the death voice and starts the fade only when the bar's
+# rounded percent changes (frame_42/DoAction_8.as:295-298 and 345-347), so the
+# original kills a unit from under 0.5% life with neither. ADR 0005 counts that
+# as an Original bug, and the port plays both on every death.
+func test_a_unit_killed_from_under_half_a_percent_life_still_plays_its_death_voice_and_fade():
+	_unit.life_u = 1000.0
+	_unit.life_n = 4.0
+	_present(_unit)
+	_presenter.show_result(_killing(_damage(4.0, 0.0)), null)
+	_step_frames(27)
+	assert_eq(_cues, [VOICE_DIE], "the death voice")
+	assert_almost_eq(_overlay_alpha(), 0.5, 0.001, "and the bar halfway through its fade")
+
+
+# A damage-over-time death has no result to move the bar. The original empties
+# the bar on the tick that kills (frame_42/DoAction_10.as:108-114 and 135, and
+# applyChangesKrin's lifeBarUpdate at 342), so the bar fades from empty.
+func test_a_death_with_no_result_empties_the_bar_before_it_fades():
+	_unit.life_n = 0.0
+	_presenter.die()
+	assert_eq(_overlay.health_bar.value, 0.0)
 
 
 func test_die_plays_the_death_with_no_hit():
 	_presenter.die()
 	assert_eq(_doll._state, DEAD, "the doll plays its death")
-	assert_false(_overlay.visible, "the overlay goes with it")
 	assert_eq(_cues, [VOICE_DIE], "with the death cry alone")
 
 
@@ -360,7 +468,6 @@ func test_heal_on_a_sswitch_target_shows_as_damage():
 func test_heal_that_kills_a_sswitch_target_plays_the_death():
 	_presenter.show_result(_killing(_heal_that_hurts(150.0, 0.0)), null)
 	assert_eq(_doll._state, DEAD, "the doll plays its death")
-	assert_false(_overlay.visible, "its overlay is hidden with it")
 	assert_eq(_presenter.displayed_hp, 0.0, "the bar drops to empty")
 	assert_eq(_cues, [VOICE_DIE], "with the death cry and no hit voice")
 
@@ -436,11 +543,13 @@ func test_every_result_but_a_miss_moves_the_bar_to_the_life_it_states():
 	assert_eq(_overlay.health_bar.value, 100.0, "a miss leaves it")
 
 
-func test_a_miss_floats_miss_and_plays_the_miss_sound():
+# The miss sound depends on the move's type, so battle_scene.gd plays it and
+# test_battle_scene.gd checks it.
+func test_a_miss_floats_miss_and_plays_nothing():
 	_presenter.show_result(_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 100.0), null)
 	assert_eq(_numbers()[-1].text, "MISS")
 	assert_eq(_numbers()[-1].modulate, Color.GRAY)
-	assert_eq(_cues, ["sfx_magicmiss"], "the miss sound")
+	assert_eq(_cues, [], "no sound and no voice")
 	assert_ne(_doll._state, HIT, "and no flinch")
 
 
@@ -609,54 +718,120 @@ func test_floating_text_rises_fades_and_frees_itself():
 	assert_true(label.is_queued_for_deletion(), "and gone once the 0.8 s are up")
 
 
-# Starts a melee whose swing the test steps by hand. The returned array holds
-# what melee() returned once it has returned.
-func _start_melee(on_blow: Callable) -> Array:
+# Starts a melee at an ally 200 px to the left, whose swing the test steps by
+# hand. The returned array holds true once melee() has returned.
+func _start_melee(on_impact: Callable) -> Array:
 	_doll.set_process(false)
+	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT), HOME - Vector2(200, 0))
 	var returned: Array = []
 	var run: Callable = func():
-		returned.append(await _presenter.melee(Vector2(100, 0), "Attack", on_blow))
+		await _presenter.melee(target, "Attack", on_impact)
+		returned.append(true)
 	run.call()
 	return returned
 
 
-func test_melee_lands_the_blow_once_and_returns_when_the_doll_is_home():
-	var blows: Array = []
-	var returned: Array = _start_melee(func(): blows.append(_doll.position))
-	assert_eq(blows.size(), 0, "nothing lands as the run starts")
+# krinMelee hands the battle back at Impact and runs the fighter home on its
+# own afterwards (frame_42/DoAction_4.as:73-135), so melee() returns at
+# Impact, with the doll still where it struck.
+func test_melee_reaches_impact_once_and_returns_at_it():
+	var impacts: Array = []
+	var returned: Array = _start_melee(func(): impacts.append(_doll.position))
+	assert_eq(impacts.size(), 0, "nothing lands as the run starts")
 	for frame in 600:
 		if not returned.is_empty():
 			break
 		_doll._process(1.0 / 30.0)
-	assert_eq(blows.size(), 1, "the blow lands once")
-	if blows.size() == 1:
-		assert_almost_eq(blows[0].x, HOME.x + 100.0, 0.01, "at the target, before the run back")
-	assert_eq(_doll.position, HOME, "the doll is home")
-	assert_eq(returned, [false], "and nothing was landed late")
+	assert_eq(impacts.size(), 1, "Impact comes once")
+	if impacts.size() == 1:
+		assert_lt(impacts[0].x, HOME.x - 100.0, "after a run toward the target")
+		assert_eq(_doll.position, impacts[0], "while the doll still stands where it struck")
+	assert_eq(returned, [true], "melee returns at Impact")
+	for frame in 120:
+		_doll._process(1.0 / 30.0)
+	assert_eq(_doll.position, HOME, "and the doll then runs home on its own")
+	assert_eq(impacts.size(), 1, "with no second Impact")
 
 
-func test_an_interrupted_melee_still_lands_the_blow():
-	var blows: Array = []
-	var returned: Array = _start_melee(func(): blows.append(true))
-	_doll.set_state(CharacterVisual.State.DEAD)
-	assert_eq(blows.size(), 1, "the blow never fired, so it lands late")
-	assert_eq(returned, [true], "and melee says so")
-
-
-func test_melee_without_waiting_lands_the_blow_at_once():
-	var blows: Array = []
-	var landed_late: bool = await _presenter.melee(Vector2(100, 0), "Attack", func(): blows.append(true), false)
-	assert_eq(blows.size(), 1, "the blow lands without the swing being played")
-	assert_true(landed_late)
+func test_melee_without_waiting_reaches_impact_at_once():
+	var impacts: Array = []
+	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT), HOME - Vector2(200, 0))
+	await _presenter.melee(target, "Attack", func(): impacts.append(true), false)
+	assert_eq(impacts.size(), 1, "Impact comes without the swing being played")
 
 
 func test_a_melee_whose_presenter_left_the_tree_lands_nothing():
-	var blows: Array = []
-	var returned: Array = _start_melee(func(): blows.append(true))
+	var impacts: Array = []
+	var returned: Array = _start_melee(func(): impacts.append(true))
 	remove_child(_presenter)
-	_doll.melee_finished.emit()
-	assert_eq(blows.size(), 0, "no blow on a fighter that is gone")
-	assert_eq(returned, [false])
+	_doll.attack_connected.emit()
+	assert_eq(impacts.size(), 0, "no Impact on a fighter that is gone")
+	assert_eq(returned, [true], "and melee returns")
+
+
+# Builds a second presenter for `unit` at `home`, on the same float layer, and
+# stops its doll's own processing so that the test steps the doll itself.
+func _fighter_at(unit: CombatUnit, home: Vector2, items_by_id: Dictionary = {}) -> FighterPresenter:
+	var presenter: FighterPresenter = add_child_autofree(FighterPresenterScene.instantiate())
+	presenter.setup(unit, home, items_by_id, {}, _layer)
+	presenter.get_node("Doll").set_process(false)
+	return presenter
+
+
+# Puts a weapon whose art is `looks` in both of `unit`'s hands, and returns the
+# item table that holds it. Empty looks leave the unit bare.
+func _armed(unit: CombatUnit, looks: String) -> Dictionary:
+	var weapon := GameItem.new()
+	weapon.looks = looks
+	unit.equipment_ids = [0, 0, 0, 0, 0, 7, 7]
+	return {7: weapon}
+
+
+# Swings `caster` at `target`, steps the caster's doll until Impact, and
+# returns where the caster's doll stands then.
+func _impact_spot(caster: FighterPresenter, target: FighterPresenter) -> Vector2:
+	var doll: CharacterVisual = caster.get_node("Doll")
+	var spots: Array = []
+	# Nothing awaits the swing, because the test steps it.
+	caster.melee(target, "Attack", func(): spots.append(doll.position))
+	for frame in 60:
+		if not spots.is_empty():
+			break
+		doll._process(1.0 / 30.0)
+	return spots[0] if not spots.is_empty() else Vector2.INF
+
+
+# krinMelee stops the caster at the target's x less half of each fighter's
+# width, the caster's in its run pose and the target's as it stands
+# (frame_42/DoAction_4.as:46-56). A wide weapon widens a fighter, so two
+# fighters with wide weapons stop further apart than two bare fighters.
+func test_two_fighters_in_wide_gear_stop_further_apart_than_two_bare_fighters():
+	var gaps: Dictionary = {}
+	for looks in ["", "UBER1"]:
+		var caster_unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+		var target_unit: CombatUnit = _make_unit(CombatUnit.Team.TWO, ENEMY_SLOT)
+		var caster: FighterPresenter = _fighter_at(caster_unit, Vector2(160, 300), _armed(caster_unit, looks))
+		var target: FighterPresenter = _fighter_at(target_unit, Vector2(640, 300), _armed(target_unit, looks))
+		gaps[looks] = target.get_node("Doll").position.x - _impact_spot(caster, target).x
+	assert_gt(gaps[""], 0.0, "sanity: two bare fighters stop short of each other")
+	assert_gt(gaps["UBER1"], gaps[""], "two fighters with UBER1 in both hands stop further apart")
+
+
+# dressChar draws a MODEL5 doll 10 px lower inside its rig, and krinMelee runs
+# the rig toward the target's rig (frame_217/DoAction_2.as:19-24 and
+# frame_42/DoAction_4.as:112-116). So a MODEL5 fighter runs level at a target
+# whose rig stands level with its own.
+func test_a_model5_fighter_runs_level_at_a_target_level_with_it():
+	var caster_unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+	caster_unit.model = ["MODEL5", "ONE", "ONE", "M"]
+	var caster: FighterPresenter = _fighter_at(caster_unit, Vector2(160, 300))
+	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT), Vector2(640, 300))
+	var doll: CharacterVisual = caster.get_node("Doll")
+	var start: Vector2 = doll.position
+	assert_eq(start.y, 310.0, "sanity: the MODEL5 doll stands 10 px lower")
+	var impact: Vector2 = _impact_spot(caster, target)
+	assert_gt(impact.x, start.x + 300.0, "sanity: the doll ran most of the way")
+	assert_eq(impact.y, start.y, "and stayed level")
 
 
 # The real colortobe glow tint (frame217/onClipEvent(enterFrame).as: 417,450).
