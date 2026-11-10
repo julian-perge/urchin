@@ -88,6 +88,14 @@ _Avoid_: Ally, friend
 A unit built from a template that fights on the player's team, such as Felicity in battle 508.
 _Avoid_: Companion
 
+**Deployed pair**:
+The two Companions the player has chosen to fight. An empty slot is allowed and spawns no one.
+_Avoid_: Active party, team
+
+**Team select**:
+The part of the inventory Window where the player picks a Companion to equip and sets the Deployed pair.
+_Avoid_: Party menu, team panel
+
 **Half-turn**:
 One side's part of a turn, in which each of that side's living units takes one action. The player's half-turn opens with a Decision.
 _Avoid_: Turn, round
