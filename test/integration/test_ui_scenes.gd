@@ -795,13 +795,12 @@ func test_zone_map_button_states_follow_unlocks():
 	assert_false(zones.get_node("Zone1").disabled, "zone 1 always unlocked")
 	assert_true(zones.get_node("Zone2").disabled, "zone 2 locked at start")
 	GameData.current_save.quest_progress[1] = 10
-	ZoneManager.zone_unlocked.emit(2)
-	await get_tree().process_frame
-	assert_false(zones.get_node("Zone2").disabled, "zone 2 unlocks after the boss")
-
-	# Connectors._draw() only runs while the panel (and so the whole subtree)
-	# is visible - exercise it for real rather than just trusting the node
-	# paths it hardcodes (Zone%d under ../Zones) line up with zone_map.tscn.
+	# The map reads the unlocks again each time it opens, so opening it after
+	# the boss shows zone 2 open. Connectors._draw() also only runs while the
+	# panel (and so the whole subtree) is visible - exercise it for real rather
+	# than just trusting the node paths it hardcodes (Zone%d under ../Zones)
+	# line up with zone_map.tscn.
 	map.visible = true
 	await get_tree().process_frame
+	assert_false(zones.get_node("Zone2").disabled, "zone 2 unlocks after the boss")
 	assert_true(is_instance_valid(map.get_node("Connectors")), "connector lines node exists and drew without error")

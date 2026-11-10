@@ -22,7 +22,6 @@ var open_zone_map_on_load: bool = false
 var achievements_path: String = Achievements.SAVE_PATH
 
 signal zone_changed(zone_id: int)
-signal zone_unlocked(zone_id: int)
 signal battle_selected(info: Dictionary)
 
 func can_access_zone(zone_id: int) -> bool:

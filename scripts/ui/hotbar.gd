@@ -54,7 +54,6 @@ var _button_glows: Dictionary = {}  # button name -> {glow, icon}
 
 func _ready():
 	ZoneManager.zone_changed.connect(_on_zone_changed)
-	ZoneManager.zone_unlocked.connect(func(_zone): _refresh(ZoneManager.current_zone))
 	for button_name in HOVER_COLORS:
 		_setup_icon_glow(get_node("%" + button_name))
 	for button_name in TOOLTIP_CAPTIONS:

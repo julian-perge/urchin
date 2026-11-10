@@ -15,7 +15,6 @@ func _ready():
 		zone_button.pressed.connect(_on_zone_selected.bind(zone_id))
 	if has_node("CloseButton"):
 		$CloseButton.pressed.connect(close_map)
-	ZoneManager.zone_unlocked.connect(_on_zone_unlocked)
 	visibility_changed.connect(_on_visibility_changed)
 	_refresh_button_states()
 
@@ -44,6 +43,3 @@ func _on_zone_selected(zone_id: int):
 	if ZoneManager.can_access_zone(zone_id):
 		ZoneManager.change_zone(zone_id)
 		close_map()
-
-func _on_zone_unlocked(_zone_id: int):
-	_refresh_button_states()
