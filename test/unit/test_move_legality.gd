@@ -42,7 +42,9 @@ func _buff(id: int, element: CombatUnit.Element) -> Buff:
 
 
 func _hold_buff(unit: CombatUnit, buff_id: int, turns_left: int) -> void:
-	unit.buff_slots.append({"cd": turns_left, "buff_id": buff_id, "buff_value": 0.0, "shield_buff_value": 0.0})
+	var free_slot: Dictionary = unit.buff_slots.filter(func(slot): return slot["cd"] == 0)[0]
+	free_slot["cd"] = turns_left
+	free_slot["buff_id"] = buff_id
 
 
 func test_cooldown_gate():

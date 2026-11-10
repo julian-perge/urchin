@@ -194,33 +194,8 @@ static func build_companion_unit(save: PlayerSave, party_id: int, unit_templates
 
 	unit.ai_enabled = true
 	apply_aggression_mode(unit, AggressionStance.TACTICAL)
-	unit.move_pool_attack = template.moves.get("attack", []).duplicate()
-	unit.move_pool_defense = template.moves.get("defense", []).duplicate()
-	unit.move_pool_absolute = []
-	for absolute_entry in template.moves.get("absolute", []):
-		if absolute_entry is Dictionary:
-			unit.move_pool_absolute.append({"id": int(absolute_entry["id"]), "phase": int(absolute_entry["phase"])})
-		else:
-			unit.move_pool_absolute.append({"id": int(absolute_entry), "phase": 0})
-	unit.cooldowns_attack = CombatUnit._zero_int_array(unit.move_pool_attack.size())
-	unit.cooldowns_defense = CombatUnit._zero_int_array(unit.move_pool_defense.size())
-	unit.cooldowns_absolute = CombatUnit._zero_int_array(unit.move_pool_absolute.size())
-
-	unit.change_array = CombatUnit._zero_array(12)
-	unit.change_array_ep = CombatUnit._zero_array(8)
-	unit.change_array_ep2 = CombatUnit._zero_array(8)
-	unit.change_array_ed = CombatUnit._zero_array(8)
-	unit.change_array_ed2 = CombatUnit._zero_array(8)
-	unit.dot_ticker_array = CombatUnit._zero_array(10)
-	unit.buff_slots = []
-	for i in CombatUnit.MAX_BUFF_LIMIT:
-		unit.buff_slots.append({"cd": 0, "buff_id": -1, "buff_value": 0.0, "shield_buff_value": 0.0})
-
-	unit.life_u = unit.base_life
-	unit.life_n = unit.base_life
-	unit.focus_u = unit.base_focus
-	unit.focus_n = unit.base_focus
-	unit.apply_changes()
+	unit.load_moves_from(template)
+	unit.start_at_full()
 	return unit
 
 

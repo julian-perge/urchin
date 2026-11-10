@@ -3,11 +3,12 @@
 # save - the port of the unit-placement half of LOAD_BATTLE_SCENE +
 # krinAddNewUnit (frame42/sonny2_createNewBattle.txt).
 #
-# Slot layout: battle.players[i] fills slot i + 2. Positive values are enemy
-# unit template ids, 0 is an empty slot, and the -2/-1 markers are the two
-# deployed companions (see Party.deployed_party_id). Slot 1 is always the
-# player. players_levels entries can be "X" (player level - 2) or "Z"
-# (player level + 5), both clamped to [1, train_cap] (finalTrainCap).
+# Slot layout: battle.players[i] fills slot i + 2. Positive values are unit
+# template ids, which place a guest on the player's team and an enemy on the
+# other, 0 is an empty slot, and the -2/-1 markers are the two deployed
+# companions (see Party.deployed_party_id). Slot 1 is always the player.
+# players_levels entries can be "X" (player level - 2) or "Z" (player level
+# + 5), both clamped to [1, train_cap] (finalTrainCap).
 #
 # No autoload references - unit templates and the battle resource come in as
 # parameters. load_battle() is the one filesystem touch (the generated
@@ -29,7 +30,9 @@ static func load_battle(battle_id: int) -> BattleFight:
 
 # Builds {slot: CombatUnit} for BattleRunner.setup(). The player unit is
 # human-controlled (ai_enabled false); pass everything to the runner along
-# with TalentTree.get_passive_buff_names(save).
+# with TalentTree.get_passive_buff_names(save). This is the only place that
+# knows where each unit came from, so it records that on the unit as origin
+# and, for a companion, party_id.
 static func build_units(battle: BattleFight, save: PlayerSave, unit_templates: Dictionary, difficulty: int, train_cap: int = DEFAULT_TRAIN_CAP) -> Dictionary:
 	var units: Dictionary[Variant, Variant] = {}
 	for i in battle.players.size():
@@ -42,14 +45,20 @@ static func build_units(battle: BattleFight, save: PlayerSave, unit_templates: D
 				push_warning("build_units: no unit template %d (battle %d)" % [template_id, battle.id])
 				continue
 			var level: int = resolve_level(_level_entry(battle.players_levels, i), save.level, train_cap)
-			units[slot] = CombatUnit.from_character(template, level, difficulty, slot)
+			var unit: CombatUnit = CombatUnit.from_character(template, level, difficulty, slot)
+			unit.origin = CombatUnit.Origin.GUEST if BattleRunner.TEAM_SLOTS[CombatUnit.Team.ONE].has(slot) else CombatUnit.Origin.ENEMY
+			units[slot] = unit
 		elif template_id < 0:
 			var party_id: int = Party.deployed_party_id(save, template_id)
 			if party_id > 0:
 				var companion: CombatUnit = Party.build_companion_unit(save, party_id, unit_templates, slot)
 				if companion != null:
+					companion.origin = CombatUnit.Origin.COMPANION
+					companion.party_id = party_id
 					units[slot] = companion
-	units[BattleRunner.PLAYER_SLOT] = CombatUnit.from_player_save(save, BattleRunner.PLAYER_SLOT)
+	var player: CombatUnit = CombatUnit.from_player_save(save, BattleRunner.PLAYER_SLOT)
+	player.origin = CombatUnit.Origin.PLAYER
+	units[BattleRunner.PLAYER_SLOT] = player
 	return units
 
 

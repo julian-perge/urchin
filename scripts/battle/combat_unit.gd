@@ -22,6 +22,10 @@ enum Team { ONE = 1, TWO = 2 }
 # came from (BattleAI.choose_move's "pool", BattleRunner's cooldown lookup).
 enum MovePool { ATTACK, DEFENSE, ABSOLUTE }
 
+# BattleSetup.build_units is the only writer of a unit's origin, so a unit built
+# any other way, as tests and the equip doll do, stays at NONE.
+enum Origin { NONE, PLAYER, COMPANION, GUEST, ENEMY }
+
 # modVar_1 (strength/magic), modVar_2 (life), modVar_3 (speed), per difficulty.
 const DIFFICULTY_MODIFIERS: Dictionary[Difficulty, Dictionary] = {
 	Difficulty.EASY: {"strength_magic": 0.4, "life": 0.5, "speed": 0.9000000000000002},
@@ -47,6 +51,9 @@ var player_id: int
 var player_name: String
 var plevel: int
 var active: bool = true
+
+var origin: Origin = Origin.NONE
+var party_id: int = -1  # Only a COMPANION unit has a Party id here, and every other origin keeps -1.
 
 # Battle-slot layout (playerKrin1..6): odd slots = team 1, even = team 2.
 # Slot 1 is the human player. Set by BattleRunner at setup.
@@ -120,16 +127,16 @@ var focus_change: float = 0.0  # one-shot FOCUSU adjustment, consumed by apply_c
 
 # changeArray[0..11]: STR flat/%, MAG flat/%, SPD flat/%, LIFE flat/%,
 # DMG, DMG2, IDMG, IDMG2-or-IDMGP (see apply_buff).
-var change_array: Array = []
+var change_array: Array = _zero_array(12)
 # Per-element offense/defense deltas, only touched by buffs whose element_type matches.
-var change_array_ep: Array = []
-var change_array_ep2: Array = []
-var change_array_ed: Array = []
-var change_array_ed2: Array = []
+var change_array_ep: Array = _zero_array(8)
+var change_array_ep2: Array = _zero_array(8)
+var change_array_ed: Array = _zero_array(8)
+var change_array_ed2: Array = _zero_array(8)
 # [0..7] per-element DOT accumulation, [8] HOT (heal) accumulation, [9] focus-per-turn total.
-var dot_ticker_array: Array = []
+var dot_ticker_array: Array = _zero_array(10)
 # Active buff slots: {cd, buff_id, buff_value, shield_buff_value}.
-var buff_slots: Array = []
+var buff_slots: Array = _blank_buff_slots()
 
 var voice_hit: Array = []
 var voice_die: String = ""
@@ -160,6 +167,12 @@ static func _zero_int_array(size: int) -> Array:
 	arr.resize(size)
 	arr.fill(0)
 	return arr
+
+static func _blank_buff_slots() -> Array:
+	var slots: Array = []
+	for i in MAX_BUFF_LIMIT:
+		slots.append({"cd": 0, "buff_id": -1, "buff_value": 0.0, "shield_buff_value": 0.0})
+	return slots
 
 # Resolves a raw element name (as it appears in the JSON move/buff data,
 # e.g. Ability.from_json()'s "0_damage_element_type" field) to the enum -
@@ -246,35 +259,8 @@ static func from_character(character: Character, level: int, difficulty: Difficu
 		unit.life_boundary_2 = float(aggression_array[2])
 		unit.focus_aggression = float(aggression_array[3])
 		unit.focus_regen_limit = float(aggression_array[4])
-	unit.move_pool_attack = character.moves.get("attack", []).duplicate()
-	unit.move_pool_defense = character.moves.get("defense", []).duplicate()
-	unit.move_pool_absolute = []
-	for absolute_entry in character.moves.get("absolute", []):
-		# Older generated .tres store absolute entries as bare move ids (the
-		# phase lock was dropped); treat those as usable in any phase.
-		if absolute_entry is Dictionary:
-			unit.move_pool_absolute.append({"id": int(absolute_entry["id"]), "phase": int(absolute_entry["phase"])})
-		else:
-			unit.move_pool_absolute.append({"id": int(absolute_entry), "phase": 0})
-	unit.cooldowns_attack = _zero_int_array(unit.move_pool_attack.size())
-	unit.cooldowns_defense = _zero_int_array(unit.move_pool_defense.size())
-	unit.cooldowns_absolute = _zero_int_array(unit.move_pool_absolute.size())
-
-	unit.change_array = _zero_array(12)
-	unit.change_array_ep = _zero_array(8)
-	unit.change_array_ep2 = _zero_array(8)
-	unit.change_array_ed = _zero_array(8)
-	unit.change_array_ed2 = _zero_array(8)
-	unit.dot_ticker_array = _zero_array(10)
-	unit.buff_slots = []
-	for i in MAX_BUFF_LIMIT:
-		unit.buff_slots.append({"cd": 0, "buff_id": -1, "buff_value": 0.0, "shield_buff_value": 0.0})
-
-	unit.life_u = unit.base_life
-	unit.life_n = unit.base_life
-	unit.focus_u = unit.base_focus
-	unit.focus_n = unit.base_focus
-	unit.apply_changes()
+	unit.load_moves_from(character)
+	unit.start_at_full()
 	return unit
 
 # Build the human player's battle unit from their save - ported from
@@ -312,22 +298,29 @@ static func from_player_save(save: PlayerSave, battle_slot: int = 1) -> CombatUn
 	unit.equipped_moves = save.move_matrix.duplicate()
 	unit.ability_cooldowns = _zero_int_array(8)
 
-	unit.change_array = _zero_array(12)
-	unit.change_array_ep = _zero_array(8)
-	unit.change_array_ep2 = _zero_array(8)
-	unit.change_array_ed = _zero_array(8)
-	unit.change_array_ed2 = _zero_array(8)
-	unit.dot_ticker_array = _zero_array(10)
-	unit.buff_slots = []
-	for i in MAX_BUFF_LIMIT:
-		unit.buff_slots.append({"cd": 0, "buff_id": -1, "buff_value": 0.0, "shield_buff_value": 0.0})
-
-	unit.life_u = unit.base_life
-	unit.life_n = unit.base_life
-	unit.focus_u = unit.base_focus
-	unit.focus_n = unit.base_focus
-	unit.apply_changes()
+	unit.start_at_full()
 	return unit
+
+# krinAddNewUnit copies a unit's move arrays and zeroes their cooldowns the same
+# way in its template branch and its companion branch
+# (frame_42/DoAction_14.as:114-128 and 193-207), so both factories share this.
+func load_moves_from(template: Character) -> void:
+	move_pool_attack = template.moves.get("attack", []).duplicate()
+	move_pool_defense = template.moves.get("defense", []).duplicate()
+	move_pool_absolute = template.moves.get("absolute", []).duplicate(true)
+	cooldowns_attack = _zero_int_array(move_pool_attack.size())
+	cooldowns_defense = _zero_int_array(move_pool_defense.size())
+	cooldowns_absolute = _zero_int_array(move_pool_absolute.size())
+
+# The last step of every factory: a unit enters battle at full life and focus,
+# and apply_changes() works out its derived stats from the base stats the
+# factory has just set.
+func start_at_full() -> void:
+	life_u = base_life
+	life_n = base_life
+	focus_u = base_focus
+	focus_n = base_focus
+	apply_changes()
 
 # Ported from applyChangesKrin() - recomputes every derived (_u) stat from the
 # base stats plus whatever the active buffs have accumulated into

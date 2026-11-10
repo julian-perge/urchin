@@ -4,32 +4,13 @@
 # progress and pays out rewards including companion XP.
 extends GutTest
 
-const CharacterScript = preload("res://scripts/entities/character.gd")
-
-const MOVES_FILE = "res://dev/converted_json/moves_abilities.json"
-const BUFFS_FILE = "res://dev/converted_json/buffs.json"
-const UNITS_FILE = "res://dev/converted_json/units.json"
-
-const AGGRESSION_ORDER = ["Phalanx", "Defensive", "Tactical", "Aggressive", "Relentless"]
-const ELEMENT_ORDER = ["Physical", "Magic", "Ice", "Fire", "Lightning", "Earth", "Shadow", "Poison"]
 const MAX_HALF_TURNS = 300
 
-var moves_by_id: Dictionary = {}
-var buffs_by_id: Dictionary = {}
-var buffs_by_name: Dictionary = {}
 var unit_templates: Dictionary = {}
 
 
 func before_all():
-	for move_data in _load_json(MOVES_FILE):
-		var ability = Ability.from_json(move_data)
-		moves_by_id[ability.id] = ability
-	for buff_data in _load_json(BUFFS_FILE):
-		var buff = Buff.from_json(buff_data)
-		buffs_by_id[buff.id] = buff
-		buffs_by_name[buff.internal_name] = buff
-	for unit_data in _load_json_dict(UNITS_FILE).get("units", []):
-		unit_templates[int(unit_data["id"])] = _character_from_json(unit_data)
+	unit_templates = UnitManagerAuto.units_by_id
 
 
 func test_battle_resources_load_by_id():
@@ -54,6 +35,60 @@ func test_roster_build_places_player_companion_and_enemies():
 	assert_true(units[3].ai_enabled)
 	assert_eq(units[3].life_boundary_1, 75.0, "companions use the Tactical AI preset")
 	assert_false(units.has(5), "Roald deployed but not joined - slot stays empty")
+
+
+func test_roster_records_where_each_unit_came_from():
+	var save = PlayerSave.new_game("Flow", 0)
+	var units = BattleSetup.build_units(BattleSetup.load_battle(100), save, unit_templates, CombatUnit.Difficulty.HARD)
+	assert_eq(units[1].origin, CombatUnit.Origin.PLAYER, "slot 1 is the player")
+	assert_eq(units[1].party_id, -1, "the player isn't a companion")
+	assert_eq(units[2].origin, CombatUnit.Origin.ENEMY, "Prison Guard is an enemy")
+	assert_eq(units[2].party_id, -1, "and has no party id")
+	assert_eq(units[3].origin, CombatUnit.Origin.COMPANION, "Veradux is a companion")
+	assert_eq(units[3].party_id, 1, "with party id 1")
+
+
+# Battle 508 places unit template 71 on the player's team and battle 504 places
+# the same template on the enemy's, so only the slot tells a guest from an enemy.
+func test_roster_tells_a_guest_from_an_enemy_with_the_same_template():
+	var save = PlayerSave.new_game("Flow", 0)
+	var guest: CombatUnit = BattleSetup.build_units(BattleSetup.load_battle(508), save, unit_templates, CombatUnit.Difficulty.HARD)[3]
+	var enemy: CombatUnit = BattleSetup.build_units(BattleSetup.load_battle(504), save, unit_templates, CombatUnit.Difficulty.HARD)[2]
+	assert_eq(guest.player_name, "Felicity", "508's slot 3")
+	assert_eq(enemy.player_name, "Felicity", "504's slot 2")
+	assert_eq(guest.origin, CombatUnit.Origin.GUEST, "on the player's team the template is a guest")
+	assert_eq(enemy.origin, CombatUnit.Origin.ENEMY, "on the other team the template is an enemy")
+	assert_eq(guest.party_id, -1, "the guest isn't the party's Felicity")
+	assert_eq(enemy.party_id, -1, "and neither is the enemy")
+
+
+# The account in DECODED_ALGORITHMS.md of why no guest ever shows a stance row
+# rests on these being the only guests in the game.
+func test_only_battles_2_and_508_put_a_guest_on_the_field():
+	var save = PlayerSave.new_game("Flow", 0)
+	var battle_ids: Array = []
+	for file in DirAccess.get_files_at("res://resources/battles"):
+		if file.ends_with(".tres"):
+			battle_ids.append(int(file.get_slice("_", 0)))
+	battle_ids.sort()
+	var guests: Array = []
+	for battle_id in battle_ids:
+		var units = BattleSetup.build_units(BattleSetup.load_battle(battle_id), save, unit_templates, CombatUnit.Difficulty.HARD)
+		for slot in units:
+			if units[slot].origin == CombatUnit.Origin.GUEST:
+				guests.append([battle_id, slot])
+	assert_eq(guests, [[2, 5], [508, 3]])
+
+
+# A marker names a deployment position rather than a companion, so swapping the
+# deployed pair has to swap the party ids too.
+func test_roster_takes_a_companions_party_id_from_the_deployment():
+	var save = PlayerSave.new_game("Flow", 0)
+	save.party_roster = [0, 1, 2, -1, -1, -1]
+	save.party_deployed = [2, 1]
+	var units = BattleSetup.build_units(BattleSetup.load_battle(100), save, unit_templates, CombatUnit.Difficulty.HARD)
+	assert_eq([units[3].player_name, units[3].party_id], ["Roald", 2], "the first marker fields Roald")
+	assert_eq([units[5].player_name, units[5].party_id], ["Veradux", 1], "and the second fields Veradux")
 
 
 func test_companion_stat_model():
@@ -90,7 +125,10 @@ func test_full_zone_battle_loop():
 
 	var runner = BattleRunner.new()
 	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup(units, battle, moves_by_id, buffs_by_id, buffs_by_name, manager, TalentTree.get_passive_buff_names(save))
+	runner.setup(
+		units, battle, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id,
+		BuffManagerAuto.buffs_by_internal_name, manager, TalentTree.get_passive_buff_names(save)
+	)
 	var half_turns = 0
 	while not runner.is_over() and half_turns < MAX_HALF_TURNS:
 		runner.advance_half_turn()
@@ -108,58 +146,3 @@ func test_full_zone_battle_loop():
 		assert_gt(rewards["money_gained"], 0)
 		assert_true(save.party_exp[1] > 0.0 or save.party_levels[1] > 1, "Veradux earned XP")
 		gut.p("rewards: %s" % [rewards])
-
-
-func _character_from_json(unit_data: Dictionary) -> Character:
-	var character = Resource.new()
-	character.set_script(CharacterScript)
-	character.name = unit_data["name"]
-	character.vitality = float(unit_data["health"])
-	character.strength = float(unit_data["strength"])
-	character.magic = float(unit_data["magic"])
-	character.speed = float(unit_data["speed"])
-	character.focus = float(unit_data["focus"])
-	var absolute = []
-	for move in unit_data["moves"]["absolute"]:
-		absolute.append({"id": int(move["id"]), "phase": int(move["turn"])})
-	var attack = []
-	for move in unit_data["moves"]["attack"]:
-		attack.append(int(move["id"]))
-	var defense = []
-	for move in unit_data["moves"]["defense"]:
-		defense.append(int(move["id"]))
-	character.moves = {"absolute": absolute, "attack": attack, "defense": defense}
-	character.stats = {
-		"aggression": _ordered(unit_data["stats"]["aggression"], AGGRESSION_ORDER),
-		"piercing": _ordered(unit_data["stats"]["piercing"], ELEMENT_ORDER),
-		"defense": _ordered(unit_data["stats"]["defense"], ELEMENT_ORDER),
-	}
-	character.visuals = {"voice": unit_data["visuals"]["voice"]}
-	return character
-
-
-func _ordered(stat_dict: Dictionary, order: Array) -> Array:
-	var result = []
-	for key in order:
-		result.append(stat_dict[key])
-	return result
-
-
-func _load_json(path: String) -> Array:
-	var file = FileAccess.open(path, FileAccess.READ)
-	if file == null:
-		fail_test("Could not open " + path)
-		return []
-	var parsed = JSON.parse_string(file.get_as_text())
-	file.close()
-	return parsed if parsed is Array else []
-
-
-func _load_json_dict(path: String) -> Dictionary:
-	var file = FileAccess.open(path, FileAccess.READ)
-	if file == null:
-		fail_test("Could not open " + path)
-		return {}
-	var parsed = JSON.parse_string(file.get_as_text())
-	file.close()
-	return parsed if parsed is Dictionary else {}

@@ -4,39 +4,21 @@
 # (config in .gutconfig.json), or via the GUT panel in the editor.
 extends GutTest
 
-const CharacterScript = preload("res://scripts/entities/character.gd")
-const BattleFightScript = preload("res://scripts/battle/battle_fight.gd")
-
-const MOVES_FILE = "res://dev/converted_json/moves_abilities.json"
-const BUFFS_FILE = "res://dev/converted_json/buffs.json"
-const UNITS_FILE = "res://dev/converted_json/units.json"
-const BATTLES_FILE = "res://dev/converted_json/battles.json"
-
-const AGGRESSION_ORDER = ["Phalanx", "Defensive", "Tactical", "Aggressive", "Relentless"]
-const ELEMENT_ORDER = ["Physical", "Magic", "Ice", "Fire", "Lightning", "Earth", "Shadow", "Poison"]
-# Battle 51 (endGame-phase boss) is heal-heavy on both sides - its RNG tail
-# has been observed past 300 half-turns, hence the generous cap.
+# A fight that reaches this cap fails its is_over assert instead of hanging the
+# suite. The longest of 300 seeded runs of each fight here took 149 half-turns.
 const MAX_HALF_TURNS = 900
 
 var moves_by_id: Dictionary = {}
 var buffs_by_id: Dictionary = {}
 var buffs_by_name: Dictionary = {}
 var unit_templates: Dictionary = {}  # id -> Character
-var battles: Dictionary = {}  # id -> BattleFight
 
 
 func before_all():
-	for move_data in _load_json(MOVES_FILE):
-		var ability = Ability.from_json(move_data)
-		moves_by_id[ability.id] = ability
-	for buff_data in _load_json(BUFFS_FILE):
-		var buff = Buff.from_json(buff_data)
-		buffs_by_id[buff.id] = buff
-		buffs_by_name[buff.internal_name] = buff
-	for unit_data in _load_json_dict(UNITS_FILE).get("units", []):
-		unit_templates[int(unit_data["id"])] = _character_from_json(unit_data)
-	for battle_data in _load_json_dict(BATTLES_FILE).get("battles", []):
-		battles[int(battle_data["id"])] = _battle_from_json(battle_data)
+	moves_by_id = MoveManagerAuto.moves_by_id
+	buffs_by_id = BuffManagerAuto.buffs_by_id
+	buffs_by_name = BuffManagerAuto.buffs_by_internal_name
+	unit_templates = UnitManagerAuto.units_by_id
 
 
 func test_all_moves_parse_including_undefined_heavy_move_0():
@@ -60,8 +42,60 @@ func test_unit_id_corrections_applied():
 	assert_eq(unit_templates[34].name, "ZPCI Sniper", "Steam dump said 39, true id 34")
 
 
-func test_all_battles_built():
-	assert_eq(battles.size(), 99)
+# All three factories start from CombatUnit.new(), so each unit has to get its
+# own arrays and buff slots from it, and the change arrays have to keep the
+# fractions buffs add to them.
+func test_a_new_unit_has_its_own_blank_buff_state():
+	var first: CombatUnit = CombatUnit.new()
+	var second: CombatUnit = CombatUnit.new()
+	assert_eq(first.change_array.size(), 12)
+	assert_eq(first.change_array_ep.size(), 8)
+	assert_eq(first.change_array_ep2.size(), 8)
+	assert_eq(first.change_array_ed.size(), 8)
+	assert_eq(first.change_array_ed2.size(), 8)
+	assert_eq(first.dot_ticker_array.size(), 10)
+	assert_eq(first.buff_slots.size(), CombatUnit.MAX_BUFF_LIMIT)
+	assert_eq(first.buff_slots[39], {"cd": 0, "buff_id": -1, "buff_value": 0.0, "shield_buff_value": 0.0})
+
+	first.change_array[5] = -0.3
+	first.buff_slots[0]["cd"] = 4
+	assert_eq(first.change_array[5], -0.3, "a fraction stays a fraction")
+	assert_eq(second.change_array[5], 0.0, "the other unit's array is its own")
+	assert_eq(second.buff_slots[0]["cd"], 0, "and so are its buff slots")
+
+
+func test_every_factory_starts_its_unit_at_full_life_and_focus():
+	var save: PlayerSave = PlayerSave.new_game("Full", PlayerSave.PlayerClass.BIOLOGICAL)
+	var built: Array = [
+		CombatUnit.from_player_save(save),
+		CombatUnit.from_character(unit_templates[5], 10, CombatUnit.Difficulty.NORMAL, 2),
+		Party.build_companion_unit(save, 1, unit_templates, 3),
+	]
+	for unit in built:
+		assert_gt(unit.base_life, 0.0, "%s has life to start with" % unit.player_name)
+		assert_eq(unit.life_n, unit.base_life, "%s's current life is full" % unit.player_name)
+		assert_eq(unit.life_u, unit.base_life, "%s's maximum life is its base life" % unit.player_name)
+		assert_eq(unit.focus_n, unit.base_focus, "%s's current focus is full" % unit.player_name)
+		assert_eq(unit.focus_u, unit.base_focus, "%s's maximum focus is its base focus" % unit.player_name)
+		assert_eq(unit.speed_u, unit.base_speed, "%s's derived stats are worked out" % unit.player_name)
+
+
+# Unit 11 is the Felicity boss, whose record holds five absolute moves with
+# phase locks, and the companion Veradux uses the pools of unit 4.
+func test_a_units_moves_come_from_its_template_with_every_cooldown_at_zero():
+	var boss: CombatUnit = CombatUnit.from_character(unit_templates[11], 7, CombatUnit.Difficulty.HARD, 2)
+	assert_eq(boss.move_pool_absolute[2], {"id": 530, "phase": 2})
+	assert_not_same(boss.move_pool_absolute[2], unit_templates[11].moves["absolute"][2], "each absolute entry is the unit's own copy")
+	assert_eq(boss.cooldowns_absolute, [0, 0, 0, 0, 0])
+	assert_eq(boss.cooldowns_attack.size(), boss.move_pool_attack.size())
+	assert_eq(boss.cooldowns_defense.size(), boss.move_pool_defense.size())
+
+	var save: PlayerSave = PlayerSave.new_game("Moves", PlayerSave.PlayerClass.BIOLOGICAL)
+	var veradux: CombatUnit = Party.build_companion_unit(save, 1, unit_templates, 3)
+	var template_moves: Array = unit_templates[4].moves["attack"]
+	assert_eq(veradux.move_pool_attack, template_moves)
+	assert_not_same(veradux.move_pool_attack, template_moves, "the unit's pool is its own copy")
+	assert_eq(veradux.cooldowns_attack, [0, 0])
 
 
 func test_element_from_name_matches_element_order_position():
@@ -211,12 +245,9 @@ func test_a_speed_change_reorders_a_team_from_the_next_full_turn():
 # player as its speaker instead of finding nobody and being skipped.
 func test_the_players_battle_unit_is_sonny_whatever_the_save_is_named():
 	var save = PlayerSave.new_game("< Enter Name Here >", 0)
-	var player: CombatUnit = CombatUnit.from_player_save(save)
-	assert_eq(player.player_name, "Sonny", "the player's battle unit")
-
-	var battle: BattleFight = battles.get(100)
-	var units: Dictionary = _build_battle_units(battle)
-	units[BattleRunner.PLAYER_SLOT] = player
+	var battle: BattleFight = BattleSetup.load_battle(100)
+	var units: Dictionary = _roster_for(battle, save)
+	assert_eq(units[BattleRunner.PLAYER_SLOT].player_name, "Sonny", "the player's battle unit")
 	var runner = BattleRunner.new()
 	var manager: BattleManager = autofree(BattleManager.new())
 	var setup_events: Array = runner.setup(units, battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
@@ -231,9 +262,8 @@ func test_the_players_battle_unit_is_sonny_whatever_the_save_is_named():
 # FROST1 takes 30% off speed. Its field 7 is -0.3, applyBuffKrin adds that to
 # changeArray[5], and applyChangesKrin sets SPEEDU to
 # ceil((SPEED + changeArray[4]) * (1 + changeArray[5]))
-# (frame_42/DoAction_10.as:188, 261). The player, enemies and companions each
-# build their change arrays in their own constructor, so the test covers one of
-# each, and runs FROST1's 12 turns out to check that speed comes back.
+# (frame_42/DoAction_10.as:188, 261). The test covers one unit from each factory
+# and runs FROST1's 12 turns out to check that speed comes back.
 func test_frost_takes_30_percent_off_speed_for_a_player_an_enemy_and_a_companion():
 	var save: PlayerSave = PlayerSave.new_game("Frost", PlayerSave.PlayerClass.BIOLOGICAL)
 	save.level = 10
@@ -334,14 +364,14 @@ func test_battle_104_boss_phases_and_speeches():
 # 105 (a Doctor Leath fight - "Twisted Experiment") has exactly one speech,
 # at turnTime:0, so it's a clean single-speech reproduction of the bug.
 func test_setup_returns_its_own_turn_time_zero_speeches():
-	var battle: BattleFight = battles.get(105)
+	var battle: BattleFight = BattleSetup.load_battle(105)
 	assert_not_null(battle)
 	assert_eq(battle.speeches.size(), 1)
 	assert_eq(int(battle.speeches[0]["turnTime"]), 0, "the one speech fires at battle start, not mid-turn")
 	var runner = BattleRunner.new()
 	var manager: BattleManager = autofree(BattleManager.new())
 	var setup_events: Array = runner.setup(
-		_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
+		_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
 	)
 	var has_speech: bool = false
 	for event in setup_events:
@@ -355,15 +385,15 @@ func test_setup_returns_its_own_turn_time_zero_speeches():
 # such a line, because no playerKrinNaN exists to be active, and it only moves
 # on to the next line of a conversation after showing one, so the line after a
 # skipped one never plays either (frame_217/PlaceObject2_3389_480 enterFrame,
-# lines 813-818 and 852-856). The harness puts Veradux in both companion slots,
-# so battle 403 has no Roald: Veradux's opening line plays, Roald's reply is
-# skipped, and Sonny's answer to Roald never plays.
+# lines 813-818 and 852-856). A fresh save hasn't joined Roald, so battle 403
+# has no Roald: Veradux's opening line plays, Roald's reply is skipped, and
+# Sonny's answer to Roald never plays.
 func test_a_line_whose_speaker_is_not_on_the_field_is_skipped():
-	var battle: BattleFight = battles.get(403)
+	var battle: BattleFight = BattleSetup.load_battle(403)
 	var runner = BattleRunner.new()
 	var manager: BattleManager = autofree(BattleManager.new())
 	var setup_events: Array = runner.setup(
-		_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
+		_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
 	)
 	var lines: Array = []
 	for event in setup_events:
@@ -384,11 +414,11 @@ func test_a_line_whose_speaker_is_not_on_the_field_is_skipped():
 func test_a_battle_whose_first_phase_ends_it_is_won_after_its_opening_lines():
 	var opening_lines: Dictionary = {210: 4, 409: 2, 504: 2, 508: 4}
 	for battle_id in opening_lines:
-		var battle: BattleFight = battles.get(battle_id)
+		var battle: BattleFight = BattleSetup.load_battle(battle_id)
 		var runner = BattleRunner.new()
 		var manager: BattleManager = autofree(BattleManager.new())
 		var setup_events: Array = runner.setup(
-			_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
+			_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
 		)
 		var said: Array = setup_events.filter(func(event): return event["type"] == BattleRunner.EventType.SPEECH)
 		assert_eq(said.size(), opening_lines[battle_id], "battle %d plays its opening lines" % battle_id)
@@ -400,18 +430,17 @@ func test_a_battle_whose_first_phase_ends_it_is_won_after_its_opening_lines():
 # when the watched boss falls to 10% and 15% life, and 201 at phase 2. Every
 # phase advance moves the phase on and sets turnTimeKKK2 back to 0 before the
 # speech pass looks for lines (lines 176-193), which is the walk below. Battle
-# 212's phase 4 opens with Roald, so he stands in slot 5 here.
+# 212's phase 4 opens with Roald, so the save here has him joined.
 func test_the_phase_after_an_end_game_entry_ends_the_battle_after_its_lines():
 	var lines_at_the_end: Dictionary = {109: 2, 201: 12, 212: 2}
 	var last_phase: Dictionary = {109: 4, 201: 2, 212: 4}
 	for battle_id in lines_at_the_end:
-		var battle: BattleFight = battles.get(battle_id)
-		var units: Dictionary = _build_battle_units(battle)
-		if battle_id == 212:
-			units[5] = CombatUnit.from_character(unit_templates[32], 1, CombatUnit.Difficulty.HARD, 5)
+		var battle: BattleFight = BattleSetup.load_battle(battle_id)
+		var save: PlayerSave = _save_for(battle)
+		save.party_roster = [0, 1, 2, -1, -1, -1]
 		var runner = BattleRunner.new()
 		var manager: BattleManager = autofree(BattleManager.new())
-		runner.setup(units, battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+		runner.setup(_roster_for(battle, save), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
 		var said: Array = []
 		var over_early: bool = false
 		for next_phase in range(2, last_phase[battle_id] + 1):
@@ -444,10 +473,10 @@ func test_space_skips_the_next_line_and_strands_the_rest():
 # Runs the tutorial's opening, has Space cut the given line, and returns the
 # SPEECH events the turnTime 2 conversation plays when its time comes.
 func _tutorial_turn_2_lines_after_space_on(speech_index: int) -> Array:
-	var battle: BattleFight = battles.get(2)
+	var battle: BattleFight = BattleSetup.load_battle(2)
 	var runner = BattleRunner.new()
 	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup(_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.setup(_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
 	runner.hard_skip(speech_index)
 	runner.turns_in_phase = 2
 	var start: int = runner.events.size()
@@ -470,14 +499,14 @@ func test_battle_51_end_game_phase():
 # formula and its AI picks moves with randi_range, so an unseeded run produced
 # a different number of misses every time and occasionally none at all, which
 # failed the count assert below and drifted the whole suite's assert total.
-# This seed gives 6 misses over 45 half-turns, the same every run. The global
+# This seed gives 7 misses over 26 half-turns, the same every run. The global
 # RNG is handed back at the end so the tests after this one are unaffected.
 func test_misses_are_move_events_not_a_separate_type():
 	seed(20260823)
-	var battle: BattleFight = battles.get(51)
+	var battle: BattleFight = BattleSetup.load_battle(51)
 	var runner = BattleRunner.new()
 	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup(_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.setup(_ai_driven_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
 	_run_to_completion(runner)
 	var miss_count: int = 0
 	for event in runner.events:
@@ -732,13 +761,13 @@ func test_a_buff_a_move_lands_on_its_caster_waits_for_the_casters_tick():
 
 # Runs a full battle with AI on both sides; returns event-type counts.
 func _assert_battle_runs(battle_id: int) -> Dictionary:
-	var battle: BattleFight = battles.get(battle_id)
+	var battle: BattleFight = BattleSetup.load_battle(battle_id)
 	assert_not_null(battle, "battle %d exists" % battle_id)
 	if battle == null:
 		return {}
 	var runner = BattleRunner.new()
 	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup(_build_battle_units(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.setup(_ai_driven_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
 	var half_turns = _run_to_completion(runner)
 	assert_true(runner.is_over(), "battle %d terminates within %d half-turns" % [battle_id, MAX_HALF_TURNS])
 	assert_has([0, 1, 2], runner.win_condition, "outcome is win/loss/draw")
@@ -805,41 +834,35 @@ func _acting_order(events: Array) -> Array:
 	return order
 
 
-# players[i] -> slot i+2; positive ids are unit templates, negative are story
-# companion markers (Veradux stands in), 0 is empty. Slot 1 is a player
-# stand-in driven by the AI (template 1 "Bio") so the loop runs autonomously.
-func _build_battle_units(battle: BattleFight) -> Dictionary:
-	var units = {}
-	var player_level = 1
-	for i in battle.players.size():
-		var template_id = int(battle.players[i].get("id", 0))
-		if template_id > 0:
-			player_level = max(player_level, _resolve_level(battle.players_levels, i, 1))
-	for i in battle.players.size():
-		var template_id = int(battle.players[i].get("id", 0))
-		var slot = i + 2
-		var level = _resolve_level(battle.players_levels, i, player_level)
-		if template_id > 0 and unit_templates.has(template_id):
-			units[slot] = CombatUnit.from_character(unit_templates[template_id], level, CombatUnit.Difficulty.HARD, slot)
-		elif template_id < 0:
-			units[slot] = CombatUnit.from_character(unit_templates[4], player_level, CombatUnit.Difficulty.HARD, slot)
-	units[1] = CombatUnit.from_character(unit_templates[1], player_level, CombatUnit.Difficulty.HARD, 1)
+# This puts Sonny and Veradux at the level of the battle's strongest enemy, so
+# that a fight run to its end is a real one. A training battle's "X" and "Z"
+# levels are worked out from the player's level, so they can't set it.
+func _save_for(battle: BattleFight) -> PlayerSave:
+	var save: PlayerSave = PlayerSave.new_game("Runner")
+	save.level = int(battle.players_levels.filter(func(level): return not level is String).max())
+	Leveling.compute_stats(save)
+	save.party_levels[1] = save.level
+	return save
+
+
+func _roster_for(battle: BattleFight, save: PlayerSave = null) -> Dictionary:
+	if save == null:
+		save = _save_for(battle)
+	return BattleSetup.build_units(battle, save, unit_templates, CombatUnit.Difficulty.HARD)
+
+
+# Sonny is the one unit the AI doesn't control, so this turns the AI on for the
+# player's unit, with the moves the save knows, for a fight nobody has to play.
+func _ai_driven_roster_for(battle: BattleFight) -> Dictionary:
+	var save: PlayerSave = _save_for(battle)
+	var units: Dictionary = _roster_for(battle, save)
+	var player: CombatUnit = units[BattleRunner.PLAYER_SLOT]
+	player.ai_enabled = true
+	player.move_pool_attack = TalentTree.get_known_move_ids(save)
+	player.cooldowns_attack = []
+	for i in player.move_pool_attack.size():
+		player.cooldowns_attack.append(0)
 	return units
-
-
-# players_levels entries can be "X" (player level - 2) or "Z" (player level
-# + 5) - the training-fight level scalers.
-func _resolve_level(levels: Array, index: int, player_level: int) -> int:
-	if index >= levels.size():
-		return 1
-	var raw = levels[index]
-	if raw is String:
-		if raw == "X":
-			return max(player_level - 2, 1)
-		if raw == "Z":
-			return player_level + 5
-		return 1
-	return max(int(raw), 1)
 
 
 # Passive talent buffs carry duration -1 = permanent (never ticked down, never
@@ -860,76 +883,3 @@ func _live_buff_names(unit: CombatUnit) -> Array:
 		if slot["cd"] > 0:
 			names.append(buffs_by_id[slot["buff_id"]].internal_name)
 	return names
-
-
-func _character_from_json(unit_data: Dictionary) -> Character:
-	var character = Resource.new()
-	character.set_script(CharacterScript)
-	character.name = unit_data["name"]
-	character.vitality = float(unit_data["health"])
-	character.strength = float(unit_data["strength"])
-	character.magic = float(unit_data["magic"])
-	character.speed = float(unit_data["speed"])
-	character.focus = float(unit_data["focus"])
-	var absolute = []
-	for move in unit_data["moves"]["absolute"]:
-		absolute.append({"id": int(move["id"]), "phase": int(move["turn"])})
-	var attack = []
-	for move in unit_data["moves"]["attack"]:
-		attack.append(int(move["id"]))
-	var defense = []
-	for move in unit_data["moves"]["defense"]:
-		defense.append(int(move["id"]))
-	character.moves = {"absolute": absolute, "attack": attack, "defense": defense}
-	character.stats = {
-		"aggression": _ordered(unit_data["stats"]["aggression"], AGGRESSION_ORDER),
-		"piercing": _ordered(unit_data["stats"]["piercing"], ELEMENT_ORDER),
-		"defense": _ordered(unit_data["stats"]["defense"], ELEMENT_ORDER),
-	}
-	character.visuals = {"voice": unit_data["visuals"]["voice"]}
-	return character
-
-
-func _battle_from_json(battle_data: Dictionary) -> BattleFight:
-	var battle = Resource.new()
-	battle.set_script(BattleFightScript)
-	battle.id = int(battle_data["id"])
-	battle.absolute_start = int(battle_data.get("absolute_start", 0))
-	battle.time_lock = battle_data.get("time_lock")
-	battle.win_date = int(battle_data.get("win_date", -1))
-	battle.win_date_condition = int(battle_data.get("win_date_condition", 0))
-	battle.phases = battle_data.get("phases", {})
-	battle.players = battle_data.get("players", [])
-	battle.players_levels = battle_data.get("players_levels", [])
-	var speeches: Array[Dictionary] = []
-	for speech in battle_data.get("speeches", []):
-		speeches.append(speech)
-	battle.speeches = speeches
-	return battle
-
-
-func _ordered(stat_dict: Dictionary, order: Array) -> Array:
-	var result = []
-	for key in order:
-		result.append(stat_dict[key])
-	return result
-
-
-func _load_json(path: String) -> Array:
-	var file = FileAccess.open(path, FileAccess.READ)
-	if file == null:
-		fail_test("Could not open " + path)
-		return []
-	var parsed = JSON.parse_string(file.get_as_text())
-	file.close()
-	return parsed if parsed is Array else []
-
-
-func _load_json_dict(path: String) -> Dictionary:
-	var file = FileAccess.open(path, FileAccess.READ)
-	if file == null:
-		fail_test("Could not open " + path)
-		return {}
-	var parsed = JSON.parse_string(file.get_as_text())
-	file.close()
-	return parsed if parsed is Dictionary else {}

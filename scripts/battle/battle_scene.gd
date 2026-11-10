@@ -320,11 +320,12 @@ func _populate_stance_rows() -> void:
 	# battlefield where slot 5 is the upper fighter and slot 3 the lower one.
 	for slot in [5, 3]:
 		var unit: CombatUnit = units.get(slot)
-		if unit == null:
+		# Only a companion gets a row. The original fills the bar from whoever
+		# is active in slots 3 and 5 at each Decision, but no guest's row ever
+		# appears there: DECODED_ALGORITHMS.md has why.
+		if unit == null or unit.origin != CombatUnit.Origin.COMPANION:
 			continue
-		var party_id: int = _party_id_for_unit(unit)
-		if party_id <= 0:
-			continue
+		var party_id: int = unit.party_id
 		var row: StanceRow = StanceRowScene.instantiate()
 		row.position = Vector2(0, row_y)
 		stance_host.add_child(row)
@@ -342,13 +343,6 @@ func _refresh_stance_row(party_id: int, selected_mode: Party.AggressionStance) -
 	var row: StanceRow = _stance_rows.get(party_id)
 	if row != null:
 		row.set_selected(selected_mode)
-
-
-func _party_id_for_unit(unit: CombatUnit) -> int:
-	for party_id in Party.COMPANIONS:
-		if Party.COMPANIONS[party_id]["name"] == unit.player_name:
-			return party_id
-	return -1
 
 
 func _on_stance_pressed(party_id: int, mode: Party.AggressionStance, slot: int) -> void:
