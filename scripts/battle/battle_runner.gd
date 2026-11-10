@@ -38,8 +38,11 @@ enum Outcome { LOSS = 0, WIN = 1, DRAW = 2, ONGOING = -1 }
 #
 # PASSED is an action that dispatched with nothing to do: its caster passed,
 # chose a move at a target that was already dead, or was dead itself.
+#
+# BUFF_TICK is the Buff tick that follows an action of a caster that is alive
+# when the action ends, whether or not the tick changes anything.
 enum EventType {
-	MOVE, STUNNED, MOVE_FAILED, DISPEL, DEATH, SPEECH, PHASE_ADVANCED, BATTLE_ENDED, PASSED,
+	MOVE, STUNNED, MOVE_FAILED, DISPEL, DEATH, SPEECH, PHASE_ADVANCED, BATTLE_ENDED, PASSED, BUFF_TICK,
 }
 
 # A DEATH event's own "cause" key - MOVE plays at the killing blow's impact

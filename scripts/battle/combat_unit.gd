@@ -529,7 +529,7 @@ func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_inde
 # compilation of the WHOLE script anywhere it's loaded outside that context
 # (EditorScript, tests, ...), including for callers that never call this
 # function at all.
-func tick_buffs(buffs_by_id: Dictionary = {}) -> void:
+func tick_buffs(buffs_by_id: Dictionary = {}) -> BuffTick:
 	var total_damage: float = 0.0
 	var total_focus = dot_ticker_array[9]
 	total_damage += dot_ticker_array[8] * heal_mod_plus * heal_mod_minus * ihot
@@ -579,3 +579,4 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> void:
 		active = false
 
 	apply_changes()
+	return BuffTick.new()

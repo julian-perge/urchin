@@ -173,6 +173,10 @@ func play_shield_clip() -> void:
 	_shield_clip.play()
 
 
+func show_tick(tick: BuffTick) -> void:
+	pass
+
+
 func _element_color(move: Ability) -> Color:
 	if move == null or move.damage_element_type == -1:
 		return Color.WHITE
