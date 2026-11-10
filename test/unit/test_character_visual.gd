@@ -5,12 +5,40 @@ extends GutTest
 
 const CharacterVisualScene = preload("res://scenes/character_visual.tscn")
 const GameItemScript = preload("res://scripts/entities/game_item.gd")
+const SWF_FRAME_SECONDS: float = 1.0 / 30.0
 
 var visual: CharacterVisual
 
 
 func before_each():
 	visual = add_child_autofree(CharacterVisualScene.instantiate())
+
+
+func _animations() -> Dictionary:
+	return JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.ANIMATIONS_FILE))
+
+
+# The MODEL1 frame the doll's parts show, numbered from 1 like the SWF's, or 0
+# when the pose matches no frame.
+func _shown_frame() -> int:
+	var frames: Array = _animations()["frames"]
+	for index in frames.size():
+		if _shows_pose(frames[index]):
+			return index + 1
+	return 0
+
+
+func _shows_pose(pose: Dictionary) -> bool:
+	for part in visual.get_node("Body").get_children():
+		var matrix = pose.get(str(part.name))
+		if matrix == null:
+			if part.visible:
+				return false
+			continue
+		var transform := Transform2D(Vector2(matrix[0], matrix[1]), Vector2(matrix[2], matrix[3]), Vector2(matrix[4], matrix[5]))
+		if not part.visible or not part.transform.is_equal_approx(transform):
+			return false
+	return true
 
 
 func _sprite_count(part_name: String) -> int:
@@ -85,8 +113,8 @@ func test_melee_runs_strikes_and_returns_home():
 	watch_signals(visual)
 	visual.position = Vector2(100, 100)
 	visual.play_melee(Vector2(80, 0))
-	# krinMelee: eased dash arrives ~0.47s in; impact 0.5s after arrival;
-	# runback starts 1.0s after arrival and eases home (~2.2s total).
+	# krinMelee: eased dash arrives ~0.47s in; Impact 15 frames after arrival;
+	# the Runback starts 14 frames after Impact and eases home.
 	for i in 6:
 		visual._process(0.05)
 	assert_gt(visual.position.x, 130.0, "mid-dash: moved toward the target")
@@ -99,6 +127,61 @@ func test_melee_runs_strikes_and_returns_home():
 	assert_signal_emitted(visual, "melee_finished")
 	assert_eq(visual._state, CharacterVisual.State.IDLE, "sequence recovers to idle")
 	assert_almost_eq(visual.position.x, 100.0, 0.1, "back home after runback")
+
+
+# krinMelee's end counter counts the frame that raised the impact flag, so the
+# Runback starts 14 frames after Impact, not 15 (frame_42/DoAction_4.as:73-95).
+# krinMelee moves the fighter's clip whatever the doll plays (67-135), so a hit
+# during the Runback plays over a doll that keeps sliding home.
+func test_a_caster_hit_in_its_runback_keeps_sliding_home_while_it_plays_hit():
+	watch_signals(visual)
+	visual.position = Vector2(100, 100)
+	visual.play_melee(Vector2(80, 0))
+	for frame in 120:
+		if get_signal_emit_count(visual, "attack_connected") > 0:
+			break
+		visual._process(SWF_FRAME_SECONDS)
+	var strike_spot: Vector2 = visual.position
+	assert_eq(strike_spot, Vector2(180, 100), "sanity: the blow lands at the target")
+	for frame in 13:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual.position, strike_spot, "13 frames after Impact the caster still stands where it struck")
+	visual._process(SWF_FRAME_SECONDS)
+	assert_lt(visual.position.x, strike_spot.x, "and the 14th frame starts its Runback")
+
+	visual.set_state(CharacterVisual.State.HIT)
+	var hit: Dictionary = _animations()["labels"]["hit"]
+	for frame in 4:
+		var before: Vector2 = visual.position
+		visual._process(SWF_FRAME_SECONDS)
+		assert_lt(visual.position.x, before.x, "a hit doesn't stop the slide home")
+		assert_between(_shown_frame(), int(hit["start"]), int(hit["end"]), "while the doll plays hit")
+	for frame in 120:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual.position, Vector2(100, 100), "and the doll gets home")
+
+
+# The next action can dispatch before a Runback ends, so a fighter can swing
+# again on its way home. The original takes the clip's position then as the
+# fighter's new home (frame_42/DoAction_4.as:38-39), and ADR 0005 counts that
+# as an Original bug.
+func test_a_swing_that_starts_during_the_runback_still_ends_at_home():
+	watch_signals(visual)
+	visual.position = Vector2(100, 100)
+	visual.play_melee(Vector2(80, 0))
+	for frame in 120:
+		visual._process(SWF_FRAME_SECONDS)
+		if get_signal_emit_count(visual, "attack_connected") > 0 and visual.position.x < 160.0:
+			break
+	var partway: Vector2 = visual.position
+	assert_between(partway.x, 100.5, 160.0, "sanity: the doll is partway home")
+
+	visual.play_melee(Vector2(80, 0))
+	visual._process(SWF_FRAME_SECONDS)
+	assert_gte(visual.position.x, partway.x, "the new swing runs on from where the doll stands")
+	for frame in 240:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual.position, Vector2(100, 100), "and its Runback ends at the doll's own home")
 
 
 func test_attack_variants_and_in_place_strike():

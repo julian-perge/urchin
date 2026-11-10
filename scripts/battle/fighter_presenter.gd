@@ -281,23 +281,18 @@ func _relation_to_player() -> Relation:
 	return Relation.ALLY if _unit.team_side == CombatUnit.Team.ONE else Relation.ENEMY
 
 
-# Runs the caster's melee swing to offset and back, and returns once the doll is
-# home. on_blow runs once, at the blow. If the swing ends without one, as an
-# interrupted swing does, it runs then and this returns true. With wait false
-# nothing waits for the swing, so on_blow runs at once. If the presenter leaves
-# the tree during the swing, on_blow doesn't run.
-func melee(offset: Vector2, label: String, on_blow: Callable, wait: bool = true) -> bool:
-	_doll.attack_connected.connect(on_blow, CONNECT_ONE_SHOT)
+# Starts the caster's melee swing to offset and returns at its Impact, once
+# on_blow has run. The doll's Runback then takes it home on its own while the
+# battle goes on. With wait false nothing waits for the swing, so on_blow runs
+# at once. If the presenter leaves the tree during the swing, on_blow doesn't
+# run.
+func melee(offset: Vector2, label: String, on_blow: Callable, wait: bool = true) -> void:
 	_doll.play_melee(offset, label)
 	if wait:
-		await _doll.melee_finished
+		await _doll.attack_connected
 		if not is_inside_tree():
-			return false
-	if _doll.attack_connected.is_connected(on_blow):
-		_doll.attack_connected.disconnect(on_blow)
-		on_blow.call()
-		return true
-	return false
+			return
+	on_blow.call()
 
 
 func cast(move: Ability) -> void:
