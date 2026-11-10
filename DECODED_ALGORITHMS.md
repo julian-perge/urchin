@@ -266,8 +266,8 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
     its `shield` frame (70-76). Nothing after the shield check runs: no flash, no `hit` label, no hit voice, no life bar update and no AchVal1. A crit has already shaken the grid by
     then, and played `Angry_Dux` or `Angry_Roald` when Veradux or Roald is the caster (28-43). The result is HARM with amount 0 and `shield_took_all` set, and
     `FighterPresenter.show_result` plays the clip and `sfx_shield` and draws SHIELDED for it (see "The Shield clip" below).
-  - Otherwise the shield's value comes off the hit and the shield empties (79-81). A shield exactly as big as the hit soaks it this way, so the rest of the branch plays a hit for 0, and
-    `KrinNumberShow` only draws a number above 0 (`frame_42/DoAction_7.as:8`).
+  - Otherwise the shield's value comes off the hit and the shield empties (79-81). A shield exactly as big as the hit soaks it this way, which is not a Shield block. The rest of
+    the branch plays a hit that did nothing, with no number, because `KrinNumberShow` only draws a number above 0 (`frame_42/DoAction_7.as:8`).
   - With no SSWITCH (82-131) the hit comes off LIFEN, which stops at 0 with FOCUSN set to 0. The number is drawn twice (80 and 84). AchVal1 grows by the hit, which is what got past the
     shield, when the caster's playerName is "Sonny" (91-93). BATTLEFLASH plays `hit` (99), the target plays `hit` unless STUN is set (100-103), and at LIFEN 0 it plays `dead` and goes
     inactive (104-107), or else a hit voice plays (130). The `lifeBarUpdate` after either branch (150) plays the target's `voiceDie` when LIFEN is 0, unless its bar already read 0%
