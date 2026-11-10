@@ -103,6 +103,12 @@ var _fade_tween: Tween = null  # the running _play_fade's tween, which the next 
 @onready var sky: TextureRect = $Sky
 @onready var sky_fill: ColorRect = $SkyFill
 @onready var battlefield: Node2D = $Battlefield
+# The original attaches each Floating number at depth 1620 to 1639 of the battle
+# screen (frame_42/DoAction_7.as:4 and 37). That is over the fighters at depths
+# 40 to 240, the impact clip at -9 and the bolts from depth 600
+# (frame_42/DoAction_4.as:78 and 140). So battle_scene.tscn puts this node right
+# after Battlefield, which holds all of those.
+@onready var floating_numbers: FloatingNumberLayer = $FloatingNumbers
 @onready var turn_label: Label = $UI/TurnLabel
 @onready var speech_label: Label = $UI/SpeechLabel
 @onready var _pass_ring: Control = $BottomBar/PassRing
@@ -292,7 +298,7 @@ func _spawn_visuals() -> void:
 		var home: Vector2 = SLOT_POSITIONS.get(slot, Vector2(400, 300))
 		var presenter: FighterPresenter = FighterPresenterScene.instantiate()
 		battlefield.add_child(presenter)
-		presenter.setup(units[slot], home, ItemManagerAuto.items_by_id, BuffManagerAuto.buffs_by_id, battlefield)
+		presenter.setup(units[slot], home, ItemManagerAuto.items_by_id, BuffManagerAuto.buffs_by_id, floating_numbers)
 		presenter.voice_cue.connect(AudioManagerAuto.voice)
 		presenter.effect_cue.connect(AudioManagerAuto.play_effect)
 		presenter.hit_area.mouse_entered.connect(_on_unit_hovered.bind(slot, true))
@@ -486,7 +492,9 @@ func _play_events(events: Array) -> void:
 					combat_text_banner.show_text(COST_FAILURE_MESSAGES[event["reason"]])
 				await _pause(0.3)
 			BattleRunner.EventType.DISPEL:
-				_presenters[int(event["target_slot"])].float_text("DISPEL", Color.CYAN)
+				# The original draws nothing for a dispel (the conductor, lines
+				# 22-53), so only the combat log above shows it.
+				pass
 			BattleRunner.EventType.DEATH:
 				# A move-caused death already played at the killing blow's
 				# impact (see FighterPresenter.show_result) - only the pacing

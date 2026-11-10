@@ -239,13 +239,22 @@ The battle engine dispatches on `addNewMove` param 10:
   (`zoomPause = 1`), the screen shakes (`GridShaker`, when param 9 speed modifier >= 0), and impact (`BAMBAMBAM`) is instant. Shock also sets `missToMake` to undefined (conductor line
   447), so its miss would be silent too, but a Shock move never misses: the hit roll is skipped for Shock and `strikeSuccess` is set true (conductor lines 360 and 385).
 
-Element colors (`elementColorArray`, frame_41/DoAction_2.as - menu bars AND damage numbers): Physical `C40000`, Magic `FB95C8`, Ice `68CBF4`, Fire `FF6600`, Lightning `FFCC00`, Earth `856B47`, Shadow
+Element colors (`elementColorArray`, frame_41/DoAction_2.as - menu bars AND Floating numbers): Physical `C40000`, Magic `FB95C8`, Ice `68CBF4`, Fire `FF6600`, Lightning `FFCC00`, Earth `856B47`, Shadow
 `664D80`, Poison `508349`; heals `66FF00`.
 
-Damage numbers (`KrinNumberShow`, frame_42/DoAction_7.as): digit sprites (NumberFixer/NumberSetter clips) colored by the move's ELEMENT, `gotoAndPlay("critical")` variant on crits (`perKSuccess`),
+Floating numbers (`KrinNumberShow`, frame_42/DoAction_7.as): digit sprites (NumberFixer/NumberSetter clips) colored by the move's ELEMENT, `gotoAndPlay("critical")` variant on crits (`perKSuccess`),
 special "miss"/"shield" frames. Crits also fire `GridShaker` (frame_42/DoAction_8.as). Every damage hit that gets past the shield draws its number twice: `executeMove` calls `KrinNumberShow` at
 `frame_42/DoAction_8.as:80` and again at 84, or at 137 in heal green under sswitch. Each call attaches a new clip at the next depth (`frame_42/DoAction_7.as:37`, 75-79), so a normal hit shows two
 identical numbers and an sswitch hit shows a green number over an element-colored one.
+
+Ported: `FloatingNumberLayer` is `KrinNumberShow` and `FloatingNumber` is one `NumberFixer`, played from what `extract_floating_numbers` writes. The details the port keeps:
+
+- The number sits on the target rig's `_x`/`_y` with no offset (lines 38-39). `dressChar` lowers only a MODEL5 unit's doll inside its rig, so its number stays on the rig.
+- The digits sit 19 apart in the holder's own units, the first at `-19 * (digits - 2) / 2 - 10` (lines 3, 34-35 and 56), which leaves them half a unit left of the rig's origin.
+- Only the digits' and the MISS word's `KN` fill takes the color, through `setRGB` (58-59 and 66-67). SHIELDED has no `KN` child and is never tinted.
+- A number of 0 or less draws nothing (line 8). The digit loop drops any fraction, so a number between 0 and 1 attaches a `NumberFixer` that plays its label with no digits.
+- The depth cycles over 20 depths, 1620 to 1639, so a 21st number replaces the one still at its depth.
+- The port draws one number per result, in the color the original leaves on top (ADR 0005).
 
 ## What executeMove does on each branch (frame_42/DoAction_8.as)
 
@@ -587,7 +596,7 @@ Everything below still stands in for original behavior, except the rows marked D
 |---|---|---|
 | Camera zoom + shake | none | `GridZoomer` "KrinZoomGo" (zoom to target center * `-zoomRatioNEW` + 400/300; pause 2xCD melee / 5 missile / 1 shock), `GridShaker` (shock + crits) |
 | Result flash | **DONE (2026-11-10)**: each Fighter presenter pulses its own Result flash on the doll, no longer the HIT recoil label only. See "The Result flash" above | `BATTLEFLASH` with `characterColorState/FilterState`: `frame_42/DoAction_8.as` ~line 199 |
-| Damage number art | Labels with exact colors + bigger crit font | NumberFixer/NumberSetter digit clips, miss/shield variants: `frame_42/DoAction_7.as` |
+| Floating number art | **DONE (2026-11-10)**: `extract_floating_numbers` renders the digit, MISS and SHIELDED clips and NumberFixer's four labels, and `FloatingNumber` plays them | NumberFixer/NumberSetter digit clips, miss/shield variants: `frame_42/DoAction_7.as` |
 | Top battle HP/focus bars | in-field bars with numbers | `lifeBarUpdate` + bar clips, layout in frame 217 placements |
 | Doll ground shadow | none | player clip "shadower" (hidden on death, MODEL1 frame 360 script) |
 | Melee end point | fixed 55 px short | target/shooter half-widths: `krinMelee` endPoint |
