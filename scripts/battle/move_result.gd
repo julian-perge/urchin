@@ -15,24 +15,25 @@ enum Direction { HARM, HEAL, NONE }
 var kind: Kind = Kind.STATUS_ONLY
 
 # Which way the move pushed the target's life once sswitch had its say. Damage
-# harms and a heal heals, and under sswitch each one does the other. A shield
-# that takes the whole hit still leaves it HARM, with an amount of 0. A heal of
+# harms and a heal heals, and under sswitch each one does the other. A Shield
+# block still leaves it HARM, with an amount of 0, because the original checks
+# the shield before it checks sswitch (frame_42/DoAction_8.as:70-82). A heal of
 # 0 stays HEAL under sswitch too, because the original checks the amount before
 # it checks sswitch (frame_42/DoAction_8.as:172). Focus, status-only moves and
 # misses are NONE.
 var direction: Direction = Direction.NONE
 
 # The damage that got past the shield, overkill included, or the heal before max
-# life caps it. The original draws it over the target when it is above 0. A full
-# shield block leaves it 0, and the original draws its shield frame instead. On a
-# focus move it is the focus change the move asks for, negative for a drain,
-# which the original never draws (frame_42/DoAction_8.as:232-249).
+# life caps it. The original draws it over the target when it is above 0. A
+# Shield block leaves it 0, and the original draws SHIELDED instead. On a focus
+# move it is the focus change the move asks for, negative for a drain, which the
+# original never draws (frame_42/DoAction_8.as:232-249).
 var amount: float = 0.0
 
-# True when the target's shield was bigger than the hit, which the original
-# plays as a shield block (frame_42/DoAction_8.as:70-76). A shield exactly as
-# big as the hit soaks it too, but the original plays that as a hit for 0, so
-# this stays false.
+# True on a Shield block: the target's shield was bigger than the hit and took
+# all of it (frame_42/DoAction_8.as:70-76). A shield exactly as big as the hit
+# soaks it too, but that is not a Shield block. The original plays it as a hit
+# that draws no number, so this stays false.
 var shield_took_all: bool = false
 
 # The target's life when the move started resolving on it, after the caster paid

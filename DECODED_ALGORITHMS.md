@@ -262,9 +262,10 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
 `Achievements.collect_battle_counters` read that instead of working it out again.
 
 - **Full Damage** works out the hit (lines 24-64) and compares it with the target's SHIELD (65-70).
-  - A shield bigger than the hit takes all of it. SHIELD goes down by the hit, the target's `shield` clip and `sfx_shield` play, and `KrinNumberShow` draws its `shield` frame (70-76).
-    Nothing after the shield check runs: no flash, no `hit` label, no hit voice, no life bar update and no AchVal1. A crit has already shaken the grid by then, and played `Angry_Dux` or
-    `Angry_Roald` when Veradux or Roald is the caster (28-43). The result is HARM with amount 0 and `shield_took_all` set.
+  - A shield bigger than the hit takes all of it, which is a Shield block. SHIELD goes down by the hit, the target's `shield` clip and `sfx_shield` play, and `KrinNumberShow` draws
+    its `shield` frame (70-76). Nothing after the shield check runs: no flash, no `hit` label, no hit voice, no life bar update and no AchVal1. A crit has already shaken the grid by
+    then, and played `Angry_Dux` or `Angry_Roald` when Veradux or Roald is the caster (28-43). The result is HARM with amount 0 and `shield_took_all` set, and
+    `FighterPresenter.show_result` plays the clip and `sfx_shield` and draws SHIELDED for it (see "The shield clip" below).
   - Otherwise the shield's value comes off the hit and the shield empties (79-81). A shield exactly as big as the hit soaks it this way, so the rest of the branch plays a hit for 0, and
     `KrinNumberShow` only draws a number above 0 (`frame_42/DoAction_7.as:8`).
   - With no SSWITCH (82-131) the hit comes off LIFEN, which stops at 0 with FOCUSN set to 0. The number is drawn twice (80 and 84). AchVal1 grows by the hit, which is what got past the
@@ -300,6 +301,22 @@ Ported: each `FighterPresenter` plays its own `ResultFlash` (`scripts/battle/res
   100 px box around it is doll, which is every px of a doll, so the doll draws white with a rim and a halo in the label's color.
 - Only `executeMove` calls it (see the branches above), so a Shield block, a heal of 0, a miss, a status-only move and a Buff tick never flash. Each call points the one clip at its own
   target, so a move that hits several units flashes only the last, an Original bug that ADR 0005 has the port fix.
+
+## The shield clip (DefineSprite 2675)
+
+Ported: `extract_rig_clips` renders every frame of the clip into `assets/ui/battle/rig/shield/`, and each `FighterPresenter` plays its own `RigClip` (`scripts/battle/rig_clip.gd`)
+through `play_shield_clip()`.
+
+- The fighter rig, DefineSprite 2676, places the clip as `shield` at its origin. The clip's `onClipEvent(load)` runs `this.swapDepths(1000)`, which puts it over the `inner` doll
+  that `dressChar` attaches at depth 0 (`frame_217/DoAction_2.as:18`). BATTLEFLASH filters `inner` alone, so a Result flash never covers the clip, and `dressChar` scales and lowers a
+  MODEL5 `inner` alone (19-24), so the clip keeps the rig's size and origin. The halls place the right side's rigs with an x scale of -1, so the clip mirrors with them.
+- The clip has 20 frames at 30 fps. Frame 1 runs `stop()` and shows nothing. Frame 2 places the bubble, sprite 1709, a circle of radius 50 px with a #66FFFF glow, at the rig's
+  origin, and BOOM_SPARK, sprite 1712, at (40.55, 3.65). A color transform turns the bubble white on frames 3, 5 to 6 and 8 to 9, and its alpha falls from 230/256 on frame 11
+  to 0 on frame 20, so frame 20 shows nothing. The spark draws on frames 2 to 18.
+- `play()` leaves the playhead on frame 1 until the next frame, so the bubble shows one frame after the impact. That reads AVM1 as stepping every timeline before a frame's scripts
+  run, and no player has measured it. After frame 20 the playhead wraps to frame 1, and its `stop()` holds it there. A `play()` while the clip plays changes nothing.
+- `executeMove` plays it on a Shield block with `sfx_shield` (`frame_42/DoAction_8.as:73-74`). `buffTicker` plays it with no sound when a shield soaks a whole Buff tick, but on
+  the unit `IDKT` names (`frame_42/DoAction_10.as:72`), an Original bug that ADR 0005 has the port fix.
 
 ## Unit stats below level 10 (frame_42/DoAction_14.as `krinAddNewUnit`)
 
