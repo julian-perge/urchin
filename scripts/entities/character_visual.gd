@@ -70,6 +70,15 @@ const MELEE_IMPACT_FRAMES: float = 15.0
 const MELEE_RUNBACK_FRAMES: float = 14.0
 const MELEE_HOME_TOLERANCE: float = 0.000001
 
+const BODY_SHADER: Shader = preload("res://scenes/doll_body.gdshader")
+# The Result flash's margins in stage px. Its colored glows are 10 px wide, so
+# the body draws 6 px past the doll to hold the 5 px they reach past it. Its
+# white glow reads a box 100 px wide around each px the body draws, so the body
+# clears the screen texture 50 px past that, which is where a CanvasGroup
+# measures clear_margin from.
+const RESULT_FLASH_FIT_MARGIN: float = 6.0
+const RESULT_FLASH_CLEAR_MARGIN: float = 50.0
+
 static var _offsets: Dictionary = {}
 static var _offsets_loaded: bool = false
 static var _animations: Dictionary = {}
@@ -104,7 +113,8 @@ const REST_POSE: Dictionary[Variant, Variant] = {
 @export var animate: bool = true
 
 var _parts: Dictionary = {}  # name -> Node2D holding the layered sprites
-var _body: Node2D
+var _body: CanvasGroup
+var _body_material: ShaderMaterial
 var _state: int = State.IDLE
 var _attack_fired: bool = false
 
@@ -146,8 +156,15 @@ var _stun_phase: int = 0
 
 
 func _ready():
-	_body = Node2D.new()
+	# The parts draw into one picture, so a filter can read the whole doll at
+	# once, the way Flash filters the original's whole `inner` clip. The body
+	# keeps its shader on at all times, because a CanvasGroup's own shader would
+	# apply the doll's modulate a second time (see doll_body.gdshader).
+	_body = CanvasGroup.new()
 	_body.name = "Body"
+	_body_material = ShaderMaterial.new()
+	_body_material.shader = BODY_SHADER
+	_body.material = _body_material
 	add_child(_body)
 	var ordered: Array = REST_POSE.keys()
 	ordered.sort_custom(func(a, b): return REST_POSE[a]["z"] < REST_POSE[b]["z"])
@@ -311,6 +328,25 @@ func _valid_attack_label(label: String) -> String:
 
 func is_idle() -> bool:
 	return _state == State.IDLE
+
+
+# Puts the Result flash's filter on the whole doll in `color`. Flash measures a
+# blur in stage px, and the window can draw the stage at any size, so this reads
+# the stage's scale on screen each time. A CanvasGroup's margins are in screen
+# px too.
+func show_result_flash(color: Color) -> void:
+	var stage_scale: float = get_viewport().get_final_transform().get_scale().x
+	_body_material.set_shader_parameter("result_flash", true)
+	_body_material.set_shader_parameter("color", color)
+	_body_material.set_shader_parameter("stage_scale", stage_scale)
+	_body.fit_margin = RESULT_FLASH_FIT_MARGIN * stage_scale
+	_body.clear_margin = RESULT_FLASH_CLEAR_MARGIN * stage_scale
+
+
+# BATTLEFLASH puts back the filter the unit's buffs give its doll, and the port
+# draws no such filter, so the doll goes back to its plain look.
+func hide_result_flash() -> void:
+	_body_material.set_shader_parameter("result_flash", false)
 
 
 # The box around every part the doll draws in its current pose, in its parent's

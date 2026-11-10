@@ -34,7 +34,7 @@ func test_refresh_buffs_includes_buff_id_zero():
 	var buff_fire: Buff = _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)
 	var buffs_by_id: Dictionary = {0: buff_twin, 1: buff_fire}
 
-	overlay.refresh_buffs(unit, buffs_by_id)
+	overlay.refresh_buffs(unit.buff_slots, buffs_by_id)
 
 	assert_eq(overlay.buff_row.get_child_count(), 2, "both real active buffs shown, the empty slot skipped")
 	var first: Control = overlay.buff_row.get_child(0)
@@ -59,7 +59,7 @@ func test_refresh_buffs_caps_at_seven_icons():
 	for cd in range(1, 9):  # 8 active slots, one more than the 7-slot cap
 		unit.buff_slots.append({"cd": cd, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0})
 
-	overlay.refresh_buffs(unit, {1: buff_fire})
+	overlay.refresh_buffs(unit.buff_slots, {1: buff_fire})
 
 	assert_eq(overlay.buff_row.get_child_count(), 7, "8 active buffs capped at MAX_BUFF_ICONS (7)")
 
@@ -86,7 +86,7 @@ func test_refresh_buffs_shows_the_first_seven_slots_in_slot_order():
 	for i in CombatUnit.MAX_BUFF_LIMIT - names.size():
 		unit.buff_slots.append({"cd": 0, "buff_id": -1, "buff_value": 0.0, "shield_buff_value": 0.0})
 
-	overlay.refresh_buffs(unit, buffs_by_id)
+	overlay.refresh_buffs(unit.buff_slots, buffs_by_id)
 
 	var shown: Array = []
 	for shower in overlay.buff_row.get_children():
@@ -104,10 +104,10 @@ func test_refresh_buffs_skips_rebuild_when_state_is_unchanged():
 	var buff_fire: Buff = _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
 
-	overlay.refresh_buffs(unit, {1: buff_fire})
+	overlay.refresh_buffs(unit.buff_slots, {1: buff_fire})
 	var icon_id: int = overlay.buff_row.get_child(0).get_instance_id()
 
-	overlay.refresh_buffs(unit, {1: buff_fire})  # identical state
+	overlay.refresh_buffs(unit.buff_slots, {1: buff_fire})  # identical state
 
 	assert_eq(overlay.buff_row.get_child_count(), 1, "row still shows the one buff")
 	assert_eq(overlay.buff_row.get_child(0).get_instance_id(), icon_id, "same node - no rebuild happened")
@@ -120,11 +120,11 @@ func test_refresh_buffs_clears_expired_buffs():
 	buff_a.internal_name = "FIRESAM"
 	buff_a.element_type = CombatUnit.Element.FIRE
 	unit.buff_slots = [{"cd": 1, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
-	overlay.refresh_buffs(unit, {1: buff_a})
+	overlay.refresh_buffs(unit.buff_slots, {1: buff_a})
 	assert_eq(overlay.buff_row.get_child_count(), 1)
 
 	unit.buff_slots = []  # buff expired
-	overlay.refresh_buffs(unit, {1: buff_a})
+	overlay.refresh_buffs(unit.buff_slots, {1: buff_a})
 	await wait_process_frames(1)  # queue_free() defers actual removal to the next frame
 	assert_eq(overlay.buff_row.get_child_count(), 0, "cleared once the buff is gone")
 
@@ -149,7 +149,7 @@ func test_buff_counter_is_untinted_and_centered_over_the_icon():
 	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
-	overlay.refresh_buffs(unit, {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
+	overlay.refresh_buffs(unit.buff_slots, {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
 	await wait_process_frames(2)
 	var buff: Node = overlay.buff_row.get_child(0)
 	var counter: Label = _find(buff, "Label")
@@ -173,7 +173,7 @@ func test_buff_counter_matches_edit_text_66():
 	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
-	overlay.refresh_buffs(unit, {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
+	overlay.refresh_buffs(unit.buff_slots, {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
 	var counter: Label = _find(overlay.buff_row.get_child(0), "Label")
 	assert_eq(counter.get_theme_font_size("font_size"), 10, "10 px")
 	assert_eq(counter.get_theme_font("font").resource_path, "res://assets/fonts/texgyreheros-bold.otf", "bold")
@@ -188,7 +188,7 @@ func test_buff_tooltip_title_is_the_name_alone_and_the_icon_counts_the_turns():
 	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
-	overlay.refresh_buffs(unit, {1: _make_buff("FIRESAM", "Seek and Destroy", CombatUnit.Element.FIRE)})
+	overlay.refresh_buffs(unit.buff_slots, {1: _make_buff("FIRESAM", "Seek and Destroy", CombatUnit.Element.FIRE)})
 	var buff: Control = overlay.buff_row.get_child(0)
 	assert_eq(_find(buff, "Label").text, "3", "the icon's counter shows the turns left")
 	buff.mouse_entered.emit()

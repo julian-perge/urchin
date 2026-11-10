@@ -119,6 +119,13 @@ var _buff_tick_due: bool = false
 @onready var sky: TextureRect = $Sky
 @onready var sky_fill: ColorRect = $SkyFill
 @onready var battlefield: Node2D = $BattleScreenClip/Battlefield
+# The original attaches each Floating number to BATTLESCREEN at depth 1620 to
+# 1639 (frame_42/DoAction_7.as:4 and 37), so the numbers zoom and shake with
+# the fighters. That depth is over the fighters at depths 40 to 240, the impact
+# clip at -9 and the bolts from depth 600 (frame_42/DoAction_4.as:78 and 140).
+# So battle_scene.tscn puts this node in BattleScreenClip right after
+# Battlefield, which holds all of those.
+@onready var floating_numbers: FloatingNumberLayer = $BattleScreenClip/FloatingNumbers
 @onready var turn_label: Label = $UI/TurnLabel
 @onready var speech_label: Label = $UI/SpeechLabel
 @onready var _pass_ring: Control = $BottomBar/PassRing
@@ -312,7 +319,7 @@ func _spawn_visuals() -> void:
 		var home: Vector2 = SLOT_POSITIONS.get(slot, Vector2(400, 300))
 		var presenter: FighterPresenter = FighterPresenterScene.instantiate()
 		battlefield.add_child(presenter)
-		presenter.setup(units[slot], home, ItemManagerAuto.items_by_id, BuffManagerAuto.buffs_by_id, battlefield)
+		presenter.setup(units[slot], home, ItemManagerAuto.items_by_id, BuffManagerAuto.buffs_by_id, floating_numbers)
 		presenter.voice_cue.connect(AudioManagerAuto.voice)
 		presenter.effect_cue.connect(AudioManagerAuto.play_effect)
 		presenter.hit_area.mouse_entered.connect(_on_unit_hovered.bind(slot, true))
@@ -462,13 +469,14 @@ func _battle_loop() -> void:
 	_finish_battle()
 
 
-# battle.log gets a MOVE event's result as its fields and a MOVE_FAILED event's
-# reason as its name, because JSON.stringify would print the result as its id
-# and the reason as its number.
+# battle.log gets an event's result and unit snapshots as their fields and a
+# MOVE_FAILED event's reason as its name, because JSON.stringify would print an
+# object as its id and the reason as its number.
 func _event_log_text(event: Dictionary) -> String:
 	var logged: Dictionary = event.duplicate()
-	if logged.get("result") is MoveResult:
-		logged["result"] = logged["result"].to_dict()
+	for key in logged:
+		if logged[key] is MoveResult or logged[key] is UnitSnapshot:
+			logged[key] = logged[key].to_dict()
 	if logged.get("type") == BattleRunner.EventType.MOVE_FAILED:
 		logged["reason"] = BattleRunner.FailReason.find_key(logged["reason"])
 	return JSON.stringify(logged)
@@ -514,7 +522,9 @@ func _play_events(events: Array) -> void:
 				if int(event["caster_slot"]) == BattleRunner.PLAYER_SLOT:
 					combat_text_banner.show_text(COST_FAILURE_MESSAGES[event["reason"]])
 			BattleRunner.EventType.DISPEL:
-				_presenters[int(event["target_slot"])].float_text("DISPEL", Color.CYAN)
+				# The original draws nothing for a dispel (the conductor, lines
+				# 22-53), so only the combat log above shows it.
+				pass
 			BattleRunner.EventType.DEATH:
 				# A move's death already played at its Impact (see
 				# FighterPresenter.show_result). A death from a Buff tick plays
@@ -531,9 +541,6 @@ func _play_events(events: Array) -> void:
 				pass
 			BattleRunner.EventType.BATTLE_ENDED, BattleRunner.EventType.PASSED:
 				pass
-		# Mid-batch: redraw from DISPLAYED hp only - snapping here would
-		# reveal damage from hits that haven't animated yet.
-		_refresh_bars(false)
 	await _wait_for_dispatch()
 
 
@@ -618,6 +625,10 @@ func _play_move_event(event: Dictionary) -> void:
 	var move: Ability = MoveManagerAuto.get_move(int(event["move_id"]))
 	var caster: FighterPresenter = _presenters.get(caster_slot)
 	_start_camera(move, target_slot)
+	# The caster paid the move's costs as it dispatched, and the original redraws
+	# its bars right there (the conductor, line 359), before any swing or cast.
+	if caster != null:
+		caster.show_state(event["caster_after_dispatch"])
 	# Only Melee moves run and swing; the original plays "cast" for both
 	# Missile and Shock (param 12 is the projectile clip for Missiles, and
 	# unused for Shock) - see DECODED_ALGORITHMS.md.
@@ -757,7 +768,6 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 		int(target_unit.life_n), int(target_unit.life_u),
 	])
 	_presenters[target_slot].show_result(result, MoveManagerAuto.get_move(int(event.get("move_id", 0))))
-	_refresh_bars(false)
 
 
 # A line stays up for its whole timeToSay seconds, unless Space cuts it short
@@ -810,19 +820,15 @@ func _input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 
-# snap = true syncs the displayed hp to the true values (half-turn
-# boundaries - covers DOTs, life costs, shields); snap = false only redraws
-# from the displayed values (mid-batch, so unplayed hits stay hidden).
-func _refresh_bars(snap: bool = true) -> void:
+# Shows every fighter's unit as the half-turn left it. It runs only once the
+# replay has played every event, so it reveals nothing that hasn't played.
+func _refresh_bars() -> void:
 	for slot in _presenters:
 		var presenter: FighterPresenter = _presenters[slot]
-		if not snap:
-			presenter.redraw()
-			continue
 		var unit: CombatUnit = units[slot]
-		if int(presenter.displayed_hp) != int(unit.life_n):
+		if int(presenter.displayed.life) != int(unit.life_n):
 			_log("bar snap: slot=%d (%s) hp %d -> %d" % [
-				slot, unit.player_name, int(presenter.displayed_hp), int(unit.life_n),
+				slot, unit.player_name, int(presenter.displayed.life), int(unit.life_n),
 			])
 		presenter.snap_to_unit()
 

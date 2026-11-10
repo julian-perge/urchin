@@ -43,7 +43,7 @@ func test_full_battle_scene_run():
 	assert_eq(scene._presenters.size(), 3, "player + enemy + Veradux fighters spawned")
 	assert_not_null(scene._presenters.get(1))
 	assert_eq(scene.units[2].player_name, "Prison Guard")
-	assert_eq(scene._presenters[2].displayed_hp, scene.units[2].life_n, "each fighter shows its own slot's unit")
+	assert_eq(scene._presenters[2].displayed.life, scene.units[2].life_n, "each fighter shows its own slot's unit")
 
 	# Let the AI drive the player so the loop runs unattended.
 	var player: CombatUnit = scene.units[1]
@@ -967,7 +967,7 @@ func test_the_retreat_button_shows_the_original_quit_tooltip():
 # A heal bigger than an sswitch target's life kills it, and the original plays
 # the death at that impact (frame_42/DoAction_8.as:208-228). The runner logs a
 # killing blow as the MOVE whose result killed, then a DEATH caused by the move,
-# and _play_events() only pauses on that DEATH, leaving the death itself to
+# and _play_events() plays nothing for that DEATH, leaving the death itself to
 # FighterPresenter.show_result().
 func test_heal_that_kills_an_sswitch_target_plays_the_death():
 	var save = PlayerSave.new_game("RetrogradeKill", 0)
@@ -988,13 +988,14 @@ func test_heal_that_kills_an_sswitch_target_plays_the_death():
 
 	await scene._play_events([
 		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": target_slot,
-			"move_id": 4, "move_name": "Heal", "result": killing_heal},
+			"move_id": 4, "move_name": "Heal", "caster_after_dispatch": scene._presenters[1].displayed,
+			"result": killing_heal},
 		{"type": BattleRunner.EventType.DEATH, "slot": target_slot, "cause": BattleRunner.DeathCause.MOVE},
 	])
 
 	var presenter: FighterPresenter = scene._presenters[target_slot]
 	assert_eq(presenter.get_node("Doll")._state, CharacterVisual.State.DEAD, "the heal killed the target, so its doll plays the death")
-	assert_eq(presenter.displayed_hp, 0.0, "the bar drops to empty")
+	assert_eq(presenter.displayed.life, 0.0, "the bar drops to empty")
 	assert_eq(
 		scene._combat_log._log_text.text,
 		"%s hits Prison Guard with Heal for 37\nPrison Guard falls" % caster.player_name,
@@ -1415,12 +1416,26 @@ func test_hovering_a_fighter_shows_its_ring_only_during_a_decision():
 	ZoneManager.auto_start_battles = true
 
 
-# The runner applies the whole half-turn before the replay, so every fighter's
-# focus and buffs are already true when the first hit lands. The scene shows
-# them at every impact and after every event, on every fighter and not just the
-# one that was hit.
-func test_an_impact_and_each_event_redraw_every_fighter():
-	GameData.current_save = PlayerSave.new_game("AllSlotsRedraw", 0)
+# A MOVE event the way the runner logs one, for a move whose costs left its
+# caster as the screen already shows it.
+func _move_event(scene, caster_slot: int, target_slot: int, move_id: int, result: MoveResult) -> Dictionary:
+	return {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": caster_slot, "target_slot": target_slot,
+		"move_id": move_id, "move_name": MoveManagerAuto.get_move(move_id).display_name,
+		"caster_after_dispatch": scene._presenters[caster_slot].displayed, "result": result,
+	}
+
+
+func _buff_icons(presenter: FighterPresenter) -> Array:
+	return presenter.get_node("Overlay").buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
+
+
+# The runner resolves the whole half-turn before the replay, so when the first
+# event plays, every unit already holds its Focus, buffs and stun from later in
+# the half-turn. An impact on someone else and every other event leave a
+# fighter as the screen last showed it.
+func test_an_impact_and_each_event_leave_a_bystander_as_it_was():
+	GameData.current_save = PlayerSave.new_game("AllSlotsHeldBack", 0)
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
 
@@ -1428,20 +1443,102 @@ func test_an_impact_and_each_event_redraw_every_fighter():
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	var bystander: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
-	var overlay: UnitOverlay = scene._presenters[BattleRunner.PLAYER_SLOT].get_node("Overlay")
-
+	var presenter: FighterPresenter = scene._presenters[BattleRunner.PLAYER_SLOT]
+	var overlay: UnitOverlay = presenter.get_node("Overlay")
+	var doll: CharacterVisual = presenter.get_node("Doll")
+	var focus_shown: float = overlay.focus_bar.value
 	bystander.focus_n = 1.0
-	scene._show_move_result(
-		{"type": BattleRunner.EventType.MOVE, "caster_slot": 2, "target_slot": 3, "move_id": 1,
-			"result": _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0)},
-		3
-	)
-	assert_eq(overlay.focus_bar.value, 1.0, "an impact on someone else redraws this fighter")
+	bystander.apply_buff(BuffManagerAuto.get_buff_by_name("SHATTERBOLT"), 1, scene.units[2])
+	bystander.apply_changes()
 
-	bystander.focus_n = 2.0
+	scene._show_move_result(_move_event(scene, 2, 3, 1, _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0)), 3)
+	assert_eq(overlay.focus_bar.value, focus_shown, "an impact on someone else leaves this fighter's Focus")
+	assert_eq(_buff_icons(presenter).size(), 0, "and its buff icons")
+	assert_ne(doll._state, CharacterVisual.State.STUN, "and its pose")
+
 	await scene._play_events([{"type": BattleRunner.EventType.DISPEL, "caster_slot": 2, "target_slot": 3, "removed": []}])
-	assert_eq(overlay.focus_bar.value, 2.0, "and so does any other event")
+	assert_eq(overlay.focus_bar.value, focus_shown, "so does any other event")
+	assert_eq(_buff_icons(presenter).size(), 0, "with its buff icons")
+	assert_ne(doll._state, CharacterVisual.State.STUN, "and its pose")
 
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Found on battle 100: after only the guard's first hit had played, Veradux
+# already showed the SHATTERBOLT icon and stood in his stun, because the runner
+# lands the bolt before the replay starts. The icon and the stun wait for the
+# bolt's own result, where the original's applyChangesKrin draws them (the
+# conductor, line 103).
+func test_a_buff_landed_late_in_a_half_turn_shows_its_icon_only_once_its_result_plays():
+	GameData.current_save = PlayerSave.new_game("LateBuff", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var veradux: CombatUnit = scene.units[3]
+	var presenter: FighterPresenter = scene._presenters[3]
+	var doll: CharacterVisual = presenter.get_node("Doll")
+	var first_hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)
+	first_hit.target_after = UnitSnapshot.of(scene.units[BattleRunner.PLAYER_SLOT])
+	first_hit.target_after.life -= 10.0
+	veradux.apply_buff(BuffManagerAuto.get_buff_by_name("SHATTERBOLT"), 1, scene.units[2])
+	veradux.apply_changes()
+	var bolt: MoveResult = _move_result(MoveResult.Kind.STATUS_ONLY, MoveResult.Direction.NONE, 0.0)
+	bolt.buff_applied = "SHATTERBOLT"
+	bolt.target_after = UnitSnapshot.of(veradux)
+
+	await scene._play_events([_move_event(scene, 2, BattleRunner.PLAYER_SLOT, 1, first_hit)])
+	assert_eq(_buff_icons(presenter).size(), 0, "after the guard's first hit Veradux shows no icon")
+	assert_ne(doll._state, CharacterVisual.State.STUN, "and no stun")
+
+	await scene._play_events([_move_event(scene, 2, 3, 521, bolt)])
+	assert_eq(_buff_icons(presenter).size(), 1, "the bolt's result shows its icon")
+	assert_eq(doll._state, CharacterVisual.State.STUN, "and starts the stun")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The runner resolves the whole half-turn before the replay, so a caster's Focus
+# is already down by its move's cost when the replay starts. The original pays
+# and redraws the caster's bars as its move dispatches (the conductor, lines
+# 357-359), so the cost shows when that move's event starts, and the result
+# waits for the blow.
+func test_a_focus_cost_shows_on_the_casters_bar_when_its_move_starts():
+	GameData.current_save = PlayerSave.new_game("CostAtDispatch", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var caster: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	var focus_bar: ProgressBar = scene._presenters[BattleRunner.PLAYER_SLOT].get_node("Overlay").focus_bar
+	var target_bar: ProgressBar = scene._presenters[2].get_node("Overlay").health_bar
+	var focus_shown: float = focus_bar.value
+	var life_shown: float = target_bar.value
+	var dispatched: UnitSnapshot = UnitSnapshot.of(caster)
+	dispatched.focus = focus_shown - 20.0
+	caster.focus_n = focus_shown - 35.0
+
+	await scene._play_events([{"type": BattleRunner.EventType.DISPEL, "caster_slot": 3, "target_slot": 2, "removed": []}])
+	assert_eq(focus_bar.value, focus_shown, "an earlier event leaves the caster's Focus where it was")
+
+	var move: Ability = MoveManagerAuto.get_move(1)  # Leading Strike, a Melee move
+	var hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)
+	hit.target_after = UnitSnapshot.of(scene.units[2])
+	hit.target_after.life -= 10.0
+	var event: Dictionary = _move_event(scene, BattleRunner.PLAYER_SLOT, 2, move.id, hit)
+	event["caster_after_dispatch"] = dispatched
+	scene.animation_speed = 1.0
+	scene._play_move_event(event)  # not awaited, because this swing never ends
+	assert_eq(focus_bar.value, focus_shown - 20.0, "the move's start shows the Focus its cost left")
+	assert_eq(target_bar.value, life_shown, "while the hit waits for the blow")
+
+	scene.animation_speed = 0.0
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
 
@@ -1465,8 +1562,7 @@ func test_a_stun_starts_at_the_hit_that_lands_it_and_outlasts_its_flinch():
 	assert_ne(doll._state, CharacterVisual.State.STUN, "an earlier event doesn't start the stun")
 
 	var stunning_hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)
-	stunning_hit.life_after = scene.units[2].life_n
-	stunning_hit.stun_after = 1.0
+	stunning_hit.target_after = UnitSnapshot.of(scene.units[2])
 	scene._show_move_result({"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2, "move_id": 434, "result": stunning_hit}, 2)
 	for frame in 60:
 		doll._process(1.0 / 30.0)
@@ -1481,7 +1577,12 @@ func test_a_stun_starts_at_the_hit_that_lands_it_and_outlasts_its_flinch():
 func test_battle_log_names_a_results_fields_and_a_failed_moves_cost():
 	var scene = autofree(BattleSceneRes.instantiate())
 	var hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 12.0)
-	var move_line: Dictionary = JSON.parse_string(scene._event_log_text({"type": BattleRunner.EventType.MOVE, "result": hit}))
+	hit.target_after.life = 88.0
+	var dispatched := UnitSnapshot.new()
+	dispatched.focus = 30.0
+	var move_line: Dictionary = JSON.parse_string(scene._event_log_text(
+		{"type": BattleRunner.EventType.MOVE, "caster_after_dispatch": dispatched, "result": hit}
+	))
 	var failed_line: Dictionary = JSON.parse_string(scene._event_log_text(
 		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 1, "reason": BattleRunner.FailReason.HEALTH}
 	))
@@ -1490,17 +1591,19 @@ func test_battle_log_names_a_results_fields_and_a_failed_moves_cost():
 		["DAMAGE", "HARM", 12.0],
 		"a result's fields, with its enums by name"
 	)
+	assert_eq(move_line["result"]["target_after"]["life"], 88.0, "the target it left")
+	assert_eq(move_line["caster_after_dispatch"]["focus"], 30.0, "and the caster its costs left")
 	assert_eq(failed_line["reason"], "HEALTH", "and a failed move's cost by name")
 
 
-func _float_labels(scene) -> Array:
-	return scene.battlefield.get_children().filter(func(child): return child is Label)
+func _floating_numbers(scene) -> Array[FloatingNumber]:
+	return scene.floating_numbers.numbers()
 
 
-# A stun or a failed move floats nothing over its fighter. The original only
-# tells the player about their own, in the Combat text banner. A dispel still
-# floats over its target.
-func test_the_replay_floats_a_dispel_but_not_a_stun_or_a_failed_move():
+# A stun or a failed move draws no Floating number. The original only tells the
+# player about their own, in the Combat text banner. A dispel draws nothing
+# either (the conductor, lines 22-53).
+func test_the_replay_draws_no_floating_number_for_a_stun_a_failed_move_or_a_dispel():
 	GameData.current_save = PlayerSave.new_game("StatusFloats", 0)
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -1513,13 +1616,7 @@ func test_the_replay_floats_a_dispel_but_not_a_stun_or_a_failed_move():
 		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 3, "reason": BattleRunner.FailReason.FOCUS},
 		{"type": BattleRunner.EventType.DISPEL, "caster_slot": 1, "target_slot": 2, "removed": []},
 	])
-
-	var above_fighter: Callable = func(slot: int) -> Vector2:
-		return scene._presenters[slot].get_node("Doll").position + FighterPresenter.FLOAT_OFFSET
-	assert_eq(
-		_float_labels(scene).map(func(label): return [label.text, label.position, label.modulate]),
-		[["DISPEL", above_fighter.call(2), Color.CYAN]]
-	)
+	assert_eq(_floating_numbers(scene), [])
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1744,7 +1841,7 @@ func test_the_end_of_a_half_turn_snaps_every_fighter_to_its_unit():
 
 	scene._on_pass_pressed()
 	await wait_until(func(): return scene.decision_open or scene._finished, 10)
-	assert_eq(scene._presenters[BattleRunner.PLAYER_SLOT].displayed_hp, player.life_n, "the bar caught up with the unit")
+	assert_eq(scene._presenters[BattleRunner.PLAYER_SLOT].displayed.life, player.life_n, "the bar caught up with the unit")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1774,11 +1871,14 @@ func _step_frame(scene: Control) -> void:
 			mover._process(SWF_FRAME_SECONDS)
 
 
-func _damage_event(caster_slot: int, target_slot: int, move: Ability, amount: float) -> Dictionary:
-	return {
-		"type": BattleRunner.EventType.MOVE, "caster_slot": caster_slot, "target_slot": target_slot,
-		"move_id": move.id, "result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, amount),
-	}
+func _damage_event(scene, caster_slot: int, target_slot: int, move: Ability, amount: float) -> Dictionary:
+	return _move_event(scene, caster_slot, target_slot, move.id, _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, amount))
+
+
+# What each Floating number on the battle screen shows, oldest first: its
+# digits, or the word of a miss or a Shield block.
+func _floating_texts(scene) -> Array:
+	return _floating_numbers(scene).map(func(number): return "".join(number.glyphs))
 
 
 func _first_move_of_type(animation_type: String) -> Ability:
@@ -1786,16 +1886,16 @@ func _first_move_of_type(animation_type: String) -> Ability:
 
 
 # Starts playing `events` on a battle on a stepped clock and steps it until
-# every text in `wanted` has floated over a fighter. Returns the frame each
-# floating text first showed on, by its text, where frame 0 is the one the
-# events start on.
+# every text in `wanted` has shown as a Floating number over a fighter. Returns
+# the frame each Floating number's text first showed on, by its text, where
+# frame 0 is the one the events start on.
 func _frames_texts_float(scene: Control, events: Array, wanted: Array) -> Dictionary:
 	var shown: Dictionary = {}
 	scene._play_events(events)  # Nothing awaits this, because the test steps the frames.
 	for frame in 300:
-		for label in _float_labels(scene):
-			if not shown.has(label.text):
-				shown[label.text] = frame
+		for text in _floating_texts(scene):
+			if not shown.has(text):
+				shown[text] = frame
 		if wanted.all(func(text): return shown.has(text)):
 			break
 		_step_frame(scene)
@@ -1816,8 +1916,8 @@ func test_the_next_action_dispatches_26_frames_after_each_kind_of_impact():
 		var first: String = str(11 + 10 * index)
 		var second: String = str(12 + 10 * index)
 		var shown: Dictionary = _frames_texts_float(scene, [
-			_damage_event(BattleRunner.PLAYER_SLOT, 2, _first_move_of_type(kind), float(first)),
-			_damage_event(3, 2, shock, float(second)),
+			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, _first_move_of_type(kind), float(first)),
+			_damage_event(scene, 3, 2, shock, float(second)),
 		], [first, second])
 		assert_true(shown.has(first) and shown.has(second), "sanity: both %s's number and the next move's show" % kind)
 		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26, "the next action dispatches 26 frames after a %s's Impact" % kind)
@@ -1836,8 +1936,8 @@ func test_a_melee_caster_is_still_in_its_runback_when_the_next_action_dispatches
 	var doll: CharacterVisual = scene._presenters[BattleRunner.PLAYER_SLOT].get_node("Doll")
 	var home: Vector2 = doll.position
 	var shown: Dictionary = _frames_texts_float(scene, [
-		_damage_event(BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Melee"), 11.0),
-		_damage_event(3, 2, _first_move_of_type("Shock"), 12.0),
+		_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Melee"), 11.0),
+		_damage_event(scene, 3, 2, _first_move_of_type("Shock"), 12.0),
 	], ["11", "12"])
 	assert_true(shown.has("12"), "sanity: the next action dispatched")
 	var at_dispatch: Vector2 = doll.position
@@ -1858,23 +1958,23 @@ func test_a_melee_caster_is_still_in_its_runback_when_the_next_action_dispatches
 # again, so the next action dispatches 26 frames after the bolt is gone.
 func test_the_next_action_dispatches_26_frames_after_a_missed_bolt_is_gone():
 	var scene = await _battle_100_on_a_stepped_clock("MissedBolt")
-	var miss: Dictionary = _damage_event(BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Missile"), 0.0)
+	var miss: Dictionary = _damage_event(scene, BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Missile"), 0.0)
 	miss["result"] = _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0)
 	# Nothing awaits this, because the test steps the frames.
-	scene._play_events([miss, _damage_event(3, 2, _first_move_of_type("Shock"), 12.0)])
+	scene._play_events([miss, _damage_event(scene, 3, 2, _first_move_of_type("Shock"), 12.0)])
 	var bolt: Projectile = scene.battlefield.get_children().filter(func(child): return child is Projectile)[0]
 	var frames: Dictionary = {}
 	for frame in 300:
 		if bolt.is_queued_for_deletion() and not frames.has("gone"):
 			frames["gone"] = frame
-		for label in _float_labels(scene):
-			if not frames.has(label.text):
-				frames[label.text] = frame
+		for text in _floating_texts(scene):
+			if not frames.has(text):
+				frames[text] = frame
 		if frames.has("12"):
 			break
 		_step_frame(scene)
-	assert_true(frames.has("MISS") and frames.has("gone"), "sanity: the bolt missed and then left")
-	assert_lt(frames.get("MISS", -1), frames.get("gone", -1), "sanity: it missed before it left")
+	assert_true(frames.has("miss") and frames.has("gone"), "sanity: the bolt missed and then left")
+	assert_lt(frames.get("miss", -1), frames.get("gone", -1), "sanity: it missed before it left")
 	assert_eq(frames.get("12", -1) - frames.get("gone", -1), 26, "the next action dispatches 26 frames after the bolt is gone")
 
 	GameData.current_save = null
@@ -1896,9 +1996,9 @@ func test_a_stunned_caster_or_a_failed_cost_holds_the_next_action_1_frame():
 		var first: String = str(11 + 10 * index)
 		var second: String = str(12 + 10 * index)
 		var shown: Dictionary = _frames_texts_float(scene, [
-			_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, float(first)),
+			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(first)),
 			stopped_actions[index],
-			_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, float(second)),
+			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(second)),
 		], [first, second])
 		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26 + 1,
 			"%s dispatches 26 frames after the Impact, and the next action 1 frame after it" % BattleRunner.EventType.find_key(stopped_actions[index]["type"]))
@@ -1924,9 +2024,9 @@ func test_a_pass_holds_the_next_action_1_frame_whether_or_not_its_buff_tick_kill
 	for index in passes.size():
 		var first: String = str(11 + 10 * index)
 		var second: String = str(12 + 10 * index)
-		var events: Array = [_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, float(first))]
+		var events: Array = [_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(first))]
 		events.append_array(passes[index])
-		events.append(_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, float(second)))
+		events.append(_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(second)))
 		var shown: Dictionary = _frames_texts_float(scene, events, [first, second])
 		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26 + 1,
 			"the pass dispatches 26 frames after the Impact, and the next action 1 frame after it, %s" % [
@@ -1956,9 +2056,9 @@ func test_an_ai_half_turn_dispatches_2_frames_after_the_last_half_turn_ends():
 	scene._on_pass_pressed()
 	await wait_process_frames(1)  # The turn loop takes the pass on the next frame.
 	assert_eq(scene.runner.team_move_now, 2, "sanity: the guard's Half-turn is next")
-	var numbers: int = _float_labels(scene).size()
+	var numbers: int = _floating_numbers(scene).size()
 	var frames: int = 0
-	while _float_labels(scene).size() == numbers and frames < 60:
+	while _floating_numbers(scene).size() == numbers and frames < 60:
 		_step_frame(scene)
 		frames += 1
 	assert_eq(frames, 2 + 2, "the guard's move dispatches 2 frames after the two passes end the player's Half-turn")
@@ -1977,17 +2077,17 @@ func test_a_buff_tick_that_kills_its_caster_holds_the_next_action_to_frame_51():
 	var caster: FighterPresenter = scene._presenters[3]
 	# Nothing awaits this, because the test steps the frames.
 	scene._play_events([
-		_damage_event(3, 2, shock, 11.0),
+		_damage_event(scene, 3, 2, shock, 11.0),
 		{"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME},
-		_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, 12.0),
+		_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, 12.0),
 	])
 	var frames: Dictionary = {}
 	for frame in 300:
-		if caster.displayed_hp == 0.0 and not frames.has("death"):
+		if caster.displayed.life == 0.0 and not frames.has("death"):
 			frames["death"] = frame
-		for label in _float_labels(scene):
-			if not frames.has(label.text):
-				frames[label.text] = frame
+		for text in _floating_texts(scene):
+			if not frames.has(text):
+				frames[text] = frame
 		if frames.has("12"):
 			break
 		_step_frame(scene)
@@ -2004,12 +2104,12 @@ func test_a_buff_tick_that_kills_its_caster_holds_the_next_action_to_frame_51():
 func test_a_caster_its_own_move_killed_holds_the_next_action_25_frames():
 	var scene = await _battle_100_on_a_stepped_clock("SelfKillFrames")
 	var shock: Ability = _first_move_of_type("Shock")
-	var kills_its_caster: Dictionary = _damage_event(3, 3, shock, 11.0)
+	var kills_its_caster: Dictionary = _damage_event(scene, 3, 3, shock, 11.0)
 	kills_its_caster["result"].killed = true
 	var shown: Dictionary = _frames_texts_float(scene, [
 		kills_its_caster,
 		{"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.MOVE},
-		_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, 12.0),
+		_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, 12.0),
 	], ["11", "12"])
 	assert_eq(shown.get("12", -1) - shown.get("11", -1), 25, "the next action dispatches on frame 25")
 
@@ -2031,9 +2131,10 @@ func test_a_hit_number_takes_its_moves_element_color():
 			"result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)},
 		2
 	)
-	var number: Label = _float_labels(scene)[-1]
-	assert_ne(number.modulate, Color.WHITE, "sanity: this move's color isn't the no-move white")
-	assert_eq(number.modulate, MenuTheme.ELEMENT_COLORS[move.damage_element_type])
+	var number: FloatingNumber = _floating_numbers(scene)[-1]
+	assert_ne(number.tint, Color.WHITE, "sanity: this move's color isn't the no-move white")
+	assert_eq(number.tint, MenuTheme.ELEMENT_COLORS[move.damage_element_type], "the move's element color")
+	assert_eq(number.position, scene.SLOT_POSITIONS[2], "on the target's slot")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -2055,6 +2156,7 @@ func test_a_melee_move_swings_at_its_target_with_its_own_label():
 	)[0]
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2, "move_id": move.id,
+		"caster_after_dispatch": scene._presenters[1].displayed,
 		"result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0),
 	}
 	var impacts: int = _count_impact_effects(scene)
@@ -2098,7 +2200,7 @@ func test_a_fighter_wears_its_items_and_shows_its_buffs_from_the_real_tables():
 	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
 	player.apply_buff(BuffManagerAuto.get_buff_by_name("TIEDYE"), 1, player)
 	player.apply_changes()
-	scene._refresh_bars(false)
+	scene._refresh_bars()
 	assert_eq(presenter.get_node("Overlay").buff_row.get_child_count(), 1, "the buff row found the buff")
 
 	GameData.current_save = null
@@ -2157,9 +2259,8 @@ func test_combat_log_toggle_and_live_narration():
 
 
 # Counts ImpactEffect instances specifically, not battlefield.get_child_count()
-# as a whole - FighterPresenter.float_text() parents a damage-number (or "MISS")
-# Label under battlefield on every hit AND every miss, so a raw child-count
-# comparison can't tell an ImpactEffect apart from that floatie.
+# as a whole, because battlefield also holds every Fighter presenter and any
+# bolt in flight.
 func _count_impact_effects(scene) -> int:
 	var count: int = 0
 	for child in scene.battlefield.get_children():
@@ -2182,6 +2283,7 @@ func test_melee_hit_spawns_an_impact_effect_at_the_target():
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_id": 1, "move_name": "Leading Strike",  # Melee, impact_effect_name BOOM_SPARK
+		"caster_after_dispatch": scene._presenters[1].displayed,
 		"result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0),
 	}
 	await scene._play_move_event(event)
@@ -2206,6 +2308,7 @@ func test_melee_miss_does_not_spawn_an_impact_effect():
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_id": 1, "move_name": "Leading Strike",
+		"caster_after_dispatch": scene._presenters[1].displayed,
 		"result": _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0),
 	}
 	await scene._play_move_event(event)
@@ -2229,10 +2332,7 @@ func _effects_heard_during(move: Ability, result: MoveResult) -> Array:
 	var heard: Array = []
 	var listen: Callable = func(cue: String): heard.append(cue)
 	AudioManagerAuto.effect_played.connect(listen)
-	await scene._play_move_event({
-		"type": BattleRunner.EventType.MOVE, "caster_slot": BattleRunner.PLAYER_SLOT, "target_slot": 2,
-		"move_id": move.id, "result": result,
-	})
+	await scene._play_move_event(_move_event(scene, BattleRunner.PLAYER_SLOT, 2, move.id, result))
 	AudioManagerAuto.effect_played.disconnect(listen)
 
 	GameData.current_save = null
@@ -2351,6 +2451,7 @@ func test_shock_cast_tints_with_the_moves_own_visual_effect_color():
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_id": 4, "move_name": move.display_name,
+		"caster_after_dispatch": scene._presenters[1].displayed,
 		"result": _move_result(MoveResult.Kind.HEAL, MoveResult.Direction.HEAL, 10.0),
 	}
 	scene._play_move_event(event)  # not awaited - modulate is set synchronously before the Shock branch's pause
@@ -2467,10 +2568,7 @@ func _battle_100_for_the_camera(graphics: bool) -> Control:
 # BATTLESCREEN clip one SWF frame at a time and returns, for each frame, the
 # transform the player sees the fighters through.
 func _screen_after_dispatch(scene: Control, move_id: int, frames: int) -> Array[Transform2D]:
-	await scene._play_move_event({
-		"type": BattleRunner.EventType.MOVE, "caster_slot": BattleRunner.PLAYER_SLOT, "target_slot": 2,
-		"move_id": move_id, "result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0),
-	})
+	await scene._play_move_event(_move_event(scene, BattleRunner.PLAYER_SLOT, 2, move_id, _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)))
 	var seen: Array[Transform2D] = []
 	for frame in frames:
 		scene.battle_screen_clip.advance_frame()
@@ -2619,6 +2717,27 @@ func test_with_graphics_off_nothing_zooms_or_shakes():
 		ZoneManager.auto_start_battles = true
 
 
+# KrinNumberShow attaches every Floating number to BATTLESCREEN
+# (frame_42/DoAction_7.as:37), so a number zooms and shakes with the fighters.
+# Death Sentence is a Shock, so it both zooms and shakes the screen.
+func test_a_floating_number_zooms_and_shakes_with_the_fighters():
+	var scene: Control = _battle_100_for_the_camera(true)
+	await scene._play_move_event(_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, MoveManagerAuto.get_move(14), 10.0))  # Move 14 is Death Sentence.
+	assert_eq(_floating_texts(scene), ["10"], "sanity: the hit's number shows")
+	var screen_moved: bool = false
+	var frames_apart: Array = []
+	for frame in SHAKE_OFFSETS.size():
+		scene.battle_screen_clip.advance_frame()
+		var fighters: Transform2D = scene.battlefield.get_global_transform()
+		screen_moved = screen_moved or fighters != Transform2D.IDENTITY
+		if scene.floating_numbers.get_global_transform() != fighters:
+			frames_apart.append(frame + 1)
+	assert_true(screen_moved, "sanity: the screen zooms and shakes")
+	assert_eq(frames_apart, [], "the number moves with the fighters on every frame")
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # Nothing waits for the zoom, so the next action dispatches on the same frame
 # with the zoom on or off. A Melee move's zoom is the longest. A Shock lands on
 # its Dispatch frame, so the frame its number shows is the frame it dispatched
@@ -2629,8 +2748,8 @@ func test_the_next_action_dispatches_on_the_same_frame_with_the_zoom_on_or_off()
 		var scene = await _battle_100_on_a_stepped_clock("CameraTiming")
 		GameData.current_save.graphics = graphics
 		var shown: Dictionary = _frames_texts_float(scene, [
-			_damage_event(BattleRunner.PLAYER_SLOT, 2, MoveManagerAuto.get_move(1), 11.0),  # Move 1 is Leading Strike.
-			_damage_event(3, 2, MoveManagerAuto.get_move(14), 12.0),  # Move 14 is Death Sentence.
+			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, MoveManagerAuto.get_move(1), 11.0),  # Move 1 is Leading Strike.
+			_damage_event(scene, 3, 2, MoveManagerAuto.get_move(14), 12.0),  # Move 14 is Death Sentence.
 		], ["11", "12"])
 		dispatched.append(shown.get("12", -1))
 	assert_gt(dispatched[0], 0, "sanity: the Shock dispatched")

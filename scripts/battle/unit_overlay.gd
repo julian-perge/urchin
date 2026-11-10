@@ -25,9 +25,10 @@ const BUFF_COUNTER_WIDTH: float = 20.55
 
 # The rendered active-slot set as of the last refresh_buffs() call, so a
 # refresh that lands with the same buffs/durations as last time (this is
-# called after every combat event, not only when buffs actually change) can
-# skip tearing down and rebuilding the row - which would otherwise flicker
-# and kill an open tooltip out from under a player mid-hover for no reason.
+# called for every event shown on the fighter and at every half-turn's end,
+# not only when buffs actually change) can skip tearing down and rebuilding the
+# row - which would otherwise flicker and kill an open tooltip out from under a
+# player mid-hover for no reason.
 var _last_signature: Array = []
 
 
@@ -35,16 +36,16 @@ func setup(unit_name: String) -> void:
 	name_label.text = unit_name
 
 
-# displayed_hp comes from the caller because the health bar only follows the
-# unit's life as each hit lands on screen. Focus and buffs show the unit's true
-# state every time.
-func show_status(unit: CombatUnit, displayed_hp: float, buffs_by_id: Dictionary) -> void:
-	health_bar.max_value = unit.life_u
-	health_bar.value = displayed_hp
-	health_value.text = str(int(displayed_hp))
-	focus_bar.max_value = max(unit.focus_u, 1)
-	focus_bar.value = unit.focus_n
-	refresh_buffs(unit, buffs_by_id)
+# The state comes from FighterPresenter rather than from the unit, because the
+# runner has already resolved the rest of the half-turn on the unit when an
+# event plays.
+func show_status(state: UnitSnapshot, buffs_by_id: Dictionary) -> void:
+	health_bar.max_value = state.life_max
+	health_bar.value = state.life
+	health_value.text = str(int(state.life))
+	focus_bar.max_value = max(state.focus_max, 1)
+	focus_bar.value = state.focus
+	refresh_buffs(state.buff_slots, buffs_by_id)
 
 
 # Refreshes the buff-icon row the way the original draws it at the end of
@@ -59,12 +60,9 @@ func show_status(unit: CombatUnit, displayed_hp: float, buffs_by_id: Dictionary)
 # (TWINGUARDIANS, dev/converted_json/buffs.json), not an empty-slot sentinel;
 # empty slots use buff_id -1 (see CombatUnit's slot init) but always carry
 # cd == 0 too, so checking cd alone already excludes them.
-func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
-	if unit == null:
-		_clear_row()
-		return
+func refresh_buffs(buff_slots: Array, buffs_by_id: Dictionary) -> void:
 	var active_slots: Array = []
-	for slot in unit.buff_slots.slice(0, MAX_BUFF_ICONS):
+	for slot in buff_slots.slice(0, MAX_BUFF_ICONS):
 		if int(slot.get("cd", 0)) != 0:
 			active_slots.append(slot)
 	var signature: Array = []
@@ -137,10 +135,3 @@ func clear_for_death() -> void:
 	health_value.hide()
 	buff_row.hide()
 
-
-func _clear_row() -> void:
-	if _last_signature.is_empty():
-		return
-	for child in buff_row.get_children():
-		child.queue_free()
-	_last_signature = []

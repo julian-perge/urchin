@@ -261,6 +261,9 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 
 	caster.focus_n -= move.focus_cost
 	caster.life_n -= life_cost
+	# The original redraws the caster's bars as soon as it pays (the conductor,
+	# line 359), so the MOVE event carries the caster as the payment left it.
+	var caster_after_dispatch: UnitSnapshot = UnitSnapshot.of(caster)
 
 	# Cooldown starts when the move actually fires.
 	if caster.ai_enabled and action.has("pool"):
@@ -285,14 +288,14 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 		# per animation type") and only the impact-time damage NUMBER swaps
 		# to a special miss frame. Logging a bare "miss" type here instead
 		# skipped straight to a floating MISS label with no animation at all.
-		_log_move_result(caster, target, move, BattleManager.miss(target))
+		_log_move_result(caster, target, move, BattleManager.miss(target), caster_after_dispatch)
 		return
 
 	var dispelled: Array = _resolve_dispels(move, target)
 	if not dispelled.is_empty():
 		_log({"type": EventType.DISPEL, "caster_slot": caster.player_id, "target_slot": target.player_id, "removed": dispelled})
 
-	_log_move_result(caster, target, move, BattleManager.execute_move(move, caster, target, buffs_by_name))
+	_log_move_result(caster, target, move, BattleManager.execute_move(move, caster, target, buffs_by_name), caster_after_dispatch)
 
 
 # The hit/miss roll, separate from the crit roll inside execute_move().
@@ -584,13 +587,14 @@ func hard_skip(speech_index: int) -> void:
 	speech_cursor += 1
 
 
-func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, result: MoveResult) -> void:
+func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, result: MoveResult, caster_after_dispatch: UnitSnapshot) -> void:
 	var entry: Dictionary[Variant, Variant] = {
 		"type": EventType.MOVE,
 		"caster_slot": caster.player_id,
 		"target_slot": target.player_id,
 		"move_id": move.id,
 		"move_name": move.display_name,
+		"caster_after_dispatch": caster_after_dispatch,
 		"result": result,
 	}
 	_log(entry)
