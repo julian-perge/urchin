@@ -18,8 +18,8 @@ func _animations() -> Dictionary:
 	return JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.ANIMATIONS_FILE))
 
 
-# The MODEL1 frame the doll's parts show, numbered from 1 like the SWF's, or 0
-# when the pose matches no frame.
+# Returns the MODEL1 frame the doll's parts show, numbered from 1 like the
+# SWF's, or 0 when the pose matches no frame.
 func _shown_frame() -> int:
 	var frames: Array = _animations()["frames"]
 	for index in frames.size():
@@ -109,8 +109,8 @@ func test_resolve_equip_looks():
 	)
 
 
-# A doll with no art standing at `spot`. It has no width, so a swing it makes
-# stops short of its target by the target's half-width alone.
+# Returns a doll with no art standing at `spot`. It has no width, so a swing it
+# makes stops short of its target by the target's half-width alone.
 func _bare_doll(spot: Vector2) -> CharacterVisual:
 	var doll: CharacterVisual = add_child_autofree(CharacterVisualScene.instantiate())
 	doll.position = spot
@@ -247,7 +247,7 @@ func test_a_caster_hit_in_its_runback_keeps_sliding_home_while_it_plays_hit():
 			break
 		visual._process(SWF_FRAME_SECONDS)
 	var strike_spot: Vector2 = visual.position
-	assert_almost_eq(strike_spot, Vector2(180, 100), Vector2(0.1, 0.0), "sanity: the blow lands at the target")
+	assert_almost_eq(strike_spot, Vector2(180, 100), Vector2(0.1, 0.0), "sanity: Impact comes at the target")
 	for frame in 13:
 		visual._process(SWF_FRAME_SECONDS)
 	assert_eq(visual.position, strike_spot, "13 frames after Impact the caster still stands where it struck")
@@ -342,8 +342,8 @@ func test_cast_and_hit_recover_to_idle():
 	assert_eq(visual._state, CharacterVisual.State.IDLE)
 
 
-# The alpha each part is drawn at: its own modulate times every ancestor's, up
-# to the doll.
+# Returns the alpha each part is drawn at, which is its own modulate times every
+# ancestor's, up to the doll.
 func _drawn_alphas() -> Array:
 	var alphas: Array = []
 	for part in visual._parts.values():

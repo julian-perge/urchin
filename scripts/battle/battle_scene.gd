@@ -60,7 +60,8 @@ const COST_FAILURE_MESSAGES: Dictionary[BattleRunner.FailReason, String] = {
 # in the Combat text banner.
 const CANNOT_MOVE_YET_MESSAGE: String = "You cannot move yet. Please wait until the 'ring' is blue, then click on a target."
 
-# 1.0 = normal pacing; 0.0 = instant (tests). It scales the battle clock.
+# At 1.0 the battle plays at the original's pace, and at 0.0 it plays at once,
+# as the tests run it. It scales the battle clock.
 var animation_speed: float = 1.0
 
 var runner: BattleRunner
@@ -102,10 +103,11 @@ var _hard_skip: bool = false
 # Space sets it to end the line on screen at once, and _play_speech clears it.
 var _line_cut: bool = false
 var _fade_tween: Tween = null  # the running _play_fade's tween, which the next fade kills
-# SWF frames the battle clock has counted, scaled by animation_speed.
+# _clock counts the SWF frames the battle has played, scaled by animation_speed.
 var _clock: float = 0.0
-# Frames the last action still holds the next Dispatch back for. _play_events
-# waits them out before the next action, and before the Half-turn ends.
+# The last action still holds the next Dispatch back for this many frames.
+# _play_events waits them out before the next action, and before the Half-turn
+# ends.
 var _frames_to_dispatch: int = 0
 # These say whether the action playing was a move, and whether its caster's Buff
 # tick is still to come.
@@ -620,8 +622,9 @@ func _play_move_event(event: Dictionary) -> void:
 	# Missile and Shock (param 12 is the projectile clip for Missiles, and
 	# unused for Shock) - see DECODED_ALGORITHMS.md.
 	if caster != null and move != null and move.attack_animation_type == "Melee":
-		# The original order: run to the target, swing, damage lands at the
-		# blow. The caster hands back at the blow and runs back on its own.
+		# The original runs the caster to the target and swings, and the Move
+		# result applies at Impact. The caster hands back at Impact and runs
+		# back on its own.
 		var start_ms: int = Time.get_ticks_msec()
 		var on_impact: Callable = func():
 			_log("melee impact: caster=%d move=%s +%dms" % [
@@ -719,15 +722,15 @@ func _start_camera(move: Ability, target_slot: int) -> void:
 		battle_screen_clip.shake()
 
 
-# krinBoltMake port: an accelerating bolt (Projectile) that flies from the
-# caster to the target, then spawns the move's impact effect there, and
-# returns the bolt once it gets there. On a hit the bolt destroys itself the
-# moment it arrives; on a miss it keeps flying past the target and only frees
-# once it is far enough past it. Tests run with animation_speed <= 0 - skip
-# the visual flight entirely there (no _process tick would ever advance it),
-# and return null. The return type isn't declared, because GUT prints a
-# compiler error when it doubles this scene with a declared return type on a
-# function that awaits (GUT issue 842).
+# Ports krinBoltMake: an accelerating bolt (Projectile) flies from the caster to
+# the target, spawns the move's impact effect there, and this returns the bolt
+# once it gets there. On a hit the bolt destroys itself the moment it arrives.
+# On a miss it keeps flying past the target and only frees once it is far
+# enough past it. At an animation_speed of 0 or below, as the tests run it,
+# this skips the flight and returns null, because no _process tick would ever
+# move the bolt. The return type isn't declared, because GUT prints a compiler
+# error when it doubles this scene with a declared return type on a function
+# that awaits (GUT issue 842).
 func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result: MoveResult):
 	if animation_speed <= 0.0:
 		return null

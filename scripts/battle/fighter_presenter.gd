@@ -49,8 +49,8 @@ var _dead: bool = false
 var _frames_since_death: float = 0.0
 var _ring_fade: Tween = null
 var _hover_info: Label = null
-# How far setup() put the doll from its home, which rig_position() takes back
-# off.
+# setup() puts the doll this far from its home, and rig_position() takes it
+# back off.
 var _doll_offset: Vector2 = Vector2.ZERO
 
 @onready var hit_area: Button = $Overlay/HitButton
@@ -284,23 +284,23 @@ func _relation_to_player() -> Relation:
 
 
 # Starts the caster's melee swing at `target` and returns at its Impact, once
-# on_blow has run. The doll runs toward where the target's rig stands on each
+# on_impact has run. The doll runs toward where the target's rig stands on each
 # frame, and stops short of where it stood as the swing started by half of each
 # fighter's width. The doll's Runback then takes it home on its own while the
-# battle goes on. With wait false nothing waits for the swing, so on_blow runs
-# at once. If the presenter leaves the tree during the swing, on_blow doesn't
+# battle goes on. With wait false nothing waits for the swing, so on_impact runs
+# at once. If the presenter leaves the tree during the swing, on_impact doesn't
 # run.
-func melee(target: FighterPresenter, label: String, on_blow: Callable, wait: bool = true) -> void:
+func melee(target: FighterPresenter, label: String, on_impact: Callable, wait: bool = true) -> void:
 	_doll.play_melee(_doll_spot_on.bind(target), target.rig_size().x / 2.0, label)
 	if wait:
 		await _doll.attack_connected
 		if not is_inside_tree():
 			return
-	on_blow.call()
+	on_impact.call()
 
 
-# Where this fighter's doll would stand if its rig stood where `other`'s rig
-# stands now, in this presenter's space. krinMelee runs the caster's rig toward
+# Returns where this fighter's doll would stand if its rig stood where `other`'s
+# rig stands now, in this presenter's space. krinMelee runs the caster's rig toward
 # the target's rig, so a MODEL5 doll's 10 px drop inside its rig doesn't tilt
 # the run.
 func _doll_spot_on(other: FighterPresenter) -> Vector2:
@@ -316,14 +316,14 @@ func cast(move: Ability) -> void:
 	_doll.modulate = move.visual_effect_color.lerp(Color.WHITE, 0.4)
 
 
-# Where the original's rig stands, the clip that dressChar puts the doll in.
-# That is the doll's own spot but for the 10 px that dressChar moves a MODEL5
-# doll down inside its rig (frame_217/DoAction_2.as:19-24).
+# Returns where the original's rig stands, the clip that dressChar puts the doll
+# in. That is the doll's own spot but for the 10 px that dressChar moves a
+# MODEL5 doll down inside its rig (frame_217/DoAction_2.as:19-24).
 func rig_position() -> Vector2:
 	return position + _doll.position - _doll_offset
 
 
-# The rig's _width and _height: the size of the box around everything its doll
-# draws right now.
+# Returns the rig's _width and _height, which is the size of the box around
+# everything its doll draws right now.
 func rig_size() -> Vector2:
 	return _doll.get_bounds().size

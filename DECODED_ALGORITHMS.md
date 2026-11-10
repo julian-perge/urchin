@@ -445,7 +445,7 @@ Three Heroic cases, read from the code but not run, and not ported, since the po
 
 ## Heroic decision timer (frame_217/DoAction.as, the conductor)
 
-Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / 30.0` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
+Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / BattleScreenClip.fps()` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
 and on Heroic once a half-turn ends with the player's unit dead, it waits for the player and hides the countdown label.
 
 - `BattleTime = BattleTimeLimit = 120` (`frame_217/DoAction.as:1-3`). The conductor adds 1 to `BattleTimeNow` once per frame, and only while `turnBasedKrin` is false and the player's team is

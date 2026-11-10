@@ -33,9 +33,9 @@ ACTION_DEFINE_FUNCTION2 = 0x8E
 ACTION_PUSH = 0x96
 ACTION_DEFINE_FUNCTION = 0x9B
 
-# The values a DefineFunction2 can preload into registers, in the order it puts
-# them in registers from register 1 on, each with the byte and the bit of the
-# record's flags that ask for it.
+# A DefineFunction2 can preload these values into registers. It puts them in
+# registers from register 1 on, in this order, and each comes with the byte and
+# the bit of the record's flags that ask for it.
 PRELOADS = (
     ("this", 0, 0x01),
     ("arguments", 0, 0x04),
@@ -228,8 +228,9 @@ def statements(index: SwfIndex, block: CodeBlock) -> list[Assignment]:
     result = []
     stack: list = []
     registers: dict[int, str] = {}
-    # For each function body being read: the index of the first action after
-    # it, and the registers and the stack of the code around it.
+    # For each function body being read, this holds the index of the first
+    # action after the body, and the registers and the stack of the code around
+    # it.
     around: list[tuple[int, dict, list]] = []
     for at, action in enumerate(actions(index, block)):
         while around and at == around[-1][0]:

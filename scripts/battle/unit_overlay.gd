@@ -127,7 +127,7 @@ func refresh_buffs(unit: CombatUnit, buffs_by_id: Dictionary) -> void:
 		buff_row.add_child(shower)
 
 
-# What LifeBarSmoother's frame 18 does to a dead unit's bar
+# Does what LifeBarSmoother's frame 18 does to a dead unit's bar
 # (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as): it removes the buff
 # icons and sends the bar's inner clip to its empty "third" frame, which takes
 # the name and the numbers away. Only the two bars stay to fade. show_status()
