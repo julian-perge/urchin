@@ -134,16 +134,33 @@ def check_scripts(index: SwfIndex, go_frame: int) -> None:
         )
 
 
+def text_layout(field: EditText, placed: tuple[float, float]) -> dict:
+    """-> what a Label needs to draw `field`'s line where Flash would: the
+    rect text_rect() gives, and the field's alignment, colour and size."""
+    return {
+        "align": ALIGNMENTS[field.align],
+        "color": "#{:02x}{:02x}{:02x}".format(*field.color[:3]),
+        "rect": text_rect(field, placed),
+        "size": field.font_height / TWIPS,
+    }
+
+
 def text_field(index: SwfIndex, inner: int) -> tuple[int, EditText]:
     """-> the id and fields of the edit text the inner clip shows the message
-    in. Raises unless it is one line of a bold Device font with no margins,
-    which is what the port's Label stands in for."""
+    in, checked by plain_device_line()."""
     (field_id,) = [
         layer.character_id
         for layer in timeline.frames(index, inner)[0].values()
         if character_kind(index, layer.character_id) == "edittext"
         and edit_text(index, layer.character_id).variable_name == TEXT_VARIABLE
     ]
+    return field_id, plain_device_line(index, field_id)
+
+
+def plain_device_line(index: SwfIndex, field_id: int) -> EditText:
+    """-> the fields of edit text `field_id`. Raises unless it is one line of
+    a bold Device font with no margins, which is what the port's Label stands
+    in for."""
     field = edit_text(index, field_id)
     face = font(index, field.font_id)
     if not (face.device and face.bold):
@@ -155,7 +172,7 @@ def text_field(index: SwfIndex, inner: int) -> tuple[int, EditText]:
         raise RuntimeError(f"edit text {field_id} is not one plain line: {field}")
     if (field.left_margin, field.right_margin, field.indent) != (0, 0, 0):
         raise RuntimeError(f"edit text {field_id} has margins: {field}")
-    return field_id, field
+    return field
 
 
 def main():
@@ -216,12 +233,7 @@ def main():
         "go_frame": go_frame,
         "offsets": offsets,
         "position": {"x": position[0], "y": position[1]},
-        "text": {
-            "align": ALIGNMENTS[field.align],
-            "color": "#{:02x}{:02x}{:02x}".format(*field.color[:3]),
-            "rect": text_rect(field, placed),
-            "size": field.font_height / TWIPS,
-        },
+        "text": text_layout(field, placed),
     }
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
     print(f"wrote {LAYOUT_JSON}", file=sys.stderr)
