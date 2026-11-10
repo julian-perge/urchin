@@ -66,6 +66,16 @@ testing the game by hand.
   roll leaves every other `randi_range` in the run free, so it settles a single
   branch rather than making a whole battle repeatable.
 
+- `uv run gut` starts Godot with a new, empty `HOME` for each run and deletes it
+  when Godot exits. On macOS Godot builds `user://` from `HOME`, so each run has
+  a `user://` of its own. Suites that run at the same time from different
+  worktrees no longer overwrite each other's test files (the wave 5
+  `fix-bold-menu-font` failures), and a test run no longer shares
+  `battle.log`, saves or `achievements.cfg` with a QA game
+  (julian-perge/urchin#106). The slot script keeps the real `HOME`, and the
+  `--import` step does too. Godot started by hand and the godot-mcp
+  `run_gut_tests` tool still use the shared real `user://`.
+
 ## QA save presets
 
 - QA save presets are in `dev/save_presets/`, one `.tres` per known game state.

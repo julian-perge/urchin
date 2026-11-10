@@ -6,7 +6,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from urchin_dev.gut import run_gut
+from urchin_dev.gut import GODOT, SLOT_SCRIPT, godot_command, run_gut
 
 PASSED = (
     "---  GUT  ---\n"
@@ -56,10 +56,18 @@ class FakeGodot:
     def __init__(self, *results: tuple[int, str]):
         self.results = list(results)
         self.calls: list[list[str]] = []
+        self.homes: list[Path | None] = []
+        self.home_existed: list[bool] = []
 
-    def __call__(self, args):
+    def __call__(self, args, home=None):
         self.calls.append(list(args))
-        return self.results.pop(0)
+        self.homes.append(home)
+        if home is not None:
+            self.home_existed.append(home.is_dir())
+        result = self.results.pop(0)
+        if isinstance(result, BaseException):
+            raise result
+        return result
 
 
 @pytest.fixture
@@ -148,3 +156,54 @@ def test_a_failed_import_stops_before_the_run(project):
     godot = FakeGodot((1, "import failed\n"), (0, PASSED))
     assert run_gut([], project, project, godot) == 1
     assert godot.calls == [["--headless", "--import", "--path", str(project)]]
+
+
+def test_the_run_gets_a_home_folder_of_its_own_that_is_gone_afterwards(project):
+    godot = FakeGodot((0, PASSED))
+    assert run_gut([], project, project, godot) == 0
+    [home] = godot.homes
+    assert home is not None
+    assert home != Path.home()
+    assert godot.home_existed == [True]
+    assert not home.exists()
+
+
+def test_two_runs_get_different_home_folders(project):
+    godot = FakeGodot((0, PASSED), (0, PASSED))
+    run_gut([], project, project, godot)
+    run_gut([], project, project, godot)
+    assert godot.homes[0] != godot.homes[1]
+
+
+@pytest.mark.parametrize("result", [(1, "a test failed\n"), (0, UNPARSEABLE_FILE)])
+def test_the_home_folder_is_gone_after_a_failing_run(project, result):
+    godot = FakeGodot(result)
+    assert run_gut([], project, project, godot) != 0
+    assert not godot.homes[0].exists()
+
+
+def test_the_home_folder_is_gone_after_a_run_that_raises(project):
+    godot = FakeGodot(KeyboardInterrupt())
+    with pytest.raises(KeyboardInterrupt):
+        run_gut([], project, project, godot)
+    assert not godot.homes[0].exists()
+
+
+def test_the_import_step_keeps_the_real_home(project):
+    (project / ".godot").rmdir()
+    godot = FakeGodot((0, "import done\n"), (0, PASSED))
+    run_gut([], project, project, godot)
+    assert godot.homes[0] is None
+    assert godot.homes[1] is not None
+
+
+def test_only_the_godot_process_gets_the_new_home_not_the_slot_script():
+    command = godot_command(["--headless"], Path("/tmp/h"))
+    assert command[0] == "fish"
+    assert command[2:5] == ["env", "HOME=/tmp/h", GODOT]
+    assert godot_command(["--headless"], None) == [
+        "fish",
+        SLOT_SCRIPT,
+        GODOT,
+        "--headless",
+    ]

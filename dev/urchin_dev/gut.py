@@ -7,7 +7,9 @@
 from __future__ import annotations
 
 import re
+import shutil
 import sys
+import tempfile
 from collections.abc import Callable, Sequence
 from pathlib import Path
 
@@ -25,11 +27,19 @@ SLOT_SCRIPT = Path.home() / "tmp" / "2026-11-07-godot-slots" / "godot-slot.fish"
 COLOR_CODE = re.compile(r"\x1b\[[0-9;]*m")
 TESTS_TOTAL = re.compile(r"^Tests +(\d+)$", re.MULTILINE)
 
-Godot = Callable[[Sequence[str]], tuple[int, str]]
+# The optional Path is the HOME the Godot process gets. None keeps the real one.
+Godot = Callable[[Sequence[str], Path | None], tuple[int, str]]
 
 
-def godot_in_a_slot(args: Sequence[str]) -> tuple[int, str]:
-    return stream(["fish", SLOT_SCRIPT, GODOT, *args])
+def godot_command(args: Sequence[str], home: Path | None) -> list[str | Path]:
+    """The slot script keeps the real HOME, because it keeps its slot folders
+    under ~. `env` sets the new HOME for the Godot process only."""
+    env = ["env", f"HOME={home}"] if home else []
+    return ["fish", SLOT_SCRIPT, *env, GODOT, *args]
+
+
+def godot_in_a_slot(args: Sequence[str], home: Path | None = None) -> tuple[int, str]:
+    return stream(godot_command(args, home))
 
 
 def failures(code: int, log: str) -> list[str]:
@@ -76,11 +86,17 @@ def run_gut(argv: Sequence[str], cwd: Path, root: Path, godot: Godot) -> int:
     args = gut_args(argv, cwd, root)
     if not (root / ".godot").is_dir():
         print("uv run gut: there is no .godot/ import cache, so importing first.")
-        code, _ = godot(["--headless", "--import", "--path", str(root)])
+        code, _ = godot(["--headless", "--import", "--path", str(root)], None)
         if code != 0:
             print(f"uv run gut: the import exited with code {code}.", file=sys.stderr)
             return code
-    code, log = godot(args)
+    # Godot builds user:// from HOME on macOS, so a new HOME gives the run a user://
+    # of its own. Runs from other checkouts, and the real game, never share it.
+    home = Path(tempfile.mkdtemp(prefix="urchin-gut-home-"))
+    try:
+        code, log = godot(args, home)
+    finally:
+        shutil.rmtree(home, ignore_errors=True)
     reasons = failures(code, log)
     for reason in reasons:
         print(f"uv run gut: the run failed because {reason}.", file=sys.stderr)

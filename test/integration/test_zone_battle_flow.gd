@@ -6,8 +6,9 @@
 extends GutTest
 
 const MAX_HALF_TURNS = 300
-# Every checkout of the project shares one user:// folder with the player's
-# real achievements, so a settled win unlocks into a file of its own.
+# A settled win unlocks into a file of its own, so a run that does not use
+# `uv run gut` (and so shares the real user://) never touches the real
+# achievements.
 const ACHIEVEMENTS_FILE: String = "user://test_zone_battle_flow_achievements.cfg"
 
 var unit_templates: Dictionary = {}

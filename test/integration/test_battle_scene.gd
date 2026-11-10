@@ -5,9 +5,10 @@
 extends GutTest
 
 const BattleSceneRes = preload("res://scenes/battle_scene.tscn")
-# Every checkout of the project shares one user:// folder, the player's real
-# saves and achievements included, so the Re-Load test writes its slot in a
-# folder of its own and every win here unlocks into a file of its own.
+# `uv run gut` gives each run a user:// folder of its own, so these paths never
+# reach the player's real saves or achievements. The Re-Load test still writes
+# its slot in a folder of its own and every win here unlocks into a file of its
+# own, for runs that do not use `uv run gut`.
 const TEST_SAVE_DIR: String = "user://test_battle_scene_saves/"
 const ACHIEVEMENTS_FILE: String = "user://test_battle_scene_achievements.cfg"
 

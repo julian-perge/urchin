@@ -1,7 +1,7 @@
 # Every test here settles a battle from resources/battles through a real
 # runner on the real roster, with the outcome set before any half-turn is
-# played. Achievements go to a file of this test's own, because every checkout
-# of the project shares one user:// folder with the player's real achievements.
+# played. Achievements go to a file of this test's own, so a run that does not use
+# `uv run gut` (and so shares the real user://) never touches the real ones.
 extends GutTest
 
 const ACHIEVEMENTS_FILE: String = "user://test_battle_settlement_achievements.cfg"

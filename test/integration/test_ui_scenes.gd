@@ -117,8 +117,8 @@ func test_hovering_a_card_again_mid_fade_replaces_the_running_fade():
 	assert_almost_eq(overlay.modulate.a, 1.0, 0.001, "the last hover wins outright")
 
 
-# The slot tests write saves, and every checkout shares one user:// folder with
-# the player's real saves, so they write to a folder of their own.
+# The slot tests write saves to a folder of their own, so a run that does not
+# use `uv run gut` (and so shares the real user://) never touches the real saves.
 const MENU_SAVE_DIR: String = "user://test_main_menu_saves/"
 
 
