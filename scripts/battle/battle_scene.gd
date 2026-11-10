@@ -14,6 +14,8 @@
 # - the bottom bar: companion stance buttons (agModeAr presets) on the
 #   left, the Pass ring in the center (light blue while waiting for your
 #   choice, gray during the fight loop) with the retreat X beside it
+# - a left-click anywhere while no Decision is open, until the battle ends,
+#   puts "You cannot move yet" in the Combat text banner if it is not already up
 #
 # Entry: ZoneManager.battle_selected stores the pick in
 # ZoneManager.pending_battle and the game scene switches here; _ready()
@@ -623,6 +625,20 @@ func _play_speech(event: Dictionary) -> void:
 	speech_label.text = ""
 
 
+# MENU[37] (frame_1/DoAction.as:245), which the original's click listener puts
+# in the Combat text banner.
+const CANNOT_MOVE_YET_MESSAGE: String = "You cannot move yet. Please wait until the 'ring' is blue, then click on a target."
+
+
+# The original's click listener is a Mouse.onMouseDown that the battle frame
+# adds (frame_217/DoAction.as:18-27), so it hears every left-click, one that a
+# button or a unit also answers included. This reads the click before any
+# control can take it and leaves it to them. Outside a Decision the listener
+# shows MENU[37] with a bare play(), which show_if_idle() matches. The port
+# shows nothing once the battle has ended, though the original's listener still
+# hears clicks during the closing fade (DECODED_ALGORITHMS.md, "The Combat text
+# banner").
+#
 # The original's speech box answers Space all through a battle
 # (frame_217/PlaceObject2_3367_634 onClipEvent(keyDown), lines 2-9). It stops
 # the three effect channels, and while a line is up it ends that line and sets
@@ -631,7 +647,13 @@ func _play_speech(event: Dictionary) -> void:
 # also fire on Enter or a gamepad button, so this checks the key itself, as
 # Key.isDown(32) does.
 func _input(event: InputEvent) -> void:
-	if _finished or not (event is InputEventKey and event.pressed and event.keycode == KEY_SPACE):
+	if _finished:
+		return
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if not decision_open:
+			combat_text_banner.show_if_idle(CANNOT_MOVE_YET_MESSAGE)
+		return
+	if not (event is InputEventKey and event.pressed and event.keycode == KEY_SPACE):
 		return
 	AudioManagerAuto.stop_effects()
 	if _line_on_screen.is_empty():

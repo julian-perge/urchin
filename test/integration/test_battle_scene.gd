@@ -2023,3 +2023,60 @@ func test_shock_cast_tints_with_the_moves_own_visual_effect_color():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# The original's Mouse.onMouseDown listener puts MENU[37] in the Combat text
+# banner for a left-click anywhere while no Decision is open, a click that a
+# button or a unit also answers included (frame_217/DoAction.as:18-27).
+func test_a_click_during_the_fight_says_you_cannot_move_yet_and_one_during_a_decision_does_not():
+	var scene = _battle_100_in_its_own_viewport("CannotMoveYet")
+	var banner: CombatTextBanner = scene.combat_text_banner
+	await wait_until(func(): return scene.decision_open, 5)
+	_click(scene.get_viewport(), scene.background)
+	assert_false(banner.is_up(), "a click during a Decision shows nothing")
+
+	_click(scene.get_viewport(), scene.get_node("BottomBar/PassButton"))
+	assert_false(scene.decision_open, "sanity: the pass closed the Decision")
+	assert_false(banner.is_up(), "the pass's own click came during the Decision")
+	_click(scene.get_viewport(), scene._presenters[2].hit_area)
+	assert_true(banner.is_up(), "a click on a unit during the fight puts the banner up")
+	assert_eq(
+		banner.label.text,
+		"You cannot move yet. Please wait until the 'ring' is blue, then click on a target."
+	)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The listener's bare play() leaves a KrinCombatText that is already playing
+# alone, so a second click neither restarts the banner nor keeps it up past
+# the end of the run the first click started.
+func test_a_second_click_while_the_banner_is_up_changes_nothing():
+	var scene = _battle_100_in_its_own_viewport("CannotMoveYetTwice")
+	var banner: CombatTextBanner = scene.combat_text_banner
+	banner.set_process(false)
+	await wait_until(func(): return scene.decision_open, 5)
+	_click(scene.get_viewport(), scene.get_node("BottomBar/PassButton"))
+	_click(scene.get_viewport(), scene.background)
+	assert_true(banner.is_up(), "sanity: the first click put the banner up")
+
+	banner.advance(100.5 / 30.0)
+	_click(scene.get_viewport(), scene.background)
+	banner.advance(35.0 / 30.0)
+	assert_false(banner.is_up(), "the banner ends when the first click's run does")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func test_a_click_after_the_battle_has_ended_leaves_the_banner_down():
+	var scene = _battle_100_in_its_own_viewport("CannotMoveYetAfterTheEnd")
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	var victory: Control = scene.get_node("VictoryScreen")
+	_click(scene.get_viewport(), victory.get_node("LeftPanel"))
+	assert_false(scene.combat_text_banner.is_up(), "the banner stays down")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true

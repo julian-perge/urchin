@@ -35,7 +35,7 @@ The ring of orbs, one per bar slot, that opens around a clicked unit during a De
 _Avoid_: Selector
 
 **Combat text banner**:
-The line of text that slides up near the top of the Battle screen to tell the player why a pick or a move was refused, then fades out. It is the original's `KrinCombatText`.
+The line of text that slides up near the top of the Battle screen to tell the player why a pick or a move was refused, or that they cannot move yet, then fades out. It is the original's `KrinCombatText`.
 _Avoid_: Toast, floating text, which is the numbers and words that float over a unit
 
 **Fighter presenter**:
