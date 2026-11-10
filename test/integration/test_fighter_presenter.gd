@@ -314,7 +314,13 @@ func test_a_killing_blow_plays_the_death_at_the_impact():
 	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
 	assert_eq(_doll._state, DEAD, "the doll plays its death at the impact")
 	assert_false(_overlay.visible, "the overlay goes the same moment")
-	assert_eq(_cues, [VOICE_DIE, VOICE_HIT], "the death cry, then the hit voice")
+
+
+# The original plays the hit voice only when the target survives, in the else
+# of IDKT.LIFEN == 0 (frame_42/DoAction_8.as:104-131).
+func test_a_killing_blow_plays_the_death_voice_and_not_the_hit_voice():
+	_presenter.show_result(_killing(_damage(500.0, 0.0)), null)
+	assert_eq(_cues, [VOICE_DIE])
 
 
 func test_die_plays_the_death_with_no_hit():
