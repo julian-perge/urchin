@@ -84,7 +84,7 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 
 # Shows one move's result at the moment it lands on this fighter: the number,
 # then the death or flinch, then the voice, or for a Shield block the shield
-# clip, its sound and SHIELDED. Then come the Result flash, and then the bars,
+# clip, its sound and SHIELDED. Then comes the Result flash, and then the bars,
 # the buff icons and the stun pose. Every result but a miss shows the target it
 # states, because the original recomputes and redraws its target after every
 # strike that lands (the conductor, line 103) and runs nothing on a miss. That
