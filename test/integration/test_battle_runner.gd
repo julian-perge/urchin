@@ -1212,6 +1212,60 @@ func test_a_poisoned_caster_logs_a_buff_tick_after_its_own_move_with_its_amount_
 	assert_eq(life_after_move - player.life_n, tick.amount, "which is the life it took from him")
 
 
+# The Immortal Flame "regenerates 300 Health" every turn. buffTicker draws a
+# heal before max life caps it (frame_42/DoAction_10.as:88-91), so a unit at full
+# life still shows the whole 300.
+func test_a_healing_buff_ticks_as_a_heal_of_its_whole_amount_even_at_full_life():
+	var runner: BattleRunner = _sonny_holding(["FIRESAM"])
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	assert_eq(player.life_n, player.life_u, "sanity: Sonny is at full life")
+
+	var tick: BuffTick = _tick_after_passing(runner)
+
+	assert_eq([tick.direction, tick.amount], [MoveResult.Direction.HEAL, 300.0], "a heal of 300")
+	assert_eq(player.life_n, player.life_u, "though he can hold no more life")
+
+
+# buffTicker adds the healing, which is negative, to every element's damage and
+# works from that one total (frame_42/DoAction_10.as:17-40).
+func test_a_buff_tick_nets_its_healing_against_its_damage_into_one_total():
+	var hurt: BuffTick = _sonnys_tick_holding(["FATE", "FIRESAM"])  # 666 Physical damage and 300 healing
+	assert_eq([hurt.direction, hurt.amount], [MoveResult.Direction.HARM, 366.0], "666 damage less 300 healing")
+
+	var healed: BuffTick = _sonnys_tick_holding(["FIRESAM2", "FIRESAM"])  # 50 Fire damage and 300 healing
+	assert_eq([healed.direction, healed.amount], [MoveResult.Direction.HEAL, 250.0], "300 healing less 50 damage")
+
+
+# The tick takes the color of the element with the strictly largest damage, so a
+# tie goes to the element that comes first in elementMainArray
+# (frame_42/DoAction_10.as:27-40). It looks at each element's own damage, before
+# the healing comes off the total.
+func test_a_buff_ticks_element_is_the_one_with_the_most_damage_and_the_first_of_a_tie():
+	var ice_over_fire: BuffTick = _sonnys_tick_holding(["FIRESAM2", "PERSECUTE"])  # 50 Fire damage and 500 Ice damage
+	assert_eq([ice_over_fire.amount, ice_over_fire.element], [550.0, CombatUnit.Element.ICE], "Ice has the most of the 550")
+
+	var runner: BattleRunner = _sonny_holding([])
+	runner.units[BattleRunner.PLAYER_SLOT].dot_ticker_array[CombatUnit.Element.FIRE] = 50.0
+	runner.units[BattleRunner.PLAYER_SLOT].dot_ticker_array[CombatUnit.Element.ICE] = 50.0
+	assert_eq(_tick_after_passing(runner).element, CombatUnit.Element.ICE, "Ice and Fire tie, and Ice comes first")
+
+
+# Under sswitch the total changes sign before anything else reads it
+# (frame_42/DoAction_10.as:59-62), so damage heals and healing hurts. The color
+# looks only at the damage each element dealt, so a tick that hurts through
+# healing alone has no element to take it from, and colorToBe stays Physical.
+func test_sswitch_turns_a_buff_tick_around_and_a_tick_with_no_damage_element_is_physical():
+	var healed: BuffTick = _sonnys_tick_holding(["RETROGRADED", "FATE"])  # 666 Physical damage
+	assert_eq([healed.direction, healed.amount], [MoveResult.Direction.HEAL, 666.0], "damage heals Sonny")
+
+	var hurt: BuffTick = _sonnys_tick_holding(["RETROGRADED", "FIRESAM"])  # 300 healing
+	assert_eq(
+		[hurt.direction, hurt.amount, hurt.element],
+		[MoveResult.Direction.HARM, 300.0, CombatUnit.Element.PHYSICAL],
+		"healing hurts Sonny, and no element dealt it"
+	)
+
+
 # Runs a full battle with AI on both sides; returns event-type counts.
 func _assert_battle_runs(battle_id: int) -> Dictionary:
 	var battle: BattleFight = BattleSetup.load_battle(battle_id)
@@ -1373,6 +1427,39 @@ func _sure_crit_caster() -> CombatUnit:
 
 func _ticks_in(events: Array) -> Array:
 	return events.filter(func(event): return event["type"] == BattleRunner.EventType.BUFF_TICK)
+
+
+# Sonny opens the fight against a level 9 Prison Guard, and the named buffs, which
+# the guard cast, are on Sonny. He has 3300 life, so none of them kills him. A
+# level 1 Sonny with no points in defense has the 100 + 15 per level in every
+# element that a Buff tick divides by, so a flat damage or healing buff ticks
+# for exactly its own number.
+func _sonny_holding(buff_names: Array) -> BattleRunner:
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	save.life = 100.0
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	var guard: CombatUnit = _guard_holding("")
+	var runner := BattleRunner.new()
+	runner.setup({1: player, 2: guard}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
+	for buff_name in buff_names:
+		player.apply_buff(buffs_by_name[buff_name], 1, guard)
+	player.apply_changes()
+	assert_true(runner.is_player_turn(), "sanity: Sonny's team opens")
+	return runner
+
+
+# The one Buff tick Sonny's Half-turn logs when he passes.
+func _tick_after_passing(runner: BattleRunner) -> BuffTick:
+	var ticks: Array = _ticks_in(runner.advance_half_turn({}))
+	if ticks.size() != 1:
+		fail_test("expected one Buff tick, got %d" % ticks.size())
+		return BuffTick.new()
+	return ticks[0]["tick"]
+
+
+func _sonnys_tick_holding(buff_names: Array) -> BuffTick:
+	return _tick_after_passing(_sonny_holding(buff_names))
 
 
 func _live_buff_names(unit: CombatUnit) -> Array:
