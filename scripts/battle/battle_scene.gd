@@ -539,6 +539,10 @@ func _play_events(events: Array) -> void:
 				# it picks the battle track once, when the battle loads
 				# (frame_201/DoAction.as:86).
 				pass
+			BattleRunner.EventType.BUFF_TICK:
+				var tick: BuffTick = event["tick"]
+				_presenters[int(event["caster_slot"])].show_tick(tick)
+				_count_from_tick(tick)
 			BattleRunner.EventType.BATTLE_ENDED, BattleRunner.EventType.PASSED:
 				pass
 	await _wait_for_dispatch()
@@ -552,20 +556,12 @@ func _play_events(events: Array) -> void:
 func _wait_until_due(event: Dictionary) -> void:
 	match event["type"]:
 		BattleRunner.EventType.DEATH:
-			if event.get("cause") == BattleRunner.DeathCause.MOVE:
-				return
-			await _reach_buff_tick()
-			# The tick that killed this unit did something. After a move the
-			# conductor then holds the next Dispatch a whole AttackEndCounter
-			# more (frame_217/PlaceObject2_3389_480 enterFrame, lines 118-127).
-			# After a stun, a failed cost or a pass it moves on 1 frame later
-			# anyway, because it first checks that the caster lived through its
-			# tick (lines 515 and 569).
-			if _acting_moved:
-				_frames_to_dispatch = _attack_end_counter_limit() + 1
+			return
 		BattleRunner.EventType.MOVE, BattleRunner.EventType.STUNNED, BattleRunner.EventType.MOVE_FAILED, BattleRunner.EventType.PASSED:
 			await _wait_for_dispatch()
 			_start_action(event["type"] == BattleRunner.EventType.MOVE)
+		BattleRunner.EventType.BUFF_TICK:
+			await _reach_buff_tick()
 		_:
 			await _wait_for_dispatch()
 
@@ -599,6 +595,17 @@ func _count_from_impact(event: Dictionary) -> void:
 	var killed_its_caster: bool = result.killed and int(event["target_slot"]) == int(event["caster_slot"])
 	_buff_tick_due = not killed_its_caster
 	_frames_to_dispatch = _attack_end_counter_limit() + (0 if killed_its_caster else 1)
+
+
+# A Buff tick that did something, one that a shield soaked whole included, raises
+# the impact flag again, so the conductor counts its AttackEndCounter from the
+# tick and the next Dispatch comes AttackEndCounterLimit + 1 frames after it
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 118-127). A caster that did
+# not move gets no count when the tick kills it, because the conductor first
+# checks that it lived through the tick (lines 515 and 569).
+func _count_from_tick(tick: BuffTick) -> void:
+	if tick.did_something() and (_acting_moved or not tick.killed):
+		_frames_to_dispatch = _attack_end_counter_limit() + 1
 
 
 # Returns the conductor's AttackEndCounterLimit, 25, which its onClipEvent(load)
