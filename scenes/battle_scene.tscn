@@ -242,6 +242,18 @@ theme_type_variation = &"RegularLabel"
 horizontal_alignment = 1
 autowrap_mode = 2
 
+[node name="Fade" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="Black" type="ColorRect" parent="Fade"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
 [connection signal="draw" from="BottomBar/PassRing" to="." method="_draw_pass_ring"]
 [connection signal="move_picked" from="RadialMenu" to="." method="_on_radial_move_picked"]
 [connection signal="pressed" from="BottomBar/PassButton" to="." method="_on_pass_pressed"]

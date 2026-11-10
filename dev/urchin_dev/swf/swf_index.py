@@ -76,6 +76,7 @@ CHARACTER_KINDS = {
 
 # The four FILLSTYLE types that point at a bitmap character.
 BITMAP_FILL_TYPES = (0x40, 0x41, 0x42, 0x43)
+SOLID_FILL_TYPE = 0x00
 
 ACTION_GOTO_FRAME = 0x81
 ACTION_CONSTANT_POOL = 0x88
@@ -167,10 +168,13 @@ class SwfIndex:
     character id to its defining tag's code and the start and end of that
     tag's body in data, so shape_bounds() and first_fill_bitmap_id() can parse
     a shape later. sound_blocks holds the body spans of each timeline's
-    SoundStreamBlock tags."""
+    SoundStreamBlock tags. stage is the header's FrameSize in twips, as
+    (xmin, ymin, xmax, ymax), and frame_rate is the header's frames a second."""
 
     version: int
     root_frames: int
+    stage: tuple[int, int, int, int] = (0, 0, 0, 0)
+    frame_rate: float = 0.0
     sprite_frames: dict[int, int] = field(default_factory=dict)
     labels: list[Label] = field(default_factory=list)
     placements: list[Placement] = field(default_factory=list)
@@ -516,8 +520,14 @@ def parse_swf(raw: bytes) -> SwfIndex:
     # Pad back the 8 header bytes so offsets match the file's own.
     data = b"\0" * 8 + payload
     pos = _skip_rect(data, 8)
-    _rate, root_frames = struct.unpack_from("<HH", data, pos)
-    index = SwfIndex(version=version, root_frames=root_frames, data=data)
+    rate, root_frames = struct.unpack_from("<HH", data, pos)
+    index = SwfIndex(
+        version=version,
+        root_frames=root_frames,
+        stage=_read_rect(data, 8),
+        frame_rate=rate / 256,
+        data=data,
+    )
     _Walker(data, index).walk(pos + 4, len(data), 0)
     return index
 
@@ -553,6 +563,21 @@ def first_fill_bitmap_id(index: SwfIndex, cid: int) -> int | None:
     if count == 0 or index.data[pos] not in BITMAP_FILL_TYPES:
         return None
     return struct.unpack_from("<H", index.data, pos + 1)[0]
+
+
+def first_fill_color(index: SwfIndex, cid: int) -> tuple[int, int, int, int] | None:
+    """-> the (r, g, b, a) a DefineShape's first fill style paints, or None
+    when the shape has no fill styles or its first one isn't a solid colour.
+    DefineShape and DefineShape2 store no alpha, so theirs reads as 255."""
+    code, pos = _fill_style_array(index, cid)
+    count, pos = _fill_style_count(index.data, pos, code)
+    if count == 0 or index.data[pos] != SOLID_FILL_TYPE:
+        return None
+    if code in (TAG_DEFINE_SHAPE3, TAG_DEFINE_SHAPE4):
+        r, g, b, a = index.data[pos + 1 : pos + 5]
+        return r, g, b, a
+    r, g, b = index.data[pos + 1 : pos + 4]
+    return r, g, b, 255
 
 
 def _fill_style_array(index: SwfIndex, cid: int) -> tuple[int, int]:
