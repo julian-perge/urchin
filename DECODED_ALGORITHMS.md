@@ -632,9 +632,9 @@ Everything below still stands in for original behavior, except the rows marked D
 | Result flash | **DONE (2026-11-10)**: each Fighter presenter pulses its own Result flash on the doll, no longer the HIT recoil label only. See "The Result flash" above | `BATTLEFLASH` with `characterColorState/FilterState`: `frame_42/DoAction_8.as` ~line 199 |
 | Floating number art | **DONE (2026-11-10)**: `extract_floating_numbers` renders the digit, MISS and SHIELDED clips and NumberFixer's four labels, and `FloatingNumber` plays them | NumberFixer/NumberSetter digit clips, miss/shield variants: `frame_42/DoAction_7.as` |
 | Top battle HP/focus bars | in-field bars with numbers | `lifeBarUpdate` + bar clips, layout in frame 217 placements |
-| Doll ground shadow | none | player clip "shadower" (hidden on death, MODEL1 frame 360 script) |
+| Doll ground shadow ([#192](https://github.com/julian-perge/urchin/issues/192)) | none | player clip "shadower" (hidden on death, MODEL1 frame 360 script) |
 | Melee end point | **DONE (2026-11-10)**: `CharacterVisual.play_melee` stops the caster at the target's x less both half-widths, measured from the dolls' drawn bounds as the swing starts, and steps toward the target's live position on the original's dash and Runback steps. The part PNGs carry their filters' glow and Flash's bounds don't, so a half-width can come out a few px wider than the original's | target/shooter half-widths: `krinMelee` endPoint |
-| Swing whoosh | impact sound only | `sfx_swing` cues baked at MODEL1 clip frames 88/118/146 |
+| Swing whoosh ([#191](https://github.com/julian-perge/urchin/issues/191)) | impact sound only | `sfx_swing` cues baked at MODEL1 clip frames 88/118/146 |
 | Stun/cast animations | **DONE (2026-07-21)**: the port plays the real labels (see the stun family section above), no longer a code-driven slump/raise | labels `cast` 189-219, `stun` 220-239 -> `stun2` 240-279 loop (frame 279 goto), `outofstun` 280-295 -> stand |
 | Hover ring / radial menu / pass ring | modern inventions (kept by design) | original UX: `KrinSelector` clips + `KrinToolTipper` tooltip system |
 | Victory screen layout | inventory-window geometry + reference screenshot | menu clip 3142 frame 9 placements (never dumped precisely) |
