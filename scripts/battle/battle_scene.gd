@@ -99,10 +99,11 @@ var _hard_skip: bool = false
 var _pause_timer: SceneTreeTimer = null  # the running _pause's timer, which Space runs out during a line
 var _fade_tween: Tween = null  # the running _play_fade's tween, which the next fade kills
 
-@onready var background: TextureRect = $Background
+@onready var battle_screen_clip: BattleScreenClip = $BattleScreenClip
+@onready var background: TextureRect = $BattleScreenClip/Background
 @onready var sky: TextureRect = $Sky
 @onready var sky_fill: ColorRect = $SkyFill
-@onready var battlefield: Node2D = $Battlefield
+@onready var battlefield: Node2D = $BattleScreenClip/Battlefield
 @onready var turn_label: Label = $UI/TurnLabel
 @onready var speech_label: Label = $UI/SpeechLabel
 @onready var _pass_ring: Control = $BottomBar/PassRing
@@ -160,6 +161,7 @@ func _maybe_start_debug_battle() -> void:
 
 
 func _process(delta: float) -> void:
+	battle_screen_clip.advance(delta * animation_speed)
 	if decision_open and not _turn_based:
 		_decision_timer = maxf(_decision_timer - delta, 0.0)
 		if _decision_timer == 0.0:
@@ -515,6 +517,7 @@ func _play_move_event(event: Dictionary) -> void:
 	var target_slot: int = int(event["target_slot"])
 	var move: Ability = MoveManagerAuto.get_move(int(event["move_id"]))
 	var caster: FighterPresenter = _presenters.get(caster_slot)
+	_start_camera(move, target_slot)
 	# Only Melee moves run and swing; the original plays "cast" for both
 	# Missile and Shock (param 12 is the projectile clip for Missiles, and
 	# unused for Shock) - see DECODED_ALGORITHMS.md.
@@ -586,6 +589,43 @@ func _play_landing_sound(move: Ability, result: MoveResult) -> void:
 		AudioManagerAuto.play_effect(move.sound_effect_name)
 	elif move.attack_animation_type == "Missile":
 		AudioManagerAuto.play_effect("sfx_magicmiss")
+
+
+# How the conductor zooms for each move type: the ratio it multiplies the
+# target's rig point by, and how many frames GridZoomer holds at its peak. A
+# Missile and a Melee move use zoomRatioNEW, 0.4 (frame_42/DoAction_4.as:219),
+# and a Shock uses 0.3. A Missile holds 5 frames, a Shock 1 and a Melee move
+# krinMeleeAttackCD * 2, which is 30 (DoAction_4.as:217). The Missile and Shock
+# zooms are the conductor's, lines 419-428 and 455-462, and the Melee zoom is
+# krinMelee's, DoAction_4.as:58-65.
+const CAMERA_ZOOMS: Dictionary[String, Dictionary] = {
+	"Missile": {"ratio": 0.4, "hold": 5},
+	"Shock": {"ratio": 0.3, "hold": 1},
+	"Melee": {"ratio": 0.4, "hold": 30},
+}
+# Each zoom aims at the target's rig point times -ratio, plus this.
+const ZOOM_CENTER: Vector2 = Vector2(400, 300)
+
+
+# At Dispatch the conductor zooms GridZoomer toward the target of every move
+# but a Missile that hits every enemy, and plays GridShaker with a Shock whose
+# speed modifier is 0 or more (line 464). It does both only while the Graphics
+# option is on, which frame_201/DoAction.as:87-100 copies into
+# KrinSettings.SFX. The rig point the zoom aims at is the target's rig x plus
+# half its width and its y plus half its height, from where BATTLESCREEN rests.
+# Nothing waits for the zoom or the shake.
+func _start_camera(move: Ability, target_slot: int) -> void:
+	var target: FighterPresenter = _presenters.get(target_slot)
+	var save: PlayerSave = GameData.current_save
+	if move == null or target == null or save == null or not save.graphics:
+		return
+	var zoom: Dictionary = CAMERA_ZOOMS.get(move.attack_animation_type, {})
+	if zoom.is_empty() or (move.attack_animation_type == "Missile" and move.hits_all_enemies):
+		return
+	var rig_point: Vector2 = target.rig_position() - battle_screen_clip.rest + target.rig_size() / 2.0
+	battle_screen_clip.zoom(rig_point * -float(zoom["ratio"]) + ZOOM_CENTER, int(zoom["hold"]))
+	if move.attack_animation_type == "Shock" and move.combat_speed_modifier >= 0:
+		battle_screen_clip.shake()
 
 
 # krinBoltMake port: an accelerating bolt (Projectile) that flies from the

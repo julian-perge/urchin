@@ -2174,3 +2174,216 @@ func test_a_click_while_the_deciding_half_turn_plays_leaves_the_banner_down():
 	await wait_for_signal(scene.battle_finished, 5)
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# Battle 100 at animation_speed 0, so nothing but the test moves its hall and
+# fighters. The player is in slot 1 and the Prison Guard in slot 2.
+func _battle_100_for_the_camera(graphics: bool) -> Control:
+	var save: PlayerSave = PlayerSave.new_game("Camera", 0)
+	save.graphics = graphics
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	return scene
+
+
+# Plays the player's move `move_id` on the Prison Guard, then steps the
+# BATTLESCREEN clip one SWF frame at a time and returns, for each frame, the
+# transform the player sees the fighters through.
+func _screen_after_dispatch(scene: Control, move_id: int, frames: int) -> Array[Transform2D]:
+	await scene._play_move_event({
+		"type": BattleRunner.EventType.MOVE, "caster_slot": BattleRunner.PLAYER_SLOT, "target_slot": 2,
+		"move_id": move_id, "result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0),
+	})
+	var seen: Array[Transform2D] = []
+	for frame in frames:
+		scene.battle_screen_clip.advance_frame()
+		seen.append(scene.battlefield.get_global_transform())
+	return seen
+
+
+# GridZoomer, DefineSprite 3419, steps on the frame after its KrinZoomPlay label
+# with zoomPoint counting down from zoomTime, 9, and each step moves the screen
+# zoomPoint / zoomFactor, 70ths, of the way to the point the conductor gave it,
+# so it gets 45/70 of the way there. Its scale grows by scaleChange, 30%, times
+# the same share. After the last step in it holds for _root.zoomPause frames,
+# then steps back out the same way and snaps back to where BATTLESCREEN rests
+# (frame_217/PlaceObject2_3419_332 onClipEvent(load), and DefineSprite_3419's
+# frames 2, 4 and 6). Its first step comes on the second frame after Dispatch,
+# because Dispatch sends it to KrinZoomGo, frame 2, and its step is on frame 4.
+const ZOOM_IN_SEVENTIETHS: Array = [9, 17, 24, 30, 35, 39, 42, 44, 45]
+const ZOOM_OUT_SEVENTIETHS: Array = [36, 28, 21, 15, 10, 6, 3, 1, 0]
+# BATTLESCREEN rests where the battle frame places it
+# (frame_217/PlaceObject2_3435_89).
+const BATTLE_SCREEN_REST: Vector2 = Vector2(400, 294.5)
+
+
+# Each frame's scale for a zoom that holds for `hold` frames, from the frame
+# after Dispatch to two frames after the zoom is back at rest.
+func _zoom_scales(hold: int) -> Array:
+	var seventieths: Array = [0] + ZOOM_IN_SEVENTIETHS
+	for frame in hold:
+		seventieths.append(45)
+	seventieths.append_array(ZOOM_OUT_SEVENTIETHS + [0, 0])
+	return seventieths.map(func(share): return 1.0 + 0.3 * share / 70.0)
+
+
+# The conductor aims the zoom at the target's rig: its x plus half its width and
+# its y plus half its height, measured from where BATTLESCREEN rests. It sets
+# zoomPointX to that x times -ratio, plus 400, and zoomPointY to that y times
+# -ratio, plus 300, with a ratio of 0.3 for a Shock and zoomRatioNEW, 0.4, for a
+# Missile and a Melee move, and holds 1 frame for a Shock, 5 for a Missile and
+# krinMeleeAttackCD * 2, 30, for a Melee move (the conductor, lines 419-428 and
+# 455-462, krinMelee in frame_42/DoAction_4.as:58-65, and krinMeleeAttackCD and
+# zoomRatioNEW at 217 and 219 there). A 0.3 ratio grows the screen around that
+# point, which stays put but for 3.5 px down at the peak, since the conductor
+# aims at y 300 and BATTLESCREEN rests at 294.5. A 0.4 ratio also pulls it 6.4%
+# of the way toward where BATTLESCREEN rests. A Shock also shakes the screen,
+# which puts it 0.8 px lower on the peak's first frame. Flash drops a fraction
+# of a twip on each step of either, up to 0.45 px over the zoom's 9 steps in
+# and 0.15 px over the shake.
+func test_each_move_type_zooms_toward_its_target_for_9_frames_its_hold_and_9_more():
+	var moves: Dictionary = {
+		14: {"type": "Shock", "ratio": 0.3, "hold": 1, "shaken": SHAKE_OFFSETS[9]},  # Death Sentence
+		5: {"type": "Missile", "ratio": 0.4, "hold": 5, "shaken": 0.0},  # Nuke
+		1: {"type": "Melee", "ratio": 0.4, "hold": 30, "shaken": 0.0},  # Leading Strike
+	}
+	for move_id in moves:
+		var expected: Dictionary = moves[move_id]
+		assert_eq(MoveManagerAuto.get_move(move_id).attack_animation_type, expected["type"], "sanity: move %d" % move_id)
+		var scene: Control = _battle_100_for_the_camera(true)
+		var target: FighterPresenter = scene._presenters[2]
+		var anchor: Vector2 = target.rig_position() + target.rig_size() / 2.0
+		var scales: Array = _zoom_scales(expected["hold"])
+		var seen: Array[Transform2D] = await _screen_after_dispatch(scene, move_id, scales.size())
+		for frame in scales.size():
+			assert_almost_eq(seen[frame].get_scale().x, scales[frame], 0.00001, "%s frame %d" % [expected["type"], frame + 1])
+		assert_eq(seen[-1], Transform2D.IDENTITY, "a %s's zoom ends back at rest" % expected["type"])
+		var at_peak: Vector2 = seen[ZOOM_IN_SEVENTIETHS.size()] * anchor
+		var share: float = 45.0 / 70.0
+		var pulled: Vector2 = share * (0.3 - expected["ratio"]) * (anchor - BATTLE_SCREEN_REST)
+		var lowered: Vector2 = Vector2(0, share * 5.5 + expected["shaken"])
+		assert_almost_eq(at_peak, anchor + lowered + pulled, Vector2(0.6, 0.6),
+			"a %s zooms toward the Prison Guard" % expected["type"])
+		GameData.current_save = null
+		ZoneManager.auto_start_battles = true
+
+
+# GridShaker, DefineSprite 3420, plays from the stop on its frame 1. Its frame 2
+# moves _y down by half of shakeValue, 8. Then a frame moves it up by
+# shakeValue and the next down by it, each taking shakeMinus, 0.8, off it,
+# until shakeValue runs out, and the last adds back the 0.9 px that Flash drops
+# along the way (frame_217/PlaceObject2_3420_330 onClipEvent(load), and
+# DefineSprite_3420's frames 2, 4 and 5). This is how far that puts the screen
+# below where it would be on each frame after Dispatch.
+const SHAKE_OFFSETS: Array = [4.0, 4.0, -4.0, 3.2, -3.2, 2.4, -2.4, 1.6, -1.6, 0.8, -0.8, 0.0, 0.0, 0.0, 0.0]
+# An id no move in the game has, for a copy of a move that a test changes.
+const TEST_MOVE_ID: int = 99999
+
+
+# The conductor plays GridShaker with a Shock whose speed modifier, mAry1[9],
+# is 0 or more (line 464), which is every Shock in the game. A copy of the same
+# Shock with a speed modifier below 0 gives the zoom without the shake. Both
+# drop fractions of a twip from _y on each step, so they can drift up to three
+# twips, 0.15 px, apart over the shake, which a simulation of the two clips at
+# 40,000 target heights measured.
+func test_a_shock_with_a_speed_modifier_of_0_or_more_shakes_the_screen():
+	var shock: Ability = MoveManagerAuto.get_move(14)  # Death Sentence
+	assert_eq(shock.combat_speed_modifier, 1.0, "sanity: Death Sentence's speed modifier")
+	var unshaken: Ability = shock.duplicate()
+	unshaken.id = TEST_MOVE_ID
+	unshaken.combat_speed_modifier = -1.0
+	MoveManagerAuto.moves_by_id[unshaken.id] = unshaken
+	var shaken: Array[Transform2D] = await _screen_after_dispatch(_battle_100_for_the_camera(true), shock.id, SHAKE_OFFSETS.size())
+	var still: Array[Transform2D] = await _screen_after_dispatch(_battle_100_for_the_camera(true), unshaken.id, SHAKE_OFFSETS.size())
+	MoveManagerAuto.moves_by_id.erase(unshaken.id)
+	for frame in SHAKE_OFFSETS.size():
+		assert_almost_eq(shaken[frame].origin.y - still[frame].origin.y, SHAKE_OFFSETS[frame], 0.16, "frame %d" % (frame + 1))
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The conductor zooms toward a Missile's target only when the Missile hits one
+# target, mAry2[20] (line 419). No move in the game hits every enemy, so this
+# plays a copy of Nuke that does.
+func test_a_missile_that_hits_every_enemy_does_not_zoom():
+	var every_enemy: Ability = MoveManagerAuto.get_move(5).duplicate()  # Nuke
+	every_enemy.id = TEST_MOVE_ID
+	every_enemy.hits_all_enemies = true
+	MoveManagerAuto.moves_by_id[every_enemy.id] = every_enemy
+	var seen: Array[Transform2D] = await _screen_after_dispatch(_battle_100_for_the_camera(true), every_enemy.id, 30)
+	MoveManagerAuto.moves_by_id.erase(every_enemy.id)
+	assert_eq(seen.filter(func(frame): return frame != Transform2D.IDENTITY), [])
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Melee move's zoom is still stepping out 45 frames after its Dispatch, when
+# the next move can start one of its own. GridZoomer's last step puts _x and _y
+# back where BATTLESCREEN rests, but the original leaves the scale to come back
+# by itself, so the second zoom ends on the scale the first had when it was cut
+# off, and the screen stays zoomed (DefineSprite_3419/frame_4). The port puts
+# the scale back too, as ADR 0005 lists.
+func test_a_zoom_that_starts_before_the_last_one_ends_still_ends_at_rest():
+	var scene: Control = _battle_100_for_the_camera(true)
+	await _screen_after_dispatch(scene, 1, 45)  # Leading Strike
+	var seen: Array[Transform2D] = await _screen_after_dispatch(scene, 14, 30)  # Death Sentence
+	assert_eq(seen[-1], Transform2D.IDENTITY)
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The conductor zooms and shakes only while KrinSettings.SFX is set, which
+# frame_201/DoAction.as:87-100 copies from the Graphics option. A Melee move's
+# zoom, the longest, is over 50 frames after Dispatch.
+func test_with_graphics_off_nothing_zooms_or_shakes():
+	for move_id in [14, 5, 1]:  # Death Sentence, Nuke and Leading Strike
+		var seen: Array[Transform2D] = await _screen_after_dispatch(_battle_100_for_the_camera(false), move_id, 60)
+		assert_eq(seen.filter(func(frame): return frame != Transform2D.IDENTITY), [], "move %d" % move_id)
+		GameData.current_save = null
+		ZoneManager.auto_start_battles = true
+
+
+# Plays a Shock, a Missile and a Melee move by the player on the Prison Guard in
+# a scene whose _pause only records each wait it is asked for. Returns the waits,
+# and whether the hall and the fighters have moved two frames after the moves
+# finished.
+func _waits_while_moves_play(graphics: bool) -> Dictionary:
+	var save: PlayerSave = PlayerSave.new_game("CameraTiming", 0)
+	save.graphics = graphics
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = partial_double(BattleSceneRes).instantiate()
+	var waits: Array = []
+	stub(scene, "_pause").to_call(func(seconds: float): waits.append(seconds))
+	stub(scene, "_battle_loop").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)
+	var moves: Array = [14, 5, 1].map(func(move_id): return {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": BattleRunner.PLAYER_SLOT, "target_slot": 2,
+		"move_id": move_id, "result": hit,
+	})
+	await scene._play_events(moves)
+	scene.battle_screen_clip.advance_frame()
+	scene.battle_screen_clip.advance_frame()
+	var moved: bool = scene.battlefield.get_global_transform() != Transform2D.IDENTITY
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+	return {"waits": waits, "moved": moved}
+
+
+# Nothing waits for the zoom. Each move asks for the same waits with the zoom on
+# or off, and the last move is over before its zoom has taken a step.
+func test_the_next_action_waits_the_same_with_the_zoom_on_or_off():
+	var on: Dictionary = await _waits_while_moves_play(true)
+	var off: Dictionary = await _waits_while_moves_play(false)
+	assert_false(off["waits"].is_empty(), "sanity: the moves wait")
+	assert_eq(on["waits"], off["waits"], "the same waits")
+	assert_true(on["moved"], "the Melee move's zoom starts only after the moves are over")
+	assert_false(off["moved"], "and with the zoom off nothing moves")
