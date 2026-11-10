@@ -100,15 +100,15 @@ func _make_cover(texture: Texture2D, rect: Dictionary, centre: Vector2) -> Textu
 # The original's "ACD" field, the turns left on a cooldown. It keeps the font
 # the project theme gives every Label, which is the Stand-in font for the bold
 # _sans the field names, as the Combat text banner's line does.
-func _make_count(text: Dictionary, centre: Vector2) -> Label:
+func _make_count(text_layout: Dictionary, centre: Vector2) -> Label:
 	var count := Label.new()
 	count.name = "Count"
-	var rect: Dictionary = text["rect"]
+	var rect: Dictionary = text_layout["rect"]
 	count.position = centre + Vector2(rect["x"], rect["y"])
 	count.size = Vector2(rect["w"], rect["h"])
-	count.horizontal_alignment = CombatTextBanner.ALIGNMENTS[text["align"]]
-	count.add_theme_font_size_override("font_size", int(text["size"]))
-	count.add_theme_color_override("font_color", Color(text["color"]))
+	count.horizontal_alignment = LabelLayout.ALIGNMENTS[text_layout["align"]]
+	count.add_theme_font_size_override("font_size", int(text_layout["size"]))
+	count.add_theme_color_override("font_color", Color(text_layout["color"]))
 	count.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return count
 
