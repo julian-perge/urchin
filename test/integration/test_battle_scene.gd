@@ -994,7 +994,6 @@ func test_heal_that_kills_an_sswitch_target_plays_the_death():
 
 	var presenter: FighterPresenter = scene._presenters[target_slot]
 	assert_eq(presenter.get_node("Doll")._state, CharacterVisual.State.DEAD, "the heal killed the target, so its doll plays the death")
-	assert_false(presenter.get_node("Overlay").visible, "its overlay is hidden with it")
 	assert_eq(presenter.displayed_hp, 0.0, "the bar drops to empty")
 	assert_eq(
 		scene._combat_log._log_text.text,

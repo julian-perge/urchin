@@ -273,6 +273,19 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
 - The STUN checks for the `hit` label read the target as the hit lands, before the move's own status effect, so `MoveResult.target_stunned` is read then too. Shatter Bolt's stun comes
   after its own hit. The stun pose changes in the recompute after the strike (`frame_42/DoAction_10.as:468-481`), so `MoveResult.stun_after` is read after that recompute, with the life.
 
+## A death (MODEL1's `dead` label and LifeBarSmoother, DefineSprite 57)
+
+Ported: `CharacterVisual._play_death` and `FighterPresenter.die`. Frame counts below start at the death, which is the Impact that kills or the Buff tick that kills.
+
+- The doll plays MODEL1's `dead` label, frames 313 to 371 (`frame_42/DoAction_8.as:104-107` and 208-211 for a move, `frame_42/DoAction_10.as:113` for a Buff tick). Frames 313 to 360 draw at
+  full alpha. On 361 to 371 the label's own colour transforms fade every part from 233/256 to 0, and frame 371's script removes the doll before that frame is drawn
+  (`DefineSprite_166_MODEL1/frame_371/DoAction.as`), 58 frames after the death. Frame 360 hides the player clip's `shadower`, which the port has no counterpart for.
+- `lifeBarUpdate` plays the death voice and attaches LifeBarSmoother to the unit's bar with `deadNow` set (`frame_42/DoAction_8.as:345-347`). The clip's frame 18, 17 frames after the
+  death, removes the buff icons `bshr0` to `bshr9` and sends the bar's `inner` clip (DefineSprite 3407, the name and the life and focus numbers) to its empty `third` frame. From the next
+  frame, its frame 38 takes 5 off the whole bar's `_alpha` every frame, so the bar is at 0 on frame 37 and hidden on frame 38.
+- `lifeBarUpdate` does none of that when the bar's rounded percent hasn't changed (295-298), so a unit killed from under 0.5% life dies with no voice and no fade. ADR 0005 counts that as
+  an Original bug, and the port plays both on every death.
+
 ## Unit stats below level 10 (frame_42/DoAction_14.as `krinAddNewUnit`)
 
 Implemented in `scripts/battle/combat_unit.gd` (`from_character`).

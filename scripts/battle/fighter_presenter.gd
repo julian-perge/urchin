@@ -27,10 +27,20 @@ const RING_COLORS: Dictionary[Relation, Color] = {
 const RING_FADE_IN_TIME: float = 0.17
 const RING_FADE_OUT_TIME: float = 0.67
 const FLOAT_OFFSET: Vector2 = Vector2(-15, -72)
+# The SWF's frame rate, which the overlay's death is counted in.
+const FPS: float = 30.0
+# LifeBarSmoother starts at the death, and its frame 18 clears the overlay 17
+# frames later (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as). From the
+# next frame on, its frame 38 takes this much off the bar's alpha, out of 100,
+# every frame, and hides the bar on the frame after the alpha reaches 0
+# (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as).
+const DEATH_CLEAR_FRAME: int = 17
+const DEATH_FADE_PER_FRAME: int = 5
 
 # Health and stun as displayed. The runner pre-applies a whole half-turn before
 # the replay starts, so the bars and the stun pose follow these numbers instead
-# of the unit's own, and only show_result() and snap_to_unit() change them.
+# of the unit's own, and only show_result(), snap_to_unit() and die() change
+# them.
 var displayed_hp: float = 0.0
 var displayed_stun: float = 0.0
 
@@ -38,6 +48,7 @@ var _unit: CombatUnit
 var _buffs_by_id: Dictionary = {}
 var _float_layer: Node2D
 var _dead: bool = false
+var _frames_since_death: float = 0.0
 var _ring_fade: Tween = null
 var _hover_info: Label = null
 # How far setup() put the doll from its home, which rig_position() takes back
@@ -166,11 +177,36 @@ func float_text(text: String, color: Color, critical: bool = false) -> void:
 	tween.tween_callback(label.queue_free)
 
 
+# Plays the death: the doll's dead label, an empty bar, the death voice, and the
+# overlay's clear and fade, which _process() counts out. The original's
+# lifeBarUpdate plays the voice and starts the fade only when the bar's rounded
+# percent changes (frame_42/DoAction_8.as:295-298 and 345-347), which skips a
+# unit killed from under 0.5% life. ADR 0005 counts that as an Original bug, so
+# every death plays them here.
 func die() -> void:
 	_dead = true
 	_doll.set_state(CharacterVisual.State.DEAD)
-	_overlay.visible = false
+	displayed_hp = 0.0
+	redraw()
 	effect_cue.emit(_unit.voice_die)
+
+
+# Counts the frames since the death, so the overlay clears, fades and hides on
+# the original's frames. The count is in frames rather than seconds, because a
+# sum of 1/30 s steps drifts off whole frames.
+func _process(delta: float) -> void:
+	if not _dead:
+		return
+	_frames_since_death += delta * FPS
+	var frames_since_clear: int = int(_frames_since_death) - DEATH_CLEAR_FRAME
+	if frames_since_clear < 0:
+		return
+	_overlay.clear_for_death()
+	var alpha_percent: int = 100 - DEATH_FADE_PER_FRAME * frames_since_clear
+	_overlay.modulate.a = maxi(alpha_percent, 0) / 100.0
+	if alpha_percent < 0:
+		_overlay.hide()
+		set_process(false)
 
 
 # Draws the displayed health and the unit's true focus and buffs. It never moves
@@ -204,7 +240,7 @@ func _show_stun(stun: float) -> void:
 
 # battle_scene.gd passes true only while the mouse is over the fighter during a
 # Decision, so the ring fades in only then and fades out on any other call. A
-# dead fighter ignores this, because its overlay is already hidden.
+# dead fighter ignores this.
 func show_hover(showing: bool) -> void:
 	if not _unit.active:
 		return
