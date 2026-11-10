@@ -28,15 +28,16 @@ const RING_FADE_IN_TIME: float = 0.17
 const RING_FADE_OUT_TIME: float = 0.67
 const FLOAT_OFFSET: Vector2 = Vector2(-15, -72)
 
-# Health as displayed. The runner pre-applies a whole half-turn's damage before
-# the replay starts, so the bars follow this number instead of the unit's life,
-# and only show_result() and snap_to_unit() change it.
+# Health and stun as displayed. The runner pre-applies a whole half-turn before
+# the replay starts, so the bars and the stun pose follow these numbers instead
+# of the unit's own, and only show_result() and snap_to_unit() change them.
 var displayed_hp: float = 0.0
+var displayed_stun: float = 0.0
 
 var _unit: CombatUnit
 var _buffs_by_id: Dictionary = {}
 var _float_layer: Node2D
-var _last_stun: float = 0.0
+var _dead: bool = false
 var _ring_fade: Tween = null
 var _hover_info: Label = null
 
@@ -54,7 +55,7 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	_buffs_by_id = buffs_by_id
 	_float_layer = float_layer
 	displayed_hp = unit.life_n
-	_last_stun = unit.stun
+	displayed_stun = unit.stun
 	_doll.position = home
 	if unit.team_side == CombatUnit.Team.TWO:
 		_doll.scale.x = -1  # mirrored, facing left
@@ -72,43 +73,48 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 
 
 # Shows one move's result at the moment it lands on this fighter: the number,
-# then the bar, then the death or flinch, then the voice.
-func show_result(result: Dictionary, move: Ability) -> void:
-	var amount: float = float(result.get("amount", 0))
-	var critical: bool = result.get("did_crit", false)
-	match result.get("type"):
-		BattleManager.ResultType.DAMAGE when result.get("sswitched", false):
+# then the death or flinch, then the voice, then the bar and the stun pose. Every
+# result but a miss moves the bar and the stun pose to the life and stun it
+# states, because the original recomputes and redraws its target after every
+# strike that lands (the conductor, line 103) and runs nothing on a miss. The
+# life a result states already holds any life cost or damage-over-time tick the
+# unit took earlier in the half-turn. The original drew those when they
+# happened, and here they reach the bar with the next result on the unit.
+func show_result(result: MoveResult, move: Ability) -> void:
+	var amount: float = result.amount
+	var critical: bool = result.critical
+	match result.kind:
+		MoveResult.Kind.DAMAGE when result.direction == MoveResult.Direction.HEAL:
 			# Under sswitch this damage healed the target. The original draws its
 			# number in heal green and plays no hit animation or hit voice
 			# (frame_42/DoAction_8.as:133-149).
 			float_text(str(int(amount)), MenuTheme.HEAL_COLOR, critical)
-			displayed_hp = minf(displayed_hp + amount, _unit.life_u)
-		BattleManager.ResultType.DAMAGE:
+		MoveResult.Kind.DAMAGE:
 			# KrinNumberShow: numbers colored by the move's ELEMENT; crits
 			# play the bigger "critical" variant of the same color.
 			float_text(str(int(amount)), _damage_color(move), critical)
-			displayed_hp = maxf(displayed_hp - amount, 0.0)
 			_die_or_flinch(result)
 			voice_cue.emit(_unit.voice_hit)
-		BattleManager.ResultType.HEAL when result.get("sswitched", false):
+		MoveResult.Kind.HEAL when result.direction == MoveResult.Direction.HARM:
 			# Under sswitch this heal hurt the target. The original draws its
 			# number in the Shadow color, plays the hit animation unless the
 			# target is stunned, plays no hit voice, and plays the death at the
 			# impact when the heal kills (frame_42/DoAction_8.as:189-229).
 			float_text(str(int(amount)), MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], critical)
-			displayed_hp = maxf(displayed_hp - amount, 0.0)
 			_die_or_flinch(result)
-		BattleManager.ResultType.HEAL:
+		MoveResult.Kind.HEAL:
 			float_text("+%d" % int(amount), MenuTheme.HEAL_COLOR)
-			displayed_hp = minf(displayed_hp + amount, _unit.life_u)
-		BattleManager.ResultType.FOCUS:
+		MoveResult.Kind.FOCUS:
 			float_text("+%d FOCUS" % int(amount), Color.SKY_BLUE)
-		BattleManager.ResultType.MISS:
+		MoveResult.Kind.MISS:
 			# The special miss frame KrinNumberShow swaps to at impact,
 			# instead of a damage number - the caster's own animation still
 			# played in full to get here (see _execute_move_action's comment).
 			float_text("MISS", Color.GRAY)
 			effect_cue.emit("sfx_magicmiss")
+	if result.kind != MoveResult.Kind.MISS:
+		displayed_hp = result.life_after
+		_show_stun(result.stun_after)
 	redraw()
 
 
@@ -118,15 +124,15 @@ func _damage_color(move: Ability) -> Color:
 	return MenuTheme.ELEMENT_COLORS[move.damage_element_type]
 
 
-func _die_or_flinch(result: Dictionary) -> void:
-	if result.get("target_died", false):
+func _die_or_flinch(result: MoveResult) -> void:
+	if result.killed:
 		# The death plays at the impact that actually kills, because the queued
 		# DEATH event only reaches the replay after the caster's whole move,
 		# melee runback included, has finished.
 		die()
-	elif _unit.stun == 0:
-		# The original skips the hit animation on a stunned target
-		# (frame_42/DoAction_8.as:101-104).
+	elif not result.target_stunned:
+		# The original skips the hit animation on a target that is stunned when
+		# the hit lands (frame_42/DoAction_8.as:100-103 and 204-207).
 		_doll.set_state(CharacterVisual.State.HIT)
 
 
@@ -153,37 +159,39 @@ func float_text(text: String, color: Color, critical: bool = false) -> void:
 
 
 func die() -> void:
+	_dead = true
 	_doll.set_state(CharacterVisual.State.DEAD)
 	_overlay.visible = false
 	effect_cue.emit(_unit.voice_die)
 
 
-# Draws the displayed health and the unit's true focus and buffs, and plays any
-# change in its stun. It never moves the health bar toward the unit's real life.
+# Draws the displayed health and the unit's true focus and buffs. It never moves
+# the health bar toward the unit's real life, and never changes the stun pose.
 func redraw() -> void:
 	_overlay.show_status(_unit, displayed_hp, _buffs_by_id)
-	_play_stun_change()
 
 
-# For the half-turn's end, which is where damage-over-time ticks, life costs and
-# shields reach the bar, since no hit shows them.
+# For the half-turn's end, which is where a damage-over-time tick, a buff that
+# wears off or a life cost with no later result on the unit reaches the bar and
+# the stun pose.
 func snap_to_unit() -> void:
 	displayed_hp = _unit.life_n
+	_show_stun(_unit.stun)
 	redraw()
 
 
-# krinBuff STUN is a running total across active stun-inflicting buffs -
-# replay "stun" on any increase (including stacking while already stunned),
-# "outofstun" on any decrease (even a partial one that leaves the unit still
-# stunned by a shorter-lived buff); both labels flow back to idle/stun2 on
-# their own once triggered (see DECODED_ALGORITHMS.md).
-func _play_stun_change() -> void:
-	var current: float = _unit.stun if _unit.active else 0.0
-	if current > _last_stun:
-		_doll.enter_stun()
-	elif current < _last_stun:
-		_doll.exit_stun()
-	_last_stun = current
+# A unit's stun is a running total over every stun buff it holds. Any rise
+# replays the "stun" label, even on a doll that is already stunned, and any fall
+# plays "outofstun", even one that leaves it stunned by a shorter buff, the way
+# applyChangesKrin compares STUN with its last value (see DECODED_ALGORITHMS.md).
+# The original changes no dead unit's stun pose, so a dead doll keeps its death.
+func _show_stun(stun: float) -> void:
+	if not _dead:
+		if stun > displayed_stun:
+			_doll.enter_stun()
+		elif stun < displayed_stun:
+			_doll.exit_stun()
+	displayed_stun = stun
 
 
 # battle_scene.gd passes true only while the mouse is over the fighter during a

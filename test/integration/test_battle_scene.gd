@@ -207,6 +207,14 @@ func test_space_takes_a_long_line_down_at_once():
 	ZoneManager.auto_start_battles = true
 
 
+func _move_result(kind: MoveResult.Kind, direction: MoveResult.Direction, amount: float) -> MoveResult:
+	var result := MoveResult.new()
+	result.kind = kind
+	result.direction = direction
+	result.amount = amount
+	return result
+
+
 func _space_press() -> InputEventKey:
 	var event: InputEventKey = InputEventKey.new()
 	event.keycode = KEY_SPACE
@@ -940,9 +948,10 @@ func test_the_retreat_button_shows_the_original_quit_tooltip():
 
 
 # A heal bigger than an sswitch target's life kills it, and the original plays
-# the death at that impact (frame_42/DoAction_8.as:208-228). The events come
-# from the runner, because _play_events() only pauses on a DEATH event caused
-# by a move and leaves the death itself to FighterPresenter.show_result().
+# the death at that impact (frame_42/DoAction_8.as:208-228). The runner logs a
+# killing blow as the MOVE whose result killed, then a DEATH caused by the move,
+# and _play_events() only pauses on that DEATH, leaving the death itself to
+# FighterPresenter.show_result().
 func test_heal_that_kills_an_sswitch_target_plays_the_death():
 	var save = PlayerSave.new_game("RetrogradeKill", 0)
 	GameData.current_save = save
@@ -954,17 +963,17 @@ func test_heal_that_kills_an_sswitch_target_plays_the_death():
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	var caster: CombatUnit = scene.units[1]
 	var target_slot := 2  # battle 100's Prison Guard
-	var target: CombatUnit = scene.units[target_slot]
-	target.apply_buff(BuffManagerAuto.get_buff_by_name("RETROGRADED"), 1, caster)
-	target.apply_changes()
-	target.life_n = 1.0
+	scene.units[target_slot].life_n = 1.0
 	scene._refresh_bars()
+	var killing_heal: MoveResult = _move_result(MoveResult.Kind.HEAL, MoveResult.Direction.HARM, 37.0)
+	killing_heal.life_before = 1.0
+	killing_heal.killed = true
 
-	var move: Ability = MoveManagerAuto.get_move(4)  # Heal: a Shock move, so it can't miss
-	var first_event: int = scene.runner.events.size()
-	scene.runner._execute_move_action({"caster_slot": 1, "target_slot": target_slot, "move_id": move.id}, caster, target)
-	var events: Array = scene.runner.events.slice(first_event)
-	await scene._play_events(events)
+	await scene._play_events([
+		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": target_slot,
+			"move_id": 4, "move_name": "Heal", "result": killing_heal},
+		{"type": BattleRunner.EventType.DEATH, "slot": target_slot, "cause": BattleRunner.DeathCause.MOVE},
+	])
 
 	var presenter: FighterPresenter = scene._presenters[target_slot]
 	assert_eq(presenter.get_node("Doll")._state, CharacterVisual.State.DEAD, "the heal killed the target, so its doll plays the death")
@@ -972,7 +981,7 @@ func test_heal_that_kills_an_sswitch_target_plays_the_death():
 	assert_eq(presenter.displayed_hp, 0.0, "the bar drops to empty")
 	assert_eq(
 		scene._combat_log._log_text.text,
-		"%s hits Prison Guard with Heal for %d\nPrison Guard falls" % [caster.player_name, int(events[0]["result"]["amount"])],
+		"%s hits Prison Guard with Heal for 37\nPrison Guard falls" % caster.player_name,
 		"the log calls the heal a hit, then the fall"
 	)
 
@@ -1391,9 +1400,9 @@ func test_hovering_a_fighter_shows_its_ring_only_during_a_decision():
 
 
 # The runner applies the whole half-turn before the replay, so every fighter's
-# stun, focus and buffs are already true when the first hit lands. The scene
-# shows them at every impact and after every event, on every fighter and not
-# just the one that was hit.
+# focus and buffs are already true when the first hit lands. The scene shows
+# them at every impact and after every event, on every fighter and not just the
+# one that was hit.
 func test_an_impact_and_each_event_redraw_every_fighter():
 	GameData.current_save = PlayerSave.new_game("AllSlotsRedraw", 0)
 	ZoneManager.auto_start_battles = false
@@ -1408,7 +1417,7 @@ func test_an_impact_and_each_event_redraw_every_fighter():
 	bystander.focus_n = 1.0
 	scene._show_move_result(
 		{"type": BattleRunner.EventType.MOVE, "caster_slot": 2, "target_slot": 3, "move_id": 1,
-			"result": {"type": BattleManager.ResultType.MISS}},
+			"result": _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0)},
 		3
 	)
 	assert_eq(overlay.focus_bar.value, 1.0, "an impact on someone else redraws this fighter")
@@ -1419,6 +1428,53 @@ func test_an_impact_and_each_event_redraw_every_fighter():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# A stun that a later hit lands is already on its target when the replay
+# starts, but the doll takes it at the hit that lands it, the way the original's
+# applyChangesKrin does after that strike, and keeps it once the hit's flinch
+# has played.
+func test_a_stun_starts_at_the_hit_that_lands_it_and_outlasts_its_flinch():
+	GameData.current_save = PlayerSave.new_game("StunAtItsHit", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var doll: CharacterVisual = scene._presenters[2].get_node("Doll")
+	scene.units[2].stun = 1.0
+
+	await scene._play_events([{"type": BattleRunner.EventType.DISPEL, "caster_slot": 1, "target_slot": 3, "removed": []}])
+	assert_ne(doll._state, CharacterVisual.State.STUN, "an earlier event doesn't start the stun")
+
+	var stunning_hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)
+	stunning_hit.life_after = scene.units[2].life_n
+	stunning_hit.stun_after = 1.0
+	scene._show_move_result({"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2, "move_id": 434, "result": stunning_hit}, 2)
+	for frame in 60:
+		doll._process(1.0 / 30.0)
+	assert_eq(doll._state, CharacterVisual.State.STUN, "the hit that lands it leaves the doll stunned")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# battle.log is the debug record of every event. It is written with
+# JSON.stringify, which prints an object as its id and an enum as its number.
+func test_battle_log_names_a_results_fields_and_a_failed_moves_cost():
+	var scene = autofree(BattleSceneRes.instantiate())
+	var hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 12.0)
+	var move_line: Dictionary = JSON.parse_string(scene._event_log_text({"type": BattleRunner.EventType.MOVE, "result": hit}))
+	var failed_line: Dictionary = JSON.parse_string(scene._event_log_text(
+		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 1, "reason": BattleRunner.FailReason.HEALTH}
+	))
+	assert_eq(
+		[move_line["result"]["kind"], move_line["result"]["direction"], move_line["result"]["amount"]],
+		["DAMAGE", "HARM", 12.0],
+		"a result's fields, with its enums by name"
+	)
+	assert_eq(failed_line["reason"], "HEALTH", "and a failed move's cost by name")
 
 
 func _float_labels(scene) -> Array:
@@ -1435,7 +1491,7 @@ func test_the_replay_floats_status_text_over_the_right_fighter():
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	await scene._play_events([
 		{"type": BattleRunner.EventType.STUNNED, "caster_slot": 1},
-		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 3, "reason": "focus"},
+		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 3, "reason": BattleRunner.FailReason.FOCUS},
 		{"type": BattleRunner.EventType.DISPEL, "caster_slot": 1, "target_slot": 2, "removed": []},
 	])
 
@@ -1511,7 +1567,7 @@ func test_a_hit_number_takes_its_moves_element_color():
 	var move: Ability = MoveManagerAuto.get_move(5)  # Nuke
 	scene._show_move_result(
 		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2, "move_id": move.id,
-			"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 10.0, "did_crit": false, "target_died": false}},
+			"result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)},
 		2
 	)
 	var number: Label = _float_labels(scene)[-1]
@@ -1537,7 +1593,7 @@ func test_a_melee_move_swings_at_its_target_with_its_own_label():
 	)[0]
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2, "move_id": move.id,
-		"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 10.0, "did_crit": false, "target_died": false},
+		"result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0),
 	}
 	var impacts: int = _count_impact_effects(scene)
 
@@ -1659,7 +1715,7 @@ func test_melee_hit_spawns_an_impact_effect_at_the_target():
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_id": 1, "move_name": "Leading Strike",  # Melee, impact_effect_name BOOM_SPARK
-		"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 10.0, "did_crit": false, "target_died": false},
+		"result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0),
 	}
 	await scene._play_move_event(event)
 
@@ -1683,7 +1739,7 @@ func test_melee_miss_does_not_spawn_an_impact_effect():
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_id": 1, "move_name": "Leading Strike",
-		"result": {"type": BattleManager.ResultType.MISS},
+		"result": _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0),
 	}
 	await scene._play_move_event(event)
 
@@ -1708,10 +1764,7 @@ func test_missile_fire_spawns_a_bolt_and_its_impact_on_arrival():
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 
 	var move: Ability = MoveManagerAuto.get_move(5)  # Nuke: Missile, Krin.Magicbolt, BOOM_SLASHORANGE
-	var result: Dictionary = {
-		"type": BattleManager.ResultType.DAMAGE, "amount": 10.0,
-		"did_crit": false, "target_died": false,
-	}
+	var result: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)
 	var impacts_before: int = _count_impact_effects(scene)
 	# Deliberately not awaited: _fire_projectile suspends on the bolt's
 	# reached_target, and the bolt has to be hand-driven from out here to
@@ -1741,6 +1794,31 @@ func test_missile_fire_spawns_a_bolt_and_its_impact_on_arrival():
 	ZoneManager.auto_start_battles = true
 
 
+# On a miss the original's bolt keeps flying past its target instead of freeing
+# itself there (frame_42/DoAction_4.as:188-205), which Projectile.did_hit
+# decides.
+func test_a_missed_bolt_is_told_it_missed():
+	GameData.current_save = PlayerSave.new_game("MissileMissTest", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene.animation_speed = 1.0
+	# Deliberately not awaited, like the bolt test above, since nothing drives
+	# this bolt to its target.
+	scene._fire_projectile(1, 2, MoveManagerAuto.get_move(5), _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0))
+
+	var bolts: Array = scene.battlefield.get_children().filter(func(child): return child is Projectile)
+	assert_eq(bolts.size(), 1, "the bolt is out")
+	assert_false(bolts[0].did_hit, "and it knows it missed")
+
+	scene.animation_speed = 0.0
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func test_shock_cast_tints_with_the_moves_own_visual_effect_color():
 	var save = PlayerSave.new_game("CastTintTest", 0)
 	GameData.current_save = save
@@ -1756,7 +1834,7 @@ func test_shock_cast_tints_with_the_moves_own_visual_effect_color():
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_id": 4, "move_name": move.display_name,
-		"result": {"type": BattleManager.ResultType.HEAL, "amount": 10.0, "did_crit": false, "target_died": false},
+		"result": _move_result(MoveResult.Kind.HEAL, MoveResult.Direction.HEAL, 10.0),
 	}
 	scene._play_move_event(event)  # not awaited - modulate is set synchronously before the Shock branch's pause
 

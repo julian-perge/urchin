@@ -28,9 +28,8 @@ func toggle() -> void:
 	visible = not visible
 
 
-# Appends one line for an event, if that event type produces a readable
-# line at all (phase_advanced/battle_ended don't - same events
-# _play_events() plays a sound/does nothing visible for, respectively).
+# Appends one line for an event, if that event type produces a readable line at
+# all.
 func append_event(event: Dictionary, units: Dictionary) -> void:
 	var line: String = _format_line(event, units)
 	if line.is_empty():
@@ -54,7 +53,7 @@ func _format_line(event: Dictionary, units: Dictionary) -> String:
 			return "%s is stunned" % _unit_name(units, int(event["caster_slot"]))
 		BattleRunner.EventType.MOVE_FAILED:
 			return "%s doesn't have enough %s" % [
-				_unit_name(units, int(event["caster_slot"])), str(event.get("reason", "")),
+				_unit_name(units, int(event["caster_slot"])), BattleRunner.FailReason.find_key(event["reason"]).to_lower(),
 			]
 		BattleRunner.EventType.DISPEL:
 			return "%s's buffs are dispelled" % _unit_name(units, int(event["target_slot"]))
@@ -70,22 +69,30 @@ func _format_move_line(event: Dictionary, units: Dictionary) -> String:
 	var caster_name: String = _unit_name(units, int(event["caster_slot"]))
 	var target_name: String = _unit_name(units, int(event["target_slot"]))
 	var move_name: String = str(event.get("move_name", "a move"))
-	var result: Dictionary = event.get("result", {})
-	match result.get("type"):
-		BattleManager.ResultType.DAMAGE when result.get("sswitched", false):
-			return "%s's %s heals %s for %d" % [caster_name, move_name, target_name, int(result.get("amount", 0))]
-		BattleManager.ResultType.DAMAGE:
-			return "%s hits %s with %s for %d" % [caster_name, target_name, move_name, int(result.get("amount", 0))]
-		BattleManager.ResultType.HEAL when result.get("sswitched", false):
-			return "%s hits %s with %s for %d" % [caster_name, target_name, move_name, int(result.get("amount", 0))]
-		BattleManager.ResultType.HEAL:
-			return "%s heals %s for %d" % [caster_name, target_name, int(result.get("amount", 0))]
-		BattleManager.ResultType.FOCUS:
-			return "%s restores %s's focus by %d" % [caster_name, target_name, int(result.get("amount", 0))]
-		BattleManager.ResultType.MISS:
+	var result: MoveResult = event["result"]
+	# ADR 0001 has each line say what the move did to its target, so a line is
+	# worded by which way the move pushed the target's life. A move that pushed it
+	# neither way is worded by its kind, and so is a heal of 0, which keeps the
+	# HEAL direction only because the original checks a heal's amount before it
+	# checks sswitch.
+	match result.direction:
+		MoveResult.Direction.HARM:
+			return "%s hits %s with %s for %d" % [caster_name, target_name, move_name, int(result.amount)]
+		MoveResult.Direction.HEAL when result.kind != MoveResult.Kind.HEAL or result.amount > 0:
+			return "%s heals %s with %s for %d" % [caster_name, target_name, move_name, int(result.amount)]
+	match result.kind:
+		MoveResult.Kind.HEAL:
+			if result.buff_applied.is_empty():
+				return "%s's %s has no effect on %s" % [caster_name, move_name, target_name]
+			return "%s uses %s on %s" % [caster_name, move_name, target_name]
+		MoveResult.Kind.FOCUS:
+			if result.amount < 0:
+				return "%s drains %s's focus by %d" % [caster_name, target_name, -int(result.amount)]
+			return "%s restores %s's focus by %d" % [caster_name, target_name, int(result.amount)]
+		MoveResult.Kind.MISS:
 			return "%s's %s misses %s" % [caster_name, move_name, target_name]
-		BattleManager.ResultType.STATUS_ONLY:
-			if str(result.get("buff_applied", "")) == "":
+		MoveResult.Kind.STATUS_ONLY:
+			if result.buff_applied.is_empty():
 				return "%s's %s has no effect on %s" % [caster_name, move_name, target_name]
 			return "%s hits %s with %s" % [caster_name, target_name, move_name]
 		_:

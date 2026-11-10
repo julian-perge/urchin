@@ -77,19 +77,21 @@ static func check_all_star(saves: Array) -> bool:
 	return classes_cleared.size() >= 3
 
 
-# Derives the original AchVal1-4 from a finished battle: total damage the
-# PLAYER dealt (move events from slot 1, damage results, all-enemy splash
-# included), companion presence/count (slots 3/5), and the half-turn count.
+# Derives the original AchVal1 to AchVal4 from a finished battle: the total
+# damage the PLAYER dealt (move events from slot 1), whether any companion
+# fought and how many did (slots 3 and 5), and the half-turn count.
 static func collect_battle_counters(runner: BattleRunner, units: Dictionary) -> Dictionary:
 	var player_damage: float = 0.0
 	for event in runner.events:
 		if event.get("type") != BattleRunner.EventType.MOVE or int(event.get("caster_slot", 0)) != BattleRunner.PLAYER_SLOT:
 			continue
-		var result: Dictionary = event.get("result", {})
-		# Damage under sswitch healed its target, and the original leaves it out
-		# of AchVal1 (frame_42/DoAction_8.as:84-93).
-		if result.get("type") == BattleManager.ResultType.DAMAGE and not result.get("sswitched", false):
-			player_damage += float(result.get("amount", 0.0)) + float(result.get("shielded_amount", 0.0))
+		var result: MoveResult = event["result"]
+		# The original adds to AchVal1 only on its branch where damage got past
+		# the shield and harmed the target, and it adds what got past
+		# (frame_42/DoAction_8.as:79-93). Damage that healed under sswitch and a
+		# hit the shield took whole both add nothing.
+		if result.kind == MoveResult.Kind.DAMAGE and result.direction == MoveResult.Direction.HARM:
+			player_damage += result.amount
 	var teammate_count: int = 0
 	for slot in [3, 5]:
 		if units.get(slot) != null:

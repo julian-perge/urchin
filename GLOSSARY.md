@@ -64,6 +64,10 @@ _Avoid_: Ally, friend
 A unit built from a template that fights on the player's team, such as Felicity in battle 508.
 _Avoid_: Companion
 
+**Move result**:
+What one move did to its target, as `BattleManager` resolved it: what kind of move it was, which way it pushed the target's life once sswitch had its say, how much damage, heal or focus change it made, the target's life before and after, and its stun when the move landed and after it.
+_Avoid_: Hit, outcome
+
 **Settlement**:
 Everything a finished battle does to the save and the achievements, applied in one call by `BattleSettlement.settle`, and the summary the Victory and Game over screens show.
 _Avoid_: Rewards, which are only the money and XP a win pays

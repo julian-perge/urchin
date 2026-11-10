@@ -163,7 +163,6 @@ func test_player_from_save_with_talent_passives():
 	assert_has(TalentTree.get_known_move_ids(save), 101, "upgraded rank in known moves")
 
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
 	player.ai_enabled = true
 	player.move_pool_attack = TalentTree.get_known_move_ids(save)
 	player.cooldowns_attack = []
@@ -171,7 +170,7 @@ func test_player_from_save_with_talent_passives():
 		player.cooldowns_attack.append(0)
 	var enemy = CombatUnit.from_character(unit_templates[5], 1, CombatUnit.Difficulty.HARD, 2)
 	runner.setup(
-		{1: player, 2: enemy}, null, moves_by_id, buffs_by_id, buffs_by_name, manager,
+		{1: player, 2: enemy}, null, moves_by_id, buffs_by_id, buffs_by_name,
 		TalentTree.get_passive_buff_names(save)
 	)
 	assert_true(
@@ -223,8 +222,7 @@ func test_a_speed_change_reorders_a_team_from_the_next_full_turn():
 	var bio: CombatUnit = CombatUnit.from_character(unit_templates[1], 10, CombatUnit.Difficulty.HARD, 2)
 	var guard: CombatUnit = CombatUnit.from_character(unit_templates[5], 10, CombatUnit.Difficulty.HARD, 4)
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup({1: player, 2: bio, 4: guard}, null, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.setup({1: player, 2: bio, 4: guard}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
 	assert_true(runner.is_player_turn(), "Sonny's team opens")
 	assert_gt(bio.speed_u, guard.speed_u, "slot 2 starts faster than slot 4")
 
@@ -249,8 +247,7 @@ func test_the_players_battle_unit_is_sonny_whatever_the_save_is_named():
 	var units: Dictionary = _roster_for(battle, save)
 	assert_eq(units[BattleRunner.PLAYER_SLOT].player_name, "Sonny", "the player's battle unit")
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
-	var setup_events: Array = runner.setup(units, battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	var setup_events: Array = runner.setup(units, battle, moves_by_id, buffs_by_id, buffs_by_name, [])
 	var doorbell: Dictionary = {}
 	for event in setup_events:
 		if event["type"] == BattleRunner.EventType.SPEECH and event["say"] == "Sorry about the gate, I couldn't find the doorbell.":
@@ -311,19 +308,18 @@ func test_two_surprise_shots_leave_speed_at_0_not_below():
 # rounded up and the buffed hit is 1.25 * x rounded up, which puts the buffed
 # hit between ceil(1.25 * (plain - 1)) and ceil(1.25 * plain).
 func test_assault_tactics_makes_the_secret_police_hit_25_percent_harder():
-	var manager: BattleManager = autofree(BattleManager.new())
 	var secret_police: CombatUnit = CombatUnit.from_character(unit_templates[62], 21, CombatUnit.Difficulty.HARD, 2)
 	var snipe: Ability = moves_by_id[734]
 	assert_eq(snipe.status_effect_id, "", "Snipe applies no buff of its own")
 	seed(20261108)
 	var plain_target: CombatUnit = CombatUnit.from_character(unit_templates[5], 21, CombatUnit.Difficulty.HARD, 1)
-	var plain: float = manager.execute_move(snipe, secret_police, plain_target, buffs_by_name)["amount"]
+	var plain: float = BattleManager.execute_move(snipe, secret_police, plain_target, buffs_by_name).amount
 	secret_police.apply_buff(buffs_by_name["SPASSAULTTACTICS"], 1, secret_police)
 	secret_police.apply_changes()
 	assert_eq(secret_police.dmg2, 0.25, "DMG2 holds the buff's 0.25")
 	seed(20261108)
 	var buffed_target: CombatUnit = CombatUnit.from_character(unit_templates[5], 21, CombatUnit.Difficulty.HARD, 1)
-	var buffed: float = manager.execute_move(snipe, secret_police, buffed_target, buffs_by_name)["amount"]
+	var buffed: float = BattleManager.execute_move(snipe, secret_police, buffed_target, buffs_by_name).amount
 	assert_between(buffed, ceil(1.25 * (plain - 1)), ceil(1.25 * plain), "Snipe hit for %d without the buff" % plain)
 	randomize()
 
@@ -348,9 +344,45 @@ func test_battle_100_simple_fight():
 	_assert_battle_runs(100)
 
 
+# Battle 104's one phase entry watches Doctor Leath in slot 2 and moves the
+# battle to phase 2 once he falls to 30% life.
 func test_battle_104_boss_phases_and_speeches():
+	seed(20261109)
 	var counts = _assert_battle_runs(104)
 	assert_gt(counts.get(BattleRunner.EventType.SPEECH, 0), 0, "scripted dialogue fired")
+	assert_eq(counts.get(BattleRunner.EventType.PHASE_ADVANCED, 0), 1, "Leath's fall to 30% life moves the battle on a phase")
+	randomize()
+
+
+# The conductor moves a battle on a phase at the end of a half-turn when the unit
+# the phase entry watches is down to its life fraction, when that unit's team is
+# down to teamLeft active units, or when the phase has lasted turn half-turns,
+# checked in that order (the conductor, lines 176-193). Sonny passes, so nothing
+# but the test moves the guards' life.
+func test_a_phase_advances_when_its_watched_unit_falls_to_its_life_fraction():
+	var holding: BattleRunner = _phase_runner({"player": 2, "life": 0.5})
+	assert_eq(_phases_advanced_to(holding.advance_half_turn()), [], "a guard at full life holds the phase")
+
+	var falling: BattleRunner = _phase_runner({"player": 2, "life": 0.5})
+	falling.units[2].life_n = floorf(falling.units[2].life_u * 0.4)
+	assert_eq(_phases_advanced_to(falling.advance_half_turn()), [2], "at 40% life the battle moves on to phase 2")
+	assert_eq(falling.phase, 2, "and stays there")
+
+
+func test_a_phase_advances_when_its_watched_units_team_is_down_to_team_left():
+	var holding: BattleRunner = _phase_runner({"player": 2, "teamLeft": 1}, [2, 4])
+	assert_eq(_phases_advanced_to(holding.advance_half_turn()), [], "two guards standing hold the phase")
+
+	var thinned: BattleRunner = _phase_runner({"player": 2, "teamLeft": 1}, [2, 4])
+	thinned.units[4].life_n = 0.0
+	thinned.units[4].active = false
+	assert_eq(_phases_advanced_to(thinned.advance_half_turn()), [2], "one guard left moves the battle on")
+
+
+func test_a_phase_advances_once_it_has_lasted_its_turns():
+	var runner: BattleRunner = _phase_runner({"player": 2, "turn": 2})
+	assert_eq(_phases_advanced_to(runner.advance_half_turn()), [], "one half-turn in, the phase holds")
+	assert_eq(_phases_advanced_to(runner.advance_half_turn()), [2], "two half-turns in, it moves on")
 
 
 # battle_scene.gd never reads runner.events directly - it only ever plays
@@ -369,9 +401,8 @@ func test_setup_returns_its_own_turn_time_zero_speeches():
 	assert_eq(battle.speeches.size(), 1)
 	assert_eq(int(battle.speeches[0]["turnTime"]), 0, "the one speech fires at battle start, not mid-turn")
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
 	var setup_events: Array = runner.setup(
-		_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
+		_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, []
 	)
 	var has_speech: bool = false
 	for event in setup_events:
@@ -391,9 +422,8 @@ func test_setup_returns_its_own_turn_time_zero_speeches():
 func test_a_line_whose_speaker_is_not_on_the_field_is_skipped():
 	var battle: BattleFight = BattleSetup.load_battle(403)
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
 	var setup_events: Array = runner.setup(
-		_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
+		_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, []
 	)
 	var lines: Array = []
 	for event in setup_events:
@@ -416,9 +446,8 @@ func test_a_battle_whose_first_phase_ends_it_is_won_after_its_opening_lines():
 	for battle_id in opening_lines:
 		var battle: BattleFight = BattleSetup.load_battle(battle_id)
 		var runner = BattleRunner.new()
-		var manager: BattleManager = autofree(BattleManager.new())
 		var setup_events: Array = runner.setup(
-			_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, []
+			_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, []
 		)
 		var said: Array = setup_events.filter(func(event): return event["type"] == BattleRunner.EventType.SPEECH)
 		assert_eq(said.size(), opening_lines[battle_id], "battle %d plays its opening lines" % battle_id)
@@ -439,8 +468,7 @@ func test_the_phase_after_an_end_game_entry_ends_the_battle_after_its_lines():
 		var save: PlayerSave = _save_for(battle)
 		save.party_roster = [0, 1, 2, -1, -1, -1]
 		var runner = BattleRunner.new()
-		var manager: BattleManager = autofree(BattleManager.new())
-		runner.setup(_roster_for(battle, save), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+		runner.setup(_roster_for(battle, save), battle, moves_by_id, buffs_by_id, buffs_by_name, [])
 		var said: Array = []
 		var over_early: bool = false
 		for next_phase in range(2, last_phase[battle_id] + 1):
@@ -475,8 +503,7 @@ func test_space_skips_the_next_line_and_strands_the_rest():
 func _tutorial_turn_2_lines_after_space_on(speech_index: int) -> Array:
 	var battle: BattleFight = BattleSetup.load_battle(2)
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup(_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.setup(_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, [])
 	runner.hard_skip(speech_index)
 	runner.turns_in_phase = 2
 	var start: int = runner.events.size()
@@ -505,12 +532,11 @@ func test_misses_are_move_events_not_a_separate_type():
 	seed(20260823)
 	var battle: BattleFight = BattleSetup.load_battle(51)
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup(_ai_driven_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.setup(_ai_driven_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, [])
 	_run_to_completion(runner)
 	var miss_count: int = 0
 	for event in runner.events:
-		if event.get("type") == BattleRunner.EventType.MOVE and event.get("result", {}).get("type") == BattleManager.ResultType.MISS:
+		if event["type"] == BattleRunner.EventType.MOVE and event["result"].kind == MoveResult.Kind.MISS:
 			miss_count += 1
 			assert_ne(
 				int(event["caster_slot"]), int(event["target_slot"]),
@@ -567,10 +593,11 @@ func test_accuracy_roll_keeps_a_75_miss_chance_when_only_the_casters_speed_is_0(
 func test_shatter_bolt_stuns_its_target():
 	var frost_terror: CombatUnit = CombatUnit.from_character(unit_templates[25], 9, CombatUnit.Difficulty.HARD, 2)
 	var target: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
-	var manager: BattleManager = autofree(BattleManager.new())
-	var result: Dictionary = manager.execute_move(moves_by_id[521], frost_terror, target, buffs_by_name)
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[521], frost_terror, target, buffs_by_name)
 
-	assert_false(result.has("amount"), "Shatter Bolt deals no damage, so its result carries no amount")
+	assert_eq(result.kind, MoveResult.Kind.STATUS_ONLY, "Shatter Bolt deals no damage")
+	assert_eq(result.direction, MoveResult.Direction.NONE, "so it moves no one's life")
+	assert_eq(result.buff_applied, "SHATTERBOLT", "and its result names the buff it landed")
 	var shatterbolt: Buff = buffs_by_name["SHATTERBOLT"]
 	var turns_left: Array = []
 	for slot in target.buff_slots:
@@ -596,8 +623,7 @@ func test_dispel_takes_tied_buffs_in_the_order_the_original_sorts_them():
 	var target: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 5)
 	var enemy: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup({2: enemy, 3: veradux, 5: target}, null, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.setup({2: enemy, 3: veradux, 5: target}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
 	for buff_name in ["LIQUIDVEINS", "IRONJAWS", "APPREHEND"]:
 		target.apply_buff(buffs_by_name[buff_name], 1, enemy)
 		target.apply_changes()
@@ -613,18 +639,6 @@ func test_dispel_takes_tied_buffs_in_the_order_the_original_sorts_them():
 	assert_true(_has_active_buff(target, "IRONJAWS"), "Iron Jaws is still on the target")
 
 
-# Keeps the target's stun and incoming damage multiplier as they are when
-# execute_move resolves the hit.
-class HitWatcher extends BattleManager:
-	var stun_at_hit: float = -1.0
-	var idmgp2_at_hit: float = -1.0
-
-	func execute_move(ability: Ability, caster: CombatUnit, target: CombatUnit, buffs_by_name: Dictionary = {}) -> Dictionary:
-		stun_at_hit = target.stun
-		idmgp2_at_hit = target.idmgp2
-		return super.execute_move(ability, caster, target, buffs_by_name)
-
-
 # The original resolves the hit in executeMove (conductor lines 54-69) and only
 # then recomputes the target's stats with applyChangesKrin (line 103). The
 # dispel's applyBuffKrin call takes a removed buff's STUN off straight away
@@ -632,25 +646,31 @@ class HitWatcher extends BattleManager:
 # target takes, is only worked out in applyChangesKrin (line 313). SHATTERBOLT
 # stuns by 1 and halves the damage its holder takes, and Shatter (move 224)
 # dispels Ice debuffs, so the Shatter hit that removes SHATTERBOLT lands on a
-# target that is no longer stunned and still takes half damage.
+# target that is no longer stunned and still takes half damage. Every Shatter
+# from this caster crits, so no roll decides how much a hit does, and two twins
+# of the target take the same hit straight from BattleManager to show what half
+# damage and full damage are.
 func test_a_dispelled_buffs_stats_still_count_for_the_hit_that_removes_it():
-	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
-	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
+	var target: CombatUnit = _guard_holding("SHATTERBOLT")
 	var runner = BattleRunner.new()
-	var watcher: HitWatcher = autofree(HitWatcher.new())
-	runner.setup({1: caster, 2: target}, null, moves_by_id, buffs_by_id, buffs_by_name, watcher, [])
-	target.apply_buff(buffs_by_name["SHATTERBOLT"], 1, caster)
-	target.apply_changes()
+	runner.setup({1: _sure_crit_caster(), 2: target}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
 
 	runner._execute_action({"caster_slot": 1, "target_slot": 2, "move_id": 224})
 
 	var removed: Array = []
+	var result: MoveResult = null
 	for event in runner.events:
 		if event["type"] == BattleRunner.EventType.DISPEL:
 			removed.append_array(event["removed"])
+		elif event["type"] == BattleRunner.EventType.MOVE:
+			result = event["result"]
+	var halved: MoveResult = BattleManager.execute_move(moves_by_id[224], _sure_crit_caster(), _guard_holding("SHATTERBOLT"), buffs_by_name)
+	var full: MoveResult = BattleManager.execute_move(moves_by_id[224], _sure_crit_caster(), _guard_holding(""), buffs_by_name)
 	assert_eq(removed, ["SHATTERBOLT"], "Shatter dispels SHATTERBOLT")
-	assert_eq(watcher.stun_at_hit, 0.0, "the stun is gone before the hit lands")
-	assert_eq(watcher.idmgp2_at_hit, 0.5, "the hit still takes SHATTERBOLT's halving")
+	assert_true(result.critical and halved.critical and full.critical, "every Shatter from this caster crits")
+	assert_false(result.target_stunned, "the stun is gone before the hit lands")
+	assert_eq(result.amount, halved.amount, "the hit still takes SHATTERBOLT's halving")
+	assert_gt(full.amount, halved.amount, "which a target without SHATTERBOLT doesn't")
 	assert_eq(target.idmgp2, 1.0, "the halving is gone once the move resolves")
 
 
@@ -664,8 +684,7 @@ func test_a_dispelled_sswitch_no_longer_turns_the_hit_into_healing():
 	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
 	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup({1: caster, 2: target}, null, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.setup({1: caster, 2: target}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
 	target.apply_buff(buffs_by_name["RETROGRADED"], 1, target)
 	target.apply_changes()
 	var life_before: float = target.life_n
@@ -673,55 +692,329 @@ func test_a_dispelled_sswitch_no_longer_turns_the_hit_into_healing():
 	runner._execute_action({"caster_slot": 1, "target_slot": 2, "move_id": 434})
 
 	var removed: Array = []
-	var result: Dictionary = {}
+	var result: MoveResult = null
 	for event in runner.events:
 		if event["type"] == BattleRunner.EventType.DISPEL:
 			removed.append_array(event["removed"])
 		elif event["type"] == BattleRunner.EventType.MOVE:
 			result = event["result"]
 	assert_eq(removed, ["RETROGRADED"], "Shock Therapy dispels RETROGRADED")
-	assert_eq(result.get("type"), BattleManager.ResultType.DAMAGE, "the hit is damage")
-	assert_false(result.get("sswitched", true), "and isn't turned into healing")
+	assert_eq(result.kind, MoveResult.Kind.DAMAGE, "the hit is damage")
+	assert_eq(result.direction, MoveResult.Direction.HARM, "and isn't turned into healing")
 	assert_lt(target.life_n, life_before, "so the target loses life")
 
 
-# Damage on a target under an sswitch buff heals it, capped at max life
-# (frame_42/DoAction_8.as:133-149). FighterPresenter raises the bar by this
-# result's amount, so the amount has to be what the target really gained.
-func test_damage_under_sswitch_heals_the_target_by_the_result_amount():
+# A hit takes the damage that got past the shield off its target's life
+# (frame_42/DoAction_8.as:79-85), and its result states the life on both sides
+# of the hit.
+func test_a_hit_states_the_life_it_took_and_the_life_it_left():
+	seed(20261109)
 	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
 	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
-	var manager: BattleManager = autofree(BattleManager.new())
+
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[5], caster, target, buffs_by_name)  # Nuke
+
+	assert_eq(result.kind, MoveResult.Kind.DAMAGE, "Nuke is damage")
+	assert_eq(result.direction, MoveResult.Direction.HARM, "and it harmed its target")
+	assert_eq(result.life_before, target.life_u, "which started at full life")
+	assert_eq(result.life_after, target.life_n, "the result states the life the target has now")
+	assert_eq(result.life_before - result.life_after, result.amount, "which is the amount less")
+	assert_false(result.killed, "and the target lives")
+	randomize()
+
+
+# The runner logs a killing blow as the MOVE whose result killed, then a DEATH
+# caused by the move. battle_scene.gd only pauses on that DEATH, because the
+# presenter plays the death at the impact.
+func test_a_killing_blow_logs_the_death_after_its_move():
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	save.focus = 100.0
+	var guard: CombatUnit = _guard_holding("")
+	var runner = BattleRunner.new()
+	runner.setup({1: CombatUnit.from_player_save(save), 2: guard}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
+	guard.life_n = 1.0
+
+	var events: Array = runner.advance_half_turn({"target_slot": 2, "move_id": 434})  # Shock Therapy, which can't miss
+
+	assert_eq(events.slice(0, 2).map(func(event): return event["type"]), [BattleRunner.EventType.MOVE, BattleRunner.EventType.DEATH], "the hit, then the death")
+	assert_true(events[0]["result"].killed, "the hit's result says it killed")
+	assert_eq([events[1].get("slot"), events[1].get("cause")], [2, BattleRunner.DeathCause.MOVE], "and the death is the guard's, caused by the move")
+
+
+# Edge Of Death lands EDGEOFDEATH on its target, which takes 85% off max life,
+# and the stat recompute after the hit scales life down along with max life
+# (apply_changes in combat_unit.gd, from applyChangesKrin). The original redraws
+# the life bar in that recompute (frame_42/DoAction_10.as:342), so a result
+# states the life its target has once the recompute has run.
+func test_a_result_states_the_life_left_after_the_recompute_that_follows_the_hit():
+	seed(20261109)
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
+
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[579], caster, target, buffs_by_name)  # Edge Of Death
+
+	assert_eq(result.buff_applied, "EDGEOFDEATH", "the hit lands its buff")
+	assert_lt(result.life_after, result.life_before - result.amount, "and the lower max life takes life with it")
+	assert_eq(result.life_after, target.life_n, "the result states the life the target has once that is done")
+	randomize()
+
+
+func test_a_hit_that_takes_the_last_of_its_targets_life_kills_it():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
+	target.life_n = 1.0
+
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[5], caster, target, buffs_by_name)  # Nuke
+
+	assert_true(result.killed, "the result says the hit killed")
+	assert_eq(result.life_after, 0.0, "and left no life")
+	assert_false(target.active, "the target is down")
+
+
+# A Focus move changes its target's focus and leaves life alone
+# (frame_42/DoAction_8.as:232-249). Aim For The Heart gives 30.
+func test_a_focus_move_moves_focus_and_no_life():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
+	target.focus_n = 0.0
+
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[16], caster, target, buffs_by_name)  # Aim For The Heart
+
+	assert_eq(result.kind, MoveResult.Kind.FOCUS, "the move is a Focus move")
+	assert_eq(result.direction, MoveResult.Direction.NONE, "it pushes life neither way")
+	assert_eq(result.amount, 30.0, "its amount is the focus it gives")
+	assert_eq(result.life_after, result.life_before, "and the target's life doesn't move")
+
+
+# Damage on a target under an sswitch buff heals it, capped at max life
+# (frame_42/DoAction_8.as:133-149).
+func test_damage_under_sswitch_heals_the_target():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
 	target.apply_buff(buffs_by_name["TIEDYE"], 1, caster)
 	target.apply_changes()
 	target.life_n = floorf(target.life_u / 2.0)
 	var life_before: float = target.life_n
 
-	var result: Dictionary = manager.execute_move(moves_by_id[5], caster, target, buffs_by_name)  # Nuke
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[5], caster, target, buffs_by_name)  # Nuke
 
-	assert_eq(result.get("type"), BattleManager.ResultType.DAMAGE, "the result is still damage")
-	assert_true(result.get("sswitched", false), "and says the damage healed")
-	assert_gt(target.life_n, life_before, "the target gains life")
-	assert_eq(target.life_n, minf(life_before + result["amount"], target.life_u), "by the amount the result reports")
+	assert_eq(result.kind, MoveResult.Kind.DAMAGE, "the move is still damage")
+	assert_eq(result.direction, MoveResult.Direction.HEAL, "and the result says it healed")
+	assert_eq(result.life_before, life_before, "from the life the target had")
+	assert_eq(result.life_after, minf(life_before + result.amount, target.life_u), "by the amount, up to max life")
+	assert_eq(result.life_after, target.life_n, "which is the life the target has now")
 
 
 # A heal on a target under an sswitch buff hurts it
-# (frame_42/DoAction_8.as:189-207). FighterPresenter lowers the bar by this
-# result's amount, so the amount has to be what the target really lost.
-func test_a_heal_under_sswitch_hurts_the_target_by_the_result_amount():
+# (frame_42/DoAction_8.as:189-207).
+func test_a_heal_under_sswitch_hurts_the_target():
 	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
 	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
-	var manager: BattleManager = autofree(BattleManager.new())
 	target.apply_buff(buffs_by_name["RETROGRADED"], 1, caster)
 	target.apply_changes()
 	var life_before: float = target.life_n
 
-	var result: Dictionary = manager.execute_move(moves_by_id[4], caster, target, buffs_by_name)  # Heal
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[4], caster, target, buffs_by_name)  # Heal
 
-	assert_eq(result.get("type"), BattleManager.ResultType.HEAL, "the result is still a heal")
-	assert_true(result.get("sswitched", false), "and says the heal hurt")
-	assert_lt(target.life_n, life_before, "the target loses life")
-	assert_eq(target.life_n, maxf(life_before - result["amount"], 0.0), "by the amount the result reports")
+	assert_eq(result.kind, MoveResult.Kind.HEAL, "the move is still a heal")
+	assert_eq(result.direction, MoveResult.Direction.HARM, "and the result says it hurt")
+	assert_eq(result.life_before, life_before, "from the life the target had")
+	assert_eq(result.life_after, maxf(life_before - result.amount, 0.0), "by the amount, down to 0")
+	assert_eq(result.life_after, target.life_n, "which is the life the target has now")
+
+
+# A heal that hurts can kill. The original stops life at 0, empties focus and
+# takes the target down (frame_42/DoAction_8.as:193-197 and 208-211).
+func test_a_heal_under_sswitch_that_takes_the_last_of_its_targets_life_kills_it():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = _guard_holding("RETROGRADED")
+	target.life_n = 1.0
+
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[4], caster, target, buffs_by_name)  # Heal
+
+	assert_eq(result.direction, MoveResult.Direction.HARM, "the heal hurt the target")
+	assert_true(result.killed, "the result says it killed")
+	assert_eq(result.life_after, 0.0, "and left no life")
+	assert_eq(target.focus_n, 0.0, "the target's focus is gone")
+	assert_false(target.active, "and the target is down")
+
+
+# Two Block Healing debuffs take 0.5 each off the caster's heal modifier
+# (BLOCKHEALING field 37), so its heals come to 0. The original only checks
+# sswitch inside its DamageOutputKrinFinal > 0 branch
+# (frame_42/DoAction_8.as:172-174), so a heal of 0 changes nothing, under sswitch
+# or not, and stays a heal.
+func test_a_heal_of_0_stays_a_heal_under_sswitch():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
+	for _stack in 2:
+		caster.apply_buff(buffs_by_name["BLOCKHEALING"], 1, target)
+	caster.apply_changes()
+	target.apply_buff(buffs_by_name["RETROGRADED"], 1, target)
+	target.apply_changes()
+	target.life_n = floorf(target.life_u / 2.0)
+
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[4], caster, target, buffs_by_name)  # Heal
+
+	assert_eq(caster.heal_mod, 0.0, "the caster heals for nothing")
+	assert_eq(result.amount, 0.0, "so the heal comes to 0")
+	assert_eq(result.direction, MoveResult.Direction.HEAL, "and stays a heal under sswitch")
+	assert_eq(result.life_after, result.life_before, "leaving the target's life where it was")
+
+
+# A shield bigger than the hit takes all of it, and the original plays that as a
+# shield block, with no hit and no life lost (frame_42/DoAction_8.as:70-76).
+func test_a_shield_bigger_than_the_hit_takes_all_of_it():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var target: CombatUnit = _guard_holding("")
+	target.shield = 100000.0
+
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[5], caster, target, buffs_by_name)  # Nuke
+
+	assert_true(result.shield_took_all, "the result says the shield took the whole hit")
+	assert_eq(result.amount, 0.0, "nothing got through")
+	assert_eq(result.direction, MoveResult.Direction.HARM, "though the hit still pushed down")
+	assert_eq(result.life_after, result.life_before, "so no life was lost")
+	assert_lt(target.shield, 100000.0, "and the shield paid for it")
+
+
+# A shield exactly as big as the hit soaks it too, but the original takes the
+# other branch for it, the one that plays a hit (frame_42/DoAction_8.as:66-85).
+# Both hits run on the same seed, so the first one shows how big the hit is.
+func test_a_shield_exactly_as_big_as_the_hit_is_a_hit_for_0():
+	var first_caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var second_caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var unshielded: CombatUnit = _guard_holding("")
+	var target: CombatUnit = _guard_holding("")
+	seed(20261109)
+	var plain: MoveResult = BattleManager.execute_move(moves_by_id[5], first_caster, unshielded, buffs_by_name)  # Nuke
+	target.shield = plain.amount
+	seed(20261109)
+
+	var result: MoveResult = BattleManager.execute_move(moves_by_id[5], second_caster, target, buffs_by_name)
+
+	assert_false(result.shield_took_all, "a shield as big as the hit isn't a block")
+	assert_eq(result.amount, 0.0, "but nothing gets through")
+	assert_eq(target.shield, 0.0, "and the shield is used up")
+	randomize()
+
+
+# The original reads the target's stun when the hit lands, to decide whether it
+# flinches (frame_42/DoAction_8.as:100-103). Shatter Bolt lands its own stun
+# after its hit, so the target it stuns wasn't stunned when the bolt landed.
+func test_a_result_states_whether_its_target_was_stunned_when_the_hit_landed():
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	var hit_while_stunned: MoveResult = BattleManager.execute_move(moves_by_id[5], caster, _guard_holding("SHATTERBOLT"), buffs_by_name)  # Nuke
+	var bolted: CombatUnit = _guard_holding("")
+	var frost_terror: CombatUnit = CombatUnit.from_character(unit_templates[25], 9, CombatUnit.Difficulty.HARD, 1)
+
+	var bolt: MoveResult = BattleManager.execute_move(moves_by_id[521], frost_terror, bolted, buffs_by_name)  # Shatter Bolt
+
+	assert_true(hit_while_stunned.target_stunned, "a target holding a stun was stunned when the hit landed")
+	assert_eq(hit_while_stunned.stun_after, 1.0, "and still is afterwards")
+	assert_false(bolt.target_stunned, "Shatter Bolt's own stun comes after its hit")
+	assert_eq(bolted.stun, 1.0, "though it leaves its target stunned")
+	assert_eq(bolt.stun_after, 1.0, "and its result says so")
+
+
+# A move fails as it dispatches when its caster can't pay for it, and the
+# failure says which cost it couldn't pay (the conductor, lines 477-488). Nuke
+# costs 20 focus, and Predator Form costs 15% of max life and no focus.
+func test_a_move_its_caster_cannot_pay_for_fails_naming_the_cost():
+	var cases: Array = [[5, BattleRunner.FailReason.FOCUS], [116, BattleRunner.FailReason.HEALTH]]
+	for case in cases:
+		var save: PlayerSave = PlayerSave.new_game("Sonny")
+		save.speed = 100.0
+		var player: CombatUnit = CombatUnit.from_player_save(save)
+		var runner = BattleRunner.new()
+		runner.setup({1: player, 2: _guard_holding("")}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
+		player.focus_n = 0.0
+		player.life_n = 1.0
+
+		var failed: Array = runner.advance_half_turn({"target_slot": 2, "move_id": case[0]}).filter(
+			func(event): return event["type"] == BattleRunner.EventType.MOVE_FAILED
+		)
+
+		assert_eq(failed.size(), 1, "move %d fails" % case[0])
+		assert_eq(failed[0]["reason"], case[1], "and names the cost Sonny couldn't pay")
+
+
+# While one team acts, only its moves change the other team's life and stun:
+# costs and buff ticks land on the casters, and the end of a half-turn changes
+# no one. So for every target on the team that isn't acting, each result starts
+# from the life the result before it left, and the last one leaves the life and
+# the stun the unit has once the half-turn is over.
+func test_every_result_states_the_life_and_stun_its_target_has_afterwards():
+	seed(20261109)
+	var battle: BattleFight = BattleSetup.load_battle(104)
+	var runner = BattleRunner.new()
+	runner.setup(_ai_driven_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, [])
+	var checked: int = 0
+	var stuns_landed: int = 0
+	var mismatches: Array = []
+	var half_turns: int = 0
+	while not runner.is_over() and half_turns < MAX_HALF_TURNS:
+		var resting_team: CombatUnit.Team = CombatUnit.Team.TWO if runner.team_move_now == CombatUnit.Team.ONE else CombatUnit.Team.ONE
+		var life: Dictionary = {}
+		var stun: Dictionary = {}
+		for slot in BattleRunner.TEAM_SLOTS[resting_team]:
+			if runner.units.has(slot):
+				life[slot] = runner.units[slot].life_n
+				stun[slot] = runner.units[slot].stun
+		for event in runner.advance_half_turn():
+			if event["type"] != BattleRunner.EventType.MOVE or not life.has(int(event["target_slot"])):
+				continue
+			var slot: int = int(event["target_slot"])
+			var result: MoveResult = event["result"]
+			if result.life_before != life[slot]:
+				mismatches.append("half-turn %d, slot %d starts at %s, not %s" % [half_turns, slot, result.life_before, life[slot]])
+			life[slot] = result.life_after
+			if result.stun_after > stun[slot]:
+				stuns_landed += 1
+			stun[slot] = result.stun_after
+			checked += 1
+		for slot in life:
+			if life[slot] != runner.units[slot].life_n:
+				mismatches.append("half-turn %d, slot %d ends at %s, not %s" % [half_turns, slot, life[slot], runner.units[slot].life_n])
+			if stun[slot] != runner.units[slot].stun:
+				mismatches.append("half-turn %d, slot %d ends with stun %s, not %s" % [half_turns, slot, stun[slot], runner.units[slot].stun])
+		half_turns += 1
+	gut.p("battle 104: %d results checked, %d of them landed a stun" % [checked, stuns_landed])
+	assert_true(runner.is_over(), "battle 104 finishes")
+	assert_gt(checked, 0, "results on the team that wasn't acting were checked")
+	assert_eq(mismatches, [], "and every one agrees with its target")
+	randomize()
+
+
+# The same holds under sswitch, where damage heals its target and a heal hurts
+# it (frame_42/DoAction_8.as:133-149 and 189-207). Sonny is fast enough that his
+# team opens, Shock Therapy and Heal are Shock moves, which can't miss, and
+# neither one dispels the buff here.
+func test_a_result_on_a_target_under_sswitch_states_the_life_it_has_afterwards():
+	var cases: Array = [
+		["TIEDYE", 434, MoveResult.Direction.HEAL],  # Shock Therapy, damage that heals
+		["RETROGRADED", 4, MoveResult.Direction.HARM],  # Heal, a heal that hurts
+	]
+	for case in cases:
+		var save: PlayerSave = PlayerSave.new_game("Sonny")
+		save.speed = 100.0
+		save.focus = 100.0
+		var guard: CombatUnit = _guard_holding(case[0])
+		var runner = BattleRunner.new()
+		runner.setup({1: CombatUnit.from_player_save(save), 2: guard}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
+		guard.life_n = floorf(guard.life_u / 2.0)
+		var life_before: float = guard.life_n
+		assert_true(runner.is_player_turn(), "Sonny's team opens")
+
+		var result: MoveResult = null
+		for event in runner.advance_half_turn({"target_slot": 2, "move_id": case[1]}):
+			if event["type"] == BattleRunner.EventType.MOVE:
+				result = event["result"]
+
+		assert_eq(result.direction, case[2], "%s turns the move around" % case[0])
+		assert_eq(result.life_before, life_before, "from the life the target had")
+		assert_eq(result.life_after, guard.life_n, "to the life it has afterwards")
 
 
 # A move can send its status buff to its own caster (ability_two[21],
@@ -739,8 +1032,7 @@ func test_a_buff_a_move_lands_on_its_caster_waits_for_the_casters_tick():
 	var colonel: CombatUnit = CombatUnit.from_character(unit_templates[61], 22, CombatUnit.Difficulty.HARD, 2)
 	var target: CombatUnit = CombatUnit.from_character(unit_templates[1], 22, CombatUnit.Difficulty.HARD, 1)
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup({1: target, 2: colonel}, null, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.setup({1: target, 2: colonel}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
 	for buff_name in ["PERSECUTE", "CHAINS"]:
 		colonel.apply_buff(buffs_by_name[buff_name], 1, target)
 		colonel.apply_changes()
@@ -766,8 +1058,7 @@ func _assert_battle_runs(battle_id: int) -> Dictionary:
 	if battle == null:
 		return {}
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup(_ai_driven_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.setup(_ai_driven_roster_for(battle), battle, moves_by_id, buffs_by_id, buffs_by_name, [])
 	var half_turns = _run_to_completion(runner)
 	assert_true(runner.is_over(), "battle %d terminates within %d half-turns" % [battle_id, MAX_HALF_TURNS])
 	assert_has([0, 1, 2], runner.win_condition, "outcome is win/loss/draw")
@@ -775,11 +1066,6 @@ func _assert_battle_runs(battle_id: int) -> Dictionary:
 	for event in runner.events:
 		counts[event["type"]] = counts.get(event["type"], 0) + 1
 	assert_gt(counts.get(BattleRunner.EventType.MOVE, 0), 0, "moves were executed")
-	if not battle.phases.is_empty():
-		assert_true(
-			counts.get(BattleRunner.EventType.PHASE_ADVANCED, 0) > 0 or runner.is_over(),
-			"phase advanced or battle ended early"
-		)
 	gut.p("battle %d: outcome=%d turns=%d events=%s" % [battle_id, runner.win_condition, runner.turn_count, counts])
 	return counts
 
@@ -808,8 +1094,7 @@ func _queued_heal_runner() -> BattleRunner:
 	veradux.cooldowns_attack = []
 	var guard: CombatUnit = CombatUnit.from_character(unit_templates[5], 1, CombatUnit.Difficulty.HARD, 2)
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
-	runner.setup({1: player, 2: guard, 3: veradux}, null, moves_by_id, buffs_by_id, buffs_by_name, manager, [])
+	runner.setup({1: player, 2: guard, 3: veradux}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
 	player.life_n = round(player.life_u * 0.6)
 	veradux.life_n = round(veradux.life_u * 0.4)
 	assert_true(runner.is_player_turn(), "Sonny's team opens")
@@ -875,6 +1160,54 @@ func _has_active_buff(unit: CombatUnit, buff_name: String) -> bool:
 		if slot["buff_id"] == buff.id and slot["cd"] != 0:
 			return true
 	return false
+
+
+# A runner on a hand-built battle whose one phase entry is entry, with Sonny in
+# slot 1, fast enough that his team opens, and level 9 Prison Guards in
+# enemy_slots. Entry 0 is the original's EMPTY placeholder, so the battle opens
+# on phase 1, which is entry.
+func _phase_runner(entry: Dictionary, enemy_slots: Array = [2]) -> BattleRunner:
+	var battle := BattleFight.new()
+	battle.phases = {"0": "EMPTY", "1": entry}
+	battle.win_date = -1
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	var units: Dictionary = {BattleRunner.PLAYER_SLOT: CombatUnit.from_player_save(save)}
+	for slot in enemy_slots:
+		units[slot] = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, slot)
+	var runner := BattleRunner.new()
+	runner.setup(units, battle, moves_by_id, buffs_by_id, buffs_by_name, [])
+	assert_true(runner.is_player_turn(), "Sonny's team opens")
+	return runner
+
+
+func _phases_advanced_to(events: Array) -> Array:
+	var phases: Array = []
+	for event in events:
+		if event["type"] == BattleRunner.EventType.PHASE_ADVANCED:
+			phases.append(event["phase"])
+	return phases
+
+
+# A level 9 Prison Guard in slot 2, holding the named buff unless the name is
+# empty.
+func _guard_holding(buff_name: String) -> CombatUnit:
+	var guard: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 2)
+	if not buff_name.is_empty():
+		guard.apply_buff(buffs_by_name[buff_name], 1, guard)
+		guard.apply_changes()
+	return guard
+
+
+# perScript crits when its 0 to 99 roll is under (PERCALKK + GGG[7] + the speed
+# term) * GGG[8] / DEFCALKK * 15 (frame_42/DoAction_8.as:258). An Ice piercing of
+# 100000 puts that far over 99 against the guards here, so every Ice hit from
+# this caster with a GGG[8] above 0 crits.
+func _sure_crit_caster() -> CombatUnit:
+	var caster: CombatUnit = CombatUnit.from_character(unit_templates[1], 9, CombatUnit.Difficulty.HARD, 1)
+	caster.base_per[CombatUnit.Element.ICE] = 100000.0
+	caster.apply_changes()
+	return caster
 
 
 func _live_buff_names(unit: CombatUnit) -> Array:

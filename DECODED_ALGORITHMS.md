@@ -65,9 +65,8 @@ Sequence:
 4. **Multi-target.** `ability_two[20]` (`is_multi_target`) fires one independent bolt per living enemy on the opposing side, each targeting its own unit. This is dead content: no move sets
    `[20]`, which defaults to 0 (`frame_42/DoAction_6.as:48`), and nothing assigns `hackMove[20]`.
 
-The Godot port fires a single bolt per `_play_move_event` call. Multi-target itself is handled: `BattleRunner._execute_move_action` runs the move on every living enemy when
-`Ability.hits_all_enemies` is set and logs one move event per enemy, so only the presentation differs: read from the code (not run), the port would play one cast and one bolt per enemy where
-the original casts once and fires the bolts together. With no move setting `[20]`, neither path ever runs. **DONE (2026-08-19)**, see `.superpowers/sdd/2026-08-18-missile-projectile-art/`: distinct clip art per `projectileModel` name (e.g. `Krin.Firebolt`) is extracted and rendered untinted; `KrinTrail`'s real 33-frame fade-in/fade-out pulse (not a generic tinted circle+line) plays alongside it, tinted by the move's real `colortobe` value; and a miss now flies the bolt fully past the target off-screen instead of always resolving as a hit on arrival, matching `strikeSuccess`'s hit/miss branch (`Projectile.did_hit` gates whether `reached_target` frees the bolt immediately or lets it keep flying). Both the bolt and the trail come from a generated scene of their own under `scenes/battle/vfx/`, which `Projectile` instantiates by clip name - each one already carries that clip's frames and the registration point the source SWF drew it around, so nothing here positions or scales art at play time (**DONE (2026-08-20)**, see `.superpowers/sdd/2026-08-19-vfx-registration-scenes/`).
+The Godot port fires a single bolt per `_play_move_event` call and has no multi-target path. `BattleRunner` ran a move on every living enemy when `Ability.hits_all_enemies` was set
+until issue 47 deleted that branch, since no move sets `[20]`. **DONE (2026-08-19)**, see `.superpowers/sdd/2026-08-18-missile-projectile-art/`: distinct clip art per `projectileModel` name (e.g. `Krin.Firebolt`) is extracted and rendered untinted; `KrinTrail`'s real 33-frame fade-in/fade-out pulse (not a generic tinted circle+line) plays alongside it, tinted by the move's real `colortobe` value; and a miss now flies the bolt fully past the target off-screen instead of always resolving as a hit on arrival, matching `strikeSuccess`'s hit/miss branch (`Projectile.did_hit` gates whether `reached_target` frees the bolt immediately or lets it keep flying). Both the bolt and the trail come from a generated scene of their own under `scenes/battle/vfx/`, which `Projectile` instantiates by clip name - each one already carries that clip's frames and the registration point the source SWF drew it around, so nothing here positions or scales art at play time (**DONE (2026-08-20)**, see `.superpowers/sdd/2026-08-19-vfx-registration-scenes/`).
 
 ## "cast" label dispatch and timing (frame_217/PlaceObject2_3389_480 enterFrame, ~line 400-469)
 
@@ -83,7 +82,7 @@ Implemented in `scripts/entities/character_visual.gd` (real MODEL1 label playbac
 
 ## Stun family labels (frame_42/DoAction_10.as `applyChangesKrin`/`applyBuffKrin`, ~line 135-481)
 
-Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/`_animate_stun`) and `scripts/battle/fighter_presenter.gd` (`_play_stun_change`).
+Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/`_animate_stun`) and `scripts/battle/fighter_presenter.gd` (`_show_stun`).
 
 - **`STUN` is a running total**, not a flag: `applyBuffKrin` does `ukcb2.STUN += iftbc * bffker[17]` where `bffker[17]` is the buff's stun contribution and `iftbc` is +1 on apply / -1 on the buff's own
   expiry (via `buffTicker`'s `autoDebuffer`, when a buff's `CD` hits 0). Multiple stacked stun buffs sum their contributions; the doll only fully un-stuns once every contributing buff has expired.
@@ -105,15 +104,16 @@ Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/
 - **One extra code-driven trigger:** `changeForm()` (model/skin swap mid-battle, e.g. transformation buffs) ends with `if (STUN) inner.gotoAndPlay("stun2")` - after a form change resets the doll's
   clip, a still-stunned unit is snapped straight back into the `stun2` loop instead of showing an idle pose. Not ported (form-changing buffs aren't implemented yet).
 - **`outofstun` ends** via MODEL1 frame 295's own `gotoAndStop("stand"); play()` - a one-shot that always falls back to idle, same pattern as `cast`.
-- No numeric timing constants gate any of this (unlike `krinBoltTime`/`krinMeleeAttackCD`) - it's a value-comparison state machine that runs on every `applyChangesKrin` call; the Godot port
-  evaluates it in `FighterPresenter.redraw` (called after every event and at half-turn boundaries). This note used to call that finer-grained than the original, from the same misreading as the trigger
-  above: the original also evaluates it at every successful hit, so both start the stun animation at the impact. The comparison only fires when the value has changed, so extra evaluations in
-  between change nothing.
+- No numeric timing constants gate any of this (unlike `krinBoltTime`/`krinMeleeAttackCD`). It is a value comparison that runs on every `applyChangesKrin` call, for an active unit only
+  (line 468). The port compares in `FighterPresenter._show_stun`, against the stun a `MoveResult` states (`stun_after`) at its impact and against the unit's own stun at the half-turn's end,
+  and a dead doll keeps its death. It never compares at the redraws in between, because the runner resolves the whole half-turn before the replay, so the unit's own stun can already hold a
+  stun from later in it. This note used to say those extra comparisons changed nothing. They started a later stun early, and the flinch at the hit that landed it then left the doll idle for
+  the whole stun.
 
 ## Dispel order and timing (frame_217/PlaceObject2_3389_480 enterFrame, lines 22-103)
 
 Ported: `BattleRunner._resolve_dispels` takes slots in `CombatUnit.buff_slots` order, `CombatUnit.apply_changes` sorts `buff_slots` the way `applyChangesKrin` sorts `BUFFARRAYK`
-(`_sort_buff_slots`), and `_execute_move_action` recomputes the target's stats after the hit.
+(`_sort_buff_slots`), and `BattleManager.execute_move` recomputes the target's stats after the hit.
 
 - On a successful strike, before `executeMove`, the conductor walks the target's 40 `BUFFARRAYK` slots (`maxBuffLimit`, `frame_42/DoAction_10.as:538`) in array order. A slot is a
   candidate when its CD is above 0 and its buff's element is in the move's `[15]` list (line 30). While any of the move's `[16]` dispels are left, each candidate whose buff polarity `[20]`
@@ -133,7 +133,7 @@ Ported: `BattleRunner._resolve_dispels` takes slots in `CombatUnit.buff_slots` o
   doesn't match: in 40,000 random runs of hits, self-buffs, ticks and dispels on one unit it removed different buffs from the original in 11,577.
 - A move can land its status buff on its own caster (`[21]`, conductor lines 76-83), and line 103 still recomputes only the target, so a buff that lands on the caster of a move aimed at
   someone else waits for the caster's `buffTicker`, stats and sort both. That tick works out its DoT damage (`frame_42/DoAction_10.as:31`) before its own `applyChangesKrin` (135), so it
-  reads the caster's stats from before the buff. `BattleManager._apply_status_effect` leaves `apply_changes` to `_execute_move_action` for the target and to `tick_buffs` for the caster.
+  reads the caster's stats from before the buff. `BattleManager._apply_status_effect` leaves `apply_changes` to the end of `execute_move` for the target and to `tick_buffs` for the caster.
 - `applyBuffKrin` changes a removed buff's STUN, REFLECT, HEALMOD_PLUS, HEALMOD_MINUS, HEALMOD, IDOT, IHOT, ODOT, FOCUSCHANGE and SILENCED at once (`frame_42/DoAction_10.as:140-149`), and
   its SSWITCH (171), SHIELD (205-222) and DoT and focus ticks (223, 243-251). Its stat changes only go into `changeArray` and `IDMGP` (172-191) and the per-element arrays (229-232), and
   only `applyChangesKrin` turns those into STRENGTHU, MAGICU, SPEEDU, LIFEU, DMG, DMG2, IDMG, IDMG2, IDMGP2, PERU and DEFU (259-339), the fields `executeMove` reads
@@ -243,6 +243,35 @@ Damage numbers (`KrinNumberShow`, frame_42/DoAction_7.as): digit sprites (Number
 special "miss"/"shield" frames. Crits also fire `GridShaker` (frame_42/DoAction_8.as). Every damage hit that gets past the shield draws its number twice: `executeMove` calls `KrinNumberShow` at
 `frame_42/DoAction_8.as:80` and again at 84, or at 137 in heal green under sswitch. Each call attaches a new clip at the next depth (`frame_42/DoAction_7.as:37`, 75-79), so a normal hit shows two
 identical numbers and an sswitch hit shows a green number over an element-colored one.
+
+## What executeMove does on each branch (frame_42/DoAction_8.as)
+
+Ported: `BattleManager.execute_move` returns a `MoveResult` that states which branch ran and what it left, and `FighterPresenter`, `CombatLogPanel` and
+`Achievements.collect_battle_counters` read that instead of working it out again.
+
+- **Full Damage** works out the hit (lines 24-64) and compares it with the target's SHIELD (65-70).
+  - A shield bigger than the hit takes all of it. SHIELD goes down by the hit, the target's `shield` clip and `sfx_shield` play, and `KrinNumberShow` draws its `shield` frame (70-76).
+    Nothing after the shield check runs: no flash, no `hit` label, no hit voice, no life bar update and no AchVal1. A crit has already shaken the grid by then, and played `Angry_Dux` or
+    `Angry_Roald` when Veradux or Roald is the caster (28-43). The result is HARM with amount 0 and `shield_took_all` set.
+  - Otherwise the shield's value comes off the hit and the shield empties (79-81). A shield exactly as big as the hit soaks it this way, so the rest of the branch plays a hit for 0, and
+    `KrinNumberShow` only draws a number above 0 (`frame_42/DoAction_7.as:8`).
+  - With no SSWITCH (82-131) the hit comes off LIFEN, which stops at 0 with FOCUSN set to 0. The number is drawn twice (80 and 84). AchVal1 grows by the hit, which is what got past the
+    shield, when the caster's playerName is "Sonny" (91-93). BATTLEFLASH plays `hit` (99), the target plays `hit` unless STUN is set (100-103), and at LIFEN 0 it plays `dead` and goes
+    inactive (104-107), or else a hit voice plays (130). The `lifeBarUpdate` after either branch (150) plays the target's `voiceDie` when LIFEN is 0, unless its bar already read 0%
+    (328, 344-347).
+  - With SSWITCH (133-149) the hit is added to LIFEN, which stops at LIFEU. The second number is heal green and BATTLEFLASH plays `heal`. No `hit` label, voice or AchVal1.
+- **Heal** works out the heal (153-171), shaking the grid on a crit (158-160), and does nothing more when it comes to 0 or less (172), before it looks at SSWITCH (174). So a heal of 0 is
+  HEAL with amount 0 under SSWITCH too.
+  With no SSWITCH, LIFEN rises to at most LIFEU with a heal-green number and the `heal` flash (174-187). With SSWITCH, LIFEN falls instead, with a Shadow-colored number (191), the `hit`
+  flash (203), the `hit` label unless STUN is set (204-207) and `dead` at 0 (208-211). It plays no hit voice, but its `lifeBarUpdate` (198) plays the target's `voiceDie` when LIFEN
+  reaches 0, as the one at 150 does.
+- **Focus** adds `[9]` to FOCUSN, kept between 0 and FOCUSU, and plays the `focus` flash. It draws no number (232-249).
+- Any other category does nothing in `executeMove`. Shatter Bolt is the only such move, and its status effect still lands after it (`KNOWN_GAPS.md`, the "Attack" entry).
+- The life bar redraws in `executeMove` (150, 187, 198 and 248) and again in `applyChangesKrin` (`frame_42/DoAction_10.as:342`), which the conductor runs on the target after the
+  move's status effect (conductor line 103). So a move leaves the bar on the life after that recompute, which is the life `MoveResult.life_after` holds. The recompute moves life when the
+  move lands, or dispels, a buff that changes max life: Edge Of Death's EDGEOFDEATH takes 85% off.
+- The STUN checks for the `hit` label read the target as the hit lands, before the move's own status effect, so `MoveResult.target_stunned` is read then too. Shatter Bolt's stun comes
+  after its own hit. The stun pose changes in the recompute after the strike (`frame_42/DoAction_10.as:468-481`), so `MoveResult.stun_after` is read after that recompute, with the life.
 
 ## Unit stats below level 10 (frame_42/DoAction_14.as `krinAddNewUnit`)
 

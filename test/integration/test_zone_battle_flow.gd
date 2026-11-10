@@ -128,10 +128,9 @@ func test_full_zone_battle_loop():
 		player.cooldowns_attack.append(0)
 
 	var runner = BattleRunner.new()
-	var manager: BattleManager = autofree(BattleManager.new())
 	runner.setup(
 		units, battle, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id,
-		BuffManagerAuto.buffs_by_internal_name, manager, TalentTree.get_passive_buff_names(save)
+		BuffManagerAuto.buffs_by_internal_name, TalentTree.get_passive_buff_names(save)
 	)
 	var half_turns = 0
 	while not runner.is_over() and half_turns < MAX_HALF_TURNS:

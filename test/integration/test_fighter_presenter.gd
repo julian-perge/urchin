@@ -55,12 +55,52 @@ func _present(unit: CombatUnit, items_by_id: Dictionary = {}, buffs_by_id: Dicti
 	_presenter.effect_cue.connect(func(cue): _cues.append(cue))
 
 
-func _damage(amount: float, extra: Dictionary = {}) -> Dictionary:
-	return {"type": BattleManager.ResultType.DAMAGE, "amount": amount, "did_crit": false, "target_died": false}.merged(extra, true)
+func _result(kind: MoveResult.Kind, direction: MoveResult.Direction, amount: float, life_after: float) -> MoveResult:
+	var result := MoveResult.new()
+	result.kind = kind
+	result.direction = direction
+	result.amount = amount
+	result.life_after = life_after
+	return result
 
 
-func _heal(amount: float, extra: Dictionary = {}) -> Dictionary:
-	return {"type": BattleManager.ResultType.HEAL, "amount": amount, "did_crit": false, "target_died": false}.merged(extra, true)
+func _damage(amount: float, life_after: float) -> MoveResult:
+	return _result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, amount, life_after)
+
+
+func _heal(amount: float, life_after: float) -> MoveResult:
+	return _result(MoveResult.Kind.HEAL, MoveResult.Direction.HEAL, amount, life_after)
+
+
+# Damage on a target under sswitch heals it.
+func _damage_that_heals(amount: float, life_after: float) -> MoveResult:
+	return _result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HEAL, amount, life_after)
+
+
+# A heal on a target under sswitch hurts it.
+func _heal_that_hurts(amount: float, life_after: float) -> MoveResult:
+	return _result(MoveResult.Kind.HEAL, MoveResult.Direction.HARM, amount, life_after)
+
+
+func _critical(result: MoveResult) -> MoveResult:
+	result.critical = true
+	return result
+
+
+func _killing(result: MoveResult) -> MoveResult:
+	result.killed = true
+	return result
+
+
+func _stunned_at_hit(result: MoveResult) -> MoveResult:
+	result.target_stunned = true
+	result.stun_after = 1.0
+	return result
+
+
+func _stunning(result: MoveResult) -> MoveResult:
+	result.stun_after = 1.0
+	return result
 
 
 func _fire_move() -> Ability:
@@ -75,7 +115,13 @@ func _numbers() -> Array:
 
 func _stun() -> void:
 	_unit.stun = 1.0
-	_presenter.redraw()
+	_presenter.snap_to_unit()
+
+
+# Steps the doll for two seconds, which outlasts its hit label.
+func _play_out_the_hit() -> void:
+	for frame in 60:
+		_doll._process(1.0 / 30.0)
 
 
 func test_setup_draws_the_unit():
@@ -146,22 +192,42 @@ func test_the_bars_only_move_when_the_hit_lands():
 	assert_eq(_overlay.health_bar.value, 100.0, "a redraw before the hit leaves the bar alone")
 	assert_eq(_overlay.health_value.text, "100", "and the number beside it")
 
-	_presenter.show_result(_damage(60.0), null)
+	_presenter.show_result(_damage(60.0, 40.0), null)
 	assert_eq(_overlay.health_bar.value, 40.0, "the bar drops when the hit lands")
 	assert_eq(_overlay.health_value.text, "40", "and so does the number")
 	assert_eq(_presenter.displayed_hp, 40.0, "and the health it displays")
 
 
-func test_each_hit_of_a_half_turn_moves_the_bar_by_its_own_amount():
+func test_each_hit_of_a_half_turn_shows_the_life_it_left():
 	_unit.life_n = 40.0
-	_presenter.show_result(_damage(25.0), null)
+	_presenter.show_result(_damage(25.0, 75.0), null)
 	assert_eq(_overlay.health_bar.value, 75.0, "the first hit shows only itself")
-	_presenter.show_result(_damage(35.0), null)
+	_presenter.show_result(_damage(35.0, 40.0), null)
 	assert_eq(_overlay.health_bar.value, 40.0, "and the second reaches the unit's life")
 
 
-# A damage-over-time tick, a life cost or a shield changes the unit with no hit
-# to show it, so the bar only catches up when the half-turn ends.
+# A unit pays its own move's life cost when it acts, and the runner resolves the
+# whole half-turn before the replay, so a result on the unit later in that
+# half-turn starts from the life left after the cost. Here the cost was 40 and
+# the move moved 10 either way. The bar shows the life each result states, so
+# the cost reaches it at that result, where the original drew it when the cost
+# was paid (the conductor, line 359).
+func test_a_result_shows_the_life_it_states_with_an_earlier_cost_in_it():
+	for result in [
+		_damage(10.0, 50.0),
+		_damage_that_heals(10.0, 70.0),
+		_heal_that_hurts(10.0, 50.0),
+		_heal(10.0, 70.0),
+	]:
+		var label: String = "%s that pushed %s" % [MoveResult.Kind.find_key(result.kind), MoveResult.Direction.find_key(result.direction)]
+		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+		_presenter.show_result(result, null)
+		assert_eq(_presenter.displayed_hp, result.life_after, "a %s takes the cost along with it" % label)
+		assert_eq(_overlay.health_value.text, str(int(result.life_after)), "and so does the number beside the bar")
+
+
+# A damage-over-time tick or a life cost with no later result on the unit only
+# reaches the bar when the half-turn ends.
 func test_the_bars_snap_to_the_unit_at_half_turn_end():
 	_unit.life_n = 63.0
 	_presenter.redraw()
@@ -192,7 +258,7 @@ func test_a_redraw_shows_the_units_buffs():
 
 
 func test_a_hit_bigger_than_the_displayed_health_stops_the_bar_at_empty():
-	_presenter.show_result(_damage(250.0), null)
+	_presenter.show_result(_damage(250.0, 0.0), null)
 	assert_eq(_presenter.displayed_hp, 0.0, "the displayed health stops at zero")
 	assert_eq(_overlay.health_value.text, "0", "and so does the number")
 
@@ -200,36 +266,36 @@ func test_a_hit_bigger_than_the_displayed_health_stops_the_bar_at_empty():
 func test_a_heal_raises_the_bar_with_a_plus_number_and_stops_at_full():
 	_unit.life_n = 40.0
 	_presenter.snap_to_unit()
-	_presenter.show_result(_heal(10.0), null)
+	_presenter.show_result(_heal(10.0, 50.0), null)
 	assert_eq(_overlay.health_bar.value, 50.0, "the bar rises by the heal")
 	assert_eq(_numbers()[-1].text, "+10", "the number carries a plus")
 	assert_eq(_numbers()[-1].modulate, MenuTheme.HEAL_COLOR, "in heal green")
 	assert_eq(_cues, [], "a heal plays no voice")
-	_presenter.show_result(_heal(500.0), null)
+	_presenter.show_result(_heal(500.0, 100.0), null)
 	assert_eq(_presenter.displayed_hp, 100.0, "and it stops at full")
 
 
 # KrinNumberShow colors a number by the move's element.
 func test_a_damage_number_takes_the_moves_element_color():
-	_presenter.show_result(_damage(12.0), _fire_move())
+	_presenter.show_result(_damage(12.0, 88.0), _fire_move())
 	assert_eq(_numbers()[-1].text, "12")
 	assert_eq(_numbers()[-1].modulate, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.FIRE])
 
 
 func test_a_damage_number_without_an_element_is_white():
-	_presenter.show_result(_damage(5.0), null)
+	_presenter.show_result(_damage(5.0, 95.0), null)
 	assert_eq(_numbers()[-1].modulate, Color.WHITE, "no move")
 	var elementless := Ability.new()
 	elementless.damage_element_type = -1 as CombatUnit.Element
-	_presenter.show_result(_damage(5.0), elementless)
+	_presenter.show_result(_damage(5.0, 90.0), elementless)
 	assert_eq(_numbers()[-1].modulate, Color.WHITE, "a move with no element")
 
 
 func test_a_critical_number_is_bigger_and_outlined():
 	for result in [
-		_damage(12.0, {"did_crit": true}),
-		_damage(12.0, {"did_crit": true, "sswitched": true}),
-		_heal(12.0, {"did_crit": true, "sswitched": true}),
+		_critical(_damage(12.0, 88.0)),
+		_critical(_damage_that_heals(12.0, 100.0)),
+		_critical(_heal_that_hurts(12.0, 88.0)),
 	]:
 		_presenter.show_result(result, null)
 		assert_eq(_numbers()[-1].get_theme_font_size("font_size"), 24, "the critical size")
@@ -237,7 +303,7 @@ func test_a_critical_number_is_bigger_and_outlined():
 
 
 func test_a_hit_flinches_the_doll_and_plays_the_hit_voice():
-	_presenter.show_result(_damage(10.0), null)
+	_presenter.show_result(_damage(10.0, 90.0), null)
 	assert_eq(_doll._state, HIT, "the flinch")
 	assert_eq(_cues, [VOICE_HIT], "and the unit's hit voices")
 
@@ -245,7 +311,7 @@ func test_a_hit_flinches_the_doll_and_plays_the_hit_voice():
 # A move-caused death used to play only when the queued DEATH event was reached,
 # which for a melee hit is after the caster has run back.
 func test_a_killing_blow_plays_the_death_at_the_impact():
-	_presenter.show_result(_damage(100.0, {"target_died": true}), null)
+	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
 	assert_eq(_doll._state, DEAD, "the doll plays its death at the impact")
 	assert_false(_overlay.visible, "the overlay goes the same moment")
 	assert_eq(_cues, [VOICE_DIE, VOICE_HIT], "the death cry, then the hit voice")
@@ -264,7 +330,7 @@ func test_die_plays_the_death_with_no_hit():
 func test_damage_on_a_sswitch_target_shows_as_a_heal():
 	_unit.life_n = 50.0
 	_presenter.snap_to_unit()
-	_presenter.show_result(_damage(15.0, {"sswitched": true}), _fire_move())
+	_presenter.show_result(_damage_that_heals(15.0, 65.0), _fire_move())
 	assert_eq(_overlay.health_bar.value, 65.0, "the bar rises, because the damage healed the target")
 	assert_eq(_numbers()[-1].text, "15", "the number is the amount the damage healed")
 	assert_eq(_numbers()[-1].modulate, MenuTheme.HEAL_COLOR, "drawn in heal green")
@@ -273,7 +339,7 @@ func test_damage_on_a_sswitch_target_shows_as_a_heal():
 
 
 func test_damage_on_a_sswitch_target_stops_the_bar_at_full():
-	_presenter.show_result(_damage(15.0, {"sswitched": true}), null)
+	_presenter.show_result(_damage_that_heals(15.0, 100.0), null)
 	assert_eq(_presenter.displayed_hp, 100.0)
 
 
@@ -281,7 +347,7 @@ func test_damage_on_a_sswitch_target_stops_the_bar_at_full():
 # number in the Shadow color, lowers life and plays the hit animation
 # (frame_42/DoAction_8.as:189-207).
 func test_heal_on_a_sswitch_target_shows_as_damage():
-	_presenter.show_result(_heal(20.0, {"sswitched": true}), null)
+	_presenter.show_result(_heal_that_hurts(20.0, 80.0), null)
 	assert_eq(_overlay.health_bar.value, 80.0, "the bar falls, because the heal hurt the target")
 	assert_eq(_numbers()[-1].text, "20", "no plus sign")
 	assert_eq(_numbers()[-1].modulate, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], "drawn in the Shadow color")
@@ -292,7 +358,7 @@ func test_heal_on_a_sswitch_target_shows_as_damage():
 # A heal bigger than an sswitch target's life kills it, and the original plays
 # the death at that impact (frame_42/DoAction_8.as:208-228).
 func test_heal_that_kills_a_sswitch_target_plays_the_death():
-	_presenter.show_result(_heal(150.0, {"sswitched": true, "target_died": true}), null)
+	_presenter.show_result(_killing(_heal_that_hurts(150.0, 0.0)), null)
 	assert_eq(_doll._state, DEAD, "the doll plays its death")
 	assert_false(_overlay.visible, "its overlay is hidden with it")
 	assert_eq(_presenter.displayed_hp, 0.0, "the bar drops to empty")
@@ -304,7 +370,7 @@ func test_heal_that_kills_a_sswitch_target_plays_the_death():
 # in its stun. The hit voice still plays.
 func test_damage_on_a_stunned_target_keeps_it_stunned():
 	_stun()
-	_presenter.show_result(_damage(10.0), null)
+	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
 	assert_eq(_doll._state, STUN, "no hit animation on a stunned target")
 	assert_eq(_cues, [VOICE_HIT], "the hit voice still plays")
 
@@ -313,19 +379,65 @@ func test_damage_on_a_stunned_target_keeps_it_stunned():
 # (frame_42/DoAction_8.as:204-207).
 func test_heal_on_a_stunned_sswitch_target_keeps_it_stunned():
 	_stun()
-	_presenter.show_result(_heal(10.0, {"sswitched": true}), null)
+	_presenter.show_result(_stunned_at_hit(_heal_that_hurts(10.0, 90.0)), null)
 	assert_eq(_doll._state, STUN, "no hit animation on a stunned target")
 
 
-func test_a_focus_result_floats_its_amount_and_leaves_the_health_alone():
-	_presenter.show_result({"type": BattleManager.ResultType.FOCUS, "amount": 8.0}, null)
+# The runner resolves the whole half-turn before the replay, so the unit's stun
+# is already the one it ends the half-turn with when an earlier event plays. The
+# original reads the stun when a hit lands to decide the flinch
+# (frame_42/DoAction_8.as:100-103), and starts the stun pose at the strike that
+# lands the stun (the conductor, line 103), so the doll goes by the stun each
+# result states.
+func test_a_stun_from_later_in_the_half_turn_waits_for_the_hit_that_lands_it():
+	_unit.stun = 1.0
+	_presenter.redraw()
+	assert_ne(_doll._state, STUN, "a redraw before the stun lands doesn't start it")
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	assert_eq(_doll._state, HIT, "a hit before it flinches")
+	_play_out_the_hit()
+	_presenter.show_result(_stunning(_damage(10.0, 80.0)), null)
+	assert_eq(_doll._state, STUN, "and the hit that lands it starts the stun")
+
+	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
+	assert_ne(_doll._state, HIT, "a stun that has worn off by the half-turn's end still stops the flinch")
+
+
+# Every event redraws every fighter, so a redraw comes between the start of a
+# half-turn and the hit that lands a stun. The original plays that hit's flinch
+# and starts the stun at the same strike, so the doll ends up stunned.
+func test_a_hit_that_lands_a_stun_leaves_the_doll_stunned():
+	_unit.stun = 1.0
+	_presenter.redraw()
+	_presenter.show_result(_stunning(_damage(10.0, 90.0)), null)
+	_play_out_the_hit()
+	assert_eq(_doll._state, STUN)
+
+
+func test_a_focus_result_floats_its_amount():
+	_presenter.show_result(_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 8.0, 100.0), null)
 	assert_eq(_numbers()[-1].text, "+8 FOCUS")
 	assert_eq(_numbers()[-1].modulate, Color.SKY_BLUE)
-	assert_eq(_overlay.health_bar.value, 100.0, "health doesn't move")
+
+
+# A focus move can dispel a buff that holds up max life, and the recompute after
+# it then moves life. The original redraws the bar after every strike that lands
+# (the conductor, line 103) and runs nothing on a miss, so every result but a
+# miss moves the bar to the life it states.
+func test_every_result_but_a_miss_moves_the_bar_to_the_life_it_states():
+	for kind in [MoveResult.Kind.FOCUS, MoveResult.Kind.STATUS_ONLY]:
+		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+		_presenter.show_result(_result(kind, MoveResult.Direction.NONE, 0.0, 25.0), null)
+		assert_eq(_overlay.health_bar.value, 25.0, "a %s result moves the bar" % MoveResult.Kind.find_key(kind))
+
+	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+	_presenter.show_result(_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 25.0), null)
+	assert_eq(_overlay.health_bar.value, 100.0, "a miss leaves it")
 
 
 func test_a_miss_floats_miss_and_plays_the_miss_sound():
-	_presenter.show_result({"type": BattleManager.ResultType.MISS}, null)
+	_presenter.show_result(_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 100.0), null)
 	assert_eq(_numbers()[-1].text, "MISS")
 	assert_eq(_numbers()[-1].modulate, Color.GRAY)
 	assert_eq(_cues, ["sfx_magicmiss"], "the miss sound")
@@ -338,7 +450,7 @@ func test_a_miss_floats_miss_and_plays_the_miss_sound():
 # after the status lands (conductor line 103).
 func test_a_status_only_result_starts_the_stun_and_draws_no_number():
 	_unit.stun = 1.0
-	_presenter.show_result({"type": BattleManager.ResultType.STATUS_ONLY}, null)
+	_presenter.show_result(_stunning(_result(MoveResult.Kind.STATUS_ONLY, MoveResult.Direction.NONE, 0.0, 100.0)), null)
 	assert_eq(_numbers().size(), 0, "no number floats up")
 	assert_eq(_doll._state, STUN, "the target's stun animation starts at the impact")
 	assert_eq(_cues, [], "and nothing plays")
@@ -350,7 +462,7 @@ func test_any_rise_in_stun_replays_the_stun_animation():
 	_doll._process(0.1)
 	assert_gt(_doll._label_time, 0.0, "sanity: the animation has moved on")
 	_unit.stun = 2.0
-	_presenter.redraw()
+	_presenter.snap_to_unit()
 	assert_eq(_doll._label, "stun", "a second stun plays the stun-in label")
 	assert_eq(_doll._label_time, 0.0, "from its start")
 
@@ -365,17 +477,29 @@ func test_a_redraw_with_no_change_in_stun_leaves_the_animation_alone():
 
 func test_any_fall_in_stun_plays_the_wake_up_even_while_still_stunned():
 	_unit.stun = 2.0
-	_presenter.redraw()
+	_presenter.snap_to_unit()
 	_unit.stun = 1.0
-	_presenter.redraw()
+	_presenter.snap_to_unit()
 	assert_eq(_doll._label, "outofstun", "a partial fall still plays the wake-up")
 
 
-func test_a_dead_unit_counts_as_not_stunned():
+# A unit stunned when its half-turn starts can fall to a later hit in it, so the
+# runner has it inactive before the replay reaches that hit. The original keeps
+# it in its stun until the hit that kills it, and changes no dead unit's stun
+# pose (frame_42/DoAction_10.as:468).
+func test_a_stunned_unit_stays_stunned_until_its_death_plays():
 	_stun()
 	_unit.active = false
 	_presenter.redraw()
-	assert_eq(_doll._label, "outofstun")
+	assert_eq(_doll._state, STUN, "the doll is still stunned")
+	assert_ne(_doll._label, "outofstun", "and doesn't wake up first")
+	var killing_stun: MoveResult = _stunned_at_hit(_killing(_damage(100.0, 0.0)))
+	killing_stun.stun_after = 2.0
+	_presenter.show_result(killing_stun, null)
+	assert_eq(_doll._state, DEAD, "the hit that kills it plays the death, though it lands another stun")
+	_unit.stun = 2.0
+	_presenter.snap_to_unit()
+	assert_eq(_doll._state, DEAD, "and the half-turn's end leaves the death alone")
 
 
 # The ring fades in at +20 a frame at the original's 30 fps

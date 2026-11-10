@@ -8,6 +8,14 @@ const CombatLogPanelScene = preload("res://scenes/battle/combat_log_panel.tscn")
 var units: Dictionary
 
 
+func _result(kind: MoveResult.Kind, direction: MoveResult.Direction, amount: float) -> MoveResult:
+	var result := MoveResult.new()
+	result.kind = kind
+	result.direction = direction
+	result.amount = amount
+	return result
+
+
 func before_each():
 	var caster := CombatUnit.new()
 	caster.player_name = "Veradux"
@@ -21,7 +29,7 @@ func test_format_damage_move_line():
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_name": "Acid Slash",
-		"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 42.0, "did_crit": false, "target_died": false},
+		"result": _result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 42.0),
 	}
 	assert_eq(panel._format_line(event, units), "Veradux hits Grulnak with Acid Slash for 42")
 
@@ -31,11 +39,21 @@ func test_format_sswitched_damage_line_reads_as_a_heal():
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_name": "Acid Slash",
-		"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 42.0, "did_crit": false, "target_died": false, "sswitched": true},
+		"result": _result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HEAL, 42.0),
 	}
 	var line: String = panel._format_line(event, units)
 	assert_false(line.contains("hits"), "damage under sswitch healed the target, so the line can't say it hit")
-	assert_eq(line, "Veradux's Acid Slash heals Grulnak for 42", "the line still names the attack that did it")
+	assert_eq(line, "Veradux heals Grulnak with Acid Slash for 42", "the line reads like any other heal and still names the attack")
+
+
+func test_format_heal_move_line():
+	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
+	var event: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_name": "Heal",
+		"result": _result(MoveResult.Kind.HEAL, MoveResult.Direction.HEAL, 42.0),
+	}
+	assert_eq(panel._format_line(event, units), "Veradux heals Grulnak with Heal for 42")
 
 
 func test_format_sswitched_heal_line_reads_as_a_hit():
@@ -43,9 +61,42 @@ func test_format_sswitched_heal_line_reads_as_a_hit():
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_name": "Heal",
-		"result": {"type": BattleManager.ResultType.HEAL, "amount": 42.0, "did_crit": false, "target_died": false, "sswitched": true},
+		"result": _result(MoveResult.Kind.HEAL, MoveResult.Direction.HARM, 42.0),
 	}
 	assert_eq(panel._format_line(event, units), "Veradux hits Grulnak with Heal for 42")
+
+
+# A heal of 0 moves no life, which is all a buff-only Heal move like Block ever
+# heals, and the original draws nothing for it (frame_42/DoAction_8.as:172).
+func test_format_heal_of_0_line_says_what_landed_instead():
+	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
+	var event: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_name": "Block",
+		"result": _result(MoveResult.Kind.HEAL, MoveResult.Direction.HEAL, 0.0),
+	}
+	event["result"].buff_applied = "BLOCK"
+	assert_eq(panel._format_line(event, units), "Veradux uses Block on Grulnak")
+	event["result"].buff_applied = ""
+	assert_eq(panel._format_line(event, units), "Veradux's Block has no effect on Grulnak", "no buff landed, so nothing happened to the target")
+
+
+# A Focus move's amount is the change in focus it asks for, and Regulate and
+# Disrupt ask for a negative one, which drains the target's focus.
+func test_format_focus_move_line_says_whether_it_gave_or_drained():
+	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
+	var gift: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_name": "Aim For The Heart",
+		"result": _result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 30.0),
+	}
+	var drain: Dictionary = {
+		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
+		"move_name": "Regulate",
+		"result": _result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, -30.0),
+	}
+	assert_eq(panel._format_line(gift, units), "Veradux restores Grulnak's focus by 30")
+	assert_eq(panel._format_line(drain, units), "Veradux drains Grulnak's focus by 30")
 
 
 func test_format_miss_move_line():
@@ -53,7 +104,7 @@ func test_format_miss_move_line():
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_name": "Acid Slash",
-		"result": {"type": BattleManager.ResultType.MISS},
+		"result": _result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0),
 	}
 	assert_eq(panel._format_line(event, units), "Veradux's Acid Slash misses Grulnak")
 
@@ -63,11 +114,20 @@ func test_format_status_only_move_line():
 	var event: Dictionary = {
 		"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 		"move_name": "Shatter Bolt",
-		"result": {"type": BattleManager.ResultType.STATUS_ONLY, "buff_applied": "SHATTERBOLT"},
+		"result": _result(MoveResult.Kind.STATUS_ONLY, MoveResult.Direction.NONE, 0.0),
 	}
+	event["result"].buff_applied = "SHATTERBOLT"
 	assert_eq(panel._format_line(event, units), "Veradux hits Grulnak with Shatter Bolt")
-	event["result"]["buff_applied"] = ""
+	event["result"].buff_applied = ""
 	assert_eq(panel._format_line(event, units), "Veradux's Shatter Bolt has no effect on Grulnak", "no status landed, so nothing happened to the target")
+
+
+func test_format_failed_move_line_names_the_cost():
+	var panel: CombatLogPanel = add_child_autofree(CombatLogPanelScene.instantiate())
+	var event: Dictionary = {"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 1, "reason": BattleRunner.FailReason.FOCUS}
+	assert_eq(panel._format_line(event, units), "Veradux doesn't have enough focus")
+	event["reason"] = BattleRunner.FailReason.HEALTH
+	assert_eq(panel._format_line(event, units), "Veradux doesn't have enough health")
 
 
 func test_format_death_line():
@@ -89,7 +149,7 @@ func test_log_caps_at_max_lines_dropping_oldest():
 		var event: Dictionary = {
 			"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
 			"move_name": "Acid Slash",
-			"result": {"type": BattleManager.ResultType.DAMAGE, "amount": float(i), "did_crit": false, "target_died": false},
+			"result": _result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, float(i)),
 		}
 		panel.append_event(event, units)
 

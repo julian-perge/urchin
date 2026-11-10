@@ -27,18 +27,49 @@ func _counters(damage: float = 0.0, teammates: int = 0, turns: int = 10) -> Dict
 	}
 
 
-# The original adds to AchVal1 only when the target has no sswitch buff
-# (frame_42/DoAction_8.as:84-93), because damage under sswitch heals it.
+func _damage(amount: float, direction: MoveResult.Direction) -> MoveResult:
+	var result := MoveResult.new()
+	result.kind = MoveResult.Kind.DAMAGE
+	result.direction = direction
+	result.amount = amount
+	return result
+
+
+func _player_move(result: MoveResult) -> Dictionary:
+	return {"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2, "result": result}
+
+
+# The original adds to AchVal1 only in its Full Damage branch, and there only
+# when the target has no sswitch buff (frame_42/DoAction_8.as:82-93). So damage
+# that healed under sswitch is left out, and so is a heal that hurt.
 func test_damage_that_healed_under_sswitch_is_not_damage_dealt():
+	var heal_that_hurt := MoveResult.new()
+	heal_that_hurt.kind = MoveResult.Kind.HEAL
+	heal_that_hurt.direction = MoveResult.Direction.HARM
+	heal_that_hurt.amount = 5.0
 	var runner := BattleRunner.new()
 	runner.events = [
-		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
-			"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 10.0}},
-		{"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2,
-			"result": {"type": BattleManager.ResultType.DAMAGE, "amount": 7.0, "sswitched": true}},
+		_player_move(_damage(10.0, MoveResult.Direction.HARM)),
+		_player_move(_damage(7.0, MoveResult.Direction.HEAL)),
+		_player_move(heal_that_hurt),
 	]
 	var counters: Dictionary = Achievements.collect_battle_counters(runner, {})
-	assert_eq(counters["player_damage_dealt"], 10.0, "the hit that healed the target is left out")
+	assert_eq(counters["player_damage_dealt"], 10.0, "only the hit that harmed counts")
+
+
+# The original takes the shield off the damage before it adds the damage to
+# AchVal1 (frame_42/DoAction_8.as:79-93), and the branch where the shield takes
+# the whole hit adds nothing (lines 70-76).
+func test_only_damage_that_got_past_a_shield_is_damage_dealt():
+	var blocked: MoveResult = _damage(0.0, MoveResult.Direction.HARM)
+	blocked.shield_took_all = true
+	var runner := BattleRunner.new()
+	runner.events = [
+		_player_move(_damage(10.0, MoveResult.Direction.HARM)),
+		_player_move(blocked),
+	]
+	var counters: Dictionary = Achievements.collect_battle_counters(runner, {})
+	assert_eq(counters["player_damage_dealt"], 10.0, "what the shields took is left out")
 
 
 func test_the_tape():

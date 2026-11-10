@@ -14,7 +14,7 @@ Two differences from the original remained until 2026-11-08. The original remove
 descending on every call (`frame_42/DoAction_10.as:344`) and the dispel walks the slots in array order, while `_resolve_dispels()` walked `buff_slots` in the order the buffs landed. And the
 original recomputes the target's stats once, after the hit (line 103 of the conductor, `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as`), while
 `_resolve_dispels()` recomputed them before it. Both match now: `CombatUnit.apply_changes()` sorts `buff_slots` the way `applyChangesKrin` sorts `BUFFARRAYK`, ties included, and only
-`_execute_move_action()` recomputes the stats, after the hit. The dispel section of `DECODED_ALGORITHMS.md` has the details.
+`BattleManager.execute_move()` recomputes the stats, after the hit. The dispel section of `DECODED_ALGORITHMS.md` has the details.
 
 ## "Attack" effect_category - RESOLVED (2026-11-07)
 
