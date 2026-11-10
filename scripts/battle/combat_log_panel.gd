@@ -4,8 +4,8 @@
 # it. _play_events() in battle_scene.gd calls append_event() with each event
 # just before playing it, whether or not the panel is showing.
 # docs/adr/0001-keep-the-combat-log.md records why the port keeps it and the
-# rule that each line says what a move did to its target, which matters
-# under an sswitch buff, where damage heals and a heal hurts.
+# rule that each line says what a move or a Buff tick did to its target, which
+# matters under an sswitch buff, where damage heals and a heal hurts.
 extends PanelContainer
 class_name CombatLogPanel
 

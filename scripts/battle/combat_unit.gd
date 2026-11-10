@@ -517,9 +517,11 @@ func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_inde
 		else:
 			dot_ticker_array[i] += change_value
 
-# Ported from buffTicker() - runs once per turn: resolves this turn's DOT/HOT,
-# ticks buff durations down, auto-expires anything that hits 0, and refreshes
-# every derived stat via apply_changes(). Visual-only side effects
+# Ported from buffTicker() - runs once after each of the unit's own actions: nets
+# this turn's damage and healing over time into one total, ticks buff durations
+# down, auto-expires anything that hits 0, and refreshes every derived stat via
+# apply_changes(). It returns what the Buff tick did, which BattleRunner logs as
+# a BUFF_TICK event and the battle screen shows. Visual-only side effects
 # (color flash, filter tracking) are left out, same as execute_move().
 #
 # `buffs_by_id` (numeric id -> Buff, e.g. BuffManagerAuto.buffs_by_id) is taken

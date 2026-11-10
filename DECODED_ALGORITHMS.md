@@ -109,7 +109,7 @@ Implemented in `scripts/entities/character_visual.gd` (`enter_stun`/`exit_stun`/
 - **`outofstun` ends** via MODEL1 frame 295's own `gotoAndStop("stand"); play()` - a one-shot that always falls back to idle, same pattern as `cast`.
 - No numeric timing constants gate any of this (unlike `krinBoltTime`/`krinMeleeAttackCD`). It is a value comparison that runs on every `applyChangesKrin` call, for an active unit only
   (line 468). The port compares in `FighterPresenter._show_stun`, against the stun in the `UnitSnapshot` an event states (a `MoveResult`'s `target_after` at its impact, a MOVE event's
-  `caster_after_dispatch` when it starts) and against the unit's own stun at the half-turn's end, and a dead doll keeps its death. It never compares with the unit's own stun before then,
+  `caster_after_dispatch` when it starts, a `BuffTick`'s `after` when it comes due) and against the unit's own stun at the half-turn's end, and a dead doll keeps its death. It never compares with the unit's own stun before then,
   because the runner resolves the whole half-turn before the replay, so the unit's own stun can already hold a stun from later in it. This note used to say those extra comparisons changed nothing. They started a later stun early, and the flinch at the hit that landed it then left the doll idle for
   the whole stun.
 
@@ -135,10 +135,10 @@ Ported: `BattleRunner._resolve_dispels` takes slots in `CombatUnit.buff_slots` o
 - Sorting slots that are already in order moves nothing, so the port's `apply_changes` when it builds a unit, on empty slots, changes nothing. Sorting a copy at each dispel instead
   doesn't match: in 40,000 random runs of hits, self-buffs, ticks and dispels on one unit it removed different buffs from the original in 11,577.
 - A move can land its status buff on its own caster (`[21]`, conductor lines 76-83), and line 103 still recomputes only the target, so a buff that lands on the caster of a move aimed at
-  someone else waits for the caster's `buffTicker`, stats and sort both. That tick works out its DoT damage (`frame_42/DoAction_10.as:31`) before its own `applyChangesKrin` (135), so it
+  someone else waits for the caster's `buffTicker`, stats and sort both. That Buff tick works out its damage over time (`frame_42/DoAction_10.as:31`) before its own `applyChangesKrin` (135), so it
   reads the caster's stats from before the buff. `BattleManager._apply_status_effect` leaves `apply_changes` to the end of `execute_move` for the target and to `tick_buffs` for the caster.
 - `applyBuffKrin` changes a removed buff's STUN, REFLECT, HEALMOD_PLUS, HEALMOD_MINUS, HEALMOD, IDOT, IHOT, ODOT, FOCUSCHANGE and SILENCED at once (`frame_42/DoAction_10.as:140-149`), and
-  its SSWITCH (171), SHIELD (205-222) and DoT and focus ticks (223, 243-251). Its stat changes only go into `changeArray` and `IDMGP` (172-191) and the per-element arrays (229-232), and
+  its SSWITCH (171), SHIELD (205-222) and the damage, healing and Focus its Buff tick deals (223, 243-251). Its stat changes only go into `changeArray` and `IDMGP` (172-191) and the per-element arrays (229-232), and
   only `applyChangesKrin` turns those into STRENGTHU, MAGICU, SPEEDU, LIFEU, DMG, DMG2, IDMG, IDMG2, IDMGP2, PERU and DEFU (259-339), the fields `executeMove` reads
   (`frame_42/DoAction_8.as:3-60`). The conductor runs `executeMove` (lines 54-69) and the status effect (70-102) before that `applyChangesKrin` (103). So the hit that removes a buff lands
   without the buff's direct fields but with its stat changes: a Shatter that dispels SHATTERBOLT hits a target that is no longer stunned but still takes half damage.
@@ -152,9 +152,9 @@ Ported: `UnitOverlay.refresh_buffs` (`scripts/battle/unit_overlay.gd`).
   `p<playerID>BAR` at x = (110 + 17 * slot) times 1 for team 1 or -1 for team 2. It sets the clip's `buffCounter` text (edit text 66) to the CD, sends `buffIcon` to the frame named by
   the buff id and tints `buffColor` with the buff element's color. The tooltip title is the buff's `[0]` and its text the buff's `[25]` (the enterFrame handler on `buffColor` inside
   DefineSprite 104). Nothing sorts the row itself, so it shows the first 7 slots in the order the sort left them, and it only changes when `applyChangesKrin` runs for that unit.
-- The port draws the row from the `UnitSnapshot` of the last event shown on the unit, so it changes at the impact of each result on the unit, when the unit's own MOVE event starts, and at
-  the half-turn's end. A buff that a move lands on its own caster waits for the caster's `buffTicker` in the original (`frame_42/DoAction_10.as:135`), which the port shows at the
-  half-turn's end until julian-perge/urchin#151 gives the Buff tick an event of its own.
+- The port draws the row from the `UnitSnapshot` of the last event shown on the unit, so it changes at the impact of each result on the unit, when the unit's own MOVE event starts, when its
+  Buff tick comes due, and at the half-turn's end. A buff that a move lands on its own caster waits for the caster's `buffTicker` in the original (`frame_42/DoAction_10.as:135`), and the port
+  shows it when that Buff tick comes due, because the `BuffTick`'s `after` is taken once the tick has recomputed the caster.
 - The port's row used to sort the slots with turns left again with `sort_custom`, which moved tied buffs once a unit held more than 16 of them and changed the 7 icons it showed in 212
   of 20,000 sorted states. The port's tooltip title also adds the turns left, which the original's doesn't.
 
@@ -259,6 +259,7 @@ Ported: `FloatingNumberLayer` is `KrinNumberShow` and `FloatingNumber` is one `N
 - A number of 0 or less draws nothing (line 8). The digit loop drops any fraction, so a number between 0 and 1 attaches a `NumberFixer` that plays its label with no digits.
 - The depth cycles over 20 depths, 1620 to 1639, so a 21st number replaces the one still at its depth.
 - The port draws one number per result, in the color the original leaves on top (ADR 0005).
+- A Buff tick draws one number too, always in `normal`, which "The Buff tick" below has.
 
 ## What executeMove does on each branch (frame_42/DoAction_8.as)
 
@@ -320,7 +321,35 @@ through `play_shield_clip()`.
 - `play()` leaves the playhead on frame 1 until the next frame, so the bubble shows one frame after the impact. That reads AVM1 as stepping every timeline before a frame's scripts
   run, and no player has measured it. After frame 20 the playhead wraps to frame 1, and its `stop()` holds it there. A `play()` while the clip plays changes nothing.
 - `executeMove` plays it on a Shield block with `sfx_shield` (`frame_42/DoAction_8.as:73-74`). `buffTicker` plays it with no sound when a shield soaks a whole Buff tick, but on
-  the unit `IDKT` names (`frame_42/DoAction_10.as:72`), an Original bug that ADR 0005 has the port fix.
+  the unit `IDKT` names (`frame_42/DoAction_10.as:72`), an Original bug that ADR 0005 has the port fix. The port plays it on the unit that ticked, through `FighterPresenter.show_tick`.
+
+## The Buff tick (`buffTicker`, frame_42/DoAction_10.as:14-136)
+
+Ported: `CombatUnit.tick_buffs` returns a `BuffTick`, `BattleRunner._execute_action` logs it as a BUFF_TICK event, and `FighterPresenter.show_tick`, `battle_scene.gd` and `CombatLogPanel` show it.
+Conductor lines below are in `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as`.
+
+- **When it runs.** Once after each action of a caster that is alive when the action starts, which the conductor decides at the Dispatch with `usedBuff` (lines 330-337). A move's tick runs 25 frames
+  after its Impact (112-128). A caster that was stunned, could not pay or passed ticks on its Dispatch frame (511-530 and 565-584). A caster that its own move killed has no tick (118). The port
+  logs an event for every tick that runs, even one that changes nothing, because the `applyChangesKrin` that ends `buffTicker` (`frame_42/DoAction_10.as:135`) redraws the unit, and a buff can wear
+  off there.
+- **One total.** The tick adds the healing term, `DOTTICKERARRAY[8] * HEALMOD_PLUS * HEALMOD_MINUS * IHOT` held at 0 or below, to the damage of each element,
+  `ceil((1 + IDMG2) * IDMGP2 * IDOT * (DOTTICKERARRAY[i] * (100 + plevel * 15) / DEFU[i]))` (17-40). So healing and damage net: 666 damage and 300 healing make a total of 366. Then each buff's `CD`
+  counts down, and each buff that reaches 0 comes off (41-58). That is after the total is worked out, so the damage of a buff that runs out at this tick still counts. Then SSWITCH flips the sign
+  of the total (59-62). A total above 0 hurts and a total below 0 heals.
+- **The shield.** The shield only reads a total above 0. A shield strictly bigger than the total takes all of it: SHIELD falls by the total, SHIELDED draws and the Shield clip plays (64-73). Otherwise
+  the shield comes off the total and empties (76-84). A shield exactly as big as the total takes the second branch and leaves a total of 0, a Quirk that ADR 0005 keeps.
+- **The number.** One Floating number for a total that is not 0 (85-96): the total in heal green when it is below 0, and otherwise in the color of the element with the strictly largest damage, which
+  starts as Physical (25-40). A heal draws before `applyChangesKrin` caps life at its max (305-308), so a unit at full life still draws it. `buffTicker` resets `perKSuccess` first (24), so the label
+  is always `normal`. A tick plays no flash and no sound.
+- **The wait.** `buffTickChecker` ends as the total, a soaked total included (99). The conductor then raises `BAMBAMBAM` again and restarts its `AttackEndCounter` (lines 122-127), so the next Dispatch
+  comes 26 frames after the tick, which is 51 after the Impact of a move, instead of 1 frame after it. A caster that did not move waits 26 frames after its Dispatch frame (511-521 and 565-575),
+  unless the tick killed it, which sends the next action on at once. A tick that only moved Focus or only ran a buff out leaves `buffTickChecker` at 0 and holds nothing back. `BuffTick.did_something`
+  is that test, and the number, the wait and the line in the combat log all use it.
+- **Focus** moves by `DOTTICKERARRAY[9]` and stays between 0 and `FOCUSU` (100-108). It draws no number and does not count towards the wait, so a buff such as Re-Focusing ticks with no number.
+- **A death** (109-134) sets LIFEN and FOCUSN to 0 and plays `dead`. The port logs a DEATH event after the tick's event, and the death plays on the tick's frame.
+- **The unit afterwards.** `BuffTick.after` is taken after `applyChangesKrin`, so it states max life, life, Focus, stun and the buff slots once the buffs that ran out have come off. A buff that cuts
+  max life, such as Judge's Hammer or Iricin, gives max life and life back together when it runs out (`frame_42/DoAction_10.as:280-296`). The bar keeps the max and the fill it had until the tick and
+  takes both from it.
 
 ## A death (MODEL1's `dead` label and LifeBarSmoother, DefineSprite 57)
 

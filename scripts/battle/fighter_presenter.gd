@@ -3,8 +3,8 @@
 # buff icons, its hover ring, its Floating numbers, its Result flash, its Shield
 # clip, its stun and its death.
 # battle_scene.gd keeps one per slot and tells it when its move starts, when a
-# hit lands, when to snap to the unit, when it is hovered during a Decision and
-# when it dies.
+# hit lands, when its Buff tick comes due, when to snap to the unit, when it is
+# hovered during a Decision and when it dies.
 #
 # Nothing here reads an autoload, so a test can build one from a hand-made
 # CombatUnit. The scene passes the item and buff tables to setup() and connects
@@ -38,7 +38,7 @@ const DEATH_FADE_PER_FRAME: int = 5
 # What the fighter shows: the life, Focus, stun and buff slots that the last
 # event shown on it left on its unit. The runner resolves a whole half-turn
 # before the replay starts, so the bars, the stun pose and the buff icons follow
-# this instead of the unit, and only show_state(), show_result(),
+# this instead of the unit, and only show_state(), show_result(), show_tick(),
 # snap_to_unit() and die() change it.
 var displayed: UnitSnapshot
 
@@ -100,9 +100,8 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 # the bars, the buff icons and the stun pose. Every result but a miss shows the
 # target it states, because the original recomputes and redraws its target
 # after every strike that lands (the conductor, line 103) and runs nothing on a
-# miss. That target already holds any damage-over-time tick the unit took
-# earlier in the half-turn. The original drew a tick when it happened, and here
-# it reaches the screen with the next result on the unit.
+# miss. A Buff tick that the unit took earlier in the half-turn has already
+# shown, because it has an event of its own (see show_tick()).
 func show_result(result: MoveResult, move: Ability) -> void:
 	var amount: float = result.amount
 	var critical: bool = result.critical
@@ -166,13 +165,21 @@ func show_result(result: MoveResult, move: Ability) -> void:
 		show_state(result.target_after)
 
 
-# Plays the Shield clip once on this fighter's rig. It takes no Move result,
-# because buffTicker also plays it, with no sound, when a shield soaks a whole
-# Buff tick (frame_42/DoAction_10.as:68-73).
+# Plays the Shield clip once on this fighter's rig. A Shield block plays it with
+# a sound, and a Buff tick that a shield soaks whole plays it with none
+# (frame_42/DoAction_10.as:68-73), so it takes no Move result.
 func play_shield_clip() -> void:
 	_shield_clip.play()
 
 
+# Shows one Buff tick at the moment it comes due on this fighter. buffTicker
+# draws one Floating number in `normal` for the whole total: heal green for
+# healing, the color of the strongest element for damage, SHIELDED with the
+# Shield clip for a tick that a shield soaked whole, and nothing for a total of 0
+# (frame_42/DoAction_10.as:64-98). A tick plays no Result flash and no sound.
+# Then comes the update of the bars, the buff icons and the stun pose, because the
+# applyChangesKrin that ends buffTicker redraws the unit (line 135). A tick that
+# kills the unit is followed by a DEATH event, which plays the death.
 func show_tick(tick: BuffTick) -> void:
 	if tick.shield_took_all:
 		play_shield_clip()
@@ -248,8 +255,9 @@ func _draw_status() -> void:
 	_overlay.show_status(displayed, _buffs_by_id)
 
 
-# For the half-turn's end. A Buff tick, and a buff that a move lands on its own
-# caster, reach the screen here when no later event on the unit shows them.
+# The backstop for the half-turn's end. Every change to a unit has an event that
+# states it, and each shows when it plays, so this only catches a change that no
+# event states.
 func snap_to_unit() -> void:
 	show_state(UnitSnapshot.of(_unit))
 

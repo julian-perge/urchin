@@ -528,7 +528,7 @@ func _play_events(events: Array) -> void:
 			BattleRunner.EventType.DEATH:
 				# A move's death already played at its Impact (see
 				# FighterPresenter.show_result). A death from a Buff tick plays
-				# here, on the frame the tick comes due.
+				# here, on the frame its BUFF_TICK event came due.
 				if event.get("cause") != BattleRunner.DeathCause.MOVE:
 					_presenters[int(event["slot"])].die()
 			BattleRunner.EventType.SPEECH:
@@ -548,11 +548,12 @@ func _play_events(events: Array) -> void:
 	await _wait_for_dispatch()
 
 
-# Waits until `event` is due on the battle clock. A move's death is due at that
-# move's Impact, and a death from a Buff tick when the tick comes due. Every
-# other event is due once the last action's frames have run out: a MOVE,
-# STUNNED, MOVE_FAILED or PASSED starts the next action, a DISPEL comes with the
-# MOVE after it, and the rest come at the Half-turn's end.
+# Waits until `event` is due on the battle clock. A BUFF_TICK is due when its
+# caster's tick comes due, and a DEATH is due as soon as the event before it has
+# played: a move's death at that move's Impact, and a death from a Buff tick with
+# the tick. Every other event is due once the last action's frames have run out: a
+# MOVE, STUNNED, MOVE_FAILED or PASSED starts the next action, a DISPEL comes with
+# the MOVE after it, and the rest come at the Half-turn's end.
 func _wait_until_due(event: Dictionary) -> void:
 	match event["type"]:
 		BattleRunner.EventType.DEATH:
@@ -577,8 +578,9 @@ func _wait_for_dispatch() -> void:
 # An action dispatches. A caster that doesn't move, because it is stunned, can't
 # pay the cost or has nothing to do, ticks its buffs on its Dispatch frame
 # unless it is dead, and the next action dispatches 1 frame later
-# (frame_217/PlaceObject2_3389_480 enterFrame, lines 503-530 and 557-584). A
-# move's tick comes due once it lands (see _count_from_impact).
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 503-530 and 557-584), unless
+# the tick did something (see _count_from_tick). A move's tick comes due once it
+# lands (see _count_from_impact).
 func _start_action(moves: bool) -> void:
 	_acting_moved = moves
 	_buff_tick_due = not moves
@@ -609,8 +611,8 @@ func _count_from_tick(tick: BuffTick) -> void:
 
 
 # Returns the conductor's AttackEndCounterLimit, 25, which its onClipEvent(load)
-# sets (frame_217/PlaceObject2_3389_480, line 7). _count_from_impact has what
-# it decides.
+# sets (frame_217/PlaceObject2_3389_480, line 7). _count_from_impact and
+# _count_from_tick have what it decides.
 func _attack_end_counter_limit() -> int:
 	return int(BattleScreenClip.motion()["conductor"]["AttackEndCounterLimit"])
 

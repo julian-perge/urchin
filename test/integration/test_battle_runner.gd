@@ -1143,12 +1143,13 @@ func test_a_result_on_a_target_under_sswitch_states_the_life_it_has_afterwards()
 # A move can send its status buff to its own caster (ability_two[21],
 # conductor lines 76-83), but the conductor's only applyChangesKrin after a hit
 # is on the target (line 103), so the caster's stats and slot order wait for
-# its own buffTicker. That tick works out its DoT damage
+# its own buffTicker. That Buff tick works out its damage over time
 # (frame_42/DoAction_10.as:31) before it calls applyChangesKrin (line 135), so
 # it still reads the caster's old stats. Honor and Duty (move 755) hits someone
 # else and lands HONORDUTY on the Police Colonel, which cuts the damage he takes
-# by 20%. He holds Cold Justice, a 500-a-turn Ice DoT, and his Ice defense is
-# 100 + 15 per level, so with the old IDMGP2 of 1 that tick takes exactly 500.
+# by 20%. He holds Cold Justice, an Ice buff that deals 500 a turn, and his Ice
+# defense is 100 + 15 per level, so with the old IDMGP2 of 1 that tick takes
+# exactly 500.
 # The test calls the two halves of _execute_action, the move and the tick, one
 # at a time to look in between.
 func test_a_buff_a_move_lands_on_its_caster_waits_for_the_casters_tick():

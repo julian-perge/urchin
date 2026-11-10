@@ -1,6 +1,6 @@
 # Keep the combat log the original never had
 
-The original Sonny 2 has no combat log, and the port's battle screen has one: `CombatLogPanel` (`scripts/battle/combat_log_panel.gd`), added in `e5e0b06`. We keep it as a deliberate departure, because it makes a fight easy to follow and to debug, so a fidelity pass should not remove it. That is safe because it only narrates. It starts hidden, nothing but the player's own press opens it, it changes no battle rule, and every line reports an event the battle screen already plays. The one condition is that each line says what a move did to its target, not what kind of move it was.
+The original Sonny 2 has no combat log, and the port's battle screen has one: `CombatLogPanel` (`scripts/battle/combat_log_panel.gd`), added in `e5e0b06`. We keep it as a deliberate departure, because it makes a fight easy to follow and to debug, so a fidelity pass should not remove it. That is safe because it only narrates. It starts hidden, nothing but the player's own press opens it, it changes no battle rule, and every line reports an event the battle screen already plays. The one condition is that each line says what a move or a Buff tick did to its target, not what kind of move it was.
 
 AS paths below are relative to `dev/source_files/action_script/`, and character ids are the web build's, from `dev/source_files/swf_xml/sonny-2-2900.xml`. The research behind this is sections 2.26 and 4(d) of `docs/research/2026-11-07-original-logic-vs-port.md`.
 
@@ -18,11 +18,11 @@ The web build's only `UIScrollBar` sits in DefineSprite 3332, the PvP arena's Ch
 
 ## What the log adds
 
-- A record that stays. The log keeps the last 200 lines of the fight (`MAX_LINES`), one for each hit, heal, focus gain, miss, stun, failed move, dispel, death and speech line.
+- A record that stays. The log keeps the last 200 lines of the fight (`MAX_LINES`), one for each hit, heal, focus gain, miss, stun, failed move, dispel, Buff tick that did something, death and speech line.
 - Text for every unit. In battle, `KrinCombatText` only ever tells the player about their own picks and moves. The log writes the same kind of line for an enemy's stun or failed move.
 - The whole fight so far. `battle_scene.gd`'s `_play_events` hands each event to the log just before playing it, whether the panel is open or not, so opening the log mid-fight shows everything since the fight began, up to the 200-line cap.
 
-The log reads nothing but the event and the units' names. The phase change, the end of the battle and a pass get no line, and neither does a buff tick, because the runner emits no event for one.
+The log reads nothing but the event and the units' names. The phase change, the end of the battle and a pass get no line. A Buff tick gets a line when it did something. The runner logs an event for every tick. The log writes a line for each tick whose total is not 0, and for a tick whose total a shield soaked whole, because the original draws a Floating number for those (`frame_42/DoAction_10.as:64-98`). A tick that did nothing gets no line. A tick that only moved Focus or ran a buff out gets none either, because the original draws nothing for it.
 
 ## Off until the player opens it
 
@@ -33,5 +33,7 @@ The log reads nothing but the event and the units' names. The phase change, the 
 The original reports a move by its outcome. Under an sswitch buff a damage move heals its target: the original draws the number a second time in heal green, raises the target's life and plays the heal flash (`frame_42/DoAction_8.as:137-148`). A heal hurts its target instead: its number is drawn in the Shadow color, the hit flash plays, and the target can die (191-228). The log has nothing in the original to be checked against, so the only way it stays faithful is by reporting the outcome the original shows. Each line has to be worded from what happened to the target, not from the move's effect category or the result's type.
 
 When this ADR was written, on 2026-11-07, the log broke that rule. `BattleManager._apply_damage` and `_execute_heal` swap the life math under sswitch but still return `DAMAGE` and `HEAL`, so `CombatLogPanel._format_move_line` prints "hits" for damage that healed and "heals" for a heal that hurt, even one that killed. [#24](https://github.com/julian-perge/urchin/issues/24) fixes the wording, and [#47](https://github.com/julian-perge/urchin/issues/47) makes each result state its effect so the log stops working it out.
+
+A Buff tick's line follows the same rule. It says what the tick did to its unit: the damage that got through the shield and its element, the healing, or that the shield soaked the whole tick. It never says which buff dealt it. The original draws the same three things for a tick (`frame_42/DoAction_10.as:68-96`). Under sswitch the original flips the total's sign before it draws anything (`frame_42/DoAction_10.as:59-62`). So a tick of damage that heals the unit reads as healing, and a tick of healing that hurts it reads as damage.
 
 Every claim about the original here comes from reading the ActionScript and the XML dumps, not from running the game.

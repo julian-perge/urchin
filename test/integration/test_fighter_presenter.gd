@@ -303,8 +303,7 @@ func test_each_hit_of_a_half_turn_shows_the_life_it_left():
 
 # A result states the target's whole life, so the bar shows that life even when
 # the unit also lost life to something the screen has not shown yet. Here that
-# was 40, as a damage-over-time tick earlier in the half-turn can take, and the
-# move moved 10 either way.
+# was 40, and the move moved 10 either way.
 func test_a_result_shows_the_life_it_states_with_an_earlier_loss_in_it():
 	for result in [
 		_damage(10.0, 50.0),
@@ -319,8 +318,8 @@ func test_a_result_shows_the_life_it_states_with_an_earlier_loss_in_it():
 		assert_eq(_overlay.health_value.text, str(int(result.target_after.life)), "and so does the number beside the bar")
 
 
-# A damage-over-time tick with no later event on the unit only reaches the bar
-# when the half-turn ends.
+# The snap at the half-turn's end is the backstop for a change that no event
+# states, so it shows the unit as it is.
 func test_the_bars_snap_to_the_unit_at_half_turn_end():
 	_unit.life_n = 63.0
 	assert_eq(_overlay.health_bar.value, 100.0, "still held back before the snap")
@@ -558,7 +557,7 @@ func test_a_unit_killed_from_under_half_a_percent_life_still_plays_its_death_voi
 	assert_almost_eq(_overlay_alpha(), 0.5, 0.001, "and the bar halfway through its fade")
 
 
-# A damage-over-time death has no result to move the bar. The original empties
+# A death from a Buff tick has no Move result to move the bar. The original empties
 # the bar on the tick that kills (frame_42/DoAction_10.as:108-114 and 135, and
 # applyChangesKrin's lifeBarUpdate at 342), so the bar fades from empty.
 func test_a_death_with_no_result_empties_the_bar_before_it_fades():
@@ -1166,7 +1165,8 @@ func test_a_shield_block_plays_the_shield_clip_once_from_its_extracted_frames():
 
 # buffTicker plays the shield clip too, when a shield soaks a whole Buff tick,
 # and draws SHIELDED but plays no sound (frame_42/DoAction_10.as:68-73). A tick
-# has no Move result, so the presenter plays the clip on its own.
+# has no Move result, so the clip plays on its own, and show_tick() plays it
+# this way.
 func test_the_shield_clip_plays_on_its_own_with_no_number_or_sound():
 	_presenter.play_shield_clip()
 	_step_shield_clip(1)

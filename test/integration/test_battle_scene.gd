@@ -1850,8 +1850,8 @@ func test_an_idle_only_message_changes_nothing_while_the_banner_is_up():
 	assert_true(banner.is_up(), "and the banner is up")
 
 
-# A damage-over-time death has no impact to play at, so its DEATH event plays
-# it. A move's death already played at the blow, so its DEATH event only paces.
+# A Buff tick's death has no Impact to play at, so its DEATH event plays it. A
+# move's death already played at the Impact, so its DEATH event plays nothing.
 func test_the_death_event_plays_only_the_deaths_no_move_landed():
 	GameData.current_save = PlayerSave.new_game("DeathEvent", 0)
 	ZoneManager.auto_start_battles = false
@@ -1866,15 +1866,15 @@ func test_the_death_event_plays_only_the_deaths_no_move_landed():
 	assert_ne(doll._state, CharacterVisual.State.DEAD, "a move's DEATH event plays nothing")
 
 	await scene._play_events([{"type": BattleRunner.EventType.DEATH, "slot": 2, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME}])
-	assert_eq(doll._state, CharacterVisual.State.DEAD, "a damage-over-time death plays here")
+	assert_eq(doll._state, CharacterVisual.State.DEAD, "a Buff tick's death plays here")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
 
 
-# The player's life is moved behind the bar's back during the Decision, the way
-# a life cost or a damage-over-time tick moves it with no hit to show it. The
-# life is far more than the enemy can take in a half-turn.
+# The player's life is moved behind the bar's back during the Decision, the way a
+# change that no event states would move it. The life is far more than the enemy
+# can take in a half-turn.
 func test_the_end_of_a_half_turn_snaps_every_fighter_to_its_unit():
 	GameData.current_save = PlayerSave.new_game("HalfTurnSnap", 0)
 	ZoneManager.auto_start_battles = false
