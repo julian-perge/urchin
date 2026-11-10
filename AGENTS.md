@@ -25,9 +25,6 @@ the original SWF by script, not by hand.
   instead of trusting it.
 - Do not hand-cut art or hand-place a coordinate. If it exists in the SWF,
   script it.
-- `.png.import` and `.uid` sidecars must be committed. Forgetting them has
-  broken a fresh checkout at least six times (`54ff0b9`, `9e72d69`, `ec53f69`,
-  `011cb96`, `18cf5c3`, `37de6ed`).
 
 ## Read the doc that matches the task
 
