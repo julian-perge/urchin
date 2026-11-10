@@ -1,6 +1,7 @@
 # FighterPresenter on its own, with a hand-made unit and hand-made results and
-# no battle scene or save behind it. Fades are stepped with custom_step() and
-# the doll's swing with its own _process(), so nothing here waits on real time.
+# no battle scene or save behind it. Fades are stepped with custom_step(), the
+# doll's swing with its own _process() and Floating numbers with their layer's
+# advance(), so nothing here waits on real time.
 extends GutTest
 
 const FighterPresenterScene = preload("res://scenes/battle/fighter_presenter.tscn")
@@ -17,7 +18,7 @@ const ENEMY_COLOR: Color = FighterPresenter.RING_COLORS[FighterPresenter.Relatio
 var _presenter: FighterPresenter
 var _doll: CharacterVisual
 var _overlay: UnitOverlay
-var _layer: Node2D
+var _layer: FloatingNumberLayer
 var _unit: CombatUnit
 var _cues: Array = []
 
@@ -42,10 +43,12 @@ func _make_unit(team: CombatUnit.Team, slot: int) -> CombatUnit:
 	return unit
 
 
-# Builds a presenter the way battle_scene.gd does, on a float layer of its own,
-# and records every cue it asks for in order in _cues.
+# Builds a presenter the way battle_scene.gd does, on a Floating number layer of
+# its own that only steps when a test steps it, and records every cue it asks
+# for in order in _cues.
 func _present(unit: CombatUnit, items_by_id: Dictionary = {}, buffs_by_id: Dictionary = {}) -> void:
-	_layer = add_child_autofree(Node2D.new())
+	_layer = add_child_autofree(FloatingNumberLayer.new())
+	_layer.set_process(false)
 	_presenter = add_child_autofree(FighterPresenterScene.instantiate())
 	_presenter.setup(unit, HOME, items_by_id, buffs_by_id, _layer)
 	_doll = _presenter.get_node("Doll")
@@ -120,8 +123,42 @@ func _fire_move() -> Ability:
 	return move
 
 
-func _numbers() -> Array:
-	return _layer.get_children().filter(func(child): return child is Label)
+func _numbers() -> Array[FloatingNumber]:
+	return _layer.numbers()
+
+
+# Shows `result` on a fresh fighter and returns the labels of the Floating
+# numbers it draws, oldest first.
+func _labels_drawn_by(result: MoveResult, move: Ability = null) -> Array:
+	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+	_presenter.show_result(result, move)
+	return _numbers().map(func(number): return number.label)
+
+
+# Where a Floating number's holder draws each of its glyphs, from the left, in
+# the holder's own units.
+func _glyph_offsets(number: FloatingNumber) -> Array:
+	return number.flasher.get_children().map(func(glyph): return glyph.position.x)
+
+
+# Every layer sprite of a Floating number, glyph by glyph from the left and
+# bottom first within a glyph.
+func _layer_sprites(number: FloatingNumber) -> Array:
+	var sprites: Array = []
+	for glyph in number.flasher.get_children():
+		sprites.append_array(glyph.get_children())
+	return sprites
+
+
+# The shares of white a Floating number's layer sprites are drawn with, each
+# share once.
+func _whites(number: FloatingNumber) -> Array:
+	var whites: Array = []
+	for sprite in _layer_sprites(number):
+		var white: float = (sprite.material as ShaderMaterial).get_shader_parameter("white")
+		if not whites.has(white):
+			whites.append(white)
+	return whites
 
 
 func _stun() -> void:
@@ -317,13 +354,17 @@ func test_a_hit_bigger_than_the_displayed_health_stops_the_bar_at_empty():
 	assert_eq(_overlay.health_value.text, "0", "and so does the number")
 
 
-func test_a_heal_raises_the_bar_with_a_plus_number_and_stops_at_full():
+# KrinNumberShow draws a heal in its HEAL color, 0x66FF00, with the same digits
+# as any other number (frame_42/DoAction_7.as:10-13).
+func test_a_heal_raises_the_bar_with_a_green_number_and_no_plus():
 	_unit.life_n = 40.0
 	_presenter.snap_to_unit()
-	_presenter.show_result(_heal(10.0, 50.0), null)
-	assert_eq(_overlay.health_bar.value, 50.0, "the bar rises by the heal")
-	assert_eq(_numbers()[-1].text, "+10", "the number carries a plus")
-	assert_eq(_numbers()[-1].modulate, MenuTheme.HEAL_COLOR, "in heal green")
+	_presenter.show_result(_heal(12.0, 52.0), null)
+	assert_eq(_overlay.health_bar.value, 52.0, "the bar rises by the heal")
+	var number: FloatingNumber = _numbers()[-1]
+	assert_eq(number.label, "normal", "the normal label")
+	assert_eq(number.glyphs, ["1", "2"], "12 with no plus")
+	assert_eq(number.tint, Color("66FF00"), "in heal green")
 	assert_eq(_cues, [], "a heal plays no voice")
 	_presenter.show_result(_heal(500.0, 100.0), null)
 	assert_eq(_presenter.displayed.life, 100.0, "and it stops at full")
@@ -336,31 +377,42 @@ func test_a_heal_of_zero_draws_no_number():
 	assert_eq(_numbers().size(), 0)
 
 
-# KrinNumberShow colors a number by the move's element.
+# KrinNumberShow colors a number by the move's element, from elementColorArray
+# (frame_42/DoAction_7.as:14-22 and frame_41/DoAction_2.as:2).
 func test_a_damage_number_takes_the_moves_element_color():
-	_presenter.show_result(_damage(12.0, 88.0), _fire_move())
-	assert_eq(_numbers()[-1].text, "12")
-	assert_eq(_numbers()[-1].modulate, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.FIRE])
+	assert_eq(_labels_drawn_by(_damage(12.0, 88.0), _fire_move()), ["normal"], "one number")
+	assert_eq(_numbers()[0].glyphs, ["1", "2"], "12")
+	assert_eq(_numbers()[0].tint, Color("FF6600"), "in the Fire color")
 
 
 func test_a_damage_number_without_an_element_is_white():
 	_presenter.show_result(_damage(5.0, 95.0), null)
-	assert_eq(_numbers()[-1].modulate, Color.WHITE, "no move")
+	assert_eq(_numbers()[-1].tint, Color.WHITE, "no move")
 	var elementless := Ability.new()
 	elementless.damage_element_type = -1 as CombatUnit.Element
 	_presenter.show_result(_damage(5.0, 90.0), elementless)
-	assert_eq(_numbers()[-1].modulate, Color.WHITE, "a move with no element")
+	assert_eq(_numbers()[-1].tint, Color.WHITE, "a move with no element")
 
 
-func test_a_critical_number_is_bigger_and_outlined():
+# KrinNumberShow plays the critical label for any number while perKSuccess is
+# set (frame_42/DoAction_7.as:42-49), so a crit heal plays it too. That label
+# starts at 2.84x and flickers white every other frame over its frames 7 to 18
+# (DefineSprite 53, frames 75-86).
+func test_a_crit_plays_the_critical_label_for_a_heal_as_well_as_damage():
 	for result in [
 		_critical(_damage(12.0, 88.0)),
 		_critical(_damage_that_heals(12.0, 100.0)),
 		_critical(_heal_that_hurts(12.0, 88.0)),
+		_critical(_heal(12.0, 100.0)),
 	]:
-		_presenter.show_result(result, null)
-		assert_eq(_numbers()[-1].get_theme_font_size("font_size"), 24, "the critical size")
-		assert_eq(_numbers()[-1].get_theme_constant("outline_size"), 4, "with an outline")
+		var kind: String = "%s that pushed %s" % [MoveResult.Kind.find_key(result.kind), MoveResult.Direction.find_key(result.direction)]
+		assert_eq(_labels_drawn_by(result), ["critical"], "a crit %s" % kind)
+	var heal: FloatingNumber = _numbers()[0]
+	assert_almost_eq(heal.flasher.scale.x, 2.842, 0.001, "2.84x on its first frame")
+	_step(6)
+	assert_eq(_whites(heal), [1.0], "white on frame 7")
+	_step(1)
+	assert_eq(_whites(heal), [0.0], "in its own color on frame 8")
 
 
 func test_a_hit_flinches_the_doll_and_plays_the_hit_voice():
@@ -385,16 +437,18 @@ func test_die_plays_the_death_with_no_hit():
 	assert_eq(_cues, [VOICE_DIE], "with the death cry alone")
 
 
-# Damage on a target under an sswitch buff heals it. The original draws the
-# number in heal green, raises life capped at max, and plays no hit animation
-# (frame_42/DoAction_8.as:133-149).
+# Damage on a target under an sswitch buff heals it. The original raises life
+# capped at max and plays no hit animation (frame_42/DoAction_8.as:133-149). It
+# leaves a heal green number on top (line 137), and the port draws only that
+# one (ADR 0005).
 func test_damage_on_a_sswitch_target_shows_as_a_heal():
 	_unit.life_n = 50.0
 	_presenter.snap_to_unit()
 	_presenter.show_result(_damage_that_heals(15.0, 65.0), _fire_move())
 	assert_eq(_overlay.health_bar.value, 65.0, "the bar rises, because the damage healed the target")
-	assert_eq(_numbers()[-1].text, "15", "the number is the amount the damage healed")
-	assert_eq(_numbers()[-1].modulate, MenuTheme.HEAL_COLOR, "drawn in heal green")
+	assert_eq(_numbers().size(), 1, "one number")
+	assert_eq(_numbers()[0].glyphs, ["1", "5"], "the amount the damage healed")
+	assert_eq(_numbers()[0].tint, Color("66FF00"), "drawn in heal green")
 	assert_ne(_doll._state, HIT, "no hit animation")
 	assert_eq(_cues, [], "and no hit voice")
 
@@ -410,8 +464,8 @@ func test_damage_on_a_sswitch_target_stops_the_bar_at_full():
 func test_heal_on_a_sswitch_target_shows_as_damage():
 	_presenter.show_result(_heal_that_hurts(20.0, 80.0), null)
 	assert_eq(_overlay.health_bar.value, 80.0, "the bar falls, because the heal hurt the target")
-	assert_eq(_numbers()[-1].text, "20", "no plus sign")
-	assert_eq(_numbers()[-1].modulate, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], "drawn in the Shadow color")
+	assert_eq(_numbers()[-1].glyphs, ["2", "0"], "the amount the heal took")
+	assert_eq(_numbers()[-1].tint, Color("664D80"), "drawn in the Shadow color")
 	assert_eq(_doll._state, HIT, "the hit animation plays")
 	assert_eq(_cues, [], "but no hit voice")
 
@@ -494,10 +548,14 @@ func test_every_result_but_a_miss_moves_the_bar_to_the_life_it_states():
 	assert_eq(_overlay.health_bar.value, 100.0, "a miss leaves it")
 
 
-func test_a_miss_floats_miss_and_plays_the_miss_sound():
-	_presenter.show_result(_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 100.0), null)
-	assert_eq(_numbers()[-1].text, "MISS")
-	assert_eq(_numbers()[-1].modulate, Color.GRAY)
+# The conductor passes a miss the move's element (line 108), and KrinNumberShow
+# gives the MISS word's KN fill that element's color (frame_42/DoAction_7.as:63-68).
+func test_a_miss_shows_the_miss_word_in_the_moves_element_color():
+	var miss: MoveResult = _result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 100.0)
+	assert_eq(_labels_drawn_by(miss, _fire_move()), ["miss"], "the miss label")
+	var number: FloatingNumber = _numbers()[0]
+	assert_eq(number.glyphs, ["miss"], "the MISS word")
+	assert_eq(number.tint, Color("FF6600"), "in the Fire color")
 	assert_eq(_cues, ["sfx_magicmiss"], "the miss sound")
 	assert_ne(_doll._state, HIT, "and no flinch")
 
@@ -643,27 +701,117 @@ func test_hovering_a_dead_fighter_does_nothing():
 	assert_eq(_level_labels().size(), 0, "and no level shows")
 
 
-func test_floating_text_goes_on_the_float_layer_above_the_doll():
-	_presenter.float_text("DISPEL", Color.CYAN)
-	var label: Label = _numbers()[-1]
-	assert_eq(label.get_parent(), _layer, "on the layer, so it draws over every fighter")
-	assert_eq(label.text, "DISPEL", "the text")
-	assert_eq(label.modulate, Color.CYAN, "the color")
-	assert_eq(label.position, HOME + FighterPresenter.FLOAT_OFFSET, "above the doll")
+# KrinNumberShow puts a number on the target rig's own spot with no offset
+# (frame_42/DoAction_7.as:38-39). It sets the digits 19 apart along the holder,
+# the first at -19 * (digits - 2) / 2 - 10 (lines 3, 34-35 and 56), so three
+# digits sit at -19.5, -0.5 and 18.5: around the rig's origin, half a unit to the
+# left because half a spacing is 9.5.
+func test_a_three_digit_number_draws_three_digits_19_apart_around_the_rig():
+	_presenter.show_result(_damage(123.0, 0.0), null)
+	var number: FloatingNumber = _numbers()[-1]
+	assert_eq(number.position, HOME, "on the target rig's origin")
+	assert_eq(number.glyphs, ["1", "2", "3"], "the digits from the left")
+	assert_eq(_glyph_offsets(number), [-19.5, -0.5, 18.5], "19 apart around the origin")
 
 
-func test_floating_text_rises_fades_and_frees_itself():
-	var running: Array = get_tree().get_processed_tweens()
-	_presenter.float_text("12", Color.WHITE)
-	var rise: Tween = get_tree().get_processed_tweens().filter(func(tween): return not running.has(tween))[0]
-	var label: Label = _numbers()[-1]
-	var start_y: float = label.position.y
-	rise.pause()
-	rise.custom_step(0.4)
-	assert_almost_eq(label.position.y, start_y - 20.0, 0.01, "halfway up after 0.4 s")
-	assert_almost_eq(label.modulate.a, 0.5, 0.01, "and half faded")
-	rise.custom_step(0.5)
-	assert_true(label.is_queued_for_deletion(), "and gone once the 0.8 s are up")
+# dressChar lowers only a MODEL5 unit's doll inside its rig
+# (frame_217/DoAction_2.as:19-24), and KrinNumberShow puts the number on the
+# rig itself.
+func test_a_model5_units_number_stays_on_the_rig_above_its_lowered_doll():
+	var unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+	unit.model = ["MODEL5", "ONE", "ONE", "M"]
+	_present(unit)
+	_presenter.show_result(_damage(5.0, 95.0), null)
+	assert_eq(_numbers()[-1].position, HOME)
+
+
+# KrinNumberShow attaches each number one depth above the last and goes from
+# depth 1639 back to 1620 (frame_42/DoAction_7.as:4 and 75-79), and a clip
+# attached at a depth that is in use replaces the clip there.
+func test_a_21st_live_number_replaces_the_oldest():
+	_presenter.show_result(_damage(1.0, 99.0), null)
+	var oldest: FloatingNumber = _numbers()[0]
+	for amount in range(2, 22):
+		_presenter.show_result(_damage(amount, 100.0 - amount), null)
+	var shown: Array = _numbers().map(func(number): return "".join(number.glyphs))
+	assert_eq(shown.size(), 20, "20 numbers at most")
+	assert_eq([shown[0], shown[-1]], ["2", "21"], "from the second number to the 21st")
+	assert_true(oldest.is_queued_for_deletion(), "and the first one is freed")
+
+
+# A shield can leave less than 1 of a hit. KrinNumberShow still attaches a
+# number for anything above 0, but its digit loop starts below the ones digit
+# and draws no digit (frame_42/DoAction_7.as:8 and 26-61).
+func test_a_hit_under_one_plays_a_number_with_no_digits():
+	assert_eq(_labels_drawn_by(_damage(0.5, 99.5)), ["normal"], "a number")
+	assert_eq(_numbers()[0].glyphs, [], "with no digits")
+
+
+# Steps every Floating number on by `frames` frames of the SWF's 30 fps.
+func _step(frames: int) -> void:
+	for frame in frames:
+		_layer.advance(1.0 / 30.0)
+
+
+# The color each layer sprite of a Floating number replaces its own with, or
+# null for a sprite that keeps its own.
+func _layer_tints(number: FloatingNumber) -> Array:
+	return _layer_sprites(number).map(func(sprite):
+		var material: ShaderMaterial = sprite.material
+		return material.get_shader_parameter("tint") if material.get_shader_parameter("tinted") else null
+	)
+
+
+# KrinNumberShow's setRGB colors only the KN fill of each digit, the middle of
+# its three layers, and leaves the outline and the shine alone
+# (frame_42/DoAction_7.as:58-59).
+func test_only_each_digits_kn_fill_takes_the_numbers_color():
+	_presenter.show_result(_damage(12.0, 88.0), _fire_move())
+	var fire: Color = Color("FF6600")
+	assert_eq(_layer_tints(_numbers()[-1]), [null, fire, null, null, fire, null])
+
+
+# SHIELDED (DefineSprite 52) is one layer with no KN child, so it takes no color.
+func test_shielded_takes_no_color():
+	_layer.show_shield(HOME)
+	assert_eq(_layer_tints(_numbers()[-1]), [null])
+
+
+# NumberFixer's normal label pops the number in all white at 1.78x, settles it
+# at 1x in its own color by frame 6, lifts it 27.5 px by frame 45 and fades it
+# out over frames 53 to 67 (DefineSprite 53).
+func test_a_normal_number_pops_in_white_settles_rises_and_fades():
+	_presenter.show_result(_damage(12.0, 88.0), _fire_move())
+	var number: FloatingNumber = _numbers()[-1]
+	assert_almost_eq(number.flasher.scale.x, 1.776, 0.001, "1.78x on frame 1")
+	assert_eq(_whites(number), [1.0], "all white on frame 1")
+	_step(5)
+	assert_eq(number.flasher.scale, Vector2.ONE, "1x on frame 6")
+	assert_eq(_whites(number), [0.0], "in its own color on frame 6")
+	_step(39)
+	assert_eq(number.flasher.position.y, -27.5, "27.5 px up on frame 45")
+	assert_eq(number.flasher.modulate.a, 1.0, "and not faded yet")
+	_step(22)
+	assert_eq(number.flasher.modulate.a, 0.0, "faded out on frame 67")
+
+
+# NumberFixer's labels run frames 1-67, 69-129, 131-181 and 183-233, and the
+# frame after each one runs removeMovieClip(this) (DefineSprite 53).
+func test_each_label_runs_its_swf_frame_count_and_frees_itself():
+	for case in [
+		["normal", 67, func(): _layer.show_number(HOME, 12.0, Color.WHITE, false)],
+		["critical", 61, func(): _layer.show_number(HOME, 12.0, Color.WHITE, true)],
+		["miss", 51, func(): _layer.show_miss(HOME, Color.WHITE)],
+		["shield", 51, func(): _layer.show_shield(HOME)],
+	]:
+		case[2].call()
+		var number: FloatingNumber = _numbers()[-1]
+		assert_eq(number.label, case[0], "the label")
+		_step(case[1] - 1)
+		assert_true(_numbers().has(number), "%s still shows on frame %d" % [case[0], case[1]])
+		_step(1)
+		assert_false(_numbers().has(number), "%s is gone after frame %d" % [case[0], case[1]])
+		assert_true(number.is_queued_for_deletion(), "and %s has freed itself" % case[0])
 
 
 # Starts a melee whose swing the test steps by hand. The returned array holds

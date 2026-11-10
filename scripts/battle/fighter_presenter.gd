@@ -1,6 +1,6 @@
 # fighter_presenter.gd
 # Everything one fighter shows on the Battle screen: its doll, its bars, its
-# buff icons, its hover ring, its floating numbers, its stun and its death.
+# buff icons, its hover ring, its Floating numbers, its stun and its death.
 # battle_scene.gd keeps one per slot and tells it when its move starts, when a
 # hit lands, when to snap to the unit, when it is hovered during a Decision and
 # when it dies.
@@ -26,7 +26,6 @@ const RING_COLORS: Dictionary[Relation, Color] = {
 # original's 30fps - a ~4x faster fade-in than fade-out.
 const RING_FADE_IN_TIME: float = 0.17
 const RING_FADE_OUT_TIME: float = 0.67
-const FLOAT_OFFSET: Vector2 = Vector2(-15, -72)
 
 # What the fighter shows: the life, Focus, stun and buff slots that the last
 # event shown on it left on its unit. The runner resolves a whole half-turn
@@ -37,7 +36,11 @@ var displayed: UnitSnapshot
 
 var _unit: CombatUnit
 var _buffs_by_id: Dictionary = {}
-var _float_layer: Node2D
+var _floating_numbers: FloatingNumberLayer
+# Where the original's rig, the unit's clip on BATTLESCREEN, stands. dressChar
+# lowers only the doll inside it for a MODEL5 unit (frame_217/DoAction_2.as:19-24),
+# so the rig and every Floating number on the unit stay here.
+var _home: Vector2
 var _dead: bool = false
 var _ring_fade: Tween = null
 var _hover_info: Label = null
@@ -48,13 +51,14 @@ var _hover_info: Label = null
 
 
 # Call once, after the presenter is in the tree. It leaves the fighter drawn.
-# Floating numbers go on float_layer rather than on this node because they have
-# to draw over every fighter, and a fighter later in the tree would cover a
-# number parented here.
-func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id: Dictionary, float_layer: Node2D) -> void:
+# Floating numbers go on the battle's one FloatingNumberLayer rather than on this
+# node, because they have to draw over every fighter, and a fighter later in the
+# tree would cover a number parented here.
+func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id: Dictionary, floating_numbers: FloatingNumberLayer) -> void:
 	_unit = unit
 	_buffs_by_id = buffs_by_id
-	_float_layer = float_layer
+	_floating_numbers = floating_numbers
+	_home = home
 	displayed = UnitSnapshot.of(unit)
 	_doll.position = home
 	if unit.team_side == CombatUnit.Team.TWO:
@@ -85,14 +89,16 @@ func show_result(result: MoveResult, move: Ability) -> void:
 	var critical: bool = result.critical
 	match result.kind:
 		MoveResult.Kind.DAMAGE when result.direction == MoveResult.Direction.HEAL:
-			# Under sswitch this damage healed the target. The original draws its
-			# number in heal green and plays no hit animation or hit voice
-			# (frame_42/DoAction_8.as:133-149).
-			float_text(str(int(amount)), MenuTheme.HEAL_COLOR, critical)
+			# Under sswitch this damage healed the target. The original plays no
+			# hit animation or hit voice (frame_42/DoAction_8.as:133-149). It
+			# draws the number in the move's element color and then a heal green
+			# one over it (lines 80 and 137), and ADR 0005 has the port draw one
+			# number, in heal green.
+			_floating_numbers.show_number(_home, amount, MenuTheme.HEAL_COLOR, critical)
 		MoveResult.Kind.DAMAGE:
-			# KrinNumberShow: numbers colored by the move's ELEMENT; crits
-			# play the bigger "critical" variant of the same color.
-			float_text(str(int(amount)), _damage_color(move), critical)
+			# The original draws this number twice (frame_42/DoAction_8.as:80 and
+			# 84), and ADR 0005 has the port draw it once.
+			_floating_numbers.show_number(_home, amount, _element_color(move), critical)
 			_die_or_flinch(result)
 			voice_cue.emit(_unit.voice_hit)
 		MoveResult.Kind.HEAL when result.direction == MoveResult.Direction.HARM:
@@ -100,28 +106,28 @@ func show_result(result: MoveResult, move: Ability) -> void:
 			# number in the Shadow color, plays the hit animation unless the
 			# target is stunned, plays no hit voice, and plays the death at the
 			# impact when the heal kills (frame_42/DoAction_8.as:189-229).
-			float_text(str(int(amount)), MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], critical)
+			_floating_numbers.show_number(_home, amount, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW], critical)
 			_die_or_flinch(result)
 		MoveResult.Kind.HEAL:
 			# A heal of 0 draws nothing, because the original's whole heal branch
 			# sits inside DamageOutputKrinFinal > 0 (frame_42/DoAction_8.as:172).
 			if amount > 0:
-				float_text("+%d" % int(amount), MenuTheme.HEAL_COLOR)
+				_floating_numbers.show_number(_home, amount, MenuTheme.HEAL_COLOR, critical)
 		MoveResult.Kind.FOCUS:
 			# The original draws no number for a focus result, only the focus
 			# flash (frame_42/DoAction_8.as:232-249).
 			pass
 		MoveResult.Kind.MISS:
-			# The special miss frame KrinNumberShow swaps to at impact,
-			# instead of a damage number - the caster's own animation still
-			# played in full to get here (see _execute_move_action's comment).
-			float_text("MISS", Color.GRAY)
+			# The conductor shows a miss as the MISS word in the move's element
+			# color (line 108). The caster's own animation still played in full
+			# to get here (see _execute_move_action's comment).
+			_floating_numbers.show_miss(_home, _element_color(move))
 			effect_cue.emit("sfx_magicmiss")
 	if result.kind != MoveResult.Kind.MISS:
 		show_state(result.target_after)
 
 
-func _damage_color(move: Ability) -> Color:
+func _element_color(move: Ability) -> Color:
 	if move == null or move.damage_element_type == -1:
 		return Color.WHITE
 	return MenuTheme.ELEMENT_COLORS[move.damage_element_type]
@@ -137,28 +143,6 @@ func _die_or_flinch(result: MoveResult) -> void:
 		# The original skips the hit animation on a target that is stunned when
 		# the hit lands (frame_42/DoAction_8.as:100-103 and 204-207).
 		_doll.set_state(CharacterVisual.State.HIT)
-
-
-func float_text(text: String, color: Color, critical: bool = false) -> void:
-	var label: Label = Label.new()
-	label.text = text
-	# The original draws these numbers with the digit shapes of its
-	# NumberSetter clip (frame_42/DoAction_7.as), not in a font, so they use
-	# RegularLabel and keep the regular face instead of the project theme's
-	# bold default.
-	label.theme_type_variation = &"RegularLabel"
-	label.modulate = color
-	label.position = _doll.position + FLOAT_OFFSET
-	label.scale = Vector2.ONE
-	if critical:
-		label.add_theme_font_size_override("font_size", 24)
-		label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
-		label.add_theme_constant_override("outline_size", 4)
-	_float_layer.add_child(label)
-	var tween: Tween = label.create_tween()
-	tween.tween_property(label, "position:y", label.position.y - 40.0, 0.8)
-	tween.parallel().tween_property(label, "modulate:a", 0.0, 0.8)
-	tween.tween_callback(label.queue_free)
 
 
 func die() -> void:

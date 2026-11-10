@@ -1597,14 +1597,14 @@ func test_battle_log_names_a_results_fields_and_a_failed_moves_cost():
 	assert_eq(failed_line["reason"], "HEALTH", "and a failed move's cost by name")
 
 
-func _float_labels(scene) -> Array:
-	return scene.battlefield.get_children().filter(func(child): return child is Label)
+func _floating_numbers(scene) -> Array[FloatingNumber]:
+	return scene.floating_numbers.numbers()
 
 
-# A stun or a failed move floats nothing over its fighter. The original only
-# tells the player about their own, in the Combat text banner. A dispel still
-# floats over its target.
-func test_the_replay_floats_a_dispel_but_not_a_stun_or_a_failed_move():
+# A stun or a failed move draws no Floating number. The original only tells the
+# player about their own, in the Combat text banner. A dispel draws nothing
+# either (the conductor, lines 22-53).
+func test_the_replay_draws_no_floating_number_for_a_stun_a_failed_move_or_a_dispel():
 	GameData.current_save = PlayerSave.new_game("StatusFloats", 0)
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -1617,13 +1617,7 @@ func test_the_replay_floats_a_dispel_but_not_a_stun_or_a_failed_move():
 		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 3, "reason": BattleRunner.FailReason.FOCUS},
 		{"type": BattleRunner.EventType.DISPEL, "caster_slot": 1, "target_slot": 2, "removed": []},
 	])
-
-	var above_fighter: Callable = func(slot: int) -> Vector2:
-		return scene._presenters[slot].get_node("Doll").position + FighterPresenter.FLOAT_OFFSET
-	assert_eq(
-		_float_labels(scene).map(func(label): return [label.text, label.position, label.modulate]),
-		[["DISPEL", above_fighter.call(2), Color.CYAN]]
-	)
+	assert_eq(_floating_numbers(scene), [])
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1868,9 +1862,10 @@ func test_a_hit_number_takes_its_moves_element_color():
 			"result": _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)},
 		2
 	)
-	var number: Label = _float_labels(scene)[-1]
-	assert_ne(number.modulate, Color.WHITE, "sanity: this move's color isn't the no-move white")
-	assert_eq(number.modulate, MenuTheme.ELEMENT_COLORS[move.damage_element_type])
+	var number: FloatingNumber = _floating_numbers(scene)[-1]
+	assert_ne(number.tint, Color.WHITE, "sanity: this move's color isn't the no-move white")
+	assert_eq(number.tint, MenuTheme.ELEMENT_COLORS[move.damage_element_type], "the move's element color")
+	assert_eq(number.position, scene.SLOT_POSITIONS[2], "on the target's slot")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1989,9 +1984,8 @@ func test_combat_log_toggle_and_live_narration():
 
 
 # Counts ImpactEffect instances specifically, not battlefield.get_child_count()
-# as a whole - FighterPresenter.float_text() parents a damage-number (or "MISS")
-# Label under battlefield on every hit AND every miss, so a raw child-count
-# comparison can't tell an ImpactEffect apart from that floatie.
+# as a whole, because battlefield also holds every Fighter presenter and any
+# bolt in flight.
 func _count_impact_effects(scene) -> int:
 	var count: int = 0
 	for child in scene.battlefield.get_children():
