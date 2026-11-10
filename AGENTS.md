@@ -5,6 +5,8 @@ the original SWF by script, not by hand.
 
 ## Commands
 
+- In a new git worktree, run `uv run setup_worktree` first. It links the
+  gitignored SWFs from the main checkout and runs Godot's import.
 - Extraction and conversion scripts are `[project.scripts]` entry points:
   `uv run extract_battle_screen`, `uv run convert_items`, and so on. Run
   `rg '^extract_|^convert_' pyproject.toml` for the list.

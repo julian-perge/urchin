@@ -742,6 +742,42 @@ func test_a_killing_blow_logs_the_death_after_its_move():
 	assert_eq([events[1].get("slot"), events[1].get("cause")], [2, BattleRunner.DeathCause.MOVE], "and the death is the guard's, caused by the move")
 
 
+# Sonny's team opens against a level 9 Prison Guard in slot 2, with a dead
+# Prison Guard on Sonny's side in slot 3.
+func _sonny_with_a_dead_ally() -> BattleRunner:
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	var ally: CombatUnit = CombatUnit.from_character(unit_templates[5], 9, CombatUnit.Difficulty.HARD, 3)
+	var runner := BattleRunner.new()
+	runner.setup({1: CombatUnit.from_player_save(save), 2: _guard_holding(""), 3: ally}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
+	ally.life_n = 0.0
+	ally.active = false
+	assert_true(runner.is_player_turn(), "sanity: Sonny's team opens")
+	return runner
+
+
+func _passing_slots(events: Array) -> Array:
+	return events.filter(func(event): return event["type"] == BattleRunner.EventType.PASSED).map(
+		func(event): return event["caster_slot"]
+	)
+
+
+# The conductor runs a pass, a move at a target that is already dead and the
+# turn of a caster that is dead down the path a stun takes, and that path holds
+# the next action back a frame (frame_217/PlaceObject2_3389_480 enterFrame,
+# lines 350 and 534-585). The runner logs each as a PASSED event, so the scene
+# can give it that frame.
+func test_a_pass_a_move_at_a_dead_target_and_a_dead_caster_each_log_a_pass():
+	var passing: BattleRunner = _sonny_with_a_dead_ally()
+	assert_eq(_passing_slots(passing.advance_half_turn({})), [1, 3], "Sonny passes, and his dead ally takes its turn")
+
+	var at_the_dead: BattleRunner = _sonny_with_a_dead_ally()
+	at_the_dead.units[2].life_n = 0.0
+	at_the_dead.units[2].active = false
+	var events: Array = at_the_dead.advance_half_turn({"target_slot": 2, "move_id": 434})  # Move 434 is Shock Therapy.
+	assert_eq(_passing_slots(events), [1, 3], "Sonny's move at the dead guard passes too")
+
+
 # Edge Of Death lands EDGEOFDEATH on its target, which takes 85% off max life,
 # and the stat recompute after the hit scales life down along with max life
 # (apply_changes in combat_unit.gd, from applyChangesKrin). The original redraws

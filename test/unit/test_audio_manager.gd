@@ -59,3 +59,16 @@ func test_real_cue_loads():
 	assert_not_null(stream, "extracted audio file resolves")
 	assert_true(stream.loop, "music streams loop")
 	assert_not_null(manager._stream("hit_sonny1"))
+
+
+# The battle scene tests hear what a move plays through effect_played, so it
+# names only cues that really start, not one that is off, empty or missing.
+func test_an_effect_that_starts_playing_is_announced():
+	watch_signals(manager)
+	manager.play_effect("hit_sonny1")
+	manager.play_effect("definitely_not_a_real_cue")
+	manager.play_effect("")
+	manager.sound_enabled = false
+	manager.play_effect("hit_sonny2")
+	assert_signal_emit_count(manager, "effect_played", 1)
+	assert_signal_emitted_with_parameters(manager, "effect_played", ["hit_sonny1"])

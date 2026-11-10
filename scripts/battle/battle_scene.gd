@@ -25,6 +25,9 @@
 extends Control
 
 signal battle_finished(outcome: int)
+# Emitted every process frame once the battle clock has moved on. Every wait in
+# the scene resumes on it.
+signal clock_ticked
 
 const FighterPresenterScene: PackedScene = preload("res://scenes/battle/fighter_presenter.tscn")
 const StanceRowScene: PackedScene = preload("res://scenes/battle/stance_row.tscn")
@@ -57,7 +60,8 @@ const COST_FAILURE_MESSAGES: Dictionary[BattleRunner.FailReason, String] = {
 # in the Combat text banner.
 const CANNOT_MOVE_YET_MESSAGE: String = "You cannot move yet. Please wait until the 'ring' is blue, then click on a target."
 
-# 1.0 = normal pacing; 0.0 = instant (tests).
+# At 1.0 the battle plays at the original's pace, and at 0.0 it plays at once,
+# as the tests run it. It scales the battle clock.
 var animation_speed: float = 1.0
 
 var runner: BattleRunner
@@ -96,19 +100,32 @@ var _line_on_screen: Dictionary = {}
 # The original's hardSkip. Space sets it during a line, and _play_events then
 # drops the rest of that batch's lines, until its next call clears it.
 var _hard_skip: bool = false
-var _pause_timer: SceneTreeTimer = null  # the running _pause's timer, which Space runs out during a line
+# Space sets it to end the line on screen at once, and _play_speech clears it.
+var _line_cut: bool = false
 var _fade_tween: Tween = null  # the running _play_fade's tween, which the next fade kills
+# _clock counts the SWF frames the battle has played, scaled by animation_speed.
+var _clock: float = 0.0
+# The last action still holds the next Dispatch back for this many frames.
+# _play_events waits them out before the next action, and before the Half-turn
+# ends.
+var _frames_to_dispatch: int = 0
+# These say whether the action playing was a move, and whether its caster's Buff
+# tick is still to come.
+var _acting_moved: bool = false
+var _buff_tick_due: bool = false
 
-@onready var background: TextureRect = $Background
+@onready var battle_screen_clip: BattleScreenClip = $BattleScreenClip
+@onready var background: TextureRect = $BattleScreenClip/Background
 @onready var sky: TextureRect = $Sky
 @onready var sky_fill: ColorRect = $SkyFill
-@onready var battlefield: Node2D = $Battlefield
-# The original attaches each Floating number at depth 1620 to 1639 of the battle
-# screen (frame_42/DoAction_7.as:4 and 37). That is over the fighters at depths
-# 40 to 240, the impact clip at -9 and the bolts from depth 600
-# (frame_42/DoAction_4.as:78 and 140). So battle_scene.tscn puts this node right
-# after Battlefield, which holds all of those.
-@onready var floating_numbers: FloatingNumberLayer = $FloatingNumbers
+@onready var battlefield: Node2D = $BattleScreenClip/Battlefield
+# The original attaches each Floating number to BATTLESCREEN at depth 1620 to
+# 1639 (frame_42/DoAction_7.as:4 and 37), so the numbers zoom and shake with
+# the fighters. That depth is over the fighters at depths 40 to 240, the impact
+# clip at -9 and the bolts from depth 600 (frame_42/DoAction_4.as:78 and 140).
+# So battle_scene.tscn puts this node in BattleScreenClip right after
+# Battlefield, which holds all of those.
+@onready var floating_numbers: FloatingNumberLayer = $BattleScreenClip/FloatingNumbers
 @onready var turn_label: Label = $UI/TurnLabel
 @onready var speech_label: Label = $UI/SpeechLabel
 @onready var _pass_ring: Control = $BottomBar/PassRing
@@ -166,16 +183,20 @@ func _maybe_start_debug_battle() -> void:
 
 
 func _process(delta: float) -> void:
+	battle_screen_clip.advance(delta * animation_speed)
 	if decision_open and not _turn_based:
 		_decision_timer = maxf(_decision_timer - delta, 0.0)
 		if _decision_timer == 0.0:
 			_on_pass_pressed()
 	_countdown_label.visible = not _turn_based
 	_countdown_label.text = str(int(ceil(_decision_timer)))
+	if animation_speed > 0.0:
+		_clock += delta * BattleScreenClip.fps() * animation_speed
+	clock_ticked.emit()
 
 
 func _reset_decision_timer() -> void:
-	_decision_timer = BattleRunner.BATTLE_TIME_LIMIT / 30.0
+	_decision_timer = BattleRunner.BATTLE_TIME_LIMIT / BattleScreenClip.fps()
 
 
 # Combat debug log -> user://logs/battle.log (see LogManagerAuto).
@@ -393,11 +414,16 @@ func _on_stance_pressed(party_id: int, mode: Party.AggressionStance, slot: int) 
 # frame at a time, and its whole decision block waits for 0, the opening lines
 # included (frame_217/PlaceObject2_3389_480 onClipEvent(load), line 6, and
 # enterFrame, lines 5-8 and 589). That is a second at the SWF's 30 fps.
-const START_WAIT_SECONDS: float = 30.0 / 30.0
+const START_WAIT_FRAMES: float = 30.0
+# The conductor ends a Half-turn on the frame its last action's count runs out.
+# On the next frame the AI picks its moves at once, and on the frame after that
+# the first of them dispatches (enterFrame, lines 139-312 and 589-792). The
+# port opens the player's Decision after the same 2 frames.
+const TEAM_SWITCH_FRAMES: int = 2
 
 
 func _battle_loop() -> void:
-	await _pause(START_WAIT_SECONDS)
+	await _pause(START_WAIT_FRAMES / BattleScreenClip.fps())
 	if not is_inside_tree() or _finished:
 		return
 	if not _pending_setup_events.is_empty():
@@ -417,7 +443,6 @@ func _battle_loop() -> void:
 		else:
 			turn_label.text = "Enemy turn" if runner.team_move_now == 2 else "Ally turn"
 			_log("half-turn %d: AI side %d acts" % [runner.turn_count, runner.team_move_now])
-			await _pause(0.4)
 		if not is_inside_tree() or _finished:
 			return
 		_pass_ring.queue_redraw()
@@ -436,6 +461,10 @@ func _battle_loop() -> void:
 		var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
 		if player == null or not player.active:
 			_turn_based = true
+		if not runner.is_over():
+			await _wait_frames(TEAM_SWITCH_FRAMES)
+			if not is_inside_tree() or _finished:
+				return
 	_log("battle over: outcome=%d turns=%d" % [runner.win_condition, runner.turn_count])
 	_finish_battle()
 
@@ -473,12 +502,15 @@ func _on_retreat_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 
-# Replays a half-turn's event log with animation + audio pacing.
+# Replays a half-turn's event log on the battle clock. Each event plays once it
+# is due (see _wait_until_due), and the last action's frames run out before
+# this returns, which is when the conductor ends the Half-turn.
 func _play_events(events: Array) -> void:
 	_hard_skip = false
 	for event in events:
 		if _hard_skip and event["type"] == BattleRunner.EventType.SPEECH:
 			continue
+		await _wait_until_due(event)
 		_combat_log.append_event(event, units)
 		match event["type"]:
 			BattleRunner.EventType.MOVE:
@@ -486,24 +518,19 @@ func _play_events(events: Array) -> void:
 			BattleRunner.EventType.STUNNED:
 				if int(event["caster_slot"]) == BattleRunner.PLAYER_SLOT:
 					combat_text_banner.show_text(STUNNED_MESSAGE)
-				await _pause(0.3)
 			BattleRunner.EventType.MOVE_FAILED:
 				if int(event["caster_slot"]) == BattleRunner.PLAYER_SLOT:
 					combat_text_banner.show_text(COST_FAILURE_MESSAGES[event["reason"]])
-				await _pause(0.3)
 			BattleRunner.EventType.DISPEL:
 				# The original draws nothing for a dispel (the conductor, lines
 				# 22-53), so only the combat log above shows it.
 				pass
 			BattleRunner.EventType.DEATH:
-				# A move-caused death already played at the killing blow's
-				# impact (see FighterPresenter.show_result) - only the pacing
-				# pause still belongs here. damage_over_time deaths (buff
-				# ticks, not a move) have no impact moment to hook into, so
-				# they still play here, same as always.
+				# A move's death already played at its Impact (see
+				# FighterPresenter.show_result). A death from a Buff tick plays
+				# here, on the frame the tick comes due.
 				if event.get("cause") != BattleRunner.DeathCause.MOVE:
 					_presenters[int(event["slot"])].die()
-				await _pause(0.4)
 			BattleRunner.EventType.SPEECH:
 				await _play_speech(event)
 			BattleRunner.EventType.PHASE_ADVANCED:
@@ -512,8 +539,84 @@ func _play_events(events: Array) -> void:
 				# it picks the battle track once, when the battle loads
 				# (frame_201/DoAction.as:86).
 				pass
-			BattleRunner.EventType.BATTLE_ENDED:
+			BattleRunner.EventType.BATTLE_ENDED, BattleRunner.EventType.PASSED:
 				pass
+	await _wait_for_dispatch()
+
+
+# Waits until `event` is due on the battle clock. A move's death is due at that
+# move's Impact, and a death from a Buff tick when the tick comes due. Every
+# other event is due once the last action's frames have run out: a MOVE,
+# STUNNED, MOVE_FAILED or PASSED starts the next action, a DISPEL comes with the
+# MOVE after it, and the rest come at the Half-turn's end.
+func _wait_until_due(event: Dictionary) -> void:
+	match event["type"]:
+		BattleRunner.EventType.DEATH:
+			if event.get("cause") == BattleRunner.DeathCause.MOVE:
+				return
+			await _reach_buff_tick()
+			# The tick that killed this unit did something. After a move the
+			# conductor then holds the next Dispatch a whole AttackEndCounter
+			# more (frame_217/PlaceObject2_3389_480 enterFrame, lines 118-127).
+			# After a stun, a failed cost or a pass it moves on 1 frame later
+			# anyway, because it first checks that the caster lived through its
+			# tick (lines 515 and 569).
+			if _acting_moved:
+				_frames_to_dispatch = _attack_end_counter_limit() + 1
+		BattleRunner.EventType.MOVE, BattleRunner.EventType.STUNNED, BattleRunner.EventType.MOVE_FAILED, BattleRunner.EventType.PASSED:
+			await _wait_for_dispatch()
+			_start_action(event["type"] == BattleRunner.EventType.MOVE)
+		_:
+			await _wait_for_dispatch()
+
+
+# Waits out the frames the last action holds the next Dispatch back for.
+func _wait_for_dispatch() -> void:
+	var frames: int = _frames_to_dispatch
+	_frames_to_dispatch = 0
+	_buff_tick_due = false
+	await _wait_frames(frames)
+
+
+# An action dispatches. A caster that doesn't move, because it is stunned, can't
+# pay the cost or has nothing to do, ticks its buffs on its Dispatch frame
+# unless it is dead, and the next action dispatches 1 frame later
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 503-530 and 557-584). A
+# move's tick comes due once it lands (see _count_from_impact).
+func _start_action(moves: bool) -> void:
+	_acting_moved = moves
+	_buff_tick_due = not moves
+	_frames_to_dispatch = 0 if moves else 1
+
+
+# The conductor sets its AttackEndCounter to 0 at every Impact and counts that
+# frame too, so the caster's Buff tick comes due 25 frames after the Impact and
+# the next action dispatches 26 frames after it (frame_217/PlaceObject2_3389_480
+# enterFrame, lines 12-15 and 112-138). A caster its own move killed has no
+# tick, and the next action dispatches on frame 25 (line 118).
+func _count_from_impact(event: Dictionary) -> void:
+	var result: MoveResult = event["result"]
+	var killed_its_caster: bool = result.killed and int(event["target_slot"]) == int(event["caster_slot"])
+	_buff_tick_due = not killed_its_caster
+	_frames_to_dispatch = _attack_end_counter_limit() + (0 if killed_its_caster else 1)
+
+
+# Returns the conductor's AttackEndCounterLimit, 25, which its onClipEvent(load)
+# sets (frame_217/PlaceObject2_3389_480, line 7). _count_from_impact has what
+# it decides.
+func _attack_end_counter_limit() -> int:
+	return int(BattleScreenClip.motion()["conductor"]["AttackEndCounterLimit"])
+
+
+# Waits until the acting caster's Buff tick comes due, on the frame before the
+# next Dispatch could come.
+func _reach_buff_tick() -> void:
+	if not _buff_tick_due:
+		return
+	_buff_tick_due = false
+	var frames: int = _frames_to_dispatch - 1
+	_frames_to_dispatch = 1
+	await _wait_frames(frames)
 
 
 func _play_move_event(event: Dictionary) -> void:
@@ -521,6 +624,7 @@ func _play_move_event(event: Dictionary) -> void:
 	var target_slot: int = int(event["target_slot"])
 	var move: Ability = MoveManagerAuto.get_move(int(event["move_id"]))
 	var caster: FighterPresenter = _presenters.get(caster_slot)
+	_start_camera(move, target_slot)
 	# The caster paid the move's costs as it dispatched, and the original redraws
 	# its bars right there (the conductor, line 359), before any swing or cast.
 	if caster != null:
@@ -529,27 +633,24 @@ func _play_move_event(event: Dictionary) -> void:
 	# Missile and Shock (param 12 is the projectile clip for Missiles, and
 	# unused for Shock) - see DECODED_ALGORITHMS.md.
 	if caster != null and move != null and move.attack_animation_type == "Melee":
-		# The original order: run to the target, swing, damage lands at the
-		# blow, THEN run back.
+		# The original runs the caster to the target and swings, and the Move
+		# result applies at Impact. The caster hands back at Impact and runs
+		# back on its own.
 		var start_ms: int = Time.get_ticks_msec()
 		var on_impact: Callable = func():
 			_log("melee impact: caster=%d move=%s +%dms" % [
 				caster_slot, move.display_name, Time.get_ticks_msec() - start_ms,
 			])
-			AudioManagerAuto.play_effect(move.sound_effect_name)
+			_play_landing_sound(move, event["result"])
 			_spawn_impact(target_slot, move, event["result"])
 			_show_move_result(event, target_slot)
 		_log("melee start: caster=%d target=%d move=%s label=%s" % [
 			caster_slot, target_slot, move.display_name, move.animation_label,
 		])
-		var flushed: bool = await caster.melee(_melee_offset(caster_slot, target_slot), move.animation_label, on_impact, animation_speed > 0.0)
+		await caster.melee(_presenters[target_slot], move.animation_label, on_impact, animation_speed > 0.0)
 		if not is_inside_tree():
 			return
-		if animation_speed > 0.0:
-			_log("melee finished: caster=%d +%dms" % [caster_slot, Time.get_ticks_msec() - start_ms])
-		if flushed:
-			_log("melee impact flushed late (interrupted/instant): caster=%d" % caster_slot)
-		await _pause(0.15)
+		_count_from_impact(event)
 		return
 	if caster != null and move != null:
 		_log("cast start: caster=%d target=%d move=%s type=%s" % [
@@ -563,7 +664,7 @@ func _play_move_event(event: Dictionary) -> void:
 			AudioManagerAuto.play_effect(move.sound_effect_name)
 			_spawn_impact(target_slot, move, event["result"])
 			_show_move_result(event, target_slot)
-			await _pause(0.35)
+			_count_from_impact(event)
 			return
 		if move.attack_animation_type == "Missile":
 			# Missile: sfx_cast plays at cast start, then a krinBoltMake bolt
@@ -571,30 +672,79 @@ func _play_move_event(event: Dictionary) -> void:
 			# target, not on a fixed cast-clip time (the bolt's own
 			# accel/arrival model decides it).
 			AudioManagerAuto.play_effect("sfx_cast")
-			await _fire_projectile(caster_slot, target_slot, move, event["result"])
+			var bolt: Projectile = await _fire_projectile(caster_slot, target_slot, move, event["result"])
 			if not is_inside_tree():
 				return
-			AudioManagerAuto.play_effect(move.sound_effect_name)
+			_play_landing_sound(move, event["result"])
 			_show_move_result(event, target_slot)
-			await _pause(0.2)
+			# A missed bolt flies on and raises the impact flag again on every
+			# frame until it is gone (frame_42/DoAction_4.as:188-205), so the
+			# count to the next Dispatch starts then.
+			if bolt != null and not bolt.is_queued_for_deletion():
+				await bolt.flight_ended
+				if not is_inside_tree():
+					return
+			_count_from_impact(event)
 			return
 		AudioManagerAuto.play_effect("sfx_cast")
-		await _pause(0.25)
+	# A move the scene can't animate, because its caster, its record or its
+	# animation type is unknown, lands at its Dispatch like a Shock.
 	if move != null:
 		AudioManagerAuto.play_effect(move.sound_effect_name)
 	_show_move_result(event, target_slot)
-	await _pause(0.35)
+	_count_from_impact(event)
 
 
-# krinBoltMake port: an accelerating bolt (Projectile) that flies from the
-# caster to the target, then spawns the move's impact effect there. On a
-# hit the bolt destroys itself the moment it arrives; on a miss it keeps
-# flying past the target and only frees once it leaves the canvas. Tests
-# run with animation_speed <= 0 - skip the visual flight entirely there
-# (no _process tick would ever advance it).
-func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result: MoveResult) -> void:
-	if animation_speed <= 0.0:
+# The original plays a move's own sound only when the move lands (the conductor,
+# lines 19-21). A miss plays missToMake instead (lines 105-108), which a Missile
+# sets to sfx_magicmiss (line 415). A Melee move sets missToMake to undefined on
+# purpose (line 407), and addSound plays nothing for undefined
+# (frame_42/DoAction.as:7), so a Melee miss is silent.
+func _play_landing_sound(move: Ability, result: MoveResult) -> void:
+	if result.kind != MoveResult.Kind.MISS:
+		AudioManagerAuto.play_effect(move.sound_effect_name)
+	elif move.attack_animation_type == "Missile":
+		AudioManagerAuto.play_effect("sfx_magicmiss")
+
+
+# At Dispatch the conductor zooms GridZoomer toward the target of every move
+# but a Missile that hits every enemy, and plays GridShaker with a Shock whose
+# speed modifier is 0 or more (line 464). It does both only while the Graphics
+# option is on, which frame_201/DoAction.as:87-100 copies into
+# KrinSettings.SFX. The rig point the zoom aims at is the target's rig x plus
+# half its width and its y plus half its height, from where BATTLESCREEN rests.
+# Each move type's zoom multiplies that point by a factor, adds a center, and
+# holds GridZoomer at its peak for some frames. battle_screen_motion.json has
+# each type's zoom from the scripts that set it up: the conductor's for a
+# Missile and a Shock (lines 419-428 and 455-462), and krinMelee's for a Melee
+# move (frame_42/DoAction_4.as:58-65). Nothing waits for the zoom or the shake.
+func _start_camera(move: Ability, target_slot: int) -> void:
+	var target: FighterPresenter = _presenters.get(target_slot)
+	var save: PlayerSave = GameData.current_save
+	if move == null or target == null or save == null or not save.graphics:
 		return
+	var zoom: Dictionary = BattleScreenClip.motion()["zooms"].get(move.attack_animation_type, {})
+	if zoom.is_empty() or (move.attack_animation_type == "Missile" and move.hits_all_enemies):
+		return
+	var rig_point: Vector2 = target.rig_position() - battle_screen_clip.rest + target.rig_size() / 2.0
+	var center := Vector2(float(zoom["center"]["x"]), float(zoom["center"]["y"]))
+	battle_screen_clip.zoom(rig_point * float(zoom["factor"]) + center, int(zoom["hold"]))
+	if move.attack_animation_type == "Shock" and move.combat_speed_modifier >= 0:
+		battle_screen_clip.shake()
+
+
+# Ports krinBoltMake: an accelerating bolt (Projectile) flies from the caster to
+# the target, spawns the move's impact effect there, and this returns the bolt
+# once it gets there. On a hit the bolt destroys itself the moment it arrives.
+# On a miss it keeps flying past the target and only frees once it is far
+# enough past it. At an animation_speed of 0 or below, as the tests run it,
+# this skips the flight and returns null, because no _process tick would ever
+# move the bolt. The return type isn't declared, because GUT prints a compiler
+# error when it doubles this scene with a declared return type on a function
+# that awaits (GUT issue 842).
+func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result: MoveResult):
+	if animation_speed <= 0.0:
+		return null
 	var from: Vector2 = SLOT_POSITIONS.get(caster_slot, Vector2(400, 300))
 	var to: Vector2 = SLOT_POSITIONS.get(target_slot, Vector2(400, 300))
 	var bolt: Projectile = ProjectileScene.instantiate()
@@ -602,10 +752,12 @@ func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result:
 	bolt.clip_name = move.animation_label
 	bolt.trail_color = move.visual_effect_color
 	bolt.did_hit = result.kind != MoveResult.Kind.MISS
+	bolt.battle_screen_x = battle_screen_clip.rest.x
 	battlefield.add_child(bolt)
 	bolt.start(from, to)
 	await bolt.reached_target
 	_spawn_impact(target_slot, move, result)
+	return bolt
 
 
 func _show_move_result(event: Dictionary, target_slot: int) -> void:
@@ -616,17 +768,6 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 		int(target_unit.life_n), int(target_unit.life_u),
 	])
 	_presenters[target_slot].show_result(result, MoveManagerAuto.get_move(int(event.get("move_id", 0))))
-
-
-# Run-to-target offset for a melee strike: stop just short of the target,
-# on the caster's side of it.
-func _melee_offset(caster_slot: int, target_slot: int) -> Vector2:
-	var from: Vector2 = SLOT_POSITIONS.get(caster_slot, Vector2(400, 300))
-	var to: Vector2 = SLOT_POSITIONS.get(target_slot, Vector2(400, 300))
-	var offset: Vector2 = to - from
-	if offset.length() <= 60.0:
-		return Vector2.ZERO
-	return offset - offset.normalized() * 55.0
 
 
 # A line stays up for its whole timeToSay seconds, unless Space cuts it short
@@ -640,6 +781,7 @@ func _play_speech(event: Dictionary) -> void:
 	_line_on_screen = event
 	await _pause(float(event.get("time_to_say", 2.0)))
 	_line_on_screen = {}
+	_line_cut = false
 	speech_label.text = ""
 
 
@@ -674,8 +816,7 @@ func _input(event: InputEvent) -> void:
 		return
 	_hard_skip = true
 	runner.hard_skip(int(_line_on_screen["speech_index"]))
-	if _pause_timer != null:
-		_pause_timer.time_left = 0.0
+	_line_cut = true
 	get_viewport().set_input_as_handled()
 
 
@@ -780,11 +921,19 @@ func _on_continue_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/game.tscn")
 
 
+# Waits `seconds` on the battle clock, for the waits the battle data gives in
+# seconds.
 func _pause(seconds: float) -> void:
-	if animation_speed <= 0.0:
-		return
-	_pause_timer = get_tree().create_timer(seconds / animation_speed)
-	await _pause_timer.timeout
+	await _wait_frames(seconds * BattleScreenClip.fps())
+
+
+# Waits `frames` frames on the battle clock, and returns at once while
+# animation_speed is 0. Space ends a line's wait early (see _input), and only a
+# line's wait runs while a line is on screen.
+func _wait_frames(frames: float) -> void:
+	var until: float = _clock + frames
+	while animation_speed > 0.0 and _clock < until and not _line_cut:
+		await clock_ticked
 
 
 # Plays blacker5, DefineSprite 3355, from frame `from_frame` to frame `to_frame`

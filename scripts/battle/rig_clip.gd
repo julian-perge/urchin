@@ -28,7 +28,6 @@ var frame: int = 1
 var sprite: Sprite2D
 
 var _frames: Array[Texture2D] = []
-var _fps: float = 0.0
 var _playing: bool = false
 # The time since the playhead last stepped, counted in frames of the SWF.
 var _frames_due: float = 0.0
@@ -37,7 +36,6 @@ var _frames_due: float = 0.0
 func _ready() -> void:
 	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(LAYOUT_PATH))
 	var entry: Dictionary = layout["clips"][clip]
-	_fps = float(layout["fps"])
 	for png in entry["frames"]:
 		_frames.append(load(ART_DIR + png))
 	var rect: Dictionary = entry["rect"]
@@ -68,7 +66,7 @@ func play() -> void:
 func advance(delta: float) -> void:
 	if not _playing:
 		return
-	_frames_due += delta * _fps
+	_frames_due += delta * BattleScreenClip.fps()
 	while _frames_due >= 1.0 and _playing:
 		_frames_due -= 1.0
 		frame += 1
