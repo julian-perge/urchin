@@ -543,11 +543,13 @@ func test_every_result_but_a_miss_moves_the_bar_to_the_life_it_states():
 	assert_eq(_overlay.health_bar.value, 100.0, "a miss leaves it")
 
 
-func test_a_miss_floats_miss_and_plays_the_miss_sound():
+# The miss sound depends on the move's type, so battle_scene.gd plays it and
+# test_battle_scene.gd checks it.
+func test_a_miss_floats_miss_and_plays_nothing():
 	_presenter.show_result(_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 100.0), null)
 	assert_eq(_numbers()[-1].text, "MISS")
 	assert_eq(_numbers()[-1].modulate, Color.GRAY)
-	assert_eq(_cues, ["sfx_magicmiss"], "the miss sound")
+	assert_eq(_cues, [], "no sound and no voice")
 	assert_ne(_doll._state, HIT, "and no flinch")
 
 
