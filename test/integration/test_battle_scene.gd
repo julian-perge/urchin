@@ -2249,6 +2249,47 @@ func test_a_buff_tick_that_did_something_holds_the_next_action_to_frame_51_and_o
 	ZoneManager.auto_start_battles = true
 
 
+# In the scene, a damage tick draws in the color of its strongest element, a heal
+# tick draws in heal green, a tick that a shield soaked whole draws SHIELDED and
+# plays the Shield clip, and a tick of nothing draws nothing
+# (frame_42/DoAction_10.as:64-98). The Prison Guard in slot 2 ticks for real here,
+# so the numbers are the ones tick_buffs works out.
+func test_a_buff_tick_draws_in_the_scene_by_what_it_did():
+	var cases: Array = [
+		["a damage tick", ["PERSECUTE"], 0.0],  # Cold Justice is Ice damage, #68CBF4
+		["a heal tick", ["FIRESAM"], 0.0],  # The Immortal Flame heals, #66FF00
+		["a tick a shield soaked whole", ["PERSECUTE"], 100000.0],
+		["a tick of nothing", [], 0.0],
+	]
+	for case in cases:
+		var scene = _battle_100("TickKinds")
+		var guard: CombatUnit = scene.units[2]
+		for buff_name in case[1]:
+			guard.apply_buff(BuffManagerAuto.get_buff_by_name(buff_name), 1, scene.units[BattleRunner.PLAYER_SLOT])
+		guard.apply_changes()
+		guard.shield = case[2]
+		var tick: BuffTick = guard.tick_buffs(BuffManagerAuto.buffs_by_id)
+
+		await scene._play_events([{"type": BattleRunner.EventType.BUFF_TICK, "caster_slot": 2, "tick": tick}])
+
+		var numbers: Array[FloatingNumber] = _floating_numbers(scene)
+		match case[0]:
+			"a damage tick":
+				assert_eq(_floating_texts(scene), [str(int(tick.amount))], "%s draws its amount" % case[0])
+				assert_eq(numbers[0].tint, Color("68CBF4"), "%s is Ice blue" % case[0])
+			"a heal tick":
+				assert_eq(_floating_texts(scene), [str(int(tick.amount))], "%s draws its amount" % case[0])
+				assert_eq(numbers[0].tint, Color("66FF00"), "%s is heal green" % case[0])
+			"a tick a shield soaked whole":
+				assert_eq(_floating_texts(scene), ["shield"], "%s draws SHIELDED" % case[0])
+				assert_true(scene._presenters[2].get_node("ShieldClip").is_playing(), "%s plays the Shield clip on the guard" % case[0])
+			"a tick of nothing":
+				assert_eq(_floating_texts(scene), [], "%s draws nothing" % case[0])
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # buffTicker plays the Shield clip through IDKT, the unit the last move hit
 # (frame_42/DoAction_10.as:72), which ADR 0005 counts as an Original bug. The tick
 # lands on the unit whose buffs ticked: its number draws on that unit's rig, and its
