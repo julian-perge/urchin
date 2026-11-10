@@ -39,8 +39,8 @@ The bottom bar is DefineSprite 3317, `UI_BAR`, placed at depth 1 on both the
 
 3288 masks depths 5 through 57, which is what keeps the member bars inside the
 left panel. Neither mask may ever go in `STRIPPED_CHARACTERS`; see the clip
-mask rule in `CLAUDE.md`. Deleting 3312, the content rather than the mask, is
-what this work does.
+mask rule in `docs/agents/art-extraction.md`. Deleting 3312, the content rather
+than the mask, is what this work does.
 
 ### The member bar
 
@@ -200,7 +200,7 @@ texture would mean rendering 3311 once per name, which is not possible, or
 compositing per stance per selection state, which is twenty renders that still
 would not carry the name. The parts are small and the composition is trivial in
 Godot, so the port takes the art and rebuilds the arrangement. That is the
-general rule this case is an instance of, recorded in `CLAUDE.md`.
+general rule this case is an instance of, recorded in `CODING_STANDARDS.md`.
 
 ## Verification
 
