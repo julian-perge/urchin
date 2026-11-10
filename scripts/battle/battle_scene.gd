@@ -470,7 +470,11 @@ func _play_events(events: Array) -> void:
 			BattleRunner.EventType.SPEECH:
 				await _play_speech(event)
 			BattleRunner.EventType.PHASE_ADVANCED:
-				AudioManagerAuto.play_battle_music(true)
+				# The original changes no music when a phase advances. Its phase
+				# block only moves the phase on (the conductor, lines 176-193), and
+				# it picks the battle track once, when the battle loads
+				# (frame_201/DoAction.as:86).
+				pass
 			BattleRunner.EventType.BATTLE_ENDED:
 				pass
 		# Mid-batch: redraw from DISPLAYED hp only - snapping here would
