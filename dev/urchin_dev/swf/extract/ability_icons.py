@@ -164,11 +164,7 @@ def main():
         if cover is None:
             raise RuntimeError(f"{COVER_SPRITE} rendered empty")
         cover.image.save(COVER_PNG)
-        layout = {
-            "art_zoom": ZOOM,
-            "count": count_layout(index),
-            "cover": rect_entry(cover.rect),
-        }
+        layout = {"count": count_layout(index), "cover": rect_entry(cover.rect)}
         COOLDOWN_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
         print(
             f"cover -> {COVER_PNG.name} {cover.image.size} at {cover.rect},"

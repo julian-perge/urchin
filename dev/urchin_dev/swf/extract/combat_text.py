@@ -180,7 +180,6 @@ def main():
     placed = render.placement_origin(index, inner, 1, field_id)
     layout = {
         "alphas": alphas,
-        "art_zoom": ZOOM,
         "backdrop": rect_entry((x - position[0], y - position[1], w, h)),
         "clear_frame": CLEAR_FRAME,
         "fps": index.frame_rate,
