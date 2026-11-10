@@ -35,10 +35,19 @@ testing the game by hand.
 - A CanvasGroup's `fit_margin` and `clear_margin` are in screen px, so they
   cover half as much of the stage in the 2x window, and `clear_margin` grows the
   rect that `fit_margin` already grew (Godot's renderer_canvas_cull.cpp).
-- A headless run draws nothing, so a test cannot see what a shader draws. Check
-  it with a SceneTree script run without `--headless` that saves
+- A headless run draws nothing, so a test cannot see what a shader or a clip
+  draws. To see one on a fighter, run `dev/battle_render.gd` without
+  `--headless`. It lands a hit, heal, focus or Shield block on chosen
+  fighters, or plays their Shield clip, and saves the frames you pick, with
+  `--alpha` over black and white too. Its header gives the command line. For
+  anything else, write a SceneTree script that saves
   `root.get_texture().get_image()`. That script has to `load()` the scenes it
-  uses, because autoloads such as `GameTooltip` don't exist yet when it compiles.
+  uses, because autoloads such as `GameTooltip` don't exist yet when it
+  compiles.
+- A windowed run shows on the user's screen. The script sets its window title
+  to `AGENT RENDER - <what>` with `DisplayServer.window_set_title()` as it
+  starts, and quits when it is done. The user once took such a render for a bug
+  in the game.
 - Test tweens with `pause()` plus `custom_step(delta)`. `wait_seconds()` races
   the tween in headless and overshoots.
 - GDScript `==` throws on an int/String comparison rather than returning false,
