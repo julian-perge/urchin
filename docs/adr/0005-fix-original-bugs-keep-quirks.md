@@ -8,7 +8,7 @@ AS paths below are relative to `dev/source_files/action_script/`. The conductor 
 
 ## Original bugs the port fixes
 
-- When a shield soaks a whole Buff tick, `buffTicker` plays the shield clip through `IDKT` (`frame_42/DoAction_10.as:72`), a global that `executeMove` last set to whichever unit the last move hit. The port plays the shield clip on the unit whose shield soaked the tick. Lands with [#151](https://github.com/julian-perge/urchin/issues/151).
+- When a shield soaks a whole Buff tick, `buffTicker` plays the Shield clip through `IDKT` (`frame_42/DoAction_10.as:72`), a global that `executeMove` last set to whichever unit the last move hit. The port plays the Shield clip on the unit whose shield soaked the tick. Lands with [#151](https://github.com/julian-perge/urchin/issues/151).
 - `executeMove` draws every damage number twice (`frame_42/DoAction_8.as:80` and `84`), and under sswitch it stacks a heal-green number over the element-colored one (80 and 137). The port draws one Floating number per result, in the color the original leaves on top. The original's only visible trace is a doubled highlight.
 - `executeMove` flashes its target through `_root.BATTLEFLASH`, one clip for the whole battle that each call points at its own target (`frame_42/DoAction_8.as:95-99`), so a move that hits several units flashes only the last one. The port flashes every unit a result lands on, because each Fighter presenter has its own Result flash.
 - The death voice and the bar's fade play inside `lifeBarUpdate` (`frame_42/DoAction_8.as:345-347`), which does nothing when the bar's rounded percent hasn't changed. So a unit killed from under 0.5% life dies with no voice and its bar never fades. The port plays the death voice and the fade on every death. Lands with [#148](https://github.com/julian-perge/urchin/issues/148).
@@ -20,3 +20,5 @@ AS paths below are relative to `dev/source_files/action_script/`. The conductor 
 - A shield exactly as big as a hit is not a Shield block. The shield drops to 0, and the hit plays its flash, its `hit` label and the hit voice with no number (`frame_42/DoAction_8.as:70-131`).
 - Any rise in a unit's stun replays its stun animation, even on a unit that is already stunned, and any fall plays `outofstun`, even one that leaves it stunned (`applyChangesKrin`, `frame_42/DoAction_10.as:468-481`).
 - `dressChar` draws a `MODEL5` unit at 0.8x and 10 px lower.
+- A Floating number between 0 and 1 plays its label with no digits. `KrinNumberShow` draws any number above 0, and its digit loop drops the fraction (`frame_42/DoAction_7.as:8` and 27-61).
+- `KrinNumberShow` cycles its Floating numbers over 20 depths, 1620 to 1639, so a 21st number replaces the one still at its depth (`frame_42/DoAction_7.as:4`, 37 and 75-79).

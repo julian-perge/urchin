@@ -5,13 +5,14 @@
 // 2026-11-10, the tinted doll came out at the plain doll times the tint again.
 //
 // During a Result flash it also runs the three GlowFilters each of BATTLEFLASH's
-// labels sets on the original's whole doll (frame_42/DoAction_3.as:117-130 and
-// 162-168). Each GlowFilter has quality 1, so it averages the alpha over one box
-// as wide as its blur, multiplies that by its strength and caps it at 1. An inner
-// glow averages the alpha outside the doll and paints over the doll, and an outer
-// glow averages the doll's alpha and paints behind it. Each filter reads what
-// the one before it left. The screen texture holds premultiplied alpha, and this
-// works in it until the last step.
+// labels sets on the original's whole doll, in this order: a white inner glow,
+// then an outer glow and an inner glow in the label's color
+// (frame_42/DoAction_3.as:117-130 and 162-168). Each GlowFilter has quality 1,
+// so it averages the alpha over one box as wide as its blur, multiplies that by
+// its strength and caps it at 1. An inner glow averages the alpha outside the
+// doll and paints over the doll, and an outer glow averages the doll's alpha and
+// paints behind it. Each filter reads what the one before it left. The screen
+// texture holds premultiplied alpha, and this works in it until the last step.
 shader_type canvas_item;
 render_mode unshaded;
 
@@ -21,7 +22,6 @@ uniform vec4 color : source_color = vec4(1.0);
 uniform float stage_scale = 1.0;
 uniform sampler2D doll : hint_screen_texture, repeat_disable, filter_linear;
 
-// Each box's average is taken from a grid of SAMPLES by SAMPLES points.
 const int SAMPLES = 5;
 const float WHITE_BLUR = 100.0;
 const float WHITE_STRENGTH = 10.0;
@@ -63,12 +63,9 @@ void fragment() {
 	if (result_flash) {
 		vec2 stage_pixel = SCREEN_PIXEL_SIZE * stage_scale;
 		vec4 glow_color = vec4(color.rgb, 1.0);
-		// The first glow, white and inner.
 		float white = clamp((1.0 - box_alpha(SCREEN_UV, WHITE_BLUR, stage_pixel)) * WHITE_STRENGTH, 0.0, 1.0);
 		drawn = vec4(1.0) * white * drawn.a + drawn * (1.0 - white);
-		// The second glow, outer and in the label's color.
 		drawn += glow_color * outer_glow(SCREEN_UV, stage_pixel) * (1.0 - drawn.a);
-		// The third glow, inner and in the label's color.
 		float inner = clamp((1.0 - box_alpha_after_outer_glow(SCREEN_UV, stage_pixel)) * COLOR_STRENGTH, 0.0, 1.0);
 		drawn = glow_color * inner * drawn.a + drawn * (1.0 - inner);
 	}

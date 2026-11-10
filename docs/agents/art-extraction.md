@@ -110,7 +110,10 @@ extracting it.
 - **Export at 2x, 4x or 5x and let Godot scale down.** Halls, skies, hub art,
   battle chrome and store art go at 4x, and orbs, faces and class cards at 5x.
   Dolls, VFX, the item, buff and ability icons and the start screen backgrounds
-  go at 2x.
+  go at 2x. The Floating numbers (`floating_numbers.py`) go at 4x, because the
+  critical label starts at 2.84x and the other labels start at 1.78x. The
+  rig's clips (`rig_clips.py`) go at 2x, the window's default scale, as the
+  dolls do.
 - **ffdec thins the blur on large filtered objects, at any zoom.**
   `Filtering.boxBlurSingleIterationTwoPass` shrinks both box widths until
   `boxX * boxY * width * height` fits `boxBlurPixelsLimit * 100000`, which cut

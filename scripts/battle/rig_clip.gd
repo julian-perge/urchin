@@ -1,7 +1,7 @@
 # rig_clip.gd
 # One of the clips the original's fighter rig (DefineSprite 2676) holds beside
 # the doll, which the original plays on a unit through
-# BATTLESCREEN["player" + id]. The Fighter presenter plays its shield clip
+# BATTLESCREEN["player" + id]. The Fighter presenter plays its Shield clip
 # (DefineSprite 2675) on a Shield block.
 #
 # extract_rig_clips renders each frame of the clip whole into one box around the
