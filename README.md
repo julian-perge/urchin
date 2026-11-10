@@ -18,13 +18,17 @@ uv run convert_items
 ## Tests
 
 GUT tests live under `test/` (`unit/` for pure logic, `integration/` for full-stack runs against
-the real converted data). Run headless:
+the real converted data). Run them headless:
 
 ```sh
-/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .
+uv run gut                                  # the whole suite
+uv run gut test/unit/test_leveling.gd       # one test file
+uv run gut -gunit_test_name=<name>          # the tests whose names contain <name>
 ```
 
-Exits nonzero on failure. Also, runnable from the GUT panel inside the Godot editor.
+`uv run gut` exits nonzero when a test fails. It also exits nonzero on the runs that GUT itself
+exits 0 on: a script or parse error, or a run where no tests ran. You can also run the tests from
+the GUT panel inside the Godot editor.
 
 ## Project layout
 

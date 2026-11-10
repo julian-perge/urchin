@@ -10,15 +10,17 @@ the original SWF by script, not by hand.
 - Extraction and conversion scripts are `[project.scripts]` entry points:
   `uv run extract_battle_screen`, `uv run convert_items`, and so on. Run
   `rg '^extract_|^convert_' pyproject.toml` for the list.
-- Tests: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s
-  res://addons/gut/gut_cmdln.gd --path .` Add `-gunit_test_name=<name>` for one
-  test. The Python package's tests are `uv run pytest`, under `dev/tests/`.
-  They never read the SWF or the XML dump, so they pass on a fresh checkout.
-- One test file needs `-gdir= -gtest=res://<path>`. GUT 9.7.1 adds `-gtest` to
-  `.gutconfig.json`'s dirs, so on its own it runs the whole suite.
+- Tests: `uv run gut` runs the GUT suite. `uv run gut <path>` runs one test
+  file, and `uv run gut -gunit_test_name=<name>` runs the tests whose names
+  contain `<name>`. Trust its exit code. It also fails the runs that GUT exits 0
+  on: a script or parse error, or no tests run. It takes a Godot slot from
+  `~/tmp/2026-11-07-godot-slots/godot-slot.fish` itself, so run it bare.
+- The Python package's tests are `uv run pytest`, under `dev/tests/`. They
+  never read the SWF or the XML dump, so they pass on a fresh checkout.
 - After writing anything under `assets/`, run
   `/Applications/Godot.app/Contents/MacOS/Godot --headless --import --path .`
-  or tests fail with "No loader found for resource".
+  or tests fail with "No loader found for resource". `uv run gut` runs this
+  import by itself only in a checkout with no `.godot` folder.
 
 ## Every task
 
