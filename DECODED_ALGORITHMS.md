@@ -354,7 +354,7 @@ Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 2
 ## The Combat text banner (DefineSprite 2852 `KrinCombatText`)
 
 Ported: `CombatTextBanner` (`scripts/battle/combat_text_banner.gd`) plays it from `assets/ui/battle/combat_text.json`, which `extract_combat_text` writes, and `battle_scene.gd` shows the
-player's own failed moves in it.
+player's own failed moves in it, and "You cannot move yet" for a click outside a Decision.
 
 - Root frame 217 places it at depth 630, at (400, 148.5), above the orb ring at 500 and below the speech box at 634, with a red Glow filter (blur 10 by 5, strength 1) that turns its
   translucent white band pink and haloes its text. Root frame 181 places the same clip at (400, 48.95) for the hub, which the port does not show yet.
@@ -363,6 +363,13 @@ player's own failed moves in it.
   text (`DefineSprite_2852/frame_125/DoAction.as`), and frames 126 to 136 slide it back down as it fades out. The clip then loops to frame 1 and stops, 4.5 s after the GO frame at 30 fps.
 - A pick with a Refusal (`frame_42/DoAction_11.as:125`) and the player's own failed move call `gotoAndPlay("GO")`, which starts the banner over with the new text. The click listener's
   "You cannot move yet" calls a bare `play()` instead (`frame_217/DoAction.as:19-26`), which changes nothing while the clip is playing, because only frame 2 copies the text.
+- The click listener is a `Mouse.onMouseDown` that the battle frame adds (`frame_217/DoAction.as:18-27`), so it hears every left-click, one that a button or a unit also answers
+  included. It shows `MENU[37]` (`frame_1/DoAction.as:245`) unless `InBattle` is false, `timerWait` is 0, `winCondition` is below 0 and `speechDone` is true, the test the conductor's
+  decision block makes (lines 589-591), so a click during the fight, the second before the first Decision or a spoken line shows it. The port reads the click in `battle_scene.gd`'s
+  `_input`, before any control takes it.
+- Not ported: the listener after the battle has ended. The original removes it only once blacker5's frame 85 has sent the root to the result, on `winCombat` (`frame_219/DoAction.as:72`),
+  `loseCombat` (`frame_230/DoAction.as:4`) or the arena's end (`frame_253/DoAction.as:1`), so a click during the closing fade, after `winCondition` is set, still shows `MENU[37]`. The
+  port shows nothing once the battle has ended, as julian-perge/urchin#170 asks.
 - The conductor writes its failure strings only when `mCaster.playerID == Krin.playerNumber`: Focus and then Health, so Health wins when both fall short (lines 477-488), and the stun
   (lines 538-542). AI units and Companions never show one.
 - The text field is edit text 2849, one line of 12 px black centered text in DefineFont3 65, the bold `_sans` Device font. Flash lays the line out 2 px inside the field's bounds, which the
