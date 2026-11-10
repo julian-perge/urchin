@@ -11,12 +11,13 @@
 #   an orb you cannot use says why in the Combat text banner, and orb tooltips
 #   carry name/cost/description
 # - when your own move fails as it dispatches, the Combat text banner says why.
-#   An AI unit's or a Companion's failure shows nothing
+#   When an AI unit's or a Companion's move fails, the banner shows nothing.
 # - the bottom bar: companion stance buttons (agModeAr presets) on the
 #   left, the Pass ring in the center (light blue while waiting for your
 #   choice, gray during the fight loop) with the retreat X beside it
-# - a left-click anywhere while no Decision is open, until the battle ends,
-#   puts "You cannot move yet" in the Combat text banner if it is not already up
+# - a left-click anywhere while no Decision is open, until the battle is
+#   decided, puts "You cannot move yet" in the Combat text banner if it is not
+#   already up
 #
 # Entry: ZoneManager.battle_selected stores the pick in
 # ZoneManager.pending_battle and the game scene switches here; _ready()
@@ -52,6 +53,9 @@ const COST_FAILURE_MESSAGES: Dictionary[BattleRunner.FailReason, String] = {
 	BattleRunner.FailReason.FOCUS: "You failed to use your ability because you don't have enough Focus.",
 	BattleRunner.FailReason.HEALTH: "You failed to use your ability because you don't have enough Health.",
 }
+# MENU[37] (frame_1/DoAction.as:245), which the original's click listener puts
+# in the Combat text banner.
+const CANNOT_MOVE_YET_MESSAGE: String = "You cannot move yet. Please wait until the 'ring' is blue, then click on a target."
 
 # 1.0 = normal pacing; 0.0 = instant (tests).
 var animation_speed: float = 1.0
@@ -103,6 +107,10 @@ var _fade_tween: Tween = null  # the running _play_fade's tween, which the next 
 @onready var speech_label: Label = $UI/SpeechLabel
 @onready var _pass_ring: Control = $BottomBar/PassRing
 @onready var radial_menu: RadialMenu = $RadialMenu
+# The battle frame places KrinCombatText at depth 630, above the orb ring at 500
+# and below the speech box at 634. So battle_scene.tscn puts this node after the
+# RadialMenu, where it draws over the Radial menu, and the speech line is on the
+# UI layer, which draws over both.
 @onready var combat_text_banner: CombatTextBanner = $CombatTextBanner
 @onready var stance_host: Control = $BottomBar/StanceHost
 @onready var _countdown_label: Label = $BottomBar/Panel3/CountdownLabel
@@ -626,34 +634,30 @@ func _play_speech(event: Dictionary) -> void:
 	speech_label.text = ""
 
 
-# MENU[37] (frame_1/DoAction.as:245), which the original's click listener puts
-# in the Combat text banner.
-const CANNOT_MOVE_YET_MESSAGE: String = "You cannot move yet. Please wait until the 'ring' is blue, then click on a target."
-
-
-# The original's click listener is a Mouse.onMouseDown that the battle frame
-# adds (frame_217/DoAction.as:18-27), so it hears every left-click, one that a
-# button or a unit also answers included. This reads the click before any
-# control can take it and leaves it to them. Outside a Decision the listener
-# shows MENU[37] with a bare play(), which show_if_idle() matches. The port
-# shows nothing once the battle has ended, though the original's listener still
-# hears clicks during the closing fade (DECODED_ALGORITHMS.md, "The Combat text
-# banner").
-#
-# The original's speech box answers Space all through a battle
-# (frame_217/PlaceObject2_3367_634 onClipEvent(keyDown), lines 2-9). It stops
-# the three effect channels, and while a line is up it ends that line and sets
-# hardSkip, which drops the rest of the conversation (BattleRunner.hard_skip).
-# The project has no input action for it, and Godot's ui_accept and ui_select
-# also fire on Enter or a gamepad button, so this checks the key itself, as
-# Key.isDown(32) does.
 func _input(event: InputEvent) -> void:
 	if _finished:
 		return
+	# The original's click listener is a Mouse.onMouseDown that the battle frame
+	# adds (frame_217/DoAction.as:18-27), so it hears every left-click, one that
+	# a button or a unit also answers included. This reads the click before any
+	# control can take it and leaves it to them. Outside a Decision the listener
+	# shows MENU[37] with a bare play(), which show_if_idle() matches. The
+	# original's listener goes on showing it once winCondition is set, but the
+	# port shows nothing from the moment the runner has decided the battle, while
+	# the half-turn that decided it is still playing (DECODED_ALGORITHMS.md, "The
+	# Combat text banner").
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if not decision_open:
+		var decided: bool = runner != null and runner.is_over()
+		if not decision_open and not decided:
 			combat_text_banner.show_if_idle(CANNOT_MOVE_YET_MESSAGE)
 		return
+	# The original's speech box answers Space all through a battle
+	# (frame_217/PlaceObject2_3367_634 onClipEvent(keyDown), lines 2-9). It
+	# stops the three effect channels, and while a line is up it ends that line
+	# and sets hardSkip, which drops the rest of the conversation
+	# (BattleRunner.hard_skip). The project has no input action for it, and
+	# Godot's ui_accept and ui_select also fire on Enter or a gamepad button, so
+	# this checks the key itself, as Key.isDown(32) does.
 	if not (event is InputEventKey and event.pressed and event.keycode == KEY_SPACE):
 		return
 	AudioManagerAuto.stop_effects()

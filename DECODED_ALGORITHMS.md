@@ -367,9 +367,11 @@ player's own failed moves in it, and "You cannot move yet" for a click outside a
   included. It shows `MENU[37]` (`frame_1/DoAction.as:245`) unless `InBattle` is false, `timerWait` is 0, `winCondition` is below 0 and `speechDone` is true, the test the conductor's
   decision block makes (lines 589-591), so a click during the fight, the second before the first Decision or a spoken line shows it. The port reads the click in `battle_scene.gd`'s
   `_input`, before any control takes it.
-- Not ported: the listener after the battle has ended. The original removes it only once blacker5's frame 85 has sent the root to the result, on `winCombat` (`frame_219/DoAction.as:72`),
-  `loseCombat` (`frame_230/DoAction.as:4`) or the arena's end (`frame_253/DoAction.as:1`), so a click during the closing fade, after `winCondition` is set, still shows `MENU[37]`. The
-  port shows nothing once the battle has ended, as julian-perge/urchin#170 asks.
+- Not ported: the listener once the battle is decided. Its test shows `MENU[37]` while `winCondition` is 0 or above (`frame_217/DoAction.as:21`), and the conductor sets `winCondition`
+  as the deciding half-turn ends, after its moves have played (lines 194-261). The original removes the listener only once blacker5's frame 85 has sent the root to the result, on
+  `winCombat` (`frame_219/DoAction.as:72`), `loseCombat` (`frame_230/DoAction.as:4`) or the arena's end (`frame_253/DoAction.as:1`), so a click during the closing fade still shows
+  `MENU[37]`. The port's runner decides the battle before the half-turn that decided it is replayed, and from that moment a click shows nothing, through the replay and the fade
+  (julian-perge/urchin#170).
 - The conductor writes its failure strings only when `mCaster.playerID == Krin.playerNumber`: Focus and then Health, so Health wins when both fall short (lines 477-488), and the stun
   (lines 538-542). AI units and Companions never show one.
 - The text field is edit text 2849, one line of 12 px black centered text in DefineFont3 65, the bold `_sans` Device font. Flash lays the line out 2 px inside the field's bounds, which the

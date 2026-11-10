@@ -2097,3 +2097,31 @@ func test_a_click_after_the_battle_has_ended_leaves_the_banner_down():
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# The original's listener still shows MENU[37] once winCondition is set
+# (frame_217/DoAction.as:21), but the port shows nothing from the moment the
+# half-turn that decides the battle has run, while its replay is still playing.
+# A move against a stunned target always hits, so the player's move kills the
+# guard on 1 life and wins. The replay runs at full speed so the click lands
+# during it.
+func test_a_click_while_the_deciding_half_turn_plays_leaves_the_banner_down():
+	var scene = _battle_100_in_its_own_viewport("CannotMoveYetWhileDeciding")
+	await wait_until(func(): return scene.decision_open, 5)
+	var guard: CombatUnit = scene.units[2]
+	guard.stun = 1.0
+	guard.life_n = 1.0
+	scene.animation_speed = 1.0
+	watch_signals(scene)
+	_pick_the_first_move_on_the_enemy(scene)
+	var decided: bool = await wait_until(func(): return scene.runner.is_over(), 5)
+	assert_true(decided, "sanity: the player's move decided the battle")
+
+	_click(scene.get_viewport(), scene.background)
+	assert_signal_not_emitted(scene, "battle_finished", "sanity: the click came before the battle finished")
+	assert_false(scene.combat_text_banner.is_up(), "the banner stays down")
+
+	scene.animation_speed = 0.0
+	await wait_for_signal(scene.battle_finished, 5)
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true

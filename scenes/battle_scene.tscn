@@ -225,8 +225,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_retreat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_retreat_hover")
 text = "x"
 
-; The battle frame places KrinCombatText at depth 630, above the orb ring at
-; 500 and below the speech box at 634, so it draws over the Radial menu here.
 [node name="CombatTextBanner" parent="." instance=ExtResource("7_banner")]
 layout_mode = 0
 
