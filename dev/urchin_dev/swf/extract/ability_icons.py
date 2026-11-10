@@ -31,6 +31,17 @@
 # otherwise paint over every icon. COOLDOWN_DISPLAY below has which ones and
 # the evidence.
 #
+# The Radial menu draws those two itself over a darkened orb, so this also
+# writes them out on their own:
+#
+#   assets/ui/abilities/cooldown_cover.png - the black disc, rendered alone
+#   assets/ui/abilities/cooldown.json      - where the disc sits on the orb,
+#                                            and where the turns left go and
+#                                            in what size, colour and alignment
+#
+# The count's font is the same bold _sans Device font as the Combat text
+# banner's, so the port draws it in the Stand-in font too.
+#
 # ffdec sizes every exported frame to the whole sprite timeline's union
 # bounding box, so each frame comes back as a large, mostly-transparent canvas
 # with the icon in one corner. The mask constrains every frame to the same
@@ -43,21 +54,30 @@
 # Run: uv run extract_ability_icons
 from __future__ import annotations
 
+import json
 import re
 import sys
 
 from PIL import Image
 
 from urchin_dev import REPO_ROOT, WEB_SWF
-from urchin_dev.swf import render, strip, timeline
-from urchin_dev.swf.swf_index import read_swf
+from urchin_dev.swf import label_layout, render, strip, timeline
+from urchin_dev.swf.extract.battle_screen import rect_entry
+from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "abilities"
+COVER_PNG = OUT_DIR / "cooldown_cover.png"
+COOLDOWN_JSON = OUT_DIR / "cooldown.json"
 
 ZOOM = 2.0
 ICON_SPRITE = 2427
 # The slot viewport is 31x31 design px; icons are drawn centered on (0,0).
 ICON_HALF = 15.5
+COVER_SPRITE = 2241
+COUNT_TEXT = 2245
+# The variable the Radial menu's enterFrame writes a cooldown's turns left to
+# (frame_217/PlaceObject3_3382_500 enterFrame, lines 23-28).
+COUNT_VARIABLE = "ACD"
 
 # characterId -> why the running game never shows it.
 #
@@ -74,13 +94,13 @@ COOLDOWN_DISPLAY: dict[int, str] = {
     # clipActions bytecode: ActionPush "_parent", GetVariable, ActionPush
     # "dontHide", GetMember, Equals2, ActionIf, then ActionPush ("", 7,
     # false) into SetProperty - where property index 7 is _visible.
-    2241: "cooldown darkener, hides itself in onLoad",
+    COVER_SPRITE: "cooldown darkener, hides itself in onLoad",
     # DefineEditText 2245, placed at depth 13, initialText "00", grey
     # (153,153,153). The cooldown turn counter that sits on the disc above.
     # It survives a shape-by-shape compositor only by accident, because an
     # edit text carries `bounds` where a shape carries `shapeBounds` and the
     # bounds lookup returns nothing for it.
-    2245: "cooldown turn counter, hidden with its disc",
+    COUNT_TEXT: "cooldown turn counter, hidden with its disc",
 }
 
 
@@ -88,8 +108,41 @@ def sanitize(label: str) -> str:
     return re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_")
 
 
+def origin_on_orb(index: SwfIndex, character: int) -> tuple[float, float]:
+    """-> where the orb places `character`, in design px from the orb's
+    centre. Raises unless every frame that shows it places it in the one spot
+    with a pure translate."""
+    matrices = {
+        layer.matrix
+        for layers in timeline.frames(index, ICON_SPRITE)
+        for layer in layers.values()
+        if layer.character_id == character
+    }
+    if len(matrices) != 1:
+        raise RuntimeError(
+            f"{ICON_SPRITE} places {character} with {len(matrices)} matrices, want 1"
+        )
+    (matrix,) = matrices
+    if matrix[:4] != render.IDENTITY_LINEAR:
+        raise RuntimeError(f"{ICON_SPRITE} places {character} with {matrix}")
+    return matrix[4] / render.TWIPS, matrix[5] / render.TWIPS
+
+
+def count_layout(index: SwfIndex) -> dict:
+    """-> where the cooldown count's line goes from the orb's centre, and its
+    size, colour and alignment. Raises unless it is the field the ring writes
+    the turns left to."""
+    field = label_layout.plain_device_line(index, COUNT_TEXT)
+    if field.variable_name != COUNT_VARIABLE:
+        raise RuntimeError(
+            f"edit text {COUNT_TEXT} is {field.variable_name!r}, want {COUNT_VARIABLE!r}"
+        )
+    return label_layout.text_layout(field, origin_on_orb(index, COUNT_TEXT))
+
+
 def main():
-    labels = timeline.labels(read_swf(WEB_SWF), ICON_SPRITE)
+    index = read_swf(WEB_SWF)
+    labels = timeline.labels(index, ICON_SPRITE)
     print(f"icon labels: {len(labels)}", file=sys.stderr)
 
     size = (int(ICON_HALF * 2 * ZOOM), int(ICON_HALF * 2 * ZOOM))
@@ -98,11 +151,26 @@ def main():
         render.Job(ICON_SPRITE, frame, ZOOM, strip=stripped)
         for frame in sorted(set(labels.values()))
     ]
+    cover_job = render.Job(
+        COVER_SPRITE, 1, ZOOM, origin=origin_on_orb(index, COVER_SPRITE)
+    )
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     written: dict[str, str] = {}
     blank = []
     oversized = []
-    with render.frames(WEB_SWF, jobs) as rendered:
+    with render.frames(WEB_SWF, [*jobs, cover_job]) as rendered:
+        *rendered, cover_frame = rendered
+        cover = render.trim(cover_frame)
+        if cover is None:
+            raise RuntimeError(f"{COVER_SPRITE} rendered empty")
+        cover.image.save(COVER_PNG)
+        layout = {"count": count_layout(index), "cover": rect_entry(cover.rect)}
+        COOLDOWN_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
+        print(
+            f"cover -> {COVER_PNG.name} {cover.image.size} at {cover.rect},"
+            f" layout -> {COOLDOWN_JSON.name}",
+            file=sys.stderr,
+        )
         by_frame = {frame.job.frame: frame for frame in rendered}
         for label, frame in labels.items():
             trimmed = render.trim(by_frame[frame])

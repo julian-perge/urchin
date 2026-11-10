@@ -20,7 +20,8 @@
 //       "hide_depths": [{"owner": id, "depth": d}]  hide a depth on every frame
 //       "goto": [{"depth": 89, "label": "CHURCH"}]  move the sprite at that
 //                                          depth of the rendered frame to the
-//                                          label
+//                                          label, or with "frame": 12 in place
+//                                          of the label, to that 1-based frame
 //     }]
 //   }]}
 //
@@ -33,7 +34,8 @@
 // child renders frame `time % frameCount` (Timeline.java:1161 at 792d2c2), so
 // that is the frame gotoAndStop would have moved its playhead to. Labels match
 // case-insensitively, as AVM1 matches them, and the first frame carrying the
-// label wins. A missing label fails the job instead of rendering frame 0.
+// label wins. A missing label or a frame past the sprite's last fails the job
+// instead of rendering another frame.
 //
 // Every override and every delete refuses a layer with clipDepth > -1.
 // Timeline.toImage skips an invisible layer before it builds that layer's
@@ -265,18 +267,26 @@ public class Render {
             for (JsonValue value : array(job, "goto")) {
                 JsonObject target = value.asObject();
                 int depth = target.get("depth").asInt();
-                String label = target.get("label").asString();
                 DepthState layer = frame.layers.get(depth);
                 if (layer == null) {
                     throw new IllegalArgumentException(where + " has nothing at depth " + depth);
                 }
                 Timeline child = timeline(layer.characterId);
-                int labelFrame = labelFrame(child, label);
-                if (labelFrame < 0) {
-                    throw new IllegalArgumentException("sprite " + layer.characterId + " has no label " + label);
+                int time;
+                if (target.get("frame") != null) {
+                    time = target.get("frame").asInt() - 1;
+                    if (time < 0 || time >= child.getFrameCount()) {
+                        throw new IllegalArgumentException("sprite " + layer.characterId + " has no frame " + (time + 1));
+                    }
+                } else {
+                    String label = target.get("label").asString();
+                    time = labelFrame(child, label);
+                    if (time < 0) {
+                        throw new IllegalArgumentException("sprite " + layer.characterId + " has no label " + label);
+                    }
                 }
                 savedTime.putIfAbsent(layer, new int[] {layer.time});
-                layer.time = labelFrame;
+                layer.time = time;
             }
 
             Color background = null;

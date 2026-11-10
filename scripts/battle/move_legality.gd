@@ -20,6 +20,17 @@ extends RefCounted
 # pick is allowed.
 enum Refusal { NONE, BAD_TARGET, LIFE, COOLDOWN, SILENCED, FOCUS, TARGET_STATUS }
 
+# What the Combat text banner tells the player for each Refusal, written as
+# addMoveForPlayer writes them (frame_42/DoAction_11.as:63-88).
+const MESSAGES: Dictionary[Refusal, String] = {
+	Refusal.BAD_TARGET: "You cannot use this move on that target.",
+	Refusal.LIFE: "You cannot use this move because you don't have enough Health.",
+	Refusal.COOLDOWN: "This move is not ready yet.",
+	Refusal.SILENCED: "You cannot use moves that require Focus this turn.",
+	Refusal.FOCUS: "You cannot use this move because you don't have enough Focus.",
+	Refusal.TARGET_STATUS: "The target's status does not meet the requirements of this move.",
+}
+
 
 static func can_afford(caster: CombatUnit, move: Ability) -> bool:
 	return not (_is_silenced_from(caster, move) or _is_short_of_focus(caster, move) or _is_short_of_life(caster, move))
@@ -42,6 +53,10 @@ static func refusal(caster: CombatUnit, move: Ability, bar_slot: int, target: Co
 	if _active_buffs_of_element(target, move.required_buff_element, buffs_by_id) < move.required_buff_count:
 		return Refusal.TARGET_STATUS
 	return Refusal.NONE
+
+
+static func message(refusal: Refusal) -> String:
+	return MESSAGES[refusal]
 
 
 static func _is_silenced_from(caster: CombatUnit, move: Ability) -> bool:

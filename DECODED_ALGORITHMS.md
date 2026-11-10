@@ -336,16 +336,48 @@ Not ported: `RadialMenu` keeps the port's own numbers, 0.15 s of grace and a 0.6
 - While it is true, alpha goes straight back to 100 (line 64).
 - An orb darkens only for a bad target or a cooldown (lines 15-29). The buttons on the orbs, `DefineButton2_3374` to `3381`, call `addMoveForPlayer` with no gate of their own, so a darkened orb
   still answers a click with its refusal message.
+- The darkening is the orb's `bfilter`, DefineSprite 2241, a black disc 23 px across. It is at 75 alpha on the two frames the ring fades in and 85 from then on (lines 16 and 42). A cooldown
+  also writes its turns left to the orb's `ACD` field, edit text 2245, and an empty string once it is 0 (lines 23-28). Ported: `RadialMenu` draws the disc at 85 alpha and the count, both
+  from `extract_ability_icons`, and a click on any refused orb shows `MoveLegality.message()` in the Combat text banner. Not ported: the ring also empties every `ACD` while the mouse is
+  away (lines 52-56).
 
 ## Required target buffs (frame_42/DoAction_11.as)
 
-Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 23 and 24, and `MoveLegality.refusal` returns `TARGET_STATUS` when the target falls short, which darkens the orb.
+Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 23 and 24, and `MoveLegality.refusal` returns `TARGET_STATUS` when the target falls short, so a click on the orb says so in the Combat text banner.
 
 - When the player picks a move, the original refuses it with "The target's status does not meet the requirements of this move." if the target has fewer than `KRINABILITYB[24]` active buffs
   of element `KRINABILITYB[23]` (lines 60-64, counted by `checkBuffsOnUnit` at 129-146).
 - Only two moves set them: the four Shatter ranks need 3 Ice buffs (`frame_42/DoAction_6.as:852-892`), and Corruption, the Psychological starting move, needs 1 Shadow buff (1607-1618, with
   the fields at 1613-1614). In the converted JSON they are `ability_two`'s `23_secondary_element_type` and `24_required_buff_count`.
 - The AI never checks them: `checkBuffsOnUnit` is only called from the player's pick.
+
+## The Combat text banner (DefineSprite 2852 `KrinCombatText`)
+
+Ported: `CombatTextBanner` (`scripts/battle/combat_text_banner.gd`) plays it from `assets/ui/battle/combat_text.json`, which `extract_combat_text` writes, and `battle_scene.gd` shows the
+player's own failed moves in it, and "You cannot move yet" for a click outside a Decision.
+
+- Root frame 217 places it at depth 630, at (400, 148.5), above the orb ring at 500 and below the speech box at 634, with a red Glow filter (blur 10 by 5, strength 1) that turns its
+  translucent white band pink and haloes its text. Root frame 181 places the same clip at (400, 48.95) for the hub, which the port does not show yet.
+- Frame 1 runs `stop()` and shows nothing. `gotoAndPlay("GO")` jumps to frame 2, which copies `combatTexter` into the text field through `inner.combatText`
+  (`DefineSprite_2852/frame_2/DoAction.as`). Frames 2 to 12 slide the inner clip up from 10 px below its place and fade it in from 0 to full, frames 13 to 125 hold it, frame 125 empties the
+  text (`DefineSprite_2852/frame_125/DoAction.as`), and frames 126 to 136 slide it back down as it fades out. The clip then loops to frame 1 and stops, 4.5 s after the GO frame at 30 fps.
+- A pick with a Refusal (`frame_42/DoAction_11.as:125`) and the player's own failed move call `gotoAndPlay("GO")`, which starts the banner over with the new text. The click listener's
+  "You cannot move yet" calls a bare `play()` instead (`frame_217/DoAction.as:19-26`), which changes nothing while the clip is playing, because only frame 2 copies the text.
+- The click listener is a `Mouse.onMouseDown` that the battle frame adds (`frame_217/DoAction.as:18-27`), so it hears every left-click, one that a button or a unit also answers
+  included. It shows `MENU[37]` (`frame_1/DoAction.as:245`) unless `InBattle` is false, `timerWait` is 0, `winCondition` is below 0 and `speechDone` is true, the test the conductor's
+  decision block makes (lines 589-591), so a click during the fight, the second before the first Decision or a spoken line shows it. The port reads the click in `battle_scene.gd`'s
+  `_input`, before any control takes it.
+- Not ported: the listener once the battle is decided. Its test shows `MENU[37]` while `winCondition` is 0 or above (`frame_217/DoAction.as:21`), and the conductor sets `winCondition`
+  as the deciding half-turn ends, after its moves have played (lines 194-261). The original removes the listener only once blacker5's frame 85 has sent the root to the result, on
+  `winCombat` (`frame_219/DoAction.as:72`), `loseCombat` (`frame_230/DoAction.as:4`) or the arena's end (`frame_253/DoAction.as:1`), so a click during the closing fade still shows
+  `MENU[37]`. The port's runner decides the battle before the half-turn that decided it is replayed, and from that moment a click shows nothing, through the replay and the fade
+  (julian-perge/urchin#170).
+- The conductor writes its failure strings only when `mCaster.playerID == Krin.playerNumber`: Focus and then Health, so Health wins when both fall short (lines 477-488), and the stun
+  (lines 538-542). AI units and Companions never show one.
+- The text field is edit text 2849, one line of 12 px black centered text in DefineFont3 65, the bold `_sans` Device font. Flash lays the line out 2 px inside the field's bounds, which the
+  inner clip places at (-374.5, -9.8), so the line starts at (-372.5, -7.8) and runs 744.95 px.
+- Not ported: the text's own share of the glow. A Label cannot blur one, and the outline other screens use in place of a glow reads far heavier than the faint halo around 12 px text, so the
+  port draws the text plain. The band's share is baked into its art.
 
 ## Turn order and queued heals (frame_217/DoAction_2.as, frame_42/DoAction_4.as and DoAction_11.as, the conductor)
 

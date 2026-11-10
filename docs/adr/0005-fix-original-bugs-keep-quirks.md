@@ -1,0 +1,22 @@
+# Fix the original's bugs and keep its quirks
+
+[#1](https://github.com/julian-perge/urchin/issues/1) keeps behavior faithful to the original and asks for an ADR for any departure a player could notice. This ADR covers one kind of departure for every case at once: the port fixes an Original bug and keeps a Quirk. An Original bug is code in the original that cannot do what it evidently means, such as a variable that is stale or missing in that scope, an accidental repeat, or a flag set on the wrong object. A Quirk is odd behavior that follows consistently from the original's rules, however unexpected. Reproducing an Original bug would mean carrying the original's stale state into the port, which nobody wants to build or test, while dropping a Quirk changes a rule the original really has. The project owner drew this line while grilling [#144](https://github.com/julian-perge/urchin/issues/144).
+
+A fix that cites this ADR adds its case to the first list below instead of writing its own ADR. A Quirk found along the way goes on the second list, so it can be readdressed later if keeping it turns out to be the wrong call. A case whose fix hasn't landed yet ends with the issue that lands it.
+
+AS paths below are relative to `dev/source_files/action_script/`. The conductor is `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as`.
+
+## Original bugs the port fixes
+
+- When a shield soaks a whole Buff tick, `buffTicker` plays the shield clip through `IDKT` (`frame_42/DoAction_10.as:72`), a global that `executeMove` last set to whichever unit the last move hit. The port plays the shield clip on the unit whose shield soaked the tick. Lands with [#151](https://github.com/julian-perge/urchin/issues/151).
+- `executeMove` draws every damage number twice (`frame_42/DoAction_8.as:80` and `84`), and under sswitch it stacks a heal-green number over the element-colored one (80 and 137). The port draws one Floating number per result, in the color the original leaves on top. The original's only visible trace is a doubled highlight. Lands with [#172](https://github.com/julian-perge/urchin/issues/172).
+- `executeMove` flashes its target through `_root.BATTLEFLASH`, one clip for the whole battle that each call points at its own target (`frame_42/DoAction_8.as:95-99`), so a move that hits several units flashes only the last one. The port flashes every unit a result lands on. Lands with [#152](https://github.com/julian-perge/urchin/issues/152).
+- The death voice and the bar's fade play inside `lifeBarUpdate` (`frame_42/DoAction_8.as:345-347`), which does nothing when the bar's rounded percent hasn't changed. So a unit killed from under 0.5% life dies with no voice and its bar never fades. The port plays the death voice and the fade on every death. Lands with [#148](https://github.com/julian-perge/urchin/issues/148).
+- The AI reads `focusCheck`, `playerFocusCheck`, `focusMove` and `D_Array_*` left over from the previous caller (section 2.11 of `docs/research/2026-11-07-original-logic-vs-port.md`). The port computes them for each caller.
+- On the cost-failure path, a Buff tick may re-raise the impact flag on `_root` instead of on the conductor's clip, so the impact block could run the unpaid move with a stale `strikeSuccess` (conductor:475-531, open question 4 of the same research doc). Nobody has seen this in the running game. The port never runs a move whose cost failed.
+
+## Quirks the port keeps
+
+- A shield exactly as big as a hit is not a Shield block. The shield drops to 0, and the hit plays its flash, its `hit` label and the hit voice with no number (`frame_42/DoAction_8.as:70-131`).
+- Any rise in a unit's stun replays its stun animation, even on a unit that is already stunned, and any fall plays `outofstun`, even one that leaves it stunned (`applyChangesKrin`, `frame_42/DoAction_10.as:468-481`).
+- `dressChar` draws a `MODEL5` unit at 0.8x and 10 px lower.

@@ -940,6 +940,34 @@ func test_a_move_its_caster_cannot_pay_for_fails_naming_the_cost():
 		assert_eq(failed[0]["reason"], case[1], "and names the cost Sonny couldn't pay")
 
 
+# A caster short of both life and Focus fails with the Health reason: the
+# original writes the Focus message and then overwrites it with the Health one,
+# and MoveLegality.refusal() tests life first for the same reason. No shipped
+# move costs both, so this is Nuke (20 focus) with a life cost added.
+func test_a_caster_short_of_both_life_and_focus_fails_naming_the_health_cost():
+	var nuke_costing_life: Ability = moves_by_id[5].duplicate()
+	nuke_costing_life.flat_life_cost = 10
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	var runner = BattleRunner.new()
+	runner.setup({1: player, 2: _guard_holding("")}, null, {5: nuke_costing_life}, buffs_by_id, buffs_by_name, [])
+	player.focus_n = 0.0
+	player.life_n = 1.0
+
+	var failed: Array = runner.advance_half_turn({"target_slot": 2, "move_id": 5}).filter(
+		func(event): return event["type"] == BattleRunner.EventType.MOVE_FAILED
+	)
+
+	assert_eq(failed.size(), 1, "the move fails")
+	assert_eq(failed[0]["reason"], BattleRunner.FailReason.HEALTH, "and names the life cost")
+	assert_eq(
+		MoveLegality.refusal(player, nuke_costing_life, 99, runner.units[2], buffs_by_id),
+		MoveLegality.Refusal.LIFE,
+		"as the legality check does",
+	)
+
+
 # While one team acts, only its moves change the other team's life and stun:
 # costs and buff ticks land on the casters, and the end of a half-turn changes
 # no one. So for every target on the team that isn't acting, each result starts

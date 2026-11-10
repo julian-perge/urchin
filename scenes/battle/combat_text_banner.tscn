@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/combat_text_banner.gd" id="1_banner"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/combat_text_backdrop.png" id="2_band"]
+
+[node name="CombatTextBanner" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("1_banner")
+
+[node name="Backdrop" type="TextureRect" parent="."]
+layout_mode = 0
+mouse_filter = 2
+texture = ExtResource("2_band")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+mouse_filter = 2

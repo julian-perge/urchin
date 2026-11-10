@@ -196,3 +196,28 @@ def test_strip_lists_group_into_one_load_each(tmp_path, monkeypatch):
     assert [load["strip_characters"] for load in spec["loads"]] == [[2676, 3312], []]
     assert [len(load["jobs"]) for load in spec["loads"]] == [2, 1]
     assert [r["out"] for r in results] == [job["out"] for job in jobs]
+
+
+def test_only_depths_and_goto_reach_the_driver_only_when_a_job_sets_them(
+    tmp_path, monkeypatch
+):
+    # The driver reads an only_depths list as "hide every other depth", so an
+    # empty one would hide everything a job meant to keep.
+    sent = []
+
+    def fake(swf_path, jobs):
+        sent.extend(jobs)
+        for job in jobs:
+            Image.new("RGBA", (92, 92)).save(job["out"])
+        return [{**result(92, 92, CANVAS, DISPLAY), "out": j["out"]} for j in jobs]
+
+    monkeypatch.setattr(ffdec_lib, "render", fake)
+    jobs = [
+        Job(0, 217, 4.0),
+        Job(0, 217, 4.0, only_depths=(72, 630), goto=((630, 12),)),
+    ]
+    with render.frames(tmp_path / "a.swf", jobs):
+        pass
+    assert "only_depths" not in sent[0] and "goto" not in sent[0]
+    assert sent[1]["only_depths"] == [72, 630]
+    assert sent[1]["goto"] == [{"depth": 630, "frame": 12}]

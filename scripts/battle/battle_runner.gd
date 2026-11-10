@@ -247,7 +247,10 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 
 	var life_cost = move.flat_life_cost + round(caster.life_u * move.health_cost_percentage)
 	if caster.focus_n < move.focus_cost or caster.life_n <= life_cost:
-		var reason: FailReason = FailReason.FOCUS if caster.focus_n < move.focus_cost else FailReason.HEALTH
+		# A caster short of both fails with the Health reason, because the
+		# original writes the Focus message and then overwrites it with the
+		# Health one. MoveLegality.refusal() tests life first for the same reason.
+		var reason: FailReason = FailReason.HEALTH if caster.life_n <= life_cost else FailReason.FOCUS
 		_log({"type": EventType.MOVE_FAILED, "caster_slot": caster.player_id, "move_id": move.id, "reason": reason})
 		return
 

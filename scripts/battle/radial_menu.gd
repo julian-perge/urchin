@@ -15,6 +15,9 @@ extends Control
 class_name RadialMenu
 
 signal move_picked(bar_index: int, move_id: int, target_slot: int)
+# A click on an orb whose move the player cannot pick, with the message the
+# Combat text banner shows for its Refusal. The menu stays open.
+signal pick_refused(message: String)
 
 const ORB_RADIUS: float = 15.0
 const ICON_DIR: String = "res://assets/ui/abilities/"
@@ -34,6 +37,15 @@ const ORB_OFFSETS: Array[Vector2] = [
 # out over 10 frames with no grace (frame_217/PlaceObject3_3382_500 enterFrame).
 const LEAVE_GRACE: float = 0.15
 const FADE_TIME: float = 0.67
+# extract_ability_icons writes the black disc a darkened orb is covered with and
+# where it and the cooldown count sit on the orb.
+const COOLDOWN_LAYOUT_PATH: String = "res://assets/ui/abilities/cooldown.json"
+const COVER_PATH: String = "res://assets/ui/abilities/cooldown_cover.png"
+# The ring's enterFrame sets the disc to 85% alpha once the ring has faded in.
+# It uses 75% only on the two frames the fade-in takes, and the port's ring opens
+# whole with no fade-in (frame_217/PlaceObject3_3382_500 enterFrame, lines 16
+# and 42).
+const COVER_ALPHA: float = 0.85
 
 # Setting this false closes any menu that is up, and open() does nothing until
 # it is true again.
@@ -55,6 +67,8 @@ var _tooltip_up: bool = false
 
 
 func _ready() -> void:
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(COOLDOWN_LAYOUT_PATH))
+	var cover_texture: Texture2D = load(COVER_PATH)
 	for bar_index in orbs.size():
 		var orb: Button = orbs[bar_index]
 		orb.custom_minimum_size = Vector2(ORB_RADIUS * 2, ORB_RADIUS * 2)
@@ -62,9 +76,41 @@ func _ready() -> void:
 		orb.position = ORB_OFFSETS[bar_index] - orb.size / 2.0
 		orb.expand_icon = true
 		orb.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		orb.add_child(_make_cover(cover_texture, layout["cover"], orb.size / 2.0))
+		orb.add_child(_make_count(layout["count"], orb.size / 2.0))
 		orb.pressed.connect(_on_orb_pressed.bind(bar_index))
 		orb.mouse_entered.connect(_on_orb_entered.bind(bar_index))
 		orb.mouse_exited.connect(_on_orb_exited)
+
+
+# The original's "bfilter", the black disc over a darkened orb.
+func _make_cover(texture: Texture2D, rect: Dictionary, centre: Vector2) -> TextureRect:
+	var cover := TextureRect.new()
+	cover.name = "Cover"
+	cover.texture = texture
+	cover.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	cover.position = centre + Vector2(rect["x"], rect["y"])
+	cover.size = Vector2(rect["w"], rect["h"])
+	cover.modulate.a = COVER_ALPHA
+	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cover.visible = false
+	return cover
+
+
+# The original's "ACD" field, the turns left on a cooldown. It keeps the font
+# the project theme gives every Label, which is the Stand-in font for the bold
+# _sans the field names, as the Combat text banner's line does.
+func _make_count(text_layout: Dictionary, centre: Vector2) -> Label:
+	var count := Label.new()
+	count.name = "Count"
+	var rect: Dictionary = text_layout["rect"]
+	count.position = centre + Vector2(rect["x"], rect["y"])
+	count.size = Vector2(rect["w"], rect["h"])
+	count.horizontal_alignment = LabelLayout.ALIGNMENTS[text_layout["align"]]
+	count.add_theme_font_size_override("font_size", int(text_layout["size"]))
+	count.add_theme_color_override("font_color", Color(text_layout["color"]))
+	count.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return count
 
 
 func _process(delta: float) -> void:
@@ -139,11 +185,18 @@ func _dress_orb(bar_index: int, player: CombatUnit, target: CombatUnit) -> bool:
 	orb.visible = move != null
 	if move == null:
 		return false
-	var usable: bool = MoveLegality.refusal(player, move, bar_index, target, _buffs_by_id) == MoveLegality.Refusal.NONE
-	orb.disabled = not usable
+	# The ring darkens an orb for a bad target or a cooldown and for nothing else,
+	# and it tests the cooldown on its own, so a cooldown darkens its orb even when
+	# another check names the message (frame_217/PlaceObject3_3382_500
+	# enterFrame, lines 15-29). refusal() tests the target before anything else,
+	# so it names BAD_TARGET whenever the target is wrong.
+	var bad_target: bool = MoveLegality.refusal(player, move, bar_index, target, _buffs_by_id) == MoveLegality.Refusal.BAD_TARGET
+	var turns_left: int = int(player.ability_cooldowns[bar_index]) if bar_index < player.ability_cooldowns.size() else 0
+	(orb.get_node("Cover") as TextureRect).visible = bad_target or turns_left > 0
+	(orb.get_node("Count") as Label).text = str(turns_left) if turns_left > 0 else ""
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
 	orb.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null
-	_style_orb(orb, _move_color(move), usable)
+	_style_orb(orb, _move_color(move))
 	return true
 
 
@@ -157,8 +210,16 @@ func _move_on_bar(player: CombatUnit, bar_index: int) -> Ability:
 	return null if move_id == 0 else _moves_by_id.get(move_id)
 
 
+# The original's orb buttons call addMoveForPlayer with no gate of their own, so
+# every orb takes the click, darkened or not. Only a pick that passes every
+# check closes the menu (frame_42/DoAction_11.as:60-104).
 func _on_orb_pressed(bar_index: int) -> void:
 	var player: CombatUnit = _units[BattleRunner.PLAYER_SLOT]
+	var move: Ability = _move_on_bar(player, bar_index)
+	var refusal: MoveLegality.Refusal = MoveLegality.refusal(player, move, bar_index, _units.get(_target_slot), _buffs_by_id)
+	if refusal != MoveLegality.Refusal.NONE:
+		pick_refused.emit(MoveLegality.message(refusal))
+		return
 	var move_id: int = int(player.equipped_moves[bar_index])
 	_close()
 	move_picked.emit(bar_index, move_id, _target_slot)
@@ -216,15 +277,13 @@ func _sanitize_icon_key(label: String) -> String:
 	return result.strip_edges().lstrip("_").rstrip("_")
 
 
-func _style_orb(orb: Button, color: Color, usable: bool) -> void:
-	for state in ["normal", "hover", "pressed", "disabled"]:
+func _style_orb(orb: Button, color: Color) -> void:
+	for state in ["normal", "hover", "pressed"]:
 		var style: StyleBoxFlat = StyleBoxFlat.new()
-		var bg: Color = Color(0.08, 0.08, 0.1) if usable else Color(0.05, 0.05, 0.06)
+		var bg: Color = Color(0.08, 0.08, 0.1)
 		style.bg_color = bg.lightened(0.1) if state == "hover" else bg
-		style.border_color = color if usable else Color(0.18, 0.18, 0.2)
+		style.border_color = color
 		style.set_border_width_all(2)
 		style.set_corner_radius_all(99)
 		orb.add_theme_stylebox_override(state, style)
 	orb.add_theme_font_size_override("font_size", 9)
-	orb.add_theme_color_override("font_color", Color.WHITE if usable else Color(0.35, 0.35, 0.35))
-	orb.add_theme_color_override("font_disabled_color", Color(0.3, 0.3, 0.32))
