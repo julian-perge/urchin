@@ -40,6 +40,9 @@ var _float_layer: Node2D
 var _dead: bool = false
 var _ring_fade: Tween = null
 var _hover_info: Label = null
+# How far setup() put the doll from its home, which rig_position() takes back
+# off.
+var _doll_offset: Vector2 = Vector2.ZERO
 
 @onready var hit_area: Button = $Overlay/HitButton
 @onready var _doll: CharacterVisual = $Doll
@@ -63,6 +66,7 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	if not unit.model.is_empty() and str(unit.model[0]) == "MODEL5":
 		_doll.scale *= 0.8
 		_doll.position.y += 10
+	_doll_offset = _doll.position - home
 	_doll.dress_from_model(unit.model, CharacterVisual.resolve_equip_looks(unit, items_by_id))
 	# The overlay is the doll's sibling because parenting it to a mirrored doll
 	# flipped its offsets on team 2.
@@ -271,3 +275,16 @@ func cast(move: Ability) -> void:
 	# approximation. set_state() resets modulate back to white when the
 	# cast label finishes.
 	_doll.modulate = move.visual_effect_color.lerp(Color.WHITE, 0.4)
+
+
+# Where the original's rig stands, the clip that dressChar puts the doll in.
+# That is the doll's own spot but for the 10 px that dressChar moves a MODEL5
+# doll down inside its rig (frame_217/DoAction_2.as:19-24).
+func rig_position() -> Vector2:
+	return position + _doll.position - _doll_offset
+
+
+# The rig's _width and _height: the size of the box around everything its doll
+# draws right now.
+func rig_size() -> Vector2:
+	return _doll.get_bounds().size
