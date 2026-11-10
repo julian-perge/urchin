@@ -67,10 +67,10 @@ func _format_line(event: Dictionary, units: Dictionary) -> String:
 			return ""
 
 
-# Words a Buff tick by what it did to its unit, as ADR 0001 has each line do. A
-# total under 1 gets no line, because the original draws a number with no digits
-# for it. A tick that kills its unit is followed by a DEATH event, which has its
-# own line.
+# Writes the line for a Buff tick by what it did to its unit, as ADR 0001 has each
+# line do. A total under 1 gets no line, because the original draws a number with
+# no digits for it. A tick that kills its unit is followed by a DEATH event, which
+# has its own line.
 func _format_tick_line(event: Dictionary, units: Dictionary) -> String:
 	var tick: BuffTick = event["tick"]
 	if not tick.did_something():

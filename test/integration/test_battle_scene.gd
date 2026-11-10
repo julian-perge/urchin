@@ -1655,7 +1655,7 @@ func test_the_combat_log_has_a_line_for_a_buff_tick_that_did_something_and_none_
 
 # The original draws a Floating number for any total above 0, and its digit loop
 # drops the fraction, so a total between 0 and 1 draws a number with no digits
-# (frame_42/DoAction_7.as:8 and 27-61). The log has no digits to word there, so it
+# (frame_42/DoAction_7.as:8 and 27-61). The log has no digits to show there, so it
 # writes no line (ADR 0001).
 func test_the_combat_log_has_no_line_for_a_buff_tick_with_a_total_under_1():
 	var scene = _battle_100("TickUnderOne")

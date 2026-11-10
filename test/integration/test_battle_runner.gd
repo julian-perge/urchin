@@ -1398,7 +1398,7 @@ func test_a_caster_its_own_move_killed_logs_no_buff_tick_and_no_second_death():
 	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
 	player.life_n = 1.0
 
-	var events: Array = runner.advance_half_turn({"target_slot": BattleRunner.PLAYER_SLOT, "move_id": 4})  # Heal
+	var events: Array = runner.advance_half_turn({"target_slot": BattleRunner.PLAYER_SLOT, "move_id": 4})  # Move 4 is Heal.
 
 	assert_eq(events[0]["type"], BattleRunner.EventType.MOVE, "sanity: Sonny's action is his move")
 	assert_true(events[0]["result"].killed, "sanity: and the move killed him")

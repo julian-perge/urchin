@@ -22,7 +22,7 @@ The web build's only `UIScrollBar` sits in DefineSprite 3332, the PvP arena's Ch
 - Text for every unit. In battle, `KrinCombatText` only ever tells the player about their own picks and moves. The log writes the same kind of line for an enemy's stun or failed move.
 - The whole fight so far. `battle_scene.gd`'s `_play_events` hands each event to the log just before playing it, whether the panel is open or not, so opening the log mid-fight shows everything since the fight began, up to the 200-line cap.
 
-The log reads nothing but the event and the units' names. The phase change, the end of the battle and a pass get no line. The runner logs an event for every Buff tick, and `BuffTick.did_something` marks the ones that did something. Those are the ticks whose total is not 0 and the ticks whose total a shield soaked whole, because the original draws a Floating number for them (`frame_42/DoAction_10.as:64-98`). A tick that only moved Focus or ran a buff out did nothing, because the original draws nothing for it. A total under 1 gets no line either, because the original draws its number with no digits.
+The log reads nothing but the event and the units' names. The phase change, the end of the battle and a pass get no line. The runner logs an event for every Buff tick, and `BuffTick.did_something` marks the ones that did something. Those are the ticks whose total is not 0 and the ticks whose total a shield soaked whole. The original draws a Floating number for each of them (`frame_42/DoAction_10.as:64-98`). A tick that only moved Focus or ran a buff out did nothing, because the original draws nothing for it. A total under 1 gets no line either, because the original draws its number with no digits.
 
 ## Off until the player opens it
 
