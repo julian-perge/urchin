@@ -13,10 +13,17 @@ const STUN: CharacterVisual.State = CharacterVisual.State.STUN
 const HIT: CharacterVisual.State = CharacterVisual.State.HIT
 const DEAD: CharacterVisual.State = CharacterVisual.State.DEAD
 const ENEMY_COLOR: Color = FighterPresenter.RING_COLORS[FighterPresenter.Relation.ENEMY]
+# The colors of the Result flash's two colored glows in each of BATTLEFLASH's
+# labels, 16763904, 10092288 and 3407871 in frame_42/DoAction_3.as:117-130 and
+# 162-168.
+const HIT_FLASH: Color = Color("#ffcc00")
+const HEAL_FLASH: Color = Color("#99ff00")
+const FOCUS_FLASH: Color = Color("#33ffff")
 
 var _presenter: FighterPresenter
 var _doll: CharacterVisual
 var _overlay: UnitOverlay
+var _flash: ResultFlash
 var _layer: Node2D
 var _unit: CombatUnit
 var _cues: Array = []
@@ -50,6 +57,9 @@ func _present(unit: CombatUnit, items_by_id: Dictionary = {}, buffs_by_id: Dicti
 	_presenter.setup(unit, HOME, items_by_id, buffs_by_id, _layer)
 	_doll = _presenter.get_node("Doll")
 	_overlay = _presenter.get_node("Overlay")
+	# The tests step the Result flash themselves through advance().
+	_flash = _presenter.get_node("ResultFlash")
+	_flash.set_process(false)
 	_cues = []
 	_presenter.voice_cue.connect(func(cues): _cues.append(cues))
 	_presenter.effect_cue.connect(func(cue): _cues.append(cue))
@@ -726,3 +736,158 @@ func test_cast_plays_the_cast_state_tinted_with_the_moves_color():
 	assert_almost_eq(_doll.modulate.r, expected.r, 0.01, "tinted red")
 	assert_almost_eq(_doll.modulate.g, expected.g, 0.01, "tinted green")
 	assert_almost_eq(_doll.modulate.b, expected.b, 0.01, "tinted blue")
+
+
+# The color of the Result flash the doll shows, or null while it shows none. The
+# flash is a filter in the shader that draws the doll's body, so this reads
+# whether that filter is on and the color it draws.
+func _flash_color_on(doll: CharacterVisual) -> Variant:
+	var body_shader: ShaderMaterial = doll.get_node("Body").material
+	if not body_shader.get_shader_parameter("result_flash"):
+		return null
+	return body_shader.get_shader_parameter("color")
+
+
+func _flash_color() -> Variant:
+	return _flash_color_on(_doll)
+
+
+func _advance_flash(frames: int) -> void:
+	for frame in frames:
+		_flash.advance(1.0 / 30.0)
+
+
+# executeMove plays BATTLEFLASH's `hit` label on a hit
+# (frame_42/DoAction_8.as:95-99) and on a heal that hurts under sswitch
+# (199-203), its `heal` label on damage that heals under sswitch (144-148) and on
+# a heal (182-186), and its `focus` label on every focus result, a drain
+# included (232-249).
+func test_each_result_starts_the_result_flash_in_its_color():
+	for case in [
+		[_damage(10.0, 90.0), HIT_FLASH, "a hit"],
+		[_heal_that_hurts(10.0, 90.0), HIT_FLASH, "a heal that hurts under sswitch"],
+		[_damage_that_heals(10.0, 100.0), HEAL_FLASH, "damage that heals under sswitch"],
+		[_heal(10.0, 100.0), HEAL_FLASH, "a heal"],
+		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 8.0, 100.0), FOCUS_FLASH, "a focus result"],
+		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, -8.0, 100.0), FOCUS_FLASH, "a focus drain"],
+	]:
+		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+		_presenter.show_result(case[0], null)
+		assert_eq(_flash_color(), case[1], case[2])
+
+
+func _shield_block() -> MoveResult:
+	var result: MoveResult = _damage(0.0, 100.0)
+	result.shield_took_all = true
+	return result
+
+
+# A Shield block stops short of executeMove's call to BATTLEFLASH
+# (frame_42/DoAction_8.as:70-76). A hit exactly as big as the shield is not a
+# Shield block, and ADR 0005 keeps it as a Quirk: it plays the hit's flash with
+# no number (79-99).
+func test_a_shield_block_plays_no_flash_but_a_hit_the_shield_soaks_exactly_does():
+	_presenter.show_result(_shield_block(), null)
+	assert_null(_flash_color(), "a Shield block")
+	_presenter.show_result(_damage(0.0, 100.0), null)
+	assert_eq(_flash_color(), HIT_FLASH, "a hit the shield soaked exactly")
+
+
+# The original's whole heal branch, its calls to BATTLEFLASH included, is inside
+# DamageOutputKrinFinal > 0 (frame_42/DoAction_8.as:172), so a heal of 0 plays
+# no flash, under sswitch too.
+func test_a_heal_of_0_plays_no_flash():
+	_presenter.show_result(_heal(0.0, 100.0), null)
+	assert_null(_flash_color())
+
+
+# The conductor runs executeMove only on a strike that lands, and a miss takes
+# its else branch (lines 19 and 105-109). Shatter Bolt's "Attack" category has
+# no branch in executeMove.
+func test_a_miss_and_a_status_only_result_play_no_flash():
+	_presenter.show_result(_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 100.0), null)
+	assert_null(_flash_color(), "a miss")
+	_presenter.show_result(_result(MoveResult.Kind.STATUS_ONLY, MoveResult.Direction.NONE, 0.0, 100.0), null)
+	assert_null(_flash_color(), "a status-only result")
+
+
+# Only executeMove calls BATTLEFLASH, so buffTicker draws a Buff tick with no
+# flash (frame_42/DoAction_10.as:14-136). A tick reaches the fighter through
+# show_state(), or through snap_to_unit() at the half-turn's end.
+func test_a_buff_tick_plays_no_flash():
+	_presenter.show_state(_state(80.0))
+	assert_null(_flash_color(), "a tick shown when it happens")
+	_unit.life_n = 70.0
+	_presenter.snap_to_unit()
+	assert_null(_flash_color(), "a tick shown at the half-turn's end")
+
+
+# Each of BATTLEFLASH's labels puts its filter on at its first frame and on the
+# 4th, 8th and 12th frames after it, takes it off 2 frames after each, and takes
+# it off for good and stops on the 14th frame after it (DefineSprite_3416/frame_2
+# to frame_46). The doll shows that filter from the frame the result lands on.
+func test_the_flash_pulses_4_times_over_14_frames_then_stops():
+	for case in [
+		[_damage(10.0, 90.0), HIT_FLASH],
+		[_heal(10.0, 100.0), HEAL_FLASH],
+		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 8.0, 100.0), FOCUS_FLASH],
+	]:
+		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+		_presenter.show_result(case[0], null)
+		var shown: Array = [_flash_color()]
+		for frame in 15:
+			_advance_flash(1)
+			shown.append(_flash_color())
+		var on: Color = case[1]
+		assert_eq(shown, [on, on, null, null, on, on, null, null, on, on, null, null, on, on, null, null], str(on))
+
+
+# The flash only puts its filter on the doll's body and takes it off, so the doll
+# ends it looking the way it did before. A caster that heals itself keeps the
+# cast tint it had when its heal landed, and a stunned doll keeps its stun pose.
+func test_the_doll_looks_the_same_after_the_flash():
+	var heal_move := Ability.new()
+	heal_move.visual_effect_color = Color(0.2, 1.0, 0.0)
+	_presenter.cast(heal_move)
+	var tint: Color = _doll.modulate
+	_presenter.show_result(_heal(10.0, 100.0), heal_move)
+	assert_eq(_flash_color(), HEAL_FLASH, "a heal flashes the caster it lands on")
+	_advance_flash(14)
+	assert_null(_flash_color(), "the flash is over")
+	assert_eq(_doll.modulate, tint, "and the cast tint is still on")
+
+	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+	_stun()
+	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
+	assert_eq(_flash_color(), HIT_FLASH, "a hit flashes a stunned doll")
+	_advance_flash(14)
+	assert_null(_flash_color(), "the flash is over")
+	assert_eq(_doll._state, STUN, "and the doll is still in its stun")
+	assert_eq(_doll._label, "stun", "on the same label")
+
+
+# executeMove's gotoAndPlay() starts BATTLEFLASH's label over, so a result that
+# lands during a flash starts a new one in its own color, which runs all 14
+# frames.
+func test_a_result_during_a_flash_starts_it_over_in_its_own_color():
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	_advance_flash(2)
+	_presenter.show_result(_heal(10.0, 100.0), null)
+	assert_eq(_flash_color(), HEAL_FLASH, "the new flash shows at once")
+	_advance_flash(13)
+	assert_eq(_flash_color(), HEAL_FLASH, "it still pulses 13 frames later")
+	_advance_flash(1)
+	assert_null(_flash_color(), "and stops 14 frames after it started")
+
+
+# The original has one BATTLEFLASH for the whole battle, so a move that hits
+# several units flashes only the last one, an Original bug that ADR 0005 has the
+# port fix. Each Fighter presenter runs its own Result flash.
+func test_every_target_of_a_move_flashes():
+	var first_target: FighterPresenter = _presenter
+	var first_doll: CharacterVisual = _doll
+	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT + 2))
+	first_target.show_result(_damage(10.0, 90.0), null)
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	assert_eq(_flash_color_on(first_doll), HIT_FLASH, "the first target")
+	assert_eq(_flash_color(), HIT_FLASH, "the second target")

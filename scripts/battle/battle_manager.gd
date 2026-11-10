@@ -12,8 +12,9 @@ extends RefCounted
 # applyChangesKrin (line 103), which redraws its bars, its buff icons and its
 # stun pose (frame_42/DoAction_10.as:342-379 and 468-481), so execute_move()
 # ends with that recompute and takes the snapshot the result ends on after it.
-# Visual/audio side effects (BATTLEFLASH, BATTLESCREEN, addSound, ...) are left
-# out entirely. This returns a MoveResult and the battle screen reacts to it.
+# The visual and audio side effects (BATTLEFLASH, BATTLESCREEN, addSound, ...)
+# are not here. This returns a MoveResult, and the battle screen plays them from
+# it. FighterPresenter plays BATTLEFLASH as the Result flash, for example.
 #
 # _crit_roll() calls randi_range(0, 99) where the original's perScript() reads
 # KRS, a table of 100 random(100) values that it refills every time a battle

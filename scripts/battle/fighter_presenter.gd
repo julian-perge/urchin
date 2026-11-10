@@ -1,6 +1,7 @@
 # fighter_presenter.gd
 # Everything one fighter shows on the Battle screen: its doll, its bars, its
-# buff icons, its hover ring, its floating numbers, its stun and its death.
+# buff icons, its hover ring, its floating numbers, its Result flash, its stun
+# and its death.
 # battle_scene.gd keeps one per slot and tells it when its move starts, when a
 # hit lands, when to snap to the unit, when it is hovered during a Decision and
 # when it dies.
@@ -45,6 +46,7 @@ var _hover_info: Label = null
 @onready var hit_area: Button = $Overlay/HitButton
 @onready var _doll: CharacterVisual = $Doll
 @onready var _overlay: UnitOverlay = $Overlay
+@onready var _flash: ResultFlash = $ResultFlash
 
 
 # Call once, after the presenter is in the tree. It leaves the fighter drawn.
@@ -73,13 +75,13 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 
 
 # Shows one move's result at the moment it lands on this fighter: the number,
-# then the death or flinch, then the voice, then the bars, the buff icons and
-# the stun pose. Every result but a miss shows the target it states, because the
-# original recomputes and redraws its target after every strike that lands (the
-# conductor, line 103) and runs nothing on a miss. That target already holds any
-# damage-over-time tick the unit took earlier in the half-turn. The original
-# drew a tick when it happened, and here it reaches the screen with the next
-# result on the unit.
+# then the death or flinch, then the voice, then the Result flash, then the bars,
+# the buff icons and the stun pose. Every result but a miss shows the target it
+# states, because the original recomputes and redraws its target after every
+# strike that lands (the conductor, line 103) and runs nothing on a miss. That
+# target already holds any damage-over-time tick the unit took earlier in the
+# half-turn. The original drew a tick when it happened, and here it reaches the
+# screen with the next result on the unit.
 func show_result(result: MoveResult, move: Ability) -> void:
 	var amount: float = result.amount
 	var critical: bool = result.critical
@@ -108,7 +110,7 @@ func show_result(result: MoveResult, move: Ability) -> void:
 			if amount > 0:
 				float_text("+%d" % int(amount), MenuTheme.HEAL_COLOR)
 		MoveResult.Kind.FOCUS:
-			# The original draws no number for a focus result, only the focus
+			# The original draws no number for a focus result, only its Result
 			# flash (frame_42/DoAction_8.as:232-249).
 			pass
 		MoveResult.Kind.MISS:
@@ -117,8 +119,25 @@ func show_result(result: MoveResult, move: Ability) -> void:
 			# played in full to get here (see _execute_move_action's comment).
 			float_text("MISS", Color.GRAY)
 			effect_cue.emit("sfx_magicmiss")
+	_play_result_flash(result)
 	if result.kind != MoveResult.Kind.MISS:
 		show_state(result.target_after)
+
+
+# Plays the Result flash where executeMove plays BATTLEFLASH: `hit` on a result
+# that harms and `heal` on one that heals, once sswitch has had its say, and
+# `focus` on a focus result (frame_42/DoAction_8.as:95-99, 144-148, 182-186,
+# 199-203 and 243-247). A Shield block (70-76) and a heal of 0 (172) stop short of
+# those calls, and a miss and a status-only result never reach them.
+func _play_result_flash(result: MoveResult) -> void:
+	var life_flash: ResultFlash.Kind = ResultFlash.Kind.HIT if result.direction == MoveResult.Direction.HARM else ResultFlash.Kind.HEAL
+	match result.kind:
+		MoveResult.Kind.DAMAGE when not result.shield_took_all:
+			_flash.play(life_flash)
+		MoveResult.Kind.HEAL when result.amount > 0:
+			_flash.play(life_flash)
+		MoveResult.Kind.FOCUS:
+			_flash.play(ResultFlash.Kind.FOCUS)
 
 
 func _damage_color(move: Ability) -> Color:
