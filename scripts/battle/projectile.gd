@@ -41,11 +41,9 @@ const BOLT_SCENE_DIR := "res://scenes/battle/vfx/bolts/"
 const TRAIL_SCENE: PackedScene = preload("res://scenes/battle/vfx/trail/krintrail.tscn")
 # krinBoltMake removes a missed bolt once its x is more than 500 px either side
 # of the origin of BATTLESCREEN, the clip it flies in
-# (frame_42/DoAction_4.as:201). The battle frame's PlaceObject2 of BATTLESCREEN
-# (characterId 3435) puts that origin at x 400 on the stage, translateX 8000
-# twips, which is also where battle_scene.gd's SLOT_POSITIONS are measured
-# from.
-const BATTLE_SCREEN_X := 400.0
+# (frame_42/DoAction_4.as:201). On the battlefield the bolt flies over, that
+# origin is the rest that battle_screen_motion.json records for BATTLESCREEN,
+# which start() reads.
 const MISS_RANGE := 500.0
 # Safety net for the miss fly-past below. A move whose caster and target
 # share an x coordinate would give the bolt a zero x-step, so its x would
@@ -63,7 +61,7 @@ var trail_color: Color = Color.WHITE
 # frees the bolt the instant it reaches the target (matching source: the
 # bolt is destroyed the same tick its impact clip appears). A miss keeps
 # the bolt (and its growing trail) moving past the target until it is
-# MISS_RANGE from BATTLE_SCREEN_X. reached_target fires at the same
+# MISS_RANGE from BATTLESCREEN's origin. reached_target fires at the same
 # coordinate-cross tick either way, so the audio and the floatie land where
 # they do on a hit, and flight_ended fires when the bolt is gone.
 var did_hit: bool = true
@@ -93,6 +91,7 @@ var _trail_spawned: bool = false
 var _trail_growth: float = 1.0
 var _reached: bool = false  # reached_target already fired - only matters for the miss fly-past
 var _ticks: int = 0
+var _battle_screen_x: float = 0.0  # BATTLESCREEN's origin, which start() reads
 
 
 func start(origin: Vector2, target: Vector2) -> void:
@@ -101,6 +100,8 @@ func start(origin: Vector2, target: Vector2) -> void:
 	_target_x = target.x
 	_step = (target - origin) / BOLT_TIME
 	_checker = 1.0 if origin.x < target.x else -1.0
+	var motion: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(BattleScreenClip.MOTION_PATH))
+	_battle_screen_x = float(motion["rest"]["x"])
 	_load_bolt_sprite()
 	_load_trail_sprite()
 
@@ -167,7 +168,7 @@ func _process(delta: float) -> void:
 			if did_hit:
 				_end_flight()
 				return
-		if _reached and (absf(position.x - BATTLE_SCREEN_X) > MISS_RANGE or _ticks >= MAX_FLIGHT_TICKS):
+		if _reached and (absf(position.x - _battle_screen_x) > MISS_RANGE or _ticks >= MAX_FLIGHT_TICKS):
 			_end_flight()
 			return
 	queue_redraw()
