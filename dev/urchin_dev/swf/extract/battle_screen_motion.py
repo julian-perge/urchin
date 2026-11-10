@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import json
 import sys
+from dataclasses import dataclass
 
 from urchin_dev import REPO_ROOT, WEB_SWF
 from urchin_dev.swf import avm1, render, timeline
@@ -32,20 +33,29 @@ MOTION_JSON = REPO_ROOT / "assets" / "ui" / "battle" / "battle_screen_motion.jso
 
 ZOOMER = 3419
 SHAKER = 3420
-# The onClipEvent(load) bit of a clip action record's event flags.
+# A clip action record sets this bit of its event flags for onClipEvent(load).
 CLIP_EVENT_LOAD = 1
 
 
-def frame_scripts(index: SwfIndex, sprite: int) -> dict[int, CodeBlock]:
-    """-> {frame: the DoAction that frame runs} for one sprite."""
+@dataclass(frozen=True)
+class FrameScript:
+    """The DoAction that runs on one frame of a sprite."""
+
+    sprite: int
+    frame: int
+    block: CodeBlock
+
+
+def frame_scripts(index: SwfIndex, sprite: int) -> dict[int, FrameScript]:
+    """-> {frame: the script that frame runs} for one sprite."""
     return {
-        block.frame: block
+        block.frame: FrameScript(sprite, block.frame, block)
         for block in index.code
         if block.kind == "frame" and block.owner == sprite
     }
 
 
-def first_script_from(scripts: dict[int, CodeBlock], frame: int, sprite: int) -> int:
+def first_script_from(scripts: dict[int, FrameScript], frame: int, sprite: int) -> int:
     """-> the first frame from `frame` on that runs a script."""
     later = [f for f in scripts if f >= frame]
     if not later:
@@ -53,9 +63,10 @@ def first_script_from(scripts: dict[int, CodeBlock], frame: int, sprite: int) ->
     return min(later)
 
 
-def load_variables(index: SwfIndex, battle_frame: int, sprite: int) -> dict:
-    """-> the variables the onClipEvent(load) that the battle frame gives
-    `sprite` sets, with the values it sets them to."""
+def clip_script(
+    index: SwfIndex, battle_frame: int, sprite: int, event: int
+) -> CodeBlock:
+    """-> the clip action that the battle frame gives `sprite` for `event`."""
     (block,) = [
         block
         for block in index.code
@@ -63,25 +74,37 @@ def load_variables(index: SwfIndex, battle_frame: int, sprite: int) -> dict:
         and block.owner == 0
         and block.frame == battle_frame
         and block.placed_id == sprite
-        and block.events == CLIP_EVENT_LOAD
+        and block.events == event
     ]
-    return avm1.assignments(index, block)
+    return block
 
 
-def check(sprite: int, frame: int, block: CodeBlock, strings: set, gotos: tuple):
-    """Raise unless `block` pushes every one of `strings` and makes exactly
+def load_variables(index: SwfIndex, battle_frame: int, sprite: int) -> dict:
+    """-> the variables the onClipEvent(load) that the battle frame gives
+    `sprite` sets, with the values it sets them to."""
+    return avm1.assignments(
+        index, clip_script(index, battle_frame, sprite, CLIP_EVENT_LOAD)
+    )
+
+
+def check_strings_and_jumps(script: FrameScript, strings: set, gotos: tuple) -> None:
+    """Raise unless `script` pushes every one of `strings` and makes exactly
     the GotoLabel jumps in `gotos`, in that order."""
+    block = script.block
     missing = strings - set(block.strings)
     if missing or block.goto_labels != gotos:
         raise RuntimeError(
-            f"{sprite} frame {frame} pushes {block.strings} and jumps to"
-            f" {block.goto_labels}, want {sorted(strings)} and {gotos}"
+            f"{script.sprite} frame {script.frame} pushes {block.strings} and jumps"
+            f" to {block.goto_labels}, want {sorted(strings)} and {gotos}"
         )
 
 
-def check_stop(index: SwfIndex, sprite: int, frame: int, block: CodeBlock) -> None:
-    if avm1.actions(index, block) != [avm1.Action(avm1.ACTION_STOP)]:
-        raise RuntimeError(f"{sprite} frame {frame} does more than stop()")
+def check_stop(index: SwfIndex, script: FrameScript) -> None:
+    """Raise unless `script` does nothing but stop()."""
+    if avm1.actions(index, script.block) != [avm1.Action(avm1.ACTION_STOP)]:
+        raise RuntimeError(
+            f"{script.sprite} frame {script.frame} does more than stop()"
+        )
 
 
 def zoomer_motion(index: SwfIndex, battle_frame: int) -> dict:
@@ -99,24 +122,18 @@ def zoomer_motion(index: SwfIndex, battle_frame: int) -> dict:
     }
     if roles["go"] != labels["KrinZoomGo"] or sorted(scripts) != sorted(roles.values()):
         raise RuntimeError(f"{ZOOMER} runs scripts on {sorted(scripts)}, want {roles}")
-    check_stop(index, ZOOMER, roles["stop"], scripts[roles["stop"]])
-    check(
-        ZOOMER,
-        roles["go"],
+    check_stop(index, scripts[roles["stop"]])
+    check_strings_and_jumps(
         scripts[roles["go"]],
         {"zoomPointX", "zoomPointY", "saverX", "saverY", "zoomFactor", "scaleChange"},
         (),
     )
-    check(
-        ZOOMER,
-        roles["step"],
+    check_strings_and_jumps(
         scripts[roles["step"]],
         {"_x", "_y", "_xscale", "_yscale", "saverX", "saverY"},
         ("KrinZoomPlay", "KrinZoomPause", "KrinZoomStop"),
     )
-    check(
-        ZOOMER,
-        roles["hold"],
+    check_strings_and_jumps(
         scripts[roles["hold"]],
         {"zoomPause", "zoomPauseCounter"},
         ("KrinZoomPlay", "KrinZoomPause"),
@@ -148,19 +165,18 @@ def shaker_motion(index: SwfIndex, battle_frame: int) -> dict:
     }
     if sorted(scripts) != sorted(roles.values()):
         raise RuntimeError(f"{SHAKER} runs scripts on {sorted(scripts)}, want {roles}")
-    check_stop(index, SHAKER, stop, scripts[stop])
-    check(SHAKER, roles["open"], scripts[roles["open"]], {"_y", "shakeValue"}, ())
-    check(SHAKER, up, scripts[up], {"_y", "shakeValue", "shakeMinus"}, ())
+    check_stop(index, scripts[stop])
+    check_strings_and_jumps(scripts[roles["open"]], {"_y", "shakeValue"}, ())
+    check_strings_and_jumps(scripts[up], {"_y", "shakeValue", "shakeMinus"}, ())
     down = scripts[roles["down"]]
-    check(
-        SHAKER,
-        roles["down"],
+    check_strings_and_jumps(
         down,
         {"_y", "shakeValue", "shakeMinus", "shakeOriginal"},
         ("KrinShakeplayHere", "KrinShakestopHere"),
     )
-    # The 0 that shakeValue is compared with, then the number added to _y.
-    pushed = avm1.numbers(index, down)
+    # The down frame pushes the 0 that it compares shakeValue with, and then the
+    # number that it adds to _y.
+    pushed = avm1.numbers(index, down.block)
     if len(pushed) != 2 or pushed[0] != 0:
         raise RuntimeError(f"{SHAKER} frame {roles['down']} pushes {pushed}")
     return {
@@ -175,11 +191,7 @@ def shaker_motion(index: SwfIndex, battle_frame: int) -> dict:
 def rest(index: SwfIndex, battle_frame: int) -> dict:
     """-> where the battle frame places BATTLESCREEN, which is where its
     onClipEvent(load) saves saverX and saverY from."""
-    (block,) = [
-        block
-        for block in index.code
-        if block.kind == "clip" and block.placed_id == HALL_SPRITE
-    ]
+    block = clip_script(index, battle_frame, HALL_SPRITE, CLIP_EVENT_LOAD)
     if not {"saverX", "saverY"} <= set(block.strings):
         raise RuntimeError(f"{HALL_SPRITE}'s clip action sets {block.strings}")
     x, y = render.placement_origin(index, 0, battle_frame, HALL_SPRITE)
