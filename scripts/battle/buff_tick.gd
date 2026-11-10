@@ -6,11 +6,12 @@
 class_name BuffTick
 extends RefCounted
 
-# Which way the tick moved the unit's life once sswitch had its say. buffTicker
-# nets its healing and every element's damage into one total, so a tick moves
-# life one way or not at all. Damage harms and healing heals, and under sswitch
-# each one does the other. A tick that a shield soaked whole stays HARM with an
-# amount of 0, as a Shield block does. A tick whose total came to 0 is NONE.
+# Which way the tick moved the unit's life, after any turn-around by sswitch.
+# buffTicker nets its healing and every element's damage into one total, so a tick
+# moves life one way or not at all. Damage harms and healing heals, and under
+# sswitch each one does the other. A tick that a shield soaked whole stays HARM
+# with an amount of 0, as a Shield block does. A tick whose total came to 0 is
+# NONE.
 var direction: MoveResult.Direction = MoveResult.Direction.NONE
 
 # What the Floating number shows: the damage that got past the shield, or the
