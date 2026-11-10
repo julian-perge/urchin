@@ -1,0 +1,91 @@
+# gut.py
+# `uv run gut`, the command that runs the GUT suite, or only the test files it
+# is given. GUT 9.7.1 exits 0 on some runs that failed: a test file that does
+# not parse prints "SCRIPT ERROR" and "Nothing was run", and the exit code still
+# reads as a pass (~/.config/papercuts.md, 2026-11-10). So this command also
+# fails a run whose log has a script or parse error, or that ran no tests.
+from __future__ import annotations
+
+import re
+import sys
+from collections.abc import Callable, Sequence
+from pathlib import Path
+
+from urchin_dev import REPO_ROOT
+from urchin_dev.run import stream
+
+GODOT = Path("/Applications/Godot.app/Contents/MacOS/Godot")
+
+# Every Godot process waits for a free slot in this script, so parallel agents
+# never run more of them than this 16 GB machine can hold. The script reads
+# GODOT_SLOTS from the environment, which the run passes on unchanged.
+SLOT_SCRIPT = Path.home() / "tmp" / "2026-11-07-godot-slots" / "godot-slot.fish"
+
+# Godot colors its log even when the log goes to a pipe.
+COLOR_CODE = re.compile(r"\x1b\[[0-9;]*m")
+TESTS_TOTAL = re.compile(r"^Tests +(\d+)$", re.MULTILINE)
+
+Godot = Callable[[Sequence[str]], tuple[int, str]]
+
+
+def godot_in_a_slot(args: Sequence[str]) -> tuple[int, str]:
+    return stream(["fish", SLOT_SCRIPT, GODOT, *args])
+
+
+def failures(code: int, log: str) -> list[str]:
+    text = COLOR_CODE.sub("", log)
+    reasons = []
+    if code != 0:
+        reasons.append(f"Godot exited with code {code}")
+    for marker in ("SCRIPT ERROR", "Parse Error"):
+        if marker in text:
+            reasons.append(f"the log has {marker!r}")
+    tests_ran = [int(count) for count in TESTS_TOTAL.findall(text)]
+    if "Nothing was run" in text or not any(tests_ran):
+        reasons.append("GUT ran no tests")
+    return reasons
+
+
+def res_path(arg: str, cwd: Path, root: Path) -> str:
+    """A test file named by a res:// path, or by a path from the shell's folder,
+    as the res:// path GUT takes. Exits when the file is not in the project."""
+    if arg.startswith("res://"):
+        path = (root / arg.removeprefix("res://")).resolve()
+    else:
+        path = (cwd / arg).resolve()
+    if not path.is_file() or not path.is_relative_to(root):
+        raise SystemExit(f"uv run gut: {arg} is not a test file in {root}.")
+    return f"res://{path.relative_to(root).as_posix()}"
+
+
+def gut_args(argv: Sequence[str], cwd: Path, root: Path) -> list[str]:
+    """GUT 9.7.1 adds -gtest files to the dirs in .gutconfig.json instead of
+    running them alone, so a run of named files also clears the dirs with an
+    empty -gdir=. Arguments that start with -g are GUT options and pass through
+    unchanged."""
+    args = ["--headless", "-s", "res://addons/gut/gut_cmdln.gd", "--path", str(root)]
+    options = [arg for arg in argv if arg.startswith("-g")]
+    tests = [res_path(arg, cwd, root) for arg in argv if not arg.startswith("-g")]
+    if tests:
+        args += ["-gdir=", "-gtest=" + ",".join(tests)]
+    return args + options
+
+
+def run_gut(argv: Sequence[str], cwd: Path, root: Path, godot: Godot) -> int:
+    root = root.resolve()
+    args = gut_args(argv, cwd, root)
+    if not (root / ".godot").is_dir():
+        print("uv run gut: there is no .godot/ import cache, so importing first.")
+        code, _ = godot(["--headless", "--import", "--path", str(root)])
+        if code != 0:
+            print(f"uv run gut: the import exited with code {code}.", file=sys.stderr)
+            return code
+    code, log = godot(args)
+    reasons = failures(code, log)
+    for reason in reasons:
+        print(f"uv run gut: the run failed because {reason}.", file=sys.stderr)
+    return (code or 1) if reasons else 0
+
+
+def main() -> int:
+    return run_gut(sys.argv[1:], Path.cwd(), REPO_ROOT, godot_in_a_slot)

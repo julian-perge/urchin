@@ -20,8 +20,10 @@ dependencies = [
 ]
 
 [project.scripts]
+check_avoid_terms = "urchin_dev.checks.avoid_terms:main"
 check_doc_paths = "urchin_dev.checks.doc_paths:main"
 check_godot_sidecars = "urchin_dev.checks.godot_sidecars:main"
+setup_worktree = "urchin_dev.setup_worktree:main"
 convert_battles = "urchin_dev.convert.battles:main"
 convert_buffs = "urchin_dev.convert.buffs:main"
 convert_items = "urchin_dev.convert.items:main"
@@ -30,6 +32,7 @@ convert_units = "urchin_dev.convert.units:main"
 export_swf_sources = "urchin_dev.swf.export_swf_sources:main"
 extract_ability_icons = "urchin_dev.swf.extract.ability_icons:main"
 extract_battle_screen = "urchin_dev.swf.extract.battle_screen:main"
+extract_battle_screen_motion = "urchin_dev.swf.extract.battle_screen_motion:main"
 extract_buff_icons = "urchin_dev.swf.extract.buff_icons:main"
 extract_combat_text = "urchin_dev.swf.extract.combat_text:main"
 extract_cutscenes = "urchin_dev.swf.extract.cutscenes:main"
@@ -46,6 +49,8 @@ extract_zone_hub = "urchin_dev.swf.extract.zone_hub:main"
 extract_store_art = "urchin_dev.swf.extract.store_art:main"
 extract_vfx = "urchin_dev.swf.extract.vfx:main"
 extract_vfx_scenes = "urchin_dev.swf.extract.vfx_scenes:main"
+gut = "urchin_dev.gut:main"
+merge_ticket = "urchin_dev.merge_ticket:main"
 
 [tool.uv]
 # A build system is declared above, so uv would package this project by

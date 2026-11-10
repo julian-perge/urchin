@@ -1,0 +1,78 @@
+{
+ "conductor": {
+  "AttackEndCounterLimit": 25
+ },
+ "fps": 30.0,
+ "rest": {
+  "x": 400.0,
+  "y": 294.5
+ },
+ "shaker": {
+  "frames": 5,
+  "labels": {
+   "KrinShakeplayHere": 3,
+   "KrinShakestopHere": 1
+  },
+  "scripts": {
+   "down": 5,
+   "open": 2,
+   "stop": 1,
+   "up": 4
+  },
+  "settle": 0.9000000000000002,
+  "variables": {
+   "shakeMinus": 0.8,
+   "shakeOriginal": 8,
+   "shakeValue": 8
+  }
+ },
+ "zoomer": {
+  "frames": 6,
+  "labels": {
+   "KrinZoomGo": 2,
+   "KrinZoomPause": 5,
+   "KrinZoomPlay": 3,
+   "KrinZoomStop": 1
+  },
+  "scripts": {
+   "go": 2,
+   "hold": 6,
+   "step": 4,
+   "stop": 1
+  },
+  "variables": {
+   "scaleChange": 30,
+   "zoomFactor": 70.0,
+   "zoomPoint": 0.0,
+   "zoomRatio": 14,
+   "zoomStep": 1.5555555555555556,
+   "zoomTime": 9
+  }
+ },
+ "zooms": {
+  "Melee": {
+   "center": {
+    "x": 400,
+    "y": 300
+   },
+   "factor": -0.4,
+   "hold": 30
+  },
+  "Missile": {
+   "center": {
+    "x": 400,
+    "y": 300
+   },
+   "factor": -0.4,
+   "hold": 5
+  },
+  "Shock": {
+   "center": {
+    "x": 400,
+    "y": 300
+   },
+   "factor": -0.3,
+   "hold": 1
+  }
+ }
+}

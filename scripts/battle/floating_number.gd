@@ -30,7 +30,6 @@ var tint: Color = Color.WHITE
 var flasher: Node2D
 
 var _frames: Array = []
-var _fps: float = 0.0
 # The playhead, counted from the label's first frame as 0.
 var _frame: int = 0
 # The time since the playhead last stepped, counted in frames of the SWF.
@@ -45,7 +44,6 @@ func setup(layout: Dictionary, label_name: String, color: Color, glyph_names: Ar
 	label = label_name
 	glyphs = glyph_names
 	tint = color
-	_fps = float(layout["fps"])
 	_frames = layout["labels"][label]["frames"]
 	_plain = _material(false)
 	_tinted = _material(true)
@@ -60,7 +58,7 @@ func setup(layout: Dictionary, label_name: String, color: Color, glyph_names: Ar
 # label's last frame the number leaves its layer and frees itself, where
 # NumberFixer's next frame runs removeMovieClip(this).
 func advance(delta: float) -> void:
-	_frames_due += delta * _fps
+	_frames_due += delta * BattleScreenClip.fps()
 	while _frames_due >= 1.0:
 		_frames_due -= 1.0
 		_frame += 1

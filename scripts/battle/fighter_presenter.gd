@@ -1,6 +1,6 @@
 # fighter_presenter.gd
 # Everything one fighter shows on the Battle screen: its doll, its bars, its
-# buff icons, its hover ring, its Floating numbers, its Result flash, its shield
+# buff icons, its hover ring, its Floating numbers, its Result flash, its Shield
 # clip, its stun and its death.
 # battle_scene.gd keeps one per slot and tells it when its move starts, when a
 # hit lands, when to snap to the unit, when it is hovered during a Decision and
@@ -27,12 +27,19 @@ const RING_COLORS: Dictionary[Relation, Color] = {
 # original's 30fps - a ~4x faster fade-in than fade-out.
 const RING_FADE_IN_TIME: float = 0.17
 const RING_FADE_OUT_TIME: float = 0.67
+# LifeBarSmoother starts at the death, and its frame 18 clears the overlay 17
+# frames later (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as). From the
+# next frame on, its frame 38 takes this much off the bar's alpha, out of 100,
+# every frame, and hides the bar on the frame after the alpha reaches 0
+# (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as).
+const DEATH_CLEAR_FRAME: int = 17
+const DEATH_FADE_PER_FRAME: int = 5
 
 # What the fighter shows: the life, Focus, stun and buff slots that the last
 # event shown on it left on its unit. The runner resolves a whole half-turn
 # before the replay starts, so the bars, the stun pose and the buff icons follow
-# this instead of the unit, and only show_state(), show_result() and
-# snap_to_unit() change it.
+# this instead of the unit, and only show_state(), show_result(),
+# snap_to_unit() and die() change it.
 var displayed: UnitSnapshot
 
 var _unit: CombatUnit
@@ -43,8 +50,12 @@ var _floating_numbers: FloatingNumberLayer
 # so the rig and every Floating number on the unit stay here.
 var _home: Vector2
 var _dead: bool = false
+var _frames_since_death: float = 0.0
 var _ring_fade: Tween = null
 var _hover_info: Label = null
+# setup() puts the doll this far from its home, and rig_position() takes it
+# back off.
+var _doll_offset: Vector2 = Vector2.ZERO
 
 @onready var hit_area: Button = $Overlay/HitButton
 @onready var _doll: CharacterVisual = $Doll
@@ -73,6 +84,7 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	if not unit.model.is_empty() and str(unit.model[0]) == "MODEL5":
 		_doll.scale *= 0.8
 		_doll.position.y += 10
+	_doll_offset = _doll.position - home
 	_doll.dress_from_model(unit.model, CharacterVisual.resolve_equip_looks(unit, items_by_id))
 	# The overlay is the doll's sibling because parenting it to a mirrored doll
 	# flipped its offsets on team 2.
@@ -118,7 +130,10 @@ func show_result(result: MoveResult, move: Ability) -> void:
 			_floating_numbers.show_number(_home, amount, _element_color(move), critical)
 			_flash.play(ResultFlash.Kind.HIT)
 			_die_or_flinch(result)
-			voice_cue.emit(_unit.voice_hit)
+			# The original plays the hit voice only when the target survives, and
+			# plays it on a stunned target too (frame_42/DoAction_8.as:104-131).
+			if not result.killed:
+				voice_cue.emit(_unit.voice_hit)
 		MoveResult.Kind.HEAL when result.direction == MoveResult.Direction.HARM:
 			# Under sswitch this heal hurt the target. The original draws its
 			# number in the Shadow color, plays the `hit` flash, plays the hit
@@ -144,9 +159,9 @@ func show_result(result: MoveResult, move: Ability) -> void:
 			# The conductor shows a miss as the MISS word in the move's element
 			# color (line 108), and no Result flash. The caster's own animation
 			# still played in full to get here (see _execute_move_action's
-			# comment).
+			# comment). battle_scene.gd plays the miss sound, because the move's
+			# type decides it.
 			_floating_numbers.show_miss(_home, _element_color(move))
-			effect_cue.emit("sfx_magicmiss")
 	if result.kind != MoveResult.Kind.MISS:
 		show_state(result.target_after)
 
@@ -176,11 +191,36 @@ func _die_or_flinch(result: MoveResult) -> void:
 		_doll.set_state(CharacterVisual.State.HIT)
 
 
+# Plays the death: the doll's dead label, an empty bar, the death voice, and the
+# overlay's clear and fade, which _process() counts out. The original's
+# lifeBarUpdate plays the voice and starts the fade only when the bar's rounded
+# percent changes (frame_42/DoAction_8.as:295-298 and 345-347), which skips a
+# unit killed from under 0.5% life. ADR 0005 counts that as an Original bug, so
+# every death plays them here.
 func die() -> void:
 	_dead = true
 	_doll.set_state(CharacterVisual.State.DEAD)
-	_overlay.visible = false
+	displayed = displayed.with_life(0.0)
+	_draw_status()
 	effect_cue.emit(_unit.voice_die)
+
+
+# Counts the frames since the death, so the overlay clears, fades and hides on
+# the original's frames. The count is in frames rather than seconds, because a
+# sum of 1/30 s steps drifts off whole frames.
+func _process(delta: float) -> void:
+	if not _dead:
+		return
+	_frames_since_death += delta * BattleScreenClip.fps()
+	var frames_since_clear: int = int(_frames_since_death) - DEATH_CLEAR_FRAME
+	if frames_since_clear < 0:
+		return
+	_overlay.clear_for_death()
+	var alpha_percent: int = 100 - DEATH_FADE_PER_FRAME * frames_since_clear
+	_overlay.modulate.a = maxi(alpha_percent, 0) / 100.0
+	if alpha_percent < 0:
+		_overlay.hide()
+		set_process(false)
 
 
 # Shows the bars, the buff icons and the stun pose that an event left on this
@@ -217,7 +257,7 @@ func _show_stun(stun: float) -> void:
 
 # battle_scene.gd passes true only while the mouse is over the fighter during a
 # Decision, so the ring fades in only then and fades out on any other call. A
-# dead fighter ignores this, because its overlay is already hidden.
+# dead fighter ignores this.
 func show_hover(showing: bool) -> void:
 	if not _unit.active:
 		return
@@ -262,23 +302,28 @@ func _relation_to_player() -> Relation:
 	return Relation.ALLY if _unit.team_side == CombatUnit.Team.ONE else Relation.ENEMY
 
 
-# Runs the caster's melee swing to offset and back, and returns once the doll is
-# home. on_blow runs once, at the blow. If the swing ends without one, as an
-# interrupted swing does, it runs then and this returns true. With wait false
-# nothing waits for the swing, so on_blow runs at once. If the presenter leaves
-# the tree during the swing, on_blow doesn't run.
-func melee(offset: Vector2, label: String, on_blow: Callable, wait: bool = true) -> bool:
-	_doll.attack_connected.connect(on_blow, CONNECT_ONE_SHOT)
-	_doll.play_melee(offset, label)
+# Starts the caster's melee swing at `target` and returns at its Impact, once
+# on_impact has run. The doll runs toward where the target's rig stands on each
+# frame, and stops short of where it stood as the swing started by half of each
+# fighter's width. The doll's Runback then takes it home on its own while the
+# battle goes on. With wait false nothing waits for the swing, so on_impact runs
+# at once. If the presenter leaves the tree during the swing, on_impact doesn't
+# run.
+func melee(target: FighterPresenter, label: String, on_impact: Callable, wait: bool = true) -> void:
+	_doll.play_melee(_doll_spot_on.bind(target), target.rig_size().x / 2.0, label)
 	if wait:
-		await _doll.melee_finished
+		await _doll.attack_connected
 		if not is_inside_tree():
-			return false
-	if _doll.attack_connected.is_connected(on_blow):
-		_doll.attack_connected.disconnect(on_blow)
-		on_blow.call()
-		return true
-	return false
+			return
+	on_impact.call()
+
+
+# Returns where this fighter's doll would stand if its rig stood where `other`'s
+# rig stands now, in this presenter's space. krinMelee runs the caster's rig toward
+# the target's rig, so a MODEL5 doll's 10 px drop inside its rig doesn't tilt
+# the run.
+func _doll_spot_on(other: FighterPresenter) -> Vector2:
+	return other.rig_position() - position + _doll_offset
 
 
 func cast(move: Ability) -> void:
@@ -288,3 +333,16 @@ func cast(move: Ability) -> void:
 	# approximation. set_state() resets modulate back to white when the
 	# cast label finishes.
 	_doll.modulate = move.visual_effect_color.lerp(Color.WHITE, 0.4)
+
+
+# Returns where the original's rig stands, the clip that dressChar puts the doll
+# in. That is the doll's own spot but for the 10 px that dressChar moves a
+# MODEL5 doll down inside its rig (frame_217/DoAction_2.as:19-24).
+func rig_position() -> Vector2:
+	return position + _doll.position - _doll_offset
+
+
+# Returns the rig's _width and _height, which is the size of the box around
+# everything its doll draws right now.
+func rig_size() -> Vector2:
+	return _doll.get_bounds().size

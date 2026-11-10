@@ -16,8 +16,9 @@
 # Code blocks are what ffdec's script export writes one file each for:
 # DoAction, DoInitAction, each DefineButton2 condition action and each clip
 # action record. Each block keeps the strings it pushes or pools, its
-# GotoLabel and GotoFrame opcodes, and the code of every action in it, which
-# is how render.py sees a stop(). A goto with a receiver, like
+# GotoLabel and GotoFrame opcodes, the code of every action in it, which is
+# how render.py sees a stop(), and where its bytes are, which avm1.py reads the
+# numbers and assignments from. A goto with a receiver, like
 # `inner.gotoAndStop("GO")`, compiles to a method call instead, so for those
 # the decompiled text is the only readable form (see label_xref.py).
 #
@@ -167,7 +168,9 @@ class CodeBlock:
     owner is the sprite the init code belongs to, and "button", whose owner is
     the button. actions holds the code of every action in the order the
     bytes hold them, function bodies included, and leaves out the end flag.
-    placed_id and depth are set for clip actions only."""
+    placed_id and depth are set for clip actions only. span is where the
+    block's action records start and end in SwfIndex.data, which avm1.py
+    decodes."""
 
     kind: str
     owner: int
@@ -179,6 +182,7 @@ class CodeBlock:
     placed_id: int | None = None
     depth: int | None = None
     events: int | None = None
+    span: tuple[int, int] = (0, 0)
 
 
 @dataclass(frozen=True)
@@ -467,7 +471,17 @@ class _Walker:
     def _code(self, kind, owner, frame, start, end, **extra) -> None:
         strings, labels, frames, codes = _scan_actions(self.data, start, end)
         self.index.code.append(
-            CodeBlock(kind, owner, frame, strings, labels, frames, codes, **extra)
+            CodeBlock(
+                kind,
+                owner,
+                frame,
+                strings,
+                labels,
+                frames,
+                codes,
+                span=(start, end),
+                **extra,
+            )
         )
 
     def _button2(self, body: int, end: int) -> None:

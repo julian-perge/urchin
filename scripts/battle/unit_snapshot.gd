@@ -29,6 +29,19 @@ static func of(unit: CombatUnit) -> UnitSnapshot:
 	return snapshot
 
 
+# Returns a copy of this snapshot with `new_life` as its life. Events hold their
+# snapshots after they play, so a change goes on a copy.
+func with_life(new_life: float) -> UnitSnapshot:
+	var snapshot := UnitSnapshot.new()
+	snapshot.life = new_life
+	snapshot.life_max = life_max
+	snapshot.focus = focus
+	snapshot.focus_max = focus_max
+	snapshot.stun = stun
+	snapshot.buff_slots = buff_slots.duplicate(true)
+	return snapshot
+
+
 # battle_scene.gd writes events to battle.log with JSON.stringify, which prints
 # an object as its id, so the scene writes this dictionary in its place. It
 # lists only the slots that hold a buff, because the other slots are blank.

@@ -3,7 +3,10 @@
 #:schema https://www.schemastore.org/prek.json
 
 minimum_prek_version = "0.4.0"
-exclude = "^.*/.*_vendor/"
+# addons/ holds GUT, and GUST-FONT-LICENSE.txt is a published license text.
+# Both are third-party files, kept exactly as they ship, trailing whitespace
+# included.
+exclude = "^(.*/.*_vendor/|addons/|assets/fonts/GUST-FONT-LICENSE\\.txt$)"
 default_language_version = { python = "python3.14" }
 
 [[repos]]
@@ -61,3 +64,48 @@ args = [
 ]
 pass_filenames = false
 always_run = true
+
+[[repos.hooks]]
+id = "avoid-terms"
+name = "Added lines use no GLOSSARY.md _Avoid_ term"
+language = "system"
+entry = "uv run check_avoid_terms"
+files = "\\.(md|gd)$"
+# A whole-word check cannot tell which sense of a word a line means, so it
+# skips these terms. The glossary defines Screen, Window, Companion, Stage,
+# Quirk, Original bug and Floating number as terms of their own. Party roster,
+# Failure and Rewards each name a real thing, as their _Avoid_ lines say. The
+# rest are plain English or Godot words that the docs and comments use in
+# their ordinary sense, each more than 10 times.
+args = [
+  "--allow=Screen",
+  "--allow=Window",
+  "--allow=Companion",
+  "--allow=Stage",
+  "--allow=Quirk",
+  "--allow=Original bug",
+  "--allow=Floating number",
+  "--allow=Party roster",
+  "--allow=Failure",
+  "--allow=Rewards",
+  "--allow=Background",
+  "--allow=blow",
+  "--allow=Box",
+  "--allow=canvas",
+  "--allow=Cast",
+  "--allow=column",
+  "--allow=Glow",
+  "--allow=Hit",
+  "--allow=menu",
+  "--allow=outcome",
+  "--allow=Overlay",
+  "--allow=page",
+  "--allow=Return",
+  "--allow=round",
+  "--allow=Scene",
+  "--allow=Source",
+  "--allow=start",
+  "--allow=Turn",
+  "--allow=type",
+  "--allow=Viewport",
+]

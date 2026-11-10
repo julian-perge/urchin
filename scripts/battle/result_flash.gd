@@ -23,7 +23,6 @@ const COLORS: Dictionary[Kind, Color] = {
 	Kind.HEAL: Color("#99ff00"),
 	Kind.FOCUS: Color("#33ffff"),
 }
-const FPS: float = 30.0
 const PULSE_FRAMES: int = 4
 const FRAMES_ON: int = 2
 const LENGTH: int = 14
@@ -55,7 +54,7 @@ func play(kind: Kind) -> void:
 func advance(delta: float) -> void:
 	if _frame >= LENGTH:
 		return
-	_frames_due += delta * FPS
+	_frames_due += delta * BattleScreenClip.fps()
 	while _frames_due >= 1.0 and _frame < LENGTH:
 		_frames_due -= 1.0
 		_frame += 1

@@ -22,7 +22,7 @@ The web build's only `UIScrollBar` sits in DefineSprite 3332, the PvP arena's Ch
 - Text for every unit. In battle, `KrinCombatText` only ever tells the player about their own picks and moves. The log writes the same kind of line for an enemy's stun or failed move.
 - The whole fight so far. `battle_scene.gd`'s `_play_events` hands each event to the log just before playing it, whether the panel is open or not, so opening the log mid-fight shows everything since the fight began, up to the 200-line cap.
 
-The log reads nothing but the event and the units' names. The phase change and the end of the battle get no line, and neither does a buff tick, because the runner emits no event for one.
+The log reads nothing but the event and the units' names. The phase change, the end of the battle and a pass get no line, and neither does a buff tick, because the runner emits no event for one.
 
 ## Off until the player opens it
 
