@@ -105,7 +105,9 @@ func show_result(result: MoveResult, move: Ability) -> void:
 		MoveResult.Kind.HEAL:
 			float_text("+%d" % int(amount), MenuTheme.HEAL_COLOR)
 		MoveResult.Kind.FOCUS:
-			float_text("+%d FOCUS" % int(amount), Color.SKY_BLUE)
+			# The original draws no number for a focus result, only the focus
+			# flash (frame_42/DoAction_8.as:232-249).
+			pass
 		MoveResult.Kind.MISS:
 			# The special miss frame KrinNumberShow swaps to at impact,
 			# instead of a damage number - the caster's own animation still
