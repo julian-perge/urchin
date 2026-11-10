@@ -36,7 +36,7 @@ has already made reading them.
   `KrinLang.ENGLISH.BUFFSAY` instead (`46d16da`).
 - **Player-facing text comes from `KrinLang.ENGLISH.*`, not the item or buff
   record.** `ITEMNAME[id]` overwrites the item record's own name at load
-  (`frame_42/DoAction_16`). `internal_name` disagrees with what the game shows
+  (`frame_42/DoAction_16.as`). `internal_name` disagrees with what the game shows
   and nothing in the icon path reads it; a reported collision between four item
   pairs was a read of that field and there was nothing to fix (`dc4c5b2`).
 - **Check what an id means before treating it as an index.** `buffId` looks

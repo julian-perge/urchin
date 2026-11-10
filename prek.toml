@@ -33,12 +33,32 @@ hooks = [
 
 [[repos]]
 repo = "local"
-hooks = [
-  {
-    id = "godot-sidecars",
-    name = "Godot sidecars are staged or tracked",
-    language = "system",
-    entry = "uv run check_godot_sidecars",
-    types_or = ["png", "gdscript"],
-  },
+
+[[repos.hooks]]
+id = "godot-sidecars"
+name = "Godot sidecars are staged or tracked"
+language = "system"
+entry = "uv run check_godot_sidecars"
+types_or = ["png", "gdscript"]
+
+[[repos.hooks]]
+id = "agent-doc-paths"
+name = "Paths in the agent docs exist"
+language = "system"
+entry = "uv run check_doc_paths"
+# The --not-a-path spans read as paths but name things outside the repo: a
+# jpexs source file, two Godot project settings, a glossary map the domain doc
+# reads only when it exists, and two files in Godot's user folder.
+args = [
+  "AGENTS.md",
+  "CODING_STANDARDS.md",
+  "docs/agents",
+  "--not-a-path=Timeline.java",
+  "--not-a-path=gui/common/snap_controls_to_pixels",
+  "--not-a-path=rendering/2d/snap/snap_2d_transforms_to_pixel",
+  "--not-a-path=GLOSSARY-MAP.md",
+  "--not-a-path=achievements.cfg",
+  "--not-a-path=achievements.cfg.bak",
 ]
+pass_filenames = false
+always_run = true
