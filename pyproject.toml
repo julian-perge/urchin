@@ -45,6 +45,7 @@ extract_zone_hub = "urchin_dev.swf.extract.zone_hub:main"
 extract_store_art = "urchin_dev.swf.extract.store_art:main"
 extract_vfx = "urchin_dev.swf.extract.vfx:main"
 extract_vfx_scenes = "urchin_dev.swf.extract.vfx_scenes:main"
+merge_ticket = "urchin_dev.merge_ticket:main"
 
 [tool.uv]
 # A build system is declared above, so uv would package this project by
