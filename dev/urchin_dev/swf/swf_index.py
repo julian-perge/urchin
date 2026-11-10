@@ -16,8 +16,9 @@
 # Code blocks are what ffdec's script export writes one file each for:
 # DoAction, DoInitAction, each DefineButton2 condition action and each clip
 # action record. Each block keeps the strings it pushes or pools, its
-# GotoLabel and GotoFrame opcodes, and where its bytes are, which avm1.py
-# reads the numbers and assignments from. A goto with a receiver, like
+# GotoLabel and GotoFrame opcodes, the code of every action in it, which is
+# how render.py sees a stop(), and where its bytes are, which avm1.py reads the
+# numbers and assignments from. A goto with a receiver, like
 # `inner.gotoAndStop("GO")`, compiles to a method call instead, so for those
 # the decompiled text is the only readable form (see label_xref.py).
 #
@@ -82,10 +83,23 @@ CHARACTER_KINDS = {
 BITMAP_FILL_TYPES = (0x40, 0x41, 0x42, 0x43)
 SOLID_FILL_TYPE = 0x00
 
+ACTION_END = 0x00
+ACTION_NEXT_FRAME = 0x04
+ACTION_PREVIOUS_FRAME = 0x05
+ACTION_PLAY = 0x06
+ACTION_STOP = 0x07
+ACTION_SET_TARGET2 = 0x20
 ACTION_GOTO_FRAME = 0x81
 ACTION_CONSTANT_POOL = 0x88
+ACTION_SET_TARGET = 0x8B
 ACTION_GOTO_LABEL = 0x8C
+ACTION_DEFINE_FUNCTION2 = 0x8E
+ACTION_WITH = 0x94
 ACTION_PUSH = 0x96
+ACTION_JUMP = 0x99
+ACTION_DEFINE_FUNCTION = 0x9B
+ACTION_IF = 0x9D
+ACTION_GOTO_FRAME2 = 0x9F
 
 # A clip action record carries one extra key code byte when it handles
 # keyPress, which is bit 17 of the SWF 6+ event flags.
@@ -152,9 +166,11 @@ class CodeBlock:
     """kind is "frame" (DoAction), "init" (DoInitAction), "button" or
     "clip". owner is the timeline holding the tag, except for "init", whose
     owner is the sprite the init code belongs to, and "button", whose owner is
-    the button. placed_id and depth are set for clip actions only. span is
-    where the block's action records start and end in SwfIndex.data, which
-    avm1.py decodes."""
+    the button. actions holds the code of every action in the order the
+    bytes hold them, function bodies included, and leaves out the end flag.
+    placed_id and depth are set for clip actions only. span is where the
+    block's action records start and end in SwfIndex.data, which avm1.py
+    decodes."""
 
     kind: str
     owner: int
@@ -162,6 +178,7 @@ class CodeBlock:
     strings: tuple[str, ...]
     goto_labels: tuple[str, ...]
     goto_frames: tuple[int, ...]
+    actions: tuple[int, ...]
     placed_id: int | None = None
     depth: int | None = None
     events: int | None = None
@@ -318,17 +335,21 @@ def _cstring(data: bytes, pos: int) -> tuple[str, int]:
 
 
 def _scan_actions(data: bytes, start: int, end: int):
-    """-> (strings, goto labels, goto frames) of one action stream. Function
-    bodies sit inline after their DefineFunction header, so a flat walk
-    visits them too. GotoFrame's operand is 0-based and returned 1-based."""
+    """-> (strings, goto labels, goto frames, action codes) of one action
+    stream. Function bodies sit inline after their DefineFunction header, so a
+    flat walk visits them too. GotoFrame's operand is 0-based and returned
+    1-based."""
     strings: set[str] = set()
     labels: list[str] = []
     frames: list[int] = []
+    codes: list[int] = []
     pool: list[str] = []
     pos = start
     while pos < end:
         code = data[pos]
         pos += 1
+        if code != ACTION_END:
+            codes.append(code)
         if code < 0x80:
             continue
         (length,) = struct.unpack_from("<H", data, pos)
@@ -369,7 +390,7 @@ def _scan_actions(data: bytes, start: int, end: int):
                     if i < len(pool):
                         strings.add(pool[i])
                     p += 2
-    return tuple(sorted(strings)), tuple(labels), tuple(frames)
+    return tuple(sorted(strings)), tuple(labels), tuple(frames), tuple(codes)
 
 
 def _filter_size(data: bytes, pos: int) -> int:
@@ -448,10 +469,18 @@ class _Walker:
         self.index.display.setdefault(placement.owner, []).append(placement)
 
     def _code(self, kind, owner, frame, start, end, **extra) -> None:
-        strings, labels, frames = _scan_actions(self.data, start, end)
+        strings, labels, frames, codes = _scan_actions(self.data, start, end)
         self.index.code.append(
             CodeBlock(
-                kind, owner, frame, strings, labels, frames, span=(start, end), **extra
+                kind,
+                owner,
+                frame,
+                strings,
+                labels,
+                frames,
+                codes,
+                span=(start, end),
+                **extra,
             )
         )
 

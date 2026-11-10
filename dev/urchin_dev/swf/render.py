@@ -21,6 +21,14 @@
 # the zoom, rounded up as ffdec rounds it, and it can't be smaller than the
 # displayRect without the margin. A canvas that fails either doesn't match
 # the rects the driver reported, so no rect computed from them can be trusted.
+#
+# ffdec runs no ActionScript, so it draws every frame of a clip, frames past a
+# stop() included. It also draws a nested clip on its age modulo its frame
+# count, which brings a nested clip that ran stop() round to its frame 1 again.
+# BOOM_SPARK (DefineSprite 1712) drew its spark a second time on frames 21 to
+# 24 that way, where the game holds sprite 884 inside it on its empty frame
+# 20. played_frames() gives the frames to render of a clip the game plays
+# once, and ends them before any frame ffdec draws that way.
 from __future__ import annotations
 
 import math
@@ -33,10 +41,52 @@ from pathlib import Path
 from PIL import Image
 
 from urchin_dev.swf import ffdec_lib, timeline
-from urchin_dev.swf.swf_index import SwfIndex
+from urchin_dev.swf.swf_index import (
+    ACTION_DEFINE_FUNCTION,
+    ACTION_DEFINE_FUNCTION2,
+    ACTION_GOTO_FRAME2,
+    ACTION_IF,
+    ACTION_JUMP,
+    ACTION_NEXT_FRAME,
+    ACTION_PLAY,
+    ACTION_PREVIOUS_FRAME,
+    ACTION_SET_TARGET,
+    ACTION_SET_TARGET2,
+    ACTION_STOP,
+    ACTION_WITH,
+    Placement,
+    SwfIndex,
+)
 
 TWIPS = 20
 IDENTITY_LINEAR = (1.0, 0.0, 0.0, 1.0)
+
+# The actions that move or start a playhead: nextFrame(), prevFrame(), play(),
+# and a gotoAndPlay() or gotoAndStop() to a frame the script computes. A goto
+# to a fixed frame or label is in a CodeBlock's goto_frames or goto_labels
+# instead.
+MOVING_ACTIONS = frozenset(
+    {ACTION_NEXT_FRAME, ACTION_PREVIOUS_FRAME, ACTION_PLAY, ACTION_GOTO_FRAME2}
+)
+# The actions that leave a stop() in the same script in doubt: a branch or a
+# jump that may skip it, a function that holds it, and a with or tellTarget
+# block that may point it at another clip.
+DOUBTFUL_STOP_ACTIONS = frozenset(
+    {
+        ACTION_IF,
+        ACTION_JUMP,
+        ACTION_DEFINE_FUNCTION,
+        ACTION_DEFINE_FUNCTION2,
+        ACTION_WITH,
+        ACTION_SET_TARGET,
+        ACTION_SET_TARGET2,
+    }
+)
+# The playhead methods a script can call on a clip by name, as _parent.stop()
+# does.
+PLAYHEAD_METHODS = frozenset(
+    {"stop", "play", "gotoAndPlay", "gotoAndStop", "nextFrame", "prevFrame"}
+)
 
 
 @dataclass(frozen=True)
@@ -253,3 +303,124 @@ def placement_origin(
             f" with {layer.matrix[:4]}, not a pure translate"
         )
     return layer.matrix[4] / TWIPS, layer.matrix[5] / TWIPS
+
+
+def runs_stop(index: SwfIndex, sprite: int, frame: int) -> bool:
+    """-> whether `sprite`'s scripts on `frame` run stop(). Raises on a
+    script that moves a playhead any other way, calls a playhead method by
+    name, or holds a stop() with DOUBTFUL_STOP_ACTIONS, because then only its
+    ActionScript says which frames the clip shows."""
+    stops = False
+    for block in index.code:
+        if block.kind != "frame" or block.owner != sprite or block.frame != frame:
+            continue
+        where = f"timeline {sprite} frame {frame}"
+        actions = set(block.actions)
+        if block.goto_labels or block.goto_frames or actions & MOVING_ACTIONS:
+            raise RenderError(f"{where} moves its playhead other than by stop()")
+        names = sorted(PLAYHEAD_METHODS.intersection(block.strings))
+        if names:
+            raise RenderError(f"{where} calls {', '.join(names)} by name")
+        if ACTION_STOP in actions:
+            if actions & DOUBTFUL_STOP_ACTIONS:
+                raise RenderError(
+                    f"{where} may skip its stop() or run it on another clip"
+                )
+            stops = True
+    return stops
+
+
+def played_frames(index: SwfIndex, sprite: int, start: int = 1) -> list[int]:
+    """-> the frames to render of a clip the game plays once from `start`:
+    through the frame whose script runs stop(), or through its last frame
+    when none does. A clip nested in it plays from its own frame 1 and holds
+    the frame whose script runs stop(), where ffdec loops it on instead, so
+    the frames end before the first frame ffdec draws that way. That needs
+    the game to draw nothing from there on. Raises when it still draws
+    something, and when a clip placed before `start` still plays on `start`,
+    since no tag says how long that clip has played."""
+    count = index.sprite_frames[sprite]
+    end = next(
+        (frame for frame in range(start, count + 1) if runs_stop(index, sprite, frame)),
+        count,
+    )
+    frames = list(range(start, end + 1))
+    for at, frame in enumerate(frames):
+        for character, placed in _shown(index, sprite, frame):
+            if placed < start and character in index.sprite_frames:
+                raise RenderError(
+                    f"timeline {sprite} frame {frame} shows {character}, placed on"
+                    f" frame {placed}, before the frame {start} the clip resumes on"
+                )
+        if _misdrawn(index, sprite, frame, frame - 1):
+            for later in frames[at:]:
+                drawn = _draws(index, sprite, later, later - 1)
+                if drawn:
+                    raise RenderError(
+                        f"timeline {sprite} frame {later} still draws {drawn} after"
+                        f" a clip nested in it stops on frame {frame - 1}, which"
+                        " ffdec draws looped round instead"
+                    )
+            return frames[:at]
+    return frames
+
+
+def _game_frame(index: SwfIndex, sprite: int, age: int) -> int:
+    """-> the frame the game shows a clip on `age` frames after placing it.
+    The clip plays from its frame 1, holds the first frame it reaches whose
+    script runs stop(), and loops when it reaches none."""
+    count = index.sprite_frames[sprite]
+    for frame in range(1, min(age + 1, count) + 1):
+        if runs_stop(index, sprite, frame):
+            return frame
+    return age % count + 1
+
+
+def _shown(index: SwfIndex, owner: int, frame: int) -> list[tuple[int, int]]:
+    """-> (character, the frame that placed it) for each depth `owner` shows
+    on `frame`. A move keeps the character's place frame, and a place after a
+    RemoveObject starts a new one."""
+    placed: dict[int, int] = {}
+    for event in index.display.get(owner, []):
+        if event.frame > frame:
+            break
+        if isinstance(event, Placement) and not event.move:
+            placed[event.depth] = event.frame
+    return [
+        (layer.character_id, placed[depth])
+        for depth, layer in timeline.frames(index, owner)[frame - 1].items()
+    ]
+
+
+def _misdrawn(index: SwfIndex, owner: int, frame: int, age: int) -> bool:
+    """-> whether ffdec draws a clip nested in `owner`'s `frame` on another
+    frame than the game shows it on. `age` counts the frames since `owner`
+    started on its frame 1. ffdec draws a nested clip on its age modulo its
+    frame count (Timeline.drawDrawable at jpexs cde1cc21a), and passes that
+    age on to the clips nested in it."""
+    for character, placed in _shown(index, owner, frame):
+        if character not in index.sprite_frames:
+            continue
+        child_age = age - (placed - 1)
+        drawn = child_age % index.sprite_frames[character] + 1
+        if drawn != _game_frame(index, character, child_age) or _misdrawn(
+            index, character, drawn, child_age
+        ):
+            return True
+    return False
+
+
+def _draws(index: SwfIndex, owner: int, frame: int, age: int) -> list[int]:
+    """-> every character other than a clip that the game draws for
+    `owner`'s `frame`, the ones clips nested in it draw included. `age`
+    counts the frames since `owner` started on its frame 1."""
+    drawn = []
+    for character, placed in _shown(index, owner, frame):
+        if character not in index.sprite_frames:
+            drawn.append(character)
+            continue
+        child_age = age - (placed - 1)
+        drawn += _draws(
+            index, character, _game_frame(index, character, child_age), child_age
+        )
+    return drawn

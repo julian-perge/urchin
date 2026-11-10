@@ -1,12 +1,24 @@
 # Battle VFX extraction: 15 Missile bolt clips + KrinTrail + every real
 # BOOM_*/ex_* impact clip referenced by moves_abilities.json's
 # 13_impact_effect_name (frame_42/DoAction_4.as's krinBoltMake) - all
-# shape/tween DefineSprites with no ActionScript of their own (except
-# KrinTrail's inner clip - see TRAIL_SPRITE_ID below).
+# shape/tween DefineSprites.
+#
+# WHICH FRAMES. The game attaches each clip and only moves it into place
+# (frame_42/DoAction_4.as:78 and 193, and frame_217/PlaceObject2_3389_480
+# enterFrame line 452). A bolt loops while it flies. An impact clip plays
+# once and runs unloadMovie(this) on its last frame, and KrinTrail's inner
+# clip plays once and runs stop() on its last frame. So each clip renders
+# the frames render.played_frames() gives. That ends 18 impact clips early,
+# because each holds a clip that runs stop() on an empty frame and ffdec
+# loops that clip on instead: BOOM_SPARK ends on its frame 20, where ffdec
+# drew the spark again on frames 21 to 24. A bolt that played_frames() would
+# end early is refused, because a clip that loops can't end there.
 #
 # Each clip's frames are copied as-is into their own per-clip folder
 # (1.png, 2.png, ..., N.png, exactly as ffdec names them) - no packing,
-# no cropping, no resizing, no recoloring. Packing into one spritesheet
+# no cropping, no resizing, no recoloring. A run deletes any frame past
+# N, and the .import file beside it, which Godot's import leaves behind
+# when a PNG goes. Packing into one spritesheet
 # per clip was tried first and abandoned: BOOM1 (36 frames, 1225px wide)
 # and BOOM2 (36 frames, 956px wide) would pack to 44100px/34416px wide
 # images, past Godot's texture importer's 32768px width cap, which
@@ -53,6 +65,7 @@ import json
 import re
 import shutil
 import sys
+from pathlib import Path
 
 from urchin_dev import REPO_ROOT, WEB_SWF
 from urchin_dev.swf import render
@@ -137,6 +150,15 @@ def clip_offset(frame: render.Frame):
     return offset, (real_w - computed_w) / 2.0, (real_h - computed_h) / 2.0
 
 
+def remove_frames_past(out_dir: Path, count: int) -> None:
+    """Delete each frame in `out_dir` numbered past `count`, with its .import
+    file."""
+    for png in out_dir.glob("*.png"):
+        if int(png.stem) > count:
+            png.unlink()
+            png.with_name(png.name + ".import").unlink(missing_ok=True)
+
+
 def main():
     index = read_swf(WEB_SWF)
     ci_exports = {k.lower(): (k, v) for k, v in index.exports.items()}
@@ -167,10 +189,18 @@ def main():
     collect([TRAIL_CLIP_NAME], "trail", resolve_id=lambda _name: TRAIL_SPRITE_ID)
     collect(_impact_names(), "impacts")
 
+    played = {cid: render.played_frames(index, cid) for _name, cid, _category in clips}
+    for name, cid, category in clips:
+        count = index.sprite_frames[cid]
+        if category == "bolts" and len(played[cid]) != count:
+            raise RuntimeError(
+                f"{name} ({cid}) loops while it flies, but render.played_frames()"
+                f" ends it on frame {played[cid][-1]} of {count}"
+            )
     jobs = [
         render.Job(cid, frame, ZOOM)
-        for cid in dict.fromkeys(cid for _name, cid, _category in clips)
-        for frame in range(1, index.sprite_frames[cid] + 1)
+        for cid, frames in played.items()
+        for frame in frames
     ]
     offsets = {}
     outliers = []
@@ -184,6 +214,7 @@ def main():
             out_dir.mkdir(parents=True, exist_ok=True)
             for n, frame in enumerate(by_clip[cid], start=1):
                 shutil.copyfile(frame.path, out_dir / f"{n}.png")
+            remove_frames_past(out_dir, len(by_clip[cid]))
             # A clip that a bolt name and an impact name both resolve to gets
             # an offset under its first name only, as vfx_offsets.py did, so
             # vfx_scenes.py skips the second folder.

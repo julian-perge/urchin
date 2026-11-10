@@ -1,6 +1,7 @@
-# render.py with ffdec_lib.render faked by canned PNGs and result lines, and
-# ffdec_lib's load grouping with the driver command faked, so no test needs
-# Java, ffdec or the gitignored SWF.
+# render.py with ffdec_lib.render faked by canned PNGs and result lines,
+# ffdec_lib's load grouping with the driver command faked, and played_frames()
+# on SWF bytes built by hand, so no test needs Java, ffdec or the gitignored
+# SWF.
 from __future__ import annotations
 
 import json
@@ -12,9 +13,18 @@ from pathlib import Path
 import pytest
 from PIL import Image
 from test_swf_index import bits, place2, swf, tag
+from test_timeline import remove
 from urchin_dev.swf import ffdec_lib, render
 from urchin_dev.swf.render import Job, RenderError
-from urchin_dev.swf.swf_index import TAG_DEFINE_SHAPE, TAG_SHOW_FRAME, parse_swf
+from urchin_dev.swf.swf_index import (
+    TAG_DEFINE_SHAPE,
+    TAG_DEFINE_SPRITE,
+    TAG_DO_ACTION,
+    TAG_END,
+    TAG_SHOW_FRAME,
+    SwfIndex,
+    parse_swf,
+)
 
 
 def fake_driver(monkeypatch, results: list[dict], boxes: list[tuple | None]):
@@ -221,3 +231,174 @@ def test_only_depths_and_goto_reach_the_driver_only_when_a_job_sets_them(
     assert "only_depths" not in sent[0] and "goto" not in sent[0]
     assert sent[1]["only_depths"] == [72, 630]
     assert sent[1]["goto"] == [{"depth": 630, "frame": 12}]
+
+
+SHOW = tag(TAG_SHOW_FRAME)
+# A frame script that runs stop(): ActionStop, then the end flag.
+STOP = tag(TAG_DO_ACTION, bytes([0x07, 0x00]))
+SHAPE = 10
+# The clip a test plays, and a clip nested in it.
+CLIP = 21
+INNER = 22
+
+
+def sprite(sprite_id: int, *frames: bytes) -> bytes:
+    """A DefineSprite with one frame for each argument, which holds that
+    frame's tags."""
+    body = b"".join(frame + SHOW for frame in frames)
+    return tag(
+        TAG_DEFINE_SPRITE,
+        struct.pack("<HH", sprite_id, len(frames)) + body + tag(TAG_END),
+    )
+
+
+def clips(*sprites: bytes) -> SwfIndex:
+    """-> the index of a SWF that defines the shape SHAPE and then `sprites`."""
+    shape = tag(TAG_DEFINE_SHAPE, struct.pack("<H", SHAPE) + b"\0\0\0\0\0")
+    return parse_swf(swf(shape, *sprites, SHOW))
+
+
+def test_a_clip_that_never_stops_plays_through_its_last_frame():
+    index = clips(sprite(CLIP, place2(1, cid=SHAPE), b"", b""))
+    assert render.played_frames(index, CLIP) == [1, 2, 3]
+
+
+def test_a_clip_ends_on_the_frame_whose_script_runs_stop():
+    index = clips(sprite(CLIP, place2(1, cid=SHAPE), STOP, b""))
+    assert render.played_frames(index, CLIP) == [1, 2]
+
+
+def test_a_clip_resumed_past_a_stop_plays_on_from_where_it_resumes():
+    # The Shield clip rests on its frame 1, which runs stop(), and play() runs
+    # it on from frame 2 (DECODED_ALGORITHMS.md, The Shield clip).
+    index = clips(sprite(CLIP, STOP, place2(1, cid=SHAPE), b""))
+    assert render.played_frames(index, CLIP) == [1]
+    assert render.played_frames(index, CLIP, start=2) == [2, 3]
+
+
+def test_a_clip_ends_where_a_nested_clip_stops_when_nothing_draws_after():
+    # BOOM_SPARK (DefineSprite 1712) shows sprite 884 until its frame 25, and
+    # 884 runs stop() on its empty frame 20 (DefineSprite_884/frame_20), so the
+    # game draws nothing after frame 20 while ffdec loops 884 back to its
+    # frame 1. Here INNER stops on its empty frame 3 and CLIP shows it to its
+    # frame 5.
+    index = clips(
+        sprite(INNER, place2(1, cid=SHAPE), b"", remove(1) + STOP),
+        sprite(CLIP, place2(1, cid=INNER), b"", b"", b"", b"", remove(1)),
+    )
+    assert render.played_frames(index, CLIP) == [1, 2, 3]
+
+
+@pytest.mark.parametrize(
+    "inner, clip",
+    [
+        ((place2(1, cid=SHAPE), STOP), (place2(1, cid=INNER), b"", b"")),
+        (
+            (place2(1, cid=SHAPE), remove(1) + STOP),
+            (place2(1, cid=INNER), b"", place2(2, cid=SHAPE)),
+        ),
+    ],
+    ids=["the nested clip stops on a frame it draws", "the clip draws more"],
+)
+def test_a_clip_that_draws_after_a_nested_clip_stops_is_refused(inner, clip):
+    index = clips(sprite(INNER, *inner), sprite(CLIP, *clip))
+    with pytest.raises(RenderError, match=f"timeline {CLIP} frame 3 still draws"):
+        render.played_frames(index, CLIP)
+
+
+def test_a_nested_clip_counts_its_frames_from_the_frame_that_places_it():
+    # The Shield clip (DefineSprite 2675) places BOOM_SPARK on its frame 2, so
+    # sprite 884 inside the spark is one frame behind the Shield clip and only
+    # reaches its frame 19 of 20. Here CLIP places INNER on its frame 2, so
+    # INNER runs its stop() on CLIP's last frame and never plays past it.
+    index = clips(
+        sprite(INNER, place2(1, cid=SHAPE), remove(1) + STOP),
+        sprite(CLIP, b"", place2(1, cid=INNER), b""),
+    )
+    assert render.played_frames(index, CLIP) == [1, 2, 3]
+
+
+def test_a_clip_nested_two_deep_that_stops_ends_the_clip_too():
+    # The Shield clip holds BOOM_SPARK, which holds sprite 884, so 884 plays
+    # two levels down. Here MIDDLE places INNER on its frame 2, and INNER stops
+    # on its empty frame 2, which is CLIP's frame 3.
+    middle = 23
+    index = clips(
+        sprite(INNER, place2(1, cid=SHAPE), remove(1) + STOP),
+        sprite(middle, b"", place2(1, cid=INNER), b"", b""),
+        sprite(CLIP, place2(1, cid=middle), b"", b"", b""),
+    )
+    assert render.played_frames(index, CLIP) == [1, 2, 3]
+
+
+# gotoAndPlay("hit"): GotoLabel, then Play.
+GOTO_AND_PLAY = tag(
+    TAG_DO_ACTION, bytes([0x8C]) + struct.pack("<H", 4) + b"hit\0" + bytes([0x06, 0x00])
+)
+# if (x) stop();: Push "x", GetVariable, Not, then an If that jumps over the
+# Stop.
+MAYBE_STOP = tag(
+    TAG_DO_ACTION,
+    bytes([0x96]) + struct.pack("<H", 3) + b"\0x\0"
+    + bytes([0x1C, 0x12, 0x9D]) + struct.pack("<Hh", 2, 1)
+    + bytes([0x07, 0x00]),
+)  # fmt: skip
+# _parent.stop();: Push 0 and "_parent", GetVariable, Push "stop", CallMethod,
+# then Pop.
+PARENT_STOP = tag(
+    TAG_DO_ACTION,
+    bytes([0x96]) + struct.pack("<H", 14) + b"\x07\0\0\0\0" + b"\0_parent\0"
+    + bytes([0x1C, 0x96]) + struct.pack("<H", 6) + b"\0stop\0"
+    + bytes([0x52, 0x17, 0x00]),
+)  # fmt: skip
+# with (_parent) { stop(); }: Push "_parent", GetVariable, then a With whose
+# 1-byte body is the Stop.
+WITH_PARENT_STOP = tag(
+    TAG_DO_ACTION,
+    bytes([0x96]) + struct.pack("<H", 9) + b"\0_parent\0"
+    + bytes([0x1C, 0x94]) + struct.pack("<HH", 2, 1)
+    + bytes([0x07, 0x00]),
+)  # fmt: skip
+
+
+@pytest.mark.parametrize(
+    "script, refusal",
+    [
+        (GOTO_AND_PLAY, "moves its playhead"),
+        (MAYBE_STOP, "may skip its stop"),
+        (WITH_PARENT_STOP, "may skip its stop.* or run it on another clip"),
+        (PARENT_STOP, "calls stop by name"),
+    ],
+    ids=[
+        "a jump",
+        "a stop() behind a branch",
+        "a stop() inside a with block",
+        "a stop() called by name",
+    ],
+)
+def test_a_script_whose_effect_on_the_playhead_is_unclear_is_refused(script, refusal):
+    index = clips(sprite(CLIP, place2(1, cid=SHAPE), script, b""))
+    with pytest.raises(RenderError, match=f"timeline {CLIP} frame 2 {refusal}"):
+        render.played_frames(index, CLIP)
+
+
+def test_a_clip_resumed_while_an_earlier_nested_clip_plays_is_refused():
+    # INNER has played for as long as CLIP rested on its frame 1, and no tag
+    # says how long that was.
+    index = clips(
+        sprite(INNER, place2(1, cid=SHAPE), b""),
+        sprite(CLIP, place2(1, cid=INNER) + STOP, b"", b""),
+    )
+    with pytest.raises(
+        RenderError, match=f"timeline {CLIP} frame 2 shows {INNER}, placed on frame 1"
+    ):
+        render.played_frames(index, CLIP, start=2)
+
+
+def test_a_nested_clip_is_read_only_as_far_as_it_plays():
+    # INNER jumps on its frame 3, and CLIP shows it for 2 frames.
+    index = clips(
+        sprite(INNER, place2(1, cid=SHAPE), b"", GOTO_AND_PLAY),
+        sprite(CLIP, place2(1, cid=INNER), b""),
+    )
+    assert render.played_frames(index, CLIP) == [1, 2]
