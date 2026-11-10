@@ -639,7 +639,7 @@ func _play_move_event(event: Dictionary) -> void:
 		_log("melee start: caster=%d target=%d move=%s label=%s" % [
 			caster_slot, target_slot, move.display_name, move.animation_label,
 		])
-		await caster.melee(_melee_offset(caster_slot, target_slot), move.animation_label, on_impact, animation_speed > 0.0)
+		await caster.melee(_presenters[target_slot], move.animation_label, on_impact, animation_speed > 0.0)
 		if not is_inside_tree():
 			return
 		_count_from_impact(event)
@@ -771,17 +771,6 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 	])
 	_presenters[target_slot].show_result(result, MoveManagerAuto.get_move(int(event.get("move_id", 0))))
 	_refresh_bars(false)
-
-
-# Run-to-target offset for a melee strike: stop just short of the target,
-# on the caster's side of it.
-func _melee_offset(caster_slot: int, target_slot: int) -> Vector2:
-	var from: Vector2 = SLOT_POSITIONS.get(caster_slot, Vector2(400, 300))
-	var to: Vector2 = SLOT_POSITIONS.get(target_slot, Vector2(400, 300))
-	var offset: Vector2 = to - from
-	if offset.length() <= 60.0:
-		return Vector2.ZERO
-	return offset - offset.normalized() * 55.0
 
 
 # A line stays up for its whole timeToSay seconds, unless Space cuts it short

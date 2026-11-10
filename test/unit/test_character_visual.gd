@@ -109,24 +109,129 @@ func test_resolve_equip_looks():
 	)
 
 
+# A doll with no art standing at `spot`. It has no width, so a swing it makes
+# stops short of its target by the target's half-width alone.
+func _bare_doll(spot: Vector2) -> CharacterVisual:
+	var doll: CharacterVisual = add_child_autofree(CharacterVisualScene.instantiate())
+	doll.position = spot
+	return doll
+
+
+# Each frame krinMelee moves the caster a sixth of the way from its home to the
+# target's center, times min(1, 1.5 - 1.45 * relX / slowPoint), and the dash
+# ends on the first frame that has covered slowPoint, the distance less both
+# half-widths (frame_42/DoAction_4.as:46-56 and 97-133). So the dash takes 13
+# frames with no half-widths at any distance, and fewer the more of the
+# distance the half-widths take up (DECODED_ALGORITHMS.md, "krinMelee").
+func test_the_dash_reaches_its_end_point_in_the_original_number_of_frames():
+	var cases: Array = [
+		{"distance": 300.0, "half_widths": 0.0, "frames": 13},
+		{"distance": 477.0, "half_widths": 0.0, "frames": 13},
+		{"distance": 300.0, "half_widths": 60.0, "frames": 11},
+		{"distance": 150.0, "half_widths": 100.0, "frames": 4},
+	]
+	for case in cases:
+		var caster: CharacterVisual = _bare_doll(Vector2(100, 100))
+		assert_eq(caster.get_bounds().size.x, 0.0, "sanity: a doll with no art has no width")
+		var target: Vector2 = Vector2(100.0 + case["distance"], 100.0)
+		caster.play_melee(func(): return target, case["half_widths"])
+		var reached: int = 0
+		for frame in range(1, 31):
+			caster._process(SWF_FRAME_SECONDS)
+			if caster.position.x >= target.x - case["half_widths"]:
+				reached = frame
+				break
+		assert_eq(reached, case["frames"], "%d px with %d px of half-widths" % [case["distance"], case["half_widths"]])
+
+
+# krinMelee reads the target's x and both widths once, when the swing starts,
+# and ends the dash on the first frame that gets the caster to that end point
+# (frame_42/DoAction_4.as:46-56 and 124-133). The next action can dispatch
+# while its target is still running home, so the caster stops at the edge of
+# where the target stood when the swing started, wherever it has run since.
+func test_a_dash_at_a_target_still_in_its_runback_ends_at_its_edge_where_it_stood_then():
+	var caster: CharacterVisual = _bare_doll(Vector2(160, 100))
+	var target: CharacterVisual = _bare_doll(Vector2(640, 100))
+	watch_signals(target)
+	target.play_melee(func(): return caster.position, 0.0)
+	var runback_frames: int = 0
+	for frame in 120:
+		var before: float = target.position.x
+		target._process(SWF_FRAME_SECONDS)
+		if get_signal_emit_count(target, "attack_connected") > 0 and target.position.x > before:
+			runback_frames += 1
+			if runback_frames == 2:
+				break
+	assert_between(target.position.x, 200.0, 600.0, "sanity: the target is partway home")
+
+	var edge: float = target.position.x - 30.0
+	caster.play_melee(func(): return target.position, 30.0)
+	var dash: Array = [caster.position.x]
+	for frame in 60:
+		target._process(SWF_FRAME_SECONDS)
+		caster._process(SWF_FRAME_SECONDS)
+		if caster.position.x == dash[-1]:
+			break
+		dash.append(caster.position.x)
+	assert_gt(target.position.x - 30.0, dash[-1] + 100.0, "sanity: the target has run on since")
+	assert_gte(dash[-1], edge, "the dash reaches the target's edge where it stood when the swing started")
+	assert_lt(dash[-2], edge, "and ends on the frame it gets there")
+
+
+# krinMelee works each frame's step out from where the target stands that
+# frame (frame_42/DoAction_4.as:112-116), so a caster gains on a target that
+# runs on, and gets to the same end point sooner.
+func test_the_dash_chases_a_target_that_runs_on():
+	var running: Array = [Vector2(400, 100)]
+	var chaser: CharacterVisual = _bare_doll(Vector2(100, 100))
+	chaser.play_melee(func(): return running[0], 0.0)
+	var still: CharacterVisual = _bare_doll(Vector2(100, 100))
+	still.play_melee(func(): return Vector2(400, 100), 0.0)
+	var reached: Dictionary = {}
+	for frame in range(1, 31):
+		running[0] += Vector2(20, 0)
+		chaser._process(SWF_FRAME_SECONDS)
+		still._process(SWF_FRAME_SECONDS)
+		if chaser.position.x >= 400.0 and not reached.has("chaser"):
+			reached["chaser"] = frame
+		if still.position.x >= 400.0 and not reached.has("still"):
+			reached["still"] = frame
+	assert_eq(reached.get("still"), 13, "sanity: the dash at a target that stands still")
+	assert_lt(reached.get("chaser", 99), 13, "the dash after a target that runs on")
+
+
+# krinMelee moves y by the same share of the way to the target's center as x,
+# with no offset of its own (frame_42/DoAction_4.as:112-116), so the caster
+# runs along the line from its home to the target's center.
+func test_the_dash_runs_along_the_line_to_the_targets_center():
+	var caster: CharacterVisual = _bare_doll(Vector2(100, 100))
+	caster.play_melee(func(): return Vector2(400, 200), 60.0)
+	for frame in 11:
+		caster._process(SWF_FRAME_SECONDS)
+		var travelled: Vector2 = caster.position - Vector2(100, 100)
+		assert_almost_eq(travelled.y * 3.0, travelled.x, 0.001, "frame %d" % (frame + 1))
+	assert_gt(caster.position.y, 170.0, "sanity: the caster got most of the way down")
+
+
+# krinMelee: the dash with no half-widths arrives 13 frames in, Impact comes
+# 15 frames after arrival, and the Runback starts 14 frames after Impact and
+# eases home.
 func test_melee_runs_strikes_and_returns_home():
 	watch_signals(visual)
 	visual.position = Vector2(100, 100)
-	visual.play_melee(Vector2(80, 0))
-	# krinMelee: eased dash arrives ~0.47s in; Impact 15 frames after arrival;
-	# the Runback starts 14 frames after Impact and eases home.
-	for i in 6:
-		visual._process(0.05)
+	visual.play_melee(func(): return Vector2(180, 100), 0.0)
+	for frame in 6:
+		visual._process(SWF_FRAME_SECONDS)
 	assert_gt(visual.position.x, 130.0, "mid-dash: moved toward the target")
-	for i in 8:
-		visual._process(0.05)
+	for frame in 7:
+		visual._process(SWF_FRAME_SECONDS)
 	assert_almost_eq(visual.position.x, 180.0, 1.0, "arrived at the target")
-	for i in 46:
-		visual._process(0.05)
+	for frame in 120:
+		visual._process(SWF_FRAME_SECONDS)
 	assert_signal_emitted(visual, "attack_connected")
 	assert_signal_emitted(visual, "melee_finished")
 	assert_eq(visual._state, CharacterVisual.State.IDLE, "sequence recovers to idle")
-	assert_almost_eq(visual.position.x, 100.0, 0.1, "back home after runback")
+	assert_eq(visual.position, Vector2(100, 100), "back home after runback")
 
 
 # krinMelee's end counter counts the frame that raised the impact flag, so the
@@ -136,13 +241,13 @@ func test_melee_runs_strikes_and_returns_home():
 func test_a_caster_hit_in_its_runback_keeps_sliding_home_while_it_plays_hit():
 	watch_signals(visual)
 	visual.position = Vector2(100, 100)
-	visual.play_melee(Vector2(80, 0))
+	visual.play_melee(func(): return Vector2(180, 100), 0.0)
 	for frame in 120:
 		if get_signal_emit_count(visual, "attack_connected") > 0:
 			break
 		visual._process(SWF_FRAME_SECONDS)
 	var strike_spot: Vector2 = visual.position
-	assert_eq(strike_spot, Vector2(180, 100), "sanity: the blow lands at the target")
+	assert_almost_eq(strike_spot, Vector2(180, 100), Vector2(0.1, 0.0), "sanity: the blow lands at the target")
 	for frame in 13:
 		visual._process(SWF_FRAME_SECONDS)
 	assert_eq(visual.position, strike_spot, "13 frames after Impact the caster still stands where it struck")
@@ -168,7 +273,7 @@ func test_a_caster_hit_in_its_runback_keeps_sliding_home_while_it_plays_hit():
 func test_a_swing_that_starts_during_the_runback_still_ends_at_home():
 	watch_signals(visual)
 	visual.position = Vector2(100, 100)
-	visual.play_melee(Vector2(80, 0))
+	visual.play_melee(func(): return Vector2(180, 100), 0.0)
 	for frame in 120:
 		visual._process(SWF_FRAME_SECONDS)
 		if get_signal_emit_count(visual, "attack_connected") > 0 and visual.position.x < 160.0:
@@ -176,7 +281,7 @@ func test_a_swing_that_starts_during_the_runback_still_ends_at_home():
 	var partway: Vector2 = visual.position
 	assert_between(partway.x, 100.5, 160.0, "sanity: the doll is partway home")
 
-	visual.play_melee(Vector2(80, 0))
+	visual.play_melee(func(): return Vector2(180, 100), 0.0)
 	visual._process(SWF_FRAME_SECONDS)
 	assert_gte(visual.position.x, partway.x, "the new swing runs on from where the doll stands")
 	for frame in 240:
@@ -187,18 +292,18 @@ func test_a_swing_that_starts_during_the_runback_still_ends_at_home():
 func test_attack_variants_and_in_place_strike():
 	watch_signals(visual)
 	# Attack_Upper is a 30-frame swing (1s) - the overhead Destroy strike.
-	visual.play_melee(Vector2(80, 0), "Attack_Upper")
+	visual.play_melee(func(): return Vector2(80, 0), 0.0, "Attack_Upper")
 	assert_eq(visual._attack_label, "Attack_Upper")
 	for i in 60:
 		visual._process(0.05)
 	assert_signal_emitted(visual, "attack_connected")
 	assert_eq(visual._state, CharacterVisual.State.IDLE)
 	# Unknown labels fall back to the base swing.
-	visual.play_melee(Vector2.ZERO, "Krin.Firebolt")
+	visual.play_melee(func(): return Vector2(80, 0), 0.0, "Krin.Firebolt")
 	assert_eq(visual._attack_label, "Attack")
 	visual.set_state(CharacterVisual.State.IDLE)
-	# In-place strike (Shock moves): strike + follow-through play where the
-	# unit stands (the original Shock casters do the same), never moving.
+	# An in-place strike plays the swing and its follow-through where the doll
+	# stands, and the doll never moves.
 	visual.position = Vector2(50, 50)
 	visual.play_strike("Attack_Stab")
 	for i in 45:

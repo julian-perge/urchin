@@ -2029,11 +2029,16 @@ func test_a_melee_move_swings_at_its_target_with_its_own_label():
 	assert_eq(_count_impact_effects(scene), impacts + 1, "instant mode lands the blow at once")
 
 	scene.animation_speed = 1.0
-	scene._play_move_event(event)  # not awaited, because this swing never ends
+	scene._play_move_event(event)  # not awaited, because the test steps the swing
 	assert_eq(_count_impact_effects(scene), impacts + 1, "at full speed the blow waits for the swing")
 	var doll: CharacterVisual = scene._presenters[1].get_node("Doll")
 	assert_eq(doll._attack_label, move.animation_label, "the move's own swing")
-	assert_eq(doll._melee_offset, scene._melee_offset(1, 2), "run to the target")
+	for frame in 60:
+		if _count_impact_effects(scene) > impacts + 1:
+			break
+		doll._process(1.0 / 30.0)
+	var guard: CharacterVisual = scene._presenters[2].get_node("Doll")
+	assert_between(guard.position.x - doll.position.x, 0.0, 120.0, "the blow lands just short of the target")
 
 	scene.animation_speed = 0.0
 	GameData.current_save = null

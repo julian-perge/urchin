@@ -285,18 +285,28 @@ func _relation_to_player() -> Relation:
 	return Relation.ALLY if _unit.team_side == CombatUnit.Team.ONE else Relation.ENEMY
 
 
-# Starts the caster's melee swing to offset and returns at its Impact, once
-# on_blow has run. The doll's Runback then takes it home on its own while the
+# Starts the caster's melee swing at `target` and returns at its Impact, once
+# on_blow has run. The doll runs toward where the target's rig stands on each
+# frame, and stops short of where it stood as the swing started by half of each
+# fighter's width. The doll's Runback then takes it home on its own while the
 # battle goes on. With wait false nothing waits for the swing, so on_blow runs
 # at once. If the presenter leaves the tree during the swing, on_blow doesn't
 # run.
-func melee(offset: Vector2, label: String, on_blow: Callable, wait: bool = true) -> void:
-	_doll.play_melee(offset, label)
+func melee(target: FighterPresenter, label: String, on_blow: Callable, wait: bool = true) -> void:
+	_doll.play_melee(_doll_spot_on.bind(target), target.rig_size().x / 2.0, label)
 	if wait:
 		await _doll.attack_connected
 		if not is_inside_tree():
 			return
 	on_blow.call()
+
+
+# Where this fighter's doll would stand if its rig stood where `other`'s rig
+# stands now, in this presenter's space. krinMelee runs the caster's rig toward
+# the target's rig, so a MODEL5 doll's 10 px drop inside its rig doesn't tilt
+# the run.
+func _doll_spot_on(other: FighterPresenter) -> Vector2:
+	return other.rig_position() - position + _doll_offset
 
 
 func cast(move: Ability) -> void:
