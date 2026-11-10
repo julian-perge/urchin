@@ -30,3 +30,15 @@ hooks = [
   },
   { id = "ruff-format" }
 ]
+
+[[repos]]
+repo = "local"
+hooks = [
+  {
+    id = "godot-sidecars",
+    name = "Godot sidecars are staged or tracked",
+    language = "system",
+    entry = "uv run check_godot_sidecars",
+    types_or = ["png", "gdscript"],
+  },
+]
