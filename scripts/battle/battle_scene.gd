@@ -434,13 +434,14 @@ func _battle_loop() -> void:
 	_finish_battle()
 
 
-# battle.log gets a MOVE event's result as its fields and a MOVE_FAILED event's
-# reason as its name, because JSON.stringify would print the result as its id
-# and the reason as its number.
+# battle.log gets an event's result and unit snapshots as their fields and a
+# MOVE_FAILED event's reason as its name, because JSON.stringify would print an
+# object as its id and the reason as its number.
 func _event_log_text(event: Dictionary) -> String:
 	var logged: Dictionary = event.duplicate()
-	if logged.get("result") is MoveResult:
-		logged["result"] = logged["result"].to_dict()
+	for key in logged:
+		if logged[key] is MoveResult or logged[key] is UnitSnapshot:
+			logged[key] = logged[key].to_dict()
 	if logged.get("type") == BattleRunner.EventType.MOVE_FAILED:
 		logged["reason"] = BattleRunner.FailReason.find_key(logged["reason"])
 	return JSON.stringify(logged)
@@ -505,9 +506,6 @@ func _play_events(events: Array) -> void:
 				pass
 			BattleRunner.EventType.BATTLE_ENDED:
 				pass
-		# Mid-batch: redraw from DISPLAYED hp only - snapping here would
-		# reveal damage from hits that haven't animated yet.
-		_refresh_bars(false)
 
 
 func _play_move_event(event: Dictionary) -> void:
@@ -515,6 +513,10 @@ func _play_move_event(event: Dictionary) -> void:
 	var target_slot: int = int(event["target_slot"])
 	var move: Ability = MoveManagerAuto.get_move(int(event["move_id"]))
 	var caster: FighterPresenter = _presenters.get(caster_slot)
+	# The caster paid the move's costs as it dispatched, and the original redraws
+	# its bars right there (the conductor, line 359), before any swing or cast.
+	if caster != null:
+		caster.show_state(event["caster_after_dispatch"])
 	# Only Melee moves run and swing; the original plays "cast" for both
 	# Missile and Shock (param 12 is the projectile clip for Missiles, and
 	# unused for Shock) - see DECODED_ALGORITHMS.md.
@@ -606,7 +608,6 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 		int(target_unit.life_n), int(target_unit.life_u),
 	])
 	_presenters[target_slot].show_result(result, MoveManagerAuto.get_move(int(event.get("move_id", 0))))
-	_refresh_bars(false)
 
 
 # Run-to-target offset for a melee strike: stop just short of the target,
@@ -670,19 +671,15 @@ func _input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 
-# snap = true syncs the displayed hp to the true values (half-turn
-# boundaries - covers DOTs, life costs, shields); snap = false only redraws
-# from the displayed values (mid-batch, so unplayed hits stay hidden).
-func _refresh_bars(snap: bool = true) -> void:
+# Shows every fighter's unit as the half-turn left it. It runs only once the
+# replay has played every event, so it reveals nothing that hasn't played.
+func _refresh_bars() -> void:
 	for slot in _presenters:
 		var presenter: FighterPresenter = _presenters[slot]
-		if not snap:
-			presenter.redraw()
-			continue
 		var unit: CombatUnit = units[slot]
-		if int(presenter.displayed_hp) != int(unit.life_n):
+		if int(presenter.displayed.life) != int(unit.life_n):
 			_log("bar snap: slot=%d (%s) hp %d -> %d" % [
-				slot, unit.player_name, int(presenter.displayed_hp), int(unit.life_n),
+				slot, unit.player_name, int(presenter.displayed.life), int(unit.life_n),
 			])
 		presenter.snap_to_unit()
 

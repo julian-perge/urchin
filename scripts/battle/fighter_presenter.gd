@@ -1,9 +1,9 @@
 # fighter_presenter.gd
-# Everything one fighter shows on the Battle screen: its doll, its bars, the
-# health those bars display, its hover ring, its floating numbers, its stun and
-# its death. battle_scene.gd keeps one per slot and tells it when a hit lands,
-# when to snap to the unit, when it is hovered during a Decision and when it
-# dies.
+# Everything one fighter shows on the Battle screen: its doll, its bars, its
+# buff icons, its hover ring, its floating numbers, its stun and its death.
+# battle_scene.gd keeps one per slot and tells it when its move starts, when a
+# hit lands, when to snap to the unit, when it is hovered during a Decision and
+# when it dies.
 #
 # Nothing here reads an autoload, so a test can build one from a hand-made
 # CombatUnit. The scene passes the item and buff tables to setup() and connects
@@ -28,11 +28,12 @@ const RING_FADE_IN_TIME: float = 0.17
 const RING_FADE_OUT_TIME: float = 0.67
 const FLOAT_OFFSET: Vector2 = Vector2(-15, -72)
 
-# Health and stun as displayed. The runner pre-applies a whole half-turn before
-# the replay starts, so the bars and the stun pose follow these numbers instead
-# of the unit's own, and only show_result() and snap_to_unit() change them.
-var displayed_hp: float = 0.0
-var displayed_stun: float = 0.0
+# What the fighter shows: the life, Focus, stun and buff slots that the last
+# event shown on it left on its unit. The runner resolves a whole half-turn
+# before the replay starts, so the bars, the stun pose and the buff icons follow
+# this instead of the unit, and only show_state(), show_result() and
+# snap_to_unit() change it.
+var displayed: UnitSnapshot
 
 var _unit: CombatUnit
 var _buffs_by_id: Dictionary = {}
@@ -54,8 +55,7 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	_unit = unit
 	_buffs_by_id = buffs_by_id
 	_float_layer = float_layer
-	displayed_hp = unit.life_n
-	displayed_stun = unit.stun
+	displayed = UnitSnapshot.of(unit)
 	_doll.position = home
 	if unit.team_side == CombatUnit.Team.TWO:
 		_doll.scale.x = -1  # mirrored, facing left
@@ -69,17 +69,17 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	_overlay.position = _doll.position
 	_overlay.setup(unit.player_name)
 	_overlay.ring.draw.connect(_draw_ring)
-	redraw()
+	_draw_status()
 
 
 # Shows one move's result at the moment it lands on this fighter: the number,
-# then the death or flinch, then the voice, then the bar and the stun pose. Every
-# result but a miss moves the bar and the stun pose to the life and stun it
-# states, because the original recomputes and redraws its target after every
-# strike that lands (the conductor, line 103) and runs nothing on a miss. The
-# life a result states already holds any life cost or damage-over-time tick the
-# unit took earlier in the half-turn. The original drew those when they
-# happened, and here they reach the bar with the next result on the unit.
+# then the death or flinch, then the voice, then the bars, the buff icons and
+# the stun pose. Every result but a miss shows the target it states, because the
+# original recomputes and redraws its target after every strike that lands (the
+# conductor, line 103) and runs nothing on a miss. That target already holds any
+# damage-over-time tick the unit took earlier in the half-turn. The original
+# drew a tick when it happened, and here it reaches the screen with the next
+# result on the unit.
 func show_result(result: MoveResult, move: Ability) -> void:
 	var amount: float = result.amount
 	var critical: bool = result.critical
@@ -118,9 +118,7 @@ func show_result(result: MoveResult, move: Ability) -> void:
 			float_text("MISS", Color.GRAY)
 			effect_cue.emit("sfx_magicmiss")
 	if result.kind != MoveResult.Kind.MISS:
-		displayed_hp = result.life_after
-		_show_stun(result.stun_after)
-	redraw()
+		show_state(result.target_after)
 
 
 func _damage_color(move: Ability) -> Color:
@@ -170,19 +168,22 @@ func die() -> void:
 	effect_cue.emit(_unit.voice_die)
 
 
-# Draws the displayed health and the unit's true focus and buffs. It never moves
-# the health bar toward the unit's real life, and never changes the stun pose.
-func redraw() -> void:
-	_overlay.show_status(_unit, displayed_hp, _buffs_by_id)
+# Shows the bars, the buff icons and the stun pose that an event left on this
+# fighter's unit.
+func show_state(state: UnitSnapshot) -> void:
+	_show_stun(state.stun)
+	displayed = state
+	_draw_status()
 
 
-# For the half-turn's end, which is where a damage-over-time tick, a buff that
-# wears off or a life cost with no later result on the unit reaches the bar and
-# the stun pose.
+func _draw_status() -> void:
+	_overlay.show_status(displayed, _buffs_by_id)
+
+
+# For the half-turn's end. A Buff tick, and a buff that a move lands on its own
+# caster, reach the screen here when no later event on the unit shows them.
 func snap_to_unit() -> void:
-	displayed_hp = _unit.life_n
-	_show_stun(_unit.stun)
-	redraw()
+	show_state(UnitSnapshot.of(_unit))
 
 
 # A unit's stun is a running total over every stun buff it holds. Any rise
@@ -191,12 +192,12 @@ func snap_to_unit() -> void:
 # applyChangesKrin compares STUN with its last value (see DECODED_ALGORITHMS.md).
 # The original changes no dead unit's stun pose, so a dead doll keeps its death.
 func _show_stun(stun: float) -> void:
-	if not _dead:
-		if stun > displayed_stun:
-			_doll.enter_stun()
-		elif stun < displayed_stun:
-			_doll.exit_stun()
-	displayed_stun = stun
+	if _dead:
+		return
+	if stun > displayed.stun:
+		_doll.enter_stun()
+	elif stun < displayed.stun:
+		_doll.exit_stun()
 
 
 # battle_scene.gd passes true only while the mouse is over the fighter during a

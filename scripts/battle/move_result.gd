@@ -36,11 +36,8 @@ var amount: float = 0.0
 var shield_took_all: bool = false
 
 # The target's life when the move started resolving on it, after the caster paid
-# the move's costs, and its life once the move finished, after the stat
-# recompute that follows every hit. That recompute moves life when the move lands
-# or dispels a buff that changes max life.
+# the move's costs.
 var life_before: float = 0.0
-var life_after: float = 0.0
 
 var killed: bool = false
 var critical: bool = false
@@ -54,12 +51,15 @@ var buff_applied: String = ""
 # unit's own stun can already include a stun from later in that half-turn.
 var target_stunned: bool = false
 
-# The target's stun once the move finished, after its status effect landed. The
-# battle screen starts or ends the target's stun pose from this at the impact,
-# the way the original's applyChangesKrin compares STUN after every strike that
-# lands (frame_42/DoAction_10.as:468-481), because the unit's own stun at replay
-# time can already include a stun from later in the half-turn.
-var stun_after: float = 0.0
+# The target once the move finished: its life, Focus, stun and buff slots after
+# the status effect landed and after the stat recompute that follows every hit.
+# That recompute moves life when the move lands or dispels a buff that changes
+# max life. The battle screen draws the target from this at the impact, the way
+# the original's applyChangesKrin redraws the target's bars, buff icons and stun
+# pose after every strike that lands (the conductor, line 103, and
+# frame_42/DoAction_10.as:342-379 and 468-481), because at replay time the unit
+# can already hold changes from later in the half-turn.
+var target_after: UnitSnapshot = UnitSnapshot.new()
 
 
 # battle_scene.gd writes events to battle.log with JSON.stringify, which prints
@@ -71,10 +71,9 @@ func to_dict() -> Dictionary:
 		"amount": amount,
 		"shield_took_all": shield_took_all,
 		"life_before": life_before,
-		"life_after": life_after,
 		"killed": killed,
 		"critical": critical,
 		"buff_applied": buff_applied,
 		"target_stunned": target_stunned,
-		"stun_after": stun_after,
+		"target_after": target_after.to_dict(),
 	}
