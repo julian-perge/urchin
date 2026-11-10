@@ -27,14 +27,15 @@ SLOT_SCRIPT = Path.home() / "tmp" / "2026-11-07-godot-slots" / "godot-slot.fish"
 COLOR_CODE = re.compile(r"\x1b\[[0-9;]*m")
 TESTS_TOTAL = re.compile(r"^Tests +(\d+)$", re.MULTILINE)
 
-# The optional Path is the HOME the Godot process gets. None keeps the real one.
+# The Path is the HOME the Godot process gets. None means Godot gets the real HOME.
 Godot = Callable[[Sequence[str], Path | None], tuple[int, str]]
 
 
 def godot_command(args: Sequence[str], home: Path | None) -> list[str | Path]:
-    """The slot script keeps the real HOME, because it keeps its slot folders
-    under ~. `env` sets the new HOME for the Godot process only."""
-    env = ["env", f"HOME={home}"] if home else []
+    """The command that runs Godot in a slot. The slot script keeps its slot
+    folders under the real ~, so it must see the real HOME. `env` sets the new
+    HOME for the Godot process only."""
+    env = ["env", f"HOME={home}"] if home is not None else []
     return ["fish", SLOT_SCRIPT, *env, GODOT, *args]
 
 
