@@ -1,7 +1,7 @@
 # battle_scene.gd
 # The playable battle screen - glues the headless stack (BattleSetup ->
-# BattleRunner -> BattleRewards/ZoneProgression/Achievements) to visuals
-# (one FighterPresenter per slot), input, and audio.
+# BattleRunner -> BattleSettlement) to visuals (one FighterPresenter per
+# slot), input, and audio.
 #
 # Interaction model matches the original (frame 217 KRIN_BATTLE_SCENE):
 # - hover a unit: a target ring glows under it (white = you, green = ally,
@@ -629,31 +629,16 @@ func _finish_battle() -> void:
 		return
 	_finished = true
 	var save: PlayerSave = GameData.current_save
-	var outcome: int = runner.win_condition
-	if outcome == BattleRunner.Outcome.WIN and save != null:
-		var was_story = battle_info.get("is_story_progress", false)
-		var battle_result: Dictionary = ZoneProgression.after_battle_won(save, battle.id, was_story)
-		_pending_cutscene = battle_result.get("cutscene", "")
-		_pending_goto_scene = battle_result.get("goto_scene", "")
-		var enemy_levels: Array = BattleRewards.unit_levels_from_slots(units, [2, 4, 6])
-		var train_cap: int = int(battle_info.get("train_cap", BattleSetup.DEFAULT_TRAIN_CAP))
-		var money_levels: Array = BattleRewards.money_levels(battle, save, train_cap)
-		var fighting_party: Array[Variant] = []
-		for marker in [-2, -1]:
-			var party_id: int = Party.deployed_party_id(save, marker)
-			if party_id > 0:
-				fighting_party.append(party_id)
-		var rewards: Dictionary = BattleRewards.apply_victory(save, money_levels, enemy_levels, fighting_party)
-		var drops: Array = BattleRewards.roll_drops(battle)
-		var counters: Dictionary = Achievements.collect_battle_counters(runner, units)
-		for achievement_id in Achievements.check_battle_victory(save, battle.id, was_story, counters):
-			Achievements.unlock(achievement_id)
+	var settlement := BattleSettlement.settle(runner, save, battle_info, ZoneManager.achievements_path)
+	if settlement.outcome == BattleRunner.Outcome.WIN:
+		_pending_cutscene = settlement.cutscene
+		_pending_goto_scene = settlement.goto_scene
 		# Drops are click-to-keep on the victory screen (VICTORY[1]); the
 		# autosave happens on Proceed, like the original.
 		var victory: VictoryScreen = preload("res://scenes/battle/victory_screen.tscn").instantiate()
 		victory.name = "VictoryScreen"
 		add_child(victory)
-		victory.setup(save, rewards, drops, fighting_party)
+		victory.setup(save, settlement)
 		victory.proceed_pressed.connect(_on_victory_proceed)
 		# The original never had a turn label, and it draws its victory screen on
 		# Navigation, the hub's frame, once a win has left the battle's frame
@@ -662,16 +647,13 @@ func _finish_battle() -> void:
 		# this screen, so it is hidden here instead of still showing whose turn it
 		# was across the top of the screen.
 		turn_label.hide()
-	elif outcome == BattleRunner.Outcome.LOSS or outcome == BattleRunner.Outcome.DRAW:
-		# A draw ends the game the same as a defeat: the original sends both to
-		# loseCombat (DefineSprite_3355/frame_85/DoAction.as:5-16,
-		# frame_241/DoAction.as:1), which resets the game and opens gameOverMenu
-		# (frame_230/DoAction.as:1-5, frame_43/DoAction.as:21-25). The screen goes
-		# on the UI layer so the turn label there can't draw over it.
+	elif settlement.game_over:
+		# The screen goes on the UI layer so the turn label there can't draw over
+		# it.
 		var game_over: GameOverScreen = preload("res://scenes/battle/game_over_screen.tscn").instantiate()
 		game_over.name = "GameOverScreen"
 		$UI.add_child(game_over)
-	battle_finished.emit(outcome)
+	battle_finished.emit(settlement.outcome)
 
 
 func _on_victory_proceed() -> void:

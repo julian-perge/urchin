@@ -53,13 +53,11 @@ func _on_proceed_pressed() -> void:
 	proceed_pressed.emit()
 
 
-# rewards = BattleRewards.apply_victory result; drops = rolled item ids;
-# party_ids = deployed companion party ids that fought.
-func setup(save: PlayerSave, rewards: Dictionary, drops: Array, party_ids: Array) -> void:
-	_money_value.text = "€%d" % int(rewards.get("money_gained", 0))
-	_exp_value.text = "%d%%" % int(rewards.get("xp_gained", 0))
-	_build_experience_rows(save, party_ids)
-	_build_drop_slots(save, drops)
+func setup(save: PlayerSave, settlement: BattleSettlement) -> void:
+	_money_value.text = "€%d" % settlement.money_gained
+	_exp_value.text = "%d%%" % int(settlement.xp_gained)
+	_build_experience_rows(save, settlement.fighting_party)
+	_build_drop_slots(save, settlement.drops)
 	inventory_panel.populate_from_save(save, ItemManagerAuto.items_by_id)
 	inventory_panel.set_gold(save.euro)
 

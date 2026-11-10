@@ -343,7 +343,7 @@ func test_the_game_calls_the_player_sonny_whatever_the_save_is_named():
 	var save: PlayerSave = PlayerSave.new_game("< Enter Name Here >", 0)
 	GameData.current_save = save
 	var victory = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
-	victory.setup(save, {}, [], [])
+	victory.setup(save, BattleSettlement.new())
 	var rows: Array = victory.get_children().filter(func(child): return child is VictoryExperienceRow)
 	assert_eq(rows.size(), 1, "one experience row, the player's")
 	if rows.size() == 1:

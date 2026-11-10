@@ -146,7 +146,7 @@ func test_hub_panel_text_is_bold():
 # and 50).
 func test_victory_text_is_bold_except_the_two_font_295_lines():
 	var victory = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
-	victory.setup(GameData.current_save, {}, [], [])
+	victory.setup(GameData.current_save, BattleSettlement.new())
 	_assert_fonts(victory, {
 		"ExperienceLabel": [2996, 65],
 		"ClickHintLabel": [3007, 65],
