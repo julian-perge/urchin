@@ -718,13 +718,14 @@ func test_floating_text_rises_fades_and_frees_itself():
 	assert_true(label.is_queued_for_deletion(), "and gone once the 0.8 s are up")
 
 
-# Starts a melee whose swing the test steps by hand. The returned array holds
-# true once melee() has returned.
+# Starts a melee at an ally 200 px to the left, whose swing the test steps by
+# hand. The returned array holds true once melee() has returned.
 func _start_melee(on_blow: Callable) -> Array:
 	_doll.set_process(false)
+	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT), HOME - Vector2(200, 0))
 	var returned: Array = []
 	var run: Callable = func():
-		await _presenter.melee(Vector2(100, 0), "Attack", on_blow)
+		await _presenter.melee(target, "Attack", on_blow)
 		returned.append(true)
 	run.call()
 	return returned
@@ -743,9 +744,9 @@ func test_melee_lands_the_blow_once_and_returns_at_it():
 		_doll._process(1.0 / 30.0)
 	assert_eq(blows.size(), 1, "the blow lands once")
 	if blows.size() == 1:
-		assert_almost_eq(blows[0].x, HOME.x + 100.0, 0.01, "at the target")
+		assert_lt(blows[0].x, HOME.x - 100.0, "after a run toward the target")
+		assert_eq(_doll.position, blows[0], "while the doll still stands where it struck")
 	assert_eq(returned, [true], "melee returns at the blow")
-	assert_eq(_doll.position, HOME + Vector2(100, 0), "while the doll still stands where it struck")
 	for frame in 120:
 		_doll._process(1.0 / 30.0)
 	assert_eq(_doll.position, HOME, "and the doll then runs home on its own")
@@ -754,7 +755,8 @@ func test_melee_lands_the_blow_once_and_returns_at_it():
 
 func test_melee_without_waiting_lands_the_blow_at_once():
 	var blows: Array = []
-	await _presenter.melee(Vector2(100, 0), "Attack", func(): blows.append(true), false)
+	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT), HOME - Vector2(200, 0))
+	await _presenter.melee(target, "Attack", func(): blows.append(true), false)
 	assert_eq(blows.size(), 1, "the blow lands without the swing being played")
 
 
@@ -765,6 +767,70 @@ func test_a_melee_whose_presenter_left_the_tree_lands_nothing():
 	_doll.attack_connected.emit()
 	assert_eq(blows.size(), 0, "no blow on a fighter that is gone")
 	assert_eq(returned, [true], "and melee returns")
+
+
+# Builds a second presenter for `unit` at `home`, on the same float layer, and
+# stops its doll's own processing so that the test steps the doll itself.
+func _fighter_at(unit: CombatUnit, home: Vector2, items_by_id: Dictionary = {}) -> FighterPresenter:
+	var presenter: FighterPresenter = add_child_autofree(FighterPresenterScene.instantiate())
+	presenter.setup(unit, home, items_by_id, {}, _layer)
+	presenter.get_node("Doll").set_process(false)
+	return presenter
+
+
+# Puts a weapon whose art is `looks` in both of `unit`'s hands, and returns the
+# item table that holds it. Empty looks leave the unit bare.
+func _armed(unit: CombatUnit, looks: String) -> Dictionary:
+	var weapon := GameItem.new()
+	weapon.looks = looks
+	unit.equipment_ids = [0, 0, 0, 0, 0, 7, 7]
+	return {7: weapon}
+
+
+# Swings `caster` at `target`, steps the caster's doll until the blow lands,
+# and returns where the caster's doll stands then.
+func _blow_spot(caster: FighterPresenter, target: FighterPresenter) -> Vector2:
+	var doll: CharacterVisual = caster.get_node("Doll")
+	var spots: Array = []
+	caster.melee(target, "Attack", func(): spots.append(doll.position))  # not awaited, because the test steps the swing
+	for frame in 60:
+		if not spots.is_empty():
+			break
+		doll._process(1.0 / 30.0)
+	return spots[0] if not spots.is_empty() else Vector2.INF
+
+
+# krinMelee stops the caster at the target's x less half of each fighter's
+# width, the caster's in its run pose and the target's as it stands
+# (frame_42/DoAction_4.as:46-56). A wide weapon widens a fighter, so two
+# fighters with wide weapons stop further apart than two bare fighters.
+func test_two_fighters_in_wide_gear_stop_further_apart_than_two_bare_fighters():
+	var gaps: Dictionary = {}
+	for looks in ["", "UBER1"]:
+		var caster_unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+		var target_unit: CombatUnit = _make_unit(CombatUnit.Team.TWO, ENEMY_SLOT)
+		var caster: FighterPresenter = _fighter_at(caster_unit, Vector2(160, 300), _armed(caster_unit, looks))
+		var target: FighterPresenter = _fighter_at(target_unit, Vector2(640, 300), _armed(target_unit, looks))
+		gaps[looks] = target.get_node("Doll").position.x - _blow_spot(caster, target).x
+	assert_gt(gaps[""], 0.0, "sanity: two bare fighters stop short of each other")
+	assert_gt(gaps["UBER1"], gaps[""], "two fighters with UBER1 in both hands stop further apart")
+
+
+# dressChar draws a MODEL5 doll 10 px lower inside its rig, and krinMelee runs
+# the rig toward the target's rig (frame_217/DoAction_2.as:19-24 and
+# frame_42/DoAction_4.as:112-116). So a MODEL5 fighter runs level at a target
+# whose rig stands level with its own.
+func test_a_model5_fighter_runs_level_at_a_target_level_with_it():
+	var caster_unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+	caster_unit.model = ["MODEL5", "ONE", "ONE", "M"]
+	var caster: FighterPresenter = _fighter_at(caster_unit, Vector2(160, 300))
+	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT), Vector2(640, 300))
+	var doll: CharacterVisual = caster.get_node("Doll")
+	var start: Vector2 = doll.position
+	assert_eq(start.y, 310.0, "sanity: the MODEL5 doll stands 10 px lower")
+	var blow: Vector2 = _blow_spot(caster, target)
+	assert_gt(blow.x, start.x + 300.0, "sanity: the doll ran most of the way")
+	assert_eq(blow.y, start.y, "and stayed level")
 
 
 # The real colortobe glow tint (frame217/onClipEvent(enterFrame).as: 417,450).

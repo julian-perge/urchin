@@ -5,7 +5,8 @@ timeline.
 
 ## krinMelee - the melee run/strike/runback (frame_42/DoAction_4.as)
 
-Implemented in `scripts/entities/character_visual.gd` (`play_melee`, `_animate_melee`).
+Implemented in `scripts/entities/character_visual.gd` (`play_melee`, `_animate_melee`). `FighterPresenter.melee` (`scripts/battle/fighter_presenter.gd`) gives the doll the target's
+rig position on every frame and the target's half-width.
 
 Constants (frame 42 globals):
 
@@ -587,7 +588,7 @@ Everything below still stands in for original behavior, except the rows marked D
 | Damage number art | Labels with exact colors + bigger crit font | NumberFixer/NumberSetter digit clips, miss/shield variants: `frame_42/DoAction_7.as` |
 | Top battle HP/focus bars | in-field bars with numbers | `lifeBarUpdate` + bar clips, layout in frame 217 placements |
 | Doll ground shadow | none | player clip "shadower" (hidden on death, MODEL1 frame 360 script) |
-| Melee end point | fixed 55 px short | target/shooter half-widths: `krinMelee` endPoint |
+| Melee end point | **DONE (2026-11-10)**: `CharacterVisual.play_melee` stops the caster at the target's x less both half-widths, measured from the dolls' drawn bounds as the swing starts, and steps toward the target's live position on the original's dash and Runback steps. The part PNGs carry their filters' glow and Flash's bounds don't, so a half-width can come out a few px wider than the original's | target/shooter half-widths: `krinMelee` endPoint |
 | Swing whoosh | impact sound only | `sfx_swing` cues baked at MODEL1 clip frames 88/118/146 |
 | Stun/cast animations | **DONE (2026-07-21)**: the port plays the real labels (see the stun family section above), no longer a code-driven slump/raise | labels `cast` 189-219, `stun` 220-239 -> `stun2` 240-279 loop (frame 279 goto), `outofstun` 280-295 -> stand |
 | Hover ring / radial menu / pass ring | modern inventions (kept by design) | original UX: `KrinSelector` clips + `KrinToolTipper` tooltip system |
