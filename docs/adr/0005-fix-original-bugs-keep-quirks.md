@@ -20,3 +20,5 @@ AS paths below are relative to `dev/source_files/action_script/`. The conductor 
 - A shield exactly as big as a hit is not a Shield block. The shield drops to 0, and the hit plays its flash, its `hit` label and the hit voice with no number (`frame_42/DoAction_8.as:70-131`).
 - Any rise in a unit's stun replays its stun animation, even on a unit that is already stunned, and any fall plays `outofstun`, even one that leaves it stunned (`applyChangesKrin`, `frame_42/DoAction_10.as:468-481`).
 - `dressChar` draws a `MODEL5` unit at 0.8x and 10 px lower.
+- A Floating number between 0 and 1 plays its label with no digits. `KrinNumberShow` draws any number above 0, and its digit loop drops the fraction (`frame_42/DoAction_7.as:8` and 27-61).
+- `KrinNumberShow` cycles its Floating numbers over 20 depths, 1620 to 1639, so a 21st number replaces the one still at its depth (`frame_42/DoAction_7.as:4`, 37 and 75-79).
