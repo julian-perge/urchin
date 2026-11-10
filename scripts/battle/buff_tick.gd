@@ -24,6 +24,12 @@ var amount: float = 0.0
 # element's color.
 var element: CombatUnit.Element = CombatUnit.Element.PHYSICAL
 
+# True when some element dealt damage in the tick, so that `element` is the one
+# that dealt the most. It is false when `element` is only the PHYSICAL that the
+# original's colorToBe starts at, as it is for a tick that hurts the unit only
+# because sswitch turned its healing around.
+var element_dealt_damage: bool = false
+
 # True when the unit's shield was bigger than the whole total, so the shield took
 # all of it and the unit lost no life. A shield exactly as big as the total does
 # not count: the original takes its other branch, which leaves a total of 0
@@ -56,6 +62,7 @@ func to_dict() -> Dictionary:
 		"direction": MoveResult.Direction.find_key(direction),
 		"amount": amount,
 		"element": CombatUnit.ELEMENT_ORDER[element],
+		"element_dealt_damage": element_dealt_damage,
 		"shield_took_all": shield_took_all,
 		"killed": killed,
 		"after": after.to_dict(),
