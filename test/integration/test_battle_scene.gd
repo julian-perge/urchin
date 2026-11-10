@@ -1084,7 +1084,7 @@ func test_heroic_decision_passes_the_turn_when_the_window_runs_out():
 	var player_events: Array = scene.runner.events.slice(first_event).filter(
 		func(event): return event["turn"] == turn and int(event.get("caster_slot", 0)) == BattleRunner.PLAYER_SLOT
 	)
-	assert_eq(player_events, [], "the player passed")
+	assert_eq(player_events.map(func(event): return event["type"]), [BattleRunner.EventType.PASSED], "the player passed")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1906,12 +1906,43 @@ func test_a_stunned_caster_or_a_failed_cost_holds_the_next_action_1_frame():
 	ZoneManager.auto_start_battles = true
 
 
+# A pass takes the path a stun takes in the conductor. It ticks the caster's
+# buffs on its Dispatch frame, and the next action dispatches on the frame
+# after, both when the tick does nothing and when it kills the caster
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 557-584).
+func test_a_pass_holds_the_next_action_1_frame_whether_or_not_its_buff_tick_kills():
+	var scene = await _battle_100_on_a_stepped_clock("PassFrames")
+	var shock: Ability = _first_move_of_type("Shock")
+	var passes: Array = [
+		[{"type": BattleRunner.EventType.PASSED, "caster_slot": 3}],
+		[
+			{"type": BattleRunner.EventType.PASSED, "caster_slot": 3},
+			{"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME},
+		],
+	]
+	for index in passes.size():
+		var first: String = str(11 + 10 * index)
+		var second: String = str(12 + 10 * index)
+		var events: Array = [_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, float(first))]
+		events.append_array(passes[index])
+		events.append(_damage_event(BattleRunner.PLAYER_SLOT, 2, shock, float(second)))
+		var shown: Dictionary = _frames_texts_float(scene, events, [first, second])
+		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26 + 1,
+			"the pass dispatches 26 frames after the Impact, and the next action 1 frame after it, %s" % [
+				"with a tick that kills" if index == 1 else "with a tick that does nothing",
+			])
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The conductor ends a Half-turn on the frame its last action's count runs out.
 # On the next frame the AI picks its moves at once, and on the frame after that
 # the first of them dispatches (frame_217/PlaceObject2_3389_480 enterFrame,
 # lines 139-312 and 589-792). Here the player passes and Veradux is off AI, so
-# the player's Half-turn has nothing to play, and the guard's only move is a
-# Shock, which lands on the frame it dispatches on.
+# both of them pass, and each pass holds the next action 1 frame (lines
+# 557-584). The guard's only move is a Shock, which lands on the frame it
+# dispatches on.
 func test_an_ai_half_turn_dispatches_2_frames_after_the_last_half_turn_ends():
 	var scene = await _battle_100_on_a_stepped_clock("AiHalfTurnStart")
 	var shock: Ability = MoveManagerAuto.moves_by_id.values().filter(func(move):
@@ -1922,14 +1953,14 @@ func test_an_ai_half_turn_dispatches_2_frames_after_the_last_half_turn_ends():
 	guard.cooldowns_absolute = [0]
 	scene.units[3].ai_enabled = false
 	scene._on_pass_pressed()
-	await wait_process_frames(1)  # the turn loop takes the pass on the next frame
+	await wait_process_frames(1)  # The turn loop takes the pass on the next frame.
 	assert_eq(scene.runner.team_move_now, 2, "sanity: the guard's Half-turn is next")
 	var numbers: int = _float_labels(scene).size()
 	var frames: int = 0
 	while _float_labels(scene).size() == numbers and frames < 60:
 		_step_frame(scene)
 		frames += 1
-	assert_eq(frames, 2, "the guard's move dispatches 2 frames after the player's Half-turn ends")
+	assert_eq(frames, 2 + 2, "the guard's move dispatches 2 frames after the two passes end the player's Half-turn")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

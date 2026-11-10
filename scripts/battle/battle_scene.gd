@@ -107,9 +107,8 @@ var _clock: float = 0.0
 # Frames the last action still holds the next Dispatch back for. _play_events
 # waits them out before the next action, and before the Half-turn ends.
 var _frames_to_dispatch: int = 0
-# The slot whose action is playing, whether that action was a move, and whether
-# the caster's Buff tick is still to come.
-var _acting_slot: int = 0
+# These say whether the action playing was a move, and whether its caster's Buff
+# tick is still to come.
 var _acting_moved: bool = false
 var _buff_tick_due: bool = false
 
@@ -498,7 +497,6 @@ func _on_retreat_pressed() -> void:
 # this returns, which is when the conductor ends the Half-turn.
 func _play_events(events: Array) -> void:
 	_hard_skip = false
-	_acting_slot = 0
 	for event in events:
 		if _hard_skip and event["type"] == BattleRunner.EventType.SPEECH:
 			continue
@@ -529,7 +527,7 @@ func _play_events(events: Array) -> void:
 				# it picks the battle track once, when the battle loads
 				# (frame_201/DoAction.as:86).
 				pass
-			BattleRunner.EventType.BATTLE_ENDED:
+			BattleRunner.EventType.BATTLE_ENDED, BattleRunner.EventType.PASSED:
 				pass
 		# Mid-batch: redraw from DISPLAYED hp only - snapping here would
 		# reveal damage from hits that haven't animated yet.
@@ -540,14 +538,14 @@ func _play_events(events: Array) -> void:
 # Waits until `event` is due on the battle clock. A move's death is due at that
 # move's Impact, and a death from a Buff tick when the tick comes due. Every
 # other event is due once the last action's frames have run out: a MOVE,
-# STUNNED or MOVE_FAILED starts the next action, a DISPEL comes with the MOVE
-# after it, and the rest come at the Half-turn's end.
+# STUNNED, MOVE_FAILED or PASSED starts the next action, a DISPEL comes with the
+# MOVE after it, and the rest come at the Half-turn's end.
 func _wait_until_due(event: Dictionary) -> void:
 	match event["type"]:
 		BattleRunner.EventType.DEATH:
 			if event.get("cause") == BattleRunner.DeathCause.MOVE:
 				return
-			await _reach_buff_tick(int(event["slot"]))
+			await _reach_buff_tick()
 			# The tick that killed this unit did something. After a move the
 			# conductor then holds the next Dispatch a whole AttackEndCounter
 			# more (frame_217/PlaceObject2_3389_480 enterFrame, lines 118-127).
@@ -556,9 +554,9 @@ func _wait_until_due(event: Dictionary) -> void:
 			# tick (lines 515 and 569).
 			if _acting_moved:
 				_frames_to_dispatch = _attack_end_counter_limit() + 1
-		BattleRunner.EventType.MOVE, BattleRunner.EventType.STUNNED, BattleRunner.EventType.MOVE_FAILED:
+		BattleRunner.EventType.MOVE, BattleRunner.EventType.STUNNED, BattleRunner.EventType.MOVE_FAILED, BattleRunner.EventType.PASSED:
 			await _wait_for_dispatch()
-			_start_action(int(event["caster_slot"]), event["type"] == BattleRunner.EventType.MOVE)
+			_start_action(event["type"] == BattleRunner.EventType.MOVE)
 		_:
 			await _wait_for_dispatch()
 
@@ -571,13 +569,12 @@ func _wait_for_dispatch() -> void:
 	await _wait_frames(frames)
 
 
-# The action of the caster in `slot` dispatches. A caster that doesn't move,
-# because it is stunned, can't pay the cost or has nothing to do, ticks its
-# buffs on its Dispatch frame, and the next action dispatches 1 frame later
-# (frame_217/PlaceObject2_3389_480 enterFrame, lines 511-530 and 565-584). A
+# An action dispatches. A caster that doesn't move, because it is stunned, can't
+# pay the cost or has nothing to do, ticks its buffs on its Dispatch frame
+# unless it is dead, and the next action dispatches 1 frame later
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 503-530 and 557-584). A
 # move's tick comes due once it lands (see _count_from_impact).
-func _start_action(slot: int, moves: bool) -> void:
-	_acting_slot = slot
+func _start_action(moves: bool) -> void:
 	_acting_moved = moves
 	_buff_tick_due = not moves
 	_frames_to_dispatch = 0 if moves else 1
@@ -602,13 +599,9 @@ func _attack_end_counter_limit() -> int:
 	return int(BattleScreenClip.motion()["conductor"]["AttackEndCounterLimit"])
 
 
-# Waits until the Buff tick of the caster in `slot` comes due, on the frame
-# before the next Dispatch could come. A caster whose action played no event,
-# a pass or a move on a target that was already dead, dispatches here first.
-func _reach_buff_tick(slot: int) -> void:
-	if slot != _acting_slot:
-		await _wait_for_dispatch()
-		_start_action(slot, false)
+# Waits until the acting caster's Buff tick comes due, on the frame before the
+# next Dispatch could come.
+func _reach_buff_tick() -> void:
 	if not _buff_tick_due:
 		return
 	_buff_tick_due = false
