@@ -289,6 +289,34 @@ func test_a_swing_that_starts_during_the_runback_still_ends_at_home():
 	assert_eq(visual.position, Vector2(100, 100), "and its Runback ends at the doll's own home")
 
 
+# krinMelee starts every swing with relX at 0 and works its dash out from where
+# the fighter stands (frame_42/DoAction_4.as:38-57 and 97-133). So a swing that
+# starts during the Runback dashes frame for frame the way a swing from that
+# spot does, and only its Runback differs, because it ends at the doll's home.
+func test_a_swing_that_starts_during_the_runback_dashes_as_one_from_that_spot():
+	var target: Vector2 = Vector2(400, 100)
+	var doll: CharacterVisual = _bare_doll(Vector2(100, 100))
+	watch_signals(doll)
+	doll.play_melee(func(): return target, 0.0)
+	for frame in 120:
+		doll._process(SWF_FRAME_SECONDS)
+		if get_signal_emit_count(doll, "attack_connected") > 0 and doll.position.x < 200.0:
+			break
+	var spot: Vector2 = doll.position
+	assert_between(spot.x, 100.5, 200.0, "sanity: the doll is partway home")
+
+	var fresh: CharacterVisual = _bare_doll(spot)
+	doll.play_melee(func(): return target, 0.0)
+	fresh.play_melee(func(): return target, 0.0)
+	var dashes: Array = [[], []]
+	for frame in 20:
+		doll._process(SWF_FRAME_SECONDS)
+		fresh._process(SWF_FRAME_SECONDS)
+		dashes[0].append(doll.position)
+		dashes[1].append(fresh.position)
+	assert_eq(dashes[0], dashes[1], "the dash and its arrival match a swing from that spot")
+
+
 func test_a_swing_plays_its_attack_label_and_an_unknown_label_plays_attack():
 	watch_signals(visual)
 	# Attack_Upper is a 30-frame swing (1s) - the overhead Destroy strike.
