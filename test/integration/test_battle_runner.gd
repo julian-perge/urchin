@@ -1193,7 +1193,8 @@ func test_a_poisoned_caster_logs_a_buff_tick_after_its_own_move_with_its_amount_
 	player.apply_changes()
 	assert_true(runner.is_player_turn(), "Sonny's team opens")
 
-	var events: Array = runner.advance_half_turn({"target_slot": 2, "move_id": 434})  # Shock Therapy, which can't miss
+	# Move 434 is Shock Therapy, which can't miss.
+	var events: Array = runner.advance_half_turn({"target_slot": 2, "move_id": 434})
 
 	assert_eq(
 		events.slice(0, 2).map(func(event): return event["type"]),
@@ -1230,10 +1231,10 @@ func test_a_healing_buff_ticks_as_a_heal_of_its_whole_amount_even_at_full_life()
 # buffTicker adds the healing, which is negative, to every element's damage and
 # works from that one total (frame_42/DoAction_10.as:17-40).
 func test_a_buff_tick_nets_its_healing_against_its_damage_into_one_total():
-	var hurt: BuffTick = _sonnys_tick_holding(["FATE", "FIRESAM"])  # 666 Physical damage and 300 healing
+	var hurt: BuffTick = _sonnys_tick_holding(["FATE", "FIRESAM"])
 	assert_eq([hurt.direction, hurt.amount], [MoveResult.Direction.HARM, 366.0], "666 damage less 300 healing")
 
-	var healed: BuffTick = _sonnys_tick_holding(["FIRESAM2", "FIRESAM"])  # 50 Fire damage and 300 healing
+	var healed: BuffTick = _sonnys_tick_holding(["FIRESAM2", "FIRESAM"])
 	assert_eq([healed.direction, healed.amount], [MoveResult.Direction.HEAL, 250.0], "300 healing less 50 damage")
 
 
@@ -1242,8 +1243,8 @@ func test_a_buff_tick_nets_its_healing_against_its_damage_into_one_total():
 # (frame_42/DoAction_10.as:27-40). It looks at each element's own damage, before
 # the healing comes off the total.
 func test_a_buff_ticks_element_is_the_one_with_the_most_damage_and_the_first_of_a_tie():
-	var ice_over_fire: BuffTick = _sonnys_tick_holding(["FIRESAM2", "PERSECUTE"])  # 50 Fire damage and 500 Ice damage
-	assert_eq([ice_over_fire.amount, ice_over_fire.element], [550.0, CombatUnit.Element.ICE], "Ice has the most of the 550")
+	var ice_over_fire: BuffTick = _sonnys_tick_holding(["FIRESAM2", "PERSECUTE"])
+	assert_eq([ice_over_fire.amount, ice_over_fire.element], [550.0, CombatUnit.Element.ICE], "Ice has 500 of the 550, and Fire has 50")
 
 	var runner: BattleRunner = _sonny_holding([])
 	runner.units[BattleRunner.PLAYER_SLOT].dot_ticker_array[CombatUnit.Element.FIRE] = 50.0
@@ -1256,14 +1257,14 @@ func test_a_buff_ticks_element_is_the_one_with_the_most_damage_and_the_first_of_
 # looks only at the damage each element dealt, so a tick that hurts through
 # healing alone has no element to take it from, and colorToBe stays Physical.
 func test_sswitch_turns_a_buff_tick_around_and_a_tick_with_no_damage_element_is_physical():
-	var healed: BuffTick = _sonnys_tick_holding(["RETROGRADED", "FATE"])  # 666 Physical damage
-	assert_eq([healed.direction, healed.amount], [MoveResult.Direction.HEAL, 666.0], "damage heals Sonny")
+	var healed: BuffTick = _sonnys_tick_holding(["RETROGRADED", "FATE"])
+	assert_eq([healed.direction, healed.amount], [MoveResult.Direction.HEAL, 666.0], "666 damage heals Sonny")
 
-	var hurt: BuffTick = _sonnys_tick_holding(["RETROGRADED", "FIRESAM"])  # 300 healing
+	var hurt: BuffTick = _sonnys_tick_holding(["RETROGRADED", "FIRESAM"])
 	assert_eq(
 		[hurt.direction, hurt.amount, hurt.element],
 		[MoveResult.Direction.HARM, 300.0, CombatUnit.Element.PHYSICAL],
-		"healing hurts Sonny, and no element dealt it"
+		"300 healing hurts Sonny, and no element dealt it"
 	)
 
 
@@ -1288,7 +1289,7 @@ func test_a_buff_tick_that_only_moves_focus_states_the_new_focus_and_did_nothing
 # A shield bigger than the whole tick takes all of it. The unit loses no life,
 # and buffTicker draws SHIELDED (frame_42/DoAction_10.as:64-73).
 func test_a_shield_bigger_than_a_buff_tick_soaks_all_of_it():
-	var runner: BattleRunner = _sonny_holding(["FATE"])  # 666 Physical damage
+	var runner: BattleRunner = _sonny_holding(["FATE"])
 	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
 	player.shield = 1000.0
 	var life_before: float = player.life_n
@@ -1307,7 +1308,7 @@ func test_a_shield_bigger_than_a_buff_tick_soaks_all_of_it():
 # and what is left comes off the unit's life, which is what the number shows
 # (frame_42/DoAction_10.as:76-97).
 func test_a_buff_tick_bigger_than_the_shield_takes_what_got_through():
-	var runner: BattleRunner = _sonny_holding(["FATE"])  # 666 Physical damage
+	var runner: BattleRunner = _sonny_holding(["FATE"])
 	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
 	player.shield = 100.0
 	var life_before: float = player.life_n
@@ -1326,7 +1327,7 @@ func test_a_buff_tick_bigger_than_the_shield_takes_what_got_through():
 # tick draws nothing and does not count as doing something. ADR 0005 keeps this
 # Quirk, as it keeps the same case for a Shield block.
 func test_a_shield_exactly_as_big_as_a_buff_tick_leaves_a_tick_that_did_nothing():
-	var runner: BattleRunner = _sonny_holding(["FATE"])  # 666 Physical damage
+	var runner: BattleRunner = _sonny_holding(["FATE"])
 	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
 	player.shield = 666.0
 	var life_before: float = player.life_n
@@ -1377,7 +1378,7 @@ func test_every_living_casters_action_logs_a_buff_tick_even_one_that_changes_not
 # A tick that takes the unit's last life states it dead, and its DEATH event
 # follows the tick, because the tick is what kills it (frame_42/DoAction_10.as:109-134).
 func test_a_buff_tick_that_takes_the_last_life_states_the_unit_dead_and_logs_its_death_after_it():
-	var runner: BattleRunner = _sonny_holding(["FATE"])  # 666 Physical damage
+	var runner: BattleRunner = _sonny_holding(["FATE"])
 	runner.units[BattleRunner.PLAYER_SLOT].life_n = 600.0
 
 	var events: Array = runner.advance_half_turn({})
@@ -1560,7 +1561,8 @@ func _ticks_in(events: Array) -> Array:
 # the guard cast, are on Sonny. He has 3300 life, so none of them kills him. A
 # level 1 Sonny with no points in defense has the 100 + 15 per level in every
 # element that a Buff tick divides by, so a flat damage or healing buff ticks
-# for exactly its own number.
+# for exactly its own number. FATE deals 666 Physical damage a turn, PERSECUTE
+# deals 500 Ice damage, FIRESAM2 deals 50 Fire damage, and FIRESAM heals 300.
 func _sonny_holding(buff_names: Array) -> BattleRunner:
 	var save: PlayerSave = PlayerSave.new_game("Sonny")
 	save.speed = 100.0
@@ -1576,7 +1578,7 @@ func _sonny_holding(buff_names: Array) -> BattleRunner:
 	return runner
 
 
-# The one Buff tick Sonny's Half-turn logs when he passes.
+# Returns the one Buff tick that Sonny's Half-turn logs when he passes.
 func _tick_after_passing(runner: BattleRunner) -> BuffTick:
 	var ticks: Array = _ticks_in(runner.advance_half_turn({}))
 	if ticks.size() != 1:
@@ -1597,7 +1599,7 @@ func _run_buffs_out_at_the_next_tick(unit: CombatUnit) -> void:
 			slot["cd"] = 1
 
 
-# The slots of a snapshot that hold a buff, as {buff_id, cd}.
+# Returns the slots of a snapshot that hold a buff.
 func _live_slots(state: UnitSnapshot) -> Array:
 	return state.buff_slots.filter(func(slot): return slot["cd"] != 0)
 

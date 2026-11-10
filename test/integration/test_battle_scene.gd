@@ -1931,8 +1931,9 @@ func _attack_end_counter_limit() -> int:
 	return int(BattleScreenClip.motion()["conductor"]["AttackEndCounterLimit"])
 
 
-# A BUFF_TICK event the way the runner logs one. The tick left its unit as it
-# stands now, so a test that wants the bars to move changes the tick's `after`.
+# Returns a BUFF_TICK event as the runner logs it. The tick left its unit as the
+# unit stands now, so a test that wants the bars to move changes the tick's
+# `after`.
 func _tick_event(scene, slot: int, direction: MoveResult.Direction, amount: float) -> Dictionary:
 	var tick := BuffTick.new()
 	tick.direction = direction
@@ -2234,8 +2235,10 @@ func test_a_buff_tick_that_did_something_holds_the_next_action_to_frame_51_and_o
 	var shock: Ability = _first_move_of_type("Shock")
 	var soaked: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 0.0)
 	soaked["tick"].shield_took_all = true
+	# A tick that did something comes due `limit` frames after the Impact, and the
+	# next Dispatch comes a count of `limit + 1` frames after it.
 	var limit: int = _attack_end_counter_limit()
-	var held: int = limit + (limit + 1)  # the tick, then the count from it
+	var held: int = limit + (limit + 1)
 	var cases: Array = [
 		["a damage tick", _tick_event(scene, 3, MoveResult.Direction.HARM, 5.0), held],
 		["a heal tick", _tick_event(scene, 3, MoveResult.Direction.HEAL, 5.0), held],
@@ -2262,11 +2265,12 @@ func test_a_buff_tick_that_did_something_holds_the_next_action_to_frame_51_and_o
 # tick draws in heal green, a tick that a shield soaked whole draws SHIELDED and
 # plays the Shield clip, and a tick of nothing draws nothing
 # (frame_42/DoAction_10.as:64-98). The Prison Guard in slot 2 ticks for real here,
-# so the numbers are the ones tick_buffs works out.
+# so the numbers are the ones tick_buffs works out. Cold Justice deals Ice damage,
+# whose color is #68CBF4, and The Immortal Flame heals.
 func test_a_buff_tick_draws_in_the_scene_by_what_it_did():
 	var cases: Array = [
-		["a damage tick", ["PERSECUTE"], 0.0],  # Cold Justice is Ice damage, #68CBF4
-		["a heal tick", ["FIRESAM"], 0.0],  # The Immortal Flame heals, #66FF00
+		["a damage tick", ["PERSECUTE"], 0.0],
+		["a heal tick", ["FIRESAM"], 0.0],
 		["a tick a shield soaked whole", ["PERSECUTE"], 100000.0],
 		["a tick of nothing", [], 0.0],
 	]

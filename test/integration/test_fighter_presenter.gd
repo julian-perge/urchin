@@ -1334,8 +1334,8 @@ func test_every_target_of_a_move_flashes():
 	assert_eq(_flash_color(), HIT_FLASH, "the second target")
 
 
-# A Buff tick the way tick_buffs states it: which way it pushed, how much, in
-# which element's damage, and the unit it left at the life given.
+# Returns a Buff tick as tick_buffs states it, with the unit it left at the life
+# given.
 func _tick(direction: MoveResult.Direction, amount: float, life_after: float) -> BuffTick:
 	var tick := BuffTick.new()
 	tick.direction = direction
@@ -1354,8 +1354,8 @@ func _heal_tick(amount: float, life_after: float) -> BuffTick:
 	return _tick(MoveResult.Direction.HEAL, amount, life_after)
 
 
-# A tick whose total a shield soaked whole. It still pushed down, with nothing
-# left of it.
+# Returns a tick whose total a shield soaked whole. It still pushed down, with
+# nothing left of it.
 func _soaked_tick() -> BuffTick:
 	var tick: BuffTick = _tick(MoveResult.Direction.HARM, 0.0, 100.0)
 	tick.shield_took_all = true
