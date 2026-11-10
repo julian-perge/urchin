@@ -95,7 +95,6 @@ const REST_POSE: Dictionary[Variant, Variant] = {
 var _parts: Dictionary = {}  # name -> Node2D holding the layered sprites
 var _body: Node2D
 var _state: int = State.IDLE
-var _state_time: float = 0.0
 var _attack_fired: bool = false
 
 # Timeline playback (labels from model1_animations.json).
@@ -187,7 +186,6 @@ func set_state(new_state: State) -> void:
 		_melee_phase = -1
 		melee_finished.emit()
 	_state = new_state
-	_state_time = 0.0
 	_attack_fired = false
 	_label_time = 0.0
 	_label_finished = false
@@ -198,8 +196,7 @@ func set_state(new_state: State) -> void:
 	if _body != null:
 		_body.position = Vector2.ZERO
 		_body.rotation = 0.0
-	if new_state != State.DEAD:
-		modulate = Color.WHITE
+	modulate = Color.WHITE
 	match new_state:
 		State.IDLE:
 			_start_label("stand")
@@ -207,6 +204,7 @@ func set_state(new_state: State) -> void:
 			_start_label("hit")
 		State.DEAD:
 			_start_label("dead")
+			_playhead = _label_start_frame("dead")
 		State.MELEE:
 			_home_position = position
 			_melee_phase = 0
@@ -286,7 +284,6 @@ func is_idle() -> bool:
 func _process(delta: float) -> void:
 	if not animate:
 		return
-	_state_time += delta
 	match _state:
 		State.IDLE:
 			_advance_label(delta, true)
@@ -303,11 +300,7 @@ func _process(delta: float) -> void:
 			if _label_finished:
 				set_state(State.IDLE)
 		State.DEAD:
-			_advance_label(delta, false)
-			modulate = Color(1, 1, 1, lerp(1.0, 0.55, min(_state_time / 2.0, 1.0)))
-			if _label_finished and not _attack_fired:
-				_attack_fired = true
-				state_finished.emit(State.DEAD)
+			_play_death(delta)
 
 
 # --- timeline playback (model1_animations.json) ------------------------------
@@ -353,10 +346,13 @@ func _apply_label_frame(label: String, time: float) -> void:
 
 
 func _apply_frame_index(index: int) -> void:
-	var frames: Array = _load_animations().get("frames", [])
+	var animations: Dictionary = _load_animations()
+	var frames: Array = animations.get("frames", [])
 	if frames.is_empty():
 		return
-	var pose: Dictionary = frames[clampi(index, 0, frames.size() - 1)]
+	var frame: int = clampi(index, 0, frames.size() - 1)
+	var pose: Dictionary = frames[frame]
+	var alphas: Dictionary = animations["alphas"][frame]
 	for part_name in _parts:
 		var part: Node2D = _parts[part_name]
 		var matrix = pose.get(part_name)
@@ -369,6 +365,7 @@ func _apply_frame_index(index: int) -> void:
 			Vector2(matrix[2], matrix[3]),
 			Vector2(matrix[4], matrix[5])
 		)
+		part.modulate.a = alphas.get(part_name, 1.0)
 
 
 func _label_start_frame(label: String) -> float:
@@ -432,6 +429,23 @@ func _animate_melee(delta: float) -> void:
 				_melee_phase = -1
 				melee_finished.emit()
 				set_state(State.IDLE)
+
+
+# The dead label plays through once, and the script on its last frame, 371,
+# removes the doll before Flash draws that frame
+# (DefineSprite_166_MODEL1/frame_371/DoAction.as). The playhead counts frames,
+# not seconds, because a sum of 1/30 s steps drifts off whole frames and would
+# remove the doll a frame early or late.
+func _play_death(delta: float) -> void:
+	if _label_finished:
+		return
+	_playhead += delta * _load_animations().get("fps", 30.0)
+	if _playhead >= _label_end_frame("dead"):
+		_label_finished = true
+		visible = false
+		state_finished.emit(State.DEAD)
+		return
+	_apply_frame_index(int(_playhead))
 
 
 # stun(220-239, one-shot) -> stun2(240-279, loop - the clip flows into this
