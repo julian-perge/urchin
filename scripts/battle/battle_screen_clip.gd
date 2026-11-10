@@ -6,11 +6,12 @@
 # starting variables from battle_screen_motion.json, which
 # extract_battle_screen_motion reads out of the SWF. Nothing waits for either.
 #
-# Flash keeps a clip's _x and _y in whole twips and drops the rest of what a
-# script sets them to, so this does too. GridShaker's last frame adds 0.9 px
-# back for the twips its other frames drop. A simulation of its frames ends
-# exactly at rest with whole twips, and 0.1 px low without them, which is the
-# evidence that Flash drops the fractions.
+# Flash keeps a clip's _x and _y in whole twips, so this does too, and drops the
+# fraction of a twip that a script sets them to. That Flash drops the fraction
+# rather than rounding it is inferred, not read in a player: GridShaker's last
+# frame adds back 0.9 px, and a simulation of its frames from where BATTLESCREEN
+# rests ends exactly there only when the fractions are dropped. It ends 0.1 px
+# low when they are rounded or kept.
 class_name BattleScreenClip
 extends Control
 

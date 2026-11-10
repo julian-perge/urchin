@@ -2384,6 +2384,7 @@ func _waits_while_moves_play(graphics: bool) -> Dictionary:
 func test_the_next_action_waits_the_same_with_the_zoom_on_or_off():
 	var on: Dictionary = await _waits_while_moves_play(true)
 	var off: Dictionary = await _waits_while_moves_play(false)
+	assert_false(off["waits"].is_empty(), "sanity: the moves wait")
 	assert_eq(on["waits"], off["waits"], "the same waits")
 	assert_true(on["moved"], "the Melee move's zoom starts only after the moves are over")
 	assert_false(off["moved"], "and with the zoom off nothing moves")
