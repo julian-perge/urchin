@@ -174,7 +174,16 @@ func play_shield_clip() -> void:
 
 
 func show_tick(tick: BuffTick) -> void:
-	pass
+	if tick.shield_took_all:
+		play_shield_clip()
+		_floating_numbers.show_shield(_home)
+	else:
+		match tick.direction:
+			MoveResult.Direction.HARM:
+				_floating_numbers.show_number(_home, tick.amount, MenuTheme.ELEMENT_COLORS[tick.element], false)
+			MoveResult.Direction.HEAL:
+				_floating_numbers.show_number(_home, tick.amount, MenuTheme.HEAL_COLOR, false)
+	show_state(tick.after)
 
 
 func _element_color(move: Ability) -> Color:
