@@ -589,6 +589,8 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> BuffTick:
 		life_n = 0
 		focus_n = 0
 		active = false
+		tick.killed = true
 
 	apply_changes()
+	tick.after = UnitSnapshot.of(self)
 	return tick

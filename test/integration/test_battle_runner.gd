@@ -1321,6 +1321,59 @@ func test_a_shield_exactly_as_big_as_a_buff_tick_leaves_a_tick_that_did_nothing(
 	assert_eq(player.shield, 0.0, "and the shield is used up")
 
 
+# Judge's Hammer takes 15% off total life, and Iricin takes 25% off it. When one
+# runs out at a tick, max life comes back and brings life up with it, in the
+# recompute that ends buffTicker (frame_42/DoAction_10.as:135 and 280-296). The
+# tick states the unit after that recompute, so a bar can keep the max and the
+# fill it had until the tick and take both from it. Sonny's base life is 3300.
+func test_a_buff_tick_states_the_max_life_that_a_buff_running_out_gives_back():
+	for buff_name in ["JUDGESHAMMER", "IRICIN"]:
+		var runner: BattleRunner = _sonny_holding([buff_name])
+		var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+		_run_buffs_out_at_the_next_tick(player)
+		assert_lt(player.life_u, 3300.0, "sanity: %s cuts Sonny's max life" % buff_name)
+
+		var tick: BuffTick = _tick_after_passing(runner)
+
+		assert_eq([tick.after.life_max, tick.after.life], [3300.0, 3300.0], "%s gives max life and life back" % buff_name)
+		assert_eq(_live_slots(tick.after), [], "and the tick states the buff gone")
+		assert_false(tick.did_something(), "a tick that only ran a buff out did nothing else")
+
+
+# Every Buff tick of a caster that is alive when its action ends is logged, even
+# one that changes nothing, because the original redraws the caster there
+# (applyChangesKrin, frame_42/DoAction_10.as:135). A caster that is dead logs
+# none, because the conductor sets usedBuff for it (line 336).
+func test_every_living_casters_action_logs_a_buff_tick_even_one_that_changes_nothing():
+	var runner: BattleRunner = _sonny_holding([])
+	var events: Array = runner.advance_half_turn({})
+	assert_eq(events.map(func(event): return event["type"]), [BattleRunner.EventType.PASSED, BattleRunner.EventType.BUFF_TICK], "Sonny passes and ticks")
+	assert_false(events[1]["tick"].did_something(), "to no effect")
+
+	var with_a_dead_ally: BattleRunner = _sonny_with_a_dead_ally()
+	var ticked: Array = _ticks_in(with_a_dead_ally.advance_half_turn({})).map(func(event): return event["caster_slot"])
+	assert_eq(ticked, [BattleRunner.PLAYER_SLOT], "Sonny's tick is the only one, because his dead ally takes its turn and doesn't tick")
+
+
+# A tick that takes the unit's last life states it dead, and its DEATH event
+# follows the tick, because the tick is what kills it (frame_42/DoAction_10.as:109-134).
+func test_a_buff_tick_that_takes_the_last_life_states_the_unit_dead_and_logs_its_death_after_it():
+	var runner: BattleRunner = _sonny_holding(["FATE"])  # 666 Physical damage
+	runner.units[BattleRunner.PLAYER_SLOT].life_n = 600.0
+
+	var events: Array = runner.advance_half_turn({})
+
+	assert_eq(
+		events.map(func(event): return event["type"]),
+		[BattleRunner.EventType.PASSED, BattleRunner.EventType.BUFF_TICK, BattleRunner.EventType.DEATH, BattleRunner.EventType.BATTLE_ENDED],
+		"Sonny passes, his tick kills him, and the battle ends"
+	)
+	var tick: BuffTick = events[1]["tick"]
+	assert_true(tick.killed, "the tick says it killed")
+	assert_eq(tick.after.life, 0.0, "and left no life")
+	assert_eq([events[2]["slot"], events[2]["cause"]], [BattleRunner.PLAYER_SLOT, BattleRunner.DeathCause.DAMAGE_OVER_TIME], "the death is Sonny's, caused by the tick")
+
+
 # Runs a full battle with AI on both sides; returns event-type counts.
 func _assert_battle_runs(battle_id: int) -> Dictionary:
 	var battle: BattleFight = BattleSetup.load_battle(battle_id)
@@ -1515,6 +1568,19 @@ func _tick_after_passing(runner: BattleRunner) -> BuffTick:
 
 func _sonnys_tick_holding(buff_names: Array) -> BuffTick:
 	return _tick_after_passing(_sonny_holding(buff_names))
+
+
+# Leaves every buff the unit holds with 1 turn, so the unit's next Buff tick runs
+# them all out.
+func _run_buffs_out_at_the_next_tick(unit: CombatUnit) -> void:
+	for slot in unit.buff_slots:
+		if slot["cd"] > 0:
+			slot["cd"] = 1
+
+
+# The slots of a snapshot that hold a buff, as {buff_id, cd}.
+func _live_slots(state: UnitSnapshot) -> Array:
+	return state.buff_slots.filter(func(slot): return slot["cd"] != 0)
 
 
 func _live_buff_names(unit: CombatUnit) -> Array:
