@@ -287,7 +287,9 @@ def test_a_font_with_no_glyphs_is_a_device_font():
     # DefineFont3 65 as the web build stores it: WideCodes and Bold set,
     # language 1, the name "_sans" with a NUL inside its length, no glyphs.
     sans = struct.pack("<H", 65) + bytes([0x05, 1, 6]) + b"_sans\0" + b"\0\0"
-    # The same header with two glyphs, followed by whatever their tables hold.
+    # An embedded font: WideCodes and Italic set, language 1, the name "Arial"
+    # with no NUL, and two glyphs. The 12 zero bytes after it stand in for the
+    # glyph tables, which font() never reads.
     embedded = struct.pack("<H", 66) + bytes([0x06, 1, 5]) + b"Arial" + b"\2\0"
     index = parse_swf(
         swf(

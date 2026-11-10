@@ -61,8 +61,7 @@ import sys
 from PIL import Image
 
 from urchin_dev import REPO_ROOT, WEB_SWF
-from urchin_dev.swf import render, strip, timeline
-from urchin_dev.swf.extract import combat_text
+from urchin_dev.swf import label_layout, render, strip, timeline
 from urchin_dev.swf.extract.battle_screen import rect_entry
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
@@ -71,7 +70,6 @@ COVER_PNG = OUT_DIR / "cooldown_cover.png"
 COOLDOWN_JSON = OUT_DIR / "cooldown.json"
 
 ZOOM = 2.0
-TWIPS = 20
 ICON_SPRITE = 2427
 # The slot viewport is 31x31 design px; icons are drawn centered on (0,0).
 ICON_HALF = 15.5
@@ -127,19 +125,19 @@ def origin_on_orb(index: SwfIndex, character: int) -> tuple[float, float]:
     (matrix,) = matrices
     if matrix[:4] != render.IDENTITY_LINEAR:
         raise RuntimeError(f"{ICON_SPRITE} places {character} with {matrix}")
-    return matrix[4] / TWIPS, matrix[5] / TWIPS
+    return matrix[4] / render.TWIPS, matrix[5] / render.TWIPS
 
 
 def count_layout(index: SwfIndex) -> dict:
     """-> where the cooldown count's line goes from the orb's centre, and its
     size, colour and alignment. Raises unless it is the field the ring writes
     the turns left to."""
-    field = combat_text.plain_device_line(index, COUNT_TEXT)
+    field = label_layout.plain_device_line(index, COUNT_TEXT)
     if field.variable_name != COUNT_VARIABLE:
         raise RuntimeError(
             f"edit text {COUNT_TEXT} is {field.variable_name!r}, want {COUNT_VARIABLE!r}"
         )
-    return combat_text.text_layout(field, origin_on_orb(index, COUNT_TEXT))
+    return label_layout.text_layout(field, origin_on_orb(index, COUNT_TEXT))
 
 
 def main():

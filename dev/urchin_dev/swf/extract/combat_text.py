@@ -36,7 +36,7 @@ import json
 import sys
 
 from urchin_dev import REPO_ROOT, WEB_SWF
-from urchin_dev.swf import render, strip, timeline
+from urchin_dev.swf import label_layout, render, strip, timeline
 from urchin_dev.swf.extract.battle_screen import (
     FRAME_LABEL,
     IDENTITY_COLOR_TRANSFORM,
@@ -65,11 +65,6 @@ STOP_FRAME = 1
 CLEAR_FRAME = 125
 # Battle chrome is rendered at 4x, as docs/agents/art-extraction.md sets out.
 ZOOM = 4.0
-TWIPS = 20
-# Flash lays a text field's text out 2 px inside its bounds on every side.
-# unit_overlay.gd measures the buff counter, edit text 66, the same way.
-GUTTER = 2.0
-ALIGNMENTS = {0: "left", 1: "right", 2: "center", 3: "justify"}
 
 
 def motion(index: SwfIndex, sprite: int) -> tuple[list[float], list[float]]:
@@ -90,26 +85,14 @@ def motion(index: SwfIndex, sprite: int) -> tuple[list[float], list[float]]:
         (layer,) = layers.values()
         if layer.name != INNER_NAME:
             raise RuntimeError(f"{where} shows {layer.name!r}, want {INNER_NAME!r}")
-        if layer.matrix[:5] != (1.0, 0.0, 0.0, 1.0, 0):
+        if layer.matrix[:4] != render.IDENTITY_LINEAR or layer.matrix[4] != 0:
             raise RuntimeError(f"{where} places {INNER_NAME} with {layer.matrix}")
         transform = layer.color_transform or IDENTITY_COLOR_TRANSFORM
         if transform[:3] != (256, 256, 256) or transform[4:] != (0, 0, 0, 0):
             raise RuntimeError(f"{where} transforms more than the alpha: {transform}")
         alphas.append(max(0, min(transform[3], 256)) / 256)
-        offsets.append(layer.matrix[5] / TWIPS)
+        offsets.append(layer.matrix[5] / render.TWIPS)
     return alphas, offsets
-
-
-def text_rect(field: EditText, placed: tuple[float, float]) -> dict[str, float]:
-    """-> the rect Flash lays `field`'s text out in, in design px from the
-    origin of the clip that places the field at `placed`."""
-    xmin, ymin, xmax, ymax = (v / TWIPS for v in field.bounds)
-    return {
-        "x": round(placed[0] + xmin + GUTTER, 2),
-        "y": round(placed[1] + ymin + GUTTER, 2),
-        "w": round(xmax - xmin - 2 * GUTTER, 2),
-        "h": round(ymax - ymin - 2 * GUTTER, 2),
-    }
 
 
 def check_scripts(index: SwfIndex, go_frame: int) -> None:
@@ -134,45 +117,16 @@ def check_scripts(index: SwfIndex, go_frame: int) -> None:
         )
 
 
-def text_layout(field: EditText, placed: tuple[float, float]) -> dict:
-    """-> what a Label needs to draw `field`'s line where Flash would: the
-    rect text_rect() gives, and the field's alignment, colour and size."""
-    return {
-        "align": ALIGNMENTS[field.align],
-        "color": "#{:02x}{:02x}{:02x}".format(*field.color[:3]),
-        "rect": text_rect(field, placed),
-        "size": field.font_height / TWIPS,
-    }
-
-
 def text_field(index: SwfIndex, inner: int) -> tuple[int, EditText]:
     """-> the id and fields of the edit text the inner clip shows the message
-    in, checked by plain_device_line()."""
+    in, checked by label_layout.plain_device_line()."""
     (field_id,) = [
         layer.character_id
         for layer in timeline.frames(index, inner)[0].values()
         if character_kind(index, layer.character_id) == "edittext"
         and edit_text(index, layer.character_id).variable_name == TEXT_VARIABLE
     ]
-    return field_id, plain_device_line(index, field_id)
-
-
-def plain_device_line(index: SwfIndex, field_id: int) -> EditText:
-    """-> the fields of edit text `field_id`. Raises unless it is one line of
-    a bold Device font with no margins, which is what the port's Label stands
-    in for."""
-    field = edit_text(index, field_id)
-    face = font(index, field.font_id)
-    if not (face.device and face.bold):
-        raise RuntimeError(
-            f"edit text {field_id}'s font {field.font_id} is {face}, and the port"
-            " only has a Stand-in font for a bold Device font"
-        )
-    if field.multiline or field.word_wrap or field.html:
-        raise RuntimeError(f"edit text {field_id} is not one plain line: {field}")
-    if (field.left_margin, field.right_margin, field.indent) != (0, 0, 0):
-        raise RuntimeError(f"edit text {field_id} has margins: {field}")
-    return field
+    return field_id, label_layout.plain_device_line(index, field_id)
 
 
 def main():
@@ -233,7 +187,7 @@ def main():
         "go_frame": go_frame,
         "offsets": offsets,
         "position": {"x": position[0], "y": position[1]},
-        "text": text_layout(field, placed),
+        "text": label_layout.text_layout(field, placed),
     }
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
     print(f"wrote {LAYOUT_JSON}", file=sys.stderr)
