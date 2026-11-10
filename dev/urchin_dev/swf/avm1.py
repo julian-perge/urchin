@@ -24,10 +24,7 @@ ACTION_GET_VARIABLE = 0x1C
 ACTION_SET_VARIABLE = 0x1D
 ACTION_ADD2 = 0x47
 ACTION_CONSTANT_POOL = 0x88
-ACTION_GOTO_LABEL = 0x8C
 ACTION_PUSH = 0x96
-ACTION_JUMP = 0x99
-ACTION_IF = 0x9D
 
 ARITHMETIC = {
     ACTION_ADD2: lambda a, b: a + b,
@@ -51,9 +48,8 @@ UNDEFINED = object()
 @dataclass(frozen=True)
 class Action:
     """One action record. code is its opcode. args holds a Push's values, with
-    each constant pool index already swapped for its string, a GotoLabel's
-    label, an If's or a Jump's branch offset, or a ConstantPool's strings. It
-    is empty for every other action."""
+    each constant pool index already swapped for its string, or a
+    ConstantPool's strings. It is empty for every other action."""
 
     code: int
     args: tuple = ()
@@ -81,10 +77,6 @@ def actions(index: SwfIndex, block: CodeBlock) -> list[Action]:
             result.append(Action(code, pool))
         elif code == ACTION_PUSH:
             result.append(Action(code, _push_values(body, pool)))
-        elif code == ACTION_GOTO_LABEL:
-            result.append(Action(code, _strings(body, 0, 1)))
-        elif code in (ACTION_JUMP, ACTION_IF):
-            result.append(Action(code, struct.unpack_from("<h", body)))
         else:
             result.append(Action(code))
     return result

@@ -289,7 +289,7 @@ func test_a_swing_that_starts_during_the_runback_still_ends_at_home():
 	assert_eq(visual.position, Vector2(100, 100), "and its Runback ends at the doll's own home")
 
 
-func test_attack_variants_and_in_place_strike():
+func test_a_swing_plays_its_attack_label_and_an_unknown_label_plays_attack():
 	watch_signals(visual)
 	# Attack_Upper is a 30-frame swing (1s) - the overhead Destroy strike.
 	visual.play_melee(func(): return Vector2(80, 0), 0.0, "Attack_Upper")
@@ -301,16 +301,6 @@ func test_attack_variants_and_in_place_strike():
 	# Unknown labels fall back to the base swing.
 	visual.play_melee(func(): return Vector2(80, 0), 0.0, "Krin.Firebolt")
 	assert_eq(visual._attack_label, "Attack")
-	visual.set_state(CharacterVisual.State.IDLE)
-	# An in-place strike plays the swing and its follow-through where the doll
-	# stands, and the doll never moves.
-	visual.position = Vector2(50, 50)
-	visual.play_strike("Attack_Stab")
-	for i in 45:
-		visual._process(0.05)
-	assert_signal_emitted(visual, "melee_finished")
-	assert_eq(visual.position, Vector2(50, 50), "in-place strike never moves")
-	assert_eq(visual._state, CharacterVisual.State.IDLE)
 
 
 func test_cast_and_hit_recover_to_idle():

@@ -119,10 +119,9 @@ var _playhead: float = 0.0  # continuous 0-based frame position
 var _strike_frames: float = 0.0  # SWF frames since the strike started
 var _impact_fired: bool = false
 # krinMelee's targetMC, faceing, slowPoint and relX. _target_spot returns where
-# the target stands now, as a spot for this doll, and an in-place strike has
-# none. _facing is 1 when the target is to the right of home. _slow_point is
-# the dash's x distance from home, and _rel_x and _rel_y are how far the doll
-# stands from home.
+# the target stands now, as a spot for this doll. _facing is 1 when the target
+# is to the right of home. _slow_point is the dash's x distance from home, and
+# _rel_x and _rel_y are how far the doll stands from home.
 var _target_spot: Callable = Callable()
 var _facing: float = 1.0
 var _slow_point: float = 0.0
@@ -231,7 +230,20 @@ func set_state(new_state: State) -> void:
 # Emits attack_connected at Impact and melee_finished once the Runback has
 # brought the doll home.
 func play_melee(target_spot: Callable, target_half_width: float, attack_label: String = "Attack") -> void:
-	_start_swing(MeleePhase.DASH, attack_label)
+	# A swing that starts while the doll is still in its Runback keeps the doll's
+	# home and starts from where the doll stands. The original takes the clip's
+	# position at that moment as its new home (krinMelee's boltx,
+	# frame_42/DoAction_4.as:38-39), which leaves the fighter short of its slot
+	# for the rest of the battle. ADR 0005 counts that as an Original bug.
+	if _melee_phase != MeleePhase.RUNBACK:
+		_home_position = position
+	set_state(State.MELEE)
+	_melee_phase = MeleePhase.DASH
+	_attack_label = _valid_attack_label(attack_label)
+	_strike_frames = 0.0
+	_impact_fired = false
+	_rel_x = position.x - _home_position.x
+	_rel_y = position.y - _home_position.y
 	_playhead = _label_start_frame("run")
 	_apply_frame_index(int(_playhead))
 	_target_spot = target_spot
@@ -239,34 +251,6 @@ func play_melee(target_spot: Callable, target_half_width: float, attack_label: S
 	var reach: float = target_half_width + get_bounds().size.x / 2.0
 	_facing = 1.0 if _home_position.x < target_x else -1.0
 	_slow_point = target_x - _facing * reach - _home_position.x
-
-
-# A strike without the run: plays the attack label where the doll stands,
-# flowing through the clip's own follow-through frames, and its Runback ends
-# at once. Same signals as play_melee. Nothing in the battle calls it, because
-# the original's Shock moves play "cast".
-func play_strike(attack_label: String = "Attack") -> void:
-	_start_swing(MeleePhase.STRIKE, attack_label)
-	_playhead = _label_start_frame(_attack_label)
-	_target_spot = Callable()
-	_slow_point = 0.0
-
-
-# A swing that starts while the doll is still in its Runback keeps the doll's
-# home and starts from where the doll stands. The original takes the clip's
-# position at that moment as its new home (krinMelee's boltx,
-# frame_42/DoAction_4.as:38-39), which leaves the fighter short of its slot
-# for the rest of the battle. ADR 0005 counts that as an Original bug.
-func _start_swing(phase: MeleePhase, attack_label: String) -> void:
-	if _melee_phase != MeleePhase.RUNBACK:
-		_home_position = position
-	set_state(State.MELEE)
-	_melee_phase = phase
-	_attack_label = _valid_attack_label(attack_label)
-	_strike_frames = 0.0
-	_impact_fired = false
-	_rel_x = position.x - _home_position.x
-	_rel_y = position.y - _home_position.y
 
 
 # krinBuff STUN is a running total across active stun-inflicting buffs (see
@@ -470,9 +454,8 @@ func _animate_melee(delta: float) -> void:
 
 
 # krinMelee's goRat: the share of the dash's x distance the doll has covered.
-# An in-place strike has no distance, so it has covered none.
 func _go_rat() -> float:
-	return _rel_x / _slow_point if _slow_point != 0.0 else 0.0
+	return _rel_x / _slow_point
 
 
 # Moves the doll `coefficient` steps toward where its target stands now, over
@@ -480,8 +463,6 @@ func _go_rat() -> float:
 # target, so it grows when the target moves away from that home. A negative
 # coefficient steps back toward home.
 func _step_toward_target(coefficient: float, frames: float) -> void:
-	if not _target_spot.is_valid():
-		return
 	var target: Vector2 = _target_spot.call()
 	var share: float = coefficient * MELEE_STEP_SHARE * frames
 	_rel_x += share * (target.x - _home_position.x)

@@ -39,8 +39,7 @@ Sequence:
    stun or a death on the doll during the runback doesn't stop it sliding home. The settle has no fixed length (this note used to say ~18 frames): the same four cases as the dash simulation, with the zero half-width case taken at 300 px, put the
    doll within 1 px of home after 4 to 22 frames of runback, and snap it home after 15 to 72.
 
-Attack label selection: each move's `addNewMove` param 12 (`Ability.animation_label`). Shock moves play "cast" instead (param 12 is unused for them); `play_strike()` exists for in-place strikes but is
-not used by Shock.
+Attack label selection: each move's `addNewMove` param 12 (`Ability.animation_label`). Shock moves play "cast" instead (param 12 is unused for them).
 
 ## krinBoltMake - the missile projectile (frame_42/DoAction_4.as, ~line 137)
 
