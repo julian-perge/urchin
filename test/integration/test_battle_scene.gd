@@ -2455,9 +2455,6 @@ func _screen_after_dispatch(scene: Control, move_id: int, frames: int) -> Array[
 # because Dispatch sends it to KrinZoomGo, frame 2, and its step is on frame 4.
 const ZOOM_IN_SEVENTIETHS: Array = [9, 17, 24, 30, 35, 39, 42, 44, 45]
 const ZOOM_OUT_SEVENTIETHS: Array = [36, 28, 21, 15, 10, 6, 3, 1, 0]
-# BATTLESCREEN rests where the battle frame places it
-# (frame_217/PlaceObject2_3435_89).
-const BATTLE_SCREEN_REST: Vector2 = Vector2(400, 294.5)
 
 
 # Each frame's scale for a zoom that holds for `hold` frames, from the frame
@@ -2471,41 +2468,43 @@ func _zoom_scales(hold: int) -> Array:
 
 
 # The conductor aims the zoom at the target's rig: its x plus half its width and
-# its y plus half its height, measured from where BATTLESCREEN rests. It sets
-# zoomPointX to that x times -ratio, plus 400, and zoomPointY to that y times
-# -ratio, plus 300, with a ratio of 0.3 for a Shock and zoomRatioNEW, 0.4, for a
-# Missile and a Melee move, and holds 1 frame for a Shock, 5 for a Missile and
-# krinMeleeAttackCD * 2, 30, for a Melee move (the conductor, lines 419-428 and
-# 455-462, krinMelee in frame_42/DoAction_4.as:58-65, and krinMeleeAttackCD and
-# zoomRatioNEW at 217 and 219 there). A 0.3 ratio grows the screen around that
-# point, which stays put but for 3.5 px down at the peak, since the conductor
-# aims at y 300 and BATTLESCREEN rests at 294.5. A 0.4 ratio also pulls it 6.4%
-# of the way toward where BATTLESCREEN rests. A Shock also shakes the screen,
-# which puts it 0.8 px lower on the peak's first frame. Flash drops a fraction
-# of a twip on each step of either, up to 0.45 px over the zoom's 9 steps in
-# and 0.15 px over the shake.
+# its y plus half its height, measured from where BATTLESCREEN rests. Each move
+# type's zoom sets zoomPointX to that x times the type's factor, plus its
+# center's x, sets zoomPointY the same way, and holds for the type's hold.
+# battle_screen_motion.json has those from the conductor, lines 419-428 and
+# 455-462, and from krinMelee in frame_42/DoAction_4.as:58-65. GridZoomer grows
+# the scale by 30% of the share, so a Shock's factor of -0.3 grows the screen
+# around that point, which stays put but for 3.5 px down at the peak, since the
+# conductor aims at y 300 and BATTLESCREEN rests at 294.5. A factor of -0.4 also
+# pulls it 6.4% of the way toward where BATTLESCREEN rests. A Shock also shakes
+# the screen, which puts it 0.8 px lower on the peak's first frame. Flash drops
+# a fraction of a twip on each step of either, up to 0.45 px over the zoom's 9
+# steps in and 0.15 px over the shake.
 func test_each_move_type_zooms_toward_its_target_for_9_frames_its_hold_and_9_more():
 	var moves: Dictionary = {
-		14: {"type": "Shock", "ratio": 0.3, "hold": 1, "shaken": SHAKE_OFFSETS[9]},  # Death Sentence
-		5: {"type": "Missile", "ratio": 0.4, "hold": 5, "shaken": 0.0},  # Nuke
-		1: {"type": "Melee", "ratio": 0.4, "hold": 30, "shaken": 0.0},  # Leading Strike
+		14: {"type": "Shock", "shaken": SHAKE_OFFSETS[9]},  # Move 14 is Death Sentence.
+		5: {"type": "Missile", "shaken": 0.0},  # Move 5 is Nuke.
+		1: {"type": "Melee", "shaken": 0.0},  # Move 1 is Leading Strike.
 	}
 	for move_id in moves:
 		var expected: Dictionary = moves[move_id]
+		var zoom: Dictionary = BattleScreenClip.motion()["zooms"][expected["type"]]
 		assert_eq(MoveManagerAuto.get_move(move_id).attack_animation_type, expected["type"], "sanity: move %d" % move_id)
 		var scene: Control = _battle_100_for_the_camera(true)
 		var target: FighterPresenter = scene._presenters[2]
 		var anchor: Vector2 = target.rig_position() + target.rig_size() / 2.0
-		var scales: Array = _zoom_scales(expected["hold"])
+		var scales: Array = _zoom_scales(int(zoom["hold"]))
 		var seen: Array[Transform2D] = await _screen_after_dispatch(scene, move_id, scales.size())
 		for frame in scales.size():
 			assert_almost_eq(seen[frame].get_scale().x, scales[frame], 0.00001, "%s frame %d" % [expected["type"], frame + 1])
 		assert_eq(seen[-1], Transform2D.IDENTITY, "a %s's zoom ends back at rest" % expected["type"])
 		var at_peak: Vector2 = seen[ZOOM_IN_SEVENTIETHS.size()] * anchor
 		var share: float = 45.0 / 70.0
-		var pulled: Vector2 = share * (0.3 - expected["ratio"]) * (anchor - BATTLE_SCREEN_REST)
-		var lowered: Vector2 = Vector2(0, share * 5.5 + expected["shaken"])
-		assert_almost_eq(at_peak, anchor + lowered + pulled, Vector2(0.6, 0.6),
+		var rest: Vector2 = scene.battle_screen_clip.rest
+		var center := Vector2(float(zoom["center"]["x"]), float(zoom["center"]["y"]))
+		var pulled: Vector2 = share * (0.3 + float(zoom["factor"])) * (anchor - rest)
+		var aimed: Vector2 = share * (center - rest) + Vector2(0, expected["shaken"])
+		assert_almost_eq(at_peak, anchor + aimed + pulled, Vector2(0.6, 0.6),
 			"a %s zooms toward the Prison Guard" % expected["type"])
 		GameData.current_save = null
 		ZoneManager.auto_start_battles = true

@@ -1,4 +1,7 @@
 {
+ "conductor": {
+  "AttackEndCounterLimit": 25
+ },
  "fps": 30.0,
  "rest": {
   "x": 400.0,
@@ -44,6 +47,32 @@
    "zoomRatio": 14,
    "zoomStep": 1.5555555555555556,
    "zoomTime": 9
+  }
+ },
+ "zooms": {
+  "Melee": {
+   "center": {
+    "x": 400,
+    "y": 300
+   },
+   "factor": -0.4,
+   "hold": 30
+  },
+  "Missile": {
+   "center": {
+    "x": 400,
+    "y": 300
+   },
+   "factor": -0.4,
+   "hold": 5
+  },
+  "Shock": {
+   "center": {
+    "x": 400,
+    "y": 300
+   },
+   "factor": -0.3,
+   "hold": 1
   }
  }
 }
