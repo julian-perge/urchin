@@ -88,6 +88,13 @@ const FIRST_STORY_FIGHT: Dictionary = {
 	"cutscene_before": "CS_INTRO2",
 }
 
+# Story battles that play a Cutscene before the fight, as the pick's cutscene_before.
+# The PRISON orb plays CS_CUT1 whenever BattlePick is 109 and progressFight, which is
+# the pick's is_story_progress, is on (DefineButton2_3188 on(press), lines 18-24). A
+# loss changes no progress, so every attempt plays it again. No other orb plays a
+# Cutscene, and a Boss replay turns progressFight off.
+const CUTSCENE_BEFORE_BATTLES: Dictionary = {109: "CS_CUT1"}
+
 
 static func quest_progress(save: PlayerSave, zone: int) -> int:
 	if zone < 0 or zone >= save.quest_progress.size():
@@ -102,6 +109,8 @@ static func quest_progress(save: PlayerSave, zone: int) -> int:
 # (frame_42/DoAction.as:55-74). The orbs set it for a beaten zone's boss replay
 # and for the fight at the zone's progress_max, apart from zone 4's.
 # counts_as_training tells ZoneManager to set the save's used_training.
+# cutscene_before names the Cutscene that plays before the fight, and the pick
+# leaves the key out when none does.
 static func pick_story_battle(save: PlayerSave) -> Dictionary:
 	var zone: int = save.section_in
 	var hub: Dictionary = QUEST_HUB.get(zone, {})
@@ -132,12 +141,15 @@ static func pick_story_battle(save: PlayerSave) -> Dictionary:
 		# 3220, 3239 and 3204. Zones 6 and 7 share the ROME and JAPAN orb,
 		# DefineButton2_3243, which replays without setting it.
 		counts_as_training = zone <= 5
-	return {
+	var pick: Dictionary = {
 		"battle_id": battle_id,
 		"is_story_progress": is_story_progress,
 		"is_boss": is_boss,
 		"counts_as_training": counts_as_training,
 	}
+	if is_story_progress and CUTSCENE_BEFORE_BATTLES.has(battle_id):
+		pick["cutscene_before"] = CUTSCENE_BEFORE_BATTLES[battle_id]
+	return pick
 
 
 # The training orbs (DefineButton2_3186 in zones 1 to 5, 3242 in zone 6) build
