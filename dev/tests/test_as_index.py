@@ -75,6 +75,17 @@ def invariant_failures(records: list[dict], lines_of) -> list[str]:
                 failures.append(f"{where}: no call of {call['name']} on line {line}")
             if record["kind"] == "function" and not start <= line <= end:
                 failures.append(f"{where}: call on line {line} is outside the range")
+        for write in record["writes"]:
+            segment = write["name"].rsplit(".", 1)[-1].rstrip("*")
+            for line in write["lines"]:
+                if not 1 <= line <= len(lines) or segment not in lines[line - 1]:
+                    failures.append(f"{where}: no {write['name']} on line {line}")
+        first, last = (1, len(lines)) if record["kind"] == "script" else (start, end)
+        for entry in record.get("outline", []):
+            if not first <= entry["start"] <= entry["end"] <= last:
+                failures.append(f"{where}: outline entry outside the record")
+            elif entry["head"] != lines[entry["start"] - 1].strip()[:100]:
+                failures.append(f"{where}: outline head is not line {entry['start']}")
     return failures
 
 
@@ -129,6 +140,8 @@ def test_a_line_added_to_an_export_file_fails_an_invariant(records, tmp_path):
     failures = invariant_failures(records, lines_of)
     assert any("first line does not hold the name" in f for f in failures)
     assert any("no call of" in f for f in failures)
+    assert any("no AVGNUMC on line 3" in f for f in failures)
+    assert any("outline head is not line" in f for f in failures)
 
 
 def test_declarations_match_a_regex_count_over_the_same_files(records):
@@ -139,17 +152,68 @@ def test_declarations_match_a_regex_count_over_the_same_files(records):
 
 
 def test_only_the_fields_of_this_schema_are_written(records):
-    script = {"kind", "file", "lines", "owner", "calls"}
+    script = {"kind", "file", "lines", "owner", "calls", "writes", "reads"}
     function = {"kind", "name", "declared_as", "file", "start", "end", "params"}
-    function |= {"calls"}
+    function |= {"calls", "writes", "reads"}
     for record in records:
+        fields = set(record) - {"outline"}
         if record["kind"] == "script":
-            assert set(record) - {"event"} == script, record["file"]
+            assert fields - {"event"} == script, record["file"]
         elif record["declared_as"] == "assignment":
-            assert set(record) == function | {"target"}, record["file"]
+            assert fields == function | {"target"}, record["file"]
         else:
             assert record["declared_as"] == "declaration"
-            assert set(record) == function, record["file"]
+            assert fields == function, record["file"]
+
+
+def span(record: dict) -> int:
+    if record["kind"] == "script":
+        return record["lines"]
+    return record["end"] - record["start"] + 1
+
+
+def test_a_record_has_an_outline_only_when_it_spans_more_than_60_lines(records):
+    assert any("outline" in r for r in records)
+    for record in records:
+        assert ("outline" in record) == (span(record) > 60), record["file"]
+
+
+def test_outline_entries_are_long_statements_to_depth_3_in_line_order(records):
+    for record in records:
+        outline = record.get("outline", [])
+        assert [e["start"] for e in outline] == sorted(e["start"] for e in outline)
+        for entry in outline:
+            assert set(entry) == {"start", "end", "depth", "head"}
+            assert entry["end"] - entry["start"] + 1 >= 15
+            assert 1 <= entry["depth"] <= 3
+
+
+def test_writes_and_reads_are_sorted_with_one_entry_per_name(records):
+    for record in records:
+        names = [w["name"] for w in record["writes"]]
+        assert names == sorted(set(names)), record["file"]
+        assert record["reads"] == sorted(set(record["reads"])), record["file"]
+        for write in record["writes"]:
+            assert set(write) == {"name", "lines"}
+            assert write["lines"] == sorted(set(write["lines"])) != []
+
+
+def test_execute_move_writes_and_reads_its_globals(records):
+    (record,) = functions_named(records, "executeMove")
+    writes = {w["name"]: w["lines"] for w in record["writes"]}
+    assert writes["AVGNUMC"] == [3]
+    assert writes["_root.perKSuccess"] == [21]
+    assert "_root.perKSuccess" in record["reads"]
+    assert not {"IDKM", "IDKM2", "IDKC", "IDKT"} & {n.split(".")[0] for n in writes}
+    assert not [n for n in record["reads"] if n.split(".")[0] == "IDKT"]
+
+
+def test_the_conductor_outline_starts_at_the_battle_block(records):
+    outline = script_record(records, CONDUCTOR)["outline"]
+    entries = [(e["start"], e["end"], e["depth"], e["head"]) for e in outline]
+    assert entries[0] == (10, 588, 1, "if(_root.InBattle)")
+    assert (12, 111, 2, "if(_root.BAMBAMBAM)") in entries
+    assert (139, 587, 2, "if(_root.nextPlayer)") in entries
 
 
 def test_execute_move_is_a_declaration_with_its_range_and_params(records):
@@ -246,6 +310,135 @@ def test_parse_keeps_the_event_text_of_a_key_handler():
     script = parse_script(b'on(keyPress "<Tab>"){\n   this.tabHandler();\n}\n')
     assert script.event == 'on(keyPress "<Tab>")'
     assert [(c.name, c.receiver) for c in script.calls] == [("tabHandler", "this")]
+
+
+def names(script_or_function) -> tuple[dict, list]:
+    writes = {w.name: list(w.lines) for w in script_or_function.writes}
+    return writes, list(script_or_function.reads)
+
+
+def test_a_name_is_the_longest_static_path_and_stops_at_a_computed_segment():
+    source = (
+        b"x = _root.Krin.zoneName[_root.Krin.sectionIn];\n"
+        b"_root.a.b[i].c = _root.d.e.f(g);\n"
+    )
+    writes, reads = names(parse_script(source))
+    assert writes == {"x": [1], "_root.a.b": [2]}
+    assert reads == [
+        "_root.Krin.sectionIn",
+        "_root.Krin.zoneName",
+        "_root.d.e",
+        "g",
+        "i",
+    ]
+
+
+def test_a_path_keeps_its_root_parent_global_or_this_prefix():
+    source = b"_parent.a = this.b;\n_global.c = _root.d;\ne = this;\nf = _root;\n"
+    writes, reads = names(parse_script(source))
+    assert writes == {"_parent.a": [1], "_global.c": [2], "e": [3], "f": [4]}
+    assert reads == ["_root.d", "this.b"]
+
+
+def test_a_bare_name_is_kept_unless_it_is_a_param_a_var_or_a_built_in():
+    source = (
+        b"function f(p)\n{\n   var v = 1;\n   AVGNUMC = p.level + v + Math.PI;\n"
+        b"   p.life = other.life;\n   _X = _alpha + NaN;\n"
+        b"   function inner()\n   {\n      v = p;\n      deep = 1;\n   }\n}\n"
+    )
+    f, inner = parse_script(source).functions
+    assert names(f) == ({"AVGNUMC": [4]}, ["other.life"])
+    assert names(inner) == ({"deep": [10]}, [])
+
+
+def test_a_var_outside_every_function_is_a_name_of_the_script():
+    frame = parse_script(b"var listener = new Object();\nlistener.x = 1;\n")
+    assert names(frame) == ({"listener": [1], "listener.x": [2]}, [])
+    handler = parse_script(b"onClipEvent(load){\n   var c = new Color(this);\n}\n")
+    assert names(handler) == ({"c": [2]}, [])
+
+
+def test_a_computed_segment_with_a_string_prefix_keeps_the_prefix_and_a_star():
+    source = (
+        b'a = _root["playerKrin" + n];\n_root["playerKrin" + n].LIFEN = 5;\n'
+        b'this["b" + i + "x"].COVER.gotoAndStop(1);\nb = _root[n + "tail"].c;\n'
+    )
+    writes, reads = names(parse_script(source))
+    assert writes == {"a": [1], "_root.playerKrin*.LIFEN": [2], "b": [4]}
+    assert reads == ["_root.playerKrin*", "i", "n", "this.b*.COVER"]
+
+
+def test_an_update_or_a_compound_assignment_writes_and_reads_the_name():
+    writes, reads = names(
+        parse_script(b"_root.n += 1;\ni++;\nfor(k in _root.t)\n{\n}\n")
+    )
+    assert writes == {"_root.n": [1], "i": [2], "k": [3]}
+    assert reads == ["_root.n", "_root.t", "i"]
+
+
+def test_a_called_name_is_not_a_read_and_an_assigned_function_is_a_write():
+    source = (
+        b"g(_root.a);\n_root.h.run(b);\n_root.tick = function()\n{\n   c = 1;\n};\n"
+    )
+    script = parse_script(source)
+    assert names(script) == ({"_root.tick": [3]}, ["_root.a", "_root.h", "b"])
+    assert names(script.functions[0]) == ({"c": [5]}, [])
+
+
+def test_parse_outlines_long_statements_and_keeps_an_else_at_the_depth_of_its_if():
+    body = "".join(f"   a{n} = {n};\n" for n in range(16))
+    source = (
+        f"function f()\n{{\nif(x)\n{{\n{body}while(y)\n{{\n{body}}}\n}}\n"
+        f"else if(z)\n{{\n{body}}}\nelse\n{{\nfor(k in t)\n{{\n{body}}}\n}}\n}}\n"
+    ).encode()
+    script = parse_script(source)
+    (f,) = script.functions
+    assert [(e.start, e.end, e.depth, e.head) for e in f.outline] == [
+        (3, 81, 1, "if(x)"),
+        (21, 39, 2, "while(y)"),
+        (41, 81, 1, "else if(z)"),
+        (60, 81, 1, "else"),
+        (62, 80, 2, "for(k in t)"),
+    ]
+    assert [(e.start, e.end, e.depth, e.head) for e in script.outline] == [
+        (1, 82, 1, "function f()")
+    ]
+
+
+def block_script(block_lines: int, script_lines: int) -> bytes:
+    """One `if` block of block_lines lines, then single-line statements up to
+    script_lines lines."""
+    block = "if(x)\n{\n" + "   a = 1;\n" * (block_lines - 3) + "}\n"
+    return (block + "b = 2;\n" * (script_lines - block_lines)).encode()
+
+
+def test_a_script_of_60_lines_has_no_outline_and_one_of_61_lines_has():
+    assert parse_script(block_script(15, 60)).outline is None
+    (block,) = parse_script(block_script(15, 61)).outline
+    assert (block.start, block.end, block.depth, block.head) == (1, 15, 1, "if(x)")
+
+
+def test_a_statement_of_14_lines_is_not_in_the_outline():
+    assert parse_script(block_script(14, 61)).outline == ()
+
+
+def test_a_statement_below_depth_3_is_not_in_the_outline():
+    inner = "   a = 1;\n" * 15
+    source = "".join(f"if(x{depth})\n{{\n" for depth in (1, 2, 3, 4))
+    source += inner + "}\n" * 4 + "b = 2;\n" * 40
+    outline = parse_script(source.encode()).outline
+    assert [(e.depth, e.head) for e in outline] == [
+        (1, "if(x1)"),
+        (2, "if(x2)"),
+        (3, "if(x3)"),
+    ]
+
+
+def test_a_head_is_cut_at_100_characters():
+    condition = "x" * 120
+    source = f"if({condition})\n{{\n" + "   a = 1;\n" * 15 + "}\n" + "b = 2;\n" * 50
+    (block,) = parse_script(source.encode()).outline
+    assert block.head == f"if({condition})"[:100]
 
 
 def test_parse_reports_a_syntax_error():
