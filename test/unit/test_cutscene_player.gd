@@ -174,3 +174,46 @@ func test_skip_covers_the_original_hit_area_and_draws_its_text_where_the_origina
 	assert_eq(player.skip_text.horizontal_alignment, HORIZONTAL_ALIGNMENT_RIGHT, "right-aligned")
 	assert_eq(player.skip_text.get_theme_font_size("font_size"), 12)
 	assert_eq(player.skip_text.get_theme_color("font_color"), Color.WHITE)
+
+
+# SKIP's release stops all sounds and sets cutSceneEnd (DefineButton2_3468
+# on(release)), and the fade clip then fades out and goes where the clip's end
+# goes (frame_263/PlaceObject2_3466_80 onClipEvent(enterFrame)). The test
+# clicks the button the way a player does, which needs a viewport of its own,
+# because GUT's window sits above everything in the root viewport and would
+# take the click.
+func test_pressing_skip_stops_the_clip_and_finishes_the_way_a_clip_that_plays_to_its_end_does():
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 600)
+	add_child_autofree(viewport)
+	var player: CutscenePlayer = CutscenePlayerScene.instantiate()
+	player.animation_speed = 0.0
+	viewport.add_child(player)
+	# play() frees the player once it finishes, so the state is read the instant
+	# "finished" fires. A Dictionary is used because lambdas capture plain locals
+	# by value.
+	var result := {"finished": 0, "clip_playing": true, "alpha": -1.0}
+	player.finished.connect(func():
+		result.finished += 1
+		result.clip_playing = player.video.is_playing()
+		result.alpha = player.fade_rect.color.a
+	)
+
+	player.play("CS_CUT4")
+	assert_true(player.video.is_playing(), "the clip is playing before SKIP")
+	_click(viewport, player.skip_button)
+
+	assert_eq(result.finished, 1, "SKIP finished the cutscene")
+	assert_false(result.clip_playing, "with the clip and its audio stopped")
+	assert_eq(result.alpha, 1.0, "after the same fade to black")
+
+
+# A left click on the control's center, pushed through the viewport's GUI input.
+func _click(viewport: Viewport, control: Control) -> void:
+	for pressed in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.pressed = pressed
+		event.position = control.get_global_rect().get_center()
+		event.global_position = event.position
+		viewport.push_input(event, true)
