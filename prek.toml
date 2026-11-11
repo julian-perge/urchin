@@ -44,6 +44,13 @@ language = "system"
 entry = "uv run check_godot_sidecars"
 
 [[repos.hooks]]
+id = "gd-parse"
+name = "Staged .gd files parse"
+language = "system"
+entry = "uv run check_gd_parse"
+files = "\\.gd$"
+
+[[repos.hooks]]
 id = "agent-doc-paths"
 name = "Paths in the agent docs exist"
 language = "system"
