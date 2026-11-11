@@ -913,6 +913,12 @@ func _on_victory_proceed() -> void:
 			return
 		if goto_scene == "overMap":
 			ZoneManager.open_zone_map_on_load = true
+	elif bool(battle_info.get("is_boss", false)):
+		# With no cutscene queued, the original opens the zone map after any
+		# fight with bossFight on, a first win and a Boss replay alike
+		# (DefineButton2_3004 on(release), lines 13-16, and
+		# frame_219/DoAction.as:9-16).
+		ZoneManager.open_zone_map_on_load = true
 	_on_continue_pressed()
 
 
