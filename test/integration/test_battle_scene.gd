@@ -1690,6 +1690,28 @@ func test_a_guest_with_a_companions_name_gets_no_stance_row():
 	ZoneManager.auto_start_battles = true
 
 
+# The original hides the member bar in battle 2 (DefineSprite_3317/frame_1/
+# PlaceObject2_3312_7 onClipEvent(load), lines 5-8), where Louis the Blind
+# fights in slot 5 as a Guest. The port gives a row to a Companion only, so the
+# Tutorial shows no row (DECODED_ALGORITHMS.md has why).
+func test_battle_2_shows_no_stance_rows():
+	var save = PlayerSave.new_game("TutorialRows", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+
+	assert_eq(scene.units[5].player_name, "Louis the Blind", "battle 2 fields Louis the Blind in slot 5")
+	assert_eq(scene.units[5].origin, CombatUnit.Origin.GUEST, "as a Guest")
+	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func test_a_deployed_companion_gets_the_row_the_guest_does_not():
 	var save = PlayerSave.new_game("CompanionRowTest", 0)
 	save.party_roster = [0, 1, 2, 3, -1, -1]
