@@ -46,11 +46,15 @@ static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, ach
 	settlement.game_over = settlement.outcome == BattleRunner.Outcome.LOSS or settlement.outcome == BattleRunner.Outcome.DRAW
 	if settlement.outcome != BattleRunner.Outcome.WIN:
 		return settlement
-	# A Tutorial win pays nothing and settles nothing else. The original applies a
-	# win's money, XP, drops and achievements on the victory screen
-	# (DefineSprite_3142/frame_9), which a Tutorial win never opens
-	# (frame_181/PlaceObject3_3142_175 onClipEvent(load), lines 3-7).
+	# A Tutorial win only puts the class's starting moves back on the first two bar
+	# slots (frame_219/DoAction.as:65-69). It pays nothing and settles nothing
+	# else, because the original applies a win's money, XP, drops and achievements
+	# on the victory screen (DefineSprite_3142/frame_9), which a Tutorial win never
+	# opens (frame_181/PlaceObject3_3142_175 onClipEvent(load), lines 3-7).
 	if runner.battle.id == ZoneProgression.TUTORIAL_BATTLE_ID:
+		var starting_moves: Array = TalentTree.STARTING_MOVES.get(save.player_class, [])
+		for i in starting_moves.size():
+			save.move_matrix[i] = starting_moves[i]
 		return settlement
 
 	var was_story_progress: bool = pick.get("is_story_progress", false)
