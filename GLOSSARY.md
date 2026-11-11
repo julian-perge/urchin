@@ -22,6 +22,10 @@ _Avoid_: Box, column
 The art behind a Window's Panels.
 _Avoid_: Background
 
+**Info card**:
+The framed text the Hub shows over everything, with a dim behind it, when the player presses an info spot or Save, or after Proceed on some wins. The Hub does nothing else until the player closes it. It is the original's `krinNavFadeSpeech`.
+_Avoid_: Popup, dialog
+
 **HUD**:
 The Battle screen's status elements drawn over the hall: unit overlays, member bars, the top status bar and the speech box.
 _Avoid_: Overlay, battle UI
