@@ -238,6 +238,28 @@ func test_starting_a_new_game_in_an_empty_slot_writes_no_save():
 	_clear_test_slots()
 
 
+# The Tutorial option is on until the player turns it off (frame_93/DoAction.as:7),
+# and this test leaves the toggle alone. With it on, the original's START plays
+# CS_INTRO (DefineButton2_2770 on(release), lines 2-6). The clip's end goes to
+# IntroSeq, which starts battle 2 with progressFight off
+# (frame_165/DoAction.as:2-3). The pick waits in ZoneManager for the Battle screen.
+func test_new_game_with_the_tutorial_on_goes_on_to_battle_2_after_cs_intro():
+	_write_test_slots([])
+	var menu = await _menu_without_scene_change()
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(0).pressed.emit()
+	menu.class_picker.get_node("Biological").pressed.emit()
+	assert_true(menu.get_node("OptionsPanel/TutorialToggle").button_pressed, "the toggle starts on")
+	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+
+	var pick: Dictionary = ZoneManager.pending_battle
+	assert_eq(pick.get("battle_id"), 2, "the first fight is battle 2")
+	assert_false(pick.get("is_story_progress", true), "and not a Story fight")
+	assert_eq(pick.get("cutscene_before"), "CS_INTRO", "with CS_INTRO before it")
+	_clear_test_slots()
+
+
 # START goes on to the first fight and not to the hub. With the Tutorial off the
 # original's START plays CS_INTRO2 (DefineButton2_2770 on(release), lines 7-10).
 # That clip's end goes to IntroSeq2 (frame_293/DoAction.as:1), which starts
