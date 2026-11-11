@@ -148,3 +148,29 @@ func test_second_play_call_on_same_instance_is_ignored():
 
 	player.video.finished.emit()
 	assert_eq(player.fade_rect.color.a, 1.0, "first call's sequence still completes normally")
+
+
+# extract_cutscene_skip reads where the original puts SKIP out of the SWF: a hit
+# area for button 3468 and a line of white text for edit text 3469. The test
+# reads the same file that the player does. A Control keeps its offsets and
+# works its size out from them, so the numbers match to within float error. A
+# Label is never shorter than one line of its font, which is taller than the
+# field here, so only the text's position and width are compared.
+func test_skip_covers_the_original_hit_area_and_draws_its_text_where_the_original_does():
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/cutscenes/skip_button.json"))
+	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
+	var tolerance := Vector2(0.01, 0.01)
+
+	var hit: Dictionary = layout["button"]
+	var button_rect: Rect2 = player.skip_button.get_global_rect()
+	assert_almost_eq(button_rect.position, Vector2(hit["x"], hit["y"]), tolerance, "the button's corner")
+	assert_almost_eq(button_rect.size, Vector2(hit["w"], hit["h"]), tolerance, "the button's size")
+
+	var text: Dictionary = layout["text"]
+	var rect: Dictionary = text["rect"]
+	assert_eq(player.skip_text.text, "SKIP")
+	assert_almost_eq(player.skip_text.get_global_rect().position, Vector2(rect["x"], rect["y"]), tolerance, "where the text starts")
+	assert_almost_eq(player.skip_text.size.x, rect["w"], 0.01, "how wide its line is")
+	assert_eq(player.skip_text.horizontal_alignment, HORIZONTAL_ALIGNMENT_RIGHT, "right-aligned")
+	assert_eq(player.skip_text.get_theme_font_size("font_size"), 12)
+	assert_eq(player.skip_text.get_theme_color("font_color"), Color.WHITE)
