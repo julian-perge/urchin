@@ -104,6 +104,10 @@ const TUTORIAL_FIGHT: Dictionary = {
 	"cutscene_before": "CS_INTRO",
 }
 
+# The moves IntroSeq puts on the first two bar slots for the Tutorial fight,
+# Quick Strike and Suppression (frame_165/DoAction.as:6-7).
+const TUTORIAL_MOVES: Array[int] = [21, 22]
+
 
 static func quest_progress(save: PlayerSave, zone: int) -> int:
 	if zone < 0 or zone >= save.quest_progress.size():
