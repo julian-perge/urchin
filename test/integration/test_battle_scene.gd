@@ -524,6 +524,146 @@ func test_proceeding_after_a_non_boss_win_leaves_the_zone_map_shut():
 	ZoneManager.auto_start_battles = true
 
 
+# With no cutscene queued and no boss win, the original's Proceed opens the
+# skills frame when playerLeveled is set (DefineButton2_3004 on(release), lines
+# 17-29), and the player's XP bar sets it when it fills
+# (DefineSprite_3142/frame_9/PlaceObject3_3002_1197 onClipEvent(enterFrame),
+# lines 21-23). The save starts the win just short of a full bar, so the win's
+# XP fills it.
+func test_proceeding_after_a_win_that_levels_the_player_up_opens_the_abilities_window():
+	var save = PlayerSave.new_game("LevelUpAbilities", 0)
+	save.experience = Leveling.EXP_PER_LEVEL - 0.01
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+	ZoneManager.open_abilities_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_eq(save.level, 2, "the win filled the XP bar")
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_null(scene.get_node_or_null("CutscenePlayer"), "no cutscene plays")
+	assert_called(scene, "_on_continue_pressed")
+	assert_true(ZoneManager.open_abilities_on_load, "Proceed opens the Abilities window")
+	assert_false(ZoneManager.open_zone_map_on_load, "the zone map stays shut")
+
+	ZoneManager.open_abilities_on_load = false
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A win whose XP leaves the bar short of full goes on to the hub, so Proceed
+# leaves the Abilities window shut (DefineButton2_3004 on(release), lines 17-29).
+func test_proceeding_after_a_win_with_no_level_up_leaves_the_abilities_window_shut():
+	var save = PlayerSave.new_game("NoLevelUp", 0)
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+	ZoneManager.open_abilities_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_eq(save.level, 1, "the win left the XP bar short of full")
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_called(scene, "_on_continue_pressed")
+	assert_false(ZoneManager.open_abilities_on_load, "the Abilities window stays shut")
+
+	ZoneManager.open_abilities_on_load = false
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original's Proceed opens overMap when bossJustPwned2 is set, and only
+# otherwise looks at playerLeveled (DefineButton2_3004 on(release), lines
+# 13-29), so a boss win that also fills the XP bar opens the map and not the
+# skills frame.
+func test_proceeding_after_a_boss_win_that_levels_the_player_up_opens_only_the_zone_map():
+	var save = PlayerSave.new_game("BossLevelUp", 0)
+	save.quest_progress[1] = 10
+	save.experience = Leveling.EXP_PER_LEVEL - 0.01
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+	ZoneManager.open_abilities_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 109, "is_story_progress": false, "is_boss": true, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_gt(save.level, 1, "the win filled the XP bar")
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_called(scene, "_on_continue_pressed")
+	assert_true(ZoneManager.open_zone_map_on_load, "Proceed opens the zone map")
+	assert_false(ZoneManager.open_abilities_on_load, "the Abilities window stays shut")
+
+	ZoneManager.open_abilities_on_load = false
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original's Proceed jumps to afterCut before it looks at playerLeveled
+# (DefineButton2_3004 on(release), lines 8-29), so a win that queues a cutscene
+# plays it and nothing else, even when the win fills the XP bar. The first win
+# over 210 queues CS_CUT3, which goes on to Navigation, the hub (frame_219).
+func test_proceeding_after_a_level_up_win_that_queues_a_cutscene_leaves_the_abilities_window_shut():
+	var save = PlayerSave.new_game("CutsceneLevelUp", 0)
+	save.section_in = 2
+	save.quest_progress[2] = 10
+	save.experience = Leveling.EXP_PER_LEVEL - 0.01
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+	ZoneManager.open_abilities_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 210, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_gt(save.level, 1, "the win filled the XP bar")
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	assert_not_null(scene.get_node_or_null("CutscenePlayer"), "CS_CUT3 plays")
+	scene.get_node("CutscenePlayer").video.finished.emit()
+
+	assert_called(scene, "_on_continue_pressed")
+	assert_false(ZoneManager.open_abilities_on_load, "the Abilities window stays shut")
+	assert_false(ZoneManager.open_zone_map_on_load, "and so does the zone map")
+
+	ZoneManager.open_abilities_on_load = false
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The original's Proceed can't be pressed twice, because its release always
 # leaves the frame of DefineSprite 3142 that the victory screen is drawn on, for
 # the cutscene, the map or 3142's skills or hide frame (DefineButton2_3004

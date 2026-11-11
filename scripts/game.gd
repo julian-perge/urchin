@@ -29,6 +29,11 @@ func _ready():
 	if ZoneManager.open_zone_map_on_load:
 		ZoneManager.open_zone_map_on_load = false
 		$ZoneMapOverlay.visible = true
+	# A win that levelled the player up opens the Abilities window the way the
+	# hotbar's button does, so the new skill point is in front of the player.
+	if ZoneManager.open_abilities_on_load:
+		ZoneManager.open_abilities_on_load = false
+		$Hotbar.toggle_menu_screen("abilities_window")
 
 
 func _load_zone(zone_id: int) -> void:
