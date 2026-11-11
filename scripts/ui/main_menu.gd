@@ -241,15 +241,18 @@ func _on_autosave_toggled(pressed: bool) -> void:
 # (DefineButton2_2722 on(release), line 5).
 #
 # START goes on to the first fight and not to the hub. The original's START
-# plays CS_INTRO2 when the Tutorial is off (DefineButton2_2770 on(release)), and
-# that leads into battle 100 (see ZoneProgression.FIRST_STORY_FIGHT). The
-# Tutorial option is stored and not read yet, so both of its settings take that
-# path.
+# plays CS_INTRO when the Tutorial is on, which leads into battle 2 (see
+# ZoneProgression.TUTORIAL_FIGHT). It plays CS_INTRO2 when the Tutorial is off
+# (DefineButton2_2770 on(release)), which leads into battle 100 (see
+# ZoneProgression.FIRST_STORY_FIGHT).
 func _on_start_new_game() -> void:
 	GameData.new_game(_selected_slot, name_input.text, _selected_class)
 	GameData.current_save.difficulty = _selected_difficulty
 	GameData.current_save.autosave = _autosave_enabled
-	ZoneManager.request_new_game_fight()
+	if _tutorial_enabled:
+		ZoneManager.request_tutorial_fight()
+	else:
+		ZoneManager.request_new_game_fight()
 
 
 func _enter_game() -> void:

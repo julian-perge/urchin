@@ -93,6 +93,14 @@ func request_new_game_fight() -> Dictionary:
 	_launch_battle(info)
 	return info
 
+# New Game's handler with the Tutorial option on: the Tutorial fight, with its
+# Cutscene before it.
+func request_tutorial_fight() -> Dictionary:
+	var info: Dictionary = ZoneProgression.TUTORIAL_FIGHT.duplicate()
+	info["train_cap"] = BattleSetup.DEFAULT_TRAIN_CAP
+	_launch_battle(info)
+	return info
+
 func _launch_battle(info: Dictionary) -> void:
 	pending_battle = info
 	battle_selected.emit(info)

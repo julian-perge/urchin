@@ -88,6 +88,22 @@ const FIRST_STORY_FIGHT: Dictionary = {
 	"cutscene_before": "CS_INTRO2",
 }
 
+# The Tutorial is battle 2 (frame_165/DoAction.as:2).
+const TUTORIAL_BATTLE_ID: int = 2
+
+# The fight a new game opens on when the Tutorial option is on, as the pick
+# ZoneManager hands the Battle screen. The Start button sends the player to
+# CS_INTRO when the option is on (DefineButton2_2770 on(release), lines 2-6), the
+# clip's end goes on to IntroSeq (the button's gotoSceneKrin), and IntroSeq's
+# last frame starts battle 2 with progressFight off (frame_165/DoAction.as:2-3).
+# Nothing on that path sets bossFight either.
+const TUTORIAL_FIGHT: Dictionary = {
+	"battle_id": TUTORIAL_BATTLE_ID,
+	"is_story_progress": false,
+	"is_boss": false,
+	"cutscene_before": "CS_INTRO",
+}
+
 
 static func quest_progress(save: PlayerSave, zone: int) -> int:
 	if zone < 0 or zone >= save.quest_progress.size():
