@@ -83,6 +83,20 @@
   ],
   "zoom": 4.0
  },
+ "hotbar_quit_red": {
+  "rect": [
+   436.0,
+   464.75,
+   18.0,
+   18.0
+  ],
+  "relative_to": "stage",
+  "size": [
+   72,
+   72
+  ],
+  "zoom": 4.0
+ },
  "hotbar_square": {
   "rect": [
    25.0,

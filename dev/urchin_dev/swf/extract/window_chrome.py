@@ -9,14 +9,16 @@
 # drawn, because the Bevel, Glow and DropShadow of a placement are part of the
 # look and a render of the bare shape leaves them out. That is why most pieces
 # are rendered "as placed": the job renders the timeline that places the
-# piece and keeps only the piece's depth.
+# piece and keeps only the piece's depth. The zone fill is the one exception,
+# see below.
 #
 # THE BACKDROP is KRINMENU's own depth 2 (DefineSprite 2994), and its Bevel,
 # Glow and DropShadow are on KRINMENU's placement on the root frame, not on
 # the backdrop. The root frame is rendered with only KRINMENU kept, and every
 # depth of KRINMENU except depth 2 hidden on every frame, so those filters
-# draw over the backdrop alone. Depths that are clip masks stay, because
-# hiding one unclips what it covers and the driver refuses it.
+# draw over the backdrop alone. KRINMENU places no clip mask today. If a later
+# SWF does, the driver refuses to hide it, because hiding a mask unclips what
+# it covers.
 #
 # THE ITEM SLOTS 2986, 2984 and 3013 are rendered as sprites of their own.
 # Their inner DropShadow is on a placement inside each slot, so it is drawn
@@ -27,7 +29,16 @@
 # sizes. Six are the same square at 0.671, at x positions that are not whole
 # zoom 4 pixels, so each render has to match the first within same_art() or the
 # extractor stops, and one PNG per size is enough. The hit buttons and their
-# hover Glows are not here.
+# hover Glows are not here. Quit's red square is the separate shape 3172, which
+# the hub places at depth 152 with no filter, so it is its own piece.
+#
+# THE ZONE FILL AND ITS TRACK are both inside sprite 3149, and the DropShadow
+# is on 3149's placement, so in the game it draws around the track and the fill
+# together. The track render has it, from the root frame with the fill hidden.
+# The fill is rendered from inside 3149, so it has no DropShadow of its own and
+# no render draws the shadow of the two together. The game also sets the fill's
+# _width to the progress (frame_181/DoAction.as:11), so zone_fill.png is the
+# full width and a scene crops or stretches it.
 #
 # WHAT RECTS MEAN. A piece rendered as a sprite of its own has a rect measured
 # from that sprite's origin, "relative_to": "sprite <id>", because the game
@@ -40,7 +51,6 @@ from __future__ import annotations
 
 import json
 import sys
-from pathlib import Path
 
 from PIL import Image, ImageChops, ImageStat
 
@@ -65,8 +75,8 @@ ZONE_BAR_FILL_DEPTH = 2
 INVENTORY_FRAME = 1
 SHOP_FRAME = 16
 ACHIEVEMENTS_FRAME = 45
-# The achievement plate's first placement on the "ach" frame. Every plate on
-# it is the same clip at another y.
+# The "ach" frame places the plate ten times, in two columns of five rows
+# (x -1649 and 1651 twips), all the same clip. Depth 7 is the first of them.
 PLATE_DEPTH = 7
 PLATE_SPRITE = 3141
 PLATE_TEXT = 3138
@@ -77,6 +87,7 @@ VICTORY_GLOSS_DEPTH = 41
 SQUARE_DEPTHS = (126, 128, 130, 136, 138, 165)
 WORLD_MAP_DEPTH = 142
 QUIT_DEPTH = 140
+QUIT_RED_DEPTH = 152
 
 PIECES: dict[str, str] = {
     "backdrop": "KRINMENU's backdrop under its Bevel, Glow and DropShadow",
@@ -93,8 +104,9 @@ PIECES: dict[str, str] = {
     "hotbar_square": "a hotbar square at scale 0.671, under its Bevel and Glows",
     "hotbar_world_map": "the World Map square, scale 0.812",
     "hotbar_quit": "the Quit square, scale 0.3",
-    "zone_track": "the Hub's zone progress track (3149)",
-    "zone_fill": "the Hub's zone progress bar, full width",
+    "hotbar_quit_red": "Quit's red square (3172), with no filter",
+    "zone_track": "the Hub's zone progress track (3149), under its DropShadow",
+    "zone_fill": "the Hub's zone progress bar (3147), full width, no DropShadow",
 }
 
 
@@ -104,13 +116,8 @@ def hub_frame(index: SwfIndex) -> int:
 
 def backdrop_hides(index: SwfIndex) -> tuple[tuple[int, int], ...]:
     """-> (KRINMENU, depth) for every depth any frame of it places, other than
-    the backdrop's and the clip masks, which the driver refuses to hide."""
-    depths = {
-        depth
-        for layers in timeline.frames(index, KRINMENU)
-        for depth, layer in layers.items()
-        if layer.clip_depth is None
-    }
+    the backdrop's."""
+    depths = {depth for layers in timeline.frames(index, KRINMENU) for depth in layers}
     return tuple((KRINMENU, depth) for depth in sorted(depths - {BACKDROP_DEPTH}))
 
 
@@ -149,6 +156,7 @@ def jobs(index: SwfIndex, plate_strip: tuple[int, ...]) -> dict[str, render.Job]
         "hotbar_square": on_hub(SQUARE_DEPTHS[0]),
         "hotbar_world_map": on_hub(WORLD_MAP_DEPTH),
         "hotbar_quit": on_hub(QUIT_DEPTH),
+        "hotbar_quit_red": on_hub(QUIT_RED_DEPTH),
         "zone_track": on_hub(
             ZONE_BAR_ROOT_DEPTH, hide_depths=((ZONE_BAR_SPRITE, ZONE_BAR_FILL_DEPTH),)
         ),
@@ -173,13 +181,14 @@ def same_art(a: Image.Image, b: Image.Image) -> bool:
 
 def relative_to(job: render.Job) -> str:
     """-> what a piece's rect is measured from: the stage when the job renders
-    the root or KRINMENU, which sit at known places, or the sprite itself."""
-    if job.timeline in (0, KRINMENU, ZONE_BAR_SPRITE):
+    the root, or a sprite given the origin where the root places it, or the
+    sprite's own origin otherwise."""
+    if job.timeline == 0 or job.origin != (0.0, 0.0):
         return "stage"
     return f"sprite {job.timeline}"
 
 
-def record_of(name: str, job: render.Job, cut: render.Trimmed) -> dict:
+def record_of(job: render.Job, cut: render.Trimmed) -> dict:
     return {
         "rect": [round(v, 4) for v in cut.rect],
         "relative_to": relative_to(job),
@@ -207,7 +216,7 @@ def main():
     record = {}
     with render.frames(WEB_SWF, [*by_name.values(), *twins.values()]) as rendered:
         cuts: dict[str, render.Trimmed] = {}
-        for name, frame in zip(by_name, rendered, strict=False):
+        for name, frame in zip(by_name, rendered[: len(by_name)], strict=True):
             cut = render.trim(frame)
             if cut is None:
                 raise RuntimeError(f"{name} rendered fully transparent")
@@ -221,14 +230,10 @@ def main():
                 )
     for name, job in by_name.items():
         cut = cuts[name]
-        write_png(cut, OUT_DIR / f"{name}.png")
-        record[name] = record_of(name, job, cut)
+        cut.image.save(OUT_DIR / f"{name}.png")
+        record[name] = record_of(job, cut)
         print(f"{name} {record[name]['rect']} {cut.image.size}", file=sys.stderr)
     RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
-
-
-def write_png(cut: render.Trimmed, path: Path) -> None:
-    cut.image.save(path)
 
 
 if __name__ == "__main__":
