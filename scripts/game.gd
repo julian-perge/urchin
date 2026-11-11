@@ -23,11 +23,17 @@ func _ready():
 	ZoneManager.zone_changed.connect(_load_zone)
 	_load_zone(ZoneManager.current_zone)
 	AudioManagerAuto.play_menu_music()
-	# A cutscene that just unlocked a new zone opens the map here instead of
-	# landing in the same hub (see battle_scene.gd's _on_victory_proceed()).
+	# A boss win, or a cutscene that just unlocked a new zone, opens the map here
+	# instead of landing in the same hub (see battle_scene.gd's
+	# _on_victory_proceed()).
 	if ZoneManager.open_zone_map_on_load:
 		ZoneManager.open_zone_map_on_load = false
 		$ZoneMapOverlay.visible = true
+	# A win that levelled the player up opens the Abilities window the way the
+	# hotbar's button does, so the new skill point is in front of the player.
+	if ZoneManager.open_abilities_on_load:
+		ZoneManager.open_abilities_on_load = false
+		$Hotbar.toggle_menu_screen("abilities_window")
 
 
 func _load_zone(zone_id: int) -> void:

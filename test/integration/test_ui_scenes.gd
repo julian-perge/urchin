@@ -522,6 +522,27 @@ func test_game_shell_hosts_current_zone():
 	assert_false(game.get_node("ZoneMapOverlay").visible, "map overlay starts hidden")
 
 
+# The original's Proceed shows its skills frame after a win that levels the
+# player up (DefineButton2_3004 on(release), lines 17-29), and the port's hub
+# opens the Abilities window for it, through the hotbar like the Abilities
+# button does. The flag clears, so the next time the hub loads it opens shut.
+func test_hub_opens_the_abilities_window_when_the_flag_is_set_and_clears_it():
+	ZoneManager.open_abilities_on_load = true
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	assert_true(game.get_node("AbilitiesWindow").visible, "the Abilities window is open")
+	assert_false(ZoneManager.open_abilities_on_load, "the flag is cleared")
+	assert_false(game.get_node("ZoneMapOverlay").visible, "the map stays shut")
+	assert_true(game.get_node("Hotbar").get_node("%AbilitiesButton/Glow").visible, "the Abilities button glows, as after a click")
+
+
+func test_hub_leaves_the_abilities_window_shut_when_the_flag_is_unset():
+	ZoneManager.open_abilities_on_load = false
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	assert_false(game.get_node("AbilitiesWindow").visible, "the Abilities window stays shut")
+
+
 func test_hotbar_shows_progress_from_save():
 	GameData.current_save.quest_progress[1] = 3
 	var game = add_child_autofree(GameScene.instantiate())

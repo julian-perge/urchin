@@ -3,7 +3,11 @@ from __future__ import annotations
 
 import struct
 
+import pytest
 from urchin_dev.swf.swf_index import (
+    BUTTON_HAS_BLEND_MODE,
+    BUTTON_HAS_FILTER_LIST,
+    TAG_DEFINE_BUTTON2,
     TAG_DEFINE_EDIT_TEXT,
     TAG_DEFINE_FONT3,
     TAG_DEFINE_SHAPE,
@@ -16,10 +20,12 @@ from urchin_dev.swf.swf_index import (
     TAG_REMOVE_OBJECT2,
     TAG_SHOW_FRAME,
     TAG_SOUND_STREAM_BLOCK,
+    ButtonRecord,
     EditText,
     Font,
     Placement,
     Removal,
+    button_records,
     edit_text,
     first_fill_bitmap_id,
     font,
@@ -318,3 +324,53 @@ def test_a_font_with_no_glyphs_is_a_device_font():
     assert font(index, 65).device
     assert font(index, 66) == Font(name="Arial", bold=False, italic=True, glyphs=2)
     assert not font(index, 66).device
+
+
+# A BUTTONRECORD with no colour transform terms: HasAddTerms and HasMultTerms
+# clear, and a 4-bit field that goes unused.
+NO_TERMS = bits((0, 1), (0, 1), (1, 4))
+
+
+def button_record(
+    flags: int, cid: int, depth: int, matrix: bytes, extra: bytes = b""
+) -> bytes:
+    """A BUTTONRECORD. `extra` is the filter list and blend mode bytes that
+    follow the colour transform when the flags say so."""
+    record = bytes([flags]) + struct.pack("<HH", cid, depth) + matrix + NO_TERMS
+    return record + extra
+
+
+def test_button_records_give_each_records_states_character_depth_and_matrix():
+    # DefineButton2 3468 as the web build stores it has one record, which draws
+    # shape 291 in the hit-test state only. The second record here is invented,
+    # to show a record that draws in two states and moves its character.
+    moved = bits((0, 1), (0, 1), (5, 5), (3, 5), (-4, 5))
+    hit_only = button_record(0x08, 291, 1, IDENTITY_MATRIX)
+    up_and_over = button_record(0x01 | 0x02, 40, 2, moved)
+    body = struct.pack("<HBH", 3468, 0, 0) + hit_only + up_and_over + b"\0"
+    index = parse_swf(swf(tag(TAG_DEFINE_BUTTON2, body), tag(TAG_SHOW_FRAME)))
+    assert button_records(index, 3468) == [
+        ButtonRecord(frozenset({"hit"}), 291, 1, (1.0, 0.0, 0.0, 1.0, 0, 0)),
+        ButtonRecord(frozenset({"up", "over"}), 40, 2, (1.0, 0.0, 0.0, 1.0, 3, -4)),
+    ]
+
+
+def test_a_filter_list_and_a_blend_mode_do_not_hide_the_next_record():
+    # Buttons 3114 and 3115 of the web build have a record with both. This one
+    # holds one Blur filter, a filter id and 9 bytes, then a blend mode byte.
+    extra = bytes([1]) + bytes([1]) + b"\0" * 9 + bytes([5])
+    flags = 0x01 | BUTTON_HAS_FILTER_LIST | BUTTON_HAS_BLEND_MODE
+    filtered = button_record(flags, 40, 1, IDENTITY_MATRIX, extra)
+    hit = button_record(0x08, 291, 2, IDENTITY_MATRIX)
+    body = struct.pack("<HBH", 3114, 0, 0) + filtered + hit + b"\0"
+    index = parse_swf(swf(tag(TAG_DEFINE_BUTTON2, body), tag(TAG_SHOW_FRAME)))
+    assert [(r.character_id, r.depth) for r in button_records(index, 3114)] == [
+        (40, 1),
+        (291, 2),
+    ]
+
+
+def test_a_character_that_is_not_a_button_is_refused():
+    index = parse_swf(swf(tag(TAG_DEFINE_SHAPE, struct.pack("<H", 30) + b"\0" * 5)))
+    with pytest.raises(ValueError, match="not a DefineButton2"):
+        button_records(index, 30)
