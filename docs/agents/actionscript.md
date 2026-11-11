@@ -46,6 +46,12 @@ has already made reading them.
 - **Watch off-by-one in rank tables.** `BUFFSAY` is 0-indexed for rank 1 and
   the original clamps its index up from -1, so rank 0 and rank 1 both show the
   first entry (`46d16da`, `f068f87`).
+- **A name in a function body can be a parameter, not a global.** ADR 0005
+  said `buffTicker` plays the Shield clip through `IDKT`, a global that
+  `executeMove` last set. `IDKT` is a parameter of `executeMove` and is never
+  assigned, so the original plays no clip. Before you write that a variable is
+  a global, find its declaration and run `rg -uu 'NAME\s*=[^=]'` over
+  `dev/source_files/action_script` for an assignment (`c8733b7f`).
 - **Flash folds case in linkage lookups.** `KRIN.MAGICBOLT` and
   `Krin.Magicbolt` are the same clip; resolve export names case-insensitively
   (`4ccdb39`).
