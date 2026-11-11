@@ -763,6 +763,33 @@ func test_proceeding_after_a_level_up_win_that_queues_a_cutscene_leaves_the_abil
 	ZoneManager.auto_start_battles = true
 
 
+# A win over the Tutorial pays no money and no XP. The original applies both on
+# the victory screen (DefineSprite_3142/frame_9), which only opens on
+# Navigation's load (frame_181/PlaceObject3_3142_175 onClipEvent(load), lines
+# 3-7), and a Tutorial win goes to CS_INTRO2 instead (frame_219/DoAction.as:73-77).
+# The win is set before the battle loop starts, so no fight is played.
+func test_winning_the_tutorial_pays_no_money_or_xp():
+	var save = PlayerSave.new_game("TutorialPays", 0)
+	save.euro = 120.0
+	save.experience = 10.0
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	assert_eq(save.euro, 120.0, "no money")
+	assert_eq(save.experience, 10.0, "no XP")
+
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The original's Proceed can't be pressed twice, because its release always
 # leaves the frame of DefineSprite 3142 that the victory screen is drawn on, for
 # the cutscene, the map or 3142's skills or hide frame (DefineButton2_3004
