@@ -13,9 +13,11 @@ var pending_battle: Dictionary = {}
 # Tests/headless flows set this false to keep request_* from switching scenes.
 var auto_start_battles: bool = true
 # Set by battle_scene.gd right before switching back to game.tscn when the
-# battle just won unlocked a new zone (ZoneProgression.CUTSCENE_GOTO_SCENE ==
-# "overMap") - game.gd's _ready() opens the zone map overlay on load and
-# clears this, matching the original's gotoSceneKrin == "overMap" (frame_219).
+# battle just won was a boss fight with no cutscene queued, or queued a cutscene
+# that goes on to the map (ZoneProgression.CUTSCENE_GOTO_SCENE == "overMap").
+# game.gd's _ready() opens the zone map overlay on load and clears this,
+# matching the original's Proceed (DefineButton2_3004 on(release), lines 8-16)
+# and gotoSceneKrin == "overMap" (frame_219).
 var open_zone_map_on_load: bool = false
 # Tests point this at a temp file so they can grant Legend without touching the
 # player's real achievements.
