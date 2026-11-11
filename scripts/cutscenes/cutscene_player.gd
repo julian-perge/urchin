@@ -6,6 +6,11 @@
 # cutSceneEnd when released (DefineButton2_3468/BUTTONCONDACTION
 # on(release).as). This player has no input handling, so it has no skip yet.
 #
+# CS_INTRO is the one id that is not a clip. The original draws it as text over a
+# gradient, so play() fades in scenes/cutscenes/cs_intro.tscn for it, holds it for
+# as long as the original does, and then fades out and finishes as it does for a
+# clip.
+#
 # Two things in cutscene_player.tscn exist to keep the rest of the game out
 # of the way while the clip runs, and both matter:
 #   - The root Control is MOUSE_FILTER_STOP, so clicks land here instead of
@@ -37,6 +42,9 @@ const PLAYBACK_TIMEOUT_MARGIN_SECONDS: float = 5.0
 # (get_stream_length() returns 0). Longer than any of the 4 clips.
 const PLAYBACK_TIMEOUT_FALLBACK_SECONDS: float = 120.0
 
+const INTRO_ID: String = "CS_INTRO"
+const CsIntroScene: PackedScene = preload("res://scenes/cutscenes/cs_intro.tscn")
+
 # 1.0 = normal pacing; 0.0 or less = instant (tests). Mirrors
 # battle_scene.gd's animation_speed / _pause convention.
 var animation_speed: float = 1.0
@@ -50,6 +58,7 @@ var playback_timeout_seconds: float = 0.0
 # driving the same fade_rect/queue_free.
 var _started: bool = false
 
+@onready var overlay: CanvasLayer = $Overlay
 @onready var video: VideoStreamPlayer = $Overlay/Video
 @onready var fade_rect: ColorRect = $Overlay/FadeRect
 
@@ -59,6 +68,10 @@ func play(cutscene_id: String) -> void:
 		push_warning("CutscenePlayer.play() called again on an instance already playing %s - ignored." % cutscene_id)
 		return
 	_started = true
+
+	if cutscene_id == INTRO_ID:
+		await _play_intro()
+		return
 
 	var stream: VideoStream = load("res://assets/cutscenes/%s.ogv" % cutscene_id)
 	if stream == null:
@@ -78,6 +91,27 @@ func play(cutscene_id: String) -> void:
 	await _fade(1.0)
 	finished.emit()
 	queue_free()
+
+
+# The scene takes the video's place in the overlay's order, so the fade stays above it.
+func _play_intro() -> void:
+	var intro: CsIntro = CsIntroScene.instantiate()
+	overlay.add_child(intro)
+	overlay.move_child(intro, video.get_index() + 1)
+	fade_rect.color.a = 1.0
+	await _fade(0.0)
+	await _hold(intro.hold_seconds)
+	await _fade(1.0)
+	finished.emit()
+	queue_free()
+
+
+# Waits `seconds` of the original's time. animation_speed scales the wait as it scales
+# the fades, and a speed of 0 or less skips it.
+func _hold(seconds: float) -> void:
+	if animation_speed <= 0.0:
+		return
+	await get_tree().create_timer(seconds / animation_speed).timeout
 
 
 # Waits for whichever comes first: the video reporting it finished, or a
