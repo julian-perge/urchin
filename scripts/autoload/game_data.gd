@@ -80,6 +80,19 @@ func load_game(slot: int) -> bool:
 	save_loaded.emit(slot)
 	return true
 
+# The saves in the four slot files, read without touching the
+# live game, so a caller can scan them the way the original's checkIfAllStar
+# scans _root.slot1 to slot4. An empty slot is left out.
+func slot_saves() -> Array:
+	var saves: Array = []
+	for slot in range(1, NUM_SLOTS + 1):
+		if not has_save(slot):
+			continue
+		var slot_save: Resource = ResourceLoader.load(_slot_path(slot), "", ResourceLoader.CACHE_MODE_IGNORE)
+		if slot_save is PlayerSave:
+			saves.append(slot_save)
+	return saves
+
 func save_game() -> bool:
 	if current_save == null or current_slot == -1:
 		push_warning("save_game: no active save/slot")

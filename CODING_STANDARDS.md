@@ -22,7 +22,9 @@ this project already got wrong once and names its evidence.
   coordinate or a limit, comes from an extractor's output, and the test reads
   the same output. When the AS computes a value, extract the inputs and the
   operation. Three of #150's six tickets typed such values in by hand, and
-  only review caught them (`3f50df8a`).
+  only review caught them (`3f50df8a`). This includes amounts that
+  `dev/converted_json` already holds: read a buff's base value from
+  `buffs.json` instead of typing 666 (`c84c007a`).
 - **A comment passes three tests or goes.** It is necessary, because the code
   alone can't say it: a reason, a link to another file, or an intentional
   absence. It is skimmable, as a full sentence that stands on its own, with no
@@ -46,6 +48,11 @@ this project already got wrong once and names its evidence.
     so a compile error proves nothing. Commit the new API alone first, then
     show the test fail on behavior, then add the fix, as #146 did with
     `AudioManager.effect_played` (`2628f3e2`).
+  - A test's pass signal has to be one that only the code under test can
+    cause. #196's killing-tick test watched `displayed.life == 0.0`, which the
+    BUFF_TICK event had already set, so it passed with the DEATH arm broken.
+    Break the line a test claims to pin and watch it go red (`2a79eb9a`,
+    `14a32db9`, `785aafef`).
   - Run Python mutation checks with `PYTHONDONTWRITEBYTECODE=1`. In #148, a
     restored file kept its size and landed in the same second as the mutated
     `.pyc`, so the next extractor run used the mutated bytecode and wrote red
