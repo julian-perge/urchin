@@ -191,7 +191,7 @@ opening lines (210, 409, 504 and 508).
 ## New Game and Load Game (root frames 56 to 93, `Krin.dataMode`)
 
 Ported: `main_menu.gd` opens on New Game and Load Game, asks for the name before the slot list, lets New Game use any slot with the hover warning, takes the name as typed, doesn't
-save when the game starts, and sends every Back to its first screen. In the game the player is "Sonny" whatever the typed name is.
+save when the game starts, goes on to the first fight when it starts, and sends every Back to its first screen. In the game the player is "Sonny" whatever the typed name is.
 
 - `subMenu`, root frame 56, captions its buttons with `MENU[21]` "New Game", `MENU[22]` "Load Game" and `MENU[85]` "PvP Arena" (`frame_56/DoAction.as:1-3`). New Game (`DefineButton2_2707`
   on(release), lines 2-3) goes to `nameMenu` and sets `Krin.dataMode` to "save". Load Game (`DefineButton2_2706` on(release), lines 2-3) goes to `dataMenu` and sets it to "load". The port
@@ -217,6 +217,15 @@ save when the game starts, and sends every Back to its first screen. In the game
   the stage at x -86 to -44, and the KRINMENU frame holding the last caller, `DefineButton2_3121`, is only opened by 3182.
 - So a new game in a used slot leaves the old save on disk until its first save, and a game over before then reloads the old save, because Re-Load reads the slot back
   (`DefineButton2_2791` on(release), lines 2-7).
+- Start (`DefineButton2_2770` on(release)) sends the player to CS_INTRO when `Krin.tutorOn` is true and to CS_INTRO2 when it is false, and sets `gotoSceneKrin` to "IntroSeq" or
+  "IntroSeq2" first. CS_INTRO2 is root frame 293 and sets `gotoSceneKrin` to "IntroSeq2" again (`frame_293/DoAction.as:1`). When the clip ends, the cutscene controller jumps to
+  `gotoSceneKrin` (`frame_263/PlaceObject2_3466_80` enterFrame, line 33). IntroSeq2 is root frame 166. Frames 166 to 179 have no script, and frame 180 sets `Krin.BattlePick` to 100
+  and `progressFight` on, then loads the battle (`frame_180/DoAction.as:2-3` and 9). So a new game with the Tutorial off plays CS_INTRO2 and then fights battle 100 as a Story fight.
+  The port's `ZoneManager.request_new_game_fight` hands the Battle screen that pick, `ZoneProgression.FIRST_STORY_FIGHT`, with `cutscene_before` set to "CS_INTRO2". Until the Tutorial
+  is ported it does this for both settings of the Tutorial option.
+- Frame 180 also sets `soundPlayCounter` to 3, `soundModeKrin` to 0 and `bangStart` on (lines 4-6). So the first fight plays `_music_battle2`, entry 3 of `soundPlayArray`
+  (`frame_41/DoAction_2.as:11`), and starts it at full volume at once (`frame_42/DoAction.as`, `addSound` with "Music" and 2). The port does not do this. Its Battle screen starts the
+  rotation's next track and fades it in, as it does for every fight. The Tutorial's battle 2 sets `soundPlayCounter` to 1 and `bangStart` on the same way (`frame_165/DoAction.as:4-5`).
 
 ## Starting state (new game)
 
@@ -709,4 +718,5 @@ Everything below still stands in for original behavior, except the rows marked D
 | Abilities tutorial callout | skipped | texts 3063 + glow box sprite 3059 (frame 25) |
 | Sky horizon | **DONE (2026-08-22)**: the strip position comes from `battle_layout.json` (`BATTLE_LAYOUT_PATH` in `battle_scene.gd`), no longer an empirical y = 292 | background clips' own art timelines (sky placement baked per zone) |
 | Start-menu flow | slot -> name+class -> options | original: PLAY -> name entry (root ~65) -> slot select (~75) -> class (~85) -> options (~95) |
+| Music of a new game's first fight | the rotation's next track, faded in, as for any fight | `frame_180/DoAction.as:4-6` sets `soundPlayCounter` 3 (`_music_battle2`) and `bangStart`, so it starts at full volume. See "New Game and Load Game" above |
 | Battle countdown | **DONE (2026-11-08)** for the timing: 4 s on Heroic only, running out passes the turn, and Easy and Normal wait with the label hidden. The display is still a number in the bottom bar's `Panel3` | 120 frames (4 s at 30 fps) on Heroic only, and the half-turn starts when it runs out: see "Heroic decision timer" above. The original shows no number: `battleClocker` (DefineSprite 3389) sits behind the pass button and fills the two half-dials of DefineSprite 3386 from `BattleTimeNow` |
