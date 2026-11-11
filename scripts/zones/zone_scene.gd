@@ -1,6 +1,6 @@
 # zone_scene.gd
 # Root script for the per-zone hub scenes (scenes/zones/zone*.tscn). Each
-# scene is laid out in the original 800x600 stage space: the hub art fills
+# scene is laid out in the original 800x575 stage space: the hub art fills
 # the rect (18, 16)-(782, 430) and the orbs sit at the exact positions
 # extracted from the original SWF's zone-hub sprite (sprite 3287, one labeled
 # frame per zone; container offset (400, 222.9) applied). Zones 1 to 6 have a

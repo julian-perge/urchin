@@ -5,11 +5,10 @@ testing the game by hand.
 
 ## Godot specifics
 
-- Base resolution is 800x600 with `canvas_items` stretch, so SWF coordinates
-  drop in 1:1. The SWF's own stage is 800x575, and julian-perge/urchin#111
-  decided the base resolution becomes 800x575 too. Build new layouts for the
-  800x575 stage, because that change is the UI overhaul's first implementation
-  issue and has not landed yet.
+- Base resolution is 800x575 with `canvas_items` stretch, the original's Stage
+  size (julian-perge/urchin#111, #203). A SWF coordinate is a viewport
+  coordinate, so SWF positions drop in 1:1 with no offset. A layout that
+  assumes a 600 px high viewport is wrong by 25 px.
 - Pixel snapping is off so a piece is drawn at its layout position and SWF
   fractions reach the screen. `gui/common/snap_controls_to_pixels` and
   `rendering/2d/snap/snap_2d_transforms_to_pixel` both have to stay off, because
