@@ -15,9 +15,9 @@
 # text go and how the text is drawn.
 #
 # CS_INTRO is the one id that is not a clip. The original draws it as text over a
-# gradient, so play() fades in scenes/cutscenes/cs_intro.tscn for it, holds it for
-# as long as the original does, and then fades out and finishes as it does for a
-# clip.
+# gradient, so play() fades in scenes/cutscenes/cs_intro.tscn for it and holds it
+# for as long as the original does, or until the player presses SKIP. Then it
+# fades out and finishes as it does for a clip.
 #
 # Two things in cutscene_player.tscn exist to keep the rest of the game out
 # of the way while the clip runs, and both matter:
@@ -37,7 +37,7 @@ extends Control
 signal finished
 
 # Emitted when playback ends: the video reported it finished, the failsafe
-# timeout ran out, or the player pressed SKIP.
+# timeout ran out, CS_INTRO's hold ran out, or the player pressed SKIP.
 signal _playback_settled
 
 # Where the SKIP button's hit area and its text go, and how the text is drawn.
@@ -73,7 +73,8 @@ var playback_timeout_seconds: float = 0.0
 var _started: bool = false
 
 # Set when the player presses SKIP. A press before play() reaches its wait for
-# the clip emits _playback_settled with nothing listening, so play() checks this.
+# the clip or for CS_INTRO's hold emits _playback_settled with nothing listening,
+# so play() and _hold() check this.
 var _skipped: bool = false
 
 @onready var overlay: CanvasLayer = $Overlay
@@ -147,11 +148,18 @@ func _play_intro() -> void:
 
 
 # Waits `seconds` of the original's time. animation_speed scales the wait as it scales
-# the fades, and a speed of 0 or less skips it.
+# the fades. It ends early when the player presses SKIP, and a speed of 0 or less, or a
+# press before it starts, skips it.
 func _hold(seconds: float) -> void:
-	if animation_speed <= 0.0:
+	if animation_speed <= 0.0 or _skipped:
 		return
-	await get_tree().create_timer(seconds / animation_speed).timeout
+	var timer: SceneTreeTimer = get_tree().create_timer(seconds / animation_speed)
+	var settle: Callable = func(): _playback_settled.emit()
+	timer.timeout.connect(settle, CONNECT_ONE_SHOT)
+	await _playback_settled
+	# Drop the timer's call if SKIP ended the wait first, so it can't reach a freed node.
+	if timer.timeout.is_connected(settle):
+		timer.timeout.disconnect(settle)
 
 
 func _on_skip_pressed() -> void:

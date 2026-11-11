@@ -603,6 +603,7 @@ and `assets/cutscenes/cs_intro.json` for it. Nothing in the game plays it yet.
   starts opaque and loses 5 alpha points a frame until `cutSceneEnd` is true. Then it gains 5 a frame, and at full alpha it goes to `gotoSceneKrin` (`frame_263/PlaceObject2_3466_80`
   enterFrame). Each fade is 20 frames. The timer runs under the first fade, so the original leaves about 420 frames after it starts.
 - The port holds the lines for the timer's 401 frames at 30 fps, which is 13.37 s, after its fade-in, as it plays a clip after the fade-in. So it runs about 20 frames longer than the original.
+  A press of SKIP ends the hold at once, as it ends a clip, and a press during the fade-in skips the hold.
 - The gradient is a radial gradient from (30, 36, 38) at its center to black. The shape is a little bigger than the Stage, from -6 to 804 px by -4 to 584 px, and the render keeps the part
   inside the Stage.
 - The fields allow wrapping, but each MENU string fits on one line, so the port draws one Label for each. A Label cannot blur. The glow is an outline half as wide as its blur, and the
