@@ -587,6 +587,27 @@ Ported: once CS_CUT5 ends, `battle_scene.gd`'s `_on_victory_proceed` opens `Endi
   at the export's 2x raises that to 17. The logo, the copyright line and the "Play MORE Games!" link are left out like the game over screen's, see
   `docs/adr/0002-leave-out-the-armor-games-branding.md`.
 
+## CS_INTRO (root frame 263)
+
+Ported: `CutscenePlayer.play("CS_INTRO")` shows `CsIntro` (`scripts/cutscenes/cs_intro.gd`) in place of a clip, with the same fade and `finished`. `extract_cs_intro` writes the gradient
+and `assets/cutscenes/cs_intro.json` for it. Nothing in the game plays it yet.
+
+- The Start button opens the Tutorial on it (`DefineButton2_2770` on(release), lines 2-11). Root frame 263 places the gradient, DefineShape 3475, at depth 1 and the four edit texts 3474,
+  3473, 3472 and 3471 at depths 2 to 5. The texts' variables are `introText1` to `introText4`. Each text has a Glow filter (blur 3, strength 10, black) and a `DropShadow` filter (blur 8,
+  distance 2 at 45 degrees, strength 1, black). The frame also places the timer sprite 3470, the SKIP button 3468 and its text 3469, the subtitle text 3467 and the fade clip 3466.
+- The frame's script runs `stop()` and sets `introText1` to `introText4` to `MENU[86]` to `MENU[89]` of `KrinLang[KLangChoosen]` (`frame_263/DoAction.as:2-5`). `KLangChoosen` is "ENGLISH"
+  (`frame_1/DoAction.as:4512`). Frames 1 and 41 both build the English table, with the same four strings (lines 294-297 of each).
+- The fields bake in older text as their `initialText`, and only the first differs from its MENU string: "One month ago, Sonny wakes up on the ship..." against "One month ago. Sonny
+  wakes up on the ship." The other three bake in the same words as `MENU[87]` to `MENU[89]`. Edit text 3467 shows nothing, because no script sets its variable, `subText`.
+- DefineSprite 3470 draws nothing and plays no sound. Its last frame, frame 401, runs `_root.cutSceneEnd = true` and `stop()` (`DefineSprite_3470/frame_401/DoAction.as`). The fade clip
+  starts opaque and loses 5 alpha points a frame until `cutSceneEnd` is true. Then it gains 5 a frame, and at full alpha it goes to `gotoSceneKrin` (`frame_263/PlaceObject2_3466_80`
+  enterFrame). Each fade is 20 frames. The timer runs under the first fade, so the original leaves about 420 frames after it starts.
+- The port holds the lines for the timer's 401 frames at 30 fps, which is 13.37 s, after its fade-in, as it plays a clip after the fade-in. So it runs about 20 frames longer than the original.
+- The gradient is a radial gradient from (30, 36, 38) at its center to black. The shape is a little bigger than the Stage, from -6 to 804 px by -4 to 584 px, and the render keeps the part
+  inside the Stage.
+- The fields allow wrapping, but each MENU string fits on one line, so the port draws one Label for each. A Label cannot blur. The glow is an outline half as wide as its blur, and the
+  shadow is one hard copy of the text moved by its distance along its angle. Their strength and the shadow's blur are not drawn.
+
 ## Zone hub orbs (DefineSprite 3287)
 
 Ported: `ZoneProgression.pick_story_battle` and `pick_training_battle` carry each orb's flags, and `scenes/zones/zone*.tscn` place the orbs.

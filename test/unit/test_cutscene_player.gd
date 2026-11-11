@@ -148,3 +148,115 @@ func test_second_play_call_on_same_instance_is_ignored():
 
 	player.video.finished.emit()
 	assert_eq(player.fade_rect.color.a, 1.0, "first call's sequence still completes normally")
+
+
+# CS_INTRO is a text screen, not a clip. The original's frame script fills four text
+# fields from MENU[86] to MENU[89] (frame_263/DoAction.as:2-5, with the strings at
+# frame_1/DoAction.as:294-297). The fields also bake in the author's older text as
+# their initialText, which the original never shows. Three of the four baked strings
+# equal their MENU string, so only the first one, the field for MENU[86], can be told
+# apart from the MENU text.
+const CS_INTRO_LINES: Array[String] = [
+	"One month ago. Sonny wakes up on the ship.",
+	"He remembers nothing.",
+	"The blind man gives him a tape...",
+	"...then the blind man dies.",
+]
+const CS_INTRO_BAKED_TEXT: String = "One month ago, Sonny wakes up on the ship..."
+
+
+func test_cs_intro_shows_the_four_menu_lines_and_not_the_baked_text():
+	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
+	player.animation_speed = 0.0
+	watch_signals(player)
+	# play() frees the player once it finishes, so the lines are read as finished fires.
+	var shown: Array[String] = []
+	player.finished.connect(func():
+		for node: Node in player.find_children("*", "Label", true, false):
+			if node.is_visible_in_tree():
+				shown.append((node as Label).text)
+	)
+
+	player.play("CS_INTRO")
+
+	assert_signal_emitted(player, "finished")
+	for line in CS_INTRO_LINES:
+		assert_has(shown, line, "shows the MENU string %s" % line)
+	assert_does_not_have(shown, CS_INTRO_BAKED_TEXT, "does not show the text baked into the field")
+
+
+# Adds up the time the engine hands each frame, which is the time the player's timers
+# and tweens count. The wall clock is no stand-in for it: the first frame after a
+# test's set-up carries all of the set-up's time, so a 0.033 s fade can end in 0.01 s
+# of wall time.
+class FrameClock extends Node:
+	var seconds: float = 0.0
+
+	func _process(delta: float) -> void:
+		seconds += delta
+
+
+# The original holds CS_INTRO until its silent timer sprite runs through its frames.
+# extract_cs_intro writes that frame count and the SWF's frame rate into
+# cs_intro.json, and this test reads the same two numbers. It runs at 20 times the
+# original's pace, so the hold takes well under a second. The two fades only add to
+# the time between play() and finished.
+func test_cs_intro_holds_its_lines_for_as_long_as_the_original_does():
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CsIntro.LAYOUT_PATH))
+	var hold_seconds: float = float(layout["hold_frames"]) / float(layout["fps"])
+	var speed: float = 20.0
+	var clock: FrameClock = add_child_autofree(FrameClock.new())
+	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
+	player.animation_speed = speed
+	await wait_process_frames(1)
+	var started: float = clock.seconds
+
+	player.play("CS_INTRO")
+	var got_finished: bool = await wait_for_signal(player.finished, 5.0)
+
+	assert_true(got_finished, "CS_INTRO finishes")
+	assert_gte(clock.seconds - started, hold_seconds / speed, "the lines stay up for the timer sprite's length")
+
+
+# Plays CS_INTRO at animation_speed 0 and returns its scene. The player frees itself as
+# it finishes, but the scene stays up until the end of the frame, so a test that does
+# not await can still read it.
+func _play_cs_intro() -> CsIntro:
+	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
+	player.animation_speed = 0.0
+	player.play("CS_INTRO")
+	for child in player.overlay.get_children():
+		if child is CsIntro:
+			return child
+	return null
+
+
+# The cutscene draws over the Battle screen, which would show through anywhere the
+# gradient does not reach, and the lines would be unreadable if it covered them.
+func test_cs_intro_draws_the_gradient_over_the_whole_window_behind_its_lines():
+	var intro: CsIntro = _play_cs_intro()
+	assert_not_null(intro, "the intro scene is up")
+	if intro == null:
+		return
+	var gradients: Array[Node] = intro.find_children("*", "TextureRect", true, false)
+	assert_eq(gradients.size(), 1, "the intro draws one gradient")
+	if gradients.size() != 1:
+		return
+	var gradient: TextureRect = gradients[0]
+	assert_not_null(gradient.texture, "the gradient has its art")
+	assert_eq(gradient.get_global_rect(), intro.get_viewport().get_visible_rect(), "it covers the whole window")
+	for label: Node in intro.find_children("*", "Label", true, false):
+		assert_lt(gradient.get_index(), label.get_index(), "it is behind the line %s" % (label as Label).text)
+
+
+# All four of the original's text fields allow wrapping, and extract_cs_intro writes
+# them as Labels that wrap. The original shows each MENU string on one line because it
+# fits its field, so a Label that wraps one means the field, the font or the string
+# is not what the extractor assumed.
+func test_each_cs_intro_line_fits_on_one_line_of_its_field():
+	var intro: CsIntro = _play_cs_intro()
+	assert_not_null(intro, "the intro scene is up")
+	if intro == null:
+		return
+	for label: Node in intro.find_children("*", "Label", true, false):
+		assert_eq((label as Label).get_line_count(), 1, "%s fits on one line" % (label as Label).text)
