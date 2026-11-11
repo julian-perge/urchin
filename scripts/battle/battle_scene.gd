@@ -877,7 +877,7 @@ func _finish_battle() -> void:
 	await _play_fade(int(fade["stop_frame"]), int(fade["result_frame"]))
 	var save: PlayerSave = GameData.current_save
 	var settlement := BattleSettlement.settle(runner, save, battle_info, ZoneManager.achievements_path, GameData.slot_saves())
-	if settlement.outcome == BattleRunner.Outcome.WIN:
+	if settlement.outcome == BattleRunner.Outcome.WIN and settlement.next_fight.is_empty():
 		_pending_cutscene = settlement.cutscene
 		_pending_goto_scene = settlement.goto_scene
 		_player_leveled = settlement.levels_gained > 0
@@ -895,6 +895,10 @@ func _finish_battle() -> void:
 		# this screen, so it is hidden here instead of still showing whose turn it
 		# was across the top of the screen.
 		turn_label.hide()
+	elif settlement.outcome == BattleRunner.Outcome.WIN:
+		# A win that goes straight on opens no victory screen. The original's
+		# Tutorial win jumps to CS_INTRO2 instead (frame_219/DoAction.as:73-77).
+		ZoneManager.request_fight(settlement.next_fight)
 	elif settlement.game_over:
 		# The screen goes on the UI layer so the turn label there can't draw over
 		# it.

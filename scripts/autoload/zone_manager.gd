@@ -9,7 +9,7 @@ extends Node2D
 # The battle pick handed to the battle scene: {battle_id, is_story_progress,
 # is_boss, train_cap}, plus cutscene_before when a Cutscene plays ahead of the
 # fight. Set by request_story_fight(), request_training_fight() and
-# request_new_game_fight(), consumed by battle_scene.gd's _ready().
+# request_fight(), consumed by battle_scene.gd's _ready().
 var pending_battle: Dictionary = {}
 # Tests/headless flows set this false to keep request_* from switching scenes.
 var auto_start_battles: bool = true
@@ -88,17 +88,19 @@ func request_training_fight() -> Dictionary:
 
 # New Game's handler: the first fight of a new game, with its Cutscene before it.
 func request_new_game_fight() -> Dictionary:
-	var info: Dictionary = ZoneProgression.FIRST_STORY_FIGHT.duplicate()
-	info["train_cap"] = BattleSetup.DEFAULT_TRAIN_CAP
-	_launch_battle(info)
-	return info
+	return request_fight(ZoneProgression.FIRST_STORY_FIGHT)
 
 # New Game's handler with the Tutorial option on: the Tutorial fight, with its
 # Cutscene before it. The bar holds the Tutorial's moves for that fight.
 func request_tutorial_fight() -> Dictionary:
 	for i in ZoneProgression.TUTORIAL_MOVES.size():
 		GameData.current_save.move_matrix[i] = ZoneProgression.TUTORIAL_MOVES[i]
-	var info: Dictionary = ZoneProgression.TUTORIAL_FIGHT.duplicate()
+	return request_fight(ZoneProgression.TUTORIAL_FIGHT)
+
+# Hands the Battle screen one of ZoneProgression's fixed picks. They are the
+# first fights of a new game, which no orb starts.
+func request_fight(pick: Dictionary) -> Dictionary:
+	var info: Dictionary = pick.duplicate()
 	info["train_cap"] = BattleSetup.DEFAULT_TRAIN_CAP
 	_launch_battle(info)
 	return info

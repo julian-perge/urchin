@@ -814,6 +814,56 @@ func test_winning_the_tutorial_puts_the_starting_moves_back_on_the_bar():
 	ZoneManager.auto_start_battles = true
 
 
+# A Tutorial win opens no victory screen, because the original only opens it on
+# Navigation's load (frame_181/PlaceObject3_3142_175 onClipEvent(load), lines
+# 3-7), and frame_219 sends the win on to CS_INTRO2 instead (lines 73-77).
+func test_winning_the_tutorial_opens_no_victory_screen():
+	var save = PlayerSave.new_game("TutorialNoVictory", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	assert_null(scene.get_node_or_null("VictoryScreen"), "no victory screen opens")
+
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Tutorial win goes on to CS_INTRO2 and then to battle 100 as a Story fight.
+# The win jumps to the cutsceneSequence that IntroSeq set
+# (frame_165/DoAction.as:8 and frame_219/DoAction.as:73-77), CS_INTRO2's end goes
+# to IntroSeq2 (frame_293/DoAction.as:1), and IntroSeq2 starts battle 100 with
+# progressFight on (frame_180/DoAction.as:2-3). The pick waits in ZoneManager for
+# the next Battle screen.
+func test_winning_the_tutorial_goes_on_to_battle_100_after_cs_intro2():
+	var save = PlayerSave.new_game("TutorialNext", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	var pick: Dictionary = ZoneManager.pending_battle
+	assert_eq(pick.get("battle_id"), 100, "the next fight is battle 100")
+	assert_true(pick.get("is_story_progress", false), "as a Story fight")
+	assert_eq(pick.get("cutscene_before"), "CS_INTRO2", "with CS_INTRO2 before it")
+
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The original's Proceed can't be pressed twice, because its release always
 # leaves the frame of DefineSprite 3142 that the victory screen is drawn on, for
 # the cutscene, the map or 3142's skills or hide frame (DefineButton2_3004
