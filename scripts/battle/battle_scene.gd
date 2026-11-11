@@ -94,6 +94,7 @@ var _turn_based: bool = true
 var _finished: bool = false
 var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
 var _pending_goto_scene: String = ""  # ZoneProgression.CUTSCENE_GOTO_SCENE for that cutscene
+var _player_leveled: bool = false  # set by _finish_battle() on a win whose XP filled the bar, like playerLeveled
 var _pending_setup_events: Array = []  # runner.setup()'s return - played first by _battle_loop()
 # The SPEECH event _play_speech has on screen, or {} when no line is up.
 var _line_on_screen: Dictionary = {}
@@ -848,6 +849,7 @@ func _finish_battle() -> void:
 	if settlement.outcome == BattleRunner.Outcome.WIN:
 		_pending_cutscene = settlement.cutscene
 		_pending_goto_scene = settlement.goto_scene
+		_player_leveled = settlement.levels_gained > 0
 		# Drops are click-to-keep on the victory screen (VICTORY[1]); the
 		# autosave happens on Proceed, like the original.
 		var victory: VictoryScreen = preload("res://scenes/battle/victory_screen.tscn").instantiate()
@@ -913,6 +915,17 @@ func _on_victory_proceed() -> void:
 			return
 		if goto_scene == "overMap":
 			ZoneManager.open_zone_map_on_load = true
+	elif bool(battle_info.get("is_boss", false)):
+		# With no cutscene queued, the original opens the zone map after any
+		# fight with bossFight on, a first win and a Boss replay alike
+		# (DefineButton2_3004 on(release), lines 13-16, and
+		# frame_219/DoAction.as:9-16).
+		ZoneManager.open_zone_map_on_load = true
+	elif _player_leveled:
+		# Neither a cutscene nor the map comes next, so the original shows its
+		# skills frame when the win filled the XP bar (DefineButton2_3004
+		# on(release), lines 17-29). The hub opens the Abilities window.
+		ZoneManager.open_abilities_on_load = true
 	_on_continue_pressed()
 
 
