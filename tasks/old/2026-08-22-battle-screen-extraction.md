@@ -8,7 +8,7 @@
 
 **Tech Stack:** Python 3.14 (`uv`, Pillow, ruff), ffdec built from the jpexs master branch at `~/.local/bin/ffdec`, Godot 4.7.2 with GUT 9.7.1.
 
-**Spec:** `docs/superpowers/specs/2026-08-22-battle-screen-extraction-design.md`
+**Spec:** `spec/old/2026-08-22-battle-screen-extraction-design.md`
 
 ## Global Constraints
 
@@ -723,7 +723,7 @@ it."
 **Files:**
 - Test: `test/integration/test_battle_scene.gd`
 - Modify: `NEXT_PHASES.md`, `KNOWN_GAPS.md`, `dev/source_files/README.md`
-- Modify: `docs/superpowers/specs/2026-08-22-battle-screen-extraction-design.md` (status line)
+- Modify: `spec/old/2026-08-22-battle-screen-extraction-design.md` (status line)
 
 **Interfaces:**
 - Consumes: everything from Tasks 1-4. Produces nothing later tasks use.
@@ -895,7 +895,7 @@ Invoke the `humanizer` skill on the three doc edits above. Apply whatever correc
 ```bash
 python3 -c "
 from pathlib import Path
-for f in ('NEXT_PHASES.md','KNOWN_GAPS.md','dev/source_files/README.md','docs/superpowers/specs/2026-08-22-battle-screen-extraction-design.md','dev/urchin_dev/swf/extract/battle_screen.py','dev/urchin_dev/swf/extract/verify_battle_screen.py'):
+for f in ('NEXT_PHASES.md','KNOWN_GAPS.md','dev/source_files/README.md','spec/old/2026-08-22-battle-screen-extraction-design.md','dev/urchin_dev/swf/extract/battle_screen.py','dev/urchin_dev/swf/extract/verify_battle_screen.py'):
     s=Path(f).read_text()
     bad=[c for c in set(s) if ord(c)>127]
     print(f, bad if bad else 'ascii ok')"
@@ -914,7 +914,7 @@ Expected: 214 passing, 0 failing.
 ```bash
 git add dev/urchin_dev/swf/extract/verify_battle_screen.py \
         NEXT_PHASES.md KNOWN_GAPS.md dev/source_files/README.md \
-        docs/superpowers/specs/2026-08-22-battle-screen-extraction-design.md
+        spec/old/2026-08-22-battle-screen-extraction-design.md
 git commit -m "test: check the battle recomposition against a full frame render
 
 verify_battle_screen composites the extracted CHURCH hall and ROME sky at the

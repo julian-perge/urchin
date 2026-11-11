@@ -10,7 +10,7 @@
 # same PNG this script measures again for the scale ratio's denominator,
 # so the ZOOM factor cancels regardless of a clip's own filter padding.
 #
-# See docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# See spec/old/2026-08-19-vfx-registration-scenes-design.md.
 # Run: uv run extract_vfx_scenes
 from __future__ import annotations
 

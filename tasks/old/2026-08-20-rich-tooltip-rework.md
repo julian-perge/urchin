@@ -19,7 +19,7 @@ recovered from the original's own tooltip clip (see the spec).
 **Tech Stack:** Godot 4.7.2, GDScript, GUT (test framework, vendored in
 `addons/gut`).
 
-**Spec:** `docs/superpowers/specs/2026-08-20-rich-tooltip-rework-design.md`
+**Spec:** `spec/old/2026-08-20-rich-tooltip-rework-design.md`
 
 ## Global Constraints
 
@@ -86,7 +86,7 @@ recovered from the original's own tooltip clip (see the spec).
 # applies at that stop - not an arbitrary flat-color guess. Text colors are
 # pixel-sampled from reference captures (the source's own TextFormat.color
 # values are buried in undecompiled AS2 bytecode) - see
-# docs/superpowers/specs/2026-08-20-rich-tooltip-rework-design.md.
+# spec/old/2026-08-20-rich-tooltip-rework-design.md.
 class_name TooltipTheme
 extends RefCounted
 
@@ -163,7 +163,7 @@ one in this codebase's existing scenes).
 # original's title-bar/colored-info-bar/body look at all). A tooltip is a
 # stack of sections (scripts/ui/tooltip_theme.gd's colors); each section is
 # its own background box holding one or more independently-colored lines -
-# see docs/superpowers/specs/2026-08-20-rich-tooltip-rework-design.md.
+# see spec/old/2026-08-20-rich-tooltip-rework-design.md.
 extends CanvasLayer
 class_name GameTooltip
 

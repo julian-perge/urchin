@@ -1,6 +1,6 @@
 # Ability.visual_effect_color - frame42/sonny2_moves.txt's colortobe value
 # (11_visual_effect_color), tints the cast glow (both Missile and Shock)
-# and the KrinTrail streak. docs/superpowers/specs/2026-08-18-missile-projectile-art-design.md.
+# and the KrinTrail streak. spec/old/2026-08-18-missile-projectile-art-design.md.
 extends GutTest
 
 

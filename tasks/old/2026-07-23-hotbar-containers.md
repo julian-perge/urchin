@@ -4,7 +4,7 @@
 
 **Goal:** Migrate `scripts/ui/hotbar.gd` + `scenes/ui/hotbar.tscn` off imperative runtime Control-building, as the fifth increment of the "UI architecture: native Godot Containers instead of
 code-built controls" phase in `NEXT_PHASES.md` (`item_slot.gd`/`store_window.gd`/`inventory_panel.gd`/`abilities_window.gd`/`achievements_window.gd` are already done - see the sibling plans in
-`docs/superpowers/plans/` for the established conventions this plan follows).
+`tasks/old/` for the established conventions this plan follows).
 
 **Architecture:** Unlike every prior increment, `hotbar.tscn` is ALREADY mostly declarative - it uses real `HBoxContainer`/`CenterContainer`/`VBoxContainer` layout, shared `StyleBoxFlat`
 sub-resources, and `unique_name_in_owner` nodes for every button and label. Only two things in `hotbar.gd` still build nodes at runtime: (1) `_build_quit_button()`, which constructs the red X

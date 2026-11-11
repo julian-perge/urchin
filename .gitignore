@@ -1,6 +1,7 @@
 ### Project
 .DS_Store
-.recall
+tasks/*
+!tasks/old/
 /test_*
 
 # Original decompiled Flash source, not for distribution

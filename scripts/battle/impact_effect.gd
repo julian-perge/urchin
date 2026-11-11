@@ -7,7 +7,7 @@
 # this script only instantiates it and wires cleanup. The source never
 # explicitly removes its own equivalent clips ("bbb"+counter in
 # frame_42/DoAction_4.as's krinBoltMake) - a deliberate improvement, not
-# an unfaithful port. See docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# an unfaithful port. See spec/old/2026-08-19-vfx-registration-scenes-design.md.
 class_name ImpactEffect
 extends Node2D
 

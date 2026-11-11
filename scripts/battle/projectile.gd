@@ -23,7 +23,7 @@
 # (non-looping - its own frames already carry the fade), tinted by
 # trail_color (RGB only - alpha comes from the frames), and grows scale.x
 # every tick, independent of its own internal animation - see
-# docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# spec/old/2026-08-19-vfx-registration-scenes-design.md.
 class_name Projectile
 extends Node2D
 

@@ -81,7 +81,7 @@ STANCE_DIR = BATTLE_UI_DIR / "stance"
 # out of these rather than extracting it whole, because a faithful texture
 # would need one render per stance per selection state and still could not
 # carry the player-supplied name. See
-# docs/superpowers/specs/2026-08-23-battle-bottom-bar-and-stance-rows.md.
+# spec/old/2026-08-23-battle-bottom-bar-and-stance-rows.md.
 #
 # 3305 labels its five frames Phalanx, Defensive, Tactical, Aggressive and
 # Relentless, which is _root.agModeNames verbatim and also the order of

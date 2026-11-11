@@ -6,7 +6,7 @@
 # Background colors below are each gradient's own recorded midpoint stop
 # (170,170,170) with the same additive transform the source applies at that
 # stop - not an arbitrary flat-color guess - see
-# docs/superpowers/specs/2026-08-20-rich-tooltip-rework-design.md. Text sizes,
+# spec/old/2026-08-20-rich-tooltip-rework-design.md. Text sizes,
 # colors and widths are the TextFormat and createTextField values the clip's
 # frame scripts give each text field they build.
 class_name TooltipTheme
