@@ -151,11 +151,12 @@ func test_second_play_call_on_same_instance_is_ignored():
 
 
 # extract_cutscene_skip reads where the original puts SKIP out of the SWF: a hit
-# area for button 3468 and a line of white text for edit text 3469. The test
-# reads the same file that the player does. A Control keeps its offsets and
-# works its size out from them, so the numbers match to within float error. A
-# Label is never shorter than one line of its font, which is taller than the
-# field here, so only the text's position and width are compared.
+# area for button 3468 and a line of text for edit text 3469. The test reads the
+# same file that the player does, and the extractor's own tests check what it
+# writes there. A Control keeps its offsets and works its size out from them, so
+# the numbers match to within float error. A Label is never shorter than one
+# line of its font, which is taller than the field here, so only the text's
+# position and width are compared.
 func test_skip_covers_the_original_hit_area_and_draws_its_text_where_the_original_does():
 	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/cutscenes/skip_button.json"))
 	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
@@ -168,12 +169,12 @@ func test_skip_covers_the_original_hit_area_and_draws_its_text_where_the_origina
 
 	var text: Dictionary = layout["text"]
 	var rect: Dictionary = text["rect"]
-	assert_eq(player.skip_text.text, "SKIP")
+	assert_eq(player.skip_text.text, text["string"])
 	assert_almost_eq(player.skip_text.get_global_rect().position, Vector2(rect["x"], rect["y"]), tolerance, "where the text starts")
 	assert_almost_eq(player.skip_text.size.x, rect["w"], 0.01, "how wide its line is")
-	assert_eq(player.skip_text.horizontal_alignment, HORIZONTAL_ALIGNMENT_RIGHT, "right-aligned")
-	assert_eq(player.skip_text.get_theme_font_size("font_size"), 12)
-	assert_eq(player.skip_text.get_theme_color("font_color"), Color.WHITE)
+	assert_eq(player.skip_text.horizontal_alignment, LabelLayout.ALIGNMENTS[text["align"]], "aligned as the field is")
+	assert_eq(player.skip_text.get_theme_font_size("font_size"), int(text["size"]), "the field's size")
+	assert_eq(player.skip_text.get_theme_color("font_color"), Color(text["color"]), "the field's color")
 
 
 # SKIP's release stops all sounds and sets cutSceneEnd (DefineButton2_3468
