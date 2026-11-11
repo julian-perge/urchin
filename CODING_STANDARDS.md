@@ -31,6 +31,11 @@ this project already got wrong once and names its evidence.
   fragments. It is complete, because it says what actually happens and nothing
   else in the file contradicts it. #150's review rewrote or deleted a dozen
   fragment comments (`3053a675`).
+- **A doc claim about what the game does not do yet names the ticket that
+  changes it.** #178 wrote "Nothing in the game plays it yet" about CS_INTRO in
+  `DECODED_ALGORITHMS.md`. #53 made it false inside the same PR, and only the
+  review caught it. Write "Nothing plays it until #53 lands", and grep the docs
+  for the claim when the later ticket merges.
 
 ## Verifying
 
