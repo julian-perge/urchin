@@ -94,8 +94,10 @@ func request_new_game_fight() -> Dictionary:
 	return info
 
 # New Game's handler with the Tutorial option on: the Tutorial fight, with its
-# Cutscene before it.
+# Cutscene before it. The bar holds the Tutorial's moves for that fight.
 func request_tutorial_fight() -> Dictionary:
+	for i in ZoneProgression.TUTORIAL_MOVES.size():
+		GameData.current_save.move_matrix[i] = ZoneProgression.TUTORIAL_MOVES[i]
 	var info: Dictionary = ZoneProgression.TUTORIAL_FIGHT.duplicate()
 	info["train_cap"] = BattleSetup.DEFAULT_TRAIN_CAP
 	_launch_battle(info)
