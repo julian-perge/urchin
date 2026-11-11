@@ -142,6 +142,80 @@ func test_boss_replay_from_the_story_orb_sets_used_training():
 	GameData.current_save = previous_save
 
 
+# The PRISON orb plays CS_CUT1 ahead of the fight when BattlePick is 109 and
+# progressFight is on (DefineButton2_3188 on(press), lines 18-24). A loss is game
+# over and a reload puts the player back in front of 109, so every attempt plays it.
+func test_the_story_orb_plays_cs_cut1_before_every_story_attempt_at_109():
+	var previous_save: PlayerSave = GameData.current_save
+	var previous_zone: int = ZoneManager.current_zone
+	var previous_auto_start: bool = ZoneManager.auto_start_battles
+	var previous_pending: Dictionary = ZoneManager.pending_battle
+	GameData.current_save = save
+	ZoneManager.current_zone = 1
+	ZoneManager.auto_start_battles = false
+	save.quest_progress[1] = 9
+	for attempt in range(1, 3):
+		ZoneManager.pending_battle = {}
+		ZoneManager.request_story_fight()
+		assert_eq(ZoneManager.pending_battle.get("battle_id"), 109, "attempt %d is battle 109" % attempt)
+		assert_eq(ZoneManager.pending_battle.get("cutscene_before"), "CS_CUT1", "attempt %d plays CS_CUT1 first" % attempt)
+
+	ZoneManager.pending_battle = previous_pending
+	ZoneManager.auto_start_battles = previous_auto_start
+	ZoneManager.current_zone = previous_zone
+	GameData.current_save = previous_save
+
+
+# A Boss replay of 109 turns progressFight off (DefineButton2_3188 on(press), line 11),
+# so the orb skips the Cutscene (lines 18-24).
+func test_a_boss_replay_of_109_starts_with_no_cutscene():
+	var previous_save: PlayerSave = GameData.current_save
+	var previous_zone: int = ZoneManager.current_zone
+	var previous_auto_start: bool = ZoneManager.auto_start_battles
+	var previous_pending: Dictionary = ZoneManager.pending_battle
+	GameData.current_save = save
+	ZoneManager.current_zone = 1
+	ZoneManager.auto_start_battles = false
+	save.quest_progress[1] = 10
+	ZoneManager.pending_battle = {}
+	ZoneManager.request_story_fight()
+	assert_eq(ZoneManager.pending_battle.get("battle_id"), 109, "the replay is battle 109 again")
+	assert_eq(ZoneManager.pending_battle.get("is_story_progress"), false, "and it is a Boss replay")
+	assert_eq(ZoneManager.pending_battle.get("cutscene_before", ""), "", "it starts with no Cutscene")
+
+	ZoneManager.pending_battle = previous_pending
+	ZoneManager.auto_start_battles = previous_auto_start
+	ZoneManager.current_zone = previous_zone
+	GameData.current_save = previous_save
+
+
+# Only 109 has a Cutscene before it. The other zones' bosses are boss fights too,
+# so a Cutscene keyed to is_boss would wrongly play before each of them. Zone 1's
+# fights from progress 9 on are the two tests above.
+func test_no_other_story_orb_fight_has_a_cutscene_before_it():
+	var previous_save: PlayerSave = GameData.current_save
+	var previous_zone: int = ZoneManager.current_zone
+	var previous_auto_start: bool = ZoneManager.auto_start_battles
+	var previous_pending: Dictionary = ZoneManager.pending_battle
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	for zone in ZoneProgression.QUEST_HUB:
+		ZoneManager.current_zone = zone
+		var progress_max: int = int(ZoneProgression.QUEST_HUB[zone]["progress_max"])
+		for progress in range(progress_max + 2):
+			if zone == 1 and progress >= 9:
+				continue
+			save.quest_progress[zone] = progress
+			ZoneManager.pending_battle = {}
+			ZoneManager.request_story_fight()
+			assert_eq(ZoneManager.pending_battle.get("cutscene_before", ""), "", "zone %d at progress %d" % [zone, progress])
+
+	ZoneManager.pending_battle = previous_pending
+	ZoneManager.auto_start_battles = previous_auto_start
+	ZoneManager.current_zone = previous_zone
+	GameData.current_save = previous_save
+
+
 # Zones 1 to 5 share one training orb, DefineButton2_3186, which sets
 # usedTraining (on(press), line 15). The ROME orb, DefineButton2_3242, doesn't,
 # and the JAPAN frame of the hub has no training orb at all.

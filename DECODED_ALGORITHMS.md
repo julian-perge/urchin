@@ -660,6 +660,12 @@ Ported: `ZoneProgression.pick_story_battle` and `pick_training_battle` carry eac
 - `usedTraining` is set by the zones 1 to 5 training orb (`DefineButton2_3186` on(press), line 15) and by the boss replays of the zones 1 to 5 story orbs (`DefineButton2_3188` line 9, the
   others line 12). The ROME training orb and the ROME and JAPAN story orb never set it. Predator and Legend are decided on the first wins of 212 and 513, before zone 6 opens, so neither
   award changes.
+- The PRISON orb plays CS_CUT1 before the fight when `BattlePick` is 109 and `progressFight` is on (`DefineButton2_3188` on(press), lines 18-24). It sets `afterCut` to "CS_CUT1" and
+  `gotoSceneKrin` to "LOADBATTLESCENE", calls `stopAllSounds()` and goes to the CS_CUT1 label. The clip's last frame sets `cutSceneEnd` (`DefineSprite_3928/frame_621/DoAction.as:1`), and
+  the fade clip then goes on to the battle without touching the music (`frame_263/PlaceObject2_3466_80` enterFrame, lines 15-33). `progressFight` is on for the first fight at 109 and off
+  for a Boss replay (line 11), and a loss changes no progress, so every attempt at 109 plays the clip and a replay plays none. No other orb plays a cutscene. The port's
+  `ZoneProgression.pick_story_battle` sets `cutscene_before` to "CS_CUT1" for a Story fight at 109 and leaves it out of a Boss replay, and the Battle screen plays it (#48). This is read
+  from the AS and not confirmed in a live run.
 
 ## Hub panel on the Navigation frame (root frame 181)
 

@@ -12,7 +12,7 @@
 # - it does two things that decide what the player of the original ever sees:
 #
 #   1. It places the animation sprite offset by translate (5395, 3049) twips
-#      = (269.75, 152.45) px, identical across all four wrappers.
+#      = (269.75, 152.45) px, identical across every wrapper.
 #   2. It places DefineShape 2870 - a plain 10660x6000-twip (533x300 px)
 #      rectangle - at depth 1 with a clipDepth covering the animation
 #      sprite's depth. That is a clip mask: everything the animation draws
@@ -161,8 +161,10 @@ def tool(name: str) -> Path:
 # label -> (animation sprite chid, wrapper sprite chid, frame count,
 # camera clip chid to strip). The frame count is the *animation* sprite's;
 # the wrapper always declares 1 and gets patched up to this (see file header).
+# CS_CUT1 and CS_CUT3 place the same camera clip, 3812.
 CUTSCENES: dict[str, tuple[int, int, int, int]] = {
     "CS_INTRO2": (3643, 3644, 2084, 3478),
+    "CS_CUT1": (3928, 3929, 621, 3812),
     "CS_CUT2": (3810, 3811, 1795, 3645),
     "CS_CUT3": (3960, 3961, 501, 3812),
     "CS_CUT4": (4038, 4039, 1237, 3962),
