@@ -790,6 +790,30 @@ func test_winning_the_tutorial_pays_no_money_or_xp():
 	ZoneManager.auto_start_battles = true
 
 
+# A Tutorial win puts the class's two starting moves back on the first two bar
+# slots, where the Tutorial had put moves 21 and 22 (frame_219/DoAction.as:65-69).
+# Hydraulic has other starting moves than the default class does.
+func test_winning_the_tutorial_puts_the_starting_moves_back_on_the_bar():
+	var save = PlayerSave.new_game("TutorialBar", PlayerSave.PlayerClass.HYDRAULIC)
+	save.move_matrix[0] = 21
+	save.move_matrix[1] = 22
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	assert_eq(save.move_matrix, [276, 277, 0, 0, 0, 0, 0, 0], "the class's starting moves are back")
+
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The original's Proceed can't be pressed twice, because its release always
 # leaves the frame of DefineSprite 3142 that the victory screen is drawn on, for
 # the cutscene, the map or 3142's skills or hide frame (DefineButton2_3004
