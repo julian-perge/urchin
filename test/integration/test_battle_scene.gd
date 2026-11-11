@@ -13,11 +13,20 @@ const TEST_SAVE_DIR: String = "user://test_battle_scene_saves/"
 const ACHIEVEMENTS_FILE: String = "user://test_battle_scene_achievements.cfg"
 
 var _achievements_path: String
+# The Tutorial's unit slots as they were before a test patched the loaded battle,
+# or empty when no test did.
+var _tutorial_players_to_restore: Array = []
 
 
 func before_all():
 	_achievements_path = ZoneManager.achievements_path
 	ZoneManager.achievements_path = ACHIEVEMENTS_FILE
+
+
+func after_each():
+	if not _tutorial_players_to_restore.is_empty():
+		BattleSetup.load_battle(ZoneProgression.TUTORIAL_BATTLE_ID).players = _tutorial_players_to_restore
+		_tutorial_players_to_restore = []
 
 
 func after_all():
@@ -314,6 +323,9 @@ func test_the_battle_music_and_the_first_half_turn_start_once_the_cutscene_ends(
 	var scene = _start_battle_100_with({"cutscene_before": "CS_INTRO2"})
 	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
 	assert_not_null(cutscene, "the Cutscene is playing")
+	assert_ne(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music has not started while the clip plays")
+	await wait_process_frames(3)
+	assert_false(scene.decision_open, "and the first half-turn has not opened its Decision")
 	if cutscene != null:
 		cutscene.video.finished.emit()
 
@@ -791,12 +803,14 @@ func test_winning_the_tutorial_pays_no_money_or_xp():
 
 
 # A Tutorial win puts the class's two starting moves back on the first two bar
-# slots, where the Tutorial had put moves 21 and 22 (frame_219/DoAction.as:65-69).
+# slots, where the Tutorial had put its own two moves (frame_219/DoAction.as:65-69).
 # Hydraulic has other starting moves than the default class does.
 func test_winning_the_tutorial_puts_the_starting_moves_back_on_the_bar():
 	var save = PlayerSave.new_game("TutorialBar", PlayerSave.PlayerClass.HYDRAULIC)
-	save.move_matrix[0] = 21
-	save.move_matrix[1] = 22
+	var starting_moves: Array = TalentTree.STARTING_MOVES[PlayerSave.PlayerClass.HYDRAULIC]
+	var other_slots: Array = save.move_matrix.slice(starting_moves.size())
+	for i in ZoneProgression.TUTORIAL_MOVES.size():
+		save.move_matrix[i] = ZoneProgression.TUTORIAL_MOVES[i]
 	GameData.current_save = save
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -807,7 +821,7 @@ func test_winning_the_tutorial_puts_the_starting_moves_back_on_the_bar():
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
 
-	assert_eq(save.move_matrix, [276, 277, 0, 0, 0, 0, 0, 0], "the class's starting moves are back")
+	assert_eq(save.move_matrix, starting_moves + other_slots, "the class's starting moves are back, and no other slot changed")
 
 	ZoneManager.pending_battle = {}
 	GameData.current_save = null
@@ -1692,8 +1706,9 @@ func test_a_guest_with_a_companions_name_gets_no_stance_row():
 
 # The original hides the member bar in battle 2 (DefineSprite_3317/frame_1/
 # PlaceObject2_3312_7 onClipEvent(load), lines 5-8), where Louis the Blind
-# fights in slot 5 as a Guest. The port gives a row to a Companion only, so the
-# Tutorial shows no row (DECODED_ALGORITHMS.md has why).
+# fights in slot 5 as a Guest. The port gives a row to a Companion only, so a
+# Guest gets none (DECODED_ALGORITHMS.md has why). The next test covers a
+# Companion in battle 2.
 func test_battle_2_shows_no_stance_rows():
 	var save = PlayerSave.new_game("TutorialRows", 0)
 	GameData.current_save = save
@@ -1707,6 +1722,33 @@ func test_battle_2_shows_no_stance_rows():
 	assert_eq(scene.units[5].player_name, "Louis the Blind", "battle 2 fields Louis the Blind in slot 5")
 	assert_eq(scene.units[5].origin, CombatUnit.Origin.GUEST, "as a Guest")
 	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original hides the member bar in battle 2 whoever fights there
+# (DefineSprite_3317/frame_1/PlaceObject2_3312_7 onClipEvent(load), lines 5-8),
+# so the port has a rule for it and does not lean on battle 2 fielding no
+# Companion. Battle 2's data deploys none, so the test puts the deployed-companion
+# marker into slot 3 of the loaded battle, which fields a fresh save's Veradux
+# there. after_each puts the data back.
+func test_battle_2_shows_no_stance_rows_even_with_a_companion_deployed():
+	var save = PlayerSave.new_game("TutorialCompanionRows", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var tutorial: BattleFight = BattleSetup.load_battle(ZoneProgression.TUTORIAL_BATTLE_ID)
+	_tutorial_players_to_restore = tutorial.players.duplicate(true)
+	tutorial.players[1] = {"id": -2.0}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": ZoneProgression.TUTORIAL_BATTLE_ID, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+
+	assert_eq(scene.units[3].origin, CombatUnit.Origin.COMPANION, "battle 2 fields a Companion in slot 3")
+	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
+	assert_true(scene._stance_rows.is_empty(), "and nothing keeps a row for the Companion")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

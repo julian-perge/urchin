@@ -260,9 +260,9 @@ func test_new_game_with_the_tutorial_on_goes_on_to_battle_2_after_cs_intro():
 	_clear_test_slots()
 
 
-# IntroSeq puts moves 21 and 22 on the first two bar slots for battle 2, whatever
-# the class, and touches no other slot (frame_165/DoAction.as:6-7).
-func test_new_game_with_the_tutorial_on_puts_moves_21_and_22_on_the_bar():
+# IntroSeq puts the Tutorial's two moves on the first two bar slots for battle 2,
+# whatever the class, and touches no other slot (frame_165/DoAction.as:6-7).
+func test_new_game_with_the_tutorial_on_puts_the_tutorial_moves_on_the_bar():
 	_write_test_slots([])
 	var menu = await _menu_without_scene_change()
 	menu.get_node("ModePanel/NewGameButton").pressed.emit()
@@ -271,7 +271,10 @@ func test_new_game_with_the_tutorial_on_puts_moves_21_and_22_on_the_bar():
 	menu.class_picker.get_node("Hydraulic").pressed.emit()
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
 
-	assert_eq(GameData.current_save.move_matrix, [21, 22, 0, 0, 0, 0, 0, 0], "the Tutorial's two moves lead the bar")
+	var bar: Array = GameData.current_save.move_matrix
+	var tutorial_moves: Array = ZoneProgression.TUTORIAL_MOVES
+	assert_eq(bar.slice(0, tutorial_moves.size()), tutorial_moves, "the Tutorial's two moves lead the bar")
+	assert_eq(bar.slice(tutorial_moves.size()).count(0), bar.size() - tutorial_moves.size(), "and no other slot holds a move")
 	_clear_test_slots()
 
 
@@ -294,7 +297,10 @@ func test_new_game_with_the_tutorial_off_goes_on_to_battle_100_after_cs_intro2()
 	assert_eq(pick.get("battle_id"), 100, "the first fight is battle 100")
 	assert_true(pick.get("is_story_progress", false), "as a Story fight")
 	assert_eq(pick.get("cutscene_before"), "CS_INTRO2", "with CS_INTRO2 before it")
-	assert_eq(GameData.current_save.move_matrix, [1, 6, 0, 0, 0, 0, 0, 0], "and the class's starting moves stay on the bar")
+	var bar: Array = GameData.current_save.move_matrix
+	var starting_moves: Array = TalentTree.STARTING_MOVES[PlayerSave.PlayerClass.BIOLOGICAL]
+	assert_eq(bar.slice(0, starting_moves.size()), starting_moves, "and the class's starting moves stay on the bar")
+	assert_eq(bar.slice(starting_moves.size()).count(0), bar.size() - starting_moves.size(), "with no other slot holding a move")
 	_clear_test_slots()
 
 

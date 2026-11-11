@@ -184,7 +184,7 @@ slots 3 and 5, by whether each unit is active (`frame_217/PlaceObject2_3389_480`
 guest's row would work. Only battles 2 and 508 put a guest on the player's team (measured over the 99 battles in `resources/battles`). Battle 2 hides the bar outright
 (`DefineSprite_3317/frame_1/PlaceObject2_3312_7` onClipEvent(load), lines 5-8). Battle 508's only phase entry is flagged endGame, so it is won the moment its opening lines finish (lines
 862-868), and the block at line 703 needs `speechDone` true with `winCondition` still below 0 (lines 589-591), so it never runs. The bar starts hidden (`gotoAndStop("HIDE")` in that same
-onClipEvent). This is read from the AS, not seen in a live run of the SWF. The port gives a row only to a unit whose `origin` is COMPANION, so no guest gets one there either. When the rows
+onClipEvent). This is read from the AS, not seen in a live run of the SWF. The port gives a row only to a unit whose `origin` is COMPANION, so no guest gets one there either, and `_populate_stance_rows` builds none in battle 2 whoever fights there, as the original's load handler hides the bar. When the rows
 show still differs: the port keeps a companion's row up for the whole battle, while the original shows the bar only at Decisions, so it never appears in the four battles won during their
 opening lines (210, 409, 504 and 508).
 
@@ -644,7 +644,8 @@ Ported: once CS_CUT5 ends, `battle_scene.gd`'s `_on_victory_proceed` opens `Endi
 ## CS_INTRO (root frame 263)
 
 Ported: `CutscenePlayer.play("CS_INTRO")` shows `CsIntro` (`scripts/cutscenes/cs_intro.gd`) in place of a clip, with the same fade and `finished`. `extract_cs_intro` writes the gradient
-and `assets/cutscenes/cs_intro.json` for it. Nothing in the game plays it yet.
+and `assets/cutscenes/cs_intro.json` for it. The Tutorial plays it: the main menu's start button calls `ZoneManager.request_tutorial_fight` when the Tutorial option is on, `ZoneProgression.TUTORIAL_FIGHT` names it as
+its `cutscene_before`, and the Battle screen plays it before the fight.
 
 - The Start button opens the Tutorial on it (`DefineButton2_2770` on(release), lines 2-11). Root frame 263 places the gradient, DefineShape 3475, at depth 1 and the four edit texts 3474,
   3473, 3472 and 3471 at depths 2 to 5. The texts' variables are `introText1` to `introText4`. Each text has a Glow filter (blur 3, strength 10, black) and a `DropShadow` filter (blur 8,
