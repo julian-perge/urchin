@@ -7,8 +7,9 @@ extends Node2D
 @onready var current_zone: int = 1
 
 # The battle pick handed to the battle scene: {battle_id, is_story_progress,
-# is_boss, train_cap}. Set by request_story_fight()/request_training_fight(),
-# consumed by battle_scene.gd's _ready().
+# is_boss, train_cap}, plus cutscene_before when a Cutscene plays ahead of the
+# fight. Set by request_story_fight(), request_training_fight() and
+# request_new_game_fight(), consumed by battle_scene.gd's _ready().
 var pending_battle: Dictionary = {}
 # Tests/headless flows set this false to keep request_* from switching scenes.
 var auto_start_battles: bool = true
@@ -75,6 +76,13 @@ func request_training_fight() -> Dictionary:
 		if info["counts_as_training"]:
 			save.used_training = true
 		_launch_battle(info)
+	return info
+
+# New Game's handler: the first fight of a new game, with its Cutscene before it.
+func request_new_game_fight() -> Dictionary:
+	var info: Dictionary = ZoneProgression.FIRST_STORY_FIGHT.duplicate()
+	info["train_cap"] = BattleSetup.DEFAULT_TRAIN_CAP
+	_launch_battle(info)
 	return info
 
 func _launch_battle(info: Dictionary) -> void:
