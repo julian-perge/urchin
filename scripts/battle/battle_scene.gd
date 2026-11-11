@@ -21,7 +21,9 @@
 #
 # Entry: ZoneManager.battle_selected stores the pick in
 # ZoneManager.pending_battle and the game scene switches here; _ready()
-# consumes it. Tests inject via start_battle() with animation_speed = 0.
+# consumes it. A pick with a cutscene_before id plays that Cutscene first, and
+# the battle music and the first half-turn wait for its end. Tests inject via
+# start_battle() with animation_speed = 0.
 extends Control
 
 signal battle_finished(outcome: int)
@@ -92,6 +94,11 @@ var _decision_timer: float = 0.0
 # hidden, because the original's clock does not move then.
 var _turn_based: bool = true
 var _finished: bool = false
+# True while the Cutscene a pick names plays. The original's click and Space
+# listeners come with the battle frame (frame_217/DoAction.as:18-27 and
+# frame_217/PlaceObject2_3367_634 onClipEvent(keyDown)), which loads after the
+# Cutscene, so _input ignores both until the clip has ended.
+var _cutscene_playing: bool = false
 var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
 var _pending_goto_scene: String = ""  # ZoneProgression.CUTSCENE_GOTO_SCENE for that cutscene
 var _player_leveled: bool = false  # set by _finish_battle() on a win whose XP filled the bar, like playerLeveled
@@ -237,12 +244,27 @@ func start_battle(info: Dictionary) -> void:
 	_load_background()
 	_spawn_visuals()
 	_populate_stance_rows()
+	var cutscene_id: String = str(info.get("cutscene_before", ""))
+	if not cutscene_id.is_empty():
+		await _play_cutscene_before(cutscene_id)
 	AudioManagerAuto.play_battle_music(info.get("is_boss", false))
 	# The battle frame opens on blacker5's frame 1, which fades the battle in
 	# from black until the stop() on its frame 31
 	# (DefineSprite_3355/frame_31/DoAction.as).
 	_play_fade(1, int(_layout()["fade"]["stop_frame"]))
 	_battle_loop.call_deferred()
+
+
+# Plays the Cutscene a pick names and returns once it has ended. Every sound
+# stops first, so nothing plays under the clip's own audio.
+func _play_cutscene_before(cutscene_id: String) -> void:
+	_cutscene_playing = true
+	AudioManagerAuto.stop_all_sounds()
+	var cutscene: CutscenePlayer = preload("res://scenes/cutscenes/cutscene_player.tscn").instantiate()
+	cutscene.animation_speed = animation_speed
+	add_child(cutscene)
+	await cutscene.play(cutscene_id)
+	_cutscene_playing = false
 
 
 # The original composites a sky layer behind the hall art; the hall PNGs have a
@@ -787,7 +809,7 @@ func _play_speech(event: Dictionary) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if _finished:
+	if _finished or _cutscene_playing:
 		return
 	# The original's click listener is a Mouse.onMouseDown that the battle frame
 	# adds (frame_217/DoAction.as:18-27), so it hears every left-click, one that

@@ -210,8 +210,9 @@ func test_new_game_starts_in_any_used_slot_and_keeps_its_save_until_the_first_sa
 		assert_not_called(menu, "_enter_game")
 
 		menu.class_picker.get_node("Hydraulic").pressed.emit()
+		ZoneManager.pending_battle = {}
 		menu.get_node("OptionsPanel/StartButton").pressed.emit()
-		assert_called(menu, "_enter_game")
+		assert_false(ZoneManager.pending_battle.is_empty(), "START goes on to the first fight")
 		assert_eq(GameData.current_slot, slot, "the new game plays in slot %d" % slot)
 		assert_eq(GameData.current_save.name_user, "Fresh%d" % slot, "under the typed name")
 		assert_eq(GameData.current_save.player_class, PlayerSave.PlayerClass.HYDRAULIC, "as the picked class")
@@ -231,9 +232,31 @@ func test_starting_a_new_game_in_an_empty_slot_writes_no_save():
 	menu.slot_buttons.get_child(2).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
-	assert_called(menu, "_enter_game")
+	assert_false(ZoneManager.pending_battle.is_empty(), "START goes on to the first fight")
 	assert_eq(GameData.current_slot, 3, "the new game plays in slot 3")
 	assert_false(GameData.has_save(3), "and slot 3 stays empty until it saves")
+	_clear_test_slots()
+
+
+# START goes on to the first fight and not to the hub. With the Tutorial off the
+# original's START plays CS_INTRO2 (DefineButton2_2770 on(release), lines 7-10).
+# That clip's end goes to IntroSeq2 (frame_293/DoAction.as:1), which starts
+# battle 100 as a progress fight (frame_180/DoAction.as:2-3). The pick waits in
+# ZoneManager for the Battle screen.
+func test_new_game_with_the_tutorial_off_goes_on_to_battle_100_after_cs_intro2():
+	_write_test_slots([])
+	var menu = await _menu_without_scene_change()
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(0).pressed.emit()
+	menu.class_picker.get_node("Biological").pressed.emit()
+	menu.get_node("OptionsPanel/TutorialToggle").button_pressed = false
+	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+
+	var pick: Dictionary = ZoneManager.pending_battle
+	assert_eq(pick.get("battle_id"), 100, "the first fight is battle 100")
+	assert_true(pick.get("is_story_progress", false), "as a Story fight")
+	assert_eq(pick.get("cutscene_before"), "CS_INTRO2", "with CS_INTRO2 before it")
 	_clear_test_slots()
 
 

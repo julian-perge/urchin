@@ -74,6 +74,20 @@ const CUTSCENE_GOTO_SCENE: Dictionary = {
 	"CS_CUT2": "overMap", "CS_CUT3": "Navigation", "CS_CUT4": "overMap", "CS_CUT5": "endMenu",
 }
 
+# The fight a new game opens on, as the pick ZoneManager hands the Battle screen:
+# battle 100 as a Story fight, with CS_INTRO2 played first. The Start button
+# sends the player to CS_INTRO2 when the Tutorial is off
+# (DefineButton2_2770 on(release), lines 7-10), the clip's end goes on to
+# IntroSeq2 (frame_293/DoAction.as:1), and IntroSeq2's last frame starts
+# battle 100 with progressFight on (frame_180/DoAction.as:2-3). Nothing on that
+# path sets bossFight, so it is not a boss fight.
+const FIRST_STORY_FIGHT: Dictionary = {
+	"battle_id": 100,
+	"is_story_progress": true,
+	"is_boss": false,
+	"cutscene_before": "CS_INTRO2",
+}
+
 
 static func quest_progress(save: PlayerSave, zone: int) -> int:
 	if zone < 0 or zone >= save.quest_progress.size():
