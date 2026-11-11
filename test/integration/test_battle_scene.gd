@@ -13,11 +13,20 @@ const TEST_SAVE_DIR: String = "user://test_battle_scene_saves/"
 const ACHIEVEMENTS_FILE: String = "user://test_battle_scene_achievements.cfg"
 
 var _achievements_path: String
+# The Tutorial's unit slots as they were before a test patched the loaded battle,
+# or empty when no test did.
+var _tutorial_players_to_restore: Array = []
 
 
 func before_all():
 	_achievements_path = ZoneManager.achievements_path
 	ZoneManager.achievements_path = ACHIEVEMENTS_FILE
+
+
+func after_each():
+	if not _tutorial_players_to_restore.is_empty():
+		BattleSetup.load_battle(ZoneProgression.TUTORIAL_BATTLE_ID).players = _tutorial_players_to_restore
+		_tutorial_players_to_restore = []
 
 
 func after_all():
@@ -1697,8 +1706,9 @@ func test_a_guest_with_a_companions_name_gets_no_stance_row():
 
 # The original hides the member bar in battle 2 (DefineSprite_3317/frame_1/
 # PlaceObject2_3312_7 onClipEvent(load), lines 5-8), where Louis the Blind
-# fights in slot 5 as a Guest. The port gives a row to a Companion only, so the
-# Tutorial shows no row (DECODED_ALGORITHMS.md has why).
+# fights in slot 5 as a Guest. The port gives a row to a Companion only, so a
+# Guest gets none (DECODED_ALGORITHMS.md has why). The next test covers a
+# Companion in battle 2.
 func test_battle_2_shows_no_stance_rows():
 	var save = PlayerSave.new_game("TutorialRows", 0)
 	GameData.current_save = save
@@ -1712,6 +1722,33 @@ func test_battle_2_shows_no_stance_rows():
 	assert_eq(scene.units[5].player_name, "Louis the Blind", "battle 2 fields Louis the Blind in slot 5")
 	assert_eq(scene.units[5].origin, CombatUnit.Origin.GUEST, "as a Guest")
 	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original hides the member bar in battle 2 whoever fights there
+# (DefineSprite_3317/frame_1/PlaceObject2_3312_7 onClipEvent(load), lines 5-8),
+# so the port has a rule for it and does not lean on battle 2 fielding no
+# Companion. Battle 2's data deploys none, so the test puts the deployed-companion
+# marker into slot 3 of the loaded battle, which fields a fresh save's Veradux
+# there. after_each puts the data back.
+func test_battle_2_shows_no_stance_rows_even_with_a_companion_deployed():
+	var save = PlayerSave.new_game("TutorialCompanionRows", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var tutorial: BattleFight = BattleSetup.load_battle(ZoneProgression.TUTORIAL_BATTLE_ID)
+	_tutorial_players_to_restore = tutorial.players.duplicate(true)
+	tutorial.players[1] = {"id": -2.0}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": ZoneProgression.TUTORIAL_BATTLE_ID, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+
+	assert_eq(scene.units[3].origin, CombatUnit.Origin.COMPANION, "battle 2 fields a Companion in slot 3")
+	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
+	assert_true(scene._stance_rows.is_empty(), "and nothing keeps a row for the Companion")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

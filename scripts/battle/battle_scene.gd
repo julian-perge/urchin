@@ -393,6 +393,11 @@ func _populate_stance_rows() -> void:
 	for child in stance_host.get_children():
 		child.queue_free()
 	_stance_rows.clear()
+	# The original hides the member bar container in the Tutorial, rows and all,
+	# whoever fights there (DefineSprite_3317/frame_1/PlaceObject2_3312_7
+	# CLIPACTIONRECORD onClipEvent(load).as:5-8).
+	if battle.id == ZoneProgression.TUTORIAL_BATTLE_ID:
+		return
 	var row_y: float = 0.0
 	# Slot 5 first: the original's member bar container places its "p5" copy
 	# above its "p3" copy (DefineSprite 3312, y 12.60 vs y 50.10), matching the
