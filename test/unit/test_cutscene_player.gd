@@ -90,7 +90,7 @@ func test_missing_cutscene_id_emits_finished_instead_of_hanging():
 # CutscenePlayer.play(). This confirms ResourceLoader resolves every committed
 # clip to a real VideoStreamTheora, CS_INTRO2 included.
 func test_every_cutscene_clip_loads_as_video_stream_theora():
-	for cutscene_id in ["CS_INTRO2", "CS_CUT2", "CS_CUT3", "CS_CUT4", "CS_CUT5"]:
+	for cutscene_id in ["CS_INTRO2", "CS_CUT1", "CS_CUT2", "CS_CUT3", "CS_CUT4", "CS_CUT5"]:
 		var stream = load("res://assets/cutscenes/%s.ogv" % cutscene_id)
 		assert_not_null(stream, "%s.ogv resolves via ResourceLoader" % cutscene_id)
 		if stream != null:
