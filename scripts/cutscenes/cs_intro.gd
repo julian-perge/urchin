@@ -7,8 +7,9 @@
 # each one from there.
 #
 # The lines are MENU[86] to MENU[89], which the original's frame script puts in
-# its four text fields (frame_263/DoAction.as:2-5). They are not the older text
-# the fields bake in as their initialText, which the extractor never writes.
+# its four text fields (frame_263/DoAction.as:2-5). They are not the text the
+# fields bake in as their initialText, which differs from MENU[86] in the first
+# field. The extractor never writes it.
 #
 # The gradient is 800x575, the Stage's size, and the window is 800x600 until
 # julian-perge/urchin#111 changes its base resolution. So the scene stretches the
