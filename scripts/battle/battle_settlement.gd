@@ -21,6 +21,9 @@ var cutscene: String = ""
 # One of ZoneProgression.CUTSCENE_GOTO_SCENE's values, or empty when the win
 # queues no cutscene.
 var goto_scene: String = ""
+# The fight a win goes straight on to, with no victory screen. Empty for a win
+# that opens the victory screen.
+var next_fight: Dictionary = {}
 # Only the ids this win unlocked, not ones the player already held, because the
 # original's awardAch shows its banner only for those
 # (frame_46/DoAction_2.as:3-9).
@@ -55,6 +58,7 @@ static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, ach
 		var starting_moves: Array = TalentTree.STARTING_MOVES.get(save.player_class, [])
 		for i in starting_moves.size():
 			save.move_matrix[i] = starting_moves[i]
+		settlement.next_fight = ZoneProgression.FIGHT_AFTER_TUTORIAL
 		return settlement
 
 	var was_story_progress: bool = pick.get("is_story_progress", false)

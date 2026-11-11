@@ -108,6 +108,12 @@ const TUTORIAL_FIGHT: Dictionary = {
 # Quick Strike and Suppression (frame_165/DoAction.as:6-7).
 const TUTORIAL_MOVES: Array[int] = [21, 22]
 
+# The fight a win over the Tutorial goes straight on to. IntroSeq sets
+# cutsceneSequence to CS_INTRO2 (frame_165/DoAction.as:8) and the win jumps to it
+# instead of Navigation (frame_219/DoAction.as:73-77). From there the path is the
+# one START takes with the Tutorial off, so this is the same pick.
+const FIGHT_AFTER_TUTORIAL: Dictionary = FIRST_STORY_FIGHT
+
 
 static func quest_progress(save: PlayerSave, zone: int) -> int:
 	if zone < 0 or zone >= save.quest_progress.size():
