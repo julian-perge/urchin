@@ -254,6 +254,27 @@ func test_cs_intro_draws_the_gradient_over_the_whole_window_behind_its_lines():
 		assert_lt(gradient.get_index(), label.get_index(), "it is behind the line %s" % (label as Label).text)
 
 
+# The original stacks the intro's gradient and text under the SKIP text and button at
+# depths 76 and 77, and those under the fade clip at depth 80 (frame_263). So the fade
+# covers the intro as it fades in and out, and SKIP stays on top of the gradient. The
+# gradient has no transparency, so an intro drawn above them would hide SKIP and
+# leave the fade with nothing to cover.
+func test_cs_intro_is_drawn_under_skip_and_the_fade():
+	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
+	player.animation_speed = 0.0
+
+	player.play("CS_INTRO")
+
+	var intro: CsIntro = _intro_of(player)
+	assert_not_null(intro, "the intro scene is up")
+	if intro == null:
+		return
+	assert_gt(intro.get_index(), player.video.get_index(), "above the place of the video")
+	assert_lt(intro.get_index(), player.skip_text.get_index(), "under the SKIP text")
+	assert_lt(intro.get_index(), player.skip_button.get_index(), "under the SKIP button")
+	assert_lt(intro.get_index(), player.fade_rect.get_index(), "under the fade")
+
+
 # All four of the original's text fields allow wrapping, and extract_cs_intro writes
 # them as Labels that wrap. The original shows each MENU string on one line because it
 # fits its field, so a Label that wraps one means the field, the font or the string
@@ -360,3 +381,39 @@ func _click(viewport: Viewport, control: Control) -> void:
 		event.position = control.get_global_rect().get_center()
 		event.global_position = event.position
 		viewport.push_input(event, true)
+
+
+# SKIP ends CS_INTRO the way it ends a clip. The tests run at 5 times the original's
+# pace, so the hold still outlasts the 1.5 s wait for finished. A press that works
+# finishes the cutscene a fade later, and one that is lost leaves the hold to run.
+func test_pressing_skip_ends_the_cs_intro_hold():
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 600)
+	add_child_autofree(viewport)
+	var player: CutscenePlayer = CutscenePlayerScene.instantiate()
+	player.animation_speed = 5.0
+	viewport.add_child(player)
+
+	player.play("CS_INTRO")
+	await wait_until(func(): return player.fade_rect.color.a == 0.0, 2.0)
+	_click(viewport, player.skip_button)
+
+	var got_finished: bool = await wait_for_signal(player.finished, 1.5)
+	assert_true(got_finished, "SKIP ended the hold")
+
+
+# A press while the cutscene still fades in comes before the hold starts, so it has
+# no wait to end. The hold has to see that the press already happened.
+func test_pressing_skip_during_the_fade_in_skips_the_cs_intro_hold():
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 600)
+	add_child_autofree(viewport)
+	var player: CutscenePlayer = CutscenePlayerScene.instantiate()
+	player.animation_speed = 5.0
+	viewport.add_child(player)
+
+	player.play("CS_INTRO")
+	_click(viewport, player.skip_button)
+
+	var got_finished: bool = await wait_for_signal(player.finished, 1.5)
+	assert_true(got_finished, "the early press skipped the hold")
