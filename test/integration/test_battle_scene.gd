@@ -432,6 +432,98 @@ func test_the_ending_screen_stays_silent_and_ok_starts_the_first_menu_track():
 	ZoneManager.auto_start_battles = true
 
 
+# The original's Proceed opens the zone map after any fight with bossFight on
+# when no cutscene is queued (DefineButton2_3004 on(release), lines 13-16, and
+# frame_219/DoAction.as:9-16), so a replay of a beaten zone's boss, which queues
+# no cutscene, lands on the map and not on the hub. The scene is a partial
+# double with _on_continue_pressed stubbed, because the real one changes the
+# scene and takes the test runner down with it.
+func test_proceeding_after_a_boss_replay_win_opens_the_zone_map():
+	var save = PlayerSave.new_game("BossReplayMap", 0)
+	save.quest_progress[1] = 10
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 109, "is_story_progress": false, "is_boss": true, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_null(scene.get_node_or_null("CutscenePlayer"), "no cutscene plays")
+	assert_called(scene, "_on_continue_pressed")
+	assert_true(ZoneManager.open_zone_map_on_load, "Proceed opens the zone map")
+
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The first win over 212 is a boss fight whose win queues no cutscene, so
+# Proceed reaches the original's bossJustPwned2 branch with a Story fight that
+# moves the zone on, and not only with a replay.
+func test_proceeding_after_the_first_212_win_opens_the_zone_map():
+	var save = PlayerSave.new_game("First212Map", 0)
+	save.section_in = 2
+	save.quest_progress[2] = 12
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 212, "is_story_progress": true, "is_boss": true, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_eq(save.quest_progress[2], 13, "the win moved the zone on")
+	assert_null(scene.get_node_or_null("CutscenePlayer"), "no cutscene plays")
+	assert_called(scene, "_on_continue_pressed")
+	assert_true(ZoneManager.open_zone_map_on_load, "Proceed opens the zone map")
+
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A win of a fight with bossFight off goes on to the hub, so Proceed leaves the
+# zone map shut (DefineButton2_3004 on(release), lines 13-16).
+func test_proceeding_after_a_non_boss_win_leaves_the_zone_map_shut():
+	var save = PlayerSave.new_game("NonBossMap", 0)
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_called(scene, "_on_continue_pressed")
+	assert_false(ZoneManager.open_zone_map_on_load, "the zone map stays shut")
+
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The original's Proceed can't be pressed twice, because its release always
 # leaves the frame of DefineSprite 3142 that the victory screen is drawn on, for
 # the cutscene, the map or 3142's skills or hide frame (DefineButton2_3004
