@@ -54,6 +54,10 @@ var playback_timeout_seconds: float = 0.0
 # driving the same fade_rect/queue_free.
 var _started: bool = false
 
+# Set when the player presses SKIP. A press before play() reaches its wait for
+# the clip emits _playback_settled with nothing listening, so play() checks this.
+var _skipped: bool = false
+
 @onready var video: VideoStreamPlayer = $Overlay/Video
 @onready var skip_text: Label = $Overlay/SkipText
 @onready var skip_button: Button = $Overlay/SkipButton
@@ -97,14 +101,16 @@ func play(cutscene_id: String) -> void:
 	video.stream = stream
 	fade_rect.color.a = 1.0
 	await _fade(0.0)
-	video.play()
-	await _await_playback_end()
+	if not _skipped:
+		video.play()
+		await _await_playback_end()
 	await _fade(1.0)
 	finished.emit()
 	queue_free()
 
 
 func _on_skip_pressed() -> void:
+	_skipped = true
 	video.stop()
 	_playback_settled.emit()
 
