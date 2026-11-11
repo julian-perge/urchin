@@ -208,6 +208,31 @@ func test_pressing_skip_stops_the_clip_and_finishes_the_way_a_clip_that_plays_to
 	assert_eq(result.alpha, 1.0, "after the same fade to black")
 
 
+# The button is clickable from the first frame, while the fade clip still has
+# the cutscene fading in, and its release sets cutSceneEnd at once. So a press
+# before the clip has started has to skip it, and the clip must never start,
+# because its audio would play under the fade-out.
+func test_pressing_skip_during_the_fade_in_skips_a_clip_that_has_not_started():
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 600)
+	add_child_autofree(viewport)
+	var player: CutscenePlayer = CutscenePlayerScene.instantiate()
+	# A real tween, so the fade-in is still running when play() returns.
+	player.animation_speed = 1000.0
+	viewport.add_child(player)
+	var result := {"clip_playing": true}
+	player.finished.connect(func(): result.clip_playing = player.video.is_playing())
+
+	player.play("CS_CUT4")
+	assert_false(player.video.is_playing(), "the clip waits for the fade-in")
+	_click(viewport, player.skip_button)
+
+	# The clip is 16.7 s long, so a skip that is lost takes far longer than this.
+	var got_finished: bool = await wait_for_signal(player.finished, 2.0)
+	assert_true(got_finished, "the early press skipped the cutscene")
+	assert_false(result.clip_playing, "and the clip never started")
+
+
 # A left click on the control's center, pushed through the viewport's GUI input.
 func _click(viewport: Viewport, control: Control) -> void:
 	for pressed in [true, false]:
