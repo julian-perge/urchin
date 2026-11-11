@@ -267,6 +267,105 @@ func _an_effect_is_playing() -> bool:
 	return AudioManagerAuto._effect_players.any(func(player): return player.is_playing())
 
 
+# Battle 100 started at animation_speed 0 from a pick that holds `extra` as well,
+# the way ZoneManager hands the screen a pick.
+func _start_battle_100_with(extra: Dictionary) -> Control:
+	GameData.current_save = PlayerSave.new_game("PickStart", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	var pick: Dictionary = {"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP}
+	pick.merge(extra)
+	scene.start_battle(pick)
+	return scene
+
+
+# A pick that names a Cutscene plays it before the fight, with every sound
+# stopped first. The zone 1 story orb does both for CS_CUT1 at 109
+# (DefineButton2_3188 on(press), lines 18-24), and only the clip's end goes on to
+# the battle. CS_INTRO2 leads into battle 100 the same way, through IntroSeq2
+# (frame_293/DoAction.as:1 and frame_180/DoAction.as).
+func test_a_pick_with_a_cutscene_stops_every_sound_and_plays_it_before_the_fight():
+	AudioManagerAuto.play_menu_music()
+	AudioManagerAuto.play_effect("sfx_hit2")
+	assert_true(_an_effect_is_playing(), "sanity: an effect is playing when the pick arrives")
+
+	var scene = _start_battle_100_with({"cutscene_before": "CS_INTRO2"})
+
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the Cutscene is playing")
+	if cutscene != null:
+		assert_eq(cutscene.video.stream.resource_path, "res://assets/cutscenes/CS_INTRO2.ogv", "and it is the pick's")
+	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "no music plays under it")
+	assert_false(_an_effect_is_playing(), "and no effect plays on into it")
+	await wait_process_frames(3)
+	assert_false(scene.decision_open, "the fight has not reached its first half-turn")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original loads the battle after the Cutscene (the orb's gotoSceneKrin is
+# "LOADBATTLESCENE", and IntroSeq2's last frame goes there too), and the battle
+# frame picks its music once, as it loads (frame_201/DoAction.as:86). So the
+# music and the first half-turn wait for the clip's end.
+func test_the_battle_music_and_the_first_half_turn_start_once_the_cutscene_ends():
+	var scene = _start_battle_100_with({"cutscene_before": "CS_INTRO2"})
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the Cutscene is playing")
+	if cutscene != null:
+		cutscene.video.finished.emit()
+
+	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music starts as the clip ends")
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_true(scene.decision_open, "and the first half-turn opens its Decision")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The battle frame opens on blacker5's frame 1, which fades the battle in from
+# black (DefineSprite_3355/frame_31/DoAction.as), and it loads after the
+# Cutscene. So the fade starts when the clip ends and not behind it. The battle
+# runs at full speed here, and the Cutscene keeps the speed 0 it was built with,
+# so it ends at once.
+func test_the_battle_fades_in_from_black_once_the_cutscene_ends():
+	var scene = _start_battle_100_with({"cutscene_before": "CS_INTRO2"})
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the Cutscene is playing")
+	scene.animation_speed = 1.0
+	if cutscene != null:
+		cutscene.video.finished.emit()
+
+	assert_eq(scene.get_node("Fade/Black").color, Color.BLACK, "the battle opens on full black")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A pick with no cutscene_before, or an empty one, starts the fight as it always
+# did: no Cutscene, and the battle music and the first Decision at once.
+func test_a_pick_with_no_cutscene_starts_the_fight_at_once():
+	await _assert_the_fight_starts_at_once({})
+
+
+func test_a_pick_with_an_empty_cutscene_starts_the_fight_at_once():
+	await _assert_the_fight_starts_at_once({"cutscene_before": ""})
+
+
+func _assert_the_fight_starts_at_once(extra: Dictionary) -> void:
+	AudioManagerAuto.stop_music()
+	var scene = _start_battle_100_with(extra)
+	assert_null(scene.get_node_or_null("CutscenePlayer"), "no Cutscene plays")
+	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music starts with the fight")
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_true(scene.decision_open, "and the first half-turn opens its Decision")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The victory screen's Proceed calls stopAllSounds() before it goes to a
 # cutscene (DefineButton2_3004 on(release), lines 8-11), which stops the effects
 # as well as the music. The win of story battle 109 is set before the battle
@@ -1624,8 +1723,9 @@ func test_the_replay_draws_no_floating_number_for_a_stun_a_failed_move_or_a_disp
 
 
 # Battle 100 in a viewport of its own, because GUT's window sits above
-# everything in the root viewport and would take the clicks.
-func _battle_100_in_its_own_viewport(save_name: String) -> Control:
+# everything in the root viewport and would take the clicks. `extra` goes into
+# the pick as well.
+func _battle_100_in_its_own_viewport(save_name: String, extra: Dictionary = {}) -> Control:
 	GameData.current_save = PlayerSave.new_game(save_name, 0)
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -1635,7 +1735,9 @@ func _battle_100_in_its_own_viewport(save_name: String) -> Control:
 	var scene = BattleSceneRes.instantiate()
 	viewport.add_child(scene)
 	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var pick: Dictionary = {"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9}
+	pick.merge(extra)
+	scene.start_battle(pick)
 	return scene
 
 
@@ -2506,6 +2608,28 @@ func test_a_second_click_while_the_banner_is_up_changes_nothing():
 	_click(scene.get_viewport(), scene.background)
 	banner.advance(35.0 / 30.0)
 	assert_false(banner.is_up(), "the banner ends when the first click's run does")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original's click listener comes with the battle frame
+# (frame_217/DoAction.as:18-27), which loads after the Cutscene. So a click while
+# the Cutscene plays, such as one on its SKIP button, puts nothing in the Combat
+# text banner, and clicks count again once the clip has ended.
+func test_a_click_during_the_cutscene_leaves_the_banner_down():
+	var scene = _battle_100_in_its_own_viewport("CannotMoveYetInTheCutscene", {"cutscene_before": "CS_INTRO2"})
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the Cutscene is playing")
+	_click(scene.get_viewport(), scene.background)
+	assert_false(scene.combat_text_banner.is_up(), "a click during the Cutscene shows nothing")
+
+	if cutscene != null:
+		cutscene.video.finished.emit()
+	await wait_until(func(): return scene.decision_open, 5)
+	_click(scene.get_viewport(), scene.get_node("BottomBar/PassButton"))
+	_click(scene.get_viewport(), scene._presenters[2].hit_area)
+	assert_true(scene.combat_text_banner.is_up(), "and a click during the fight after it does")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
