@@ -896,8 +896,9 @@ func _finish_battle() -> void:
 		# was across the top of the screen.
 		turn_label.hide()
 	elif settlement.outcome == BattleRunner.Outcome.WIN:
-		# A win that goes straight on opens no victory screen. The original's
-		# Tutorial win jumps to CS_INTRO2 instead (frame_219/DoAction.as:73-77).
+		# A win that goes straight on opens no victory screen and so has no Proceed,
+		# which is where the autosave is. It requests the next fight, as the
+		# original's Tutorial win jumps to CS_INTRO2 (frame_219/DoAction.as:73-77).
 		ZoneManager.request_fight(settlement.next_fight)
 	elif settlement.game_over:
 		# The screen goes on the UI layer so the turn label there can't draw over
