@@ -98,12 +98,12 @@ func test_all_four_cutscene_clips_load_as_video_stream_theora():
 			assert_eq(stream.get_class(), "VideoStreamTheora", "%s.ogv loads as a real Theora stream" % cutscene_id)
 
 
-# The cutscene is unskippable, so for its whole runtime it is the only thing
-# the player should be able to click and the only thing they should be able
-# to see. Both halves of that are scene structure rather than script, so they
-# get asserted here: an IGNORE root would let clicks reach the battle victory
-# screen sitting underneath (a second Proceed press), and living in the same
-# canvas layer as the battle HUD would let the HUD draw over the video.
+# For as long as a cutscene plays, the player should be able to click nothing
+# but its SKIP button and see nothing but the cutscene. Both halves of that
+# are scene structure rather than script, so they get asserted here: an IGNORE
+# root would let clicks reach the battle victory screen sitting underneath (a
+# second Proceed press), and living in the same canvas layer as the battle HUD
+# would let the HUD draw over the video.
 func test_overlay_blocks_clicks_and_draws_above_the_battle_hud():
 	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
 	assert_eq(player.mouse_filter, Control.MOUSE_FILTER_STOP, "root swallows clicks meant for what's underneath")
@@ -114,9 +114,9 @@ func test_overlay_blocks_clicks_and_draws_above_the_battle_hud():
 
 
 # Without a timeout, a Theora stream that stalls or never decodes leaves
-# play() parked on the video forever - and there is no skip input, so the
-# game would be soft-locked with no way out. Here the video is never told to
-# finish; only the failsafe can end it.
+# play() parked on the video until the player thinks to press SKIP. Here the
+# video is never told to finish and SKIP is not pressed; only the failsafe can
+# end it.
 func test_stalled_video_times_out_instead_of_soft_locking():
 	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
 	player.animation_speed = 1000.0

@@ -1,28 +1,38 @@
 # cutscene_player.gd
 # Reusable full-screen cutscene player: fades in from black, plays an .ogv
 # clip with audio, fades back to black on completion, then frees itself.
-# The original does have a skip: button 3468, labelled by the "SKIP" text
-# 3469, sits on every cutscene frame and stops all sounds and sets
-# cutSceneEnd when released (DefineButton2_3468/BUTTONCONDACTION
-# on(release).as). This player has no input handling, so it has no skip yet.
+#
+# It has the original's SKIP button. Button 3468, a hit area at the bottom
+# right, and the "SKIP" text 3469 sit on every cutscene frame. Releasing the
+# button stops all sounds and sets cutSceneEnd
+# (DefineButton2_3468/BUTTONCONDACTION on(release).as), and the original's fade
+# clip then fades out and jumps to gotoSceneKrin
+# (frame_263/PlaceObject2_3466_80/CLIPACTIONRECORD onClipEvent(enterFrame).as).
+# Here a press stops the clip and its audio. Then the same fade out, finished
+# signal and queue_free run as when the clip plays to its end. The button works
+# from the first frame, while the cutscene still fades in. extract_cutscene_skip
+# writes assets/cutscenes/skip_button.json, which says where the button and its
+# text go and how the text is drawn.
 #
 # Two things in cutscene_player.tscn exist to keep the rest of the game out
 # of the way while the clip runs, and both matter:
 #   - The root Control is MOUSE_FILTER_STOP, so clicks land here instead of
 #     falling through to whatever put the cutscene up. Without it the battle
-#     victory screen's Proceed button stays live underneath for the clip's
-#     whole unskippable runtime.
-#   - The video and the fade sit under a CanvasLayer at layer 100, above
-#     battle_scene.tscn's "UI" layer (the default, 1). Added to an ordinary
-#     Control the way battle_scene.gd adds this, they would otherwise draw
-#     *under* the battle HUD.
+#     victory screen's Proceed button stays live underneath for as long as the
+#     clip plays.
+#   - The video, the SKIP button and the fade sit under a CanvasLayer at layer
+#     100, above battle_scene.tscn's "UI" layer (the default, 1). Added to an
+#     ordinary Control the way battle_scene.gd adds this, they would otherwise
+#     draw *under* the battle HUD.
+# The fade rect sits above the SKIP button and ignores the mouse. So the button
+# fades with the clip, as in the original, and still takes clicks.
 class_name CutscenePlayer
 extends Control
 
 signal finished
 
-# Emitted once playback has ended, whether the video reported it or the
-# failsafe timeout did. Private to _await_playback_end().
+# Emitted when playback ends: the video reported it finished, the failsafe
+# timeout ran out, or the player pressed SKIP.
 signal _playback_settled
 
 # Where the SKIP button's hit area and its text go, and how the text is drawn.
@@ -115,11 +125,11 @@ func _on_skip_pressed() -> void:
 	_playback_settled.emit()
 
 
-# Waits for whichever comes first: the video reporting it finished, or a
-# timeout sized from the clip's own length. A Theora stream that stalls or
-# fails to decode partway never emits "finished", and there is no skip input
-# and no other way out of a cutscene, so waiting on the video alone would
-# soft-lock the game outright. Timing out is treated exactly like a normal
+# Waits for whichever comes first: the video reporting it finished, a timeout
+# sized from the clip's own length, or the player pressing SKIP. A Theora
+# stream that stalls or fails to decode partway never emits "finished". The
+# player could press SKIP, but waiting on the video and SKIP alone would leave
+# the game stuck until they did. Timing out is treated exactly like a normal
 # end - fade out, signal, free - so the player still lands back in the game.
 func _await_playback_end() -> void:
 	var budget: float = playback_timeout_seconds
