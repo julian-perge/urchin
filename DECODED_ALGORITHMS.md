@@ -644,7 +644,8 @@ Ported: once CS_CUT5 ends, `battle_scene.gd`'s `_on_victory_proceed` opens `Endi
 ## CS_INTRO (root frame 263)
 
 Ported: `CutscenePlayer.play("CS_INTRO")` shows `CsIntro` (`scripts/cutscenes/cs_intro.gd`) in place of a clip, with the same fade and `finished`. `extract_cs_intro` writes the gradient
-and `assets/cutscenes/cs_intro.json` for it. Nothing in the game plays it yet.
+and `assets/cutscenes/cs_intro.json` for it. The Tutorial plays it: the main menu's start button calls `ZoneManager.request_tutorial_fight` when the Tutorial option is on, `ZoneProgression.TUTORIAL_FIGHT` names it as
+its `cutscene_before`, and the Battle screen plays it before the fight.
 
 - The Start button opens the Tutorial on it (`DefineButton2_2770` on(release), lines 2-11). Root frame 263 places the gradient, DefineShape 3475, at depth 1 and the four edit texts 3474,
   3473, 3472 and 3471 at depths 2 to 5. The texts' variables are `introText1` to `introText4`. Each text has a Glow filter (blur 3, strength 10, black) and a `DropShadow` filter (blur 8,
