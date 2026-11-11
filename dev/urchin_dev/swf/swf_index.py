@@ -105,6 +105,8 @@ ACTION_GOTO_FRAME2 = 0x9F
 # keyPress, which is bit 17 of the SWF 6+ event flags.
 CLIP_EVENT_KEY_PRESS = 1 << 17
 
+FILTER_DROP_SHADOW = 0
+FILTER_GLOW = 2
 FILTER_FIXED_SIZES = {0: 23, 1: 9, 2: 15, 3: 27, 6: 80}
 FILTER_NAMES = {
     0: "DropShadow",
@@ -133,7 +135,9 @@ class Placement:
     translateY), with the translation in integer twips. color_transform is
     the four multiply terms (256 is 1.0) followed by the four add terms, in
     RGBA order. move is PlaceFlagMove, so a move with a character is a
-    replace."""
+    replace. filters holds the names of the tag's filters, and filters_at is
+    where its filter list starts in SwfIndex.data, which
+    placement_filters() reads."""
 
     owner: int
     frame: int
@@ -149,6 +153,7 @@ class Placement:
     filters: tuple[str, ...] | None = None
     blend_mode: int | None = None
     clip_actions: bool = False
+    filters_at: int | None = None
 
 
 @dataclass(frozen=True)
@@ -222,6 +227,27 @@ class Font:
         """A font with no glyphs only names a font, so the player's machine
         drew its text."""
         return self.glyphs == 0
+
+
+@dataclass(frozen=True)
+class Filter:
+    """One DropShadow or Glow filter of a PlaceObject3. color is (r, g, b, a),
+    blur_x, blur_y and distance are in px, and angle is in radians, which a Glow
+    has none of and so reads 0.0. strength multiplies the blurred alpha before it
+    is clamped to 1. passes is how many times the filter blurs, and
+    composite_source says it draws the object over itself."""
+
+    kind: str
+    color: tuple[int, int, int, int]
+    blur_x: float
+    blur_y: float
+    angle: float
+    distance: float
+    strength: float
+    inner: bool
+    knockout: bool
+    composite_source: bool
+    passes: int
 
 
 @dataclass
@@ -526,9 +552,10 @@ class _Walker:
         if flags & 0x40:
             (clip_depth,) = struct.unpack_from("<H", data, p)
             p += 2
-        filters, blend_mode = None, None
+        filters, blend_mode, filters_at = None, None, None
         if code == TAG_PLACE_OBJECT3:
             if flags3 & 0x01:
+                filters_at = p
                 count = data[p]
                 p += 1
                 filters = []
@@ -561,6 +588,7 @@ class _Walker:
                 filters=filters,
                 blend_mode=blend_mode,
                 clip_actions=bool(flags & 0x80),
+                filters_at=filters_at,
             )
         )
         if flags & 0x80:
@@ -693,6 +721,55 @@ def font(index: SwfIndex, font_id: int) -> Font:
     (glyphs,) = struct.unpack_from("<H", data, body + 5 + length)
     return Font(
         name=name, bold=bool(flags & 0x01), italic=bool(flags & 0x02), glyphs=glyphs
+    )
+
+
+def placement_filters(index: SwfIndex, placement: Placement) -> tuple[Filter, ...]:
+    """-> the filters of a PlaceObject3, in the order its filter list holds them,
+    or () for a tag with none. It reads DropShadow and Glow filters and raises on
+    any other kind, because no extractor needs the rest yet."""
+    if placement.filters_at is None:
+        return ()
+    data = index.data
+    count = data[placement.filters_at]
+    pos = placement.filters_at + 1
+    result = []
+    for _ in range(count):
+        result.append(_drop_shadow_or_glow(data, pos))
+        pos += _filter_size(data, pos)
+    return tuple(result)
+
+
+def _drop_shadow_or_glow(data: bytes, pos: int) -> Filter:
+    """One filter record at `pos`, which starts with its id. Both kinds hold a
+    colour, the two blurs, the strength as an 8.8 fixed point and a byte of
+    flags, and a DropShadow adds an angle and a distance after the blurs. A
+    FIXED is 16.16."""
+    kind = data[pos]
+    if kind not in (FILTER_DROP_SHADOW, FILTER_GLOW):
+        raise ValueError(f"filter {FILTER_NAMES[kind]} is not read")
+    pos += 1
+    color = tuple(data[pos : pos + 4])
+    blur_x, blur_y = (v / 65536 for v in struct.unpack_from("<ii", data, pos + 4))
+    pos += 12
+    angle = distance = 0.0
+    if kind == FILTER_DROP_SHADOW:
+        angle, distance = (v / 65536 for v in struct.unpack_from("<ii", data, pos))
+        pos += 8
+    (strength,) = struct.unpack_from("<h", data, pos)
+    flags = data[pos + 2]
+    return Filter(
+        kind=FILTER_NAMES[kind],
+        color=color,
+        blur_x=blur_x,
+        blur_y=blur_y,
+        angle=angle,
+        distance=distance,
+        strength=strength / 256,
+        inner=bool(flags & 0x80),
+        knockout=bool(flags & 0x40),
+        composite_source=bool(flags & 0x20),
+        passes=flags & 0x1F,
     )
 
 

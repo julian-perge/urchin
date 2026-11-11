@@ -40,10 +40,14 @@ def text_layout(field: EditText, placed: tuple[float, float]) -> dict:
     }
 
 
-def plain_device_line(index: SwfIndex, field_id: int) -> EditText:
+def plain_device_line(
+    index: SwfIndex, field_id: int, *, wrapping: bool = False
+) -> EditText:
     """-> the fields of edit text `field_id`. Raises unless it is one line of
     a bold Device font with no margins, which is what the port's Label stands
-    in for."""
+    in for. A field that allows wrapping is refused too, unless `wrapping` is
+    set. The caller sets it for a field whose text fits on one line, which a
+    Label that wraps draws as Flash does."""
     field = edit_text(index, field_id)
     face = font(index, field.font_id)
     if not (face.device and face.bold):
@@ -51,7 +55,7 @@ def plain_device_line(index: SwfIndex, field_id: int) -> EditText:
             f"edit text {field_id}'s font {field.font_id} is {face}, and the port"
             " only has a Stand-in font for a bold Device font"
         )
-    if field.multiline or field.word_wrap or field.html:
+    if field.html or (not wrapping and (field.multiline or field.word_wrap)):
         raise RuntimeError(f"edit text {field_id} is not one plain line: {field}")
     if (field.left_margin, field.right_margin, field.indent) != (0, 0, 0):
         raise RuntimeError(f"edit text {field_id} has margins: {field}")
