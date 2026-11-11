@@ -65,15 +65,24 @@ testing the game by hand.
   and its stubs do intercept calls an object makes on itself, but stubbing one
   roll leaves every other `randi_range` in the run free, so it settles a single
   branch rather than making a whole battle repeatable.
-
 - `uv run gut` starts Godot with a new, empty `HOME` for each run and deletes it
   when Godot exits. On macOS Godot builds `user://` from `HOME`, so each run has
   a `user://` of its own. Suites that run at the same time from different
   worktrees no longer overwrite each other's test files. This caused the wave 5
   `fix-bold-menu-font` failures. A test run also no longer shares `battle.log`,
   saves or `achievements.cfg` with a QA game (julian-perge/urchin#106). The slot
-  script keeps the real `HOME`, and the `--import` step does too. Godot started by hand and the godot-mcp
-  `run_gut_tests` tool still use the shared real `user://`.
+  script keeps the real `HOME`, and the `--import` step does too. Godot started
+  by hand and the godot-mcp `run_gut_tests` tool still use the shared real
+  `user://`.
+- To compile-check one script, run
+  `/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s res://<script.gd> --path .`.
+  It exits 0 even when the script is broken, so read the log. A "Parse Error"
+  is real. "Compile Error: Identifier not found" for an autoload name is not,
+  because `--check-only` compiles without the autoloads. The `gd-parse` commit
+  hook runs this on each staged `.gd` file and reports only the Parse Errors.
+  A multi-line edit once joined a comment to the line below it, and the full
+  suite then failed 92 tests with "Cannot infer the type" errors that named
+  none of it.
 
 ## QA save presets
 
