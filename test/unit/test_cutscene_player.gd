@@ -151,17 +151,23 @@ func test_second_play_call_on_same_instance_is_ignored():
 
 # CS_INTRO is a text screen, not a clip. The original's frame script fills four text
 # fields from MENU[86] to MENU[89] (frame_263/DoAction.as:2-5, with the strings at
-# frame_1/DoAction.as:294-297). The fields also bake in the author's text as their
-# initialText, which the frame script replaces. Three of the four baked strings equal
-# their MENU string, so only the first one, the field for MENU[86], can be told apart
-# from the MENU text.
-const CS_INTRO_LINES: Array[String] = [
-	"One month ago. Sonny wakes up on the ship.",
-	"He remembers nothing.",
-	"The blind man gives him a tape...",
-	"...then the blind man dies.",
-]
+# frame_1/DoAction.as:294-297). extract_cs_intro writes those four strings into
+# cs_intro.json, and the test reads them from there.
+#
+# The fields also bake in the author's text as their initialText, which the frame
+# script replaces. Three of the four baked strings equal their MENU string, so only the
+# first one, the field for MENU[86], can be told apart from the MENU text. That baked
+# string is the one value this test types, because the extractor never writes it.
 const CS_INTRO_BAKED_TEXT: String = "One month ago, Sonny wakes up on the ship..."
+
+
+# The four MENU strings, in the order of the fields, as the extractor wrote them.
+func _cs_intro_lines() -> Array[String]:
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CsIntro.LAYOUT_PATH))
+	var lines: Array[String] = []
+	for line: Dictionary in layout["lines"]:
+		lines.append(line["text"])
+	return lines
 
 
 func test_cs_intro_shows_the_four_menu_lines_and_not_the_baked_text():
@@ -179,7 +185,9 @@ func test_cs_intro_shows_the_four_menu_lines_and_not_the_baked_text():
 	player.play("CS_INTRO")
 
 	assert_signal_emitted(player, "finished")
-	for line in CS_INTRO_LINES:
+	var lines: Array[String] = _cs_intro_lines()
+	assert_eq(lines.size(), 4, "the extractor wrote the four MENU strings")
+	for line in lines:
 		assert_has(shown, line, "shows the MENU string %s" % line)
 	assert_does_not_have(shown, CS_INTRO_BAKED_TEXT, "does not show the text baked into the field")
 

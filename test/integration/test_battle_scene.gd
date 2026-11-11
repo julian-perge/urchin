@@ -791,12 +791,14 @@ func test_winning_the_tutorial_pays_no_money_or_xp():
 
 
 # A Tutorial win puts the class's two starting moves back on the first two bar
-# slots, where the Tutorial had put moves 21 and 22 (frame_219/DoAction.as:65-69).
+# slots, where the Tutorial had put its own two moves (frame_219/DoAction.as:65-69).
 # Hydraulic has other starting moves than the default class does.
 func test_winning_the_tutorial_puts_the_starting_moves_back_on_the_bar():
 	var save = PlayerSave.new_game("TutorialBar", PlayerSave.PlayerClass.HYDRAULIC)
-	save.move_matrix[0] = 21
-	save.move_matrix[1] = 22
+	var starting_moves: Array = TalentTree.STARTING_MOVES[PlayerSave.PlayerClass.HYDRAULIC]
+	var other_slots: Array = save.move_matrix.slice(starting_moves.size())
+	for i in ZoneProgression.TUTORIAL_MOVES.size():
+		save.move_matrix[i] = ZoneProgression.TUTORIAL_MOVES[i]
 	GameData.current_save = save
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -807,7 +809,7 @@ func test_winning_the_tutorial_puts_the_starting_moves_back_on_the_bar():
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
 
-	assert_eq(save.move_matrix, [276, 277, 0, 0, 0, 0, 0, 0], "the class's starting moves are back")
+	assert_eq(save.move_matrix, starting_moves + other_slots, "the class's starting moves are back, and no other slot changed")
 
 	ZoneManager.pending_battle = {}
 	GameData.current_save = null
