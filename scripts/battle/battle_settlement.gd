@@ -46,6 +46,12 @@ static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, ach
 	settlement.game_over = settlement.outcome == BattleRunner.Outcome.LOSS or settlement.outcome == BattleRunner.Outcome.DRAW
 	if settlement.outcome != BattleRunner.Outcome.WIN:
 		return settlement
+	# A Tutorial win pays nothing and settles nothing else. The original applies a
+	# win's money, XP, drops and achievements on the victory screen
+	# (DefineSprite_3142/frame_9), which a Tutorial win never opens
+	# (frame_181/PlaceObject3_3142_175 onClipEvent(load), lines 3-7).
+	if runner.battle.id == ZoneProgression.TUTORIAL_BATTLE_ID:
+		return settlement
 
 	var was_story_progress: bool = pick.get("is_story_progress", false)
 	var progression: Dictionary = ZoneProgression.after_battle_won(save, runner.battle.id, was_story_progress)
