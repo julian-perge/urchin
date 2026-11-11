@@ -628,7 +628,7 @@ and `assets/cutscenes/cs_intro.json` for it. Nothing in the game plays it yet.
   distance 2 at 45 degrees, strength 1, black). The frame also places the timer sprite 3470, the SKIP button 3468 and its text 3469, the subtitle text 3467 and the fade clip 3466.
 - The frame's script runs `stop()` and sets `introText1` to `introText4` to `MENU[86]` to `MENU[89]` of `KrinLang[KLangChoosen]` (`frame_263/DoAction.as:2-5`). `KLangChoosen` is "ENGLISH"
   (`frame_1/DoAction.as:4512`). Frames 1 and 41 both build the English table, with the same four strings (lines 294-297 of each).
-- The fields bake in older text as their `initialText`, and only the first differs from its MENU string: "One month ago, Sonny wakes up on the ship..." against "One month ago. Sonny
+- The fields bake in text as their `initialText`, which the script replaces. Only the first differs from its MENU string: "One month ago, Sonny wakes up on the ship..." against "One month ago. Sonny
   wakes up on the ship." The other three bake in the same words as `MENU[87]` to `MENU[89]`. Edit text 3467 shows nothing, because no script sets its variable, `subText`.
 - DefineSprite 3470 draws nothing and plays no sound. Its last frame, frame 401, runs `_root.cutSceneEnd = true` and `stop()` (`DefineSprite_3470/frame_401/DoAction.as`). The fade clip
   starts opaque and loses 5 alpha points a frame until `cutSceneEnd` is true. Then it gains 5 a frame, and at full alpha it goes to `gotoSceneKrin` (`frame_263/PlaceObject2_3466_80`

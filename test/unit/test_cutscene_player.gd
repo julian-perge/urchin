@@ -152,10 +152,10 @@ func test_second_play_call_on_same_instance_is_ignored():
 
 # CS_INTRO is a text screen, not a clip. The original's frame script fills four text
 # fields from MENU[86] to MENU[89] (frame_263/DoAction.as:2-5, with the strings at
-# frame_1/DoAction.as:294-297). The fields also bake in the author's older text as
-# their initialText, which the original never shows. Three of the four baked strings
-# equal their MENU string, so only the first one, the field for MENU[86], can be told
-# apart from the MENU text.
+# frame_1/DoAction.as:294-297). The fields also bake in the author's text as their
+# initialText, which the frame script replaces. Three of the four baked strings equal
+# their MENU string, so only the first one, the field for MENU[86], can be told apart
+# from the MENU text.
 const CS_INTRO_LINES: Array[String] = [
 	"One month ago. Sonny wakes up on the ship.",
 	"He remembers nothing.",

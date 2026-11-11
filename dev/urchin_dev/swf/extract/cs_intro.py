@@ -15,11 +15,11 @@
 # scripts build the KrinLang table that holds those strings, and set
 # KLangChoosen to ENGLISH.
 #
-# THE TEXTS' initialText IS NOT USED. Each field bakes in the author's older
-# wording, which the script replaces at runtime. Only the first field's text
-# differs from its MENU string, and the others are the same words. The lines in
-# the JSON are the MENU strings, and the gradient is rendered with every depth
-# but the gradient's hidden, so no baked text reaches a render.
+# THE TEXTS' initialText IS NOT USED. Each field bakes in the author's text,
+# which the script replaces at runtime. Only the first field's text differs from
+# its MENU string, and the other three are the same words. The lines in the JSON
+# are the MENU strings, and the gradient is rendered with every depth but the
+# gradient's hidden, so no baked text reaches a render.
 #
 # HOW LONG IT HOLDS. DefineSprite 3470 is placed on the same frame. It shows
 # nothing and plays no sound, and its last frame sets cutSceneEnd, which makes
