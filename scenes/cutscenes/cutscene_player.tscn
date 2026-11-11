@@ -25,6 +25,18 @@ mouse_filter = 2
 autoplay = false
 expand = true
 
+; The original puts the SKIP text at depth 76 and its button at depth 77, both
+; under the fade clip, so the two sit between the video and FadeRect and fade
+; with the clip. extract_cutscene_skip writes where they go and how the text is
+; drawn, and cutscene_player.gd reads that.
+[node name="SkipText" type="Label" parent="Overlay"]
+mouse_filter = 2
+
+[node name="SkipButton" type="Button" parent="Overlay"]
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
 [node name="FadeRect" type="ColorRect" parent="Overlay"]
 anchors_preset = 15
 anchor_right = 1.0

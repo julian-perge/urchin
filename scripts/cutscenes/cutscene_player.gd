@@ -51,6 +51,8 @@ var playback_timeout_seconds: float = 0.0
 var _started: bool = false
 
 @onready var video: VideoStreamPlayer = $Overlay/Video
+@onready var skip_text: Label = $Overlay/SkipText
+@onready var skip_button: Button = $Overlay/SkipButton
 @onready var fade_rect: ColorRect = $Overlay/FadeRect
 
 
