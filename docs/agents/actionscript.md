@@ -96,3 +96,9 @@ a caller by name, and it does not resolve which timeline a bare name such as
   `MISLABELED_BATTLE_IDS` corrects all nine at conversion time. `c13cff0`
   corrected only 109, 409 and 513, which left the zone 2, 3, 6 and 7 bosses
   and the tutorial unable to load.
+- **A control can sit on the root timeline, outside the clip it belongs with.**
+  The cutscene plan read the four cutscene sprites, found no skip button in
+  them and recorded that the original has none (`e7eff3a8`). Button 3468 is
+  placed once on the root timeline, at frame 263, and every root frame to 448
+  shows it, which covers all seven CS_ labels (`d3da2ff5`). When a screen seems
+  to lack a control, read what the root frame places around the clip as well.
