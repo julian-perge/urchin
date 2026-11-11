@@ -75,6 +75,7 @@ func _ready() -> void:
 	# minimum forced up, and the minimum of a 16 px Label is taller than this one.
 	skip_text.position = Vector2(rect["x"], rect["y"])
 	skip_text.size = Vector2(rect["w"], rect["h"])
+	skip_button.pressed.connect(_on_skip_pressed)
 
 
 func play(cutscene_id: String) -> void:
@@ -101,6 +102,11 @@ func play(cutscene_id: String) -> void:
 	await _fade(1.0)
 	finished.emit()
 	queue_free()
+
+
+func _on_skip_pressed() -> void:
+	video.stop()
+	_playback_settled.emit()
 
 
 # Waits for whichever comes first: the video reporting it finished, or a
