@@ -32,10 +32,13 @@ SCALED = bits(
 )  # fmt: skip
 
 
-def skip_swf(*, button_states: int = HIT, second_frame: bytes = b"") -> bytes:
+def skip_swf(
+    *, button_states: int = HIT, caption_cxform: bytes = b"", second_frame: bytes = b""
+) -> bytes:
     """A SWF whose first cutscene frame places the button at depth 77 and its
-    caption at depth 76, and whose second one adds `second_frame`'s tags to
-    that. The hit shape is a 600 by 600 twip square around its origin."""
+    caption at depth 76 with `caption_cxform`, and whose second one adds
+    `second_frame`'s tags to that. The hit shape is a 600 by 600 twip square
+    around its origin."""
     square = bits((11, 5), (-300, 11), (300, 11), (-300, 11), (300, 11))
     shape = tag(TAG_DEFINE_SHAPE, struct.pack("<H", SHAPE) + square + b"\0\0\0\0")
     record = button_record(button_states, SHAPE, 1, IDENTITY_MATRIX)
@@ -47,7 +50,7 @@ def skip_swf(*, button_states: int = HIT, second_frame: bytes = b"") -> bytes:
         caption,
         label("CS_ONE"),
         place2(77, cid=BUTTON, matrix=SCALED),
-        place2(76, cid=CAPTION, matrix=translate(13500, 10900)),
+        place2(76, cid=CAPTION, matrix=translate(13500, 10900), cxform=caption_cxform),
         tag(TAG_SHOW_FRAME),
         label("CS_TWO"),
         second_frame,
@@ -83,3 +86,11 @@ def test_a_cutscene_frame_that_moves_the_button_is_refused():
     moved = place2(77, move=True, matrix=translate(15000, 11000))
     with pytest.raises(RuntimeError, match="CS_TWO"):
         cutscene_skip.skip_layout(parse_swf(skip_swf(second_frame=moved)))
+
+
+def test_a_caption_with_a_colour_transform_is_refused():
+    # Half alpha. The Label would draw the caption at full strength, so the
+    # layout would be wrong without a word.
+    half = bits((0, 1), (1, 1), (10, 4), (256, 10), (256, 10), (256, 10), (128, 10))
+    with pytest.raises(RuntimeError, match="colour transform"):
+        cutscene_skip.skip_layout(parse_swf(skip_swf(caption_cxform=half)))

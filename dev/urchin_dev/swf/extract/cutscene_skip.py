@@ -46,10 +46,11 @@ CAPTION = 3469
 CUTSCENE_PREFIX = "CS_"
 
 
-def placements(index: SwfIndex) -> dict[str, dict[int, tuple[int, tuple]]]:
-    """-> for each cutscene label, the depth and matrix the label's root frame
+def placements(index: SwfIndex) -> dict[str, dict[int, tuple[int, timeline.Layer]]]:
+    """-> for each cutscene label, the depth and layer the label's root frame
     shows the button and the caption with, by character id. Raises when a
-    frame shows either of them other than once."""
+    frame shows either of them other than once, and when it shows the caption
+    with a colour transform or a filter, which a Label does not draw."""
     root = timeline.frames(index, 0)
     shown = {}
     for name, frame in timeline.labels(index, 0).items():
@@ -58,7 +59,7 @@ def placements(index: SwfIndex) -> dict[str, dict[int, tuple[int, tuple]]]:
         row = {}
         for character in (BUTTON, CAPTION):
             at = [
-                (depth, layer.matrix)
+                (depth, layer)
                 for depth, layer in root[frame - 1].items()
                 if layer.character_id == character
             ]
@@ -67,6 +68,12 @@ def placements(index: SwfIndex) -> dict[str, dict[int, tuple[int, tuple]]]:
                     f"{name}, root frame {frame}, shows {character} {len(at)} times"
                 )
             row[character] = at[0]
+        _, caption = row[CAPTION]
+        if caption.color_transform or caption.filters:
+            raise RuntimeError(
+                f"{name} shows the caption {CAPTION} with a colour transform or"
+                f" a filter, which the port's Label does not draw: {caption}"
+            )
         shown[name] = row
     if not shown:
         raise RuntimeError(f"the root timeline has no {CUTSCENE_PREFIX} label")
@@ -115,7 +122,7 @@ def skip_layout(index: SwfIndex) -> dict:
         raise RuntimeError(f"edit text {CAPTION} has no text")
     origin = render.placement_origin(index, 0, frame, CAPTION)
     return {
-        "button": rect_entry(hit_rect(index, row[BUTTON][1])),
+        "button": rect_entry(hit_rect(index, row[BUTTON][1].matrix)),
         "text": {**label_layout.text_layout(field, origin), "string": string},
     }
 
