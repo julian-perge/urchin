@@ -79,7 +79,6 @@ show-fixes = true
 extend-exclude = [
   "*.md",
   ".godot",
-  ".recall",
   "addons",
   "assets",
   "docs",

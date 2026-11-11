@@ -133,6 +133,31 @@ extracting it.
   when nothing follows it.
 - **Do not run ffdec concurrently.** It renders all 780 sprites in 2.64s
   serial against 2.79, 3.47 and 4.80s at 2, 4 and 6 processes (`94ae2b1`).
+  A daemon that keeps the parsed SWF would save about 1.3s of a 34s run, so
+  none was built. Two ffdec faults are known and left alone: `-select all:N`
+  throws a NullPointerException at `CommandLineArgumentParser.java:1650`, and
+  the launcher sets `-Xmx1024m` where one export runs in 192m.
+- **Measure a backdrop colour from the SWF, never from the port's art.** The
+  battle sky PNGs have a soft top edge, so the pixel at row 0 is transparent
+  for 5 of the 9 skies, and a fill sampled there drew nothing. The colour under
+  the sky is (0, 0, 0, 255): DefineShape 333, placed once inside DefineSprite
+  3455 at depth 70 and once at depth 72. The SWF's SetBackgroundColorTag
+  (14, 18, 21) never reaches the screen on that frame. A render with the whole
+  `FOREGROUND` list stripped also strips 333, so it shows (14, 18, 21) and
+  gives the wrong answer. Strip only the characters the frame places above the
+  hall.
+- **A strip needs a check on a label it changes.** Stripping the fighter rig
+  moves the displayRect of 5 of the 10 halls. A check on CHURCH passed because
+  CHURCH is one of the 5 it does not move. `-removeCharacter` on a container
+  removes the container only, and the characters nested in it still render.
+  It also shrinks the container's union bounds, so `content_rect` reports a new
+  origin for art whose pixels did not move.
+- **A shape with a bitmap fill of id 65535 renders as static.** The source SWF
+  has no DefineBits for it, so this is an authoring fault, not a pipeline
+  fault. It put about 1.1s of noise at the end of one cutscene and more in the
+  middle of another. `cutscenes.py` finds these shapes with
+  `find_broken_bitmap_fill_cids` and strips them, so a new cutscene needs no
+  hand-made id list. Its header comment records the encoder settings.
 - **Leave the headless setting alone.** `dev/urchin_dev/__init__.py` sets
   `JAVA_TOOL_OPTIONS=-Djava.awt.headless=true` because ffdec's launcher adds
   `-Xdock` flags that register a macOS Dock app which can steal focus mid-run.

@@ -8,7 +8,7 @@
 
 **Tech Stack:** Godot 4.7 GDScript, GUT 9.6.1 test framework, Python 3 + `uv` + `ffdec` for extraction (mirrors `dev/urchin_dev/swf/extract/item_icons.py`/`buff_icons.py`).
 
-**Spec:** `docs/superpowers/specs/2026-08-18-missile-projectile-art-design.md` - read it first for the *why* behind every mechanic here (source citations for the bolt/trail tint split, `KrinTrail`'s real 33-frame fade-pulse nature, the `strikeSuccess` impact gate, and the re-derived clip lists); this plan covers the *how*.
+**Spec:** `spec/old/2026-08-18-missile-projectile-art-design.md` - read it first for the *why* behind every mechanic here (source citations for the bolt/trail tint split, `KrinTrail`'s real 33-frame fade-pulse nature, the `strikeSuccess` impact gate, and the re-derived clip lists); this plan covers the *how*.
 
 ## Global Constraints
 
@@ -309,7 +309,7 @@ Create `test/unit/test_ability_visual_effect.gd`:
 ```gdscript
 # Ability.visual_effect_color - frame42/sonny2_moves.txt's colortobe value
 # (11_visual_effect_color), tints the cast glow (both Missile and Shock)
-# and the KrinTrail streak. docs/superpowers/specs/2026-08-18-missile-projectile-art-design.md.
+# and the KrinTrail streak. spec/old/2026-08-18-missile-projectile-art-design.md.
 extends GutTest
 
 
@@ -403,7 +403,7 @@ Create `test/unit/test_vfx_frames.gd`:
 # VfxFrames.load_frames() - loads a per-clip folder of numbered frame
 # files (dev/urchin_dev/swf/extract/vfx.py's own output) into a
 # SpriteFrames animation. Shared by ImpactEffect and Projectile.
-# docs/superpowers/specs/2026-08-18-missile-projectile-art-design.md.
+# spec/old/2026-08-18-missile-projectile-art-design.md.
 extends GutTest
 
 
@@ -485,7 +485,7 @@ Create `test/unit/test_impact_effect.gd`:
 
 ```gdscript
 # ImpactEffect - a one-shot animation that frees itself when done.
-# docs/superpowers/specs/2026-08-18-missile-projectile-art-design.md.
+# spec/old/2026-08-18-missile-projectile-art-design.md.
 extends GutTest
 
 const ImpactEffectScene = preload("res://scenes/battle/impact_effect.tscn")
@@ -542,7 +542,7 @@ Create `scripts/battle/impact_effect.gd`:
 # plays once at wherever it's positioned, then frees itself. The source
 # never explicitly removes its own equivalent clips ("bbb"+counter in
 # frame_42/DoAction_4.as's krinBoltMake) - a deliberate improvement, not
-# an unfaithful port. See docs/superpowers/specs/2026-08-18-missile-projectile-art-design.md.
+# an unfaithful port. See spec/old/2026-08-18-missile-projectile-art-design.md.
 class_name ImpactEffect
 extends Node2D
 
@@ -635,7 +635,7 @@ Create `test/unit/test_projectile.gd`:
 
 ```gdscript
 # Projectile's bolt/trail rendering - real per-clip art instead of a
-# tinted circle+line. docs/superpowers/specs/2026-08-18-missile-projectile-art-design.md.
+# tinted circle+line. spec/old/2026-08-18-missile-projectile-art-design.md.
 extends GutTest
 
 const ProjectileScene = preload("res://scenes/battle/projectile.tscn")
@@ -745,7 +745,7 @@ Replace the whole file with:
 # (non-looping - its own frames already carry the fade), tinted by
 # trail_color (RGB only - alpha comes from the frames), rotated once to
 # the flight angle, and grows scale.x every tick, independent of its own
-# internal animation - see docs/superpowers/specs/
+# internal animation - see spec/old/
 # 2026-08-18-missile-projectile-art-design.md.
 class_name Projectile
 extends Node2D

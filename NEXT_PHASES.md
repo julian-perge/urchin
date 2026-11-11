@@ -29,7 +29,7 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     fixed `!= 0` toggle - see `DECODED_ALGORITHMS.md`.
   - **Remaining:** the MODEL4 (female) timeline.
 
-- **Missile projectile art** - **DONE (2026-08-19)**, see `.superpowers/sdd/2026-08-18-missile-projectile-art/` for the full 6-task breakdown. `Projectile` no longer draws a generic tinted
+- **Missile projectile art** - **DONE (2026-08-19)**, see `tasks/old/2026-08-18-missile-projectile-art.md` for the full 6-task breakdown. `Projectile` no longer draws a generic tinted
   circle+line for every bolt - it plays the real per-element clip art, and impact effects land at the target on every hit, matching `DECODED_ALGORITHMS.md`'s krinBoltMake section:
 
   - All 51 clips (15 bolts, `KrinTrail`, 35 `BOOM_*`/`ex_*` impacts) extracted from the web-build SWF into `assets/vfx/{bolts,trail,impacts}/<clip>/<frame>.png` - per-frame folders, not
@@ -52,7 +52,7 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   GUT suite green: 169/169 tests, 844 asserts. Manual visual check (a live Missile move showing real bolt/trail art, a miss flying past, the cast glow tinted by the move's own color) was not
   completed - this environment has no interactive/screenshot tooling for a native (non-browser) Godot window, worth a project owner eyes-on pass.
 
-- **VFX registration scenes** - **DONE (2026-08-20)**, see `.superpowers/sdd/2026-08-19-vfx-registration-scenes/` for the full 6-task breakdown. Closes the registration-point mismatch parked at
+- **VFX registration scenes** - **DONE (2026-08-20)**, see `tasks/old/2026-08-19-vfx-registration-scenes.md` for the full 6-task breakdown. Closes the registration-point mismatch parked at
   the end of the missile projectile art work above: bolts and impacts drew with Godot's default `centered = true`, which centers a clip on its own bounding box instead of on the origin the
   source SWF drew it around, and a rotating bolt swings visibly wide of a pivot that far off. Every clip now has a generated scene of its own with its real registration point baked in:
 

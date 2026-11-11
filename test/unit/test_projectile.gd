@@ -1,7 +1,7 @@
 # Projectile's bolt/trail rendering - each clip's own generated scene
 # (dev/urchin_dev/swf/extract/vfx_scenes.py) instead of a tinted circle+
 # line or a dynamically-scanned PNG folder.
-# docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# spec/old/2026-08-19-vfx-registration-scenes-design.md.
 extends GutTest
 
 const ProjectileScene = preload("res://scenes/battle/projectile.tscn")

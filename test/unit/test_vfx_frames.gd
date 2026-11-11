@@ -2,7 +2,7 @@
 # dev/urchin_dev/swf/extract/vfx_scenes.py wrote for it. Frame-loading
 # tests retired along with load_frames() itself - every clip now loads
 # from a generated scene instead of a dynamically-scanned folder.
-# docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# spec/old/2026-08-19-vfx-registration-scenes-design.md.
 extends GutTest
 
 

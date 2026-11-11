@@ -8,7 +8,7 @@
 
 **Tech Stack:** Python 3.14 (`uv run`), `ffdec`, Pillow, GDScript/Godot 4.7, GUT 9.6.1.
 
-**Spec:** `docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md`
+**Spec:** `spec/old/2026-08-19-vfx-registration-scenes-design.md`
 
 ## Global Constraints
 
@@ -191,7 +191,7 @@ git commit -m "feat: full-timeline union bounds for VFX registration points"
 # own convention), keyed by the same sanitize()d name vfx.py already uses
 # for its PNG folder names.
 #
-# See docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# See spec/old/2026-08-19-vfx-registration-scenes-design.md.
 # Run: uv run extract_vfx_offsets
 from __future__ import annotations
 
@@ -361,7 +361,7 @@ git commit -m "feat: compute real per-clip VFX registration offsets"
 # same PNG this script measures again for the scale ratio's denominator,
 # so the ZOOM factor cancels regardless of a clip's own filter padding.
 #
-# See docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# See spec/old/2026-08-19-vfx-registration-scenes-design.md.
 # Run: uv run extract_vfx_scenes
 from __future__ import annotations
 
@@ -575,7 +575,7 @@ Replace its contents entirely:
 # (non-looping - its own frames already carry the fade), tinted by
 # trail_color (RGB only - alpha comes from the frames), and grows scale.x
 # every tick, independent of its own internal animation - see
-# docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# spec/old/2026-08-19-vfx-registration-scenes-design.md.
 class_name Projectile
 extends Node2D
 
@@ -756,7 +756,7 @@ Replace its contents entirely - same coverage as before, updated for the instant
 # Projectile's bolt/trail rendering - each clip's own generated scene
 # (dev/urchin_dev/swf/extract/vfx_scenes.py) instead of a tinted circle+
 # line or a dynamically-scanned PNG folder.
-# docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# spec/old/2026-08-19-vfx-registration-scenes-design.md.
 extends GutTest
 
 const ProjectileScene = preload("res://scenes/battle/projectile.tscn")
@@ -1033,7 +1033,7 @@ Replace its contents entirely:
 # this script only instantiates it and wires cleanup. The source never
 # explicitly removes its own equivalent clips ("bbb"+counter in
 # frame_42/DoAction_4.as's krinBoltMake) - a deliberate improvement, not
-# an unfaithful port. See docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# an unfaithful port. See spec/old/2026-08-19-vfx-registration-scenes-design.md.
 class_name ImpactEffect
 extends Node2D
 
@@ -1065,7 +1065,7 @@ Replace its contents entirely:
 ```gdscript
 # ImpactEffect - a one-shot animation that frees itself when done. Art
 # comes from a per-clip generated scene under scenes/battle/vfx/impacts/.
-# docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# spec/old/2026-08-19-vfx-registration-scenes-design.md.
 extends GutTest
 
 const ImpactEffectScene = preload("res://scenes/battle/impact_effect.tscn")
@@ -1177,7 +1177,7 @@ Replace its contents entirely:
 # dev/urchin_dev/swf/extract/vfx_scenes.py wrote for it. Frame-loading
 # tests retired along with load_frames() itself - every clip now loads
 # from a generated scene instead of a dynamically-scanned folder.
-# docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# spec/old/2026-08-19-vfx-registration-scenes-design.md.
 extends GutTest
 
 

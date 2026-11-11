@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Migrate `scripts/ui/menu/abilities_window.gd` + `scenes/ui/menu/abilities_window.tscn` off imperative runtime Control-building, as the third increment of the "UI architecture: native Godot Containers instead of code-built controls" phase in `NEXT_PHASES.md` (`item_slot.gd`/`store_window.gd`/`inventory_panel.gd` are already done - see `docs/superpowers/plans/2026-07-21-store-ui-containers.md` and `docs/superpowers/plans/2026-07-21-inventory-panel-containers.md` for the established conventions this plan follows).
+**Goal:** Migrate `scripts/ui/menu/abilities_window.gd` + `scenes/ui/menu/abilities_window.tscn` off imperative runtime Control-building, as the third increment of the "UI architecture: native Godot Containers instead of code-built controls" phase in `NEXT_PHASES.md` (`item_slot.gd`/`store_window.gd`/`inventory_panel.gd` are already done - see `tasks/old/2026-07-21-store-ui-containers.md` and `tasks/old/2026-07-21-inventory-panel-containers.md` for the established conventions this plan follows).
 
 **Architecture:** Unlike the prior two increments, this screen has THREE different kinds of content, each converted differently:
 1. **Genuinely static chrome** (backdrop, close button, panel textures, title labels, the attribute rows) - converts directly into the `.tscn`, exactly like before.

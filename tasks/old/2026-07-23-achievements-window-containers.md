@@ -4,7 +4,7 @@
 
 **Goal:** Migrate `scripts/ui/menu/achievements_window.gd` + `scenes/ui/menu/achievements_window.tscn` off imperative runtime Control-building, as the fourth increment of the "UI architecture: native
 Godot Containers instead of code-built controls" phase in `NEXT_PHASES.md` (`item_slot.gd`/`store_window.gd`/`inventory_panel.gd`/`abilities_window.gd` are already done - see the sibling plans in
-`docs/superpowers/plans/` for the established conventions this plan follows).
+`tasks/old/` for the established conventions this plan follows).
 
 **Architecture:** This screen is small and everything positional in it is genuinely static/fixed - backdrop, close button, panel texture, title label, and 10 achievement plates on a uniform
 2-column x 5-row pixel grid. All of it moves into the `.tscn`. The ONLY thing that stays code-driven is each plate's `StyleBoxFlat` (locked vs. unlocked look) and its label's `font_color`, since

@@ -24,6 +24,7 @@ the original SWF by script, not by hand.
 
 ## Every task
 
+- Run `uv run gut` before each commit.
 - Every lesson here and in the docs below records something this project
   already got wrong once. Each one names its evidence so you can check it
   instead of trusting it.
@@ -40,16 +41,9 @@ the original SWF by script, not by hand.
   `docs/agents/godot.md`.
 - Reviewing a diff, or calling a change verified: `CODING_STANDARDS.md`.
 
-## Agent skills
+## Workflow
 
-### Issue tracker
-
-Issues live in GitHub Issues for julian-perge/urchin, managed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-The five default triage labels, each label string the same as its role name. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+- Tasks are tracked in GitHub Issues for julian-perge/urchin, with the `gh` CLI. `/agent-skills:plan` creates one sub-issue per task. `tasks/` is git-ignored scratch, except `tasks/old/`.
+- Specs are files at `spec/<issue>-<slug>.md`, not `SPEC.md`. Specs from before this workflow are in `spec/old/`.
+- ADRs go in `docs/adr/`. Read `GLOSSARY.md` and `docs/adr/` (those that exist) before design work.
+- Read `docs/agents/workflow.md` before any `/agent-skills` command.

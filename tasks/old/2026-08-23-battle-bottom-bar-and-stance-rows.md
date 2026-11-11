@@ -18,7 +18,7 @@ five plain `Button`s for `TextureButton`s with a cover child, and
 **Tech Stack:** Python 3 with Pillow and the ffdec CLI for extraction, Godot
 4.7.2 with GUT 9.7.1 for the port and its tests.
 
-**Spec:** `docs/superpowers/specs/2026-08-23-battle-bottom-bar-and-stance-rows.md`
+**Spec:** `spec/old/2026-08-23-battle-bottom-bar-and-stance-rows.md`
 
 ## Global Constraints
 
@@ -268,7 +268,7 @@ STANCE_DIR = BATTLE_UI_DIR / "stance"
 # out of these rather than extracting it whole, because a faithful texture
 # would need one render per stance per selection state and still could not
 # carry the player-supplied name. See
-# docs/superpowers/specs/2026-08-23-battle-bottom-bar-and-stance-rows.md.
+# spec/old/2026-08-23-battle-bottom-bar-and-stance-rows.md.
 #
 # 3305 labels its five frames Phalanx, Defensive, Tactical, Aggressive and
 # Relentless, which is _root.agModeNames verbatim and also the order of
@@ -865,7 +865,7 @@ git commit -m "feat: stance rows draw the original's own button art"
 ### Task 4: Bring the docs up to date
 
 **Files:**
-- Modify: `docs/superpowers/specs/2026-08-23-battle-bottom-bar-and-stance-rows.md`
+- Modify: `spec/old/2026-08-23-battle-bottom-bar-and-stance-rows.md`
 - Modify: `NEXT_PHASES.md`
 - Modify: `KNOWN_GAPS.md`
 - Modify: `dev/source_files/README.md`
@@ -925,7 +925,7 @@ In `dev/source_files/README.md`, change the `extract/battle_screen.py` line to:
 - [ ] **Step 5: Check the prose and the encoding**
 
 ```bash
-rg -n "[^\x00-\x7F]" NEXT_PHASES.md KNOWN_GAPS.md dev/source_files/README.md docs/superpowers/specs/2026-08-23-battle-bottom-bar-and-stance-rows.md
+rg -n "[^\x00-\x7F]" NEXT_PHASES.md KNOWN_GAPS.md dev/source_files/README.md spec/old/2026-08-23-battle-bottom-bar-and-stance-rows.md
 ```
 
 Expected: no matches. Read each edit once for plain register: no marketing
@@ -936,7 +936,7 @@ sits in.
 
 ```bash
 /Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .
-git add NEXT_PHASES.md KNOWN_GAPS.md dev/source_files/README.md docs/superpowers/specs/2026-08-23-battle-bottom-bar-and-stance-rows.md
+git add NEXT_PHASES.md KNOWN_GAPS.md dev/source_files/README.md spec/old/2026-08-23-battle-bottom-bar-and-stance-rows.md
 git commit -m "docs: close out the battle bottom bar and stance row work"
 ```
 

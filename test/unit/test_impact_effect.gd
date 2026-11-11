@@ -1,6 +1,6 @@
 # ImpactEffect - a one-shot animation that frees itself when done. Art
 # comes from a per-clip generated scene under scenes/battle/vfx/impacts/.
-# docs/superpowers/specs/2026-08-19-vfx-registration-scenes-design.md.
+# spec/old/2026-08-19-vfx-registration-scenes-design.md.
 extends GutTest
 
 const ImpactEffectScene = preload("res://scenes/battle/impact_effect.tscn")

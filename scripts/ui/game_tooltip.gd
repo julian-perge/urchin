@@ -5,7 +5,7 @@
 # original's title-bar/colored-info-bar/body look at all). A tooltip is a
 # stack of sections (scripts/ui/tooltip_theme.gd's colors); each section is
 # its own background box holding one or more independently-colored lines -
-# see docs/superpowers/specs/2026-08-20-rich-tooltip-rework-design.md.
+# see spec/old/2026-08-20-rich-tooltip-rework-design.md.
 extends CanvasLayer
 
 const EDGE_MARGIN: float = 4.0

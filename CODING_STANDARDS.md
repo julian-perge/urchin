@@ -13,7 +13,7 @@ this project already got wrong once and names its evidence.
   icon and which of two overlays, so a faithful texture would have meant twenty
   renders that still could not carry the name. Faithful art plus a Godot
   arrangement beats a heroic extraction. See
-  `docs/superpowers/specs/2026-08-23-battle-bottom-bar-and-stance-rows.md`.
+  `spec/old/2026-08-23-battle-bottom-bar-and-stance-rows.md`.
 - **Tests assert against source-derived values.** A test that pins a
   placeholder breaks when the real data lands, which is what happened to the
   store catalog test (`f435959`).

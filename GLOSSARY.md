@@ -132,6 +132,12 @@ _Avoid_: DoT, HoT, ticker
 Everything a finished battle does to the save and the achievements, applied in one call by `BattleSettlement.settle`, and the summary the Victory and Game over screens show.
 _Avoid_: Rewards, which are only the money and XP a win pays
 
+### Cutscenes
+
+**Cutscene camera**:
+The clip each Cutscene's animation places, whose box, scale and color transform the original applies to the whole animation every frame, so the 533x300 view pans, zooms and tints. The original never draws the clip itself.
+_Avoid_: Virtual camera, guide overlay, Camera
+
 ### Porting
 
 **Original bug**:
