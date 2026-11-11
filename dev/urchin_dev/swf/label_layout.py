@@ -40,14 +40,25 @@ def text_layout(field: EditText, placed: tuple[float, float]) -> dict:
     }
 
 
+def one_static_line(field: EditText) -> bool:
+    """-> whether `field` is static text of one line. Static text comes out of
+    the editor as a multiline field with no variable, and its text almost
+    always ends with a paragraph mark, so "SKIP\\r" is one line."""
+    if field.variable_name or field.initial_text is None:
+        return False
+    return not any(mark in field.initial_text.removesuffix("\r") for mark in "\r\n")
+
+
 def plain_device_line(
     index: SwfIndex, field_id: int, *, wrapping: bool = False
 ) -> EditText:
     """-> the fields of edit text `field_id`. Raises unless it is one line of
     a bold Device font with no margins, which is what the port's Label stands
-    in for. A field that allows wrapping is refused too, unless `wrapping` is
-    set. The caller sets it for a field whose text fits on one line, which a
-    Label that wraps draws as Flash does."""
+    in for. A multiline field passes only when it is static text of one line,
+    because the game fills any other multiline field with text of any length.
+    A field that allows wrapping is refused too, unless `wrapping` is set. The
+    caller sets it for a field whose text fits on one line, which a Label that
+    wraps draws as Flash does."""
     field = edit_text(index, field_id)
     face = font(index, field.font_id)
     if not (face.device and face.bold):
@@ -55,7 +66,10 @@ def plain_device_line(
             f"edit text {field_id}'s font {field.font_id} is {face}, and the port"
             " only has a Stand-in font for a bold Device font"
         )
-    if field.html or (not wrapping and (field.multiline or field.word_wrap)):
+    if field.html or (
+        not wrapping
+        and ((field.multiline and not one_static_line(field)) or field.word_wrap)
+    ):
         raise RuntimeError(f"edit text {field_id} is not one plain line: {field}")
     if (field.left_margin, field.right_margin, field.indent) != (0, 0, 0):
         raise RuntimeError(f"edit text {field_id} has margins: {field}")

@@ -80,6 +80,12 @@ CHARACTER_KINDS = {
     60: "video",
 }
 
+# The flag bits of a BUTTONRECORD, which names the button states the record
+# draws in and says whether a filter list and a blend mode follow its matrix.
+BUTTON_STATES = {0x01: "up", 0x02: "over", 0x04: "down", 0x08: "hit"}
+BUTTON_HAS_FILTER_LIST = 0x10
+BUTTON_HAS_BLEND_MODE = 0x20
+
 # The four FILLSTYLE types that point at a bitmap character.
 BITMAP_FILL_TYPES = (0x40, 0x41, 0x42, 0x43)
 SOLID_FILL_TYPE = 0x00
@@ -191,6 +197,18 @@ class CodeBlock:
     depth: int | None = None
     events: int | None = None
     span: tuple[int, int] = (0, 0)
+
+
+@dataclass(frozen=True)
+class ButtonRecord:
+    """One BUTTONRECORD of a DefineButton2. states holds the button states the
+    record draws its character in, from "up", "over", "down" and "hit". matrix
+    is as in Placement and places the character inside the button."""
+
+    states: frozenset[str]
+    character_id: int
+    depth: int
+    matrix: tuple[float, float, float, float, int, int]
 
 
 @dataclass(frozen=True)
@@ -679,6 +697,33 @@ def shape_bounds(index: SwfIndex, cid: int) -> tuple[int, int, int, int]:
     if code not in SHAPE_TAGS:
         raise ValueError(f"character {cid} is not a DefineShape")
     return _read_rect(index.data, body + 2)
+
+
+def button_records(index: SwfIndex, cid: int) -> list[ButtonRecord]:
+    """-> a DefineButton2's records in tag order, which are the characters it
+    draws in each of its states. A record's filter list and blend mode are
+    stepped over and not read."""
+    code, body, end = index.characters[cid]
+    if code != TAG_DEFINE_BUTTON2:
+        raise ValueError(f"character {cid} is not a DefineButton2")
+    data = index.data
+    p = body + 5  # the button id, a byte of flags and the ActionOffset
+    records = []
+    while p < end and data[p]:
+        flags = data[p]
+        character, depth = struct.unpack_from("<HH", data, p + 1)
+        matrix, p = _read_matrix(data, p + 5)
+        _, p = _read_cxform_with_alpha(data, p)
+        if flags & BUTTON_HAS_FILTER_LIST:
+            count = data[p]
+            p += 1
+            for _ in range(count):
+                p += _filter_size(data, p)
+        if flags & BUTTON_HAS_BLEND_MODE:
+            p += 1
+        states = frozenset(name for bit, name in BUTTON_STATES.items() if flags & bit)
+        records.append(ButtonRecord(states, character, depth, matrix))
+    return records
 
 
 def edit_text(index: SwfIndex, cid: int) -> EditText:
