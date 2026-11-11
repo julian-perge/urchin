@@ -618,6 +618,20 @@ Ported: once CS_CUT5 ends, `battle_scene.gd`'s `_on_victory_proceed` opens `Endi
   at the export's 2x raises that to 17. The logo, the copyright line and the "Play MORE Games!" link are left out like the game over screen's, see
   `docs/adr/0002-leave-out-the-armor-games-branding.md`.
 
+## The SKIP button on every cutscene (button 3468)
+
+Ported: `CutscenePlayer` places the button and its text from `assets/cutscenes/skip_button.json`, which `uv run extract_cutscene_skip` writes, and a press ends the cutscene.
+
+- Root frame 263, the frame of CS_INTRO, places button 3468 at depth 77 and the "SKIP" text, edit text 3469, at depth 76. Frame 449 removes both. So every root frame from 263 to 448 shows them, which
+  covers all seven CS_ labels, and all seven place them in the same spot: the text at (675.55, 545.75) and the button, scaled 2.63 across and 0.89 down, at (759.55, 554.95).
+- The button has no art. Its one record draws shape 291, a 30 px square, in the hit-test state only. So its hit area is 79 by 27 px at the bottom right of the stage, and the player sees only the text. The
+  text is white, 12 px and right-aligned in the bold `_sans` Device font, which the port draws as a Label.
+- Release calls `stopAllSounds()` and sets `cutSceneEnd` (`DefineButton2_3468` on(release)). The fade clip 3466, placed at depth 80 above the button, then fades to black and jumps to `gotoSceneKrin`
+  (`frame_263/PlaceObject2_3466_80` enterFrame, lines 9-33). That is the same place that the clip's own last frame sends it, because that frame sets `cutSceneEnd` too (`DefineSprite_4153/frame_2424/DoAction.as:1`
+  for CS_CUT5). The port's press stops the clip and its audio, and then runs the fade out, `finished` and the free that the end of the clip runs.
+- The fade clip has an enterFrame handler only, and nothing stops the button while the cutscene fades in, so a press in that first 0.67 s counts. The release handler stops no clip, so the original's picture plays on
+  under the fade out and only its sound stops. Both are read from the AS and not confirmed in a live run. The port starts no clip after an early press, and holds the last frame of a clip that it stopped (#51).
+
 ## Zone hub orbs (DefineSprite 3287)
 
 Ported: `ZoneProgression.pick_story_battle` and `pick_training_battle` carry each orb's flags, and `scenes/zones/zone*.tscn` place the orbs.
