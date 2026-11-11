@@ -92,7 +92,12 @@ extracting it.
   changing `absMat` to `mat` at that line of `Timeline.java`. Of the 3,893
   generated files only the six cards change, because every other extractor renders
   the filtered sprite itself rather than its parent. The ffdec CLI still has the
-  bug, and none of the four extracted cutscenes reach a case it would change.
+  bug. CS_CUT2 to CS_CUT5 reach no case it would change. CS_INTRO2 reaches one,
+  because sprite 3643 places the blurred sprite 3635, which holds clip masks, three
+  times from frame 1851 to 2002. On sprite 3643's own frames, the CLI differs from
+  the driver by at most 92 of 8.4 million pixels over 19 frames sampled in that
+  span. Those pixels sit in a box no larger than 43x41 px, and no frame from 1915
+  on differs at all, so its export stays on the CLI.
 - **Render PNG frames through `dev/urchin_dev/swf/render.py`.** It runs the
   ffdec_lib driver once per SWF per extractor, deletes each strip list in
   memory, and hands back every canvas with the rects it was sized from, so a
