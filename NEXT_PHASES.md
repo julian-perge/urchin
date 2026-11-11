@@ -12,7 +12,7 @@ scene. See `KNOWN_GAPS.md` for the handful of deliberate approximations and `SWF
 
 The UI/scene layer was rebuilt 2026-07-18: main menu (save slots + new-game flow), 7 per-zone hub scenes with SWF-exact orb positions (`scenes/zones/`), the zone-hub shell (`game.tscn` + `game.gd`),
 the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exact button positions, and the asset tree reorganized (`assets/backgrounds/{hub,battle,sky}`,
-`assets/ui/{hotbar,battle,store,zone_map}`). Base resolution is 800x600 (canvas_items stretch) against the original's 800x575 stage, so every SWF-extracted coordinate drops in 1:1.
+`assets/ui/{hotbar,battle,store,zone_map}`). Base resolution is 800x575 (canvas_items stretch), the original's stage size, so every SWF-extracted coordinate drops in 1:1.
 
 - **Timeline-accurate animations**
 

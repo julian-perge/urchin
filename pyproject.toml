@@ -50,6 +50,7 @@ extract_zone_hub = "urchin_dev.swf.extract.zone_hub:main"
 extract_store_art = "urchin_dev.swf.extract.store_art:main"
 extract_vfx = "urchin_dev.swf.extract.vfx:main"
 extract_vfx_scenes = "urchin_dev.swf.extract.vfx_scenes:main"
+extract_window_chrome = "urchin_dev.swf.extract.window_chrome:main"
 gut = "urchin_dev.gut:main"
 merge_ticket = "urchin_dev.merge_ticket:main"
 

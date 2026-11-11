@@ -120,9 +120,9 @@ offset_bottom = 180.0
 [node name="BottomBar" type="Control" parent="."]
 layout_mode = 0
 offset_left = 0.0
-offset_top = 470.0
+offset_top = 445.0
 offset_right = 800.0
-offset_bottom = 600.0
+offset_bottom = 575.0
 mouse_filter = 2
 
 [node name="Backdrop" type="TextureRect" parent="BottomBar"]

@@ -402,3 +402,25 @@ def test_a_nested_clip_is_read_only_as_far_as_it_plays():
         sprite(CLIP, place2(1, cid=INNER), b""),
     )
     assert render.played_frames(index, CLIP) == [1, 2]
+
+
+def test_hide_depths_reach_the_driver_as_owner_and_depth(tmp_path, monkeypatch):
+    # The window chrome backdrop hides every depth of KRINMENU (3142) but one
+    # while the root frame draws it, so a job has to carry (owner, depth) pairs.
+    fake_driver(monkeypatch, [result(92, 92, CANVAS, DISPLAY)] * 2, [None, None])
+    real = ffdec_lib.render
+    seen: list[dict] = []
+
+    def spy(swf_path, jobs):
+        seen.extend(jobs)
+        return real(swf_path, jobs)
+
+    monkeypatch.setattr(ffdec_lib, "render", spy)
+    jobs = [Job(7, 1, 4.0, hide_depths=((3142, 5), (3142, 9))), Job(7, 1, 4.0)]
+    with render.frames(tmp_path / "a.swf", jobs):
+        pass
+    assert seen[0]["hide_depths"] == [
+        {"owner": 3142, "depth": 5},
+        {"owner": 3142, "depth": 9},
+    ]
+    assert "hide_depths" not in seen[1]

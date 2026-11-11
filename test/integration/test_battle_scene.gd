@@ -450,7 +450,7 @@ func test_enter_and_space_after_clicking_proceed_press_nothing_under_the_cutscen
 	# The scene gets a viewport of its own, because GUT's window sits above
 	# everything in the root viewport and would take the click.
 	var viewport := SubViewport.new()
-	viewport.size = Vector2i(800, 600)
+	viewport.size = Vector2i(800, 575)
 	add_child_autofree(viewport)
 	var scene = partial_double(BattleSceneRes).instantiate()
 	stub(scene, "_on_continue_pressed").to_do_nothing()
@@ -887,7 +887,7 @@ func test_clicking_a_unit_then_an_orb_runs_that_move():
 	# GUT's window sits above everything in the root viewport and would take
 	# the clicks, so the scene gets a viewport of its own.
 	var viewport := SubViewport.new()
-	viewport.size = Vector2i(800, 600)
+	viewport.size = Vector2i(800, 575)
 	add_child_autofree(viewport)
 	var scene = BattleSceneRes.instantiate()
 	viewport.add_child(scene)
@@ -1630,7 +1630,7 @@ func _battle_100_in_its_own_viewport(save_name: String) -> Control:
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
 	var viewport := SubViewport.new()
-	viewport.size = Vector2i(800, 600)
+	viewport.size = Vector2i(800, 575)
 	add_child_autofree(viewport)
 	var scene = BattleSceneRes.instantiate()
 	viewport.add_child(scene)
