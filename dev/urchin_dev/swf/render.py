@@ -95,7 +95,9 @@ class Job:
     frame is 1-based, and origin is where that timeline's own (0, 0) sits on
     the stage in design px. strip holds ids for the driver to delete first,
     as strip.strip_list() returns them. only_depths, when set, hides every
-    other depth of the rendered frame, and each (depth, frame) in goto shows
+    other depth of the rendered frame, and each (owner, depth) in hide_depths
+    hides that depth of the owner's timeline on every frame, which reaches a
+    sprite drawn inside the rendered frame. Each (depth, frame) in goto shows
     the sprite at that depth on its own 1-based frame, the way a gotoAndStop
     would."""
 
@@ -106,6 +108,7 @@ class Job:
     strip: tuple[int, ...] = ()
     background: bool = False
     only_depths: tuple[int, ...] = ()
+    hide_depths: tuple[tuple[int, int], ...] = ()
     goto: tuple[tuple[int, int], ...] = ()
 
 
@@ -180,6 +183,10 @@ def _request(job: Job, out: Path) -> dict:
     }
     if job.only_depths:
         request["only_depths"] = list(job.only_depths)
+    if job.hide_depths:
+        request["hide_depths"] = [
+            {"owner": owner, "depth": depth} for owner, depth in job.hide_depths
+        ]
     if job.goto:
         request["goto"] = [{"depth": d, "frame": f} for d, f in job.goto]
     return request
