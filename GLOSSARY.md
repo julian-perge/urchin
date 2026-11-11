@@ -74,6 +74,10 @@ _Avoid_: Viewport, canvas
 How far the player has got through a zone's story battles, which the Hub labels "Stage 11".
 _Avoid_: Stage
 
+**Cutscene**:
+A full-window clip or text screen that fades in from black, plays and fades out to black, as `CutscenePlayer` draws it. It is one of the original's seven `CS_` labels. CS_CUT1 to CS_CUT5 and CS_INTRO2 are video clips, and CS_INTRO is four lines of text over a gradient. One plays before a fight, such as CS_CUT1 before the zone 1 boss, or after a win, such as CS_CUT2. The player can end any of them with the SKIP button, and the Cutscene then goes on where its end would go.
+_Avoid_: Cinematic, movie
+
 ### Battle
 
 **Battle roster**:
@@ -135,6 +139,18 @@ _Avoid_: DoT, HoT, ticker
 **Settlement**:
 Everything a finished battle does to the save and the achievements, applied in one call by `BattleSettlement.settle`, and the summary the Victory and Game over screens show.
 _Avoid_: Rewards, which are only the money and XP a win pays
+
+**Story fight**:
+A fight picked with the original's `progressFight` on, so a win advances Quest progress. The story orb starts one at each step of Quest progress up to the zone's boss fight, and a new game's first fight, battle 100, is one. A Story fight can name a Cutscene to play before it, as `cutscene_before`.
+_Avoid_: Quest fight
+
+**Boss replay**:
+A fight the story orb starts once the player has beaten the zone's boss. It has `progressFight` off and `bossFight` on, so a win leaves Quest progress as it is and Proceed opens the zone map, as after the first win over the boss. In zones 1 to 5 it counts as training. It plays no Cutscene before it, so a Boss replay of battle 109 starts with no CS_CUT1.
+_Avoid_: Rematch
+
+**Tutorial**:
+The fight a new game opens on when the Tutorial option on the new-game screen is on, which it is by default: battle 2, the Metabii fight with Louis the Blind as a Guest. It is not a Story fight. CS_INTRO plays before it and the two Tutorial moves are on the player's bar for it. Losing Sonny loses the game. A win pays no money, XP, drops or achievements and opens no Victory screen. It puts the class's starting moves back on the bar, leaves Quest progress at 0 and goes straight on to CS_INTRO2 and battle 100.
+_Avoid_: Training fight, which a training orb starts
 
 ### Cutscenes
 
