@@ -314,6 +314,9 @@ func test_the_battle_music_and_the_first_half_turn_start_once_the_cutscene_ends(
 	var scene = _start_battle_100_with({"cutscene_before": "CS_INTRO2"})
 	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
 	assert_not_null(cutscene, "the Cutscene is playing")
+	assert_ne(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music has not started while the clip plays")
+	await wait_process_frames(3)
+	assert_false(scene.decision_open, "and the first half-turn has not opened its Decision")
 	if cutscene != null:
 		cutscene.video.finished.emit()
 
