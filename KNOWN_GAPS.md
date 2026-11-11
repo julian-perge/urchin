@@ -114,9 +114,12 @@ Scoped-out edges from the playtest-feedback batch:
 - **Class-select card art - RESOLVED**: the original sketch art has been extracted and wired - gray rest / colored hover textures in `assets/ui/menu/class_cards/`,
   each card at the position and size the original places it at (reference `6_start_screen...png`). The class name under each card is a Godot Label, because the
   original fills a separate text field from `KrinLang` at runtime. Hovering a card shows that class's description through the shared `GameTooltip`, the way the original's `KrinToolTipper` shows it.
-- **Tutorial Level option**: stored on the options screen, but no tutorial system exists. The original's tutorial is battle 2 (`frame_165/DoAction.as:2`). It loads under that id
-  since the `battleCreationID` relabels in `SWF_DIFFERENCES.md` were corrected, but nothing in the port launches it, so `BattleRunner`'s `battle.id == 2` tutorial loss rule never matches in play. The tutorial also swaps the action bar to moves 21 and 22 for that fight
-  (`frame_165/DoAction.as`), and `frame_219/DoAction.as:65-69` puts the class starting skills back after it, which the port doesn't do either.
+- **Tutorial Level option - RESOLVED**: the option is on by default (`frame_93/DoAction.as:7`). With it on, New Game plays CS_INTRO and fights battle 2, the original's tutorial
+  (`frame_165/DoAction.as:2`), with moves 21 and 22 on the bar. A win over it opens no victory screen and pays nothing, puts the class starting skills back
+  (`frame_219/DoAction.as:65-69`) and goes on to CS_INTRO2 and battle 100. `DECODED_ALGORITHMS.md` has the path in "New Game and Load Game". `BattleRunner`'s `battle.id == 2` loss rule
+  now matches in play. Two differences remain. The original's Sonny fights battle 2 before frame 180 has run, so he wears no White T-Shirt (`frame_42/DoAction_17.as:50`) and still holds
+  the level-1 class split (see "Starting state" in `DECODED_ALGORITHMS.md`). The port's Sonny fights it with the starting gear and its bonuses only. The port's music rotation puts
+  `_music_menu2` on battle 100 after the tutorial, where frame 180 sets `soundPlayCounter` to 3 for `_music_battle2` (`frame_180/DoAction.as:4`).
 - **Wolfgang/Amber portraits**: the web SWF's face-clip frames for party ids 4/5 are empty at their labels; the extracted portraits are blank frames.
   Party data also names them Teco/Catelin (from the companion seeds) while the face-clip labels say Wolfgang(Rockstar)/Amber - naming not yet reconciled against the Steam build.
   Both points are moot in the web build, because party ids 4 and 5 never join: the only roster writes are `frame_42/DoAction_17.as:10` and `frame_219/DoAction.as:59, 63`, and the last of

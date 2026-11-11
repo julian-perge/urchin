@@ -21,6 +21,9 @@ var cutscene: String = ""
 # One of ZoneProgression.CUTSCENE_GOTO_SCENE's values, or empty when the win
 # queues no cutscene.
 var goto_scene: String = ""
+# The fight a win goes straight on to, with no victory screen. Empty for a win
+# that opens the victory screen.
+var next_fight: Dictionary = {}
 # Only the ids this win unlocked, not ones the player already held, because the
 # original's awardAch shows its banner only for those
 # (frame_46/DoAction_2.as:3-9).
@@ -45,6 +48,18 @@ static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, ach
 	# frame_43/DoAction.as:21-25).
 	settlement.game_over = settlement.outcome == BattleRunner.Outcome.LOSS or settlement.outcome == BattleRunner.Outcome.DRAW
 	if settlement.outcome != BattleRunner.Outcome.WIN:
+		return settlement
+	# A Tutorial win puts the class's starting moves back on the first two bar slots
+	# (frame_219/DoAction.as:65-69) and goes straight on to the next fight. It pays
+	# nothing and settles nothing else, because the original applies a win's money,
+	# XP, drops and achievements on the victory screen (DefineSprite_3142/frame_9),
+	# which a Tutorial win never opens (frame_181/PlaceObject3_3142_175
+	# onClipEvent(load), lines 3-7).
+	if runner.battle.id == ZoneProgression.TUTORIAL_BATTLE_ID:
+		var starting_moves: Array = TalentTree.STARTING_MOVES.get(save.player_class, [])
+		for i in starting_moves.size():
+			save.move_matrix[i] = starting_moves[i]
+		settlement.next_fight = ZoneProgression.FIGHT_AFTER_TUTORIAL
 		return settlement
 
 	var was_story_progress: bool = pick.get("is_story_progress", false)

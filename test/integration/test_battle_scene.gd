@@ -763,6 +763,107 @@ func test_proceeding_after_a_level_up_win_that_queues_a_cutscene_leaves_the_abil
 	ZoneManager.auto_start_battles = true
 
 
+# A win over the Tutorial pays no money and no XP. The original applies both on
+# the victory screen (DefineSprite_3142/frame_9), which only opens on
+# Navigation's load (frame_181/PlaceObject3_3142_175 onClipEvent(load), lines
+# 3-7), and a Tutorial win goes to CS_INTRO2 instead (frame_219/DoAction.as:73-77).
+# The win is set before the battle loop starts, so no fight is played.
+func test_winning_the_tutorial_pays_no_money_or_xp():
+	var save = PlayerSave.new_game("TutorialPays", 0)
+	save.euro = 120.0
+	save.experience = 10.0
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	assert_eq(save.euro, 120.0, "no money")
+	assert_eq(save.experience, 10.0, "no XP")
+
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Tutorial win puts the class's two starting moves back on the first two bar
+# slots, where the Tutorial had put moves 21 and 22 (frame_219/DoAction.as:65-69).
+# Hydraulic has other starting moves than the default class does.
+func test_winning_the_tutorial_puts_the_starting_moves_back_on_the_bar():
+	var save = PlayerSave.new_game("TutorialBar", PlayerSave.PlayerClass.HYDRAULIC)
+	save.move_matrix[0] = 21
+	save.move_matrix[1] = 22
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	assert_eq(save.move_matrix, [276, 277, 0, 0, 0, 0, 0, 0], "the class's starting moves are back")
+
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Tutorial win opens no victory screen, because the original only opens it on
+# Navigation's load (frame_181/PlaceObject3_3142_175 onClipEvent(load), lines
+# 3-7), and frame_219 sends the win on to CS_INTRO2 instead (lines 73-77).
+func test_winning_the_tutorial_opens_no_victory_screen():
+	var save = PlayerSave.new_game("TutorialNoVictory", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	assert_null(scene.get_node_or_null("VictoryScreen"), "no victory screen opens")
+
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Tutorial win goes on to CS_INTRO2 and then to battle 100 as a Story fight.
+# The win jumps to the cutsceneSequence that IntroSeq set
+# (frame_165/DoAction.as:8 and frame_219/DoAction.as:73-77), CS_INTRO2's end goes
+# to IntroSeq2 (frame_293/DoAction.as:1), and IntroSeq2 starts battle 100 with
+# progressFight on (frame_180/DoAction.as:2-3). The pick waits in ZoneManager for
+# the next Battle screen.
+func test_winning_the_tutorial_goes_on_to_battle_100_after_cs_intro2():
+	var save = PlayerSave.new_game("TutorialNext", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	var pick: Dictionary = ZoneManager.pending_battle
+	assert_eq(pick.get("battle_id"), 100, "the next fight is battle 100")
+	assert_true(pick.get("is_story_progress", false), "as a Story fight")
+	assert_eq(pick.get("cutscene_before"), "CS_INTRO2", "with CS_INTRO2 before it")
+
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The original's Proceed can't be pressed twice, because its release always
 # leaves the frame of DefineSprite 3142 that the victory screen is drawn on, for
 # the cutscene, the map or 3142's skills or hide frame (DefineButton2_3004
@@ -1584,6 +1685,28 @@ func test_a_guest_with_a_companions_name_gets_no_stance_row():
 	assert_eq(scene.units[3].player_name, "Felicity", "battle 508 fields Felicity in slot 3")
 	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "the guest gets no stance row")
 	assert_true(scene._stance_rows.is_empty(), "and nothing keeps a row for the guest")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original hides the member bar in battle 2 (DefineSprite_3317/frame_1/
+# PlaceObject2_3312_7 onClipEvent(load), lines 5-8), where Louis the Blind
+# fights in slot 5 as a Guest. The port gives a row to a Companion only, so the
+# Tutorial shows no row (DECODED_ALGORITHMS.md has why).
+func test_battle_2_shows_no_stance_rows():
+	var save = PlayerSave.new_game("TutorialRows", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+
+	assert_eq(scene.units[5].player_name, "Louis the Blind", "battle 2 fields Louis the Blind in slot 5")
+	assert_eq(scene.units[5].origin, CombatUnit.Origin.GUEST, "as a Guest")
+	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

@@ -221,11 +221,25 @@ save when the game starts, goes on to the first fight when it starts, and sends 
   "IntroSeq2" first. CS_INTRO2 is root frame 293 and sets `gotoSceneKrin` to "IntroSeq2" again (`frame_293/DoAction.as:1`). When the clip ends, the cutscene controller jumps to
   `gotoSceneKrin` (`frame_263/PlaceObject2_3466_80` enterFrame, line 33). IntroSeq2 is root frame 166. Frames 166 to 179 have no script, and frame 180 sets `Krin.BattlePick` to 100
   and `progressFight` on, then loads the battle (`frame_180/DoAction.as:2-3` and 9). So a new game with the Tutorial off plays CS_INTRO2 and then fights battle 100 as a Story fight.
-  The port's `ZoneManager.request_new_game_fight` hands the Battle screen that pick, `ZoneProgression.FIRST_STORY_FIGHT`, with `cutscene_before` set to "CS_INTRO2". Until the Tutorial
-  is ported it does this for both settings of the Tutorial option.
+  The port's `ZoneManager.request_new_game_fight` hands the Battle screen that pick, `ZoneProgression.FIRST_STORY_FIGHT`, with `cutscene_before` set to "CS_INTRO2". With the Tutorial on,
+  `ZoneManager.request_tutorial_fight` hands it the pick below instead.
+- With the Tutorial on, which it is by default (`frame_93/DoAction.as:7` sets `Krin.tutorOn` each time the settings frame opens, and `DefineButton2_2769` on(release) toggles it), Start plays
+  CS_INTRO and the clip's end goes to IntroSeq, root frame 151. Frames 151 to 164 have no script. Frame 165 sets `Krin.BattlePick` to 2 and `progressFight` off, puts moves 21 and 22 on bar
+  slots 0 and 1, sets `cutsceneSequence` to "CS_INTRO2" and loads the battle (`frame_165/DoAction.as:2-3` and 6-9). `ZoneManager.request_tutorial_fight` puts
+  `ZoneProgression.TUTORIAL_MOVES` on the port's bar and hands the Battle screen `ZoneProgression.TUTORIAL_FIGHT`: battle 2, not a Story fight, with `cutscene_before` set to "CS_INTRO".
+- A win over battle 2 runs `frame_219/DoAction.as` like any win. `progressFight` is off, so Quest progress stays 0. The frame puts `startSkill1` and `startSkill2` back on bar slots 0 and 1
+  when `BattlePick` is 2 (lines 65-69). Then it stops every sound and jumps to `cutsceneSequence` instead of Navigation (lines 73-81). The clip's end sets `cutsceneSequence` back to 0
+  (`frame_263/PlaceObject2_3466_80` enterFrame, line 32) and goes to IntroSeq2 as above. The victory screen only opens on Navigation's load (`frame_181/PlaceObject3_3142_175`
+  onClipEvent(load), lines 3-7). Its frame holds the money (`DefineSprite_3142/frame_9/DoAction.as:43`), the XP (the `expWorkOut` calls in the three `PlaceObject3_3002` clips) and every
+  `awardAch` call (`DefineSprite_3142/frame_9/DoAction_2.as`). Drops are rolled when the battle loads (`frame_201/DoAction.as:233-267`), and the player only takes them on that screen
+  (`DefineButton2_3012` on(press)). So a Tutorial win pays and unlocks nothing. This is read from the AS, not seen in a live run. The port's `BattleSettlement.settle` returns early for
+  battle 2 after it puts `TalentTree.STARTING_MOVES` back, and sets `next_fight` to `ZoneProgression.FIGHT_AFTER_TUTORIAL`, which is `FIRST_STORY_FIGHT`. The Battle screen opens no
+  victory screen for such a win and requests that fight through `ZoneManager.request_fight`.
 - Frame 180 also sets `soundPlayCounter` to 3, `soundModeKrin` to 0 and `bangStart` on (lines 4-6). So the first fight plays `_music_battle2`, entry 3 of `soundPlayArray`
   (`frame_41/DoAction_2.as:11`), and starts it at full volume at once (`frame_42/DoAction.as`, `addSound` with "Music" and 2). The port does not do this. Its Battle screen starts the
   rotation's next track and fades it in, as it does for every fight. The Tutorial's battle 2 sets `soundPlayCounter` to 1 and `bangStart` on the same way (`frame_165/DoAction.as:4-5`).
+  With the Tutorial on, the next track after battle 2's `_music_battle1` is `_music_menu2`, because no menu track plays between the two fights, so battle 100 plays a menu track. A
+  headless run measured this on 2026-11-11: the menu track, then battle 2, then battle 100 played `_music_menu1`, `_music_battle1` and `_music_menu2`.
 
 ## Starting state (new game)
 

@@ -88,6 +88,32 @@ const FIRST_STORY_FIGHT: Dictionary = {
 	"cutscene_before": "CS_INTRO2",
 }
 
+# The Tutorial is battle 2 (frame_165/DoAction.as:2).
+const TUTORIAL_BATTLE_ID: int = 2
+
+# The fight a new game opens on when the Tutorial option is on, as the pick
+# ZoneManager hands the Battle screen. The Start button sends the player to
+# CS_INTRO when the option is on (DefineButton2_2770 on(release), lines 2-6), the
+# clip's end goes on to IntroSeq (the button's gotoSceneKrin), and IntroSeq's
+# last frame starts battle 2 with progressFight off (frame_165/DoAction.as:2-3).
+# Nothing on that path sets bossFight either.
+const TUTORIAL_FIGHT: Dictionary = {
+	"battle_id": TUTORIAL_BATTLE_ID,
+	"is_story_progress": false,
+	"is_boss": false,
+	"cutscene_before": "CS_INTRO",
+}
+
+# The moves IntroSeq puts on the first two bar slots for the Tutorial fight,
+# Quick Strike and Suppression (frame_165/DoAction.as:6-7).
+const TUTORIAL_MOVES: Array[int] = [21, 22]
+
+# The fight a win over the Tutorial goes straight on to. IntroSeq sets
+# cutsceneSequence to CS_INTRO2 (frame_165/DoAction.as:8) and the win jumps to it
+# instead of Navigation (frame_219/DoAction.as:73-77). From there the path is the
+# one START takes with the Tutorial off, so this is the same pick.
+const FIGHT_AFTER_TUTORIAL: Dictionary = FIRST_STORY_FIGHT
+
 # Story battles that play a Cutscene before the fight, as the pick's cutscene_before.
 # The PRISON orb plays CS_CUT1 whenever BattlePick is 109 and progressFight, which is
 # the pick's is_story_progress, is on (DefineButton2_3188 on(press), lines 18-24). A
