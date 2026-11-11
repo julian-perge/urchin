@@ -25,6 +25,10 @@ signal finished
 # failsafe timeout did. Private to _await_playback_end().
 signal _playback_settled
 
+# Where the SKIP button's hit area and its text go, and how the text is drawn.
+# extract_cutscene_skip writes this file.
+const SKIP_LAYOUT_PATH: String = "res://assets/cutscenes/skip_button.json"
+
 # The original's fade steps _alpha by 5 per frame at 30fps, so a full
 # 0-100 sweep is 20 frames = 0.667s. Matched here for both fade directions.
 const FADE_SECONDS: float = 20.0 / 30.0
@@ -54,6 +58,23 @@ var _started: bool = false
 @onready var skip_text: Label = $Overlay/SkipText
 @onready var skip_button: Button = $Overlay/SkipButton
 @onready var fade_rect: ColorRect = $Overlay/FadeRect
+
+
+func _ready() -> void:
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(SKIP_LAYOUT_PATH))
+	var hit: Dictionary = layout["button"]
+	skip_button.position = Vector2(hit["x"], hit["y"])
+	skip_button.size = Vector2(hit["w"], hit["h"])
+	var text: Dictionary = layout["text"]
+	var rect: Dictionary = text["rect"]
+	skip_text.text = text["string"]
+	skip_text.horizontal_alignment = LabelLayout.ALIGNMENTS[text["align"]]
+	skip_text.add_theme_font_size_override("font_size", int(text["size"]))
+	skip_text.add_theme_color_override("font_color", Color(text["color"]))
+	# The size goes on last. A Control never shrinks back from a size that its
+	# minimum forced up, and the minimum of a 16 px Label is taller than this one.
+	skip_text.position = Vector2(rect["x"], rect["y"])
+	skip_text.size = Vector2(rect["w"], rect["h"])
 
 
 func play(cutscene_id: String) -> void:
