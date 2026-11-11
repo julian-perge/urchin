@@ -3183,6 +3183,25 @@ func test_a_click_during_the_cutscene_leaves_the_banner_down():
 	ZoneManager.auto_start_battles = true
 
 
+# SKIP ends a pre-fight Cutscene as the clip's own end does, because the original's
+# SKIP releases to the same gotoSceneKrin, so the fight starts. The click that
+# presses it comes while the Cutscene plays, so it leaves the banner down too.
+func test_skip_on_a_pre_fight_cutscene_starts_the_fight():
+	var scene = _battle_100_in_its_own_viewport("SkipPreFight", {"cutscene_before": "CS_INTRO2"})
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the Cutscene is playing")
+	assert_false(scene.decision_open, "the fight waits for it")
+	if cutscene != null:
+		_click(scene.get_viewport(), cutscene.skip_button)
+
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_true(scene.decision_open, "SKIP goes on to the fight, whose first half-turn opens a Decision")
+	assert_false(scene.combat_text_banner.is_up(), "and its click shows nothing")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func test_a_click_after_the_battle_has_ended_leaves_the_banner_down():
 	var scene = _battle_100_in_its_own_viewport("CannotMoveYetAfterTheEnd")
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
