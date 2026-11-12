@@ -36,10 +36,6 @@ var _drop_slots: Array[ItemSlot] = []
 @onready var _companion_row_1: VictoryExpRow = $ExpRows/CompanionSlot1/Row
 
 
-func _ready():
-	right_column.show_sell_button(false)
-
-
 # The original's Proceed works once, because its release always leaves the
 # frame the victory screen is drawn on (DefineButton2_3004 on(release), lines
 # 8-29). This screen stays under the cutscene and the ending screen, and a click

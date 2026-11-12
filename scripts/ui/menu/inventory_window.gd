@@ -52,7 +52,6 @@ func _ready():
 	_build_left_panel()
 	_build_center_panel()
 	_build_party_bar()
-	right_column.show_sell_button(false)
 	GameData.inventory_changed.connect(_refresh_if_visible)
 	GameData.gold_changed.connect(func(_amount): _refresh_if_visible())
 	visibility_changed.connect(func():

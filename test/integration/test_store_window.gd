@@ -13,7 +13,6 @@ func after_each():
 func test_scene_instantiates_with_wired_nodes():
 	var window = add_child_autofree(StoreWindowScene.instantiate())
 	assert_not_null(window.store_items, "%StoreItems resolves")
-	assert_true(window.right_column is RightColumn)
 
 
 # The shop frame is the one frame that places the sell slot

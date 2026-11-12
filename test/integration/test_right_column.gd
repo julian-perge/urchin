@@ -25,6 +25,7 @@ func _make_item(price: float) -> GameItem:
 
 func test_can_drop_data_over_sell_button_previews_price_and_accepts():
 	var panel: RightColumn = add_child_autofree(RightColumnScene.instantiate())
+	panel.show_sell_button(true)
 	var item: GameItem = _make_item(100.0)
 	var at_position: Vector2 = panel.sell_button.get_rect().get_center()
 	assert_true(panel._can_drop_data(at_position, {"item": item}))
@@ -41,6 +42,7 @@ func test_can_drop_data_outside_sell_button_rejects_and_leaves_tooltip():
 
 func test_drop_data_on_sell_button_emits_sell_pressed_and_resets_tooltip():
 	var panel: RightColumn = add_child_autofree(RightColumnScene.instantiate())
+	panel.show_sell_button(true)
 	var item: GameItem = _make_item(100.0)
 	var default_tooltip: String = panel.sell_button.tooltip_text
 	var at_position: Vector2 = panel.sell_button.get_rect().get_center()
@@ -53,6 +55,7 @@ func test_drop_data_on_sell_button_emits_sell_pressed_and_resets_tooltip():
 
 func test_drag_end_notification_resets_tooltip():
 	var panel: RightColumn = add_child_autofree(RightColumnScene.instantiate())
+	panel.show_sell_button(true)
 	var item: GameItem = _make_item(100.0)
 	var default_tooltip: String = panel.sell_button.tooltip_text
 	panel._can_drop_data(panel.sell_button.get_rect().get_center(), {"item": item})
@@ -75,6 +78,9 @@ func test_the_euro_sign_and_the_amount_are_two_labels_and_the_amount_has_no_comm
 
 func test_show_sell_button_shows_and_hides_the_sell_slot():
 	var column: RightColumn = add_child_autofree(RightColumnScene.instantiate())
+	assert_false(column.sell_button.visible, "hidden until a host shows it")
+	column.show_sell_button(true)
+	assert_true(column.sell_button.visible)
 	column.show_sell_button(false)
 	assert_false(column.sell_button.visible)
 	column.show_sell_button(true)

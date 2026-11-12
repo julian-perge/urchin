@@ -99,8 +99,8 @@ func _on_slot_clicked(slot: ItemSlot) -> void:
 # The sell slot is a drop target. The root's mouse_filter is PASS, so Godot
 # asks the root too. Over the sell slot, a dragged item shows its sale price in
 # the slot's tooltip, and a drop sells it through sell_pressed, as a click does.
-# A hidden sell slot keeps its rect, so a host that hides it would still sell
-# on a drop there without the visibility check.
+# The sell slot is hidden until the Store shows it. A hidden slot keeps its
+# rect, so without the visibility check a drop there would still sell the item.
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	if not data is Dictionary or not data.get("item"):
 		return false
