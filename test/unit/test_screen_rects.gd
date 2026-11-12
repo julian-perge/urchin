@@ -93,6 +93,12 @@ func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[Stri
 	var color: Color = label.get_theme_color("font_color")
 	if not _same_color(color, entry["color"]):
 		found.append("%s: font colour %s, expected %s" % [path, color.to_html(), entry["color"]])
+	# A Label puts its lines one font height plus its line spacing apart.
+	if entry.has("line_pitch"):
+		var pitch: float = label.get_theme_font("font").get_height(size) \
+			+ label.get_theme_constant("line_spacing")
+		if not _close(pitch, float(entry["line_pitch"])):
+			found.append("%s: line pitch %s, expected %s" % [path, pitch, entry["line_pitch"]])
 	return found
 
 
@@ -312,3 +318,10 @@ func test_control_an_attribute_row_moved_20_px_fails() -> void:
 	for problem: String in found:
 		assert_string_contains(problem, "AttributeRows/SpeedRow/")
 		assert_string_contains(problem, "top left")
+
+
+func test_control_a_wrapping_label_with_the_wrong_line_pitch_fails() -> void:
+	var root: Control = await _laid_out(ABILITIES_SCENE)
+	var hint: Label = root.get_node("HintLabel")
+	hint.add_theme_constant_override("line_spacing", hint.get_theme_constant("line_spacing") + 3)
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][ABILITIES_SCENE]), "HintLabel: line pitch")

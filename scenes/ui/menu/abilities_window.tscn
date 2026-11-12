@@ -135,7 +135,9 @@ offset_top = 171.7
 offset_right = 475.65
 offset_bottom = 272.5
 mouse_filter = 2
+theme_type_variation = &"RegularLabel"
 theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_constants/line_spacing = -4
 theme_override_font_sizes/font_size = 12
 autowrap_mode = 3
 

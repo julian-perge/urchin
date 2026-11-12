@@ -199,6 +199,7 @@
      "color": "999999ff",
      "font_size": 12.0,
      "kind": "text",
+     "line_pitch": 14.0,
      "rect": [
       319.95,
       171.7,

@@ -243,12 +243,17 @@ def text_record(text: EditText, matrix, origin) -> dict:
         origin[1] + matrix[5] / render.TWIPS,
     )
     rect = label_layout.text_rect(text, placed)
-    return {
+    entry = {
         "kind": "text",
         "rect": [rect["x"], rect["y"], rect["w"], rect["h"]],
         "font_size": text.font_height / render.TWIPS,
         "color": color_hex(text.color),
     }
+    # Flash puts the lines of a field that wraps one font height plus the
+    # field's leading apart. A field of one line has no pitch to check.
+    if text.multiline and text.word_wrap:
+        entry["line_pitch"] = (text.font_height + (text.leading or 0)) / render.TWIPS
+    return entry
 
 
 def art_record(name: str, chrome: dict) -> dict:

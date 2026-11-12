@@ -253,3 +253,16 @@ def test_inner_origin_adds_the_sprite_placement_to_the_origin():
 def test_inner_origin_refuses_a_scaled_sprite():
     with pytest.raises(ValueError, match="scale"):
         screen_rects.inner_origin((1.041, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+
+
+# The Abilities window's tip field 3037: 12 px text with 2 px of leading, which
+# wraps. Flash puts its lines 12 + 2 px apart.
+def test_text_record_of_a_wrapping_field_holds_its_line_pitch():
+    tip = field(font_height=240, leading=40, multiline=True, word_wrap=True)
+    entry = screen_rects.text_record(tip, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert entry["line_pitch"] == 14.0
+
+
+def test_text_record_of_a_one_line_field_holds_no_line_pitch():
+    entry = screen_rects.text_record(field(), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert "line_pitch" not in entry
