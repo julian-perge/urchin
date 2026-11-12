@@ -92,6 +92,13 @@ class Piece:
     # first frame, for a piece that the scene's timeline does not place itself.
     inner_depth: int | None = None
 
+    def __post_init__(self) -> None:
+        if (self.depth is None) == (self.instance is None):
+            raise ValueError(
+                f"A piece needs a depth or an instance name, not both or neither:"
+                f" depth {self.depth}, instance {self.instance}"
+            )
+
 
 @dataclass(frozen=True)
 class Scene:
@@ -115,6 +122,7 @@ VICTORY_ROW_PIECES: dict[str, tuple[str, int, str | None]] = {
 
 # The frame names the grid's slots itemSlot0 to itemSlot35, row by row.
 INVENTORY_SLOTS = 36
+INVENTORY_COLUMNS = 6
 
 SCENES: dict[str, Scene] = {
     # The victory frame's left Panel and the field at its top. It is a test
@@ -185,8 +193,8 @@ SCENES: dict[str, Scene] = {
     # (spec/107-window-shell.md, RightColumn). The shop frame is the one frame
     # that places all of it, the sell slot included, and the inventory frame
     # places the other pieces at the same depths. The euro sign and the amount
-    # carry a Glow and a DropShadow, which a Label can't draw, so the record
-    # leaves them out.
+    # carry a Glow and a DropShadow filter. A Label can't draw either, so the
+    # record leaves the two filters out and the port draws neither.
     "res://scenes/ui/window/right_column.tscn": Scene(
         timeline=KRINMENU,
         frame="shop",
@@ -194,7 +202,7 @@ SCENES: dict[str, Scene] = {
             "TallPanel": Piece("panel", 7),
             "Title": Piece("text", 1430),
             **{
-                f"Grid/Row{i // 6}/Slot{i % 6}": Piece(
+                f"Grid/Row{i // INVENTORY_COLUMNS}/Slot{i % INVENTORY_COLUMNS}": Piece(
                     "art", None, art="slot_inventory", instance=f"itemSlot{i}"
                 )
                 for i in range(INVENTORY_SLOTS)
@@ -208,7 +216,7 @@ SCENES: dict[str, Scene] = {
             ),
         },
         port_only=tuple(
-            f"Grid/Row{i // 6}/Slot{i % 6}/{node}"
+            f"Grid/Row{i // INVENTORY_COLUMNS}/Slot{i % INVENTORY_COLUMNS}/{node}"
             for i in range(INVENTORY_SLOTS)
             for node in ("ItemIcon", "Highlight")
         ),
@@ -570,13 +578,9 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
         sprite_origins = {}
         holder_shadow = None
         if piece.inner_depth is None:
-            if (
-                piece.kind == "art"
-                and character_kind(index, layer.character_id) == "sprite"
-            ):
-                sprite_origins[f"sprite {layer.character_id}"] = inner_origin(
-                    layer.matrix, origin
-                )
+            sprite = f"sprite {layer.character_id}"
+            if piece.kind == "art" and chrome[piece.art]["relative_to"] == sprite:
+                sprite_origins[sprite] = inner_origin(layer.matrix, origin)
         else:
             holder_shadow = _shadow_of(layer)
             piece_origin = inner_origin(layer.matrix, origin)

@@ -730,7 +730,6 @@ expand_mode = 1
 stretch_mode = 0
 
 [node name="RightColumn" parent="." instance=ExtResource("17_rightcolumn")]
-layout_mode = 0
 
 [connection signal="pressed" from="CloseButton" to="." method="hide"]
 [connection signal="item_selected" from="RightColumn" to="." method="_on_inventory_item_selected"]
