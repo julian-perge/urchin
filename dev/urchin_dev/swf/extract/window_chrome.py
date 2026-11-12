@@ -84,6 +84,9 @@ PLATE_SPRITE = 3141
 PLATE_TEXT = 3138
 VICTORY_ROW_SPRITE = 3002
 VICTORY_GLOSS_DEPTH = 41
+# The experience bar (2867). Frame 1 draws the normal fill (2865) and the
+# frame labelled "level" draws the fill a row jumps to when it levels up (2866).
+XP_BAR_SPRITE = 2867
 # The six hotbar squares at 0.671, in the depths that place them on the hub
 # frame, and the depths of the two other sizes.
 SQUARE_DEPTHS = (126, 128, 130, 136, 138, 165)
@@ -99,6 +102,8 @@ PIECES: dict[str, str] = {
     "sell_slot": "the sell slot (3017), as placed at depth 1281",
     "xp_gloss": "the experience gloss (2864), as placed at depth 1421",
     "xp_gloss_victory": "the victory row's experience gloss (2998 in 3002)",
+    "xp_bar": "the experience bar (2867), frame 1, the normal fill 2865",
+    "xp_bar_level": "the experience bar (2867), its level frame, the fill 2866",
     "achievement_plate_1": "the achievement plate (3141), frame 1, text stripped",
     "achievement_plate_2": "the achievement plate (3141), frame 2, text stripped",
     "hotbar_square": "a hotbar square at scale 0.671, under its Bevel and Glows",
@@ -144,6 +149,10 @@ def jobs(index: SwfIndex, plate_strip: tuple[int, ...]) -> dict[str, render.Job]
         "xp_gloss": on_menu(INVENTORY_FRAME, 1421),
         "xp_gloss_victory": render.Job(
             VICTORY_ROW_SPRITE, 1, ZOOM, only_depths=(VICTORY_GLOSS_DEPTH,)
+        ),
+        "xp_bar": render.Job(XP_BAR_SPRITE, 1, ZOOM),
+        "xp_bar_level": render.Job(
+            XP_BAR_SPRITE, timeline.frame_of(index, XP_BAR_SPRITE, "level"), ZOOM
         ),
         "achievement_plate_1": on_menu(
             ACHIEVEMENTS_FRAME, PLATE_DEPTH, strip=plate_strip, goto=((PLATE_DEPTH, 1),)

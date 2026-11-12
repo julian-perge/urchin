@@ -21,6 +21,8 @@ RECORD = json.loads((CHROME_DIR / "window_chrome.json").read_text())
 OWN_SPRITE = {
     "slot_inventory": "sprite 2986",
     "xp_gloss_victory": "sprite 3002",
+    "xp_bar": "sprite 2867",
+    "xp_bar_level": "sprite 2867",
 }
 
 # Each piece's shape box on the stage in design px, (x, y, w, h), from the hub
