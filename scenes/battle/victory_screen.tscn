@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/victory_screen.gd" id="1_victory"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/panel_large.png" id="3_panellarge"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/panel_center.png" id="4_panelcenter"]
+[ext_resource type="Script" path="res://scripts/ui/float_box.gd" id="5_floatbox"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu/victory_exp_row.tscn" id="6_exprow"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_proceed_normal"]
 bg_color = Color(0.05, 0.05, 0.06, 1)
@@ -62,6 +64,40 @@ theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 1)
 theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
 text = "Character Experience"
+
+[node name="ExpRows" type="Container" parent="."]
+layout_mode = 0
+offset_left = 49.2
+offset_top = 131.05
+offset_right = 246.0
+offset_bottom = 399.25
+mouse_filter = 2
+script = ExtResource("5_floatbox")
+separation = 9.3
+
+[node name="PlayerSlot" type="Control" parent="ExpRows"]
+custom_minimum_size = Vector2(196.8, 83.2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Row" parent="ExpRows/PlayerSlot" instance=ExtResource("6_exprow")]
+layout_mode = 0
+
+[node name="CompanionSlot0" type="Control" parent="ExpRows"]
+custom_minimum_size = Vector2(196.8, 83.2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Row" parent="ExpRows/CompanionSlot0" instance=ExtResource("6_exprow")]
+layout_mode = 0
+
+[node name="CompanionSlot1" type="Control" parent="ExpRows"]
+custom_minimum_size = Vector2(196.8, 83.2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Row" parent="ExpRows/CompanionSlot1" instance=ExtResource("6_exprow")]
+layout_mode = 0
 
 [node name="MiddlePanel" type="TextureRect" parent="."]
 layout_mode = 0

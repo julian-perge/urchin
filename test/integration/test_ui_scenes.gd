@@ -411,10 +411,8 @@ func test_the_game_calls_the_player_sonny_whatever_the_save_is_named():
 	GameData.current_save = save
 	var victory = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
 	victory.setup(save, BattleSettlement.new())
-	var rows: Array = victory.get_children().filter(func(child): return child is VictoryExperienceRow)
-	assert_eq(rows.size(), 1, "one experience row, the player's")
-	if rows.size() == 1:
-		assert_eq(rows[0].name_label.text, "Sonny", "the victory screen's player row")
+	var row: VictoryExpRow = victory.get_node("ExpRows/PlayerSlot/Row")
+	assert_eq(row.name_label.text, "Sonny", "the victory screen's player row")
 
 	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())
 	abilities.refresh()
@@ -892,3 +890,34 @@ func test_zone_map_button_states_follow_unlocks():
 	await get_tree().process_frame
 	assert_false(zones.get_node("Zone2").disabled, "zone 2 unlocks after the boss")
 	assert_true(is_instance_valid(map.get_node("Connectors")), "connector lines node exists and drew without error")
+
+
+# The victory frame's rows: the player's at the top (PlaceObject3_3002_1197),
+# then friendlySlotsFFTT[0] and [1] (_1111 and _1154). A row whose fighter
+# does not exist is hidden and keeps its place (onClipEvent(load), lines 3-6).
+func test_the_victory_rows_show_the_fighters_and_hide_the_rest_in_place():
+	var save: PlayerSave = PlayerSave.new_game("VictoryRows", 0)
+	var settlement := BattleSettlement.new()
+	settlement.fighting_party.assign([1])
+	var player := BattleSettlement.FighterExperience.new()
+	player.experience_before = 30.0
+	player.level_before = 2
+	settlement.fighters[0] = player
+	var veradux := BattleSettlement.FighterExperience.new()
+	veradux.experience_before = 55.0
+	veradux.level_before = 4
+	settlement.fighters[1] = veradux
+	var victory = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
+	victory.setup(save, settlement)
+	await wait_process_frames(2)
+	var player_row: VictoryExpRow = victory.get_node("ExpRows/PlayerSlot/Row")
+	var first: VictoryExpRow = victory.get_node("ExpRows/CompanionSlot0/Row")
+	var second: VictoryExpRow = victory.get_node("ExpRows/CompanionSlot1/Row")
+	assert_true(player_row.visible)
+	assert_eq(player_row.level_label.text, Strings.menu(0) + "2", "the player's level before the win")
+	assert_true(first.visible)
+	assert_eq(first.name_label.text, str(Party.COMPANIONS[1]["name"]))
+	assert_eq(first.percent_label.text, "55%", "Veradux's experience before the win")
+	assert_false(second.visible, "no second companion fought")
+	var slot: Control = victory.get_node("ExpRows/CompanionSlot1")
+	assert_almost_eq(slot.global_position.y - victory.global_position.y, 316.05, 0.01, "the hidden row's slot keeps its place")

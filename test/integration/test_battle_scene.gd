@@ -1020,8 +1020,10 @@ func test_the_victory_screen_shows_the_battles_settlement():
 		var drop_slots: Array = victory.get_children().filter(func(child): return child is ItemSlot)
 		var rare_pool: Array = [300, 301, 302, 303, 304, 500]
 		assert_eq(drop_slots.map(func(slot): return slot.item != null and slot.item.id in rare_pool), [true], "the drop")
-		var rows: Array = victory.get_children().filter(func(child): return child is VictoryExperienceRow)
-		assert_eq(rows.map(func(row): return row.name_label.text), ["Sonny", "Veradux"], "and rows for Sonny and Veradux alone")
+		var rows: Array = ["PlayerSlot", "CompanionSlot0", "CompanionSlot1"].map(
+			func(slot): return victory.get_node("ExpRows/%s/Row" % slot))
+		var shown: Array = rows.filter(func(row): return row.visible)
+		assert_eq(shown.map(func(row): return row.name_label.text), ["Sonny", "Veradux"], "and rows for Sonny and Veradux alone")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

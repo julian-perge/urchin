@@ -182,6 +182,40 @@ def test_art_record_refuses_a_rect_measured_from_a_sprite():
         )
 
 
+def test_art_record_of_a_sprite_rect_adds_where_that_sprite_sits():
+    gloss = {**CLOSE_X_CHROME, "rect": [-38.25, 10.85, 129.0, 18.75]}
+    entry = screen_rects.art_record(
+        "xp_gloss_victory",
+        {**gloss, "relative_to": "sprite 3002"},
+        {"sprite 3002": (147.6, 172.65)},
+    )
+    assert entry["rect"] == pytest.approx([109.35, 183.5, 129.0, 18.75])
+    assert entry["texture"] == "res://assets/ui/window/xp_gloss_victory.png"
+
+
+def test_art_record_refuses_a_sprite_rect_of_another_sprite():
+    with pytest.raises(ValueError, match="sprite 2867"):
+        screen_rects.art_record(
+            "xp_bar",
+            {**CLOSE_X_CHROME, "relative_to": "sprite 2867"},
+            {"sprite 3002": (147.6, 172.65)},
+        )
+
+
+# The victory row's backing 3001: a solid black 3936 x 1664 twip shape around
+# the row's centre.
+def test_box_record_is_the_shape_through_the_placement_with_its_fill():
+    entry = screen_rects.box_record(
+        (-1968, -832, 1968, 832),
+        (1.0, 0.0, 0.0, 1.0, 0, 0),
+        (147.6, 172.65),
+        (0, 0, 0, 255),
+    )
+    assert entry["kind"] == "box"
+    assert entry["rect"] == pytest.approx([49.2, 131.05, 196.8, 83.2])
+    assert entry["fill"] == "000000ff"
+
+
 # The close button 2853: one record, drawn in the hit state only, of the
 # 600 twip square shape 291. KRINMENU frame 1 places it at depth 1434.
 CLOSE_HIT = ButtonRecord(frozenset({"hit"}), 291, 1, (1.0, 0.0, 0.0, 1.0, 0, 0))

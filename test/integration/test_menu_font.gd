@@ -157,10 +157,8 @@ func test_victory_text_is_bold_except_the_two_font_295_lines():
 		"DropsLabel": [3005, 295],
 		"ProceedHintLabel": [3006, 295],
 	})
-	var rows: Array = victory.get_children().filter(func(child): return child is VictoryExperienceRow)
-	assert_eq(rows.size(), 1, "the player's experience row")
-	if rows.size() == 1:
-		_assert_font(rows[0].name_label, 65, "the experience row's name (edit text 3000)")
+	var row: VictoryExpRow = victory.get_node("ExpRows/PlayerSlot/Row")
+	_assert_font(row.name_label, 65, "the experience row's name (edit text 3000)")
 
 
 # These nodes stand in for edit texts on frames 1 (inventory), 16 (shop), 25

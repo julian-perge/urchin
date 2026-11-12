@@ -1,5 +1,221 @@
 {
  "scenes": {
+  "res://scenes/battle/victory_screen.tscn": {
+   "frame": "win",
+   "origin": [
+    400.5,
+    222.4
+   ],
+   "pieces": {
+    "ExpRows/CompanionSlot0/Row/Backing": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      49.2,
+      223.55,
+      196.8,
+      83.2
+     ]
+    },
+    "ExpRows/CompanionSlot0/Row/Bar": {
+     "kind": "art",
+     "rect": [
+      142.975,
+      276.1,
+      95.25,
+      18.75
+     ],
+     "texture": "res://assets/ui/window/xp_bar.png"
+    },
+    "ExpRows/CompanionSlot0/Row/Gloss": {
+     "kind": "art",
+     "rect": [
+      109.35,
+      276.0,
+      129.0,
+      18.75
+     ],
+     "texture": "res://assets/ui/window/xp_gloss_victory.png"
+    },
+    "ExpRows/CompanionSlot0/Row/LevelLabel": {
+     "color": "ccccccff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      111.1,
+      254.9,
+      124.9,
+      15.05
+     ]
+    },
+    "ExpRows/CompanionSlot0/Row/NameLabel": {
+     "color": "ccccccff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      111.1,
+      236.9,
+      124.9,
+      15.05
+     ]
+    },
+    "ExpRows/CompanionSlot0/Row/PercentLabel": {
+     "color": "ffffffff",
+     "font_size": 10.0,
+     "kind": "text",
+     "rect": [
+      109.2,
+      279.0,
+      30.8,
+      13.7
+     ]
+    },
+    "ExpRows/CompanionSlot1/Row/Backing": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      49.2,
+      316.05,
+      196.8,
+      83.2
+     ]
+    },
+    "ExpRows/CompanionSlot1/Row/Bar": {
+     "kind": "art",
+     "rect": [
+      142.975,
+      368.6,
+      95.25,
+      18.75
+     ],
+     "texture": "res://assets/ui/window/xp_bar.png"
+    },
+    "ExpRows/CompanionSlot1/Row/Gloss": {
+     "kind": "art",
+     "rect": [
+      109.35,
+      368.5,
+      129.0,
+      18.75
+     ],
+     "texture": "res://assets/ui/window/xp_gloss_victory.png"
+    },
+    "ExpRows/CompanionSlot1/Row/LevelLabel": {
+     "color": "ccccccff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      111.1,
+      347.4,
+      124.9,
+      15.05
+     ]
+    },
+    "ExpRows/CompanionSlot1/Row/NameLabel": {
+     "color": "ccccccff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      111.1,
+      329.4,
+      124.9,
+      15.05
+     ]
+    },
+    "ExpRows/CompanionSlot1/Row/PercentLabel": {
+     "color": "ffffffff",
+     "font_size": 10.0,
+     "kind": "text",
+     "rect": [
+      109.2,
+      371.5,
+      30.8,
+      13.7
+     ]
+    },
+    "ExpRows/PlayerSlot/Row/Backing": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      49.2,
+      131.05,
+      196.8,
+      83.2
+     ]
+    },
+    "ExpRows/PlayerSlot/Row/Bar": {
+     "kind": "art",
+     "rect": [
+      142.975,
+      183.6,
+      95.25,
+      18.75
+     ],
+     "texture": "res://assets/ui/window/xp_bar.png"
+    },
+    "ExpRows/PlayerSlot/Row/Gloss": {
+     "kind": "art",
+     "rect": [
+      109.35,
+      183.5,
+      129.0,
+      18.75
+     ],
+     "texture": "res://assets/ui/window/xp_gloss_victory.png"
+    },
+    "ExpRows/PlayerSlot/Row/LevelLabel": {
+     "color": "ccccccff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      111.1,
+      162.4,
+      124.9,
+      15.05
+     ]
+    },
+    "ExpRows/PlayerSlot/Row/NameLabel": {
+     "color": "ccccccff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      111.1,
+      144.4,
+      124.9,
+      15.05
+     ]
+    },
+    "ExpRows/PlayerSlot/Row/PercentLabel": {
+     "color": "ffffffff",
+     "font_size": 10.0,
+     "kind": "text",
+     "rect": [
+      109.2,
+      186.5,
+      30.8,
+      13.7
+     ]
+    }
+   },
+   "port_only": [
+    "Backdrop",
+    "LeftPanel",
+    "ExperienceLabel",
+    "MiddlePanel",
+    "DropsLabel",
+    "ClickHintLabel",
+    "MoneyLabel",
+    "MoneyValue",
+    "ExpLabel",
+    "ExpValue",
+    "ProceedHintLabel",
+    "InventoryPanel",
+    "ExpRows/PlayerSlot/Row/Face",
+    "ExpRows/CompanionSlot0/Row/Face",
+    "ExpRows/CompanionSlot1/Row/Face"
+   ],
+   "timeline": 3142
+  },
   "res://scenes/ui/menu/abilities_window.tscn": {
    "frame": "skills",
    "origin": [

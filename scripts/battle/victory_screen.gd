@@ -13,7 +13,6 @@ class_name VictoryScreen
 signal proceed_pressed
 
 const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
-const VictoryExperienceRowScene: PackedScene = preload("res://scenes/battle/victory_experience_row.tscn")
 
 const INVENTORY_AT: Vector2 = Vector2(503.5, 81.6)
 const DROP_ORIGIN: Vector2 = Vector2(321.0, 130.0)
@@ -34,6 +33,9 @@ var _drop_slots: Array[ItemSlot] = []
 
 @onready var _money_value: Label = $MoneyValue
 @onready var _exp_value: Label = $ExpValue
+@onready var _player_row: VictoryExpRow = $ExpRows/PlayerSlot/Row
+@onready var _companion_row_0: VictoryExpRow = $ExpRows/CompanionSlot0/Row
+@onready var _companion_row_1: VictoryExpRow = $ExpRows/CompanionSlot1/Row
 
 
 func _ready():
@@ -56,34 +58,34 @@ func _on_proceed_pressed() -> void:
 func setup(save: PlayerSave, settlement: BattleSettlement) -> void:
 	_money_value.text = "€%d" % settlement.money_gained
 	_exp_value.text = "%d%%" % int(settlement.xp_gained)
-	_build_experience_rows(save, settlement.fighting_party)
+	_build_experience_rows(save, settlement)
 	_build_drop_slots(save, settlement.drops)
 	inventory_panel.populate_from_save(save, ItemManagerAuto.items_by_id)
 	inventory_panel.set_gold(save.euro)
 
 
-func _build_experience_rows(save: PlayerSave, party_ids: Array) -> void:
-	var fighters: Array[int] = [0]
-	for party_id in party_ids:
-		fighters.append(int(party_id))
-	var y: float = 120.0
-	for party_id in fighters:
-		var row: VictoryExperienceRow = VictoryExperienceRowScene.instantiate()
-		row.position = Vector2(0, y)
-		add_child(row)
-		var display_name: String
-		var level: int
-		var experience: float
-		if party_id == 0:
-			display_name = Party.PLAYER_NAME
-			level = save.level
-			experience = save.experience
-		else:
-			display_name = str(Party.COMPANIONS.get(party_id, {}).get("name", "?"))
-			level = int(save.party_levels[party_id]) if party_id < save.party_levels.size() else 1
-			experience = float(save.party_exp[party_id]) if party_id < save.party_exp.size() else 0.0
-		row.setup(PORTRAITS.get(party_id, PORTRAITS[0]), display_name, level, experience)
-		y += 62.0
+# The player's row is at the top and shows even with no settlement behind it.
+# The two below show friendlySlotsFFTT[0] and [1] and are hidden when no
+# companion fought in that place.
+func _build_experience_rows(save: PlayerSave, settlement: BattleSettlement) -> void:
+	var player: BattleSettlement.FighterExperience = settlement.fighters.get(0)
+	if player == null:
+		player = BattleSettlement.FighterExperience.new()
+		player.experience_before = save.experience
+		player.level_before = save.level
+	_player_row.setup(PORTRAITS[0], Party.PLAYER_NAME, player)
+	var companion_rows: Array[VictoryExpRow] = [_companion_row_0, _companion_row_1]
+	for i in companion_rows.size():
+		var row: VictoryExpRow = companion_rows[i]
+		var fighter: BattleSettlement.FighterExperience = null
+		var party_id: int = -1
+		if i < settlement.fighting_party.size():
+			party_id = settlement.fighting_party[i]
+			fighter = settlement.fighters.get(party_id)
+		row.visible = fighter != null
+		if fighter != null:
+			var display_name: String = str(Party.COMPANIONS.get(party_id, {}).get("name", "?"))
+			row.setup(PORTRAITS.get(party_id, PORTRAITS[0]), display_name, fighter)
 
 
 func _build_drop_slots(save: PlayerSave, drops: Array) -> void:

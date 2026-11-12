@@ -137,6 +137,13 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 						found.append("%s: texture %s, expected %s" % [path, texture_path, entry["texture"]])
 				else:
 					found.append("%s: an art piece that is not a TextureRect" % path)
+			"box":
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+				if node is ColorRect:
+					if not _same_color((node as ColorRect).color, entry["fill"]):
+						found.append("%s: fill %s, expected %s" % [path, (node as ColorRect).color.to_html(), entry["fill"]])
+				else:
+					found.append("%s: a box piece that is not a ColorRect" % path)
 			"hit", "button":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 				if not node is BaseButton:
