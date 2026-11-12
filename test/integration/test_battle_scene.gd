@@ -2459,6 +2459,13 @@ func _attack_end_counter_limit() -> int:
 	return int(BattleScreenClip.motion()["conductor"]["AttackEndCounterLimit"])
 
 
+# A Shock's Floating number shows 1 frame after its Dispatch, because the
+# conductor runs its Impact block before its Dispatch block. A test that reads
+# a Dispatch from a Shock's number adds this frame
+# (test_a_shock_lands_1_frame_after_its_dispatch_and_the_count_starts_there).
+const SHOCK_LANDS_AFTER_DISPATCH: int = 1
+
+
 # Returns a BUFF_TICK event as the runner logs it. The tick left its unit as the
 # unit stands now, so a test that wants the bars to move changes the tick's
 # `after`.
@@ -2517,8 +2524,8 @@ func _frames_texts_float(scene: Control, events: Array, wanted: Array) -> Dictio
 # The conductor restarts its AttackEndCounter at every Impact and dispatches the
 # next action once the counter runs past AttackEndCounterLimit = 25, which is 26
 # frames after the Impact whatever the move's type (frame_217/PlaceObject2_3389_480
-# enterFrame, lines 12-15 and 112-138). A Shock lands on the frame it dispatches
-# on, so its number shows the next Dispatch.
+# enterFrame, lines 12-15 and 112-138). The next action is a Shock, so its
+# number shows 1 frame after the next Dispatch.
 func test_the_next_action_dispatches_26_frames_after_each_kind_of_impact():
 	var scene = await _battle_100_on_a_stepped_clock("ImpactToDispatch")
 	var shock: Ability = _first_move_of_type("Shock")
@@ -2532,7 +2539,58 @@ func test_the_next_action_dispatches_26_frames_after_each_kind_of_impact():
 			_damage_event(scene, 3, 2, shock, float(second)),
 		], [first, second])
 		assert_true(shown.has(first) and shown.has(second), "sanity: both %s's number and the next move's show" % kind)
-		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26, "the next action dispatches 26 frames after a %s's Impact" % kind)
+		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26 + SHOCK_LANDS_AFTER_DISPATCH, "the next action dispatches 26 frames after a %s's Impact, and the Shock's number shows 1 frame after it" % kind)
+		for frame in 120:
+			_step_frame(scene)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Shock raises the impact flag in the conductor's Dispatch block, but the
+# Impact block comes first in the same enterFrame handler, so the Shock lands on
+# the frame after its Dispatch (frame_217/PlaceObject2_3389_480 enterFrame,
+# lines 12 and 468). The Buff tick and the next Dispatch count from that Impact.
+# The caster's doll starts its cast on the Dispatch frame, so the test reads the
+# Dispatch from it.
+func test_a_shock_lands_1_frame_after_its_dispatch_and_the_count_starts_there():
+	var shock: Ability = _first_move_of_type("Shock")
+	var limit: int = _attack_end_counter_limit()
+	# Each case is a name, the tick's direction and amount, the frame after the
+	# Dispatch that the tick's number shows on (-1 when a tick that did nothing
+	# shows no number), and the frame after the Dispatch of the next Dispatch.
+	var cases: Array = [
+		["a tick that did nothing", MoveResult.Direction.NONE, 0.0, -1, 1 + limit + 1],
+		["a tick that did something", MoveResult.Direction.HARM, 5.0, 1 + limit, 1 + limit + (limit + 1)],
+	]
+	for case in cases:
+		var scene = await _battle_100_on_a_stepped_clock("ShockImpactLag")
+		var guard_doll: CharacterVisual = scene._presenters[3].get_node("Doll")
+		var player_doll: CharacterVisual = scene._presenters[BattleRunner.PLAYER_SLOT].get_node("Doll")
+		# Nothing awaits this, because the test steps the frames.
+		scene._play_events([
+			_damage_event(scene, 3, 2, shock, 11.0),
+			_tick_event(scene, 3, case[1], case[2]),
+			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, 12.0),
+		])
+		var frames: Dictionary = {}
+		for frame in 300:
+			if guard_doll._state == CharacterVisual.State.CAST and not frames.has("dispatch"):
+				frames["dispatch"] = frame
+			if player_doll._state == CharacterVisual.State.CAST and not frames.has("next dispatch"):
+				frames["next dispatch"] = frame
+			for text in _floating_texts(scene):
+				if not frames.has(text):
+					frames[text] = frame
+			if frames.has("next dispatch"):
+				break
+			_step_frame(scene)
+		assert_true(frames.has("dispatch") and frames.has("next dispatch"), "sanity: with %s, both casters' dolls start their cast" % case[0])
+		var dispatch: int = frames.get("dispatch", -100)
+		assert_eq(frames.get("11", -1) - dispatch, 1, "with %s, the Shock's number shows 1 frame after its Dispatch" % case[0])
+		if case[3] != -1:
+			assert_eq(frames.get("5", -1) - dispatch, case[3], "with %s, the tick comes %d frames after the Dispatch" % [case[0], case[3]])
+		assert_eq(frames.get("next dispatch", -1) - dispatch, case[4], "with %s, the next action dispatches %d frames after the Dispatch" % [case[0], case[4]])
 		for frame in 120:
 			_step_frame(scene)
 
@@ -2587,7 +2645,7 @@ func test_the_next_action_dispatches_26_frames_after_a_missed_bolt_is_gone():
 		_step_frame(scene)
 	assert_true(frames.has("miss") and frames.has("gone"), "sanity: the bolt missed and then left")
 	assert_lt(frames.get("miss", -1), frames.get("gone", -1), "sanity: it missed before it left")
-	assert_eq(frames.get("12", -1) - frames.get("gone", -1), 26, "the next action dispatches 26 frames after the bolt is gone")
+	assert_eq(frames.get("12", -1) - frames.get("gone", -1), 26 + SHOCK_LANDS_AFTER_DISPATCH, "the next action dispatches 26 frames after the bolt is gone, and the Shock's number shows 1 frame after it")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -2612,8 +2670,8 @@ func test_a_stunned_caster_or_a_failed_cost_holds_the_next_action_1_frame():
 			stopped_actions[index],
 			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(second)),
 		], [first, second])
-		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26 + 1,
-			"%s dispatches 26 frames after the Impact, and the next action 1 frame after it" % BattleRunner.EventType.find_key(stopped_actions[index]["type"]))
+		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26 + 1 + SHOCK_LANDS_AFTER_DISPATCH,
+			"%s dispatches 26 frames after the Impact, and the next action 1 frame after it, and the Shock's number shows 1 frame after it" % BattleRunner.EventType.find_key(stopped_actions[index]["type"]))
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -2644,8 +2702,8 @@ func test_a_pass_holds_the_next_action_1_frame_whether_or_not_its_buff_tick_kill
 		events.append_array(passes[index])
 		events.append(_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(second)))
 		var shown: Dictionary = _frames_texts_float(scene, events, [first, second])
-		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26 + 1,
-			"the pass dispatches 26 frames after the Impact, and the next action 1 frame after it, %s" % [
+		assert_eq(shown.get(second, -1) - shown.get(first, -1), 26 + 1 + SHOCK_LANDS_AFTER_DISPATCH,
+			"the pass dispatches 26 frames after the Impact, and the next action 1 frame after it, and the Shock's number shows 1 frame after it, %s" % [
 				"with a tick that kills" if index == 1 else "with a tick that does nothing",
 			])
 
@@ -2658,8 +2716,8 @@ func test_a_pass_holds_the_next_action_1_frame_whether_or_not_its_buff_tick_kill
 # the first of them dispatches (frame_217/PlaceObject2_3389_480 enterFrame,
 # lines 139-312 and 589-792). Here the player passes and Veradux is off AI, so
 # both of them pass, and each pass holds the next action 1 frame (lines
-# 557-584). The guard's only move is a Shock, which lands on the frame it
-# dispatches on.
+# 557-584). The guard's only move is a Shock, whose number shows 1 frame after
+# its Dispatch.
 func test_an_ai_half_turn_dispatches_2_frames_after_the_last_half_turn_ends():
 	var scene = await _battle_100_on_a_stepped_clock("AiHalfTurnStart")
 	var shock: Ability = MoveManagerAuto.moves_by_id.values().filter(func(move):
@@ -2677,7 +2735,7 @@ func test_an_ai_half_turn_dispatches_2_frames_after_the_last_half_turn_ends():
 	while _floating_numbers(scene).size() == numbers and frames < 60:
 		_step_frame(scene)
 		frames += 1
-	assert_eq(frames, 2 + 2, "the guard's move dispatches 2 frames after the two passes end the player's Half-turn")
+	assert_eq(frames, 2 + 2 + SHOCK_LANDS_AFTER_DISPATCH, "the guard's move dispatches 2 frames after the two passes end the player's Half-turn, and the Shock's number shows 1 frame after it")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -2711,7 +2769,7 @@ func test_a_buff_tick_that_kills_its_caster_holds_the_next_action_to_frame_51():
 		_step_frame(scene)
 	assert_eq(frames.get("death", -1) - frames.get("11", -1), 25, "the caster's doll dies 25 frames after the Impact")
 	assert_eq(frames.get("death", -1), frames.get("5", -2), "on the frame the tick's number shows")
-	assert_eq(frames.get("12", -1) - frames.get("11", -1), 51, "and the next action dispatches 26 frames after the tick")
+	assert_eq(frames.get("12", -1) - frames.get("11", -1), 51 + SHOCK_LANDS_AFTER_DISPATCH, "and the next action dispatches 26 frames after the tick, and the Shock's number shows 1 frame after it")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -2730,7 +2788,7 @@ func test_a_caster_its_own_move_killed_holds_the_next_action_25_frames():
 		{"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.MOVE},
 		_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, 12.0),
 	], ["11", "12"])
-	assert_eq(shown.get("12", -1) - shown.get("11", -1), 25, "the next action dispatches on frame 25")
+	assert_eq(shown.get("12", -1) - shown.get("11", -1), 25 + SHOCK_LANDS_AFTER_DISPATCH, "the next action dispatches on frame 25, and the Shock's number shows 1 frame after it")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -2791,7 +2849,7 @@ func test_a_buff_tick_that_did_something_holds_the_next_action_to_frame_51_and_o
 			cases[index][1],
 			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(second)),
 		], [first, second])
-		assert_eq(shown.get(second, -1) - shown.get(first, -1), cases[index][2], "after %s the next action dispatches %d frames after the Impact" % [cases[index][0], cases[index][2]])
+		assert_eq(shown.get(second, -1) - shown.get(first, -1), cases[index][2] + SHOCK_LANDS_AFTER_DISPATCH, "after %s the next action dispatches %d frames after the Impact, and the Shock's number shows 1 frame after it" % [cases[index][0], cases[index][2]])
 		for frame in 120:
 			_step_frame(scene)
 
@@ -2850,7 +2908,7 @@ func test_a_buff_tick_draws_its_number_and_plays_its_shield_clip_on_the_unit_tha
 	var scene = await _battle_100_on_a_stepped_clock("TickOnItsUnit")
 	# Nothing awaits this, because the test steps the frames.
 	scene._play_events([_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Shock"), 11.0), _soaked_tick_event(scene, 3)])
-	for frame in _attack_end_counter_limit():
+	for frame in SHOCK_LANDS_AFTER_DISPATCH + _attack_end_counter_limit():
 		_step_frame(scene)
 
 	assert_eq(_floating_texts(scene), ["11", "shield"], "the hit's number, then SHIELDED")
@@ -2887,14 +2945,14 @@ func test_a_bar_keeps_the_max_life_and_fill_a_buff_cut_until_the_tick_that_runs_
 			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Shock"), 11.0),
 			{"type": BattleRunner.EventType.BUFF_TICK, "caster_slot": BattleRunner.PLAYER_SLOT, "tick": tick},
 		])
-		var limit: int = _attack_end_counter_limit()
+		var tick_frame: int = SHOCK_LANDS_AFTER_DISPATCH + _attack_end_counter_limit()
 		var bars: Array = []
-		for frame in limit + 1:
+		for frame in tick_frame + 1:
 			bars.append([health_bar.max_value, health_bar.value])
 			_step_frame(scene)
 
-		assert_eq(bars.slice(0, limit), range(limit).map(func(_frame): return cut), "%s: the bar keeps its cut max and fill until the tick" % buff_name)
-		assert_eq(bars[limit], restored, "%s: and the tick gives it both back" % buff_name)
+		assert_eq(bars.slice(0, tick_frame), range(tick_frame).map(func(_frame): return cut), "%s: the bar keeps its cut max and fill until the tick" % buff_name)
+		assert_eq(bars[tick_frame], restored, "%s: and the tick gives it both back" % buff_name)
 		for frame in 120:
 			_step_frame(scene)
 
@@ -2925,7 +2983,7 @@ func test_a_buff_tick_after_a_pass_or_a_stun_holds_the_next_action_26_frames_unl
 		events.append_array(cases[index][1])
 		events.append(_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(second)))
 		var shown: Dictionary = _frames_texts_float(scene, events, [first, second])
-		assert_eq(shown.get(second, -1) - shown.get(first, -1), cases[index][2], "after %s the next action dispatches %d frames after the Impact" % [cases[index][0], cases[index][2]])
+		assert_eq(shown.get(second, -1) - shown.get(first, -1), cases[index][2] + SHOCK_LANDS_AFTER_DISPATCH, "after %s the next action dispatches %d frames after the Impact, and the Shock's number shows 1 frame after it" % [cases[index][0], cases[index][2]])
 		for frame in 120:
 			_step_frame(scene)
 
