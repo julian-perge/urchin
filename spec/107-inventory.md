@@ -41,7 +41,7 @@ The centre panel holds a 1 px outline, 2980, at (321.75, 89.45) 158.35x313.20, l
 | --- | --- | --- | --- |
 | 2891 `yut_name` | the member's name | (92.00, 90.05) 166.95x20.20 | `_sans` bold 14 #cccccc center |
 | 2890 `yut_info` | `MENU[0]`, level, class (`CLASS[n]`) | (92.00, 109.85) 166.95x19.60 | `_sans` bold 12 #cccccc center |
-| 2984 `playerSlot0` to `playerSlot6` | equip slots | centres below | `equip` slot |
+| 2984 `playerSlot0` to `playerSlot6` | equip slots | centres below | `ItemSlot` |
 | 121 to 143 | the doll: 31 part placements named `arm2` to `hand1_f` | part origins between (163.75, 163.30) and (207.95, 260.45) | doll art |
 | 2869 `yut_info51` | "Experience:" (`MENU[17]`) | (30.20, 284.40) 103.55x19.05 | `_sans` bold 12 #cccccc right |
 | 2868 | experience left box | (138.45, 282.85) 34.30x18.80 | solid #111111 |
@@ -52,7 +52,7 @@ The centre panel holds a 1 px outline, 2980, at (321.75, 89.45) 158.35x313.20, l
 Equip slot centres, by `playerSlot` index: 0 (82.20, 172.15), 1 (263.10, 172.15), 2 (82.20, 212.15), 3 (263.10, 212.15), 4 (263.10, 252.15), 5 (122.20, 252.15), 6 (82.20, 252.15).
 
 - The doll stays `CharacterVisual`, the battle doll, dressed by `dress_from_model`. The battle art is out of scope. This module sets the doll's position and scale from the 31 placements, not from today's typed `DOLL_POSITION` (192.5, 214.4) and `DOLL_SCALE` 1.2.
-- The slots are `ItemSlot` scenes, the `equip` variant, placed by centre. `EquipDollView` keeps its signal and its `setup` and `refresh` methods.
+- The slots are `ItemSlot` scenes, placed by centre. `EquipDollView` keeps its signal and its `setup` and `refresh` methods.
 - The experience fill's width is `experience / 100` of its box, as today. The AS for sprite 2867 and its 14 frames is read in the build issue. The result must match the capture.
 - The labels, texts and stat names read from `strings.json` (`MENU[0]`, `MENU[17]`, `SYSTEM[0]` to `[6]`, `CLASS`).
 

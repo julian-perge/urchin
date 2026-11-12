@@ -1,6 +1,6 @@
 # Spec: victory
 
-Source issue: [#107](https://github.com/julian-perge/urchin/issues/107). Module `victory` of [the capability map](107-capability-map.md). It depends on [window-shell](107-window-shell.md) (`WindowShell`, `ShellPanel`, the `drop` slot and `RightColumn`), [hub](107-hub.md) (the Hub that hosts it, `set_inert`, `set_art_visible` and `show_battle_hint`) and [inventory](107-inventory.md) (the experience bar's pieces). Through them it uses `FloatBox`, the rect test, the compare tool and `strings.json` from ui-foundation.
+Source issue: [#107](https://github.com/julian-perge/urchin/issues/107). Module `victory` of [the capability map](107-capability-map.md). It depends on [window-shell](107-window-shell.md) (`WindowShell`, `ShellPanel`, `ItemSlot` and `RightColumn`), [hub](107-hub.md) (the Hub that hosts it, `set_inert`, `set_art_visible` and `show_battle_hint`) and [inventory](107-inventory.md) (the experience bar's pieces). Through them it uses `FloatBox`, the rect test, the compare tool and `strings.json` from ui-foundation.
 
 Commands, project structure and code style are in [AGENTS.md](../AGENTS.md), `docs/agents/godot.md` and `docs/agents/art-extraction.md`. Terms are in [GLOSSARY.md](../GLOSSARY.md).
 
@@ -62,7 +62,7 @@ Each row holds the face 2978 (`avIn`, scaled 1.653), `namerI` 3000 and `levelI` 
 | cid | Piece | Box | Look |
 | --- | --- | --- | --- |
 | 3005 `vb1` | `VICTORY[0]`, "Victory! Items that dropped:" | (288.20, 90.40) 187.30x55.00 | `_sans` 12 #666666 |
-| 3013 `dropSlot0` to `dropSlot14` | drops | first centre (305.10, 146.65), 5 columns on a 38 px pitch | `drop` slot |
+| 3013 `dropSlot0` to `dropSlot14` | drops | first centre (305.10, 146.65), 5 columns on a 38 px pitch | `ItemSlot` |
 | 3003 `vb99` | `MENU[12]`, "No Items Found." | (291.20, 163.80) 180.30x70.60 | `_sans` bold 19 #a53030 center |
 | 3007 `vb2` | `VICTORY[1]`, "CLICK on the items that you wish to keep!" | (289.20, 244.80) 183.55x49.80 | `_sans` bold 12 #ffff33 |
 | 3011 `vb3`, 3010 `vb5` | `VICTORY[2]` and the money, "€" plus the gain | (296.20, 287.20) and (362.70, 287.20) | `_sans` bold 12 #fad95a |
