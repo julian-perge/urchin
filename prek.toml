@@ -51,6 +51,13 @@ entry = "uv run check_gd_parse"
 files = "\\.gd$"
 
 [[repos.hooks]]
+id = "as-citations"
+name = "ActionScript citations in .gd files exist"
+language = "system"
+entry = "uv run check_as_citations"
+files = "\\.gd$"
+
+[[repos.hooks]]
 id = "agent-doc-paths"
 name = "Paths in the agent docs exist"
 language = "system"

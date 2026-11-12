@@ -20,11 +20,11 @@ const BG_NEXT_RANK: Color = Color(50.0 / 255.0, 40.0 / 255.0, 53.0 / 255.0, 230.
 # Every field the clip builds is 12 px (DefineSprite_2717/frame_4/DoAction.as:43).
 const FONT_SIZE: int = 12
 
-# The title is black in every layout (frame_4/DoAction.as:60). An ability's
-# cost line is 0x000033, its description white and its next tier 0xFFCC00
-# (frame_17/DoAction.as:30, 47 and 71). An item's level line is 0x333333, its
-# stat lines 0xF8D754 and its flavor text 0xB8FE4E (frame_13/DoAction.as:34,
-# 58 and 77).
+# The title is black in every layout (DefineSprite_2717/frame_4/DoAction.as:60).
+# An ability's cost line is 0x000033, its description white and its next tier
+# 0xFFCC00 (DefineSprite_2717/frame_17/DoAction.as:30, 47 and 71). An item's
+# level line is 0x333333, its stat lines 0xF8D754 and its flavor text 0xB8FE4E
+# (DefineSprite_2717/frame_13/DoAction.as:34, 58 and 77).
 const TEXT_TITLE: Color = Color("000000")
 const TEXT_SUBHEADER: Color = Color("000033")
 const TEXT_BODY: Color = Color("ffffff")
@@ -34,8 +34,9 @@ const TEXT_STAT: Color = Color("f8d754")
 const TEXT_FLAVOR: Color = Color("b8fe4e")
 
 # The clip builds every field of a layout at one width: 170 px for a plain
-# tooltip (frame_4/DoAction.as:33), 150 for an ability
-# (frame_17/DoAction.as:21) and 200 for an item (frame_13/DoAction.as:25),
+# tooltip (DefineSprite_2717/frame_4/DoAction.as:33), 150 for an ability
+# (DefineSprite_2717/frame_17/DoAction.as:21) and 200 for an item
+# (DefineSprite_2717/frame_13/DoAction.as:25),
 # and Flash keeps a 2 px gutter on each side of the text. Each width below is
 # that field width less both gutters, plus the 3.34 px of one 12 px space,
 # because Godot counts the space after a line's last word when it wraps and the

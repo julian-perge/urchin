@@ -185,9 +185,10 @@ func test_menu_screens_are_bold_except_the_shop_dialogue():
 
 
 # KrinToolTipper (DefineSprite 2717) builds its own text fields in _sans and
-# sets bold only on the title field, my_txt2 (frame_4/DoAction.as:58-64). Its
-# body field, my_txt, sets no bold (frame_4/DoAction.as:40-45), which is the
-# face font 295 has.
+# sets bold only on the title field, my_txt2
+# (DefineSprite_2717/frame_4/DoAction.as:58-64). Its body field, my_txt, sets
+# no bold (DefineSprite_2717/frame_4/DoAction.as:40-45), which is the face
+# font 295 has.
 func test_tooltips_bold_the_title_and_keep_the_body_regular():
 	var anchor: Control = add_child_autofree(Control.new())
 	GameTooltip.show_sections([
@@ -279,8 +280,8 @@ func _equipment_with_flavor() -> GameItem:
 # field. An ability's title is black, its cost line 0x000033, its description
 # white and its next tier 0xFFCC00 (DefineSprite_2717/frame_17/DoAction.as:89,
 # 30, 47 and 71). An item's title is black, its level line 0x333333, its stat
-# lines 0xF8D754 and its flavor text 0xB8FE4E (frame_13/DoAction.as:104, 34,
-# 58 and 77).
+# lines 0xF8D754 and its flavor text 0xB8FE4E
+# (DefineSprite_2717/frame_13/DoAction.as:104, 34, 58 and 77).
 func test_tooltips_use_the_original_text_size_and_colors():
 	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())
 	abilities.refresh()

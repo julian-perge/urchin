@@ -15,6 +15,31 @@ has already made reading them.
 - `KNOWN_GAPS.md` is deliberate scoped-out gaps. `NEXT_PHASES.md` is what has
   not been built. Both carry DONE entries with what was found.
 
+## Find the place before you read it
+
+Run `uv run as_lookup <query>` before `rg` on the export. One lookup gives
+what `rg 'function X'` and a `sed -n` of a line range take several calls to
+find. It prints one answer for each kind of query:
+
+- A function name, such as `executeMove`: the file and line range, the source
+  lines (the outline of its blocks when the function has more than 120 lines),
+  each caller, each function it calls with the place that defines it, and the
+  globals it writes and reads.
+- A global name, such as `perKSuccess`: each line that writes it and each
+  function or script that reads it.
+- An export path, or the unique end of one, such as `frame_42/DoAction_8.as`:
+  the same answer for the script, with the functions it defines.
+- A path with a line, such as `frame_42/DoAction_8.as:82`: the function that
+  holds the line and the chain of blocks around the line.
+
+Each answer ends with `ports`, the GDScript comments that cite that range, so
+it shows where the port already implements the code.
+
+The lookup is for navigation only. Read the original lines before you port or
+decide anything, because the index is not an authority on behavior. It matches
+a caller by name, and it does not resolve which timeline a bare name such as
+`AVGNUMC` lands on.
+
 ## Reading the ActionScript
 
 - **An array can index by name rather than by order.** `Krin.zoneName`

@@ -140,8 +140,9 @@ func test_lines_keep_the_flash_text_field_gutter():
 
 
 # KrinToolTipper starts each text field 2 px below the one above it
-# (DefineSprite_2717/frame_13/DoAction.as:48 and frame_17/DoAction.as:38), so
-# the lines sit 2 px apart whether or not they share a section.
+# (DefineSprite_2717/frame_13/DoAction.as:48 and
+# DefineSprite_2717/frame_17/DoAction.as:38), so the lines sit 2 px apart
+# whether or not they share a section.
 func test_fields_stack_2_px_apart():
 	var anchor: Control = add_child_autofree(Control.new())
 	GameTooltip.show_sections(_sections_fixture(), anchor)

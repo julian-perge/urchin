@@ -17,9 +17,12 @@ dependencies = [
   # portrait/face compositing in dev/urchin_dev/swf
   "pillow>=11.0",
   "ruff>=0.15.15",
+  "tree-sitter>=0.25,<0.26",
+  "tree-sitter-javascript>=0.23,<0.26",
 ]
 
 [project.scripts]
+check_as_citations = "urchin_dev.checks.as_citations:main"
 check_avoid_terms = "urchin_dev.checks.avoid_terms:main"
 check_doc_paths = "urchin_dev.checks.doc_paths:main"
 check_gd_parse = "urchin_dev.checks.gd_parse:main"
@@ -42,6 +45,7 @@ extract_faces = "urchin_dev.swf.extract.faces:main"
 extract_floating_numbers = "urchin_dev.swf.extract.floating_numbers:main"
 extract_item_icons = "urchin_dev.swf.extract.item_icons:main"
 extract_item_looks = "urchin_dev.swf.extract.item_looks:main"
+extract_as_index = "urchin_dev.swf.as_index:main"
 extract_label_xref = "urchin_dev.swf.label_xref:main"
 extract_model1_animations = "urchin_dev.swf.extract.model1_animations:main"
 extract_rig_clips = "urchin_dev.swf.extract.rig_clips:main"
@@ -51,6 +55,7 @@ extract_store_art = "urchin_dev.swf.extract.store_art:main"
 extract_vfx = "urchin_dev.swf.extract.vfx:main"
 extract_vfx_scenes = "urchin_dev.swf.extract.vfx_scenes:main"
 extract_window_chrome = "urchin_dev.swf.extract.window_chrome:main"
+as_lookup = "urchin_dev.as_lookup:main"
 gut = "urchin_dev.gut:main"
 merge_ticket = "urchin_dev.merge_ticket:main"
 
