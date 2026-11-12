@@ -1,0 +1,64 @@
+{
+  "element_bars": {
+    "source": "DefineSprite_3142/frame_1/DoAction.as",
+    "save_height": 68.0,
+    "average": {
+      "base": 100,
+      "per_level": 15
+    },
+    "bar_quartic": [
+      0.016666667,
+      -0.25,
+      1.233333,
+      -1.9000000000000001,
+      0.9000000000000002
+    ],
+    "gbar": {
+      "factor": 15,
+      "divisor": 100
+    },
+    "xbar": {
+      "factor": 0.07,
+      "offset": -1
+    },
+    "capped": [
+      "bar",
+      "gbar"
+    ],
+    "defense_tips": {
+      "default": 1,
+      "rules": [
+        {
+          "compare": ">",
+          "threshold": 1,
+          "tip": 0
+        },
+        {
+          "compare": "<",
+          "threshold": 1,
+          "tip": 2
+        },
+        {
+          "compare": "<",
+          "threshold": 0.81,
+          "tip": 3
+        },
+        {
+          "compare": "<",
+          "threshold": 0.6100000000000001,
+          "tip": 4
+        },
+        {
+          "compare": "<",
+          "threshold": 0.41000000000000014,
+          "tip": 5
+        },
+        {
+          "compare": "<",
+          "threshold": 0.31000000000000005,
+          "tip": 6
+        }
+      ]
+    }
+  }
+}

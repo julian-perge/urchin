@@ -111,6 +111,11 @@ convert-buffs *args:
 convert-items *args:
     uv run convert_items "$@"
 
+[doc('Run convert_menu_math, which reads the inventory element bar formulas into JSON')]
+[group('convert')]
+convert-menu-math *args:
+    uv run convert_menu_math "$@"
+
 [doc('Run convert_moves, which converts the extracted data into JSON and Godot resources')]
 [group('convert')]
 convert-moves *args:
