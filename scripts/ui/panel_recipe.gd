@@ -2,12 +2,12 @@
 # The recipe for the 16 flat KRINMENU Panels (spec/107-ui-foundation.md,
 # Part 3). Each Panel is a PanelContainer with its own StyleBoxFlat and the
 # shared inner shadow material. A Theme cannot hold a material, so every Panel
-# sets it itself.
+# sets it itself. Each Panel's scene types its own content margins, so build()
+# leaves them at the StyleBoxFlat default and problems() does not check them.
 class_name PanelRecipe
 extends RefCounted
 
 const SHADOW_MATERIAL: ShaderMaterial = preload("res://resources/ui/panel_inner_shadow.tres")
-
 
 const SIDES: Array[Side] = [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]
 const CORNERS: Array[Corner] = [CORNER_TOP_LEFT, CORNER_TOP_RIGHT, CORNER_BOTTOM_RIGHT, CORNER_BOTTOM_LEFT]
@@ -46,7 +46,8 @@ static func build(fill: Color, line: Color, fill_rect: Rect2, placement_scale: V
 
 
 # Returns one message for each part of the recipe the Panel breaks: its border
-# width, its rect, or its material. An empty list means the Panel follows it.
+# width, its corners, its anti-aliasing, its rect, or its material. An empty
+# list means the Panel follows it.
 static func problems(panel: PanelContainer, fill_rect: Rect2, placement_scale: Vector2) -> Array[String]:
 	var found: Array[String] = []
 	var border: int = border_width(placement_scale)
@@ -59,6 +60,13 @@ static func problems(panel: PanelContainer, fill_rect: Rect2, placement_scale: V
 			widths.append(style.get_border_width(side))
 		if widths != [border, border, border, border]:
 			found.append("border: widths %s, expected %d on every side" % [widths, border])
+		var radii: Array[int] = []
+		for corner: Corner in CORNERS:
+			radii.append(style.get_corner_radius(corner))
+		if radii != [0, 0, 0, 0]:
+			found.append("corners: radii %s, expected 0 on every corner" % [radii])
+		if style.anti_aliasing:
+			found.append("anti_aliasing: on, expected off")
 	var rect: Rect2 = panel_rect(fill_rect, border)
 	var actual: Rect2 = Rect2(panel.position, panel.size)
 	if not (

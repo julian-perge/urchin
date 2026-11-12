@@ -45,6 +45,7 @@ func test_built_panel_has_sharp_corners() -> void:
 	assert_not_null(style)
 	for corner: Corner in [CORNER_TOP_LEFT, CORNER_TOP_RIGHT, CORNER_BOTTOM_RIGHT, CORNER_BOTTOM_LEFT]:
 		assert_eq(style.get_corner_radius(corner), 0)
+	assert_false(style.anti_aliasing)
 
 
 func test_built_panel_sits_on_the_grown_rect() -> void:
@@ -75,6 +76,22 @@ func test_problems_reports_a_wrong_border_width() -> void:
 	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, SCALE)
 	assert_eq(found.size(), 1, str(found))
 	assert_string_contains(found[0] if found else "", "border")
+
+
+func test_problems_reports_a_rounded_corner() -> void:
+	var panel: PanelContainer = _panel()
+	(panel.get_theme_stylebox("panel") as StyleBoxFlat).corner_radius_bottom_right = 3
+	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, SCALE)
+	assert_eq(found.size(), 1, str(found))
+	assert_string_contains(found[0] if found else "", "corners")
+
+
+func test_problems_reports_anti_aliasing() -> void:
+	var panel: PanelContainer = _panel()
+	(panel.get_theme_stylebox("panel") as StyleBoxFlat).anti_aliasing = true
+	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, SCALE)
+	assert_eq(found.size(), 1, str(found))
+	assert_string_contains(found[0] if found else "", "anti_aliasing")
 
 
 func test_problems_reports_a_position_without_growth() -> void:
