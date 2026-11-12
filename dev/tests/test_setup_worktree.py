@@ -44,16 +44,6 @@ def test_the_main_checkout_links_nothing_to_itself(tmp_path):
     assert swf_links(main, main) == []
 
 
-def test_the_import_goes_through_the_slot_script_when_it_and_fish_exist(tmp_path):
-    slot = tmp_path / "godot-slot.fish"
-    slot.write_text("")
-    command = godot_import_command(Path("/Godot"), slot, "/bin/fish")
-    assert command[:3] == ["/bin/fish", str(slot), "/Godot"]
-    assert command[3:6] == ["--headless", "--import", "--path"]
-
-
-def test_the_import_runs_godot_directly_without_the_slot_script(tmp_path):
-    command = godot_import_command(Path("/Godot"), tmp_path / "none.fish", "/bin/fish")
+def test_the_import_command_runs_the_given_godot_on_the_repo():
+    command = godot_import_command("/Godot")
     assert command[:4] == ["/Godot", "--headless", "--import", "--path"]
-    command = godot_import_command(Path("/Godot"), tmp_path / "none.fish", None)
-    assert command[0] == "/Godot"

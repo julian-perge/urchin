@@ -6,7 +6,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from urchin_dev.gut import GODOT, SLOT_SCRIPT, godot_command, run_gut
+from urchin_dev.gut import godot_command, run_gut
 
 PASSED = (
     "---  GUT  ---\n"
@@ -197,13 +197,12 @@ def test_the_import_step_keeps_the_real_home(project):
     assert godot.homes[1] is not None
 
 
-def test_only_the_godot_process_gets_the_new_home_not_the_slot_script():
-    command = godot_command(["--headless"], Path("/tmp/h"))
-    assert command[0] == "fish"
-    assert command[2:5] == ["env", "HOME=/tmp/h", GODOT]
-    assert godot_command(["--headless"], None) == [
-        "fish",
-        SLOT_SCRIPT,
-        GODOT,
+def test_the_new_home_is_set_by_env_before_the_godot_binary(monkeypatch):
+    monkeypatch.setenv("GODOT_BIN", "/Godot")
+    assert godot_command(["--headless"], Path("/tmp/h")) == [
+        "env",
+        "HOME=/tmp/h",
+        "/Godot",
         "--headless",
     ]
+    assert godot_command(["--headless"], None) == ["/Godot", "--headless"]

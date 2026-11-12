@@ -397,7 +397,7 @@ ability orbs (`battle_scene.gd`), buff icons (`unit_overlay.gd`), and the class-
 GUT 9.7.1 is vendored at `addons/gut/`, tests in `test/unit/` + `test/integration/`, config in `.gutconfig.json`. Run headless (exits nonzero on failure):
 
 ```sh
-/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .
+just godot --headless -s res://addons/gut/gut_cmdln.gd --path .
 ```
 
 Compile-check a script without GUT: `Godot --headless --check-only -s <script.gd> --path .` (run `--headless --editor --quit --path .` once after adding new `class_name` scripts, or the class

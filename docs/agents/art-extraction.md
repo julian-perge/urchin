@@ -20,9 +20,10 @@ extracting it.
   build rendered the committed art on JDK 25.0.4, and
   `unzip -p ~/git/jindrapetrik/jpexs-decompiler/dist/lib/ffdec_lib.jar project.properties`
   prints the commit yours was built from. The render driver always passes
-  `aaScale` 1, and CLI exports read `useMsaaForExport` from
-  `~/Library/Application Support/FFDec/config.toml`, where it has to stay
-  `false` and a GUI session can change it. Another build redraws art by itself,
+  `aaScale` 1, and CLI exports read `useMsaaForExport` from FFDec's
+  config.toml, where it has to stay `false` and a GUI session can change it.
+  That file is in ~/Library/Application Support/FFDec on macOS and in
+  ~/.config/FFDec on Linux. Another build redraws art by itself,
   so change builds in a PR of their own that regenerates and measures every
   family: `e3cd93397` moved tiled bitmap fills, `afbe4fa33` moved clip mask rims
   and broke the class cards until `Render.java` corrected it (see Extracting

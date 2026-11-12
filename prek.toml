@@ -47,7 +47,7 @@ entry = "uv run check_godot_sidecars"
 id = "gd-parse"
 name = "Staged .gd files parse"
 language = "system"
-entry = "uv run check_gd_parse"
+entry = "just gd-parse"
 files = "\\.gd$"
 
 [[repos.hooks]]

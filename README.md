@@ -9,10 +9,10 @@ Fan remake of an ArmorGames game.
 asset-extraction tooling (`swf/`); `dev/data_json/` and `dev/converted_json/` hold the raw and
 converted data they read and produce. `pyproject.toml` at the repo root declares `dev` as the
 package's `module-root` and registers each script as a `[project.scripts]` entry point, so they
-run via `uv run`:
+run through `just`:
 
 ```sh
-uv run convert_items
+just convert-items
 ```
 
 ## Tests
@@ -21,12 +21,12 @@ GUT tests live under `test/` (`unit/` for pure logic, `integration/` for full-st
 the real converted data). Run them headless:
 
 ```sh
-uv run gut                                  # the whole suite
-uv run gut test/unit/test_leveling.gd       # one test file
-uv run gut -gunit_test_name=<name>          # the tests whose names contain <name>
+just gut                                  # the whole suite
+just gut test/unit/test_leveling.gd       # one test file
+just gut -gunit_test_name=<name>          # the tests whose names contain <name>
 ```
 
-`uv run gut` exits nonzero when a test fails. It also exits nonzero on the runs that GUT itself
+`just gut` exits nonzero when a test fails. It also exits nonzero on the runs that GUT itself
 exits 0 on: a script or parse error, or a run where no tests ran. You can also run the tests from
 the GUT panel inside the Godot editor.
 

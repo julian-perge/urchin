@@ -17,7 +17,7 @@ has already made reading them.
 
 ## Find the place before you read it
 
-Run `uv run as_lookup <query>` before `rg` on the export. One lookup gives
+Run `just as-lookup <query>` before `rg` on the export. One lookup gives
 what `rg 'function X'` and a `sed -n` of a line range take several calls to
 find. It prints one answer for each kind of query:
 

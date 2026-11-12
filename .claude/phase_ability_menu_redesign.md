@@ -44,10 +44,10 @@ tooltip resolution, and the true state of passive-node tooltip descriptions). Ev
 - Godot enum literals used below (confirmed against this project's actual Godot 4.7.1 binary): `TextureRect.STRETCH_KEEP_ASPECT_CENTERED = 5`, `Control.MOUSE_FILTER_IGNORE = 2`,
   `Control.MOUSE_FILTER_STOP = 0`, `HORIZONTAL_ALIGNMENT_LEFT = 0`, `HORIZONTAL_ALIGNMENT_CENTER = 1`. `Button.icon`/`Button.expand_icon`/`Button.icon_alignment` are real Button properties
   (confirmed via a headless property-existence check against this Godot build) - Task 5 relies on them.
-- Compile-check after every `.gd` edit: `/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s <script.gd> --path .` (expect a `GameData`/other-autoload "Identifier not found"
+- Compile-check after every `.gd` edit: `just godot --headless --check-only -s <script.gd> --path .` (expect a `GameData`/other-autoload "Identifier not found"
   line - known false positive, not a real error). Any task that adds a new `class_name` needs a global-class-cache reimport first:
-  `/Applications/Godot.app/Contents/MacOS/Godot --headless --editor --quit --path .` - this is per-checkout (worktree AND main both need it separately after a merge).
-- Run the full suite after every task: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`. Confirm the actual baseline count live in whatever
+  `just godot --headless --editor --quit --path .` - this is per-checkout (worktree AND main both need it separately after a merge).
+- Run the full suite after every task: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`. Confirm the actual baseline count live in whatever
   worktree this executes in before starting - do not trust a hardcoded number in this document.
 - `--headless` cannot produce a real rendered image on this machine (verified this session - zero Vulkan/Metal/OpenGL initialization in the verbose log under `--headless`, vs. a real
   `Metal 4.0 - Apple M4 Pro` device without it). For any manual visual check in this plan, drop `--headless` from the command (compile-checks and GUT itself stay `--headless`, they don't render
@@ -68,7 +68,7 @@ tooltip resolution, and the true state of passive-node tooltip descriptions). Ev
 
 - [ ] **Step 1: Confirm the baseline is green**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS. Note the exact count - you'll compare against this exact number after every task in this plan.
 
 - [ ] **Step 2: Write `ability_icons.py`**
@@ -207,7 +207,7 @@ re-running must not depend on state left over from the first run (temp shape dir
 
 - [ ] **Step 5: Run the full suite**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, same count as Step 1 (this task adds no GDScript changes and no new tests - pure asset extraction).
 
 - [ ] **Step 6: Commit**
@@ -231,7 +231,7 @@ git commit -m "feat: extract ability icon art from DefineSprite 2427"
 
 - [ ] **Step 1: Confirm the baseline is green**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, matching Task 1's ending count exactly.
 
 - [ ] **Step 2: Add the two fields to `scripts/battle/ability.gd`**
@@ -289,12 +289,12 @@ re-derive or paraphrase them if the assertion fails, re-check the JSON directly.
 
 - [ ] **Step 4: Compile-check**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s scripts/battle/ability.gd --path .`
+Run: `just godot --headless --check-only -s scripts/battle/ability.gd --path .`
 Expected: clean compile, no output at all (this script doesn't reference any autoload).
 
 - [ ] **Step 5: Run the full suite**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, Task 1's ending count + 2 new tests, both passing.
 
 - [ ] **Step 6: Commit**
@@ -323,7 +323,7 @@ git commit -m "feat: surface the original tooltip_description/tooltip_cost strin
 
 - [ ] **Step 1: Confirm the baseline is green**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, matching Task 2's ending count exactly.
 
 - [ ] **Step 2: Write `scripts/ui/menu/ability_tooltip_builder.gd`**
@@ -431,8 +431,8 @@ func test_pool_row_hover_has_no_next_rank_text():
 
 - [ ] **Step 4: Force a global class cache reimport, then compile-check**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless --editor --quit --path .`
-Then: `/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s scripts/ui/menu/ability_tooltip_builder.gd --path .`
+Run: `just godot --headless --editor --quit --path .`
+Then: `just godot --headless --check-only -s scripts/ui/menu/ability_tooltip_builder.gd --path .`
 Expected: clean compile, no output at all.
 
 - [ ] **Step 5: Write `scripts/ui/menu/ability_tooltip.gd`**
@@ -558,12 +558,12 @@ keeps driving show/hide.
 
 - [ ] **Step 7: Compile-check `ability_tooltip.gd`**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s scripts/ui/menu/ability_tooltip.gd --path .`
+Run: `just godot --headless --check-only -s scripts/ui/menu/ability_tooltip.gd --path .`
 Expected: only the known autoload false positive, if anything.
 
 - [ ] **Step 8: Run the full suite**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, Task 2's ending count + 4 new tests (3 from Step 3, run them explicitly first to confirm: `-gtest=test/unit/test_ability_tooltip_builder.gd`), all passing. The tooltip scene
 exists but is not yet wired into `abilities_window.tscn` - that's Task 4.
 
@@ -591,7 +591,7 @@ git commit -m "feat: add the reusable AbilityTooltip scene and its pure data bui
 
 - [ ] **Step 1: Confirm the baseline is green**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, matching Task 3's ending count exactly.
 
 - [ ] **Step 2: Add `TalentTree.is_prerequisite_learned()` and its test**
@@ -775,14 +775,14 @@ func _draw_tree_lines() -> void:
 
 - [ ] **Step 6: Force a global class cache reimport, then compile-check**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless --editor --quit --path .`
-Then: `/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s scripts/ui/menu/abilities_window.gd --path .` and
-`/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s scripts/entities/talent_tree.gd --path .`
+Run: `just godot --headless --editor --quit --path .`
+Then: `just godot --headless --check-only -s scripts/ui/menu/abilities_window.gd --path .` and
+`just godot --headless --check-only -s scripts/entities/talent_tree.gd --path .`
 Expected: only the known autoload false positive, if anything, on the first; clean compile (no autoload references) on the second.
 
 - [ ] **Step 7: Run the full suite**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, Task 3's ending count + 1 new test (`test_is_prerequisite_learned`), all passing.
 
 - [ ] **Step 8: Manual visual check**
@@ -812,7 +812,7 @@ git commit -m "feat: rich floating tooltips and prerequisite-colored connector l
 
 - [ ] **Step 1: Confirm the baseline is green**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, matching Task 4's ending count exactly.
 
 - [ ] **Step 2: Wheel sockets show icons and hover tooltips**
@@ -950,12 +950,12 @@ both together (icon left of text) using Godot's own default Button layout, which
 
 - [ ] **Step 5: Compile-check**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s scripts/ui/menu/abilities_window.gd --path .`
+Run: `just godot --headless --check-only -s scripts/ui/menu/abilities_window.gd --path .`
 Expected: only the known autoload false positive, if anything.
 
 - [ ] **Step 6: Run the full suite**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, same count as Task 4's ending count (no new tests - this task is UI wiring against already-tested helpers).
 
 - [ ] **Step 7: Manual visual check**
@@ -987,7 +987,7 @@ git commit -m "feat: icon thumbnails and rich tooltips on the ability pool and a
 
 - [x] **Step 1: Confirm the baseline is green**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, matching Task 5's ending count exactly.
 
 - [x] **Step 2: Write `scripts/ui/menu/ability_pool_row.gd`**
@@ -1089,8 +1089,8 @@ never touches `self.text`. `size_flags_vertical = 4` is `SIZE_SHRINK_CENTER` - k
 
 - [x] **Step 4: Force a global class cache reimport, then compile-check**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless --editor --quit --path .`
-Then: `/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s scripts/ui/menu/ability_pool_row.gd --path .`
+Run: `just godot --headless --editor --quit --path .`
+Then: `just godot --headless --check-only -s scripts/ui/menu/ability_pool_row.gd --path .`
 Expected: clean compile, no output at all.
 
 - [x] **Step 5: Write `test/unit/test_ability_pool_row.gd`**
@@ -1198,12 +1198,12 @@ type changing from `Button` to `AbilityPoolRow` (a `Button` subclass in every wa
 
 - [x] **Step 8: Compile-check**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s scripts/ui/menu/abilities_window.gd --path .`
+Run: `just godot --headless --check-only -s scripts/ui/menu/abilities_window.gd --path .`
 Expected: only the known autoload false positive, if anything.
 
 - [x] **Step 9: Run the full suite**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, Task 5's ending count + 2 new tests (Step 5), all passing. In particular re-confirm `test_abilities_window_edits_action_bar` (from `test_ui_scenes.gd`) still passes - it's the
 test most directly touching pool-row click behavior end to end.
 
@@ -1230,7 +1230,7 @@ git commit -m "refactor: migrate the ability pool row to a reusable instanced sc
 
 - [x] **Step 1: Full regression run**
 
-Run: `/Applications/Godot.app/Contents/MacOS/Godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
+Run: `just godot --headless -s res://addons/gut/gut_cmdln.gd --path .`
 Expected: PASS, every test green, matching Task 6's ending count exactly.
 
 - [x] **Step 2: Full manual walkthrough**

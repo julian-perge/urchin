@@ -1,5 +1,6 @@
 ### Project
 .DS_Store
+.env
 tasks/*
 !tasks/old/
 /test_*
