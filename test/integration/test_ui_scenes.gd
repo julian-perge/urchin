@@ -210,8 +210,9 @@ func test_new_game_starts_in_any_used_slot_and_keeps_its_save_until_the_first_sa
 		assert_not_called(menu, "_enter_game")
 
 		menu.class_picker.get_node("Hydraulic").pressed.emit()
+		ZoneManager.pending_battle = {}
 		menu.get_node("OptionsPanel/StartButton").pressed.emit()
-		assert_called(menu, "_enter_game")
+		assert_false(ZoneManager.pending_battle.is_empty(), "START goes on to the first fight")
 		assert_eq(GameData.current_slot, slot, "the new game plays in slot %d" % slot)
 		assert_eq(GameData.current_save.name_user, "Fresh%d" % slot, "under the typed name")
 		assert_eq(GameData.current_save.player_class, PlayerSave.PlayerClass.HYDRAULIC, "as the picked class")
@@ -231,9 +232,75 @@ func test_starting_a_new_game_in_an_empty_slot_writes_no_save():
 	menu.slot_buttons.get_child(2).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
-	assert_called(menu, "_enter_game")
+	assert_false(ZoneManager.pending_battle.is_empty(), "START goes on to the first fight")
 	assert_eq(GameData.current_slot, 3, "the new game plays in slot 3")
 	assert_false(GameData.has_save(3), "and slot 3 stays empty until it saves")
+	_clear_test_slots()
+
+
+# The Tutorial option is on until the player turns it off (frame_93/DoAction.as:7),
+# and this test leaves the toggle alone. With it on, the original's START plays
+# CS_INTRO (DefineButton2_2770 on(release), lines 2-6). The clip's end goes to
+# IntroSeq, which starts battle 2 with progressFight off
+# (frame_165/DoAction.as:2-3). The pick waits in ZoneManager for the Battle screen.
+func test_new_game_with_the_tutorial_on_goes_on_to_battle_2_after_cs_intro():
+	_write_test_slots([])
+	var menu = await _menu_without_scene_change()
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(0).pressed.emit()
+	menu.class_picker.get_node("Biological").pressed.emit()
+	assert_true(menu.get_node("OptionsPanel/TutorialToggle").button_pressed, "the toggle starts on")
+	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+
+	var pick: Dictionary = ZoneManager.pending_battle
+	assert_eq(pick.get("battle_id"), 2, "the first fight is battle 2")
+	assert_false(pick.get("is_story_progress", true), "and not a Story fight")
+	assert_eq(pick.get("cutscene_before"), "CS_INTRO", "with CS_INTRO before it")
+	_clear_test_slots()
+
+
+# IntroSeq puts the Tutorial's two moves on the first two bar slots for battle 2,
+# whatever the class, and touches no other slot (frame_165/DoAction.as:6-7).
+func test_new_game_with_the_tutorial_on_puts_the_tutorial_moves_on_the_bar():
+	_write_test_slots([])
+	var menu = await _menu_without_scene_change()
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(0).pressed.emit()
+	menu.class_picker.get_node("Hydraulic").pressed.emit()
+	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+
+	var bar: Array = GameData.current_save.move_matrix
+	var tutorial_moves: Array = ZoneProgression.TUTORIAL_MOVES
+	assert_eq(bar.slice(0, tutorial_moves.size()), tutorial_moves, "the Tutorial's two moves lead the bar")
+	assert_eq(bar.slice(tutorial_moves.size()).count(0), bar.size() - tutorial_moves.size(), "and no other slot holds a move")
+	_clear_test_slots()
+
+
+# START goes on to the first fight and not to the hub. With the Tutorial off the
+# original's START plays CS_INTRO2 (DefineButton2_2770 on(release), lines 7-10).
+# That clip's end goes to IntroSeq2 (frame_293/DoAction.as:1), which starts
+# battle 100 as a progress fight (frame_180/DoAction.as:2-3). The pick waits in
+# ZoneManager for the Battle screen.
+func test_new_game_with_the_tutorial_off_goes_on_to_battle_100_after_cs_intro2():
+	_write_test_slots([])
+	var menu = await _menu_without_scene_change()
+	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	menu.slot_buttons.get_child(0).pressed.emit()
+	menu.class_picker.get_node("Biological").pressed.emit()
+	menu.get_node("OptionsPanel/TutorialToggle").button_pressed = false
+	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+
+	var pick: Dictionary = ZoneManager.pending_battle
+	assert_eq(pick.get("battle_id"), 100, "the first fight is battle 100")
+	assert_true(pick.get("is_story_progress", false), "as a Story fight")
+	assert_eq(pick.get("cutscene_before"), "CS_INTRO2", "with CS_INTRO2 before it")
+	var bar: Array = GameData.current_save.move_matrix
+	var starting_moves: Array = TalentTree.STARTING_MOVES[PlayerSave.PlayerClass.BIOLOGICAL]
+	assert_eq(bar.slice(0, starting_moves.size()), starting_moves, "and the class's starting moves stay on the bar")
+	assert_eq(bar.slice(starting_moves.size()).count(0), bar.size() - starting_moves.size(), "with no other slot holding a move")
 	_clear_test_slots()
 
 
@@ -497,6 +564,27 @@ func test_game_shell_hosts_current_zone():
 	assert_eq(game.zone_host.get_child(0).zone_id, 2, "zone swap on zone_changed")
 	assert_false(game.get_node("StoreWindow").visible, "store starts hidden")
 	assert_false(game.get_node("ZoneMapOverlay").visible, "map overlay starts hidden")
+
+
+# The original's Proceed shows its skills frame after a win that levels the
+# player up (DefineButton2_3004 on(release), lines 17-29), and the port's hub
+# opens the Abilities window for it, through the hotbar like the Abilities
+# button does. The flag clears, so the next time the hub loads it opens shut.
+func test_hub_opens_the_abilities_window_when_the_flag_is_set_and_clears_it():
+	ZoneManager.open_abilities_on_load = true
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	assert_true(game.get_node("AbilitiesWindow").visible, "the Abilities window is open")
+	assert_false(ZoneManager.open_abilities_on_load, "the flag is cleared")
+	assert_false(game.get_node("ZoneMapOverlay").visible, "the map stays shut")
+	assert_true(game.get_node("Hotbar").get_node("%AbilitiesButton/Glow").visible, "the Abilities button glows, as after a click")
+
+
+func test_hub_leaves_the_abilities_window_shut_when_the_flag_is_unset():
+	ZoneManager.open_abilities_on_load = false
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	assert_false(game.get_node("AbilitiesWindow").visible, "the Abilities window stays shut")
 
 
 func test_hotbar_shows_progress_from_save():

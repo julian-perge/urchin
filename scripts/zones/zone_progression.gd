@@ -74,6 +74,53 @@ const CUTSCENE_GOTO_SCENE: Dictionary = {
 	"CS_CUT2": "overMap", "CS_CUT3": "Navigation", "CS_CUT4": "overMap", "CS_CUT5": "endMenu",
 }
 
+# The fight a new game opens on, as the pick ZoneManager hands the Battle screen:
+# battle 100 as a Story fight, with CS_INTRO2 played first. The Start button
+# sends the player to CS_INTRO2 when the Tutorial is off
+# (DefineButton2_2770 on(release), lines 7-10), the clip's end goes on to
+# IntroSeq2 (frame_293/DoAction.as:1), and IntroSeq2's last frame starts
+# battle 100 with progressFight on (frame_180/DoAction.as:2-3). Nothing on that
+# path sets bossFight, so it is not a boss fight.
+const FIRST_STORY_FIGHT: Dictionary = {
+	"battle_id": 100,
+	"is_story_progress": true,
+	"is_boss": false,
+	"cutscene_before": "CS_INTRO2",
+}
+
+# The Tutorial is battle 2 (frame_165/DoAction.as:2).
+const TUTORIAL_BATTLE_ID: int = 2
+
+# The fight a new game opens on when the Tutorial option is on, as the pick
+# ZoneManager hands the Battle screen. The Start button sends the player to
+# CS_INTRO when the option is on (DefineButton2_2770 on(release), lines 2-6), the
+# clip's end goes on to IntroSeq (the button's gotoSceneKrin), and IntroSeq's
+# last frame starts battle 2 with progressFight off (frame_165/DoAction.as:2-3).
+# Nothing on that path sets bossFight either.
+const TUTORIAL_FIGHT: Dictionary = {
+	"battle_id": TUTORIAL_BATTLE_ID,
+	"is_story_progress": false,
+	"is_boss": false,
+	"cutscene_before": "CS_INTRO",
+}
+
+# The moves IntroSeq puts on the first two bar slots for the Tutorial fight,
+# Quick Strike and Suppression (frame_165/DoAction.as:6-7).
+const TUTORIAL_MOVES: Array[int] = [21, 22]
+
+# The fight a win over the Tutorial goes straight on to. IntroSeq sets
+# cutsceneSequence to CS_INTRO2 (frame_165/DoAction.as:8) and the win jumps to it
+# instead of Navigation (frame_219/DoAction.as:73-77). From there the path is the
+# one START takes with the Tutorial off, so this is the same pick.
+const FIGHT_AFTER_TUTORIAL: Dictionary = FIRST_STORY_FIGHT
+
+# Story battles that play a Cutscene before the fight, as the pick's cutscene_before.
+# The PRISON orb plays CS_CUT1 whenever BattlePick is 109 and progressFight, which is
+# the pick's is_story_progress, is on (DefineButton2_3188 on(press), lines 18-24). A
+# loss changes no progress, so every attempt plays it again. No other orb plays a
+# Cutscene, and a Boss replay turns progressFight off.
+const CUTSCENE_BEFORE_BATTLES: Dictionary = {109: "CS_CUT1"}
+
 
 static func quest_progress(save: PlayerSave, zone: int) -> int:
 	if zone < 0 or zone >= save.quest_progress.size():
@@ -88,6 +135,8 @@ static func quest_progress(save: PlayerSave, zone: int) -> int:
 # (frame_42/DoAction.as:55-74). The orbs set it for a beaten zone's boss replay
 # and for the fight at the zone's progress_max, apart from zone 4's.
 # counts_as_training tells ZoneManager to set the save's used_training.
+# cutscene_before names the Cutscene that plays before the fight, and the pick
+# leaves the key out when none does.
 static func pick_story_battle(save: PlayerSave) -> Dictionary:
 	var zone: int = save.section_in
 	var hub: Dictionary = QUEST_HUB.get(zone, {})
@@ -118,12 +167,15 @@ static func pick_story_battle(save: PlayerSave) -> Dictionary:
 		# 3220, 3239 and 3204. Zones 6 and 7 share the ROME and JAPAN orb,
 		# DefineButton2_3243, which replays without setting it.
 		counts_as_training = zone <= 5
-	return {
+	var pick: Dictionary = {
 		"battle_id": battle_id,
 		"is_story_progress": is_story_progress,
 		"is_boss": is_boss,
 		"counts_as_training": counts_as_training,
 	}
+	if is_story_progress and CUTSCENE_BEFORE_BATTLES.has(battle_id):
+		pick["cutscene_before"] = CUTSCENE_BEFORE_BATTLES[battle_id]
+	return pick
 
 
 # The training orbs (DefineButton2_3186 in zones 1 to 5, 3242 in zone 6) build

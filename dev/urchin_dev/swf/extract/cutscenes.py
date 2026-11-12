@@ -2,8 +2,9 @@
 # on the root timeline, gotoAndStop-jumped into by frame label (see
 # frame_219/DoAction.as's afterCut assignments, and each cutscene sprite's own
 # final-frame DoAction setting cutSceneEnd). Produces
-# assets/cutscenes/CS_CUT{2,3,4,5}.ogv - Ogg Theora is Godot's only built-in
-# video codec (WebM was removed from Godot core in 4.0).
+# assets/cutscenes/<label>.ogv for every label in CUTSCENES below - Ogg Theora
+# is Godot's only built-in video codec (WebM was removed from Godot core in
+# 4.0).
 #
 # The pair is an *animation* sprite (chid N, one frame per animation frame)
 # nested inside a *wrapper* sprite (chid N+1, frameCount 1), and it is the
@@ -11,7 +12,7 @@
 # - it does two things that decide what the player of the original ever sees:
 #
 #   1. It places the animation sprite offset by translate (5395, 3049) twips
-#      = (269.75, 152.45) px, identical across all four wrappers.
+#      = (269.75, 152.45) px, identical across every wrapper.
 #   2. It places DefineShape 2870 - a plain 10660x6000-twip (533x300 px)
 #      rectangle - at depth 1 with a clipDepth covering the animation
 #      sprite's depth. That is a clip mask: everything the animation draws
@@ -104,7 +105,10 @@
 # Requires ffdec (~/.local/bin/ffdec) for the character-strip and video
 # export, and an ffmpeg with libtheora and libvorbis (`brew install
 # ffmpeg-full`) for the encode and the checks.
-# Run: uv run extract_cutscenes
+# Run: uv run extract_cutscenes [LABEL ...]
+# With no label every clip in CUTSCENES is extracted. A full run encodes all of
+# them again, and the encode does not reproduce the committed clips byte for
+# byte, so name the label of a new clip to leave the others as they are.
 from __future__ import annotations
 
 import functools
@@ -157,7 +161,10 @@ def tool(name: str) -> Path:
 # label -> (animation sprite chid, wrapper sprite chid, frame count,
 # camera clip chid to strip). The frame count is the *animation* sprite's;
 # the wrapper always declares 1 and gets patched up to this (see file header).
+# CS_CUT1 and CS_CUT3 place the same camera clip, 3812.
 CUTSCENES: dict[str, tuple[int, int, int, int]] = {
+    "CS_INTRO2": (3643, 3644, 2084, 3478),
+    "CS_CUT1": (3928, 3929, 621, 3812),
     "CS_CUT2": (3810, 3811, 1795, 3645),
     "CS_CUT3": (3960, 3961, 501, 3812),
     "CS_CUT4": (4038, 4039, 1237, 3962),
@@ -185,13 +192,16 @@ NOISE_RESIDUAL_THRESHOLD = 20.0
 NOISE_RATIO_THRESHOLD = 0.35
 NOISE_SAMPLE_INTERVAL_S = 1.0
 # Sprite 3960's real corruption hit 11/478 sampled frames - a wide, contiguous
-# run. Sprite 3643 (CS_INTRO2, which this script extracted as CS_CUT2 under
-# the old mapping) had 2 isolated flagged frames (~67.5-68.5s) that weren't
-# root-caused (not the same dangling-bitmap-fill pattern
-# find_broken_bitmap_fill_cids() catches) - tolerated rather than blocking
-# the whole export on a sub-second glitch. Anything past this still fails
-# loudly, so a real widespread corruption run still gets caught.
+# run. A clip may have up to this many sampled frames read as static before
+# the export fails loudly, so an isolated glitch does not block it and a real
+# widespread corruption run still gets caught.
 MAX_TOLERATED_NOISE_FRAMES = 2
+# CS_INTRO2 (sprite 3643) ends on a motorcycle jumping a prison yard behind
+# chain-link fence and razor wire. That fine detail reads as static, and three
+# sampled frames in a row do, at 67.5, 68.5 and 69.4 s. Frames 2025, 2055 and
+# 2083 of the stripped wrapper show real art and no noise, so this clip may
+# have three.
+TOLERATED_NOISE_FRAMES = {"CS_INTRO2": 3}
 
 MISSING_BITMAP = 65535
 
@@ -425,10 +435,11 @@ def verify_output(
     label: str, ogv_path: Path, expected_frames: int, has_audio: bool, work_dir: Path
 ) -> tuple[int, int]:
     """Fail loudly instead of shipping a silently-corrupt or mis-framed file -
-    except for up to MAX_TOLERATED_NOISE_FRAMES isolated noise hits, which
-    print a warning and pass rather than blocking the whole export. Returns
-    the video stream's (width, height) so main() can cross-check that every
-    cutscene came out the same shape.
+    except for up to MAX_TOLERATED_NOISE_FRAMES isolated noise hits (a clip
+    named in TOLERATED_NOISE_FRAMES gets its own count), which print a warning
+    and pass rather than blocking the whole export. Returns the video stream's
+    (width, height) so main() can cross-check that every cutscene came out the
+    same shape.
 
     Checks: exactly the expected stream types are present (Theora video,
     Vorbis audio if the source sprite had one), the frame is exactly the
@@ -524,14 +535,15 @@ def verify_output(
         detail = ", ".join(
             f"{ts:.2f}s (residual {d:.1f}, ratio {r:.2f})" for ts, d, r in bad_frames
         )
-        if len(bad_frames) > MAX_TOLERATED_NOISE_FRAMES:
+        tolerated = TOLERATED_NOISE_FRAMES.get(label, MAX_TOLERATED_NOISE_FRAMES)
+        if len(bad_frames) > tolerated:
             raise RuntimeError(
                 f"{label}: {len(bad_frames)}/{n_samples} sampled frame(s) look like "
                 f"corrupted static/noise rather than real content: {detail}"
             )
         print(
             f"{label}: tolerating {len(bad_frames)}/{n_samples} sampled frame(s) "
-            f"that look like static (within the {MAX_TOLERATED_NOISE_FRAMES}-frame "
+            f"that look like static (within the {tolerated}-frame "
             f"tolerance): {detail}",
             file=sys.stderr,
         )
@@ -546,6 +558,14 @@ def process_cutscene(
     overlay_chid: int,
     index: SwfIndex,
 ) -> tuple[int, int]:
+    # verify_output() holds the clip to this same count, so a wrong count in
+    # the table would pass it. The SWF is where the count comes from.
+    swf_frames = index.sprite_frames.get(chid)
+    if swf_frames != frames:
+        raise RuntimeError(
+            f"{label}: the table gives sprite {chid} {frames} frames, "
+            f"but the SWF declares {swf_frames}"
+        )
     print(
         f"--- {label}: sprite {chid} in wrapper {wrapper_chid}, {frames} frames, "
         f"stripping overlay {overlay_chid} ---",
@@ -652,6 +672,12 @@ def process_cutscene(
 
 
 def main():
+    labels = sys.argv[1:] or list(CUTSCENES)
+    unknown = [label for label in labels if label not in CUTSCENES]
+    if unknown:
+        raise SystemExit(
+            f"unknown cutscene label(s) {unknown}, CUTSCENES has {list(CUTSCENES)}"
+        )
     for name in _TOOL_HINTS:
         tool(name)
     encoders = run([str(tool("ffmpeg")), "-hide_banner", "-encoders"]).stdout
@@ -664,7 +690,8 @@ def main():
     index = read_swf(WEB_SWF)
 
     resolutions: dict[str, tuple[int, int]] = {}
-    for label, (chid, wrapper_chid, frames, overlay_chid) in CUTSCENES.items():
+    for label in labels:
+        chid, wrapper_chid, frames, overlay_chid = CUTSCENES[label]
         resolutions[label] = process_cutscene(
             label, chid, wrapper_chid, frames, overlay_chid, index
         )

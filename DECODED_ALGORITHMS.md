@@ -184,14 +184,14 @@ slots 3 and 5, by whether each unit is active (`frame_217/PlaceObject2_3389_480`
 guest's row would work. Only battles 2 and 508 put a guest on the player's team (measured over the 99 battles in `resources/battles`). Battle 2 hides the bar outright
 (`DefineSprite_3317/frame_1/PlaceObject2_3312_7` onClipEvent(load), lines 5-8). Battle 508's only phase entry is flagged endGame, so it is won the moment its opening lines finish (lines
 862-868), and the block at line 703 needs `speechDone` true with `winCondition` still below 0 (lines 589-591), so it never runs. The bar starts hidden (`gotoAndStop("HIDE")` in that same
-onClipEvent). This is read from the AS, not seen in a live run of the SWF. The port gives a row only to a unit whose `origin` is COMPANION, so no guest gets one there either. When the rows
+onClipEvent). This is read from the AS, not seen in a live run of the SWF. The port gives a row only to a unit whose `origin` is COMPANION, so no guest gets one there either, and `_populate_stance_rows` builds none in battle 2 whoever fights there, as the original's load handler hides the bar. When the rows
 show still differs: the port keeps a companion's row up for the whole battle, while the original shows the bar only at Decisions, so it never appears in the four battles won during their
 opening lines (210, 409, 504 and 508).
 
 ## New Game and Load Game (root frames 56 to 93, `Krin.dataMode`)
 
 Ported: `main_menu.gd` opens on New Game and Load Game, asks for the name before the slot list, lets New Game use any slot with the hover warning, takes the name as typed, doesn't
-save when the game starts, and sends every Back to its first screen. In the game the player is "Sonny" whatever the typed name is.
+save when the game starts, goes on to the first fight when it starts, and sends every Back to its first screen. In the game the player is "Sonny" whatever the typed name is.
 
 - `subMenu`, root frame 56, captions its buttons with `MENU[21]` "New Game", `MENU[22]` "Load Game" and `MENU[85]` "PvP Arena" (`frame_56/DoAction.as:1-3`). New Game (`DefineButton2_2707`
   on(release), lines 2-3) goes to `nameMenu` and sets `Krin.dataMode` to "save". Load Game (`DefineButton2_2706` on(release), lines 2-3) goes to `dataMenu` and sets it to "load". The port
@@ -217,6 +217,29 @@ save when the game starts, and sends every Back to its first screen. In the game
   the stage at x -86 to -44, and the KRINMENU frame holding the last caller, `DefineButton2_3121`, is only opened by 3182.
 - So a new game in a used slot leaves the old save on disk until its first save, and a game over before then reloads the old save, because Re-Load reads the slot back
   (`DefineButton2_2791` on(release), lines 2-7).
+- Start (`DefineButton2_2770` on(release)) sends the player to CS_INTRO when `Krin.tutorOn` is true and to CS_INTRO2 when it is false, and sets `gotoSceneKrin` to "IntroSeq" or
+  "IntroSeq2" first. CS_INTRO2 is root frame 293 and sets `gotoSceneKrin` to "IntroSeq2" again (`frame_293/DoAction.as:1`). When the clip ends, the cutscene controller jumps to
+  `gotoSceneKrin` (`frame_263/PlaceObject2_3466_80` enterFrame, line 33). IntroSeq2 is root frame 166. Frames 166 to 179 have no script, and frame 180 sets `Krin.BattlePick` to 100
+  and `progressFight` on, then loads the battle (`frame_180/DoAction.as:2-3` and 9). So a new game with the Tutorial off plays CS_INTRO2 and then fights battle 100 as a Story fight.
+  The port's `ZoneManager.request_new_game_fight` hands the Battle screen that pick, `ZoneProgression.FIRST_STORY_FIGHT`, with `cutscene_before` set to "CS_INTRO2". With the Tutorial on,
+  `ZoneManager.request_tutorial_fight` hands it the pick below instead.
+- With the Tutorial on, which it is by default (`frame_93/DoAction.as:7` sets `Krin.tutorOn` each time the settings frame opens, and `DefineButton2_2769` on(release) toggles it), Start plays
+  CS_INTRO and the clip's end goes to IntroSeq, root frame 151. Frames 151 to 164 have no script. Frame 165 sets `Krin.BattlePick` to 2 and `progressFight` off, puts moves 21 and 22 on bar
+  slots 0 and 1, sets `cutsceneSequence` to "CS_INTRO2" and loads the battle (`frame_165/DoAction.as:2-3` and 6-9). `ZoneManager.request_tutorial_fight` puts
+  `ZoneProgression.TUTORIAL_MOVES` on the port's bar and hands the Battle screen `ZoneProgression.TUTORIAL_FIGHT`: battle 2, not a Story fight, with `cutscene_before` set to "CS_INTRO".
+- A win over battle 2 runs `frame_219/DoAction.as` like any win. `progressFight` is off, so Quest progress stays 0. The frame puts `startSkill1` and `startSkill2` back on bar slots 0 and 1
+  when `BattlePick` is 2 (lines 65-69). Then it stops every sound and jumps to `cutsceneSequence` instead of Navigation (lines 73-81). The clip's end sets `cutsceneSequence` back to 0
+  (`frame_263/PlaceObject2_3466_80` enterFrame, line 32) and goes to IntroSeq2 as above. The victory screen only opens on Navigation's load (`frame_181/PlaceObject3_3142_175`
+  onClipEvent(load), lines 3-7). Its frame holds the money (`DefineSprite_3142/frame_9/DoAction.as:43`), the XP (the `expWorkOut` calls in the three `PlaceObject3_3002` clips) and every
+  `awardAch` call (`DefineSprite_3142/frame_9/DoAction_2.as`). Drops are rolled when the battle loads (`frame_201/DoAction.as:233-267`), and the player only takes them on that screen
+  (`DefineButton2_3012` on(press)). So a Tutorial win pays and unlocks nothing. This is read from the AS, not seen in a live run. The port's `BattleSettlement.settle` returns early for
+  battle 2 after it puts `TalentTree.STARTING_MOVES` back, and sets `next_fight` to `ZoneProgression.FIGHT_AFTER_TUTORIAL`, which is `FIRST_STORY_FIGHT`. The Battle screen opens no
+  victory screen for such a win and requests that fight through `ZoneManager.request_fight`.
+- Frame 180 also sets `soundPlayCounter` to 3, `soundModeKrin` to 0 and `bangStart` on (lines 4-6). So the first fight plays `_music_battle2`, entry 3 of `soundPlayArray`
+  (`frame_41/DoAction_2.as:11`), and starts it at full volume at once (`frame_42/DoAction.as`, `addSound` with "Music" and 2). The port does not do this. Its Battle screen starts the
+  rotation's next track and fades it in, as it does for every fight. The Tutorial's battle 2 sets `soundPlayCounter` to 1 and `bangStart` on the same way (`frame_165/DoAction.as:4-5`).
+  With the Tutorial on, the next track after battle 2's `_music_battle1` is `_music_menu2`, because no menu track plays between the two fights, so battle 100 plays a menu track. A
+  headless run measured this on 2026-11-11: the menu track, then battle 2, then battle 100 played `_music_menu1`, `_music_battle1` and `_music_menu2`.
 
 ## Starting state (new game)
 
@@ -618,6 +641,46 @@ Ported: once CS_CUT5 ends, `battle_scene.gd`'s `_on_victory_proceed` opens `Endi
   at the export's 2x raises that to 17. The logo, the copyright line and the "Play MORE Games!" link are left out like the game over screen's, see
   `docs/adr/0002-leave-out-the-armor-games-branding.md`.
 
+## CS_INTRO (root frame 263)
+
+Ported: `CutscenePlayer.play("CS_INTRO")` shows `CsIntro` (`scripts/cutscenes/cs_intro.gd`) in place of a clip, with the same fade and `finished`. `extract_cs_intro` writes the gradient
+and `assets/cutscenes/cs_intro.json` for it. The Tutorial plays it: the main menu's start button calls `ZoneManager.request_tutorial_fight` when the Tutorial option is on, `ZoneProgression.TUTORIAL_FIGHT` names it as
+its `cutscene_before`, and the Battle screen plays it before the fight.
+
+- The Start button opens the Tutorial on it (`DefineButton2_2770` on(release), lines 2-11). Root frame 263 places the gradient, DefineShape 3475, at depth 1 and the four edit texts 3474,
+  3473, 3472 and 3471 at depths 2 to 5. The texts' variables are `introText1` to `introText4`. Each text has a Glow filter (blur 3, strength 10, black) and a `DropShadow` filter (blur 8,
+  distance 2 at 45 degrees, strength 1, black). The frame also places the timer sprite 3470, the SKIP button 3468 and its text 3469, the subtitle text 3467 and the fade clip 3466.
+- The frame's script runs `stop()` and sets `introText1` to `introText4` to `MENU[86]` to `MENU[89]` of `KrinLang[KLangChoosen]` (`frame_263/DoAction.as:2-5`). `KLangChoosen` is "ENGLISH"
+  (`frame_1/DoAction.as:4512`). Frames 1 and 41 both build the English table, with the same four strings (lines 294-297 of each).
+- The fields bake in text as their `initialText`, which the script replaces. Only the first differs from its MENU string: "One month ago, Sonny wakes up on the ship..." against "One month ago. Sonny
+  wakes up on the ship." The other three bake in the same words as `MENU[87]` to `MENU[89]`. Edit text 3467 shows nothing, because no script sets its variable, `subText`.
+- DefineSprite 3470 draws nothing and plays no sound. Its last frame, frame 401, runs `_root.cutSceneEnd = true` and `stop()` (`DefineSprite_3470/frame_401/DoAction.as`). The fade clip
+  starts opaque and loses 5 alpha points a frame until `cutSceneEnd` is true. Then it gains 5 a frame, and at full alpha it goes to `gotoSceneKrin` (`frame_263/PlaceObject2_3466_80`
+  enterFrame). Each fade is 20 frames. The timer runs under the first fade, so the original leaves about 420 frames after it starts.
+- The port holds the lines for the timer's 401 frames at 30 fps, which is 13.37 s, after its fade-in, as it plays a clip after the fade-in. So it runs about 20 frames longer than the original.
+  A press of SKIP ends the hold at once, as it ends a clip, and a press during the fade-in skips the hold.
+- The gradient is a radial gradient from (30, 36, 38) at its center to black. The shape is a little bigger than the Stage, from -6 to 804 px by -4 to 584 px, and the render keeps the part
+  inside the Stage.
+- The fields allow wrapping, but each MENU string fits on one line, so the port draws one Label for each. A Label cannot blur. The glow is an outline half as wide as its blur, and the
+  shadow is one hard copy of the text moved by its distance along its angle. Their strength and the shadow's blur are not drawn.
+
+## The SKIP button on every cutscene (button 3468)
+
+Ported: `CutscenePlayer` places the button and its text from `assets/cutscenes/skip_button.json`, which `uv run extract_cutscene_skip` writes, and a press ends the cutscene.
+
+- Root frame 263, the frame of CS_INTRO, places button 3468 at depth 77 and the "SKIP" text, edit text 3469, at depth 76. Frame 449 removes both. So every root frame from 263 to 448 shows them, which
+  covers all seven CS_ labels, and all seven place them in the same spot: the text at (675.55, 545.75) and the button, scaled 2.63 across and 0.89 down, at (759.55, 554.95).
+- The button has no art. Its one record draws shape 291, a 30 px square, in the hit-test state only. So its hit area is 79 by 27 px at the bottom right of the stage, and the player sees only the text. The
+  text is white, 12 px and right-aligned in the bold `_sans` Device font, which the port draws as a Label.
+- Release calls `stopAllSounds()` and sets `cutSceneEnd` (`DefineButton2_3468` on(release)). The fade clip 3466, placed at depth 80 above the button, then fades to black and jumps to `gotoSceneKrin`
+  (`frame_263/PlaceObject2_3466_80` enterFrame, lines 9-33). That is the same place that the clip's own last frame sends it, because that frame sets `cutSceneEnd` too (`DefineSprite_4153/frame_2424/DoAction.as:1`
+  for CS_CUT5). The port's press stops the clip and its audio, and then runs the fade out, `finished` and the free that the end of the clip runs.
+- The fade clip has an enterFrame handler only, and nothing stops the button while the cutscene fades in, so a press in that first 0.67 s counts. The release handler stops no clip, so the original's picture plays on
+  under the fade out and only its sound stops. Both are read from the AS and not confirmed in a live run. The port starts the clip with the fade-in, as the original does, stops it on an early press, and holds the last frame of a clip that it stopped (#51).
+- The cutscene sprite plays from the frame that places it, under the fade clip's fade-in: the fade clip only lowers `_alpha` while `cutSceneEnd` is false, and the CS_CUT5 sprite has no script before
+  frame 2424 (`DefineSprite_4153`). The port first faded in over an empty video, which showed the battle under it, or the Victory screen after Proceed, for 0.67 s before the clip started. A black rect
+  under the video now stands in for the original's own root frame, which shows nothing of the battle.
+
 ## Zone hub orbs (DefineSprite 3287)
 
 Ported: `ZoneProgression.pick_story_battle` and `pick_training_battle` carry each orb's flags, and `scenes/zones/zone*.tscn` place the orbs.
@@ -632,6 +695,12 @@ Ported: `ZoneProgression.pick_story_battle` and `pick_training_battle` carry eac
 - `usedTraining` is set by the zones 1 to 5 training orb (`DefineButton2_3186` on(press), line 15) and by the boss replays of the zones 1 to 5 story orbs (`DefineButton2_3188` line 9, the
   others line 12). The ROME training orb and the ROME and JAPAN story orb never set it. Predator and Legend are decided on the first wins of 212 and 513, before zone 6 opens, so neither
   award changes.
+- The PRISON orb plays CS_CUT1 before the fight when `BattlePick` is 109 and `progressFight` is on (`DefineButton2_3188` on(press), lines 18-24). It sets `afterCut` to "CS_CUT1" and
+  `gotoSceneKrin` to "LOADBATTLESCENE", calls `stopAllSounds()` and goes to the CS_CUT1 label. The clip's last frame sets `cutSceneEnd` (`DefineSprite_3928/frame_621/DoAction.as:1`), and
+  the fade clip then goes on to the battle without touching the music (`frame_263/PlaceObject2_3466_80` enterFrame, lines 15-33). `progressFight` is on for the first fight at 109 and off
+  for a Boss replay (line 11), and a loss changes no progress, so every attempt at 109 plays the clip and a replay plays none. No other orb plays a cutscene. The port's
+  `ZoneProgression.pick_story_battle` sets `cutscene_before` to "CS_CUT1" for a Story fight at 109 and leaves it out of a Boss replay, and the Battle screen plays it (#48). This is read
+  from the AS and not confirmed in a live run.
 
 ## Hub panel on the Navigation frame (root frame 181)
 
@@ -673,4 +742,5 @@ Everything below still stands in for original behavior, except the rows marked D
 | Abilities tutorial callout | skipped | texts 3063 + glow box sprite 3059 (frame 25) |
 | Sky horizon | **DONE (2026-08-22)**: the strip position comes from `battle_layout.json` (`BATTLE_LAYOUT_PATH` in `battle_scene.gd`), no longer an empirical y = 292 | background clips' own art timelines (sky placement baked per zone) |
 | Start-menu flow | slot -> name+class -> options | original: PLAY -> name entry (root ~65) -> slot select (~75) -> class (~85) -> options (~95) |
+| Music of a new game's first fight | the rotation's next track, faded in, as for any fight | `frame_180/DoAction.as:4-6` sets `soundPlayCounter` 3 (`_music_battle2`) and `bangStart`, so it starts at full volume. See "New Game and Load Game" above |
 | Battle countdown | **DONE (2026-11-08)** for the timing: 4 s on Heroic only, running out passes the turn, and Easy and Normal wait with the label hidden. The display is still a number in the bottom bar's `Panel3` | 120 frames (4 s at 30 fps) on Heroic only, and the half-turn starts when it runs out: see "Heroic decision timer" above. The original shows no number: `battleClocker` (DefineSprite 3389) sits behind the pass button and fills the two half-dials of DefineSprite 3386 from `BattleTimeNow` |

@@ -1,29 +1,48 @@
 # cutscene_player.gd
-# Reusable full-screen cutscene player: fades in from black, plays an .ogv
-# clip with audio, fades back to black on completion, then frees itself.
-# The original does have a skip: button 3468, labelled by the "SKIP" text
-# 3469, sits on every cutscene frame and stops all sounds and sets
-# cutSceneEnd when released (DefineButton2_3468/BUTTONCONDACTION
-# on(release).as). This player has no input handling, so it has no skip yet.
+# Reusable full-screen cutscene player: plays an .ogv clip with audio under a
+# fade in from black, fades back to black on completion, then frees itself.
+#
+# It has the original's SKIP button. Button 3468, a hit area at the bottom
+# right, and the "SKIP" text 3469 sit on every cutscene frame. Releasing the
+# button stops all sounds and sets cutSceneEnd
+# (DefineButton2_3468/BUTTONCONDACTION on(release).as), and the original's fade
+# clip then fades out and jumps to gotoSceneKrin
+# (frame_263/PlaceObject2_3466_80/CLIPACTIONRECORD onClipEvent(enterFrame).as).
+# Here a press stops the clip and its audio. Then the same fade out, finished
+# signal and queue_free run as when the clip plays to its end. The button works
+# from the first frame, while the cutscene still fades in. extract_cutscene_skip
+# writes assets/cutscenes/skip_button.json, which says where the button and its
+# text go and how the text is drawn.
+#
+# CS_INTRO is the one id that is not a clip. The original draws it as text over a
+# gradient, so play() fades in scenes/cutscenes/cs_intro.tscn for it and holds it
+# for as long as the original does, or until the player presses SKIP. Then it
+# fades out and finishes as it does for a clip.
 #
 # Two things in cutscene_player.tscn exist to keep the rest of the game out
 # of the way while the clip runs, and both matter:
 #   - The root Control is MOUSE_FILTER_STOP, so clicks land here instead of
 #     falling through to whatever put the cutscene up. Without it the battle
-#     victory screen's Proceed button stays live underneath for the clip's
-#     whole unskippable runtime.
-#   - The video and the fade sit under a CanvasLayer at layer 100, above
-#     battle_scene.tscn's "UI" layer (the default, 1). Added to an ordinary
-#     Control the way battle_scene.gd adds this, they would otherwise draw
-#     *under* the battle HUD.
+#     victory screen's Proceed button stays live underneath for as long as the
+#     clip plays.
+#   - The video, the SKIP button and the fade sit under a CanvasLayer at layer
+#     100, above battle_scene.tscn's "UI" layer (the default, 1). Added to an
+#     ordinary Control the way battle_scene.gd adds this, they would otherwise
+#     draw *under* the battle HUD.
+# The fade rect sits above the SKIP button and ignores the mouse. So the button
+# fades with the clip, as in the original, and still takes clicks.
 class_name CutscenePlayer
 extends Control
 
 signal finished
 
-# Emitted once playback has ended, whether the video reported it or the
-# failsafe timeout did. Private to _await_playback_end().
+# Emitted when playback ends: the video reported it finished, the failsafe
+# timeout ran out, CS_INTRO's hold ran out, or the player pressed SKIP.
 signal _playback_settled
+
+# Where the SKIP button's hit area and its text go, and how the text is drawn.
+# extract_cutscene_skip writes this file.
+const SKIP_LAYOUT_PATH: String = "res://assets/cutscenes/skip_button.json"
 
 # The original's fade steps _alpha by 5 per frame at 30fps, so a full
 # 0-100 sweep is 20 frames = 0.667s. Matched here for both fade directions.
@@ -36,6 +55,9 @@ const PLAYBACK_TIMEOUT_MARGIN_SECONDS: float = 5.0
 # Budget used when the stream will not report a length at all
 # (get_stream_length() returns 0). Longer than any of the 4 clips.
 const PLAYBACK_TIMEOUT_FALLBACK_SECONDS: float = 120.0
+
+const INTRO_ID: String = "CS_INTRO"
+const CsIntroScene: PackedScene = preload("res://scenes/cutscenes/cs_intro.tscn")
 
 # 1.0 = normal pacing; 0.0 or less = instant (tests). Mirrors
 # battle_scene.gd's animation_speed / _pause convention.
@@ -50,8 +72,34 @@ var playback_timeout_seconds: float = 0.0
 # driving the same fade_rect/queue_free.
 var _started: bool = false
 
+# Set when the player presses SKIP. A press before play() reaches its wait for
+# the clip or for CS_INTRO's hold emits _playback_settled with nothing listening,
+# so play() and _hold() check this.
+var _skipped: bool = false
+
+@onready var overlay: CanvasLayer = $Overlay
 @onready var video: VideoStreamPlayer = $Overlay/Video
+@onready var skip_text: Label = $Overlay/SkipText
+@onready var skip_button: Button = $Overlay/SkipButton
 @onready var fade_rect: ColorRect = $Overlay/FadeRect
+
+
+func _ready() -> void:
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(SKIP_LAYOUT_PATH))
+	var hit: Dictionary = layout["button"]
+	skip_button.position = Vector2(hit["x"], hit["y"])
+	skip_button.size = Vector2(hit["w"], hit["h"])
+	var text: Dictionary = layout["text"]
+	var rect: Dictionary = text["rect"]
+	skip_text.text = text["string"]
+	skip_text.horizontal_alignment = LabelLayout.ALIGNMENTS[text["align"]]
+	skip_text.add_theme_font_size_override("font_size", int(text["size"]))
+	skip_text.add_theme_color_override("font_color", Color(text["color"]))
+	# The size goes on last. A Control never shrinks back from a size that its
+	# minimum forced up, and the minimum of a 16 px Label is taller than this one.
+	skip_text.position = Vector2(rect["x"], rect["y"])
+	skip_text.size = Vector2(rect["w"], rect["h"])
+	skip_button.pressed.connect(_on_skip_pressed)
 
 
 func play(cutscene_id: String) -> void:
@@ -59,6 +107,10 @@ func play(cutscene_id: String) -> void:
 		push_warning("CutscenePlayer.play() called again on an instance already playing %s - ignored." % cutscene_id)
 		return
 	_started = true
+
+	if cutscene_id == INTRO_ID:
+		await _play_intro()
+		return
 
 	var stream: VideoStream = load("res://assets/cutscenes/%s.ogv" % cutscene_id)
 	if stream == null:
@@ -70,21 +122,61 @@ func play(cutscene_id: String) -> void:
 		queue_free()
 		return
 
+	# The original places the clip on the same root frame as the fade clip, and
+	# nothing stops the clip on its first frame, so it plays under the fade-in
+	# (frame_263/PlaceObject2_3466_80 enterFrame, lines 2-8). A SKIP press
+	# during the fade-in stops it.
 	video.stream = stream
 	fade_rect.color.a = 1.0
-	await _fade(0.0)
 	video.play()
-	await _await_playback_end()
+	await _fade(0.0)
+	if not _skipped:
+		await _await_playback_end()
 	await _fade(1.0)
 	finished.emit()
 	queue_free()
 
 
-# Waits for whichever comes first: the video reporting it finished, or a
-# timeout sized from the clip's own length. A Theora stream that stalls or
-# fails to decode partway never emits "finished", and there is no skip input
-# and no other way out of a cutscene, so waiting on the video alone would
-# soft-lock the game outright. Timing out is treated exactly like a normal
+# The scene takes the video's place in the overlay's order, so SKIP and the fade stay
+# above it.
+func _play_intro() -> void:
+	var intro: CsIntro = CsIntroScene.instantiate()
+	overlay.add_child(intro)
+	overlay.move_child(intro, video.get_index() + 1)
+	fade_rect.color.a = 1.0
+	await _fade(0.0)
+	await _hold(intro.hold_seconds)
+	await _fade(1.0)
+	finished.emit()
+	queue_free()
+
+
+# Waits `seconds` of the original's time. animation_speed scales the wait as it scales
+# the fades. It ends early when the player presses SKIP, and a speed of 0 or less, or a
+# press before it starts, skips it.
+func _hold(seconds: float) -> void:
+	if animation_speed <= 0.0 or _skipped:
+		return
+	var timer: SceneTreeTimer = get_tree().create_timer(seconds / animation_speed)
+	var settle: Callable = func(): _playback_settled.emit()
+	timer.timeout.connect(settle, CONNECT_ONE_SHOT)
+	await _playback_settled
+	# Drop the timer's call if SKIP ended the wait first, so it can't reach a freed node.
+	if timer.timeout.is_connected(settle):
+		timer.timeout.disconnect(settle)
+
+
+func _on_skip_pressed() -> void:
+	_skipped = true
+	video.stop()
+	_playback_settled.emit()
+
+
+# Waits for whichever comes first: the video reporting it finished, a timeout
+# sized from the clip's own length, or the player pressing SKIP. A Theora
+# stream that stalls or fails to decode partway never emits "finished". The
+# player could press SKIP, but waiting on the video and SKIP alone would leave
+# the game stuck until they did. Timing out is treated exactly like a normal
 # end - fade out, signal, free - so the player still lands back in the game.
 func _await_playback_end() -> void:
 	var budget: float = playback_timeout_seconds

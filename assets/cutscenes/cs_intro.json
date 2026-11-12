@@ -1,0 +1,142 @@
+{
+ "fps": 30.0,
+ "hold_frames": 401,
+ "lines": [
+  {
+   "align": "center",
+   "color": "#ffffff",
+   "glow": {
+    "alpha": 1.0,
+    "angle": 0.0,
+    "blur_x": 3.0,
+    "blur_y": 3.0,
+    "color": "#000000",
+    "distance": 0.0,
+    "passes": 1,
+    "strength": 10.0
+   },
+   "menu": 86,
+   "rect": {
+    "h": 25.7,
+    "w": 840.6,
+    "x": -20.3,
+    "y": 216.8
+   },
+   "shadow": {
+    "alpha": 1.0,
+    "angle": 0.7853851318359375,
+    "blur_x": 8.0,
+    "blur_y": 8.0,
+    "color": "#000000",
+    "distance": 2.0,
+    "passes": 1,
+    "strength": 1.0078125
+   },
+   "size": 23.0,
+   "text": "One month ago. Sonny wakes up on the ship.",
+   "wrap": true
+  },
+  {
+   "align": "center",
+   "color": "#b6e0fc",
+   "glow": {
+    "alpha": 1.0,
+    "angle": 0.0,
+    "blur_x": 3.0,
+    "blur_y": 3.0,
+    "color": "#000000",
+    "distance": 0.0,
+    "passes": 1,
+    "strength": 10.0
+   },
+   "menu": 87,
+   "rect": {
+    "h": 22.25,
+    "w": 595.75,
+    "x": 4.5,
+    "y": 250.95
+   },
+   "shadow": {
+    "alpha": 1.0,
+    "angle": 0.7853851318359375,
+    "blur_x": 8.0,
+    "blur_y": 8.0,
+    "color": "#000000",
+    "distance": 2.0,
+    "passes": 1,
+    "strength": 1.0078125
+   },
+   "size": 17.0,
+   "text": "He remembers nothing.",
+   "wrap": true
+  },
+  {
+   "align": "center",
+   "color": "#5ebfff",
+   "glow": {
+    "alpha": 1.0,
+    "angle": 0.0,
+    "blur_x": 3.0,
+    "blur_y": 3.0,
+    "color": "#000000",
+    "distance": 0.0,
+    "passes": 1,
+    "strength": 10.0
+   },
+   "menu": 88,
+   "rect": {
+    "h": 26.7,
+    "w": 595.75,
+    "x": 47.0,
+    "y": 277.2
+   },
+   "shadow": {
+    "alpha": 1.0,
+    "angle": 0.7853851318359375,
+    "blur_x": 8.0,
+    "blur_y": 8.0,
+    "color": "#000000",
+    "distance": 2.0,
+    "passes": 1,
+    "strength": 1.0078125
+   },
+   "size": 22.0,
+   "text": "The blind man gives him a tape...",
+   "wrap": true
+  },
+  {
+   "align": "center",
+   "color": "#6c7dbd",
+   "glow": {
+    "alpha": 1.0,
+    "angle": 0.0,
+    "blur_x": 3.0,
+    "blur_y": 3.0,
+    "color": "#000000",
+    "distance": 0.0,
+    "passes": 1,
+    "strength": 10.0
+   },
+   "menu": 89,
+   "rect": {
+    "h": 19.0,
+    "w": 595.75,
+    "x": 149.85,
+    "y": 313.95
+   },
+   "shadow": {
+    "alpha": 1.0,
+    "angle": 0.7853851318359375,
+    "blur_x": 8.0,
+    "blur_y": 8.0,
+    "color": "#000000",
+    "distance": 2.0,
+    "passes": 1,
+    "strength": 1.0078125
+   },
+   "size": 17.0,
+   "text": "...then the blind man dies.",
+   "wrap": true
+  }
+ ]
+}

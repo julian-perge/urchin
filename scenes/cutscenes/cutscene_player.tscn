@@ -15,6 +15,18 @@ script = ExtResource("1_script")
 [node name="Overlay" type="CanvasLayer" parent="."]
 layer = 100
 
+; The original's cutscene is a root frame of its own, so nothing from the
+; battle or its Victory screen shows. The video draws nothing until it has
+; decoded its first frame, so this black rect covers the screen under it.
+[node name="Backdrop" type="ColorRect" parent="Overlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
 [node name="Video" type="VideoStreamPlayer" parent="Overlay"]
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,6 +36,18 @@ grow_vertical = 2
 mouse_filter = 2
 autoplay = false
 expand = true
+
+; The original puts the SKIP text at depth 76 and its button at depth 77, both
+; under the fade clip, so the two sit between the video and FadeRect and fade
+; with the clip. extract_cutscene_skip writes where they go and how the text is
+; drawn, and cutscene_player.gd reads that.
+[node name="SkipText" type="Label" parent="Overlay"]
+mouse_filter = 2
+
+[node name="SkipButton" type="Button" parent="Overlay"]
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
 
 [node name="FadeRect" type="ColorRect" parent="Overlay"]
 anchors_preset = 15

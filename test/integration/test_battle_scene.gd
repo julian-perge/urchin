@@ -13,11 +13,20 @@ const TEST_SAVE_DIR: String = "user://test_battle_scene_saves/"
 const ACHIEVEMENTS_FILE: String = "user://test_battle_scene_achievements.cfg"
 
 var _achievements_path: String
+# The Tutorial's unit slots as they were before a test patched the loaded battle,
+# or empty when no test did.
+var _tutorial_players_to_restore: Array = []
 
 
 func before_all():
 	_achievements_path = ZoneManager.achievements_path
 	ZoneManager.achievements_path = ACHIEVEMENTS_FILE
+
+
+func after_each():
+	if not _tutorial_players_to_restore.is_empty():
+		BattleSetup.load_battle(ZoneProgression.TUTORIAL_BATTLE_ID).players = _tutorial_players_to_restore
+		_tutorial_players_to_restore = []
 
 
 func after_all():
@@ -267,6 +276,108 @@ func _an_effect_is_playing() -> bool:
 	return AudioManagerAuto._effect_players.any(func(player): return player.is_playing())
 
 
+# Battle 100 started at animation_speed 0 from a pick that holds `extra` as well,
+# the way ZoneManager hands the screen a pick.
+func _start_battle_100_with(extra: Dictionary) -> Control:
+	GameData.current_save = PlayerSave.new_game("PickStart", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	var pick: Dictionary = {"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP}
+	pick.merge(extra)
+	scene.start_battle(pick)
+	return scene
+
+
+# A pick that names a Cutscene plays it before the fight, with every sound
+# stopped first. The zone 1 story orb does both for CS_CUT1 at 109
+# (DefineButton2_3188 on(press), lines 18-24), and only the clip's end goes on to
+# the battle. CS_INTRO2 leads into battle 100 the same way, through IntroSeq2
+# (frame_293/DoAction.as:1 and frame_180/DoAction.as).
+func test_a_pick_with_a_cutscene_stops_every_sound_and_plays_it_before_the_fight():
+	AudioManagerAuto.play_menu_music()
+	AudioManagerAuto.play_effect("sfx_hit2")
+	assert_true(_an_effect_is_playing(), "sanity: an effect is playing when the pick arrives")
+
+	var scene = _start_battle_100_with({"cutscene_before": "CS_INTRO2"})
+
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the Cutscene is playing")
+	if cutscene != null:
+		assert_eq(cutscene.video.stream.resource_path, "res://assets/cutscenes/CS_INTRO2.ogv", "and it is the pick's")
+	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "no music plays under it")
+	assert_false(_an_effect_is_playing(), "and no effect plays on into it")
+	await wait_process_frames(3)
+	assert_false(scene.decision_open, "the fight has not reached its first half-turn")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original loads the battle after the Cutscene (the orb's gotoSceneKrin is
+# "LOADBATTLESCENE", and IntroSeq2's last frame goes there too), and the battle
+# frame picks its music once, as it loads (frame_201/DoAction.as:86). So the
+# music and the first half-turn wait for the clip's end.
+func test_the_battle_music_and_the_first_half_turn_start_once_the_cutscene_ends():
+	var scene = _start_battle_100_with({"cutscene_before": "CS_INTRO2"})
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the Cutscene is playing")
+	assert_ne(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music has not started while the clip plays")
+	await wait_process_frames(3)
+	assert_false(scene.decision_open, "and the first half-turn has not opened its Decision")
+	if cutscene != null:
+		cutscene.video.finished.emit()
+
+	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music starts as the clip ends")
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_true(scene.decision_open, "and the first half-turn opens its Decision")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The battle frame opens on blacker5's frame 1, which fades the battle in from
+# black (DefineSprite_3355/frame_31/DoAction.as), and it loads after the
+# Cutscene. So the fade starts when the clip ends and not behind it. The battle
+# runs at full speed here, and the Cutscene keeps the speed 0 it was built with,
+# so it ends at once.
+func test_the_battle_fades_in_from_black_once_the_cutscene_ends():
+	var scene = _start_battle_100_with({"cutscene_before": "CS_INTRO2"})
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the Cutscene is playing")
+	scene.animation_speed = 1.0
+	if cutscene != null:
+		cutscene.video.finished.emit()
+
+	assert_eq(scene.get_node("Fade/Black").color, Color.BLACK, "the battle opens on full black")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A pick with no cutscene_before, or an empty one, starts the fight as it always
+# did: no Cutscene, and the battle music and the first Decision at once.
+func test_a_pick_with_no_cutscene_starts_the_fight_at_once():
+	await _assert_the_fight_starts_at_once({})
+
+
+func test_a_pick_with_an_empty_cutscene_starts_the_fight_at_once():
+	await _assert_the_fight_starts_at_once({"cutscene_before": ""})
+
+
+func _assert_the_fight_starts_at_once(extra: Dictionary) -> void:
+	AudioManagerAuto.stop_music()
+	var scene = _start_battle_100_with(extra)
+	assert_null(scene.get_node_or_null("CutscenePlayer"), "no Cutscene plays")
+	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music starts with the fight")
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_true(scene.decision_open, "and the first half-turn opens its Decision")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 # The victory screen's Proceed calls stopAllSounds() before it goes to a
 # cutscene (DefineButton2_3004 on(release), lines 8-11), which stops the effects
 # as well as the music. The win of story battle 109 is set before the battle
@@ -428,6 +539,341 @@ func test_the_ending_screen_stays_silent_and_ok_starts_the_first_menu_track():
 
 	AudioManagerAuto.stop_music()
 	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original's Proceed opens the zone map after any fight with bossFight on
+# when no cutscene is queued (DefineButton2_3004 on(release), lines 13-16, and
+# frame_219/DoAction.as:9-16), so a replay of a beaten zone's boss, which queues
+# no cutscene, lands on the map and not on the hub. The scene is a partial
+# double with _on_continue_pressed stubbed, because the real one changes the
+# scene and takes the test runner down with it.
+func test_proceeding_after_a_boss_replay_win_opens_the_zone_map():
+	var save = PlayerSave.new_game("BossReplayMap", 0)
+	save.quest_progress[1] = 10
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 109, "is_story_progress": false, "is_boss": true, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_null(scene.get_node_or_null("CutscenePlayer"), "no cutscene plays")
+	assert_called(scene, "_on_continue_pressed")
+	assert_true(ZoneManager.open_zone_map_on_load, "Proceed opens the zone map")
+
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The first win over 212 is a boss fight whose win queues no cutscene, so
+# Proceed reaches the original's bossJustPwned2 branch with a Story fight that
+# moves the zone on, and not only with a replay.
+func test_proceeding_after_the_first_212_win_opens_the_zone_map():
+	var save = PlayerSave.new_game("First212Map", 0)
+	save.section_in = 2
+	save.quest_progress[2] = 12
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 212, "is_story_progress": true, "is_boss": true, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_eq(save.quest_progress[2], 13, "the win moved the zone on")
+	assert_null(scene.get_node_or_null("CutscenePlayer"), "no cutscene plays")
+	assert_called(scene, "_on_continue_pressed")
+	assert_true(ZoneManager.open_zone_map_on_load, "Proceed opens the zone map")
+
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A win of a fight with bossFight off goes on to the hub, so Proceed leaves the
+# zone map shut (DefineButton2_3004 on(release), lines 13-16).
+func test_proceeding_after_a_non_boss_win_leaves_the_zone_map_shut():
+	var save = PlayerSave.new_game("NonBossMap", 0)
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_called(scene, "_on_continue_pressed")
+	assert_false(ZoneManager.open_zone_map_on_load, "the zone map stays shut")
+
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# With no cutscene queued and no boss win, the original's Proceed opens the
+# skills frame when playerLeveled is set (DefineButton2_3004 on(release), lines
+# 17-29), and the player's XP bar sets it when it fills
+# (DefineSprite_3142/frame_9/PlaceObject3_3002_1197 onClipEvent(enterFrame),
+# lines 21-23). The save starts the win just short of a full bar, so the win's
+# XP fills it.
+func test_proceeding_after_a_win_that_levels_the_player_up_opens_the_abilities_window():
+	var save = PlayerSave.new_game("LevelUpAbilities", 0)
+	save.experience = Leveling.EXP_PER_LEVEL - 0.01
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+	ZoneManager.open_abilities_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_eq(save.level, 2, "the win filled the XP bar")
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_null(scene.get_node_or_null("CutscenePlayer"), "no cutscene plays")
+	assert_called(scene, "_on_continue_pressed")
+	assert_true(ZoneManager.open_abilities_on_load, "Proceed opens the Abilities window")
+	assert_false(ZoneManager.open_zone_map_on_load, "the zone map stays shut")
+
+	ZoneManager.open_abilities_on_load = false
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A win whose XP leaves the bar short of full goes on to the hub, so Proceed
+# leaves the Abilities window shut (DefineButton2_3004 on(release), lines 17-29).
+func test_proceeding_after_a_win_with_no_level_up_leaves_the_abilities_window_shut():
+	var save = PlayerSave.new_game("NoLevelUp", 0)
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+	ZoneManager.open_abilities_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_eq(save.level, 1, "the win left the XP bar short of full")
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_called(scene, "_on_continue_pressed")
+	assert_false(ZoneManager.open_abilities_on_load, "the Abilities window stays shut")
+
+	ZoneManager.open_abilities_on_load = false
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original's Proceed opens overMap when bossJustPwned2 is set, and only
+# otherwise looks at playerLeveled (DefineButton2_3004 on(release), lines
+# 13-29), so a boss win that also fills the XP bar opens the map and not the
+# skills frame.
+func test_proceeding_after_a_boss_win_that_levels_the_player_up_opens_only_the_zone_map():
+	var save = PlayerSave.new_game("BossLevelUp", 0)
+	save.quest_progress[1] = 10
+	save.experience = Leveling.EXP_PER_LEVEL - 0.01
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+	ZoneManager.open_abilities_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 109, "is_story_progress": false, "is_boss": true, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_gt(save.level, 1, "the win filled the XP bar")
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+
+	assert_called(scene, "_on_continue_pressed")
+	assert_true(ZoneManager.open_zone_map_on_load, "Proceed opens the zone map")
+	assert_false(ZoneManager.open_abilities_on_load, "the Abilities window stays shut")
+
+	ZoneManager.open_abilities_on_load = false
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original's Proceed jumps to afterCut before it looks at playerLeveled
+# (DefineButton2_3004 on(release), lines 8-29), so a win that queues a cutscene
+# plays it and nothing else, even when the win fills the XP bar. The first win
+# over 210 queues CS_CUT3, which goes on to Navigation, the hub (frame_219).
+func test_proceeding_after_a_level_up_win_that_queues_a_cutscene_leaves_the_abilities_window_shut():
+	var save = PlayerSave.new_game("CutsceneLevelUp", 0)
+	save.section_in = 2
+	save.quest_progress[2] = 10
+	save.experience = Leveling.EXP_PER_LEVEL - 0.01
+	save.autosave = false
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	ZoneManager.open_zone_map_on_load = false
+	ZoneManager.open_abilities_on_load = false
+
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_on_continue_pressed").to_do_nothing()
+	add_child_autofree(scene)
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 210, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+	assert_gt(save.level, 1, "the win filled the XP bar")
+	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	assert_not_null(scene.get_node_or_null("CutscenePlayer"), "CS_CUT3 plays")
+	scene.get_node("CutscenePlayer").video.finished.emit()
+
+	assert_called(scene, "_on_continue_pressed")
+	assert_false(ZoneManager.open_abilities_on_load, "the Abilities window stays shut")
+	assert_false(ZoneManager.open_zone_map_on_load, "and so does the zone map")
+
+	ZoneManager.open_abilities_on_load = false
+	ZoneManager.open_zone_map_on_load = false
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A win over the Tutorial pays no money and no XP. The original applies both on
+# the victory screen (DefineSprite_3142/frame_9), which only opens on
+# Navigation's load (frame_181/PlaceObject3_3142_175 onClipEvent(load), lines
+# 3-7), and a Tutorial win goes to CS_INTRO2 instead (frame_219/DoAction.as:73-77).
+# The win is set before the battle loop starts, so no fight is played.
+func test_winning_the_tutorial_pays_no_money_or_xp():
+	var save = PlayerSave.new_game("TutorialPays", 0)
+	save.euro = 120.0
+	save.experience = 10.0
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	assert_eq(save.euro, 120.0, "no money")
+	assert_eq(save.experience, 10.0, "no XP")
+
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Tutorial win puts the class's two starting moves back on the first two bar
+# slots, where the Tutorial had put its own two moves (frame_219/DoAction.as:65-69).
+# Hydraulic has other starting moves than the default class does.
+func test_winning_the_tutorial_puts_the_starting_moves_back_on_the_bar():
+	var save = PlayerSave.new_game("TutorialBar", PlayerSave.PlayerClass.HYDRAULIC)
+	var starting_moves: Array = TalentTree.STARTING_MOVES[PlayerSave.PlayerClass.HYDRAULIC]
+	var other_slots: Array = save.move_matrix.slice(starting_moves.size())
+	for i in ZoneProgression.TUTORIAL_MOVES.size():
+		save.move_matrix[i] = ZoneProgression.TUTORIAL_MOVES[i]
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	assert_eq(save.move_matrix, starting_moves + other_slots, "the class's starting moves are back, and no other slot changed")
+
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Tutorial win opens no victory screen, because the original only opens it on
+# Navigation's load (frame_181/PlaceObject3_3142_175 onClipEvent(load), lines
+# 3-7), and frame_219 sends the win on to CS_INTRO2 instead (lines 73-77).
+func test_winning_the_tutorial_opens_no_victory_screen():
+	var save = PlayerSave.new_game("TutorialNoVictory", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	assert_null(scene.get_node_or_null("VictoryScreen"), "no victory screen opens")
+
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Tutorial win goes on to CS_INTRO2 and then to battle 100 as a Story fight.
+# The win jumps to the cutsceneSequence that IntroSeq set
+# (frame_165/DoAction.as:8 and frame_219/DoAction.as:73-77), CS_INTRO2's end goes
+# to IntroSeq2 (frame_293/DoAction.as:1), and IntroSeq2 starts battle 100 with
+# progressFight on (frame_180/DoAction.as:2-3). The pick waits in ZoneManager for
+# the next Battle screen.
+func test_winning_the_tutorial_goes_on_to_battle_100_after_cs_intro2():
+	var save = PlayerSave.new_game("TutorialNext", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+	scene.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(scene.battle_finished, 5)
+
+	var pick: Dictionary = ZoneManager.pending_battle
+	assert_eq(pick.get("battle_id"), 100, "the next fight is battle 100")
+	assert_true(pick.get("is_story_progress", false), "as a Story fight")
+	assert_eq(pick.get("cutscene_before"), "CS_INTRO2", "with CS_INTRO2 before it")
+
+	ZoneManager.pending_battle = {}
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
 
@@ -1258,6 +1704,56 @@ func test_a_guest_with_a_companions_name_gets_no_stance_row():
 	ZoneManager.auto_start_battles = true
 
 
+# The original hides the member bar in battle 2 (DefineSprite_3317/frame_1/
+# PlaceObject2_3312_7 onClipEvent(load), lines 5-8), where Louis the Blind
+# fights in slot 5 as a Guest. The port gives a row to a Companion only, so a
+# Guest gets none (DECODED_ALGORITHMS.md has why). The next test covers a
+# Companion in battle 2.
+func test_battle_2_shows_no_stance_rows():
+	var save = PlayerSave.new_game("TutorialRows", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 2, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+
+	assert_eq(scene.units[5].player_name, "Louis the Blind", "battle 2 fields Louis the Blind in slot 5")
+	assert_eq(scene.units[5].origin, CombatUnit.Origin.GUEST, "as a Guest")
+	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original hides the member bar in battle 2 whoever fights there
+# (DefineSprite_3317/frame_1/PlaceObject2_3312_7 onClipEvent(load), lines 5-8),
+# so the port has a rule for it and does not lean on battle 2 fielding no
+# Companion. Battle 2's data deploys none, so the test puts the deployed-companion
+# marker into slot 3 of the loaded battle, which fields a fresh save's Veradux
+# there. after_each puts the data back.
+func test_battle_2_shows_no_stance_rows_even_with_a_companion_deployed():
+	var save = PlayerSave.new_game("TutorialCompanionRows", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var tutorial: BattleFight = BattleSetup.load_battle(ZoneProgression.TUTORIAL_BATTLE_ID)
+	_tutorial_players_to_restore = tutorial.players.duplicate(true)
+	tutorial.players[1] = {"id": -2.0}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": ZoneProgression.TUTORIAL_BATTLE_ID, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
+
+	assert_eq(scene.units[3].origin, CombatUnit.Origin.COMPANION, "battle 2 fields a Companion in slot 3")
+	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
+	assert_true(scene._stance_rows.is_empty(), "and nothing keeps a row for the Companion")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func test_a_deployed_companion_gets_the_row_the_guest_does_not():
 	var save = PlayerSave.new_game("CompanionRowTest", 0)
 	save.party_roster = [0, 1, 2, 3, -1, -1]
@@ -1699,8 +2195,9 @@ func test_the_replay_draws_no_floating_number_for_a_stun_a_failed_move_or_a_disp
 
 
 # Battle 100 in a viewport of its own, because GUT's window sits above
-# everything in the root viewport and would take the clicks.
-func _battle_100_in_its_own_viewport(save_name: String) -> Control:
+# everything in the root viewport and would take the clicks. `extra` goes into
+# the pick as well.
+func _battle_100_in_its_own_viewport(save_name: String, extra: Dictionary = {}) -> Control:
 	GameData.current_save = PlayerSave.new_game(save_name, 0)
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -1710,7 +2207,9 @@ func _battle_100_in_its_own_viewport(save_name: String) -> Control:
 	var scene = BattleSceneRes.instantiate()
 	viewport.add_child(scene)
 	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var pick: Dictionary = {"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9}
+	pick.merge(extra)
+	scene.start_battle(pick)
 	return scene
 
 
@@ -2822,6 +3321,47 @@ func test_a_second_click_while_the_banner_is_up_changes_nothing():
 	_click(scene.get_viewport(), scene.background)
 	banner.advance(35.0 / 30.0)
 	assert_false(banner.is_up(), "the banner ends when the first click's run does")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original's click listener comes with the battle frame
+# (frame_217/DoAction.as:18-27), which loads after the Cutscene. So a click while
+# the Cutscene plays, such as one on its SKIP button, puts nothing in the Combat
+# text banner, and clicks count again once the clip has ended.
+func test_a_click_during_the_cutscene_leaves_the_banner_down():
+	var scene = _battle_100_in_its_own_viewport("CannotMoveYetInTheCutscene", {"cutscene_before": "CS_INTRO2"})
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the Cutscene is playing")
+	_click(scene.get_viewport(), scene.background)
+	assert_false(scene.combat_text_banner.is_up(), "a click during the Cutscene shows nothing")
+
+	if cutscene != null:
+		cutscene.video.finished.emit()
+	await wait_until(func(): return scene.decision_open, 5)
+	_click(scene.get_viewport(), scene.get_node("BottomBar/PassButton"))
+	_click(scene.get_viewport(), scene._presenters[2].hit_area)
+	assert_true(scene.combat_text_banner.is_up(), "and a click during the fight after it does")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# SKIP ends a pre-fight Cutscene as the clip's own end does, because the original's
+# SKIP releases to the same gotoSceneKrin, so the fight starts. The click that
+# presses it comes while the Cutscene plays, so it leaves the banner down too.
+func test_skip_on_a_pre_fight_cutscene_starts_the_fight():
+	var scene = _battle_100_in_its_own_viewport("SkipPreFight", {"cutscene_before": "CS_INTRO2"})
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the Cutscene is playing")
+	assert_false(scene.decision_open, "the fight waits for it")
+	if cutscene != null:
+		_click(scene.get_viewport(), cutscene.skip_button)
+
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_true(scene.decision_open, "SKIP goes on to the fight, whose first half-turn opens a Decision")
+	assert_false(scene.combat_text_banner.is_up(), "and its click shows nothing")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

@@ -1,8 +1,8 @@
 # Rebuilds every QA save preset in this folder. Each one starts from the same
 # steps as the main menu's new game and wins its story fights through
 # ZoneProgression, so companions, unlocks and quest_progress match a real run.
-# docs/agents/godot.md has the command that runs this and the one that copies a
-# preset into a slot.
+# docs/agents/godot.md has the command that runs this. `just apply-preset`
+# copies a preset into a slot.
 extends SceneTree
 
 const OUTPUT_DIR: String = "res://dev/save_presets/"
@@ -88,9 +88,9 @@ func _build_rich() -> void:
 	_write_preset(save)
 
 
-# These are the steps of main_menu.gd's _on_start_new_game, without writing a
-# slot. The preset name goes in name_user so the slot button shows which preset
-# a slot holds.
+# These are the steps of main_menu.gd's _on_start_new_game that build the save.
+# They leave out its first fight and do not write a slot. The preset name goes in
+# name_user so the slot button shows which preset a slot holds.
 func _new_game(preset_name: String, difficulty: CombatUnit.Difficulty) -> PlayerSave:
 	_game_data.new_game(0, preset_name, PlayerSave.PlayerClass.BIOLOGICAL)
 	var save: PlayerSave = _game_data.current_save

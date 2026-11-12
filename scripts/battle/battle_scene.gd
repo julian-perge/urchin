@@ -21,7 +21,9 @@
 #
 # Entry: ZoneManager.battle_selected stores the pick in
 # ZoneManager.pending_battle and the game scene switches here; _ready()
-# consumes it. Tests inject via start_battle() with animation_speed = 0.
+# consumes it. A pick with a cutscene_before id plays that Cutscene first, and
+# the battle music and the first half-turn wait for its end. Tests inject via
+# start_battle() with animation_speed = 0.
 extends Control
 
 signal battle_finished(outcome: int)
@@ -92,8 +94,14 @@ var _decision_timer: float = 0.0
 # hidden, because the original's clock does not move then.
 var _turn_based: bool = true
 var _finished: bool = false
+# True while the Cutscene a pick names plays. The original's click and Space
+# listeners come with the battle frame (frame_217/DoAction.as:18-27 and
+# frame_217/PlaceObject2_3367_634 onClipEvent(keyDown)), which loads after the
+# Cutscene, so _input ignores both until the clip has ended.
+var _cutscene_playing: bool = false
 var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
 var _pending_goto_scene: String = ""  # ZoneProgression.CUTSCENE_GOTO_SCENE for that cutscene
+var _player_leveled: bool = false  # set by _finish_battle() on a win whose XP filled the bar, like playerLeveled
 var _pending_setup_events: Array = []  # runner.setup()'s return - played first by _battle_loop()
 # The SPEECH event _play_speech has on screen, or {} when no line is up.
 var _line_on_screen: Dictionary = {}
@@ -236,12 +244,27 @@ func start_battle(info: Dictionary) -> void:
 	_load_background()
 	_spawn_visuals()
 	_populate_stance_rows()
+	var cutscene_id: String = str(info.get("cutscene_before", ""))
+	if not cutscene_id.is_empty():
+		await _play_cutscene_before(cutscene_id)
 	AudioManagerAuto.play_battle_music(info.get("is_boss", false))
 	# The battle frame opens on blacker5's frame 1, which fades the battle in
 	# from black until the stop() on its frame 31
 	# (DefineSprite_3355/frame_31/DoAction.as).
 	_play_fade(1, int(_layout()["fade"]["stop_frame"]))
 	_battle_loop.call_deferred()
+
+
+# Plays the Cutscene a pick names and returns once it has ended. Every sound
+# stops first, so nothing plays under the clip's own audio.
+func _play_cutscene_before(cutscene_id: String) -> void:
+	_cutscene_playing = true
+	AudioManagerAuto.stop_all_sounds()
+	var cutscene: CutscenePlayer = preload("res://scenes/cutscenes/cutscene_player.tscn").instantiate()
+	cutscene.animation_speed = animation_speed
+	add_child(cutscene)
+	await cutscene.play(cutscene_id)
+	_cutscene_playing = false
 
 
 # The original composites a sky layer behind the hall art; the hall PNGs have a
@@ -370,6 +393,11 @@ func _populate_stance_rows() -> void:
 	for child in stance_host.get_children():
 		child.queue_free()
 	_stance_rows.clear()
+	# The original hides the member bar container in the Tutorial, rows and all,
+	# whoever fights there (DefineSprite_3317/frame_1/PlaceObject2_3312_7
+	# CLIPACTIONRECORD onClipEvent(load).as:5-8).
+	if battle.id == ZoneProgression.TUTORIAL_BATTLE_ID:
+		return
 	var row_y: float = 0.0
 	# Slot 5 first: the original's member bar container places its "p5" copy
 	# above its "p3" copy (DefineSprite 3312, y 12.60 vs y 50.10), matching the
@@ -795,7 +823,7 @@ func _play_speech(event: Dictionary) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if _finished:
+	if _finished or _cutscene_playing:
 		return
 	# The original's click listener is a Mouse.onMouseDown that the battle frame
 	# adds (frame_217/DoAction.as:18-27), so it hears every left-click, one that
@@ -854,9 +882,10 @@ func _finish_battle() -> void:
 	await _play_fade(int(fade["stop_frame"]), int(fade["result_frame"]))
 	var save: PlayerSave = GameData.current_save
 	var settlement := BattleSettlement.settle(runner, save, battle_info, ZoneManager.achievements_path, GameData.slot_saves())
-	if settlement.outcome == BattleRunner.Outcome.WIN:
+	if settlement.outcome == BattleRunner.Outcome.WIN and settlement.next_fight.is_empty():
 		_pending_cutscene = settlement.cutscene
 		_pending_goto_scene = settlement.goto_scene
+		_player_leveled = settlement.levels_gained > 0
 		# Drops are click-to-keep on the victory screen (VICTORY[1]); the
 		# autosave happens on Proceed, like the original.
 		var victory: VictoryScreen = preload("res://scenes/battle/victory_screen.tscn").instantiate()
@@ -871,6 +900,11 @@ func _finish_battle() -> void:
 		# this screen, so it is hidden here instead of still showing whose turn it
 		# was across the top of the screen.
 		turn_label.hide()
+	elif settlement.outcome == BattleRunner.Outcome.WIN:
+		# A win that goes straight on opens no victory screen and so has no Proceed,
+		# which is where the autosave is. It requests the next fight, as the
+		# original's Tutorial win jumps to CS_INTRO2 (frame_219/DoAction.as:73-77).
+		ZoneManager.request_fight(settlement.next_fight)
 	elif settlement.game_over:
 		# The screen goes on the UI layer so the turn label there can't draw over
 		# it.
@@ -922,6 +956,17 @@ func _on_victory_proceed() -> void:
 			return
 		if goto_scene == "overMap":
 			ZoneManager.open_zone_map_on_load = true
+	elif bool(battle_info.get("is_boss", false)):
+		# With no cutscene queued, the original opens the zone map after any
+		# fight with bossFight on, a first win and a Boss replay alike
+		# (DefineButton2_3004 on(release), lines 13-16, and
+		# frame_219/DoAction.as:9-16).
+		ZoneManager.open_zone_map_on_load = true
+	elif _player_leveled:
+		# Neither a cutscene nor the map comes next, so the original shows its
+		# skills frame when the win filled the XP bar (DefineButton2_3004
+		# on(release), lines 17-29). The hub opens the Abilities window.
+		ZoneManager.open_abilities_on_load = true
 	_on_continue_pressed()
 
 

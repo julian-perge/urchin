@@ -7,16 +7,25 @@ extends Node2D
 @onready var current_zone: int = 1
 
 # The battle pick handed to the battle scene: {battle_id, is_story_progress,
-# is_boss, train_cap}. Set by request_story_fight()/request_training_fight(),
-# consumed by battle_scene.gd's _ready().
+# is_boss, train_cap}, plus cutscene_before when a Cutscene plays ahead of the
+# fight. Set by request_story_fight(), request_training_fight() and
+# request_fight(), consumed by battle_scene.gd's _ready().
 var pending_battle: Dictionary = {}
 # Tests/headless flows set this false to keep request_* from switching scenes.
 var auto_start_battles: bool = true
 # Set by battle_scene.gd right before switching back to game.tscn when the
-# battle just won unlocked a new zone (ZoneProgression.CUTSCENE_GOTO_SCENE ==
-# "overMap") - game.gd's _ready() opens the zone map overlay on load and
-# clears this, matching the original's gotoSceneKrin == "overMap" (frame_219).
+# battle just won was a boss fight with no cutscene queued, or queued a cutscene
+# that goes on to the map (ZoneProgression.CUTSCENE_GOTO_SCENE == "overMap").
+# game.gd's _ready() opens the zone map overlay on load and clears this,
+# matching the original's Proceed (DefineButton2_3004 on(release), lines 8-16)
+# and gotoSceneKrin == "overMap" (frame_219).
 var open_zone_map_on_load: bool = false
+# Set by battle_scene.gd right before switching back to game.tscn when the win
+# that just ended levelled the player up and neither a cutscene nor the zone map
+# comes next. game.gd's _ready() opens the Abilities window through the hotbar
+# and clears this, matching the original's Proceed, which opens the skills frame
+# when playerLeveled is set (DefineButton2_3004 on(release), lines 17-29).
+var open_abilities_on_load: bool = false
 # Tests point this at a temp file so they can grant Legend without touching the
 # player's real achievements.
 var achievements_path: String = Achievements.SAVE_PATH
@@ -75,6 +84,25 @@ func request_training_fight() -> Dictionary:
 		if info["counts_as_training"]:
 			save.used_training = true
 		_launch_battle(info)
+	return info
+
+# New Game's handler: the first fight of a new game, with its Cutscene before it.
+func request_new_game_fight() -> Dictionary:
+	return request_fight(ZoneProgression.FIRST_STORY_FIGHT)
+
+# New Game's handler with the Tutorial option on: the Tutorial fight, with its
+# Cutscene before it. The bar holds the Tutorial's moves for that fight.
+func request_tutorial_fight() -> Dictionary:
+	for i in ZoneProgression.TUTORIAL_MOVES.size():
+		GameData.current_save.move_matrix[i] = ZoneProgression.TUTORIAL_MOVES[i]
+	return request_fight(ZoneProgression.TUTORIAL_FIGHT)
+
+# Hands the Battle screen one of ZoneProgression's fixed picks. They are the
+# first fights of a new game, which no orb starts.
+func request_fight(pick: Dictionary) -> Dictionary:
+	var info: Dictionary = pick.duplicate()
+	info["train_cap"] = BattleSetup.DEFAULT_TRAIN_CAP
+	_launch_battle(info)
 	return info
 
 func _launch_battle(info: Dictionary) -> void:
