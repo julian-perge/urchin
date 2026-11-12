@@ -77,9 +77,16 @@ func test_problems_reports_a_wrong_border_width() -> void:
 	assert_string_contains(found[0] if found else "", "border")
 
 
-func test_problems_reports_a_rect_without_growth() -> void:
+func test_problems_reports_a_position_without_growth() -> void:
 	var panel: PanelContainer = _panel()
 	panel.position = FILL_RECT.position
+	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, SCALE)
+	assert_eq(found.size(), 1, str(found))
+	assert_string_contains(found[0] if found else "", "rect")
+
+
+func test_problems_reports_a_size_without_growth() -> void:
+	var panel: PanelContainer = _panel()
 	panel.size = FILL_RECT.size
 	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, SCALE)
 	assert_eq(found.size(), 1, str(found))
