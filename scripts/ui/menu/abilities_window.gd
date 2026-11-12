@@ -3,15 +3,14 @@
 # (spec/107-abilities.md). abilities_window.tscn holds the shell, the panels,
 # the titles, the points, the hint box and the attribute rows, and
 # test_screen_rects.gd checks them against the SWF.
-# - left: the class ability tree ('talenttreefull' sprite 3100 - 28 nodes,
-#   4 columns x 7 rows on a 52 x 40 pitch at stage 45.4, 74.2), learn with
-#   a click (TalentTree.learn rules: prerequisites, level tiers, 1 point)
+# - left: the class ability tree ('talenttreefull' sprite 3100), 28 nodes in
+#   4 columns and 7 rows. A click learns a talent by the TalentTree.learn
+#   rules: prerequisites, level tiers and 1 point.
 # - middle: name and level, the ability points and attribute points, a random
-#   tip, and the four attribute rows with '+' spend buttons (no Focus row in
-#   the original)
-# - right: the Combat Action Bar wheel ('selector' sprite 3109 - 8 sockets
-#   on a 49.5 px ring at stage 630.6, 172.2) and the Ability Pool list
-#   ('talentPool' sprite 3120 at stage 523.6, 274.2)
+#   tip, and the four attribute rows with '+' spend buttons. The original has
+#   no Focus row.
+# - right: the Combat Action Bar wheel ('selector' sprite 3109) with 8
+#   sockets, and the Ability Pool list ('talentPool' sprite 3120).
 #
 # Click a pool ability to place it in the first free socket; click a socket
 # to send its ability back to the pool.
@@ -110,12 +109,15 @@ func _style_plus_buttons() -> void:
 			"normal": color,
 			"hover": color.lightened(0.25),
 			"pressed": color.darkened(0.25),
-			"focus": color,
 		}
 		for state: String in fills:
 			var style := StyleBoxFlat.new()
 			style.bg_color = fills[state]
 			_plus_buttons[i].add_theme_stylebox_override(state, style)
+		# Godot draws the focus style over the state style, and a click gives
+		# the button focus, so a filled focus style would hide the hover and
+		# pressed fills after the first click.
+		_plus_buttons[i].add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 
 
 func _pick_tip() -> void:

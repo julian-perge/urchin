@@ -249,9 +249,13 @@ def text_record(text: EditText, matrix, origin) -> dict:
         "font_size": text.font_height / render.TWIPS,
         "color": color_hex(text.color),
     }
-    # Flash puts the lines of a field that wraps one font height plus the
-    # field's leading apart. A field of one line has no pitch to check.
-    if text.multiline and text.word_wrap:
+    # Flash puts the lines of a field one font height plus the field's leading
+    # apart. A field that wraps, or a multiline field that is not one line of
+    # static text, can show more than one line, so its pitch is recorded. A
+    # field of one line has no pitch to check.
+    if text.word_wrap or (
+        text.multiline and not label_layout.one_static_line(text)
+    ):
         entry["line_pitch"] = (text.font_height + (text.leading or 0)) / render.TWIPS
     return entry
 

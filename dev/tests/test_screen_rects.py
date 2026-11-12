@@ -266,3 +266,17 @@ def test_text_record_of_a_wrapping_field_holds_its_line_pitch():
 def test_text_record_of_a_one_line_field_holds_no_line_pitch():
     entry = screen_rects.text_record(field(), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
     assert "line_pitch" not in entry
+
+
+# A multiline field that the game fills breaks its lines at line breaks, with
+# no wrapping, and its lines are as far apart as those of a field that wraps.
+def test_text_record_of_a_multiline_field_with_no_wrap_holds_its_line_pitch():
+    filled = field(font_height=240, leading=40, multiline=True)
+    entry = screen_rects.text_record(filled, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert entry["line_pitch"] == 14.0
+
+
+def test_text_record_of_one_line_of_static_text_holds_no_line_pitch():
+    static = field(multiline=True, variable_name=None, initial_text="SKIP\r")
+    entry = screen_rects.text_record(static, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert "line_pitch" not in entry

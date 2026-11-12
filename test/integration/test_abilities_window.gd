@@ -77,8 +77,11 @@ func test_the_attribute_names_read_system_0_to_3() -> void:
 func test_the_level_line_reads_menu_0_the_level_and_the_class() -> void:
 	var save: PlayerSave = GameData.current_save
 	var window: Control = _window()
-	var expected: String = "%s%d %s" % [Strings.menu(0), save.level, Strings.text("CLASS", save.player_class)]
-	assert_eq(_text(window, "LevelLabel"), expected)
+	for player_class: int in PlayerSave.PlayerClass.values():
+		save.player_class = player_class
+		window.refresh()
+		var expected: String = "%s%d %s" % [Strings.menu(0), save.level, PlayerSave.CLASS_NAMES[player_class]]
+		assert_eq(_text(window, "LevelLabel"), expected, PlayerSave.CLASS_NAMES[player_class])
 
 
 func test_each_plus_button_is_filled_with_its_rows_colour() -> void:
@@ -90,6 +93,15 @@ func test_each_plus_button_is_filled_with_its_rows_colour() -> void:
 		assert_not_null(style, "%s: the normal style is a StyleBoxFlat" % row)
 		if style != null:
 			assert_eq(style.bg_color.to_html(), label.get_theme_color("font_color").to_html(), row)
+
+
+# Godot draws the focus style over the state style, and a click gives a button
+# focus, so a focus style that draws would hide the hover and pressed fills.
+func test_a_plus_button_draws_no_focus_style() -> void:
+	var window: Control = _window()
+	for row: String in ROWS:
+		var button: Button = window.get_node("PlusColumn/%sSlot/%sPlus" % [row, row])
+		assert_is(button.get_theme_stylebox("focus"), StyleBoxEmpty, row)
 
 
 func test_a_plus_button_spends_an_attribute_point() -> void:
