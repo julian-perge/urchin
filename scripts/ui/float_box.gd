@@ -41,4 +41,20 @@ func _get_minimum_size() -> Vector2:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_SORT_CHILDREN:
-		pass
+		_place_children()
+
+
+# Each child gets its own minimum size along the box's axis and the box's full
+# size across it, as a stock BoxContainer gives a child with the fill flag.
+func _place_children() -> void:
+	var cursor: float = 0.0
+	for child: Node in get_children():
+		if not (child is Control and child.visible):
+			continue
+		var min_size: Vector2 = child.get_combined_minimum_size()
+		if vertical:
+			fit_child_in_rect(child, Rect2(0.0, cursor, size.x, min_size.y))
+			cursor += min_size.y + separation
+		else:
+			fit_child_in_rect(child, Rect2(cursor, 0.0, min_size.x, size.y))
+			cursor += min_size.x + separation
