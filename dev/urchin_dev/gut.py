@@ -44,7 +44,12 @@ def failures(code: int, log: str) -> list[str]:
     reasons = []
     if code != 0:
         reasons.append(f"Godot exited with code {code}")
-    for marker in ("SCRIPT ERROR", "Parse Error", "leaked at exit", "still in use at exit"):
+    for marker in (
+        "SCRIPT ERROR",
+        "Parse Error",
+        "leaked at exit",
+        "still in use at exit",
+    ):
         if marker in text:
             reasons.append(f"the log has {marker!r}")
     tests_ran = [int(count) for count in TESTS_TOTAL.findall(text)]
