@@ -189,6 +189,16 @@ extract-buff-icons *args: (require "ffdec" "java")
 extract-combat-text *args: (require "ffdec" "java")
     uv run extract_combat_text "$@"
 
+[doc('Run extract_cs_intro, which reads the SWF through ffdec')]
+[group('extract')]
+extract-cs-intro *args: (require "ffdec" "java")
+    uv run extract_cs_intro "$@"
+
+[doc('Run extract_cutscene_skip, which reads the SWF without ffdec')]
+[group('extract')]
+extract-cutscene-skip *args:
+    uv run extract_cutscene_skip "$@"
+
 [doc('Run extract_cutscenes, which reads the SWF through ffdec')]
 [group('extract')]
 extract-cutscenes *args: (require "ffdec" "java")

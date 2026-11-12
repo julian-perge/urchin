@@ -67,7 +67,7 @@ import json
 import sys
 from pathlib import Path
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render, strip, timeline
 from urchin_dev.swf.swf_index import read_swf
 
@@ -139,7 +139,7 @@ def write_background(frame: render.Frame, stripped: int, out_path: Path) -> None
     """Save the classMenu frame, drawn with every foreground character
     deleted, as the background the menu screens share."""
     image = frame.image()
-    image.save(out_path)
+    png.save(image, out_path)
     print(
         f"wrote {out_path} {image.size} ({stripped} foreground characters stripped)",
         file=sys.stderr,
@@ -169,7 +169,7 @@ def write_cards(
         for frame, suffix in ((BASE_CARD_FRAME, "_gray"), (HOVER_CARD_FRAME, "")):
             out = CARDS_DIR / f"{name}{suffix}.png"
             image = render.crop(cards[(name, frame)], base.bbox).image
-            image.save(out)
+            png.save(image, out)
             print(f"wrote {out} {image.size}", file=sys.stderr)
     return rects
 

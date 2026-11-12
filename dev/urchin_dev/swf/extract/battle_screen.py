@@ -36,7 +36,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, png
 from urchin_dev.run import run
 from urchin_dev.swf import render, strip, timeline
 from urchin_dev.swf.swf_index import SwfIndex, first_fill_color, read_swf, shape_bounds
@@ -154,7 +154,7 @@ def write_labels(
                 f" (frame {frame}) rendered empty"
             )
         name = f"{prefix}{label.replace(' ', '_')}.png"
-        trimmed.image.save(out_dir / name)
+        png.save(trimmed.image, out_dir / name)
         print(
             f"  {label:<16} frame {frame:>3} -> {name} {trimmed.image.size}",
             file=sys.stderr,
@@ -173,7 +173,7 @@ def write_chrome(rendered: dict[int, render.Frame]) -> dict[str, dict[str, float
         trimmed = render.trim(rendered[cid])
         if trimmed is None:
             raise RuntimeError(f"chrome {cid} ({name}) rendered empty")
-        trimmed.image.save(BATTLE_UI_DIR / f"{name}.png")
+        png.save(trimmed.image, BATTLE_UI_DIR / f"{name}.png")
         print(f"  {cid} -> {name}.png {trimmed.image.size}", file=sys.stderr)
         rects[name] = rect_entry(trimmed.rect)
     return rects
@@ -206,7 +206,7 @@ def render_member_bar_panel() -> None:
             raise RuntimeError(f"member bar panel {MEMBER_BAR_PANEL} rendered empty")
         cropped = image.crop(bbox)
         BATTLE_UI_DIR.mkdir(parents=True, exist_ok=True)
-        cropped.save(BATTLE_UI_DIR / "member_bar_panel.png")
+        png.save(cropped, BATTLE_UI_DIR / "member_bar_panel.png")
         print(
             f"  {MEMBER_BAR_PANEL} -> member_bar_panel.png {cropped.size}",
             file=sys.stderr,

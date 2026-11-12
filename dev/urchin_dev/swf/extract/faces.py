@@ -42,7 +42,7 @@ from __future__ import annotations
 import re
 import sys
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render, timeline
 from urchin_dev.swf.swf_index import read_swf
 
@@ -73,7 +73,7 @@ def main():
     by_frame = dict(zip(frames, cut, strict=True))
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for label, frame in labels.items():
-        by_frame[frame].image.save(OUT_DIR / f"{sanitize(label)}.png")
+        png.save(by_frame[frame].image, OUT_DIR / f"{sanitize(label)}.png")
     crop = cut[0].bbox
     print(
         f"wrote {len(labels)} portraits, cropped to {crop[2] - crop[0]}x"

@@ -46,12 +46,12 @@ The border of each Panel is the recipe's rounded mean scale, from the record. Th
 
 | cid | Piece | Box | Look |
 | --- | --- | --- | --- |
-| 2984 x7, scaled 0.86 | equip slots, indexes 0 to 6 | centres from (301.10, 117.55) to (456.75, 186.40) | `equip` slot, 26.66 px |
+| 2984 x7, scaled 0.86 | equip slots, indexes 0 to 6 | centres from (301.10, 117.55) to (456.75, 186.40) | `ItemSlot`, 26.66 px |
 | the doll | the player's doll, small | placed from its part placements | doll art, mirrored to face left |
 
 The seven centres, by equip index, are in the record. Today's typed values are 0 (301.1, 117.6), 2 (301.1, 152.0), 6 (301.1, 186.4), 5 (335.5, 186.4), 1 (456.7, 117.6), 3 (456.7, 152.0) and 4 (456.7, 186.4).
 
-- The slots are `ItemSlot` scenes with the `equip` variant, placed by centre and scaled to 0.86. The slot's art, its baked shadow and its highlight scale together, as the SWF scales the clip. The window-shell slot scene needs a scale that its rect record can state. If its fixed 31x31 size gets in the way, the build issue adds a `scale` to the variant. It does not draw a second set of art.
+- The slots are `ItemSlot` scenes, placed by centre and scaled to 0.86. The slot's art, its baked shadow and its highlight scale together, as the SWF scales the clip. The window-shell slot scene needs a scale that its rect record can state. If its fixed 31x31 size gets in the way, the build issue adds a `scale` to the slot. It does not draw a second set of art.
 - The doll stays `CharacterVisual` through `EquipDollView`, placed by the same method as the Inventory doll, from the part placements in this frame. It replaces `DOLL_POSITION` (396.5, 162.4) and `DOLL_SCALE` 0.85. The store doll faces left, which `EquipDollView.setup` already does by mirroring.
 - This label places no party faces and no element bars. The frame script sets them up, and no piece draws them.
 
@@ -60,7 +60,7 @@ The seven centres, by equip index, are in the record. Today's typed values are 0
 | cid | Piece | Box | Look | Built as |
 | --- | --- | --- | --- | --- |
 | 3018 `vb1` | `MENU[6]`, "Click on items to purchase:" | (288.20, 235.60) 187.30x55.00 | `_sans` 12 #666666 | Label in a fixed-height slot |
-| 3013 `dropSlot0` to `dropSlot14` | wares | first centre (305.10, 291.85), 5 columns on a 38 px pitch | `drop` slot | `FloatBox` rows in a `FloatBox` column, separation 7 |
+| 3013 `dropSlot0` to `dropSlot14` | wares | first centre (305.10, 291.85), 5 columns on a 38 px pitch | `ItemSlot` | `FloatBox` rows in a `FloatBox` column, separation 7 |
 
 - The hint text reads `MENU[6]` from `strings.json`. The port's `PURCHASE_HINT` constant goes.
 - An empty ware slot is hidden, as the original does (`frame_16/DoAction.as`, `_visible = false` when `dropArray[w] == 0`). The port shows 15 slots with empty ones. This is a change a player can see, and it follows the original, so it needs no ADR.
@@ -146,6 +146,6 @@ The snippet shows style only. A hidden ware slot keeps its place and size and dr
 ## Open questions
 
 1. **Hidden empty wares.** This spec hides empty ware slots as the original does, which changes what a player sees in shops with fewer than 15 items. Confirm.
-2. **The scaled slot.** The equip slot at 0.86 may need a `scale` on the window-shell slot variant. If it does, the build issue adds it there and tells you, because window-shell's spec drew the slot at 31 px only.
+2. **The scaled slot.** The equip slot at 0.86 may need a `scale` on the window-shell slot. If it does, the build issue adds it there and tells you, because window-shell's spec drew the slot at 31 px only.
 3. **The status band.** The port-only `StatusLabel` sits in the free band under the wares. Confirm the place, or name another.
 4. **Catalog source.** The catalogs are typed from `krinSetShop` and not read from an extractor. This spec leaves them, and asks whether a later issue should extract them.

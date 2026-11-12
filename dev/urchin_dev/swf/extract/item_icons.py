@@ -43,7 +43,7 @@ import sys
 
 from PIL import Image
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render, timeline
 from urchin_dev.swf.swf_index import read_swf
 
@@ -76,7 +76,7 @@ def main():
                 if trimmed is not None
                 else Image.new("RGBA", (1, 1), (0, 0, 0, 0))
             )
-            img.save(OUT_DIR / (sanitize(label) + ".png"))
+            png.save(img, OUT_DIR / (sanitize(label) + ".png"))
     print(f"icons written: {len(labels)}", file=sys.stderr)
 
 
