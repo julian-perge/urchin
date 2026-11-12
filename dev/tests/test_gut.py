@@ -51,6 +51,18 @@ NO_TEST_MATCHED = (
     'Ran Tests matching "no_test_has_this_name"\n'
 )
 
+# The last lines of a full run on 2026-11-11 that passed every test and exited
+# 0, but left the menu music playing when Godot quit (julian-perge/urchin#187).
+LEAKED_AT_EXIT = PASSED + (
+    "WARNING: 2 ObjectDB instances were leaked at exit (run with `--verbose` for"
+    " details).\n"
+    "   at: cleanup (core/object/object.cpp:2536)\n"
+)
+STILL_IN_USE_AT_EXIT = PASSED + (
+    "ERROR: 1 resources still in use at exit (run with --verbose for details).\n"
+    "   at: clear (core/io/resource.cpp:822)\n"
+)
+
 
 class FakeGodot:
     def __init__(self, *results: tuple[int, str]):
@@ -94,6 +106,14 @@ def test_a_test_file_that_does_not_parse_fails_although_gut_exits_0(project):
 
 def test_a_run_where_no_test_matched_fails_although_gut_exits_0(project):
     assert run_gut([], project, project, FakeGodot((0, NO_TEST_MATCHED))) == 1
+
+
+def test_a_run_that_leaks_objects_at_exit_fails_although_gut_exits_0(project):
+    assert run_gut([], project, project, FakeGodot((0, LEAKED_AT_EXIT))) == 1
+
+
+def test_a_run_that_leaves_resources_in_use_at_exit_fails_although_gut_exits_0(project):
+    assert run_gut([], project, project, FakeGodot((0, STILL_IN_USE_AT_EXIT))) == 1
 
 
 def test_a_crash_keeps_godots_exit_code(project):

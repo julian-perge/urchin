@@ -4,6 +4,8 @@
 # not parse prints "SCRIPT ERROR" and "Nothing was run", and the exit code still
 # reads as a pass (~/.config/papercuts.md, 2026-11-10). So this command also
 # fails a run whose log has a script or parse error, or that ran no tests.
+# It also fails a run in which Godot reports objects or resources still alive
+# at exit, because such a leak shows no failing test (julian-perge/urchin#187).
 from __future__ import annotations
 
 import re
@@ -42,7 +44,7 @@ def failures(code: int, log: str) -> list[str]:
     reasons = []
     if code != 0:
         reasons.append(f"Godot exited with code {code}")
-    for marker in ("SCRIPT ERROR", "Parse Error"):
+    for marker in ("SCRIPT ERROR", "Parse Error", "leaked at exit", "still in use at exit"):
         if marker in text:
             reasons.append(f"the log has {marker!r}")
     tests_ran = [int(count) for count in TESTS_TOTAL.findall(text)]
