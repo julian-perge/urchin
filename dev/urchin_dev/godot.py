@@ -1,13 +1,12 @@
 # godot.py
-# Where the Godot binary is, and how many Godot processes run at once. The
-# binary is at a different path on each machine, so every script that runs
-# Godot asks this module. The limit keeps parallel agents from running more
-# Godot processes than the machine has memory for.
+# Which Godot binary to run, and how many Godot processes run at once. The
+# justfile picks the binary for the machine and passes it in GODOT_BIN, so
+# every script that runs Godot asks this module. The limit keeps parallel
+# agents from running more Godot processes than the machine has memory for.
 from __future__ import annotations
 
 import fcntl
 import os
-import shutil
 import tempfile
 import time
 from collections.abc import Iterator
@@ -15,25 +14,16 @@ from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from typing import IO
 
-MAC_APP = Path("/Applications/Godot.app/Contents/MacOS/Godot")
 SLOT_DIR = Path(tempfile.gettempdir()) / "urchin-godot-slots"
 
 
 def godot_bin(env: dict[str, str] | None = None) -> str:
-    """$GODOT_BIN when it is set, else `godot` on PATH, else the macOS app.
-    Exits with a message that names all three when none of them exists."""
+    """$GODOT_BIN. The justfile sets it for every recipe, so a run outside
+    `just` exits with a message that says so."""
     env = os.environ if env is None else env
-    if env.get("GODOT_BIN"):
-        return env["GODOT_BIN"]
-    found = shutil.which("godot", path=env.get("PATH"))
-    if found:
-        return found
-    if MAC_APP.exists():
-        return str(MAC_APP)
-    raise SystemExit(
-        "no Godot found. Set GODOT_BIN, put `godot` on PATH, or install "
-        f"Godot at {MAC_APP}."
-    )
+    if not env.get("GODOT_BIN"):
+        raise SystemExit("GODOT_BIN is not set. Run this through `just`.")
+    return env["GODOT_BIN"]
 
 
 def slot_count(env: dict[str, str] | None = None) -> int:

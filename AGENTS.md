@@ -5,32 +5,42 @@ the original SWF by script, not by hand.
 
 ## Commands
 
-- In a new git worktree, run `uv run setup_worktree` first. It links the
+Run every command through `just`. `just` lists the recipes. It picks Godot for
+the OS, loads the per-machine settings from `.env`, and stops with a message
+when a tool is missing. The Python scripts read `GODOT_BIN` from it and do not
+look for Godot themselves, so `uv run gut` outside `just` fails.
+
+- In a new git worktree, run `just setup-worktree` first. It links the
   gitignored SWFs from the main checkout and runs Godot's import.
-- Extraction and conversion scripts are `[project.scripts]` entry points:
-  `uv run extract_battle_screen`, `uv run convert_items`, and so on. Run
-  `rg '^extract_|^convert_' pyproject.toml` for the list.
-- `uv run as_lookup <name>` finds a function, a global, a script or a line of
+- Extraction and conversion scripts are `[project.scripts]` entry points with
+  a recipe each: `just extract-battle-screen`, `just convert-items`, and so on.
+  Arguments pass through. `just` lists them.
+- `just as-lookup <name>` finds a function, a global, a script or a line of
   the original ActionScript, with its callers and the GDScript that cites it.
   Run it before `rg` on the export.
-- Tests: `uv run gut` runs the GUT suite. `uv run gut <path>` runs one test
-  file, and `uv run gut -gunit_test_name=<name>` runs the tests whose names
-  contain `<name>`. Trust its exit code. It also fails the runs that GUT exits 0
-  on: a script or parse error, or no tests run. It takes a Godot slot
-  itself, so run it bare.
-- Godot is `$GODOT_BIN`, else `godot` on `PATH`, else the macOS app. The
-  Python scripts use the same order. `GODOT_SLOTS` is the most Godot processes
-  that run at once. The default, `auto`, is the number of CPU cores.
-- The Python package's tests are `uv run pytest`, under `dev/tests/`. They
-  never read the SWF or the XML dump, so they pass on a fresh checkout.
-- After writing anything under `assets/`, run
-  `"${GODOT_BIN:-godot}" --headless --import --path .`
-  or tests fail with "No loader found for resource". `uv run gut` runs this
-  import by itself only in a checkout with no `.godot` folder.
+- Tests: `just gut` runs the GUT suite. `just gut <path>` runs one test file,
+  and `just gut -gunit_test_name=<name>` runs the tests whose names contain
+  `<name>`. Trust its exit code. It also fails the runs that GUT exits 0 on: a
+  script or parse error, or no tests run. It takes a Godot slot itself.
+- The Python package's tests are `just pytest`, under `dev/tests/`. They never
+  read the SWF or the XML dump, so they pass on a fresh checkout.
+- After writing anything under `assets/`, run `just import` or tests fail with
+  "No loader found for resource". `just gut` runs this import by itself only in
+  a checkout with no `.godot` folder.
+- Any other Godot command: `just godot <arguments>`.
+
+## Setup
+
+- Install `just`, `uv`, `prek`, Godot 4.7.2, and for the extractors a JDK and
+  the ffdec build in `docs/agents/art-extraction.md`.
+- `GODOT_BIN` is the app bundle on macOS and `godot` on `PATH` elsewhere. To
+  change it, or to limit the Godot processes that run at once with
+  `GODOT_SLOTS` (default `auto`, the number of CPU cores), copy `.env.example`
+  to `.env`. `.env` is git-ignored. A variable set in the shell wins over it.
 
 ## Every task
 
-- Run `uv run gut` before each commit.
+- Run `just gut` before each commit.
 - Every lesson here and in the docs below records something this project
   already got wrong once. Each one names its evidence so you can check it
   instead of trusting it.

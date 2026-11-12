@@ -7,21 +7,15 @@ from urchin_dev import godot
 from urchin_dev.godot import godot_bin, godot_slot, slot_count
 
 
-def test_godot_bin_prefers_the_environment_variable():
-    assert godot_bin({"GODOT_BIN": "/opt/godot", "PATH": "/usr/bin"}) == "/opt/godot"
+def test_godot_bin_is_the_environment_variable():
+    assert godot_bin({"GODOT_BIN": "/opt/godot"}) == "/opt/godot"
 
 
-def test_godot_bin_falls_back_to_godot_on_path(tmp_path):
-    binary = tmp_path / "godot"
-    binary.write_text("#!/bin/sh\n")
-    binary.chmod(0o755)
-    assert godot_bin({"PATH": str(tmp_path)}) == str(binary)
-
-
-def test_godot_bin_exits_when_nothing_is_found(tmp_path, monkeypatch):
-    monkeypatch.setattr(godot, "MAC_APP", tmp_path / "none")
-    with pytest.raises(SystemExit, match="GODOT_BIN"):
-        godot_bin({"PATH": str(tmp_path)})
+def test_godot_bin_exits_and_names_just_when_the_variable_is_unset():
+    with pytest.raises(SystemExit, match="through `just`"):
+        godot_bin({})
+    with pytest.raises(SystemExit, match="through `just`"):
+        godot_bin({"GODOT_BIN": ""})
 
 
 def test_slot_count_reads_godot_slots(monkeypatch):
