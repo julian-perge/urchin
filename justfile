@@ -64,6 +64,34 @@ gut *args: require-godot
 gd-parse +files: require-godot
     uv run check_gd_parse "$@"
 
+[doc('Copy a QA save preset into save slot 1 to 4, and its achievements file when it has one')]
+[group('godot')]
+apply-preset preset slot: (save-preset preset slot)
+
+[doc('List the QA save presets that apply-preset takes')]
+[group('godot')]
+list-presets: (save-preset "--list")
+
+[doc('Put back the achievements file that apply-preset replaced')]
+[group('godot')]
+restore-achievements: (save-preset "--restore-achievements")
+
+# Godot exits 0 after a script error, so this also fails when the log has one.
+# It keeps the real HOME, so user:// is the folder the game reads.
+[private]
+save-preset +args: require-godot
+    #!/usr/bin/env bash
+    set -euo pipefail
+    log=$(mktemp)
+    trap 'rm -f "$log"' EXIT
+    status=0
+    "$GODOT_BIN" --headless --path . -s res://dev/save_presets/apply.gd -- "$@" 2>&1 | tee "$log" || status=$?
+    if grep -q "SCRIPT ERROR" "$log"; then
+        echo "error: apply.gd had a script error." >&2
+        exit 1
+    fi
+    exit "$status"
+
 [doc('Run the Python package tests under dev/tests/')]
 [group('python')]
 pytest *args:
