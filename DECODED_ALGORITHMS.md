@@ -82,6 +82,11 @@ Implemented in `scripts/entities/character_visual.gd` (real MODEL1 label playbac
   `gotoAndPlay("cast")` call - the doll's cast animation is purely cosmetic follow-through for Shock; the hit does not wait on the clip. The Impact itself comes 1 frame later: the conductor's
   Impact block (`if(_root.BAMBAMBAM)`, line 12) runs before its Dispatch block (line 468) in the same enterFrame handler, so it sees the flag on the next frame. With D as the Dispatch frame, the
   Move result applies at D+1, the Buff tick comes at D+26 and the next Dispatch at D+27, or at D+52 after a tick that did something.
+- **Melee and Missile have no such lag.** They raise `BAMBAMBAM` from another clip's `onEnterFrame`: the caster's doll (`frame_42/DoAction_4.as:80`) or the bolt (line 190). AVM1 runs the
+  enterFrame code of the newest clip first. Ruffle puts each new clip at the front of its run list (`add_to_exec_list` in `core/src/avm1/runtime.rs`). The dolls are children of `BATTLESCREEN`, which
+  frame 217 places after the conductor (`battleClocker`, depth 480, then `BATTLESCREEN`, depth 89, in the main timeline's tag order). The conductor creates each bolt with `attachMovie` (line 430).
+  So both clips are newer than the conductor, their code runs first, and the conductor's Impact block sees the flag on the same frame. This order comes from the SWF's tag order and from Ruffle's
+  model of Flash Player. It was not checked in Flash Player itself.
 - **How cast ends:** MODEL1 frame 219's own frame script is `gotoAndStop("stand"); play()` - cast is a one-shot that always runs to completion (189-219, ~1.03 s at 30 fps) and falls straight into the
   idle stand loop on its own; nothing in the engine interrupts it early or re-triggers it mid-flight.
 
