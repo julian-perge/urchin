@@ -129,7 +129,7 @@ def write_logo(job: render.Job, frame: render.Frame) -> None:
     cut = render.trim(frame)
     if cut is None:
         raise RuntimeError(f"the logo {LOGO} rendered fully transparent")
-    cut.image.save(OUT_MENU / "logo.png")
+    png.save(cut.image, OUT_MENU / "logo.png")
     record = logo_record(job, cut)
     LOGO_RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
     print(f"wrote logo.png {record['rect']} {cut.image.size}", file=sys.stderr)
