@@ -10,6 +10,11 @@ has already made reading them.
 - `dev/data_json/` is a runtime capture of the Steam build's live `_root`
   arrays, not an export. No script produces it and none can. See
   `SWF_DIFFERENCES.md`.
+- The original's English text is in `dev/converted_json/strings.json`.
+  `just convert-strings` (`uv run convert_strings`) writes it from the
+  `KrinLang.ENGLISH` table in `frame_1/DoAction.as`, with each array index
+  equal to the AS index. GDScript reads it through `Strings`, as in
+  `Strings.system(17)`, and does not type the text as a literal.
 - `DECODED_ALGORITHMS.md` holds behavior already decoded from the AS so it
   never has to be re-derived. Check it before reading the AS yourself.
 - `KNOWN_GAPS.md` is deliberate scoped-out gaps. `NEXT_PHASES.md` is what has

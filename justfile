@@ -121,6 +121,11 @@ convert-menu-math *args:
 convert-moves *args:
     uv run convert_moves "$@"
 
+[doc('Run convert_strings, which converts the extracted data into JSON and Godot resources')]
+[group('convert')]
+convert-strings *args:
+    uv run convert_strings "$@"
+
 [doc('Run convert_units, which converts the extracted data into JSON and Godot resources')]
 [group('convert')]
 convert-units *args:
