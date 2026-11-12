@@ -18,7 +18,6 @@ UNTESTED = {
     "doll_art",
     "faces",
     "item_looks",
-    "start_screens",
     "store_art",
     "vfx_scenes",
     "zone_hub",

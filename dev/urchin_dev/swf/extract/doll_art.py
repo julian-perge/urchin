@@ -31,7 +31,7 @@ import json
 import sys
 from pathlib import Path
 
-from urchin_dev import REPO_ROOT, STEAM_SWF, WEB_SWF
+from urchin_dev import REPO_ROOT, STEAM_SWF, WEB_SWF, png
 from urchin_dev.swf import render
 from urchin_dev.swf.swf_index import read_swf
 
@@ -80,7 +80,7 @@ def render_swf(swf_path: Path, names: list[str]):
             ):
                 grown.append(name)
             rects[name] = trimmed.rect
-            trimmed.image.save(SPRITES / (name + ".png"))
+            png.save(trimmed.image, SPRITES / (name + ".png"))
     return rects, unresolved, grown
 
 

@@ -31,7 +31,8 @@ extracting it.
   the biological class card from 191 to 136 design px (`fd755b3`).
 - On that build every extractor that renders through ffdec, apart from
   `extract_cutscenes`, reproduces its committed files byte for byte, so the diff
-  after a run is what the run changed. One exception is expected and goes back
+  after a run is what the run changed. This holds on macOS and on Linux, because
+  every PNG goes through `dev/urchin_dev/png.py`. One exception is expected and goes back
   with `git checkout`: `extract_battle_screen` rewrites `STREETS.png` and
   `STREETS3.png`, where 5 pixels are 1 level off and no build reproduces the
   committed file.
@@ -107,6 +108,15 @@ extracting it.
   for the cutscene AVI and its probe frame, the two shape exports and
   `export_swf_sources.py`. Every external command goes through
   `dev/urchin_dev/run.py`.
+- **Write every PNG through `dev/urchin_dev/png.py`, never `Image.save` or a
+  copy of the driver's file.** Pillow and the driver's Java encoder compress
+  with the zlib build of the machine they run on, so the same pixels came out
+  as different bytes on Linux and on macOS. Every committed portrait and class
+  card showed as changed after a Linux run, with 0 pixels changed. `png.save`
+  encodes through oxipng, whose bytes depend only on the pixels and the
+  `pyoxipng-ng` version. That version is pinned exactly, because a new one
+  rewrites every PNG, so change it in a PR of its own that regenerates them.
+  `dev/tests/test_png.py` fails when an extractor writes a PNG another way.
 - **Recover positions, never invent them.** ffdec grows the export canvas by
   the filter dimension symmetrically around the timeline displayRect, so the
   canvas keeps the displayRect's centre and the stage rect follows from that

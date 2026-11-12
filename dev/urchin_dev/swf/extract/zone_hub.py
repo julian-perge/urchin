@@ -42,7 +42,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
+from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, png
 from urchin_dev.run import run
 from urchin_dev.swf import render, strip, timeline
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
@@ -107,7 +107,7 @@ def render_hubs(frames: dict[int, int]) -> None:
                     f"zone {zone} ({ZONE_LABELS[zone]}, frame {frame}) rendered empty"
                 )
             path = HUB_DIR / f"{ZONE_LABELS[zone]}.png"
-            trimmed.image.save(path)
+            png.save(trimmed.image, path)
             print(
                 f"zone {zone} {ZONE_LABELS[zone]:<8} frame {frame:>3} -> "
                 f"{path.name} {trimmed.image.size}",
@@ -140,7 +140,7 @@ def export_orb_shapes() -> None:
             if bbox is None:
                 raise RuntimeError(f"orb shape {cid} rendered empty")
             cropped = image.crop(bbox)
-            cropped.save(ORB_DIR / f"{name}.png")
+            png.save(cropped, ORB_DIR / f"{name}.png")
             print(f"shape {cid} -> {name}.png {cropped.size}", file=sys.stderr)
     finally:
         shutil.rmtree(work, ignore_errors=True)

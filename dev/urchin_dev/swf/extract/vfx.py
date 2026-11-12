@@ -63,11 +63,10 @@ from __future__ import annotations
 
 import json
 import re
-import shutil
 import sys
 from pathlib import Path
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render
 from urchin_dev.swf.swf_index import read_swf
 
@@ -153,10 +152,10 @@ def clip_offset(frame: render.Frame):
 def remove_frames_past(out_dir: Path, count: int) -> None:
     """Delete each frame in `out_dir` numbered past `count`, with its .import
     file."""
-    for png in out_dir.glob("*.png"):
-        if int(png.stem) > count:
-            png.unlink()
-            png.with_name(png.name + ".import").unlink(missing_ok=True)
+    for frame_png in out_dir.glob("*.png"):
+        if int(frame_png.stem) > count:
+            frame_png.unlink()
+            frame_png.with_name(frame_png.name + ".import").unlink(missing_ok=True)
 
 
 def main():
@@ -213,7 +212,7 @@ def main():
             out_dir = VFX_DIR / category / sanitize(name)
             out_dir.mkdir(parents=True, exist_ok=True)
             for n, frame in enumerate(by_clip[cid], start=1):
-                shutil.copyfile(frame.path, out_dir / f"{n}.png")
+                png.save_copy(frame.path, out_dir / f"{n}.png")
             remove_frames_past(out_dir, len(by_clip[cid]))
             # A clip that a bolt name and an impact name both resolve to gets
             # an offset under its first name only, as vfx_offsets.py did, so

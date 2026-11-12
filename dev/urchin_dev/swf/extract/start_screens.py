@@ -5,6 +5,8 @@
 #   assets/ui/menu/class_cards/<class>_gray.png  - resting card
 #   assets/ui/menu/class_cards/<class>.png       - hovered card, full color
 #   assets/ui/menu/start_background.png          - the shared menu background
+#   assets/ui/menu/logo.png                      - the SONNY 2 logo with its Glow
+#   assets/ui/menu/logo.json                     - the logo's rect, size and zoom
 #
 # The class name under each card is NOT part of these textures. The original
 # draws it as a separate DefineEditText above the card and fills it from
@@ -52,6 +54,12 @@
 # at 136 wide. write_cards refuses cards of different sizes, because all three
 # draw the same mask through the same filters.
 #
+# THE LOGO. The title (frame label "mainMenu") places sprite 321, which holds
+# only shape 320, and the Glow is a filter on that root placement, not inside
+# the sprite. So the logo is a render of the title frame with every depth but
+# the logo's hidden, and a render of sprite 321 alone would come out without
+# its Glow. The logo's rect on the stage comes from the same render.
+#
 # Run: uv run extract_start_screens
 from __future__ import annotations
 
@@ -59,7 +67,7 @@ import json
 import sys
 from pathlib import Path
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render, strip, timeline
 from urchin_dev.swf.swf_index import read_swf
 
@@ -71,6 +79,7 @@ CARDS_DIR = OUT_MENU / "class_cards"
 # stretched across the whole window and gains nothing from the same treatment.
 CARD_ZOOM = 5.0
 BACKGROUND_ZOOM = 2.0
+LOGO_ZOOM = 4.0
 
 FRAME_LABEL = "classMenu"
 BASE_CARD_FRAME = 1
@@ -86,12 +95,51 @@ CARDS = {"psychological": 2746, "biological": 2766, "hydraulic": 2755}
 # and everything above depth 5 is that screen's own foreground.
 BACKGROUND_MAX_DEPTH = 5
 
+TITLE_LABEL = "mainMenu"
+LOGO = 321
+LOGO_RECORD = OUT_MENU / "logo.json"
+
+
+def logo_job(index) -> render.Job:
+    """-> the render of the title frame with only the logo's depth kept.
+    Raises unless the title places the logo exactly once."""
+    frame_number = timeline.frame_of(index, 0, TITLE_LABEL)
+    depths = [
+        depth
+        for depth, layer in timeline.frames(index, 0)[frame_number - 1].items()
+        if layer.character_id == LOGO
+    ]
+    if len(depths) != 1:
+        raise render.RenderError(
+            f"{TITLE_LABEL} (frame {frame_number}) places the logo {LOGO}"
+            f" {len(depths)} times"
+        )
+    return render.Job(0, frame_number, LOGO_ZOOM, only_depths=(depths[0],))
+
+
+def logo_record(job: render.Job, cut: render.Trimmed) -> dict:
+    return {
+        "rect": [round(v, 4) for v in cut.rect],
+        "size": list(cut.image.size),
+        "zoom": job.zoom,
+    }
+
+
+def write_logo(job: render.Job, frame: render.Frame) -> None:
+    cut = render.trim(frame)
+    if cut is None:
+        raise RuntimeError(f"the logo {LOGO} rendered fully transparent")
+    png.save(cut.image, OUT_MENU / "logo.png")
+    record = logo_record(job, cut)
+    LOGO_RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
+    print(f"wrote logo.png {record['rect']} {cut.image.size}", file=sys.stderr)
+
 
 def write_background(frame: render.Frame, stripped: int, out_path: Path) -> None:
     """Save the classMenu frame, drawn with every foreground character
     deleted, as the background the menu screens share."""
     image = frame.image()
-    image.save(out_path)
+    png.save(image, out_path)
     print(
         f"wrote {out_path} {image.size} ({stripped} foreground characters stripped)",
         file=sys.stderr,
@@ -121,7 +169,7 @@ def write_cards(
         for frame, suffix in ((BASE_CARD_FRAME, "_gray"), (HOVER_CARD_FRAME, "")):
             out = CARDS_DIR / f"{name}{suffix}.png"
             image = render.crop(cards[(name, frame)], base.bbox).image
-            image.save(out)
+            png.save(image, out)
             print(f"wrote {out} {image.size}", file=sys.stderr)
     return rects
 
@@ -151,11 +199,13 @@ def main():
         for name, cid in sorted(CARDS.items())
         for frame in (BASE_CARD_FRAME, HOVER_CARD_FRAME)
     }
-    with render.frames(WEB_SWF, [background, *card_jobs.values()]) as rendered:
+    logo = logo_job(index)
+    with render.frames(WEB_SWF, [background, logo, *card_jobs.values()]) as rendered:
         write_background(
             rendered[0], len(foreground), OUT_MENU / "start_background.png"
         )
-        rects = write_cards(dict(zip(card_jobs, rendered[1:], strict=True)))
+        write_logo(logo, rendered[1])
+        rects = write_cards(dict(zip(card_jobs, rendered[2:], strict=True)))
 
     print("card rects on the 800x575 stage, in design px:", file=sys.stderr)
     print(

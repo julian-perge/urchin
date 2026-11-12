@@ -55,7 +55,7 @@ import sys
 
 from PIL import Image, ImageChops, ImageStat
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render, strip, timeline
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
@@ -228,7 +228,7 @@ def main():
                 )
     for name, job in by_name.items():
         cut = cuts[name]
-        cut.image.save(OUT_DIR / f"{name}.png")
+        png.save(cut.image, OUT_DIR / f"{name}.png")
         record[name] = record_of(job, cut)
         print(f"{name} {record[name]['rect']} {cut.image.size}", file=sys.stderr)
     RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")

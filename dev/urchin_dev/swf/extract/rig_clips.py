@@ -34,7 +34,7 @@ from __future__ import annotations
 import json
 import sys
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render, timeline
 from urchin_dev.swf.extract.battle_screen import FIGHTER_RIG, rect_entry
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
@@ -115,9 +115,9 @@ def main():
             (OUT_DIR / name).mkdir(parents=True, exist_ok=True)
             pngs = []
             for frame, piece in enumerate(pieces, start=1):
-                png = f"{name}/{frame}.png"
-                piece.image.save(OUT_DIR / png)
-                pngs.append(png)
+                file_name = f"{name}/{frame}.png"
+                png.save(piece.image, OUT_DIR / file_name)
+                pngs.append(file_name)
             clips[name] = {"frames": pngs, "rect": rect_entry(rects.pop())}
             print(f"  {name}: sprite {sprite}, {count} frames", file=sys.stderr)
 
