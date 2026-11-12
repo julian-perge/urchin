@@ -16,8 +16,9 @@ const ANCHOR_GAP: float = 8.0
 # its lines.
 const TEXT_GUTTER: float = 2.0
 # KrinToolTipper starts each text field 2 px below the one above it
-# (DefineSprite_2717/frame_13/DoAction.as:48 and frame_17/DoAction.as:38), so
-# lines sit 2 px apart whether or not they share a section.
+# (DefineSprite_2717/frame_13/DoAction.as:48 and
+# DefineSprite_2717/frame_17/DoAction.as:38), so lines sit 2 px apart whether
+# or not they share a section.
 const FIELD_SPACING: int = 2
 
 @onready var _root: HBoxContainer = $Root
@@ -62,15 +63,17 @@ func show_sections(
 			var label: Label = Label.new()
 			label.text = line["text"]
 			# The original also indents the first line of every field, the
-			# title by 3 px and the rest by 2 (frame_4/DoAction.as:44 and 63).
+			# title by 3 px and the rest by 2
+			# (DefineSprite_2717/frame_4/DoAction.as:44 and 63).
 			# Label has no first-line indent, so the port leaves it out.
 			label.add_theme_stylebox_override("normal", gutter)
 
 			# The original's tooltip clip, DefineSprite 2717, makes only its
 			# title field bold and draws every other field in regular _sans
-			# (frame_4/DoAction.as:40-64). Every caller puts the title in the
-			# first section, so that section keeps the project theme's bold
-			# face and every later section switches to RegularLabel.
+			# (DefineSprite_2717/frame_4/DoAction.as:40-64). Every caller puts
+			# the title in the first section, so that section keeps the
+			# project theme's bold face and every later section switches to
+			# RegularLabel.
 			if section_index > 0:
 				label.theme_type_variation = &"RegularLabel"
 			label.add_theme_font_size_override("font_size", TooltipTheme.FONT_SIZE)

@@ -22,6 +22,7 @@ dependencies = [
 ]
 
 [project.scripts]
+check_as_citations = "urchin_dev.checks.as_citations:main"
 check_avoid_terms = "urchin_dev.checks.avoid_terms:main"
 check_doc_paths = "urchin_dev.checks.doc_paths:main"
 check_gd_parse = "urchin_dev.checks.gd_parse:main"
