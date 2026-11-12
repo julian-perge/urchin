@@ -200,6 +200,16 @@ func test_control_no_shadow_material_fails() -> void:
 	_assert_one_problem(_scene_problems(root, _test_scene_record()), "shadow material")
 
 
+# The shared material is one resource for every Panel, so this control changes
+# the record instead. It stands for a SWF Panel whose shadow differs from the
+# shared material.
+func test_control_a_shadow_other_than_the_shared_one_fails() -> void:
+	var root: Control = await _laid_out(TEST_SCENE)
+	var scene: Dictionary = _test_scene_record()
+	scene["pieces"]["LeftPanel"]["shadow"]["blur"] = 4.0
+	_assert_one_problem(_scene_problems(root, scene), "LeftPanel: shadow blur")
+
+
 func test_control_a_wrong_font_size_fails() -> void:
 	var root: Control = await _laid_out(TEST_SCENE)
 	(root.get_node("LeftPanel/Heading") as Label).add_theme_font_size_override("font_size", 12)

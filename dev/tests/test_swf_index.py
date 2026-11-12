@@ -350,6 +350,19 @@ def test_first_line_style_reads_width_and_colour_past_every_fill_style():
     assert first_line_style(index, 2) is None
 
 
+def test_first_line_style_skips_the_miter_limit_of_a_miter_join():
+    # A DefineShape4 with no fill styles and one LINESTYLE2. Its first flags
+    # byte sets the join style to 2, a miter join, so a UI16 miter limit comes
+    # between the flags and the RGBA colour.
+    line = (
+        struct.pack("<H", 40) + bytes([0x20, 0x00]) + struct.pack("<H", 3 << 8)
+        + bytes([10, 20, 30, 255])
+    )  # fmt: skip
+    body = struct.pack("<H", 1) + b"\0\0\0" + bytes([0]) + bytes([1]) + line + b"\0\0"
+    index = parse_swf(swf(tag(TAG_DEFINE_SHAPE4, body), tag(TAG_SHOW_FRAME)))
+    assert first_line_style(index, 1) == (40, (10, 20, 30, 255))
+
+
 def drop_shadow_record(*, inner: bool) -> bytes:
     """A DropShadow filter record: its id, an RGBA colour, blur 5 by 4,
     angle 0.7854 radians, distance 5 and strength 1, then the flags with one
