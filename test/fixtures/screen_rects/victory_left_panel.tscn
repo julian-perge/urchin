@@ -1,19 +1,6 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Material" path="res://resources/ui/panel_inner_shadow.tres" id="1_shadow"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_left"]
-content_margin_left = 7.2302
-content_margin_top = 8.0249
-content_margin_right = 7.2302
-content_margin_bottom = 8.0249
-bg_color = Color(0.21568628, 0.21568628, 0.21568628, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0, 0, 0, 1)
-anti_aliasing = false
+[ext_resource type="PackedScene" path="res://scenes/ui/window/shell_panel.tscn" id="1_panel"]
 
 [node name="VictoryLeftPanel" type="Control"]
 layout_mode = 3
@@ -21,14 +8,13 @@ anchors_preset = 0
 offset_right = 800.0
 offset_bottom = 575.0
 
-[node name="LeftPanel" type="PanelContainer" parent="."]
-material = ExtResource("1_shadow")
+[node name="LeftPanel" parent="." instance=ExtResource("1_panel")]
 layout_mode = 0
 offset_left = 36.0698
 offset_top = 81.0751
 offset_right = 258.875
 offset_bottom = 408.0861
-theme_override_styles/panel = SubResource("StyleBoxFlat_left")
+content_margins = Vector4(7.2302, 8.0249, 7.2302, 8.0249)
 
 [node name="Heading" type="Label" parent="LeftPanel"]
 layout_mode = 2

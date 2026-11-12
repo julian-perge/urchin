@@ -21,6 +21,11 @@
 #             times that axis's scale.
 #   "text"  - an edit text, recorded as the rect Flash lays its text out in
 #             (label_layout.text_rect), with its font height and colour.
+#   "art"   - a piece drawn from a zoom 4 PNG of extract_window_chrome, which
+#             a TextureRect shows at the rect that render measured, with the
+#             PNG's path. The depth only proves that the frame places it.
+#   "hit"   - a button that draws nothing, only a hit square, recorded as the
+#             hit shape's bounds through the placement matrix.
 #
 # A timeline other than the root is measured from where the root's Navigation
 # frame places it, which for KRINMENU is (400.50, 222.40).
@@ -35,11 +40,13 @@ from dataclasses import dataclass, field
 from urchin_dev import REPO_ROOT, WEB_SWF
 from urchin_dev.swf import label_layout, render, timeline
 from urchin_dev.swf.swf_index import (
+    ButtonRecord,
     DropShadow,
     EditText,
     SwfIndex,
     character_kind,
     drop_shadow,
+    button_records,
     edit_text,
     first_fill_color,
     first_line_style,
@@ -48,6 +55,8 @@ from urchin_dev.swf.swf_index import (
 )
 
 RECORD = REPO_ROOT / "test" / "fixtures" / "screen_rects.json"
+CHROME = REPO_ROOT / "assets" / "ui" / "window" / "window_chrome.json"
+CHROME_TEXTURES = "res://assets/ui/window"
 KRINMENU = 3142
 HUB_FRAME = "Navigation"
 
@@ -56,6 +65,7 @@ HUB_FRAME = "Navigation"
 class Piece:
     kind: str
     depth: int
+    art: str | None = None
 
 
 @dataclass(frozen=True)
@@ -76,7 +86,29 @@ SCENES: dict[str, Scene] = {
             "LeftPanel": Piece("panel", 11),
             "LeftPanel/Heading": Piece("text", 1240),
         },
-    )
+    ),
+    # One ShellPanel of each fill, where the inventory frame places them, so
+    # the test checks each fill against its sprite: 2990 is tall, 2992 is bar
+    # and 2988 is centre.
+    "res://test/fixtures/screen_rects/shell_panel_fills.tscn": Scene(
+        timeline=KRINMENU,
+        frame="inventory",
+        pieces={
+            "Tall": Piece("panel", 11),
+            "Bar": Piece("panel", 5),
+            "Centre": Piece("panel", 21),
+        },
+    ),
+    # The 1 px line 2995 at depth 1 is not drawn (spec/107-window-shell.md).
+    "res://scenes/ui/window/window_shell.tscn": Scene(
+        timeline=KRINMENU,
+        frame="inventory",
+        pieces={
+            "Backdrop": Piece("art", 2, art="backdrop"),
+            "CloseArt": Piece("art", 1431, art="close_x"),
+            "CloseButton": Piece("hit", 1434),
+        },
+    ),
 }
 
 
@@ -165,6 +197,41 @@ def text_record(text: EditText, matrix, origin) -> dict:
     }
 
 
+def art_record(name: str, chrome: dict) -> dict:
+    """-> the record of the window_chrome.json entry `chrome` of piece `name`."""
+    if chrome["relative_to"] != "stage":
+        raise ValueError(
+            f"{name}'s rect is measured from {chrome['relative_to']}, not the stage"
+        )
+    return {
+        "kind": "art",
+        "rect": list(chrome["rect"]),
+        "texture": f"{CHROME_TEXTURES}/{name}.png",
+    }
+
+
+def hit_record(records: list[ButtonRecord], bounds, matrix, origin) -> dict:
+    """-> the record of a button that `records` describe, whose one hit shape
+    has `bounds`, placed with `matrix`."""
+    drawn = [(sorted(r.states), r.character_id) for r in records]
+    if len(records) != 1 or records[0].states != {"hit"}:
+        raise ValueError(f"the button draws {drawn}, and the port keeps a hit area only")
+    if records[0].matrix != timeline.IDENTITY:
+        raise ValueError(f"the button moves its hit shape: {records[0].matrix}")
+    return {
+        "kind": "hit",
+        "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
+    }
+
+
+def _hit(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
+    records = button_records(index, layer.character_id)
+    shape = records[0].character_id if records else None
+    if shape is None or character_kind(index, shape) != "shape":
+        raise ValueError(f"button {layer.character_id} has no hit shape")
+    return hit_record(records, shape_bounds(index, shape), layer.matrix, origin)
+
+
 def _panel(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
     where = f"panel sprite {layer.character_id}"
     shapes = list(timeline.frames(index, layer.character_id)[0].values())
@@ -216,6 +283,11 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
         elif piece.kind == "text":
             text = edit_text(index, layer.character_id)
             pieces[path] = text_record(text, layer.matrix, origin)
+        elif piece.kind == "art":
+            chrome = json.loads(CHROME.read_text())
+            pieces[path] = art_record(piece.art, chrome[piece.art])
+        elif piece.kind == "hit":
+            pieces[path] = _hit(index, layer, origin)
         else:
             raise ValueError(f"{path}: unknown piece kind {piece.kind!r}")
     return {

@@ -8,7 +8,7 @@ from dataclasses import replace
 import pytest
 from urchin_dev import REPO_ROOT
 from urchin_dev.swf.extract import screen_rects
-from urchin_dev.swf.swf_index import DropShadow, EditText
+from urchin_dev.swf.swf_index import ButtonRecord, DropShadow, EditText
 
 ORIGIN = (400.5, 222.4)
 # The victory frame's left Panel: KRINMENU frame 9 places sprite 2990 at depth
@@ -155,3 +155,54 @@ def test_the_committed_record_holds_every_configured_scene_and_piece():
     for path, scene in screen_rects.SCENES.items():
         assert set(record["scenes"][path]["pieces"]) == set(scene.pieces)
         assert record["scenes"][path]["port_only"] == list(scene.port_only)
+
+
+# The close X of KRINMENU's inventory frame, as extract_window_chrome records it.
+CLOSE_X_CHROME = {
+    "rect": [734.3, 29.675, 37.0, 36.5],
+    "relative_to": "stage",
+    "size": [148, 146],
+    "zoom": 4.0,
+}
+
+
+def test_art_record_is_the_render_rect_and_the_png():
+    entry = screen_rects.art_record("close_x", CLOSE_X_CHROME)
+    assert entry == {
+        "kind": "art",
+        "rect": [734.3, 29.675, 37.0, 36.5],
+        "texture": "res://assets/ui/window/close_x.png",
+    }
+
+
+def test_art_record_refuses_a_rect_measured_from_a_sprite():
+    with pytest.raises(ValueError, match="sprite 2986"):
+        screen_rects.art_record(
+            "slot_inventory", {**CLOSE_X_CHROME, "relative_to": "sprite 2986"}
+        )
+
+
+# The close button 2853: one record, drawn in the hit state only, of the
+# 600 twip square shape 291. KRINMENU frame 1 places it at depth 1434.
+CLOSE_HIT = ButtonRecord(frozenset({"hit"}), 291, 1, (1.0, 0.0, 0.0, 1.0, 0, 0))
+CLOSE_MATRIX = (1.0, 0.0, 0.0, 1.0, 7062, -3494)
+CLOSE_BOUNDS = (-300, -300, 300, 300)
+
+
+def test_hit_record_is_the_hit_shape_through_the_placement():
+    entry = screen_rects.hit_record([CLOSE_HIT], CLOSE_BOUNDS, CLOSE_MATRIX, ORIGIN)
+    assert entry["kind"] == "hit"
+    assert entry["rect"] == pytest.approx([738.6, 32.7, 30.0, 30.0])
+
+
+@pytest.mark.parametrize(
+    "records, message",
+    [
+        ([CLOSE_HIT, CLOSE_HIT], "draws"),
+        ([replace(CLOSE_HIT, states=frozenset({"up", "hit"}))], "draws"),
+        ([replace(CLOSE_HIT, matrix=(1.0, 0.0, 0.0, 1.0, 20, 0))], "moves"),
+    ],
+)
+def test_hit_record_refuses_a_button_that_is_more_than_a_hit_square(records, message):
+    with pytest.raises(ValueError, match=message):
+        screen_rects.hit_record(records, CLOSE_BOUNDS, CLOSE_MATRIX, ORIGIN)

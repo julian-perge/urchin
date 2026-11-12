@@ -1,5 +1,107 @@
 {
  "scenes": {
+  "res://scenes/ui/window/window_shell.tscn": {
+   "frame": "inventory",
+   "origin": [
+    400.5,
+    222.4
+   ],
+   "pieces": {
+    "Backdrop": {
+     "kind": "art",
+     "rect": [
+      13.25,
+      14.25,
+      776.75,
+      433.0
+     ],
+     "texture": "res://assets/ui/window/backdrop.png"
+    },
+    "CloseArt": {
+     "kind": "art",
+     "rect": [
+      734.3,
+      29.675,
+      37.0,
+      36.5
+     ],
+     "texture": "res://assets/ui/window/close_x.png"
+    },
+    "CloseButton": {
+     "kind": "hit",
+     "rect": [
+      738.6,
+      32.7,
+      30.0,
+      30.0
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 3142
+  },
+  "res://test/fixtures/screen_rects/shell_panel_fills.tscn": {
+   "frame": "inventory",
+   "origin": [
+    400.5,
+    222.4
+   ],
+   "pieces": {
+    "Bar": {
+     "border": 1,
+     "fill": "404040ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      503.5,
+      358.2,
+      249.05,
+      50.85
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "Centre": {
+     "border": 1,
+     "fill": "1a1a1aff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      308.95,
+      82.15,
+      183.05,
+      326.5
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "Tall": {
+     "border": 1,
+     "fill": "373737ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      47.5,
+      86.6,
+      249.05,
+      267.15
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    }
+   },
+   "port_only": [],
+   "timeline": 3142
+  },
   "res://test/fixtures/screen_rects/victory_left_panel.tscn": {
    "frame": "win",
    "origin": [

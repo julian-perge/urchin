@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/window/shell_panel.gd" id="1_script"]
+[ext_resource type="Material" path="res://resources/ui/panel_inner_shadow.tres" id="2_shadow"]
+
+[node name="ShellPanel" type="PanelContainer"]
+material = ExtResource("2_shadow")
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_script")

@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/window/window_shell.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/window/backdrop.png" id="2_backdrop"]
+[ext_resource type="Texture2D" path="res://assets/ui/window/close_x.png" id="3_close"]
+
+[node name="WindowShell" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 800.0
+offset_bottom = 575.0
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="Backdrop" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 13.25
+offset_top = 14.25
+offset_right = 790.0
+offset_bottom = 447.25
+texture = ExtResource("2_backdrop")
+expand_mode = 1
+
+[node name="CloseArt" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 734.3
+offset_top = 29.675
+offset_right = 771.3
+offset_bottom = 66.175
+mouse_filter = 2
+texture = ExtResource("3_close")
+expand_mode = 1
+
+[node name="CloseButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 738.6
+offset_top = 32.7
+offset_right = 768.6
+offset_bottom = 62.7
+
+[connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]
