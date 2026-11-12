@@ -250,7 +250,8 @@ def bar_save_height(index: SwfIndex, owner: int) -> float:
 def convert(action_script: Path, index: SwfIndex) -> dict:
     bars = {"source": SOURCE, "save_height": bar_save_height(index, BAR_SPRITE)}
     bars.update(parse_element_bars((action_script / SOURCE).read_text("utf-8")))
-    rows = {"source": f"{ROWS}/PlaceObject3_3002_*"}
+    # The rows step once a frame, so they run at the SWF's frame rate.
+    rows = {"source": f"{ROWS}/PlaceObject3_3002_*", "frame_rate": index.frame_rate}
     rows.update(parse_victory_rows(_row_scripts(action_script)))
     return {"element_bars": bars, "victory_rows": rows}
 
