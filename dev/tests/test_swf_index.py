@@ -3,25 +3,31 @@ from __future__ import annotations
 
 import struct
 
+import pytest
 from urchin_dev.swf.swf_index import (
     TAG_DEFINE_EDIT_TEXT,
     TAG_DEFINE_FONT3,
     TAG_DEFINE_SHAPE,
     TAG_DEFINE_SHAPE3,
+    TAG_DEFINE_SHAPE4,
     TAG_DEFINE_SPRITE,
     TAG_DO_ACTION,
     TAG_END,
     TAG_FRAME_LABEL,
     TAG_PLACE_OBJECT2,
+    TAG_PLACE_OBJECT3,
     TAG_REMOVE_OBJECT2,
     TAG_SHOW_FRAME,
     TAG_SOUND_STREAM_BLOCK,
+    DropShadow,
     EditText,
     Font,
     Placement,
     Removal,
+    drop_shadow,
     edit_text,
     first_fill_bitmap_id,
+    first_line_style,
     font,
     parse_swf,
     shape_bounds,
@@ -318,3 +324,69 @@ def test_a_font_with_no_glyphs_is_a_device_font():
     assert font(index, 65).device
     assert font(index, 66) == Font(name="Arial", bold=False, italic=True, glyphs=2)
     assert not font(index, 66).device
+
+
+def test_first_line_style_reads_width_and_colour_past_every_fill_style():
+    # A DefineShape4: ShapeBounds, EdgeBounds and a flags byte, then a solid
+    # fill and a bitmap fill, so the line styles start only after a fill style
+    # that carries a matrix. The line style is LINESTYLE2: a width of 20 twips,
+    # two bytes of flags with no miter and no fill, then an RGBA colour.
+    solid = bytes([0x00]) + bytes([55, 55, 55, 255])
+    bitmap = bytes([0x41]) + struct.pack("<H", 7) + IDENTITY_MATRIX
+    line = struct.pack("<H", 20) + b"\0\0" + bytes([10, 20, 30, 255])
+    body = (
+        struct.pack("<H", 1) + b"\0" + b"\0" + b"\0"
+        + bytes([2]) + solid + bitmap + bytes([1]) + line + b"\0\0"
+    )  # fmt: skip
+    none = struct.pack("<H", 2) + b"\0\0\0" + b"\0\0" + b"\0\0"
+    index = parse_swf(
+        swf(
+            tag(TAG_DEFINE_SHAPE4, body),
+            tag(TAG_DEFINE_SHAPE4, none),
+            tag(TAG_SHOW_FRAME),
+        )
+    )
+    assert first_line_style(index, 1) == (20, (10, 20, 30, 255))
+    assert first_line_style(index, 2) is None
+
+
+def drop_shadow_record(*, inner: bool) -> bytes:
+    """A DropShadow filter record: its id, an RGBA colour, blur 5 by 4,
+    angle 0.7854 radians, distance 5 and strength 1, then the flags with one
+    pass. Blur, angle and distance are 16.16 and strength is 8.8."""
+    body = bytes([0, 0, 0, 128]) + struct.pack(
+        "<iiiih", 5 << 16, 4 << 16, 51472, 5 << 16, 1 << 8
+    )
+    return bytes([0]) + body + bytes([(0x80 if inner else 0) | 0x01])
+
+
+def test_place_object3_keeps_each_filter_record():
+    glow = bytes([2]) + bytes(15)
+    shadow = drop_shadow_record(inner=True)
+    # Flags: HasCharacter. Flags3: HasFilterList. Then the depth and character.
+    body = bytes([0x02, 0x01]) + struct.pack("<HH", 4, 9)
+    body += bytes([2]) + glow + shadow
+    index = parse_swf(swf(tag(TAG_PLACE_OBJECT3, body), tag(TAG_SHOW_FRAME)))
+    (placed,) = index.placements
+    assert placed.filters == ("Glow", "DropShadow")
+    assert placed.filter_records == (glow, shadow)
+
+
+def test_drop_shadow_reads_its_values_in_px_and_degrees():
+    shadow = drop_shadow(drop_shadow_record(inner=True))
+    assert shadow == DropShadow(
+        color=(0, 0, 0, 128),
+        blur_x=5.0,
+        blur_y=4.0,
+        angle=45.0,
+        distance=5.0,
+        strength=1.0,
+        inner=True,
+        knockout=False,
+    )
+    assert drop_shadow(drop_shadow_record(inner=False)).inner is False
+
+
+def test_drop_shadow_refuses_another_filter():
+    with pytest.raises(ValueError, match="Glow"):
+        drop_shadow(bytes([2]) + bytes(15))

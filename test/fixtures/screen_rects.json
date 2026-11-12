@@ -1,0 +1,43 @@
+{
+ "scenes": {
+  "res://test/fixtures/screen_rects/victory_left_panel.tscn": {
+   "frame": "win",
+   "origin": [
+    400.5,
+    222.4
+   ],
+   "pieces": {
+    "LeftPanel": {
+     "border": 1,
+     "fill": "373737ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      36.0698,
+      81.0751,
+      222.8052,
+      327.011
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "LeftPanel/Heading": {
+     "color": "5e5e5eff",
+     "font_size": 13.0,
+     "kind": "text",
+     "rect": [
+      43.3,
+      89.1,
+      209.15,
+      15.0
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 3142
+  }
+ }
+}
