@@ -31,8 +31,12 @@ SWF_XML = SOURCE_FILES / "swf_xml"
 WEB_SWF_XML = SWF_XML / "sonny-2-2900.xml"
 STEAM_SWF_XML = SWF_XML / "SONNY2_steam.xml"
 
-WEB_SWF = REPO_ROOT / "sonny-2-2900.swf"
-STEAM_SWF = REPO_ROOT / "SONNY2.swf"
+# The SWFs are gitignored. URCHIN_SWF_DIR names one folder outside the repo
+# that holds them, so every worktree reads the same copy. Without the
+# variable, the scripts look in the repo root.
+SWF_DIR = Path(os.environ.get("URCHIN_SWF_DIR", REPO_ROOT)).expanduser()
+WEB_SWF = SWF_DIR / "sonny-2-2900.swf"
+STEAM_SWF = SWF_DIR / "SONNY2.swf"
 
 
 def require_data_json(file_name: str) -> Path:

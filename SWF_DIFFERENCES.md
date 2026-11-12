@@ -1,6 +1,6 @@
 # Web SWF vs Steam SWF differences
 
-Tracking file for divergences found between the original web release (`sonny-2-2900.swf`, repo root) and the Steam rebundle (`SONNY2.swf`, repo root). Both builds define game content the same way -
+Tracking file for divergences found between the original web release (`sonny-2-2900.swf`) and the Steam rebundle (`SONNY2.swf`), both in `URCHIN_SWF_DIR`. Both builds define game content the same way -
 imperative AVM1 call sequences in frame 42 (`createNewUnitKrin(...)` / `createNewBattle()` / `addNewMove(...)`, etc.) - decompilable with `ffdec -export script`; neither embeds a structured data
 format. The readable decompiled code in `source_files/action_script_curated/` is the web release's script (the full ffdec export lives at `source_files/action_script/`).
 

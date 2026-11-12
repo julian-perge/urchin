@@ -10,8 +10,8 @@ the OS, loads the per-machine settings from `.env`, and stops with a message
 when a tool is missing. The Python scripts read `GODOT_BIN` from it and do not
 look for Godot themselves, so `uv run gut` outside `just` fails.
 
-- In a new git worktree, run `just setup-worktree` first. It links the
-  gitignored SWFs from the main checkout and runs Godot's import.
+- In a new git worktree, run `just setup-worktree` first. It runs Godot's
+  import and warns when `URCHIN_SWF_DIR` has no SWFs.
 - Extraction and conversion scripts are `[project.scripts]` entry points with
   a recipe each: `just extract-battle-screen`, `just convert-items`, and so on.
   Arguments pass through. `just` lists them.
@@ -37,6 +37,10 @@ look for Godot themselves, so `uv run gut` outside `just` fails.
   change it, or to limit the Godot processes that run at once with
   `GODOT_SLOTS` (default `auto`, the number of CPU cores), copy `.env.example`
   to `.env`. `.env` is git-ignored. A variable set in the shell wins over it.
+- The two SWFs are git-ignored. Put them in one folder outside the repo and
+  set `URCHIN_SWF_DIR` to it in your shell profile, so every worktree reads
+  the same copy. Do not set it in `.env`: a new worktree has no `.env`.
+  Without the variable, the scripts look in the repo root.
 
 ## Every task
 

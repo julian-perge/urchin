@@ -77,7 +77,7 @@ An extractor and one GUT test. They keep each Screen's and Window's numbers hone
 
 ## Part 5: The compare tool
 
-One shared tool, generalized from the victory prototype's `compare.py` on the branch `prototype/victory-containers` (`dev/prototypes/victory_containers/`). It lives in `dev/` (proposed: `dev/urchin_dev/checks/`) and runs by hand through the godot-mcp captures, outside `uv run gut`. It needs the SWF, which is gitignored and exists only in the main checkout, and it needs a drawing window.
+One shared tool, generalized from the victory prototype's `compare.py` on the branch `prototype/victory-containers` (`dev/prototypes/victory_containers/`). It lives in `dev/` (proposed: `dev/urchin_dev/checks/`) and runs by hand through the godot-mcp captures, outside `uv run gut`. It needs the SWF, which is gitignored and read from `URCHIN_SWF_DIR`, and it needs a drawing window.
 
 - It scores layout and art with text hidden, in the prototype's `chrome` and `panels` modes. It scores inside the mask the Screen draws, and it reads a percentile, as `verify_battle_screen.py` does. Faces stay masked out, because ffdec draws them empty. Text stays with the rect test and the font ticket.
 - It has a per-Screen config. Each build issue adds an entry.
@@ -162,7 +162,7 @@ This snippet shows the style only. The build issue writes the real `_notificatio
 - **FloatBox**: GUT unit tests in `test/unit/`. Cases: fractional separation, fractional minimum sizes, nesting, vertical and horizontal, a hidden child. Each expected position is computed from numbers the test reads, not typed.
 - **Panel recipe**: a GUT test that builds one Panel and checks its border width, its rect growth and its material. A second test breaks one of the three and expects a failure.
 - **Rect test**: the generic test above. It runs in every `uv run gut`. Its must-fail control moves one piece 20 px in a copy of the scene and expects a failure.
-- **Extractors**: `uv run pytest` tests under `dev/tests/` for the pure parts, and the byte-for-byte rerun rule from `docs/agents/art-extraction.md` for each PNG. The extractors read the SWF, so those runs happen in the main checkout.
+- **Extractors**: `uv run pytest` tests under `dev/tests/` for the pure parts, and the byte-for-byte rerun rule from `docs/agents/art-extraction.md` for each PNG. The extractors read the SWF from `URCHIN_SWF_DIR`, so those runs work in any worktree.
 - **Compare tool**: the must-fail control in Part 5. It runs by hand and is not a GUT test.
 - **Viewport**: `test/unit/test_project_settings.gd` already reads both snap settings. Add a case there that expects the 800x575 viewport.
 

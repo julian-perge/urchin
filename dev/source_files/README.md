@@ -1,6 +1,6 @@
 # source_files
 
-Decompiled source material extracted from the two SWFs at the repo root
+Decompiled source material extracted from the two SWFs in `URCHIN_SWF_DIR` (see AGENTS.md, Setup)
 (`sonny-2-2900.swf` = ArmorGames web build, `SONNY2.swf` = Steam build).
 Everything here regenerates with:
 

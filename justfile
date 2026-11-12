@@ -39,7 +39,7 @@ require +tools:
 require-godot:
     @command -v "$GODOT_BIN" >/dev/null || { echo "error: no Godot at GODOT_BIN=$GODOT_BIN. Install Godot 4.7.2 or set GODOT_BIN in .env. See the Setup section of AGENTS.md." >&2; exit 1; }
 
-[doc('Link the SWFs from the main checkout into a new worktree and run Godot import')]
+[doc('Run Godot import in a new worktree and warn when URCHIN_SWF_DIR has no SWFs')]
 [group('godot')]
 setup-worktree: require-godot
     uv run setup_worktree
