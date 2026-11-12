@@ -78,8 +78,10 @@ Implemented in `scripts/entities/character_visual.gd` (real MODEL1 label playbac
 - **Missile:** `colortobe = param 11` is set on `inner` immediately BEFORE `inner.gotoAndPlay("cast")` - the cast-glow tint is active for the whole animation from frame 1 of the label, not something
   faded in/out mid-clip by a script trigger. `sfx_cast` plays at cast start; the actual impact/damage timing is driven by the projectile's own arrival (see krinBoltMake above), NOT by the cast clip's
   elapsed time.
-- **Shock:** same `colortobe`/`gotoAndPlay("cast")` call, but the move's own sound, the BOOM clip attach, the camera zoom/shake, and `BAMBAMBAM = true` (impact) ALL fire in the same tick as the
-  `gotoAndPlay("cast")` call - the doll's cast animation is purely cosmetic follow-through for Shock; the hit lands instantly, no waiting on the clip.
+- **Shock:** same `colortobe`/`gotoAndPlay("cast")` call, but the move's own sound, the BOOM clip attach, the camera zoom/shake, and `BAMBAMBAM = true` ALL fire in the same tick as the
+  `gotoAndPlay("cast")` call - the doll's cast animation is purely cosmetic follow-through for Shock; the hit does not wait on the clip. The Impact itself comes 1 frame later: the conductor's
+  Impact block (`if(_root.BAMBAMBAM)`, line 12) runs before its Dispatch block (line 468) in the same enterFrame handler, so it sees the flag on the next frame. With D as the Dispatch frame, the
+  Move result applies at D+1, the Buff tick comes at D+26 and the next Dispatch at D+27, or at D+52 after a tick that did something.
 - **How cast ends:** MODEL1 frame 219's own frame script is `gotoAndStop("stand"); play()` - cast is a one-shot that always runs to completion (189-219, ~1.03 s at 30 fps) and falls straight into the
   idle stand loop on its own; nothing in the engine interrupts it early or re-triggers it mid-flight.
 
@@ -262,7 +264,8 @@ The battle engine dispatches on `addNewMove` param 10:
   `krinBoltSpeed = 1`, stretching trail `_xscale += 8.3 * step`); impact/sound/boom land when the bolt arrives. A Missile miss plays `sfx_magicmiss` (conductor line 415).
   `ability_two[20]` (is_multi_target) fires one bolt per living enemy, but no move sets it (see krinBoltMake above), so this branch is dead content.
 - **Shock**: caster plays **"cast"** with the `colortobe` tint; param 12 is UNUSED. The move's own sound plays immediately, the BOOM clip (param 13) attaches at the target at once, the camera zooms
-  (`zoomPause = 1`), the screen shakes (`GridShaker`, when param 9 speed modifier >= 0), and impact (`BAMBAMBAM`) is instant. Shock also sets `missToMake` to undefined (conductor line
+  (`zoomPause = 1`), the screen shakes (`GridShaker`, when param 9 speed modifier >= 0), and `BAMBAMBAM` is raised at once. The Impact
+  that the flag triggers runs 1 frame after the Dispatch (see the Shock entry under the cast animation above). Shock also sets `missToMake` to undefined (conductor line
   447), so its miss would be silent too, but a Shock move never misses: the hit roll is skipped for Shock and `strikeSuccess` is set true (conductor lines 360 and 385).
 
 Element colors (`elementColorArray`, frame_41/DoAction_2.as - menu bars AND Floating numbers): Physical `C40000`, Magic `FB95C8`, Ice `68CBF4`, Fire `FF6600`, Lightning `FFCC00`, Earth `856B47`, Shadow

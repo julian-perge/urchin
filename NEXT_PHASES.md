@@ -23,8 +23,9 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     Krin.Firebolt-style projectile clip names for Missile moves; unused for Shock, which casts). Melee moves run to the target and damage lands at `attack_connected` (mid-swing), with runback after.
   - **DONE (2026-07-21) - movement/timing model.** The faithful krinMelee port (see `DECODED_ALGORITHMS.md`): eased ~0.47 s dash that interrupts the run label, impact at 0.5 s into the strike, the
     strike flowing through `attack2` (the downswing - not a variant), runback at 1.0 s with the eased return.
-  - **DONE (2026-07-21) - cast, stun family, and Missile projectiles.** `cast` (189-219) now plays the real MODEL1 label for both Missile and Shock casters; Shock resolves its impact instantly
-    (matches the source's same-tick `BAMBAMBAM`), Missile awaits a krinBoltMake-ported `Projectile` bolt's arrival before landing the hit. The stun family (`stun` 220-239 one-shot ->
+  - **DONE (2026-07-21) - cast, stun family, and Missile projectiles.** `cast` (189-219) now plays the real MODEL1 label for both Missile and Shock casters; Shock lands 1 frame after its Dispatch
+    (the source raises `BAMBAMBAM` in the conductor's Dispatch block, and the Impact block runs before that block, so it sees the flag on the next frame; fixed in #198), Missile awaits a
+    krinBoltMake-ported `Projectile` bolt's arrival before landing the hit. The stun family (`stun` 220-239 one-shot ->
     `stun2` 240-279 loop -> `outofstun` 280-295 one-shot) is a real value-comparison state machine (`CharacterVisual.enter_stun`/`exit_stun`) driven off the krinBuff `STUN` running total, not a
     fixed `!= 0` toggle - see `DECODED_ALGORITHMS.md`.
   - **Remaining:** the MODEL4 (female) timeline.

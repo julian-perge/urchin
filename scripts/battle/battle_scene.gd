@@ -695,11 +695,17 @@ func _play_move_event(event: Dictionary) -> void:
 		])
 		caster.cast(move)
 		if move.attack_animation_type == "Shock":
-			# Shock: sound, the BOOM clip, and impact (BAMBAMBAM) all fire in
-			# the same tick as gotoAndPlay("cast") - the doll's cast animation
-			# plays out cosmetically but the hit lands immediately, no wait.
+			# A Shock plays its sound and attaches its BOOM clip on its Dispatch
+			# frame, as it starts the cast. It raises the impact flag there too,
+			# but the conductor's Impact block runs before its Dispatch block in
+			# the same enterFrame handler, so the Move result applies on the next
+			# frame (frame_217/PlaceObject2_3389_480 enterFrame, lines 12 and
+			# 450-468).
 			AudioManagerAuto.play_effect(move.sound_effect_name)
 			_spawn_impact(target_slot, move, event["result"])
+			await _wait_frames(1)
+			if not is_inside_tree():
+				return
 			_show_move_result(event, target_slot)
 			_count_from_impact(event)
 			return
@@ -725,7 +731,7 @@ func _play_move_event(event: Dictionary) -> void:
 			return
 		AudioManagerAuto.play_effect("sfx_cast")
 	# A move the scene can't animate, because its caster, its record or its
-	# animation type is unknown, lands at its Dispatch like a Shock.
+	# animation type is unknown, lands on its Dispatch frame.
 	if move != null:
 		AudioManagerAuto.play_effect(move.sound_effect_name)
 	_show_move_result(event, target_slot)
