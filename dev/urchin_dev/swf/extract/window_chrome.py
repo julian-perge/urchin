@@ -65,6 +65,7 @@ ZOOM = 4.0
 KRINMENU = 3142
 HUB_FRAME = "Navigation"
 BACKDROP_DEPTH = 2
+CLOSE_X_DEPTH = 1431
 KRINMENU_ROOT_DEPTH = 175
 ZONE_BAR_ROOT_DEPTH = 169
 ZONE_BAR_SPRITE = 3149
@@ -140,7 +141,7 @@ def jobs(index: SwfIndex, plate_strip: tuple[int, ...]) -> dict[str, render.Job]
         "slot_inventory": render.Job(2986, 1, ZOOM),
         "slot_equip": render.Job(2984, 1, ZOOM),
         "slot_drop": render.Job(3013, 1, ZOOM),
-        "close_x": on_menu(INVENTORY_FRAME, 1431),
+        "close_x": on_menu(INVENTORY_FRAME, CLOSE_X_DEPTH),
         "delete_slot": on_menu(INVENTORY_FRAME, 1425),
         "sell_slot": on_menu(SHOP_FRAME, 1281),
         "xp_gloss": on_menu(INVENTORY_FRAME, 1421),

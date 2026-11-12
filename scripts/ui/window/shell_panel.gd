@@ -19,7 +19,8 @@ const FILLS: Dictionary[Fill, Color] = {
 		fill = value
 		_style.bg_color = FILLS[fill]
 
-# The recipe's mean scale stroke for the placement, in whole pixels.
+# The host sets this to the recipe's mean scale stroke for its placement, in
+# whole pixels.
 @export var border: int = 1:
 	set(value):
 		border = value

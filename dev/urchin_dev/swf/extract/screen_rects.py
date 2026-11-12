@@ -13,7 +13,7 @@
 # node that draws a piece. port_only names the nodes the port draws and the
 # SWF does not, so the test skips them.
 #
-# A piece is one of two kinds:
+# A piece is one of four kinds:
 #   "panel" - a flat Panel (Part 3): a sprite whose one shape has a solid fill
 #             and a line, under an inner DropShadow. Its rect is the fill rect
 #             grown by half the border. The fill rect is ShapeBounds through
@@ -23,7 +23,8 @@
 #             (label_layout.text_rect), with its font height and colour.
 #   "art"   - a piece drawn from a zoom 4 PNG of extract_window_chrome, which
 #             a TextureRect shows at the rect that render measured, with the
-#             PNG's path. The depth only proves that the frame places it.
+#             PNG's path. Its depth is the one window_chrome renders, so the
+#             two extractors cannot name different placements.
 #   "hit"   - a button that draws nothing, only a hit square, recorded as the
 #             hit shape's bounds through the placement matrix.
 #
@@ -39,14 +40,15 @@ from dataclasses import dataclass, field
 
 from urchin_dev import REPO_ROOT, WEB_SWF
 from urchin_dev.swf import label_layout, render, timeline
+from urchin_dev.swf.extract import window_chrome
 from urchin_dev.swf.swf_index import (
     ButtonRecord,
     DropShadow,
     EditText,
     SwfIndex,
+    button_records,
     character_kind,
     drop_shadow,
-    button_records,
     edit_text,
     first_fill_color,
     first_line_style,
@@ -55,7 +57,6 @@ from urchin_dev.swf.swf_index import (
 )
 
 RECORD = REPO_ROOT / "test" / "fixtures" / "screen_rects.json"
-CHROME = REPO_ROOT / "assets" / "ui" / "window" / "window_chrome.json"
 CHROME_TEXTURES = "res://assets/ui/window"
 KRINMENU = 3142
 HUB_FRAME = "Navigation"
@@ -104,8 +105,8 @@ SCENES: dict[str, Scene] = {
         timeline=KRINMENU,
         frame="inventory",
         pieces={
-            "Backdrop": Piece("art", 2, art="backdrop"),
-            "CloseArt": Piece("art", 1431, art="close_x"),
+            "Backdrop": Piece("art", window_chrome.BACKDROP_DEPTH, art="backdrop"),
+            "CloseArt": Piece("art", window_chrome.CLOSE_X_DEPTH, art="close_x"),
             "CloseButton": Piece("hit", 1434),
         },
     ),
@@ -215,7 +216,9 @@ def hit_record(records: list[ButtonRecord], bounds, matrix, origin) -> dict:
     has `bounds`, placed with `matrix`."""
     drawn = [(sorted(r.states), r.character_id) for r in records]
     if len(records) != 1 or records[0].states != {"hit"}:
-        raise ValueError(f"the button draws {drawn}, and the port keeps a hit area only")
+        raise ValueError(
+            f"the button draws {drawn}, and the port keeps a hit area only"
+        )
     if records[0].matrix != timeline.IDENTITY:
         raise ValueError(f"the button moves its hit shape: {records[0].matrix}")
     return {
@@ -273,6 +276,7 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
     origin = origin_of(index, scene.timeline)
     frame = timeline.frame_of(index, scene.timeline, scene.frame)
     layers = timeline.frames(index, scene.timeline)[frame - 1]
+    chrome = json.loads(window_chrome.RECORD.read_text())
     pieces = {}
     for path, piece in scene.pieces.items():
         layer = layers.get(piece.depth)
@@ -284,7 +288,6 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
             text = edit_text(index, layer.character_id)
             pieces[path] = text_record(text, layer.matrix, origin)
         elif piece.kind == "art":
-            chrome = json.loads(CHROME.read_text())
             pieces[path] = art_record(piece.art, chrome[piece.art])
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, origin)
