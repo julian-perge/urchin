@@ -23,13 +23,18 @@ func _draws(node: Node) -> bool:
 		or node is ColorRect or node is NinePatchRect
 
 
-func _drawing_paths(root: Node) -> Array[String]:
+# A port only node is skipped with every node under it, so a piece the port
+# builds from several nodes needs one name in port_only.
+func _drawing_paths(root: Node, port_only: Array) -> Array[String]:
 	var found: Array[String] = []
 	var queue: Array[Node] = root.get_children()
 	while queue:
 		var node: Node = queue.pop_front()
+		var path: String = str(root.get_path_to(node))
+		if port_only.has(path):
+			continue
 		if _draws(node):
-			found.append(str(root.get_path_to(node)))
+			found.append(path)
 		queue.append_array(node.get_children())
 	return found
 
@@ -88,6 +93,12 @@ func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[Stri
 	var color: Color = label.get_theme_color("font_color")
 	if not _same_color(color, entry["color"]):
 		found.append("%s: font colour %s, expected %s" % [path, color.to_html(), entry["color"]])
+	# A Label puts its lines one font height plus its line spacing apart.
+	if entry.has("line_pitch"):
+		var pitch: float = label.get_theme_font("font").get_height(size) \
+			+ label.get_theme_constant("line_spacing")
+		if not _close(pitch, float(entry["line_pitch"])):
+			found.append("%s: line pitch %s, expected %s" % [path, pitch, entry["line_pitch"]])
 	return found
 
 
@@ -126,14 +137,14 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 						found.append("%s: texture %s, expected %s" % [path, texture_path, entry["texture"]])
 				else:
 					found.append("%s: an art piece that is not a TextureRect" % path)
-			"hit":
+			"hit", "button":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 				if not node is BaseButton:
-					found.append("%s: a hit piece that is not a button" % path)
+					found.append("%s: a %s piece that is not a button" % [path, entry["kind"]])
 			_:
 				found.append("%s: unknown kind %s" % [path, entry["kind"]])
-	for path: String in _drawing_paths(root):
-		if not pieces.has(path) and not (scene["port_only"] as Array).has(path):
+	for path: String in _drawing_paths(root, scene["port_only"]):
+		if not pieces.has(path):
 			found.append("%s: draws but is neither in the record nor port only" % path)
 	return found
 
@@ -276,3 +287,41 @@ func test_control_the_wrong_art_fails() -> void:
 	var root: Control = await _laid_out(SHELL_SCENE)
 	(root.get_node("CloseArt") as TextureRect).texture = (root.get_node("Backdrop") as TextureRect).texture
 	_assert_one_problem(_scene_problems(root, _shell_record()), "CloseArt: texture")
+
+
+func test_control_a_port_only_node_also_skips_the_nodes_under_it() -> void:
+	var root: Control = await _laid_out(TEST_SCENE)
+	var extra := Control.new()
+	extra.name = "Extra"
+	var inner := ColorRect.new()
+	inner.name = "Inner"
+	extra.add_child(inner)
+	root.add_child(extra)
+	var scene: Dictionary = _test_scene_record()
+	_assert_one_problem(_scene_problems(root, scene), "Extra/Inner: draws")
+	scene["port_only"] = ["Extra"]
+	assert_eq(_scene_problems(root, scene), [] as Array[String])
+
+
+const ABILITIES_SCENE: String = "res://scenes/ui/menu/abilities_window.tscn"
+
+
+# A taller Instinct slot pushes the Speed row 20 px down its FloatBox column, so
+# the row's name and value both fail.
+func test_control_an_attribute_row_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(ABILITIES_SCENE)
+	var slot: Control = root.get_node("AttributeRows/InstinctRow")
+	slot.custom_minimum_size.y += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][ABILITIES_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_contains(problem, "AttributeRows/SpeedRow/")
+		assert_string_contains(problem, "top left")
+
+
+func test_control_a_wrapping_label_with_the_wrong_line_pitch_fails() -> void:
+	var root: Control = await _laid_out(ABILITIES_SCENE)
+	var hint: Label = root.get_node("HintLabel")
+	hint.add_theme_constant_override("line_spacing", hint.get_theme_constant("line_spacing") + 3)
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][ABILITIES_SCENE]), "HintLabel: line pitch")

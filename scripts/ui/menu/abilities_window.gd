@@ -1,15 +1,16 @@
 # abilities_window.gd
 # The abilities screen, rebuilt from frame 25 of the original menu clip
-# (DefineSprite 3142 at stage 400.5, 222.4):
-# - left: the class ability tree ('talenttreefull' sprite 3100 - 28 nodes,
-#   4 columns x 7 rows on a 52 x 40 pitch at stage 45.4, 74.2), learn with
-#   a click (TalentTree.learn rules: prerequisites, level tiers, 1 point)
-# - middle: name/level, Ability Points (skill points) and Attribute Points
-#   (stat points), plus the four attribute rows with '+' spend buttons
-#   (frame-25 buttons 3068/3071/3070/3069 - no Focus row in the original)
-# - right: the Combat Action Bar wheel ('selector' sprite 3109 - 8 sockets
-#   on a 49.5 px ring at stage 630.6, 172.2) and the Ability Pool list
-#   ('talentPool' sprite 3120 at stage 523.6, 274.2)
+# (spec/107-abilities.md). abilities_window.tscn holds the shell, the panels,
+# the titles, the points, the hint box and the attribute rows, and
+# test_screen_rects.gd checks them against the SWF.
+# - left: the class ability tree ('talenttreefull' sprite 3100), 28 nodes in
+#   4 columns and 7 rows. A click learns a talent by the TalentTree.learn
+#   rules: prerequisites, level tiers and 1 point.
+# - middle: name and level, the ability points and attribute points, a random
+#   tip, and the four attribute rows with '+' spend buttons. The original has
+#   no Focus row.
+# - right: the Combat Action Bar wheel ('selector' sprite 3109) with 8
+#   sockets, and the Ability Pool list ('talentPool' sprite 3120).
 #
 # Click a pool ability to place it in the first free socket; click a socket
 # to send its ability back to the pool.
@@ -34,6 +35,11 @@ const SOCKET_SIZE: Vector2 = Vector2(30, 30)
 
 const POOL_VISIBLE_ROWS: int = 5
 
+# The reader clip shows MENU[43 + random(4)] when the frame opens
+# (DefineSprite_3059/frame_1/DoAction.as).
+const FIRST_TIP: int = 43
+const TIP_COUNT: int = 4
+
 
 var _tree_buttons: Array[Button] = []
 var _tree_rank_labels: Array[Label] = []
@@ -49,12 +55,27 @@ var _pool_move_ids: Array = []
 @onready var _level_label: Label = $LevelLabel
 @onready var _ability_points_value: Label = $AbilityPointsValue
 @onready var _attribute_points_value: Label = $AttributePointsValue
-@onready var _attribute_values: Array[Label] = [$VitalityValue, $StrengthValue, $InstinctValue, $SpeedValue]
+@onready var _attribute_values: Array[Label] = [
+	$AttributeRows/VitalityRow/VitalityValue, $AttributeRows/StrengthRow/StrengthValue,
+	$AttributeRows/InstinctRow/InstinctValue, $AttributeRows/SpeedRow/SpeedValue,
+]
+@onready var _attribute_names: Array[Label] = [
+	$AttributeRows/VitalityRow/VitalityLabel, $AttributeRows/StrengthRow/StrengthLabel,
+	$AttributeRows/InstinctRow/InstinctLabel, $AttributeRows/SpeedRow/SpeedLabel,
+]
+@onready var _plus_buttons: Array[Button] = [
+	$PlusColumn/VitalitySlot/VitalityPlus, $PlusColumn/StrengthSlot/StrengthPlus,
+	$PlusColumn/InstinctSlot/InstinctPlus, $PlusColumn/SpeedSlot/SpeedPlus,
+]
+@onready var _hint_label: Label = $HintLabel
 @onready var _status_label: Label = $StatusLabel
 
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_set_static_text()
+	_style_plus_buttons()
+	_pick_tip()
 	_build_tree_panel()
 	_build_wheel_panel()
 	for i in _pool_rows.size():
@@ -63,7 +84,44 @@ func _ready():
 		_pool_rows[i].mouse_exited.connect(GameTooltip.hide_tooltip)
 	visibility_changed.connect(func():
 		if visible:
+			_pick_tip()
 			refresh())
+
+
+# DefineSprite_3142/frame_25/DoAction.as:2-5 and 10-15.
+func _set_static_text() -> void:
+	$TreeTitle.text = Strings.text("K_TITLE1")
+	$AttributesTitle.text = Strings.text("K_TITLE2")
+	$ActionBarTitle.text = Strings.text("K_TITLE3")
+	$PoolTitle.text = Strings.menu(16)
+	$AbilityPointsLabel.text = Strings.text("SKLOAD") + ":"
+	$AttributePointsLabel.text = Strings.text("SPLOAD") + ":"
+	for i in _attribute_names.size():
+		_attribute_names[i].text = Strings.system(i) + ":"
+
+
+# The SWF tints a gradient plate per row (shapes 3064 to 3067). The port fills
+# each native Button with its row's name colour instead, which ADR 0007 records.
+func _style_plus_buttons() -> void:
+	for i in _plus_buttons.size():
+		var color: Color = _attribute_names[i].get_theme_color("font_color")
+		var fills: Dictionary[String, Color] = {
+			"normal": color,
+			"hover": color.lightened(0.25),
+			"pressed": color.darkened(0.25),
+		}
+		for state: String in fills:
+			var style := StyleBoxFlat.new()
+			style.bg_color = fills[state]
+			_plus_buttons[i].add_theme_stylebox_override(state, style)
+		# Godot draws the focus style over the state style, and a click gives
+		# the button focus, so a filled focus style would hide the hover and
+		# pressed fills after the first click.
+		_plus_buttons[i].add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+
+
+func _pick_tip() -> void:
+	_hint_label.text = Strings.menu(FIRST_TIP + randi() % TIP_COUNT)
 
 
 static func _sanitize_icon_key(label: String) -> String:
@@ -83,12 +141,13 @@ func _build_tree_panel() -> void:
 	var tree: Array = TalentTree.TREES.get(_player_class(), TalentTree.TREES[PlayerSave.PlayerClass.BIOLOGICAL])
 	for node_index in tree.size():
 		var node_button: Button = TalentNodeScene.instantiate()
+		node_button.name = "Node%d" % node_index
 		node_button.position = _node_center(node_index) - NODE_SIZE / 2.0
 		node_button.pressed.connect(_on_tree_node_pressed.bind(node_index))
 		node_button.mouse_entered.connect(_on_tree_node_hovered.bind(node_index))
 		node_button.mouse_exited.connect(GameTooltip.hide_tooltip)
 		_style_circle_button(node_button, Color(0.1, 0.1, 0.11), Color(0.3, 0.3, 0.32))
-		add_child(node_button)
+		$TreeNodes.add_child(node_button)
 		_tree_buttons.append(node_button)
 		_tree_rank_labels.append(node_button.get_node("RankLabel"))
 
@@ -129,7 +188,9 @@ func refresh() -> void:
 		return
 	_status_label.text = ""
 	_name_label.text = Party.PLAYER_NAME
-	_level_label.text = "Lvl. %d %s" % [save.level, PlayerSave.CLASS_NAMES[save.player_class]]
+	# DefineSprite_3142/frame_25/DoAction.as:17. ClassStats counts from 1, and
+	# PlayerClass counts from 0.
+	_level_label.text = "%s%d %s" % [Strings.menu(0), save.level, Strings.text("CLASS", save.player_class)]
 	_ability_points_value.text = str(save.skill_points)
 	_attribute_points_value.text = str(save.stat_points)
 	var stats: Array[Variant] = [save.life, save.strength, save.magic, save.speed]

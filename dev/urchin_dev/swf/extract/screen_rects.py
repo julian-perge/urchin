@@ -13,7 +13,7 @@
 # node that draws a piece. port_only names the nodes the port draws and the
 # SWF does not, so the test skips them.
 #
-# A piece is one of four kinds:
+# A piece is one of five kinds:
 #   "panel" - a flat Panel (Part 3): a sprite whose one shape has a solid fill
 #             and a line, under an inner DropShadow. Its rect is the fill rect
 #             grown by half the border. The fill rect is ShapeBounds through
@@ -27,6 +27,12 @@
 #             two extractors cannot name different placements.
 #   "hit"   - a button that draws nothing, only a hit square, recorded as the
 #             hit shape's bounds through the placement matrix.
+#   "button" - a button that draws art, which the port draws as a native
+#             Button. It is recorded as the bounds of the shapes its up state
+#             draws, through the placement matrix.
+#
+# A piece that a sprite places on its own first frame names the sprite's depth
+# and its own inner_depth, and it is measured from where the sprite sits.
 #
 # A timeline other than the root is measured from where the root's Navigation
 # frame places it, which for KRINMENU is (400.50, 222.40).
@@ -67,6 +73,9 @@ class Piece:
     kind: str
     depth: int
     art: str | None = None
+    # The depth of the piece inside the sprite at `depth`, on the sprite's
+    # first frame, for a piece that the scene's timeline does not place itself.
+    inner_depth: int | None = None
 
 
 @dataclass(frozen=True)
@@ -109,6 +118,50 @@ SCENES: dict[str, Scene] = {
             "CloseArt": Piece("art", window_chrome.CLOSE_X_DEPTH, art="close_x"),
             "CloseButton": Piece("hit", 1434),
         },
+    ),
+    # The skills frame (spec/107-abilities.md). The tree nodes and the pool
+    # are port only here until #237 and #238 record them. StatusLabel has no
+    # piece in the SWF.
+    "res://scenes/ui/menu/abilities_window.tscn": Scene(
+        timeline=KRINMENU,
+        frame="skills",
+        pieces={
+            "WindowShell/Backdrop": Piece(
+                "art", window_chrome.BACKDROP_DEPTH, art="backdrop"
+            ),
+            "WindowShell/CloseArt": Piece(
+                "art", window_chrome.CLOSE_X_DEPTH, art="close_x"
+            ),
+            "WindowShell/CloseButton": Piece("hit", 1434),
+            "TreePanel": Piece("panel", 7),
+            "PointsPanel": Piece("panel", 23),
+            "AttributesPanel": Piece("panel", 21),
+            "ActionPanel": Piece("panel", 5),
+            "TreeTitle": Piece("text", 673),
+            "ActionBarTitle": Piece("text", 672),
+            "PoolTitle": Piece("text", 674),
+            "AttributesTitle": Piece("text", 671),
+            "NameLabel": Piece("text", 653),
+            "LevelLabel": Piece("text", 654),
+            "AbilityPointsLabel": Piece("text", 651),
+            "AbilityPointsValue": Piece("text", 655),
+            "AttributePointsLabel": Piece("text", 652),
+            "AttributePointsValue": Piece("text", 656),
+            "HintLabel": Piece("text", 675, inner_depth=1),
+            "PlusColumn/VitalitySlot/VitalityPlus": Piece("button", 668),
+            "PlusColumn/StrengthSlot/StrengthPlus": Piece("button", 659),
+            "PlusColumn/InstinctSlot/InstinctPlus": Piece("button", 662),
+            "PlusColumn/SpeedSlot/SpeedPlus": Piece("button", 665),
+            "AttributeRows/VitalityRow/VitalityLabel": Piece("text", 643),
+            "AttributeRows/StrengthRow/StrengthLabel": Piece("text", 644),
+            "AttributeRows/InstinctRow/InstinctLabel": Piece("text", 645),
+            "AttributeRows/SpeedRow/SpeedLabel": Piece("text", 646),
+            "AttributeRows/VitalityRow/VitalityValue": Piece("text", 647),
+            "AttributeRows/StrengthRow/StrengthValue": Piece("text", 648),
+            "AttributeRows/InstinctRow/InstinctValue": Piece("text", 649),
+            "AttributeRows/SpeedRow/SpeedValue": Piece("text", 650),
+        },
+        port_only=("StatusLabel", "TreeNodes", "PoolBackdrop", "PoolRows"),
     ),
 }
 
@@ -190,12 +243,21 @@ def text_record(text: EditText, matrix, origin) -> dict:
         origin[1] + matrix[5] / render.TWIPS,
     )
     rect = label_layout.text_rect(text, placed)
-    return {
+    entry = {
         "kind": "text",
         "rect": [rect["x"], rect["y"], rect["w"], rect["h"]],
         "font_size": text.font_height / render.TWIPS,
         "color": color_hex(text.color),
     }
+    # Flash puts the lines of a field one font height plus the field's leading
+    # apart. A field that wraps, or a multiline field that is not one line of
+    # static text, can show more than one line, so its pitch is recorded. A
+    # field of one line has no pitch to check.
+    if text.word_wrap or (
+        text.multiline and not label_layout.one_static_line(text)
+    ):
+        entry["line_pitch"] = (text.font_height + (text.leading or 0)) / render.TWIPS
+    return entry
 
 
 def art_record(name: str, chrome: dict) -> dict:
@@ -225,6 +287,50 @@ def hit_record(records: list[ButtonRecord], bounds, matrix, origin) -> dict:
         "kind": "hit",
         "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
     }
+
+
+def button_record(records: list[ButtonRecord], bounds: dict, matrix, origin) -> dict:
+    """-> the record of a button that draws art, as the rect of the shapes its
+    up state draws, placed with `matrix`. `bounds` maps each shape to its
+    ShapeBounds."""
+    up = [r for r in records if "up" in r.states]
+    if not up:
+        raise ValueError("the button draws nothing in its up state")
+    for r in up:
+        if r.matrix != timeline.IDENTITY:
+            raise ValueError(f"the button moves shape {r.character_id}: {r.matrix}")
+    shapes = [bounds[r.character_id] for r in up]
+    union = (
+        min(b[0] for b in shapes),
+        min(b[1] for b in shapes),
+        max(b[2] for b in shapes),
+        max(b[3] for b in shapes),
+    )
+    return {
+        "kind": "button",
+        "rect": [round(v, 4) for v in stage_rect(union, matrix, origin)],
+    }
+
+
+def _button(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
+    records = button_records(index, layer.character_id)
+    bounds = {
+        r.character_id: shape_bounds(index, r.character_id)
+        for r in records
+        if character_kind(index, r.character_id) == "shape"
+    }
+    return button_record(records, bounds, layer.matrix, origin)
+
+
+def inner_origin(matrix, origin) -> tuple[float, float]:
+    """-> the origin of a sprite's own timeline, when the sprite is placed with
+    `matrix` on a timeline whose origin is `origin`."""
+    if _scale(matrix) != (1.0, 1.0):
+        raise ValueError(f"matrix {matrix} scales the sprite, and an origin can't")
+    return (
+        origin[0] + matrix[4] / render.TWIPS,
+        origin[1] + matrix[5] / render.TWIPS,
+    )
 
 
 def _hit(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
@@ -282,15 +388,27 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
         layer = layers.get(piece.depth)
         if layer is None:
             raise ValueError(f"{path}: frame {scene.frame} has no depth {piece.depth}")
+        piece_origin = origin
+        if piece.inner_depth is not None:
+            piece_origin = inner_origin(layer.matrix, origin)
+            first = timeline.frames(index, layer.character_id)[0]
+            if piece.inner_depth not in first:
+                raise ValueError(
+                    f"{path}: sprite {layer.character_id} has no depth"
+                    f" {piece.inner_depth} on its first frame"
+                )
+            layer = first[piece.inner_depth]
         if piece.kind == "panel":
-            pieces[path] = _panel(index, layer, origin)
+            pieces[path] = _panel(index, layer, piece_origin)
         elif piece.kind == "text":
             text = edit_text(index, layer.character_id)
-            pieces[path] = text_record(text, layer.matrix, origin)
+            pieces[path] = text_record(text, layer.matrix, piece_origin)
+        elif piece.kind == "button":
+            pieces[path] = _button(index, layer, piece_origin)
         elif piece.kind == "art":
             pieces[path] = art_record(piece.art, chrome[piece.art])
         elif piece.kind == "hit":
-            pieces[path] = _hit(index, layer, origin)
+            pieces[path] = _hit(index, layer, piece_origin)
         else:
             raise ValueError(f"{path}: unknown piece kind {piece.kind!r}")
     return {

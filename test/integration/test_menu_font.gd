@@ -176,7 +176,8 @@ func test_menu_screens_are_bold_except_the_shop_dialogue():
 		"TreeTitle": [3061, 65],
 		"AttributesTitle": [3063, 65],
 		"AbilityPointsLabel": [3081, 65],
-		"VitalityLabel": [3089, 65],
+		"AttributeRows/VitalityRow/VitalityLabel": [3089, 65],
+		"HintLabel": [3037, 295],
 	})
 	var achievements = add_child_autofree(load("res://scenes/ui/menu/achievements_window.tscn").instantiate())
 	_assert_fonts(achievements, {"TitleLabel": [3136, 65], "Plate0/NameLabel": [3138, 65]})

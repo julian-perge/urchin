@@ -206,3 +206,77 @@ def test_hit_record_is_the_hit_shape_through_the_placement():
 def test_hit_record_refuses_a_button_that_is_more_than_a_hit_square(records, message):
     with pytest.raises(ValueError, match=message):
         screen_rects.hit_record(records, CLOSE_BOUNDS, CLOSE_MATRIX, ORIGIN)
+
+
+# The Abilities window's top plus button 3068. Shape 3065 is the black plate of
+# the up state, under the gradient 3064. Shapes 3066 and 3067 draw only on
+# hover, press and hit. KRINMENU frame 25 places the button at depth 668.
+PLUS_RECORDS = [
+    ButtonRecord(frozenset({"up", "over", "down"}), 3064, 1, (1.0, 0.0, 0.0, 1.0, 0, 0)),
+    ButtonRecord(frozenset({"up"}), 3065, 2, (1.0, 0.0, 0.0, 1.0, 0, 0)),
+    ButtonRecord(frozenset({"over", "down", "hit"}), 3066, 3, (1.0, 0.0, 0.0, 1.0, 0, 0)),
+    ButtonRecord(frozenset({"hit"}), 3067, 4, (1.0, 0.0, 0.0, 1.0, 0, 0)),
+]
+PLUS_BOUNDS = {
+    3064: (-431, -154, 431, 155),
+    3065: (-441, -164, 441, 165),
+    3066: (-451, -174, 451, 175),
+    3067: (-441, -164, 441, 165),
+}
+PLUS_MATRIX = (1.0, 0.0, 0.0, 1.0, -1358, 2501)
+
+
+def test_button_record_is_the_up_state_through_the_placement():
+    entry = screen_rects.button_record(PLUS_RECORDS, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+    assert entry["kind"] == "button"
+    assert entry["rect"] == pytest.approx([310.55, 339.25, 44.1, 16.45])
+
+
+def test_button_record_refuses_a_moved_up_state_record():
+    moved = [replace(PLUS_RECORDS[1], matrix=(1.0, 0.0, 0.0, 1.0, 20, 0))]
+    with pytest.raises(ValueError, match="moves"):
+        screen_rects.button_record(moved, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+
+
+def test_button_record_refuses_a_button_with_no_up_state():
+    with pytest.raises(ValueError, match="up state"):
+        screen_rects.button_record(PLUS_RECORDS[2:], PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+
+
+# The clip reader (3059) at depth 675 of KRINMENU frame 25. Its first frame
+# places the tip field at depth 1.
+def test_inner_origin_adds_the_sprite_placement_to_the_origin():
+    inner = screen_rects.inner_origin((1.0, 0.0, 0.0, 1.0, 0, -17), ORIGIN)
+    assert inner == pytest.approx((400.5, 221.55))
+
+
+def test_inner_origin_refuses_a_scaled_sprite():
+    with pytest.raises(ValueError, match="scale"):
+        screen_rects.inner_origin((1.041, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+
+
+# The Abilities window's tip field 3037: 12 px text with 2 px of leading, which
+# wraps. Flash puts its lines 12 + 2 px apart.
+def test_text_record_of_a_wrapping_field_holds_its_line_pitch():
+    tip = field(font_height=240, leading=40, multiline=True, word_wrap=True)
+    entry = screen_rects.text_record(tip, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert entry["line_pitch"] == 14.0
+
+
+def test_text_record_of_a_one_line_field_holds_no_line_pitch():
+    entry = screen_rects.text_record(field(), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert "line_pitch" not in entry
+
+
+# A multiline field that the game fills breaks its lines at line breaks, with
+# no wrapping, and its lines are as far apart as those of a field that wraps.
+def test_text_record_of_a_multiline_field_with_no_wrap_holds_its_line_pitch():
+    filled = field(font_height=240, leading=40, multiline=True)
+    entry = screen_rects.text_record(filled, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert entry["line_pitch"] == 14.0
+
+
+def test_text_record_of_one_line_of_static_text_holds_no_line_pitch():
+    static = field(multiline=True, variable_name=None, initial_text="SKIP\r")
+    entry = screen_rects.text_record(static, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert "line_pitch" not in entry
