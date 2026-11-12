@@ -16,12 +16,15 @@ the original SWF by script, not by hand.
 - Tests: `uv run gut` runs the GUT suite. `uv run gut <path>` runs one test
   file, and `uv run gut -gunit_test_name=<name>` runs the tests whose names
   contain `<name>`. Trust its exit code. It also fails the runs that GUT exits 0
-  on: a script or parse error, or no tests run. It takes a Godot slot from
-  `~/tmp/2026-11-07-godot-slots/godot-slot.fish` itself, so run it bare.
+  on: a script or parse error, or no tests run. It takes a Godot slot
+  itself, so run it bare.
+- Godot is `$GODOT_BIN`, else `godot` on `PATH`, else the macOS app. The
+  Python scripts use the same order. `GODOT_SLOTS` is the most Godot processes
+  that run at once. The default, `auto`, is the number of CPU cores.
 - The Python package's tests are `uv run pytest`, under `dev/tests/`. They
   never read the SWF or the XML dump, so they pass on a fresh checkout.
 - After writing anything under `assets/`, run
-  `/Applications/Godot.app/Contents/MacOS/Godot --headless --import --path .`
+  `"${GODOT_BIN:-godot}" --headless --import --path .`
   or tests fail with "No loader found for resource". `uv run gut` runs this
   import by itself only in a checkout with no `.godot` folder.
 

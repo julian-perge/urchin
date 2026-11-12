@@ -4,20 +4,18 @@
 # fails with "No such file". The post-checkout hook skips the first checkout of
 # a new worktree, so it also has no .godot/ cache, and GUT fails with "Could
 # not find type" until an import runs. This links each SWF from the main
-# checkout and then runs Godot's import, through the shared slot script when it
-# exists so parallel agents stay under the machine's Godot limit.
+# checkout and then runs Godot's import in a Godot slot, so parallel agents stay
+# under the machine's Godot limit.
 from __future__ import annotations
 
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 from urchin_dev import REPO_ROOT, STEAM_SWF, WEB_SWF
+from urchin_dev.godot import godot_bin, godot_slot
 from urchin_dev.run import run
 
-GODOT = Path("/Applications/Godot.app/Contents/MacOS/Godot")
-GODOT_SLOT = Path.home() / "tmp" / "2026-11-07-godot-slots" / "godot-slot.fish"
 SWF_NAMES = (WEB_SWF.name, STEAM_SWF.name)
 
 
@@ -40,11 +38,8 @@ def swf_links(worktree: Path, main: Path) -> list[tuple[Path, Path]]:
     ]
 
 
-def godot_import_command(godot: Path, slot: Path, fish: str | None) -> list[str]:
-    command = [str(godot), "--headless", "--import", "--path", str(REPO_ROOT)]
-    if slot.exists() and fish:
-        return [fish, str(slot), *command]
-    return command
+def godot_import_command(godot: str) -> list[str]:
+    return [godot, "--headless", "--import", "--path", str(REPO_ROOT)]
 
 
 def main() -> None:
@@ -57,8 +52,7 @@ def main() -> None:
         print(
             f"no {', '.join(missing)} in {main}, so extractors that read it will fail"
         )
-    if not GODOT.exists():
-        sys.exit(f"no Godot at {GODOT}, so the import did not run")
-    command = godot_import_command(GODOT, GODOT_SLOT, shutil.which("fish"))
+    command = godot_import_command(godot_bin())
     print("running Godot's import")
-    sys.exit(subprocess.run(command, cwd=REPO_ROOT).returncode)
+    with godot_slot():
+        sys.exit(subprocess.run(command, cwd=REPO_ROOT).returncode)

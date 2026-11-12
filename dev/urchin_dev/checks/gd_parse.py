@@ -16,9 +16,9 @@ import sys
 from collections.abc import Sequence
 
 from urchin_dev import REPO_ROOT
+from urchin_dev.godot import godot_bin
 from urchin_dev.run import run
 
-GODOT = "/Applications/Godot.app/Contents/MacOS/Godot"
 COLOR_CODE = re.compile(r"\x1b\[[0-9;]*m")
 PARSE_ERROR = re.compile(r"^SCRIPT ERROR: Parse Error: .*\n\s+at: .*$", re.MULTILINE)
 
@@ -30,7 +30,7 @@ def parse_errors(log: str) -> list[str]:
 
 def check_script(path: str) -> list[str]:
     result = run(
-        [GODOT, "--headless", "--path", str(REPO_ROOT), "--check-only"]
+        [godot_bin(), "--headless", "--path", str(REPO_ROOT), "--check-only"]
         + ["-s", f"res://{path}"]
     )
     return parse_errors(result.stdout + result.stderr)

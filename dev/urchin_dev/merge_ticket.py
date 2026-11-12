@@ -7,8 +7,7 @@
 # the merged tree differs from the ticket's tree, because the ticket's
 # implementer already ran them on that exact tree.
 #
-# The script runs Godot twice, one process at a time. Run it through the
-# Godot slot script when other agents run Godot at the same time.
+# The script runs Godot twice, one process at a time, each in a Godot slot.
 from __future__ import annotations
 
 import argparse
@@ -17,9 +16,8 @@ import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from urchin_dev.godot import godot_bin, godot_slot
 from urchin_dev.run import run
-
-GODOT = "/Applications/Godot.app/Contents/MacOS/Godot"
 
 
 class MergeConflict(Exception):
@@ -41,8 +39,11 @@ def git(*args: str) -> str:
 def run_suites() -> None:
     """The import comes first, because the GUT suite fails with "No loader
     found for resource" on any asset the merge brought in unimported."""
-    run([GODOT, "--headless", "--import", "--path", "."])
-    run([GODOT, "--headless", "-s", "res://addons/gut/gut_cmdln.gd", "--path", "."])
+    godot = godot_bin()
+    with godot_slot():
+        run([godot, "--headless", "--import", "--path", "."])
+    with godot_slot():
+        run([godot, "--headless", "-s", "res://addons/gut/gut_cmdln.gd", "--path", "."])
     run(["uv", "run", "pytest"])
 
 

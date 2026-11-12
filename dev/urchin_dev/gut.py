@@ -14,14 +14,8 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from urchin_dev import REPO_ROOT
+from urchin_dev.godot import godot_bin, godot_slot
 from urchin_dev.run import stream
-
-GODOT = Path("/Applications/Godot.app/Contents/MacOS/Godot")
-
-# Every Godot process waits for a free slot in this script, so parallel agents
-# never run more of them than this 16 GB machine can hold. The script reads
-# GODOT_SLOTS from the environment, which the run passes on unchanged.
-SLOT_SCRIPT = Path.home() / "tmp" / "2026-11-07-godot-slots" / "godot-slot.fish"
 
 # Godot colors its log even when the log goes to a pipe.
 COLOR_CODE = re.compile(r"\x1b\[[0-9;]*m")
@@ -32,15 +26,15 @@ Godot = Callable[[Sequence[str], Path | None], tuple[int, str]]
 
 
 def godot_command(args: Sequence[str], home: Path | None) -> list[str | Path]:
-    """The command that runs Godot in a slot. The slot script keeps its slot
-    folders under the real ~, so it must see the real HOME. `env` sets the new
-    HOME for the Godot process only."""
+    """The command that runs Godot. `env` sets the new HOME for the Godot
+    process only."""
     env = ["env", f"HOME={home}"] if home is not None else []
-    return ["fish", SLOT_SCRIPT, *env, GODOT, *args]
+    return [*env, godot_bin(), *args]
 
 
 def godot_in_a_slot(args: Sequence[str], home: Path | None = None) -> tuple[int, str]:
-    return stream(godot_command(args, home))
+    with godot_slot():
+        return stream(godot_command(args, home))
 
 
 def failures(code: int, log: str) -> list[str]:
@@ -91,7 +85,7 @@ def run_gut(argv: Sequence[str], cwd: Path, root: Path, godot: Godot) -> int:
         if code != 0:
             print(f"uv run gut: the import exited with code {code}.", file=sys.stderr)
             return code
-    # Godot builds user:// from HOME on macOS, so a new HOME gives the run a user://
+    # Godot builds user:// from HOME on macOS and Linux, so a new HOME gives the run a user://
     # of its own. Runs from other checkouts, and the real game, never share it.
     home = Path(tempfile.mkdtemp(prefix="urchin-gut-home-"))
     try:

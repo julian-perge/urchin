@@ -69,12 +69,12 @@ testing the game by hand.
   a `user://` of its own. Suites that run at the same time from different
   worktrees no longer overwrite each other's test files. This caused the wave 5
   `fix-bold-menu-font` failures. A test run also no longer shares `battle.log`,
-  saves or `achievements.cfg` with a QA game (julian-perge/urchin#106). The slot
-  script keeps the real `HOME`, and the `--import` step does too. Godot started
+  saves or `achievements.cfg` with a QA game (julian-perge/urchin#106). The
+  `--import` step keeps the real `HOME`. Godot started
   by hand and the godot-mcp `run_gut_tests` tool still use the shared real
   `user://`.
 - To compile-check one script, run
-  `/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only -s res://<script.gd> --path .`.
+  `"${GODOT_BIN:-godot}" --headless --check-only -s res://<script.gd> --path .`.
   It exits 0 even when the script is broken, so read the log. A "Parse Error"
   is real. "Compile Error: Identifier not found" for an autoload name is not,
   because `--check-only` compiles without the autoloads. The `gd-parse` commit
@@ -93,6 +93,6 @@ testing the game by hand.
   `--restore-achievements` puts back. Level 99 presets carry set stats, and
   changing equipment recomputes them from a curve that is negative by level 55,
   so use `rich` for equip checks. Rebuild them after `PlayerSave` changes with
-  `/Applications/Godot.app/Contents/MacOS/Godot --headless --path . -s
+  `"${GODOT_BIN:-godot}" --headless --path . -s
   res://dev/save_presets/generate.gd --quit-after 30`, then check the output for
   `SCRIPT ERROR`, because a script error still exits 0.
