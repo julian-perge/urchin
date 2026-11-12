@@ -153,6 +153,48 @@
   ],
   "zoom": 4.0
  },
+ "victory_row": {
+  "rect": [
+   -98.55,
+   -41.725,
+   203.25,
+   89.5
+  ],
+  "relative_to": "sprite 3002",
+  "size": [
+   813,
+   358
+  ],
+  "zoom": 4.0
+ },
+ "xp_bar": {
+  "rect": [
+   -0.075,
+   -9.35,
+   95.25,
+   18.75
+  ],
+  "relative_to": "sprite 2867",
+  "size": [
+   381,
+   75
+  ],
+  "zoom": 4.0
+ },
+ "xp_bar_level": {
+  "rect": [
+   -0.075,
+   -9.35,
+   95.25,
+   18.75
+  ],
+  "relative_to": "sprite 2867",
+  "size": [
+   381,
+   75
+  ],
+  "zoom": 4.0
+ },
  "xp_gloss": {
   "rect": [
    138.05,

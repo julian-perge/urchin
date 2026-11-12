@@ -13,7 +13,7 @@
 # node that draws a piece. port_only names the nodes the port draws and the
 # SWF does not, so the test skips them.
 #
-# A piece is one of five kinds:
+# A piece is one of six kinds:
 #   "panel" - a flat Panel (Part 3): a sprite whose one shape has a solid fill
 #             and a line, under an inner DropShadow. Its rect is the fill rect
 #             grown by half the border. The fill rect is ShapeBounds through
@@ -30,9 +30,18 @@
 #   "button" - a button that draws art, which the port draws as a native
 #             Button. It is recorded as the bounds of the shapes its up state
 #             draws, through the placement matrix.
+#   "box"   - a shape of one solid fill and no line, which the port draws as a
+#             ColorRect, recorded as its ShapeBounds through the placement
+#             matrix with its fill colour.
+#
+# An "art" piece whose render is measured from a sprite of its own is placed
+# by where that sprite sits: the sprite at `depth`, or the sprite at
+# `inner_depth` inside it.
 #
 # A piece that a sprite places on its own first frame names the sprite's depth
 # and its own inner_depth, and it is measured from where the sprite sits.
+# When the sprite's placement carries a DropShadow, Flash shadows every text
+# field inside it, so a text piece there records the shadow too.
 #
 # A timeline other than the root is measured from where the root's Navigation
 # frame places it, which for KRINMENU is (400.50, 222.40).
@@ -51,6 +60,7 @@ from urchin_dev.swf.swf_index import (
     ButtonRecord,
     DropShadow,
     EditText,
+    StyleSet,
     SwfIndex,
     button_records,
     character_kind,
@@ -60,6 +70,7 @@ from urchin_dev.swf.swf_index import (
     first_line_style,
     read_swf,
     shape_bounds,
+    shape_styles,
 )
 
 RECORD = REPO_ROOT / "test" / "fixtures" / "screen_rects.json"
@@ -85,6 +96,18 @@ class Scene:
     pieces: dict[str, Piece]
     port_only: tuple[str, ...] = field(default=())
 
+
+# The victory frame's experience rows, top to bottom, by the depth that
+# places each, and the pieces inside sprite 3002 by their own depth.
+VICTORY_ROWS = {"PlayerSlot": 1197, "CompanionSlot0": 1111, "CompanionSlot1": 1154}
+VICTORY_ROW_PIECES: dict[str, tuple[str, int, str | None]] = {
+    "Frame": ("art", 2, "victory_row"),
+    "NameLabel": ("text", 37, None),
+    "LevelLabel": ("text", 38, None),
+    "Bar": ("art", 39, "xp_bar"),
+    "Gloss": ("art", 41, "xp_gloss_victory"),
+    "PercentLabel": ("text", 42, None),
+}
 
 SCENES: dict[str, Scene] = {
     # The victory frame's left Panel and the field at its top. It is a test
@@ -118,6 +141,38 @@ SCENES: dict[str, Scene] = {
             "CloseArt": Piece("art", window_chrome.CLOSE_X_DEPTH, art="close_x"),
             "CloseButton": Piece("hit", 1434),
         },
+    ),
+    # The victory frame's three experience rows, each a placement of sprite
+    # 3002: the player's at depth 1197, then friendlySlotsFFTT[0] and [1] at
+    # 1111 and 1154. The rest of the Victory screen is port only until the
+    # Victory Window replaces it (spec/107-victory.md). The face has no record,
+    # because extract_faces does not write where its crop sits in sprite 2978.
+    # The row's shape 3001 has no fill across the row: it strokes a 1 px line
+    # around it and fills only the box under the bar. The port draws it as the
+    # victory_row art, which holds the shape under the row's DropShadow.
+    "res://scenes/battle/victory_screen.tscn": Scene(
+        timeline=KRINMENU,
+        frame="win",
+        pieces={
+            f"ExpRows/{slot}/Row/{node}": Piece(kind, depth, art=art, inner_depth=inner)
+            for slot, depth in VICTORY_ROWS.items()
+            for node, (kind, inner, art) in VICTORY_ROW_PIECES.items()
+        },
+        port_only=(
+            "Backdrop",
+            "LeftPanel",
+            "ExperienceLabel",
+            "MiddlePanel",
+            "DropsLabel",
+            "ClickHintLabel",
+            "MoneyLabel",
+            "MoneyValue",
+            "ExpLabel",
+            "ExpValue",
+            "ProceedHintLabel",
+            "InventoryPanel",
+            *(f"ExpRows/{slot}/Row/Face" for slot in VICTORY_ROWS),
+        ),
     ),
     # The skills frame (spec/107-abilities.md). The tree nodes and the pool
     # are port only here until #237 and #238 record them. StatusLabel has no
@@ -260,16 +315,68 @@ def text_record(text: EditText, matrix, origin) -> dict:
     return entry
 
 
-def art_record(name: str, chrome: dict) -> dict:
-    """-> the record of the window_chrome.json entry `chrome` of piece `name`."""
-    if chrome["relative_to"] != "stage":
-        raise ValueError(
-            f"{name}'s rect is measured from {chrome['relative_to']}, not the stage"
-        )
+def text_shadow(shadow: DropShadow) -> dict:
+    """-> the shadow a Label draws for a DropShadow on the sprite that holds
+    its field: the offset in px, and the colour with the strength in its
+    alpha. A Label can't blur its shadow, so the blur is recorded but the
+    rect test does not check it."""
+    if shadow.inner:
+        raise ValueError(f"{shadow} is an inner shadow, and a Label's is outer")
+    if shadow.knockout:
+        raise ValueError(f"{shadow} is a knockout")
+    if shadow.blur_x != shadow.blur_y:
+        raise ValueError(f"{shadow} has two blur values")
+    angle = math.radians(shadow.angle)
+    r, g, b, a = shadow.color
+    return {
+        "offset": [
+            round(shadow.distance * math.cos(angle), 4),
+            round(shadow.distance * math.sin(angle), 4),
+        ],
+        "color": color_hex((r, g, b, min(255, round(a * shadow.strength)))),
+        "blur": shadow.blur_x,
+    }
+
+
+def _shadow_of(layer: timeline.Layer) -> DropShadow | None:
+    shadows = [
+        drop_shadow(record)
+        for name, record in zip(layer.filters, layer.filter_records, strict=True)
+        if name == "DropShadow"
+    ]
+    if len(shadows) > 1:
+        raise ValueError(f"character {layer.character_id} has {len(shadows)} DropShadows")
+    return shadows[0] if shadows else None
+
+
+def art_record(name: str, chrome: dict, sprite_origins: dict | None = None) -> dict:
+    """-> the record of the window_chrome.json entry `chrome` of piece `name`.
+    A rect measured from a sprite is moved to the stage by that sprite's
+    origin in `sprite_origins`, keyed as "sprite <id>"."""
+    relative_to = chrome["relative_to"]
+    shift = (0.0, 0.0)
+    if relative_to != "stage":
+        if relative_to not in (sprite_origins or {}):
+            raise ValueError(
+                f"{name}'s rect is measured from {relative_to}, which does not"
+                " place this piece"
+            )
+        shift = sprite_origins[relative_to]
+    x, y, w, h = chrome["rect"]
     return {
         "kind": "art",
-        "rect": list(chrome["rect"]),
+        "rect": [round(x + shift[0], 4), round(y + shift[1], 4), w, h],
         "texture": f"{CHROME_TEXTURES}/{name}.png",
+    }
+
+
+def box_record(bounds, matrix, origin, fill: tuple[int, int, int, int]) -> dict:
+    """-> the record of a shape of one solid fill and no line, which the port
+    draws as a ColorRect."""
+    return {
+        "kind": "box",
+        "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
+        "fill": color_hex(fill),
     }
 
 
@@ -371,6 +478,29 @@ def _panel(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
     )
 
 
+def one_solid_fill(sets: list[StyleSet], shape: int) -> tuple[int, int, int, int]:
+    """-> the colour of a shape that fills with one solid fill and strokes no
+    line. Its first style set alone can't say so, because a shape can declare
+    new styles partway through and draw more with them."""
+    only = sets[0] if len(sets) == 1 else None
+    if (
+        only is None
+        or only.line_bounds
+        or only.used_fills != {1}
+        or only.fills[0] is None
+    ):
+        raise ValueError(f"shape {shape} is not one solid fill with no line")
+    return only.fills[0]
+
+
+def _box(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
+    shape = layer.character_id
+    if character_kind(index, shape) != "shape":
+        raise ValueError(f"box {shape} is not a shape")
+    fill = one_solid_fill(shape_styles(index, shape), shape)
+    return box_record(shape_bounds(index, shape), layer.matrix, origin, fill)
+
+
 def origin_of(index: SwfIndex, owner: int) -> tuple[float, float]:
     if owner == 0:
         return 0.0, 0.0
@@ -389,8 +519,12 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
         if layer is None:
             raise ValueError(f"{path}: frame {scene.frame} has no depth {piece.depth}")
         piece_origin = origin
+        sprite_origins = {}
+        holder_shadow = None
         if piece.inner_depth is not None:
+            holder_shadow = _shadow_of(layer)
             piece_origin = inner_origin(layer.matrix, origin)
+            sprite_origins[f"sprite {layer.character_id}"] = piece_origin
             first = timeline.frames(index, layer.character_id)[0]
             if piece.inner_depth not in first:
                 raise ValueError(
@@ -398,15 +532,23 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
                     f" {piece.inner_depth} on its first frame"
                 )
             layer = first[piece.inner_depth]
+            if character_kind(index, layer.character_id) == "sprite":
+                sprite_origins[f"sprite {layer.character_id}"] = inner_origin(
+                    layer.matrix, piece_origin
+                )
         if piece.kind == "panel":
             pieces[path] = _panel(index, layer, piece_origin)
         elif piece.kind == "text":
             text = edit_text(index, layer.character_id)
             pieces[path] = text_record(text, layer.matrix, piece_origin)
+            if holder_shadow is not None:
+                pieces[path]["shadow"] = text_shadow(holder_shadow)
         elif piece.kind == "button":
             pieces[path] = _button(index, layer, piece_origin)
         elif piece.kind == "art":
-            pieces[path] = art_record(piece.art, chrome[piece.art])
+            pieces[path] = art_record(piece.art, chrome[piece.art], sprite_origins)
+        elif piece.kind == "box":
+            pieces[path] = _box(index, layer, piece_origin)
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, piece_origin)
         else:

@@ -146,7 +146,9 @@ func test_hub_panel_text_is_bold():
 # and 50).
 func test_victory_text_is_bold_except_the_two_font_295_lines():
 	var victory = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
-	victory.setup(GameData.current_save, BattleSettlement.new())
+	var settlement := BattleSettlement.new()
+	settlement.fighters[0] = BattleSettlement.FighterExperience.new()
+	victory.setup(GameData.current_save, settlement)
 	_assert_fonts(victory, {
 		"ExperienceLabel": [2996, 65],
 		"ClickHintLabel": [3007, 65],
@@ -157,10 +159,8 @@ func test_victory_text_is_bold_except_the_two_font_295_lines():
 		"DropsLabel": [3005, 295],
 		"ProceedHintLabel": [3006, 295],
 	})
-	var rows: Array = victory.get_children().filter(func(child): return child is VictoryExperienceRow)
-	assert_eq(rows.size(), 1, "the player's experience row")
-	if rows.size() == 1:
-		_assert_font(rows[0].name_label, 65, "the experience row's name (edit text 3000)")
+	var row: VictoryExpRow = victory.get_node("ExpRows/PlayerSlot/Row")
+	_assert_font(row.name_label, 65, "the experience row's name (edit text 3000)")
 
 
 # These nodes stand in for edit texts on frames 1 (inventory), 16 (shop), 25

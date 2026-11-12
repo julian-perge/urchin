@@ -10,6 +10,15 @@
 class_name BattleSettlement
 extends RefCounted
 
+
+# One fighter's experience row on the victory screen. The row animates from the
+# values before the win to the values the save holds after it.
+class FighterExperience:
+	var experience_before: float = 0.0
+	var level_before: int = 0
+	var xp_gained: float = 0.0
+
+
 var outcome: BattleRunner.Outcome = BattleRunner.Outcome.ONGOING
 var game_over: bool = false
 var money_gained: int = 0
@@ -28,6 +37,9 @@ var next_fight: Dictionary = {}
 # original's awardAch shows its banner only for those
 # (frame_46/DoAction_2.as:3-9).
 var achievements_unlocked: Array[int] = []
+# The player, under party id 0, and each companion in fighting_party. A loss, a
+# draw and a Tutorial win keep none.
+var fighters: Dictionary[int, FighterExperience] = {}
 
 
 # Settles the battle the runner has finished. pick is the dictionary ZoneManager
@@ -70,7 +82,13 @@ static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, ach
 	var train_cap: int = int(pick.get("train_cap", BattleSetup.DEFAULT_TRAIN_CAP))
 	var money_levels: Array = BattleRewards.money_levels(runner.battle, save, train_cap)
 	var enemy_levels: Array = BattleRewards.unit_levels_from_slots(runner.units, [2, 4, 6])
+	settlement.fighters[0] = _before(save.experience, save.level)
+	for party_id in settlement.fighting_party:
+		settlement.fighters[party_id] = _before(save.party_exp[party_id], save.party_levels[party_id])
 	var rewards: Dictionary = BattleRewards.apply_victory(save, money_levels, enemy_levels, settlement.fighting_party)
+	settlement.fighters[0].xp_gained = rewards["xp_gained"]
+	for party_id in settlement.fighting_party:
+		settlement.fighters[party_id].xp_gained = rewards["companion_xp_gained"][party_id]
 	settlement.money_gained = rewards["money_gained"]
 	settlement.xp_gained = rewards["xp_gained"]
 	settlement.levels_gained = rewards["levels_gained"]
@@ -85,6 +103,13 @@ static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, ach
 	if Achievements.check_all_star(slot_saves + [save]) and Achievements.unlock(all_star_id, achievements_path):
 		settlement.achievements_unlocked.append(all_star_id)
 	return settlement
+
+
+static func _before(experience: float, level: int) -> FighterExperience:
+	var fighter := FighterExperience.new()
+	fighter.experience_before = experience
+	fighter.level_before = level
+	return fighter
 
 
 # The original pays XP to the companions in Krin.friendlySlotsFFTT, which

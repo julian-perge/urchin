@@ -263,3 +263,32 @@ func test_all_star_goes_to_a_win_that_completes_the_three_classes_with_the_live_
 	DirAccess.remove_absolute(ACHIEVEMENTS_FILE)
 	settlement = BattleSettlement.settle(short_runner, live, {}, ACHIEVEMENTS_FILE, [_heroic_clear(0)])
 	assert_does_not_have(settlement.achievements_unlocked, Achievements.NAMES.find("All Star"), "two classes are not enough")
+
+
+# The victory rows animate from each fighter's values before the win, so the
+# settlement keeps them, with each fighter's own gain. A companion's gain
+# depends on its own level, as each row asks expWorkOut with its own fighter's
+# level (DefineSprite_3142/frame_9/PlaceObject3_3002_1111 onClipEvent(load),
+# line 11).
+func test_a_win_keeps_each_fighters_experience_and_level_from_before_it():
+	var save := PlayerSave.new_game("SettleBefore")
+	save.party_roster = [0, 1, 2, -1, -1, -1]
+	save.experience = 40.0
+	save.party_exp[1] = 25.0
+	var settlement := _settle(1000, save, BattleRunner.Outcome.WIN, {"is_story_progress": false, "train_cap": 9})
+	assert_eq(settlement.fighters.keys(), [0, 1], "the player and Veradux, who fought")
+	var player: BattleSettlement.FighterExperience = settlement.fighters[0]
+	assert_eq(player.level_before, 1)
+	assert_almost_eq(player.experience_before, 40.0, 0.001)
+	assert_almost_eq(player.xp_gained, settlement.xp_gained, 0.001, "the player's gain is the settlement's")
+	var veradux: BattleSettlement.FighterExperience = settlement.fighters[1]
+	assert_eq(veradux.level_before, 1)
+	assert_almost_eq(veradux.experience_before, 25.0, 0.001)
+	assert_almost_eq(veradux.xp_gained, 90.0, 0.001, "expWorkOut(1, 1), from his own level")
+	assert_almost_eq(save.party_exp[1], 15.0, 0.001, "the save holds the value after the win")
+
+
+func test_a_loss_keeps_no_fighters():
+	var save := PlayerSave.new_game("SettleLossBefore")
+	var settlement := _settle(100, save, BattleRunner.Outcome.LOSS, {})
+	assert_eq(settlement.fighters.size(), 0)

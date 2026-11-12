@@ -133,9 +133,11 @@ static func apply_victory(save: PlayerSave, spawned_unit_levels: Array, enemy_le
 	var xp: float = experience_gain(average_enemy, save.level)
 	var level_result: Dictionary = Leveling.grant_experience(save, xp)
 	var companion_levels_gained: Dictionary[Variant, Variant] = {}
+	var companion_xp_gained: Dictionary[int, float] = {}
 	for party_id in fighting_party_ids:
 		var companion_level: int = int(save.party_levels[party_id])
 		var companion_xp: float = experience_gain(average_enemy, companion_level)
+		companion_xp_gained[party_id] = companion_xp
 		companion_levels_gained[party_id] = Party.grant_companion_experience(save, party_id, companion_xp)
 	return {
 		"money_gained": money,
@@ -144,6 +146,7 @@ static func apply_victory(save: PlayerSave, spawned_unit_levels: Array, enemy_le
 		"new_level": level_result["new_level"],
 		"stat_points_granted": level_result["stat_points_granted"],
 		"companion_levels_gained": companion_levels_gained,
+		"companion_xp_gained": companion_xp_gained,
 	}
 
 

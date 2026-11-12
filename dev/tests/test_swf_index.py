@@ -28,6 +28,7 @@ from urchin_dev.swf.swf_index import (
     Font,
     Placement,
     Removal,
+    StyleSet,
     button_records,
     drop_shadow,
     edit_text,
@@ -35,6 +36,7 @@ from urchin_dev.swf.swf_index import (
     first_line_style,
     font,
     parse_swf,
+    shape_styles,
     shape_bounds,
     sound_stream,
 )
@@ -458,3 +460,52 @@ def test_a_character_that_is_not_a_button_is_refused():
     index = parse_swf(swf(tag(TAG_DEFINE_SHAPE, struct.pack("<H", 30) + b"\0" * 5)))
     with pytest.raises(ValueError, match="not a DefineButton2"):
         button_records(index, 30)
+
+
+
+def _box_edges(width: int, height: int) -> list[tuple[int, int]]:
+    """Four straight edges around a box, each a horizontal or vertical
+    STRAIGHTEDGERECORD with 9 bit deltas."""
+    fields = []
+    for vertical, delta in ((0, width), (1, height), (0, -width), (1, -height)):
+        fields += [(1, 1), (1, 1), (7, 4), (0, 1), (vertical, 1), (delta, 9)]
+    return fields
+
+
+def test_shape_styles_reads_each_style_set_and_what_its_edges_use():
+    # A DefineShape4 like the victory row's 3001: a black fill under a 100 x 50
+    # box, then a new style set whose 20 twip grey line draws a 200 x 100 box
+    # from (-10, -10) and whose grey fill no edge uses. Both style sets use 1
+    # bit for fill and line indices.
+    black = bytes([0x00, 0, 0, 0, 255])
+    grey = bytes([0x00, 102, 102, 102, 255])
+    line = struct.pack("<H", 20) + b"\0\0" + bytes([102, 102, 102, 255])
+    first_path = bits(
+        (0, 1), (0b00101, 5), (8, 5), (0, 8), (0, 8), (1, 1), *_box_edges(100, 50),
+        (0, 1), (0b10000, 5),
+    )  # fmt: skip
+    second_path = bits(
+        (0, 1), (0b01001, 5), (9, 5), (-10, 9), (-10, 9), (1, 1),
+        *_box_edges(200, 100), (0, 1), (0, 5),
+    )  # fmt: skip
+    body = (
+        struct.pack("<H", 1) + b"\0\0\0" + bytes([1]) + black + bytes([0]) + bytes([0x11])
+        + first_path
+        + bytes([1]) + grey + bytes([1]) + line + bytes([0x11])
+        + second_path
+    )  # fmt: skip
+    index = parse_swf(swf(tag(TAG_DEFINE_SHAPE4, body), tag(TAG_SHOW_FRAME)))
+    assert shape_styles(index, 1) == [
+        StyleSet(
+            fills=((0, 0, 0, 255),),
+            lines=(),
+            used_fills=frozenset({1}),
+            line_bounds={},
+        ),
+        StyleSet(
+            fills=((102, 102, 102, 255),),
+            lines=((20, (102, 102, 102, 255)),),
+            used_fills=frozenset(),
+            line_bounds={1: (-10, -10, 190, 90)},
+        ),
+    ]

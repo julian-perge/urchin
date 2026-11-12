@@ -21,6 +21,9 @@ RECORD = json.loads((CHROME_DIR / "window_chrome.json").read_text())
 OWN_SPRITE = {
     "slot_inventory": "sprite 2986",
     "xp_gloss_victory": "sprite 3002",
+    "xp_bar": "sprite 2867",
+    "xp_bar_level": "sprite 2867",
+    "victory_row": "sprite 3002",
 }
 
 # Each piece's shape box on the stage in design px, (x, y, w, h), from the hub
@@ -155,6 +158,10 @@ def test_each_piece_renders_the_timeline_and_depth_that_places_it(monkeypatch):
     assert by_name["zone_track"].hide_depths == ((3149, 2),)
     assert by_name["zone_fill"].origin == (630.7, 522.25)
     assert by_name["hotbar_quit_red"].only_depths == (152,)
+    row = by_name["victory_row"]
+    assert (row.timeline, row.frame, row.origin) == (3142, 181, menu)
+    assert row.only_depths == (1197,)
+    assert row.hide_depths == ((3002, 5),), "every depth of the row but its shape 3001"
 
 
 def test_a_job_with_an_origin_or_on_the_root_is_on_the_stage():
@@ -163,3 +170,10 @@ def test_a_job_with_an_origin_or_on_the_root_is_on_the_stage():
         window_chrome.relative_to(render.Job(3142, 1, 4.0, (400.5, 222.4))) == "stage"
     )
     assert window_chrome.relative_to(render.Job(2986, 1, 4.0)) == "sprite 2986"
+
+
+def test_a_piece_rendered_where_a_sprite_is_placed_is_measured_from_that_sprite():
+    placed = {"rect": [49.05, 130.925, 203.25, 89.5], "relative_to": "stage"}
+    record = window_chrome.measured_from(placed, (147.6, 172.65), 3002)
+    assert record["relative_to"] == "sprite 3002"
+    assert record["rect"] == pytest.approx([-98.55, -41.725, 203.25, 89.5])

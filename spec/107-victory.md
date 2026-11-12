@@ -38,14 +38,14 @@ The port's panels are up to 54.50 px off the SWF today, because the Victory scre
 | cid | Piece | Box | Look |
 | --- | --- | --- | --- |
 | 2996 `vbbc1` | `MENU[15]`, "Character Experience" | (41.30, 87.10) 213.15x19.00 | `_sans` bold 13 #5e5e5e center |
-| 3002, three of them | experience rows, centred at (147.60, 172.65), (147.60, 265.15), (147.60, 357.65) | each 3001: 196.80x83.20 around its centre | solid black |
+| 3002, three of them | experience rows, centred at (147.60, 172.65), (147.60, 265.15), (147.60, 357.65) | each 3001: 196.80x83.20 around its centre | a 1 px #666666 outline and a black box under the bar, with no fill across the row, so the panel shows through |
 
 Each row holds the face 2978 (`avIn`, scaled 1.653), `namerI` 3000 and `levelI` 2999 (`_sans` bold 12 #cccccc), the bar 2867 over its track 2998, and the percent 2997 `exp2`. The rows' inner rects come from the record.
 
 - The row pitch is 92.50 px. Each row is a fixed-height slot in a `FloatBox` column. The port's rows are 62 px apart with a 150 px bar today.
-- A row is hidden when its fighter does not exist (`prx == undefined`). The first two rows are the fighting Companions, `friendlySlotsFFTT[0]` and `[1]`, and the third is the player (`prx = 0`).
+- A row is hidden when its fighter does not exist (`prx == undefined`). The top row is the player (`prx = 0`, depth 1197). The two rows below it are the fighting Companions, `friendlySlotsFFTT[0]` and `[1]` (depths 1111 and 1154).
 - Faces are the existing `assets/ui/menu/portraits/` art. The compare tool masks them out.
-- The black row backing 3001 and the XP gloss 2998 are new art or a StyleBoxFlat. The gloss is placed on the sprite's timeline at depth 41, and #161 renders it.
+- Shape 3001 has no fill across the row. It declares a second style set partway through, so its first fill (black) covers only the box under the bar and the percent, and its line strokes the row's edge. The port draws 3001 as the `victory_row` art, rendered under the DropShadow on the row's placement. That shadow also falls on the row's text in Flash, so the row's Labels carry it as a Label shadow, with the SWF's offset rounded to whole px and no blur. The XP gloss 2998 is new art. The gloss is placed on the sprite's timeline at depth 41, and #161 renders it.
 
 **The animation** (`DefineSprite_3142/frame_9/PlaceObject3_3002_*`, `onClipEvent(enterFrame)`):
 
@@ -74,7 +74,7 @@ Each row holds the face 2978 (`avIn`, scaled 1.653), `namerI` 3000 and `levelI` 
 - The drops are three rows by five columns on a 38 px pitch, so a `FloatBox` column of rows with separation 7. The port draws four columns from (321, 130) today.
 - An empty drop slot is hidden and keeps its place, as in Store, so a shorter list does not shift the others. With no drops, `vb99` shows and `vb2` is empty. With drops, `vb2` shows and `vb99` is empty.
 - Every string reads from `strings.json`. The port's typed text, "€%d" and "%d%%" formats and hint labels go.
-- Proceed is the hit button 3004 over the caption. It is inert until the player's experience row has run its 30 frames (`PauseForScreen2`, set false by the player's row once `sLmT2` counts down). The port's `$ProceedButton.disabled` guard against a second press stays, and the animation lock joins it.
+- Proceed is the hit button 3004 over the caption. It is inert until the player's experience row has run its 30 frames (`PauseForScreen2`, set false by the player's row once `sLmT2` counts down). The port differs for a player at the level cap: that row has no frames to run, so Proceed works at once. The original waits the 30 frames anyway. Decided with you in #268's review. The port's `$ProceedButton.disabled` guard against a second press stays, and the animation lock joins it.
 
 ### The right column
 

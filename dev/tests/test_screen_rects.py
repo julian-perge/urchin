@@ -8,7 +8,7 @@ from dataclasses import replace
 import pytest
 from urchin_dev import REPO_ROOT
 from urchin_dev.swf.extract import screen_rects
-from urchin_dev.swf.swf_index import ButtonRecord, DropShadow, EditText
+from urchin_dev.swf.swf_index import ButtonRecord, DropShadow, EditText, StyleSet
 
 ORIGIN = (400.5, 222.4)
 # The victory frame's left Panel: KRINMENU frame 9 places sprite 2990 at depth
@@ -180,6 +180,96 @@ def test_art_record_refuses_a_rect_measured_from_a_sprite():
         screen_rects.art_record(
             "slot_inventory", {**CLOSE_X_CHROME, "relative_to": "sprite 2986"}
         )
+
+
+def test_art_record_of_a_sprite_rect_adds_where_that_sprite_sits():
+    gloss = {**CLOSE_X_CHROME, "rect": [-38.25, 10.85, 129.0, 18.75]}
+    entry = screen_rects.art_record(
+        "xp_gloss_victory",
+        {**gloss, "relative_to": "sprite 3002"},
+        {"sprite 3002": (147.6, 172.65)},
+    )
+    assert entry["rect"] == pytest.approx([109.35, 183.5, 129.0, 18.75])
+    assert entry["texture"] == "res://assets/ui/window/xp_gloss_victory.png"
+
+
+def test_art_record_refuses_a_sprite_rect_of_another_sprite():
+    with pytest.raises(ValueError, match="sprite 2867"):
+        screen_rects.art_record(
+            "xp_bar",
+            {**CLOSE_X_CHROME, "relative_to": "sprite 2867"},
+            {"sprite 3002": (147.6, 172.65)},
+        )
+
+
+# The victory row's backing 3001: a solid black 3936 x 1664 twip shape around
+# the row's centre.
+def test_box_record_is_the_shape_through_the_placement_with_its_fill():
+    entry = screen_rects.box_record(
+        (-1968, -832, 1968, 832),
+        (1.0, 0.0, 0.0, 1.0, 0, 0),
+        (147.6, 172.65),
+        (0, 0, 0, 255),
+    )
+    assert entry["kind"] == "box"
+    assert entry["rect"] == pytest.approx([49.2, 131.05, 196.8, 83.2])
+    assert entry["fill"] == "000000ff"
+
+
+# The DropShadow on each victory row: black, blur 5, distance 5 at 45 degrees.
+ROW_SHADOW = DropShadow(
+    color=(0, 0, 0, 255),
+    blur_x=5.0,
+    blur_y=5.0,
+    angle=45.0,
+    distance=5.0,
+    strength=1.0,
+    inner=False,
+    knockout=False,
+)
+
+
+def test_text_shadow_is_the_drop_shadow_offset_and_colour():
+    assert screen_rects.text_shadow(ROW_SHADOW) == {
+        "offset": pytest.approx([3.5355, 3.5355], abs=0.0001),
+        "color": "000000ff",
+        "blur": 5.0,
+    }
+
+
+def test_text_shadow_scales_the_alpha_by_the_strength():
+    from dataclasses import replace as changed
+
+    assert screen_rects.text_shadow(changed(ROW_SHADOW, strength=0.5))["color"] == "00000080"
+
+
+@pytest.mark.parametrize(
+    "change, message",
+    [
+        ({"inner": True}, "inner"),
+        ({"knockout": True}, "knockout"),
+        ({"blur_y": 4.0}, "two blur values"),
+    ],
+)
+def test_text_shadow_refuses_a_shadow_a_label_cannot_draw(change, message):
+    from dataclasses import replace as changed
+
+    with pytest.raises(ValueError, match=message):
+        screen_rects.text_shadow(changed(ROW_SHADOW, **change))
+
+
+def test_one_solid_fill_refuses_a_shape_with_a_second_style_set():
+    sets = [
+        StyleSet(((0, 0, 0, 255),), (), frozenset({1}), {}),
+        StyleSet(((102, 102, 102, 255),), (), frozenset({1}), {}),
+    ]
+    with pytest.raises(ValueError, match="3001 is not one solid fill"):
+        screen_rects.one_solid_fill(sets, 3001)
+
+
+def test_one_solid_fill_is_the_fill_of_a_plain_box():
+    sets = [StyleSet(((0, 0, 0, 255),), (), frozenset({1}), {})]
+    assert screen_rects.one_solid_fill(sets, 7) == (0, 0, 0, 255)
 
 
 # The close button 2853: one record, drawn in the hit state only, of the

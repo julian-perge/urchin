@@ -1,7 +1,9 @@
 # Run: uv run convert_menu_math
 # Writes dev/converted_json/menu_math.json, the numbers the inventory menu's
-# element bars are drawn from. The formulas come from the menu's script,
-# DefineSprite_3142/frame_1/DoAction.as. The bar height that the formulas
+# element bars are drawn from, and the counts that the victory frame's
+# experience rows animate with. The formulas come from the menu's script,
+# DefineSprite_3142/frame_1/DoAction.as, and the counts from the rows' clip
+# scripts in DefineSprite_3142/frame_9. The bar height that the formulas
 # scale, saveH, is not in the script: the script reads it from the bar clip
 # at run time, so this reads it from the web SWF.
 from __future__ import annotations
@@ -15,6 +17,9 @@ from urchin_dev.swf import timeline
 from urchin_dev.swf.swf_index import SwfIndex, read_swf, shape_bounds
 
 SOURCE = "DefineSprite_3142/frame_1/DoAction.as"
+# The victory frame's three experience rows. Each is a placement of sprite 3002
+# with a load and an enterFrame clip script.
+ROWS = "DefineSprite_3142/frame_9"
 # The perBarShow clip that holds the piercing bars. defBarShow is a second
 # placement of the same sprite, and the script caps both with perBarShow's
 # saveH.
@@ -166,6 +171,51 @@ def parse_element_bars(source: str) -> dict:
     }
 
 
+def _victory_row(load: str, enter_frame: str) -> dict:
+    """-> the counts of one victory experience row's two clip scripts."""
+    frames = _one(r"setLimiter = (?:sLmT2 = )?(\d+);", load, "setLimiter")
+    _one(r"adderPer = _root\.Krin\.totalXP / setLimiter;", load, "adderPer")
+    cap = _one(
+        r"if\(_root\.Krin\.LevelStats\[prx\] < (\d+)\)", enter_frame, "the level cap"
+    )
+    scaled = _one(rf"bar\._width = exp / 100 \* ({NUM});", enter_frame, "bar_width")
+    full = _one(rf"bar\._width = ({NUM});", enter_frame, "the full bar_width")
+    return {
+        "frames": int(frames.group(1)),
+        "bar_width": _same(
+            "bar_width", _number(scaled.group(1)), _number(full.group(1))
+        ),
+        "level_cap": int(cap.group(1)),
+    }
+
+
+def parse_victory_rows(rows: list[tuple[str, str]]) -> dict:
+    """-> the frame count, the full bar width and the level cap of the victory
+    experience rows. rows holds the load and enterFrame scripts of each row,
+    and every row must give the same numbers."""
+    first, *others = [_victory_row(load, enter) for load, enter in rows]
+    for other in others:
+        for name, value in first.items():
+            if other[name] != value:
+                raise ValueError(
+                    f"{ROWS}: the rows disagree on {name}: {value} and {other[name]}"
+                )
+    return first
+
+
+def _row_scripts(action_script: Path) -> list[tuple[str, str]]:
+    folders = sorted((action_script / ROWS).glob("PlaceObject3_3002_*"))
+    if len(folders) != 3:
+        raise ValueError(f"{ROWS}: {len(folders)} experience rows, not 3")
+    return [
+        (
+            (folder / "CLIPACTIONRECORD onClipEvent(load).as").read_text("utf-8"),
+            (folder / "CLIPACTIONRECORD onClipEvent(enterFrame).as").read_text("utf-8"),
+        )
+        for folder in folders
+    ]
+
+
 def _layer(index: SwfIndex, owner: int, name: str | None) -> timeline.Layer:
     layers = timeline.frames(index, owner)[0].values()
     found = [layer for layer in layers if name is None or layer.name == name]
@@ -197,15 +247,18 @@ def bar_save_height(index: SwfIndex, owner: int) -> float:
     return round((ymax - ymin) * scale) / 20
 
 
-def convert(script: Path, index: SwfIndex) -> dict:
+def convert(action_script: Path, index: SwfIndex) -> dict:
     bars = {"source": SOURCE, "save_height": bar_save_height(index, BAR_SPRITE)}
-    bars.update(parse_element_bars(script.read_text(encoding="utf-8")))
-    return {"element_bars": bars}
+    bars.update(parse_element_bars((action_script / SOURCE).read_text("utf-8")))
+    # The rows step once a frame, so they run at the SWF's frame rate.
+    rows = {"source": f"{ROWS}/PlaceObject3_3002_*", "frame_rate": index.frame_rate}
+    rows.update(parse_victory_rows(_row_scripts(action_script)))
+    return {"element_bars": bars, "victory_rows": rows}
 
 
 def main() -> None:
     output = CONVERTED_JSON / "menu_math.json"
-    math = convert(ACTION_SCRIPT / SOURCE, read_swf(WEB_SWF))
+    math = convert(ACTION_SCRIPT, read_swf(WEB_SWF))
     output.write_text(json.dumps(math, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {output}")
 

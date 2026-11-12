@@ -159,3 +159,70 @@ def test_a_skewed_bar_shape_is_refused():
     index = parse_swf(bar_swf(matrix(0.25, skew=0.1)))
     with pytest.raises(ValueError, match="character 10 is placed rotated or skewed"):
         menu_math.bar_save_height(index, 13)
+
+
+# The statement shapes of one victory experience row's scripts
+# (DefineSprite_3142/frame_9/PlaceObject3_3002_*), with other numbers.
+ROW_LOAD = """onClipEvent(load){
+   prx = _root.Krin.friendlySlotsFFTT[0];
+   if(prx == undefined)
+   {
+      _visible = false;
+   }
+   else
+   {
+      setLimiter = 24;
+      adderPer = _root.Krin.totalXP / setLimiter;
+   }
+}
+"""
+PLAYER_ROW_LOAD = ROW_LOAD.replace("setLimiter = 24", "setLimiter = sLmT2 = 24")
+ROW_ENTER_FRAME = """onClipEvent(enterFrame){
+   if(prx != undefined)
+   {
+      if(setLimiter > 0)
+      {
+         if(_root.Krin.LevelStats[prx] < 40)
+         {
+            setLimiter--;
+            exp += adderPer;
+            bar._width = exp / 100 * 88.4;
+            if(exp >= 100)
+            {
+               exp -= 100;
+               bar.gotoAndStop("level");
+               bar._width = 88.4;
+            }
+         }
+      }
+   }
+}
+"""
+
+
+def test_the_row_parser_reads_the_frames_the_bar_width_and_the_level_cap():
+    rows = [(ROW_LOAD, ROW_ENTER_FRAME), (PLAYER_ROW_LOAD, ROW_ENTER_FRAME)]
+    assert menu_math.parse_victory_rows(rows) == {
+        "frames": 24,
+        "bar_width": 88.4,
+        "level_cap": 40,
+    }
+
+
+def test_rows_that_disagree_are_refused():
+    other = ROW_ENTER_FRAME.replace("< 40", "< 41")
+    rows = [(ROW_LOAD, ROW_ENTER_FRAME), (ROW_LOAD, other)]
+    with pytest.raises(ValueError, match="level_cap"):
+        menu_math.parse_victory_rows(rows)
+
+
+def test_a_full_bar_width_that_differs_from_the_scaled_one_is_refused():
+    changed = ROW_ENTER_FRAME.replace("bar._width = 88.4;", "bar._width = 88.5;")
+    with pytest.raises(ValueError, match="bar_width"):
+        menu_math.parse_victory_rows([(ROW_LOAD, changed)])
+
+
+def test_a_row_that_does_not_divide_the_gain_by_its_frames_is_refused():
+    changed = ROW_LOAD.replace("totalXP / setLimiter", "totalXP / 20")
+    with pytest.raises(ValueError, match="adderPer"):
+        menu_math.parse_victory_rows([(changed, ROW_ENTER_FRAME)])

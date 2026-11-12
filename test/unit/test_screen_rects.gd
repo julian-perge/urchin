@@ -99,6 +99,17 @@ func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[Stri
 			+ label.get_theme_constant("line_spacing")
 		if not _close(pitch, float(entry["line_pitch"])):
 			found.append("%s: line pitch %s, expected %s" % [path, pitch, entry["line_pitch"]])
+	# A Label's shadow offsets are whole px and it can't blur its shadow, so the
+	# offsets are the SWF's rounded and the blur is not checked.
+	if entry.has("shadow"):
+		var shadow: Dictionary = entry["shadow"]
+		var shadow_color: Color = label.get_theme_color("font_shadow_color")
+		if not _same_color(shadow_color, shadow["color"]):
+			found.append("%s: shadow colour %s, expected %s" % [path, shadow_color.to_html(), shadow["color"]])
+		var offset := Vector2i(label.get_theme_constant("shadow_offset_x"), label.get_theme_constant("shadow_offset_y"))
+		var expected := Vector2i(roundi(shadow["offset"][0]), roundi(shadow["offset"][1]))
+		if offset != expected:
+			found.append("%s: shadow offset %s, expected %s" % [path, offset, expected])
 	return found
 
 
@@ -137,6 +148,13 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 						found.append("%s: texture %s, expected %s" % [path, texture_path, entry["texture"]])
 				else:
 					found.append("%s: an art piece that is not a TextureRect" % path)
+			"box":
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+				if node is ColorRect:
+					if not _same_color((node as ColorRect).color, entry["fill"]):
+						found.append("%s: fill %s, expected %s" % [path, (node as ColorRect).color.to_html(), entry["fill"]])
+				else:
+					found.append("%s: a box piece that is not a ColorRect" % path)
 			"hit", "button":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 				if not node is BaseButton:
