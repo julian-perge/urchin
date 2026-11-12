@@ -20,10 +20,11 @@
 # SWF does, the driver refuses to hide it, because hiding a mask unclips what
 # it covers.
 #
-# THE ITEM SLOTS 2986, 2984 and 3013 are rendered as sprites of their own.
-# Their inner DropShadow is on a placement inside each slot, so it is drawn
-# whatever places the slot, and 2984's is at angle 45 where the other two are
-# at 52.
+# THE ITEM SLOT 2986 is rendered as a sprite of its own. Its inner DropShadow
+# is on a placement inside the slot, so it is drawn whatever places the slot.
+# Every ItemSlot uses this art. The equip slot 2984 and the drop slot 3013
+# differ from it only in the DropShadow's angle, which is too small to see, so
+# they are not rendered.
 #
 # THE HOTBAR SQUARES are DefineButton2s placed on the root frame at three
 # sizes. Six are the same square at 0.671, at x positions that are not whole
@@ -93,8 +94,6 @@ QUIT_RED_DEPTH = 152
 PIECES: dict[str, str] = {
     "backdrop": "KRINMENU's backdrop under its Bevel, Glow and DropShadow",
     "slot_inventory": "the 36-slot grid's slot (2986), inner shadow at angle 52",
-    "slot_equip": "the equip slot (2984), inner shadow at angle 45",
-    "slot_drop": "the drop and ware slot (3013), inner shadow at angle 52",
     "close_x": "the close X (2855), as placed at depth 1431",
     "delete_slot": "the delete slot (2860), as placed at depth 1425",
     "sell_slot": "the sell slot (3017), as placed at depth 1281",
@@ -139,8 +138,6 @@ def jobs(index: SwfIndex, plate_strip: tuple[int, ...]) -> dict[str, render.Job]
     return {
         "backdrop": on_hub(KRINMENU_ROOT_DEPTH, hide_depths=backdrop_hides(index)),
         "slot_inventory": render.Job(2986, 1, ZOOM),
-        "slot_equip": render.Job(2984, 1, ZOOM),
-        "slot_drop": render.Job(3013, 1, ZOOM),
         "close_x": on_menu(INVENTORY_FRAME, CLOSE_X_DEPTH),
         "delete_slot": on_menu(INVENTORY_FRAME, 1425),
         "sell_slot": on_menu(SHOP_FRAME, 1281),

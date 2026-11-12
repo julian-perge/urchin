@@ -139,34 +139,6 @@
   ],
   "zoom": 4.0
  },
- "slot_drop": {
-  "rect": [
-   -15.7,
-   -15.7,
-   31.25,
-   31.25
-  ],
-  "relative_to": "sprite 3013",
-  "size": [
-   125,
-   125
-  ],
-  "zoom": 4.0
- },
- "slot_equip": {
-  "rect": [
-   -15.7,
-   -15.7,
-   31.25,
-   31.25
-  ],
-  "relative_to": "sprite 2984",
-  "size": [
-   125,
-   125
-  ],
-  "zoom": 4.0
- },
  "slot_inventory": {
   "rect": [
    -15.7,

@@ -20,8 +20,6 @@ RECORD = json.loads((CHROME_DIR / "window_chrome.json").read_text())
 # The pieces rendered as sprites of their own. Every other piece is on the stage.
 OWN_SPRITE = {
     "slot_inventory": "sprite 2986",
-    "slot_equip": "sprite 2984",
-    "slot_drop": "sprite 3013",
     "xp_gloss_victory": "sprite 3002",
 }
 

@@ -16,7 +16,7 @@ The module delivers four scenes:
 | --- | --- |
 | `scenes/ui/window/window_shell.tscn` | The backdrop, the close X, and the KRINMENU origin |
 | `scenes/ui/window/shell_panel.tscn` | One Panel built to the ui-foundation recipe, with a fill variant |
-| `scenes/ui/item_slot.tscn` (existing, art swapped) | The three slot variants and the highlight |
+| `scenes/ui/item_slot.tscn` (existing, art swapped) | The slot art and the highlight |
 | `scenes/ui/window/right_column.tscn` | The "Your Inventory" Panel, the 36-slot grid and the money bar with its sell and delete slots |
 
 Success is that the three Windows that show the right column place one `RightColumn` and no longer carry their own copy, and that the shell's pieces match the SWF under the rect test and the compare tool.
@@ -60,15 +60,15 @@ A PanelContainer built to the ui-foundation Panel recipe: a StyleBoxFlat of fill
 
 ### Item slots
 
-| cid | Variant | Used by | Look |
+| cid | Slot | Used by | Look |
 | --- | --- | --- | --- |
-| 2986 | `inventory` | the 36-slot grid | linear #090909 to #262626, black line, inner DropShadow (blur 5, distance 5, angle 52) |
-| 2984 | `equip` | Inventory and Store equip slots | the same, with angle 45 |
-| 3013 | `drop` | Victory drops and Store wares | the same, with angle 52 |
+| 2986 | inventory slot | the 36-slot grid | linear #090909 to #262626, black line, inner DropShadow (blur 5, distance 5, angle 52) |
+| 2984 | equip slot | Inventory and Store equip slots | the same, with angle 45 |
+| 3013 | drop slot | Victory drops and Store wares | the same, with angle 52 |
 | 2857 | highlight | the hover and down state of all three | no fill, 2 px line #ffffff, 32x32 around the slot centre |
 
 - Each slot is 31x31 and is placed by its centre, so a slot's top left is a fractional number. `FloatBox` places it.
-- The three slot arts come from #161 at zoom 4, one file each, because the shadow angle differs.
+- Every slot uses the art of 2986 from #161 at zoom 4. The equip and drop slots differ from it only in the shadow angle, which is too small to see, so they have no art of their own (#211).
 - The highlight is a StyleBoxFlat with `draw_center` off and a 2 px white border. #161 does not render it, and the Panel recipe already draws a plain stroke.
 - Look only. `ItemSlot`'s script, signals, drag and drop and meta keys do not change.
 
@@ -139,7 +139,7 @@ The snippet shows style only.
 - **Rect test.** Add `window_shell.tscn` and `right_column.tscn` to the rect record, with every piece in the tables above. All pass under 0.5 px. The control moves one piece 20 px and fails.
 - **Panel recipe.** The rect test already fails a `ShellPanel` with a wrong fill, stroke or shadow material.
 - **RightColumn.** The existing `test/integration/test_inventory_panel.gd` and `test_item_slot.gd` keep passing after the nodes move. New cases cover the two Labels (sign and amount) and the sell slot's visibility.
-- **Slots.** A GUT test checks that each variant loads its own art and that the highlight is a 2 px white border.
+- **Slots.** A GUT test checks that the slot loads the inventory art and that the highlight is a 2 px white border.
 - **Compare tool.** Add a `window-shell` entry in `chrome` mode. It scores the backdrop, the close X and the right column inside their masks on a labelled capture of the Inventory Window. The build issue sets the bar from the first passing run and shows the 20 px shift scoring over it.
 - **Whole suite.** `uv run gut` passes before each commit.
 
@@ -161,7 +161,7 @@ The snippet shows style only.
 
 1. `window_shell.tscn` draws the backdrop and close X from the zoom 4 art, with every rect under 0.5 px from the SWF.
 2. `ShellPanel` has the three fills. A test fails on a wrong fill, border or missing shadow material.
-3. The three slot variants and the highlight pass the rect test. The slot script is unchanged.
+3. The slot and the highlight pass the rect test. The slot script is unchanged.
 4. `right_column.tscn` places 36 slots at a 38 px pitch, the title, the money bar with a separate euro sign and amount, and the sell and delete slots. Every rect is under 0.5 px from the SWF.
 5. Inventory, Store and Victory each instance `RightColumn`. No scene keeps its own copy of the grid, money bar or sell and delete buttons.
 6. The compare tool scores the `window-shell` entry under its bar, and the 20 px shift scores over it.
