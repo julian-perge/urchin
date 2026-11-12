@@ -1,6 +1,6 @@
 # cutscene_player.gd
-# Reusable full-screen cutscene player: fades in from black, plays an .ogv
-# clip with audio, fades back to black on completion, then frees itself.
+# Reusable full-screen cutscene player: plays an .ogv clip with audio under a
+# fade in from black, fades back to black on completion, then frees itself.
 #
 # It has the original's SKIP button. Button 3468, a hit area at the bottom
 # right, and the "SKIP" text 3469 sit on every cutscene frame. Releasing the
@@ -122,11 +122,15 @@ func play(cutscene_id: String) -> void:
 		queue_free()
 		return
 
+	# The original places the clip on the same root frame as the fade clip, and
+	# nothing stops the clip on its first frame, so it plays under the fade-in
+	# (frame_263/PlaceObject2_3466_80 enterFrame, lines 2-8). A SKIP press
+	# during the fade-in stops it.
 	video.stream = stream
 	fade_rect.color.a = 1.0
+	video.play()
 	await _fade(0.0)
 	if not _skipped:
-		video.play()
 		await _await_playback_end()
 	await _fade(1.0)
 	finished.emit()

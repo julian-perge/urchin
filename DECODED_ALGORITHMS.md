@@ -676,7 +676,10 @@ Ported: `CutscenePlayer` places the button and its text from `assets/cutscenes/s
   (`frame_263/PlaceObject2_3466_80` enterFrame, lines 9-33). That is the same place that the clip's own last frame sends it, because that frame sets `cutSceneEnd` too (`DefineSprite_4153/frame_2424/DoAction.as:1`
   for CS_CUT5). The port's press stops the clip and its audio, and then runs the fade out, `finished` and the free that the end of the clip runs.
 - The fade clip has an enterFrame handler only, and nothing stops the button while the cutscene fades in, so a press in that first 0.67 s counts. The release handler stops no clip, so the original's picture plays on
-  under the fade out and only its sound stops. Both are read from the AS and not confirmed in a live run. The port starts no clip after an early press, and holds the last frame of a clip that it stopped (#51).
+  under the fade out and only its sound stops. Both are read from the AS and not confirmed in a live run. The port starts the clip with the fade-in, as the original does, stops it on an early press, and holds the last frame of a clip that it stopped (#51).
+- The cutscene sprite plays from the frame that places it, under the fade clip's fade-in: the fade clip only lowers `_alpha` while `cutSceneEnd` is false, and the CS_CUT5 sprite has no script before
+  frame 2424 (`DefineSprite_4153`). The port first faded in over an empty video, which showed the battle under it, or the Victory screen after Proceed, for 0.67 s before the clip started. A black rect
+  under the video now stands in for the original's own root frame, which shows nothing of the battle.
 
 ## Zone hub orbs (DefineSprite 3287)
 

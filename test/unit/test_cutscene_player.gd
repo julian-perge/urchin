@@ -30,7 +30,7 @@ func test_play_fades_in_plays_video_then_fades_out_and_finishes():
 	# duration since a fixed 0.05s wait was flaky under full-suite load.
 	await wait_seconds(0.2)
 	assert_almost_eq(player.fade_rect.color.a, 0.0, 0.01, "faded to transparent before playback")
-	assert_true(player.video.is_playing(), "video started after the fade-in")
+	assert_true(player.video.is_playing(), "video is playing once the fade-in ends")
 	assert_eq(player.video.stream.get_class(), "VideoStreamTheora", "ogv resolves via the built-in importer")
 
 	# Simulate the clip reaching its end instead of waiting out its real
@@ -110,6 +110,13 @@ func test_overlay_blocks_clicks_and_draws_above_the_battle_hud():
 	assert_not_null(overlay, "video and fade live on their own canvas layer")
 	# battle_scene.tscn's "UI" CanvasLayer sets no layer, i.e. the default 1.
 	assert_gt(overlay.layer, 1, "cutscene layer is above the battle HUD's")
+	# The video draws nothing until it decodes its first frame. Without an
+	# opaque rect under it, the fade-in showed the battle or the Victory screen.
+	var backdrop: ColorRect = overlay.get_child(0) as ColorRect
+	assert_not_null(backdrop, "the overlay's lowest node is a rect")
+	assert_eq(backdrop.color, Color.BLACK, "an opaque black one")
+	assert_eq(backdrop.anchor_right, 1.0, "that spans the screen across")
+	assert_eq(backdrop.anchor_bottom, 1.0, "and down")
 
 
 # Without a timeout, a Theora stream that stalls or never decodes leaves
@@ -354,11 +361,10 @@ func test_pressing_skip_stops_the_clip_and_finishes_the_way_a_clip_that_plays_to
 	assert_eq(result.alpha, 1.0, "after the same fade to black")
 
 
-# The button is clickable from the first frame, while the fade clip still has
-# the cutscene fading in, and its release sets cutSceneEnd at once. So a press
-# before the clip has started has to skip it, and the clip must never start,
-# because its audio would play under the fade-out.
-func test_pressing_skip_during_the_fade_in_skips_a_clip_that_has_not_started():
+# The original plays the clip under the fade-in, and the button is clickable
+# from the first frame, so a press during the fade-in has to stop the clip that
+# already plays, or its audio would play on under the fade-out.
+func test_pressing_skip_during_the_fade_in_stops_the_clip_that_plays_under_it():
 	var viewport := SubViewport.new()
 	viewport.size = Vector2i(800, 600)
 	add_child_autofree(viewport)
@@ -370,13 +376,14 @@ func test_pressing_skip_during_the_fade_in_skips_a_clip_that_has_not_started():
 	player.finished.connect(func(): result.clip_playing = player.video.is_playing())
 
 	player.play("CS_CUT4")
-	assert_false(player.video.is_playing(), "the clip waits for the fade-in")
+	assert_gt(player.fade_rect.color.a, 0.5, "the fade-in has just started")
+	assert_true(player.video.is_playing(), "the clip plays under the fade-in")
 	_click(viewport, player.skip_button)
 
 	# The clip is 16.7 s long, so a skip that is lost takes far longer than this.
 	var got_finished: bool = await wait_for_signal(player.finished, 2.0)
 	assert_true(got_finished, "the early press skipped the cutscene")
-	assert_false(result.clip_playing, "and the clip never started")
+	assert_false(result.clip_playing, "and stopped the clip")
 
 
 # A left click on the control's center, pushed through the viewport's GUI input.
