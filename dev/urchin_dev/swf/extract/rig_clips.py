@@ -8,13 +8,15 @@
 #                                         around the rig's origin
 #
 # Today the one clip is `shield` (DefineSprite 2675), which executeMove plays
-# on a Shield block (frame_42/DoAction_8.as:73) and buffTicker plays when a
-# shield soaks a whole Buff tick (frame_42/DoAction_10.as:72). Its frame 1
-# runs stop() and shows nothing. Frame 2 places the bubble (sprite 1709) at the
-# rig's origin and BOOM_SPARK (sprite 1712) at (40.55, 3.65). A color transform
-# turns the bubble white on frames 3, 5 to 6 and 8 to 9, and its alpha falls to
-# 0 over frames 11 to 20. The spark steps through its own frames with the clip,
-# and it draws on the clip's frames 2 to 18.
+# on a Shield block (frame_42/DoAction_8.as:73). buffTicker also calls it when a
+# shield soaks a whole Buff tick (frame_42/DoAction_10.as:72), but through a name
+# it never declares, so that call reaches no clip. The port plays the clip there
+# anyway (ADR 0005). The clip's frame 1 runs stop() and shows nothing. Frame 2
+# places the bubble (sprite 1709) at the rig's origin and BOOM_SPARK (sprite
+# 1712) at (40.55, 3.65). A color transform turns the bubble white on frames 3,
+# 5 to 6 and 8 to 9, and its alpha falls to 0 over frames 11 to 20. The spark
+# steps through its own frames with the clip, and it draws on the clip's frames
+# 2 to 18.
 #
 # EVERY FRAME IS RENDERED WHOLE. ffdec draws the bubble's glow, its white color
 # transform and its fade, and steps the spark to the frame it shows on each

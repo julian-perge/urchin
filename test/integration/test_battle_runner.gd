@@ -1143,12 +1143,13 @@ func test_a_result_on_a_target_under_sswitch_states_the_life_it_has_afterwards()
 # A move can send its status buff to its own caster (ability_two[21],
 # conductor lines 76-83), but the conductor's only applyChangesKrin after a hit
 # is on the target (line 103), so the caster's stats and slot order wait for
-# its own buffTicker. That tick works out its DoT damage
+# its own buffTicker. That Buff tick works out its damage over time
 # (frame_42/DoAction_10.as:31) before it calls applyChangesKrin (line 135), so
 # it still reads the caster's old stats. Honor and Duty (move 755) hits someone
 # else and lands HONORDUTY on the Police Colonel, which cuts the damage he takes
-# by 20%. He holds Cold Justice, a 500-a-turn Ice DoT, and his Ice defense is
-# 100 + 15 per level, so with the old IDMGP2 of 1 that tick takes exactly 500.
+# by 20%. He holds Cold Justice, an Ice buff that deals 500 a turn, and his Ice
+# defense is 100 + 15 per level, so with the old IDMGP2 of 1 that tick takes
+# exactly 500.
 # The test calls the two halves of _execute_action, the move and the tick, one
 # at a time to look in between.
 func test_a_buff_a_move_lands_on_its_caster_waits_for_the_casters_tick():
@@ -1172,6 +1173,277 @@ func test_a_buff_a_move_lands_on_its_caster_waits_for_the_casters_tick():
 	assert_eq(life_before_tick - colonel.life_n, 500.0, "Cold Justice's tick still reads the old IDMGP2")
 	assert_almost_eq(colonel.idmgp2, 0.8, 0.000001, "the tick's own recompute brings HONORDUTY in")
 	assert_eq(_live_buff_names(colonel), ["PERSECUTE", "HONORDUTY", "CHAINS"], "and sorts it ahead of Chains of Justice")
+
+
+# The conductor ticks a caster's buffs once after its action, and buffTicker nets
+# the unit's healing and every element's damage into one total
+# (frame_42/DoAction_10.as:14-40). Digitalis is Poison, and it deals "damage equal
+# to 100% of the enemy's Speed" each turn. A level 1 Sonny with no points in
+# Poison defense has the 100 + 15 per level that the tick divides by, so the
+# tick deals exactly the guard's Speed.
+func test_a_poisoned_caster_logs_a_buff_tick_after_its_own_move_with_its_amount_and_element():
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	save.focus = 100.0
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	var guard: CombatUnit = _guard_holding("")
+	var runner = BattleRunner.new()
+	runner.setup({1: player, 2: guard}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
+	player.apply_buff(buffs_by_name["IDIGITALIS"], 1, guard)
+	player.apply_changes()
+	assert_true(runner.is_player_turn(), "Sonny's team opens")
+
+	# Move 434 is Shock Therapy, which can't miss.
+	var events: Array = runner.advance_half_turn({"target_slot": 2, "move_id": 434})
+
+	assert_eq(
+		events.slice(0, 2).map(func(event): return event["type"]),
+		[BattleRunner.EventType.MOVE, BattleRunner.EventType.BUFF_TICK],
+		"Sonny's move, then his Buff tick"
+	)
+	var ticks: Array = _ticks_in(events)
+	if ticks.size() != 1:
+		fail_test("expected one Buff tick, got %d" % ticks.size())
+		return
+	var tick: BuffTick = ticks[0]["tick"]
+	var life_after_move: float = events[0]["caster_after_dispatch"].life
+	assert_eq(ticks[0]["caster_slot"], BattleRunner.PLAYER_SLOT, "the tick is Sonny's")
+	assert_eq(tick.direction, MoveResult.Direction.HARM, "it harmed him")
+	assert_eq(tick.amount, guard.speed_u, "for 100% of the guard's Speed")
+	assert_eq(tick.element, CombatUnit.Element.POISON, "in Poison")
+	assert_eq(life_after_move - player.life_n, tick.amount, "which is the life it took from him")
+
+
+# The Immortal Flame "regenerates 300 Health" every turn. buffTicker draws a
+# heal before max life caps it (frame_42/DoAction_10.as:88-91), so a unit at full
+# life still shows the whole amount.
+func test_a_healing_buff_ticks_as_a_heal_of_its_whole_amount_even_at_full_life():
+	var runner: BattleRunner = _sonny_holding(["FIRESAM"])
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	assert_eq(player.life_n, player.life_u, "sanity: Sonny is at full life")
+
+	var tick: BuffTick = _tick_after_passing(runner)
+
+	assert_eq([tick.direction, tick.amount], [MoveResult.Direction.HEAL, _flat_amount("FIRESAM")], "a heal of the buff's whole amount")
+	assert_eq(player.life_n, player.life_u, "though he can hold no more life")
+
+
+# buffTicker adds the healing, which is negative, to every element's damage and
+# works from that one total (frame_42/DoAction_10.as:17-40).
+func test_a_buff_tick_nets_its_healing_against_its_damage_into_one_total():
+	var hurt: BuffTick = _sonnys_tick_holding(["FATE", "FIRESAM"])
+	assert_eq([hurt.direction, hurt.amount], [MoveResult.Direction.HARM, _flat_amount("FATE") - _flat_amount("FIRESAM")], "Fate's damage less The Immortal Flame's healing")
+
+	var healed: BuffTick = _sonnys_tick_holding(["FIRESAM2", "FIRESAM"])
+	assert_eq([healed.direction, healed.amount], [MoveResult.Direction.HEAL, _flat_amount("FIRESAM") - _flat_amount("FIRESAM2")], "The Immortal Flame's healing less Mark of Flame's damage")
+
+
+# The tick takes the color of the element with the strictly largest damage, so a
+# tie goes to the element that comes first in elementMainArray
+# (frame_42/DoAction_10.as:27-40). It looks at each element's own damage, before
+# the healing comes off the total.
+func test_a_buff_ticks_element_is_the_one_with_the_most_damage_and_the_first_of_a_tie():
+	var ice: float = _flat_amount("PERSECUTE")
+	var fire: float = _flat_amount("FIRESAM2")
+	assert_gt(ice, fire, "sanity: Cold Justice deals more than Mark of Flame")
+	var ice_over_fire: BuffTick = _sonnys_tick_holding(["FIRESAM2", "PERSECUTE"])
+	assert_eq([ice_over_fire.amount, ice_over_fire.element], [ice + fire, CombatUnit.Element.ICE], "the total is both, and Ice has the most of it")
+	assert_true(ice_over_fire.element_dealt_damage, "and an element dealt the damage")
+
+	var runner: BattleRunner = _sonny_holding([])
+	var tied_amount: float = fire
+	runner.units[BattleRunner.PLAYER_SLOT].dot_ticker_array[CombatUnit.Element.FIRE] = tied_amount
+	runner.units[BattleRunner.PLAYER_SLOT].dot_ticker_array[CombatUnit.Element.ICE] = tied_amount
+	assert_eq(_tick_after_passing(runner).element, CombatUnit.Element.ICE, "Ice and Fire tie, and Ice comes first")
+
+
+# Under sswitch the total changes sign before anything else reads it
+# (frame_42/DoAction_10.as:59-62), so damage heals and healing hurts. The color
+# looks only at the damage each element dealt, so a tick that hurts through
+# healing alone has no element to take it from, and colorToBe stays Physical.
+# The tick records that no element dealt damage, so the combat log names none.
+func test_sswitch_turns_a_buff_tick_around_and_a_tick_that_only_healing_hurts_has_no_damage_element():
+	var healed: BuffTick = _sonnys_tick_holding(["RETROGRADED", "FATE"])
+	assert_eq([healed.direction, healed.amount], [MoveResult.Direction.HEAL, _flat_amount("FATE")], "Fate's damage heals Sonny")
+
+	var hurt: BuffTick = _sonnys_tick_holding(["RETROGRADED", "FIRESAM"])
+	assert_eq(
+		[hurt.direction, hurt.amount, hurt.element],
+		[MoveResult.Direction.HARM, _flat_amount("FIRESAM"), CombatUnit.Element.PHYSICAL],
+		"The Immortal Flame's healing hurts Sonny, and the number stays Physical"
+	)
+	assert_false(hurt.element_dealt_damage, "but no element dealt it")
+
+
+# Energized "is recovering 7 Focus per turn", and Energy Drain "is losing 8 Focus
+# per turn". buffTicker moves Focus by DOTTICKERARRAY[9] and draws no number for
+# it, and buffTickChecker only reads the life total (frame_42/DoAction_10.as:99-108).
+# So a tick that only moves Focus states the new Focus and did nothing that the
+# original draws or waits for.
+func test_a_buff_tick_that_only_moves_focus_states_the_new_focus_and_did_nothing():
+	for buff_name in ["ZAP", "ENERGYDRAIN"]:
+		var runner: BattleRunner = _sonny_holding([buff_name])
+		var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+		player.focus_n = floorf(player.focus_u / 2.0)
+		var focus_before: float = player.focus_n
+		# A buff's focus_per_turn is the Focus it takes, so a negative one gives Focus.
+		var focus_change: float = -buffs_by_name[buff_name].focus_per_turn
+
+		var tick: BuffTick = _tick_after_passing(runner)
+
+		assert_eq(tick.after.focus, focus_before + focus_change, "%s moves Focus by %d" % [buff_name, int(focus_change)])
+		assert_false(tick.did_something(), "and the tick did nothing else")
+
+
+# A shield bigger than the whole tick takes all of it. The unit loses no life,
+# and buffTicker draws SHIELDED (frame_42/DoAction_10.as:64-73).
+func test_a_shield_bigger_than_a_buff_tick_soaks_all_of_it():
+	var fate: float = _flat_amount("FATE")
+	var runner: BattleRunner = _sonny_holding(["FATE"])
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	player.shield = 2.0 * fate
+	var life_before: float = player.life_n
+
+	var tick: BuffTick = _tick_after_passing(runner)
+
+	assert_true(tick.shield_took_all, "the shield soaked the whole tick")
+	assert_eq(tick.amount, 0.0, "so nothing got through")
+	assert_eq(tick.direction, MoveResult.Direction.HARM, "and the tick's direction is still HARM, as a Shield block's is")
+	assert_true(tick.did_something(), "and the original counts it as a tick that did something")
+	assert_eq(player.life_n, life_before, "Sonny lost no life")
+	assert_eq(player.shield, fate, "and the shield paid for Fate's damage")
+
+
+# A shield smaller than the tick takes its own value off the tick and empties,
+# and what is left comes off the unit's life, which is what the number shows
+# (frame_42/DoAction_10.as:76-97).
+func test_a_buff_tick_bigger_than_the_shield_takes_what_got_through():
+	var fate: float = _flat_amount("FATE")
+	var runner: BattleRunner = _sonny_holding(["FATE"])
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	var shield: float = 100.0
+	assert_lt(shield, fate, "sanity: the shield is smaller than Fate's damage")
+	player.shield = shield
+	var life_before: float = player.life_n
+
+	var tick: BuffTick = _tick_after_passing(runner)
+
+	assert_false(tick.shield_took_all, "a shield smaller than the tick doesn't soak all of it")
+	assert_eq([tick.direction, tick.amount], [MoveResult.Direction.HARM, fate - shield], "what got through")
+	assert_eq(life_before - player.life_n, fate - shield, "comes off Sonny's life")
+	assert_eq(player.shield, 0.0, "and the shield is used up")
+
+
+# A shield exactly as big as the tick is not soaking all of it, because
+# buffTicker only takes that branch for a shield that is strictly bigger (line
+# 68). The other branch subtracts the shield and leaves a total of 0, so the
+# tick draws nothing and does not count as doing something. ADR 0005 keeps this
+# Quirk, as it keeps the same case for a Shield block.
+func test_a_shield_exactly_as_big_as_a_buff_tick_leaves_a_tick_that_did_nothing():
+	var runner: BattleRunner = _sonny_holding(["FATE"])
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	player.shield = _flat_amount("FATE")
+	var life_before: float = player.life_n
+
+	var tick: BuffTick = _tick_after_passing(runner)
+
+	assert_false(tick.shield_took_all, "a shield exactly as big isn't soaking it all")
+	assert_eq([tick.direction, tick.amount], [MoveResult.Direction.NONE, 0.0], "and nothing is left of the tick")
+	assert_false(tick.did_something(), "so the tick did nothing")
+	assert_eq(player.life_n, life_before, "Sonny lost no life")
+	assert_eq(player.shield, 0.0, "and the shield is used up")
+
+
+# Judge's Hammer takes 15% off total life, and Iricin takes 25% off it. When one
+# runs out at a tick, max life comes back and brings life up with it, in the
+# recompute that ends buffTicker (frame_42/DoAction_10.as:135 and 280-296). The
+# tick states the unit after that recompute, so a bar can keep the max and the
+# fill it had until the tick and take both from it. Sonny's base life is 3300.
+func test_a_buff_tick_states_the_max_life_that_a_buff_running_out_gives_back():
+	for buff_name in ["JUDGESHAMMER", "IRICIN"]:
+		var runner: BattleRunner = _sonny_holding([buff_name])
+		var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+		_run_buffs_out_at_the_next_tick(player)
+		assert_lt(player.life_u, 3300.0, "sanity: %s cuts Sonny's max life" % buff_name)
+
+		var tick: BuffTick = _tick_after_passing(runner)
+
+		assert_eq([tick.after.life_max, tick.after.life], [3300.0, 3300.0], "%s gives max life and life back" % buff_name)
+		assert_eq(_live_slots(tick.after), [], "and the tick states the buff gone")
+		assert_false(tick.did_something(), "a tick that only ran a buff out did nothing else")
+
+
+# Every Buff tick of a caster that is alive when its action ends is logged, even
+# one that changes nothing, because the original redraws the caster there
+# (applyChangesKrin, frame_42/DoAction_10.as:135). A caster that is dead logs
+# none, because the conductor sets usedBuff for it (line 336).
+func test_every_living_casters_action_logs_a_buff_tick_even_one_that_changes_nothing():
+	var runner: BattleRunner = _sonny_holding([])
+	var events: Array = runner.advance_half_turn({})
+	assert_eq(events.map(func(event): return event["type"]), [BattleRunner.EventType.PASSED, BattleRunner.EventType.BUFF_TICK], "Sonny passes and ticks")
+	assert_false(events[1]["tick"].did_something(), "to no effect")
+
+	var with_a_dead_ally: BattleRunner = _sonny_with_a_dead_ally()
+	var ticked: Array = _ticks_in(with_a_dead_ally.advance_half_turn({})).map(func(event): return event["caster_slot"])
+	assert_eq(ticked, [BattleRunner.PLAYER_SLOT], "Sonny's tick is the only one, because his dead ally takes its turn and doesn't tick")
+
+
+# A caster that its own move killed has no Buff tick, because the conductor ticks
+# a caster only while it is still active when its tick comes due
+# (frame_217/PlaceObject2_3389_480 enterFrame, line 118). Under sswitch a heal
+# hurts its target, so Sonny kills himself by healing himself at 1 life, and his
+# action logs the move's death and no tick or second death after it.
+func test_a_caster_its_own_move_killed_logs_no_buff_tick_and_no_second_death():
+	var runner: BattleRunner = _sonny_holding(["RETROGRADED"])
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	player.life_n = 1.0
+
+	var events: Array = runner.advance_half_turn({"target_slot": BattleRunner.PLAYER_SLOT, "move_id": 4})  # Move 4 is Heal.
+
+	assert_eq(events[0]["type"], BattleRunner.EventType.MOVE, "sanity: Sonny's action is his move")
+	assert_true(events[0]["result"].killed, "sanity: and the move killed him")
+	assert_eq(_ticks_in(events), [], "so his action logs no Buff tick")
+	var causes: Array = events.filter(func(event): return event["type"] == BattleRunner.EventType.DEATH).map(func(event): return event["cause"])
+	assert_eq(causes, [BattleRunner.DeathCause.MOVE], "and the only death is the move's")
+
+
+# A tick that takes the unit's last life states it dead, and its DEATH event
+# follows the tick, because the tick is what kills it (frame_42/DoAction_10.as:109-134).
+func test_a_buff_tick_that_takes_the_last_life_states_the_unit_dead_and_logs_its_death_after_it():
+	var runner: BattleRunner = _sonny_holding(["FATE"])
+	# Fate's damage is twice the life that Sonny has left, so the tick kills him.
+	runner.units[BattleRunner.PLAYER_SLOT].life_n = _flat_amount("FATE") / 2.0
+
+	var events: Array = runner.advance_half_turn({})
+
+	assert_eq(
+		events.map(func(event): return event["type"]),
+		[BattleRunner.EventType.PASSED, BattleRunner.EventType.BUFF_TICK, BattleRunner.EventType.DEATH, BattleRunner.EventType.BATTLE_ENDED],
+		"Sonny passes, his tick kills him, and the battle ends"
+	)
+	var tick: BuffTick = events[1]["tick"]
+	assert_true(tick.killed, "the tick says it killed")
+	assert_eq(tick.after.life, 0.0, "and left no life")
+	assert_eq([events[2]["slot"], events[2]["cause"]], [BattleRunner.PLAYER_SLOT, BattleRunner.DeathCause.DAMAGE_OVER_TIME], "the death is Sonny's, caused by the tick")
+
+
+# The recompute that ends buffTicker gives max life and life back when a buff that
+# cut max life runs out (frame_42/DoAction_10.as:280-296), and it does so for a
+# unit that the same tick has just killed. The original leaves the unit that life,
+# so the port does too, but the tick states the unit dead, because it says it
+# killed. Judge's Hammer runs out on the tick where Fate takes Sonny's last life.
+func test_a_tick_that_kills_states_no_life_even_when_a_buff_running_out_gives_life_back():
+	var runner: BattleRunner = _sonny_holding(["JUDGESHAMMER", "FATE"])
+	var player: CombatUnit = runner.units[BattleRunner.PLAYER_SLOT]
+	# Fate's damage is twice the life that Sonny has left, so the tick kills him.
+	player.life_n = _flat_amount("FATE") / 2.0
+	_run_buffs_out_at_the_next_tick(player)
+
+	var tick: BuffTick = _tick_after_passing(runner)
+
+	assert_true(tick.killed, "the tick killed Sonny")
+	assert_gt(player.life_n, 0.0, "sanity: the recompute gave the dead unit life back, as the original does")
+	assert_eq(tick.after.life, 0.0, "and the tick still states him with no life")
 
 
 # Runs a full battle with AI on both sides; returns event-type counts.
@@ -1331,6 +1603,65 @@ func _sure_crit_caster() -> CombatUnit:
 	caster.base_per[CombatUnit.Element.ICE] = 100000.0
 	caster.apply_changes()
 	return caster
+
+
+func _ticks_in(events: Array) -> Array:
+	return events.filter(func(event): return event["type"] == BattleRunner.EventType.BUFF_TICK)
+
+
+# Sonny opens the fight against a level 9 Prison Guard, and the named buffs, which
+# the guard cast, are on Sonny. He has 3300 life, so none of them kills him. A
+# level 1 Sonny with no points in defense has the 100 + 15 per level in every
+# element that a Buff tick divides by, so a flat damage or healing buff ticks
+# for exactly its own base value (see _flat_amount). FATE deals Physical damage
+# each turn, PERSECUTE deals Ice damage, FIRESAM2 deals Fire damage, and FIRESAM
+# heals.
+func _sonny_holding(buff_names: Array) -> BattleRunner:
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	save.life = 100.0
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	var guard: CombatUnit = _guard_holding("")
+	var runner := BattleRunner.new()
+	runner.setup({1: player, 2: guard}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
+	for buff_name in buff_names:
+		player.apply_buff(buffs_by_name[buff_name], 1, guard)
+	player.apply_changes()
+	assert_true(runner.is_player_turn(), "sanity: Sonny's team opens")
+	return runner
+
+
+# Returns the one Buff tick that Sonny's Half-turn logs when he passes.
+func _tick_after_passing(runner: BattleRunner) -> BuffTick:
+	var ticks: Array = _ticks_in(runner.advance_half_turn({}))
+	if ticks.size() != 1:
+		fail_test("expected one Buff tick, got %d" % ticks.size())
+		return BuffTick.new()
+	return ticks[0]["tick"]
+
+
+func _sonnys_tick_holding(buff_names: Array) -> BuffTick:
+	return _tick_after_passing(_sonny_holding(buff_names))
+
+
+# Returns what a flat damage or healing buff ticks for in _sonny_holding's setup.
+# That is the buff's own base value in buffs.json, without the minus sign that
+# marks a healing buff.
+func _flat_amount(buff_name: String) -> float:
+	return absf(buffs_by_name[buff_name].dot_hot_base_value)
+
+
+# Leaves every buff the unit holds with 1 turn, so the unit's next Buff tick runs
+# them all out.
+func _run_buffs_out_at_the_next_tick(unit: CombatUnit) -> void:
+	for slot in unit.buff_slots:
+		if slot["cd"] > 0:
+			slot["cd"] = 1
+
+
+# Returns the slots of a snapshot that hold a buff.
+func _live_slots(state: UnitSnapshot) -> Array:
+	return state.buff_slots.filter(func(slot): return slot["cd"] != 0)
 
 
 func _live_buff_names(unit: CombatUnit) -> Array:

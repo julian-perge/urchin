@@ -1086,7 +1086,7 @@ func test_heroic_decision_passes_the_turn_when_the_window_runs_out():
 	var player_events: Array = scene.runner.events.slice(first_event).filter(
 		func(event): return event["turn"] == turn and int(event.get("caster_slot", 0)) == BattleRunner.PLAYER_SLOT
 	)
-	assert_eq(player_events.map(func(event): return event["type"]), [BattleRunner.EventType.PASSED], "the player passed")
+	assert_eq(player_events.map(func(event): return event["type"]), [BattleRunner.EventType.PASSED, BattleRunner.EventType.BUFF_TICK], "the player passed, and the pass is followed by his Buff tick")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1597,6 +1597,81 @@ func test_battle_log_names_a_results_fields_and_a_failed_moves_cost():
 	assert_eq(failed_line["reason"], "HEALTH", "and a failed move's cost by name")
 
 
+# battle.log writes a Buff tick's fields the same way, with its direction and
+# element by name.
+func test_battle_log_names_a_buff_ticks_fields():
+	var scene = autofree(BattleSceneRes.instantiate())
+	var tick := BuffTick.new()
+	tick.direction = MoveResult.Direction.HARM
+	tick.amount = 12.0
+	tick.element = CombatUnit.Element.POISON
+	tick.element_dealt_damage = true
+	tick.after.life = 88.0
+
+	var line: Dictionary = JSON.parse_string(scene._event_log_text({"type": BattleRunner.EventType.BUFF_TICK, "caster_slot": 3, "tick": tick}))
+
+	if not line["tick"] is Dictionary:
+		fail_test("the tick is written as %s, not as its fields" % line["tick"])
+		return
+	assert_eq(
+		[line["tick"]["direction"], line["tick"]["amount"], line["tick"]["element"], line["tick"]["element_dealt_damage"]],
+		["HARM", 12.0, "Poison", true],
+		"what the tick did"
+	)
+	assert_eq(line["tick"]["after"]["life"], 88.0, "and the unit it left")
+
+
+# ADR 0001 has the combat log write a line for each Buff tick that did something,
+# worded by what it did to the unit, and none for a tick that did nothing, which
+# draws nothing on the screen either.
+func test_the_combat_log_has_a_line_for_a_buff_tick_that_did_something_and_none_for_one_that_did_nothing():
+	var scene = _battle_100("TickLog")
+	var unit_name: String = scene.units[3].player_name
+	var poison: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 12.0)
+	poison["tick"].element = CombatUnit.Element.POISON
+	poison["tick"].element_dealt_damage = true
+	# No element dealt the damage of this tick, so its line names none. That is the
+	# tick of a unit that sswitch hurts through its healing.
+	var no_element: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 300.0)
+	var cases: Array = [
+		[poison, "%s takes 12 Poison damage from buffs" % unit_name],
+		[no_element, "%s takes 300 damage from buffs" % unit_name],
+		[_tick_event(scene, 3, MoveResult.Direction.HEAL, 30.0), "%s regains 30 life from buffs" % unit_name],
+		[_soaked_tick_event(scene, 3), "%s's shield soaks the damage from buffs" % unit_name],
+		[_tick_event(scene, 3, MoveResult.Direction.NONE, 0.0), ""],
+	]
+
+	var lines: Array = []
+	for case in cases:
+		var before: String = scene._combat_log._log_text.text
+		await scene._play_events([case[0]])
+		lines.append(scene._combat_log._log_text.text.trim_prefix(before).strip_edges())
+
+	assert_eq(lines, cases.map(func(case): return case[1]), "a line for each tick that did something, and none for the one that did nothing")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The original draws a Floating number for any total above 0, and its digit loop
+# drops the fraction, so a total between 0 and 1 draws a number with no digits
+# (frame_42/DoAction_7.as:8 and 27-61). The log has no digits to show there, so it
+# writes no line (ADR 0001).
+func test_the_combat_log_has_no_line_for_a_buff_tick_with_a_total_under_1():
+	var scene = _battle_100("TickUnderOne")
+	var before: String = scene._combat_log._log_text.text
+
+	await scene._play_events([
+		_tick_event(scene, 3, MoveResult.Direction.HARM, 0.4),
+		_tick_event(scene, 3, MoveResult.Direction.HEAL, 0.4),
+	])
+
+	assert_eq(scene._combat_log._log_text.text, before, "a harmful total and a healing total under 1 add no line")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
 func _floating_numbers(scene) -> Array[FloatingNumber]:
 	return scene.floating_numbers.numbers()
 
@@ -1802,8 +1877,8 @@ func test_an_idle_only_message_changes_nothing_while_the_banner_is_up():
 	assert_true(banner.is_up(), "and the banner is up")
 
 
-# A damage-over-time death has no impact to play at, so its DEATH event plays
-# it. A move's death already played at the blow, so its DEATH event only paces.
+# A Buff tick's death has no Impact to play at, so its DEATH event plays it. A
+# move's death already played at the Impact, so its DEATH event plays nothing.
 func test_the_death_event_plays_only_the_deaths_no_move_landed():
 	GameData.current_save = PlayerSave.new_game("DeathEvent", 0)
 	ZoneManager.auto_start_battles = false
@@ -1818,31 +1893,33 @@ func test_the_death_event_plays_only_the_deaths_no_move_landed():
 	assert_ne(doll._state, CharacterVisual.State.DEAD, "a move's DEATH event plays nothing")
 
 	await scene._play_events([{"type": BattleRunner.EventType.DEATH, "slot": 2, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME}])
-	assert_eq(doll._state, CharacterVisual.State.DEAD, "a damage-over-time death plays here")
+	assert_eq(doll._state, CharacterVisual.State.DEAD, "a Buff tick's death plays here")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
 
 
-# The player's life is moved behind the bar's back during the Decision, the way
-# a life cost or a damage-over-time tick moves it with no hit to show it. The
-# life is far more than the enemy can take in a half-turn.
+# The test moves the player's life by hand, as a change that no event states. It
+# does so after the player's own events have played, while the replay of the
+# half-turn waits for its last frames. Only the end of the half-turn then shows the
+# new life. The replay ends 2 frames later, and the guard's half-turn starts 2
+# frames after that (see
+# test_an_ai_half_turn_dispatches_2_frames_after_the_last_half_turn_ends).
 func test_the_end_of_a_half_turn_snaps_every_fighter_to_its_unit():
-	GameData.current_save = PlayerSave.new_game("HalfTurnSnap", 0)
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
-
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
-	await wait_until(func(): return scene.decision_open, 5)
+	var scene = await _battle_100_on_a_stepped_clock("HalfTurnSnap")
 	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	scene.units[3].ai_enabled = false  # Veradux passes too, so the replay is two passes and their ticks.
+	scene._on_pass_pressed()
+	await wait_process_frames(1)  # The turn loop takes the pass on the next frame.
 	player.life_u = 999999.0
 	player.life_n = 500000.0
+	var presenter: FighterPresenter = scene._presenters[BattleRunner.PLAYER_SLOT]
+	assert_ne(presenter.displayed.life, player.life_n, "sanity: no event has shown the new life")
 
-	scene._on_pass_pressed()
-	await wait_until(func(): return scene.decision_open or scene._finished, 10)
-	assert_eq(scene._presenters[BattleRunner.PLAYER_SLOT].displayed.life, player.life_n, "the bar caught up with the unit")
+	for frame in 3:
+		_step_frame(scene)
+
+	assert_eq(presenter.displayed.life, player.life_n, "the bar caught up with the unit")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1874,6 +1951,41 @@ func _step_frame(scene: Control) -> void:
 
 func _damage_event(scene, caster_slot: int, target_slot: int, move: Ability, amount: float) -> Dictionary:
 	return _move_event(scene, caster_slot, target_slot, move.id, _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, amount))
+
+
+# The conductor's AttackEndCounterLimit, which battle_screen_motion.json reads out
+# of the SWF. A move's Buff tick comes due that many frames after its Impact, and
+# the next Dispatch comes one frame more after any tick or Impact it counts from.
+func _attack_end_counter_limit() -> int:
+	return int(BattleScreenClip.motion()["conductor"]["AttackEndCounterLimit"])
+
+
+# Returns a BUFF_TICK event as the runner logs it. The tick left its unit as the
+# unit stands now, so a test that wants the bars to move changes the tick's
+# `after`.
+func _tick_event(scene, slot: int, direction: MoveResult.Direction, amount: float) -> Dictionary:
+	var tick := BuffTick.new()
+	tick.direction = direction
+	tick.amount = amount
+	tick.after = UnitSnapshot.of(scene.units[slot])
+	return {"type": BattleRunner.EventType.BUFF_TICK, "caster_slot": slot, "tick": tick}
+
+
+# Returns a BUFF_TICK event for a tick that a shield soaked whole. Its direction is
+# HARM and its amount is 0, as tick_buffs states it.
+func _soaked_tick_event(scene, slot: int) -> Dictionary:
+	var event: Dictionary = _tick_event(scene, slot, MoveResult.Direction.HARM, 0.0)
+	event["tick"].shield_took_all = true
+	return event
+
+
+# Returns a BUFF_TICK event for a tick that took its unit's last life. The tick
+# says it killed and states the unit with no life, as tick_buffs does.
+func _killing_tick_event(scene, slot: int, amount: float) -> Dictionary:
+	var event: Dictionary = _tick_event(scene, slot, MoveResult.Direction.HARM, amount)
+	event["tick"].killed = true
+	event["tick"].after = event["tick"].after.with_life(0.0)
+	return event
 
 
 # What each Floating number on the battle screen shows, oldest first: its
@@ -2016,9 +2128,13 @@ func test_a_pass_holds_the_next_action_1_frame_whether_or_not_its_buff_tick_kill
 	var scene = await _battle_100_on_a_stepped_clock("PassFrames")
 	var shock: Ability = _first_move_of_type("Shock")
 	var passes: Array = [
-		[{"type": BattleRunner.EventType.PASSED, "caster_slot": 3}],
 		[
 			{"type": BattleRunner.EventType.PASSED, "caster_slot": 3},
+			_tick_event(scene, 3, MoveResult.Direction.NONE, 0.0),
+		],
+		[
+			{"type": BattleRunner.EventType.PASSED, "caster_slot": 3},
+			_killing_tick_event(scene, 3, 5.0),
 			{"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME},
 		],
 	]
@@ -2071,20 +2187,22 @@ func test_an_ai_half_turn_dispatches_2_frames_after_the_last_half_turn_ends():
 # The caster's Buff tick comes due 25 frames after its Impact. A tick that did
 # something, as one that kills its caster has, raises the impact flag again, so
 # the next action dispatches 26 frames after the tick, 51 after the Impact
-# (frame_217/PlaceObject2_3389_480 enterFrame, lines 116-127).
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 116-127). The runner logs the
+# DEATH after the tick that causes it, and the death plays on the tick's frame.
 func test_a_buff_tick_that_kills_its_caster_holds_the_next_action_to_frame_51():
 	var scene = await _battle_100_on_a_stepped_clock("TickDeathFrames")
 	var shock: Ability = _first_move_of_type("Shock")
-	var caster: FighterPresenter = scene._presenters[3]
+	var doll: CharacterVisual = scene._presenters[3].get_node("Doll")
 	# Nothing awaits this, because the test steps the frames.
 	scene._play_events([
 		_damage_event(scene, 3, 2, shock, 11.0),
+		_killing_tick_event(scene, 3, 5.0),
 		{"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME},
 		_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, 12.0),
 	])
 	var frames: Dictionary = {}
 	for frame in 300:
-		if caster.displayed.life == 0.0 and not frames.has("death"):
+		if doll._state == CharacterVisual.State.DEAD and not frames.has("death"):
 			frames["death"] = frame
 		for text in _floating_texts(scene):
 			if not frames.has(text):
@@ -2092,7 +2210,8 @@ func test_a_buff_tick_that_kills_its_caster_holds_the_next_action_to_frame_51():
 		if frames.has("12"):
 			break
 		_step_frame(scene)
-	assert_eq(frames.get("death", -1) - frames.get("11", -1), 25, "the tick kills its caster 25 frames after the Impact")
+	assert_eq(frames.get("death", -1) - frames.get("11", -1), 25, "the caster's doll dies 25 frames after the Impact")
+	assert_eq(frames.get("death", -1), frames.get("5", -2), "on the frame the tick's number shows")
 	assert_eq(frames.get("12", -1) - frames.get("11", -1), 51, "and the next action dispatches 26 frames after the tick")
 
 	GameData.current_save = null
@@ -2113,6 +2232,203 @@ func test_a_caster_its_own_move_killed_holds_the_next_action_25_frames():
 		_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, 12.0),
 	], ["11", "12"])
 	assert_eq(shown.get("12", -1) - shown.get("11", -1), 25, "the next action dispatches on frame 25")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The conductor ticks the caster's buffs 25 frames after its Impact, and
+# buffTicker draws the number and moves the caster's bars there
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 116-122, and
+# frame_42/DoAction_10.as:94-97 and 135). Nothing of the tick shows before then.
+func test_a_buff_tick_shows_its_number_and_moves_the_bars_25_frames_after_the_impact():
+	var scene = await _battle_100_on_a_stepped_clock("TickAt25")
+	var caster: FighterPresenter = scene._presenters[3]
+	var life_shown: float = caster.displayed.life
+	var tick: Dictionary = _tick_event(scene, 3, MoveResult.Direction.HARM, 77.0)
+	tick["tick"].after.life = life_shown - 77.0
+	# Nothing awaits this, because the test steps the frames.
+	scene._play_events([_damage_event(scene, 3, 2, _first_move_of_type("Shock"), 11.0), tick])
+	var frames: Dictionary = {}
+	for frame in 100:
+		for text in _floating_texts(scene):
+			if not frames.has(text):
+				frames[text] = frame
+		if caster.displayed.life != life_shown and not frames.has("bar"):
+			frames["bar"] = frame
+		if frames.has("77") and frames.has("bar"):
+			break
+		_step_frame(scene)
+	assert_eq(frames.get("77", -1) - frames.get("11", -1), _attack_end_counter_limit(), "the tick's number shows 25 frames after the Impact")
+	assert_eq(frames.get("bar", -1), frames.get("77", -2), "and the bar moves on that same frame, not before")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Buff tick whose total isn't 0, one a shield soaked whole included, raises the
+# impact flag again, so the conductor counts its AttackEndCounterLimit from the
+# tick and the next action dispatches 26 frames after the tick, 51 after the
+# Impact (frame_217/PlaceObject2_3389_480 enterFrame, lines 99 and 116-127). A
+# tick that did nothing leaves the next Dispatch 26 frames after the Impact.
+func test_a_buff_tick_that_did_something_holds_the_next_action_to_frame_51_and_one_that_did_nothing_does_not():
+	var scene = await _battle_100_on_a_stepped_clock("TickWait")
+	var shock: Ability = _first_move_of_type("Shock")
+	# A tick that did something comes due `limit` frames after the Impact, and the
+	# next Dispatch comes a count of `limit + 1` frames after it.
+	var limit: int = _attack_end_counter_limit()
+	var held: int = limit + (limit + 1)
+	var cases: Array = [
+		["a damage tick", _tick_event(scene, 3, MoveResult.Direction.HARM, 5.0), held],
+		["a heal tick", _tick_event(scene, 3, MoveResult.Direction.HEAL, 5.0), held],
+		["a tick a shield soaked whole", _soaked_tick_event(scene, 3), held],
+		["a tick that did nothing", _tick_event(scene, 3, MoveResult.Direction.NONE, 0.0), limit + 1],
+	]
+	for index in cases.size():
+		var first: String = str(11 + 10 * index)
+		var second: String = str(12 + 10 * index)
+		var shown: Dictionary = _frames_texts_float(scene, [
+			_damage_event(scene, 3, 2, shock, float(first)),
+			cases[index][1],
+			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(second)),
+		], [first, second])
+		assert_eq(shown.get(second, -1) - shown.get(first, -1), cases[index][2], "after %s the next action dispatches %d frames after the Impact" % [cases[index][0], cases[index][2]])
+		for frame in 120:
+			_step_frame(scene)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# In the scene, a damage tick draws in the color of its strongest element, a heal
+# tick draws in heal green, a tick that a shield soaked whole draws SHIELDED, and a
+# tick of nothing draws nothing (frame_42/DoAction_10.as:64-98). The port also plays
+# the Shield clip for the soaked tick, which the original does not (ADR 0005). The
+# Prison Guard in slot 2 ticks for real here, so the numbers are the ones
+# tick_buffs works out. Cold Justice deals Ice damage, whose color is #68CBF4, and
+# The Immortal Flame heals.
+func test_a_buff_tick_draws_in_the_scene_by_what_it_did():
+	var cases: Array = [
+		["a damage tick", ["PERSECUTE"], 0.0],
+		["a heal tick", ["FIRESAM"], 0.0],
+		["a tick a shield soaked whole", ["PERSECUTE"], 100000.0],
+		["a tick of nothing", [], 0.0],
+	]
+	for case in cases:
+		var scene = _battle_100("TickKinds")
+		var guard: CombatUnit = scene.units[2]
+		for buff_name in case[1]:
+			guard.apply_buff(BuffManagerAuto.get_buff_by_name(buff_name), 1, scene.units[BattleRunner.PLAYER_SLOT])
+		guard.apply_changes()
+		guard.shield = case[2]
+		var tick: BuffTick = guard.tick_buffs(BuffManagerAuto.buffs_by_id)
+
+		await scene._play_events([{"type": BattleRunner.EventType.BUFF_TICK, "caster_slot": 2, "tick": tick}])
+
+		var numbers: Array[FloatingNumber] = _floating_numbers(scene)
+		match case[0]:
+			"a damage tick":
+				assert_eq(_floating_texts(scene), [str(int(tick.amount))], "%s draws its amount" % case[0])
+				assert_eq(numbers[0].tint, Color("68CBF4"), "%s is Ice blue" % case[0])
+			"a heal tick":
+				assert_eq(_floating_texts(scene), [str(int(tick.amount))], "%s draws its amount" % case[0])
+				assert_eq(numbers[0].tint, Color("66FF00"), "%s is heal green" % case[0])
+			"a tick a shield soaked whole":
+				assert_eq(_floating_texts(scene), ["shield"], "%s draws SHIELDED" % case[0])
+				assert_true(scene._presenters[2].get_node("ShieldClip").is_playing(), "%s plays the Shield clip on the guard" % case[0])
+			"a tick of nothing":
+				assert_eq(_floating_texts(scene), [], "%s draws nothing" % case[0])
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Buff tick lands on the unit whose buffs ticked: its number draws on that unit's
+# rig, and its Shield clip plays there and nowhere else. The original's call for the
+# clip names IDKT, which buffTicker never declares (frame_42/DoAction_10.as:72), so
+# it plays none, and ADR 0005 counts that as an Original bug.
+func test_a_buff_tick_draws_its_number_and_plays_its_shield_clip_on_the_unit_that_ticked():
+	var scene = await _battle_100_on_a_stepped_clock("TickOnItsUnit")
+	# Nothing awaits this, because the test steps the frames.
+	scene._play_events([_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Shock"), 11.0), _soaked_tick_event(scene, 3)])
+	for frame in _attack_end_counter_limit():
+		_step_frame(scene)
+
+	assert_eq(_floating_texts(scene), ["11", "shield"], "the hit's number, then SHIELDED")
+	assert_eq(_floating_numbers(scene)[-1].position, scene.SLOT_POSITIONS[3], "on the unit that ticked")
+	assert_true(scene._presenters[3].get_node("ShieldClip").is_playing(), "its Shield clip plays")
+	assert_false(scene._presenters[2].get_node("ShieldClip").is_playing(), "and the unit the last move hit has none")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Judge's Hammer takes 15% off max life and Iricin takes 25%. The unit already
+# holds the max and the life that the buff's running out gives back when the replay
+# starts, but its bar keeps the max and the fill it had until the tick that does it.
+func test_a_bar_keeps_the_max_life_and_fill_a_buff_cut_until_the_tick_that_runs_it_out():
+	for buff_name in ["JUDGESHAMMER", "IRICIN"]:
+		var scene = await _battle_100_on_a_stepped_clock("TickMaxLife")
+		var unit: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+		var presenter: FighterPresenter = scene._presenters[BattleRunner.PLAYER_SLOT]
+		var health_bar: ProgressBar = presenter.get_node("Overlay").health_bar
+		unit.apply_buff(BuffManagerAuto.get_buff_by_name(buff_name), 1, scene.units[2])
+		unit.apply_changes()
+		for slot in unit.buff_slots:
+			if slot["cd"] > 0:
+				slot["cd"] = 1
+		presenter.snap_to_unit()
+		var cut: Array = [health_bar.max_value, health_bar.value]
+		var tick: BuffTick = unit.tick_buffs(BuffManagerAuto.buffs_by_id)
+		var restored: Array = [unit.life_u, unit.life_n]
+		assert_gt(restored[0], cut[0], "sanity: %s's running out gives max life back" % buff_name)
+
+		# Nothing awaits this, because the test steps the frames.
+		scene._play_events([
+			_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, _first_move_of_type("Shock"), 11.0),
+			{"type": BattleRunner.EventType.BUFF_TICK, "caster_slot": BattleRunner.PLAYER_SLOT, "tick": tick},
+		])
+		var limit: int = _attack_end_counter_limit()
+		var bars: Array = []
+		for frame in limit + 1:
+			bars.append([health_bar.max_value, health_bar.value])
+			_step_frame(scene)
+
+		assert_eq(bars.slice(0, limit), range(limit).map(func(_frame): return cut), "%s: the bar keeps its cut max and fill until the tick" % buff_name)
+		assert_eq(bars[limit], restored, "%s: and the tick gives it both back" % buff_name)
+		for frame in 120:
+			_step_frame(scene)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A caster that did not move, because it passed or was stunned, ticks on its
+# Dispatch frame. A tick that did something holds the next action 26 frames, and
+# a tick that kills the caster doesn't, because the conductor first checks that it
+# lived through the tick (lines 511-530 and 565-584).
+func test_a_buff_tick_after_a_pass_or_a_stun_holds_the_next_action_26_frames_unless_it_kills_the_caster():
+	var scene = await _battle_100_on_a_stepped_clock("StoppedTickWait")
+	var shock: Ability = _first_move_of_type("Shock")
+	# The pass or the stun dispatches a count after the move's Impact. Its tick holds
+	# the next action a count more, and without that it holds it 1 frame.
+	var count: int = _attack_end_counter_limit() + 1
+	var cases: Array = [
+		["a pass and a tick that did something", [{"type": BattleRunner.EventType.PASSED, "caster_slot": 3}, _tick_event(scene, 3, MoveResult.Direction.HARM, 5.0)], count + count],
+		["a stun and a tick that did something", [{"type": BattleRunner.EventType.STUNNED, "caster_slot": 3}, _tick_event(scene, 3, MoveResult.Direction.HEAL, 5.0)], count + count],
+		["a stun and a tick that did nothing", [{"type": BattleRunner.EventType.STUNNED, "caster_slot": 3}, _tick_event(scene, 3, MoveResult.Direction.NONE, 0.0)], count + 1],
+		["a pass and a tick that kills", [{"type": BattleRunner.EventType.PASSED, "caster_slot": 3}, _killing_tick_event(scene, 3, 5.0), {"type": BattleRunner.EventType.DEATH, "slot": 3, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME}], count + 1],
+	]
+	for index in cases.size():
+		var first: String = str(11 + 10 * index)
+		var second: String = str(12 + 10 * index)
+		var events: Array = [_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(first))]
+		events.append_array(cases[index][1])
+		events.append(_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, float(second)))
+		var shown: Dictionary = _frames_texts_float(scene, events, [first, second])
+		assert_eq(shown.get(second, -1) - shown.get(first, -1), cases[index][2], "after %s the next action dispatches %d frames after the Impact" % [cases[index][0], cases[index][2]])
+		for frame in 120:
+			_step_frame(scene)
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

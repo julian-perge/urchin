@@ -38,14 +38,19 @@ enum Outcome { LOSS = 0, WIN = 1, DRAW = 2, ONGOING = -1 }
 #
 # PASSED is an action that dispatched with nothing to do: its caster passed,
 # chose a move at a target that was already dead, or was dead itself.
+#
+# BUFF_TICK is the Buff tick that follows an action of a caster that is alive
+# when the action ends, whether or not the tick changes anything. Its "tick" key
+# is the BuffTick that states what the tick did and the unit it left. A tick that
+# kills its caster is followed by a DEATH event.
 enum EventType {
-	MOVE, STUNNED, MOVE_FAILED, DISPEL, DEATH, SPEECH, PHASE_ADVANCED, BATTLE_ENDED, PASSED,
+	MOVE, STUNNED, MOVE_FAILED, DISPEL, DEATH, SPEECH, PHASE_ADVANCED, BATTLE_ENDED, PASSED, BUFF_TICK,
 }
 
 # A DEATH event's own "cause" key - MOVE plays at the killing blow's impact
-# (see battle_scene.gd's _show_move_result), DAMAGE_OVER_TIME (a buff tick,
-# not a move) has no impact moment to hook into so it plays from the queued
-# event instead, same as always.
+# (see battle_scene.gd's _show_move_result), DAMAGE_OVER_TIME (a Buff tick, not
+# a move) has no impact to hook into, so it plays from its own event, which
+# follows the BUFF_TICK event of the tick that killed.
 enum DeathCause { MOVE, DAMAGE_OVER_TIME }
 
 # A MOVE_FAILED event's own "reason" key: the cost its caster couldn't pay when
@@ -239,7 +244,8 @@ func _execute_action(action: Dictionary) -> void:
 		_log({"type": EventType.PASSED, "caster_slot": action["caster_slot"]})
 
 	if should_tick_buffs and caster.active:
-		caster.tick_buffs(buffs_by_id)
+		var tick: BuffTick = caster.tick_buffs(buffs_by_id)
+		_log({"type": EventType.BUFF_TICK, "caster_slot": action["caster_slot"], "tick": tick})
 		if not caster.active:
 			_log({"type": EventType.DEATH, "slot": action["caster_slot"], "cause": DeathCause.DAMAGE_OVER_TIME})
 

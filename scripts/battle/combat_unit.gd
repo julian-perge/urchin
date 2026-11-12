@@ -517,9 +517,11 @@ func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_inde
 		else:
 			dot_ticker_array[i] += change_value
 
-# Ported from buffTicker() - runs once per turn: resolves this turn's DOT/HOT,
-# ticks buff durations down, auto-expires anything that hits 0, and refreshes
-# every derived stat via apply_changes(). Visual-only side effects
+# Ported from buffTicker() - runs once after each of the unit's own actions: nets
+# this turn's damage and healing over time into one total, ticks buff durations
+# down, auto-expires anything that hits 0, and refreshes every derived stat via
+# apply_changes(). It returns what the Buff tick did, which BattleRunner logs as
+# a BUFF_TICK event and the battle screen shows. Visual-only side effects
 # (color flash, filter tracking) are left out, same as execute_move().
 #
 # `buffs_by_id` (numeric id -> Buff, e.g. BuffManagerAuto.buffs_by_id) is taken
@@ -529,19 +531,25 @@ func apply_buff(buff: Buff, direction: int, caster: CombatUnit = null, slot_inde
 # compilation of the WHOLE script anywhere it's loaded outside that context
 # (EditorScript, tests, ...), including for callers that never call this
 # function at all.
-func tick_buffs(buffs_by_id: Dictionary = {}) -> void:
+func tick_buffs(buffs_by_id: Dictionary = {}) -> BuffTick:
+	var tick := BuffTick.new()
 	var total_damage: float = 0.0
 	var total_focus = dot_ticker_array[9]
 	total_damage += dot_ticker_array[8] * heal_mod_plus * heal_mod_minus * ihot
 	if total_damage > 0:
 		total_damage = 0
 
+	var strongest_damage: float = 0.0
 	for i in ELEMENT_ORDER.size():
 		var element_damage = ceil(
 			(1 + idmg2) * idmgp2 * idot
 			* (dot_ticker_array[i] * ((100 + plevel * 15) / def_u[i]))
 		)
 		total_damage += element_damage
+		if element_damage > strongest_damage:
+			strongest_damage = element_damage
+			tick.element = i as Element
+			tick.element_dealt_damage = true
 
 	var expiring: Array[int] = []
 	for i in buff_slots.size():
@@ -563,6 +571,8 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> void:
 		shield_difference = shield - total_damage
 	if shield_difference > 0:
 		shield -= total_damage
+		tick.shield_took_all = true
+		tick.direction = MoveResult.Direction.HARM
 	else:
 		if total_damage > 0:
 			total_damage -= shield
@@ -570,6 +580,11 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> void:
 				total_damage = 0
 			shield = 0
 		life_n -= total_damage
+		tick.amount = absf(total_damage)
+		if total_damage > 0:
+			tick.direction = MoveResult.Direction.HARM
+		elif total_damage < 0:
+			tick.direction = MoveResult.Direction.HEAL
 
 	focus_n = clamp(focus_n - total_focus, 0, focus_u)
 
@@ -577,5 +592,14 @@ func tick_buffs(buffs_by_id: Dictionary = {}) -> void:
 		life_n = 0
 		focus_n = 0
 		active = false
+		tick.killed = true
 
 	apply_changes()
+	# The recompute gives life back to a unit that this tick just killed when a buff
+	# that cut max life runs out, and the original leaves the unit that life
+	# (frame_42/DoAction_10.as:280-296). The unit keeps that life here too, but the
+	# tick states the unit dead, so its snapshot agrees with its killed flag.
+	tick.after = UnitSnapshot.of(self)
+	if tick.killed:
+		tick.after = tick.after.with_life(0.0)
+	return tick

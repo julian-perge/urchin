@@ -303,8 +303,7 @@ func test_each_hit_of_a_half_turn_shows_the_life_it_left():
 
 # A result states the target's whole life, so the bar shows that life even when
 # the unit also lost life to something the screen has not shown yet. Here that
-# was 40, as a damage-over-time tick earlier in the half-turn can take, and the
-# move moved 10 either way.
+# was 40, and the move moved 10 either way.
 func test_a_result_shows_the_life_it_states_with_an_earlier_loss_in_it():
 	for result in [
 		_damage(10.0, 50.0),
@@ -319,8 +318,8 @@ func test_a_result_shows_the_life_it_states_with_an_earlier_loss_in_it():
 		assert_eq(_overlay.health_value.text, str(int(result.target_after.life)), "and so does the number beside the bar")
 
 
-# A damage-over-time tick with no later event on the unit only reaches the bar
-# when the half-turn ends.
+# A change that no event stated reaches the bars when the half-turn ends, because
+# the snap shows the unit as it is.
 func test_the_bars_snap_to_the_unit_at_half_turn_end():
 	_unit.life_n = 63.0
 	assert_eq(_overlay.health_bar.value, 100.0, "still held back before the snap")
@@ -526,6 +525,20 @@ func test_a_redraw_after_the_clear_leaves_the_overlay_cleared():
 	assert_eq(_overlay_shows(), {"icons": 0, "name": false, "number": false})
 
 
+# The scene snaps every fighter at the half-turn's end, and a dead fighter's bar
+# stays empty through it. The unit can hold life again after the tick that killed
+# it, when a buff that cut max life runs out on that tick (see
+# CombatUnit.tick_buffs).
+func test_the_snap_at_half_turn_end_leaves_a_dead_fighters_bar_empty():
+	_presenter.die()
+	_unit.life_n = 40.0
+
+	_presenter.snap_to_unit()
+
+	assert_eq(_overlay.health_bar.value, 0.0, "the bar stays empty")
+	assert_eq(_presenter.displayed.life, 0.0, "and the fighter still displays no life")
+
+
 # LifeBarSmoother hides the bar the frame after its alpha reaches 0
 # (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as), and the doll removes
 # itself when its dead label ends. The Shield clip stays on the rig, as the
@@ -558,7 +571,7 @@ func test_a_unit_killed_from_under_half_a_percent_life_still_plays_its_death_voi
 	assert_almost_eq(_overlay_alpha(), 0.5, 0.001, "and the bar halfway through its fade")
 
 
-# A damage-over-time death has no result to move the bar. The original empties
+# A death from a Buff tick has no Move result to move the bar. The original empties
 # the bar on the tick that kills (frame_42/DoAction_10.as:108-114 and 135, and
 # applyChangesKrin's lifeBarUpdate at 342), so the bar fades from empty.
 func test_a_death_with_no_result_empties_the_bar_before_it_fades():
@@ -1164,9 +1177,10 @@ func test_a_shield_block_plays_the_shield_clip_once_from_its_extracted_frames():
 	assert_false(_shield_clip.is_playing(), "and the clip rests again")
 
 
-# buffTicker plays the shield clip too, when a shield soaks a whole Buff tick,
-# and draws SHIELDED but plays no sound (frame_42/DoAction_10.as:68-73). A tick
-# has no Move result, so the presenter plays the clip on its own.
+# A Buff tick has no Move result, so show_tick() plays the clip on its own, with no
+# sound, for a tick that a shield soaked whole. The original draws SHIELDED for
+# such a tick and plays no clip (frame_42/DoAction_10.as:68-73), and ADR 0005 has
+# the port play it.
 func test_the_shield_clip_plays_on_its_own_with_no_number_or_sound():
 	_presenter.play_shield_clip()
 	_step_shield_clip(1)
@@ -1251,15 +1265,17 @@ func test_a_miss_and_a_status_only_result_play_no_flash():
 	assert_null(_flash_color(), "a status-only result")
 
 
-# Only executeMove calls BATTLEFLASH, so buffTicker draws a Buff tick with no
-# flash (frame_42/DoAction_10.as:14-136). A tick reaches the fighter through
-# show_state(), or through snap_to_unit() at the half-turn's end.
-func test_a_buff_tick_plays_no_flash():
-	_presenter.show_state(_state(80.0))
-	assert_null(_flash_color(), "a tick shown when it happens")
-	_unit.life_n = 70.0
-	_presenter.snap_to_unit()
-	assert_null(_flash_color(), "a tick shown at the half-turn's end")
+# Only executeMove calls BATTLEFLASH, and buffTicker plays no sound
+# (frame_42/DoAction_10.as:14-136). The one clip the port plays for a tick is the
+# Shield clip, and only when a shield soaks the whole of it (lines 68-73 and
+# ADR 0005).
+func test_a_buff_tick_plays_no_flash_and_no_sound_and_the_shield_clip_only_when_soaked_whole():
+	for case in [[_damage_tick(10.0, 90.0), false, "a damage tick"], [_heal_tick(10.0, 100.0), false, "a heal tick"], [_soaked_tick(), true, "a soaked tick"]]:
+		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+		_presenter.show_tick(case[0])
+		assert_null(_flash_color(), "%s plays no flash" % case[2])
+		assert_eq(_cues, [], "%s plays no sound" % case[2])
+		assert_eq(_shield_clip.is_playing(), case[1], "%s plays the Shield clip: %s" % [case[2], case[1]])
 
 
 # Each of BATTLEFLASH's labels puts its filter on at its first frame and on the
@@ -1331,3 +1347,140 @@ func test_every_target_of_a_move_flashes():
 	_presenter.show_result(_damage(10.0, 90.0), null)
 	assert_eq(_flash_color_on(first_doll), HIT_FLASH, "the first target")
 	assert_eq(_flash_color(), HIT_FLASH, "the second target")
+
+
+# Returns a Buff tick as tick_buffs states it, with the unit it left at the life
+# given.
+func _tick(direction: MoveResult.Direction, amount: float, life_after: float) -> BuffTick:
+	var tick := BuffTick.new()
+	tick.direction = direction
+	tick.amount = amount
+	tick.after = _state(life_after)
+	return tick
+
+
+func _damage_tick(amount: float, life_after: float, element: CombatUnit.Element = CombatUnit.Element.PHYSICAL) -> BuffTick:
+	var tick: BuffTick = _tick(MoveResult.Direction.HARM, amount, life_after)
+	tick.element = element
+	return tick
+
+
+func _heal_tick(amount: float, life_after: float) -> BuffTick:
+	return _tick(MoveResult.Direction.HEAL, amount, life_after)
+
+
+# Returns a tick whose total a shield soaked whole. Its direction is HARM and its
+# amount is 0, as tick_buffs states it.
+func _soaked_tick() -> BuffTick:
+	var tick: BuffTick = _tick(MoveResult.Direction.HARM, 0.0, 100.0)
+	tick.shield_took_all = true
+	return tick
+
+
+# buffTicker draws its total with KrinNumberShow in `normal`, because it resets
+# perKSuccess first, and fills the number with the color of the element that dealt
+# the most (frame_42/DoAction_10.as:24-40 and 94). The colors are
+# elementColorArray, in the order of elementMainArray (frame_41/DoAction_2.as:1-2).
+func test_a_damage_tick_draws_its_amount_as_a_normal_number_in_its_elements_color():
+	var element_colors: Array = ["C40000", "FB95C8", "68CBF4", "FF6600", "FFCC00", "856B47", "664D80", "508349"]
+	for element in element_colors.size():
+		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
+		_presenter.show_tick(_damage_tick(12.0, 88.0, element as CombatUnit.Element))
+		var numbers: Array[FloatingNumber] = _numbers()
+		assert_eq(numbers.size(), 1, "element %d draws one number" % element)
+		if numbers.size() != 1:
+			continue
+		assert_eq(numbers[0].glyphs, ["1", "2"], "element %d's amount" % element)
+		assert_eq(numbers[0].label, "normal", "element %d's number is never critical" % element)
+		assert_eq(numbers[0].tint, Color(element_colors[element]), "element %d's color" % element)
+
+
+# KrinNumberShow's "HEAL" color is 6749952, which is #66FF00
+# (frame_42/DoAction_7.as:10-13), and buffTicker asks for it whenever the total is
+# below 0 (frame_42/DoAction_10.as:88-91). The number has no plus sign.
+func test_a_heal_tick_draws_its_amount_in_heal_green_with_no_plus():
+	_presenter.show_tick(_heal_tick(300.0, 100.0))
+	var numbers: Array[FloatingNumber] = _numbers()
+	assert_eq(numbers.size(), 1, "one number")
+	if numbers.size() != 1:
+		return
+	assert_eq(numbers[0].glyphs, ["3", "0", "0"], "the amount and no plus sign")
+	assert_eq(numbers[0].label, "normal", "in the normal label")
+	assert_eq(numbers[0].tint, Color("66FF00"), "in heal green")
+
+
+# A shield that soaks a whole Buff tick draws SHIELDED, and plays no sound and no
+# flinch (frame_42/DoAction_10.as:68-73). The port also plays the Shield clip on
+# the unit whose shield soaked the tick. The original's call for the clip names
+# IDKT, which buffTicker never declares, so it plays none, and ADR 0005 counts
+# that as an Original bug.
+func test_a_tick_that_a_shield_soaked_whole_draws_shielded_and_plays_the_shield_clip_with_no_sound():
+	_presenter.show_tick(_soaked_tick())
+	var numbers: Array[FloatingNumber] = _numbers()
+	assert_eq(numbers.size(), 1, "one number")
+	if numbers.size() == 1:
+		assert_eq([numbers[0].label, numbers[0].glyphs], ["shield", ["shield"]], "SHIELDED and no digits")
+	_step_shield_clip(1)
+	assert_eq(_shield_clip_art(), SHIELD_CLIP_ART % 2, "the Shield clip plays")
+	assert_eq(_cues, [], "with no sound")
+	assert_ne(_doll._state, HIT, "and no flinch")
+
+
+# The original redraws a unit's bars, buff icons and stun pose in the
+# applyChangesKrin that ends buffTicker (frame_42/DoAction_10.as:135), so a Buff
+# tick moves the bars when it is shown. The runner has already taken the unit to
+# the half-turn's end, so the bars show nothing of it until then.
+func test_a_buff_tick_moves_the_bars_when_it_is_shown_and_not_before():
+	_unit.life_n = 40.0
+	assert_eq(_overlay.health_bar.value, 100.0, "before the tick the bar is where it was")
+
+	_presenter.show_tick(_damage_tick(60.0, 40.0))
+	assert_eq(_overlay.health_bar.value, 40.0, "the bar drops when the tick is shown")
+	assert_eq(_overlay.health_value.text, "40", "and so does the number beside it")
+	assert_eq(_presenter.displayed.life, 40.0, "and the health the fighter displays")
+
+
+# Judge's Hammer and Iricin take life off a unit's max life, and the unit's bar
+# keeps the max and the fill it had until the tick that runs the buff out gives
+# both back. Here the bar shows 85 of 85 and the unit has already gone back to
+# 100 of 100.
+func test_a_buff_tick_gives_the_bar_its_max_life_back_and_not_before():
+	var cut: UnitSnapshot = _state(85.0)
+	cut.life_max = 85.0
+	_presenter.show_state(cut)
+	_unit.life_u = 100.0
+	_unit.life_n = 100.0
+	assert_eq([_overlay.health_bar.max_value, _overlay.health_bar.value], [85.0, 85.0], "until the tick the bar keeps its max and its fill")
+
+	_presenter.show_tick(_tick(MoveResult.Direction.NONE, 0.0, 100.0))
+	assert_eq([_overlay.health_bar.max_value, _overlay.health_bar.value], [100.0, 100.0], "the tick gives it both")
+
+
+# buffTicker draws nothing when its total comes to 0 (frame_42/DoAction_10.as:85),
+# but the applyChangesKrin that ends it still redraws the unit, so a Focus change
+# shows.
+func test_a_buff_tick_of_nothing_draws_no_number_but_shows_the_focus_it_moved():
+	var tick: BuffTick = _tick(MoveResult.Direction.NONE, 0.0, 100.0)
+	tick.after.focus = 38.0
+
+	_presenter.show_tick(tick)
+
+	assert_eq(_numbers().size(), 0, "no number")
+	assert_eq(_overlay.focus_bar.value, 38.0, "and the Focus bar moves")
+
+
+# A buff that runs out at a tick leaves the icon row at that tick, and a stun that
+# runs out plays the wake-up there (frame_42/DoAction_10.as:344-379 and 468-481).
+func test_a_buff_running_out_at_a_tick_leaves_the_icon_row_and_wakes_a_stunned_doll():
+	var buff := Buff.new()
+	buff.internal_name = "SHATTERBOLT"
+	_unit.buff_slots = [{"cd": 1, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
+	_present(_unit, {}, {1: buff})
+	_stun()
+	assert_eq(_buff_icons().size(), 1, "sanity: the buff's icon shows")
+	assert_eq(_doll._state, STUN, "sanity: and the doll is stunned")
+
+	_presenter.show_tick(_tick(MoveResult.Direction.NONE, 0.0, 100.0))
+
+	assert_eq(_buff_icons().size(), 0, "the icon is gone")
+	assert_eq(_doll._label, "outofstun", "and the stunned doll wakes up")

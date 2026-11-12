@@ -4,8 +4,8 @@
 # it. _play_events() in battle_scene.gd calls append_event() with each event
 # just before playing it, whether or not the panel is showing.
 # docs/adr/0001-keep-the-combat-log.md records why the port keeps it and the
-# rule that each line says what a move did to its target, which matters
-# under an sswitch buff, where damage heals and a heal hurts.
+# rule that each line says what a move or a Buff tick did to its target, which
+# matters under an sswitch buff, where damage heals and a heal hurts.
 extends PanelContainer
 class_name CombatLogPanel
 
@@ -57,12 +57,35 @@ func _format_line(event: Dictionary, units: Dictionary) -> String:
 			]
 		BattleRunner.EventType.DISPEL:
 			return "%s's buffs are dispelled" % _unit_name(units, int(event["target_slot"]))
+		BattleRunner.EventType.BUFF_TICK:
+			return _format_tick_line(event, units)
 		BattleRunner.EventType.DEATH:
 			return "%s falls" % _unit_name(units, int(event["slot"]))
 		BattleRunner.EventType.SPEECH:
 			return "%s: %s" % [str(event["speaker_name"]), str(event.get("say", ""))]
 		_:
 			return ""
+
+
+# Writes the line for a Buff tick by what it did to its unit, as ADR 0001 has each
+# line do. A total under 1 gets no line, because the original draws a number with
+# no digits for it. A tick that kills its unit is followed by a DEATH event, which
+# has its own line.
+func _format_tick_line(event: Dictionary, units: Dictionary) -> String:
+	var tick: BuffTick = event["tick"]
+	if not tick.did_something():
+		return ""
+	var unit_name: String = _unit_name(units, int(event["caster_slot"]))
+	if tick.shield_took_all:
+		return "%s's shield soaks the damage from buffs" % unit_name
+	var amount: int = int(tick.amount)
+	if amount == 0:
+		return ""
+	if tick.direction == MoveResult.Direction.HEAL:
+		return "%s regains %d life from buffs" % [unit_name, amount]
+	if tick.element_dealt_damage:
+		return "%s takes %d %s damage from buffs" % [unit_name, amount, CombatUnit.ELEMENT_ORDER[tick.element]]
+	return "%s takes %d damage from buffs" % [unit_name, amount]
 
 
 func _format_move_line(event: Dictionary, units: Dictionary) -> String:
