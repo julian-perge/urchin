@@ -60,6 +60,8 @@ One task, one branch, one pull request. Branch: `<type>/<issue>-<slug>`, or `ret
 
 `/agent-skills:build auto` runs every task of one spec on one branch, `<type>/<source issue>-<slug>`, with one commit per task. Its pull request closes every task issue.
 
+A spec's glossary line is a task, not a fact. A spec that says "`GLOSSARY.md` has **X**" may describe the glossary it means to leave behind, so check the file before you rely on it. If the term is missing, the first task that uses it adds the entry. Spec #49 said its four terms existed, none did, two implementers noticed and neither added them, and the code review found the gap.
+
 Run the verify command from `AGENTS.md` (`Every task`) before each commit. Open the pull request and stop. The user merges.
 
 ## Review
