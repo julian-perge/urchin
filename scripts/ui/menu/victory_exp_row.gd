@@ -71,7 +71,7 @@ func advance(delta: float) -> void:
 # One frame of the original's onClipEvent(enterFrame). A fighter at the level
 # cap does not move, and the original checks the cap on every frame.
 func step() -> void:
-	if is_finished() or level >= _level_cap:
+	if is_finished():
 		return
 	_frame += 1
 	experience += _per_frame

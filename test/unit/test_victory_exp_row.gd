@@ -63,11 +63,14 @@ func test_a_row_that_overflows_adds_one_level_shows_100_once_and_keeps_the_remai
 	# before the one that overflows.
 	var row := _row(_fighter(81.0, 4, 45.0))
 	var hundreds: int = 0
+	var width_at_hundred: float = 0.0
 	for i in _frames():
 		row.step()
 		if row.percent_label.text == "100%":
 			hundreds += 1
+			width_at_hundred = row.bar.size.x
 	assert_eq(hundreds, 1, "the frame that crosses 100 shows 100%")
+	assert_almost_eq(width_at_hundred, _full_width(), 0.001, "the frame that crosses 100 shows the full bar")
 	assert_eq(row.level, 5)
 	assert_true(row.leveled)
 	assert_eq(row.level_label.text, Strings.menu(0) + "5")

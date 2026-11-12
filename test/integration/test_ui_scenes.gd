@@ -410,7 +410,9 @@ func test_the_game_calls_the_player_sonny_whatever_the_save_is_named():
 	var save: PlayerSave = PlayerSave.new_game("< Enter Name Here >", 0)
 	GameData.current_save = save
 	var victory = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
-	victory.setup(save, BattleSettlement.new())
+	var settlement := BattleSettlement.new()
+	settlement.fighters[0] = BattleSettlement.FighterExperience.new()
+	victory.setup(save, settlement)
 	var row: VictoryExpRow = victory.get_node("ExpRows/PlayerSlot/Row")
 	assert_eq(row.name_label.text, "Sonny", "the victory screen's player row")
 
@@ -919,5 +921,13 @@ func test_the_victory_rows_show_the_fighters_and_hide_the_rest_in_place():
 	assert_eq(first.name_label.text, str(Party.COMPANIONS[1]["name"]))
 	assert_eq(first.percent_label.text, "55%", "Veradux's experience before the win")
 	assert_false(second.visible, "no second companion fought")
-	var slot: Control = victory.get_node("ExpRows/CompanionSlot1")
-	assert_almost_eq(slot.global_position.y - victory.global_position.y, 316.05, 0.01, "the hidden row's slot keeps its place")
+	var hidden_y: float = victory.get_node("ExpRows/CompanionSlot1").global_position.y - victory.global_position.y
+
+	settlement.fighting_party.assign([1, 2])
+	settlement.fighters[2] = BattleSettlement.FighterExperience.new()
+	var both = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
+	both.setup(save, settlement)
+	await wait_process_frames(2)
+	assert_true(both.get_node("ExpRows/CompanionSlot1/Row").visible, "the second companion fought")
+	var shown_y: float = both.get_node("ExpRows/CompanionSlot1").global_position.y - both.global_position.y
+	assert_almost_eq(hidden_y, shown_y, 0.01, "the hidden row's slot keeps its place")

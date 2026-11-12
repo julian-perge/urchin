@@ -58,22 +58,16 @@ func _on_proceed_pressed() -> void:
 func setup(save: PlayerSave, settlement: BattleSettlement) -> void:
 	_money_value.text = "€%d" % settlement.money_gained
 	_exp_value.text = "%d%%" % int(settlement.xp_gained)
-	_build_experience_rows(save, settlement)
+	_build_experience_rows(settlement)
 	_build_drop_slots(save, settlement.drops)
 	inventory_panel.populate_from_save(save, ItemManagerAuto.items_by_id)
 	inventory_panel.set_gold(save.euro)
 
 
-# The player's row is at the top and shows even with no settlement behind it.
-# The two below show friendlySlotsFFTT[0] and [1] and are hidden when no
-# companion fought in that place.
-func _build_experience_rows(save: PlayerSave, settlement: BattleSettlement) -> void:
-	var player: BattleSettlement.FighterExperience = settlement.fighters.get(0)
-	if player == null:
-		player = BattleSettlement.FighterExperience.new()
-		player.experience_before = save.experience
-		player.level_before = save.level
-	_player_row.setup(PORTRAITS[0], Party.PLAYER_NAME, player)
+# The player's row is at the top. The two below show friendlySlotsFFTT[0] and
+# [1] and are hidden when no companion fought in that place.
+func _build_experience_rows(settlement: BattleSettlement) -> void:
+	_player_row.setup(PORTRAITS[0], Party.PLAYER_NAME, settlement.fighters[0])
 	var companion_rows: Array[VictoryExpRow] = [_companion_row_0, _companion_row_1]
 	for i in companion_rows.size():
 		var row: VictoryExpRow = companion_rows[i]
