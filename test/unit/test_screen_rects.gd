@@ -93,6 +93,14 @@ func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[Stri
 	var color: Color = label.get_theme_color("font_color")
 	if not _same_color(color, entry["color"]):
 		found.append("%s: font colour %s, expected %s" % [path, color.to_html(), entry["color"]])
+	# A centred or right-aligned Label places its text from its right edge too,
+	# so a wrong width moves the text. A Label also grows past its offsets when
+	# its text is wider than the field.
+	if label.horizontal_alignment != HORIZONTAL_ALIGNMENT_LEFT:
+		var right: float = label.global_position.x + label.size.x
+		var expected_right: float = float(entry["rect"][0]) + float(entry["rect"][2])
+		if not _close(right, expected_right):
+			found.append("%s: right edge %s, expected %s" % [path, right, expected_right])
 	# A Label puts its lines one font height plus its line spacing apart.
 	if entry.has("line_pitch"):
 		var pitch: float = label.get_theme_font("font").get_height(size) \
@@ -114,8 +122,9 @@ func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[Stri
 
 
 # Returns one message for each way the laid-out scene under `root` differs from
-# its record. A Label is checked at its top left only, because a Label is
-# taller than the SWF's field (spec Part 2). A Panel is checked at both corners.
+# its record. A Label is checked at its top left, and at its right edge when its
+# text is not left-aligned. Its bottom is not checked, because a Label is taller
+# than the SWF's field (spec Part 2). A Panel is checked at both corners.
 func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 	var found: Array[String] = []
 	var pieces: Dictionary = scene["pieces"]
@@ -125,7 +134,10 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 		if node == null:
 			found.append("%s: no such Control in the scene" % path)
 			continue
-		var actual := Rect2(node.global_position - root.global_position, node.size)
+		# The record holds Stage positions. A scene such as right_column.tscn
+		# puts its root where the SWF puts the piece, so the root's own
+		# position counts.
+		var actual := Rect2(node.global_position, node.size)
 		match entry["kind"]:
 			"panel":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
@@ -343,3 +355,36 @@ func test_control_a_wrapping_label_with_the_wrong_line_pitch_fails() -> void:
 	var hint: Label = root.get_node("HintLabel")
 	hint.add_theme_constant_override("line_spacing", hint.get_theme_constant("line_spacing") + 3)
 	_assert_one_problem(_scene_problems(root, _record()["scenes"][ABILITIES_SCENE]), "HintLabel: line pitch")
+
+
+const RIGHT_COLUMN_SCENE: String = "res://scenes/ui/window/right_column.tscn"
+
+
+# A slot in row 2 that is 20 px wider pushes the five slots after it 20 px
+# right along the row's FloatBox. The wide slot fails at its bottom right, and
+# each of the five fails at both corners, so there are 11 problems, all in row 2.
+func test_control_a_right_column_slot_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(RIGHT_COLUMN_SCENE)
+	(root.get_node("Grid/Row2/Slot0") as Control).custom_minimum_size.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][RIGHT_COLUMN_SCENE])
+	assert_eq(found.size(), 11, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "Grid/Row2/Slot")
+	assert_string_starts_with(found[0] if found else "", "Grid/Row2/Slot0: bottom right")
+
+
+# The Title is centred, so a field 20 px too wide moves its text 10 px right
+# while its top left stays where the SWF puts it.
+func test_control_a_centred_label_20_px_too_wide_fails() -> void:
+	var root: Control = await _laid_out(RIGHT_COLUMN_SCENE)
+	(root.get_node("Title") as Label).offset_right += 20.0
+	await wait_process_frames(2)
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][RIGHT_COLUMN_SCENE]), "Title: right edge")
+
+
+func test_control_a_left_aligned_label_20_px_too_wide_passes() -> void:
+	var root: Control = await _laid_out(RIGHT_COLUMN_SCENE)
+	(root.get_node("Amount") as Label).offset_right += 20.0
+	await wait_process_frames(2)
+	assert_eq(_scene_problems(root, _record()["scenes"][RIGHT_COLUMN_SCENE]), [] as Array[String])

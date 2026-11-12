@@ -36,6 +36,12 @@ testing the game by hand.
   applying but callbacks still fire. Kill it explicitly (`08dc6a7`).
 - A Control never shrinks its own `.size` back down once grown. Resize to
   `get_combined_minimum_size()` (`cbc2257`).
+- An instanced scene whose root has offsets keeps them only when the instance
+  line sets no `layout_mode`. A bare `layout_mode = 0` override sets the
+  offsets to 0 and keeps the size, so the scene draws at its parent's top
+  left. The RightColumn instance in `inventory_window.tscn` did this (#212),
+  and `test_the_inventory_window_puts_the_right_column_where_the_swf_does`
+  now checks it.
 - A CanvasGroup applies its ancestors' modulate twice. Its children carry the
   modulate into the screen texture, and its built-in shader multiplies by
   `COLOR`, which carries it again. So `scenes/doll_body.gdshader` leaves `COLOR`

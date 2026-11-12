@@ -170,7 +170,7 @@ func test_victory_text_is_bold_except_the_two_font_295_lines():
 func test_menu_screens_are_bold_except_the_shop_dialogue():
 	var inventory = add_child_autofree(load("res://scenes/ui/menu/inventory_window.tscn").instantiate())
 	_assert_fonts(inventory, {"NameLabel": [2891, 65], "ExperienceLabel": [2869, 65]})
-	_assert_fonts(inventory.inventory_panel, {"TitleLabel": [2856, 65], "GoldLabel": [2862, 65]})
+	_assert_fonts(inventory.right_column, {"Title": [2856, 65], "EuroSign": [2861, 65], "Amount": [2862, 65]})
 	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())
 	_assert_fonts(abilities, {
 		"TreeTitle": [3061, 65],

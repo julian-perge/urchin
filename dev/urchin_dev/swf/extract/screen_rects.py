@@ -82,11 +82,27 @@ HUB_FRAME = "Navigation"
 @dataclass(frozen=True)
 class Piece:
     kind: str
-    depth: int
+    # The depth that places the piece, or None when `instance` finds it.
+    depth: int | None
     art: str | None = None
+    # The instance name of the placement, for a piece that the SWF names
+    # instead of a depth the record has to type, such as itemSlot0.
+    instance: str | None = None
     # The depth of the piece inside the sprite at `depth`, on the sprite's
     # first frame, for a piece that the scene's timeline does not place itself.
     inner_depth: int | None = None
+
+    def __post_init__(self) -> None:
+        if (self.depth is None) == (self.instance is None):
+            raise ValueError(
+                f"A piece needs a depth or an instance name, not both or neither:"
+                f" depth {self.depth}, instance {self.instance}"
+            )
+        if self.kind == "art" and self.art is None:
+            raise ValueError(
+                f"An art piece needs the name of its art: depth {self.depth},"
+                f" instance {self.instance}"
+            )
 
 
 @dataclass(frozen=True)
@@ -108,6 +124,10 @@ VICTORY_ROW_PIECES: dict[str, tuple[str, int, str | None]] = {
     "Gloss": ("art", 41, "xp_gloss_victory"),
     "PercentLabel": ("text", 42, None),
 }
+
+# The frame names the grid's slots itemSlot0 to itemSlot35, row by row.
+INVENTORY_SLOTS = 36
+INVENTORY_COLUMNS = 6
 
 SCENES: dict[str, Scene] = {
     # The victory frame's left Panel and the field at its top. It is a test
@@ -172,6 +192,38 @@ SCENES: dict[str, Scene] = {
             "ProceedHintLabel",
             "InventoryPanel",
             *(f"ExpRows/{slot}/Row/Face" for slot in VICTORY_ROWS),
+        ),
+    ),
+    # The right column of 36 item slots and the money bar
+    # (spec/107-window-shell.md, RightColumn). The shop frame is the one frame
+    # that places all of it, the sell slot included, and the inventory frame
+    # places the other pieces at the same depths. The euro sign and the amount
+    # carry a Glow and a DropShadow filter. A Label can't draw either, so the
+    # record leaves the two filters out and the port draws neither.
+    "res://scenes/ui/window/right_column.tscn": Scene(
+        timeline=KRINMENU,
+        frame="shop",
+        pieces={
+            "TallPanel": Piece("panel", 7),
+            "Title": Piece("text", 1430),
+            **{
+                f"Grid/Row{i // INVENTORY_COLUMNS}/Slot{i % INVENTORY_COLUMNS}": Piece(
+                    "art", None, art="slot_inventory", instance=f"itemSlot{i}"
+                )
+                for i in range(INVENTORY_SLOTS)
+            },
+            "BarPanel": Piece("panel", 5),
+            "EuroSign": Piece("text", 1424),
+            "Amount": Piece("text", 1423),
+            "SellSlot/Art": Piece("art", window_chrome.SELL_SLOT_DEPTH, art="sell_slot"),
+            "DeleteSlot/Art": Piece(
+                "art", window_chrome.DELETE_SLOT_DEPTH, art="delete_slot"
+            ),
+        },
+        port_only=tuple(
+            f"Grid/Row{i // INVENTORY_COLUMNS}/Slot{i % INVENTORY_COLUMNS}/{node}"
+            for i in range(INVENTORY_SLOTS)
+            for node in ("ItemIcon", "Highlight")
         ),
     ),
     # The skills frame (spec/107-abilities.md). The tree nodes and the pool
@@ -515,13 +567,26 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
     chrome = json.loads(window_chrome.RECORD.read_text())
     pieces = {}
     for path, piece in scene.pieces.items():
-        layer = layers.get(piece.depth)
-        if layer is None:
-            raise ValueError(f"{path}: frame {scene.frame} has no depth {piece.depth}")
+        if piece.instance is None:
+            layer = layers.get(piece.depth)
+            if layer is None:
+                raise ValueError(f"{path}: frame {scene.frame} has no depth {piece.depth}")
+        else:
+            named = [layer for layer in layers.values() if layer.name == piece.instance]
+            if len(named) != 1:
+                raise ValueError(
+                    f"{path}: frame {scene.frame} places {len(named)} instances"
+                    f" named {piece.instance}"
+                )
+            layer = named[0]
         piece_origin = origin
         sprite_origins = {}
         holder_shadow = None
-        if piece.inner_depth is not None:
+        if piece.inner_depth is None:
+            sprite = f"sprite {layer.character_id}"
+            if piece.kind == "art" and chrome[piece.art]["relative_to"] == sprite:
+                sprite_origins[sprite] = inner_origin(layer.matrix, origin)
+        else:
             holder_shadow = _shadow_of(layer)
             piece_origin = inner_origin(layer.matrix, origin)
             sprite_origins[f"sprite {layer.character_id}"] = piece_origin
