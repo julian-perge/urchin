@@ -53,10 +53,12 @@ func _assert_placed(box: FloatBox) -> void:
 			assert_almost_eq(child.position.y, offsets[index], EPSILON, "child %d y" % index)
 			assert_almost_eq(child.position.x, 0.0, EPSILON, "child %d x" % index)
 			assert_almost_eq(child.size.y, min_size.y, EPSILON, "child %d height" % index)
+			assert_almost_eq(child.size.x, box.size.x, EPSILON, "child %d width" % index)
 		else:
 			assert_almost_eq(child.position.x, offsets[index], EPSILON, "child %d x" % index)
 			assert_almost_eq(child.position.y, 0.0, EPSILON, "child %d y" % index)
 			assert_almost_eq(child.size.x, min_size.x, EPSILON, "child %d width" % index)
+			assert_almost_eq(child.size.y, box.size.y, EPSILON, "child %d height" % index)
 
 
 func test_vertical_box_places_children_at_fractional_offsets():
@@ -98,7 +100,22 @@ func test_hidden_child_takes_no_space_and_no_separation():
 	)
 
 
-func test_minimum_size_sums_shown_children_and_their_gaps():
+func test_vertical_minimum_size_takes_the_widest_child_and_sums_heights():
+	var hidden: Control = _slot(Vector2(99.0, 99.0))
+	hidden.visible = false
+	var box: FloatBox = _box(true, 2.9, [
+		_slot(Vector2(7.15, 4.4)),
+		_slot(Vector2(11.6, 6.25)),
+		hidden,
+	])
+	var first: Vector2 = box.get_child(0).get_combined_minimum_size()
+	var second: Vector2 = box.get_child(1).get_combined_minimum_size()
+	var expected: Vector2 = Vector2(maxf(first.x, second.x), first.y + box.separation + second.y)
+	assert_almost_eq(box.get_combined_minimum_size(), expected, Vector2(EPSILON, EPSILON))
+	box.free()
+
+
+func test_horizontal_minimum_size_sums_widths_and_takes_the_tallest_child():
 	var hidden: Control = _slot(Vector2(99.0, 99.0))
 	hidden.visible = false
 	var box: FloatBox = _box(false, 1.7, [
@@ -140,11 +157,29 @@ func test_nested_rows_in_a_column_place_cells_at_summed_offsets():
 
 
 func test_changing_separation_moves_children():
-	var box: FloatBox = _box(true, 1.0, [
+	var box: FloatBox = _box(true, 3.85, [
 		_slot(Vector2(10.0, 5.5)),
 		_slot(Vector2(10.0, 5.5)),
 	])
 	await _show(box)
-	box.separation = 3.85
+	# A smaller separation shrinks the minimum size, so the box keeps its size
+	# and does not resize. Only the setter can make the box sort its children.
+	box.separation = 0.4
+	await wait_process_frames(2)
+	_assert_placed(box)
+
+
+func test_changing_direction_moves_children():
+	var box: FloatBox = _box(true, 2.2, [
+		_slot(Vector2(10.0, 5.5)),
+		_slot(Vector2(12.0, 5.5)),
+	])
+	await _show(box)
+	# The box is larger than its minimum size on both axes, so the change of
+	# direction does not resize it. Only the setter can make the box sort its
+	# children.
+	box.size = Vector2(100.0, 100.0)
+	await wait_process_frames(2)
+	box.vertical = false
 	await wait_process_frames(2)
 	_assert_placed(box)
