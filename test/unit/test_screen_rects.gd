@@ -85,6 +85,24 @@ func _panel_problems(path: String, panel: PanelContainer, entry: Dictionary) -> 
 	return found
 
 
+# An outline is a border with nothing drawn inside it, so what is under it
+# shows through.
+func _outline_problems(path: String, panel: PanelContainer, entry: Dictionary) -> Array[String]:
+	var found: Array[String] = []
+	var style: StyleBoxFlat = panel.get_theme_stylebox("panel") as StyleBoxFlat
+	if style == null:
+		return ["%s: the outline style is not a StyleBoxFlat" % path] as Array[String]
+	if style.draw_center:
+		found.append("%s: the outline fills its inside" % path)
+	if not _same_color(style.border_color, entry["line"]):
+		found.append("%s: line colour %s, expected %s" % [path, style.border_color.to_html(), entry["line"]])
+	for side: Side in PanelRecipe.SIDES:
+		if style.get_border_width(side) != int(entry["border"]):
+			found.append("%s: line width %d on side %d, expected %d" % [
+				path, style.get_border_width(side), side, int(entry["border"])])
+	return found
+
+
 func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[String]:
 	var found: Array[String] = []
 	var size: int = label.get_theme_font_size("font_size")
@@ -144,6 +162,12 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 						found.append("%s: fill %s, expected %s" % [path, (node as ColorRect).color.to_html(), entry["fill"]])
 				else:
 					found.append("%s: a box piece that is not a ColorRect" % path)
+			"outline":
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+				if node is PanelContainer:
+					found.append_array(_outline_problems(path, node, entry))
+				else:
+					found.append("%s: an outline piece that is not a PanelContainer" % path)
 			"hit", "button":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 				if not node is BaseButton:

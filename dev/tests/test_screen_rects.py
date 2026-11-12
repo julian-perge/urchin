@@ -8,7 +8,7 @@ from dataclasses import replace
 import pytest
 from urchin_dev import REPO_ROOT
 from urchin_dev.swf.extract import screen_rects
-from urchin_dev.swf.swf_index import ButtonRecord, DropShadow, EditText
+from urchin_dev.swf.swf_index import ButtonRecord, DropShadow, EditText, StyleSet
 
 ORIGIN = (400.5, 222.4)
 # The victory frame's left Panel: KRINMENU frame 9 places sprite 2990 at depth
@@ -214,6 +214,60 @@ def test_box_record_is_the_shape_through_the_placement_with_its_fill():
     assert entry["kind"] == "box"
     assert entry["rect"] == pytest.approx([49.2, 131.05, 196.8, 83.2])
     assert entry["fill"] == "000000ff"
+
+
+# The victory row's 3001 strokes a 20 twip #666666 line around its edge, and
+# its fills draw only the track box and a small box inside it.
+def test_outline_record_is_the_line_path_grown_by_half_the_line():
+    entry = screen_rects.outline_record(
+        (-1958, -822, 1958, 822),
+        20,
+        (102, 102, 102, 255),
+        (1.0, 0.0, 0.0, 1.0, 0, 0),
+        (147.6, 172.65),
+    )
+    assert entry["kind"] == "outline"
+    assert entry["rect"] == pytest.approx([49.2, 131.05, 196.8, 83.2])
+    assert entry["line"] == "666666ff"
+    assert entry["border"] == 1
+
+
+def test_one_line_is_the_used_line_of_every_style_set():
+    sets = [
+        StyleSet(((0, 0, 0, 255),), (), frozenset({1}), {}),
+        StyleSet(
+            ((102, 102, 102, 255),),
+            ((20, (102, 102, 102, 255)),),
+            frozenset({1}),
+            {1: (-1958, -822, 1958, 822)},
+        ),
+    ]
+    assert screen_rects.one_line(sets, 3001) == (
+        (-1958, -822, 1958, 822),
+        20,
+        (102, 102, 102, 255),
+    )
+
+
+def test_one_line_refuses_a_shape_that_strokes_two_lines():
+    line = (20, (102, 102, 102, 255))
+    sets = [StyleSet((), (line, line), frozenset(), {1: (0, 0, 9, 9), 2: (0, 0, 5, 5)})]
+    with pytest.raises(ValueError, match="3001 strokes 2 lines"):
+        screen_rects.one_line(sets, 3001)
+
+
+def test_one_solid_fill_refuses_a_shape_with_a_second_style_set():
+    sets = [
+        StyleSet(((0, 0, 0, 255),), (), frozenset({1}), {}),
+        StyleSet(((102, 102, 102, 255),), (), frozenset({1}), {}),
+    ]
+    with pytest.raises(ValueError, match="3001 is not one solid fill"):
+        screen_rects.one_solid_fill(sets, 3001)
+
+
+def test_one_solid_fill_is_the_fill_of_a_plain_box():
+    sets = [StyleSet(((0, 0, 0, 255),), (), frozenset({1}), {})]
+    assert screen_rects.one_solid_fill(sets, 7) == (0, 0, 0, 255)
 
 
 # The close button 2853: one record, drawn in the hit state only, of the

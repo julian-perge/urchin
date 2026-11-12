@@ -1,8 +1,16 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/menu/victory_exp_row.gd" id="1_row"]
 [ext_resource type="Texture2D" path="res://assets/ui/window/xp_bar.png" id="2_bar"]
 [ext_resource type="Texture2D" path="res://assets/ui/window/xp_gloss_victory.png" id="3_gloss"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.4, 0.4, 1)
 
 [node name="VictoryExpRow" type="Control"]
 custom_minimum_size = Vector2(196.8, 83.2)
@@ -13,12 +21,12 @@ offset_bottom = 83.2
 mouse_filter = 2
 script = ExtResource("1_row")
 
-[node name="Backing" type="ColorRect" parent="."]
+[node name="Frame" type="PanelContainer" parent="."]
 layout_mode = 0
 offset_right = 196.8
 offset_bottom = 83.2
 mouse_filter = 2
-color = Color(0, 0, 0, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
 
 [node name="Face" type="TextureRect" parent="."]
 layout_mode = 0

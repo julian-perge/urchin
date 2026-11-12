@@ -900,6 +900,125 @@ def first_line_style(
     return width, (r, g, b, 255)
 
 
+@dataclass(frozen=True)
+class StyleSet:
+    """One style set of a DefineShape: the shape's first one, or one that a
+    StyleChangeRecord declares partway through. fills holds each fill's
+    (r, g, b, a), or None for a fill that is not a solid colour. lines holds
+    each line's (width in twips, (r, g, b, a)). used_fills holds the 1-based
+    fill indices that some edge fills with, and line_bounds the (xmin, ymin,
+    xmax, ymax) in twips of the edges each used 1-based line index strokes."""
+
+    fills: tuple[tuple[int, int, int, int] | None, ...]
+    lines: tuple[tuple[int, tuple[int, int, int, int]], ...]
+    used_fills: frozenset[int]
+    line_bounds: dict[int, tuple[int, int, int, int]]
+
+
+def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
+    """-> every style set of DefineShape `cid`, in order, with what its edges
+    use. A shape can declare new styles partway through, and the first set
+    alone then misses what the later paths draw."""
+    code, pos = _fill_style_array(index, cid)
+    data = index.data
+    sets: list[StyleSet] = []
+    fills, lines, pos = _style_arrays(data, pos, code)
+    fill_bits, line_bits = data[pos] >> 4, data[pos] & 0x0F
+    bits = _Bits(data, pos + 1)
+    used_fills: set[int] = set()
+    line_bounds: dict[int, list[int]] = {}
+    x = y = fill0 = fill1 = line = 0
+
+    def close_set() -> None:
+        sets.append(
+            StyleSet(
+                fills=fills,
+                lines=lines,
+                used_fills=frozenset(used_fills),
+                line_bounds={k: tuple(v) for k, v in sorted(line_bounds.items())},
+            )
+        )
+
+    def edge_to(nx: int, ny: int) -> None:
+        nonlocal x, y
+        used_fills.update(f for f in (fill0, fill1) if f)
+        if line:
+            box = line_bounds.setdefault(line, [x, y, x, y])
+            box[0], box[1] = min(box[0], nx), min(box[1], ny)
+            box[2], box[3] = max(box[2], nx), max(box[3], ny)
+        x, y = nx, ny
+
+    while True:
+        if bits.ub(1):
+            straight = bits.ub(1)
+            n = bits.ub(4) + 2
+            if straight:
+                if bits.ub(1):
+                    dx, dy = bits.sb(n), bits.sb(n)
+                elif bits.ub(1):
+                    dx, dy = 0, bits.sb(n)
+                else:
+                    dx, dy = bits.sb(n), 0
+                edge_to(x + dx, y + dy)
+            else:
+                cx, cy = x + bits.sb(n), y + bits.sb(n)
+                edge_to(cx, cy)
+                edge_to(cx + bits.sb(n), cy + bits.sb(n))
+            continue
+        flags = bits.ub(5)
+        if flags == 0:
+            break
+        if flags & 0x01:
+            n = bits.ub(5)
+            x, y = bits.sb(n), bits.sb(n)
+        if flags & 0x02:
+            fill0 = bits.ub(fill_bits)
+        if flags & 0x04:
+            fill1 = bits.ub(fill_bits)
+        if flags & 0x08:
+            line = bits.ub(line_bits)
+        if flags & 0x10:
+            # The new set's indices start at 0, so an index from the old set
+            # does not carry over to a fill or a line of the new one.
+            close_set()
+            used_fills, line_bounds = set(), {}
+            fill0 = fill1 = line = 0
+            fills, lines, pos = _style_arrays(data, bits.align(), code)
+            fill_bits, line_bits = data[pos] >> 4, data[pos] & 0x0F
+            bits = _Bits(data, pos + 1)
+    close_set()
+    return sets
+
+
+def _style_arrays(data: bytes, pos: int, code: int):
+    """-> (fills, lines, offset past them) for the FILLSTYLEARRAY at pos and
+    the LINESTYLEARRAY after it."""
+    rgba = code in (TAG_DEFINE_SHAPE3, TAG_DEFINE_SHAPE4)
+    fills = []
+    count, pos = _fill_style_count(data, pos, code)
+    for _ in range(count):
+        solid = data[pos] == SOLID_FILL_TYPE
+        color = tuple(data[pos + 1 : pos + 5]) if rgba else (*data[pos + 1 : pos + 4], 255)
+        fills.append(color if solid else None)
+        pos = _skip_fill_style(data, pos, code)
+    lines = []
+    count, pos = _fill_style_count(data, pos, code)
+    for _ in range(count):
+        (width,) = struct.unpack_from("<H", data, pos)
+        pos += 2
+        if code == TAG_DEFINE_SHAPE4:
+            flags = data[pos]
+            pos += 2
+            if (flags >> 4) & 0x03 == 2:
+                pos += 2
+            if flags & 0x08:
+                raise ValueError("a filled line style has no one colour")
+        color = tuple(data[pos : pos + 4]) if rgba else (*data[pos : pos + 3], 255)
+        pos += 4 if rgba else 3
+        lines.append((width, color))
+    return tuple(fills), tuple(lines), pos
+
+
 def drop_shadow(record: bytes) -> DropShadow:
     """-> the values of one filter record from Placement.filter_records.
     Raises when the record is another filter."""

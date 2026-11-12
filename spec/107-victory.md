@@ -38,14 +38,14 @@ The port's panels are up to 54.50 px off the SWF today, because the Victory scre
 | cid | Piece | Box | Look |
 | --- | --- | --- | --- |
 | 2996 `vbbc1` | `MENU[15]`, "Character Experience" | (41.30, 87.10) 213.15x19.00 | `_sans` bold 13 #5e5e5e center |
-| 3002, three of them | experience rows, centred at (147.60, 172.65), (147.60, 265.15), (147.60, 357.65) | each 3001: 196.80x83.20 around its centre | solid black |
+| 3002, three of them | experience rows, centred at (147.60, 172.65), (147.60, 265.15), (147.60, 357.65) | each 3001: 196.80x83.20 around its centre | a 1 px #666666 outline with no fill, so the panel shows through |
 
 Each row holds the face 2978 (`avIn`, scaled 1.653), `namerI` 3000 and `levelI` 2999 (`_sans` bold 12 #cccccc), the bar 2867 over its track 2998, and the percent 2997 `exp2`. The rows' inner rects come from the record.
 
 - The row pitch is 92.50 px. Each row is a fixed-height slot in a `FloatBox` column. The port's rows are 62 px apart with a 150 px bar today.
 - A row is hidden when its fighter does not exist (`prx == undefined`). The first two rows are the fighting Companions, `friendlySlotsFFTT[0]` and `[1]`, and the third is the player (`prx = 0`).
 - Faces are the existing `assets/ui/menu/portraits/` art. The compare tool masks them out.
-- The black row backing 3001 and the XP gloss 2998 are new art or a StyleBoxFlat. The gloss is placed on the sprite's timeline at depth 41, and #161 renders it.
+- Shape 3001 has no fill across the row. It declares a second style set partway through, so its first fill (black) covers only the box under the bar and the percent, and its line strokes the row's edge. The port draws the line as a StyleBoxFlat border with no fill, and does not draw the box under the bar yet. The XP gloss 2998 is new art. The gloss is placed on the sprite's timeline at depth 41, and #161 renders it.
 
 **The animation** (`DefineSprite_3142/frame_9/PlaceObject3_3002_*`, `onClipEvent(enterFrame)`):
 

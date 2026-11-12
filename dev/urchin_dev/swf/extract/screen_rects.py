@@ -13,7 +13,7 @@
 # node that draws a piece. port_only names the nodes the port draws and the
 # SWF does not, so the test skips them.
 #
-# A piece is one of six kinds:
+# A piece is one of seven kinds:
 #   "panel" - a flat Panel (Part 3): a sprite whose one shape has a solid fill
 #             and a line, under an inner DropShadow. Its rect is the fill rect
 #             grown by half the border. The fill rect is ShapeBounds through
@@ -33,6 +33,10 @@
 #   "box"   - a shape of one solid fill and no line, which the port draws as a
 #             ColorRect, recorded as its ShapeBounds through the placement
 #             matrix with its fill colour.
+#   "outline" - the one line a shape strokes, which the port draws as the
+#             border of a PanelContainer with no fill. It is recorded as the
+#             line's outer edge through the placement matrix, with its colour
+#             and width. The shape's fills are not part of the piece.
 #
 # An "art" piece whose render is measured from a sprite of its own is placed
 # by where that sprite sits: the sprite at `depth`, or the sprite at
@@ -58,6 +62,7 @@ from urchin_dev.swf.swf_index import (
     ButtonRecord,
     DropShadow,
     EditText,
+    StyleSet,
     SwfIndex,
     button_records,
     character_kind,
@@ -67,6 +72,7 @@ from urchin_dev.swf.swf_index import (
     first_line_style,
     read_swf,
     shape_bounds,
+    shape_styles,
 )
 
 RECORD = REPO_ROOT / "test" / "fixtures" / "screen_rects.json"
@@ -97,7 +103,7 @@ class Scene:
 # places each, and the pieces inside sprite 3002 by their own depth.
 VICTORY_ROWS = {"PlayerSlot": 1197, "CompanionSlot0": 1111, "CompanionSlot1": 1154}
 VICTORY_ROW_PIECES: dict[str, tuple[str, int, str | None]] = {
-    "Backing": ("box", 2, None),
+    "Frame": ("outline", 2, None),
     "NameLabel": ("text", 37, None),
     "LevelLabel": ("text", 38, None),
     "Bar": ("art", 39, "xp_bar"),
@@ -143,6 +149,9 @@ SCENES: dict[str, Scene] = {
     # 1111 and 1154. The rest of the Victory screen is port only until the
     # Victory Window replaces it (spec/107-victory.md). The face has no record,
     # because extract_faces does not write where its crop sits in sprite 2978.
+    # The row's shape 3001 has no fill across the row: it strokes a 1 px line
+    # around it and fills only the box under the bar, which the port does not
+    # draw yet.
     "res://scenes/battle/victory_screen.tscn": Scene(
         timeline=KRINMENU,
         frame="win",
@@ -437,14 +446,67 @@ def _panel(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
     )
 
 
+def one_solid_fill(sets: list[StyleSet], shape: int) -> tuple[int, int, int, int]:
+    """-> the colour of a shape that fills with one solid fill and strokes no
+    line. Its first style set alone can't say so, because a shape can declare
+    new styles partway through and draw more with them."""
+    only = sets[0] if len(sets) == 1 else None
+    if (
+        only is None
+        or only.line_bounds
+        or only.used_fills != {1}
+        or only.fills[0] is None
+    ):
+        raise ValueError(f"shape {shape} is not one solid fill with no line")
+    return only.fills[0]
+
+
+def one_line(sets: list[StyleSet], shape: int):
+    """-> (the bounds of its edges in twips, width in twips, (r, g, b, a)) of
+    the one line that a shape strokes, over all of its style sets."""
+    used = [
+        (bounds, *style_set.lines[index - 1])
+        for style_set in sets
+        for index, bounds in style_set.line_bounds.items()
+    ]
+    if len(used) != 1:
+        raise ValueError(f"shape {shape} strokes {len(used)} lines, not 1")
+    return used[0]
+
+
+def outline_record(line_bounds, width: int, line, matrix, origin) -> dict:
+    """-> the record of a shape's one line, which the port draws as the
+    border of a PanelContainer with no fill. Its rect is the line's outer
+    edge: the edges' bounds grown by half the line on each side."""
+    half = width / 2
+    grown = (
+        line_bounds[0] - half,
+        line_bounds[1] - half,
+        line_bounds[2] + half,
+        line_bounds[3] + half,
+    )
+    return {
+        "kind": "outline",
+        "rect": [round(v, 4) for v in stage_rect(grown, matrix, origin)],
+        "line": color_hex(line),
+        "border": border_width(width, _scale(matrix)),
+    }
+
+
 def _box(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
     shape = layer.character_id
     if character_kind(index, shape) != "shape":
         raise ValueError(f"box {shape} is not a shape")
-    fill = first_fill_color(index, shape)
-    if fill is None or first_line_style(index, shape) is not None:
-        raise ValueError(f"box {shape} is not one solid fill with no line")
+    fill = one_solid_fill(shape_styles(index, shape), shape)
     return box_record(shape_bounds(index, shape), layer.matrix, origin, fill)
+
+
+def _outline(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
+    shape = layer.character_id
+    if character_kind(index, shape) != "shape":
+        raise ValueError(f"outline {shape} is not a shape")
+    bounds, width, line = one_line(shape_styles(index, shape), shape)
+    return outline_record(bounds, width, line, layer.matrix, origin)
 
 
 def origin_of(index: SwfIndex, owner: int) -> tuple[float, float]:
@@ -491,6 +553,8 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
             pieces[path] = art_record(piece.art, chrome[piece.art], sprite_origins)
         elif piece.kind == "box":
             pieces[path] = _box(index, layer, piece_origin)
+        elif piece.kind == "outline":
+            pieces[path] = _outline(index, layer, piece_origin)
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, piece_origin)
         else:
