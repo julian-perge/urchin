@@ -84,11 +84,11 @@ Its origin is the Panel's top left, (503.50, 81.60), as Inventory, Store and Vic
 | 2992 | money Panel | (503.50, 358.20) 249.05x50.85 | `bar` | ShellPanel |
 | 2861 | the euro sign | (505.25, 364.90) 30.40x43.40 | `_sans` bold 31 #fad95a right | Label in a fixed-height slot |
 | 2862 | `dumbEuro`, the amount | (537.10, 371.55) 116.40x28.55 | `_sans` bold 22 #fad95a left | Label in a fixed-height slot |
-| 3017 | sell slot | centre (685.10, 384.20) | linear #ffcc00 to #a33507, black line, baked shadow | Art from #161 in a hit Control. Store only, shown through `show_sell_button`. |
+| 3017 | sell slot | centre (685.10, 384.20) | linear #ffcc00 to #a33507, black line, baked shadow | Art from #161 in a hit Control. Store only. Hidden in the scene, and the Store shows it through `show_sell_button`. |
 | 2860 | delete slot | centre not in the inventory note | linear #aa1111 to #350606, black line, baked shadow | Art from #161 in a hit Control |
 
 - The euro sign and the amount are two Labels, as in the SWF. The port has one "€ 7" Label today, which cannot match the capture, as the #107 comment from #139 records.
-- The right column keeps the `InventoryPanel` script API: the signals `item_selected`, `sell_pressed` and `delete_pressed`, and the methods `populate`, `populate_from_save`, `set_gold` and `show_sell_button`. Hosts and `test_inventory_panel.gd` keep working. Its internals move to the new nodes.
+- The right column keeps the `InventoryPanel` script API: the signals `item_selected`, `sell_pressed` and `delete_pressed`, and the methods `populate`, `populate_from_save`, `set_gold` and `show_sell_button`. Hosts keep working. Its integration test is `test_right_column.gd`, renamed from `test_inventory_panel.gd`. Its internals move to the new nodes.
 - The sell slot is a drop target. The existing drag-to-sell code moves with it unchanged.
 
 ## Replacements
@@ -138,14 +138,14 @@ The snippet shows style only.
 
 - **Rect test.** Add `window_shell.tscn` and `right_column.tscn` to the rect record, with every piece in the tables above. All pass under 0.5 px. The control moves one piece 20 px and fails.
 - **Panel recipe.** The rect test already fails a `ShellPanel` with a wrong fill, stroke or shadow material.
-- **RightColumn.** The existing `test/integration/test_inventory_panel.gd` and `test_item_slot.gd` keep passing after the nodes move. New cases cover the two Labels (sign and amount) and the sell slot's visibility.
+- **RightColumn.** The existing `test/integration/test_right_column.gd` (renamed from `test_inventory_panel.gd`) and `test_item_slot.gd` keep passing after the nodes move. New cases cover the two Labels (sign and amount) and the sell slot's visibility.
 - **Slots.** A GUT test checks that the slot loads the inventory art and that the highlight is a 2 px white border.
 - **Compare tool.** Add a `window-shell` entry in `chrome` mode. It scores the backdrop, the close X and the right column inside their masks on a labelled capture of the Inventory Window. The build issue sets the bar from the first passing run and shows the 20 px shift scoring over it.
 - **Whole suite.** `uv run gut` passes before each commit.
 
 ## Boundaries
 
-- Always: Take a SWF number from the rect record or an extractor. Keep `ItemSlot`'s and `InventoryPanel`'s public signals and methods. Commit `.png.import` sidecars.
+- Always: Take a SWF number from the rect record or an extractor. Keep `ItemSlot`'s public signals and methods, and the `InventoryPanel` ones that `RightColumn` took over. Commit `.png.import` sidecars.
 - Ask first: A change to a hand export that Achievements still uses. A change to a slot's drag and drop behavior. A new dependency.
 - Never: Draw a flat Panel from a PNG. Hand-place a coordinate the rect record can supply. Delete a hand export before every Window that loads it is rebuilt. Change tooltip text here.
 

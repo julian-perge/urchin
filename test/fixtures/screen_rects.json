@@ -281,7 +281,7 @@
     "ExpLabel",
     "ExpValue",
     "ProceedHintLabel",
-    "InventoryPanel",
+    "RightColumn",
     "ExpRows/PlayerSlot/Row/Face",
     "ExpRows/CompanionSlot0/Row/Face",
     "ExpRows/CompanionSlot1/Row/Face"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/victory_screen.gd" id="1_victory"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" path="res://assets/ui/menu/panel_center.png" id="4_panelcenter"]
 [ext_resource type="Script" path="res://scripts/ui/float_box.gd" id="5_floatbox"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/victory_exp_row.tscn" id="6_exprow"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/right_column.tscn" id="7_rightcolumn"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_proceed_normal"]
 bg_color = Color(0.05, 0.05, 0.06, 1)
@@ -204,5 +205,7 @@ theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_proceed_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_proceed_hover")
 text = "Proceed!"
+
+[node name="RightColumn" parent="." instance=ExtResource("7_rightcolumn")]
 
 [connection signal="pressed" from="ProceedButton" to="." method="_on_proceed_pressed"]

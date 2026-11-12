@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://brmx4sa7xb3xq"]
+[gd_scene load_steps=7 format=3 uid="uid://brmx4sa7xb3xq"]
 
 [ext_resource type="Script" uid="uid://dci8fqqpbntjm" path="res://scripts/ui/store/store_window.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/close_x.png" id="3_close"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/panel_large.png" id="4_panellarge"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/panel_center.png" id="5_panelcenter"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/right_column.tscn" id="6_rightcolumn"]
 
 [node name="StoreWindow" type="Control" groups=["menu_screen"]]
 layout_mode = 3
@@ -128,4 +129,9 @@ theme_override_constants/h_separation = 7
 theme_override_constants/v_separation = 7
 columns = 5
 
+[node name="RightColumn" parent="." instance=ExtResource("6_rightcolumn")]
+
 [connection signal="pressed" from="CloseButton" to="." method="_on_exit_pressed"]
+[connection signal="item_selected" from="RightColumn" to="." method="_on_inventory_item_selected"]
+[connection signal="sell_pressed" from="RightColumn" to="." method="_on_sell_pressed"]
+[connection signal="delete_pressed" from="RightColumn" to="." method="_on_delete_pressed"]

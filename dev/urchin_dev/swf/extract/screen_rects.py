@@ -190,7 +190,7 @@ SCENES: dict[str, Scene] = {
             "ExpLabel",
             "ExpValue",
             "ProceedHintLabel",
-            "InventoryPanel",
+            "RightColumn",
             *(f"ExpRows/{slot}/Row/Face" for slot in VICTORY_ROWS),
         ),
     ),
