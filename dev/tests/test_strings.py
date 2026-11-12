@@ -50,7 +50,7 @@ def test_parse_skips_the_other_languages():
 def test_parse_fails_on_an_english_line_it_cannot_read():
     with pytest.raises(ValueError, match="line 2"):
         strings.parse_english(
-            'KrinLang.ENGLISH.MENU = new Array();\n'
+            "KrinLang.ENGLISH.MENU = new Array();\n"
             'KrinLang.ENGLISH.MENU[0] = "a" + "b";\n'
         )
 

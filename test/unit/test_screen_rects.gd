@@ -117,6 +117,19 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 					found.append_array(_text_problems(path, node, entry))
 				else:
 					found.append("%s: a text piece that is not a Label" % path)
+			"art":
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+				if node is TextureRect:
+					var texture: Texture2D = (node as TextureRect).texture
+					var texture_path: String = texture.resource_path if texture else "no texture"
+					if texture_path != entry["texture"]:
+						found.append("%s: texture %s, expected %s" % [path, texture_path, entry["texture"]])
+				else:
+					found.append("%s: an art piece that is not a TextureRect" % path)
+			"hit":
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+				if not node is BaseButton:
+					found.append("%s: a hit piece that is not a button" % path)
 			_:
 				found.append("%s: unknown kind %s" % [path, entry["kind"]])
 	for path: String in _drawing_paths(root):
@@ -232,3 +245,34 @@ func test_control_an_unrecorded_piece_fails_and_a_port_only_one_passes() -> void
 	_assert_one_problem(_scene_problems(root, scene), "Extra: draws")
 	scene["port_only"] = ["Extra"]
 	assert_eq(_scene_problems(root, scene), [] as Array[String])
+
+
+const SHELL_SCENE: String = "res://scenes/ui/window/window_shell.tscn"
+
+
+func _shell_record() -> Dictionary:
+	return _record()["scenes"][SHELL_SCENE]
+
+
+func test_control_a_shell_piece_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(SHELL_SCENE)
+	(root.get_node("CloseArt") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _shell_record())
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "CloseArt: top left")
+
+
+func test_control_a_hit_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(SHELL_SCENE)
+	(root.get_node("CloseButton") as Control).position.y += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _shell_record())
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "CloseButton: top left")
+
+
+func test_control_the_wrong_art_fails() -> void:
+	var root: Control = await _laid_out(SHELL_SCENE)
+	(root.get_node("CloseArt") as TextureRect).texture = (root.get_node("Backdrop") as TextureRect).texture
+	_assert_one_problem(_scene_problems(root, _shell_record()), "CloseArt: texture")
