@@ -16,6 +16,17 @@ testing the game by hand.
   `NearestText` autoload keeps text NEAREST, so text stays crisp at fractional
   positions and a filter change has to recheck it (julian-perge/urchin#128,
   julian-perge/urchin#130).
+- Use `FloatBox` (`scripts/ui/float_box.gd`) for every box whose pitches come
+  from the SWF, even when the pitches are whole numbers. A stock BoxContainer
+  takes its separation from a whole-pixel theme constant, so it cannot hold a
+  pitch such as 19.05. Keep a BoxContainer only where the SWF gives no source.
+  `FloatBox` has no expand flags, no alignment and no ratios. Each child gets
+  its minimum size along the axis and the box's full size across it. A hidden
+  child takes no space and no separation. There is no float grid: build a grid
+  as `FloatBox` rows in a `FloatBox` column. A Label is taller than its SWF
+  field (23 px for a 12 px label, against 19.05), so put each Label in a
+  fixed-height slot, a Control with a set minimum size, to keep the field's
+  pitch (spec/107-ui-foundation.md, Part 2).
 - `SpriteFrames.new()` ships with a `default` animation already registered, so
   guard `add_animation()` with `has_animation()`.
 - Godot's texture importer silently caps width at 32768px and rescales the
