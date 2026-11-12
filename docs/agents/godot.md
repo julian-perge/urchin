@@ -98,10 +98,13 @@ testing the game by hand.
 
 - QA save presets are in `dev/save_presets/`, one `.tres` per known game state.
   Copy one into a slot before launching the game, because a running game keeps
-  the slot it already loaded: `dev/save_presets/apply.sh zone3_boss 3`. `--list`
-  names them. A preset that depends on Legend also replaces `achievements.cfg`
-  and keeps the first original as `achievements.cfg.bak`, which
-  `--restore-achievements` puts back. Level 99 presets carry set stats, and
+  the slot it already loaded: `just apply-preset zone3_boss 3`.
+  `just list-presets` names them. A preset that depends on Legend also replaces
+  `achievements.cfg` and keeps the first original as `achievements.cfg.bak`,
+  which `just restore-achievements` puts back. These recipes run
+  `dev/save_presets/apply.gd` in Godot with the real `HOME`, so Godot finds the
+  `user://` folder of the game on every OS. A shell script that named the macOS
+  folder copied nothing the game read on Linux. Level 99 presets carry set stats, and
   changing equipment recomputes them from a curve that is negative by level 55,
   so use `rich` for equip checks. Rebuild them after `PlayerSave` changes with
   `just godot --headless --path . -s
