@@ -85,24 +85,6 @@ func _panel_problems(path: String, panel: PanelContainer, entry: Dictionary) -> 
 	return found
 
 
-# An outline is a border with nothing drawn inside it, so what is under it
-# shows through.
-func _outline_problems(path: String, panel: PanelContainer, entry: Dictionary) -> Array[String]:
-	var found: Array[String] = []
-	var style: StyleBoxFlat = panel.get_theme_stylebox("panel") as StyleBoxFlat
-	if style == null:
-		return ["%s: the outline style is not a StyleBoxFlat" % path] as Array[String]
-	if style.draw_center:
-		found.append("%s: the outline fills its inside" % path)
-	if not _same_color(style.border_color, entry["line"]):
-		found.append("%s: line colour %s, expected %s" % [path, style.border_color.to_html(), entry["line"]])
-	for side: Side in PanelRecipe.SIDES:
-		if style.get_border_width(side) != int(entry["border"]):
-			found.append("%s: line width %d on side %d, expected %d" % [
-				path, style.get_border_width(side), side, int(entry["border"])])
-	return found
-
-
 func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[String]:
 	var found: Array[String] = []
 	var size: int = label.get_theme_font_size("font_size")
@@ -117,6 +99,17 @@ func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[Stri
 			+ label.get_theme_constant("line_spacing")
 		if not _close(pitch, float(entry["line_pitch"])):
 			found.append("%s: line pitch %s, expected %s" % [path, pitch, entry["line_pitch"]])
+	# A Label's shadow offsets are whole px and it can't blur its shadow, so the
+	# offsets are the SWF's rounded and the blur is not checked.
+	if entry.has("shadow"):
+		var shadow: Dictionary = entry["shadow"]
+		var shadow_color: Color = label.get_theme_color("font_shadow_color")
+		if not _same_color(shadow_color, shadow["color"]):
+			found.append("%s: shadow colour %s, expected %s" % [path, shadow_color.to_html(), shadow["color"]])
+		var offset := Vector2i(label.get_theme_constant("shadow_offset_x"), label.get_theme_constant("shadow_offset_y"))
+		var expected := Vector2i(roundi(shadow["offset"][0]), roundi(shadow["offset"][1]))
+		if offset != expected:
+			found.append("%s: shadow offset %s, expected %s" % [path, offset, expected])
 	return found
 
 
@@ -162,12 +155,6 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 						found.append("%s: fill %s, expected %s" % [path, (node as ColorRect).color.to_html(), entry["fill"]])
 				else:
 					found.append("%s: a box piece that is not a ColorRect" % path)
-			"outline":
-				found.append_array(_rect_problems(path, actual, entry["rect"], true))
-				if node is PanelContainer:
-					found.append_array(_outline_problems(path, node, entry))
-				else:
-					found.append("%s: an outline piece that is not a PanelContainer" % path)
 			"hit", "button":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 				if not node is BaseButton:

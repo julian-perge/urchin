@@ -216,44 +216,46 @@ def test_box_record_is_the_shape_through_the_placement_with_its_fill():
     assert entry["fill"] == "000000ff"
 
 
-# The victory row's 3001 strokes a 20 twip #666666 line around its edge, and
-# its fills draw only the track box and a small box inside it.
-def test_outline_record_is_the_line_path_grown_by_half_the_line():
-    entry = screen_rects.outline_record(
-        (-1958, -822, 1958, 822),
-        20,
-        (102, 102, 102, 255),
-        (1.0, 0.0, 0.0, 1.0, 0, 0),
-        (147.6, 172.65),
-    )
-    assert entry["kind"] == "outline"
-    assert entry["rect"] == pytest.approx([49.2, 131.05, 196.8, 83.2])
-    assert entry["line"] == "666666ff"
-    assert entry["border"] == 1
+# The DropShadow on each victory row: black, blur 5, distance 5 at 45 degrees.
+ROW_SHADOW = DropShadow(
+    color=(0, 0, 0, 255),
+    blur_x=5.0,
+    blur_y=5.0,
+    angle=45.0,
+    distance=5.0,
+    strength=1.0,
+    inner=False,
+    knockout=False,
+)
 
 
-def test_one_line_is_the_used_line_of_every_style_set():
-    sets = [
-        StyleSet(((0, 0, 0, 255),), (), frozenset({1}), {}),
-        StyleSet(
-            ((102, 102, 102, 255),),
-            ((20, (102, 102, 102, 255)),),
-            frozenset({1}),
-            {1: (-1958, -822, 1958, 822)},
-        ),
-    ]
-    assert screen_rects.one_line(sets, 3001) == (
-        (-1958, -822, 1958, 822),
-        20,
-        (102, 102, 102, 255),
-    )
+def test_text_shadow_is_the_drop_shadow_offset_and_colour():
+    assert screen_rects.text_shadow(ROW_SHADOW) == {
+        "offset": pytest.approx([3.5355, 3.5355], abs=0.0001),
+        "color": "000000ff",
+        "blur": 5.0,
+    }
 
 
-def test_one_line_refuses_a_shape_that_strokes_two_lines():
-    line = (20, (102, 102, 102, 255))
-    sets = [StyleSet((), (line, line), frozenset(), {1: (0, 0, 9, 9), 2: (0, 0, 5, 5)})]
-    with pytest.raises(ValueError, match="3001 strokes 2 lines"):
-        screen_rects.one_line(sets, 3001)
+def test_text_shadow_scales_the_alpha_by_the_strength():
+    from dataclasses import replace as changed
+
+    assert screen_rects.text_shadow(changed(ROW_SHADOW, strength=0.5))["color"] == "00000080"
+
+
+@pytest.mark.parametrize(
+    "change, message",
+    [
+        ({"inner": True}, "inner"),
+        ({"knockout": True}, "knockout"),
+        ({"blur_y": 4.0}, "two blur values"),
+    ],
+)
+def test_text_shadow_refuses_a_shadow_a_label_cannot_draw(change, message):
+    from dataclasses import replace as changed
+
+    with pytest.raises(ValueError, match=message):
+        screen_rects.text_shadow(changed(ROW_SHADOW, **change))
 
 
 def test_one_solid_fill_refuses_a_shape_with_a_second_style_set():

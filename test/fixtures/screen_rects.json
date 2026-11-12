@@ -18,15 +18,14 @@
      "texture": "res://assets/ui/window/xp_bar.png"
     },
     "ExpRows/CompanionSlot0/Row/Frame": {
-     "border": 1,
-     "kind": "outline",
-     "line": "666666ff",
+     "kind": "art",
      "rect": [
-      49.2,
-      223.55,
-      196.8,
-      83.2
-     ]
+      49.05,
+      223.425,
+      203.25,
+      89.5
+     ],
+     "texture": "res://assets/ui/window/victory_row.png"
     },
     "ExpRows/CompanionSlot0/Row/Gloss": {
      "kind": "art",
@@ -47,7 +46,15 @@
       254.9,
       124.9,
       15.05
-     ]
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000ff",
+      "offset": [
+       3.5355,
+       3.5355
+      ]
+     }
     },
     "ExpRows/CompanionSlot0/Row/NameLabel": {
      "color": "ccccccff",
@@ -58,7 +65,15 @@
       236.9,
       124.9,
       15.05
-     ]
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000ff",
+      "offset": [
+       3.5355,
+       3.5355
+      ]
+     }
     },
     "ExpRows/CompanionSlot0/Row/PercentLabel": {
      "color": "ffffffff",
@@ -69,7 +84,15 @@
       279.0,
       30.8,
       13.7
-     ]
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000ff",
+      "offset": [
+       3.5355,
+       3.5355
+      ]
+     }
     },
     "ExpRows/CompanionSlot1/Row/Bar": {
      "kind": "art",
@@ -82,15 +105,14 @@
      "texture": "res://assets/ui/window/xp_bar.png"
     },
     "ExpRows/CompanionSlot1/Row/Frame": {
-     "border": 1,
-     "kind": "outline",
-     "line": "666666ff",
+     "kind": "art",
      "rect": [
-      49.2,
-      316.05,
-      196.8,
-      83.2
-     ]
+      49.05,
+      315.925,
+      203.25,
+      89.5
+     ],
+     "texture": "res://assets/ui/window/victory_row.png"
     },
     "ExpRows/CompanionSlot1/Row/Gloss": {
      "kind": "art",
@@ -111,7 +133,15 @@
       347.4,
       124.9,
       15.05
-     ]
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000ff",
+      "offset": [
+       3.5355,
+       3.5355
+      ]
+     }
     },
     "ExpRows/CompanionSlot1/Row/NameLabel": {
      "color": "ccccccff",
@@ -122,7 +152,15 @@
       329.4,
       124.9,
       15.05
-     ]
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000ff",
+      "offset": [
+       3.5355,
+       3.5355
+      ]
+     }
     },
     "ExpRows/CompanionSlot1/Row/PercentLabel": {
      "color": "ffffffff",
@@ -133,7 +171,15 @@
       371.5,
       30.8,
       13.7
-     ]
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000ff",
+      "offset": [
+       3.5355,
+       3.5355
+      ]
+     }
     },
     "ExpRows/PlayerSlot/Row/Bar": {
      "kind": "art",
@@ -146,15 +192,14 @@
      "texture": "res://assets/ui/window/xp_bar.png"
     },
     "ExpRows/PlayerSlot/Row/Frame": {
-     "border": 1,
-     "kind": "outline",
-     "line": "666666ff",
+     "kind": "art",
      "rect": [
-      49.2,
-      131.05,
-      196.8,
-      83.2
-     ]
+      49.05,
+      130.925,
+      203.25,
+      89.5
+     ],
+     "texture": "res://assets/ui/window/victory_row.png"
     },
     "ExpRows/PlayerSlot/Row/Gloss": {
      "kind": "art",
@@ -175,7 +220,15 @@
       162.4,
       124.9,
       15.05
-     ]
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000ff",
+      "offset": [
+       3.5355,
+       3.5355
+      ]
+     }
     },
     "ExpRows/PlayerSlot/Row/NameLabel": {
      "color": "ccccccff",
@@ -186,7 +239,15 @@
       144.4,
       124.9,
       15.05
-     ]
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000ff",
+      "offset": [
+       3.5355,
+       3.5355
+      ]
+     }
     },
     "ExpRows/PlayerSlot/Row/PercentLabel": {
      "color": "ffffffff",
@@ -197,7 +258,15 @@
       186.5,
       30.8,
       13.7
-     ]
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000ff",
+      "offset": [
+       3.5355,
+       3.5355
+      ]
+     }
     }
    },
    "port_only": [

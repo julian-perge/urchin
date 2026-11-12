@@ -41,6 +41,11 @@
 # _width to the progress (frame_181/DoAction.as:11), so zone_fill.png is the
 # full width and a scene crops or stretches it.
 #
+# THE VICTORY ROW is the row's shape 3001, rendered where the win frame places
+# the player's row with every other depth of the row hidden, so the DropShadow
+# on the row's placement draws around 3001 alone. The two other rows are the
+# same art, so its rect is measured from the row sprite's origin.
+#
 # WHAT RECTS MEAN. A piece rendered as a sprite of its own has a rect measured
 # from that sprite's origin, "relative_to": "sprite <id>", because the game
 # places the sprite in more than one spot. Every other piece is placed on the
@@ -84,6 +89,10 @@ PLATE_SPRITE = 3141
 PLATE_TEXT = 3138
 VICTORY_ROW_SPRITE = 3002
 VICTORY_GLOSS_DEPTH = 41
+# The win frame places the three victory rows at these depths, the player's
+# first. Each draws the same shape 3001 under the same DropShadow.
+VICTORY_ROW_DEPTHS = (1197, 1111, 1154)
+VICTORY_ROW_SHAPE_DEPTH = 2
 # The experience bar (2867). Frame 1 draws the normal fill (2865) and the
 # frame labelled "level" draws the fill a row jumps to when it levels up (2866).
 XP_BAR_SPRITE = 2867
@@ -104,6 +113,7 @@ PIECES: dict[str, str] = {
     "xp_gloss_victory": "the victory row's experience gloss (2998 in 3002)",
     "xp_bar": "the experience bar (2867), frame 1, the normal fill 2865",
     "xp_bar_level": "the experience bar (2867), its level frame, the fill 2866",
+    "victory_row": "the victory row's shape 3001, under the DropShadow on the row",
     "achievement_plate_1": "the achievement plate (3141), frame 1, text stripped",
     "achievement_plate_2": "the achievement plate (3141), frame 2, text stripped",
     "hotbar_square": "a hotbar square at scale 0.671, under its Bevel and Glows",
@@ -154,6 +164,7 @@ def jobs(index: SwfIndex, plate_strip: tuple[int, ...]) -> dict[str, render.Job]
         "xp_bar_level": render.Job(
             XP_BAR_SPRITE, timeline.frame_of(index, XP_BAR_SPRITE, "level"), ZOOM
         ),
+        "victory_row": victory_row(index, VICTORY_ROW_DEPTHS[0]),
         "achievement_plate_1": on_menu(
             ACHIEVEMENTS_FRAME, PLATE_DEPTH, strip=plate_strip, goto=((PLATE_DEPTH, 1),)
         ),
@@ -171,6 +182,46 @@ def jobs(index: SwfIndex, plate_strip: tuple[int, ...]) -> dict[str, render.Job]
             ZONE_BAR_SPRITE, 1, ZOOM, bar_origin, only_depths=(ZONE_BAR_FILL_DEPTH,)
         ),
     }
+
+
+def victory_row(index: SwfIndex, depth: int) -> render.Job:
+    """-> the job that renders the row at `depth` of the win frame with only
+    its shape 3001 shown. The row's DropShadow is on its placement, so it
+    draws around the shape, but not around the text, bar and face that the
+    job hides."""
+    menu_origin = render.placement_origin(index, 0, hub_frame(index), KRINMENU)
+    inner = timeline.frames(index, VICTORY_ROW_SPRITE)[0]
+    return render.Job(
+        KRINMENU,
+        timeline.frame_of(index, KRINMENU, "win"),
+        ZOOM,
+        menu_origin,
+        only_depths=(depth,),
+        hide_depths=tuple(
+            (VICTORY_ROW_SPRITE, d) for d in sorted(inner) if d != VICTORY_ROW_SHAPE_DEPTH
+        ),
+    )
+
+
+def measured_from(record: dict, origin: tuple[float, float], sprite: int) -> dict:
+    """-> a stage record moved so its rect is measured from where `sprite`
+    is placed at `origin`, so every placement of the sprite can use it."""
+    x, y, w, h = record["rect"]
+    return {
+        **record,
+        "rect": [round(x - origin[0], 4), round(y - origin[1], 4), w, h],
+        "relative_to": f"sprite {sprite}",
+    }
+
+
+def _row_origin(index: SwfIndex, depth: int) -> tuple[float, float]:
+    menu_origin = render.placement_origin(index, 0, hub_frame(index), KRINMENU)
+    win = timeline.frame_of(index, KRINMENU, "win")
+    matrix = timeline.frames(index, KRINMENU)[win - 1][depth].matrix
+    return (
+        menu_origin[0] + matrix[4] / render.TWIPS,
+        menu_origin[1] + matrix[5] / render.TWIPS,
+    )
 
 
 def same_art(a: Image.Image, b: Image.Image) -> bool:
@@ -218,10 +269,14 @@ def main():
         depth: render.Job(0, hub_frame(index), ZOOM, only_depths=(depth,))
         for depth in SQUARE_DEPTHS[1:]
     }
+    # The two companion rows are only rendered to prove they are the player
+    # row's art.
+    row_twins = {depth: victory_row(index, depth) for depth in VICTORY_ROW_DEPTHS[1:]}
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     record = {}
-    with render.frames(WEB_SWF, [*by_name.values(), *twins.values()]) as rendered:
+    jobs_run = [*by_name.values(), *twins.values(), *row_twins.values()]
+    with render.frames(WEB_SWF, jobs_run) as rendered:
         cuts: dict[str, render.Trimmed] = {}
         for name, frame in zip(by_name, rendered[: len(by_name)], strict=True):
             cut = render.trim(frame)
@@ -229,16 +284,27 @@ def main():
                 raise RuntimeError(f"{name} rendered fully transparent")
             cuts[name] = cut
         first = cuts["hotbar_square"].image
-        for depth, frame in zip(twins, rendered[len(by_name) :], strict=True):
+        squares = rendered[len(by_name) : len(by_name) + len(twins)]
+        for depth, frame in zip(twins, squares, strict=True):
             cut = render.trim(frame)
             if cut is None or not same_art(first, cut.image):
                 raise RuntimeError(
                     f"the hotbar square at depth {depth} is not the first one's art"
                 )
+        rows = rendered[len(by_name) + len(twins) :]
+        for depth, frame in zip(row_twins, rows, strict=True):
+            cut = render.trim(frame)
+            if cut is None or not same_art(cuts["victory_row"].image, cut.image):
+                raise RuntimeError(
+                    f"the victory row at depth {depth} is not the player row's art"
+                )
     for name, job in by_name.items():
         cut = cuts[name]
         png.save(cut.image, OUT_DIR / f"{name}.png")
         record[name] = record_of(job, cut)
+        if name == "victory_row":
+            origin = _row_origin(index, VICTORY_ROW_DEPTHS[0])
+            record[name] = measured_from(record[name], origin, VICTORY_ROW_SPRITE)
         print(f"{name} {record[name]['rect']} {cut.image.size}", file=sys.stderr)
     RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
 
