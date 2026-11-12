@@ -10,6 +10,9 @@ the original SWF by script, not by hand.
 - Extraction and conversion scripts are `[project.scripts]` entry points:
   `uv run extract_battle_screen`, `uv run convert_items`, and so on. Run
   `rg '^extract_|^convert_' pyproject.toml` for the list.
+- `uv run as_lookup <name>` finds a function, a global, a script or a line of
+  the original ActionScript, with its callers and the GDScript that cites it.
+  Run it before `rg` on the export.
 - Tests: `uv run gut` runs the GUT suite. `uv run gut <path>` runs one test
   file, and `uv run gut -gunit_test_name=<name>` runs the tests whose names
   contain `<name>`. Trust its exit code. It also fails the runs that GUT exits 0
