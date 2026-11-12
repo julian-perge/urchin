@@ -1,67 +1,10 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/menu/abilities_window.gd" id="1_abilwin"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/close_x.png" id="3_close"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/panel_large.png" id="4_panellarge"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/panel_center.png" id="5_panelcenter"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/window_shell.tscn" id="2_shell"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/shell_panel.tscn" id="3_panel"]
+[ext_resource type="Script" path="res://scripts/ui/float_box.gd" id="4_floatbox"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/ability_pool_row.tscn" id="7_poolrow"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vitality"]
-bg_color = Color(0.55, 0.85, 0.3, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vitality_hover"]
-bg_color = Color(0.6625, 0.8875, 0.475, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_strength"]
-bg_color = Color(0.9, 0.35, 0.3, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_strength_hover"]
-bg_color = Color(0.925, 0.5125, 0.475, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_instinct"]
-bg_color = Color(0.95, 0.65, 0.2, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_instinct_hover"]
-bg_color = Color(0.9625, 0.7375, 0.4, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_speed"]
-bg_color = Color(0.75, 0.55, 0.9, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_speed_hover"]
-bg_color = Color(0.8125, 0.6625, 0.925, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
 
 [node name="AbilitiesWindow" type="Control" groups=["abilities_window", "menu_screen"]]
 layout_mode = 3
@@ -73,88 +16,71 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_abilwin")
 
-[node name="Backdrop" type="TextureRect" parent="."]
+[node name="WindowShell" parent="." instance=ExtResource("2_shell")]
 layout_mode = 0
-offset_left = 14.2
-offset_top = 14.9
-offset_right = 782.7
-offset_bottom = 440.0
-mouse_filter = 0
-texture = ExtResource("2_backdrop")
-expand_mode = 1
-stretch_mode = 0
 
-[node name="CloseButton" type="TextureButton" parent="."]
+[node name="TreePanel" parent="." instance=ExtResource("3_panel")]
 layout_mode = 0
-offset_left = 734.5
-offset_top = 29.8
-offset_right = 771.2
-offset_bottom = 66.2
-texture_normal = ExtResource("3_close")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="StatusLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 44.9
-offset_top = 414.0
-offset_right = 744.9
-offset_bottom = 434.0
+offset_left = 44.9349
+offset_top = 73.5794
+offset_right = 294.0152
+offset_bottom = 419.3853
 mouse_filter = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
-theme_override_font_sizes/font_size = 12
+
+[node name="PointsPanel" parent="." instance=ExtResource("3_panel")]
+layout_mode = 0
+offset_left = 304.2322
+offset_top = 73.9841
+offset_right = 494.8158
+offset_bottom = 290.6298
+mouse_filter = 2
+fill = 2
+
+[node name="AttributesPanel" parent="." instance=ExtResource("3_panel")]
+layout_mode = 0
+offset_left = 304.2322
+offset_top = 301.878
+offset_right = 494.8158
+offset_bottom = 419.0798
+mouse_filter = 2
+fill = 2
+
+[node name="ActionPanel" parent="." instance=ExtResource("3_panel")]
+layout_mode = 0
+offset_left = 506.3254
+offset_top = 73.5794
+offset_right = 755.4246
+offset_bottom = 419.3853
+mouse_filter = 2
 
 [node name="TreeTitle" type="Label" parent="."]
 layout_mode = 0
-offset_left = 53.6
+offset_left = 53.65
 offset_top = 80.1
-offset_right = 285.4
-offset_bottom = 102.1
+offset_right = 282.35
+offset_bottom = 98.2
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 1)
-theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.36862746, 0.36862746, 0.36862746, 1)
+theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
-text = "Ability Tree"
-
-[node name="LeftPanel" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 44.9
-offset_top = 104.1
-offset_right = 294.0
-offset_bottom = 386.1
-mouse_filter = 2
-texture = ExtResource("4_panellarge")
-expand_mode = 1
-stretch_mode = 0
-
-[node name="MiddleTopPanel" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 308.6
-offset_top = 74.0
-offset_right = 491.7
-offset_bottom = 312.0
-mouse_filter = 2
-texture = ExtResource("5_panelcenter")
-expand_mode = 1
-stretch_mode = 0
 
 [node name="NameLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 308.6
+offset_left = 317.25
 offset_top = 79.7
-offset_right = 491.7
-offset_bottom = 101.7
+offset_right = 480.2
+offset_bottom = 95.9
 mouse_filter = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 14
 horizontal_alignment = 1
 
 [node name="LevelLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 308.6
+offset_left = 317.25
 offset_top = 99.5
-offset_right = 491.7
-offset_bottom = 117.5
+offset_right = 480.2
+offset_bottom = 115.1
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/font_size = 12
@@ -163,246 +89,263 @@ horizontal_alignment = 1
 [node name="AbilityPointsLabel" type="Label" parent="."]
 layout_mode = 0
 offset_left = 314.3
-offset_top = 122.2
-offset_right = 424.3
-offset_bottom = 138.2
+offset_top = 122.15
+offset_right = 445.5
+offset_bottom = 137.2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 12
-text = "Ability Points:"
 
 [node name="AbilityPointsValue" type="Label" parent="."]
 layout_mode = 0
-offset_left = 400.0
-offset_top = 122.2
-offset_right = 483.0
-offset_bottom = 138.2
+offset_left = 380.8
+offset_top = 122.15
+offset_right = 481.05
+offset_bottom = 137.2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 12
 horizontal_alignment = 2
-text = "0"
 
 [node name="AttributePointsLabel" type="Label" parent="."]
 layout_mode = 0
 offset_left = 314.3
-offset_top = 141.2
-offset_right = 424.3
-offset_bottom = 157.2
+offset_top = 141.15
+offset_right = 445.5
+offset_bottom = 156.2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 12
-text = "Attribute Points:"
 
 [node name="AttributePointsValue" type="Label" parent="."]
 layout_mode = 0
-offset_left = 400.0
-offset_top = 141.2
-offset_right = 483.0
-offset_bottom = 157.2
+offset_left = 380.8
+offset_top = 141.15
+offset_right = 481.05
+offset_bottom = 156.2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 12
 horizontal_alignment = 2
-text = "0"
 
-[node name="MiddleBottomPanel" type="TextureRect" parent="."]
+[node name="HintLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 308.6
-offset_top = 322.0
-offset_right = 491.7
-offset_bottom = 430.0
+offset_left = 319.95
+offset_top = 171.7
+offset_right = 475.65
+offset_bottom = 272.5
 mouse_filter = 2
-texture = ExtResource("5_panelcenter")
-expand_mode = 1
-stretch_mode = 0
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
 
 [node name="AttributesTitle" type="Label" parent="."]
 layout_mode = 0
-offset_left = 308.6
-offset_top = 324.0
-offset_right = 491.7
-offset_bottom = 340.0
+offset_left = 313.0
+offset_top = 306.8
+offset_right = 473.45
+offset_bottom = 324.7
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
-text = "Your Attributes"
 
-[node name="VitalityPlus" type="Button" parent="."]
+[node name="PlusColumn" type="Container" parent="."]
 layout_mode = 0
-offset_left = 318.0
-offset_top = 341.4
-offset_right = 344.0
-offset_bottom = 355.4
-theme_override_font_sizes/font_size = 11
+offset_left = 310.55
+offset_top = 339.25
+offset_right = 354.8
+offset_bottom = 409.6
+mouse_filter = 2
+script = ExtResource("4_floatbox")
+
+[node name="VitalitySlot" type="Control" parent="PlusColumn"]
+custom_minimum_size = Vector2(44.25, 17.75)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="VitalityPlus" type="Button" parent="PlusColumn/VitalitySlot"]
+layout_mode = 0
+offset_right = 44.1
+offset_bottom = 16.45
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_vitality")
-theme_override_styles/hover = SubResource("StyleBoxFlat_vitality_hover")
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
 text = "+"
 
-[node name="VitalityLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 352.0
-offset_top = 340.4
-offset_right = 432.0
-offset_bottom = 356.4
+[node name="StrengthSlot" type="Control" parent="PlusColumn"]
+custom_minimum_size = Vector2(44.25, 18.5)
+layout_mode = 2
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.55, 0.85, 0.3, 1)
-theme_override_font_sizes/font_size = 12
-text = "Vitality:"
 
-[node name="VitalityValue" type="Label" parent="."]
+[node name="StrengthPlus" type="Button" parent="PlusColumn/StrengthSlot"]
 layout_mode = 0
-offset_left = 400.0
-offset_top = 340.4
-offset_right = 480.0
-offset_bottom = 356.4
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.55, 0.85, 0.3, 1)
-theme_override_font_sizes/font_size = 12
-horizontal_alignment = 2
-text = "0"
-
-[node name="StrengthPlus" type="Button" parent="."]
-layout_mode = 0
-offset_left = 318.0
-offset_top = 358.9
-offset_right = 344.0
-offset_bottom = 372.9
-theme_override_font_sizes/font_size = 11
+offset_right = 44.1
+offset_bottom = 16.45
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_strength")
-theme_override_styles/hover = SubResource("StyleBoxFlat_strength_hover")
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
 text = "+"
 
-[node name="StrengthLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 352.0
-offset_top = 357.9
-offset_right = 432.0
-offset_bottom = 373.9
+[node name="InstinctSlot" type="Control" parent="PlusColumn"]
+custom_minimum_size = Vector2(44.25, 17.65)
+layout_mode = 2
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.9, 0.35, 0.3, 1)
-theme_override_font_sizes/font_size = 12
-text = "Strength:"
 
-[node name="StrengthValue" type="Label" parent="."]
+[node name="InstinctPlus" type="Button" parent="PlusColumn/InstinctSlot"]
 layout_mode = 0
-offset_left = 400.0
-offset_top = 357.9
-offset_right = 480.0
-offset_bottom = 373.9
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.9, 0.35, 0.3, 1)
-theme_override_font_sizes/font_size = 12
-horizontal_alignment = 2
-text = "0"
-
-[node name="InstinctPlus" type="Button" parent="."]
-layout_mode = 0
-offset_left = 318.0
-offset_top = 377.1
-offset_right = 344.0
-offset_bottom = 391.1
-theme_override_font_sizes/font_size = 11
+offset_right = 44.1
+offset_bottom = 16.45
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_instinct")
-theme_override_styles/hover = SubResource("StyleBoxFlat_instinct_hover")
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
 text = "+"
 
-[node name="InstinctLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 352.0
-offset_top = 376.1
-offset_right = 432.0
-offset_bottom = 392.1
+[node name="SpeedSlot" type="Control" parent="PlusColumn"]
+custom_minimum_size = Vector2(44.25, 16.45)
+layout_mode = 2
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.95, 0.65, 0.2, 1)
-theme_override_font_sizes/font_size = 12
-text = "Instinct:"
 
-[node name="InstinctValue" type="Label" parent="."]
+[node name="SpeedPlus" type="Button" parent="PlusColumn/SpeedSlot"]
 layout_mode = 0
-offset_left = 400.0
-offset_top = 376.1
-offset_right = 480.0
-offset_bottom = 392.1
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.95, 0.65, 0.2, 1)
-theme_override_font_sizes/font_size = 12
-horizontal_alignment = 2
-text = "0"
-
-[node name="SpeedPlus" type="Button" parent="."]
-layout_mode = 0
-offset_left = 318.0
-offset_top = 395.2
-offset_right = 344.0
-offset_bottom = 409.2
-theme_override_font_sizes/font_size = 11
+offset_left = 0.15
+offset_right = 44.25
+offset_bottom = 16.45
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_speed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_speed_hover")
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
 text = "+"
 
-[node name="SpeedLabel" type="Label" parent="."]
+[node name="AttributeRows" type="Container" parent="."]
 layout_mode = 0
-offset_left = 352.0
-offset_top = 394.2
-offset_right = 432.0
-offset_bottom = 410.2
+offset_left = 358.9
+offset_top = 340.45
+offset_right = 477.25
+offset_bottom = 412.1
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.75, 0.55, 0.9, 1)
-theme_override_font_sizes/font_size = 12
-text = "Speed:"
+script = ExtResource("4_floatbox")
 
-[node name="SpeedValue" type="Label" parent="."]
-layout_mode = 0
-offset_left = 400.0
-offset_top = 394.2
-offset_right = 480.0
-offset_bottom = 410.2
+[node name="VitalityRow" type="Control" parent="AttributeRows"]
+custom_minimum_size = Vector2(118.35, 17.45)
+layout_mode = 2
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.75, 0.55, 0.9, 1)
+
+[node name="VitalityLabel" type="Label" parent="AttributeRows/VitalityRow"]
+layout_mode = 0
+offset_right = 81.35
+offset_bottom = 17.9
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.40392157, 0.5764706, 0.22352941, 1)
+theme_override_font_sizes/font_size = 12
+
+[node name="VitalityValue" type="Label" parent="AttributeRows/VitalityRow"]
+layout_mode = 0
+offset_left = 37.0
+offset_right = 118.35
+offset_bottom = 15.6
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.40392157, 0.5764706, 0.22352941, 1)
 theme_override_font_sizes/font_size = 12
 horizontal_alignment = 2
-text = "0"
 
-[node name="RightPanel" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 506.3
-offset_top = 104.0
-offset_right = 755.4
-offset_bottom = 406.2
+[node name="StrengthRow" type="Control" parent="AttributeRows"]
+custom_minimum_size = Vector2(118.35, 18.15)
+layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("4_panellarge")
-expand_mode = 1
-stretch_mode = 0
+
+[node name="StrengthLabel" type="Label" parent="AttributeRows/StrengthRow"]
+layout_mode = 0
+offset_right = 81.35
+offset_bottom = 17.9
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.6, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 12
+
+[node name="StrengthValue" type="Label" parent="AttributeRows/StrengthRow"]
+layout_mode = 0
+offset_left = 37.0
+offset_right = 118.35
+offset_bottom = 15.6
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.6, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+
+[node name="InstinctRow" type="Control" parent="AttributeRows"]
+custom_minimum_size = Vector2(118.35, 18.15)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="InstinctLabel" type="Label" parent="AttributeRows/InstinctRow"]
+layout_mode = 0
+offset_right = 81.35
+offset_bottom = 17.9
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.76862746, 0.54901963, 0.23529412, 1)
+theme_override_font_sizes/font_size = 12
+
+[node name="InstinctValue" type="Label" parent="AttributeRows/InstinctRow"]
+layout_mode = 0
+offset_left = 37.0
+offset_right = 118.35
+offset_bottom = 15.6
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.76862746, 0.54901963, 0.23529412, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+
+[node name="SpeedRow" type="Control" parent="AttributeRows"]
+custom_minimum_size = Vector2(118.35, 17.9)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="SpeedLabel" type="Label" parent="AttributeRows/SpeedRow"]
+layout_mode = 0
+offset_right = 81.35
+offset_bottom = 17.9
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.4509804, 0.33333334, 0.53333336, 1)
+theme_override_font_sizes/font_size = 12
+
+[node name="SpeedValue" type="Label" parent="AttributeRows/SpeedRow"]
+layout_mode = 0
+offset_left = 37.0
+offset_right = 118.35
+offset_bottom = 15.6
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.4509804, 0.33333334, 0.53333336, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
 
 [node name="ActionBarTitle" type="Label" parent="."]
 layout_mode = 0
 offset_left = 516.3
 offset_top = 80.1
-offset_right = 748.1
-offset_bottom = 102.1
+offset_right = 746.05
+offset_bottom = 98.0
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 1)
-theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.36862746, 0.36862746, 0.36862746, 1)
+theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
-text = "Combat Action Bar"
 
 [node name="PoolTitle" type="Label" parent="."]
 layout_mode = 0
 offset_left = 516.3
 offset_top = 250.1
-offset_right = 748.1
-offset_bottom = 270.1
+offset_right = 746.05
+offset_bottom = 268.0
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.36862746, 0.36862746, 0.36862746, 1)
+theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
-text = "Ability Pool"
 
 [node name="PoolBackdrop" type="ColorRect" parent="."]
 layout_mode = 0
@@ -459,11 +402,27 @@ offset_right = 800.0
 offset_bottom = 575.0
 mouse_filter = 2
 
-[connection signal="pressed" from="CloseButton" to="." method="hide"]
-[connection signal="pressed" from="VitalityPlus" to="." method="_on_attribute_plus_pressed" binds=[0]]
-[connection signal="pressed" from="StrengthPlus" to="." method="_on_attribute_plus_pressed" binds=[1]]
-[connection signal="pressed" from="InstinctPlus" to="." method="_on_attribute_plus_pressed" binds=[2]]
-[connection signal="pressed" from="SpeedPlus" to="." method="_on_attribute_plus_pressed" binds=[3]]
+[node name="TreeNodes" type="Control" parent="."]
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 575.0
+mouse_filter = 2
+
+[node name="StatusLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 44.9
+offset_top = 414.0
+offset_right = 744.9
+offset_bottom = 434.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+
+[connection signal="close_pressed" from="WindowShell" to="." method="hide"]
+[connection signal="pressed" from="PlusColumn/VitalitySlot/VitalityPlus" to="." method="_on_attribute_plus_pressed" binds=[0]]
+[connection signal="pressed" from="PlusColumn/StrengthSlot/StrengthPlus" to="." method="_on_attribute_plus_pressed" binds=[1]]
+[connection signal="pressed" from="PlusColumn/InstinctSlot/InstinctPlus" to="." method="_on_attribute_plus_pressed" binds=[2]]
+[connection signal="pressed" from="PlusColumn/SpeedSlot/SpeedPlus" to="." method="_on_attribute_plus_pressed" binds=[3]]
 [connection signal="draw" from="TreeLines" to="." method="_draw_tree_lines"]
 [connection signal="pressed" from="ScrollUpButton" to="." method="_on_pool_scrolled" binds=[-1]]
 [connection signal="pressed" from="ScrollDownButton" to="." method="_on_pool_scrolled" binds=[1]]
