@@ -6,6 +6,9 @@
       "base": 100,
       "per_level": 15
     },
+    "value": {
+      "average_rounding": "ceil"
+    },
     "bar_quartic": [
       0.016666667,
       -0.25,

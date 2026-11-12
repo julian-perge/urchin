@@ -90,6 +90,25 @@ def _average(source: str) -> dict[str, int | float]:
     return {"base": _number(base), "per_level": _number(per_level)}
 
 
+def _value(source: str) -> dict[str, str]:
+    """-> how the script rounds the average that it adds to a bar's
+    allocation. The bar's value is allocation + rounding(average), and x is
+    value / average, with the average not rounded. The piercing and defense
+    statements must agree."""
+    roundings = []
+    for value, sets in (("yut_per2", "PerSets"), ("yut_def2", "DefSets")):
+        found = _one(
+            rf'{value}\[wefjnew\] = _root\.Krin\["{sets}" \+ '
+            r"_root\.Krin\.MenuPlayerSelect\]\[wefjnew\] \+ "
+            rf"Math\.(\w+)\({NUM} \+ {NUM} \* {LEVEL}\);",
+            source,
+            value,
+        )
+        _one(rf"CRITCALC_X = {value}\[wefjnew\] / AVGNUMC;", source, f"x of {value}")
+        roundings.append(found.group(1))
+    return {"average_rounding": _same("yut_def2", *roundings)}
+
+
 def _capped(source: str, clip: str) -> list[str]:
     return re.findall(
         rf'if\({clip}\["(\w+)" \+ wefjnew\]\._height > '
@@ -127,6 +146,7 @@ def parse_element_bars(source: str) -> dict:
     )
     return {
         "average": _average(source),
+        "value": _value(source),
         "bar_quartic": _same("nT4", _quartic(source, "nT1"), _quartic(source, "nT4")),
         "gbar": {
             "factor": _same(
@@ -154,6 +174,14 @@ def _layer(index: SwfIndex, owner: int, name: str | None) -> timeline.Layer:
     return found[0]
 
 
+def _scale_y(layer: timeline.Layer) -> float:
+    """-> the layer's y scale. A rotated or skewed layer is refused, because
+    its height then depends on the shape's width too."""
+    if layer.matrix[1] != 0 or layer.matrix[2] != 0:
+        raise ValueError(f"character {layer.character_id} is placed rotated or skewed")
+    return layer.matrix[3]
+
+
 def bar_save_height(index: SwfIndex, owner: int) -> float:
     """-> the _height of the bar0 clip in sprite owner, in px. The script
     stores it as saveH before it resizes the bar. The clip holds "inner",
@@ -161,9 +189,9 @@ def bar_save_height(index: SwfIndex, owner: int) -> float:
     scale = 1.0
     layer = _layer(index, owner, "bar0")
     for name in ("inner", None):
-        scale *= layer.matrix[3]
+        scale *= _scale_y(layer)
         layer = _layer(index, layer.character_id, name)
-    scale *= layer.matrix[3]
+    scale *= _scale_y(layer)
     _xmin, ymin, _xmax, ymax = shape_bounds(index, layer.character_id)
     # Flash keeps a clip's bounds in whole twips, and 20 twips are 1 px.
     return round((ymax - ymin) * scale) / 20
