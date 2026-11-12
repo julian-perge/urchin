@@ -5,7 +5,7 @@
 #   over the large panel, shopkeeper dialogue beneath it
 # - middle: the dressed player doll with the 7 equip slots (top panel) and
 #   the 15-item shop catalog on a 5x3 grid (bottom panel)
-# - right: the shared InventoryPanel (6x6 grid + money bar + sell/drop)
+# - right: the shared RightColumn, with its sell slot shown
 #
 # Click a catalog item to buy it; click an inventory item to equip it;
 # click an equip slot to unequip. Sell pays 15% of list price (button 3015).
@@ -15,7 +15,6 @@ signal store_closed
 
 const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
 
-const INVENTORY_AT: Vector2 = Vector2(503.5, 81.6)
 # 15 catalog slots, 5 columns (3 rows) - keep in sync with StoreItems'
 # `columns` property in store_window.tscn.
 const CATALOG_SLOTS: int = 15
@@ -40,8 +39,8 @@ const PURCHASE_HINT: String = "Click on items to purchase:"
 @onready var store_items: GridContainer = $StoreItems
 @onready var _status_label: Label = $StatusLabel
 @onready var _purchase_hint: Label = $PurchaseHintLabel
+@onready var right_column: RightColumn = $RightColumn
 
-var inventory_panel: InventoryPanel
 var equip_view: EquipDollView
 
 var selected_store_slot: ItemSlot = null
@@ -51,10 +50,10 @@ func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_purchase_hint.text = PURCHASE_HINT
 	_build_middle()
-	_build_inventory()
+	right_column.show_sell_button(true)
 	GameData.gold_changed.connect(func(_amount):
 		if visible:
-			inventory_panel.set_gold(GameData.get_player_gold()))
+			right_column.set_gold(GameData.get_player_gold()))
 	GameData.inventory_changed.connect(func():
 		if visible:
 			refresh_store())
@@ -74,16 +73,6 @@ func _build_middle() -> void:
 		store_items.add_child(slot)
 
 
-func _build_inventory() -> void:
-	inventory_panel = preload("res://scenes/ui/inventory.tscn").instantiate()
-	inventory_panel.position = INVENTORY_AT
-	add_child(inventory_panel)
-	inventory_panel.show_sell_button(true)
-	inventory_panel.item_selected.connect(_on_inventory_item_selected)
-	inventory_panel.sell_pressed.connect(_on_sell_pressed)
-	inventory_panel.delete_pressed.connect(_on_delete_pressed)
-
-
 func open_store():
 	show()
 	refresh_store()
@@ -96,11 +85,11 @@ func refresh_store():
 		shop_backdrop.texture = backdrop
 	var dialogue: String = StoreManager.get_current_shop_dialogue()
 	shop_dialogue.text = dialogue if dialogue != "" else "..."
-	inventory_panel.set_gold(GameData.get_player_gold())
+	right_column.set_gold(GameData.get_player_gold())
 	_load_store_items()
 	var save: PlayerSave = GameData.current_save
 	if save != null:
-		inventory_panel.populate_from_save(save, ItemManagerAuto.items_by_id)
+		right_column.populate_from_save(save, ItemManagerAuto.items_by_id)
 		equip_view.refresh(save, ItemManagerAuto.items_by_id)
 
 

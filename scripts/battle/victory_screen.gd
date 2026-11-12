@@ -4,7 +4,7 @@
 # - middle: "Victory! Items that dropped:" with the drop slots - CLICK a
 #   drop to keep it (moves into the first free inventory cell), gold
 #   call-out text, money/exp gained, and the green Proceed! button
-# - right: the shared InventoryPanel
+# - right: the shared RightColumn, with its sell slot hidden
 # Reuses the menu chrome (MenuTheme) - the original showed this inside the
 # same red menu shell.
 extends Control
@@ -14,7 +14,6 @@ signal proceed_pressed
 
 const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
 
-const INVENTORY_AT: Vector2 = Vector2(503.5, 81.6)
 const DROP_ORIGIN: Vector2 = Vector2(321.0, 130.0)
 const DROP_COLUMNS: int = 4
 
@@ -27,10 +26,9 @@ const PORTRAITS: Dictionary[int, String] = {
 	5: "portraits/amber.png",
 }
 
-var inventory_panel: InventoryPanel
-
 var _drop_slots: Array[ItemSlot] = []
 
+@onready var right_column: RightColumn = $RightColumn
 @onready var _money_value: Label = $MoneyValue
 @onready var _exp_value: Label = $ExpValue
 @onready var _player_row: VictoryExpRow = $ExpRows/PlayerSlot/Row
@@ -39,10 +37,7 @@ var _drop_slots: Array[ItemSlot] = []
 
 
 func _ready():
-	inventory_panel = preload("res://scenes/ui/inventory.tscn").instantiate()
-	inventory_panel.position = INVENTORY_AT
-	add_child(inventory_panel)
-	inventory_panel.show_sell_button(false)
+	right_column.show_sell_button(false)
 
 
 # The original's Proceed works once, because its release always leaves the
@@ -60,8 +55,8 @@ func setup(save: PlayerSave, settlement: BattleSettlement) -> void:
 	_exp_value.text = "%d%%" % int(settlement.xp_gained)
 	_build_experience_rows(settlement)
 	_build_drop_slots(save, settlement.drops)
-	inventory_panel.populate_from_save(save, ItemManagerAuto.items_by_id)
-	inventory_panel.set_gold(save.euro)
+	right_column.populate_from_save(save, ItemManagerAuto.items_by_id)
+	right_column.set_gold(save.euro)
 
 
 # The player's row is at the top. The two below show friendlySlotsFFTT[0] and
@@ -103,4 +98,4 @@ func _on_drop_clicked(slot: ItemSlot, save: PlayerSave) -> void:
 		return  # inventory full - the drop stays claimable
 	save.item_array[empty] = slot.item.id
 	slot.set_item(null)
-	inventory_panel.populate_from_save(save, ItemManagerAuto.items_by_id)
+	right_column.populate_from_save(save, ItemManagerAuto.items_by_id)

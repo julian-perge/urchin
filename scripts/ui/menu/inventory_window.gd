@@ -52,7 +52,7 @@ func _ready():
 	_build_left_panel()
 	_build_center_panel()
 	_build_party_bar()
-	right_column.show_sell_button(true)
+	right_column.show_sell_button(false)
 	GameData.inventory_changed.connect(_refresh_if_visible)
 	GameData.gold_changed.connect(func(_amount): _refresh_if_visible())
 	visibility_changed.connect(func():
@@ -155,10 +155,6 @@ func _on_inventory_item_selected(slot: ItemSlot) -> void:
 func _on_equip_slot_clicked(equip_index: int) -> void:
 	if not GameData.unequip_to_inventory(equip_index):
 		_status_label.text = "Inventory is full." if GameData.current_save != null else ""
-
-
-func _on_sell_pressed(item: GameItem) -> void:
-	GameData.sell_item(item)
 
 
 func _on_delete_pressed(slot: ItemSlot) -> void:

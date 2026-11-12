@@ -120,7 +120,7 @@ func _on_gui_input(event: InputEvent) -> void:
 
 # Drag source (Godot's built-in Control drag API - see
 # .claude/plan_item_drag_and_drop.md). "drag_source"/"drag_index" are set
-# by whichever host owns this slot (inventory_panel.gd: "inventory" +
+# by whichever host owns this slot (right_column.gd: "inventory" +
 # save_index; equip_doll_view.gd: "equip" + equip_index) - ItemSlot itself
 # has no opinion on which kind of slot it is. A dragged-from empty slot
 # (item == null) starts no drag at all, same as Godot's default when this

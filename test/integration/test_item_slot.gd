@@ -23,7 +23,7 @@ func test_highlight_toggles_on_hover_signals():
 
 
 # Drag source (.claude/plan_item_drag_and_drop.md Task 2) - "drag_source"/
-# "drag_index" are set by whichever host owns the slot (inventory_panel.gd/
+# "drag_index" are set by whichever host owns the slot (right_column.gd/
 # equip_doll_view.gd), not by ItemSlot itself, so an unowned slot in this
 # test falls back to the same defaults _get_drag_data() itself declares.
 func test_get_drag_data_on_empty_slot_starts_no_drag():

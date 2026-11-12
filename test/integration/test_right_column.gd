@@ -1,5 +1,6 @@
 # RightColumn (spec/107-window-shell.md): the sell slot as a drop target, the
-# money bar's two Labels, the grid, and the Inventory window that hosts it.
+# money bar's two Labels, the grid, and the Inventory and Victory hosts.
+# test_store_window.gd checks the Store host.
 # Over the sell slot, a dragged item shows its price in the slot's tooltip, and
 # a drop sells it through sell_pressed, as a click does.
 extends GutTest
@@ -80,6 +81,19 @@ func test_show_sell_button_shows_and_hides_the_sell_slot():
 	assert_true(column.sell_button.visible)
 
 
+func test_a_hidden_sell_slot_refuses_a_drop_and_sells_nothing():
+	var column: RightColumn = add_child_autofree(RightColumnScene.instantiate())
+	var item: GameItem = _make_item(100.0)
+	var default_tooltip: String = column.sell_button.tooltip_text
+	var at_position: Vector2 = column.sell_button.get_rect().get_center()
+	column.show_sell_button(false)
+	watch_signals(column)
+	assert_false(column._can_drop_data(at_position, {"item": item}))
+	column._drop_data(at_position, {"item": item})
+	assert_signal_not_emitted(column, "sell_pressed")
+	assert_eq(column.sell_button.tooltip_text, default_tooltip)
+
+
 func test_the_grid_holds_36_slots_in_save_order():
 	var column: RightColumn = add_child_autofree(RightColumnScene.instantiate())
 	assert_eq(column.slots.size(), 36)
@@ -130,17 +144,18 @@ func _window_with_item_in_slot_0() -> Array:
 	return [window, item]
 
 
-# The sell and delete slots reach the window through the [connection] lines in
-# right_column.tscn and inventory_window.tscn.
-func test_the_sell_slot_sells_the_selected_item_through_the_window():
+# KRINMENU's inventory frame does not place the sell slot (depth 1281). Only
+# the shop frame does (spec/107-window-shell.md, RightColumn).
+func test_the_inventory_window_hides_the_sell_slot_and_refuses_a_drop_on_it():
 	var made: Array = _window_with_item_in_slot_0()
-	var item: GameItem = made[1]
-	var euro_before: float = GameData.current_save.euro
-	made[0].right_column.sell_button.pressed.emit()
-	assert_eq(int(GameData.current_save.item_array[0]), 0)
-	assert_eq(GameData.current_save.euro, euro_before + ceil(item.price * 0.15))
+	var column: RightColumn = made[0].right_column
+	assert_false(column.sell_button.visible)
+	var at_position: Vector2 = column.sell_button.get_rect().get_center()
+	assert_false(column._can_drop_data(at_position, {"item": made[1]}))
 
 
+# The delete slot reaches the window through the [connection] lines in
+# right_column.tscn and inventory_window.tscn.
 func test_the_delete_slot_destroys_the_selected_item_through_the_window():
 	var made: Array = _window_with_item_in_slot_0()
 	var euro_before: float = GameData.current_save.euro
@@ -154,7 +169,24 @@ func test_the_inventory_window_instances_the_right_column_and_no_copy_of_it():
 	var columns: Array[Node] = window.find_children("*", "RightColumn", true, false)
 	assert_eq(columns.size(), 1)
 	assert_eq(window.right_column, columns[0])
-	assert_eq(window.find_children("*", "InventoryPanel", true, false), [] as Array[Node])
 	var slots: Array[Node] = window.find_children("*", "ItemSlot", true, false)
 	var grid_slots: Array[Node] = slots.filter(func(slot: Node) -> bool: return slot.get_meta("drag_source", "") == "inventory")
 	assert_eq(grid_slots.size(), 36, "the window adds no grid slot of its own")
+
+
+func _right_column_rect() -> Array:
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://test/fixtures/screen_rects.json"))
+	return record["scenes"]["res://scenes/ui/window/right_column.tscn"]["pieces"]["TallPanel"]["rect"]
+
+
+# The win frame shows the right column with no sell slot.
+func test_the_victory_screen_instances_the_right_column_with_the_sell_slot_hidden():
+	var victory: Control = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
+	await wait_process_frames(2)
+	var columns: Array[Node] = victory.find_children("*", "RightColumn", true, false)
+	assert_eq(columns.size(), 1)
+	assert_eq(victory.right_column, columns[0])
+	assert_eq(victory.right_column.owner, victory, "the column is a node of victory_screen.tscn")
+	assert_false(victory.right_column.sell_button.visible)
+	var rect: Array = _right_column_rect()
+	assert_almost_eq(victory.right_column.global_position, Vector2(rect[0], rect[1]), Vector2(0.5, 0.5))

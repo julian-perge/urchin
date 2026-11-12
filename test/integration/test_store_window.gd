@@ -1,50 +1,55 @@
-# Integration test for the repaired store UI: the scene instantiates without
-# missing-node errors, the InventoryPanel API drives the instanced
-# inventory.tscn, and buy/sell flow through GameData against a live save.
+# Integration test for the Store window: the scene instances RightColumn with
+# its sell slot shown, and buy and sell flow through GameData against a live
+# save.
 extends GutTest
 
 const StoreWindowScene = preload("res://scenes/ui/store/store_window.tscn")
-const GameItemScript = preload("res://scripts/entities/game_item.gd")
 
 
-func _make_item(id: int, price: int) -> GameItem:
-	var item = Resource.new()
-	item.set_script(GameItemScript)
-	item.id = id
-	item.display_name = "Test Item %d" % id
-	item.item_type = GameItem.ItemType.HEAD
-	item.price = price
-	item.stats = {}
-	return item
+func after_each():
+	GameData.current_save = null
 
 
 func test_scene_instantiates_with_wired_nodes():
 	var window = add_child_autofree(StoreWindowScene.instantiate())
 	assert_not_null(window.store_items, "%StoreItems resolves")
-	assert_not_null(window.inventory_panel, "instanced inventory panel found")
-	assert_true(window.inventory_panel is InventoryPanel, "inventory.tscn carries the panel script")
-	assert_not_null(window.inventory_panel.gold_label, "%PlayerGold resolves inside the panel")
-	assert_not_null(window.inventory_panel.sell_button)
-	assert_not_null(window.inventory_panel.inventory_grid)
+	assert_true(window.right_column is RightColumn)
 
 
-func test_inventory_panel_populate_and_selection():
-	var window = add_child_autofree(StoreWindowScene.instantiate())
-	var panel: InventoryPanel = window.inventory_panel
-	var item = _make_item(1, 10)
-	panel.populate([item])
-	var first_slot: ItemSlot = null
-	for child in panel.inventory_grid.get_children():
-		if child is ItemSlot:
-			first_slot = child
+# The shop frame is the one frame that places the sell slot
+# (spec/107-window-shell.md, RightColumn).
+func test_the_store_instances_the_right_column_with_the_sell_slot_shown():
+	var window: Control = add_child_autofree(StoreWindowScene.instantiate())
+	await wait_process_frames(2)
+	var columns: Array[Node] = window.find_children("*", "RightColumn", true, false)
+	assert_eq(columns.size(), 1)
+	assert_eq(window.right_column, columns[0])
+	assert_eq(window.right_column.owner, window, "the column is a node of store_window.tscn")
+	assert_true(window.right_column.sell_button.visible)
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://test/fixtures/screen_rects.json"))
+	var rect: Array = record["scenes"]["res://scenes/ui/window/right_column.tscn"]["pieces"]["TallPanel"]["rect"]
+	assert_almost_eq(window.right_column.global_position, Vector2(rect[0], rect[1]), Vector2(0.5, 0.5))
+
+
+# The sell slot reaches the window through the [connection] lines in
+# right_column.tscn and store_window.tscn.
+func test_the_sell_slot_sells_the_selected_item_and_shows_the_new_amount():
+	GameData.current_save = PlayerSave.new_game("StoreSellTest", 0)
+	var item: GameItem = null
+	for candidate: GameItem in ItemManagerAuto.items_by_id.values():
+		if candidate.price > 0.0:
+			item = candidate
 			break
-	assert_not_null(first_slot)
-	assert_eq(first_slot.item, item, "first slot holds the item")
-	var selected = []
-	panel.item_selected.connect(func(slot): selected.append(slot))
-	panel._on_slot_clicked(first_slot)
-	assert_eq(selected.size(), 1, "selection signal fired")
-	assert_true(first_slot.selected)
+	GameData.current_save.item_array[0] = item.id
+	var window = add_child_autofree(StoreWindowScene.instantiate())
+	window.refresh_store()
+	var euro_before: float = GameData.current_save.euro
+	window.right_column.selected_slot = window.right_column.slots[0]
+	window.right_column.sell_button.pressed.emit()
+	assert_eq(int(GameData.current_save.item_array[0]), 0)
+	assert_eq(GameData.current_save.euro, euro_before + ceil(item.price * 0.15))
+	assert_eq(window.right_column.amount_label.text, str(int(GameData.current_save.euro)))
+	assert_null(window.right_column.slots[0].item)
 
 
 # The shop frame fills its vb1 field with MENU[6]
@@ -52,14 +57,6 @@ func test_inventory_panel_populate_and_selection():
 func test_purchase_hint_is_the_original_string():
 	var window = add_child_autofree(StoreWindowScene.instantiate())
 	assert_eq(window.get_node("PurchaseHintLabel").text, "Click on items to purchase:")
-
-
-func test_gold_formatting():
-	var window = add_child_autofree(StoreWindowScene.instantiate())
-	window.inventory_panel.set_gold(1234567.0)
-	assert_eq(window.inventory_panel.gold_label.text, "€ 1,234,567")
-	window.inventory_panel.set_gold(0.0)
-	assert_eq(window.inventory_panel.gold_label.text, "€ 0")
 
 
 # The catalogs are real source data that gets corrected from time to time (see
