@@ -10,12 +10,12 @@ extends GutHookScript
 # "still in use at exit" (julian-perge/urchin#187). In 2026-11-11 tests, 5 of
 # 10 full runs leaked without this hook and 0 of 10 with it.
 #
-# So the hook stops every sound and waits long enough for several mix steps.
+# So the hook stops every sound and then waits 0.1 s. That wait is the value
+# measured in those 10 runs, not a value calculated from the mix rate.
 
 const AUDIO_RELEASE_SECONDS: float = 0.1
 
 
 func run():
-	# AudioManager's _ready() renames the AudioManagerAuto autoload node.
-	gut.get_tree().root.get_node("AudioManager").stop_all_sounds()
+	AudioManagerAuto.stop_all_sounds()
 	await gut.get_tree().create_timer(AUDIO_RELEASE_SECONDS).timeout
