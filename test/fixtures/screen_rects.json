@@ -647,6 +647,538 @@
    ],
    "timeline": 3142
   },
+  "res://scenes/ui/window/right_column.tscn": {
+   "frame": "shop",
+   "origin": [
+    400.5,
+    222.4
+   ],
+   "pieces": {
+    "Amount": {
+     "color": "fad95aff",
+     "font_size": 22.0,
+     "kind": "text",
+     "line_pitch": 24.0,
+     "rect": [
+      539.1,
+      373.55,
+      112.4,
+      24.55
+     ]
+    },
+    "BarPanel": {
+     "border": 1,
+     "fill": "404040ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      503.5,
+      358.2,
+      249.05,
+      50.85
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "DeleteSlot/Art": {
+     "kind": "art",
+     "rect": [
+      707.55,
+      368.425,
+      31.0,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/delete_slot.png"
+    },
+    "EuroSign": {
+     "color": "fad95aff",
+     "font_size": 31.0,
+     "kind": "text",
+     "rect": [
+      507.25,
+      366.9,
+      26.4,
+      39.4
+     ]
+    },
+    "Grid/Row0/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row0/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row0/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row0/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row0/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row0/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row1/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row1/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row1/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row1/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row1/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row1/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row2/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row2/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row2/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row2/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row2/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row2/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row3/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row3/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row3/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row3/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row3/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row3/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row4/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row4/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row4/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row4/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row4/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row4/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row5/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row5/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row5/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row5/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row5/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "Grid/Row5/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png"
+    },
+    "SellSlot/Art": {
+     "kind": "art",
+     "rect": [
+      669.3,
+      368.425,
+      31.25,
+      31.25
+     ],
+     "texture": "res://assets/ui/window/sell_slot.png"
+    },
+    "TallPanel": {
+     "border": 1,
+     "fill": "373737ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      503.5,
+      81.6,
+      249.05,
+      267.15
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "Title": {
+     "color": "5e5e5eff",
+     "font_size": 13.0,
+     "kind": "text",
+     "rect": [
+      514.3,
+      89.1,
+      229.75,
+      17.9
+     ]
+    }
+   },
+   "port_only": [
+    "Grid/Row0/Slot0/ItemIcon",
+    "Grid/Row0/Slot0/Highlight",
+    "Grid/Row0/Slot1/ItemIcon",
+    "Grid/Row0/Slot1/Highlight",
+    "Grid/Row0/Slot2/ItemIcon",
+    "Grid/Row0/Slot2/Highlight",
+    "Grid/Row0/Slot3/ItemIcon",
+    "Grid/Row0/Slot3/Highlight",
+    "Grid/Row0/Slot4/ItemIcon",
+    "Grid/Row0/Slot4/Highlight",
+    "Grid/Row0/Slot5/ItemIcon",
+    "Grid/Row0/Slot5/Highlight",
+    "Grid/Row1/Slot0/ItemIcon",
+    "Grid/Row1/Slot0/Highlight",
+    "Grid/Row1/Slot1/ItemIcon",
+    "Grid/Row1/Slot1/Highlight",
+    "Grid/Row1/Slot2/ItemIcon",
+    "Grid/Row1/Slot2/Highlight",
+    "Grid/Row1/Slot3/ItemIcon",
+    "Grid/Row1/Slot3/Highlight",
+    "Grid/Row1/Slot4/ItemIcon",
+    "Grid/Row1/Slot4/Highlight",
+    "Grid/Row1/Slot5/ItemIcon",
+    "Grid/Row1/Slot5/Highlight",
+    "Grid/Row2/Slot0/ItemIcon",
+    "Grid/Row2/Slot0/Highlight",
+    "Grid/Row2/Slot1/ItemIcon",
+    "Grid/Row2/Slot1/Highlight",
+    "Grid/Row2/Slot2/ItemIcon",
+    "Grid/Row2/Slot2/Highlight",
+    "Grid/Row2/Slot3/ItemIcon",
+    "Grid/Row2/Slot3/Highlight",
+    "Grid/Row2/Slot4/ItemIcon",
+    "Grid/Row2/Slot4/Highlight",
+    "Grid/Row2/Slot5/ItemIcon",
+    "Grid/Row2/Slot5/Highlight",
+    "Grid/Row3/Slot0/ItemIcon",
+    "Grid/Row3/Slot0/Highlight",
+    "Grid/Row3/Slot1/ItemIcon",
+    "Grid/Row3/Slot1/Highlight",
+    "Grid/Row3/Slot2/ItemIcon",
+    "Grid/Row3/Slot2/Highlight",
+    "Grid/Row3/Slot3/ItemIcon",
+    "Grid/Row3/Slot3/Highlight",
+    "Grid/Row3/Slot4/ItemIcon",
+    "Grid/Row3/Slot4/Highlight",
+    "Grid/Row3/Slot5/ItemIcon",
+    "Grid/Row3/Slot5/Highlight",
+    "Grid/Row4/Slot0/ItemIcon",
+    "Grid/Row4/Slot0/Highlight",
+    "Grid/Row4/Slot1/ItemIcon",
+    "Grid/Row4/Slot1/Highlight",
+    "Grid/Row4/Slot2/ItemIcon",
+    "Grid/Row4/Slot2/Highlight",
+    "Grid/Row4/Slot3/ItemIcon",
+    "Grid/Row4/Slot3/Highlight",
+    "Grid/Row4/Slot4/ItemIcon",
+    "Grid/Row4/Slot4/Highlight",
+    "Grid/Row4/Slot5/ItemIcon",
+    "Grid/Row4/Slot5/Highlight",
+    "Grid/Row5/Slot0/ItemIcon",
+    "Grid/Row5/Slot0/Highlight",
+    "Grid/Row5/Slot1/ItemIcon",
+    "Grid/Row5/Slot1/Highlight",
+    "Grid/Row5/Slot2/ItemIcon",
+    "Grid/Row5/Slot2/Highlight",
+    "Grid/Row5/Slot3/ItemIcon",
+    "Grid/Row5/Slot3/Highlight",
+    "Grid/Row5/Slot4/ItemIcon",
+    "Grid/Row5/Slot4/Highlight",
+    "Grid/Row5/Slot5/ItemIcon",
+    "Grid/Row5/Slot5/Highlight"
+   ],
+   "timeline": 3142
+  },
   "res://scenes/ui/window/window_shell.tscn": {
    "frame": "inventory",
    "origin": [

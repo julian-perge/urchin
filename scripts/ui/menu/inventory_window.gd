@@ -5,7 +5,7 @@
 #   slots around it, and the experience bar
 # - center panel: the five stats plus the Piercing/Defense element bars
 #   (fill math from the frame-1 DoAction, see MenuTheme.bar_fill_fraction)
-# - right: the shared InventoryPanel (6x6 grid + money bar + sell/drop)
+# - right: the shared RightColumn (6x6 grid + money bar + sell/delete)
 # - bottom-left bar: party portrait frames (art from sprite 2979 is a
 #   backlog item - frames show names for now)
 #
@@ -14,7 +14,6 @@
 extends Control
 
 
-const INVENTORY_AT: Vector2 = Vector2(503.5, 81.6)
 # playerSlot0-6 centers from the frame-1 dump.
 const EQUIP_SLOT_CENTERS: Dictionary[int, Vector2] = {
 	0: Vector2(82.2, 172.2),
@@ -34,9 +33,9 @@ const BAR_TRACK_HEIGHT: float = 78.0
 # width the fraction-scaled fill is computed against.
 const EXP_FILL: Rect2 = Rect2(172.6, 283.3, 95.1, 18.7)
 
-var inventory_panel: InventoryPanel
 var equip_view: EquipDollView
 
+@onready var right_column: RightColumn = $RightColumn
 @onready var _status_label: Label = $StatusLabel
 @onready var _name_label: Label = $NameLabel
 @onready var _level_label: Label = $LevelLabel
@@ -53,7 +52,7 @@ func _ready():
 	_build_left_panel()
 	_build_center_panel()
 	_build_party_bar()
-	_build_inventory()
+	right_column.show_sell_button(true)
 	GameData.inventory_changed.connect(_refresh_if_visible)
 	GameData.gold_changed.connect(func(_amount): _refresh_if_visible())
 	visibility_changed.connect(func():
@@ -93,16 +92,6 @@ func _build_party_bar() -> void:
 	_portrait_frames = [$Portrait0, $Portrait1, $Portrait2, $Portrait3, $Portrait4, $Portrait5]
 
 
-func _build_inventory() -> void:
-	inventory_panel = preload("res://scenes/ui/inventory.tscn").instantiate()
-	inventory_panel.position = INVENTORY_AT
-	add_child(inventory_panel)
-	inventory_panel.item_selected.connect(_on_inventory_item_selected)
-	inventory_panel.sell_pressed.connect(_on_sell_pressed)
-	inventory_panel.delete_pressed.connect(_on_delete_pressed)
-	inventory_panel.show_sell_button(true)
-
-
 func refresh() -> void:
 	var save: PlayerSave = GameData.current_save
 	if save == null:
@@ -121,8 +110,8 @@ func refresh() -> void:
 	_exp_fill.size.x = EXP_FILL.size.x * exp_fraction
 	_exp_percent.text = "%d%%" % int(save.experience)
 	equip_view.refresh(save, ItemManagerAuto.items_by_id)
-	inventory_panel.populate_from_save(save, ItemManagerAuto.items_by_id)
-	inventory_panel.set_gold(save.euro)
+	right_column.populate_from_save(save, ItemManagerAuto.items_by_id)
+	right_column.set_gold(save.euro)
 	_refresh_portraits(save)
 
 

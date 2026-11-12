@@ -125,7 +125,10 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 		if node == null:
 			found.append("%s: no such Control in the scene" % path)
 			continue
-		var actual := Rect2(node.global_position - root.global_position, node.size)
+		# The record holds Stage positions. A scene such as right_column.tscn
+		# puts its root where the SWF puts the piece, so the root's own
+		# position counts.
+		var actual := Rect2(node.global_position, node.size)
 		match entry["kind"]:
 			"panel":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
@@ -343,3 +346,20 @@ func test_control_a_wrapping_label_with_the_wrong_line_pitch_fails() -> void:
 	var hint: Label = root.get_node("HintLabel")
 	hint.add_theme_constant_override("line_spacing", hint.get_theme_constant("line_spacing") + 3)
 	_assert_one_problem(_scene_problems(root, _record()["scenes"][ABILITIES_SCENE]), "HintLabel: line pitch")
+
+
+const RIGHT_COLUMN_SCENE: String = "res://scenes/ui/window/right_column.tscn"
+
+
+# A slot in row 2 that is 20 px wider pushes the five slots after it 20 px
+# right along the row's FloatBox. The wide slot fails at its bottom right, and
+# each of the five fails at both corners, so there are 11 problems, all in row 2.
+func test_control_a_right_column_slot_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(RIGHT_COLUMN_SCENE)
+	(root.get_node("Grid/Row2/Slot0") as Control).custom_minimum_size.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][RIGHT_COLUMN_SCENE])
+	assert_eq(found.size(), 11, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "Grid/Row2/Slot")
+	assert_string_starts_with(found[0] if found else "", "Grid/Row2/Slot0: bottom right")

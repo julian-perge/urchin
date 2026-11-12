@@ -710,9 +710,9 @@ func test_inventory_window_equips_from_grid_click():
 	GameData.current_save.item_array[0] = item.id
 	var window = add_child_autofree(load("res://scenes/ui/menu/inventory_window.tscn").instantiate())
 	window.refresh()
-	var slot: ItemSlot = window.inventory_panel.inventory_grid.get_child(0)
+	var slot: ItemSlot = window.right_column.slots[0]
 	assert_eq(slot.item.id, item.id, "grid slot 0 mirrors item_array[0]")
-	window.inventory_panel._on_slot_clicked(slot)
+	window.right_column._on_slot_clicked(slot)
 	var equip_slot = Equipment.slot_for_item(item)
 	assert_eq(int(GameData.current_save.equip_array[equip_slot]), item.id, "click equips into the natural slot")
 	assert_eq(int(GameData.current_save.item_array[0]), 0, "inventory cell emptied")

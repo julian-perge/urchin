@@ -1,0 +1,180 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/window/right_column.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/shell_panel.tscn" id="2_panel"]
+[ext_resource type="Script" path="res://scripts/ui/float_box.gd" id="3_floatbox"]
+[ext_resource type="Texture2D" path="res://assets/ui/window/sell_slot.png" id="4_sell"]
+[ext_resource type="Texture2D" path="res://assets/ui/window/delete_slot.png" id="5_delete"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_flat"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[node name="RightColumn" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 503.5
+offset_top = 81.6
+offset_right = 752.55
+offset_bottom = 409.05
+mouse_filter = 1
+script = ExtResource("1_script")
+
+[node name="TallPanel" parent="." instance=ExtResource("2_panel")]
+layout_mode = 0
+offset_right = 249.05
+offset_bottom = 267.15
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_left = 10.8
+offset_top = 7.5
+offset_right = 240.55
+offset_bottom = 25.4
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.36862746, 0.36862746, 0.36862746, 1)
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+
+[node name="Grid" type="Container" parent="."]
+layout_mode = 0
+offset_left = 13.9
+offset_top = 30.85
+offset_right = 234.9
+offset_bottom = 251.85
+mouse_filter = 2
+script = ExtResource("3_floatbox")
+separation = 7.0
+
+[node name="Row0" type="Container" parent="Grid"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="Row1" type="Container" parent="Grid"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="Row2" type="Container" parent="Grid"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="Row3" type="Container" parent="Grid"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="Row4" type="Container" parent="Grid"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="Row5" type="Container" parent="Grid"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="BarPanel" parent="." instance=ExtResource("2_panel")]
+layout_mode = 0
+offset_top = 276.6
+offset_right = 249.05
+offset_bottom = 327.45
+mouse_filter = 2
+fill = 1
+
+[node name="EuroSign" type="Label" parent="."]
+layout_mode = 0
+offset_left = 3.75
+offset_top = 285.3
+offset_right = 30.15
+offset_bottom = 324.7
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.98039216, 0.8509804, 0.3529412, 1)
+theme_override_font_sizes/font_size = 31
+text = "€"
+horizontal_alignment = 2
+
+[node name="Amount" type="Label" parent="."]
+layout_mode = 0
+offset_left = 35.6
+offset_top = 291.95
+offset_right = 148.0
+offset_bottom = 316.5
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.98039216, 0.8509804, 0.3529412, 1)
+theme_override_constants/line_spacing = -8
+theme_override_font_sizes/font_size = 22
+
+[node name="SellSlot" type="Button" parent="."]
+layout_mode = 0
+offset_left = 165.8
+offset_top = 286.825
+offset_right = 197.05
+offset_bottom = 318.075
+tooltip_text = "Sell Item
+Select an item, then click here to sell it for 15% of its price."
+theme_override_styles/normal = SubResource("StyleBoxEmpty_flat")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_flat")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flat")
+
+[node name="Art" type="TextureRect" parent="SellSlot"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_sell")
+expand_mode = 1
+
+[node name="DeleteSlot" type="Button" parent="."]
+layout_mode = 0
+offset_left = 204.05
+offset_top = 286.825
+offset_right = 235.05
+offset_bottom = 318.075
+tooltip_text = "Destroy Item
+Select an item, then click here to destroy it permanently."
+theme_override_styles/normal = SubResource("StyleBoxEmpty_flat")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_flat")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_flat")
+
+[node name="Art" type="TextureRect" parent="DeleteSlot"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_delete")
+expand_mode = 1
+
+[connection signal="pressed" from="SellSlot" to="." method="_on_sell_pressed"]
+[connection signal="pressed" from="DeleteSlot" to="." method="_on_delete_pressed"]

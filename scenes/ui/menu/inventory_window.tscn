@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/menu/inventory_window.gd" id="1_invwin"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/felicity.png" id="11_felicity"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/wolfgang.png" id="12_wolfgang"]
 [ext_resource type="Texture2D" path="res://assets/ui/menu/portraits/amber.png" id="13_amber"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/right_column.tscn" id="17_rightcolumn"]
 
 [node name="InventoryWindow" type="Control" groups=["inventory_window", "menu_screen"]]
 layout_mode = 3
@@ -728,4 +729,10 @@ texture = ExtResource("13_amber")
 expand_mode = 1
 stretch_mode = 0
 
+[node name="RightColumn" parent="." instance=ExtResource("17_rightcolumn")]
+layout_mode = 0
+
 [connection signal="pressed" from="CloseButton" to="." method="hide"]
+[connection signal="item_selected" from="RightColumn" to="." method="_on_inventory_item_selected"]
+[connection signal="sell_pressed" from="RightColumn" to="." method="_on_sell_pressed"]
+[connection signal="delete_pressed" from="RightColumn" to="." method="_on_delete_pressed"]
