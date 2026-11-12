@@ -49,7 +49,11 @@ look for Godot themselves, so `uv run gut` outside `just` fails.
   already got wrong once. Each one names its evidence so you can check it
   instead of trusting it.
 - Do not hand-cut art or hand-place a coordinate. If it exists in the SWF,
-  script it.
+  script it. One exception: a Screen or Window may type its numbers into its
+  `.tscn` when the rect test compares them with the SWF. Add the scene and its
+  pieces to `SCENES` in `dev/urchin_dev/swf/extract/screen_rects.py`, run
+  `just extract-screen-rects`, and `test/unit/test_screen_rects.gd` checks
+  where each piece lands, to 0.5 px.
 
 ## Read the doc that matches the task
 

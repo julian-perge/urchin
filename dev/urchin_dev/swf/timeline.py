@@ -39,7 +39,8 @@ SWAPPABLE_KINDS = {"shape", "morph"}
 class Layer:
     """What one depth shows on one frame. matrix is (scaleX, rotateSkew0,
     rotateSkew1, scaleY, tx, ty) with the translation in integer twips, as
-    swf_index.Placement stores it."""
+    swf_index.Placement stores it. filter_records holds the bytes of each
+    filter in filters, which swf_index.drop_shadow() reads."""
 
     character_id: int
     name: str | None = None
@@ -48,6 +49,7 @@ class Layer:
     clip_depth: int | None = None
     ratio: int | None = None
     filters: tuple[str, ...] = ()
+    filter_records: tuple[bytes, ...] = ()
     blend_mode: int | None = None
 
 
@@ -130,6 +132,7 @@ def _apply(index: SwfIndex, state: dict[int, Layer], event) -> None:
             clip_depth=event.clip_depth,
             ratio=event.ratio,
             filters=event.filters or (),
+            filter_records=event.filter_records or (),
             blend_mode=event.blend_mode,
         )
         return
@@ -160,5 +163,10 @@ def _apply(index: SwfIndex, state: dict[int, Layer], event) -> None:
         ),
         ratio=current.ratio if event.ratio is None else event.ratio,
         filters=current.filters if event.filters is None else event.filters,
+        filter_records=(
+            current.filter_records
+            if event.filter_records is None
+            else event.filter_records
+        ),
         blend_mode=current.blend_mode if event.blend_mode is None else event.blend_mode,
     )

@@ -26,6 +26,7 @@
 # https://open-flash.github.io/mirrors/swf-spec-19.pdf
 from __future__ import annotations
 
+import math
 import struct
 import zlib
 from dataclasses import dataclass, field
@@ -133,7 +134,8 @@ class Placement:
     translateY), with the translation in integer twips. color_transform is
     the four multiply terms (256 is 1.0) followed by the four add terms, in
     RGBA order. move is PlaceFlagMove, so a move with a character is a
-    replace."""
+    replace. filter_records holds each filter's bytes, its id first, in the
+    order of filters, so drop_shadow() can read the values."""
 
     owner: int
     frame: int
@@ -147,6 +149,7 @@ class Placement:
     color_transform: tuple[int, ...] | None = None
     ratio: int | None = None
     filters: tuple[str, ...] | None = None
+    filter_records: tuple[bytes, ...] | None = None
     blend_mode: int | None = None
     clip_actions: bool = False
 
@@ -206,6 +209,21 @@ class EditText:
     html: bool
     variable_name: str
     initial_text: str | None
+
+
+@dataclass(frozen=True)
+class DropShadow:
+    """One DropShadow filter. color is (r, g, b, a), the blurs and the
+    distance are in px, and the angle is in degrees."""
+
+    color: tuple[int, int, int, int]
+    blur_x: float
+    blur_y: float
+    angle: float
+    distance: float
+    strength: float
+    inner: bool
+    knockout: bool
 
 
 @dataclass(frozen=True)
@@ -526,16 +544,18 @@ class _Walker:
         if flags & 0x40:
             (clip_depth,) = struct.unpack_from("<H", data, p)
             p += 2
-        filters, blend_mode = None, None
+        filters, filter_records, blend_mode = None, None, None
         if code == TAG_PLACE_OBJECT3:
             if flags3 & 0x01:
                 count = data[p]
                 p += 1
-                filters = []
+                records = []
                 for _ in range(count):
-                    filters.append(FILTER_NAMES[data[p]])
-                    p += _filter_size(data, p)
-                filters = tuple(filters)
+                    size = _filter_size(data, p)
+                    records.append(data[p : p + size])
+                    p += size
+                filter_records = tuple(records)
+                filters = tuple(FILTER_NAMES[record[0]] for record in records)
             if flags3 & 0x02:
                 blend_mode = data[p]
                 p += 1
@@ -559,6 +579,7 @@ class _Walker:
                 color_transform=color_transform,
                 ratio=ratio,
                 filters=filters,
+                filter_records=filter_records,
                 blend_mode=blend_mode,
                 clip_actions=bool(flags & 0x80),
             )
@@ -724,6 +745,74 @@ def first_fill_color(index: SwfIndex, cid: int) -> tuple[int, int, int, int] | N
         return r, g, b, a
     r, g, b = index.data[pos + 1 : pos + 4]
     return r, g, b, 255
+
+
+def first_line_style(
+    index: SwfIndex, cid: int
+) -> tuple[int, tuple[int, int, int, int]] | None:
+    """-> (width in twips, (r, g, b, a)) of a DefineShape's first line style,
+    or None when the shape has no line styles. DefineShape and DefineShape2
+    store no alpha, so theirs reads as 255."""
+    code, pos = _fill_style_array(index, cid)
+    data = index.data
+    count, pos = _fill_style_count(data, pos, code)
+    for _ in range(count):
+        pos = _skip_fill_style(data, pos, code)
+    count, pos = _fill_style_count(data, pos, code)
+    if count == 0:
+        return None
+    (width,) = struct.unpack_from("<H", data, pos)
+    pos += 2
+    if code == TAG_DEFINE_SHAPE4:
+        flags = data[pos]
+        has_fill = flags & 0x08
+        pos += 2
+        if (flags >> 4) & 0x03 == 2:  # a miter join carries its limit
+            pos += 2
+        if has_fill:
+            raise ValueError(f"shape {cid}'s first line style is filled")
+    if code in (TAG_DEFINE_SHAPE3, TAG_DEFINE_SHAPE4):
+        r, g, b, a = data[pos : pos + 4]
+        return width, (r, g, b, a)
+    r, g, b = data[pos : pos + 3]
+    return width, (r, g, b, 255)
+
+
+def drop_shadow(record: bytes) -> DropShadow:
+    """-> the values of one filter record from Placement.filter_records.
+    Raises when the record is another filter."""
+    if record[0] != 0:
+        raise ValueError(f"filter {FILTER_NAMES[record[0]]} is not a DropShadow")
+    color = tuple(record[1:5])
+    blur_x, blur_y, angle, distance = struct.unpack_from("<iiii", record, 5)
+    (strength,) = struct.unpack_from("<h", record, 21)
+    flags = record[23]
+    return DropShadow(
+        color=color,
+        blur_x=blur_x / 65536,
+        blur_y=blur_y / 65536,
+        angle=round(math.degrees(angle / 65536), 2),
+        distance=distance / 65536,
+        strength=strength / 256,
+        inner=bool(flags & 0x80),
+        knockout=bool(flags & 0x40),
+    )
+
+
+def _skip_fill_style(data: bytes, pos: int, code: int) -> int:
+    kind = data[pos]
+    pos += 1
+    if kind == SOLID_FILL_TYPE:
+        return pos + (4 if code in (TAG_DEFINE_SHAPE3, TAG_DEFINE_SHAPE4) else 3)
+    if kind in BITMAP_FILL_TYPES:
+        return _skip_matrix(data, pos + 2)
+    if kind in (0x10, 0x12, 0x13):  # linear, radial and focal gradients
+        pos = _skip_matrix(data, pos)
+        stops = data[pos] & 0x0F
+        color = 4 if code in (TAG_DEFINE_SHAPE3, TAG_DEFINE_SHAPE4) else 3
+        pos += 1 + stops * (1 + color)
+        return pos + (2 if kind == 0x13 else 0)
+    raise ValueError(f"fill style type {kind:#x} at {pos - 1}")
 
 
 def _fill_style_array(index: SwfIndex, cid: int) -> tuple[int, int]:

@@ -211,6 +211,11 @@ extract-model1-animations *args: (require "ffdec" "java")
 extract-rig-clips *args: (require "ffdec" "java")
     uv run extract_rig_clips "$@"
 
+[doc('Run extract_screen_rects, which reads the SWF without ffdec')]
+[group('extract')]
+extract-screen-rects *args:
+    uv run extract_screen_rects "$@"
+
 [doc('Run extract_start_screens, which reads the SWF through ffdec')]
 [group('extract')]
 extract-start-screens *args: (require "ffdec" "java")
