@@ -1,7 +1,0 @@
-[gd_scene load_steps=3 format=3]
-
-[ext_resource type="PackedScene" uid="uid://duxqydn2hw6b3" path="res://scenes/ui/item_slot.tscn" id="1_slot"]
-[ext_resource type="Texture2D" uid="uid://bbnd6bffm6u71" path="res://assets/ui/window/slot_drop.png" id="2_art"]
-
-[node name="ItemSlot" instance=ExtResource("1_slot")]
-texture = ExtResource("2_art")
