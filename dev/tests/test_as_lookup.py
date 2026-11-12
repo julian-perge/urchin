@@ -1,14 +1,26 @@
 # These tests run as_lookup.py on the checked-in index and the tracked export,
-# and on small records built by hand. Each expected value comes from a record
-# or from an export line, so a regenerated index does not need new numbers.
+# on the tracked GDScript, and on small records and GDScript text built by hand.
+# Each expected value comes from a record, an export line or a GDScript line,
+# so a regenerated index or an edited comment does not need new numbers.
 from __future__ import annotations
 
+import re
 import subprocess
 import sys
 
 import pytest
-from urchin_dev import ACTION_SCRIPT
-from urchin_dev.as_lookup import EXPORT, INDEX, load, lookup, main, resolve
+from urchin_dev import ACTION_SCRIPT, REPO_ROOT
+from urchin_dev.as_lookup import (
+    EXPORT,
+    INDEX,
+    Citation,
+    load,
+    lookup,
+    main,
+    read_citations,
+    resolve,
+    tracked_citations,
+)
 from urchin_dev.swf import as_index
 
 EXECUTE_MOVE_FILE = "frame_42/DoAction_8.as"
@@ -377,25 +389,28 @@ def test_a_name_written_on_many_lines_prints_12_lines_and_the_count(records):
 
 
 def test_main_prints_the_answer_and_returns_the_exit_code(capsys):
+    cited = tracked_citations()
     assert main(["executeMove"]) == 0
-    assert capsys.readouterr().out == lookup("executeMove", load())[1] + "\n"
+    answer = lookup("executeMove", load(), citations=cited)[1]
+    assert capsys.readouterr().out == answer + "\n"
+    assert section(answer, "ports") != ["  none"]
     assert main(["executeMoov"]) == 1
     assert capsys.readouterr().out.startswith("no match for executeMoov\n")
 
 
 def test_main_passes_the_source_flags_and_joins_a_path_with_spaces(capsys):
     records = load()
+    cited = tracked_citations()
+
+    def answer(query: str, source: bool | None = None) -> str:
+        return lookup(query, records, source=source, citations=cited)[1] + "\n"
+
     assert main(["--source", "executeMove"]) == 0
-    assert (
-        capsys.readouterr().out == lookup("executeMove", records, source=True)[1] + "\n"
-    )
+    assert capsys.readouterr().out == answer("executeMove", True)
     assert main(["--no-source", "lifeBarUpdate"]) == 0
-    assert (
-        capsys.readouterr().out
-        == lookup("lifeBarUpdate", records, source=False)[1] + "\n"
-    )
+    assert capsys.readouterr().out == answer("lifeBarUpdate", False)
     assert main(CONDUCTOR.split(" ")) == 0
-    assert capsys.readouterr().out == lookup(CONDUCTOR, records)[1] + "\n"
+    assert capsys.readouterr().out == answer(CONDUCTOR)
 
 
 FILES = ["a/DoAction.as", "b/DoAction.as", "b/c/Other.as"]
@@ -473,3 +488,258 @@ def test_a_line_in_a_nested_function_prints_the_innermost_function(tmp_path):
     assert "line 5 is in no outline block" in out.splitlines()
     _, out = lookup("frame_1/DoAction.as:2", built, export=tmp_path)
     assert out.splitlines()[0] == "function outer()"
+
+
+GD = """\
+## Ported from frame_1/DoAction.as.
+extends Node
+
+# The cap comes from frame_42/DoAction_8.as:82.
+const CAP := 5
+
+
+# Rolls the hit (frame_42/DoAction_8.as:40-64).
+# The second line of the block has no citation.
+func roll() -> int:
+	var x := 1  # frame_42/DoAction_8.as:188, 261
+	# DefineSprite_12_bar/frame_4/DoAction.as:3-5, 9
+	return x
+
+
+var after := 0  # frame_3/DoAction.as
+
+# A blank line parts this comment from the func: frame_5/DoAction.as:6
+
+func apart() -> void:
+	pass
+
+
+class Inner:
+	# frame_7/DoAction.as:2
+	func inside() -> void:
+		pass
+
+	static func other() -> void:
+		pass  # frame_8/DoAction.as:1; frame_9/DoAction.as:4-5
+"""
+
+
+def gd_line(text: str, part: str) -> tuple[int, str]:
+    """The number and the stripped text of the one line that holds `part`."""
+    ((number, line),) = [
+        (number, line.strip())
+        for number, line in enumerate(text.splitlines(), 1)
+        if part in line
+    ]
+    return number, line
+
+
+def cite(part: str, function: str | None, path: str, *lines: tuple[int, int]):
+    number, comment = gd_line(GD, part)
+    return Citation("scripts/x.gd", number, function, path, lines, comment)
+
+
+def test_a_citation_has_a_path_an_optional_line_part_and_the_func_that_holds_it():
+    assert read_citations(GD, "scripts/x.gd") == [
+        cite("Ported from", None, "frame_1/DoAction.as"),
+        cite("The cap", None, "frame_42/DoAction_8.as", (82, 82)),
+        cite("Rolls the hit", "roll", "frame_42/DoAction_8.as", (40, 64)),
+        cite("var x", "roll", "frame_42/DoAction_8.as", (188, 188), (261, 261)),
+        cite(
+            "_bar/", "roll", "DefineSprite_12_bar/frame_4/DoAction.as", (3, 5), (9, 9)
+        ),
+        cite("var after", None, "frame_3/DoAction.as"),
+        cite("A blank line", None, "frame_5/DoAction.as", (6, 6)),
+        cite("frame_7", "inside", "frame_7/DoAction.as", (2, 2)),
+        cite("frame_8", "other", "frame_8/DoAction.as", (1, 1)),
+        cite("frame_8", "other", "frame_9/DoAction.as", (4, 5)),
+    ]
+
+
+def test_a_signature_on_more_than_one_line_does_not_end_its_func():
+    text = "func wide(\n\ta: int,\n) -> int:\n\treturn a  # frame_1/DoAction.as:1\n"
+    (cited,) = read_citations(text, "x.gd")
+    assert cited.function == "wide"
+
+
+def test_every_export_path_is_read_back_from_a_comment(records):
+    files = [r["file"] for r in records if r["kind"] == "script"]
+    assert len(files) > 800
+    for file in files:
+        comment = f"# see ({file}:7-9, 12) for the rule"
+        assert read_citations(comment, "x.gd") == [
+            Citation("x.gd", 1, None, file, ((7, 9), (12, 12)), comment)
+        ], file
+
+
+def test_text_outside_a_comment_and_a_bare_file_name_are_no_citation():
+    assert read_citations('var path := "frame_1/DoAction.as:5"', "x.gd") == []
+    assert read_citations("# DoAction.as:5 and frame217/DoAction.as:5", "x.gd") == []
+    assert read_citations("# _data.asset_library and frame_1/x.assets", "x.gd") == []
+    assert read_citations("# keyframe_1/DoAction.as:5", "x.gd") == []
+
+
+def test_a_deeper_comment_directly_above_a_func_stays_in_the_func_before_it():
+    text = "func a():\n\tpass\n\t# frame_1/DoAction.as:1\nfunc b():\n\tpass\n"
+    (cited,) = read_citations(text, "x.gd")
+    assert cited.function == "a"
+
+
+def test_tracked_citations_reads_the_tracked_gd_files_and_no_other_file(tmp_path):
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts/in.gd").write_text("# frame_1/DoAction.as:2\n")
+    (tmp_path / "scripts/out.gd").write_text("# frame_2/DoAction.as:2\n")
+    (tmp_path / "notes.md").write_text("# frame_3/DoAction.as:2\n")
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    subprocess.run(
+        ["git", "add", "scripts/in.gd", "notes.md"], cwd=tmp_path, check=True
+    )
+    assert tracked_citations(tmp_path) == [
+        Citation(
+            "scripts/in.gd",
+            1,
+            None,
+            "frame_1/DoAction.as",
+            ((2, 2),),
+            "# frame_1/DoAction.as:2",
+        )
+    ]
+
+
+PORT = """\
+# The whole script: frame_1/DoAction.as
+
+func port() -> void:
+	pass  # frame_1/DoAction.as:3
+	# frame_1/DoAction.as:4-5
+	# frame_1/DoAction.as:9, 2
+	# frame_1/DoAction.as:99
+	# frame_9/DoAction.as:1
+"""
+HIT = (
+    "function hit(a)\n{\n   return a;\n}\n"
+    "function swing()\n{\n   hit(1);\n}\n_root.hit(2);\n"
+)
+
+
+def port_row(part: str, function: str = "port") -> str:
+    number, comment = gd_line(PORT, part)
+    return f"  scripts/x.gd:{number}  {function}  {comment}"
+
+
+def test_ports_print_the_citations_of_the_lines_of_a_record(tmp_path):
+    built = as_index.build(write_export(tmp_path, {"frame_1/DoAction.as": HIT}))
+    cited = read_citations(PORT, "scripts/x.gd")
+    _, out = lookup("hit", built, export=tmp_path, citations=cited)
+    assert section(out, "ports") == [
+        port_row(":3"),
+        port_row(":4-5"),
+        port_row(":9, 2"),
+    ]
+    assert out.splitlines().index("ports") > out.splitlines().index("reads")
+    _, out = lookup("swing", built, export=tmp_path, citations=cited)
+    assert section(out, "ports") == [port_row(":4-5")]
+
+
+def test_a_citation_with_no_line_is_a_port_of_the_script_alone(tmp_path):
+    built = as_index.build(write_export(tmp_path, {"frame_1/DoAction.as": HIT}))
+    cited = read_citations(PORT, "scripts/x.gd")
+    _, out = lookup("frame_1/DoAction.as", built, export=tmp_path, citations=cited)
+    assert section(out, "ports") == [
+        port_row("The whole script", "file"),
+        port_row(":3"),
+        port_row(":4-5"),
+        port_row(":9, 2"),
+    ]
+
+
+def test_a_record_with_no_citation_prints_none(tmp_path):
+    built = as_index.build(write_export(tmp_path, {"frame_1/DoAction.as": HIT}))
+    _, out = lookup("hit", built, export=tmp_path)
+    assert section(out, "ports") == ["  none"]
+
+
+def test_a_citation_is_a_port_only_when_its_path_names_one_file(tmp_path):
+    files = {
+        "DefineSprite_1_a/frame_2/DoAction.as": "a = 1;\n",
+        "DefineSprite_2_b/frame_2/DoAction.as": "a = 1;\n",
+        "DefineSprite_2_b/frame_3/DoAction.as": "a = 1;\n",
+    }
+    built = as_index.build(write_export(tmp_path, files))
+    text = "# frame_2/DoAction.as:1\n\n# frame_3/DoAction.as:1\n"
+    cited = read_citations(text, "scripts/x.gd")
+    for file in files:
+        _, out = lookup(file, built, export=tmp_path, citations=cited)
+        expected = ["  none"]
+        if "frame_3" in file:
+            expected = ["  scripts/x.gd:3  file  # frame_3/DoAction.as:1"]
+        assert section(out, "ports") == expected, file
+
+
+def tracked_lines() -> list[tuple[str, int, str]]:
+    """Every line of every tracked .gd file, found without the reader."""
+    listed = subprocess.run(
+        ["git", "ls-files", "*.gd"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return [
+        (gd, number, line)
+        for gd in listed.stdout.splitlines()
+        for number, line in enumerate((REPO_ROOT / gd).read_text().splitlines(), 1)
+    ]
+
+
+FIRST_RANGE = re.compile(r"#.*frame_42/DoAction_8\.as:(\d+)(?:-(\d+))?")
+
+
+def first_ranges() -> list[tuple[str, int, int, int]]:
+    """The first cited range of each tracked line that cites the file of
+    executeMove with a line."""
+    found = []
+    for gd, number, line in tracked_lines():
+        cited = FIRST_RANGE.search(line)
+        if cited:
+            start = int(cited[1])
+            found.append((gd, number, start, int(cited[2] or start)))
+    return found
+
+
+def test_executemove_prints_the_tracked_citations_of_its_lines(records):
+    record = function(records, "executeMove")
+    _, out = lookup("executeMove", records, citations=tracked_citations())
+    ports = section(out, "ports")
+    assert out.splitlines().index("ports") > out.splitlines().index("reads")
+    inside = [
+        f"  {gd}:{number}  "
+        for gd, number, start, end in first_ranges()
+        if start <= record["end"] and end >= record["start"]
+    ]
+    assert len(inside) > 5
+    for prefix in inside:
+        assert any(row.startswith(prefix) for row in ports), prefix
+    outside = [
+        f"  {gd}:{number}  "
+        for gd, number, start, end in first_ranges()
+        if start > record["end"]
+    ]
+    assert outside
+    for prefix in outside:
+        assert not any(row.startswith(prefix) for row in ports), prefix
+
+
+def test_a_line_query_prints_the_ports_of_its_block(records):
+    block = holders(function(records, "executeMove"), 82)[-1]
+    query = f"{EXECUTE_MOVE_FILE}:82"
+    _, out = lookup(query, records, citations=tracked_citations())
+    ports = section(out, "ports")
+    ranges = first_ranges()
+    inside = [r for r in ranges if r[2] <= block["end"] and r[3] >= block["start"]]
+    before = [r for r in ranges if r[3] < block["start"]]
+    assert inside and before
+    for gd, number, _, _ in inside:
+        assert any(row.startswith(f"  {gd}:{number}  ") for row in ports)
+    for gd, number, _, _ in before:
+        assert not any(row.startswith(f"  {gd}:{number}  ") for row in ports)

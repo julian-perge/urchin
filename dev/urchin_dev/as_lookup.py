@@ -2,20 +2,109 @@
 # index that extract_as_index writes. A query is a function name, a global
 # name, an export path, or an export path with a line. The answer gives the
 # location, the source lines or the outline, the callers, the calls and the
-# globals. This module does not import the parser, so a lookup starts fast.
+# globals, and the GDScript comments that cite the range. It reads those
+# comments from the tracked .gd files at each run. This module does not import
+# the parser, so a lookup starts fast.
 from __future__ import annotations
 
 import argparse
 import difflib
 import json
 import re
+import subprocess
 from collections.abc import Callable, Collection, Sequence
+from dataclasses import dataclass
 from pathlib import Path
 
 from urchin_dev import ACTION_SCRIPT, CONVERTED_JSON, REPO_ROOT
 
 INDEX = CONVERTED_JSON / "as_index.jsonl"
 EXPORT = ACTION_SCRIPT.relative_to(REPO_ROOT).as_posix()
+
+
+@dataclass(frozen=True)
+class Citation:
+    """One export path in a GDScript comment. `function` is None when the
+    comment belongs to the file and not to a func. `lines` holds each cited
+    range, and is empty when the citation has no line part. `comment` is the
+    GDScript line without its indent."""
+
+    gd: str
+    line: int
+    function: str | None
+    path: str
+    lines: tuple[tuple[int, int], ...]
+    comment: str
+
+
+# A citation is an export path that starts at a frame_N or a Define component,
+# then an optional line part: ":82", ":40-64" or ":188, 261".
+_CITATION = re.compile(
+    r"(?<!\w)((?:frame_\d+|Define\w+_\d+\w*)"
+    r"(?:/[^\s:,;()]+(?: on\(\w+(?: \w+)?\)| onClipEvent\(\w+\))?)*\.as)(?!\w)"
+    r"(?::(\d+(?:-\d+)?(?:,\s*\d+(?:-\d+)?)*))?"
+)
+_GD_FUNC = re.compile(r"\s*(?:static\s+)?func\s+(\w+)")
+
+
+def _gd_functions(lines: list[str]) -> list[str | None]:
+    """The GDScript func that holds each line, or None for a line of the file
+    itself. A func holds the lines below it that are indented deeper. The
+    comment lines directly above a func line, at its indent, are in that func."""
+    holders: list[str | None] = []
+    widths = []
+    current, indent = None, 0
+    above: list[int] = []
+    for index, line in enumerate(lines):
+        text = line.lstrip()
+        width = len(line) - len(text)
+        widths.append(width)
+        func = _GD_FUNC.match(line)
+        if func:
+            current, indent = func[1], width
+            for comment in above:
+                if widths[comment] == width:
+                    holders[comment] = current
+        elif current and width <= indent and text and text[0] not in ")]}":
+            current = None
+        above = [*above, index] if text.startswith("#") else []
+        holders.append(current)
+    return holders
+
+
+def _range(part: str) -> tuple[int, int]:
+    start, _, end = part.strip().partition("-")
+    return int(start), int(end or start)
+
+
+def read_citations(text: str, gd: str) -> list[Citation]:
+    """The citations in the comments of one GDScript file. `gd` is the path
+    that each citation carries."""
+    lines = text.splitlines()
+    found = []
+    for number, (line, function) in enumerate(zip(lines, _gd_functions(lines)), 1):
+        comment = line.partition("#")[2]
+        for cited in _CITATION.finditer(comment):
+            ranges = tuple(_range(part) for part in (cited[2] or "").split(",") if part)
+            found.append(Citation(gd, number, function, cited[1], ranges, line.strip()))
+    return found
+
+
+def tracked_citations(root: Path = REPO_ROOT) -> list[Citation]:
+    listed = subprocess.run(
+        ["git", "ls-files", "-z", "*.gd"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return [
+        citation
+        for gd in listed.stdout.split("\0")
+        if (root / gd).is_file()
+        for citation in read_citations((root / gd).read_text(encoding="utf-8"), gd)
+    ]
+
 
 _SOURCE_LINES = 120
 _LINES_SHOWN = 12
@@ -137,11 +226,34 @@ def _calls(record: dict, records: list[dict]) -> list[str]:
     return rows
 
 
+def _ports(
+    record: dict,
+    start: int,
+    end: int,
+    records: list[dict],
+    citations: Sequence[Citation],
+) -> list[str]:
+    files = [r["file"] for r in records if r["kind"] == "script"]
+    rows = []
+    for cited in citations:
+        if resolve(cited.path, files) != [record["file"]]:
+            continue
+        if cited.lines:
+            linked = any(first <= end and last >= start for first, last in cited.lines)
+        else:
+            linked = record["kind"] == "script"
+        if linked:
+            holder = cited.function or "file"
+            rows.append(f"  {cited.gd}:{cited.line}  {holder}  {cited.comment}")
+    return rows
+
+
 def _record_answer(
     record: dict,
     records: list[dict],
     source: bool | None,
     export: Path,
+    citations: Sequence[Citation],
     line: int | None = None,
 ) -> str:
     out = [_title(record), _location(record)]
@@ -176,6 +288,8 @@ def _record_answer(
     writes = [f"  {w['name']}  {_shown(w['lines'])}" for w in record["writes"]]
     out += ["writes", *(writes or ["  none"])]
     out += ["reads", *(_wrapped(record["reads"]) if record["reads"] else ["  none"])]
+    ports = _ports(record, start, end, records, citations)
+    out += ["ports", *(ports or ["  none"])]
     return "\n".join(out)
 
 
@@ -200,7 +314,11 @@ def _global_answer(name: str, records: list[dict]) -> str:
 
 
 def _name_query(
-    query: str, records: list[dict], source: bool | None, export: Path
+    query: str,
+    records: list[dict],
+    source: bool | None,
+    export: Path,
+    citations: Sequence[Citation],
 ) -> tuple[int, str]:
     functions = [r for r in records if r["kind"] == "function"]
     names = sorted(
@@ -230,7 +348,7 @@ def _name_query(
         if near:
             out += ["nearest names", *(f"  {name}" for name in near)]
         return 1, "\n".join(out)
-    answers = [_record_answer(r, records, source, export) for r in found[0]]
+    answers = [_record_answer(r, records, source, export, citations) for r in found[0]]
     answers += [_global_answer(name, records) for name in found[1]]
     return 0, "\n\n".join(note + answers)
 
@@ -261,7 +379,12 @@ def _script(path: str, records: list[dict]) -> dict | str:
 
 
 def _line_query(
-    path: str, line: int, records: list[dict], source: bool | None, export: Path
+    path: str,
+    line: int,
+    records: list[dict],
+    source: bool | None,
+    export: Path,
+    citations: Sequence[Citation],
 ) -> tuple[int, str]:
     script = _script(path, records)
     if isinstance(script, str):
@@ -276,7 +399,7 @@ def _line_query(
         and r["start"] <= line <= r["end"]
     ]
     innermost = min(holders, key=lambda r: r["end"] - r["start"], default=script)
-    return 0, _record_answer(innermost, records, source, export, line)
+    return 0, _record_answer(innermost, records, source, export, citations, line)
 
 
 def lookup(
@@ -285,19 +408,20 @@ def lookup(
     *,
     source: bool | None = None,
     export: Path = ACTION_SCRIPT,
+    citations: Sequence[Citation] = (),
 ) -> tuple[int, str]:
     """The exit code and the text for one query. `source` forces the source
     lines in or out, and None prints them for a range of 120 lines or less."""
     with_line = re.fullmatch(r"(.+\.as):(\d+)", query)
     if with_line:
         path, line = with_line.groups()
-        return _line_query(path, int(line), records, source, export)
+        return _line_query(path, int(line), records, source, export, citations)
     if query.endswith(".as"):
         script = _script(query, records)
         if isinstance(script, str):
             return 1, script
-        return 0, _record_answer(script, records, source, export)
-    return _name_query(query, records, source, export)
+        return 0, _record_answer(script, records, source, export, citations)
+    return _name_query(query, records, source, export, citations)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -326,7 +450,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="print no source lines",
     )
     args = parser.parse_args(argv)
-    code, out = lookup(" ".join(args.query), load(), source=args.source)
+    code, out = lookup(
+        " ".join(args.query), load(), source=args.source, citations=tracked_citations()
+    )
     print(out)
     return code
 
