@@ -35,7 +35,7 @@ from __future__ import annotations
 import json
 import sys
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import label_layout, render, strip, timeline
 from urchin_dev.swf.extract.battle_screen import (
     FRAME_LABEL,
@@ -173,7 +173,7 @@ def main():
         if trimmed is None:
             raise RuntimeError(f"{BANNER} frame {rest} rendered empty")
         OUT_DIR.mkdir(parents=True, exist_ok=True)
-        trimmed.image.save(BACKDROP_PNG)
+        png.save(trimmed.image, BACKDROP_PNG)
     x, y, w, h = trimmed.rect
     print(f"  backdrop -> {BACKDROP_PNG.name} {trimmed.image.size}", file=sys.stderr)
 

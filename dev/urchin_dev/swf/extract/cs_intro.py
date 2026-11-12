@@ -40,7 +40,7 @@ import math
 import re
 import sys
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import avm1, label_layout, render, timeline
 from urchin_dev.swf.swf_index import (
     CodeBlock,
@@ -290,7 +290,7 @@ def write_background(index: SwfIndex, frame: int, layers: dict) -> None:
     ):
         raise RuntimeError(f"the gradient is {trimmed.rect}, not the whole stage")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    trimmed.image.save(BACKGROUND_PNG)
+    png.save(trimmed.image, BACKGROUND_PNG)
     print(f"wrote {BACKGROUND_PNG} {trimmed.image.size}", file=sys.stderr)
 
 

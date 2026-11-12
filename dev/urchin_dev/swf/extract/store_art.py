@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import sys
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "store" / "backdrops"
@@ -43,7 +43,7 @@ def main():
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for shop, cropped in zip(SHOP_IDS, shops, strict=True):
-        cropped.image.save(OUT_DIR / f"shop{shop}.png")
+        png.save(cropped.image, OUT_DIR / f"shop{shop}.png")
         print(f"shop {shop} <- frame {shop + 1} {cropped.image.size}", file=sys.stderr)
 
 

@@ -60,7 +60,7 @@ import sys
 
 from PIL import Image
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import label_layout, render, strip, timeline
 from urchin_dev.swf.extract.battle_screen import rect_entry
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
@@ -163,7 +163,7 @@ def main():
         cover = render.trim(cover_frame)
         if cover is None:
             raise RuntimeError(f"{COVER_SPRITE} rendered empty")
-        cover.image.save(COVER_PNG)
+        png.save(cover.image, COVER_PNG)
         layout = {"count": count_layout(index), "cover": rect_entry(cover.rect)}
         COOLDOWN_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
         print(
@@ -202,7 +202,7 @@ def main():
                     ((size[0] - content.width) // 2, (size[1] - content.height) // 2),
                 )
             file_name = sanitize(label) + ".png"
-            canvas.save(OUT_DIR / file_name)
+            png.save(canvas, OUT_DIR / file_name)
             written[label] = file_name
     print(f"icons written: {len(written)}", file=sys.stderr)
     if blank:

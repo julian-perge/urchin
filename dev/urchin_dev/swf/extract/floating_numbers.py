@@ -40,7 +40,7 @@ from dataclasses import dataclass
 
 from PIL import Image, ImageChops
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render, timeline
 from urchin_dev.swf.extract.battle_screen import IDENTITY_COLOR_TRANSFORM, rect_entry
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
@@ -255,10 +255,14 @@ def main():
                 trimmed = render.trim(part)
                 if trimmed is None:
                     raise RuntimeError(f"{name} depth {depth} rendered empty")
-                png = f"{name}_depth{depth}.png"
-                trimmed.image.save(OUT_DIR / png)
+                file_name = f"{name}_depth{depth}.png"
+                png.save(trimmed.image, OUT_DIR / file_name)
                 entries.append(
-                    {"png": png, "rect": rect_entry(trimmed.rect), "tinted": tinted}
+                    {
+                        "png": file_name,
+                        "rect": rect_entry(trimmed.rect),
+                        "tinted": tinted,
+                    }
                 )
             glyph_entries[name] = entries
             print(f"  {name}: depths {[depth for depth, _ in layers]}", file=sys.stderr)
