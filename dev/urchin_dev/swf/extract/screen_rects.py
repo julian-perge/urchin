@@ -98,6 +98,11 @@ class Piece:
                 f"A piece needs a depth or an instance name, not both or neither:"
                 f" depth {self.depth}, instance {self.instance}"
             )
+        if self.kind == "art" and self.art is None:
+            raise ValueError(
+                f"An art piece needs the name of its art: depth {self.depth},"
+                f" instance {self.instance}"
+            )
 
 
 @dataclass(frozen=True)

@@ -378,3 +378,8 @@ def test_text_record_of_one_line_of_static_text_holds_no_line_pitch():
 def test_a_piece_needs_exactly_one_of_a_depth_and_an_instance_name(depth, instance):
     with pytest.raises(ValueError, match="not both or neither"):
         screen_rects.Piece("art", depth, art="slot_inventory", instance=instance)
+
+
+def test_an_art_piece_needs_the_name_of_its_art():
+    with pytest.raises(ValueError, match="needs the name of its art"):
+        screen_rects.Piece("art", 7)

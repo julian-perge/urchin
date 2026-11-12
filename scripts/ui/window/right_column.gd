@@ -19,11 +19,6 @@ signal delete_pressed(slot: ItemSlot)
 
 const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
 const SLOTS_PER_ROW: int = 6
-# _can_drop_data shows a price in the sell slot's tooltip during a drag. This
-# is the tooltip that right_column.tscn gives the slot, which a sale or the end
-# of the drag puts back.
-const _DEFAULT_SELL_TOOLTIP: String = "Sell Item\nSelect an item, then click here to sell it for 15% of its price."
-
 var selected_slot: ItemSlot = null
 # The 36 slots in grid order, row by row.
 var slots: Array[ItemSlot] = []
@@ -31,6 +26,10 @@ var slots: Array[ItemSlot] = []
 @onready var amount_label: Label = $Amount
 @onready var sell_button: Button = $SellSlot
 @onready var delete_button: Button = $DeleteSlot
+# _can_drop_data shows a price in the sell slot's tooltip during a drag. This
+# is the tooltip that right_column.tscn gives the slot, which a sale or the end
+# of the drag puts back.
+@onready var _default_sell_tooltip: String = sell_button.tooltip_text
 
 
 func _ready() -> void:
@@ -117,9 +116,9 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 	if item == null:
 		return
 	sell_pressed.emit(item)
-	sell_button.tooltip_text = _DEFAULT_SELL_TOOLTIP
+	sell_button.tooltip_text = _default_sell_tooltip
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_DRAG_END:
-		sell_button.tooltip_text = _DEFAULT_SELL_TOOLTIP
+		sell_button.tooltip_text = _default_sell_tooltip
