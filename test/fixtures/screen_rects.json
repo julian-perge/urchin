@@ -17,6 +17,15 @@
      ],
      "texture": "res://assets/ui/window/xp_bar.png"
     },
+    "ExpRows/CompanionSlot0/Row/Face": {
+     "kind": "face",
+     "rect": [
+      58.1788,
+      233.8253,
+      45.9598,
+      62.492
+     ]
+    },
     "ExpRows/CompanionSlot0/Row/Frame": {
      "kind": "art",
      "rect": [
@@ -107,6 +116,15 @@
      ],
      "texture": "res://assets/ui/window/xp_bar.png"
     },
+    "ExpRows/CompanionSlot1/Row/Face": {
+     "kind": "face",
+     "rect": [
+      58.1788,
+      326.3253,
+      45.9598,
+      62.492
+     ]
+    },
     "ExpRows/CompanionSlot1/Row/Frame": {
      "kind": "art",
      "rect": [
@@ -196,6 +214,15 @@
       18.75
      ],
      "texture": "res://assets/ui/window/xp_bar.png"
+    },
+    "ExpRows/PlayerSlot/Row/Face": {
+     "kind": "face",
+     "rect": [
+      58.1788,
+      141.3253,
+      45.9598,
+      62.492
+     ]
     },
     "ExpRows/PlayerSlot/Row/Frame": {
      "kind": "art",
@@ -291,10 +318,7 @@
     "ExpValue",
     "ProceedHintLabel",
     "ProceedButton",
-    "RightColumn",
-    "ExpRows/PlayerSlot/Row/Face",
-    "ExpRows/CompanionSlot0/Row/Face",
-    "ExpRows/CompanionSlot1/Row/Face"
+    "RightColumn"
    ],
    "timeline": 3142
   },

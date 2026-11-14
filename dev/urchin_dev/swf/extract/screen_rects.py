@@ -13,7 +13,7 @@
 # node that draws a piece. port_only names the nodes the port draws and the
 # SWF does not, so the test skips them.
 #
-# A piece is one of six kinds:
+# A piece is one of seven kinds:
 #   "panel" - a flat Panel (Part 3): a sprite whose one shape has a solid fill
 #             and a line, under an inner DropShadow. Its rect is the fill rect
 #             grown by half the border. The fill rect is ShapeBounds through
@@ -26,6 +26,10 @@
 #             a TextureRect shows at the rect that render measured, with the
 #             PNG's path. Its depth is the one window_chrome renders, so the
 #             two extractors cannot name different placements.
+#   "face"  - the portrait clip 2978, which the port draws as a TextureRect that
+#             shows a different PNG for each fighter. It is recorded as the crop
+#             box that extract_faces cut every portrait to, placed with the
+#             clip's matrix, and it has no texture.
 #   "hit"   - a button that draws nothing, only a hit square, recorded as the
 #             hit shape's bounds through the placement matrix.
 #   "button" - a button that draws art, which the port draws as a native
@@ -56,7 +60,7 @@ from dataclasses import dataclass, field
 
 from urchin_dev import REPO_ROOT, WEB_SWF
 from urchin_dev.swf import label_layout, render, timeline
-from urchin_dev.swf.extract import window_chrome
+from urchin_dev.swf.extract import faces, window_chrome
 from urchin_dev.swf.swf_index import (
     ButtonRecord,
     DropShadow,
@@ -119,6 +123,7 @@ class Scene:
 VICTORY_ROWS = {"PlayerSlot": 1197, "CompanionSlot0": 1111, "CompanionSlot1": 1154}
 VICTORY_ROW_PIECES: dict[str, tuple[str, int, str | None]] = {
     "Frame": ("art", 2, "victory_row"),
+    "Face": ("face", 3, None),
     "NameLabel": ("text", 37, None),
     "LevelLabel": ("text", 38, None),
     "Bar": ("art", 39, "xp_bar"),
@@ -166,8 +171,8 @@ SCENES: dict[str, Scene] = {
     # The victory frame's three experience rows, each a placement of sprite
     # 3002: the player's at depth 1197, then friendlySlotsFFTT[0] and [1] at
     # 1111 and 1154. The rest of the Victory screen is port only until the
-    # Victory Window replaces it (spec/107-victory.md). The face has no record,
-    # because extract_faces does not write where its crop sits in sprite 2978.
+    # Victory Window replaces it (spec/107-victory.md). The face is the clip 2978
+    # at depth 3 of the row, and extract_faces writes where its crop sits in it.
     # The row's shape 3001 has no fill across the row: it strokes a 1 px line
     # around it and fills only the box under the bar. The port draws it as the
     # victory_row art, which holds the shape under the row's DropShadow.
@@ -193,7 +198,6 @@ SCENES: dict[str, Scene] = {
             "ProceedHintLabel",
             "ProceedButton",
             "RightColumn",
-            *(f"ExpRows/{slot}/Row/Face" for slot in VICTORY_ROWS),
         ),
     ),
     # The right column of 36 item slots and the money bar
@@ -451,6 +455,19 @@ def box_record(bounds, matrix, origin, fill: tuple[int, int, int, int]) -> dict:
     }
 
 
+def face_record(crop, matrix, origin) -> dict:
+    """-> the record of a portrait, as the crop box of extract_faces placed with
+    `matrix`, the matrix that places the face clip. `crop` is (x, y, w, h) in the
+    clip's own design px. The portrait is a different texture for each fighter,
+    so the record holds the rect and no texture."""
+    x, y, w, h = crop
+    bounds = tuple(v * render.TWIPS for v in (x, y, x + w, y + h))
+    return {
+        "kind": "face",
+        "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
+    }
+
+
 def hit_record(records: list[ButtonRecord], bounds, matrix, origin) -> dict:
     """-> the record of a button that `records` describe, whose one hit shape
     has `bounds`, placed with `matrix`."""
@@ -615,7 +632,11 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
                     f" {piece.inner_depth} on its first frame"
                 )
             layer = first[piece.inner_depth]
-            if character_kind(index, layer.character_id) == "sprite":
+            # A face is placed with a scale, so no origin of its own exists.
+            if (
+                piece.kind != "face"
+                and character_kind(index, layer.character_id) == "sprite"
+            ):
                 sprite_origins[f"sprite {layer.character_id}"] = inner_origin(
                     layer.matrix, piece_origin
                 )
@@ -630,6 +651,14 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
             pieces[path] = _button(index, layer, piece_origin)
         elif piece.kind == "art":
             pieces[path] = art_record(piece.art, chrome[piece.art], sprite_origins)
+        elif piece.kind == "face":
+            if layer.character_id != faces.FACE_CLIP:
+                raise ValueError(
+                    f"{path}: depth {piece.inner_depth} holds {layer.character_id},"
+                    f" not the face clip {faces.FACE_CLIP}"
+                )
+            crop = json.loads(faces.RECORD.read_text())["rect"]
+            pieces[path] = face_record(crop, layer.matrix, piece_origin)
         elif piece.kind == "box":
             pieces[path] = _box(index, layer, piece_origin)
         elif piece.kind == "hit":

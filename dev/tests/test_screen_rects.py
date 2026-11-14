@@ -149,6 +149,15 @@ def test_text_record_holds_the_alignment_of_the_field(align, name):
     assert entry["align"] == name
 
 
+# The face's crop box in clip 2978 is placed by the clip's own matrix, which
+# scales (sprite 3002 places it at 1.653), so the record scales it too.
+def test_face_record_is_the_crop_box_through_the_placement():
+    entry = screen_rects.face_record(
+        [1.0, 2.0, 28.0, 38.0], (2.0, 0.0, 0.0, 2.0, -100, 20), ORIGIN
+    )
+    assert entry == {"kind": "face", "rect": pytest.approx([397.5, 227.4, 56.0, 76.0])}
+
+
 def test_text_record_refuses_a_scaled_field():
     with pytest.raises(ValueError, match="scale"):
         screen_rects.text_record(field(), (1.5, 0.0, 0.0, 1.0, 0, 0), ORIGIN)

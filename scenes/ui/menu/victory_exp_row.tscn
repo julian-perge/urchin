@@ -27,10 +27,10 @@ stretch_mode = 0
 
 [node name="Face" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 9.02
-offset_top = 10.86
-offset_right = 54.98
-offset_bottom = 73.34
+offset_left = 8.9788
+offset_top = 10.2753
+offset_right = 54.9386
+offset_bottom = 72.7673
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 0

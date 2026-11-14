@@ -172,6 +172,12 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 						found.append("%s: texture %s, expected %s" % [path, texture_path, entry["texture"]])
 				else:
 					found.append("%s: an art piece that is not a TextureRect" % path)
+			"face":
+				# A face shows a different PNG for each fighter, so there is no
+				# texture to compare.
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+				if not node is TextureRect:
+					found.append("%s: a face piece that is not a TextureRect" % path)
 			"box":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 				if node is ColorRect:
@@ -435,3 +441,24 @@ func test_control_a_left_aligned_label_20_px_too_wide_passes() -> void:
 	(root.get_node("Amount") as Label).offset_right += 20.0
 	await wait_process_frames(2)
 	assert_eq(_scene_problems(root, _record()["scenes"][RIGHT_COLUMN_SCENE]), [] as Array[String])
+
+
+const VICTORY_SCENE: String = "res://scenes/battle/victory_screen.tscn"
+
+
+# The Face's rect comes from where extract_faces cuts its portraits in clip 2978
+# and where the row places that clip, not from numbers typed in the scene (#271,
+# from the re-review of #239).
+func test_control_a_victory_row_face_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(VICTORY_SCENE)
+	(root.get_node("ExpRows/PlayerSlot/Row/Face") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][VICTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "PlayerSlot/Row/Face: top left")
+
+
+func test_the_victory_row_face_is_not_port_only() -> void:
+	var scene: Dictionary = _record()["scenes"][VICTORY_SCENE]
+	assert_does_not_have(scene["port_only"], "ExpRows/PlayerSlot/Row/Face")
+	assert_eq(scene["pieces"]["ExpRows/PlayerSlot/Row/Face"]["kind"], "face")
