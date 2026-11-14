@@ -12,17 +12,37 @@ const FILL_RECT: Rect2 = Rect2(100.25, 50.5, 200.0, 120.0)
 # The arithmetic mean of the two scales is 1.35 and would round to 1.
 const SCALE: Vector2 = Vector2(0.6, 2.1)
 const BORDER: int = 2
+# Every Panel in the SWF has a 20 twip (1 px) line today. The two tests with a
+# wider line show that the width comes from the line and not from the scale alone.
+const LINE_TWIPS: int = 20
 
 
 func _panel() -> PanelContainer:
-	var panel: PanelContainer = PanelRecipe.build(FILL, LINE, FILL_RECT, SCALE)
+	var panel: PanelContainer = PanelRecipe.build(FILL, LINE, FILL_RECT, LINE_TWIPS, SCALE)
 	add_child_autofree(panel)
 	return panel
 
 
 func test_border_width_is_the_rounded_mean_scale_stroke() -> void:
-	assert_eq(PanelRecipe.border_width(SCALE), BORDER)
-	assert_eq(PanelRecipe.border_width(Vector2.ONE), 1)
+	assert_eq(PanelRecipe.border_width(LINE_TWIPS, SCALE), BORDER)
+	assert_eq(PanelRecipe.border_width(LINE_TWIPS, Vector2.ONE), 1)
+
+
+# The extractor's border_width (dev/urchin_dev/swf/extract/screen_rects.py) has
+# the same case in dev/tests/test_screen_rects.py. A 60 twip line is 3 px, and
+# 3 * 1.54 = 4.63 rounds to 5, where the scale alone would give 2.
+func test_border_width_takes_the_line_width() -> void:
+	assert_eq(PanelRecipe.border_width(60, SCALE), 5)
+	assert_eq(PanelRecipe.border_width(40, Vector2.ONE), 2)
+
+
+func test_built_panel_with_a_wider_line_has_a_wider_border() -> void:
+	var panel: PanelContainer = PanelRecipe.build(FILL, LINE, FILL_RECT, 60, SCALE)
+	add_child_autofree(panel)
+	assert_eq((panel.get_theme_stylebox("panel") as StyleBoxFlat).get_border_width(SIDE_LEFT), 5)
+	assert_eq(PanelRecipe.problems(panel, FILL_RECT, 60, SCALE), [] as Array[String])
+	# A 20 twip line expects a 2 px border and a rect grown by 1 px, so the border and the rect fail.
+	assert_eq(PanelRecipe.problems(panel, FILL_RECT, LINE_TWIPS, SCALE).size(), 2)
 
 
 func test_panel_rect_grows_the_fill_rect_by_half_the_border() -> void:
@@ -67,13 +87,13 @@ func test_shadow_material_holds_the_swf_filter_values() -> void:
 
 
 func test_built_panel_has_no_problems() -> void:
-	assert_eq(PanelRecipe.problems(_panel(), FILL_RECT, SCALE), [] as Array[String])
+	assert_eq(PanelRecipe.problems(_panel(), FILL_RECT, LINE_TWIPS, SCALE), [] as Array[String])
 
 
 func test_problems_reports_a_wrong_border_width() -> void:
 	var panel: PanelContainer = _panel()
 	(panel.get_theme_stylebox("panel") as StyleBoxFlat).border_width_top = BORDER + 1
-	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, SCALE)
+	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, LINE_TWIPS, SCALE)
 	assert_eq(found.size(), 1, str(found))
 	assert_string_contains(found[0] if found else "", "border")
 
@@ -81,7 +101,7 @@ func test_problems_reports_a_wrong_border_width() -> void:
 func test_problems_reports_a_rounded_corner() -> void:
 	var panel: PanelContainer = _panel()
 	(panel.get_theme_stylebox("panel") as StyleBoxFlat).corner_radius_bottom_right = 3
-	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, SCALE)
+	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, LINE_TWIPS, SCALE)
 	assert_eq(found.size(), 1, str(found))
 	assert_string_contains(found[0] if found else "", "corners")
 
@@ -89,7 +109,7 @@ func test_problems_reports_a_rounded_corner() -> void:
 func test_problems_reports_anti_aliasing() -> void:
 	var panel: PanelContainer = _panel()
 	(panel.get_theme_stylebox("panel") as StyleBoxFlat).anti_aliasing = true
-	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, SCALE)
+	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, LINE_TWIPS, SCALE)
 	assert_eq(found.size(), 1, str(found))
 	assert_string_contains(found[0] if found else "", "anti_aliasing")
 
@@ -97,7 +117,7 @@ func test_problems_reports_anti_aliasing() -> void:
 func test_problems_reports_a_position_without_growth() -> void:
 	var panel: PanelContainer = _panel()
 	panel.position = FILL_RECT.position
-	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, SCALE)
+	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, LINE_TWIPS, SCALE)
 	assert_eq(found.size(), 1, str(found))
 	assert_string_contains(found[0] if found else "", "rect")
 
@@ -105,7 +125,7 @@ func test_problems_reports_a_position_without_growth() -> void:
 func test_problems_reports_a_size_without_growth() -> void:
 	var panel: PanelContainer = _panel()
 	panel.size = FILL_RECT.size
-	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, SCALE)
+	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, LINE_TWIPS, SCALE)
 	assert_eq(found.size(), 1, str(found))
 	assert_string_contains(found[0] if found else "", "rect")
 
@@ -113,6 +133,6 @@ func test_problems_reports_a_size_without_growth() -> void:
 func test_problems_reports_a_missing_material() -> void:
 	var panel: PanelContainer = _panel()
 	panel.material = null
-	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, SCALE)
+	var found: Array[String] = PanelRecipe.problems(panel, FILL_RECT, LINE_TWIPS, SCALE)
 	assert_eq(found.size(), 1, str(found))
 	assert_string_contains(found[0] if found else "", "material")

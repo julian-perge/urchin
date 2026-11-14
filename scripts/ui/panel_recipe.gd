@@ -12,12 +12,16 @@ const SHADOW_MATERIAL: ShaderMaterial = preload("res://resources/ui/panel_inner_
 const SIDES: Array[Side] = [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]
 const CORNERS: Array[Corner] = [CORNER_TOP_LEFT, CORNER_TOP_RIGHT, CORNER_BOTTOM_RIGHT, CORNER_BOTTOM_LEFT]
 const RECT_TOLERANCE: float = 0.001
+const TWIPS: float = 20.0
 
 
 # The SWF scales one stroke with the placement matrix. One whole-pixel width on
-# all four sides keeps the StyleBoxFlat sharp, so the width is the mean scale.
-static func border_width(placement_scale: Vector2) -> int:
-	return roundi(sqrt((placement_scale.x ** 2 + placement_scale.y ** 2) / 2.0))
+# all four sides keeps the StyleBoxFlat sharp, so the width is the line's width in
+# px times the mean scale. dev/urchin_dev/swf/extract/screen_rects.py computes the
+# same number for the rect record.
+static func border_width(line_twips: int, placement_scale: Vector2) -> int:
+	var mean_scale: float = sqrt((placement_scale.x ** 2 + placement_scale.y ** 2) / 2.0)
+	return roundi(line_twips / TWIPS * mean_scale)
 
 
 # The SWF's fill rect ends at the middle of its stroke, and a StyleBoxFlat draws
@@ -26,8 +30,8 @@ static func panel_rect(fill_rect: Rect2, border: int) -> Rect2:
 	return fill_rect.grow(border / 2.0)
 
 
-static func build(fill: Color, line: Color, fill_rect: Rect2, placement_scale: Vector2) -> PanelContainer:
-	var border: int = border_width(placement_scale)
+static func build(fill: Color, line: Color, fill_rect: Rect2, line_twips: int, placement_scale: Vector2) -> PanelContainer:
+	var border: int = border_width(line_twips, placement_scale)
 	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = fill
 	style.border_color = line
@@ -48,9 +52,9 @@ static func build(fill: Color, line: Color, fill_rect: Rect2, placement_scale: V
 # Returns one message for each part of the recipe the Panel breaks: its border
 # width, its corners, its anti-aliasing, its rect, or its material. An empty
 # list means the Panel follows it.
-static func problems(panel: PanelContainer, fill_rect: Rect2, placement_scale: Vector2) -> Array[String]:
+static func problems(panel: PanelContainer, fill_rect: Rect2, line_twips: int, placement_scale: Vector2) -> Array[String]:
 	var found: Array[String] = []
-	var border: int = border_width(placement_scale)
+	var border: int = border_width(line_twips, placement_scale)
 	var style: StyleBoxFlat = panel.get_theme_stylebox("panel") as StyleBoxFlat
 	if style == null:
 		found.append("border: the panel style is not a StyleBoxFlat")

@@ -80,6 +80,8 @@ def test_border_is_the_line_times_the_rounded_mean_scale():
     assert screen_rects.border_width(LINE, (0.6, 2.1)) == 2
     assert screen_rects.border_width(LINE, (0.894, 1.225)) == 1
     assert screen_rects.border_width(2 * LINE, (1.0, 1.0)) == 2
+    # PanelRecipe.border_width has the same case in test/unit/test_panel_recipe.gd.
+    assert screen_rects.border_width(3 * LINE, (0.6, 2.1)) == 5
 
 
 def test_panel_record_grows_the_fill_rect_by_half_the_border():
