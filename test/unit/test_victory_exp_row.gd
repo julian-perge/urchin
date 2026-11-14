@@ -99,6 +99,33 @@ func test_a_fighter_at_the_level_cap_does_not_move() -> void:
 	assert_eq(row.level, cap)
 
 
+# A row that reaches the level cap partway through the animation stops there.
+# Starting at 90 with a gain of 45, the row overflows 100 a few frames in, adds
+# the level that reaches the cap, and then must not move again even though
+# frames remain. The only other cap test starts at the cap, so it cannot see a
+# row that becomes capped mid-animation (#239).
+func test_a_row_that_reaches_the_level_cap_mid_animation_stops_there() -> void:
+	var cap: int = int(_math()["victory_rows"]["level_cap"])
+	var row := _row(_fighter(90.0, cap - 1, 45.0))
+	for i in _frames():
+		row.step()
+		if row.level == cap:
+			break
+	assert_eq(row.level, cap, "the overflow frame adds the level that reaches the cap")
+	assert_eq(row.percent_label.text, "100%", "the overflow frame shows 100%")
+	assert_almost_eq(row.bar.size.x, _full_width(), 0.001, "the overflow frame fills the bar")
+	# Steps after the cap change nothing.
+	var width_at_cap: float = row.bar.size.x
+	var exp_at_cap: float = row.experience
+	for i in _frames():
+		row.step()
+	assert_eq(row.level, cap, "the level stays at the cap")
+	assert_eq(row.percent_label.text, "100%", "the label stays at 100%")
+	assert_almost_eq(row.bar.size.x, width_at_cap, 0.001, "the bar does not grow past full")
+	assert_almost_eq(row.experience, exp_at_cap, 0.001, "the experience does not move")
+	assert_true(row.is_finished())
+
+
 func test_a_row_ends_where_the_save_does() -> void:
 	var save := PlayerSave.new_game("RowEndsLikeSave")
 	save.level = 6
