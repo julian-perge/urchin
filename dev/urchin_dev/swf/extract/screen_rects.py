@@ -20,7 +20,8 @@
 #             the placement matrix, shrunk on each side by half the line width
 #             times that axis's scale.
 #   "text"  - an edit text, recorded as the rect Flash lays its text out in
-#             (label_layout.text_rect), with its font height and colour.
+#             (label_layout.text_rect), with its font height, colour and
+#             alignment.
 #   "art"   - a piece drawn from a zoom 4 PNG of extract_window_chrome, which
 #             a TextureRect shows at the rect that render measured, with the
 #             PNG's path. Its depth is the one window_chrome renders, so the
@@ -372,6 +373,7 @@ def text_record(text: EditText, matrix, origin) -> dict:
         "rect": [rect["x"], rect["y"], rect["w"], rect["h"]],
         "font_size": text.font_height / render.TWIPS,
         "color": color_hex(text.color),
+        "align": label_layout.ALIGNMENTS[text.align],
     }
     # Flash puts the lines of a field one font height plus the field's leading
     # apart. A field that wraps, or a multiline field that is not one line of

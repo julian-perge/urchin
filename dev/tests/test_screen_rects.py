@@ -135,7 +135,18 @@ def test_text_record_is_the_field_inside_its_gutter_with_its_size_and_colour():
         "rect": pytest.approx([43.3, 89.1, 209.15, 15.0]),
         "font_size": 13.0,
         "color": "5e5e5eff",
+        "align": "left",
     }
+
+
+@pytest.mark.parametrize(
+    ("align", "name"), [(0, "left"), (1, "right"), (2, "center"), (3, "justify")]
+)
+def test_text_record_holds_the_alignment_of_the_field(align, name):
+    entry = screen_rects.text_record(
+        field(align=align), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN
+    )
+    assert entry["align"] == name
 
 
 def test_text_record_refuses_a_scaled_field():
@@ -240,7 +251,10 @@ def test_text_shadow_is_the_drop_shadow_offset_and_colour():
 def test_text_shadow_scales_the_alpha_by_the_strength():
     from dataclasses import replace as changed
 
-    assert screen_rects.text_shadow(changed(ROW_SHADOW, strength=0.5))["color"] == "00000080"
+    assert (
+        screen_rects.text_shadow(changed(ROW_SHADOW, strength=0.5))["color"]
+        == "00000080"
+    )
 
 
 @pytest.mark.parametrize(
@@ -302,9 +316,13 @@ def test_hit_record_refuses_a_button_that_is_more_than_a_hit_square(records, mes
 # the up state, under the gradient 3064. Shapes 3066 and 3067 draw only on
 # hover, press and hit. KRINMENU frame 25 places the button at depth 668.
 PLUS_RECORDS = [
-    ButtonRecord(frozenset({"up", "over", "down"}), 3064, 1, (1.0, 0.0, 0.0, 1.0, 0, 0)),
+    ButtonRecord(
+        frozenset({"up", "over", "down"}), 3064, 1, (1.0, 0.0, 0.0, 1.0, 0, 0)
+    ),
     ButtonRecord(frozenset({"up"}), 3065, 2, (1.0, 0.0, 0.0, 1.0, 0, 0)),
-    ButtonRecord(frozenset({"over", "down", "hit"}), 3066, 3, (1.0, 0.0, 0.0, 1.0, 0, 0)),
+    ButtonRecord(
+        frozenset({"over", "down", "hit"}), 3066, 3, (1.0, 0.0, 0.0, 1.0, 0, 0)
+    ),
     ButtonRecord(frozenset({"hit"}), 3067, 4, (1.0, 0.0, 0.0, 1.0, 0, 0)),
 ]
 PLUS_BOUNDS = {

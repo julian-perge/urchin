@@ -14,10 +14,11 @@ offset_left = 36.0698
 offset_top = 81.0751
 offset_right = 258.875
 offset_bottom = 408.0861
-content_margins = Vector4(7.2302, 8.0249, 7.2302, 8.0249)
+content_margins = Vector4(7.2302, 8.0249, 6.425, 8.0249)
 
 [node name="Heading" type="Label" parent="LeftPanel"]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_colors/font_color = Color(0.36862746, 0.36862746, 0.36862746, 1)
 theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1

@@ -38,6 +38,7 @@
      "texture": "res://assets/ui/window/xp_gloss_victory.png"
     },
     "ExpRows/CompanionSlot0/Row/LevelLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -57,6 +58,7 @@
      }
     },
     "ExpRows/CompanionSlot0/Row/NameLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -76,6 +78,7 @@
      }
     },
     "ExpRows/CompanionSlot0/Row/PercentLabel": {
+     "align": "right",
      "color": "ffffffff",
      "font_size": 10.0,
      "kind": "text",
@@ -125,6 +128,7 @@
      "texture": "res://assets/ui/window/xp_gloss_victory.png"
     },
     "ExpRows/CompanionSlot1/Row/LevelLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -144,6 +148,7 @@
      }
     },
     "ExpRows/CompanionSlot1/Row/NameLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -163,6 +168,7 @@
      }
     },
     "ExpRows/CompanionSlot1/Row/PercentLabel": {
+     "align": "right",
      "color": "ffffffff",
      "font_size": 10.0,
      "kind": "text",
@@ -212,6 +218,7 @@
      "texture": "res://assets/ui/window/xp_gloss_victory.png"
     },
     "ExpRows/PlayerSlot/Row/LevelLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -231,6 +238,7 @@
      }
     },
     "ExpRows/PlayerSlot/Row/NameLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -250,6 +258,7 @@
      }
     },
     "ExpRows/PlayerSlot/Row/PercentLabel": {
+     "align": "right",
      "color": "ffffffff",
      "font_size": 10.0,
      "kind": "text",
@@ -297,6 +306,7 @@
    ],
    "pieces": {
     "AbilityPointsLabel": {
+     "align": "left",
      "color": "ffffffff",
      "font_size": 12.0,
      "kind": "text",
@@ -308,6 +318,7 @@
      ]
     },
     "AbilityPointsValue": {
+     "align": "right",
      "color": "ffffffff",
      "font_size": 12.0,
      "kind": "text",
@@ -319,6 +330,7 @@
      ]
     },
     "ActionBarTitle": {
+     "align": "center",
      "color": "5e5e5eff",
      "font_size": 13.0,
      "kind": "text",
@@ -347,6 +359,7 @@
      }
     },
     "AttributePointsLabel": {
+     "align": "left",
      "color": "ffffffff",
      "font_size": 12.0,
      "kind": "text",
@@ -358,6 +371,7 @@
      ]
     },
     "AttributePointsValue": {
+     "align": "right",
      "color": "ffffffff",
      "font_size": 12.0,
      "kind": "text",
@@ -369,6 +383,7 @@
      ]
     },
     "AttributeRows/InstinctRow/InstinctLabel": {
+     "align": "left",
      "color": "c48c3cff",
      "font_size": 12.0,
      "kind": "text",
@@ -380,6 +395,7 @@
      ]
     },
     "AttributeRows/InstinctRow/InstinctValue": {
+     "align": "right",
      "color": "c48c3cff",
      "font_size": 12.0,
      "kind": "text",
@@ -391,6 +407,7 @@
      ]
     },
     "AttributeRows/SpeedRow/SpeedLabel": {
+     "align": "left",
      "color": "735588ff",
      "font_size": 12.0,
      "kind": "text",
@@ -402,6 +419,7 @@
      ]
     },
     "AttributeRows/SpeedRow/SpeedValue": {
+     "align": "right",
      "color": "735588ff",
      "font_size": 12.0,
      "kind": "text",
@@ -413,6 +431,7 @@
      ]
     },
     "AttributeRows/StrengthRow/StrengthLabel": {
+     "align": "left",
      "color": "993333ff",
      "font_size": 12.0,
      "kind": "text",
@@ -424,6 +443,7 @@
      ]
     },
     "AttributeRows/StrengthRow/StrengthValue": {
+     "align": "right",
      "color": "993333ff",
      "font_size": 12.0,
      "kind": "text",
@@ -435,6 +455,7 @@
      ]
     },
     "AttributeRows/VitalityRow/VitalityLabel": {
+     "align": "left",
      "color": "679339ff",
      "font_size": 12.0,
      "kind": "text",
@@ -446,6 +467,7 @@
      ]
     },
     "AttributeRows/VitalityRow/VitalityValue": {
+     "align": "right",
      "color": "679339ff",
      "font_size": 12.0,
      "kind": "text",
@@ -474,6 +496,7 @@
      }
     },
     "AttributesTitle": {
+     "align": "center",
      "color": "333333ff",
      "font_size": 13.0,
      "kind": "text",
@@ -485,6 +508,7 @@
      ]
     },
     "HintLabel": {
+     "align": "left",
      "color": "999999ff",
      "font_size": 12.0,
      "kind": "text",
@@ -497,6 +521,7 @@
      ]
     },
     "LevelLabel": {
+     "align": "center",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -508,6 +533,7 @@
      ]
     },
     "NameLabel": {
+     "align": "center",
      "color": "ccccccff",
      "font_size": 14.0,
      "kind": "text",
@@ -572,6 +598,7 @@
      }
     },
     "PoolTitle": {
+     "align": "center",
      "color": "5e5e5eff",
      "font_size": 13.0,
      "kind": "text",
@@ -600,6 +627,7 @@
      }
     },
     "TreeTitle": {
+     "align": "center",
      "color": "5e5e5eff",
      "font_size": 13.0,
      "kind": "text",
@@ -666,6 +694,7 @@
    ],
    "pieces": {
     "Amount": {
+     "align": "left",
      "color": "fad95aff",
      "font_size": 22.0,
      "kind": "text",
@@ -705,6 +734,7 @@
      "texture": "res://assets/ui/window/delete_slot.png"
     },
     "EuroSign": {
+     "align": "right",
      "color": "fad95aff",
      "font_size": 31.0,
      "kind": "text",
@@ -1103,6 +1133,7 @@
      }
     },
     "Title": {
+     "align": "center",
      "color": "5e5e5eff",
      "font_size": 13.0,
      "kind": "text",
@@ -1319,6 +1350,7 @@
      }
     },
     "LeftPanel/Heading": {
+     "align": "center",
      "color": "5e5e5eff",
      "font_size": 13.0,
      "kind": "text",

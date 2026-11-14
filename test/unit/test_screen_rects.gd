@@ -87,8 +87,18 @@ func _panel_problems(path: String, panel: PanelContainer, entry: Dictionary) -> 
 	return found
 
 
+const ALIGNMENTS: Dictionary = {
+	"left": HORIZONTAL_ALIGNMENT_LEFT,
+	"center": HORIZONTAL_ALIGNMENT_CENTER,
+	"right": HORIZONTAL_ALIGNMENT_RIGHT,
+	"justify": HORIZONTAL_ALIGNMENT_FILL,
+}
+
+
 func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[String]:
 	var found: Array[String] = []
+	if label.horizontal_alignment != ALIGNMENTS[entry["align"]]:
+		found.append("%s: alignment %d, expected %s" % [path, label.horizontal_alignment, entry["align"]])
 	var size: int = label.get_theme_font_size("font_size")
 	if not is_equal_approx(float(size), float(entry["font_size"])):
 		found.append("%s: font size %d, expected %s" % [path, size, entry["font_size"]])
@@ -210,8 +220,10 @@ func test_control_a_panel_moved_20_px_fails() -> void:
 	var root: Control = await _laid_out(TEST_SCENE)
 	(root.get_node("LeftPanel") as Control).position.x += 20.0
 	await wait_process_frames(2)
+	# The Panel fails at both corners. The centred Heading fails at its top left
+	# and at its right edge.
 	var found: Array[String] = _scene_problems(root, _test_scene_record())
-	assert_eq(found.size(), 3, str(found))
+	assert_eq(found.size(), 4, str(found))
 	assert_string_contains(found[0] if found else "", "LeftPanel: top left")
 
 
@@ -271,6 +283,18 @@ func test_control_a_wrong_font_size_fails() -> void:
 	(root.get_node("LeftPanel/Heading") as Label).add_theme_font_size_override("font_size", 12)
 	await wait_process_frames(2)
 	_assert_one_problem(_scene_problems(root, _test_scene_record()), "font size")
+
+
+# The Heading is edit text 2996, align 2, so it is centred in the SWF.
+func test_control_a_centred_field_drawn_left_aligned_fails() -> void:
+	var root: Control = await _laid_out(TEST_SCENE)
+	var heading: Label = root.get_node("LeftPanel/Heading")
+	assert_eq(heading.horizontal_alignment, HORIZONTAL_ALIGNMENT_CENTER, "the scene centres its Heading")
+	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _test_scene_record())
+	assert_gt(found.size(), 0, "a left-aligned Heading passed")
+	assert_string_contains(found[0] if found else "", "LeftPanel/Heading: alignment")
 
 
 func test_control_a_wrong_font_colour_fails() -> void:
