@@ -16,11 +16,13 @@ func _record() -> Dictionary:
 	return JSON.parse_string(text)
 
 
-# A piece is a node that draws. Containers and slots only place pieces, so they
-# are not pieces of their own.
+# A piece is a node that draws. Containers and plain Controls only place pieces,
+# so they are not pieces of their own. Every other CanvasItem counts, so a class
+# that nobody listed here, such as a Button or a RichTextLabel, still has to be in
+# the record or port only. A script that extends Control keeps the class name
+# "Control", so it is still a plain Control.
 func _draws(node: Node) -> bool:
-	return node is Label or node is PanelContainer or node is TextureRect \
-		or node is ColorRect or node is NinePatchRect
+	return node is CanvasItem and not node is Container and node.get_class() != "Control"
 
 
 # A port only node is skipped with every node under it, so a piece the port
@@ -72,6 +74,8 @@ func _panel_problems(path: String, panel: PanelContainer, entry: Dictionary) -> 
 			if style.get_border_width(side) != int(entry["border"]):
 				found.append("%s: stroke width %d on side %d, expected %d" % [
 					path, style.get_border_width(side), side, int(entry["border"])])
+		for problem: String in PanelRecipe.edge_problems(style):
+			found.append("%s: %s" % [path, problem])
 	var material: ShaderMaterial = panel.material as ShaderMaterial
 	if material != PanelRecipe.SHADOW_MATERIAL:
 		found.append("%s: shadow material %s, expected %s" % [
@@ -85,8 +89,36 @@ func _panel_problems(path: String, panel: PanelContainer, entry: Dictionary) -> 
 	return found
 
 
+# CODING_STANDARDS.md names `rect * zoom == PNG pixel size` as the invariant that
+# holds across all the extracted art. The record holds the PNG's size and zoom, so
+# this checks the rect against them and the texture against the size.
+func _art_size_problems(path: String, texture: Texture2D, entry: Dictionary) -> Array[String]:
+	var found: Array[String] = []
+	var size := Vector2(entry["size"][0], entry["size"][1])
+	var zoomed := Vector2(entry["rect"][2], entry["rect"][3]) * float(entry["zoom"])
+	if not zoomed.is_equal_approx(size):
+		found.append("%s: rect times zoom %s, expected the PNG size %s" % [path, zoomed, size])
+	var actual: Vector2 = texture.get_size() if texture else Vector2.ZERO
+	if not actual.is_equal_approx(size):
+		found.append("%s: texture size %s, expected %s" % [path, actual, size])
+	return found
+
+
+const ALIGNMENTS: Dictionary = {
+	"left": HORIZONTAL_ALIGNMENT_LEFT,
+	"center": HORIZONTAL_ALIGNMENT_CENTER,
+	"right": HORIZONTAL_ALIGNMENT_RIGHT,
+	"justify": HORIZONTAL_ALIGNMENT_FILL,
+}
+
+
 func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[String]:
 	var found: Array[String] = []
+	if label.horizontal_alignment != ALIGNMENTS[entry["align"]]:
+		found.append("%s: alignment %d, expected %s" % [path, label.horizontal_alignment, entry["align"]])
+	# Only a field of static text has a text in the record. The game fills the rest.
+	if entry.has("text") and label.text != entry["text"]:
+		found.append("%s: text '%s', expected '%s'" % [path, label.text, entry["text"]])
 	var size: int = label.get_theme_font_size("font_size")
 	if not is_equal_approx(float(size), float(entry["font_size"])):
 		found.append("%s: font size %d, expected %s" % [path, size, entry["font_size"]])
@@ -158,8 +190,15 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 					var texture_path: String = texture.resource_path if texture else "no texture"
 					if texture_path != entry["texture"]:
 						found.append("%s: texture %s, expected %s" % [path, texture_path, entry["texture"]])
+					found.append_array(_art_size_problems(path, texture, entry))
 				else:
 					found.append("%s: an art piece that is not a TextureRect" % path)
+			"face":
+				# A face shows a different PNG for each fighter, so there is no
+				# texture to compare.
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+				if not node is TextureRect:
+					found.append("%s: a face piece that is not a TextureRect" % path)
 			"box":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 				if node is ColorRect:
@@ -208,8 +247,10 @@ func test_control_a_panel_moved_20_px_fails() -> void:
 	var root: Control = await _laid_out(TEST_SCENE)
 	(root.get_node("LeftPanel") as Control).position.x += 20.0
 	await wait_process_frames(2)
+	# The Panel fails at both corners. The centred Heading fails at its top left
+	# and at its right edge.
 	var found: Array[String] = _scene_problems(root, _test_scene_record())
-	assert_eq(found.size(), 3, str(found))
+	assert_eq(found.size(), 4, str(found))
 	assert_string_contains(found[0] if found else "", "LeftPanel: top left")
 
 
@@ -248,6 +289,18 @@ func test_control_a_wrong_stroke_width_fails() -> void:
 	_assert_one_problem(_scene_problems(root, _test_scene_record()), "stroke width")
 
 
+func test_control_a_rounded_corner_fails() -> void:
+	var root: Control = await _laid_out(TEST_SCENE)
+	_broken_style(root).corner_radius_top_left = 4
+	_assert_one_problem(_scene_problems(root, _test_scene_record()), "LeftPanel: corners")
+
+
+func test_control_anti_aliasing_on_fails() -> void:
+	var root: Control = await _laid_out(TEST_SCENE)
+	_broken_style(root).anti_aliasing = true
+	_assert_one_problem(_scene_problems(root, _test_scene_record()), "LeftPanel: anti_aliasing")
+
+
 func test_control_no_shadow_material_fails() -> void:
 	var root: Control = await _laid_out(TEST_SCENE)
 	(root.get_node("LeftPanel") as Control).material = null
@@ -269,6 +322,18 @@ func test_control_a_wrong_font_size_fails() -> void:
 	(root.get_node("LeftPanel/Heading") as Label).add_theme_font_size_override("font_size", 12)
 	await wait_process_frames(2)
 	_assert_one_problem(_scene_problems(root, _test_scene_record()), "font size")
+
+
+# The Heading is edit text 2996, align 2, so it is centred in the SWF.
+func test_control_a_centred_field_drawn_left_aligned_fails() -> void:
+	var root: Control = await _laid_out(TEST_SCENE)
+	var heading: Label = root.get_node("LeftPanel/Heading")
+	assert_eq(heading.horizontal_alignment, HORIZONTAL_ALIGNMENT_CENTER, "the scene centres its Heading")
+	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _test_scene_record())
+	assert_gt(found.size(), 0, "a left-aligned Heading passed")
+	assert_string_contains(found[0] if found else "", "LeftPanel/Heading: alignment")
 
 
 func test_control_a_wrong_font_colour_fails() -> void:
@@ -316,7 +381,32 @@ func test_control_a_hit_button_moved_20_px_fails() -> void:
 func test_control_the_wrong_art_fails() -> void:
 	var root: Control = await _laid_out(SHELL_SCENE)
 	(root.get_node("CloseArt") as TextureRect).texture = (root.get_node("Backdrop") as TextureRect).texture
-	_assert_one_problem(_scene_problems(root, _shell_record()), "CloseArt: texture")
+	# The backdrop is also not the close button's size, so the size check fails too.
+	var found: Array[String] = _scene_problems(root, _shell_record())
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "CloseArt: texture res://")
+	assert_string_contains(found[1] if found else "", "CloseArt: texture size")
+
+
+# _draws once knew only five classes, so a probe that added each of these to the
+# test scene got no problem back (#271, from the re-review of #208).
+func test_control_an_unrecorded_node_of_any_drawing_class_fails() -> void:
+	var drawing: Array[Control] = [
+		Button.new(), TextureButton.new(), Panel.new(), RichTextLabel.new(), LineEdit.new(),
+	]
+	for extra: Control in drawing:
+		var root: Control = await _laid_out(TEST_SCENE)
+		extra.name = "Extra"
+		root.add_child(extra)
+		_assert_one_problem(_scene_problems(root, _test_scene_record()), "Extra: draws")
+
+
+func test_control_a_container_and_a_plain_control_are_not_drawing_nodes() -> void:
+	var root: Control = await _laid_out(TEST_SCENE)
+	root.add_child(Control.new())
+	root.add_child(FloatBox.new())
+	root.add_child(MarginContainer.new())
+	assert_eq(_scene_problems(root, _test_scene_record()), [] as Array[String])
 
 
 func test_control_a_port_only_node_also_skips_the_nodes_under_it() -> void:
@@ -388,3 +478,65 @@ func test_control_a_left_aligned_label_20_px_too_wide_passes() -> void:
 	(root.get_node("Amount") as Label).offset_right += 20.0
 	await wait_process_frames(2)
 	assert_eq(_scene_problems(root, _record()["scenes"][RIGHT_COLUMN_SCENE]), [] as Array[String])
+
+
+const VICTORY_SCENE: String = "res://scenes/battle/victory_screen.tscn"
+
+
+# The Face's rect comes from where extract_faces cuts its portraits in clip 2978
+# and where the row places that clip, not from numbers typed in the scene (#271,
+# from the re-review of #239).
+func test_control_a_victory_row_face_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(VICTORY_SCENE)
+	(root.get_node("ExpRows/PlayerSlot/Row/Face") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][VICTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "PlayerSlot/Row/Face: top left")
+
+
+func test_the_victory_row_face_is_not_port_only() -> void:
+	var scene: Dictionary = _record()["scenes"][VICTORY_SCENE]
+	assert_does_not_have(scene["port_only"], "ExpRows/PlayerSlot/Row/Face")
+	assert_eq(scene["pieces"]["ExpRows/PlayerSlot/Row/Face"]["kind"], "face")
+
+
+# The record says the CloseArt PNG is 148 by 146 at zoom 4, so its rect is 37 by
+# 36.5. A rect 5 px wider no longer matches the PNG.
+func test_control_an_art_rect_that_is_not_the_png_size_over_the_zoom_fails() -> void:
+	var root: Control = await _laid_out(SHELL_SCENE)
+	var scene: Dictionary = _shell_record()
+	scene["pieces"]["CloseArt"]["rect"][2] += 5.0
+	var found: Array[String] = _scene_problems(root, scene)
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "CloseArt: bottom right")
+	assert_string_contains(found[1] if found else "", "CloseArt: rect times zoom")
+
+
+# The record's rect and size agree with each other here, so only the PNG on disk
+# is wrong: it stands for an art file that a run of the extractor left at another
+# size.
+func test_control_a_png_that_is_not_the_recorded_size_fails() -> void:
+	var root: Control = await _laid_out(SHELL_SCENE)
+	var scene: Dictionary = _shell_record()
+	var piece: Dictionary = scene["pieces"]["CloseArt"]
+	piece["size"] = [152, 146]
+	piece["rect"][2] = 152.0 / float(piece["zoom"])
+	var found: Array[String] = _scene_problems(root, scene)
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "CloseArt: bottom right")
+	assert_string_contains(found[1] if found else "", "CloseArt: texture size")
+
+
+# The euro sign is static text in the SWF (edit text 2861), so the record holds
+# its character and the Label has to show it.
+func test_control_a_label_with_other_text_than_the_static_field_fails() -> void:
+	var root: Control = await _laid_out(RIGHT_COLUMN_SCENE)
+	(root.get_node("EuroSign") as Label).text = "$"
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][RIGHT_COLUMN_SCENE]), "EuroSign: text")
+
+
+func test_the_record_holds_the_text_of_static_fields_only() -> void:
+	var pieces: Dictionary = _record()["scenes"][RIGHT_COLUMN_SCENE]["pieces"]
+	assert_true(pieces["EuroSign"].has("text"), "the euro sign is static text")
+	assert_false(pieces["Amount"].has("text"), "the game fills the amount")

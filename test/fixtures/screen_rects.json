@@ -15,7 +15,21 @@
       95.25,
       18.75
      ],
-     "texture": "res://assets/ui/window/xp_bar.png"
+     "size": [
+      381,
+      75
+     ],
+     "texture": "res://assets/ui/window/xp_bar.png",
+     "zoom": 4.0
+    },
+    "ExpRows/CompanionSlot0/Row/Face": {
+     "kind": "face",
+     "rect": [
+      58.1788,
+      233.8253,
+      45.9598,
+      62.492
+     ]
     },
     "ExpRows/CompanionSlot0/Row/Frame": {
      "kind": "art",
@@ -25,7 +39,12 @@
       203.25,
       89.5
      ],
-     "texture": "res://assets/ui/window/victory_row.png"
+     "size": [
+      813,
+      358
+     ],
+     "texture": "res://assets/ui/window/victory_row.png",
+     "zoom": 4.0
     },
     "ExpRows/CompanionSlot0/Row/Gloss": {
      "kind": "art",
@@ -35,9 +54,15 @@
       129.0,
       18.75
      ],
-     "texture": "res://assets/ui/window/xp_gloss_victory.png"
+     "size": [
+      516,
+      75
+     ],
+     "texture": "res://assets/ui/window/xp_gloss_victory.png",
+     "zoom": 4.0
     },
     "ExpRows/CompanionSlot0/Row/LevelLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -57,6 +82,7 @@
      }
     },
     "ExpRows/CompanionSlot0/Row/NameLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -76,6 +102,7 @@
      }
     },
     "ExpRows/CompanionSlot0/Row/PercentLabel": {
+     "align": "right",
      "color": "ffffffff",
      "font_size": 10.0,
      "kind": "text",
@@ -102,7 +129,21 @@
       95.25,
       18.75
      ],
-     "texture": "res://assets/ui/window/xp_bar.png"
+     "size": [
+      381,
+      75
+     ],
+     "texture": "res://assets/ui/window/xp_bar.png",
+     "zoom": 4.0
+    },
+    "ExpRows/CompanionSlot1/Row/Face": {
+     "kind": "face",
+     "rect": [
+      58.1788,
+      326.3253,
+      45.9598,
+      62.492
+     ]
     },
     "ExpRows/CompanionSlot1/Row/Frame": {
      "kind": "art",
@@ -112,7 +153,12 @@
       203.25,
       89.5
      ],
-     "texture": "res://assets/ui/window/victory_row.png"
+     "size": [
+      813,
+      358
+     ],
+     "texture": "res://assets/ui/window/victory_row.png",
+     "zoom": 4.0
     },
     "ExpRows/CompanionSlot1/Row/Gloss": {
      "kind": "art",
@@ -122,9 +168,15 @@
       129.0,
       18.75
      ],
-     "texture": "res://assets/ui/window/xp_gloss_victory.png"
+     "size": [
+      516,
+      75
+     ],
+     "texture": "res://assets/ui/window/xp_gloss_victory.png",
+     "zoom": 4.0
     },
     "ExpRows/CompanionSlot1/Row/LevelLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -144,6 +196,7 @@
      }
     },
     "ExpRows/CompanionSlot1/Row/NameLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -163,6 +216,7 @@
      }
     },
     "ExpRows/CompanionSlot1/Row/PercentLabel": {
+     "align": "right",
      "color": "ffffffff",
      "font_size": 10.0,
      "kind": "text",
@@ -189,7 +243,21 @@
       95.25,
       18.75
      ],
-     "texture": "res://assets/ui/window/xp_bar.png"
+     "size": [
+      381,
+      75
+     ],
+     "texture": "res://assets/ui/window/xp_bar.png",
+     "zoom": 4.0
+    },
+    "ExpRows/PlayerSlot/Row/Face": {
+     "kind": "face",
+     "rect": [
+      58.1788,
+      141.3253,
+      45.9598,
+      62.492
+     ]
     },
     "ExpRows/PlayerSlot/Row/Frame": {
      "kind": "art",
@@ -199,7 +267,12 @@
       203.25,
       89.5
      ],
-     "texture": "res://assets/ui/window/victory_row.png"
+     "size": [
+      813,
+      358
+     ],
+     "texture": "res://assets/ui/window/victory_row.png",
+     "zoom": 4.0
     },
     "ExpRows/PlayerSlot/Row/Gloss": {
      "kind": "art",
@@ -209,9 +282,15 @@
       129.0,
       18.75
      ],
-     "texture": "res://assets/ui/window/xp_gloss_victory.png"
+     "size": [
+      516,
+      75
+     ],
+     "texture": "res://assets/ui/window/xp_gloss_victory.png",
+     "zoom": 4.0
     },
     "ExpRows/PlayerSlot/Row/LevelLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -231,6 +310,7 @@
      }
     },
     "ExpRows/PlayerSlot/Row/NameLabel": {
+     "align": "left",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -250,6 +330,7 @@
      }
     },
     "ExpRows/PlayerSlot/Row/PercentLabel": {
+     "align": "right",
      "color": "ffffffff",
      "font_size": 10.0,
      "kind": "text",
@@ -281,10 +362,8 @@
     "ExpLabel",
     "ExpValue",
     "ProceedHintLabel",
-    "RightColumn",
-    "ExpRows/PlayerSlot/Row/Face",
-    "ExpRows/CompanionSlot0/Row/Face",
-    "ExpRows/CompanionSlot1/Row/Face"
+    "ProceedButton",
+    "RightColumn"
    ],
    "timeline": 3142
   },
@@ -296,6 +375,7 @@
    ],
    "pieces": {
     "AbilityPointsLabel": {
+     "align": "left",
      "color": "ffffffff",
      "font_size": 12.0,
      "kind": "text",
@@ -307,6 +387,7 @@
      ]
     },
     "AbilityPointsValue": {
+     "align": "right",
      "color": "ffffffff",
      "font_size": 12.0,
      "kind": "text",
@@ -318,6 +399,7 @@
      ]
     },
     "ActionBarTitle": {
+     "align": "center",
      "color": "5e5e5eff",
      "font_size": 13.0,
      "kind": "text",
@@ -346,6 +428,7 @@
      }
     },
     "AttributePointsLabel": {
+     "align": "left",
      "color": "ffffffff",
      "font_size": 12.0,
      "kind": "text",
@@ -357,6 +440,7 @@
      ]
     },
     "AttributePointsValue": {
+     "align": "right",
      "color": "ffffffff",
      "font_size": 12.0,
      "kind": "text",
@@ -368,6 +452,7 @@
      ]
     },
     "AttributeRows/InstinctRow/InstinctLabel": {
+     "align": "left",
      "color": "c48c3cff",
      "font_size": 12.0,
      "kind": "text",
@@ -379,6 +464,7 @@
      ]
     },
     "AttributeRows/InstinctRow/InstinctValue": {
+     "align": "right",
      "color": "c48c3cff",
      "font_size": 12.0,
      "kind": "text",
@@ -390,6 +476,7 @@
      ]
     },
     "AttributeRows/SpeedRow/SpeedLabel": {
+     "align": "left",
      "color": "735588ff",
      "font_size": 12.0,
      "kind": "text",
@@ -401,6 +488,7 @@
      ]
     },
     "AttributeRows/SpeedRow/SpeedValue": {
+     "align": "right",
      "color": "735588ff",
      "font_size": 12.0,
      "kind": "text",
@@ -412,6 +500,7 @@
      ]
     },
     "AttributeRows/StrengthRow/StrengthLabel": {
+     "align": "left",
      "color": "993333ff",
      "font_size": 12.0,
      "kind": "text",
@@ -423,6 +512,7 @@
      ]
     },
     "AttributeRows/StrengthRow/StrengthValue": {
+     "align": "right",
      "color": "993333ff",
      "font_size": 12.0,
      "kind": "text",
@@ -434,6 +524,7 @@
      ]
     },
     "AttributeRows/VitalityRow/VitalityLabel": {
+     "align": "left",
      "color": "679339ff",
      "font_size": 12.0,
      "kind": "text",
@@ -445,6 +536,7 @@
      ]
     },
     "AttributeRows/VitalityRow/VitalityValue": {
+     "align": "right",
      "color": "679339ff",
      "font_size": 12.0,
      "kind": "text",
@@ -473,6 +565,7 @@
      }
     },
     "AttributesTitle": {
+     "align": "center",
      "color": "333333ff",
      "font_size": 13.0,
      "kind": "text",
@@ -484,6 +577,7 @@
      ]
     },
     "HintLabel": {
+     "align": "left",
      "color": "999999ff",
      "font_size": 12.0,
      "kind": "text",
@@ -496,6 +590,7 @@
      ]
     },
     "LevelLabel": {
+     "align": "center",
      "color": "ccccccff",
      "font_size": 12.0,
      "kind": "text",
@@ -507,6 +602,7 @@
      ]
     },
     "NameLabel": {
+     "align": "center",
      "color": "ccccccff",
      "font_size": 14.0,
      "kind": "text",
@@ -571,6 +667,7 @@
      }
     },
     "PoolTitle": {
+     "align": "center",
      "color": "5e5e5eff",
      "font_size": 13.0,
      "kind": "text",
@@ -599,6 +696,7 @@
      }
     },
     "TreeTitle": {
+     "align": "center",
      "color": "5e5e5eff",
      "font_size": 13.0,
      "kind": "text",
@@ -617,7 +715,12 @@
       776.75,
       433.0
      ],
-     "texture": "res://assets/ui/window/backdrop.png"
+     "size": [
+      3107,
+      1732
+     ],
+     "texture": "res://assets/ui/window/backdrop.png",
+     "zoom": 4.0
     },
     "WindowShell/CloseArt": {
      "kind": "art",
@@ -627,7 +730,12 @@
       37.0,
       36.5
      ],
-     "texture": "res://assets/ui/window/close_x.png"
+     "size": [
+      148,
+      146
+     ],
+     "texture": "res://assets/ui/window/close_x.png",
+     "zoom": 4.0
     },
     "WindowShell/CloseButton": {
      "kind": "hit",
@@ -643,7 +751,17 @@
     "StatusLabel",
     "TreeNodes",
     "PoolBackdrop",
-    "PoolRows"
+    "PoolRows",
+    "ScrollUpButton",
+    "ScrollDownButton",
+    "Socket0",
+    "Socket1",
+    "Socket2",
+    "Socket3",
+    "Socket4",
+    "Socket5",
+    "Socket6",
+    "Socket7"
    ],
    "timeline": 3142
   },
@@ -655,6 +773,7 @@
    ],
    "pieces": {
     "Amount": {
+     "align": "left",
      "color": "fad95aff",
      "font_size": 22.0,
      "kind": "text",
@@ -691,9 +810,15 @@
       31.0,
       31.25
      ],
-     "texture": "res://assets/ui/window/delete_slot.png"
+     "size": [
+      124,
+      125
+     ],
+     "texture": "res://assets/ui/window/delete_slot.png",
+     "zoom": 4.0
     },
     "EuroSign": {
+     "align": "right",
      "color": "fad95aff",
      "font_size": 31.0,
      "kind": "text",
@@ -702,7 +827,8 @@
       366.9,
       26.4,
       39.4
-     ]
+     ],
+     "text": "\u20ac"
     },
     "Grid/Row0/Slot0": {
      "kind": "art",
@@ -712,7 +838,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row0/Slot1": {
      "kind": "art",
@@ -722,7 +853,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row0/Slot2": {
      "kind": "art",
@@ -732,7 +868,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row0/Slot3": {
      "kind": "art",
@@ -742,7 +883,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row0/Slot4": {
      "kind": "art",
@@ -752,7 +898,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row0/Slot5": {
      "kind": "art",
@@ -762,7 +913,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row1/Slot0": {
      "kind": "art",
@@ -772,7 +928,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row1/Slot1": {
      "kind": "art",
@@ -782,7 +943,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row1/Slot2": {
      "kind": "art",
@@ -792,7 +958,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row1/Slot3": {
      "kind": "art",
@@ -802,7 +973,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row1/Slot4": {
      "kind": "art",
@@ -812,7 +988,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row1/Slot5": {
      "kind": "art",
@@ -822,7 +1003,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row2/Slot0": {
      "kind": "art",
@@ -832,7 +1018,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row2/Slot1": {
      "kind": "art",
@@ -842,7 +1033,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row2/Slot2": {
      "kind": "art",
@@ -852,7 +1048,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row2/Slot3": {
      "kind": "art",
@@ -862,7 +1063,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row2/Slot4": {
      "kind": "art",
@@ -872,7 +1078,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row2/Slot5": {
      "kind": "art",
@@ -882,7 +1093,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row3/Slot0": {
      "kind": "art",
@@ -892,7 +1108,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row3/Slot1": {
      "kind": "art",
@@ -902,7 +1123,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row3/Slot2": {
      "kind": "art",
@@ -912,7 +1138,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row3/Slot3": {
      "kind": "art",
@@ -922,7 +1153,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row3/Slot4": {
      "kind": "art",
@@ -932,7 +1168,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row3/Slot5": {
      "kind": "art",
@@ -942,7 +1183,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row4/Slot0": {
      "kind": "art",
@@ -952,7 +1198,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row4/Slot1": {
      "kind": "art",
@@ -962,7 +1213,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row4/Slot2": {
      "kind": "art",
@@ -972,7 +1228,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row4/Slot3": {
      "kind": "art",
@@ -982,7 +1243,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row4/Slot4": {
      "kind": "art",
@@ -992,7 +1258,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row4/Slot5": {
      "kind": "art",
@@ -1002,7 +1273,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row5/Slot0": {
      "kind": "art",
@@ -1012,7 +1288,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row5/Slot1": {
      "kind": "art",
@@ -1022,7 +1303,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row5/Slot2": {
      "kind": "art",
@@ -1032,7 +1318,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row5/Slot3": {
      "kind": "art",
@@ -1042,7 +1333,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row5/Slot4": {
      "kind": "art",
@@ -1052,7 +1348,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "Grid/Row5/Slot5": {
      "kind": "art",
@@ -1062,7 +1363,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/slot_inventory.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
     },
     "SellSlot/Art": {
      "kind": "art",
@@ -1072,7 +1378,12 @@
       31.25,
       31.25
      ],
-     "texture": "res://assets/ui/window/sell_slot.png"
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/sell_slot.png",
+     "zoom": 4.0
     },
     "TallPanel": {
      "border": 1,
@@ -1092,6 +1403,7 @@
      }
     },
     "Title": {
+     "align": "center",
      "color": "5e5e5eff",
      "font_size": 13.0,
      "kind": "text",
@@ -1104,6 +1416,8 @@
     }
    },
    "port_only": [
+    "SellSlot",
+    "DeleteSlot",
     "Grid/Row0/Slot0/ItemIcon",
     "Grid/Row0/Slot0/Highlight",
     "Grid/Row0/Slot1/ItemIcon",
@@ -1194,7 +1508,12 @@
       776.75,
       433.0
      ],
-     "texture": "res://assets/ui/window/backdrop.png"
+     "size": [
+      3107,
+      1732
+     ],
+     "texture": "res://assets/ui/window/backdrop.png",
+     "zoom": 4.0
     },
     "CloseArt": {
      "kind": "art",
@@ -1204,7 +1523,12 @@
       37.0,
       36.5
      ],
-     "texture": "res://assets/ui/window/close_x.png"
+     "size": [
+      148,
+      146
+     ],
+     "texture": "res://assets/ui/window/close_x.png",
+     "zoom": 4.0
     },
     "CloseButton": {
      "kind": "hit",
@@ -1306,6 +1630,7 @@
      }
     },
     "LeftPanel/Heading": {
+     "align": "center",
      "color": "5e5e5eff",
      "font_size": 13.0,
      "kind": "text",

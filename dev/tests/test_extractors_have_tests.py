@@ -16,7 +16,6 @@ UNTESTED = {
     "battle_screen_motion",
     "buff_icons",
     "doll_art",
-    "faces",
     "item_looks",
     "store_art",
     "vfx_scenes",

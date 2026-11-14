@@ -35,10 +35,16 @@
 # The scenes showing them stretch to fill (stretch_mode 0), which only holds
 # while the outputs share a size.
 #
+# The crop box is written to face_crop.json, in the clip's own design px, so
+# extract_screen_rects can place it where a scene shows a face (the Victory
+# row's Face, spec/107-victory.md).
+#
 # Requires ffdec (~/.local/bin/ffdec) for the sprite PNG export.
 # Run: uv run extract_faces
 from __future__ import annotations
 
+import json
+import math
 import re
 import sys
 
@@ -47,12 +53,32 @@ from urchin_dev.swf import render, timeline
 from urchin_dev.swf.swf_index import read_swf
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "menu" / "portraits"
+RECORD = OUT_DIR / "face_crop.json"
 ZOOM = 5.0
 FACE_CLIP = 2978
 
 
 def sanitize(label: str) -> str:
     return re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_").lower()
+
+
+def crop_record(cut: list[render.Trimmed], zoom: float) -> dict:
+    """-> where the crop box of `cut` sits in clip 2978, in the clip's design
+    px. Raises unless every frame has the same box, because one rect has to
+    place every portrait."""
+    if not cut:
+        raise ValueError("no frame was cut")
+    first = cut[0].rect
+    for frame in cut[1:]:
+        if not all(math.isclose(a, b) for a, b in zip(frame.rect, first, strict=True)):
+            raise ValueError(f"the frames' crop boxes differ: {first} and {frame.rect}")
+    w, h = first[2], first[3]
+    return {
+        "relative_to": f"sprite {FACE_CLIP}",
+        "rect": [round(v, 4) for v in first],
+        "size": [round(w * zoom), round(h * zoom)],
+        "zoom": zoom,
+    }
 
 
 def main():
@@ -74,6 +100,9 @@ def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for label, frame in labels.items():
         png.save(by_frame[frame].image, OUT_DIR / f"{sanitize(label)}.png")
+    RECORD.write_text(
+        json.dumps(crop_record(cut, ZOOM), indent=1, sort_keys=True) + "\n"
+    )
     crop = cut[0].bbox
     print(
         f"wrote {len(labels)} portraits, cropped to {crop[2] - crop[0]}x"

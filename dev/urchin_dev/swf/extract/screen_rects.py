@@ -13,18 +13,23 @@
 # node that draws a piece. port_only names the nodes the port draws and the
 # SWF does not, so the test skips them.
 #
-# A piece is one of six kinds:
+# A piece is one of seven kinds:
 #   "panel" - a flat Panel (Part 3): a sprite whose one shape has a solid fill
 #             and a line, under an inner DropShadow. Its rect is the fill rect
 #             grown by half the border. The fill rect is ShapeBounds through
 #             the placement matrix, shrunk on each side by half the line width
 #             times that axis's scale.
 #   "text"  - an edit text, recorded as the rect Flash lays its text out in
-#             (label_layout.text_rect), with its font height and colour.
+#             (label_layout.text_rect), with its font height, colour and
+#             alignment.
 #   "art"   - a piece drawn from a zoom 4 PNG of extract_window_chrome, which
 #             a TextureRect shows at the rect that render measured, with the
 #             PNG's path. Its depth is the one window_chrome renders, so the
 #             two extractors cannot name different placements.
+#   "face"  - the portrait clip 2978, which the port draws as a TextureRect that
+#             shows a different PNG for each fighter. It is recorded as the crop
+#             box that extract_faces cut every portrait to, placed with the
+#             clip's matrix, and it has no texture.
 #   "hit"   - a button that draws nothing, only a hit square, recorded as the
 #             hit shape's bounds through the placement matrix.
 #   "button" - a button that draws art, which the port draws as a native
@@ -55,7 +60,7 @@ from dataclasses import dataclass, field
 
 from urchin_dev import REPO_ROOT, WEB_SWF
 from urchin_dev.swf import label_layout, render, timeline
-from urchin_dev.swf.extract import window_chrome
+from urchin_dev.swf.extract import faces, window_chrome
 from urchin_dev.swf.swf_index import (
     ButtonRecord,
     DropShadow,
@@ -66,8 +71,6 @@ from urchin_dev.swf.swf_index import (
     character_kind,
     drop_shadow,
     edit_text,
-    first_fill_color,
-    first_line_style,
     read_swf,
     shape_bounds,
     shape_styles,
@@ -118,6 +121,7 @@ class Scene:
 VICTORY_ROWS = {"PlayerSlot": 1197, "CompanionSlot0": 1111, "CompanionSlot1": 1154}
 VICTORY_ROW_PIECES: dict[str, tuple[str, int, str | None]] = {
     "Frame": ("art", 2, "victory_row"),
+    "Face": ("face", 3, None),
     "NameLabel": ("text", 37, None),
     "LevelLabel": ("text", 38, None),
     "Bar": ("art", 39, "xp_bar"),
@@ -165,8 +169,8 @@ SCENES: dict[str, Scene] = {
     # The victory frame's three experience rows, each a placement of sprite
     # 3002: the player's at depth 1197, then friendlySlotsFFTT[0] and [1] at
     # 1111 and 1154. The rest of the Victory screen is port only until the
-    # Victory Window replaces it (spec/107-victory.md). The face has no record,
-    # because extract_faces does not write where its crop sits in sprite 2978.
+    # Victory Window replaces it (spec/107-victory.md). The face is the clip 2978
+    # at depth 3 of the row, and extract_faces writes where its crop sits in it.
     # The row's shape 3001 has no fill across the row: it strokes a 1 px line
     # around it and fills only the box under the bar. The port draws it as the
     # victory_row art, which holds the shape under the row's DropShadow.
@@ -190,8 +194,8 @@ SCENES: dict[str, Scene] = {
             "ExpLabel",
             "ExpValue",
             "ProceedHintLabel",
+            "ProceedButton",
             "RightColumn",
-            *(f"ExpRows/{slot}/Row/Face" for slot in VICTORY_ROWS),
         ),
     ),
     # The right column of 36 item slots and the money bar
@@ -215,15 +219,23 @@ SCENES: dict[str, Scene] = {
             "BarPanel": Piece("panel", 5),
             "EuroSign": Piece("text", 1424),
             "Amount": Piece("text", 1423),
-            "SellSlot/Art": Piece("art", window_chrome.SELL_SLOT_DEPTH, art="sell_slot"),
+            "SellSlot/Art": Piece(
+                "art", window_chrome.SELL_SLOT_DEPTH, art="sell_slot"
+            ),
             "DeleteSlot/Art": Piece(
                 "art", window_chrome.DELETE_SLOT_DEPTH, art="delete_slot"
             ),
         },
-        port_only=tuple(
-            f"Grid/Row{i // INVENTORY_COLUMNS}/Slot{i % INVENTORY_COLUMNS}/{node}"
-            for i in range(INVENTORY_SLOTS)
-            for node in ("ItemIcon", "Highlight")
+        # SellSlot and DeleteSlot are Buttons that draw only a hover highlight over
+        # the art. Their Art children are pieces, so the test still checks them.
+        port_only=(
+            "SellSlot",
+            "DeleteSlot",
+            *(
+                f"Grid/Row{i // INVENTORY_COLUMNS}/Slot{i % INVENTORY_COLUMNS}/{node}"
+                for i in range(INVENTORY_SLOTS)
+                for node in ("ItemIcon", "Highlight")
+            ),
         ),
     ),
     # The skills frame (spec/107-abilities.md). The tree nodes and the pool
@@ -268,7 +280,15 @@ SCENES: dict[str, Scene] = {
             "AttributeRows/InstinctRow/InstinctValue": Piece("text", 649),
             "AttributeRows/SpeedRow/SpeedValue": Piece("text", 650),
         },
-        port_only=("StatusLabel", "TreeNodes", "PoolBackdrop", "PoolRows"),
+        port_only=(
+            "StatusLabel",
+            "TreeNodes",
+            "PoolBackdrop",
+            "PoolRows",
+            "ScrollUpButton",
+            "ScrollDownButton",
+            *(f"Socket{i}" for i in range(8)),
+        ),
     ),
 }
 
@@ -355,14 +375,17 @@ def text_record(text: EditText, matrix, origin) -> dict:
         "rect": [rect["x"], rect["y"], rect["w"], rect["h"]],
         "font_size": text.font_height / render.TWIPS,
         "color": color_hex(text.color),
+        "align": label_layout.ALIGNMENTS[text.align],
     }
+    # Static text of one line says what it shows, so a Label that shows it can be
+    # checked against the SWF's own characters. The game fills every other field.
+    if label_layout.one_static_line(text):
+        entry["text"] = text.initial_text.removesuffix("\r")
     # Flash puts the lines of a field one font height plus the field's leading
     # apart. A field that wraps, or a multiline field that is not one line of
     # static text, can show more than one line, so its pitch is recorded. A
     # field of one line has no pitch to check.
-    if text.word_wrap or (
-        text.multiline and not label_layout.one_static_line(text)
-    ):
+    if text.word_wrap or (text.multiline and not label_layout.one_static_line(text)):
         entry["line_pitch"] = (text.font_height + (text.leading or 0)) / render.TWIPS
     return entry
 
@@ -397,7 +420,9 @@ def _shadow_of(layer: timeline.Layer) -> DropShadow | None:
         if name == "DropShadow"
     ]
     if len(shadows) > 1:
-        raise ValueError(f"character {layer.character_id} has {len(shadows)} DropShadows")
+        raise ValueError(
+            f"character {layer.character_id} has {len(shadows)} DropShadows"
+        )
     return shadows[0] if shadows else None
 
 
@@ -419,6 +444,8 @@ def art_record(name: str, chrome: dict, sprite_origins: dict | None = None) -> d
         "kind": "art",
         "rect": [round(x + shift[0], 4), round(y + shift[1], 4), w, h],
         "texture": f"{CHROME_TEXTURES}/{name}.png",
+        "size": chrome["size"],
+        "zoom": chrome["zoom"],
     }
 
 
@@ -429,6 +456,19 @@ def box_record(bounds, matrix, origin, fill: tuple[int, int, int, int]) -> dict:
         "kind": "box",
         "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
         "fill": color_hex(fill),
+    }
+
+
+def face_record(crop, matrix, origin) -> dict:
+    """-> the record of a portrait, as the crop box of extract_faces placed with
+    `matrix`, the matrix that places the face clip. `crop` is (x, y, w, h) in the
+    clip's own design px. The portrait is a different texture for each fighter,
+    so the record holds the rect and no texture."""
+    x, y, w, h = crop
+    bounds = tuple(v * render.TWIPS for v in (x, y, x + w, y + h))
+    return {
+        "kind": "face",
+        "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
     }
 
 
@@ -486,10 +526,7 @@ def inner_origin(matrix, origin) -> tuple[float, float]:
     `matrix` on a timeline whose origin is `origin`."""
     if _scale(matrix) != (1.0, 1.0):
         raise ValueError(f"matrix {matrix} scales the sprite, and an origin can't")
-    return (
-        origin[0] + matrix[4] / render.TWIPS,
-        origin[1] + matrix[5] / render.TWIPS,
-    )
+    return (origin[0] + matrix[4] / render.TWIPS, origin[1] + matrix[5] / render.TWIPS)
 
 
 def _hit(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
@@ -515,10 +552,9 @@ def _panel(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
     ]
     if len(shadows) != 1 or len(layer.filters) != 1:
         raise ValueError(f"{where} has filters {layer.filters}, not one DropShadow")
-    line_style = first_line_style(index, inner.character_id)
-    fill = first_fill_color(index, inner.character_id)
-    if line_style is None or fill is None:
-        raise ValueError(f"{where}'s shape has no solid fill or no line")
+    fill, line_style = one_fill_and_line(
+        shape_styles(index, inner.character_id), inner.character_id
+    )
     return panel_record(
         bounds=shape_bounds(index, inner.character_id),
         line_width=line_style[0],
@@ -528,6 +564,26 @@ def _panel(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
         line=line_style[1],
         shadow=shadows[0],
     )
+
+
+def one_fill_and_line(
+    sets: list[StyleSet], shape: int
+) -> tuple[tuple[int, int, int, int], tuple[int, tuple[int, int, int, int]]]:
+    """-> (fill colour, (line width in twips, line colour)) of a Panel's shape.
+    Raises unless the shape has one style set, whose only fill is a solid
+    colour that its edges use as fill 1, and one line. A shape that declares new
+    styles partway through draws more with them, and its first style set alone
+    would record the wrong fill or line. Shape 3001 did that (`6b0bb46e`)."""
+    if len(sets) != 1:
+        raise ValueError(f"shape {shape} has {len(sets)} style sets, not one")
+    only = sets[0]
+    if only.used_fills != {1}:
+        raise ValueError(f"shape {shape} uses fills {set(only.used_fills)}, not fill 1")
+    if only.fills[0] is None:
+        raise ValueError(f"shape {shape}'s fill 1 is not a solid colour")
+    if len(only.lines) != 1:
+        raise ValueError(f"shape {shape} has {len(only.lines)} lines, not one line")
+    return only.fills[0], only.lines[0]
 
 
 def one_solid_fill(sets: list[StyleSet], shape: int) -> tuple[int, int, int, int]:
@@ -570,7 +626,9 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
         if piece.instance is None:
             layer = layers.get(piece.depth)
             if layer is None:
-                raise ValueError(f"{path}: frame {scene.frame} has no depth {piece.depth}")
+                raise ValueError(
+                    f"{path}: frame {scene.frame} has no depth {piece.depth}"
+                )
         else:
             named = [layer for layer in layers.values() if layer.name == piece.instance]
             if len(named) != 1:
@@ -597,7 +655,11 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
                     f" {piece.inner_depth} on its first frame"
                 )
             layer = first[piece.inner_depth]
-            if character_kind(index, layer.character_id) == "sprite":
+            # A face is placed with a scale, so no origin of its own exists.
+            if (
+                piece.kind != "face"
+                and character_kind(index, layer.character_id) == "sprite"
+            ):
                 sprite_origins[f"sprite {layer.character_id}"] = inner_origin(
                     layer.matrix, piece_origin
                 )
@@ -612,6 +674,14 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
             pieces[path] = _button(index, layer, piece_origin)
         elif piece.kind == "art":
             pieces[path] = art_record(piece.art, chrome[piece.art], sprite_origins)
+        elif piece.kind == "face":
+            if layer.character_id != faces.FACE_CLIP:
+                raise ValueError(
+                    f"{path}: depth {piece.inner_depth} holds {layer.character_id},"
+                    f" not the face clip {faces.FACE_CLIP}"
+                )
+            crop = json.loads(faces.RECORD.read_text())["rect"]
+            pieces[path] = face_record(crop, layer.matrix, piece_origin)
         elif piece.kind == "box":
             pieces[path] = _box(index, layer, piece_origin)
         elif piece.kind == "hit":

@@ -80,6 +80,8 @@ def test_border_is_the_line_times_the_rounded_mean_scale():
     assert screen_rects.border_width(LINE, (0.6, 2.1)) == 2
     assert screen_rects.border_width(LINE, (0.894, 1.225)) == 1
     assert screen_rects.border_width(2 * LINE, (1.0, 1.0)) == 2
+    # PanelRecipe.border_width has the same case in test/unit/test_panel_recipe.gd.
+    assert screen_rects.border_width(3 * LINE, (0.6, 2.1)) == 5
 
 
 def test_panel_record_grows_the_fill_rect_by_half_the_border():
@@ -135,7 +137,27 @@ def test_text_record_is_the_field_inside_its_gutter_with_its_size_and_colour():
         "rect": pytest.approx([43.3, 89.1, 209.15, 15.0]),
         "font_size": 13.0,
         "color": "5e5e5eff",
+        "align": "left",
     }
+
+
+@pytest.mark.parametrize(
+    ("align", "name"), [(0, "left"), (1, "right"), (2, "center"), (3, "justify")]
+)
+def test_text_record_holds_the_alignment_of_the_field(align, name):
+    entry = screen_rects.text_record(
+        field(align=align), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN
+    )
+    assert entry["align"] == name
+
+
+# The face's crop box in clip 2978 is placed by the clip's own matrix, which
+# scales (sprite 3002 places it at 1.653), so the record scales it too.
+def test_face_record_is_the_crop_box_through_the_placement():
+    entry = screen_rects.face_record(
+        [1.0, 2.0, 28.0, 38.0], (2.0, 0.0, 0.0, 2.0, -100, 20), ORIGIN
+    )
+    assert entry == {"kind": "face", "rect": pytest.approx([397.5, 227.4, 56.0, 76.0])}
 
 
 def test_text_record_refuses_a_scaled_field():
@@ -172,6 +194,8 @@ def test_art_record_is_the_render_rect_and_the_png():
         "kind": "art",
         "rect": [734.3, 29.675, 37.0, 36.5],
         "texture": "res://assets/ui/window/close_x.png",
+        "size": [148, 146],
+        "zoom": 4.0,
     }
 
 
@@ -240,7 +264,10 @@ def test_text_shadow_is_the_drop_shadow_offset_and_colour():
 def test_text_shadow_scales_the_alpha_by_the_strength():
     from dataclasses import replace as changed
 
-    assert screen_rects.text_shadow(changed(ROW_SHADOW, strength=0.5))["color"] == "00000080"
+    assert (
+        screen_rects.text_shadow(changed(ROW_SHADOW, strength=0.5))["color"]
+        == "00000080"
+    )
 
 
 @pytest.mark.parametrize(
@@ -302,9 +329,13 @@ def test_hit_record_refuses_a_button_that_is_more_than_a_hit_square(records, mes
 # the up state, under the gradient 3064. Shapes 3066 and 3067 draw only on
 # hover, press and hit. KRINMENU frame 25 places the button at depth 668.
 PLUS_RECORDS = [
-    ButtonRecord(frozenset({"up", "over", "down"}), 3064, 1, (1.0, 0.0, 0.0, 1.0, 0, 0)),
+    ButtonRecord(
+        frozenset({"up", "over", "down"}), 3064, 1, (1.0, 0.0, 0.0, 1.0, 0, 0)
+    ),
     ButtonRecord(frozenset({"up"}), 3065, 2, (1.0, 0.0, 0.0, 1.0, 0, 0)),
-    ButtonRecord(frozenset({"over", "down", "hit"}), 3066, 3, (1.0, 0.0, 0.0, 1.0, 0, 0)),
+    ButtonRecord(
+        frozenset({"over", "down", "hit"}), 3066, 3, (1.0, 0.0, 0.0, 1.0, 0, 0)
+    ),
     ButtonRecord(frozenset({"hit"}), 3067, 4, (1.0, 0.0, 0.0, 1.0, 0, 0)),
 ]
 PLUS_BOUNDS = {
@@ -383,3 +414,54 @@ def test_a_piece_needs_exactly_one_of_a_depth_and_an_instance_name(depth, instan
 def test_an_art_piece_needs_the_name_of_its_art():
     with pytest.raises(ValueError, match="needs the name of its art"):
         screen_rects.Piece("art", 7)
+
+
+# A Panel's shape is one solid fill and one stroked line in one style set. 2989
+# is the victory frame's left Panel: a 20 twip black line round a #373737 fill.
+PANEL_FILL = (55, 55, 55, 255)
+PANEL_LINE = (20, (0, 0, 0, 255))
+
+
+def panel_styles(**changes) -> StyleSet:
+    base = StyleSet(
+        (PANEL_FILL,), (PANEL_LINE,), frozenset({1}), {1: (-2490, -2671, 2491, 2672)}
+    )
+    return replace(base, **changes)
+
+
+def test_one_fill_and_line_is_the_fill_and_the_line_of_a_plain_panel():
+    assert screen_rects.one_fill_and_line([panel_styles()], 2989) == (
+        PANEL_FILL,
+        PANEL_LINE,
+    )
+
+
+@pytest.mark.parametrize(
+    ("sets", "message"),
+    [
+        ([panel_styles(), panel_styles()], "2 style sets"),
+        ([panel_styles(used_fills=frozenset({2}))], "fill 1"),
+        ([panel_styles(used_fills=frozenset({1, 2}))], "fill 1"),
+        ([panel_styles(fills=(None,))], "solid"),
+        ([panel_styles(lines=(), line_bounds={})], "one line"),
+        ([panel_styles(lines=(PANEL_LINE, PANEL_LINE))], "one line"),
+    ],
+)
+def test_one_fill_and_line_refuses_a_shape_that_is_not_one_fill_and_one_line(
+    sets, message
+):
+    with pytest.raises(ValueError, match=message):
+        screen_rects.one_fill_and_line(sets, 2989)
+
+
+# The euro sign is static text of one line: edit text 2861, "€" and a paragraph
+# mark. A Label that shows it has to show the same character.
+def test_text_record_of_one_line_of_static_text_holds_its_text_without_the_paragraph_mark():
+    static = field(multiline=True, variable_name=None, initial_text="€\r")
+    entry = screen_rects.text_record(static, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert entry["text"] == "€"
+
+
+def test_text_record_of_a_field_the_game_fills_holds_no_text():
+    entry = screen_rects.text_record(field(), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert "text" not in entry

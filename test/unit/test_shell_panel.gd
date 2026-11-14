@@ -20,7 +20,7 @@ func _style(panel: ShellPanel) -> StyleBoxFlat:
 func test_the_default_panel_follows_the_recipe() -> void:
 	var panel: ShellPanel = _panel()
 	var fill_rect: Rect2 = Rect2(panel.position, panel.size).grow(-0.5)
-	assert_eq(PanelRecipe.problems(panel, fill_rect, Vector2.ONE), [] as Array[String])
+	assert_eq(PanelRecipe.problems(panel, fill_rect, 20, Vector2.ONE), [] as Array[String])
 	assert_eq(_style(panel).border_color, Color.BLACK)
 
 

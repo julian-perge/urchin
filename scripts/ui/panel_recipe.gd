@@ -12,12 +12,16 @@ const SHADOW_MATERIAL: ShaderMaterial = preload("res://resources/ui/panel_inner_
 const SIDES: Array[Side] = [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]
 const CORNERS: Array[Corner] = [CORNER_TOP_LEFT, CORNER_TOP_RIGHT, CORNER_BOTTOM_RIGHT, CORNER_BOTTOM_LEFT]
 const RECT_TOLERANCE: float = 0.001
+const TWIPS: float = 20.0
 
 
 # The SWF scales one stroke with the placement matrix. One whole-pixel width on
-# all four sides keeps the StyleBoxFlat sharp, so the width is the mean scale.
-static func border_width(placement_scale: Vector2) -> int:
-	return roundi(sqrt((placement_scale.x ** 2 + placement_scale.y ** 2) / 2.0))
+# all four sides keeps the StyleBoxFlat sharp, so the width is the line's width in
+# px times the mean scale. dev/urchin_dev/swf/extract/screen_rects.py computes the
+# same number for the rect record.
+static func border_width(line_twips: int, placement_scale: Vector2) -> int:
+	var mean_scale: float = sqrt((placement_scale.x ** 2 + placement_scale.y ** 2) / 2.0)
+	return roundi(line_twips / TWIPS * mean_scale)
 
 
 # The SWF's fill rect ends at the middle of its stroke, and a StyleBoxFlat draws
@@ -26,8 +30,8 @@ static func panel_rect(fill_rect: Rect2, border: int) -> Rect2:
 	return fill_rect.grow(border / 2.0)
 
 
-static func build(fill: Color, line: Color, fill_rect: Rect2, placement_scale: Vector2) -> PanelContainer:
-	var border: int = border_width(placement_scale)
+static func build(fill: Color, line: Color, fill_rect: Rect2, line_twips: int, placement_scale: Vector2) -> PanelContainer:
+	var border: int = border_width(line_twips, placement_scale)
 	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = fill
 	style.border_color = line
@@ -45,12 +49,27 @@ static func build(fill: Color, line: Color, fill_rect: Rect2, placement_scale: V
 	return panel
 
 
+# Returns one message for each way the style's corners or edges are not the
+# recipe's sharp, unsmoothed ones. The rect test calls this on its own, because
+# problems() reads the Panel's local rect and the rect test reads Stage rects.
+static func edge_problems(style: StyleBoxFlat) -> Array[String]:
+	var found: Array[String] = []
+	var radii: Array[int] = []
+	for corner: Corner in CORNERS:
+		radii.append(style.get_corner_radius(corner))
+	if radii != [0, 0, 0, 0]:
+		found.append("corners: radii %s, expected 0 on every corner" % [radii])
+	if style.anti_aliasing:
+		found.append("anti_aliasing: on, expected off")
+	return found
+
+
 # Returns one message for each part of the recipe the Panel breaks: its border
 # width, its corners, its anti-aliasing, its rect, or its material. An empty
 # list means the Panel follows it.
-static func problems(panel: PanelContainer, fill_rect: Rect2, placement_scale: Vector2) -> Array[String]:
+static func problems(panel: PanelContainer, fill_rect: Rect2, line_twips: int, placement_scale: Vector2) -> Array[String]:
 	var found: Array[String] = []
-	var border: int = border_width(placement_scale)
+	var border: int = border_width(line_twips, placement_scale)
 	var style: StyleBoxFlat = panel.get_theme_stylebox("panel") as StyleBoxFlat
 	if style == null:
 		found.append("border: the panel style is not a StyleBoxFlat")
@@ -60,13 +79,7 @@ static func problems(panel: PanelContainer, fill_rect: Rect2, placement_scale: V
 			widths.append(style.get_border_width(side))
 		if widths != [border, border, border, border]:
 			found.append("border: widths %s, expected %d on every side" % [widths, border])
-		var radii: Array[int] = []
-		for corner: Corner in CORNERS:
-			radii.append(style.get_corner_radius(corner))
-		if radii != [0, 0, 0, 0]:
-			found.append("corners: radii %s, expected 0 on every corner" % [radii])
-		if style.anti_aliasing:
-			found.append("anti_aliasing: on, expected off")
+		found.append_array(edge_problems(style))
 	var rect: Rect2 = panel_rect(fill_rect, border)
 	var actual: Rect2 = Rect2(panel.position, panel.size)
 	if not (
