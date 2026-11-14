@@ -2,7 +2,7 @@
 
 Read this before any `/agent-skills` command. The commands default to `SPEC.md` and `tasks/todo.md`. This repo uses the tracker mode of `planning-and-task-breakdown`: GitHub issues hold the tasks, and files under `spec/` hold the specs. [Issue tracker](issue-tracker.md) holds the `gh` commands.
 
-The user types each stage. Run one stage per session. When it ends, name the next stage and stop.
+The user types each stage. Run one stage per session. When it ends, print the next stage's command as the last line, with real issue, PR and file values, and stop. The user pastes that line into a new session, so it must need no edits. `/agent-skills-next` prints the same commands for the whole tracker.
 
 ## Stages
 
@@ -14,7 +14,7 @@ The user types each stage. Run one stage per session. When it ends, name the nex
 | Plan | `/agent-skills:plan <issue>` | One sub-issue per task. |
 | Build | `/agent-skills:build <task issue>` | One branch, one pull request. |
 | Bug | `/agent-skills:test <issue>` | A failing test, then the fix, on one branch with one pull request. |
-| Review | `/agent-skills:review` | Findings against the standards and the spec. |
+| Review | `/agent-skills:review issue #<task>, PR #<pr>, spec <spec file>, standard <standard file>` | Findings against the standards and the spec. |
 
 An issue that is one task with acceptance criteria goes straight to Build.
 
@@ -46,7 +46,7 @@ Publish each task as a sub-issue of the source issue. Add blockers as native `bl
 
 Give every item of a spec's list to one task. A review of each task alone misses an item that two tasks share: the battle screen spec asked for six chrome rects, one task wrote the PNGs and another wrote the JSON, and the JSON got two.
 
-Task body: `Parent`, `What to build`, `Acceptance criteria`, `Verification` (the exact command). Label each task `ready-for-agent`.
+Task body: `Parent`, `Spec` (the spec file's path), `What to build`, `Acceptance criteria`, `Verification` (the exact command). Label each task `ready-for-agent`.
 
 `tasks/plan.md` holds the plan's decisions, risks and an ordered list of the task issue numbers. It is git-ignored scratch. A plan is complete when every issue it lists is closed, and a complete plan can be replaced without asking.
 
@@ -62,13 +62,24 @@ One task, one branch, one pull request. Branch: `<type>/<issue>-<slug>`, or `ret
 
 A spec's glossary line is a task, not a fact. A spec that says "`GLOSSARY.md` has **X**" may describe the glossary it means to leave behind, so check the file before you rely on it. If the term is missing, the first task that uses it adds the entry. Spec #49 said its four terms existed, none did, two implementers noticed and neither added them, and the code review found the gap.
 
-Run the verify command from `AGENTS.md` (`Every task`) before each commit. Open the pull request and stop. The user merges.
+Run the verify command from `AGENTS.md` (`Every task`) before each commit. Open the pull request, print the review command and stop. The user merges.
+
+The review command is the session's last line:
+
+```
+/agent-skills:review issue #<task>, PR #<pr>, spec <spec file>, standard CODING_STANDARDS.md
+```
+
+- **Spec file**: the `Spec` line of the task body. When the task body has none, use the `spec/` path in the parent issue's body. When neither names one, leave out the `spec` part.
+- In `auto` mode, `<task>` is the source issue.
+
+A Bug session ends with the same command.
 
 ## Review
 
 Run the review in a new session, not in the build session. The command starts no subagent, so the build session would review its own work. Check out the PR branch first (`gh pr checkout <pr>`), because the command reviews staged changes or recent commits.
 
-Run `/agent-skills:review` on the branch. Give it the task issue and the spec file as the spec. Name `CODING_STANDARDS.md` as the standard when the repo has one, and `AGENTS.md` when it does not. The review does not read either on its own.
+Run `/agent-skills:review` on the branch with the command that the Build section gives. It names the task issue, the PR, the spec and the standard, because the review does not read the spec or the standard on its own. 12 of the first 13 reviews in this repo ran without the spec or the standard, and each had to run again.
 
 Fix small findings in the review session. Start a new build session for large ones.
 
