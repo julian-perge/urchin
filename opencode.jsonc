@@ -1,0 +1,12 @@
+// OpenCode settings for this repo. The workers of docs/agents/multi-model.md run here, and these
+// rules add to the rules in each user's own OpenCode settings.
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permissions": [
+    // merge_ticket pushes the integration branch. The worker agents deny `git push*`, but that rule
+    // does not see a push that a script makes. The second rule also covers `uv run`, the .venv entry
+    // point and `python -m`, and it blocks every shell command that names the script.
+    { "action": "shell", "resource": "just merge-ticket*", "effect": "deny" },
+    { "action": "shell", "resource": "*merge_ticket*", "effect": "deny" }
+  ]
+}
