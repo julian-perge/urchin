@@ -49,6 +49,21 @@ static func build(fill: Color, line: Color, fill_rect: Rect2, line_twips: int, p
 	return panel
 
 
+# Returns one message for each way the style's corners or edges are not the
+# recipe's sharp, unsmoothed ones. The rect test calls this on its own, because
+# problems() reads the Panel's local rect and the rect test reads Stage rects.
+static func edge_problems(style: StyleBoxFlat) -> Array[String]:
+	var found: Array[String] = []
+	var radii: Array[int] = []
+	for corner: Corner in CORNERS:
+		radii.append(style.get_corner_radius(corner))
+	if radii != [0, 0, 0, 0]:
+		found.append("corners: radii %s, expected 0 on every corner" % [radii])
+	if style.anti_aliasing:
+		found.append("anti_aliasing: on, expected off")
+	return found
+
+
 # Returns one message for each part of the recipe the Panel breaks: its border
 # width, its corners, its anti-aliasing, its rect, or its material. An empty
 # list means the Panel follows it.
@@ -64,13 +79,7 @@ static func problems(panel: PanelContainer, fill_rect: Rect2, line_twips: int, p
 			widths.append(style.get_border_width(side))
 		if widths != [border, border, border, border]:
 			found.append("border: widths %s, expected %d on every side" % [widths, border])
-		var radii: Array[int] = []
-		for corner: Corner in CORNERS:
-			radii.append(style.get_corner_radius(corner))
-		if radii != [0, 0, 0, 0]:
-			found.append("corners: radii %s, expected 0 on every corner" % [radii])
-		if style.anti_aliasing:
-			found.append("anti_aliasing: on, expected off")
+		found.append_array(edge_problems(style))
 	var rect: Rect2 = panel_rect(fill_rect, border)
 	var actual: Rect2 = Rect2(panel.position, panel.size)
 	if not (

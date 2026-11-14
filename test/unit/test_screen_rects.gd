@@ -74,6 +74,8 @@ func _panel_problems(path: String, panel: PanelContainer, entry: Dictionary) -> 
 			if style.get_border_width(side) != int(entry["border"]):
 				found.append("%s: stroke width %d on side %d, expected %d" % [
 					path, style.get_border_width(side), side, int(entry["border"])])
+		for problem: String in PanelRecipe.edge_problems(style):
+			found.append("%s: %s" % [path, problem])
 	var material: ShaderMaterial = panel.material as ShaderMaterial
 	if material != PanelRecipe.SHADOW_MATERIAL:
 		found.append("%s: shadow material %s, expected %s" % [
@@ -266,6 +268,18 @@ func test_control_a_wrong_stroke_width_fails() -> void:
 	var root: Control = await _laid_out(TEST_SCENE)
 	_broken_style(root).border_width_left = 2
 	_assert_one_problem(_scene_problems(root, _test_scene_record()), "stroke width")
+
+
+func test_control_a_rounded_corner_fails() -> void:
+	var root: Control = await _laid_out(TEST_SCENE)
+	_broken_style(root).corner_radius_top_left = 4
+	_assert_one_problem(_scene_problems(root, _test_scene_record()), "LeftPanel: corners")
+
+
+func test_control_anti_aliasing_on_fails() -> void:
+	var root: Control = await _laid_out(TEST_SCENE)
+	_broken_style(root).anti_aliasing = true
+	_assert_one_problem(_scene_problems(root, _test_scene_record()), "LeftPanel: anti_aliasing")
 
 
 func test_control_no_shadow_material_fails() -> void:
