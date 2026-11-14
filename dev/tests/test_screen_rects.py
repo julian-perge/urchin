@@ -452,3 +452,16 @@ def test_one_fill_and_line_refuses_a_shape_that_is_not_one_fill_and_one_line(
 ):
     with pytest.raises(ValueError, match=message):
         screen_rects.one_fill_and_line(sets, 2989)
+
+
+# The euro sign is static text of one line: edit text 2861, "€" and a paragraph
+# mark. A Label that shows it has to show the same character.
+def test_text_record_of_one_line_of_static_text_holds_its_text_without_the_paragraph_mark():
+    static = field(multiline=True, variable_name=None, initial_text="€\r")
+    entry = screen_rects.text_record(static, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert entry["text"] == "€"
+
+
+def test_text_record_of_a_field_the_game_fills_holds_no_text():
+    entry = screen_rects.text_record(field(), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert "text" not in entry

@@ -64,12 +64,19 @@ func test_drag_end_notification_resets_tooltip():
 	assert_eq(panel.sell_button.tooltip_text, default_tooltip, "restored on a cancelled drag")
 
 
+# The character is the one extract_screen_rects read from edit text 2861, so the
+# test does not type it.
+func _euro_sign_in_the_swf() -> String:
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://test/fixtures/screen_rects.json"))
+	return record["scenes"]["res://scenes/ui/window/right_column.tscn"]["pieces"]["EuroSign"]["text"]
+
+
 # The SWF draws the euro sign and the amount as two fields, 2861 and 2862, and
 # sets the amount to a plain number (DefineSprite_3142/frame_1/DoAction.as:267).
 func test_the_euro_sign_and_the_amount_are_two_labels_and_the_amount_has_no_commas():
 	var column: RightColumn = add_child_autofree(RightColumnScene.instantiate())
 	column.set_gold(1234567.0)
-	assert_eq((column.get_node("EuroSign") as Label).text, "€")
+	assert_eq((column.get_node("EuroSign") as Label).text, _euro_sign_in_the_swf(), "the SWF's own character, from the rect record")
 	assert_eq(column.amount_label, column.get_node("Amount"))
 	assert_eq(column.amount_label.text, "1234567")
 	column.set_gold(0.0)

@@ -116,6 +116,9 @@ func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[Stri
 	var found: Array[String] = []
 	if label.horizontal_alignment != ALIGNMENTS[entry["align"]]:
 		found.append("%s: alignment %d, expected %s" % [path, label.horizontal_alignment, entry["align"]])
+	# Only a field of static text has a text in the record. The game fills the rest.
+	if entry.has("text") and label.text != entry["text"]:
+		found.append("%s: text '%s', expected '%s'" % [path, label.text, entry["text"]])
 	var size: int = label.get_theme_font_size("font_size")
 	if not is_equal_approx(float(size), float(entry["font_size"])):
 		found.append("%s: font size %d, expected %s" % [path, size, entry["font_size"]])
@@ -523,3 +526,17 @@ func test_control_a_png_that_is_not_the_recorded_size_fails() -> void:
 	assert_eq(found.size(), 2, str(found))
 	assert_string_contains(found[0] if found else "", "CloseArt: bottom right")
 	assert_string_contains(found[1] if found else "", "CloseArt: texture size")
+
+
+# The euro sign is static text in the SWF (edit text 2861), so the record holds
+# its character and the Label has to show it.
+func test_control_a_label_with_other_text_than_the_static_field_fails() -> void:
+	var root: Control = await _laid_out(RIGHT_COLUMN_SCENE)
+	(root.get_node("EuroSign") as Label).text = "$"
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][RIGHT_COLUMN_SCENE]), "EuroSign: text")
+
+
+func test_the_record_holds_the_text_of_static_fields_only() -> void:
+	var pieces: Dictionary = _record()["scenes"][RIGHT_COLUMN_SCENE]["pieces"]
+	assert_true(pieces["EuroSign"].has("text"), "the euro sign is static text")
+	assert_false(pieces["Amount"].has("text"), "the game fills the amount")

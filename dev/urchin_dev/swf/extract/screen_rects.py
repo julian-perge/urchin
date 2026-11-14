@@ -377,6 +377,10 @@ def text_record(text: EditText, matrix, origin) -> dict:
         "color": color_hex(text.color),
         "align": label_layout.ALIGNMENTS[text.align],
     }
+    # Static text of one line says what it shows, so a Label that shows it can be
+    # checked against the SWF's own characters. The game fills every other field.
+    if label_layout.one_static_line(text):
+        entry["text"] = text.initial_text.removesuffix("\r")
     # Flash puts the lines of a field one font height plus the field's leading
     # apart. A field that wraps, or a multiline field that is not one line of
     # static text, can show more than one line, so its pitch is recorded. A
