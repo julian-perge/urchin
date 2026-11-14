@@ -1,6 +1,30 @@
 # Urchin
 
-Fan remake of an ArmorGames game.
+A non-commercial fan port of the Flash game Sonny 2 to Godot 4. The goal
+is to keep the game playable after the end of Flash, with quality-of-life
+fixes.
+
+## Original game and assets
+
+Sonny 2 was made by Krin Juangbhanich (Krinlabs) and published by Armor
+Games. The game, its art, audio, text and data belong to its original
+authors. This project does not claim to own them.
+
+- The assets in this repository are extracted by script from the original
+  SWF, which each user supplies. The SWF itself is not in the repository.
+  You can get it from Armor Games or from the Flashpoint Archive.
+- The extracted assets are committed so that each extraction run shows its
+  changes in the diff, and so that the assets do not drift between
+  machines.
+- The project is free. It is not sold, and it carries no ads or payments.
+- If you are a rights holder and want an asset removed, open an issue and
+  it will be taken down.
+
+## License
+
+The source code and the documentation are under the MIT license in
+[LICENSE](LICENSE). The license does not cover the game's assets or the
+data extracted from the SWF. Those stay with their original authors.
 
 ## Python conversion scripts
 
