@@ -89,6 +89,21 @@ func _panel_problems(path: String, panel: PanelContainer, entry: Dictionary) -> 
 	return found
 
 
+# CODING_STANDARDS.md names `rect * zoom == PNG pixel size` as the invariant that
+# holds across all the extracted art. The record holds the PNG's size and zoom, so
+# this checks the rect against them and the texture against the size.
+func _art_size_problems(path: String, texture: Texture2D, entry: Dictionary) -> Array[String]:
+	var found: Array[String] = []
+	var size := Vector2(entry["size"][0], entry["size"][1])
+	var zoomed := Vector2(entry["rect"][2], entry["rect"][3]) * float(entry["zoom"])
+	if not zoomed.is_equal_approx(size):
+		found.append("%s: rect times zoom %s, expected the PNG size %s" % [path, zoomed, size])
+	var actual: Vector2 = texture.get_size() if texture else Vector2.ZERO
+	if not actual.is_equal_approx(size):
+		found.append("%s: texture size %s, expected %s" % [path, actual, size])
+	return found
+
+
 const ALIGNMENTS: Dictionary = {
 	"left": HORIZONTAL_ALIGNMENT_LEFT,
 	"center": HORIZONTAL_ALIGNMENT_CENTER,
@@ -172,6 +187,7 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 					var texture_path: String = texture.resource_path if texture else "no texture"
 					if texture_path != entry["texture"]:
 						found.append("%s: texture %s, expected %s" % [path, texture_path, entry["texture"]])
+					found.append_array(_art_size_problems(path, texture, entry))
 				else:
 					found.append("%s: an art piece that is not a TextureRect" % path)
 			"face":
@@ -362,7 +378,11 @@ func test_control_a_hit_button_moved_20_px_fails() -> void:
 func test_control_the_wrong_art_fails() -> void:
 	var root: Control = await _laid_out(SHELL_SCENE)
 	(root.get_node("CloseArt") as TextureRect).texture = (root.get_node("Backdrop") as TextureRect).texture
-	_assert_one_problem(_scene_problems(root, _shell_record()), "CloseArt: texture")
+	# The backdrop is also not the close button's size, so the size check fails too.
+	var found: Array[String] = _scene_problems(root, _shell_record())
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "CloseArt: texture res://")
+	assert_string_contains(found[1] if found else "", "CloseArt: texture size")
 
 
 # _draws once knew only five classes, so a probe that added each of these to the
@@ -476,3 +496,30 @@ func test_the_victory_row_face_is_not_port_only() -> void:
 	var scene: Dictionary = _record()["scenes"][VICTORY_SCENE]
 	assert_does_not_have(scene["port_only"], "ExpRows/PlayerSlot/Row/Face")
 	assert_eq(scene["pieces"]["ExpRows/PlayerSlot/Row/Face"]["kind"], "face")
+
+
+# The record says the CloseArt PNG is 148 by 146 at zoom 4, so its rect is 37 by
+# 36.5. A rect 5 px wider no longer matches the PNG.
+func test_control_an_art_rect_that_is_not_the_png_size_over_the_zoom_fails() -> void:
+	var root: Control = await _laid_out(SHELL_SCENE)
+	var scene: Dictionary = _shell_record()
+	scene["pieces"]["CloseArt"]["rect"][2] += 5.0
+	var found: Array[String] = _scene_problems(root, scene)
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "CloseArt: bottom right")
+	assert_string_contains(found[1] if found else "", "CloseArt: rect times zoom")
+
+
+# The record's rect and size agree with each other here, so only the PNG on disk
+# is wrong: it stands for an art file that a run of the extractor left at another
+# size.
+func test_control_a_png_that_is_not_the_recorded_size_fails() -> void:
+	var root: Control = await _laid_out(SHELL_SCENE)
+	var scene: Dictionary = _shell_record()
+	var piece: Dictionary = scene["pieces"]["CloseArt"]
+	piece["size"] = [152, 146]
+	piece["rect"][2] = 152.0 / float(piece["zoom"])
+	var found: Array[String] = _scene_problems(root, scene)
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "CloseArt: bottom right")
+	assert_string_contains(found[1] if found else "", "CloseArt: texture size")

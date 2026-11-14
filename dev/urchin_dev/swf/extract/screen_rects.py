@@ -440,6 +440,8 @@ def art_record(name: str, chrome: dict, sprite_origins: dict | None = None) -> d
         "kind": "art",
         "rect": [round(x + shift[0], 4), round(y + shift[1], 4), w, h],
         "texture": f"{CHROME_TEXTURES}/{name}.png",
+        "size": chrome["size"],
+        "zoom": chrome["zoom"],
     }
 
 

@@ -194,6 +194,8 @@ def test_art_record_is_the_render_rect_and_the_png():
         "kind": "art",
         "rect": [734.3, 29.675, 37.0, 36.5],
         "texture": "res://assets/ui/window/close_x.png",
+        "size": [148, 146],
+        "zoom": 4.0,
     }
 
 
