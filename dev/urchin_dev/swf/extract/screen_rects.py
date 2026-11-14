@@ -71,8 +71,6 @@ from urchin_dev.swf.swf_index import (
     character_kind,
     drop_shadow,
     edit_text,
-    first_fill_color,
-    first_line_style,
     read_swf,
     shape_bounds,
     shape_styles,
@@ -548,10 +546,9 @@ def _panel(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
     ]
     if len(shadows) != 1 or len(layer.filters) != 1:
         raise ValueError(f"{where} has filters {layer.filters}, not one DropShadow")
-    line_style = first_line_style(index, inner.character_id)
-    fill = first_fill_color(index, inner.character_id)
-    if line_style is None or fill is None:
-        raise ValueError(f"{where}'s shape has no solid fill or no line")
+    fill, line_style = one_fill_and_line(
+        shape_styles(index, inner.character_id), inner.character_id
+    )
     return panel_record(
         bounds=shape_bounds(index, inner.character_id),
         line_width=line_style[0],
@@ -561,6 +558,26 @@ def _panel(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
         line=line_style[1],
         shadow=shadows[0],
     )
+
+
+def one_fill_and_line(
+    sets: list[StyleSet], shape: int
+) -> tuple[tuple[int, int, int, int], tuple[int, tuple[int, int, int, int]]]:
+    """-> (fill colour, (line width in twips, line colour)) of a Panel's shape.
+    Raises unless the shape has one style set, whose only fill is a solid
+    colour that its edges use as fill 1, and one line. A shape that declares new
+    styles partway through draws more with them, and its first style set alone
+    would record the wrong fill or line. Shape 3001 did that (`6b0bb46e`)."""
+    if len(sets) != 1:
+        raise ValueError(f"shape {shape} has {len(sets)} style sets, not one")
+    only = sets[0]
+    if only.used_fills != {1}:
+        raise ValueError(f"shape {shape} uses fills {set(only.used_fills)}, not fill 1")
+    if only.fills[0] is None:
+        raise ValueError(f"shape {shape}'s fill 1 is not a solid colour")
+    if len(only.lines) != 1:
+        raise ValueError(f"shape {shape} has {len(only.lines)} lines, not one line")
+    return only.fills[0], only.lines[0]
 
 
 def one_solid_fill(sets: list[StyleSet], shape: int) -> tuple[int, int, int, int]:

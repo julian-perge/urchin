@@ -410,3 +410,41 @@ def test_a_piece_needs_exactly_one_of_a_depth_and_an_instance_name(depth, instan
 def test_an_art_piece_needs_the_name_of_its_art():
     with pytest.raises(ValueError, match="needs the name of its art"):
         screen_rects.Piece("art", 7)
+
+
+# A Panel's shape is one solid fill and one stroked line in one style set. 2989
+# is the victory frame's left Panel: a 20 twip black line round a #373737 fill.
+PANEL_FILL = (55, 55, 55, 255)
+PANEL_LINE = (20, (0, 0, 0, 255))
+
+
+def panel_styles(**changes) -> StyleSet:
+    base = StyleSet(
+        (PANEL_FILL,), (PANEL_LINE,), frozenset({1}), {1: (-2490, -2671, 2491, 2672)}
+    )
+    return replace(base, **changes)
+
+
+def test_one_fill_and_line_is_the_fill_and_the_line_of_a_plain_panel():
+    assert screen_rects.one_fill_and_line([panel_styles()], 2989) == (
+        PANEL_FILL,
+        PANEL_LINE,
+    )
+
+
+@pytest.mark.parametrize(
+    ("sets", "message"),
+    [
+        ([panel_styles(), panel_styles()], "2 style sets"),
+        ([panel_styles(used_fills=frozenset({2}))], "fill 1"),
+        ([panel_styles(used_fills=frozenset({1, 2}))], "fill 1"),
+        ([panel_styles(fills=(None,))], "solid"),
+        ([panel_styles(lines=(), line_bounds={})], "one line"),
+        ([panel_styles(lines=(PANEL_LINE, PANEL_LINE))], "one line"),
+    ],
+)
+def test_one_fill_and_line_refuses_a_shape_that_is_not_one_fill_and_one_line(
+    sets, message
+):
+    with pytest.raises(ValueError, match=message):
+        screen_rects.one_fill_and_line(sets, 2989)
