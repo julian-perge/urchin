@@ -281,6 +281,7 @@
     "ExpLabel",
     "ExpValue",
     "ProceedHintLabel",
+    "ProceedButton",
     "RightColumn",
     "ExpRows/PlayerSlot/Row/Face",
     "ExpRows/CompanionSlot0/Row/Face",
@@ -643,7 +644,17 @@
     "StatusLabel",
     "TreeNodes",
     "PoolBackdrop",
-    "PoolRows"
+    "PoolRows",
+    "ScrollUpButton",
+    "ScrollDownButton",
+    "Socket0",
+    "Socket1",
+    "Socket2",
+    "Socket3",
+    "Socket4",
+    "Socket5",
+    "Socket6",
+    "Socket7"
    ],
    "timeline": 3142
   },
@@ -1104,6 +1115,8 @@
     }
    },
    "port_only": [
+    "SellSlot",
+    "DeleteSlot",
     "Grid/Row0/Slot0/ItemIcon",
     "Grid/Row0/Slot0/Highlight",
     "Grid/Row0/Slot1/ItemIcon",

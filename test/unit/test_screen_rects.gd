@@ -16,11 +16,13 @@ func _record() -> Dictionary:
 	return JSON.parse_string(text)
 
 
-# A piece is a node that draws. Containers and slots only place pieces, so they
-# are not pieces of their own.
+# A piece is a node that draws. Containers and plain Controls only place pieces,
+# so they are not pieces of their own. Every other CanvasItem counts, so a class
+# that nobody listed here, such as a Button or a RichTextLabel, still has to be in
+# the record or port only. A script that extends Control keeps the class name
+# "Control", so it is still a plain Control.
 func _draws(node: Node) -> bool:
-	return node is Label or node is PanelContainer or node is TextureRect \
-		or node is ColorRect or node is NinePatchRect
+	return node is CanvasItem and not node is Container and node.get_class() != "Control"
 
 
 # A port only node is skipped with every node under it, so a piece the port
@@ -317,6 +319,27 @@ func test_control_the_wrong_art_fails() -> void:
 	var root: Control = await _laid_out(SHELL_SCENE)
 	(root.get_node("CloseArt") as TextureRect).texture = (root.get_node("Backdrop") as TextureRect).texture
 	_assert_one_problem(_scene_problems(root, _shell_record()), "CloseArt: texture")
+
+
+# _draws once knew only five classes, so a probe that added each of these to the
+# test scene got no problem back (#271, from the re-review of #208).
+func test_control_an_unrecorded_node_of_any_drawing_class_fails() -> void:
+	var drawing: Array[Control] = [
+		Button.new(), TextureButton.new(), Panel.new(), RichTextLabel.new(), LineEdit.new(),
+	]
+	for extra: Control in drawing:
+		var root: Control = await _laid_out(TEST_SCENE)
+		extra.name = "Extra"
+		root.add_child(extra)
+		_assert_one_problem(_scene_problems(root, _test_scene_record()), "Extra: draws")
+
+
+func test_control_a_container_and_a_plain_control_are_not_drawing_nodes() -> void:
+	var root: Control = await _laid_out(TEST_SCENE)
+	root.add_child(Control.new())
+	root.add_child(FloatBox.new())
+	root.add_child(MarginContainer.new())
+	assert_eq(_scene_problems(root, _test_scene_record()), [] as Array[String])
 
 
 func test_control_a_port_only_node_also_skips_the_nodes_under_it() -> void:

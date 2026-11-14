@@ -190,6 +190,7 @@ SCENES: dict[str, Scene] = {
             "ExpLabel",
             "ExpValue",
             "ProceedHintLabel",
+            "ProceedButton",
             "RightColumn",
             *(f"ExpRows/{slot}/Row/Face" for slot in VICTORY_ROWS),
         ),
@@ -215,15 +216,23 @@ SCENES: dict[str, Scene] = {
             "BarPanel": Piece("panel", 5),
             "EuroSign": Piece("text", 1424),
             "Amount": Piece("text", 1423),
-            "SellSlot/Art": Piece("art", window_chrome.SELL_SLOT_DEPTH, art="sell_slot"),
+            "SellSlot/Art": Piece(
+                "art", window_chrome.SELL_SLOT_DEPTH, art="sell_slot"
+            ),
             "DeleteSlot/Art": Piece(
                 "art", window_chrome.DELETE_SLOT_DEPTH, art="delete_slot"
             ),
         },
-        port_only=tuple(
-            f"Grid/Row{i // INVENTORY_COLUMNS}/Slot{i % INVENTORY_COLUMNS}/{node}"
-            for i in range(INVENTORY_SLOTS)
-            for node in ("ItemIcon", "Highlight")
+        # SellSlot and DeleteSlot are Buttons that draw only a hover highlight over
+        # the art. Their Art children are pieces, so the test still checks them.
+        port_only=(
+            "SellSlot",
+            "DeleteSlot",
+            *(
+                f"Grid/Row{i // INVENTORY_COLUMNS}/Slot{i % INVENTORY_COLUMNS}/{node}"
+                for i in range(INVENTORY_SLOTS)
+                for node in ("ItemIcon", "Highlight")
+            ),
         ),
     ),
     # The skills frame (spec/107-abilities.md). The tree nodes and the pool
@@ -268,7 +277,15 @@ SCENES: dict[str, Scene] = {
             "AttributeRows/InstinctRow/InstinctValue": Piece("text", 649),
             "AttributeRows/SpeedRow/SpeedValue": Piece("text", 650),
         },
-        port_only=("StatusLabel", "TreeNodes", "PoolBackdrop", "PoolRows"),
+        port_only=(
+            "StatusLabel",
+            "TreeNodes",
+            "PoolBackdrop",
+            "PoolRows",
+            "ScrollUpButton",
+            "ScrollDownButton",
+            *(f"Socket{i}" for i in range(8)),
+        ),
     ),
 }
 
@@ -360,9 +377,7 @@ def text_record(text: EditText, matrix, origin) -> dict:
     # apart. A field that wraps, or a multiline field that is not one line of
     # static text, can show more than one line, so its pitch is recorded. A
     # field of one line has no pitch to check.
-    if text.word_wrap or (
-        text.multiline and not label_layout.one_static_line(text)
-    ):
+    if text.word_wrap or (text.multiline and not label_layout.one_static_line(text)):
         entry["line_pitch"] = (text.font_height + (text.leading or 0)) / render.TWIPS
     return entry
 
@@ -397,7 +412,9 @@ def _shadow_of(layer: timeline.Layer) -> DropShadow | None:
         if name == "DropShadow"
     ]
     if len(shadows) > 1:
-        raise ValueError(f"character {layer.character_id} has {len(shadows)} DropShadows")
+        raise ValueError(
+            f"character {layer.character_id} has {len(shadows)} DropShadows"
+        )
     return shadows[0] if shadows else None
 
 
@@ -486,10 +503,7 @@ def inner_origin(matrix, origin) -> tuple[float, float]:
     `matrix` on a timeline whose origin is `origin`."""
     if _scale(matrix) != (1.0, 1.0):
         raise ValueError(f"matrix {matrix} scales the sprite, and an origin can't")
-    return (
-        origin[0] + matrix[4] / render.TWIPS,
-        origin[1] + matrix[5] / render.TWIPS,
-    )
+    return (origin[0] + matrix[4] / render.TWIPS, origin[1] + matrix[5] / render.TWIPS)
 
 
 def _hit(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
@@ -570,7 +584,9 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
         if piece.instance is None:
             layer = layers.get(piece.depth)
             if layer is None:
-                raise ValueError(f"{path}: frame {scene.frame} has no depth {piece.depth}")
+                raise ValueError(
+                    f"{path}: frame {scene.frame} has no depth {piece.depth}"
+                )
         else:
             named = [layer for layer in layers.values() if layer.name == piece.instance]
             if len(named) != 1:

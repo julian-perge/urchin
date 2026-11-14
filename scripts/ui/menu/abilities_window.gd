@@ -160,6 +160,8 @@ func _build_tree_panel() -> void:
 func _build_wheel_panel() -> void:
 	for i in WHEEL_OFFSETS.size():
 		var socket: Button = Button.new()
+		# The rect test names each port only node, so a socket needs a stable name.
+		socket.name = "Socket%d" % i
 		socket.custom_minimum_size = SOCKET_SIZE
 		socket.size = SOCKET_SIZE
 		socket.position = WHEEL_CENTER + WHEEL_OFFSETS[i] - SOCKET_SIZE / 2.0
