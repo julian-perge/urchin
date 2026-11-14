@@ -66,7 +66,8 @@ entry = "uv run check_doc_paths"
 # jpexs source file, two Godot project settings, two files in Godot's user
 # folder, two files the agent-skills commands default to that this repo does
 # not use, tasks/plan.md (a git-ignored scratch file that /agent-skills:plan
-# writes), and the GitHub repo name.
+# writes), the GitHub repo name, and the run log that worker-run writes
+# outside every repo.
 args = [
   "AGENTS.md",
   "CODING_STANDARDS.md",
@@ -80,6 +81,7 @@ args = [
   "--not-a-path=tasks/todo.md",
   "--not-a-path=tasks/plan.md",
   "--not-a-path=julian-perge/urchin",
+  "--not-a-path=~/.local/state/worker-runs/runs.tsv",
 ]
 pass_filenames = false
 always_run = true
