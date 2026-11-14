@@ -64,6 +64,8 @@ look for Godot themselves, so `uv run gut` outside `just` fails.
 - Writing GDScript, a scene or a GUT test, or loading a QA save preset:
   `docs/agents/godot.md`.
 - Reviewing a diff, or calling a change verified: `CODING_STANDARDS.md`.
+- Dispatching a Build or Bug task to a worker model, or working as one:
+  `docs/agents/multi-model.md`.
 
 ## Workflow
 
