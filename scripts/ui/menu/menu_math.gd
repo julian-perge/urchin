@@ -26,30 +26,16 @@ static func x_for(allocation: float, level: int, math: Dictionary) -> float:
 
 # The DEFTIP index for a defense bar's x (DoAction.as:128-153). The script
 # tests 1 / x against each rule in order, and the last rule that matches wins.
-# The rule's comparison is the one the extractor read from the script, so a
-# boundary of "<" is exclusive and "<=" would be inclusive.
 static func defense_tip(x: float, math: Dictionary) -> int:
 	var tips: Dictionary = math["element_bars"]["defense_tips"]
 	var ratio: float = 1.0 / x
 	var tip: int = tips["default"]
 	for rule: Dictionary in tips["rules"]:
-		if _matches(rule["compare"], ratio, rule["threshold"]):
+		var threshold: float = rule["threshold"]
+		var matches: bool = ratio > threshold if rule["compare"] == ">" else ratio < threshold
+		if matches:
 			tip = rule["tip"]
 	return tip
-
-
-static func _matches(compare: String, ratio: float, threshold: float) -> bool:
-	match compare:
-		">":
-			return ratio > threshold
-		">=":
-			return ratio >= threshold
-		"<":
-			return ratio < threshold
-		"<=":
-			return ratio <= threshold
-	assert(false, "MenuMath does not know the comparison %s" % compare)
-	return false
 
 
 # x is the bar's value divided by the level's average. The heights are in px
