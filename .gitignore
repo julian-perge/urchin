@@ -4,6 +4,7 @@
 tasks/*
 !tasks/old/
 /test_*
+.claude/settings.local.json
 
 # Original decompiled Flash source, not for distribution
 *.swf
