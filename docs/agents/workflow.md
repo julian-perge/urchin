@@ -75,6 +75,8 @@ The review command is the session's last line:
 
 A Bug session ends with the same command.
 
+To have a worker model build the task, type `Build #<issue> with a <tier> worker`, or `Fix #<issue> with a <tier> worker` for a bug, and follow [Multi-model build workers](multi-model.md). That session reviews the worker's branch itself, so it ends with the PR's URL, not the review command.
+
 ## Review
 
 Run the review in a new session, not in the build session. The command starts no subagent, so the build session would review its own work. Check out the PR branch first (`gh pr checkout <pr>`), because the command reviews staged changes or recent commits.
@@ -82,6 +84,8 @@ Run the review in a new session, not in the build session. The command starts no
 Run `/agent-skills:review` on the branch with the command that the Build section gives. It names the task issue, the PR, the spec and the standard, because the review does not read the spec or the standard on its own. 12 of the first 13 reviews in this repo ran without the spec or the standard, and each had to run again.
 
 Fix small findings in the review session. Start a new build session for large ones.
+
+A worker's branch is the exception. The overseer session that dispatched the worker reviews it, and the findings go back to the worker as a comment on the task issue. The overseer does not fix them itself.
 
 ## Reports
 
