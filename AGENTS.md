@@ -72,4 +72,4 @@ look for Godot themselves, so `uv run gut` outside `just` fails.
 - Tasks are tracked in GitHub Issues for julian-perge/urchin, with the `gh` CLI. `/agent-skills:plan` creates one sub-issue per task. `tasks/` is git-ignored scratch, except `tasks/old/`.
 - Specs are files at `spec/<issue>-<slug>.md`, not `SPEC.md`. Specs from before this workflow are in `spec/old/`.
 - ADRs go in `docs/adr/`. Read `GLOSSARY.md` and `docs/adr/` (those that exist) before design work.
-- Read `docs/agents/workflow.md` before any `/agent-skills` command.
+- Start each `/agent-skills` stage with `agent-skills brief <stage> <n>`. Read all of `docs/agents/workflow.md` before other work in this repo.
