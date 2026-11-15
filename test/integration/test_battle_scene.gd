@@ -2562,8 +2562,8 @@ func test_a_shock_lands_1_frame_after_its_dispatch_and_the_count_starts_there():
 	# Dispatch that the tick's number shows on (-1 when a tick that did nothing
 	# shows no number), and the frame after the Dispatch of the next Dispatch.
 	var cases: Array = [
-		["a tick that did nothing", MoveResult.Direction.NONE, 0.0, -1, 1 + limit + 1],
-		["a tick that did something", MoveResult.Direction.HARM, 5.0, 1 + limit, 1 + limit + (limit + 1)],
+		["a tick that did nothing", MoveResult.Direction.NONE, 0.0, -1, SHOCK_LANDS_AFTER_DISPATCH + limit + 1],
+		["a tick that did something", MoveResult.Direction.HARM, 5.0, SHOCK_LANDS_AFTER_DISPATCH + limit, SHOCK_LANDS_AFTER_DISPATCH + limit + (limit + 1)],
 	]
 	for case in cases:
 		var scene = await _battle_100_on_a_stepped_clock("ShockImpactLag")
@@ -2589,7 +2589,7 @@ func test_a_shock_lands_1_frame_after_its_dispatch_and_the_count_starts_there():
 			_step_frame(scene)
 		assert_true(frames.has("dispatch") and frames.has("next dispatch"), "sanity: with %s, both casters' dolls start their cast" % case[0])
 		var dispatch: int = frames.get("dispatch", -100)
-		assert_eq(frames.get("11", -1) - dispatch, 1, "with %s, the Shock's number shows 1 frame after its Dispatch" % case[0])
+		assert_eq(frames.get("11", -1) - dispatch, SHOCK_LANDS_AFTER_DISPATCH, "with %s, the Shock's number shows 1 frame after its Dispatch" % case[0])
 		if case[3] != -1:
 			assert_eq(frames.get("5", -1) - dispatch, case[3], "with %s, the tick comes %d frames after the Dispatch" % [case[0], case[3]])
 		assert_eq(frames.get("next dispatch", -1) - dispatch, case[4], "with %s, the next action dispatches %d frames after the Dispatch" % [case[0], case[4]])

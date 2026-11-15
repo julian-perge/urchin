@@ -8,7 +8,6 @@ extends GutTest
 const RECORD_PATH: String = "res://test/fixtures/screen_rects.json"
 const TEST_SCENE: String = "res://test/fixtures/screen_rects/victory_left_panel.tscn"
 const TOLERANCE: float = 0.5
-const COLOR_TOLERANCE: float = 0.001
 
 
 func _record() -> Dictionary:

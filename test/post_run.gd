@@ -19,6 +19,6 @@ extends GutHookScript
 const AUDIO_RELEASE_SECONDS: float = 0.1
 
 
-func run():
+func run() -> void:
 	AudioManagerAuto.stop_all_sounds()
 	await gut.get_tree().create_timer(AUDIO_RELEASE_SECONDS).timeout

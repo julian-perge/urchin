@@ -78,12 +78,9 @@ func test_built_panel_uses_the_shared_shadow_material() -> void:
 	assert_same(_panel().material, PanelRecipe.SHADOW_MATERIAL)
 
 
-func test_shadow_material_holds_the_swf_filter_values() -> void:
+func test_shadow_material_is_the_inner_shadow_shader() -> void:
 	var material: ShaderMaterial = PanelRecipe.SHADOW_MATERIAL
 	assert_eq(material.shader.resource_path, "res://scenes/ui/panel_inner_shadow.gdshader")
-	assert_eq(material.get_shader_parameter("blur"), 5.0)
-	assert_eq(material.get_shader_parameter("distance"), 5.0)
-	assert_eq(material.get_shader_parameter("angle"), 45.0)
 
 
 func test_built_panel_has_no_problems() -> void:

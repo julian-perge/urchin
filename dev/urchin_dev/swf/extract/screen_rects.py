@@ -502,6 +502,11 @@ def button_record(
     for r in up:
         if r.matrix != timeline.IDENTITY:
             raise ValueError(f"the button moves shape {r.character_id}: {r.matrix}")
+        if r.character_id not in bounds:
+            raise ValueError(
+                f"button {button} draws character {r.character_id} in its up"
+                " state, which is not a shape"
+            )
     shapes = [bounds[r.character_id] for r in up]
     union = (
         min(b[0] for b in shapes),

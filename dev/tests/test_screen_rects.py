@@ -369,6 +369,13 @@ def test_button_record_refuses_a_button_with_no_up_state():
         )
 
 
+def test_button_record_refuses_a_sprite_in_the_up_state():
+    # The clip reader 3059 is a sprite, so it has no ShapeBounds.
+    records = [PLUS_RECORDS[0], replace(PLUS_RECORDS[1], character_id=3059)]
+    with pytest.raises(ValueError, match="3068.*3059"):
+        screen_rects.button_record(3068, records, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+
+
 # The clip reader (3059) at depth 675 of KRINMENU frame 25. Its first frame
 # places the tip field at depth 1.
 def test_inner_origin_adds_the_sprite_placement_to_the_origin():
@@ -386,6 +393,15 @@ def test_inner_origin_refuses_a_scaled_sprite():
 def test_text_record_of_a_wrapping_field_holds_its_line_pitch():
     tip = field(font_height=240, leading=40, multiline=True, word_wrap=True)
     entry = screen_rects.text_record(tip, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert entry["line_pitch"] == 14.0
+
+
+# A field that wraps shows more than one line even when it is not multiline.
+# This test pins the word_wrap arm of the pitch condition, which the multiline
+# wrapping field above does not cover.
+def test_text_record_of_a_wrapping_field_with_no_multiline_holds_its_line_pitch():
+    wrapping = field(font_height=240, leading=40, multiline=False, word_wrap=True)
+    entry = screen_rects.text_record(wrapping, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
     assert entry["line_pitch"] == 14.0
 
 
