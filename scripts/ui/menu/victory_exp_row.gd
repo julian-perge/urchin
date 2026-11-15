@@ -19,8 +19,9 @@ const LEVEL_FILL: Texture2D = preload("res://assets/ui/window/xp_bar_level.png")
 
 var experience: float = 0.0
 var level: int = 0
-# True once the row has added a level. The player's row sets the original's
-# playerLeveled from it.
+# True once the row has added a level. Nothing reads it today: battle_scene.gd
+# takes the level-up flag from settlement.levels_gained instead, and no open
+# task makes the player's row set the original's playerLeveled from it.
 var leveled: bool = false
 
 var _frames: int = 0

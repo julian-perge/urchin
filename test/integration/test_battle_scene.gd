@@ -3656,9 +3656,8 @@ func test_a_floating_number_zooms_and_shakes_with_the_fighters():
 
 
 # Nothing waits for the zoom, so the next action dispatches on the same frame
-# with the zoom on or off. A Melee move's zoom is the longest. A Shock lands on
-# its Dispatch frame, so the frame its number shows is the frame it dispatched
-# on.
+# with the zoom on or off. A Melee move's zoom is the longest. A Shock shows 1
+# frame after its Dispatch on both runs, so the frames still compare.
 func test_the_next_action_dispatches_on_the_same_frame_with_the_zoom_on_or_off():
 	var dispatched: Array = []
 	for graphics in [true, false]:

@@ -325,9 +325,10 @@ def test_hit_record_refuses_a_button_that_is_more_than_a_hit_square(records, mes
         screen_rects.hit_record(records, CLOSE_BOUNDS, CLOSE_MATRIX, ORIGIN)
 
 
-# The Abilities window's top plus button 3068. Shape 3065 is the black plate of
-# the up state, under the gradient 3064. Shapes 3066 and 3067 draw only on
-# hover, press and hit. KRINMENU frame 25 places the button at depth 668.
+# The Abilities window's top plus button 3068. Shape 3065 is the black plus
+# glyph and its outline, at depth 2 over the gradient 3064, in the up state.
+# Shapes 3066 and 3067 draw only on hover, press and hit. KRINMENU frame 25
+# places the button at depth 668.
 PLUS_RECORDS = [
     ButtonRecord(
         frozenset({"up", "over", "down"}), 3064, 1, (1.0, 0.0, 0.0, 1.0, 0, 0)

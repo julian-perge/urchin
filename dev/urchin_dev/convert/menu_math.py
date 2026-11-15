@@ -87,7 +87,8 @@ def _xbar(source: str, name: str) -> dict[str, int | float]:
 
 def _average(source: str) -> dict[str, int | float]:
     """-> the level's average, base + per_level * level. The script writes it
-    in four statements, and all four must agree."""
+    in five statements (its lines 104, 105, 106, 109 and 155), and all five
+    must agree."""
     pairs = set(re.findall(rf"({NUM}) \+ ({NUM}) \* {LEVEL}", source))
     if len(pairs) != 1:
         raise ValueError(f"{SOURCE}: the average is not one formula: {sorted(pairs)}")

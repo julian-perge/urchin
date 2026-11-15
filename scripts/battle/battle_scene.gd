@@ -700,7 +700,7 @@ func _play_move_event(event: Dictionary) -> void:
 			# but the conductor's Impact block runs before its Dispatch block in
 			# the same enterFrame handler, so the Move result applies on the next
 			# frame (frame_217/PlaceObject2_3389_480 enterFrame, lines 12 and
-			# 450-468).
+			# 449-468).
 			AudioManagerAuto.play_effect(move.sound_effect_name)
 			_spawn_impact(target_slot, move, event["result"])
 			await _wait_frames(1)

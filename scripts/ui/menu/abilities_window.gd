@@ -100,8 +100,10 @@ func _set_static_text() -> void:
 		_attribute_names[i].text = Strings.system(i) + ":"
 
 
-# The SWF tints a gradient plate per row (shapes 3064 to 3067). The port fills
-# each native Button with its row's name colour instead, which ADR 0007 records.
+# The SWF tints the gradient plate of shape 3064 per row, and its button 3068
+# swaps the black plus glyph and its outline (3065) for the white shape 3066 on
+# hover and press. The port fills each native Button with its row's name
+# colour instead, which ADR 0007 records.
 func _style_plus_buttons() -> void:
 	for i in _plus_buttons.size():
 		var color: Color = _attribute_names[i].get_theme_color("font_color")
