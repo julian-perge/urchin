@@ -1,0 +1,69 @@
+{
+ "color_glow": {
+  "blur": 10,
+  "strength": 1
+ },
+ "labels": {
+  "focus": {
+   "color": "33ffff",
+   "frames": [
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true
+   ]
+  },
+  "heal": {
+   "color": "99ff00",
+   "frames": [
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true
+   ]
+  },
+  "hit": {
+   "color": "ffcc00",
+   "frames": [
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true
+   ]
+  }
+ },
+ "white_glow": {
+  "blur": 100,
+  "strength": 10
+ }
+}

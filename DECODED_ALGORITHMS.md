@@ -325,6 +325,7 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
 ## The Result flash (DefineSprite 3416 `BATTLEFLASH`)
 
 Ported: each `FighterPresenter` plays its own `ResultFlash` (`scripts/battle/result_flash.gd`), and `scenes/doll_body.gdshader` draws its filter over the doll's CanvasGroup body.
+`extract_result_flash` writes each label's color and frames and the glows' blurs and strengths to `assets/ui/battle/result_flash.json`, and both read them from there.
 
 - The clip has 46 frames at 30 fps, places nothing and is all frame scripts. Its labels are `none` on frame 1, which stops, `hit` on 2, `heal` on 17 and `focus` on 32. Each label puts its
   filter on at its first frame and 4, 8 and 12 frames after it, takes it off 2 frames after each, and 14 frames after it takes it off and stops on `none`

@@ -34,12 +34,14 @@ def constant_pool(*names: str) -> bytes:
 
 def push(*values) -> bytes:
     """A Push of constant pool indexes, given as ("pool", i), registers, given
-    as ("register", n), 32-bit integers, and doubles, which the SWF stores as
-    two little-endian halves with the high half first."""
+    as ("register", n), booleans, 32-bit integers, and doubles, which the SWF
+    stores as two little-endian halves with the high half first."""
     body = b""
     for value in values:
         if isinstance(value, tuple):
             body += bytes([{"pool": 8, "register": 4}[value[0]], value[1]])
+        elif isinstance(value, bool):
+            body += bytes([5, value])
         elif isinstance(value, int):
             body += bytes([7]) + struct.pack("<i", value)
         else:
@@ -159,6 +161,95 @@ def test_statements_name_the_registers_a_function_preloads_and_its_parameters():
         ("_root.zoomPause", hold),
         ("shooter.dir", 1),
         ("krinMeleeAttackCD", 15),
+    ]
+
+
+NEW_OBJECT = b"\x40"
+NEW_METHOD = b"\x53"
+DEFINE_LOCAL = b"\x3c"
+CALL_METHOD = b"\x52"
+POP = b"\x17"
+EQUALS2 = b"\x49"
+NOT = b"\x12"
+INCREMENT = b"\x50"
+
+
+def test_statements_read_a_var_set_to_a_new_object_with_its_arguments():
+    # The Result flash's white glow and its filter list
+    # (frame_42/DoAction_3.as:117 and 120): var KFHit1 = new
+    # flash.filters.GlowFilter(16777215,1,100,100,10,1,true,false);
+    # var KrinFilterHit = new Array();
+    index, block = script(
+        constant_pool("KFHit1", "flash", "filters", "GlowFilter", "KrinFilterHit", "Array")
+        + push(("pool", 0), False, True, 1, 10, 100, 100, 1, 16777215, 8, ("pool", 1))
+        + GET_VARIABLE
+        + push(("pool", 2))
+        + GET_MEMBER
+        + push(("pool", 3))
+        + NEW_METHOD
+        + DEFINE_LOCAL
+        + push(("pool", 4), 0.0, ("pool", 5))
+        + NEW_OBJECT
+        + DEFINE_LOCAL
+        + END
+    )  # fmt: skip
+    glow = avm1.New(
+        "flash.filters.GlowFilter", (16777215, 1, 100, 100, 10, 1, True, False)
+    )
+    assert [(s.target, s.value) for s in avm1.statements(index, block)] == [
+        ("KFHit1", glow),
+        ("KrinFilterHit", avm1.New("Array", ())),
+    ]
+
+
+def test_calls_name_each_method_a_script_calls_and_its_arguments():
+    # frame_42/DoAction_3.as:121: KrinFilterHit.push(KFHit1);
+    index, block = script(
+        constant_pool("KFHit1", "KrinFilterHit", "push")
+        + push(("pool", 0))
+        + GET_VARIABLE
+        + push(1, ("pool", 1))
+        + GET_VARIABLE
+        + push(("pool", 2))
+        + CALL_METHOD
+        + POP
+        + END
+    )
+    assert [(c.path, c.args) for c in avm1.calls(index, block)] == [
+        ("KrinFilterHit.push", (avm1.Read("KFHit1"),))
+    ]
+
+
+def test_an_increment_is_an_add_of_1_and_comparisons_name_what_an_equals_compares():
+    # The end of KrinNumberShow (frame_42/DoAction_7.as:75-78), which keeps
+    # _root in register 1: _root.numberDepthCyler = _root.numberDepthCyler + 1;
+    # if(_root.numberDepthCyler == 1640) { _root.numberDepthCyler = 1620; }
+    body = (
+        push(("register", 1), ("pool", 0), ("register", 1), ("pool", 0))
+        + GET_MEMBER
+        + INCREMENT
+        + SET_MEMBER
+        + push(("register", 1), ("pool", 0))
+        + GET_MEMBER
+        + push(1640)
+        + EQUALS2
+        + NOT
+        + record(0x9D, struct.pack("<h", 0))
+        + push(("register", 1), ("pool", 0), 1620)
+        + SET_MEMBER
+    )
+    index, block = script(
+        constant_pool("numberDepthCyler")
+        + define_function2("KrinNumberShow", (0x40, 0x00), (), body)
+        + END
+    )
+    depth = avm1.Read("_root.numberDepthCyler")
+    assert [(s.target, s.value) for s in avm1.statements(index, block)] == [
+        ("_root.numberDepthCyler", avm1.Arithmetic(0x47, depth, 1)),
+        ("_root.numberDepthCyler", 1620),
+    ]
+    assert [(c.left, c.right) for c in avm1.comparisons(index, block)] == [
+        (depth, 1640)
     ]
 
 

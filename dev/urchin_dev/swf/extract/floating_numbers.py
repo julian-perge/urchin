@@ -7,8 +7,9 @@
 #       words
 #   assets/ui/battle/floating_number/floating_number.json
 #       where each layer sits on its glyph and whether it takes the number's
-#       color, and how the holder scales, rises, fades and turns white on
-#       each frame of each of NumberFixer's four labels
+#       color, how the holder scales, rises, fades and turns white on each
+#       frame of each of NumberFixer's four labels, and how many depths
+#       KrinNumberShow cycles through and where it puts each digit
 #
 # HOW THE CLIP PLAYS. NumberFixer has the labels normal, critical, miss and
 # shield, and each one ends on a frame that runs removeMovieClip(this). Every
@@ -41,7 +42,7 @@ from dataclasses import dataclass
 from PIL import Image, ImageChops
 
 from urchin_dev import REPO_ROOT, WEB_SWF, png
-from urchin_dev.swf import render, timeline
+from urchin_dev.swf import avm1, render, timeline
 from urchin_dev.swf.extract.battle_screen import IDENTITY_COLOR_TRANSFORM, rect_entry
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
@@ -69,6 +70,11 @@ DIGIT_LABELS = (
     "Eight",
     "Nine",
 )
+# numberSpacingKrin, the distance between two digits along the holder, and
+# numberDepthCyler, the depth KrinNumberShow attaches the next NumberFixer at
+# (frame_42/DoAction_7.as:3-4).
+SPACING = "numberSpacingKrin"
+DEPTH = "numberDepthCyler"
 # How far a color transform may stray from a tint toward white, as the share
 # its multiply and add terms leave between them. Flash rounds both terms to
 # whole steps, so (51, 204) leaves 0.9992 where an exact tint leaves 1.
@@ -157,6 +163,78 @@ def check_rebuild(name: str, whole: Image.Image, layers: list[Image.Image]) -> N
         raise RuntimeError(
             f"{name}: its layers stacked are {worst} levels off the whole glyph"
         )
+
+
+def number_show(index: SwfIndex) -> dict:
+    """-> how KrinNumberShow lays numbers out: `slots`, how many depths it
+    cycles through, and under `digits` the `spacing` between two digits and
+    the `offset` it adds to the first digit's place. The first of n digits
+    sits at -spacing * (n - 2) / 2 + offset along the holder.
+
+    Raises unless the root frame script that sets SPACING reads as
+    frame_42/DoAction_7.as does: the depth starts at one number, goes up by 1
+    for each number shown, and goes back to its start when it equals a second
+    number, totalLKrinN is the spacing times one less than gKMPsteps, and
+    KrinNOffset is minus half of totalLKrinN plus a number. The script sets
+    each digit's _x on a clip whose name it builds as it runs, so this cannot
+    read that line (56)."""
+    found = []
+    for block in index.code:
+        if block.kind != "frame" or block.owner != 0 or SPACING not in block.strings:
+            continue
+        sets = avm1.statements(index, block)
+        if any(a.target == SPACING for a in sets):
+            found.append((block, sets))
+    if len(found) != 1:
+        raise RuntimeError(f"{len(found)} root frame scripts set {SPACING}, want 1")
+    block, sets = found[0]
+
+    def one(target: str):
+        values = [a.value for a in sets if a.target == target]
+        if len(values) != 1:
+            raise RuntimeError(
+                f"KrinNumberShow's script sets {target} {len(values)} times"
+            )
+        return values[0]
+
+    spacing, start = one(SPACING), one(DEPTH)
+    root_depth = f"_root.{DEPTH}"
+    limits = [
+        c.right
+        for c in avm1.comparisons(index, block)
+        if c.left == avm1.Read(root_depth)
+    ]
+    steps = [a.value for a in sets if a.target == root_depth]
+    try:
+        cycles = (
+            len(steps) == 2
+            and avm1.evaluate(steps[0], {root_depth: start}) == start + 1
+            and steps[1] == start
+            and len(limits) == 1
+            and limits[0] > start
+        )
+        offset = avm1.evaluate(one("KrinNOffset"), {"totalLKrinN": 0})
+        centered = (
+            avm1.evaluate(one("totalLKrinN"), {f"_root.{SPACING}": 7, "gKMPsteps": 3})
+            == 14
+            and avm1.evaluate(one("KrinNOffset"), {"totalLKrinN": 14}) == offset - 7
+        )
+    except (TypeError, ValueError) as error:
+        raise RuntimeError(f"KrinNumberShow's script {error}") from error
+    if not cycles:
+        raise RuntimeError(
+            f"the number depth starts at {start}, is set to {steps} and is"
+            f" compared with {limits}, where it goes up by 1 and wraps to its start"
+        )
+    if not centered:
+        raise RuntimeError(
+            "KrinNumberShow does not center the digits as spacing * (steps - 1)"
+            " / 2 either side of an offset"
+        )
+    return {
+        "slots": limits[0] - start,
+        "digits": {"spacing": spacing, "offset": offset},
+    }
 
 
 def _premultiplied(image: Image.Image) -> list[Image.Image]:
@@ -268,6 +346,7 @@ def main():
             print(f"  {name}: depths {[depth for depth, _ in layers]}", file=sys.stderr)
 
     layout = {
+        **number_show(index),
         "fps": index.frame_rate,
         "glyphs": glyph_entries,
         "labels": {

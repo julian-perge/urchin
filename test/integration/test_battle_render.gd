@@ -5,12 +5,10 @@ extends GutTest
 
 const BattleRender = preload("res://dev/battle_render.gd")
 const FighterPresenterScene = preload("res://scenes/battle/fighter_presenter.tscn")
-# The colors of the Result flash's labels, 16763904, 10092288 and 3407871 in
-# frame_42/DoAction_3.as:117-130 and 162-168.
-const HIT_FLASH: Color = Color("#ffcc00")
-const HEAL_FLASH: Color = Color("#99ff00")
-const FOCUS_FLASH: Color = Color("#33ffff")
 
+# BATTLEFLASH's labels, as extract_result_flash writes them from
+# frame_42/DoAction_3.as:117-130 and 162-168.
+var _flash_labels: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ui/battle/result_flash.json"))["labels"]
 var _presenter: FighterPresenter
 var _shield_clip: RigClip
 var _layer: FloatingNumberLayer
@@ -34,6 +32,10 @@ func _present() -> void:
 	_presenter.get_node("ResultFlash").set_process(false)
 	_shield_clip = _presenter.get_node("ShieldClip")
 	_shield_clip.set_process(false)
+
+
+func _flash_label_color(label: String) -> Color:
+	return Color.html(_flash_labels[label]["color"])
 
 
 # The color of the Result flash the doll shows, or null while it shows none.
@@ -88,9 +90,9 @@ func test_it_refuses_a_command_line_it_cannot_render():
 # test_fighter_presenter.gd pins each of these presenter calls in full.
 func test_each_show_lands_what_it_names_on_the_fighter():
 	for case in [
-		["hit", HIT_FLASH, false, ["normal"]],
-		["heal", HEAL_FLASH, false, ["normal"]],
-		["focus", FOCUS_FLASH, false, []],
+		["hit", _flash_label_color("hit"), false, ["normal"]],
+		["heal", _flash_label_color("heal"), false, ["normal"]],
+		["focus", _flash_label_color("focus"), false, []],
 		["shield_block", null, true, ["shield"]],
 		["shield_clip", null, true, []],
 	]:
@@ -101,17 +103,18 @@ func test_each_show_lands_what_it_names_on_the_fighter():
 		assert_eq(_number_labels(), case[3], "%s: the Floating number" % case[0])
 
 
-# The Result flash is on for its frames 0 and 1 and off for frame 2. The Shield
-# clip waits on its frame 1 until the first step. The hit's number leaves its
-# layer after the last frame of its label.
+# The Result flash's `hit` label is on for its frames 0 and 1 and off for frame
+# 2. The Shield clip waits on its frame 1 until the first step. The hit's number
+# leaves its layer after the last frame of its label.
 func test_a_step_moves_the_flash_the_clip_and_the_numbers_on_by_one_swf_frame():
 	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(FloatingNumberLayer.LAYOUT_PATH))
 	var number_frames: int = layout["labels"]["normal"]["frames"].size()
+	assert_eq(_flash_labels["hit"]["frames"].slice(0, 3), [true, true, false], "the frames this test steps over")
 	_present()
 	BattleRender.show_on(_presenter, _unit, "hit")
 	BattleRender.show_on(_presenter, _unit, "shield_clip")
 	BattleRender.step([_presenter], _layer)
-	assert_eq(_flash_color(), HIT_FLASH, "the flash is still on at its frame 1")
+	assert_eq(_flash_color(), _flash_label_color("hit"), "the flash is still on at its frame 1")
 	assert_eq(_shield_clip.frame, 2, "the clip shows its frame 2")
 	BattleRender.step([_presenter], _layer)
 	assert_null(_flash_color(), "the flash is off at its frame 2")
