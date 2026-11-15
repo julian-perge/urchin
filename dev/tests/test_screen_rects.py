@@ -349,7 +349,9 @@ PLUS_MATRIX = (1.0, 0.0, 0.0, 1.0, -1358, 2501)
 
 
 def test_button_record_is_the_up_state_through_the_placement():
-    entry = screen_rects.button_record(PLUS_RECORDS, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+    entry = screen_rects.button_record(
+        3068, PLUS_RECORDS, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN
+    )
     assert entry["kind"] == "button"
     assert entry["rect"] == pytest.approx([310.55, 339.25, 44.1, 16.45])
 
@@ -357,12 +359,14 @@ def test_button_record_is_the_up_state_through_the_placement():
 def test_button_record_refuses_a_moved_up_state_record():
     moved = [replace(PLUS_RECORDS[1], matrix=(1.0, 0.0, 0.0, 1.0, 20, 0))]
     with pytest.raises(ValueError, match="moves"):
-        screen_rects.button_record(moved, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+        screen_rects.button_record(3068, moved, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
 
 
 def test_button_record_refuses_a_button_with_no_up_state():
     with pytest.raises(ValueError, match="up state"):
-        screen_rects.button_record(PLUS_RECORDS[2:], PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+        screen_rects.button_record(
+            3068, PLUS_RECORDS[2:], PLUS_BOUNDS, PLUS_MATRIX, ORIGIN
+        )
 
 
 # The clip reader (3059) at depth 675 of KRINMENU frame 25. Its first frame

@@ -490,10 +490,12 @@ def hit_record(records: list[ButtonRecord], bounds, matrix, origin) -> dict:
     }
 
 
-def button_record(records: list[ButtonRecord], bounds: dict, matrix, origin) -> dict:
-    """-> the record of a button that draws art, as the rect of the shapes its
-    up state draws, placed with `matrix`. `bounds` maps each shape to its
-    ShapeBounds."""
+def button_record(
+    button: int, records: list[ButtonRecord], bounds: dict, matrix, origin
+) -> dict:
+    """-> the record of the button `button`, whose `records` draw art, as the
+    rect of the shapes its up state draws, placed with `matrix`. `bounds` maps
+    each shape to its ShapeBounds."""
     up = [r for r in records if "up" in r.states]
     if not up:
         raise ValueError("the button draws nothing in its up state")
@@ -520,7 +522,7 @@ def _button(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
         for r in records
         if character_kind(index, r.character_id) == "shape"
     }
-    return button_record(records, bounds, layer.matrix, origin)
+    return button_record(layer.character_id, records, bounds, layer.matrix, origin)
 
 
 def inner_origin(matrix, origin) -> tuple[float, float]:
