@@ -20,14 +20,14 @@ const ENEMY_COLOR: Color = FighterPresenter.RING_COLORS[FighterPresenter.Relatio
 const HIT_FLASH: Color = Color("#ffcc00")
 const HEAL_FLASH: Color = Color("#99ff00")
 const FOCUS_FLASH: Color = Color("#33ffff")
-# Frame n of the shield clip, as extract_rig_clips writes it.
-const SHIELD_CLIP_ART: String = "res://assets/ui/battle/rig/shield/%d.png"
+# Frame n of the shield clip, as extract_shield_clip writes it.
+const SHIELD_CLIP_ART: String = "res://assets/ui/battle/shield_clip/%d.png"
 
 var _presenter: FighterPresenter
 var _doll: CharacterVisual
 var _overlay: UnitOverlay
 var _flash: ResultFlash
-var _shield_clip: RigClip
+var _shield_clip: ShieldClip
 var _layer: FloatingNumberLayer
 var _unit: CombatUnit
 var _cues: Array = []
@@ -550,7 +550,7 @@ func test_a_dead_units_slot_shows_nothing_for_the_rest_of_the_battle():
 	_step_frames(90)
 	_presenter.snap_to_unit()
 	var drawn: Array = _presenter.get_children().filter(func(child):
-		if child is RigClip and not child.is_playing():
+		if child is ShieldClip and not child.is_playing():
 			return false
 		return child is CanvasItem and child.is_visible_in_tree()
 	)

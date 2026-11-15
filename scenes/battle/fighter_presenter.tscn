@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://scenes/character_visual.tscn" id="2_doll"]
 [ext_resource type="PackedScene" path="res://scenes/battle/unit_overlay.tscn" id="3_overlay"]
 [ext_resource type="Script" path="res://scripts/battle/result_flash.gd" id="4_flash"]
-[ext_resource type="Script" path="res://scripts/battle/rig_clip.gd" id="5_rig_clip"]
+[ext_resource type="Script" path="res://scripts/battle/shield_clip.gd" id="5_shield_clip"]
 
 [node name="FighterPresenter" type="Node2D"]
 script = ExtResource("1_presenter")
@@ -12,8 +12,7 @@ script = ExtResource("1_presenter")
 [node name="Doll" parent="." instance=ExtResource("2_doll")]
 
 [node name="ShieldClip" type="Node2D" parent="."]
-script = ExtResource("5_rig_clip")
-clip = "shield"
+script = ExtResource("5_shield_clip")
 
 [node name="Overlay" parent="." instance=ExtResource("3_overlay")]
 

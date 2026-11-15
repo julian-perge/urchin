@@ -139,7 +139,7 @@ extracting it.
   Dolls, VFX, the item, buff and ability icons and the start screen backgrounds
   go at 2x. The Floating numbers (`floating_numbers.py`) go at 4x, because the
   critical label starts at 2.84x and the other labels start at 1.78x. The
-  rig's clips (`rig_clips.py`) go at 2x, the window's default scale, as the
+  Shield clip (`shield_clip.py`) goes at 2x, the window's default scale, as the
   dolls do.
 - **ffdec thins the blur on large filtered objects, at any zoom.**
   `Filtering.boxBlurSingleIterationTwoPass` shrinks both box widths until

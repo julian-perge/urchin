@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://n6pgdvc0jqlx"
-path="res://.godot/imported/3.png-43a93aeec79f68b07eca1a9e586c1a23.ctex"
+uid="uid://bm1plhu6cudpb"
+path="res://.godot/imported/11.png-cac1a1aaf55d8038a4f1f2bba482d58e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/battle/rig/shield/3.png"
-dest_files=["res://.godot/imported/3.png-43a93aeec79f68b07eca1a9e586c1a23.ctex"]
+source_file="res://assets/ui/battle/shield_clip/11.png"
+dest_files=["res://.godot/imported/11.png-cac1a1aaf55d8038a4f1f2bba482d58e.ctex"]
 
 [params]
 

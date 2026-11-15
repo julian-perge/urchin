@@ -1,14 +1,14 @@
-# The clips the fighter rig (DefineSprite 2676) holds beside the doll, which
-# the original plays on a unit through BATTLESCREEN["player" + id]:
+# The Shield clip (DefineSprite 2675), which the fighter rig (DefineSprite 2676)
+# holds beside the doll under the instance name `shield`, and which the
+# original plays on a unit through BATTLESCREEN["player" + id]:
 #
-#   assets/ui/battle/rig/<clip>/<n>.png   frame n of the clip, all of its
-#                                         frames cut to one box
-#   assets/ui/battle/rig/rig_clips.json   the frame rate, and for each clip
-#                                         its frames and that box's rect
-#                                         around the rig's origin
+#   assets/ui/battle/shield_clip/<n>.png           frame n of the clip, all of
+#                                                  its frames cut to one box
+#   assets/ui/battle/shield_clip/shield_clip.json  the frame rate, the frames
+#                                                  and that box's rect around
+#                                                  the rig's origin
 #
-# Today the one clip is `shield` (DefineSprite 2675), which executeMove plays
-# on a Shield block (frame_42/DoAction_8.as:73). buffTicker also calls it when a
+# executeMove plays the clip on a Shield block (frame_42/DoAction_8.as:73). buffTicker also calls it when a
 # shield soaks a whole Buff tick (frame_42/DoAction_10.as:72), but through a name
 # it never declares, so that call reaches no clip. The port plays the clip there
 # anyway (ADR 0005). The clip's frame 1 runs stop() and shows nothing. Frame 2
@@ -28,7 +28,7 @@
 #
 # The art is rendered at 2x, the window's default scale, as the doll is.
 #
-# Run: uv run extract_rig_clips
+# Run: uv run extract_shield_clip
 from __future__ import annotations
 
 import json
@@ -39,11 +39,11 @@ from urchin_dev.swf import render, timeline
 from urchin_dev.swf.extract.battle_screen import FIGHTER_RIG, rect_entry
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
-OUT_DIR = REPO_ROOT / "assets" / "ui" / "battle" / "rig"
-LAYOUT_JSON = OUT_DIR / "rig_clips.json"
+OUT_DIR = REPO_ROOT / "assets" / "ui" / "battle" / "shield_clip"
+LAYOUT_JSON = OUT_DIR / "shield_clip.json"
 ZOOM = 2.0
-# The rig's clips the port plays, by the instance name the rig gives each.
-CLIPS = ("shield",)
+# The instance name the rig gives the clip.
+CLIP = "shield"
 
 
 def rig_clip(index: SwfIndex, rig: int, name: str) -> int:
@@ -86,42 +86,32 @@ def rig_clip(index: SwfIndex, rig: int, name: str) -> int:
 
 def main():
     index = read_swf(WEB_SWF)
-    sprites = {name: rig_clip(index, FIGHTER_RIG, name) for name in CLIPS}
-    jobs: list[render.Job] = []
-    for sprite in sprites.values():
-        # The rect comes out around the rig's origin, which is where the port
-        # puts the clip's node. placement_origin() raises if the rig scales or
-        # turns the clip, because a rect can't carry that.
-        origin = render.placement_origin(index, FIGHTER_RIG, 1, sprite)
-        jobs.extend(
-            render.Job(sprite, frame, ZOOM, origin=origin)
-            for frame in range(1, index.sprite_frames[sprite] + 1)
-        )
+    sprite = rig_clip(index, FIGHTER_RIG, CLIP)
+    count = index.sprite_frames[sprite]
+    # The rect comes out around the rig's origin, which is where the port puts
+    # the clip's node. placement_origin() raises if the rig scales or turns the
+    # clip, because a rect can't carry that.
+    origin = render.placement_origin(index, FIGHTER_RIG, 1, sprite)
+    jobs = [
+        render.Job(sprite, frame, ZOOM, origin=origin) for frame in range(1, count + 1)
+    ]
 
-    clips: dict[str, dict] = {}
     with render.frames(WEB_SWF, jobs) as rendered:
-        at = 0
-        for name, sprite in sprites.items():
-            count = index.sprite_frames[sprite]
-            pieces = render.trim_union(rendered[at : at + count])
-            at += count
-            if pieces is None:
-                raise RuntimeError(f"{name} ({sprite}) rendered empty")
-            rects = {piece.rect for piece in pieces}
-            if len(rects) != 1:
-                raise RuntimeError(
-                    f"{name} ({sprite}) frames sit in {len(rects)} boxes"
-                )
-            (OUT_DIR / name).mkdir(parents=True, exist_ok=True)
-            pngs = []
-            for frame, piece in enumerate(pieces, start=1):
-                file_name = f"{name}/{frame}.png"
-                png.save(piece.image, OUT_DIR / file_name)
-                pngs.append(file_name)
-            clips[name] = {"frames": pngs, "rect": rect_entry(rects.pop())}
-            print(f"  {name}: sprite {sprite}, {count} frames", file=sys.stderr)
+        pieces = render.trim_union(rendered)
+        if pieces is None:
+            raise RuntimeError(f"{CLIP} ({sprite}) rendered empty")
+        rects = {piece.rect for piece in pieces}
+        if len(rects) != 1:
+            raise RuntimeError(f"{CLIP} ({sprite}) frames sit in {len(rects)} boxes")
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
+        pngs = []
+        for frame, piece in enumerate(pieces, start=1):
+            file_name = f"{frame}.png"
+            png.save(piece.image, OUT_DIR / file_name)
+            pngs.append(file_name)
+        print(f"  {CLIP}: sprite {sprite}, {count} frames", file=sys.stderr)
 
-    layout = {"fps": index.frame_rate, "clips": clips}
+    layout = {"fps": index.frame_rate, "frames": pngs, "rect": rect_entry(rects.pop())}
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
     print(f"wrote {LAYOUT_JSON}", file=sys.stderr)
 
