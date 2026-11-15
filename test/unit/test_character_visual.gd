@@ -342,6 +342,36 @@ func test_cast_and_hit_recover_to_idle():
 	assert_eq(visual._state, CharacterVisual.State.IDLE)
 
 
+# Returns how many steps of `step_seconds` the doll takes to leave `state` for
+# idle, which it does on the step that ends the state's label.
+func _steps_until_idle(state: CharacterVisual.State, step_seconds: float) -> int:
+	visual.set_state(state)
+	for step in range(1, 1000):
+		visual._process(step_seconds)
+		if visual._state == CharacterVisual.State.IDLE:
+			return step
+	return 0
+
+
+func _label_length(label: String) -> int:
+	var segment: Dictionary = _animations()["labels"][label]
+	return int(segment["end"]) - int(segment["start"]) + 1
+
+
+func test_hit_ends_on_the_frame_its_label_length_gives():
+	assert_eq(_steps_until_idle(CharacterVisual.State.HIT, SWF_FRAME_SECONDS), _label_length("hit"))
+
+
+func test_cast_ends_on_the_frame_its_label_length_gives():
+	assert_eq(_steps_until_idle(CharacterVisual.State.CAST, SWF_FRAME_SECONDS), _label_length("cast"))
+
+
+func test_hit_and_cast_end_on_the_same_frame_at_two_steps_a_frame():
+	var half_frame: float = SWF_FRAME_SECONDS / 2.0
+	assert_eq(_steps_until_idle(CharacterVisual.State.HIT, half_frame), 2 * _label_length("hit"), "hit")
+	assert_eq(_steps_until_idle(CharacterVisual.State.CAST, half_frame), 2 * _label_length("cast"), "cast")
+
+
 # Returns the alpha each part is drawn at, which is its own modulate times every
 # ancestor's, up to the doll.
 func _drawn_alphas() -> Array:
