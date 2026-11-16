@@ -1203,6 +1203,16 @@ func test_the_shield_clip_sits_on_the_rig_over_the_doll_and_mirrors_with_team_2(
 	assert_eq(_shield_clip.scale, Vector2.ONE, "and not mirrored on team 1")
 
 
+func test_the_shield_clips_art_fills_the_box_the_extractor_measured_around_the_rig():
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ShieldClip.LAYOUT_PATH))
+	var rect: Dictionary = layout["rect"]
+	var art: Sprite2D = _shield_clip.sprite
+	var drawn := Rect2(art.position, art.texture.get_size() * art.scale)
+	assert_almost_eq(drawn.position, Vector2(rect["x"], rect["y"]), Vector2(0.01, 0.01), "the box's corner")
+	assert_almost_eq(drawn.size, Vector2(rect["w"], rect["h"]), Vector2(0.01, 0.01), "the box's size")
+	assert_false(art.centered, "drawn from that corner")
+
+
 # A shield exactly as big as the hit soaks it, but executeMove takes the hit's
 # branch for it, a Quirk that ADR 0005 keeps. KrinNumberShow draws no number for
 # 0 (frame_42/DoAction_7.as:8), and the flinch and the hit voice play with no
