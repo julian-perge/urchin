@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://ce0fyqjs5nd5q"]
+[gd_scene load_steps=19 format=3 uid="uid://ce0fyqjs5nd5q"]
 
 [ext_resource type="Script" path="res://scripts/ui/hotbar.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/bottom_bar.tscn" id="2_bar"]
@@ -16,12 +16,6 @@
 [ext_resource type="Texture2D" uid="uid://bc2oy3aami1yn" path="res://assets/ui/window/hotbar_quit_red.png" id="t11"]
 [ext_resource type="Texture2D" path="res://assets/ui/window/zone_track.png" id="t12"]
 [ext_resource type="Texture2D" path="res://assets/ui/window/zone_fill.png" id="t13"]
-
-[sub_resource type="LabelSettings" id="title_settings"]
-font_size = 20
-font_color = Color(1, 1, 1, 1)
-shadow_size = 4
-shadow_color = Color(0, 0, 0, 0.6)
 
 [node name="Hotbar" type="Control" groups=["hotbar"]]
 layout_mode = 3
@@ -473,39 +467,58 @@ mouse_filter = 2
 texture = ExtResource("t13")
 expand_mode = 1
 
-[node name="ZoneInfo" type="VBoxContainer" parent="."]
+[node name="ZoneTitleSlot" type="Control" parent="."]
+custom_minimum_size = Vector2(177.1, 20.9)
 layout_mode = 0
-offset_left = 484.0
-offset_top = 463.0
-offset_right = 772.0
-offset_bottom = 559.0
-theme_override_constants/separation = 1
-
-[node name="ZoneTitle" type="Label" parent="ZoneInfo"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Zone 1"
-label_settings = SubResource("title_settings")
-horizontal_alignment = 1
-
-[node name="ZoneSubtitle" type="Label" parent="ZoneInfo"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.35, 0.88, 0.16, 1)
-theme_override_font_sizes/font_size = 12
-text = "New Alcatraz: The Iron Prison"
-horizontal_alignment = 1
-
-[node name="ZoneProgressGap" type="Control" parent="ZoneInfo"]
-custom_minimum_size = Vector2(0, 16)
-layout_mode = 2
+offset_left = 538.7
+offset_top = 468.9
+offset_right = 715.8
+offset_bottom = 489.8
 mouse_filter = 2
 
-[node name="StageLabel" type="Label" parent="ZoneInfo"]
+[node name="ZoneTitle" type="Label" parent="ZoneTitleSlot"]
 unique_name_in_owner = true
-layout_mode = 2
+layout_mode = 0
+offset_right = 177.1
+offset_bottom = 20.9
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 17
+horizontal_alignment = 1
+
+[node name="ZoneSubtitleSlot" type="Control" parent="."]
+custom_minimum_size = Vector2(288, 15.05)
+layout_mode = 0
+offset_left = 482.0
+offset_top = 491.15
+offset_right = 770.0
+offset_bottom = 506.2
+mouse_filter = 2
+
+[node name="ZoneSubtitle" type="Label" parent="ZoneSubtitleSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 288.0
+offset_bottom = 15.05
+theme_override_colors/font_color = Color(0.5647059, 0.9764706, 0.5176471, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+
+[node name="StageSlot" type="Control" parent="."]
+custom_minimum_size = Vector2(109.7, 28.65)
+layout_mode = 0
+offset_left = 645.25
+offset_top = 534.3
+offset_right = 754.95
+offset_bottom = 562.95
+mouse_filter = 2
+
+[node name="StageLabel" type="Label" parent="StageSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 109.7
+offset_bottom = 28.65
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 10
-text = "Stage 1"
 horizontal_alignment = 2
 
 [connection signal="pressed" from="InventorySlot/InventoryButton" to="." method="_on_menu_button_pressed" binds=["inventory_window"]]

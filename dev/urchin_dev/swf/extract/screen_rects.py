@@ -255,6 +255,9 @@ HOTBAR_PIECES = {
         inner_depth=window_chrome.ZONE_BAR_FILL_DEPTH,
     ),
     "ZoneFill/Art": Piece("art", window_chrome.ZONE_BAR_ROOT_DEPTH, art="zone_fill"),
+    "ZoneTitleSlot/ZoneTitle": Piece("text", 173),
+    "ZoneSubtitleSlot/ZoneSubtitle": Piece("text", 174),
+    "StageSlot/StageLabel": Piece("text", 172),
 }
 
 # The slot list frame's pieces, by their path in slot_panel.tscn
@@ -519,15 +522,13 @@ SCENES: dict[str, Scene] = {
         timeline=0, frame=HUB_FRAME, pieces={".": Piece("art", 1, art="bottom_bar")}
     ),
     # The hotbar on the bottom bar. Each Glow and InnerGlow holds the port's
-    # hover, which the SWF draws as Glow filters on the icon. ZoneInfo holds the
-    # three zone texts, which are port only until #221 records them. Depth 144
-    # is the Armor Games strip 3176.
+    # hover, which the SWF draws as Glow filters on the icon. Depth 144 is the
+    # Armor Games strip 3176.
     "res://scenes/ui/hotbar.tscn": Scene(
         timeline=0,
         frame=HUB_FRAME,
         pieces=HOTBAR_PIECES,
         port_only=(
-            "ZoneInfo",
             *(
                 f"{slot}Slot/{holder}"
                 for slot in (*HOTBAR_SLOTS, "ZoneMap")

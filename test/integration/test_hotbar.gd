@@ -50,6 +50,51 @@ func after_each():
 	GameTooltip.hide_tooltip()
 
 
+func test_zone_texts_read_the_strings_record_for_every_zone():
+	var strings: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Strings.STRINGS_FILE))
+	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
+	for zone: int in ZoneProgression.QUEST_HUB:
+		hotbar._refresh(zone)
+		assert_eq(hotbar.zone_title.text, strings["SYSTEM"][9] + str(zone))
+		assert_eq(hotbar.zone_subtitle.text, strings["ZONES"][zone] + ": " + strings["ZONES2"][zone])
+		var progress: int = 0 if GameData.current_save == null else ZoneProgression.quest_progress(GameData.current_save, zone)
+		assert_eq(hotbar.stage_label.text, strings["SYSTEM"][10] + str(progress + 1))
+
+
+func test_zone_texts_use_the_loader_instead_of_copies_of_english():
+	var original: Dictionary = Strings._load()
+	Strings._table = original.duplicate(true)
+	Strings._table["SYSTEM"][9] = "Zone prefix "
+	Strings._table["SYSTEM"][10] = "Stage prefix "
+	Strings._table["ZONES"][1] = "Zone name"
+	Strings._table["ZONES2"][1] = "Zone subtitle"
+	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
+	hotbar._refresh(1)
+	assert_eq(hotbar.zone_title.text, "Zone prefix 1")
+	assert_eq(hotbar.zone_subtitle.text, "Zone name: Zone subtitle")
+	assert_string_starts_with(hotbar.stage_label.text, "Stage prefix ")
+	Strings._table = original
+
+
+func test_zone_fill_width_is_capped_but_stage_text_keeps_counting():
+	var previous_save: PlayerSave = GameData.current_save
+	GameData.current_save = PlayerSave.new_game("Progress", 0)
+	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://test/fixtures/screen_rects.json"))
+	var fill_rect: Array = record["scenes"][HotbarScene.resource_path]["pieces"]["ZoneFill"]["rect"]
+	for zone: int in ZoneProgression.QUEST_HUB:
+		var maximum: int = ZoneProgression.QUEST_HUB[zone]["progress_max"]
+		for progress: int in [0, 1, maximum - 1, maximum, maximum + 1]:
+			GameData.current_save.quest_progress[zone] = progress
+			hotbar._refresh(zone)
+			assert_almost_eq(hotbar.zone_fill.size.x * hotbar.zone_fill.scale.x,
+				float(fill_rect[2]) * mini(progress, maximum) / maximum, 0.01)
+			assert_almost_eq(hotbar.zone_fill.size.y * hotbar.zone_fill.scale.y, float(fill_rect[3]), 0.001)
+			assert_eq(hotbar.zone_fill.pivot_offset, Vector2.ZERO)
+			assert_eq(hotbar.stage_label.text, Strings.system(10) + str(progress + 1))
+	GameData.current_save = previous_save
+
+
 func test_hover_shows_a_two_section_tooltip_for_inventory_button():
 	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
 	var button: BaseButton = hotbar.get_node("%InventoryButton")
