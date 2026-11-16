@@ -196,12 +196,27 @@ def test_layers_that_do_not_rebuild_the_whole_glyph_are_refused():
         floating_numbers.check_rebuild("Seven", whole, [shine, outline])
 
 
-def number_script(reset: int = 1620, halve: int = 2) -> bytes:
+def number_script(
+    reset: int = 1620,
+    halve: int = 2,
+    limits: tuple[int, ...] = (1640,),
+    step: bytes = b"\x50",
+) -> bytes:
     """A root frame script that reads as frame_42/DoAction_7.as does, cut down
     to the lines number_show() reads: lines 3-4, and in KrinNumberShow, which
     keeps _root in register 1, lines 34-35 and 75-79. `reset` is the depth
-    line 78 goes back to, and `halve` is what line 35 divides by."""
+    line 78 goes back to, and `halve` is what line 35 divides by. `limits`
+    holds what the script compares the depth with, where line 76 compares it
+    once, and `step` is the actions that raise the depth on line 75."""
     depth = (("register", 1), ("pool", 1))
+    compares = b"".join(
+        push(*depth)
+        + b"\x4e"
+        + push(limit)
+        + b"\x49\x12"
+        + record(0x9D, struct.pack("<h", 0))
+        for limit in limits
+    )
     body = (
         push(("pool", 3), ("register", 1), ("pool", 0))
         + b"\x4e"
@@ -216,12 +231,10 @@ def number_script(reset: int = 1620, halve: int = 2) -> bytes:
         + push(10)
         + b"\x0b\x1d"
         + push(*depth, *depth)
-        + b"\x4e\x50\x4f"
-        + push(*depth)
         + b"\x4e"
-        + push(1640)
-        + b"\x49\x12"
-        + record(0x9D, struct.pack("<h", 0))
+        + step
+        + b"\x4f"
+        + compares
         + push(*depth, reset)
         + b"\x4f"
     )
@@ -254,9 +267,18 @@ def test_number_show_reads_the_slot_count_the_digit_spacing_and_the_offset():
     "script, refusal",
     [
         (number_script(reset=1600), "wraps to its start"),
+        (number_script(limits=(1600,)), "wraps to its start"),
+        (number_script(limits=(1640, 1650)), "wraps to its start"),
+        (number_script(step=push(2) + b"\x47"), "wraps to its start"),
         (number_script(halve=3), "does not center the digits"),
     ],
-    ids=["a wrap to another depth", "digits that are not centered"],
+    ids=[
+        "a wrap to another depth",
+        "a wrap at a depth under the first",
+        "two depths to wrap at",
+        "a depth that goes up by 2",
+        "digits that are not centered",
+    ],
 )
 def test_a_krinnumbershow_that_reads_another_way_is_refused(script, refusal):
     index = parse_swf(swf(script, SHOW))

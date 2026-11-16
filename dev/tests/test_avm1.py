@@ -220,6 +220,31 @@ def test_calls_name_each_method_a_script_calls_and_its_arguments():
     ]
 
 
+def test_a_new_and_a_call_whose_argument_count_is_not_a_number_are_not_read():
+    # var made = new Array(<count arguments>); list.push(<count arguments>);
+    # with a count the script reads from a variable.
+    index, block = script(
+        constant_pool("made", "count", "Array", "list", "push")
+        + push(("pool", 0), ("pool", 1))
+        + GET_VARIABLE
+        + push(("pool", 2))
+        + NEW_OBJECT
+        + DEFINE_LOCAL
+        + push(("pool", 1))
+        + GET_VARIABLE
+        + push(("pool", 3))
+        + GET_VARIABLE
+        + push(("pool", 4))
+        + CALL_METHOD
+        + POP
+        + END
+    )
+    assert [(s.target, s.value) for s in avm1.statements(index, block)] == [
+        ("made", avm1.UNKNOWN)
+    ]
+    assert avm1.calls(index, block) == []
+
+
 def test_an_increment_is_an_add_of_1_and_comparisons_name_what_an_equals_compares():
     # The end of KrinNumberShow (frame_42/DoAction_7.as:75-78), which keeps
     # _root in register 1: _root.numberDepthCyler = _root.numberDepthCyler + 1;
