@@ -70,7 +70,7 @@ res://
 │   ├── unit/                      # Pure-logic tests (talent tree rules, ...)
 │   └── integration/               # Full-stack tests against real converted data (battle runner, ...)
 ├── scenes/
-│   ├── main_menu.tscn             # Starting screen: save slots + new-game (name/class/difficulty)
+│   ├── main_menu.tscn             # Starting screen: title, save slots + new-game (name/class/difficulty)
 │   ├── game.tscn                  # Zone-hub shell: hosts the current zone scene + hotbar/store/map
 │   ├── zones/                     # One scene per zone (zone1_prison .. zone7_shotul) - hub art +
 │   │                              #   the 3 orbs at positions extracted from the original SWF

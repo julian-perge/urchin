@@ -292,3 +292,23 @@ def test_every_committed_entry_names_a_scene_that_exists():
     for name, found in entries.items():
         scene = REPO_ROOT / found.scene.removeprefix("res://")
         assert scene.is_file(), f"{name}: {found.scene}"
+
+
+def test_an_entry_carries_the_depths_its_scene_leaves_out(tmp_path):
+    scenes = {SCENE: Scene(timeline=0, frame="mainMenu", pieces={}, left_out=(38, 41))}
+    config = write_config(tmp_path, {"title": entry(chrome={"bar": None})})
+
+    entries = screen_compare.load_config(config, scenes)
+
+    assert entries["title"].left_out == (38, 41)
+
+
+def test_the_left_out_characters_are_those_at_the_left_out_depths():
+    layers = {1: 2701, 6: 321, 38: 2689, 41: 294}
+
+    assert screen_compare.left_out_ids(layers, (38, 41), "title") == {2689, 294}
+
+
+def test_a_left_out_depth_that_the_frame_does_not_place_is_an_error():
+    with pytest.raises(screen_compare.CompareError, match="depth 40"):
+        screen_compare.left_out_ids({38: 2689}, (38, 40), "title")

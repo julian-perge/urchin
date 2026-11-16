@@ -234,6 +234,10 @@ This tool checks how it looks: the art, the fills and the shadows.
   instantiated with no data. Do not add a second way to set state for a
   capture. If the scene needs data to draw a piece, score that piece in a
   `panels` entry without it, or leave it to the rect test.
+- **What the port leaves out is stripped.** When an ADR leaves a character
+  of the frame out of the port, name its depth in the scene's `left_out` in
+  `SCENES`. `chrome` mode strips those characters from the reference. The
+  title leaves out the Armor Games logo and copyright line this way (ADR 0002).
 - **Hidden nodes keep their place.** The capture scene hides a node by making
   its own drawing clear (`self_modulate`), not with `visible`, because a hidden
   child leaves a `FloatBox` and the pieces after it would move. A node whose
