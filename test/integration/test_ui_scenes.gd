@@ -695,8 +695,9 @@ func test_hotbar_shows_progress_from_save():
 	var hotbar = game.get_node("Hotbar")
 	assert_eq(hotbar.zone_title.text, "Zone 1")
 	assert_eq(hotbar.zone_subtitle.text, "New Alcatraz: The Iron Prison")
-	assert_eq(hotbar.progress_bar.value, 3.0, "quest progress drives the bar")
-	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 1 progress_max")
+	assert_almost_eq(hotbar.zone_fill.scale.x, 3.0 / 9.0, 0.0001, "quest progress drives the bar")
+	assert_eq(hotbar.zone_fill.scale.y, 1.0, "the fill keeps its height")
+	assert_eq(hotbar.zone_fill.pivot_offset, Vector2.ZERO, "the fill grows from its left edge")
 	assert_eq(hotbar.stage_label.text, "Stage 4")
 
 
@@ -715,8 +716,7 @@ func test_hotbar_shows_the_saved_zone_right_after_a_load():
 	var hotbar = game.get_node("Hotbar")
 	assert_eq(hotbar.zone_title.text, "Zone 4")
 	assert_eq(hotbar.zone_subtitle.text, "Labyrinth: Tunnel of Illusions")
-	assert_eq(hotbar.progress_bar.value, 6.0, "zone 4's progress, not zone 1's")
-	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 4 progress_max")
+	assert_almost_eq(hotbar.zone_fill.scale.x, 6.0 / 9.0, 0.0001, "zone 4's progress, not zone 1's")
 	assert_eq(hotbar.stage_label.text, "Stage 7")
 
 
@@ -731,8 +731,7 @@ func test_hotbar_ignores_the_zone_another_slot_left_behind():
 	var hotbar = game.get_node("Hotbar")
 	assert_eq(hotbar.zone_title.text, "Zone 4")
 	assert_eq(hotbar.zone_subtitle.text, "Labyrinth: Tunnel of Illusions")
-	assert_eq(hotbar.progress_bar.value, 6.0, "zone 4's progress, not zone 2's")
-	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 4 progress_max")
+	assert_almost_eq(hotbar.zone_fill.scale.x, 6.0 / 9.0, 0.0001, "zone 4's progress, not zone 2's")
 	assert_eq(hotbar.stage_label.text, "Stage 7")
 
 
@@ -759,8 +758,7 @@ func test_hotbar_shows_the_saved_zone_after_a_game_over_reload():
 	var hotbar = game.get_node("Hotbar")
 	assert_eq(hotbar.zone_title.text, "Zone 4")
 	assert_eq(hotbar.zone_subtitle.text, "Labyrinth: Tunnel of Illusions")
-	assert_eq(hotbar.progress_bar.value, 6.0, "zone 4's progress, not zone 2's")
-	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 4 progress_max")
+	assert_almost_eq(hotbar.zone_fill.scale.x, 6.0 / 9.0, 0.0001, "zone 4's progress, not zone 2's")
 	assert_eq(hotbar.stage_label.text, "Stage 7")
 
 	GameData.current_slot = -1
@@ -777,8 +775,7 @@ func test_hotbar_stage_keeps_counting_past_a_beaten_zone():
 	var game = add_child_autofree(GameScene.instantiate())
 	await get_tree().process_frame
 	var hotbar = game.get_node("Hotbar")
-	assert_eq(hotbar.progress_bar.value, 9.0, "the bar stops at zone 1's progress_max")
-	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 1 progress_max")
+	assert_almost_eq(hotbar.zone_fill.scale.x, 9.0 / 9.0, 0.0001, "the bar stops at zone 1's progress_max")
 	assert_eq(hotbar.stage_label.text, "Stage 11")
 
 
@@ -926,10 +923,12 @@ func test_a_hotbar_icon_stays_white_while_its_window_is_open():
 		await get_tree().process_frame
 		assert_true(game.get_node(slot + "Window").visible, "%s opens its Window" % slot)
 		var icon: TextureRect = hotbar.get_node(slot + "Slot/Icon")
-		var glow: Control = hotbar.get_node(slot + "Slot/Glow")
 		assert_eq(icon.modulate, Color.WHITE, "%s icon" % slot)
 		assert_eq(icon.self_modulate, Color.WHITE, "%s icon" % slot)
-		assert_eq(glow.modulate.a, 0.0, "%s glow" % slot)
+		assert_eq(hotbar.hover_frame(slot), 1, "%s shows the frame with no Glow" % slot)
+		for holder: String in ["Glow", "InnerGlow"]:
+			for layer: CanvasItem in hotbar.get_node(slot + "Slot/" + holder).get_children():
+				assert_false(layer.visible, "%s %s layer" % [slot, holder])
 
 
 # First unrestricted level-1 wearable in the item set (deterministic pick:

@@ -14,27 +14,8 @@
 [ext_resource type="Texture2D" uid="uid://cukjxt5ana5ph" path="res://assets/ui/hotbar/world_map.png" id="t9"]
 [ext_resource type="Texture2D" uid="uid://1agj0s1ys2op" path="res://assets/ui/window/hotbar_quit.png" id="t10"]
 [ext_resource type="Texture2D" uid="uid://bc2oy3aami1yn" path="res://assets/ui/window/hotbar_quit_red.png" id="t11"]
-
-[sub_resource type="StyleBoxFlat" id="bar_bg"]
-bg_color = Color(0.05, 0.06, 0.06, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="bar_fill"]
-bg_color = Color(0.35, 0.88, 0.16, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-shadow_color = Color(0.35, 0.88, 0.16, 0.45)
-shadow_size = 5
+[ext_resource type="Texture2D" path="res://assets/ui/window/zone_track.png" id="t12"]
+[ext_resource type="Texture2D" path="res://assets/ui/window/zone_fill.png" id="t13"]
 
 [sub_resource type="LabelSettings" id="title_settings"]
 font_size = 20
@@ -71,7 +52,6 @@ texture = ExtResource("t1")
 expand_mode = 1
 
 [node name="Glow" type="Control" parent="InventorySlot"]
-modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 11.8
 offset_top = 11.95
@@ -88,6 +68,14 @@ offset_bottom = 40.75
 mouse_filter = 2
 texture = ExtResource("t2")
 expand_mode = 1
+
+[node name="InnerGlow" type="Control" parent="InventorySlot"]
+layout_mode = 0
+offset_left = 11.8
+offset_top = 11.95
+offset_right = 40.6
+offset_bottom = 40.75
+mouse_filter = 2
 
 [node name="InventoryButton" type="TextureButton" parent="InventorySlot"]
 unique_name_in_owner = true
@@ -117,7 +105,6 @@ texture = ExtResource("t1")
 expand_mode = 1
 
 [node name="Glow" type="Control" parent="AbilitiesSlot"]
-modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 12.8
 offset_top = 11.15
@@ -134,6 +121,14 @@ offset_bottom = 42.35
 mouse_filter = 2
 texture = ExtResource("t3")
 expand_mode = 1
+
+[node name="InnerGlow" type="Control" parent="AbilitiesSlot"]
+layout_mode = 0
+offset_left = 12.8
+offset_top = 11.15
+offset_right = 38.4
+offset_bottom = 42.35
+mouse_filter = 2
 
 [node name="AbilitiesButton" type="TextureButton" parent="AbilitiesSlot"]
 unique_name_in_owner = true
@@ -163,7 +158,6 @@ texture = ExtResource("t1")
 expand_mode = 1
 
 [node name="Glow" type="Control" parent="SaveSlot"]
-modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 16.7
 offset_top = 12.15
@@ -180,6 +174,14 @@ offset_bottom = 40.95
 mouse_filter = 2
 texture = ExtResource("t4")
 expand_mode = 1
+
+[node name="InnerGlow" type="Control" parent="SaveSlot"]
+layout_mode = 0
+offset_left = 16.7
+offset_top = 12.15
+offset_right = 37.1
+offset_bottom = 40.95
+mouse_filter = 2
 
 [node name="SaveButton" type="TextureButton" parent="SaveSlot"]
 unique_name_in_owner = true
@@ -210,7 +212,6 @@ texture = ExtResource("t1")
 expand_mode = 1
 
 [node name="Glow" type="Control" parent="OptionsSlot"]
-modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 12.4
 offset_top = 11.95
@@ -227,6 +228,14 @@ offset_bottom = 41.75
 mouse_filter = 2
 texture = ExtResource("t5")
 expand_mode = 1
+
+[node name="InnerGlow" type="Control" parent="OptionsSlot"]
+layout_mode = 0
+offset_left = 12.4
+offset_top = 11.95
+offset_right = 41.6
+offset_bottom = 41.75
+mouse_filter = 2
 
 [node name="OptionsButton" type="TextureButton" parent="OptionsSlot"]
 unique_name_in_owner = true
@@ -257,7 +266,6 @@ texture = ExtResource("t1")
 expand_mode = 1
 
 [node name="Glow" type="Control" parent="RespecSlot"]
-modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 14.1
 offset_top = 13.95
@@ -274,6 +282,14 @@ offset_bottom = 38.75
 mouse_filter = 2
 texture = ExtResource("t6")
 expand_mode = 1
+
+[node name="InnerGlow" type="Control" parent="RespecSlot"]
+layout_mode = 0
+offset_left = 14.1
+offset_top = 13.95
+offset_right = 38.9
+offset_bottom = 38.75
+mouse_filter = 2
 
 [node name="RespecButton" type="TextureButton" parent="RespecSlot"]
 unique_name_in_owner = true
@@ -303,7 +319,6 @@ texture = ExtResource("t1")
 expand_mode = 1
 
 [node name="Glow" type="Control" parent="AchievementsSlot"]
-modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 14.2
 offset_top = 15.15
@@ -320,6 +335,14 @@ offset_bottom = 41.35
 mouse_filter = 2
 texture = ExtResource("t7")
 expand_mode = 1
+
+[node name="InnerGlow" type="Control" parent="AchievementsSlot"]
+layout_mode = 0
+offset_left = 14.2
+offset_top = 15.15
+offset_right = 39.0
+offset_bottom = 41.35
+mouse_filter = 2
 
 [node name="AchievementsButton" type="TextureButton" parent="AchievementsSlot"]
 unique_name_in_owner = true
@@ -349,7 +372,6 @@ texture = ExtResource("t8")
 expand_mode = 1
 
 [node name="Glow" type="Control" parent="ZoneMapSlot"]
-modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 14.65
 offset_top = 15.05
@@ -366,6 +388,14 @@ offset_bottom = 46.85
 mouse_filter = 2
 texture = ExtResource("t9")
 expand_mode = 1
+
+[node name="InnerGlow" type="Control" parent="ZoneMapSlot"]
+layout_mode = 0
+offset_left = 14.65
+offset_top = 15.05
+offset_right = 46.45
+offset_bottom = 46.85
+mouse_filter = 2
 
 [node name="ZoneMapButton" type="TextureButton" parent="ZoneMapSlot"]
 unique_name_in_owner = true
@@ -414,6 +444,35 @@ offset_right = 24.6072
 offset_bottom = 24.6578
 focus_mode = 0
 
+[node name="ZoneTrack" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 504.5
+offset_top = 515.0
+offset_right = 762.75
+offset_bottom = 535.5
+mouse_filter = 2
+texture = ExtResource("t12")
+expand_mode = 1
+
+[node name="ZoneFill" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 504.7
+offset_top = 515.25
+offset_right = 756.1
+offset_bottom = 529.3
+mouse_filter = 2
+
+[node name="Art" type="TextureRect" parent="ZoneFill"]
+layout_mode = 0
+offset_left = -19.025
+offset_top = -19.1
+offset_right = 270.475
+offset_bottom = 33.15
+mouse_filter = 2
+texture = ExtResource("t13")
+expand_mode = 1
+
 [node name="ZoneInfo" type="VBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 484.0
@@ -437,14 +496,10 @@ theme_override_font_sizes/font_size = 12
 text = "New Alcatraz: The Iron Prison"
 horizontal_alignment = 1
 
-[node name="ZoneProgress" type="ProgressBar" parent="ZoneInfo"]
-unique_name_in_owner = true
+[node name="ZoneProgressGap" type="Control" parent="ZoneInfo"]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
-theme_override_styles/background = SubResource("bar_bg")
-theme_override_styles/fill = SubResource("bar_fill")
-max_value = 9.0
-show_percentage = false
+mouse_filter = 2
 
 [node name="StageLabel" type="Label" parent="ZoneInfo"]
 unique_name_in_owner = true

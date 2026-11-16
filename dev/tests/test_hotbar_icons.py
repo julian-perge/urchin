@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import math
+import struct
 from types import SimpleNamespace
 
 import pytest
@@ -17,8 +18,8 @@ from urchin_dev.swf.extract import hotbar_icons
 RECORD = json.loads(hotbar_icons.RECORD.read_text())
 
 # The hover Glow colours at the end of START, from the table in
-# spec/107-hub.md (The hotbar). World Map's are the two GradientGlow stops
-# that the spec left undecoded.
+# spec/107-hub.md (The hotbar). The spec left World Map's GradientGlow
+# undecoded, so it is not here.
 SPEC_GLOWS = {
     "inventory": ["#ff66ff"],
     "abilities": ["#66ff66", "#33ff00"],
@@ -26,8 +27,11 @@ SPEC_GLOWS = {
     "options": ["#ffcc00"],
     "respec": ["#ff66ff", "#6633ff"],
     "achievements": ["#ff9900", "#ff3300"],
-    "world_map": ["#00ff00"],
 }
+WORLD_MAP_STOPS = [
+    {"alpha": 0, "color": "#00ff00", "ratio": 0},
+    {"alpha": 255, "color": "#00ffff", "ratio": 255},
+]
 
 # Each icon shape's box on the stage in design px, (x, y, w, h), from the same
 # table. The icon is drawn with no Glow, so its rect is this box to the pixel
@@ -44,19 +48,36 @@ SHAPE_BOXES = {
 EDGE = 0.5
 
 
-def glow(red: int, green: int, blue: int) -> bytes:
-    """A Glow filter record: its id, the colour, two blurs, the strength and
-    the flags."""
-    return bytes([2, red, green, blue, 255]) + bytes(8) + bytes([0x8C, 0x01, 0x21])
+def glow(
+    red: int,
+    green: int,
+    blue: int,
+    *,
+    alpha: int = 255,
+    blurs: tuple[int, int] = (13, 13),
+    flags: int = 0x21,
+) -> bytes:
+    """A Glow filter record: its id, the colour, two blurs in px, the strength
+    396/256 and the flags. Flags 0x21 are an outer Glow under the icon with
+    one blur pass."""
+    fixed = struct.pack("<iih", blurs[0] << 16, blurs[1] << 16, 396)
+    return bytes([2, red, green, blue, alpha]) + fixed + bytes([flags])
 
 
-def gradient_glow(*stops: tuple[int, int, int, int, int]) -> bytes:
+def gradient_glow(*stops: tuple[int, int, int, int, int], distance: int = 0) -> bytes:
     """A GradientGlow filter record from (red, green, blue, alpha, ratio)
-    stops: its id, the count, every colour, every ratio, then two blurs, the
-    angle, the distance, the strength and the flags."""
+    stops: its id, the count, every colour, every ratio, then two blurs of 17
+    px, the angle, the distance in px, the strength 465/256 and the flags."""
     colours = b"".join(bytes(stop[:4]) for stop in stops)
     ratios = bytes(stop[4] for stop in stops)
-    return bytes([4, len(stops)]) + colours + ratios + bytes(16) + bytes([0, 1, 0x21])
+    fixed = struct.pack("<iiiih", 17 << 16, 17 << 16, 0, distance << 16, 465)
+    return bytes([4, len(stops)]) + colours + ratios + fixed + bytes([0x21])
+
+
+def held(name: str) -> list[dict]:
+    """-> the Glows of the frame the clip holds while the pointer is on the
+    button, the last frame of START."""
+    return RECORD["icons"][name]["frames"][RECORD["hover"]["start"][1] - 1]
 
 
 def test_every_icon_the_extractor_renders_is_in_the_record():
@@ -85,37 +106,76 @@ def test_an_icon_is_drawn_in_white_only(name):
     assert {colour[:3] for _count, colour in colours if colour[3]} == {(255, 255, 255)}
 
 
-def test_the_record_holds_the_glow_colours_of_the_specs_table():
-    assert {name: icon["glow"] for name, icon in RECORD["icons"].items()} == SPEC_GLOWS
+def test_the_held_frame_holds_the_glow_colours_of_the_specs_table():
+    assert {
+        name: [glow["color"] for glow in held(name)] for name in SPEC_GLOWS
+    } == SPEC_GLOWS
 
 
-def test_the_record_holds_both_stops_of_the_world_map_gradient():
-    assert RECORD["icons"]["world_map"]["gradient"] == [
-        {"alpha": 0, "color": "#00ff00", "ratio": 0},
-        {"alpha": 255, "color": "#00ffff", "ratio": 255},
+def test_the_held_frame_of_the_world_map_holds_both_stops_of_its_gradient():
+    assert held("world_map") == [
+        {"blur": 17.0, "gradient": WORLD_MAP_STOPS, "inner": False, "strength": 1.8164}
     ]
-    others = [icon for name, icon in RECORD["icons"].items() if name != "world_map"]
-    assert all("gradient" not in icon for icon in others)
+    others = [glow for name in SPEC_GLOWS for glow in held(name)]
+    assert all("gradient" not in glow for glow in others)
+
+
+def test_the_held_frame_holds_the_blur_the_strength_and_the_side_of_each_glow():
+    assert held("inventory") == [
+        {"blur": 13.0, "color": "#ff66ff", "inner": False, "strength": 1.5469}
+    ]
+    assert held("achievements") == [
+        {"blur": 7.0, "color": "#ff9900", "inner": True, "strength": 1.0},
+        {"blur": 13.0, "color": "#ff3300", "inner": False, "strength": 1.5469},
+    ]
+
+
+def test_every_icon_holds_the_glows_of_each_frame_of_both_runs():
+    last = RECORD["hover"]["stop"][1]
+    for name, icon in RECORD["icons"].items():
+        assert len(icon["frames"]) == last, name
+
+
+def test_every_glow_has_no_strength_at_rest_and_at_the_end_of_stop():
+    for name, icon in RECORD["icons"].items():
+        for frame in (icon["frames"][0], icon["frames"][-1]):
+            assert [glow["strength"] for glow in frame] == [0.0] * len(frame), name
 
 
 def test_the_record_holds_both_hover_ranges_and_the_frame_rate():
     assert RECORD["hover"] == {"frame_rate": 30.0, "start": [2, 7], "stop": [8, 27]}
 
 
-def test_glow_filters_give_their_colours_in_filter_order():
-    records = (glow(0x66, 0xFF, 0x66), glow(0x33, 0xFF, 0x00))
-    assert hotbar_icons.glow_record(records) == {"glow": ["#66ff66", "#33ff00"]}
+def test_glow_filters_give_their_values_in_filter_order():
+    records = (glow(0x66, 0xFF, 0x66, blurs=(5, 5), flags=0xA1), glow(0x33, 0xFF, 0))
+    assert hotbar_icons.glow_record(records) == [
+        {"blur": 5.0, "color": "#66ff66", "inner": True, "strength": 1.5469},
+        {"blur": 13.0, "color": "#33ff00", "inner": False, "strength": 1.5469},
+    ]
 
 
-def test_a_gradient_glow_gives_its_lowest_ratio_stop_and_every_stop():
+def test_a_gradient_glow_gives_every_stop_lowest_ratio_first():
     record = gradient_glow((0, 255, 255, 255, 255), (0, 255, 0, 0, 0))
-    assert hotbar_icons.glow_record((record,)) == {
-        "glow": ["#00ff00"],
-        "gradient": [
-            {"alpha": 0, "color": "#00ff00", "ratio": 0},
-            {"alpha": 255, "color": "#00ffff", "ratio": 255},
-        ],
-    }
+    assert hotbar_icons.glow_record((record,)) == [
+        {"blur": 17.0, "gradient": WORLD_MAP_STOPS, "inner": False, "strength": 1.8164}
+    ]
+
+
+@pytest.mark.parametrize(
+    ("record", "message"),
+    [
+        (glow(1, 2, 3, alpha=128), "alpha"),
+        (glow(1, 2, 3, blurs=(13, 5)), "differ"),
+        (glow(1, 2, 3, flags=0x61), "knock"),
+        (glow(1, 2, 3, flags=0x01), "knock"),
+        (glow(1, 2, 3, flags=0x22), "one blur pass"),
+        (gradient_glow((0, 0, 0, 0, 0), (0, 0, 0, 255, 128)), "0 and 255"),
+        (gradient_glow((0, 0, 0, 0, 0), (0, 0, 0, 255, 255), distance=4), "distance"),
+    ],
+)
+def test_a_glow_the_shader_does_not_draw_is_refused(record, message):
+    with pytest.raises(ValueError, match=message):
+        hotbar_icons.glow_values(record)
 
 
 @pytest.mark.parametrize(
@@ -191,15 +251,26 @@ def test_an_icon_the_hub_does_not_place_once_is_refused(monkeypatch, hub):
         hotbar_icons.jobs(None)
 
 
-def test_the_hover_glow_is_read_from_the_one_depth_of_the_asked_frame(monkeypatch):
+def test_the_hover_frames_are_the_glows_of_the_one_depth_of_each_frame(monkeypatch):
     rest = {1: timeline.Layer(3170, filter_records=(glow(0xFF, 0, 0),))}
     full = {1: timeline.Layer(3170, filter_records=(glow(0xFF, 0x66, 0xFF),))}
     monkeypatch.setattr(timeline, "frames", lambda index, owner: [rest, full])
-    assert hotbar_icons.hover_glow(None, 3171, 2) == {"glow": ["#ff66ff"]}
+    assert [
+        [glow["color"] for glow in frame]
+        for frame in hotbar_icons.hover_frames(None, 3171)
+    ] == [["#ff0000"], ["#ff66ff"]]
 
 
 def test_a_hover_frame_that_shows_two_depths_is_refused(monkeypatch):
     layer = timeline.Layer(3170, filter_records=(glow(1, 2, 3),))
     monkeypatch.setattr(timeline, "frames", lambda index, owner: [{1: layer, 2: layer}])
     with pytest.raises(ValueError, match="2 depths"):
-        hotbar_icons.hover_glow(None, 3171, 1)
+        hotbar_icons.hover_frames(None, 3171)
+
+
+def test_a_hover_frame_with_another_number_of_glows_is_refused(monkeypatch):
+    one = {1: timeline.Layer(3170, filter_records=(glow(1, 2, 3),))}
+    two = {1: timeline.Layer(3170, filter_records=(glow(1, 2, 3), glow(4, 5, 6)))}
+    monkeypatch.setattr(timeline, "frames", lambda index, owner: [one, two])
+    with pytest.raises(ValueError, match="frame 2 has 2 Glows"):
+        hotbar_icons.hover_frames(None, 3171)

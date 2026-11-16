@@ -798,6 +798,30 @@
      "texture": "res://assets/ui/window/hotbar_square.png",
      "zoom": 4.0
     },
+    "ZoneFill": {
+     "kind": "shape",
+     "rect": [
+      504.7,
+      515.25,
+      251.4,
+      14.05
+     ]
+    },
+    "ZoneFill/Art": {
+     "kind": "art",
+     "rect": [
+      485.675,
+      496.15,
+      289.5,
+      52.25
+     ],
+     "size": [
+      1158,
+      209
+     ],
+     "texture": "res://assets/ui/window/zone_fill.png",
+     "zoom": 4.0
+    },
     "ZoneMapSlot/Icon": {
      "kind": "art",
      "rect": [
@@ -836,17 +860,39 @@
       48.7302,
       48.7306
      ]
+    },
+    "ZoneTrack": {
+     "kind": "art",
+     "rect": [
+      504.5,
+      515.0,
+      258.25,
+      20.5
+     ],
+     "size": [
+      1033,
+      82
+     ],
+     "texture": "res://assets/ui/window/zone_track.png",
+     "zoom": 4.0
     }
    },
    "port_only": [
     "ZoneInfo",
     "InventorySlot/Glow",
+    "InventorySlot/InnerGlow",
     "AbilitiesSlot/Glow",
+    "AbilitiesSlot/InnerGlow",
     "SaveSlot/Glow",
+    "SaveSlot/InnerGlow",
     "OptionsSlot/Glow",
+    "OptionsSlot/InnerGlow",
     "RespecSlot/Glow",
+    "RespecSlot/InnerGlow",
     "AchievementsSlot/Glow",
-    "ZoneMapSlot/Glow"
+    "AchievementsSlot/InnerGlow",
+    "ZoneMapSlot/Glow",
+    "ZoneMapSlot/InnerGlow"
    ],
    "timeline": 0
   },

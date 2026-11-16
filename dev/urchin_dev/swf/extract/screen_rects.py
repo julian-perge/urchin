@@ -42,6 +42,11 @@
 #   "box"   - a shape of one solid fill and no line, which the port draws as a
 #             ColorRect, recorded as its ShapeBounds through the placement
 #             matrix with its fill colour.
+#   "shape" - a shape that an "art" piece draws with a filter around it, where
+#             the port also needs the shape's own rect. It is recorded as the
+#             ShapeBounds through the placement matrix, and the port puts a
+#             plain Control on it. The zone fill is one: the game scales it
+#             from the shape's left edge, and its art is wider than the shape.
 #
 # An "art" piece whose render is measured from a sprite of its own is placed
 # by where that sprite sits: the sprite at `depth`, or the sprite at
@@ -239,6 +244,16 @@ HOTBAR_PIECES = {
     "QuitSlot/Square": Piece("art", window_chrome.QUIT_DEPTH, art="hotbar_quit"),
     "QuitSlot/Red": Piece("art", window_chrome.QUIT_RED_DEPTH, art="hotbar_quit_red"),
     "QuitSlot/QuitButton": Piece("button", window_chrome.QUIT_DEPTH),
+    # The zone progress bar 3149 holds the track and the fill. The game sets the
+    # fill's width (frame_181/DoAction.as:11), so ZoneFill is the fill's shape,
+    # which hotbar.gd scales, and its Art is the fill's render at full width.
+    "ZoneTrack": Piece("art", window_chrome.ZONE_BAR_ROOT_DEPTH, art="zone_track"),
+    "ZoneFill": Piece(
+        "shape",
+        window_chrome.ZONE_BAR_ROOT_DEPTH,
+        inner_depth=window_chrome.ZONE_BAR_FILL_DEPTH,
+    ),
+    "ZoneFill/Art": Piece("art", window_chrome.ZONE_BAR_ROOT_DEPTH, art="zone_fill"),
 }
 
 SCENES: dict[str, Scene] = {
@@ -467,17 +482,21 @@ SCENES: dict[str, Scene] = {
     "res://scenes/ui/bottom_bar.tscn": Scene(
         timeline=0, frame=HUB_FRAME, pieces={".": Piece("art", 1, art="bottom_bar")}
     ),
-    # The hotbar on the bottom bar. Each Glow is the port's hover, which the SWF
-    # draws as a Glow filter on the icon. ZoneInfo is the zone progress, which
-    # is port only until #221 records it. Depth 144 is the Armor Games strip
-    # 3176.
+    # The hotbar on the bottom bar. Each Glow and InnerGlow holds the port's
+    # hover, which the SWF draws as Glow filters on the icon. ZoneInfo holds the
+    # three zone texts, which are port only until #221 records them. Depth 144
+    # is the Armor Games strip 3176.
     "res://scenes/ui/hotbar.tscn": Scene(
         timeline=0,
         frame=HUB_FRAME,
         pieces=HOTBAR_PIECES,
         port_only=(
             "ZoneInfo",
-            *(f"{slot}Slot/Glow" for slot in (*HOTBAR_SLOTS, "ZoneMap")),
+            *(
+                f"{slot}Slot/{holder}"
+                for slot in (*HOTBAR_SLOTS, "ZoneMap")
+                for holder in ("Glow", "InnerGlow")
+            ),
         ),
         left_out=(144,),
     ),
@@ -720,6 +739,28 @@ def box_record(bounds, matrix, origin, fill: tuple[int, int, int, int]) -> dict:
     }
 
 
+def shape_record(bounds, matrix, origin) -> dict:
+    """-> the record of a shape the port puts a plain Control on."""
+    return {
+        "kind": "shape",
+        "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
+    }
+
+
+def _shape(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
+    """-> shape_record() of the shape `layer` places, or of the one shape that
+    the sprite it places holds."""
+    shape = layer.character_id
+    if character_kind(index, shape) == "sprite":
+        held = list(timeline.frames(index, shape)[0].values())
+        if len(held) != 1 or character_kind(index, held[0].character_id) != "shape":
+            raise ValueError(f"sprite {shape} does not hold exactly one shape")
+        if held[0].matrix != timeline.IDENTITY:
+            raise ValueError(f"sprite {shape} places its shape with {held[0].matrix}")
+        shape = held[0].character_id
+    return shape_record(shape_bounds(index, shape), layer.matrix, origin)
+
+
 def face_record(crop, matrix, origin) -> dict:
     """-> the record of a portrait, as the crop box of extract_faces placed with
     `matrix`, the matrix that places the face clip. `crop` is (x, y, w, h) in the
@@ -956,6 +997,8 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
             pieces[path] = face_record(crop, layer.matrix, piece_origin)
         elif piece.kind == "box":
             pieces[path] = _box(index, layer, piece_origin)
+        elif piece.kind == "shape":
+            pieces[path] = _shape(index, layer, piece_origin)
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, piece_origin)
         else:

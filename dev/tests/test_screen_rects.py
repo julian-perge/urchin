@@ -262,6 +262,15 @@ def test_art_rendered_from_a_sprite_cannot_be_moved():
         )
 
 
+# The zone fill's shape 3146 is 5028 by 281 twips, and the bar's sprite places
+# it at its own origin.
+def test_a_shape_record_is_the_shape_bounds_through_the_placement():
+    entry = screen_rects.shape_record(
+        (0, 0, 5028, 281), (1.0, 0.0, 0.0, 1.0, 94, 105), (500.0, 510.0)
+    )
+    assert entry == {"kind": "shape", "rect": [504.7, 515.25, 251.4, 14.05]}
+
+
 def test_art_record_refuses_a_rect_measured_from_a_sprite():
     with pytest.raises(ValueError, match="sprite 2986"):
         screen_rects.art_record(
