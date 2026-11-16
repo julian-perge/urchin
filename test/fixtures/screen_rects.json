@@ -1001,6 +1001,201 @@
    "port_only": [],
    "timeline": 0
   },
+  "res://scenes/ui/menu/slot_panel.tscn": {
+   "frame": "dataMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Rows/Row1/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      193.2,
+      113.8,
+      30.0
+     ]
+    },
+    "Rows/Row1/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      194.05,
+      117.3,
+      33.1
+     ],
+     "text": "1"
+    },
+    "Rows/Row1/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      194.05,
+      381.1,
+      31.55
+     ]
+    },
+    "Rows/Row1/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      194.05,
+      103.85,
+      29.05
+     ]
+    },
+    "Rows/Row2/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      248.7,
+      113.8,
+      30.0
+     ]
+    },
+    "Rows/Row2/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      248.05,
+      117.3,
+      33.1
+     ],
+     "text": "2"
+    },
+    "Rows/Row2/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      248.05,
+      381.1,
+      31.55
+     ]
+    },
+    "Rows/Row2/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      248.05,
+      103.85,
+      29.05
+     ]
+    },
+    "Rows/Row3/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      304.2,
+      113.8,
+      30.0
+     ]
+    },
+    "Rows/Row3/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      305.05,
+      117.3,
+      33.1
+     ],
+     "text": "3"
+    },
+    "Rows/Row3/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      305.05,
+      381.1,
+      31.55
+     ]
+    },
+    "Rows/Row3/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      305.05,
+      103.85,
+      29.05
+     ]
+    },
+    "Rows/Row4/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      359.7,
+      113.8,
+      30.0
+     ]
+    },
+    "Rows/Row4/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      359.05,
+      117.3,
+      33.1
+     ],
+     "text": "4"
+    },
+    "Rows/Row4/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      359.05,
+      381.1,
+      31.55
+     ]
+    },
+    "Rows/Row4/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      359.05,
+      103.85,
+      29.05
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
   "res://scenes/ui/menu/title_panel.tscn": {
    "frame": "mainMenu",
    "origin": [
@@ -2033,6 +2228,237 @@
    },
    "port_only": [],
    "timeline": 3142
+  },
+  "res://test/fixtures/screen_rects/slots_screen.tscn": {
+   "frame": "dataMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Back/Caption": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 24.0,
+     "kind": "text",
+     "rect": [
+      490.15,
+      534.15,
+      300.1,
+      26.85
+     ]
+    },
+    "Back/HitButton": {
+     "kind": "hit",
+     "rect": [
+      604.4392,
+      534.4501,
+      188.1216,
+      26.7998
+     ]
+    },
+    "Background": {
+     "kind": "art",
+     "rect": [
+      0.0,
+      0.0,
+      800.0,
+      575.0
+     ],
+     "size": [
+      1600,
+      1150
+     ],
+     "texture": "res://assets/ui/menu/start_background.png",
+     "zoom": 2.0
+    },
+    "SlotPanel/Rows/Row1/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      193.2,
+      113.8,
+      30.0
+     ]
+    },
+    "SlotPanel/Rows/Row1/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      194.05,
+      117.3,
+      33.1
+     ],
+     "text": "1"
+    },
+    "SlotPanel/Rows/Row1/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      194.05,
+      381.1,
+      31.55
+     ]
+    },
+    "SlotPanel/Rows/Row1/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      194.05,
+      103.85,
+      29.05
+     ]
+    },
+    "SlotPanel/Rows/Row2/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      248.7,
+      113.8,
+      30.0
+     ]
+    },
+    "SlotPanel/Rows/Row2/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      248.05,
+      117.3,
+      33.1
+     ],
+     "text": "2"
+    },
+    "SlotPanel/Rows/Row2/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      248.05,
+      381.1,
+      31.55
+     ]
+    },
+    "SlotPanel/Rows/Row2/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      248.05,
+      103.85,
+      29.05
+     ]
+    },
+    "SlotPanel/Rows/Row3/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      304.2,
+      113.8,
+      30.0
+     ]
+    },
+    "SlotPanel/Rows/Row3/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      305.05,
+      117.3,
+      33.1
+     ],
+     "text": "3"
+    },
+    "SlotPanel/Rows/Row3/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      305.05,
+      381.1,
+      31.55
+     ]
+    },
+    "SlotPanel/Rows/Row3/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      305.05,
+      103.85,
+      29.05
+     ]
+    },
+    "SlotPanel/Rows/Row4/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      359.7,
+      113.8,
+      30.0
+     ]
+    },
+    "SlotPanel/Rows/Row4/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      359.05,
+      117.3,
+      33.1
+     ],
+     "text": "4"
+    },
+    "SlotPanel/Rows/Row4/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      359.05,
+      381.1,
+      31.55
+     ]
+    },
+    "SlotPanel/Rows/Row4/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      359.05,
+      103.85,
+      29.05
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 0
   },
   "res://test/fixtures/screen_rects/victory_left_panel.tscn": {
    "frame": "win",

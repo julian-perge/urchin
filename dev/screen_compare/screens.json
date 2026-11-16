@@ -15,6 +15,14 @@
    }
   }
  },
+ "slots": {
+  "scene": "res://test/fixtures/screen_rects/slots_screen.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 1
+   }
+  }
+ },
  "victory_left_panel": {
   "scene": "res://test/fixtures/screen_rects/victory_left_panel.tscn",
   "modes": {
