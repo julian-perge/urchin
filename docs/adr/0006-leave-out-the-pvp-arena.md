@@ -8,7 +8,7 @@ AS paths below are relative to `dev/source_files/action_script/`, and character 
 
 - "PvP Arena" is DefineEditText 2705, at depth 14 of frame 56, at y 410.10. `frame_56/DoAction.as:3` fills it with `MENU[85]` (`frame_1/DoAction.as:293`).
 - DefineButton2 2704, at depth 15, covers it. Its release sets `arenaMode` to true and `currentArenaPlayer` to 1, sets `Krin.dataMode` to "load", builds the empty `arenaPlayer1` and `arenaPlayer2` objects, and goes to `dataMenu`, the slot list (`DefineButton2_2704/BUTTONCONDACTION on(release).as`).
-- On the slot list, root frame 74, the pick text, DefineEditText 2718, reads `MENU[72]`, "[ Player 1 ] Select your character:", while `arenaMode` is set (`frame_74/DoAction.as:11-17`). A click on a used slot loads it as that player, changes the pick text to `MENU[73]` for player 2, and after the second pick goes to `ArenaNav` (`DefineButton2_2722/BUTTONCONDACTION on(release).as:15-27`). Outside the arena the pick text is empty (`frame_74/DoAction.as:20-23`).
+- On the slot list, root frame 74, the pick text, DefineEditText 2718, reads `MENU[72]`, "[ Player 1 ] Select your character:", while `arenaMode` is set (`frame_74/DoAction.as:13-19`). A click on a used slot loads it as that player, changes the pick text to `MENU[73]` for player 2, and after the second pick goes to `ArenaNav` (`DefineButton2_2722/BUTTONCONDACTION on(release).as:12-29`). Outside the arena the pick text is empty (`frame_74/DoAction.as:20-23`).
 - `frame_46/DoAction.as:2` sets `arenaMode` back to false each time the title opens.
 
 ## What the port shows
