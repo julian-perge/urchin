@@ -71,13 +71,10 @@ const MELEE_RUNBACK_FRAMES: float = 14.0
 const MELEE_HOME_TOLERANCE: float = 0.000001
 
 const BODY_SHADER: Shader = preload("res://scenes/doll_body.gdshader")
-# The Result flash's margins in stage px. Its colored glows are 10 px wide, so
-# the body draws 6 px past the doll to hold the 5 px they reach past it. Its
-# white glow reads a box 100 px wide around each px the body draws, so the body
-# clears the screen texture 50 px past that, which is where a CanvasGroup
-# measures clear_margin from.
-const RESULT_FLASH_FIT_MARGIN: float = 6.0
-const RESULT_FLASH_CLEAR_MARGIN: float = 50.0
+# The stage px the body draws past the reach of the Result flash's colored
+# glows, so that their soft edge is not cut. The port chose it. The original
+# has no such number.
+const RESULT_FLASH_FIT_SPARE: float = 1.0
 
 static var _offsets: Dictionary = {}
 static var _offsets_loaded: bool = false
@@ -330,17 +327,28 @@ func is_idle() -> bool:
 	return _state == State.IDLE
 
 
-# Puts the Result flash's filter on the whole doll in `color`. Flash measures a
-# blur in stage px, and the window can draw the stage at any size, so this reads
-# the stage's scale on screen each time. A CanvasGroup's margins are in screen
-# px too.
-func show_result_flash(color: Color) -> void:
+# Puts the Result flash's filter on the whole doll in `color`. `white_glow` and
+# `color_glow` each hold the `blur` and the `strength` of a glow, as
+# result_flash.json gives them. Flash measures a blur in stage px, and the
+# window can draw the stage at any size, so this reads the stage's scale on
+# screen each time. A CanvasGroup's margins are in screen px too.
+#
+# A glow reads a box as wide as its blur around each px, so it reaches half its
+# blur. The body draws that far past the doll for the colored glows, and
+# RESULT_FLASH_FIT_SPARE more. The white glow reads its box around each px the
+# body draws, so the body clears the screen texture half the white blur past
+# that, which is where a CanvasGroup measures clear_margin from.
+func show_result_flash(color: Color, white_glow: Dictionary, color_glow: Dictionary) -> void:
 	var stage_scale: float = get_viewport().get_final_transform().get_scale().x
 	_body_material.set_shader_parameter("result_flash", true)
 	_body_material.set_shader_parameter("color", color)
 	_body_material.set_shader_parameter("stage_scale", stage_scale)
-	_body.fit_margin = RESULT_FLASH_FIT_MARGIN * stage_scale
-	_body.clear_margin = RESULT_FLASH_CLEAR_MARGIN * stage_scale
+	_body_material.set_shader_parameter("white_blur", white_glow["blur"])
+	_body_material.set_shader_parameter("white_strength", white_glow["strength"])
+	_body_material.set_shader_parameter("color_blur", color_glow["blur"])
+	_body_material.set_shader_parameter("color_strength", color_glow["strength"])
+	_body.fit_margin = (color_glow["blur"] / 2.0 + RESULT_FLASH_FIT_SPARE) * stage_scale
+	_body.clear_margin = white_glow["blur"] / 2.0 * stage_scale
 
 
 # BATTLEFLASH puts back the filter the unit's buffs give its doll, and the port

@@ -1,4 +1,8 @@
 {
+ "digits": {
+  "offset": -10.0,
+  "spacing": 19
+ },
  "fps": 30.0,
  "glyphs": {
   "0": [
@@ -1765,5 +1769,6 @@
    ],
    "word": "shield"
   }
- }
+ },
+ "slots": 20
 }

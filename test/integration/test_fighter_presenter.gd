@@ -14,15 +14,19 @@ const STUN: CharacterVisual.State = CharacterVisual.State.STUN
 const HIT: CharacterVisual.State = CharacterVisual.State.HIT
 const DEAD: CharacterVisual.State = CharacterVisual.State.DEAD
 const ENEMY_COLOR: Color = FighterPresenter.RING_COLORS[FighterPresenter.Relation.ENEMY]
-# The colors of the Result flash's two colored glows in each of BATTLEFLASH's
-# labels, 16763904, 10092288 and 3407871 in frame_42/DoAction_3.as:117-130 and
-# 162-168.
-const HIT_FLASH: Color = Color("#ffcc00")
-const HEAL_FLASH: Color = Color("#99ff00")
-const FOCUS_FLASH: Color = Color("#33ffff")
 # Frame n of the shield clip, as extract_shield_clip writes it.
 const SHIELD_CLIP_ART: String = "res://assets/ui/battle/shield_clip/%d.png"
 
+# BATTLEFLASH's labels and glows, as extract_result_flash writes them from
+# DefineSprite 3416's frame scripts and frame_42/DoAction_3.as:117-130 and
+# 162-168.
+var _flash_layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ui/battle/result_flash.json"))
+var _hit_flash: Color = _flash_label_color("hit")
+var _heal_flash: Color = _flash_label_color("heal")
+var _focus_flash: Color = _flash_label_color("focus")
+# What KrinNumberShow lays a number out with, as extract_floating_numbers
+# writes it from frame_42/DoAction_7.as.
+var _number_layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(FloatingNumberLayer.LAYOUT_PATH))
 var _presenter: FighterPresenter
 var _doll: CharacterVisual
 var _overlay: UnitOverlay
@@ -36,6 +40,15 @@ var _cues: Array = []
 func before_each():
 	_unit = _make_unit(CombatUnit.Team.TWO, ENEMY_SLOT)
 	_present(_unit)
+
+
+func _flash_label_color(label: String) -> Color:
+	return Color.html(_flash_layout["labels"][label]["color"])
+
+
+# Whether the filter is on for each frame the label plays.
+func _flash_frames(label: String) -> Array:
+	return _flash_layout["labels"][label]["frames"]
 
 
 func _make_unit(team: CombatUnit.Team, slot: int) -> CombatUnit:
@@ -852,16 +865,18 @@ func test_hovering_a_dead_fighter_does_nothing():
 
 
 # KrinNumberShow puts a number on the target rig's own spot with no offset
-# (frame_42/DoAction_7.as:38-39). It sets the digits 19 apart along the holder,
-# the first at -19 * (digits - 2) / 2 - 10 (lines 3, 34-35 and 56), so three
-# digits sit at -19.5, -0.5 and 18.5: around the rig's origin, half a unit to the
-# left because half a spacing is 9.5.
-func test_a_three_digit_number_draws_three_digits_19_apart_around_the_rig():
+# (frame_42/DoAction_7.as:38-39). It sets the digits numberSpacingKrin apart
+# along the holder, the first at -spacing * (digits - 2) / 2 less 10 (lines 3,
+# 34-35 and 56). With a spacing of 19, three digits sit at -19.5, -0.5 and 18.5:
+# around the rig's origin, half a unit to the left because half a spacing is 9.5.
+func test_a_three_digit_number_draws_three_digits_one_spacing_apart_around_the_rig():
 	_presenter.show_result(_damage(123.0, 0.0), null)
 	var number: FloatingNumber = _numbers()[-1]
 	assert_eq(number.position, HOME, "on the target rig's origin")
 	assert_eq(number.glyphs, ["1", "2", "3"], "the digits from the left")
-	assert_eq(_glyph_offsets(number), [-19.5, -0.5, 18.5], "19 apart around the origin")
+	var spacing: float = _number_layout["digits"]["spacing"]
+	var first: float = -spacing / 2.0 + _number_layout["digits"]["offset"]
+	assert_eq(_glyph_offsets(number), [first, first + spacing, first + spacing * 2.0], "one spacing apart around the origin")
 
 
 # dressChar lowers only a MODEL5 unit's doll inside its rig
@@ -878,14 +893,15 @@ func test_a_model5_units_number_stays_on_the_rig_above_its_lowered_doll():
 # KrinNumberShow attaches each number one depth above the last and goes from
 # depth 1639 back to 1620 (frame_42/DoAction_7.as:4 and 75-79), and a clip
 # attached at a depth that is in use replaces the clip there.
-func test_a_21st_live_number_replaces_the_oldest():
+func test_a_live_number_past_the_last_depth_replaces_the_oldest():
+	var slots: int = _number_layout["slots"]
 	_presenter.show_result(_damage(1.0, 99.0), null)
 	var oldest: FloatingNumber = _numbers()[0]
-	for amount in range(2, 22):
+	for amount in range(2, slots + 2):
 		_presenter.show_result(_damage(amount, 100.0 - amount), null)
 	var shown: Array = _numbers().map(func(number): return "".join(number.glyphs))
-	assert_eq(shown.size(), 20, "20 numbers at most")
-	assert_eq([shown[0], shown[-1]], ["2", "21"], "from the second number to the 21st")
+	assert_eq(shown.size(), slots, "one number for each depth at most")
+	assert_eq([shown[0], shown[-1]], ["2", str(slots + 1)], "from the second number to the last")
 	assert_true(oldest.is_queued_for_deletion(), "and the first one is freed")
 
 
@@ -1119,12 +1135,12 @@ func _advance_flash(frames: int) -> void:
 # included (232-249).
 func test_each_result_starts_the_result_flash_in_its_color():
 	for case in [
-		[_damage(10.0, 90.0), HIT_FLASH, "a hit"],
-		[_heal_that_hurts(10.0, 90.0), HIT_FLASH, "a heal that hurts under sswitch"],
-		[_damage_that_heals(10.0, 100.0), HEAL_FLASH, "damage that heals under sswitch"],
-		[_heal(10.0, 100.0), HEAL_FLASH, "a heal"],
-		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 8.0, 100.0), FOCUS_FLASH, "a focus result"],
-		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, -8.0, 100.0), FOCUS_FLASH, "a focus drain"],
+		[_damage(10.0, 90.0), _hit_flash, "a hit"],
+		[_heal_that_hurts(10.0, 90.0), _hit_flash, "a heal that hurts under sswitch"],
+		[_damage_that_heals(10.0, 100.0), _heal_flash, "damage that heals under sswitch"],
+		[_heal(10.0, 100.0), _heal_flash, "a heal"],
+		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 8.0, 100.0), _focus_flash, "a focus result"],
+		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, -8.0, 100.0), _focus_flash, "a focus drain"],
 	]:
 		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 		_presenter.show_result(case[0], null)
@@ -1254,7 +1270,7 @@ func test_a_shield_block_plays_no_flash_but_a_hit_the_shield_soaks_exactly_does(
 	_presenter.show_result(_shield_block(), null)
 	assert_null(_flash_color(), "a Shield block")
 	_presenter.show_result(_damage(0.0, 100.0), null)
-	assert_eq(_flash_color(), HIT_FLASH, "a hit the shield soaked exactly")
+	assert_eq(_flash_color(), _hit_flash, "a hit the shield soaked exactly")
 
 
 # The original's whole heal branch, its calls to BATTLEFLASH included, is inside
@@ -1292,20 +1308,41 @@ func test_a_buff_tick_plays_no_flash_and_no_sound_and_the_shield_clip_only_when_
 # 4th, 8th and 12th frames after it, takes it off 2 frames after each, and takes
 # it off for good and stops on the 14th frame after it (DefineSprite_3416/frame_2
 # to frame_46). The doll shows that filter from the frame the result lands on.
-func test_the_flash_pulses_4_times_over_14_frames_then_stops():
+func test_the_flash_is_on_for_the_frames_its_label_has_it_on_then_stops():
 	for case in [
-		[_damage(10.0, 90.0), HIT_FLASH],
-		[_heal(10.0, 100.0), HEAL_FLASH],
-		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 8.0, 100.0), FOCUS_FLASH],
+		[_damage(10.0, 90.0), "hit"],
+		[_heal(10.0, 100.0), "heal"],
+		[_result(MoveResult.Kind.FOCUS, MoveResult.Direction.NONE, 8.0, 100.0), "focus"],
 	]:
 		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 		_presenter.show_result(case[0], null)
+		var frames: Array = _flash_frames(case[1])
 		var shown: Array = [_flash_color()]
-		for frame in 15:
+		for frame in frames.size() + 1:
 			_advance_flash(1)
 			shown.append(_flash_color())
-		var on: Color = case[1]
-		assert_eq(shown, [on, on, null, null, on, on, null, null, on, on, null, null, on, on, null, null], str(on))
+		var on: Color = _flash_label_color(case[1])
+		var expected: Array = frames.map(func(is_on: bool) -> Variant: return on if is_on else null)
+		assert_eq(shown, expected + [null, null], case[1])
+
+
+# doll_body.gdshader draws the label's three GlowFilters, and it takes their
+# blurs and strengths from the label's filter list. A glow reaches half its blur
+# past the px it reads, so the body draws half the colored blur and 1 px past
+# the doll, and clears the screen texture half the white blur past that.
+func test_the_flash_hands_the_shader_the_extracted_glows_and_sizes_the_body_for_them():
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	var body: CanvasGroup = _doll.get_node("Body")
+	var shader: ShaderMaterial = body.material
+	var white: Dictionary = _flash_layout["white_glow"]
+	var colored: Dictionary = _flash_layout["color_glow"]
+	assert_eq(shader.get_shader_parameter("white_blur"), white["blur"], "the white glow's blur")
+	assert_eq(shader.get_shader_parameter("white_strength"), white["strength"], "the white glow's strength")
+	assert_eq(shader.get_shader_parameter("color_blur"), colored["blur"], "the colored glows' blur")
+	assert_eq(shader.get_shader_parameter("color_strength"), colored["strength"], "the colored glows' strength")
+	var stage_scale: float = _doll.get_viewport().get_final_transform().get_scale().x
+	assert_almost_eq(body.fit_margin, (colored["blur"] / 2.0 + 1.0) * stage_scale, 0.0001, "half the colored blur and 1 px")
+	assert_almost_eq(body.clear_margin, white["blur"] / 2.0 * stage_scale, 0.0001, "half the white blur")
 
 
 # The flash only puts its filter on the doll's body and takes it off, so the doll
@@ -1317,33 +1354,33 @@ func test_the_doll_looks_the_same_after_the_flash():
 	_presenter.cast(heal_move)
 	var tint: Color = _doll.modulate
 	_presenter.show_result(_heal(10.0, 100.0), heal_move)
-	assert_eq(_flash_color(), HEAL_FLASH, "a heal flashes the caster it lands on")
-	_advance_flash(14)
+	assert_eq(_flash_color(), _heal_flash, "a heal flashes the caster it lands on")
+	_advance_flash(_flash_frames("heal").size())
 	assert_null(_flash_color(), "the flash is over")
 	assert_eq(_doll.modulate, tint, "and the cast tint is still on")
 
 	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 	_stun()
 	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
-	assert_eq(_flash_color(), HIT_FLASH, "a hit flashes a stunned doll")
-	_advance_flash(14)
+	assert_eq(_flash_color(), _hit_flash, "a hit flashes a stunned doll")
+	_advance_flash(_flash_frames("hit").size())
 	assert_null(_flash_color(), "the flash is over")
 	assert_eq(_doll._state, STUN, "and the doll is still in its stun")
 	assert_eq(_doll._label, "stun", "on the same label")
 
 
 # executeMove's gotoAndPlay() starts BATTLEFLASH's label over, so a result that
-# lands during a flash starts a new one in its own color, which runs all 14
-# frames.
+# lands during a flash starts a new one in its own color, which runs all of its
+# label's frames. The label's last frame has the filter on.
 func test_a_result_during_a_flash_starts_it_over_in_its_own_color():
 	_presenter.show_result(_damage(10.0, 90.0), null)
 	_advance_flash(2)
 	_presenter.show_result(_heal(10.0, 100.0), null)
-	assert_eq(_flash_color(), HEAL_FLASH, "the new flash shows at once")
-	_advance_flash(13)
-	assert_eq(_flash_color(), HEAL_FLASH, "it still pulses 13 frames later")
+	assert_eq(_flash_color(), _heal_flash, "the new flash shows at once")
+	_advance_flash(_flash_frames("heal").size() - 1)
+	assert_eq(_flash_color(), _heal_flash, "it still pulses on its label's last frame")
 	_advance_flash(1)
-	assert_null(_flash_color(), "and stops 14 frames after it started")
+	assert_null(_flash_color(), "and stops on the frame after it")
 
 
 # The original has one BATTLEFLASH for the whole battle, so a move that hits
@@ -1355,8 +1392,8 @@ func test_every_target_of_a_move_flashes():
 	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT + 2))
 	first_target.show_result(_damage(10.0, 90.0), null)
 	_presenter.show_result(_damage(10.0, 90.0), null)
-	assert_eq(_flash_color_on(first_doll), HIT_FLASH, "the first target")
-	assert_eq(_flash_color(), HIT_FLASH, "the second target")
+	assert_eq(_flash_color_on(first_doll), _hit_flash, "the first target")
+	assert_eq(_flash_color(), _hit_flash, "the second target")
 
 
 # Returns a Buff tick as tick_buffs states it, with the unit it left at the life

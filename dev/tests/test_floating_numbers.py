@@ -6,6 +6,7 @@ import struct
 
 import pytest
 from PIL import Image
+from test_avm1 import constant_pool, define_function2, push, record
 from test_swf_index import bits, label, place2, swf, tag
 from urchin_dev.swf.extract import floating_numbers
 from urchin_dev.swf.swf_index import (
@@ -193,6 +194,96 @@ def test_layers_that_do_not_rebuild_the_whole_glyph_are_refused():
     floating_numbers.check_rebuild("Seven", whole, [outline, shine])
     with pytest.raises(RuntimeError, match="Seven"):
         floating_numbers.check_rebuild("Seven", whole, [shine, outline])
+
+
+def number_script(
+    reset: int = 1620,
+    halve: int = 2,
+    limits: tuple[int, ...] = (1640,),
+    step: bytes = b"\x50",
+) -> bytes:
+    """A root frame script that reads as frame_42/DoAction_7.as does, cut down
+    to the lines number_show() reads: lines 3-4, and in KrinNumberShow, which
+    keeps _root in register 1, lines 34-35 and 75-79. `reset` is the depth
+    line 78 goes back to, and `halve` is what line 35 divides by. `limits`
+    holds what the script compares the depth with, where line 76 compares it
+    once, and `step` is the actions that raise the depth on line 75."""
+    depth = (("register", 1), ("pool", 1))
+    compares = b"".join(
+        push(*depth)
+        + b"\x4e"
+        + push(limit)
+        + b"\x49\x12"
+        + record(0x9D, struct.pack("<h", 0))
+        for limit in limits
+    )
+    body = (
+        push(("pool", 3), ("register", 1), ("pool", 0))
+        + b"\x4e"
+        + push(("pool", 4))
+        + b"\x1c"
+        + push(1)
+        + b"\x0b\x0c\x1d"
+        + push(("pool", 5), 0.0, ("pool", 3))
+        + b"\x1c"
+        + push(halve)
+        + b"\x0d\x0b"
+        + push(10)
+        + b"\x0b\x1d"
+        + push(*depth, *depth)
+        + b"\x4e"
+        + step
+        + b"\x4f"
+        + compares
+        + push(*depth, reset)
+        + b"\x4f"
+    )
+    names = (
+        "numberSpacingKrin", "numberDepthCyler", "KrinNumberShow",
+        "totalLKrinN", "gKMPsteps", "KrinNOffset",
+    )  # fmt: skip
+    return tag(
+        TAG_DO_ACTION,
+        constant_pool(*names)
+        + push(("pool", 0), 19)
+        + b"\x1d"
+        + push(("pool", 1), 1620)
+        + b"\x1d"
+        + push(("pool", 2))
+        + define_function2("", (0x40, 0x00), (), body)
+        + b"\x1d\0",
+    )
+
+
+def test_number_show_reads_the_slot_count_the_digit_spacing_and_the_offset():
+    index = parse_swf(swf(number_script(), SHOW))
+    assert floating_numbers.number_show(index) == {
+        "slots": 20,
+        "digits": {"spacing": 19, "offset": -10.0},
+    }
+
+
+@pytest.mark.parametrize(
+    "script, refusal",
+    [
+        (number_script(reset=1600), "wraps to its start"),
+        (number_script(limits=(1600,)), "wraps to its start"),
+        (number_script(limits=(1640, 1650)), "wraps to its start"),
+        (number_script(step=push(2) + b"\x47"), "wraps to its start"),
+        (number_script(halve=3), "does not center the digits"),
+    ],
+    ids=[
+        "a wrap to another depth",
+        "a wrap at a depth under the first",
+        "two depths to wrap at",
+        "a depth that goes up by 2",
+        "digits that are not centered",
+    ],
+)
+def test_a_krinnumbershow_that_reads_another_way_is_refused(script, refusal):
+    index = parse_swf(swf(script, SHOW))
+    with pytest.raises(RuntimeError, match=refusal):
+        floating_numbers.number_show(index)
 
 
 def test_a_tint_toward_anything_but_white_is_refused():
