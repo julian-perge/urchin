@@ -110,13 +110,15 @@ func test_main_menu_text_is_bold_and_the_class_names_are_rockwell():
 	_assert_fonts(menu, {
 		"NamePanel/NameInput": [2712, 65],
 		"NamePanel/OkLabel": [2711, 65],
+		"SlotPanel/Rows/Row1/SlotLabel": [2734, 65],
+		"SlotPanel/Rows/Row1/Number": [2726, 65],
+		"SlotPanel/Rows/Row1/SaveName": [2733, 65],
 		"NewGamePanel/ClassLabel": [2768, 65],
 		"OptionsPanel/SettingsLabel": [2786, 65],
 		"NewGamePanel/ClassPicker/PsychologicalName": [2739, 2738],
 		"NewGamePanel/ClassPicker/BiologicalName": [2756, 2738],
 		"NewGamePanel/ClassPicker/HydraulicName": [2747, 2738],
 	})
-	_assert_font(menu.slot_buttons.get_child(0), 65, "slot 1's button (edit text 2733)")
 
 
 # Every edit text on root frame 104 (gameOverMenu) uses font 65.
@@ -318,7 +320,7 @@ func test_tooltips_wrap_onto_as_many_lines_as_the_reference_captures():
 	menu.class_picker.get_node("Biological").mouse_exited.emit()
 	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
-	menu.slot_buttons.get_child(0).mouse_entered.emit()
+	menu.get_node("SlotPanel/Rows/Row1/HitButton").mouse_entered.emit()
 	await wait_process_frames(2)
 	assert_eq(_tooltip_labels()[1].get_line_count(), 5, "the New Game warning")
 	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())

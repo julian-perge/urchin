@@ -256,6 +256,24 @@ HOTBAR_PIECES = {
     "ZoneFill/Art": Piece("art", window_chrome.ZONE_BAR_ROOT_DEPTH, art="zone_fill"),
 }
 
+# The slot list frame's pieces, by their path in slot_panel.tscn
+# (spec/107-title-slots.md, The slot list). Each row is the "Slot" caption, the
+# slot's number, the save's name and one hit button over the first two. The
+# frame also places the arena's pick text at depth 26, which the port leaves
+# out (docs/adr/0006-leave-out-the-pvp-arena.md).
+SLOTS_FRAME = "dataMenu"
+SLOT_ROW_DEPTHS = {
+    "Row1": {"SlotLabel": 6, "Number": 14, "SaveName": 7, "HitButton": 18},
+    "Row2": {"SlotLabel": 11, "Number": 15, "SaveName": 8, "HitButton": 20},
+    "Row3": {"SlotLabel": 12, "Number": 16, "SaveName": 9, "HitButton": 22},
+    "Row4": {"SlotLabel": 13, "Number": 17, "SaveName": 10, "HitButton": 24},
+}
+SLOT_PIECES = {
+    f"Rows/{row}/{node}": Piece("hit" if node == "HitButton" else "text", depth)
+    for row, depths in SLOT_ROW_DEPTHS.items()
+    for node, depth in depths.items()
+}
+
 SCENES: dict[str, Scene] = {
     # The victory frame's left Panel and the field at its top. It is a test
     # scene, so the generic test and its must-fail control have a scene to run.
@@ -444,6 +462,23 @@ SCENES: dict[str, Scene] = {
         pieces={
             "Background": Piece("art", 1, art="start_background"),
             **{f"ModePanel/{path}": piece for path, piece in CHOICE_PIECES.items()},
+            "Back/Caption": Piece("text", 35),
+            "Back/HitButton": Piece("hit", 36),
+        },
+        left_out=(38, 41),
+    ),
+    "res://scenes/ui/menu/slot_panel.tscn": Scene(
+        timeline=0, frame=SLOTS_FRAME, pieces=SLOT_PIECES
+    ),
+    # The slot list as the menu shows it: the background, the rows and Back,
+    # for the compare tool, as choice_screen.tscn is for the choice. Depths 38
+    # and 41 are the Armor Games line and logo, as on the title.
+    "res://test/fixtures/screen_rects/slots_screen.tscn": Scene(
+        timeline=0,
+        frame=SLOTS_FRAME,
+        pieces={
+            "Background": Piece("art", 1, art="start_background"),
+            **{f"SlotPanel/{path}": piece for path, piece in SLOT_PIECES.items()},
             "Back/Caption": Piece("text", 35),
             "Back/HitButton": Piece("hit", 36),
         },

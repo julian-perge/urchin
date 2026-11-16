@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/title_panel.tscn" id="11_title"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/menu_back.tscn" id="12_back"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/mode_panel.tscn" id="13_mode"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu/slot_panel.tscn" id="14_slots"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_difficulty"]
 
@@ -45,8 +46,7 @@ visible = false
 ; button's, and the black outline stands for the glow filter the original puts
 ; on each of these texts. NameInput fills the name box that shape 2713 draws, in
 ; the color, size and alignment of the name text 2712 inside it, and like 2712
-; it sets no maximum length. The slot buttons are the port's own and keep their
-; centered column.
+; it sets no maximum length.
 [node name="NamePanel" type="Control" parent="."]
 visible = false
 layout_mode = 1
@@ -93,28 +93,8 @@ flat = true
 
 [node name="Back" parent="NamePanel" instance=ExtResource("12_back")]
 
-[node name="SlotPanel" type="Control" parent="."]
+[node name="SlotPanel" parent="." instance=ExtResource("14_slots")]
 visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Layout" type="VBoxContainer" parent="SlotPanel" unique_id=452309352]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="SlotButtons" type="VBoxContainer" parent="SlotPanel/Layout"]
-layout_mode = 2
-theme_override_constants/separation = 10
 
 [node name="Back" parent="SlotPanel" instance=ExtResource("12_back")]
 
@@ -456,6 +436,9 @@ text = "Click here to START!"
 [connection signal="load_game_pressed" from="ModePanel" to="." method="_on_load_game_pressed"]
 [connection signal="pressed" from="NamePanel/OkButton" to="." method="_on_name_confirmed"]
 [connection signal="pressed" from="NamePanel/Back" to="." method="_on_back_pressed"]
+[connection signal="slot_pressed" from="SlotPanel" to="." method="_on_slot_pressed"]
+[connection signal="slot_hovered" from="SlotPanel" to="." method="_on_slot_hovered"]
+[connection signal="slot_unhovered" from="SlotPanel" to="." method="_on_slot_unhovered"]
 [connection signal="pressed" from="SlotPanel/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="NewGamePanel/ClassPicker/Psychological" to="." method="_on_class_picked" binds=[1]]
 [connection signal="pressed" from="NewGamePanel/ClassPicker/Biological" to="." method="_on_class_picked" binds=[0]]

@@ -8,8 +8,9 @@
 #      The original's third choice, PvP Arena, is left out with the rest of
 #      the arena (docs/adr/0006-leave-out-the-pvp-arena.md).
 #   3. New Game asks for the player's name (root frame 64).
-#   4. The four save slots (root frame 74). New Game goes on to class select
-#      from any slot, used or empty, and Load Game loads a used one.
+#   4. The four save slots (root frame 74, scenes/ui/menu/slot_panel.tscn).
+#      New Game goes on to class select from any slot, used or empty, and
+#      Load Game loads a used one.
 #   5. "Please select a class:" - the original sketch-art class cards, gray at
 #      rest and colored on hover, each at the position and size the original
 #      places it at. The class name under each card is a Label, because the
@@ -54,8 +55,7 @@ var _card_fades: Dictionary = {}  # card node name -> its running color fade
 @onready var title_panel: TitlePanel = $TitlePanel
 @onready var mode_panel: ModePanel = $ModePanel
 @onready var name_panel: Control = $NamePanel
-@onready var slot_panel: Control = $SlotPanel
-@onready var slot_buttons: VBoxContainer = $SlotPanel/Layout/SlotButtons
+@onready var slot_panel: SlotPanel = $SlotPanel
 @onready var new_game_panel: Control = $NewGamePanel  # class-select screen
 @onready var options_panel: Control = $OptionsPanel   # settings screen
 @onready var class_picker: Control = $NewGamePanel/ClassPicker
@@ -74,7 +74,7 @@ func _ready():
 		style.set_content_margin(SIDE_BOTTOM, 3.5)
 		name_input.add_theme_stylebox_override(style_name, style)
 	_show_screen(title_panel)
-	_refresh_slot_buttons()
+	_refresh_slot_names()
 	_setup_class_cards()
 	AudioManagerAuto.play_menu_music()
 
@@ -119,29 +119,24 @@ func _on_name_confirmed() -> void:
 
 # --- screen 4: save slots ----------------------------------------------------
 
-func _refresh_slot_buttons() -> void:
-	for child in slot_buttons.get_children():
-		child.queue_free()
+func _refresh_slot_names() -> void:
 	for slot in range(1, GameData.NUM_SLOTS + 1):
-		var button: Button = Button.new()
-		button.custom_minimum_size = Vector2(320, 44)
-		button.text = _slot_label(slot)
-		button.pressed.connect(_on_slot_pressed.bind(slot))
-		button.mouse_entered.connect(_on_slot_hovered.bind(button))
-		button.mouse_exited.connect(GameTooltip.hide_tooltip)
-		slot_buttons.add_child(button)
+		slot_panel.set_save_name(slot, _slot_name(slot))
 
 
-func _slot_label(slot: int) -> String:
+# The save's nameUser, or "< Empty Slot >" for a slot with none
+# (frame_74/DoAction.as:4-9). "(corrupted)" is the port's own, for a slot file
+# that does not load as a save.
+func _slot_name(slot: int) -> String:
 	if not GameData.has_save(slot):
-		return "Slot %d - < Empty Slot >" % slot
+		return "< Empty Slot >"
 	var save: Resource = ResourceLoader.load(GameData._slot_path(slot))
 	if save is PlayerSave:
-		return "Slot %d - %s  Lv %d  (Zone %d)" % [slot, save.name_user, save.level, save.section_in]
-	return "Slot %d - (corrupted)" % slot
+		return save.name_user
+	return "(corrupted)"
 
 
-func _on_slot_hovered(button: Button) -> void:
+func _on_slot_hovered(slot: int) -> void:
 	if _slot_mode != SlotMode.NEW_GAME:
 		return
 	GameTooltip.show_sections([
@@ -153,7 +148,11 @@ func _on_slot_hovered(button: Button) -> void:
 			"text": NEW_GAME_WARNING_TEXT,
 			"color": TooltipTheme.TEXT_BODY,
 		}]},
-	], button)
+	], slot_panel.hit_button(slot))
+
+
+func _on_slot_unhovered() -> void:
+	GameTooltip.hide_tooltip()
 
 
 # New Game goes on to class select from any slot without reading it, and Load

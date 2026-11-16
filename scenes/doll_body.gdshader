@@ -20,13 +20,16 @@ uniform bool result_flash = false;
 uniform vec4 color : source_color = vec4(1.0);
 // Screen px for each stage px, because Flash measures a blur in stage px.
 uniform float stage_scale = 1.0;
+// The blur and the strength of the white glow and of the two colored glows.
+// CharacterVisual.show_result_flash() sets them from result_flash.json, which
+// extract_result_flash writes from those GlowFilters.
+uniform float white_blur;
+uniform float white_strength;
+uniform float color_blur;
+uniform float color_strength;
 uniform sampler2D doll : hint_screen_texture, repeat_disable, filter_linear;
 
 const int SAMPLES = 5;
-const float WHITE_BLUR = 100.0;
-const float WHITE_STRENGTH = 10.0;
-const float COLOR_BLUR = 10.0;
-const float COLOR_STRENGTH = 1.0;
 
 float box_alpha(vec2 uv, float blur, vec2 stage_pixel) {
 	float sum = 0.0;
@@ -40,7 +43,7 @@ float box_alpha(vec2 uv, float blur, vec2 stage_pixel) {
 }
 
 float outer_glow(vec2 uv, vec2 stage_pixel) {
-	return clamp(box_alpha(uv, COLOR_BLUR, stage_pixel) * COLOR_STRENGTH, 0.0, 1.0);
+	return clamp(box_alpha(uv, color_blur, stage_pixel) * color_strength, 0.0, 1.0);
 }
 
 // The alpha the outer glow leaves, which the third glow reads, averaged over its
@@ -50,7 +53,7 @@ float box_alpha_after_outer_glow(vec2 uv, vec2 stage_pixel) {
 	for (int i = 0; i < SAMPLES; i++) {
 		for (int j = 0; j < SAMPLES; j++) {
 			vec2 offset = (vec2(float(i), float(j)) + 0.5) / float(SAMPLES) - 0.5;
-			vec2 sample_uv = uv + offset * COLOR_BLUR * stage_pixel;
+			vec2 sample_uv = uv + offset * color_blur * stage_pixel;
 			float alpha = texture(doll, sample_uv).a;
 			sum += alpha + outer_glow(sample_uv, stage_pixel) * (1.0 - alpha);
 		}
@@ -63,10 +66,10 @@ void fragment() {
 	if (result_flash) {
 		vec2 stage_pixel = SCREEN_PIXEL_SIZE * stage_scale;
 		vec4 glow_color = vec4(color.rgb, 1.0);
-		float white = clamp((1.0 - box_alpha(SCREEN_UV, WHITE_BLUR, stage_pixel)) * WHITE_STRENGTH, 0.0, 1.0);
+		float white = clamp((1.0 - box_alpha(SCREEN_UV, white_blur, stage_pixel)) * white_strength, 0.0, 1.0);
 		drawn = vec4(1.0) * white * drawn.a + drawn * (1.0 - white);
 		drawn += glow_color * outer_glow(SCREEN_UV, stage_pixel) * (1.0 - drawn.a);
-		float inner = clamp((1.0 - box_alpha_after_outer_glow(SCREEN_UV, stage_pixel)) * COLOR_STRENGTH, 0.0, 1.0);
+		float inner = clamp((1.0 - box_alpha_after_outer_glow(SCREEN_UV, stage_pixel)) * color_strength, 0.0, 1.0);
 		drawn = glow_color * inner * drawn.a + drawn * (1.0 - inner);
 	}
 	if (drawn.a > 0.0001) {
