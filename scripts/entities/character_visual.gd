@@ -120,7 +120,7 @@ var _attack_fired: bool = false
 
 # Timeline playback (labels from model1_animations.json).
 var _label: String = ""
-var _label_time: float = 0.0
+var _label_frames: float = 0.0
 var _label_finished: bool = false
 # These run the melee swing. krinMelee moves the fighter's clip whatever its
 # inner doll plays (frame_42/DoAction_4.as:67-135), so the swing goes on through
@@ -225,7 +225,7 @@ func dress_from_model(model: Array, equip_looks: Array) -> void:
 func set_state(new_state: State) -> void:
 	_state = new_state
 	_attack_fired = false
-	_label_time = 0.0
+	_label_frames = 0.0
 	_label_finished = false
 	# Reset the transient transforms the previous state left behind (hit
 	# recoil x-offset, stun tilt, cast tint) - without this the doll keeps
@@ -394,40 +394,44 @@ func _process(delta: float) -> void:
 
 func _start_label(label: String) -> void:
 	_label = label
-	_label_time = 0.0
+	_label_frames = 0.0
 	_label_finished = false
 	_apply_label_frame(label, 0.0)
 
 
-func _label_duration(label: String) -> float:
+# Returns how many SWF frames `label` lasts.
+func _label_length(label: String) -> float:
 	var animations: Dictionary = _load_animations()
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
-		return 0.5
-	return (float(segment["end"]) - float(segment["start"]) + 1.0) / BattleScreenClip.fps()
+		return 15.0
+	return float(segment["end"]) - float(segment["start"]) + 1.0
 
 
+# The label's playhead counts frames, not seconds, for the reason _play_death
+# gives: a sum of 1/30 s steps drifts off whole frames, and a one-shot label
+# would then end a frame late.
 func _advance_label(delta: float, loop: bool) -> void:
-	_label_time += delta
-	var duration: float = _label_duration(_label)
+	_label_frames += delta * BattleScreenClip.fps()
+	var length: float = _label_length(_label)
 	if loop:
-		_label_time = fmod(_label_time, duration)
-	elif _label_time >= duration:
-		_label_time = duration
+		_label_frames = fmod(_label_frames, length)
+	elif _label_frames >= length:
+		_label_frames = length
 		_label_finished = true
-	_apply_label_frame(_label, _label_time)
+	_apply_label_frame(_label, _label_frames)
 
 
-# Applies the pose at `time` seconds into a labeled segment: every part gets
+# Applies the pose `frames` SWF frames into a labeled segment: every part gets
 # the original frame's full affine matrix (rotation, scale, AND skew).
-func _apply_label_frame(label: String, time: float) -> void:
+func _apply_label_frame(label: String, frames: float) -> void:
 	var animations: Dictionary = _load_animations()
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return
 	var start: int = int(segment["start"]) - 1
 	var end: int = int(segment["end"]) - 1
-	_apply_frame_index(clampi(start + int(time * BattleScreenClip.fps()), start, end))
+	_apply_frame_index(clampi(start + int(frames), start, end))
 
 
 func _apply_frame_index(index: int) -> void:

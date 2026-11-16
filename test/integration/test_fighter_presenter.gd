@@ -726,19 +726,19 @@ func test_any_rise_in_stun_replays_the_stun_animation():
 	_stun()
 	assert_eq(_doll._state, STUN, "the first stun")
 	_doll._process(0.1)
-	assert_gt(_doll._label_time, 0.0, "sanity: the animation has moved on")
+	assert_gt(_doll._label_frames, 0.0, "sanity: the animation has moved on")
 	_unit.stun = 2.0
 	_presenter.snap_to_unit()
 	assert_eq(_doll._label, "stun", "a second stun plays the stun-in label")
-	assert_eq(_doll._label_time, 0.0, "from its start")
+	assert_eq(_doll._label_frames, 0.0, "from its start")
 
 
 func test_a_result_with_no_change_in_stun_leaves_the_animation_alone():
 	_stun()
 	_doll._process(0.1)
-	var time_into_label: float = _doll._label_time
+	var frames_into_label: float = _doll._label_frames
 	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
-	assert_eq(_doll._label_time, time_into_label)
+	assert_eq(_doll._label_frames, frames_into_label)
 
 
 func test_any_fall_in_stun_plays_the_wake_up_even_while_still_stunned():
