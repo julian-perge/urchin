@@ -340,7 +340,7 @@ Ported: each `FighterPresenter` plays its own `ResultFlash` (`scripts/battle/res
 
 ## The Shield clip (DefineSprite 2675)
 
-Ported: `extract_rig_clips` renders every frame of the clip into `assets/ui/battle/rig/shield/`, and each `FighterPresenter` plays its own `RigClip` (`scripts/battle/rig_clip.gd`)
+Ported: `extract_shield_clip` renders every frame of the clip into `assets/ui/battle/shield_clip/`, and each `FighterPresenter` plays its own `ShieldClip` (`scripts/battle/shield_clip.gd`)
 through `play_shield_clip()`.
 
 - The fighter rig, DefineSprite 2676, places the clip as `shield` at its origin. The clip's `onClipEvent(load)` runs `this.swapDepths(1000)`, which puts it over the `inner` doll

@@ -1,4 +1,4 @@
-# extract_rig_clips' reading of the fighter rig on SWF bytes built by hand, so
+# extract_shield_clip's reading of the fighter rig on SWF bytes built by hand, so
 # no test needs the gitignored SWF.
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ import struct
 import pytest
 from test_swf_index import place2, swf, tag
 from test_timeline import remove
-from urchin_dev.swf.extract import rig_clips
+from urchin_dev.swf.extract import shield_clip
 from urchin_dev.swf.render import RenderError
 from urchin_dev.swf.swf_index import (
     TAG_DEFINE_SHAPE,
@@ -61,20 +61,20 @@ RESTING_CLIP = (STOP + SHOW, place2(1, cid=SHAPE) + SHOW, SHOW)
 
 def test_a_clip_is_the_sprite_the_rig_places_under_its_name():
     index = parse_swf(rig(RESTING_CLIP))
-    assert rig_clips.rig_clip(index, RIG, "shield") == SHIELD
-    assert rig_clips.rig_clip(index, RIG, "speech") == SPEECH
+    assert shield_clip.rig_clip(index, RIG, "shield") == SHIELD
+    assert shield_clip.rig_clip(index, RIG, "speech") == SPEECH
 
 
 def test_a_name_the_rig_does_not_place_is_refused():
     index = parse_swf(rig(RESTING_CLIP))
     with pytest.raises(RuntimeError, match="places 0 clips named 'bubble'"):
-        rig_clips.rig_clip(index, RIG, "bubble")
+        shield_clip.rig_clip(index, RIG, "bubble")
 
 
 def test_a_clip_that_draws_on_its_frame_1_is_refused():
     index = parse_swf(rig((place2(1, cid=SHAPE) + STOP + SHOW, SHOW)))
     with pytest.raises(RuntimeError, match=f"{SHIELD} frame 1 shows 1 layer"):
-        rig_clips.rig_clip(index, RIG, "shield")
+        shield_clip.rig_clip(index, RIG, "shield")
 
 
 # gotoAndPlay("hit"): GoToLabel, then Play.
@@ -107,7 +107,7 @@ GOTO_AND_PLAY = tag(
 def test_a_clip_that_does_more_than_stop_on_frame_1_is_refused(frames, error, refusal):
     index = parse_swf(rig(frames))
     with pytest.raises(error, match=refusal):
-        rig_clips.rig_clip(index, RIG, "shield")
+        shield_clip.rig_clip(index, RIG, "shield")
 
 
 def test_a_clip_that_a_nested_clip_ends_early_is_refused():
@@ -119,4 +119,4 @@ def test_a_clip_that_a_nested_clip_ends_early_is_refused():
     frames = (STOP + SHOW, place2(1, cid=NESTED) + SHOW, SHOW, SHOW)
     index = parse_swf(rig(frames, nested))
     with pytest.raises(RuntimeError, match=r"plays frames \[2, 3\] after play\(\)"):
-        rig_clips.rig_clip(index, RIG, "shield")
+        shield_clip.rig_clip(index, RIG, "shield")

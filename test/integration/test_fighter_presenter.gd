@@ -20,14 +20,14 @@ const ENEMY_COLOR: Color = FighterPresenter.RING_COLORS[FighterPresenter.Relatio
 const HIT_FLASH: Color = Color("#ffcc00")
 const HEAL_FLASH: Color = Color("#99ff00")
 const FOCUS_FLASH: Color = Color("#33ffff")
-# Frame n of the shield clip, as extract_rig_clips writes it.
-const SHIELD_CLIP_ART: String = "res://assets/ui/battle/rig/shield/%d.png"
+# Frame n of the shield clip, as extract_shield_clip writes it.
+const SHIELD_CLIP_ART: String = "res://assets/ui/battle/shield_clip/%d.png"
 
 var _presenter: FighterPresenter
 var _doll: CharacterVisual
 var _overlay: UnitOverlay
 var _flash: ResultFlash
-var _shield_clip: RigClip
+var _shield_clip: ShieldClip
 var _layer: FloatingNumberLayer
 var _unit: CombatUnit
 var _cues: Array = []
@@ -550,7 +550,7 @@ func test_a_dead_units_slot_shows_nothing_for_the_rest_of_the_battle():
 	_step_frames(90)
 	_presenter.snap_to_unit()
 	var drawn: Array = _presenter.get_children().filter(func(child):
-		if child is RigClip and not child.is_playing():
+		if child is ShieldClip and not child.is_playing():
 			return false
 		return child is CanvasItem and child.is_visible_in_tree()
 	)
@@ -1201,6 +1201,16 @@ func test_the_shield_clip_sits_on_the_rig_over_the_doll_and_mirrors_with_team_2(
 	assert_gt(_shield_clip.get_index(), _doll.get_index(), "over the doll, outside its body")
 	_present(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT))
 	assert_eq(_shield_clip.scale, Vector2.ONE, "and not mirrored on team 1")
+
+
+func test_the_shield_clips_art_fills_the_box_the_extractor_measured_around_the_rig():
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ShieldClip.LAYOUT_PATH))
+	var rect: Dictionary = layout["rect"]
+	var art: Sprite2D = _shield_clip.sprite
+	var drawn := Rect2(art.position, art.texture.get_size() * art.scale)
+	assert_almost_eq(drawn.position, Vector2(rect["x"], rect["y"]), Vector2(0.01, 0.01), "the box's corner")
+	assert_almost_eq(drawn.size, Vector2(rect["w"], rect["h"]), Vector2(0.01, 0.01), "the box's size")
+	assert_false(art.centered, "drawn from that corner")
 
 
 # A shield exactly as big as the hit soaks it, but executeMove takes the hit's

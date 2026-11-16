@@ -12,7 +12,7 @@ const HEAL_FLASH: Color = Color("#99ff00")
 const FOCUS_FLASH: Color = Color("#33ffff")
 
 var _presenter: FighterPresenter
-var _shield_clip: RigClip
+var _shield_clip: ShieldClip
 var _layer: FloatingNumberLayer
 var _unit: CombatUnit
 

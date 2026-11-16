@@ -254,10 +254,10 @@ extract-label-xref *args: (require "ffdec" "java")
 extract-model1-animations *args: (require "ffdec" "java")
     uv run extract_model1_animations "$@"
 
-[doc('Run extract_rig_clips, which reads the SWF through ffdec')]
+[doc('Run extract_shield_clip, which reads the SWF through ffdec')]
 [group('extract')]
-extract-rig-clips *args: (require "ffdec" "java")
-    uv run extract_rig_clips "$@"
+extract-shield-clip *args: (require "ffdec" "java")
+    uv run extract_shield_clip "$@"
 
 [doc('Run extract_screen_rects, which reads the SWF without ffdec')]
 [group('extract')]
