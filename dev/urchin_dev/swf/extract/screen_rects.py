@@ -555,7 +555,7 @@ SCENES[INVENTORY_SCENE] = Scene(
         "LeftPanel": Piece("panel", 11),
         "PartyBar": Piece("panel", 9),
         "CenterPanel": Piece("panel", 21),
-        "CenterOutline": Piece("outline", 994),
+        "CenterPanel/Content/CenterOutline": Piece("outline", 994),
         "LeftPanel/Content/Header/NameRow/NameLabel": Piece("text", 1241),
         "LeftPanel/Content/Header/InfoRow/LevelLabel": Piece("text", 1242),
         **{

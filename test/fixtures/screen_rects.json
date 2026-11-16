@@ -1301,17 +1301,6 @@
     222.4
    ],
    "pieces": {
-    "CenterOutline": {
-     "border": 1,
-     "kind": "outline",
-     "line": "333333ff",
-     "rect": [
-      321.75,
-      89.45,
-      158.35,
-      313.2
-     ]
-    },
     "CenterPanel": {
      "border": 1,
      "fill": "1a1a1aff",
@@ -1328,6 +1317,17 @@
       "blur": 5.0,
       "distance": 5.0
      }
+    },
+    "CenterPanel/Content/CenterOutline": {
+     "border": 1,
+     "kind": "outline",
+     "line": "333333ff",
+     "rect": [
+      321.75,
+      89.45,
+      158.35,
+      313.2
+     ]
     },
     "LeftPanel": {
      "border": 1,
