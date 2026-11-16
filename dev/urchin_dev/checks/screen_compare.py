@@ -53,7 +53,7 @@ from PIL import Image
 
 from urchin_dev import REPO_ROOT, WEB_SWF
 from urchin_dev.swf import render, strip, timeline
-from urchin_dev.swf.extract import screen_rects
+from urchin_dev.swf.extract import screen_rects, window_chrome
 from urchin_dev.swf.swf_index import SwfIndex, character_kind, read_swf
 
 CONFIG = REPO_ROOT / "dev" / "screen_compare" / "screens.json"
@@ -275,9 +275,30 @@ def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
     origin = screen_rects.origin_of(index, entry.timeline)
     frame = timeline.frame_of(index, entry.timeline, entry.frame)
     if mode == "panels":
-        return render.Job(
-            entry.timeline, frame, ZOOM, origin, only_depths=entry.modes[mode].depths
-        )
+        depths = entry.modes[mode].depths
+        if (
+            entry.timeline == window_chrome.KRINMENU
+            and window_chrome.BACKDROP_DEPTH in depths
+        ):
+            # The backdrop's Bevel, Glow and DropShadow belong to KRINMENU's
+            # Stage placement, so rendering its own timeline loses them.
+            all_depths = {
+                depth
+                for layers in timeline.frames(index, entry.timeline)
+                for depth in layers
+            }
+            return render.Job(
+                0,
+                window_chrome.hub_frame(index),
+                ZOOM,
+                only_depths=(window_chrome.KRINMENU_ROOT_DEPTH,),
+                hide_depths=tuple(
+                    (entry.timeline, depth)
+                    for depth in sorted(all_depths - set(depths))
+                ),
+                goto=((window_chrome.KRINMENU_ROOT_DEPTH, frame),),
+            )
+        return render.Job(entry.timeline, frame, ZOOM, origin, only_depths=depths)
 
     def characters(owner: int) -> list[dict[int, int]]:
         return [

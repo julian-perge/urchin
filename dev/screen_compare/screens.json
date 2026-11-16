@@ -31,5 +31,56 @@
     "bar": 2
    }
   }
+ },
+ "window-shell": {
+  "scene": "res://scenes/ui/menu/inventory_window.tscn",
+  "modes": {
+   "panels": {
+    "nodes": [
+     "WindowShell/Backdrop",
+     "WindowShell/CloseArt",
+     "RightColumn/TallPanel",
+     "RightColumn/Grid/Row0/Slot0",
+     "RightColumn/Grid/Row0/Slot1",
+     "RightColumn/Grid/Row0/Slot2",
+     "RightColumn/Grid/Row0/Slot3",
+     "RightColumn/Grid/Row0/Slot4",
+     "RightColumn/Grid/Row0/Slot5",
+     "RightColumn/Grid/Row1/Slot0",
+     "RightColumn/Grid/Row1/Slot1",
+     "RightColumn/Grid/Row1/Slot2",
+     "RightColumn/Grid/Row1/Slot3",
+     "RightColumn/Grid/Row1/Slot4",
+     "RightColumn/Grid/Row1/Slot5",
+     "RightColumn/Grid/Row2/Slot0",
+     "RightColumn/Grid/Row2/Slot1",
+     "RightColumn/Grid/Row2/Slot2",
+     "RightColumn/Grid/Row2/Slot3",
+     "RightColumn/Grid/Row2/Slot4",
+     "RightColumn/Grid/Row2/Slot5",
+     "RightColumn/Grid/Row3/Slot0",
+     "RightColumn/Grid/Row3/Slot1",
+     "RightColumn/Grid/Row3/Slot2",
+     "RightColumn/Grid/Row3/Slot3",
+     "RightColumn/Grid/Row3/Slot4",
+     "RightColumn/Grid/Row3/Slot5",
+     "RightColumn/Grid/Row4/Slot0",
+     "RightColumn/Grid/Row4/Slot1",
+     "RightColumn/Grid/Row4/Slot2",
+     "RightColumn/Grid/Row4/Slot3",
+     "RightColumn/Grid/Row4/Slot4",
+     "RightColumn/Grid/Row4/Slot5",
+     "RightColumn/Grid/Row5/Slot0",
+     "RightColumn/Grid/Row5/Slot1",
+     "RightColumn/Grid/Row5/Slot2",
+     "RightColumn/Grid/Row5/Slot3",
+     "RightColumn/Grid/Row5/Slot4",
+     "RightColumn/Grid/Row5/Slot5",
+     "RightColumn/BarPanel",
+     "RightColumn/DeleteSlot/Art"
+    ],
+    "bar": 11
+   }
+  }
  }
 }

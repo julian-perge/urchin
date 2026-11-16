@@ -5,10 +5,13 @@ the original SWF by script, not by hand.
 
 ## Commands
 
-Run every command through `just`. `just` lists the recipes. It picks Godot for
-the OS, loads the per-machine settings from `.env`, and stops with a message
-when a tool is missing. The Python scripts read `GODOT_BIN` from it and do not
-look for Godot themselves, so `uv run gut` outside `just` fails.
+Run the project's tasks, such as tests, Godot, extraction and conversion,
+through their `just` recipes. `just` lists the recipes. It picks Godot for the
+OS, loads the per-machine settings from `.env`, and stops with a message when a
+tool is missing. The Python scripts read `GODOT_BIN` from it and do not look
+for Godot themselves, so `uv run gut` outside `just` fails. Run plain tools
+such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
+`just --command`, because they do not read `.env`.
 
 - In a new git worktree, run `just setup-worktree` first. It runs Godot's
   import and warns when `URCHIN_SWF_DIR` has no SWFs.

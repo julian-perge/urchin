@@ -16,26 +16,32 @@ var _slots: Dictionary = {}  # equip index -> ItemSlot
 var _doll: CharacterVisual
 
 
-# slot_centers: equip index (0-6) -> stage-relative center. The doll draws
-# at doll_position with doll_scale (origin = mid-body, like the battle);
-# menu dolls stand still (the original only animates in battle), and
-# face_left mirrors them (the shop doll faces left in the source).
+# Inventory supplies its slots in the scene and passes an empty map. Store
+# still supplies centres here. Both use equip_index metadata for clicks and
+# drag-and-drop, and dress a still battle doll at the supplied position.
 func setup(slot_centers: Dictionary, doll_position: Vector2, doll_scale: float, face_left: bool = false) -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_doll = CharacterVisualScript.new()
+	_doll.name = "Doll"
 	_doll.animate = false
 	_doll.position = doll_position
 	_doll.scale = Vector2(-doll_scale if face_left else doll_scale, doll_scale)
 	add_child(_doll)
+	move_child(_doll, 0)
 	for equip_index in slot_centers:
 		var slot: ItemSlot = ItemSlotScene.instantiate()
 		slot.position = slot_centers[equip_index] - MenuTheme.SLOT_SIZE / 2.0
 		slot.set_meta("equip_index", equip_index)
+		add_child(slot)
+	for child: Node in get_children():
+		if not child is ItemSlot or not child.has_meta("equip_index"):
+			continue
+		var slot: ItemSlot = child
+		var equip_index: int = int(slot.get_meta("equip_index"))
 		slot.set_meta("drag_source", "equip")
 		slot.set_meta("drag_index", equip_index)
 		slot.empty_slot_type = Equipment.EQUIP_SLOT_TYPES[equip_index]
 		slot.slot_clicked.connect(_on_slot_clicked)
-		add_child(slot)
 		_slots[equip_index] = slot
 
 

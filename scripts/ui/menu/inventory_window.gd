@@ -1,29 +1,8 @@
-# inventory_window.gd
-# The player inventory screen, rebuilt from frame 1 of the original menu
-# clip (DefineSprite 3142 at stage 400.5, 222.4):
-# - left panel: name + level/class, the dressed paper doll with the 7 equip
-#   slots around it, and the experience bar
-# - center panel: the five stats plus the Piercing/Defense element bars
-#   (fill math from the frame-1 DoAction, see MenuTheme.bar_fill_fraction)
-# - right: the shared RightColumn (6x6 grid + money bar + sell/delete)
-# - bottom-left bar: party portrait frames (art from sprite 2979 is a
-#   backlog item - frames show names for now)
-#
-# Click an inventory item to equip it into its natural slot; click an equip
-# slot to send the item back to the first free inventory cell.
+# The Inventory shell and left panel follow spec/107-inventory.md.
+# test_screen_rects.gd checks their placement against the SWF.
 extends Control
 
 
-# playerSlot0-6 centers from the frame-1 dump.
-const EQUIP_SLOT_CENTERS: Dictionary[int, Vector2] = {
-	0: Vector2(82.2, 172.2),
-	2: Vector2(82.2, 212.2),
-	6: Vector2(82.2, 252.2),
-	5: Vector2(122.2, 252.2),
-	1: Vector2(263.1, 172.2),
-	3: Vector2(263.1, 212.2),
-	4: Vector2(263.1, 252.2),
-}
 const DOLL_POSITION: Vector2 = Vector2(192.5, 214.4)
 const DOLL_SCALE: float = 1.2
 const BAR_BLOCK_CENTERS_Y: Dictionary[Variant, Variant] = {"per": 256.0, "def": 360.5}
@@ -36,9 +15,9 @@ const EXP_FILL: Rect2 = Rect2(172.6, 283.3, 95.1, 18.7)
 var equip_view: EquipDollView
 
 @onready var right_column: RightColumn = $RightColumn
-@onready var _status_label: Label = $StatusLabel
-@onready var _name_label: Label = $NameLabel
-@onready var _level_label: Label = $LevelLabel
+@onready var _status_label: Label = $LeftPanel/Content/StatusLabel
+@onready var _name_label: Label = $LeftPanel/Content/Header/NameRow/NameLabel
+@onready var _level_label: Label = $LeftPanel/Content/Header/InfoRow/LevelLabel
 @onready var _exp_fill: TextureRect = $ExpFill
 @onready var _exp_percent: Label = $ExpPercent
 @onready var _stat_values: Array[Label] = [$StatValue0, $StatValue1, $StatValue2, $StatValue3, $StatValue4]
@@ -60,13 +39,8 @@ func _ready():
 
 
 func _build_left_panel() -> void:
-	equip_view = EquipDollView.new()
-	equip_view.name = "EquipDollView"
-	add_child(equip_view)
-	# Draw behind the experience bar, matching the original build order
-	# (doll added before the exp-bar nodes) now that the exp bar is static.
-	move_child(equip_view, $LevelLabel.get_index() + 1)
-	equip_view.setup(EQUIP_SLOT_CENTERS, DOLL_POSITION, DOLL_SCALE)
+	equip_view = $LeftPanel/Content/EquipDollView
+	equip_view.setup({}, DOLL_POSITION - $LeftPanel.position, DOLL_SCALE)
 	equip_view.equip_slot_clicked.connect(_on_equip_slot_clicked)
 
 
@@ -97,7 +71,7 @@ func refresh() -> void:
 		return
 	_status_label.text = ""
 	_name_label.text = Party.PLAYER_NAME
-	_level_label.text = "Lvl. %d %s" % [save.level, PlayerSave.CLASS_NAMES[save.player_class]]
+	_level_label.text = "%s%d %s" % [Strings.menu(0), save.level, Strings.text("CLASS", save.player_class)]
 	var stats: Array[Variant] = [save.life, save.strength, save.magic, save.speed, save.focus]
 	for i in _stat_values.size():
 		_stat_values[i].text = str(int(stats[i]))

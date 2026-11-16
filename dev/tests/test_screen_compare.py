@@ -312,3 +312,37 @@ def test_the_left_out_characters_are_those_at_the_left_out_depths():
 def test_a_left_out_depth_that_the_frame_does_not_place_is_an_error():
     with pytest.raises(screen_compare.CompareError, match="depth 40"):
         screen_compare.left_out_ids({38: 2689}, (38, 40), "title")
+
+
+def test_a_window_backdrop_reference_keeps_its_stage_filters(monkeypatch):
+    from types import SimpleNamespace
+
+    from urchin_dev.swf.extract import window_chrome
+
+    monkeypatch.setattr(
+        screen_compare.screen_rects, "origin_of", lambda *_: (400.5, 222.4)
+    )
+    monkeypatch.setattr(
+        screen_compare.timeline,
+        "frame_of",
+        lambda _, owner, label: 181 if owner == 0 else 1,
+    )
+    monkeypatch.setattr(
+        screen_compare.timeline,
+        "frames",
+        lambda *_: [
+            {2: SimpleNamespace(), 7: SimpleNamespace(), 11: SimpleNamespace()}
+        ],
+    )
+    entry = screen_compare.Entry(
+        "res://window.tscn",
+        window_chrome.KRINMENU,
+        "inventory",
+        {"panels": screen_compare.Mode(None, (2, 7))},
+    )
+    job = screen_compare.reference_job(None, entry, "panels")
+    assert job.timeline == 0
+    assert job.frame == 181
+    assert job.only_depths == (window_chrome.KRINMENU_ROOT_DEPTH,)
+    assert job.hide_depths == ((window_chrome.KRINMENU, 11),)
+    assert job.goto == ((window_chrome.KRINMENU_ROOT_DEPTH, 1),)

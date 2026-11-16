@@ -121,8 +121,9 @@ class Piece:
     # The depth of the piece inside the sprite at `depth`, on the sprite's
     # first frame, for a piece that the scene's timeline does not place itself.
     inner_depth: int | None = None
-    # The depth whose placement the art's render was measured at, for art that
-    # the frame places at several depths and the extractor rendered at one.
+    # The depth whose placement the art was rendered from. A Stage render moves
+    # by the placement difference. A sprite-local render uses this depth's
+    # sprite as its source and the current placement as its origin.
     rendered_at: int | None = None
 
     def __post_init__(self) -> None:
@@ -538,6 +539,82 @@ SCENES: dict[str, Scene] = {
 }
 
 
+# The Inventory record covers #226's shell and left panel. Later build tasks
+# replace the experience row, stats, element bars, doll and party faces.
+INVENTORY_SCENE = "res://scenes/ui/menu/inventory_window.tscn"
+SCENES[INVENTORY_SCENE] = Scene(
+    timeline=KRINMENU,
+    frame="inventory",
+    pieces={
+        **{
+            f"WindowShell/{node}": piece
+            for node, piece in SCENES[
+                "res://scenes/ui/window/window_shell.tscn"
+            ].pieces.items()
+        },
+        "LeftPanel": Piece("panel", 11),
+        "PartyBar": Piece("panel", 9),
+        "CenterPanel": Piece("panel", 21),
+        "CenterPanel/Content/CenterOutline": Piece("outline", 994),
+        "LeftPanel/Content/Header/NameRow/NameLabel": Piece("text", 1241),
+        "LeftPanel/Content/Header/InfoRow/LevelLabel": Piece("text", 1242),
+        **{
+            f"LeftPanel/Content/EquipDollView/Slot{i}": Piece(
+                "art",
+                None,
+                art="slot_inventory",
+                instance=f"playerSlot{i}",
+                rendered_at=30,
+            )
+            for i in range(7)
+        },
+        **{
+            f"RightColumn/{node}": (
+                Piece(
+                    "art",
+                    30 + 21 * int(piece.instance.removeprefix("itemSlot")),
+                    art=piece.art,
+                )
+                if piece.instance is not None
+                else piece
+            )
+            for node, piece in SCENES[
+                "res://scenes/ui/window/right_column.tscn"
+            ].pieces.items()
+            if not node.startswith("SellSlot")
+        },
+    },
+    port_only=(
+        "LeftPanel/Content/StatusLabel",
+        "LeftPanel/Content/EquipDollView/Doll",
+        *(
+            f"LeftPanel/Content/EquipDollView/Slot{i}/{node}"
+            for i in range(7)
+            for node in ("ItemIcon", "Highlight")
+        ),
+        "ExperienceLabel",
+        "ExpTrack",
+        "ExpFill",
+        "ExpZeroBox",
+        "ExpPercent",
+        "PiercingLabel",
+        "DefenseLabel",
+        *(f"Stat{kind}{i}" for i in range(5) for kind in ("Label", "Value")),
+        *(
+            f"{block}{kind}{i}"
+            for block in ("Per", "Def")
+            for i in range(8)
+            for kind in ("Track", "Fill")
+        ),
+        *(f"Portrait{i}" for i in range(6)),
+        *(
+            f"RightColumn/{node}"
+            for node in SCENES["res://scenes/ui/window/right_column.tscn"].port_only
+        ),
+    ),
+)
+
+
 def color_hex(color: tuple[int, int, int, int]) -> str:
     """-> "rrggbbaa", as Godot's Color.to_html() writes it."""
     return "{:02x}{:02x}{:02x}{:02x}".format(*color)
@@ -782,6 +859,19 @@ def shape_record(bounds, matrix, origin) -> dict:
     }
 
 
+def outline_record(bounds, matrix, origin, styles: list[StyleSet]) -> dict:
+    only = styles[0] if len(styles) == 1 else None
+    if only is None or only.fills or only.used_fills or len(only.lines) != 1:
+        raise ValueError("an outline needs one line and no fill")
+    width, color = only.lines[0]
+    return {
+        "kind": "outline",
+        "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
+        "line": color_hex(color),
+        "border": border_width(width, _scale(matrix)),
+    }
+
+
 def _shape(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
     """-> shape_record() of the shape `layer` places, or of the one shape that
     the sprite it places holds."""
@@ -1020,7 +1110,18 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
             entry, textures = art[piece.art]
             if piece.rendered_at is not None:
                 rendered = layers[piece.rendered_at]
-                entry = moved_art(entry, layer.matrix, rendered.matrix)
+                if entry["relative_to"] == f"sprite {rendered.character_id}":
+                    # #211 shares the grid's art with equip slots. Place that
+                    # sprite-local render at the equip slot's own origin.
+                    if _scale(layer.matrix) != _scale(rendered.matrix):
+                        raise ValueError(
+                            "shared sprite art has a different placement scale"
+                        )
+                    sprite_origins[entry["relative_to"]] = inner_origin(
+                        layer.matrix, piece_origin
+                    )
+                else:
+                    entry = moved_art(entry, layer.matrix, rendered.matrix)
             pieces[path] = art_record(piece.art, entry, sprite_origins, textures)
         elif piece.kind == "face":
             if layer.character_id != faces.FACE_CLIP:
@@ -1034,6 +1135,13 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
             pieces[path] = _box(index, layer, piece_origin)
         elif piece.kind == "shape":
             pieces[path] = _shape(index, layer, piece_origin)
+        elif piece.kind == "outline":
+            pieces[path] = outline_record(
+                shape_bounds(index, layer.character_id),
+                layer.matrix,
+                piece_origin,
+                shape_styles(index, layer.character_id),
+            )
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, piece_origin)
         else:
