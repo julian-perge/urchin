@@ -482,12 +482,22 @@ func test_slot_rows_show_the_name_or_empty_slot_with_no_level_or_zone():
 
 
 # The hit button covers the "Slot" caption and the number, not the name
-# (DefineButton2_2719 to 2722), so a click on the name reaches nothing.
+# (DefineButton2_2719 to 2722), so a click on the name reaches nothing. The
+# slots are empty and the menu is in Load Game mode, so a click that does reach
+# a hit button loads nothing.
 func test_a_click_on_the_name_column_does_nothing():
-	var menu = add_child_autofree(MainMenuScene.instantiate())
+	_write_test_slots([])
+	# GUT's window sits above everything in the root viewport and would take
+	# the clicks, so the menu gets a viewport of its own.
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 575)
+	add_child_autofree(viewport)
+	var menu = MainMenuScene.instantiate()
+	viewport.add_child(menu)
 	await get_tree().process_frame
 	menu.get_node("ModePanel/Captions/LoadGameSlot/HitButton").pressed.emit()
 	var panel: Control = menu.get_node("SlotPanel")
+	watch_signals(panel)
 	assert_eq(panel.mouse_filter, Control.MOUSE_FILTER_IGNORE, "the panel takes no click")
 	assert_eq(panel.get_node("Rows").mouse_filter, Control.MOUSE_FILTER_IGNORE, "nor the column")
 	for slot in range(1, GameData.NUM_SLOTS + 1):
@@ -498,6 +508,12 @@ func test_a_click_on_the_name_column_does_nothing():
 		assert_eq(save_name.mouse_filter, Control.MOUSE_FILTER_IGNORE, "row %d name takes no click" % slot)
 		assert_false(hit.get_global_rect().intersects(save_name.get_global_rect()), "row %d hit button stays off the name" % slot)
 		assert_true(hit.get_global_rect().intersects(row.get_node("SlotLabel").get_global_rect()), "row %d hit button covers the caption" % slot)
+		_click(save_name)
+		assert_signal_emit_count(panel, "slot_pressed", slot - 1, "a click on row %d's name presses no slot" % slot)
+		_click(hit)
+		assert_signal_emitted_with_parameters(panel, "slot_pressed", [slot])
+		assert_signal_emit_count(panel, "slot_pressed", slot, "a click on row %d's hit button presses it" % slot)
+	_clear_test_slots()
 
 
 # In New Game mode a slot warns on hover with MENU[21] over MENU[25]
@@ -642,6 +658,18 @@ func _start_from_the_name_screen(menu: Control) -> void:
 	_slot_button(menu, 1).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+
+
+# A left click on the control's center, pushed through the GUI input of the
+# viewport that holds the control.
+func _click(control: Control) -> void:
+	for pressed in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.pressed = pressed
+		event.position = control.get_global_rect().get_center()
+		event.global_position = event.position
+		control.get_viewport().push_input(event, true)
 
 
 func _slot_row(menu: Control, slot: int) -> Control:
