@@ -135,7 +135,7 @@ extracting it.
   (`5045c5c`, `8ef2139`).
 - **Export at 2x, 4x or 5x and let Godot scale down.** Halls, skies, hub art,
   battle chrome, store art and Window chrome (`window_chrome.py`) go at 4x, and
-  orbs, faces and class cards at 5x.
+  orbs, faces, class cards and the hotbar icons (`hotbar_icons.py`) at 5x.
   Dolls, VFX, the item, buff and ability icons and the start screen backgrounds
   go at 2x. The Floating numbers (`floating_numbers.py`) go at 4x, because the
   critical label starts at 2.84x and the other labels start at 1.78x. The
