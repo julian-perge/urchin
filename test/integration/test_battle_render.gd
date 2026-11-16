@@ -10,7 +10,7 @@ const FighterPresenterScene = preload("res://scenes/battle/fighter_presenter.tsc
 # frame_42/DoAction_3.as:117-130 and 162-168.
 var _flash_labels: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ui/battle/result_flash.json"))["labels"]
 var _presenter: FighterPresenter
-var _shield_clip: RigClip
+var _shield_clip: ShieldClip
 var _layer: FloatingNumberLayer
 var _unit: CombatUnit
 

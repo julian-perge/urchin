@@ -1,6 +1,6 @@
 # Workflow
 
-`agent-skills brief <stage> <n>` prints the parts of this file that a stage needs. Read all of it before other work in this repo. The commands default to `SPEC.md` and `tasks/todo.md`. This repo uses the tracker mode of `planning-and-task-breakdown`: GitHub issues hold the tasks, and files under `spec/` hold the specs. [Issue tracker](issue-tracker.md) holds the `gh` commands that no helper covers.
+`agent-skills brief <stage> <n>` prints the parts of this file that a stage needs, so a stage does not read this file. Read all of it before other work in this repo. The commands default to `SPEC.md` and `tasks/todo.md`. This repo uses the tracker mode of `planning-and-task-breakdown`: GitHub issues hold the tasks, and files under `spec/` hold the specs. [Issue tracker](issue-tracker.md) holds the `gh` commands that no helper covers.
 
 The user types each stage. Run one stage per session. When it ends, print the next stage's command as the last line, with real issue, PR and file values, and stop. The user pastes that line into a new session, so it must need no edits. `/agent-skills:next` prints the same commands for the whole tracker.
 
@@ -11,10 +11,12 @@ The user types each stage. Run one stage per session. When it ends, print the ne
 | Verb | Use |
 | --- | --- |
 | `agent-skills brief <stage> [<n>]` | The rules of this file that the stage needs, then the `issue` output, or the `pr` output for `review`. With no number it prints the rules only. `--full` is passed on to `issue` or `pr`. |
-| `agent-skills issue <n>` | The issue with its labels, assignee, parent, spec, blockers, pull requests, sub-issues and comments. `--full` prints all of it. |
+| `agent-skills issue <n>` | The issue with its labels, assignee, parent, spec, blockers, pull requests, sub-issues and comments, and every decision comment of the issue and its parent. `--full` prints all of it. |
 | `agent-skills pr <pr>` | The PR with its task, spec, standard, checks and files, and the review command. |
 | `agent-skills frontier <parent>` | The parent's open sub-issues and the next task to build. |
 | `agent-skills claim <n>` | Assign the task to `@me` and make its branch from the default branch. |
+| `agent-skills decide <n> --from <stage> [--pr <pr>]` | Post the decisions on stdin as one decision comment on the issue, and print its URL. |
+| `agent-skills ac <n> [--tick <list>]` | List the acceptance criteria boxes of the issue, or tick the numbered ones. No other line of the body changes. |
 | `agent-skills next-cmd <stage> <n>` | The paste line that ends a stage: `review <pr>`, `build <parent>`, `plan <issue>` or `spec <issue>`. |
 | `agent-skills run -- <cmd>` | Run a test, lint or build command once. It saves the full log and prints the exit code, the result lines and the last lines. Read the log when you need more, and do not run the command again. |
 | `agent-skills next` | What `/agent-skills:next` prints, for the whole tracker. |
@@ -63,7 +65,7 @@ Give every item of a spec's list to one task. A review of each task alone misses
 
 Task body: `Parent`, `Spec` (the spec file's path), `What to build`, `Acceptance criteria`, `Verification` (the exact command). Label each task `ready-for-agent`.
 
-`tasks/plan.md` holds the plan's decisions, risks and an ordered list of the task issue numbers. It is git-ignored scratch. A plan is complete when every issue it lists is closed, and a complete plan can be replaced without asking.
+`tasks/plan.md` holds the plan's risks and an ordered list of the task issue numbers. It is git-ignored scratch, so it holds no decision. Post decisions on the source issue, as Reports says. A plan is complete when every issue it lists is closed, and a complete plan can be replaced without asking.
 
 ## Build
 
@@ -77,7 +79,7 @@ One task, one branch, one pull request. Branch: `<type>/<issue>-<slug>`, or `ret
 
 A spec's glossary line is a task, not a fact. A spec that says "`GLOSSARY.md` has **X**" may describe the glossary it means to leave behind, so check the file before you rely on it. If the term is missing, the first task that uses it adds the entry. Spec #49 said its four terms existed, none did, two implementers noticed and neither added them, and the code review found the gap.
 
-Run the verify command from `AGENTS.md` (`Every task`) with `agent-skills run --` before each commit. Open the pull request, print the review command and stop. The user merges.
+Run the verify command from `AGENTS.md` (`Every task`) with `agent-skills run --` before each commit. Open the pull request ready for review, print the review command and stop. The user merges. The review ticks the acceptance criteria boxes, not the build.
 
 The review command is the session's last line, and `agent-skills next-cmd review <pr>` prints it:
 
@@ -104,4 +106,4 @@ A worker's branch is the exception. The overseer session that dispatched the wor
 
 ## Reports
 
-Report every guess and every gap you accepted. Put any choice that changes user-visible behavior to the user before you commit.
+Post every decision the user makes in a session, and every guess and gap you accepted, in one decision comment with `agent-skills decide`. Post it on the task issue, or on the source issue when later tasks need it. Mark guesses as guesses. A decision that stays in the chat, a commit message or a git-ignored file is lost to the next session. Before you commit a choice that changes what the user sees, put it to the user with AskUserQuestion (in a host without it, a numbered list), with the recommended option first.

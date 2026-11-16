@@ -342,6 +342,50 @@ func test_cast_and_hit_recover_to_idle():
 	assert_eq(visual._state, CharacterVisual.State.IDLE)
 
 
+# Returns how many steps of `step_seconds` the doll takes to leave `state` for
+# idle, which it does on the step that ends the state's label.
+func _steps_until_idle(state: CharacterVisual.State, step_seconds: float) -> int:
+	visual.set_state(state)
+	for step in range(1, 1000):
+		visual._process(step_seconds)
+		if visual._state == CharacterVisual.State.IDLE:
+			return step
+	return 0
+
+
+func _label_length(label: String) -> int:
+	var segment: Dictionary = _animations()["labels"][label]
+	return int(segment["end"]) - int(segment["start"]) + 1
+
+
+func test_hit_ends_on_the_frame_its_label_length_gives():
+	assert_eq(_steps_until_idle(CharacterVisual.State.HIT, SWF_FRAME_SECONDS), _label_length("hit"))
+
+
+func test_cast_ends_on_the_frame_its_label_length_gives():
+	assert_eq(_steps_until_idle(CharacterVisual.State.CAST, SWF_FRAME_SECONDS), _label_length("cast"))
+
+
+func test_hit_and_cast_end_on_the_same_frame_at_two_steps_a_frame():
+	var half_frame: float = SWF_FRAME_SECONDS / 2.0
+	assert_eq(_steps_until_idle(CharacterVisual.State.HIT, half_frame), 2 * _label_length("hit"), "hit")
+	assert_eq(_steps_until_idle(CharacterVisual.State.CAST, half_frame), 2 * _label_length("cast"), "cast")
+
+
+func test_the_idle_label_shows_the_same_frame_one_loop_later():
+	visual.set_state(CharacterVisual.State.IDLE)
+	var stand: Dictionary = _animations()["labels"]["stand"]
+	for step in 10:
+		visual._process(SWF_FRAME_SECONDS)
+	var frame_before_the_loop: int = _shown_frame()
+	# The first and last frames of stand hold the same pose, so only a frame
+	# between them can tell a loop from a label that stopped at its end.
+	assert_ne(frame_before_the_loop, int(stand["start"]), "sanity: a pose the label's ends do not hold")
+	for step in _label_length("stand"):
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(_shown_frame(), frame_before_the_loop)
+
+
 # Returns the alpha each part is drawn at, which is its own modulate times every
 # ancestor's, up to the doll.
 func _drawn_alphas() -> Array:
@@ -394,6 +438,21 @@ func test_stun_holds_until_cleared():
 	assert_eq(visual._state, CharacterVisual.State.STUN)
 	visual.set_state(CharacterVisual.State.IDLE)
 	assert_true(visual.is_idle())
+
+
+func test_stun_flows_into_its_loop_and_the_wake_up_ends_in_idle():
+	visual.set_state(CharacterVisual.State.STUN)
+	for step in _label_length("stun") - 1:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._label, "stun", "on the last frame of stun")
+	visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._label, "stun2", "one step later")
+	visual.exit_stun()
+	for step in _label_length("outofstun") - 1:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._state, CharacterVisual.State.STUN, "on the last frame of outofstun")
+	visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._state, CharacterVisual.State.IDLE, "one step later")
 
 
 func test_matrixless_placement_keeps_its_depths_matrix():

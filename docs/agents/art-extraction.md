@@ -135,11 +135,11 @@ extracting it.
   (`5045c5c`, `8ef2139`).
 - **Export at 2x, 4x or 5x and let Godot scale down.** Halls, skies, hub art,
   battle chrome, store art and Window chrome (`window_chrome.py`) go at 4x, and
-  orbs, faces and class cards at 5x.
+  orbs, faces, class cards and the hotbar icons (`hotbar_icons.py`) at 5x.
   Dolls, VFX, the item, buff and ability icons and the start screen backgrounds
   go at 2x. The Floating numbers (`floating_numbers.py`) go at 4x, because the
   critical label starts at 2.84x and the other labels start at 1.78x. The
-  rig's clips (`rig_clips.py`) go at 2x, the window's default scale, as the
+  Shield clip (`shield_clip.py`) goes at 2x, the window's default scale, as the
   dolls do.
 - **ffdec thins the blur on large filtered objects, at any zoom.**
   `Filtering.boxBlurSingleIterationTwoPass` shrinks both box widths until
@@ -181,3 +181,71 @@ extracting it.
   `-Xdock` flags that register a macOS Dock app which can steal focus mid-run.
   It lives there rather than in the app bundle, which is not version controlled
   (`53e24ac`).
+
+## Screen compare tool
+
+`just compare-screen <entry>` scores a capture of a Screen or Window in the
+port against ffdec's render of the same SWF frame, with text hidden
+(spec/107-ui-foundation.md, Part 5). The rect test checks where a piece lands.
+This tool checks how it looks: the art, the fills and the shadows.
+
+- **It never runs in `just gut`.** It needs the gitignored SWF, ffdec and a
+  capture from a drawing window, so run it by hand. `just pytest` covers its
+  arithmetic and its config rules without any of the three.
+- **The config is `dev/screen_compare/screens.json`.** Each Screen or Window
+  build issue adds one entry: the scene and one or both modes. `chrome` scores
+  the whole frame with every edit text stripped against the scene with every
+  Label hidden. `panels` scores only the scene nodes in `nodes` against only
+  the frame depths that place them. The tool and the capture scene both read
+  this file, so a new entry does not change the tool.
+  `just compare-screen --list` prints the entries.
+- **The config types no SWF number.** The tool reads the scene's timeline, its
+  frame label and the depth of each `panels` node from `SCENES` in
+  `dev/urchin_dev/swf/extract/screen_rects.py`, so the scene has to be there
+  first, as the rect test already needs. A `panels` node has to be a piece
+  that `SCENES` places by a depth of the frame, with no `instance` and no
+  `inner_depth`.
+- **How to run it.**
+  1. Run `just compare-screen <entry>`. It lists each capture that is missing,
+     with the arguments and the path for it.
+  2. For each one, call the godot-mcp `run_scene` tool on
+     `res://dev/screen_compare/capture.tscn` with `embedded` true and those
+     arguments, then `capture_screenshot` with that `savePath`. Each mode needs
+     two captures, one over magenta and one over green. The pixels that are
+     the same in both are the pixels the scene covers, and only those are
+     scored.
+  3. Run `just compare-screen <entry>` again. It prints p50, p90 and p99 of the
+     largest channel difference, and the control's p99. It writes
+     `<mode>_reference.png` and `<mode>_diff.png` beside the captures, in
+     `tasks/screen_compare/<entry>/`, which is git-ignored.
+- **The bar and the control.** A mode passes when its p99 is at or under its
+  `bar` and the control is over the bar. The control scores the same capture
+  against the reference moved 20 px to the right, so a bar that a wrong layout
+  can pass fails the run. Write `"bar": null` in a new entry, and set the bar
+  to the p99 of the first run that looks right in the diff image. The first
+  entry, `victory_left_panel` in `panels` mode, scored p99 2 with the control
+  at 30.
+- **How run-time state is frozen.** The capture scene never starts the game.
+  It instantiates the entry's scene alone, with no save, no battle and no host
+  scene, waits one frame for the containers, and turns the scene's processing
+  off. The scene then shows what its `.tscn` holds. ffdec runs no ActionScript,
+  so the reference shows the frame as the timeline places it: empty slots and
+  no data. A Screen or Window therefore has to show that same state when it is
+  instantiated with no data. Do not add a second way to set state for a
+  capture. If the scene needs data to draw a piece, score that piece in a
+  `panels` entry without it, or leave it to the rect test.
+- **What the port leaves out is stripped.** When an ADR leaves a character
+  of the frame out of the port, name its depth in the scene's `left_out` in
+  `SCENES`. `chrome` mode strips those characters from the reference. The
+  title leaves out the Armor Games logo and copyright line this way (ADR 0002).
+- **Hidden nodes keep their place.** The capture scene hides a node by making
+  its own drawing clear (`self_modulate`), not with `visible`, because a hidden
+  child leaves a `FloatBox` and the pieces after it would move. A node whose
+  shader ignores `COLOR` stays visible, so check the capture.
+- **Faces are left out.** The tool reads the scene's `face` pieces from
+  `test/fixtures/screen_rects.json` and removes them from the mask. The
+  game sets each face from its data, and ffdec runs no ActionScript, so the
+  reference cannot hold the same face. The `chrome` render of KRINMENU's `win`
+  frame shows one face in all three rows.
+- **Captures load as they are.** The godot-mcp captures are sRGB at the Stage
+  size, 800x575. The tool refuses any other size.

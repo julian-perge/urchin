@@ -61,7 +61,7 @@ var _doll_offset: Vector2 = Vector2.ZERO
 @onready var _doll: CharacterVisual = $Doll
 @onready var _overlay: UnitOverlay = $Overlay
 @onready var _flash: ResultFlash = $ResultFlash
-@onready var _shield_clip: RigClip = $ShieldClip
+@onready var _shield_clip: ShieldClip = $ShieldClip
 
 
 # Call once, after the presenter is in the tree. It leaves the fighter drawn.

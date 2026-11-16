@@ -33,11 +33,12 @@ func after_each():
 	GameTooltip.hide_tooltip()
 
 
-func test_main_menu_builds_slot_buttons():
+func test_main_menu_builds_slot_rows():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	var buttons = menu.slot_buttons.get_children()
-	assert_eq(buttons.size(), GameData.NUM_SLOTS, "one button per save slot")
+	var rows = menu.get_node("SlotPanel/Rows").get_children()
+	assert_eq(rows.size(), GameData.NUM_SLOTS, "one row per save slot")
+	assert_false(menu.get_node("SlotPanel").has_node("Layout"), "the slot buttons VBox is gone")
 	assert_false(menu.new_game_panel.visible, "new-game panel starts hidden")
 	# Count the cards, not every child - the picker also holds a name label per card.
 	var cards = menu.class_picker.get_children().filter(func(c): return c is TextureButton)
@@ -122,43 +123,173 @@ func test_hovering_a_card_again_mid_fade_replaces_the_running_fade():
 const MENU_SAVE_DIR: String = "user://test_main_menu_saves/"
 
 
-# The original opens on New Game and Load Game, MENU[21] and MENU[22]
-# (frame_56/DoAction.as:1-2), with the slot list behind both.
-func test_main_menu_opens_on_new_game_and_load_game():
+const TITLE_CAPTIONS: String = "TitlePanel/Captions"
+const BACK_PANELS: Array[String] = ["ModePanel", "NamePanel", "SlotPanel", "NewGamePanel", "OptionsPanel"]
+
+
+# The original opens on mainMenu, root frame 46, whose captions are MENU[18],
+# MENU[20] and MENU[91] (frame_46/DoAction_3.as:2-6). The two links to the
+# publisher's site between them are left out (ADR 0002).
+func test_main_menu_opens_on_the_title():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	assert_true(menu.get_node("ModePanel").visible, "the menu opens on the choice")
-	assert_eq(menu.get_node("ModePanel/NewGameLabel").text, "New Game")
-	assert_eq(menu.get_node("ModePanel/LoadGameLabel").text, "Load Game")
-	assert_false(menu.get_node("NamePanel").visible, "the name screen starts hidden")
-	assert_false(menu.get_node("SlotPanel").visible, "the slot list starts hidden")
+	assert_true(menu.get_node("TitlePanel").visible, "the menu opens on the title")
+	assert_eq(menu.get_node(TITLE_CAPTIONS + "/PlaySlot/Caption").text, "Start!")
+	assert_eq(menu.get_node(TITLE_CAPTIONS + "/GameManualSlot/Caption").text, "Game Manual")
+	assert_eq(menu.get_node(TITLE_CAPTIONS + "/CreditsSlot/Caption").text, "Credits")
+	assert_eq(menu.get_node(TITLE_CAPTIONS).get_child_count(), 3, "and no other caption")
+	for panel in BACK_PANELS:
+		assert_false(menu.get_node(panel).visible, "%s starts hidden" % panel)
 
 
-# Each rect is an edit text, a hit button or a shape that root frame 56
-# (subMenu), 64 (nameMenu) or 74 (dataMenu) places, and Title's is the logo,
-# sprite 321.
-func test_main_menu_screens_use_the_frame_56_64_and_74_rects():
+# The title's first caption goes to subMenu (DefineButton2_2692 on(release)),
+# New Game and Load Game, MENU[21] and MENU[22] (frame_56/DoAction.as:1-2).
+func test_play_on_the_title_shows_new_game_and_load_game():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node(TITLE_CAPTIONS + "/PlaySlot/HitButton").pressed.emit()
+	assert_true(menu.get_node("ModePanel").visible, "Play shows the choice")
+	assert_false(menu.get_node("TitlePanel").visible, "in place of the title")
+	assert_eq(menu.get_node("ModePanel/Captions/NewGameSlot/Caption").text, "New Game")
+	assert_eq(menu.get_node("ModePanel/Captions/LoadGameSlot/Caption").text, "Load Game")
+
+
+# The choice shows the logo, sprite 321, where the port once typed "Sonny 2".
+# Its third caption, PvP Arena (edit text 2705), is left out with the arena
+# (docs/adr/0006-leave-out-the-pvp-arena.md).
+func test_the_choice_shows_the_logo_and_no_arena_caption():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	var choice: ModePanel = menu.get_node("ModePanel")
+	assert_false(choice.has_node("Title"), "the 'Sonny 2' Label is gone")
+	var logo: TextureRect = choice.get_node("Logo")
+	assert_eq(logo.texture.resource_path, "res://assets/ui/menu/logo.png")
+	assert_eq(choice.get_node("Captions").get_child_count(), 2, "New Game and Load Game only")
+	assert_eq(choice.global_position, Vector2.ZERO, "the choice sits at the Stage's top left")
+	assert_eq(choice.size, Vector2(800.0, 575.0))
+
+
+# Game Manual and Credits open Screens the port does not have yet, so a click
+# on either leaves the title up (spec/107-title-slots.md, The title).
+func test_game_manual_and_credits_leave_the_title_up():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	var title: TitlePanel = menu.get_node("TitlePanel")
+	watch_signals(title)
+	menu.get_node(TITLE_CAPTIONS + "/GameManualSlot/HitButton").pressed.emit()
+	menu.get_node(TITLE_CAPTIONS + "/CreditsSlot/HitButton").pressed.emit()
+	assert_signal_emitted(title, "game_manual_pressed")
+	assert_signal_emitted(title, "credits_pressed")
+	assert_true(title.visible, "the title stays up")
+	for panel in BACK_PANELS:
+		assert_false(menu.get_node(panel).visible, "%s stays hidden" % panel)
+
+
+# Returns one message for each panel whose Back does not swap that panel for
+# the title.
+func _back_problems(menu: Control) -> Array[String]:
+	var found: Array[String] = []
+	for panel_name in BACK_PANELS:
+		var panel: Control = menu.get_node(panel_name)
+		menu._show_screen(panel)
+		(panel.get_node("Back/HitButton") as Button).pressed.emit()
+		if not menu.get_node("TitlePanel").visible:
+			found.append("%s: Back does not show the title" % panel_name)
+		if panel.visible:
+			found.append("%s: Back leaves the panel up" % panel_name)
+	return found
+
+
+# Back goes to mainMenu from every menu frame that places it
+# (DefineButton2_2702 on(release), line 2).
+func test_back_on_every_panel_shows_the_title():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	assert_eq(_back_problems(menu), [] as Array[String])
+
+
+func test_control_a_back_with_no_target_fails_the_back_check():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	(menu.get_node("SlotPanel/Back") as MenuBack).pressed.disconnect(menu._on_back_pressed)
+	assert_eq(_back_problems(menu), [
+		"SlotPanel: Back does not show the title",
+		"SlotPanel: Back leaves the panel up",
+	] as Array[String])
+
+
+# Each panel's Back is the shared scene, whose own pieces the rect test checks.
+# An instance that sets a layout mode loses its root's offsets (docs/agents/godot.md),
+# so this checks that each one still covers the Stage from its top left.
+func test_every_panel_places_the_shared_back_over_the_whole_stage():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	for panel in BACK_PANELS:
+		var back: MenuBack = menu.get_node("%s/Back" % panel)
+		assert_eq(back.global_position, Vector2.ZERO, "%s Back position" % panel)
+		assert_eq(back.size, Vector2(800.0, 575.0), "%s Back size" % panel)
+		assert_eq((back.get_node("Caption") as Label).text, "Back", "%s Back caption, MENU[26]" % panel)
+
+
+# The background and the title are the shared scenes too, at the Stage's top left.
+func test_the_menu_places_the_shared_background_and_the_title_at_the_stage_origin():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	for path in ["Background", "TitlePanel"]:
+		var piece: Control = menu.get_node(path)
+		assert_eq(piece.global_position, Vector2.ZERO, "%s position" % path)
+		assert_eq(piece.size, Vector2(800.0, 575.0), "%s size" % path)
+
+
+# A caption's Glow and DropShadow are a black outline and a black shadow on the
+# MenuCaption variation of the project Theme (spec/107-title-slots.md, The
+# caption look), so no scene sets them itself.
+func test_menu_captions_take_their_outline_and_shadow_from_the_theme():
+	var theme: Theme = ThemeDB.get_project_theme()
+	assert_eq(theme.get_type_variation_base("MenuCaption"), &"Label")
+	assert_eq(theme.get_color("font_color", "MenuCaption"), Color.WHITE)
+	assert_eq(theme.get_color("font_outline_color", "MenuCaption"), Color.BLACK)
+	assert_eq(theme.get_color("font_shadow_color", "MenuCaption"), Color.BLACK)
+	assert_eq(theme.get_constant("outline_size", "MenuCaption"), 4, "the outline for the Glow")
+	assert_eq(theme.get_constant("shadow_outline_size", "MenuCaption"), 4, "the shadow is as wide as the outline")
+	assert_eq(theme.get_constant("shadow_offset_x", "MenuCaption"), 1, "the shadow for the DropShadow")
+	assert_eq(theme.get_constant("shadow_offset_y", "MenuCaption"), 1)
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	var captions: Array[String] = [
+		"ModePanel/Back/Caption",
+		"ModePanel/Captions/NewGameSlot/Caption",
+		"ModePanel/Captions/LoadGameSlot/Caption",
+		"SlotPanel/Back/Caption",
+	]
+	for slot in range(1, GameData.NUM_SLOTS + 1):
+		for node in ["SlotLabel", "Number"]:
+			captions.append("SlotPanel/Rows/Row%d/%s" % [slot, node])
+	for slot in ["PlaySlot", "GameManualSlot", "CreditsSlot"]:
+		captions.append("%s/%s/Caption" % [TITLE_CAPTIONS, slot])
+	for path in captions:
+		var caption: Label = menu.get_node(path)
+		assert_eq(caption.theme_type_variation, &"MenuCaption", path)
+		for override in ["font_color", "font_outline_color", "font_shadow_color"]:
+			assert_false(caption.has_theme_color_override(override), "%s sets no %s" % [path, override])
+		assert_false(caption.has_theme_constant_override("outline_size"), "%s sets no outline size" % path)
+
+
+# Each rect is an edit text, a hit button or a shape that root frame 64
+# (nameMenu) places. The rect test checks the choice, frame 56.
+func test_the_name_screen_uses_the_frame_64_rects():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
 	var texts: Dictionary = {
-		"ModePanel/Title": Rect2(123.2, 119.8, 549.55, 97.7),
-		"ModePanel/NewGameLabel": Rect2(241.0, 290.1, 304.1, 45.6),
-		"ModePanel/LoadGameLabel": Rect2(241.0, 350.1, 304.1, 45.6),
 		"NamePanel/OkLabel": Rect2(339.4, 330.1, 121.25, 51.3),
-		"NamePanel/BackLabel": Rect2(488.15, 532.15, 304.1, 30.85),
-		"SlotPanel/BackLabel": Rect2(488.15, 532.15, 304.1, 30.85),
 	}
 	for path in texts:
 		var label: Label = menu.get_node(path)
 		assert_almost_eq(label.position, texts[path].position, Vector2(0.01, 0.01), "%s position" % path)
 		assert_almost_eq(label.size.x, texts[path].size.x, 0.01, "%s width" % path)
 	var boxes: Dictionary = {
-		"ModePanel/NewGameButton": Rect2(241.06, 290.7, 302.27, 40.0),
-		"ModePanel/LoadGameButton": Rect2(241.06, 350.7, 302.27, 40.0),
 		"NamePanel/NameInput": Rect2(185.55, 252.2, 426.1, 45.25),
 		"NamePanel/OkButton": Rect2(368.33, 336.6, 61.83, 30.0),
-		"NamePanel/BackButton": Rect2(604.44, 534.45, 188.12, 26.8),
-		"SlotPanel/BackButton": Rect2(604.44, 534.45, 188.12, 26.8),
 	}
 	for path in boxes:
 		var box: Control = menu.get_node(path)
@@ -168,25 +299,25 @@ func test_main_menu_screens_use_the_frame_56_64_and_74_rects():
 
 # New Game asks for the name before the slot list (DefineButton2_2707 goes to
 # nameMenu and its OK!, DefineButton2_2710, goes to dataMenu), and Back returns
-# to the choice from either screen.
+# to the title from either screen.
 func test_new_game_asks_for_the_name_before_the_slot_list():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	assert_true(menu.get_node("NamePanel").visible, "New Game opens the name screen")
 	assert_false(menu.get_node("ModePanel").visible, "in place of the choice")
 	assert_false(menu.get_node("SlotPanel").visible, "before the slot list")
 	assert_false(menu.new_game_panel.has_node("NameInput"), "class select no longer asks for the name")
-	menu.get_node("NamePanel/BackButton").pressed.emit()
-	assert_true(menu.get_node("ModePanel").visible, "Back on the name screen returns to the choice")
+	menu.get_node("NamePanel/Back/HitButton").pressed.emit()
+	assert_true(menu.get_node("TitlePanel").visible, "Back on the name screen returns to the title")
 	assert_false(menu.get_node("NamePanel").visible)
 
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	assert_true(menu.get_node("SlotPanel").visible, "OK! opens the slot list")
 	assert_false(menu.get_node("NamePanel").visible)
-	menu.get_node("SlotPanel/BackButton").pressed.emit()
-	assert_true(menu.get_node("ModePanel").visible, "Back on the slot list returns to the choice")
+	menu.get_node("SlotPanel/Back/HitButton").pressed.emit()
+	assert_true(menu.get_node("TitlePanel").visible, "Back on the slot list returns to the title")
 	assert_false(menu.get_node("SlotPanel").visible)
 
 
@@ -199,11 +330,11 @@ func test_new_game_starts_in_any_used_slot_and_keeps_its_save_until_the_first_sa
 	_write_test_slots([1, 2, 3, 4])
 	for slot in range(1, GameData.NUM_SLOTS + 1):
 		var menu = await _menu_without_scene_change()
-		menu.get_node("ModePanel/NewGameButton").pressed.emit()
+		menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 		menu.name_input.text = "Fresh%d" % slot
 		menu.get_node("NamePanel/OkButton").pressed.emit()
 		var loaded_before: PlayerSave = GameData.current_save
-		menu.slot_buttons.get_child(slot - 1).pressed.emit()
+		_slot_button(menu, slot).pressed.emit()
 		assert_true(menu.new_game_panel.visible, "used slot %d goes on to class select" % slot)
 		assert_false(menu.get_node("SlotPanel").visible, "slot %d leaves the slot list" % slot)
 		assert_same(GameData.current_save, loaded_before, "slot %d loads nothing" % slot)
@@ -227,9 +358,9 @@ func test_new_game_starts_in_any_used_slot_and_keeps_its_save_until_the_first_sa
 func test_starting_a_new_game_in_an_empty_slot_writes_no_save():
 	_write_test_slots([])
 	var menu = await _menu_without_scene_change()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
-	menu.slot_buttons.get_child(2).pressed.emit()
+	_slot_button(menu, 3).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
 	assert_false(ZoneManager.pending_battle.is_empty(), "START goes on to the first fight")
@@ -246,9 +377,9 @@ func test_starting_a_new_game_in_an_empty_slot_writes_no_save():
 func test_new_game_with_the_tutorial_on_goes_on_to_battle_2_after_cs_intro():
 	_write_test_slots([])
 	var menu = await _menu_without_scene_change()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
-	menu.slot_buttons.get_child(0).pressed.emit()
+	_slot_button(menu, 1).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
 	assert_true(menu.get_node("OptionsPanel/TutorialToggle").button_pressed, "the toggle starts on")
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
@@ -265,9 +396,9 @@ func test_new_game_with_the_tutorial_on_goes_on_to_battle_2_after_cs_intro():
 func test_new_game_with_the_tutorial_on_puts_the_tutorial_moves_on_the_bar():
 	_write_test_slots([])
 	var menu = await _menu_without_scene_change()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
-	menu.slot_buttons.get_child(0).pressed.emit()
+	_slot_button(menu, 1).pressed.emit()
 	menu.class_picker.get_node("Hydraulic").pressed.emit()
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
 
@@ -286,9 +417,9 @@ func test_new_game_with_the_tutorial_on_puts_the_tutorial_moves_on_the_bar():
 func test_new_game_with_the_tutorial_off_goes_on_to_battle_100_after_cs_intro2():
 	_write_test_slots([])
 	var menu = await _menu_without_scene_change()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
-	menu.slot_buttons.get_child(0).pressed.emit()
+	_slot_button(menu, 1).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
 	menu.get_node("OptionsPanel/TutorialToggle").button_pressed = false
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
@@ -311,22 +442,77 @@ func test_new_game_with_the_tutorial_off_goes_on_to_battle_100_after_cs_intro2()
 func test_load_game_loads_a_used_slot_and_ignores_an_empty_one():
 	_write_test_slots([1])
 	var menu = await _menu_without_scene_change()
-	menu.get_node("ModePanel/LoadGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/LoadGameSlot/HitButton").pressed.emit()
 	assert_true(menu.get_node("SlotPanel").visible, "Load Game opens the slot list")
 	assert_false(menu.get_node("NamePanel").visible, "without asking for a name")
-	assert_eq(menu.slot_buttons.get_child(2).text, "Slot 3 - < Empty Slot >")
+	assert_eq(_slot_row(menu, 3).get_node("SaveName").text, "< Empty Slot >")
 
 	var loaded_before: PlayerSave = GameData.current_save
-	menu.slot_buttons.get_child(2).pressed.emit()
+	_slot_button(menu, 3).pressed.emit()
 	assert_not_called(menu, "_enter_game")
 	assert_same(GameData.current_save, loaded_before, "the empty slot loads nothing")
 	assert_true(menu.get_node("SlotPanel").visible, "and the slot list stays up")
 	assert_false(menu.new_game_panel.visible, "and no new game starts")
 
-	menu.slot_buttons.get_child(0).pressed.emit()
+	_slot_button(menu, 1).pressed.emit()
 	assert_called(menu, "_enter_game")
 	assert_eq(GameData.current_slot, 1, "the used slot loads")
 	assert_eq(GameData.current_save.name_user, "Old1", "with its own save")
+	_clear_test_slots()
+
+
+# Each row is slotNamerText, MENU[23], then the slot's number and the save's
+# nameUser, or "< Empty Slot >" when the slot has none (frame_74/DoAction.as:1-11).
+# The original shows no level and no zone. "(corrupted)" is the port's own, for
+# a slot file that is not a save (spec/107-title-slots.md, Open questions).
+func test_slot_rows_show_the_name_or_empty_slot_with_no_level_or_zone():
+	_write_test_slots([1, 4])
+	ResourceSaver.save(Resource.new(), MENU_SAVE_DIR + "slot2.tres")
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	var names: Array[String] = []
+	for slot in range(1, GameData.NUM_SLOTS + 1):
+		var row: Control = _slot_row(menu, slot)
+		assert_eq(row.get_node("SlotLabel").text, "Slot", "row %d caption, MENU[23]" % slot)
+		assert_eq(row.get_node("Number").text, str(slot), "row %d number" % slot)
+		assert_eq(row.get_node("HitButton").text, "", "row %d hit button draws no text" % slot)
+		names.append(row.get_node("SaveName").text)
+	assert_eq(names, ["Old1", "(corrupted)", "< Empty Slot >", "Old4"] as Array[String])
+	_clear_test_slots()
+
+
+# The hit button covers the "Slot" caption and the number, not the name
+# (DefineButton2_2719 to 2722), so a click on the name reaches nothing. The
+# slots are empty and the menu is in Load Game mode, so a click that does reach
+# a hit button loads nothing.
+func test_a_click_on_the_name_column_does_nothing():
+	_write_test_slots([])
+	# GUT's window sits above everything in the root viewport and would take
+	# the clicks, so the menu gets a viewport of its own.
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 575)
+	add_child_autofree(viewport)
+	var menu = MainMenuScene.instantiate()
+	viewport.add_child(menu)
+	await get_tree().process_frame
+	menu.get_node("ModePanel/Captions/LoadGameSlot/HitButton").pressed.emit()
+	var panel: Control = menu.get_node("SlotPanel")
+	watch_signals(panel)
+	assert_eq(panel.mouse_filter, Control.MOUSE_FILTER_IGNORE, "the panel takes no click")
+	assert_eq(panel.get_node("Rows").mouse_filter, Control.MOUSE_FILTER_IGNORE, "nor the column")
+	for slot in range(1, GameData.NUM_SLOTS + 1):
+		var row: Control = _slot_row(menu, slot)
+		var save_name: Label = row.get_node("SaveName")
+		var hit: Button = row.get_node("HitButton")
+		assert_eq(row.mouse_filter, Control.MOUSE_FILTER_IGNORE, "row %d takes no click" % slot)
+		assert_eq(save_name.mouse_filter, Control.MOUSE_FILTER_IGNORE, "row %d name takes no click" % slot)
+		assert_false(hit.get_global_rect().intersects(save_name.get_global_rect()), "row %d hit button stays off the name" % slot)
+		assert_true(hit.get_global_rect().intersects(row.get_node("SlotLabel").get_global_rect()), "row %d hit button covers the caption" % slot)
+		_click(save_name)
+		assert_signal_emit_count(panel, "slot_pressed", slot - 1, "a click on row %d's name presses no slot" % slot)
+		_click(hit)
+		assert_signal_emitted_with_parameters(panel, "slot_pressed", [slot])
+		assert_signal_emit_count(panel, "slot_pressed", slot, "a click on row %d's hit button presses it" % slot)
 	_clear_test_slots()
 
 
@@ -338,14 +524,14 @@ func test_new_game_slots_warn_that_a_new_game_replaces_the_save():
 	GameTooltip.hide_tooltip()
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	menu.get_node("ModePanel/LoadGameButton").pressed.emit()
-	var slot: Button = menu.slot_buttons.get_child(0)
+	menu.get_node("ModePanel/Captions/LoadGameSlot/HitButton").pressed.emit()
+	var slot: Button = _slot_button(menu, 1)
 	slot.mouse_entered.emit()
 	assert_false(GameTooltip._root.visible, "a Load Game slot doesn't warn")
 	slot.mouse_exited.emit()
 
-	menu.get_node("SlotPanel/BackButton").pressed.emit()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("SlotPanel/Back/HitButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	slot.mouse_entered.emit()
 	assert_true(GameTooltip._root.visible, "a New Game slot warns")
@@ -358,18 +544,42 @@ func test_new_game_slots_warn_that_a_new_game_replaces_the_save():
 	assert_false(GameTooltip._root.visible, "leaving the slot hides the warning")
 
 
+# The warning opens beside the slot the pointer is on, so it moves down by the
+# distance between two rows' hit buttons when the pointer moves between them.
+func test_the_new_game_warning_opens_beside_the_hovered_slot():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	var first: Button = _slot_button(menu, 1)
+	var third: Button = _slot_button(menu, 3)
+	first.mouse_entered.emit()
+	await wait_process_frames(2)
+	var first_y: float = GameTooltip._root.global_position.y
+	first.mouse_exited.emit()
+	third.mouse_entered.emit()
+	await wait_process_frames(2)
+	assert_almost_eq(
+		GameTooltip._root.global_position.y - first_y,
+		third.global_position.y - first.global_position.y,
+		0.01,
+		"the warning follows the pointer from slot 1 to slot 3"
+	)
+	assert_gt(third.global_position.y, first.global_position.y, "slot 3 sits under slot 1")
+
+
 # The name field starts at SYSTEM[34], "< Enter Name Here >", each time the name
 # screen opens (frame_64/DoAction.as:1, frame_1/DoAction.as:101), and edit text
 # 2712 has no HasMaxLength flag, so nothing caps the name's length.
 func test_new_game_starts_the_name_at_the_original_prompt_with_no_length_limit():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	assert_eq(menu.name_input.text, "< Enter Name Here >", "the field starts at the prompt")
 	assert_eq(menu.name_input.max_length, 0, "with no limit on the name's length")
 	menu.name_input.text = "Typed then dropped"
-	menu.get_node("NamePanel/BackButton").pressed.emit()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("NamePanel/Back/HitButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	assert_eq(menu.name_input.text, "< Enter Name Here >", "opening the name screen again resets it")
 
 
@@ -380,18 +590,18 @@ func test_new_game_starts_the_name_at_the_original_prompt_with_no_length_limit()
 func test_new_game_keeps_the_name_as_typed_even_untouched_or_empty():
 	_write_test_slots([])
 	var untouched = await _menu_without_scene_change()
-	untouched.get_node("ModePanel/NewGameButton").pressed.emit()
+	untouched.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	_start_from_the_name_screen(untouched)
 	assert_eq(GameData.current_save.name_user, "< Enter Name Here >", "an untouched field names the game after the prompt")
 
 	var emptied = await _menu_without_scene_change()
-	emptied.get_node("ModePanel/NewGameButton").pressed.emit()
+	emptied.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	emptied.name_input.text = ""
 	_start_from_the_name_screen(emptied)
 	assert_eq(GameData.current_save.name_user, "", "an emptied field starts a game with no name")
 
 	var spaced = await _menu_without_scene_change()
-	spaced.get_node("ModePanel/NewGameButton").pressed.emit()
+	spaced.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	spaced.name_input.text = " Newbie "
 	_start_from_the_name_screen(spaced)
 	assert_eq(GameData.current_save.name_user, " Newbie ", "and a typed name keeps its spaces")
@@ -426,41 +636,17 @@ func test_the_game_calls_the_player_sonny_whatever_the_save_is_named():
 	assert_eq(inventory._portrait_frames[0].tooltip_text, "Sonny", "the player's portrait in the inventory window")
 
 
-# Class select and settings place the same Back as the other menu frames, edit
-# text 2703 over hit button 2702 at depths 35 and 36 of root frames 84
-# (classMenu) and 93 (optionsMenu), captioned MENU[26] (frame_46/DoAction.as:1).
-func test_class_select_and_settings_back_use_the_frame_84_and_93_rects():
+# Back on settings goes to mainMenu (DefineButton2_2702 on(release), line 2),
+# not to class select, the panel the player came from.
+func test_back_on_settings_hides_class_select_too():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	for panel in ["NewGamePanel", "OptionsPanel"]:
-		var label: Label = menu.get_node("%s/BackLabel" % panel)
-		assert_eq(label.text, "Back", "%s Back caption" % panel)
-		assert_almost_eq(label.position, Vector2(488.15, 532.15), Vector2(0.01, 0.01), "%s Back text position" % panel)
-		assert_almost_eq(label.size.x, 304.1, 0.01, "%s Back text width" % panel)
-		var button: Button = menu.get_node("%s/BackButton" % panel)
-		assert_true(button.flat, "%s Back is a bare hit area under its text" % panel)
-		assert_almost_eq(button.position, Vector2(604.44, 534.45), Vector2(0.01, 0.01), "%s Back hit area position" % panel)
-		assert_almost_eq(button.size, Vector2(188.12, 26.8), Vector2(0.01, 0.01), "%s Back hit area size" % panel)
-
-
-# Back on class select and on settings goes to mainMenu in the original
-# (DefineButton2_2702 on(release), line 2), so both return to the first screen.
-func test_back_on_class_select_and_settings_returns_to_the_first_screen():
-	var menu = add_child_autofree(MainMenuScene.instantiate())
-	await get_tree().process_frame
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
-	menu.slot_buttons.get_child(0).pressed.emit()
-	menu.get_node("NewGamePanel/BackButton").pressed.emit()
-	assert_true(menu.get_node("ModePanel").visible, "Back on class select returns to the first screen")
-	assert_false(menu.new_game_panel.visible)
-
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
-	menu.get_node("NamePanel/OkButton").pressed.emit()
-	menu.slot_buttons.get_child(0).pressed.emit()
+	_slot_button(menu, 1).pressed.emit()
 	menu.class_picker.get_node("Psychological").pressed.emit()
-	menu.get_node("OptionsPanel/BackButton").pressed.emit()
-	assert_true(menu.get_node("ModePanel").visible, "Back on settings returns to the first screen")
+	menu.get_node("OptionsPanel/Back/HitButton").pressed.emit()
+	assert_true(menu.get_node("TitlePanel").visible, "Back on settings returns to the title")
 	assert_false(menu.options_panel.visible)
 	assert_false(menu.new_game_panel.visible, "rather than to class select")
 
@@ -469,9 +655,29 @@ func test_back_on_class_select_and_settings_returns_to_the_first_screen():
 # starting a new game from the name screen.
 func _start_from_the_name_screen(menu: Control) -> void:
 	menu.get_node("NamePanel/OkButton").pressed.emit()
-	menu.slot_buttons.get_child(0).pressed.emit()
+	_slot_button(menu, 1).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+
+
+# A left click on the control's center, pushed through the GUI input of the
+# viewport that holds the control.
+func _click(control: Control) -> void:
+	for pressed in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.pressed = pressed
+		event.position = control.get_global_rect().get_center()
+		event.global_position = event.position
+		control.get_viewport().push_input(event, true)
+
+
+func _slot_row(menu: Control, slot: int) -> Control:
+	return menu.get_node("SlotPanel/Rows/Row%d" % slot)
+
+
+func _slot_button(menu: Control, slot: int) -> Button:
+	return _slot_row(menu, slot).get_node("HitButton")
 
 
 # A partial double of the menu whose _enter_game does nothing, because the real

@@ -5,6 +5,7 @@
 #   assets/ui/menu/class_cards/<class>_gray.png  - resting card
 #   assets/ui/menu/class_cards/<class>.png       - hovered card, full color
 #   assets/ui/menu/start_background.png          - the shared menu background
+#   assets/ui/menu/start_background.json         - its rect, size and zoom
 #   assets/ui/menu/logo.png                      - the SONNY 2 logo with its Glow
 #   assets/ui/menu/logo.json                     - the logo's rect, size and zoom
 #
@@ -65,7 +66,6 @@ from __future__ import annotations
 
 import json
 import sys
-from pathlib import Path
 
 from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render, strip, timeline
@@ -98,6 +98,8 @@ BACKGROUND_MAX_DEPTH = 5
 TITLE_LABEL = "mainMenu"
 LOGO = 321
 LOGO_RECORD = OUT_MENU / "logo.json"
+BACKGROUND_PNG = OUT_MENU / "start_background.png"
+BACKGROUND_RECORD = OUT_MENU / "start_background.json"
 
 
 def logo_job(index) -> render.Job:
@@ -117,7 +119,8 @@ def logo_job(index) -> render.Job:
     return render.Job(0, frame_number, LOGO_ZOOM, only_depths=(depths[0],))
 
 
-def logo_record(job: render.Job, cut: render.Trimmed) -> dict:
+def cut_record(job: render.Job, cut: render.Trimmed) -> dict:
+    """-> what the rect record needs to place the PNG of `cut`."""
     return {
         "rect": [round(v, 4) for v in cut.rect],
         "size": list(cut.image.size),
@@ -130,18 +133,25 @@ def write_logo(job: render.Job, frame: render.Frame) -> None:
     if cut is None:
         raise RuntimeError(f"the logo {LOGO} rendered fully transparent")
     png.save(cut.image, OUT_MENU / "logo.png")
-    record = logo_record(job, cut)
+    record = cut_record(job, cut)
     LOGO_RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
     print(f"wrote logo.png {record['rect']} {cut.image.size}", file=sys.stderr)
 
 
-def write_background(frame: render.Frame, stripped: int, out_path: Path) -> None:
+def write_background(frame: render.Frame, stripped: int) -> None:
     """Save the classMenu frame, drawn with every foreground character
-    deleted, as the background the menu screens share."""
-    image = frame.image()
-    png.save(image, out_path)
+    deleted, as the background the menu screens share. The frame is drawn over
+    the SWF's background colour, so it is opaque and the cut is the whole
+    Stage."""
+    cut = render.trim(frame)
+    if cut is None:
+        raise RuntimeError("the menu background rendered fully transparent")
+    png.save(cut.image, BACKGROUND_PNG)
+    record = cut_record(frame.job, cut)
+    BACKGROUND_RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
     print(
-        f"wrote {out_path} {image.size} ({stripped} foreground characters stripped)",
+        f"wrote {BACKGROUND_PNG.name} {record['rect']} {cut.image.size}"
+        f" ({stripped} foreground characters stripped)",
         file=sys.stderr,
     )
 
@@ -201,9 +211,7 @@ def main():
     }
     logo = logo_job(index)
     with render.frames(WEB_SWF, [background, logo, *card_jobs.values()]) as rendered:
-        write_background(
-            rendered[0], len(foreground), OUT_MENU / "start_background.png"
-        )
+        write_background(rendered[0], len(foreground))
         write_logo(logo, rendered[1])
         rects = write_cards(dict(zip(card_jobs, rendered[2:], strict=True)))
 

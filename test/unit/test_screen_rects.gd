@@ -540,3 +540,72 @@ func test_the_record_holds_the_text_of_static_fields_only() -> void:
 	var pieces: Dictionary = _record()["scenes"][RIGHT_COLUMN_SCENE]["pieces"]
 	assert_true(pieces["EuroSign"].has("text"), "the euro sign is static text")
 	assert_false(pieces["Amount"].has("text"), "the game fills the amount")
+
+
+const TITLE_SCENE: String = "res://scenes/ui/menu/title_panel.tscn"
+
+
+# A menu hit button draws nothing, so only this test can see one move.
+func test_control_a_title_hit_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(TITLE_SCENE)
+	(root.get_node("Captions/PlaySlot/HitButton") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][TITLE_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "Captions/PlaySlot/HitButton: top left")
+
+
+# A taller Play slot pushes the two slots after it 20 px down the FloatBox
+# column, so the caption and the hit button of each fail at their top left, and
+# each hit button at its bottom right too.
+func test_control_a_title_slot_20_px_taller_fails() -> void:
+	var root: Control = await _laid_out(TITLE_SCENE)
+	(root.get_node("Captions/PlaySlot") as Control).custom_minimum_size.y += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][TITLE_SCENE])
+	assert_eq(found.size(), 6, str(found))
+	for problem: String in found:
+		assert_false(problem.contains("PlaySlot"), problem)
+
+
+const MODE_SCENE: String = "res://scenes/ui/menu/mode_panel.tscn"
+
+
+# A New Game slot 20 px taller breaks the 60 px pitch of the choice, so Load
+# Game's caption fails at its top left and its hit button at both corners.
+func test_control_a_choice_slot_20_px_taller_fails() -> void:
+	var root: Control = await _laid_out(MODE_SCENE)
+	(root.get_node("Captions/NewGameSlot") as Control).custom_minimum_size.y += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][MODE_SCENE])
+	assert_eq(found.size(), 3, str(found))
+	for problem: String in found:
+		assert_string_contains(problem, "Captions/LoadGameSlot")
+
+
+const SLOT_SCENE: String = "res://scenes/ui/menu/slot_panel.tscn"
+
+
+# A menu hit button draws nothing, so only this test can see one move.
+func test_control_a_slot_hit_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(SLOT_SCENE)
+	(root.get_node("Rows/Row2/HitButton") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][SLOT_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_contains(problem, "Rows/Row2/HitButton")
+
+
+# The row pitches are 54, 57 and 54 px. A first row as tall as the second
+# moves the three rows under it 3 px down, so each of their four pieces fails
+# at its top left, each hit button at its bottom right too.
+func test_control_a_slot_row_with_the_wrong_pitch_fails() -> void:
+	var root: Control = await _laid_out(SLOT_SCENE)
+	var rows: Control = root.get_node("Rows")
+	(rows.get_node("Row1") as Control).custom_minimum_size.y = (rows.get_node("Row2") as Control).custom_minimum_size.y
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][SLOT_SCENE])
+	assert_eq(found.size(), 15, str(found))
+	for problem: String in found:
+		assert_false(problem.contains("Row1"), problem)

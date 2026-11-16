@@ -1,0 +1,35 @@
+{
+ "title": {
+  "scene": "res://scenes/main_menu.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 6
+   }
+  }
+ },
+ "choice": {
+  "scene": "res://test/fixtures/screen_rects/choice_screen.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 6
+   }
+  }
+ },
+ "slots": {
+  "scene": "res://test/fixtures/screen_rects/slots_screen.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 1
+   }
+  }
+ },
+ "victory_left_panel": {
+  "scene": "res://test/fixtures/screen_rects/victory_left_panel.tscn",
+  "modes": {
+   "panels": {
+    "nodes": ["LeftPanel"],
+    "bar": 2
+   }
+  }
+ }
+}
