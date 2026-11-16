@@ -289,6 +289,46 @@ def test_art_record_of_a_sprite_rect_adds_where_that_sprite_sits():
     assert entry["texture"] == "res://assets/ui/window/xp_gloss_victory.png"
 
 
+def test_shared_slot_art_uses_the_equip_placement_not_the_grid_placement(monkeypatch):
+    from types import SimpleNamespace
+
+    equip = SimpleNamespace(
+        character_id=2984, matrix=(1.0, 0.0, 0.0, 1.0, -6366, -1005)
+    )
+    grid = SimpleNamespace(character_id=2986, matrix=(1.0, 0.0, 0.0, 1.0, 2652, -1885))
+    monkeypatch.setattr(screen_rects, "origin_of", lambda *_: ORIGIN)
+    monkeypatch.setattr(screen_rects.timeline, "frame_of", lambda *_: 1)
+    monkeypatch.setattr(
+        screen_rects.timeline, "frames", lambda *_: [{828: equip, 30: grid}]
+    )
+    monkeypatch.setattr(
+        screen_rects,
+        "art_sources",
+        lambda: {
+            "slot_inventory": (
+                {
+                    "relative_to": "sprite 2986",
+                    "rect": [-15.5, -15.5, 31.0, 31.0],
+                    "size": [124, 124],
+                    "zoom": 4,
+                },
+                screen_rects.CHROME_TEXTURES,
+            )
+        },
+    )
+    scene = screen_rects.Scene(
+        3142,
+        "inventory",
+        {
+            "EquipSlot": screen_rects.Piece(
+                "art", 828, art="slot_inventory", rendered_at=30
+            )
+        },
+    )
+    piece = screen_rects.scene_record(None, scene)["pieces"]["EquipSlot"]
+    assert piece["rect"] == pytest.approx([66.7, 156.65, 31.0, 31.0])
+
+
 def test_art_record_refuses_a_sprite_rect_of_another_sprite():
     with pytest.raises(ValueError, match="sprite 2867"):
         screen_rects.art_record(
@@ -369,6 +409,26 @@ def test_one_solid_fill_refuses_a_shape_with_a_second_style_set():
 def test_one_solid_fill_is_the_fill_of_a_plain_box():
     sets = [StyleSet(((0, 0, 0, 255),), (), frozenset({1}), {})]
     assert screen_rects.one_solid_fill(sets, 7) == (0, 0, 0, 255)
+
+
+def test_outline_record_has_a_stroke_and_no_fill_or_shadow():
+    styles = [StyleSet((), ((20, (51, 51, 51, 255)),), frozenset(), {})]
+    entry = screen_rects.outline_record(
+        (-100, -200, 100, 200), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN, styles
+    )
+    assert entry == {
+        "kind": "outline",
+        "rect": [395.5, 212.4, 10.0, 20.0],
+        "line": "333333ff",
+        "border": 1,
+    }
+
+
+def test_outline_record_refuses_a_shape_with_fill():
+    with pytest.raises(ValueError, match="outline"):
+        screen_rects.outline_record(
+            (0, 0, 100, 100), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN, [panel_styles()]
+        )
 
 
 # The close button 2853: one record, drawn in the hit state only, of the

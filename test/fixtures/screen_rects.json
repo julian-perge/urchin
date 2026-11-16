@@ -1294,6 +1294,1020 @@
    ],
    "timeline": 3142
   },
+  "res://scenes/ui/menu/inventory_window.tscn": {
+   "frame": "inventory",
+   "origin": [
+    400.5,
+    222.4
+   ],
+   "pieces": {
+    "CenterOutline": {
+     "border": 1,
+     "kind": "outline",
+     "line": "333333ff",
+     "rect": [
+      321.75,
+      89.45,
+      158.35,
+      313.2
+     ]
+    },
+    "CenterPanel": {
+     "border": 1,
+     "fill": "1a1a1aff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      308.95,
+      82.15,
+      183.05,
+      326.5
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "LeftPanel": {
+     "border": 1,
+     "fill": "373737ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      47.5,
+      86.6,
+      249.05,
+      267.15
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "LeftPanel/Content/EquipDollView/Slot0": {
+     "kind": "art",
+     "rect": [
+      66.5,
+      156.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot1": {
+     "kind": "art",
+     "rect": [
+      247.4,
+      156.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot2": {
+     "kind": "art",
+     "rect": [
+      66.5,
+      196.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot3": {
+     "kind": "art",
+     "rect": [
+      247.4,
+      196.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot4": {
+     "kind": "art",
+     "rect": [
+      247.4,
+      236.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot5": {
+     "kind": "art",
+     "rect": [
+      106.5,
+      236.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot6": {
+     "kind": "art",
+     "rect": [
+      66.5,
+      236.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/Header/InfoRow/LevelLabel": {
+     "align": "center",
+     "color": "ccccccff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      94.0,
+      111.85,
+      162.95,
+      15.6
+     ]
+    },
+    "LeftPanel/Content/Header/NameRow/NameLabel": {
+     "align": "center",
+     "color": "ccccccff",
+     "font_size": 14.0,
+     "kind": "text",
+     "rect": [
+      94.0,
+      92.05,
+      162.95,
+      16.2
+     ]
+    },
+    "PartyBar": {
+     "border": 1,
+     "fill": "404040ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      47.5,
+      358.2,
+      249.05,
+      50.85
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "RightColumn/Amount": {
+     "align": "left",
+     "color": "fad95aff",
+     "font_size": 22.0,
+     "kind": "text",
+     "line_pitch": 24.0,
+     "rect": [
+      539.1,
+      373.55,
+      112.4,
+      24.55
+     ]
+    },
+    "RightColumn/BarPanel": {
+     "border": 1,
+     "fill": "404040ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      503.5,
+      358.2,
+      249.05,
+      50.85
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "RightColumn/DeleteSlot/Art": {
+     "kind": "art",
+     "rect": [
+      707.55,
+      368.425,
+      31.0,
+      31.25
+     ],
+     "size": [
+      124,
+      125
+     ],
+     "texture": "res://assets/ui/window/delete_slot.png",
+     "zoom": 4.0
+    },
+    "RightColumn/EuroSign": {
+     "align": "right",
+     "color": "fad95aff",
+     "font_size": 31.0,
+     "kind": "text",
+     "rect": [
+      507.25,
+      366.9,
+      26.4,
+      39.4
+     ],
+     "text": "\u20ac"
+    },
+    "RightColumn/Grid/Row0/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/TallPanel": {
+     "border": 1,
+     "fill": "373737ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      503.5,
+      81.6,
+      249.05,
+      267.15
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "RightColumn/Title": {
+     "align": "center",
+     "color": "5e5e5eff",
+     "font_size": 13.0,
+     "kind": "text",
+     "rect": [
+      514.3,
+      89.1,
+      229.75,
+      17.9
+     ]
+    },
+    "WindowShell/Backdrop": {
+     "kind": "art",
+     "rect": [
+      13.25,
+      14.25,
+      776.75,
+      433.0
+     ],
+     "size": [
+      3107,
+      1732
+     ],
+     "texture": "res://assets/ui/window/backdrop.png",
+     "zoom": 4.0
+    },
+    "WindowShell/CloseArt": {
+     "kind": "art",
+     "rect": [
+      734.3,
+      29.675,
+      37.0,
+      36.5
+     ],
+     "size": [
+      148,
+      146
+     ],
+     "texture": "res://assets/ui/window/close_x.png",
+     "zoom": 4.0
+    },
+    "WindowShell/CloseButton": {
+     "kind": "hit",
+     "rect": [
+      738.6,
+      32.7,
+      30.0,
+      30.0
+     ]
+    }
+   },
+   "port_only": [
+    "LeftPanel/Content/StatusLabel",
+    "LeftPanel/Content/EquipDollView/Doll",
+    "LeftPanel/Content/EquipDollView/Slot0/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot0/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot1/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot1/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot2/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot2/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot3/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot3/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot4/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot4/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot5/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot5/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot6/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot6/Highlight",
+    "ExperienceLabel",
+    "ExpTrack",
+    "ExpFill",
+    "ExpZeroBox",
+    "ExpPercent",
+    "PiercingLabel",
+    "DefenseLabel",
+    "StatLabel0",
+    "StatValue0",
+    "StatLabel1",
+    "StatValue1",
+    "StatLabel2",
+    "StatValue2",
+    "StatLabel3",
+    "StatValue3",
+    "StatLabel4",
+    "StatValue4",
+    "PerTrack0",
+    "PerFill0",
+    "PerTrack1",
+    "PerFill1",
+    "PerTrack2",
+    "PerFill2",
+    "PerTrack3",
+    "PerFill3",
+    "PerTrack4",
+    "PerFill4",
+    "PerTrack5",
+    "PerFill5",
+    "PerTrack6",
+    "PerFill6",
+    "PerTrack7",
+    "PerFill7",
+    "DefTrack0",
+    "DefFill0",
+    "DefTrack1",
+    "DefFill1",
+    "DefTrack2",
+    "DefFill2",
+    "DefTrack3",
+    "DefFill3",
+    "DefTrack4",
+    "DefFill4",
+    "DefTrack5",
+    "DefFill5",
+    "DefTrack6",
+    "DefFill6",
+    "DefTrack7",
+    "DefFill7",
+    "Portrait0",
+    "Portrait1",
+    "Portrait2",
+    "Portrait3",
+    "Portrait4",
+    "Portrait5",
+    "RightColumn/SellSlot",
+    "RightColumn/DeleteSlot",
+    "RightColumn/Grid/Row0/Slot0/ItemIcon",
+    "RightColumn/Grid/Row0/Slot0/Highlight",
+    "RightColumn/Grid/Row0/Slot1/ItemIcon",
+    "RightColumn/Grid/Row0/Slot1/Highlight",
+    "RightColumn/Grid/Row0/Slot2/ItemIcon",
+    "RightColumn/Grid/Row0/Slot2/Highlight",
+    "RightColumn/Grid/Row0/Slot3/ItemIcon",
+    "RightColumn/Grid/Row0/Slot3/Highlight",
+    "RightColumn/Grid/Row0/Slot4/ItemIcon",
+    "RightColumn/Grid/Row0/Slot4/Highlight",
+    "RightColumn/Grid/Row0/Slot5/ItemIcon",
+    "RightColumn/Grid/Row0/Slot5/Highlight",
+    "RightColumn/Grid/Row1/Slot0/ItemIcon",
+    "RightColumn/Grid/Row1/Slot0/Highlight",
+    "RightColumn/Grid/Row1/Slot1/ItemIcon",
+    "RightColumn/Grid/Row1/Slot1/Highlight",
+    "RightColumn/Grid/Row1/Slot2/ItemIcon",
+    "RightColumn/Grid/Row1/Slot2/Highlight",
+    "RightColumn/Grid/Row1/Slot3/ItemIcon",
+    "RightColumn/Grid/Row1/Slot3/Highlight",
+    "RightColumn/Grid/Row1/Slot4/ItemIcon",
+    "RightColumn/Grid/Row1/Slot4/Highlight",
+    "RightColumn/Grid/Row1/Slot5/ItemIcon",
+    "RightColumn/Grid/Row1/Slot5/Highlight",
+    "RightColumn/Grid/Row2/Slot0/ItemIcon",
+    "RightColumn/Grid/Row2/Slot0/Highlight",
+    "RightColumn/Grid/Row2/Slot1/ItemIcon",
+    "RightColumn/Grid/Row2/Slot1/Highlight",
+    "RightColumn/Grid/Row2/Slot2/ItemIcon",
+    "RightColumn/Grid/Row2/Slot2/Highlight",
+    "RightColumn/Grid/Row2/Slot3/ItemIcon",
+    "RightColumn/Grid/Row2/Slot3/Highlight",
+    "RightColumn/Grid/Row2/Slot4/ItemIcon",
+    "RightColumn/Grid/Row2/Slot4/Highlight",
+    "RightColumn/Grid/Row2/Slot5/ItemIcon",
+    "RightColumn/Grid/Row2/Slot5/Highlight",
+    "RightColumn/Grid/Row3/Slot0/ItemIcon",
+    "RightColumn/Grid/Row3/Slot0/Highlight",
+    "RightColumn/Grid/Row3/Slot1/ItemIcon",
+    "RightColumn/Grid/Row3/Slot1/Highlight",
+    "RightColumn/Grid/Row3/Slot2/ItemIcon",
+    "RightColumn/Grid/Row3/Slot2/Highlight",
+    "RightColumn/Grid/Row3/Slot3/ItemIcon",
+    "RightColumn/Grid/Row3/Slot3/Highlight",
+    "RightColumn/Grid/Row3/Slot4/ItemIcon",
+    "RightColumn/Grid/Row3/Slot4/Highlight",
+    "RightColumn/Grid/Row3/Slot5/ItemIcon",
+    "RightColumn/Grid/Row3/Slot5/Highlight",
+    "RightColumn/Grid/Row4/Slot0/ItemIcon",
+    "RightColumn/Grid/Row4/Slot0/Highlight",
+    "RightColumn/Grid/Row4/Slot1/ItemIcon",
+    "RightColumn/Grid/Row4/Slot1/Highlight",
+    "RightColumn/Grid/Row4/Slot2/ItemIcon",
+    "RightColumn/Grid/Row4/Slot2/Highlight",
+    "RightColumn/Grid/Row4/Slot3/ItemIcon",
+    "RightColumn/Grid/Row4/Slot3/Highlight",
+    "RightColumn/Grid/Row4/Slot4/ItemIcon",
+    "RightColumn/Grid/Row4/Slot4/Highlight",
+    "RightColumn/Grid/Row4/Slot5/ItemIcon",
+    "RightColumn/Grid/Row4/Slot5/Highlight",
+    "RightColumn/Grid/Row5/Slot0/ItemIcon",
+    "RightColumn/Grid/Row5/Slot0/Highlight",
+    "RightColumn/Grid/Row5/Slot1/ItemIcon",
+    "RightColumn/Grid/Row5/Slot1/Highlight",
+    "RightColumn/Grid/Row5/Slot2/ItemIcon",
+    "RightColumn/Grid/Row5/Slot2/Highlight",
+    "RightColumn/Grid/Row5/Slot3/ItemIcon",
+    "RightColumn/Grid/Row5/Slot3/Highlight",
+    "RightColumn/Grid/Row5/Slot4/ItemIcon",
+    "RightColumn/Grid/Row5/Slot4/Highlight",
+    "RightColumn/Grid/Row5/Slot5/ItemIcon",
+    "RightColumn/Grid/Row5/Slot5/Highlight"
+   ],
+   "timeline": 3142
+  },
   "res://scenes/ui/menu/menu_back.tscn": {
    "frame": "subMenu",
    "origin": [

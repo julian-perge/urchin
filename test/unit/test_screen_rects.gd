@@ -103,6 +103,25 @@ func _panel_problems(path: String, panel: PanelContainer, entry: Dictionary) -> 
 	return found
 
 
+func _outline_problems(path: String, panel: Panel, entry: Dictionary) -> Array[String]:
+	var found: Array[String] = []
+	var style: StyleBoxFlat = panel.get_theme_stylebox("panel") as StyleBoxFlat
+	if style == null:
+		return ["%s: outline is not a StyleBoxFlat" % path]
+	if style.draw_center:
+		found.append("%s: outline has a fill" % path)
+	if style.shadow_size != 0 or panel.material != null:
+		found.append("%s: outline has a shadow" % path)
+	if not _same_color(style.border_color, entry["line"]):
+		found.append("%s: outline stroke colour" % path)
+	for side: Side in PanelRecipe.SIDES:
+		if style.get_border_width(side) != int(entry["border"]):
+			found.append("%s: outline stroke width" % path)
+	for problem: String in PanelRecipe.edge_problems(style):
+		found.append("%s: %s" % [path, problem])
+	return found
+
+
 # CODING_STANDARDS.md names `rect * zoom == PNG pixel size` as the invariant that
 # holds across all the extracted art. The record holds the PNG's size and zoom, so
 # this checks the rect against them and the texture against the size.
@@ -185,6 +204,12 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 		# position counts.
 		var actual := Rect2(node.global_position, node.size)
 		match entry["kind"]:
+			"outline":
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+				if node is Panel:
+					found.append_array(_outline_problems(path, node, entry))
+				else:
+					found.append("%s: an outline piece that is not a Panel" % path)
 			"panel":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 				if node is PanelContainer:
@@ -663,3 +688,43 @@ func test_control_a_slot_row_with_the_wrong_pitch_fails() -> void:
 	assert_eq(found.size(), 15, str(found))
 	for problem: String in found:
 		assert_false(problem.contains("Row1"), problem)
+
+
+const INVENTORY_SCENE: String = "res://scenes/ui/menu/inventory_window.tscn"
+
+
+func test_control_an_inventory_header_row_20_px_taller_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("LeftPanel/Content/Header/NameRow") as Control).custom_minimum_size.y += 20.0
+	await wait_process_frames(2)
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][INVENTORY_SCENE]), "InfoRow/LevelLabel: top left")
+
+
+func test_control_an_inventory_outline_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("CenterOutline") as Control).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "CenterOutline:")
+
+
+func test_control_an_inventory_equip_slot_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("LeftPanel/Content/EquipDollView/Slot0") as Control).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "LeftPanel/Content/EquipDollView/Slot0:")
+
+
+func test_control_an_inventory_outline_with_fill_or_shadow_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	var panel: Panel = root.get_node("CenterOutline")
+	var style: StyleBoxFlat = panel.get_theme_stylebox("panel").duplicate()
+	panel.add_theme_stylebox_override("panel", style)
+	style.draw_center = true
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][INVENTORY_SCENE]), "outline has a fill")
+	style.draw_center = false
+	style.shadow_size = 5
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][INVENTORY_SCENE]), "outline has a shadow")
