@@ -528,6 +528,30 @@ func test_new_game_slots_warn_that_a_new_game_replaces_the_save():
 	assert_false(GameTooltip._root.visible, "leaving the slot hides the warning")
 
 
+# The warning opens beside the slot the pointer is on, so it moves down by the
+# distance between two rows' hit buttons when the pointer moves between them.
+func test_the_new_game_warning_opens_beside_the_hovered_slot():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	var first: Button = _slot_button(menu, 1)
+	var third: Button = _slot_button(menu, 3)
+	first.mouse_entered.emit()
+	await wait_process_frames(2)
+	var first_y: float = GameTooltip._root.global_position.y
+	first.mouse_exited.emit()
+	third.mouse_entered.emit()
+	await wait_process_frames(2)
+	assert_almost_eq(
+		GameTooltip._root.global_position.y - first_y,
+		third.global_position.y - first.global_position.y,
+		0.01,
+		"the warning follows the pointer from slot 1 to slot 3"
+	)
+	assert_gt(third.global_position.y, first.global_position.y, "slot 3 sits under slot 1")
+
+
 # The name field starts at SYSTEM[34], "< Enter Name Here >", each time the name
 # screen opens (frame_64/DoAction.as:1, frame_1/DoAction.as:101), and edit text
 # 2712 has no HasMaxLength flag, so nothing caps the name's length.
