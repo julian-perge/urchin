@@ -316,7 +316,7 @@ func test_tooltips_wrap_onto_as_many_lines_as_the_reference_captures():
 	await wait_process_frames(2)
 	assert_eq(_tooltip_labels()[1].get_line_count(), 11, "the Biological blurb")
 	menu.class_picker.get_node("Biological").mouse_exited.emit()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	menu.slot_buttons.get_child(0).mouse_entered.emit()
 	await wait_process_frames(2)

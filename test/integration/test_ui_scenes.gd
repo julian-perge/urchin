@@ -149,8 +149,23 @@ func test_play_on_the_title_shows_new_game_and_load_game():
 	menu.get_node(TITLE_CAPTIONS + "/PlaySlot/HitButton").pressed.emit()
 	assert_true(menu.get_node("ModePanel").visible, "Play shows the choice")
 	assert_false(menu.get_node("TitlePanel").visible, "in place of the title")
-	assert_eq(menu.get_node("ModePanel/NewGameLabel").text, "New Game")
-	assert_eq(menu.get_node("ModePanel/LoadGameLabel").text, "Load Game")
+	assert_eq(menu.get_node("ModePanel/Captions/NewGameSlot/Caption").text, "New Game")
+	assert_eq(menu.get_node("ModePanel/Captions/LoadGameSlot/Caption").text, "Load Game")
+
+
+# The choice shows the logo, sprite 321, where the port once typed "Sonny 2".
+# Its third caption, PvP Arena (edit text 2705), is left out with the arena
+# (docs/adr/0006-leave-out-the-pvp-arena.md).
+func test_the_choice_shows_the_logo_and_no_arena_caption():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	var choice: ModePanel = menu.get_node("ModePanel")
+	assert_false(choice.has_node("Title"), "the 'Sonny 2' Label is gone")
+	var logo: TextureRect = choice.get_node("Logo")
+	assert_eq(logo.texture.resource_path, "res://assets/ui/menu/logo.png")
+	assert_eq(choice.get_node("Captions").get_child_count(), 2, "New Game and Load Game only")
+	assert_eq(choice.global_position, Vector2.ZERO, "the choice sits at the Stage's top left")
+	assert_eq(choice.size, Vector2(800.0, 575.0))
 
 
 # Game Manual and Credits open Screens the port does not have yet, so a click
@@ -240,7 +255,11 @@ func test_menu_captions_take_their_outline_and_shadow_from_the_theme():
 	assert_eq(theme.get_constant("shadow_offset_y", "MenuCaption"), 1)
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	var captions: Array[String] = ["ModePanel/Back/Caption"]
+	var captions: Array[String] = [
+		"ModePanel/Back/Caption",
+		"ModePanel/Captions/NewGameSlot/Caption",
+		"ModePanel/Captions/LoadGameSlot/Caption",
+	]
 	for slot in ["PlaySlot", "GameManualSlot", "CreditsSlot"]:
 		captions.append("%s/%s/Caption" % [TITLE_CAPTIONS, slot])
 	for path in captions:
@@ -251,15 +270,12 @@ func test_menu_captions_take_their_outline_and_shadow_from_the_theme():
 		assert_false(caption.has_theme_constant_override("outline_size"), "%s sets no outline size" % path)
 
 
-# Each rect is an edit text, a hit button or a shape that root frame 56
-# (subMenu) or 64 (nameMenu) places, and Title's is the logo, sprite 321.
-func test_main_menu_screens_use_the_frame_56_and_64_rects():
+# Each rect is an edit text, a hit button or a shape that root frame 64
+# (nameMenu) places. The rect test checks the choice, frame 56.
+func test_the_name_screen_uses_the_frame_64_rects():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
 	var texts: Dictionary = {
-		"ModePanel/Title": Rect2(123.2, 119.8, 549.55, 97.7),
-		"ModePanel/NewGameLabel": Rect2(241.0, 290.1, 304.1, 45.6),
-		"ModePanel/LoadGameLabel": Rect2(241.0, 350.1, 304.1, 45.6),
 		"NamePanel/OkLabel": Rect2(339.4, 330.1, 121.25, 51.3),
 	}
 	for path in texts:
@@ -267,8 +283,6 @@ func test_main_menu_screens_use_the_frame_56_and_64_rects():
 		assert_almost_eq(label.position, texts[path].position, Vector2(0.01, 0.01), "%s position" % path)
 		assert_almost_eq(label.size.x, texts[path].size.x, 0.01, "%s width" % path)
 	var boxes: Dictionary = {
-		"ModePanel/NewGameButton": Rect2(241.06, 290.7, 302.27, 40.0),
-		"ModePanel/LoadGameButton": Rect2(241.06, 350.7, 302.27, 40.0),
 		"NamePanel/NameInput": Rect2(185.55, 252.2, 426.1, 45.25),
 		"NamePanel/OkButton": Rect2(368.33, 336.6, 61.83, 30.0),
 	}
@@ -284,7 +298,7 @@ func test_main_menu_screens_use_the_frame_56_and_64_rects():
 func test_new_game_asks_for_the_name_before_the_slot_list():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	assert_true(menu.get_node("NamePanel").visible, "New Game opens the name screen")
 	assert_false(menu.get_node("ModePanel").visible, "in place of the choice")
 	assert_false(menu.get_node("SlotPanel").visible, "before the slot list")
@@ -293,7 +307,7 @@ func test_new_game_asks_for_the_name_before_the_slot_list():
 	assert_true(menu.get_node("TitlePanel").visible, "Back on the name screen returns to the title")
 	assert_false(menu.get_node("NamePanel").visible)
 
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	assert_true(menu.get_node("SlotPanel").visible, "OK! opens the slot list")
 	assert_false(menu.get_node("NamePanel").visible)
@@ -311,7 +325,7 @@ func test_new_game_starts_in_any_used_slot_and_keeps_its_save_until_the_first_sa
 	_write_test_slots([1, 2, 3, 4])
 	for slot in range(1, GameData.NUM_SLOTS + 1):
 		var menu = await _menu_without_scene_change()
-		menu.get_node("ModePanel/NewGameButton").pressed.emit()
+		menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 		menu.name_input.text = "Fresh%d" % slot
 		menu.get_node("NamePanel/OkButton").pressed.emit()
 		var loaded_before: PlayerSave = GameData.current_save
@@ -339,7 +353,7 @@ func test_new_game_starts_in_any_used_slot_and_keeps_its_save_until_the_first_sa
 func test_starting_a_new_game_in_an_empty_slot_writes_no_save():
 	_write_test_slots([])
 	var menu = await _menu_without_scene_change()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	menu.slot_buttons.get_child(2).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
@@ -358,7 +372,7 @@ func test_starting_a_new_game_in_an_empty_slot_writes_no_save():
 func test_new_game_with_the_tutorial_on_goes_on_to_battle_2_after_cs_intro():
 	_write_test_slots([])
 	var menu = await _menu_without_scene_change()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	menu.slot_buttons.get_child(0).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
@@ -377,7 +391,7 @@ func test_new_game_with_the_tutorial_on_goes_on_to_battle_2_after_cs_intro():
 func test_new_game_with_the_tutorial_on_puts_the_tutorial_moves_on_the_bar():
 	_write_test_slots([])
 	var menu = await _menu_without_scene_change()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	menu.slot_buttons.get_child(0).pressed.emit()
 	menu.class_picker.get_node("Hydraulic").pressed.emit()
@@ -398,7 +412,7 @@ func test_new_game_with_the_tutorial_on_puts_the_tutorial_moves_on_the_bar():
 func test_new_game_with_the_tutorial_off_goes_on_to_battle_100_after_cs_intro2():
 	_write_test_slots([])
 	var menu = await _menu_without_scene_change()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	menu.slot_buttons.get_child(0).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
@@ -423,7 +437,7 @@ func test_new_game_with_the_tutorial_off_goes_on_to_battle_100_after_cs_intro2()
 func test_load_game_loads_a_used_slot_and_ignores_an_empty_one():
 	_write_test_slots([1])
 	var menu = await _menu_without_scene_change()
-	menu.get_node("ModePanel/LoadGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/LoadGameSlot/HitButton").pressed.emit()
 	assert_true(menu.get_node("SlotPanel").visible, "Load Game opens the slot list")
 	assert_false(menu.get_node("NamePanel").visible, "without asking for a name")
 	assert_eq(menu.slot_buttons.get_child(2).text, "Slot 3 - < Empty Slot >")
@@ -450,14 +464,14 @@ func test_new_game_slots_warn_that_a_new_game_replaces_the_save():
 	GameTooltip.hide_tooltip()
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	menu.get_node("ModePanel/LoadGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/LoadGameSlot/HitButton").pressed.emit()
 	var slot: Button = menu.slot_buttons.get_child(0)
 	slot.mouse_entered.emit()
 	assert_false(GameTooltip._root.visible, "a Load Game slot doesn't warn")
 	slot.mouse_exited.emit()
 
 	menu.get_node("SlotPanel/Back/HitButton").pressed.emit()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	slot.mouse_entered.emit()
 	assert_true(GameTooltip._root.visible, "a New Game slot warns")
@@ -476,12 +490,12 @@ func test_new_game_slots_warn_that_a_new_game_replaces_the_save():
 func test_new_game_starts_the_name_at_the_original_prompt_with_no_length_limit():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	assert_eq(menu.name_input.text, "< Enter Name Here >", "the field starts at the prompt")
 	assert_eq(menu.name_input.max_length, 0, "with no limit on the name's length")
 	menu.name_input.text = "Typed then dropped"
 	menu.get_node("NamePanel/Back/HitButton").pressed.emit()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	assert_eq(menu.name_input.text, "< Enter Name Here >", "opening the name screen again resets it")
 
 
@@ -492,18 +506,18 @@ func test_new_game_starts_the_name_at_the_original_prompt_with_no_length_limit()
 func test_new_game_keeps_the_name_as_typed_even_untouched_or_empty():
 	_write_test_slots([])
 	var untouched = await _menu_without_scene_change()
-	untouched.get_node("ModePanel/NewGameButton").pressed.emit()
+	untouched.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	_start_from_the_name_screen(untouched)
 	assert_eq(GameData.current_save.name_user, "< Enter Name Here >", "an untouched field names the game after the prompt")
 
 	var emptied = await _menu_without_scene_change()
-	emptied.get_node("ModePanel/NewGameButton").pressed.emit()
+	emptied.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	emptied.name_input.text = ""
 	_start_from_the_name_screen(emptied)
 	assert_eq(GameData.current_save.name_user, "", "an emptied field starts a game with no name")
 
 	var spaced = await _menu_without_scene_change()
-	spaced.get_node("ModePanel/NewGameButton").pressed.emit()
+	spaced.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	spaced.name_input.text = " Newbie "
 	_start_from_the_name_screen(spaced)
 	assert_eq(GameData.current_save.name_user, " Newbie ", "and a typed name keeps its spaces")
@@ -543,7 +557,7 @@ func test_the_game_calls_the_player_sonny_whatever_the_save_is_named():
 func test_back_on_settings_hides_class_select_too():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	menu.slot_buttons.get_child(0).pressed.emit()
 	menu.class_picker.get_node("Psychological").pressed.emit()
