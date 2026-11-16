@@ -383,7 +383,7 @@ function parameters/locals/match targets take the enum type directly. New enum w
 
 - **Explicitly NOT enum candidates** (open-ended/data-driven content, matches the project owner's own exclusion): zone/battle/shop/item id-keyed dictionaries (`ZoneManager.ZONES`,
   `StoreManager.ZONE_SHOP_IDS`/`SHOP_DIALOGUE`/`KRIN_SHOP_ITEMS`, `GameData.STARTING_EQUIPMENT`, `ZoneProgression`'s battle-cap tables), `Achievements.NAMES`/`DESCRIPTIONS` (text content), and
-  `hotbar.gd`'s `MENU_BUTTON_GROUPS`/`HOVER_COLORS` (keyed by actual Godot scene-node names, not a portable "kind" concept).
+  `hotbar.gd`'s `ICON_SLOTS` (keyed by actual Godot scene-node names, not a portable "kind" concept).
 
 ## Rich tooltip rework
 

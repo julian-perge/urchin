@@ -783,7 +783,6 @@ func test_hub_opens_the_abilities_window_when_the_flag_is_set_and_clears_it():
 	assert_true(game.get_node("AbilitiesWindow").visible, "the Abilities window is open")
 	assert_false(ZoneManager.open_abilities_on_load, "the flag is cleared")
 	assert_false(game.get_node("ZoneMapOverlay").visible, "the map stays shut")
-	assert_true(game.get_node("Hotbar").get_node("%AbilitiesButton/Glow").visible, "the Abilities button glows, as after a click")
 
 
 func test_hub_leaves_the_abilities_window_shut_when_the_flag_is_unset():
@@ -800,8 +799,9 @@ func test_hotbar_shows_progress_from_save():
 	var hotbar = game.get_node("Hotbar")
 	assert_eq(hotbar.zone_title.text, "Zone 1")
 	assert_eq(hotbar.zone_subtitle.text, "New Alcatraz: The Iron Prison")
-	assert_eq(hotbar.progress_bar.value, 3.0, "quest progress drives the bar")
-	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 1 progress_max")
+	assert_almost_eq(hotbar.zone_fill.scale.x, 3.0 / 9.0, 0.0001, "quest progress drives the bar")
+	assert_eq(hotbar.zone_fill.scale.y, 1.0, "the fill keeps its height")
+	assert_eq(hotbar.zone_fill.pivot_offset, Vector2.ZERO, "the fill grows from its left edge")
 	assert_eq(hotbar.stage_label.text, "Stage 4")
 
 
@@ -820,8 +820,7 @@ func test_hotbar_shows_the_saved_zone_right_after_a_load():
 	var hotbar = game.get_node("Hotbar")
 	assert_eq(hotbar.zone_title.text, "Zone 4")
 	assert_eq(hotbar.zone_subtitle.text, "Labyrinth: Tunnel of Illusions")
-	assert_eq(hotbar.progress_bar.value, 6.0, "zone 4's progress, not zone 1's")
-	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 4 progress_max")
+	assert_almost_eq(hotbar.zone_fill.scale.x, 6.0 / 9.0, 0.0001, "zone 4's progress, not zone 1's")
 	assert_eq(hotbar.stage_label.text, "Stage 7")
 
 
@@ -836,8 +835,7 @@ func test_hotbar_ignores_the_zone_another_slot_left_behind():
 	var hotbar = game.get_node("Hotbar")
 	assert_eq(hotbar.zone_title.text, "Zone 4")
 	assert_eq(hotbar.zone_subtitle.text, "Labyrinth: Tunnel of Illusions")
-	assert_eq(hotbar.progress_bar.value, 6.0, "zone 4's progress, not zone 2's")
-	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 4 progress_max")
+	assert_almost_eq(hotbar.zone_fill.scale.x, 6.0 / 9.0, 0.0001, "zone 4's progress, not zone 2's")
 	assert_eq(hotbar.stage_label.text, "Stage 7")
 
 
@@ -864,8 +862,7 @@ func test_hotbar_shows_the_saved_zone_after_a_game_over_reload():
 	var hotbar = game.get_node("Hotbar")
 	assert_eq(hotbar.zone_title.text, "Zone 4")
 	assert_eq(hotbar.zone_subtitle.text, "Labyrinth: Tunnel of Illusions")
-	assert_eq(hotbar.progress_bar.value, 6.0, "zone 4's progress, not zone 2's")
-	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 4 progress_max")
+	assert_almost_eq(hotbar.zone_fill.scale.x, 6.0 / 9.0, 0.0001, "zone 4's progress, not zone 2's")
 	assert_eq(hotbar.stage_label.text, "Stage 7")
 
 	GameData.current_slot = -1
@@ -882,8 +879,7 @@ func test_hotbar_stage_keeps_counting_past_a_beaten_zone():
 	var game = add_child_autofree(GameScene.instantiate())
 	await get_tree().process_frame
 	var hotbar = game.get_node("Hotbar")
-	assert_eq(hotbar.progress_bar.value, 9.0, "the bar stops at zone 1's progress_max")
-	assert_eq(hotbar.progress_bar.max_value, 9.0, "zone 1 progress_max")
+	assert_almost_eq(hotbar.zone_fill.scale.x, 9.0 / 9.0, 0.0001, "the bar stops at zone 1's progress_max")
 	assert_eq(hotbar.stage_label.text, "Stage 11")
 
 
@@ -1006,21 +1002,37 @@ func test_achievements_window_builds_ten_plates():
 	assert_eq(window._plates.size(), Achievements.ACHIEVEMENT_COUNT)
 
 
-func test_hotbar_menu_toggle_is_exclusive_and_glows():
+func test_hotbar_menu_toggle_is_exclusive():
 	var game = add_child_autofree(GameScene.instantiate())
 	await get_tree().process_frame
 	var hotbar = game.get_node("Hotbar")
 	hotbar.toggle_menu_screen("abilities_window")
 	assert_true(game.get_node("AbilitiesWindow").visible, "abilities opens")
-	assert_true(hotbar._button_glows["AbilitiesButton"]["glow"].visible, "abilities icon glows")
 	hotbar.toggle_menu_screen("inventory_window")
 	assert_false(game.get_node("AbilitiesWindow").visible, "one menu screen at a time")
 	assert_true(game.get_node("InventoryWindow").visible)
-	assert_false(hotbar._button_glows["AbilitiesButton"]["glow"].visible, "old glow off")
-	assert_true(hotbar._button_glows["InventoryButton"]["glow"].visible, "new glow on")
 	hotbar.toggle_menu_screen("inventory_window")
 	assert_false(game.get_node("InventoryWindow").visible, "second press closes")
-	assert_false(hotbar._button_glows["InventoryButton"]["glow"].visible)
+
+
+# The original has no open-Window state on the hotbar (spec/107-hub.md, The
+# hotbar), so the icon and its hover Glow stay as they are when a button opens
+# its Window.
+func test_a_hotbar_icon_stays_white_while_its_window_is_open():
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var hotbar = game.get_node("Hotbar")
+	for slot: String in ["Inventory", "Abilities", "Achievements"]:
+		(hotbar.get_node("%" + slot + "Button") as BaseButton).pressed.emit()
+		await get_tree().process_frame
+		assert_true(game.get_node(slot + "Window").visible, "%s opens its Window" % slot)
+		var icon: TextureRect = hotbar.get_node(slot + "Slot/Icon")
+		assert_eq(icon.modulate, Color.WHITE, "%s icon" % slot)
+		assert_eq(icon.self_modulate, Color.WHITE, "%s icon" % slot)
+		assert_eq(hotbar.hover_frame(slot), 1, "%s shows the frame with no Glow" % slot)
+		for holder: String in ["Glow", "InnerGlow"]:
+			for layer: CanvasItem in hotbar.get_node(slot + "Slot/" + holder).get_children():
+				assert_false(layer.visible, "%s %s layer" % [slot, holder])
 
 
 # First unrestricted level-1 wearable in the item set (deterministic pick:

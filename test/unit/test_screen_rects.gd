@@ -10,6 +10,20 @@ const TEST_SCENE: String = "res://test/fixtures/screen_rects/victory_left_panel.
 const TOLERANCE: float = 0.5
 const COLOR_TOLERANCE: float = 0.001
 
+var _save_before: PlayerSave
+
+
+# The record holds each scene as its .tscn places it. A scene that sizes a
+# piece from the save, as the hotbar sizes the zone fill, only shows that state
+# with no save, and an earlier test script can leave one behind.
+func before_each() -> void:
+	_save_before = GameData.current_save
+	GameData.current_save = null
+
+
+func after_each() -> void:
+	GameData.current_save = _save_before
+
 
 func _record() -> Dictionary:
 	var text: String = FileAccess.get_file_as_string(RECORD_PATH)
@@ -206,6 +220,8 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 						found.append("%s: fill %s, expected %s" % [path, (node as ColorRect).color.to_html(), entry["fill"]])
 				else:
 					found.append("%s: a box piece that is not a ColorRect" % path)
+			"shape":
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 			"hit", "button":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 				if not node is BaseButton:
@@ -566,6 +582,44 @@ func test_control_a_title_slot_20_px_taller_fails() -> void:
 	assert_eq(found.size(), 6, str(found))
 	for problem: String in found:
 		assert_false(problem.contains("PlaySlot"), problem)
+
+
+const HOTBAR_SCENE: String = "res://scenes/ui/hotbar.tscn"
+
+
+# A slot holds its square, its icon and its hit button, so each of the three
+# fails at both corners. The slot's Glow is port only.
+func test_control_a_hotbar_slot_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(HOTBAR_SCENE)
+	(root.get_node("SaveSlot") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][HOTBAR_SCENE])
+	assert_eq(found.size(), 6, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "SaveSlot/")
+
+
+# The hit button is smaller than the square's art, which holds the Glows around
+# the square, so only this test can see the hit button move.
+func test_control_a_hotbar_hit_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(HOTBAR_SCENE)
+	(root.get_node("%ZoneMapButton") as Control).position.y += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][HOTBAR_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "ZoneMapSlot/ZoneMapButton: top left")
+
+
+# The zone fill is a plain Control on the fill's shape with the fill's art
+# under it, so the shape and the art each fail at both corners.
+func test_control_the_zone_fill_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(HOTBAR_SCENE)
+	(root.get_node("ZoneFill") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][HOTBAR_SCENE])
+	assert_eq(found.size(), 4, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "ZoneFill")
 
 
 const MODE_SCENE: String = "res://scenes/ui/menu/mode_panel.tscn"

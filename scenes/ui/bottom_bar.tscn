@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" uid="uid://cid001n0dkxbx" path="res://assets/ui/battle/bottom_bar.png" id="1_art"]
+
+[node name="BottomBar" type="TextureRect"]
+offset_left = 13.73
+offset_top = 452.45
+offset_right = 786.73
+offset_bottom = 563.95
+texture = ExtResource("1_art")
+expand_mode = 1

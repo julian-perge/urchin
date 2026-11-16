@@ -58,4 +58,3 @@ layout_mode = 1
 layout_mode = 1
 
 [node name="Hotbar" parent="." instance=ExtResource("4_hotbar")]
-layout_mode = 1

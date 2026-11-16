@@ -477,6 +477,425 @@
    ],
    "timeline": 0
   },
+  "res://scenes/ui/bottom_bar.tscn": {
+   "frame": "Navigation",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    ".": {
+     "kind": "art",
+     "rect": [
+      13.73,
+      452.45,
+      773.0,
+      111.5
+     ],
+     "size": [
+      3092,
+      446
+     ],
+     "texture": "res://assets/ui/battle/bottom_bar.png",
+     "zoom": 4.0
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
+  "res://scenes/ui/hotbar.tscn": {
+   "frame": "Navigation",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "AbilitiesSlot/AbilitiesButton": {
+     "kind": "button",
+     "rect": [
+      79.7165,
+      473.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "AbilitiesSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      86.0,
+      478.4,
+      25.6,
+      31.2
+     ],
+     "size": [
+      128,
+      156
+     ],
+     "texture": "res://assets/ui/hotbar/abilities.png",
+     "zoom": 5.0
+    },
+    "AbilitiesSlot/Square": {
+     "kind": "art",
+     "rect": [
+      73.2,
+      467.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "AchievementsSlot/AchievementsButton": {
+     "kind": "button",
+     "rect": [
+      275.3165,
+      473.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "AchievementsSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      283.0,
+      482.4,
+      24.8,
+      26.2
+     ],
+     "size": [
+      124,
+      131
+     ],
+     "texture": "res://assets/ui/hotbar/achievements.png",
+     "zoom": 5.0
+    },
+    "AchievementsSlot/Square": {
+     "kind": "art",
+     "rect": [
+      268.8,
+      467.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "BottomBar": {
+     "kind": "art",
+     "rect": [
+      13.73,
+      452.45,
+      773.0,
+      111.5
+     ],
+     "size": [
+      3092,
+      446
+     ],
+     "texture": "res://assets/ui/battle/bottom_bar.png",
+     "zoom": 4.0
+    },
+    "InventorySlot/Icon": {
+     "kind": "art",
+     "rect": [
+      36.8,
+      479.2,
+      28.8,
+      28.8
+     ],
+     "size": [
+      144,
+      144
+     ],
+     "texture": "res://assets/ui/hotbar/inventory.png",
+     "zoom": 5.0
+    },
+    "InventorySlot/InventoryButton": {
+     "kind": "button",
+     "rect": [
+      31.5165,
+      473.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "InventorySlot/Square": {
+     "kind": "art",
+     "rect": [
+      25.0,
+      467.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "OptionsSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      183.4,
+      479.2,
+      29.2,
+      29.8
+     ],
+     "size": [
+      146,
+      149
+     ],
+     "texture": "res://assets/ui/hotbar/options.png",
+     "zoom": 5.0
+    },
+    "OptionsSlot/OptionsButton": {
+     "kind": "button",
+     "rect": [
+      177.5165,
+      473.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "OptionsSlot/Square": {
+     "kind": "art",
+     "rect": [
+      171.0,
+      467.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "QuitSlot/QuitButton": {
+     "kind": "button",
+     "rect": [
+      436.0843,
+      464.9068,
+      18.0229,
+      18.001
+     ]
+    },
+    "QuitSlot/Red": {
+     "kind": "art",
+     "rect": [
+      436.0,
+      464.75,
+      18.0,
+      18.0
+     ],
+     "size": [
+      72,
+      72
+     ],
+     "texture": "res://assets/ui/window/hotbar_quit_red.png",
+     "zoom": 4.0
+    },
+    "QuitSlot/Square": {
+     "kind": "art",
+     "rect": [
+      429.5,
+      458.25,
+      31.75,
+      31.75
+     ],
+     "size": [
+      127,
+      127
+     ],
+     "texture": "res://assets/ui/window/hotbar_quit.png",
+     "zoom": 4.0
+    },
+    "RespecSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      233.8,
+      481.2,
+      24.8,
+      24.8
+     ],
+     "size": [
+      124,
+      124
+     ],
+     "texture": "res://assets/ui/hotbar/respec.png",
+     "zoom": 5.0
+    },
+    "RespecSlot/RespecButton": {
+     "kind": "button",
+     "rect": [
+      226.2165,
+      473.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "RespecSlot/Square": {
+     "kind": "art",
+     "rect": [
+      219.7,
+      467.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "SaveSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      139.2,
+      479.4,
+      20.4,
+      28.8
+     ],
+     "size": [
+      102,
+      144
+     ],
+     "texture": "res://assets/ui/hotbar/save.png",
+     "zoom": 5.0
+    },
+    "SaveSlot/SaveButton": {
+     "kind": "button",
+     "rect": [
+      129.0165,
+      473.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "SaveSlot/Square": {
+     "kind": "art",
+     "rect": [
+      122.5,
+      467.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "ZoneFill": {
+     "kind": "shape",
+     "rect": [
+      504.7,
+      515.25,
+      251.4,
+      14.05
+     ]
+    },
+    "ZoneFill/Art": {
+     "kind": "art",
+     "rect": [
+      485.675,
+      496.15,
+      289.5,
+      52.25
+     ],
+     "size": [
+      1158,
+      209
+     ],
+     "texture": "res://assets/ui/window/zone_fill.png",
+     "zoom": 4.0
+    },
+    "ZoneMapSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      384.4,
+      492.8,
+      31.8,
+      31.8
+     ],
+     "size": [
+      159,
+      159
+     ],
+     "texture": "res://assets/ui/hotbar/world_map.png",
+     "zoom": 5.0
+    },
+    "ZoneMapSlot/Square": {
+     "kind": "art",
+     "rect": [
+      369.75,
+      477.75,
+      62.5,
+      62.5
+     ],
+     "size": [
+      250,
+      250
+     ],
+     "texture": "res://assets/ui/window/hotbar_world_map.png",
+     "zoom": 4.0
+    },
+    "ZoneMapSlot/ZoneMapButton": {
+     "kind": "button",
+     "rect": [
+      376.3234,
+      484.3045,
+      48.7302,
+      48.7306
+     ]
+    },
+    "ZoneTrack": {
+     "kind": "art",
+     "rect": [
+      504.5,
+      515.0,
+      258.25,
+      20.5
+     ],
+     "size": [
+      1033,
+      82
+     ],
+     "texture": "res://assets/ui/window/zone_track.png",
+     "zoom": 4.0
+    }
+   },
+   "port_only": [
+    "ZoneInfo",
+    "InventorySlot/Glow",
+    "InventorySlot/InnerGlow",
+    "AbilitiesSlot/Glow",
+    "AbilitiesSlot/InnerGlow",
+    "SaveSlot/Glow",
+    "SaveSlot/InnerGlow",
+    "OptionsSlot/Glow",
+    "OptionsSlot/InnerGlow",
+    "RespecSlot/Glow",
+    "RespecSlot/InnerGlow",
+    "AchievementsSlot/Glow",
+    "AchievementsSlot/InnerGlow",
+    "ZoneMapSlot/Glow",
+    "ZoneMapSlot/InnerGlow"
+   ],
+   "timeline": 0
+  },
   "res://scenes/ui/menu/abilities_window.tscn": {
    "frame": "skills",
    "origin": [

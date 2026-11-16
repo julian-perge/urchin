@@ -37,7 +37,15 @@ func _ready():
 
 func _on_hit_box_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		interact()
+		if not _hub_is_inert():
+			interact()
+
+
+# The hotbar holds the Hub's inert state (hotbar.gd, set_inert). An orb with no
+# hotbar in its tree is never inert.
+func _hub_is_inert() -> bool:
+	var hotbar: Node = get_tree().get_first_node_in_group("hotbar")
+	return hotbar != null and hotbar.is_inert()
 
 func setup_orb():
 	print("Setting up orb color %s for %s" % [orb_color, name])
@@ -47,7 +55,8 @@ func setup_orb():
 
 func _on_input_event(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		interact()
+		if not _hub_is_inert():
+			interact()
 
 func interact():
 	print("Emitting event for %s" % name)

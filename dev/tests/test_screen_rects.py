@@ -7,7 +7,7 @@ from dataclasses import replace
 
 import pytest
 from urchin_dev import REPO_ROOT
-from urchin_dev.swf.extract import screen_rects
+from urchin_dev.swf.extract import hotbar_icons, screen_rects
 from urchin_dev.swf.swf_index import ButtonRecord, DropShadow, EditText, StyleSet
 
 ORIGIN = (400.5, 222.4)
@@ -220,6 +220,57 @@ def test_the_art_sources_hold_the_window_chrome_and_the_menu_art():
         assert set(entry) == {"rect", "relative_to", "size", "zoom"}
 
 
+def test_the_art_sources_hold_the_bottom_bar_and_the_hotbar_icons():
+    sources = screen_rects.art_sources()
+    bar, bar_folder = sources["bottom_bar"]
+    assert bar_folder == screen_rects.BATTLE_TEXTURES
+    assert bar["relative_to"] == "stage"
+    assert [v * bar["zoom"] for v in bar["rect"][2:]] == pytest.approx(bar["size"])
+    for name in hotbar_icons.ICONS:
+        entry, folder = sources[name]
+        assert folder == screen_rects.HOTBAR_TEXTURES
+        assert set(entry) == {"rect", "relative_to", "size", "zoom"}
+        assert entry["relative_to"] == "stage"
+
+
+# extract_window_chrome renders the hotbar square where depth 126 places it,
+# and depth 128 places the same art 964 twips to the right.
+def test_art_rendered_at_another_placement_moves_by_the_difference():
+    square = {**CLOSE_X_CHROME, "rect": [25.0, 467.25, 53.75, 54.0]}
+    moved = screen_rects.moved_art(
+        square, (0.67, 0.0, 0.0, 0.67, 1997, 9878), (0.67, 0.0, 0.0, 0.67, 1033, 9878)
+    )
+    assert moved["rect"] == pytest.approx([73.2, 467.25, 53.75, 54.0])
+    assert moved["size"] == square["size"]
+
+
+def test_art_rendered_at_another_scale_is_refused():
+    with pytest.raises(ValueError, match="scale"):
+        screen_rects.moved_art(
+            CLOSE_X_CHROME,
+            (0.81, 0.0, 0.0, 0.81, 1997, 9878),
+            (0.67, 0.0, 0.0, 0.67, 1033, 9878),
+        )
+
+
+def test_art_rendered_from_a_sprite_cannot_be_moved():
+    with pytest.raises(ValueError, match="sprite 2986"):
+        screen_rects.moved_art(
+            {**CLOSE_X_CHROME, "relative_to": "sprite 2986"},
+            (1.0, 0.0, 0.0, 1.0, 20, 0),
+            (1.0, 0.0, 0.0, 1.0, 0, 0),
+        )
+
+
+# The zone fill's shape 3146 is 5028 by 281 twips, and the bar's sprite places
+# it at its own origin.
+def test_a_shape_record_is_the_shape_bounds_through_the_placement():
+    entry = screen_rects.shape_record(
+        (0, 0, 5028, 281), (1.0, 0.0, 0.0, 1.0, 94, 105), (500.0, 510.0)
+    )
+    assert entry == {"kind": "shape", "rect": [504.7, 515.25, 251.4, 14.05]}
+
+
 def test_art_record_refuses_a_rect_measured_from_a_sprite():
     with pytest.raises(ValueError, match="sprite 2986"):
         screen_rects.art_record(
@@ -374,10 +425,27 @@ def test_button_record_is_the_up_state_through_the_placement():
     assert entry["rect"] == pytest.approx([310.55, 339.25, 44.1, 16.45])
 
 
-def test_button_record_refuses_a_moved_up_state_record():
-    moved = [replace(PLUS_RECORDS[1], matrix=(1.0, 0.0, 0.0, 1.0, 20, 0))]
-    with pytest.raises(ValueError, match="moves"):
-        screen_rects.button_record(moved, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+# A hotbar square is a button whose one record scales and moves shape 3119
+# inside the button, and the hub frame then scales the button.
+def test_button_record_places_the_shape_with_its_record_before_the_placement():
+    records = [
+        ButtonRecord(
+            frozenset({"up", "over", "down", "hit"}),
+            3119,
+            1,
+            (0.5, 0.0, 0.0, 0.25, -600, -400),
+        )
+    ]
+    entry = screen_rects.button_record(
+        records, {3119: (0, 0, 2000, 4000)}, (2.0, 0.0, 0.0, 2.0, 1000, 2000), (0, 0)
+    )
+    assert entry["rect"] == pytest.approx([-10.0, 60.0, 100.0, 100.0])
+
+
+def test_button_record_refuses_a_rotated_up_state_record():
+    turned = [replace(PLUS_RECORDS[1], matrix=(1.0, 0.1, 0.0, 1.0, 0, 0))]
+    with pytest.raises(ValueError, match="rotat"):
+        screen_rects.button_record(turned, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
 
 
 def test_button_record_refuses_a_button_with_no_up_state():
