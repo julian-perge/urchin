@@ -235,9 +235,8 @@ func _on_zone_changed(zone_id: int) -> void:
 
 
 func _refresh(zone_id: int) -> void:
-	var zone: Dictionary = ZoneManager.ZONES.get(zone_id, {})
-	zone_title.text = "Zone %d" % zone_id
-	zone_subtitle.text = "%s: %s" % [zone.get("name", "?"), zone.get("subtitle", "?")]
+	zone_title.text = Strings.system(9) + str(zone_id)
+	zone_subtitle.text = Strings.text("ZONES", zone_id) + ": " + Strings.text("ZONES2", zone_id)
 	var progress: int = 0
 	var progress_max: int = int(ZoneProgression.QUEST_HUB.get(zone_id, {}).get("progress_max", 1))
 	# The original sets the fill's width to this share of its full width, which
@@ -248,7 +247,7 @@ func _refresh(zone_id: int) -> void:
 	if GameData.current_save != null:
 		progress = ZoneProgression.quest_progress(GameData.current_save, zone_id)
 		zone_fill.scale.x = float(mini(progress, progress_max)) / float(progress_max)
-	stage_label.text = "Stage %d" % (progress + 1)
+	stage_label.text = Strings.system(10) + str(progress + 1)
 
 
 func _on_save_pressed() -> void:

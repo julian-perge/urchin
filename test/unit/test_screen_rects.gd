@@ -612,6 +612,16 @@ func test_control_a_title_slot_20_px_taller_fails() -> void:
 const HOTBAR_SCENE: String = "res://scenes/ui/hotbar.tscn"
 
 
+func test_control_each_zone_text_slot_moved_20_px_fails() -> void:
+	for slot: String in ["ZoneTitleSlot", "ZoneSubtitleSlot", "StageSlot"]:
+		var root: Control = await _laid_out(HOTBAR_SCENE)
+		(root.get_node(slot) as Control).position.y += 20.0
+		await wait_process_frames(2)
+		var found: Array[String] = _scene_problems(root, _record()["scenes"][HOTBAR_SCENE])
+		_assert_one_problem(found, slot + "/")
+		assert_string_contains(found[0] if found else "", "top left")
+
+
 # A slot holds its square, its icon and its hit button, so each of the three
 # fails at both corners. The slot's Glow is port only.
 func test_control_a_hotbar_slot_moved_20_px_fails() -> void:
