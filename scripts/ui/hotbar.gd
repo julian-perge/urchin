@@ -1,38 +1,20 @@
 # hotbar.gd
-# The bottom hotbar (scenes/ui/hotbar.tscn), matching the original layout:
-# left panel = menu buttons, middle = world-map toggle, right = zone name +
-# story progress bar + stage counter. The hub builds a new hotbar every time it
-# opens, after a load and after every battle, so _ready() paints the right
-# panel from the save's zone, which game.gd's _enter_tree() has just restored.
-# After that, picking a zone on the world map repaints it through
-# ZoneManager.zone_changed, and so does the Save button once its "Game saved."
-# message is gone.
+# The Hub's hotbar on the bottom bar (scenes/ui/hotbar.tscn). Each button is a
+# slot at its SWF rect: the square, the icon, and a hit button over them. The
+# zone name, the story progress bar and the stage counter are on the right. The
+# hub builds a new hotbar every time it opens, after a load and after every
+# battle, so _ready() paints the zone progress from the save's zone, which
+# game.gd's _enter_tree() has just restored. After that, picking a zone on the
+# world map repaints it through ZoneManager.zone_changed, and so does the Save
+# button once its "Game saved." message is gone.
 #
-# Menu buttons open the full-screen overlays (group "menu_screen"); while a
-# screen is open, its button's white icon glows green like the original.
+# Three buttons open a Window (group "menu_screen"). The original has no
+# open-Window state on the hotbar, so nothing here follows a Window's
+# visibility.
 extends Control
 
-# button unique name -> the menu-screen group it opens.
-const MENU_BUTTON_GROUPS: Dictionary[String, String] = {
-	"InventoryButton": "inventory_window",
-	"AbilitiesButton": "abilities_window",
-	"AchievementsButton": "achievements_window",
-}
-const ACTIVE_ICON_COLOR: Color = Color(0.7, 1.0, 0.6)
-# Every button hovers in its own color, per the live-game captures in
-# references/hotbar/ (*_glow_with_tooltip.png).
-const HOVER_COLORS: Dictionary[String, Color] = {
-	"InventoryButton": Color(1.0, 0.4, 0.8),      # pink
-	"AbilitiesButton": Color(0.45, 1.0, 0.35),    # green
-	"SaveButton": Color(0.35, 0.6, 1.0),          # blue
-	"OptionsButton": Color(1.0, 0.9, 0.3),        # yellow
-	"RespecButton": Color(0.7, 0.4, 1.0),         # violet
-	"AchievementsButton": Color(1.0, 0.55, 0.2),  # burnt orange
-}
 # Tooltip captions per button: [title] for a single-line caption, or
-# [title, body] for a 2-section tooltip. These are the same strings the
-# scene file used to carry as plain tooltip_text - kept here now that
-# GameTooltip needs sections, not a joined string.
+# [title, body] for a 2-section tooltip.
 const TOOLTIP_CAPTIONS: Dictionary[String, Array] = {
 	"InventoryButton": ["Inventory", "Click here to manage equipment."],
 	"AbilitiesButton": ["Abilities", "Click here to manage abilities and attributes."],
@@ -44,22 +26,105 @@ const TOOLTIP_CAPTIONS: Dictionary[String, Array] = {
 	"QuitButton": ["Quit", "Click here to return to the save select screen."],
 }
 
+# extract_hotbar_icons writes this record: each icon's hover Glow colors, the
+# inner one first, and the frames of the hover clip's START and STOP runs.
+const ICONS_PATH: String = "res://assets/ui/hotbar/hotbar_icons.json"
+# Each slot with an icon, and the icon's name in the record. Quit has no icon
+# and no hover.
+const ICON_SLOTS: Dictionary[String, String] = {
+	"Inventory": "inventory",
+	"Abilities": "abilities",
+	"Save": "save",
+	"Options": "options",
+	"Respec": "respec",
+	"Achievements": "achievements",
+	"ZoneMap": "world_map",
+}
+const GLOW_SHADER: Shader = preload("res://scenes/ui/hotbar_glow.gdshader")
+# The blur of the two Glow layers in Stage px, the near one first, and their
+# strength. The record holds no blur, so these were chosen by eye for #219.
+const GLOW_RADII: Array[float] = [4.0, 9.0]
+const GLOW_STRENGTH: float = 2.5
+# A layer is this many radii larger than the icon on each side, which is where
+# the blur has faded out.
+const GLOW_PAD: float = 1.5
+
 @onready var zone_title: Label = %ZoneTitle
 @onready var zone_subtitle: Label = %ZoneSubtitle
 @onready var progress_bar: ProgressBar = %ZoneProgress
 @onready var stage_label: Label = %StageLabel
 
-var _button_glows: Dictionary = {}  # button name -> {glow, icon}
+var _fade_in_seconds: float
+var _fade_out_seconds: float
+var _hover_tweens: Dictionary[String, Tween] = {}
 
 
 func _ready():
 	ZoneManager.zone_changed.connect(_on_zone_changed)
-	for button_name in HOVER_COLORS:
-		_setup_icon_glow(get_node("%" + button_name))
+	_setup_hover()
 	for button_name in TOOLTIP_CAPTIONS:
 		_setup_tooltip(get_node("%" + button_name), TOOLTIP_CAPTIONS[button_name])
-	_wire_screen_visibility.call_deferred()
 	_refresh(ZoneManager.current_zone)
+
+
+# The SWF draws the hover as one or two Glow filters on the icon, which grow
+# over the clip's START frames and fall over its STOP frames. The port draws
+# each icon's Glow node as two blurred copies of the icon, the outer color wide
+# and the inner color near, and fades the node. An icon with one Glow color
+# draws both layers in it.
+func _setup_hover() -> void:
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ICONS_PATH))
+	var hover: Dictionary = record["hover"]
+	_fade_in_seconds = _run_seconds(hover["start"], hover["frame_rate"])
+	_fade_out_seconds = _run_seconds(hover["stop"], hover["frame_rate"])
+	for slot: String in ICON_SLOTS:
+		var colors: Array = record["icons"][ICON_SLOTS[slot]]["glow"]
+		var icon: TextureRect = get_node(slot + "Slot/Icon")
+		var glow: Control = get_node(slot + "Slot/Glow")
+		for layer: int in [1, 0]:
+			var color: String = colors[mini(layer, colors.size() - 1)]
+			glow.add_child(_glow_layer(icon, Color.html(color), GLOW_RADII[layer]))
+		var button: BaseButton = get_node("%" + slot + "Button")
+		button.mouse_entered.connect(_fade_glow.bind(slot, 1.0))
+		button.mouse_exited.connect(_fade_glow.bind(slot, 0.0))
+
+
+# A run of the hover clip shows its first frame at once, so it lasts one frame
+# time less than its frame count.
+func _run_seconds(frames: Array, frame_rate: float) -> float:
+	return (float(frames[1]) - float(frames[0])) / frame_rate
+
+
+func _glow_layer(icon: TextureRect, color: Color, radius: float) -> TextureRect:
+	var pad := Vector2(radius, radius) * GLOW_PAD
+	var layer := TextureRect.new()
+	layer.texture = icon.texture
+	layer.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.position = -pad
+	layer.size = icon.size + pad * 2.0
+	layer.modulate = color
+	var material := ShaderMaterial.new()
+	material.shader = GLOW_SHADER
+	material.set_shader_parameter("grow", layer.size / icon.size)
+	material.set_shader_parameter("radius", Vector2(radius, radius) / icon.size)
+	material.set_shader_parameter("strength", GLOW_STRENGTH)
+	layer.material = material
+	return layer
+
+
+func _fade_glow(slot: String, alpha: float) -> void:
+	var glow: Control = get_node(slot + "Slot/Glow")
+	if _hover_tweens.has(slot):
+		_hover_tweens[slot].kill()
+	var tween: Tween = create_tween()
+	tween.tween_property(glow, "modulate:a", alpha, _fade_in_seconds if alpha > 0.0 else _fade_out_seconds)
+	_hover_tweens[slot] = tween
+
+
+# The tween that fades the Glow of `slot`, or null before its first hover.
+func hover_tween(slot: String) -> Tween:
+	return _hover_tweens.get(slot)
 
 
 func _on_quit_pressed() -> void:
@@ -67,23 +132,7 @@ func _on_quit_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 
-# Fetches the pre-built glow/icon overlay children (see hotbar.tscn) and
-# wires the per-button hover tint - the active (menu-open) state always
-# wins over hover, matching the original's single green-glow priority.
-func _setup_icon_glow(button: Button) -> void:
-	var glow: TextureRect = button.get_node("Glow")
-	var icon: TextureRect = button.get_node("Icon")
-	_button_glows[button.name] = {"glow": glow, "icon": icon}
-	var hover_color: Color = HOVER_COLORS.get(button.name, Color.WHITE)
-	button.mouse_entered.connect(func():
-		if not glow.visible:
-			icon.modulate = hover_color)
-	button.mouse_exited.connect(func():
-		if not glow.visible:
-			icon.modulate = Color.WHITE)
-
-
-func _setup_tooltip(button: Button, caption: Array) -> void:
+func _setup_tooltip(button: BaseButton, caption: Array) -> void:
 	var sections: Array = [
 		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": caption[0], "color": TooltipTheme.TEXT_TITLE}]},
 	]
@@ -91,17 +140,6 @@ func _setup_tooltip(button: Button, caption: Array) -> void:
 		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": caption[1], "color": TooltipTheme.TEXT_BODY}]})
 	button.mouse_entered.connect(func(): GameTooltip.show_sections(sections, button))
 	button.mouse_exited.connect(GameTooltip.hide_tooltip)
-
-
-# The screens can close themselves (their X button) - follow their
-# visibility to keep the glows honest. Deferred: the screens live in the
-# game scene, which finishes building after the hotbar.
-func _wire_screen_visibility() -> void:
-	for group in MENU_BUTTON_GROUPS.values():
-		var screen: Node = get_tree().get_first_node_in_group(str(group))
-		if screen != null:
-			screen.visibility_changed.connect(_update_glows)
-	_update_glows()
 
 
 func _on_menu_button_pressed(group: String) -> void:
@@ -119,18 +157,6 @@ func toggle_menu_screen(group: String) -> void:
 	for screen in get_tree().get_nodes_in_group("menu_screen"):
 		screen.visible = false
 	target.visible = opening
-	_update_glows()
-
-
-func _update_glows() -> void:
-	for button_name in MENU_BUTTON_GROUPS:
-		var parts: Dictionary = _button_glows.get(button_name, {})
-		if parts.is_empty():
-			continue
-		var screen: Node = get_tree().get_first_node_in_group(str(MENU_BUTTON_GROUPS[button_name]))
-		var active: bool = screen != null and screen.visible
-		parts["glow"].visible = active
-		parts["icon"].modulate = ACTIVE_ICON_COLOR if active else Color.WHITE
 
 
 func _on_zone_changed(zone_id: int) -> void:

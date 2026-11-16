@@ -1,51 +1,19 @@
-[gd_scene load_steps=19 format=3 uid="uid://ce0fyqjs5nd5q"]
+[gd_scene load_steps=20 format=3 uid="uid://ce0fyqjs5nd5q"]
 
 [ext_resource type="Script" path="res://scripts/ui/hotbar.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/ui/hotbar/background.png" id="2_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/bottom_bar.tscn" id="2_bar"]
 [ext_resource type="Script" uid="uid://bla0fvdm45ped" path="res://scripts/ui/zone_map_toggle_button.gd" id="3_maptoggle"]
-[ext_resource type="Texture2D" path="res://resources/toolbar/inventory.png" id="4_inv"]
-[ext_resource type="Texture2D" path="res://resources/toolbar/abilities.png" id="5_abil"]
-[ext_resource type="Texture2D" path="res://resources/toolbar/save.png" id="6_save"]
-[ext_resource type="Texture2D" path="res://resources/toolbar/options.png" id="7_opt"]
-[ext_resource type="Texture2D" path="res://resources/toolbar/respec.png" id="8_respec"]
-[ext_resource type="Texture2D" path="res://resources/toolbar/achievements.png" id="9_ach"]
-[ext_resource type="Texture2D" path="res://resources/toolbar/world_map.png" id="10_map"]
-
-[sub_resource type="StyleBoxFlat" id="btn_normal"]
-bg_color = Color(0.09, 0.1, 0.11, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.38, 0.42, 0.45, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
-[sub_resource type="StyleBoxFlat" id="btn_hover"]
-bg_color = Color(0.16, 0.18, 0.19, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.62, 0.68, 0.72, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
-[sub_resource type="StyleBoxFlat" id="btn_pressed"]
-bg_color = Color(0.05, 0.06, 0.06, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.3, 0.33, 0.35, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+[ext_resource type="Texture2D" uid="uid://bkx6v11rhjbu7" path="res://assets/ui/window/hotbar_square.png" id="t1"]
+[ext_resource type="Texture2D" uid="uid://dqt7w85dfrwjc" path="res://assets/ui/hotbar/inventory.png" id="t2"]
+[ext_resource type="Texture2D" uid="uid://dqifqmq566x72" path="res://assets/ui/hotbar/abilities.png" id="t3"]
+[ext_resource type="Texture2D" uid="uid://bs6epj7gy61yn" path="res://assets/ui/hotbar/save.png" id="t4"]
+[ext_resource type="Texture2D" uid="uid://dk704uggire8f" path="res://assets/ui/hotbar/options.png" id="t5"]
+[ext_resource type="Texture2D" uid="uid://cu4smosxa70be" path="res://assets/ui/hotbar/respec.png" id="t6"]
+[ext_resource type="Texture2D" uid="uid://dg2eb8o3q6hlp" path="res://assets/ui/hotbar/achievements.png" id="t7"]
+[ext_resource type="Texture2D" uid="uid://cqt2yl2uxh7qv" path="res://assets/ui/window/hotbar_world_map.png" id="t8"]
+[ext_resource type="Texture2D" uid="uid://cukjxt5ana5ph" path="res://assets/ui/hotbar/world_map.png" id="t9"]
+[ext_resource type="Texture2D" uid="uid://1agj0s1ys2op" path="res://assets/ui/window/hotbar_quit.png" id="t10"]
+[ext_resource type="Texture2D" uid="uid://bc2oy3aami1yn" path="res://assets/ui/window/hotbar_quit_red.png" id="t11"]
 
 [sub_resource type="StyleBoxFlat" id="bar_bg"]
 bg_color = Color(0.05, 0.06, 0.06, 1)
@@ -74,390 +42,394 @@ font_color = Color(1, 1, 1, 1)
 shadow_size = 4
 shadow_color = Color(0, 0, 0, 0.6)
 
-[sub_resource type="StyleBoxFlat" id="quit_normal"]
-bg_color = Color(0.55, 0.1, 0.08, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.8, 0.3, 0.25, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="quit_hover"]
-bg_color = Color(0.75, 0.15, 0.1, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.8, 0.3, 0.25, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
 [node name="Hotbar" type="Control" groups=["hotbar"]]
 layout_mode = 3
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -130.0
-grow_horizontal = 2
-grow_vertical = 0
+anchors_preset = 0
+offset_right = 800.0
+offset_bottom = 575.0
+mouse_filter = 2
 script = ExtResource("1_script")
 
-[node name="Strip" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-color = Color(0.04, 0.05, 0.06, 1)
+[node name="BottomBar" parent="." instance=ExtResource("2_bar")]
 
-[node name="LeftPanel" type="TextureRect" parent="."]
+[node name="InventorySlot" type="Control" parent="."]
 layout_mode = 0
-offset_left = 12.0
-offset_top = 10.0
-offset_right = 332.0
-offset_bottom = 120.0
-texture = ExtResource("2_panel")
-expand_mode = 1
-
-[node name="LeftButtons" type="HBoxContainer" parent="LeftPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 9
-alignment = 1
-
-[node name="InventoryButton" type="Button" parent="LeftPanel/LeftButtons"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(42, 42)
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/normal = SubResource("btn_normal")
-theme_override_styles/hover = SubResource("btn_hover")
-theme_override_styles/pressed = SubResource("btn_pressed")
-
-[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/InventoryButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -19.0
-offset_top = -19.0
-offset_right = 19.0
-offset_bottom = 19.0
+offset_left = 25.0
+offset_top = 467.25
+offset_right = 78.75
+offset_bottom = 521.25
 mouse_filter = 2
-texture = ExtResource("4_inv")
-expand_mode = 1
-stretch_mode = 0
-modulate = Color(0.45, 1.0, 0.35, 0.9)
-visible = false
 
-[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/InventoryButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -14.0
-offset_top = -14.0
-offset_right = 14.0
-offset_bottom = 14.0
-mouse_filter = 2
-texture = ExtResource("4_inv")
-expand_mode = 1
-stretch_mode = 0
-
-[node name="AbilitiesButton" type="Button" parent="LeftPanel/LeftButtons"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(42, 42)
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/normal = SubResource("btn_normal")
-theme_override_styles/hover = SubResource("btn_hover")
-theme_override_styles/pressed = SubResource("btn_pressed")
-
-[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/AbilitiesButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -19.0
-offset_top = -19.0
-offset_right = 19.0
-offset_bottom = 19.0
-mouse_filter = 2
-texture = ExtResource("5_abil")
-expand_mode = 1
-stretch_mode = 0
-modulate = Color(0.45, 1.0, 0.35, 0.9)
-visible = false
-
-[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/AbilitiesButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -14.0
-offset_top = -14.0
-offset_right = 14.0
-offset_bottom = 14.0
-mouse_filter = 2
-texture = ExtResource("5_abil")
-expand_mode = 1
-stretch_mode = 0
-
-[node name="SaveButton" type="Button" parent="LeftPanel/LeftButtons"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(42, 42)
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/normal = SubResource("btn_normal")
-theme_override_styles/hover = SubResource("btn_hover")
-theme_override_styles/pressed = SubResource("btn_pressed")
-
-[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/SaveButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -19.0
-offset_top = -19.0
-offset_right = 19.0
-offset_bottom = 19.0
-mouse_filter = 2
-texture = ExtResource("6_save")
-expand_mode = 1
-stretch_mode = 0
-modulate = Color(0.45, 1.0, 0.35, 0.9)
-visible = false
-
-[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/SaveButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -14.0
-offset_top = -14.0
-offset_right = 14.0
-offset_bottom = 14.0
-mouse_filter = 2
-texture = ExtResource("6_save")
-expand_mode = 1
-stretch_mode = 0
-
-[node name="OptionsButton" type="Button" parent="LeftPanel/LeftButtons"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(42, 42)
-layout_mode = 2
-size_flags_vertical = 4
-modulate = Color(1, 1, 1, 0.5)
-theme_override_styles/normal = SubResource("btn_normal")
-theme_override_styles/hover = SubResource("btn_hover")
-theme_override_styles/pressed = SubResource("btn_pressed")
-
-[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/OptionsButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -19.0
-offset_top = -19.0
-offset_right = 19.0
-offset_bottom = 19.0
-mouse_filter = 2
-texture = ExtResource("7_opt")
-expand_mode = 1
-stretch_mode = 0
-modulate = Color(0.45, 1.0, 0.35, 0.9)
-visible = false
-
-[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/OptionsButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -14.0
-offset_top = -14.0
-offset_right = 14.0
-offset_bottom = 14.0
-mouse_filter = 2
-texture = ExtResource("7_opt")
-expand_mode = 1
-stretch_mode = 0
-
-[node name="RespecButton" type="Button" parent="LeftPanel/LeftButtons"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(42, 42)
-layout_mode = 2
-size_flags_vertical = 4
-modulate = Color(1, 1, 1, 0.5)
-theme_override_styles/normal = SubResource("btn_normal")
-theme_override_styles/hover = SubResource("btn_hover")
-theme_override_styles/pressed = SubResource("btn_pressed")
-
-[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/RespecButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -19.0
-offset_top = -19.0
-offset_right = 19.0
-offset_bottom = 19.0
-mouse_filter = 2
-texture = ExtResource("8_respec")
-expand_mode = 1
-stretch_mode = 0
-modulate = Color(0.45, 1.0, 0.35, 0.9)
-visible = false
-
-[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/RespecButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -14.0
-offset_top = -14.0
-offset_right = 14.0
-offset_bottom = 14.0
-mouse_filter = 2
-texture = ExtResource("8_respec")
-expand_mode = 1
-stretch_mode = 0
-
-[node name="AchievementsButton" type="Button" parent="LeftPanel/LeftButtons"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(42, 42)
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/normal = SubResource("btn_normal")
-theme_override_styles/hover = SubResource("btn_hover")
-theme_override_styles/pressed = SubResource("btn_pressed")
-
-[node name="Glow" type="TextureRect" parent="LeftPanel/LeftButtons/AchievementsButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -19.0
-offset_top = -19.0
-offset_right = 19.0
-offset_bottom = 19.0
-mouse_filter = 2
-texture = ExtResource("9_ach")
-expand_mode = 1
-stretch_mode = 0
-modulate = Color(0.45, 1.0, 0.35, 0.9)
-visible = false
-
-[node name="Icon" type="TextureRect" parent="LeftPanel/LeftButtons/AchievementsButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -14.0
-offset_top = -14.0
-offset_right = 14.0
-offset_bottom = 14.0
-mouse_filter = 2
-texture = ExtResource("9_ach")
-expand_mode = 1
-stretch_mode = 0
-
-[node name="MiddlePanel" type="TextureRect" parent="."]
+[node name="Square" type="TextureRect" parent="InventorySlot"]
 layout_mode = 0
-offset_left = 340.0
-offset_top = 10.0
-offset_right = 460.0
-offset_bottom = 120.0
-texture = ExtResource("2_panel")
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 53.75
+offset_bottom = 54.0
+mouse_filter = 2
+texture = ExtResource("t1")
 expand_mode = 1
 
-[node name="MapCenter" type="CenterContainer" parent="MiddlePanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Glow" type="Control" parent="InventorySlot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 11.8
+offset_top = 11.95
+offset_right = 40.6
+offset_bottom = 40.75
+mouse_filter = 2
 
-[node name="ZoneMapButton" type="Button" parent="MiddlePanel/MapCenter"]
+[node name="Icon" type="TextureRect" parent="InventorySlot"]
+layout_mode = 0
+offset_left = 11.8
+offset_top = 11.95
+offset_right = 40.6
+offset_bottom = 40.75
+mouse_filter = 2
+texture = ExtResource("t2")
+expand_mode = 1
+
+[node name="InventoryButton" type="TextureButton" parent="InventorySlot"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(48, 48)
-layout_mode = 2
-theme_override_styles/normal = SubResource("btn_normal")
-theme_override_styles/hover = SubResource("btn_hover")
-theme_override_styles/pressed = SubResource("btn_pressed")
-theme_override_constants/icon_max_width = 32
-icon = ExtResource("10_map")
-icon_alignment = 1
-expand_icon = true
+layout_mode = 0
+offset_left = 6.5165
+offset_top = 6.5422
+offset_right = 46.7644
+offset_bottom = 46.7905
+focus_mode = 0
+
+[node name="AbilitiesSlot" type="Control" parent="."]
+layout_mode = 0
+offset_left = 73.2
+offset_top = 467.25
+offset_right = 126.95
+offset_bottom = 521.25
+mouse_filter = 2
+
+[node name="Square" type="TextureRect" parent="AbilitiesSlot"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 53.75
+offset_bottom = 54.0
+mouse_filter = 2
+texture = ExtResource("t1")
+expand_mode = 1
+
+[node name="Glow" type="Control" parent="AbilitiesSlot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 12.8
+offset_top = 11.15
+offset_right = 38.4
+offset_bottom = 42.35
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="AbilitiesSlot"]
+layout_mode = 0
+offset_left = 12.8
+offset_top = 11.15
+offset_right = 38.4
+offset_bottom = 42.35
+mouse_filter = 2
+texture = ExtResource("t3")
+expand_mode = 1
+
+[node name="AbilitiesButton" type="TextureButton" parent="AbilitiesSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 6.5165
+offset_top = 6.5422
+offset_right = 46.7644
+offset_bottom = 46.7905
+focus_mode = 0
+
+[node name="SaveSlot" type="Control" parent="."]
+layout_mode = 0
+offset_left = 122.5
+offset_top = 467.25
+offset_right = 176.25
+offset_bottom = 521.25
+mouse_filter = 2
+
+[node name="Square" type="TextureRect" parent="SaveSlot"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 53.75
+offset_bottom = 54.0
+mouse_filter = 2
+texture = ExtResource("t1")
+expand_mode = 1
+
+[node name="Glow" type="Control" parent="SaveSlot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 16.7
+offset_top = 12.15
+offset_right = 37.1
+offset_bottom = 40.95
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="SaveSlot"]
+layout_mode = 0
+offset_left = 16.7
+offset_top = 12.15
+offset_right = 37.1
+offset_bottom = 40.95
+mouse_filter = 2
+texture = ExtResource("t4")
+expand_mode = 1
+
+[node name="SaveButton" type="TextureButton" parent="SaveSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 6.5165
+offset_top = 6.5422
+offset_right = 46.7644
+offset_bottom = 46.7905
+focus_mode = 0
+
+[node name="OptionsSlot" type="Control" parent="."]
+modulate = Color(1, 1, 1, 0.5)
+layout_mode = 0
+offset_left = 171.0
+offset_top = 467.25
+offset_right = 224.75
+offset_bottom = 521.25
+mouse_filter = 2
+
+[node name="Square" type="TextureRect" parent="OptionsSlot"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 53.75
+offset_bottom = 54.0
+mouse_filter = 2
+texture = ExtResource("t1")
+expand_mode = 1
+
+[node name="Glow" type="Control" parent="OptionsSlot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 12.4
+offset_top = 11.95
+offset_right = 41.6
+offset_bottom = 41.75
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="OptionsSlot"]
+layout_mode = 0
+offset_left = 12.4
+offset_top = 11.95
+offset_right = 41.6
+offset_bottom = 41.75
+mouse_filter = 2
+texture = ExtResource("t5")
+expand_mode = 1
+
+[node name="OptionsButton" type="TextureButton" parent="OptionsSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 6.5165
+offset_top = 6.5422
+offset_right = 46.7644
+offset_bottom = 46.7905
+focus_mode = 0
+
+[node name="RespecSlot" type="Control" parent="."]
+modulate = Color(1, 1, 1, 0.5)
+layout_mode = 0
+offset_left = 219.7
+offset_top = 467.25
+offset_right = 273.45
+offset_bottom = 521.25
+mouse_filter = 2
+
+[node name="Square" type="TextureRect" parent="RespecSlot"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 53.75
+offset_bottom = 54.0
+mouse_filter = 2
+texture = ExtResource("t1")
+expand_mode = 1
+
+[node name="Glow" type="Control" parent="RespecSlot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 14.1
+offset_top = 13.95
+offset_right = 38.9
+offset_bottom = 38.75
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="RespecSlot"]
+layout_mode = 0
+offset_left = 14.1
+offset_top = 13.95
+offset_right = 38.9
+offset_bottom = 38.75
+mouse_filter = 2
+texture = ExtResource("t6")
+expand_mode = 1
+
+[node name="RespecButton" type="TextureButton" parent="RespecSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 6.5165
+offset_top = 6.5422
+offset_right = 46.7644
+offset_bottom = 46.7905
+focus_mode = 0
+
+[node name="AchievementsSlot" type="Control" parent="."]
+layout_mode = 0
+offset_left = 268.8
+offset_top = 467.25
+offset_right = 322.55
+offset_bottom = 521.25
+mouse_filter = 2
+
+[node name="Square" type="TextureRect" parent="AchievementsSlot"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 53.75
+offset_bottom = 54.0
+mouse_filter = 2
+texture = ExtResource("t1")
+expand_mode = 1
+
+[node name="Glow" type="Control" parent="AchievementsSlot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 14.2
+offset_top = 15.15
+offset_right = 39.0
+offset_bottom = 41.35
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="AchievementsSlot"]
+layout_mode = 0
+offset_left = 14.2
+offset_top = 15.15
+offset_right = 39.0
+offset_bottom = 41.35
+mouse_filter = 2
+texture = ExtResource("t7")
+expand_mode = 1
+
+[node name="AchievementsButton" type="TextureButton" parent="AchievementsSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 6.5165
+offset_top = 6.5422
+offset_right = 46.7644
+offset_bottom = 46.7905
+focus_mode = 0
+
+[node name="ZoneMapSlot" type="Control" parent="."]
+layout_mode = 0
+offset_left = 369.75
+offset_top = 477.75
+offset_right = 432.25
+offset_bottom = 540.25
+mouse_filter = 2
+
+[node name="Square" type="TextureRect" parent="ZoneMapSlot"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 62.5
+offset_bottom = 62.5
+mouse_filter = 2
+texture = ExtResource("t8")
+expand_mode = 1
+
+[node name="Glow" type="Control" parent="ZoneMapSlot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 14.65
+offset_top = 15.05
+offset_right = 46.45
+offset_bottom = 46.85
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="ZoneMapSlot"]
+layout_mode = 0
+offset_left = 14.65
+offset_top = 15.05
+offset_right = 46.45
+offset_bottom = 46.85
+mouse_filter = 2
+texture = ExtResource("t9")
+expand_mode = 1
+
+[node name="ZoneMapButton" type="TextureButton" parent="ZoneMapSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 6.5734
+offset_top = 6.5545
+offset_right = 55.3036
+offset_bottom = 55.2851
+focus_mode = 0
 script = ExtResource("3_maptoggle")
 
-[node name="RightPanel" type="TextureRect" parent="."]
+[node name="QuitSlot" type="Control" parent="."]
 layout_mode = 0
-offset_left = 468.0
-offset_top = 10.0
-offset_right = 788.0
-offset_bottom = 120.0
-texture = ExtResource("2_panel")
+offset_left = 429.5
+offset_top = 458.25
+offset_right = 461.25
+offset_bottom = 490.0
+mouse_filter = 2
+
+[node name="Square" type="TextureRect" parent="QuitSlot"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 31.75
+offset_bottom = 31.75
+mouse_filter = 2
+texture = ExtResource("t10")
 expand_mode = 1
 
-[node name="ZoneInfo" type="VBoxContainer" parent="RightPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 8.0
-offset_right = -16.0
-offset_bottom = -6.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Red" type="TextureRect" parent="QuitSlot"]
+layout_mode = 0
+offset_left = 6.5
+offset_top = 6.5
+offset_right = 24.5
+offset_bottom = 24.5
+mouse_filter = 2
+texture = ExtResource("t11")
+expand_mode = 1
+
+[node name="QuitButton" type="TextureButton" parent="QuitSlot"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 6.5843
+offset_top = 6.6568
+offset_right = 24.6072
+offset_bottom = 24.6578
+focus_mode = 0
+
+[node name="ZoneInfo" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 484.0
+offset_top = 463.0
+offset_right = 772.0
+offset_bottom = 559.0
 theme_override_constants/separation = 1
 
-[node name="ZoneTitle" type="Label" parent="RightPanel/ZoneInfo"]
+[node name="ZoneTitle" type="Label" parent="ZoneInfo"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Zone 1"
 label_settings = SubResource("title_settings")
 horizontal_alignment = 1
 
-[node name="ZoneSubtitle" type="Label" parent="RightPanel/ZoneInfo"]
+[node name="ZoneSubtitle" type="Label" parent="ZoneInfo"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.35, 0.88, 0.16, 1)
@@ -465,7 +437,7 @@ theme_override_font_sizes/font_size = 12
 text = "New Alcatraz: The Iron Prison"
 horizontal_alignment = 1
 
-[node name="ZoneProgress" type="ProgressBar" parent="RightPanel/ZoneInfo"]
+[node name="ZoneProgress" type="ProgressBar" parent="ZoneInfo"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
@@ -474,27 +446,15 @@ theme_override_styles/fill = SubResource("bar_fill")
 max_value = 9.0
 show_percentage = false
 
-[node name="StageLabel" type="Label" parent="RightPanel/ZoneInfo"]
+[node name="StageLabel" type="Label" parent="ZoneInfo"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Stage 1"
 horizontal_alignment = 2
 
-[node name="QuitButton" type="Button" parent="."]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 442.0
-offset_top = 4.0
-offset_right = 468.0
-offset_bottom = 30.0
-theme_override_font_sizes/font_size = 14
-theme_override_styles/normal = SubResource("quit_normal")
-theme_override_styles/hover = SubResource("quit_hover")
-text = "x"
-
-[connection signal="pressed" from="LeftPanel/LeftButtons/InventoryButton" to="." method="_on_menu_button_pressed" binds=["inventory_window"]]
-[connection signal="pressed" from="LeftPanel/LeftButtons/AbilitiesButton" to="." method="_on_menu_button_pressed" binds=["abilities_window"]]
-[connection signal="pressed" from="LeftPanel/LeftButtons/AchievementsButton" to="." method="_on_menu_button_pressed" binds=["achievements_window"]]
-[connection signal="pressed" from="LeftPanel/LeftButtons/SaveButton" to="." method="_on_save_pressed"]
-[connection signal="pressed" from="QuitButton" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="InventorySlot/InventoryButton" to="." method="_on_menu_button_pressed" binds=["inventory_window"]]
+[connection signal="pressed" from="AbilitiesSlot/AbilitiesButton" to="." method="_on_menu_button_pressed" binds=["abilities_window"]]
+[connection signal="pressed" from="AchievementsSlot/AchievementsButton" to="." method="_on_menu_button_pressed" binds=["achievements_window"]]
+[connection signal="pressed" from="SaveSlot/SaveButton" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="QuitSlot/QuitButton" to="." method="_on_quit_pressed"]

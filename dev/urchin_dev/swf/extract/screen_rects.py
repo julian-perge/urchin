@@ -22,10 +22,11 @@
 #   "text"  - an edit text, recorded as the rect Flash lays its text out in
 #             (label_layout.text_rect), with its font height, colour and
 #             alignment.
-#   "art"   - a piece drawn from a PNG of extract_window_chrome or of
-#             extract_start_screens, which a TextureRect shows at the rect that
-#             render measured, with the PNG's path. A window chrome depth is
-#             the one window_chrome renders, so the two extractors cannot name
+#   "art"   - a piece drawn from a PNG of extract_window_chrome,
+#             extract_start_screens or extract_hotbar_icons, or from the bottom
+#             bar of extract_battle_screen, which a TextureRect shows at the
+#             rect that render measured, with the PNG's path. A window chrome
+#             depth is the one window_chrome renders, so the two extractors cannot name
 #             different placements.
 #   "face"  - the portrait clip 2978, which the port draws as a TextureRect that
 #             shows a different PNG for each fighter. It is recorded as the crop
@@ -35,14 +36,18 @@
 #             hit shape's bounds through the placement matrix.
 #   "button" - a button that draws art, which the port draws as a native
 #             Button. It is recorded as the bounds of the shapes its up state
-#             draws, through the placement matrix.
+#             draws, each through its button record's matrix and then the
+#             placement matrix. A hotbar square is one: the port draws its art
+#             as an "art" piece and puts a Button on this rect to take clicks.
 #   "box"   - a shape of one solid fill and no line, which the port draws as a
 #             ColorRect, recorded as its ShapeBounds through the placement
 #             matrix with its fill colour.
 #
 # An "art" piece whose render is measured from a sprite of its own is placed
 # by where that sprite sits: the sprite at `depth`, or the sprite at
-# `inner_depth` inside it.
+# `inner_depth` inside it. An "art" piece whose render is measured on the Stage
+# at another depth, `rendered_at`, is moved by the distance between the two
+# placements. The six hotbar squares are one PNG that way.
 #
 # A piece that a sprite places on its own first frame names the sprite's depth
 # and its own inner_depth, and it is measured from where the sprite sits.
@@ -59,9 +64,17 @@ import json
 import math
 from dataclasses import dataclass, field
 
+from PIL import Image
+
 from urchin_dev import REPO_ROOT, WEB_SWF
 from urchin_dev.swf import label_layout, render, timeline
-from urchin_dev.swf.extract import faces, start_screens, window_chrome
+from urchin_dev.swf.extract import (
+    battle_screen,
+    faces,
+    hotbar_icons,
+    start_screens,
+    window_chrome,
+)
 from urchin_dev.swf.swf_index import (
     ButtonRecord,
     DropShadow,
@@ -80,6 +93,8 @@ from urchin_dev.swf.swf_index import (
 RECORD = REPO_ROOT / "test" / "fixtures" / "screen_rects.json"
 CHROME_TEXTURES = "res://assets/ui/window"
 MENU_TEXTURES = "res://assets/ui/menu"
+BATTLE_TEXTURES = "res://assets/ui/battle"
+HOTBAR_TEXTURES = "res://assets/ui/hotbar"
 # The menu art, by the record that extract_start_screens writes beside each PNG.
 MENU_ART = {
     "logo": start_screens.LOGO_RECORD,
@@ -101,6 +116,9 @@ class Piece:
     # The depth of the piece inside the sprite at `depth`, on the sprite's
     # first frame, for a piece that the scene's timeline does not place itself.
     inner_depth: int | None = None
+    # The depth whose placement the art's render was measured at, for art that
+    # the frame places at several depths and the extractor rendered at one.
+    rendered_at: int | None = None
 
     def __post_init__(self) -> None:
         if (self.depth is None) == (self.instance is None):
@@ -172,6 +190,55 @@ CHOICE_PIECES = {
     "Captions/NewGameSlot/HitButton": Piece("hit", 10),
     "Captions/LoadGameSlot/Caption": Piece("text", 9),
     "Captions/LoadGameSlot/HitButton": Piece("hit", 12),
+}
+
+# The six hotbar slots that share the 0.671 square, by their slot node in
+# hotbar.tscn: the depth of the slot's button and the name of its icon art
+# (spec/107-hub.md, The hotbar). The button draws the square, so the square's
+# art and the hit rect are two pieces at one depth.
+HOTBAR_SLOTS: dict[str, tuple[int, str]] = {
+    "Inventory": (126, "inventory"),
+    "Abilities": (128, "abilities"),
+    "Save": (130, "save"),
+    "Options": (136, "options"),
+    "Respec": (138, "respec"),
+    "Achievements": (165, "achievements"),
+}
+if (
+    tuple(depth for depth, _icon in HOTBAR_SLOTS.values())
+    != window_chrome.SQUARE_DEPTHS
+):
+    raise ValueError("HOTBAR_SLOTS and window_chrome.SQUARE_DEPTHS disagree")
+
+
+def hotbar_icon(name: str) -> Piece:
+    return Piece("art", None, art=name, instance=hotbar_icons.ICONS[name])
+
+
+HOTBAR_PIECES = {
+    "BottomBar": Piece("art", 1, art="bottom_bar"),
+    **{
+        f"{slot}Slot/{node}": piece
+        for slot, (depth, icon) in HOTBAR_SLOTS.items()
+        for node, piece in {
+            "Square": Piece(
+                "art",
+                depth,
+                art="hotbar_square",
+                rendered_at=window_chrome.SQUARE_DEPTHS[0],
+            ),
+            "Icon": hotbar_icon(icon),
+            f"{slot}Button": Piece("button", depth),
+        }.items()
+    },
+    "ZoneMapSlot/Square": Piece(
+        "art", window_chrome.WORLD_MAP_DEPTH, art="hotbar_world_map"
+    ),
+    "ZoneMapSlot/Icon": hotbar_icon("world_map"),
+    "ZoneMapSlot/ZoneMapButton": Piece("button", window_chrome.WORLD_MAP_DEPTH),
+    "QuitSlot/Square": Piece("art", window_chrome.QUIT_DEPTH, art="hotbar_quit"),
+    "QuitSlot/Red": Piece("art", window_chrome.QUIT_RED_DEPTH, art="hotbar_quit_red"),
+    "QuitSlot/QuitButton": Piece("button", window_chrome.QUIT_DEPTH),
 }
 
 SCENES: dict[str, Scene] = {
@@ -394,6 +461,26 @@ SCENES: dict[str, Scene] = {
         ),
         left_out=(38, 41),
     ),
+    # The bottom bar body 3317, which the hub frame and the battle frame both
+    # place at depth 1 (spec/107-hub.md, The bottom bar body). The scene's root
+    # is the piece.
+    "res://scenes/ui/bottom_bar.tscn": Scene(
+        timeline=0, frame=HUB_FRAME, pieces={".": Piece("art", 1, art="bottom_bar")}
+    ),
+    # The hotbar on the bottom bar. Each Glow is the port's hover, which the SWF
+    # draws as a Glow filter on the icon. ZoneInfo is the zone progress, which
+    # is port only until #221 records it. Depth 144 is the Armor Games strip
+    # 3176.
+    "res://scenes/ui/hotbar.tscn": Scene(
+        timeline=0,
+        frame=HUB_FRAME,
+        pieces=HOTBAR_PIECES,
+        port_only=(
+            "ZoneInfo",
+            *(f"{slot}Slot/Glow" for slot in (*HOTBAR_SLOTS, "ZoneMap")),
+        ),
+        left_out=(144,),
+    ),
 }
 
 
@@ -530,20 +617,68 @@ def _shadow_of(layer: timeline.Layer) -> DropShadow | None:
     return shadows[0] if shadows else None
 
 
+def bottom_bar_source() -> dict:
+    """-> the render record of the bottom bar, which extract_battle_screen
+    writes as a rect only. Its zoom is that extractor's, and its size is read
+    from the PNG."""
+    rect = json.loads(battle_screen.LAYOUT_JSON.read_text())["chrome"]["bottom_bar"]
+    with Image.open(battle_screen.BATTLE_UI_DIR / "bottom_bar.png") as image:
+        size = list(image.size)
+    return {
+        "rect": [rect["x"], rect["y"], rect["w"], rect["h"]],
+        "size": size,
+        "zoom": battle_screen.ZOOM,
+    }
+
+
 def art_sources() -> dict[str, tuple[dict, str]]:
     """-> the render record and the res:// folder of every PNG an art piece can
-    name. The menu art is measured from the Stage, and its records do not say
-    so, so each gets the relative_to that window_chrome.json writes."""
+    name. Only window_chrome.json says what a rect is measured from. Every
+    other record is measured from the Stage, so each gets that relative_to."""
     sources = {
         name: (entry, CHROME_TEXTURES)
         for name, entry in json.loads(window_chrome.RECORD.read_text()).items()
     }
-    for name, record in MENU_ART.items():
+    icons = json.loads(hotbar_icons.RECORD.read_text())["icons"]
+    on_stage = [
+        *(
+            (name, json.loads(record.read_text()), MENU_TEXTURES)
+            for name, record in MENU_ART.items()
+        ),
+        ("bottom_bar", bottom_bar_source(), BATTLE_TEXTURES),
+        *(
+            (
+                name,
+                {key: icon[key] for key in ("rect", "size", "zoom")},
+                HOTBAR_TEXTURES,
+            )
+            for name, icon in icons.items()
+        ),
+    ]
+    for name, record, textures in on_stage:
         if name in sources:
-            raise ValueError(f"{name} is both window chrome and menu art")
-        entry = {**json.loads(record.read_text()), "relative_to": "stage"}
-        sources[name] = (entry, MENU_TEXTURES)
+            raise ValueError(f"two art sources are named {name}")
+        sources[name] = ({**record, "relative_to": "stage"}, textures)
     return sources
+
+
+def moved_art(entry: dict, matrix, rendered_matrix) -> dict:
+    """-> the render record `entry`, measured on the Stage where
+    `rendered_matrix` places the art, moved to where `matrix` places the same
+    art."""
+    if entry["relative_to"] != "stage":
+        raise ValueError(
+            f"a rect measured from {entry['relative_to']} has no Stage position to move"
+        )
+    if _scale(matrix) != _scale(rendered_matrix):
+        raise ValueError(
+            f"matrix {matrix} does not have the scale of {rendered_matrix}, so"
+            " the art is another size there"
+        )
+    x, y, w, h = entry["rect"]
+    dx = (matrix[4] - rendered_matrix[4]) / render.TWIPS
+    dy = (matrix[5] - rendered_matrix[5]) / render.TWIPS
+    return {**entry, "rect": [round(x + dx, 4), round(y + dy, 4), w, h]}
 
 
 def art_record(
@@ -616,15 +751,13 @@ def hit_record(records: list[ButtonRecord], bounds, matrix, origin) -> dict:
 
 def button_record(records: list[ButtonRecord], bounds: dict, matrix, origin) -> dict:
     """-> the record of a button that draws art, as the rect of the shapes its
-    up state draws, placed with `matrix`. `bounds` maps each shape to its
+    up state draws, each placed in the button with its record's matrix, and
+    the button placed with `matrix`. `bounds` maps each shape to its
     ShapeBounds."""
     up = [r for r in records if "up" in r.states]
     if not up:
         raise ValueError("the button draws nothing in its up state")
-    for r in up:
-        if r.matrix != timeline.IDENTITY:
-            raise ValueError(f"the button moves shape {r.character_id}: {r.matrix}")
-    shapes = [bounds[r.character_id] for r in up]
+    shapes = [_in_button(bounds[r.character_id], r.matrix) for r in up]
     union = (
         min(b[0] for b in shapes),
         min(b[1] for b in shapes),
@@ -635,6 +768,15 @@ def button_record(records: list[ButtonRecord], bounds: dict, matrix, origin) -> 
         "kind": "button",
         "rect": [round(v, 4) for v in stage_rect(union, matrix, origin)],
     }
+
+
+def _in_button(bounds, matrix) -> tuple[float, float, float, float]:
+    """-> `bounds` (twips) through a button record's `matrix`, in the button's
+    own twips."""
+    scale_x, scale_y = _scale(matrix)
+    xs = sorted(v * scale_x + matrix[4] for v in (bounds[0], bounds[2]))
+    ys = sorted(v * scale_y + matrix[5] for v in (bounds[1], bounds[3]))
+    return xs[0], ys[0], xs[1], ys[1]
 
 
 def _button(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
@@ -800,6 +942,9 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
             pieces[path] = _button(index, layer, piece_origin)
         elif piece.kind == "art":
             entry, textures = art[piece.art]
+            if piece.rendered_at is not None:
+                rendered = layers[piece.rendered_at]
+                entry = moved_art(entry, layer.matrix, rendered.matrix)
             pieces[path] = art_record(piece.art, entry, sprite_origins, textures)
         elif piece.kind == "face":
             if layer.character_id != faces.FACE_CLIP:

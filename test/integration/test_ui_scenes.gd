@@ -679,7 +679,6 @@ func test_hub_opens_the_abilities_window_when_the_flag_is_set_and_clears_it():
 	assert_true(game.get_node("AbilitiesWindow").visible, "the Abilities window is open")
 	assert_false(ZoneManager.open_abilities_on_load, "the flag is cleared")
 	assert_false(game.get_node("ZoneMapOverlay").visible, "the map stays shut")
-	assert_true(game.get_node("Hotbar").get_node("%AbilitiesButton/Glow").visible, "the Abilities button glows, as after a click")
 
 
 func test_hub_leaves_the_abilities_window_shut_when_the_flag_is_unset():
@@ -902,21 +901,35 @@ func test_achievements_window_builds_ten_plates():
 	assert_eq(window._plates.size(), Achievements.ACHIEVEMENT_COUNT)
 
 
-func test_hotbar_menu_toggle_is_exclusive_and_glows():
+func test_hotbar_menu_toggle_is_exclusive():
 	var game = add_child_autofree(GameScene.instantiate())
 	await get_tree().process_frame
 	var hotbar = game.get_node("Hotbar")
 	hotbar.toggle_menu_screen("abilities_window")
 	assert_true(game.get_node("AbilitiesWindow").visible, "abilities opens")
-	assert_true(hotbar._button_glows["AbilitiesButton"]["glow"].visible, "abilities icon glows")
 	hotbar.toggle_menu_screen("inventory_window")
 	assert_false(game.get_node("AbilitiesWindow").visible, "one menu screen at a time")
 	assert_true(game.get_node("InventoryWindow").visible)
-	assert_false(hotbar._button_glows["AbilitiesButton"]["glow"].visible, "old glow off")
-	assert_true(hotbar._button_glows["InventoryButton"]["glow"].visible, "new glow on")
 	hotbar.toggle_menu_screen("inventory_window")
 	assert_false(game.get_node("InventoryWindow").visible, "second press closes")
-	assert_false(hotbar._button_glows["InventoryButton"]["glow"].visible)
+
+
+# The original has no open-Window state on the hotbar (spec/107-hub.md, The
+# hotbar), so the icon and its hover Glow stay as they are when a button opens
+# its Window.
+func test_a_hotbar_icon_stays_white_while_its_window_is_open():
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var hotbar = game.get_node("Hotbar")
+	for slot: String in ["Inventory", "Abilities", "Achievements"]:
+		(hotbar.get_node("%" + slot + "Button") as BaseButton).pressed.emit()
+		await get_tree().process_frame
+		assert_true(game.get_node(slot + "Window").visible, "%s opens its Window" % slot)
+		var icon: TextureRect = hotbar.get_node(slot + "Slot/Icon")
+		var glow: Control = hotbar.get_node(slot + "Slot/Glow")
+		assert_eq(icon.modulate, Color.WHITE, "%s icon" % slot)
+		assert_eq(icon.self_modulate, Color.WHITE, "%s icon" % slot)
+		assert_eq(glow.modulate.a, 0.0, "%s glow" % slot)
 
 
 # First unrestricted level-1 wearable in the item set (deterministic pick:

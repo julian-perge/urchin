@@ -568,6 +568,32 @@ func test_control_a_title_slot_20_px_taller_fails() -> void:
 		assert_false(problem.contains("PlaySlot"), problem)
 
 
+const HOTBAR_SCENE: String = "res://scenes/ui/hotbar.tscn"
+
+
+# A slot holds its square, its icon and its hit button, so each of the three
+# fails at both corners. The slot's Glow is port only.
+func test_control_a_hotbar_slot_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(HOTBAR_SCENE)
+	(root.get_node("SaveSlot") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][HOTBAR_SCENE])
+	assert_eq(found.size(), 6, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "SaveSlot/")
+
+
+# The hit button is smaller than the square's art, which holds the Glows around
+# the square, so only this test can see the hit button move.
+func test_control_a_hotbar_hit_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(HOTBAR_SCENE)
+	(root.get_node("%ZoneMapButton") as Control).position.y += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][HOTBAR_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "ZoneMapSlot/ZoneMapButton: top left")
+
+
 const MODE_SCENE: String = "res://scenes/ui/menu/mode_panel.tscn"
 
 
