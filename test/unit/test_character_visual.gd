@@ -440,6 +440,21 @@ func test_stun_holds_until_cleared():
 	assert_true(visual.is_idle())
 
 
+func test_stun_flows_into_its_loop_and_the_wake_up_ends_in_idle():
+	visual.set_state(CharacterVisual.State.STUN)
+	for step in _label_length("stun") - 1:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._label, "stun", "on the last frame of stun")
+	visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._label, "stun2", "one step later")
+	visual.exit_stun()
+	for step in _label_length("outofstun") - 1:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._state, CharacterVisual.State.STUN, "on the last frame of outofstun")
+	visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._state, CharacterVisual.State.IDLE, "one step later")
+
+
 func test_matrixless_placement_keeps_its_depths_matrix():
 	# Frame 123 of MODEL1 (sprite 166) moves foot2 at depth 9 with a blur filter
 	# and no matrix, so foot2 keeps frame 122's matrix: scale 0.8 at (216, 654)
