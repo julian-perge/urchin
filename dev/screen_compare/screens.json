@@ -1,0 +1,11 @@
+{
+ "victory_left_panel": {
+  "scene": "res://test/fixtures/screen_rects/victory_left_panel.tscn",
+  "modes": {
+   "panels": {
+    "nodes": ["LeftPanel"],
+    "bar": 2
+   }
+  }
+ }
+}
