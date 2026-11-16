@@ -161,6 +161,19 @@ TITLE_PIECES = {
     "Captions/CreditsSlot/HitButton": Piece("hit", 22),
 }
 
+# The choice frame's pieces, by their path in mode_panel.tscn
+# (spec/107-title-slots.md, The choice). The frame also places "PvP Arena" at
+# depth 14 and its hit button at depth 15, which the port leaves out
+# (docs/adr/0006-leave-out-the-pvp-arena.md).
+CHOICE_FRAME = "subMenu"
+CHOICE_PIECES = {
+    "Logo": Piece("art", 6, art="logo"),
+    "Captions/NewGameSlot/Caption": Piece("text", 8),
+    "Captions/NewGameSlot/HitButton": Piece("hit", 10),
+    "Captions/LoadGameSlot/Caption": Piece("text", 9),
+    "Captions/LoadGameSlot/HitButton": Piece("hit", 12),
+}
+
 SCENES: dict[str, Scene] = {
     # The victory frame's left Panel and the field at its top. It is a test
     # scene, so the generic test and its must-fail control have a scene to run.
@@ -331,8 +344,28 @@ SCENES: dict[str, Scene] = {
     # subMenu is the first of them.
     "res://scenes/ui/menu/menu_back.tscn": Scene(
         timeline=0,
-        frame="subMenu",
+        frame=CHOICE_FRAME,
         pieces={"Caption": Piece("text", 35), "HitButton": Piece("hit", 36)},
+    ),
+    "res://scenes/ui/menu/mode_panel.tscn": Scene(
+        timeline=0, frame=CHOICE_FRAME, pieces=CHOICE_PIECES
+    ),
+    # The choice as the menu shows it: the background, the choice and Back. The
+    # menu opens on the title, and a capture shows a scene as it opens, so the
+    # compare tool scores this scene against the choice frame. Depths 38 and 41
+    # are the Armor Games line and logo, as on the title. PvP Arena is left out
+    # too, and is not listed, because an edit text and a hit button draw nothing
+    # in the reference.
+    "res://test/fixtures/screen_rects/choice_screen.tscn": Scene(
+        timeline=0,
+        frame=CHOICE_FRAME,
+        pieces={
+            "Background": Piece("art", 1, art="start_background"),
+            **{f"ModePanel/{path}": piece for path, piece in CHOICE_PIECES.items()},
+            "Back/Caption": Piece("text", 35),
+            "Back/HitButton": Piece("hit", 36),
+        },
+        left_out=(38, 41),
     ),
     "res://scenes/ui/menu/title_panel.tscn": Scene(
         timeline=0, frame=TITLE_FRAME, pieces=TITLE_PIECES

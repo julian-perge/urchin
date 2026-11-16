@@ -566,3 +566,18 @@ func test_control_a_title_slot_20_px_taller_fails() -> void:
 	assert_eq(found.size(), 6, str(found))
 	for problem: String in found:
 		assert_false(problem.contains("PlaySlot"), problem)
+
+
+const MODE_SCENE: String = "res://scenes/ui/menu/mode_panel.tscn"
+
+
+# A New Game slot 20 px taller breaks the 60 px pitch of the choice, so Load
+# Game's caption fails at its top left and its hit button at both corners.
+func test_control_a_choice_slot_20_px_taller_fails() -> void:
+	var root: Control = await _laid_out(MODE_SCENE)
+	(root.get_node("Captions/NewGameSlot") as Control).custom_minimum_size.y += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][MODE_SCENE])
+	assert_eq(found.size(), 3, str(found))
+	for problem: String in found:
+		assert_string_contains(problem, "Captions/LoadGameSlot")

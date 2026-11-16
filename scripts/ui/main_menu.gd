@@ -4,8 +4,9 @@
 #   1. The title (root frame 46, scenes/ui/menu/title_panel.tscn). Its first
 #      caption goes on to screen 2. Game Manual and Credits are not wired,
 #      because their Screens do not exist yet.
-#   2. New Game or Load Game (root frame 56). The original's third choice,
-#      PvP Arena, is left out with the rest of the arena.
+#   2. New Game or Load Game (root frame 56, scenes/ui/menu/mode_panel.tscn).
+#      The original's third choice, PvP Arena, is left out with the rest of
+#      the arena (docs/adr/0006-leave-out-the-pvp-arena.md).
 #   3. New Game asks for the player's name (root frame 64).
 #   4. The four save slots (root frame 74). New Game goes on to class select
 #      from any slot, used or empty, and Load Game loads a used one.
@@ -51,7 +52,7 @@ var _autosave_enabled: bool = true
 var _card_fades: Dictionary = {}  # card node name -> its running color fade
 
 @onready var title_panel: TitlePanel = $TitlePanel
-@onready var mode_panel: Control = $ModePanel  # New Game or Load Game
+@onready var mode_panel: ModePanel = $ModePanel
 @onready var name_panel: Control = $NamePanel
 @onready var slot_panel: Control = $SlotPanel
 @onready var slot_buttons: VBoxContainer = $SlotPanel/Layout/SlotButtons

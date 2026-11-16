@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/menu_background.tscn" id="10_background"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/title_panel.tscn" id="11_title"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/menu_back.tscn" id="12_back"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu/mode_panel.tscn" id="13_mode"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_difficulty"]
 
@@ -34,85 +35,18 @@ script = ExtResource("1_menu")
 
 [node name="TitlePanel" parent="." instance=ExtResource("11_title")]
 
-; Every rect on the choice and name screens is read from the original's root
-; frames 56 (subMenu) and 64 (nameMenu). A Label takes its edit text's rect and a
-; flat Button its hit button's, and the black outline stands for the glow filter
-; the original puts on each of these texts. Title stands in for the logo, sprite
-; 321, at that sprite's rect. NameInput fills the name box that shape 2713 draws,
-; in the color, size and alignment of the name text 2712 inside it, and like 2712
-; it sets no maximum length. The slot buttons are the port's own and keep their
-; centered column.
-[node name="ModePanel" type="Control" parent="."]
+[node name="ModePanel" parent="." instance=ExtResource("13_mode")]
 visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Title" type="Label" parent="ModePanel"]
-layout_mode = 0
-offset_left = 123.2
-offset_top = 119.8
-offset_right = 672.75
-offset_bottom = 217.5
-mouse_filter = 2
-theme_override_font_sizes/font_size = 34
-horizontal_alignment = 1
-vertical_alignment = 1
-text = "Sonny 2"
-
-[node name="NewGameLabel" type="Label" parent="ModePanel"]
-layout_mode = 0
-offset_left = 241.0
-offset_top = 290.1
-offset_right = 545.1
-offset_bottom = 335.7
-mouse_filter = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 36
-horizontal_alignment = 1
-text = "New Game"
-
-[node name="NewGameButton" type="Button" parent="ModePanel"]
-layout_mode = 0
-offset_left = 241.0629
-offset_top = 290.7001
-offset_right = 543.3371
-offset_bottom = 330.6999
-focus_mode = 0
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="LoadGameLabel" type="Label" parent="ModePanel"]
-layout_mode = 0
-offset_left = 241.0
-offset_top = 350.1
-offset_right = 545.1
-offset_bottom = 395.7
-mouse_filter = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 36
-horizontal_alignment = 1
-text = "Load Game"
-
-[node name="LoadGameButton" type="Button" parent="ModePanel"]
-layout_mode = 0
-offset_left = 241.0629
-offset_top = 350.7001
-offset_right = 543.3371
-offset_bottom = 390.6999
-focus_mode = 0
-mouse_default_cursor_shape = 2
-flat = true
 
 [node name="Back" parent="ModePanel" instance=ExtResource("12_back")]
 
+; Every rect on the name screen is read from the original's root frame 64
+; (nameMenu). A Label takes its edit text's rect and a flat Button its hit
+; button's, and the black outline stands for the glow filter the original puts
+; on each of these texts. NameInput fills the name box that shape 2713 draws, in
+; the color, size and alignment of the name text 2712 inside it, and like 2712
+; it sets no maximum length. The slot buttons are the port's own and keep their
+; centered column.
 [node name="NamePanel" type="Control" parent="."]
 visible = false
 layout_mode = 1
@@ -517,9 +451,9 @@ text = "Click here to START!"
 [node name="Back" parent="OptionsPanel" instance=ExtResource("12_back")]
 
 [connection signal="play_pressed" from="TitlePanel" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="ModePanel/NewGameButton" to="." method="_on_new_game_pressed"]
+[connection signal="new_game_pressed" from="ModePanel" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="ModePanel/Back" to="." method="_on_back_pressed"]
-[connection signal="pressed" from="ModePanel/LoadGameButton" to="." method="_on_load_game_pressed"]
+[connection signal="load_game_pressed" from="ModePanel" to="." method="_on_load_game_pressed"]
 [connection signal="pressed" from="NamePanel/OkButton" to="." method="_on_name_confirmed"]
 [connection signal="pressed" from="NamePanel/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="SlotPanel/Back" to="." method="_on_back_pressed"]
