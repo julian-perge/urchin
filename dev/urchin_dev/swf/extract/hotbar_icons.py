@@ -26,8 +26,10 @@
 # stops, lowest ratio first. A GradientGlow colours each pixel by the blurred
 # alpha there, so the ratio 0 stop is the outer edge of the glow and the ratio
 # 255 stop is at the icon. The port's hover takes one colour, and "glow" holds
-# the ratio 0 stop for it, as #218 chose. That stop has alpha 0 in the SWF, so
-# whether it is the right one colour is a guess to check against the game.
+# the ratio 0 stop for it, as #218 chose. That stop has alpha 0 in the SWF, and
+# a screenshot of the game's hover shows the glow teal at its edge and cyan at
+# the icon, so "glow" is greener than the game. The review of #288 kept it,
+# because the port's hover is not an exact copy of the Glow.
 #
 # Run: uv run extract_hotbar_icons
 from __future__ import annotations
@@ -126,7 +128,7 @@ def glow_record(records: tuple[bytes, ...]) -> dict:
     the "gradient" stops when the list is one GradientGlow. Raises on any list
     that is neither Glows only nor one GradientGlow."""
     kinds = [record[0] for record in records]
-    if kinds and set(kinds) == {FILTER_GLOW}:
+    if set(kinds) == {FILTER_GLOW}:
         return {"glow": [_hex(*record[1:4]) for record in records]}
     if kinds == [FILTER_GRADIENT_GLOW]:
         stops = gradient_stops(records[0])

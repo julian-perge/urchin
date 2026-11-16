@@ -145,6 +145,11 @@ def test_a_hover_range_runs_from_its_label_to_the_next_stop(monkeypatch):
     assert hotbar_icons.hover_ranges(index, 9) == {"start": [2, 7], "stop": [8, 27]}
 
 
+def test_a_hover_range_ends_on_its_label_frame_when_that_frame_stops(monkeypatch):
+    index = stub_stops(monkeypatch, {"START": 2, "STOP": 8}, {2, 27})
+    assert hotbar_icons.hover_ranges(index, 9) == {"start": [2, 2], "stop": [8, 27]}
+
+
 def test_a_hover_range_with_no_stop_after_its_label_is_refused(monkeypatch):
     index = stub_stops(monkeypatch, {"START": 2, "STOP": 8}, {1, 7})
     with pytest.raises(ValueError, match="STOP"):
@@ -168,8 +173,33 @@ def test_each_icon_is_rendered_alone_on_the_hub_with_its_clip_on_frame_1(monkeyp
     }
 
 
-def test_an_icon_the_hub_does_not_place_once_is_refused(monkeypatch):
+@pytest.mark.parametrize(
+    "hub",
+    [
+        {},
+        {
+            153: timeline.Layer(3171, name="ui_but1"),
+            154: timeline.Layer(3171, name="ui_but1"),
+        },
+    ],
+)
+def test_an_icon_the_hub_does_not_place_once_is_refused(monkeypatch, hub):
     monkeypatch.setattr(timeline, "frame_of", lambda index, owner, label: 1)
-    monkeypatch.setattr(timeline, "frames", lambda index, owner: [{}])
+    monkeypatch.setattr(timeline, "frames", lambda index, owner: [hub])
+    monkeypatch.setattr(hotbar_icons, "ICONS", {"inventory": "ui_but1"})
     with pytest.raises(ValueError, match="ui_but1"):
         hotbar_icons.jobs(None)
+
+
+def test_the_hover_glow_is_read_from_the_one_depth_of_the_asked_frame(monkeypatch):
+    rest = {1: timeline.Layer(3170, filter_records=(glow(0xFF, 0, 0),))}
+    full = {1: timeline.Layer(3170, filter_records=(glow(0xFF, 0x66, 0xFF),))}
+    monkeypatch.setattr(timeline, "frames", lambda index, owner: [rest, full])
+    assert hotbar_icons.hover_glow(None, 3171, 2) == {"glow": ["#ff66ff"]}
+
+
+def test_a_hover_frame_that_shows_two_depths_is_refused(monkeypatch):
+    layer = timeline.Layer(3170, filter_records=(glow(1, 2, 3),))
+    monkeypatch.setattr(timeline, "frames", lambda index, owner: [{1: layer, 2: layer}])
+    with pytest.raises(ValueError, match="2 depths"):
+        hotbar_icons.hover_glow(None, 3171, 1)
