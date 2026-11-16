@@ -224,6 +224,11 @@ extract-faces *args: (require "ffdec" "java")
 extract-floating-numbers *args: (require "ffdec" "java")
     uv run extract_floating_numbers "$@"
 
+[doc('Run extract_hotbar_icons, which reads the SWF through ffdec')]
+[group('extract')]
+extract-hotbar-icons *args: (require "ffdec" "java")
+    uv run extract_hotbar_icons "$@"
+
 [doc('Run extract_item_icons, which reads the SWF through ffdec')]
 [group('extract')]
 extract-item-icons *args: (require "ffdec" "java")
