@@ -55,12 +55,10 @@ def test_png_save_copy_writes_the_bytes_save_would(tmp_path):
 def test_no_extractor_writes_a_png_without_png_save():
     writers = re.compile(r"\.save\(|copyfile\(|shutil\.copy")
     found = [
-        f"{path.name}:{n}: {line.strip()}"
+        f"{path.name}: {line.strip()}"
         for path in sorted((REPO_ROOT / "dev/urchin_dev/swf/extract").glob("*.py"))
-        for n, line in enumerate(path.read_text().splitlines(), start=1)
+        for line in path.read_text().splitlines()
         if writers.search(line) and "png.save" not in line
     ]
     # cutscenes.py copies the encoded video, which is not a PNG.
-    assert found == [
-        "cutscenes.py:664: shutil.copyfile(ogv_path, OUT_DIR / ogv_path.name)"
-    ]
+    assert found == ["cutscenes.py: shutil.copyfile(ogv_path, OUT_DIR / ogv_path.name)"]

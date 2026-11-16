@@ -193,12 +193,18 @@ This tool checks how it looks: the art, the fills and the shadows.
   capture from a drawing window, so run it by hand. `just pytest` covers its
   arithmetic and its config rules without any of the three.
 - **The config is `dev/screen_compare/screens.json`.** Each Screen or Window
-  build issue adds one entry: the scene, the SWF timeline, the frame label and
-  one or both modes. `chrome` scores the whole frame with every edit text
-  stripped against the scene with every Label hidden. `panels` scores only the
-  frame depths in `depths` against only the scene nodes in `nodes`. The tool
-  and the capture scene both read this file, so a new entry needs no code.
+  build issue adds one entry: the scene and one or both modes. `chrome` scores
+  the whole frame with every edit text stripped against the scene with every
+  Label hidden. `panels` scores only the scene nodes in `nodes` against only
+  the frame depths that place them. The tool and the capture scene both read
+  this file, so a new entry does not change the tool.
   `just compare-screen --list` prints the entries.
+- **The config types no SWF number.** The tool reads the scene's timeline, its
+  frame label and the depth of each `panels` node from `SCENES` in
+  `dev/urchin_dev/swf/extract/screen_rects.py`, so the scene has to be there
+  first, as the rect test already needs. A `panels` node has to be a piece
+  that `SCENES` places by a depth of the frame, with no `instance` and no
+  `inner_depth`.
 - **How to run it.**
   1. Run `just compare-screen <entry>`. It lists each capture that is missing,
      with the arguments and the path for it.
@@ -233,7 +239,9 @@ This tool checks how it looks: the art, the fills and the shadows.
   child leaves a `FloatBox` and the pieces after it would move. A node whose
   shader ignores `COLOR` stays visible, so check the capture.
 - **Faces are left out.** The tool reads the scene's `face` pieces from
-  `test/fixtures/screen_rects.json` and removes them from the mask, because
-  ffdec draws the face clip empty inside a frame.
+  `test/fixtures/screen_rects.json` and removes them from the mask. The
+  game sets each face from its data, and ffdec runs no ActionScript, so the
+  reference cannot hold the same face. The `chrome` render of KRINMENU's `win`
+  frame shows one face in all three rows.
 - **Captures load as they are.** The godot-mcp captures are sRGB at the Stage
   size, 800x575. The tool refuses any other size.

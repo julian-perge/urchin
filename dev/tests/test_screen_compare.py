@@ -6,10 +6,24 @@ import json
 
 import numpy as np
 import pytest
+from PIL import Image
 from urchin_dev import REPO_ROOT
 from urchin_dev.checks import screen_compare
+from urchin_dev.swf.extract.screen_rects import Piece, Scene
 
-PANELS = {"depths": [11], "nodes": ["LeftPanel"], "bar": 5}
+SCENE = "res://scenes/a.tscn"
+SCENES = {
+    SCENE: Scene(
+        timeline=3142,
+        frame="win",
+        pieces={
+            "LeftPanel": Piece("panel", 11),
+            "Slot": Piece("panel", None, instance="itemSlot0"),
+            "Row/Frame": Piece("art", 1197, "victory_row", inner_depth=2),
+        },
+    )
+}
+PANELS = {"nodes": ["LeftPanel"], "bar": 5}
 
 
 def write_config(tmp_path, entries: dict):
@@ -19,12 +33,7 @@ def write_config(tmp_path, entries: dict):
 
 
 def entry(**modes) -> dict:
-    return {
-        "scene": "res://scenes/a.tscn",
-        "timeline": 3142,
-        "frame": "win",
-        "modes": modes,
-    }
+    return {"scene": SCENE, "modes": modes}
 
 
 def capture(height: int, width: int, colour, box, fill) -> np.ndarray:
@@ -117,8 +126,8 @@ def test_a_score_with_no_pixels_is_an_error():
 
 
 def test_a_reference_shifted_20_px_scores_over_an_exact_match():
-    # Vertical bands 10 px wide, so a 20 px shift lands every band on its
-    # neighbour's colour only when the bands differ two apart.
+    # Vertical bands 10 px wide in four colours 60 apart, so a 20 px shift
+    # lands every band on the colour two bands away, which differs by 120.
     columns = (np.arange(80) // 10 % 4 * 60).astype(np.int16)
     reference = np.zeros((20, 80, 4), dtype=np.int16)
     reference[:, :, :3] = columns[None, :, None]
@@ -169,9 +178,10 @@ def test_a_second_entry_loads_from_the_config_file_alone(tmp_path):
         tmp_path, {"first": entry(panels=PANELS), "second": entry(chrome={"bar": None})}
     )
 
-    entries = screen_compare.load_config(path)
+    entries = screen_compare.load_config(path, SCENES)
 
     assert list(entries) == ["first", "second"]
+    assert entries["first"].frame == "win"
     assert entries["first"].modes["panels"].depths == (11,)
     assert entries["first"].modes["panels"].nodes == ("LeftPanel",)
     assert entries["first"].modes["panels"].bar == 5
@@ -184,17 +194,43 @@ def test_a_second_entry_loads_from_the_config_file_alone(tmp_path):
     [
         ({}, "no modes"),
         ({"live": {"bar": 5}}, "unknown mode"),
-        ({"panels": {"bar": 5}}, "depths"),
-        ({"panels": {"depths": [11], "nodes": [], "bar": 5}}, "nodes"),
-        ({"chrome": {"bar": 5, "depths": [11]}}, "chrome"),
-        ({"chrome": {}}, "bar"),
+        ({"panels": {"bar": 5}}, "nodes"),
+        ({"panels": {"nodes": [], "bar": 5}}, "nodes"),
+        ({"panels": {"nodes": ["Missing"], "bar": 5}}, "Missing is not a piece"),
+        ({"panels": {"nodes": ["Slot"], "bar": 5}}, "Slot is not a piece"),
+        ({"panels": {"nodes": ["Row/Frame"], "bar": 5}}, "Row/Frame is not a piece"),
+        ({"panels": {"nodes": ["LeftPanel"], "depths": [11], "bar": 5}}, "depths"),
+        ({"chrome": {"bar": 5, "nodes": ["LeftPanel"]}}, "chrome takes no nodes"),
+        ({"chrome": {}}, "no bar"),
+        ({"chrome": {"bar": "5"}}, "not a number"),
+        ({"chrome": {"bar": True}}, "not a number"),
     ],
 )
 def test_a_config_entry_that_breaks_the_format_is_refused(tmp_path, modes, message):
     path = write_config(tmp_path, {"broken": entry(**modes)})
 
     with pytest.raises(screen_compare.CompareError, match=message):
-        screen_compare.load_config(path)
+        screen_compare.load_config(path, SCENES)
+
+
+@pytest.mark.parametrize(
+    ("raw", "message"),
+    [
+        ({"modes": {"chrome": {"bar": 5}}}, "broken: no scene"),
+        ({"scene": SCENE}, "broken: no modes"),
+        (
+            {"scene": "res://scenes/b.tscn", "modes": {"chrome": {"bar": 5}}},
+            "b.tscn is not in SCENES",
+        ),
+    ],
+)
+def test_an_entry_needs_its_modes_and_a_scene_that_the_rect_extractor_knows(
+    tmp_path, raw, message
+):
+    path = write_config(tmp_path, {"broken": raw})
+
+    with pytest.raises(screen_compare.CompareError, match=message):
+        screen_compare.load_config(path, SCENES)
 
 
 def test_the_capture_arguments_name_the_entry_the_mode_and_the_background():
@@ -205,16 +241,45 @@ def test_the_capture_arguments_name_the_entry_the_mode_and_the_background():
     ]
 
 
-def test_edit_texts_are_found_inside_nested_sprites():
-    # Depth to character id per timeline: sprite 10 holds text 3 and sprite
-    # 11, and sprite 11 holds text 4 on its second frame and places sprite 10
-    # again, which must not loop.
-    frames = {10: [{1: 3, 2: 11}], 11: [{1: 2}, {1: 4, 2: 10}]}
-    kinds = {1: "edittext", 2: "shape", 3: "edittext", 4: "edittext"}
-    kinds |= {10: "sprite", 11: "sprite"}
+def test_only_the_captures_that_are_not_on_disk_are_listed_as_missing(tmp_path):
+    present = screen_compare.capture_path(tmp_path, "victory", "panels", "magenta")
+    present.parent.mkdir(parents=True)
+    present.write_bytes(b"")
+
+    lines = screen_compare.missing_captures(tmp_path, "victory", ["panels"])
+
+    assert len(lines) == 1
+    assert "panels_green.png" in lines[0]
+    assert '"--background=green"' in lines[0]
+
+
+def test_a_capture_loads_only_at_the_stage_size(tmp_path):
+    Image.new("RGB", screen_compare.STAGE, (1, 2, 3)).save(tmp_path / "stage.png")
+    Image.new("RGB", (1600, 1150)).save(tmp_path / "window.png")
+
+    loaded = screen_compare.load_capture(tmp_path / "stage.png")
+
+    assert loaded.shape == (575, 800, 3)
+    assert tuple(loaded[0, 0]) == (1, 2, 3)
+    with pytest.raises(screen_compare.CompareError, match="Stage size"):
+        screen_compare.load_capture(tmp_path / "window.png")
+
+
+def test_edit_texts_are_those_of_the_frame_and_of_its_nested_sprites():
+    # Depth to character id per timeline. Frame 2 of timeline 20 places text
+    # 1 and sprite 10, and its other frames place texts 5 and 6. Sprite 10
+    # holds text 3 and sprite 11, and sprite 11 holds text 4 on its second
+    # frame and places sprite 10 again, which must not loop.
+    frames = {
+        20: [{1: 5}, {1: 1, 2: 2, 3: 10}, {1: 6}],
+        10: [{1: 3, 2: 11}],
+        11: [{1: 2}, {1: 4, 2: 10}],
+    }
+    kinds = dict.fromkeys((1, 3, 4, 5, 6), "edittext")
+    kinds |= {2: "shape", 10: "sprite", 11: "sprite"}
 
     found = screen_compare.edit_text_ids(
-        [1, 2, 10], lambda sprite: frames[sprite], lambda cid: kinds[cid]
+        20, 2, lambda owner: frames[owner], lambda cid: kinds[cid]
     )
 
     assert found == {1, 3, 4}

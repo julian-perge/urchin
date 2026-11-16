@@ -7,14 +7,16 @@
 # compare tool) gives the steps.
 #
 # dev/screen_compare/screens.json is the per-Screen config. Each Screen or
-# Window build issue adds one entry: the scene, the timeline and frame label
-# that draw it in the SWF, and one or both modes with a bar each.
+# Window build issue adds one entry: the scene, and one or both modes with a
+# bar each.
 #   "chrome" - the whole frame with every edit text stripped, against the scene
 #              with every Label hidden.
-#   "panels" - only the frame depths in `depths`, against only the scene nodes
-#              in `nodes`.
+#   "panels" - only the scene nodes in `nodes`, against only the frame depths
+#              that place them.
 # dev/screen_compare/capture.gd reads the same file and draws the scene for a
-# capture.
+# capture. The scene's timeline, its frame label and the depth of each node
+# come from SCENES in screen_rects.py, where the rect test already needs them,
+# so the config types no SWF number.
 #
 # The method, generalized from the victory prototype's compare.py on the
 # branch prototype/victory-containers:
@@ -23,7 +25,8 @@
 #     the mask is every pixel that matches, shrunk by one pixel so that no
 #     resampled edge counts.
 #   - The faces of the scene in test/fixtures/screen_rects.json are left out
-#     of the mask, because ffdec draws the face clip empty inside a frame.
+#     of the mask, because the game sets each face from its data and ffdec
+#     runs no ActionScript, so the reference cannot hold the same face.
 #   - The reference is rendered at zoom 2 on a Stage canvas and shrunk to the
 #     Stage size with Lanczos, the way godot-mcp shrinks the 2x window to its
 #     capture. Only pixels where the shrunk reference is opaque are scored.
@@ -94,26 +97,60 @@ class Score:
     p99: float
 
 
-def load_config(path: Path) -> dict[str, Entry]:
+def panel_depths(
+    scene: screen_rects.Scene, nodes: Iterable[str], where: str
+) -> tuple[int, ...]:
+    """-> the frame depth that places each of `nodes`, from the scene's pieces."""
+    depths = []
+    for node in nodes:
+        piece = scene.pieces.get(node)
+        if piece is None or piece.depth is None or piece.inner_depth is not None:
+            raise CompareError(
+                f"{where}: {node} is not a piece that SCENES of screen_rects.py"
+                " places by a depth of the frame"
+            )
+        depths.append(piece.depth)
+    return tuple(depths)
+
+
+def load_config(
+    path: Path, scenes: dict[str, screen_rects.Scene] = screen_rects.SCENES
+) -> dict[str, Entry]:
     entries = {}
     for name, raw in json.loads(path.read_text()).items():
+        absent = sorted({"scene", "modes"} - raw.keys())
+        if absent:
+            raise CompareError(f"{name}: no {' and no '.join(absent)}")
+        if raw["scene"] not in scenes:
+            raise CompareError(
+                f"{name}: {raw['scene']} is not in SCENES of screen_rects.py, which"
+                " holds its timeline and its frame"
+            )
+        scene = scenes[raw["scene"]]
         modes = {}
         for mode, fields in raw["modes"].items():
             where = f"{name}, mode {mode}"
             if mode not in MODES:
                 raise CompareError(f"{where}: unknown mode, expected one of {MODES}")
+            unknown = sorted(fields.keys() - {"bar", "nodes"})
+            if unknown:
+                raise CompareError(f"{where}: unknown fields {unknown}")
             if "bar" not in fields:
                 raise CompareError(f"{where}: no bar. Write null until the first run")
-            depths = tuple(fields.get("depths", ()))
+            bar = fields["bar"]
+            if bar is not None and (
+                isinstance(bar, bool) or not isinstance(bar, (int, float))
+            ):
+                raise CompareError(f"{where}: the bar {bar!r} is not a number or null")
             nodes = tuple(fields.get("nodes", ()))
-            if mode == "panels" and not (depths and nodes):
-                raise CompareError(f"{where}: panels needs its depths and its nodes")
-            if mode == "chrome" and (depths or nodes):
-                raise CompareError(f"{where}: chrome takes no depths and no nodes")
-            modes[mode] = Mode(fields["bar"], depths, nodes)
+            if mode == "panels" and not nodes:
+                raise CompareError(f"{where}: panels needs its nodes")
+            if mode == "chrome" and nodes:
+                raise CompareError(f"{where}: chrome takes no nodes")
+            modes[mode] = Mode(bar, panel_depths(scene, nodes, where), nodes)
         if not modes:
             raise CompareError(f"{name}: no modes")
-        entries[name] = Entry(raw["scene"], raw["timeline"], raw["frame"], modes)
+        entries[name] = Entry(raw["scene"], scene.timeline, scene.frame, modes)
     return entries
 
 
@@ -194,15 +231,17 @@ def verdict(p99: float, control_p99: float, bar: float | None) -> str | None:
 
 
 def edit_text_ids(
-    characters: Iterable[int],
+    owner: int,
+    frame: int,
     frames_of: Callable[[int], list[dict[int, int]]],
     kind_of: Callable[[int], str],
 ) -> set[int]:
-    """-> every edit text among `characters` and inside their sprites, on any
-    frame. frames_of gives a sprite's frames as {depth: character id}."""
+    """-> every edit text that `frame` of `owner` places, counted from 1, and
+    every one inside the sprites it places, on any of their frames. frames_of
+    gives a timeline's frames as {depth: character id}."""
     found: set[int] = set()
     seen: set[int] = set()
-    pending = list(characters)
+    pending = list(frames_of(owner)[frame - 1].values())
     while pending:
         cid = pending.pop()
         if cid in seen:
@@ -232,9 +271,7 @@ def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
         ]
 
     texts = edit_text_ids(
-        characters(entry.timeline)[frame - 1].values(),
-        characters,
-        lambda cid: character_kind(index, cid),
+        entry.timeline, frame, characters, lambda cid: character_kind(index, cid)
     )
     reasons = dict.fromkeys(texts, "an edit text, hidden in chrome mode")
     stripped = strip.strip_list(WEB_SWF, reasons) if reasons else []
