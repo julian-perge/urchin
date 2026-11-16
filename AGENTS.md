@@ -31,6 +31,10 @@ such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
   "No loader found for resource". `just gut` runs this import by itself only in
   a checkout with no `.godot` folder.
 - Any other Godot command: `just godot <arguments>`.
+- In Codex, if a check cannot write its normal tool cache outside the
+  workspace, rerun it with sandbox escalation. A blocked write to prek's
+  `prek.log` stopped the #220 checks before any hook ran; the same checks
+  passed with escalation. Do not treat that error as a failed code check.
 
 ## Setup
 

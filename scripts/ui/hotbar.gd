@@ -13,17 +13,15 @@
 # visibility.
 extends Control
 
-# Tooltip captions per button: [title] for a single-line caption, or
-# [title, body] for a 2-section tooltip.
-const TOOLTIP_CAPTIONS: Dictionary[String, Array] = {
-	"InventoryButton": ["Inventory", "Click here to manage equipment."],
-	"AbilitiesButton": ["Abilities", "Click here to manage abilities and attributes."],
-	"SaveButton": ["Save Game", "Click here to save your progress."],
-	"OptionsButton": ["Coming soon"],
-	"RespecButton": ["Coming soon"],
-	"AchievementsButton": ["Achievements", "Click here to view your achievements."],
-	"ZoneMapButton": ["World map"],
-	"QuitButton": ["Quit", "Click here to return to the save select screen."],
+const TOOLTIP_INDICES: Dictionary[String, Array] = {
+	"InventoryButton": [17, 18],
+	"AbilitiesButton": [19, 20],
+	"SaveButton": [21, 22],
+	"OptionsButton": [23, 24],
+	"RespecButton": [32, 33],
+	"AchievementsButton": [42, 43],
+	"ZoneMapButton": [27, 28],
+	"QuitButton": [25, 26],
 }
 
 # extract_hotbar_icons writes this record: the Glows of every frame of each
@@ -65,8 +63,10 @@ var _inert: bool = false
 func _ready():
 	ZoneManager.zone_changed.connect(_on_zone_changed)
 	_setup_hover()
-	for button_name in TOOLTIP_CAPTIONS:
-		_setup_tooltip(get_node("%" + button_name), TOOLTIP_CAPTIONS[button_name])
+	for button_name in TOOLTIP_INDICES:
+		var button: BaseButton = get_node("%" + button_name)
+		button.mouse_entered.connect(_show_tooltip.bind(button))
+		button.mouse_exited.connect(GameTooltip.hide_tooltip)
 	_refresh(ZoneManager.current_zone)
 
 
@@ -199,14 +199,18 @@ func _on_quit_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 
-func _setup_tooltip(button: BaseButton, caption: Array) -> void:
+func _show_tooltip(button: BaseButton) -> void:
+	var indices: Array = TOOLTIP_INDICES[button.name]
+	var title: String = Strings.system(indices[0])
+	# The original computes the price on roll over, so a level gained since
+	# the Hub opened changes the next tooltip (DefineButton2_3179, on(rollOver)).
+	if button.name == "RespecButton" and GameData.current_save != null:
+		title += ": €%d" % Leveling.respec_cost(GameData.current_save.level)
 	var sections: Array = [
-		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": caption[0], "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": title, "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": Strings.system(indices[1]), "color": TooltipTheme.TEXT_BODY}]},
 	]
-	if caption.size() > 1:
-		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": caption[1], "color": TooltipTheme.TEXT_BODY}]})
-	button.mouse_entered.connect(func(): GameTooltip.show_sections(sections, button))
-	button.mouse_exited.connect(GameTooltip.hide_tooltip)
+	GameTooltip.show_sections(sections, button)
 
 
 func _on_menu_button_pressed(group: String) -> void:

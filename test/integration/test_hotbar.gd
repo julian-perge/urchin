@@ -60,11 +60,84 @@ func test_hover_shows_a_two_section_tooltip_for_inventory_button():
 	assert_false(GameTooltip._root.visible)
 
 
-func test_hover_shows_a_single_section_tooltip_for_a_coming_soon_button():
+func test_each_hotbar_tooltip_reads_its_system_entries():
+	var previous_save: PlayerSave = GameData.current_save
+	GameData.current_save = PlayerSave.new_game("Tooltips", 0)
+	GameData.current_save.level = 5
 	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
-	var button: BaseButton = hotbar.get_node("%OptionsButton")
-	button.mouse_entered.emit()
-	assert_eq(GameTooltip._sections.get_child_count(), 1, "single-line caption, no body section")
+	var system: Array = JSON.parse_string(FileAccess.get_file_as_string(Strings.STRINGS_FILE))["SYSTEM"]
+	var indices: Dictionary = {
+		"Inventory": [17, 18], "Abilities": [19, 20], "Save": [21, 22],
+		"Options": [23, 24], "Respec": [32, 33], "Achievements": [42, 43],
+		"ZoneMap": [27, 28], "Quit": [25, 26],
+	}
+	for slot: String in indices:
+		(hotbar.get_node("%" + slot + "Button") as BaseButton).mouse_entered.emit()
+		var title: String = system[indices[slot][0]]
+		if slot == "Respec":
+			title += ": €%d" % Leveling.respec_cost(GameData.current_save.level)
+		assert_eq(_tooltip_lines(), [title, system[indices[slot][1]]], slot)
+	GameData.current_save = previous_save
+
+
+func _tooltip_lines() -> Array[String]:
+	var lines: Array[String] = []
+	for label: Label in GameTooltip._sections.find_children("*", "Label", true, false):
+		lines.append(label.text)
+	return lines
+
+
+func test_respec_tooltip_uses_the_current_level_on_each_hover():
+	var previous_save: PlayerSave = GameData.current_save
+	GameData.current_save = PlayerSave.new_game("Tooltips", 0)
+	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
+	var button: BaseButton = hotbar.get_node("%RespecButton")
+	for level: int in [1, 12]:
+		GameData.current_save.level = level
+		button.mouse_entered.emit()
+		assert_eq(_tooltip_lines()[0], Strings.system(32) + ": €%d" % Leveling.respec_cost(level))
+	GameData.current_save = previous_save
+
+
+func test_each_orb_tooltip_reads_its_system_entries():
+	var system: Array = JSON.parse_string(FileAccess.get_file_as_string(Strings.STRINGS_FILE))["SYSTEM"]
+	for entry: Array in [["store", 15, 16], ["training", 29, 30], ["fight", 13, 14]]:
+		var orb: OrbBase = OrbScene.instantiate()
+		orb.set_script(load("res://scripts/ui/%s_orb.gd" % entry[0]))
+		add_child_autofree(orb)
+		(orb.get_node("Control") as Control).mouse_entered.emit()
+		assert_eq(_tooltip_lines(), [system[entry[1]], system[entry[2]]], entry[0])
+
+
+func test_tooltips_use_the_loader_instead_of_copies_of_the_english_text():
+	var original: Dictionary = Strings._load()
+	Strings._table = original.duplicate(true)
+	for index: int in Strings._table["SYSTEM"].size():
+		Strings._table["SYSTEM"][index] = "SYSTEM entry %d" % index
+	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
+	for button_name: String in [
+		"Inventory", "Abilities", "Save", "Options", "Respec", "Achievements", "ZoneMap", "Quit",
+	]:
+		(hotbar.get_node("%" + button_name + "Button") as BaseButton).mouse_entered.emit()
+		for line: String in _tooltip_lines():
+			assert_true(line.begins_with("SYSTEM entry "), button_name)
+	for kind: String in ["store", "training", "fight"]:
+		var orb: OrbBase = OrbScene.instantiate()
+		orb.set_script(load("res://scripts/ui/%s_orb.gd" % kind))
+		add_child_autofree(orb)
+		(orb.get_node("Control") as Control).mouse_entered.emit()
+		for line: String in _tooltip_lines():
+			assert_true(line.begins_with("SYSTEM entry "), kind)
+	Strings._table = original
+
+
+func test_respec_tooltip_without_a_save_shows_its_title_without_a_price():
+	var previous_save: PlayerSave = GameData.current_save
+	GameData.current_save = null
+	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
+	(hotbar.get_node("%RespecButton") as BaseButton).mouse_entered.emit()
+	assert_eq(_tooltip_lines(), [Strings.system(32), Strings.system(33)])
+	GameData.current_save = previous_save
 
 
 func test_zone_map_and_quit_buttons_also_show_tooltips():
@@ -212,33 +285,39 @@ func test_an_inert_hotbar_ignores_a_click_on_each_button_and_takes_it_again_afte
 		"RespecButton", "AchievementsButton", "ZoneMapButton", "QuitButton",
 	]:
 		var button: BaseButton = hotbar.get_node("%" + button_name)
+		if button_name == "QuitButton":
+			button.pressed.disconnect(hotbar._on_quit_pressed)
 		watch_signals(button)
 		hotbar.set_inert(true)
 		_click(button)
 		assert_signal_not_emitted(button, "pressed", button_name)
 		hotbar.set_inert(false)
-		# A press on Quit leaves the scene this test runs in.
-		if button_name == "QuitButton":
-			assert_false(button.disabled, button_name)
-			continue
 		_click(button)
 		assert_signal_emitted(button, "pressed", button_name)
 
 
-func test_an_inert_hotbar_makes_an_orb_ignore_a_click_and_take_it_again_after():
+func test_an_inert_hotbar_makes_each_orb_ignore_a_click_and_take_it_again_after():
 	var stage: SubViewport = _stage()
 	var hotbar: Control = HotbarScene.instantiate()
 	stage.add_child(hotbar)
-	var orb: OrbBase = partial_double(OrbScene).instantiate()
-	stage.add_child(orb)
-	orb.position = Vector2(200.0, 200.0)
-	await wait_process_frames(2)
-	hotbar.set_inert(true)
-	_click(orb.get_node("Control"))
-	assert_not_called(orb, "interact")
-	hotbar.set_inert(false)
-	_click(orb.get_node("Control"))
-	assert_called(orb, "interact")
+	for kind: String in ["store", "training", "fight"]:
+		var template: OrbBase = OrbScene.instantiate()
+		template.set_script(load("res://scripts/ui/%s_orb.gd" % kind))
+		var scene := PackedScene.new()
+		scene.pack(template)
+		template.free()
+		var orb: OrbBase = partial_double(scene).instantiate()
+		stub(orb, "interact").to_do_nothing()
+		stage.add_child(orb)
+		orb.position = Vector2(200.0, 200.0)
+		await wait_process_frames(2)
+		hotbar.set_inert(true)
+		_click(orb.get_node("Control"))
+		assert_not_called(orb, "interact")
+		hotbar.set_inert(false)
+		_click(orb.get_node("Control"))
+		assert_called(orb, "interact")
+		orb.free()
 
 
 # The orb also takes a click through its Area2D (orb.tscn, input_event), which
@@ -267,5 +346,5 @@ func test_quit_has_no_glow():
 
 func test_the_typed_hover_values_are_gone():
 	var constants: Dictionary = (load("res://scripts/ui/hotbar.gd") as Script).get_script_constant_map()
-	for constant: String in ["HOVER_COLORS", "ACTIVE_ICON_COLOR", "GLOW_RADII", "GLOW_STRENGTH", "GLOW_PAD"]:
+	for constant: String in ["HOVER_COLORS", "ACTIVE_ICON_COLOR", "GLOW_RADII", "GLOW_STRENGTH", "GLOW_PAD", "TOOLTIP_CAPTIONS"]:
 		assert_does_not_have(constants, constant)
