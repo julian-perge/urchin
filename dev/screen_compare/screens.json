@@ -1,0 +1,14 @@
+{
+ "victory_left_panel": {
+  "scene": "res://test/fixtures/screen_rects/victory_left_panel.tscn",
+  "timeline": 3142,
+  "frame": "win",
+  "modes": {
+   "panels": {
+    "depths": [11],
+    "nodes": ["LeftPanel"],
+    "bar": 2
+   }
+  }
+ }
+}

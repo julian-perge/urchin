@@ -181,3 +181,59 @@ extracting it.
   `-Xdock` flags that register a macOS Dock app which can steal focus mid-run.
   It lives there rather than in the app bundle, which is not version controlled
   (`53e24ac`).
+
+## Screen compare tool
+
+`just compare-screen <entry>` scores a capture of a Screen or Window in the
+port against ffdec's render of the same SWF frame, with text hidden
+(spec/107-ui-foundation.md, Part 5). The rect test checks where a piece lands.
+This tool checks how it looks: the art, the fills and the shadows.
+
+- **It never runs in `just gut`.** It needs the gitignored SWF, ffdec and a
+  capture from a drawing window, so run it by hand. `just pytest` covers its
+  arithmetic and its config rules without any of the three.
+- **The config is `dev/screen_compare/screens.json`.** Each Screen or Window
+  build issue adds one entry: the scene, the SWF timeline, the frame label and
+  one or both modes. `chrome` scores the whole frame with every edit text
+  stripped against the scene with every Label hidden. `panels` scores only the
+  frame depths in `depths` against only the scene nodes in `nodes`. The tool
+  and the capture scene both read this file, so a new entry needs no code.
+  `just compare-screen --list` prints the entries.
+- **How to run it.**
+  1. Run `just compare-screen <entry>`. It lists each capture that is missing,
+     with the arguments and the path for it.
+  2. For each one, call the godot-mcp `run_scene` tool on
+     `res://dev/screen_compare/capture.tscn` with `embedded` true and those
+     arguments, then `capture_screenshot` with that `savePath`. Each mode needs
+     two captures, one over magenta and one over green. The pixels that are
+     the same in both are the pixels the scene covers, and only those are
+     scored.
+  3. Run `just compare-screen <entry>` again. It prints p50, p90 and p99 of the
+     largest channel difference, and the control's p99. It writes
+     `<mode>_reference.png` and `<mode>_diff.png` beside the captures, in
+     `tasks/screen_compare/<entry>/`, which is git-ignored.
+- **The bar and the control.** A mode passes when its p99 is at or under its
+  `bar` and the control is over the bar. The control scores the same capture
+  against the reference moved 20 px to the right, so a bar that a wrong layout
+  can pass fails the run. Write `"bar": null` in a new entry, and set the bar
+  to the p99 of the first run that looks right in the diff image. The first
+  entry, `victory_left_panel` in `panels` mode, scored p99 2 with the control
+  at 30.
+- **How run-time state is frozen.** The capture scene never starts the game.
+  It instantiates the entry's scene alone, with no save, no battle and no host
+  scene, waits one frame for the containers, and turns the scene's processing
+  off. The scene then shows what its `.tscn` holds. ffdec runs no ActionScript,
+  so the reference shows the frame as the timeline places it: empty slots and
+  no data. A Screen or Window therefore has to show that same state when it is
+  instantiated with no data. Do not add a second way to set state for a
+  capture. If the scene needs data to draw a piece, score that piece in a
+  `panels` entry without it, or leave it to the rect test.
+- **Hidden nodes keep their place.** The capture scene hides a node by making
+  its own drawing clear (`self_modulate`), not with `visible`, because a hidden
+  child leaves a `FloatBox` and the pieces after it would move. A node whose
+  shader ignores `COLOR` stays visible, so check the capture.
+- **Faces are left out.** The tool reads the scene's `face` pieces from
+  `test/fixtures/screen_rects.json` and removes them from the mask, because
+  ffdec draws the face clip empty inside a frame.
+- **Captures load as they are.** The godot-mcp captures are sRGB at the Stage
+  size, 800x575. The tool refuses any other size.

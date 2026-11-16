@@ -60,7 +60,8 @@ look for Godot themselves, so `uv run gut` outside `just` fails.
 - Reading the ActionScript, or porting the original's logic or data:
   `docs/agents/actionscript.md`.
 - Running or changing an extractor, or anything else that renders through
-  ffdec: `docs/agents/art-extraction.md`.
+  ffdec, or scoring a Screen with `just compare-screen`:
+  `docs/agents/art-extraction.md`.
 - Writing GDScript, a scene or a GUT test, or loading a QA save preset:
   `docs/agents/godot.md`.
 - Reviewing a diff, or calling a change verified: `CODING_STANDARDS.md`.

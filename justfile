@@ -111,6 +111,11 @@ as-lookup *args:
 merge-ticket *args: require-godot
     uv run merge_ticket "$@"
 
+[doc('Score godot-mcp captures of a Screen against the ffdec render: just compare-screen <entry>, or --list')]
+[group('python')]
+compare-screen *args: (require "ffdec" "java")
+    uv run compare_screen "$@"
+
 [doc('Run every pre-commit hook on every file')]
 [group('lint')]
 lint: (require "prek")
