@@ -11,10 +11,9 @@
 # fields bake in as their initialText, which differs from MENU[86] in the first
 # field. The extractor never writes it.
 #
-# The gradient is 800x575, the Stage's size, and the window is 800x600 until
-# julian-perge/urchin#111 changes its base resolution. So the scene stretches the
-# gradient over the whole window, as main_menu.tscn does with its background, and
-# leaves the lines at their Stage coordinates.
+# The gradient is 800x575, the Stage's size, and so is the game's viewport. The
+# gradient fills the viewport without scaling, and the lines sit at their Stage
+# coordinates.
 class_name CsIntro
 extends Control
 

@@ -10,8 +10,6 @@ from pathlib import Path
 
 from test_swf_index import IDENTITY_MATRIX, place2, swf, tag
 from urchin_dev.swf.extract.cutscenes import (
-    CONTENT_X,
-    CONTENT_Y,
     CUTSCENES,
     OUT_DIR,
     OUT_H,
@@ -102,14 +100,7 @@ def ogv_picture_size(path: Path) -> tuple[int, int]:
 
 def test_each_extracted_clip_is_the_size_of_the_stage():
     for label in CUTSCENES:
-        assert ogv_picture_size(OUT_DIR / f"{label}.ogv") == (800, 575), label
-
-
-def test_the_clip_mask_sits_where_the_original_centers_it_on_the_stage():
-    # The wrapper is at (133.5, 137.5) px on the 800x575 Stage, and the pad
-    # filter takes whole pixels.
-    assert (OUT_W, OUT_H) == (800, 575)
-    assert (CONTENT_X, CONTENT_Y) == (133, 137)
+        assert ogv_picture_size(OUT_DIR / f"{label}.ogv") == (OUT_W, OUT_H), label
 
 
 def test_only_shapes_whose_first_fill_is_the_missing_bitmap_get_stripped():
