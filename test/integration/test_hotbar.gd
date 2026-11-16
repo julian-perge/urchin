@@ -241,6 +241,24 @@ func test_an_inert_hotbar_makes_an_orb_ignore_a_click_and_take_it_again_after():
 	assert_called(orb, "interact")
 
 
+# The orb also takes a click through its Area2D (orb.tscn, input_event), which
+# only fires where no Control takes the mouse first. The SubViewport of the
+# test above does no physics picking, so this test calls the handler itself.
+func test_an_inert_hotbar_makes_an_orb_ignore_a_click_on_its_area_and_take_it_again_after():
+	add_child_autofree(HotbarScene.instantiate())
+	var hotbar: Control = get_tree().get_first_node_in_group("hotbar")
+	var orb: OrbBase = add_child_autofree(partial_double(OrbScene).instantiate())
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	hotbar.set_inert(true)
+	orb._on_input_event(orb.get_viewport(), press, 0)
+	assert_not_called(orb, "interact")
+	hotbar.set_inert(false)
+	orb._on_input_event(orb.get_viewport(), press, 0)
+	assert_called(orb, "interact")
+
+
 func test_quit_has_no_glow():
 	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
 	assert_null(hotbar.get_node_or_null("QuitSlot/Glow"))

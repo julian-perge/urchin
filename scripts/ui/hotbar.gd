@@ -240,7 +240,7 @@ func _refresh(zone_id: int) -> void:
 	# scales the fill from its left edge. It caps the bar at progress_max but not
 	# the stage text (frame_181/DoAction.as:7-14), so a beaten zone reads one
 	# stage past its boss. With no save the fill keeps the scene's full width,
-	# which is the state the rect record and the compare tool measure.
+	# which is the state the rect record measures.
 	if GameData.current_save != null:
 		progress = ZoneProgression.quest_progress(GameData.current_save, zone_id)
 		zone_fill.scale.x = float(mini(progress, progress_max)) / float(progress_max)
