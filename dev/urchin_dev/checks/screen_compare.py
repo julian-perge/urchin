@@ -89,6 +89,7 @@ class Entry:
     frame: str
     modes: dict[str, Mode]
     left_out: tuple[int, ...] = ()
+    compare_strip: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -153,7 +154,12 @@ def load_config(
         if not modes:
             raise CompareError(f"{name}: no modes")
         entries[name] = Entry(
-            raw["scene"], scene.timeline, scene.frame, modes, scene.left_out
+            raw["scene"],
+            scene.timeline,
+            scene.frame,
+            modes,
+            scene.left_out,
+            scene.compare_strip,
         )
     return entries
 
@@ -313,6 +319,8 @@ def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
     layers = characters(entry.timeline)[frame - 1]
     for cid in left_out_ids(layers, entry.left_out, entry.frame):
         reasons[cid] = "a character the port leaves out"
+    for cid in entry.compare_strip:
+        reasons[cid] = "outside the static chrome comparison"
     stripped = strip.strip_list(WEB_SWF, reasons) if reasons else []
     return render.Job(entry.timeline, frame, ZOOM, origin, strip=tuple(stripped))
 

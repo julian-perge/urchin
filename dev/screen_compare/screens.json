@@ -27,7 +27,9 @@
   "scene": "res://test/fixtures/screen_rects/victory_left_panel.tscn",
   "modes": {
    "panels": {
-    "nodes": ["LeftPanel"],
+    "nodes": [
+     "LeftPanel"
+    ],
     "bar": 2
    }
   }
@@ -80,6 +82,14 @@
      "RightColumn/DeleteSlot/Art"
     ],
     "bar": 11
+   }
+  }
+ },
+ "hub": {
+  "scene": "res://test/fixtures/screen_rects/hub_chrome.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 37
    }
   }
  }

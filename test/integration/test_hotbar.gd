@@ -393,3 +393,18 @@ func test_the_typed_hover_values_are_gone():
 	var constants: Dictionary = (load("res://scripts/ui/hotbar.gd") as Script).get_script_constant_map()
 	for constant: String in ["HOVER_COLORS", "ACTIVE_ICON_COLOR", "GLOW_RADII", "GLOW_STRENGTH", "GLOW_PAD", "TOOLTIP_CAPTIONS"]:
 		assert_does_not_have(constants, constant)
+
+
+func test_windows_hide_zone_art_and_orbs_and_restore_them_on_close():
+	var previous_save: PlayerSave = GameData.current_save
+	GameData.current_save = null
+	var hub: Control = add_child_autofree(load("res://scenes/game.tscn").instantiate())
+	await wait_process_frames(2)
+	var hotbar: Control = hub.get_node("Hotbar")
+	for group: String in ["inventory_window", "abilities_window", "achievements_window", "store_window"]:
+		hotbar.toggle_menu_screen(group)
+		assert_false(hub.get_node("ZoneHost").is_visible_in_tree(), group)
+		assert_true(hotbar.is_visible_in_tree())
+		hotbar.toggle_menu_screen(group)
+		assert_true(hub.get_node("ZoneHost").is_visible_in_tree(), group)
+	GameData.current_save = previous_save

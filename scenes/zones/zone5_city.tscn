@@ -19,25 +19,58 @@ zone_id = 5
 
 [node name="HubArt" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 16.0
-offset_right = 782.0
-offset_bottom = 430.0
+offset_left = 17.350000
+offset_top = 15.775000
+offset_right = 780.350000
+offset_bottom = 430.025000
 texture = ExtResource("2_bg")
 expand_mode = 1
-stretch_mode = 6
+stretch_mode = 0
 
 [node name="StoryFight" parent="." instance=ExtResource("3_orb")]
-position = Vector2(476.5, 170.8)
-scale = Vector2(1, 1)
+position = Vector2(479.55, 167.85)
+scale = Vector2(1.0, 1.0)
 script = ExtResource("4_story")
 
 [node name="ItemStore" parent="." instance=ExtResource("3_orb")]
-position = Vector2(229.6, 330.6)
-scale = Vector2(1, 1)
+position = Vector2(230.55, 331.15)
+scale = Vector2(1.0, 1.0)
 script = ExtResource("5_store")
 
 [node name="TrainingFight" parent="." instance=ExtResource("3_orb")]
-position = Vector2(587.0, 279.0)
-scale = Vector2(1, 1)
+position = Vector2(588.0, 278.55)
+scale = Vector2(1.0, 1.0)
 script = ExtResource("6_train")
+
+[node name="Control" parent="ItemStore" index="5"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -24.317100
+offset_top = -22.944300
+offset_right = 22.317100
+offset_bottom = 21.844200
+
+[node name="Control" parent="StoryFight" index="5"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -25.257500
+offset_top = -20.210700
+offset_right = 19.157500
+offset_bottom = 26.010600
+
+[node name="Control" parent="TrainingFight" index="5"]
+layout_mode = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -28.358900
+offset_top = -27.094800
+offset_right = 26.359000
+offset_bottom = 27.994800

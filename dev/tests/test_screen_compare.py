@@ -346,3 +346,16 @@ def test_a_window_backdrop_reference_keeps_its_stage_filters(monkeypatch):
     assert job.only_depths == (window_chrome.KRINMENU_ROOT_DEPTH,)
     assert job.hide_depths == ((window_chrome.KRINMENU, 11),)
     assert job.goto == ((window_chrome.KRINMENU_ROOT_DEPTH, 1),)
+
+
+def test_an_entry_carries_its_static_chrome_strip_list(tmp_path):
+    scenes = {
+        SCENE: Scene(
+            timeline=0, frame="Navigation", pieces={}, compare_strip=(2837, 3196)
+        )
+    }
+    config = write_config(tmp_path, {"hub": entry(chrome={"bar": 37})})
+    assert screen_compare.load_config(config, scenes)["hub"].compare_strip == (
+        2837,
+        3196,
+    )

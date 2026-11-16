@@ -34,6 +34,7 @@
 # Run: uv run extract_zone_hub
 from __future__ import annotations
 
+import json
 import math
 import shutil
 import sys
@@ -48,6 +49,7 @@ from urchin_dev.swf import render, strip, timeline
 from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
 HUB_DIR = REPO_ROOT / "assets" / "backgrounds" / "hub"
+RECORD = HUB_DIR / "zone_hub.json"
 ORB_DIR = REPO_ROOT / "assets" / "ui" / "orbs"
 
 HUB_SPRITE = 3287
@@ -91,14 +93,18 @@ def zone_frames(index: SwfIndex) -> dict[int, int]:
     }
 
 
-def render_hubs(frames: dict[int, int]) -> None:
+def render_hubs(frames: dict[int, int], origin: tuple[float, float]) -> None:
     """Draw each zone's hub frame with the orb and its buttons deleted,
     trimmed to the scene art."""
     stripped = tuple(strip.strip_list(WEB_SWF, HUB_STRIP))
     wanted = sorted(set(frames.values()))
-    jobs = [render.Job(HUB_SPRITE, frame, HUB_ZOOM, strip=stripped) for frame in wanted]
+    jobs = [
+        render.Job(HUB_SPRITE, frame, HUB_ZOOM, origin, strip=stripped)
+        for frame in wanted
+    ]
     HUB_DIR.mkdir(parents=True, exist_ok=True)
     with render.frames(WEB_SWF, jobs) as rendered:
+        record = {}
         by_frame = dict(zip(wanted, rendered, strict=True))
         for zone, frame in sorted(frames.items()):
             trimmed = render.trim(by_frame[frame])
@@ -108,11 +114,17 @@ def render_hubs(frames: dict[int, int]) -> None:
                 )
             path = HUB_DIR / f"{ZONE_LABELS[zone]}.png"
             png.save(trimmed.image, path)
+            record[ZONE_LABELS[zone]] = {
+                "rect": [round(v, 4) for v in trimmed.rect],
+                "size": list(trimmed.image.size),
+                "zoom": HUB_ZOOM,
+            }
             print(
                 f"zone {zone} {ZONE_LABELS[zone]:<8} frame {frame:>3} -> "
                 f"{path.name} {trimmed.image.size}",
                 file=sys.stderr,
             )
+        RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
 
 
 def export_orb_shapes() -> None:
@@ -148,7 +160,9 @@ def export_orb_shapes() -> None:
 
 def main():
     index = read_swf(WEB_SWF)
-    render_hubs(zone_frames(index))
+    hub_frame = timeline.frame_of(index, 0, "Navigation")
+    origin = render.placement_origin(index, 0, hub_frame, HUB_SPRITE)
+    render_hubs(zone_frames(index), origin)
     export_orb_shapes()
 
     print("\norb layers, bottom first (scenes/orb.tscn must match):", file=sys.stderr)
