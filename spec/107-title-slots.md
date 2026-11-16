@@ -60,8 +60,8 @@ The original draws each caption as `_sans` bold text with a Glow (#000000, blur 
 | cid | Piece | Box | Look | Built as |
 | --- | --- | --- | --- | --- |
 | 321, shape 320 | the "SONNY 2" logo, at (403.50, 180.20) | (123.20, 119.80) 549.55x97.70 | linear #68d9f4 to #ffffff, Glow #33ffff (blur 17) | TextureRect of `logo.png` |
-| 2699 and 2696 | `whatToSay1`, "PLAY" | (241.95, 304.50) 304.10x45.60 | `_sans` bold 36 #ffffff center | Label. The SWF draws it twice, once with the filters, so one Label with the caption look covers both. |
-| 2692 | hit button for PLAY | (242.01, 305.10) 302.27x40.00 | none | flat Button, goes to the choice |
+| 2699 and 2696 | `whatToSay1`, "Start!" (`MENU[18]`). "PLAY" is only the field's placeholder in ffdec's export | (241.95, 304.50) 304.10x45.60 | `_sans` bold 36 #ffffff center | Label. The SWF draws it twice, once with the filters, so one Label with the caption look covers both. |
+| 2692 | hit button for "Start!" | (242.01, 305.10) 302.27x40.00 | none | flat Button, goes to the choice |
 | 2698 | `whatToSay2`, "Game Manual" | (313.15, 365.50) 304.10x24.10 | `_sans` bold 18 #ffffff left | Label |
 | 2693 | its hit button | (313.93, 367.36) 230.33x20.78 | none | flat Button, goes to Game Manual |
 | 2694 | `whatToSay5`, "Credits" | (313.15, 455.50) 304.10x24.10 | as 2698 | Label |

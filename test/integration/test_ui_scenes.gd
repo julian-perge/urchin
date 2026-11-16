@@ -234,8 +234,10 @@ func test_menu_captions_take_their_outline_and_shadow_from_the_theme():
 	assert_eq(theme.get_color("font_color", "MenuCaption"), Color.WHITE)
 	assert_eq(theme.get_color("font_outline_color", "MenuCaption"), Color.BLACK)
 	assert_eq(theme.get_color("font_shadow_color", "MenuCaption"), Color.BLACK)
-	assert_gt(theme.get_constant("outline_size", "MenuCaption"), 0, "an outline for the Glow")
-	assert_gt(theme.get_constant("shadow_offset_y", "MenuCaption"), 0, "a shadow for the DropShadow")
+	assert_eq(theme.get_constant("outline_size", "MenuCaption"), 4, "the outline for the Glow")
+	assert_eq(theme.get_constant("shadow_outline_size", "MenuCaption"), 4, "the shadow is as wide as the outline")
+	assert_eq(theme.get_constant("shadow_offset_x", "MenuCaption"), 1, "the shadow for the DropShadow")
+	assert_eq(theme.get_constant("shadow_offset_y", "MenuCaption"), 1)
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
 	var captions: Array[String] = ["ModePanel/Back/Caption"]

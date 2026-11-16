@@ -66,7 +66,6 @@ from __future__ import annotations
 
 import json
 import sys
-from pathlib import Path
 
 from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render, strip, timeline
@@ -99,6 +98,7 @@ BACKGROUND_MAX_DEPTH = 5
 TITLE_LABEL = "mainMenu"
 LOGO = 321
 LOGO_RECORD = OUT_MENU / "logo.json"
+BACKGROUND_PNG = OUT_MENU / "start_background.png"
 BACKGROUND_RECORD = OUT_MENU / "start_background.json"
 
 
@@ -138,7 +138,7 @@ def write_logo(job: render.Job, frame: render.Frame) -> None:
     print(f"wrote logo.png {record['rect']} {cut.image.size}", file=sys.stderr)
 
 
-def write_background(frame: render.Frame, stripped: int, out_path: Path) -> None:
+def write_background(frame: render.Frame, stripped: int) -> None:
     """Save the classMenu frame, drawn with every foreground character
     deleted, as the background the menu screens share. The frame is drawn over
     the SWF's background colour, so it is opaque and the cut is the whole
@@ -146,11 +146,11 @@ def write_background(frame: render.Frame, stripped: int, out_path: Path) -> None
     cut = render.trim(frame)
     if cut is None:
         raise RuntimeError("the menu background rendered fully transparent")
-    png.save(cut.image, out_path)
+    png.save(cut.image, BACKGROUND_PNG)
     record = cut_record(frame.job, cut)
     BACKGROUND_RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
     print(
-        f"wrote {out_path} {record['rect']} {cut.image.size}"
+        f"wrote {BACKGROUND_PNG.name} {record['rect']} {cut.image.size}"
         f" ({stripped} foreground characters stripped)",
         file=sys.stderr,
     )
@@ -211,9 +211,7 @@ def main():
     }
     logo = logo_job(index)
     with render.frames(WEB_SWF, [background, logo, *card_jobs.values()]) as rendered:
-        write_background(
-            rendered[0], len(foreground), OUT_MENU / "start_background.png"
-        )
+        write_background(rendered[0], len(foreground))
         write_logo(logo, rendered[1])
         rects = write_cards(dict(zip(card_jobs, rendered[2:], strict=True)))
 

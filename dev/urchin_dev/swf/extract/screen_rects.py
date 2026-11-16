@@ -341,7 +341,10 @@ SCENES: dict[str, Scene] = {
     # against the title frame, and the record checks that its instances of the
     # background and the title land where their own scenes put them. The other
     # panels stand for later frames. Depth 38 is the Armor Games copyright line
-    # and depth 41 its logo.
+    # and depth 41 its logo. The two publisher links at depths 10, 12, 16 and
+    # 20 are left out too, and are not listed, because they draw nothing in the
+    # reference: chrome mode strips every edit text, and a hit button has no
+    # art.
     "res://scenes/main_menu.tscn": Scene(
         timeline=0,
         frame=TITLE_FRAME,
