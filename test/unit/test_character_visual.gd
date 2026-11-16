@@ -372,6 +372,20 @@ func test_hit_and_cast_end_on_the_same_frame_at_two_steps_a_frame():
 	assert_eq(_steps_until_idle(CharacterVisual.State.CAST, half_frame), 2 * _label_length("cast"), "cast")
 
 
+func test_the_idle_label_shows_the_same_frame_one_loop_later():
+	visual.set_state(CharacterVisual.State.IDLE)
+	var stand: Dictionary = _animations()["labels"]["stand"]
+	for step in 10:
+		visual._process(SWF_FRAME_SECONDS)
+	var frame_before_the_loop: int = _shown_frame()
+	# The first and last frames of stand hold the same pose, so only a frame
+	# between them can tell a loop from a label that stopped at its end.
+	assert_ne(frame_before_the_loop, int(stand["start"]), "sanity: a pose the label's ends do not hold")
+	for step in _label_length("stand"):
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(_shown_frame(), frame_before_the_loop)
+
+
 # Returns the alpha each part is drawn at, which is its own modulate times every
 # ancestor's, up to the doll.
 func _drawn_alphas() -> Array:
