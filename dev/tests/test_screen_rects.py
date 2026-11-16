@@ -199,6 +199,27 @@ def test_art_record_is_the_render_rect_and_the_png():
     }
 
 
+def test_art_record_names_the_png_in_the_folder_it_is_given():
+    entry = screen_rects.art_record(
+        "logo", CLOSE_X_CHROME, textures=screen_rects.MENU_TEXTURES
+    )
+    assert entry["texture"] == "res://assets/ui/menu/logo.png"
+
+
+def test_the_art_sources_hold_the_window_chrome_and_the_menu_art():
+    sources = screen_rects.art_sources()
+    chrome, chrome_folder = sources["close_x"]
+    assert chrome_folder == screen_rects.CHROME_TEXTURES
+    assert chrome["relative_to"] == "stage"
+    for name in ("logo", "start_background"):
+        entry, folder = sources[name]
+        assert folder == screen_rects.MENU_TEXTURES
+        # extract_start_screens measures both from the Stage and writes no
+        # relative_to, so art_sources adds it.
+        assert entry["relative_to"] == "stage"
+        assert set(entry) == {"rect", "relative_to", "size", "zoom"}
+
+
 def test_art_record_refuses_a_rect_measured_from_a_sprite():
     with pytest.raises(ValueError, match="sprite 2986"):
         screen_rects.art_record(

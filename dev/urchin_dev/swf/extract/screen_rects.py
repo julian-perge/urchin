@@ -22,10 +22,11 @@
 #   "text"  - an edit text, recorded as the rect Flash lays its text out in
 #             (label_layout.text_rect), with its font height, colour and
 #             alignment.
-#   "art"   - a piece drawn from a zoom 4 PNG of extract_window_chrome, which
-#             a TextureRect shows at the rect that render measured, with the
-#             PNG's path. Its depth is the one window_chrome renders, so the
-#             two extractors cannot name different placements.
+#   "art"   - a piece drawn from a PNG of extract_window_chrome or of
+#             extract_start_screens, which a TextureRect shows at the rect that
+#             render measured, with the PNG's path. A window chrome depth is
+#             the one window_chrome renders, so the two extractors cannot name
+#             different placements.
 #   "face"  - the portrait clip 2978, which the port draws as a TextureRect that
 #             shows a different PNG for each fighter. It is recorded as the crop
 #             box that extract_faces cut every portrait to, placed with the
@@ -60,7 +61,7 @@ from dataclasses import dataclass, field
 
 from urchin_dev import REPO_ROOT, WEB_SWF
 from urchin_dev.swf import label_layout, render, timeline
-from urchin_dev.swf.extract import faces, window_chrome
+from urchin_dev.swf.extract import faces, start_screens, window_chrome
 from urchin_dev.swf.swf_index import (
     ButtonRecord,
     DropShadow,
@@ -78,6 +79,12 @@ from urchin_dev.swf.swf_index import (
 
 RECORD = REPO_ROOT / "test" / "fixtures" / "screen_rects.json"
 CHROME_TEXTURES = "res://assets/ui/window"
+MENU_TEXTURES = "res://assets/ui/menu"
+# The menu art, by the record that extract_start_screens writes beside each PNG.
+MENU_ART = {
+    "logo": start_screens.LOGO_RECORD,
+    "start_background": start_screens.BACKGROUND_RECORD,
+}
 KRINMENU = 3142
 HUB_FRAME = "Navigation"
 
@@ -114,6 +121,9 @@ class Scene:
     frame: str
     pieces: dict[str, Piece]
     port_only: tuple[str, ...] = field(default=())
+    # The depths of the frame whose characters the port leaves out by an ADR.
+    # The compare tool takes them out of its reference too.
+    left_out: tuple[int, ...] = field(default=())
 
 
 # The victory frame's experience rows, top to bottom, by the depth that
@@ -132,6 +142,24 @@ VICTORY_ROW_PIECES: dict[str, tuple[str, int, str | None]] = {
 # The frame names the grid's slots itemSlot0 to itemSlot35, row by row.
 INVENTORY_SLOTS = 36
 INVENTORY_COLUMNS = 6
+
+# The title frame's pieces, by their path in title_panel.tscn
+# (spec/107-title-slots.md, The title). The SWF places the Play caption twice,
+# 2699 at depth 8 with no filter and 2696 at depth 11 with the caption's Glow
+# and DropShadow, at one spot. The port draws one Label for both. The frame
+# also places "Play More Games!" and "Play the Original Sonny" at depths 10 and
+# 12, the Armor Games line at depth 38 and its logo at depth 41, which the port
+# leaves out (docs/adr/0002-leave-out-the-armor-games-branding.md).
+TITLE_FRAME = "mainMenu"
+TITLE_PIECES = {
+    "Logo": Piece("art", 6, art="logo"),
+    "Captions/PlaySlot/Caption": Piece("text", 11),
+    "Captions/PlaySlot/HitButton": Piece("hit", 18),
+    "Captions/GameManualSlot/Caption": Piece("text", 9),
+    "Captions/GameManualSlot/HitButton": Piece("hit", 14),
+    "Captions/CreditsSlot/Caption": Piece("text", 13),
+    "Captions/CreditsSlot/HitButton": Piece("hit", 22),
+}
 
 SCENES: dict[str, Scene] = {
     # The victory frame's left Panel and the field at its top. It is a test
@@ -290,6 +318,46 @@ SCENES: dict[str, Scene] = {
             *(f"Socket{i}" for i in range(8)),
         ),
     ),
+    # The background that every menu frame from mainMenu to endMenu places at
+    # depths 1, 2 and 5: the backdrop 2701, the swirl 307 and the splatter 2700.
+    # extract_start_screens renders the three as one PNG of the whole Stage, so
+    # the piece names the first of them. The scene's root is the piece.
+    "res://scenes/ui/menu/menu_background.tscn": Scene(
+        timeline=0,
+        frame=TITLE_FRAME,
+        pieces={".": Piece("art", 1, art="start_background")},
+    ),
+    # Back, which every menu frame after the title places at depths 35 and 36.
+    # subMenu is the first of them.
+    "res://scenes/ui/menu/menu_back.tscn": Scene(
+        timeline=0,
+        frame="subMenu",
+        pieces={"Caption": Piece("text", 35), "HitButton": Piece("hit", 36)},
+    ),
+    "res://scenes/ui/menu/title_panel.tscn": Scene(
+        timeline=0, frame=TITLE_FRAME, pieces=TITLE_PIECES
+    ),
+    # The menu opens on the title, so it is the scene the compare tool scores
+    # against the title frame, and the record checks that its instances of the
+    # background and the title land where their own scenes put them. The other
+    # panels stand for later frames. Depth 38 is the Armor Games copyright line
+    # and depth 41 its logo.
+    "res://scenes/main_menu.tscn": Scene(
+        timeline=0,
+        frame=TITLE_FRAME,
+        pieces={
+            "Background": Piece("art", 1, art="start_background"),
+            **{f"TitlePanel/{path}": piece for path, piece in TITLE_PIECES.items()},
+        },
+        port_only=(
+            "ModePanel",
+            "NamePanel",
+            "SlotPanel",
+            "NewGamePanel",
+            "OptionsPanel",
+        ),
+        left_out=(38, 41),
+    ),
 }
 
 
@@ -426,10 +494,32 @@ def _shadow_of(layer: timeline.Layer) -> DropShadow | None:
     return shadows[0] if shadows else None
 
 
-def art_record(name: str, chrome: dict, sprite_origins: dict | None = None) -> dict:
-    """-> the record of the window_chrome.json entry `chrome` of piece `name`.
-    A rect measured from a sprite is moved to the stage by that sprite's
-    origin in `sprite_origins`, keyed as "sprite <id>"."""
+def art_sources() -> dict[str, tuple[dict, str]]:
+    """-> the render record and the res:// folder of every PNG an art piece can
+    name. The menu art is measured from the Stage, and its records do not say
+    so, so each gets the relative_to that window_chrome.json writes."""
+    sources = {
+        name: (entry, CHROME_TEXTURES)
+        for name, entry in json.loads(window_chrome.RECORD.read_text()).items()
+    }
+    for name, record in MENU_ART.items():
+        if name in sources:
+            raise ValueError(f"{name} is both window chrome and menu art")
+        entry = {**json.loads(record.read_text()), "relative_to": "stage"}
+        sources[name] = (entry, MENU_TEXTURES)
+    return sources
+
+
+def art_record(
+    name: str,
+    chrome: dict,
+    sprite_origins: dict | None = None,
+    textures: str = CHROME_TEXTURES,
+) -> dict:
+    """-> the record of the render record `chrome` of piece `name`, whose PNG
+    is in the res:// folder `textures`. A rect measured from a sprite is moved
+    to the stage by that sprite's origin in `sprite_origins`, keyed as
+    "sprite <id>"."""
     relative_to = chrome["relative_to"]
     shift = (0.0, 0.0)
     if relative_to != "stage":
@@ -443,7 +533,7 @@ def art_record(name: str, chrome: dict, sprite_origins: dict | None = None) -> d
     return {
         "kind": "art",
         "rect": [round(x + shift[0], 4), round(y + shift[1], 4), w, h],
-        "texture": f"{CHROME_TEXTURES}/{name}.png",
+        "texture": f"{textures}/{name}.png",
         "size": chrome["size"],
         "zoom": chrome["zoom"],
     }
@@ -620,7 +710,7 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
     origin = origin_of(index, scene.timeline)
     frame = timeline.frame_of(index, scene.timeline, scene.frame)
     layers = timeline.frames(index, scene.timeline)[frame - 1]
-    chrome = json.loads(window_chrome.RECORD.read_text())
+    art = art_sources()
     pieces = {}
     for path, piece in scene.pieces.items():
         if piece.instance is None:
@@ -642,7 +732,7 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
         holder_shadow = None
         if piece.inner_depth is None:
             sprite = f"sprite {layer.character_id}"
-            if piece.kind == "art" and chrome[piece.art]["relative_to"] == sprite:
+            if piece.kind == "art" and art[piece.art][0]["relative_to"] == sprite:
                 sprite_origins[sprite] = inner_origin(layer.matrix, origin)
         else:
             holder_shadow = _shadow_of(layer)
@@ -673,7 +763,8 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
         elif piece.kind == "button":
             pieces[path] = _button(index, layer, piece_origin)
         elif piece.kind == "art":
-            pieces[path] = art_record(piece.art, chrome[piece.art], sprite_origins)
+            entry, textures = art[piece.art]
+            pieces[path] = art_record(piece.art, entry, sprite_origins, textures)
         elif piece.kind == "face":
             if layer.character_id != faces.FACE_CLIP:
                 raise ValueError(

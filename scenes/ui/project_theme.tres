@@ -8,6 +8,15 @@
 default_font = ExtResource("1_bold")
 BoldItalicLabel/base_type = &"Label"
 BoldItalicLabel/fonts/font = ExtResource("3_bolditalic")
+MenuCaption/base_type = &"Label"
+MenuCaption/colors/font_color = Color(1, 1, 1, 1)
+MenuCaption/colors/font_outline_color = Color(0, 0, 0, 1)
+MenuCaption/colors/font_shadow_color = Color(0, 0, 0, 1)
+MenuCaption/constants/outline_size = 4
+MenuCaption/constants/shadow_offset_x = 1
+MenuCaption/constants/shadow_offset_y = 1
+MenuCaption/constants/shadow_outline_size = 4
+MenuCaption/fonts/font = ExtResource("1_bold")
 RegularLabel/base_type = &"Label"
 RegularLabel/fonts/font = ExtResource("2_regular")
 TooltipLabel/fonts/font = ExtResource("2_regular")

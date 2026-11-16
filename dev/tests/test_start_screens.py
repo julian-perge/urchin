@@ -65,9 +65,7 @@ def layer(character_id: int, matrix=timeline.IDENTITY) -> timeline.Layer:
 def stub_swf(monkeypatch, frame_46):
     """Make start_screens read `frame_46` as the root's mainMenu frame."""
     monkeypatch.setattr(timeline, "frame_of", lambda index, owner, label: 46)
-    monkeypatch.setattr(
-        timeline, "frames", lambda index, owner: [{}] * 45 + [frame_46]
-    )
+    monkeypatch.setattr(timeline, "frames", lambda index, owner: [{}] * 45 + [frame_46])
 
 
 def test_the_logo_renders_the_title_frame_with_only_the_logo_depth(monkeypatch):
@@ -97,8 +95,20 @@ def test_the_record_holds_the_rect_size_and_zoom_of_the_cut():
     cut = render.Trimmed(
         Image.new("RGBA", (8, 4)), (0, 0, 8, 4), (1.123456, 2.0, 2.0, 1.0)
     )
-    assert start_screens.logo_record(job, cut) == {
+    assert start_screens.cut_record(job, cut) == {
         "rect": [1.1235, 2.0, 2.0, 1.0],
         "size": [8, 4],
         "zoom": 4.0,
     }
+
+
+def test_the_background_png_is_the_whole_stage_at_its_zoom():
+    record = json.loads((MENU_DIR / "start_background.json").read_text())
+    with Image.open(MENU_DIR / "start_background.png") as image:
+        size = image.size
+    assert record == {
+        "rect": [0.0, 0.0, 800.0, 575.0],
+        "size": list(size),
+        "zoom": start_screens.BACKGROUND_ZOOM,
+    }
+    assert size == (1600, 1150)

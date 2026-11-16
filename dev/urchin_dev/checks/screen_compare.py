@@ -10,7 +10,8 @@
 # Window build issue adds one entry: the scene, and one or both modes with a
 # bar each.
 #   "chrome" - the whole frame with every edit text stripped, against the scene
-#              with every Label hidden.
+#              with every Label hidden. The characters at the depths the scene
+#              leaves out (`left_out` in SCENES) are stripped too.
 #   "panels" - only the scene nodes in `nodes`, against only the frame depths
 #              that place them.
 # dev/screen_compare/capture.gd reads the same file and draws the scene for a
@@ -87,6 +88,7 @@ class Entry:
     timeline: int
     frame: str
     modes: dict[str, Mode]
+    left_out: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -150,7 +152,9 @@ def load_config(
             modes[mode] = Mode(bar, panel_depths(scene, nodes, where), nodes)
         if not modes:
             raise CompareError(f"{name}: no modes")
-        entries[name] = Entry(raw["scene"], scene.timeline, scene.frame, modes)
+        entries[name] = Entry(
+            raw["scene"], scene.timeline, scene.frame, modes, scene.left_out
+        )
     return entries
 
 
@@ -256,6 +260,17 @@ def edit_text_ids(
     return found
 
 
+def left_out_ids(layers: dict[int, int], depths: Iterable[int], where: str) -> set[int]:
+    """-> the character at each of `depths` in `layers`, a frame as
+    {depth: character id}."""
+    found = set()
+    for depth in depths:
+        if depth not in layers:
+            raise CompareError(f"{where}: the frame places nothing at depth {depth}")
+        found.add(layers[depth])
+    return found
+
+
 def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
     origin = screen_rects.origin_of(index, entry.timeline)
     frame = timeline.frame_of(index, entry.timeline, entry.frame)
@@ -274,6 +289,9 @@ def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
         entry.timeline, frame, characters, lambda cid: character_kind(index, cid)
     )
     reasons = dict.fromkeys(texts, "an edit text, hidden in chrome mode")
+    layers = characters(entry.timeline)[frame - 1]
+    for cid in left_out_ids(layers, entry.left_out, entry.frame):
+        reasons[cid] = "a character the port leaves out"
     stripped = strip.strip_list(WEB_SWF, reasons) if reasons else []
     return render.Job(entry.timeline, frame, ZOOM, origin, strip=tuple(stripped))
 
