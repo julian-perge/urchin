@@ -281,7 +281,9 @@ special "miss"/"shield" frames. Crits also fire `GridShaker` (frame_42/DoAction_
 `frame_42/DoAction_8.as:80` and again at 84, or at 137 in heal green under sswitch. Each call attaches a new clip at the next depth (`frame_42/DoAction_7.as:37`, 75-79), so a normal hit shows two
 identical numbers and an sswitch hit shows a green number over an element-colored one.
 
-Ported: `FloatingNumberLayer` is `KrinNumberShow` and `FloatingNumber` is one `NumberFixer`, played from what `extract_floating_numbers` writes. The details the port keeps:
+Ported: `FloatingNumberLayer` is `KrinNumberShow` and `FloatingNumber` is one `NumberFixer`, played from what `extract_floating_numbers` writes.
+It writes the count of the depths as `slots`, and the digit spacing and the first digit's offset under `digits`, to `assets/ui/battle/floating_number/floating_number.json`, and `FloatingNumberLayer` reads them from there.
+The details the port keeps:
 
 - The number sits on the target rig's `_x`/`_y` with no offset (lines 38-39). `dressChar` lowers only a MODEL5 unit's doll inside its rig, so its number stays on the rig.
 - `KrinNumberShow` attaches the number to BATTLESCREEN (line 37), so it zooms and shakes with the fighters. The port's layer is a child of `BattleScreenClip`, next to `Battlefield`.
