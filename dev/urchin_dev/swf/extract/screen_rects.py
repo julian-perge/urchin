@@ -60,6 +60,12 @@
 # When the sprite's placement carries a DropShadow, Flash shadows every text
 # field inside it, so a text piece there records the shadow too.
 #
+# The record reads the web build, sonny-2-2900.swf. A piece that names a
+# `steam` placement is moved to where the Steam build, SONNY2.swf, places it
+# on the same frame. The six hotbar slots do: the web build places them 13 px
+# higher. Its Armor Games strip 3176 is an overlay under that row and does not
+# move the buttons.
+#
 # A timeline other than the root is measured from where the root's Navigation
 # frame places it, which for KRINMENU is (400.50, 222.40).
 #
@@ -72,7 +78,7 @@ from dataclasses import dataclass, field
 
 from PIL import Image
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, STEAM_SWF, WEB_SWF
 from urchin_dev.swf import label_layout, render, timeline
 from urchin_dev.swf.extract import (
     battle_screen,
@@ -127,6 +133,9 @@ class Piece:
     # by the placement difference. A sprite-local render uses this depth's
     # sprite as its source and the current placement as its origin.
     rendered_at: int | None = None
+    # The depth, or the instance name, that places the same piece on the same
+    # frame of the Steam build, for a piece the port puts where that build does.
+    steam: int | str | None = None
 
     def __post_init__(self) -> None:
         if (self.depth is None) == (self.instance is None):
@@ -205,40 +214,45 @@ CHOICE_PIECES = {
 # The six hotbar slots that share the 0.671 square, by their slot node in
 # hotbar.tscn: the depth of the slot's button and the name of its icon art
 # (spec/107-hub.md, The hotbar). The button draws the square, so the square's
-# art and the hit rect are two pieces at one depth.
-HOTBAR_SLOTS: dict[str, tuple[int, str]] = {
-    "Inventory": (126, "inventory"),
-    "Abilities": (128, "abilities"),
-    "Save": (130, "save"),
-    "Options": (136, "options"),
-    "Respec": (138, "respec"),
-    "Achievements": (165, "achievements"),
+# art and the hit rect are two pieces at one depth. The second depth is the
+# same button's in the Steam build, whose row the port uses.
+HOTBAR_SLOTS: dict[str, tuple[int, int, str]] = {
+    "Inventory": (126, 126, "inventory"),
+    "Abilities": (128, 128, "abilities"),
+    "Save": (130, 130, "save"),
+    "Options": (136, 136, "options"),
+    "Respec": (138, 138, "respec"),
+    "Achievements": (165, 157, "achievements"),
 }
 if (
-    tuple(depth for depth, _icon in HOTBAR_SLOTS.values())
+    tuple(depth for depth, _steam, _icon in HOTBAR_SLOTS.values())
     != window_chrome.SQUARE_DEPTHS
 ):
     raise ValueError("HOTBAR_SLOTS and window_chrome.SQUARE_DEPTHS disagree")
 
 
-def hotbar_icon(name: str) -> Piece:
-    return Piece("art", None, art=name, instance=hotbar_icons.ICONS[name])
+def hotbar_icon(name: str, *, steam: bool = False) -> Piece:
+    instance = hotbar_icons.ICONS[name]
+    return Piece(
+        "art", None, art=name, instance=instance, steam=instance if steam else None
+    )
 
 
 HOTBAR_PIECES = {
     "BottomBar": Piece("art", 1, art="bottom_bar"),
     **{
         f"{slot}Slot/{node}": piece
-        for slot, (depth, icon) in HOTBAR_SLOTS.items()
+        for slot, (depth, steam, icon) in HOTBAR_SLOTS.items()
         for node, piece in {
             "Square": Piece(
                 "art",
                 depth,
                 art="hotbar_square",
                 rendered_at=window_chrome.SQUARE_DEPTHS[0],
+                steam=steam,
             ),
-            "Icon": hotbar_icon(icon),
-            f"{slot}Button": Piece("button", depth),
+            "Icon": hotbar_icon(icon, steam=True),
+            f"{slot}Button": Piece("button", depth, steam=steam),
         }.items()
     },
     "ZoneMapSlot/Square": Piece(
@@ -1127,27 +1141,59 @@ def origin_of(index: SwfIndex, owner: int) -> tuple[float, float]:
     return render.placement_origin(index, 0, hub, owner)
 
 
-def scene_record(index: SwfIndex, scene: Scene) -> dict:
+def placed_layer(
+    layers: dict[int, timeline.Layer], where: int | str, path: str, frame: str
+) -> timeline.Layer:
+    """-> the layer of `layers` at the depth `where`, or the one layer with
+    the instance name `where`."""
+    if isinstance(where, int):
+        if where not in layers:
+            raise ValueError(f"{path}: frame {frame} has no depth {where}")
+        return layers[where]
+    named = [layer for layer in layers.values() if layer.name == where]
+    if len(named) != 1:
+        raise ValueError(
+            f"{path}: frame {frame} places {len(named)} instances named {where}"
+        )
+    return named[0]
+
+
+def moved_to_steam(record: dict, matrix, steam_matrix) -> dict:
+    """-> `record`, which holds the rect of a piece the web build places with
+    `matrix`, moved to where the Steam build places the same piece with
+    `steam_matrix`."""
+    if _scale(matrix) != _scale(steam_matrix):
+        raise ValueError(
+            f"the Steam placement {steam_matrix} does not have the scale of"
+            f" {matrix}, so the piece is another size there"
+        )
+    x, y, w, h = record["rect"]
+    dx = (steam_matrix[4] - matrix[4]) / render.TWIPS
+    dy = (steam_matrix[5] - matrix[5]) / render.TWIPS
+    return {**record, "rect": [round(x + dx, 4), round(y + dy, 4), w, h]}
+
+
+def scene_record(
+    index: SwfIndex, scene: Scene, steam_index: SwfIndex | None = None
+) -> dict:
     origin = origin_of(index, scene.timeline)
     frame = timeline.frame_of(index, scene.timeline, scene.frame)
     layers = timeline.frames(index, scene.timeline)[frame - 1]
+    steam_layers = None
+    if any(piece.steam is not None for piece in scene.pieces.values()):
+        if steam_index is None:
+            raise ValueError(
+                f"frame {scene.frame} has a piece with a Steam placement, and"
+                " no Steam build was given"
+            )
+        steam_frame = timeline.frame_of(steam_index, scene.timeline, scene.frame)
+        steam_layers = timeline.frames(steam_index, scene.timeline)[steam_frame - 1]
     art = art_sources()
     pieces = {}
     for path, piece in scene.pieces.items():
-        if piece.instance is None:
-            layer = layers.get(piece.depth)
-            if layer is None:
-                raise ValueError(
-                    f"{path}: frame {scene.frame} has no depth {piece.depth}"
-                )
-        else:
-            named = [layer for layer in layers.values() if layer.name == piece.instance]
-            if len(named) != 1:
-                raise ValueError(
-                    f"{path}: frame {scene.frame} places {len(named)} instances"
-                    f" named {piece.instance}"
-                )
-            layer = named[0]
+        where = piece.depth if piece.instance is None else piece.instance
+        layer = placed_layer(layers, where, path, scene.frame)
+        placed = layer
         piece_origin = origin
         sprite_origins = {}
         holder_shadow = None
@@ -1232,6 +1278,9 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
             pieces[path] = _hit(index, layer, piece_origin)
         else:
             raise ValueError(f"{path}: unknown piece kind {piece.kind!r}")
+        if piece.steam is not None:
+            steam = placed_layer(steam_layers, piece.steam, path, scene.frame)
+            pieces[path] = moved_to_steam(pieces[path], placed.matrix, steam.matrix)
     return {
         "timeline": scene.timeline,
         "frame": scene.frame,
@@ -1243,8 +1292,12 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
 
 def main():
     index = read_swf(WEB_SWF)
+    steam_index = read_swf(STEAM_SWF)
     record = {
-        "scenes": {path: scene_record(index, scene) for path, scene in SCENES.items()}
+        "scenes": {
+            path: scene_record(index, scene, steam_index)
+            for path, scene in SCENES.items()
+        }
     }
     RECORD.parent.mkdir(parents=True, exist_ok=True)
     RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")

@@ -369,6 +369,61 @@ def test_shared_slot_art_refuses_a_placement_with_another_scale(monkeypatch):
         screen_rects.scene_record(None, scene)
 
 
+HOTBAR_SQUARE_SOURCE = {
+    "hotbar_square": (
+        {
+            "relative_to": "stage",
+            "rect": [25.0, 467.25, 53.75, 54.0],
+            "size": [269, 270],
+            "zoom": 5,
+        },
+        screen_rects.CHROME_TEXTURES,
+    )
+}
+
+
+def steam_scene_record(monkeypatch, web_matrix, steam_matrix):
+    """-> the record of one hotbar square that the web build places at depth
+    126 with `web_matrix` and the Steam build at depth 157 with `steam_matrix`."""
+    from types import SimpleNamespace
+
+    frames = {
+        "web": [{126: SimpleNamespace(character_id=3185, matrix=web_matrix)}],
+        "steam": [{157: SimpleNamespace(character_id=2910, matrix=steam_matrix)}],
+    }
+    monkeypatch.setattr(screen_rects.timeline, "frame_of", lambda *_: 1)
+    monkeypatch.setattr(screen_rects.timeline, "frames", lambda index, _: frames[index])
+    monkeypatch.setattr(screen_rects, "art_sources", lambda: HOTBAR_SQUARE_SOURCE)
+    scene = screen_rects.Scene(
+        0,
+        "Navigation",
+        {"Square": screen_rects.Piece("art", 126, art="hotbar_square", steam=157)},
+    )
+    return screen_rects.scene_record("web", scene, "steam")["pieces"]["Square"]
+
+
+# The Steam build places the six hotbar squares 260 twips under the web
+# build's, and the port puts them where the Steam build does.
+def test_a_piece_with_a_steam_placement_sits_where_the_steam_build_places_it(
+    monkeypatch,
+):
+    piece = steam_scene_record(
+        monkeypatch,
+        (0.67, 0.0, 0.0, 0.67, 1033, 9878),
+        (0.67, 0.0, 0.0, 0.67, 1033, 10138),
+    )
+    assert piece["rect"] == pytest.approx([25.0, 480.25, 53.75, 54.0])
+
+
+def test_a_steam_placement_with_another_scale_is_refused(monkeypatch):
+    with pytest.raises(ValueError, match="scale"):
+        steam_scene_record(
+            monkeypatch,
+            (0.67, 0.0, 0.0, 0.67, 1033, 9878),
+            (0.81, 0.0, 0.0, 0.81, 1033, 10138),
+        )
+
+
 def test_art_record_refuses_a_sprite_rect_of_another_sprite():
     with pytest.raises(ValueError, match="sprite 2867"):
         screen_rects.art_record(
