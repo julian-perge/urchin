@@ -131,6 +131,29 @@ def test_trace_diff_prints_the_records_of_each_side_sorted(tmp_path, capsys):
     )
 
 
+def test_trace_diff_exits_1_and_names_a_log_that_does_not_exist(tmp_path):
+    log_a = tmp_path / "a.txt"
+    log_a.write_text(FLASH_LOG, newline="")
+    absent = tmp_path / "absent.txt"
+
+    with pytest.raises(SystemExit) as exit_info:
+        diff_main([str(log_a), str(absent)])
+
+    assert exit_info.value.code == f"error: no Trace log at {absent}."
+
+
+def test_trace_diff_exits_1_and_names_the_log_and_the_line_of_a_bad_goto_line(tmp_path):
+    log_a = tmp_path / "a.txt"
+    log_b = tmp_path / "b.txt"
+    log_a.write_text(FLASH_LOG, newline="")
+    log_b.write_text("HOOK\tinstalled\ttrue\nGOTO\tstop\t_level0.c\t5\t1\tEND\n")
+
+    with pytest.raises(SystemExit) as exit_info:
+        diff_main([str(log_a), str(log_b)])
+
+    assert str(exit_info.value.code).startswith(f"error: {log_b}: line 2: ")
+
+
 def test_the_goto_probe_traces_its_fields_in_the_order_parse_reads():
     probe = (PROBES / "goto.as").read_text(encoding="utf-8")
     call = re.search(r'trace\("GOTO\\t" \+ (.+)\);', probe)
