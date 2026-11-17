@@ -21,6 +21,9 @@ such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
 - `just as-lookup <name>` finds a function, a global, a script or a line of
   the original ActionScript, with its callers and the GDScript that cites it.
   Run it before `rg` on the export.
+- `just trace-swf`, `just trace-run` and `just trace-diff` build a Traced
+  copy of the original, play it and save its Trace log, and compare two Trace
+  logs. See "Tracing the original" in `docs/agents/actionscript.md`.
 - Tests: `just gut` runs the GUT suite. `just gut <path>` runs one test file,
   and `just gut -gunit_test_name=<name>` runs the tests whose names contain
   `<name>`. Trust its exit code. It also fails the runs that GUT exits 0 on: a
@@ -64,8 +67,8 @@ such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
 
 ## Read the doc that matches the task
 
-- Reading the ActionScript, or porting the original's logic or data:
-  `docs/agents/actionscript.md`.
+- Reading the ActionScript, porting the original's logic or data, or tracing
+  the original in a Traced run: `docs/agents/actionscript.md`.
 - Running or changing an extractor, or anything else that renders through
   ffdec, or scoring a Screen with `just compare-screen`:
   `docs/agents/art-extraction.md`.
