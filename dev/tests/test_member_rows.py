@@ -32,18 +32,30 @@ FIELD = timeline.Layer(character_id=3310, matrix=(1.0, 0.0, 0.0, 1.0, -2690, -11
 
 
 def test_the_text_rect_is_measured_from_the_panels_top_left():
-    entry = member_rows.inactive_from(FIELD, SAY, PANEL, 9)
+    entry = member_rows.inactive_from(FIELD, SAY, PANEL, 9, 52)
     assert entry["rect"] == pytest.approx([8.0, 7.15, 269.5, 18.0])
     assert entry["align"] == "center"
     assert entry["color"] == "#999999"
     assert entry["font_size"] == 9.0
     assert entry["frame"] == 9
+    assert entry["menu_index"] == 52
+
+
+SCRIPT = "say = _root.KrinLang[_root.KLangChoosen].MENU[52];\nstop();\n"
+
+
+def test_the_menu_index_is_the_one_the_inactive_script_sets_say_from():
+    assert member_rows.menu_index(SCRIPT) == 52
+    with pytest.raises(ValueError, match="0 times"):
+        member_rows.menu_index("stop();")
+    with pytest.raises(ValueError, match="2 times"):
+        member_rows.menu_index(SCRIPT * 2)
 
 
 def test_a_scaled_text_is_refused():
     scaled = replace(FIELD, matrix=(2.0, 0.0, 0.0, 1.0, -2690, -113))
     with pytest.raises(ValueError, match="not a translate"):
-        member_rows.inactive_from(scaled, SAY, PANEL, 9)
+        member_rows.inactive_from(scaled, SAY, PANEL, 9, 52)
 
 
 def test_the_committed_record_holds_the_text_of_menu_52():

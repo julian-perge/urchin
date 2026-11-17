@@ -722,6 +722,18 @@
       31.3
      ]
     },
+    "BottomBar/StanceHost/Row3/NameLabel": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 6.0,
+     "kind": "text",
+     "rect": [
+      39.2,
+      520.65,
+      128.05,
+      12.0
+     ]
+    },
     "BottomBar/StanceHost/Row5": {
      "kind": "shape",
      "rect": [
@@ -729,6 +741,18 @@
       473.5,
       285.0,
       31.3
+     ]
+    },
+    "BottomBar/StanceHost/Row5/NameLabel": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 6.0,
+     "kind": "text",
+     "rect": [
+      39.2,
+      483.15,
+      128.05,
+      12.0
      ]
     },
     "HallOutline": {
@@ -2248,7 +2272,6 @@
     "TopStatusBar/Bar6/Inner2/LifeSmoother",
     "TopStatusBar/Bar6/Inner2/FocusSmoother",
     "BottomBar/StanceHost/Row5/Panel",
-    "BottomBar/StanceHost/Row5/NameLabel",
     "BottomBar/StanceHost/Row5/InactiveLabel",
     "BottomBar/StanceHost/Row5/Mode0",
     "BottomBar/StanceHost/Row5/Mode1",
@@ -2256,7 +2279,6 @@
     "BottomBar/StanceHost/Row5/Mode3",
     "BottomBar/StanceHost/Row5/Mode4",
     "BottomBar/StanceHost/Row3/Panel",
-    "BottomBar/StanceHost/Row3/NameLabel",
     "BottomBar/StanceHost/Row3/InactiveLabel",
     "BottomBar/StanceHost/Row3/Mode0",
     "BottomBar/StanceHost/Row3/Mode1",

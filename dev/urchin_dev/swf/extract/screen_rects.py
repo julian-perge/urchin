@@ -1029,6 +1029,12 @@ SCENES[BATTLE_SCENE] = Scene(
         # row's panel.
         "BottomBar/StanceHost/Row5": Piece("shape", 1, via=(7, 1, 1), character=3317),
         "BottomBar/StanceHost/Row3": Piece("shape", 1, via=(7, 49, 1), character=3317),
+        "BottomBar/StanceHost/Row5/NameLabel": Piece(
+            "text", 1, via=(7, 1, 2), character=3317
+        ),
+        "BottomBar/StanceHost/Row3/NameLabel": Piece(
+            "text", 1, via=(7, 49, 2), character=3317
+        ),
         "BottomBar/RightPanel": Piece("shape", 1, via=(1, 1), path=2, character=3317),
         "BottomBar/PassButton": Piece("button", 498, character=3383),
         "BottomBar/PassRing": Piece("point", 498, character=3383),
@@ -1047,15 +1053,15 @@ SCENES[BATTLE_SCENE] = Scene(
             for slot in range(1, 7)
             for band in ("LifeSmoother", "FocusSmoother")
         ),
-        # What a row draws inside its panel: the name and the buttons of the
-        # active frame, and the text of the inactive one. StanceRow places them
-        # from battle_layout.json and member_rows.json.
+        # What a row draws inside its panel, other than its name: the panel's art,
+        # the buttons of the active frame and the text of the inactive one.
+        # StanceRow places them from battle_layout.json and member_rows.json, which
+        # extract_battle_screen and extract_member_rows measure off the SWF.
         *(
             f"BottomBar/StanceHost/Row{slot}/{part}"
             for slot in (5, 3)
             for part in (
                 "Panel",
-                "NameLabel",
                 "InactiveLabel",
                 "Mode0",
                 "Mode1",

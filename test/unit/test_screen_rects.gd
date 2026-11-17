@@ -1093,6 +1093,25 @@ func test_control_a_top_status_bar_piece_moved_20_px_fails() -> void:
 		assert_string_contains(found[0] if found else "", "%s: top left" % piece)
 
 
+# The member rows are two copies of one scene, so each kind of piece is moved on
+# both: the row and its name. A moved row
+# moves its parts too, so the problem list has to name the piece that moved.
+func test_control_a_member_row_piece_moved_20_px_fails() -> void:
+	var pieces: Array[String] = []
+	for row: String in ["Row5", "Row3"]:
+		for part: String in ["", "/NameLabel"]:
+			pieces.append("BottomBar/StanceHost/%s%s" % [row, part])
+	for piece: String in pieces:
+		var root: Control = await _laid_out(BATTLE_SCENE)
+		var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
+		assert_eq(_scene_problems(root, scene), [] as Array[String], "%s starts in place" % piece)
+		(root.get_node(piece) as Control).position.x += 20.0
+		await wait_process_frames(2)
+		var found: Array[String] = _scene_problems(root, scene)
+		assert_gt(found.size(), 0, "%s moved 20 px and passed" % piece)
+		assert_true(found.any(func(problem: String): return problem.begins_with("%s: top left" % piece)), "%s is named in %s" % [piece, found])
+
+
 # A bar whose mirror is lost, or a field whose color is lost, fails too.
 func test_control_a_top_status_bar_with_no_mirror_or_a_wrong_color_fails() -> void:
 	var root: Control = await _laid_out(BATTLE_SCENE)

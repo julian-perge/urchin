@@ -18,10 +18,9 @@ class_name StanceRow
 const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
 const COVER_UNSELECTED: String = "res://assets/ui/battle/stance/cover_BLACK.png"
 const COVER_SELECTED: String = "res://assets/ui/battle/stance/cover_WHITE.png"
-# Where the inactive frame draws its text, which extract_member_rows reads out of
-# the SWF, and MENU's index for the text.
+# Where the inactive frame draws its text, and MENU's index for the text, which
+# extract_member_rows reads out of the SWF.
 const MEMBER_ROWS_PATH: String = "res://assets/ui/battle/member_rows.json"
-const INACTIVE_MENU_INDEX: int = 52
 
 @onready var name_label: Label = $NameLabel
 @onready var panel: TextureRect = $Panel
@@ -97,7 +96,7 @@ func _ready() -> void:
 	}[inactive["align"]]
 	inactive_label.add_theme_font_size_override("font_size", roundi(float(inactive["font_size"])))
 	inactive_label.add_theme_color_override("font_color", Color.html(inactive["color"]))
-	inactive_label.text = Strings.menu(INACTIVE_MENU_INDEX)
+	inactive_label.text = Strings.menu(int(inactive["menu_index"]))
 
 
 func setup(unit_name: String) -> void:

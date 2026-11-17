@@ -1782,7 +1782,8 @@ func test_one_companion_in_slot_3_keeps_the_lower_row_and_slot_5_shows_inactive(
 	assert_true(lower.buttons[0].visible, "it shows its five buttons")
 	assert_false(upper.buttons[0].visible, "the upper row shows none")
 	assert_true(upper.inactive_label.visible, "it shows the inactive text instead")
-	assert_eq(upper.inactive_label.text, Strings.menu(52), "which is MENU[52]")
+	assert_eq(upper.inactive_label.text, Strings.menu(int(StanceRow.member_rows()["inactive"]["menu_index"])), "which is the text of MENU[52]")
+	assert_true(upper.visible, "and the row itself shows")
 	assert_false(lower.inactive_label.visible)
 
 	GameData.current_save = null
@@ -1808,9 +1809,9 @@ func test_a_companions_row_flips_to_inactive_at_the_next_decision():
 	assert_true(row.buttons[0].visible, "his death changes nothing yet")
 	scene._on_pass_pressed()
 	await wait_until(func(): return scene.decision_open or scene._finished, 5)
-	if not scene._finished:
-		assert_false(row.buttons[0].visible, "the next Decision flips it")
-		assert_true(row.inactive_label.visible)
+	assert_false(scene._finished, "the battle goes on to a next Decision")
+	assert_false(row.buttons[0].visible, "the next Decision flips it")
+	assert_true(row.inactive_label.visible)
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1834,8 +1835,8 @@ func test_the_member_rows_hide_during_the_enemy_half_turn():
 	scene._on_pass_pressed()
 	await wait_until(func(): return scene.decision_open or scene._finished, 5)
 	assert_eq(seen.slice(0, 2), [false, true], "the enemy's half-turn hid them, and the next Decision showed them")
-	if not scene._finished:
-		assert_true(scene.stance_host.visible, "and the next Decision shows them again")
+	assert_false(scene._finished, "the battle goes on to a next Decision")
+	assert_true(scene.stance_host.visible, "and the next Decision shows them again")
 	scene._show_member_rows_for(2)
 	assert_false(scene.stance_host.visible, "a half-turn of the other team hides them")
 	scene._show_member_rows_for(1)

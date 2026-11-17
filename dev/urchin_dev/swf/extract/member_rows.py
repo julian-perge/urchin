@@ -14,9 +14,10 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import ACTION_SCRIPT, REPO_ROOT, WEB_SWF
 from urchin_dev.swf import label_layout, render, timeline
 from urchin_dev.swf.extract import battle_screen
 from urchin_dev.swf.swf_index import (
@@ -30,6 +31,19 @@ from urchin_dev.swf.swf_index import (
 RECORD = REPO_ROOT / "assets" / "ui" / "battle" / "member_rows.json"
 PANEL_SHAPE = battle_screen.MEMBER_BAR_PANEL
 LABELS = ("active", "inactive")
+INACTIVE_SCRIPT = ACTION_SCRIPT / "DefineSprite_3311" / "frame_9" / "DoAction.as"
+
+
+def menu_index(script: str) -> int:
+    """-> the MENU index that the inactive frame's script sets `say` from."""
+    found = re.findall(
+        r"\bsay\s*=\s*_root\.KrinLang\[_root\.KLangChoosen\]\.MENU\[(\d+)\];", script
+    )
+    if len(found) != 1:
+        raise ValueError(
+            f"the inactive frame sets say from MENU {len(found)} times, want 1"
+        )
+    return int(found[0])
 
 
 def inactive_record(index: SwfIndex) -> dict:
@@ -50,11 +64,16 @@ def inactive_record(index: SwfIndex) -> dict:
         edit_text(index, field.character_id),
         shape_bounds(index, PANEL_SHAPE),
         labels["inactive"],
+        menu_index(INACTIVE_SCRIPT.read_text("utf-8")),
     )
 
 
 def inactive_from(
-    field: timeline.Layer, text: EditText, panel: tuple[int, int, int, int], frame: int
+    field: timeline.Layer,
+    text: EditText,
+    panel: tuple[int, int, int, int],
+    frame: int,
+    menu: int,
 ) -> dict:
     """-> the record of the edit text `field` places, with the rect Flash lays it
     out in from the top left of the panel shape whose bounds are `panel`. The
@@ -77,6 +96,7 @@ def inactive_from(
         "align": label_layout.ALIGNMENTS[text.align],
         "frame": frame,
         "initial_text": text.initial_text,
+        "menu_index": menu,
     }
 
 

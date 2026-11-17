@@ -23,7 +23,7 @@ func test_the_inactive_frame_shows_the_text_of_menu_52_and_nothing_else():
 	var row: StanceRow = _row()
 	row.show_inactive()
 	assert_true(row.inactive_label.visible)
-	assert_eq(row.inactive_label.text, Strings.menu(52))
+	assert_eq(row.inactive_label.text, Strings.menu(int(StanceRow.member_rows()["inactive"]["menu_index"])))
 	assert_eq(row.inactive_label.text, "< Team Member Inactive >")
 	assert_false(row.name_label.visible, "the name goes")
 	assert_eq(row.buttons.filter(func(button): return button.visible), [], "and the buttons")
