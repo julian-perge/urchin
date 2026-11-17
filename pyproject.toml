@@ -70,6 +70,7 @@ as_lookup = "urchin_dev.as_lookup:main"
 gut = "urchin_dev.gut:main"
 merge_ticket = "urchin_dev.merge_ticket:main"
 trace_swf = "urchin_dev.swf.trace:main"
+trace_run = "urchin_dev.swf.trace:run_main"
 trace_diff = "urchin_dev.swf.trace:diff_main"
 
 [tool.uv]
