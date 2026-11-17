@@ -102,3 +102,104 @@ a caller by name, and it does not resolve which timeline a bare name such as
   placed once on the root timeline, at frame 263, and every root frame to 448
   shows it, which covers all seven CS_ labels (`d3da2ff5`). When a screen seems
   to lack a control, read what the root frame places around the clip as well.
+
+## Tracing the original
+
+A Traced run records what the original does while it runs, so a port check
+compares against a saved Trace log and not against a person who watches the
+game. The terms are in `GLOSSARY.md` under "Tracing the original", and the
+record is `docs/adr/0008-trace-the-original-with-probes.md`. The code is
+`dev/urchin_dev/swf/trace.py`.
+
+### The recipes
+
+- `just trace-swf <web|steam>` builds a Traced copy. It reads the build's SWF
+  in `URCHIN_SWF_DIR` and each Probe in `dev/probes/`. It exports the build's
+  own `frame_1/DoAction.as` with ffdec, puts the Probes in front of it, and
+  writes the result with `ffdec -replace` to
+  `$URCHIN_SWF_DIR/traced/sonny-2-2900.swf` or
+  `$URCHIN_SWF_DIR/traced/SONNY2.swf`. It prints that path. The recipe exports
+  each build itself, because the repo holds only the web build's scripts.
+- `just trace-run <web|steam> <flash|ruffle>` builds the Traced copy, plays it
+  in one player and waits until you quit the player. It then saves the raw
+  player log as `references/traced_runs/<build>_<player>.txt` and replaces an
+  older file. It prints the number of GOTO lines and exits 1 when the log has
+  no `HOOK<tab>installed<tab>true` line. The players come from
+  `FLASH_DEBUG_PLAYER` and `RUFFLE_BIN`, with defaults in `trace.py` and
+  `.env.example`. It needs macOS.
+- `just trace-diff <log a> <log b>` reads two Trace logs and prints the
+  distinct gotos that only one of them has, in two sorted groups. Each line
+  is kind, clip, total frames, target, and `moved` or `stayed`. `moved` means
+  that at least one call of that goto changed the frame. Order and count are
+  ignored, because fights roll dice. It needs no SWF, no ffdec and no label
+  data.
+
+### The four Traced runs
+
+Each run starts a new game and presses SKIP on each Cutscene as soon as it
+shows. The run name is `<build>_<player>`.
+
+| Traced run | Tutorial | Route | Battles |
+| --- | --- | --- | --- |
+| `web_flash`, `steam_flash` | on | CS_INTRO, battle 2, CS_INTRO2, battle 100, the zone 1 hub | 2, 100 |
+| `web_ruffle`, `steam_ruffle` | off | CS_INTRO2, battle 100, the zone 1 hub | 100 |
+
+`trace-run` takes no Tutorial flag. The player picks the Tutorial in the game.
+A lost fight ends the run, so start it again.
+
+The Trace logs go to `references/traced_runs/<run>.txt`. Take a screenshot in
+each battle and at the hub, and save them next to the log as
+`<run>_battle2.png`, `<run>_battle100.png` and `<run>_hub.png`. In each Ruffle
+run, open the Debug view on `BATTLESCREEN` during battle 100 and record the
+current label. The full plan is in `spec/5-trace-the-original.md`.
+
+### Facts a run needs
+
+The sessions of #5 and #304 measured these, except where a fact says
+otherwise.
+
+- **`flashlog.txt` starts empty at every launch of the Flash debug player.**
+  `trace-run` copies it when the player quits. A second launch before that
+  copy loses the first run's log. The player writes the file only when
+  `~/mm.cfg` has `TraceOutputFileEnable=1`, and `trace-run` stops with a
+  message when that line is missing.
+- **Ruffle opens a SWF only inside its sandbox container.**
+  `/Applications/Ruffle.app` has the app-sandbox entitlement. A SWF path
+  outside `~/Library/Containers/rs.ruffle.ruffle/Data/` fails to open, and
+  Ruffle 0.7.1 then panics in a folder picker. So `trace-run` first copies
+  the Traced copy to
+  `~/Library/Containers/rs.ruffle.ruffle/Data/urchin_traced/`. Ruffle writes
+  the `trace()` lines to stdout as `INFO avm_trace: ...`, with colour codes
+  in front. `trace-run` saves stdout and stderr together.
+- **Only one Traced run can play at a time.** Two runs share the screen, and
+  two Flash runs share `flashlog.txt`. This follows from the facts above. No
+  session tried two runs at once. Before you start a run, check that no Flash
+  player or Ruffle process is running.
+- Flash reports `_currentframe` 0 for an empty clip and Ruffle reports 1.
+
+### Add a Probe
+
+1. Write one plain ActionScript 1/2 file in `dev/probes/`. `ffdec -replace`
+   compiles it, so use only what the original's own scripts use.
+2. Pick its file name for its place. `trace-swf` puts the Probes in front of
+   the frame script in name order, so `goto.as` runs before a file whose name
+   sorts after it. Use a lowercase name. The order is by code point, so an
+   uppercase name sorts before every lowercase one.
+3. Do not change what the game does. Wrap a function, call the original with
+   `apply(this, arguments)`, and only add `trace()` calls, as
+   `dev/probes/goto.as` does. A Probe runs once, before the rest of frame 1. It
+   cannot put a `trace()` inside a loop of a later frame script.
+4. Start each line it traces with its own mark, not `GOTO<tab>` or `HOOK`.
+   The parser reads every line that has `GOTO<tab>` as a goto record.
+5. Run `just trace-swf web` and `just trace-swf steam`, and check that a fresh
+   script export of each Traced copy differs from the build's export only in
+   `frame_1/DoAction.as`. For the web build, in a scratch folder:
+
+   ```
+   ffdec -export script plain "$URCHIN_SWF_DIR/sonny-2-2900.swf"
+   ffdec -export script traced "$URCHIN_SWF_DIR/traced/sonny-2-2900.swf"
+   diff -rq plain traced
+   ```
+
+   `diff` must print one line, for `frame_1/DoAction.as`. Do the same
+   for `SONNY2.swf`.
