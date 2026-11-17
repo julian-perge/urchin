@@ -18,10 +18,12 @@
 # in the web build - no zone reaches them - and BETA is a debug screen.
 #
 # WHY THE ORBS ARE STRIPPED. Each hub frame places DefineSprite 3196, the
-# spinning orb, once per interactive spot, plus a DefineButton2 for each one.
-# Godot draws those as its own orb.tscn nodes at positions the zone scenes
-# already carry, so the background has to come out without them. Deleting the
-# orb and its buttons before the render leaves ffdec drawing the
+# spinning orb, once per story, shop and training spot, plus a DefineButton2 for
+# each one. The info spots have a DefineButton2 and no orb, and
+# scripts/ui/info_spot.gd is their hit area. Godot draws the orbs as its own
+# orb.tscn nodes at positions the zone scenes already carry, so the background
+# has to come out without them. Deleting the orb and its buttons before the
+# render leaves ffdec drawing the
 # scene art alone - the same approach start_screens.py uses for the menu
 # background.
 #

@@ -591,8 +591,8 @@ ZONE_ORBS = (
 # NAVTEXT[n] that the spot's press shows, each as (depth, button id). The
 # buttons hold a hit shape and nothing else, and the zone's frame places no
 # orb sprite on them. Neither the depth nor the button id runs in the order of
-# n, so dev/tests/test_screen_rects.py reads each button's press script for its n. Zones 6
-# and 7 have none.
+# n, so dev/tests/test_screen_rects.py reads each button's press script for its
+# n. Zones 6 and 7 have none.
 ZONE_SPOTS = (
     {1: (39, 3193), 2: (41, 3192), 3: (43, 3191), 4: (45, 3190)},
     {5: (66, 3207), 6: (64, 3208), 7: (60, 3210), 8: (62, 3209), 9: (58, 3211)},
