@@ -5,6 +5,7 @@
 extends GutTest
 
 const BattleSceneRes = preload("res://scenes/battle_scene.tscn")
+const BattleSceneScript = preload("res://scripts/battle/battle_scene.gd")
 # `uv run gut` gives each run a user:// folder of its own, so these paths never
 # reach the player's real saves or achievements. The Re-Load test still writes
 # its slot in a folder of its own and every win here unlocks into a file of its
@@ -1620,16 +1621,16 @@ func test_sky_is_placed_from_the_layout_json():
 	ZoneManager.auto_start_battles = true
 
 
-# The fill covers everything above the sky strip, so it has to be opaque. The
-# sky art cannot supply that colour: the SWF renders are trimmed to their own
-# soft top edge, so five of the nine skies read alpha 0 at row 0 centre. Battle
-# 201 runs the SNOW sky, one of the five.
-func test_sky_fill_is_opaque_over_a_sky_whose_top_row_is_transparent():
+# The Hall window is the black rect the original draws under the sky, so it has
+# to be opaque. The sky art cannot supply that colour: the SWF renders are
+# trimmed to their own soft top edge, so five of the nine skies read alpha 0 at
+# row 0 centre. Battle 201 runs the SNOW sky, one of the five.
+func test_hall_window_is_opaque_black_under_a_sky_whose_top_row_is_transparent():
 	var art: Image = load("res://assets/backgrounds/sky/SKY_SNOW.png").get_image()
 	assert_eq(art.get_pixel(int(art.get_width() / 2.0), 0).a, 0.0,
 		"SNOW's top row centre is transparent, which is what broke the old fill")
 
-	var save = PlayerSave.new_game("SkyFillTest", 0)
+	var save = PlayerSave.new_game("HallWindowTest", 0)
 	GameData.current_save = save
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -1638,12 +1639,86 @@ func test_sky_fill_is_opaque_over_a_sky_whose_top_row_is_transparent():
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 201, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 
-	assert_eq(scene.sky_fill.color.a, 1.0, "the fill above the strip is opaque")
-	assert_eq(scene.sky_fill.color, Color.BLACK, "and is the black the original paints there")
-	assert_gt(scene.sky_fill.size.y, 0.0, "the fill actually covers something")
+	assert_eq(scene.hall_window.color, Color.BLACK, "the window is the black the original paints there")
+	assert_true(scene.hall_window.is_ancestor_of(scene.sky), "the sky is drawn inside the window")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+func _scene_with_hall(label: String) -> Node:
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.battle = BattleFight.new()
+	scene.battle.id = 600
+	scene.battle.zone_background = label.replace("_", " ")
+	scene.battle.sky_background = "ROME"
+	scene._load_background()
+	return scene
+
+
+# Every hall sits at the rect of its label, in the window's own space, and the
+# PNG is that rect at the extractor's zoom. The hall used to stretch over the
+# whole canvas, which put the floor 34 to 35 px from where the fighters stand.
+func test_each_hall_sits_at_its_layout_rect_and_is_not_stretched_over_the_canvas():
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/backgrounds/battle/battle_layout.json"))
+	assert_eq(layout["halls"].size(), 10, "the layout holds ten halls")
+	for label: String in layout["halls"]:
+		var rect: Dictionary = layout["halls"][label]
+		var scene: Node = _scene_with_hall(label)
+		var hall: TextureRect = scene.background
+		assert_not_null(hall.texture, "%s has art" % label)
+		var expected := Rect2(float(rect["x"]), float(rect["y"]), float(rect["w"]), float(rect["h"]))
+		assert_almost_eq(hall.get_global_rect().position, expected.position, Vector2(0.01, 0.01), "%s position" % label)
+		assert_almost_eq(hall.get_global_rect().size, expected.size, Vector2(0.01, 0.01), "%s size" % label)
+		assert_almost_eq(hall.texture.get_size() / 4.0, expected.size, Vector2(0.01, 0.01), "%s is its PNG at zoom 4" % label)
+		assert_true(hall.size != Vector2(800, 575), "%s is not stretched over the canvas" % label)
+
+
+# SLOT_POSITIONS is a typed table. The record holds where each hall label of the
+# SWF puts the fighter rig of each slot, and the hall sits at its label's rect,
+# so a fighter whose home is that mark stands on the hall's floor.
+func test_each_fighter_home_is_where_every_hall_puts_its_rig():
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://test/fixtures/screen_rects.json"))
+	var marks: Dictionary = record["fighter_marks"]
+	assert_eq(marks.size(), 10, "the record holds ten halls")
+	for label: String in marks:
+		for slot: int in BattleSceneScript.SLOT_POSITIONS:
+			var mark: Array = marks[label][str(slot)]
+			assert_almost_eq(BattleSceneScript.SLOT_POSITIONS[slot], Vector2(mark[0], mark[1]), Vector2(0.5, 0.5), "%s slot %d" % [label, slot])
+
+
+# The window clips the hall, the sky, the fighters and the Floating numbers, as
+# shape 333 (clipDepth 340) clips depths 73 to 340 of the battle frame. The
+# window itself does not zoom or shake, because it is not inside the clip.
+func test_hall_window_clips_what_the_screen_clip_zooms_and_shakes():
+	var scene: Node = _scene_with_hall("CHURCH")
+	var window: ColorRect = scene.hall_window
+	assert_true(window.clip_contents, "the window clips what it holds")
+	for inside: Node in [scene.sky, scene.background, scene.battle_screen_clip, scene.battlefield, scene.floating_numbers]:
+		assert_true(window.is_ancestor_of(inside), "%s is inside the window" % inside.name)
+	assert_false(scene.battle_screen_clip.is_ancestor_of(window), "the window is not inside the clip")
+
+	var before: Rect2 = window.get_global_rect()
+	scene.battle_screen_clip.zoom(Vector2(560, 300), 0)
+	for i in 10:
+		scene.battle_screen_clip.advance_frame()
+	scene.battle_screen_clip.shake()
+	for i in 3:
+		scene.battle_screen_clip.advance_frame()
+	assert_ne(scene.battle_screen_clip.scale, Vector2.ONE, "the clip zoomed")
+	assert_eq(window.get_global_rect(), before, "the window stayed where it is")
+
+
+# The outline draws above the hall, and the panels draw above the outline.
+func test_hall_outline_draws_over_the_hall_and_under_the_panels():
+	var scene: Node = _scene_with_hall("CHURCH")
+	var outline: Node = scene.get_node("HallOutline")
+	assert_gt(outline.get_index(), scene.hall_window.get_index(), "the outline is over the hall")
+	assert_gt(scene.get_node("TopPanel").get_index(), outline.get_index(), "the top panel is over the outline")
+	assert_gt(scene.get_node("BottomBar").get_index(), outline.get_index(), "the bottom bar is over the outline")
+	for node_name in ["HallWindow", "HallOutline", "TopPanel"]:
+		assert_eq((scene.get_node(node_name) as Control).mouse_filter, Control.MOUSE_FILTER_IGNORE, "%s lets clicks through" % node_name)
 
 
 # DefineSprite 3312 places "p5" above "p3" (y 12.60 vs y 50.10), matching the

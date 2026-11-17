@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_scene.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle/battle_screen_clip.gd" id="8_screen"]
@@ -9,6 +9,16 @@
 [ext_resource type="PackedScene" path="res://scenes/battle/radial_menu.tscn" id="6_radial"]
 [ext_resource type="PackedScene" path="res://scenes/battle/combat_text_banner.tscn" id="7_banner"]
 [ext_resource type="Script" path="res://scripts/battle/floating_number_layer.gd" id="8_floatingnumbers"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/top_panel.png" id="9_toppanel"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hall_outline"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 1)
+anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pass_normal"]
 bg_color = Color(0.1, 0.1, 0.11, 1)
@@ -67,21 +77,29 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_battle")
 
-[node name="SkyFill" type="ColorRect" parent="."]
+[node name="HallWindow" type="ColorRect" parent="."]
+clip_contents = true
 layout_mode = 0
-offset_left = 0.0
-offset_top = 0.0
+offset_left = 15.0142
+offset_top = 130.386
+offset_right = 785.0152
+offset_bottom = 444.4366
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="HallSpace" type="Control" parent="HallWindow"]
+layout_mode = 0
 offset_right = 800.0
+offset_bottom = 575.0
 mouse_filter = 2
 
-[node name="Sky" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 0
+[node name="Sky" type="TextureRect" parent="HallWindow/HallSpace"]
+layout_mode = 0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
 
-[node name="BattleScreenClip" type="Control" parent="."]
+[node name="BattleScreenClip" type="Control" parent="HallWindow/HallSpace"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -91,21 +109,34 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("8_screen")
 
-[node name="Background" type="TextureRect" parent="BattleScreenClip"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Background" type="TextureRect" parent="HallWindow/HallSpace/BattleScreenClip"]
+layout_mode = 0
 mouse_filter = 2
 expand_mode = 1
-stretch_mode = 6
 
-[node name="Battlefield" type="Node2D" parent="BattleScreenClip"]
+[node name="Battlefield" type="Node2D" parent="HallWindow/HallSpace/BattleScreenClip"]
 
-[node name="FloatingNumbers" type="Node2D" parent="BattleScreenClip"]
+[node name="FloatingNumbers" type="Node2D" parent="HallWindow/HallSpace/BattleScreenClip"]
 script = ExtResource("8_floatingnumbers")
+
+[node name="HallOutline" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 14.5
+offset_top = 129.9
+offset_right = 785.5
+offset_bottom = 444.95
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hall_outline")
+
+[node name="TopPanel" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 13.73
+offset_top = 6.5
+offset_right = 787.48
+offset_bottom = 124.75
+mouse_filter = 2
+texture = ExtResource("9_toppanel")
+expand_mode = 1
 
 [node name="RadialMenu" parent="." instance=ExtResource("6_radial")]
 layout_mode = 0

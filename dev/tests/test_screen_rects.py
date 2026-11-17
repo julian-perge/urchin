@@ -180,6 +180,69 @@ def test_the_committed_record_holds_every_configured_scene_and_piece():
         assert record["scenes"][path]["port_only"] == list(scene.port_only)
 
 
+def rig(name: str, x_twips: int, y_twips: int, scale: float = 1.0) -> timeline.Layer:
+    return timeline.Layer(
+        character_id=2676, name=name, matrix=(scale, 0.0, 0.0, 1.0, x_twips, y_twips)
+    )
+
+
+# CHURCH's label frame of BATTLESCREEN (3435), which the battle frame places at
+# (400, 294.5). The right-hand rigs are mirrored and sit at the mirrored x.
+CHURCH_RIGS = {
+    40: rig("player5", -3582, -1520),
+    80: rig("player6", 3558, -1520, -1.0),
+    120: rig("player1", -4782, 58),
+    160: rig("player2", 4758, 58, -1.0),
+    200: rig("player3", -3582, 1530),
+    240: rig("player4", 3558, 1530, -1.0),
+}
+BATTLESCREEN_ORIGIN = (400.0, 294.5)
+
+
+def test_fighter_marks_are_the_rig_placements_on_the_stage():
+    marks = screen_rects.fighter_marks(BATTLESCREEN_ORIGIN, CHURCH_RIGS)
+    assert marks == {
+        "1": [160.9, 297.4],
+        "2": [637.9, 297.4],
+        "3": [220.9, 371.0],
+        "4": [577.9, 371.0],
+        "5": [220.9, 218.5],
+        "6": [577.9, 218.5],
+    }
+
+
+def test_fighter_marks_ignore_the_hall_art_and_refuse_a_missing_slot():
+    art = timeline.Layer(character_id=3400, name=None)
+    without_five = {d: layer for d, layer in CHURCH_RIGS.items() if d != 40}
+    with pytest.raises(ValueError, match="slots"):
+        screen_rects.fighter_marks(BATTLESCREEN_ORIGIN, {**without_five, 1: art})
+    assert screen_rects.fighter_marks(BATTLESCREEN_ORIGIN, {**CHURCH_RIGS, 1: art})
+
+
+def test_fighter_marks_refuse_a_rig_with_another_name():
+    with pytest.raises(ValueError, match="player7"):
+        screen_rects.fighter_marks(
+            BATTLESCREEN_ORIGIN, {**CHURCH_RIGS, 41: rig("player7", 0, 0)}
+        )
+
+
+def test_the_committed_record_holds_the_fighter_marks_of_every_hall():
+    record = json.loads(screen_rects.RECORD.read_text())
+    layout = json.loads(screen_rects.battle_screen.LAYOUT_JSON.read_text())
+    assert set(record["fighter_marks"]) == set(layout["halls"])
+    for marks in record["fighter_marks"].values():
+        assert sorted(marks) == ["1", "2", "3", "4", "5", "6"]
+
+
+def test_the_art_sources_hold_the_battle_top_panel():
+    entry, folder = screen_rects.art_sources()["top_panel"]
+    assert folder == screen_rects.BATTLE_TEXTURES
+    assert entry["relative_to"] == "stage"
+    assert [v * entry["zoom"] for v in entry["rect"][2:]] == pytest.approx(
+        entry["size"]
+    )
+
+
 # The close X of KRINMENU's inventory frame, as extract_window_chrome records it.
 CLOSE_X_CHROME = {
     "rect": [734.3, 29.675, 37.0, 36.5],

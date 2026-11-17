@@ -125,18 +125,22 @@ var _frames_to_dispatch: int = 0
 var _acting_moved: bool = false
 var _buff_tick_due: bool = false
 
-@onready var battle_screen_clip: BattleScreenClip = $BattleScreenClip
-@onready var background: TextureRect = $BattleScreenClip/Background
-@onready var sky: TextureRect = $Sky
-@onready var sky_fill: ColorRect = $SkyFill
-@onready var battlefield: Node2D = $BattleScreenClip/Battlefield
+# The Hall window is shape 333, which the battle frame places with clipDepth 340,
+# so it clips the sky, the hall and the fighters. HallSpace sits inside it at the
+# opposite offset, so everything under HallSpace keeps its Stage coordinates.
+@onready var hall_window: ColorRect = $HallWindow
+@onready var _hall_space: Control = $HallWindow/HallSpace
+@onready var battle_screen_clip: BattleScreenClip = $HallWindow/HallSpace/BattleScreenClip
+@onready var background: TextureRect = $HallWindow/HallSpace/BattleScreenClip/Background
+@onready var sky: TextureRect = $HallWindow/HallSpace/Sky
+@onready var battlefield: Node2D = $HallWindow/HallSpace/BattleScreenClip/Battlefield
 # The original attaches each Floating number to BATTLESCREEN at depth 1620 to
 # 1639 (frame_42/DoAction_7.as:4 and 37), so the numbers zoom and shake with
 # the fighters. That depth is over the fighters at depths 40 to 240, the impact
 # clip at -9 and the bolts from depth 600 (frame_42/DoAction_4.as:78 and 140).
 # So battle_scene.tscn puts this node in BattleScreenClip right after
 # Battlefield, which holds all of those.
-@onready var floating_numbers: FloatingNumberLayer = $BattleScreenClip/FloatingNumbers
+@onready var floating_numbers: FloatingNumberLayer = $HallWindow/HallSpace/BattleScreenClip/FloatingNumbers
 @onready var turn_label: Label = $UI/TurnLabel
 @onready var speech_label: Label = $UI/SpeechLabel
 @onready var _pass_ring: Control = $BottomBar/PassRing
@@ -153,6 +157,7 @@ var _buff_tick_due: bool = false
 
 
 func _ready():
+	_hall_space.position = -hall_window.position
 	speech_label.text = ""
 	# The retreat button is the original's battle Quit button,
 	# DefineButton2_3356, which shows SYSTEM[25] over SYSTEM[26]
@@ -287,13 +292,11 @@ func _play_cutscene_before(cutscene_id: String) -> void:
 # label, and ROME's is at 306.0.
 const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
 
-# What the original shows above the strip. The battle frame places DefineShape
-# 333, a solid black rect, under the sky, and a render of the frame reads
-# (0, 0, 0) at every pixel between that rect's top edge at y = 130 and the sky.
-# Do not sample the sky art for it instead: the SWF renders are trimmed to their
-# own soft top edge, so five of the nine skies read alpha 0 at row 0 centre and
-# SEA reads 0.37.
-const SKY_FILL_COLOR: Color = Color.BLACK
+# HallWindow is black because the original shows black above the strip: a render
+# of the frame reads (0, 0, 0) at every pixel between shape 333's top edge at
+# y = 130 and the sky. Do not sample the sky art for it instead: the SWF renders
+# are trimmed to their own soft top edge, so five of the nine skies read alpha 0
+# at row 0 centre and SEA reads 0.37.
 
 var _battle_layout: Dictionary = {}
 
@@ -313,11 +316,21 @@ func _sky_rect(sky_key: String) -> Dictionary:
 	return _layout().get("skies", {}).get(sky_key, {})
 
 
+# -> {x, y, w, h} for one hall label, or {} when the JSON has no entry for it.
+func _hall_rect(hall_key: String) -> Dictionary:
+	return _layout().get("halls", {}).get(hall_key, {})
+
+
 func _load_background() -> void:
 	var key: String = battle.zone_background.replace(" ", "_")
 	var path: String = "%s/battle/%s.png" % [BACKGROUND_ROOT, key]
-	if ResourceLoader.exists(path):
+	var hall_rect: Dictionary = _hall_rect(key)
+	if ResourceLoader.exists(path) and not hall_rect.is_empty():
 		background.texture = load(path)
+		background.position = Vector2(float(hall_rect["x"]), float(hall_rect["y"]))
+		background.size = Vector2(float(hall_rect["w"]), float(hall_rect["h"]))
+	else:
+		push_error("no hall art or layout entry for %s (battle %d)" % [key, battle.id])
 	var sky_key: String = battle.sky_background.replace(" ", "_")
 	var sky_path: String = "%s/sky/SKY_%s.png" % [BACKGROUND_ROOT, sky_key]
 	if not ResourceLoader.exists(sky_path):
@@ -335,9 +348,6 @@ func _load_background() -> void:
 	sky.stretch_mode = TextureRect.STRETCH_SCALE
 	sky.position = Vector2(float(rect["x"]), float(rect["y"]))
 	sky.size = Vector2(float(rect["w"]), float(rect["h"]))
-	sky_fill.color = SKY_FILL_COLOR
-	sky_fill.position = Vector2.ZERO
-	sky_fill.size = Vector2(800, float(rect["y"]) + 2.0)
 
 
 func _spawn_visuals() -> void:

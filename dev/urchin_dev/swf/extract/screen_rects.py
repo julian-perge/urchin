@@ -951,6 +951,37 @@ SCENES[STORE_SCENE] = Scene(
 )
 
 
+# The Battle screen's frame, KRINBATTLESCENE (spec/67-battle-hud.md). Each task of
+# the spec records the pieces it builds. The rest of the scene is in port_only
+# until a task records it and takes its node out.
+#
+# Shape 333 is placed twice: at depth 70 inside sprite 3455 as the black backdrop,
+# and at depth 72 as the mask whose clipDepth 340 clips the hall, the sky and the
+# fighters. The Hall window is the mask, so it is the one that is recorded. Its
+# rect is 0.4 px from `chrome.stage_rect`, which is the backdrop's render.
+BATTLE_SCENE = "res://scenes/battle_scene.tscn"
+SCENES[BATTLE_SCENE] = Scene(
+    timeline=0,
+    frame=battle_screen.FRAME_LABEL,
+    pieces={
+        "TopPanel": Piece("art", 59, art="top_panel", character=3465),
+        "HallWindow": Piece("box", 72, character=333),
+        "HallOutline": Piece("outline", 341, character=3415),
+    },
+    # HallSpace holds the sky, the hall and the fighters, whose art the battle
+    # loads when it starts.
+    port_only=(
+        "HallWindow/HallSpace",
+        "RadialMenu",
+        "CombatLogPanel",
+        "BottomBar",
+        "CombatTextBanner",
+        "UI",
+        "Fade",
+    ),
+)
+
+
 def color_hex(color: tuple[int, int, int, int]) -> str:
     """-> "rrggbbaa", as Godot's Color.to_html() writes it."""
     return "{:02x}{:02x}{:02x}{:02x}".format(*color)
@@ -1084,12 +1115,12 @@ def _shadow_of(layer: timeline.Layer) -> DropShadow | None:
     return shadows[0] if shadows else None
 
 
-def bottom_bar_source() -> dict:
-    """-> the render record of the bottom bar, which extract_battle_screen
+def battle_chrome_source(name: str) -> dict:
+    """-> the render record of one battle chrome PNG, which extract_battle_screen
     writes as a rect only. Its zoom is that extractor's, and its size is read
     from the PNG."""
-    rect = json.loads(battle_screen.LAYOUT_JSON.read_text())["chrome"]["bottom_bar"]
-    with Image.open(battle_screen.BATTLE_UI_DIR / "bottom_bar.png") as image:
+    rect = json.loads(battle_screen.LAYOUT_JSON.read_text())["chrome"][name]
+    with Image.open(battle_screen.BATTLE_UI_DIR / f"{name}.png") as image:
         size = list(image.size)
     return {
         "rect": [rect["x"], rect["y"], rect["w"], rect["h"]],
@@ -1112,7 +1143,8 @@ def art_sources() -> dict[str, tuple[dict, str]]:
             (name, json.loads(record.read_text()), MENU_TEXTURES)
             for name, record in MENU_ART.items()
         ),
-        ("bottom_bar", bottom_bar_source(), BATTLE_TEXTURES),
+        ("bottom_bar", battle_chrome_source("bottom_bar"), BATTLE_TEXTURES),
+        ("top_panel", battle_chrome_source("top_panel"), BATTLE_TEXTURES),
         *(
             (
                 name,
@@ -1598,6 +1630,47 @@ def doll_record(
     }
 
 
+RIG_NAME = re.compile(r"player([1-6])")
+
+
+def fighter_marks(origin, layers: dict[int, timeline.Layer]) -> dict[str, list[float]]:
+    """-> {slot: [x, y]}: where one hall label of BATTLESCREEN, placed at
+    `origin`, puts the fighter rig of each slot on the Stage. A slot is the digit
+    of the rig's instance name, player1 to player6. Another character of the
+    label is the hall's art, which this leaves alone."""
+    marks: dict[str, list[float]] = {}
+    for depth, layer in layers.items():
+        if layer.character_id != battle_screen.FIGHTER_RIG:
+            continue
+        found = RIG_NAME.fullmatch(layer.name or "")
+        if found is None or found[1] in marks:
+            raise ValueError(
+                f"depth {depth} holds the fighter rig as {layer.name!r}, which is"
+                " not a slot that is still free"
+            )
+        marks[found[1]] = [
+            round(origin[0] + layer.matrix[4] / render.TWIPS, 4),
+            round(origin[1] + layer.matrix[5] / render.TWIPS, 4),
+        ]
+    if sorted(marks) != list("123456"):
+        raise ValueError(f"the label places the rig for slots {sorted(marks)}, not 1-6")
+    return marks
+
+
+def hall_fighter_marks(index: SwfIndex) -> dict[str, dict[str, list[float]]]:
+    """-> fighter_marks() of every hall label, by the label's key in
+    battle_layout.json."""
+    frame = timeline.frame_of(index, 0, battle_screen.FRAME_LABEL)
+    origin = render.placement_origin(index, 0, frame, battle_screen.HALL_SPRITE)
+    by_frame = timeline.frames(index, battle_screen.HALL_SPRITE)
+    return {
+        label.replace(" ", "_"): fighter_marks(origin, by_frame[number - 1])
+        for label, number in battle_screen.sprite_label_frames(
+            index, battle_screen.HALL_SPRITE
+        ).items()
+    }
+
+
 def origin_of(index: SwfIndex, owner: int) -> tuple[float, float]:
     if owner == 0:
         return 0.0, 0.0
@@ -1792,7 +1865,8 @@ def main():
         "scenes": {
             path: scene_record(index, scene, steam_index)
             for path, scene in SCENES.items()
-        }
+        },
+        "fighter_marks": hall_fighter_marks(index),
     }
     RECORD.parent.mkdir(parents=True, exist_ok=True)
     RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")

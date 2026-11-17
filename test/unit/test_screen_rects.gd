@@ -1038,3 +1038,20 @@ func test_control_a_store_doll_moved_20_px_or_facing_right_fails() -> void:
 	found = _scene_problems(root, _store_record())
 	assert_gt(found.size(), 0)
 	assert_string_contains(found[0] if found else "", "scale")
+
+
+const BATTLE_SCENE: String = "res://scenes/battle_scene.tscn"
+
+
+# Each piece of the battle scene is moved on its own, so a control that fails
+# names the piece that moved.
+func test_control_a_battle_piece_moved_20_px_fails() -> void:
+	for piece: String in ["TopPanel", "HallWindow", "HallOutline"]:
+		var root: Control = await _laid_out(BATTLE_SCENE)
+		var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
+		assert_eq(_scene_problems(root, scene), [] as Array[String], "%s starts in place" % piece)
+		(root.get_node(piece) as Control).position.x += 20.0
+		await wait_process_frames(2)
+		var found: Array[String] = _scene_problems(root, scene)
+		assert_gt(found.size(), 0, "%s moved 20 px and passed" % piece)
+		assert_string_contains(found[0] if found else "", "%s: top left" % piece)
