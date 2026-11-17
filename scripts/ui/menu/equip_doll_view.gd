@@ -1,9 +1,7 @@
-# equip_doll_view.gd
-# The dressed player doll flanked by the 7 equip slots - shared by the
-# inventory screen (frame 1 of the original menu clip) and the store screen
-# (frame 16), which lay the same elements out at different positions.
-# Call setup() with the slot-center map once, then refresh() after any
-# save/equipment change.
+# The dressed player doll with the 7 equip slots. The Inventory window (frame 1
+# of the original menu clip) and the Store window (frame 16) share it and place
+# the same pieces at different positions. Call setup() once, then refresh()
+# after each change to the save or the equipment.
 extends Control
 class_name EquipDollView
 
