@@ -44,12 +44,17 @@ FLASH_LOG = (
     "GOTO\tplay\t_level0.BATTLESCREEN.instance12\t40\t3\tWHITE NOVEMBER\t17\r\n"
 )
 
-# A guess at Ruffle's stderr: a prefix, then the same tabs. The first Ruffle
-# log replaces these lines.
+# Three lines of references/traced_runs/web_ruffle.txt as Ruffle 0.7.1 wrote
+# them: a prefix with colour codes, then the same tabs as a Flash line.
 RUFFLE_LOG = (
-    "2026-11-16T10:00:00Z  INFO avm_trace: HOOK\tinstalled\ttrue\n"
-    "2026-11-16T10:00:01Z  INFO avm_trace: GOTO\tstop\t_level0.__t\t1\t1\t1\t1\n"
-    "2026-11-16T10:00:02Z  WARN ruffle_core: GOTO is not followed by a tab here\n"
+    "\x1b[2m2026-11-17T07:10:00.045621Z\x1b[0m \x1b[32m INFO\x1b[0m"
+    " \x1b[2mavm_trace\x1b[0m\x1b[2m:\x1b[0m HOOK\tinstalled\ttrue\n"
+    "\x1b[2m2026-11-17T07:10:00.049162Z\x1b[0m \x1b[33m WARN\x1b[0m"
+    " \x1b[2mruffle_core::avm1::fscommand\x1b[0m\x1b[2m:\x1b[0m"
+    " Unhandled FSCommand: showMenu\n"
+    "\x1b[2m2026-11-17T07:10:33.744921Z\x1b[0m \x1b[32m INFO\x1b[0m"
+    " \x1b[2mavm_trace\x1b[0m\x1b[2m:\x1b[0m"
+    " GOTO\tstop\t_level0.BATTLESCREEN\t145\t1\tJAIL\t15\n"
 )
 
 
@@ -61,7 +66,9 @@ def test_parse_returns_one_record_for_each_goto_line_of_a_flash_log():
 
 
 def test_parse_reads_a_goto_line_behind_a_ruffle_prefix():
-    assert parse(RUFFLE_LOG) == [Goto("stop", "_level0.__t", 1, 1, "1", 1)]
+    assert parse(RUFFLE_LOG) == [
+        Goto("stop", "_level0.BATTLESCREEN", 145, 1, "JAIL", 15)
+    ]
 
 
 def test_parse_names_the_line_number_of_a_goto_line_with_a_missing_field():
