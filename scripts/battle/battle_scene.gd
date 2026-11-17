@@ -36,6 +36,9 @@ const StanceRowScene: PackedScene = preload("res://scenes/battle/stance_row.tscn
 const ProjectileScene: PackedScene = preload("res://scenes/battle/projectile.tscn")
 const ImpactEffectScene: PackedScene = preload("res://scenes/battle/impact_effect.tscn")
 const BACKGROUND_ROOT: String = "res://assets/backgrounds"
+# The voices a damage crit plays, by the caster's name
+# (frame_42/DoAction_8.as:36-43).
+const CRIT_VOICES: Dictionary[String, String] = {"Veradux": "Angry_Dux", "Roald": "Angry_Roald"}
 
 # Exact BATTLESCREEN placements from the SWF: BATTLESCREEN sits at
 # (400, 294.5); player1-6 offsets pulled from its PlaceObject matrices
@@ -803,9 +806,26 @@ func _fire_projectile(caster_slot: int, target_slot: int, move: Ability, result:
 	return bolt
 
 
+# A crit shakes the screen when executeMove works it out, with no check of the
+# Graphics option, before the Shield check and everything else the result shows
+# (frame_42/DoAction_8.as:30 for damage and 160 for a heal). A damage crit by
+# Veradux or Roald also plays that fighter's angry voice (lines 36-43). A heal
+# crit plays no voice.
+func _play_crit(result: MoveResult, caster_slot: int) -> void:
+	if not result.critical:
+		return
+	battle_screen_clip.shake()
+	if result.kind != MoveResult.Kind.DAMAGE:
+		return
+	var caster: CombatUnit = units.get(caster_slot)
+	if caster != null:
+		AudioManagerAuto.play_effect(CRIT_VOICES.get(caster.player_name, ""))
+
+
 func _show_move_result(event: Dictionary, target_slot: int) -> void:
 	var result: MoveResult = event["result"]
 	var target_unit: CombatUnit = units[target_slot]
+	_play_crit(result, int(event["caster_slot"]))
 	_log("result shown: %s target=%d (%s) hp=%d/%d" % [
 		JSON.stringify(result.to_dict()), target_slot, target_unit.player_name,
 		int(target_unit.life_n), int(target_unit.life_u),
