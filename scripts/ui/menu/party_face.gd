@@ -10,12 +10,12 @@
 class_name PartyFace
 extends Control
 
-# The id of the member this face shows, or -1 while none joined this slot.
-var party_id: int = -1
-
 # A press on the face, with whether Shift was down. The inventory window decides
 # what it does, as the original's button does in DefineButton2_2895 on(press).
 signal chosen(party_id: int, shift: bool)
+
+# The id of the member this face shows, or -1 while none joined this slot.
+var party_id: int = -1
 
 @onready var _parts: Control = $Parts
 @onready var _face: TextureRect = $Parts/Face
