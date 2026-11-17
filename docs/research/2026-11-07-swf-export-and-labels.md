@@ -38,7 +38,8 @@ The five working files that later issues start from are copied out of the
 scratch folder. `swf_index.py`, `index_web.json`, `Probe.java` and
 `montage.png` are next to this report, in
 `docs/research/2026-11-07-swf-export-and-labels/`. The hook is
-`dev/probes/goto.as`. The paths below point there. Everything else stays in the scratch folder.
+`dev/probes/goto.as`. The paths below point at these places. Everything else
+stays in the scratch folder.
 
 ## Summary
 

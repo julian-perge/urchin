@@ -27,7 +27,7 @@ BUILDS = {"web": WEB_SWF, "steam": STEAM_SWF}
 
 def read_probes(folder: Path) -> list[str]:
     """Return the text of each .as file in `folder`, in name order."""
-    return [path.read_text() for path in sorted(folder.glob("*.as"))]
+    return [path.read_text(encoding="utf-8") for path in sorted(folder.glob("*.as"))]
 
 
 def with_probes(frame_script: str, probes: Sequence[str]) -> str:
@@ -43,13 +43,12 @@ def trace_swf(swf: Path) -> Path:
     with tempfile.TemporaryDirectory() as tmp:
         export = Path(tmp) / "export"
         run([FFDEC, "-export", "script", export, swf])
-        # Bytes keep the export's own line endings in the frame script.
-        frame_script = (export / "scripts/frame_1/DoAction.as").read_bytes()
+        frame_script = (export / "scripts/frame_1/DoAction.as").read_text(
+            encoding="utf-8", newline=""
+        )
         script = Path(tmp) / "DoAction.as"
-        script.write_bytes(
-            with_probes(frame_script.decode("utf-8"), read_probes(PROBES)).encode(
-                "utf-8"
-            )
+        script.write_text(
+            with_probes(frame_script, read_probes(PROBES)), encoding="utf-8", newline=""
         )
         run([FFDEC, "-replace", swf, traced, "/frame_1/DoAction", script])
     return traced
