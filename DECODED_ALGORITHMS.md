@@ -748,8 +748,7 @@ Ported: `scripts/game.gd`'s `show_battle_hint` shows the card, and `convert_batt
   of those two Windows. After a win that levelled the player up, Proceed calls nothing, so the hint waits until the player next closes the Inventory or the Store with 2853. A new win or a
   load ends the wait. This is read from the AS and not confirmed in a live run.
 - The port's `show_battle_hint(battle_id)` keeps `tutSpeecher` as `_hint_used`, a field of the Hub. The port builds a new Hub after every win and every load, so the field is false in each
-  new Hub, which is the reset on a win. A load never calls the method, which is what the set-on-load does. The call from 2853's two Windows is not ported, and #241 and the Inventory and
-  Store tasks own it.
+  new Hub, which is the reset on a win. A load never calls the method, which is what the set-on-load does. The call from 2853's two Windows is not ported, and #325 owns it.
 
 ## Approximation audit (2026-07-21) - port pieces NOT yet source-faithful
 
