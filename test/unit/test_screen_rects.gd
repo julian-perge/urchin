@@ -779,3 +779,15 @@ func test_control_a_zone_orb_moved_20_px_fails() -> void:
 	var found: Array[String] = _scene_problems(root, scenes[path])
 	assert_gt(found.size(), 0)
 	assert_string_contains(found[0] if found else "", "StoryFight")
+
+
+# An info spot is a hit area on the zone art, so a spot moved 20 px fails at both
+# of its corners.
+func test_control_an_info_spot_moved_20_px_fails() -> void:
+	var path: String = "res://scenes/zones/zone1_prison.tscn"
+	var root: Control = await _laid_out(path)
+	(root.get_node("InfoSpot4") as Control).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][path])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "InfoSpot4: ")

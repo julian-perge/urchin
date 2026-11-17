@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/zones/zone_scene.gd" id="1_zone"]
 [ext_resource type="Texture2D" path="res://assets/backgrounds/hub/TRAIN.png" id="2_bg"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://c1b7lb4ellb4y" path="res://scripts/ui/fight_orb.gd" id="4_story"]
 [ext_resource type="Script" uid="uid://btdh4sbo1pnkw" path="res://scripts/ui/store_orb.gd" id="5_store"]
 [ext_resource type="Script" uid="uid://dkxcijni1mbpc" path="res://scripts/ui/training_orb.gd" id="6_train"]
+[ext_resource type="Script" path="res://scripts/ui/info_spot.gd" id="7_spot"]
 
 [node name="Zone3" type="Control"]
 layout_mode = 3
@@ -41,6 +42,54 @@ script = ExtResource("5_store")
 position = Vector2(483.55, 333.3)
 scale = Vector2(1.0, 1.0)
 script = ExtResource("6_train")
+
+[node name="InfoSpot10" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 259.6678
+offset_top = 214.9909
+offset_right = 308.3322
+offset_bottom = 266.2092
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 10
+
+[node name="InfoSpot12" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 514.7339
+offset_top = 130.9909
+offset_right = 589.2661
+offset_bottom = 182.2092
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 12
+
+[node name="InfoSpot11" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 331.006
+offset_top = 205.8215
+offset_right = 366.994
+offset_bottom = 240.8784
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 11
+
+[node name="InfoSpot13" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 434.6973
+offset_top = 216.4026
+offset_right = 458.3028
+offset_bottom = 239.3974
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 13
 
 [node name="Control" parent="ItemStore" index="5"]
 layout_mode = 0

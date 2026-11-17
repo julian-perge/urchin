@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/zones/zone_scene.gd" id="1_zone"]
 [ext_resource type="Texture2D" path="res://assets/backgrounds/hub/TUNNELS.png" id="2_bg"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://c1b7lb4ellb4y" path="res://scripts/ui/fight_orb.gd" id="4_story"]
 [ext_resource type="Script" uid="uid://btdh4sbo1pnkw" path="res://scripts/ui/store_orb.gd" id="5_store"]
 [ext_resource type="Script" uid="uid://dkxcijni1mbpc" path="res://scripts/ui/training_orb.gd" id="6_train"]
+[ext_resource type="Script" path="res://scripts/ui/info_spot.gd" id="7_spot"]
 
 [node name="Zone4" type="Control"]
 layout_mode = 3
@@ -41,6 +42,42 @@ script = ExtResource("5_store")
 position = Vector2(735.55, 265.5)
 scale = Vector2(1.0, 1.0)
 script = ExtResource("6_train")
+
+[node name="InfoSpot14" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 27.552
+offset_top = 189.8382
+offset_right = 83.948
+offset_bottom = 233.8618
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 14
+
+[node name="InfoSpot16" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 569.7238
+offset_top = 173.8382
+offset_right = 614.2761
+offset_bottom = 217.8618
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 16
+
+[node name="InfoSpot15" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 282.6154
+offset_top = 303.8678
+offset_right = 395.1845
+offset_bottom = 361.8321
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 15
 
 [node name="Control" parent="ItemStore" index="5"]
 layout_mode = 0
