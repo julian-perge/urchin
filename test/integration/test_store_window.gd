@@ -259,8 +259,9 @@ func test_the_seven_equip_slots_are_scene_nodes_at_the_slot_scale_of_the_frame()
 		var slot: ItemSlot = window.equip_view.get_node("Slot%d" % i)
 		assert_eq(slot.owner, window)
 		assert_eq(int(slot.get_meta("equip_index")), i)
-		assert_almost_eq(slot.scale, Vector2(0.86, 0.86), Vector2(0.001, 0.001))
-		assert_almost_eq(slot.get_global_rect().size.x, 26.89, 0.05, "the slot draws at 0.86 of its art")
+		var rect: Array = _store_pieces()["CentreTopPanel/Content/EquipDollView/Slot%d" % i]["rect"]
+		assert_almost_eq(slot.get_global_rect().size, Vector2(rect[2], rect[3]), Vector2(0.05, 0.05), "the slot draws at the record's size")
+		assert_lt(slot.scale.x, 1.0, "the slot is scaled down from its 31 px art")
 
 
 # A click on an equip slot of the Store unequips the item, and a click on an
