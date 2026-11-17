@@ -636,6 +636,83 @@
     0.0
    ],
    "pieces": {
+    "BottomBar/AlertIcon": {
+     "kind": "art",
+     "rect": [
+      385.0,
+      492.9,
+      30.0,
+      30.0
+     ],
+     "size": [
+      120,
+      120
+     ],
+     "texture": "res://assets/ui/battle/alert_icon.png",
+     "zoom": 4.0
+    },
+    "BottomBar/Bar": {
+     "kind": "art",
+     "rect": [
+      13.73,
+      452.45,
+      773.0,
+      111.5
+     ],
+     "size": [
+      3092,
+      446
+     ],
+     "texture": "res://assets/ui/battle/bottom_bar.png",
+     "zoom": 4.0
+    },
+    "BottomBar/PassButton": {
+     "kind": "button",
+     "rect": [
+      384.9888,
+      492.7388,
+      30.0225,
+      30.0225
+     ]
+    },
+    "BottomBar/PassRing": {
+     "kind": "point",
+     "position": [
+      400.0,
+      507.75
+     ],
+     "scale": [
+      1.4296417236328125,
+      1.4296417236328125
+     ]
+    },
+    "BottomBar/RetreatButton": {
+     "kind": "button",
+     "rect": [
+      436.0843,
+      464.3068,
+      18.0229,
+      18.001
+     ]
+    },
+    "BottomBar/RightPanel": {
+     "kind": "shape",
+     "rect": [
+      467.6,
+      453.8,
+      317.55,
+      108.4
+     ]
+    },
+    "BottomBar/StanceHost": {
+     "kind": "shape",
+     "rect": [
+      31.2,
+      473.5,
+      285.0,
+      31.3
+     ]
+    },
     "HallOutline": {
      "border": 1,
      "kind": "outline",
@@ -676,8 +753,10 @@
    "port_only": [
     "HallWindow/HallSpace",
     "RadialMenu",
-    "CombatLogPanel",
-    "BottomBar",
+    "BottomBar/RightPanel/CombatLogPanel",
+    "BottomBar/RightPanel/LogToggleButton",
+    "BottomBar/CountdownRing",
+    "BottomBar/CountdownLabel",
     "CombatTextBanner",
     "UI",
     "Fade"

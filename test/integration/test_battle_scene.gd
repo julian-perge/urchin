@@ -1931,25 +1931,46 @@ func test_sky_comes_from_sky_background_not_the_hall_name():
 	ZoneManager.auto_start_battles = true
 
 
-func test_bottom_bar_uses_extracted_backdrop_art():
-	var save = PlayerSave.new_game("BackdropTest", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
+func _textures_under(node: Node) -> Array[String]:
+	var found: Array[String] = []
+	for child: Node in node.get_children():
+		if child is TextureRect and (child as TextureRect).texture != null:
+			found.append((child as TextureRect).texture.resource_path)
+		found.append_array(_textures_under(child))
+	return found
 
+
+# The bar is the shared bottom_bar.tscn, whose art is one frame for each of the
+# three panels. The old backdrop and the three hub-hotbar panels drew a second
+# frame over each.
+func test_bottom_bar_is_the_shared_scene_with_one_frame_per_panel():
 	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var bar: TextureRect = scene.get_node("BottomBar/Bar")
+	assert_eq(bar.scene_file_path, "res://scenes/ui/bottom_bar.tscn", "the bar is the shared scene")
+	assert_eq(bar.texture.resource_path, "res://assets/ui/battle/bottom_bar.png", "it draws the extracted bar")
+	var textures: Array[String] = _textures_under(scene.get_node("BottomBar"))
+	assert_false(textures.has("res://assets/ui/battle/hotbar_background.png"), "the old backdrop is gone")
+	assert_false(textures.has("res://assets/ui/hotbar/background.png"), "the hub hotbar panels are gone")
+	for node_name in ["Backdrop", "Panel1", "Panel2", "Panel3"]:
+		assert_null(scene.get_node_or_null("BottomBar/%s" % node_name), "%s is gone" % node_name)
 
-	var backdrop: TextureRect = scene.get_node("BottomBar/Backdrop")
-	assert_not_null(backdrop, "Backdrop is a TextureRect now")
-	assert_eq(
-		backdrop.texture.resource_path, "res://assets/ui/battle/hotbar_background.png",
-		"backdrop uses the extracted art"
-	)
 
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
+# The Log button and the combat log sit on the bar's right panel, which the
+# original leaves empty, and the button still opens and closes the log.
+func test_log_button_toggles_the_combat_log_over_the_right_panel():
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	await wait_process_frames(2)
+	var panel: Control = scene.get_node("BottomBar/RightPanel")
+	var log_panel: CombatLogPanel = scene.get_node("BottomBar/RightPanel/CombatLogPanel")
+	var button: Button = scene.get_node("BottomBar/RightPanel/LogToggleButton")
+	assert_false(log_panel.visible, "the log starts closed")
+	button.pressed.emit()
+	await wait_process_frames(2)
+	assert_true(log_panel.visible, "the button opens the log")
+	assert_eq(log_panel.get_global_rect(), panel.get_global_rect(), "the log fills the right panel")
+	assert_true(panel.get_global_rect().encloses(button.get_global_rect()), "the button is on the right panel")
+	button.pressed.emit()
+	assert_false(log_panel.visible, "the button closes it again")
 
 
 # FighterPresenter's own tests cover the ring. This is the scene's half of it:

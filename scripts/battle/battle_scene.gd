@@ -151,8 +151,8 @@ var _buff_tick_due: bool = false
 # UI layer, which draws over both.
 @onready var combat_text_banner: CombatTextBanner = $CombatTextBanner
 @onready var stance_host: Control = $BottomBar/StanceHost
-@onready var _countdown_label: Label = $BottomBar/Panel3/CountdownLabel
-@onready var _combat_log: CombatLogPanel = $CombatLogPanel
+@onready var _countdown_label: Label = $BottomBar/CountdownLabel
+@onready var _combat_log: CombatLogPanel = $BottomBar/RightPanel/CombatLogPanel
 @onready var _fade_black: ColorRect = $Fade/Black
 
 

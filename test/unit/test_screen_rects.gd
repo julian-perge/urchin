@@ -234,15 +234,19 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 			found.append_array(_doll_problems(root, path, entry))
 			continue
 		if entry["kind"] == "point":
-			var point: Node2D = root.get_node_or_null(path) as Node2D
+			# A Node2D sits at the point with the placement's scale. A plain Control
+			# only marks the point, because the scale of a Control would scale
+			# what it holds.
+			var point: CanvasItem = root.get_node_or_null(path) as CanvasItem
 			if point == null:
-				found.append("%s: no such Node2D" % path)
-			else:
-				var expected := Vector2(entry["position"][0], entry["position"][1])
-				if not (_close(point.global_position.x, expected.x) and _close(point.global_position.y, expected.y)):
-					found.append("%s: position %s, expected %s" % [path, point.global_position, expected])
-				if not point.scale.is_equal_approx(Vector2(entry["scale"][0], entry["scale"][1])):
-					found.append("%s: scale differs" % path)
+				found.append("%s: no such Node2D or Control" % path)
+				continue
+			var expected := Vector2(entry["position"][0], entry["position"][1])
+			var actual_position: Vector2 = point.global_position if point is Node2D else (point as Control).get_global_rect().position
+			if not (_close(actual_position.x, expected.x) and _close(actual_position.y, expected.y)):
+				found.append("%s: position %s, expected %s" % [path, actual_position, expected])
+			if point is Node2D and not (point as Node2D).scale.is_equal_approx(Vector2(entry["scale"][0], entry["scale"][1])):
+				found.append("%s: scale differs" % path)
 			continue
 		var node: Control = root.get_node_or_null(path) as Control
 		if node == null:
@@ -1046,7 +1050,11 @@ const BATTLE_SCENE: String = "res://scenes/battle_scene.tscn"
 # Each piece of the battle scene is moved on its own, so a control that fails
 # names the piece that moved.
 func test_control_a_battle_piece_moved_20_px_fails() -> void:
-	for piece: String in ["TopPanel", "HallWindow", "HallOutline"]:
+	var pieces: Array[String] = [
+		"TopPanel", "HallWindow", "HallOutline", "BottomBar/Bar", "BottomBar/StanceHost", "BottomBar/RightPanel",
+		"BottomBar/PassButton", "BottomBar/PassRing", "BottomBar/AlertIcon", "BottomBar/RetreatButton",
+	]
+	for piece: String in pieces:
 		var root: Control = await _laid_out(BATTLE_SCENE)
 		var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
 		assert_eq(_scene_problems(root, scene), [] as Array[String], "%s starts in place" % piece)
@@ -1054,4 +1062,5 @@ func test_control_a_battle_piece_moved_20_px_fails() -> void:
 		await wait_process_frames(2)
 		var found: Array[String] = _scene_problems(root, scene)
 		assert_gt(found.size(), 0, "%s moved 20 px and passed" % piece)
-		assert_string_contains(found[0] if found else "", "%s: top left" % piece)
+		var what: String = "position" if piece == "BottomBar/PassRing" else "top left"
+		assert_string_contains(found[0] if found else "", "%s: %s" % [piece, what])

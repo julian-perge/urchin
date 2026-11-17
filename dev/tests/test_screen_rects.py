@@ -243,6 +243,40 @@ def test_the_art_sources_hold_the_battle_top_panel():
     )
 
 
+# The bottom bar's one shape 3315 strokes three boxes with one line. A path is
+# counted from the top and then from the left, and it is the line's centre.
+THREE_BOXES = [
+    StyleSet(
+        fills=(None,),
+        lines=((20, (0, 0, 0, 255)),),
+        used_fills=frozenset({1}),
+        line_bounds={},
+        paths=(
+            (1351, -1084, 7702, 1084),
+            (-1252, -1084, 1273, 1084),
+            (-7701, -1084, -1349, 1084),
+        ),
+    )
+]
+
+
+def test_a_path_shape_is_the_nth_box_from_the_left_through_the_placement():
+    entry = screen_rects.path_shape_record(
+        THREE_BOXES, 2, (1.0, 0.0, 0.0, 1.0, 1, 0), (400.0, 508.0)
+    )
+    assert entry == {
+        "kind": "shape",
+        "rect": pytest.approx([467.6, 453.8, 317.55, 108.4], abs=0.01),
+    }
+    left = screen_rects.path_shape_record(THREE_BOXES, 0, timeline.IDENTITY, (0.0, 0.0))
+    assert left["rect"][0] == pytest.approx(-385.05)
+
+
+def test_a_path_shape_refuses_a_path_it_does_not_have():
+    with pytest.raises(ValueError, match="3 paths"):
+        screen_rects.path_shape_record(THREE_BOXES, 3, timeline.IDENTITY, (0.0, 0.0))
+
+
 # The close X of KRINMENU's inventory frame, as extract_window_chrome records it.
 CLOSE_X_CHROME = {
     "rect": [734.3, 29.675, 37.0, 36.5],

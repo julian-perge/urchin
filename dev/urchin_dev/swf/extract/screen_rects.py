@@ -177,8 +177,13 @@ class Piece:
     character: int | None = None
     # The 0-based stroked path, from the top down, of an outline shape that
     # draws several boxes with one line, for a piece the port builds as one
-    # Panel for each box.
+    # Panel for each box. A "shape" piece with a path is that box's stroke
+    # centre line.
     path: int | None = None
+    # The depths that lead from the placement at `depth` down to the piece, one
+    # for each sprite on the way: each is read on the first frame of the sprite
+    # that the step before it reached. `inner_depth` is the same for one step.
+    via: tuple[int, ...] = ()
     # For a "doll": whether the frame places the female set of the 15 parts
     # next to the male one. The Inventory frame does and the shop frame does not.
     female_set: bool = True
@@ -967,14 +972,28 @@ SCENES[BATTLE_SCENE] = Scene(
         "TopPanel": Piece("art", 59, art="top_panel", character=3465),
         "HallWindow": Piece("box", 72, character=333),
         "HallOutline": Piece("outline", 341, character=3415),
+        # The bottom bar body 3317, and the pieces the battle frame puts on it.
+        # StanceHost is the panel of the upper member row, slot 5's p5 on the
+        # SHOW frame of 3312, which the conductor shows during the player's
+        # half-turn. RightPanel is the right one of the bar's three boxes, which
+        # the original leaves empty.
+        "BottomBar/Bar": Piece("art", 1, art="bottom_bar", character=3317),
+        "BottomBar/StanceHost": Piece("shape", 1, via=(7, 1, 1), character=3317),
+        "BottomBar/RightPanel": Piece("shape", 1, via=(1, 1), path=2, character=3317),
+        "BottomBar/PassButton": Piece("button", 498, character=3383),
+        "BottomBar/PassRing": Piece("point", 498, character=3383),
+        "BottomBar/AlertIcon": Piece("art", 65, art="alert_icon", character=3460),
+        "BottomBar/RetreatButton": Piece("button", 644, character=3356),
     },
     # HallSpace holds the sky, the hall and the fighters, whose art the battle
     # loads when it starts.
     port_only=(
         "HallWindow/HallSpace",
         "RadialMenu",
-        "CombatLogPanel",
-        "BottomBar",
+        "BottomBar/RightPanel/CombatLogPanel",
+        "BottomBar/RightPanel/LogToggleButton",
+        "BottomBar/CountdownRing",
+        "BottomBar/CountdownLabel",
         "CombatTextBanner",
         "UI",
         "Fade",
@@ -1145,6 +1164,7 @@ def art_sources() -> dict[str, tuple[dict, str]]:
         ),
         ("bottom_bar", battle_chrome_source("bottom_bar"), BATTLE_TEXTURES),
         ("top_panel", battle_chrome_source("top_panel"), BATTLE_TEXTURES),
+        ("alert_icon", battle_chrome_source("alert_icon"), BATTLE_TEXTURES),
         *(
             (
                 name,
@@ -1300,6 +1320,18 @@ def outline_record(
         "line": color_hex(color),
         "border": border_width(width, _scale(matrix)),
     }
+
+
+def path_shape_record(styles: list[StyleSet], path: int, matrix, origin) -> dict:
+    """-> the record of the `path`th stroked path of a shape, from the top down
+    and from the left, as the line's centre. It is the rect inside the line's
+    outer edge, for a piece that sits over a box the shape draws with one line."""
+    if len(styles) != 1 or not styles[0].paths:
+        raise ValueError("a path shape needs one style set with stroked paths")
+    boxes = sorted(styles[0].paths, key=lambda box: (box[1], box[0]))
+    if not 0 <= path < len(boxes):
+        raise ValueError(f"the shape has {len(boxes)} paths, not a path {path}")
+    return shape_record(boxes[path], matrix, origin)
 
 
 def through_sprites(index: SwfIndex, layer: timeline.Layer) -> tuple[int, tuple]:
@@ -1763,6 +1795,17 @@ def scene_record(
                 sprite_origins[f"sprite {layer.character_id}"] = inner_origin(
                     layer.matrix, piece_origin
                 )
+        for step in piece.via:
+            if piece.inner_depth is not None:
+                raise ValueError(f"{path}: a piece names inner_depth or via, not both")
+            piece_origin = inner_origin(layer.matrix, piece_origin)
+            first = timeline.frames(index, layer.character_id)[0]
+            if step not in first:
+                raise ValueError(
+                    f"{path}: sprite {layer.character_id} has no depth {step} on its"
+                    " first frame"
+                )
+            layer = first[step]
         if piece.kind == "point":
             pieces[path] = {
                 "kind": "point",
@@ -1821,6 +1864,13 @@ def scene_record(
             pieces[path] = face_record(crop, layer.matrix, piece_origin)
         elif piece.kind == "box":
             pieces[path] = _box(index, layer, piece_origin)
+        elif piece.kind == "shape" and piece.path is not None:
+            pieces[path] = path_shape_record(
+                shape_styles(index, layer.character_id),
+                piece.path,
+                layer.matrix,
+                piece_origin,
+            )
         elif piece.kind == "shape":
             pieces[path] = _shape(index, layer, piece_origin)
         elif piece.kind == "outline":
