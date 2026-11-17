@@ -1,9 +1,9 @@
 # label_xref.py
 # Writes dev/converted_json/label_xref.json: every frame label in the web SWF,
 # with the sprite and frame it lives on, the characters that frame places, and
-# every goto in the ActionScript that can select it. It reads the SWF through swf_index.py and the goto calls
-# from ffdec's script export in dev/source_files/action_script/, and calls
-# neither ffdec nor the XML dump.
+# every goto in the ActionScript that can select it. It reads the SWF through
+# swf_index.py and the goto calls from ffdec's script export in
+# dev/source_files/action_script/, and calls neither ffdec nor the XML dump.
 #
 # The export path of a script names the code's owner:
 #   frame_N/...                     root frame N

@@ -1,7 +1,8 @@
 # Run: uv run convert_menu_math
 # Writes dev/converted_json/menu_math.json, the numbers the inventory menu's
-# element bars are drawn from, the eight element colours, the width of its experience bar, and the counts
-# that the victory frame's experience rows animate with. The formulas come from
+# element bars are drawn from, the eight element colours, the width of its
+# experience bar, and the counts that the victory frame's experience rows
+# animate with. The formulas come from
 # the menu's script, DefineSprite_3142/frame_1/DoAction.as, the bar width from
 # the bar clip's scripts, and the counts from the rows' clip scripts in
 # DefineSprite_3142/frame_9. The bar height that the formulas scale, saveH, is

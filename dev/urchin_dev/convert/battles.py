@@ -6,7 +6,7 @@ import json
 from urchin_dev import CONVERTED_JSON, require_data_json
 from urchin_dev.swf import models
 
-# ["EMPTY","PRISON","VILLAGE","TRAIN","TUNNELS","CITY","ROME","JAPAN","UTOPIA","JAPAN","STORM","EDEN","DOME","BETA"];
+# ["EMPTY","PRISON","VILLAGE","TRAIN","TUNNELS","CITY","ROME","JAPAN","UTOPIA","JAPAN","STORM","EDEN","DOME","BETA"];  # noqa: W505
 # CHURCH
 # CHURCH2
 # JAIL

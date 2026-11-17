@@ -124,6 +124,9 @@ fixable = ["ALL"]
 future-annotations = true
 
 extend-select = [
+  # W505 checks comments and docstrings only. ruff format never wraps them,
+  # and E501 stays ignored because the formatter owns code lines.
+  "W505",
   "I",
   "FURB",
   "PTH",
@@ -153,6 +156,13 @@ ignore = [
   "F841", # Variable assigned but never used (debugging artifacts)
   "E402",
 ]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 88
+
+[tool.ruff.lint.per-file-ignores]
+# The long comments here are pasted ActionScript and its strings.
+"dev/urchin_dev/convert/moves.py" = ["W505"]
 
 [tool.ruff.lint.isort]
 # Import sorting and organization

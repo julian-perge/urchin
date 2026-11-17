@@ -167,8 +167,9 @@ class Piece:
     # the record types by hand names it, so a depth that points at another
     # character fails here and not in a rect that moved with it.
     character: int | None = None
-    # The 0-based stroked path, from the top down, of an outline shape that draws several boxes with
-    # one line, for a piece the port builds as one Panel for each box.
+    # The 0-based stroked path, from the top down, of an outline shape that
+    # draws several boxes with one line, for a piece the port builds as one
+    # Panel for each box.
     path: int | None = None
 
     def __post_init__(self) -> None:
@@ -1087,9 +1088,9 @@ def outline_record(
     bounds, matrix, origin, styles: list[StyleSet], path: int | None = None
 ) -> dict:
     """-> the record of an outline shape, or of its `path`th stroked path, from
-    the top down, when the shape draws several boxes with one line. A path's rect is its edges
-    grown by half the line, as the whole shape's bounds are, and the paths'
-    rects must cover the shape's bounds exactly."""
+    the top down, when the shape draws several boxes with one line. A path's
+    rect is its edges grown by half the line, as the whole shape's bounds are,
+    and the paths' rects must cover the shape's bounds exactly."""
     only = styles[0] if len(styles) == 1 else None
     if only is None or only.fills or only.used_fills or len(only.lines) != 1:
         raise ValueError("an outline needs one line and no fill")
