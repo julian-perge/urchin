@@ -298,3 +298,8 @@ extract-vfx-scenes *args: (require "ffdec" "java")
 [group('extract')]
 extract-window-chrome *args: (require "ffdec" "java")
     uv run extract_window_chrome "$@"
+
+[doc('Build a Traced copy of the web or Steam build in $URCHIN_SWF_DIR/traced/: just trace-swf <web|steam>')]
+[group('trace')]
+trace-swf build: (require "ffdec" "java")
+    uv run trace_swf "$@"

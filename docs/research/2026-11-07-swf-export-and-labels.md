@@ -34,10 +34,12 @@ body below is left as measured; these two points in it are wrong.
   (`FrameExporter.java:421-426` and `SVGExporter.java:199-205` at jpexs
   792d2c2).
 
-The five working files that later issues start from are copied next to this
-report, in `docs/research/2026-11-07-swf-export-and-labels/`: `swf_index.py`,
-`index_web.json`, `Probe.java`, `montage.png` and `hook.as`. The paths below
-point there. Everything else stays in the scratch folder.
+The five working files that later issues start from are copied out of the
+scratch folder. `swf_index.py`, `index_web.json`, `Probe.java` and
+`montage.png` are next to this report, in
+`docs/research/2026-11-07-swf-export-and-labels/`. The hook is
+`dev/probes/goto.as`. The paths below point at these places. Everything else
+stays in the scratch folder.
 
 ## Summary
 
@@ -453,7 +455,7 @@ Intel projectors working through Rosetta
 This works with Ruffle or with the debug projector, and is the cheapest way to
 see dynamic targets that static analysis cannot resolve.
 
-**Injection. [measured]** `docs/research/2026-11-07-swf-export-and-labels/hook.as`
+**Injection. [measured]** `dev/probes/goto.as`
 (14 lines) overrides `MovieClip.prototype.gotoAndStop` and `gotoAndPlay` with
 wrappers. Each wrapper calls
 `trace("GOTO\t" + kind + "\t" + this + "\t" + this._currentframe + "\t" + target)`
@@ -468,6 +470,9 @@ export of the original differs only in `frame_1/DoAction.as`, and that file's
 tail after the 17 injected lines is identical. The repo's committed
 `action_script/` differs from a fresh export by CRLF line endings only
 (`as_base/scripts/Border.as` checked).
+
+The goto Probe has since replaced this hook. It calls the original first and
+also logs `_totalframes` and the frame after the goto.
 
 **Coverage. [measured]** The wrapper sees the 316 receiver calls, which
 compile to method calls. Ruffle declares both methods on `MovieClip.prototype`
@@ -682,7 +687,7 @@ All under `~/tmp/2026-11-07-ffdec-research/`, except the five files copied into
   `javaprobe/*.png`.
 - `instrument/`: goto hook, instrumented SWF and script round-trip exports.
   The hook is copied as
-  `docs/research/2026-11-07-swf-export-and-labels/hook.as`.
+  `dev/probes/goto.as`.
 - `svgtest/`, `godot_probe/`, `compare.py`: SVG versus PNG experiment.
 - `thorvg_*.cpp|h`, `ruffle_*.rs`: upstream source snapshots read for this
   report.
