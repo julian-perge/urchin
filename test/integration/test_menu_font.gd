@@ -28,15 +28,23 @@ func after_each():
 	GameTooltip.hide_tooltip()
 
 
+# The theme wraps each Heros face in a FontVariation that raises its baseline, so
+# the face's file is the variation's base font. An embedded font has no wrapper.
+func _face_path(font: Font) -> String:
+	if font is FontVariation:
+		return (font as FontVariation).base_font.resource_path
+	return font.resource_path
+
+
 func _assert_font(control: Control, font_id: int, what: String) -> void:
 	var font: Font = control.get_theme_font("font")
 	if EMBEDDED_FONTS.has(font_id):
-		assert_eq(font.resource_path, EMBEDDED_FONTS[font_id], "%s uses the font the SWF embeds as font %d" % [what, font_id])
+		assert_eq(_face_path(font), EMBEDDED_FONTS[font_id], "%s uses the font the SWF embeds as font %d" % [what, font_id])
 		return
 	if font_id == BOLD_FONT_ID:
-		assert_eq(font.resource_path, HEROS_BOLD_PATH, "%s draws in the bold face like font 65" % what)
+		assert_eq(_face_path(font), HEROS_BOLD_PATH, "%s draws in the bold face like font 65" % what)
 	else:
-		assert_eq(font.resource_path, HEROS_REGULAR_PATH, "%s draws in the regular face like font %d" % [what, font_id])
+		assert_eq(_face_path(font), HEROS_REGULAR_PATH, "%s draws in the regular face like font %d" % [what, font_id])
 
 
 # Each case maps a node path to [edit text id, font id].
@@ -54,9 +62,9 @@ func test_the_project_theme_draws_sans_in_the_three_heros_faces():
 	var bold: Font = theme.default_font
 	var regular: Font = theme.get_font("font", "RegularLabel")
 	var bold_italic: Font = theme.get_font("font", "BoldItalicLabel")
-	assert_eq(bold.resource_path, HEROS_BOLD_PATH, "the default font is the bold face")
-	assert_eq(regular.resource_path, HEROS_REGULAR_PATH, "RegularLabel is the regular face")
-	assert_eq(bold_italic.resource_path, HEROS_BOLD_ITALIC_PATH, "BoldItalicLabel is the bold italic face")
+	assert_eq(_face_path(bold), HEROS_BOLD_PATH, "the default font is the bold face")
+	assert_eq(_face_path(regular), HEROS_REGULAR_PATH, "RegularLabel is the regular face")
+	assert_eq(_face_path(bold_italic), HEROS_BOLD_ITALIC_PATH, "BoldItalicLabel is the bold italic face")
 	assert_eq(bold.get_font_style(), TextServer.FONT_BOLD, "the bold file is a bold face")
 	assert_eq(regular.get_font_style(), 0, "the regular file is an upright regular face")
 	assert_eq(bold_italic.get_font_style(), TextServer.FONT_BOLD | TextServer.FONT_ITALIC, "the bold italic file is both")
@@ -87,6 +95,44 @@ func _text_files(directory: String) -> Array[String]:
 # runtime from them, which is why scanning the files covers the item, ability
 # and buff text the converters brought in from KrinLang. The name a player
 # types is the one exception, because any character can be typed there.
+# TeX Gyre Heros has an ascent of 1.125 em, so a Label puts its baseline lower
+# than Flash puts the baseline of its device font. Against
+# references/sonny2_inventory_screen.png, a real Flash capture, the port's 12 px
+# text sat 1.1 to 1.7 px lower, and the 31 px euro sign about 6 px lower. The
+# baseline offset is a fraction of the face's line height, which is 1.432 em
+# for Heros, so -0.08 raises 12 px text by 1.4 px. SWF_DIFFERENCES.md has the
+# measurements.
+func test_every_heros_face_raises_its_baseline_to_where_flash_draws_it():
+	var theme: Theme = ThemeDB.get_project_theme()
+	assert_not_null(theme, "project.godot sets a project theme")
+	if theme == null:
+		return
+	var faces: Array[Font] = [theme.default_font, theme.get_font("font", "RegularLabel"), theme.get_font("font", "BoldItalicLabel")]
+	for face: Font in faces:
+		assert_true(face is FontVariation, "%s is wrapped in a FontVariation" % _face_path(face).get_file())
+		if face is FontVariation:
+			assert_almost_eq((face as FontVariation).baseline_offset, -0.08, 0.0001, _face_path(face).get_file())
+
+
+# Three fields sit higher in the capture than the 12 px offset gives. The 31 px
+# euro sign and the 22 px amount need about 0.14 of the line height. The 10 px
+# experience percent needs 0.22, because Flash draws it about 2 px above its
+# field's top as well. The measurements are in SWF_DIFFERENCES.md.
+func test_the_gold_row_and_the_experience_percent_raise_their_baseline_further():
+	var theme: Theme = ThemeDB.get_project_theme()
+	assert_not_null(theme, "project.godot sets a project theme")
+	if theme == null:
+		return
+	var cases: Dictionary = {&"GoldLabel": -0.14, &"ExpPercentLabel": -0.22}
+	for type_name: StringName in cases:
+		assert_eq(theme.get_type_variation_base(type_name), &"Label", "%s varies Label" % type_name)
+		var face: FontVariation = theme.get_font("font", type_name) as FontVariation
+		assert_not_null(face, "%s draws in a FontVariation" % type_name)
+		if face:
+			assert_eq(face.base_font.resource_path, HEROS_BOLD_PATH, "%s keeps the bold face" % type_name)
+			assert_almost_eq(face.baseline_offset, cases[type_name], 0.0001, str(type_name))
+
+
 func test_every_character_the_port_can_show_exists_in_all_three_faces():
 	var characters: Dictionary = {}
 	for directory in ["res://resources", "res://scenes", "res://scripts"]:

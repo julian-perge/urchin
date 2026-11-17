@@ -907,12 +907,15 @@ class StyleSet:
     (r, g, b, a), or None for a fill that is not a solid colour. lines holds
     each line's (width in twips, (r, g, b, a)). used_fills holds the 1-based
     fill indices that some edge fills with, and line_bounds the (xmin, ymin,
-    xmax, ymax) in twips of the edges each used 1-based line index strokes."""
+    xmax, ymax) in twips of the edges each used 1-based line index strokes.
+    paths holds the same box for each stroked path, in drawing order. A path
+    starts at a move, so a shape that draws three stacked rectangles has three."""
 
     fills: tuple[tuple[int, int, int, int] | None, ...]
     lines: tuple[tuple[int, tuple[int, int, int, int]], ...]
     used_fills: frozenset[int]
     line_bounds: dict[int, tuple[int, int, int, int]]
+    paths: tuple[tuple[int, int, int, int], ...] = ()
 
 
 def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
@@ -927,6 +930,8 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
     bits = _Bits(data, pos + 1)
     used_fills: set[int] = set()
     line_bounds: dict[int, list[int]] = {}
+    paths: list[list[int]] = []
+    new_path = True
     x = y = fill0 = fill1 = line = 0
 
     def close_set() -> None:
@@ -936,16 +941,23 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
                 lines=lines,
                 used_fills=frozenset(used_fills),
                 line_bounds={k: tuple(v) for k, v in sorted(line_bounds.items())},
+                paths=tuple(tuple(box) for box in paths),
             )
         )
 
     def edge_to(nx: int, ny: int) -> None:
-        nonlocal x, y
+        nonlocal x, y, new_path
         used_fills.update(f for f in (fill0, fill1) if f)
         if line:
             box = line_bounds.setdefault(line, [x, y, x, y])
             box[0], box[1] = min(box[0], nx), min(box[1], ny)
             box[2], box[3] = max(box[2], nx), max(box[3], ny)
+            if new_path:
+                paths.append([x, y, x, y])
+                new_path = False
+            path = paths[-1]
+            path[0], path[1] = min(path[0], nx), min(path[1], ny)
+            path[2], path[3] = max(path[2], nx), max(path[3], ny)
         x, y = nx, ny
 
     while True:
@@ -971,6 +983,7 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
         if flags & 0x01:
             n = bits.ub(5)
             x, y = bits.sb(n), bits.sb(n)
+            new_path = True
         if flags & 0x02:
             fill0 = bits.ub(fill_bits)
         if flags & 0x04:
@@ -982,6 +995,7 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
             # does not carry over to a fill or a line of the new one.
             close_set()
             used_fills, line_bounds = set(), {}
+            paths, new_path = [], True
             fill0 = fill1 = line = 0
             fills, lines, pos = _style_arrays(data, bits.align(), code)
             fill_bits, line_bits = data[pos] >> 4, data[pos] & 0x0F
@@ -998,7 +1012,9 @@ def _style_arrays(data: bytes, pos: int, code: int):
     count, pos = _fill_style_count(data, pos, code)
     for _ in range(count):
         solid = data[pos] == SOLID_FILL_TYPE
-        color = tuple(data[pos + 1 : pos + 5]) if rgba else (*data[pos + 1 : pos + 4], 255)
+        color = (
+            tuple(data[pos + 1 : pos + 5]) if rgba else (*data[pos + 1 : pos + 4], 255)
+        )
         fills.append(color if solid else None)
         pos = _skip_fill_style(data, pos, code)
     lines = []

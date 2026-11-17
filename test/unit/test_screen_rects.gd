@@ -779,11 +779,33 @@ func test_control_an_inventory_header_row_20_px_taller_fails() -> void:
 
 func test_control_an_inventory_outline_moved_20_px_fails() -> void:
 	var root: Control = await _laid_out(INVENTORY_SCENE)
-	(root.get_node("CenterPanel/Content/CenterOutline") as Control).position.x += 20.0
+	(root.get_node("CenterPanel/Content/StatsOutline") as Control).position.x += 20.0
 	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
 	assert_eq(found.size(), 2, str(found))
 	for problem: String in found:
-		assert_string_starts_with(problem, "CenterPanel/Content/CenterOutline:")
+		assert_string_starts_with(problem, "CenterPanel/Content/StatsOutline:")
+
+
+func test_control_an_inventory_defense_outline_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("CenterPanel/Content/DefenseOutline") as Control).position.y += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "CenterPanel/Content/DefenseOutline:")
+
+
+func test_the_inventory_centre_column_has_three_outline_boxes_one_above_the_other() -> void:
+	var pieces: Dictionary = _record()["scenes"][INVENTORY_SCENE]["pieces"]
+	var tops: Array[float] = []
+	for path: String in pieces:
+		if path.begins_with("CenterPanel/Content/") and pieces[path]["kind"] == "outline":
+			tops.append(pieces[path]["rect"][1])
+	tops.sort()
+	assert_eq(tops.size(), 3, "stats, Piercing and Defense")
+	if tops.size() == 3:
+		assert_lt(tops[0], tops[1])
+		assert_lt(tops[1], tops[2])
 
 
 func test_control_an_inventory_equip_slot_moved_20_px_fails() -> void:
@@ -842,7 +864,7 @@ func test_control_an_inventory_stat_row_moved_20_px_fails() -> void:
 
 func test_control_an_inventory_outline_with_fill_or_shadow_fails() -> void:
 	var root: Control = await _laid_out(INVENTORY_SCENE)
-	var panel: Panel = root.get_node("CenterPanel/Content/CenterOutline")
+	var panel: Panel = root.get_node("CenterPanel/Content/StatsOutline")
 	var style: StyleBoxFlat = panel.get_theme_stylebox("panel").duplicate()
 	panel.add_theme_stylebox_override("panel", style)
 	style.draw_center = true

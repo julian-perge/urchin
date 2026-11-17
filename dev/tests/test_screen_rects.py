@@ -520,6 +520,39 @@ def test_outline_record_has_a_stroke_and_no_fill_or_shadow():
     }
 
 
+def test_outline_record_of_a_path_is_its_box_grown_by_half_the_line():
+    # Two stacked boxes drawn with one 20 twip line. Each box's rect is its
+    # edges grown by 10 twips, so the two cover the shape's bounds.
+    styles = [
+        StyleSet(
+            (),
+            ((20, (51, 51, 51, 255)),),
+            frozenset(),
+            {},
+            ((-90, 10, 90, 190), (-90, -190, 90, -10)),
+        )
+    ]
+    matrix = (1.0, 0.0, 0.0, 1.0, 0, 0)
+    bounds = (-100, -200, 100, 200)
+    first = screen_rects.outline_record(bounds, matrix, ORIGIN, styles, 0)
+    second = screen_rects.outline_record(bounds, matrix, ORIGIN, styles, 1)
+    assert first["rect"] == [395.5, 212.4, 10.0, 10.0]
+    assert second["rect"] == [395.5, 222.4, 10.0, 10.0]
+    assert first["border"] == second["border"] == 1
+
+
+def test_outline_record_refuses_paths_that_do_not_cover_the_shape():
+    styles = [
+        StyleSet(
+            (), ((20, (51, 51, 51, 255)),), frozenset(), {}, ((-90, -190, 90, -10),)
+        )
+    ]
+    with pytest.raises(ValueError, match="paths cover"):
+        screen_rects.outline_record(
+            (-100, -200, 100, 200), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN, styles, 0
+        )
+
+
 def test_outline_record_refuses_a_shape_with_fill():
     with pytest.raises(ValueError, match="outline"):
         screen_rects.outline_record(

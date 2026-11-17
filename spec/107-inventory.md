@@ -33,7 +33,7 @@ All numbers are Stage px from `timeline.frames()`. The rect extractor from ui-fo
 | centre | `centre` | (308.95, 82.15) 183.05x326.50 |
 | right column | window-shell | origin (503.50, 81.60) |
 
-The centre panel holds a 1 px outline, 2980, at (321.75, 89.45) 158.35x313.20, line #333333. It is a StyleBoxFlat with no fill and no shadow.
+The centre panel holds three 1 px outline boxes, all drawn by shape 2980 at depth 994, line #333333: the stats box at (321.75, 89.45) 158.35x102.15, the Piercing box at (321.75, 196.80) 158.35x100.45 and the Defense box at (321.75, 302.20) 158.35x100.45. Each is a StyleBoxFlat with no fill and no shadow. The first draft of this spec read the shape's bounds as one outline, 158.35x313.20. A real Flash capture (`references/sonny2_inventory_screen.png`) shows three.
 
 ### Left panel
 

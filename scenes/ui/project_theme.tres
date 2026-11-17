@@ -1,13 +1,37 @@
-[gd_resource type="Theme" load_steps=4 format=3 uid="uid://drhvt4xw6rw7f"]
+[gd_resource type="Theme" load_steps=9 format=3 uid="uid://drhvt4xw6rw7f"]
 
 [ext_resource type="FontFile" uid="uid://4ywirvsmhfgm" path="res://assets/fonts/texgyreheros-bold.otf" id="1_bold"]
 [ext_resource type="FontFile" uid="uid://bdh7n3ujt1vju" path="res://assets/fonts/texgyreheros-regular.otf" id="2_regular"]
 [ext_resource type="FontFile" uid="uid://b0fm64b4yp4us" path="res://assets/fonts/texgyreheros-bolditalic.otf" id="3_bolditalic"]
 
+[sub_resource type="FontVariation" id="FontVariation_bold"]
+base_font = ExtResource("1_bold")
+baseline_offset = -0.08
+
+[sub_resource type="FontVariation" id="FontVariation_regular"]
+base_font = ExtResource("2_regular")
+baseline_offset = -0.08
+
+[sub_resource type="FontVariation" id="FontVariation_bolditalic"]
+base_font = ExtResource("3_bolditalic")
+baseline_offset = -0.08
+
+[sub_resource type="FontVariation" id="FontVariation_gold"]
+base_font = ExtResource("1_bold")
+baseline_offset = -0.14
+
+[sub_resource type="FontVariation" id="FontVariation_percent"]
+base_font = ExtResource("1_bold")
+baseline_offset = -0.22
+
 [resource]
-default_font = ExtResource("1_bold")
+default_font = SubResource("FontVariation_bold")
 BoldItalicLabel/base_type = &"Label"
-BoldItalicLabel/fonts/font = ExtResource("3_bolditalic")
+BoldItalicLabel/fonts/font = SubResource("FontVariation_bolditalic")
+ExpPercentLabel/base_type = &"Label"
+ExpPercentLabel/fonts/font = SubResource("FontVariation_percent")
+GoldLabel/base_type = &"Label"
+GoldLabel/fonts/font = SubResource("FontVariation_gold")
 MenuCaption/base_type = &"Label"
 MenuCaption/colors/font_color = Color(1, 1, 1, 1)
 MenuCaption/colors/font_outline_color = Color(0, 0, 0, 1)
@@ -16,8 +40,8 @@ MenuCaption/constants/outline_size = 4
 MenuCaption/constants/shadow_offset_x = 1
 MenuCaption/constants/shadow_offset_y = 1
 MenuCaption/constants/shadow_outline_size = 4
-MenuCaption/fonts/font = ExtResource("1_bold")
+MenuCaption/fonts/font = SubResource("FontVariation_bold")
 RegularLabel/base_type = &"Label"
-RegularLabel/fonts/font = ExtResource("2_regular")
-TooltipLabel/fonts/font = ExtResource("2_regular")
+RegularLabel/fonts/font = SubResource("FontVariation_regular")
+TooltipLabel/fonts/font = SubResource("FontVariation_regular")
 TooltipLabel/font_sizes/font_size = 12

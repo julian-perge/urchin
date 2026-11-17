@@ -167,6 +167,9 @@ class Piece:
     # the record types by hand names it, so a depth that points at another
     # character fails here and not in a rect that moved with it.
     character: int | None = None
+    # The 0-based stroked path, from the top down, of an outline shape that draws several boxes with
+    # one line, for a piece the port builds as one Panel for each box.
+    path: int | None = None
 
     def __post_init__(self) -> None:
         if (self.depth is None) == (self.instance is None):
@@ -722,7 +725,11 @@ SCENES[INVENTORY_SCENE] = Scene(
         "LeftPanel": Piece("panel", 11),
         "PartyBar": Piece("panel", 9),
         "CenterPanel": Piece("panel", 21),
-        "CenterPanel/Content/CenterOutline": Piece("outline", 994),
+        # Shape 2980 draws three stacked boxes with one line: the stats, the
+        # piercing bars and the defense bars.
+        "CenterPanel/Content/StatsOutline": Piece("outline", 994, path=0),
+        "CenterPanel/Content/PiercingOutline": Piece("outline", 994, path=1),
+        "CenterPanel/Content/DefenseOutline": Piece("outline", 994, path=2),
         "LeftPanel/Content/Header/NameRow/NameLabel": Piece("text", 1241),
         "LeftPanel/Content/Header/InfoRow/LevelLabel": Piece("text", 1242),
         "LeftPanel/Content/EquipDollView/Doll": Piece("doll", 912, character=143),
@@ -1046,11 +1053,36 @@ def shape_record(bounds, matrix, origin) -> dict:
     }
 
 
-def outline_record(bounds, matrix, origin, styles: list[StyleSet]) -> dict:
+def outline_record(
+    bounds, matrix, origin, styles: list[StyleSet], path: int | None = None
+) -> dict:
+    """-> the record of an outline shape, or of its `path`th stroked path, from
+    the top down, when the shape draws several boxes with one line. A path's rect is its edges
+    grown by half the line, as the whole shape's bounds are, and the paths'
+    rects must cover the shape's bounds exactly."""
     only = styles[0] if len(styles) == 1 else None
     if only is None or only.fills or only.used_fills or len(only.lines) != 1:
         raise ValueError("an outline needs one line and no fill")
     width, color = only.lines[0]
+    if path is not None:
+        half = width / 2
+        grown = [
+            (xmin - half, ymin - half, xmax + half, ymax + half)
+            for xmin, ymin, xmax, ymax in sorted(
+                only.paths, key=lambda box: (box[1], box[0])
+            )
+        ]
+        covered = (
+            min(g[0] for g in grown),
+            min(g[1] for g in grown),
+            max(g[2] for g in grown),
+            max(g[3] for g in grown),
+        )
+        if any(abs(a - b) > 1 for a, b in zip(covered, bounds, strict=True)):
+            raise ValueError(
+                f"the outline's {len(grown)} paths cover {covered}, not its bounds {bounds}"
+            )
+        bounds = grown[path]
     return {
         "kind": "outline",
         "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
@@ -1505,6 +1537,7 @@ def scene_record(
                 layer.matrix,
                 piece_origin,
                 shape_styles(index, layer.character_id),
+                piece.path,
             )
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, piece_origin)

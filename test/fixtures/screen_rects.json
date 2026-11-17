@@ -1450,15 +1450,26 @@
       "distance": 5.0
      }
     },
-    "CenterPanel/Content/CenterOutline": {
+    "CenterPanel/Content/DefenseOutline": {
      "border": 1,
      "kind": "outline",
      "line": "333333ff",
      "rect": [
       321.75,
-      89.45,
+      302.2,
       158.35,
-      313.2
+      100.45
+     ]
+    },
+    "CenterPanel/Content/PiercingOutline": {
+     "border": 1,
+     "kind": "outline",
+     "line": "333333ff",
+     "rect": [
+      321.75,
+      196.8,
+      158.35,
+      100.45
      ]
     },
     "CenterPanel/Content/StatNames/Row0/Label": {
@@ -1579,6 +1590,17 @@
       170.3,
       81.35,
       15.6
+     ]
+    },
+    "CenterPanel/Content/StatsOutline": {
+     "border": 1,
+     "kind": "outline",
+     "line": "333333ff",
+     "rect": [
+      321.75,
+      89.45,
+      158.35,
+      102.15
      ]
     },
     "ExpFill": {

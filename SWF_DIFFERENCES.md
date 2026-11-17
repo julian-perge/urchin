@@ -72,6 +72,12 @@ resolved the two bugs below.
 - **`_sans` is a device font, so the SWF only names it.** Flash drew every `_sans` field in whatever the player's machine mapped that name to, and the SWF holds no glyphs for it, so neither
   build carries one look to reproduce. The `references/2026_07_18_flashpoint/` captures were taken on a Mac and show Helvetica. The port ships TeX Gyre Heros in its place, a free Helvetica clone
   under the GUST Font License, with real regular, bold and bold italic faces (#118, #127).
+  **Text sits lower than in Flash, so the theme raises it.** TeX Gyre Heros has an ascent of 1.125 em, which puts a Label's baseline lower than Flash puts the baseline of its device font. Measured on 2026-11-17 against
+  `references/sonny2_inventory_screen.png`, a real Flash capture, with the same strings in both and the capture's y scale read from the left panel (2.246 px for each Stage px): the stat rows, `Experience:`, `Piercing`
+  and `Defense` (12 px) sat 1.1 to 1.7 px lower, `Sonny` (14 px) 2 to 3 px, the 22 px amount about 4.4 px and the 31 px euro sign about 6 px. The project theme wraps each face in a `FontVariation` with
+  `baseline_offset` -0.08, which is a fraction of the face's line height (1.432 em), and raises 12 px text by 1.4 px, to within 0.4 px of the capture. `GoldLabel` (the euro sign and the amount, -0.14) and
+  `ExpPercentLabel` (-0.22) raise their text further to match the capture. The percent needs the most, because Flash draws it about 2 px above its field's top. The offset does not scale with size, so 14 px text
+  still sits about 1 px low. These offsets are fitted to one capture, not read from the SWF.
 
 ## Dropped on purpose (not differences, but scoped out from both)
 
