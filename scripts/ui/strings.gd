@@ -33,6 +33,17 @@ static func text(name: String, index: int = -1) -> String:
 	return str(value[index])
 
 
+# True when the KrinLang.ENGLISH member `name` is an array with a text at
+# `index`. Unlike text(), it pushes no error when there is none, so a caller can
+# ask before it reads.
+static func has(name: String, index: int) -> bool:
+	var table := _load()
+	if not table.has(name) or not table[name] is Array:
+		return false
+	var value: Array = table[name]
+	return index >= 0 and index < value.size() and value[index] != null
+
+
 static func _load() -> Dictionary:
 	if _table.is_empty():
 		var file := FileAccess.open(STRINGS_FILE, FileAccess.READ)
