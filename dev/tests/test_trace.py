@@ -71,6 +71,12 @@ def test_parse_names_the_line_number_of_a_goto_line_with_a_frame_that_is_no_numb
         parse("GOTO\tstop\t_level0.__t\t1\tundefined\t1\t0\n")
 
 
+def test_parse_reads_from_the_first_goto_mark_when_the_target_is_the_label_goto():
+    assert parse("GOTO\tstop\t_level0.c\t5\t1\tGOTO\t1\n") == [
+        Goto("stop", "_level0.c", 5, 1, "GOTO", 1)
+    ]
+
+
 def test_diff_ignores_the_order_and_the_count_of_the_gotos():
     hall = Goto("stop", "_level0.BATTLESCREEN", 20, 1, "JAIL", 15)
     hub = Goto("stop", "_level0.KrinScreen", 9, 1, "PRISON", 1)
@@ -116,15 +122,22 @@ def test_trace_diff_prints_the_records_of_each_side_sorted(tmp_path, capsys):
     log_a = tmp_path / "a.txt"
     log_b = tmp_path / "b.txt"
     log_a.write_text(
-        "GOTO\tstop\t_level0.b\t5\t1\tEND\t5\nGOTO\tplay\t_level0.a\t5\t2\tNONE\t2\n"
+        "GOTO\tstop\t_level0.b\t5\t1\tEND\t5\n"
+        "GOTO\tplay\t_level0.a\t5\t2\tNONE\t2\n"
+        "GOTO\tstop\t_level0.a\t9\t1\tEND\t4\n"
+        "GOTO\tplay\t_level0.d\t3\t1\t2\t2\n"
+        "GOTO\tplay\t_level0.a\t4\t1\tNONE\t1\n"
     )
     log_b.write_text("GOTO\tstop\t_level0.c\t7\t1\t3\t3\n")
 
     diff_main([str(log_a), str(log_b)])
 
     assert capsys.readouterr().out == (
-        f"only in {log_a} (2):\n"
+        f"only in {log_a} (5):\n"
+        "play\t_level0.a\t4\tNONE\tstayed\n"
         "play\t_level0.a\t5\tNONE\tstayed\n"
+        "play\t_level0.d\t3\t2\tmoved\n"
+        "stop\t_level0.a\t9\tEND\tmoved\n"
         "stop\t_level0.b\t5\tEND\tmoved\n"
         f"only in {log_b} (1):\n"
         "stop\t_level0.c\t7\t3\tmoved\n"
