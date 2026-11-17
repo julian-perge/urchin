@@ -13,7 +13,8 @@
 # node that draws a piece. port_only names the nodes the port draws and the
 # SWF does not, so the test skips them.
 #
-# A piece is one of seven kinds:
+# A piece has one of these kinds:
+#   "point" - a Node2D at a sprite placement, with its position and scale.
 #   "panel" - a flat Panel (Part 3): a sprite whose one shape has a solid fill
 #             and a line, under an inner DropShadow. Its rect is the fill rect
 #             grown by half the border. The fill rect is ShapeBounds through
@@ -79,6 +80,7 @@ from urchin_dev.swf.extract import (
     hotbar_icons,
     start_screens,
     window_chrome,
+    zone_hub,
 )
 from urchin_dev.swf.swf_index import (
     ButtonRecord,
@@ -148,6 +150,8 @@ class Scene:
     # The depths of the frame whose characters the port leaves out by an ADR.
     # The compare tool takes them out of its reference too.
     left_out: tuple[int, ...] = field(default=())
+    # Characters excluded from a static chrome score, such as the fade and orbs.
+    compare_strip: tuple[int, ...] = field(default=())
 
 
 # The victory frame's experience rows, top to bottom, by the depth that
@@ -540,6 +544,68 @@ SCENES: dict[str, Scene] = {
 }
 
 
+ZONE_SCENES = (
+    "zone1_prison",
+    "zone2_village",
+    "zone3_train",
+    "zone4_tunnels",
+    "zone5_city",
+    "zone6_rome",
+    "zone7_shotul",
+)
+# Each pair names the orb depth and its button depth on the zone's frame.
+# Zone 7 has no training orb, because every frame under the JAPAN label places
+# a story orb and a shop orb only. The ROME training button at depth 56 is
+# removed at frame 86 and nothing replaces it.
+ZONE_ORBS = (
+    {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (35, 56)},
+    {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (35, 56)},
+    {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (52, 56)},
+    {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (52, 56)},
+    {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (52, 56)},
+    {"StoryFight": (27, 31), "ItemStore": (58, 62), "TrainingFight": (52, 56)},
+    {"StoryFight": (26, 30), "ItemStore": (32, 36)},
+)
+for zone, (slug, orbs) in enumerate(zip(ZONE_SCENES, ZONE_ORBS, strict=True), 1):
+    SCENES[f"res://scenes/zones/{slug}.tscn"] = Scene(
+        timeline=zone_hub.HUB_SPRITE,
+        frame=zone_hub.ZONE_LABELS[zone],
+        pieces={
+            "HubArt": Piece(
+                "art", next(iter(orbs.values()))[0], art=zone_hub.ZONE_LABELS[zone]
+            ),
+            **{name: Piece("point", depths[0]) for name, depths in orbs.items()},
+            **{
+                f"{name}/Control": Piece("hit", depths[1])
+                for name, depths in orbs.items()
+            },
+        },
+        port_only=tuple(
+            f"{name}/{part}"
+            for name in orbs
+            for part in ("bottom", "middle", "top", "CollisionShape2D")
+        ),
+    )
+
+
+# This fixture scores the static Hub chrome. Animated orbs are checked by the
+# zone records, and the Windows, banners and card have their own build tasks.
+HUB_CHROME = "res://test/fixtures/screen_rects/hub_chrome.tscn"
+SCENES[HUB_CHROME] = Scene(
+    timeline=0,
+    frame=HUB_FRAME,
+    pieces={
+        "HubArt": Piece("art", 59, art="PRISON"),
+        **{f"Hotbar/{path}": piece for path, piece in HOTBAR_PIECES.items()},
+    },
+    port_only=tuple(
+        f"Hotbar/{path}" for path in SCENES["res://scenes/ui/hotbar.tscn"].port_only
+    ),
+    left_out=(144,),
+    compare_strip=(2837, 2836, 2848, 2839, 2840, 2717, 2852, 3142, 3196, 3312),
+)
+
+
 # The Inventory record covers #226's shell and left panel. Later build tasks
 # replace the experience row, stats, element bars, doll and party faces.
 INVENTORY_SCENE = "res://scenes/ui/menu/inventory_window.tscn"
@@ -791,6 +857,11 @@ def art_sources() -> dict[str, tuple[dict, str]]:
         if name in sources:
             raise ValueError(f"two art sources are named {name}")
         sources[name] = ({**record, "relative_to": "stage"}, textures)
+    for name, entry in json.loads(zone_hub.RECORD.read_text()).items():
+        sources[name] = (
+            {**entry, "relative_to": "stage"},
+            "res://assets/backgrounds/hub",
+        )
     return sources
 
 
@@ -1098,7 +1169,16 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
                 sprite_origins[f"sprite {layer.character_id}"] = inner_origin(
                     layer.matrix, piece_origin
                 )
-        if piece.kind == "panel":
+        if piece.kind == "point":
+            pieces[path] = {
+                "kind": "point",
+                "position": [
+                    round(piece_origin[0] + layer.matrix[4] / render.TWIPS, 4),
+                    round(piece_origin[1] + layer.matrix[5] / render.TWIPS, 4),
+                ],
+                "scale": list(_scale(layer.matrix)),
+            }
+        elif piece.kind == "panel":
             pieces[path] = _panel(index, layer, piece_origin)
         elif piece.kind == "text":
             text = edit_text(index, layer.character_id)

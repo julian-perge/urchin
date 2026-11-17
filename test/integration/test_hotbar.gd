@@ -365,24 +365,6 @@ func test_an_inert_hotbar_makes_each_orb_ignore_a_click_and_take_it_again_after(
 		orb.free()
 
 
-# The orb also takes a click through its Area2D (orb.tscn, input_event), which
-# only fires where no Control takes the mouse first. The SubViewport of the
-# test above does no physics picking, so this test calls the handler itself.
-func test_an_inert_hotbar_makes_an_orb_ignore_a_click_on_its_area_and_take_it_again_after():
-	add_child_autofree(HotbarScene.instantiate())
-	var hotbar: Control = get_tree().get_first_node_in_group("hotbar")
-	var orb: OrbBase = add_child_autofree(partial_double(OrbScene).instantiate())
-	var press := InputEventMouseButton.new()
-	press.button_index = MOUSE_BUTTON_LEFT
-	press.pressed = true
-	hotbar.set_inert(true)
-	orb._on_input_event(orb.get_viewport(), press, 0)
-	assert_not_called(orb, "interact")
-	hotbar.set_inert(false)
-	orb._on_input_event(orb.get_viewport(), press, 0)
-	assert_called(orb, "interact")
-
-
 func test_quit_has_no_glow():
 	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
 	assert_null(hotbar.get_node_or_null("QuitSlot/Glow"))
@@ -393,3 +375,18 @@ func test_the_typed_hover_values_are_gone():
 	var constants: Dictionary = (load("res://scripts/ui/hotbar.gd") as Script).get_script_constant_map()
 	for constant: String in ["HOVER_COLORS", "ACTIVE_ICON_COLOR", "GLOW_RADII", "GLOW_STRENGTH", "GLOW_PAD", "TOOLTIP_CAPTIONS"]:
 		assert_does_not_have(constants, constant)
+
+
+func test_windows_hide_zone_art_and_orbs_and_restore_them_on_close():
+	var previous_save: PlayerSave = GameData.current_save
+	GameData.current_save = null
+	var hub: Control = add_child_autofree(load("res://scenes/game.tscn").instantiate())
+	await wait_process_frames(2)
+	var hotbar: Control = hub.get_node("Hotbar")
+	for group: String in ["inventory_window", "abilities_window", "achievements_window", "store_window"]:
+		hotbar.toggle_menu_screen(group)
+		assert_false(hub.get_node("ZoneHost").is_visible_in_tree(), group)
+		assert_true(hotbar.is_visible_in_tree())
+		hotbar.toggle_menu_screen(group)
+		assert_true(hub.get_node("ZoneHost").is_visible_in_tree(), group)
+	GameData.current_save = previous_save

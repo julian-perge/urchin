@@ -249,3 +249,16 @@ This tool checks how it looks: the art, the fills and the shadows.
   frame shows one face in all three rows.
 - **Captures load as they are.** The godot-mcp captures are sRGB at the Stage
   size, 800x575. The tool refuses any other size.
+- **The Hub score covers static chrome.** The `hub` entry uses
+  `test/fixtures/screen_rects/hub_chrome.tscn`: Prison art and the hotbar.
+  `SCENES.compare_strip` removes the fade (2837), Windows, card, banners,
+  tooltip, animated orbs and member bars from frame 181. Orb positions,
+  scales and button rects are checked in all seven zone records instead.
+  The first score is p99 37, with the 20 px control at 195. Two things in the
+  diff are not port faults to fix here. The port draws the Options and Re-Spec
+  icons at half alpha, and their behavior stays with their own tasks. ffdec
+  cuts the zone fill's Glow off at a hard box, (496, 506.5) 269.25x31.75, when
+  it renders the fill inside sprite 3149, whose placement has a DropShadow.
+  Flash Player draws a soft glow there, as `references/sonny2_zone1_prison.png`
+  shows, and so does the port, from the fill rendered alone. Do not re-extract
+  `zone_fill.png` from the root frame to lower this score.

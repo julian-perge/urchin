@@ -20,6 +20,9 @@ func _enter_tree():
 
 
 func _ready():
+	for window: CanvasItem in get_tree().get_nodes_in_group("menu_screen"):
+		window.visibility_changed.connect(_sync_art_visibility)
+	_sync_art_visibility()
 	ZoneManager.zone_changed.connect(_load_zone)
 	_load_zone(ZoneManager.current_zone)
 	AudioManagerAuto.play_menu_music()
@@ -46,3 +49,15 @@ func _load_zone(zone_id: int) -> void:
 		return
 	_current_zone_scene = load(scene_path).instantiate()
 	zone_host.add_child(_current_zone_scene)
+
+
+func set_art_visible(art_visible: bool) -> void:
+	zone_host.visible = art_visible
+
+
+func _sync_art_visibility() -> void:
+	var art_visible: bool = true
+	for window: CanvasItem in get_tree().get_nodes_in_group("menu_screen"):
+		if window.visible:
+			art_visible = false
+	set_art_visible(art_visible)

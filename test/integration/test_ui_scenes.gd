@@ -7,18 +7,6 @@ const MainMenuScene = preload("res://scenes/main_menu.tscn")
 const GameScene = preload("res://scenes/game.tscn")
 const ACHIEVEMENTS_FILE = "user://test_ui_scenes_achievements.cfg"
 
-# Story-orb positions extracted from the original SWF's zone-hub sprite
-# (sprite 3287) - the scenes must match the source exactly.
-const EXPECTED_STORY_POSITIONS = {
-	1: Vector2(486.9, 250.7),
-	2: Vector2(499.8, 236.7),
-	3: Vector2(402.8, 267.6),
-	4: Vector2(420.6, 210.2),
-	5: Vector2(476.5, 170.8),
-	6: Vector2(526.8, 202.6),
-	7: Vector2(526.8, 202.6),
-}
-
 
 func before_each():
 	GameData.current_save = PlayerSave.new_game("UiTest", 0)
@@ -721,6 +709,7 @@ func _clear_test_slots() -> void:
 
 
 func test_all_zone_scenes_have_source_accurate_orbs():
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://test/fixtures/screen_rects.json"))
 	for zone_id in range(1, 8):
 		var path = str(ZoneManager.ZONES[zone_id]["scene"])
 		assert_true(ResourceLoader.exists(path), "zone %d scene exists" % zone_id)
@@ -731,18 +720,13 @@ func test_all_zone_scenes_have_source_accurate_orbs():
 		assert_not_null(story)
 		assert_not_null(store)
 		assert_eq(zone.has_node("TrainingFight"), zone_id != 7, "zone %d training orb" % zone_id)
-		var expected: Vector2 = EXPECTED_STORY_POSITIONS[zone_id]
+		var position: Array = record["scenes"][path]["pieces"]["StoryFight"]["position"]
+		var expected := Vector2(position[0], position[1])
 		assert_almost_eq(story.position.x, expected.x, 0.1, "zone %d story orb x" % zone_id)
 		assert_almost_eq(story.position.y, expected.y, 0.1, "zone %d story orb y" % zone_id)
 		assert_not_null(zone.get_node("HubArt").texture, "zone %d hub art loads" % zone_id)
 
 
-# Zone 7 is the JAPAN frame of the hub sprite 3287 (Krin.zoneName,
-# frame_41/DoAction_2.as:25), and every frame under that label places two
-# orbs, the story orb under DefineButton2_3243 and the shop orb under 3256,
-# each at its button's position with the sprite at (400, 222.9). It places no
-# training orb at any depth, because the ROME training orb, 3242 at depth 56,
-# is removed at frame 86 and nothing replaces it.
 func test_zone_7_has_only_the_orbs_the_japan_frame_places():
 	var zone = add_child_autofree(load(str(ZoneManager.ZONES[7]["scene"])).instantiate())
 	var orbs: Dictionary = {}
@@ -752,10 +736,6 @@ func test_zone_7_has_only_the_orbs_the_japan_frame_places():
 	assert_eq(orbs.keys(), ["StoryFight", "ItemStore"], "the story and shop orbs and nothing else")
 	assert_true(orbs.get("StoryFight") is StoryFightOrb, "the story orb fights the next story battle")
 	assert_true(orbs.get("ItemStore") is ItemStoreOrb, "the shop orb opens the store")
-	var positions: Dictionary = {"StoryFight": Vector2(526.8, 202.55), "ItemStore": Vector2(139.65, 264.8)}
-	for orb_name in positions:
-		if orbs.has(orb_name):
-			assert_almost_eq(orbs[orb_name].position, positions[orb_name], Vector2(0.1, 0.1), "%s position" % orb_name)
 
 
 func test_game_shell_hosts_current_zone():

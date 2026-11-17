@@ -195,6 +195,17 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 	var pieces: Dictionary = scene["pieces"]
 	for path: String in pieces:
 		var entry: Dictionary = pieces[path]
+		if entry["kind"] == "point":
+			var point: Node2D = root.get_node_or_null(path) as Node2D
+			if point == null:
+				found.append("%s: no such Node2D" % path)
+			else:
+				var expected := Vector2(entry["position"][0], entry["position"][1])
+				if not (_close(point.global_position.x, expected.x) and _close(point.global_position.y, expected.y)):
+					found.append("%s: position %s, expected %s" % [path, point.global_position, expected])
+				if not point.scale.is_equal_approx(Vector2(entry["scale"][0], entry["scale"][1])):
+					found.append("%s: scale differs" % path)
+			continue
 		var node: Control = root.get_node_or_null(path) as Control
 		if node == null:
 			found.append("%s: no such Control in the scene" % path)
@@ -202,7 +213,7 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 		# The record holds Stage positions. A scene such as right_column.tscn
 		# puts its root where the SWF puts the piece, so the root's own
 		# position counts.
-		var actual := Rect2(node.global_position, node.size)
+		var actual := node.get_global_rect()
 		match entry["kind"]:
 			"outline":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
@@ -249,7 +260,9 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 			"hit", "button":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
-				if not node is BaseButton:
+				# An orb takes its clicks through a plain Control (orb_base.gd), so
+				# its hit piece is the one that does not have to be a button.
+				if not (node is BaseButton or node.get_parent() is OrbBase):
 					found.append("%s: a %s piece that is not a button" % [path, entry["kind"]])
 			_:
 				found.append("%s: unknown kind %s" % [path, entry["kind"]])
@@ -417,6 +430,22 @@ func test_control_a_hit_button_moved_20_px_fails() -> void:
 	var found: Array[String] = _scene_problems(root, _shell_record())
 	assert_eq(found.size(), 2, str(found))
 	assert_string_contains(found[0] if found else "", "CloseButton: top left")
+
+
+func test_control_a_hit_piece_that_is_a_plain_control_fails() -> void:
+	var root: Control = await _laid_out(SHELL_SCENE)
+	var button: Control = root.get_node("CloseButton")
+	var plain := Control.new()
+	plain.position = button.position
+	plain.size = button.size
+	var parent: Node = button.get_parent()
+	var index: int = button.get_index()
+	parent.remove_child(button)
+	button.free()
+	plain.name = "CloseButton"
+	parent.add_child(plain)
+	parent.move_child(plain, index)
+	_assert_one_problem(_scene_problems(root, _shell_record()), "CloseButton: a hit piece that is not a button")
 
 
 func test_control_the_wrong_art_fails() -> void:
@@ -738,3 +767,16 @@ func test_control_an_inventory_outline_with_fill_or_shadow_fails() -> void:
 	style.draw_center = false
 	style.shadow_size = 5
 	_assert_one_problem(_scene_problems(root, _record()["scenes"][INVENTORY_SCENE]), "outline has a shadow")
+
+
+func test_control_a_zone_orb_moved_20_px_fails() -> void:
+	var path: String = "res://scenes/zones/zone1_prison.tscn"
+	var scenes: Dictionary = _record()["scenes"]
+	assert_has(scenes, path)
+	if not scenes.has(path):
+		return
+	var root: Control = await _laid_out(path)
+	(root.get_node("StoryFight") as Node2D).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, scenes[path])
+	assert_gt(found.size(), 0)
+	assert_string_contains(found[0] if found else "", "StoryFight")
