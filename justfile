@@ -303,3 +303,8 @@ extract-window-chrome *args: (require "ffdec" "java")
 [group('trace')]
 trace-swf build: (require "ffdec" "java")
     uv run trace_swf "$@"
+
+[doc('Print the distinct gotos that one Trace log has and the other lacks: just trace-diff <log a> <log b>')]
+[group('trace')]
+trace-diff log_a log_b:
+    uv run trace_diff "$@"
