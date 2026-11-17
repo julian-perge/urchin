@@ -6,7 +6,7 @@ import json
 from dataclasses import replace
 
 import pytest
-from urchin_dev import REPO_ROOT
+from urchin_dev import ACTION_SCRIPT, REPO_ROOT
 from urchin_dev.swf.extract import hotbar_icons, screen_rects
 from urchin_dev.swf.swf_index import ButtonRecord, DropShadow, EditText, StyleSet
 
@@ -734,3 +734,26 @@ def test_text_record_of_one_line_of_static_text_holds_its_text_without_the_parag
 def test_text_record_of_a_field_the_game_fills_holds_no_text():
     entry = screen_rects.text_record(field(), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
     assert "text" not in entry
+
+
+# The info spots of zones 1 to 5: each button's press script calls
+# krinNavHideUI(n) with the n that ZONE_SPOTS names it by. Neither the depth nor
+# the button id runs in the order of n, so a typed pair that is off by one
+# would still pass the rect test, which reads the record the pair builds.
+def test_each_info_spot_names_the_number_its_button_press_shows():
+    shown = {}
+    for zone, spots in enumerate(screen_rects.ZONE_SPOTS, 1):
+        for n, (_depth, button) in spots.items():
+            script = (
+                ACTION_SCRIPT
+                / f"DefineButton2_{button}"
+                / "BUTTONCONDACTION on(press).as"
+            ).read_text()
+            assert script.split() == [
+                "on(press){",
+                f"_root.krinNavHideUI({n});",
+                "}",
+            ], f"zone {zone} spot {n}, button {button}"
+            shown[n] = zone
+    assert sorted(shown) == list(range(1, 21))
+    assert [n for n, zone in shown.items() if zone > 5] == []

@@ -3650,6 +3650,42 @@
      "texture": "res://assets/backgrounds/hub/PRISON.png",
      "zoom": 4.0
     },
+    "InfoSpot1": {
+     "kind": "hit",
+     "rect": [
+      148.8178,
+      238.9909,
+      48.6644,
+      51.2183
+     ]
+    },
+    "InfoSpot2": {
+     "kind": "hit",
+     "rect": [
+      457.9178,
+      367.2409,
+      48.6644,
+      51.2183
+     ]
+    },
+    "InfoSpot3": {
+     "kind": "hit",
+     "rect": [
+      467.0678,
+      119.2409,
+      48.6644,
+      51.2183
+     ]
+    },
+    "InfoSpot4": {
+     "kind": "hit",
+     "rect": [
+      197.5178,
+      68.0409,
+      48.6644,
+      51.2183
+     ]
+    },
     "ItemStore": {
      "kind": "point",
      "position": [
@@ -3748,6 +3784,51 @@
      ],
      "texture": "res://assets/backgrounds/hub/VILLAGE.png",
      "zoom": 4.0
+    },
+    "InfoSpot5": {
+     "kind": "hit",
+     "rect": [
+      119.6871,
+      250.9813,
+      70.7259,
+      74.4374
+     ]
+    },
+    "InfoSpot6": {
+     "kind": "hit",
+     "rect": [
+      393.6678,
+      304.2409,
+      48.6644,
+      51.2183
+     ]
+    },
+    "InfoSpot7": {
+     "kind": "hit",
+     "rect": [
+      595.9375,
+      291.266,
+      174.1251,
+      105.168
+     ]
+    },
+    "InfoSpot8": {
+     "kind": "hit",
+     "rect": [
+      639.1784,
+      46.8034,
+      67.6433,
+      71.1932
+     ]
+    },
+    "InfoSpot9": {
+     "kind": "hit",
+     "rect": [
+      494.6678,
+      56.7909,
+      48.6644,
+      51.2183
+     ]
     },
     "ItemStore": {
      "kind": "point",
@@ -3848,6 +3929,42 @@
      "texture": "res://assets/backgrounds/hub/TRAIN.png",
      "zoom": 4.0
     },
+    "InfoSpot10": {
+     "kind": "hit",
+     "rect": [
+      259.6678,
+      214.9909,
+      48.6644,
+      51.2183
+     ]
+    },
+    "InfoSpot11": {
+     "kind": "hit",
+     "rect": [
+      331.006,
+      205.8215,
+      35.988,
+      35.0569
+     ]
+    },
+    "InfoSpot12": {
+     "kind": "hit",
+     "rect": [
+      514.7339,
+      130.9909,
+      74.5322,
+      51.2183
+     ]
+    },
+    "InfoSpot13": {
+     "kind": "hit",
+     "rect": [
+      434.6973,
+      216.4026,
+      23.6055,
+      22.9948
+     ]
+    },
     "ItemStore": {
      "kind": "point",
      "position": [
@@ -3947,6 +4064,33 @@
      "texture": "res://assets/backgrounds/hub/TUNNELS.png",
      "zoom": 4.0
     },
+    "InfoSpot14": {
+     "kind": "hit",
+     "rect": [
+      27.552,
+      189.8382,
+      56.396,
+      44.0236
+     ]
+    },
+    "InfoSpot15": {
+     "kind": "hit",
+     "rect": [
+      282.6154,
+      303.8678,
+      112.5691,
+      57.9643
+     ]
+    },
+    "InfoSpot16": {
+     "kind": "hit",
+     "rect": [
+      569.7238,
+      173.8382,
+      44.5523,
+      44.0236
+     ]
+    },
     "ItemStore": {
      "kind": "point",
      "position": [
@@ -4045,6 +4189,42 @@
      ],
      "texture": "res://assets/backgrounds/hub/CITY.png",
      "zoom": 4.0
+    },
+    "InfoSpot17": {
+     "kind": "hit",
+     "rect": [
+      92.7372,
+      115.751,
+      108.3257,
+      54.2981
+     ]
+    },
+    "InfoSpot18": {
+     "kind": "hit",
+     "rect": [
+      92.7406,
+      215.7282,
+      102.6187,
+      80.2437
+     ]
+    },
+    "InfoSpot19": {
+     "kind": "hit",
+     "rect": [
+      512.7691,
+      367.1057,
+      80.1617,
+      34.3886
+     ]
+    },
+    "InfoSpot20": {
+     "kind": "hit",
+     "rect": [
+      447.9191,
+      56.6874,
+      80.1617,
+      52.3251
+     ]
     },
     "ItemStore": {
      "kind": "point",

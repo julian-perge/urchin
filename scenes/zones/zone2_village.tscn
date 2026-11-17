@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/zones/zone_scene.gd" id="1_zone"]
 [ext_resource type="Texture2D" path="res://assets/backgrounds/hub/VILLAGE.png" id="2_bg"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://c1b7lb4ellb4y" path="res://scripts/ui/fight_orb.gd" id="4_story"]
 [ext_resource type="Script" uid="uid://btdh4sbo1pnkw" path="res://scripts/ui/store_orb.gd" id="5_store"]
 [ext_resource type="Script" uid="uid://dkxcijni1mbpc" path="res://scripts/ui/training_orb.gd" id="6_train"]
+[ext_resource type="Script" path="res://scripts/ui/info_spot.gd" id="7_spot"]
 
 [node name="Zone2" type="Control"]
 layout_mode = 3
@@ -41,6 +42,66 @@ script = ExtResource("5_store")
 position = Vector2(126.2, 122.0)
 scale = Vector2(1.0, 1.0)
 script = ExtResource("6_train")
+
+[node name="InfoSpot9" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 494.6678
+offset_top = 56.7909
+offset_right = 543.3322
+offset_bottom = 108.0092
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 9
+
+[node name="InfoSpot7" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 595.9375
+offset_top = 291.266
+offset_right = 770.0626
+offset_bottom = 396.434
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 7
+
+[node name="InfoSpot8" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 639.1784
+offset_top = 46.8034
+offset_right = 706.8217
+offset_bottom = 117.9966
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 8
+
+[node name="InfoSpot6" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 393.6678
+offset_top = 304.2409
+offset_right = 442.3322
+offset_bottom = 355.4592
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 6
+
+[node name="InfoSpot5" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 119.6871
+offset_top = 250.9813
+offset_right = 190.413
+offset_bottom = 325.4187
+focus_mode = 0
+mouse_default_cursor_shape = 2
+action_mode = 0
+script = ExtResource("7_spot")
+spot = 5
 
 [node name="Control" parent="ItemStore" index="5"]
 layout_mode = 0

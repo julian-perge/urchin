@@ -139,6 +139,10 @@ class Piece:
     # The depth, or the instance name, that places the same piece on the same
     # frame of the Steam build, for a piece the port puts where that build does.
     steam: int | str | None = None
+    # The id of the character the placement must hold. A piece whose depth
+    # the record types by hand names it, so a depth that points at another
+    # character fails here and not in a rect that moved with it.
+    character: int | None = None
 
     def __post_init__(self) -> None:
         if (self.depth is None) == (self.instance is None):
@@ -583,7 +587,24 @@ ZONE_ORBS = (
     {"StoryFight": (27, 31), "ItemStore": (58, 62), "TrainingFight": (52, 56)},
     {"StoryFight": (26, 30), "ItemStore": (32, 36)},
 )
-for zone, (slug, orbs) in enumerate(zip(ZONE_SCENES, ZONE_ORBS, strict=True), 1):
+# The info spots of zones 1 to 5, by the number n of the NAVTITLE[n] and
+# NAVTEXT[n] that the spot's press shows, each as (depth, button id). The
+# buttons hold a hit shape and nothing else, and the zone's frame places no
+# orb sprite on them. Neither the depth nor the button id runs in the order of
+# n, so dev/tests/test_screen_rects.py reads each button's press script for its
+# n. Zones 6 and 7 have none.
+ZONE_SPOTS = (
+    {1: (39, 3193), 2: (41, 3192), 3: (43, 3191), 4: (45, 3190)},
+    {5: (66, 3207), 6: (64, 3208), 7: (60, 3210), 8: (62, 3209), 9: (58, 3211)},
+    {10: (58, 3218), 11: (62, 3216), 12: (60, 3217), 13: (64, 3215)},
+    {14: (58, 3237), 15: (62, 3235), 16: (60, 3236)},
+    {17: (60, 3201), 18: (58, 3202), 19: (62, 3200), 20: (64, 3199)},
+    {},
+    {},
+)
+for zone, (slug, orbs, spots) in enumerate(
+    zip(ZONE_SCENES, ZONE_ORBS, ZONE_SPOTS, strict=True), 1
+):
     SCENES[f"res://scenes/zones/{slug}.tscn"] = Scene(
         timeline=zone_hub.HUB_SPRITE,
         frame=zone_hub.ZONE_LABELS[zone],
@@ -595,6 +616,10 @@ for zone, (slug, orbs) in enumerate(zip(ZONE_SCENES, ZONE_ORBS, strict=True), 1)
             **{
                 f"{name}/Control": Piece("hit", depths[1])
                 for name, depths in orbs.items()
+            },
+            **{
+                f"InfoSpot{n}": Piece("hit", depth, character=button)
+                for n, (depth, button) in spots.items()
             },
         },
         port_only=tuple(
@@ -1233,6 +1258,11 @@ def scene_record(
     for path, piece in scene.pieces.items():
         where = piece.depth if piece.instance is None else piece.instance
         layer = placed_layer(layers, where, path, scene.frame)
+        if piece.character is not None and layer.character_id != piece.character:
+            raise ValueError(
+                f"{path}: depth {where} of frame {scene.frame} holds character"
+                f" {layer.character_id}, not {piece.character}"
+            )
         placed = layer
         piece_origin = origin
         sprite_origins = {}
