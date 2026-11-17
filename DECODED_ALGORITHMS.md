@@ -153,7 +153,7 @@ Ported: `BattleRunner._resolve_dispels` takes slots in `CombatUnit.buff_slots` o
 
 ## Buff icon row (frame_42/DoAction_10.as `applyChangesKrin`, lines 345-379)
 
-Ported: `UnitOverlay.refresh_buffs` (`scripts/battle/unit_overlay.gd`).
+Ported: `StatusBar.refresh_buffs` (`scripts/battle/status_bar.gd`). The row used to be `UnitOverlay.refresh_buffs`, which julian-perge/urchin#67 deleted.
 
 - `applyChangesKrin` redraws a unit's row right after its sort. For each of slots 0 to 6 of `BUFFARRAYK` whose CD isn't 0, it attaches a `KrinBuffShower` (DefineSprite 104) to
   `p<playerID>BAR` at x = (110 + 17 * slot) times 1 for team 1 or -1 for team 2. It sets the clip's `buffCounter` text (edit text 66) to the CD, sends `buffIcon` to the frame named by

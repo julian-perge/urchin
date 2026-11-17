@@ -27,7 +27,7 @@ The framed text the Hub shows over everything, with a dim behind it, when the pl
 _Avoid_: Popup, dialog
 
 **HUD**:
-The Battle screen's status elements drawn over the hall: unit overlays, member bars, the top status bar and the speech box.
+The status elements of the Battle screen: the top status bar, the member rows, the unit overlays (a hover ring and a hit zone over each fighter) and the speech box.
 _Avoid_: Overlay, battle UI
 
 **Status bar**:

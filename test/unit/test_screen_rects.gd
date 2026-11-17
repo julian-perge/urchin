@@ -1094,8 +1094,8 @@ func test_control_a_top_status_bar_piece_moved_20_px_fails() -> void:
 
 
 # The member rows are two copies of one scene, so each kind of piece is moved on
-# both: the row and its name. A moved row
-# moves its parts too, so the problem list has to name the piece that moved.
+# both: the row and its name. A moved row moves its parts too, so the problem
+# list has to name the piece that moved.
 func test_control_a_member_row_piece_moved_20_px_fails() -> void:
 	var pieces: Array[String] = []
 	for row: String in ["Row5", "Row3"]:

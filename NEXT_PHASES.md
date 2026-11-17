@@ -131,6 +131,7 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   **Deferred, not fixed** (all cosmetic, low-value): the hover-ring's fade tween still fires (a 0-length no-op) on every mouse enter/exit during an AI turn, harmless but wasteful; the combat log
   panel, when toggled on, can visually overlap and swallow clicks on slot 5's unit overlay (low impact since the log is off by default); `BottomBar/Backdrop`'s texture is stretched slightly larger
   than the Panel1-3 region it was measured against - worth an eyes-on check, not a code fix.
+  Both are gone since julian-perge/urchin#67: `BottomBar/Backdrop` no longer exists, and the combat log opens over the bar's right panel, not over a fighter.
 
 - **Item click-n-drag** - **DONE (2026-08-18)**, project owner request 2026-07-18. See `.claude/plan_item_drag_and_drop.md` for the full task breakdown. `ItemSlot` is both drag source
   (`_get_drag_data`, a semi-transparent 31x31 preview) and drop target (`_can_drop_data`/`_drop_data`) via Godot's built-in Control drag API - inventory<->inventory swaps, inventory<->equip
