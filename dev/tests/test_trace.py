@@ -1,12 +1,24 @@
 # Tests trace.py with probe files and Trace logs in a temporary folder, and
 # with the goto Probe of dev/probes/. No SWF, ffdec or player is needed.
+#
+# The last tests check the committed Trace logs in references/traced_runs/.
+# Each hub, hall and sky goto of a log must go to the label that battles.json
+# or Krin.zoneName gives for the route, that label must be one the matching
+# goto record of label_xref.json selects, and in a web log the clip must land
+# on that label's frame. Every label and frame comes from those files and the
+# tracked export, so the test reads no SWF and no XML dump.
 from __future__ import annotations
 
+import json
 import re
 
 import pytest
+from urchin_dev import ACTION_SCRIPT, CONVERTED_JSON
+from urchin_dev.swf.label_xref import load_value_sets
 from urchin_dev.swf.trace import (
+    HOOK_LINE,
     PROBES,
+    TRACED_RUNS,
     DiffRecord,
     Goto,
     diff,
@@ -367,3 +379,130 @@ def test_trace_run_exits_with_its_usage_for_wrong_arguments(args):
         run_main(args)
 
     assert stop.value.code == "usage: trace_run <web|steam> <flash|ruffle>"
+
+
+# The route of each Traced run: the battles it fights, in order, and the zone
+# of the hub it ends on. spec/5-trace-the-original.md gives the route.
+RUNS = {
+    "web_flash": (2, 100),
+    "steam_flash": (2, 100),
+    "web_ruffle": (100,),
+    "steam_ruffle": (100,),
+}
+HUB_ZONE = 1
+
+# A run whose Trace log is not committed, with the URL of the #5 comment that
+# records where the run stopped. Add a run here only when that comment exists.
+MISSING: dict[str, str] = {}
+MISSING_COMMENT = re.compile(
+    r"https://github\.com/julian-perge/urchin/issues/5#issuecomment-\d+"
+)
+
+HALL_CLIP = "_level0.BATTLESCREEN"
+HUB_CLIP = "_level0.KrinScreen"
+# The sky clip has no instance name, so the player names it instanceN.
+SKY_CLIP = re.compile(r"_level0\.instance\d+")
+
+
+@pytest.fixture(scope="module")
+def xref():
+    return json.loads((CONVERTED_JSON / "label_xref.json").read_text())
+
+
+@pytest.fixture(scope="module")
+def route_labels():
+    """-> {value set name: {battle id or zone index: label}}."""
+    values = load_value_sets(ACTION_SCRIPT, CONVERTED_JSON / "battles.json")
+    return {
+        name: dict(values[name])
+        for name in ("zone_background", "sky_background", "zone_name")
+    }
+
+
+def folded(labels):
+    return [label.casefold() for label in labels]
+
+
+def read_log(run):
+    log = TRACED_RUNS / f"{run}.txt"
+    if not log.is_file():
+        assert run in MISSING, f"no Trace log at {log}, and MISSING does not list {run}"
+        pytest.skip(f"{run} is in MISSING: {MISSING[run]}")
+    return log.read_text(encoding="utf-8")
+
+
+def route_gotos(gotos, xref):
+    """-> {value set name: the gotos of the log that select from it, in order}."""
+    sky_sprite = xref["value_sets"]["sky_background"]["sprite"]
+    sky_labels = {
+        label["label"].casefold()
+        for label in xref["labels"]
+        if label["sprite"] == sky_sprite
+    }
+    return {
+        "zone_background": [goto for goto in gotos if goto.clip == HALL_CLIP],
+        "sky_background": [
+            goto
+            for goto in gotos
+            if goto.kind == "stop"
+            and SKY_CLIP.fullmatch(goto.clip)
+            and goto.target.casefold() in sky_labels
+        ],
+        "zone_name": [goto for goto in gotos if goto.clip == HUB_CLIP],
+    }
+
+
+def test_every_missing_trace_log_names_a_run_and_its_comment_on_issue_5():
+    for run, url in MISSING.items():
+        assert run in RUNS
+        assert MISSING_COMMENT.fullmatch(url), f"{run}: {url}"
+
+
+@pytest.mark.parametrize("run", RUNS)
+def test_the_trace_log_has_the_hook_line(run):
+    lines = read_log(run).splitlines()
+
+    assert any(HOOK_LINE in line for line in lines), f"{run} has no HOOK line"
+
+
+@pytest.mark.parametrize("run", RUNS)
+def test_the_hall_and_sky_gotos_go_to_the_labels_of_the_run_battles(
+    run, xref, route_labels
+):
+    gotos = route_gotos(parse(read_log(run)), xref)
+
+    for name in ("zone_background", "sky_background"):
+        expected = [route_labels[name][battle] for battle in RUNS[run]]
+        assert folded(goto.target for goto in gotos[name]) == folded(expected), name
+
+
+@pytest.mark.parametrize("run", RUNS)
+def test_every_hub_goto_goes_to_the_name_of_the_hub_zone(run, xref, route_labels):
+    hub = route_gotos(parse(read_log(run)), xref)["zone_name"]
+
+    assert hub
+    assert set(folded(goto.target for goto in hub)) == {
+        route_labels["zone_name"][HUB_ZONE].casefold()
+    }
+
+
+@pytest.mark.parametrize("run", RUNS)
+def test_each_route_target_is_selected_by_the_goto_record_of_its_value_set(run, xref):
+    for name, gotos in route_gotos(parse(read_log(run)), xref).items():
+        (record,) = [goto for goto in xref["gotos"] if goto.get("via") == name]
+        selects = set(folded(label for _sprite, label in record["selects"]))
+        for goto in gotos:
+            assert goto.target.casefold() in selects, (name, goto)
+
+
+@pytest.mark.parametrize("run", [run for run in RUNS if run.startswith("web_")])
+def test_each_route_goto_of_a_web_log_lands_on_the_frame_of_its_label(run, xref):
+    for name, gotos in route_gotos(parse(read_log(run)), xref).items():
+        sprite = xref["value_sets"][name]["sprite"]
+        frames = {
+            label["label"].casefold(): label["frame"]
+            for label in xref["labels"]
+            if label["sprite"] == sprite
+        }
+        for goto in gotos:
+            assert goto.after == frames[goto.target.casefold()], (name, goto)
