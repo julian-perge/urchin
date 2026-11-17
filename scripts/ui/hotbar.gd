@@ -177,12 +177,14 @@ func hover_frame(slot: String) -> int:
 
 
 # The port's form of the original's Krin.PauseForScreen. While it is set, a
-# click on a hotbar button or on an orb does nothing
+# click on a hotbar button, on an orb or on an info spot does nothing
 # (DefineButton2_3178/BUTTONCONDACTION on(release).as:2 for Quit,
-# DefineButton2_3188/BUTTONCONDACTION on(press).as:2 for an orb). The roll over
-# still plays. An orb reads is_inert() on each click (orb_base.gd), so an orb
-# made while it is set is inert too. Nothing sets it until the Victory Window
-# does (#241).
+# DefineButton2_3188/BUTTONCONDACTION on(press).as:2 for an orb). The original's
+# info spot has no such check at the button, because its press calls
+# krinNavHideUI, which toggles on PauseForScreen. The port's spot ignores the
+# press instead. The roll over still plays. An orb and an info spot read
+# is_inert() on each click (orb_base.gd, info_spot.gd), so one made while it is
+# set is inert too. Nothing sets it until the Victory Window does (#241).
 func set_inert(inert: bool) -> void:
 	_inert = inert
 	for button: BaseButton in find_children("*", "BaseButton"):
