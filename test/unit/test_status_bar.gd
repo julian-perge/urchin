@@ -52,6 +52,23 @@ func _advance(bar: StatusBar, frames: int) -> void:
 		bar.advance_frame()
 
 
+# How many frames a smoother plays from `first_frame` to the frame whose script
+# does `role`, read from the record.
+func _frames_to(smoother: String, role: String, first_frame: int = 1) -> int:
+	var scripts: Dictionary = StatusBar.record()["smoothers"][smoother]["scripts"]
+	for frame: String in scripts:
+		if scripts[frame] == role:
+			return int(frame) - first_frame
+	fail_test("%s has no %s frame" % [smoother, role])
+	return 0
+
+
+# How many frames a gain plays: it starts at the healSmooth label.
+func _gain_frames(smoother: String) -> int:
+	var label: int = int(StatusBar.record()["smoothers"][smoother]["labels"]["healSmooth"])
+	return _frames_to(smoother, "gain_end", label)
+
+
 func test_full_life_fills_the_bar_in_the_last_color_frame_and_shows_the_numbers() -> void:
 	var bar: StatusBar = _bar(1)
 	bar.show_status(_state(250.0, 250.0, 30.0, 50.0))
@@ -145,13 +162,31 @@ func test_a_loss_moves_the_fill_at_once_and_a_band_trails_it_and_ends_on_frame_1
 	assert_almost_eq(bar.life_band.size.x, _full_width("life") * 0.5, 0.01, "as wide as the loss")
 	assert_almost_eq(bar.life_band.position.x, bar.life_fill.position.x + bar.life_fill.size.x, 1.0, "from the fill's new end")
 	assert_eq(bar.life_band.modulate, _life_color(50), "in the color of the new life")
+	var frames: int = _frames_to("LifeBarSmoother", "loss_end")
 	_advance(bar, 8)
 	assert_lt(bar.life_band.size.x, _full_width("life") * 0.5, "it shrinks on each frame")
-	_advance(bar, 8)
-	assert_true(bar.life_band.visible, "it still shows on frame 17")
+	_advance(bar, frames - 9)
+	assert_true(bar.life_band.visible, "it still shows the frame before its end")
 	_advance(bar, 1)
-	assert_false(bar.life_band.visible, "and ends on frame 18")
+	assert_false(bar.life_band.visible, "and ends on its loss_end frame")
 	assert_almost_eq(bar.life_fill.size.x, _full_width("life") * 0.5, 0.001, "the fill stays")
+
+
+# lifeBarUpdate puts a smoother's x at the fill's width times a factor, less an
+# offset (frame_42/DoAction_8.as:316 and 341). The smoother places its colour clip
+# at the frame's x and x scale, and the bar clip places the smoother.
+func test_a_loss_band_starts_where_lifebarupdate_puts_the_smoother() -> void:
+	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0, 50.0, 50.0))
+	bar.show_status(_state(125.0, 250.0, 50.0, 50.0))
+	var record: Dictionary = StatusBar.record()
+	var factors: Dictionary = record["smoother_factors"]
+	var holder: Dictionary = record["bars"]["life"]
+	var art: Dictionary = record["art"]["life_fill"]
+	var first: Dictionary = record["smoothers"]["LifeBarSmoother"]["shown"][0]
+	var anchor: float = bar.life_fill.size.x * float(factors["x_factor"]) - float(factors["x_offset"])
+	var shape_left: float = float(art["rect"][0]) - float(art["origin"][0])
+	var left: float = anchor + 0.5 * (float(first["x"]) + float(first["x_scale"]) * shape_left)
+	assert_almost_eq(bar.life_band.position.x, float(holder["x"]) + float(holder["scale_x"]) * left, 0.001)
 
 
 func test_a_gain_after_a_loss_holds_the_fill_until_frame_36_of_its_smoother() -> void:
@@ -161,11 +196,11 @@ func test_a_gain_after_a_loss_holds_the_fill_until_frame_36_of_its_smoother() ->
 	assert_almost_eq(bar.life_fill.size.x, _full_width("life") * 0.5, 0.001, "the fill holds where the loss left it")
 	assert_eq(bar.life_fill.modulate, _life_color(80), "but takes the new color")
 	assert_true(bar.life_band.visible, "the band starts at the healSmooth label")
-	_advance(bar, 16)
-	assert_almost_eq(bar.life_fill.size.x, _full_width("life") * 0.5, 0.001, "still held on frame 35")
+	_advance(bar, _gain_frames("LifeBarSmoother") - 1)
+	assert_almost_eq(bar.life_fill.size.x, _full_width("life") * 0.5, 0.001, "still held the frame before")
 	assert_true(bar.life_band.visible)
 	_advance(bar, 1)
-	assert_almost_eq(bar.life_fill.size.x, _full_width("life") * 0.8, 0.001, "frame 36 sets the width")
+	assert_almost_eq(bar.life_fill.size.x, _full_width("life") * 0.8, 0.001, "its gain_end frame sets the width")
 	assert_false(bar.life_band.visible, "and ends the band")
 
 
@@ -192,28 +227,29 @@ func test_a_focus_loss_moves_the_fill_and_plays_the_blue_band() -> void:
 	assert_true(bar.focus_band.visible)
 	assert_eq(bar.focus_band.modulate, Color.html("#0099cc"), "in the Focus smoother's blue")
 	assert_false(bar.life_band.visible, "and the life has none")
-	_advance(bar, 18)
-	assert_false(bar.focus_band.visible, "it ends on frame 19")
+	_advance(bar, _frames_to("LifeBarSmoother2", "loss_end"))
+	assert_false(bar.focus_band.visible, "it ends on its loss_end frame")
 
 
 func test_a_focus_gain_holds_the_fill_until_frame_39_of_its_smoother() -> void:
 	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0, 50.0, 50.0))
 	bar.show_status(_state(250.0, 250.0, 10.0, 50.0))
 	bar.show_status(_state(250.0, 250.0, 30.0, 50.0))
-	_advance(bar, 18)
-	assert_almost_eq(bar.focus_fill.size.x, _full_width("focus") * 0.2, 0.001, "held on frame 38")
+	_advance(bar, _gain_frames("LifeBarSmoother2") - 1)
+	assert_almost_eq(bar.focus_fill.size.x, _full_width("focus") * 0.2, 0.001, "held the frame before")
 	_advance(bar, 1)
-	assert_almost_eq(bar.focus_fill.size.x, _full_width("focus") * 0.6, 0.001, "frame 39 sets the width")
+	assert_almost_eq(bar.focus_fill.size.x, _full_width("focus") * 0.6, 0.001, "its gain_end frame sets the width")
 
 
 func test_a_bar_that_runs_steps_its_clips_at_the_swf_frame_rate() -> void:
 	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0))
 	bar.show_status(_state(125.0, 250.0))
-	for step in 16:
+	var frames: int = _frames_to("LifeBarSmoother", "loss_end")
+	for step in frames - 1:
 		bar._process(1.0 / BattleScreenClip.fps())
-	assert_true(bar.life_band.visible, "16 frames in")
+	assert_true(bar.life_band.visible, "one frame before the end")
 	bar._process(1.0 / BattleScreenClip.fps())
-	assert_false(bar.life_band.visible, "17 frames in, which plays frame 18")
+	assert_false(bar.life_band.visible, "the next frame plays the loss_end frame")
 	assert_false(bar.is_processing(), "and the bar stops running")
 
 
@@ -225,15 +261,18 @@ func test_a_death_clears_on_frame_17_then_fades_5_a_frame_and_hides() -> void:
 	var fades: Array[float] = []
 	bar.death_faded.connect(func(alpha: float): fades.append(alpha))
 	watch_signals(bar)
-	_advance(bar, 16)
-	assert_true(bar.inner.visible, "not yet cleared on frame 16")
+	var death: Dictionary = StatusBar.record()["death"]
+	var clear_frame: int = int(death["clear_frame"])
+	var per_frame: float = float(death["fade_per_frame"]) / 100.0
+	_advance(bar, clear_frame - 1)
+	assert_true(bar.inner.visible, "not yet cleared the frame before")
 	_advance(bar, 1)
-	assert_false(bar.inner.visible, "cleared on frame 17")
+	assert_false(bar.inner.visible, "cleared on the clear frame")
 	assert_eq(bar.modulate.a, 1.0)
 	_advance(bar, 1)
-	assert_almost_eq(bar.modulate.a, 0.95, 0.001, "5 off the alpha the frame after")
-	_advance(bar, 19)
-	assert_eq(bar.modulate.a, 0.0, "to 0")
+	assert_almost_eq(bar.modulate.a, 1.0 - per_frame, 0.001, "its step off the alpha the frame after")
+	_advance(bar, roundi(1.0 / per_frame) - 1)
+	assert_almost_eq(bar.modulate.a, 0.0, 0.001, "to 0")
 	assert_true(bar.visible, "it hides on the frame after")
 	_advance(bar, 1)
 	assert_false(bar.visible)

@@ -55,6 +55,10 @@
   "slots": 7,
   "space": 17.0
  },
+ "death": {
+  "clear_frame": 17,
+  "fade_per_frame": 5
+ },
  "inner": {
   "frames": {
    "first": {
@@ -546,12 +550,12 @@
     "dead": 37,
     "healSmooth": 19
    },
-   "script_frames": [
-    18,
-    19,
-    36,
-    38
-   ],
+   "scripts": {
+    "18": "loss_end",
+    "19": "gain_color",
+    "36": "gain_end",
+    "38": "death_fade"
+   },
    "shown": [
     {
      "frame": 1,
@@ -818,10 +822,10 @@
    "labels": {
     "healSmooth": 20
    },
-   "script_frames": [
-    19,
-    39
-   ],
+   "scripts": {
+    "19": "loss_end",
+    "39": "gain_end"
+   },
    "shown": [
     {
      "color": "#0099cc",

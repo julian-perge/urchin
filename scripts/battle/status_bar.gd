@@ -22,22 +22,11 @@ class_name StatusBar
 
 const RECORD_PATH: String = "res://assets/ui/battle/top_bar/top_bar.json"
 const TEXTURE_DIR: String = "res://assets/ui/battle/top_bar/"
-# The death clear and fade (DefineSprite_57_LifeBarSmoother/frame_18 and
-# frame_38). The smoother starts at the death, and its frame 18 clears the bar 17
-# frames later. From the next frame on, its frame 38 takes this much off the bar's
-# alpha, out of 100, every frame, and hides the bar on the frame after the alpha
-# reaches 0.
-const DEATH_CLEAR_FRAME: int = 17
-const DEATH_FADE_PER_FRAME: int = 5
-# The smoothers' own names in top_bar.json, and what each one's frame scripts do,
-# in the order of their frames. A life smoother's frame 18 ends a loss, its frame
-# 19 colors a gain and its frame 36 ends a gain. Frame 38 is the death fade, which
-# die() counts. A Focus smoother's frame 19 ends a loss and its frame 39 ends a
-# gain.
+# The smoothers' own names in top_bar.json. Each smoother's record holds what its
+# frame scripts do, by frame number, and the record's `death` holds the frames and
+# the alpha of the death (DefineSprite_57_LifeBarSmoother/frame_18 and frame_38).
 const LIFE_SMOOTHER: String = "LifeBarSmoother"
 const FOCUS_SMOOTHER: String = "LifeBarSmoother2"
-const LIFE_SCRIPTS: Array[String] = ["loss_end", "gain_color", "gain_end", "death_fade"]
-const FOCUS_SCRIPTS: Array[String] = ["loss_end", "gain_end"]
 # The life bar's color clip has one frame for each whole percent from 0 to 100,
 # and the clip's frame number is the percent plus 1 (lifeBarUpdate,
 # frame_42/DoAction_8.as:339-340).
@@ -337,11 +326,12 @@ func advance_frame() -> void:
 
 func _advance_death() -> void:
 	_frames_since_death += 1
-	var frames_since_clear: int = _frames_since_death - DEATH_CLEAR_FRAME
+	var death: Dictionary = record()["death"]
+	var frames_since_clear: int = _frames_since_death - int(death["clear_frame"])
 	if frames_since_clear < 0:
 		return
 	clear_for_death()
-	var alpha_percent: int = 100 - DEATH_FADE_PER_FRAME * frames_since_clear
+	var alpha_percent: int = 100 - int(death["fade_per_frame"]) * frames_since_clear
 	modulate.a = maxi(alpha_percent, 0) / 100.0
 	death_faded.emit(modulate.a)
 	if alpha_percent < 0:
@@ -366,7 +356,7 @@ func _play_band(kind: String, change: float, maximum: float, share: float, full:
 		"anchor": fill.size.x * float(factors["x_factor"]) - float(factors["x_offset"]),
 		"scale": absf(change) / maximum if maximum > 0.0 else 0.0,
 		"color": _life_color(share) if kind == "life" else Color.WHITE,
-		"scripts": _scripts_of(kind, clip),
+		"scripts": _scripts_of(clip),
 		"target": full * share,
 	}
 	if change > 0.0:
@@ -378,13 +368,10 @@ func _play_band(kind: String, change: float, maximum: float, share: float, full:
 
 
 # Returns the frames that run a script, with what each one does.
-func _scripts_of(kind: String, clip: Dictionary) -> Dictionary:
-	var roles: Array[String] = LIFE_SCRIPTS if kind == "life" else FOCUS_SCRIPTS
-	var frames: Array = clip["script_frames"]
-	assert(frames.size() == roles.size(), "the %s smoother runs scripts on %s" % [kind, frames])
+func _scripts_of(clip: Dictionary) -> Dictionary:
 	var scripts: Dictionary = {}
-	for index in frames.size():
-		scripts[int(frames[index])] = roles[index]
+	for frame: String in clip["scripts"]:
+		scripts[int(frame)] = clip["scripts"][frame]
 	return scripts
 
 

@@ -127,11 +127,11 @@ def test_a_smoother_frame_is_the_colour_clip_at_an_x_and_a_scale_or_nothing():
     clip = layer(
         top_bar.LIFE_COLOR_CLIP, (0.5, 0.0, 0.0, 1.0, 1000, 0), name="LCC", ratio=3
     )
-    record = top_bar.smoother_record([{1: clip}, {}], {"dead": 2}, [2])
+    record = top_bar.smoother_record([{1: clip}, {}], {"dead": 2}, {2: "loss_end"})
     assert record == {
         "frames": 2,
         "labels": {"dead": 2},
-        "script_frames": [2],
+        "scripts": {"2": "loss_end"},
         "shown": [
             {"frame": 1, "shown": True, "x": 50.0, "x_scale": 0.5, "ratio": 3},
             {"frame": 2, "shown": False},
@@ -142,7 +142,44 @@ def test_a_smoother_frame_is_the_colour_clip_at_an_x_and_a_scale_or_nothing():
 def test_a_smoother_frame_that_moves_the_clip_up_is_refused():
     clip = layer(top_bar.LIFE_COLOR_CLIP, (1.0, 0.0, 0.0, 1.0, 0, 20), name="LCC")
     with pytest.raises(ValueError, match="places LCC"):
-        top_bar.smoother_record([{1: clip}], {}, [])
+        top_bar.smoother_record([{1: clip}], {}, {})
+
+
+# The four frame scripts of LifeBarSmoother, as the AS has them.
+LIFE_SMOOTHER_SCRIPTS = {
+    18: 'if(deadNow == true)\n{\n   this.gotoAndPlay("dead");\n'
+    '   _parent._parent._parent.inner.gotoAndStop("third");\n}\n'
+    "else\n{\n   removeMovieClip(this);\n}",
+    19: "LCC.gotoAndStop(stopper);",
+    36: "_parent._parent.lB._width = wsaver;\nremoveMovieClip(this);",
+    38: "if(_parent._parent._parent._alpha > 0)\n{\n"
+    '   _parent._parent._parent._alpha -= 5;\n   this.gotoAndPlay("dead");\n}\n'
+    "else\n{\n   _parent._parent._visible = false;\n   removeMovieClip(this);\n}",
+}
+
+
+def test_each_smoother_frame_script_is_given_its_role():
+    assert top_bar.smoother_roles(LIFE_SMOOTHER_SCRIPTS) == {
+        18: "loss_end",
+        19: "gain_color",
+        36: "gain_end",
+        38: "death_fade",
+    }
+    assert top_bar.smoother_roles({19: "removeMovieClip(this);"}) == {19: "loss_end"}
+    assert top_bar.smoother_roles({39: "_parent._parent.fB._width = wsaver;"}) == {
+        39: "gain_end"
+    }
+    with pytest.raises(ValueError, match="frame 5"):
+        top_bar.smoother_roles({5: "stop();"})
+
+
+def test_the_death_clears_the_frame_before_its_script_and_fades_by_the_amount_it_takes_off():
+    assert top_bar.death_record(LIFE_SMOOTHER_SCRIPTS) == {
+        "clear_frame": 17,
+        "fade_per_frame": 5,
+    }
+    with pytest.raises(ValueError, match="0 frames"):
+        top_bar.death_record({19: "LCC.gotoAndStop(stopper);"})
 
 
 RECORD = json.loads(top_bar.RECORD.read_text())

@@ -192,14 +192,54 @@ def life_colors(frames: list[dict[int, timeline.Layer]]) -> list[str]:
     return colors
 
 
+def smoother_roles(scripts: dict[int, str]) -> dict[int, str]:
+    """-> what each frame script of a smoother clip does, by frame number: it
+    ends a loss (`loss_end`), colours a gain (`gain_color`), ends a gain
+    (`gain_end`) or fades a dead bar (`death_fade`). A script that is none of
+    these is refused."""
+    roles = {}
+    for frame, script in sorted(scripts.items()):
+        text = script.strip()
+        if re.search(r"_alpha\s*-=\s*\d+", text):
+            roles[frame] = "death_fade"
+        elif re.fullmatch(r"LCC\.gotoAndStop\(stopper\);", text):
+            roles[frame] = "gain_color"
+        elif re.search(r"\.(?:lB|fB)\._width\s*=\s*wsaver;", text):
+            roles[frame] = "gain_end"
+        elif "deadNow" in text or text == "removeMovieClip(this);":
+            roles[frame] = "loss_end"
+        else:
+            raise ValueError(f"frame {frame} runs a script that is no known role")
+    return roles
+
+
+def death_record(scripts: dict[int, str]) -> dict:
+    """-> the death of the life smoother: the frames from its start to the clear
+    of the bar, and the alpha the fade takes off each frame. The clear is the
+    script that sends `inner` to its "third" frame, and the clip starts on frame
+    1, so it is that many frames after the start less one."""
+    clears = [f for f, s in scripts.items() if 'inner.gotoAndStop("third")' in s]
+    fades = {
+        f: int(m[1])
+        for f, s in scripts.items()
+        if (m := re.search(r"_alpha\s*-=\s*(\d+)", s))
+    }
+    if len(clears) != 1 or len(fades) != 1:
+        raise ValueError(
+            f"the death clears on {len(clears)} frames and fades on {len(fades)}, want 1 each"
+        )
+    return {"clear_frame": clears[0] - 1, "fade_per_frame": next(iter(fades.values()))}
+
+
 def smoother_record(
     frames: list[dict[int, timeline.Layer]],
     labels: dict[str, int],
-    script_frames: list[int],
+    roles: dict[int, str],
 ) -> dict:
-    """-> one smoother clip: its labels, the frames that run a script, and what
-    each frame shows. A smoother frame shows the colour clip under an x and an x
-    scale, or nothing. `ratio` is set on the frames that follow a gap."""
+    """-> one smoother clip: its labels, the role of each frame that runs a
+    script, and what each frame shows. A smoother frame shows the colour clip
+    under an x and an x scale, or nothing. `ratio` is set on the frames that
+    follow a gap."""
     shown = []
     for number, layers in enumerate(frames, start=1):
         if not layers:
@@ -227,7 +267,7 @@ def smoother_record(
     return {
         "frames": len(frames),
         "labels": dict(sorted(labels.items())),
-        "script_frames": script_frames,
+        "scripts": {str(frame): role for frame, role in sorted(roles.items())},
         "shown": shown,
     }
 
@@ -432,14 +472,20 @@ def main():
     for block in index.code:
         code[(block.kind, block.owner)].append(block.frame)
     smoothers = {}
+    smoother_scripts = {}
     for name in SMOOTHERS:
         sprite = index.exports[name]
+        folder = ACTION_SCRIPT / f"DefineSprite_{sprite}_{name}"
+        smoother_scripts[name] = {
+            frame: (folder / f"frame_{frame}" / "DoAction.as").read_text("utf-8")
+            for frame in sorted(code.get(("frame", sprite), []))
+        }
         smoothers[name] = {
             "character": sprite,
             **smoother_record(
                 timeline.frames(index, sprite),
                 timeline.labels(index, sprite),
-                sorted(code.get(("frame", sprite), [])),
+                smoother_roles(smoother_scripts[name]),
             ),
         }
 
@@ -486,6 +532,7 @@ def main():
         "life_color_frames": len(colors),
         "life_colors": colors,
         "smoothers": smoothers,
+        "death": death_record(smoother_scripts[SMOOTHERS[0]]),
         "smoother_factors": smoother_factors(LIFE_BAR_SCRIPT.read_text("utf-8")),
         "buff_row": {
             **buff_row_constants(BUFF_ROW_SCRIPT.read_text("utf-8")),

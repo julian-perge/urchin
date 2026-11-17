@@ -204,6 +204,16 @@ func _play_out_the_hit() -> void:
 		_doll._process(1.0 / 30.0)
 
 
+# The frame that clears a dead bar and the alpha the fade takes off each frame
+# after it, as top_bar.json records them.
+func _clear_frame() -> int:
+	return int(StatusBar.record()["death"]["clear_frame"])
+
+
+func _fade_per_frame() -> float:
+	return float(StatusBar.record()["death"]["fade_per_frame"]) / 100.0
+
+
 # Steps the presenter and its doll by `count` frames at the original's 30 fps.
 func _step_frames(count: int) -> void:
 	for frame in count:
@@ -513,10 +523,10 @@ func test_a_move_result_that_kills_plays_the_death_voice_and_not_the_hit_voice()
 # frame 18, 17 frames later, removes the buff icons and sends the bar's inner
 # clip to its empty "third" frame, which takes the name and the numbers away
 # (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as).
-func test_the_buff_icons_name_and_number_clear_17_frames_after_a_killing_impact():
+func test_the_buff_icons_name_and_number_clear_on_the_clear_frame_after_a_killing_impact():
 	_present_with_a_buff()
 	_presenter.show_result(_killing_hit_on_the_buffed_unit(), null)
-	_step_frames(16)
+	_step_frames(_clear_frame() - 1)
 	var before_the_clear: Dictionary = _overlay_shows()
 	_step_frames(1)
 	assert_eq([before_the_clear, _overlay_shows()], [
@@ -532,13 +542,14 @@ func _overlay_alpha() -> float:
 
 # From the frame after the clear, LifeBarSmoother takes 5 off the bar's alpha
 # every frame (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as).
-func test_the_bar_fades_5_alpha_a_frame_after_the_clear():
+func test_the_bar_fades_its_step_of_alpha_a_frame_after_the_clear():
 	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
+	var clear: int = _clear_frame()
 	var alphas: Array = [_overlay_alpha()]
-	for frame in 37:
+	for frame in clear + roundi(1.0 / _fade_per_frame()):
 		_step_frames(1)
 		alphas.append(_overlay_alpha())
-	for expected in [[16, 1.0], [17, 1.0], [18, 0.95], [27, 0.5], [37, 0.0]]:
+	for expected in [[clear - 1, 1.0], [clear, 1.0], [clear + 1, 1.0 - _fade_per_frame()], [clear + roundi(0.5 / _fade_per_frame()), 0.5], [clear + roundi(1.0 / _fade_per_frame()), 0.0]]:
 		assert_almost_eq(alphas[expected[0]], expected[1], 0.001, "frame %d after the impact" % expected[0])
 
 
@@ -593,7 +604,7 @@ func test_a_unit_killed_from_under_half_a_percent_life_still_plays_its_death_voi
 	_unit.life_n = 4.0
 	_present(_unit)
 	_presenter.show_result(_killing(_damage(4.0, 0.0)), null)
-	_step_frames(27)
+	_step_frames(_clear_frame() + roundi(0.5 / _fade_per_frame()))
 	assert_eq(_cues, [VOICE_DIE], "the death voice")
 	assert_almost_eq(_overlay_alpha(), 0.5, 0.001, "and the bar halfway through its fade")
 
