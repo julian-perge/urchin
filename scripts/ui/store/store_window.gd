@@ -105,6 +105,10 @@ func _load_store_items() -> void:
 		var stocked: bool = i < catalog.size()
 		slot.set_item(catalog[i] if stocked else null)
 		slot.modulate.a = 1.0 if stocked else 0.0
+		# set_selected(false) sets modulate to white, alpha included, so a
+		# hidden slot must not stay the selected one.
+		if not stocked and slot == selected_store_slot:
+			selected_store_slot = null
 		slot.mouse_filter = Control.MOUSE_FILTER_STOP if stocked else Control.MOUSE_FILTER_IGNORE
 
 

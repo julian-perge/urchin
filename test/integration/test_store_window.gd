@@ -11,12 +11,8 @@ func after_each():
 
 
 const STRINGS_PATH: String = "res://dev/converted_json/strings.json"
-# Slot 0 of the wares grid sits at this top left, and the slots are 38 px apart
-# (spec/107-store.md, Centre bottom panel). The record in screen_rects.json
-# checks the same cells piece by piece, and these numbers check that a hidden
-# slot keeps its cell.
-const WARE_ORIGIN: Vector2 = Vector2(289.4, 276.15)
-const WARE_PITCH: float = 38.0
+const RECORD_PATH: String = "res://test/fixtures/screen_rects.json"
+const WARE_ROW: String = "CentreBottomPanel/Content/Wares/Row%d/Slot%d"
 const WARE_COLUMNS: int = 5
 
 
@@ -123,6 +119,8 @@ func test_a_catalog_of_8_items_shows_8_wares_and_hides_7_in_their_cells():
 	window.refresh_store()
 	await wait_process_frames(2)
 	assert_eq(StoreManager.get_current_shop_items().size(), 8, "shop 0 stocks 8 items")
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RECORD_PATH))
+	var pieces: Dictionary = record["scenes"]["res://scenes/ui/store/store_window.tscn"]["pieces"]
 	for i in window.ware_slots.size():
 		var slot: ItemSlot = window.ware_slots[i]
 		var stocked: bool = i < 8
@@ -130,8 +128,8 @@ func test_a_catalog_of_8_items_shows_8_wares_and_hides_7_in_their_cells():
 		assert_eq(slot.modulate.a, 1.0 if stocked else 0.0, "slot %d alpha" % i)
 		assert_eq(slot.mouse_filter, Control.MOUSE_FILTER_STOP if stocked else Control.MOUSE_FILTER_IGNORE, "slot %d mouse filter" % i)
 		assert_true(slot.visible, "slot %d stays visible so it keeps its cell" % i)
-		var cell := WARE_ORIGIN + Vector2(WARE_PITCH * (i % WARE_COLUMNS), WARE_PITCH * floori(float(i) / WARE_COLUMNS))
-		assert_almost_eq(slot.global_position, cell, Vector2(0.5, 0.5), "slot %d cell" % i)
+		var rect: Array = pieces[WARE_ROW % [floori(float(i) / WARE_COLUMNS), i % WARE_COLUMNS]]["rect"]
+		assert_almost_eq(slot.global_position, Vector2(rect[0], rect[1]), Vector2(0.5, 0.5), "slot %d cell" % i)
 
 
 # Clicking a stocked ware buys it. A hidden slot takes no click, because its
@@ -201,3 +199,26 @@ func test_store_refreshes_per_zone():
 	)
 	ZoneManager.current_zone = 1
 	GameData.current_save = null
+
+
+# Selecting a ware tints its slot, and deselecting it sets modulate back to
+# white, alpha included. A selected slot that the next shop leaves empty must
+# not come back as a visible blank cell when the player clicks another ware.
+# The click buys nothing here, because a purchase refreshes the Store and hides
+# the slot again.
+func test_a_selected_ware_that_the_next_shop_empties_stays_hidden():
+	ZoneManager.current_zone = 3
+	GameData.current_save = PlayerSave.new_game("StoreSelectTest", 0)
+	GameData.current_save.euro = 1000000.0
+	var window = add_child_autofree(StoreWindowScene.instantiate())
+	window.refresh_store()
+	var last: ItemSlot = window.ware_slots[14]
+	last.slot_clicked.emit(last)
+	ZoneManager.current_zone = 1
+	window.refresh_store()
+	assert_eq(last.item, null, "shop 0 leaves slot 14 empty")
+	GameData.current_save.euro = 0.0
+	var first: ItemSlot = window.ware_slots[0]
+	first.slot_clicked.emit(first)
+	assert_eq(last.modulate.a, 0.0, "the emptied slot is still hidden")
+	ZoneManager.current_zone = 1
