@@ -12,7 +12,12 @@ from urchin_dev.swf.trace import (
     diff,
     diff_main,
     parse,
+    play_flash,
+    play_ruffle,
+    preflight,
     read_probes,
+    report,
+    run_main,
     with_probes,
 )
 
@@ -183,3 +188,175 @@ def test_the_goto_probe_traces_its_fields_in_the_order_parse_reads():
     )
 
     assert parse(line) == [Goto("stop", "_level0.clip", 7, 3, "LABEL", 5)]
+
+
+def fake_player(path, body):
+    """Write an executable shell script that stands in for a player binary."""
+    path.write_text(f"#!/bin/sh\n{body}\n")
+    path.chmod(0o755)
+    return path
+
+
+def test_preflight_stops_on_an_os_other_than_macos(tmp_path):
+    binary = fake_player(tmp_path / "player", "exit 0")
+
+    with pytest.raises(SystemExit) as stop:
+        preflight("ruffle", platform="linux", binary=binary, mm_cfg=tmp_path / "mm.cfg")
+
+    assert stop.value.code == "error: trace-run needs macOS. This OS is linux."
+
+
+def test_preflight_stops_and_names_a_player_binary_that_does_not_exist(tmp_path):
+    binary = tmp_path / "no_player"
+
+    with pytest.raises(SystemExit) as stop:
+        preflight(
+            "ruffle", platform="darwin", binary=binary, mm_cfg=tmp_path / "mm.cfg"
+        )
+
+    assert stop.value.code == f"error: no ruffle player at {binary}. Set RUFFLE_BIN."
+
+
+def test_preflight_stops_for_flash_when_mm_cfg_does_not_turn_the_trace_file_on(
+    tmp_path,
+):
+    binary = fake_player(tmp_path / "player", "exit 0")
+    mm_cfg = tmp_path / "mm.cfg"
+    mm_cfg.write_text("ErrorReportingEnable=1\nTraceOutputFileEnable=0\n")
+
+    with pytest.raises(SystemExit) as stop:
+        preflight("flash", platform="darwin", binary=binary, mm_cfg=mm_cfg)
+
+    assert stop.value.code == (
+        f"error: {mm_cfg} does not have TraceOutputFileEnable=1, "
+        "so the debug player writes no flashlog.txt. Add that line."
+    )
+
+
+def test_preflight_stops_for_flash_when_mm_cfg_does_not_exist(tmp_path):
+    binary = fake_player(tmp_path / "player", "exit 0")
+
+    with pytest.raises(SystemExit) as stop:
+        preflight("flash", platform="darwin", binary=binary, mm_cfg=tmp_path / "mm.cfg")
+
+    assert "does not have TraceOutputFileEnable=1" in stop.value.code
+
+
+def test_preflight_passes_for_flash_with_the_trace_file_on_and_for_ruffle_with_no_mm_cfg(
+    tmp_path,
+):
+    binary = fake_player(tmp_path / "player", "exit 0")
+    mm_cfg = tmp_path / "mm.cfg"
+    mm_cfg.write_text("ErrorReportingEnable=1\r\n TraceOutputFileEnable=1 \r\n")
+
+    preflight("flash", platform="darwin", binary=binary, mm_cfg=mm_cfg)
+    preflight("ruffle", platform="darwin", binary=binary, mm_cfg=tmp_path / "none")
+
+
+def test_play_flash_gives_the_player_the_traced_copy_and_saves_its_flashlog(tmp_path):
+    flashlog = tmp_path / "Logs" / "flashlog.txt"
+    flashlog.parent.mkdir()
+    flashlog.write_bytes(b"the log of an older launch\r\n")
+    traced = tmp_path / "traced" / "sonny-2-2900.swf"
+    binary = fake_player(
+        tmp_path / "player", f"printf 'opened %s\\r\\n' \"$1\" > '{flashlog}'"
+    )
+    dest = tmp_path / "runs" / "web_flash.txt"
+    dest.parent.mkdir()
+    dest.write_text("the log of an older run")
+
+    play_flash(binary, traced, flashlog, dest)
+
+    assert dest.read_bytes() == f"opened {traced}\r\n".encode()
+
+
+def test_play_flash_stops_when_the_player_wrote_no_flashlog(tmp_path):
+    flashlog = tmp_path / "flashlog.txt"
+    flashlog.write_text("the log of an older launch")
+    binary = fake_player(tmp_path / "player", "exit 0")
+    dest = tmp_path / "web_flash.txt"
+
+    with pytest.raises(SystemExit) as stop:
+        play_flash(binary, tmp_path / "x.swf", flashlog, dest)
+
+    assert stop.value.code == f"error: the player wrote no log at {flashlog}."
+    assert not dest.exists()
+
+
+def test_play_flash_saves_the_log_of_a_player_that_was_killed(tmp_path):
+    flashlog = tmp_path / "flashlog.txt"
+    binary = fake_player(tmp_path / "player", f"echo HOOK > '{flashlog}'; kill -9 $$")
+    dest = tmp_path / "web_flash.txt"
+
+    play_flash(binary, tmp_path / "x.swf", flashlog, dest)
+
+    assert dest.read_text() == "HOOK\n"
+
+
+def test_play_ruffle_opens_a_copy_in_the_container_and_saves_its_stdout_and_stderr(
+    tmp_path,
+):
+    traced = tmp_path / "traced" / "SONNY2.swf"
+    traced.parent.mkdir()
+    traced.write_bytes(b"swf bytes")
+    container = tmp_path / "Data" / "urchin_traced"
+    binary = fake_player(
+        tmp_path / "player",
+        'echo "INFO avm_trace: on stdout"; echo "opened $1 with $(cat "$1")" >&2; exit 3',
+    )
+    dest = tmp_path / "steam_ruffle.txt"
+    dest.write_text("the log of an older run, which is longer than the new one" * 9)
+
+    play_ruffle(binary, traced, container, dest)
+
+    assert dest.read_text() == (
+        f"INFO avm_trace: on stdout\nopened {container / 'SONNY2.swf'} with swf bytes\n"
+    )
+
+
+def test_report_prints_the_number_of_goto_lines(tmp_path, capsys):
+    log = tmp_path / "web_flash.txt"
+    log.write_bytes(FLASH_LOG.encode())
+
+    report(log)
+
+    assert capsys.readouterr().out == f"{log}: 2 GOTO lines\n"
+
+
+def test_report_reads_the_hook_line_behind_a_ruffle_prefix(tmp_path, capsys):
+    log = tmp_path / "web_ruffle.txt"
+    log.write_text("2026-11-17 INFO avm_trace: HOOK\tinstalled\ttrue\n")
+
+    report(log)
+
+    assert capsys.readouterr().out == f"{log}: 0 GOTO lines\n"
+
+
+@pytest.mark.parametrize(
+    "hook_line", ["", "HOOK\tinstalled\tfalse\r\n", "HOOK installed true\r\n"]
+)
+def test_report_prints_the_count_then_exits_1_for_a_log_with_no_hook_line(
+    tmp_path, capsys, hook_line
+):
+    log = tmp_path / "web_flash.txt"
+    log.write_text(hook_line + "GOTO\tstop\t_level0.__t\t1\t0\t1\t0\r\n")
+
+    with pytest.raises(SystemExit) as stop:
+        report(log)
+
+    assert capsys.readouterr().out == f"{log}: 1 GOTO lines\n"
+    assert stop.value.code == (
+        f"error: {log} has no HOOK<tab>installed<tab>true line, "
+        "so the goto Probe did not install."
+    )
+
+
+@pytest.mark.parametrize(
+    "args",
+    [[], ["web"], ["web", "vlc"], ["zip", "flash"], ["web", "flash", "--tutorial"]],
+)
+def test_trace_run_exits_with_its_usage_for_wrong_arguments(args):
+    with pytest.raises(SystemExit) as stop:
+        run_main(args)
+
+    assert stop.value.code == "usage: trace_run <web|steam> <flash|ruffle>"

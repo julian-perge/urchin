@@ -304,6 +304,11 @@ extract-window-chrome *args: (require "ffdec" "java")
 trace-swf build: (require "ffdec" "java")
     uv run trace_swf "$@"
 
+[doc('Play a Traced copy in one player and save its log in references/traced_runs/ when the player quits: just trace-run <web|steam> <flash|ruffle>')]
+[group('trace')]
+trace-run build player: (require "ffdec" "java")
+    uv run trace_run "$@"
+
 [doc('Print the distinct gotos that one Trace log has and the other lacks: just trace-diff <log a> <log b>')]
 [group('trace')]
 trace-diff log_a log_b:

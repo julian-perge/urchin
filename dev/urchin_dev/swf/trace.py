@@ -13,23 +13,52 @@
 # copy, and compares two of them. Only the GOTO lines of the goto Probe are
 # read. The comparison needs no SWF, no ffdec and no label data.
 #
+# trace_run plays a Traced copy in the Flash debug player or in Ruffle and, when
+# the player quits, saves the raw player log as
+# references/traced_runs/<build>_<player>.txt. The Flash log is a copy of the
+# player's flashlog.txt, and the Ruffle log is Ruffle's stdout and stderr. The
+# player paths come from FLASH_DEBUG_PLAYER and RUFFLE_BIN.
+#
 # Run: uv run trace_swf <web|steam>
+#      uv run trace_run <web|steam> <flash|ruffle>
 #      uv run trace_diff <log a> <log b>
 from __future__ import annotations
 
+import os
+import shutil
+import subprocess
 import sys
 import tempfile
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from urchin_dev import DEV_ROOT, FFDEC, STEAM_SWF, SWF_DIR, WEB_SWF
+from urchin_dev import DEV_ROOT, FFDEC, REPO_ROOT, STEAM_SWF, SWF_DIR, WEB_SWF
 from urchin_dev.run import run
 
 PROBES = DEV_ROOT / "probes"
 TRACED_DIR = SWF_DIR / "traced"
 BUILDS = {"web": WEB_SWF, "steam": STEAM_SWF}
 GOTO_MARK = "GOTO\t"
+HOOK_LINE = "HOOK\tinstalled\ttrue"
+
+TRACED_RUNS = REPO_ROOT / "references" / "traced_runs"
+MM_CFG = Path.home() / "mm.cfg"
+MM_CFG_LINE = "TraceOutputFileEnable=1"
+FLASHLOG = Path.home() / "Library/Preferences/Macromedia/Flash Player/Logs/flashlog.txt"
+# The sandboxed Ruffle app opens a SWF only inside its own container, so a
+# Ruffle run plays a copy of the Traced copy from this folder.
+RUFFLE_CONTAINER = (
+    Path.home() / "Library/Containers/rs.ruffle.ruffle/Data/urchin_traced"
+)
+# Each player's environment variable and its default binary.
+PLAYERS = {
+    "flash": (
+        "FLASH_DEBUG_PLAYER",
+        "~/Games/Flashpoint_14/FPSoftware/Flash/Flash 14.app/Contents/MacOS/Flash Player Debugger",
+    ),
+    "ruffle": ("RUFFLE_BIN", "/Applications/Ruffle.app/Contents/MacOS/ruffle"),
+}
 
 
 @dataclass(frozen=True)
@@ -144,6 +173,84 @@ def diff_main(argv: Sequence[str] | None = None) -> None:
             print(
                 f"{record.kind}\t{record.clip}\t{record.total_frames}\t{record.target}\t{state}"
             )
+
+
+def preflight(player: str, *, platform: str, binary: Path, mm_cfg: Path) -> None:
+    """Stop with a message when this machine cannot play a Traced run in
+    `player`."""
+    if platform != "darwin":
+        raise SystemExit(f"error: trace-run needs macOS. This OS is {platform}.")
+    if not binary.is_file():
+        raise SystemExit(
+            f"error: no {player} player at {binary}. Set {PLAYERS[player][0]}."
+        )
+    if player == "flash":
+        lines = (
+            mm_cfg.read_text(encoding="utf-8").splitlines() if mm_cfg.is_file() else []
+        )
+        if MM_CFG_LINE not in (line.strip() for line in lines):
+            raise SystemExit(
+                f"error: {mm_cfg} does not have {MM_CFG_LINE}, "
+                "so the debug player writes no flashlog.txt. Add that line."
+            )
+
+
+def play_flash(binary: Path, traced: Path, flashlog: Path, dest: Path) -> None:
+    """Play `traced` in the Flash debug player, wait until it quits, and copy
+    its flashlog.txt to `dest`."""
+    # The player empties flashlog.txt at each launch. Deleting it first means
+    # that a player which fails to start cannot leave the log of an older
+    # launch to be saved as this run.
+    flashlog.unlink(missing_ok=True)
+    subprocess.run([binary, traced])
+    if not flashlog.is_file():
+        raise SystemExit(f"error: the player wrote no log at {flashlog}.")
+    shutil.copyfile(flashlog, dest)
+
+
+def play_ruffle(binary: Path, traced: Path, container: Path, dest: Path) -> None:
+    """Play a copy of `traced` in `container` with Ruffle, wait until it quits,
+    and save its output as `dest`."""
+    container.mkdir(parents=True, exist_ok=True)
+    inside = container / traced.name
+    shutil.copyfile(traced, inside)
+    with dest.open("wb") as log:
+        # Ruffle 0.7.1 writes its log, with the trace() lines, to stdout. Both
+        # streams are saved, so a Ruffle that logs to stderr is covered too.
+        subprocess.run([binary, inside], stdout=log, stderr=subprocess.STDOUT)
+
+
+def report(log: Path) -> None:
+    """Print the number of GOTO lines of `log`, and exit 1 when it has no HOOK
+    line."""
+    text = log.read_text(encoding="utf-8", errors="replace")
+    print(f"{log}: {len(parse(text))} GOTO lines")
+    if not any(HOOK_LINE in line for line in text.splitlines()):
+        raise SystemExit(
+            f"error: {log} has no HOOK<tab>installed<tab>true line, "
+            "so the goto Probe did not install."
+        )
+
+
+def run_main(argv: Sequence[str] | None = None) -> None:
+    args = sys.argv[1:] if argv is None else argv
+    if len(args) != 2 or args[0] not in BUILDS or args[1] not in PLAYERS:
+        raise SystemExit(f"usage: trace_run <{'|'.join(BUILDS)}> <{'|'.join(PLAYERS)}>")
+    build, player = args
+    variable, default = PLAYERS[player]
+    binary = Path(os.environ.get(variable, default)).expanduser()
+    preflight(player, platform=sys.platform, binary=binary, mm_cfg=MM_CFG)
+    swf = BUILDS[build]
+    if not swf.is_file():
+        raise SystemExit(f"error: no SWF at {swf}. Set URCHIN_SWF_DIR.")
+    traced = trace_swf(swf)
+    TRACED_RUNS.mkdir(parents=True, exist_ok=True)
+    dest = TRACED_RUNS / f"{build}_{player}.txt"
+    if player == "flash":
+        play_flash(binary, traced, FLASHLOG, dest)
+    else:
+        play_ruffle(binary, traced, RUFFLE_CONTAINER, dest)
+    report(dest)
 
 
 def main() -> None:
