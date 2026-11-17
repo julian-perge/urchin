@@ -80,7 +80,8 @@ func refresh() -> void:
 		_update_bar(_def_fills[k], float(save.def.get(k, 0.0)), save.level, element_name, "defense")
 	var exp_fraction: float = clampf(save.experience / 100.0, 0.0, 1.0)
 	_exp_fill.size.x = _exp_full_width * exp_fraction
-	# Math.round in the original (PlaceObject2_2867_1419 onClipEvent(enterFrame)).
+	# The original rounds the percent with Math.round, in the enterFrame script of
+	# PlaceObject2_2867_1419.
 	_exp_percent.text = "%d%%" % roundi(save.experience)
 	equip_view.refresh(save, ItemManagerAuto.items_by_id)
 	right_column.populate_from_save(save, ItemManagerAuto.items_by_id)
