@@ -1461,6 +1461,70 @@
       313.2
      ]
     },
+    "ExpFill": {
+     "kind": "art",
+     "rect": [
+      172.525,
+      283.3,
+      95.25,
+      18.75
+     ],
+     "size": [
+      381,
+      75
+     ],
+     "texture": "res://assets/ui/window/xp_bar.png",
+     "zoom": 4.0
+    },
+    "ExpGloss": {
+     "kind": "art",
+     "rect": [
+      138.05,
+      282.925,
+      129.75,
+      19.25
+     ],
+     "size": [
+      519,
+      77
+     ],
+     "texture": "res://assets/ui/window/xp_gloss.png",
+     "zoom": 4.0
+    },
+    "ExpLeftBox": {
+     "fill": "111111ff",
+     "kind": "box",
+     "rect": [
+      138.45,
+      282.85,
+      34.3,
+      18.8
+     ]
+    },
+    "ExpPercent": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 10.0,
+     "kind": "text",
+     "rect": [
+      138.55,
+      286.4,
+      30.8,
+      13.7
+     ]
+    },
+    "ExperienceLabel": {
+     "align": "right",
+     "color": "ccccccff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      32.2,
+      286.4,
+      99.55,
+      15.05
+     ]
+    },
     "LeftPanel": {
      "border": 1,
      "fill": "373737ff",
@@ -1477,6 +1541,28 @@
       "blur": 5.0,
       "distance": 5.0
      }
+    },
+    "LeftPanel/Content/EquipDollView/Doll": {
+     "kind": "doll",
+     "look": {
+      "gender": "M",
+      "hair": "ONE",
+      "skin": "ONE"
+     },
+     "position": [
+      193.5107,
+      211.5316
+     ],
+     "rect": [
+      170.4792,
+      156.4323,
+      47.237,
+      107.8497
+     ],
+     "scale": [
+      -1.3075,
+      1.3075
+     ]
     },
     "LeftPanel/Content/EquipDollView/Slot0": {
      "kind": "art",
@@ -2293,7 +2379,7 @@
    },
    "port_only": [
     "LeftPanel/Content/StatusLabel",
-    "LeftPanel/Content/EquipDollView/Doll",
+    "LeftPanel/Content/EquipDollView/Doll/Body",
     "LeftPanel/Content/EquipDollView/Slot0/ItemIcon",
     "LeftPanel/Content/EquipDollView/Slot0/Highlight",
     "LeftPanel/Content/EquipDollView/Slot1/ItemIcon",
@@ -2308,11 +2394,6 @@
     "LeftPanel/Content/EquipDollView/Slot5/Highlight",
     "LeftPanel/Content/EquipDollView/Slot6/ItemIcon",
     "LeftPanel/Content/EquipDollView/Slot6/Highlight",
-    "ExperienceLabel",
-    "ExpTrack",
-    "ExpFill",
-    "ExpZeroBox",
-    "ExpPercent",
     "PiercingLabel",
     "DefenseLabel",
     "StatLabel0",

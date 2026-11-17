@@ -1,11 +1,12 @@
 # Run: uv run convert_menu_math
 # Writes dev/converted_json/menu_math.json, the numbers the inventory menu's
-# element bars are drawn from, and the counts that the victory frame's
-# experience rows animate with. The formulas come from the menu's script,
-# DefineSprite_3142/frame_1/DoAction.as, and the counts from the rows' clip
-# scripts in DefineSprite_3142/frame_9. The bar height that the formulas
-# scale, saveH, is not in the script: the script reads it from the bar clip
-# at run time, so this reads it from the web SWF.
+# element bars are drawn from, the width of its experience bar, and the counts
+# that the victory frame's experience rows animate with. The formulas come from
+# the menu's script, DefineSprite_3142/frame_1/DoAction.as, the bar width from
+# the bar clip's scripts, and the counts from the rows' clip scripts in
+# DefineSprite_3142/frame_9. The bar height that the formulas scale, saveH, is
+# not in the script: the script reads it from the bar clip at run time, so this
+# reads it from the web SWF.
 from __future__ import annotations
 
 import json
@@ -20,6 +21,9 @@ SOURCE = "DefineSprite_3142/frame_1/DoAction.as"
 # The victory frame's three experience rows. Each is a placement of sprite 3002
 # with a load and an enterFrame clip script.
 ROWS = "DefineSprite_3142/frame_9"
+# The Inventory's experience bar, the clip 2867 at depth 1419 of frame 1. Its
+# two clip scripts scale its width to the experience.
+BAR = "DefineSprite_3142/frame_1/PlaceObject2_2867_1419"
 # The perBarShow clip that holds the piercing bars. defBarShow is a second
 # placement of the same sprite, and the script caps both with perBarShow's
 # saveH.
@@ -204,6 +208,25 @@ def parse_victory_rows(rows: list[tuple[str, str]]) -> dict:
     return first
 
 
+def parse_experience_bar(load: str, enter_frame: str) -> dict:
+    """-> the width of the Inventory's full experience bar, from the load and
+    enterFrame scripts of the bar clip. Both scale the clip's _width to the
+    experience, and they must agree."""
+    pattern = (
+        r"_width = _root\.Krin\.ExpSets\[_root\.Krin\.MenuPlayerSelect\]"
+        rf" / 100 \* ({NUM});"
+    )
+    widths = []
+    for name, script in (("load", load), ("enterFrame", enter_frame)):
+        found = re.search(pattern, script)
+        if found is None:
+            raise ValueError(f"{BAR}: the {name} script does not scale the width")
+        widths.append(_number(found.group(1)))
+    if widths[0] != widths[1]:
+        raise ValueError(f"{BAR}: the width is {widths[0]} on load and {widths[1]}")
+    return {"width": widths[0]}
+
+
 def _row_scripts(action_script: Path) -> list[tuple[str, str]]:
     folders = sorted((action_script / ROWS).glob("PlaceObject3_3002_*"))
     if len(folders) != 3:
@@ -254,7 +277,15 @@ def convert(action_script: Path, index: SwfIndex) -> dict:
     # The rows step once a frame, so they run at the SWF's frame rate.
     rows = {"source": f"{ROWS}/PlaceObject3_3002_*", "frame_rate": index.frame_rate}
     rows.update(parse_victory_rows(_row_scripts(action_script)))
-    return {"element_bars": bars, "victory_rows": rows}
+    folder = action_script / BAR
+    bar = {"source": f"{BAR}/CLIPACTIONRECORD onClipEvent(*)"}
+    bar.update(
+        parse_experience_bar(
+            (folder / "CLIPACTIONRECORD onClipEvent(load).as").read_text("utf-8"),
+            (folder / "CLIPACTIONRECORD onClipEvent(enterFrame).as").read_text("utf-8"),
+        )
+    )
+    return {"element_bars": bars, "experience_bar": bar, "victory_rows": rows}
 
 
 def main() -> None:

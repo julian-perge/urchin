@@ -226,3 +226,27 @@ def test_a_row_that_does_not_divide_the_gain_by_its_frames_is_refused():
     changed = ROW_LOAD.replace("totalXP / setLimiter", "totalXP / 20")
     with pytest.raises(ValueError, match="adderPer"):
         menu_math.parse_victory_rows([(changed, ROW_ENTER_FRAME)])
+
+
+BAR_LOAD = """onClipEvent(load){
+   _width = _root.Krin.ExpSets[_root.Krin.MenuPlayerSelect] / 100 * 88.4;
+   _parent.exp2 = Math.round(_root.Krin.ExpSets[_root.Krin.MenuPlayerSelect]) + "%";
+}
+"""
+BAR_ENTER_FRAME = BAR_LOAD.replace("onClipEvent(load)", "onClipEvent(enterFrame)")
+
+
+def test_the_experience_bar_parser_reads_the_width_of_the_full_bar():
+    assert menu_math.parse_experience_bar(BAR_LOAD, BAR_ENTER_FRAME) == {"width": 88.4}
+
+
+def test_an_experience_bar_whose_two_scripts_disagree_is_refused():
+    changed = BAR_ENTER_FRAME.replace("88.4", "88.5")
+    with pytest.raises(ValueError, match="width"):
+        menu_math.parse_experience_bar(BAR_LOAD, changed)
+
+
+def test_an_experience_bar_script_that_does_not_scale_the_width_is_refused():
+    changed = BAR_LOAD.replace("_width =", "_height =")
+    with pytest.raises(ValueError, match="width"):
+        menu_math.parse_experience_bar(changed, changed)

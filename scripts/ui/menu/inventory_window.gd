@@ -3,16 +3,13 @@
 extends Control
 
 
-const DOLL_POSITION: Vector2 = Vector2(192.5, 214.4)
-const DOLL_SCALE: float = 1.2
 const BAR_BLOCK_CENTERS_Y: Dictionary[Variant, Variant] = {"per": 256.0, "def": 360.5}
 const BAR_TRACK_HEIGHT: float = 78.0
-# Experience row (texts 2869/2863, shapes 2864/2868, fill sprite 2867) - only
-# EXP_FILL survives here: refresh() still reads EXP_FILL.size.x as the full
-# width the fraction-scaled fill is computed against.
-const EXP_FILL: Rect2 = Rect2(172.6, 283.3, 95.1, 18.7)
 
 var equip_view: EquipDollView
+# The width of the experience fill in the scene, which is the full bar. The
+# original scales the fill clip to experience / 100 of it.
+var _exp_full_width: float = 0.0
 
 @onready var right_column: RightColumn = $RightColumn
 @onready var _status_label: Label = $LeftPanel/Content/StatusLabel
@@ -28,6 +25,8 @@ var _portrait_frames: Array[ItemSlot] = []
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	$ExperienceLabel.text = Strings.menu(17)
+	_exp_full_width = _exp_fill.size.x
 	_build_left_panel()
 	_build_center_panel()
 	_build_party_bar()
@@ -40,7 +39,7 @@ func _ready():
 
 func _build_left_panel() -> void:
 	equip_view = $LeftPanel/Content/EquipDollView
-	equip_view.setup({}, DOLL_POSITION - $LeftPanel.position, DOLL_SCALE)
+	equip_view.setup({})
 	equip_view.equip_slot_clicked.connect(_on_equip_slot_clicked)
 
 
@@ -79,9 +78,11 @@ func refresh() -> void:
 		var element_name: String = CombatUnit.ELEMENT_ORDER[k]
 		_update_bar(_per_fills[k], float(save.per.get(k, 0.0)), save.level, element_name, "piercing")
 		_update_bar(_def_fills[k], float(save.def.get(k, 0.0)), save.level, element_name, "defense")
-	var exp_fraction = clamp(save.experience / 100.0, 0.0, 1.0)
-	_exp_fill.size.x = EXP_FILL.size.x * exp_fraction
-	_exp_percent.text = "%d%%" % int(save.experience)
+	var exp_fraction: float = clampf(save.experience / 100.0, 0.0, 1.0)
+	_exp_fill.size.x = _exp_full_width * exp_fraction
+	# The original rounds the percent with Math.round, in the enterFrame script of
+	# PlaceObject2_2867_1419.
+	_exp_percent.text = "%d%%" % roundi(save.experience)
 	equip_view.refresh(save, ItemManagerAuto.items_by_id)
 	right_column.populate_from_save(save, ItemManagerAuto.items_by_id)
 	right_column.set_gold(save.euro)

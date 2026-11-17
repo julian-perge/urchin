@@ -14,18 +14,21 @@ var _slots: Dictionary = {}  # equip index -> ItemSlot
 var _doll: CharacterVisual
 
 
-# Inventory supplies its slots in the scene and passes an empty map. Store
-# still supplies centres here. Both use equip_index metadata for clicks and
-# drag-and-drop, and dress a still battle doll at the supplied position.
-func setup(slot_centers: Dictionary, doll_position: Vector2, doll_scale: float, face_left: bool = false) -> void:
+# Inventory supplies its slots and its Doll in the scene, so it passes an empty
+# map and no placement, and the Doll keeps the position and scale the scene
+# gives it. Store still supplies centres and a placement here, which builds a
+# still battle doll. Both use equip_index metadata for clicks and drag-and-drop.
+func setup(slot_centers: Dictionary, doll_position: Vector2 = Vector2.ZERO, doll_scale: float = 1.0, face_left: bool = false) -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_doll = CharacterVisualScript.new()
-	_doll.name = "Doll"
-	_doll.animate = false
-	_doll.position = doll_position
-	_doll.scale = Vector2(-doll_scale if face_left else doll_scale, doll_scale)
-	add_child(_doll)
-	move_child(_doll, 0)
+	_doll = get_node_or_null("Doll") as CharacterVisual
+	if _doll == null:
+		_doll = CharacterVisualScript.new()
+		_doll.name = "Doll"
+		_doll.animate = false
+		_doll.position = doll_position
+		_doll.scale = Vector2(-doll_scale if face_left else doll_scale, doll_scale)
+		add_child(_doll)
+		move_child(_doll, 0)
 	for equip_index in slot_centers:
 		var slot: ItemSlot = ItemSlotScene.instantiate()
 		slot.position = slot_centers[equip_index] - MenuTheme.SLOT_SIZE / 2.0

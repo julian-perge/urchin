@@ -51,6 +51,10 @@
 #             ShapeBounds through the placement matrix, and the port puts a
 #             plain Control on it. The zone fill is one: the game scales it
 #             from the shape's left edge, and its art is wider than the shape.
+#   "doll"  - the doll that a frame places as loose part clips, which the port
+#             draws as one CharacterVisual. It is recorded as the position and
+#             scale that put the rig's stand pose where the clips sit, and as
+#             the union rect of the unequipped male doll's art (doll_record).
 #
 # An "art" piece whose render is measured from a sprite of its own is placed
 # by where that sprite sits: the sprite at `depth`, or the sprite at
@@ -77,11 +81,13 @@ from __future__ import annotations
 
 import json
 import math
+import re
+import statistics
 from dataclasses import dataclass, field
 
 from PIL import Image
 
-from urchin_dev import REPO_ROOT, STEAM_SWF, WEB_SWF
+from urchin_dev import ACTION_SCRIPT, REPO_ROOT, STEAM_SWF, WEB_SWF
 from urchin_dev.swf import label_layout, render, timeline
 from urchin_dev.swf.extract import (
     battle_screen,
@@ -118,6 +124,24 @@ MENU_ART = {
 }
 KRINMENU = 3142
 HUB_FRAME = "Navigation"
+# The Inventory frame places its doll as 31 loose clips with the characters 121
+# to 143: 15 male parts, the same 15 with an _f suffix for a female doll, and
+# the ground shadow 143. The menu script shows one of the two sets
+# (updateDoll) and attaches the art at run time.
+DOLL_CHARACTERS = range(121, 144)
+DOLL_SCRIPT = f"DefineSprite_{KRINMENU}/frame_1/DoAction.as"
+# The rig's part origins and the art's bounds, which the port's CharacterVisual
+# reads. The rig's stand label starts on its first frame, and that frame is
+# the pose the menu doll holds.
+RIG_ANIMATIONS = REPO_ROOT / "resources" / "sprites" / "model1_animations.json"
+DOLL_OFFSETS = REPO_ROOT / "resources" / "sprites" / "doll_offsets.json"
+# The player's look, which the record's union rect is drawn for: male, skin
+# ONE and hair ONE (combat_unit.gd gives the player ["MODEL1", "ONE", "ONE",
+# "M"], from the seeds in frame_42).
+DOLL_LOOK = {"gender": "M", "skin": "ONE", "hair": "ONE"}
+# How far a placed part's scale and rotation may be from the rig's stand pose
+# times the doll's mirrored scale, as a difference of matrix entries.
+DOLL_MATRIX_TOLERANCE = 0.005
 
 
 @dataclass(frozen=True)
@@ -677,10 +701,13 @@ SCENES[HUB_CHROME] = Scene(
 )
 
 
-# The Inventory record covers #226's shell and left panel. The other pieces
-# are port only until their tasks record them: the doll and the experience row
-# (#227), the stat rows (#228), the element bars (#230) and the party faces
-# (#231).
+# The Inventory record covers #226's shell and left panel, and #227's doll and
+# experience row. The other pieces are port only until their tasks record
+# them: the stat rows (#228), the element bars (#230) and the party faces
+# (#231). The frame places the doll as 31 clips, which depth 912 names by the
+# ground shadow 143, and the port draws as the one Doll. The port draws no
+# ground shadow. The experience fill is the sprite 2867 on its first frame,
+# which the game scales to the experience, and its gloss is the shape 2864.
 INVENTORY_SCENE = "res://scenes/ui/menu/inventory_window.tscn"
 SCENES[INVENTORY_SCENE] = Scene(
     timeline=KRINMENU,
@@ -698,6 +725,12 @@ SCENES[INVENTORY_SCENE] = Scene(
         "CenterPanel/Content/CenterOutline": Piece("outline", 994),
         "LeftPanel/Content/Header/NameRow/NameLabel": Piece("text", 1241),
         "LeftPanel/Content/Header/InfoRow/LevelLabel": Piece("text", 1242),
+        "LeftPanel/Content/EquipDollView/Doll": Piece("doll", 912, character=143),
+        "ExperienceLabel": Piece("text", 1417),
+        "ExpLeftBox": Piece("box", 1418),
+        "ExpFill": Piece("art", 1419, art="xp_bar"),
+        "ExpGloss": Piece("art", 1421, art="xp_gloss"),
+        "ExpPercent": Piece("text", 1422),
         **{
             f"LeftPanel/Content/EquipDollView/Slot{i}": Piece(
                 "art",
@@ -729,17 +762,12 @@ SCENES[INVENTORY_SCENE] = Scene(
     },
     port_only=(
         "LeftPanel/Content/StatusLabel",
-        "LeftPanel/Content/EquipDollView/Doll",
+        "LeftPanel/Content/EquipDollView/Doll/Body",
         *(
             f"LeftPanel/Content/EquipDollView/Slot{i}/{node}"
             for i in range(7)
             for node in ("ItemIcon", "Highlight")
         ),
-        "ExperienceLabel",
-        "ExpTrack",
-        "ExpFill",
-        "ExpZeroBox",
-        "ExpPercent",
         "PiercingLabel",
         "DefenseLabel",
         *(f"Stat{kind}{i}" for i in range(5) for kind in ("Label", "Value")),
@@ -1199,6 +1227,129 @@ def _box(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
     return box_record(shape_bounds(index, shape), layer.matrix, origin, fill)
 
 
+def _string_array(script: str, name: str) -> list[str]:
+    found = re.findall(rf"{name} = \[((?:\"\w+\",?)+)\];", script)
+    if len(found) != 1:
+        raise ValueError(f"{DOLL_SCRIPT}: {len(found)} statements fill {name}")
+    return re.findall(r"\w+", found[0])
+
+
+def doll_parts(script: str) -> list[tuple[str, str]]:
+    """-> (part name, art code) for each doll part, in the order of the menu
+    script's dollPartsArray. The art of a part is named from its code, as in
+    M_SARM_ONE. A WEAPON part has no skin art."""
+    names = _string_array(script, "dollPartsArray")
+    codes = _string_array(script, "dollPartsCores2")
+    if len(names) != len(codes):
+        raise ValueError(
+            f"{DOLL_SCRIPT}: {len(names)} doll parts and {len(codes)} art codes"
+        )
+    return list(zip(names, codes, strict=True))
+
+
+def _doll_scale(placed: dict[str, timeline.Layer], rig: dict) -> float:
+    """-> the scale s of the doll, where each placed part's matrix is the rig's
+    matrix for that part with x mirrored and everything scaled by s. It is the
+    least squares fit over every part. Raises when a part is a different
+    pose: another rotation, another scale, or no mirror."""
+    top = bottom = 0.0
+    for name, layer in placed.items():
+        a, b, c, d = layer.matrix[:4]
+        ra, rb, rc, rd = rig[name][:4]
+        top += -a * ra - c * rc + b * rb + d * rd
+        bottom += ra * ra + rb * rb + rc * rc + rd * rd
+    scale = top / bottom
+    misses = {}
+    for name, layer in placed.items():
+        ra, rb, rc, rd = rig[name][:4]
+        expected = (-scale * ra, scale * rb, -scale * rc, scale * rd)
+        misses[name] = max(
+            abs(m - e) for m, e in zip(layer.matrix[:4], expected, strict=True)
+        )
+    name = max(misses, key=misses.__getitem__)
+    if misses[name] > DOLL_MATRIX_TOLERANCE:
+        raise ValueError(
+            f"the doll's {name} is not the rig's stand pose, mirrored and"
+            f" scaled by {scale:.4f}: a matrix entry is {misses[name]:.4f} away"
+        )
+    return scale
+
+
+def doll_record(
+    layers: dict[int, timeline.Layer],
+    parts: list[tuple[str, str]],
+    rig: dict[str, list[float]],
+    offsets: dict[str, dict],
+    origin: tuple[float, float],
+) -> dict:
+    """-> the record of the doll that `layers` place as loose clips: where the
+    rig's stand pose lands on the Stage, as the doll's position and scale, and
+    the union rect of the art of DOLL_LOOK's unequipped doll under the male
+    placements.
+
+    `rig` is the rig's stand pose as one [a, b, c, d, tx, ty] matrix in px for
+    each part, and `offsets` the art bounds of doll_offsets.json. The scale is
+    fitted from the parts' matrices, and the position is the median over the
+    parts of where each placed origin puts the doll. The median holds against
+    a part whose origin the SWF moves off the pose, which the menu does with
+    arm1 by 1 px in x and y."""
+    held = [layer for layer in layers.values() if layer.character_id in DOLL_CHARACTERS]
+    expected = 2 * len(parts) + 1
+    if len(held) != expected:
+        raise ValueError(f"the frame places {len(held)} doll clips, not {expected}")
+    names = {layer.name: layer for layer in held if layer.name}
+    wanted = [name for name, _code in parts]
+    for name in (*wanted, *(f"{name}_f" for name in wanted)):
+        if name not in names:
+            raise ValueError(f"the frame places no doll clip named {name}")
+    placed = {name: names[name] for name in wanted}
+    scale = _doll_scale(placed, rig)
+    x0 = statistics.median(
+        layer.matrix[4] / render.TWIPS + scale * rig[name][4]
+        for name, layer in placed.items()
+    )
+    y0 = statistics.median(
+        layer.matrix[5] / render.TWIPS - scale * rig[name][5]
+        for name, layer in placed.items()
+    )
+    xs: list[float] = []
+    ys: list[float] = []
+    for name, code in parts:
+        art = (
+            []
+            if code == "WEAPON"
+            else [f"{DOLL_LOOK['gender']}_S{code}_{DOLL_LOOK['skin']}"]
+        )
+        if name == "head":
+            art.append(f"HAIR_{DOLL_LOOK['hair']}")
+        a, b, c, d, tx, ty = placed[name].matrix
+        for key in art:
+            # A part the original leaves empty has no entry, as in the port.
+            if key not in offsets:
+                continue
+            box = offsets[key]
+            for x, y in (
+                (box["x"], box["y"]),
+                (box["x"] + box["w"], box["y"]),
+                (box["x"], box["y"] + box["h"]),
+                (box["x"] + box["w"], box["y"] + box["h"]),
+            ):
+                xs.append(origin[0] + (a * x + c * y + tx / render.TWIPS))
+                ys.append(origin[1] + (b * x + d * y + ty / render.TWIPS))
+    return {
+        "kind": "doll",
+        "position": [round(origin[0] + x0, 4), round(origin[1] + y0, 4)],
+        "scale": [round(-scale, 4), round(scale, 4)],
+        "look": dict(DOLL_LOOK),
+        "rect": [
+            round(min(xs), 4),
+            round(min(ys), 4),
+            round(max(xs) - min(xs), 4),
+            round(max(ys) - min(ys), 4),
+        ],
+    }
+
+
 def origin_of(index: SwfIndex, owner: int) -> tuple[float, float]:
     if owner == 0:
         return 0.0, 0.0
@@ -1346,6 +1497,16 @@ def scene_record(
             )
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, piece_origin)
+        elif piece.kind == "doll":
+            rig = json.loads(RIG_ANIMATIONS.read_text())
+            stand = int(rig["labels"]["stand"]["start"]) - 1
+            pieces[path] = doll_record(
+                layers,
+                doll_parts((ACTION_SCRIPT / DOLL_SCRIPT).read_text("utf-8")),
+                rig["frames"][stand],
+                json.loads(DOLL_OFFSETS.read_text()),
+                piece_origin,
+            )
         else:
             raise ValueError(f"{path}: unknown piece kind {piece.kind!r}")
         if piece.steam is not None:

@@ -64,6 +64,10 @@
       ]
     }
   },
+  "experience_bar": {
+    "source": "DefineSprite_3142/frame_1/PlaceObject2_2867_1419/CLIPACTIONRECORD onClipEvent(*)",
+    "width": 95.10000000000001
+  },
   "victory_rows": {
     "source": "DefineSprite_3142/frame_9/PlaceObject3_3002_*",
     "frame_rate": 30.0,

@@ -7,6 +7,7 @@ from dataclasses import replace
 
 import pytest
 from urchin_dev import ACTION_SCRIPT, REPO_ROOT
+from urchin_dev.swf import timeline
 from urchin_dev.swf.extract import hotbar_icons, screen_rects
 from urchin_dev.swf.swf_index import ButtonRecord, DropShadow, EditText, StyleSet
 
@@ -757,3 +758,132 @@ def test_each_info_spot_names_the_number_its_button_press_shows():
             shown[n] = zone
     assert sorted(shown) == list(range(1, 21))
     assert [n for n, zone in shown.items() if zone > 5] == []
+
+
+DOLL_SCRIPT = """
+dollPartsArray = new Array();
+dollPartsArray = ["head","arm1","weapon1"];
+dollPartsCores = new Array();
+dollPartsCores = [0,1,5];
+dollPartsCores2 = new Array();
+dollPartsCores2 = ["HEAD","ARM","WEAPON"];
+"""
+DOLL_PARTS = [("head", "HEAD"), ("arm1", "ARM"), ("weapon1", "WEAPON")]
+# The rig's stand pose: [a, b, c, d, tx, ty] in px for each part.
+DOLL_RIG = {
+    "head": [1.0, 0.0, 0.0, 1.0, 5.0, -34.0],
+    "arm1": [0.8, 0.4, -0.4, 0.8, -7.0, -20.0],
+    "weapon1": [0.9, 0.5, -0.5, 0.9, 9.0, -19.0],
+}
+DOLL_OFFSETS = {
+    "M_SHEAD_ONE": {"x": -10.0, "y": -20.0, "w": 20.0, "h": 24.0},
+    "HAIR_ONE": {"x": -12.0, "y": -30.0, "w": 24.0, "h": 20.0},
+    "M_SARM_ONE": {"x": 0.0, "y": 0.0, "w": 10.0, "h": 30.0},
+}
+
+
+def mirrored_doll(scale, x0, y0, rig=DOLL_RIG):
+    """-> the layers of a frame that places the rig mirrored and scaled by
+    `scale`, with its origin at (x0, y0) px: each part, its _f twin and the
+    ground shadow."""
+    layers = {}
+    depth = 912
+    layers[depth] = timeline.Layer(143)
+    for suffix in ("", "_f"):
+        for name, (a, b, c, d, tx, ty) in rig.items():
+            depth += 1
+            layers[depth] = timeline.Layer(
+                121,
+                name + suffix,
+                (-scale * a, scale * b, -scale * c, scale * d,
+                 round((x0 - scale * tx) * 20), round((y0 + scale * ty) * 20)),
+            )  # fmt: skip
+    return layers
+
+
+def test_the_doll_parts_are_read_in_the_order_of_the_scripts_array():
+    assert screen_rects.doll_parts(DOLL_SCRIPT) == DOLL_PARTS
+
+
+def test_a_doll_script_with_another_count_of_codes_is_refused():
+    changed = DOLL_SCRIPT.replace('["HEAD","ARM","WEAPON"]', '["HEAD","ARM"]')
+    with pytest.raises(ValueError, match="art codes"):
+        screen_rects.doll_parts(changed)
+
+
+def test_a_doll_script_that_fills_an_array_twice_is_refused():
+    with pytest.raises(ValueError, match="dollPartsArray"):
+        screen_rects.doll_parts(DOLL_SCRIPT + DOLL_SCRIPT)
+
+
+def test_the_doll_record_is_the_rigs_stand_pose_mirrored_and_scaled_to_the_placements():
+    record = screen_rects.doll_record(
+        mirrored_doll(1.5, -200.0, -10.0), DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN
+    )
+    assert record["kind"] == "doll"
+    assert record["scale"] == [-1.5, 1.5]
+    assert record["position"] == pytest.approx([400.5 - 200.0, 222.4 - 10.0])
+    assert record["look"] == {"gender": "M", "skin": "ONE", "hair": "ONE"}
+
+
+def test_the_doll_rect_is_the_union_of_the_art_under_the_male_placements():
+    record = screen_rects.doll_record(
+        mirrored_doll(1.5, -200.0, -10.0), DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN
+    )
+    # The weapon has no skin art, and the head holds the skin and the hair. The
+    # head's matrix is the rig's mirrored, so its art spans x from -12 to 12 and
+    # y from -30 to 4, each times 1.5, around the head's placed origin.
+    head_x = 400.5 - 200.0 - 1.5 * 5.0
+    head_y = 222.4 - 10.0 + 1.5 * -34.0
+    arm = placed_box(DOLL_RIG["arm1"], "M_SARM_ONE", (-200.0, -10.0))
+    left = min(head_x - 1.5 * 12.0, arm[0])
+    top = min(head_y - 1.5 * 30.0, arm[1])
+    right = max(head_x + 1.5 * 12.0, arm[2])
+    bottom = max(head_y + 1.5 * 4.0, arm[3])
+    x, y, w, h = record["rect"]
+    assert (x, y, x + w, y + h) == pytest.approx((left, top, right, bottom), abs=0.01)
+
+
+def placed_box(rig, key, at):
+    """-> (left, top, right, bottom) of the art `key` under the mirrored
+    placement of one rig matrix, with the doll at `at` and scale 1.5."""
+    a, b, c, d, tx, ty = rig
+    box = DOLL_OFFSETS[key]
+    xs, ys = [], []
+    for x, y in (
+        (box["x"], box["y"]),
+        (box["x"] + box["w"], box["y"]),
+        (box["x"], box["y"] + box["h"]),
+        (box["x"] + box["w"], box["y"] + box["h"]),
+    ):
+        xs.append(ORIGIN[0] + at[0] + -1.5 * (a * x + c * y + tx))
+        ys.append(ORIGIN[1] + at[1] + 1.5 * (b * x + d * y + ty))
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def test_a_part_with_the_rigs_rotation_but_another_scale_is_refused():
+    layers = mirrored_doll(1.5, -200.0, -10.0)
+    arm = layers[914]
+    assert arm.name == "arm1"
+    layers[914] = replace(arm, matrix=(arm.matrix[0] * 1.5, *arm.matrix[1:]))
+    with pytest.raises(ValueError, match="arm1 is not the rig's stand pose"):
+        screen_rects.doll_record(layers, DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN)
+
+
+def test_one_part_origin_off_the_pose_does_not_move_the_doll():
+    layers = mirrored_doll(1.5, -200.0, -10.0)
+    arm = layers[914]
+    layers[914] = replace(
+        arm, matrix=(*arm.matrix[:4], arm.matrix[4] + 20, arm.matrix[5] - 20)
+    )
+    record = screen_rects.doll_record(
+        layers, DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN
+    )
+    assert record["position"] == pytest.approx([400.5 - 200.0, 222.4 - 10.0])
+
+
+def test_a_frame_with_another_count_of_doll_clips_is_refused():
+    layers = mirrored_doll(1.5, -200.0, -10.0)
+    del layers[912]
+    with pytest.raises(ValueError, match="6 doll clips, not 7"):
+        screen_rects.doll_record(layers, DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN)
