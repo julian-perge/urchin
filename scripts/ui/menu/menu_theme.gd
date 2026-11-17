@@ -39,15 +39,6 @@ const ELEMENT_COLORS: Array[Color] = [
 # KrinNumberShow's HEAL color (0x66FF00).
 const HEAL_COLOR: Color = Color("66FF00")
 
-const STAT_LABELS: Array[String] = ["Vitality:", "Strength:", "Instinct:", "Speed:", "Focus:"]
-const STAT_COLORS: Array[Color] = [
-	Color(0.55, 0.85, 0.3),   # Vitality - green
-	Color(0.9, 0.35, 0.3),    # Strength - red
-	Color(0.95, 0.65, 0.2),   # Instinct - orange
-	Color(0.75, 0.55, 0.9),   # Speed - purple
-	Color(0.55, 0.65, 0.95),  # Focus - blue
-]
-
 
 # Menu bar fill fraction (frame-1 DoAction nT1/nT4): the crit-curve quartic
 # of value / (100 + 15 * level), clamped to the bar. Base allocation fills

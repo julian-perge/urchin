@@ -701,13 +701,13 @@ SCENES[HUB_CHROME] = Scene(
 )
 
 
-# The Inventory record covers #226's shell and left panel, and #227's doll and
-# experience row. The other pieces are port only until their tasks record
-# them: the stat rows (#228), the element bars (#230) and the party faces
-# (#231). The frame places the doll as 31 clips, which depth 912 names by the
-# ground shadow 143, and the port draws as the one Doll. The port draws no
-# ground shadow. The experience fill is the sprite 2867 on its first frame,
-# which the game scales to the experience, and its gloss is the shape 2864.
+# The Inventory record covers #226's shell and left panel, #227's doll and
+# experience row, and #228's stat rows. The other pieces are port only until
+# their tasks record them: the element bars (#230) and the party faces (#231).
+# The frame places the doll as 31 clips, which depth 912 names by the ground
+# shadow 143, and the port draws as the one Doll. The port draws no ground
+# shadow. The experience fill is the sprite 2867 on its first frame, which the
+# game scales to the experience, and its gloss is the shape 2864.
 INVENTORY_SCENE = "res://scenes/ui/menu/inventory_window.tscn"
 SCENES[INVENTORY_SCENE] = Scene(
     timeline=KRINMENU,
@@ -731,6 +731,18 @@ SCENES[INVENTORY_SCENE] = Scene(
         "ExpFill": Piece("art", 1419, art="xp_bar"),
         "ExpGloss": Piece("art", 1421, art="xp_gloss"),
         "ExpPercent": Piece("text", 1422),
+        # The menu script fills the five names with SYSTEM[0] to [4] plus ":",
+        # and the five values with the stats of the selected member.
+        **{
+            f"CenterPanel/Content/Stat{column}/Row{i}/Label": Piece(
+                "text", first + i, character=character - i
+            )
+            for column, first, character in (
+                ("Names", 1243, 2889),
+                ("Values", 1248, 2884),
+            )
+            for i in range(5)
+        },
         **{
             f"LeftPanel/Content/EquipDollView/Slot{i}": Piece(
                 "art",
@@ -770,7 +782,6 @@ SCENES[INVENTORY_SCENE] = Scene(
         ),
         "PiercingLabel",
         "DefenseLabel",
-        *(f"Stat{kind}{i}" for i in range(5) for kind in ("Label", "Value")),
         *(
             f"{block}{kind}{i}"
             for block in ("Per", "Def")

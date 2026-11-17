@@ -831,6 +831,15 @@ func test_control_an_inventory_experience_fill_moved_20_px_fails() -> void:
 		assert_string_starts_with(problem, "ExpFill:")
 
 
+func test_control_an_inventory_stat_row_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("CenterPanel/Content/StatNames/Row2/Label") as Control).position.y += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 1, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "CenterPanel/Content/StatNames/Row2/Label:")
+
+
 func test_control_an_inventory_outline_with_fill_or_shadow_fails() -> void:
 	var root: Control = await _laid_out(INVENTORY_SCENE)
 	var panel: Panel = root.get_node("CenterPanel/Content/CenterOutline")

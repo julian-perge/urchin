@@ -17,7 +17,8 @@ var _exp_full_width: float = 0.0
 @onready var _level_label: Label = $LeftPanel/Content/Header/InfoRow/LevelLabel
 @onready var _exp_fill: TextureRect = $ExpFill
 @onready var _exp_percent: Label = $ExpPercent
-@onready var _stat_values: Array[Label] = [$StatValue0, $StatValue1, $StatValue2, $StatValue3, $StatValue4]
+@onready var _stat_names: Array[Label] = _row_labels($CenterPanel/Content/StatNames)
+@onready var _stat_values: Array[Label] = _row_labels($CenterPanel/Content/StatValues)
 var _per_fills: Array[ColorRect] = []
 var _def_fills: Array[ColorRect] = []
 var _portrait_frames: Array[ItemSlot] = []
@@ -26,6 +27,8 @@ var _portrait_frames: Array[ItemSlot] = []
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$ExperienceLabel.text = Strings.menu(17)
+	for i in _stat_names.size():
+		_stat_names[i].text = Strings.system(i) + ":"
 	_exp_full_width = _exp_fill.size.x
 	_build_left_panel()
 	_build_center_panel()
@@ -35,6 +38,14 @@ func _ready():
 	visibility_changed.connect(func():
 		if visible:
 			refresh())
+
+
+# Each stat is a fixed-height Row slot that holds one Label.
+func _row_labels(column: Node) -> Array[Label]:
+	var labels: Array[Label] = []
+	for row: Node in column.get_children():
+		labels.append(row.get_node("Label") as Label)
+	return labels
 
 
 func _build_left_panel() -> void:
