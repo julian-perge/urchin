@@ -200,11 +200,11 @@ func _update_focus() -> void:
 
 # Refreshes the buff-icon row the way the original draws it at the end of
 # applyChangesKrin (frame_42/DoAction_10.as:355-379): one KrinBuffShower for
-# each of slots 0 to MAX_BUFF_ICONS - 1 whose cd isn't 0, in slot order. The
-# row deliberately doesn't sort, because CombatUnit.apply_changes() already
-# keeps buff_slots in the order applyChangesKrin's sortOn leaves them (line
-# 344), and sort_custom would move tied buffs once more than 16 have turns
-# left. Each icon is modulate-tinted by the buff's element color (Godot tints
+# each of the first buff_row.slots slots of the record (7) whose cd isn't 0, in
+# slot order. The row deliberately doesn't sort, because
+# CombatUnit.apply_changes() already keeps buff_slots in the order
+# applyChangesKrin's sortOn leaves them (line 344), and sort_custom would move
+# tied buffs once more than 16 have turns left. Each icon is modulate-tinted by the buff's element color (Godot tints
 # at runtime - no per-element art baked into the extracted PNGs), with the
 # remaining-turns count and the tooltip built below. buff_id 0 is a real buff
 # (TWINGUARDIANS, dev/converted_json/buffs.json), not an empty-slot sentinel;

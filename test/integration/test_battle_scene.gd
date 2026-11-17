@@ -3929,3 +3929,38 @@ func test_the_next_action_dispatches_on_the_same_frame_with_the_zoom_on_or_off()
 	assert_eq(dispatched[0], dispatched[1], "the Shock dispatches on the same frame")
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+# Returns the controls under `point` that take the mouse, in the order Godot draws
+# them, so the last one is the one the mouse reaches.
+func _mouse_takers_at(node: Node, point: Vector2) -> Array:
+	var found: Array = []
+	if node is Control and node.visible and node.mouse_filter != Control.MOUSE_FILTER_IGNORE and node.get_global_rect().has_point(point):
+		found.append(node)
+	for child in node.get_children():
+		if child is CanvasItem and not child.visible:
+			continue
+		found.append_array(_mouse_takers_at(child, point))
+	return found
+
+
+# A buff icon opens its tooltip only when the mouse reaches it, so no control that
+# takes the mouse may be drawn over it. A headless run has no mouse, so this finds
+# the controls over the icon's center and not the mouse's own pick.
+func test_no_control_that_takes_the_mouse_covers_a_buff_icon_on_either_side():
+	GameData.current_save = PlayerSave.new_game("BuffHover", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var buff: Buff = BuffManagerAuto.get_buff_by_name("TIEDYE")
+	for slot in [BattleRunner.PLAYER_SLOT, 2]:
+		var bar: StatusBar = scene.top_status_bar.bar_for_slot(slot)
+		bar.refresh_buffs([{"cd": 3, "buff_id": buff.id, "buff_value": 0.0, "shield_buff_value": 0.0}], {buff.id: buff})
+		var icon: Control = bar.buff_row.get_child(0)
+		var takers: Array = _mouse_takers_at(scene, icon.get_global_rect().get_center())
+		assert_eq(takers.back() if not takers.is_empty() else null, icon, "slot %d's icon is the last control under its center that takes the mouse" % slot)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
