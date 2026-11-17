@@ -12,7 +12,8 @@ extends Control
 enum Kind { PIERCING, DEFENSE }
 
 # Three passes of a 9 px box blur reach 13.5 px past the layer, and the glow
-# node has 14 px of room on every side. setup() checks the blur against these.
+# node has 14 px of room on every side. _ready() checks the extracted blur
+# against these.
 const GLOW_REACH: float = 14.0
 const GLOW_PASSES: int = 3
 # The layers in the order the SWF stacks them over the track. Each gets a
@@ -43,6 +44,7 @@ func _ready() -> void:
 		var glow: Dictionary = _math["element_bars"]["layers"][layer.to_lower()]["glow"]
 		assert(glow["passes"] == GLOW_PASSES, "the glow shader draws three passes")
 		assert(glow["composite_source"], "the glow shader draws the layer over its glow")
+		assert(maxf(glow["blur_x"], glow["blur_y"]) * GLOW_PASSES / 2.0 <= GLOW_REACH, "the glow node has room for the blur")
 		var material: ShaderMaterial = (get_node("%s/Glow" % layer) as ColorRect).material
 		material.set_shader_parameter("blur", Vector2(glow["blur_x"], glow["blur_y"]))
 		material.set_shader_parameter("strength", glow["strength"])
