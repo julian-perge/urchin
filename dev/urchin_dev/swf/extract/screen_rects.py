@@ -500,10 +500,12 @@ def button_record(
     each shape to its ShapeBounds."""
     up = [r for r in records if "up" in r.states]
     if not up:
-        raise ValueError("the button draws nothing in its up state")
+        raise ValueError(f"button {button} draws nothing in its up state")
     for r in up:
         if r.matrix != timeline.IDENTITY:
-            raise ValueError(f"the button moves shape {r.character_id}: {r.matrix}")
+            raise ValueError(
+                f"button {button} moves shape {r.character_id}: {r.matrix}"
+            )
         if r.character_id not in bounds:
             raise ValueError(
                 f"button {button} draws character {r.character_id} in its up"

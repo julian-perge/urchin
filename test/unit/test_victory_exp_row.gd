@@ -72,7 +72,6 @@ func test_a_row_that_overflows_adds_one_level_shows_100_once_and_keeps_the_remai
 	assert_eq(hundreds, 1, "the frame that crosses 100 shows 100%")
 	assert_almost_eq(width_at_hundred, _full_width(), 0.001, "the frame that crosses 100 shows the full bar")
 	assert_eq(row.level, 5)
-	assert_true(row.leveled)
 	assert_eq(row.level_label.text, Strings.menu(0) + "5")
 	assert_eq(row.bar.texture.resource_path, VictoryExpRow.LEVEL_FILL.resource_path, "the bar keeps its level frame")
 	assert_almost_eq(row.experience, 26.0, 0.001)
@@ -84,7 +83,6 @@ func test_a_row_that_does_not_overflow_keeps_the_normal_fill() -> void:
 	var row := _row(_fighter(20.0, 3, 45.0))
 	for i in _frames():
 		row.step()
-	assert_false(row.leveled)
 	assert_eq(row.bar.texture.resource_path, VictoryExpRow.FILL.resource_path)
 
 

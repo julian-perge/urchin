@@ -19,10 +19,6 @@ const LEVEL_FILL: Texture2D = preload("res://assets/ui/window/xp_bar_level.png")
 
 var experience: float = 0.0
 var level: int = 0
-# True once the row has added a level. Nothing reads it today: battle_scene.gd
-# takes the level-up flag from settlement.levels_gained instead, and no open
-# task makes the player's row set the original's playerLeveled from it.
-var leveled: bool = false
 
 var _frames: int = 0
 var _frame: int = 0
@@ -51,7 +47,6 @@ func setup(portrait_file: String, display_name: String, fighter: BattleSettlemen
 	_elapsed = 0.0
 	experience = fighter.experience_before
 	level = fighter.level_before
-	leveled = false
 	_per_frame = fighter.xp_gained / _frames
 	face.texture = MenuTheme.texture(portrait_file)
 	name_label.text = display_name
@@ -82,7 +77,6 @@ func step() -> void:
 		experience -= 100.0
 		percent_label.text = "100%"
 		level += 1
-		leveled = true
 		bar.texture = LEVEL_FILL
 		_set_bar_fraction(1.0)
 		_show_level()
