@@ -30,6 +30,14 @@ _Avoid_: Popup, dialog
 The Battle screen's status elements drawn over the hall: unit overlays, member bars, the top status bar and the speech box.
 _Avoid_: Overlay, battle UI
 
+**Status bar**:
+One fighter's entry in the top status bar: the name, the life and Focus numbers, the two fills and the buff icons. It is the original's `pNBAR`, sprite 3414.
+_Avoid_: Health bar, unit bar
+
+**Hall window**:
+The 770 by 314 px area of the Battle screen that the hall, the sky and the fighters are clipped to. It is the original's shape 333, which masks them.
+_Avoid_: Stage rect, viewport
+
 **Decision**:
 The part of the player's half-turn when the turn loop waits for a pick or a pass.
 _Avoid_: Window, decision window
