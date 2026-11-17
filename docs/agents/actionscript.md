@@ -183,7 +183,8 @@ otherwise.
    compiles it, so use only what the original's own scripts use.
 2. Pick its file name for its place. `trace-swf` puts the Probes in front of
    the frame script in name order, so `goto.as` runs before a file whose name
-   sorts after it.
+   sorts after it. Use a lowercase name. The order is by code point, so an
+   uppercase name sorts before every lowercase one.
 3. Do not change what the game does. Wrap a function, call the original with
    `apply(this, arguments)`, and only add `trace()` calls, as
    `dev/probes/goto.as` does. A Probe runs once, before the rest of frame 1. It
@@ -192,4 +193,13 @@ otherwise.
    The parser reads every line that has `GOTO<tab>` as a goto record.
 5. Run `just trace-swf web` and `just trace-swf steam`, and check that a fresh
    script export of each Traced copy differs from the build's export only in
-   `frame_1/DoAction.as`.
+   `frame_1/DoAction.as`. For the web build, in a scratch folder:
+
+   ```
+   ffdec -export script plain "$URCHIN_SWF_DIR/sonny-2-2900.swf"
+   ffdec -export script traced "$URCHIN_SWF_DIR/traced/sonny-2-2900.swf"
+   diff -rq plain traced
+   ```
+
+   `diff` must print one line, for `frame_1/DoAction.as`. Do the same
+   for `SONNY2.swf`.
