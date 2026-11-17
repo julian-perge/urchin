@@ -1098,6 +1098,27 @@ func test_a_model5_fighter_runs_level_at_a_target_level_with_it():
 
 
 # The real colortobe glow tint (frame217/onClipEvent(enterFrame).as: 417,450).
+func test_a_melee_swing_asks_for_sfx_swing_once_before_its_impact():
+	var impacts: Array = []
+	var returned: Array = _start_melee(func(): impacts.append(_cues.duplicate()))
+	for frame in 600:
+		if not returned.is_empty():
+			break
+		_doll._process(1.0 / 30.0)
+	assert_eq(impacts, [["sfx_swing"]], "the whoosh has played when Impact lands")
+	for frame in 120:
+		_doll._process(1.0 / 30.0)
+	assert_eq(_cues, ["sfx_swing"], "and the rest of the swing adds none")
+
+
+func test_a_cast_asks_for_no_swing_sound():
+	var move := Ability.new()
+	_presenter.cast(move)
+	for frame in 120:
+		_doll._process(1.0 / 30.0)
+	assert_eq(_cues, [])
+
+
 func test_cast_plays_the_cast_state_tinted_with_the_moves_color():
 	var move := Ability.new()
 	move.visual_effect_color = Color(0.2, 1.0, 0.0)

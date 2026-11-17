@@ -25,6 +25,9 @@ signal attack_connected
 signal state_finished(state: int)
 # Emitted once the Runback has brought the doll home.
 signal melee_finished
+# Emitted on the frame of a swing whose script in the MODEL1 clip plays a sound,
+# with that sound's name for the audio manager, such as "sfx_swing".
+signal sound_cue(cue: String)
 
 enum State { IDLE, MELEE, CAST, STUN, HIT, DEAD }
 enum MeleePhase { NONE, DASH, STRIKE, RUNBACK }
@@ -42,6 +45,10 @@ const OFFSETS_FILE: String = SPRITE_ROOT + "/doll_offsets.json"
 # per-frame full affine matrices per part, 30 fps, labeled segments
 # (stand/run/Attack/runback/hit/dead/... - see NEXT_PHASES).
 const ANIMATIONS_FILE: String = SPRITE_ROOT + "/model1_animations.json"
+# The sounds the MODEL1 clip's frame scripts play (convert_model1_sound_cues):
+# the 1-based frame as a string -> the cue names of that frame. The three swing
+# labels each hold one "sfx_swing", and no other frame has a cue.
+const SOUND_CUES_FILE: String = "res://dev/converted_json/model1_sound_cues.json"
 
 # krinMelee (frame_42/DoAction_4.as:36-135) moves the fighter on every frame of
 # its swing:
@@ -80,6 +87,8 @@ static var _offsets: Dictionary = {}
 static var _offsets_loaded: bool = false
 static var _animations: Dictionary = {}
 static var _animations_loaded: bool = false
+static var _sound_cues: Dictionary = {}
+static var _sound_cues_loaded: bool = false
 
 # dollPartsArray order (also the back-to-front draw order once sorted by z).
 # tx/ty/sx/sy/rot are the exact MODEL1 rest-pose matrix (SWF twips converted
@@ -475,6 +484,17 @@ func _label_end_frame(label: String) -> float:
 	return float(int(segment.get("end", 1)) - 1)
 
 
+static func _load_sound_cues() -> Dictionary:
+	if not _sound_cues_loaded:
+		_sound_cues_loaded = true
+		var file: FileAccess = FileAccess.open(SOUND_CUES_FILE, FileAccess.READ)
+		if file != null:
+			var parsed = JSON.parse_string(file.get_as_text())
+			if parsed is Dictionary:
+				_sound_cues = parsed
+	return _sound_cues
+
+
 static func _load_animations() -> Dictionary:
 	if not _animations_loaded:
 		_animations_loaded = true
@@ -503,7 +523,7 @@ func _animate_melee(delta: float) -> void:
 			if _go_rat() >= 1.0:
 				_melee_phase = MeleePhase.STRIKE
 				_strike_frames = 0.0
-				_show_swing_frame(_label_start_frame(_attack_label))
+				_show_swing_frame(_label_start_frame(_attack_label), true)
 		MeleePhase.STRIKE:
 			_strike_frames += frames
 			_show_swing_frame(_playhead + frames)
@@ -513,7 +533,7 @@ func _animate_melee(delta: float) -> void:
 			if _strike_frames >= MELEE_IMPACT_FRAMES + MELEE_RUNBACK_FRAMES:
 				_melee_phase = MeleePhase.RUNBACK
 				_measure_from(_home_position)
-				_show_swing_frame(_label_start_frame("runback"))
+				_show_swing_frame(_label_start_frame("runback"), true)
 				_step_home(frames)
 		MeleePhase.RUNBACK:
 			_play_runback_label(frames)
@@ -542,11 +562,20 @@ func _step_toward_target(coefficient: float, frames: float) -> void:
 
 # Shows the swing's `frame` while the doll's state is MELEE. In any other state
 # it leaves _playhead alone, because _play_death plays the dead label on the
-# same playhead.
-func _show_swing_frame(frame: float) -> void:
-	if _state == State.MELEE:
-		_playhead = frame
-		_apply_frame_index(int(_playhead))
+# same playhead. Every frame the playhead goes through plays its sound cues, as
+# the clip's frame scripts do. With `jumped` true the playhead lands on `frame`
+# from another label, as gotoAndPlay does, and only that frame's cues play. The
+# run and runback labels hold no cue, so only the strike calls this with a
+# playhead that crosses one.
+func _show_swing_frame(frame: float, jumped: bool = false) -> void:
+	if _state != State.MELEE:
+		return
+	var before: int = int(frame) - 1 if jumped else int(_playhead)
+	_playhead = frame
+	_apply_frame_index(int(_playhead))
+	for index in range(before + 1, int(_playhead) + 1):
+		for cue in _load_sound_cues().get(str(index + 1), []):
+			sound_cue.emit(cue)
 
 
 # The runback label plays to its end and then falls into stand, as its last

@@ -154,6 +154,11 @@ convert-items *args:
 convert-menu-math *args:
     uv run convert_menu_math "$@"
 
+[doc('Run convert_model1_sound_cues, which reads the sounds the MODEL1 doll clip plays into JSON')]
+[group('convert')]
+convert-model1-sound-cues *args:
+    uv run convert_model1_sound_cues "$@"
+
 [doc('Run convert_moves, which converts the extracted data into JSON and Godot resources')]
 [group('convert')]
 convert-moves *args:

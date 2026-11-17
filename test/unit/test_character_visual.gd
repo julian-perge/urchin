@@ -331,6 +331,66 @@ func test_a_swing_plays_its_attack_label_and_an_unknown_label_plays_attack():
 	assert_eq(visual._attack_label, "Attack")
 
 
+# Runs one swing through its Runback a frame at a time and returns the MODEL1
+# frame (numbered from 1, like the SWF's) on which each cue played, as
+# [frame, cue] pairs.
+func _swing_cues(label: String) -> Array:
+	var cues: Array = []
+	visual.sound_cue.connect(func(cue): cues.append([int(visual._playhead) + 1, cue]))
+	visual.play_melee(func(): return Vector2(80, 0), 0.0, label)
+	for frame in 120:
+		visual._process(SWF_FRAME_SECONDS)
+	return cues
+
+
+# DefineSprite_166_MODEL1 frames 88, 118 and 146 each call
+# addSound("Effects", "sfx_swing"), one inside each of the three swing labels.
+func test_each_swing_plays_sfx_swing_once_on_its_cue_frame():
+	assert_eq(_swing_cues("Attack_Upper"), [[88, "sfx_swing"]], "Attack_Upper")
+	assert_eq(_swing_cues("Attack_Stab"), [[118, "sfx_swing"]], "Attack_Stab")
+	assert_eq(_swing_cues("Attack"), [[146, "sfx_swing"]], "Attack")
+
+
+# The original clip's frame scripts only run while its playhead goes through the
+# frame, so a doll that stops swinging before the cue frame stays quiet.
+func test_a_caster_hit_before_the_cue_frame_plays_no_swing_sound():
+	var cues: Array = []
+	visual.sound_cue.connect(func(cue): cues.append(cue))
+	visual.play_melee(func(): return Vector2(80, 0), 0.0, "Attack_Upper")
+	for frame in 14:
+		visual._process(SWF_FRAME_SECONDS)
+	visual.set_state(CharacterVisual.State.HIT)
+	for frame in 120:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(cues, [])
+
+
+# A cue outside the strike would never play, because only the strike steps the
+# playhead through frames that can hold one.
+func test_every_sound_cue_frame_lies_inside_a_swing_label():
+	var labels: Dictionary = _animations()["labels"]
+	var swings: Array = ["Attack_Upper", "Attack_Stab", "Attack", "attack2"]
+	var cues: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.SOUND_CUES_FILE))
+	assert_false(cues.is_empty(), "the file lists cues")
+	for frame in cues:
+		var inside := false
+		for swing in swings:
+			inside = inside or (int(frame) >= labels[swing]["start"] and int(frame) <= labels[swing]["end"])
+		assert_true(inside, "frame %s lies inside a swing label" % frame)
+
+
+func test_a_doll_that_does_not_swing_plays_no_sound():
+	var cues: Array = []
+	visual.sound_cue.connect(func(cue): cues.append(cue))
+	visual.set_state(CharacterVisual.State.CAST)
+	for frame in 60:
+		visual._process(SWF_FRAME_SECONDS)
+	visual.set_state(CharacterVisual.State.HIT)
+	for frame in 60:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(cues, [])
+
+
 func test_cast_and_hit_recover_to_idle():
 	visual.set_state(CharacterVisual.State.CAST)
 	for i in 40:

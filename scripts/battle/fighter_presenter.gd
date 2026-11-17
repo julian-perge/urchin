@@ -75,6 +75,8 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	_home = home
 	displayed = UnitSnapshot.of(unit)
 	_doll.position = home
+	# The doll's swing plays its own sounds, such as the whoosh of sfx_swing.
+	_doll.sound_cue.connect(effect_cue.emit)
 	# The Shield clip is the rig's own, so the MODEL5 quirk below leaves it alone.
 	_shield_clip.position = home
 	if unit.team_side == CombatUnit.Team.TWO:
