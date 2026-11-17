@@ -1,0 +1,591 @@
+[2m2026-11-17T07:09:59.729711Z[0m [32m INFO[0m [2mruffle_desktop::gui::controller[0m[2m:[0m Using preferred backend Metal
+[2m2026-11-17T07:09:59.733764Z[0m [32m INFO[0m [2mruffle_desktop::gui::controller[0m[2m:[0m Using graphics API metal on Apple M2 Pro (type: IntegratedGpu)
+[2m2026-11-17T07:09:59.733797Z[0m [32m INFO[0m [2mruffle_desktop::gui::controller[0m[2m:[0m Using surface format Bgra8Unorm
+[2m2026-11-17T07:09:59.748055Z[0m [33m WARN[0m [2mruffle_desktop::gui::controller[0m[2m:[0m Failed to register [Name("Noto Sans CJK KR"), Name("Malgun Gothic")] as Proportional: no unicode fonts found!
+[2m2026-11-17T07:09:59.748593Z[0m [33m WARN[0m [2mruffle_desktop::gui::controller[0m[2m:[0m Failed to register [Name("Noto Sans CJK JP"), Name("MS UI Gothic")] as Proportional: no unicode fonts found!
+[2m2026-11-17T07:09:59.748602Z[0m [33m WARN[0m [2mruffle_desktop::gui::controller[0m[2m:[0m Failed to register [Name("Noto Sans CJK SC"), Name("Microsoft YaHei")] as Proportional: no unicode fonts found!
+[2m2026-11-17T07:09:59.748612Z[0m [33m WARN[0m [2mruffle_desktop::gui::controller[0m[2m:[0m Failed to register [Name("Noto Sans CJK TC"), Name("Microsoft JhengHei")] as Proportional: no unicode fonts found!
+[2m2026-11-17T07:09:59.748705Z[0m [32m INFO[0m [2mruffle_desktop::gui::controller[0m[2m:[0m Opening file:///Users/sweetjp/Library/Containers/rs.ruffle.ruffle/Data/urchin_traced/sonny-2-2900.swf
+[2m2026-11-17T07:09:59.879989Z[0m [32m INFO[0m [2mruffle_video_external::decoder::openh264[0m[2m:[0m Using OpenH264 at "/Users/sweetjp/Library/Containers/rs.ruffle.ruffle/Data/Library/Caches/ruffle/video/libopenh264-2.4.1-mac-arm64.dylib"
+[2m2026-11-17T07:10:00.006694Z[0m [32m INFO[0m [2mruffle_core::context[0m[2m:[0m Loaded SWF version 9, resolution 800x575 @ 30 FPS
+[2m2026-11-17T07:10:00.021683Z[0m [32m INFO[0m [2mruffle_desktop::backends::ui[0m[2m:[0m Loading device font "Arial-BoldMT" for "Arial" (italic: false, bold: true)
+[2m2026-11-17T07:10:00.025399Z[0m [32m INFO[0m [2mruffle_desktop::backends::ui[0m[2m:[0m Loading device font "ArialMT" for "Arial" (italic: false, bold: false)
+[2m2026-11-17T07:10:00.026817Z[0m [33m WARN[0m [2mruffle_core::avm1::runtime[0m[2m:[0m Avm1::pop: Stack underflow
+[2m2026-11-17T07:10:00.027133Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m Cannot enumerate Undefined
+[2m2026-11-17T07:10:00.044878Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m Cannot enumerate Undefined
+[2m2026-11-17T07:10:00.045621Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m HOOK	installed	true
+[2m2026-11-17T07:10:00.049162Z[0m [33m WARN[0m [2mruffle_core::avm1::fscommand[0m[2m:[0m Unhandled FSCommand: showMenu
+[2m2026-11-17T07:10:00.142346Z[0m [33m WARN[0m [2mruffle_core::library[0m[2m:[0m Unknown device font "Hypatia Sans Pro Black" (bold: false, italic: false)
+[2m2026-11-17T07:10:00.167060Z[0m [33m WARN[0m [2mruffle_core::library[0m[2m:[0m Unknown device font "standard 07_55" (bold: false, italic: false)
+[2m2026-11-17T07:10:00.167108Z[0m [33m WARN[0m [2mruffle_core::library[0m[2m:[0m Unknown device font "Hypatia Sans Pro" (bold: true, italic: false)
+[2m2026-11-17T07:10:00.167200Z[0m [32m INFO[0m [2mruffle_desktop::backends::ui[0m[2m:[0m Loading device font "Arial-BoldItalicMT" for "Arial" (italic: true, bold: true)
+[2m2026-11-17T07:10:08.421099Z[0m [33m WARN[0m [2mruffle_core::stub[0m[2m:[0m Encountered stub: AVM1 System.security.allowDomain()
+[2m2026-11-17T07:10:09.655076Z[0m [31mERROR[0m [2mruffle_core::loader[0m[2m:[0m Error during movie loading of "http://cdn.cpmstar.com/cached/swf/watermark10.swf?poolid=1052&subpoolid=9": InvalidDomain("http://cdn.cpmstar.com/cached/swf/watermark10.swf?poolid=1052&subpoolid=9")
+[2m2026-11-17T07:10:09.847369Z[0m [33m WARN[0m [2mruffle_frontend_utils::backends::storage[0m[2m:[0m Unable to read file "localhost/Users/sweetjp/Library/Containers/rs.ruffle.ruffle/Data/urchin_traced/sonny-2-2900.swf/slot1": Os { code: 2, kind: NotFound, message: "No such file or directory" }
+[2m2026-11-17T07:10:09.850737Z[0m [33m WARN[0m [2mruffle_frontend_utils::backends::storage[0m[2m:[0m Unable to read file "localhost/Users/sweetjp/Library/Containers/rs.ruffle.ruffle/Data/urchin_traced/sonny-2-2900.swf/slot3": Os { code: 2, kind: NotFound, message: "No such file or directory" }
+[2m2026-11-17T07:10:09.850754Z[0m [33m WARN[0m [2mruffle_frontend_utils::backends::storage[0m[2m:[0m Unable to read file "localhost/Users/sweetjp/Library/Containers/rs.ruffle.ruffle/Data/urchin_traced/sonny-2-2900.swf/slot4": Os { code: 2, kind: NotFound, message: "No such file or directory" }
+[2m2026-11-17T07:10:09.865792Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SSHOULDER_MAN
+[2m2026-11-17T07:10:09.865805Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SSHOULDER_MAN'
+[2m2026-11-17T07:10:09.865830Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SWEAPON_MAN
+[2m2026-11-17T07:10:09.865832Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SWEAPON_MAN'
+[2m2026-11-17T07:10:09.865840Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_WEAPON_0
+[2m2026-11-17T07:10:09.865842Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_WEAPON_0'
+[2m2026-11-17T07:10:09.865850Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SWEAPON_MAN
+[2m2026-11-17T07:10:09.865851Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SWEAPON_MAN'
+[2m2026-11-17T07:10:09.865864Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_WEAPON_0
+[2m2026-11-17T07:10:09.865866Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_WEAPON_0'
+[2m2026-11-17T07:10:10.303104Z[0m [33m WARN[0m [2msymphonia_bundle_mp3::layer3[0m[2m:[0m mpa: invalid main_data_begin, underflow by 84 bytes
+[2m2026-11-17T07:10:16.567081Z[0m [32m INFO[0m [2mruffle_core::focus_tracker[0m[2m:[0m Focus is now on Some(EditText(EditText { ptr: 0x79ef37e310 }))
+[2m2026-11-17T07:10:19.218104Z[0m [32m INFO[0m [2mruffle_core::focus_tracker[0m[2m:[0m Focus is now on None
+[2m2026-11-17T07:10:20.550623Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	1	GO	4
+[2m2026-11-17T07:10:20.550923Z[0m [32m INFO[0m [2mruffle_desktop::backends::ui[0m[2m:[0m Loading device font "TimesNewRomanPSMT" for "Times New Roman" (italic: false, bold: false)
+[2m2026-11-17T07:10:22.242527Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	4	1	1
+[2m2026-11-17T07:10:22.961399Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.bioDis	26	1	START	2
+[2m2026-11-17T07:10:22.961605Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	1	GO	4
+[2m2026-11-17T07:10:32.101174Z[0m [33m WARN[0m [2msymphonia_bundle_mp3::layer3[0m[2m:[0m mpa: invalid main_data_begin, underflow by 223 bytes
+[2m2026-11-17T07:10:32.128150Z[0m [33m WARN[0m [2msymphonia_bundle_mp3::layer3[0m[2m:[0m mpa: invalid main_data_begin, underflow by 47 bytes
+[2m2026-11-17T07:10:32.770135Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0	449	293	IntroSeq2	166
+[2m2026-11-17T07:10:33.235920Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m 3
+[2m2026-11-17T07:10:33.737496Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SHOULDER_SHIRT
+[2m2026-11-17T07:10:33.737549Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SHOULDER_SHIRT'
+[2m2026-11-17T07:10:33.737588Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SWEAPON_ONE
+[2m2026-11-17T07:10:33.737591Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SWEAPON_ONE'
+[2m2026-11-17T07:10:33.737626Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_WEAPON_0
+[2m2026-11-17T07:10:33.737629Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_WEAPON_0'
+[2m2026-11-17T07:10:33.737640Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SWEAPON_ONE
+[2m2026-11-17T07:10:33.737643Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SWEAPON_ONE'
+[2m2026-11-17T07:10:33.738390Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SSHOULDER_MAN
+[2m2026-11-17T07:10:33.738399Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SSHOULDER_MAN'
+[2m2026-11-17T07:10:33.738443Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SWEAPON_MAN
+[2m2026-11-17T07:10:33.738446Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SWEAPON_MAN'
+[2m2026-11-17T07:10:33.738467Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_WEAPON_0
+[2m2026-11-17T07:10:33.738470Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_WEAPON_0'
+[2m2026-11-17T07:10:33.738481Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SWEAPON_MAN
+[2m2026-11-17T07:10:33.738483Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SWEAPON_MAN'
+[2m2026-11-17T07:10:33.739280Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SSHOULDER_TWO
+[2m2026-11-17T07:10:33.739292Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SSHOULDER_TWO'
+[2m2026-11-17T07:10:33.739349Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SWEAPON_TWO
+[2m2026-11-17T07:10:33.739354Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SWEAPON_TWO'
+[2m2026-11-17T07:10:33.739384Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_WEAPON_0
+[2m2026-11-17T07:10:33.739388Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_WEAPON_0'
+[2m2026-11-17T07:10:33.739403Z[0m [31mERROR[0m [2mruffle_core::library[0m[2m:[0m Tried to instantiate a non-registered character M_SWEAPON_TWO
+[2m2026-11-17T07:10:33.739405Z[0m [33m WARN[0m [2mruffle_core::avm1::globals::movie_clip[0m[2m:[0m Unable to attach 'M_SWEAPON_TWO'
+[2m2026-11-17T07:10:33.741433Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.selector.thing0	986	1	Leading Strike	52
+[2m2026-11-17T07:10:33.741655Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.selector.thing1	986	1	Destroy	194
+[2m2026-11-17T07:10:33.741768Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.selector.thing2	986	1	None	1
+[2m2026-11-17T07:10:33.741891Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.selector.thing3	986	1	None	1
+[2m2026-11-17T07:10:33.741982Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.selector.thing4	986	1	None	1
+[2m2026-11-17T07:10:33.742071Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.selector.thing5	986	1	None	1
+[2m2026-11-17T07:10:33.742168Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.selector.thing6	986	1	None	1
+[2m2026-11-17T07:10:33.742280Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.selector.thing7	986	1	None	1
+[2m2026-11-17T07:10:33.742438Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.krinToMove	986	1	None	1
+[2m2026-11-17T07:10:33.742515Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.battleClocker.thingerClock	21	1	friend	1
+[2m2026-11-17T07:10:33.742838Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p1BAR.inner2.lB.LCC	101	1	100	100
+[2m2026-11-17T07:10:33.742948Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p1BAR.inner2.lB2.LCC	101	1	100	100
+[2m2026-11-17T07:10:33.743039Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p1BAR.inner2.lB.LCC	101	100	101	101
+[2m2026-11-17T07:10:33.743109Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p1BAR.inner2.lB2.LCC	101	100	101	101
+[2m2026-11-17T07:10:33.743354Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	1	100	100
+[2m2026-11-17T07:10:33.743451Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	1	100	100
+[2m2026-11-17T07:10:33.743547Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	100	101	101
+[2m2026-11-17T07:10:33.743679Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	100	101	101
+[2m2026-11-17T07:10:33.744036Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p3BAR.inner2.lB.LCC	101	1	100	100
+[2m2026-11-17T07:10:33.744126Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p3BAR.inner2.lB2.LCC	101	1	100	100
+[2m2026-11-17T07:10:33.744206Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p3BAR.inner2.lB.LCC	101	100	101	101
+[2m2026-11-17T07:10:33.744264Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p3BAR.inner2.lB2.LCC	101	100	101	101
+[2m2026-11-17T07:10:33.744437Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p4BAR.inner	16	1	second	2
+[2m2026-11-17T07:10:33.744640Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p2BAR.inner	16	1	second	2
+[2m2026-11-17T07:10:33.744744Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p6BAR.inner	16	1	second	2
+[2m2026-11-17T07:10:33.744921Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.BATTLESCREEN	145	1	JAIL	15
+[2m2026-11-17T07:10:33.745086Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1435	92	1	JAIL	14
+[2m2026-11-17T07:10:33.745142Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR	6	1	HIDE	6
+[2m2026-11-17T07:10:33.745215Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b1.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:33.745263Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b2.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:33.745294Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:33.745325Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b4.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:33.745357Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b5.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:33.745427Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.COVER	20	1	WHITE	11
+[2m2026-11-17T07:10:33.745485Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b5.PIC	49	1	Relentless	40
+[2m2026-11-17T07:10:33.745540Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b2.PIC	49	1	Defensive	10
+[2m2026-11-17T07:10:33.745582Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b1.PIC	49	1	Phalanx	1
+[2m2026-11-17T07:10:33.745640Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b4.PIC	49	1	Aggressive	30
+[2m2026-11-17T07:10:33.745697Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.PIC	49	1	Tactical	20
+[2m2026-11-17T07:10:33.745748Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:33.745778Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b2.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:33.745810Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b3.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:33.745840Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b4.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:33.745869Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b5.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:33.745925Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	1	WHITE	11
+[2m2026-11-17T07:10:33.745974Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b5.PIC	49	1	Relentless	40
+[2m2026-11-17T07:10:33.746023Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b2.PIC	49	1	Defensive	10
+[2m2026-11-17T07:10:33.746062Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.PIC	49	1	Phalanx	1
+[2m2026-11-17T07:10:33.746111Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b4.PIC	49	1	Aggressive	30
+[2m2026-11-17T07:10:33.746163Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b3.PIC	49	1	Tactical	20
+[2m2026-11-17T07:10:34.735155Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.combatScript.inner.inner2	295	31	Prison Guard	55
+[2m2026-11-17T07:10:38.801922Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.combatScript.inner.inner2	295	55	Sonny	6
+[2m2026-11-17T07:10:41.433778Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.battleClocker.thingerClock	21	1	friend	1
+[2m2026-11-17T07:10:41.433821Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR	6	6	SHOW	1
+[2m2026-11-17T07:10:41.433836Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3	16	1	active	1
+[2m2026-11-17T07:10:41.433868Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p5	16	1	inactive	9
+[2m2026-11-17T07:10:41.433885Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b1.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:41.433895Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b2.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:41.433912Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.COVER	20	11	BLACK	1
+[2m2026-11-17T07:10:41.433926Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b4.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:41.433940Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b5.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:41.433972Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.COVER	20	1	WHITE	11
+[2m2026-11-17T07:10:53.442433Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	3	GO3	10
+[2m2026-11-17T07:10:53.467545Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	1	GO3	10
+[2m2026-11-17T07:10:53.500652Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+[2m2026-11-17T07:10:53.542075Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+[2m2026-11-17T07:10:53.575444Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+[2m2026-11-17T07:10:53.601407Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	11	GO2	7
+[2m2026-11-17T07:10:53.634002Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	8	GO2	7
+[2m2026-11-17T07:10:53.667339Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	8	GO2	7
+[2m2026-11-17T07:10:53.708623Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	8	GO2	7
+[2m2026-11-17T07:10:53.734033Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	8	GO2	7
+[2m2026-11-17T07:10:53.775507Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	8	GO2	7
+[2m2026-11-17T07:10:53.800577Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	8	GO2	7
+[2m2026-11-17T07:10:53.834950Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	8	GO2	7
+[2m2026-11-17T07:10:53.867263Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.KrinToolTipper	19	8	GO2	7
+[2m2026-11-17T07:10:53.874943Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.UI_BAR.subAI_BAR	6	1	HIDE	6
+[2m2026-11-17T07:10:53.875018Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.krinToMove	986	1	Destroy	194
+[2m2026-11-17T07:10:53.901489Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m STEP1
+[2m2026-11-17T07:10:53.901501Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m STEP2
+[2m2026-11-17T07:10:53.901505Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m STEP3
+[2m2026-11-17T07:10:53.901858Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m ADD2
+[2m2026-11-17T07:10:53.901865Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m STEP1
+[2m2026-11-17T07:10:53.935418Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.BATTLESCREEN.player3.inner	371	35	cast	189
+[2m2026-11-17T07:10:53.935469Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+[2m2026-11-17T07:10:54.502164Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.BATTLESCREEN.NumberFixer1620	234	1	critical	69
+[2m2026-11-17T07:10:54.502212Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.BATTLESCREEN.NumberFixer1620.flasher.NumSet2	40	1	One	1
+[2m2026-11-17T07:10:54.502260Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.BATTLESCREEN.NumberFixer1620.flasher.NumSet1	40	1	Six	21
+[2m2026-11-17T07:10:54.502309Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.BATTLESCREEN.NumberFixer1620.flasher.NumSet0	40	1	Six	21
+[2m2026-11-17T07:10:54.502371Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.BATTLESCREEN.NumberFixer1621	234	1	critical	69
+[2m2026-11-17T07:10:54.502406Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.BATTLESCREEN.NumberFixer1621.flasher.NumSet2	40	1	One	1
+[2m2026-11-17T07:10:54.502453Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.BATTLESCREEN.NumberFixer1621.flasher.NumSet1	40	1	Six	21
+[2m2026-11-17T07:10:54.502503Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.BATTLESCREEN.NumberFixer1621.flasher.NumSet0	40	1	Six	21
+[2m2026-11-17T07:10:54.502541Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.BATTLEFLASH	46	1	hit	2
+[2m2026-11-17T07:10:54.503054Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.BATTLESCREEN.player2.inner	371	8	hit	296
+[2m2026-11-17T07:10:54.503111Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.BATTLESCREEN.player2.inner	371	296	dead	313
+[2m2026-11-17T07:10:54.503280Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p2BAR.inner2.lB3.LBS.LCC	101	1	1	1
+[2m2026-11-17T07:10:54.503306Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	101	1	1
+[2m2026-11-17T07:10:54.503329Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	101	1	1
+[2m2026-11-17T07:10:54.503542Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:54.503552Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:54.503558Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:54.503563Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:54.503568Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:54.503573Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:54.503577Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.067933Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	18	dead	37
+[2m2026-11-17T07:10:55.067974Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.p2BAR.inner	16	2	third	9
+[2m2026-11-17T07:10:55.067983Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.067989Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.067994Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.067999Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.068005Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.068010Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.068015Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.068020Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.068025Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.068029Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.101283Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.134594Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.167921Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.201258Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.234556Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.267954Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.301266Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.334606Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.335312Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.335323Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.335330Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.335336Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.335342Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.335347Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.335353Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.367888Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.368627Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.368637Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.368643Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.368650Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.368655Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.368660Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.368665Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:55.401198Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.434534Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.434909Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.battleClocker.thingerClock	21	1	enemy	12
+[2m2026-11-17T07:10:55.467388Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.501220Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.533880Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.567931Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.601229Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.634610Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.667930Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.700645Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:55.734140Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+[2m2026-11-17T07:10:57.235109Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0	449	217	winCombat	218
+[2m2026-11-17T07:10:57.267883Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m Sonny attacked = 0
+[2m2026-11-17T07:10:57.267895Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m Sonny has team = true
+[2m2026-11-17T07:10:57.267899Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m team member count = 1
+[2m2026-11-17T07:10:57.267902Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m turns to win = 1
+[2m2026-11-17T07:10:57.269603Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0	449	219	Navigation	181
+[2m2026-11-17T07:10:57.269789Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m 5
+[2m2026-11-17T07:10:57.269976Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper.inner	856	1	None	1
+[2m2026-11-17T07:10:57.270500Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU	57	1	win	9
+[2m2026-11-17T07:10:57.271097Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot35.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271129Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot34.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271159Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot33.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271188Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot32.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271222Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot31.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271252Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot30.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271284Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot29.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271315Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot28.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271346Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot27.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271378Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot26.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271407Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot25.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271438Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot24.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271467Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot23.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271499Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot22.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271529Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot21.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271561Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot20.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271593Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot19.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271624Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot18.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271654Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot17.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271684Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot16.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271714Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot15.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271745Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot14.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271775Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot13.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271807Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot12.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271838Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot11.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271867Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot10.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271896Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot9.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271927Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot8.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271956Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot7.inner	856	1	None	1
+[2m2026-11-17T07:10:57.271987Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot6.inner	856	1	None	1
+[2m2026-11-17T07:10:57.272018Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot5.inner	856	1	None	1
+[2m2026-11-17T07:10:57.272048Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot4.inner	856	1	None	1
+[2m2026-11-17T07:10:57.272079Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot3.inner	856	1	None	1
+[2m2026-11-17T07:10:57.272109Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot2.inner	856	1	None	1
+[2m2026-11-17T07:10:57.272142Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot1.inner	856	1	None	1
+[2m2026-11-17T07:10:57.272170Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot0.inner	856	1	None	1
+[2m2026-11-17T07:10:57.272395Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272406Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272413Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272420Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272427Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272433Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272440Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272446Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272453Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272459Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272465Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272471Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272477Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272486Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272492Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272498Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272504Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272510Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272516Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272522Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272528Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272534Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272540Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272546Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272552Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272558Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272565Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272571Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272577Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272583Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272589Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272595Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272601Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272607Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272613Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272619Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272625Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272631Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272638Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272644Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272650Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272655Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272661Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272667Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272673Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272679Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272685Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272691Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272697Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272703Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272709Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272715Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272722Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272728Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272734Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272740Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272747Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272753Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272759Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.272765Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.273085Z[0m [33m WARN[0m [2mruffle_core::avm1::activation[0m[2m:[0m RemoveSprite: Source is not a display object
+[2m2026-11-17T07:10:57.274182Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinScreen	190	1	PRISON	1
+[2m2026-11-17T07:10:57.274218Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR	6	1	HIDE	6
+[2m2026-11-17T07:10:57.274265Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p3.b1.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:57.274288Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p3.b2.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:57.274307Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p3.b3.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:57.274329Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p3.b4.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:57.274347Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p3.b5.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:57.274383Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p3.b3.COVER	20	1	WHITE	11
+[2m2026-11-17T07:10:57.274419Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p3.b5.PIC	49	1	Relentless	40
+[2m2026-11-17T07:10:57.274449Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p3.b2.PIC	49	1	Defensive	10
+[2m2026-11-17T07:10:57.274471Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p3.b1.PIC	49	1	Phalanx	1
+[2m2026-11-17T07:10:57.274504Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p3.b4.PIC	49	1	Aggressive	30
+[2m2026-11-17T07:10:57.274534Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p3.b3.PIC	49	1	Tactical	20
+[2m2026-11-17T07:10:57.274568Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p5.b1.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:57.274589Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p5.b2.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:57.274607Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p5.b3.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:57.274627Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p5.b4.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:57.274648Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p5.b5.COVER	20	1	BLACK	1
+[2m2026-11-17T07:10:57.274681Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p5.b1.COVER	20	1	WHITE	11
+[2m2026-11-17T07:10:57.274712Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p5.b5.PIC	49	1	Relentless	40
+[2m2026-11-17T07:10:57.274740Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p5.b2.PIC	49	1	Defensive	10
+[2m2026-11-17T07:10:57.274763Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p5.b1.PIC	49	1	Phalanx	1
+[2m2026-11-17T07:10:57.274788Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p5.b4.PIC	49	1	Aggressive	30
+[2m2026-11-17T07:10:57.274817Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.instance1788.subAI_BAR.p5.b3.PIC	49	1	Tactical	20
+[2m2026-11-17T07:10:57.274886Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot35.inner	856	1	None	1
+[2m2026-11-17T07:10:57.274915Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot34.inner	856	1	None	1
+[2m2026-11-17T07:10:57.274942Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot33.inner	856	1	None	1
+[2m2026-11-17T07:10:57.274969Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot32.inner	856	1	None	1
+[2m2026-11-17T07:10:57.274996Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot31.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275023Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot30.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275048Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot29.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275076Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot28.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275101Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot27.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275127Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot26.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275153Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot25.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275178Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot24.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275204Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot23.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275232Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot22.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275260Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot21.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275287Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot20.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275314Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot19.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275340Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot18.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275368Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot17.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275396Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot16.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275422Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot15.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275448Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot14.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275474Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot13.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275496Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot12.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275519Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot11.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275541Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot10.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275563Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot9.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275586Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot8.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275608Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot7.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275631Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot6.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275653Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot5.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275674Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot4.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275699Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot3.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275724Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot2.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275752Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot1.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275778Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot0.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275825Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot0.inner	856	1	Guard's Leggings	159
+[2m2026-11-17T07:10:57.275856Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot1.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275887Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot2.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275916Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot3.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275945Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot4.inner	856	1	None	1
+[2m2026-11-17T07:10:57.275974Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot5.inner	856	1	None	1
+[2m2026-11-17T07:10:57.276005Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot6.inner	856	1	None	1
+[2m2026-11-17T07:10:57.276036Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot7.inner	856	1	None	1
+[2m2026-11-17T07:10:57.276065Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot8.inner	856	1	None	1
+[2m2026-11-17T07:10:57.276094Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot9.inner	856	1	None	1
+[2m2026-11-17T07:10:57.276125Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot10.inner	856	1	None	1
+[2m2026-11-17T07:10:57.276156Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot11.inner	856	1	None	1
+[2m2026-11-17T07:10:57.276190Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot12.inner	856	1	None	1
+[2m2026-11-17T07:10:57.276222Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot13.inner	856	1	None	1
+[2m2026-11-17T07:10:57.276253Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot14.inner	856	1	None	1
+[2m2026-11-17T07:10:57.276279Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m TEMPGAIN 1
+[2m2026-11-17T07:10:57.276290Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m TEMPGAIN 10
+[2m2026-11-17T07:10:57.276557Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m PROFILE 0
+[2m2026-11-17T07:10:57.276562Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m H 0
+[2m2026-11-17T07:10:57.276564Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m B 0
+[2m2026-11-17T07:10:57.276566Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m P 0
+[2m2026-11-17T07:10:57.283701Z[0m [33m WARN[0m [2mruffle_render_wgpu::filters[0m[2m:[0m Unsupported filter GradientGlowFilter(GradientFilter { colors: [GradientRecord { ratio: 0, color: Color(0xffffff00) }, GradientRecord { ratio: 255, color: Color(0x000000ff) }], blur_x: -1.0, blur_y: -1.0, angle: 0.7853851318359375, distance: 0.0, strength: 0.0, flags: GradientFilterFlags(COMPOSITE_SOURCE | 0x1) })
+[2m2026-11-17T07:10:57.351685Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	2	1	1
+[2m2026-11-17T07:10:57.351776Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	2	mainPlayer	6
+[2m2026-11-17T07:10:57.352088Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.352117Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.367891Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.367947Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.427523Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.427585Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.441916Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.441960Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.467835Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.467877Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.501234Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.501277Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.533826Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.533869Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.567847Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.567896Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.601180Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.601230Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.634555Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.634612Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.667282Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.667337Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.700778Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.700836Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.734575Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.734642Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.767877Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.767946Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.801247Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.801315Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.834554Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.834622Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.867928Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.868006Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.901229Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.901301Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.934273Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.934350Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:57.967299Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:57.967395Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.008367Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.008457Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.034307Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.034410Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.067314Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.067405Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.108438Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.108552Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.133693Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.133838Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.167547Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.167638Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.200634Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.200715Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.233717Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.233792Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.267056Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.267134Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.309076Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.309133Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.341667Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.341719Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.367545Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.367606Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.409241Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.409290Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.442669Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.442723Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.475062Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.475127Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.477138Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	1	GO4	13
+[2m2026-11-17T07:10:58.484133Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	13	1	1
+[2m2026-11-17T07:10:58.508333Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.508394Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.542714Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.542776Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.575095Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.575155Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.608383Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.608451Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.633569Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.633617Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.675988Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.676052Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.700207Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.700255Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.742070Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.742111Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.767810Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.767839Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.801477Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.801569Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.834035Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.834143Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.868167Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.868272Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.901573Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.901705Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.944180Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.944253Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.967896Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:58.967943Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:58.979097Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	1	GO4	13
+[2m2026-11-17T07:10:59.000593Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.000628Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.042325Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.042364Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.075012Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.075067Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.108357Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.108420Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.134318Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.itemSlot0.inner	856	1	Guard's Leggings	159
+[2m2026-11-17T07:10:59.134374Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.dropSlot0.inner	856	159	None	1
+[2m2026-11-17T07:10:59.134548Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	13	GO	4
+[2m2026-11-17T07:10:59.141638Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.141681Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.175872Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.175930Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.200345Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.200400Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.234235Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.234301Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.267876Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.267924Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.301247Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.301296Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.335041Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.335161Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.367266Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.367329Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.376993Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	4	1	1
+[2m2026-11-17T07:10:59.400220Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.400282Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.441978Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.442054Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.466881Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.466937Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.509651Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.509713Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.541724Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.541789Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.567576Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.567627Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.609287Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.609348Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.642962Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.643029Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.667946Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.668009Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.702107Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.702166Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.743239Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.743301Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.767898Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.767960Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.808395Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.808493Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.842784Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.842847Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.875887Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.875953Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.900599Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.900658Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.935093Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.935235Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:10:59.967812Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:10:59.967887Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:11:00.001500Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1817.avIn	295	1	1	1
+[2m2026-11-17T07:11:00.001630Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KRINMENU.instance1803.avIn	295	6	mainPlayer	6
+[2m2026-11-17T07:11:03.225658Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.ui_but3	27	1	START	2
+[2m2026-11-17T07:11:03.225808Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	1	GO	4
+[2m2026-11-17T07:11:03.544490Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m 4
+[2m2026-11-17T07:11:03.825807Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	play	_level0.ui_but3	27	7	STOP	8
+[2m2026-11-17T07:11:03.825859Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	4	1	1
+[2m2026-11-17T07:11:05.509446Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	1	GO	4
+[2m2026-11-17T07:11:08.034817Z[0m [32m INFO[0m [2mavm_trace[0m[2m:[0m GOTO	stop	_level0.KrinToolTipper	19	4	1	1
