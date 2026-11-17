@@ -367,6 +367,570 @@
    ],
    "timeline": 3142
   },
+  "res://scenes/main_menu.tscn": {
+   "frame": "mainMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Background": {
+     "kind": "art",
+     "rect": [
+      0.0,
+      0.0,
+      800.0,
+      575.0
+     ],
+     "size": [
+      1600,
+      1150
+     ],
+     "texture": "res://assets/ui/menu/start_background.png",
+     "zoom": 2.0
+    },
+    "TitlePanel/Captions/CreditsSlot/Caption": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      315.15,
+      457.5,
+      300.1,
+      20.1
+     ]
+    },
+    "TitlePanel/Captions/CreditsSlot/HitButton": {
+     "kind": "hit",
+     "rect": [
+      313.9344,
+      457.8081,
+      230.3311,
+      20.7838
+     ]
+    },
+    "TitlePanel/Captions/GameManualSlot/Caption": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      315.15,
+      367.5,
+      300.1,
+      20.1
+     ]
+    },
+    "TitlePanel/Captions/GameManualSlot/HitButton": {
+     "kind": "hit",
+     "rect": [
+      313.9344,
+      367.3581,
+      230.3311,
+      20.7838
+     ]
+    },
+    "TitlePanel/Captions/PlaySlot/Caption": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 36.0,
+     "kind": "text",
+     "rect": [
+      243.95,
+      306.5,
+      300.1,
+      41.6
+     ]
+    },
+    "TitlePanel/Captions/PlaySlot/HitButton": {
+     "kind": "hit",
+     "rect": [
+      242.0129,
+      305.1001,
+      302.2742,
+      39.9998
+     ]
+    },
+    "TitlePanel/Logo": {
+     "kind": "art",
+     "rect": [
+      106.25,
+      102.75,
+      583.75,
+      131.75
+     ],
+     "size": [
+      2335,
+      527
+     ],
+     "texture": "res://assets/ui/menu/logo.png",
+     "zoom": 4.0
+    }
+   },
+   "port_only": [
+    "ModePanel",
+    "NamePanel",
+    "SlotPanel",
+    "NewGamePanel",
+    "OptionsPanel"
+   ],
+   "timeline": 0
+  },
+  "res://scenes/ui/bottom_bar.tscn": {
+   "frame": "Navigation",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    ".": {
+     "kind": "art",
+     "rect": [
+      13.73,
+      452.45,
+      773.0,
+      111.5
+     ],
+     "size": [
+      3092,
+      446
+     ],
+     "texture": "res://assets/ui/battle/bottom_bar.png",
+     "zoom": 4.0
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
+  "res://scenes/ui/hotbar.tscn": {
+   "frame": "Navigation",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "AbilitiesSlot/AbilitiesButton": {
+     "kind": "button",
+     "rect": [
+      79.7165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "AbilitiesSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      86.0,
+      491.4,
+      25.6,
+      31.2
+     ],
+     "size": [
+      128,
+      156
+     ],
+     "texture": "res://assets/ui/hotbar/abilities.png",
+     "zoom": 5.0
+    },
+    "AbilitiesSlot/Square": {
+     "kind": "art",
+     "rect": [
+      73.2,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "AchievementsSlot/AchievementsButton": {
+     "kind": "button",
+     "rect": [
+      275.3165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "AchievementsSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      283.0,
+      495.4,
+      24.8,
+      26.2
+     ],
+     "size": [
+      124,
+      131
+     ],
+     "texture": "res://assets/ui/hotbar/achievements.png",
+     "zoom": 5.0
+    },
+    "AchievementsSlot/Square": {
+     "kind": "art",
+     "rect": [
+      268.8,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "BottomBar": {
+     "kind": "art",
+     "rect": [
+      13.73,
+      452.45,
+      773.0,
+      111.5
+     ],
+     "size": [
+      3092,
+      446
+     ],
+     "texture": "res://assets/ui/battle/bottom_bar.png",
+     "zoom": 4.0
+    },
+    "InventorySlot/Icon": {
+     "kind": "art",
+     "rect": [
+      36.8,
+      492.2,
+      28.8,
+      28.8
+     ],
+     "size": [
+      144,
+      144
+     ],
+     "texture": "res://assets/ui/hotbar/inventory.png",
+     "zoom": 5.0
+    },
+    "InventorySlot/InventoryButton": {
+     "kind": "button",
+     "rect": [
+      31.5165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "InventorySlot/Square": {
+     "kind": "art",
+     "rect": [
+      25.0,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "OptionsSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      183.4,
+      492.2,
+      29.2,
+      29.8
+     ],
+     "size": [
+      146,
+      149
+     ],
+     "texture": "res://assets/ui/hotbar/options.png",
+     "zoom": 5.0
+    },
+    "OptionsSlot/OptionsButton": {
+     "kind": "button",
+     "rect": [
+      177.5165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "OptionsSlot/Square": {
+     "kind": "art",
+     "rect": [
+      171.0,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "QuitSlot/QuitButton": {
+     "kind": "button",
+     "rect": [
+      436.0843,
+      464.9068,
+      18.0229,
+      18.001
+     ]
+    },
+    "QuitSlot/Red": {
+     "kind": "art",
+     "rect": [
+      436.0,
+      464.75,
+      18.0,
+      18.0
+     ],
+     "size": [
+      72,
+      72
+     ],
+     "texture": "res://assets/ui/window/hotbar_quit_red.png",
+     "zoom": 4.0
+    },
+    "QuitSlot/Square": {
+     "kind": "art",
+     "rect": [
+      429.5,
+      458.25,
+      31.75,
+      31.75
+     ],
+     "size": [
+      127,
+      127
+     ],
+     "texture": "res://assets/ui/window/hotbar_quit.png",
+     "zoom": 4.0
+    },
+    "RespecSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      233.8,
+      494.2,
+      24.8,
+      24.8
+     ],
+     "size": [
+      124,
+      124
+     ],
+     "texture": "res://assets/ui/hotbar/respec.png",
+     "zoom": 5.0
+    },
+    "RespecSlot/RespecButton": {
+     "kind": "button",
+     "rect": [
+      226.2165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "RespecSlot/Square": {
+     "kind": "art",
+     "rect": [
+      219.7,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "SaveSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      139.2,
+      492.4,
+      20.4,
+      28.8
+     ],
+     "size": [
+      102,
+      144
+     ],
+     "texture": "res://assets/ui/hotbar/save.png",
+     "zoom": 5.0
+    },
+    "SaveSlot/SaveButton": {
+     "kind": "button",
+     "rect": [
+      129.0165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "SaveSlot/Square": {
+     "kind": "art",
+     "rect": [
+      122.5,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "StageSlot/StageLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 10.0,
+     "kind": "text",
+     "rect": [
+      645.25,
+      534.3,
+      109.7,
+      28.65
+     ]
+    },
+    "ZoneFill": {
+     "kind": "shape",
+     "rect": [
+      504.7,
+      515.25,
+      251.4,
+      14.05
+     ]
+    },
+    "ZoneFill/Art": {
+     "kind": "art",
+     "rect": [
+      485.675,
+      496.15,
+      289.5,
+      52.25
+     ],
+     "size": [
+      1158,
+      209
+     ],
+     "texture": "res://assets/ui/window/zone_fill.png",
+     "zoom": 4.0
+    },
+    "ZoneMapSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      384.4,
+      492.8,
+      31.8,
+      31.8
+     ],
+     "size": [
+      159,
+      159
+     ],
+     "texture": "res://assets/ui/hotbar/world_map.png",
+     "zoom": 5.0
+    },
+    "ZoneMapSlot/Square": {
+     "kind": "art",
+     "rect": [
+      369.75,
+      477.75,
+      62.5,
+      62.5
+     ],
+     "size": [
+      250,
+      250
+     ],
+     "texture": "res://assets/ui/window/hotbar_world_map.png",
+     "zoom": 4.0
+    },
+    "ZoneMapSlot/ZoneMapButton": {
+     "kind": "button",
+     "rect": [
+      376.3234,
+      484.3045,
+      48.7302,
+      48.7306
+     ]
+    },
+    "ZoneSubtitleSlot/ZoneSubtitle": {
+     "align": "center",
+     "color": "90f984ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      482.0,
+      491.15,
+      288.0,
+      15.05
+     ]
+    },
+    "ZoneTitleSlot/ZoneTitle": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 17.0,
+     "kind": "text",
+     "rect": [
+      538.7,
+      468.9,
+      177.1,
+      20.9
+     ]
+    },
+    "ZoneTrack": {
+     "kind": "art",
+     "rect": [
+      504.5,
+      515.0,
+      258.25,
+      20.5
+     ],
+     "size": [
+      1033,
+      82
+     ],
+     "texture": "res://assets/ui/window/zone_track.png",
+     "zoom": 4.0
+    }
+   },
+   "port_only": [
+    "InventorySlot/Glow",
+    "InventorySlot/InnerGlow",
+    "AbilitiesSlot/Glow",
+    "AbilitiesSlot/InnerGlow",
+    "SaveSlot/Glow",
+    "SaveSlot/InnerGlow",
+    "OptionsSlot/Glow",
+    "OptionsSlot/InnerGlow",
+    "RespecSlot/Glow",
+    "RespecSlot/InnerGlow",
+    "AchievementsSlot/Glow",
+    "AchievementsSlot/InnerGlow",
+    "ZoneMapSlot/Glow",
+    "ZoneMapSlot/InnerGlow"
+   ],
+   "timeline": 0
+  },
   "res://scenes/ui/menu/abilities_window.tscn": {
    "frame": "skills",
    "origin": [
@@ -764,6 +1328,1430 @@
     "Socket7"
    ],
    "timeline": 3142
+  },
+  "res://scenes/ui/menu/inventory_window.tscn": {
+   "frame": "inventory",
+   "origin": [
+    400.5,
+    222.4
+   ],
+   "pieces": {
+    "CenterPanel": {
+     "border": 1,
+     "fill": "1a1a1aff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      308.95,
+      82.15,
+      183.05,
+      326.5
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "CenterPanel/Content/CenterOutline": {
+     "border": 1,
+     "kind": "outline",
+     "line": "333333ff",
+     "rect": [
+      321.75,
+      89.45,
+      158.35,
+      313.2
+     ]
+    },
+    "LeftPanel": {
+     "border": 1,
+     "fill": "373737ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      47.5,
+      86.6,
+      249.05,
+      267.15
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "LeftPanel/Content/EquipDollView/Slot0": {
+     "kind": "art",
+     "rect": [
+      66.5,
+      156.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot1": {
+     "kind": "art",
+     "rect": [
+      247.4,
+      156.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot2": {
+     "kind": "art",
+     "rect": [
+      66.5,
+      196.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot3": {
+     "kind": "art",
+     "rect": [
+      247.4,
+      196.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot4": {
+     "kind": "art",
+     "rect": [
+      247.4,
+      236.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot5": {
+     "kind": "art",
+     "rect": [
+      106.5,
+      236.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/EquipDollView/Slot6": {
+     "kind": "art",
+     "rect": [
+      66.5,
+      236.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/Header/InfoRow/LevelLabel": {
+     "align": "center",
+     "color": "ccccccff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      94.0,
+      111.85,
+      162.95,
+      15.6
+     ]
+    },
+    "LeftPanel/Content/Header/NameRow/NameLabel": {
+     "align": "center",
+     "color": "ccccccff",
+     "font_size": 14.0,
+     "kind": "text",
+     "rect": [
+      94.0,
+      92.05,
+      162.95,
+      16.2
+     ]
+    },
+    "PartyBar": {
+     "border": 1,
+     "fill": "404040ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      47.5,
+      358.2,
+      249.05,
+      50.85
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "RightColumn/Amount": {
+     "align": "left",
+     "color": "fad95aff",
+     "font_size": 22.0,
+     "kind": "text",
+     "line_pitch": 24.0,
+     "rect": [
+      539.1,
+      373.55,
+      112.4,
+      24.55
+     ]
+    },
+    "RightColumn/BarPanel": {
+     "border": 1,
+     "fill": "404040ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      503.5,
+      358.2,
+      249.05,
+      50.85
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "RightColumn/DeleteSlot/Art": {
+     "kind": "art",
+     "rect": [
+      707.55,
+      368.425,
+      31.0,
+      31.25
+     ],
+     "size": [
+      124,
+      125
+     ],
+     "texture": "res://assets/ui/window/delete_slot.png",
+     "zoom": 4.0
+    },
+    "RightColumn/EuroSign": {
+     "align": "right",
+     "color": "fad95aff",
+     "font_size": 31.0,
+     "kind": "text",
+     "rect": [
+      507.25,
+      366.9,
+      26.4,
+      39.4
+     ],
+     "text": "\u20ac"
+    },
+    "RightColumn/Grid/Row0/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/TallPanel": {
+     "border": 1,
+     "fill": "373737ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      503.5,
+      81.6,
+      249.05,
+      267.15
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "RightColumn/Title": {
+     "align": "center",
+     "color": "5e5e5eff",
+     "font_size": 13.0,
+     "kind": "text",
+     "rect": [
+      514.3,
+      89.1,
+      229.75,
+      17.9
+     ]
+    },
+    "WindowShell/Backdrop": {
+     "kind": "art",
+     "rect": [
+      13.25,
+      14.25,
+      776.75,
+      433.0
+     ],
+     "size": [
+      3107,
+      1732
+     ],
+     "texture": "res://assets/ui/window/backdrop.png",
+     "zoom": 4.0
+    },
+    "WindowShell/CloseArt": {
+     "kind": "art",
+     "rect": [
+      734.3,
+      29.675,
+      37.0,
+      36.5
+     ],
+     "size": [
+      148,
+      146
+     ],
+     "texture": "res://assets/ui/window/close_x.png",
+     "zoom": 4.0
+    },
+    "WindowShell/CloseButton": {
+     "kind": "hit",
+     "rect": [
+      738.6,
+      32.7,
+      30.0,
+      30.0
+     ]
+    }
+   },
+   "port_only": [
+    "LeftPanel/Content/StatusLabel",
+    "LeftPanel/Content/EquipDollView/Doll",
+    "LeftPanel/Content/EquipDollView/Slot0/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot0/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot1/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot1/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot2/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot2/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot3/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot3/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot4/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot4/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot5/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot5/Highlight",
+    "LeftPanel/Content/EquipDollView/Slot6/ItemIcon",
+    "LeftPanel/Content/EquipDollView/Slot6/Highlight",
+    "ExperienceLabel",
+    "ExpTrack",
+    "ExpFill",
+    "ExpZeroBox",
+    "ExpPercent",
+    "PiercingLabel",
+    "DefenseLabel",
+    "StatLabel0",
+    "StatValue0",
+    "StatLabel1",
+    "StatValue1",
+    "StatLabel2",
+    "StatValue2",
+    "StatLabel3",
+    "StatValue3",
+    "StatLabel4",
+    "StatValue4",
+    "PerTrack0",
+    "PerFill0",
+    "PerTrack1",
+    "PerFill1",
+    "PerTrack2",
+    "PerFill2",
+    "PerTrack3",
+    "PerFill3",
+    "PerTrack4",
+    "PerFill4",
+    "PerTrack5",
+    "PerFill5",
+    "PerTrack6",
+    "PerFill6",
+    "PerTrack7",
+    "PerFill7",
+    "DefTrack0",
+    "DefFill0",
+    "DefTrack1",
+    "DefFill1",
+    "DefTrack2",
+    "DefFill2",
+    "DefTrack3",
+    "DefFill3",
+    "DefTrack4",
+    "DefFill4",
+    "DefTrack5",
+    "DefFill5",
+    "DefTrack6",
+    "DefFill6",
+    "DefTrack7",
+    "DefFill7",
+    "Portrait0",
+    "Portrait1",
+    "Portrait2",
+    "Portrait3",
+    "Portrait4",
+    "Portrait5",
+    "RightColumn/SellSlot",
+    "RightColumn/DeleteSlot",
+    "RightColumn/Grid/Row0/Slot0/ItemIcon",
+    "RightColumn/Grid/Row0/Slot0/Highlight",
+    "RightColumn/Grid/Row0/Slot1/ItemIcon",
+    "RightColumn/Grid/Row0/Slot1/Highlight",
+    "RightColumn/Grid/Row0/Slot2/ItemIcon",
+    "RightColumn/Grid/Row0/Slot2/Highlight",
+    "RightColumn/Grid/Row0/Slot3/ItemIcon",
+    "RightColumn/Grid/Row0/Slot3/Highlight",
+    "RightColumn/Grid/Row0/Slot4/ItemIcon",
+    "RightColumn/Grid/Row0/Slot4/Highlight",
+    "RightColumn/Grid/Row0/Slot5/ItemIcon",
+    "RightColumn/Grid/Row0/Slot5/Highlight",
+    "RightColumn/Grid/Row1/Slot0/ItemIcon",
+    "RightColumn/Grid/Row1/Slot0/Highlight",
+    "RightColumn/Grid/Row1/Slot1/ItemIcon",
+    "RightColumn/Grid/Row1/Slot1/Highlight",
+    "RightColumn/Grid/Row1/Slot2/ItemIcon",
+    "RightColumn/Grid/Row1/Slot2/Highlight",
+    "RightColumn/Grid/Row1/Slot3/ItemIcon",
+    "RightColumn/Grid/Row1/Slot3/Highlight",
+    "RightColumn/Grid/Row1/Slot4/ItemIcon",
+    "RightColumn/Grid/Row1/Slot4/Highlight",
+    "RightColumn/Grid/Row1/Slot5/ItemIcon",
+    "RightColumn/Grid/Row1/Slot5/Highlight",
+    "RightColumn/Grid/Row2/Slot0/ItemIcon",
+    "RightColumn/Grid/Row2/Slot0/Highlight",
+    "RightColumn/Grid/Row2/Slot1/ItemIcon",
+    "RightColumn/Grid/Row2/Slot1/Highlight",
+    "RightColumn/Grid/Row2/Slot2/ItemIcon",
+    "RightColumn/Grid/Row2/Slot2/Highlight",
+    "RightColumn/Grid/Row2/Slot3/ItemIcon",
+    "RightColumn/Grid/Row2/Slot3/Highlight",
+    "RightColumn/Grid/Row2/Slot4/ItemIcon",
+    "RightColumn/Grid/Row2/Slot4/Highlight",
+    "RightColumn/Grid/Row2/Slot5/ItemIcon",
+    "RightColumn/Grid/Row2/Slot5/Highlight",
+    "RightColumn/Grid/Row3/Slot0/ItemIcon",
+    "RightColumn/Grid/Row3/Slot0/Highlight",
+    "RightColumn/Grid/Row3/Slot1/ItemIcon",
+    "RightColumn/Grid/Row3/Slot1/Highlight",
+    "RightColumn/Grid/Row3/Slot2/ItemIcon",
+    "RightColumn/Grid/Row3/Slot2/Highlight",
+    "RightColumn/Grid/Row3/Slot3/ItemIcon",
+    "RightColumn/Grid/Row3/Slot3/Highlight",
+    "RightColumn/Grid/Row3/Slot4/ItemIcon",
+    "RightColumn/Grid/Row3/Slot4/Highlight",
+    "RightColumn/Grid/Row3/Slot5/ItemIcon",
+    "RightColumn/Grid/Row3/Slot5/Highlight",
+    "RightColumn/Grid/Row4/Slot0/ItemIcon",
+    "RightColumn/Grid/Row4/Slot0/Highlight",
+    "RightColumn/Grid/Row4/Slot1/ItemIcon",
+    "RightColumn/Grid/Row4/Slot1/Highlight",
+    "RightColumn/Grid/Row4/Slot2/ItemIcon",
+    "RightColumn/Grid/Row4/Slot2/Highlight",
+    "RightColumn/Grid/Row4/Slot3/ItemIcon",
+    "RightColumn/Grid/Row4/Slot3/Highlight",
+    "RightColumn/Grid/Row4/Slot4/ItemIcon",
+    "RightColumn/Grid/Row4/Slot4/Highlight",
+    "RightColumn/Grid/Row4/Slot5/ItemIcon",
+    "RightColumn/Grid/Row4/Slot5/Highlight",
+    "RightColumn/Grid/Row5/Slot0/ItemIcon",
+    "RightColumn/Grid/Row5/Slot0/Highlight",
+    "RightColumn/Grid/Row5/Slot1/ItemIcon",
+    "RightColumn/Grid/Row5/Slot1/Highlight",
+    "RightColumn/Grid/Row5/Slot2/ItemIcon",
+    "RightColumn/Grid/Row5/Slot2/Highlight",
+    "RightColumn/Grid/Row5/Slot3/ItemIcon",
+    "RightColumn/Grid/Row5/Slot3/Highlight",
+    "RightColumn/Grid/Row5/Slot4/ItemIcon",
+    "RightColumn/Grid/Row5/Slot4/Highlight",
+    "RightColumn/Grid/Row5/Slot5/ItemIcon",
+    "RightColumn/Grid/Row5/Slot5/Highlight"
+   ],
+   "timeline": 3142
+  },
+  "res://scenes/ui/menu/menu_back.tscn": {
+   "frame": "subMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Caption": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 24.0,
+     "kind": "text",
+     "rect": [
+      490.15,
+      534.15,
+      300.1,
+      26.85
+     ]
+    },
+    "HitButton": {
+     "kind": "hit",
+     "rect": [
+      604.4392,
+      534.4501,
+      188.1216,
+      26.7998
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
+  "res://scenes/ui/menu/menu_background.tscn": {
+   "frame": "mainMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    ".": {
+     "kind": "art",
+     "rect": [
+      0.0,
+      0.0,
+      800.0,
+      575.0
+     ],
+     "size": [
+      1600,
+      1150
+     ],
+     "texture": "res://assets/ui/menu/start_background.png",
+     "zoom": 2.0
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
+  "res://scenes/ui/menu/mode_panel.tscn": {
+   "frame": "subMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Captions/LoadGameSlot/Caption": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 36.0,
+     "kind": "text",
+     "rect": [
+      243.0,
+      352.1,
+      300.1,
+      41.6
+     ]
+    },
+    "Captions/LoadGameSlot/HitButton": {
+     "kind": "hit",
+     "rect": [
+      241.0629,
+      350.7001,
+      302.2742,
+      39.9998
+     ]
+    },
+    "Captions/NewGameSlot/Caption": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 36.0,
+     "kind": "text",
+     "rect": [
+      243.0,
+      292.1,
+      300.1,
+      41.6
+     ]
+    },
+    "Captions/NewGameSlot/HitButton": {
+     "kind": "hit",
+     "rect": [
+      241.0629,
+      290.7001,
+      302.2742,
+      39.9998
+     ]
+    },
+    "Logo": {
+     "kind": "art",
+     "rect": [
+      106.25,
+      102.75,
+      583.75,
+      131.75
+     ],
+     "size": [
+      2335,
+      527
+     ],
+     "texture": "res://assets/ui/menu/logo.png",
+     "zoom": 4.0
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
+  "res://scenes/ui/menu/slot_panel.tscn": {
+   "frame": "dataMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Rows/Row1/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      193.2,
+      113.8,
+      30.0
+     ]
+    },
+    "Rows/Row1/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      194.05,
+      117.3,
+      33.1
+     ],
+     "text": "1"
+    },
+    "Rows/Row1/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      194.05,
+      381.1,
+      31.55
+     ]
+    },
+    "Rows/Row1/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      194.05,
+      103.85,
+      29.05
+     ]
+    },
+    "Rows/Row2/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      248.7,
+      113.8,
+      30.0
+     ]
+    },
+    "Rows/Row2/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      248.05,
+      117.3,
+      33.1
+     ],
+     "text": "2"
+    },
+    "Rows/Row2/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      248.05,
+      381.1,
+      31.55
+     ]
+    },
+    "Rows/Row2/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      248.05,
+      103.85,
+      29.05
+     ]
+    },
+    "Rows/Row3/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      304.2,
+      113.8,
+      30.0
+     ]
+    },
+    "Rows/Row3/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      305.05,
+      117.3,
+      33.1
+     ],
+     "text": "3"
+    },
+    "Rows/Row3/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      305.05,
+      381.1,
+      31.55
+     ]
+    },
+    "Rows/Row3/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      305.05,
+      103.85,
+      29.05
+     ]
+    },
+    "Rows/Row4/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      359.7,
+      113.8,
+      30.0
+     ]
+    },
+    "Rows/Row4/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      359.05,
+      117.3,
+      33.1
+     ],
+     "text": "4"
+    },
+    "Rows/Row4/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      359.05,
+      381.1,
+      31.55
+     ]
+    },
+    "Rows/Row4/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      359.05,
+      103.85,
+      29.05
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
+  "res://scenes/ui/menu/title_panel.tscn": {
+   "frame": "mainMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Captions/CreditsSlot/Caption": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      315.15,
+      457.5,
+      300.1,
+      20.1
+     ]
+    },
+    "Captions/CreditsSlot/HitButton": {
+     "kind": "hit",
+     "rect": [
+      313.9344,
+      457.8081,
+      230.3311,
+      20.7838
+     ]
+    },
+    "Captions/GameManualSlot/Caption": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      315.15,
+      367.5,
+      300.1,
+      20.1
+     ]
+    },
+    "Captions/GameManualSlot/HitButton": {
+     "kind": "hit",
+     "rect": [
+      313.9344,
+      367.3581,
+      230.3311,
+      20.7838
+     ]
+    },
+    "Captions/PlaySlot/Caption": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 36.0,
+     "kind": "text",
+     "rect": [
+      243.95,
+      306.5,
+      300.1,
+      41.6
+     ]
+    },
+    "Captions/PlaySlot/HitButton": {
+     "kind": "hit",
+     "rect": [
+      242.0129,
+      305.1001,
+      302.2742,
+      39.9998
+     ]
+    },
+    "Logo": {
+     "kind": "art",
+     "rect": [
+      106.25,
+      102.75,
+      583.75,
+      131.75
+     ],
+     "size": [
+      2335,
+      527
+     ],
+     "texture": "res://assets/ui/menu/logo.png",
+     "zoom": 4.0
+    }
+   },
+   "port_only": [],
+   "timeline": 0
   },
   "res://scenes/ui/window/right_column.tscn": {
    "frame": "shop",
@@ -1543,6 +3531,1222 @@
    "port_only": [],
    "timeline": 3142
   },
+  "res://scenes/zones/zone1_prison.tscn": {
+   "frame": "PRISON",
+   "origin": [
+    400.0,
+    222.9
+   ],
+   "pieces": {
+    "HubArt": {
+     "kind": "art",
+     "rect": [
+      17.35,
+      15.775,
+      763.0,
+      414.25
+     ],
+     "size": [
+      3052,
+      1657
+     ],
+     "texture": "res://assets/backgrounds/hub/PRISON.png",
+     "zoom": 4.0
+    },
+    "ItemStore": {
+     "kind": "point",
+     "position": [
+      123.3,
+      314.8
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "ItemStore/Control": {
+     "kind": "hit",
+     "rect": [
+      98.0181,
+      290.2227,
+      50.7637,
+      48.7546
+     ]
+    },
+    "StoryFight": {
+     "kind": "point",
+     "position": [
+      486.8,
+      250.4
+     ],
+     "scale": [
+      0.781463623046875,
+      0.846771240234375
+     ]
+    },
+    "StoryFight/Control": {
+     "kind": "hit",
+     "rect": [
+      467.3048,
+      230.2558,
+      39.2903,
+      40.8884
+     ]
+    },
+    "TrainingFight": {
+     "kind": "point",
+     "position": [
+      634.45,
+      276.45
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "TrainingFight/Control": {
+     "kind": "hit",
+     "rect": [
+      609.1685,
+      254.1389,
+      51.563,
+      49.5222
+     ]
+    }
+   },
+   "port_only": [
+    "StoryFight/bottom",
+    "StoryFight/middle",
+    "StoryFight/top",
+    "StoryFight/CollisionShape2D",
+    "ItemStore/bottom",
+    "ItemStore/middle",
+    "ItemStore/top",
+    "ItemStore/CollisionShape2D",
+    "TrainingFight/bottom",
+    "TrainingFight/middle",
+    "TrainingFight/top",
+    "TrainingFight/CollisionShape2D"
+   ],
+   "timeline": 3287
+  },
+  "res://scenes/zones/zone2_village.tscn": {
+   "frame": "VILLAGE",
+   "origin": [
+    400.0,
+    222.9
+   ],
+   "pieces": {
+    "HubArt": {
+     "kind": "art",
+     "rect": [
+      17.35,
+      16.025,
+      762.75,
+      414.0
+     ],
+     "size": [
+      3051,
+      1656
+     ],
+     "texture": "res://assets/backgrounds/hub/VILLAGE.png",
+     "zoom": 4.0
+    },
+    "ItemStore": {
+     "kind": "point",
+     "position": [
+      245.75,
+      222.7
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "ItemStore/Control": {
+     "kind": "hit",
+     "rect": [
+      220.5112,
+      198.7897,
+      51.9777,
+      49.9205
+     ]
+    },
+    "StoryFight": {
+     "kind": "point",
+     "position": [
+      498.0,
+      233.5
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "StoryFight/Control": {
+     "kind": "hit",
+     "rect": [
+      472.7582,
+      210.7766,
+      53.9836,
+      51.8468
+     ]
+    },
+    "TrainingFight": {
+     "kind": "point",
+     "position": [
+      126.2,
+      122.0
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "TrainingFight/Control": {
+     "kind": "hit",
+     "rect": [
+      102.0258,
+      100.4064,
+      49.5483,
+      47.5873
+     ]
+    }
+   },
+   "port_only": [
+    "StoryFight/bottom",
+    "StoryFight/middle",
+    "StoryFight/top",
+    "StoryFight/CollisionShape2D",
+    "ItemStore/bottom",
+    "ItemStore/middle",
+    "ItemStore/top",
+    "ItemStore/CollisionShape2D",
+    "TrainingFight/bottom",
+    "TrainingFight/middle",
+    "TrainingFight/top",
+    "TrainingFight/CollisionShape2D"
+   ],
+   "timeline": 3287
+  },
+  "res://scenes/zones/zone3_train.tscn": {
+   "frame": "TRAIN",
+   "origin": [
+    400.0,
+    222.9
+   ],
+   "pieces": {
+    "HubArt": {
+     "kind": "art",
+     "rect": [
+      17.35,
+      15.775,
+      762.75,
+      414.25
+     ],
+     "size": [
+      3051,
+      1657
+     ],
+     "texture": "res://assets/backgrounds/hub/TRAIN.png",
+     "zoom": 4.0
+    },
+    "ItemStore": {
+     "kind": "point",
+     "position": [
+      275.0,
+      316.1
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "ItemStore/Control": {
+     "kind": "hit",
+     "rect": [
+      249.7681,
+      291.5227,
+      50.7637,
+      48.7546
+     ]
+    },
+    "StoryFight": {
+     "kind": "point",
+     "position": [
+      402.45,
+      265.5
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "StoryFight/Control": {
+     "kind": "hit",
+     "rect": [
+      377.1874,
+      240.8958,
+      51.2251,
+      53.3084
+     ]
+    },
+    "TrainingFight": {
+     "kind": "point",
+     "position": [
+      483.55,
+      333.3
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "TrainingFight/Control": {
+     "kind": "hit",
+     "rect": [
+      456.9112,
+      309.3897,
+      51.9777,
+      49.9205
+     ]
+    }
+   },
+   "port_only": [
+    "StoryFight/bottom",
+    "StoryFight/middle",
+    "StoryFight/top",
+    "StoryFight/CollisionShape2D",
+    "ItemStore/bottom",
+    "ItemStore/middle",
+    "ItemStore/top",
+    "ItemStore/CollisionShape2D",
+    "TrainingFight/bottom",
+    "TrainingFight/middle",
+    "TrainingFight/top",
+    "TrainingFight/CollisionShape2D"
+   ],
+   "timeline": 3287
+  },
+  "res://scenes/zones/zone4_tunnels.tscn": {
+   "frame": "TUNNELS",
+   "origin": [
+    400.0,
+    222.9
+   ],
+   "pieces": {
+    "HubArt": {
+     "kind": "art",
+     "rect": [
+      17.35,
+      15.775,
+      763.0,
+      414.25
+     ],
+     "size": [
+      3052,
+      1657
+     ],
+     "texture": "res://assets/backgrounds/hub/TUNNELS.png",
+     "zoom": 4.0
+    },
+    "ItemStore": {
+     "kind": "point",
+     "position": [
+      117.05,
+      277.85
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "ItemStore/Control": {
+     "kind": "hit",
+     "rect": [
+      89.7252,
+      253.0566,
+      54.6497,
+      52.4867
+     ]
+    },
+    "StoryFight": {
+     "kind": "point",
+     "position": [
+      420.45,
+      207.85
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "StoryFight/Control": {
+     "kind": "hit",
+     "rect": [
+      397.5585,
+      186.2712,
+      46.0831,
+      47.9576
+     ]
+    },
+    "TrainingFight": {
+     "kind": "point",
+     "position": [
+      735.55,
+      265.5
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "TrainingFight/Control": {
+     "kind": "hit",
+     "rect": [
+      711.333,
+      245.4231,
+      50.034,
+      48.0537
+     ]
+    }
+   },
+   "port_only": [
+    "StoryFight/bottom",
+    "StoryFight/middle",
+    "StoryFight/top",
+    "StoryFight/CollisionShape2D",
+    "ItemStore/bottom",
+    "ItemStore/middle",
+    "ItemStore/top",
+    "ItemStore/CollisionShape2D",
+    "TrainingFight/bottom",
+    "TrainingFight/middle",
+    "TrainingFight/top",
+    "TrainingFight/CollisionShape2D"
+   ],
+   "timeline": 3287
+  },
+  "res://scenes/zones/zone5_city.tscn": {
+   "frame": "CITY",
+   "origin": [
+    400.0,
+    222.9
+   ],
+   "pieces": {
+    "HubArt": {
+     "kind": "art",
+     "rect": [
+      17.35,
+      15.775,
+      763.0,
+      414.25
+     ],
+     "size": [
+      3052,
+      1657
+     ],
+     "texture": "res://assets/backgrounds/hub/CITY.png",
+     "zoom": 4.0
+    },
+    "ItemStore": {
+     "kind": "point",
+     "position": [
+      230.55,
+      331.15
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "ItemStore/Control": {
+     "kind": "hit",
+     "rect": [
+      206.2329,
+      308.2057,
+      46.6342,
+      44.7885
+     ]
+    },
+    "StoryFight": {
+     "kind": "point",
+     "position": [
+      479.55,
+      167.85
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "StoryFight/Control": {
+     "kind": "hit",
+     "rect": [
+      454.2925,
+      147.6393,
+      44.415,
+      46.2213
+     ]
+    },
+    "TrainingFight": {
+     "kind": "point",
+     "position": [
+      588.0,
+      278.55
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "TrainingFight/Control": {
+     "kind": "hit",
+     "rect": [
+      559.6411,
+      251.4552,
+      54.7179,
+      55.0896
+     ]
+    }
+   },
+   "port_only": [
+    "StoryFight/bottom",
+    "StoryFight/middle",
+    "StoryFight/top",
+    "StoryFight/CollisionShape2D",
+    "ItemStore/bottom",
+    "ItemStore/middle",
+    "ItemStore/top",
+    "ItemStore/CollisionShape2D",
+    "TrainingFight/bottom",
+    "TrainingFight/middle",
+    "TrainingFight/top",
+    "TrainingFight/CollisionShape2D"
+   ],
+   "timeline": 3287
+  },
+  "res://scenes/zones/zone6_rome.tscn": {
+   "frame": "ROME",
+   "origin": [
+    400.0,
+    222.9
+   ],
+   "pieces": {
+    "HubArt": {
+     "kind": "art",
+     "rect": [
+      17.35,
+      15.775,
+      762.75,
+      414.25
+     ],
+     "size": [
+      3051,
+      1657
+     ],
+     "texture": "res://assets/backgrounds/hub/ROME.png",
+     "zoom": 4.0
+    },
+    "ItemStore": {
+     "kind": "point",
+     "position": [
+      199.8,
+      299.0
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "ItemStore/Control": {
+     "kind": "hit",
+     "rect": [
+      172.4752,
+      274.2066,
+      54.6497,
+      52.4867
+     ]
+    },
+    "StoryFight": {
+     "kind": "point",
+     "position": [
+      526.45,
+      200.5
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "StoryFight/Control": {
+     "kind": "hit",
+     "rect": [
+      501.1874,
+      175.8958,
+      51.2251,
+      53.3084
+     ]
+    },
+    "TrainingFight": {
+     "kind": "point",
+     "position": [
+      735.55,
+      265.5
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "TrainingFight/Control": {
+     "kind": "hit",
+     "rect": [
+      711.333,
+      245.4231,
+      50.034,
+      48.0537
+     ]
+    }
+   },
+   "port_only": [
+    "StoryFight/bottom",
+    "StoryFight/middle",
+    "StoryFight/top",
+    "StoryFight/CollisionShape2D",
+    "ItemStore/bottom",
+    "ItemStore/middle",
+    "ItemStore/top",
+    "ItemStore/CollisionShape2D",
+    "TrainingFight/bottom",
+    "TrainingFight/middle",
+    "TrainingFight/top",
+    "TrainingFight/CollisionShape2D"
+   ],
+   "timeline": 3287
+  },
+  "res://scenes/zones/zone7_shotul.tscn": {
+   "frame": "JAPAN",
+   "origin": [
+    400.0,
+    222.9
+   ],
+   "pieces": {
+    "HubArt": {
+     "kind": "art",
+     "rect": [
+      17.35,
+      15.775,
+      763.0,
+      414.25
+     ],
+     "size": [
+      3052,
+      1657
+     ],
+     "texture": "res://assets/backgrounds/hub/JAPAN.png",
+     "zoom": 4.0
+    },
+    "ItemStore": {
+     "kind": "point",
+     "position": [
+      139.65,
+      263.35
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "ItemStore/Control": {
+     "kind": "hit",
+     "rect": [
+      112.3252,
+      238.5566,
+      54.6497,
+      52.4867
+     ]
+    },
+    "StoryFight": {
+     "kind": "point",
+     "position": [
+      526.45,
+      200.5
+     ],
+     "scale": [
+      1.0,
+      1.0
+     ]
+    },
+    "StoryFight/Control": {
+     "kind": "hit",
+     "rect": [
+      501.1874,
+      175.8958,
+      51.2251,
+      53.3084
+     ]
+    }
+   },
+   "port_only": [
+    "StoryFight/bottom",
+    "StoryFight/middle",
+    "StoryFight/top",
+    "StoryFight/CollisionShape2D",
+    "ItemStore/bottom",
+    "ItemStore/middle",
+    "ItemStore/top",
+    "ItemStore/CollisionShape2D"
+   ],
+   "timeline": 3287
+  },
+  "res://test/fixtures/screen_rects/choice_screen.tscn": {
+   "frame": "subMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Back/Caption": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 24.0,
+     "kind": "text",
+     "rect": [
+      490.15,
+      534.15,
+      300.1,
+      26.85
+     ]
+    },
+    "Back/HitButton": {
+     "kind": "hit",
+     "rect": [
+      604.4392,
+      534.4501,
+      188.1216,
+      26.7998
+     ]
+    },
+    "Background": {
+     "kind": "art",
+     "rect": [
+      0.0,
+      0.0,
+      800.0,
+      575.0
+     ],
+     "size": [
+      1600,
+      1150
+     ],
+     "texture": "res://assets/ui/menu/start_background.png",
+     "zoom": 2.0
+    },
+    "ModePanel/Captions/LoadGameSlot/Caption": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 36.0,
+     "kind": "text",
+     "rect": [
+      243.0,
+      352.1,
+      300.1,
+      41.6
+     ]
+    },
+    "ModePanel/Captions/LoadGameSlot/HitButton": {
+     "kind": "hit",
+     "rect": [
+      241.0629,
+      350.7001,
+      302.2742,
+      39.9998
+     ]
+    },
+    "ModePanel/Captions/NewGameSlot/Caption": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 36.0,
+     "kind": "text",
+     "rect": [
+      243.0,
+      292.1,
+      300.1,
+      41.6
+     ]
+    },
+    "ModePanel/Captions/NewGameSlot/HitButton": {
+     "kind": "hit",
+     "rect": [
+      241.0629,
+      290.7001,
+      302.2742,
+      39.9998
+     ]
+    },
+    "ModePanel/Logo": {
+     "kind": "art",
+     "rect": [
+      106.25,
+      102.75,
+      583.75,
+      131.75
+     ],
+     "size": [
+      2335,
+      527
+     ],
+     "texture": "res://assets/ui/menu/logo.png",
+     "zoom": 4.0
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
+  "res://test/fixtures/screen_rects/hub_chrome.tscn": {
+   "frame": "Navigation",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Hotbar/AbilitiesSlot/AbilitiesButton": {
+     "kind": "button",
+     "rect": [
+      79.7165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "Hotbar/AbilitiesSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      86.0,
+      491.4,
+      25.6,
+      31.2
+     ],
+     "size": [
+      128,
+      156
+     ],
+     "texture": "res://assets/ui/hotbar/abilities.png",
+     "zoom": 5.0
+    },
+    "Hotbar/AbilitiesSlot/Square": {
+     "kind": "art",
+     "rect": [
+      73.2,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "Hotbar/AchievementsSlot/AchievementsButton": {
+     "kind": "button",
+     "rect": [
+      275.3165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "Hotbar/AchievementsSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      283.0,
+      495.4,
+      24.8,
+      26.2
+     ],
+     "size": [
+      124,
+      131
+     ],
+     "texture": "res://assets/ui/hotbar/achievements.png",
+     "zoom": 5.0
+    },
+    "Hotbar/AchievementsSlot/Square": {
+     "kind": "art",
+     "rect": [
+      268.8,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "Hotbar/BottomBar": {
+     "kind": "art",
+     "rect": [
+      13.73,
+      452.45,
+      773.0,
+      111.5
+     ],
+     "size": [
+      3092,
+      446
+     ],
+     "texture": "res://assets/ui/battle/bottom_bar.png",
+     "zoom": 4.0
+    },
+    "Hotbar/InventorySlot/Icon": {
+     "kind": "art",
+     "rect": [
+      36.8,
+      492.2,
+      28.8,
+      28.8
+     ],
+     "size": [
+      144,
+      144
+     ],
+     "texture": "res://assets/ui/hotbar/inventory.png",
+     "zoom": 5.0
+    },
+    "Hotbar/InventorySlot/InventoryButton": {
+     "kind": "button",
+     "rect": [
+      31.5165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "Hotbar/InventorySlot/Square": {
+     "kind": "art",
+     "rect": [
+      25.0,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "Hotbar/OptionsSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      183.4,
+      492.2,
+      29.2,
+      29.8
+     ],
+     "size": [
+      146,
+      149
+     ],
+     "texture": "res://assets/ui/hotbar/options.png",
+     "zoom": 5.0
+    },
+    "Hotbar/OptionsSlot/OptionsButton": {
+     "kind": "button",
+     "rect": [
+      177.5165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "Hotbar/OptionsSlot/Square": {
+     "kind": "art",
+     "rect": [
+      171.0,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "Hotbar/QuitSlot/QuitButton": {
+     "kind": "button",
+     "rect": [
+      436.0843,
+      464.9068,
+      18.0229,
+      18.001
+     ]
+    },
+    "Hotbar/QuitSlot/Red": {
+     "kind": "art",
+     "rect": [
+      436.0,
+      464.75,
+      18.0,
+      18.0
+     ],
+     "size": [
+      72,
+      72
+     ],
+     "texture": "res://assets/ui/window/hotbar_quit_red.png",
+     "zoom": 4.0
+    },
+    "Hotbar/QuitSlot/Square": {
+     "kind": "art",
+     "rect": [
+      429.5,
+      458.25,
+      31.75,
+      31.75
+     ],
+     "size": [
+      127,
+      127
+     ],
+     "texture": "res://assets/ui/window/hotbar_quit.png",
+     "zoom": 4.0
+    },
+    "Hotbar/RespecSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      233.8,
+      494.2,
+      24.8,
+      24.8
+     ],
+     "size": [
+      124,
+      124
+     ],
+     "texture": "res://assets/ui/hotbar/respec.png",
+     "zoom": 5.0
+    },
+    "Hotbar/RespecSlot/RespecButton": {
+     "kind": "button",
+     "rect": [
+      226.2165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "Hotbar/RespecSlot/Square": {
+     "kind": "art",
+     "rect": [
+      219.7,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "Hotbar/SaveSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      139.2,
+      492.4,
+      20.4,
+      28.8
+     ],
+     "size": [
+      102,
+      144
+     ],
+     "texture": "res://assets/ui/hotbar/save.png",
+     "zoom": 5.0
+    },
+    "Hotbar/SaveSlot/SaveButton": {
+     "kind": "button",
+     "rect": [
+      129.0165,
+      486.7922,
+      40.2479,
+      40.2483
+     ]
+    },
+    "Hotbar/SaveSlot/Square": {
+     "kind": "art",
+     "rect": [
+      122.5,
+      480.25,
+      53.75,
+      54.0
+     ],
+     "size": [
+      215,
+      216
+     ],
+     "texture": "res://assets/ui/window/hotbar_square.png",
+     "zoom": 4.0
+    },
+    "Hotbar/StageSlot/StageLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 10.0,
+     "kind": "text",
+     "rect": [
+      645.25,
+      534.3,
+      109.7,
+      28.65
+     ]
+    },
+    "Hotbar/ZoneFill": {
+     "kind": "shape",
+     "rect": [
+      504.7,
+      515.25,
+      251.4,
+      14.05
+     ]
+    },
+    "Hotbar/ZoneFill/Art": {
+     "kind": "art",
+     "rect": [
+      485.675,
+      496.15,
+      289.5,
+      52.25
+     ],
+     "size": [
+      1158,
+      209
+     ],
+     "texture": "res://assets/ui/window/zone_fill.png",
+     "zoom": 4.0
+    },
+    "Hotbar/ZoneMapSlot/Icon": {
+     "kind": "art",
+     "rect": [
+      384.4,
+      492.8,
+      31.8,
+      31.8
+     ],
+     "size": [
+      159,
+      159
+     ],
+     "texture": "res://assets/ui/hotbar/world_map.png",
+     "zoom": 5.0
+    },
+    "Hotbar/ZoneMapSlot/Square": {
+     "kind": "art",
+     "rect": [
+      369.75,
+      477.75,
+      62.5,
+      62.5
+     ],
+     "size": [
+      250,
+      250
+     ],
+     "texture": "res://assets/ui/window/hotbar_world_map.png",
+     "zoom": 4.0
+    },
+    "Hotbar/ZoneMapSlot/ZoneMapButton": {
+     "kind": "button",
+     "rect": [
+      376.3234,
+      484.3045,
+      48.7302,
+      48.7306
+     ]
+    },
+    "Hotbar/ZoneSubtitleSlot/ZoneSubtitle": {
+     "align": "center",
+     "color": "90f984ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      482.0,
+      491.15,
+      288.0,
+      15.05
+     ]
+    },
+    "Hotbar/ZoneTitleSlot/ZoneTitle": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 17.0,
+     "kind": "text",
+     "rect": [
+      538.7,
+      468.9,
+      177.1,
+      20.9
+     ]
+    },
+    "Hotbar/ZoneTrack": {
+     "kind": "art",
+     "rect": [
+      504.5,
+      515.0,
+      258.25,
+      20.5
+     ],
+     "size": [
+      1033,
+      82
+     ],
+     "texture": "res://assets/ui/window/zone_track.png",
+     "zoom": 4.0
+    },
+    "HubArt": {
+     "kind": "art",
+     "rect": [
+      17.35,
+      15.775,
+      763.0,
+      414.25
+     ],
+     "size": [
+      3052,
+      1657
+     ],
+     "texture": "res://assets/backgrounds/hub/PRISON.png",
+     "zoom": 4.0
+    }
+   },
+   "port_only": [
+    "Hotbar/InventorySlot/Glow",
+    "Hotbar/InventorySlot/InnerGlow",
+    "Hotbar/AbilitiesSlot/Glow",
+    "Hotbar/AbilitiesSlot/InnerGlow",
+    "Hotbar/SaveSlot/Glow",
+    "Hotbar/SaveSlot/InnerGlow",
+    "Hotbar/OptionsSlot/Glow",
+    "Hotbar/OptionsSlot/InnerGlow",
+    "Hotbar/RespecSlot/Glow",
+    "Hotbar/RespecSlot/InnerGlow",
+    "Hotbar/AchievementsSlot/Glow",
+    "Hotbar/AchievementsSlot/InnerGlow",
+    "Hotbar/ZoneMapSlot/Glow",
+    "Hotbar/ZoneMapSlot/InnerGlow"
+   ],
+   "timeline": 0
+  },
   "res://test/fixtures/screen_rects/shell_panel_fills.tscn": {
    "frame": "inventory",
    "origin": [
@@ -1604,6 +4808,237 @@
    },
    "port_only": [],
    "timeline": 3142
+  },
+  "res://test/fixtures/screen_rects/slots_screen.tscn": {
+   "frame": "dataMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Back/Caption": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 24.0,
+     "kind": "text",
+     "rect": [
+      490.15,
+      534.15,
+      300.1,
+      26.85
+     ]
+    },
+    "Back/HitButton": {
+     "kind": "hit",
+     "rect": [
+      604.4392,
+      534.4501,
+      188.1216,
+      26.7998
+     ]
+    },
+    "Background": {
+     "kind": "art",
+     "rect": [
+      0.0,
+      0.0,
+      800.0,
+      575.0
+     ],
+     "size": [
+      1600,
+      1150
+     ],
+     "texture": "res://assets/ui/menu/start_background.png",
+     "zoom": 2.0
+    },
+    "SlotPanel/Rows/Row1/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      193.2,
+      113.8,
+      30.0
+     ]
+    },
+    "SlotPanel/Rows/Row1/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      194.05,
+      117.3,
+      33.1
+     ],
+     "text": "1"
+    },
+    "SlotPanel/Rows/Row1/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      194.05,
+      381.1,
+      31.55
+     ]
+    },
+    "SlotPanel/Rows/Row1/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      194.05,
+      103.85,
+      29.05
+     ]
+    },
+    "SlotPanel/Rows/Row2/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      248.7,
+      113.8,
+      30.0
+     ]
+    },
+    "SlotPanel/Rows/Row2/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      248.05,
+      117.3,
+      33.1
+     ],
+     "text": "2"
+    },
+    "SlotPanel/Rows/Row2/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      248.05,
+      381.1,
+      31.55
+     ]
+    },
+    "SlotPanel/Rows/Row2/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      248.05,
+      103.85,
+      29.05
+     ]
+    },
+    "SlotPanel/Rows/Row3/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      304.2,
+      113.8,
+      30.0
+     ]
+    },
+    "SlotPanel/Rows/Row3/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      305.05,
+      117.3,
+      33.1
+     ],
+     "text": "3"
+    },
+    "SlotPanel/Rows/Row3/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      305.05,
+      381.1,
+      31.55
+     ]
+    },
+    "SlotPanel/Rows/Row3/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      305.05,
+      103.85,
+      29.05
+     ]
+    },
+    "SlotPanel/Rows/Row4/HitButton": {
+     "kind": "hit",
+     "rect": [
+      213.0,
+      359.7,
+      113.8,
+      30.0
+     ]
+    },
+    "SlotPanel/Rows/Row4/Number": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      310.0,
+      359.05,
+      117.3,
+      33.1
+     ],
+     "text": "4"
+    },
+    "SlotPanel/Rows/Row4/SaveName": {
+     "align": "left",
+     "color": "9dee66ff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      358.5,
+      359.05,
+      381.1,
+      31.55
+     ]
+    },
+    "SlotPanel/Rows/Row4/SlotLabel": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 26.0,
+     "kind": "text",
+     "rect": [
+      197.0,
+      359.05,
+      103.85,
+      29.05
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 0
   },
   "res://test/fixtures/screen_rects/victory_left_panel.tscn": {
    "frame": "win",

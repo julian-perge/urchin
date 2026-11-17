@@ -61,7 +61,7 @@ The worker sees nothing of the session that dispatched it. The worker agent's pr
 
 These rules are for the worker. They win over a skill and over the agent's prompt where they differ.
 
-- Run every command through `just`, as `AGENTS.md` says. The worktree is already set up.
+- Run the project's tasks through their `just` recipes, and plain tools such as `git` directly, as `AGENTS.md` says. The worktree is already set up.
 - Do not pipe `just gut` into another command. Its exit code is the result, and a pipe gives the exit code of the last command instead. In the smoke test of #274, the small tier ran `just gut` into `tail` and reported the exit code of `tail`.
 - Read the spec file that the issue's `Spec` line names. When it has none, use the `spec/` path in the parent issue's body. When neither names one, the issue is the whole spec.
 - Before you write code, read the topic docs that `AGENTS.md` lists for the task, and `CODING_STANDARDS.md` at the repo root.

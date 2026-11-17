@@ -47,6 +47,34 @@ func test_play_fades_in_plays_video_then_fades_out_and_finishes():
 	assert_almost_eq(result.alpha_at_finish, 1.0, 0.01, "fully opaque again when finished fires")
 
 
+# extract_cutscenes pads each clip to the 800x575 Stage, which is the viewport's
+# size in project.godot. The video node covers the viewport, so a clip of the
+# same size draws one clip pixel on one viewport pixel, with no bar and no
+# stretch. The player sits in a viewport of its own because GUT's window is not
+# the game's size.
+func test_each_clip_fills_the_game_viewport_pixel_for_pixel():
+	var game_size := Vector2i(
+		ProjectSettings.get_setting("display/window/size/viewport_width"),
+		ProjectSettings.get_setting("display/window/size/viewport_height")
+	)
+	var clips: Array = Array(DirAccess.get_files_at("res://assets/cutscenes")).filter(
+		func(file: String): return file.ends_with(".ogv")
+	)
+	assert_eq(clips.size(), 6, "the six extracted clips")
+	for clip: String in clips:
+		var viewport := SubViewport.new()
+		viewport.size = game_size
+		add_child_autofree(viewport)
+		var player: CutscenePlayer = CutscenePlayerScene.instantiate()
+		player.animation_speed = 0.0
+		viewport.add_child(player)
+
+		player.play(clip.get_basename())
+
+		assert_eq(player.video.get_global_rect(), Rect2(Vector2.ZERO, game_size), "%s: the video covers the viewport" % clip)
+		assert_eq(player.video.get_video_texture().get_size(), Vector2(game_size), "%s: the clip is the viewport's size" % clip)
+
+
 func test_animation_speed_zero_skips_fades_instantly():
 	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
 	player.animation_speed = 0.0

@@ -9,6 +9,20 @@ const RECORD_PATH: String = "res://test/fixtures/screen_rects.json"
 const TEST_SCENE: String = "res://test/fixtures/screen_rects/victory_left_panel.tscn"
 const TOLERANCE: float = 0.5
 
+var _save_before: PlayerSave
+
+
+# The record holds each scene as its .tscn places it. A scene that sizes a
+# piece from the save, as the hotbar sizes the zone fill, only shows that state
+# with no save, and an earlier test script can leave one behind.
+func before_each() -> void:
+	_save_before = GameData.current_save
+	GameData.current_save = null
+
+
+func after_each() -> void:
+	GameData.current_save = _save_before
+
 
 func _record() -> Dictionary:
 	var text: String = FileAccess.get_file_as_string(RECORD_PATH)
@@ -88,6 +102,25 @@ func _panel_problems(path: String, panel: PanelContainer, entry: Dictionary) -> 
 	return found
 
 
+func _outline_problems(path: String, panel: Panel, entry: Dictionary) -> Array[String]:
+	var found: Array[String] = []
+	var style: StyleBoxFlat = panel.get_theme_stylebox("panel") as StyleBoxFlat
+	if style == null:
+		return ["%s: outline is not a StyleBoxFlat" % path]
+	if style.draw_center:
+		found.append("%s: outline has a fill" % path)
+	if style.shadow_size != 0 or panel.material != null:
+		found.append("%s: outline has a shadow" % path)
+	if not _same_color(style.border_color, entry["line"]):
+		found.append("%s: outline stroke colour" % path)
+	for side: Side in PanelRecipe.SIDES:
+		if style.get_border_width(side) != int(entry["border"]):
+			found.append("%s: outline stroke width" % path)
+	for problem: String in PanelRecipe.edge_problems(style):
+		found.append("%s: %s" % [path, problem])
+	return found
+
+
 # CODING_STANDARDS.md names `rect * zoom == PNG pixel size` as the invariant that
 # holds across all the extracted art. The record holds the PNG's size and zoom, so
 # this checks the rect against them and the texture against the size.
@@ -161,6 +194,17 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 	var pieces: Dictionary = scene["pieces"]
 	for path: String in pieces:
 		var entry: Dictionary = pieces[path]
+		if entry["kind"] == "point":
+			var point: Node2D = root.get_node_or_null(path) as Node2D
+			if point == null:
+				found.append("%s: no such Node2D" % path)
+			else:
+				var expected := Vector2(entry["position"][0], entry["position"][1])
+				if not (_close(point.global_position.x, expected.x) and _close(point.global_position.y, expected.y)):
+					found.append("%s: position %s, expected %s" % [path, point.global_position, expected])
+				if not point.scale.is_equal_approx(Vector2(entry["scale"][0], entry["scale"][1])):
+					found.append("%s: scale differs" % path)
+			continue
 		var node: Control = root.get_node_or_null(path) as Control
 		if node == null:
 			found.append("%s: no such Control in the scene" % path)
@@ -168,8 +212,14 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 		# The record holds Stage positions. A scene such as right_column.tscn
 		# puts its root where the SWF puts the piece, so the root's own
 		# position counts.
-		var actual := Rect2(node.global_position, node.size)
+		var actual := node.get_global_rect()
 		match entry["kind"]:
+			"outline":
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+				if node is Panel:
+					found.append_array(_outline_problems(path, node, entry))
+				else:
+					found.append("%s: an outline piece that is not a Panel" % path)
 			"panel":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 				if node is PanelContainer:
@@ -205,9 +255,13 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 						found.append("%s: fill %s, expected %s" % [path, (node as ColorRect).color.to_html(), entry["fill"]])
 				else:
 					found.append("%s: a box piece that is not a ColorRect" % path)
+			"shape":
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 			"hit", "button":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
-				if not node is BaseButton:
+				# An orb takes its clicks through a plain Control (orb_base.gd), so
+				# its hit piece is the one that does not have to be a button.
+				if not (node is BaseButton or node.get_parent() is OrbBase):
 					found.append("%s: a %s piece that is not a button" % [path, entry["kind"]])
 			_:
 				found.append("%s: unknown kind %s" % [path, entry["kind"]])
@@ -377,6 +431,22 @@ func test_control_a_hit_button_moved_20_px_fails() -> void:
 	assert_string_contains(found[0] if found else "", "CloseButton: top left")
 
 
+func test_control_a_hit_piece_that_is_a_plain_control_fails() -> void:
+	var root: Control = await _laid_out(SHELL_SCENE)
+	var button: Control = root.get_node("CloseButton")
+	var plain := Control.new()
+	plain.position = button.position
+	plain.size = button.size
+	var parent: Node = button.get_parent()
+	var index: int = button.get_index()
+	parent.remove_child(button)
+	button.free()
+	plain.name = "CloseButton"
+	parent.add_child(plain)
+	parent.move_child(plain, index)
+	_assert_one_problem(_scene_problems(root, _shell_record()), "CloseButton: a hit piece that is not a button")
+
+
 func test_control_the_wrong_art_fails() -> void:
 	var root: Control = await _laid_out(SHELL_SCENE)
 	(root.get_node("CloseArt") as TextureRect).texture = (root.get_node("Backdrop") as TextureRect).texture
@@ -539,3 +609,173 @@ func test_the_record_holds_the_text_of_static_fields_only() -> void:
 	var pieces: Dictionary = _record()["scenes"][RIGHT_COLUMN_SCENE]["pieces"]
 	assert_true(pieces["EuroSign"].has("text"), "the euro sign is static text")
 	assert_false(pieces["Amount"].has("text"), "the game fills the amount")
+
+
+const TITLE_SCENE: String = "res://scenes/ui/menu/title_panel.tscn"
+
+
+# A menu hit button draws nothing, so only this test can see one move.
+func test_control_a_title_hit_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(TITLE_SCENE)
+	(root.get_node("Captions/PlaySlot/HitButton") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][TITLE_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "Captions/PlaySlot/HitButton: top left")
+
+
+# A taller Play slot pushes the two slots after it 20 px down the FloatBox
+# column, so the caption and the hit button of each fail at their top left, and
+# each hit button at its bottom right too.
+func test_control_a_title_slot_20_px_taller_fails() -> void:
+	var root: Control = await _laid_out(TITLE_SCENE)
+	(root.get_node("Captions/PlaySlot") as Control).custom_minimum_size.y += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][TITLE_SCENE])
+	assert_eq(found.size(), 6, str(found))
+	for problem: String in found:
+		assert_false(problem.contains("PlaySlot"), problem)
+
+
+const HOTBAR_SCENE: String = "res://scenes/ui/hotbar.tscn"
+
+
+func test_control_each_zone_text_slot_moved_20_px_fails() -> void:
+	for slot: String in ["ZoneTitleSlot", "ZoneSubtitleSlot", "StageSlot"]:
+		var root: Control = await _laid_out(HOTBAR_SCENE)
+		(root.get_node(slot) as Control).position.y += 20.0
+		await wait_process_frames(2)
+		var found: Array[String] = _scene_problems(root, _record()["scenes"][HOTBAR_SCENE])
+		_assert_one_problem(found, slot + "/")
+		assert_string_contains(found[0] if found else "", "top left")
+
+
+# A slot holds its square, its icon and its hit button, so each of the three
+# fails at both corners. The slot's Glow is port only.
+func test_control_a_hotbar_slot_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(HOTBAR_SCENE)
+	(root.get_node("SaveSlot") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][HOTBAR_SCENE])
+	assert_eq(found.size(), 6, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "SaveSlot/")
+
+
+# The hit button is smaller than the square's art, which holds the Glows around
+# the square, so only this test can see the hit button move.
+func test_control_a_hotbar_hit_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(HOTBAR_SCENE)
+	(root.get_node("%ZoneMapButton") as Control).position.y += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][HOTBAR_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "ZoneMapSlot/ZoneMapButton: top left")
+
+
+# The zone fill is a plain Control on the fill's shape with the fill's art
+# under it, so the shape and the art each fail at both corners.
+func test_control_the_zone_fill_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(HOTBAR_SCENE)
+	(root.get_node("ZoneFill") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][HOTBAR_SCENE])
+	assert_eq(found.size(), 4, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "ZoneFill")
+
+
+const MODE_SCENE: String = "res://scenes/ui/menu/mode_panel.tscn"
+
+
+# A New Game slot 20 px taller breaks the 60 px pitch of the choice, so Load
+# Game's caption fails at its top left and its hit button at both corners.
+func test_control_a_choice_slot_20_px_taller_fails() -> void:
+	var root: Control = await _laid_out(MODE_SCENE)
+	(root.get_node("Captions/NewGameSlot") as Control).custom_minimum_size.y += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][MODE_SCENE])
+	assert_eq(found.size(), 3, str(found))
+	for problem: String in found:
+		assert_string_contains(problem, "Captions/LoadGameSlot")
+
+
+const SLOT_SCENE: String = "res://scenes/ui/menu/slot_panel.tscn"
+
+
+# A menu hit button draws nothing, so only this test can see one move.
+func test_control_a_slot_hit_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(SLOT_SCENE)
+	(root.get_node("Rows/Row2/HitButton") as Control).position.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][SLOT_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_contains(problem, "Rows/Row2/HitButton")
+
+
+# The row pitches are 54, 57 and 54 px. A first row as tall as the second
+# moves the three rows under it 3 px down, so each of their four pieces fails
+# at its top left, each hit button at its bottom right too.
+func test_control_a_slot_row_with_the_wrong_pitch_fails() -> void:
+	var root: Control = await _laid_out(SLOT_SCENE)
+	var rows: Control = root.get_node("Rows")
+	(rows.get_node("Row1") as Control).custom_minimum_size.y = (rows.get_node("Row2") as Control).custom_minimum_size.y
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][SLOT_SCENE])
+	assert_eq(found.size(), 15, str(found))
+	for problem: String in found:
+		assert_false(problem.contains("Row1"), problem)
+
+
+const INVENTORY_SCENE: String = "res://scenes/ui/menu/inventory_window.tscn"
+
+
+func test_control_an_inventory_header_row_20_px_taller_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("LeftPanel/Content/Header/NameRow") as Control).custom_minimum_size.y += 20.0
+	await wait_process_frames(2)
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][INVENTORY_SCENE]), "InfoRow/LevelLabel: top left")
+
+
+func test_control_an_inventory_outline_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("CenterPanel/Content/CenterOutline") as Control).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "CenterPanel/Content/CenterOutline:")
+
+
+func test_control_an_inventory_equip_slot_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("LeftPanel/Content/EquipDollView/Slot0") as Control).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "LeftPanel/Content/EquipDollView/Slot0:")
+
+
+func test_control_an_inventory_outline_with_fill_or_shadow_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	var panel: Panel = root.get_node("CenterPanel/Content/CenterOutline")
+	var style: StyleBoxFlat = panel.get_theme_stylebox("panel").duplicate()
+	panel.add_theme_stylebox_override("panel", style)
+	style.draw_center = true
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][INVENTORY_SCENE]), "outline has a fill")
+	style.draw_center = false
+	style.shadow_size = 5
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][INVENTORY_SCENE]), "outline has a shadow")
+
+
+func test_control_a_zone_orb_moved_20_px_fails() -> void:
+	var path: String = "res://scenes/zones/zone1_prison.tscn"
+	var scenes: Dictionary = _record()["scenes"]
+	assert_has(scenes, path)
+	if not scenes.has(path):
+		return
+	var root: Control = await _laid_out(path)
+	(root.get_node("StoryFight") as Node2D).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, scenes[path])
+	assert_gt(found.size(), 0)
+	assert_string_contains(found[0] if found else "", "StoryFight")

@@ -13,7 +13,8 @@
 # node that draws a piece. port_only names the nodes the port draws and the
 # SWF does not, so the test skips them.
 #
-# A piece is one of seven kinds:
+# A piece has one of these kinds:
+#   "point" - a Node2D at a sprite placement, with its position and scale.
 #   "panel" - a flat Panel (Part 3): a sprite whose one shape has a solid fill
 #             and a line, under an inner DropShadow. Its rect is the fill rect
 #             grown by half the border. The fill rect is ShapeBounds through
@@ -22,14 +23,15 @@
 #   "text"  - an edit text, recorded as the rect Flash lays its text out in
 #             (label_layout.text_rect), with its font height, colour and
 #             alignment.
-#   "art"   - a piece drawn from a zoom 4 PNG of extract_window_chrome, which
-#             a TextureRect shows at the rect that render measured, with the
-#             PNG's path. The rect and the PNG come from `window_chrome.json`
-#             by the art's name, not from the piece's depth. For art measured
-#             from a sprite, the sprite at the piece's depth must be the one
-#             the render was measured from. For art measured from the stage,
-#             the code only checks that the depth exists on the frame, so a
-#             wrong depth there is not caught.
+#   "art"   - a piece drawn from a PNG of extract_window_chrome,
+#             extract_start_screens or extract_hotbar_icons, or from the bottom
+#             bar of extract_battle_screen, which a TextureRect shows at the
+#             rect that render measured, with the PNG's path. The rect and the
+#             PNG come from the render's record by the art's name, not from the
+#             piece's depth. For art measured from a sprite, the sprite at the
+#             piece's depth must be the one the render was measured from. For
+#             art measured from the stage, the code only checks that the depth
+#             exists on the frame, so a wrong depth there is not caught.
 #   "face"  - the portrait clip 2978, which the port draws as a TextureRect that
 #             shows a different PNG for each fighter. It is recorded as the crop
 #             box that extract_faces cut every portrait to, placed with the
@@ -38,19 +40,34 @@
 #             hit shape's bounds through the placement matrix.
 #   "button" - a button that draws art, which the port draws as a native
 #             Button. It is recorded as the bounds of the shapes its up state
-#             draws, through the placement matrix.
+#             draws, each through its button record's matrix and then the
+#             placement matrix. A hotbar square is one: the port draws its art
+#             as an "art" piece and puts a Button on this rect to take clicks.
 #   "box"   - a shape of one solid fill and no line, which the port draws as a
 #             ColorRect, recorded as its ShapeBounds through the placement
 #             matrix with its fill colour.
+#   "shape" - a shape that an "art" piece draws with a filter around it, where
+#             the port also needs the shape's own rect. It is recorded as the
+#             ShapeBounds through the placement matrix, and the port puts a
+#             plain Control on it. The zone fill is one: the game scales it
+#             from the shape's left edge, and its art is wider than the shape.
 #
 # An "art" piece whose render is measured from a sprite of its own is placed
 # by where that sprite sits: the sprite at `depth`, or the sprite at
-# `inner_depth` inside it.
+# `inner_depth` inside it. An "art" piece whose render is measured on the Stage
+# at another depth, `rendered_at`, is moved by the distance between the two
+# placements. The six hotbar squares are one PNG that way.
 #
 # A piece that a sprite places on its own first frame names the sprite's depth
 # and its own inner_depth, and it is measured from where the sprite sits.
 # When the sprite's placement carries a DropShadow, Flash shadows every text
 # field inside it, so a text piece there records the shadow too.
+#
+# The record reads the web build, sonny-2-2900.swf. A piece that names a
+# `steam` placement is moved to where the Steam build, SONNY2.swf, places it
+# on the same frame. The six hotbar slots do: the web build places them 13 px
+# higher. Its Armor Games strip 3176 is an overlay under that row and does not
+# move the buttons.
 #
 # A timeline other than the root is measured from where the root's Navigation
 # frame places it, which for KRINMENU is (400.50, 222.40).
@@ -62,9 +79,18 @@ import json
 import math
 from dataclasses import dataclass, field
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from PIL import Image
+
+from urchin_dev import REPO_ROOT, STEAM_SWF, WEB_SWF
 from urchin_dev.swf import label_layout, render, timeline
-from urchin_dev.swf.extract import faces, window_chrome
+from urchin_dev.swf.extract import (
+    battle_screen,
+    faces,
+    hotbar_icons,
+    start_screens,
+    window_chrome,
+    zone_hub,
+)
 from urchin_dev.swf.swf_index import (
     ButtonRecord,
     DropShadow,
@@ -82,6 +108,14 @@ from urchin_dev.swf.swf_index import (
 
 RECORD = REPO_ROOT / "test" / "fixtures" / "screen_rects.json"
 CHROME_TEXTURES = "res://assets/ui/window"
+MENU_TEXTURES = "res://assets/ui/menu"
+BATTLE_TEXTURES = "res://assets/ui/battle"
+HOTBAR_TEXTURES = "res://assets/ui/hotbar"
+# The menu art, by the record that extract_start_screens writes beside each PNG.
+MENU_ART = {
+    "logo": start_screens.LOGO_RECORD,
+    "start_background": start_screens.BACKGROUND_RECORD,
+}
 KRINMENU = 3142
 HUB_FRAME = "Navigation"
 
@@ -98,6 +132,13 @@ class Piece:
     # The depth of the piece inside the sprite at `depth`, on the sprite's
     # first frame, for a piece that the scene's timeline does not place itself.
     inner_depth: int | None = None
+    # The depth whose placement the art was rendered from. A Stage render moves
+    # by the placement difference. A sprite-local render uses this depth's
+    # sprite as its source and the current placement as its origin.
+    rendered_at: int | None = None
+    # The depth, or the instance name, that places the same piece on the same
+    # frame of the Steam build, for a piece the port puts where that build does.
+    steam: int | str | None = None
 
     def __post_init__(self) -> None:
         if (self.depth is None) == (self.instance is None):
@@ -118,6 +159,11 @@ class Scene:
     frame: str
     pieces: dict[str, Piece]
     port_only: tuple[str, ...] = field(default=())
+    # The depths of the frame whose characters the port leaves out by an ADR.
+    # The compare tool takes them out of its reference too.
+    left_out: tuple[int, ...] = field(default=())
+    # Characters excluded from a static chrome score, such as the fade and orbs.
+    compare_strip: tuple[int, ...] = field(default=())
 
 
 # The victory frame's experience rows, top to bottom, by the depth that
@@ -136,6 +182,122 @@ VICTORY_ROW_PIECES: dict[str, tuple[str, int, str | None]] = {
 # The frame names the grid's slots itemSlot0 to itemSlot35, row by row.
 INVENTORY_SLOTS = 36
 INVENTORY_COLUMNS = 6
+
+# The title frame's pieces, by their path in title_panel.tscn
+# (spec/107-title-slots.md, The title). The SWF places the Play caption twice,
+# 2699 at depth 8 with no filter and 2696 at depth 11 with the caption's Glow
+# and DropShadow, at one spot. The port draws one Label for both. The frame
+# also places "Play More Games!" and "Play the Original Sonny" at depths 10 and
+# 12, the Armor Games line at depth 38 and its logo at depth 41, which the port
+# leaves out (docs/adr/0002-leave-out-the-armor-games-branding.md).
+TITLE_FRAME = "mainMenu"
+TITLE_PIECES = {
+    "Logo": Piece("art", 6, art="logo"),
+    "Captions/PlaySlot/Caption": Piece("text", 11),
+    "Captions/PlaySlot/HitButton": Piece("hit", 18),
+    "Captions/GameManualSlot/Caption": Piece("text", 9),
+    "Captions/GameManualSlot/HitButton": Piece("hit", 14),
+    "Captions/CreditsSlot/Caption": Piece("text", 13),
+    "Captions/CreditsSlot/HitButton": Piece("hit", 22),
+}
+
+# The choice frame's pieces, by their path in mode_panel.tscn
+# (spec/107-title-slots.md, The choice). The frame also places "PvP Arena" at
+# depth 14 and its hit button at depth 15, which the port leaves out
+# (docs/adr/0006-leave-out-the-pvp-arena.md).
+CHOICE_FRAME = "subMenu"
+CHOICE_PIECES = {
+    "Logo": Piece("art", 6, art="logo"),
+    "Captions/NewGameSlot/Caption": Piece("text", 8),
+    "Captions/NewGameSlot/HitButton": Piece("hit", 10),
+    "Captions/LoadGameSlot/Caption": Piece("text", 9),
+    "Captions/LoadGameSlot/HitButton": Piece("hit", 12),
+}
+
+# The six hotbar slots that share the 0.671 square, by their slot node in
+# hotbar.tscn: the depth of the slot's button and the name of its icon art
+# (spec/107-hub.md, The hotbar). The button draws the square, so the square's
+# art and the hit rect are two pieces at one depth. The second depth is the
+# same button's in the Steam build, whose row the port uses.
+HOTBAR_SLOTS: dict[str, tuple[int, int, str]] = {
+    "Inventory": (126, 126, "inventory"),
+    "Abilities": (128, 128, "abilities"),
+    "Save": (130, 130, "save"),
+    "Options": (136, 136, "options"),
+    "Respec": (138, 138, "respec"),
+    "Achievements": (165, 157, "achievements"),
+}
+if (
+    tuple(depth for depth, _steam, _icon in HOTBAR_SLOTS.values())
+    != window_chrome.SQUARE_DEPTHS
+):
+    raise ValueError("HOTBAR_SLOTS and window_chrome.SQUARE_DEPTHS disagree")
+
+
+def hotbar_icon(name: str, *, steam: bool = False) -> Piece:
+    instance = hotbar_icons.ICONS[name]
+    return Piece(
+        "art", None, art=name, instance=instance, steam=instance if steam else None
+    )
+
+
+HOTBAR_PIECES = {
+    "BottomBar": Piece("art", 1, art="bottom_bar"),
+    **{
+        f"{slot}Slot/{node}": piece
+        for slot, (depth, steam, icon) in HOTBAR_SLOTS.items()
+        for node, piece in {
+            "Square": Piece(
+                "art",
+                depth,
+                art="hotbar_square",
+                rendered_at=window_chrome.SQUARE_DEPTHS[0],
+                steam=steam,
+            ),
+            "Icon": hotbar_icon(icon, steam=True),
+            f"{slot}Button": Piece("button", depth, steam=steam),
+        }.items()
+    },
+    "ZoneMapSlot/Square": Piece(
+        "art", window_chrome.WORLD_MAP_DEPTH, art="hotbar_world_map"
+    ),
+    "ZoneMapSlot/Icon": hotbar_icon("world_map"),
+    "ZoneMapSlot/ZoneMapButton": Piece("button", window_chrome.WORLD_MAP_DEPTH),
+    "QuitSlot/Square": Piece("art", window_chrome.QUIT_DEPTH, art="hotbar_quit"),
+    "QuitSlot/Red": Piece("art", window_chrome.QUIT_RED_DEPTH, art="hotbar_quit_red"),
+    "QuitSlot/QuitButton": Piece("button", window_chrome.QUIT_DEPTH),
+    # The zone progress bar 3149 holds the track and the fill. The game sets the
+    # fill's width (frame_181/DoAction.as:11), so ZoneFill is the fill's shape,
+    # which hotbar.gd scales, and its Art is the fill's render at full width.
+    "ZoneTrack": Piece("art", window_chrome.ZONE_BAR_ROOT_DEPTH, art="zone_track"),
+    "ZoneFill": Piece(
+        "shape",
+        window_chrome.ZONE_BAR_ROOT_DEPTH,
+        inner_depth=window_chrome.ZONE_BAR_FILL_DEPTH,
+    ),
+    "ZoneFill/Art": Piece("art", window_chrome.ZONE_BAR_ROOT_DEPTH, art="zone_fill"),
+    "ZoneTitleSlot/ZoneTitle": Piece("text", 173),
+    "ZoneSubtitleSlot/ZoneSubtitle": Piece("text", 174),
+    "StageSlot/StageLabel": Piece("text", 172),
+}
+
+# The slot list frame's pieces, by their path in slot_panel.tscn
+# (spec/107-title-slots.md, The slot list). Each row is the "Slot" caption, the
+# slot's number, the save's name and one hit button over the first two. The
+# frame also places the arena's pick text at depth 26, which the port leaves
+# out (docs/adr/0006-leave-out-the-pvp-arena.md).
+SLOTS_FRAME = "dataMenu"
+SLOT_ROW_DEPTHS = {
+    "Row1": {"SlotLabel": 6, "Number": 14, "SaveName": 7, "HitButton": 18},
+    "Row2": {"SlotLabel": 11, "Number": 15, "SaveName": 8, "HitButton": 20},
+    "Row3": {"SlotLabel": 12, "Number": 16, "SaveName": 9, "HitButton": 22},
+    "Row4": {"SlotLabel": 13, "Number": 17, "SaveName": 10, "HitButton": 24},
+}
+SLOT_PIECES = {
+    f"Rows/{row}/{node}": Piece("hit" if node == "HitButton" else "text", depth)
+    for row, depths in SLOT_ROW_DEPTHS.items()
+    for node, depth in depths.items()
+}
 
 SCENES: dict[str, Scene] = {
     # The victory frame's left Panel and the field at its top. It is a test
@@ -294,7 +456,252 @@ SCENES: dict[str, Scene] = {
             *(f"Socket{i}" for i in range(8)),
         ),
     ),
+    # The background that every menu frame from mainMenu to endMenu places at
+    # depths 1, 2 and 5: the backdrop 2701, the swirl 307 and the splatter 2700.
+    # extract_start_screens renders the three as one PNG of the whole Stage, so
+    # the piece names the first of them. The scene's root is the piece.
+    "res://scenes/ui/menu/menu_background.tscn": Scene(
+        timeline=0,
+        frame=TITLE_FRAME,
+        pieces={".": Piece("art", 1, art="start_background")},
+    ),
+    # Back, which every menu frame after the title places at depths 35 and 36.
+    # subMenu is the first of them.
+    "res://scenes/ui/menu/menu_back.tscn": Scene(
+        timeline=0,
+        frame=CHOICE_FRAME,
+        pieces={"Caption": Piece("text", 35), "HitButton": Piece("hit", 36)},
+    ),
+    "res://scenes/ui/menu/mode_panel.tscn": Scene(
+        timeline=0, frame=CHOICE_FRAME, pieces=CHOICE_PIECES
+    ),
+    # The choice as the menu shows it: the background, the choice and Back. The
+    # menu opens on the title, and a capture shows a scene as it opens, so the
+    # compare tool scores this scene against the choice frame. Depths 38 and 41
+    # are the Armor Games line and logo, as on the title. PvP Arena is left out
+    # too, and is not listed, because an edit text and a hit button draw nothing
+    # in the reference.
+    "res://test/fixtures/screen_rects/choice_screen.tscn": Scene(
+        timeline=0,
+        frame=CHOICE_FRAME,
+        pieces={
+            "Background": Piece("art", 1, art="start_background"),
+            **{f"ModePanel/{path}": piece for path, piece in CHOICE_PIECES.items()},
+            "Back/Caption": Piece("text", 35),
+            "Back/HitButton": Piece("hit", 36),
+        },
+        left_out=(38, 41),
+    ),
+    "res://scenes/ui/menu/slot_panel.tscn": Scene(
+        timeline=0, frame=SLOTS_FRAME, pieces=SLOT_PIECES
+    ),
+    # The slot list as the menu shows it: the background, the rows and Back,
+    # for the compare tool, as choice_screen.tscn is for the choice. Depths 38
+    # and 41 are the Armor Games line and logo, as on the title.
+    "res://test/fixtures/screen_rects/slots_screen.tscn": Scene(
+        timeline=0,
+        frame=SLOTS_FRAME,
+        pieces={
+            "Background": Piece("art", 1, art="start_background"),
+            **{f"SlotPanel/{path}": piece for path, piece in SLOT_PIECES.items()},
+            "Back/Caption": Piece("text", 35),
+            "Back/HitButton": Piece("hit", 36),
+        },
+        left_out=(38, 41),
+    ),
+    "res://scenes/ui/menu/title_panel.tscn": Scene(
+        timeline=0, frame=TITLE_FRAME, pieces=TITLE_PIECES
+    ),
+    # The menu opens on the title, so it is the scene the compare tool scores
+    # against the title frame, and the record checks that its instances of the
+    # background and the title land where their own scenes put them. The other
+    # panels stand for later frames. Depth 38 is the Armor Games copyright line
+    # and depth 41 its logo. The two publisher links at depths 10, 12, 16 and
+    # 20 are left out too, and are not listed, because they draw nothing in the
+    # reference: chrome mode strips every edit text, and a hit button has no
+    # art.
+    "res://scenes/main_menu.tscn": Scene(
+        timeline=0,
+        frame=TITLE_FRAME,
+        pieces={
+            "Background": Piece("art", 1, art="start_background"),
+            **{f"TitlePanel/{path}": piece for path, piece in TITLE_PIECES.items()},
+        },
+        port_only=(
+            "ModePanel",
+            "NamePanel",
+            "SlotPanel",
+            "NewGamePanel",
+            "OptionsPanel",
+        ),
+        left_out=(38, 41),
+    ),
+    # The bottom bar body 3317, which the hub frame and the battle frame both
+    # place at depth 1 (spec/107-hub.md, The bottom bar body). The scene's root
+    # is the piece.
+    "res://scenes/ui/bottom_bar.tscn": Scene(
+        timeline=0, frame=HUB_FRAME, pieces={".": Piece("art", 1, art="bottom_bar")}
+    ),
+    # The hotbar on the bottom bar. Each Glow and InnerGlow holds the port's
+    # hover, which the SWF draws as Glow filters on the icon. Depth 144 is the
+    # Armor Games strip 3176.
+    "res://scenes/ui/hotbar.tscn": Scene(
+        timeline=0,
+        frame=HUB_FRAME,
+        pieces=HOTBAR_PIECES,
+        port_only=(
+            *(
+                f"{slot}Slot/{holder}"
+                for slot in (*HOTBAR_SLOTS, "ZoneMap")
+                for holder in ("Glow", "InnerGlow")
+            ),
+        ),
+        left_out=(144,),
+    ),
 }
+
+
+ZONE_SCENES = (
+    "zone1_prison",
+    "zone2_village",
+    "zone3_train",
+    "zone4_tunnels",
+    "zone5_city",
+    "zone6_rome",
+    "zone7_shotul",
+)
+# Each pair names the orb depth and its button depth on the zone's frame.
+# Zone 7 has no training orb, because every frame under the JAPAN label places
+# a story orb and a shop orb only. The ROME training button at depth 56 is
+# removed at frame 86 and nothing replaces it.
+ZONE_ORBS = (
+    {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (35, 56)},
+    {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (35, 56)},
+    {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (52, 56)},
+    {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (52, 56)},
+    {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (52, 56)},
+    {"StoryFight": (27, 31), "ItemStore": (58, 62), "TrainingFight": (52, 56)},
+    {"StoryFight": (26, 30), "ItemStore": (32, 36)},
+)
+for zone, (slug, orbs) in enumerate(zip(ZONE_SCENES, ZONE_ORBS, strict=True), 1):
+    SCENES[f"res://scenes/zones/{slug}.tscn"] = Scene(
+        timeline=zone_hub.HUB_SPRITE,
+        frame=zone_hub.ZONE_LABELS[zone],
+        pieces={
+            "HubArt": Piece(
+                "art", next(iter(orbs.values()))[0], art=zone_hub.ZONE_LABELS[zone]
+            ),
+            **{name: Piece("point", depths[0]) for name, depths in orbs.items()},
+            **{
+                f"{name}/Control": Piece("hit", depths[1])
+                for name, depths in orbs.items()
+            },
+        },
+        port_only=tuple(
+            f"{name}/{part}"
+            for name in orbs
+            for part in ("bottom", "middle", "top", "CollisionShape2D")
+        ),
+    )
+
+
+# This fixture scores the static Hub chrome. Animated orbs are checked by the
+# zone records, and the Windows, banners and card have their own build tasks.
+HUB_CHROME = "res://test/fixtures/screen_rects/hub_chrome.tscn"
+SCENES[HUB_CHROME] = Scene(
+    timeline=0,
+    frame=HUB_FRAME,
+    pieces={
+        "HubArt": Piece("art", 59, art="PRISON"),
+        **{f"Hotbar/{path}": piece for path, piece in HOTBAR_PIECES.items()},
+    },
+    port_only=tuple(
+        f"Hotbar/{path}" for path in SCENES["res://scenes/ui/hotbar.tscn"].port_only
+    ),
+    left_out=(144,),
+    compare_strip=(2837, 2836, 2848, 2839, 2840, 2717, 2852, 3142, 3196, 3312),
+)
+
+
+# The Inventory record covers #226's shell and left panel. The other pieces
+# are port only until their tasks record them: the doll and the experience row
+# (#227), the stat rows (#228), the element bars (#230) and the party faces
+# (#231).
+INVENTORY_SCENE = "res://scenes/ui/menu/inventory_window.tscn"
+SCENES[INVENTORY_SCENE] = Scene(
+    timeline=KRINMENU,
+    frame="inventory",
+    pieces={
+        **{
+            f"WindowShell/{node}": piece
+            for node, piece in SCENES[
+                "res://scenes/ui/window/window_shell.tscn"
+            ].pieces.items()
+        },
+        "LeftPanel": Piece("panel", 11),
+        "PartyBar": Piece("panel", 9),
+        "CenterPanel": Piece("panel", 21),
+        "CenterPanel/Content/CenterOutline": Piece("outline", 994),
+        "LeftPanel/Content/Header/NameRow/NameLabel": Piece("text", 1241),
+        "LeftPanel/Content/Header/InfoRow/LevelLabel": Piece("text", 1242),
+        **{
+            f"LeftPanel/Content/EquipDollView/Slot{i}": Piece(
+                "art",
+                None,
+                art="slot_inventory",
+                instance=f"playerSlot{i}",
+                rendered_at=30,
+            )
+            for i in range(7)
+        },
+        # The compare tool's panels mode takes only pieces that are placed by
+        # a depth, so each grid slot is named here by its depth and not by its
+        # instance name. The frame places itemSlot n at depth 30 + 21 * n.
+        **{
+            f"RightColumn/{node}": (
+                Piece(
+                    "art",
+                    30 + 21 * int(piece.instance.removeprefix("itemSlot")),
+                    art=piece.art,
+                )
+                if piece.instance is not None
+                else piece
+            )
+            for node, piece in SCENES[
+                "res://scenes/ui/window/right_column.tscn"
+            ].pieces.items()
+            if not node.startswith("SellSlot")
+        },
+    },
+    port_only=(
+        "LeftPanel/Content/StatusLabel",
+        "LeftPanel/Content/EquipDollView/Doll",
+        *(
+            f"LeftPanel/Content/EquipDollView/Slot{i}/{node}"
+            for i in range(7)
+            for node in ("ItemIcon", "Highlight")
+        ),
+        "ExperienceLabel",
+        "ExpTrack",
+        "ExpFill",
+        "ExpZeroBox",
+        "ExpPercent",
+        "PiercingLabel",
+        "DefenseLabel",
+        *(f"Stat{kind}{i}" for i in range(5) for kind in ("Label", "Value")),
+        *(
+            f"{block}{kind}{i}"
+            for block in ("Per", "Def")
+            for i in range(8)
+            for kind in ("Track", "Fill")
+        ),
+        *(f"Portrait{i}" for i in range(6)),
+        *(
+            f"RightColumn/{node}"
+            for node in SCENES["res://scenes/ui/window/right_column.tscn"].port_only
+        ),
+    ),
+)
 
 
 def color_hex(color: tuple[int, int, int, int]) -> str:
@@ -430,10 +837,85 @@ def _shadow_of(layer: timeline.Layer) -> DropShadow | None:
     return shadows[0] if shadows else None
 
 
-def art_record(name: str, chrome: dict, sprite_origins: dict | None = None) -> dict:
-    """-> the record of the window_chrome.json entry `chrome` of piece `name`.
-    A rect measured from a sprite is moved to the stage by that sprite's
-    origin in `sprite_origins`, keyed as "sprite <id>"."""
+def bottom_bar_source() -> dict:
+    """-> the render record of the bottom bar, which extract_battle_screen
+    writes as a rect only. Its zoom is that extractor's, and its size is read
+    from the PNG."""
+    rect = json.loads(battle_screen.LAYOUT_JSON.read_text())["chrome"]["bottom_bar"]
+    with Image.open(battle_screen.BATTLE_UI_DIR / "bottom_bar.png") as image:
+        size = list(image.size)
+    return {
+        "rect": [rect["x"], rect["y"], rect["w"], rect["h"]],
+        "size": size,
+        "zoom": battle_screen.ZOOM,
+    }
+
+
+def art_sources() -> dict[str, tuple[dict, str]]:
+    """-> the render record and the res:// folder of every PNG an art piece can
+    name. Only window_chrome.json says what a rect is measured from. Every
+    other record is measured from the Stage, so each gets that relative_to."""
+    sources = {
+        name: (entry, CHROME_TEXTURES)
+        for name, entry in json.loads(window_chrome.RECORD.read_text()).items()
+    }
+    icons = json.loads(hotbar_icons.RECORD.read_text())["icons"]
+    on_stage = [
+        *(
+            (name, json.loads(record.read_text()), MENU_TEXTURES)
+            for name, record in MENU_ART.items()
+        ),
+        ("bottom_bar", bottom_bar_source(), BATTLE_TEXTURES),
+        *(
+            (
+                name,
+                {key: icon[key] for key in ("rect", "size", "zoom")},
+                HOTBAR_TEXTURES,
+            )
+            for name, icon in icons.items()
+        ),
+    ]
+    for name, record, textures in on_stage:
+        if name in sources:
+            raise ValueError(f"two art sources are named {name}")
+        sources[name] = ({**record, "relative_to": "stage"}, textures)
+    for name, entry in json.loads(zone_hub.RECORD.read_text()).items():
+        sources[name] = (
+            {**entry, "relative_to": "stage"},
+            "res://assets/backgrounds/hub",
+        )
+    return sources
+
+
+def moved_art(entry: dict, matrix, rendered_matrix) -> dict:
+    """-> the render record `entry`, measured on the Stage where
+    `rendered_matrix` places the art, moved to where `matrix` places the same
+    art."""
+    if entry["relative_to"] != "stage":
+        raise ValueError(
+            f"a rect measured from {entry['relative_to']} has no Stage position to move"
+        )
+    if _scale(matrix) != _scale(rendered_matrix):
+        raise ValueError(
+            f"matrix {matrix} does not have the scale of {rendered_matrix}, so"
+            " the art is another size there"
+        )
+    x, y, w, h = entry["rect"]
+    dx = (matrix[4] - rendered_matrix[4]) / render.TWIPS
+    dy = (matrix[5] - rendered_matrix[5]) / render.TWIPS
+    return {**entry, "rect": [round(x + dx, 4), round(y + dy, 4), w, h]}
+
+
+def art_record(
+    name: str,
+    chrome: dict,
+    sprite_origins: dict | None = None,
+    textures: str = CHROME_TEXTURES,
+) -> dict:
+    """-> the record of the render record `chrome` of piece `name`, whose PNG
+    is in the res:// folder `textures`. A rect measured from a sprite is moved
+    to the stage by that sprite's origin in `sprite_origins`, keyed as
+    "sprite <id>"."""
     relative_to = chrome["relative_to"]
     shift = (0.0, 0.0)
     if relative_to != "stage":
@@ -447,7 +929,7 @@ def art_record(name: str, chrome: dict, sprite_origins: dict | None = None) -> d
     return {
         "kind": "art",
         "rect": [round(x + shift[0], 4), round(y + shift[1], 4), w, h],
-        "texture": f"{CHROME_TEXTURES}/{name}.png",
+        "texture": f"{textures}/{name}.png",
         "size": chrome["size"],
         "zoom": chrome["zoom"],
     }
@@ -461,6 +943,41 @@ def box_record(bounds, matrix, origin, fill: tuple[int, int, int, int]) -> dict:
         "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
         "fill": color_hex(fill),
     }
+
+
+def shape_record(bounds, matrix, origin) -> dict:
+    """-> the record of a shape the port puts a plain Control on."""
+    return {
+        "kind": "shape",
+        "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
+    }
+
+
+def outline_record(bounds, matrix, origin, styles: list[StyleSet]) -> dict:
+    only = styles[0] if len(styles) == 1 else None
+    if only is None or only.fills or only.used_fills or len(only.lines) != 1:
+        raise ValueError("an outline needs one line and no fill")
+    width, color = only.lines[0]
+    return {
+        "kind": "outline",
+        "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
+        "line": color_hex(color),
+        "border": border_width(width, _scale(matrix)),
+    }
+
+
+def _shape(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
+    """-> shape_record() of the shape `layer` places, or of the one shape that
+    the sprite it places holds."""
+    shape = layer.character_id
+    if character_kind(index, shape) == "sprite":
+        held = list(timeline.frames(index, shape)[0].values())
+        if len(held) != 1 or character_kind(index, held[0].character_id) != "shape":
+            raise ValueError(f"sprite {shape} does not hold exactly one shape")
+        if held[0].matrix != timeline.IDENTITY:
+            raise ValueError(f"sprite {shape} places its shape with {held[0].matrix}")
+        shape = held[0].character_id
+    return shape_record(shape_bounds(index, shape), layer.matrix, origin)
 
 
 def face_record(crop, matrix, origin) -> dict:
@@ -496,22 +1013,19 @@ def button_record(
     button: int, records: list[ButtonRecord], bounds: dict, matrix, origin
 ) -> dict:
     """-> the record of the button `button`, whose `records` draw art, as the
-    rect of the shapes its up state draws, placed with `matrix`. `bounds` maps
-    each shape to its ShapeBounds."""
+    rect of the shapes its up state draws, each placed in the button with its
+    record's matrix, and the button placed with `matrix`. `bounds` maps each
+    shape to its ShapeBounds."""
     up = [r for r in records if "up" in r.states]
     if not up:
         raise ValueError(f"button {button} draws nothing in its up state")
     for r in up:
-        if r.matrix != timeline.IDENTITY:
-            raise ValueError(
-                f"button {button} moves shape {r.character_id}: {r.matrix}"
-            )
         if r.character_id not in bounds:
             raise ValueError(
                 f"button {button} draws character {r.character_id} in its up"
                 " state, which is not a shape"
             )
-    shapes = [bounds[r.character_id] for r in up]
+    shapes = [_in_button(bounds[r.character_id], r.matrix) for r in up]
     union = (
         min(b[0] for b in shapes),
         min(b[1] for b in shapes),
@@ -522,6 +1036,15 @@ def button_record(
         "kind": "button",
         "rect": [round(v, 4) for v in stage_rect(union, matrix, origin)],
     }
+
+
+def _in_button(bounds, matrix) -> tuple[float, float, float, float]:
+    """-> `bounds` (twips) through a button record's `matrix`, in the button's
+    own twips."""
+    scale_x, scale_y = _scale(matrix)
+    xs = sorted(v * scale_x + matrix[4] for v in (bounds[0], bounds[2]))
+    ys = sorted(v * scale_y + matrix[5] for v in (bounds[1], bounds[3]))
+    return xs[0], ys[0], xs[1], ys[1]
 
 
 def _button(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
@@ -629,33 +1152,65 @@ def origin_of(index: SwfIndex, owner: int) -> tuple[float, float]:
     return render.placement_origin(index, 0, hub, owner)
 
 
-def scene_record(index: SwfIndex, scene: Scene) -> dict:
+def placed_layer(
+    layers: dict[int, timeline.Layer], where: int | str, path: str, frame: str
+) -> timeline.Layer:
+    """-> the layer of `layers` at the depth `where`, or the one layer with
+    the instance name `where`."""
+    if isinstance(where, int):
+        if where not in layers:
+            raise ValueError(f"{path}: frame {frame} has no depth {where}")
+        return layers[where]
+    named = [layer for layer in layers.values() if layer.name == where]
+    if len(named) != 1:
+        raise ValueError(
+            f"{path}: frame {frame} places {len(named)} instances named {where}"
+        )
+    return named[0]
+
+
+def moved_to_steam(record: dict, matrix, steam_matrix) -> dict:
+    """-> `record`, which holds the rect of a piece the web build places with
+    `matrix`, moved to where the Steam build places the same piece with
+    `steam_matrix`."""
+    if _scale(matrix) != _scale(steam_matrix):
+        raise ValueError(
+            f"the Steam placement {steam_matrix} does not have the scale of"
+            f" {matrix}, so the piece is another size there"
+        )
+    x, y, w, h = record["rect"]
+    dx = (steam_matrix[4] - matrix[4]) / render.TWIPS
+    dy = (steam_matrix[5] - matrix[5]) / render.TWIPS
+    return {**record, "rect": [round(x + dx, 4), round(y + dy, 4), w, h]}
+
+
+def scene_record(
+    index: SwfIndex, scene: Scene, steam_index: SwfIndex | None = None
+) -> dict:
     origin = origin_of(index, scene.timeline)
     frame = timeline.frame_of(index, scene.timeline, scene.frame)
     layers = timeline.frames(index, scene.timeline)[frame - 1]
-    chrome = json.loads(window_chrome.RECORD.read_text())
+    steam_layers = None
+    if any(piece.steam is not None for piece in scene.pieces.values()):
+        if steam_index is None:
+            raise ValueError(
+                f"frame {scene.frame} has a piece with a Steam placement, and"
+                " no Steam build was given"
+            )
+        steam_frame = timeline.frame_of(steam_index, scene.timeline, scene.frame)
+        steam_layers = timeline.frames(steam_index, scene.timeline)[steam_frame - 1]
+    art = art_sources()
     pieces = {}
     for path, piece in scene.pieces.items():
-        if piece.instance is None:
-            layer = layers.get(piece.depth)
-            if layer is None:
-                raise ValueError(
-                    f"{path}: frame {scene.frame} has no depth {piece.depth}"
-                )
-        else:
-            named = [layer for layer in layers.values() if layer.name == piece.instance]
-            if len(named) != 1:
-                raise ValueError(
-                    f"{path}: frame {scene.frame} places {len(named)} instances"
-                    f" named {piece.instance}"
-                )
-            layer = named[0]
+        where = piece.depth if piece.instance is None else piece.instance
+        layer = placed_layer(layers, where, path, scene.frame)
+        placed = layer
         piece_origin = origin
         sprite_origins = {}
         holder_shadow = None
         if piece.inner_depth is None:
             sprite = f"sprite {layer.character_id}"
-            if piece.kind == "art" and chrome[piece.art]["relative_to"] == sprite:
+            if piece.kind == "art" and art[piece.art][0]["relative_to"] == sprite:
                 sprite_origins[sprite] = inner_origin(layer.matrix, origin)
         else:
             holder_shadow = _shadow_of(layer)
@@ -676,7 +1231,16 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
                 sprite_origins[f"sprite {layer.character_id}"] = inner_origin(
                     layer.matrix, piece_origin
                 )
-        if piece.kind == "panel":
+        if piece.kind == "point":
+            pieces[path] = {
+                "kind": "point",
+                "position": [
+                    round(piece_origin[0] + layer.matrix[4] / render.TWIPS, 4),
+                    round(piece_origin[1] + layer.matrix[5] / render.TWIPS, 4),
+                ],
+                "scale": list(_scale(layer.matrix)),
+            }
+        elif piece.kind == "panel":
             pieces[path] = _panel(index, layer, piece_origin)
         elif piece.kind == "text":
             text = edit_text(index, layer.character_id)
@@ -686,7 +1250,22 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
         elif piece.kind == "button":
             pieces[path] = _button(index, layer, piece_origin)
         elif piece.kind == "art":
-            pieces[path] = art_record(piece.art, chrome[piece.art], sprite_origins)
+            entry, textures = art[piece.art]
+            if piece.rendered_at is not None:
+                rendered = layers[piece.rendered_at]
+                if entry["relative_to"] == f"sprite {rendered.character_id}":
+                    # #211 shares the grid's art with equip slots. Place that
+                    # sprite-local render at the equip slot's own origin.
+                    if _scale(layer.matrix) != _scale(rendered.matrix):
+                        raise ValueError(
+                            "shared sprite art has a different placement scale"
+                        )
+                    sprite_origins[entry["relative_to"]] = inner_origin(
+                        layer.matrix, piece_origin
+                    )
+                else:
+                    entry = moved_art(entry, layer.matrix, rendered.matrix)
+            pieces[path] = art_record(piece.art, entry, sprite_origins, textures)
         elif piece.kind == "face":
             if layer.character_id != faces.FACE_CLIP:
                 raise ValueError(
@@ -697,10 +1276,22 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
             pieces[path] = face_record(crop, layer.matrix, piece_origin)
         elif piece.kind == "box":
             pieces[path] = _box(index, layer, piece_origin)
+        elif piece.kind == "shape":
+            pieces[path] = _shape(index, layer, piece_origin)
+        elif piece.kind == "outline":
+            pieces[path] = outline_record(
+                shape_bounds(index, layer.character_id),
+                layer.matrix,
+                piece_origin,
+                shape_styles(index, layer.character_id),
+            )
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, piece_origin)
         else:
             raise ValueError(f"{path}: unknown piece kind {piece.kind!r}")
+        if piece.steam is not None:
+            steam = placed_layer(steam_layers, piece.steam, path, scene.frame)
+            pieces[path] = moved_to_steam(pieces[path], placed.matrix, steam.matrix)
     return {
         "timeline": scene.timeline,
         "frame": scene.frame,
@@ -712,8 +1303,12 @@ def scene_record(index: SwfIndex, scene: Scene) -> dict:
 
 def main():
     index = read_swf(WEB_SWF)
+    steam_index = read_swf(STEAM_SWF)
     record = {
-        "scenes": {path: scene_record(index, scene) for path, scene in SCENES.items()}
+        "scenes": {
+            path: scene_record(index, scene, steam_index)
+            for path, scene in SCENES.items()
+        }
     }
     RECORD.parent.mkdir(parents=True, exist_ok=True)
     RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")

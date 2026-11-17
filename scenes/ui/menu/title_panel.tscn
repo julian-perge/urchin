@@ -1,0 +1,105 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/menu/title_panel.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dy7fggw22k8rm" path="res://assets/ui/menu/logo.png" id="2_logo"]
+[ext_resource type="Script" path="res://scripts/ui/float_box.gd" id="3_float_box"]
+
+[node name="TitlePanel" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 800.0
+offset_bottom = 575.0
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="Logo" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 106.25
+offset_top = 102.75
+offset_right = 690.0
+offset_bottom = 234.5
+mouse_filter = 2
+texture = ExtResource("2_logo")
+expand_mode = 1
+
+[node name="Captions" type="Container" parent="."]
+layout_mode = 0
+offset_left = 243.95
+offset_top = 306.5
+offset_right = 615.25
+offset_bottom = 477.6
+mouse_filter = 2
+script = ExtResource("3_float_box")
+
+[node name="PlaySlot" type="Control" parent="Captions"]
+custom_minimum_size = Vector2(0, 61)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Caption" type="Label" parent="Captions/PlaySlot"]
+layout_mode = 0
+offset_right = 300.1
+offset_bottom = 41.6
+theme_type_variation = &"MenuCaption"
+theme_override_font_sizes/font_size = 36
+horizontal_alignment = 1
+
+[node name="HitButton" type="Button" parent="Captions/PlaySlot"]
+layout_mode = 0
+offset_left = -1.9371
+offset_top = -1.3999
+offset_right = 300.3371
+offset_bottom = 38.5999
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="GameManualSlot" type="Control" parent="Captions"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Caption" type="Label" parent="Captions/GameManualSlot"]
+layout_mode = 0
+offset_left = 71.2
+offset_right = 371.3
+offset_bottom = 20.1
+theme_type_variation = &"MenuCaption"
+theme_override_font_sizes/font_size = 18
+
+[node name="HitButton" type="Button" parent="Captions/GameManualSlot"]
+layout_mode = 0
+offset_left = 69.9844
+offset_top = -0.1419
+offset_right = 300.3155
+offset_bottom = 20.6419
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="CreditsSlot" type="Control" parent="Captions"]
+custom_minimum_size = Vector2(0, 20.1)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Caption" type="Label" parent="Captions/CreditsSlot"]
+layout_mode = 0
+offset_left = 71.2
+offset_right = 371.3
+offset_bottom = 20.1
+theme_type_variation = &"MenuCaption"
+theme_override_font_sizes/font_size = 18
+
+[node name="HitButton" type="Button" parent="Captions/CreditsSlot"]
+layout_mode = 0
+offset_left = 69.9844
+offset_top = 0.3081
+offset_right = 300.3155
+offset_bottom = 21.0919
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[connection signal="pressed" from="Captions/PlaySlot/HitButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="Captions/GameManualSlot/HitButton" to="." method="_on_game_manual_button_pressed"]
+[connection signal="pressed" from="Captions/CreditsSlot/HitButton" to="." method="_on_credits_button_pressed"]

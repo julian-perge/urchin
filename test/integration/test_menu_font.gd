@@ -110,13 +110,15 @@ func test_main_menu_text_is_bold_and_the_class_names_are_rockwell():
 	_assert_fonts(menu, {
 		"NamePanel/NameInput": [2712, 65],
 		"NamePanel/OkLabel": [2711, 65],
+		"SlotPanel/Rows/Row1/SlotLabel": [2734, 65],
+		"SlotPanel/Rows/Row1/Number": [2726, 65],
+		"SlotPanel/Rows/Row1/SaveName": [2733, 65],
 		"NewGamePanel/ClassLabel": [2768, 65],
 		"OptionsPanel/SettingsLabel": [2786, 65],
 		"NewGamePanel/ClassPicker/PsychologicalName": [2739, 2738],
 		"NewGamePanel/ClassPicker/BiologicalName": [2756, 2738],
 		"NewGamePanel/ClassPicker/HydraulicName": [2747, 2738],
 	})
-	_assert_font(menu.slot_buttons.get_child(0), 65, "slot 1's button (edit text 2733)")
 
 
 # Every edit text on root frame 104 (gameOverMenu) uses font 65.
@@ -169,7 +171,7 @@ func test_victory_text_is_bold_except_the_two_font_295_lines():
 # (DefineSprite_3142/frame_16/DoAction.as:96-97).
 func test_menu_screens_are_bold_except_the_shop_dialogue():
 	var inventory = add_child_autofree(load("res://scenes/ui/menu/inventory_window.tscn").instantiate())
-	_assert_fonts(inventory, {"NameLabel": [2891, 65], "ExperienceLabel": [2869, 65]})
+	_assert_fonts(inventory, {"LeftPanel/Content/Header/NameRow/NameLabel": [2891, 65], "ExperienceLabel": [2869, 65]})
 	_assert_fonts(inventory.right_column, {"Title": [2856, 65], "EuroSign": [2861, 65], "Amount": [2862, 65]})
 	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())
 	_assert_fonts(abilities, {
@@ -316,9 +318,9 @@ func test_tooltips_wrap_onto_as_many_lines_as_the_reference_captures():
 	await wait_process_frames(2)
 	assert_eq(_tooltip_labels()[1].get_line_count(), 11, "the Biological blurb")
 	menu.class_picker.get_node("Biological").mouse_exited.emit()
-	menu.get_node("ModePanel/NewGameButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
-	menu.slot_buttons.get_child(0).mouse_entered.emit()
+	menu.get_node("SlotPanel/Rows/Row1/HitButton").mouse_entered.emit()
 	await wait_process_frames(2)
 	assert_eq(_tooltip_labels()[1].get_line_count(), 5, "the New Game warning")
 	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())

@@ -1,0 +1,2577 @@
+{
+ "hover": {
+  "frame_rate": 30.0,
+  "start": [
+   2,
+   7
+  ],
+  "stop": [
+   8,
+   27
+  ]
+ },
+ "icons": {
+  "abilities": {
+   "frames": [
+    [
+     {
+      "blur": 0.0,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.0
+     },
+     {
+      "blur": 0.0,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.0
+     }
+    ],
+    [
+     {
+      "blur": 0.8334,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.1562
+     },
+     {
+      "blur": 2.1667,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.25
+     }
+    ],
+    [
+     {
+      "blur": 1.6666,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.3281
+     },
+     {
+      "blur": 4.3333,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.5078
+     }
+    ],
+    [
+     {
+      "blur": 2.5,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.5
+     },
+     {
+      "blur": 6.5,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.7695
+     }
+    ],
+    [
+     {
+      "blur": 3.3334,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.6562
+     },
+     {
+      "blur": 8.6667,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 1.0273
+     }
+    ],
+    [
+     {
+      "blur": 4.1666,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.8281
+     },
+     {
+      "blur": 10.8333,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 1.2891
+     }
+    ],
+    [
+     {
+      "blur": 5.0,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 1.0
+     },
+     {
+      "blur": 13.0,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 5.0,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 1.0
+     },
+     {
+      "blur": 13.0,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 4.7369,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.9375
+     },
+     {
+      "blur": 12.3158,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 1.457
+     }
+    ],
+    [
+     {
+      "blur": 4.4736,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.8867
+     },
+     {
+      "blur": 11.6315,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 1.3789
+     }
+    ],
+    [
+     {
+      "blur": 4.2105,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.8398
+     },
+     {
+      "blur": 10.9473,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 1.2969
+     }
+    ],
+    [
+     {
+      "blur": 3.9474,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.7773
+     },
+     {
+      "blur": 10.2632,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 1.2188
+     }
+    ],
+    [
+     {
+      "blur": 3.6842,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.7266
+     },
+     {
+      "blur": 9.579,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 1.1367
+     }
+    ],
+    [
+     {
+      "blur": 3.421,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.6797
+     },
+     {
+      "blur": 8.8947,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 1.0586
+     }
+    ],
+    [
+     {
+      "blur": 3.1579,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.6289
+     },
+     {
+      "blur": 8.2105,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.9688
+     }
+    ],
+    [
+     {
+      "blur": 2.8947,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.5664
+     },
+     {
+      "blur": 7.5263,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.8867
+     }
+    ],
+    [
+     {
+      "blur": 2.6316,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.5195
+     },
+     {
+      "blur": 6.8422,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.8086
+     }
+    ],
+    [
+     {
+      "blur": 2.3684,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.4688
+     },
+     {
+      "blur": 6.1578,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.7266
+     }
+    ],
+    [
+     {
+      "blur": 2.1053,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.418
+     },
+     {
+      "blur": 5.4737,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.6484
+     }
+    ],
+    [
+     {
+      "blur": 1.8421,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.3594
+     },
+     {
+      "blur": 4.7895,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.5664
+     }
+    ],
+    [
+     {
+      "blur": 1.579,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.3086
+     },
+     {
+      "blur": 4.1053,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.4766
+     }
+    ],
+    [
+     {
+      "blur": 1.3158,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.2578
+     },
+     {
+      "blur": 3.421,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.3984
+     }
+    ],
+    [
+     {
+      "blur": 1.0526,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.207
+     },
+     {
+      "blur": 2.7368,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.3164
+     }
+    ],
+    [
+     {
+      "blur": 0.7895,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.1484
+     },
+     {
+      "blur": 2.0527,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.2383
+     }
+    ],
+    [
+     {
+      "blur": 0.5264,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.0977
+     },
+     {
+      "blur": 1.3685,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.1562
+     }
+    ],
+    [
+     {
+      "blur": 0.2631,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.0469
+     },
+     {
+      "blur": 0.6842,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.0781
+     }
+    ],
+    [
+     {
+      "blur": 0.0,
+      "color": "#66ff66",
+      "inner": true,
+      "strength": 0.0
+     },
+     {
+      "blur": 0.0,
+      "color": "#33ff00",
+      "inner": false,
+      "strength": 0.0
+     }
+    ]
+   ],
+   "rect": [
+    86.0,
+    478.4,
+    25.6,
+    31.2
+   ],
+   "size": [
+    128,
+    156
+   ],
+   "zoom": 5.0
+  },
+  "achievements": {
+   "frames": [
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.0
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.0
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.1562
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.25
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.3281
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.5078
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.5
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.7695
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.6562
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 1.0273
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.8281
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 1.2891
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 1.0
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 1.0
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.9375
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 1.457
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.8867
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 1.3789
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.8398
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 1.2969
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.7773
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 1.2188
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.7266
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 1.1367
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.6797
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 1.0586
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.6289
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.9688
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.5664
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.8867
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.5195
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.8086
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.4688
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.7266
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.418
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.6484
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.3594
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.5664
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.3086
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.4766
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.2578
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.3984
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.207
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.3164
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.1484
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.2383
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.0977
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.1562
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.0469
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.0781
+     }
+    ],
+    [
+     {
+      "blur": 7.0,
+      "color": "#ff9900",
+      "inner": true,
+      "strength": 0.0
+     },
+     {
+      "blur": 13.0,
+      "color": "#ff3300",
+      "inner": false,
+      "strength": 0.0
+     }
+    ]
+   ],
+   "rect": [
+    283.0,
+    482.4,
+    24.8,
+    26.2
+   ],
+   "size": [
+    124,
+    131
+   ],
+   "zoom": 5.0
+  },
+  "inventory": {
+   "frames": [
+    [
+     {
+      "blur": 0.0,
+      "color": "#ff0000",
+      "inner": false,
+      "strength": 0.0
+     }
+    ],
+    [
+     {
+      "blur": 2.1667,
+      "color": "#ff112a",
+      "inner": false,
+      "strength": 0.25
+     }
+    ],
+    [
+     {
+      "blur": 4.3333,
+      "color": "#ff2154",
+      "inner": false,
+      "strength": 0.5078
+     }
+    ],
+    [
+     {
+      "blur": 6.5,
+      "color": "#ff337f",
+      "inner": false,
+      "strength": 0.7695
+     }
+    ],
+    [
+     {
+      "blur": 8.6667,
+      "color": "#ff44aa",
+      "inner": false,
+      "strength": 1.0273
+     }
+    ],
+    [
+     {
+      "blur": 10.8333,
+      "color": "#ff54d4",
+      "inner": false,
+      "strength": 1.2891
+     }
+    ],
+    [
+     {
+      "blur": 13.0,
+      "color": "#ff66ff",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 13.0,
+      "color": "#ff66ff",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 12.3158,
+      "color": "#ff61f2",
+      "inner": false,
+      "strength": 1.457
+     }
+    ],
+    [
+     {
+      "blur": 11.6315,
+      "color": "#ff5ce5",
+      "inner": false,
+      "strength": 1.3789
+     }
+    ],
+    [
+     {
+      "blur": 10.9473,
+      "color": "#ff56d7",
+      "inner": false,
+      "strength": 1.2969
+     }
+    ],
+    [
+     {
+      "blur": 10.2632,
+      "color": "#ff51ca",
+      "inner": false,
+      "strength": 1.2188
+     }
+    ],
+    [
+     {
+      "blur": 9.579,
+      "color": "#ff4cbc",
+      "inner": false,
+      "strength": 1.1367
+     }
+    ],
+    [
+     {
+      "blur": 8.8947,
+      "color": "#ff46af",
+      "inner": false,
+      "strength": 1.0586
+     }
+    ],
+    [
+     {
+      "blur": 8.2105,
+      "color": "#ff41a2",
+      "inner": false,
+      "strength": 0.9688
+     }
+    ],
+    [
+     {
+      "blur": 7.5263,
+      "color": "#ff3c94",
+      "inner": false,
+      "strength": 0.8867
+     }
+    ],
+    [
+     {
+      "blur": 6.8422,
+      "color": "#ff3687",
+      "inner": false,
+      "strength": 0.8086
+     }
+    ],
+    [
+     {
+      "blur": 6.1578,
+      "color": "#ff3179",
+      "inner": false,
+      "strength": 0.7266
+     }
+    ],
+    [
+     {
+      "blur": 5.4737,
+      "color": "#ff2b6c",
+      "inner": false,
+      "strength": 0.6484
+     }
+    ],
+    [
+     {
+      "blur": 4.7895,
+      "color": "#ff265e",
+      "inner": false,
+      "strength": 0.5664
+     }
+    ],
+    [
+     {
+      "blur": 4.1053,
+      "color": "#ff2151",
+      "inner": false,
+      "strength": 0.4766
+     }
+    ],
+    [
+     {
+      "blur": 3.421,
+      "color": "#ff1b44",
+      "inner": false,
+      "strength": 0.3984
+     }
+    ],
+    [
+     {
+      "blur": 2.7368,
+      "color": "#ff1636",
+      "inner": false,
+      "strength": 0.3164
+     }
+    ],
+    [
+     {
+      "blur": 2.0527,
+      "color": "#ff1129",
+      "inner": false,
+      "strength": 0.2383
+     }
+    ],
+    [
+     {
+      "blur": 1.3685,
+      "color": "#ff0b1b",
+      "inner": false,
+      "strength": 0.1562
+     }
+    ],
+    [
+     {
+      "blur": 0.6842,
+      "color": "#ff060e",
+      "inner": false,
+      "strength": 0.0781
+     }
+    ],
+    [
+     {
+      "blur": 0.0,
+      "color": "#ff0000",
+      "inner": false,
+      "strength": 0.0
+     }
+    ]
+   ],
+   "rect": [
+    36.8,
+    479.2,
+    28.8,
+    28.8
+   ],
+   "size": [
+    144,
+    144
+   ],
+   "zoom": 5.0
+  },
+  "options": {
+   "frames": [
+    [
+     {
+      "blur": 0.0,
+      "color": "#ff0000",
+      "inner": false,
+      "strength": 0.0
+     }
+    ],
+    [
+     {
+      "blur": 2.1667,
+      "color": "#ff2200",
+      "inner": false,
+      "strength": 0.25
+     }
+    ],
+    [
+     {
+      "blur": 4.3333,
+      "color": "#ff4300",
+      "inner": false,
+      "strength": 0.5078
+     }
+    ],
+    [
+     {
+      "blur": 6.5,
+      "color": "#ff6600",
+      "inner": false,
+      "strength": 0.7695
+     }
+    ],
+    [
+     {
+      "blur": 8.6667,
+      "color": "#ff8800",
+      "inner": false,
+      "strength": 1.0273
+     }
+    ],
+    [
+     {
+      "blur": 10.8333,
+      "color": "#ffa900",
+      "inner": false,
+      "strength": 1.2891
+     }
+    ],
+    [
+     {
+      "blur": 13.0,
+      "color": "#ffcc00",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 13.0,
+      "color": "#ffcc00",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 12.3158,
+      "color": "#ffc200",
+      "inner": false,
+      "strength": 1.457
+     }
+    ],
+    [
+     {
+      "blur": 11.6315,
+      "color": "#ffb700",
+      "inner": false,
+      "strength": 1.3789
+     }
+    ],
+    [
+     {
+      "blur": 10.9473,
+      "color": "#ffac00",
+      "inner": false,
+      "strength": 1.2969
+     }
+    ],
+    [
+     {
+      "blur": 10.2632,
+      "color": "#ffa200",
+      "inner": false,
+      "strength": 1.2188
+     }
+    ],
+    [
+     {
+      "blur": 9.579,
+      "color": "#ff9700",
+      "inner": false,
+      "strength": 1.1367
+     }
+    ],
+    [
+     {
+      "blur": 8.8947,
+      "color": "#ff8c00",
+      "inner": false,
+      "strength": 1.0586
+     }
+    ],
+    [
+     {
+      "blur": 8.2105,
+      "color": "#ff8100",
+      "inner": false,
+      "strength": 0.9688
+     }
+    ],
+    [
+     {
+      "blur": 7.5263,
+      "color": "#ff7700",
+      "inner": false,
+      "strength": 0.8867
+     }
+    ],
+    [
+     {
+      "blur": 6.8422,
+      "color": "#ff6c00",
+      "inner": false,
+      "strength": 0.8086
+     }
+    ],
+    [
+     {
+      "blur": 6.1578,
+      "color": "#ff6100",
+      "inner": false,
+      "strength": 0.7266
+     }
+    ],
+    [
+     {
+      "blur": 5.4737,
+      "color": "#ff5600",
+      "inner": false,
+      "strength": 0.6484
+     }
+    ],
+    [
+     {
+      "blur": 4.7895,
+      "color": "#ff4c00",
+      "inner": false,
+      "strength": 0.5664
+     }
+    ],
+    [
+     {
+      "blur": 4.1053,
+      "color": "#ff4100",
+      "inner": false,
+      "strength": 0.4766
+     }
+    ],
+    [
+     {
+      "blur": 3.421,
+      "color": "#ff3600",
+      "inner": false,
+      "strength": 0.3984
+     }
+    ],
+    [
+     {
+      "blur": 2.7368,
+      "color": "#ff2b00",
+      "inner": false,
+      "strength": 0.3164
+     }
+    ],
+    [
+     {
+      "blur": 2.0527,
+      "color": "#ff2100",
+      "inner": false,
+      "strength": 0.2383
+     }
+    ],
+    [
+     {
+      "blur": 1.3685,
+      "color": "#ff1600",
+      "inner": false,
+      "strength": 0.1562
+     }
+    ],
+    [
+     {
+      "blur": 0.6842,
+      "color": "#ff0b00",
+      "inner": false,
+      "strength": 0.0781
+     }
+    ],
+    [
+     {
+      "blur": 0.0,
+      "color": "#ff0000",
+      "inner": false,
+      "strength": 0.0
+     }
+    ]
+   ],
+   "rect": [
+    183.4,
+    479.2,
+    29.2,
+    29.8
+   ],
+   "size": [
+    146,
+    149
+   ],
+   "zoom": 5.0
+  },
+  "respec": {
+   "frames": [
+    [
+     {
+      "blur": 0.0,
+      "color": "#ff0000",
+      "inner": false,
+      "strength": 0.0
+     },
+     {
+      "blur": 0.0,
+      "color": "#ff0000",
+      "inner": false,
+      "strength": 0.0
+     }
+    ],
+    [
+     {
+      "blur": 0.8334,
+      "color": "#ff112a",
+      "inner": false,
+      "strength": 0.1562
+     },
+     {
+      "blur": 2.1667,
+      "color": "#e6082a",
+      "inner": false,
+      "strength": 0.25
+     }
+    ],
+    [
+     {
+      "blur": 1.6666,
+      "color": "#ff2154",
+      "inner": false,
+      "strength": 0.3281
+     },
+     {
+      "blur": 4.3333,
+      "color": "#cd1054",
+      "inner": false,
+      "strength": 0.5078
+     }
+    ],
+    [
+     {
+      "blur": 2.5,
+      "color": "#ff337f",
+      "inner": false,
+      "strength": 0.5
+     },
+     {
+      "blur": 6.5,
+      "color": "#b3197f",
+      "inner": false,
+      "strength": 0.7695
+     }
+    ],
+    [
+     {
+      "blur": 3.3334,
+      "color": "#ff44aa",
+      "inner": false,
+      "strength": 0.6562
+     },
+     {
+      "blur": 8.6667,
+      "color": "#9922aa",
+      "inner": false,
+      "strength": 1.0273
+     }
+    ],
+    [
+     {
+      "blur": 4.1666,
+      "color": "#ff54d4",
+      "inner": false,
+      "strength": 0.8281
+     },
+     {
+      "blur": 10.8333,
+      "color": "#802ad4",
+      "inner": false,
+      "strength": 1.2891
+     }
+    ],
+    [
+     {
+      "blur": 5.0,
+      "color": "#ff66ff",
+      "inner": true,
+      "strength": 1.0
+     },
+     {
+      "blur": 13.0,
+      "color": "#6633ff",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 5.0,
+      "color": "#ff66ff",
+      "inner": true,
+      "strength": 1.0
+     },
+     {
+      "blur": 13.0,
+      "color": "#6633ff",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 4.7369,
+      "color": "#ff61f2",
+      "inner": true,
+      "strength": 0.9375
+     },
+     {
+      "blur": 12.3158,
+      "color": "#6e31f2",
+      "inner": false,
+      "strength": 1.457
+     }
+    ],
+    [
+     {
+      "blur": 4.4736,
+      "color": "#ff5ce5",
+      "inner": true,
+      "strength": 0.8867
+     },
+     {
+      "blur": 11.6315,
+      "color": "#762ee5",
+      "inner": false,
+      "strength": 1.3789
+     }
+    ],
+    [
+     {
+      "blur": 4.2105,
+      "color": "#ff56d7",
+      "inner": true,
+      "strength": 0.8398
+     },
+     {
+      "blur": 10.9473,
+      "color": "#7e2bd7",
+      "inner": false,
+      "strength": 1.2969
+     }
+    ],
+    [
+     {
+      "blur": 3.9474,
+      "color": "#ff51ca",
+      "inner": true,
+      "strength": 0.7773
+     },
+     {
+      "blur": 10.2632,
+      "color": "#8629ca",
+      "inner": false,
+      "strength": 1.2188
+     }
+    ],
+    [
+     {
+      "blur": 3.6842,
+      "color": "#ff4cbc",
+      "inner": true,
+      "strength": 0.7266
+     },
+     {
+      "blur": 9.579,
+      "color": "#8e26bc",
+      "inner": false,
+      "strength": 1.1367
+     }
+    ],
+    [
+     {
+      "blur": 3.421,
+      "color": "#ff46af",
+      "inner": true,
+      "strength": 0.6797
+     },
+     {
+      "blur": 8.8947,
+      "color": "#9623af",
+      "inner": false,
+      "strength": 1.0586
+     }
+    ],
+    [
+     {
+      "blur": 3.1579,
+      "color": "#ff41a2",
+      "inner": true,
+      "strength": 0.6289
+     },
+     {
+      "blur": 8.2105,
+      "color": "#9e21a2",
+      "inner": false,
+      "strength": 0.9688
+     }
+    ],
+    [
+     {
+      "blur": 2.8947,
+      "color": "#ff3c94",
+      "inner": true,
+      "strength": 0.5664
+     },
+     {
+      "blur": 7.5263,
+      "color": "#a61e94",
+      "inner": false,
+      "strength": 0.8867
+     }
+    ],
+    [
+     {
+      "blur": 2.6316,
+      "color": "#ff3687",
+      "inner": true,
+      "strength": 0.5195
+     },
+     {
+      "blur": 6.8422,
+      "color": "#ae1b87",
+      "inner": false,
+      "strength": 0.8086
+     }
+    ],
+    [
+     {
+      "blur": 2.3684,
+      "color": "#ff3179",
+      "inner": true,
+      "strength": 0.4688
+     },
+     {
+      "blur": 6.1578,
+      "color": "#b61979",
+      "inner": false,
+      "strength": 0.7266
+     }
+    ],
+    [
+     {
+      "blur": 2.1053,
+      "color": "#ff2b6c",
+      "inner": true,
+      "strength": 0.418
+     },
+     {
+      "blur": 5.4737,
+      "color": "#be166c",
+      "inner": false,
+      "strength": 0.6484
+     }
+    ],
+    [
+     {
+      "blur": 1.8421,
+      "color": "#ff265e",
+      "inner": true,
+      "strength": 0.3594
+     },
+     {
+      "blur": 4.7895,
+      "color": "#c6135e",
+      "inner": false,
+      "strength": 0.5664
+     }
+    ],
+    [
+     {
+      "blur": 1.579,
+      "color": "#ff2151",
+      "inner": true,
+      "strength": 0.3086
+     },
+     {
+      "blur": 4.1053,
+      "color": "#ce1151",
+      "inner": false,
+      "strength": 0.4766
+     }
+    ],
+    [
+     {
+      "blur": 1.3158,
+      "color": "#ff1b44",
+      "inner": true,
+      "strength": 0.2578
+     },
+     {
+      "blur": 3.421,
+      "color": "#d60e44",
+      "inner": false,
+      "strength": 0.3984
+     }
+    ],
+    [
+     {
+      "blur": 1.0526,
+      "color": "#ff1636",
+      "inner": true,
+      "strength": 0.207
+     },
+     {
+      "blur": 2.7368,
+      "color": "#de0b36",
+      "inner": false,
+      "strength": 0.3164
+     }
+    ],
+    [
+     {
+      "blur": 0.7895,
+      "color": "#ff1129",
+      "inner": true,
+      "strength": 0.1484
+     },
+     {
+      "blur": 2.0527,
+      "color": "#e60929",
+      "inner": false,
+      "strength": 0.2383
+     }
+    ],
+    [
+     {
+      "blur": 0.5264,
+      "color": "#ff0b1b",
+      "inner": true,
+      "strength": 0.0977
+     },
+     {
+      "blur": 1.3685,
+      "color": "#ee061b",
+      "inner": false,
+      "strength": 0.1562
+     }
+    ],
+    [
+     {
+      "blur": 0.2631,
+      "color": "#ff060e",
+      "inner": true,
+      "strength": 0.0469
+     },
+     {
+      "blur": 0.6842,
+      "color": "#f6030e",
+      "inner": false,
+      "strength": 0.0781
+     }
+    ],
+    [
+     {
+      "blur": 0.0,
+      "color": "#ff0000",
+      "inner": false,
+      "strength": 0.0
+     },
+     {
+      "blur": 0.0,
+      "color": "#ff0000",
+      "inner": false,
+      "strength": 0.0
+     }
+    ]
+   ],
+   "rect": [
+    233.8,
+    481.2,
+    24.8,
+    24.8
+   ],
+   "size": [
+    124,
+    124
+   ],
+   "zoom": 5.0
+  },
+  "save": {
+   "frames": [
+    [
+     {
+      "blur": 0.0,
+      "color": "#00ffff",
+      "inner": false,
+      "strength": 0.0
+     },
+     {
+      "blur": 0.0,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.0
+     }
+    ],
+    [
+     {
+      "blur": 0.8334,
+      "color": "#00f7ff",
+      "inner": false,
+      "strength": 0.1094
+     },
+     {
+      "blur": 2.1667,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.25
+     }
+    ],
+    [
+     {
+      "blur": 1.6666,
+      "color": "#00efff",
+      "inner": false,
+      "strength": 0.2188
+     },
+     {
+      "blur": 4.3333,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.5078
+     }
+    ],
+    [
+     {
+      "blur": 2.5,
+      "color": "#00e6ff",
+      "inner": false,
+      "strength": 0.3398
+     },
+     {
+      "blur": 6.5,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.7695
+     }
+    ],
+    [
+     {
+      "blur": 3.3334,
+      "color": "#00ddff",
+      "inner": false,
+      "strength": 0.457
+     },
+     {
+      "blur": 8.6667,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 1.0273
+     }
+    ],
+    [
+     {
+      "blur": 4.1666,
+      "color": "#00d5ff",
+      "inner": false,
+      "strength": 0.5664
+     },
+     {
+      "blur": 10.8333,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 1.2891
+     }
+    ],
+    [
+     {
+      "blur": 5.0,
+      "color": "#00ccff",
+      "inner": true,
+      "strength": 0.6875
+     },
+     {
+      "blur": 13.0,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 5.0,
+      "color": "#00ccff",
+      "inner": true,
+      "strength": 1.0
+     },
+     {
+      "blur": 13.0,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 1.5469
+     }
+    ],
+    [
+     {
+      "blur": 4.7369,
+      "color": "#00ceff",
+      "inner": true,
+      "strength": 0.9375
+     },
+     {
+      "blur": 12.3158,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 1.457
+     }
+    ],
+    [
+     {
+      "blur": 4.4736,
+      "color": "#00d1ff",
+      "inner": true,
+      "strength": 0.8867
+     },
+     {
+      "blur": 11.6315,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 1.3789
+     }
+    ],
+    [
+     {
+      "blur": 4.2105,
+      "color": "#00d4ff",
+      "inner": true,
+      "strength": 0.8398
+     },
+     {
+      "blur": 10.9473,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 1.2969
+     }
+    ],
+    [
+     {
+      "blur": 3.9474,
+      "color": "#00d6ff",
+      "inner": true,
+      "strength": 0.7773
+     },
+     {
+      "blur": 10.2632,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 1.2188
+     }
+    ],
+    [
+     {
+      "blur": 3.6842,
+      "color": "#00d9ff",
+      "inner": true,
+      "strength": 0.7266
+     },
+     {
+      "blur": 9.579,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 1.1367
+     }
+    ],
+    [
+     {
+      "blur": 3.421,
+      "color": "#00dcff",
+      "inner": true,
+      "strength": 0.6797
+     },
+     {
+      "blur": 8.8947,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 1.0586
+     }
+    ],
+    [
+     {
+      "blur": 3.1579,
+      "color": "#00deff",
+      "inner": true,
+      "strength": 0.6289
+     },
+     {
+      "blur": 8.2105,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.9688
+     }
+    ],
+    [
+     {
+      "blur": 2.8947,
+      "color": "#00e1ff",
+      "inner": true,
+      "strength": 0.5664
+     },
+     {
+      "blur": 7.5263,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.8867
+     }
+    ],
+    [
+     {
+      "blur": 2.6316,
+      "color": "#00e4ff",
+      "inner": true,
+      "strength": 0.5195
+     },
+     {
+      "blur": 6.8422,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.8086
+     }
+    ],
+    [
+     {
+      "blur": 2.3684,
+      "color": "#00e6ff",
+      "inner": true,
+      "strength": 0.4688
+     },
+     {
+      "blur": 6.1578,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.7266
+     }
+    ],
+    [
+     {
+      "blur": 2.1053,
+      "color": "#00e9ff",
+      "inner": true,
+      "strength": 0.418
+     },
+     {
+      "blur": 5.4737,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.6484
+     }
+    ],
+    [
+     {
+      "blur": 1.8421,
+      "color": "#00ecff",
+      "inner": true,
+      "strength": 0.3594
+     },
+     {
+      "blur": 4.7895,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.5664
+     }
+    ],
+    [
+     {
+      "blur": 1.579,
+      "color": "#00eeff",
+      "inner": true,
+      "strength": 0.3086
+     },
+     {
+      "blur": 4.1053,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.4766
+     }
+    ],
+    [
+     {
+      "blur": 1.3158,
+      "color": "#00f1ff",
+      "inner": true,
+      "strength": 0.2578
+     },
+     {
+      "blur": 3.421,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.3984
+     }
+    ],
+    [
+     {
+      "blur": 1.0526,
+      "color": "#00f4ff",
+      "inner": true,
+      "strength": 0.207
+     },
+     {
+      "blur": 2.7368,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.3164
+     }
+    ],
+    [
+     {
+      "blur": 0.7895,
+      "color": "#00f6ff",
+      "inner": true,
+      "strength": 0.1484
+     },
+     {
+      "blur": 2.0527,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.2383
+     }
+    ],
+    [
+     {
+      "blur": 0.5264,
+      "color": "#00f9ff",
+      "inner": true,
+      "strength": 0.0977
+     },
+     {
+      "blur": 1.3685,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.1562
+     }
+    ],
+    [
+     {
+      "blur": 0.2631,
+      "color": "#00fcff",
+      "inner": true,
+      "strength": 0.0469
+     },
+     {
+      "blur": 0.6842,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.0781
+     }
+    ],
+    [
+     {
+      "blur": 0.0,
+      "color": "#00ffff",
+      "inner": false,
+      "strength": 0.0
+     },
+     {
+      "blur": 0.0,
+      "color": "#0099ff",
+      "inner": false,
+      "strength": 0.0
+     }
+    ]
+   ],
+   "rect": [
+    139.2,
+    479.4,
+    20.4,
+    28.8
+   ],
+   "size": [
+    102,
+    144
+   ],
+   "zoom": 5.0
+  },
+  "world_map": {
+   "frames": [
+    [
+     {
+      "blur": 0.0,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#ffffff",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#000000",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.0
+     }
+    ],
+    [
+     {
+      "blur": 2.8334,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#d5ffd5",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#002a2a",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.2969
+     }
+    ],
+    [
+     {
+      "blur": 5.6666,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#abffab",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#005454",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.5977
+     }
+    ],
+    [
+     {
+      "blur": 8.5,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#80ff80",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#007f7f",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.9062
+     }
+    ],
+    [
+     {
+      "blur": 11.3334,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#55ff55",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#00aaaa",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.207
+     }
+    ],
+    [
+     {
+      "blur": 14.1666,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#2bff2b",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#00d4d4",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.5078
+     }
+    ],
+    [
+     {
+      "blur": 17.0,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#00ff00",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#00ffff",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.8164
+     }
+    ],
+    [
+     {
+      "blur": 17.0,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#00ff00",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#00ffff",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.8164
+     }
+    ],
+    [
+     {
+      "blur": 16.1053,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#0dff0d",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#00f2f2",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.7188
+     }
+    ],
+    [
+     {
+      "blur": 15.2104,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#1aff1a",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#00e5e5",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.6172
+     }
+    ],
+    [
+     {
+      "blur": 14.3157,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#28ff28",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#00d7d7",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.5273
+     }
+    ],
+    [
+     {
+      "blur": 13.4211,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#35ff35",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#00caca",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.4297
+     }
+    ],
+    [
+     {
+      "blur": 12.5264,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#43ff43",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#00bcbc",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.3398
+     }
+    ],
+    [
+     {
+      "blur": 11.6315,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#50ff50",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#00afaf",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.2383
+     }
+    ],
+    [
+     {
+      "blur": 10.7368,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#5dff5d",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#00a2a2",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.1367
+     }
+    ],
+    [
+     {
+      "blur": 9.8421,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#6bff6b",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#009494",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 1.0469
+     }
+    ],
+    [
+     {
+      "blur": 8.9475,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#78ff78",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#008787",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.9492
+     }
+    ],
+    [
+     {
+      "blur": 8.0525,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#86ff86",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#007979",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.8594
+     }
+    ],
+    [
+     {
+      "blur": 7.1579,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#93ff93",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#006c6c",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.7578
+     }
+    ],
+    [
+     {
+      "blur": 6.2632,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#a1ffa1",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#005e5e",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.668
+     }
+    ],
+    [
+     {
+      "blur": 5.3685,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#aeffae",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#005151",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.5664
+     }
+    ],
+    [
+     {
+      "blur": 4.4736,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#bbffbb",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#004444",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.4688
+     }
+    ],
+    [
+     {
+      "blur": 3.5789,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#c9ffc9",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#003636",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.3789
+     }
+    ],
+    [
+     {
+      "blur": 2.6843,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#d6ffd6",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#002929",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.2773
+     }
+    ],
+    [
+     {
+      "blur": 1.7896,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#e4ffe4",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#001b1b",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.1875
+     }
+    ],
+    [
+     {
+      "blur": 0.8947,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#f1fff1",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#000e0e",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.0898
+     }
+    ],
+    [
+     {
+      "blur": 0.0,
+      "gradient": [
+       {
+        "alpha": 0,
+        "color": "#ffffff",
+        "ratio": 0
+       },
+       {
+        "alpha": 255,
+        "color": "#000000",
+        "ratio": 255
+       }
+      ],
+      "inner": false,
+      "strength": 0.0
+     }
+    ]
+   ],
+   "rect": [
+    384.4,
+    492.8,
+    31.8,
+    31.8
+   ],
+   "size": [
+    159,
+    159
+   ],
+   "zoom": 5.0
+  }
+ }
+}

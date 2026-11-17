@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/backgrounds/hub/PRISON.png" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hotbar.tscn" id="2"]
+
+[node name="HubChrome" type="Control"]
+mouse_filter = 2
+
+[node name="HubArt" type="TextureRect" parent="."]
+offset_left = 17.35
+offset_top = 15.775
+offset_right = 780.35
+offset_bottom = 430.025
+texture = ExtResource("1")
+expand_mode = 1
+mouse_filter = 2
+
+[node name="Hotbar" parent="." instance=ExtResource("2")]

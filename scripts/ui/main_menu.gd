@@ -1,16 +1,21 @@
 # main_menu.gd
 # The starting screen (scenes/main_menu.tscn), the original's menu from its
-# subMenu frame on. references/2026_07_18_flashpoint/4-8 show screens 3 to 5.
-#   1. New Game or Load Game (root frame 56). The original's third choice,
-#      PvP Arena, is left out with the rest of the arena.
-#   2. New Game asks for the player's name (root frame 64).
-#   3. The four save slots (root frame 74). New Game goes on to class select
-#      from any slot, used or empty, and Load Game loads a used one.
-#   4. "Please select a class:" - the original sketch-art class cards, gray at
+# mainMenu frame on. references/2026_07_18_flashpoint/4-8 show screens 4 to 6.
+#   1. The title (root frame 46, scenes/ui/menu/title_panel.tscn). Its first
+#      caption goes on to screen 2. Game Manual and Credits are not wired,
+#      because their Screens do not exist yet.
+#   2. New Game or Load Game (root frame 56, scenes/ui/menu/mode_panel.tscn).
+#      The original's third choice, PvP Arena, is left out with the rest of
+#      the arena (docs/adr/0006-leave-out-the-pvp-arena.md).
+#   3. New Game asks for the player's name (root frame 64).
+#   4. The four save slots (root frame 74, scenes/ui/menu/slot_panel.tscn).
+#      New Game goes on to class select from any slot, used or empty, and
+#      Load Game loads a used one.
+#   5. "Please select a class:" - the original sketch-art class cards, gray at
 #      rest and colored on hover, each at the position and size the original
 #      places it at. The class name under each card is a Label, because the
 #      original fills a separate text field from KrinLang at runtime.
-#   5. "Please configure your settings:" - Difficulty, Tutorial Level,
+#   6. "Please configure your settings:" - Difficulty, Tutorial Level,
 #      Sound, Autosave (Effects/Graphics skipped), then Click here to START!
 # All screens sit on the original blue splatter background. The card art, the
 # card rects in the scene and the background all come from
@@ -47,10 +52,10 @@ var _sound_enabled: bool = true
 var _autosave_enabled: bool = true
 var _card_fades: Dictionary = {}  # card node name -> its running color fade
 
-@onready var mode_panel: Control = $ModePanel  # New Game or Load Game
+@onready var title_panel: TitlePanel = $TitlePanel
+@onready var mode_panel: ModePanel = $ModePanel
 @onready var name_panel: Control = $NamePanel
-@onready var slot_panel: Control = $SlotPanel
-@onready var slot_buttons: VBoxContainer = $SlotPanel/Layout/SlotButtons
+@onready var slot_panel: SlotPanel = $SlotPanel
 @onready var new_game_panel: Control = $NewGamePanel  # class-select screen
 @onready var options_panel: Control = $OptionsPanel   # settings screen
 @onready var class_picker: Control = $NewGamePanel/ClassPicker
@@ -68,27 +73,32 @@ func _ready():
 		style.set_content_margin(SIDE_TOP, 3.5)
 		style.set_content_margin(SIDE_BOTTOM, 3.5)
 		name_input.add_theme_stylebox_override(style_name, style)
-	_show_screen(mode_panel)
-	_refresh_slot_buttons()
+	_show_screen(title_panel)
+	_refresh_slot_names()
 	_setup_class_cards()
 	AudioManagerAuto.play_menu_music()
 
 
 func _show_screen(screen: Control) -> void:
-	for panel in [mode_panel, name_panel, slot_panel, new_game_panel, options_panel]:
+	for panel in [title_panel, mode_panel, name_panel, slot_panel, new_game_panel, options_panel]:
 		panel.visible = panel == screen
 
 
-# Every screen's Back returns to the first screen. The original's Back,
-# DefineButton2_2702, goes to mainMenu from all of them (on(release), line 2),
-# the title screen in front of New Game and Load Game, which the port doesn't
-# have.
+# Every screen's Back returns to the title. The original's Back,
+# DefineButton2_2702, goes to mainMenu from all of them (on(release), line 2).
 func _on_back_pressed() -> void:
 	GameTooltip.hide_tooltip()
+	_show_screen(title_panel)
+
+
+# --- screen 1: the title -----------------------------------------------------
+
+# DefineButton2_2692 on(release) goes to subMenu.
+func _on_play_pressed() -> void:
 	_show_screen(mode_panel)
 
 
-# --- screen 1: New Game or Load Game -----------------------------------------
+# --- screen 2: New Game or Load Game -----------------------------------------
 
 func _on_new_game_pressed() -> void:
 	_slot_mode = SlotMode.NEW_GAME
@@ -101,37 +111,32 @@ func _on_load_game_pressed() -> void:
 	_show_screen(slot_panel)
 
 
-# --- screen 2: name ----------------------------------------------------------
+# --- screen 3: name ----------------------------------------------------------
 
 func _on_name_confirmed() -> void:
 	_show_screen(slot_panel)
 
 
-# --- screen 3: save slots ----------------------------------------------------
+# --- screen 4: save slots ----------------------------------------------------
 
-func _refresh_slot_buttons() -> void:
-	for child in slot_buttons.get_children():
-		child.queue_free()
+func _refresh_slot_names() -> void:
 	for slot in range(1, GameData.NUM_SLOTS + 1):
-		var button: Button = Button.new()
-		button.custom_minimum_size = Vector2(320, 44)
-		button.text = _slot_label(slot)
-		button.pressed.connect(_on_slot_pressed.bind(slot))
-		button.mouse_entered.connect(_on_slot_hovered.bind(button))
-		button.mouse_exited.connect(GameTooltip.hide_tooltip)
-		slot_buttons.add_child(button)
+		slot_panel.set_save_name(slot, _slot_name(slot))
 
 
-func _slot_label(slot: int) -> String:
+# The save's nameUser, or "< Empty Slot >" for a slot with none
+# (frame_74/DoAction.as:4-9). "(corrupted)" is the port's own, for a slot file
+# that does not load as a save.
+func _slot_name(slot: int) -> String:
 	if not GameData.has_save(slot):
-		return "Slot %d - < Empty Slot >" % slot
+		return "< Empty Slot >"
 	var save: Resource = ResourceLoader.load(GameData._slot_path(slot))
 	if save is PlayerSave:
-		return "Slot %d - %s  Lv %d  (Zone %d)" % [slot, save.name_user, save.level, save.section_in]
-	return "Slot %d - (corrupted)" % slot
+		return save.name_user
+	return "(corrupted)"
 
 
-func _on_slot_hovered(button: Button) -> void:
+func _on_slot_hovered(slot: int) -> void:
 	if _slot_mode != SlotMode.NEW_GAME:
 		return
 	GameTooltip.show_sections([
@@ -143,7 +148,11 @@ func _on_slot_hovered(button: Button) -> void:
 			"text": NEW_GAME_WARNING_TEXT,
 			"color": TooltipTheme.TEXT_BODY,
 		}]},
-	], button)
+	], slot_panel.hit_button(slot))
+
+
+func _on_slot_unhovered() -> void:
+	GameTooltip.hide_tooltip()
 
 
 # New Game goes on to class select from any slot without reading it, and Load
@@ -158,7 +167,7 @@ func _on_slot_pressed(slot: int) -> void:
 		_enter_game()
 
 
-# --- screen 4: class select ---------------------------------------------------
+# --- screen 5: class select ---------------------------------------------------
 
 # Each card gets the shared rich tooltip the abilities and buff icons use, so
 # the class name sits in a header bar above its blurb the way the original's
@@ -209,7 +218,7 @@ func _on_class_picked(class_id: PlayerSave.PlayerClass) -> void:
 	options_panel.show()
 
 
-# --- screen 5: settings -------------------------------------------------------
+# --- screen 6: settings -------------------------------------------------------
 
 func _on_difficulty_selected(index: CombatUnit.Difficulty) -> void:
 	_selected_difficulty = index

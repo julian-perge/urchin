@@ -5,10 +5,13 @@ the original SWF by script, not by hand.
 
 ## Commands
 
-Run every command through `just`. `just` lists the recipes. It picks Godot for
-the OS, loads the per-machine settings from `.env`, and stops with a message
-when a tool is missing. The Python scripts read `GODOT_BIN` from it and do not
-look for Godot themselves, so `uv run gut` outside `just` fails.
+Run the project's tasks, such as tests, Godot, extraction and conversion,
+through their `just` recipes. `just` lists the recipes. It picks Godot for the
+OS, loads the per-machine settings from `.env`, and stops with a message when a
+tool is missing. The Python scripts read `GODOT_BIN` from it and do not look
+for Godot themselves, so `uv run gut` outside `just` fails. Run plain tools
+such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
+`just --command`, because they do not read `.env`.
 
 - In a new git worktree, run `just setup-worktree` first. It runs Godot's
   import and warns when `URCHIN_SWF_DIR` has no SWFs.
@@ -28,6 +31,10 @@ look for Godot themselves, so `uv run gut` outside `just` fails.
   "No loader found for resource". `just gut` runs this import by itself only in
   a checkout with no `.godot` folder.
 - Any other Godot command: `just godot <arguments>`.
+- In Codex, if a check cannot write its normal tool cache outside the
+  workspace, rerun it with sandbox escalation. A blocked write to prek's
+  `prek.log` stopped the #220 checks before any hook ran; the same checks
+  passed with escalation. Do not treat that error as a failed code check.
 
 ## Setup
 
@@ -60,7 +67,8 @@ look for Godot themselves, so `uv run gut` outside `just` fails.
 - Reading the ActionScript, or porting the original's logic or data:
   `docs/agents/actionscript.md`.
 - Running or changing an extractor, or anything else that renders through
-  ffdec: `docs/agents/art-extraction.md`.
+  ffdec, or scoring a Screen with `just compare-screen`:
+  `docs/agents/art-extraction.md`.
 - Writing GDScript, a scene or a GUT test, or loading a QA save preset:
   `docs/agents/godot.md`.
 - Reviewing a diff, or calling a change verified: `CODING_STANDARDS.md`.
@@ -72,4 +80,4 @@ look for Godot themselves, so `uv run gut` outside `just` fails.
 - Tasks are tracked in GitHub Issues for julian-perge/urchin, with the `gh` CLI. `/agent-skills:plan` creates one sub-issue per task. `tasks/` is git-ignored scratch, except `tasks/old/`.
 - Specs are files at `spec/<issue>-<slug>.md`, not `SPEC.md`. Specs from before this workflow are in `spec/old/`.
 - ADRs go in `docs/adr/`. Read `GLOSSARY.md` and `docs/adr/` (those that exist) before design work.
-- Read `docs/agents/workflow.md` before any `/agent-skills` command.
+- Start each `/agent-skills` stage with `agent-skills brief <stage> <n>`. It prints every rule of `docs/agents/workflow.md` that the stage needs, so do not read that file in a stage. Before other work in this repo, read all of `docs/agents/workflow.md`.

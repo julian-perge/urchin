@@ -3,7 +3,9 @@
 # to, out of a code block swf_index.py found. It decodes the action records,
 # and it lists the assignments a script makes without running the script: the
 # variable or member each one sets, and its value, which can be built from
-# numbers and from variables the script reads. It works a value out only from
+# numbers, from variables the script reads and from a `new` of a class. It
+# lists the methods a script calls and the values it compares the same way. It
+# works a value out only from
 # variables it is given. assignments() works out everything a script sets when
 # the script does nothing but assign numbers, as a clip's onClipEvent(load)
 # does when it sets the clip's starting variables, and refuses any other
@@ -25,9 +27,15 @@ ACTION_MULTIPLY = 0x0C
 ACTION_DIVIDE = 0x0D
 ACTION_GET_VARIABLE = 0x1C
 ACTION_SET_VARIABLE = 0x1D
+ACTION_DEFINE_LOCAL = 0x3C
+ACTION_NEW_OBJECT = 0x40
 ACTION_ADD2 = 0x47
+ACTION_EQUALS2 = 0x49
 ACTION_GET_MEMBER = 0x4E
 ACTION_SET_MEMBER = 0x4F
+ACTION_INCREMENT = 0x50
+ACTION_CALL_METHOD = 0x52
+ACTION_NEW_METHOD = 0x53
 ACTION_CONSTANT_POOL = 0x88
 ACTION_DEFINE_FUNCTION2 = 0x8E
 ACTION_PUSH = 0x96
@@ -102,6 +110,36 @@ class Assignment:
 
     target: str
     value: object
+    at: int
+
+
+@dataclass(frozen=True)
+class New:
+    """A `new` of the class at a path, such as "flash.filters.GlowFilter",
+    with its arguments in the order the script writes them."""
+
+    path: str
+    args: tuple
+
+
+@dataclass(frozen=True)
+class Call:
+    """A CallMethod: the path of the method, such as "KrinFilterHit.push", its
+    arguments in the order the script writes them, and at, the index in
+    actions()'s list of the action that calls it."""
+
+    path: str
+    args: tuple
+    at: int
+
+
+@dataclass(frozen=True)
+class Comparison:
+    """An Equals2: its two sides, and at, the index in actions()'s list of
+    the action that compares them."""
+
+    left: object
+    right: object
     at: int
 
 
@@ -217,15 +255,37 @@ def evaluate(value, variables: dict[str, object]):
 
 
 def statements(index: SwfIndex, block: CodeBlock) -> list[Assignment]:
-    """-> every SetVariable and SetMember in the block, function bodies
-    included, whose target it can name without running the script, in order. A
-    value is a number, a string or a boolean, a Read, an Arithmetic or UNKNOWN.
-    In a function's body, a register that the function's caller fills reads as
-    the value it holds. Every action other than a Push, a ConstantPool, a
-    GetVariable, a GetMember, a SetVariable, a SetMember, the four arithmetic
-    ones and a function definition empties the stack, so an assignment of what
-    a call or a branch works out is left out."""
+    """-> every SetVariable, SetMember and DefineLocal in the block, function
+    bodies included, whose target it can name without running the script, in
+    order. A value is a number, a string or a boolean, a Read, an Arithmetic,
+    a New or UNKNOWN. In a function's body, a register that the function's
+    caller fills reads as the value it holds. An Increment is an Add2 of 1.
+    Every action other than those, a Push, a ConstantPool, a GetVariable, a
+    GetMember, a NewObject, a NewMethod, the four arithmetic ones and a
+    function definition empties the stack, so an assignment of what a call or
+    a branch works out is left out."""
+    return _walk(index, block)[0]
+
+
+def calls(index: SwfIndex, block: CodeBlock) -> list[Call]:
+    """-> every CallMethod in the block, function bodies included, whose
+    object and method it can name without running the script, in order. Each
+    argument is a value as statements() gives it."""
+    return _walk(index, block)[1]
+
+
+def comparisons(index: SwfIndex, block: CodeBlock) -> list[Comparison]:
+    """-> every Equals2 in the block, function bodies included, in order, with
+    its two sides as statements() gives a value."""
+    return _walk(index, block)[2]
+
+
+def _walk(
+    index: SwfIndex, block: CodeBlock
+) -> tuple[list[Assignment], list[Call], list[Comparison]]:
     result = []
+    called = []
+    compared = []
     stack: list = []
     registers: dict[int, str] = {}
     # For each function body being read, this holds the index of the first
@@ -253,7 +313,27 @@ def statements(index: SwfIndex, block: CodeBlock) -> list[Assignment]:
         elif code in ARITHMETIC:
             right, left = _pop(stack), _pop(stack)
             stack.append(_arithmetic(code, left, right))
-        elif code in (ACTION_SET_VARIABLE, ACTION_SET_MEMBER):
+        elif code == ACTION_INCREMENT:
+            stack.append(_arithmetic(ACTION_ADD2, _pop(stack), 1))
+        elif code in (ACTION_NEW_OBJECT, ACTION_NEW_METHOD):
+            name = _pop(stack)
+            owner = _pop(stack) if code == ACTION_NEW_METHOD else None
+            made = _read(owner, name)
+            args = _arguments(stack)
+            known = isinstance(made, Read) and args is not None
+            stack.append(New(made.path, args) if known else UNKNOWN)
+        elif code == ACTION_CALL_METHOD:
+            name = _pop(stack)
+            method = _read(_pop(stack), name)
+            args = _arguments(stack)
+            if isinstance(method, Read) and args is not None:
+                called.append(Call(method.path, args, at))
+            stack = []
+        elif code == ACTION_EQUALS2:
+            right, left = _pop(stack), _pop(stack)
+            compared.append(Comparison(left, right, at))
+            stack = []
+        elif code in (ACTION_SET_VARIABLE, ACTION_SET_MEMBER, ACTION_DEFINE_LOCAL):
             value, name = _pop(stack), _pop(stack)
             owner = _pop(stack) if code == ACTION_SET_MEMBER else None
             target = _read(owner, name)
@@ -261,7 +341,17 @@ def statements(index: SwfIndex, block: CodeBlock) -> list[Assignment]:
                 result.append(Assignment(target.path, value, at))
         elif code != ACTION_CONSTANT_POOL:
             stack = []
-    return result
+    return result, called, compared
+
+
+def _arguments(stack: list) -> tuple | None:
+    """Pops the count a call or a `new` pushes over its arguments, then that
+    many arguments. -> the arguments in the order the script writes them, or
+    None when the count is not a number."""
+    count = _pop(stack)
+    if not _is_number(count):
+        return None
+    return tuple(_pop(stack) for _ in range(int(count)))
 
 
 def numbers(index: SwfIndex, block: CodeBlock) -> list[float]:

@@ -177,12 +177,12 @@ MASK_W, MASK_H = 533, 300
 
 # The SWF stage is 16000x11500 twips (800x575 px) and each wrapper sits on it
 # at (2670, 2750) twips = (133.5, 137.5) px, which centers the 533x300 mask
-# exactly. Godot's viewport is 800x600 (project.godot), so re-centering the
-# same box in an 800x600 frame puts it back where the original had it once
-# the 575-tall stage is itself centered in the 600-tall viewport, and
-# lets cutscene_player.tscn's VideoStreamPlayer stretch the clip to fill the
-# screen without distorting it.
-OUT_W, OUT_H = 800, 600
+# exactly. Godot's viewport is the same 800x575 (project.godot), so a clip
+# with the mask box centered in an 800x575 frame is the whole Stage, and
+# cutscene_player.tscn's VideoStreamPlayer fills the viewport with it and
+# does not scale it. The pad filter takes whole pixels, so the box lands at
+# (133, 137), half a pixel up and left of the original.
+OUT_W, OUT_H = 800, 575
 CONTENT_X, CONTENT_Y = (OUT_W - MASK_W) // 2, (OUT_H - MASK_H) // 2
 
 # Verification thresholds - see verify_output()'s and _frame_noise()'s
@@ -201,7 +201,13 @@ MAX_TOLERATED_NOISE_FRAMES = 2
 # sampled frames in a row do, at 67.5, 68.5 and 69.4 s. Frames 2025, 2055 and
 # 2083 of the stripped wrapper show real art and no noise, so this clip may
 # have three.
-TOLERATED_NOISE_FRAMES = {"CS_INTRO2": 3}
+#
+# CS_CUT2 (sprite 3810) has a figure falling in front of dense white speed
+# lines. Two sampled frames of them read as static, at 6.09 and 7.10 s of the
+# encoded clip, and both show real art and no noise. That is the whole general
+# limit, and a new encode can move a third sample onto the speed lines, so this
+# clip may have three.
+TOLERATED_NOISE_FRAMES = {"CS_INTRO2": 3, "CS_CUT2": 3}
 
 MISSING_BITMAP = 65535
 

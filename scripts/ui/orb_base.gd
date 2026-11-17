@@ -20,13 +20,7 @@ func _ready():
 	$AnimationPlayer.stop()
 	$AnimationPlayer.play("spin")
 	setup_orb()
-	# Reliable click path: the Area2D's input_event only fires when no Control
-	# above it consumes the mouse, which full-rect scene layouts always do.
-	# Size the (otherwise zero-sized) Control child into a centered hit box
-	# and take clicks through the GUI system instead.
 	var hit_box: Control = $Control
-	hit_box.position = Vector2(-60, -60)
-	hit_box.size = Vector2(120, 120)
 	hit_box.gui_input.connect(_on_hit_box_input)
 	var sections: Array = [
 		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": tooltip_title, "color": TooltipTheme.TEXT_TITLE}]},
@@ -37,17 +31,21 @@ func _ready():
 
 func _on_hit_box_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		interact()
+		if not _hub_is_inert():
+			interact()
+
+
+# The hotbar holds the Hub's inert state (hotbar.gd, set_inert). An orb with no
+# hotbar in its tree is never inert.
+func _hub_is_inert() -> bool:
+	var hotbar: Node = get_tree().get_first_node_in_group("hotbar")
+	return hotbar != null and hotbar.is_inert()
 
 func setup_orb():
 	print("Setting up orb color %s for %s" % [orb_color, name])
 	$bottom.modulate = orb_color
 	$middle.modulate = orb_color
 	$top.modulate = orb_color
-
-func _on_input_event(_viewport, event, _shape_idx):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		interact()
 
 func interact():
 	print("Emitting event for %s" % name)
@@ -61,7 +59,3 @@ func interact():
 	#var tooltip = Label.new()
 	#tooltip.text = for_text
 	#return tooltip
-
-
-func _on_mouse_entered() -> void:
-	print("mouse ", name)

@@ -281,7 +281,9 @@ special "miss"/"shield" frames. Crits also fire `GridShaker` (frame_42/DoAction_
 `frame_42/DoAction_8.as:80` and again at 84, or at 137 in heal green under sswitch. Each call attaches a new clip at the next depth (`frame_42/DoAction_7.as:37`, 75-79), so a normal hit shows two
 identical numbers and an sswitch hit shows a green number over an element-colored one.
 
-Ported: `FloatingNumberLayer` is `KrinNumberShow` and `FloatingNumber` is one `NumberFixer`, played from what `extract_floating_numbers` writes. The details the port keeps:
+Ported: `FloatingNumberLayer` is `KrinNumberShow` and `FloatingNumber` is one `NumberFixer`, played from what `extract_floating_numbers` writes.
+It writes the count of the depths as `slots`, and the digit spacing and the first digit's offset under `digits`, to `assets/ui/battle/floating_number/floating_number.json`, and `FloatingNumberLayer` reads them from there.
+The details the port keeps:
 
 - The number sits on the target rig's `_x`/`_y` with no offset (lines 38-39). `dressChar` lowers only a MODEL5 unit's doll inside its rig, so its number stays on the rig.
 - `KrinNumberShow` attaches the number to BATTLESCREEN (line 37), so it zooms and shakes with the fighters. The port's layer is a child of `BattleScreenClip`, next to `Battlefield`.
@@ -325,6 +327,7 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
 ## The Result flash (DefineSprite 3416 `BATTLEFLASH`)
 
 Ported: each `FighterPresenter` plays its own `ResultFlash` (`scripts/battle/result_flash.gd`), and `scenes/doll_body.gdshader` draws its filter over the doll's CanvasGroup body.
+`extract_result_flash` writes each label's color and frames and the glows' blurs and strengths to `assets/ui/battle/result_flash.json`, and both read them from there.
 
 - The clip has 46 frames at 30 fps, places nothing and is all frame scripts. Its labels are `none` on frame 1, which stops, `hit` on 2, `heal` on 17 and `focus` on 32. Each label puts its
   filter on at its first frame and 4, 8 and 12 frames after it, takes it off 2 frames after each, and 14 frames after it takes it off and stops on `none`
@@ -340,7 +343,7 @@ Ported: each `FighterPresenter` plays its own `ResultFlash` (`scripts/battle/res
 
 ## The Shield clip (DefineSprite 2675)
 
-Ported: `extract_rig_clips` renders every frame of the clip into `assets/ui/battle/rig/shield/`, and each `FighterPresenter` plays its own `RigClip` (`scripts/battle/rig_clip.gd`)
+Ported: `extract_shield_clip` renders every frame of the clip into `assets/ui/battle/shield_clip/`, and each `FighterPresenter` plays its own `ShieldClip` (`scripts/battle/shield_clip.gd`)
 through `play_shield_clip()`.
 
 - The fighter rig, DefineSprite 2676, places the clip as `shield` at its origin. The clip's `onClipEvent(load)` runs `this.swapDepths(1000)`, which puts it over the `inner` doll

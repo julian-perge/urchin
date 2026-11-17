@@ -1,22 +1,10 @@
-# zone_scene.gd
-# Root script for the per-zone hub scenes (scenes/zones/zone*.tscn). Each
-# scene is laid out in the original 800x575 stage space: the hub art fills
-# the rect (18, 16)-(782, 430) and the orbs sit at the exact positions
-# extracted from the original SWF's zone-hub sprite (sprite 3287, one labeled
-# frame per zone; container offset (400, 222.9) applied). Zones 1 to 6 have a
-# story, a shop and a training orb. Zone 7 has no training orb, because 3287's
-# JAPAN frame places none.
-#
-# The orbs themselves are orb.tscn instances with the story/training/store
-# scripts attached - they talk to ZoneManager directly. game.tscn's ZoneHost
-# instances the right zone scene whenever ZoneManager.zone_changed fires.
 extends Control
 
 @export var zone_id: int = 1
 
 
 func _ready():
-	# Let clicks fall through to the orbs' hit boxes - a full-rect Control
-	# with the default STOP filter would swallow every mouse event.
+	# The root and the art cover the whole Hub. With the default filter they
+	# would take every mouse event before it reaches an orb's hit box.
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$HubArt.mouse_filter = Control.MOUSE_FILTER_IGNORE

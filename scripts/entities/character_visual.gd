@@ -71,13 +71,10 @@ const MELEE_RUNBACK_FRAMES: float = 14.0
 const MELEE_HOME_TOLERANCE: float = 0.000001
 
 const BODY_SHADER: Shader = preload("res://scenes/doll_body.gdshader")
-# The Result flash's margins in stage px. Its colored glows are 10 px wide, so
-# the body draws 6 px past the doll to hold the 5 px they reach past it. Its
-# white glow reads a box 100 px wide around each px the body draws, so the body
-# clears the screen texture 50 px past that, which is where a CanvasGroup
-# measures clear_margin from.
-const RESULT_FLASH_FIT_MARGIN: float = 6.0
-const RESULT_FLASH_CLEAR_MARGIN: float = 50.0
+# The stage px the body draws past the reach of the Result flash's colored
+# glows, so that their soft edge is not cut. The port chose it. The original
+# has no such number.
+const RESULT_FLASH_FIT_SPARE: float = 1.0
 
 static var _offsets: Dictionary = {}
 static var _offsets_loaded: bool = false
@@ -120,7 +117,7 @@ var _attack_fired: bool = false
 
 # Timeline playback (labels from model1_animations.json).
 var _label: String = ""
-var _label_time: float = 0.0
+var _label_frames: float = 0.0
 var _label_finished: bool = false
 # These run the melee swing. krinMelee moves the fighter's clip whatever its
 # inner doll plays (frame_42/DoAction_4.as:67-135), so the swing goes on through
@@ -225,7 +222,7 @@ func dress_from_model(model: Array, equip_looks: Array) -> void:
 func set_state(new_state: State) -> void:
 	_state = new_state
 	_attack_fired = false
-	_label_time = 0.0
+	_label_frames = 0.0
 	_label_finished = false
 	# Reset the transient transforms the previous state left behind (hit
 	# recoil x-offset, stun tilt, cast tint) - without this the doll keeps
@@ -330,17 +327,28 @@ func is_idle() -> bool:
 	return _state == State.IDLE
 
 
-# Puts the Result flash's filter on the whole doll in `color`. Flash measures a
-# blur in stage px, and the window can draw the stage at any size, so this reads
-# the stage's scale on screen each time. A CanvasGroup's margins are in screen
-# px too.
-func show_result_flash(color: Color) -> void:
+# Puts the Result flash's filter on the whole doll in `color`. `white_glow` and
+# `color_glow` each hold the `blur` and the `strength` of a glow, as
+# result_flash.json gives them. Flash measures a blur in stage px, and the
+# window can draw the stage at any size, so this reads the stage's scale on
+# screen each time. A CanvasGroup's margins are in screen px too.
+#
+# A glow reads a box as wide as its blur around each px, so it reaches half its
+# blur. The body draws that far past the doll for the colored glows, and
+# RESULT_FLASH_FIT_SPARE more. The white glow reads its box around each px the
+# body draws, so the body clears the screen texture half the white blur past
+# that, which is where a CanvasGroup measures clear_margin from.
+func show_result_flash(color: Color, white_glow: Dictionary, color_glow: Dictionary) -> void:
 	var stage_scale: float = get_viewport().get_final_transform().get_scale().x
 	_body_material.set_shader_parameter("result_flash", true)
 	_body_material.set_shader_parameter("color", color)
 	_body_material.set_shader_parameter("stage_scale", stage_scale)
-	_body.fit_margin = RESULT_FLASH_FIT_MARGIN * stage_scale
-	_body.clear_margin = RESULT_FLASH_CLEAR_MARGIN * stage_scale
+	_body_material.set_shader_parameter("white_blur", white_glow["blur"])
+	_body_material.set_shader_parameter("white_strength", white_glow["strength"])
+	_body_material.set_shader_parameter("color_blur", color_glow["blur"])
+	_body_material.set_shader_parameter("color_strength", color_glow["strength"])
+	_body.fit_margin = (color_glow["blur"] / 2.0 + RESULT_FLASH_FIT_SPARE) * stage_scale
+	_body.clear_margin = white_glow["blur"] / 2.0 * stage_scale
 
 
 # BATTLEFLASH puts back the filter the unit's buffs give its doll, and the port
@@ -394,40 +402,44 @@ func _process(delta: float) -> void:
 
 func _start_label(label: String) -> void:
 	_label = label
-	_label_time = 0.0
+	_label_frames = 0.0
 	_label_finished = false
 	_apply_label_frame(label, 0.0)
 
 
-func _label_duration(label: String) -> float:
+# Returns how many SWF frames `label` lasts.
+func _label_length(label: String) -> float:
 	var animations: Dictionary = _load_animations()
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
-		return 0.5
-	return (float(segment["end"]) - float(segment["start"]) + 1.0) / BattleScreenClip.fps()
+		return 15.0
+	return float(segment["end"]) - float(segment["start"]) + 1.0
 
 
+# The label's playhead counts frames, not seconds, for the reason _play_death
+# gives: a sum of 1/30 s steps drifts off whole frames, and a one-shot label
+# would then end a frame late.
 func _advance_label(delta: float, loop: bool) -> void:
-	_label_time += delta
-	var duration: float = _label_duration(_label)
+	_label_frames += delta * BattleScreenClip.fps()
+	var length: float = _label_length(_label)
 	if loop:
-		_label_time = fmod(_label_time, duration)
-	elif _label_time >= duration:
-		_label_time = duration
+		_label_frames = fmod(_label_frames, length)
+	elif _label_frames >= length:
+		_label_frames = length
 		_label_finished = true
-	_apply_label_frame(_label, _label_time)
+	_apply_label_frame(_label, _label_frames)
 
 
-# Applies the pose at `time` seconds into a labeled segment: every part gets
+# Applies the pose `frames` SWF frames into a labeled segment: every part gets
 # the original frame's full affine matrix (rotation, scale, AND skew).
-func _apply_label_frame(label: String, time: float) -> void:
+func _apply_label_frame(label: String, frames: float) -> void:
 	var animations: Dictionary = _load_animations()
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return
 	var start: int = int(segment["start"]) - 1
 	var end: int = int(segment["end"]) - 1
-	_apply_frame_index(clampi(start + int(time * BattleScreenClip.fps()), start, end))
+	_apply_frame_index(clampi(start + int(frames), start, end))
 
 
 func _apply_frame_index(index: int) -> void:

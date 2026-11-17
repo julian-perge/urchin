@@ -327,8 +327,8 @@ frames (each an instance of `item_slot.tscn` with a static `Face` child) - only 
 code-driven, both genuinely live-save-dependent. `scripts/ui/main_menu.gd` is also migrated - `scenes/main_menu.tscn` (already partially declarative before this pass) now owns the title label, the
 class-select screen's chrome and all 3 fixed-order class cards (Psychological/Biological/Hydraulic, each wired via a `[connection]` with the class id bound as a literal) plus its Cancel button,
 and the settings screen's chrome, difficulty picker (3 buttons sharing one `ButtonGroup` sub-resource), and 3 toggle rows (Tutorial/Sound/Autosave, each with its own named handler method since
-their side effects differ - Sound's also mutes an audio bus) plus its Start/Back buttons - only the save-slot button list stays code-driven (`_refresh_slot_buttons()`, count is `GameData.NUM_SLOTS`
-and each label depends on live save data). `scripts/ui/menu/inventory_window.gd`, `scripts/ui/main_menu.gd`, and `scripts/battle/victory_screen.gd` are also migrated, completing the retirement of
+their side effects differ - Sound's also mutes an audio bus) plus its Start/Back buttons - only the save-slot list's names stay code-driven. Since #217 the list is `scenes/ui/menu/slot_panel.tscn`, and
+`_refresh_slot_names()` fills each row's name from live save data. `scripts/ui/menu/inventory_window.gd`, `scripts/ui/main_menu.gd`, and `scripts/battle/victory_screen.gd` are also migrated, completing the retirement of
 `menu_theme.gd`'s runtime `add_texture_rect`/`add_label` helpers (both deleted - zero remaining callers). `victory_screen.gd` didn't have a `.tscn` at all before this - it now has
 `scenes/battle/victory_screen.tscn` for its static chrome, plus a new reusable `scenes/battle/victory_experience_row.tscn` (instanced once per fighter, 1-3 depending on the deployed party) for
 what used to be raw per-row `MenuTheme` calls, matching the same instanced-`PackedScene` pattern as `ItemSlot`/`talent_node.tscn`. Only the drop slots (`ItemSlotScene`, count varies per battle)
@@ -383,7 +383,7 @@ function parameters/locals/match targets take the enum type directly. New enum w
 
 - **Explicitly NOT enum candidates** (open-ended/data-driven content, matches the project owner's own exclusion): zone/battle/shop/item id-keyed dictionaries (`ZoneManager.ZONES`,
   `StoreManager.ZONE_SHOP_IDS`/`SHOP_DIALOGUE`/`KRIN_SHOP_ITEMS`, `GameData.STARTING_EQUIPMENT`, `ZoneProgression`'s battle-cap tables), `Achievements.NAMES`/`DESCRIPTIONS` (text content), and
-  `hotbar.gd`'s `MENU_BUTTON_GROUPS`/`HOVER_COLORS` (keyed by actual Godot scene-node names, not a portable "kind" concept).
+  `hotbar.gd`'s `ICON_SLOTS` (keyed by actual Godot scene-node names, not a portable "kind" concept).
 
 ## Rich tooltip rework
 

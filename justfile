@@ -111,6 +111,11 @@ as-lookup *args:
 merge-ticket *args: require-godot
     uv run merge_ticket "$@"
 
+[doc('Score godot-mcp captures of a Screen against the ffdec render: just compare-screen <entry>, or --list')]
+[group('python')]
+compare-screen *args: (require "ffdec" "java")
+    uv run compare_screen "$@"
+
 [doc('Run every pre-commit hook on every file')]
 [group('lint')]
 lint: (require "prek")
@@ -219,6 +224,11 @@ extract-faces *args: (require "ffdec" "java")
 extract-floating-numbers *args: (require "ffdec" "java")
     uv run extract_floating_numbers "$@"
 
+[doc('Run extract_hotbar_icons, which reads the SWF through ffdec')]
+[group('extract')]
+extract-hotbar-icons *args: (require "ffdec" "java")
+    uv run extract_hotbar_icons "$@"
+
 [doc('Run extract_item_icons, which reads the SWF through ffdec')]
 [group('extract')]
 extract-item-icons *args: (require "ffdec" "java")
@@ -244,10 +254,15 @@ extract-label-xref *args: (require "ffdec" "java")
 extract-model1-animations *args: (require "ffdec" "java")
     uv run extract_model1_animations "$@"
 
-[doc('Run extract_rig_clips, which reads the SWF through ffdec')]
+[doc('Run extract_result_flash, which reads the SWF without ffdec')]
 [group('extract')]
-extract-rig-clips *args: (require "ffdec" "java")
-    uv run extract_rig_clips "$@"
+extract-result-flash *args:
+    uv run extract_result_flash "$@"
+
+[doc('Run extract_shield_clip, which reads the SWF through ffdec')]
+[group('extract')]
+extract-shield-clip *args: (require "ffdec" "java")
+    uv run extract_shield_clip "$@"
 
 [doc('Run extract_screen_rects, which reads the SWF without ffdec')]
 [group('extract')]

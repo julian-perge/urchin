@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" uid="uid://be351g307gwtg" path="res://assets/ui/menu/start_background.png" id="1_art"]
+
+[node name="MenuBackground" type="TextureRect"]
+offset_right = 800.0
+offset_bottom = 575.0
+texture = ExtResource("1_art")
+expand_mode = 1

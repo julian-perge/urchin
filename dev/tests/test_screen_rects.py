@@ -7,7 +7,7 @@ from dataclasses import replace
 
 import pytest
 from urchin_dev import REPO_ROOT
-from urchin_dev.swf.extract import screen_rects
+from urchin_dev.swf.extract import hotbar_icons, screen_rects
 from urchin_dev.swf.swf_index import ButtonRecord, DropShadow, EditText, StyleSet
 
 ORIGIN = (400.5, 222.4)
@@ -199,6 +199,78 @@ def test_art_record_is_the_render_rect_and_the_png():
     }
 
 
+def test_art_record_names_the_png_in_the_folder_it_is_given():
+    entry = screen_rects.art_record(
+        "logo", CLOSE_X_CHROME, textures=screen_rects.MENU_TEXTURES
+    )
+    assert entry["texture"] == "res://assets/ui/menu/logo.png"
+
+
+def test_the_art_sources_hold_the_window_chrome_and_the_menu_art():
+    sources = screen_rects.art_sources()
+    chrome, chrome_folder = sources["close_x"]
+    assert chrome_folder == screen_rects.CHROME_TEXTURES
+    assert chrome["relative_to"] == "stage"
+    for name in ("logo", "start_background"):
+        entry, folder = sources[name]
+        assert folder == screen_rects.MENU_TEXTURES
+        # extract_start_screens measures both from the Stage and writes no
+        # relative_to, so art_sources adds it.
+        assert entry["relative_to"] == "stage"
+        assert set(entry) == {"rect", "relative_to", "size", "zoom"}
+
+
+def test_the_art_sources_hold_the_bottom_bar_and_the_hotbar_icons():
+    sources = screen_rects.art_sources()
+    bar, bar_folder = sources["bottom_bar"]
+    assert bar_folder == screen_rects.BATTLE_TEXTURES
+    assert bar["relative_to"] == "stage"
+    assert [v * bar["zoom"] for v in bar["rect"][2:]] == pytest.approx(bar["size"])
+    for name in hotbar_icons.ICONS:
+        entry, folder = sources[name]
+        assert folder == screen_rects.HOTBAR_TEXTURES
+        assert set(entry) == {"rect", "relative_to", "size", "zoom"}
+        assert entry["relative_to"] == "stage"
+
+
+# extract_window_chrome renders the hotbar square where depth 126 places it,
+# and depth 128 places the same art 964 twips to the right.
+def test_art_rendered_at_another_placement_moves_by_the_difference():
+    square = {**CLOSE_X_CHROME, "rect": [25.0, 467.25, 53.75, 54.0]}
+    moved = screen_rects.moved_art(
+        square, (0.67, 0.0, 0.0, 0.67, 1997, 9878), (0.67, 0.0, 0.0, 0.67, 1033, 9878)
+    )
+    assert moved["rect"] == pytest.approx([73.2, 467.25, 53.75, 54.0])
+    assert moved["size"] == square["size"]
+
+
+def test_art_rendered_at_another_scale_is_refused():
+    with pytest.raises(ValueError, match="scale"):
+        screen_rects.moved_art(
+            CLOSE_X_CHROME,
+            (0.81, 0.0, 0.0, 0.81, 1997, 9878),
+            (0.67, 0.0, 0.0, 0.67, 1033, 9878),
+        )
+
+
+def test_art_rendered_from_a_sprite_cannot_be_moved():
+    with pytest.raises(ValueError, match="sprite 2986"):
+        screen_rects.moved_art(
+            {**CLOSE_X_CHROME, "relative_to": "sprite 2986"},
+            (1.0, 0.0, 0.0, 1.0, 20, 0),
+            (1.0, 0.0, 0.0, 1.0, 0, 0),
+        )
+
+
+# The zone fill's shape 3146 is 5028 by 281 twips, and the bar's sprite places
+# it at its own origin.
+def test_a_shape_record_is_the_shape_bounds_through_the_placement():
+    entry = screen_rects.shape_record(
+        (0, 0, 5028, 281), (1.0, 0.0, 0.0, 1.0, 94, 105), (500.0, 510.0)
+    )
+    assert entry == {"kind": "shape", "rect": [504.7, 515.25, 251.4, 14.05]}
+
+
 def test_art_record_refuses_a_rect_measured_from_a_sprite():
     with pytest.raises(ValueError, match="sprite 2986"):
         screen_rects.art_record(
@@ -215,6 +287,141 @@ def test_art_record_of_a_sprite_rect_adds_where_that_sprite_sits():
     )
     assert entry["rect"] == pytest.approx([109.35, 183.5, 129.0, 18.75])
     assert entry["texture"] == "res://assets/ui/window/xp_gloss_victory.png"
+
+
+def test_shared_slot_art_uses_the_equip_placement_not_the_grid_placement(monkeypatch):
+    from types import SimpleNamespace
+
+    equip = SimpleNamespace(
+        character_id=2984, matrix=(1.0, 0.0, 0.0, 1.0, -6366, -1005)
+    )
+    grid = SimpleNamespace(character_id=2986, matrix=(1.0, 0.0, 0.0, 1.0, 2652, -1885))
+    monkeypatch.setattr(screen_rects, "origin_of", lambda *_: ORIGIN)
+    monkeypatch.setattr(screen_rects.timeline, "frame_of", lambda *_: 1)
+    monkeypatch.setattr(
+        screen_rects.timeline, "frames", lambda *_: [{828: equip, 30: grid}]
+    )
+    monkeypatch.setattr(
+        screen_rects,
+        "art_sources",
+        lambda: {
+            "slot_inventory": (
+                {
+                    "relative_to": "sprite 2986",
+                    "rect": [-15.5, -15.5, 31.0, 31.0],
+                    "size": [124, 124],
+                    "zoom": 4,
+                },
+                screen_rects.CHROME_TEXTURES,
+            )
+        },
+    )
+    scene = screen_rects.Scene(
+        3142,
+        "inventory",
+        {
+            "EquipSlot": screen_rects.Piece(
+                "art", 828, art="slot_inventory", rendered_at=30
+            )
+        },
+    )
+    piece = screen_rects.scene_record(None, scene)["pieces"]["EquipSlot"]
+    assert piece["rect"] == pytest.approx([66.7, 156.65, 31.0, 31.0])
+
+
+def test_shared_slot_art_refuses_a_placement_with_another_scale(monkeypatch):
+    from types import SimpleNamespace
+
+    equip = SimpleNamespace(
+        character_id=2984, matrix=(2.0, 0.0, 0.0, 2.0, -6366, -1005)
+    )
+    grid = SimpleNamespace(character_id=2986, matrix=(1.0, 0.0, 0.0, 1.0, 2652, -1885))
+    monkeypatch.setattr(screen_rects, "origin_of", lambda *_: ORIGIN)
+    monkeypatch.setattr(screen_rects.timeline, "frame_of", lambda *_: 1)
+    monkeypatch.setattr(
+        screen_rects.timeline, "frames", lambda *_: [{828: equip, 30: grid}]
+    )
+    monkeypatch.setattr(
+        screen_rects,
+        "art_sources",
+        lambda: {
+            "slot_inventory": (
+                {
+                    "relative_to": "sprite 2986",
+                    "rect": [-15.5, -15.5, 31.0, 31.0],
+                    "size": [124, 124],
+                    "zoom": 4,
+                },
+                screen_rects.CHROME_TEXTURES,
+            )
+        },
+    )
+    scene = screen_rects.Scene(
+        3142,
+        "inventory",
+        {
+            "EquipSlot": screen_rects.Piece(
+                "art", 828, art="slot_inventory", rendered_at=30
+            )
+        },
+    )
+    with pytest.raises(ValueError, match="placement scale"):
+        screen_rects.scene_record(None, scene)
+
+
+HOTBAR_SQUARE_SOURCE = {
+    "hotbar_square": (
+        {
+            "relative_to": "stage",
+            "rect": [25.0, 467.25, 53.75, 54.0],
+            "size": [269, 270],
+            "zoom": 5,
+        },
+        screen_rects.CHROME_TEXTURES,
+    )
+}
+
+
+def steam_scene_record(monkeypatch, web_matrix, steam_matrix):
+    """-> the record of one hotbar square that the web build places at depth
+    126 with `web_matrix` and the Steam build at depth 157 with `steam_matrix`."""
+    from types import SimpleNamespace
+
+    frames = {
+        "web": [{126: SimpleNamespace(character_id=3185, matrix=web_matrix)}],
+        "steam": [{157: SimpleNamespace(character_id=2910, matrix=steam_matrix)}],
+    }
+    monkeypatch.setattr(screen_rects.timeline, "frame_of", lambda *_: 1)
+    monkeypatch.setattr(screen_rects.timeline, "frames", lambda index, _: frames[index])
+    monkeypatch.setattr(screen_rects, "art_sources", lambda: HOTBAR_SQUARE_SOURCE)
+    scene = screen_rects.Scene(
+        0,
+        "Navigation",
+        {"Square": screen_rects.Piece("art", 126, art="hotbar_square", steam=157)},
+    )
+    return screen_rects.scene_record("web", scene, "steam")["pieces"]["Square"]
+
+
+# The Steam build places the six hotbar squares 260 twips under the web
+# build's, and the port puts them where the Steam build does.
+def test_a_piece_with_a_steam_placement_sits_where_the_steam_build_places_it(
+    monkeypatch,
+):
+    piece = steam_scene_record(
+        monkeypatch,
+        (0.67, 0.0, 0.0, 0.67, 1033, 9878),
+        (0.67, 0.0, 0.0, 0.67, 1033, 10138),
+    )
+    assert piece["rect"] == pytest.approx([25.0, 480.25, 53.75, 54.0])
+
+
+def test_a_steam_placement_with_another_scale_is_refused(monkeypatch):
+    with pytest.raises(ValueError, match="scale"):
+        steam_scene_record(
+            monkeypatch,
+            (0.67, 0.0, 0.0, 0.67, 1033, 9878),
+            (0.81, 0.0, 0.0, 0.81, 1033, 10138),
+        )
 
 
 def test_art_record_refuses_a_sprite_rect_of_another_sprite():
@@ -299,6 +506,26 @@ def test_one_solid_fill_is_the_fill_of_a_plain_box():
     assert screen_rects.one_solid_fill(sets, 7) == (0, 0, 0, 255)
 
 
+def test_outline_record_has_a_stroke_and_no_fill_or_shadow():
+    styles = [StyleSet((), ((20, (51, 51, 51, 255)),), frozenset(), {})]
+    entry = screen_rects.outline_record(
+        (-100, -200, 100, 200), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN, styles
+    )
+    assert entry == {
+        "kind": "outline",
+        "rect": [395.5, 212.4, 10.0, 20.0],
+        "line": "333333ff",
+        "border": 1,
+    }
+
+
+def test_outline_record_refuses_a_shape_with_fill():
+    with pytest.raises(ValueError, match="outline"):
+        screen_rects.outline_record(
+            (0, 0, 100, 100), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN, [panel_styles()]
+        )
+
+
 # The close button 2853: one record, drawn in the hit state only, of the
 # 600 twip square shape 291. KRINMENU frame 1 places it at depth 1434.
 CLOSE_HIT = ButtonRecord(frozenset({"hit"}), 291, 1, (1.0, 0.0, 0.0, 1.0, 0, 0))
@@ -356,10 +583,31 @@ def test_button_record_is_the_up_state_through_the_placement():
     assert entry["rect"] == pytest.approx([310.55, 339.25, 44.1, 16.45])
 
 
-def test_button_record_refuses_a_moved_up_state_record():
-    moved = [replace(PLUS_RECORDS[1], matrix=(1.0, 0.0, 0.0, 1.0, 20, 0))]
-    with pytest.raises(ValueError, match="moves"):
-        screen_rects.button_record(3068, moved, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+# A hotbar square is a button whose one record scales and moves shape 3119
+# inside the button, and the hub frame then scales the button.
+def test_button_record_places_the_shape_with_its_record_before_the_placement():
+    records = [
+        ButtonRecord(
+            frozenset({"up", "over", "down", "hit"}),
+            3119,
+            1,
+            (0.5, 0.0, 0.0, 0.25, -600, -400),
+        )
+    ]
+    entry = screen_rects.button_record(
+        3068,
+        records,
+        {3119: (0, 0, 2000, 4000)},
+        (2.0, 0.0, 0.0, 2.0, 1000, 2000),
+        (0, 0),
+    )
+    assert entry["rect"] == pytest.approx([-10.0, 60.0, 100.0, 100.0])
+
+
+def test_button_record_refuses_a_rotated_up_state_record():
+    turned = [replace(PLUS_RECORDS[1], matrix=(1.0, 0.1, 0.0, 1.0, 0, 0))]
+    with pytest.raises(ValueError, match="rotat"):
+        screen_rects.button_record(3068, turned, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
 
 
 def test_button_record_refuses_a_button_with_no_up_state():

@@ -7,8 +7,8 @@ func _ready():
 	orb_color = Color.html("C40000")
 	# DefineButton2_3188 on(rollOver) shows SYSTEM[13] over SYSTEM[14]
 	# (frame_1/DoAction.as:80-81).
-	tooltip_title = "Next Battle"
-	tooltip_body = "Click here to enter the next progress battle of this zone."
+	tooltip_title = Strings.system(13)
+	tooltip_body = Strings.system(14)
 	super._ready()
 
 func interact():
