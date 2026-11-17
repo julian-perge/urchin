@@ -43,8 +43,6 @@ var equip_view: EquipDollView
 # The 15 ware slots in grid order, row by row.
 var ware_slots: Array[ItemSlot] = []
 
-var selected_store_slot: ItemSlot = null
-
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -105,10 +103,6 @@ func _load_store_items() -> void:
 		var stocked: bool = i < catalog.size()
 		slot.set_item(catalog[i] if stocked else null)
 		slot.modulate.a = 1.0 if stocked else 0.0
-		# set_selected(false) sets modulate to white, alpha included, so a
-		# hidden slot must not stay the selected one.
-		if not stocked and slot == selected_store_slot:
-			selected_store_slot = null
 		slot.mouse_filter = Control.MOUSE_FILTER_STOP if stocked else Control.MOUSE_FILTER_IGNORE
 
 
@@ -116,10 +110,6 @@ func _on_store_slot_clicked(slot: ItemSlot) -> void:
 	_status_label.text = ""
 	if slot.item == null:
 		return
-	if selected_store_slot != null:
-		selected_store_slot.set_selected(false)
-	selected_store_slot = slot
-	slot.set_selected(true)
 	if GameData.purchase_item(slot.item):
 		refresh_store()
 	else:

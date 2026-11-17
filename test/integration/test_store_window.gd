@@ -201,24 +201,18 @@ func test_store_refreshes_per_zone():
 	GameData.current_save = null
 
 
-# Selecting a ware tints its slot, and deselecting it sets modulate back to
-# white, alpha included. A selected slot that the next shop leaves empty must
-# not come back as a visible blank cell when the player clicks another ware.
-# The click buys nothing here, because a purchase refreshes the Store and hides
-# the slot again.
-func test_a_selected_ware_that_the_next_shop_empties_stays_hidden():
-	ZoneManager.current_zone = 3
-	GameData.current_save = PlayerSave.new_game("StoreSelectTest", 0)
+# The original does not tint a clicked ware, because a ware you can buy goes
+# straight to the inventory. A tint would also stay on the slot after the
+# purchase.
+func test_clicking_a_ware_leaves_its_slot_untinted():
+	ZoneManager.current_zone = 1
+	GameData.current_save = PlayerSave.new_game("StoreTintTest", 0)
 	GameData.current_save.euro = 1000000.0
 	var window = add_child_autofree(StoreWindowScene.instantiate())
 	window.refresh_store()
-	var last: ItemSlot = window.ware_slots[14]
-	last.slot_clicked.emit(last)
-	ZoneManager.current_zone = 1
-	window.refresh_store()
-	assert_eq(last.item, null, "shop 0 leaves slot 14 empty")
+	var ware: ItemSlot = window.ware_slots[0]
+	ware.slot_clicked.emit(ware)
+	assert_eq(ware.modulate, Color.WHITE, "after a purchase")
 	GameData.current_save.euro = 0.0
-	var first: ItemSlot = window.ware_slots[0]
-	first.slot_clicked.emit(first)
-	assert_eq(last.modulate.a, 0.0, "the emptied slot is still hidden")
-	ZoneManager.current_zone = 1
+	ware.slot_clicked.emit(ware)
+	assert_eq(ware.modulate, Color.WHITE, "after a refused purchase")
