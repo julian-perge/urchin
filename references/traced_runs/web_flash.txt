@@ -1,0 +1,1428 @@
+Warning: addEventListener is not a function
+Warning: addEventListener is not a function
+Warning: createAccessibilityImplementation is not a function
+Warning: _endInit is not a function
+HOOK	installed	true
+Warning: false is not a function
+Warning: drawHandler is not a function
+*** Security Sandbox Violation ***
+Connection to http://server.cpmstar.com/adviewas2.swf?poolid=1052&subpoolid=9 halted - not permitted from file:///Users/sweetjp/Games/sonny2/traced/sonny-2-2900.swf
+-- Untrusted local SWFs may not contact the Internet.
+Warning: Reference to undeclared variable, 'Krin'
+Warning: 'Krin' has no property 'difficulty'
+Warning: Reference to undeclared variable, 'KrinFilterBlu0r'
+Warning: 'KLangChoosen' has no property '30'
+Warning: 'Krin' has no property '0'
+Warning: 'Krin' has no property '1'
+Warning: 'Krin' has no property '2'
+Warning: 'Krin' has no property '3'
+Warning: 'Krin' has no property '4'
+Warning: Reference to undeclared variable, 'gameoverKrin'
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: removeEventListener is not a function
+Warning: removeEventListener is not a function
+Warning: removeEventListener is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: _level0/:krinNameUser_changed is not a function
+Warning: removeEventListener is not a function
+Warning: removeEventListener is not a function
+Warning: removeEventListener is not a function
+Warning: removeEventListener is not a function
+Warning: removeEventListener is not a function
+Warning: removeEventListener is not a function
+Warning: Reference to undeclared variable, 'my_txt'
+Warning: Reference to undeclared variable, 'my_txt2'
+Warning: Reference to undeclared variable, 'my_txt3'
+Warning: Reference to undeclared variable, 'my_txt4'
+Warning: Reference to undeclared variable, 'ttt'
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+Warning: hitTest is not a function
+GOTO	stop	_level0.KrinToolTipper	19	1	GO	4
+Warning: Reference to undeclared variable, 'my_txt'
+Warning: Reference to undeclared variable, 'my_txt2'
+Warning: Reference to undeclared variable, 'my_txt3'
+Warning: Reference to undeclared variable, 'my_txt4'
+Warning: Reference to undeclared variable, 'ttt'
+Warning: Reached warning limit of 100
+GOTO	stop	_level0.KrinToolTipper	19	4	1	1
+GOTO	play	_level0.bioDis	26	1	START	2
+GOTO	stop	_level0.KrinToolTipper	19	1	GO	4
+GOTO	play	_level0	449	263	IntroSeq	151
+1
+GOTO	stop	_level0.selector.thing0	986	1	Quick Strike	976
+GOTO	stop	_level0.selector.thing1	986	1	Suppression	965
+GOTO	stop	_level0.selector.thing2	986	1	None	1
+GOTO	stop	_level0.selector.thing3	986	1	None	1
+GOTO	stop	_level0.selector.thing4	986	1	None	1
+GOTO	stop	_level0.selector.thing5	986	1	None	1
+GOTO	stop	_level0.selector.thing6	986	1	None	1
+GOTO	stop	_level0.selector.thing7	986	1	None	1
+GOTO	stop	_level0.krinToMove	986	1	None	1
+GOTO	stop	_level0.battleClocker.thingerClock	21	1	friend	1
+GOTO	stop	_level0.p1BAR.inner2.lB.LCC	101	1	100	100
+GOTO	stop	_level0.p1BAR.inner2.lB2.LCC	101	1	100	100
+GOTO	stop	_level0.p1BAR.inner2.lB.LCC	101	100	101	101
+GOTO	stop	_level0.p1BAR.inner2.lB2.LCC	101	100	101	101
+GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	1	100	100
+GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	1	100	100
+GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	100	101	101
+GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	100	101	101
+GOTO	stop	_level0.p5BAR.inner2.lB.LCC	101	1	100	100
+GOTO	stop	_level0.p5BAR.inner2.lB2.LCC	101	1	100	100
+GOTO	stop	_level0.p5BAR.inner2.lB.LCC	101	100	101	101
+GOTO	stop	_level0.p5BAR.inner2.lB2.LCC	101	100	101	101
+GOTO	stop	_level0.p4BAR.inner	16	1	second	2
+GOTO	stop	_level0.p2BAR.inner	16	1	second	2
+GOTO	stop	_level0.p6BAR.inner	16	1	second	2
+GOTO	stop	_level0.BATTLESCREEN	145	1	WHITE NOVEMBER	1
+GOTO	stop	_level0.instance3478	92	1	SEA	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	1	HIDE	6
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b1.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b5.PIC	49	1	Relentless	40
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b2.PIC	49	1	Defensive	10
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b1.PIC	49	1	Phalanx	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b4.PIC	49	1	Aggressive	30
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.PIC	49	1	Tactical	20
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b3.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	1	WHITE	11
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b5.PIC	49	1	Relentless	40
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b2.PIC	49	1	Defensive	10
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.PIC	49	1	Phalanx	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b4.PIC	49	1	Aggressive	30
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b3.PIC	49	1	Tactical	20
+GOTO	stop	_level0.combatScript.inner.inner2	295	31	Louis the Blind	23
+GOTO	stop	_level0.combatScript.inner.inner2	295	23	Sonny	6
+GOTO	stop	_level0.combatScript.inner.inner2	295	6	Louis the Blind	23
+GOTO	stop	_level0.combatScript.inner.inner2	295	23	Information	40
+GOTO	stop	_level0.combatScript.inner.inner2	295	40	Information	40
+GOTO	stop	_level0.battleClocker.thingerClock	21	1	friend	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	6	SHOW	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3	16	1	inactive	9
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5	16	1	active	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	11	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b3.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	1	WHITE	11
+GOTO	play	_level0.KrinToolTipper	19	2	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	1	HIDE	6
+GOTO	stop	_level0.krinToMove	986	1	Quick Strike	976
+STEP1
+STEP1
+STEP2
+STEP3
+ADD2
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	14	run	46
+GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	57	Attack	138
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1620	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1620.flasher.NumSet1	40	1	Four	13
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1620.flasher.NumSet0	40	1	One	1
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1621	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1621.flasher.NumSet1	40	1	Four	13
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1621.flasher.NumSet0	40	1	One	1
+GOTO	play	_level0.BATTLEFLASH	46	1	hit	2
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	40	hit	296
+GOTO	stop	_level0.p2BAR.inner2.lB3.LBS.LCC	101	1	54	54
+GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	101	54	54
+GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	101	54	54
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	167	runback	168
+GOTO	stop	_level0.battleClocker.thingerClock	21	1	enemy	12
+ADD1
+GOTO	stop	_level0.battleClocker.thingerClock	21	12	enemy	12
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	6	HIDE	6
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	15	cast	189
+GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+GOTO	stop	_level0.p2BAR.bshr0.buffIcon	400	1	BERSERK3	53
+GOTO	stop	_level0.p2BAR.bshr0.buffIcon	400	1	BERSERK3	53
+GOTO	stop	_level0.combatScript.inner.inner2	295	40	Sonny	6
+GOTO	stop	_level0.combatScript.inner.inner2	295	6	Louis the Blind	23
+GOTO	stop	_level0.combatScript.inner.inner2	295	23	Information	40
+GOTO	stop	_level0.combatScript.inner.inner2	295	40	Information	40
+GOTO	stop	_level0.battleClocker.thingerClock	21	12	friend	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	6	SHOW	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3	16	9	inactive	9
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5	16	1	active	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	11	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b3.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	1	WHITE	11
+GOTO	play	_level0.KrinToolTipper	19	3	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	1	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	1	HIDE	6
+GOTO	stop	_level0.krinToMove	986	976	Suppression	965
+STEP1
+STEP1
+STEP2
+STEP3
+ADD2
+STEP1
+STEP1
+STEP1
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	17	cast	189
+GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+GOTO	stop	_level0.p1BAR.bshr0.buffIcon	400	1	SUPRESSION	113
+GOTO	stop	_level0.p1BAR.bshr0.buffIcon	400	1	SUPRESSION	113
+GOTO	stop	_level0.battleClocker.thingerClock	21	1	enemy	12
+ADD1
+GOTO	stop	_level0.battleClocker.thingerClock	21	12	enemy	12
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	6	HIDE	6
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	22	run	46
+GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	57	Attack	138
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1622	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1622.flasher.NumSet1	40	1	One	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1622.flasher.NumSet0	40	1	Three	9
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1623	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1623.flasher.NumSet1	40	1	One	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1623.flasher.NumSet0	40	1	Three	9
+GOTO	play	_level0.BATTLEFLASH	46	1	hit	2
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	28	hit	296
+GOTO	stop	_level0.p1BAR.inner2.lB3.LBS.LCC	101	1	98	98
+GOTO	stop	_level0.p1BAR.inner2.lB.LCC	101	101	98	98
+GOTO	stop	_level0.p1BAR.inner2.lB2.LCC	101	101	98	98
+GOTO	stop	_level0.p1BAR.bshr0.buffIcon	400	1	SUPRESSION	113
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	167	runback	168
+GOTO	stop	_level0.combatScript.inner.inner2	295	40	Louis the Blind	23
+GOTO	stop	_level0.battleClocker.thingerClock	21	12	friend	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	6	SHOW	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3	16	9	inactive	9
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5	16	1	active	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	11	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b3.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	1	WHITE	11
+GOTO	play	_level0.KrinToolTipper	19	2	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	1	HIDE	6
+GOTO	stop	_level0.krinToMove	986	965	Quick Strike	976
+STEP1
+STEP1
+STEP2
+STEP3
+ADD2
+STEP1
+STEP1
+STEP1
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	42	run	46
+GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	57	Attack	138
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1624	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1624.flasher.NumSet1	40	1	Four	13
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1624.flasher.NumSet0	40	1	One	1
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1625	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1625.flasher.NumSet1	40	1	Four	13
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1625.flasher.NumSet0	40	1	One	1
+GOTO	play	_level0.BATTLEFLASH	46	1	hit	2
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	6	hit	296
+GOTO	stop	_level0.p2BAR.inner2.lB3.LBS.LCC	101	1	7	7
+GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	54	7	7
+GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	54	7	7
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	167	runback	168
+GOTO	stop	_level0.p1BAR.bshr0.buffIcon	400	1	SUPRESSION	113
+GOTO	stop	_level0.battleClocker.thingerClock	21	1	enemy	12
+ADD1
+GOTO	stop	_level0.battleClocker.thingerClock	21	12	enemy	12
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	6	HIDE	6
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	15	run	46
+GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	57	Attack	138
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1626	234	1	miss	131
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	167	runback	168
+GOTO	stop	_level0.battleClocker.thingerClock	21	12	friend	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	6	SHOW	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3	16	9	inactive	9
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5	16	1	active	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	11	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b3.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	1	WHITE	11
+GOTO	play	_level0.KrinToolTipper	19	1	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	1	HIDE	6
+GOTO	stop	_level0.krinToMove	986	976	Quick Strike	976
+STEP1
+STEP1
+STEP2
+STEP3
+ADD2
+STEP1
+STEP1
+STEP1
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	36	run	46
+GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	57	Attack	138
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1627	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1627.flasher.NumSet1	40	1	Four	13
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1627.flasher.NumSet0	40	1	One	1
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1628	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1628.flasher.NumSet1	40	1	Four	13
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1628.flasher.NumSet0	40	1	One	1
+GOTO	play	_level0.BATTLEFLASH	46	1	hit	2
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	6	hit	296
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	296	dead	313
+GOTO	stop	_level0.p2BAR.inner2.lB3.LBS.LCC	101	1	1	1
+GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	7	1	1
+GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	7	1	1
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	167	runback	168
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	18	dead	37
+GOTO	stop	_level0.p2BAR.inner	16	2	third	9
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	stop	_level0.p1BAR.bshr0.buffIcon	400	1	SUPRESSION	113
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	stop	_level0.battleClocker.thingerClock	21	1	enemy	12
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	stop	_level0	449	217	winCombat	218
+Sonny attacked = 123
+Sonny has team = false
+team member count = 0
+turns to win = 7
+GOTO	stop	_level0	449	219	CS_INTRO2	293
+GOTO	play	_level0	449	293	IntroSeq2	166
+3
+GOTO	stop	_level0.selector.thing0	986	1	Leading Strike	52
+GOTO	stop	_level0.selector.thing1	986	1	Destroy	194
+GOTO	stop	_level0.selector.thing2	986	1	None	1
+GOTO	stop	_level0.selector.thing3	986	1	None	1
+GOTO	stop	_level0.selector.thing4	986	1	None	1
+GOTO	stop	_level0.selector.thing5	986	1	None	1
+GOTO	stop	_level0.selector.thing6	986	1	None	1
+GOTO	stop	_level0.selector.thing7	986	1	None	1
+GOTO	stop	_level0.krinToMove	986	1	None	1
+GOTO	stop	_level0.battleClocker.thingerClock	21	1	friend	1
+GOTO	stop	_level0.p1BAR.inner2.lB.LCC	101	1	100	100
+GOTO	stop	_level0.p1BAR.inner2.lB2.LCC	101	1	100	100
+GOTO	stop	_level0.p1BAR.inner2.lB.LCC	101	100	101	101
+GOTO	stop	_level0.p1BAR.inner2.lB2.LCC	101	100	101	101
+GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	1	100	100
+GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	1	100	100
+GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	100	101	101
+GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	100	101	101
+GOTO	stop	_level0.p3BAR.inner2.lB.LCC	101	1	100	100
+GOTO	stop	_level0.p3BAR.inner2.lB2.LCC	101	1	100	100
+GOTO	stop	_level0.p3BAR.inner2.lB.LCC	101	100	101	101
+GOTO	stop	_level0.p3BAR.inner2.lB2.LCC	101	100	101	101
+GOTO	stop	_level0.p4BAR.inner	16	1	second	2
+GOTO	stop	_level0.p2BAR.inner	16	1	second	2
+GOTO	stop	_level0.p6BAR.inner	16	1	second	2
+GOTO	stop	_level0.BATTLESCREEN	145	1	JAIL	15
+GOTO	stop	_level0.instance9212	92	1	JAIL	14
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	1	HIDE	6
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b1.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.COVER	20	1	WHITE	11
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b5.PIC	49	1	Relentless	40
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b2.PIC	49	1	Defensive	10
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b1.PIC	49	1	Phalanx	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b4.PIC	49	1	Aggressive	30
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.PIC	49	1	Tactical	20
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b3.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.COVER	20	1	WHITE	11
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b5.PIC	49	1	Relentless	40
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b2.PIC	49	1	Defensive	10
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b1.PIC	49	1	Phalanx	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b4.PIC	49	1	Aggressive	30
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5.b3.PIC	49	1	Tactical	20
+GOTO	stop	_level0.combatScript.inner.inner2	295	31	Prison Guard	55
+GOTO	stop	_level0.combatScript.inner.inner2	295	55	Sonny	6
+GOTO	stop	_level0.battleClocker.thingerClock	21	1	friend	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	6	SHOW	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3	16	1	active	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5	16	1	inactive	9
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b1.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.COVER	20	11	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.COVER	20	1	WHITE	11
+GOTO	play	_level0.KrinToolTipper	19	2	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	1	HIDE	6
+GOTO	stop	_level0.krinToMove	986	1	Leading Strike	52
+STEP1
+STEP2
+STEP3
+ADD2
+STEP1
+GOTO	play	_level0.BATTLESCREEN.player3.inner	371	27	run	46
+GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+GOTO	play	_level0.BATTLESCREEN.player3.inner	371	57	Attack	138
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1629	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1629.flasher.NumSet1	40	1	Four	13
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1629.flasher.NumSet0	40	1	Four	13
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1630	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1630.flasher.NumSet1	40	1	Four	13
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1630.flasher.NumSet0	40	1	Four	13
+GOTO	play	_level0.BATTLEFLASH	46	1	hit	2
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	9	hit	296
+GOTO	stop	_level0.p2BAR.inner2.lB3.LBS.LCC	101	1	66	66
+GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	101	66	66
+GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	101	66	66
+GOTO	play	_level0.BATTLESCREEN.player3.inner	371	167	runback	168
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	35	run	46
+GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	57	Attack	138
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1631	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1631.flasher.NumSet1	40	1	Two	5
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1631.flasher.NumSet0	40	1	Zero	37
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1632	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1632.flasher.NumSet1	40	1	Two	5
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1632.flasher.NumSet0	40	1	Zero	37
+GOTO	play	_level0.BATTLEFLASH	46	1	hit	2
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	37	hit	296
+GOTO	stop	_level0.p2BAR.inner2.lB3.LBS.LCC	101	1	50	50
+GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	66	50	50
+GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	66	50	50
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	167	runback	168
+GOTO	stop	_level0.battleClocker.thingerClock	21	1	enemy	12
+ADD1
+GOTO	stop	_level0.battleClocker.thingerClock	21	12	enemy	12
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	6	HIDE	6
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	14	run	46
+GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	57	Attack	138
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1633	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1633.flasher.NumSet1	40	1	One	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1633.flasher.NumSet0	40	1	Three	9
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1634	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1634.flasher.NumSet1	40	1	One	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1634.flasher.NumSet0	40	1	Three	9
+GOTO	play	_level0.BATTLEFLASH	46	1	hit	2
+GOTO	play	_level0.BATTLESCREEN.player1.inner	371	22	hit	296
+GOTO	stop	_level0.p1BAR.inner2.lB3.LBS.LCC	101	1	97	97
+GOTO	stop	_level0.p1BAR.inner2.lB.LCC	101	101	97	97
+GOTO	stop	_level0.p1BAR.inner2.lB2.LCC	101	101	97	97
+GOTO	stop	_level0.p1BAR.bshr0.buffIcon	400	1	HEAVYPUNISHMENT	251
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	167	runback	168
+GOTO	stop	_level0.battleClocker.thingerClock	21	12	friend	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	6	SHOW	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3	16	1	active	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p5	16	9	inactive	9
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b1.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.COVER	20	11	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.UI_BAR.subAI_BAR.p3.b3.COVER	20	1	WHITE	11
+GOTO	play	_level0.KrinToolTipper	19	1	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	play	_level0.KrinToolTipper	19	11	GO3	10
+GOTO	stop	_level0.UI_BAR.subAI_BAR	6	1	HIDE	6
+GOTO	stop	_level0.krinToMove	986	52	Leading Strike	52
+STEP1
+STEP2
+STEP3
+ADD2
+STEP1
+STEP1
+STEP2
+STEP1
+STEP1
+GOTO	play	_level0.BATTLESCREEN.player3.inner	371	43	cast	189
+GOTO	play	_level0.GridZoomer	6	1	KrinZoomGo	2
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1635	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1635.flasher.NumSet2	40	1	One	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1635.flasher.NumSet1	40	1	Zero	37
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1635.flasher.NumSet0	40	1	One	1
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1636	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1636.flasher.NumSet2	40	1	One	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1636.flasher.NumSet1	40	1	Zero	37
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1636.flasher.NumSet0	40	1	One	1
+GOTO	play	_level0.BATTLEFLASH	46	1	hit	2
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	41	hit	296
+GOTO	play	_level0.BATTLESCREEN.player2.inner	371	296	dead	313
+GOTO	stop	_level0.p2BAR.inner2.lB3.LBS.LCC	101	1	1	1
+GOTO	stop	_level0.p2BAR.inner2.lB.LCC	101	50	1	1
+GOTO	stop	_level0.p2BAR.inner2.lB2.LCC	101	50	1	1
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	18	dead	37
+GOTO	stop	_level0.p2BAR.inner	16	2	third	9
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.BATTLESCREEN.NumberFixer1637	234	1	normal	1
+GOTO	stop	_level0.BATTLESCREEN.NumberFixer1637.flasher.NumSet0	40	1	Three	9
+GOTO	stop	_level0.p1BAR.inner2.lB3.LBS.LCC	101	1	96	96
+GOTO	stop	_level0.p1BAR.inner2.lB.LCC	101	97	96	96
+GOTO	stop	_level0.p1BAR.inner2.lB2.LCC	101	97	96	96
+GOTO	stop	_level0.p1BAR.bshr0.buffIcon	400	1	HEAVYPUNISHMENT	251
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	play	_level0.p2BAR.inner2.lB3.LBS	43	38	dead	37
+GOTO	stop	_level0.battleClocker.thingerClock	21	1	enemy	12
+GOTO	stop	_level0	449	217	winCombat	218
+Sonny attacked = 20
+Sonny has team = true
+team member count = 1
+turns to win = 3
+GOTO	stop	_level0	449	219	Navigation	181
+5
+GOTO	stop	_level0.KrinToolTipper.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU	57	1	win	9
+GOTO	stop	_level0.KRINMENU.itemSlot35.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot34.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot33.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot32.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot31.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot30.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot29.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot28.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot27.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot26.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot25.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot24.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot23.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot22.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot21.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot20.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot19.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot18.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot17.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot16.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot15.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot14.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot13.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot12.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot11.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot10.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot9.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot8.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot7.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot6.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot5.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot4.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot3.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot2.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot1.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot0.inner	856	1	None	1
+GOTO	stop	_level0.KrinScreen	190	1	PRISON	1
+GOTO	stop	_level0.instance12360.subAI_BAR	6	1	HIDE	6
+GOTO	stop	_level0.instance12360.subAI_BAR.p3.b1.COVER	20	1	BLACK	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p3.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p3.b3.COVER	20	1	BLACK	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p3.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p3.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p3.b3.COVER	20	1	WHITE	11
+GOTO	stop	_level0.instance12360.subAI_BAR.p3.b5.PIC	49	1	Relentless	40
+GOTO	stop	_level0.instance12360.subAI_BAR.p3.b2.PIC	49	1	Defensive	10
+GOTO	stop	_level0.instance12360.subAI_BAR.p3.b1.PIC	49	1	Phalanx	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p3.b4.PIC	49	1	Aggressive	30
+GOTO	stop	_level0.instance12360.subAI_BAR.p3.b3.PIC	49	1	Tactical	20
+GOTO	stop	_level0.instance12360.subAI_BAR.p5.b1.COVER	20	1	BLACK	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p5.b2.COVER	20	1	BLACK	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p5.b3.COVER	20	1	BLACK	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p5.b4.COVER	20	1	BLACK	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p5.b5.COVER	20	1	BLACK	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p5.b1.COVER	20	1	WHITE	11
+GOTO	stop	_level0.instance12360.subAI_BAR.p5.b5.PIC	49	1	Relentless	40
+GOTO	stop	_level0.instance12360.subAI_BAR.p5.b2.PIC	49	1	Defensive	10
+GOTO	stop	_level0.instance12360.subAI_BAR.p5.b1.PIC	49	1	Phalanx	1
+GOTO	stop	_level0.instance12360.subAI_BAR.p5.b4.PIC	49	1	Aggressive	30
+GOTO	stop	_level0.instance12360.subAI_BAR.p5.b3.PIC	49	1	Tactical	20
+GOTO	stop	_level0.KRINMENU.itemSlot35.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot34.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot33.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot32.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot31.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot30.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot29.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot28.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot27.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot26.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot25.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot24.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot23.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot22.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot21.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot20.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot19.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot18.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot17.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot16.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot15.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot14.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot13.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot12.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot11.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot10.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot9.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot8.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot7.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot6.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot5.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot4.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot3.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot2.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot1.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.itemSlot0.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot0.inner	856	1	Guard's Grip	174
+GOTO	stop	_level0.KRINMENU.dropSlot1.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot2.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot3.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot4.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot5.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot6.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot7.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot8.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot9.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot10.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot11.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot12.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot13.inner	856	1	None	1
+GOTO	stop	_level0.KRINMENU.dropSlot14.inner	856	1	None	1
+TEMPGAIN 1
+TEMPGAIN 10
+PROFILE 0
+H 0
+B 0
+P 0
+GOTO	stop	_level0.KrinToolTipper	19	1	GO	4
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	2	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	2	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KrinToolTipper	19	4	1	1
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
+GOTO	stop	_level0.KRINMENU.instance12389.avIn	295	1	1	1
+GOTO	stop	_level0.KRINMENU.instance12375.avIn	295	6	mainPlayer	6
