@@ -452,6 +452,29 @@ def route_gotos(gotos, xref):
     }
 
 
+def test_a_sky_goto_is_a_stop_goto_of_an_unnamed_root_clip_to_a_sky_label(xref):
+    sky_sprite = xref["value_sets"]["sky_background"]["sprite"]
+    hall_sprite = xref["value_sets"]["zone_background"]["sprite"]
+    sky_labels = [
+        label["label"] for label in xref["labels"] if label["sprite"] == sky_sprite
+    ]
+    hall_only_label = next(
+        label["label"]
+        for label in xref["labels"]
+        if label["sprite"] == hall_sprite
+        and label["label"].casefold() not in folded(sky_labels)
+    )
+    sky = Goto("stop", "_level0.instance7", 1, 1, sky_labels[0], 1)
+    gotos = [
+        Goto("play", "_level0.instance7", 1, 1, sky_labels[0], 1),
+        sky,
+        Goto("stop", "_level0.instance8", 1, 1, hall_only_label, 1),
+        Goto("stop", "_level0.instance7.instance9", 1, 1, sky_labels[0], 1),
+    ]
+
+    assert route_gotos(gotos, xref)["sky_background"] == [sky]
+
+
 def test_every_missing_trace_log_names_a_run_and_its_comment_on_issue_5():
     for run, url in MISSING.items():
         assert run in RUNS
