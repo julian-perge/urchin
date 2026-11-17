@@ -18,15 +18,25 @@
 # the union of all seven here instead, so one TextureRect rect shows any shop
 # at the same scale.
 #
+# The union rect is where the shared crop sits on the Stage, in design px, so a
+# TextureRect and the rect test read it from the record instead of placing the
+# art by hand:
+#
+#   assets/ui/store/backdrops/store_art.json
+#
 # Run: uv run extract_store_art
 from __future__ import annotations
 
+import json
 import sys
 
 from urchin_dev import REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import render
+from urchin_dev.swf.extract import window_chrome
+from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
 OUT_DIR = REPO_ROOT / "assets" / "ui" / "store" / "backdrops"
+RECORD = OUT_DIR / "store_art.json"
 STORE_SPRITE = 3036
 ZOOM = 4.0
 # StoreManager.ZONE_SHOP_IDS selects 0 through 6; the sprite holds each on
@@ -34,8 +44,35 @@ ZOOM = 4.0
 SHOP_IDS = range(7)
 
 
+def stage_origin(index: SwfIndex) -> tuple[float, float]:
+    """-> where the Stage places the keeper sprite's own (0, 0): the Hub frame
+    places KRINMENU, and KRINMENU's `shop` frame places the sprite."""
+    menu = render.placement_origin(
+        index, 0, window_chrome.hub_frame(index), window_chrome.KRINMENU
+    )
+    inside = render.placement_origin(
+        index, window_chrome.KRINMENU, window_chrome.SHOP_FRAME, STORE_SPRITE
+    )
+    return menu[0] + inside[0], menu[1] + inside[1]
+
+
+def record_of(cut: render.Trimmed, zoom: float) -> dict:
+    """-> the record of the union crop: its Stage rect (x, y, w, h), the PNG
+    size and the zoom. Raises when the rect times the zoom is not the size."""
+    rect = [round(v, 4) for v in cut.rect]
+    size = list(cut.image.size)
+    if (round(rect[2] * zoom), round(rect[3] * zoom)) != tuple(size):
+        raise ValueError(
+            f"rect {rect[2]}x{rect[3]} at zoom {zoom} is not the {size[0]}x{size[1]} image"
+        )
+    return {"rect": rect, "relative_to": "stage", "size": size, "zoom": zoom}
+
+
 def main():
-    jobs = [render.Job(STORE_SPRITE, shop + 1, ZOOM) for shop in SHOP_IDS]
+    origin = stage_origin(read_swf(WEB_SWF))
+    jobs = [
+        render.Job(STORE_SPRITE, shop + 1, ZOOM, origin=origin) for shop in SHOP_IDS
+    ]
     with render.frames(WEB_SWF, jobs) as rendered:
         shops = render.trim_union(rendered)
     if shops is None:
@@ -45,6 +82,11 @@ def main():
     for shop, cropped in zip(SHOP_IDS, shops, strict=True):
         png.save(cropped.image, OUT_DIR / f"shop{shop}.png")
         print(f"shop {shop} <- frame {shop + 1} {cropped.image.size}", file=sys.stderr)
+    record = record_of(shops[0], ZOOM)
+    if any(record_of(cropped, ZOOM) != record for cropped in shops):
+        raise RuntimeError("the seven shop crops do not share one rect")
+    RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
+    print(f"union rect {record['rect']}", file=sys.stderr)
 
 
 if __name__ == "__main__":
