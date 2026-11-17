@@ -37,12 +37,14 @@ const FULL_PERCENT: float = 100.0
 signal death_faded(alpha: float)
 signal death_hidden
 
+# The box that each buff icon is drawn in, centered on the original's icon
+# origin. The port's choice: the original draws vector art of its own there.
 const BUFF_ICON_SIZE: Vector2 = Vector2(16, 16)
-# The counter is KrinBuffShower's edit text 66, placed at (-10.3, -0.8) from
-# the icon's center. Inside its 2 px gutter its text runs 20.55 px wide and
-# centered, which centers the turns left over the lower half of the icon.
-const BUFF_COUNTER_OFFSET: Vector2 = Vector2(-10.3, -0.8)
-const BUFF_COUNTER_WIDTH: float = 20.55
+const ALIGNMENTS: Dictionary[String, HorizontalAlignment] = {
+	"left": HORIZONTAL_ALIGNMENT_LEFT,
+	"right": HORIZONTAL_ALIGNMENT_RIGHT,
+	"center": HORIZONTAL_ALIGNMENT_CENTER,
+}
 
 
 # The fighter's slot, 1 to 6. The battle frame names the bar p<slot>BAR.
@@ -265,15 +267,18 @@ func refresh_buffs(buff_slots: Array, buffs_by_id: Dictionary) -> void:
 			sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": buff.tooltip_description, "color": TooltipTheme.TEXT_BODY}]})
 		shower.mouse_entered.connect(func(): GameTooltip.show_sections(sections, shower))
 		shower.mouse_exited.connect(GameTooltip.hide_tooltip)
-		# Edit text 66 sets the turns left in 10 px bold _sans, the face the
-		# project theme gives Labels.
+		# The counter is KrinBuffShower's edit text 66, which the record places from
+		# the icon's origin. It is bold _sans, the face the project theme gives
+		# Labels.
+		var counter_field: Dictionary = row["counter"]
 		var counter: Label = Label.new()
 		counter.name = "Counter"
 		counter.text = str(int(entry["cd"]))
-		counter.add_theme_font_size_override("font_size", 10)
-		counter.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		counter.position = BUFF_ICON_SIZE / 2.0 + BUFF_COUNTER_OFFSET
-		counter.size.x = BUFF_COUNTER_WIDTH
+		counter.add_theme_font_size_override("font_size", roundi(float(counter_field["font_size"])))
+		counter.add_theme_color_override("font_color", Color.html(counter_field["color"]))
+		counter.horizontal_alignment = ALIGNMENTS[counter_field["align"]]
+		counter.position = BUFF_ICON_SIZE / 2.0 + Vector2(float(counter_field["rect"][0]), float(counter_field["rect"][1]))
+		counter.size.x = float(counter_field["rect"][2])
 		counter.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		shower.add_child(counter)
 		buff_row.add_child(shower)
@@ -494,11 +499,7 @@ func _place_fill(nodes: Array, bar: Dictionary, art: Dictionary) -> float:
 func _place_field(label: Label, field: Dictionary, shadow: Dictionary) -> void:
 	label.position = Vector2(float(field["rect"][0]), float(field["rect"][1]))
 	label.size = Vector2(float(field["rect"][2]), float(field["rect"][3]))
-	label.horizontal_alignment = {
-		"left": HORIZONTAL_ALIGNMENT_LEFT,
-		"right": HORIZONTAL_ALIGNMENT_RIGHT,
-		"center": HORIZONTAL_ALIGNMENT_CENTER,
-	}[field["align"]]
+	label.horizontal_alignment = ALIGNMENTS[field["align"]]
 	label.add_theme_font_size_override("font_size", roundi(float(field["font_size"])))
 	label.add_theme_color_override("font_color", Color.html(field["color"]))
 	var angle: float = deg_to_rad(float(shadow["angle"]))

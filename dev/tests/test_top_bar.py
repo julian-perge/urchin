@@ -74,6 +74,30 @@ def test_a_buff_row_constant_set_twice_or_not_at_all_is_refused():
         top_bar.buff_row_constants(BUFF_ROW.replace("teamSide == 1", "teamSide == 2"))
 
 
+def test_the_buff_counter_is_the_shower_field_that_sets_buffcounter():
+    fields = [
+        {"variable": "other", "rect": [0, 0, 1, 1]},
+        {
+            "variable": "buffCounter",
+            "rect": [-10.3, -0.8, 20.55, 12.35],
+            "font_size": 10.0,
+            "color": "ffffffff",
+            "align": "center",
+            "character": 66,
+        },
+    ]
+    assert top_bar.buff_counter(fields) == {
+        "rect": [-10.3, -0.8, 20.55, 12.35],
+        "font_size": 10.0,
+        "color": "ffffffff",
+        "align": "center",
+    }
+    with pytest.raises(ValueError, match="0 buffCounter"):
+        top_bar.buff_counter(fields[:1])
+    with pytest.raises(ValueError, match="2 buffCounter"):
+        top_bar.buff_counter(fields[1:] * 2)
+
+
 def test_the_smoother_factor_comes_from_the_two_lines_that_agree():
     assert top_bar.smoother_factors(LIFE_BAR_LINES) == {
         "x_factor": 1.2710000000000006,

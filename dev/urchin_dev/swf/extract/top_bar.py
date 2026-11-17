@@ -114,6 +114,16 @@ def buff_row_constants(script: str) -> dict:
     }
 
 
+def buff_counter(fields: list[dict]) -> dict:
+    """-> the turns-left counter of a buff icon, from the edit texts of
+    KrinBuffShower: its rect from the icon's origin, its size, colour and
+    alignment. The shower has one field, the one that sets `buffCounter`."""
+    found = [f for f in fields if f["variable"] == "buffCounter"]
+    if len(found) != 1:
+        raise ValueError(f"the buff shower has {len(found)} buffCounter fields, want 1")
+    return {key: found[0][key] for key in ("rect", "font_size", "color", "align")}
+
+
 def smoother_factors(script: str) -> dict:
     """-> the factor and the offset lifeBarUpdate places a smoother with:
     `LBS._x = bar._width * factor - offset`. The life and focus lines have to
@@ -537,6 +547,11 @@ def main():
         "buff_row": {
             **buff_row_constants(BUFF_ROW_SCRIPT.read_text("utf-8")),
             "shower": index.exports[BUFF_SHOWER],
+            "counter": buff_counter(
+                text_fields(
+                    index, timeline.frames(index, index.exports[BUFF_SHOWER])[0], (0, 0)
+                )
+            ),
         },
     }
     RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")

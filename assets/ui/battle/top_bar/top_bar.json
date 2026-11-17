@@ -48,6 +48,17 @@
   }
  },
  "buff_row": {
+  "counter": {
+   "align": "center",
+   "color": "ffffffff",
+   "font_size": 10.0,
+   "rect": [
+    -10.3,
+    -0.8,
+    20.55,
+    12.35
+   ]
+  },
   "enemy_side": -1,
   "offset": 110.0,
   "player_side": 1,

@@ -142,9 +142,7 @@ func _find(node: Node, type: String) -> Node:
 # KrinBuffShower, DefineSprite 104, places buffColor, the icon and the
 # counter, edit text 66, as siblings, and tints only buffColor
 # (frame_42/DoAction_10.as:373-374), so the counter keeps its own white. Edit
-# text 66 is placed at (-10.3, -0.8) from the icon's center, and inside its
-# 2 px gutter its centered text runs 20.55 px wide, which centers the turns
-# left over the lower half of the icon.
+# text 66 is placed where the record says from the icon's center.
 func test_buff_counter_is_untinted_and_centered_over_the_icon():
 	var bar: StatusBar = add_child_autofree(StatusBarScene.instantiate())
 	var unit := CombatUnit.new()
@@ -164,22 +162,24 @@ func test_buff_counter_is_untinted_and_centered_over_the_icon():
 	# The bar scales everything in it, so this reads the offset in the icon's own
 	# space.
 	var from_icon_center: Vector2 = counter.position - (icon.position + icon.size / 2.0)
-	assert_almost_eq(from_icon_center.x, -10.3, 0.01, "edit text 66's x from the icon's center")
-	assert_almost_eq(from_icon_center.y, -0.8, 0.01, "and its y")
-	assert_almost_eq(counter.size.x, 20.55, 0.01, "its text width")
+	var field: Dictionary = StatusBar.record()["buff_row"]["counter"]
+	assert_almost_eq(from_icon_center.x, float(field["rect"][0]), 0.01, "edit text 66's x from the icon's center")
+	assert_almost_eq(from_icon_center.y, float(field["rect"][1]), 0.01, "and its y")
+	assert_almost_eq(counter.size.x, float(field["rect"][2]), 0.01, "its text width")
 	assert_eq(counter.horizontal_alignment, HORIZONTAL_ALIGNMENT_CENTER, "and its centered text")
 
 
-# The counter is edit text 66, which is 10 px bold _sans in white.
+# The counter is edit text 66: the record gives its size and color, and its face is bold _sans.
 func test_buff_counter_matches_edit_text_66():
 	var bar: StatusBar = add_child_autofree(StatusBarScene.instantiate())
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
 	bar.refresh_buffs(unit.buff_slots, {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
 	var counter: Label = _find(bar.buff_row.get_child(0), "Label")
-	assert_eq(counter.get_theme_font_size("font_size"), 10, "10 px")
+	var field: Dictionary = StatusBar.record()["buff_row"]["counter"]
+	assert_eq(counter.get_theme_font_size("font_size"), roundi(float(field["font_size"])), "the field's size")
 	assert_eq((counter.get_theme_font("font") as FontVariation).base_font.resource_path, "res://assets/fonts/texgyreheros-bold.otf", "bold")
-	assert_eq(counter.get_theme_color("font_color"), Color("ffffff"), "white")
+	assert_eq(counter.get_theme_color("font_color"), Color.html(field["color"]), "the field's color")
 
 
 # The original's buff icon tooltip takes its title from the buff's name alone
