@@ -302,8 +302,8 @@ func _buff_side() -> float:
 # Does what LifeBarSmoother's frame 18 does to a dead unit's bar
 # (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as): it sends `inner` to its
 # empty "third" frame, which takes the name, the numbers and the divider away,
-# and removes the buff icons. The fills stay to fade. show_status() fills these nodes but never shows them,
-# so later redraws leave them hidden.
+# and removes the buff icons. The fills stay to fade. show_status() fills these
+# nodes but never shows them, so later redraws leave them hidden.
 func clear_for_death() -> void:
 	inner.hide()
 	buff_row.hide()

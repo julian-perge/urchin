@@ -1073,3 +1073,38 @@ func test_control_a_battle_piece_moved_20_px_fails() -> void:
 		assert_gt(found.size(), 0, "%s moved 20 px and passed" % piece)
 		var what: String = "position" if piece == "BottomBar/PassRing" else "top left"
 		assert_string_contains(found[0] if found else "", "%s: %s" % [piece, what])
+
+
+# The bar of slot 1 sits on the left and the bar of slot 2 is mirrored, so each
+# kind of piece is moved on both: the backing, a text field, a fill and the frame.
+func test_control_a_top_status_bar_piece_moved_20_px_fails() -> void:
+	var pieces: Array[String] = []
+	for bar: String in ["Bar1", "Bar2"]:
+		for part: String in ["Inner/Backing", "Inner/PlayerName", "Inner/LifeNow", "Inner2/LifeFill", "Inner2/FocusFill", "Inner2/Frame"]:
+			pieces.append("TopStatusBar/%s/%s" % [bar, part])
+	for piece: String in pieces:
+		var root: Control = await _laid_out(BATTLE_SCENE)
+		var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
+		assert_eq(_scene_problems(root, scene), [] as Array[String], "%s starts in place" % piece)
+		(root.get_node(piece) as Control).position.x += 20.0
+		await wait_process_frames(2)
+		var found: Array[String] = _scene_problems(root, scene)
+		assert_gt(found.size(), 0, "%s moved 20 px and passed" % piece)
+		assert_string_contains(found[0] if found else "", "%s: top left" % piece)
+
+
+# A bar whose mirror is lost, or a field whose color is lost, fails too.
+func test_control_a_top_status_bar_with_no_mirror_or_a_wrong_color_fails() -> void:
+	var root: Control = await _laid_out(BATTLE_SCENE)
+	var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
+	(root.get_node("TopStatusBar/Bar2/Inner2") as Control).scale.x = 1.0
+	await wait_process_frames(2)
+	assert_gt(_scene_problems(root, scene).size(), 0, "a right-hand bar with no mirror passed")
+	(root.get_node("TopStatusBar/Bar2/Inner2") as Control).scale.x = -1.0
+	await wait_process_frames(2)
+	assert_eq(_scene_problems(root, scene), [] as Array[String], "the mirror restored passes")
+	(root.get_node("TopStatusBar/Bar1/Inner/PlayerName") as Label).add_theme_color_override("font_color", Color.MAGENTA)
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, scene)
+	assert_gt(found.size(), 0, "a name in the wrong color passed")
+	assert_string_contains(found[0] if found else "", "TopStatusBar/Bar1/Inner/PlayerName")
