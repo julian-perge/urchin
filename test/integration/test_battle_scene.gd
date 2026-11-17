@@ -2039,20 +2039,20 @@ func test_an_impact_and_each_event_leave_a_bystander_as_it_was():
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	var bystander: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
 	var presenter: FighterPresenter = scene._presenters[BattleRunner.PLAYER_SLOT]
-	var overlay: UnitOverlay = presenter.get_node("Overlay")
+	var bar: StatusBar = scene.top_status_bar.bar_for_slot(BattleRunner.PLAYER_SLOT)
 	var doll: CharacterVisual = presenter.get_node("Doll")
-	var focus_shown: float = overlay.focus_bar.value
+	var focus_shown: float = bar.focus
 	bystander.focus_n = 1.0
 	bystander.apply_buff(BuffManagerAuto.get_buff_by_name("SHATTERBOLT"), 1, scene.units[2])
 	bystander.apply_changes()
 
 	scene._show_move_result(_move_event(scene, 2, 3, 1, _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0)), 3)
-	assert_eq(overlay.focus_bar.value, focus_shown, "an impact on someone else leaves this fighter's Focus")
+	assert_eq(bar.focus, focus_shown, "an impact on someone else leaves this fighter's Focus")
 	assert_eq(_buff_icons(presenter).size(), 0, "and its buff icons")
 	assert_ne(doll._state, CharacterVisual.State.STUN, "and its pose")
 
 	await scene._play_events([{"type": BattleRunner.EventType.DISPEL, "caster_slot": 2, "target_slot": 3, "removed": []}])
-	assert_eq(overlay.focus_bar.value, focus_shown, "so does any other event")
+	assert_eq(bar.focus, focus_shown, "so does any other event")
 	assert_eq(_buff_icons(presenter).size(), 0, "with its buff icons")
 	assert_ne(doll._state, CharacterVisual.State.STUN, "and its pose")
 
@@ -2111,16 +2111,16 @@ func test_a_focus_cost_shows_on_the_casters_bar_when_its_move_starts():
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	var caster: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
-	var focus_bar: ProgressBar = scene._presenters[BattleRunner.PLAYER_SLOT].get_node("Overlay").focus_bar
-	var target_bar: ProgressBar = scene._presenters[2].get_node("Overlay").health_bar
-	var focus_shown: float = focus_bar.value
-	var life_shown: float = target_bar.value
+	var focus_bar: StatusBar = scene.top_status_bar.bar_for_slot(BattleRunner.PLAYER_SLOT)
+	var target_bar: StatusBar = scene.top_status_bar.bar_for_slot(2)
+	var focus_shown: float = focus_bar.focus
+	var life_shown: float = target_bar.life
 	var dispatched: UnitSnapshot = UnitSnapshot.of(caster)
 	dispatched.focus = focus_shown - 20.0
 	caster.focus_n = focus_shown - 35.0
 
 	await scene._play_events([{"type": BattleRunner.EventType.DISPEL, "caster_slot": 3, "target_slot": 2, "removed": []}])
-	assert_eq(focus_bar.value, focus_shown, "an earlier event leaves the caster's Focus where it was")
+	assert_eq(focus_bar.focus, focus_shown, "an earlier event leaves the caster's Focus where it was")
 
 	var move: Ability = MoveManagerAuto.get_move(1)  # Leading Strike, a Melee move
 	var hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)
@@ -2130,8 +2130,8 @@ func test_a_focus_cost_shows_on_the_casters_bar_when_its_move_starts():
 	event["caster_after_dispatch"] = dispatched
 	scene.animation_speed = 1.0
 	scene._play_move_event(event)  # not awaited, because this swing never ends
-	assert_eq(focus_bar.value, focus_shown - 20.0, "the move's start shows the Focus its cost left")
-	assert_eq(target_bar.value, life_shown, "while the hit waits for the blow")
+	assert_eq(focus_bar.focus, focus_shown - 20.0, "the move's start shows the Focus its cost left")
+	assert_eq(target_bar.life, life_shown, "while the hit waits for the blow")
 
 	scene.animation_speed = 0.0
 	GameData.current_save = null
@@ -3026,14 +3026,14 @@ func test_a_bar_keeps_the_max_life_and_fill_a_buff_cut_until_the_tick_that_runs_
 		var scene = await _battle_100_on_a_stepped_clock("TickMaxLife")
 		var unit: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
 		var presenter: FighterPresenter = scene._presenters[BattleRunner.PLAYER_SLOT]
-		var health_bar: ProgressBar = presenter.get_node("Overlay").health_bar
+		var health_bar: StatusBar = scene.top_status_bar.bar_for_slot(BattleRunner.PLAYER_SLOT)
 		unit.apply_buff(BuffManagerAuto.get_buff_by_name(buff_name), 1, scene.units[2])
 		unit.apply_changes()
 		for slot in unit.buff_slots:
 			if slot["cd"] > 0:
 				slot["cd"] = 1
 		presenter.snap_to_unit()
-		var cut: Array = [health_bar.max_value, health_bar.value]
+		var cut: Array = [health_bar.life_max, health_bar.life]
 		var tick: BuffTick = unit.tick_buffs(BuffManagerAuto.buffs_by_id)
 		var restored: Array = [unit.life_u, unit.life_n]
 		assert_gt(restored[0], cut[0], "sanity: %s's running out gives max life back" % buff_name)
@@ -3046,7 +3046,7 @@ func test_a_bar_keeps_the_max_life_and_fill_a_buff_cut_until_the_tick_that_runs_
 		var tick_frame: int = SHOCK_LANDS_AFTER_DISPATCH + _attack_end_counter_limit()
 		var bars: Array = []
 		for frame in tick_frame + 1:
-			bars.append([health_bar.max_value, health_bar.value])
+			bars.append([health_bar.life_max, health_bar.life])
 			_step_frame(scene)
 
 		assert_eq(bars.slice(0, tick_frame), range(tick_frame).map(func(_frame): return cut), "%s: the bar keeps its cut max and fill until the tick" % buff_name)

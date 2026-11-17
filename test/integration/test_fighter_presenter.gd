@@ -5,6 +5,7 @@
 extends GutTest
 
 const FighterPresenterScene = preload("res://scenes/battle/fighter_presenter.tscn")
+const StatusBarScene = preload("res://scenes/battle/status_bar.tscn")
 const HOME: Vector2 = Vector2(300, 250)
 const ENEMY_SLOT: int = 2
 const ALLY_SLOT: int = 3
@@ -30,6 +31,7 @@ var _number_layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string
 var _presenter: FighterPresenter
 var _doll: CharacterVisual
 var _overlay: UnitOverlay
+var _bar: StatusBar
 var _flash: ResultFlash
 var _shield_clip: ShieldClip
 var _layer: FloatingNumberLayer
@@ -72,8 +74,9 @@ func _make_unit(team: CombatUnit.Team, slot: int) -> CombatUnit:
 func _present(unit: CombatUnit, items_by_id: Dictionary = {}, buffs_by_id: Dictionary = {}) -> void:
 	_layer = add_child_autofree(FloatingNumberLayer.new())
 	_layer.set_process(false)
+	_bar = add_child_autofree(StatusBarScene.instantiate())
 	_presenter = add_child_autofree(FighterPresenterScene.instantiate())
-	_presenter.setup(unit, HOME, items_by_id, buffs_by_id, _layer)
+	_presenter.setup(unit, HOME, items_by_id, buffs_by_id, _layer, _bar)
 	_doll = _presenter.get_node("Doll")
 	_overlay = _presenter.get_node("Overlay")
 	# The tests step the Result flash and the shield clip themselves through
@@ -223,13 +226,13 @@ func _killing_hit_on_the_buffed_unit() -> MoveResult:
 	return result
 
 
-# Returns what the overlay draws besides its two bars.
+# Returns what the status bar and the overlay draw besides the fills.
 func _overlay_shows() -> Dictionary:
 	var icons: Array = _overlay.buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
 	return {
 		"icons": icons.size() if _overlay.buff_row.is_visible_in_tree() else 0,
-		"name": _overlay.name_label.is_visible_in_tree(),
-		"number": _overlay.health_value.is_visible_in_tree(),
+		"name": _bar.name_label.is_visible_in_tree(),
+		"number": _bar.life_now_label.is_visible_in_tree(),
 	}
 
 
@@ -238,19 +241,20 @@ func test_setup_draws_the_unit():
 	_unit.life_n = 180.0
 	_unit.focus_n = 30.0
 	_present(_unit)
-	assert_eq(_overlay.name_label.text, "Prison Guard", "the name")
-	assert_eq(_overlay.health_bar.max_value, 250.0, "the health bar's scale")
-	assert_eq(_overlay.health_bar.value, 180.0, "the health bar")
-	assert_eq(_overlay.health_value.text, "180", "the number beside it")
-	assert_eq(_overlay.focus_bar.max_value, 50.0, "the focus bar's scale")
-	assert_eq(_overlay.focus_bar.value, 30.0, "the focus bar")
+	assert_eq(_bar.name_label.text, "Prison Guard", "the name")
+	assert_eq(_bar.life_max, 250.0, "the health bar's scale")
+	assert_eq(_bar.life, 180.0, "the health bar")
+	assert_eq(_bar.life_now_label.text, "180", "the number beside it")
+	assert_eq(_bar.focus_max, 50.0, "the focus bar's scale")
+	assert_eq(_bar.focus, 30.0, "the focus bar")
 
 
-func test_a_fighter_with_no_focus_keeps_a_valid_focus_bar():
+func test_a_fighter_with_no_focus_shows_an_empty_focus_fill():
 	_unit.focus_u = 0.0
 	_unit.focus_n = 0.0
 	_present(_unit)
-	assert_eq(_overlay.focus_bar.max_value, 1.0)
+	assert_eq(_bar.focus_max, 0.0)
+	assert_eq(_bar.focus_fill.size.x, 0.0, "the fill has no width, not a not-a-number one")
 
 
 func test_setup_draws_the_hover_ring_through_the_presenter():
@@ -297,21 +301,21 @@ func test_setup_dresses_the_doll_from_the_item_table():
 # already at 40 here while the hit that took it there has not been shown.
 func test_the_bars_only_move_when_the_hit_lands():
 	_unit.life_n = 40.0
-	assert_eq(_overlay.health_bar.value, 100.0, "before the hit the bar is where it was")
-	assert_eq(_overlay.health_value.text, "100", "and the number beside it")
+	assert_eq(_bar.life, 100.0, "before the hit the bar is where it was")
+	assert_eq(_bar.life_now_label.text, "100", "and the number beside it")
 
 	_presenter.show_result(_damage(60.0, 40.0), null)
-	assert_eq(_overlay.health_bar.value, 40.0, "the bar drops when the hit lands")
-	assert_eq(_overlay.health_value.text, "40", "and so does the number")
+	assert_eq(_bar.life, 40.0, "the bar drops when the hit lands")
+	assert_eq(_bar.life_now_label.text, "40", "and so does the number")
 	assert_eq(_presenter.displayed.life, 40.0, "and the health it displays")
 
 
 func test_each_hit_of_a_half_turn_shows_the_life_it_left():
 	_unit.life_n = 40.0
 	_presenter.show_result(_damage(25.0, 75.0), null)
-	assert_eq(_overlay.health_bar.value, 75.0, "the first hit shows only itself")
+	assert_eq(_bar.life, 75.0, "the first hit shows only itself")
 	_presenter.show_result(_damage(35.0, 40.0), null)
-	assert_eq(_overlay.health_bar.value, 40.0, "and the second reaches the unit's life")
+	assert_eq(_bar.life, 40.0, "and the second reaches the unit's life")
 
 
 # A result states the target's whole life, so the bar shows that life even when
@@ -328,18 +332,18 @@ func test_a_result_shows_the_life_it_states_with_an_earlier_loss_in_it():
 		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 		_presenter.show_result(result, null)
 		assert_eq(_presenter.displayed.life, result.target_after.life, "a %s takes the earlier loss along with it" % label)
-		assert_eq(_overlay.health_value.text, str(int(result.target_after.life)), "and so does the number beside the bar")
+		assert_eq(_bar.life_now_label.text, str(int(result.target_after.life)), "and so does the number beside the bar")
 
 
 # A change that no event stated reaches the bars when the half-turn ends, because
 # the snap shows the unit as it is.
 func test_the_bars_snap_to_the_unit_at_half_turn_end():
 	_unit.life_n = 63.0
-	assert_eq(_overlay.health_bar.value, 100.0, "still held back before the snap")
+	assert_eq(_bar.life, 100.0, "still held back before the snap")
 
 	_presenter.snap_to_unit()
-	assert_eq(_overlay.health_bar.value, 63.0, "the bar shows the unit's life")
-	assert_eq(_overlay.health_value.text, "63", "and so does the number")
+	assert_eq(_bar.life, 63.0, "the bar shows the unit's life")
+	assert_eq(_bar.life_now_label.text, "63", "and so does the number")
 	assert_eq(_presenter.displayed.life, 63.0, "and the health it displays")
 
 
@@ -351,13 +355,13 @@ func test_a_focus_cost_shows_when_the_move_starts_and_not_before():
 	_unit.life_n = 70.0
 	_unit.focus_n = 12.0
 	_presenter.show_result(_damage(10.0, 90.0), null)
-	assert_eq(_overlay.focus_bar.value, 50.0, "a hit before the move leaves the Focus it states")
+	assert_eq(_bar.focus, 50.0, "a hit before the move leaves the Focus it states")
 
 	var dispatched: UnitSnapshot = _state(80.0)
 	dispatched.focus = 30.0
 	_presenter.show_state(dispatched)
-	assert_eq(_overlay.focus_bar.value, 30.0, "the move's start shows the Focus its cost left")
-	assert_eq(_overlay.health_bar.value, 80.0, "and the life its cost left")
+	assert_eq(_bar.focus, 30.0, "the move's start shows the Focus its cost left")
+	assert_eq(_bar.life, 80.0, "and the life its cost left")
 
 
 func _buff_icons() -> Array:
@@ -411,7 +415,7 @@ func test_a_stun_icon_shows_only_at_the_hit_that_lands_it():
 func test_a_hit_bigger_than_the_displayed_health_stops_the_bar_at_empty():
 	_presenter.show_result(_damage(250.0, 0.0), null)
 	assert_eq(_presenter.displayed.life, 0.0, "the displayed health stops at zero")
-	assert_eq(_overlay.health_value.text, "0", "and so does the number")
+	assert_eq(_bar.life_now_label.text, "0", "and so does the number")
 
 
 # KrinNumberShow draws a heal in its HEAL color, 0x66FF00, with the same digits
@@ -420,7 +424,7 @@ func test_a_heal_raises_the_bar_with_a_green_number_and_no_plus():
 	_unit.life_n = 40.0
 	_presenter.snap_to_unit()
 	_presenter.show_result(_heal(12.0, 52.0), null)
-	assert_eq(_overlay.health_bar.value, 52.0, "the bar rises by the heal")
+	assert_eq(_bar.life, 52.0, "the bar rises by the heal")
 	var number: FloatingNumber = _numbers()[-1]
 	assert_eq(number.label, "normal", "the normal label")
 	assert_eq(number.glyphs, ["1", "2"], "12 with no plus")
@@ -511,9 +515,9 @@ func test_the_buff_icons_name_and_number_clear_17_frames_after_a_killing_impact(
 	])
 
 
-# Returns the alpha the overlay is drawn at, which is 0 once it is hidden.
+# Returns the alpha the status bar is drawn at, which is 0 once it is hidden.
 func _overlay_alpha() -> float:
-	return _overlay.modulate.a if _overlay.is_visible_in_tree() else 0.0
+	return _bar.modulate.a if _bar.is_visible_in_tree() else 0.0
 
 
 # From the frame after the clear, LifeBarSmoother takes 5 off the bar's alpha
@@ -548,7 +552,7 @@ func test_the_snap_at_half_turn_end_leaves_a_dead_fighters_bar_empty():
 
 	_presenter.snap_to_unit()
 
-	assert_eq(_overlay.health_bar.value, 0.0, "the bar stays empty")
+	assert_eq(_bar.life, 0.0, "the bar stays empty")
 	assert_eq(_presenter.displayed.life, 0.0, "and the fighter still displays no life")
 
 
@@ -590,7 +594,7 @@ func test_a_unit_killed_from_under_half_a_percent_life_still_plays_its_death_voi
 func test_a_death_with_no_result_empties_the_bar_before_it_fades():
 	_unit.life_n = 0.0
 	_presenter.die()
-	assert_eq(_overlay.health_bar.value, 0.0)
+	assert_eq(_bar.life, 0.0)
 
 
 func test_die_plays_the_death_with_no_hit():
@@ -607,7 +611,7 @@ func test_damage_on_a_sswitch_target_shows_as_a_heal():
 	_unit.life_n = 50.0
 	_presenter.snap_to_unit()
 	_presenter.show_result(_damage_that_heals(15.0, 65.0), _fire_move())
-	assert_eq(_overlay.health_bar.value, 65.0, "the bar rises, because the damage healed the target")
+	assert_eq(_bar.life, 65.0, "the bar rises, because the damage healed the target")
 	assert_eq(_numbers().size(), 1, "one number")
 	assert_eq(_numbers()[0].glyphs, ["1", "5"], "the amount the damage healed")
 	assert_eq(_numbers()[0].tint, Color("66FF00"), "drawn in heal green")
@@ -625,7 +629,7 @@ func test_damage_on_a_sswitch_target_stops_the_bar_at_full():
 # (frame_42/DoAction_8.as:189-207).
 func test_heal_on_a_sswitch_target_shows_as_damage():
 	_presenter.show_result(_heal_that_hurts(20.0, 80.0), null)
-	assert_eq(_overlay.health_bar.value, 80.0, "the bar falls, because the heal hurt the target")
+	assert_eq(_bar.life, 80.0, "the bar falls, because the heal hurt the target")
 	assert_eq(_numbers()[-1].glyphs, ["2", "0"], "the amount the heal took")
 	assert_eq(_numbers()[-1].tint, Color("664D80"), "drawn in the Shadow color")
 	assert_eq(_doll._state, HIT, "the hit animation plays")
@@ -702,11 +706,11 @@ func test_every_result_but_a_miss_moves_the_bar_to_the_life_it_states():
 	for kind in [MoveResult.Kind.FOCUS, MoveResult.Kind.STATUS_ONLY]:
 		_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 		_presenter.show_result(_result(kind, MoveResult.Direction.NONE, 0.0, 25.0), null)
-		assert_eq(_overlay.health_bar.value, 25.0, "a %s result moves the bar" % MoveResult.Kind.find_key(kind))
+		assert_eq(_bar.life, 25.0, "a %s result moves the bar" % MoveResult.Kind.find_key(kind))
 
 	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 	_presenter.show_result(_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0, 25.0), null)
-	assert_eq(_overlay.health_bar.value, 100.0, "a miss leaves it")
+	assert_eq(_bar.life, 100.0, "a miss leaves it")
 
 
 # The conductor passes a miss the move's element (line 108), and KrinNumberShow
@@ -1036,7 +1040,7 @@ func test_a_melee_whose_presenter_left_the_tree_lands_nothing():
 # stops its doll's own processing so that the test steps the doll itself.
 func _fighter_at(unit: CombatUnit, home: Vector2, items_by_id: Dictionary = {}) -> FighterPresenter:
 	var presenter: FighterPresenter = add_child_autofree(FighterPresenterScene.instantiate())
-	presenter.setup(unit, home, items_by_id, {}, _layer)
+	presenter.setup(unit, home, items_by_id, {}, _layer, add_child_autofree(StatusBarScene.instantiate()))
 	presenter.get_node("Doll").set_process(false)
 	return presenter
 
@@ -1500,11 +1504,11 @@ func test_a_tick_that_a_shield_soaked_whole_draws_shielded_and_plays_the_shield_
 # the half-turn's end, so the bars show nothing of it until then.
 func test_a_buff_tick_moves_the_bars_when_it_is_shown_and_not_before():
 	_unit.life_n = 40.0
-	assert_eq(_overlay.health_bar.value, 100.0, "before the tick the bar is where it was")
+	assert_eq(_bar.life, 100.0, "before the tick the bar is where it was")
 
 	_presenter.show_tick(_damage_tick(60.0, 40.0))
-	assert_eq(_overlay.health_bar.value, 40.0, "the bar drops when the tick is shown")
-	assert_eq(_overlay.health_value.text, "40", "and so does the number beside it")
+	assert_eq(_bar.life, 40.0, "the bar drops when the tick is shown")
+	assert_eq(_bar.life_now_label.text, "40", "and so does the number beside it")
 	assert_eq(_presenter.displayed.life, 40.0, "and the health the fighter displays")
 
 
@@ -1518,10 +1522,10 @@ func test_a_buff_tick_gives_the_bar_its_max_life_back_and_not_before():
 	_presenter.show_state(cut)
 	_unit.life_u = 100.0
 	_unit.life_n = 100.0
-	assert_eq([_overlay.health_bar.max_value, _overlay.health_bar.value], [85.0, 85.0], "until the tick the bar keeps its max and its fill")
+	assert_eq([_bar.life_max, _bar.life], [85.0, 85.0], "until the tick the bar keeps its max and its fill")
 
 	_presenter.show_tick(_tick(MoveResult.Direction.NONE, 0.0, 100.0))
-	assert_eq([_overlay.health_bar.max_value, _overlay.health_bar.value], [100.0, 100.0], "the tick gives it both")
+	assert_eq([_bar.life_max, _bar.life], [100.0, 100.0], "the tick gives it both")
 
 
 # buffTicker draws nothing when its total comes to 0 (frame_42/DoAction_10.as:85),
@@ -1534,7 +1538,7 @@ func test_a_buff_tick_of_nothing_draws_no_number_but_shows_the_focus_it_moved():
 	_presenter.show_tick(tick)
 
 	assert_eq(_numbers().size(), 0, "no number")
-	assert_eq(_overlay.focus_bar.value, 38.0, "and the Focus bar moves")
+	assert_eq(_bar.focus, 38.0, "and the Focus bar moves")
 
 
 # A buff that runs out at a tick leaves the icon row at that tick, and a stun that

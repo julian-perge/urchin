@@ -254,8 +254,9 @@ func test_tooltips_bold_the_title_and_keep_the_body_regular():
 # unit bars and the battle speech use font 295, the member bar's name uses the
 # pixel font 3307, and the buff counter and the Combat text banner use font 65.
 func test_battle_text_keeps_the_original_fonts():
+	var bar: StatusBar = add_child_autofree(load("res://scenes/battle/status_bar.tscn").instantiate())
+	_assert_fonts(bar, {"Inner/PlayerName": [3395, 295], "Inner/LifeNow": [3398, 295]})
 	var overlay: UnitOverlay = add_child_autofree(load("res://scenes/battle/unit_overlay.tscn").instantiate())
-	_assert_fonts(overlay, {"NameLabel": [3395, 295], "HealthValue": [3398, 295]})
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
 	var buff := Buff.new()

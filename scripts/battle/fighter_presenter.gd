@@ -1,6 +1,6 @@
 # fighter_presenter.gd
-# Everything one fighter shows on the Battle screen: its doll, its bars, its
-# buff icons, its hover ring, its Floating numbers, its Result flash, its Shield
+# Everything one fighter shows on the Battle screen: its doll, its status bar,
+# its buff icons, its hover ring, its Floating numbers, its Result flash, its Shield
 # clip, its stun and its death.
 # battle_scene.gd keeps one per slot and tells it when its move starts, when a
 # hit lands, when its Buff tick comes due, when to snap to the unit, when it is
@@ -43,6 +43,8 @@ const DEATH_FADE_PER_FRAME: int = 5
 var displayed: UnitSnapshot
 
 var _unit: CombatUnit
+# The fighter's entry in the top status bar, which the scene owns.
+var _status_bar: StatusBar
 var _buffs_by_id: Dictionary = {}
 var _floating_numbers: FloatingNumberLayer
 # Where the original's rig, the unit's clip on BATTLESCREEN, stands. dressChar
@@ -65,11 +67,13 @@ var _doll_offset: Vector2 = Vector2.ZERO
 
 
 # Call once, after the presenter is in the tree. It leaves the fighter drawn.
+# `status_bar` is the fighter's entry in the top status bar.
 # Floating numbers go on the battle's one FloatingNumberLayer rather than on this
 # node, because they have to draw over every fighter, and a fighter later in the
 # tree would cover a number parented here.
-func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id: Dictionary, floating_numbers: FloatingNumberLayer) -> void:
+func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id: Dictionary, floating_numbers: FloatingNumberLayer, status_bar: StatusBar) -> void:
 	_unit = unit
+	_status_bar = status_bar
 	_buffs_by_id = buffs_by_id
 	_floating_numbers = floating_numbers
 	_home = home
@@ -91,7 +95,7 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	# The overlay is the doll's sibling because parenting it to a mirrored doll
 	# flipped its offsets on team 2.
 	_overlay.position = _doll.position
-	_overlay.setup(unit.player_name)
+	_status_bar.setup(unit.player_name)
 	_overlay.ring.draw.connect(_draw_ring)
 	_draw_status()
 
@@ -217,7 +221,7 @@ func _die_or_flinch(result: MoveResult) -> void:
 
 
 # Plays the death: the doll's dead label, an empty bar, the death voice, and the
-# overlay's clear and fade, which _process() counts out. The original's
+# status bar's and overlay's clear and fade, which _process() counts out. The original's
 # lifeBarUpdate plays the voice and starts the fade only when the bar's rounded
 # percent changes (frame_42/DoAction_8.as:295-298 and 345-347), which skips a
 # unit killed from under 0.5% life. ADR 0005 counts that as an Original bug, so
@@ -230,7 +234,7 @@ func die() -> void:
 	effect_cue.emit(_unit.voice_die)
 
 
-# Counts the frames since the death, so the overlay clears, fades and hides on
+# Counts the frames since the death, so the bar clears, fades and hides on
 # the original's frames. The count is in frames rather than seconds, because a
 # sum of 1/30 s steps drifts off whole frames.
 func _process(delta: float) -> void:
@@ -240,10 +244,13 @@ func _process(delta: float) -> void:
 	var frames_since_clear: int = int(_frames_since_death) - DEATH_CLEAR_FRAME
 	if frames_since_clear < 0:
 		return
+	_status_bar.clear_for_death()
 	_overlay.clear_for_death()
 	var alpha_percent: int = 100 - DEATH_FADE_PER_FRAME * frames_since_clear
+	_status_bar.modulate.a = maxi(alpha_percent, 0) / 100.0
 	_overlay.modulate.a = maxi(alpha_percent, 0) / 100.0
 	if alpha_percent < 0:
+		_status_bar.hide()
 		_overlay.hide()
 		set_process(false)
 
@@ -257,7 +264,8 @@ func show_state(state: UnitSnapshot) -> void:
 
 
 func _draw_status() -> void:
-	_overlay.show_status(displayed, _buffs_by_id)
+	_status_bar.show_status(displayed)
+	_overlay.show_buffs(displayed, _buffs_by_id)
 
 
 # Shows this fighter's unit as it is now. The scene calls this when the replay of a

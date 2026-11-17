@@ -956,6 +956,51 @@ SCENES[STORE_SCENE] = Scene(
 )
 
 
+# The top status bar record that extract_top_bar writes. The bar parts of the
+# Battle screen are placed from it, because a part's own rect is a render's.
+TOP_BAR_RECORD = REPO_ROOT / "assets" / "ui" / "battle" / "top_bar" / "top_bar.json"
+TOP_BAR_TEXTURES = "res://assets/ui/battle/top_bar"
+BAR_TEXT_NODES = {
+    "playerName": "PlayerName",
+    "lifeNow": "LifeNow",
+    "lifeMax": "LifeMax",
+    "focusNow": "FocusNow",
+    "focusMax": "FocusMax",
+}
+# The parts of `inner2`, by their node in the port and their part name.
+BAR_INNER2_NODES = {
+    "FocusBack": "fill:focus_back",
+    "LifeBack": "fill:life_back",
+    "Shade": "inner2:Shade",
+    "FocusFill": "fill:focus",
+    "Black": "inner2:Black",
+    "LifeFill": "fill:life",
+    "Frame": "inner2:Frame",
+}
+
+
+def top_bar_pieces() -> dict[str, Piece]:
+    """-> the pieces of the six status bars, by their path in
+    top_status_bar.tscn, which the Battle screen holds as TopStatusBar. Bar n is
+    the placement p<n>BAR of the battle frame."""
+    pieces = {}
+    for slot in range(1, 7):
+        name = f"p{slot}BAR"
+        base = f"TopStatusBar/Bar{slot}"
+        pieces[f"{base}/Inner/Backing"] = Piece(
+            "bar_part", None, instance=name, art="backing"
+        )
+        for variable, node in BAR_TEXT_NODES.items():
+            pieces[f"{base}/Inner/{node}"] = Piece(
+                "bar_part", None, instance=name, art=f"text:{variable}"
+            )
+        for node, part in BAR_INNER2_NODES.items():
+            pieces[f"{base}/Inner2/{node}"] = Piece(
+                "bar_part", None, instance=name, art=part
+            )
+    return pieces
+
+
 # The Battle screen's frame, KRINBATTLESCENE (spec/67-battle-hud.md). Each task of
 # the spec records the pieces it builds. The rest of the scene is in port_only
 # until a task records it and takes its node out.
@@ -984,6 +1029,7 @@ SCENES[BATTLE_SCENE] = Scene(
         "BottomBar/PassRing": Piece("point", 498, character=3383),
         "BottomBar/AlertIcon": Piece("art", 65, art="alert_icon", character=3460),
         "BottomBar/RetreatButton": Piece("button", 644, character=3356),
+        **top_bar_pieces(),
     },
     # HallSpace holds the sky, the hall and the fighters, whose art the battle
     # loads when it starts.
@@ -1332,6 +1378,77 @@ def path_shape_record(styles: list[StyleSet], path: int, matrix, origin) -> dict
     if not 0 <= path < len(boxes):
         raise ValueError(f"the shape has {len(boxes)} paths, not a path {path}")
     return shape_record(boxes[path], matrix, origin)
+
+
+def bar_part_record(part: str, matrix, bar: dict, name: str) -> dict:
+    """-> the record of one part of the status bar that the battle frame places
+    as `name` with `matrix`. `bar` is top_bar.json. The part is an art piece, a
+    fill at its full width or a text field. Every rect in that file is in the bar
+    sprite's design px, or in `inner2`'s, which the right-hand bars mirror, so this
+    puts it through the placement. The bar's scale is not the same in x and y, so
+    an art piece has a zoom for each axis."""
+    sx, skew0, skew1, sy, tx, ty = matrix
+    if skew0 or skew1:
+        raise ValueError(f"{name} is placed with {matrix}")
+    flags = bar["placements"][name]
+    mirrored = flags["inner2_xscale"] is not None and flags["inner2_xscale"] < 0
+    frame = bar["inner"]["frames"][flags["inner_frame"] or "first"]
+
+    def on_stage(rect, flip: bool) -> list[float]:
+        x, y, w, h = rect
+        left = -x - w if flip else x
+        return [
+            round(tx / render.TWIPS + sx * left, 4),
+            round(ty / render.TWIPS + sy * y, 4),
+            round(sx * w, 4),
+            round(sy * h, 4),
+        ]
+
+    def art(entry: dict, rect: list[float], flip: bool) -> dict:
+        stage = on_stage(rect, flip)
+        return {
+            "kind": "art",
+            "rect": stage,
+            "texture": f"{TOP_BAR_TEXTURES}/{entry['file']}",
+            "size": entry["size"],
+            "zoom": [entry["size"][0] / stage[2], entry["size"][1] / stage[3]],
+        }
+
+    kind, _, which = part.partition(":")
+    if part == "backing":
+        entry = frame["art"]
+        return art(entry, entry["rect"], False)
+    if kind == "text":
+        field = next(f for f in frame["fields"] if f["variable"] == which)
+        shadow = bar["shadow"]
+        angle = math.radians(shadow["angle"])
+        alpha = int(shadow["color"][6:8], 16)
+        return {
+            "kind": "text",
+            "rect": on_stage(field["rect"], False),
+            "font_size": field["font_size"],
+            "color": field["color"],
+            "align": field["align"],
+            "shadow": {
+                "offset": [
+                    round(sx * shadow["distance"] * math.cos(angle), 4),
+                    round(sy * shadow["distance"] * math.sin(angle), 4),
+                ],
+                "color": shadow["color"][:6]
+                + f"{min(255, round(alpha * shadow['strength'])):02x}",
+                "blur": shadow["blur_x"],
+            },
+        }
+    if kind == "inner2":
+        entry = bar["inner2"]["art"][which]
+        return art(entry, entry["rect"], mirrored)
+    if kind == "fill":
+        bars = bar["bars"]["life" if which.startswith("life") else "focus"]
+        entry = bar["art"][bars["art"]]
+        x, y, w, h = entry["rect"]
+        rect = [bars["x"] + x * bars["scale_x"], bars["y"] + y, w * bars["scale_x"], h]
+        return art(entry, rect, mirrored)
+    raise ValueError(f"unknown bar part {part!r}")
 
 
 def through_sprites(index: SwfIndex, layer: timeline.Layer) -> tuple[int, tuple]:
@@ -1880,6 +1997,13 @@ def scene_record(
                 piece_origin,
                 shape_styles(index, layer.character_id),
                 piece.path,
+            )
+        elif piece.kind == "bar_part":
+            pieces[path] = bar_part_record(
+                piece.art,
+                layer.matrix,
+                json.loads(TOP_BAR_RECORD.read_text()),
+                layer.name,
             )
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, piece_origin)

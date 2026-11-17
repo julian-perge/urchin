@@ -144,6 +144,7 @@ var _buff_tick_due: bool = false
 @onready var turn_label: Label = $UI/TurnLabel
 @onready var speech_label: Label = $UI/SpeechLabel
 @onready var _pass_ring: Control = $BottomBar/PassRing
+@onready var top_status_bar: TopStatusBar = $TopStatusBar
 @onready var radial_menu: RadialMenu = $RadialMenu
 # The battle frame places KrinCombatText at depth 630, above the orb ring at 500
 # and below the speech box at 634. So battle_scene.tscn puts this node after the
@@ -355,13 +356,14 @@ func _spawn_visuals() -> void:
 		var home: Vector2 = SLOT_POSITIONS.get(slot, Vector2(400, 300))
 		var presenter: FighterPresenter = FighterPresenterScene.instantiate()
 		battlefield.add_child(presenter)
-		presenter.setup(units[slot], home, ItemManagerAuto.items_by_id, BuffManagerAuto.buffs_by_id, floating_numbers)
+		presenter.setup(units[slot], home, ItemManagerAuto.items_by_id, BuffManagerAuto.buffs_by_id, floating_numbers, top_status_bar.bar_for_slot(slot))
 		presenter.voice_cue.connect(AudioManagerAuto.voice)
 		presenter.effect_cue.connect(AudioManagerAuto.play_effect)
 		presenter.hit_area.mouse_entered.connect(_on_unit_hovered.bind(slot, true))
 		presenter.hit_area.mouse_exited.connect(_on_unit_hovered.bind(slot, false))
 		presenter.hit_area.pressed.connect(radial_menu.open.bind(slot, home, presenter.hit_area))
 		_presenters[slot] = presenter
+	top_status_bar.show_active(units)
 
 
 func _on_unit_hovered(slot: int, entered: bool) -> void:

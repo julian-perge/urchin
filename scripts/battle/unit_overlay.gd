@@ -1,9 +1,9 @@
 # unit_overlay.gd
-# The unmirrored per-unit HUD overlay shown over each battling character's
-# paper doll: name, health bar + value, focus bar, and a hover/click zone.
-# FighterPresenter owns one per fighter, positions it at the doll and draws the
-# hover ring onto its Ring node, whose color depends on the unit's relation to
-# the player. show_status() is the one place the bars are written.
+# The unmirrored per-unit overlay shown over each battling character's paper
+# doll: the buff icons and a hover/click zone. The name and the bars are in the
+# top status bar (status_bar.gd). FighterPresenter owns one per fighter,
+# positions it at the doll and draws the hover ring onto its Ring node, whose
+# color depends on the unit's relation to the player.
 extends Control
 class_name UnitOverlay
 
@@ -16,10 +16,6 @@ const BUFF_COUNTER_OFFSET: Vector2 = Vector2(-10.3, -0.8)
 const BUFF_COUNTER_WIDTH: float = 20.55
 
 @onready var ring: Control = $Ring
-@onready var name_label: Label = $NameLabel
-@onready var health_bar: ProgressBar = $HealthBar
-@onready var health_value: Label = $HealthValue
-@onready var focus_bar: ProgressBar = $FocusBar
 @onready var hit_button: Button = $HitButton
 @onready var buff_row: HBoxContainer = $BuffRow
 
@@ -32,19 +28,10 @@ const BUFF_COUNTER_WIDTH: float = 20.55
 var _last_signature: Array = []
 
 
-func setup(unit_name: String) -> void:
-	name_label.text = unit_name
-
-
 # The state comes from FighterPresenter rather than from the unit, because the
 # runner has already resolved the rest of the half-turn on the unit when an
 # event plays.
-func show_status(state: UnitSnapshot, buffs_by_id: Dictionary) -> void:
-	health_bar.max_value = state.life_max
-	health_bar.value = state.life
-	health_value.text = str(int(state.life))
-	focus_bar.max_value = max(state.focus_max, 1)
-	focus_bar.value = state.focus
+func show_buffs(state: UnitSnapshot, buffs_by_id: Dictionary) -> void:
 	refresh_buffs(state.buff_slots, buffs_by_id)
 
 
@@ -125,13 +112,9 @@ func refresh_buffs(buff_slots: Array, buffs_by_id: Dictionary) -> void:
 		buff_row.add_child(shower)
 
 
-# Does what LifeBarSmoother's frame 18 does to a dead unit's bar
-# (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as): it removes the buff
-# icons and sends the bar's inner clip to its empty "third" frame, which takes
-# the name and the numbers away. Only the two bars stay to fade. show_status()
-# fills these nodes but never shows them, so later redraws leave them hidden.
+# Does what LifeBarSmoother's frame 18 does to a dead unit's buff icons
+# (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as): it removes them.
+# show_buffs() fills the row but never shows it, so later redraws leave it
+# hidden.
 func clear_for_death() -> void:
-	name_label.hide()
-	health_value.hide()
 	buff_row.hide()
-

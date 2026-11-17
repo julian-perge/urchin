@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/battle/combat_text_banner.tscn" id="7_banner"]
 [ext_resource type="Script" path="res://scripts/battle/floating_number_layer.gd" id="8_floatingnumbers"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/top_panel.png" id="9_toppanel"]
+[ext_resource type="PackedScene" path="res://scenes/battle/top_status_bar.tscn" id="10_topbar"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hall_outline"]
 draw_center = false
@@ -123,6 +124,9 @@ offset_bottom = 124.75
 mouse_filter = 2
 texture = ExtResource("9_toppanel")
 expand_mode = 1
+
+[node name="TopStatusBar" parent="." instance=ExtResource("10_topbar")]
+layout_mode = 0
 
 [node name="RadialMenu" parent="." instance=ExtResource("6_radial")]
 layout_mode = 0

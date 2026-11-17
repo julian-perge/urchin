@@ -1,0 +1,82 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/status_bar.gd" id="1_bar"]
+
+[node name="StatusBar" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("1_bar")
+
+[node name="Inner2" type="Control" parent="."]
+layout_mode = 0
+mouse_filter = 2
+
+[node name="FocusBack" type="TextureRect" parent="Inner2"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="LifeBack" type="TextureRect" parent="Inner2"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="Shade" type="TextureRect" parent="Inner2"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="FocusFill" type="TextureRect" parent="Inner2"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="Black" type="TextureRect" parent="Inner2"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="LifeFill" type="TextureRect" parent="Inner2"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="Frame" type="TextureRect" parent="Inner2"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="Inner" type="Control" parent="."]
+layout_mode = 0
+mouse_filter = 2
+
+[node name="Backing" type="TextureRect" parent="Inner"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="PlayerName" type="Label" parent="Inner"]
+layout_mode = 0
+mouse_filter = 2
+theme_type_variation = &"RegularLabel"
+
+[node name="LifeNow" type="Label" parent="Inner"]
+layout_mode = 0
+mouse_filter = 2
+theme_type_variation = &"RegularLabel"
+
+[node name="LifeMax" type="Label" parent="Inner"]
+layout_mode = 0
+mouse_filter = 2
+theme_type_variation = &"RegularLabel"
+
+[node name="FocusNow" type="Label" parent="Inner"]
+layout_mode = 0
+mouse_filter = 2
+theme_type_variation = &"RegularLabel"
+
+[node name="FocusMax" type="Label" parent="Inner"]
+layout_mode = 0
+mouse_filter = 2
+theme_type_variation = &"RegularLabel"

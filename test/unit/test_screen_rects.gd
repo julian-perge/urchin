@@ -54,6 +54,12 @@ func _drawing_paths(root: Node, port_only: Array) -> Array[String]:
 	return found
 
 
+# Returns where a Control draws, scale and mirror included. Control.get_global_rect()
+# leaves the scale of the node and of its parents out of the size.
+func _stage_rect(node: Control) -> Rect2:
+	return node.get_global_transform() * Rect2(Vector2.ZERO, node.size)
+
+
 func _close(a: float, b: float) -> bool:
 	return absf(a - b) < TOLERANCE
 
@@ -127,7 +133,10 @@ func _outline_problems(path: String, panel: Panel, entry: Dictionary) -> Array[S
 func _art_size_problems(path: String, texture: Texture2D, entry: Dictionary) -> Array[String]:
 	var found: Array[String] = []
 	var size := Vector2(entry["size"][0], entry["size"][1])
-	var zoomed := Vector2(entry["rect"][2], entry["rect"][3]) * float(entry["zoom"])
+	# A piece that a scaled sprite holds has a zoom for each axis.
+	var zoom: Variant = entry["zoom"]
+	var zoom_xy := Vector2(zoom[0], zoom[1]) if zoom is Array else Vector2(float(zoom), float(zoom))
+	var zoomed := Vector2(entry["rect"][2], entry["rect"][3]) * zoom_xy
 	if not zoomed.is_equal_approx(size):
 		found.append("%s: rect times zoom %s, expected the PNG size %s" % [path, zoomed, size])
 	var actual: Vector2 = texture.get_size() if texture else Vector2.ZERO
@@ -161,7 +170,7 @@ func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[Stri
 	# so a wrong width moves the text. A Label also grows past its offsets when
 	# its text is wider than the field.
 	if label.horizontal_alignment != HORIZONTAL_ALIGNMENT_LEFT:
-		var right: float = label.global_position.x + label.size.x
+		var right: float = _stage_rect(label).end.x
 		var expected_right: float = float(entry["rect"][0]) + float(entry["rect"][2])
 		if not _close(right, expected_right):
 			found.append("%s: right edge %s, expected %s" % [path, right, expected_right])
@@ -255,7 +264,7 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 		# The record holds Stage positions. A scene such as right_column.tscn
 		# puts its root where the SWF puts the piece, so the root's own
 		# position counts.
-		var actual := node.get_global_rect()
+		var actual: Rect2 = _stage_rect(node)
 		match entry["kind"]:
 			"outline":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))

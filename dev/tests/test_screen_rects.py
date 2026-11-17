@@ -277,6 +277,101 @@ def test_a_path_shape_refuses_a_path_it_does_not_have():
         screen_rects.path_shape_record(THREE_BOXES, 3, timeline.IDENTITY, (0.0, 0.0))
 
 
+# A status bar as extract_top_bar writes it, cut to one backing, one text field and
+# one fill. The battle frame places the bar with a scale of 2 in x and 3 in y at
+# (100, 10) px.
+BAR_MATRIX = (2.0, 0.0, 0.0, 3.0, 2000, 200)
+BAR = {
+    "placements": {
+        "p1BAR": {"inner_frame": None, "inner2_xscale": None},
+        "p2BAR": {"inner_frame": "second", "inner2_xscale": -100.0},
+    },
+    "inner": {
+        "frames": {
+            "first": {
+                "art": {
+                    "file": "a.png",
+                    "rect": [10.0, 1.0, 1.0, 5.0],
+                    "size": [4, 20],
+                },
+                "fields": [
+                    {
+                        "variable": "lifeNow",
+                        "rect": [20.0, 2.0, 30.0, 12.0],
+                        "font_size": 9.0,
+                        "color": "ffffffff",
+                        "align": "right",
+                    }
+                ],
+            },
+            "second": {
+                "art": {
+                    "file": "b.png",
+                    "rect": [-11.0, 1.0, 1.0, 5.0],
+                    "size": [4, 20],
+                },
+                "fields": [],
+            },
+        }
+    },
+    "inner2": {"art": {}},
+    "bars": {"life": {"art": "life_fill", "scale_x": 0.5, "x": -100.0, "y": -5.0}},
+    "art": {
+        "life_fill": {
+            "file": "f.png",
+            "rect": [0.0, -6.0, 200.0, 12.0],
+            "size": [800, 48],
+        }
+    },
+    "shadow": {
+        "angle": 90.0,
+        "distance": 3.0,
+        "strength": 0.5,
+        "color": "000000ff",
+        "blur_x": 5.0,
+    },
+}
+
+
+def test_a_bar_art_part_goes_through_the_placement_with_a_zoom_for_each_axis():
+    entry = screen_rects.bar_part_record("backing", BAR_MATRIX, BAR, "p1BAR")
+    assert entry == {
+        "kind": "art",
+        "rect": [120.0, 13.0, 2.0, 15.0],
+        "texture": "res://assets/ui/battle/top_bar/a.png",
+        "size": [4, 20],
+        "zoom": [2.0, 20 / 15],
+    }
+
+
+def test_a_right_hand_bar_takes_its_second_frame_and_mirrors_inner2():
+    backing = screen_rects.bar_part_record("backing", BAR_MATRIX, BAR, "p2BAR")
+    assert backing["texture"].endswith("/b.png")
+    fill = screen_rects.bar_part_record("fill:life", BAR_MATRIX, BAR, "p2BAR")
+    # The fill is 100 px wide from x -100 in inner2, so it runs from 0 to 100
+    # once mirrored. Through the placement, that is x 100 + 2 * 0, 200 px wide.
+    assert fill["rect"] == pytest.approx([100.0, 10.0 + 3 * -11.0, 200.0, 36.0])
+    unmirrored = screen_rects.bar_part_record("fill:life", BAR_MATRIX, BAR, "p1BAR")
+    assert unmirrored["rect"][0] == pytest.approx(100.0 + 2 * -100.0)
+
+
+def test_a_bar_text_part_is_placed_with_the_shadow_scaled_and_its_strength_in_the_alpha():
+    entry = screen_rects.bar_part_record("text:lifeNow", BAR_MATRIX, BAR, "p1BAR")
+    assert entry["rect"] == [140.0, 16.0, 60.0, 36.0]
+    assert entry["font_size"] == 9.0
+    assert entry["shadow"]["color"] == "00000080"
+    assert entry["shadow"]["offset"] == pytest.approx([0.0, 9.0])
+
+
+def test_a_bar_part_that_is_not_one_is_refused():
+    with pytest.raises(ValueError, match="unknown bar part"):
+        screen_rects.bar_part_record("nothing", BAR_MATRIX, BAR, "p1BAR")
+    with pytest.raises(ValueError, match="placed with"):
+        screen_rects.bar_part_record(
+            "backing", (1.0, 0.5, 0.0, 1.0, 0, 0), BAR, "p1BAR"
+        )
+
+
 # The close X of KRINMENU's inventory frame, as extract_window_chrome records it.
 CLOSE_X_CHROME = {
     "rect": [734.3, 29.675, 37.0, 36.5],
