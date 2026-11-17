@@ -168,6 +168,24 @@ _Avoid_: Quirk
 Odd behavior that follows consistently from the original's rules. The port keeps it, and notes it in case it is readdressed later.
 _Avoid_: Original bug
 
+### Tracing the original
+
+**Probe**:
+An ActionScript file that is put in front of a build's first frame script and calls `trace()`, so the original logs what it does while it runs. Each Probe is one file in `dev/probes/`. The goto Probe logs every `gotoAndStop` and `gotoAndPlay` call that has a receiver.
+_Avoid_: Injected script
+
+**Traced copy**:
+A copy of the web build or the Steam build with the Probes in it, as `just trace-swf` builds it.
+_Avoid_: Debug copy, patched SWF
+
+**Traced run**:
+One play of a Traced copy in one player, the Flash 14 debug player or Ruffle, along a fixed route. It is named for the build and the player, such as `web_flash`.
+_Avoid_: Debug session
+
+**Trace log**:
+The raw log a player wrote during one Traced run, saved in `references/traced_runs/`. Its GOTO lines are the goto Probe's records.
+_Avoid_: Goto log
+
 ### Fonts
 
 **Device font**:
