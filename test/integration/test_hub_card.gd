@@ -7,18 +7,28 @@ extends GutTest
 const CardScene = preload("res://scenes/ui/hub_card.tscn")
 const HotbarScene = preload("res://scenes/ui/hotbar.tscn")
 
+const TEST_SAVE_DIR := "user://test_hub_card_saves/"
+
 var _save_before: PlayerSave
 var _slot_before: int
 
 
+# The Save button writes the current slot, so these tests write into a folder of
+# their own and never into the player's real saves.
 func before_each() -> void:
 	_save_before = GameData.current_save
 	_slot_before = GameData.current_slot
+	DirAccess.make_dir_recursive_absolute(TEST_SAVE_DIR)
+	GameData.save_dir = TEST_SAVE_DIR
 
 
 func after_each() -> void:
 	GameData.current_save = _save_before
 	GameData.current_slot = _slot_before
+	GameData.save_dir = GameData.SAVE_DIR
+	for file: String in DirAccess.get_files_at(TEST_SAVE_DIR):
+		DirAccess.remove_absolute(TEST_SAVE_DIR + file)
+	DirAccess.remove_absolute(TEST_SAVE_DIR)
 	GameTooltip.hide_tooltip()
 
 
@@ -180,7 +190,10 @@ func test_the_game_scene_opens_the_card_from_save_and_the_card_covers_the_hotbar
 	stage.add_child(game)
 	await wait_process_frames(2)
 	var hotbar: Control = game.get_node("Hotbar")
-	var card: HubCard = game.get_node("HubCard")
+	var card: HubCard = game.get_node_or_null("HubCard")
+	assert_not_null(card, "scenes/game.tscn has the Info card")
+	if card == null:
+		return
 	assert_false(card.visible)
 	_click(hotbar.get_node("%SaveButton"))
 	assert_true(card.visible, "Save shows the card in the game scene")
