@@ -254,8 +254,11 @@ This tool checks how it looks: the art, the fills and the shadows.
   `SCENES.compare_strip` removes the fade (2837), Windows, card, banners,
   tooltip, animated orbs and member bars from frame 181. Orb positions,
   scales and button rects are checked in all seven zone records instead.
-  The first score is p99 37, with the 20 px control at 195. Two things in the
-  diff are not port faults to fix here. The port draws the Options and Re-Spec
+  The score is p99 74, with the 20 px control at 195. It was 37 until the six
+  hotbar squares moved 13 px down to the Steam build's row. The reference is
+  the web build, which holds them higher, so the six squares are the whole
+  rise in the diff. The rect test checks their place against the Steam build.
+  Two more things in the diff are not port faults to fix here. The port draws the Options and Re-Spec
   icons at half alpha, and their behavior stays with their own tasks. ffdec
   cuts the zone fill's Glow off at a hard box, (496, 506.5) 269.25x31.75, when
   it renders the fill inside sprite 3149, whose placement has a DropShadow.
