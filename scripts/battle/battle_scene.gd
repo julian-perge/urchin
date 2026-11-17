@@ -128,6 +128,11 @@ var _buff_tick_due: bool = false
 # The Hall window is shape 333, which the battle frame places with clipDepth 340,
 # so it clips the sky, the hall and the fighters. HallSpace sits inside it at the
 # opposite offset, so everything under HallSpace keeps its Stage coordinates.
+# The window is black because the original shows black above the sky strip: a
+# render of the frame reads (0, 0, 0) at every pixel between shape 333's top
+# edge at y = 130 and the sky. Do not sample the sky art for that color instead:
+# the SWF renders are trimmed to their own soft top edge, so five of the nine
+# skies read alpha 0 at row 0 centre and SEA reads 0.37.
 @onready var hall_window: ColorRect = $HallWindow
 @onready var _hall_space: Control = $HallWindow/HallSpace
 @onready var battle_screen_clip: BattleScreenClip = $HallWindow/HallSpace/BattleScreenClip
@@ -280,7 +285,7 @@ func _play_cutscene_before(cutscene_id: String) -> void:
 # The original composites a sky layer behind the hall art; the hall PNGs have a
 # transparent sky region. The sky art is a wide horizon STRIP, not a
 # full-screen image - it sits with its bottom on the ground line, and the area
-# above it is filled with SKY_FILL_COLOR.
+# above it shows the black of the Hall window.
 #
 # The hall and the sky are two independent per-battle fields, not one key: the
 # original drives DefineSprite 3435 from Krin.ZoneBG and DefineSprite 3454 from
@@ -293,12 +298,6 @@ func _play_cutscene_before(cutscene_id: String) -> void:
 # it and put every sky's ground line at y = 292.0; the real line differs per
 # label, and ROME's is at 306.0.
 const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
-
-# HallWindow is black because the original shows black above the strip: a render
-# of the frame reads (0, 0, 0) at every pixel between shape 333's top edge at
-# y = 130 and the sky. Do not sample the sky art for it instead: the SWF renders
-# are trimmed to their own soft top edge, so five of the nine skies read alpha 0
-# at row 0 centre and SEA reads 0.37.
 
 var _battle_layout: Dictionary = {}
 
