@@ -195,8 +195,10 @@ This tool checks how it looks: the art, the fills and the shadows.
 - **The config is `dev/screen_compare/screens.json`.** Each Screen or Window
   build issue adds one entry: the scene and one or both modes. `chrome` scores
   the whole frame with every edit text stripped against the scene with every
-  Label hidden. `panels` scores only the scene nodes in `nodes` against only
-  the frame depths that place them. The tool and the capture scene both read
+  Label hidden. A `chrome` mode may also name `hide_names`: the capture then
+  hides every node with one of those names, and what is under it. `panels`
+  scores only the scene nodes in `nodes` against only the frame depths that
+  place them. The tool and the capture scene both read
   this file, so a new entry does not change the tool.
   `just compare-screen --list` prints the entries.
 - **The config types no SWF number.** The tool reads the scene's timeline, its
@@ -242,13 +244,20 @@ This tool checks how it looks: the art, the fills and the shadows.
   its own drawing clear (`self_modulate`), not with `visible`, because a hidden
   child leaves a `FloatBox` and the pieces after it would move. A node whose
   shader ignores `COLOR` stays visible, so check the capture.
-- **Faces are left out.** The tool reads the scene's `face` pieces from
-  `test/fixtures/screen_rects.json` and removes them from the mask. The
-  game sets each face from its data, and ffdec runs no ActionScript, so the
-  reference cannot hold the same face. The `chrome` render of KRINMENU's `win`
-  frame shows one face in all three rows.
+- **Faces and dolls are left out.** The tool reads the scene's `face` and
+  `doll` pieces from `test/fixtures/screen_rects.json` and removes them from
+  the mask. The game sets each face and each doll from its data, and ffdec
+  runs no ActionScript, so the reference cannot hold the same art. The
+  `chrome` render of KRINMENU's `win` frame shows one face in all three rows.
 - **Captures load as they are.** The godot-mcp captures are sRGB at the Stage
   size, 800x575. The tool refuses any other size.
+- **The Store score is p99 63, with the 20 px control at 127.** The `store`
+  entry sets `hide_names` (`ItemIcon`, `Highlight`, `Body`), which hides the
+  item icons and the doll that the game sets from its data. In the diff, the
+  seven empty ware slots are the largest error: the original hides them with a
+  script and ffdec draws them, and the port hides them. The reference also
+  has the 36 inventory slots on a white item sheet, which `compare_strip`
+  (2064) takes out.
 - **The Hub score covers static chrome.** The `hub` entry uses
   `test/fixtures/screen_rects/hub_chrome.tscn`: Prison art and the hotbar.
   `SCENES.compare_strip` removes the fade (2837), Windows, card, banners,

@@ -216,3 +216,84 @@ func test_clicking_a_ware_leaves_its_slot_untinted():
 	GameData.current_save.euro = 0.0
 	ware.slot_clicked.emit(ware)
 	assert_eq(ware.modulate, Color.WHITE, "after a refused purchase")
+
+
+# The Store places a Doll in its scene, as the Inventory does, and the equip
+# slots in the scene are the ones that EquipDollView connects. The record's
+# position is fitted from the SWF's 16 part clips of the shop frame.
+func _store_pieces() -> Dictionary:
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RECORD_PATH))
+	return record["scenes"]["res://scenes/ui/store/store_window.tscn"]["pieces"]
+
+
+func test_the_doll_stands_where_the_part_placements_put_it_facing_left_behind_the_slots():
+	GameData.current_save = PlayerSave.new_game("StoreDoll", 0)
+	var window = add_child_autofree(StoreWindowScene.instantiate())
+	var doll: Node2D = window.equip_view.get_node("Doll")
+	var placed: Dictionary = _store_pieces()["CentreTopPanel/Content/EquipDollView/Doll"]
+	assert_eq(doll.owner, window, "the doll is a node of store_window.tscn")
+	assert_almost_eq(doll.global_position, Vector2(placed["position"][0], placed["position"][1]), Vector2(0.01, 0.01))
+	assert_almost_eq(doll.scale, Vector2(placed["scale"][0], placed["scale"][1]), Vector2(0.0001, 0.0001))
+	assert_lt(doll.scale.x, 0.0, "the doll is mirrored to face left")
+	for i in 7:
+		assert_lt(doll.get_index(), window.equip_view.get_node("Slot%d" % i).get_index())
+
+
+func test_the_store_keeps_the_scene_doll_and_has_no_second_one():
+	GameData.current_save = PlayerSave.new_game("StoreDoll", 0)
+	var window = add_child_autofree(StoreWindowScene.instantiate())
+	var dolls: Array[Node] = window.find_children("*", "CharacterVisual", true, false)
+	assert_eq(dolls.size(), 1)
+	assert_eq(window.find_children("*", "EquipDollView", true, false).size(), 1)
+	window.refresh_store()
+	assert_eq(window.find_children("*", "CharacterVisual", true, false), dolls)
+	var doll: CharacterVisual = window.equip_view.get_node("Doll")
+	assert_gt(doll.get_bounds().size.x, 0.0, "refresh dresses the doll")
+
+
+func test_the_seven_equip_slots_are_scene_nodes_at_the_slot_scale_of_the_frame():
+	var window = add_child_autofree(StoreWindowScene.instantiate())
+	var slots: Array[Node] = window.equip_view.find_children("*", "ItemSlot", true, false)
+	assert_eq(slots.size(), 7)
+	for i in 7:
+		var slot: ItemSlot = window.equip_view.get_node("Slot%d" % i)
+		assert_eq(slot.owner, window)
+		assert_eq(int(slot.get_meta("equip_index")), i)
+		assert_almost_eq(slot.scale, Vector2(0.86, 0.86), Vector2(0.001, 0.001))
+		assert_almost_eq(slot.get_global_rect().size.x, 26.89, 0.05, "the slot draws at 0.86 of its art")
+
+
+# A click on an equip slot of the Store unequips the item, and a click on an
+# item of the right column equips it.
+func test_equip_and_unequip_work_through_the_scene_slots():
+	GameData.current_save = PlayerSave.new_game("StoreEquip", 0)
+	var item: GameItem = null
+	for candidate: GameItem in ItemManagerAuto.items_by_id.values():
+		if candidate.required_level <= 1 and candidate.required_unit_id == 0 and Equipment.slot_for_item(candidate) != -1:
+			item = candidate
+			break
+	assert_not_null(item)
+	if item == null:
+		return
+	GameData.current_save.item_array[0] = item.id
+	var window = add_child_autofree(StoreWindowScene.instantiate())
+	window.refresh_store()
+	var equip_index: int = Equipment.slot_for_item(item)
+	var bag_slot: ItemSlot = window.right_column.slots[0]
+	window.right_column.item_selected.emit(bag_slot)
+	assert_eq(int(GameData.current_save.equip_array[equip_index]), item.id, "the click equipped it")
+	assert_eq((window.equip_view.get_node("Slot%d" % equip_index) as ItemSlot).item, item, "the slot shows it")
+	var slot: ItemSlot = window.equip_view.get_node("Slot%d" % equip_index)
+	slot.slot_clicked.emit(slot)
+	assert_eq(int(GameData.current_save.equip_array[equip_index]), 0, "the click unequipped it")
+	assert_eq(int(GameData.current_save.item_array[0]), item.id)
+
+
+# EquipDollView holds no second way to build a doll: its setup() takes no
+# placement and finds the Doll that the scene places.
+func test_equip_doll_view_setup_takes_no_arguments_and_needs_the_scene_doll():
+	var view: EquipDollView = autofree(EquipDollView.new())
+	for method: Dictionary in view.get_method_list():
+		if method["name"] == "setup":
+			assert_eq((method["args"] as Array).size(), 0, "setup() has no placement parameters")
+	assert_eq(view.find_children("*", "CharacterVisual", true, false).size(), 0, "a bare view builds no doll")

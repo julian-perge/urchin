@@ -47,7 +47,7 @@ func _row_labels(column: Node) -> Array[Label]:
 
 func _build_left_panel() -> void:
 	equip_view = $LeftPanel/Content/EquipDollView
-	equip_view.setup({})
+	equip_view.setup()
 	equip_view.equip_slot_clicked.connect(_on_equip_slot_clicked)
 
 

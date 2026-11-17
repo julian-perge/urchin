@@ -179,6 +179,9 @@ class Piece:
     # draws several boxes with one line, for a piece the port builds as one
     # Panel for each box.
     path: int | None = None
+    # For a "doll": whether the frame places the female set of the 15 parts
+    # next to the male one. The Inventory frame does and the shop frame does not.
+    female_set: bool = True
 
     def __post_init__(self) -> None:
         if (self.depth is None) == (self.instance is None):
@@ -866,11 +869,14 @@ SCENES[INVENTORY_SCENE] = Scene(
 # holds the hint, the edit text 3018 (vb1), and the 15 wares, sprite 3013 as
 # dropSlot0 to dropSlot14, drawn with the art of the inventory slot 2986. The
 # first piece of the frame's grid, itemSlot0 at depth 30, is the sprite that
-# art was rendered from. The 31 clips of the doll and the 7 equip slots stay
-# port only until #235 records them. StatusLabel has no piece in the SWF.
+# art was rendered from. The 7 equip slots, sprite 2984 scaled to 0.86, use the
+# same art at that scale. The frame places the doll as 16 clips, the 15 male
+# parts and the ground shadow 143 at depth 1229, and the port draws it as the
+# one Doll, with no ground shadow. StatusLabel has no piece in the SWF.
 STORE_SCENE = "res://scenes/ui/store/store_window.tscn"
 STORE_WARES = 15
 STORE_WARE_COLUMNS = 5
+STORE_EQUIP_SLOTS = 7
 SCENES[STORE_SCENE] = Scene(
     timeline=KRINMENU,
     frame="shop",
@@ -887,6 +893,19 @@ SCENES[STORE_SCENE] = Scene(
         "LeftPanel/Content/KeeperArt": Piece("art_set", 25, character=3036),
         "LeftPanel/Content/KeeperLine": Piece("text", 1101, character=3019),
         "CentreBottomPanel/Content/Hint": Piece("text", 1102, character=3018),
+        "CentreTopPanel/Content/EquipDollView/Doll": Piece(
+            "doll", 1229, character=143, female_set=False
+        ),
+        **{
+            f"CentreTopPanel/Content/EquipDollView/Slot{i}": Piece(
+                "art",
+                None,
+                art="slot_inventory",
+                instance=f"playerSlot{i}",
+                rendered_at=30,
+            )
+            for i in range(STORE_EQUIP_SLOTS)
+        },
         **{
             f"CentreBottomPanel/Content/Wares/Row{i // STORE_WARE_COLUMNS}"
             f"/Slot{i % STORE_WARE_COLUMNS}": Piece(
@@ -907,7 +926,12 @@ SCENES[STORE_SCENE] = Scene(
     },
     port_only=(
         "CentreBottomPanel/Content/StatusLabel",
-        "EquipDollView",
+        "CentreTopPanel/Content/EquipDollView/Doll/Body",
+        *(
+            f"CentreTopPanel/Content/EquipDollView/Slot{i}/{node}"
+            for i in range(STORE_EQUIP_SLOTS)
+            for node in ("ItemIcon", "Highlight")
+        ),
         *(
             f"CentreBottomPanel/Content/Wares/Row{i // STORE_WARE_COLUMNS}"
             f"/Slot{i % STORE_WARE_COLUMNS}/{node}"
@@ -919,6 +943,11 @@ SCENES[STORE_SCENE] = Scene(
             for node in SCENES["res://scenes/ui/window/right_column.tscn"].port_only
         ),
     ),
+    # Each of the frame's 36 inventory slots (2986) holds the item sheet 2064,
+    # whose frame the game script sets to the item (DefineSprite_3142/frame_16/
+    # DoAction.as). ffdec runs no script and draws a white square there, so the
+    # compare tool takes the sheet out and scores the empty slot.
+    compare_strip=(2064,),
 )
 
 
@@ -1129,13 +1158,21 @@ def art_record(
     chrome: dict,
     sprite_origins: dict | None = None,
     textures: str = CHROME_TEXTURES,
+    scale: float = 1.0,
 ) -> dict:
     """-> the record of the render record `chrome` of piece `name`, whose PNG
     is in the res:// folder `textures`. A rect measured from a sprite is moved
     to the stage by that sprite's origin in `sprite_origins`, keyed as
-    "sprite <id>"."""
+    "sprite <id>". When the frame scales that sprite by `scale`, the rect's
+    offset and size scale with it, and the PNG holds 1 / scale as many pixels
+    for each Stage px, so the zoom does too."""
     relative_to = chrome["relative_to"]
     shift = (0.0, 0.0)
+    if scale != 1.0 and relative_to == "stage":
+        raise ValueError(
+            f"{name}'s rect is measured from the Stage, which a scale of {scale}"
+            " cannot move"
+        )
     if relative_to != "stage":
         if relative_to not in (sprite_origins or {}):
             raise ValueError(
@@ -1146,10 +1183,15 @@ def art_record(
     x, y, w, h = chrome["rect"]
     return {
         "kind": "art",
-        "rect": [round(x + shift[0], 4), round(y + shift[1], 4), w, h],
+        "rect": [
+            round(shift[0] + x * scale, 4),
+            round(shift[1] + y * scale, 4),
+            round(w * scale, 4),
+            round(h * scale, 4),
+        ],
         "texture": f"{textures}/{name}.png",
         "size": chrome["size"],
-        "zoom": chrome["zoom"],
+        "zoom": chrome["zoom"] if scale == 1.0 else round(chrome["zoom"] / scale, 6),
     }
 
 
@@ -1483,6 +1525,7 @@ def doll_record(
     rig: dict[str, list[float]],
     offsets: dict[str, dict],
     origin: tuple[float, float],
+    female_set: bool = True,
 ) -> dict:
     """-> the record of the doll that `layers` place as loose clips: where the
     rig's stand pose lands on the Stage, as the doll's position and scale, and
@@ -1494,14 +1537,17 @@ def doll_record(
     fitted from the parts' matrices, and the position is the median over the
     parts of where each placed origin puts the doll. The median holds against
     a part whose origin the SWF moves off the pose, which the menu does with
-    arm1 by 1 px in x and y."""
+    arm1 by 1 px in x and y.
+
+    The frame places the male parts, the ground shadow and, when `female_set`
+    is true, the same parts again with an _f suffix."""
     held = [layer for layer in layers.values() if layer.character_id in DOLL_CHARACTERS]
-    expected = 2 * len(parts) + 1
+    expected = (2 if female_set else 1) * len(parts) + 1
     if len(held) != expected:
         raise ValueError(f"the frame places {len(held)} doll clips, not {expected}")
     names = {layer.name: layer for layer in held if layer.name}
     wanted = [name for name, _code in parts]
-    for name in (*wanted, *(f"{name}_f" for name in wanted)):
+    for name in (*wanted, *(f"{name}_f" for name in wanted if female_set)):
         if name not in names:
             raise ValueError(f"the frame places no doll clip named {name}")
     placed = {name: names[name] for name in wanted}
@@ -1619,6 +1665,7 @@ def scene_record(
         placed = layer
         piece_origin = origin
         sprite_origins = {}
+        art_scale = 1.0
         holder_shadow = None
         if piece.inner_depth is None:
             sprite = f"sprite {layer.character_id}"
@@ -1667,17 +1714,24 @@ def scene_record(
                 rendered = layers[piece.rendered_at]
                 if entry["relative_to"] == f"sprite {rendered.character_id}":
                     # #211 shares the grid's art with equip slots. Place that
-                    # sprite-local render at the equip slot's own origin.
-                    if _scale(layer.matrix) != _scale(rendered.matrix):
+                    # sprite-local render at the equip slot's own origin, and
+                    # at its own scale: the shop frame scales them to 0.86.
+                    scale_x, scale_y = _scale(layer.matrix)
+                    rendered_x, rendered_y = _scale(rendered.matrix)
+                    if scale_x / rendered_x != scale_y / rendered_y:
                         raise ValueError(
-                            "shared sprite art has a different placement scale"
+                            "shared sprite art has to keep the same scale in x and y"
                         )
-                    sprite_origins[entry["relative_to"]] = inner_origin(
-                        layer.matrix, piece_origin
+                    art_scale = scale_x / rendered_x
+                    sprite_origins[entry["relative_to"]] = (
+                        piece_origin[0] + layer.matrix[4] / render.TWIPS,
+                        piece_origin[1] + layer.matrix[5] / render.TWIPS,
                     )
                 else:
                     entry = moved_art(entry, layer.matrix, rendered.matrix)
-            pieces[path] = art_record(piece.art, entry, sprite_origins, textures)
+            pieces[path] = art_record(
+                piece.art, entry, sprite_origins, textures, art_scale
+            )
         elif piece.kind == "art_set":
             crop = json.loads(store_art.RECORD.read_text())
             pieces[path] = art_set_record(
@@ -1715,6 +1769,7 @@ def scene_record(
                 rig["frames"][stand],
                 json.loads(DOLL_OFFSETS.read_text()),
                 piece_origin,
+                piece.female_set,
             )
         else:
             raise ValueError(f"{path}: unknown piece kind {piece.kind!r}")

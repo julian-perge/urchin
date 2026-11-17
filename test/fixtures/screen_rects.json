@@ -4420,6 +4420,133 @@
       "distance": 5.0
      }
     },
+    "CentreTopPanel/Content/EquipDollView/Doll": {
+     "kind": "doll",
+     "look": {
+      "gender": "M",
+      "hair": "ONE",
+      "skin": "ONE"
+     },
+     "position": [
+      396.8755,
+      151.4551
+     ],
+     "rect": [
+      377.0351,
+      104.0568,
+      40.6706,
+      92.7902
+     ],
+     "scale": [
+      -1.1249,
+      1.1249
+     ]
+    },
+    "CentreTopPanel/Content/EquipDollView/Slot0": {
+     "kind": "art",
+     "rect": [
+      287.5922,
+      104.0422,
+      26.8865,
+      26.8865
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.64918
+    },
+    "CentreTopPanel/Content/EquipDollView/Slot1": {
+     "kind": "art",
+     "rect": [
+      443.2422,
+      104.0422,
+      26.8865,
+      26.8865
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.64918
+    },
+    "CentreTopPanel/Content/EquipDollView/Slot2": {
+     "kind": "art",
+     "rect": [
+      287.5922,
+      138.4922,
+      26.8865,
+      26.8865
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.64918
+    },
+    "CentreTopPanel/Content/EquipDollView/Slot3": {
+     "kind": "art",
+     "rect": [
+      443.2422,
+      138.4922,
+      26.8865,
+      26.8865
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.64918
+    },
+    "CentreTopPanel/Content/EquipDollView/Slot4": {
+     "kind": "art",
+     "rect": [
+      443.2422,
+      172.8922,
+      26.8865,
+      26.8865
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.64918
+    },
+    "CentreTopPanel/Content/EquipDollView/Slot5": {
+     "kind": "art",
+     "rect": [
+      321.9922,
+      172.8922,
+      26.8865,
+      26.8865
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.64918
+    },
+    "CentreTopPanel/Content/EquipDollView/Slot6": {
+     "kind": "art",
+     "rect": [
+      287.5922,
+      172.8922,
+      26.8865,
+      26.8865
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.64918
+    },
     "LeftPanel": {
      "border": 1,
      "fill": "373737ff",
@@ -5157,7 +5284,21 @@
    },
    "port_only": [
     "CentreBottomPanel/Content/StatusLabel",
-    "EquipDollView",
+    "CentreTopPanel/Content/EquipDollView/Doll/Body",
+    "CentreTopPanel/Content/EquipDollView/Slot0/ItemIcon",
+    "CentreTopPanel/Content/EquipDollView/Slot0/Highlight",
+    "CentreTopPanel/Content/EquipDollView/Slot1/ItemIcon",
+    "CentreTopPanel/Content/EquipDollView/Slot1/Highlight",
+    "CentreTopPanel/Content/EquipDollView/Slot2/ItemIcon",
+    "CentreTopPanel/Content/EquipDollView/Slot2/Highlight",
+    "CentreTopPanel/Content/EquipDollView/Slot3/ItemIcon",
+    "CentreTopPanel/Content/EquipDollView/Slot3/Highlight",
+    "CentreTopPanel/Content/EquipDollView/Slot4/ItemIcon",
+    "CentreTopPanel/Content/EquipDollView/Slot4/Highlight",
+    "CentreTopPanel/Content/EquipDollView/Slot5/ItemIcon",
+    "CentreTopPanel/Content/EquipDollView/Slot5/Highlight",
+    "CentreTopPanel/Content/EquipDollView/Slot6/ItemIcon",
+    "CentreTopPanel/Content/EquipDollView/Slot6/Highlight",
     "CentreBottomPanel/Content/Wares/Row0/Slot0/ItemIcon",
     "CentreBottomPanel/Content/Wares/Row0/Slot0/Highlight",
     "CentreBottomPanel/Content/Wares/Row0/Slot1/ItemIcon",

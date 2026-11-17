@@ -80,22 +80,24 @@ def test_a_box_mask_covers_every_pixel_the_rect_touches():
     assert np.array_equal(mask, expected)
 
 
-def test_face_boxes_are_the_face_pieces_of_the_scene_in_the_rect_record():
+def test_masked_boxes_are_the_face_and_doll_pieces_of_the_scene_in_the_rect_record():
     record = {
         "scenes": {
             "res://scenes/a.tscn": {
                 "pieces": {
                     "Row/Face": {"kind": "face", "rect": [1.0, 2.0, 3.0, 4.0]},
+                    "Row/Doll": {"kind": "doll", "rect": [5.0, 6.0, 7.0, 8.0]},
                     "Row/Name": {"kind": "text", "rect": [9.0, 9.0, 9.0, 9.0]},
                 }
             }
         }
     }
 
-    assert screen_compare.face_boxes(record, "res://scenes/a.tscn") == [
-        (1.0, 2.0, 3.0, 4.0)
+    assert screen_compare.masked_boxes(record, "res://scenes/a.tscn") == [
+        (1.0, 2.0, 3.0, 4.0),
+        (5.0, 6.0, 7.0, 8.0),
     ]
-    assert screen_compare.face_boxes(record, "res://scenes/other.tscn") == []
+    assert screen_compare.masked_boxes(record, "res://scenes/other.tscn") == []
 
 
 def test_the_score_counts_only_masked_pixels_where_the_reference_is_opaque():
@@ -204,6 +206,9 @@ def test_a_second_entry_loads_from_the_config_file_alone(tmp_path):
         ({"chrome": {}}, "no bar"),
         ({"chrome": {"bar": "5"}}, "not a number"),
         ({"chrome": {"bar": True}}, "not a number"),
+        ({"chrome": {"bar": 5, "hide_names": "ItemIcon"}}, "list of node names"),
+        ({"chrome": {"bar": 5, "hide_names": [3]}}, "list of node names"),
+        ({"panels": {**PANELS, "hide_names": ["Body"]}}, "only chrome mode"),
     ],
 )
 def test_a_config_entry_that_breaks_the_format_is_refused(tmp_path, modes, message):
@@ -211,6 +216,14 @@ def test_a_config_entry_that_breaks_the_format_is_refused(tmp_path, modes, messa
 
     with pytest.raises(screen_compare.CompareError, match=message):
         screen_compare.load_config(path, SCENES)
+
+
+def test_a_chrome_mode_may_hide_nodes_by_name(tmp_path):
+    path = write_config(
+        tmp_path, {"ok": entry(chrome={"bar": 5, "hide_names": ["ItemIcon", "Body"]})}
+    )
+
+    assert "chrome" in screen_compare.load_config(path, SCENES)["ok"].modes
 
 
 @pytest.mark.parametrize(
