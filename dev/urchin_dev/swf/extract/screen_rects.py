@@ -63,7 +63,8 @@
 # The record reads the web build, sonny-2-2900.swf. A piece that names a
 # `steam` placement is moved to where the Steam build, SONNY2.swf, places it
 # on the same frame. The six hotbar slots do: the web build places them 13 px
-# higher, over its Armor Games strip, which the port leaves out.
+# higher. Its Armor Games strip 3176 is an overlay under that row and does not
+# move the buttons.
 #
 # A timeline other than the root is measured from where the root's Navigation
 # frame places it, which for KRINMENU is (400.50, 222.40).
