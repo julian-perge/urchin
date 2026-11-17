@@ -6,9 +6,14 @@
 # Battles take over via ZoneManager's scene switch and return here.
 extends Control
 
+# dev/converted_json/battle_hints.json, from convert_battle_hints.
+const BATTLE_HINTS_FILE := "res://dev/converted_json/battle_hints.json"
+
 @onready var zone_host: Control = $ZoneHost
+@onready var _hub_card: HubCard = $HubCard
 
 var _current_zone_scene: Node = null
+var _hint_used: bool = false
 
 
 # Every time the hub opens, after a load or on the return from a battle, this
@@ -54,6 +59,28 @@ func _load_zone(zone_id: int) -> void:
 
 func set_art_visible(art_visible: bool) -> void:
 	zone_host.visible = art_visible
+
+
+# Shows the hint card for the battle just won, once for each win, as the
+# original's krinNavTutSpeech does (frame_42/DoAction_21.as:62-76). The original
+# clears its flag Krin.tutSpeecher on every win and sets it on the first call,
+# and the port builds a new Hub for each win, so _hint_used starts false and
+# needs no reset (DECODED_ALGORITHMS.md, "Post-battle hint"). battle_hints.json
+# gives each battle's index into NAVTITLE2 and NAVTEXT2. Battle 33 has an index
+# but no text, so it shows nothing. The Tutorial option is not checked, as in
+# the original. Nothing calls this method until #241 lands.
+func show_battle_hint(battle_id: int) -> void:
+	if _hint_used:
+		return
+	_hint_used = true
+	var file := FileAccess.open(BATTLE_HINTS_FILE, FileAccess.READ)
+	if file == null:
+		push_error("game: cannot open %s" % BATTLE_HINTS_FILE)
+		return
+	var hints: Dictionary = JSON.parse_string(file.get_as_text())
+	var index: int = int(hints.get(str(battle_id), -1))
+	if Strings.has("NAVTITLE2", index) and Strings.has("NAVTEXT2", index):
+		_hub_card.show_card(Strings.text("NAVTITLE2", index), Strings.text("NAVTEXT2", index))
 
 
 func _sync_art_visibility() -> void:

@@ -1,13 +1,14 @@
 # test_hub_card.gd - the Hub's Info card (scenes/ui/hub_card.tscn): what it
-# shows, that it takes every click while it shows, its close prompt, and the
-# Save button that opens it. Where the card's pieces sit is checked by
-# test_screen_rects.gd.
+# shows, that it takes every click while it shows, its close prompt, the Save
+# button that opens it, and the post-battle hint the Hub shows on it. Where the
+# card's pieces sit is checked by test_screen_rects.gd.
 extends GutTest
 
 const CardScene = preload("res://scenes/ui/hub_card.tscn")
 const HotbarScene = preload("res://scenes/ui/hotbar.tscn")
 
 const TEST_SAVE_DIR := "user://test_hub_card_saves/"
+const HINTS_FILE := "res://dev/converted_json/battle_hints.json"
 
 var _save_before: PlayerSave
 var _slot_before: int
@@ -177,6 +178,79 @@ func test_a_save_that_fails_shows_no_card():
 	var hub: Dictionary = await _hub()
 	_click(hub["hotbar"].get_node("%SaveButton"))
 	assert_false((hub["card"] as HubCard).visible)
+
+
+# A Hub as scenes/game.tscn builds it. The hint tests free it with
+# _free_hub() before they build the next one, because the card is found by group
+# and the first card in the group answers.
+func _hub_scene() -> Control:
+	var game: Control = load("res://scenes/game.tscn").instantiate()
+	_stage().add_child(game)
+	await wait_process_frames(2)
+	return game
+
+
+func _free_hub(game: Control) -> void:
+	game.get_viewport().free()
+
+
+func _hint_index(battle_id: int) -> int:
+	var hints: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(HINTS_FILE))
+	return int(hints[str(battle_id)])
+
+
+# The battles whose win shows a hint (frame_42/DoAction_21.as:26-56). The
+# original keys a seventh hint to battle 33, which does not exist.
+func test_show_battle_hint_shows_the_hint_of_battles_100_to_104_and_504():
+	GameData.current_save = PlayerSave.new_game("Hinter", 0)
+	var strings: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Strings.STRINGS_FILE))
+	var indices := {}
+	for battle_id: int in [100, 101, 102, 103, 104, 504]:
+		var game: Control = await _hub_scene()
+		var card: HubCard = game.get_node("HubCard")
+		game.show_battle_hint(battle_id)
+		var index: int = _hint_index(battle_id)
+		indices[index] = true
+		assert_true(card.visible, "battle %d shows the card" % battle_id)
+		assert_eq((card.get_node("%Title") as Label).text, strings["NAVTITLE2"][index], "title of %d" % battle_id)
+		assert_eq((card.get_node("%Body") as Label).text, strings["NAVTEXT2"][index], "text of %d" % battle_id)
+		_free_hub(game)
+	assert_eq(indices.size(), 6, "each of the six battles has a hint of its own")
+
+
+func test_show_battle_hint_shows_nothing_for_any_other_battle():
+	GameData.current_save = PlayerSave.new_game("Hinter", 0)
+	for battle_id: int in [2, 33, 99, 105, 200, 503, 505, 513]:
+		var game: Control = await _hub_scene()
+		game.show_battle_hint(battle_id)
+		assert_false((game.get_node("HubCard") as HubCard).visible, "battle %d shows no card" % battle_id)
+		_free_hub(game)
+
+
+# The original's Krin.tutSpeecher lets a win show one hint
+# (frame_42/DoAction_21.as:62-76). It resets on every win (frame_219/DoAction.as:70)
+# and the port builds a new Hub for each win, so the flag is the Hub's.
+func test_show_battle_hint_shows_a_hint_once_for_a_win():
+	GameData.current_save = PlayerSave.new_game("Hinter", 0)
+	var game: Control = await _hub_scene()
+	var card: HubCard = game.get_node("HubCard")
+	game.show_battle_hint(100)
+	assert_true(card.visible)
+	card.hide_card()
+	game.show_battle_hint(100)
+	assert_false(card.visible, "the same hint does not come back")
+	game.show_battle_hint(101)
+	assert_false(card.visible, "no other hint comes either")
+
+
+func test_a_hub_built_for_the_next_win_shows_the_hint_again():
+	GameData.current_save = PlayerSave.new_game("Hinter", 0)
+	var first: Control = await _hub_scene()
+	first.show_battle_hint(100)
+	_free_hub(first)
+	var second: Control = await _hub_scene()
+	second.show_battle_hint(100)
+	assert_true((second.get_node("HubCard") as HubCard).visible)
 
 
 # The tests above stack a hotbar and a card by hand. This one uses the real

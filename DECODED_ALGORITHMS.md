@@ -733,6 +733,23 @@ Ported: `scripts/ui/hotbar.gd`'s `_refresh` builds the right panel, and `scripts
 - The world map's zone buttons are the only other readers of these strings. They show `ZONES[sectionID]` and `ZONES2[sectionID]` as their tooltip's title and body (`DefineButton2_4155`
   on(rollOver), lines 3-4), and the port's map has no tooltips yet.
 
+## Post-battle hint (`krinNavTutSpeech`, frame_42/DoAction_21.as:26-76)
+
+Ported: `scripts/game.gd`'s `show_battle_hint` shows the card, and `convert_battle_hints` writes `dev/converted_json/battle_hints.json` from the table. Nothing calls `show_battle_hint` until #241 lands.
+
+- `Krin.progressSpeech[battle]` holds `[NAVTITLE2[n], NAVTEXT2[n]]` for six battles, in order: 100 to 104 get n 0 to 4, 504 gets 5, and 33 gets 6 (lines 26-61). `NAVTITLE2` and `NAVTEXT2` have
+  entries 0 to 5, so the entry for battle 33 holds two undefined values. No battle 33 exists in `battles.json`, and the port skips that entry.
+- `krinNavTutSpeech` does nothing when `Krin.tutSpeecher` is true. Otherwise it sets the flag, and when `progressSpeech[previousBattleSp]` has two entries, it shows the card with those two
+  texts, sets `PauseForScreen` and sets `previousBattleSp` to 0 (lines 62-76). It reads neither the Tutorial option nor the player's level.
+- `tutSpeecher` goes false on every win, with `previousBattleSp` set to the battle's id (`frame_219/DoAction.as:70-71`). It goes true on the first call, and on every load of a save
+  (`frame_42/DoAction_20.as:85`). So a win shows at most one hint, and a load drops a hint that a win left waiting.
+- Two buttons call it. Proceed calls it when the win did not level the player up and no cutscene or map follows (`DefineButton2_3004` on(release), line 27). Button 2853 calls it on press,
+  after it hides the menu and shows the hub art (`DefineButton2_2853` on(press), line 4). Sprite 3142 places 2853 at the `inventory` and `shop` labels only, which makes it the close button
+  of those two Windows. After a win that levelled the player up, Proceed calls nothing, so the hint waits until the player next closes the Inventory or the Store with 2853. A new win or a
+  load ends the wait. This is read from the AS and not confirmed in a live run.
+- The port's `show_battle_hint(battle_id)` keeps `tutSpeecher` as `_hint_used`, a field of the Hub. The port builds a new Hub after every win and every load, so the field is false in each
+  new Hub, which is the reset on a win. A load never calls the method, which is what the set-on-load does. The call from 2853's two Windows is not ported, and #325 owns it.
+
 ## Approximation audit (2026-07-21) - port pieces NOT yet source-faithful
 
 Everything below still stands in for original behavior, except the rows marked DONE; the ActionScript truth is already located, so no re-decoding is needed:

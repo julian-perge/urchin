@@ -129,6 +129,11 @@ clean:
     find . -type f \( -name '*.py[co]' -o -name '*~' -o -name '@*' -o -name '#*#' -o -name '*.orig' -o -name '*.rej' \) -delete
     rm -rf build dist
 
+[doc('Run convert_battle_hints, which converts the extracted data into JSON and Godot resources')]
+[group('convert')]
+convert-battle-hints *args:
+    uv run convert_battle_hints "$@"
+
 [doc('Run convert_battles, which converts the extracted data into JSON and Godot resources')]
 [group('convert')]
 convert-battles *args:
