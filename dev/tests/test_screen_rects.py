@@ -1007,3 +1007,37 @@ def test_a_rotated_sprite_in_the_chain_is_refused(monkeypatch):
     layer = _bar_chain(monkeypatch)
     with pytest.raises(ValueError, match="rotates or skews"):
         screen_rects.through_sprites(None, layer(2873, (1.0, 0.5, 0.0, 1.0, 0, 0)))
+
+
+def test_art_set_record_is_the_crop_and_the_list_of_pngs():
+    crop = {
+        "rect": [54.525, 99.2, 187.25, 141.25],
+        "relative_to": "stage",
+        "size": [749, 565],
+        "zoom": 4.0,
+    }
+    textures = ["res://store/shop0.png", "res://store/shop1.png"]
+    assert screen_rects.art_set_record(crop, textures) == {
+        "kind": "art_set",
+        "rect": [54.525, 99.2, 187.25, 141.25],
+        "textures": textures,
+        "size": [749, 565],
+        "zoom": 4.0,
+    }
+
+
+def test_art_set_record_refuses_a_crop_measured_from_a_sprite():
+    crop = {
+        "rect": [0, 0, 1, 1],
+        "relative_to": "sprite 3036",
+        "size": [4, 4],
+        "zoom": 4.0,
+    }
+    with pytest.raises(ValueError, match="sprite 3036"):
+        screen_rects.art_set_record(crop, ["a.png"])
+
+
+def test_art_set_record_refuses_an_empty_list():
+    crop = {"rect": [0, 0, 1, 1], "relative_to": "stage", "size": [4, 4], "zoom": 4.0}
+    with pytest.raises(ValueError, match="at least one"):
+        screen_rects.art_set_record(crop, [])

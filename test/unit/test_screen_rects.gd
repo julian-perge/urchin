@@ -281,6 +281,17 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 					found.append_array(_art_size_problems(path, texture, entry))
 				else:
 					found.append("%s: an art piece that is not a TextureRect" % path)
+			"art_set":
+				# The piece shows one PNG of the set at a time, all of one size.
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+				if node is TextureRect:
+					var texture: Texture2D = (node as TextureRect).texture
+					var texture_path: String = texture.resource_path if texture else "no texture"
+					if not entry["textures"].has(texture_path):
+						found.append("%s: texture %s, expected one of %s" % [path, texture_path, entry["textures"]])
+					found.append_array(_art_size_problems(path, texture, entry))
+				else:
+					found.append("%s: an art_set piece that is not a TextureRect" % path)
 			"face":
 				# A face shows a different PNG for each fighter, so there is no
 				# texture to compare.
@@ -961,3 +972,32 @@ func test_control_an_info_spot_moved_20_px_fails() -> void:
 	assert_eq(found.size(), 2, str(found))
 	for problem: String in found:
 		assert_string_starts_with(problem, "InfoSpot4: ")
+
+
+const STORE_SCENE: String = "res://scenes/ui/store/store_window.tscn"
+
+
+func _store_record() -> Dictionary:
+	return _record()["scenes"][STORE_SCENE]
+
+
+# A ware slot is a TextureRect in a FloatBox row. Moving it 20 px fails its
+# top left and its bottom right (spec/107-store.md, Testing strategy).
+func test_control_a_ware_slot_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(STORE_SCENE)
+	assert_eq(_scene_problems(root, _store_record()), [] as Array[String], "the unchanged Store passes")
+	(root.get_node("CentreBottomPanel/Content/Wares/Row1/Slot2") as Control).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _store_record())
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "Row1/Slot2: top left")
+
+
+# The keeper's PNG changes with the shop, so the record lists all seven and
+# the check is that the node shows one of them at the recorded size.
+func test_control_a_keeper_art_from_another_folder_fails() -> void:
+	var root: Control = await _laid_out(STORE_SCENE)
+	(root.get_node("LeftPanel/Content/KeeperArt") as TextureRect).texture = load("res://assets/ui/window/backdrop.png")
+	var found: Array[String] = _scene_problems(root, _store_record())
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "KeeperArt: texture res://")
+	assert_string_contains(found[1] if found else "", "KeeperArt: texture size")

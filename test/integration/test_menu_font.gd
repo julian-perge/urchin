@@ -230,7 +230,7 @@ func test_menu_screens_are_bold_except_the_shop_dialogue():
 	var achievements = add_child_autofree(load("res://scenes/ui/menu/achievements_window.tscn").instantiate())
 	_assert_fonts(achievements, {"TitleLabel": [3136, 65], "Plate0/NameLabel": [3138, 65]})
 	var store = add_child_autofree(load("res://scenes/ui/store/store_window.tscn").instantiate())
-	_assert_fonts(store, {"DescriptionLabel": [3019, 295], "PurchaseHintLabel": [3018, 295]})
+	_assert_fonts(store, {"LeftPanel/Content/KeeperLine": [3019, 295], "CentreBottomPanel/Content/Hint": [3018, 295]})
 
 
 # KrinToolTipper (DefineSprite 2717) builds its own text fields in _sans and

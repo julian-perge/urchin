@@ -4141,6 +4141,1130 @@
    "port_only": [],
    "timeline": 0
   },
+  "res://scenes/ui/store/store_window.tscn": {
+   "frame": "shop",
+   "origin": [
+    400.5,
+    222.4
+   ],
+   "pieces": {
+    "CentreBottomPanel": {
+     "border": 1,
+     "fill": "1a1a1aff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      274.9788,
+      232.132,
+      212.9842,
+      175.9632
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "CentreBottomPanel/Content/Hint": {
+     "align": "left",
+     "color": "666666ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      290.2,
+      237.6,
+      183.3,
+      51.0
+     ]
+    },
+    "CentreBottomPanel/Content/Wares/Row0/Slot0": {
+     "kind": "art",
+     "rect": [
+      289.4,
+      276.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row0/Slot1": {
+     "kind": "art",
+     "rect": [
+      327.4,
+      276.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row0/Slot2": {
+     "kind": "art",
+     "rect": [
+      365.4,
+      276.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row0/Slot3": {
+     "kind": "art",
+     "rect": [
+      403.4,
+      276.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row0/Slot4": {
+     "kind": "art",
+     "rect": [
+      441.4,
+      276.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row1/Slot0": {
+     "kind": "art",
+     "rect": [
+      289.4,
+      314.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row1/Slot1": {
+     "kind": "art",
+     "rect": [
+      327.4,
+      314.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row1/Slot2": {
+     "kind": "art",
+     "rect": [
+      365.4,
+      314.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row1/Slot3": {
+     "kind": "art",
+     "rect": [
+      403.4,
+      314.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row1/Slot4": {
+     "kind": "art",
+     "rect": [
+      441.4,
+      314.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row2/Slot0": {
+     "kind": "art",
+     "rect": [
+      289.4,
+      352.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row2/Slot1": {
+     "kind": "art",
+     "rect": [
+      327.4,
+      352.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row2/Slot2": {
+     "kind": "art",
+     "rect": [
+      365.4,
+      352.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row2/Slot3": {
+     "kind": "art",
+     "rect": [
+      403.4,
+      352.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreBottomPanel/Content/Wares/Row2/Slot4": {
+     "kind": "art",
+     "rect": [
+      441.4,
+      352.15,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "CentreTopPanel": {
+     "border": 1,
+     "fill": "1a1a1aff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      274.9788,
+      81.5365,
+      212.9842,
+      137.0041
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "LeftPanel": {
+     "border": 1,
+     "fill": "373737ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      36.0698,
+      81.0751,
+      222.8052,
+      327.011
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "LeftPanel/Content/KeeperArt": {
+     "kind": "art_set",
+     "rect": [
+      54.525,
+      99.2,
+      187.25,
+      141.25
+     ],
+     "size": [
+      749,
+      565
+     ],
+     "textures": [
+      "res://assets/ui/store/backdrops/shop0.png",
+      "res://assets/ui/store/backdrops/shop1.png",
+      "res://assets/ui/store/backdrops/shop2.png",
+      "res://assets/ui/store/backdrops/shop3.png",
+      "res://assets/ui/store/backdrops/shop4.png",
+      "res://assets/ui/store/backdrops/shop5.png",
+      "res://assets/ui/store/backdrops/shop6.png"
+     ],
+     "zoom": 4.0
+    },
+    "LeftPanel/Content/KeeperLine": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      56.2,
+      259.15,
+      190.4,
+      134.1
+     ]
+    },
+    "RightColumn/Amount": {
+     "align": "left",
+     "color": "fad95aff",
+     "font_size": 22.0,
+     "kind": "text",
+     "line_pitch": 24.0,
+     "rect": [
+      539.1,
+      373.55,
+      112.4,
+      24.55
+     ]
+    },
+    "RightColumn/BarPanel": {
+     "border": 1,
+     "fill": "404040ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      503.5,
+      358.2,
+      249.05,
+      50.85
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "RightColumn/DeleteSlot/Art": {
+     "kind": "art",
+     "rect": [
+      707.55,
+      368.425,
+      31.0,
+      31.25
+     ],
+     "size": [
+      124,
+      125
+     ],
+     "texture": "res://assets/ui/window/delete_slot.png",
+     "zoom": 4.0
+    },
+    "RightColumn/EuroSign": {
+     "align": "right",
+     "color": "fad95aff",
+     "font_size": 31.0,
+     "kind": "text",
+     "rect": [
+      507.25,
+      366.9,
+      26.4,
+      39.4
+     ],
+     "text": "\u20ac"
+    },
+    "RightColumn/Grid/Row0/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row0/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      112.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row1/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      150.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row2/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      188.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row3/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      226.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row4/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      264.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot0": {
+     "kind": "art",
+     "rect": [
+      517.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot1": {
+     "kind": "art",
+     "rect": [
+      555.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot2": {
+     "kind": "art",
+     "rect": [
+      593.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot3": {
+     "kind": "art",
+     "rect": [
+      631.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot4": {
+     "kind": "art",
+     "rect": [
+      669.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/Grid/Row5/Slot5": {
+     "kind": "art",
+     "rect": [
+      707.4,
+      302.45,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/slot_inventory.png",
+     "zoom": 4.0
+    },
+    "RightColumn/SellSlot/Art": {
+     "kind": "art",
+     "rect": [
+      669.3,
+      368.425,
+      31.25,
+      31.25
+     ],
+     "size": [
+      125,
+      125
+     ],
+     "texture": "res://assets/ui/window/sell_slot.png",
+     "zoom": 4.0
+    },
+    "RightColumn/TallPanel": {
+     "border": 1,
+     "fill": "373737ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      503.5,
+      81.6,
+      249.05,
+      267.15
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "RightColumn/Title": {
+     "align": "center",
+     "color": "5e5e5eff",
+     "font_size": 13.0,
+     "kind": "text",
+     "rect": [
+      514.3,
+      89.1,
+      229.75,
+      17.9
+     ]
+    },
+    "WindowShell/Backdrop": {
+     "kind": "art",
+     "rect": [
+      13.25,
+      14.25,
+      776.75,
+      433.0
+     ],
+     "size": [
+      3107,
+      1732
+     ],
+     "texture": "res://assets/ui/window/backdrop.png",
+     "zoom": 4.0
+    },
+    "WindowShell/CloseArt": {
+     "kind": "art",
+     "rect": [
+      734.3,
+      29.675,
+      37.0,
+      36.5
+     ],
+     "size": [
+      148,
+      146
+     ],
+     "texture": "res://assets/ui/window/close_x.png",
+     "zoom": 4.0
+    },
+    "WindowShell/CloseButton": {
+     "kind": "hit",
+     "rect": [
+      738.6,
+      32.7,
+      30.0,
+      30.0
+     ]
+    }
+   },
+   "port_only": [
+    "CentreBottomPanel/Content/StatusLabel",
+    "EquipDollView",
+    "CentreBottomPanel/Content/Wares/Row0/Slot0/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row0/Slot0/Highlight",
+    "CentreBottomPanel/Content/Wares/Row0/Slot1/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row0/Slot1/Highlight",
+    "CentreBottomPanel/Content/Wares/Row0/Slot2/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row0/Slot2/Highlight",
+    "CentreBottomPanel/Content/Wares/Row0/Slot3/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row0/Slot3/Highlight",
+    "CentreBottomPanel/Content/Wares/Row0/Slot4/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row0/Slot4/Highlight",
+    "CentreBottomPanel/Content/Wares/Row1/Slot0/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row1/Slot0/Highlight",
+    "CentreBottomPanel/Content/Wares/Row1/Slot1/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row1/Slot1/Highlight",
+    "CentreBottomPanel/Content/Wares/Row1/Slot2/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row1/Slot2/Highlight",
+    "CentreBottomPanel/Content/Wares/Row1/Slot3/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row1/Slot3/Highlight",
+    "CentreBottomPanel/Content/Wares/Row1/Slot4/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row1/Slot4/Highlight",
+    "CentreBottomPanel/Content/Wares/Row2/Slot0/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row2/Slot0/Highlight",
+    "CentreBottomPanel/Content/Wares/Row2/Slot1/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row2/Slot1/Highlight",
+    "CentreBottomPanel/Content/Wares/Row2/Slot2/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row2/Slot2/Highlight",
+    "CentreBottomPanel/Content/Wares/Row2/Slot3/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row2/Slot3/Highlight",
+    "CentreBottomPanel/Content/Wares/Row2/Slot4/ItemIcon",
+    "CentreBottomPanel/Content/Wares/Row2/Slot4/Highlight",
+    "RightColumn/SellSlot",
+    "RightColumn/DeleteSlot",
+    "RightColumn/Grid/Row0/Slot0/ItemIcon",
+    "RightColumn/Grid/Row0/Slot0/Highlight",
+    "RightColumn/Grid/Row0/Slot1/ItemIcon",
+    "RightColumn/Grid/Row0/Slot1/Highlight",
+    "RightColumn/Grid/Row0/Slot2/ItemIcon",
+    "RightColumn/Grid/Row0/Slot2/Highlight",
+    "RightColumn/Grid/Row0/Slot3/ItemIcon",
+    "RightColumn/Grid/Row0/Slot3/Highlight",
+    "RightColumn/Grid/Row0/Slot4/ItemIcon",
+    "RightColumn/Grid/Row0/Slot4/Highlight",
+    "RightColumn/Grid/Row0/Slot5/ItemIcon",
+    "RightColumn/Grid/Row0/Slot5/Highlight",
+    "RightColumn/Grid/Row1/Slot0/ItemIcon",
+    "RightColumn/Grid/Row1/Slot0/Highlight",
+    "RightColumn/Grid/Row1/Slot1/ItemIcon",
+    "RightColumn/Grid/Row1/Slot1/Highlight",
+    "RightColumn/Grid/Row1/Slot2/ItemIcon",
+    "RightColumn/Grid/Row1/Slot2/Highlight",
+    "RightColumn/Grid/Row1/Slot3/ItemIcon",
+    "RightColumn/Grid/Row1/Slot3/Highlight",
+    "RightColumn/Grid/Row1/Slot4/ItemIcon",
+    "RightColumn/Grid/Row1/Slot4/Highlight",
+    "RightColumn/Grid/Row1/Slot5/ItemIcon",
+    "RightColumn/Grid/Row1/Slot5/Highlight",
+    "RightColumn/Grid/Row2/Slot0/ItemIcon",
+    "RightColumn/Grid/Row2/Slot0/Highlight",
+    "RightColumn/Grid/Row2/Slot1/ItemIcon",
+    "RightColumn/Grid/Row2/Slot1/Highlight",
+    "RightColumn/Grid/Row2/Slot2/ItemIcon",
+    "RightColumn/Grid/Row2/Slot2/Highlight",
+    "RightColumn/Grid/Row2/Slot3/ItemIcon",
+    "RightColumn/Grid/Row2/Slot3/Highlight",
+    "RightColumn/Grid/Row2/Slot4/ItemIcon",
+    "RightColumn/Grid/Row2/Slot4/Highlight",
+    "RightColumn/Grid/Row2/Slot5/ItemIcon",
+    "RightColumn/Grid/Row2/Slot5/Highlight",
+    "RightColumn/Grid/Row3/Slot0/ItemIcon",
+    "RightColumn/Grid/Row3/Slot0/Highlight",
+    "RightColumn/Grid/Row3/Slot1/ItemIcon",
+    "RightColumn/Grid/Row3/Slot1/Highlight",
+    "RightColumn/Grid/Row3/Slot2/ItemIcon",
+    "RightColumn/Grid/Row3/Slot2/Highlight",
+    "RightColumn/Grid/Row3/Slot3/ItemIcon",
+    "RightColumn/Grid/Row3/Slot3/Highlight",
+    "RightColumn/Grid/Row3/Slot4/ItemIcon",
+    "RightColumn/Grid/Row3/Slot4/Highlight",
+    "RightColumn/Grid/Row3/Slot5/ItemIcon",
+    "RightColumn/Grid/Row3/Slot5/Highlight",
+    "RightColumn/Grid/Row4/Slot0/ItemIcon",
+    "RightColumn/Grid/Row4/Slot0/Highlight",
+    "RightColumn/Grid/Row4/Slot1/ItemIcon",
+    "RightColumn/Grid/Row4/Slot1/Highlight",
+    "RightColumn/Grid/Row4/Slot2/ItemIcon",
+    "RightColumn/Grid/Row4/Slot2/Highlight",
+    "RightColumn/Grid/Row4/Slot3/ItemIcon",
+    "RightColumn/Grid/Row4/Slot3/Highlight",
+    "RightColumn/Grid/Row4/Slot4/ItemIcon",
+    "RightColumn/Grid/Row4/Slot4/Highlight",
+    "RightColumn/Grid/Row4/Slot5/ItemIcon",
+    "RightColumn/Grid/Row4/Slot5/Highlight",
+    "RightColumn/Grid/Row5/Slot0/ItemIcon",
+    "RightColumn/Grid/Row5/Slot0/Highlight",
+    "RightColumn/Grid/Row5/Slot1/ItemIcon",
+    "RightColumn/Grid/Row5/Slot1/Highlight",
+    "RightColumn/Grid/Row5/Slot2/ItemIcon",
+    "RightColumn/Grid/Row5/Slot2/Highlight",
+    "RightColumn/Grid/Row5/Slot3/ItemIcon",
+    "RightColumn/Grid/Row5/Slot3/Highlight",
+    "RightColumn/Grid/Row5/Slot4/ItemIcon",
+    "RightColumn/Grid/Row5/Slot4/Highlight",
+    "RightColumn/Grid/Row5/Slot5/ItemIcon",
+    "RightColumn/Grid/Row5/Slot5/Highlight"
+   ],
+   "timeline": 3142
+  },
   "res://scenes/ui/window/right_column.tscn": {
    "frame": "shop",
    "origin": [
