@@ -91,10 +91,6 @@ func _text_files(directory: String) -> Array[String]:
 	return found
 
 
-# Every string the port draws comes from one of these files or is built at
-# runtime from them, which is why scanning the files covers the item, ability
-# and buff text the converters brought in from KrinLang. The name a player
-# types is the one exception, because any character can be typed there.
 # TeX Gyre Heros has an ascent of 1.125 em, so a Label puts its baseline lower
 # than Flash puts the baseline of its device font. Against
 # references/sonny2_inventory_screen.png, a real Flash capture, the port's 12 px
@@ -133,6 +129,10 @@ func test_the_gold_row_and_the_experience_percent_raise_their_baseline_further()
 			assert_almost_eq(face.baseline_offset, cases[type_name], 0.0001, str(type_name))
 
 
+# Every string the port draws comes from one of these files or is built at
+# runtime from them, which is why scanning the files covers the item, ability
+# and buff text the converters brought in from KrinLang. The name a player
+# types is the one exception, because any character can be typed there.
 func test_every_character_the_port_can_show_exists_in_all_three_faces():
 	var characters: Dictionary = {}
 	for directory in ["res://resources", "res://scenes", "res://scripts"]:
