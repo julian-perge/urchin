@@ -3469,9 +3469,11 @@ func test_a_click_while_the_deciding_half_turn_plays_leaves_the_banner_down():
 
 # Battle 100 at animation_speed 0, so nothing but the test moves its hall and
 # fighters. The player is in slot 1 and the Prison Guard in slot 2.
-func _battle_100_for_the_camera(graphics: bool) -> Control:
+func _battle_100_for_the_camera(graphics: bool, roster: Array = []) -> Control:
 	var save: PlayerSave = PlayerSave.new_game("Camera", 0)
 	save.graphics = graphics
+	if not roster.is_empty():
+		save.party_roster = roster
 	GameData.current_save = save
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -3632,6 +3634,70 @@ func test_with_graphics_off_nothing_zooms_or_shakes():
 		assert_eq(seen.filter(func(frame): return frame != Transform2D.IDENTITY), [], "move %d" % move_id)
 		GameData.current_save = null
 		ZoneManager.auto_start_battles = true
+
+
+# Plays move `move_id` by the fighter in `caster_slot` on the Prison Guard with
+# a result that is, or is not, a crit. It returns what the screen showed on each
+# of the shake's frames after the result, and every effect that started. Graphics
+# are off, so a Shock's own shake cannot be taken for the crit's.
+func _crit_played(caster_slot: int, move_id: int, kind: MoveResult.Kind, critical: bool, shield_blocked: bool = false) -> Dictionary:
+	var scene: Control = _battle_100_for_the_camera(false, [0, 1, 2, -1, -1, -1])
+	var result: MoveResult = _move_result(kind, MoveResult.Direction.HEAL if kind == MoveResult.Kind.HEAL else MoveResult.Direction.HARM, 10.0)
+	result.critical = critical
+	result.shield_took_all = shield_blocked
+	var heard: Array = []
+	var listen: Callable = func(cue: String): heard.append(cue)
+	AudioManagerAuto.effect_played.connect(listen)
+	await scene._play_move_event(_move_event(scene, caster_slot, 2, move_id, result))
+	AudioManagerAuto.effect_played.disconnect(listen)
+	var seen: Array[float] = []
+	for frame in SHAKE_OFFSETS.size():
+		scene.battle_screen_clip.advance_frame()
+		seen.append(scene.battlefield.get_global_transform().origin.y)
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+	return {"heard": heard, "seen": seen}
+
+
+# executeMove plays GridShaker on a crit of a damage move and of a heal, with
+# no check of KrinSettings.SFX (frame_42/DoAction_8.as:30 and 160). Moves 1 and
+# 4 are Leading Strike, a Melee damage move, and Heal.
+func test_a_damage_crit_and_a_heal_crit_each_shake_the_screen():
+	var plays: Dictionary = {1: MoveResult.Kind.DAMAGE, 4: MoveResult.Kind.HEAL}
+	for move_id in plays:
+		var crit: Dictionary = await _crit_played(BattleRunner.PLAYER_SLOT, move_id, plays[move_id], true)
+		var plain: Dictionary = await _crit_played(BattleRunner.PLAYER_SLOT, move_id, plays[move_id], false)
+		for frame in SHAKE_OFFSETS.size():
+			assert_almost_eq(crit["seen"][frame] - plain["seen"][frame], SHAKE_OFFSETS[frame], 0.16, "move %d frame %d" % [move_id, frame + 1])
+		assert_eq(plain["seen"].filter(func(y): return not is_equal_approx(y, plain["seen"][0])), [], "a hit that is no crit shakes nothing")
+
+
+# Only a damage crit plays the voice, and only when its caster is Veradux, slot
+# 3 in battle 100, or Roald, slot 5 (frame_42/DoAction_8.as:36-43). A heal crit
+# plays neither (lines 158-161).
+func test_a_damage_crit_by_veradux_or_roald_plays_their_angry_voice():
+	var casters: Dictionary = {3: "Angry_Dux", 5: "Angry_Roald"}
+	for slot in casters:
+		var name: String = {3: "Veradux", 5: "Roald"}[slot]
+		var crit: Dictionary = await _crit_played(slot, 1, MoveResult.Kind.DAMAGE, true)
+		assert_has(crit["heard"], casters[slot], "a crit by %s" % name)
+		for other in casters.values().filter(func(cue): return cue != casters[slot]):
+			assert_does_not_have(crit["heard"], other, "a crit by %s plays no other voice" % name)
+		var plain: Dictionary = await _crit_played(slot, 1, MoveResult.Kind.DAMAGE, false)
+		assert_does_not_have(plain["heard"], casters[slot], "a hit by %s that is no crit" % name)
+		var heal: Dictionary = await _crit_played(slot, 4, MoveResult.Kind.HEAL, true)
+		assert_does_not_have(heal["heard"], casters[slot], "a heal crit by %s" % name)
+	var sonny: Dictionary = await _crit_played(BattleRunner.PLAYER_SLOT, 1, MoveResult.Kind.DAMAGE, true)
+	assert_does_not_have(sonny["heard"], "Angry_Dux", "a crit by Sonny")
+	assert_does_not_have(sonny["heard"], "Angry_Roald", "a crit by Sonny")
+
+
+# A crit has already shaken the screen and played the voice when the Shield
+# check blocks the hit (frame_42/DoAction_8.as:28-43 before line 70).
+func test_a_crit_that_the_shield_blocks_still_shakes_and_plays_the_voice():
+	var crit: Dictionary = await _crit_played(3, 1, MoveResult.Kind.DAMAGE, true, true)
+	assert_has(crit["heard"], "Angry_Dux")
+	assert_almost_eq(crit["seen"][1] - crit["seen"][-1], SHAKE_OFFSETS[1], 0.16)
 
 
 # KrinNumberShow attaches every Floating number to BATTLESCREEN
