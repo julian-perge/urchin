@@ -22,19 +22,19 @@ func _face() -> PartyFace:
 	return add_child_autofree(FaceScene.instantiate())
 
 
-func test_a_companion_outside_the_deployed_pair_shows_the_backing_dim() -> void:
+func test_a_companion_outside_the_deployed_pair_shows_the_dim() -> void:
 	var face: PartyFace = _face()
 	face.show_member(3, false, false)
 	assert_true(face.shows_blacker())
 
 
-func test_a_deployed_companion_hides_the_backing_dim() -> void:
+func test_a_deployed_companion_hides_the_dim() -> void:
 	var face: PartyFace = _face()
 	face.show_member(1, false, true)
 	assert_false(face.shows_blacker())
 
 
-func test_the_player_never_shows_the_backing_dim() -> void:
+func test_the_player_never_shows_the_dim() -> void:
 	var face: PartyFace = _face()
 	face.show_member(Party.PLAYER_PARTY_ID, true, false)
 	assert_false(face.shows_blacker(), "the original hides the player's dim when the clip loads")
@@ -75,6 +75,21 @@ func test_the_tooltip_of_the_player_is_the_name_over_menu_49() -> void:
 	var face: PartyFace = _face()
 	face.show_member(Party.PLAYER_PARTY_ID, true, false)
 	assert_eq(face.tooltip(), {"title": "Sonny", "body": Strings.menu(49)})
+
+
+func test_hovering_a_face_shows_its_title_and_body_in_the_shared_tooltip_and_leaving_hides_them() -> void:
+	GameTooltip.hide_tooltip()
+	var face: PartyFace = _face()
+	face.show_member(2, false, false)
+	face.hit_button.mouse_entered.emit()
+	assert_true(GameTooltip._root.visible)
+	assert_eq(GameTooltip._sections.get_child_count(), 2, "a title section and a body section")
+	var title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	var body: Label = GameTooltip._sections.get_child(1).get_child(0).get_child(0)
+	assert_eq(title.text, face.tooltip()["title"])
+	assert_eq(body.text, face.tooltip()["body"])
+	face.hit_button.mouse_exited.emit()
+	assert_false(GameTooltip._root.visible)
 
 
 func test_an_unjoined_face_has_no_tooltip() -> void:
