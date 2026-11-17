@@ -17,7 +17,6 @@ UNTESTED = {
     "buff_icons",
     "doll_art",
     "item_looks",
-    "store_art",
     "vfx_scenes",
     "zone_hub",
 }
