@@ -1742,18 +1742,104 @@ func test_stance_rows_stack_with_slot_5_on_top():
 	assert_eq(scene.units[3].player_name, "Veradux", "battle 100 deploys Veradux into slot 3")
 	assert_eq(scene.units[5].player_name, "Roald", "battle 100 deploys Roald into slot 5")
 
-	var slot3_row: StanceRow = null
-	var slot5_row: StanceRow = null
-	for child in scene.stance_host.get_children():
-		if child is StanceRow:
-			if child.name_label.text == "Veradux":
-				slot3_row = child
-			elif child.name_label.text == "Roald":
-				slot5_row = child
-	assert_not_null(slot3_row, "slot 3's row (Veradux) was built")
-	assert_not_null(slot5_row, "slot 5's row (Roald) was built")
-	assert_lt(slot5_row.position.y, slot3_row.position.y,
+	var slot3_row: StanceRow = scene.member_row(3)
+	var slot5_row: StanceRow = scene.member_row(5)
+	assert_eq(slot3_row.name_label.text, "Veradux", "slot 3's row carries Veradux")
+	assert_eq(slot5_row.name_label.text, "Roald", "slot 5's row carries Roald")
+	assert_lt(slot5_row.global_position.y, slot3_row.global_position.y,
 		"slot 5's row sits above slot 3's row, matching the SWF's p5/p3 stack")
+	assert_eq([slot5_row.buttons[0].visible, slot3_row.buttons[0].visible], [true, true], "each shows its five buttons")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func _two_member_rows_of(scene: Node) -> Array:
+	return [scene.member_row(5), scene.member_row(3)]
+
+
+# A row has a place of its own. With a Companion in slot 3 alone, that Companion's
+# row is the lower one, and slot 5's upper row shows the inactive text, which is
+# MENU[52]. (references/sonny2_swf_inbattle_one_companion_inactive_row.png shows
+# the original this way.) Battle 100 deploys Roald into slot 5 and Veradux into slot
+# 3 when both are in the roster, and Veradux alone when only he is.
+func test_one_companion_in_slot_3_keeps_the_lower_row_and_slot_5_shows_inactive():
+	var save = PlayerSave.new_game("OneCompanionRow", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	assert_eq(scene.units[3].player_name, "Veradux", "Veradux is in slot 3")
+	assert_null(scene.units.get(5), "and slot 5 is empty")
+	var upper: StanceRow = scene.member_row(5)
+	var lower: StanceRow = scene.member_row(3)
+	assert_lt(upper.global_position.y, lower.global_position.y, "slot 3's row is the lower one")
+	assert_eq(lower.name_label.text, "Veradux")
+	assert_true(lower.buttons[0].visible, "it shows its five buttons")
+	assert_false(upper.buttons[0].visible, "the upper row shows none")
+	assert_true(upper.inactive_label.visible, "it shows the inactive text instead")
+	assert_eq(upper.inactive_label.text, Strings.menu(52), "which is MENU[52]")
+	assert_false(lower.inactive_label.visible)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Companion who dies has active false, so the conductor shows its row's `inactive`
+# frame at the next Decision, and not before.
+func test_a_companions_row_flips_to_inactive_at_the_next_decision():
+	var save = PlayerSave.new_game("RowFlip", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene.decision_open, 5)
+	var row: StanceRow = scene.member_row(3)
+	assert_true(row.buttons[0].visible, "the Decision opens with Veradux's row active")
+
+	scene.units[3].active = false
+	assert_true(row.buttons[0].visible, "his death changes nothing yet")
+	scene._on_pass_pressed()
+	await wait_until(func(): return scene.decision_open or scene._finished, 5)
+	if not scene._finished:
+		assert_false(row.buttons[0].visible, "the next Decision flips it")
+		assert_true(row.inactive_label.visible)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The container shows during the player's half-turn and hides during the enemy's
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 696 to 757).
+func test_the_member_rows_hide_during_the_enemy_half_turn():
+	var save = PlayerSave.new_game("RowsHide", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_true(scene.stance_host.visible, "the player's half-turn shows them")
+	var seen: Array = []
+	scene.stance_host.visibility_changed.connect(func(): seen.append(scene.stance_host.visible))
+	scene._on_pass_pressed()
+	await wait_until(func(): return scene.decision_open or scene._finished, 5)
+	assert_eq(seen.slice(0, 2), [false, true], "the enemy's half-turn hid them, and the next Decision showed them")
+	if not scene._finished:
+		assert_true(scene.stance_host.visible, "and the next Decision shows them again")
+	scene._show_member_rows_for(2)
+	assert_false(scene.stance_host.visible, "a half-turn of the other team hides them")
+	scene._show_member_rows_for(1)
+	assert_true(scene.stance_host.visible, "and one of the player's team shows them")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1774,7 +1860,9 @@ func test_a_guest_with_a_companions_name_gets_no_stance_row():
 	scene.start_battle({"battle_id": 508, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 
 	assert_eq(scene.units[3].player_name, "Felicity", "battle 508 fields Felicity in slot 3")
-	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "the guest gets no stance row")
+	# What the original shows for a Guest in slot 3 or 5 is not known (spec/67-battle-hud.md,
+	# open question 1), so the row stays hidden.
+	assert_false(scene.member_row(3).visible, "the guest gets no stance row")
 	assert_true(scene._stance_rows.is_empty(), "and nothing keeps a row for the guest")
 
 	GameData.current_save = null
@@ -1798,7 +1886,9 @@ func test_battle_2_shows_no_stance_rows():
 
 	assert_eq(scene.units[5].player_name, "Louis the Blind", "battle 2 fields Louis the Blind in slot 5")
 	assert_eq(scene.units[5].origin, CombatUnit.Origin.GUEST, "as a Guest")
-	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
+	assert_false(scene.member_row(5).visible, "and the Guest's row is hidden")
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_false(scene.stance_host.visible, "as is the container, through the player's half-turn")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1824,8 +1914,8 @@ func test_battle_2_shows_no_stance_rows_even_with_a_companion_deployed():
 	scene.start_battle({"battle_id": ZoneProgression.TUTORIAL_BATTLE_ID, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
 
 	assert_eq(scene.units[3].origin, CombatUnit.Origin.COMPANION, "battle 2 fields a Companion in slot 3")
-	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
-	assert_true(scene._stance_rows.is_empty(), "and nothing keeps a row for the Companion")
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_false(scene.stance_host.visible, "and the container stays hidden through the player's half-turn")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://scripts/battle/floating_number_layer.gd" id="8_floatingnumbers"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/top_panel.png" id="9_toppanel"]
 [ext_resource type="PackedScene" path="res://scenes/battle/top_status_bar.tscn" id="10_topbar"]
+[ext_resource type="PackedScene" path="res://scenes/battle/stance_row.tscn" id="11_stancerow"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hall_outline"]
 draw_center = false
@@ -146,6 +147,10 @@ offset_top = 473.5
 offset_right = 316.2
 offset_bottom = 504.8
 mouse_filter = 2
+
+[node name="Row5" parent="BottomBar/StanceHost" instance=ExtResource("11_stancerow")]
+
+[node name="Row3" parent="BottomBar/StanceHost" instance=ExtResource("11_stancerow")]
 
 [node name="RightPanel" type="Control" parent="BottomBar"]
 layout_mode = 0

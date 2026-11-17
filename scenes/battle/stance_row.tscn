@@ -91,3 +91,9 @@ layout_mode = 0
 expand_mode = 1
 stretch_mode = 0
 mouse_filter = 2
+
+[node name="InactiveLabel" type="Label" parent="."]
+visible = false
+layout_mode = 0
+theme_override_fonts/font = ExtResource("8_pixelfont")
+mouse_filter = 2

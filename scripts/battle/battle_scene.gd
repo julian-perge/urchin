@@ -32,7 +32,6 @@ signal battle_finished(outcome: int)
 signal clock_ticked
 
 const FighterPresenterScene: PackedScene = preload("res://scenes/battle/fighter_presenter.tscn")
-const StanceRowScene: PackedScene = preload("res://scenes/battle/stance_row.tscn")
 const ProjectileScene: PackedScene = preload("res://scenes/battle/projectile.tscn")
 const ImpactEffectScene: PackedScene = preload("res://scenes/battle/impact_effect.tscn")
 const BACKGROUND_ROOT: String = "res://assets/backgrounds"
@@ -76,6 +75,7 @@ var battle_info: Dictionary = {}
 
 var _presenters: Dictionary = {}  # slot -> FighterPresenter
 var _stance_rows: Dictionary = {}  # party_id -> StanceRow
+var _member_rows_enabled: bool = true
 var _selected_move: Dictionary = {}
 # True while the turn loop waits for the player's pick. The menu follows it
 # through this setter, so a pick, a pass and the Heroic timeout all close the
@@ -159,6 +159,7 @@ var _buff_tick_due: bool = false
 
 func _ready():
 	_hall_space.position = -hall_window.position
+	member_row(3).position.y = StanceRow.row_pitch()
 	speech_label.text = ""
 	# The retreat button is the original's battle Quit button,
 	# DefineButton2_3356, which shows SYSTEM[25] over SYSTEM[26]
@@ -404,38 +405,65 @@ func _draw_pass_ring() -> void:
 		_pass_ring.draw_arc(Vector2.ZERO, 41.0, 0.0, TAU, 64, Color(0.4, 0.75, 1.0, 0.35), 7.0, true)
 
 
+# The slots whose member rows the bottom bar shows, upper row first. The original's
+# member bar container places its "p5" copy above its "p3" copy
+# (DefineSprite 3312, y 12.60 vs y 50.10), matching the battlefield where slot 5 is
+# the upper fighter and slot 3 the lower one. Each row has its own place, so a
+# Companion in slot 3 alone sits in the lower one.
+const MEMBER_SLOTS: Array[int] = [5, 3]
+
+
+# Returns the member row of a slot, 5 or 3.
+func member_row(slot: int) -> StanceRow:
+	return stance_host.get_node("Row%d" % slot)
+
+
+# Wires each Companion's row to its stance and shows every row. A row stays where
+# it is, so only the third slot's row is moved, down by one row.
 func _populate_stance_rows() -> void:
-	for child in stance_host.get_children():
-		child.queue_free()
 	_stance_rows.clear()
 	# The original hides the member bar container in the Tutorial, rows and all,
 	# whoever fights there (DefineSprite_3317/frame_1/PlaceObject2_3312_7
 	# CLIPACTIONRECORD onClipEvent(load).as:5-8).
-	if battle.id == ZoneProgression.TUTORIAL_BATTLE_ID:
-		return
-	var row_y: float = 0.0
-	# Slot 5 first: the original's member bar container places its "p5" copy
-	# above its "p3" copy (DefineSprite 3312, y 12.60 vs y 50.10), matching the
-	# battlefield where slot 5 is the upper fighter and slot 3 the lower one.
-	for slot in [5, 3]:
+	_member_rows_enabled = battle.id != ZoneProgression.TUTORIAL_BATTLE_ID
+	stance_host.visible = false
+	for slot in MEMBER_SLOTS:
 		var unit: CombatUnit = units.get(slot)
-		# Only a companion gets a row. The original fills the bar from whoever
-		# is active in slots 3 and 5 at each Decision, but no guest's row ever
-		# appears there: DECODED_ALGORITHMS.md has why.
-		if unit == null or unit.origin != CombatUnit.Origin.COMPANION:
-			continue
-		var party_id: int = unit.party_id
-		var row: StanceRow = StanceRowScene.instantiate()
-		row.position = Vector2(0, row_y)
-		stance_host.add_child(row)
-		row.setup(unit.player_name)
-		for mode in row.buttons.size():
-			row.buttons[mode].pressed.connect(_on_stance_pressed.bind(party_id, mode, slot))
-		_stance_rows[party_id] = row
-		# Party.build_companion_unit starts every companion on Tactical, so
-		# that is the stance each row shows until a button is pressed.
-		_refresh_stance_row(party_id, Party.AggressionStance.TACTICAL)
-		row_y += StanceRow.row_pitch()
+		if unit != null and unit.origin == CombatUnit.Origin.COMPANION:
+			var row: StanceRow = member_row(slot)
+			for mode in row.buttons.size():
+				row.buttons[mode].pressed.connect(_on_stance_pressed.bind(unit.party_id, mode, slot))
+			_stance_rows[unit.party_id] = row
+			# Party.build_companion_unit starts every companion on Tactical, so
+			# that is the stance each row shows until a button is pressed.
+			_refresh_stance_row(unit.party_id, Party.AggressionStance.TACTICAL)
+	_refresh_member_rows()
+
+
+# Does what the conductor does to the member bar at each of the player's
+# Decisions: a slot whose unit is active shows its row's `active` frame, and any
+# other slot shows `inactive` (frame_217/PlaceObject2_3389_480 enterFrame, lines
+# 696 to 746). A Companion who died has active false, so its row flips here, at
+# the next Decision. A Guest never shows a row, as DECODED_ALGORITHMS.md says,
+# and what the original shows in its place is not known (spec/67-battle-hud.md,
+# open question 1), so its row stays hidden.
+func _refresh_member_rows() -> void:
+	for slot in MEMBER_SLOTS:
+		var row: StanceRow = member_row(slot)
+		var unit: CombatUnit = units.get(slot)
+		row.visible = unit == null or unit.origin != CombatUnit.Origin.GUEST
+		if unit != null and unit.origin == CombatUnit.Origin.COMPANION and unit.active:
+			row.setup(unit.player_name)
+			row.show_active()
+		else:
+			row.show_inactive()
+
+
+# Shows the member bar during the half-turn of the player's side and hides it
+# during the other side's, as the conductor does with the container's SHOW and
+# HIDE frames. The Tutorial keeps it hidden.
+func _show_member_rows_for(team_side: int) -> void:
+	stance_host.visible = _member_rows_enabled and team_side == units[BattleRunner.PLAYER_SLOT].team_side
 
 
 func _refresh_stance_row(party_id: int, selected_mode: Party.AggressionStance) -> void:
@@ -473,7 +501,9 @@ func _battle_loop() -> void:
 		await _play_events(_pending_setup_events)
 		_pending_setup_events = []
 	while not runner.is_over():
+		_show_member_rows_for(runner.team_move_now)
 		if runner.is_player_turn():
+			_refresh_member_rows()
 			decision_open = true
 			_reset_decision_timer()
 			turn_label.text = "Your move"

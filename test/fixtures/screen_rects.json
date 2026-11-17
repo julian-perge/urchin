@@ -713,6 +713,24 @@
       31.3
      ]
     },
+    "BottomBar/StanceHost/Row3": {
+     "kind": "shape",
+     "rect": [
+      31.2,
+      511.0,
+      285.0,
+      31.3
+     ]
+    },
+    "BottomBar/StanceHost/Row5": {
+     "kind": "shape",
+     "rect": [
+      31.2,
+      473.5,
+      285.0,
+      31.3
+     ]
+    },
     "HallOutline": {
      "border": 1,
      "kind": "outline",
@@ -2229,6 +2247,22 @@
     "TopStatusBar/Bar5/Inner2/FocusSmoother",
     "TopStatusBar/Bar6/Inner2/LifeSmoother",
     "TopStatusBar/Bar6/Inner2/FocusSmoother",
+    "BottomBar/StanceHost/Row5/Panel",
+    "BottomBar/StanceHost/Row5/NameLabel",
+    "BottomBar/StanceHost/Row5/InactiveLabel",
+    "BottomBar/StanceHost/Row5/Mode0",
+    "BottomBar/StanceHost/Row5/Mode1",
+    "BottomBar/StanceHost/Row5/Mode2",
+    "BottomBar/StanceHost/Row5/Mode3",
+    "BottomBar/StanceHost/Row5/Mode4",
+    "BottomBar/StanceHost/Row3/Panel",
+    "BottomBar/StanceHost/Row3/NameLabel",
+    "BottomBar/StanceHost/Row3/InactiveLabel",
+    "BottomBar/StanceHost/Row3/Mode0",
+    "BottomBar/StanceHost/Row3/Mode1",
+    "BottomBar/StanceHost/Row3/Mode2",
+    "BottomBar/StanceHost/Row3/Mode3",
+    "BottomBar/StanceHost/Row3/Mode4",
     "BottomBar/RightPanel/CombatLogPanel",
     "BottomBar/RightPanel/LogToggleButton",
     "BottomBar/CountdownRing",

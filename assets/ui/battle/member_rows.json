@@ -1,0 +1,16 @@
+{
+ "inactive": {
+  "align": "center",
+  "character": 3310,
+  "color": "#999999",
+  "font_size": 9.0,
+  "frame": 9,
+  "initial_text": "< Team Member Inactive >",
+  "rect": [
+   8.0,
+   7.15,
+   269.5,
+   18.0
+  ]
+ }
+}

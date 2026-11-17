@@ -1024,6 +1024,11 @@ SCENES[BATTLE_SCENE] = Scene(
         # the original leaves empty.
         "BottomBar/Bar": Piece("art", 1, art="bottom_bar", character=3317),
         "BottomBar/StanceHost": Piece("shape", 1, via=(7, 1, 1), character=3317),
+        # Each member row is the panel of one copy of the member bar 3311 in 3312's
+        # SHOW frame: slot 5's p5 above slot 3's p3. The container is the upper
+        # row's panel.
+        "BottomBar/StanceHost/Row5": Piece("shape", 1, via=(7, 1, 1), character=3317),
+        "BottomBar/StanceHost/Row3": Piece("shape", 1, via=(7, 49, 1), character=3317),
         "BottomBar/RightPanel": Piece("shape", 1, via=(1, 1), path=2, character=3317),
         "BottomBar/PassButton": Piece("button", 498, character=3383),
         "BottomBar/PassRing": Piece("point", 498, character=3383),
@@ -1041,6 +1046,23 @@ SCENES[BATTLE_SCENE] = Scene(
             f"TopStatusBar/Bar{slot}/Inner2/{band}"
             for slot in range(1, 7)
             for band in ("LifeSmoother", "FocusSmoother")
+        ),
+        # What a row draws inside its panel: the name and the buttons of the
+        # active frame, and the text of the inactive one. StanceRow places them
+        # from battle_layout.json and member_rows.json.
+        *(
+            f"BottomBar/StanceHost/Row{slot}/{part}"
+            for slot in (5, 3)
+            for part in (
+                "Panel",
+                "NameLabel",
+                "InactiveLabel",
+                "Mode0",
+                "Mode1",
+                "Mode2",
+                "Mode3",
+                "Mode4",
+            )
         ),
         "BottomBar/RightPanel/CombatLogPanel",
         "BottomBar/RightPanel/LogToggleButton",
