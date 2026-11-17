@@ -48,6 +48,14 @@ const FULL_PERCENT: float = 100.0
 signal death_faded(alpha: float)
 signal death_hidden
 
+const BUFF_ICON_SIZE: Vector2 = Vector2(16, 16)
+# The counter is KrinBuffShower's edit text 66, placed at (-10.3, -0.8) from
+# the icon's center. Inside its 2 px gutter its text runs 20.55 px wide and
+# centered, which centers the turns left over the lower half of the icon.
+const BUFF_COUNTER_OFFSET: Vector2 = Vector2(-10.3, -0.8)
+const BUFF_COUNTER_WIDTH: float = 20.55
+
+
 # The fighter's slot, 1 to 6. The battle frame names the bar p<slot>BAR.
 @export var slot: int = 1
 
@@ -73,6 +81,12 @@ var _held_focus: float = 0.0
 # The band each smoother is playing, or {} when it has none. attachMovie puts
 # every smoother at depth 1 of its holder, so a new one replaces the old.
 var _bands: Dictionary = {"life": {}, "focus": {}}
+# The active buff slots as of the last refresh_buffs() call, so a refresh that lands
+# with the same buffs and durations as last time (this is called for every event
+# shown on the fighter and at every half-turn's end, not only when buffs actually
+# change) can skip tearing down and rebuilding the row, which would otherwise
+# flicker and kill an open tooltip out from under a player mid-hover for no reason.
+var _last_signature: Array = []
 var _frames_due: float = 0.0
 var _dead: bool = false
 var _frames_since_death: int = 0
@@ -90,6 +104,7 @@ var _frames_since_death: int = 0
 @onready var focus_back: TextureRect = $Inner2/FocusBack
 @onready var life_band: TextureRect = $Inner2/LifeSmoother
 @onready var focus_band: TextureRect = $Inner2/FocusSmoother
+@onready var buff_row: Control = $BuffRow
 
 
 # Returns what top_bar.json holds. It reads the file once, the first time
@@ -194,13 +209,104 @@ func _update_focus() -> void:
 	_play_band("focus", change, focus_max, share, _focus_width)
 
 
+# Refreshes the buff-icon row the way the original draws it at the end of
+# applyChangesKrin (frame_42/DoAction_10.as:355-379): one KrinBuffShower for
+# each of slots 0 to MAX_BUFF_ICONS - 1 whose cd isn't 0, in slot order. The
+# row deliberately doesn't sort, because CombatUnit.apply_changes() already
+# keeps buff_slots in the order applyChangesKrin's sortOn leaves them (line
+# 344), and sort_custom would move tied buffs once more than 16 have turns
+# left. Each icon is modulate-tinted by the buff's element color (Godot tints
+# at runtime - no per-element art baked into the extracted PNGs), with the
+# remaining-turns count and the tooltip built below. buff_id 0 is a real buff
+# (TWINGUARDIANS, dev/converted_json/buffs.json), not an empty-slot sentinel;
+# empty slots use buff_id -1 (see CombatUnit's slot init) but always carry
+# cd == 0 too, so checking cd alone already excludes them.
+func refresh_buffs(buff_slots: Array, buffs_by_id: Dictionary) -> void:
+	var row: Dictionary = record()["buff_row"]
+	var active_slots: Array = []
+	for index in mini(buff_slots.size(), int(row["slots"])):
+		var slot: Dictionary = buff_slots[index]
+		if int(slot.get("cd", 0)) != 0:
+			active_slots.append({"index": index, "buff_id": int(slot["buff_id"]), "cd": int(slot["cd"])})
+	var signature: Array = active_slots.duplicate()
+	if signature == _last_signature:
+		return
+	_last_signature = signature
+	for child in buff_row.get_children():
+		child.queue_free()
+	for slot in active_slots:
+		var buff: Buff = buffs_by_id.get(int(slot["buff_id"]))
+		if buff == null:
+			continue
+		var icon_texture: Texture2D = BuffIcons.icon_for(buff)
+		if icon_texture == null:
+			continue
+		# KrinBuffShower, DefineSprite 104, places buffColor, the icon and the
+		# counter as siblings at depths 1, 4 and 8, and tints only buffColor
+		# (frame_42/DoAction_10.as:373-374). The port has no buffColor and
+		# tints the icon instead, so the counter is the icon's sibling here
+		# and keeps its own white.
+		var shower: Control = Control.new()
+		shower.size = BUFF_ICON_SIZE
+		# The icon's center sits at `(offset + space * h) * side` in the bar's
+		# space, on the line between the two fills, where h is the slot's index
+		# (frame_42/DoAction_10.as:352-358). An empty slot leaves its place empty.
+		shower.position = Vector2((float(row["offset"]) + float(row["space"]) * float(slot["index"])) * _buff_side(), 0.0) - BUFF_ICON_SIZE / 2.0
+		var icon_rect: TextureRect = TextureRect.new()
+		icon_rect.name = "Icon"
+		icon_rect.texture = icon_texture
+		icon_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var element_index: CombatUnit.Element = buff.element_type
+		if element_index != -1:
+			icon_rect.modulate = MenuTheme.ELEMENT_COLORS[element_index]
+		shower.add_child(icon_rect)
+		# The original titles a buff's tooltip with its name alone and shows
+		# the turns left only on the icon's counter below
+		# (frame_42/DoAction_10.as:364 and 375).
+		var sections: Array = [
+			{"bg_color": TooltipTheme.BG_HEADER, "lines": [{
+				"text": buff.display_name,
+				"color": TooltipTheme.TEXT_TITLE,
+			}]},
+		]
+		if not buff.tooltip_description.is_empty():
+			sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": buff.tooltip_description, "color": TooltipTheme.TEXT_BODY}]})
+		shower.mouse_entered.connect(func(): GameTooltip.show_sections(sections, shower))
+		shower.mouse_exited.connect(GameTooltip.hide_tooltip)
+		# Edit text 66 sets the turns left in 10 px bold _sans, the face the
+		# project theme gives Labels.
+		var counter: Label = Label.new()
+		counter.name = "Counter"
+		counter.text = str(int(slot["cd"]))
+		counter.add_theme_font_size_override("font_size", 10)
+		counter.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		counter.position = BUFF_ICON_SIZE / 2.0 + BUFF_COUNTER_OFFSET
+		counter.size.x = BUFF_COUNTER_WIDTH
+		counter.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		shower.add_child(counter)
+		buff_row.add_child(shower)
+
+
+# Returns the sign that puts the icons on the inside of the bar: 1 on the
+# player's side and -1 on the enemy's (buffMultiGF, frame_42/DoAction_10.as:346-351).
+# The right-hand bars, which mirror inner2, are the enemy's.
+func _buff_side() -> float:
+	var mirror = record()["placements"]["p%dBAR" % slot]["inner2_xscale"]
+	var side: float = record()["buff_row"]["enemy_side"] if mirror != null and mirror < 0 else record()["buff_row"]["player_side"]
+	return side
+
+
 # Does what LifeBarSmoother's frame 18 does to a dead unit's bar
 # (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as): it sends `inner` to its
-# empty "third" frame, which takes the name, the numbers and the divider away.
-# The fills stay to fade. show_status() fills these nodes but never shows them,
+# empty "third" frame, which takes the name, the numbers and the divider away,
+# and removes the buff icons. The fills stay to fade. show_status() fills these nodes but never shows them,
 # so later redraws leave them hidden.
 func clear_for_death() -> void:
 	inner.hide()
+	buff_row.hide()
 
 
 # Starts the death, which attachMovie starts for a dead unit's smoother. From the

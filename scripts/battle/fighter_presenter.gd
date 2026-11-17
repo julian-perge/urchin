@@ -65,7 +65,6 @@ var _doll_offset: Vector2 = Vector2.ZERO
 func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id: Dictionary, floating_numbers: FloatingNumberLayer, status_bar: StatusBar) -> void:
 	_unit = unit
 	_status_bar = status_bar
-	_status_bar.death_faded.connect(_on_death_faded)
 	_status_bar.death_hidden.connect(_overlay.hide)
 	_buffs_by_id = buffs_by_id
 	_floating_numbers = floating_numbers
@@ -236,15 +235,9 @@ func show_state(state: UnitSnapshot) -> void:
 	_draw_status()
 
 
-# The buff icons are still on the overlay, so they clear and fade with the bar.
-func _on_death_faded(alpha: float) -> void:
-	_overlay.buff_row.hide()
-	_overlay.modulate.a = alpha
-
-
 func _draw_status() -> void:
 	_status_bar.show_status(displayed)
-	_overlay.show_buffs(displayed, _buffs_by_id)
+	_status_bar.refresh_buffs(displayed.buff_slots, _buffs_by_id)
 
 
 # Shows this fighter's unit as it is now. The scene calls this when the replay of a

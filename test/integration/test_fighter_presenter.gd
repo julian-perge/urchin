@@ -228,9 +228,9 @@ func _killing_hit_on_the_buffed_unit() -> MoveResult:
 
 # Returns what the status bar and the overlay draw besides the fills.
 func _overlay_shows() -> Dictionary:
-	var icons: Array = _overlay.buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
+	var icons: Array = _bar.buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
 	return {
-		"icons": icons.size() if _overlay.buff_row.is_visible_in_tree() else 0,
+		"icons": icons.size() if _bar.buff_row.is_visible_in_tree() else 0,
 		"name": _bar.name_label.is_visible_in_tree(),
 		"number": _bar.life_now_label.is_visible_in_tree(),
 	}
@@ -375,7 +375,7 @@ func test_a_focus_cost_shows_when_the_move_starts_and_not_before():
 
 
 func _buff_icons() -> Array:
-	return _overlay.buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
+	return _bar.buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
 
 
 # The runner resolves the whole half-turn before the replay, so a buff that a

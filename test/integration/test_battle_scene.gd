@@ -2021,8 +2021,13 @@ func _move_event(scene, caster_slot: int, target_slot: int, move_id: int, result
 	}
 
 
+# Returns the status bar that a presenter writes to.
+func _status_bar_of(presenter: FighterPresenter) -> StatusBar:
+	return presenter._status_bar
+
+
 func _buff_icons(presenter: FighterPresenter) -> Array:
-	return presenter.get_node("Overlay").buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
+	return _status_bar_of(presenter).buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
 
 
 # The runner resolves the whole half-turn before the replay, so when the first
@@ -3173,7 +3178,7 @@ func test_a_fighter_wears_its_items_and_shows_its_buffs_from_the_real_tables():
 	player.apply_buff(BuffManagerAuto.get_buff_by_name("TIEDYE"), 1, player)
 	player.apply_changes()
 	scene._refresh_bars()
-	assert_eq(presenter.get_node("Overlay").buff_row.get_child_count(), 1, "the buff row found the buff")
+	assert_eq(_status_bar_of(presenter).buff_row.get_child_count(), 1, "the buff row found the buff")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

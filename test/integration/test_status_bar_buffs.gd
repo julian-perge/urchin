@@ -1,8 +1,8 @@
-# UnitOverlay's buff-icon row (scenes/battle/unit_overlay.tscn) -
-# .claude/plan_battle_screen_niceties.md Task 4.
+# The status bar's buff icons (scenes/battle/status_bar.tscn), which the original
+# draws on each bar (frame_42/DoAction_10.as:340-379).
 extends GutTest
 
-const UnitOverlayScene = preload("res://scenes/battle/unit_overlay.tscn")
+const StatusBarScene = preload("res://scenes/battle/status_bar.tscn")
 
 
 func after_each():
@@ -23,7 +23,7 @@ func test_refresh_buffs_includes_buff_id_zero():
 	# not an empty-slot sentinel (that's buff_id -1, see CombatUnit's slot
 	# init) - so it must show up like any other active buff. The slots are in
 	# the order apply_changes leaves them, most turns first.
-	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var overlay: StatusBar = add_child_autofree(StatusBarScene.instantiate())
 	var unit := CombatUnit.new()
 	unit.buff_slots = [
 		{"cd": 7, "buff_id": 0, "buff_value": 0.0, "shield_buff_value": 0.0},   # TWINGUARDIANS, longer
@@ -52,7 +52,7 @@ func test_refresh_buffs_includes_buff_id_zero():
 
 
 func test_refresh_buffs_caps_at_seven_icons():
-	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var overlay: StatusBar = add_child_autofree(StatusBarScene.instantiate())
 	var unit := CombatUnit.new()
 	var buff_fire: Buff = _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)
 	unit.buff_slots = []
@@ -71,7 +71,7 @@ func test_refresh_buffs_caps_at_seven_icons():
 # apply_changes leaves them in, since sorting tied slots that are already in
 # order moves nothing. The row shows the first 7 of them.
 func test_refresh_buffs_shows_the_first_seven_slots_in_slot_order():
-	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var overlay: StatusBar = add_child_autofree(StatusBarScene.instantiate())
 	var unit := CombatUnit.new()
 	var names: Array = [
 		"AGGRAVATE", "AMEND", "ANALYSIS", "APPLETHROW", "APPREHEND", "ARTERY", "AUXILLARY", "AVENGERFORM",
@@ -99,7 +99,7 @@ func test_refresh_buffs_skips_rebuild_when_state_is_unchanged():
 	# Called after every combat event, not only when buffs actually change -
 	# rebuilding an identical row would flicker and drop an open tooltip out
 	# from under a hovering player for no reason.
-	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var overlay: StatusBar = add_child_autofree(StatusBarScene.instantiate())
 	var unit := CombatUnit.new()
 	var buff_fire: Buff = _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
@@ -114,7 +114,7 @@ func test_refresh_buffs_skips_rebuild_when_state_is_unchanged():
 
 
 func test_refresh_buffs_clears_expired_buffs():
-	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var overlay: StatusBar = add_child_autofree(StatusBarScene.instantiate())
 	var unit := CombatUnit.new()
 	var buff_a := Buff.new()
 	buff_a.internal_name = "FIRESAM"
@@ -146,7 +146,7 @@ func _find(node: Node, type: String) -> Node:
 # 2 px gutter its centered text runs 20.55 px wide, which centers the turns
 # left over the lower half of the icon.
 func test_buff_counter_is_untinted_and_centered_over_the_icon():
-	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var overlay: StatusBar = add_child_autofree(StatusBarScene.instantiate())
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
 	overlay.refresh_buffs(unit.buff_slots, {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
@@ -161,7 +161,9 @@ func test_buff_counter_is_untinted_and_centered_over_the_icon():
 		node = node.get_parent()
 	assert_eq(tint, Color.WHITE, "no element tint reaches the counter")
 	assert_eq(icon.modulate, MenuTheme.ELEMENT_COLORS[CombatUnit.Element.FIRE], "the icon carries the tint")
-	var from_icon_center: Vector2 = counter.get_global_rect().position - icon.get_global_rect().get_center()
+	# The bar scales everything in it, so this reads the offset in the icon's own
+	# space.
+	var from_icon_center: Vector2 = counter.position - (icon.position + icon.size / 2.0)
 	assert_almost_eq(from_icon_center.x, -10.3, 0.01, "edit text 66's x from the icon's center")
 	assert_almost_eq(from_icon_center.y, -0.8, 0.01, "and its y")
 	assert_almost_eq(counter.size.x, 20.55, 0.01, "its text width")
@@ -170,7 +172,7 @@ func test_buff_counter_is_untinted_and_centered_over_the_icon():
 
 # The counter is edit text 66, which is 10 px bold _sans in white.
 func test_buff_counter_matches_edit_text_66():
-	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var overlay: StatusBar = add_child_autofree(StatusBarScene.instantiate())
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
 	overlay.refresh_buffs(unit.buff_slots, {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
@@ -185,7 +187,7 @@ func test_buff_counter_matches_edit_text_66():
 # shows the turns left (line 364). With no turn count after it, a name like
 # "Seek and Destroy" fits the title on one line.
 func test_buff_tooltip_title_is_the_name_alone_and_the_icon_counts_the_turns():
-	var overlay: UnitOverlay = add_child_autofree(UnitOverlayScene.instantiate())
+	var overlay: StatusBar = add_child_autofree(StatusBarScene.instantiate())
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
 	overlay.refresh_buffs(unit.buff_slots, {1: _make_buff("FIRESAM", "Seek and Destroy", CombatUnit.Element.FIRE)})
@@ -196,3 +198,55 @@ func test_buff_tooltip_title_is_the_name_alone_and_the_icon_counts_the_turns():
 	var title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
 	assert_eq(title.text, "Seek and Destroy", "the title is the name alone")
 	assert_eq(title.get_line_count(), 1, "and fits on one line")
+
+
+func _slot(cd: int, buff_id: int) -> Dictionary:
+	return {"cd": cd, "buff_id": buff_id, "buff_value": 0.0, "shield_buff_value": 0.0}
+
+
+func _bar(slot: int) -> StatusBar:
+	var bar: StatusBar = StatusBarScene.instantiate()
+	bar.slot = slot
+	return add_child_autofree(bar)
+
+
+# Returns the x of the center of each icon in the bar's space.
+func _icon_centers(bar: StatusBar) -> Array:
+	return bar.buff_row.get_children().map(func(shower: Control): return shower.position.x + shower.size.x / 2.0)
+
+
+# The icon for slot h sits at (offset + space * h) * side, with the offset and the
+# space from the extractor. An empty slot leaves its place empty, so the icons do
+# not close up. The player's bars are on the left and take side 1.
+func test_an_icon_sits_at_its_slots_place_on_the_players_side():
+	var row: Dictionary = StatusBar.record()["buff_row"]
+	var bar: StatusBar = _bar(1)
+	var buff: Buff = _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)
+	bar.refresh_buffs([_slot(3, 1), _slot(0, -1), _slot(2, 1)], {1: buff})
+	assert_eq(_icon_centers(bar), [
+		(row["offset"] + row["space"] * 0) * row["player_side"],
+		(row["offset"] + row["space"] * 2) * row["player_side"],
+	], "slot 0 and slot 2, with slot 1's place empty")
+
+
+func test_an_icon_on_a_right_hand_bar_takes_the_enemy_side():
+	var row: Dictionary = StatusBar.record()["buff_row"]
+	var bar: StatusBar = _bar(2)
+	bar.refresh_buffs([_slot(3, 1)], {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
+	assert_eq(_icon_centers(bar), [row["offset"] * row["enemy_side"]])
+	assert_lt(_icon_centers(bar)[0], 0.0, "to the left of the bar's origin")
+
+
+func test_icons_sit_on_the_line_between_the_two_fills():
+	var bar: StatusBar = _bar(1)
+	bar.refresh_buffs([_slot(3, 1)], {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
+	var shower: Control = bar.buff_row.get_child(0)
+	assert_almost_eq(shower.position.y + shower.size.y / 2.0, 0.0, 0.001)
+
+
+func test_the_death_clear_takes_the_buff_icons_away():
+	var bar: StatusBar = _bar(1)
+	bar.refresh_buffs([_slot(3, 1)], {1: _make_buff("FIRESAM", "The Immortal Flame", CombatUnit.Element.FIRE)})
+	assert_true(bar.buff_row.is_visible_in_tree())
+	bar.clear_for_death()
+	assert_false(bar.buff_row.is_visible_in_tree())

@@ -90,3 +90,7 @@ theme_type_variation = &"RegularLabel"
 layout_mode = 0
 mouse_filter = 2
 theme_type_variation = &"RegularLabel"
+
+[node name="BuffRow" type="Control" parent="."]
+layout_mode = 0
+mouse_filter = 2

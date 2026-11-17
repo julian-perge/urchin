@@ -256,7 +256,7 @@ func test_tooltips_bold_the_title_and_keep_the_body_regular():
 func test_battle_text_keeps_the_original_fonts():
 	var bar: StatusBar = add_child_autofree(load("res://scenes/battle/status_bar.tscn").instantiate())
 	_assert_fonts(bar, {"Inner/PlayerName": [3395, 295], "Inner/LifeNow": [3398, 295]})
-	var overlay: UnitOverlay = add_child_autofree(load("res://scenes/battle/unit_overlay.tscn").instantiate())
+	var overlay: StatusBar = bar
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
 	var buff := Buff.new()
