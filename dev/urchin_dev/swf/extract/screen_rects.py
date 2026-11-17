@@ -26,9 +26,12 @@
 #   "art"   - a piece drawn from a PNG of extract_window_chrome,
 #             extract_start_screens or extract_hotbar_icons, or from the bottom
 #             bar of extract_battle_screen, which a TextureRect shows at the
-#             rect that render measured, with the PNG's path. A window chrome
-#             depth is the one window_chrome renders, so the two extractors cannot name
-#             different placements.
+#             rect that render measured, with the PNG's path. The rect and the
+#             PNG come from the render's record by the art's name, not from the
+#             piece's depth. For art measured from a sprite, the sprite at the
+#             piece's depth must be the one the render was measured from. For
+#             art measured from the stage, the code only checks that the depth
+#             exists on the frame, so a wrong depth there is not caught.
 #   "face"  - the portrait clip 2978, which the port draws as a TextureRect that
 #             shows a different PNG for each fighter. It is recorded as the crop
 #             box that extract_faces cut every portrait to, placed with the
@@ -1006,14 +1009,22 @@ def hit_record(records: list[ButtonRecord], bounds, matrix, origin) -> dict:
     }
 
 
-def button_record(records: list[ButtonRecord], bounds: dict, matrix, origin) -> dict:
-    """-> the record of a button that draws art, as the rect of the shapes its
-    up state draws, each placed in the button with its record's matrix, and
-    the button placed with `matrix`. `bounds` maps each shape to its
-    ShapeBounds."""
+def button_record(
+    button: int, records: list[ButtonRecord], bounds: dict, matrix, origin
+) -> dict:
+    """-> the record of the button `button`, whose `records` draw art, as the
+    rect of the shapes its up state draws, each placed in the button with its
+    record's matrix, and the button placed with `matrix`. `bounds` maps each
+    shape to its ShapeBounds."""
     up = [r for r in records if "up" in r.states]
     if not up:
-        raise ValueError("the button draws nothing in its up state")
+        raise ValueError(f"button {button} draws nothing in its up state")
+    for r in up:
+        if r.character_id not in bounds:
+            raise ValueError(
+                f"button {button} draws character {r.character_id} in its up"
+                " state, which is not a shape"
+            )
     shapes = [_in_button(bounds[r.character_id], r.matrix) for r in up]
     union = (
         min(b[0] for b in shapes),
@@ -1043,7 +1054,7 @@ def _button(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
         for r in records
         if character_kind(index, r.character_id) == "shape"
     }
-    return button_record(records, bounds, layer.matrix, origin)
+    return button_record(layer.character_id, records, bounds, layer.matrix, origin)
 
 
 def inner_origin(matrix, origin) -> tuple[float, float]:

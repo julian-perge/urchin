@@ -552,9 +552,10 @@ def test_hit_record_refuses_a_button_that_is_more_than_a_hit_square(records, mes
         screen_rects.hit_record(records, CLOSE_BOUNDS, CLOSE_MATRIX, ORIGIN)
 
 
-# The Abilities window's top plus button 3068. Shape 3065 is the black plate of
-# the up state, under the gradient 3064. Shapes 3066 and 3067 draw only on
-# hover, press and hit. KRINMENU frame 25 places the button at depth 668.
+# The Abilities window's top plus button 3068. Shape 3065 is the black plus
+# glyph and its outline, at depth 2 over the gradient 3064, in the up state.
+# Shapes 3066 and 3067 draw only on hover, press and hit. KRINMENU frame 25
+# places the button at depth 668.
 PLUS_RECORDS = [
     ButtonRecord(
         frozenset({"up", "over", "down"}), 3064, 1, (1.0, 0.0, 0.0, 1.0, 0, 0)
@@ -575,7 +576,9 @@ PLUS_MATRIX = (1.0, 0.0, 0.0, 1.0, -1358, 2501)
 
 
 def test_button_record_is_the_up_state_through_the_placement():
-    entry = screen_rects.button_record(PLUS_RECORDS, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+    entry = screen_rects.button_record(
+        3068, PLUS_RECORDS, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN
+    )
     assert entry["kind"] == "button"
     assert entry["rect"] == pytest.approx([310.55, 339.25, 44.1, 16.45])
 
@@ -592,7 +595,11 @@ def test_button_record_places_the_shape_with_its_record_before_the_placement():
         )
     ]
     entry = screen_rects.button_record(
-        records, {3119: (0, 0, 2000, 4000)}, (2.0, 0.0, 0.0, 2.0, 1000, 2000), (0, 0)
+        3068,
+        records,
+        {3119: (0, 0, 2000, 4000)},
+        (2.0, 0.0, 0.0, 2.0, 1000, 2000),
+        (0, 0),
     )
     assert entry["rect"] == pytest.approx([-10.0, 60.0, 100.0, 100.0])
 
@@ -600,12 +607,21 @@ def test_button_record_places_the_shape_with_its_record_before_the_placement():
 def test_button_record_refuses_a_rotated_up_state_record():
     turned = [replace(PLUS_RECORDS[1], matrix=(1.0, 0.1, 0.0, 1.0, 0, 0))]
     with pytest.raises(ValueError, match="rotat"):
-        screen_rects.button_record(turned, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+        screen_rects.button_record(3068, turned, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
 
 
 def test_button_record_refuses_a_button_with_no_up_state():
     with pytest.raises(ValueError, match="up state"):
-        screen_rects.button_record(PLUS_RECORDS[2:], PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
+        screen_rects.button_record(
+            3068, PLUS_RECORDS[2:], PLUS_BOUNDS, PLUS_MATRIX, ORIGIN
+        )
+
+
+def test_button_record_refuses_a_sprite_in_the_up_state():
+    # The clip reader 3059 is a sprite, so it has no ShapeBounds.
+    records = [PLUS_RECORDS[0], replace(PLUS_RECORDS[1], character_id=3059)]
+    with pytest.raises(ValueError, match="3068.*3059"):
+        screen_rects.button_record(3068, records, PLUS_BOUNDS, PLUS_MATRIX, ORIGIN)
 
 
 # The clip reader (3059) at depth 675 of KRINMENU frame 25. Its first frame
@@ -625,6 +641,15 @@ def test_inner_origin_refuses_a_scaled_sprite():
 def test_text_record_of_a_wrapping_field_holds_its_line_pitch():
     tip = field(font_height=240, leading=40, multiline=True, word_wrap=True)
     entry = screen_rects.text_record(tip, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
+    assert entry["line_pitch"] == 14.0
+
+
+# A field that wraps shows more than one line even when it is not multiline.
+# This test pins the word_wrap arm of the pitch condition, which the multiline
+# wrapping field above does not cover.
+def test_text_record_of_a_wrapping_field_with_no_multiline_holds_its_line_pitch():
+    wrapping = field(font_height=240, leading=40, multiline=False, word_wrap=True)
+    entry = screen_rects.text_record(wrapping, (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN)
     assert entry["line_pitch"] == 14.0
 
 
