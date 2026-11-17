@@ -16,8 +16,9 @@ from urchin_dev.swf.extract import store_art, window_chrome
 ART_DIR = REPO_ROOT / "assets" / "ui" / "store" / "backdrops"
 RECORD = json.loads((ART_DIR / "store_art.json").read_text())
 
-# The keeper scene's mask on the Stage, (x, y, w, h), from spec/107-store.md.
+# The keeper scene's mask on the Stage, (x, y, w, h), typed from spec/107-store.md.
 # The union crop has to hold it and may reach past it by the keeper's own art.
+# #234 replaces this constant: its rect test reads the mask from the SWF.
 MASK = (55.25, 99.90, 186.00, 140.00)
 EDGE = 0.5
 
