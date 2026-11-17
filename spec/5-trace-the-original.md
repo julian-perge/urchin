@@ -24,7 +24,7 @@ The work has five parts:
 - `ffdec -replace <in.swf> <out.swf> "/frame_1/DoAction" <file.as>` replaces the first frame script. The research ran it in 2.3 s (`docs/research/2026-11-07-swf-export-and-labels.md`, section 7).
 - The Steam build's first frame script is not in the repo. Its export has 825 scripts, and the web export has 869. So the recipe exports each build's own `/frame_1/DoAction` before it adds the Probes.
 - The Flash debug player writes `trace()` lines to `~/Library/Preferences/Macromedia/Flash Player/Logs/flashlog.txt` when `~/mm.cfg` has `TraceOutputFileEnable=1`. The file starts empty at each player launch. `~/mm.cfg` exists on Julian's machine.
-- Ruffle writes `trace()` lines to stderr as `INFO avm_trace: ...` with its default log filter. The sandboxed `/Applications/Ruffle.app` (0.7.1) opens a SWF only inside `~/Library/Containers/rs.ruffle.ruffle/Data/`.
+- Ruffle writes `trace()` lines as `INFO avm_trace: ...` with its default log filter. They go to stdout, not to stderr as this spec first said: #304 measured it with Ruffle 0.7.1. Each line starts with ANSI colour codes. The sandboxed `/Applications/Ruffle.app` (0.7.1) opens a SWF only inside `~/Library/Containers/rs.ruffle.ruffle/Data/`.
 - The players are at `~/Games/Flashpoint_14/FPSoftware/Flash/Flash 14.app/Contents/MacOS/Flash Player Debugger` and `/Applications/Ruffle.app/Contents/MacOS/ruffle`. Both exist today.
 - The hub clip is `_level0.KrinScreen` (sprite 3287) and the hall clip is `_level0.BATTLESCREEN` (sprite 3435). The sky clip (sprite 3454) has no instance name, so its path is `_level0.instanceN`. `label_xref.json` has only one goto on each of these three clips: the load handlers, records with `via` of `zone_name`, `zone_background` and `sky_background`.
 - A Flash log line has the form `GOTO<tab>stop<tab>_level0.__t<tab>1<tab>0<tab>1<tab>0` (read from the `flashlog.txt` of the idea session). The fields after `GOTO` are kind, clip path, total frames, frame before, target and frame after.
@@ -65,7 +65,7 @@ The Traced copy differs from the build only by the Probes. The recipe does not r
 
 1. Builds the Traced copy as `trace-swf` does.
 2. **Flash.** Stops with a message when `~/mm.cfg` does not have `TraceOutputFileEnable=1`. Launches the debug player binary with the path of the Traced copy.
-3. **Ruffle.** Copies the Traced copy to `~/Library/Containers/rs.ruffle.ruffle/Data/urchin_traced/` (proposed) and launches Ruffle with that path. It captures Ruffle's stderr.
+3. **Ruffle.** Copies the Traced copy to `~/Library/Containers/rs.ruffle.ruffle/Data/urchin_traced/` (proposed) and launches Ruffle with that path. It captures Ruffle's stdout and stderr together.
 4. Waits until the player quits.
 5. Saves the raw player log as `references/traced_runs/<build>_<player>.txt`. For Flash this is a copy of `flashlog.txt`. An existing file is replaced.
 6. Prints the number of GOTO lines. It exits 1 when the log has no `HOOK<tab>installed<tab>true` line.
@@ -238,7 +238,7 @@ The breakpoint AC and the save AC of the issue body stay optional. Nothing here 
 Julian approved the spec as drafted on 2026-11-16. These points were open questions in the draft, and the approval accepts each one as written.
 
 1. **Log size.** The size of a Trace log is not measured, because no run has gone past the title. The build commits a raw log under 5 MB. Over that, the build stops and asks.
-2. **Home paths in a raw log.** Ruffle's stderr can hold paths under the home folder. The log is committed as the player wrote it.
+2. **Home paths in a raw log.** Ruffle's log can hold paths under the home folder. The log is committed as the player wrote it.
 3. **Whether the debug player caps `flashlog.txt`.** Not measured. The first `web_flash` run shows it: the hub line is the last check of the route, so a capped log fails the hub check.
 4. **Computer use on the Flash 14 debug player under Rosetta** is not tested, and the agent must win battle 2 and battle 100. The fallback is in the route section: Julian plays the run.
 5. **Names.** `trace_swf`, `trace_run`, `trace_diff`, `FLASH_DEBUG_PLAYER`, `RUFFLE_BIN`, the `urchin_traced` folder in Ruffle's container and the screenshot names are the names.
