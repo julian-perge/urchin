@@ -329,6 +329,46 @@ def test_shared_slot_art_uses_the_equip_placement_not_the_grid_placement(monkeyp
     assert piece["rect"] == pytest.approx([66.7, 156.65, 31.0, 31.0])
 
 
+def test_shared_slot_art_refuses_a_placement_with_another_scale(monkeypatch):
+    from types import SimpleNamespace
+
+    equip = SimpleNamespace(
+        character_id=2984, matrix=(2.0, 0.0, 0.0, 2.0, -6366, -1005)
+    )
+    grid = SimpleNamespace(character_id=2986, matrix=(1.0, 0.0, 0.0, 1.0, 2652, -1885))
+    monkeypatch.setattr(screen_rects, "origin_of", lambda *_: ORIGIN)
+    monkeypatch.setattr(screen_rects.timeline, "frame_of", lambda *_: 1)
+    monkeypatch.setattr(
+        screen_rects.timeline, "frames", lambda *_: [{828: equip, 30: grid}]
+    )
+    monkeypatch.setattr(
+        screen_rects,
+        "art_sources",
+        lambda: {
+            "slot_inventory": (
+                {
+                    "relative_to": "sprite 2986",
+                    "rect": [-15.5, -15.5, 31.0, 31.0],
+                    "size": [124, 124],
+                    "zoom": 4,
+                },
+                screen_rects.CHROME_TEXTURES,
+            )
+        },
+    )
+    scene = screen_rects.Scene(
+        3142,
+        "inventory",
+        {
+            "EquipSlot": screen_rects.Piece(
+                "art", 828, art="slot_inventory", rendered_at=30
+            )
+        },
+    )
+    with pytest.raises(ValueError, match="placement scale"):
+        screen_rects.scene_record(None, scene)
+
+
 def test_art_record_refuses_a_sprite_rect_of_another_sprite():
     with pytest.raises(ValueError, match="sprite 2867"):
         screen_rects.art_record(
