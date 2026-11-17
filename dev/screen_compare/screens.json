@@ -90,5 +90,14 @@
     "bar": 74
    }
   }
+ },
+ "store": {
+  "scene": "res://scenes/ui/store/store_window.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 63,
+    "hide_names": ["ItemIcon", "Highlight", "Body"]
+   }
+  }
  }
 }

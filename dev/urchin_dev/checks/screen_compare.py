@@ -135,7 +135,7 @@ def load_config(
             where = f"{name}, mode {mode}"
             if mode not in MODES:
                 raise CompareError(f"{where}: unknown mode, expected one of {MODES}")
-            unknown = sorted(fields.keys() - {"bar", "nodes"})
+            unknown = sorted(fields.keys() - {"bar", "nodes", "hide_names"})
             if unknown:
                 raise CompareError(f"{where}: unknown fields {unknown}")
             if "bar" not in fields:
@@ -145,6 +145,11 @@ def load_config(
                 isinstance(bar, bool) or not isinstance(bar, (int, float))
             ):
                 raise CompareError(f"{where}: the bar {bar!r} is not a number or null")
+            hide = fields.get("hide_names", [])
+            if not isinstance(hide, list) or not all(isinstance(n, str) for n in hide):
+                raise CompareError(f"{where}: hide_names is a list of node names")
+            if hide and mode != "chrome":
+                raise CompareError(f"{where}: only chrome mode takes hide_names")
             nodes = tuple(fields.get("nodes", ()))
             if mode == "panels" and not nodes:
                 raise CompareError(f"{where}: panels needs its nodes")
@@ -197,10 +202,15 @@ def box_mask(shape: tuple[int, int], rect: Iterable[float]) -> np.ndarray:
     return mask
 
 
-def face_boxes(record: dict, scene: str) -> list[tuple[float, ...]]:
-    """-> the rect of every face the rect record holds for `scene`."""
+# The pieces whose art the game sets from its data, and ffdec runs no
+# ActionScript, so the reference cannot hold the same art.
+MASKED_KINDS = ("face", "doll")
+
+
+def masked_boxes(record: dict, scene: str) -> list[tuple[float, ...]]:
+    """-> the rect of every face and doll the rect record holds for `scene`."""
     pieces = record["scenes"].get(scene, {}).get("pieces", {})
-    return [tuple(p["rect"]) for p in pieces.values() if p["kind"] == "face"]
+    return [tuple(p["rect"]) for p in pieces.values() if p["kind"] in MASKED_KINDS]
 
 
 def difference(shot: np.ndarray, reference: np.ndarray) -> np.ndarray:
@@ -372,7 +382,7 @@ def compare(index: SwfIndex, name: str, entry: Entry, mode: str, shots: Path) ->
     )
     mask = drawn_mask(magenta, green)
     record = json.loads(screen_rects.RECORD.read_text())
-    for rect in face_boxes(record, entry.scene):
+    for rect in masked_boxes(record, entry.scene):
         mask &= ~box_mask(mask.shape, rect)
     image = render_reference(index, entry, mode)
     image.save(shots / name / f"{mode}_reference.png")

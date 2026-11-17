@@ -10,7 +10,11 @@
 # then capture_screenshot:
 #   --entry=<name>             an entry of screens.json
 #   --mode=chrome|panels       chrome hides every Label, and panels hides
-#                              every node that the entry's `nodes` does not name
+#                              every node that the entry's `nodes` does not name.
+#                              A chrome mode with "hide_names" also hides every
+#                              node with one of those names, and what is under
+#                              it: art that the game sets from its data, such
+#                              as item icons and the doll
 #   --background=magenta|green the colour behind the scene
 extends Node
 
@@ -52,15 +56,17 @@ func _ready() -> void:
 	var keep: Array[Node] = []
 	for path: String in entry["modes"][mode].get("nodes", []):
 		keep.append(screen.get_node(path))
-	_hide(screen, mode, keep)
+	var hide_names: Array = entry["modes"][mode].get("hide_names", [])
+	_hide(screen, mode, keep, hide_names)
 
 
 # A hidden node keeps its place in the layout, because only what it draws
 # itself turns clear. Setting `visible` would take it out of a FloatBox.
-func _hide(node: Node, mode: String, keep: Array[Node]) -> void:
+func _hide(node: Node, mode: String, keep: Array[Node], hide_names: Array, under_hidden_name: bool = false) -> void:
+	var is_named: bool = under_hidden_name or hide_names.has(str(node.name))
 	if node is CanvasItem:
 		var is_text: bool = node is Label or node is RichTextLabel
-		if (mode == "chrome" and is_text) or (mode == "panels" and node not in keep):
+		if (mode == "chrome" and (is_text or is_named)) or (mode == "panels" and node not in keep):
 			node.self_modulate.a = 0.0
 	for child: Node in node.get_children():
-		_hide(child, mode, keep)
+		_hide(child, mode, keep, hide_names, is_named)

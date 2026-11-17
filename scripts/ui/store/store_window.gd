@@ -5,9 +5,9 @@
 # piece against the SWF.
 # - left: the zone's shop keeper art (sprite 3036, via StoreManager) and the
 #   keeper's line, SHOP[shopId] from strings.json
-# - middle: the dressed player doll with the 7 equip slots (top panel, typed
-#   here until #235 draws them from the SWF) and the hint and the 15 ware
-#   slots on a 5x3 grid (bottom panel)
+# - middle: the dressed player doll, facing left, with the 7 equip slots at
+#   0.86 scale (top panel), and the hint and the 15 ware slots on a 5x3 grid
+#   (bottom panel)
 # - right: the shared RightColumn, with its sell slot shown
 #
 # Click a catalog item to buy it; click an inventory item to equip it;
@@ -18,18 +18,6 @@ signal store_closed
 
 const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
 
-# playerSlot0-6 centers from the frame-16 dump.
-const EQUIP_SLOT_CENTERS: Dictionary[int, Vector2] = {
-	0: Vector2(301.1, 117.6),
-	2: Vector2(301.1, 152.0),
-	6: Vector2(301.1, 186.4),
-	5: Vector2(335.5, 186.4),
-	1: Vector2(456.7, 117.6),
-	3: Vector2(456.7, 152.0),
-	4: Vector2(456.7, 186.4),
-}
-const DOLL_POSITION: Vector2 = Vector2(396.5, 162.4)
-const DOLL_SCALE: float = 0.85
 # The wares are 3 rows of 5, as the original's dropSlot0 to dropSlot14.
 const WARES_PER_ROW: int = 5
 
@@ -38,8 +26,8 @@ const WARES_PER_ROW: int = 5
 @onready var hint_label: Label = $CentreBottomPanel/Content/Hint
 @onready var _status_label: Label = $CentreBottomPanel/Content/StatusLabel
 @onready var right_column: RightColumn = $RightColumn
+@onready var equip_view: EquipDollView = $CentreTopPanel/Content/EquipDollView
 
-var equip_view: EquipDollView
 # The 15 ware slots in grid order, row by row.
 var ware_slots: Array[ItemSlot] = []
 
@@ -59,10 +47,7 @@ func _ready():
 
 
 func _build_middle() -> void:
-	equip_view = EquipDollView.new()
-	equip_view.name = "EquipDollView"
-	add_child(equip_view)
-	equip_view.setup(EQUIP_SLOT_CENTERS, DOLL_POSITION, DOLL_SCALE, true)
+	equip_view.setup()
 	equip_view.equip_slot_clicked.connect(_on_equip_slot_clicked)
 	for row: Node in $CentreBottomPanel/Content/Wares.get_children():
 		for column in WARES_PER_ROW:

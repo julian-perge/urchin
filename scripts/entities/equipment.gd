@@ -38,8 +38,7 @@ const EQUIP_RESULT_MESSAGES: Dictionary[EquipResult, String] = {
 }
 
 # PlayerSave.equip_array index -> "kind" of slot - unlike the UI's own 0-6
-# equip-slot indices (inventory_window.gd/store_window.gd's
-# EQUIP_SLOT_CENTERS, equip_doll_view.gd's equip_index), which never branch
+# equip-slot indices (equip_doll_view.gd's equip_index), which never branch
 # on which slot it is and stay plain int, this file constantly checks WHICH
 # slot (EQUIP_SLOT_TYPES[slot], MAIN_HAND_SLOT/SECONDARY_SLOT's special
 # casing), so it earns a real enum.

@@ -1001,3 +1001,40 @@ func test_control_a_keeper_art_from_another_folder_fails() -> void:
 	assert_eq(found.size(), 2, str(found))
 	assert_string_contains(found[0] if found else "", "KeeperArt: texture res://")
 	assert_string_contains(found[1] if found else "", "KeeperArt: texture size")
+
+
+const STORE_EQUIP: String = "CentreTopPanel/Content/EquipDollView/"
+
+
+# The shop frame draws the equip slots at 0.86, so a slot at the Inventory's
+# full size is 4.4 px too wide, and its top left stays where the SWF has it.
+func test_control_a_store_equip_slot_at_full_size_fails() -> void:
+	var root: Control = await _laid_out(STORE_SCENE)
+	(root.get_node(STORE_EQUIP + "Slot3") as Control).scale = Vector2.ONE
+	var found: Array[String] = _scene_problems(root, _store_record())
+	assert_eq(found.size(), 1, str(found))
+	assert_string_contains(found[0] if found else "", "Slot3: bottom right")
+
+
+func test_control_a_store_equip_slot_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(STORE_SCENE)
+	(root.get_node(STORE_EQUIP + "Slot5") as Control).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _store_record())
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, STORE_EQUIP + "Slot5:")
+
+
+func test_control_a_store_doll_moved_20_px_or_facing_right_fails() -> void:
+	var root: Control = await _laid_out(STORE_SCENE)
+	var doll: Node2D = root.get_node(STORE_EQUIP + "Doll")
+	doll.position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _store_record())
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, STORE_EQUIP + "Doll:")
+	doll.position.x -= 20.0
+	doll.scale.x *= -1.0
+	found = _scene_problems(root, _store_record())
+	assert_gt(found.size(), 0)
+	assert_string_contains(found[0] if found else "", "scale")

@@ -5,6 +5,9 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/window/shell_panel.tscn" id="3_panel"]
 [ext_resource type="Script" path="res://scripts/ui/float_box.gd" id="4_floatbox"]
 [ext_resource type="PackedScene" path="res://scenes/ui/window/right_column.tscn" id="5_rightcolumn"]
+[ext_resource type="Script" path="res://scripts/ui/menu/equip_doll_view.gd" id="6_equip"]
+[ext_resource type="Script" path="res://scripts/entities/character_visual.gd" id="7_visual"]
+[ext_resource type="PackedScene" path="res://scenes/ui/item_slot.tscn" id="8_itemslot"]
 
 [node name="StoreWindow" type="Control" groups=["menu_screen"]]
 layout_mode = 3
@@ -61,6 +64,77 @@ offset_right = 487.963
 offset_bottom = 218.5406
 mouse_filter = 2
 fill = 2
+
+[node name="Content" type="Control" parent="CentreTopPanel"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="EquipDollView" type="Control" parent="CentreTopPanel/Content"]
+layout_mode = 0
+mouse_filter = 2
+script = ExtResource("6_equip")
+
+[node name="Doll" type="Node2D" parent="CentreTopPanel/Content/EquipDollView"]
+position = Vector2(121.8967, 69.9186)
+scale = Vector2(-1.1249, 1.1249)
+script = ExtResource("7_visual")
+animate = false
+
+[node name="Slot0" parent="CentreTopPanel/Content/EquipDollView" instance=ExtResource("8_itemslot")]
+offset_left = 12.6134
+offset_top = 22.5057
+offset_right = 43.8634
+offset_bottom = 53.7557
+scale = Vector2(0.8604, 0.8604)
+metadata/equip_index = 0
+
+[node name="Slot1" parent="CentreTopPanel/Content/EquipDollView" instance=ExtResource("8_itemslot")]
+offset_left = 168.2634
+offset_top = 22.5057
+offset_right = 199.5134
+offset_bottom = 53.7557
+scale = Vector2(0.8604, 0.8604)
+metadata/equip_index = 1
+
+[node name="Slot2" parent="CentreTopPanel/Content/EquipDollView" instance=ExtResource("8_itemslot")]
+offset_left = 12.6134
+offset_top = 56.9557
+offset_right = 43.8634
+offset_bottom = 88.2057
+scale = Vector2(0.8604, 0.8604)
+metadata/equip_index = 2
+
+[node name="Slot3" parent="CentreTopPanel/Content/EquipDollView" instance=ExtResource("8_itemslot")]
+offset_left = 168.2634
+offset_top = 56.9557
+offset_right = 199.5134
+offset_bottom = 88.2057
+scale = Vector2(0.8604, 0.8604)
+metadata/equip_index = 3
+
+[node name="Slot4" parent="CentreTopPanel/Content/EquipDollView" instance=ExtResource("8_itemslot")]
+offset_left = 168.2634
+offset_top = 91.3557
+offset_right = 199.5134
+offset_bottom = 122.6057
+scale = Vector2(0.8604, 0.8604)
+metadata/equip_index = 4
+
+[node name="Slot5" parent="CentreTopPanel/Content/EquipDollView" instance=ExtResource("8_itemslot")]
+offset_left = 47.0134
+offset_top = 91.3557
+offset_right = 78.2634
+offset_bottom = 122.6057
+scale = Vector2(0.8604, 0.8604)
+metadata/equip_index = 5
+
+[node name="Slot6" parent="CentreTopPanel/Content/EquipDollView" instance=ExtResource("8_itemslot")]
+offset_left = 12.6134
+offset_top = 91.3557
+offset_right = 43.8634
+offset_bottom = 122.6057
+scale = Vector2(0.8604, 0.8604)
+metadata/equip_index = 6
 
 [node name="CentreBottomPanel" parent="." instance=ExtResource("3_panel")]
 layout_mode = 0

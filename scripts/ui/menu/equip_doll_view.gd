@@ -1,39 +1,23 @@
 # The dressed player doll with the 7 equip slots. The Inventory window (frame 1
-# of the original menu clip) and the Store window (frame 16) share it and place
-# the same pieces at different positions. Call setup() once, then refresh()
-# after each change to the save or the equipment.
+# of the original menu clip) and the Store window (frame 16) each place this
+# node in their scene, with its Doll and its slots, at their own positions.
+# Call setup() once, then refresh() after each change to the save or the
+# equipment.
 extends Control
 class_name EquipDollView
 
 signal equip_slot_clicked(equip_index: int)
 
-const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
-const CharacterVisualScript = preload("res://scripts/entities/character_visual.gd")
-
 var _slots: Dictionary = {}  # equip index -> ItemSlot
 var _doll: CharacterVisual
 
 
-# Inventory supplies its slots and its Doll in the scene, so it passes an empty
-# map and no placement, and the Doll keeps the position and scale the scene
-# gives it. Store still supplies centres and a placement here, which builds a
-# still battle doll. Both use equip_index metadata for clicks and drag-and-drop.
-func setup(slot_centers: Dictionary, doll_position: Vector2 = Vector2.ZERO, doll_scale: float = 1.0, face_left: bool = false) -> void:
+# The scene supplies the Doll and the slots, each with its position and scale,
+# so setup() only connects them. A slot names its index in equip_index
+# metadata, which clicks and drag-and-drop read.
+func setup() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_doll = get_node_or_null("Doll") as CharacterVisual
-	if _doll == null:
-		_doll = CharacterVisualScript.new()
-		_doll.name = "Doll"
-		_doll.animate = false
-		_doll.position = doll_position
-		_doll.scale = Vector2(-doll_scale if face_left else doll_scale, doll_scale)
-		add_child(_doll)
-		move_child(_doll, 0)
-	for equip_index in slot_centers:
-		var slot: ItemSlot = ItemSlotScene.instantiate()
-		slot.position = slot_centers[equip_index] - MenuTheme.SLOT_SIZE / 2.0
-		slot.set_meta("equip_index", equip_index)
-		add_child(slot)
+	_doll = get_node("Doll") as CharacterVisual
 	for child: Node in get_children():
 		if not child is ItemSlot or not child.has_meta("equip_index"):
 			continue

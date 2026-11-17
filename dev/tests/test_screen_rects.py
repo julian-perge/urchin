@@ -330,11 +330,13 @@ def test_shared_slot_art_uses_the_equip_placement_not_the_grid_placement(monkeyp
     assert piece["rect"] == pytest.approx([66.7, 156.65, 31.0, 31.0])
 
 
-def test_shared_slot_art_refuses_a_placement_with_another_scale(monkeypatch):
+def scaled_slot_record(monkeypatch, scale_x, scale_y=None):
+    """-> the record of an equip slot that the frame places at depth 828 with
+    the scale `scale_x` by `scale_y`, drawn with the art of the grid slot."""
     from types import SimpleNamespace
 
     equip = SimpleNamespace(
-        character_id=2984, matrix=(2.0, 0.0, 0.0, 2.0, -6366, -1005)
+        character_id=2984, matrix=(scale_x, 0.0, 0.0, scale_y or scale_x, -6366, -1005)
     )
     grid = SimpleNamespace(character_id=2986, matrix=(1.0, 0.0, 0.0, 1.0, 2652, -1885))
     monkeypatch.setattr(screen_rects, "origin_of", lambda *_: ORIGIN)
@@ -359,15 +361,58 @@ def test_shared_slot_art_refuses_a_placement_with_another_scale(monkeypatch):
     )
     scene = screen_rects.Scene(
         3142,
-        "inventory",
+        "shop",
         {
             "EquipSlot": screen_rects.Piece(
                 "art", 828, art="slot_inventory", rendered_at=30
             )
         },
     )
-    with pytest.raises(ValueError, match="placement scale"):
-        screen_rects.scene_record(None, scene)
+    return screen_rects.scene_record(None, scene)["pieces"]["EquipSlot"]
+
+
+# The shop frame scales its equip slots to 0.86. The art, its baked shadow and
+# its highlight scale with the clip, so the rect is the art's rect times the
+# scale from the slot's placement, and the PNG shows that many pixels for each
+# Stage px less.
+def test_shared_slot_art_at_another_scale_is_scaled_from_the_equip_placement(
+    monkeypatch,
+):
+    piece = scaled_slot_record(monkeypatch, 0.86)
+    assert piece["rect"] == pytest.approx(
+        [400.5 - 318.3 - 15.5 * 0.86, 222.4 - 50.25 - 15.5 * 0.86, 26.66, 26.66]
+    )
+    assert piece["size"] == [124, 124]
+
+
+def test_scaled_slot_art_keeps_the_rect_times_zoom_equal_to_the_png_size(monkeypatch):
+    piece = scaled_slot_record(monkeypatch, 0.86)
+    assert [v * piece["zoom"] for v in piece["rect"][2:]] == pytest.approx(
+        piece["size"], abs=0.01
+    )
+
+
+def test_shared_slot_art_refuses_a_placement_that_scales_x_and_y_differently(
+    monkeypatch,
+):
+    with pytest.raises(ValueError, match="same scale"):
+        scaled_slot_record(monkeypatch, 0.86, 0.9)
+
+
+def test_art_record_scales_a_sprite_rect_and_leaves_a_stage_rect_alone():
+    slot = {
+        "relative_to": "sprite 2986",
+        "rect": [-15.5, -15.5, 31.0, 31.0],
+        "size": [124, 124],
+        "zoom": 4,
+    }
+    entry = screen_rects.art_record(
+        "slot_inventory", slot, {"sprite 2986": (10.0, 20.0)}, scale=0.5
+    )
+    assert entry["rect"] == [2.25, 12.25, 15.5, 15.5]
+    assert entry["zoom"] == 8
+    with pytest.raises(ValueError, match="Stage"):
+        screen_rects.art_record("close_x", CLOSE_X_CHROME, scale=0.5)
 
 
 HOTBAR_SQUARE_SOURCE = {
@@ -913,6 +958,34 @@ def test_one_part_origin_off_the_pose_does_not_move_the_doll():
         layers, DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN
     )
     assert record["position"] == pytest.approx([400.5 - 200.0, 222.4 - 10.0])
+
+
+def test_a_frame_with_no_female_set_gives_the_same_doll():
+    full = mirrored_doll(1.5, -200.0, -10.0)
+    male_only = {
+        depth: layer
+        for depth, layer in full.items()
+        if not (layer.name or "").endswith("_f")
+    }
+    assert len(male_only) == 4
+    record = screen_rects.doll_record(
+        male_only, DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN, female_set=False
+    )
+    assert record == screen_rects.doll_record(
+        full, DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN
+    )
+
+
+def test_a_frame_that_places_the_female_set_is_refused_when_none_is_expected():
+    with pytest.raises(ValueError, match="7 doll clips, not 4"):
+        screen_rects.doll_record(
+            mirrored_doll(1.5, -200.0, -10.0),
+            DOLL_PARTS,
+            DOLL_RIG,
+            DOLL_OFFSETS,
+            ORIGIN,
+            female_set=False,
+        )
 
 
 def test_a_frame_with_another_count_of_doll_clips_is_refused():
