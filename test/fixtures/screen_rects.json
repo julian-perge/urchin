@@ -931,6 +931,103 @@
    ],
    "timeline": 0
   },
+  "res://scenes/ui/hub_card.tscn": {
+   "frame": "Navigation",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Body": {
+     "align": "left",
+     "color": "000000ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      192.5,
+      157.45,
+      404.75,
+      144.35
+     ]
+    },
+    "CloseButton": {
+     "kind": "hit",
+     "rect": [
+      273.2,
+      304.0,
+      241.3,
+      30.0
+     ]
+    },
+    "Dim": {
+     "fill": "000000b3",
+     "kind": "box",
+     "rect": [
+      -12.5871,
+      -2.05,
+      812.9507,
+      576.2
+     ]
+    },
+    "Face": {
+     "kind": "art",
+     "rect": [
+      169.6,
+      116.725,
+      448.5,
+      223.25
+     ],
+     "size": [
+      1794,
+      893
+     ],
+     "texture": "res://assets/ui/window/hub_card_face.png",
+     "zoom": 4.0
+    },
+    "Frame": {
+     "kind": "art",
+     "rect": [
+      156.5,
+      104.25,
+      481.0,
+      254.25
+     ],
+     "size": [
+      1924,
+      1017
+     ],
+     "texture": "res://assets/ui/window/hub_card_frame.png",
+     "zoom": 4.0
+    },
+    "Prompt": {
+     "align": "center",
+     "color": "666666ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      284.85,
+      312.8,
+      218.0,
+      15.05
+     ]
+    },
+    "Title": {
+     "align": "left",
+     "color": "666666ff",
+     "font_size": 14.0,
+     "kind": "text",
+     "rect": [
+      192.55,
+      133.4,
+      404.7,
+      17.55
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
   "res://scenes/ui/menu/abilities_window.tscn": {
    "frame": "skills",
    "origin": [
