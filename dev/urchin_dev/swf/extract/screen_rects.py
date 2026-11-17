@@ -221,6 +221,20 @@ BAR_TRACK_DEPTH = 1
 BAR_LAYER_DEPTHS = {"Ybar": 17, "Bar": 34, "Gbar": 50, "Xbar": 66}
 BAR_COUNT = 8
 
+# The Inventory frame places the six party faces, sprite 2979, as fa0 to fa5. A
+# face holds its parts at these depths of its own first frame: the black backing
+# (shape 333), the face clip under its mask, the dim that a member outside the
+# Deployed pair keeps (`blacker`, sprite 2896), the hit button and the selection
+# frame (sprite 2893, drawn by the art "party_frame").
+PARTY_FACES = 6
+PARTY_FACE_PIECES = {
+    "Backing": lambda n: Piece("box", None, instance=f"fa{n}", inner_depth=1),
+    "Face": lambda n: Piece("face", None, instance=f"fa{n}", inner_depth=2),
+    "Blacker": lambda n: Piece("box", None, instance=f"fa{n}", inner_depth=36),
+    "HitButton": lambda n: Piece("hit", None, instance=f"fa{n}", inner_depth=38),
+    "Frame": lambda n: Piece("art", None, art="party_frame", instance=f"fa{n}"),
+}
+
 # The frame names the grid's slots itemSlot0 to itemSlot35, row by row.
 INVENTORY_SLOTS = 36
 INVENTORY_COLUMNS = 6
@@ -716,8 +730,7 @@ SCENES[HUB_CHROME] = Scene(
 
 
 # The Inventory record covers #226's shell and left panel, #227's doll and
-# experience row, and #228's stat rows. The other pieces are port only until
-# their tasks record them: the party faces (#231). #230's element bars are two
+# experience row, #228's stat rows and #231's party faces. #230's element bars are two
 # blocks, each a shade over the eight bars and a row of bars with a track and
 # four layers (BAR_LAYER_DEPTHS). The shade is the one shape 2874, which fills
 # all eight bars with a gradient, so it is one piece for each block.
@@ -758,6 +771,11 @@ SCENES[INVENTORY_SCENE] = Scene(
                 ("Track", "box", BAR_TRACK_DEPTH),
                 *((layer, "shape", depth) for layer, depth in BAR_LAYER_DEPTHS.items()),
             )
+        },
+        **{
+            f"PartyFaces/Face{n}/Parts/{node}": piece(n)
+            for n in range(PARTY_FACES)
+            for node, piece in PARTY_FACE_PIECES.items()
         },
         "LeftPanel/Content/Header/NameRow/NameLabel": Piece("text", 1241),
         "LeftPanel/Content/Header/InfoRow/LevelLabel": Piece("text", 1242),
@@ -826,7 +844,6 @@ SCENES[INVENTORY_SCENE] = Scene(
             for k in range(BAR_COUNT)
             for layer in ("Gbar", "Xbar")
         ),
-        *(f"Portrait{i}" for i in range(6)),
         *(
             f"RightColumn/{node}"
             for node in SCENES["res://scenes/ui/window/right_column.tscn"].port_only

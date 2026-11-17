@@ -2235,6 +2235,324 @@
       "distance": 5.0
      }
     },
+    "PartyFaces/Face0/Parts/Backing": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      57.4456,
+      365.159,
+      29.502,
+      39.4996
+     ]
+    },
+    "PartyFaces/Face0/Parts/Blacker": {
+     "fill": "000000d9",
+     "kind": "box",
+     "rect": [
+      58.6751,
+      366.9,
+      26.5499,
+      36.0
+     ]
+    },
+    "PartyFaces/Face0/Parts/Face": {
+     "kind": "face",
+     "rect": [
+      58.275,
+      365.65,
+      27.8,
+      37.8
+     ]
+    },
+    "PartyFaces/Face0/Parts/Frame": {
+     "kind": "art",
+     "rect": [
+      47.925,
+      355.625,
+      49.25,
+      59.25
+     ],
+     "size": [
+      197,
+      237
+     ],
+     "texture": "res://assets/ui/window/party_frame.png",
+     "zoom": 4.0
+    },
+    "PartyFaces/Face0/Parts/HitButton": {
+     "kind": "hit",
+     "rect": [
+      59.2,
+      366.9,
+      26.0,
+      36.0
+     ]
+    },
+    "PartyFaces/Face1/Parts/Backing": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      97.4456,
+      365.159,
+      29.502,
+      39.4996
+     ]
+    },
+    "PartyFaces/Face1/Parts/Blacker": {
+     "fill": "000000d9",
+     "kind": "box",
+     "rect": [
+      98.6751,
+      366.9,
+      26.5499,
+      36.0
+     ]
+    },
+    "PartyFaces/Face1/Parts/Face": {
+     "kind": "face",
+     "rect": [
+      98.275,
+      365.65,
+      27.8,
+      37.8
+     ]
+    },
+    "PartyFaces/Face1/Parts/Frame": {
+     "kind": "art",
+     "rect": [
+      87.925,
+      355.625,
+      49.25,
+      59.25
+     ],
+     "size": [
+      197,
+      237
+     ],
+     "texture": "res://assets/ui/window/party_frame.png",
+     "zoom": 4.0
+    },
+    "PartyFaces/Face1/Parts/HitButton": {
+     "kind": "hit",
+     "rect": [
+      99.2,
+      366.9,
+      26.0,
+      36.0
+     ]
+    },
+    "PartyFaces/Face2/Parts/Backing": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      137.4456,
+      365.159,
+      29.502,
+      39.4996
+     ]
+    },
+    "PartyFaces/Face2/Parts/Blacker": {
+     "fill": "000000d9",
+     "kind": "box",
+     "rect": [
+      138.6751,
+      366.9,
+      26.5499,
+      36.0
+     ]
+    },
+    "PartyFaces/Face2/Parts/Face": {
+     "kind": "face",
+     "rect": [
+      138.275,
+      365.65,
+      27.8,
+      37.8
+     ]
+    },
+    "PartyFaces/Face2/Parts/Frame": {
+     "kind": "art",
+     "rect": [
+      127.925,
+      355.625,
+      49.25,
+      59.25
+     ],
+     "size": [
+      197,
+      237
+     ],
+     "texture": "res://assets/ui/window/party_frame.png",
+     "zoom": 4.0
+    },
+    "PartyFaces/Face2/Parts/HitButton": {
+     "kind": "hit",
+     "rect": [
+      139.2,
+      366.9,
+      26.0,
+      36.0
+     ]
+    },
+    "PartyFaces/Face3/Parts/Backing": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      177.4456,
+      365.159,
+      29.502,
+      39.4996
+     ]
+    },
+    "PartyFaces/Face3/Parts/Blacker": {
+     "fill": "000000d9",
+     "kind": "box",
+     "rect": [
+      178.6751,
+      366.9,
+      26.5499,
+      36.0
+     ]
+    },
+    "PartyFaces/Face3/Parts/Face": {
+     "kind": "face",
+     "rect": [
+      178.275,
+      365.65,
+      27.8,
+      37.8
+     ]
+    },
+    "PartyFaces/Face3/Parts/Frame": {
+     "kind": "art",
+     "rect": [
+      167.925,
+      355.625,
+      49.25,
+      59.25
+     ],
+     "size": [
+      197,
+      237
+     ],
+     "texture": "res://assets/ui/window/party_frame.png",
+     "zoom": 4.0
+    },
+    "PartyFaces/Face3/Parts/HitButton": {
+     "kind": "hit",
+     "rect": [
+      179.2,
+      366.9,
+      26.0,
+      36.0
+     ]
+    },
+    "PartyFaces/Face4/Parts/Backing": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      217.4456,
+      365.159,
+      29.502,
+      39.4996
+     ]
+    },
+    "PartyFaces/Face4/Parts/Blacker": {
+     "fill": "000000d9",
+     "kind": "box",
+     "rect": [
+      218.6751,
+      366.9,
+      26.5499,
+      36.0
+     ]
+    },
+    "PartyFaces/Face4/Parts/Face": {
+     "kind": "face",
+     "rect": [
+      218.275,
+      365.65,
+      27.8,
+      37.8
+     ]
+    },
+    "PartyFaces/Face4/Parts/Frame": {
+     "kind": "art",
+     "rect": [
+      207.925,
+      355.625,
+      49.25,
+      59.25
+     ],
+     "size": [
+      197,
+      237
+     ],
+     "texture": "res://assets/ui/window/party_frame.png",
+     "zoom": 4.0
+    },
+    "PartyFaces/Face4/Parts/HitButton": {
+     "kind": "hit",
+     "rect": [
+      219.2,
+      366.9,
+      26.0,
+      36.0
+     ]
+    },
+    "PartyFaces/Face5/Parts/Backing": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      257.4456,
+      365.159,
+      29.502,
+      39.4996
+     ]
+    },
+    "PartyFaces/Face5/Parts/Blacker": {
+     "fill": "000000d9",
+     "kind": "box",
+     "rect": [
+      258.6751,
+      366.9,
+      26.5499,
+      36.0
+     ]
+    },
+    "PartyFaces/Face5/Parts/Face": {
+     "kind": "face",
+     "rect": [
+      258.275,
+      365.65,
+      27.8,
+      37.8
+     ]
+    },
+    "PartyFaces/Face5/Parts/Frame": {
+     "kind": "art",
+     "rect": [
+      247.925,
+      355.625,
+      49.25,
+      59.25
+     ],
+     "size": [
+      197,
+      237
+     ],
+     "texture": "res://assets/ui/window/party_frame.png",
+     "zoom": 4.0
+    },
+    "PartyFaces/Face5/Parts/HitButton": {
+     "kind": "hit",
+     "rect": [
+      259.2,
+      366.9,
+      26.0,
+      36.0
+     ]
+    },
     "PerBars/Bars/Bar0/Bar": {
      "kind": "shape",
      "rect": [
@@ -3336,12 +3654,6 @@
     "DefBars/Bars/Bar6/Xbar/Glow",
     "DefBars/Bars/Bar7/Gbar/Glow",
     "DefBars/Bars/Bar7/Xbar/Glow",
-    "Portrait0",
-    "Portrait1",
-    "Portrait2",
-    "Portrait3",
-    "Portrait4",
-    "Portrait5",
     "RightColumn/SellSlot",
     "RightColumn/DeleteSlot",
     "RightColumn/Grid/Row0/Slot0/ItemIcon",

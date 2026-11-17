@@ -1,0 +1,67 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/menu/party_face.gd" id="1_face"]
+[ext_resource type="Texture2D" path="res://assets/ui/window/party_frame.png" id="2_frame"]
+
+[node name="PartyFace" type="Control"]
+custom_minimum_size = Vector2(29.502, 39.4996)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 29.502
+offset_bottom = 39.4996
+mouse_filter = 2
+script = ExtResource("1_face")
+
+[node name="Parts" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 29.502
+offset_bottom = 39.4996
+mouse_filter = 2
+
+[node name="Backing" type="ColorRect" parent="Parts"]
+layout_mode = 0
+offset_right = 29.502
+offset_bottom = 39.4996
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Face" type="TextureRect" parent="Parts"]
+layout_mode = 0
+offset_left = 0.8294
+offset_top = 0.491
+offset_right = 28.6294
+offset_bottom = 38.291
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Blacker" type="ColorRect" parent="Parts"]
+layout_mode = 0
+offset_left = 1.2295
+offset_top = 1.741
+offset_right = 27.7794
+offset_bottom = 37.741
+mouse_filter = 2
+color = Color(0, 0, 0, 0.85098)
+
+[node name="HitButton" type="Button" parent="Parts"]
+layout_mode = 0
+offset_left = 1.7544
+offset_top = 1.741
+offset_right = 27.7544
+offset_bottom = 37.741
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Frame" type="TextureRect" parent="Parts"]
+layout_mode = 0
+offset_left = -9.5206
+offset_top = -9.534
+offset_right = 39.7294
+offset_bottom = 49.716
+mouse_filter = 2
+texture = ExtResource("2_frame")
+expand_mode = 1
+stretch_mode = 0

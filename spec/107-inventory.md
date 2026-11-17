@@ -104,11 +104,11 @@ The bar tooltips, built here:
 | --- | --- | --- | --- |
 | 2979 `fa0` to `fa5` | party faces | centres x 72.20 + 40n, y 384.90 | the parts below |
 
-Each face holds: a black backing, shape 333, 29.50x39.50 (`blacker`); the face 2978 under mask 2898, one frame per member (`avIn`); a hit button 2895; and the frame 2893 with a Glow #99ff00, shown only on the selected member.
+Each face holds, from the bottom up: a black backing, shape 333, 29.50x39.50, always drawn; the face 2978 under mask 2898, one frame per member (`avIn`); a dim, sprite 2896 (`blacker`), shape 2894 at 85% black, 26.55x36; a hit button 2895 with no look of its own; and the frame 2893 under two Glows of #99ff00, shown only on the selected member (`borderFrame`).
 
 - Built as a `PartyFace` scene (proposed: `scenes/ui/menu/party_face.tscn`) with three states:
   - `selected`: the green-Glow frame shows.
-  - `deployed`: the black backing is hidden. A member outside the Deployed pair keeps it. The original shows the backing when `friendArrayX` does not hold the member (`updateFriends`).
+  - `deployed`: the dim (`blacker`) is hidden. A member outside the Deployed pair keeps it. The original shows the dim when `friendArrayX` does not hold the member (`updateFriends`). The player's face never has the dim, because the original hides it when the clip loads (`PlaceObject2_2979_995`, `onClipEvent(load)`).
   - `joined`: a member who has not joined is hidden, not dimmed. The original hides a face whose `id` is below 0, and #11 asks for the same.
 - Faces are the existing `assets/ui/menu/portraits/` art from `extract_faces`. The face is drawn under a mask, as the SWF does. The compare tool masks faces out, because ffdec draws them empty.
 - The six faces sit at a 40 px pitch, so they are a horizontal `FloatBox` with separation set from the record.
@@ -162,7 +162,7 @@ The snippet shows style only. `MenuMath` is a small loader for `menu_math.json`.
 - **Rect test.** Add `inventory_window.tscn`, `party_face.tscn` and `element_bar.tscn` to the record. Every piece in the tables passes under 0.5 px, and the Labels' sizes and colors match.
 - **Bar math (GUT).** For a set of values and levels, the layer heights equal the AS formulas, with the coefficients read from `menu_math.json`. The test includes a value below the level's average, where the `xbar` formula goes negative and the bar draws no `xbar`, and one above the cap.
 - **Tooltips.** A test builds the piercing and defense tooltips for one element and compares the title and body with `strings.json` and the computed percentages. A second case covers each of the seven `DEFTIP` factors.
-- **Party face.** A test checks the three states: a member outside `party_deployed` shows the black backing, an unjoined member is hidden, and only the selected member shows the green frame.
+- **Party face.** A test checks the three states: a member outside `party_deployed` shows the dim, an unjoined member is hidden, and only the selected member shows the green frame.
 - **Existing tests.** `test_inventory_panel.gd`, `test_item_slot.gd` and the inventory window tests keep passing after the nodes move.
 - **Must-fail controls.** Move one stat row 20 px in a copy of the scene and expect the rect test to fail. Change one coefficient in a copy of `menu_math.json` and expect the bar test to fail.
 - **Extractor.** A second `uv run convert_menu_math` leaves the JSON byte-identical. `uv run pytest` covers the parsing on a small AS sample.
