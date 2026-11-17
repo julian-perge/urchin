@@ -25,9 +25,11 @@
 #   "art"   - a piece drawn from a zoom 4 PNG of extract_window_chrome, which
 #             a TextureRect shows at the rect that render measured, with the
 #             PNG's path. The rect and the PNG come from `window_chrome.json`
-#             by name, so the two extractors cannot name different placements.
-#             For stage-measured art, the code only checks that the depth
-#             exists on the frame.
+#             by the art's name, not from the piece's depth. For art measured
+#             from a sprite, the sprite at the piece's depth must be the one
+#             the render was measured from. For art measured from the stage,
+#             the code only checks that the depth exists on the frame, so a
+#             wrong depth there is not caught.
 #   "face"  - the portrait clip 2978, which the port draws as a TextureRect that
 #             shows a different PNG for each fighter. It is recorded as the crop
 #             box that extract_faces cut every portrait to, placed with the
