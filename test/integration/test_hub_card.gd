@@ -149,3 +149,26 @@ func test_a_save_that_fails_shows_no_card():
 	var hub: Dictionary = await _hub()
 	_click(hub["hotbar"].get_node("%SaveButton"))
 	assert_false((hub["card"] as HubCard).visible)
+
+
+# The tests above stack a hotbar and a card by hand. This one uses the real
+# scene, so it fails when scenes/game.tscn loses the card or puts it under the
+# Hotbar.
+func test_the_game_scene_opens_the_card_from_save_and_the_card_covers_the_hotbar():
+	GameData.current_save = PlayerSave.new_game("Saver", 0)
+	GameData.current_slot = 3
+	var stage: SubViewport = _stage()
+	var game: Control = load("res://scenes/game.tscn").instantiate()
+	stage.add_child(game)
+	await wait_process_frames(2)
+	var hotbar: Control = game.get_node("Hotbar")
+	var card: HubCard = game.get_node("HubCard")
+	assert_false(card.visible)
+	_click(hotbar.get_node("%SaveButton"))
+	assert_true(card.visible, "Save shows the card in the game scene")
+	var inventory: BaseButton = hotbar.get_node("%InventoryButton")
+	watch_signals(inventory)
+	_click(inventory)
+	assert_signal_not_emitted(inventory, "pressed", "the card covers the hotbar")
+	_click(card.get_node("CloseButton"))
+	assert_false(card.visible)
