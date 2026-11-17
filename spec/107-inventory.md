@@ -85,7 +85,7 @@ Each bar is sprite 2873 or 2872 around the white 11x68 shape 2870, stacked in fo
 | `gbar` | brightened, with a Glow | `(saveH / 100) * nT2` and `* nT5`, capped at `saveH` |
 | `xbar` | brightened, with a Glow | `saveH * nT3` and `* nT6`, not capped |
 
-The colors come from `elementColorArray` (`setRGB`, `frame_1/DoAction.as:226-230`). `value` is `allocation + ceil(100 + 15 * level)`, `x = value / (100 + 15 * level)`, and the `n` terms are the AS's quartic and linear terms of `x + 1`, with the coefficients and thresholds the AS gives. `xbar`'s term can go negative. Flash then flips the clip, and the build checks what the capture shows.
+The colors come from `elementColorArray` (`setRGB`, `frame_1/DoAction.as:226-230`). `value` is `allocation + ceil(100 + 15 * level)`, `x = value / (100 + 15 * level)`, and the `n` terms are the AS's quartic and linear terms of `x + 1`, with the coefficients and thresholds the AS gives. `xbar`'s term can go negative. Flash then flips the clip. The port draws no `xbar` instead (#230, open question 4).
 
 - This module builds all four layers for all 16 bars. Today the port draws one `ColorRect` per bar with `MenuTheme.bar_fill_fraction`, which is only the `bar` layer.
 - The formulas are extracted, not typed. A small extractor (proposed: `uv run convert_menu_math`, in `dev/urchin_dev/convert/menu_math.py`) parses the coefficients and the defense-tip thresholds from `frame_1/DoAction.as` into `dev/converted_json/menu_math.json`. The port and its test read that file. `MenuTheme.bar_fill_fraction` and `element_display_value` go.
@@ -160,7 +160,7 @@ The snippet shows style only. `MenuMath` is a small loader for `menu_math.json`.
 ## Testing strategy
 
 - **Rect test.** Add `inventory_window.tscn`, `party_face.tscn` and `element_bar.tscn` to the record. Every piece in the tables passes under 0.5 px, and the Labels' sizes and colors match.
-- **Bar math (GUT).** For a set of values and levels, the layer heights equal the AS formulas, with the coefficients read from `menu_math.json`. The test includes a value below the level's average, where `xbar` goes negative, and one above the cap.
+- **Bar math (GUT).** For a set of values and levels, the layer heights equal the AS formulas, with the coefficients read from `menu_math.json`. The test includes a value below the level's average, where the `xbar` formula goes negative and the bar draws no `xbar`, and one above the cap.
 - **Tooltips.** A test builds the piercing and defense tooltips for one element and compares the title and body with `strings.json` and the computed percentages. A second case covers each of the seven `DEFTIP` factors.
 - **Party face.** A test checks the three states: a member outside `party_deployed` shows the black backing, an unjoined member is hidden, and only the selected member shows the green frame.
 - **Existing tests.** `test_inventory_panel.gd`, `test_item_slot.gd` and the inventory window tests keep passing after the nodes move.
@@ -199,4 +199,4 @@ The snippet shows style only. `MenuMath` is a small loader for `menu_math.json`.
 1. **Element colors.** Settled in #230: `convert_menu_math` extracts `elementColorArray`, and `MenuTheme.ELEMENT_COLORS` keeps its name and uses and reads the file.
 2. **Doll placement check.** The doll is a Node2D with art, so the rect test's 0.5 px rule does not fit it directly. This spec proposes that the rect record holds the union rect of the unequipped male doll and that the test allows 1 px. Decide the tolerance.
 3. **The doll's pose.** The menu doll may be the rig's idle frame at another scale, or its own pose. The build issue compares the 31 placements with the rig's part origins. If they differ, the build asks you before it changes the doll.
-4. **`xbar` below the average.** When `x` is below 1, `xbar`'s height is negative and Flash flips the clip. The spec keeps what the capture shows, as a Quirk, and the build issue records it.
+4. **`xbar` below the average.** When `x` is below 1, `xbar`'s height is negative and Flash flips the clip. #230 clamps it to no `xbar`, because no item or save can reach it, and records the choice.

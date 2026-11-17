@@ -25,8 +25,7 @@ var _math: Dictionary = MenuMath.load_math()
 var _element: int = 0
 var _kind: Kind = Kind.PIERCING
 var _tooltip: Dictionary = {}
-# The bottom of the full bar. Every layer grows up from it, and a layer with a
-# negative height hangs below it.
+# The bottom of the full bar. Every layer grows up from it.
 var _baseline: float = 0.0
 var _full_height: float = 0.0
 # The color the script gave the element's layers, or white while it has not.
@@ -114,16 +113,14 @@ func _color_layers() -> void:
 			(glow.material as ShaderMaterial).set_shader_parameter("tint", color)
 
 
-# A positive height grows up from the baseline. A negative one hangs below it,
-# which is how Flash draws a clip whose _height is negative.
+# A layer grows up from the baseline. The xbar formula is negative when the
+# value is under the level's average. The original then flips the clip below
+# the baseline, and the port draws no height instead, because no item or save
+# can lower an element under the average today (DECODED_ALGORITHMS.md).
 func _set_height(layer: String, height: float) -> void:
 	var node: ColorRect = _layers[layer]
-	if height >= 0.0:
-		node.offset_top = _baseline - height
-		node.offset_bottom = _baseline
-	else:
-		node.offset_top = _baseline
-		node.offset_bottom = _baseline - height
+	node.offset_top = _baseline - maxf(height, 0.0)
+	node.offset_bottom = _baseline
 	_fit_glow(layer)
 
 

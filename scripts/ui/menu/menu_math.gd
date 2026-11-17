@@ -8,10 +8,17 @@ extends RefCounted
 const FILE: String = "res://dev/converted_json/menu_math.json"
 
 
+# Each path is parsed once, because every ElementBar asks for the numbers. The
+# caller must not change the dictionary it gets.
+static var _cache: Dictionary[String, Dictionary] = {}
+
+
 static func load_math(path: String = FILE) -> Dictionary:
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-	assert(parsed is Dictionary, "could not read %s" % path)
-	return parsed
+	if not _cache.has(path):
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+		assert(parsed is Dictionary, "could not read %s" % path)
+		_cache[path] = parsed
+	return _cache[path]
 
 
 # The x that the bar formulas take, for one element's allocation at a level
@@ -55,7 +62,8 @@ static func terms(x: float, math: Dictionary) -> Dictionary:
 
 # x is the bar's value divided by the level's average. The heights are in px
 # for the three layers the script sizes (DefineSprite_3142/frame_1/DoAction.as:108-125).
-# xbar goes negative when x is below 1, as it does in the original.
+# xbar goes negative when x is below 1, as it does in the original. The bar
+# draws no xbar then (ElementBar._set_height).
 static func layer_heights(x: float, math: Dictionary) -> Dictionary:
 	var bars: Dictionary = math["element_bars"]
 	var save_height: float = bars["save_height"]

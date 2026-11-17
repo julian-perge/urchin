@@ -18,15 +18,12 @@ func _bar(kind: ElementBar.Kind = ElementBar.Kind.PIERCING, element: int = 3) ->
 	return bar
 
 
-# The height a layer draws, signed: a layer below its baseline has a negative
-# height, which is how Flash draws a clip with a negative _height.
-func _signed_height(bar: ElementBar, layer: String) -> float:
+# The height a layer draws, which always grows up from the full bar's baseline.
+func _height(bar: ElementBar, layer: String) -> float:
 	var node: ColorRect = bar.get_node(layer)
 	var baseline: float = (bar.get_node("Ybar") as ColorRect).offset_bottom
-	if is_equal_approx(node.offset_bottom, baseline):
-		return node.size.y
-	assert_almost_eq(node.offset_top, baseline, EPSILON, "%s grows from the baseline in one direction only" % layer)
-	return -node.size.y
+	assert_almost_eq(node.offset_bottom, baseline, EPSILON, "%s grows from the baseline" % layer)
+	return node.size.y
 
 
 func test_with_no_value_each_layer_is_the_full_bar_the_swf_frame_draws() -> void:
@@ -38,38 +35,40 @@ func test_with_no_value_each_layer_is_the_full_bar_the_swf_frame_draws() -> void
 func test_the_average_value_draws_30_percent_and_10_percent_and_no_xbar() -> void:
 	var bar: ElementBar = _bar()
 	bar.show_value(0.0, LEVEL)
-	assert_almost_eq(_signed_height(bar, "Ybar"), 68.0, EPSILON, "the dim layer is never resized")
-	assert_almost_eq(_signed_height(bar, "Bar"), 20.39991, EPSILON)
-	assert_almost_eq(_signed_height(bar, "Gbar"), 10.2, EPSILON)
-	assert_almost_eq(_signed_height(bar, "Xbar"), 0.0, EPSILON)
+	assert_almost_eq(_height(bar, "Ybar"), 68.0, EPSILON, "the dim layer is never resized")
+	assert_almost_eq(_height(bar, "Bar"), 20.39991, EPSILON)
+	assert_almost_eq(_height(bar, "Gbar"), 10.2, EPSILON)
+	assert_almost_eq(_height(bar, "Xbar"), 0.0, EPSILON)
 
 
 func test_double_the_average_value_gives_each_layer_its_own_height() -> void:
 	var bar: ElementBar = _bar()
 	bar.show_value(115.0, LEVEL)
-	assert_almost_eq(_signed_height(bar, "Bar"), 61.2, EPSILON)
-	assert_almost_eq(_signed_height(bar, "Gbar"), 20.4, EPSILON)
-	assert_almost_eq(_signed_height(bar, "Xbar"), 4.76, EPSILON)
+	assert_almost_eq(_height(bar, "Bar"), 61.2, EPSILON)
+	assert_almost_eq(_height(bar, "Gbar"), 20.4, EPSILON)
+	assert_almost_eq(_height(bar, "Xbar"), 4.76, EPSILON)
 
 
 func test_a_value_far_over_the_average_caps_bar_and_gbar_but_not_xbar() -> void:
 	var bar: ElementBar = _bar()
 	bar.show_value(2000.0, LEVEL)
-	assert_almost_eq(_signed_height(bar, "Bar"), 68.0, EPSILON)
-	assert_almost_eq(_signed_height(bar, "Gbar"), 68.0, EPSILON)
-	assert_gt(_signed_height(bar, "Xbar"), 68.0)
+	assert_almost_eq(_height(bar, "Bar"), 68.0, EPSILON)
+	assert_almost_eq(_height(bar, "Gbar"), 68.0, EPSILON)
+	assert_gt(_height(bar, "Xbar"), 68.0)
 
 
 # The original sets _height of the xbar clip to a negative number when the
-# value is under the average, which Flash draws flipped below the clip's
-# origin. The port keeps that as a Quirk (docs/adr/0005).
-func test_a_value_under_the_average_draws_xbar_below_the_baseline() -> void:
+# value is under the average, and Flash flips the clip. The port draws no xbar
+# (DECODED_ALGORITHMS.md), and the bar and gbar still follow their formulas.
+func test_a_value_under_the_average_draws_no_xbar() -> void:
 	var bar: ElementBar = _bar()
 	bar.show_value(-57.5, LEVEL)
-	# x = 0.5, so xbar is 68 * 0.07 * (0.5 - 1) = -2.38.
-	assert_almost_eq(_signed_height(bar, "Xbar"), -2.38, EPSILON)
-	var ybar: ColorRect = bar.get_node("Ybar")
-	assert_almost_eq((bar.get_node("Xbar") as ColorRect).offset_top, ybar.offset_bottom, EPSILON)
+	# x = 0.5, so the xbar formula gives 68 * 0.07 * (0.5 - 1) = -2.38.
+	assert_almost_eq(_height(bar, "Xbar"), 0.0, EPSILON)
+	# A ColorRect clamps its size to 0 by itself, so the top edge is the proof
+	# that the rect is not inverted.
+	assert_almost_eq((bar.get_node("Xbar") as ColorRect).offset_top, (bar.get_node("Ybar") as ColorRect).offset_bottom, EPSILON)
+	assert_almost_eq(_height(bar, "Gbar"), 5.1, EPSILON)
 
 
 func test_each_layer_keeps_the_baseline_of_the_full_bar_between_values() -> void:

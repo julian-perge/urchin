@@ -16,7 +16,7 @@ func _assert_heights(heights: Dictionary, bar: float, gbar: float, xbar: float) 
 	assert_almost_eq(heights["xbar"], xbar, EPSILON, "xbar")
 
 
-func test_a_value_below_the_average_gives_xbar_a_negative_height() -> void:
+func test_a_value_below_the_average_gives_the_xbar_formula_a_negative_height() -> void:
 	_assert_heights(MenuMath.layer_heights(0.5, _math()), 4.462449, 5.1, -2.38)
 
 
