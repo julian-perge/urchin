@@ -1072,6 +1072,33 @@ SCENES[BATTLE_SCENE] = Scene(
         "UI",
         "Fade",
     ),
+    # What the frame draws that the port leaves to the game's own state: BATTLESCREEN
+    # 3435 (the hall and its placeholder rigs), the sky 3454, the fade 3355, the
+    # selector rings 3394 and 3382, the clock 3389, the move icon 2427 and the move
+    # button 3383, the Combat text 2852, the speech box 3367 and 3172, the tooltip
+    # 2717 and the pick prompt 3373.
+    compare_strip=(
+        3435,
+        3454,
+        3355,
+        3394,
+        3382,
+        3389,
+        2427,
+        3383,
+        2852,
+        3367,
+        3172,
+        2717,
+        3373,
+        # The status bars, whose parts the rect test checks one by one: ffdec
+        # runs no script, so it draws every right-hand bar as a left-hand one and
+        # every fill in the color of frame 1. The member rows and the retreat
+        # button, which the port draws as its own art.
+        3414,
+        3312,
+        3356,
+    ),
 )
 
 

@@ -275,3 +275,11 @@ This tool checks how it looks: the art, the fills and the shadows.
   Flash Player draws a soft glow there, as `references/sonny2_zone1_prison.png`
   shows, and so does the port, from the fill rendered alone. Do not re-extract
   `zone_fill.png` from the root frame to lower this score.
+- **The Battle score covers the frame, not the fighters.** The `battle` entry uses
+  `battle_scene.tscn` alone. `SCENES.compare_strip` takes the hall and its
+  placeholder rigs, the sky, the fade, the clock, the pass and retreat buttons, the
+  member rows and the status bars out of the reference, and `hide_names` hides the
+  same parts in the port. It scores the panels, the Hall window's edge and the pass
+  icon: p99 6, with the 20 px control at 86. The status bars are out because ffdec
+  runs no script. It draws every right-hand bar as a left-hand one and every fill in
+  the color of frame 1, so the rect test checks the bars part by part instead.

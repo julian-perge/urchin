@@ -99,5 +99,22 @@
     "hide_names": ["ItemIcon", "Highlight", "Body"]
    }
   }
+ },
+ "battle": {
+  "scene": "res://scenes/battle_scene.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 6,
+    "hide_names": [
+     "TopStatusBar",
+     "StanceHost",
+     "PassRing",
+     "LogToggleButton",
+     "CountdownRing",
+     "CountdownLabel",
+     "RetreatButton"
+    ]
+   }
+  }
  }
 }
