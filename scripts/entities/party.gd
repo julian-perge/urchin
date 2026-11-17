@@ -130,6 +130,31 @@ static func update_roster_after_battle(save: PlayerSave) -> bool:
 	return save.party_roster != before
 
 
+# The slot of the Deployed pair that the next added Companion takes, when the
+# Inventory opens. The original starts at 0, then moves to 1 when slot 1 holds a
+# 0, and to 1 again when both do (DefineSprite_3142/frame_1/DoAction.as:210-219).
+static func initial_deploy_picker(deployed: Array) -> int:
+	if int(deployed[1]) == 0:
+		return 1
+	return 0
+
+
+# The shift-click on a party face, DefineButton2_2895 on(press) lines 2-29. A
+# Companion who is in the Deployed pair leaves a 0 in their slot, and the picker
+# moves to that slot. Any other Companion takes the picker's slot, which holds a
+# member or a 0, and the picker moves to the other slot. The player's face
+# ignores the click. Returns the new picker.
+static func toggle_deployed(save: PlayerSave, party_id: int, picker: int) -> int:
+	if party_id == PLAYER_PARTY_ID:
+		return picker
+	var slot: int = save.party_deployed.find(party_id)
+	if slot >= 0:
+		save.party_deployed[slot] = 0
+		return slot
+	save.party_deployed[picker] = party_id
+	return 1 - picker
+
+
 static func is_in_roster(save: PlayerSave, party_id: int) -> bool:
 	return save.party_roster.has(party_id)
 

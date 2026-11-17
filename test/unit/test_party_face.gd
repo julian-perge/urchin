@@ -128,3 +128,76 @@ func test_the_window_dims_a_companion_outside_the_deployed_pair() -> void:
 	assert_false((faces.get_child(1) as PartyFace).shows_blacker())
 	assert_false((faces.get_child(2) as PartyFace).shows_blacker())
 	assert_true((faces.get_child(3) as PartyFace).shows_blacker())
+
+
+func _window(roster: Array, deployed: Array) -> Control:
+	var save: PlayerSave = PlayerSave.new_game("PartyFaceTest", 0)
+	save.party_roster = roster
+	save.party_deployed = deployed
+	GameData.current_save = save
+	var window: Control = add_child_autofree(WindowScene.instantiate())
+	window.refresh()
+	return window
+
+
+func _faces(window: Control) -> Array[PartyFace]:
+	var faces: Array[PartyFace] = []
+	for face: Node in window.get_node("PartyFaces").get_children():
+		faces.append(face as PartyFace)
+	return faces
+
+
+func test_pressing_the_hit_button_reports_the_member_and_the_shift_state() -> void:
+	var face: PartyFace = _face()
+	face.show_member(2, false, false)
+	watch_signals(face)
+	face.hit_button.pressed.emit()
+	assert_signal_emitted_with_parameters(face, "chosen", [2, false])
+
+
+func test_the_hit_button_acts_on_press_as_the_original_does() -> void:
+	assert_eq(_face().hit_button.action_mode, BaseButton.ACTION_MODE_BUTTON_PRESS)
+
+
+func test_a_plain_click_moves_the_frame_to_that_member() -> void:
+	var window: Control = _window([0, 1, 2, -1, -1, -1], [1, 2])
+	var faces: Array[PartyFace] = _faces(window)
+	faces[2].chosen.emit(2, false)
+	var framed: Array = faces.map(func(face: PartyFace) -> bool: return face.shows_frame())
+	assert_eq(framed, [false, false, true, false, false, false])
+	assert_eq(GameData.current_save.party_deployed, [1, 2], "a plain click leaves the Deployed pair alone")
+
+
+func test_a_shift_click_on_a_deployed_companion_leaves_a_0_and_dims_them() -> void:
+	var window: Control = _window([0, 1, 2, -1, -1, -1], [1, 2])
+	var faces: Array[PartyFace] = _faces(window)
+	faces[2].chosen.emit(2, true)
+	assert_eq(GameData.current_save.party_deployed, [1, 0])
+	assert_true(faces[2].shows_blacker())
+	assert_false(faces[1].shows_blacker())
+	assert_true(faces[0].shows_frame(), "a shift-click does not move the selection")
+
+
+func test_a_shift_click_on_an_undeployed_companion_takes_the_empty_slot() -> void:
+	var window: Control = _window([0, 1, 2, 3, -1, -1], [1, 0])
+	var faces: Array[PartyFace] = _faces(window)
+	faces[3].chosen.emit(3, true)
+	assert_eq(GameData.current_save.party_deployed, [1, 3])
+	assert_false(faces[3].shows_blacker())
+
+
+func test_a_shift_click_on_the_player_changes_nothing() -> void:
+	var window: Control = _window([0, 1, 2, -1, -1, -1], [1, 2])
+	_faces(window)[0].chosen.emit(0, true)
+	assert_eq(GameData.current_save.party_deployed, [1, 2])
+
+
+func test_the_selection_goes_back_to_the_player_when_the_window_opens() -> void:
+	var window: Control = _window([0, 1, 2, -1, -1, -1], [1, 2])
+	var faces: Array[PartyFace] = _faces(window)
+	faces[1].chosen.emit(1, false)
+	assert_true(faces[1].shows_frame())
+	window.hide()
+	window.show()
+	assert_true(faces[0].shows_frame())
+	assert_false(faces[1].shows_frame())

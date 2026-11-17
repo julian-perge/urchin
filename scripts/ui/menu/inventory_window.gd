@@ -19,6 +19,13 @@ var _exp_full_width: float = 0.0
 var _per_bars: Array[ElementBar] = []
 var _def_bars: Array[ElementBar] = []
 var _party_faces: Array[PartyFace] = []
+# The member the left panel shows, Krin.MenuPlayerSelect in the original. It goes
+# back to the player each time the window opens (DefineSprite_3142/frame_25).
+# Until Companion equip lands, it only moves the green frame.
+var selected_party_id: int = Party.PLAYER_PARTY_ID
+# The slot of the Deployed pair that the next shift-clicked Companion takes
+# (bickerPicker in the original).
+var _deploy_picker: int = 0
 
 
 func _ready():
@@ -30,10 +37,12 @@ func _ready():
 	_build_left_panel()
 	_build_element_bars()
 	_build_party_bar()
+	_reset_party_state()
 	GameData.inventory_changed.connect(_refresh_if_visible)
 	GameData.gold_changed.connect(func(_amount): _refresh_if_visible())
 	visibility_changed.connect(func():
 		if visible:
+			_reset_party_state()
 			refresh())
 
 
@@ -66,7 +75,29 @@ func _build_element_bars() -> void:
 
 func _build_party_bar() -> void:
 	for face: Node in $PartyFaces.get_children():
-		_party_faces.append(face as PartyFace)
+		var party_face := face as PartyFace
+		party_face.chosen.connect(_on_party_face_chosen)
+		_party_faces.append(party_face)
+
+
+func _reset_party_state() -> void:
+	selected_party_id = Party.PLAYER_PARTY_ID
+	var save: PlayerSave = GameData.current_save
+	if save != null and save.party_deployed.size() == 2:
+		_deploy_picker = Party.initial_deploy_picker(save.party_deployed)
+
+
+# DefineButton2_2895 on(press). A shift-click changes the Deployed pair. Any
+# other click selects the member, when that member joined.
+func _on_party_face_chosen(party_id: int, shift: bool) -> void:
+	var save: PlayerSave = GameData.current_save
+	if save == null or party_id < 0:
+		return
+	if shift:
+		_deploy_picker = Party.toggle_deployed(save, party_id, _deploy_picker)
+	else:
+		selected_party_id = party_id
+	_refresh_portraits(save)
 
 
 func refresh() -> void:
@@ -94,13 +125,12 @@ func refresh() -> void:
 
 
 # Each face shows the member of its roster slot, as the original does
-# (DefineSprite_3142/frame_1/DoAction.as:195-206). The player is the selected
-# member until #11 lets a click move the selection. A member is deployed when
-# party_deployed holds the id.
+# (DefineSprite_3142/frame_1/DoAction.as:195-206). The face of the selected
+# member shows the frame. A member is deployed when party_deployed holds the id.
 func _refresh_portraits(save: PlayerSave) -> void:
 	for slot in _party_faces.size():
 		var id: int = int(save.party_roster[slot]) if slot < save.party_roster.size() else -1
-		_party_faces[slot].show_member(id, id == Party.PLAYER_PARTY_ID, save.party_deployed.has(id))
+		_party_faces[slot].show_member(id, id == selected_party_id, save.party_deployed.has(id))
 
 
 func _refresh_if_visible() -> void:

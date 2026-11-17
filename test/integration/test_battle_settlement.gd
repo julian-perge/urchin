@@ -188,6 +188,19 @@ func test_black_magic_goes_to_a_first_308_win_no_companion_fought():
 	assert_eq(Array(settlement.achievements_unlocked), [Achievements.NAMES.find("Black Magic")], "but one for a win with nobody deployed")
 
 
+# Old Ghosts goes to a win of 602 when no companion spawned (the original's
+# frame_9/DoAction_2.as). Both 308 and 602 put the -2 marker in slot 3, so an
+# empty Deployed pair is the way to earn it.
+func test_old_ghosts_goes_to_a_602_win_with_the_deployed_pair_empty():
+	var with_veradux := PlayerSave.new_game("Settle602With")
+	var settlement := _settle(602, with_veradux, BattleRunner.Outcome.WIN, {"is_story_progress": false})
+	assert_eq(Array(settlement.achievements_unlocked), [], "no Old Ghosts for a win Veradux fought")
+	var alone := PlayerSave.new_game("Settle602Alone")
+	alone.party_deployed = [0, 0]
+	settlement = _settle(602, alone, BattleRunner.Outcome.WIN, {"is_story_progress": false})
+	assert_eq(Array(settlement.achievements_unlocked), [Achievements.NAMES.find("Old Ghosts")])
+
+
 func _zone_3_boss_save(save_name: String) -> PlayerSave:
 	var save := PlayerSave.new_game(save_name)
 	save.difficulty = CombatUnit.Difficulty.NORMAL

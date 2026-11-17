@@ -3,12 +3,16 @@
 # fa5) in DefineSprite_3142. The scene types the part rects, and
 # test_screen_rects.gd checks them against the SWF. show_member() sets the three
 # states from data and builds the face's tooltip (spec/107-inventory.md, Party
-# bar). Clicks and shift-click belong to #11, which connects the HitButton.
+# bar). A press on the HitButton emits `chosen`.
 #
 # Until a member is shown, the scene is the SWF's first frame: every part is
 # visible.
 class_name PartyFace
 extends Control
+
+# A press on the face, with whether Shift was down. The inventory window decides
+# what it does, as the original's button does in DefineButton2_2895 on(press).
+signal chosen(party_id: int, shift: bool)
 
 # The id of the member this face shows, or -1 while none joined this slot.
 var party_id: int = -1
@@ -23,6 +27,8 @@ var party_id: int = -1
 func _ready() -> void:
 	hit_button.mouse_entered.connect(_show_tooltip)
 	hit_button.mouse_exited.connect(GameTooltip.hide_tooltip)
+	hit_button.action_mode = BaseButton.ACTION_MODE_BUTTON_PRESS
+	hit_button.pressed.connect(func() -> void: chosen.emit(party_id, Input.is_key_pressed(KEY_SHIFT)))
 
 
 # `id` is the roster entry of this slot, a party id, or -1 for no member.
