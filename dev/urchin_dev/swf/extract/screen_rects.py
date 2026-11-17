@@ -554,6 +554,9 @@ ZONE_SCENES = (
     "zone7_shotul",
 )
 # Each pair names the orb depth and its button depth on the zone's frame.
+# Zone 7 has no training orb, because every frame under the JAPAN label places
+# a story orb and a shop orb only. The ROME training button at depth 56 is
+# removed at frame 86 and nothing replaces it.
 ZONE_ORBS = (
     {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (35, 56)},
     {"StoryFight": (27, 48), "ItemStore": (31, 50), "TrainingFight": (35, 56)},

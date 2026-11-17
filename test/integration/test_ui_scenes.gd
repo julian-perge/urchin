@@ -709,6 +709,7 @@ func _clear_test_slots() -> void:
 
 
 func test_all_zone_scenes_have_source_accurate_orbs():
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://test/fixtures/screen_rects.json"))
 	for zone_id in range(1, 8):
 		var path = str(ZoneManager.ZONES[zone_id]["scene"])
 		assert_true(ResourceLoader.exists(path), "zone %d scene exists" % zone_id)
@@ -719,7 +720,6 @@ func test_all_zone_scenes_have_source_accurate_orbs():
 		assert_not_null(story)
 		assert_not_null(store)
 		assert_eq(zone.has_node("TrainingFight"), zone_id != 7, "zone %d training orb" % zone_id)
-		var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://test/fixtures/screen_rects.json"))
 		var position: Array = record["scenes"][path]["pieces"]["StoryFight"]["position"]
 		var expected := Vector2(position[0], position[1])
 		assert_almost_eq(story.position.x, expected.x, 0.1, "zone %d story orb x" % zone_id)
@@ -736,7 +736,6 @@ func test_zone_7_has_only_the_orbs_the_japan_frame_places():
 	assert_eq(orbs.keys(), ["StoryFight", "ItemStore"], "the story and shop orbs and nothing else")
 	assert_true(orbs.get("StoryFight") is StoryFightOrb, "the story orb fights the next story battle")
 	assert_true(orbs.get("ItemStore") is ItemStoreOrb, "the shop orb opens the store")
-
 
 
 func test_game_shell_hosts_current_zone():

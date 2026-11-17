@@ -47,11 +47,6 @@ func setup_orb():
 	$middle.modulate = orb_color
 	$top.modulate = orb_color
 
-func _on_input_event(_viewport, event, _shape_idx):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if not _hub_is_inert():
-			interact()
-
 func interact():
 	print("Emitting event for %s" % name)
 	pass
@@ -64,7 +59,3 @@ func interact():
 	#var tooltip = Label.new()
 	#tooltip.text = for_text
 	#return tooltip
-
-
-func _on_mouse_entered() -> void:
-	print("mouse ", name)

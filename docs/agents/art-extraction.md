@@ -249,7 +249,6 @@ This tool checks how it looks: the art, the fills and the shadows.
   frame shows one face in all three rows.
 - **Captures load as they are.** The godot-mcp captures are sRGB at the Stage
   size, 800x575. The tool refuses any other size.
-
 - **The Hub score covers static chrome.** The `hub` entry uses
   `test/fixtures/screen_rects/hub_chrome.tscn`: Prison art and the hotbar.
   `SCENES.compare_strip` removes the fade (2837), Windows, card, banners,
