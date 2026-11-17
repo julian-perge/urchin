@@ -1036,6 +1036,12 @@ SCENES[BATTLE_SCENE] = Scene(
     port_only=(
         "HallWindow/HallSpace",
         "RadialMenu",
+        # The smoothers' bands, which the bar shows only while a change plays.
+        *(
+            f"TopStatusBar/Bar{slot}/Inner2/{band}"
+            for slot in range(1, 7)
+            for band in ("LifeSmoother", "FocusSmoother")
+        ),
         "BottomBar/RightPanel/CombatLogPanel",
         "BottomBar/RightPanel/LogToggleButton",
         "BottomBar/CountdownRing",

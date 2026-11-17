@@ -27,14 +27,6 @@ const RING_COLORS: Dictionary[Relation, Color] = {
 # original's 30fps - a ~4x faster fade-in than fade-out.
 const RING_FADE_IN_TIME: float = 0.17
 const RING_FADE_OUT_TIME: float = 0.67
-# LifeBarSmoother starts at the death, and its frame 18 clears the overlay 17
-# frames later (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as). From the
-# next frame on, its frame 38 takes this much off the bar's alpha, out of 100,
-# every frame, and hides the bar on the frame after the alpha reaches 0
-# (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as).
-const DEATH_CLEAR_FRAME: int = 17
-const DEATH_FADE_PER_FRAME: int = 5
-
 # What the fighter shows: the life, Focus, stun and buff slots that the last
 # event shown on it left on its unit. The runner resolves a whole half-turn
 # before the replay starts, so the bars, the stun pose and the buff icons follow
@@ -52,7 +44,6 @@ var _floating_numbers: FloatingNumberLayer
 # so the rig and every Floating number on the unit stay here.
 var _home: Vector2
 var _dead: bool = false
-var _frames_since_death: float = 0.0
 var _ring_fade: Tween = null
 var _hover_info: Label = null
 # setup() puts the doll this far from its home, and rig_position() takes it
@@ -74,6 +65,8 @@ var _doll_offset: Vector2 = Vector2.ZERO
 func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id: Dictionary, floating_numbers: FloatingNumberLayer, status_bar: StatusBar) -> void:
 	_unit = unit
 	_status_bar = status_bar
+	_status_bar.death_faded.connect(_on_death_faded)
+	_status_bar.death_hidden.connect(_overlay.hide)
 	_buffs_by_id = buffs_by_id
 	_floating_numbers = floating_numbers
 	_home = home
@@ -221,7 +214,7 @@ func _die_or_flinch(result: MoveResult) -> void:
 
 
 # Plays the death: the doll's dead label, an empty bar, the death voice, and the
-# status bar's and overlay's clear and fade, which _process() counts out. The original's
+# status bar's clear and fade, which the bar counts out. The original's
 # lifeBarUpdate plays the voice and starts the fade only when the bar's rounded
 # percent changes (frame_42/DoAction_8.as:295-298 and 345-347), which skips a
 # unit killed from under 0.5% life. ADR 0005 counts that as an Original bug, so
@@ -231,28 +224,8 @@ func die() -> void:
 	_doll.set_state(CharacterVisual.State.DEAD)
 	displayed = displayed.with_life(0.0)
 	_draw_status()
+	_status_bar.die()
 	effect_cue.emit(_unit.voice_die)
-
-
-# Counts the frames since the death, so the bar clears, fades and hides on
-# the original's frames. The count is in frames rather than seconds, because a
-# sum of 1/30 s steps drifts off whole frames.
-func _process(delta: float) -> void:
-	if not _dead:
-		return
-	_frames_since_death += delta * BattleScreenClip.fps()
-	var frames_since_clear: int = int(_frames_since_death) - DEATH_CLEAR_FRAME
-	if frames_since_clear < 0:
-		return
-	_status_bar.clear_for_death()
-	_overlay.clear_for_death()
-	var alpha_percent: int = 100 - DEATH_FADE_PER_FRAME * frames_since_clear
-	_status_bar.modulate.a = maxi(alpha_percent, 0) / 100.0
-	_overlay.modulate.a = maxi(alpha_percent, 0) / 100.0
-	if alpha_percent < 0:
-		_status_bar.hide()
-		_overlay.hide()
-		set_process(false)
 
 
 # Shows the bars, the buff icons and the stun pose that an event left on this
@@ -261,6 +234,12 @@ func show_state(state: UnitSnapshot) -> void:
 	_show_stun(state.stun)
 	displayed = state
 	_draw_status()
+
+
+# The buff icons are still on the overlay, so they clear and fade with the bar.
+func _on_death_faded(alpha: float) -> void:
+	_overlay.buff_row.hide()
+	_overlay.modulate.a = alpha
 
 
 func _draw_status() -> void:

@@ -110,11 +110,3 @@ func refresh_buffs(buff_slots: Array, buffs_by_id: Dictionary) -> void:
 		counter.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		shower.add_child(counter)
 		buff_row.add_child(shower)
-
-
-# Does what LifeBarSmoother's frame 18 does to a dead unit's buff icons
-# (DefineSprite_57_LifeBarSmoother/frame_18/DoAction.as): it removes them.
-# show_buffs() fills the row but never shows it, so later redraws leave it
-# hidden.
-func clear_for_death() -> void:
-	buff_row.hide()

@@ -162,6 +162,13 @@ def test_every_art_rect_times_the_zoom_is_its_png_size():
         assert (top_bar.OUT_DIR / art["file"]).is_file()
 
 
+def test_the_life_fill_records_where_the_colour_clip_sits_in_its_bar():
+    art = RECORD["art"]["life_fill"]
+    x, y, w, h = art["rect"]
+    # The clip draws shape 54, which is centred on the clip's origin.
+    assert art["origin"] == pytest.approx([x + w / 2, y + h / 2])
+
+
 def test_the_committed_record_holds_what_the_status_bar_reads():
     assert sorted(RECORD["placements"]) == [f"p{n}BAR" for n in range(1, 7)]
     mirrored = {n for n, p in RECORD["placements"].items() if p["inner2_xscale"]}

@@ -32,12 +32,22 @@ layout_mode = 0
 mouse_filter = 2
 expand_mode = 1
 
+[node name="FocusSmoother" type="TextureRect" parent="Inner2"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
 [node name="Black" type="TextureRect" parent="Inner2"]
 layout_mode = 0
 mouse_filter = 2
 expand_mode = 1
 
 [node name="LifeFill" type="TextureRect" parent="Inner2"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="LifeSmoother" type="TextureRect" parent="Inner2"]
 layout_mode = 0
 mouse_filter = 2
 expand_mode = 1

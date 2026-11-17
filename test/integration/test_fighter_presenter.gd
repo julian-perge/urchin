@@ -207,7 +207,7 @@ func _play_out_the_hit() -> void:
 # Steps the presenter and its doll by `count` frames at the original's 30 fps.
 func _step_frames(count: int) -> void:
 	for frame in count:
-		_presenter._process(1.0 / 30.0)
+		_bar._process(1.0 / 30.0)
 		_doll._process(1.0 / 30.0)
 
 
@@ -249,12 +249,22 @@ func test_setup_draws_the_unit():
 	assert_eq(_bar.focus, 30.0, "the focus bar")
 
 
-func test_a_fighter_with_no_focus_shows_an_empty_focus_fill():
+# The first update of lifeBarUpdate leaves the Focus fill at the full width it loads
+# with, whatever the unit's Focus is, and a max of 0 gives a width of 0 and not NaN
+# once the Focus changes.
+func test_a_fighter_with_no_focus_keeps_a_valid_focus_fill():
 	_unit.focus_u = 0.0
 	_unit.focus_n = 0.0
 	_present(_unit)
 	assert_eq(_bar.focus_max, 0.0)
-	assert_eq(_bar.focus_fill.size.x, 0.0, "the fill has no width, not a not-a-number one")
+	assert_gt(_bar.focus_fill.size.x, 0.0, "the first update leaves the fill at full")
+	var state: UnitSnapshot = _state(100.0)
+	state.focus = 5.0
+	state.focus_max = 0.0
+	_presenter.show_state(state)
+	for frame in 20:
+		_bar.advance_frame()
+	assert_eq(_bar.focus_fill.size.x, 0.0, "the gain ends on no width, not a not-a-number one")
 
 
 func test_setup_draws_the_hover_ring_through_the_presenter():

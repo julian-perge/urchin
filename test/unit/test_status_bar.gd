@@ -39,13 +39,26 @@ func test_a_bar_at_rest_shows_both_fills_at_full_width() -> void:
 	assert_almost_eq(bar.focus_fill.size.x, _full_width("focus"), 0.001)
 
 
+# A bar that has shown one state, which sets the life fill and leaves the Focus fill
+# at full. The next call is the first one that plays a smoother.
+func _shown_bar(slot: int, state: UnitSnapshot) -> StatusBar:
+	var bar: StatusBar = _bar(slot)
+	bar.show_status(state)
+	return bar
+
+
+func _advance(bar: StatusBar, frames: int) -> void:
+	for frame in frames:
+		bar.advance_frame()
+
+
 func test_full_life_fills_the_bar_in_the_last_color_frame_and_shows_the_numbers() -> void:
 	var bar: StatusBar = _bar(1)
 	bar.show_status(_state(250.0, 250.0, 30.0, 50.0))
 	assert_almost_eq(bar.life_fill.size.x, _full_width("life"), 0.001, "the life fill")
 	assert_eq(bar.life_fill.modulate, _life_color(100), "in the color of frame 101")
 	assert_eq(bar.life_back.modulate, _life_color(100), "and so is the fill behind it")
-	assert_almost_eq(bar.focus_fill.size.x, _full_width("focus") * 0.6, 0.001, "the focus fill is 30 of 50")
+	assert_almost_eq(bar.focus_fill.size.x, _full_width("focus"), 0.001, "the first update leaves the Focus fill at full")
 	assert_eq([bar.life_now_label.text, bar.life_max_label.text], ["250", "250"])
 	assert_eq([bar.focus_now_label.text, bar.focus_max_label.text], ["30", "50"])
 
@@ -65,6 +78,14 @@ func test_a_share_picks_the_color_frame_of_its_rounded_percent() -> void:
 	assert_eq(bar.life_fill.modulate, _life_color(67), "66.7 percent is frame 68")
 
 
+func test_the_first_update_plays_no_smoother() -> void:
+	var bar: StatusBar = _bar(1)
+	bar.show_status(_state(125.0, 250.0, 30.0, 50.0))
+	assert_false(bar.life_band.visible)
+	assert_false(bar.focus_band.visible)
+	assert_false(bar.is_processing(), "and nothing runs")
+
+
 func test_zero_life_empties_the_fill() -> void:
 	var bar: StatusBar = _bar(1)
 	bar.show_status(_state(0.0, 250.0))
@@ -73,10 +94,12 @@ func test_zero_life_empties_the_fill() -> void:
 	assert_eq(bar.life_now_label.text, "0")
 
 
-func test_a_bar_with_no_max_shows_an_empty_fill() -> void:
+func test_a_bar_with_no_max_shows_an_empty_fill_and_not_a_not_a_number_one() -> void:
 	var bar: StatusBar = _bar(1)
 	bar.show_status(_state(0.0, 0.0))
 	assert_eq(bar.life_fill.size.x, 0.0)
+	bar.show_status(_state(0.0, 0.0, 5.0, 0.0))
+	_advance(bar, 20)
 	assert_eq(bar.focus_fill.size.x, 0.0)
 
 
@@ -112,6 +135,110 @@ func test_the_death_clear_takes_the_name_and_the_numbers_away_and_leaves_the_fil
 	assert_true(bar.life_back.is_visible_in_tree(), "the bars stay")
 	bar.show_status(_state(0.0, 250.0))
 	assert_false(bar.name_label.is_visible_in_tree(), "a later redraw leaves them cleared")
+
+
+func test_a_loss_moves_the_fill_at_once_and_a_band_trails_it_and_ends_on_frame_18() -> void:
+	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0, 50.0, 50.0))
+	bar.show_status(_state(125.0, 250.0, 50.0, 50.0))
+	assert_almost_eq(bar.life_fill.size.x, _full_width("life") * 0.5, 0.001, "the fill drops at once")
+	assert_true(bar.life_band.visible, "a band shows the loss")
+	assert_almost_eq(bar.life_band.size.x, _full_width("life") * 0.5, 0.01, "as wide as the loss")
+	assert_almost_eq(bar.life_band.position.x, bar.life_fill.position.x + bar.life_fill.size.x, 1.0, "from the fill's new end")
+	assert_eq(bar.life_band.modulate, _life_color(50), "in the color of the new life")
+	_advance(bar, 8)
+	assert_lt(bar.life_band.size.x, _full_width("life") * 0.5, "it shrinks on each frame")
+	_advance(bar, 8)
+	assert_true(bar.life_band.visible, "it still shows on frame 17")
+	_advance(bar, 1)
+	assert_false(bar.life_band.visible, "and ends on frame 18")
+	assert_almost_eq(bar.life_fill.size.x, _full_width("life") * 0.5, 0.001, "the fill stays")
+
+
+func test_a_gain_after_a_loss_holds_the_fill_until_frame_36_of_its_smoother() -> void:
+	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0, 50.0, 50.0))
+	bar.show_status(_state(125.0, 250.0, 50.0, 50.0))
+	bar.show_status(_state(200.0, 250.0, 50.0, 50.0))
+	assert_almost_eq(bar.life_fill.size.x, _full_width("life") * 0.5, 0.001, "the fill holds where the loss left it")
+	assert_eq(bar.life_fill.modulate, _life_color(80), "but takes the new color")
+	assert_true(bar.life_band.visible, "the band starts at the healSmooth label")
+	_advance(bar, 16)
+	assert_almost_eq(bar.life_fill.size.x, _full_width("life") * 0.5, 0.001, "still held on frame 35")
+	assert_true(bar.life_band.visible)
+	_advance(bar, 1)
+	assert_almost_eq(bar.life_fill.size.x, _full_width("life") * 0.8, 0.001, "frame 36 sets the width")
+	assert_false(bar.life_band.visible, "and ends the band")
+
+
+func test_a_change_inside_the_same_rounded_percent_leaves_the_fill_and_plays_no_band() -> void:
+	var bar: StatusBar = _shown_bar(1, _state(1000.0, 1000.0))
+	bar.show_status(_state(996.0, 1000.0))
+	assert_almost_eq(bar.life_fill.size.x, _full_width("life"), 0.001)
+	assert_false(bar.life_band.visible)
+	assert_eq(bar.life_now_label.text, "996", "the number still changes")
+
+
+func test_a_new_change_replaces_the_band_that_is_playing() -> void:
+	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0))
+	bar.show_status(_state(200.0, 250.0))
+	_advance(bar, 5)
+	bar.show_status(_state(100.0, 250.0))
+	assert_almost_eq(bar.life_band.size.x, _full_width("life") * (100.0 / 250.0), 0.01, "the band is the second loss, from its first frame")
+
+
+func test_a_focus_loss_moves_the_fill_and_plays_the_blue_band() -> void:
+	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0, 50.0, 50.0))
+	bar.show_status(_state(250.0, 250.0, 20.0, 50.0))
+	assert_almost_eq(bar.focus_fill.size.x, _full_width("focus") * 0.4, 0.001)
+	assert_true(bar.focus_band.visible)
+	assert_eq(bar.focus_band.modulate, Color.html("#0099cc"), "in the Focus smoother's blue")
+	assert_false(bar.life_band.visible, "and the life has none")
+	_advance(bar, 18)
+	assert_false(bar.focus_band.visible, "it ends on frame 19")
+
+
+func test_a_focus_gain_holds_the_fill_until_frame_39_of_its_smoother() -> void:
+	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0, 50.0, 50.0))
+	bar.show_status(_state(250.0, 250.0, 10.0, 50.0))
+	bar.show_status(_state(250.0, 250.0, 30.0, 50.0))
+	_advance(bar, 18)
+	assert_almost_eq(bar.focus_fill.size.x, _full_width("focus") * 0.2, 0.001, "held on frame 38")
+	_advance(bar, 1)
+	assert_almost_eq(bar.focus_fill.size.x, _full_width("focus") * 0.6, 0.001, "frame 39 sets the width")
+
+
+func test_a_bar_that_runs_steps_its_clips_at_the_swf_frame_rate() -> void:
+	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0))
+	bar.show_status(_state(125.0, 250.0))
+	for step in 16:
+		bar._process(1.0 / BattleScreenClip.fps())
+	assert_true(bar.life_band.visible, "16 frames in")
+	bar._process(1.0 / BattleScreenClip.fps())
+	assert_false(bar.life_band.visible, "17 frames in, which plays frame 18")
+	assert_false(bar.is_processing(), "and the bar stops running")
+
+
+# The death, which die() starts, clears the bar on frame 17 and then fades it.
+func test_a_death_clears_on_frame_17_then_fades_5_a_frame_and_hides() -> void:
+	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0))
+	bar.show_status(_state(0.0, 250.0))
+	bar.die()
+	var fades: Array[float] = []
+	bar.death_faded.connect(func(alpha: float): fades.append(alpha))
+	watch_signals(bar)
+	_advance(bar, 16)
+	assert_true(bar.inner.visible, "not yet cleared on frame 16")
+	_advance(bar, 1)
+	assert_false(bar.inner.visible, "cleared on frame 17")
+	assert_eq(bar.modulate.a, 1.0)
+	_advance(bar, 1)
+	assert_almost_eq(bar.modulate.a, 0.95, 0.001, "5 off the alpha the frame after")
+	_advance(bar, 19)
+	assert_eq(bar.modulate.a, 0.0, "to 0")
+	assert_true(bar.visible, "it hides on the frame after")
+	_advance(bar, 1)
+	assert_false(bar.visible)
+	assert_signal_emitted(bar, "death_hidden")
+	assert_eq(fades[0], 1.0, "the first fade is the clear frame's")
 
 
 func _unit(active: bool) -> CombatUnit:

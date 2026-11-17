@@ -388,6 +388,9 @@ def main():
             }
             print(f"  {name}.png {image.size}", file=sys.stderr)
 
+    # The colour clip's origin in the bar sprite's space, which the smoothers
+    # place their own copy of the clip against.
+    art["life_fill"]["origin"] = [round(v, 4) for v in life_origin]
     colors = life_colors(timeline.frames(index, LIFE_COLOR_CLIP))
 
     def layers_of(character: int):
