@@ -606,8 +606,10 @@ SCENES[HUB_CHROME] = Scene(
 )
 
 
-# The Inventory record covers #226's shell and left panel. Later build tasks
-# replace the experience row, stats, element bars, doll and party faces.
+# The Inventory record covers #226's shell and left panel. The other pieces
+# are port only until their tasks record them: the doll and the experience row
+# (#227), the stat rows (#228), the element bars (#230) and the party faces
+# (#231).
 INVENTORY_SCENE = "res://scenes/ui/menu/inventory_window.tscn"
 SCENES[INVENTORY_SCENE] = Scene(
     timeline=KRINMENU,
@@ -635,6 +637,9 @@ SCENES[INVENTORY_SCENE] = Scene(
             )
             for i in range(7)
         },
+        # The compare tool's panels mode takes only pieces that are placed by
+        # a depth, so each grid slot is named here by its depth and not by its
+        # instance name. The frame places itemSlot n at depth 30 + 21 * n.
         **{
             f"RightColumn/{node}": (
                 Piece(
