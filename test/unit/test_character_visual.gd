@@ -343,12 +343,24 @@ func _swing_cues(label: String) -> Array:
 	return cues
 
 
+# Returns the one MODEL1 frame inside `label` that model1_sound_cues.json lists,
+# read from the same file and labels the game reads.
+func _cue_frame_in(label: String) -> int:
+	var segment: Dictionary = _animations()["labels"][label]
+	var cues: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.SOUND_CUES_FILE))
+	var inside: Array = []
+	for frame in cues:
+		if int(frame) >= segment["start"] and int(frame) <= segment["end"]:
+			inside.append(int(frame))
+	assert_eq(inside.size(), 1, "%s holds one cue frame" % label)
+	return inside[0] if not inside.is_empty() else -1
+
+
 # DefineSprite_166_MODEL1 frames 88, 118 and 146 each call
 # addSound("Effects", "sfx_swing"), one inside each of the three swing labels.
 func test_each_swing_plays_sfx_swing_once_on_its_cue_frame():
-	assert_eq(_swing_cues("Attack_Upper"), [[88, "sfx_swing"]], "Attack_Upper")
-	assert_eq(_swing_cues("Attack_Stab"), [[118, "sfx_swing"]], "Attack_Stab")
-	assert_eq(_swing_cues("Attack"), [[146, "sfx_swing"]], "Attack")
+	for label in ["Attack_Upper", "Attack_Stab", "Attack"]:
+		assert_eq(_swing_cues(label), [[_cue_frame_in(label), "sfx_swing"]], label)
 
 
 # The original clip's frame scripts only run while its playhead goes through the
