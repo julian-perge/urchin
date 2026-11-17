@@ -31,15 +31,20 @@ func _stage() -> SubViewport:
 	return stage
 
 
-# A left click at `point`, pushed through the viewport's GUI input.
+# One left button event at `point`, pushed through the viewport's GUI input.
+func _button_at(viewport: Viewport, point: Vector2, pressed: bool) -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = pressed
+	event.position = point
+	event.global_position = point
+	viewport.push_input(event, true)
+
+
+# A left click at `point`: a press, then a release.
 func _click_at(viewport: Viewport, point: Vector2) -> void:
 	for pressed: bool in [true, false]:
-		var event := InputEventMouseButton.new()
-		event.button_index = MOUSE_BUTTON_LEFT
-		event.pressed = pressed
-		event.position = point
-		event.global_position = point
-		viewport.push_input(event, true)
+		_button_at(viewport, point, pressed)
 
 
 func _click(control: Control) -> void:
@@ -106,6 +111,19 @@ func test_the_close_button_hides_the_card_and_emits_closed():
 	watch_signals(card)
 	card.show_card("A title", "Some text")
 	_click(card.get_node("CloseButton"))
+	assert_false(card.visible)
+	assert_signal_emitted(card, "closed")
+
+
+# The original's hit button closes the card on press, with no release needed
+# (DefineButton2_2841/BUTTONCONDACTION on(press).as:2).
+func test_the_close_button_closes_the_card_on_mouse_down():
+	var hub: Dictionary = await _hub()
+	var card: HubCard = hub["card"]
+	watch_signals(card)
+	card.show_card("A title", "Some text")
+	var button: Control = card.get_node("CloseButton")
+	_button_at(button.get_viewport(), button.get_global_rect().get_center(), true)
 	assert_false(card.visible)
 	assert_signal_emitted(card, "closed")
 

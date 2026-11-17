@@ -1,7 +1,8 @@
 # game.gd
 # Root of scenes/game.tscn - the zone hub shell. Hosts the current zone's
 # scene (scenes/zones/*, swapped on ZoneManager.zone_changed), with the
-# store window, the world-map overlay, and the hotbar layered on top.
+# store window, the world-map overlay, and the hotbar layered on top, with the
+# Info card above all of them.
 # Battles take over via ZoneManager's scene switch and return here.
 extends Control
 
