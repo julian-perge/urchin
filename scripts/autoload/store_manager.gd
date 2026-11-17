@@ -3,10 +3,10 @@
 # (frame42/sonny2_item_shop.txt); the zone -> shop id mapping comes from each
 # zone's store-orb button in the SWF (they set Krin.shopId directly) - NOTE
 # zones 6 and 7 are swapped versus the naive order: zone 6 uses shop 6,
-# zone 7 uses shop 5. Dialogue from frame1/sonny2_shop_say.txt (shops 5/6
-# have no dialogue in the original). Backdrops are the per-shop scene art
-# from the shop screen's portrait sprite (sprite 3036, frames = shop ids),
-# extracted to assets/ui/store/backdrops/shop<id>.jpg.
+# zone 7 uses shop 5. Dialogue is KrinLang.ENGLISH.SHOP[shopId], read from
+# strings.json (shops 5 and 6 have an empty line in the original). Backdrops
+# are the per-shop scene art from the shop screen's portrait sprite (sprite
+# 3036, frames = shop ids), extracted to assets/ui/store/backdrops/shop<id>.png.
 extends Node
 
 signal store_opened
@@ -14,17 +14,6 @@ signal store_closed
 
 # Zone id -> shop id (from the store-orb button scripts).
 const ZONE_SHOP_IDS: Dictionary[int, int] = {1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 6, 7: 5}
-
-# KrinLang.ENGLISH.SHOP[shopId].
-const SHOP_DIALOGUE: Dictionary[int, String] = {
-	0: "I got what you need mate. Except soap. Someone's taken all the soap. That's why it always stinks around here. But don't worry mate, you'll get used to it.",
-	1: "Sssh! Keep your voices down, lads. We're amongst enemies here. In fact, I don't even know if I can trust you. Just buy what you need and leave.",
-	2: "Listen. I'm a collector of antique artifacts, and I usually don't sell what I find, but since we're in tough financial times... Consider yourself lucky.",
-	3: "I'm fine, I'm fine! My nose is bleeding a little but I'll be alright. You need any more gear? I've got another suitcase of things for you to buy.",
-	4: "Police? Proletariat? I don't care, I buy and sell everything from everyone. But do keep your distance, stranger. You're in the city now.",
-	5: "",
-	6: "",
-}
 
 const BACKDROP_PATH: String = "res://assets/ui/store/backdrops/shop%d.png"
 
@@ -69,7 +58,7 @@ func get_current_shop_items() -> Array[GameItem]:
 
 
 func get_current_shop_dialogue() -> String:
-	return str(SHOP_DIALOGUE.get(get_current_shop_id(), ""))
+	return Strings.text("SHOP", get_current_shop_id())
 
 
 func get_current_shop_backdrop() -> Texture2D:

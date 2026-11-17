@@ -1,10 +1,13 @@
 # store_window.gd
 # Store screen, rebuilt from frame 16 of the original menu clip
-# (DefineSprite 3142 at stage 400.5, 222.4):
-# - left: the zone's shop backdrop (sprite 3036 frame, via StoreManager)
-#   over the large panel, shopkeeper dialogue beneath it
-# - middle: the dressed player doll with the 7 equip slots (top panel) and
-#   the 15-item shop catalog on a 5x3 grid (bottom panel)
+# (DefineSprite 3142 at stage 400.5, 222.4) on WindowShell, three ShellPanels
+# and FloatBox containers (spec/107-store.md). test_screen_rects.gd checks each
+# piece against the SWF.
+# - left: the zone's shop keeper art (sprite 3036, via StoreManager) and the
+#   keeper's line, SHOP[shopId] from strings.json
+# - middle: the dressed player doll with the 7 equip slots (top panel, typed
+#   here until #235 draws them from the SWF) and the hint and the 15 ware
+#   slots on a 5x3 grid (bottom panel)
 # - right: the shared RightColumn, with its sell slot shown
 #
 # Click a catalog item to buy it; click an inventory item to equip it;
@@ -15,9 +18,6 @@ signal store_closed
 
 const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
 
-# 15 catalog slots, 5 columns (3 rows) - keep in sync with StoreItems'
-# `columns` property in store_window.tscn.
-const CATALOG_SLOTS: int = 15
 # playerSlot0-6 centers from the frame-16 dump.
 const EQUIP_SLOT_CENTERS: Dictionary[int, Vector2] = {
 	0: Vector2(301.1, 117.6),
@@ -30,25 +30,23 @@ const EQUIP_SLOT_CENTERS: Dictionary[int, Vector2] = {
 }
 const DOLL_POSITION: Vector2 = Vector2(396.5, 162.4)
 const DOLL_SCALE: float = 0.85
-# MENU[6] (frame_1/DoAction.as:214), which the shop frame puts in its vb1
-# field over the catalog (DefineSprite_3142/frame_16/DoAction.as:96).
-const PURCHASE_HINT: String = "Click on items to purchase:"
+# The wares are 3 rows of 5, as the original's dropSlot0 to dropSlot14.
+const WARES_PER_ROW: int = 5
 
-@onready var shop_backdrop: TextureRect = $ShopBackdrop
-@onready var shop_dialogue: Label = $DescriptionLabel
-@onready var store_items: GridContainer = $StoreItems
-@onready var _status_label: Label = $StatusLabel
-@onready var _purchase_hint: Label = $PurchaseHintLabel
+@onready var keeper_art: TextureRect = $LeftPanel/Content/KeeperArt
+@onready var keeper_line: Label = $LeftPanel/Content/KeeperLine
+@onready var hint_label: Label = $CentreBottomPanel/Content/Hint
+@onready var _status_label: Label = $CentreBottomPanel/Content/StatusLabel
 @onready var right_column: RightColumn = $RightColumn
 
 var equip_view: EquipDollView
-
-var selected_store_slot: ItemSlot = null
+# The 15 ware slots in grid order, row by row.
+var ware_slots: Array[ItemSlot] = []
 
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_purchase_hint.text = PURCHASE_HINT
+	hint_label.text = Strings.menu(6)
 	_build_middle()
 	right_column.show_sell_button(true)
 	GameData.gold_changed.connect(func(_amount):
@@ -66,11 +64,14 @@ func _build_middle() -> void:
 	add_child(equip_view)
 	equip_view.setup(EQUIP_SLOT_CENTERS, DOLL_POSITION, DOLL_SCALE, true)
 	equip_view.equip_slot_clicked.connect(_on_equip_slot_clicked)
-	for i in CATALOG_SLOTS:
-		var slot: ItemSlot = ItemSlotScene.instantiate()
-		slot.show_price = true
-		slot.slot_clicked.connect(_on_store_slot_clicked)
-		store_items.add_child(slot)
+	for row: Node in $CentreBottomPanel/Content/Wares.get_children():
+		for column in WARES_PER_ROW:
+			var slot: ItemSlot = ItemSlotScene.instantiate()
+			slot.name = "Slot%d" % column
+			slot.show_price = true
+			slot.slot_clicked.connect(_on_store_slot_clicked)
+			row.add_child(slot)
+			ware_slots.append(slot)
 
 
 func open_store():
@@ -82,9 +83,8 @@ func refresh_store():
 	_status_label.text = ""
 	var backdrop: Texture2D = StoreManager.get_current_shop_backdrop()
 	if backdrop != null:
-		shop_backdrop.texture = backdrop
-	var dialogue: String = StoreManager.get_current_shop_dialogue()
-	shop_dialogue.text = dialogue if dialogue != "" else "..."
+		keeper_art.texture = backdrop
+	keeper_line.text = StoreManager.get_current_shop_dialogue()
 	right_column.set_gold(GameData.get_player_gold())
 	_load_store_items()
 	var save: PlayerSave = GameData.current_save
@@ -93,23 +93,23 @@ func refresh_store():
 		equip_view.refresh(save, ItemManagerAuto.items_by_id)
 
 
-func _load_store_items():
+# A ware slot with no ware is hidden, as the original does with _visible = false
+# (DefineSprite_3142/frame_16/DoAction.as). It keeps its place: `visible = false`
+# would make FloatBox pull the slots after it forward.
+func _load_store_items() -> void:
 	var catalog: Array[GameItem] = GameData.get_store_inventory()
-	var index: int = 0
-	for child in store_items.get_children():
-		if child is ItemSlot:
-			child.set_item(catalog[index] if index < catalog.size() else null)
-			index += 1
+	for i in ware_slots.size():
+		var slot: ItemSlot = ware_slots[i]
+		var stocked: bool = i < catalog.size()
+		slot.set_item(catalog[i] if stocked else null)
+		slot.modulate.a = 1.0 if stocked else 0.0
+		slot.mouse_filter = Control.MOUSE_FILTER_STOP if stocked else Control.MOUSE_FILTER_IGNORE
 
 
 func _on_store_slot_clicked(slot: ItemSlot) -> void:
 	_status_label.text = ""
 	if slot.item == null:
 		return
-	if selected_store_slot != null:
-		selected_store_slot.set_selected(false)
-	selected_store_slot = slot
-	slot.set_selected(true)
 	if GameData.purchase_item(slot.item):
 		refresh_store()
 	else:

@@ -32,6 +32,12 @@
 #             piece's depth must be the one the render was measured from. For
 #             art measured from the stage, the code only checks that the depth
 #             exists on the frame, so a wrong depth there is not caught.
+#   "art_set" - art that changes while the game runs, which a TextureRect shows
+#             from one of several PNGs that share one rect and one size. The
+#             Store keeper's seven shop PNGs are one. It is recorded as the rect
+#             and size of the shared crop, and the list of PNGs. The piece's
+#             depth must hold the character `character`, and the crop's rect is
+#             on the Stage already, so the placement matrix is not applied.
 #   "face"  - the portrait clip 2978, which the port draws as a TextureRect that
 #             shows a different PNG for each fighter. It is recorded as the crop
 #             box that extract_faces cut every portrait to, placed with the
@@ -94,6 +100,7 @@ from urchin_dev.swf.extract import (
     faces,
     hotbar_icons,
     start_screens,
+    store_art,
     window_chrome,
     zone_hub,
 )
@@ -117,6 +124,7 @@ CHROME_TEXTURES = "res://assets/ui/window"
 MENU_TEXTURES = "res://assets/ui/menu"
 BATTLE_TEXTURES = "res://assets/ui/battle"
 HOTBAR_TEXTURES = "res://assets/ui/hotbar"
+STORE_TEXTURES = "res://assets/ui/store/backdrops"
 # The menu art, by the record that extract_start_screens writes beside each PNG.
 MENU_ART = {
     "logo": start_screens.LOGO_RECORD,
@@ -852,6 +860,68 @@ SCENES[INVENTORY_SCENE] = Scene(
 )
 
 
+# The shop frame (spec/107-store.md). Its left panel holds the keeper's scene,
+# sprite 3036 at depth 25, which the port draws as one TextureRect of the shop's
+# PNG, and the keeper's line, the edit text 3019 (vb2). The centre bottom panel
+# holds the hint, the edit text 3018 (vb1), and the 15 wares, sprite 3013 as
+# dropSlot0 to dropSlot14, drawn with the art of the inventory slot 2986. The
+# first piece of the frame's grid, itemSlot0 at depth 30, is the sprite that
+# art was rendered from. The 31 clips of the doll and the 7 equip slots stay
+# port only until #235 records them. StatusLabel has no piece in the SWF.
+STORE_SCENE = "res://scenes/ui/store/store_window.tscn"
+STORE_WARES = 15
+STORE_WARE_COLUMNS = 5
+SCENES[STORE_SCENE] = Scene(
+    timeline=KRINMENU,
+    frame="shop",
+    pieces={
+        **{
+            f"WindowShell/{node}": piece
+            for node, piece in SCENES[
+                "res://scenes/ui/window/window_shell.tscn"
+            ].pieces.items()
+        },
+        "LeftPanel": Piece("panel", 11),
+        "CentreTopPanel": Piece("panel", 21),
+        "CentreBottomPanel": Piece("panel", 23),
+        "LeftPanel/Content/KeeperArt": Piece("art_set", 25, character=3036),
+        "LeftPanel/Content/KeeperLine": Piece("text", 1101, character=3019),
+        "CentreBottomPanel/Content/Hint": Piece("text", 1102, character=3018),
+        **{
+            f"CentreBottomPanel/Content/Wares/Row{i // STORE_WARE_COLUMNS}"
+            f"/Slot{i % STORE_WARE_COLUMNS}": Piece(
+                "art",
+                None,
+                art="slot_inventory",
+                instance=f"dropSlot{i}",
+                rendered_at=30,
+            )
+            for i in range(STORE_WARES)
+        },
+        **{
+            f"RightColumn/{node}": piece
+            for node, piece in SCENES[
+                "res://scenes/ui/window/right_column.tscn"
+            ].pieces.items()
+        },
+    },
+    port_only=(
+        "CentreBottomPanel/Content/StatusLabel",
+        "EquipDollView",
+        *(
+            f"CentreBottomPanel/Content/Wares/Row{i // STORE_WARE_COLUMNS}"
+            f"/Slot{i % STORE_WARE_COLUMNS}/{node}"
+            for i in range(STORE_WARES)
+            for node in ("ItemIcon", "Highlight")
+        ),
+        *(
+            f"RightColumn/{node}"
+            for node in SCENES["res://scenes/ui/window/right_column.tscn"].port_only
+        ),
+    ),
+)
+
+
 def color_hex(color: tuple[int, int, int, int]) -> str:
     """-> "rrggbbaa", as Godot's Color.to_html() writes it."""
     return "{:02x}{:02x}{:02x}{:02x}".format(*color)
@@ -1080,6 +1150,25 @@ def art_record(
         "texture": f"{textures}/{name}.png",
         "size": chrome["size"],
         "zoom": chrome["zoom"],
+    }
+
+
+def art_set_record(crop: dict, textures: list[str]) -> dict:
+    """-> the record of art that shows one of `textures`, which all have the
+    one rect, size and zoom of `crop` (a record of the extractor that wrote
+    them, measured from the Stage)."""
+    if crop["relative_to"] != "stage":
+        raise ValueError(
+            f"the crop is measured from {crop['relative_to']}, not the Stage"
+        )
+    if not textures:
+        raise ValueError("an art set needs at least one texture")
+    return {
+        "kind": "art_set",
+        "rect": [round(v, 4) for v in crop["rect"]],
+        "textures": list(textures),
+        "size": crop["size"],
+        "zoom": crop["zoom"],
     }
 
 
@@ -1589,6 +1678,12 @@ def scene_record(
                 else:
                     entry = moved_art(entry, layer.matrix, rendered.matrix)
             pieces[path] = art_record(piece.art, entry, sprite_origins, textures)
+        elif piece.kind == "art_set":
+            crop = json.loads(store_art.RECORD.read_text())
+            pieces[path] = art_set_record(
+                crop,
+                [f"{STORE_TEXTURES}/shop{shop}.png" for shop in store_art.SHOP_IDS],
+            )
         elif piece.kind == "face":
             if layer.character_id != faces.FACE_CLIP:
                 raise ValueError(

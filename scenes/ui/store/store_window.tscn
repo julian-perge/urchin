@@ -1,11 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://brmx4sa7xb3xq"]
+[gd_scene format=3 uid="uid://brmx4sa7xb3xq"]
 
 [ext_resource type="Script" uid="uid://dci8fqqpbntjm" path="res://scripts/ui/store/store_window.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/menu_backdrop.png" id="2_backdrop"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/close_x.png" id="3_close"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/panel_large.png" id="4_panellarge"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/panel_center.png" id="5_panelcenter"]
-[ext_resource type="PackedScene" path="res://scenes/ui/window/right_column.tscn" id="6_rightcolumn"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/window_shell.tscn" id="2_shell"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/shell_panel.tscn" id="3_panel"]
+[ext_resource type="Script" path="res://scripts/ui/float_box.gd" id="4_floatbox"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/right_column.tscn" id="5_rightcolumn"]
 
 [node name="StoreWindow" type="Control" groups=["menu_screen"]]
 layout_mode = 3
@@ -17,121 +16,122 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_script")
 
-[node name="Backdrop" type="TextureRect" parent="."]
+[node name="WindowShell" parent="." instance=ExtResource("2_shell")]
+
+[node name="LeftPanel" parent="." instance=ExtResource("3_panel")]
 layout_mode = 0
-offset_left = 14.2
-offset_top = 14.9
-offset_right = 782.7
-offset_bottom = 440.0
-mouse_filter = 0
-texture = ExtResource("2_backdrop")
+offset_left = 36.0698
+offset_top = 81.0751
+offset_right = 258.875
+offset_bottom = 408.0861
+mouse_filter = 2
+fill = 0
+
+[node name="Content" type="Control" parent="LeftPanel"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="KeeperArt" type="TextureRect" parent="LeftPanel/Content"]
+layout_mode = 0
+offset_left = 18.4552
+offset_top = 18.1249
+offset_right = 205.7052
+offset_bottom = 159.3749
+mouse_filter = 2
 expand_mode = 1
-stretch_mode = 0
 
-[node name="CloseButton" type="TextureButton" parent="."]
+[node name="KeeperLine" type="Label" parent="LeftPanel/Content"]
 layout_mode = 0
-offset_left = 734.5
-offset_top = 29.8
-offset_right = 771.2
-offset_bottom = 66.2
-texture_normal = ExtResource("3_close")
-ignore_texture_size = true
-stretch_mode = 5
+offset_left = 20.1302
+offset_top = 178.0749
+offset_right = 210.5302
+offset_bottom = 312.1749
+mouse_filter = 2
+theme_type_variation = &"RegularLabel"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
 
-[node name="StatusLabel" type="Label" parent="."]
+[node name="CentreTopPanel" parent="." instance=ExtResource("3_panel")]
 layout_mode = 0
-offset_left = 47.5
-offset_top = 414.0
-offset_right = 747.5
-offset_bottom = 434.0
+offset_left = 274.9788
+offset_top = 81.5365
+offset_right = 487.963
+offset_bottom = 218.5406
+mouse_filter = 2
+fill = 2
+
+[node name="CentreBottomPanel" parent="." instance=ExtResource("3_panel")]
+layout_mode = 0
+offset_left = 274.9788
+offset_top = 232.132
+offset_right = 487.963
+offset_bottom = 408.0952
+mouse_filter = 2
+fill = 2
+
+[node name="Content" type="Control" parent="CentreBottomPanel"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Hint" type="Label" parent="CentreBottomPanel/Content"]
+layout_mode = 0
+offset_left = 15.2212
+offset_top = 5.468
+offset_right = 198.5212
+offset_bottom = 56.468
+mouse_filter = 2
+theme_type_variation = &"RegularLabel"
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 1)
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+
+[node name="Wares" type="Container" parent="CentreBottomPanel/Content"]
+layout_mode = 0
+offset_left = 14.4212
+offset_top = 44.018
+offset_right = 197.4212
+offset_bottom = 151.018
+mouse_filter = 2
+script = ExtResource("4_floatbox")
+separation = 7.0
+
+[node name="Row0" type="Container" parent="CentreBottomPanel/Content/Wares"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("4_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="Row1" type="Container" parent="CentreBottomPanel/Content/Wares"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("4_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="Row2" type="Container" parent="CentreBottomPanel/Content/Wares"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("4_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="StatusLabel" type="Label" parent="CentreBottomPanel/Content"]
+layout_mode = 0
+offset_left = 13.2212
+offset_top = 152.868
+offset_right = 200.5212
+offset_bottom = 172.868
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_font_sizes/font_size = 12
 
-[node name="LeftPanel" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 22.9
-offset_top = 81.6
-offset_right = 272.0
-offset_bottom = 409.1
-mouse_filter = 2
-texture = ExtResource("4_panellarge")
-expand_mode = 1
-stretch_mode = 0
+[node name="RightColumn" parent="." instance=ExtResource("5_rightcolumn")]
 
-[node name="ShopBackdrop" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 34.0
-offset_top = 92.0
-offset_right = 261.0
-offset_bottom = 242.0
-clip_contents = true
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 6
-
-[node name="DescriptionLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 36.0
-offset_top = 252.0
-offset_right = 259.0
-offset_bottom = 402.0
-mouse_filter = 2
-theme_type_variation = &"RegularLabel"
-theme_override_font_sizes/font_size = 11
-autowrap_mode = 3
-text = "..."
-
-[node name="MiddleTopPanel" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 285.6
-offset_top = 81.6
-offset_right = 472.2
-offset_bottom = 215.0
-mouse_filter = 2
-texture = ExtResource("5_panelcenter")
-expand_mode = 1
-stretch_mode = 0
-
-[node name="MiddleBottomPanel" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 285.6
-offset_top = 225.0
-offset_right = 472.2
-offset_bottom = 409.1
-mouse_filter = 2
-texture = ExtResource("5_panelcenter")
-expand_mode = 1
-stretch_mode = 0
-
-[node name="PurchaseHintLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 290.2
-offset_top = 237.6
-offset_right = 467.2
-offset_bottom = 267.6
-mouse_filter = 2
-theme_type_variation = &"RegularLabel"
-theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
-theme_override_font_sizes/font_size = 10
-horizontal_alignment = 1
-autowrap_mode = 3
-text = "Click on items to purchase:"
-
-[node name="StoreItems" type="GridContainer" parent="."]
-layout_mode = 0
-offset_left = 289.6
-offset_top = 276.4
-offset_right = 472.6
-offset_bottom = 383.4
-mouse_filter = 2
-theme_override_constants/h_separation = 7
-theme_override_constants/v_separation = 7
-columns = 5
-
-[node name="RightColumn" parent="." instance=ExtResource("6_rightcolumn")]
-
-[connection signal="pressed" from="CloseButton" to="." method="_on_exit_pressed"]
+[connection signal="close_pressed" from="WindowShell" to="." method="_on_exit_pressed"]
 [connection signal="item_selected" from="RightColumn" to="." method="_on_inventory_item_selected"]
 [connection signal="sell_pressed" from="RightColumn" to="." method="_on_sell_pressed"]
 [connection signal="delete_pressed" from="RightColumn" to="." method="_on_delete_pressed"]
