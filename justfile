@@ -279,6 +279,11 @@ extract-shield-clip *args: (require "ffdec" "java")
 extract-screen-rects *args:
     uv run extract_screen_rects "$@"
 
+[doc('Run extract_top_bar, which reads the SWF through ffdec')]
+[group('extract')]
+extract-top-bar *args: (require "ffdec" "java")
+    uv run extract_top_bar "$@"
+
 [doc('Run extract_start_screens, which reads the SWF through ffdec')]
 [group('extract')]
 extract-start-screens *args: (require "ffdec" "java")
