@@ -605,6 +605,35 @@ for zone, (slug, orbs) in enumerate(zip(ZONE_SCENES, ZONE_ORBS, strict=True), 1)
     )
 
 
+# The info card krinNavFadeSpeech (2848) is placed once on the hub frame and
+# holds the dim, the frame's sprite, the close prompt and its hit button
+# (spec/107-hub.md, The info card). The title and the text are placed on the
+# frame itself at depths 1659 and 1658, outside the sprite. The frame's and the
+# face's art are two renders of one sprite, because the shadow on the face is
+# its own (extract_window_chrome).
+SCENES["res://scenes/ui/hub_card.tscn"] = Scene(
+    timeline=0,
+    frame=HUB_FRAME,
+    pieces={
+        "Dim": Piece(
+            "box", window_chrome.CARD_DEPTH, inner_depth=window_chrome.CARD_DIM_DEPTH
+        ),
+        "Frame": Piece("art", window_chrome.CARD_DEPTH, art="hub_card_frame"),
+        "Face": Piece("art", window_chrome.CARD_DEPTH, art="hub_card_face"),
+        "Title": Piece("text", 1659),
+        "Body": Piece("text", 1658),
+        "Prompt": Piece(
+            "text",
+            window_chrome.CARD_DEPTH,
+            inner_depth=window_chrome.CARD_PROMPT_DEPTH,
+        ),
+        "CloseButton": Piece(
+            "hit", window_chrome.CARD_DEPTH, inner_depth=window_chrome.CARD_CLOSE_DEPTH
+        ),
+    },
+)
+
+
 # This fixture scores the static Hub chrome. Animated orbs are checked by the
 # zone records, and the Windows, banners and card have their own build tasks.
 HUB_CHROME = "res://test/fixtures/screen_rects/hub_chrome.tscn"

@@ -37,6 +37,8 @@ SHAPE_BOXES = {
     "hotbar_world_map": (376.32, 484.30, 48.73, 48.73),
     "hotbar_quit": (436.08, 464.91, 18.02, 18.00),
     "hotbar_quit_red": (436.10, 464.90, 18.00, 18.00),
+    "hub_card_frame": (156.60, 104.25, 474.50, 248.20),
+    "hub_card_face": (169.60, 116.75, 448.50, 223.25),
     "zone_track": (505.00, 515.25, 251.40, 14.05),
     "zone_fill": (504.70, 515.25, 251.40, 14.05),
 }
@@ -121,10 +123,16 @@ def layer() -> timeline.Layer:
 
 def stub_swf(monkeypatch, menu_frames):
     """Make window_chrome read `menu_frames` as KRINMENU's frames, the hub as
-    frame 181, KRINMENU at (400.5, 222.4) and the zone bar at (630.7, 522.25)."""
+    frame 181, KRINMENU at (400.5, 222.4), the zone bar at (630.7, 522.25), the
+    info card at (393.85, 286.0) and its frame sprite 57.65 above that."""
     monkeypatch.setattr(timeline, "frame_of", lambda index, owner, label: 181)
     monkeypatch.setattr(timeline, "frames", lambda index, owner: menu_frames)
-    origins = {3142: (400.5, 222.4), 3149: (630.7, 522.25)}
+    origins = {
+        3142: (400.5, 222.4),
+        3149: (630.7, 522.25),
+        2848: (393.85, 286.0),
+        2846: (0.0, -57.65),
+    }
     monkeypatch.setattr(
         render, "placement_origin", lambda index, owner, frame, cid: origins[cid]
     )
@@ -158,6 +166,12 @@ def test_each_piece_renders_the_timeline_and_depth_that_places_it(monkeypatch):
     assert by_name["zone_track"].hide_depths == ((3149, 2),)
     assert by_name["zone_fill"].origin == (630.7, 522.25)
     assert by_name["hotbar_quit_red"].only_depths == (152,)
+    frame = by_name["hub_card_frame"]
+    assert (frame.timeline, frame.frame, frame.only_depths) == (0, 181, (1651,))
+    assert frame.hide_depths == ((2848, 1), (2848, 5), (2848, 6), (2846, 2))
+    face = by_name["hub_card_face"]
+    assert (face.timeline, face.frame, face.only_depths) == (2846, 1, (2,))
+    assert face.origin == pytest.approx((393.85, 228.35))
     row = by_name["victory_row"]
     assert (row.timeline, row.frame, row.origin) == (3142, 181, menu)
     assert row.only_depths == (1197,)

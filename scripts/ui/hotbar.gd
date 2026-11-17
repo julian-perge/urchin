@@ -5,8 +5,7 @@
 # hub builds a new hotbar every time it opens, after a load and after every
 # battle, so _ready() paints the zone progress from the save's zone, which
 # game.gd's _enter_tree() has just restored. After that, picking a zone on the
-# world map repaints it through ZoneManager.zone_changed, and so does the Save
-# button once its "Game saved." message is gone.
+# world map repaints it through ZoneManager.zone_changed.
 #
 # Three buttons open a Window (group "menu_screen"). The original has no
 # open-Window state on the hotbar, so nothing here follows a Window's
@@ -250,8 +249,15 @@ func _refresh(zone_id: int) -> void:
 	stage_label.text = Strings.system(10) + str(progress + 1)
 
 
+# The original saves, then opens the Info card with NAVTITLE[0] and NAVTEXT[0]
+# (DefineButton2_3183/BUTTONCONDACTION on(release).as:9). The port opens it
+# only when the save worked, so a failed save does not say "Your game has been
+# saved!".
 func _on_save_pressed() -> void:
-	if GameData.save_game():
-		zone_subtitle.text = "Game saved."
-		await get_tree().create_timer(1.2).timeout
-		_refresh(ZoneManager.current_zone)
+	if not GameData.save_game():
+		return
+	var card: HubCard = get_tree().get_first_node_in_group(HubCard.GROUP)
+	if card == null:
+		push_error("hotbar: no Info card in the scene to show that the game was saved")
+		return
+	card.show_card(Strings.text("NAVTITLE", 0), Strings.text("NAVTEXT", 0))

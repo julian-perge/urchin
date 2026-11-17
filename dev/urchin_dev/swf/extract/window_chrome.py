@@ -41,6 +41,27 @@
 # _width to the progress (frame_181/DoAction.as:11), so zone_fill.png is the
 # full width and a scene crops or stretches it.
 #
+# THE INFO CARD is krinNavFadeSpeech (2848), placed at depth 1651 of the hub
+# frame, and holds a dim (2847, a black shape scaled across the Stage), the
+# card's sprite 2846 at its depth 2, the close prompt and its hit button. The
+# sprite 2846 holds the frame's shape 2845 and the face, sprite 2844, with a
+# DropShadow on the face's own placement. A second DropShadow is on 2848's
+# placement of 2846, so in the game it draws around the frame and the face
+# together. That outer shadow sits under the frame's whole outline, which the
+# frame covers, so the two pieces are rendered apart, as the game's layers
+# stack them:
+#
+#   hub_card_frame - the hub frame with only depth 1651 kept, and the dim,
+#                    the prompt, the hit button and the face hidden. 2846's
+#                    placement shadow draws around the frame shape alone.
+#   hub_card_face  - sprite 2846 on its own, placed where the hub frame places
+#                    it, with only the face kept. Only the face's own shadow
+#                    draws, over the frame.
+#
+# The dim is a plain black ColorRect and the prompt is a Label, so neither is
+# art. The two edit texts that the game fills, navTitle and navText, are placed
+# on the root frame at depths 1659 and 1658 and are not part of the sprite.
+#
 # THE VICTORY ROW is the row's shape 3001, rendered where the win frame places
 # the player's row with every other depth of the row hidden, so the DropShadow
 # on the row's placement draws around 3001 alone. The two other rows are the
@@ -104,6 +125,16 @@ SQUARE_DEPTHS = (126, 128, 130, 136, 138, 165)
 WORLD_MAP_DEPTH = 142
 QUIT_DEPTH = 140
 QUIT_RED_DEPTH = 152
+# krinNavFadeSpeech, the info card, at its depth of the hub frame, and what it
+# holds: the dim, the frame's sprite, the close prompt and its hit button. The
+# sprite holds the frame's shape and the face at depths 1 and 2.
+CARD_DEPTH = 1651
+CARD_SPRITE = 2848
+CARD_DIM_DEPTH = 1
+CARD_PROMPT_DEPTH = 5
+CARD_CLOSE_DEPTH = 6
+CARD_FRAME_SPRITE = 2846
+CARD_FACE_DEPTH = 2
 
 PIECES: dict[str, str] = {
     "backdrop": "KRINMENU's backdrop under its Bevel, Glow and DropShadow",
@@ -122,6 +153,8 @@ PIECES: dict[str, str] = {
     "hotbar_world_map": "the World Map square, scale 0.812",
     "hotbar_quit": "the Quit square, scale 0.3",
     "hotbar_quit_red": "Quit's red square (3172), with no filter",
+    "hub_card_frame": "the info card's frame (2845 in 2846), under the DropShadow on 2846",
+    "hub_card_face": "the info card's face (2844), under its own DropShadow",
     "zone_track": "the Hub's zone progress track (3149), under its DropShadow",
     "zone_fill": "the Hub's zone progress bar (3147), full width, no DropShadow",
 }
@@ -143,6 +176,9 @@ def jobs(index: SwfIndex, plate_strip: tuple[int, ...]) -> dict[str, render.Job]
     hub = hub_frame(index)
     menu_origin = render.placement_origin(index, 0, hub, KRINMENU)
     bar_origin = render.placement_origin(index, 0, hub, ZONE_BAR_SPRITE)
+    card_origin = render.placement_origin(index, 0, hub, CARD_SPRITE)
+    in_card = render.placement_origin(index, CARD_SPRITE, 1, CARD_FRAME_SPRITE)
+    frame_origin = (card_origin[0] + in_card[0], card_origin[1] + in_card[1])
 
     def on_menu(frame: int, depth: int, **more) -> render.Job:
         return render.Job(
@@ -177,6 +213,18 @@ def jobs(index: SwfIndex, plate_strip: tuple[int, ...]) -> dict[str, render.Job]
         "hotbar_world_map": on_hub(WORLD_MAP_DEPTH),
         "hotbar_quit": on_hub(QUIT_DEPTH),
         "hotbar_quit_red": on_hub(QUIT_RED_DEPTH),
+        "hub_card_frame": on_hub(
+            CARD_DEPTH,
+            hide_depths=(
+                (CARD_SPRITE, CARD_DIM_DEPTH),
+                (CARD_SPRITE, CARD_PROMPT_DEPTH),
+                (CARD_SPRITE, CARD_CLOSE_DEPTH),
+                (CARD_FRAME_SPRITE, CARD_FACE_DEPTH),
+            ),
+        ),
+        "hub_card_face": render.Job(
+            CARD_FRAME_SPRITE, 1, ZOOM, frame_origin, only_depths=(CARD_FACE_DEPTH,)
+        ),
         "zone_track": on_hub(
             ZONE_BAR_ROOT_DEPTH, hide_depths=((ZONE_BAR_SPRITE, ZONE_BAR_FILL_DEPTH),)
         ),
@@ -200,7 +248,9 @@ def victory_row(index: SwfIndex, depth: int) -> render.Job:
         menu_origin,
         only_depths=(depth,),
         hide_depths=tuple(
-            (VICTORY_ROW_SPRITE, d) for d in sorted(inner) if d != VICTORY_ROW_SHAPE_DEPTH
+            (VICTORY_ROW_SPRITE, d)
+            for d in sorted(inner)
+            if d != VICTORY_ROW_SHAPE_DEPTH
         ),
     )
 

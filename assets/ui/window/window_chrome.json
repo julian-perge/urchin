@@ -125,6 +125,34 @@
   ],
   "zoom": 4.0
  },
+ "hub_card_face": {
+  "rect": [
+   169.6,
+   116.725,
+   448.5,
+   223.25
+  ],
+  "relative_to": "stage",
+  "size": [
+   1794,
+   893
+  ],
+  "zoom": 4.0
+ },
+ "hub_card_frame": {
+  "rect": [
+   156.5,
+   104.25,
+   481.0,
+   254.25
+  ],
+  "relative_to": "stage",
+  "size": [
+   1924,
+   1017
+  ],
+  "zoom": 4.0
+ },
  "sell_slot": {
   "rect": [
    669.3,

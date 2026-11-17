@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b72a78kxlnpmh"]
+[gd_scene load_steps=9 format=3 uid="uid://b72a78kxlnpmh"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="PackedScene" uid="uid://brmx4sa7xb3xq" path="res://scenes/ui/store/store_window.tscn" id="2_store"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/inventory_window.tscn" id="5_invwin"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/abilities_window.tscn" id="6_abilwin"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/achievements_window.tscn" id="7_achwin"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hub_card.tscn" id="8_hubcard"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -58,3 +59,5 @@ layout_mode = 1
 layout_mode = 1
 
 [node name="Hotbar" parent="." instance=ExtResource("4_hotbar")]
+
+[node name="HubCard" parent="." instance=ExtResource("8_hubcard")]
