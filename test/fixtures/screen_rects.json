@@ -1450,7 +1450,149 @@
       "distance": 5.0
      }
     },
-    "CenterPanel/Content/CenterOutline": {
+    "CenterPanel/Content/DefenseOutline": {
+     "border": 1,
+     "kind": "outline",
+     "line": "333333ff",
+     "rect": [
+      321.75,
+      302.2,
+      158.35,
+      100.45
+     ]
+    },
+    "CenterPanel/Content/PiercingOutline": {
+     "border": 1,
+     "kind": "outline",
+     "line": "333333ff",
+     "rect": [
+      321.75,
+      196.8,
+      158.35,
+      100.45
+     ]
+    },
+    "CenterPanel/Content/StatNames/Row0/Label": {
+     "align": "left",
+     "color": "679339ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      331.95,
+      99.1,
+      81.35,
+      17.9
+     ]
+    },
+    "CenterPanel/Content/StatNames/Row1/Label": {
+     "align": "left",
+     "color": "993333ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      331.95,
+      116.55,
+      81.35,
+      17.9
+     ]
+    },
+    "CenterPanel/Content/StatNames/Row2/Label": {
+     "align": "left",
+     "color": "c48c3cff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      331.95,
+      134.7,
+      81.35,
+      17.9
+     ]
+    },
+    "CenterPanel/Content/StatNames/Row3/Label": {
+     "align": "left",
+     "color": "735588ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      331.95,
+      152.85,
+      81.35,
+      17.9
+     ]
+    },
+    "CenterPanel/Content/StatNames/Row4/Label": {
+     "align": "left",
+     "color": "8da9e9ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      331.95,
+      170.3,
+      81.35,
+      17.9
+     ]
+    },
+    "CenterPanel/Content/StatValues/Row0/Label": {
+     "align": "right",
+     "color": "679339ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      387.95,
+      99.1,
+      81.35,
+      15.6
+     ]
+    },
+    "CenterPanel/Content/StatValues/Row1/Label": {
+     "align": "right",
+     "color": "993333ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      387.95,
+      116.55,
+      81.35,
+      15.6
+     ]
+    },
+    "CenterPanel/Content/StatValues/Row2/Label": {
+     "align": "right",
+     "color": "c48c3cff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      387.95,
+      134.7,
+      81.35,
+      15.6
+     ]
+    },
+    "CenterPanel/Content/StatValues/Row3/Label": {
+     "align": "right",
+     "color": "735588ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      387.95,
+      152.85,
+      81.35,
+      15.6
+     ]
+    },
+    "CenterPanel/Content/StatValues/Row4/Label": {
+     "align": "right",
+     "color": "8da9e9ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "rect": [
+      387.95,
+      170.3,
+      81.35,
+      15.6
+     ]
+    },
+    "CenterPanel/Content/StatsOutline": {
      "border": 1,
      "kind": "outline",
      "line": "333333ff",
@@ -1458,7 +1600,7 @@
       321.75,
       89.45,
       158.35,
-      313.2
+      102.15
      ]
     },
     "ExpFill": {
@@ -2396,16 +2538,6 @@
     "LeftPanel/Content/EquipDollView/Slot6/Highlight",
     "PiercingLabel",
     "DefenseLabel",
-    "StatLabel0",
-    "StatValue0",
-    "StatLabel1",
-    "StatValue1",
-    "StatLabel2",
-    "StatValue2",
-    "StatLabel3",
-    "StatValue3",
-    "StatLabel4",
-    "StatValue4",
     "PerTrack0",
     "PerFill0",
     "PerTrack1",

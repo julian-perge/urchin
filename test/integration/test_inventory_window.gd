@@ -98,6 +98,34 @@ func test_the_experience_fill_and_percent_follow_the_experience() -> void:
 		assert_eq((window.get_node("ExpPercent") as Label).text, case[1])
 
 
+# The stat names are SYSTEM[0] to [4] plus ":" in the original's menu script
+# (DefineSprite_3142/frame_25/DoAction.as), read here from strings.json itself.
+func test_the_stat_names_are_the_system_strings_with_a_colon() -> void:
+	var system: Array = JSON.parse_string(FileAccess.get_file_as_string(Strings.STRINGS_FILE))["SYSTEM"]
+	var window: Control = add_child_autofree(SCENE.instantiate())
+	var names: Node = window.get_node("CenterPanel/Content/StatNames")
+	assert_eq(names.get_child_count(), 5)
+	for i in 5:
+		assert_eq((names.get_node("Row%d/Label" % i) as Label).text, system[i] + ":")
+
+
+func test_the_stat_values_are_the_players_stats_in_order() -> void:
+	GameData.current_save = PlayerSave.new_game("Inventory", 0)
+	var save: PlayerSave = GameData.current_save
+	save.life = 11.0
+	save.strength = 22.0
+	save.magic = 33.0
+	save.speed = 44.0
+	save.focus = 55.0
+	var window: Control = add_child_autofree(SCENE.instantiate())
+	window.refresh()
+	var values: Node = window.get_node("CenterPanel/Content/StatValues")
+	var shown: Array[String] = []
+	for i in 5:
+		shown.append((values.get_node("Row%d/Label" % i) as Label).text)
+	assert_eq(shown, ["11", "22", "33", "44", "55"])
+
+
 func test_the_experience_label_is_the_extracted_string() -> void:
 	var window: Control = add_child_autofree(SCENE.instantiate())
 	assert_eq((window.get_node("ExperienceLabel") as Label).text, Strings.menu(17))

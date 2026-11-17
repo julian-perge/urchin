@@ -167,6 +167,9 @@ class Piece:
     # the record types by hand names it, so a depth that points at another
     # character fails here and not in a rect that moved with it.
     character: int | None = None
+    # The 0-based stroked path, from the top down, of an outline shape that draws several boxes with
+    # one line, for a piece the port builds as one Panel for each box.
+    path: int | None = None
 
     def __post_init__(self) -> None:
         if (self.depth is None) == (self.instance is None):
@@ -701,13 +704,13 @@ SCENES[HUB_CHROME] = Scene(
 )
 
 
-# The Inventory record covers #226's shell and left panel, and #227's doll and
-# experience row. The other pieces are port only until their tasks record
-# them: the stat rows (#228), the element bars (#230) and the party faces
-# (#231). The frame places the doll as 31 clips, which depth 912 names by the
-# ground shadow 143, and the port draws as the one Doll. The port draws no
-# ground shadow. The experience fill is the sprite 2867 on its first frame,
-# which the game scales to the experience, and its gloss is the shape 2864.
+# The Inventory record covers #226's shell and left panel, #227's doll and
+# experience row, and #228's stat rows. The other pieces are port only until
+# their tasks record them: the element bars (#230) and the party faces (#231).
+# The frame places the doll as 31 clips, which depth 912 names by the ground
+# shadow 143, and the port draws as the one Doll. The port draws no ground
+# shadow. The experience fill is the sprite 2867 on its first frame, which the
+# game scales to the experience, and its gloss is the shape 2864.
 INVENTORY_SCENE = "res://scenes/ui/menu/inventory_window.tscn"
 SCENES[INVENTORY_SCENE] = Scene(
     timeline=KRINMENU,
@@ -722,7 +725,11 @@ SCENES[INVENTORY_SCENE] = Scene(
         "LeftPanel": Piece("panel", 11),
         "PartyBar": Piece("panel", 9),
         "CenterPanel": Piece("panel", 21),
-        "CenterPanel/Content/CenterOutline": Piece("outline", 994),
+        # Shape 2980 draws three stacked boxes with one line: the stats, the
+        # piercing bars and the defense bars.
+        "CenterPanel/Content/StatsOutline": Piece("outline", 994, path=0),
+        "CenterPanel/Content/PiercingOutline": Piece("outline", 994, path=1),
+        "CenterPanel/Content/DefenseOutline": Piece("outline", 994, path=2),
         "LeftPanel/Content/Header/NameRow/NameLabel": Piece("text", 1241),
         "LeftPanel/Content/Header/InfoRow/LevelLabel": Piece("text", 1242),
         "LeftPanel/Content/EquipDollView/Doll": Piece("doll", 912, character=143),
@@ -731,6 +738,18 @@ SCENES[INVENTORY_SCENE] = Scene(
         "ExpFill": Piece("art", 1419, art="xp_bar"),
         "ExpGloss": Piece("art", 1421, art="xp_gloss"),
         "ExpPercent": Piece("text", 1422),
+        # The menu script fills the five names with SYSTEM[0] to [4] plus ":",
+        # and the five values with the stats of the selected member.
+        **{
+            f"CenterPanel/Content/Stat{column}/Row{i}/Label": Piece(
+                "text", first + i, character=character - i
+            )
+            for column, first, character in (
+                ("Names", 1243, 2889),
+                ("Values", 1248, 2884),
+            )
+            for i in range(5)
+        },
         **{
             f"LeftPanel/Content/EquipDollView/Slot{i}": Piece(
                 "art",
@@ -770,7 +789,6 @@ SCENES[INVENTORY_SCENE] = Scene(
         ),
         "PiercingLabel",
         "DefenseLabel",
-        *(f"Stat{kind}{i}" for i in range(5) for kind in ("Label", "Value")),
         *(
             f"{block}{kind}{i}"
             for block in ("Per", "Def")
@@ -1035,11 +1053,36 @@ def shape_record(bounds, matrix, origin) -> dict:
     }
 
 
-def outline_record(bounds, matrix, origin, styles: list[StyleSet]) -> dict:
+def outline_record(
+    bounds, matrix, origin, styles: list[StyleSet], path: int | None = None
+) -> dict:
+    """-> the record of an outline shape, or of its `path`th stroked path, from
+    the top down, when the shape draws several boxes with one line. A path's rect is its edges
+    grown by half the line, as the whole shape's bounds are, and the paths'
+    rects must cover the shape's bounds exactly."""
     only = styles[0] if len(styles) == 1 else None
     if only is None or only.fills or only.used_fills or len(only.lines) != 1:
         raise ValueError("an outline needs one line and no fill")
     width, color = only.lines[0]
+    if path is not None:
+        half = width / 2
+        grown = [
+            (xmin - half, ymin - half, xmax + half, ymax + half)
+            for xmin, ymin, xmax, ymax in sorted(
+                only.paths, key=lambda box: (box[1], box[0])
+            )
+        ]
+        covered = (
+            min(g[0] for g in grown),
+            min(g[1] for g in grown),
+            max(g[2] for g in grown),
+            max(g[3] for g in grown),
+        )
+        if any(abs(a - b) > 1 for a, b in zip(covered, bounds, strict=True)):
+            raise ValueError(
+                f"the outline's {len(grown)} paths cover {covered}, not its bounds {bounds}"
+            )
+        bounds = grown[path]
     return {
         "kind": "outline",
         "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
@@ -1494,6 +1537,7 @@ def scene_record(
                 layer.matrix,
                 piece_origin,
                 shape_styles(index, layer.character_id),
+                piece.path,
             )
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, piece_origin)

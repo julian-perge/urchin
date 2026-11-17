@@ -14,7 +14,9 @@ def test_every_extract_convert_and_export_script_has_a_recipe():
     scripts = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["scripts"]
     recipes = set(
         re.findall(
-            r"^([a-z][a-z0-9-]*)\b[^\n]*:", (ROOT / "justfile").read_text(), re.M
+            r"^([a-z][a-z0-9-]*)\b[^\n]*:",
+            (ROOT / "justfile").read_text(),
+            re.MULTILINE,
         )
     )
     missing = sorted(

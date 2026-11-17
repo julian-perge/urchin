@@ -36,8 +36,8 @@ from urchin_dev.swf.swf_index import (
     first_line_style,
     font,
     parse_swf,
-    shape_styles,
     shape_bounds,
+    shape_styles,
     sound_stream,
 )
 
@@ -462,7 +462,6 @@ def test_a_character_that_is_not_a_button_is_refused():
         button_records(index, 30)
 
 
-
 def _box_edges(width: int, height: int) -> list[tuple[int, int]]:
     """Four straight edges around a box, each a horizontal or vertical
     STRAIGHTEDGERECORD with 9 bit deltas."""
@@ -470,6 +469,26 @@ def _box_edges(width: int, height: int) -> list[tuple[int, int]]:
     for vertical, delta in ((0, width), (1, height), (0, -width), (1, -height)):
         fields += [(1, 1), (1, 1), (7, 4), (0, 1), (vertical, 1), (delta, 9)]
     return fields
+
+
+def test_shape_styles_gives_each_stroked_path_its_own_box():
+    # Shape 2980 of the web build draws three stacked boxes with one line. This
+    # one draws a 100 x 50 box at (0, 0) and a 100 x 50 box at (0, 80), each
+    # starting at its own move.
+    line = struct.pack("<H", 20) + bytes([102, 102, 102])
+    path = bits(
+        (0, 1), (0b01001, 5), (1, 5), (0, 1), (0, 1), (1, 1),
+        *_box_edges(100, 50),
+        (0, 1), (0b00001, 5), (8, 5), (0, 8), (80, 8), *_box_edges(100, 50),
+        (0, 1), (0, 5),
+    )  # fmt: skip
+    body = (
+        struct.pack("<H", 1) + b"\0" + bytes([0]) + bytes([1]) + line + bytes([0x01])
+        + path
+    )  # fmt: skip
+    index = parse_swf(swf(tag(TAG_DEFINE_SHAPE, body), tag(TAG_SHOW_FRAME)))
+    (only,) = shape_styles(index, 1)
+    assert only.paths == ((0, 0, 100, 50), (0, 80, 100, 130))
 
 
 def test_shape_styles_reads_each_style_set_and_what_its_edges_use():
@@ -501,11 +520,13 @@ def test_shape_styles_reads_each_style_set_and_what_its_edges_use():
             lines=(),
             used_fills=frozenset({1}),
             line_bounds={},
+            paths=(),
         ),
         StyleSet(
             fills=((102, 102, 102, 255),),
             lines=((20, (102, 102, 102, 255)),),
             used_fills=frozenset(),
             line_bounds={1: (-10, -10, 190, 90)},
+            paths=((-10, -10, 190, 90),),
         ),
     ]

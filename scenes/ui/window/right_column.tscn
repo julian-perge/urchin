@@ -105,6 +105,7 @@ fill = 1
 
 [node name="EuroSign" type="Label" parent="."]
 layout_mode = 0
+theme_type_variation = &"GoldLabel"
 offset_left = 3.75
 offset_top = 285.3
 offset_right = 30.15
@@ -117,6 +118,7 @@ horizontal_alignment = 2
 
 [node name="Amount" type="Label" parent="."]
 layout_mode = 0
+theme_type_variation = &"GoldLabel"
 offset_left = 35.6
 offset_top = 291.95
 offset_right = 148.0
