@@ -25,6 +25,7 @@ OWN_SPRITE = {
     "xp_bar_level": "sprite 2867",
     "victory_row": "sprite 3002",
     "bar_shade": "sprite 2877",
+    "party_frame": "sprite 2979",
 }
 
 # Each piece's shape box on the stage in design px, (x, y, w, h), from the hub

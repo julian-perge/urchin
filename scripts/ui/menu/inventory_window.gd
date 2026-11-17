@@ -18,7 +18,7 @@ var _exp_full_width: float = 0.0
 @onready var _stat_values: Array[Label] = _row_labels($CenterPanel/Content/StatValues)
 var _per_bars: Array[ElementBar] = []
 var _def_bars: Array[ElementBar] = []
-var _portrait_frames: Array[ItemSlot] = []
+var _party_faces: Array[PartyFace] = []
 
 
 func _ready():
@@ -65,7 +65,8 @@ func _build_element_bars() -> void:
 
 
 func _build_party_bar() -> void:
-	_portrait_frames = [$Portrait0, $Portrait1, $Portrait2, $Portrait3, $Portrait4, $Portrait5]
+	for face: Node in $PartyFaces.get_children():
+		_party_faces.append(face as PartyFace)
 
 
 func refresh() -> void:
@@ -92,17 +93,14 @@ func refresh() -> void:
 	_refresh_portraits(save)
 
 
+# Each face shows the member of its roster slot, as the original does
+# (DefineSprite_3142/frame_1/DoAction.as:195-206). The player is the selected
+# member until #11 lets a click move the selection. A member is deployed when
+# party_deployed holds the id.
 func _refresh_portraits(save: PlayerSave) -> void:
-	for i in _portrait_frames.size():
-		var frame: ItemSlot = _portrait_frames[i]
-		if i == 0:
-			frame.tooltip_text = Party.PLAYER_NAME
-			frame.modulate = Color(0.7, 1.1, 0.7)
-		else:
-			var companion: Dictionary = Party.COMPANIONS.get(i, {})
-			frame.tooltip_text = str(companion.get("name", ""))
-			var unlocked: bool = Party.is_in_roster(save, i)
-			frame.modulate = Color(1, 1, 1) if unlocked else Color(0.45, 0.45, 0.45)
+	for slot in _party_faces.size():
+		var id: int = int(save.party_roster[slot]) if slot < save.party_roster.size() else -1
+		_party_faces[slot].show_member(id, id == Party.PLAYER_PARTY_ID, save.party_deployed.has(id))
 
 
 func _refresh_if_visible() -> void:

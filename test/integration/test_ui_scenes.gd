@@ -621,7 +621,7 @@ func test_the_game_calls_the_player_sonny_whatever_the_save_is_named():
 	var inventory = add_child_autofree(load("res://scenes/ui/menu/inventory_window.tscn").instantiate())
 	inventory.refresh()
 	assert_eq(inventory._name_label.text, "Sonny", "the inventory window")
-	assert_eq(inventory._portrait_frames[0].tooltip_text, "Sonny", "the player's portrait in the inventory window")
+	assert_eq(inventory._party_faces[0].tooltip().get("title"), "Sonny", "the player's face in the inventory window")
 
 
 # Back on settings goes to mainMenu (DefineButton2_2702 on(release), line 2),

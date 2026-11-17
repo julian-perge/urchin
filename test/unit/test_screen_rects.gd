@@ -823,6 +823,33 @@ func test_control_an_inventory_bar_shade_moved_20_px_fails() -> void:
 		assert_string_starts_with(problem, "PerBars/Shade:")
 
 
+func test_control_a_party_face_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("PartyFaces/Face2/Parts/Face") as Control).position.y += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "PartyFaces/Face2/Parts/Face:")
+
+
+func test_control_a_party_bar_with_the_wrong_pitch_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("PartyFaces") as FloatBox).separation += 2.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_gt(found.size(), 0, "a pitch of 42 instead of 40 moves the faces after the first")
+	for problem: String in found:
+		assert_string_starts_with(problem, "PartyFaces/Face")
+		assert_false(problem.begins_with("PartyFaces/Face0/"), problem)
+
+
+func test_the_inventory_has_six_party_faces_with_five_parts_each() -> void:
+	var pieces: Dictionary = _record()["scenes"][INVENTORY_SCENE]["pieces"]
+	for n in 6:
+		for node: String in ["Backing", "Face", "Blacker", "HitButton", "Frame"]:
+			assert_true(pieces.has("PartyFaces/Face%d/Parts/%s" % [n, node]), "face %d %s" % [n, node])
+
+
 func test_the_inventory_has_sixteen_bars_with_a_track_and_four_layers_each() -> void:
 	var pieces: Dictionary = _record()["scenes"][INVENTORY_SCENE]["pieces"]
 	for block: String in ["PerBars", "DefBars"]:

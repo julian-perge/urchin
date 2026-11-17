@@ -67,6 +67,11 @@
 # It is rendered as a sprite of its own, so its rect is measured from the
 # origin of the sprite 2877 and the Inventory's two bar blocks both use it.
 #
+# THE PARTY FRAME is the selection frame (2893) that each of the Inventory's
+# six party faces (sprite 2979) places at its depth 40, under two Glows of
+# #99ff00. The faces share it, so it is rendered as a sprite of its own and
+# its rect is measured from the face sprite's origin.
+#
 # THE VICTORY ROW is the row's shape 3001, rendered where the win frame places
 # the player's row with every other depth of the row hidden, so the DropShadow
 # on the row's placement draws around 3001 alone. The two other rows are the
@@ -126,6 +131,9 @@ VICTORY_ROW_SHAPE_DEPTH = 2
 # with one shape, between the dim layer and the bar layer.
 BAR_BLOCK_SPRITE = 2877
 BAR_SHADE_DEPTH = 33
+# A party face (2979) holds the selection frame at depth 40.
+PARTY_FACE_SPRITE = 2979
+PARTY_FRAME_DEPTH = 40
 # The experience bar (2867). Frame 1 draws the normal fill (2865) and the
 # frame labelled "level" draws the fill a row jumps to when it levels up (2866).
 XP_BAR_SPRITE = 2867
@@ -157,6 +165,7 @@ PIECES: dict[str, str] = {
     "xp_bar": "the experience bar (2867), frame 1, the normal fill 2865",
     "xp_bar_level": "the experience bar (2867), its level frame, the fill 2866",
     "victory_row": "the victory row's shape 3001, under the DropShadow on the row",
+    "party_frame": "the party face's selection frame (2893 in 2979), under its Glows",
     "bar_shade": "the element bars' shading gradient (2874 in 2877), all eight bars",
     "achievement_plate_1": "the achievement plate (3141), frame 1, text stripped",
     "achievement_plate_2": "the achievement plate (3141), frame 2, text stripped",
@@ -214,6 +223,9 @@ def jobs(index: SwfIndex, plate_strip: tuple[int, ...]) -> dict[str, render.Job]
             XP_BAR_SPRITE, timeline.frame_of(index, XP_BAR_SPRITE, "level"), ZOOM
         ),
         "victory_row": victory_row(index, VICTORY_ROW_DEPTHS[0]),
+        "party_frame": render.Job(
+            PARTY_FACE_SPRITE, 1, ZOOM, only_depths=(PARTY_FRAME_DEPTH,)
+        ),
         "bar_shade": render.Job(
             BAR_BLOCK_SPRITE, 1, ZOOM, only_depths=(BAR_SHADE_DEPTH,)
         ),
