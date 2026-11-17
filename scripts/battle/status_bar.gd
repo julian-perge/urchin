@@ -225,17 +225,17 @@ func refresh_buffs(buff_slots: Array, buffs_by_id: Dictionary) -> void:
 	var row: Dictionary = record()["buff_row"]
 	var active_slots: Array = []
 	for index in mini(buff_slots.size(), int(row["slots"])):
-		var slot: Dictionary = buff_slots[index]
-		if int(slot.get("cd", 0)) != 0:
-			active_slots.append({"index": index, "buff_id": int(slot["buff_id"]), "cd": int(slot["cd"])})
+		var entry: Dictionary = buff_slots[index]
+		if int(entry.get("cd", 0)) != 0:
+			active_slots.append({"index": index, "buff_id": int(entry["buff_id"]), "cd": int(entry["cd"])})
 	var signature: Array = active_slots.duplicate()
 	if signature == _last_signature:
 		return
 	_last_signature = signature
 	for child in buff_row.get_children():
 		child.queue_free()
-	for slot in active_slots:
-		var buff: Buff = buffs_by_id.get(int(slot["buff_id"]))
+	for entry in active_slots:
+		var buff: Buff = buffs_by_id.get(int(entry["buff_id"]))
 		if buff == null:
 			continue
 		var icon_texture: Texture2D = BuffIcons.icon_for(buff)
@@ -251,7 +251,7 @@ func refresh_buffs(buff_slots: Array, buffs_by_id: Dictionary) -> void:
 		# The icon's center sits at `(offset + space * h) * side` in the bar's
 		# space, on the line between the two fills, where h is the slot's index
 		# (frame_42/DoAction_10.as:352-358). An empty slot leaves its place empty.
-		shower.position = Vector2((float(row["offset"]) + float(row["space"]) * float(slot["index"])) * _buff_side(), 0.0) - BUFF_ICON_SIZE / 2.0
+		shower.position = Vector2((float(row["offset"]) + float(row["space"]) * float(entry["index"])) * _buff_side(), 0.0) - BUFF_ICON_SIZE / 2.0
 		var icon_rect: TextureRect = TextureRect.new()
 		icon_rect.name = "Icon"
 		icon_rect.texture = icon_texture
@@ -280,7 +280,7 @@ func refresh_buffs(buff_slots: Array, buffs_by_id: Dictionary) -> void:
 		# project theme gives Labels.
 		var counter: Label = Label.new()
 		counter.name = "Counter"
-		counter.text = str(int(slot["cd"]))
+		counter.text = str(int(entry["cd"]))
 		counter.add_theme_font_size_override("font_size", 10)
 		counter.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		counter.position = BUFF_ICON_SIZE / 2.0 + BUFF_COUNTER_OFFSET
