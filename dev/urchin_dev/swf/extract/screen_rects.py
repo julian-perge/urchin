@@ -210,6 +210,16 @@ VICTORY_ROW_PIECES: dict[str, tuple[str, int, str | None]] = {
     "PercentLabel": ("text", 42, None),
 }
 
+# The Inventory frame places the element bar block, sprite 2877, twice: perBarShow
+# for the piercing bars and defBarShow for the defense bars. The block holds
+# eight bars, each as a track and four layers. A layer of bar k is at the
+# depth `first + 2 * k` of the block, and every layer of a bar draws the same
+# 11x68 rect until the menu script sets its height.
+BAR_BLOCKS = {"PerBars": "perBarShow", "DefBars": "defBarShow"}
+BAR_TRACK_DEPTH = 1
+BAR_LAYER_DEPTHS = {"Ybar": 17, "Bar": 34, "Gbar": 50, "Xbar": 66}
+BAR_COUNT = 8
+
 # The frame names the grid's slots itemSlot0 to itemSlot35, row by row.
 INVENTORY_SLOTS = 36
 INVENTORY_COLUMNS = 6
@@ -706,7 +716,10 @@ SCENES[HUB_CHROME] = Scene(
 
 # The Inventory record covers #226's shell and left panel, #227's doll and
 # experience row, and #228's stat rows. The other pieces are port only until
-# their tasks record them: the element bars (#230) and the party faces (#231).
+# their tasks record them: the party faces (#231). #230's element bars are two
+# blocks, each a shade over the eight bars and a row of bars with a track and
+# four layers (BAR_LAYER_DEPTHS). The shade is the one shape 2874, which fills
+# all eight bars with a gradient, so it is one piece for each block.
 # The frame places the doll as 31 clips, which depth 912 names by the ground
 # shadow 143, and the port draws as the one Doll. The port draws no ground
 # shadow. The experience fill is the sprite 2867 on its first frame, which the
@@ -730,6 +743,21 @@ SCENES[INVENTORY_SCENE] = Scene(
         "CenterPanel/Content/StatsOutline": Piece("outline", 994, path=0),
         "CenterPanel/Content/PiercingOutline": Piece("outline", 994, path=1),
         "CenterPanel/Content/DefenseOutline": Piece("outline", 994, path=2),
+        **{
+            f"{block}/Shade": Piece("art", None, art="bar_shade", instance=instance)
+            for block, instance in BAR_BLOCKS.items()
+        },
+        **{
+            f"{block}/Bars/Bar{k}/{node}": Piece(
+                kind, None, instance=instance, inner_depth=first + 2 * k
+            )
+            for block, instance in BAR_BLOCKS.items()
+            for k in range(BAR_COUNT)
+            for node, kind, first in (
+                ("Track", "box", BAR_TRACK_DEPTH),
+                *((layer, "shape", depth) for layer, depth in BAR_LAYER_DEPTHS.items()),
+            )
+        },
         "LeftPanel/Content/Header/NameRow/NameLabel": Piece("text", 1241),
         "LeftPanel/Content/Header/InfoRow/LevelLabel": Piece("text", 1242),
         "LeftPanel/Content/EquipDollView/Doll": Piece("doll", 912, character=143),
@@ -789,11 +817,13 @@ SCENES[INVENTORY_SCENE] = Scene(
         ),
         "PiercingLabel",
         "DefenseLabel",
+        # Each Gbar and Xbar draws its Glow behind itself, on a node that is
+        # larger than the bar.
         *(
-            f"{block}{kind}{i}"
-            for block in ("Per", "Def")
-            for i in range(8)
-            for kind in ("Track", "Fill")
+            f"{block}/Bars/Bar{k}/{layer}/Glow"
+            for block in BAR_BLOCKS
+            for k in range(BAR_COUNT)
+            for layer in ("Gbar", "Xbar")
         ),
         *(f"Portrait{i}" for i in range(6)),
         *(
@@ -1091,18 +1121,40 @@ def outline_record(
     }
 
 
+def through_sprites(index: SwfIndex, layer: timeline.Layer) -> tuple[int, tuple]:
+    """-> (shape id, matrix) of the one shape that `layer` draws, with the
+    matrices of every sprite on the way down folded into one. Each sprite must
+    hold exactly one thing on its first frame, and no matrix may rotate or
+    skew, so the result still says only a scale and a translation."""
+    matrix = layer.matrix
+    character = layer.character_id
+    _scale(matrix)
+    while character_kind(index, character) == "sprite":
+        held = list(timeline.frames(index, character)[0].values())
+        if len(held) != 1:
+            raise ValueError(
+                f"sprite {character} holds {len(held)} things, not exactly one"
+            )
+        inner = held[0]
+        scale_x, scale_y = _scale(inner.matrix)
+        outer_x, _skew0, _skew1, outer_y, tx, ty = matrix
+        matrix = (
+            outer_x * scale_x,
+            0.0,
+            0.0,
+            outer_y * scale_y,
+            tx + outer_x * inner.matrix[4],
+            ty + outer_y * inner.matrix[5],
+        )
+        character = inner.character_id
+    return character, matrix
+
+
 def _shape(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
     """-> shape_record() of the shape `layer` places, or of the one shape that
-    the sprite it places holds."""
-    shape = layer.character_id
-    if character_kind(index, shape) == "sprite":
-        held = list(timeline.frames(index, shape)[0].values())
-        if len(held) != 1 or character_kind(index, held[0].character_id) != "shape":
-            raise ValueError(f"sprite {shape} does not hold exactly one shape")
-        if held[0].matrix != timeline.IDENTITY:
-            raise ValueError(f"sprite {shape} places its shape with {held[0].matrix}")
-        shape = held[0].character_id
-    return shape_record(shape_bounds(index, shape), layer.matrix, origin)
+    the sprites it places hold."""
+    shape, matrix = through_sprites(index, layer)
+    return shape_record(shape_bounds(index, shape), matrix, origin)
 
 
 def face_record(crop, matrix, origin) -> dict:
@@ -1263,11 +1315,11 @@ def one_solid_fill(sets: list[StyleSet], shape: int) -> tuple[int, int, int, int
 
 
 def _box(index: SwfIndex, layer: timeline.Layer, origin) -> dict:
-    shape = layer.character_id
+    shape, matrix = through_sprites(index, layer)
     if character_kind(index, shape) != "shape":
         raise ValueError(f"box {shape} is not a shape")
     fill = one_solid_fill(shape_styles(index, shape), shape)
-    return box_record(shape_bounds(index, shape), layer.matrix, origin, fill)
+    return box_record(shape_bounds(index, shape), matrix, origin, fill)
 
 
 def _string_array(script: str, name: str) -> list[str]:

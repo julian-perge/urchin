@@ -1,6 +1,6 @@
 # Run: uv run convert_menu_math
 # Writes dev/converted_json/menu_math.json, the numbers the inventory menu's
-# element bars are drawn from, the width of its experience bar, and the counts
+# element bars are drawn from, the eight element colours, the width of its experience bar, and the counts
 # that the victory frame's experience rows animate with. The formulas come from
 # the menu's script, DefineSprite_3142/frame_1/DoAction.as, the bar width from
 # the bar clip's scripts, and the counts from the rows' clip scripts in
@@ -15,15 +15,23 @@ from pathlib import Path
 
 from urchin_dev import ACTION_SCRIPT, CONVERTED_JSON, WEB_SWF
 from urchin_dev.swf import timeline
-from urchin_dev.swf.swf_index import SwfIndex, read_swf, shape_bounds
+from urchin_dev.swf.swf_index import SwfIndex, filter_of, read_swf, shape_bounds
 
 SOURCE = "DefineSprite_3142/frame_1/DoAction.as"
+# The root script that sets elementColorArray, the colour of each element. The
+# menu script colours its bars from it, and so do the Floating numbers.
+COLORS_SOURCE = "frame_41/DoAction_2.as"
+ELEMENT_COUNT = 8
 # The victory frame's three experience rows. Each is a placement of sprite 3002
 # with a load and an enterFrame clip script.
 ROWS = "DefineSprite_3142/frame_9"
 # The Inventory's experience bar, the clip 2867 at depth 1419 of frame 1. Its
 # two clip scripts scale its width to the experience.
 BAR = "DefineSprite_3142/frame_1/PlaceObject2_2867_1419"
+# The layers of one bar, from the bottom up. Each has eight placements in the
+# bar block, named ybar0 to ybar7 and so on.
+BAR_LAYERS = ("ybar", "bar", "gbar", "xbar")
+BAR_COUNT = 8
 # The perBarShow clip that holds the piercing bars. defBarShow is a second
 # placement of the same sprite, and the script caps both with perBarShow's
 # saveH.
@@ -176,6 +184,122 @@ def parse_element_bars(source: str) -> dict:
     }
 
 
+def parse_element_colors(source: str) -> list[str]:
+    """-> the colour of each element, "#rrggbb", in the order of the elements,
+    from the root script's elementColorArray."""
+    found = re.search(r"elementColorArray = \[([^\]]*)\];", source)
+    if found is None:
+        raise ValueError(f"{COLORS_SOURCE}: no elementColorArray")
+    colors = []
+    for entry in found.group(1).split(","):
+        digits = re.fullmatch(r'"0x([0-9A-Fa-f]{6})"', entry.strip())
+        if digits is None:
+            raise ValueError(
+                f"{COLORS_SOURCE}: {entry.strip()} is not a 0xRRGGBB colour"
+            )
+        colors.append("#" + digits.group(1).lower())
+    if len(colors) != ELEMENT_COUNT:
+        raise ValueError(
+            f"{COLORS_SOURCE}: {len(colors)} element colours, not {ELEMENT_COUNT}"
+        )
+    return colors
+
+
+def parse_layer_tints(source: str) -> dict[str, str]:
+    """-> what the menu script colours for each bar layer it colours: "inner"
+    for the shape inside the layer's clip and "clip" for the clip itself. The
+    colour is the bar's element colour, and a layer that is not here is not
+    coloured. The piercing and defense blocks must colour the same things."""
+    blocks: dict[str, dict[str, str]] = {"perBarShow": {}, "defBarShow": {}}
+    pattern = (
+        r'new Color\((perBarShow|defBarShow)\["(\w+)" \+ wefjnew\](\.inner)?\);'
+        r"\s*my_colorKKCCXX\.setRGB\(([^)]*)\);"
+    )
+    for block, layer, inner, color in re.findall(pattern, source):
+        if color != "_root.elementColorArray[wefjnew]":
+            raise ValueError(
+                f"{SOURCE}: {block} {layer} is coloured with {color}, not elementColorArray"
+            )
+        blocks[block][layer] = "inner" if inner else "clip"
+    if blocks["perBarShow"] != blocks["defBarShow"]:
+        raise ValueError(
+            f"{SOURCE}: the piercing and defense blocks colour different layers:"
+            f" {blocks['perBarShow']} and {blocks['defBarShow']}"
+        )
+    return blocks["perBarShow"]
+
+
+def glow_look(record: bytes) -> dict:
+    """-> the Glow that one filter record holds, for a layer's art. The bar
+    layers draw an outer Glow with the shape over it, so an inner or knockout
+    Glow is refused."""
+    glow = filter_of(record)
+    if glow.kind != "Glow":
+        raise ValueError(f"a bar layer has a {glow.kind}, not a Glow")
+    if glow.inner or glow.knockout:
+        raise ValueError("a bar layer has an inner or knockout Glow")
+    red, green, blue, alpha = glow.color
+    return {
+        "color": f"#{red:02x}{green:02x}{blue:02x}",
+        "alpha": alpha / 255,
+        "blur_x": glow.blur_x,
+        "blur_y": glow.blur_y,
+        "strength": glow.strength,
+        "passes": glow.passes,
+        "composite_source": glow.composite_source,
+    }
+
+
+def layer_look(
+    placed: list[timeline.Layer], name: str, tint: str | None, glow: bytes | None
+) -> dict:
+    """-> how one bar layer is drawn. `placed` holds its eight placements in
+    the bar block, which must agree. The layer's colour transform multiplies
+    each colour channel by multiplier and then adds `add`, and the transform
+    never changes alpha."""
+    if len(placed) != BAR_COUNT:
+        raise ValueError(f"{name}: {len(placed)} placements, not {BAR_COUNT}")
+    transforms = {layer.color_transform for layer in placed}
+    if len(transforms) != 1:
+        raise ValueError(f"{name}: the eight bars are placed with {transforms}")
+    (transform,) = transforms
+    if transform is None:
+        transform = (256, 256, 256, 256, 0, 0, 0, 0)
+    red, green, blue, alpha, add_red, add_green, add_blue, add_alpha = transform
+    if len({red, green, blue}) != 1 or len({add_red, add_green, add_blue}) != 1:
+        raise ValueError(f"{name}: the colour transform {transform} tints one channel")
+    if alpha != 256 or add_alpha != 0:
+        raise ValueError(f"{name}: the colour transform {transform} changes alpha")
+    return {
+        "tint": tint,
+        "multiplier": red / 256,
+        "add": add_red / 255,
+        "glow": glow_look(glow) if glow is not None else None,
+    }
+
+
+def bar_layers(index: SwfIndex, owner: int, tints: dict[str, str]) -> dict:
+    """-> layer_look() of each layer of the bar block `owner`. A layer's Glow
+    is on the "inner" clip that its sprite holds."""
+    first = timeline.frames(index, owner)[0]
+    looks = {}
+    for name in BAR_LAYERS:
+        placed = [
+            layer
+            for layer in first.values()
+            if layer.name in (f"{name}{k}" for k in range(BAR_COUNT))
+        ]
+        sprites = {layer.character_id for layer in placed}
+        if len(sprites) != 1:
+            raise ValueError(f"{name}: placed as sprites {sprites}")
+        inner = _layer(index, sprites.pop(), "inner")
+        if len(inner.filter_records) > 1:
+            raise ValueError(f"{name}: more than one filter")
+        glow = inner.filter_records[0] if inner.filter_records else None
+        looks[name] = layer_look(placed, name, tints.get(name), glow)
+    return looks
+
+
 def _victory_row(load: str, enter_frame: str) -> dict:
     """-> the counts of one victory experience row's two clip scripts."""
     frames = _one(r"setLimiter = (?:sLmT2 = )?(\d+);", load, "setLimiter")
@@ -273,7 +397,9 @@ def bar_save_height(index: SwfIndex, owner: int) -> float:
 
 def convert(action_script: Path, index: SwfIndex) -> dict:
     bars = {"source": SOURCE, "save_height": bar_save_height(index, BAR_SPRITE)}
-    bars.update(parse_element_bars((action_script / SOURCE).read_text("utf-8")))
+    script = (action_script / SOURCE).read_text("utf-8")
+    bars.update(parse_element_bars(script))
+    bars["layers"] = bar_layers(index, BAR_SPRITE, parse_layer_tints(script))
     # The rows step once a frame, so they run at the SWF's frame rate.
     rows = {"source": f"{ROWS}/PlaceObject3_3002_*", "frame_rate": index.frame_rate}
     rows.update(parse_victory_rows(_row_scripts(action_script)))
@@ -285,7 +411,18 @@ def convert(action_script: Path, index: SwfIndex) -> dict:
             (folder / "CLIPACTIONRECORD onClipEvent(enterFrame).as").read_text("utf-8"),
         )
     )
-    return {"element_bars": bars, "experience_bar": bar, "victory_rows": rows}
+    colors = {
+        "source": COLORS_SOURCE,
+        "colors": parse_element_colors(
+            (action_script / COLORS_SOURCE).read_text("utf-8")
+        ),
+    }
+    return {
+        "element_bars": bars,
+        "element_colors": colors,
+        "experience_bar": bar,
+        "victory_rows": rows,
+    }
 
 
 def main() -> None:

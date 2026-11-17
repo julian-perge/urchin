@@ -1603,6 +1603,389 @@
       102.15
      ]
     },
+    "DefBars/Bars/Bar0/Bar": {
+     "kind": "shape",
+     "rect": [
+      332.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar0/Gbar": {
+     "kind": "shape",
+     "rect": [
+      332.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar0/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      331.0208,
+      325.4895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "DefBars/Bars/Bar0/Xbar": {
+     "kind": "shape",
+     "rect": [
+      332.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar0/Ybar": {
+     "kind": "shape",
+     "rect": [
+      332.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar1/Bar": {
+     "kind": "shape",
+     "rect": [
+      350.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar1/Gbar": {
+     "kind": "shape",
+     "rect": [
+      350.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar1/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      349.0208,
+      325.4895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "DefBars/Bars/Bar1/Xbar": {
+     "kind": "shape",
+     "rect": [
+      350.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar1/Ybar": {
+     "kind": "shape",
+     "rect": [
+      350.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar2/Bar": {
+     "kind": "shape",
+     "rect": [
+      368.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar2/Gbar": {
+     "kind": "shape",
+     "rect": [
+      368.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar2/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      367.0208,
+      325.4895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "DefBars/Bars/Bar2/Xbar": {
+     "kind": "shape",
+     "rect": [
+      368.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar2/Ybar": {
+     "kind": "shape",
+     "rect": [
+      368.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar3/Bar": {
+     "kind": "shape",
+     "rect": [
+      386.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar3/Gbar": {
+     "kind": "shape",
+     "rect": [
+      386.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar3/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      385.0208,
+      325.4895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "DefBars/Bars/Bar3/Xbar": {
+     "kind": "shape",
+     "rect": [
+      386.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar3/Ybar": {
+     "kind": "shape",
+     "rect": [
+      386.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar4/Bar": {
+     "kind": "shape",
+     "rect": [
+      404.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar4/Gbar": {
+     "kind": "shape",
+     "rect": [
+      404.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar4/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      403.0208,
+      325.4895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "DefBars/Bars/Bar4/Xbar": {
+     "kind": "shape",
+     "rect": [
+      404.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar4/Ybar": {
+     "kind": "shape",
+     "rect": [
+      404.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar5/Bar": {
+     "kind": "shape",
+     "rect": [
+      422.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar5/Gbar": {
+     "kind": "shape",
+     "rect": [
+      422.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar5/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      421.0208,
+      325.4895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "DefBars/Bars/Bar5/Xbar": {
+     "kind": "shape",
+     "rect": [
+      422.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar5/Ybar": {
+     "kind": "shape",
+     "rect": [
+      422.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar6/Bar": {
+     "kind": "shape",
+     "rect": [
+      440.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar6/Gbar": {
+     "kind": "shape",
+     "rect": [
+      440.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar6/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      439.0208,
+      325.4895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "DefBars/Bars/Bar6/Xbar": {
+     "kind": "shape",
+     "rect": [
+      440.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar6/Ybar": {
+     "kind": "shape",
+     "rect": [
+      440.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar7/Bar": {
+     "kind": "shape",
+     "rect": [
+      458.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar7/Gbar": {
+     "kind": "shape",
+     "rect": [
+      458.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar7/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      457.0208,
+      325.4895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "DefBars/Bars/Bar7/Xbar": {
+     "kind": "shape",
+     "rect": [
+      458.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Bars/Bar7/Ybar": {
+     "kind": "shape",
+     "rect": [
+      458.0,
+      326.25,
+      11.0039,
+      68.0008
+     ]
+    },
+    "DefBars/Shade": {
+     "kind": "art",
+     "rect": [
+      332.025,
+      326.225,
+      137.0,
+      68.0
+     ],
+     "size": [
+      548,
+      272
+     ],
+     "texture": "res://assets/ui/window/bar_shade.png",
+     "zoom": 4.0
+    },
     "ExpFill": {
      "kind": "art",
      "rect": [
@@ -1851,6 +2234,389 @@
       "blur": 5.0,
       "distance": 5.0
      }
+    },
+    "PerBars/Bars/Bar0/Bar": {
+     "kind": "shape",
+     "rect": [
+      332.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar0/Gbar": {
+     "kind": "shape",
+     "rect": [
+      332.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar0/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      331.0208,
+      220.9895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "PerBars/Bars/Bar0/Xbar": {
+     "kind": "shape",
+     "rect": [
+      332.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar0/Ybar": {
+     "kind": "shape",
+     "rect": [
+      332.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar1/Bar": {
+     "kind": "shape",
+     "rect": [
+      350.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar1/Gbar": {
+     "kind": "shape",
+     "rect": [
+      350.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar1/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      349.0208,
+      220.9895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "PerBars/Bars/Bar1/Xbar": {
+     "kind": "shape",
+     "rect": [
+      350.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar1/Ybar": {
+     "kind": "shape",
+     "rect": [
+      350.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar2/Bar": {
+     "kind": "shape",
+     "rect": [
+      368.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar2/Gbar": {
+     "kind": "shape",
+     "rect": [
+      368.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar2/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      367.0208,
+      220.9895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "PerBars/Bars/Bar2/Xbar": {
+     "kind": "shape",
+     "rect": [
+      368.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar2/Ybar": {
+     "kind": "shape",
+     "rect": [
+      368.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar3/Bar": {
+     "kind": "shape",
+     "rect": [
+      386.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar3/Gbar": {
+     "kind": "shape",
+     "rect": [
+      386.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar3/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      385.0208,
+      220.9895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "PerBars/Bars/Bar3/Xbar": {
+     "kind": "shape",
+     "rect": [
+      386.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar3/Ybar": {
+     "kind": "shape",
+     "rect": [
+      386.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar4/Bar": {
+     "kind": "shape",
+     "rect": [
+      404.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar4/Gbar": {
+     "kind": "shape",
+     "rect": [
+      404.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar4/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      403.0208,
+      220.9895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "PerBars/Bars/Bar4/Xbar": {
+     "kind": "shape",
+     "rect": [
+      404.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar4/Ybar": {
+     "kind": "shape",
+     "rect": [
+      404.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar5/Bar": {
+     "kind": "shape",
+     "rect": [
+      422.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar5/Gbar": {
+     "kind": "shape",
+     "rect": [
+      422.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar5/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      421.0208,
+      220.9895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "PerBars/Bars/Bar5/Xbar": {
+     "kind": "shape",
+     "rect": [
+      422.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar5/Ybar": {
+     "kind": "shape",
+     "rect": [
+      422.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar6/Bar": {
+     "kind": "shape",
+     "rect": [
+      440.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar6/Gbar": {
+     "kind": "shape",
+     "rect": [
+      440.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar6/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      439.0208,
+      220.9895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "PerBars/Bars/Bar6/Xbar": {
+     "kind": "shape",
+     "rect": [
+      440.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar6/Ybar": {
+     "kind": "shape",
+     "rect": [
+      440.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar7/Bar": {
+     "kind": "shape",
+     "rect": [
+      458.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar7/Gbar": {
+     "kind": "shape",
+     "rect": [
+      458.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar7/Track": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      457.0208,
+      220.9895,
+      12.9976,
+      70.0021
+     ]
+    },
+    "PerBars/Bars/Bar7/Xbar": {
+     "kind": "shape",
+     "rect": [
+      458.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Bars/Bar7/Ybar": {
+     "kind": "shape",
+     "rect": [
+      458.0,
+      221.75,
+      11.0039,
+      68.0008
+     ]
+    },
+    "PerBars/Shade": {
+     "kind": "art",
+     "rect": [
+      332.025,
+      221.725,
+      137.0,
+      68.0
+     ],
+     "size": [
+      548,
+      272
+     ],
+     "texture": "res://assets/ui/window/bar_shade.png",
+     "zoom": 4.0
     },
     "RightColumn/Amount": {
      "align": "left",
@@ -2538,38 +3304,38 @@
     "LeftPanel/Content/EquipDollView/Slot6/Highlight",
     "PiercingLabel",
     "DefenseLabel",
-    "PerTrack0",
-    "PerFill0",
-    "PerTrack1",
-    "PerFill1",
-    "PerTrack2",
-    "PerFill2",
-    "PerTrack3",
-    "PerFill3",
-    "PerTrack4",
-    "PerFill4",
-    "PerTrack5",
-    "PerFill5",
-    "PerTrack6",
-    "PerFill6",
-    "PerTrack7",
-    "PerFill7",
-    "DefTrack0",
-    "DefFill0",
-    "DefTrack1",
-    "DefFill1",
-    "DefTrack2",
-    "DefFill2",
-    "DefTrack3",
-    "DefFill3",
-    "DefTrack4",
-    "DefFill4",
-    "DefTrack5",
-    "DefFill5",
-    "DefTrack6",
-    "DefFill6",
-    "DefTrack7",
-    "DefFill7",
+    "PerBars/Bars/Bar0/Gbar/Glow",
+    "PerBars/Bars/Bar0/Xbar/Glow",
+    "PerBars/Bars/Bar1/Gbar/Glow",
+    "PerBars/Bars/Bar1/Xbar/Glow",
+    "PerBars/Bars/Bar2/Gbar/Glow",
+    "PerBars/Bars/Bar2/Xbar/Glow",
+    "PerBars/Bars/Bar3/Gbar/Glow",
+    "PerBars/Bars/Bar3/Xbar/Glow",
+    "PerBars/Bars/Bar4/Gbar/Glow",
+    "PerBars/Bars/Bar4/Xbar/Glow",
+    "PerBars/Bars/Bar5/Gbar/Glow",
+    "PerBars/Bars/Bar5/Xbar/Glow",
+    "PerBars/Bars/Bar6/Gbar/Glow",
+    "PerBars/Bars/Bar6/Xbar/Glow",
+    "PerBars/Bars/Bar7/Gbar/Glow",
+    "PerBars/Bars/Bar7/Xbar/Glow",
+    "DefBars/Bars/Bar0/Gbar/Glow",
+    "DefBars/Bars/Bar0/Xbar/Glow",
+    "DefBars/Bars/Bar1/Gbar/Glow",
+    "DefBars/Bars/Bar1/Xbar/Glow",
+    "DefBars/Bars/Bar2/Gbar/Glow",
+    "DefBars/Bars/Bar2/Xbar/Glow",
+    "DefBars/Bars/Bar3/Gbar/Glow",
+    "DefBars/Bars/Bar3/Xbar/Glow",
+    "DefBars/Bars/Bar4/Gbar/Glow",
+    "DefBars/Bars/Bar4/Xbar/Glow",
+    "DefBars/Bars/Bar5/Gbar/Glow",
+    "DefBars/Bars/Bar5/Xbar/Glow",
+    "DefBars/Bars/Bar6/Gbar/Glow",
+    "DefBars/Bars/Bar6/Xbar/Glow",
+    "DefBars/Bars/Bar7/Gbar/Glow",
+    "DefBars/Bars/Bar7/Xbar/Glow",
     "Portrait0",
     "Portrait1",
     "Portrait2",

@@ -2,8 +2,8 @@
 # Shared look + geometry for the rebuilt menu screens (inventory, store,
 # abilities, achievements). Everything here is extracted from the original
 # SWF's menu clip (DefineSprite 3142, placed on stage at 400.5, 222.4):
-# panel art (assets/ui/menu/, exported at 2x zoom), slot grid geometry, and
-# the piercing/defense bar math from the frame-1 DoAction.
+# panel art (assets/ui/menu/, exported at 2x zoom) and slot grid geometry. The
+# piercing/defense bar math is MenuMath's.
 class_name MenuTheme
 extends RefCounted
 
@@ -23,38 +23,21 @@ const CLOSE_RECT: Rect2 = Rect2(734.5, 29.8, 36.7, 36.4)
 const SLOT_SIZE: Vector2 = Vector2(31, 31)
 const SLOT_STEP: float = 38.0
 
-# The element order every per/def array uses (CombatUnit.ELEMENT_ORDER) and
-# the EXACT original colors (elementColorArray, frame_41/DoAction_2.as) -
-# used by the menu bars AND the floating damage numbers.
-const ELEMENT_COLORS: Array[Color] = [
-	Color("C40000"),  # Physical
-	Color("FB95C8"),  # Magic
-	Color("68CBF4"),  # Ice
-	Color("FF6600"),  # Fire
-	Color("FFCC00"),  # Lightning
-	Color("856B47"),  # Earth
-	Color("664D80"),  # Shadow
-	Color("508349"),  # Poison
-]
+# The color of each element, in the order every per/def array uses
+# (CombatUnit.ELEMENT_ORDER). The original sets it once as elementColorArray
+# (frame_41/DoAction_2.as), and the menu bars and the floating damage numbers
+# both draw with it. uv run convert_menu_math reads it into menu_math.json.
+static var ELEMENT_COLORS: Array[Color] = _read_element_colors()
+
 # KrinNumberShow's HEAL color (0x66FF00).
 const HEAL_COLOR: Color = Color("66FF00")
 
 
-# Menu bar fill fraction (frame-1 DoAction nT1/nT4): the crit-curve quartic
-# of value / (100 + 15 * level), clamped to the bar. Base allocation fills
-# 30% of the track.
-static func bar_fill_fraction(value: float, level: int) -> float:
-	var x: float = value / (100.0 + 15.0 * level) + 1.0
-	var fraction: float = (
-		0.016666667 * pow(x, 4) - 0.25 * pow(x, 3)
-		+ 1.233333 * pow(x, 2) - 1.9 * x + 0.9
-	)
-	return clamp(fraction, 0.0, 1.0)
-
-
-# Menu piercing/defense display value: allocation + ceil(100 + 15 * level).
-static func element_display_value(allocation: float, level: int) -> int:
-	return int(allocation) + int(ceil(100.0 + 15.0 * level))
+static func _read_element_colors() -> Array[Color]:
+	var colors: Array[Color] = []
+	for hex: String in MenuMath.load_math()["element_colors"]["colors"]:
+		colors.append(Color(hex))
+	return colors
 
 
 static func texture(file: String) -> Texture2D:

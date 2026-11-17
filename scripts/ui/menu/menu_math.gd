@@ -38,20 +38,58 @@ static func defense_tip(x: float, math: Dictionary) -> int:
 	return tip
 
 
+# The three formulas before the heights are capped: nT1 and nT4, nT2 and nT5,
+# nT3 and nT6 (DefineSprite_3142/frame_1/DoAction.as:108-110 and 146-148). The
+# tooltips round these and the bars cap them.
+static func terms(x: float, math: Dictionary) -> Dictionary:
+	var bars: Dictionary = math["element_bars"]
+	var quartic: float = 0.0
+	for coefficient: float in bars["bar_quartic"]:
+		quartic = quartic * (x + 1.0) + coefficient
+	return {
+		"bar": quartic,
+		"gbar": bars["gbar"]["factor"] * x,
+		"xbar": bars["xbar"]["factor"] * (x + bars["xbar"]["offset"]),
+	}
+
+
 # x is the bar's value divided by the level's average. The heights are in px
 # for the three layers the script sizes (DefineSprite_3142/frame_1/DoAction.as:108-125).
 # xbar goes negative when x is below 1, as it does in the original.
 static func layer_heights(x: float, math: Dictionary) -> Dictionary:
 	var bars: Dictionary = math["element_bars"]
 	var save_height: float = bars["save_height"]
-	var quartic: float = 0.0
-	for coefficient: float in bars["bar_quartic"]:
-		quartic = quartic * (x + 1.0) + coefficient
+	var terms_of_x: Dictionary = terms(x, math)
 	var heights: Dictionary = {
-		"bar": save_height * quartic,
-		"gbar": save_height / float(bars["gbar"]["divisor"]) * bars["gbar"]["factor"] * x,
-		"xbar": save_height * bars["xbar"]["factor"] * (x + bars["xbar"]["offset"]),
+		"bar": save_height * terms_of_x["bar"],
+		"gbar": save_height / float(bars["gbar"]["divisor"]) * terms_of_x["gbar"],
+		"xbar": save_height * terms_of_x["xbar"],
 	}
 	for layer: String in bars["capped"]:
 		heights[layer] = minf(heights[layer], save_height)
 	return heights
+
+
+# What a layer's colour is on screen, from the element's colour. The script
+# colours the shape inside a layer ("inner") or the whole clip ("clip") with
+# the element colour, or neither. A layer's own colour transform then
+# multiplies the colour and adds to it, which brightens or dims the shape
+# inside. A colour set on the clip replaces that transform
+# (DefineSprite_3142/frame_1/DoAction.as:196-220).
+static func layer_color(layer: String, element: Color, math: Dictionary) -> Color:
+	var look: Dictionary = math["element_bars"]["layers"][layer]
+	if look["tint"] == "clip":
+		return Color(element.r, element.g, element.b)
+	var base: Color = element if look["tint"] == "inner" else Color.WHITE
+	var multiplier: float = look["multiplier"]
+	var added: float = look["add"]
+	return Color(
+		clampf(base.r * multiplier + added, 0.0, 1.0),
+		clampf(base.g * multiplier + added, 0.0, 1.0),
+		clampf(base.b * multiplier + added, 0.0, 1.0),
+	)
+
+
+# Math.round: a half goes up, below zero too.
+static func flash_round(value: float) -> int:
+	return floori(value + 0.5)

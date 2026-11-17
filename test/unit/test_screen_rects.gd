@@ -795,6 +795,43 @@ func test_control_an_inventory_defense_outline_moved_20_px_fails() -> void:
 		assert_string_starts_with(problem, "CenterPanel/Content/DefenseOutline:")
 
 
+func test_control_an_inventory_element_bar_layer_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("PerBars/Bars/Bar3/Gbar") as Control).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "PerBars/Bars/Bar3/Gbar:")
+
+
+func test_control_a_defense_bar_row_with_the_wrong_pitch_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("DefBars/Bars") as FloatBox).separation += 2.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_gt(found.size(), 0, "a pitch of 20 instead of 18 moves the bars after the first")
+	for problem: String in found:
+		assert_string_starts_with(problem, "DefBars/Bars/Bar")
+
+
+func test_control_an_inventory_bar_shade_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("PerBars/Shade") as Control).position.y += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "PerBars/Shade:")
+
+
+func test_the_inventory_has_sixteen_bars_with_a_track_and_four_layers_each() -> void:
+	var pieces: Dictionary = _record()["scenes"][INVENTORY_SCENE]["pieces"]
+	for block: String in ["PerBars", "DefBars"]:
+		for k in 8:
+			for node: String in ["Track", "Ybar", "Bar", "Gbar", "Xbar"]:
+				assert_true(pieces.has("%s/Bars/Bar%d/%s" % [block, k, node]), "%s bar %d %s" % [block, k, node])
+		assert_true(pieces.has("%s/Shade" % block))
+
+
 func test_the_inventory_centre_column_has_three_outline_boxes_one_above_the_other() -> void:
 	var pieces: Dictionary = _record()["scenes"][INVENTORY_SCENE]["pieces"]
 	var tops: Array[float] = []

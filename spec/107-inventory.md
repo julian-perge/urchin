@@ -89,8 +89,8 @@ The colors come from `elementColorArray` (`setRGB`, `frame_1/DoAction.as:226-230
 
 - This module builds all four layers for all 16 bars. Today the port draws one `ColorRect` per bar with `MenuTheme.bar_fill_fraction`, which is only the `bar` layer.
 - The formulas are extracted, not typed. A small extractor (proposed: `uv run convert_menu_math`, in `dev/urchin_dev/convert/menu_math.py`) parses the coefficients and the defense-tip thresholds from `frame_1/DoAction.as` into `dev/converted_json/menu_math.json`. The port and its test read that file. `MenuTheme.bar_fill_fraction` and `element_display_value` go.
-- The element colors are today a typed constant, `MenuTheme.ELEMENT_COLORS`, which the battle code also reads. See the open questions.
-- The Glow on `gbar` and `xbar` is drawn with the existing approach for glows, a tinted extra layer from ffdec art. The build issue shows it against the SWF's frame.
+- The element colors are `MenuTheme.ELEMENT_COLORS`, which the battle code also reads. `convert_menu_math` reads `elementColorArray` from `frame_41/DoAction_2.as` into `menu_math.json`, and `MenuTheme` loads it from there (#230, open question 1).
+- The Glow on `gbar` and `xbar` is a canvas item shader (`scenes/ui/element_bar_glow.gdshader`) on a node behind the layer, not ffdec art, because the glow of a layer whose height changes cannot be one picture. It draws the Glow's three-pass box blur of a rectangle in closed form, with the blur, strength and passes read from `menu_math.json`. Against ffdec's render of a full bar it is within 0.08 alpha at worst outside the bar and 0.035 on average (#230).
 
 The bar tooltips, built here:
 
@@ -196,7 +196,7 @@ The snippet shows style only. `MenuMath` is a small loader for `menu_math.json`.
 
 ## Open questions
 
-1. **Element colors.** The colors are typed in `MenuTheme.ELEMENT_COLORS` and used by the battle code too. The standard says to read them from extractor output. This spec leaves them typed and asks whether to extract `elementColorArray` here, in `convert_menu_math`, or in a later battle spec.
+1. **Element colors.** Settled in #230: `convert_menu_math` extracts `elementColorArray`, and `MenuTheme.ELEMENT_COLORS` keeps its name and uses and reads the file.
 2. **Doll placement check.** The doll is a Node2D with art, so the rect test's 0.5 px rule does not fit it directly. This spec proposes that the rect record holds the union rect of the unequipped male doll and that the test allows 1 px. Decide the tolerance.
 3. **The doll's pose.** The menu doll may be the rig's idle frame at another scale, or its own pose. The build issue compares the 31 placements with the rig's part origins. If they differ, the build asks you before it changes the doll.
 4. **`xbar` below the average.** When `x` is below 1, `xbar`'s height is negative and Flash flips the clip. The spec keeps what the capture shows, as a Quirk, and the build issue records it.

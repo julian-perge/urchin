@@ -920,3 +920,90 @@ def test_a_frame_with_another_count_of_doll_clips_is_refused():
     del layers[912]
     with pytest.raises(ValueError, match="6 doll clips, not 7"):
         screen_rects.doll_record(layers, DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN)
+
+
+# The element bar block (sprite 2877) holds each layer of a bar as a sprite
+# that holds a sprite that holds the shape, each placed with its own matrix.
+# These are the matrices the web build uses for bar 0's dim layer (2873, 2871,
+# shape 2870) and its track (2876, 2875, shape 333).
+def _bar_chain(monkeypatch):
+    from types import SimpleNamespace
+
+    def layer(character_id, matrix):
+        return SimpleNamespace(character_id=character_id, matrix=matrix)
+
+    held = {
+        2873: [layer(2871, (1.0, 0.0, 0.0, 1.0, 0, -680))],
+        2871: [
+            layer(2870, (0.0206451416015625, 0.0, 0.0, 0.2266693115234375, -110, -680))
+        ],
+        2876: [layer(2875, (1.0, 0.0, 0.0, 1.0, 0, 0))],
+        2875: [
+            layer(333, (0.0213775634765625, 0.0, 0.0, 0.1876983642578125, -141, -798))
+        ],
+    }
+    monkeypatch.setattr(
+        screen_rects.timeline,
+        "frames",
+        lambda _index, owner: [dict(enumerate(held[owner]))],
+    )
+    kinds = {2873: "sprite", 2871: "sprite", 2876: "sprite", 2875: "sprite"}
+    monkeypatch.setattr(
+        screen_rects, "character_kind", lambda _index, cid: kinds.get(cid, "shape")
+    )
+    return layer
+
+
+def test_a_shape_inside_nested_sprites_is_placed_through_every_matrix(monkeypatch):
+    layer = _bar_chain(monkeypatch)
+    placed = layer(2873, (1.0, 0.0, 0.0, 1.0, -1260, 675))
+    shape, matrix = screen_rects.through_sprites(None, placed)
+    assert shape == 2870
+    # The two sprites only move the shape, so its own scale stays and the
+    # translations add: -1260 + 0 + -110 and 675 + -680 + -680.
+    assert matrix == pytest.approx(
+        (0.0206451416015625, 0.0, 0.0, 0.2266693115234375, -1370, -685)
+    )
+    rect = screen_rects.stage_rect((0, 0, 10660, 6000), matrix, (400.5, 256.0))
+    assert rect == pytest.approx((332.0, 221.75, 11.0, 68.0), abs=0.01)
+
+
+def test_a_scaled_sprite_scales_the_translation_of_the_shape_inside_it(monkeypatch):
+    layer = _bar_chain(monkeypatch)
+    placed = layer(2873, (2.0, 0.0, 0.0, 3.0, 10, 20))
+    _shape, matrix = screen_rects.through_sprites(None, placed)
+    assert matrix[:4] == pytest.approx(
+        (2.0 * 0.0206451416015625, 0.0, 0.0, 3.0 * 0.2266693115234375)
+    )
+    # The inner translation (0, -680) and then (-110, -680) are scaled by the
+    # outer matrix: 2 * -110 + 10 and 3 * (-680 + -680) + 20.
+    assert matrix[4:] == pytest.approx((-210, -4060))
+
+
+def test_the_track_is_a_black_13_by_70_box_through_two_sprites(monkeypatch):
+    layer = _bar_chain(monkeypatch)
+    placed = layer(2876, (1.0, 0.0, 0.0, 1.0, -1260, 0))
+    shape, matrix = screen_rects.through_sprites(None, placed)
+    assert shape == 333
+    rect = screen_rects.stage_rect((534, 521, 12694, 7980), matrix, (400.5, 256.0))
+    assert rect == pytest.approx((331.0, 221.0, 13.0, 70.0), abs=0.05)
+
+
+def test_a_sprite_that_holds_two_things_is_refused(monkeypatch):
+    layer = _bar_chain(monkeypatch)
+    held = screen_rects.timeline.frames
+    monkeypatch.setattr(
+        screen_rects.timeline,
+        "frames",
+        lambda index, owner: [
+            {**held(index, owner)[0], 9: layer(2870, (1.0, 0.0, 0.0, 1.0, 0, 0))}
+        ],
+    )
+    with pytest.raises(ValueError, match="2873"):
+        screen_rects.through_sprites(None, layer(2873, (1.0, 0.0, 0.0, 1.0, 0, 0)))
+
+
+def test_a_rotated_sprite_in_the_chain_is_refused(monkeypatch):
+    layer = _bar_chain(monkeypatch)
+    with pytest.raises(ValueError, match="rotates or skews"):
+        screen_rects.through_sprites(None, layer(2873, (1.0, 0.5, 0.0, 1.0, 0, 0)))

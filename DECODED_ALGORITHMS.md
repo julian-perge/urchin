@@ -167,8 +167,12 @@ Ported: `UnitOverlay.refresh_buffs` (`scripts/battle/unit_overlay.gd`).
 
 ## Menu piercing/defense bars (DefineSprite_3142/frame_1)
 
-Implemented in `scripts/ui/menu/menu_theme.gd` (`bar_fill_fraction`). Display value = allocation + ceil(100 + 15 * level); fill fraction = the crit-curve quartic `0.016666667 x^4 - 0.25 x^3 + 1.233333
-x^2 - 1.9 x + 0.9` of `value / (100 + 15 * level) + 1`, clamped to the track (base allocation = 30%).
+Implemented in `scripts/ui/menu/menu_math.gd` and `scripts/ui/menu/element_bar.gd`. The numbers are in `dev/converted_json/menu_math.json`, which `uv run convert_menu_math` writes. Value = allocation + ceil(100 + 15 * level), and x = value / (100 + 15 * level), where the average is not rounded.
+
+- Each bar has four layers over a black 13x70 track, and the script sets three heights from the 68 px of the full bar: `bar` = 68 * the quartic `0.016666667 y^4 - 0.25 y^3 + 1.233333 y^2 - 1.9 y + 0.9` of y = x + 1, `gbar` = 0.68 * 15x, and `xbar` = 68 * 0.07 * (x - 1). `bar` and `gbar` are capped at 68 and `xbar` is not. `ybar` is never resized.
+- The script colours the shape inside `ybar` and `bar` and the whole `gbar` clip with the element colour. It never colours `xbar`. The layers' own colour transforms then dim `ybar` to 26/256 and `bar` to 77/256, and brighten `xbar` by 100, which keeps its white shape white. A colour set on a clip replaces the clip's transform, so `gbar` is the plain element colour. `gbar` and `xbar` carry a white Glow, blur 9 by 9, strength 1.797, three passes, with the shape drawn over it.
+- The Glow is part of the clip, so the clip's colour covers it. The glow of `gbar` is the element colour and the glow of `xbar` is white.
+- When x is below 1 the `xbar` height is negative. The port draws it hanging below the baseline, which is how Flash draws a clip with a negative `_height`. This is read from Flash's rules and not seen in a capture: no capture of the original has a value under the average.
 
 ## Item looks and icons
 

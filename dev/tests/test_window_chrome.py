@@ -24,6 +24,7 @@ OWN_SPRITE = {
     "xp_bar": "sprite 2867",
     "xp_bar_level": "sprite 2867",
     "victory_row": "sprite 3002",
+    "bar_shade": "sprite 2877",
 }
 
 # Each piece's shape box on the stage in design px, (x, y, w, h), from the hub
@@ -172,6 +173,8 @@ def test_each_piece_renders_the_timeline_and_depth_that_places_it(monkeypatch):
     face = by_name["hub_card_face"]
     assert (face.timeline, face.frame, face.only_depths) == (2846, 1, (2,))
     assert face.origin == pytest.approx((393.85, 228.35))
+    shade = by_name["bar_shade"]
+    assert (shade.timeline, shade.frame, shade.only_depths) == (2877, 1, (33,))
     row = by_name["victory_row"]
     assert (row.timeline, row.frame, row.origin) == (3142, 181, menu)
     assert row.only_depths == (1197,)
