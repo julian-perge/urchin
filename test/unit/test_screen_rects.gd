@@ -185,6 +185,42 @@ func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[Stri
 	return found
 
 
+# A doll is a CharacterVisual, whose art is a set of rotated and scaled parts, so
+# no rect holds it. The record holds the position and scale that put it where the
+# SWF's 31 part clips sit, and the union rect of the art of the unequipped male
+# doll. The union rect is held to 1 px and not 0.5. The record's rect is the art
+# under the SWF's placements, and the port draws the rig's REST_POSE, which has
+# the same part origins as the SWF's pose but not every part's scale and
+# rotation, so its art reaches 0.9 to 1 px less far on the left and on the right.
+const DOLL_TOLERANCE: float = 1.0
+
+
+func _doll_problems(root: Control, path: String, entry: Dictionary) -> Array[String]:
+	var found: Array[String] = []
+	var doll: CharacterVisual = root.get_node_or_null(path) as CharacterVisual
+	if doll == null:
+		return ["%s: no such CharacterVisual in the scene" % path]
+	var position := Vector2(entry["position"][0], entry["position"][1])
+	if not (_close(doll.global_position.x, position.x) and _close(doll.global_position.y, position.y)):
+		found.append("%s: position %s, expected %s" % [path, doll.global_position, position])
+	var scale := Vector2(entry["scale"][0], entry["scale"][1])
+	if not doll.scale.is_equal_approx(scale):
+		found.append("%s: scale %s, expected %s" % [path, doll.scale, scale])
+	var look: Dictionary = entry["look"]
+	doll.dress(look["gender"], look["skin"], look["hair"], ["", "", "", "", "", "", ""])
+	var bounds: Rect2 = (doll.get_parent() as CanvasItem).get_global_transform() * doll.get_bounds()
+	var rect: Array = entry["rect"]
+	var expected := Rect2(rect[0], rect[1], rect[2], rect[3])
+	var corners: Array[float] = [
+		bounds.position.x - expected.position.x, bounds.position.y - expected.position.y,
+		bounds.end.x - expected.end.x, bounds.end.y - expected.end.y]
+	for off: float in corners:
+		if absf(off) > DOLL_TOLERANCE:
+			found.append("%s: union rect %s, expected %s" % [path, bounds, expected])
+			break
+	return found
+
+
 # Returns one message for each way the laid-out scene under `root` differs from
 # its record. A Label is checked at its top left, and at its right edge when its
 # text is not left-aligned. Its bottom is not checked, because a Label is taller
@@ -194,6 +230,9 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 	var pieces: Dictionary = scene["pieces"]
 	for path: String in pieces:
 		var entry: Dictionary = pieces[path]
+		if entry["kind"] == "doll":
+			found.append_array(_doll_problems(root, path, entry))
+			continue
 		if entry["kind"] == "point":
 			var point: Node2D = root.get_node_or_null(path) as Node2D
 			if point == null:
@@ -754,6 +793,42 @@ func test_control_an_inventory_equip_slot_moved_20_px_fails() -> void:
 	assert_eq(found.size(), 2, str(found))
 	for problem: String in found:
 		assert_string_starts_with(problem, "LeftPanel/Content/EquipDollView/Slot0:")
+
+
+const INVENTORY_DOLL: String = "LeftPanel/Content/EquipDollView/Doll"
+
+
+func test_control_an_inventory_doll_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node(INVENTORY_DOLL) as Node2D).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, INVENTORY_DOLL + ":")
+
+
+func test_control_an_inventory_doll_facing_the_other_way_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node(INVENTORY_DOLL) as Node2D).scale.x *= -1.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_gt(found.size(), 0)
+	assert_string_contains(found[0] if found else "", "scale")
+
+
+func test_control_an_inventory_doll_10_percent_too_wide_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node(INVENTORY_DOLL) as Node2D).scale.x *= 1.1
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_gt(found.size(), 0)
+
+
+func test_control_an_inventory_experience_fill_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node("ExpFill") as Control).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "ExpFill:")
 
 
 func test_control_an_inventory_outline_with_fill_or_shadow_fails() -> void:
