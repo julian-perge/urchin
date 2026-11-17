@@ -62,7 +62,62 @@
           "tip": 6
         }
       ]
+    },
+    "layers": {
+      "ybar": {
+        "tint": "inner",
+        "multiplier": 0.1015625,
+        "add": 0.0,
+        "glow": null
+      },
+      "bar": {
+        "tint": "inner",
+        "multiplier": 0.30078125,
+        "add": 0.0,
+        "glow": null
+      },
+      "gbar": {
+        "tint": "clip",
+        "multiplier": 1.0,
+        "add": 0.39215686274509803,
+        "glow": {
+          "color": "#ffffff",
+          "alpha": 1.0,
+          "blur_x": 9.0,
+          "blur_y": 9.0,
+          "strength": 1.796875,
+          "passes": 3,
+          "composite_source": true
+        }
+      },
+      "xbar": {
+        "tint": null,
+        "multiplier": 1.0,
+        "add": 0.39215686274509803,
+        "glow": {
+          "color": "#ffffff",
+          "alpha": 1.0,
+          "blur_x": 9.0,
+          "blur_y": 9.0,
+          "strength": 1.796875,
+          "passes": 3,
+          "composite_source": true
+        }
+      }
     }
+  },
+  "element_colors": {
+    "source": "frame_41/DoAction_2.as",
+    "colors": [
+      "#c40000",
+      "#fb95c8",
+      "#68cbf4",
+      "#ff6600",
+      "#ffcc00",
+      "#856b47",
+      "#664d80",
+      "#508349"
+    ]
   },
   "experience_bar": {
     "source": "DefineSprite_3142/frame_1/PlaceObject2_2867_1419/CLIPACTIONRECORD onClipEvent(*)",

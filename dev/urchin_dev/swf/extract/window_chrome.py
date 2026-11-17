@@ -62,6 +62,11 @@
 # art. The two edit texts that the game fills, navTitle and navText, are placed
 # on the root frame at depths 1659 and 1658 and are not part of the sprite.
 #
+# THE BAR SHADE is the shape 2874, which fills each of the eight element bars
+# with a gradient of black, alpha 70% at the sides and 20% across the middle.
+# It is rendered as a sprite of its own, so its rect is measured from the
+# origin of the sprite 2877 and the Inventory's two bar blocks both use it.
+#
 # THE VICTORY ROW is the row's shape 3001, rendered where the win frame places
 # the player's row with every other depth of the row hidden, so the DropShadow
 # on the row's placement draws around 3001 alone. The two other rows are the
@@ -116,6 +121,11 @@ VICTORY_GLOSS_DEPTH = 41
 # first. Each draws the same shape 3001 under the same DropShadow.
 VICTORY_ROW_DEPTHS = (1197, 1111, 1154)
 VICTORY_ROW_SHAPE_DEPTH = 2
+# The element bar block (2877), which the Inventory places twice, as perBarShow
+# and defBarShow. Its depth 33 draws the shading gradient over all eight bars
+# with one shape, between the dim layer and the bar layer.
+BAR_BLOCK_SPRITE = 2877
+BAR_SHADE_DEPTH = 33
 # The experience bar (2867). Frame 1 draws the normal fill (2865) and the
 # frame labelled "level" draws the fill a row jumps to when it levels up (2866).
 XP_BAR_SPRITE = 2867
@@ -147,6 +157,7 @@ PIECES: dict[str, str] = {
     "xp_bar": "the experience bar (2867), frame 1, the normal fill 2865",
     "xp_bar_level": "the experience bar (2867), its level frame, the fill 2866",
     "victory_row": "the victory row's shape 3001, under the DropShadow on the row",
+    "bar_shade": "the element bars' shading gradient (2874 in 2877), all eight bars",
     "achievement_plate_1": "the achievement plate (3141), frame 1, text stripped",
     "achievement_plate_2": "the achievement plate (3141), frame 2, text stripped",
     "hotbar_square": "a hotbar square at scale 0.671, under its Bevel and Glows",
@@ -203,6 +214,9 @@ def jobs(index: SwfIndex, plate_strip: tuple[int, ...]) -> dict[str, render.Job]
             XP_BAR_SPRITE, timeline.frame_of(index, XP_BAR_SPRITE, "level"), ZOOM
         ),
         "victory_row": victory_row(index, VICTORY_ROW_DEPTHS[0]),
+        "bar_shade": render.Job(
+            BAR_BLOCK_SPRITE, 1, ZOOM, only_depths=(BAR_SHADE_DEPTH,)
+        ),
         "achievement_plate_1": on_menu(
             ACHIEVEMENTS_FRAME, PLATE_DEPTH, strip=plate_strip, goto=((PLATE_DEPTH, 1),)
         ),

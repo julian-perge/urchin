@@ -1,0 +1,83 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/menu/element_bar.gd" id="1_bar"]
+[ext_resource type="Shader" path="res://scenes/ui/element_bar_glow.gdshader" id="2_glow"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gbar"]
+resource_local_to_scene = true
+shader = ExtResource("2_glow")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xbar"]
+resource_local_to_scene = true
+shader = ExtResource("2_glow")
+
+[node name="ElementBar" type="Control"]
+custom_minimum_size = Vector2(13, 70)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 13.0
+offset_bottom = 70.0
+script = ExtResource("1_bar")
+
+[node name="Track" type="ColorRect" parent="."]
+mouse_filter = 2
+layout_mode = 0
+offset_right = 13.0
+offset_bottom = 70.0
+color = Color(0, 0, 0, 1)
+
+[node name="Ybar" type="ColorRect" parent="."]
+z_index = 1
+mouse_filter = 2
+layout_mode = 0
+offset_left = 1.0
+offset_top = 0.75
+offset_right = 12.0
+offset_bottom = 68.75
+
+[node name="Bar" type="ColorRect" parent="."]
+z_index = 3
+mouse_filter = 2
+layout_mode = 0
+offset_left = 1.0
+offset_top = 0.75
+offset_right = 12.0
+offset_bottom = 68.75
+
+[node name="Gbar" type="ColorRect" parent="."]
+z_index = 4
+mouse_filter = 2
+layout_mode = 0
+offset_left = 1.0
+offset_top = 0.75
+offset_right = 12.0
+offset_bottom = 68.75
+
+[node name="Glow" type="ColorRect" parent="Gbar"]
+show_behind_parent = true
+material = SubResource("ShaderMaterial_gbar")
+mouse_filter = 2
+layout_mode = 0
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 25.0
+offset_bottom = 82.0
+
+[node name="Xbar" type="ColorRect" parent="."]
+z_index = 5
+mouse_filter = 2
+layout_mode = 0
+offset_left = 1.0
+offset_top = 0.75
+offset_right = 12.0
+offset_bottom = 68.75
+
+[node name="Glow" type="ColorRect" parent="Xbar"]
+show_behind_parent = true
+material = SubResource("ShaderMaterial_xbar")
+mouse_filter = 2
+layout_mode = 0
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 25.0
+offset_bottom = 82.0

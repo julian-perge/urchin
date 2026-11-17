@@ -806,6 +806,12 @@ def placement_filters(index: SwfIndex, placement: Placement) -> tuple[Filter, ..
     return tuple(result)
 
 
+def filter_of(record: bytes) -> Filter:
+    """-> the DropShadow or Glow that one record of Placement.filter_records
+    holds. Raises when the record is another filter."""
+    return _drop_shadow_or_glow(record, 0)
+
+
 def _drop_shadow_or_glow(data: bytes, pos: int) -> Filter:
     """One filter record at `pos`, which starts with its id. Both kinds hold a
     colour, the two blurs, the strength as an 8.8 fixed point and a byte of

@@ -3,9 +3,6 @@
 extends Control
 
 
-const BAR_BLOCK_CENTERS_Y: Dictionary[Variant, Variant] = {"per": 256.0, "def": 360.5}
-const BAR_TRACK_HEIGHT: float = 78.0
-
 var equip_view: EquipDollView
 # The width of the experience fill in the scene, which is the full bar. The
 # original scales the fill clip to experience / 100 of it.
@@ -19,8 +16,8 @@ var _exp_full_width: float = 0.0
 @onready var _exp_percent: Label = $ExpPercent
 @onready var _stat_names: Array[Label] = _row_labels($CenterPanel/Content/StatNames)
 @onready var _stat_values: Array[Label] = _row_labels($CenterPanel/Content/StatValues)
-var _per_fills: Array[ColorRect] = []
-var _def_fills: Array[ColorRect] = []
+var _per_bars: Array[ElementBar] = []
+var _def_bars: Array[ElementBar] = []
 var _portrait_frames: Array[ItemSlot] = []
 
 
@@ -31,7 +28,7 @@ func _ready():
 		_stat_names[i].text = Strings.system(i) + ":"
 	_exp_full_width = _exp_fill.size.x
 	_build_left_panel()
-	_build_center_panel()
+	_build_element_bars()
 	_build_party_bar()
 	GameData.inventory_changed.connect(_refresh_if_visible)
 	GameData.gold_changed.connect(func(_amount): _refresh_if_visible())
@@ -54,21 +51,17 @@ func _build_left_panel() -> void:
 	equip_view.equip_slot_clicked.connect(_on_equip_slot_clicked)
 
 
-func _build_center_panel() -> void:
-	_per_fills = _build_bar_block(BAR_BLOCK_CENTERS_Y["per"])
-	_def_fills = _build_bar_block(BAR_BLOCK_CENTERS_Y["def"])
-
-
-# One block of 8 element bars (called once for "per", once for "def" - see
-# _build_center_panel()) - fetches the pre-built track/fill pairs for that
-# block instead of constructing them; fill heights/positions are set every
-# refresh() by _update_bar(), unchanged below.
-func _build_bar_block(center_y: float) -> Array[ColorRect]:
-	var prefix: String = "Per" if center_y == BAR_BLOCK_CENTERS_Y["per"] else "Def"
-	var fills: Array[ColorRect] = []
+# The element bars are in the scene, eight for piercing and eight for defense.
+# setup() gives each its element and its tooltip, and refresh() gives it the
+# value.
+func _build_element_bars() -> void:
 	for k in 8:
-		fills.append(get_node("%sFill%d" % [prefix, k]))
-	return fills
+		var piercing: ElementBar = get_node("PerBars/Bars/Bar%d" % k)
+		piercing.setup(k, ElementBar.Kind.PIERCING)
+		_per_bars.append(piercing)
+		var defense: ElementBar = get_node("DefBars/Bars/Bar%d" % k)
+		defense.setup(k, ElementBar.Kind.DEFENSE)
+		_def_bars.append(defense)
 
 
 func _build_party_bar() -> void:
@@ -86,9 +79,8 @@ func refresh() -> void:
 	for i in _stat_values.size():
 		_stat_values[i].text = str(int(stats[i]))
 	for k in 8:
-		var element_name: String = CombatUnit.ELEMENT_ORDER[k]
-		_update_bar(_per_fills[k], float(save.per.get(k, 0.0)), save.level, element_name, "piercing")
-		_update_bar(_def_fills[k], float(save.def.get(k, 0.0)), save.level, element_name, "defense")
+		_per_bars[k].show_value(float(save.per.get(k, 0.0)), save.level)
+		_def_bars[k].show_value(float(save.def.get(k, 0.0)), save.level)
 	var exp_fraction: float = clampf(save.experience / 100.0, 0.0, 1.0)
 	_exp_fill.size.x = _exp_full_width * exp_fraction
 	# The original rounds the percent with Math.round, in the enterFrame script of
@@ -98,16 +90,6 @@ func refresh() -> void:
 	right_column.populate_from_save(save, ItemManagerAuto.items_by_id)
 	right_column.set_gold(save.euro)
 	_refresh_portraits(save)
-
-
-# Fill grows upward from the track bottom, like the original bars.
-func _update_bar(fill: ColorRect, allocation: float, level: int, element: String, kind: String) -> void:
-	var value: int = MenuTheme.element_display_value(allocation, level)
-	var fraction: float = MenuTheme.bar_fill_fraction(float(value), level)
-	var bottom = BAR_BLOCK_CENTERS_Y["per" if kind == "piercing" else "def"] + BAR_TRACK_HEIGHT / 2.0
-	fill.size.y = BAR_TRACK_HEIGHT * fraction
-	fill.position.y = bottom - fill.size.y
-	fill.tooltip_text = "%s %s: %d" % [element, kind, value]
 
 
 func _refresh_portraits(save: PlayerSave) -> void:

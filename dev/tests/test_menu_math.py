@@ -9,6 +9,7 @@ import struct
 import pytest
 from test_swf_index import bits, place2, swf, tag
 from urchin_dev.convert import menu_math
+from urchin_dev.swf import timeline
 from urchin_dev.swf.swf_index import (
     TAG_DEFINE_SHAPE,
     TAG_DEFINE_SPRITE,
@@ -250,3 +251,148 @@ def test_an_experience_bar_script_that_does_not_scale_the_width_is_refused():
     changed = BAR_LOAD.replace("_width =", "_height =")
     with pytest.raises(ValueError, match="width"):
         menu_math.parse_experience_bar(changed, changed)
+
+
+# The statements that colour the bar layers
+# (DefineSprite_3142/frame_1/DoAction.as:196-220), with the layer names of one
+# block. The script colours the inner shape of ybar and bar, the clip of gbar,
+# and does not colour xbar.
+TINTS = """
+   var my_colorKKCCXX = new Color(perBarShow["bar" + wefjnew].inner);
+   my_colorKKCCXX.setRGB(_root.elementColorArray[wefjnew]);
+   var my_colorKKCCXX = new Color(perBarShow["gbar" + wefjnew]);
+   my_colorKKCCXX.setRGB(_root.elementColorArray[wefjnew]);
+   var my_colorKKCCXX = new Color(perBarShow["ybar" + wefjnew].inner);
+   my_colorKKCCXX.setRGB(_root.elementColorArray[wefjnew]);
+   var my_colorKKCCXX = new Color(defBarShow["bar" + wefjnew].inner);
+   my_colorKKCCXX.setRGB(_root.elementColorArray[wefjnew]);
+   var my_colorKKCCXX = new Color(defBarShow["gbar" + wefjnew]);
+   my_colorKKCCXX.setRGB(_root.elementColorArray[wefjnew]);
+   var my_colorKKCCXX = new Color(defBarShow["ybar" + wefjnew].inner);
+   my_colorKKCCXX.setRGB(_root.elementColorArray[wefjnew]);
+"""
+
+
+def test_the_tint_parser_says_what_each_layer_colours():
+    assert menu_math.parse_layer_tints(TINTS) == {
+        "bar": "inner",
+        "gbar": "clip",
+        "ybar": "inner",
+    }
+
+
+def test_a_layer_tinted_in_one_block_only_is_refused():
+    changed = TINTS.replace(
+        'defBarShow["gbar" + wefjnew]', 'defBarShow["xbar" + wefjnew]'
+    )
+    with pytest.raises(ValueError, match="piercing and defense"):
+        menu_math.parse_layer_tints(changed)
+
+
+def test_a_tint_that_is_not_the_element_color_is_refused():
+    changed = TINTS.replace("elementColorArray[wefjnew]", "elementColorArray[0]", 1)
+    with pytest.raises(ValueError, match="elementColorArray"):
+        menu_math.parse_layer_tints(changed)
+
+
+def placed(name: str, color_transform=None):
+    return timeline.Layer(character_id=12, name=name, color_transform=color_transform)
+
+
+def test_a_dimmed_layer_is_its_multiplier_over_256_with_no_add():
+    eight = [placed(f"ybar{k}", (26, 26, 26, 256, 0, 0, 0, 0)) for k in range(8)]
+    assert menu_math.layer_look(eight, "ybar", "inner", None) == {
+        "tint": "inner",
+        "multiplier": 26 / 256,
+        "add": 0.0,
+        "glow": None,
+    }
+
+
+def test_a_brightened_layer_adds_its_offset_over_255():
+    eight = [
+        placed(f"xbar{k}", (256, 256, 256, 256, 100, 100, 100, 0)) for k in range(8)
+    ]
+    look = menu_math.layer_look(eight, "xbar", None, None)
+    assert (look["multiplier"], look["add"]) == (1.0, 100 / 255)
+
+
+def test_a_layer_with_no_colour_transform_is_left_as_it_is():
+    eight = [placed(f"bar{k}") for k in range(8)]
+    look = menu_math.layer_look(eight, "bar", "inner", None)
+    assert (look["multiplier"], look["add"]) == (1.0, 0.0)
+
+
+def test_eight_bars_that_are_placed_with_different_transforms_are_refused():
+    eight = [placed(f"bar{k}", (77, 77, 77, 256, 0, 0, 0, 0)) for k in range(8)]
+    eight[3] = placed("bar3", (78, 77, 77, 256, 0, 0, 0, 0))
+    with pytest.raises(ValueError, match="bar"):
+        menu_math.layer_look(eight, "bar", "inner", None)
+
+
+def test_a_colour_transform_that_changes_alpha_is_refused():
+    eight = [placed(f"bar{k}", (256, 256, 256, 128, 0, 0, 0, 0)) for k in range(8)]
+    with pytest.raises(ValueError, match="alpha"):
+        menu_math.layer_look(eight, "bar", "inner", None)
+
+
+# The Glow record of sprite 2872's "inner": white, blur 9 by 9, strength 1.797,
+# the source drawn over it, three passes.
+GLOW = b"\x02\xff\xff\xff\xff\x00\x00\t\x00\x00\x00\t\x00\xcc\x01#"
+
+
+def test_a_glow_is_its_color_blur_strength_and_passes():
+    assert menu_math.glow_look(GLOW) == {
+        "color": "#ffffff",
+        "alpha": 1.0,
+        "blur_x": 9.0,
+        "blur_y": 9.0,
+        "strength": 0x01CC / 256,
+        "passes": 3,
+        "composite_source": True,
+    }
+
+
+def test_a_drop_shadow_on_a_bar_is_refused():
+    shadow = bytes([0]) + GLOW[1:5] + bytes(16) + bytes([0, 1, 0x20 | 3])
+    with pytest.raises(ValueError, match="Glow"):
+        menu_math.glow_look(shadow)
+
+
+def test_an_inner_or_knockout_glow_is_refused():
+    inner = GLOW[:-1] + bytes([0x80 | 0x20 | 3])
+    with pytest.raises(ValueError, match="inner or knockout"):
+        menu_math.glow_look(inner)
+
+
+# The statement of frame_41/DoAction_2.as that gives every element its colour,
+# in the order of the elements.
+COLORS = 'elementColorArray = ["0xC40000","0xFB95C8","0x68CBF4","0xFF6600","0xFFCC00","0x856B47","0x664D80","0x508349"];'
+
+
+def test_the_colour_parser_reads_the_eight_element_colours_in_order():
+    assert menu_math.parse_element_colors("junk;\n" + COLORS + "\nmore;") == [
+        "#c40000",
+        "#fb95c8",
+        "#68cbf4",
+        "#ff6600",
+        "#ffcc00",
+        "#856b47",
+        "#664d80",
+        "#508349",
+    ]
+
+
+def test_a_colour_list_of_another_length_is_refused():
+    with pytest.raises(ValueError, match="8"):
+        menu_math.parse_element_colors(COLORS.replace(',"0x508349"', ""))
+
+
+def test_a_colour_that_is_not_six_hex_digits_is_refused():
+    with pytest.raises(ValueError, match="0x50834"):
+        menu_math.parse_element_colors(COLORS.replace("0x508349", "0x50834"))
+
+
+def test_a_script_with_no_colour_array_is_refused():
+    with pytest.raises(ValueError, match="elementColorArray"):
+        menu_math.parse_element_colors("elementMainArray = [];")

@@ -158,3 +158,34 @@ func test_a_click_on_a_scene_equip_slot_unequips_the_item() -> void:
 	slot.slot_clicked.emit(slot)
 	assert_eq(int(GameData.current_save.equip_array[equip_index]), 0)
 	assert_eq(int(GameData.current_save.item_array[0]), item.id)
+
+
+# Each element bar takes the save's per or def for its element and the level
+# (DefineSprite_3142/frame_1/DoAction.as:103-125).
+func test_refresh_sets_every_element_bar_from_the_saves_per_and_def() -> void:
+	var save: PlayerSave = PlayerSave.new_game("Inventory", 0)
+	save.level = 3
+	save.per[CombatUnit.Element.FIRE] = 50.0
+	save.def[CombatUnit.Element.ICE] = 100.0
+	GameData.current_save = save
+	var window: Control = add_child_autofree(SCENE.instantiate())
+	window.refresh()
+	var math: Dictionary = MenuMath.load_math()
+	var fire_x: float = MenuMath.x_for(50.0, 3, math)
+	var fire: ElementBar = window.get_node("PerBars/Bars/Bar%d" % CombatUnit.Element.FIRE)
+	assert_almost_eq((fire.get_node("Bar") as ColorRect).size.y, MenuMath.layer_heights(fire_x, math)["bar"], 0.001)
+	assert_eq(fire.tooltip()["title"], "%s %s: 195" % [Strings.text("ELEMENTS", CombatUnit.Element.FIRE), Strings.system(5)])
+	var ice_x: float = MenuMath.x_for(100.0, 3, math)
+	var ice: ElementBar = window.get_node("DefBars/Bars/Bar%d" % CombatUnit.Element.ICE)
+	assert_almost_eq((ice.get_node("Gbar") as ColorRect).size.y, MenuMath.layer_heights(ice_x, math)["gbar"], 0.001)
+	assert_eq(ice.tooltip()["body"], Strings.text("DEFTIP", MenuMath.defense_tip(ice_x, math)))
+	var untouched: ElementBar = window.get_node("PerBars/Bars/Bar%d" % CombatUnit.Element.ICE)
+	assert_almost_eq((untouched.get_node("Gbar") as ColorRect).size.y, MenuMath.layer_heights(MenuMath.x_for(0.0, 3, math), math)["gbar"], 0.001)
+
+
+func test_the_sixteen_bars_are_the_elements_in_order_with_their_own_stat() -> void:
+	var window: Control = add_child_autofree(SCENE.instantiate())
+	for k in 8:
+		assert_eq((window.get_node("PerBars/Bars/Bar%d" % k) as ElementBar)._kind, ElementBar.Kind.PIERCING)
+		assert_eq((window.get_node("DefBars/Bars/Bar%d" % k) as ElementBar)._kind, ElementBar.Kind.DEFENSE)
+		assert_eq((window.get_node("PerBars/Bars/Bar%d" % k) as ElementBar)._element, k)

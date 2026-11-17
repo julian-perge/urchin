@@ -16,7 +16,13 @@ func _assert_heights(heights: Dictionary, bar: float, gbar: float, xbar: float) 
 	assert_almost_eq(heights["xbar"], xbar, EPSILON, "xbar")
 
 
-func test_a_value_below_the_average_gives_xbar_a_negative_height() -> void:
+# Every ElementBar asks for the numbers, so without the cache an Inventory build
+# parses the file once for each bar.
+func test_load_math_parses_each_file_once() -> void:
+	assert_same(MenuMath.load_math(), MenuMath.load_math())
+
+
+func test_a_value_below_the_average_gives_the_xbar_formula_a_negative_height() -> void:
 	_assert_heights(MenuMath.layer_heights(0.5, _math()), 4.462449, 5.1, -2.38)
 
 
@@ -101,3 +107,57 @@ func test_a_ratio_exactly_on_a_threshold_stays_on_the_exclusive_side() -> void:
 			expected[int(rule["tip"])],
 			"ratio exactly the threshold of tip %s" % rule["tip"],
 		)
+
+
+func test_terms_are_the_three_formulas_before_the_cap() -> void:
+	# At x = 20 the quartic at x + 1 = 21 is far over 1, and the gbar term is
+	# 15 * 20 = 300.
+	var terms: Dictionary = MenuMath.terms(20.0, _math())
+	assert_almost_eq(terms["bar"], 0.016666667 * pow(21.0, 4) - 0.25 * pow(21.0, 3) + 1.233333 * pow(21.0, 2) - 1.9 * 21.0 + 0.9, 0.001)
+	assert_almost_eq(terms["gbar"], 300.0, EPSILON)
+	assert_almost_eq(terms["xbar"], 1.33, EPSILON)
+	assert_gt(MenuMath.layer_heights(20.0, _math())["bar"], 0.0, "the heights still cap")
+	assert_almost_eq(MenuMath.layer_heights(20.0, _math())["bar"], 68.0, EPSILON)
+
+
+func test_a_layer_the_script_colours_inside_is_dimmed_by_the_layer_transform() -> void:
+	var color: Color = MenuMath.layer_color("ybar", Color(1.0, 0.5, 0.0), _math())
+	assert_almost_eq(color.r, 26.0 / 256.0, EPSILON)
+	assert_almost_eq(color.g, 13.0 / 256.0, EPSILON)
+	assert_almost_eq(color.b, 0.0, EPSILON)
+	assert_eq(color.a, 1.0)
+
+
+func test_a_layer_the_script_colours_as_a_clip_replaces_the_layer_transform() -> void:
+	# The script's setRGB on the gbar clip replaces its brighten transform.
+	assert_eq(MenuMath.layer_color("gbar", Color(1.0, 0.5, 0.0), _math()), Color(1.0, 0.5, 0.0))
+
+
+func test_a_layer_the_script_never_colours_is_white_brightened() -> void:
+	assert_eq(MenuMath.layer_color("xbar", Color(1.0, 0.5, 0.0), _math()), Color.WHITE)
+
+
+func test_a_brightened_layer_adds_its_offset_to_the_colour_it_holds() -> void:
+	var math: Dictionary = _math().duplicate(true)
+	math["element_bars"]["layers"]["gbar"]["tint"] = "inner"
+	var color: Color = MenuMath.layer_color("gbar", Color(0.0, 0.5, 0.0), math)
+	assert_almost_eq(color.r, 100.0 / 255.0, EPSILON)
+	assert_almost_eq(color.g, 0.5 + 100.0 / 255.0, EPSILON)
+
+
+# Flash's Math.round is floor(x + 0.5), so a half goes up for a negative number
+# too, where GDScript's roundi() sends it away from 0.
+func test_flash_round_sends_a_half_up_even_below_zero() -> void:
+	assert_eq(MenuMath.flash_round(2.5), 3)
+	assert_eq(MenuMath.flash_round(-2.5), -2)
+	assert_eq(MenuMath.flash_round(-2.6), -3)
+	assert_eq(MenuMath.flash_round(0.49), 0)
+
+
+# elementColorArray (frame_41/DoAction_2.as:2), typed here by hand so a changed
+# number in menu_math.json fails the test.
+func test_the_element_colors_are_the_eight_of_the_original_in_order() -> void:
+	var expected: Array[String] = ["C40000", "FB95C8", "68CBF4", "FF6600", "FFCC00", "856B47", "664D80", "508349"]
+	assert_eq(MenuTheme.ELEMENT_COLORS.size(), 8)
+	for k in 8:
+		assert_eq(MenuTheme.ELEMENT_COLORS[k], Color(expected[k]), "element %d" % k)

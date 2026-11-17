@@ -314,10 +314,11 @@ def find_broken_bitmap_fill_cids(index: SwfIndex, sprite_id: int) -> set[int]:
     """Shapes placed directly in this cutscene sprite whose first fill style
     references bitmapId 65535, SWF's sentinel for "no such bitmap
     character" - a dangling bitmap-fill reference that ffdec's renderer
-    fills in with visual static/noise instead of leaving it blank. Confirmed as the root cause of
-    sprite 3960's corrupted tail frames (chids 3951/3953/3955/3957) - see
-    task-1-report.md. Auto-detected here rather than hardcoded so the same
-    class of bug in another cutscene gets caught and stripped too.
+    fills in with visual static/noise instead of leaving it blank. Confirmed as
+    the root cause of sprite 3960's corrupted tail frames (chids
+    3951/3953/3955/3957) - see task-1-report.md. Auto-detected here rather than
+    hardcoded so the same class of bug in another cutscene gets caught and
+    stripped too.
     """
     placed = {p.character_id for p in index.placements if p.owner == sprite_id}
     return {
