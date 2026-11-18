@@ -254,6 +254,11 @@ extract-item-looks *args: (require "ffdec" "java")
 extract-as-index *args: (require "ffdec" "java")
     uv run extract_as_index "$@"
 
+[doc('Run extract_gd_index, which reads the tracked .gd files and needs no SWF')]
+[group('extract')]
+extract-gd-index *args:
+    uv run extract_gd_index "$@"
+
 [doc('Run extract_label_xref, which reads the SWF through ffdec')]
 [group('extract')]
 extract-label-xref *args: (require "ffdec" "java")
