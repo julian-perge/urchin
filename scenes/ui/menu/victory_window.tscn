@@ -1,0 +1,236 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/menu/victory_window.gd" id="1_victory"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/window_shell.tscn" id="2_shell"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/shell_panel.tscn" id="3_panel"]
+[ext_resource type="Script" path="res://scripts/ui/float_box.gd" id="4_floatbox"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu/victory_exp_row.tscn" id="5_exprow"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/right_column.tscn" id="6_rightcolumn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hit"]
+
+[node name="VictoryWindow" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_victory")
+
+[node name="WindowShell" parent="." instance=ExtResource("2_shell")]
+close_visible = false
+
+[node name="LeftPanel" parent="." instance=ExtResource("3_panel")]
+layout_mode = 0
+offset_left = 36.0698
+offset_top = 81.0751
+offset_right = 258.875
+offset_bottom = 408.086
+mouse_filter = 2
+
+[node name="CentrePanel" parent="." instance=ExtResource("3_panel")]
+layout_mode = 0
+offset_left = 274.979
+offset_top = 82.15
+offset_right = 487.963
+offset_bottom = 408.65
+mouse_filter = 2
+fill = 2
+
+[node name="Heading" type="Label" parent="."]
+layout_mode = 0
+offset_left = 43.3
+offset_top = 89.1
+offset_right = 252.45
+offset_bottom = 104.1
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.368627, 0.368627, 0.368627, 1)
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+
+[node name="ExpRows" type="Container" parent="."]
+layout_mode = 0
+offset_left = 49.2
+offset_top = 131.05
+offset_right = 246.0
+offset_bottom = 399.25
+mouse_filter = 2
+script = ExtResource("4_floatbox")
+separation = 9.3
+
+[node name="PlayerSlot" type="Control" parent="ExpRows"]
+custom_minimum_size = Vector2(196.8, 83.2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Row" parent="ExpRows/PlayerSlot" instance=ExtResource("5_exprow")]
+layout_mode = 0
+
+[node name="CompanionSlot0" type="Control" parent="ExpRows"]
+custom_minimum_size = Vector2(196.8, 83.2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Row" parent="ExpRows/CompanionSlot0" instance=ExtResource("5_exprow")]
+layout_mode = 0
+
+[node name="CompanionSlot1" type="Control" parent="ExpRows"]
+custom_minimum_size = Vector2(196.8, 83.2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Row" parent="ExpRows/CompanionSlot1" instance=ExtResource("5_exprow")]
+layout_mode = 0
+
+[node name="DropsLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 290.2
+offset_top = 92.4
+offset_right = 473.5
+offset_bottom = 143.4
+mouse_filter = 2
+theme_type_variation = &"RegularLabel"
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 1)
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+
+[node name="Drops" type="Container" parent="."]
+layout_mode = 0
+offset_left = 289.4
+offset_top = 130.95
+offset_right = 472.4
+offset_bottom = 237.95
+mouse_filter = 2
+script = ExtResource("4_floatbox")
+separation = 7.0
+
+[node name="Row0" type="Container" parent="Drops"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("4_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="Row1" type="Container" parent="Drops"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("4_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="Row2" type="Container" parent="Drops"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("4_floatbox")
+vertical = false
+separation = 7.0
+
+[node name="NoItemsLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 293.2
+offset_top = 165.8
+offset_right = 469.5
+offset_bottom = 232.4
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.647059, 0.188235, 0.188235, 1)
+theme_override_constants/line_spacing = -7
+theme_override_font_sizes/font_size = 19
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ClickHintLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 291.2
+offset_top = 246.8
+offset_right = 470.75
+offset_bottom = 292.6
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 0.2, 1)
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+
+[node name="MoneyLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 298.2
+offset_top = 289.2
+offset_right = 433.5
+offset_bottom = 304.25
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.980392, 0.85098, 0.352941, 1)
+theme_override_font_sizes/font_size = 12
+
+[node name="MoneyValue" type="Label" parent="."]
+layout_mode = 0
+offset_left = 364.7
+offset_top = 289.2
+offset_right = 464.95
+offset_bottom = 304.25
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.980392, 0.85098, 0.352941, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+
+[node name="ExpLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 298.2
+offset_top = 306.8
+offset_right = 434.5
+offset_bottom = 321.85
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+
+[node name="ExpValue" type="Label" parent="."]
+layout_mode = 0
+offset_left = 364.7
+offset_top = 306.8
+offset_right = 464.95
+offset_bottom = 321.85
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+
+[node name="ProceedHintLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 292.2
+offset_top = 329.2
+offset_right = 468.5
+offset_bottom = 374.4
+mouse_filter = 2
+theme_type_variation = &"RegularLabel"
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 1)
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+
+[node name="ProceedLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 295.3
+offset_top = 365.65
+offset_right = 465.1
+offset_bottom = 385.75
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.4, 1, 0, 1)
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="ProceedButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 295.3
+offset_top = 368.894
+offset_right = 466.8
+offset_bottom = 394.505
+theme_override_styles/normal = SubResource("StyleBoxEmpty_hit")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_hit")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_hit")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_hit")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hit")
+
+[node name="RightColumn" parent="." instance=ExtResource("6_rightcolumn")]
+
+[connection signal="pressed" from="ProceedButton" to="." method="_on_proceed_pressed"]

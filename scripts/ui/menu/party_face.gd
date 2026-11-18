@@ -42,7 +42,7 @@ func show_member(id: int, selected: bool, deployed: bool) -> void:
 	_parts.visible = id >= 0
 	if id < 0:
 		return
-	_face.texture = MenuTheme.texture(VictoryScreen.PORTRAITS[id])
+	_face.texture = MenuTheme.texture(VictoryWindow.PORTRAITS[id])
 	_frame.visible = selected
 	# The original hides the player's dim when the clip loads
 	# (PlaceObject2_2979_995, onClipEvent(load)), and updateFriends only sets the

@@ -978,8 +978,8 @@ func _finish_battle() -> void:
 		_player_leveled = settlement.levels_gained > 0
 		# Drops are click-to-keep on the victory screen (VICTORY[1]); the
 		# autosave happens on Proceed, like the original.
-		var victory: VictoryScreen = preload("res://scenes/battle/victory_screen.tscn").instantiate()
-		victory.name = "VictoryScreen"
+		var victory: VictoryWindow = preload("res://scenes/ui/menu/victory_window.tscn").instantiate()
+		victory.name = "VictoryWindow"
 		add_child(victory)
 		victory.setup(save, settlement)
 		victory.proceed_pressed.connect(_on_victory_proceed)
@@ -1010,7 +1010,7 @@ func _on_victory_proceed() -> void:
 		GameData.save_game()
 	if not _pending_cutscene.is_empty():
 		# Cleared before the await, not after, so a second call can't start a
-		# second copy of the same clip on top of the first. VictoryScreen
+		# second copy of the same clip on top of the first. VictoryWindow
 		# disables Proceed once it's pressed, so the button can't make that call.
 		var cutscene_id: String = _pending_cutscene
 		var goto_scene: String = _pending_goto_scene

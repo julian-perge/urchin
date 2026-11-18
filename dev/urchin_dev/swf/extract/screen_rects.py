@@ -404,38 +404,6 @@ SCENES: dict[str, Scene] = {
             "CloseButton": Piece("hit", 1434),
         },
     ),
-    # The victory frame's three experience rows, each a placement of sprite
-    # 3002: the player's at depth 1197, then friendlySlotsFFTT[0] and [1] at
-    # 1111 and 1154. The rest of the Victory screen is port only until the
-    # Victory Window replaces it (spec/107-victory.md). The face is the clip 2978
-    # at depth 3 of the row, and extract_faces writes where its crop sits in it.
-    # The row's shape 3001 has no fill across the row: it strokes a 1 px line
-    # around it and fills only the box under the bar. The port draws it as the
-    # victory_row art, which holds the shape under the row's DropShadow.
-    "res://scenes/battle/victory_screen.tscn": Scene(
-        timeline=KRINMENU,
-        frame="win",
-        pieces={
-            f"ExpRows/{slot}/Row/{node}": Piece(kind, depth, art=art, inner_depth=inner)
-            for slot, depth in VICTORY_ROWS.items()
-            for node, (kind, inner, art) in VICTORY_ROW_PIECES.items()
-        },
-        port_only=(
-            "Backdrop",
-            "LeftPanel",
-            "ExperienceLabel",
-            "MiddlePanel",
-            "DropsLabel",
-            "ClickHintLabel",
-            "MoneyLabel",
-            "MoneyValue",
-            "ExpLabel",
-            "ExpValue",
-            "ProceedHintLabel",
-            "ProceedButton",
-            "RightColumn",
-        ),
-    ),
     # The right column of 36 item slots and the money bar
     # (spec/107-window-shell.md, RightColumn). The shop frame is the one frame
     # that places all of it, the sell slot included, and the inventory frame
@@ -2091,6 +2059,87 @@ def scene_record(
         "port_only": list(scene.port_only),
         "pieces": pieces,
     }
+
+
+# The victory frame, "win" (spec/107-victory.md). The left Panel holds the
+# heading and the three experience rows, each a placement of sprite 3002: the
+# player's at depth 1197, then friendlySlotsFFTT[0] and [1] at 1111 and 1154.
+# The face is the clip 2978 at depth 3 of the row, and extract_faces writes
+# where its crop sits in it. The row's shape 3001 has no fill across the row: it
+# strokes a 1 px line around it and fills only the box under the bar. The port
+# draws it as the victory_row art, which holds the shape under the row's
+# DropShadow. The centre Panel holds the 15 drop slots, dropSlot0 to dropSlot14,
+# the gain text and Proceed. The frame places no close X (depths 1431 and 1434)
+# and no sell slot (depth 1281), so the record leaves out the shell's close
+# pieces and the right column's SellSlot.
+VICTORY_SCENE = "res://scenes/ui/menu/victory_window.tscn"
+VICTORY_DROPS = 15
+VICTORY_DROP_COLUMNS = 5
+SCENES[VICTORY_SCENE] = Scene(
+    timeline=KRINMENU,
+    frame="win",
+    pieces={
+        **{
+            f"WindowShell/{node}": piece
+            for node, piece in SCENES[
+                "res://scenes/ui/window/window_shell.tscn"
+            ].pieces.items()
+            if node == "Backdrop"
+        },
+        "LeftPanel": Piece("panel", 11),
+        "CentrePanel": Piece("panel", 21),
+        "Heading": Piece("text", 1240, character=2996),
+        **{
+            f"ExpRows/{slot}/Row/{node}": Piece(kind, depth, art=art, inner_depth=inner)
+            for slot, depth in VICTORY_ROWS.items()
+            for node, (kind, inner, art) in VICTORY_ROW_PIECES.items()
+        },
+        "DropsLabel": Piece("text", 1107, character=3005),
+        **{
+            f"Drops/Row{i // VICTORY_DROP_COLUMNS}/Slot{i % VICTORY_DROP_COLUMNS}": Piece(
+                "art",
+                None,
+                art="slot_inventory",
+                instance=f"dropSlot{i}",
+                rendered_at=30,
+            )
+            for i in range(VICTORY_DROPS)
+        },
+        "NoItemsLabel": Piece("text", 1110, character=3003),
+        "ClickHintLabel": Piece("text", 1105, character=3007),
+        "MoneyLabel": Piece("text", 1101, character=3011),
+        "MoneyValue": Piece("text", 1102, character=3010),
+        "ExpLabel": Piece("text", 1103, character=3009),
+        "ExpValue": Piece("text", 1104, character=3008),
+        "ProceedHintLabel": Piece("text", 1106, character=3006),
+        "ProceedLabel": Piece("text", 23, character=3014),
+        "ProceedButton": Piece("hit", 1108, character=3004),
+        **{
+            f"RightColumn/{node}": piece
+            for node, piece in SCENES[
+                "res://scenes/ui/window/right_column.tscn"
+            ].pieces.items()
+            if not node.startswith("SellSlot")
+        },
+    },
+    port_only=(
+        "WindowShell/CloseArt",
+        "WindowShell/CloseButton",
+        *(
+            f"Drops/Row{i // VICTORY_DROP_COLUMNS}/Slot{i % VICTORY_DROP_COLUMNS}/{node}"
+            for i in range(VICTORY_DROPS)
+            for node in ("ItemIcon", "Highlight")
+        ),
+        *(
+            f"RightColumn/{node}"
+            for node in SCENES["res://scenes/ui/window/right_column.tscn"].port_only
+        ),
+    ),
+    # Each of the frame's 36 inventory slots (2986) holds the item sheet 2064,
+    # which the game script sets to the item. ffdec draws a white square there,
+    # so the compare tool takes the sheet out and scores the empty slot.
+    compare_strip=(2064,),
+)
 
 
 def main():

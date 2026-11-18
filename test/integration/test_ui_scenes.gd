@@ -607,7 +607,7 @@ func test_new_game_keeps_the_name_as_typed_even_untouched_or_empty():
 func test_the_game_calls_the_player_sonny_whatever_the_save_is_named():
 	var save: PlayerSave = PlayerSave.new_game("< Enter Name Here >", 0)
 	GameData.current_save = save
-	var victory = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
+	var victory = add_child_autofree(load("res://scenes/ui/menu/victory_window.tscn").instantiate())
 	var settlement := BattleSettlement.new()
 	settlement.fighters[0] = BattleSettlement.FighterExperience.new()
 	victory.setup(save, settlement)
@@ -1107,7 +1107,7 @@ func test_the_victory_rows_show_the_fighters_and_hide_the_rest_in_place():
 	veradux.experience_before = 55.0
 	veradux.level_before = 4
 	settlement.fighters[1] = veradux
-	var victory = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
+	var victory = add_child_autofree(load("res://scenes/ui/menu/victory_window.tscn").instantiate())
 	victory.setup(save, settlement)
 	await wait_process_frames(2)
 	var player_row: VictoryExpRow = victory.get_node("ExpRows/PlayerSlot/Row")
@@ -1123,7 +1123,7 @@ func test_the_victory_rows_show_the_fighters_and_hide_the_rest_in_place():
 
 	settlement.fighting_party.assign([1, 2])
 	settlement.fighters[2] = BattleSettlement.FighterExperience.new()
-	var both = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
+	var both = add_child_autofree(load("res://scenes/ui/menu/victory_window.tscn").instantiate())
 	both.setup(save, settlement)
 	await wait_process_frames(2)
 	assert_true(both.get_node("ExpRows/CompanionSlot1/Row").visible, "the second companion fought")

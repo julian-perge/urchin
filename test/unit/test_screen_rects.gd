@@ -612,7 +612,7 @@ func test_control_a_left_aligned_label_20_px_too_wide_passes() -> void:
 	assert_eq(_scene_problems(root, _record()["scenes"][RIGHT_COLUMN_SCENE]), [] as Array[String])
 
 
-const VICTORY_SCENE: String = "res://scenes/battle/victory_screen.tscn"
+const VICTORY_SCENE: String = "res://scenes/ui/menu/victory_window.tscn"
 
 
 # The Face's rect comes from where extract_faces cuts its portraits in clip 2978
@@ -625,6 +625,18 @@ func test_control_a_victory_row_face_moved_20_px_fails() -> void:
 	var found: Array[String] = _scene_problems(root, _record()["scenes"][VICTORY_SCENE])
 	assert_eq(found.size(), 2, str(found))
 	assert_string_contains(found[0] if found else "", "PlayerSlot/Row/Face: top left")
+
+
+# A drop slot 20 px wider moves the slots after it in its row, so the rect test
+# names the row's slots.
+func test_control_a_victory_drop_slot_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(VICTORY_SCENE)
+	(root.get_node("Drops/Row1/Slot0") as Control).custom_minimum_size.x += 20.0
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][VICTORY_SCENE])
+	assert_eq(found.size(), 9, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "Drops/Row1/Slot")
 
 
 func test_the_victory_row_face_is_not_port_only() -> void:

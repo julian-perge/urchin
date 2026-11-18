@@ -193,13 +193,13 @@ func _right_column_rect() -> Array:
 
 
 # The win frame shows the right column with no sell slot.
-func test_the_victory_screen_instances_the_right_column_with_the_sell_slot_hidden():
-	var victory: Control = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
+func test_the_victory_window_instances_the_right_column_with_the_sell_slot_hidden():
+	var victory: Control = add_child_autofree(load("res://scenes/ui/menu/victory_window.tscn").instantiate())
 	await wait_process_frames(2)
 	var columns: Array[Node] = victory.find_children("*", "RightColumn", true, false)
 	assert_eq(columns.size(), 1)
 	assert_eq(victory.right_column, columns[0])
-	assert_eq(victory.right_column.owner, victory, "the column is a node of victory_screen.tscn")
+	assert_eq(victory.right_column.owner, victory, "the column is a node of victory_window.tscn")
 	assert_false(victory.right_column.sell_button.visible)
 	var rect: Array = _right_column_rect()
 	assert_almost_eq(victory.right_column.global_position, Vector2(rect[0], rect[1]), Vector2(0.5, 0.5))

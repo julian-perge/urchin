@@ -7,11 +7,11 @@ urchin is a Godot port of the Flash game Sonny 2. These are the terms its code, 
 ### UI
 
 **Screen**:
-A full-window state the player navigates to, such as Title, Hub, Battle, Victory, Game over or Ending.
+A full-window state the player navigates to, such as Title, Hub, Battle, Game over or Ending.
 _Avoid_: Scene, page, menu
 
 **Window**:
-A set of Panels opened over the Hub, such as Inventory, Store or Abilities.
+A set of Panels opened over the Hub, such as Inventory, Store, Abilities or Victory.
 _Avoid_: Screen, popup, dialog
 
 **Panel**:
@@ -145,7 +145,7 @@ The damage, healing and Focus change a unit's buffs deal it once after each of i
 _Avoid_: DoT, HoT, ticker
 
 **Settlement**:
-Everything a finished battle does to the save and the achievements, applied in one call by `BattleSettlement.settle`, and the summary the Victory and Game over screens show.
+Everything a finished battle does to the save and the achievements, applied in one call by `BattleSettlement.settle`, and the summary the Victory window and the Game over screen show.
 _Avoid_: Rewards, which are only the money and XP a win pays
 
 **Story fight**:
@@ -157,7 +157,7 @@ A fight the story orb starts once the player has beaten the zone's boss. It has 
 _Avoid_: Rematch
 
 **Tutorial**:
-The fight a new game opens on when the Tutorial option on the new-game screen is on, which it is by default: battle 2, the Metabii fight with Louis the Blind as a Guest. It is not a Story fight. CS_INTRO plays before it and the two Tutorial moves are on the player's bar for it. Losing Sonny loses the game. A win pays no money, XP, drops or achievements and opens no Victory screen. It puts the class's starting moves back on the bar, leaves Quest progress at 0 and goes straight on to CS_INTRO2 and battle 100.
+The fight a new game opens on when the Tutorial option on the new-game screen is on, which it is by default: battle 2, the Metabii fight with Louis the Blind as a Guest. It is not a Story fight. CS_INTRO plays before it and the two Tutorial moves are on the player's bar for it. Losing Sonny loses the game. A win pays no money, XP, drops or achievements and opens no Victory window. It puts the class's starting moves back on the bar, leaves Quest progress at 0 and goes straight on to CS_INTRO2 and battle 100.
 _Avoid_: Training fight, which a training orb starts
 
 ### Cutscenes

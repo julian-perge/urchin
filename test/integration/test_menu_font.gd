@@ -193,17 +193,18 @@ func test_hub_panel_text_is_bold():
 # only font 295 lines are vb1 and vb7 (DefineSprite_3142/frame_9/DoAction.as:45
 # and 50).
 func test_victory_text_is_bold_except_the_two_font_295_lines():
-	var victory = add_child_autofree(load("res://scenes/battle/victory_screen.tscn").instantiate())
+	var victory = add_child_autofree(load("res://scenes/ui/menu/victory_window.tscn").instantiate())
 	var settlement := BattleSettlement.new()
 	settlement.fighters[0] = BattleSettlement.FighterExperience.new()
 	victory.setup(GameData.current_save, settlement)
 	_assert_fonts(victory, {
-		"ExperienceLabel": [2996, 65],
+		"Heading": [2996, 65],
 		"ClickHintLabel": [3007, 65],
 		"MoneyLabel": [3011, 65],
 		"MoneyValue": [3010, 65],
 		"ExpLabel": [3009, 65],
-		"ProceedButton": [3014, 65],
+		"ProceedLabel": [3014, 65],
+		"NoItemsLabel": [3003, 65],
 		"DropsLabel": [3005, 295],
 		"ProceedHintLabel": [3006, 295],
 	})
