@@ -55,6 +55,7 @@ var _doll_offset: Vector2 = Vector2.ZERO
 @onready var _overlay: UnitOverlay = $Overlay
 @onready var _flash: ResultFlash = $ResultFlash
 @onready var _shield_clip: ShieldClip = $ShieldClip
+@onready var _speech_bubble: SpeechBubble = $SpeechBubble
 
 
 # Call once, after the presenter is in the tree. It leaves the fighter drawn.
@@ -75,9 +76,11 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	_doll.sound_cue.connect(effect_cue.emit)
 	# The Shield clip is the rig's own, so the MODEL5 quirk below leaves it alone.
 	_shield_clip.position = home
+	_speech_bubble.position = home
 	if unit.team_side == CombatUnit.Team.TWO:
 		_doll.scale.x = -1  # mirrored, facing left
 		_shield_clip.scale.x = -1
+		_speech_bubble.scale.x = -1
 	# dressChar's MODEL5 quirk: 0.8x scale, 10px lower.
 	if not unit.model.is_empty() and str(unit.model[0]) == "MODEL5":
 		_doll.scale *= 0.8
@@ -168,6 +171,18 @@ func show_result(result: MoveResult, move: Ability) -> void:
 # a shield soaks whole, so it takes no Move result.
 func play_shield_clip() -> void:
 	_shield_clip.play()
+
+
+# Plays the Speech bubble once over this fighter's head, as the original's
+# BATTLESCREEN["player" + n].speech.play() does for the speaker of a line.
+func play_speech_bubble() -> void:
+	_speech_bubble.play()
+
+
+# Whether the Speech bubble is playing right now.
+var speech_bubble_playing: bool:
+	get:
+		return _speech_bubble.is_playing()
 
 
 # Shows one Buff tick at the moment it comes due on this fighter. buffTicker

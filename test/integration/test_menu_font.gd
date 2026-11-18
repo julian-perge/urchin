@@ -270,7 +270,7 @@ func test_battle_text_keeps_the_original_fonts():
 	var row = add_child_autofree(load("res://scenes/battle/stance_row.tscn").instantiate())
 	_assert_fonts(row, {"NameLabel": [3308, 3307], "InactiveLabel": [3310, 3307]})
 	var battle = add_child_autofree(load("res://scenes/battle_scene.tscn").instantiate())
-	_assert_fonts(battle, {"UI/SpeechLabel": [3361, 295], "CombatTextBanner/Label": [2849, 65]})
+	_assert_fonts(battle, {"UI/SpeechBox/Inner/LineLabel": [3361, 295], "UI/SpeechBox/Inner/SpeakerLabel": [3360, 65], "CombatTextBanner/Label": [2849, 65]})
 
 
 # The class names are edit texts 2739, 2747 and 2756 at 19 px. The member

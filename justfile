@@ -234,6 +234,16 @@ extract-doll-art *args: (require "ffdec" "java")
 extract-faces *args: (require "ffdec" "java")
     uv run extract_faces "$@"
 
+[doc('Run extract_speech_box, which reads the SWF through ffdec')]
+[group('extract')]
+extract-speech-box *args: (require "ffdec" "java")
+    uv run extract_speech_box "$@"
+
+[doc('Run extract_speech_bubble, which reads the SWF through ffdec')]
+[group('extract')]
+extract-speech-bubble *args: (require "ffdec" "java")
+    uv run extract_speech_bubble "$@"
+
 [doc('Run extract_floating_numbers, which reads the SWF through ffdec')]
 [group('extract')]
 extract-floating-numbers *args: (require "ffdec" "java")

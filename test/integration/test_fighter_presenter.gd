@@ -588,7 +588,8 @@ func test_a_dead_units_slot_shows_nothing_for_the_rest_of_the_battle():
 	_step_frames(90)
 	_presenter.snap_to_unit()
 	var drawn: Array = _presenter.get_children().filter(func(child):
-		if child is ShieldClip and not child.is_playing():
+		# An idle clip rests on its frame 1, which shows nothing.
+		if (child is ShieldClip or child is SpeechBubble) and not child.is_playing():
 			return false
 		return child is CanvasItem and child.is_visible_in_tree()
 	)

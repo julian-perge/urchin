@@ -37,6 +37,17 @@ const MUSIC_ROTATION: Array[Variant] = [
 enum MusicMode { NONE = 0, MENU = 1, BATTLE = 2 }
 
 var sound_enabled: bool = true
+# How loud the music plays, as a percentage of full volume. The battle's Speech
+# box sets it to 100 - _alpha / 1.2 while it fades, which drops the music to about
+# 17 percent under a line (frame_217/PlaceObject2_3367_634 enterFrame, line 2).
+# It does not change a crossfade that is still running.
+var music_level: float = 100.0:
+	set(value):
+		music_level = value
+		if _fade_tween != null and _fade_tween.is_running():
+			return
+		var player: AudioStreamPlayer = _music_players[_active_music]
+		player.volume_db = FULL_VOLUME_DB + linear_to_db(maxf(value, 0.001) / 100.0)
 
 var _effect_players: Array[AudioStreamPlayer] = []
 var _effect_counter: int = 0

@@ -208,11 +208,12 @@ func test_space_takes_a_long_line_down_at_once():
 	show_line.call()
 
 	await wait_process_frames(2)
-	assert_eq(scene.speech_label.text.left(20), "Twisted Experiment: ", "the 15 second line is up")
+	assert_eq(scene.speech_box.speaker_label.text, "Twisted Experiment", "the 15 second line is up")
+	assert_true(scene.speech_box.showing)
 	scene._input(_space_press())
 	await wait_process_frames(2)
 	assert_true(done[0], "Space took it down within two frames")
-	assert_eq(scene.speech_label.text, "", "and the speech box is empty")
+	assert_false(scene.speech_box.showing, "and the speech box has started to fade out")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -300,6 +301,19 @@ func test_the_box_shows_the_speakers_name_face_and_line():
 	assert_eq(scene.speech_box.speaker_label.text, "Sonny")
 	assert_eq(scene.speech_box.line_label.text, "I can take him.")
 	assert_eq(scene.speech_box.face_name, "Sonny")
+	await _end_test_speech(scene)
+
+
+# The face clip, DefineSprite 2978, has no frame for 11 of the battle speakers,
+# such as Metabii. The original leaves the last face up for them, and the port
+# shows an empty face well instead.
+func test_a_speaker_with_no_face_frame_shows_an_empty_face_well():
+	var scene = _speech_scene()
+	scene._play_speech(_line_from(scene, 1, "Sonny", "Hello", 5.0))
+	scene._play_speech(_line_from(scene, 2, "Metabii", "Hello", 5.0))
+	assert_eq(scene.speech_box.speaker_label.text, "Metabii", "the box names the new speaker")
+	assert_eq(scene.speech_box.face_name, "", "and shows no face")
+	assert_null(scene.speech_box.face.texture)
 	await _end_test_speech(scene)
 
 
@@ -392,6 +406,13 @@ func _speech_box_lines(battle_id: int, difficulty: CombatUnit.Difficulty) -> Arr
 	return run["pauses"].filter(func(pause): return pause[0] != "")
 
 
+# What the speech box shows as "speaker: line", or "" while no line is up.
+func _line_on_screen_text(scene: Node) -> String:
+	if not scene.speech_box.showing:
+		return ""
+	return "%s: %s" % [scene.speech_box.speaker_label.text, scene.speech_box.line_label.text]
+
+
 # Starts a battle in a scene whose _pause only records each wait it is asked
 # for: the speech box's text, the seconds, and whether the player could act
 # meanwhile. during_pause, when given, runs inside each wait with the scene and
@@ -408,7 +429,7 @@ func _pauses_to_first_decision(battle_id: int, difficulty: CombatUnit.Difficulty
 	var scene = partial_double(BattleSceneRes).instantiate()
 	var pauses: Array = []
 	stub(scene, "_pause").to_call(func(seconds: float):
-		var pause: Array = [scene.speech_label.text, seconds, scene.decision_open]
+		var pause: Array = [_line_on_screen_text(scene), seconds, scene.decision_open]
 		pauses.append(pause)
 		if during_pause.is_valid():
 			during_pause.call(scene, pause)

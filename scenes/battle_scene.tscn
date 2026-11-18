@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_scene.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle/battle_screen_clip.gd" id="8_screen"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/battle/combat_log_panel.tscn" id="5_combatlog"]
 [ext_resource type="PackedScene" path="res://scenes/battle/radial_menu.tscn" id="6_radial"]
 [ext_resource type="PackedScene" path="res://scenes/battle/combat_text_banner.tscn" id="7_banner"]
+[ext_resource type="PackedScene" path="res://scenes/battle/speech_box.tscn" id="12_speechbox"]
 [ext_resource type="Script" path="res://scripts/battle/floating_number_layer.gd" id="8_floatingnumbers"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/top_panel.png" id="9_toppanel"]
 [ext_resource type="PackedScene" path="res://scenes/battle/top_status_bar.tscn" id="10_topbar"]
@@ -257,14 +258,9 @@ offset_right = 480.0
 offset_bottom = 36.0
 horizontal_alignment = 1
 
-[node name="SpeechLabel" type="Label" parent="UI"]
-offset_left = 80.0
-offset_top = 430.0
-offset_right = 720.0
-offset_bottom = 466.0
-theme_type_variation = &"RegularLabel"
-horizontal_alignment = 1
-autowrap_mode = 2
+[node name="SpeechBox" parent="UI" instance=ExtResource("12_speechbox")]
+layout_mode = 3
+anchors_preset = 0
 
 [node name="Fade" type="CanvasLayer" parent="."]
 layer = 2
