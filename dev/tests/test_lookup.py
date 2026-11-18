@@ -441,7 +441,7 @@ def test_a_signal_name_prints_its_declaration_connects_and_emits(
     assert "signal proceed_pressed" in out.splitlines()
     declared = section(out, "declared")
     assert any(
-        row.startswith("  scripts/battle/victory_screen.gd:13  ") for row in declared
+        row.startswith("  scripts/ui/menu/victory_window.gd:14  ") for row in declared
     )
     connects = section(out, "connects")
     assert any(
@@ -451,7 +451,7 @@ def test_a_signal_name_prints_its_declaration_connects_and_emits(
     )
     emits = section(out, "emits")
     assert any(
-        row.startswith("  scripts/battle/victory_screen.gd:46  ") for row in emits
+        row.startswith("  scripts/ui/menu/victory_window.gd:131  ") for row in emits
     )
 
 

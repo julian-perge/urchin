@@ -70,14 +70,14 @@ func test_full_battle_scene_run():
 	assert_has([0, 1, 2], scene.runner.win_condition)
 	gut.p("scene battle outcome=%d turns=%d" % [scene.runner.win_condition, scene.runner.turn_count])
 	if scene.runner.win_condition == BattleRunner.Outcome.WIN:
-		var victory = scene.get_node_or_null("VictoryScreen")
+		var victory = scene.get_node_or_null("VictoryWindow")
 		assert_not_null(victory, "victory screen shown on win")
 		# Drops are click-to-keep now - claiming one lands in the inventory.
 		if victory != null and not victory._drop_slots.is_empty():
 			var drop: ItemSlot = victory._drop_slots[0]
 			if drop.item != null:
 				var item_id = drop.item.id
-				victory._on_drop_clicked(drop, save)
+				victory._on_drop_clicked(drop)
 				assert_has(save.item_array, item_id, "claimed drop landed in the inventory")
 	else:
 		assert_not_null(scene.get_node_or_null("UI/GameOverScreen"), "game over screen shown on loss/draw")
@@ -570,7 +570,7 @@ func test_proceeding_into_a_cutscene_stops_sound_effects_too():
 
 	AudioManagerAuto.play_effect(scene.units[2].voice_die)
 	assert_true(_an_effect_is_playing(), "Felicity's death cry is playing when Proceed is pressed")
-	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	scene.get_node("VictoryWindow").proceed_pressed.emit()
 	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
 	assert_not_null(cutscene, "the cutscene started")
 	if cutscene != null:
@@ -612,7 +612,7 @@ func test_a_cutscene_starts_the_menu_rotation_over():
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
 	AudioManagerAuto._rotation_counter = 2
-	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	scene.get_node("VictoryWindow").proceed_pressed.emit()
 	scene.get_node("CutscenePlayer").video.finished.emit()
 	assert_called(scene, "_on_continue_pressed")
 	assert_eq(_hub_menu_track(), "_music_menu1", "the hub comes back on the first menu track")
@@ -737,7 +737,7 @@ func test_proceeding_after_a_boss_replay_win_opens_the_zone_map():
 	scene.start_battle({"battle_id": 109, "is_story_progress": false, "is_boss": true, "train_cap": 9})
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
-	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	scene.get_node("VictoryWindow").proceed_pressed.emit()
 
 	assert_null(scene.get_node_or_null("CutscenePlayer"), "no cutscene plays")
 	assert_called(scene, "_on_continue_pressed")
@@ -768,7 +768,7 @@ func test_proceeding_after_the_first_212_win_opens_the_zone_map():
 	scene.start_battle({"battle_id": 212, "is_story_progress": true, "is_boss": true, "train_cap": 9})
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
-	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	scene.get_node("VictoryWindow").proceed_pressed.emit()
 
 	assert_eq(save.quest_progress[2], 13, "the win moved the zone on")
 	assert_null(scene.get_node_or_null("CutscenePlayer"), "no cutscene plays")
@@ -797,7 +797,7 @@ func test_proceeding_after_a_non_boss_win_leaves_the_zone_map_shut():
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
-	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	scene.get_node("VictoryWindow").proceed_pressed.emit()
 
 	assert_called(scene, "_on_continue_pressed")
 	assert_false(ZoneManager.open_zone_map_on_load, "the zone map stays shut")
@@ -831,7 +831,7 @@ func test_proceeding_after_a_win_that_levels_the_player_up_opens_the_abilities_w
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
 	assert_eq(save.level, 2, "the win filled the XP bar")
-	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	scene.get_node("VictoryWindow").proceed_pressed.emit()
 
 	assert_null(scene.get_node_or_null("CutscenePlayer"), "no cutscene plays")
 	assert_called(scene, "_on_continue_pressed")
@@ -863,7 +863,7 @@ func test_proceeding_after_a_win_with_no_level_up_leaves_the_abilities_window_sh
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
 	assert_eq(save.level, 1, "the win left the XP bar short of full")
-	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	scene.get_node("VictoryWindow").proceed_pressed.emit()
 
 	assert_called(scene, "_on_continue_pressed")
 	assert_false(ZoneManager.open_abilities_on_load, "the Abilities window stays shut")
@@ -897,7 +897,7 @@ func test_proceeding_after_a_boss_win_that_levels_the_player_up_opens_only_the_z
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
 	assert_gt(save.level, 1, "the win filled the XP bar")
-	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	scene.get_node("VictoryWindow").proceed_pressed.emit()
 
 	assert_called(scene, "_on_continue_pressed")
 	assert_true(ZoneManager.open_zone_map_on_load, "Proceed opens the zone map")
@@ -933,7 +933,7 @@ func test_proceeding_after_a_level_up_win_that_queues_a_cutscene_leaves_the_abil
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
 	assert_gt(save.level, 1, "the win filled the XP bar")
-	scene.get_node("VictoryScreen").proceed_pressed.emit()
+	scene.get_node("VictoryWindow").proceed_pressed.emit()
 	assert_not_null(scene.get_node_or_null("CutscenePlayer"), "CS_CUT3 plays")
 	scene.get_node("CutscenePlayer").video.finished.emit()
 
@@ -1015,7 +1015,7 @@ func test_winning_the_tutorial_opens_no_victory_screen():
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
 
-	assert_null(scene.get_node_or_null("VictoryScreen"), "no victory screen opens")
+	assert_null(scene.get_node_or_null("VictoryWindow"), "no victory screen opens")
 
 	ZoneManager.pending_battle = {}
 	GameData.current_save = null
@@ -1077,7 +1077,10 @@ func test_enter_and_space_after_clicking_proceed_press_nothing_under_the_cutscen
 	scene.start_battle({"battle_id": 513, "is_story_progress": true, "is_boss": true, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
-	var proceed: Button = scene.get_node("VictoryScreen/ProceedButton")
+	var player_row: VictoryExpRow = scene.get_node("VictoryWindow/ExpRows/PlayerSlot/Row")
+	while not player_row.is_finished():
+		player_row.step()
+	var proceed: Button = scene.get_node("VictoryWindow/ProceedButton")
 	_click(viewport, proceed)
 	assert_eq(get_call_count(scene, "_on_victory_proceed"), 1, "the click pressed Proceed")
 	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
@@ -1122,7 +1125,7 @@ func _press(viewport: Viewport, key: Key) -> void:
 # Presses Proceed on the victory screen and has CS_CUT5 report that it ended,
 # which with animation_speed 0 runs the rest of _on_victory_proceed() at once.
 func _proceed_and_play_cs_cut5_to_its_end(scene: Control) -> void:
-	var victory: VictoryScreen = scene.get_node_or_null("VictoryScreen")
+	var victory: VictoryWindow = scene.get_node_or_null("VictoryWindow")
 	assert_not_null(victory, "victory screen shown on win")
 	if victory == null:
 		return
@@ -1184,14 +1187,14 @@ func test_the_victory_screen_shows_the_battles_settlement():
 	scene.start_battle({"battle_id": 1000, "is_story_progress": false, "is_boss": false, "train_cap": 9})
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
-	var victory: VictoryScreen = scene.get_node_or_null("VictoryScreen")
+	var victory: VictoryWindow = scene.get_node_or_null("VictoryWindow")
 	assert_not_null(victory, "the win shows the victory screen")
 	if victory != null:
 		assert_eq(victory.get_node("MoneyValue").text, String.chr(0x20ac) + "7", "with the money the win paid")
 		assert_eq(victory.get_node("ExpValue").text, "90%", "the XP Sonny earned")
-		var drop_slots: Array = victory.get_children().filter(func(child): return child is ItemSlot)
+		var drop_slots: Array = victory._drop_slots.filter(func(slot): return slot.item != null)
 		var rare_pool: Array = [300, 301, 302, 303, 304, 500]
-		assert_eq(drop_slots.map(func(slot): return slot.item != null and slot.item.id in rare_pool), [true], "the drop")
+		assert_eq(drop_slots.map(func(slot): return slot.item.id in rare_pool), [true], "the drop")
 		var rows: Array = ["PlayerSlot", "CompanionSlot0", "CompanionSlot1"].map(
 			func(slot): return victory.get_node("ExpRows/%s/Row" % slot))
 		var shown: Array = rows.filter(func(row): return row.visible)
@@ -1242,7 +1245,7 @@ func test_the_victory_screen_shows_no_turn_label():
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	scene._on_pass_pressed()
 	await wait_for_signal(scene.battle_finished, 5)
-	assert_not_null(scene.get_node_or_null("VictoryScreen"), "the win shows the victory screen")
+	assert_not_null(scene.get_node_or_null("VictoryWindow"), "the win shows the victory screen")
 	assert_false(scene.turn_label.is_visible_in_tree(), "with no turn label over it")
 
 	GameData.current_save = null
@@ -1272,7 +1275,7 @@ func _finish_battle_100_with(outcome: BattleRunner.Outcome) -> Control:
 # (frame_46/DoAction.as:1, frame_1/DoAction.as:234). The reset also runs
 # stopAllSounds() (frame_41/DoAction_2.as:13).
 func _assert_game_over_screen(scene: Control) -> void:
-	assert_null(scene.get_node_or_null("VictoryScreen"), "no victory screen")
+	assert_null(scene.get_node_or_null("VictoryWindow"), "no victory screen")
 	var texts: Array = scene.find_children("*", "Label", true, false).map(func(label): return label.text)
 	assert_false("Defeat..." in texts or "Draw." in texts, "the port's old result text is gone")
 	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "the music stops")
@@ -1363,7 +1366,7 @@ func test_a_win_fades_to_black_before_the_victory_screen():
 	var euro: float = save.euro
 	var scene = _decide_battle_100(BattleRunner.Outcome.WIN)
 	assert_eq(save.euro, euro, "the win pays nothing when the fade starts")
-	_assert_fades_to_black_before(scene, "VictoryScreen")
+	_assert_fades_to_black_before(scene, "VictoryWindow")
 	assert_gt(save.euro, euro, "and pays once the victory screen is up")
 	GameData.current_save = null
 
@@ -3794,7 +3797,7 @@ func test_a_click_after_the_battle_has_ended_leaves_the_banner_down():
 	var scene = _battle_100_in_its_own_viewport("CannotMoveYetAfterTheEnd")
 	scene.runner.win_condition = BattleRunner.Outcome.WIN
 	await wait_for_signal(scene.battle_finished, 5)
-	var victory: Control = scene.get_node("VictoryScreen")
+	var victory: Control = scene.get_node("VictoryWindow")
 	_click(scene.get_viewport(), victory.get_node("LeftPanel"))
 	assert_false(scene.combat_text_banner.is_up(), "the banner stays down")
 
