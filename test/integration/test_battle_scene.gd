@@ -222,9 +222,9 @@ func test_space_takes_a_long_line_down_at_once():
 # The speech box is combatScript, DefineSprite 3367. It sits at x 473.3 for a
 # speaker on side 2 and x 21.8 for anyone else, at y 460.7 (frame_217/
 # PlaceObject2_3389_480 enterFrame, lines 819-828).
-const SPEECH_BOX_Y: float = 460.7
-const SPEECH_BOX_X_SIDE_TWO: float = 473.3
-const SPEECH_BOX_X_OTHERS: float = 21.8
+# The numbers come from speech_box.json, which extract_speech_box reads out of
+# those scripts.
+var _box_numbers: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ui/battle/speech_box.json"))
 
 
 # Starts battle 105 with its battle loop stubbed out, and with the scene's own
@@ -272,24 +272,24 @@ func _end_test_speech(scene: Node) -> void:
 func test_a_side_two_speakers_box_sits_at_the_right():
 	var scene = _speech_scene()
 	scene._play_speech(_line_from(scene, 2, "Twisted Experiment", "Hello", 5.0))
-	assert_almost_eq(scene.speech_box.position.x, SPEECH_BOX_X_SIDE_TWO, 0.05)
-	assert_almost_eq(scene.speech_box.position.y, SPEECH_BOX_Y, 0.05)
+	assert_almost_eq(scene.speech_box.position.x, _box_numbers["x_side_two"], 0.05)
+	assert_almost_eq(scene.speech_box.position.y, _box_numbers["y"], 0.05)
 	await _end_test_speech(scene)
 
 
 func test_a_side_one_speakers_box_sits_at_the_left():
 	var scene = _speech_scene()
 	scene._play_speech(_line_from(scene, 1, "Sonny", "Hello", 5.0))
-	assert_almost_eq(scene.speech_box.position.x, SPEECH_BOX_X_OTHERS, 0.05)
-	assert_almost_eq(scene.speech_box.position.y, SPEECH_BOX_Y, 0.05)
+	assert_almost_eq(scene.speech_box.position.x, _box_numbers["x_others"], 0.05)
+	assert_almost_eq(scene.speech_box.position.y, _box_numbers["y"], 0.05)
 	await _end_test_speech(scene)
 
 
 func test_the_narrators_box_sits_at_the_left():
 	var scene = _speech_scene()
 	scene._play_speech(_line_from(scene, 0, BattleRunner.NARRATOR_NAME, "Hello", 5.0))
-	assert_almost_eq(scene.speech_box.position.x, SPEECH_BOX_X_OTHERS, 0.05)
-	assert_almost_eq(scene.speech_box.position.y, SPEECH_BOX_Y, 0.05)
+	assert_almost_eq(scene.speech_box.position.x, _box_numbers["x_others"], 0.05)
+	assert_almost_eq(scene.speech_box.position.y, _box_numbers["y"], 0.05)
 	await _end_test_speech(scene)
 
 
@@ -358,7 +358,7 @@ func test_the_music_drops_to_17_percent_while_the_box_is_up():
 		done[0] = true
 	show_line.call()
 	_step_frames(scene, 25)
-	assert_almost_eq(AudioManagerAuto.music_level, 16.7, 0.1, "the music sits at about 17 percent")
+	assert_almost_eq(AudioManagerAuto.music_level, 100.0 - 100.0 / _box_numbers["music_divisor"], 0.001, "the music sits at about 17 percent")
 	_step_frames(scene, 40)
 	assert_almost_eq(AudioManagerAuto.music_level, 100.0, 0.001, "and comes back after the box fades out")
 	await _end_test_speech(scene)

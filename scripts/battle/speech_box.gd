@@ -28,22 +28,20 @@ signal alpha_changed(alpha: float)
 const LAYOUT_PATH: String = "res://assets/ui/battle/speech_box.json"
 const PORTRAIT_DIR: String = "res://assets/ui/menu/portraits/"
 const PIXEL_FONT_PATH: String = "res://assets/fonts/3307_copy 10_65.ttf"
-# The original's x for a speaker on side 2 and for everyone else, and its y for
-# both (conductor lines 819-828).
-const X_SIDE_TWO: float = 473.3
-const X_OTHERS: float = 21.8
-const Y: float = 460.7
-# How much _alpha moves each frame, on the 0 to 100 scale.
-const ALPHA_STEP: float = 5.0
-# The skip hint's MENU entry (DefineSprite_3358/frame_1/DoAction.as:1).
-const HINT_MENU_INDEX: int = 53
-
 # What the box shows: the face clip's frame label ("" for an empty face well),
 # and whether a line is up. A line that has gone down leaves its text
 # in the fields, as the original's box does.
 var face_name: String = ""
 var showing: bool = false
 var alpha: float = 0.0
+# The numbers of the original's scripts, which speech_box.json carries: the box's
+# x for a speaker on side 2 and for anyone else, its y, how far _alpha moves each
+# frame, and what the music divides _alpha by (see battle_scene.gd).
+var x_side_two: float = 0.0
+var x_others: float = 0.0
+var y: float = 0.0
+var alpha_step: float = 0.0
+var music_divisor: float = 1.0
 
 @onready var speaker_label: Label = $Inner/SpeakerLabel
 @onready var line_label: Label = $Inner/LineLabel
@@ -58,6 +56,11 @@ var _hint_frames_due: float = 0.0
 
 func _ready() -> void:
 	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(LAYOUT_PATH))
+	x_side_two = layout["x_side_two"]
+	x_others = layout["x_others"]
+	y = layout["y"]
+	alpha_step = layout["alpha_step"]
+	music_divisor = layout["music_divisor"]
 	var frame: Dictionary = layout["frame"]
 	var art: TextureRect = $Frame
 	art.position = Vector2(frame["x"], frame["y"])
@@ -71,7 +74,7 @@ func _ready() -> void:
 	_place_text(hint_label, hint["text"])
 	_hint_base = Color(hint["text"]["color"])
 	_hint_colors = hint["colors"]
-	hint_label.text = Strings.menu(HINT_MENU_INDEX)
+	hint_label.text = Strings.menu(int(layout["hint_menu_index"]))
 	var spaced := FontVariation.new()
 	spaced.base_font = load(PIXEL_FONT_PATH)
 	spaced.spacing_glyph = int(hint["letter_spacing"])
@@ -84,7 +87,7 @@ func _ready() -> void:
 # Sets the box on a line: where it sits, what it says and whose face it shows,
 # and starts it fading in. `side_two` is the speaker's teamSide == 2.
 func show_line(speaker_name: String, say: String, side_two: bool) -> void:
-	position = Vector2(X_SIDE_TWO if side_two else X_OTHERS, Y)
+	position = Vector2(x_side_two if side_two else x_others, y)
 	speaker_label.text = speaker_name
 	line_label.text = say
 	_show_face(speaker_name)
@@ -106,9 +109,9 @@ func advance(frames: float) -> void:
 		_hint_frame = (_hint_frame + 1) % _hint_colors.size()
 	var before: float = alpha
 	if showing:
-		alpha = minf(alpha + ALPHA_STEP * frames, 100.0)
+		alpha = minf(alpha + alpha_step * frames, 100.0)
 	else:
-		alpha = maxf(alpha - ALPHA_STEP * frames, 0.0)
+		alpha = maxf(alpha - alpha_step * frames, 0.0)
 	_show_frame()
 	if alpha != before:
 		alpha_changed.emit(alpha)

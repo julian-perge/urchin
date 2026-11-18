@@ -40,7 +40,7 @@ import json
 import re
 import sys
 
-from urchin_dev import REPO_ROOT, WEB_SWF, png
+from urchin_dev import ACTION_SCRIPT, REPO_ROOT, WEB_SWF, png
 from urchin_dev.swf import label_layout, render, strip, timeline
 from urchin_dev.swf.extract.battle_screen import (
     FRAME_LABEL,
@@ -96,6 +96,51 @@ def hint_colors(index) -> list[dict]:
             }
         )
     return out
+
+
+CONDUCTOR = (
+    ACTION_SCRIPT
+    / "frame_217"
+    / "PlaceObject2_3389_480"
+    / "CLIPACTIONRECORD onClipEvent(enterFrame).as"
+)
+BOX_SCRIPT = (
+    ACTION_SCRIPT
+    / "frame_217"
+    / "PlaceObject2_3367_634"
+    / "CLIPACTIONRECORD onClipEvent(enterFrame).as"
+)
+HINT_SCRIPT = ACTION_SCRIPT / "DefineSprite_3358" / "frame_1" / "DoAction.as"
+
+
+def one(pattern: str, text: str, where: str) -> str:
+    """-> the one match of `pattern` in `text`. Raises unless there is one."""
+    found = re.findall(pattern, text)
+    if len(found) != 1:
+        raise RuntimeError(f"{where}: {len(found)} matches of {pattern}, want 1")
+    return found[0]
+
+
+def script_numbers() -> dict:
+    """-> the numbers the original's scripts hold for the box: where the
+    conductor puts it for a speaker on side 2 and for anyone else, how far
+    _alpha moves each frame, what _alpha is divided by for the music, and the
+    MENU entry of the hint. Raises unless each is found once."""
+    conductor = CONDUCTOR.read_text()
+    xs = re.findall(r"_root\.combatScript\._x = ([0-9.]+);", conductor)
+    ys = set(re.findall(r"_root\.combatScript\._y = ([0-9.]+);", conductor))
+    if len(xs) != 2 or len(ys) != 1:
+        raise RuntimeError(f"{CONDUCTOR.name}: x {xs} and y {ys}, want 2 and 1")
+    box = BOX_SCRIPT.read_text()
+    hint = HINT_SCRIPT.read_text()
+    return {
+        "alpha_step": float(one(r"_alpha = _alpha \+ ([0-9.]+);", box, "box")),
+        "hint_menu_index": int(one(r"MENU\[(\d+)\]", hint, "hint")),
+        "music_divisor": float(one(r"100 - _alpha / ([0-9.]+)", box, "box")),
+        "x_others": round(float(xs[1]), 2),
+        "x_side_two": round(float(xs[0]), 2),
+        "y": round(float(ys.pop()), 2),
+    }
 
 
 def main():
@@ -198,6 +243,7 @@ def main():
     )
 
     layout = {
+        **script_numbers(),
         "face": rect_entry(face_rect),
         "fps": index.frame_rate,
         "frame": rect_entry((x - origin[0], y - origin[1], w, h)),

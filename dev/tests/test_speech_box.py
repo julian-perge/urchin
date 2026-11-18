@@ -72,3 +72,37 @@ def test_a_frame_that_moves_the_hint_text_is_refused():
     )
     with pytest.raises(RuntimeError, match="moves the text"):
         speech_box.hint_colors(index)
+
+
+def test_the_numbers_come_out_of_the_conductor_and_the_box_scripts(
+    tmp_path, monkeypatch
+):
+    conductor = tmp_path / "conductor.as"
+    conductor.write_text(
+        "if(a)\n{\n_root.combatScript._x = 473.3000000000001;\n"
+        "_root.combatScript._y = 460.7;\n}\nelse\n{\n"
+        "_root.combatScript._x = 21.800000000000008;\n_root.combatScript._y = 460.7;\n}\n"
+    )
+    box = tmp_path / "box.as"
+    box.write_text("setVolume(100 - _alpha / 1.2);\n_alpha = _alpha + 5;\n")
+    hint = tmp_path / "hint.as"
+    hint.write_text("say = _root.KrinLang[_root.KLangChoosen].MENU[53];\n")
+    monkeypatch.setattr(speech_box, "CONDUCTOR", conductor)
+    monkeypatch.setattr(speech_box, "BOX_SCRIPT", box)
+    monkeypatch.setattr(speech_box, "HINT_SCRIPT", hint)
+    assert speech_box.script_numbers() == {
+        "alpha_step": 5.0,
+        "hint_menu_index": 53,
+        "music_divisor": 1.2,
+        "x_others": 21.8,
+        "x_side_two": 473.3,
+        "y": 460.7,
+    }
+
+
+def test_a_conductor_that_places_the_box_three_times_is_refused(tmp_path, monkeypatch):
+    conductor = tmp_path / "conductor.as"
+    conductor.write_text("_root.combatScript._x = 1;\n" * 3)
+    monkeypatch.setattr(speech_box, "CONDUCTOR", conductor)
+    with pytest.raises(RuntimeError, match="want 2 and 1"):
+        speech_box.script_numbers()

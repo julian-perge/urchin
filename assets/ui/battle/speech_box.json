@@ -1,4 +1,5 @@
 {
+ "alpha_step": 5.0,
  "face": {
   "h": 74.92,
   "w": 54.68,
@@ -613,6 +614,7 @@
    "size": 9.0
   }
  },
+ "hint_menu_index": 53,
  "line": {
   "align": "left",
   "color": "#000000",
@@ -624,6 +626,7 @@
   },
   "size": 11.4
  },
+ "music_divisor": 1.2,
  "name": {
   "align": "left",
   "color": "#666666",
@@ -634,5 +637,8 @@
    "y": 5.4
   },
   "size": 12.0
- }
+ },
+ "x_others": 21.8,
+ "x_side_two": 473.3,
+ "y": 460.7
 }

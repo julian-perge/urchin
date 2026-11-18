@@ -909,7 +909,7 @@ func _play_speech(event: Dictionary) -> void:
 # percent on every frame, so the music sits at about 17 percent while the box is
 # fully up (frame_217/PlaceObject2_3367_634 enterFrame, line 2).
 func _on_speech_box_alpha_changed(alpha: float) -> void:
-	AudioManagerAuto.music_level = 100.0 - alpha / 1.2
+	AudioManagerAuto.music_level = 100.0 - alpha / speech_box.music_divisor
 
 
 func _input(event: InputEvent) -> void:
