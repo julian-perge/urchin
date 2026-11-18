@@ -79,7 +79,7 @@ One task, one branch, one pull request. Branch: `<type>/<issue>-<slug>`, or `ret
 
 A spec's glossary line is a task, not a fact. A spec that says "`GLOSSARY.md` has **X**" may describe the glossary it means to leave behind, so check the file before you rely on it. If the term is missing, the first task that uses it adds the entry. Spec #49 said its four terms existed, none did, two implementers noticed and neither added them, and the code review found the gap.
 
-Run the verify command from `AGENTS.md` (`Every task`) with `agent-skills run --` before each commit. Open the pull request ready for review, print the review command and stop. The user merges. The review ticks the acceptance criteria boxes, not the build.
+Run the verify command from `AGENTS.md` (`Every task`) with `agent-skills run --` before each commit. Open the pull request ready for review. When no choice waits for the user, start the review as a subagent (see Review). Otherwise print the review command and stop. The user merges. The review ticks the acceptance criteria boxes, not the build.
 
 The review command is the session's last line, and `agent-skills next-cmd review <pr>` prints it:
 
@@ -96,9 +96,9 @@ To have a worker model build the task, type `Build #<issue> with a <tier> worker
 
 ## Review
 
-Run the review in a new session, not in the build session. The command starts no subagent, so the build session would review its own work. Check out the PR branch first (`gh pr checkout <pr>`), because the command reviews staged changes or recent commits.
+The review runs in a context that did not write the code. When a build ends with no choice waiting for the user, the build session starts the review as one subagent and asks the user about the choices that the subagent returns. Otherwise run the review in a new session, not in the build session. Check out the PR branch first (`gh pr checkout <pr>`), because the command reviews staged changes or recent commits.
 
-Run `/agent-skills:review` on the branch with the command that the Build section gives. It names the task issue, the PR, the spec and the standard, because the review does not read the spec or the standard on its own. 12 of the first 13 reviews in this repo ran without the spec or the standard, and each had to run again. Start the review with `agent-skills pr <pr>`, which shows all four.
+In a new session, run `/agent-skills:review` on the branch with the command that the Build section gives. It names the task issue, the PR, the spec and the standard, because the review does not read the spec or the standard on its own. 12 of the first 13 reviews in this repo ran without the spec or the standard, and each had to run again. Start the review with `agent-skills pr <pr>`, which shows all four.
 
 Fix small findings in the review session. Start a new build session for large ones.
 
