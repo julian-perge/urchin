@@ -14,8 +14,8 @@ steps. The files for this repo are in `<vault>/Tools/claude/bench/urchin/`:
 
 | File | What it holds |
 | --- | --- |
-| `questions.json` | U1 to U7. U1 to U3 are GDScript, U4 is ActionScript, U5 and U6 need both, U7 is a control with no answer. |
-| `reference.md` | The graded answers at commit `e6b9f34a`. Check them again before a run on a later commit: line numbers move. |
+| `questions.json` | U1 to U10. U1 to U3 are GDScript, U4 is ActionScript, U5 and U6 need both, U7 is a control with no answer. U8 to U10 came from real sessions (see below). |
+| `reference.md` | The graded answers. U1 to U7 were checked at commit `e6b9f34a` and U8 to U10 at `9b530ecf`. Check them again before a run on a later commit: line numbers move. |
 | `keys.json` | The key words and line numbers per question, for `grade.py`. |
 | `mcp-none.json`, `mcp-sunerpy.json`, `mcp-godotlens.json` | One MCP config per condition, with `<bench dir>` placeholders. |
 
@@ -60,3 +60,20 @@ per-question results and the other findings.
    code. Do not compare against the 2026-11-18 numbers.
 4. Add 2 or 3 questions from real session transcripts, the open question in
    the idea doc.
+
+## Questions from real sessions (U8 to U10)
+
+Added 2026-11-18 for spec #346, task #354. A scratch script listed runs of 5
+or more read calls (Read, rg, sed, cat) on `.gd` or `.as` files in the urchin
+transcripts from 2026-11-04 on, with the text before each run. Most user
+prompts in this repo are slash commands, so the questions come from what a
+session was trying to find, not from a prompt. Each reference answer is in
+`reference.md`, checked at urchin commit `9b530ecf`.
+
+| Question | Transcript | Why it was chosen |
+| --- | --- | --- |
+| U8: how a hub orb receives its click | `834f6522`, 2026-11-17 | The session spent 4 partial reads and rg calls to find `OrbBase._on_hit_box_input`. GDScript only, with a signal and an override chain. |
+| U9: who writes and reads `Krin.tutSpeecher`, and where the port keeps the flag | `e282b9c3`, 2026-11-17 | The session read `DoAction_21.as` whole, then `DoAction_20.as` and `frame_219/DoAction.as` by line range. It needs both languages. |
+| U10: which function advances the animation label, and where the frame rate comes from | `850557e3`, 2026-11-16 | The session used one rg for 7 names and 3 Read calls with an offset in `character_visual.gd`. GDScript only, and the answer sits in one file. |
+
+U8 to U10 were not run yet. The run is task #355.
