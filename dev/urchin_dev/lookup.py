@@ -19,9 +19,12 @@ from urchin_dev.as_lookup import (
     _NEAREST,
     _SOURCE_LINES,
     Citation,
+    Fact,
     _blocks,
     _holders,
     _shown,
+    cited_ranges,
+    fact_row,
     resolve,
 )
 
@@ -189,41 +192,94 @@ def _owned(record: dict, functions: list[dict], citation: Citation) -> bool:
     return citation.line < record["start"] and record["start"] == min(below)
 
 
-def _ports(
+def _port_ranges(
     record: dict,
     functions: list[dict],
     as_records: list[dict],
     citations: Sequence[Citation],
-) -> list[str]:
-    """The AS ranges that the comments of a function cite, each with the AS
-    function that holds the range."""
+) -> list[tuple[Citation, str, tuple[int, int] | None, str]]:
+    """The AS ranges that the comments of a function cite, each as the citation,
+    the export file, the range (None for a citation with no line part) and the
+    AS function that holds the range."""
     as_files = [r["file"] for r in as_records if r["kind"] == "script"]
     as_functions = [r for r in as_records if r["kind"] == "function"]
-    rows = []
+    found = []
     for cited in citations:
         if not _owned(record, functions, cited):
             continue
-        found = resolve(cited.path, as_files)
-        if len(found) != 1:
+        files = resolve(cited.path, as_files)
+        if len(files) != 1:
             continue
-        path = f"{as_lookup.EXPORT}/{found[0]}"
-        for first, last in cited.lines or [None]:
-            if first is None:
-                where, holder = path, "script"
-            else:
+        for span in cited.lines or [None]:
+            holder = "script"
+            if span is not None:
                 holding = [
                     r
                     for r in as_functions
-                    if r["file"] == found[0] and r["start"] <= first <= r["end"]
+                    if r["file"] == files[0] and r["start"] <= span[0] <= r["end"]
                 ]
                 innermost = min(
                     holding, key=lambda r: r["end"] - r["start"], default=None
                 )
-                where = f"{path}:{_range_text(first, last)}"
                 holder = innermost["name"] if innermost else "script"
-            rows.append(
-                f"  {where}  {holder}  {cited.gd}:{cited.line}  {cited.comment}"
+            found.append((cited, files[0], span, holder))
+    return found
+
+
+def _ports(
+    ranges: list[tuple[Citation, str, tuple[int, int] | None, str]],
+) -> list[str]:
+    rows = []
+    for cited, file, span, holder in ranges:
+        where = f"{as_lookup.EXPORT}/{file}"
+        if span is not None:
+            where += f":{_range_text(*span)}"
+        rows.append(f"  {where}  {holder}  {cited.gd}:{cited.line}  {cited.comment}")
+    return rows
+
+
+def _names_in_text(record: dict, fact: Fact) -> bool:
+    """Whether the section names the .gd path of the record. For a function
+    the same paragraph must also name the function in backticks."""
+    if record["kind"] == "gd_script":
+        return record["file"] in fact.text
+    return any(
+        record["file"] in paragraph and f"`{record['name']}`" in paragraph
+        for paragraph in fact.text.split("\n\n")
+    )
+
+
+def _facts(
+    record: dict,
+    ranges: list[tuple[Citation, str, tuple[int, int] | None, str]],
+    as_records: list[dict],
+    facts: Sequence[Fact],
+) -> list[str]:
+    """The sections that name the record's path (and function), and the
+    sections that cite an AS range that the record's comments cite."""
+    as_files = [r["file"] for r in as_records if r["kind"] == "script"]
+    rows = []
+    for fact in facts:
+        linked = _names_in_text(record, fact)
+        if not linked:
+            cited = [
+                (files[0], spans)
+                for path, spans in cited_ranges(fact)
+                if len(files := resolve(path, as_files)) == 1
+            ]
+            linked = any(
+                file == port_file
+                and (
+                    span is None
+                    or any(
+                        first <= span[1] and last >= span[0] for first, last in spans
+                    )
+                )
+                for _, port_file, span, _ in ranges
+                for file, spans in cited
             )
+        if linked:
+            rows.append(fact_row(fact))
     return rows
 
 
@@ -234,6 +290,7 @@ def _record_answer(
     root: Path,
     as_records: list[dict],
     citations: Sequence[Citation],
+    facts: Sequence[Fact],
     line: int | None = None,
 ) -> str:
     functions = [r for r in records if r["kind"] == "gd_function"]
@@ -263,6 +320,7 @@ def _record_answer(
     elif outline:
         out += ["outline", *_blocks(outline)]
 
+    ranges = []
     if record["kind"] == "gd_script":
         inside = [
             f"  {_signature(r)}  {_location(r)}"
@@ -275,8 +333,11 @@ def _record_answer(
         out += ["callers", *(_callers(record, functions) or ["  none"])]
         out += ["calls", *(_calls(record, functions) or ["  none"])]
         out += ["signals", *(_signals(record) or ["  none"])]
-        ports = _ports(record, functions, as_records, citations)
-        out += ["ports", *(ports or ["  none"])]
+        ranges = _port_ranges(record, functions, as_records, citations)
+        out += ["ports", *(_ports(ranges) or ["  none"])]
+    linked = _facts(record, ranges, as_records, facts)
+    if linked:
+        out += ["facts", *linked]
     return "\n".join(out)
 
 
@@ -312,6 +373,7 @@ def _gd_line_query(
     root: Path,
     as_records: list[dict],
     citations: Sequence[Citation],
+    facts: Sequence[Fact],
 ) -> tuple[int, str]:
     script = _gd_path(path, records)
     if isinstance(script, str):
@@ -327,7 +389,7 @@ def _gd_line_query(
     ]
     innermost = min(holders, key=lambda r: r["end"] - r["start"], default=script)
     answer = _record_answer(
-        innermost, records, source, root, as_records, citations, line
+        innermost, records, source, root, as_records, citations, facts, line
     )
     return 0, answer
 
@@ -421,10 +483,16 @@ def _name_query(
     export: Path,
     root: Path,
     citations: Sequence[Citation],
+    facts: Sequence[Fact],
 ) -> tuple[int, str]:
     matches, signals, gd_no_case = _gd_name_matches(query, gd)
     as_code, as_text = as_lookup.lookup(
-        query, as_records, source=source, export=export, citations=citations
+        query,
+        as_records,
+        source=source,
+        export=export,
+        citations=citations,
+        facts=facts,
     )
     note = _NO_CASE.format(query=query)
     as_no_case = as_code == 0 and as_text.startswith(note)
@@ -442,7 +510,8 @@ def _name_query(
     parts = []
     if matches or signals:
         answers = [
-            _record_answer(r, gd, source, root, as_records, citations) for r in matches
+            _record_answer(r, gd, source, root, as_records, citations, facts)
+            for r in matches
         ]
         answers += [_signal_answer(name, gd) for name in signals]
         parts.append(("GDScript", "\n\n".join(answers), gd_no_case))
@@ -467,26 +536,34 @@ def lookup(
     export: Path = ACTION_SCRIPT,
     root: Path = REPO_ROOT,
     citations: Sequence[Citation] = (),
+    facts: Sequence[Fact] = (),
 ) -> tuple[int, str]:
     """The exit code and the text for one query. `source` forces the source
     lines in or out, and None prints them for a range of 120 lines or less."""
-    as_args = {"source": source, "export": export, "citations": citations}
+    as_args = {
+        "source": source,
+        "export": export,
+        "citations": citations,
+        "facts": facts,
+    }
     if re.fullmatch(r".+\.as(?::\d+)?", query):
         return as_lookup.lookup(query, as_records, **as_args)
     with_line = re.fullmatch(r"(.+\.gd):(\d+)", query)
     if with_line:
         path, line = with_line.groups()
         return _gd_line_query(
-            path, int(line), gd_records, source, root, as_records, citations
+            path, int(line), gd_records, source, root, as_records, citations, facts
         )
     if query.endswith(".gd"):
         script = _gd_path(query, gd_records)
         if isinstance(script, str):
             return 1, script
         return 0, _record_answer(
-            script, gd_records, source, root, as_records, citations
+            script, gd_records, source, root, as_records, citations, facts
         )
-    return _name_query(query, as_records, gd_records, source, export, root, citations)
+    return _name_query(
+        query, as_records, gd_records, source, export, root, citations, facts
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -522,6 +599,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         load_gd(),
         source=args.source,
         citations=as_lookup.tracked_citations(),
+        facts=as_lookup.tracked_facts(),
     )
     print(out)
     return code

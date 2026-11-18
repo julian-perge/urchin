@@ -3,8 +3,9 @@
 # name, an export path, or an export path with a line. The answer gives the
 # location, the source lines or the outline, the callers, the calls and the
 # globals, and the GDScript comments that cite the range. It reads those
-# comments from the tracked .gd files at each run. This module does not import
-# the parser, so a lookup starts fast.
+# comments from the tracked .gd files at each run, and the sections of
+# DECODED_ALGORITHMS.md that cite the range. This module does not import the
+# parser, so a lookup starts fast.
 from __future__ import annotations
 
 import argparse
@@ -104,6 +105,61 @@ def tracked_citations(root: Path = REPO_ROOT) -> list[Citation]:
         if (root / gd).is_file()
         for citation in read_citations((root / gd).read_text(encoding="utf-8"), gd)
     ]
+
+
+FACTS = "DECODED_ALGORITHMS.md"
+
+
+@dataclass(frozen=True)
+class Fact:
+    """One `##` section of DECODED_ALGORITHMS.md. `line` is the 1-based line of
+    the heading, `heading` is its text without the `## `, and `text` is the
+    whole section, heading included."""
+
+    line: int
+    heading: str
+    text: str
+
+
+def read_facts(text: str) -> list[Fact]:
+    """The `##` sections of the file. A `##` line inside a code fence is not a
+    heading."""
+    facts: list[Fact] = []
+    start = 0
+    fenced = False
+    lines = text.splitlines()
+    for number, line in enumerate(lines + ["## "], 1):
+        if line.startswith("```"):
+            fenced = not fenced
+        if fenced or not line.startswith("## "):
+            continue
+        if start:
+            facts.append(
+                Fact(
+                    start,
+                    lines[start - 1][3:],
+                    "\n".join(lines[start - 1 : number - 1]),
+                )
+            )
+        start = number
+    return facts
+
+
+def tracked_facts(root: Path = REPO_ROOT) -> list[Fact]:
+    path = root / FACTS
+    return read_facts(path.read_text(encoding="utf-8")) if path.is_file() else []
+
+
+def cited_ranges(fact: Fact) -> list[tuple[str, tuple[tuple[int, int], ...]]]:
+    """Each export path that the section cites, with its cited ranges."""
+    return [
+        (cited[1], tuple(_range(part) for part in (cited[2] or "").split(",") if part))
+        for cited in _CITATION.finditer(fact.text)
+    ]
+
+
+def fact_row(fact: Fact) -> str:
+    return f"  {FACTS}:{fact.line}  {fact.heading}"
 
 
 _SOURCE_LINES = 120
@@ -248,6 +304,27 @@ def _ports(
     return rows
 
 
+def _facts(
+    record: dict, start: int, end: int, records: list[dict], facts: Sequence[Fact]
+) -> list[str]:
+    """The sections that cite a range of the record's script that overlaps
+    start-end. A citation with no line part links the script record only."""
+    files = [r["file"] for r in records if r["kind"] == "script"]
+    rows = []
+    for fact in facts:
+        for path, ranges in cited_ranges(fact):
+            if resolve(path, files) != [record["file"]]:
+                continue
+            if ranges:
+                linked = any(first <= end and last >= start for first, last in ranges)
+            else:
+                linked = record["kind"] == "script"
+            if linked:
+                rows.append(fact_row(fact))
+                break
+    return rows
+
+
 def _record_answer(
     record: dict,
     records: list[dict],
@@ -255,6 +332,7 @@ def _record_answer(
     export: Path,
     citations: Sequence[Citation],
     line: int | None = None,
+    facts: Sequence[Fact] = (),
 ) -> str:
     out = [_title(record), _location(record)]
     start, end = _span(record)
@@ -290,6 +368,9 @@ def _record_answer(
     out += ["reads", *(_wrapped(record["reads"]) if record["reads"] else ["  none"])]
     ports = _ports(record, start, end, records, citations)
     out += ["ports", *(ports or ["  none"])]
+    linked = _facts(record, start, end, records, facts)
+    if linked:
+        out += ["facts", *linked]
     return "\n".join(out)
 
 
@@ -319,6 +400,7 @@ def _name_query(
     source: bool | None,
     export: Path,
     citations: Sequence[Citation],
+    facts: Sequence[Fact],
 ) -> tuple[int, str]:
     functions = [r for r in records if r["kind"] == "function"]
     names = sorted(
@@ -348,7 +430,10 @@ def _name_query(
         if near:
             out += ["nearest names", *(f"  {name}" for name in near)]
         return 1, "\n".join(out)
-    answers = [_record_answer(r, records, source, export, citations) for r in found[0]]
+    answers = [
+        _record_answer(r, records, source, export, citations, facts=facts)
+        for r in found[0]
+    ]
     answers += [_global_answer(name, records) for name in found[1]]
     return 0, "\n\n".join(note + answers)
 
@@ -385,6 +470,7 @@ def _line_query(
     source: bool | None,
     export: Path,
     citations: Sequence[Citation],
+    facts: Sequence[Fact],
 ) -> tuple[int, str]:
     script = _script(path, records)
     if isinstance(script, str):
@@ -399,7 +485,8 @@ def _line_query(
         and r["start"] <= line <= r["end"]
     ]
     innermost = min(holders, key=lambda r: r["end"] - r["start"], default=script)
-    return 0, _record_answer(innermost, records, source, export, citations, line)
+    answer = _record_answer(innermost, records, source, export, citations, line, facts)
+    return 0, answer
 
 
 def lookup(
@@ -409,19 +496,22 @@ def lookup(
     source: bool | None = None,
     export: Path = ACTION_SCRIPT,
     citations: Sequence[Citation] = (),
+    facts: Sequence[Fact] = (),
 ) -> tuple[int, str]:
     """The exit code and the text for one query. `source` forces the source
     lines in or out, and None prints them for a range of 120 lines or less."""
     with_line = re.fullmatch(r"(.+\.as):(\d+)", query)
     if with_line:
         path, line = with_line.groups()
-        return _line_query(path, int(line), records, source, export, citations)
+        return _line_query(path, int(line), records, source, export, citations, facts)
     if query.endswith(".as"):
         script = _script(query, records)
         if isinstance(script, str):
             return 1, script
-        return 0, _record_answer(script, records, source, export, citations)
-    return _name_query(query, records, source, export, citations)
+        return 0, _record_answer(
+            script, records, source, export, citations, facts=facts
+        )
+    return _name_query(query, records, source, export, citations, facts)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -451,7 +541,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     code, out = lookup(
-        " ".join(args.query), load(), source=args.source, citations=tracked_citations()
+        " ".join(args.query),
+        load(),
+        source=args.source,
+        citations=tracked_citations(),
+        facts=tracked_facts(),
     )
     print(out)
     return code

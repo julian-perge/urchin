@@ -25,6 +25,7 @@ def gd_records() -> list[dict]:
 
 
 def run(query: str, as_records, gd_records, **kwargs) -> tuple[int, str]:
+    kwargs.setdefault("facts", as_lookup.tracked_facts())
     return lookup(query, as_records, gd_records, **kwargs)
 
 
@@ -337,7 +338,10 @@ def test_a_name_in_both_languages_prints_one_section_for_each(tmp_path):
 
 def test_a_path_that_ends_in_as_is_answered_by_as_lookup(as_records, gd_records):
     path = "frame_42/DoAction_8.as"
-    assert run(path, as_records, gd_records) == as_lookup.lookup(path, as_records)
+    facts = as_lookup.tracked_facts()
+    assert run(path, as_records, gd_records) == as_lookup.lookup(
+        path, as_records, facts=facts
+    )
 
 
 def test_an_actionscript_query_prints_the_bytes_as_lookup_prints(
@@ -347,7 +351,10 @@ def test_an_actionscript_query_prints_the_bytes_as_lookup_prints(
         r["kind"] == "gd_function" and r["name"] == "executeMove" for r in gd_records
     )
     old = as_lookup.lookup(
-        "executeMove", as_records, citations=as_lookup.tracked_citations()
+        "executeMove",
+        as_records,
+        citations=as_lookup.tracked_citations(),
+        facts=as_lookup.tracked_facts(),
     )
     new = run(
         "executeMove", as_records, gd_records, citations=as_lookup.tracked_citations()
@@ -503,7 +510,7 @@ PORT_COMMENTS = (
 
 
 def port_fixture(tmp_path):
-    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts").mkdir(exist_ok=True)
     (tmp_path / "scripts/p.gd").write_text(PORT_COMMENTS)
     gd = [
         gd_script("scripts/p.gd", 12),
@@ -559,7 +566,7 @@ def test_a_cited_range_outside_every_function_names_the_script(tmp_path):
 def test_the_actionscript_answer_still_lists_the_gdscript_ports(tmp_path):
     as_records, gd, citations = port_fixture(tmp_path)
     export = tmp_path / "export/frame_1"
-    export.mkdir(parents=True)
+    export.mkdir(parents=True, exist_ok=True)
     (export / "DoAction_1.as").write_text("x\n" * 300)
     code, out = lookup(
         "one",
@@ -571,3 +578,123 @@ def test_the_actionscript_answer_still_lists_the_gdscript_ports(tmp_path):
     )
     assert code == 0
     assert any(row.startswith("  scripts/p.gd:1  a") for row in section(out, "ports"))
+
+
+FACTS = (
+    "# Decoded\n"
+    "\n"
+    "## Melee run (frame_1/DoAction_1.as)\n"
+    "\n"
+    "Implemented in `scripts/p.gd` (`a`, `_other`). The dash is\n"
+    "`frame_1/DoAction_1.as:40-64`.\n"
+    "\n"
+    "## Other thing\n"
+    "\n"
+    "Cites `frame_1/DoAction_1.as:200-210`.\n"
+    "\n"
+    "Names `scripts/p.gd` but not the func: `zzz`.\n"
+    "\n"
+    "```\n"
+    "## not a heading\n"
+    "```\n"
+    "\n"
+    "## No line\n"
+    "\n"
+    "See frame_1/DoAction_1.as for the whole script.\n"
+)
+MELEE = "  DECODED_ALGORITHMS.md:3  Melee run (frame_1/DoAction_1.as)"
+OTHER = "  DECODED_ALGORITHMS.md:8  Other thing"
+NO_LINE = "  DECODED_ALGORITHMS.md:18  No line"
+
+
+def facts_of(tmp_path, query: str, text: str | None = FACTS) -> list[str]:
+    as_records, gd, citations = port_fixture(tmp_path)
+    if text is not None:
+        (tmp_path / "DECODED_ALGORITHMS.md").write_text(text)
+    export = tmp_path / "export/frame_1"
+    export.mkdir(parents=True, exist_ok=True)
+    (export / "DoAction_1.as").write_text("x\n" * 300)
+    code, out = lookup(
+        query,
+        as_records,
+        gd,
+        root=tmp_path,
+        export=tmp_path / "export",
+        citations=citations,
+        facts=as_lookup.tracked_facts(tmp_path),
+    )
+    assert code == 0
+    return section(out, "facts") if "facts" in out.splitlines() else []
+
+
+def test_a_fact_whose_cited_range_overlaps_an_as_function_is_linked(tmp_path):
+    assert facts_of(tmp_path, "two") == [MELEE]
+
+
+def test_a_fact_that_cites_a_range_outside_the_function_is_not_linked(tmp_path):
+    assert facts_of(tmp_path, "one") == []
+    assert facts_of(tmp_path, "three") == [OTHER]
+
+
+def test_an_answer_with_no_linked_section_prints_no_facts_section(tmp_path):
+    as_records, gd, _ = port_fixture(tmp_path)
+    export = tmp_path / "export/frame_1"
+    export.mkdir(parents=True, exist_ok=True)
+    (export / "DoAction_1.as").write_text("x\n" * 300)
+    _, out = lookup("four", as_records, gd, root=tmp_path, export=tmp_path / "export")
+    assert "facts" not in out.splitlines()
+
+
+def test_a_citation_with_no_line_part_links_the_script_only(tmp_path):
+    assert NO_LINE not in facts_of(tmp_path, "two")
+    assert facts_of(tmp_path, "frame_1/DoAction_1.as") == [MELEE, OTHER, NO_LINE]
+
+
+def test_a_fact_that_names_the_gd_path_and_func_in_backticks_is_linked(tmp_path):
+    assert facts_of(tmp_path, "a") == [MELEE]
+
+
+def test_a_fact_that_names_only_the_path_links_the_script_and_not_each_func(tmp_path):
+    assert facts_of(tmp_path, "c") == []
+    assert facts_of(tmp_path, "scripts/p.gd") == [MELEE, OTHER]
+
+
+def test_a_gd_function_is_linked_to_facts_through_the_ranges_it_cites(tmp_path):
+    assert facts_of(tmp_path, "b") == [MELEE]
+
+
+def test_a_heading_inside_a_code_fence_is_not_a_fact(tmp_path):
+    rows = facts_of(tmp_path, "frame_1/DoAction_1.as")
+    assert not any("not a heading" in row for row in rows)
+
+
+def test_a_missing_facts_file_prints_no_facts_section(tmp_path):
+    assert facts_of(tmp_path, "two", text=None) == []
+
+
+def test_known_gaps_and_research_notes_are_not_read(tmp_path):
+    (tmp_path / "KNOWN_GAPS.md").write_text(FACTS)
+    (tmp_path / "docs/research").mkdir(parents=True)
+    (tmp_path / "docs/research/note.md").write_text(FACTS)
+    assert facts_of(tmp_path, "two", text=None) == []
+
+
+def test_krin_melee_and_play_melee_print_the_krin_melee_section(as_records, gd_records):
+    heading = next(
+        line
+        for line in (REPO_ROOT / "DECODED_ALGORITHMS.md").read_text().splitlines()
+        if line.startswith("## krinMelee")
+    )
+    for query in ("krinMelee", "play_melee"):
+        _, out = run(query, as_records, gd_records)
+        rows = section(out, "facts")
+        assert any(
+            row.startswith("  DECODED_ALGORITHMS.md:")
+            and row.endswith(heading.removeprefix("## "))
+            for row in rows
+        ), query
+
+
+def test_a_fact_prints_its_heading_and_never_its_text(as_records, gd_records):
+    _, out = run("krinMelee", as_records, gd_records)
+    assert "Constants (frame 42 globals)" not in out
