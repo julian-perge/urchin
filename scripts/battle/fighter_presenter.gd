@@ -292,7 +292,7 @@ func _set_doll_model(model: String) -> void:
 	var size: float = 0.8 if lowered else 1.0
 	_doll.scale = Vector2(signf(_doll.scale.x) * size, size)
 	var drop: float = 10.0 if lowered else -10.0
-	_doll.position.y += drop
+	_doll.shift_down(drop)
 	_doll_offset.y += drop
 	_overlay.position.y += drop
 

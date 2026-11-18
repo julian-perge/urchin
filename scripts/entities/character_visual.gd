@@ -227,6 +227,13 @@ func wear_own_form(model: Array, equip_looks: Array, stunned: bool) -> void:
 	_start_new_clip(str(model[0]), stunned)
 
 
+# Moves the doll `dy` px down inside its rig, and its saved home with it, so a
+# swing that is under way still ends at the doll's new home.
+func shift_down(dy: float) -> void:
+	position.y += dy
+	_home_position.y += dy
+
+
 # dressChar removes the doll's clip and attaches a new one, which starts on its
 # first frame, and the shadow is a part of that clip. changeForm then puts a
 # stunned unit's new clip in the stun loop (frame_42/DoAction_10.as:533-536).

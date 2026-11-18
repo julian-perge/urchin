@@ -563,6 +563,14 @@ func test_a_model5_form_stands_smaller_and_lower_and_the_units_own_form_stands_b
 	assert_eq(_doll.position, HOME)
 
 
+func test_a_model5_swap_during_a_swing_moves_the_saved_home_too():
+	var slots: Dictionary = _present_with_form_buffs()
+	_doll.play_melee(func(): return HOME + Vector2(200, 0), 0.0)
+	var home_before: Vector2 = _doll._home_position
+	_presenter.show_state(_snapshot_with([slots["hound"].duplicate()]))
+	assert_eq(_doll._home_position, home_before + Vector2(0, 10))
+
+
 func test_a_dead_fighter_keeps_its_form():
 	var slots: Dictionary = _present_with_form_buffs()
 	_presenter.die()
