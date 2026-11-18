@@ -381,8 +381,9 @@ def test_just_as_lookup_prints_the_same_bytes_as_just_lookup():
         pytest.skip("just is not on PATH")
 
     def printed(recipe: str) -> bytes:
+        # The flag checks that the alias passes each argument on as it is.
         return subprocess.run(
-            ["just", recipe, "executeMove"],
+            ["just", recipe, "executeMove", "--no-source"],
             cwd=REPO_ROOT,
             capture_output=True,
             check=True,

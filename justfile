@@ -108,7 +108,8 @@ lookup *args:
 
 [doc('Alias of lookup, which also answers for GDScript')]
 [group('python')]
-as-lookup *args: (lookup args)
+as-lookup *args:
+    uv run lookup "$@"
 
 [doc('Merge one ticket branch into the integration branch, then push it')]
 [group('python')]
