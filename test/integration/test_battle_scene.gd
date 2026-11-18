@@ -218,6 +218,156 @@ func test_space_takes_a_long_line_down_at_once():
 	ZoneManager.auto_start_battles = true
 
 
+# The speech box is combatScript, DefineSprite 3367. It sits at x 473.3 for a
+# speaker on side 2 and x 21.8 for anyone else, at y 460.7 (frame_217/
+# PlaceObject2_3389_480 enterFrame, lines 819-828).
+const SPEECH_BOX_Y: float = 460.7
+const SPEECH_BOX_X_SIDE_TWO: float = 473.3
+const SPEECH_BOX_X_OTHERS: float = 21.8
+
+
+# Starts battle 105 with its battle loop stubbed out, and with the scene's own
+# _process turned off so a test steps the battle clock by hand, one SWF frame
+# per call to _step_frames.
+func _speech_scene() -> Node:
+	var save = PlayerSave.new_game("SpeechBoxLook", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = partial_double(BattleSceneRes).instantiate()
+	stub(scene, "_battle_loop").to_do_nothing()
+	add_child_autofree(scene)
+	scene.start_battle({"battle_id": 105, "is_story_progress": false, "is_boss": false, "train_cap": 9})
+	scene.set_process(false)
+	scene.animation_speed = 1.0
+	return scene
+
+
+func _step_frames(scene: Node, frames: int) -> void:
+	for i in frames:
+		scene._process(SWF_FRAME_SECONDS)
+
+
+# A SPEECH event for `slot`, built from battle 105's first line so it carries
+# every field the runner gives a real one.
+func _line_from(scene: Node, slot: int, name: String, say: String, seconds: float) -> Dictionary:
+	var line: Dictionary = scene._pending_setup_events[0].duplicate()
+	line["speaker_slot"] = slot
+	line["speaker_name"] = name
+	line["say"] = say
+	line["time_to_say"] = seconds
+	line["voice_over"] = ""
+	return line
+
+
+func _end_test_speech(scene: Node) -> void:
+	scene._line_cut = true
+	scene.set_process(true)
+	await wait_process_frames(2)
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func test_a_side_two_speakers_box_sits_at_the_right():
+	var scene = _speech_scene()
+	scene._play_speech(_line_from(scene, 2, "Twisted Experiment", "Hello", 5.0))
+	assert_almost_eq(scene.speech_box.position.x, SPEECH_BOX_X_SIDE_TWO, 0.05)
+	assert_almost_eq(scene.speech_box.position.y, SPEECH_BOX_Y, 0.05)
+	await _end_test_speech(scene)
+
+
+func test_a_side_one_speakers_box_sits_at_the_left():
+	var scene = _speech_scene()
+	scene._play_speech(_line_from(scene, 1, "Sonny", "Hello", 5.0))
+	assert_almost_eq(scene.speech_box.position.x, SPEECH_BOX_X_OTHERS, 0.05)
+	assert_almost_eq(scene.speech_box.position.y, SPEECH_BOX_Y, 0.05)
+	await _end_test_speech(scene)
+
+
+func test_the_narrators_box_sits_at_the_left():
+	var scene = _speech_scene()
+	scene._play_speech(_line_from(scene, 0, BattleRunner.NARRATOR_NAME, "Hello", 5.0))
+	assert_almost_eq(scene.speech_box.position.x, SPEECH_BOX_X_OTHERS, 0.05)
+	assert_almost_eq(scene.speech_box.position.y, SPEECH_BOX_Y, 0.05)
+	await _end_test_speech(scene)
+
+
+# The box writes the speaker's name and the line in two fields and sends its
+# face clip to the frame named after the speaker (conductor lines 829-831).
+func test_the_box_shows_the_speakers_name_face_and_line():
+	var scene = _speech_scene()
+	scene._play_speech(_line_from(scene, 1, "Sonny", "I can take him.", 5.0))
+	assert_eq(scene.speech_box.speaker_label.text, "Sonny")
+	assert_eq(scene.speech_box.line_label.text, "I can take him.")
+	assert_eq(scene.speech_box.face_name, "Sonny")
+	await _end_test_speech(scene)
+
+
+# combatScript fades at 5 alpha a frame on a 0 to 100 scale, so it takes 20
+# frames up and 20 down (frame_217/PlaceObject2_3367_634 enterFrame, lines
+# 2-12 and 19-22).
+func test_the_box_takes_20_frames_to_fade_in():
+	var scene = _speech_scene()
+	scene._play_speech(_line_from(scene, 1, "Sonny", "Hello", 5.0))
+	assert_almost_eq(scene.speech_box.modulate.a, 0.0, 0.001, "the box starts clear")
+	_step_frames(scene, 10)
+	assert_almost_eq(scene.speech_box.modulate.a, 0.5, 0.001, "half way after 10 frames")
+	_step_frames(scene, 10)
+	assert_almost_eq(scene.speech_box.modulate.a, 1.0, 0.001, "full after 20 frames")
+	await _end_test_speech(scene)
+
+
+func test_the_box_takes_20_frames_to_fade_out():
+	var scene = _speech_scene()
+	var done: Array = [false]
+	var show_line: Callable = func():
+		await scene._play_speech(_line_from(scene, 1, "Sonny", "Hello", 1.0))
+		done[0] = true
+	show_line.call()
+	_step_frames(scene, 30)
+	assert_almost_eq(scene.speech_box.modulate.a, 1.0, 0.001, "the box is fully up for the line")
+	_step_frames(scene, 10)
+	assert_almost_eq(scene.speech_box.modulate.a, 0.5, 0.001, "half way out 10 frames after the line ends")
+	_step_frames(scene, 10)
+	assert_almost_eq(scene.speech_box.modulate.a, 0.0, 0.001, "clear 20 frames after it ends")
+	assert_true(done[0], "and _play_speech has returned")
+	await _end_test_speech(scene)
+
+
+# The music plays at 100 - _alpha / 1.2 percent while the box is up, so about
+# 16.7 percent when it is fully up, and 100 again once it has faded out.
+func test_the_music_drops_to_17_percent_while_the_box_is_up():
+	var scene = _speech_scene()
+	var done: Array = [false]
+	var show_line: Callable = func():
+		await scene._play_speech(_line_from(scene, 1, "Sonny", "Hello", 1.0))
+		done[0] = true
+	show_line.call()
+	_step_frames(scene, 25)
+	assert_almost_eq(AudioManagerAuto.music_level, 16.7, 0.1, "the music sits at about 17 percent")
+	_step_frames(scene, 40)
+	assert_almost_eq(AudioManagerAuto.music_level, 100.0, 0.001, "and comes back after the box fades out")
+	await _end_test_speech(scene)
+
+
+# The speaker's own speech clip plays a 57 frame "!" bubble over their head
+# (conductor line 842). The narrator has no unit, so no bubble plays for it.
+func test_the_bubble_plays_on_the_speaker():
+	var scene = _speech_scene()
+	scene._play_speech(_line_from(scene, 2, "Twisted Experiment", "Hello", 5.0))
+	assert_true(scene._presenters[2].speech_bubble_playing, "the speaker's bubble plays")
+	assert_false(scene._presenters[1].speech_bubble_playing, "and nobody else's does")
+	await _end_test_speech(scene)
+
+
+func test_no_bubble_plays_for_the_narrator():
+	var scene = _speech_scene()
+	scene._play_speech(_line_from(scene, 0, BattleRunner.NARRATOR_NAME, "Hello", 5.0))
+	for slot in scene._presenters:
+		assert_false(scene._presenters[slot].speech_bubble_playing, "slot %d has no bubble" % slot)
+	await _end_test_speech(scene)
+
+
 func _move_result(kind: MoveResult.Kind, direction: MoveResult.Direction, amount: float) -> MoveResult:
 	var result := MoveResult.new()
 	result.kind = kind
