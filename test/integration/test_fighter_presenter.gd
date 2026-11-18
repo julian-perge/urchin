@@ -588,7 +588,8 @@ func test_a_dead_units_slot_shows_nothing_for_the_rest_of_the_battle():
 	_step_frames(90)
 	_presenter.snap_to_unit()
 	var drawn: Array = _presenter.get_children().filter(func(child):
-		if child is ShieldClip and not child.is_playing():
+		# An idle clip rests on its frame 1, which shows nothing.
+		if (child is ShieldClip or child is SpeechBubble) and not child.is_playing():
 			return false
 		return child is CanvasItem and child.is_visible_in_tree()
 	)
@@ -1577,3 +1578,21 @@ func test_a_buff_running_out_at_a_tick_leaves_the_icon_row_and_wakes_a_stunned_d
 
 	assert_eq(_buff_icons().size(), 0, "the icon is gone")
 	assert_eq(_doll._label, "outofstun", "and the stunned doll wakes up")
+
+
+# The speech clip runs 57 frames and then rests on its empty frame 1
+# (DefineSprite 2674).
+func test_the_speech_bubble_plays_57_frames_and_then_stops():
+	# A hair over one frame, so float rounding cannot leave a step short.
+	const SWF_FRAME_NUDGED: float = 0.0334
+	_present(_unit)
+	var bubble: SpeechBubble = _presenter.get_node("SpeechBubble")
+	bubble.set_process(false)
+	_presenter.play_speech_bubble()
+	assert_true(_presenter.speech_bubble_playing)
+	for frame in 56:
+		bubble.advance(SWF_FRAME_NUDGED)
+	assert_true(_presenter.speech_bubble_playing, "still playing on frame 57")
+	bubble.advance(SWF_FRAME_NUDGED)
+	assert_false(_presenter.speech_bubble_playing, "and at rest after it")
+	assert_eq(bubble.frame, 1)

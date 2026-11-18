@@ -147,7 +147,7 @@ var _buff_tick_due: bool = false
 # Battlefield, which holds all of those.
 @onready var floating_numbers: FloatingNumberLayer = $HallWindow/HallSpace/BattleScreenClip/FloatingNumbers
 @onready var turn_label: Label = $UI/TurnLabel
-@onready var speech_label: Label = $UI/SpeechLabel
+@onready var speech_box: SpeechBox = $UI/SpeechBox
 @onready var _pass_ring: Control = $BottomBar/PassRing
 @onready var top_status_bar: TopStatusBar = $TopStatusBar
 @onready var radial_menu: RadialMenu = $RadialMenu
@@ -165,7 +165,7 @@ var _buff_tick_due: bool = false
 func _ready():
 	_hall_space.position = -hall_window.position
 	member_row(3).position.y = StanceRow.row_pitch()
-	speech_label.text = ""
+	speech_box.alpha_changed.connect(_on_speech_box_alpha_changed)
 	# The retreat button is the original's battle Quit button,
 	# DefineButton2_3356, which shows SYSTEM[25] over SYSTEM[26]
 	# (frame_1/DoAction.as:92-93). The pass button, DefineButton2_3383, shows
@@ -214,8 +214,16 @@ func _process(delta: float) -> void:
 	_countdown_label.visible = not _turn_based
 	_countdown_label.text = str(int(ceil(_decision_timer)))
 	if animation_speed > 0.0:
-		_clock += delta * BattleScreenClip.fps() * animation_speed
+		var frames: float = delta * BattleScreenClip.fps() * animation_speed
+		speech_box.advance(frames)
+		_clock += frames
 	clock_ticked.emit()
+
+
+# A battle that ends while a line is up must not leave the music at its dipped
+# level.
+func _exit_tree() -> void:
+	AudioManagerAuto.music_level = 100.0
 
 
 func _reset_decision_timer() -> void:
@@ -878,15 +886,30 @@ func _show_move_result(event: Dictionary, target_slot: int) -> void:
 # (see _input). The original's speech box adds 30 / fps to a counter every frame
 # and lets the next line through once it reaches timeToSay * 30
 # (frame_217/PlaceObject2_3389_480 enterFrame, line 841, and
-# frame_217/PlaceObject2_3367_634 enterFrame, lines 13-17).
+# frame_217/PlaceObject2_3367_634 enterFrame, lines 13-17). The box fades in
+# while the line is up and starts to fade out when it ends, and the next line
+# does not wait for that fade. The speaker's own bubble plays over their head,
+# and the narrator, who has no unit, plays none (conductor line 842).
 func _play_speech(event: Dictionary) -> void:
-	speech_label.text = "%s: %s" % [event["speaker_name"], event.get("say", "")]
+	var slot: int = int(event["speaker_slot"])
+	var speaker: CombatUnit = units.get(slot)
+	var side_two: bool = speaker != null and speaker.team_side == CombatUnit.Team.TWO
+	speech_box.show_line(str(event["speaker_name"]), str(event.get("say", "")), side_two)
+	if slot != 0 and _presenters.has(slot):
+		_presenters[slot].play_speech_bubble()
 	AudioManagerAuto.play_effect(str(event.get("voice_over", "")))
 	_line_on_screen = event
 	await _pause(float(event.get("time_to_say", 2.0)))
 	_line_on_screen = {}
 	_line_cut = false
-	speech_label.text = ""
+	speech_box.hide_line()
+
+
+# The original's Speech box sets the music's volume to 100 - _alpha / 1.2
+# percent on every frame, so the music sits at about 17 percent while the box is
+# fully up (frame_217/PlaceObject2_3367_634 enterFrame, line 2).
+func _on_speech_box_alpha_changed(alpha: float) -> void:
+	AudioManagerAuto.music_level = 100.0 - alpha / speech_box.music_divisor
 
 
 func _input(event: InputEvent) -> void:

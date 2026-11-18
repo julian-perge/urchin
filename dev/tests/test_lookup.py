@@ -445,7 +445,7 @@ def test_a_signal_name_prints_its_declaration_connects_and_emits(
     )
     connects = section(out, "connects")
     assert any(
-        row.startswith("  scripts/battle/battle_scene.gd:962  ")
+        row.startswith("  scripts/battle/battle_scene.gd:985  ")
         and "victory.proceed_pressed -> _on_victory_proceed" in row
         for row in connects
     )
@@ -458,7 +458,7 @@ def test_a_signal_name_prints_its_declaration_connects_and_emits(
 def test_a_voice_cue_connect_names_its_target(as_records, gd_records):
     _, out = run("voice_cue", as_records, gd_records)
     assert any(
-        row.startswith("  scripts/battle/battle_scene.gd:360  ")
+        row.startswith("  scripts/battle/battle_scene.gd:368  ")
         and "presenter.voice_cue -> AudioManagerAuto.voice" in row
         for row in section(out, "connects")
     )

@@ -579,7 +579,7 @@ and on Heroic once a half-turn ends with the player's unit dead, it waits for th
 
 Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with `BattleRunner.NARRATOR_NAME` for slot 0, and makes the endGame check after each batch.
 `battle_scene.gd` waits `START_WAIT_FRAMES` before the opening lines, `_play_speech` shows each line for its `timeToSay` seconds, and `_input` handles Space through
-`BattleRunner.hard_skip` and `AudioManager.stop_effects`. The port shows a plain label, without the box's placement or fade.
+`BattleRunner.hard_skip` and `AudioManager.stop_effects`. `_play_speech` drives the `SpeechBox` scene and the speaker's bubble, as the last bullet describes.
 
 - Each battle record's `speeches` entries carry `player`, `phase`, `turnTime`, `turnTime2`, `say`, `timeToSay` and sometimes `voiceOver` (`frame_42/DoAction_14.as`, 149 lines in 50
   battles). Between half-turns the conductor shows the line at `speechOn` when its `phase` is the current one, its `turnTime` is the half-turns since that phase began (`turnTimeKKK2`) and
@@ -594,6 +594,13 @@ Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with
 - A shown line sets `timeSpeechKKKUP = timeToSay * 30` (line 841). The speech box, `combatScript` (character 3367 at depth 634, `PlaceObject2_3367_634`), adds `30 / frameRateNowKrin` to
   `timeX` every frame and lets the next line through once `timeX` reaches it (enterFrame lines 13-17), so a line stays up `timeToSay` seconds at any frame rate. 55 of the 149 lines run
   past 4 s, and the longest are 15 s, the opening lines of battles 104 and 105 (`frame_42/DoAction_14.as:423` and 443).
+- The box places itself for each line: x 473.3 when the speaker's `teamSide` is 2 and x 21.8 otherwise, y 460.7 for both (lines 819-828). It writes the line into `inner.combatText` and the
+  speaker's `playerName` into `inner.combatTextName`, and sends the face clip `inner.inner2`, DefineSprite 2978, to the frame labelled with that name (lines 829-831). 11 speakers of the
+  records have no label in that clip: Metabii, Frost Terror, Frost Lord, Cult Leader, Tunnel Beast, Shunny, Bunny, Flower Zombie, Nostalgia, Doctor Klima and Versu the Corruptor.
+  `gotoAndStop` with a missing label does nothing, so their lines show the last face. The port shows an empty face well instead, by the user's choice on #156. The speaker's own `speech` clip, 57 frames, plays over their head (line 842).
+- The box fades at 5 alpha a frame on a 0 to 100 scale, so 20 frames in and 20 out, and sets the music to `100 - _alpha / 1.2` percent every frame, about 16.7 percent when it is fully up
+  (`PlaceObject2_3367_634` enterFrame, lines 2-12 and 19-22). `nextSpeechKKK` turns true when `timeX` reaches `timeSpeechKKKUP`, which starts the fade out, and the next line only waits for
+  that flag, so it starts while the box is still fading. A "Press SPACEBAR to Skip" hint, DefineSprite 3359 holding MENU[53], pulses above the box and fades with it.
 - `speechDone` stays false until the last line ends, and the whole decision block waits for it (conductor lines 591-793), so neither the clock nor the AI's picks nor the half-turn start
   move. Target clicks wait too (`frame_217/DoAction_3.as:18`), and the pass button queues the pass but only commits it once speech is done (`DefineButton2_3383` on(release), lines 4-7).
   A click meanwhile shows `MENU[37]`, "You cannot move yet..." (`frame_217/DoAction.as:19-26`). The block also waits for `timerWait`, which starts at 30 frames when the battle loads

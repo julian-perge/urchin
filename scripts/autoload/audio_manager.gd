@@ -37,6 +37,18 @@ const MUSIC_ROTATION: Array[Variant] = [
 enum MusicMode { NONE = 0, MENU = 1, BATTLE = 2 }
 
 var sound_enabled: bool = true
+# How loud the music plays, as a percentage of full volume. The battle's Speech
+# box sets it to 100 - _alpha / 1.2 while it fades, which drops the music to about
+# 17 percent under a line (frame_217/PlaceObject2_3367_634 enterFrame, line 2).
+# A crossfade that is running keeps its own volumes, and a track that starts
+# plays at this level.
+var music_level: float = 100.0:
+	set(value):
+		music_level = value
+		if _fade_tween != null and _fade_tween.is_running():
+			return
+		var player: AudioStreamPlayer = _music_players[_active_music]
+		player.volume_db = _level_db()
 
 var _effect_players: Array[AudioStreamPlayer] = []
 var _effect_counter: int = 0
@@ -145,18 +157,24 @@ func _start_music(cue: String, hard_start: bool) -> void:
 	new_player.stream = stream
 	if _fade_tween != null:
 		_fade_tween.kill()
+	var target_db: float = _level_db()
 	if hard_start:
 		old_player.stop()
-		new_player.volume_db = FULL_VOLUME_DB
+		new_player.volume_db = target_db
 		new_player.play()
 		return
 	new_player.volume_db = -40.0
 	new_player.play()
 	_fade_tween = create_tween().set_parallel(true)
-	_fade_tween.tween_property(new_player, "volume_db", FULL_VOLUME_DB, CROSSFADE_SECONDS)
+	_fade_tween.tween_property(new_player, "volume_db", target_db, CROSSFADE_SECONDS)
 	if old_player.playing:
 		_fade_tween.tween_property(old_player, "volume_db", -40.0, CROSSFADE_SECONDS)
 		_fade_tween.chain().tween_callback(old_player.stop)
+
+
+# The volume that music_level asks for.
+func _level_db() -> float:
+	return FULL_VOLUME_DB + linear_to_db(maxf(music_level, 0.001) / 100.0)
 
 
 func _stream(cue: String) -> AudioStream:

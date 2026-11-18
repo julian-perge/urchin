@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/speech_box.gd" id="1_box"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/speech_box_frame.png" id="2_frame"]
+
+[node name="SpeechBox" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("1_box")
+
+[node name="Frame" type="TextureRect" parent="."]
+layout_mode = 0
+mouse_filter = 2
+texture = ExtResource("2_frame")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Inner" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="Face" type="TextureRect" parent="Inner"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 0
+
+[node name="SpeakerLabel" type="Label" parent="Inner"]
+layout_mode = 0
+mouse_filter = 2
+
+[node name="LineLabel" type="Label" parent="Inner"]
+layout_mode = 0
+mouse_filter = 2
+theme_type_variation = &"RegularLabel"
+autowrap_mode = 2
+
+[node name="Hint" type="Label" parent="."]
+layout_mode = 0
+mouse_filter = 2
