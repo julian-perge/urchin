@@ -101,10 +101,14 @@ pytest *args:
 [group('python')]
 test: pytest gut
 
-[doc('Look up a function, a global, a script or a line of the original ActionScript')]
+[doc('Look up a function, a global, a script or a line of the GDScript or the original ActionScript')]
 [group('python')]
-as-lookup *args:
-    uv run as_lookup "$@"
+lookup *args:
+    uv run lookup "$@"
+
+[doc('Alias of lookup, which also answers for GDScript')]
+[group('python')]
+as-lookup *args: (lookup args)
 
 [doc('Merge one ticket branch into the integration branch, then push it')]
 [group('python')]
