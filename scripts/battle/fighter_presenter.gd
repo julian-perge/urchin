@@ -255,6 +255,18 @@ func show_state(state: UnitSnapshot) -> void:
 func _draw_status() -> void:
 	_status_bar.show_status(displayed)
 	_status_bar.refresh_buffs(displayed.buff_slots, _buffs_by_id)
+	_draw_buff_look()
+
+
+# Gives the doll the color and the glow that its buffs give it, as
+# applyChangesKrin does after every result and every Buff tick on the unit
+# (frame_42/DoAction_10.as:380-466). The look comes from the snapshot the fighter
+# shows, so it waits for the event that lands the buff and goes at the event that
+# removes it.
+func _draw_buff_look() -> void:
+	var look: BuffLook = BuffLook.resolve(displayed.buff_slots, _buffs_by_id)
+	var looks: Dictionary = BuffLook.looks()
+	_doll.show_buff_look(looks["colors"][look.color], looks["filters"][look.filter])
 
 
 # Shows this fighter's unit as it is now. The scene calls this when the replay of a

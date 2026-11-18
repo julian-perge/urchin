@@ -127,6 +127,14 @@ const REST_POSE: Dictionary[Variant, Variant] = {
 var _parts: Dictionary = {}  # name -> Node2D holding the layered sprites
 var _body: CanvasGroup
 var _body_material: ShaderMaterial
+# The look the doll's buffs give it (show_buff_look): the color offsets and the
+# glows of the filter list, which are empty while the doll has no such look.
+var _buff_offsets: Array = []
+var _buff_glows: Array = []
+# The fit and clear margins, in stage px, that the Result flash and the buff
+# glows each need around the body. The body takes the larger of each.
+var _flash_margins: Vector2 = Vector2.ZERO
+var _buff_margins: Vector2 = Vector2.ZERO
 var _state: int = State.IDLE
 var _attack_fired: bool = false
 
@@ -178,6 +186,10 @@ func _ready():
 	_body_material.shader = BODY_SHADER
 	_body.material = _body_material
 	add_child(_body)
+	# A glow measures its blur in stage px, so a window that changes size changes
+	# what the buff glows ask of the shader.
+	get_viewport().size_changed.connect(_apply_buff_look)
+	_apply_buff_look()
 	var ordered: Array = REST_POSE.keys()
 	ordered.sort_custom(func(a, b): return REST_POSE[a]["z"] < REST_POSE[b]["z"])
 	for part_name in ordered:
@@ -387,14 +399,60 @@ func show_result_flash(color: Color, white_glow: Dictionary, color_glow: Diction
 	_body_material.set_shader_parameter("white_strength", white_glow["strength"])
 	_body_material.set_shader_parameter("color_blur", color_glow["blur"])
 	_body_material.set_shader_parameter("color_strength", color_glow["strength"])
-	_body.fit_margin = (color_glow["blur"] / 2.0 + RESULT_FLASH_FIT_SPARE) * stage_scale
-	_body.clear_margin = white_glow["blur"] / 2.0 * stage_scale
+	_flash_margins = Vector2(color_glow["blur"] / 2.0 + RESULT_FLASH_FIT_SPARE, white_glow["blur"] / 2.0)
+	_apply_margins(stage_scale)
 
 
-# BATTLEFLASH puts back the filter the unit's buffs give its doll, and the port
-# draws no such filter, so the doll goes back to its plain look.
+# BATTLEFLASH puts back the filter and the color the unit's buffs give its doll,
+# so the doll goes back to the look that show_buff_look() set.
 func hide_result_flash() -> void:
 	_body_material.set_shader_parameter("result_flash", false)
+	_flash_margins = Vector2.ZERO
+	_apply_margins(get_viewport().get_final_transform().get_scale().x)
+
+
+# Gives the doll the look its buffs give it: `color_offsets` are the red, green
+# and blue offsets of the ColorTransform that krinChangeColor sets, each from
+# -255 to 255, and `glows` are the GlowFilters of the filter list that
+# applyChangesKrin sets, as buff_looks.json holds them. Empty arguments give the
+# doll back its plain look.
+#
+# A glow reaches half its blur past the px it reads. The body draws the outer
+# glows' reach and 1 px more past the doll, and clears the screen texture half
+# the largest blur past that, as the Result flash does for its glows.
+func show_buff_look(color_offsets: Array, glows: Array) -> void:
+	_buff_offsets = color_offsets
+	_buff_glows = glows
+	_apply_buff_look()
+
+
+func _apply_buff_look() -> void:
+	if _body_material == null:
+		return
+	var stage_scale: float = get_viewport().get_final_transform().get_scale().x
+	var offsets: Vector3 = Vector3.ZERO
+	if _buff_offsets.size() == 3:
+		offsets = Vector3(_buff_offsets[0], _buff_offsets[1], _buff_offsets[2]) / 255.0
+	_body_material.set_shader_parameter("buff_offset", offsets)
+	_body_material.set_shader_parameter("buff_glows", _buff_glows.size())
+	_body_material.set_shader_parameter("stage_scale", stage_scale)
+	var reach: float = 0.0
+	var clear: float = 0.0
+	for index in _buff_glows.size():
+		var glow: Dictionary = _buff_glows[index]
+		var slot: String = "a" if index == 0 else "b"
+		_body_material.set_shader_parameter("buff_color_" + slot, Color.html(glow["color"]))
+		_body_material.set_shader_parameter("buff_params_" + slot, Vector4(glow["blur_x"], glow["strength"], 1.0 if glow["inner"] else 0.0, 1.0 if glow["knockout"] else 0.0))
+		if not glow["inner"]:
+			reach += glow["blur_x"] / 2.0
+		clear = maxf(clear, glow["blur_x"] / 2.0)
+	_buff_margins = Vector2(reach + RESULT_FLASH_FIT_SPARE, clear) if not _buff_glows.is_empty() else Vector2.ZERO
+	_apply_margins(stage_scale)
+
+
+func _apply_margins(stage_scale: float) -> void:
+	_body.fit_margin = maxf(_flash_margins.x, _buff_margins.x) * stage_scale
+	_body.clear_margin = maxf(_flash_margins.y, _buff_margins.y) * stage_scale
 
 
 # The box around every part the doll draws in its current pose, in its parent's

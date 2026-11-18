@@ -609,3 +609,63 @@ func test_the_shadow_stays_through_the_fade_and_goes_with_the_doll_on_frame_371(
 	assert_true(visual.get_node("Body/Shadow").is_visible_in_tree(), "frame 370")
 	visual._process(SWF_FRAME_SECONDS)
 	assert_false(visual.get_node("Body/Shadow").is_visible_in_tree(), "frame 371")
+
+
+# --- the buff look (convert_buff_looks) ---------------------------------------
+
+func _body_shader() -> ShaderMaterial:
+	return visual.get_node("Body").material
+
+
+func _frost() -> Array:
+	var looks: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/buff_looks.json"))
+	return looks["filters"]["Frost"]
+
+
+func test_a_doll_has_no_buff_look_until_it_is_given_one():
+	assert_eq(_body_shader().get_shader_parameter("buff_glows"), 0)
+	assert_eq(_body_shader().get_shader_parameter("buff_offset"), Vector3.ZERO)
+
+
+func test_the_color_offsets_reach_the_shader_in_0_to_1():
+	visual.show_buff_look([-50, 0, -225], [])
+	assert_eq(_body_shader().get_shader_parameter("buff_offset"), Vector3(-50.0, 0.0, -225.0) / 255.0)
+
+
+func test_each_glow_reaches_the_shader_with_its_blur_strength_and_kind():
+	var frost: Array = _frost()
+	visual.show_buff_look([0, 0, 0], frost)
+	var shader: ShaderMaterial = _body_shader()
+	assert_eq(shader.get_shader_parameter("buff_glows"), 2)
+	assert_eq(shader.get_shader_parameter("buff_color_a"), Color.html(frost[0]["color"]))
+	assert_eq(shader.get_shader_parameter("buff_params_a"), Vector4(frost[0]["blur_x"], frost[0]["strength"], 1.0, 1.0), "an inner glow with a knockout")
+	assert_eq(shader.get_shader_parameter("buff_color_b"), Color.html(frost[1]["color"]))
+	assert_eq(shader.get_shader_parameter("buff_params_b"), Vector4(frost[1]["blur_x"], frost[1]["strength"], 0.0, 0.0), "an outer glow")
+
+
+func test_the_body_is_sized_for_the_outer_glows_reach_and_the_widest_blur():
+	var frost: Array = _frost()
+	visual.show_buff_look([0, 0, 0], frost)
+	var body: CanvasGroup = visual.get_node("Body")
+	var stage_scale: float = visual.get_viewport().get_final_transform().get_scale().x
+	assert_almost_eq(body.fit_margin, (frost[1]["blur_x"] / 2.0 + 1.0) * stage_scale, 0.0001, "half the outer glow's blur and 1 px")
+	assert_almost_eq(body.clear_margin, frost[1]["blur_x"] / 2.0 * stage_scale, 0.0001, "half the widest blur")
+
+
+func test_empty_arguments_give_the_doll_its_plain_look_back():
+	visual.show_buff_look([-50, 0, -225], _frost())
+	visual.show_buff_look([], [])
+	assert_eq(_body_shader().get_shader_parameter("buff_glows"), 0)
+	assert_eq(_body_shader().get_shader_parameter("buff_offset"), Vector3.ZERO)
+	assert_eq(visual.get_node("Body").fit_margin, 0.0)
+
+
+func test_a_result_flash_keeps_the_buff_look_for_when_it_ends():
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ui/battle/result_flash.json"))
+	visual.show_buff_look([-50, 0, -225], _frost())
+	visual.show_result_flash(Color.WHITE, layout["white_glow"], layout["color_glow"])
+	assert_eq(_body_shader().get_shader_parameter("buff_glows"), 2, "the shader still holds it, and skips it while the flash is on")
+	visual.hide_result_flash()
+	var frost: Array = _frost()
+	var stage_scale: float = visual.get_viewport().get_final_transform().get_scale().x
+	assert_almost_eq(visual.get_node("Body").clear_margin, frost[1]["blur_x"] / 2.0 * stage_scale, 0.0001, "the body is sized for the buff look again")

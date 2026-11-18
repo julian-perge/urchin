@@ -423,6 +423,68 @@ func test_a_buff_landed_late_in_a_half_turn_shows_only_once_its_result_plays():
 	assert_eq(_buff_icons().size(), 1, "the hit that lands it shows it, from the buff table")
 
 
+# applyChangesKrin recolors and glows the doll from the unit's FILTERSBUFFARRAY
+# (frame_42/DoAction_10.as:380-466), and the conductor runs it on a target after
+# each strike that lands (line 103). So the look waits for the event that lands
+# the buff, as the icon does.
+func _buff_of_filter_index(index: int) -> Buff:
+	var buff := Buff.new()
+	buff.internal_name = "FIRESAM"
+	buff.visual_filter_index = index
+	return buff
+
+
+func _doll_shader() -> ShaderMaterial:
+	return _doll.get_node("Body").material
+
+
+func test_a_poison_buff_shows_the_poison_color_and_a_frost_buff_the_frost_filter():
+	var looks: Dictionary = BuffLook.looks()
+	_present(_unit, {}, {1: _buff_of_filter_index(1), 2: _buff_of_filter_index(2)})
+	_unit.buff_slots[0] = {"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_unit.buff_slots[1] = {"cd": 3, "buff_id": 2, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_presenter.snap_to_unit()
+	var poison: Array = looks["colors"]["Poison"]
+	assert_eq(_doll_shader().get_shader_parameter("buff_offset"), Vector3(poison[0], poison[1], poison[2]) / 255.0, "the Poison color")
+	var frost: Array = looks["filters"]["Frost"]
+	assert_eq(_doll_shader().get_shader_parameter("buff_glows"), frost.size(), "the Frost glows")
+	assert_eq(_doll_shader().get_shader_parameter("buff_color_b"), Color.html(frost[1]["color"]))
+
+
+func test_a_buff_look_shows_only_at_the_event_that_lands_the_buff_and_goes_with_it():
+	_present(_unit, {}, {2: _buff_of_filter_index(2)})
+	var slot: Dictionary = {"cd": 3, "buff_id": 2, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_unit.buff_slots[0] = slot.duplicate()
+
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	assert_eq(_doll_shader().get_shader_parameter("buff_glows"), 0, "a hit before the one that lands the buff shows no look")
+
+	var landing: MoveResult = _damage(10.0, 80.0)
+	landing.target_after.buff_slots = [slot.duplicate()]
+	_presenter.show_result(landing, null)
+	assert_gt(_doll_shader().get_shader_parameter("buff_glows"), 0, "the hit that lands it shows it")
+
+	var removing: MoveResult = _damage(10.0, 70.0)
+	removing.target_after.buff_slots = []
+	_presenter.show_result(removing, null)
+	assert_eq(_doll_shader().get_shader_parameter("buff_glows"), 0, "the event that removes it shows the plain doll again")
+
+
+func test_a_buff_tick_that_removes_the_buff_removes_the_look():
+	_present(_unit, {}, {2: _buff_of_filter_index(2)})
+	var slot: Dictionary = {"cd": 1, "buff_id": 2, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_presenter.show_state(_snapshot_with([slot]))
+	assert_gt(_doll_shader().get_shader_parameter("buff_glows"), 0)
+	_presenter.show_state(_snapshot_with([]))
+	assert_eq(_doll_shader().get_shader_parameter("buff_glows"), 0)
+
+
+func _snapshot_with(slots: Array) -> UnitSnapshot:
+	var snapshot: UnitSnapshot = UnitSnapshot.of(_unit)
+	snapshot.buff_slots = slots.duplicate(true)
+	return snapshot
+
+
 # Shatter Bolt lands its stun as a buff, so its target shows the stun pose and
 # the buff's icon. Both wait for the hit that lands them, where the original's
 # applyChangesKrin draws them (the conductor, line 103).
