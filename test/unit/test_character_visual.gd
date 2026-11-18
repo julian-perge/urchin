@@ -538,3 +538,74 @@ func test_matrixless_placement_keeps_its_depths_matrix():
 	var frames: Array = JSON.parse_string(file.get_as_text())["frames"]
 	assert_eq(frames[121]["foot2"], [0.8, 0.0, 0.0, 0.8, 10.8, 32.7], "frame 122")
 	assert_eq(frames[122]["foot2"], [0.8, 0.0, 0.0, 0.8, 10.8, 32.7], "frame 123")
+
+
+# --- the Ground shadow (extract_doll_shadow) ----------------------------------
+
+func _shadow_layout() -> Dictionary:
+	return JSON.parse_string(FileAccess.get_file_as_string("res://resources/sprites/doll_shadow.json"))
+
+
+# Where the original places its clip: the model's matrix applied to the clip's
+# rect, in the doll's own space.
+func _expected_shadow_rect(model: String) -> Rect2:
+	var layout: Dictionary = _shadow_layout()
+	var m: Array = layout["models"][model]
+	var rect: Dictionary = layout["rect"]
+	var placed := Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5]))
+	return placed * Rect2(rect["x"], rect["y"], rect["w"], rect["h"])
+
+
+func _shadow_rect(shadow: Sprite2D) -> Rect2:
+	return shadow.transform * shadow.get_rect()
+
+
+func test_a_doll_has_no_shadow_until_it_is_asked_for_one():
+	assert_null(visual.get_node_or_null("Body/Shadow"), "a menu mannequin draws none")
+
+
+func test_the_shadow_lands_where_the_models_matrix_puts_it():
+	for model in _shadow_layout()["models"]:
+		visual.show_shadow(model)
+		var shadow: Sprite2D = visual.get_node("Body/Shadow")
+		var got: Rect2 = _shadow_rect(shadow)
+		var want: Rect2 = _expected_shadow_rect(model)
+		assert_true(got.position.is_equal_approx(want.position), "%s position %s, want %s" % [model, got.position, want.position])
+		assert_true(got.size.is_equal_approx(want.size), "%s size %s, want %s" % [model, got.size, want.size])
+
+
+func test_the_shadow_draws_under_every_part():
+	visual.show_shadow("MODEL1")
+	var body: Node = visual.get_node("Body")
+	assert_eq(body.get_child(0).name, &"Shadow", "depth 1 of the model, below its parts")
+	assert_eq(body.get_child_count(), 16, "the 15 parts and the shadow")
+
+
+func test_a_model_with_no_placement_gets_no_shadow():
+	visual.show_shadow("MODEL3")
+	assert_null(visual.get_node_or_null("Body/Shadow"))
+
+
+func test_asking_again_replaces_the_shadow():
+	visual.show_shadow("MODEL1")
+	visual.show_shadow("MODEL2")
+	await get_tree().process_frame
+	assert_eq(visual.get_node("Body").get_child_count(), 16)
+	var got: Rect2 = _shadow_rect(visual.get_node("Body/Shadow"))
+	assert_true(got.size.is_equal_approx(_expected_shadow_rect("MODEL2").size))
+
+
+# The shadow goes with the doll. The script on MODEL1's frame 360 hides
+# `_parent.shadower`, which the rig does not have, so the shadow lasts until
+# frame 371 removes the whole doll (extract_doll_shadow's header).
+func test_the_shadow_stays_through_the_fade_and_goes_with_the_doll_on_frame_371():
+	visual.show_shadow("MODEL1")
+	visual.set_state(CharacterVisual.State.DEAD)
+	for frame in 47:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_true(visual.get_node("Body/Shadow").is_visible_in_tree(), "frame 360, where the original's script runs")
+	for frame in 10:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_true(visual.get_node("Body/Shadow").is_visible_in_tree(), "frame 370")
+	visual._process(SWF_FRAME_SECONDS)
+	assert_false(visual.get_node("Body/Shadow").is_visible_in_tree(), "frame 371")

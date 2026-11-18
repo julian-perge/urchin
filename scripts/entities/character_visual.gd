@@ -83,6 +83,12 @@ const BODY_SHADER: Shader = preload("res://scenes/doll_body.gdshader")
 # has no such number.
 const RESULT_FLASH_FIT_SPARE: float = 1.0
 
+# The Ground shadow's art and each model's matrix for it (extract_doll_shadow).
+const SHADOW_ART: String = SPRITE_ROOT + "/doll_shadow.png"
+const SHADOW_FILE: String = SPRITE_ROOT + "/doll_shadow.json"
+
+static var _shadow_layout: Dictionary = {}
+static var _shadow_layout_loaded: bool = false
 static var _offsets: Dictionary = {}
 static var _offsets_loaded: bool = false
 static var _animations: Dictionary = {}
@@ -187,6 +193,31 @@ func _ready():
 	# (menus) keep the rest pose above.
 	if animate:
 		set_state(State.IDLE)
+
+
+# Draws the Ground shadow that `model` places under its parts, at depth 1 of
+# the model clip. The shadow is part of the body, so the doll's modulate, fade
+# and Result flash reach it as they reach the original's whole `inner` clip.
+# A model with no placement in doll_shadow.json gets none.
+func show_shadow(model: String) -> void:
+	var old: Node = _body.get_node_or_null("Shadow")
+	if old != null:
+		_body.remove_child(old)
+		old.queue_free()
+	var layout: Dictionary = _load_shadow_layout()
+	var matrix: Array = layout.get("models", {}).get(model, [])
+	if matrix.is_empty():
+		return
+	var rect: Dictionary = layout["rect"]
+	var shadow := Sprite2D.new()
+	shadow.name = "Shadow"
+	shadow.texture = load(SHADOW_ART)
+	shadow.centered = false
+	var size: Vector2 = shadow.texture.get_size()
+	var placed := Transform2D(Vector2(matrix[0], matrix[1]), Vector2(matrix[2], matrix[3]), Vector2(matrix[4], matrix[5]))
+	shadow.transform = placed * Transform2D(0.0, Vector2(rect["w"] / size.x, rect["h"] / size.y), 0.0, Vector2(rect["x"], rect["y"]))
+	_body.add_child(shadow)
+	_body.move_child(shadow, 0)
 
 
 # dressChar port. gender "M"/"F", skin/hair keys, equip = 7-slot Array of
@@ -493,6 +524,17 @@ static func _load_sound_cues() -> Dictionary:
 			if parsed is Dictionary:
 				_sound_cues = parsed
 	return _sound_cues
+
+
+static func _load_shadow_layout() -> Dictionary:
+	if not _shadow_layout_loaded:
+		_shadow_layout_loaded = true
+		var file: FileAccess = FileAccess.open(SHADOW_FILE, FileAccess.READ)
+		if file != null:
+			var parsed = JSON.parse_string(file.get_as_text())
+			if parsed is Dictionary:
+				_shadow_layout = parsed
+	return _shadow_layout
 
 
 static func _load_animations() -> Dictionary:

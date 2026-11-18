@@ -308,6 +308,20 @@ func test_setup_stands_a_model5_smaller_and_lower():
 	assert_eq(_overlay.position, _doll.position, "with the overlay on it")
 
 
+func test_setup_puts_the_units_models_shadow_under_its_doll():
+	var unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+	unit.model = ["MODEL5", "ONE", "ONE", "M"]
+	_present(unit)
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/sprites/doll_shadow.json"))
+	var m: Array = layout["models"]["MODEL5"]
+	var shadow: Sprite2D = _doll.get_node("Body/Shadow")
+	var rect: Dictionary = layout["rect"]
+	var want: Rect2 = Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5])) * Rect2(rect["x"], rect["y"], rect["w"], rect["h"])
+	var got: Rect2 = shadow.transform * shadow.get_rect()
+	assert_true(got.position.is_equal_approx(want.position), "MODEL5's matrix, not MODEL1's")
+	assert_true(got.size.is_equal_approx(want.size))
+
+
 func test_setup_dresses_the_doll_from_the_item_table():
 	var unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
 	unit.equipment_ids = [0, 7]

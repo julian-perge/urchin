@@ -229,6 +229,11 @@ extract-cutscenes *args: (require "ffdec" "java")
 extract-doll-art *args: (require "ffdec" "java")
     uv run extract_doll_art "$@"
 
+[doc('Run extract_doll_shadow, which reads the SWF through ffdec')]
+[group('extract')]
+extract-doll-shadow *args: (require "ffdec" "java")
+    uv run extract_doll_shadow "$@"
+
 [doc('Run extract_faces, which reads the SWF through ffdec')]
 [group('extract')]
 extract-faces *args: (require "ffdec" "java")
