@@ -3,6 +3,16 @@
 Godot and GUT behavior this project has tripped on, and the QA save presets for
 testing the game by hand.
 
+## Find the place before you read it
+
+Run `just lookup <query>` before `rg` on `.gd` files. It answers a function
+name (source or outline, callers, calls, signals, and the ActionScript that the
+function ports), a signal name (its declaration, connects and emits), a string
+value, a repo path such as `scripts/battle/combat_unit.gd`, and a path with a
+line such as `scripts/battle/battle_runner.gd:119`. It matches a caller by
+name, so it misses a call in class-level code and a callable reference such as
+`name.call_deferred()`. It is a guide to where to look, not an authority.
+
 ## Godot specifics
 
 - Base resolution is 800x575 with `canvas_items` stretch, the original's Stage
