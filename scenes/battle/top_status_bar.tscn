@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/top_status_bar.gd" id="1_top"]
+[ext_resource type="PackedScene" path="res://scenes/battle/status_bar.tscn" id="2_bar"]
+
+[node name="TopStatusBar" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 800.0
+offset_bottom = 575.0
+mouse_filter = 2
+script = ExtResource("1_top")
+
+[node name="Bar1" parent="." instance=ExtResource("2_bar")]
+layout_mode = 0
+slot = 1
+
+[node name="Bar2" parent="." instance=ExtResource("2_bar")]
+layout_mode = 0
+slot = 2
+
+[node name="Bar3" parent="." instance=ExtResource("2_bar")]
+layout_mode = 0
+slot = 3
+
+[node name="Bar4" parent="." instance=ExtResource("2_bar")]
+layout_mode = 0
+slot = 4
+
+[node name="Bar5" parent="." instance=ExtResource("2_bar")]
+layout_mode = 0
+slot = 5
+
+[node name="Bar6" parent="." instance=ExtResource("2_bar")]
+layout_mode = 0
+slot = 6

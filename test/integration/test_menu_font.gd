@@ -254,21 +254,21 @@ func test_tooltips_bold_the_title_and_keep_the_body_regular():
 # unit bars and the battle speech use font 295, the member bar's name uses the
 # pixel font 3307, and the buff counter and the Combat text banner use font 65.
 func test_battle_text_keeps_the_original_fonts():
-	var overlay: UnitOverlay = add_child_autofree(load("res://scenes/battle/unit_overlay.tscn").instantiate())
-	_assert_fonts(overlay, {"NameLabel": [3395, 295], "HealthValue": [3398, 295]})
+	var bar: StatusBar = add_child_autofree(load("res://scenes/battle/status_bar.tscn").instantiate())
+	_assert_fonts(bar, {"Inner/PlayerName": [3395, 295], "Inner/LifeNow": [3398, 295]})
 	var unit := CombatUnit.new()
 	unit.buff_slots = [{"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}]
 	var buff := Buff.new()
 	buff.internal_name = "FIRESAM"
 	buff.display_name = "The Immortal Flame"
 	buff.element_type = CombatUnit.Element.FIRE
-	overlay.refresh_buffs(unit.buff_slots, {1: buff})
-	assert_eq(overlay.buff_row.get_child_count(), 1, "the buff shows")
-	if overlay.buff_row.get_child_count() == 1:
-		var counter: Label = overlay.buff_row.get_child(0).find_children("*", "Label", true, false)[0]
+	bar.refresh_buffs(unit.buff_slots, {1: buff})
+	assert_eq(bar.buff_row.get_child_count(), 1, "the buff shows")
+	if bar.buff_row.get_child_count() == 1:
+		var counter: Label = bar.buff_row.get_child(0).find_children("*", "Label", true, false)[0]
 		_assert_font(counter, 65, "the buff counter (edit text 66)")
 	var row = add_child_autofree(load("res://scenes/battle/stance_row.tscn").instantiate())
-	_assert_fonts(row, {"NameLabel": [3308, 3307]})
+	_assert_fonts(row, {"NameLabel": [3308, 3307], "InactiveLabel": [3310, 3307]})
 	var battle = add_child_autofree(load("res://scenes/battle_scene.tscn").instantiate())
 	_assert_fonts(battle, {"UI/SpeechLabel": [3361, 295], "CombatTextBanner/Label": [2849, 65]})
 

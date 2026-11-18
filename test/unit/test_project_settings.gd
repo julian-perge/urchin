@@ -38,10 +38,15 @@ func _typed_value(scene_path: String, node_path: String, property: StringName):
 	return null
 
 
-func test_battle_bottom_bar_ends_at_the_viewport_bottom():
+# The battle's BottomBar holds the pieces at Stage coordinates, so it spans the
+# viewport. The shared bar art inside it ends above the viewport's bottom edge,
+# as the original's 3317 does.
+func test_battle_bottom_bar_fits_in_the_viewport():
 	var viewport_height: int = ProjectSettings.get_setting("display/window/size/viewport_height")
 	assert_eq(_typed_value("res://scenes/battle_scene.tscn", "BottomBar", &"offset_bottom"), float(viewport_height))
-	assert_eq(_typed_value("res://scenes/battle_scene.tscn", "BottomBar", &"offset_top"), 445.0, "the bar is 130 px high")
+	var bar: TextureRect = (load("res://scenes/ui/bottom_bar.tscn") as PackedScene).instantiate()
+	assert_lt(bar.offset_bottom, float(viewport_height), "the bar art ends inside the viewport")
+	bar.free()
 
 
 func test_game_background_fill_is_the_stage_backdrop_color():

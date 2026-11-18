@@ -28,7 +28,7 @@ func _present() -> void:
 	_layer = add_child_autofree(FloatingNumberLayer.new())
 	_layer.set_process(false)
 	_presenter = add_child_autofree(FighterPresenterScene.instantiate())
-	_presenter.setup(_unit, Vector2(300, 250), {}, {}, _layer)
+	_presenter.setup(_unit, Vector2(300, 250), {}, {}, _layer, add_child_autofree(load("res://scenes/battle/status_bar.tscn").instantiate()))
 	_presenter.get_node("ResultFlash").set_process(false)
 	_shield_clip = _presenter.get_node("ShieldClip")
 	_shield_clip.set_process(false)

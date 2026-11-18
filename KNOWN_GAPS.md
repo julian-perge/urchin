@@ -104,11 +104,8 @@ Player appearance customization (SkinSet/HairSet/GSet) isn't persisted - Sonny u
 
 Scoped-out edges from the playtest-feedback batch:
 
-- **Top battle bar panel**: the original shows every fighter's health/focus with numbers in a panel across the top of the battle screen (reference `9_inbattle_start...png`).
-  Noted, not built - the in-field bars carry the health number instead.
-- **Battle top panel frame extracted, bars not built**: `assets/ui/battle/top_panel.png` is the frame the original's six `p1BAR`-`p6BAR` fighter bars sit
-  inside. The bars themselves (`3414`) are still unbuilt, so the frame is not placed in the scene yet. The bottom bar's own team member bars are a
-  different thing and are built, as Godot nodes, in `scenes/battle/stance_row.tscn`.
+- **Top battle bar panel - RESOLVED** (julian-perge/urchin#67): the top status bar shows every fighter's name, life and Focus with numbers, and its buff icons, on `top_panel.png`.
+- **Battle top panel frame extracted, bars not built - RESOLVED** (julian-perge/urchin#67): `scenes/battle/top_status_bar.tscn` holds the six bars, `p1BAR` to `p6BAR`, on the frame. `uv run extract_top_bar` writes their art and constants.
 - **Ability orb art - RESOLVED**: both the radial-menu and abilities-screen orbs now show the real extracted per-move icon art (`assets/ui/abilities/`) with element-colored borders, instead of text initials.
 - **Radial menu is click-to-cast**: the original picks up the ability with the cursor; here a usable orb casts on click directly. Which orbs darken and what a refused click says match the source: only a bad target or a cooldown darkens an orb (`frame_217/PlaceObject3_3382_500/CLIPACTIONRECORD onClipEvent(enterFrame).as:15-29`), and every refused click shows its message in the Combat text banner and leaves the menu open (`frame_42/DoAction_11.as:60-125`).
 - **Class-select card art - RESOLVED**: the original sketch art has been extracted and wired - gray rest / colored hover textures in `assets/ui/menu/class_cards/`,
@@ -134,3 +131,13 @@ Scoped-out edges from the playtest-feedback batch:
 - **Start background**: rendered from a copy of the SWF with every foreground character deleted, so there is no baked text to erase afterwards.
   The horizontal bars an earlier pass left across the middle of the image were not original art - they came from that pass interpolating the baked texts away.
 - **Zone progress bar**: renders correctly at 1/9 (verified) - training fights do not advance story progress by design, which can read as "empty bar" after a training win.
+
+## Battle HUD (julian-perge/urchin#67)
+
+What the original does and the port does not yet, found while building the top status bar:
+
+- **The clock ring is not built**: the original shows a ring around the pass button that turns blue during the player's half-turn and orange during the other side's (`thingerClock`, frames `friend` and `enemy`, each with two Glow filters). It is also the turn timer: two hands that script rotates through two mask rects. ffdec cannot render it, because it draws almost nothing at the clip's start state. The port keeps the `TurnLabel` text and the old countdown art until julian-perge/urchin#339 lands.
+- **The pass button does not show the chosen ability**: the original swaps the alert icon for the ability's icon (`krinToMove`, sprite 2427), and gives the button separate over and down art (shape 2435). The port always shows the alert icon.
+- **A Guest in slot 3 or 5 has no member row**: what the original shows for it is not known. Only battle 508 has such a Guest. The port hides its row.
+- **The bars have no DropShadow**: the original's sprite 3414 has a DropShadow (blur 5, distance 3). The port gives the bar's text its shadow and draws no shadow under the art.
+- **The death fade may be too fast**: the port takes 5 off the bar's alpha on every frame from frame 18 (`death.fade_per_frame` in `top_bar.json`). `LifeBarSmoother` frame 38 jumps back to the `dead` label (frame 37), so the script may run on every second frame, which would make the fade twice as long. No run of the original has checked it.

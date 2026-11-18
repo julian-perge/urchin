@@ -32,7 +32,6 @@ signal battle_finished(outcome: int)
 signal clock_ticked
 
 const FighterPresenterScene: PackedScene = preload("res://scenes/battle/fighter_presenter.tscn")
-const StanceRowScene: PackedScene = preload("res://scenes/battle/stance_row.tscn")
 const ProjectileScene: PackedScene = preload("res://scenes/battle/projectile.tscn")
 const ImpactEffectScene: PackedScene = preload("res://scenes/battle/impact_effect.tscn")
 const BACKGROUND_ROOT: String = "res://assets/backgrounds"
@@ -76,6 +75,7 @@ var battle_info: Dictionary = {}
 
 var _presenters: Dictionary = {}  # slot -> FighterPresenter
 var _stance_rows: Dictionary = {}  # party_id -> StanceRow
+var _member_rows_enabled: bool = true
 var _selected_move: Dictionary = {}
 # True while the turn loop waits for the player's pick. The menu follows it
 # through this setter, so a pick, a pass and the Heroic timeout all close the
@@ -125,21 +125,31 @@ var _frames_to_dispatch: int = 0
 var _acting_moved: bool = false
 var _buff_tick_due: bool = false
 
-@onready var battle_screen_clip: BattleScreenClip = $BattleScreenClip
-@onready var background: TextureRect = $BattleScreenClip/Background
-@onready var sky: TextureRect = $Sky
-@onready var sky_fill: ColorRect = $SkyFill
-@onready var battlefield: Node2D = $BattleScreenClip/Battlefield
+# The Hall window is shape 333, which the battle frame places with clipDepth 340,
+# so it clips the sky, the hall and the fighters. HallSpace sits inside it at the
+# opposite offset, so everything under HallSpace keeps its Stage coordinates.
+# The window is black because the original shows black above the sky strip: a
+# render of the frame reads (0, 0, 0) at every pixel between shape 333's top
+# edge at y = 130 and the sky. Do not sample the sky art for that color instead:
+# the SWF renders are trimmed to their own soft top edge, so five of the nine
+# skies read alpha 0 at row 0 centre and SEA reads 0.37.
+@onready var hall_window: ColorRect = $HallWindow
+@onready var _hall_space: Control = $HallWindow/HallSpace
+@onready var battle_screen_clip: BattleScreenClip = $HallWindow/HallSpace/BattleScreenClip
+@onready var background: TextureRect = $HallWindow/HallSpace/BattleScreenClip/Background
+@onready var sky: TextureRect = $HallWindow/HallSpace/Sky
+@onready var battlefield: Node2D = $HallWindow/HallSpace/BattleScreenClip/Battlefield
 # The original attaches each Floating number to BATTLESCREEN at depth 1620 to
 # 1639 (frame_42/DoAction_7.as:4 and 37), so the numbers zoom and shake with
 # the fighters. That depth is over the fighters at depths 40 to 240, the impact
 # clip at -9 and the bolts from depth 600 (frame_42/DoAction_4.as:78 and 140).
 # So battle_scene.tscn puts this node in BattleScreenClip right after
 # Battlefield, which holds all of those.
-@onready var floating_numbers: FloatingNumberLayer = $BattleScreenClip/FloatingNumbers
+@onready var floating_numbers: FloatingNumberLayer = $HallWindow/HallSpace/BattleScreenClip/FloatingNumbers
 @onready var turn_label: Label = $UI/TurnLabel
 @onready var speech_label: Label = $UI/SpeechLabel
 @onready var _pass_ring: Control = $BottomBar/PassRing
+@onready var top_status_bar: TopStatusBar = $TopStatusBar
 @onready var radial_menu: RadialMenu = $RadialMenu
 # The battle frame places KrinCombatText at depth 630, above the orb ring at 500
 # and below the speech box at 634. So battle_scene.tscn puts this node after the
@@ -147,12 +157,14 @@ var _buff_tick_due: bool = false
 # UI layer, which draws over both.
 @onready var combat_text_banner: CombatTextBanner = $CombatTextBanner
 @onready var stance_host: Control = $BottomBar/StanceHost
-@onready var _countdown_label: Label = $BottomBar/Panel3/CountdownLabel
-@onready var _combat_log: CombatLogPanel = $CombatLogPanel
+@onready var _countdown_label: Label = $BottomBar/CountdownLabel
+@onready var _combat_log: CombatLogPanel = $BottomBar/RightPanel/CombatLogPanel
 @onready var _fade_black: ColorRect = $Fade/Black
 
 
 func _ready():
+	_hall_space.position = -hall_window.position
+	member_row(3).position.y = StanceRow.row_pitch()
 	speech_label.text = ""
 	# The retreat button is the original's battle Quit button,
 	# DefineButton2_3356, which shows SYSTEM[25] over SYSTEM[26]
@@ -273,7 +285,7 @@ func _play_cutscene_before(cutscene_id: String) -> void:
 # The original composites a sky layer behind the hall art; the hall PNGs have a
 # transparent sky region. The sky art is a wide horizon STRIP, not a
 # full-screen image - it sits with its bottom on the ground line, and the area
-# above it is filled with SKY_FILL_COLOR.
+# above it shows the black of the Hall window.
 #
 # The hall and the sky are two independent per-battle fields, not one key: the
 # original drives DefineSprite 3435 from Krin.ZoneBG and DefineSprite 3454 from
@@ -286,14 +298,6 @@ func _play_cutscene_before(cutscene_id: String) -> void:
 # it and put every sky's ground line at y = 292.0; the real line differs per
 # label, and ROME's is at 306.0.
 const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
-
-# What the original shows above the strip. The battle frame places DefineShape
-# 333, a solid black rect, under the sky, and a render of the frame reads
-# (0, 0, 0) at every pixel between that rect's top edge at y = 130 and the sky.
-# Do not sample the sky art for it instead: the SWF renders are trimmed to their
-# own soft top edge, so five of the nine skies read alpha 0 at row 0 centre and
-# SEA reads 0.37.
-const SKY_FILL_COLOR: Color = Color.BLACK
 
 var _battle_layout: Dictionary = {}
 
@@ -313,11 +317,21 @@ func _sky_rect(sky_key: String) -> Dictionary:
 	return _layout().get("skies", {}).get(sky_key, {})
 
 
+# -> {x, y, w, h} for one hall label, or {} when the JSON has no entry for it.
+func _hall_rect(hall_key: String) -> Dictionary:
+	return _layout().get("halls", {}).get(hall_key, {})
+
+
 func _load_background() -> void:
 	var key: String = battle.zone_background.replace(" ", "_")
 	var path: String = "%s/battle/%s.png" % [BACKGROUND_ROOT, key]
-	if ResourceLoader.exists(path):
+	var hall_rect: Dictionary = _hall_rect(key)
+	if ResourceLoader.exists(path) and not hall_rect.is_empty():
 		background.texture = load(path)
+		background.position = Vector2(float(hall_rect["x"]), float(hall_rect["y"]))
+		background.size = Vector2(float(hall_rect["w"]), float(hall_rect["h"]))
+	else:
+		push_error("no hall art or layout entry for %s (battle %d)" % [key, battle.id])
 	var sky_key: String = battle.sky_background.replace(" ", "_")
 	var sky_path: String = "%s/sky/SKY_%s.png" % [BACKGROUND_ROOT, sky_key]
 	if not ResourceLoader.exists(sky_path):
@@ -335,9 +349,6 @@ func _load_background() -> void:
 	sky.stretch_mode = TextureRect.STRETCH_SCALE
 	sky.position = Vector2(float(rect["x"]), float(rect["y"]))
 	sky.size = Vector2(float(rect["w"]), float(rect["h"]))
-	sky_fill.color = SKY_FILL_COLOR
-	sky_fill.position = Vector2.ZERO
-	sky_fill.size = Vector2(800, float(rect["y"]) + 2.0)
 
 
 func _spawn_visuals() -> void:
@@ -345,13 +356,14 @@ func _spawn_visuals() -> void:
 		var home: Vector2 = SLOT_POSITIONS.get(slot, Vector2(400, 300))
 		var presenter: FighterPresenter = FighterPresenterScene.instantiate()
 		battlefield.add_child(presenter)
-		presenter.setup(units[slot], home, ItemManagerAuto.items_by_id, BuffManagerAuto.buffs_by_id, floating_numbers)
+		presenter.setup(units[slot], home, ItemManagerAuto.items_by_id, BuffManagerAuto.buffs_by_id, floating_numbers, top_status_bar.bar_for_slot(slot))
 		presenter.voice_cue.connect(AudioManagerAuto.voice)
 		presenter.effect_cue.connect(AudioManagerAuto.play_effect)
 		presenter.hit_area.mouse_entered.connect(_on_unit_hovered.bind(slot, true))
 		presenter.hit_area.mouse_exited.connect(_on_unit_hovered.bind(slot, false))
 		presenter.hit_area.pressed.connect(radial_menu.open.bind(slot, home, presenter.hit_area))
 		_presenters[slot] = presenter
+	top_status_bar.show_active(units)
 
 
 func _on_unit_hovered(slot: int, entered: bool) -> void:
@@ -392,38 +404,65 @@ func _draw_pass_ring() -> void:
 		_pass_ring.draw_arc(Vector2.ZERO, 41.0, 0.0, TAU, 64, Color(0.4, 0.75, 1.0, 0.35), 7.0, true)
 
 
+# The slots whose member rows the bottom bar shows, upper row first. The original's
+# member bar container places its "p5" copy above its "p3" copy
+# (DefineSprite 3312, y 12.60 vs y 50.10), matching the battlefield where slot 5 is
+# the upper fighter and slot 3 the lower one. Each row has its own place, so a
+# Companion in slot 3 alone sits in the lower one.
+const MEMBER_SLOTS: Array[int] = [5, 3]
+
+
+# Returns the member row of a slot, 5 or 3.
+func member_row(slot: int) -> StanceRow:
+	return stance_host.get_node("Row%d" % slot)
+
+
+# Wires each Companion's row to its stance and shows every row. A row stays where
+# it is, so only the third slot's row is moved, down by one row.
 func _populate_stance_rows() -> void:
-	for child in stance_host.get_children():
-		child.queue_free()
 	_stance_rows.clear()
 	# The original hides the member bar container in the Tutorial, rows and all,
 	# whoever fights there (DefineSprite_3317/frame_1/PlaceObject2_3312_7
 	# CLIPACTIONRECORD onClipEvent(load).as:5-8).
-	if battle.id == ZoneProgression.TUTORIAL_BATTLE_ID:
-		return
-	var row_y: float = 0.0
-	# Slot 5 first: the original's member bar container places its "p5" copy
-	# above its "p3" copy (DefineSprite 3312, y 12.60 vs y 50.10), matching the
-	# battlefield where slot 5 is the upper fighter and slot 3 the lower one.
-	for slot in [5, 3]:
+	_member_rows_enabled = battle.id != ZoneProgression.TUTORIAL_BATTLE_ID
+	stance_host.visible = false
+	for slot in MEMBER_SLOTS:
 		var unit: CombatUnit = units.get(slot)
-		# Only a companion gets a row. The original fills the bar from whoever
-		# is active in slots 3 and 5 at each Decision, but no guest's row ever
-		# appears there: DECODED_ALGORITHMS.md has why.
-		if unit == null or unit.origin != CombatUnit.Origin.COMPANION:
-			continue
-		var party_id: int = unit.party_id
-		var row: StanceRow = StanceRowScene.instantiate()
-		row.position = Vector2(0, row_y)
-		stance_host.add_child(row)
-		row.setup(unit.player_name)
-		for mode in row.buttons.size():
-			row.buttons[mode].pressed.connect(_on_stance_pressed.bind(party_id, mode, slot))
-		_stance_rows[party_id] = row
-		# Party.build_companion_unit starts every companion on Tactical, so
-		# that is the stance each row shows until a button is pressed.
-		_refresh_stance_row(party_id, Party.AggressionStance.TACTICAL)
-		row_y += StanceRow.row_pitch()
+		if unit != null and unit.origin == CombatUnit.Origin.COMPANION:
+			var row: StanceRow = member_row(slot)
+			for mode in row.buttons.size():
+				row.buttons[mode].pressed.connect(_on_stance_pressed.bind(unit.party_id, mode, slot))
+			_stance_rows[unit.party_id] = row
+			# Party.build_companion_unit starts every companion on Tactical, so
+			# that is the stance each row shows until a button is pressed.
+			_refresh_stance_row(unit.party_id, Party.AggressionStance.TACTICAL)
+	_refresh_member_rows()
+
+
+# Does what the conductor does to the member bar at each of the player's
+# Decisions: a slot whose unit is active shows its row's `active` frame, and any
+# other slot shows `inactive` (frame_217/PlaceObject2_3389_480 enterFrame, lines
+# 696 to 746). A Companion who died has active false, so its row flips here, at
+# the next Decision. A Guest never shows a row, as DECODED_ALGORITHMS.md says,
+# and what the original shows in its place is not known (spec/67-battle-hud.md,
+# open question 1), so its row stays hidden.
+func _refresh_member_rows() -> void:
+	for slot in MEMBER_SLOTS:
+		var row: StanceRow = member_row(slot)
+		var unit: CombatUnit = units.get(slot)
+		row.visible = unit == null or unit.origin != CombatUnit.Origin.GUEST
+		if unit != null and unit.origin == CombatUnit.Origin.COMPANION and unit.active:
+			row.setup(unit.player_name)
+			row.show_active()
+		else:
+			row.show_inactive()
+
+
+# Shows the member bar during the half-turn of the player's side and hides it
+# during the other side's, as the conductor does with the container's SHOW and
+# HIDE frames. The Tutorial keeps it hidden.
+func _show_member_rows_for(team_side: int) -> void:
+	stance_host.visible = _member_rows_enabled and team_side == units[BattleRunner.PLAYER_SLOT].team_side
 
 
 func _refresh_stance_row(party_id: int, selected_mode: Party.AggressionStance) -> void:
@@ -461,7 +500,9 @@ func _battle_loop() -> void:
 		await _play_events(_pending_setup_events)
 		_pending_setup_events = []
 	while not runner.is_over():
+		_show_member_rows_for(runner.team_move_now)
 		if runner.is_player_turn():
+			_refresh_member_rows()
 			decision_open = true
 			_reset_decision_timer()
 			turn_label.text = "Your move"

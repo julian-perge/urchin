@@ -54,6 +54,12 @@ func _drawing_paths(root: Node, port_only: Array) -> Array[String]:
 	return found
 
 
+# Returns where a Control draws, scale and mirror included. Control.get_global_rect()
+# leaves the scale of the node and of its parents out of the size.
+func _stage_rect(node: Control) -> Rect2:
+	return node.get_global_transform() * Rect2(Vector2.ZERO, node.size)
+
+
 func _close(a: float, b: float) -> bool:
 	return absf(a - b) < TOLERANCE
 
@@ -127,7 +133,10 @@ func _outline_problems(path: String, panel: Panel, entry: Dictionary) -> Array[S
 func _art_size_problems(path: String, texture: Texture2D, entry: Dictionary) -> Array[String]:
 	var found: Array[String] = []
 	var size := Vector2(entry["size"][0], entry["size"][1])
-	var zoomed := Vector2(entry["rect"][2], entry["rect"][3]) * float(entry["zoom"])
+	# A piece that a scaled sprite holds has a zoom for each axis.
+	var zoom: Variant = entry["zoom"]
+	var zoom_xy := Vector2(zoom[0], zoom[1]) if zoom is Array else Vector2(float(zoom), float(zoom))
+	var zoomed := Vector2(entry["rect"][2], entry["rect"][3]) * zoom_xy
 	if not zoomed.is_equal_approx(size):
 		found.append("%s: rect times zoom %s, expected the PNG size %s" % [path, zoomed, size])
 	var actual: Vector2 = texture.get_size() if texture else Vector2.ZERO
@@ -161,7 +170,7 @@ func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[Stri
 	# so a wrong width moves the text. A Label also grows past its offsets when
 	# its text is wider than the field.
 	if label.horizontal_alignment != HORIZONTAL_ALIGNMENT_LEFT:
-		var right: float = label.global_position.x + label.size.x
+		var right: float = _stage_rect(label).end.x
 		var expected_right: float = float(entry["rect"][0]) + float(entry["rect"][2])
 		if not _close(right, expected_right):
 			found.append("%s: right edge %s, expected %s" % [path, right, expected_right])
@@ -234,15 +243,19 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 			found.append_array(_doll_problems(root, path, entry))
 			continue
 		if entry["kind"] == "point":
-			var point: Node2D = root.get_node_or_null(path) as Node2D
+			# A Node2D sits at the point with the placement's scale. A plain Control
+			# only marks the point, because the scale of a Control would scale
+			# what it holds.
+			var point: CanvasItem = root.get_node_or_null(path) as CanvasItem
 			if point == null:
-				found.append("%s: no such Node2D" % path)
-			else:
-				var expected := Vector2(entry["position"][0], entry["position"][1])
-				if not (_close(point.global_position.x, expected.x) and _close(point.global_position.y, expected.y)):
-					found.append("%s: position %s, expected %s" % [path, point.global_position, expected])
-				if not point.scale.is_equal_approx(Vector2(entry["scale"][0], entry["scale"][1])):
-					found.append("%s: scale differs" % path)
+				found.append("%s: no such Node2D or Control" % path)
+				continue
+			var expected := Vector2(entry["position"][0], entry["position"][1])
+			var actual_position: Vector2 = point.global_position if point is Node2D else (point as Control).get_global_rect().position
+			if not (_close(actual_position.x, expected.x) and _close(actual_position.y, expected.y)):
+				found.append("%s: position %s, expected %s" % [path, actual_position, expected])
+			if point is Node2D and not (point as Node2D).scale.is_equal_approx(Vector2(entry["scale"][0], entry["scale"][1])):
+				found.append("%s: scale differs" % path)
 			continue
 		var node: Control = root.get_node_or_null(path) as Control
 		if node == null:
@@ -251,7 +264,7 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 		# The record holds Stage positions. A scene such as right_column.tscn
 		# puts its root where the SWF puts the piece, so the root's own
 		# position counts.
-		var actual := node.get_global_rect()
+		var actual: Rect2 = _stage_rect(node)
 		match entry["kind"]:
 			"outline":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
@@ -1038,3 +1051,79 @@ func test_control_a_store_doll_moved_20_px_or_facing_right_fails() -> void:
 	found = _scene_problems(root, _store_record())
 	assert_gt(found.size(), 0)
 	assert_string_contains(found[0] if found else "", "scale")
+
+
+const BATTLE_SCENE: String = "res://scenes/battle_scene.tscn"
+
+
+# Each piece of the battle scene is moved on its own, so a control that fails
+# names the piece that moved.
+func test_control_a_battle_piece_moved_20_px_fails() -> void:
+	var pieces: Array[String] = [
+		"TopPanel", "HallWindow", "HallOutline", "BottomBar/Bar", "BottomBar/StanceHost", "BottomBar/RightPanel",
+		"BottomBar/PassButton", "BottomBar/PassRing", "BottomBar/AlertIcon", "BottomBar/RetreatButton",
+	]
+	for piece: String in pieces:
+		var root: Control = await _laid_out(BATTLE_SCENE)
+		var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
+		assert_eq(_scene_problems(root, scene), [] as Array[String], "%s starts in place" % piece)
+		(root.get_node(piece) as Control).position.x += 20.0
+		await wait_process_frames(2)
+		var found: Array[String] = _scene_problems(root, scene)
+		assert_gt(found.size(), 0, "%s moved 20 px and passed" % piece)
+		var what: String = "position" if piece == "BottomBar/PassRing" else "top left"
+		assert_string_contains(found[0] if found else "", "%s: %s" % [piece, what])
+
+
+# The bar of slot 1 sits on the left and the bar of slot 2 is mirrored, so each
+# kind of piece is moved on both: the backing, a text field, a fill and the frame.
+func test_control_a_top_status_bar_piece_moved_20_px_fails() -> void:
+	var pieces: Array[String] = []
+	for bar: String in ["Bar1", "Bar2"]:
+		for part: String in ["Inner/Backing", "Inner/PlayerName", "Inner/LifeNow", "Inner2/LifeFill", "Inner2/FocusFill", "Inner2/Frame"]:
+			pieces.append("TopStatusBar/%s/%s" % [bar, part])
+	for piece: String in pieces:
+		var root: Control = await _laid_out(BATTLE_SCENE)
+		var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
+		assert_eq(_scene_problems(root, scene), [] as Array[String], "%s starts in place" % piece)
+		(root.get_node(piece) as Control).position.x += 20.0
+		await wait_process_frames(2)
+		var found: Array[String] = _scene_problems(root, scene)
+		assert_gt(found.size(), 0, "%s moved 20 px and passed" % piece)
+		assert_string_contains(found[0] if found else "", "%s: top left" % piece)
+
+
+# The member rows are two copies of one scene, so each kind of piece is moved on
+# both: the row and its name. A moved row moves its parts too, so the problem
+# list has to name the piece that moved.
+func test_control_a_member_row_piece_moved_20_px_fails() -> void:
+	var pieces: Array[String] = []
+	for row: String in ["Row5", "Row3"]:
+		for part: String in ["", "/NameLabel"]:
+			pieces.append("BottomBar/StanceHost/%s%s" % [row, part])
+	for piece: String in pieces:
+		var root: Control = await _laid_out(BATTLE_SCENE)
+		var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
+		assert_eq(_scene_problems(root, scene), [] as Array[String], "%s starts in place" % piece)
+		(root.get_node(piece) as Control).position.x += 20.0
+		await wait_process_frames(2)
+		var found: Array[String] = _scene_problems(root, scene)
+		assert_gt(found.size(), 0, "%s moved 20 px and passed" % piece)
+		assert_true(found.any(func(problem: String): return problem.begins_with("%s: top left" % piece)), "%s is named in %s" % [piece, found])
+
+
+# A bar whose mirror is lost, or a field whose color is lost, fails too.
+func test_control_a_top_status_bar_with_no_mirror_or_a_wrong_color_fails() -> void:
+	var root: Control = await _laid_out(BATTLE_SCENE)
+	var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
+	(root.get_node("TopStatusBar/Bar2/Inner2") as Control).scale.x = 1.0
+	await wait_process_frames(2)
+	assert_gt(_scene_problems(root, scene).size(), 0, "a right-hand bar with no mirror passed")
+	(root.get_node("TopStatusBar/Bar2/Inner2") as Control).scale.x = -1.0
+	await wait_process_frames(2)
+	assert_eq(_scene_problems(root, scene), [] as Array[String], "the mirror restored passes")
+	(root.get_node("TopStatusBar/Bar1/Inner/PlayerName") as Label).add_theme_color_override("font_color", Color.MAGENTA)
+	await wait_process_frames(2)
+	var found: Array[String] = _scene_problems(root, scene)
+	assert_gt(found.size(), 0, "a name in the wrong color passed")
+	assert_string_contains(found[0] if found else "", "TopStatusBar/Bar1/Inner/PlayerName")

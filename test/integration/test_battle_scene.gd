@@ -5,6 +5,7 @@
 extends GutTest
 
 const BattleSceneRes = preload("res://scenes/battle_scene.tscn")
+const BattleSceneScript = preload("res://scripts/battle/battle_scene.gd")
 # `uv run gut` gives each run a user:// folder of its own, so these paths never
 # reach the player's real saves or achievements. The Re-Load test still writes
 # its slot in a folder of its own and every win here unlocks into a file of its
@@ -1620,16 +1621,16 @@ func test_sky_is_placed_from_the_layout_json():
 	ZoneManager.auto_start_battles = true
 
 
-# The fill covers everything above the sky strip, so it has to be opaque. The
-# sky art cannot supply that colour: the SWF renders are trimmed to their own
-# soft top edge, so five of the nine skies read alpha 0 at row 0 centre. Battle
-# 201 runs the SNOW sky, one of the five.
-func test_sky_fill_is_opaque_over_a_sky_whose_top_row_is_transparent():
+# The Hall window is the black rect the original draws under the sky, so it has
+# to be opaque. The sky art cannot supply that colour: the SWF renders are
+# trimmed to their own soft top edge, so five of the nine skies read alpha 0 at
+# row 0 centre. Battle 201 runs the SNOW sky, one of the five.
+func test_hall_window_is_opaque_black_under_a_sky_whose_top_row_is_transparent():
 	var art: Image = load("res://assets/backgrounds/sky/SKY_SNOW.png").get_image()
 	assert_eq(art.get_pixel(int(art.get_width() / 2.0), 0).a, 0.0,
 		"SNOW's top row centre is transparent, which is what broke the old fill")
 
-	var save = PlayerSave.new_game("SkyFillTest", 0)
+	var save = PlayerSave.new_game("HallWindowTest", 0)
 	GameData.current_save = save
 	ZoneManager.auto_start_battles = false
 	ZoneManager.pending_battle = {}
@@ -1638,12 +1639,86 @@ func test_sky_fill_is_opaque_over_a_sky_whose_top_row_is_transparent():
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 201, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 
-	assert_eq(scene.sky_fill.color.a, 1.0, "the fill above the strip is opaque")
-	assert_eq(scene.sky_fill.color, Color.BLACK, "and is the black the original paints there")
-	assert_gt(scene.sky_fill.size.y, 0.0, "the fill actually covers something")
+	assert_eq(scene.hall_window.color, Color.BLACK, "the window is the black the original paints there")
+	assert_true(scene.hall_window.is_ancestor_of(scene.sky), "the sky is drawn inside the window")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
+
+
+func _scene_with_hall(label: String) -> Node:
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.battle = BattleFight.new()
+	scene.battle.id = 600
+	scene.battle.zone_background = label.replace("_", " ")
+	scene.battle.sky_background = "ROME"
+	scene._load_background()
+	return scene
+
+
+# Every hall sits at the rect of its label, in the window's own space, and the
+# PNG is that rect at the extractor's zoom. The hall used to stretch over the
+# whole canvas, which put the floor 34 to 35 px from where the fighters stand.
+func test_each_hall_sits_at_its_layout_rect_and_is_not_stretched_over_the_canvas():
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/backgrounds/battle/battle_layout.json"))
+	assert_eq(layout["halls"].size(), 10, "the layout holds ten halls")
+	for label: String in layout["halls"]:
+		var rect: Dictionary = layout["halls"][label]
+		var scene: Node = _scene_with_hall(label)
+		var hall: TextureRect = scene.background
+		assert_not_null(hall.texture, "%s has art" % label)
+		var expected := Rect2(float(rect["x"]), float(rect["y"]), float(rect["w"]), float(rect["h"]))
+		assert_almost_eq(hall.get_global_rect().position, expected.position, Vector2(0.01, 0.01), "%s position" % label)
+		assert_almost_eq(hall.get_global_rect().size, expected.size, Vector2(0.01, 0.01), "%s size" % label)
+		assert_almost_eq(hall.texture.get_size() / 4.0, expected.size, Vector2(0.01, 0.01), "%s is its PNG at zoom 4" % label)
+		assert_true(hall.size != Vector2(800, 575), "%s is not stretched over the canvas" % label)
+
+
+# SLOT_POSITIONS is a typed table. The record holds where each hall label of the
+# SWF puts the fighter rig of each slot, and the hall sits at its label's rect,
+# so a fighter whose home is that mark stands on the hall's floor.
+func test_each_fighter_home_is_where_every_hall_puts_its_rig():
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://test/fixtures/screen_rects.json"))
+	var marks: Dictionary = record["fighter_marks"]
+	assert_eq(marks.size(), 10, "the record holds ten halls")
+	for label: String in marks:
+		for slot: int in BattleSceneScript.SLOT_POSITIONS:
+			var mark: Array = marks[label][str(slot)]
+			assert_almost_eq(BattleSceneScript.SLOT_POSITIONS[slot], Vector2(mark[0], mark[1]), Vector2(0.5, 0.5), "%s slot %d" % [label, slot])
+
+
+# The window clips the hall, the sky, the fighters and the Floating numbers, as
+# shape 333 (clipDepth 340) clips depths 73 to 340 of the battle frame. The
+# window itself does not zoom or shake, because it is not inside the clip.
+func test_hall_window_clips_what_the_screen_clip_zooms_and_shakes():
+	var scene: Node = _scene_with_hall("CHURCH")
+	var window: ColorRect = scene.hall_window
+	assert_true(window.clip_contents, "the window clips what it holds")
+	for inside: Node in [scene.sky, scene.background, scene.battle_screen_clip, scene.battlefield, scene.floating_numbers]:
+		assert_true(window.is_ancestor_of(inside), "%s is inside the window" % inside.name)
+	assert_false(scene.battle_screen_clip.is_ancestor_of(window), "the window is not inside the clip")
+
+	var before: Rect2 = window.get_global_rect()
+	scene.battle_screen_clip.zoom(Vector2(560, 300), 0)
+	for i in 10:
+		scene.battle_screen_clip.advance_frame()
+	scene.battle_screen_clip.shake()
+	for i in 3:
+		scene.battle_screen_clip.advance_frame()
+	assert_ne(scene.battle_screen_clip.scale, Vector2.ONE, "the clip zoomed")
+	assert_eq(window.get_global_rect(), before, "the window stayed where it is")
+
+
+# The outline draws above the hall, and the panels draw above the outline.
+func test_hall_outline_draws_over_the_hall_and_under_the_panels():
+	var scene: Node = _scene_with_hall("CHURCH")
+	var outline: Node = scene.get_node("HallOutline")
+	assert_gt(outline.get_index(), scene.hall_window.get_index(), "the outline is over the hall")
+	assert_gt(scene.get_node("TopPanel").get_index(), outline.get_index(), "the top panel is over the outline")
+	assert_gt(scene.get_node("BottomBar").get_index(), outline.get_index(), "the bottom bar is over the outline")
+	for node_name in ["HallWindow", "HallOutline", "TopPanel"]:
+		assert_eq((scene.get_node(node_name) as Control).mouse_filter, Control.MOUSE_FILTER_IGNORE, "%s lets clicks through" % node_name)
 
 
 # DefineSprite 3312 places "p5" above "p3" (y 12.60 vs y 50.10), matching the
@@ -1667,18 +1742,105 @@ func test_stance_rows_stack_with_slot_5_on_top():
 	assert_eq(scene.units[3].player_name, "Veradux", "battle 100 deploys Veradux into slot 3")
 	assert_eq(scene.units[5].player_name, "Roald", "battle 100 deploys Roald into slot 5")
 
-	var slot3_row: StanceRow = null
-	var slot5_row: StanceRow = null
-	for child in scene.stance_host.get_children():
-		if child is StanceRow:
-			if child.name_label.text == "Veradux":
-				slot3_row = child
-			elif child.name_label.text == "Roald":
-				slot5_row = child
-	assert_not_null(slot3_row, "slot 3's row (Veradux) was built")
-	assert_not_null(slot5_row, "slot 5's row (Roald) was built")
-	assert_lt(slot5_row.position.y, slot3_row.position.y,
+	var slot3_row: StanceRow = scene.member_row(3)
+	var slot5_row: StanceRow = scene.member_row(5)
+	assert_eq(slot3_row.name_label.text, "Veradux", "slot 3's row carries Veradux")
+	assert_eq(slot5_row.name_label.text, "Roald", "slot 5's row carries Roald")
+	assert_lt(slot5_row.global_position.y, slot3_row.global_position.y,
 		"slot 5's row sits above slot 3's row, matching the SWF's p5/p3 stack")
+	assert_eq([slot5_row.buttons[0].visible, slot3_row.buttons[0].visible], [true, true], "each shows its five buttons")
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+func _two_member_rows_of(scene: Node) -> Array:
+	return [scene.member_row(5), scene.member_row(3)]
+
+
+# A row has a place of its own. With a Companion in slot 3 alone, that Companion's
+# row is the lower one, and slot 5's upper row shows the inactive text, which is
+# MENU[52]. (references/sonny2_swf_inbattle_one_companion_inactive_row.png shows
+# the original this way.) Battle 100 deploys Roald into slot 5 and Veradux into slot
+# 3 when both are in the roster, and Veradux alone when only he is.
+func test_one_companion_in_slot_3_keeps_the_lower_row_and_slot_5_shows_inactive():
+	var save = PlayerSave.new_game("OneCompanionRow", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	assert_eq(scene.units[3].player_name, "Veradux", "Veradux is in slot 3")
+	assert_null(scene.units.get(5), "and slot 5 is empty")
+	var upper: StanceRow = scene.member_row(5)
+	var lower: StanceRow = scene.member_row(3)
+	assert_lt(upper.global_position.y, lower.global_position.y, "slot 3's row is the lower one")
+	assert_eq(lower.name_label.text, "Veradux")
+	assert_true(lower.buttons[0].visible, "it shows its five buttons")
+	assert_false(upper.buttons[0].visible, "the upper row shows none")
+	assert_true(upper.inactive_label.visible, "it shows the inactive text instead")
+	assert_eq(upper.inactive_label.text, Strings.menu(int(StanceRow.member_rows()["inactive"]["menu_index"])), "which is the text of MENU[52]")
+	assert_true(upper.visible, "and the row itself shows")
+	assert_false(lower.inactive_label.visible)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# A Companion who dies has active false, so the conductor shows its row's `inactive`
+# frame at the next Decision, and not before.
+func test_a_companions_row_flips_to_inactive_at_the_next_decision():
+	var save = PlayerSave.new_game("RowFlip", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene.decision_open, 5)
+	var row: StanceRow = scene.member_row(3)
+	assert_true(row.buttons[0].visible, "the Decision opens with Veradux's row active")
+
+	scene.units[3].active = false
+	assert_true(row.buttons[0].visible, "his death changes nothing yet")
+	scene._on_pass_pressed()
+	await wait_until(func(): return scene.decision_open or scene._finished, 5)
+	assert_false(scene._finished, "the battle goes on to a next Decision")
+	assert_false(row.buttons[0].visible, "the next Decision flips it")
+	assert_true(row.inactive_label.visible)
+
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# The container shows during the player's half-turn and hides during the enemy's
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 696 to 757).
+func test_the_member_rows_hide_during_the_enemy_half_turn():
+	var save = PlayerSave.new_game("RowsHide", 0)
+	GameData.current_save = save
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_true(scene.stance_host.visible, "the player's half-turn shows them")
+	var seen: Array = []
+	scene.stance_host.visibility_changed.connect(func(): seen.append(scene.stance_host.visible))
+	scene._on_pass_pressed()
+	await wait_until(func(): return scene.decision_open or scene._finished, 5)
+	assert_eq(seen.slice(0, 2), [false, true], "the enemy's half-turn hid them, and the next Decision showed them")
+	assert_false(scene._finished, "the battle goes on to a next Decision")
+	assert_true(scene.stance_host.visible, "and the next Decision shows them again")
+	scene._show_member_rows_for(2)
+	assert_false(scene.stance_host.visible, "a half-turn of the other team hides them")
+	scene._show_member_rows_for(1)
+	assert_true(scene.stance_host.visible, "and one of the player's team shows them")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1699,7 +1861,9 @@ func test_a_guest_with_a_companions_name_gets_no_stance_row():
 	scene.start_battle({"battle_id": 508, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 
 	assert_eq(scene.units[3].player_name, "Felicity", "battle 508 fields Felicity in slot 3")
-	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "the guest gets no stance row")
+	# What the original shows for a Guest in slot 3 or 5 is not known (spec/67-battle-hud.md,
+	# open question 1), so the row stays hidden.
+	assert_false(scene.member_row(3).visible, "the guest gets no stance row")
 	assert_true(scene._stance_rows.is_empty(), "and nothing keeps a row for the guest")
 
 	GameData.current_save = null
@@ -1723,7 +1887,9 @@ func test_battle_2_shows_no_stance_rows():
 
 	assert_eq(scene.units[5].player_name, "Louis the Blind", "battle 2 fields Louis the Blind in slot 5")
 	assert_eq(scene.units[5].origin, CombatUnit.Origin.GUEST, "as a Guest")
-	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
+	assert_false(scene.member_row(5).visible, "and the Guest's row is hidden")
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_false(scene.stance_host.visible, "as is the container, through the player's half-turn")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1749,8 +1915,8 @@ func test_battle_2_shows_no_stance_rows_even_with_a_companion_deployed():
 	scene.start_battle({"battle_id": ZoneProgression.TUTORIAL_BATTLE_ID, "is_story_progress": false, "is_boss": false, "train_cap": BattleSetup.DEFAULT_TRAIN_CAP})
 
 	assert_eq(scene.units[3].origin, CombatUnit.Origin.COMPANION, "battle 2 fields a Companion in slot 3")
-	assert_eq(scene.stance_host.get_children().filter(func(child): return child is StanceRow), [], "and no stance row shows")
-	assert_true(scene._stance_rows.is_empty(), "and nothing keeps a row for the Companion")
+	await wait_until(func(): return scene.decision_open, 5)
+	assert_false(scene.stance_host.visible, "and the container stays hidden through the player's half-turn")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -1856,25 +2022,46 @@ func test_sky_comes_from_sky_background_not_the_hall_name():
 	ZoneManager.auto_start_battles = true
 
 
-func test_bottom_bar_uses_extracted_backdrop_art():
-	var save = PlayerSave.new_game("BackdropTest", 0)
-	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
-	ZoneManager.pending_battle = {}
+func _textures_under(node: Node) -> Array[String]:
+	var found: Array[String] = []
+	for child: Node in node.get_children():
+		if child is TextureRect and (child as TextureRect).texture != null:
+			found.append((child as TextureRect).texture.resource_path)
+		found.append_array(_textures_under(child))
+	return found
 
+
+# The bar is the shared bottom_bar.tscn, whose art is one frame for each of the
+# three panels. The old backdrop and the three hub-hotbar panels drew a second
+# frame over each.
+func test_bottom_bar_is_the_shared_scene_with_one_frame_per_panel():
 	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var bar: TextureRect = scene.get_node("BottomBar/Bar")
+	assert_eq(bar.scene_file_path, "res://scenes/ui/bottom_bar.tscn", "the bar is the shared scene")
+	assert_eq(bar.texture.resource_path, "res://assets/ui/battle/bottom_bar.png", "it draws the extracted bar")
+	var textures: Array[String] = _textures_under(scene.get_node("BottomBar"))
+	assert_false(textures.has("res://assets/ui/battle/hotbar_background.png"), "the old backdrop is gone")
+	assert_false(textures.has("res://assets/ui/hotbar/background.png"), "the hub hotbar panels are gone")
+	for node_name in ["Backdrop", "Panel1", "Panel2", "Panel3"]:
+		assert_null(scene.get_node_or_null("BottomBar/%s" % node_name), "%s is gone" % node_name)
 
-	var backdrop: TextureRect = scene.get_node("BottomBar/Backdrop")
-	assert_not_null(backdrop, "Backdrop is a TextureRect now")
-	assert_eq(
-		backdrop.texture.resource_path, "res://assets/ui/battle/hotbar_background.png",
-		"backdrop uses the extracted art"
-	)
 
-	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
+# The Log button and the combat log sit on the bar's right panel, which the
+# original leaves empty, and the button still opens and closes the log.
+func test_log_button_toggles_the_combat_log_over_the_right_panel():
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	await wait_process_frames(2)
+	var panel: Control = scene.get_node("BottomBar/RightPanel")
+	var log_panel: CombatLogPanel = scene.get_node("BottomBar/RightPanel/CombatLogPanel")
+	var button: Button = scene.get_node("BottomBar/RightPanel/LogToggleButton")
+	assert_false(log_panel.visible, "the log starts closed")
+	button.pressed.emit()
+	await wait_process_frames(2)
+	assert_true(log_panel.visible, "the button opens the log")
+	assert_eq(log_panel.get_global_rect(), panel.get_global_rect(), "the log fills the right panel")
+	assert_true(panel.get_global_rect().encloses(button.get_global_rect()), "the button is on the right panel")
+	button.pressed.emit()
+	assert_false(log_panel.visible, "the button closes it again")
 
 
 # FighterPresenter's own tests cover the ring. This is the scene's half of it:
@@ -1925,8 +2112,13 @@ func _move_event(scene, caster_slot: int, target_slot: int, move_id: int, result
 	}
 
 
+# Returns the status bar that a presenter writes to.
+func _status_bar_of(presenter: FighterPresenter) -> StatusBar:
+	return presenter._status_bar
+
+
 func _buff_icons(presenter: FighterPresenter) -> Array:
-	return presenter.get_node("Overlay").buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
+	return _status_bar_of(presenter).buff_row.get_children().filter(func(icon): return not icon.is_queued_for_deletion())
 
 
 # The runner resolves the whole half-turn before the replay, so when the first
@@ -1943,20 +2135,20 @@ func test_an_impact_and_each_event_leave_a_bystander_as_it_was():
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	var bystander: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
 	var presenter: FighterPresenter = scene._presenters[BattleRunner.PLAYER_SLOT]
-	var overlay: UnitOverlay = presenter.get_node("Overlay")
+	var bar: StatusBar = scene.top_status_bar.bar_for_slot(BattleRunner.PLAYER_SLOT)
 	var doll: CharacterVisual = presenter.get_node("Doll")
-	var focus_shown: float = overlay.focus_bar.value
+	var focus_shown: float = bar.focus
 	bystander.focus_n = 1.0
 	bystander.apply_buff(BuffManagerAuto.get_buff_by_name("SHATTERBOLT"), 1, scene.units[2])
 	bystander.apply_changes()
 
 	scene._show_move_result(_move_event(scene, 2, 3, 1, _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0)), 3)
-	assert_eq(overlay.focus_bar.value, focus_shown, "an impact on someone else leaves this fighter's Focus")
+	assert_eq(bar.focus, focus_shown, "an impact on someone else leaves this fighter's Focus")
 	assert_eq(_buff_icons(presenter).size(), 0, "and its buff icons")
 	assert_ne(doll._state, CharacterVisual.State.STUN, "and its pose")
 
 	await scene._play_events([{"type": BattleRunner.EventType.DISPEL, "caster_slot": 2, "target_slot": 3, "removed": []}])
-	assert_eq(overlay.focus_bar.value, focus_shown, "so does any other event")
+	assert_eq(bar.focus, focus_shown, "so does any other event")
 	assert_eq(_buff_icons(presenter).size(), 0, "with its buff icons")
 	assert_ne(doll._state, CharacterVisual.State.STUN, "and its pose")
 
@@ -2015,16 +2207,16 @@ func test_a_focus_cost_shows_on_the_casters_bar_when_its_move_starts():
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	var caster: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
-	var focus_bar: ProgressBar = scene._presenters[BattleRunner.PLAYER_SLOT].get_node("Overlay").focus_bar
-	var target_bar: ProgressBar = scene._presenters[2].get_node("Overlay").health_bar
-	var focus_shown: float = focus_bar.value
-	var life_shown: float = target_bar.value
+	var focus_bar: StatusBar = scene.top_status_bar.bar_for_slot(BattleRunner.PLAYER_SLOT)
+	var target_bar: StatusBar = scene.top_status_bar.bar_for_slot(2)
+	var focus_shown: float = focus_bar.focus
+	var life_shown: float = target_bar.life
 	var dispatched: UnitSnapshot = UnitSnapshot.of(caster)
 	dispatched.focus = focus_shown - 20.0
 	caster.focus_n = focus_shown - 35.0
 
 	await scene._play_events([{"type": BattleRunner.EventType.DISPEL, "caster_slot": 3, "target_slot": 2, "removed": []}])
-	assert_eq(focus_bar.value, focus_shown, "an earlier event leaves the caster's Focus where it was")
+	assert_eq(focus_bar.focus, focus_shown, "an earlier event leaves the caster's Focus where it was")
 
 	var move: Ability = MoveManagerAuto.get_move(1)  # Leading Strike, a Melee move
 	var hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)
@@ -2034,8 +2226,8 @@ func test_a_focus_cost_shows_on_the_casters_bar_when_its_move_starts():
 	event["caster_after_dispatch"] = dispatched
 	scene.animation_speed = 1.0
 	scene._play_move_event(event)  # not awaited, because this swing never ends
-	assert_eq(focus_bar.value, focus_shown - 20.0, "the move's start shows the Focus its cost left")
-	assert_eq(target_bar.value, life_shown, "while the hit waits for the blow")
+	assert_eq(focus_bar.focus, focus_shown - 20.0, "the move's start shows the Focus its cost left")
+	assert_eq(target_bar.life, life_shown, "while the hit waits for the blow")
 
 	scene.animation_speed = 0.0
 	GameData.current_save = null
@@ -2930,14 +3122,14 @@ func test_a_bar_keeps_the_max_life_and_fill_a_buff_cut_until_the_tick_that_runs_
 		var scene = await _battle_100_on_a_stepped_clock("TickMaxLife")
 		var unit: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
 		var presenter: FighterPresenter = scene._presenters[BattleRunner.PLAYER_SLOT]
-		var health_bar: ProgressBar = presenter.get_node("Overlay").health_bar
+		var health_bar: StatusBar = scene.top_status_bar.bar_for_slot(BattleRunner.PLAYER_SLOT)
 		unit.apply_buff(BuffManagerAuto.get_buff_by_name(buff_name), 1, scene.units[2])
 		unit.apply_changes()
 		for slot in unit.buff_slots:
 			if slot["cd"] > 0:
 				slot["cd"] = 1
 		presenter.snap_to_unit()
-		var cut: Array = [health_bar.max_value, health_bar.value]
+		var cut: Array = [health_bar.life_max, health_bar.life]
 		var tick: BuffTick = unit.tick_buffs(BuffManagerAuto.buffs_by_id)
 		var restored: Array = [unit.life_u, unit.life_n]
 		assert_gt(restored[0], cut[0], "sanity: %s's running out gives max life back" % buff_name)
@@ -2950,7 +3142,7 @@ func test_a_bar_keeps_the_max_life_and_fill_a_buff_cut_until_the_tick_that_runs_
 		var tick_frame: int = SHOCK_LANDS_AFTER_DISPATCH + _attack_end_counter_limit()
 		var bars: Array = []
 		for frame in tick_frame + 1:
-			bars.append([health_bar.max_value, health_bar.value])
+			bars.append([health_bar.life_max, health_bar.life])
 			_step_frame(scene)
 
 		assert_eq(bars.slice(0, tick_frame), range(tick_frame).map(func(_frame): return cut), "%s: the bar keeps its cut max and fill until the tick" % buff_name)
@@ -3077,7 +3269,7 @@ func test_a_fighter_wears_its_items_and_shows_its_buffs_from_the_real_tables():
 	player.apply_buff(BuffManagerAuto.get_buff_by_name("TIEDYE"), 1, player)
 	player.apply_changes()
 	scene._refresh_bars()
-	assert_eq(presenter.get_node("Overlay").buff_row.get_child_count(), 1, "the buff row found the buff")
+	assert_eq(_status_bar_of(presenter).buff_row.get_child_count(), 1, "the buff row found the buff")
 
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -3736,5 +3928,40 @@ func test_the_next_action_dispatches_on_the_same_frame_with_the_zoom_on_or_off()
 		dispatched.append(shown.get("12", -1))
 	assert_gt(dispatched[0], 0, "sanity: the Shock dispatched")
 	assert_eq(dispatched[0], dispatched[1], "the Shock dispatches on the same frame")
+	GameData.current_save = null
+	ZoneManager.auto_start_battles = true
+
+
+# Returns the controls under `point` that take the mouse, in the order Godot draws
+# them, so the last one is the one the mouse reaches.
+func _mouse_takers_at(node: Node, point: Vector2) -> Array:
+	var found: Array = []
+	if node is Control and node.visible and node.mouse_filter != Control.MOUSE_FILTER_IGNORE and node.get_global_rect().has_point(point):
+		found.append(node)
+	for child in node.get_children():
+		if child is CanvasItem and not child.visible:
+			continue
+		found.append_array(_mouse_takers_at(child, point))
+	return found
+
+
+# A buff icon opens its tooltip only when the mouse reaches it, so no control that
+# takes the mouse may be drawn over it. A headless run has no mouse, so this finds
+# the controls over the icon's center and not the mouse's own pick.
+func test_no_control_that_takes_the_mouse_covers_a_buff_icon_on_either_side():
+	GameData.current_save = PlayerSave.new_game("BuffHover", 0)
+	ZoneManager.auto_start_battles = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var buff: Buff = BuffManagerAuto.get_buff_by_name("TIEDYE")
+	for slot in [BattleRunner.PLAYER_SLOT, 2]:
+		var bar: StatusBar = scene.top_status_bar.bar_for_slot(slot)
+		bar.refresh_buffs([{"cd": 3, "buff_id": buff.id, "buff_value": 0.0, "shield_buff_value": 0.0}], {buff.id: buff})
+		var icon: Control = bar.buff_row.get_child(0)
+		var takers: Array = _mouse_takers_at(scene, icon.get_global_rect().get_center())
+		assert_eq(takers.back() if not takers.is_empty() else null, icon, "slot %d's icon is the last control under its center that takes the mouse" % slot)
+
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true

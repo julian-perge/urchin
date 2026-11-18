@@ -85,7 +85,7 @@ func test_battle_layout_json_carries_real_stage_rects():
 	assert_almost_eq(float(tunnel["h"]), 349.00, 0.01, "TUNNEL hall height")
 
 	# The stage rect (3455) is the black rect the frame draws under the sky, so
-	# its top edge is where SKY_FILL_COLOR starts showing.
+	# its top edge is where the black above the sky starts showing.
 	var stage_rect: Dictionary = layout["chrome"]["stage_rect"]
 	assert_almost_eq(float(stage_rect["x"]), 15.03, 0.01, "stage rect left")
 	assert_almost_eq(float(stage_rect["y"]), 130.00, 0.01, "stage rect top")

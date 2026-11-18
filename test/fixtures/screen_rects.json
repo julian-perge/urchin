@@ -1,4 +1,266 @@
 {
+ "fighter_marks": {
+  "CHURCH": {
+   "1": [
+    160.9,
+    297.4
+   ],
+   "2": [
+    637.9,
+    297.4
+   ],
+   "3": [
+    220.9,
+    371.0
+   ],
+   "4": [
+    577.9,
+    371.0
+   ],
+   "5": [
+    220.9,
+    218.5
+   ],
+   "6": [
+    577.9,
+    218.5
+   ]
+  },
+  "CHURCH2": {
+   "1": [
+    160.9,
+    297.4
+   ],
+   "2": [
+    637.9,
+    297.4
+   ],
+   "3": [
+    220.9,
+    371.0
+   ],
+   "4": [
+    577.9,
+    371.0
+   ],
+   "5": [
+    220.9,
+    218.5
+   ],
+   "6": [
+    577.9,
+    218.5
+   ]
+  },
+  "JAIL": {
+   "1": [
+    160.9,
+    297.4
+   ],
+   "2": [
+    637.9,
+    297.4
+   ],
+   "3": [
+    220.9,
+    371.0
+   ],
+   "4": [
+    577.9,
+    371.0
+   ],
+   "5": [
+    220.9,
+    218.5
+   ],
+   "6": [
+    577.9,
+    218.5
+   ]
+  },
+  "SNOW": {
+   "1": [
+    160.9,
+    297.4
+   ],
+   "2": [
+    637.9,
+    297.4
+   ],
+   "3": [
+    220.9,
+    371.0
+   ],
+   "4": [
+    577.9,
+    371.0
+   ],
+   "5": [
+    220.9,
+    218.5
+   ],
+   "6": [
+    577.9,
+    218.5
+   ]
+  },
+  "STREETS": {
+   "1": [
+    160.9,
+    297.4
+   ],
+   "2": [
+    637.9,
+    297.4
+   ],
+   "3": [
+    220.9,
+    371.0
+   ],
+   "4": [
+    577.9,
+    371.0
+   ],
+   "5": [
+    220.9,
+    218.5
+   ],
+   "6": [
+    577.9,
+    218.5
+   ]
+  },
+  "STREETS2": {
+   "1": [
+    160.9,
+    297.4
+   ],
+   "2": [
+    637.9,
+    297.4
+   ],
+   "3": [
+    220.9,
+    371.0
+   ],
+   "4": [
+    577.9,
+    371.0
+   ],
+   "5": [
+    220.9,
+    218.5
+   ],
+   "6": [
+    577.9,
+    218.5
+   ]
+  },
+  "STREETS3": {
+   "1": [
+    160.9,
+    297.4
+   ],
+   "2": [
+    637.9,
+    297.4
+   ],
+   "3": [
+    220.9,
+    371.0
+   ],
+   "4": [
+    577.9,
+    371.0
+   ],
+   "5": [
+    220.9,
+    218.5
+   ],
+   "6": [
+    577.9,
+    218.5
+   ]
+  },
+  "TRAIN": {
+   "1": [
+    160.9,
+    297.4
+   ],
+   "2": [
+    637.9,
+    297.4
+   ],
+   "3": [
+    220.9,
+    371.0
+   ],
+   "4": [
+    577.9,
+    371.0
+   ],
+   "5": [
+    220.9,
+    218.5
+   ],
+   "6": [
+    577.9,
+    218.5
+   ]
+  },
+  "TUNNEL": {
+   "1": [
+    160.9,
+    297.4
+   ],
+   "2": [
+    637.9,
+    297.4
+   ],
+   "3": [
+    220.9,
+    371.0
+   ],
+   "4": [
+    577.9,
+    371.0
+   ],
+   "5": [
+    220.9,
+    218.5
+   ],
+   "6": [
+    577.9,
+    218.5
+   ]
+  },
+  "WHITE_NOVEMBER": {
+   "1": [
+    160.9,
+    297.4
+   ],
+   "2": [
+    637.9,
+    297.4
+   ],
+   "3": [
+    220.9,
+    371.0
+   ],
+   "4": [
+    577.9,
+    371.0
+   ],
+   "5": [
+    220.9,
+    218.5
+   ],
+   "6": [
+    577.9,
+    218.5
+   ]
+  }
+ },
  "scenes": {
   "res://scenes/battle/victory_screen.tscn": {
    "frame": "win",
@@ -366,6 +628,1672 @@
     "RightColumn"
    ],
    "timeline": 3142
+  },
+  "res://scenes/battle_scene.tscn": {
+   "frame": "KRINBATTLESCENE",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "BottomBar/AlertIcon": {
+     "kind": "art",
+     "rect": [
+      385.0,
+      492.9,
+      30.0,
+      30.0
+     ],
+     "size": [
+      120,
+      120
+     ],
+     "texture": "res://assets/ui/battle/alert_icon.png",
+     "zoom": 4.0
+    },
+    "BottomBar/Bar": {
+     "kind": "art",
+     "rect": [
+      13.73,
+      452.45,
+      773.0,
+      111.5
+     ],
+     "size": [
+      3092,
+      446
+     ],
+     "texture": "res://assets/ui/battle/bottom_bar.png",
+     "zoom": 4.0
+    },
+    "BottomBar/PassButton": {
+     "kind": "button",
+     "rect": [
+      384.9888,
+      492.7388,
+      30.0225,
+      30.0225
+     ]
+    },
+    "BottomBar/PassRing": {
+     "kind": "point",
+     "position": [
+      400.0,
+      507.75
+     ],
+     "scale": [
+      1.4296417236328125,
+      1.4296417236328125
+     ]
+    },
+    "BottomBar/RetreatButton": {
+     "kind": "button",
+     "rect": [
+      436.0843,
+      464.3068,
+      18.0229,
+      18.001
+     ]
+    },
+    "BottomBar/RightPanel": {
+     "kind": "shape",
+     "rect": [
+      467.6,
+      453.8,
+      317.55,
+      108.4
+     ]
+    },
+    "BottomBar/StanceHost": {
+     "kind": "shape",
+     "rect": [
+      31.2,
+      473.5,
+      285.0,
+      31.3
+     ]
+    },
+    "BottomBar/StanceHost/Row3": {
+     "kind": "shape",
+     "rect": [
+      31.2,
+      511.0,
+      285.0,
+      31.3
+     ]
+    },
+    "BottomBar/StanceHost/Row3/NameLabel": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 6.0,
+     "kind": "text",
+     "rect": [
+      39.2,
+      520.65,
+      128.05,
+      12.0
+     ]
+    },
+    "BottomBar/StanceHost/Row5": {
+     "kind": "shape",
+     "rect": [
+      31.2,
+      473.5,
+      285.0,
+      31.3
+     ]
+    },
+    "BottomBar/StanceHost/Row5/NameLabel": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 6.0,
+     "kind": "text",
+     "rect": [
+      39.2,
+      483.15,
+      128.05,
+      12.0
+     ]
+    },
+    "HallOutline": {
+     "border": 1,
+     "kind": "outline",
+     "line": "000000ff",
+     "rect": [
+      14.5,
+      129.9,
+      771.0,
+      315.05
+     ]
+    },
+    "HallWindow": {
+     "fill": "000000ff",
+     "kind": "box",
+     "rect": [
+      15.0142,
+      130.386,
+      770.001,
+      314.0506
+     ]
+    },
+    "TopPanel": {
+     "kind": "art",
+     "rect": [
+      13.73,
+      6.5,
+      773.75,
+      118.25
+     ],
+     "size": [
+      3095,
+      473
+     ],
+     "texture": "res://assets/ui/battle/top_panel.png",
+     "zoom": 4.0
+    },
+    "TopStatusBar/Bar1/Inner/Backing": {
+     "kind": "art",
+     "rect": [
+      197.8788,
+      49.1511,
+      1.3567,
+      29.5941
+     ],
+     "size": [
+      5,
+      102
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner_first.png",
+     "zoom": [
+      3.6854131348124124,
+      3.4466329437286487
+     ]
+    },
+    "TopStatusBar/Bar1/Inner/FocusMax": {
+     "align": "left",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      200.6736,
+      64.5284,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar1/Inner/FocusNow": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      154.0039,
+      64.5284,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar1/Inner/LifeMax": {
+     "align": "left",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      200.6736,
+      50.6018,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar1/Inner/LifeNow": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      154.0039,
+      50.6018,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar1/Inner/PlayerName": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      31.9029,
+      49.7314,
+      104.4099,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar1/Inner2/Black": {
+     "kind": "art",
+     "rect": [
+      198.5572,
+      49.4122,
+      46.1271,
+      28.4335
+     ],
+     "size": [
+      170,
+      98
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_black.png",
+     "zoom": [
+      3.6854690626551423,
+      3.4466386480735753
+     ]
+    },
+    "TopStatusBar/Bar1/Inner2/FocusBack": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      63.6,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar1/Inner2/FocusFill": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      63.6,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar1/Inner2/Frame": {
+     "kind": "art",
+     "rect": [
+      27.0731,
+      48.5418,
+      218.1538,
+      30.1744
+     ],
+     "size": [
+      804,
+      104
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_frame.png",
+     "zoom": [
+      3.685473276193218,
+      3.4466302561111406
+     ]
+    },
+    "TopStatusBar/Bar1/Inner2/LifeBack": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      49.6734,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar1/Inner2/LifeFill": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      49.6734,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar1/Inner2/Shade": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      49.4122,
+      170.9414,
+      28.1434
+     ],
+     "size": [
+      630,
+      97
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_shade.png",
+     "zoom": [
+      3.6854735014455247,
+      3.4466340243183127
+     ]
+    },
+    "TopStatusBar/Bar2/Inner/Backing": {
+     "kind": "art",
+     "rect": [
+      602.0858,
+      49.1511,
+      1.3567,
+      29.5941
+     ],
+     "size": [
+      5,
+      102
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner_second.png",
+     "zoom": [
+      3.6854131348124124,
+      3.4466329437286487
+     ]
+    },
+    "TopStatusBar/Bar2/Inner/FocusMax": {
+     "align": "right",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      558.4279,
+      64.5284,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar2/Inner/FocusNow": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      605.4775,
+      64.5284,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar2/Inner/LifeMax": {
+     "align": "right",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      558.4279,
+      50.6018,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar2/Inner/LifeNow": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      605.4775,
+      50.6018,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar2/Inner/PlayerName": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      666.3109,
+      49.7314,
+      104.4099,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar2/Inner2/Black": {
+     "kind": "art",
+     "rect": [
+      556.3658,
+      49.4122,
+      46.1271,
+      28.4335
+     ],
+     "size": [
+      170,
+      98
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_black.png",
+     "zoom": [
+      3.6854690626551423,
+      3.4466386480735753
+     ]
+    },
+    "TopStatusBar/Bar2/Inner2/FocusBack": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      63.6,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar2/Inner2/FocusFill": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      63.6,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar2/Inner2/Frame": {
+     "kind": "art",
+     "rect": [
+      555.8231,
+      48.5418,
+      218.1538,
+      30.1744
+     ],
+     "size": [
+      804,
+      104
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_frame.png",
+     "zoom": [
+      3.685473276193218,
+      3.4466302561111406
+     ]
+    },
+    "TopStatusBar/Bar2/Inner2/LifeBack": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      49.6734,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar2/Inner2/LifeFill": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      49.6734,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar2/Inner2/Shade": {
+     "kind": "art",
+     "rect": [
+      602.4928,
+      49.4122,
+      170.9414,
+      28.1434
+     ],
+     "size": [
+      630,
+      97
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_shade.png",
+     "zoom": [
+      3.6854735014455247,
+      3.4466340243183127
+     ]
+    },
+    "TopStatusBar/Bar3/Inner/Backing": {
+     "kind": "art",
+     "rect": [
+      197.8788,
+      83.9511,
+      1.3567,
+      29.5941
+     ],
+     "size": [
+      5,
+      102
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner_first.png",
+     "zoom": [
+      3.6854131348124124,
+      3.4466329437286487
+     ]
+    },
+    "TopStatusBar/Bar3/Inner/FocusMax": {
+     "align": "left",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      200.6736,
+      99.3284,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar3/Inner/FocusNow": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      154.0039,
+      99.3284,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar3/Inner/LifeMax": {
+     "align": "left",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      200.6736,
+      85.4018,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar3/Inner/LifeNow": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      154.0039,
+      85.4018,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar3/Inner/PlayerName": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      31.9029,
+      84.5314,
+      104.4099,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar3/Inner2/Black": {
+     "kind": "art",
+     "rect": [
+      198.5572,
+      84.2122,
+      46.1271,
+      28.4335
+     ],
+     "size": [
+      170,
+      98
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_black.png",
+     "zoom": [
+      3.6854690626551423,
+      3.4466386480735753
+     ]
+    },
+    "TopStatusBar/Bar3/Inner2/FocusBack": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      98.4,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar3/Inner2/FocusFill": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      98.4,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar3/Inner2/Frame": {
+     "kind": "art",
+     "rect": [
+      27.0731,
+      83.3418,
+      218.1538,
+      30.1744
+     ],
+     "size": [
+      804,
+      104
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_frame.png",
+     "zoom": [
+      3.685473276193218,
+      3.4466302561111406
+     ]
+    },
+    "TopStatusBar/Bar3/Inner2/LifeBack": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      84.4734,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar3/Inner2/LifeFill": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      84.4734,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar3/Inner2/Shade": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      84.2122,
+      170.9414,
+      28.1434
+     ],
+     "size": [
+      630,
+      97
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_shade.png",
+     "zoom": [
+      3.6854735014455247,
+      3.4466340243183127
+     ]
+    },
+    "TopStatusBar/Bar4/Inner/Backing": {
+     "kind": "art",
+     "rect": [
+      602.0858,
+      83.9511,
+      1.3567,
+      29.5941
+     ],
+     "size": [
+      5,
+      102
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner_second.png",
+     "zoom": [
+      3.6854131348124124,
+      3.4466329437286487
+     ]
+    },
+    "TopStatusBar/Bar4/Inner/FocusMax": {
+     "align": "right",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      558.4279,
+      99.3284,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar4/Inner/FocusNow": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      605.4775,
+      99.3284,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar4/Inner/LifeMax": {
+     "align": "right",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      558.4279,
+      85.4018,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar4/Inner/LifeNow": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      605.4775,
+      85.4018,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar4/Inner/PlayerName": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      666.3109,
+      84.5314,
+      104.4099,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar4/Inner2/Black": {
+     "kind": "art",
+     "rect": [
+      556.3658,
+      84.2122,
+      46.1271,
+      28.4335
+     ],
+     "size": [
+      170,
+      98
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_black.png",
+     "zoom": [
+      3.6854690626551423,
+      3.4466386480735753
+     ]
+    },
+    "TopStatusBar/Bar4/Inner2/FocusBack": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      98.4,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar4/Inner2/FocusFill": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      98.4,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar4/Inner2/Frame": {
+     "kind": "art",
+     "rect": [
+      555.8231,
+      83.3418,
+      218.1538,
+      30.1744
+     ],
+     "size": [
+      804,
+      104
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_frame.png",
+     "zoom": [
+      3.685473276193218,
+      3.4466302561111406
+     ]
+    },
+    "TopStatusBar/Bar4/Inner2/LifeBack": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      84.4734,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar4/Inner2/LifeFill": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      84.4734,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar4/Inner2/Shade": {
+     "kind": "art",
+     "rect": [
+      602.4928,
+      84.2122,
+      170.9414,
+      28.1434
+     ],
+     "size": [
+      630,
+      97
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_shade.png",
+     "zoom": [
+      3.6854735014455247,
+      3.4466340243183127
+     ]
+    },
+    "TopStatusBar/Bar5/Inner/Backing": {
+     "kind": "art",
+     "rect": [
+      197.8788,
+      14.1011,
+      1.3567,
+      29.5941
+     ],
+     "size": [
+      5,
+      102
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner_first.png",
+     "zoom": [
+      3.6854131348124124,
+      3.4466329437286487
+     ]
+    },
+    "TopStatusBar/Bar5/Inner/FocusMax": {
+     "align": "left",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      200.6736,
+      29.4784,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar5/Inner/FocusNow": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      154.0039,
+      29.4784,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar5/Inner/LifeMax": {
+     "align": "left",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      200.6736,
+      15.5518,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar5/Inner/LifeNow": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      154.0039,
+      15.5518,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar5/Inner/PlayerName": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      31.9029,
+      14.6814,
+      104.4099,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar5/Inner2/Black": {
+     "kind": "art",
+     "rect": [
+      198.5572,
+      14.3622,
+      46.1271,
+      28.4335
+     ],
+     "size": [
+      170,
+      98
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_black.png",
+     "zoom": [
+      3.6854690626551423,
+      3.4466386480735753
+     ]
+    },
+    "TopStatusBar/Bar5/Inner2/FocusBack": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      28.55,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar5/Inner2/FocusFill": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      28.55,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar5/Inner2/Frame": {
+     "kind": "art",
+     "rect": [
+      27.0731,
+      13.4918,
+      218.1538,
+      30.1744
+     ],
+     "size": [
+      804,
+      104
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_frame.png",
+     "zoom": [
+      3.685473276193218,
+      3.4466302561111406
+     ]
+    },
+    "TopStatusBar/Bar5/Inner2/LifeBack": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      14.6234,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar5/Inner2/LifeFill": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      14.6234,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar5/Inner2/Shade": {
+     "kind": "art",
+     "rect": [
+      27.6158,
+      14.3622,
+      170.9414,
+      28.1434
+     ],
+     "size": [
+      630,
+      97
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_shade.png",
+     "zoom": [
+      3.6854735014455247,
+      3.4466340243183127
+     ]
+    },
+    "TopStatusBar/Bar6/Inner/Backing": {
+     "kind": "art",
+     "rect": [
+      602.0858,
+      14.1011,
+      1.3567,
+      29.5941
+     ],
+     "size": [
+      5,
+      102
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner_second.png",
+     "zoom": [
+      3.6854131348124124,
+      3.4466329437286487
+     ]
+    },
+    "TopStatusBar/Bar6/Inner/FocusMax": {
+     "align": "right",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      558.4279,
+      29.4784,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar6/Inner/FocusNow": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      605.4775,
+      29.4784,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar6/Inner/LifeMax": {
+     "align": "right",
+     "color": "9d9d9dff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      558.4279,
+      15.5518,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar6/Inner/LifeNow": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      605.4775,
+      15.5518,
+      42.2198,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar6/Inner/PlayerName": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 9.0,
+     "kind": "text",
+     "rect": [
+      666.3109,
+      14.6814,
+      104.4099,
+      13.9266
+     ],
+     "shadow": {
+      "blur": 5.0,
+      "color": "000000b7",
+      "offset": [
+       2.3024,
+       2.4619
+      ]
+     }
+    },
+    "TopStatusBar/Bar6/Inner2/Black": {
+     "kind": "art",
+     "rect": [
+      556.3658,
+      14.3622,
+      46.1271,
+      28.4335
+     ],
+     "size": [
+      170,
+      98
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_black.png",
+     "zoom": [
+      3.6854690626551423,
+      3.4466386480735753
+     ]
+    },
+    "TopStatusBar/Bar6/Inner2/FocusBack": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      28.55,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar6/Inner2/FocusFill": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      28.55,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/focus_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar6/Inner2/Frame": {
+     "kind": "art",
+     "rect": [
+      555.8231,
+      13.4918,
+      218.1538,
+      30.1744
+     ],
+     "size": [
+      804,
+      104
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_frame.png",
+     "zoom": [
+      3.685473276193218,
+      3.4466302561111406
+     ]
+    },
+    "TopStatusBar/Bar6/Inner2/LifeBack": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      14.6234,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar6/Inner2/LifeFill": {
+     "kind": "art",
+     "rect": [
+      602.6007,
+      14.6234,
+      170.8335,
+      13.9266
+     ],
+     "size": [
+      800,
+      48
+     ],
+     "texture": "res://assets/ui/battle/top_bar/life_fill.png",
+     "zoom": [
+      4.6829222605636485,
+      3.446641678514497
+     ]
+    },
+    "TopStatusBar/Bar6/Inner2/Shade": {
+     "kind": "art",
+     "rect": [
+      602.4928,
+      14.3622,
+      170.9414,
+      28.1434
+     ],
+     "size": [
+      630,
+      97
+     ],
+     "texture": "res://assets/ui/battle/top_bar/inner2_shade.png",
+     "zoom": [
+      3.6854735014455247,
+      3.4466340243183127
+     ]
+    }
+   },
+   "port_only": [
+    "HallWindow/HallSpace",
+    "RadialMenu",
+    "TopStatusBar/Bar1/Inner2/LifeSmoother",
+    "TopStatusBar/Bar1/Inner2/FocusSmoother",
+    "TopStatusBar/Bar2/Inner2/LifeSmoother",
+    "TopStatusBar/Bar2/Inner2/FocusSmoother",
+    "TopStatusBar/Bar3/Inner2/LifeSmoother",
+    "TopStatusBar/Bar3/Inner2/FocusSmoother",
+    "TopStatusBar/Bar4/Inner2/LifeSmoother",
+    "TopStatusBar/Bar4/Inner2/FocusSmoother",
+    "TopStatusBar/Bar5/Inner2/LifeSmoother",
+    "TopStatusBar/Bar5/Inner2/FocusSmoother",
+    "TopStatusBar/Bar6/Inner2/LifeSmoother",
+    "TopStatusBar/Bar6/Inner2/FocusSmoother",
+    "BottomBar/StanceHost/Row5/Panel",
+    "BottomBar/StanceHost/Row5/InactiveLabel",
+    "BottomBar/StanceHost/Row5/Mode0",
+    "BottomBar/StanceHost/Row5/Mode1",
+    "BottomBar/StanceHost/Row5/Mode2",
+    "BottomBar/StanceHost/Row5/Mode3",
+    "BottomBar/StanceHost/Row5/Mode4",
+    "BottomBar/StanceHost/Row3/Panel",
+    "BottomBar/StanceHost/Row3/InactiveLabel",
+    "BottomBar/StanceHost/Row3/Mode0",
+    "BottomBar/StanceHost/Row3/Mode1",
+    "BottomBar/StanceHost/Row3/Mode2",
+    "BottomBar/StanceHost/Row3/Mode3",
+    "BottomBar/StanceHost/Row3/Mode4",
+    "BottomBar/RightPanel/CombatLogPanel",
+    "BottomBar/RightPanel/LogToggleButton",
+    "BottomBar/CountdownRing",
+    "BottomBar/CountdownLabel",
+    "CombatTextBanner",
+    "UI",
+    "Fade"
+   ],
+   "timeline": 0
   },
   "res://scenes/main_menu.tscn": {
    "frame": "mainMenu",

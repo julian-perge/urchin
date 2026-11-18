@@ -131,6 +131,7 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   **Deferred, not fixed** (all cosmetic, low-value): the hover-ring's fade tween still fires (a 0-length no-op) on every mouse enter/exit during an AI turn, harmless but wasteful; the combat log
   panel, when toggled on, can visually overlap and swallow clicks on slot 5's unit overlay (low impact since the log is off by default); `BottomBar/Backdrop`'s texture is stretched slightly larger
   than the Panel1-3 region it was measured against - worth an eyes-on check, not a code fix.
+  Both are gone since julian-perge/urchin#67: `BottomBar/Backdrop` no longer exists, and the combat log opens over the bar's right panel, not over a fighter.
 
 - **Item click-n-drag** - **DONE (2026-08-18)**, project owner request 2026-07-18. See `.claude/plan_item_drag_and_drop.md` for the full task breakdown. `ItemSlot` is both drag source
   (`_get_drag_data`, a semi-transparent 31x31 preview) and drop target (`_can_drop_data`/`_drop_data`) via Godot's built-in Control drag API - inventory<->inventory swaps, inventory<->equip
@@ -211,19 +212,10 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
   McPown" baked into it, because DefineSprite 3317 places the container at depth 7 and nothing stripped it. It renders bare now, and the five aggression
   icons (`3305`), their two overlay states (`3293`) and the row backing (`3309`) come out as separate art that `StanceRow` arranges, replacing the five
   hand-picked `StyleBoxFlat` colours it drew before. `battle_layout.json` carries the bar's internal layout so the scene does not hold a second copy of
-  the measurements. `BottomBar/Backdrop` in `scenes/battle_scene.tscn` still renders the older hand-made `assets/ui/battle/hotbar_background.png`, not
-  the regenerated `bottom_bar.png` this extraction writes; repointing it is its own change.
+  the measurements. `BottomBar/Backdrop` in `scenes/battle_scene.tscn` is gone: `BottomBar/Bar` is the shared `scenes/ui/bottom_bar.tscn`, which draws the
+  extracted `bottom_bar.png` (julian-perge/urchin#67).
 
-- **Battle hall coordinate system - TO BE SPECCED.** The battle screen is now half on the SWF stage and half not, and the two halves disagree by about
-  35px. The sky is placed from `battle_layout.json` in true stage coordinates, and `SLOT_POSITIONS` in `battle_scene.gd` is also in true stage
-  coordinates - it was checked against the six `2676` placements at all ten hall labels and matches to the decimal. The hall art is not. `Background` in
-  `scenes/battle_scene.tscn` is a full-canvas `TextureRect` (`anchors_preset = 15`, `STRETCH_KEEP_ASPECT_COVERED`) that ignores the hall rects, so the art
-  is stretched to fill 800x600 while the fighters standing on it are not. For CHURCH, the stage point (220.9, 371.0) where player3 stands lands at
-  (186.5, 406.4) once the hall is stretched, 34px right and 35px down of the fighter. SNOW errs about 40px the other way.
-
-  The data to fix it already exists: `battle_layout.json` records every hall's rect and nothing reads the `halls` section yet. Placing the hall at its true
-  rect needed a decision on the 25px difference between the SWF's 800x575 stage and the 800x600 viewport, and julian-perge/urchin#111 settled it: the base
-  resolution becomes 800x575, so there is no strip to fill. The hall placement itself is part of the battle layout in the UI overhaul, julian-perge/urchin#107.
+- **Battle hall coordinate system - DONE** (julian-perge/urchin#67). The hall is a `TextureRect` at its `battle_layout.json` rect inside the Hall window, which clips it and the sky and the fighters, as shape 333 does. `SLOT_POSITIONS` matches the six `2676` placements at all ten hall labels, and `test_each_fighter_home_is_where_every_hall_puts_its_rig` checks it. The base resolution is 800x575 (julian-perge/urchin#111), so the hall needs no strip to fill.
   Found by the whole-branch review of the battle screen extraction, 2026-08-22.
 
   Two smaller things found alongside it, both pre-existing. `test_battle_runner.gd`'s

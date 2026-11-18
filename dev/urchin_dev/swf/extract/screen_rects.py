@@ -177,8 +177,13 @@ class Piece:
     character: int | None = None
     # The 0-based stroked path, from the top down, of an outline shape that
     # draws several boxes with one line, for a piece the port builds as one
-    # Panel for each box.
+    # Panel for each box. A "shape" piece with a path is that box's stroke
+    # centre line.
     path: int | None = None
+    # The depths that lead from the placement at `depth` down to the piece, one
+    # for each sprite on the way: each is read on the first frame of the sprite
+    # that the step before it reached. `inner_depth` is the same for one step.
+    via: tuple[int, ...] = ()
     # For a "doll": whether the frame places the female set of the 15 parts
     # next to the male one. The Inventory frame does and the shop frame does not.
     female_set: bool = True
@@ -951,6 +956,158 @@ SCENES[STORE_SCENE] = Scene(
 )
 
 
+# The top status bar record that extract_top_bar writes. The bar parts of the
+# Battle screen are placed from it, because a part's own rect is a render's.
+TOP_BAR_RECORD = REPO_ROOT / "assets" / "ui" / "battle" / "top_bar" / "top_bar.json"
+TOP_BAR_TEXTURES = "res://assets/ui/battle/top_bar"
+BAR_TEXT_NODES = {
+    "playerName": "PlayerName",
+    "lifeNow": "LifeNow",
+    "lifeMax": "LifeMax",
+    "focusNow": "FocusNow",
+    "focusMax": "FocusMax",
+}
+# The parts of `inner2`, by their node in the port and their part name.
+BAR_INNER2_NODES = {
+    "FocusBack": "fill:focus_back",
+    "LifeBack": "fill:life_back",
+    "Shade": "inner2:Shade",
+    "FocusFill": "fill:focus",
+    "Black": "inner2:Black",
+    "LifeFill": "fill:life",
+    "Frame": "inner2:Frame",
+}
+
+
+def top_bar_pieces() -> dict[str, Piece]:
+    """-> the pieces of the six status bars, by their path in
+    top_status_bar.tscn, which the Battle screen holds as TopStatusBar. Bar n is
+    the placement p<n>BAR of the battle frame."""
+    pieces = {}
+    for slot in range(1, 7):
+        name = f"p{slot}BAR"
+        base = f"TopStatusBar/Bar{slot}"
+        pieces[f"{base}/Inner/Backing"] = Piece(
+            "bar_part", None, instance=name, art="backing"
+        )
+        for variable, node in BAR_TEXT_NODES.items():
+            pieces[f"{base}/Inner/{node}"] = Piece(
+                "bar_part", None, instance=name, art=f"text:{variable}"
+            )
+        for node, part in BAR_INNER2_NODES.items():
+            pieces[f"{base}/Inner2/{node}"] = Piece(
+                "bar_part", None, instance=name, art=part
+            )
+    return pieces
+
+
+# The Battle screen's frame, KRINBATTLESCENE (spec/67-battle-hud.md). Each task of
+# the spec records the pieces it builds. The rest of the scene is in port_only
+# until a task records it and takes its node out.
+#
+# Shape 333 is placed twice: at depth 70 inside sprite 3455 as the black backdrop,
+# and at depth 72 as the mask whose clipDepth 340 clips the hall, the sky and the
+# fighters. The Hall window is the mask, so it is the one that is recorded. Its
+# rect is 0.4 px from `chrome.stage_rect`, which is the backdrop's render.
+BATTLE_SCENE = "res://scenes/battle_scene.tscn"
+SCENES[BATTLE_SCENE] = Scene(
+    timeline=0,
+    frame=battle_screen.FRAME_LABEL,
+    pieces={
+        "TopPanel": Piece("art", 59, art="top_panel", character=3465),
+        "HallWindow": Piece("box", 72, character=333),
+        "HallOutline": Piece("outline", 341, character=3415),
+        # The bottom bar body 3317, and the pieces the battle frame puts on it.
+        # StanceHost is the panel of the upper member row, slot 5's p5 on the
+        # SHOW frame of 3312, which the conductor shows during the player's
+        # half-turn. RightPanel is the right one of the bar's three boxes, which
+        # the original leaves empty.
+        "BottomBar/Bar": Piece("art", 1, art="bottom_bar", character=3317),
+        "BottomBar/StanceHost": Piece("shape", 1, via=(7, 1, 1), character=3317),
+        # Each member row is the panel of one copy of the member bar 3311 in 3312's
+        # SHOW frame: slot 5's p5 above slot 3's p3. The container is the upper
+        # row's panel.
+        "BottomBar/StanceHost/Row5": Piece("shape", 1, via=(7, 1, 1), character=3317),
+        "BottomBar/StanceHost/Row3": Piece("shape", 1, via=(7, 49, 1), character=3317),
+        "BottomBar/StanceHost/Row5/NameLabel": Piece(
+            "text", 1, via=(7, 1, 2), character=3317
+        ),
+        "BottomBar/StanceHost/Row3/NameLabel": Piece(
+            "text", 1, via=(7, 49, 2), character=3317
+        ),
+        "BottomBar/RightPanel": Piece("shape", 1, via=(1, 1), path=2, character=3317),
+        "BottomBar/PassButton": Piece("button", 498, character=3383),
+        "BottomBar/PassRing": Piece("point", 498, character=3383),
+        "BottomBar/AlertIcon": Piece("art", 65, art="alert_icon", character=3460),
+        "BottomBar/RetreatButton": Piece("button", 644, character=3356),
+        **top_bar_pieces(),
+    },
+    # HallSpace holds the sky, the hall and the fighters, whose art the battle
+    # loads when it starts.
+    port_only=(
+        "HallWindow/HallSpace",
+        "RadialMenu",
+        # The smoothers' bands, which the bar shows only while a change plays.
+        *(
+            f"TopStatusBar/Bar{slot}/Inner2/{band}"
+            for slot in range(1, 7)
+            for band in ("LifeSmoother", "FocusSmoother")
+        ),
+        # What a row draws inside its panel, other than its name: the panel's art,
+        # the buttons of the active frame and the text of the inactive one.
+        # StanceRow places them from battle_layout.json and member_rows.json, which
+        # extract_battle_screen and extract_member_rows measure off the SWF.
+        *(
+            f"BottomBar/StanceHost/Row{slot}/{part}"
+            for slot in (5, 3)
+            for part in (
+                "Panel",
+                "InactiveLabel",
+                "Mode0",
+                "Mode1",
+                "Mode2",
+                "Mode3",
+                "Mode4",
+            )
+        ),
+        "BottomBar/RightPanel/CombatLogPanel",
+        "BottomBar/RightPanel/LogToggleButton",
+        "BottomBar/CountdownRing",
+        "BottomBar/CountdownLabel",
+        "CombatTextBanner",
+        "UI",
+        "Fade",
+    ),
+    # What the frame draws that the port leaves to the game's own state: BATTLESCREEN
+    # 3435 (the hall and its placeholder rigs), the sky 3454, the fade 3355, the
+    # selector rings 3394 and 3382, the clock 3389, the move icon 2427 and the move
+    # button 3383, the Combat text 2852, the speech box 3367 and 3172, the tooltip
+    # 2717 and the pick prompt 3373.
+    compare_strip=(
+        3435,
+        3454,
+        3355,
+        3394,
+        3382,
+        3389,
+        2427,
+        3383,
+        2852,
+        3367,
+        3172,
+        2717,
+        3373,
+        # The status bars, whose parts the rect test checks one by one: ffdec
+        # runs no script, so it draws every right-hand bar as a left-hand one and
+        # every fill in the color of frame 1. The member rows and the retreat
+        # button, which the port draws as its own art.
+        3414,
+        3312,
+        3356,
+    ),
+)
+
+
 def color_hex(color: tuple[int, int, int, int]) -> str:
     """-> "rrggbbaa", as Godot's Color.to_html() writes it."""
     return "{:02x}{:02x}{:02x}{:02x}".format(*color)
@@ -1084,12 +1241,12 @@ def _shadow_of(layer: timeline.Layer) -> DropShadow | None:
     return shadows[0] if shadows else None
 
 
-def bottom_bar_source() -> dict:
-    """-> the render record of the bottom bar, which extract_battle_screen
+def battle_chrome_source(name: str) -> dict:
+    """-> the render record of one battle chrome PNG, which extract_battle_screen
     writes as a rect only. Its zoom is that extractor's, and its size is read
     from the PNG."""
-    rect = json.loads(battle_screen.LAYOUT_JSON.read_text())["chrome"]["bottom_bar"]
-    with Image.open(battle_screen.BATTLE_UI_DIR / "bottom_bar.png") as image:
+    rect = json.loads(battle_screen.LAYOUT_JSON.read_text())["chrome"][name]
+    with Image.open(battle_screen.BATTLE_UI_DIR / f"{name}.png") as image:
         size = list(image.size)
     return {
         "rect": [rect["x"], rect["y"], rect["w"], rect["h"]],
@@ -1112,7 +1269,9 @@ def art_sources() -> dict[str, tuple[dict, str]]:
             (name, json.loads(record.read_text()), MENU_TEXTURES)
             for name, record in MENU_ART.items()
         ),
-        ("bottom_bar", bottom_bar_source(), BATTLE_TEXTURES),
+        ("bottom_bar", battle_chrome_source("bottom_bar"), BATTLE_TEXTURES),
+        ("top_panel", battle_chrome_source("top_panel"), BATTLE_TEXTURES),
+        ("alert_icon", battle_chrome_source("alert_icon"), BATTLE_TEXTURES),
         *(
             (
                 name,
@@ -1268,6 +1427,89 @@ def outline_record(
         "line": color_hex(color),
         "border": border_width(width, _scale(matrix)),
     }
+
+
+def path_shape_record(styles: list[StyleSet], path: int, matrix, origin) -> dict:
+    """-> the record of the `path`th stroked path of a shape, from the top down
+    and from the left, as the line's centre. It is the rect inside the line's
+    outer edge, for a piece that sits over a box the shape draws with one line."""
+    if len(styles) != 1 or not styles[0].paths:
+        raise ValueError("a path shape needs one style set with stroked paths")
+    boxes = sorted(styles[0].paths, key=lambda box: (box[1], box[0]))
+    if not 0 <= path < len(boxes):
+        raise ValueError(f"the shape has {len(boxes)} paths, not a path {path}")
+    return shape_record(boxes[path], matrix, origin)
+
+
+def bar_part_record(part: str, matrix, bar: dict, name: str) -> dict:
+    """-> the record of one part of the status bar that the battle frame places
+    as `name` with `matrix`. `bar` is top_bar.json. The part is an art piece, a
+    fill at its full width or a text field. Every rect in that file is in the bar
+    sprite's design px, or in `inner2`'s, which the right-hand bars mirror, so this
+    puts it through the placement. The bar's scale is not the same in x and y, so
+    an art piece has a zoom for each axis."""
+    sx, skew0, skew1, sy, tx, ty = matrix
+    if skew0 or skew1:
+        raise ValueError(f"{name} is placed with {matrix}")
+    flags = bar["placements"][name]
+    mirrored = flags["inner2_xscale"] is not None and flags["inner2_xscale"] < 0
+    frame = bar["inner"]["frames"][flags["inner_frame"] or "first"]
+
+    def on_stage(rect, flip: bool) -> list[float]:
+        x, y, w, h = rect
+        left = -x - w if flip else x
+        return [
+            round(tx / render.TWIPS + sx * left, 4),
+            round(ty / render.TWIPS + sy * y, 4),
+            round(sx * w, 4),
+            round(sy * h, 4),
+        ]
+
+    def art(entry: dict, rect: list[float], flip: bool) -> dict:
+        stage = on_stage(rect, flip)
+        return {
+            "kind": "art",
+            "rect": stage,
+            "texture": f"{TOP_BAR_TEXTURES}/{entry['file']}",
+            "size": entry["size"],
+            "zoom": [entry["size"][0] / stage[2], entry["size"][1] / stage[3]],
+        }
+
+    kind, _, which = part.partition(":")
+    if part == "backing":
+        entry = frame["art"]
+        return art(entry, entry["rect"], False)
+    if kind == "text":
+        field = next(f for f in frame["fields"] if f["variable"] == which)
+        shadow = bar["shadow"]
+        angle = math.radians(shadow["angle"])
+        alpha = int(shadow["color"][6:8], 16)
+        return {
+            "kind": "text",
+            "rect": on_stage(field["rect"], False),
+            "font_size": field["font_size"],
+            "color": field["color"],
+            "align": field["align"],
+            "shadow": {
+                "offset": [
+                    round(sx * shadow["distance"] * math.cos(angle), 4),
+                    round(sy * shadow["distance"] * math.sin(angle), 4),
+                ],
+                "color": shadow["color"][:6]
+                + f"{min(255, round(alpha * shadow['strength'])):02x}",
+                "blur": shadow["blur_x"],
+            },
+        }
+    if kind == "inner2":
+        entry = bar["inner2"]["art"][which]
+        return art(entry, entry["rect"], mirrored)
+    if kind == "fill":
+        bars = bar["bars"]["life" if which.startswith("life") else "focus"]
+        entry = bar["art"][bars["art"]]
+        x, y, w, h = entry["rect"]
+        rect = [bars["x"] + x * bars["scale_x"], bars["y"] + y, w * bars["scale_x"], h]
+        return art(entry, rect, mirrored)
+    raise ValueError(f"unknown bar part {part!r}")
 
 
 def through_sprites(index: SwfIndex, layer: timeline.Layer) -> tuple[int, tuple]:
@@ -1598,6 +1840,47 @@ def doll_record(
     }
 
 
+RIG_NAME = re.compile(r"player([1-6])")
+
+
+def fighter_marks(origin, layers: dict[int, timeline.Layer]) -> dict[str, list[float]]:
+    """-> {slot: [x, y]}: where one hall label of BATTLESCREEN, placed at
+    `origin`, puts the fighter rig of each slot on the Stage. A slot is the digit
+    of the rig's instance name, player1 to player6. Another character of the
+    label is the hall's art, which this leaves alone."""
+    marks: dict[str, list[float]] = {}
+    for depth, layer in layers.items():
+        if layer.character_id != battle_screen.FIGHTER_RIG:
+            continue
+        found = RIG_NAME.fullmatch(layer.name or "")
+        if found is None or found[1] in marks:
+            raise ValueError(
+                f"depth {depth} holds the fighter rig as {layer.name!r}, which is"
+                " not a slot that is still free"
+            )
+        marks[found[1]] = [
+            round(origin[0] + layer.matrix[4] / render.TWIPS, 4),
+            round(origin[1] + layer.matrix[5] / render.TWIPS, 4),
+        ]
+    if sorted(marks) != list("123456"):
+        raise ValueError(f"the label places the rig for slots {sorted(marks)}, not 1-6")
+    return marks
+
+
+def hall_fighter_marks(index: SwfIndex) -> dict[str, dict[str, list[float]]]:
+    """-> fighter_marks() of every hall label, by the label's key in
+    battle_layout.json."""
+    frame = timeline.frame_of(index, 0, battle_screen.FRAME_LABEL)
+    origin = render.placement_origin(index, 0, frame, battle_screen.HALL_SPRITE)
+    by_frame = timeline.frames(index, battle_screen.HALL_SPRITE)
+    return {
+        label.replace(" ", "_"): fighter_marks(origin, by_frame[number - 1])
+        for label, number in battle_screen.sprite_label_frames(
+            index, battle_screen.HALL_SPRITE
+        ).items()
+    }
+
+
 def origin_of(index: SwfIndex, owner: int) -> tuple[float, float]:
     if owner == 0:
         return 0.0, 0.0
@@ -1690,6 +1973,17 @@ def scene_record(
                 sprite_origins[f"sprite {layer.character_id}"] = inner_origin(
                     layer.matrix, piece_origin
                 )
+        for step in piece.via:
+            if piece.inner_depth is not None:
+                raise ValueError(f"{path}: a piece names inner_depth or via, not both")
+            piece_origin = inner_origin(layer.matrix, piece_origin)
+            first = timeline.frames(index, layer.character_id)[0]
+            if step not in first:
+                raise ValueError(
+                    f"{path}: sprite {layer.character_id} has no depth {step} on its"
+                    " first frame"
+                )
+            layer = first[step]
         if piece.kind == "point":
             pieces[path] = {
                 "kind": "point",
@@ -1748,6 +2042,13 @@ def scene_record(
             pieces[path] = face_record(crop, layer.matrix, piece_origin)
         elif piece.kind == "box":
             pieces[path] = _box(index, layer, piece_origin)
+        elif piece.kind == "shape" and piece.path is not None:
+            pieces[path] = path_shape_record(
+                shape_styles(index, layer.character_id),
+                piece.path,
+                layer.matrix,
+                piece_origin,
+            )
         elif piece.kind == "shape":
             pieces[path] = _shape(index, layer, piece_origin)
         elif piece.kind == "outline":
@@ -1757,6 +2058,13 @@ def scene_record(
                 piece_origin,
                 shape_styles(index, layer.character_id),
                 piece.path,
+            )
+        elif piece.kind == "bar_part":
+            pieces[path] = bar_part_record(
+                piece.art,
+                layer.matrix,
+                json.loads(TOP_BAR_RECORD.read_text()),
+                layer.name,
             )
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, piece_origin)
@@ -1792,7 +2100,8 @@ def main():
         "scenes": {
             path: scene_record(index, scene, steam_index)
             for path, scene in SCENES.items()
-        }
+        },
+        "fighter_marks": hall_fighter_marks(index),
     }
     RECORD.parent.mkdir(parents=True, exist_ok=True)
     RECORD.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")

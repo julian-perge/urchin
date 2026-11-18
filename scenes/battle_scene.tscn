@@ -1,40 +1,34 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_scene.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle/battle_screen_clip.gd" id="8_screen"]
-[ext_resource type="Texture2D" path="res://assets/ui/hotbar/background.png" id="2_hotbarbg"]
-[ext_resource type="Texture2D" path="res://assets/ui/battle/hotbar_background.png" id="3_battlebar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/bottom_bar.tscn" id="2_bottombar"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/alert_icon.png" id="3_alerticon"]
 [ext_resource type="Texture2D" path="res://assets/ui/battle/battle_pbar_full.png" id="4_countdownring"]
 [ext_resource type="PackedScene" path="res://scenes/battle/combat_log_panel.tscn" id="5_combatlog"]
 [ext_resource type="PackedScene" path="res://scenes/battle/radial_menu.tscn" id="6_radial"]
 [ext_resource type="PackedScene" path="res://scenes/battle/combat_text_banner.tscn" id="7_banner"]
 [ext_resource type="Script" path="res://scripts/battle/floating_number_layer.gd" id="8_floatingnumbers"]
+[ext_resource type="Texture2D" path="res://assets/ui/battle/top_panel.png" id="9_toppanel"]
+[ext_resource type="PackedScene" path="res://scenes/battle/top_status_bar.tscn" id="10_topbar"]
+[ext_resource type="PackedScene" path="res://scenes/battle/stance_row.tscn" id="11_stancerow"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pass_normal"]
-bg_color = Color(0.1, 0.1, 0.11, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.3, 0.3, 0.32, 1)
-corner_radius_top_left = 99
-corner_radius_top_right = 99
-corner_radius_bottom_right = 99
-corner_radius_bottom_left = 99
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hall_outline"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 1)
+anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pass_hover"]
-bg_color = Color(0.16, 0.16, 0.18, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.3, 0.3, 0.32, 1)
-corner_radius_top_left = 99
-corner_radius_top_right = 99
-corner_radius_bottom_right = 99
-corner_radius_bottom_left = 99
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_pass"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_retreat_normal"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
 bg_color = Color(0.55, 0.1, 0.08, 1)
 border_width_left = 2
 border_width_top = 2
@@ -47,6 +41,10 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_retreat_hover"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
 bg_color = Color(0.75, 0.15, 0.1, 1)
 border_width_left = 2
 border_width_top = 2
@@ -67,21 +65,29 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_battle")
 
-[node name="SkyFill" type="ColorRect" parent="."]
+[node name="HallWindow" type="ColorRect" parent="."]
+clip_contents = true
 layout_mode = 0
-offset_left = 0.0
-offset_top = 0.0
+offset_left = 15.0142
+offset_top = 130.386
+offset_right = 785.0152
+offset_bottom = 444.4366
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="HallSpace" type="Control" parent="HallWindow"]
+layout_mode = 0
 offset_right = 800.0
+offset_bottom = 575.0
 mouse_filter = 2
 
-[node name="Sky" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 0
+[node name="Sky" type="TextureRect" parent="HallWindow/HallSpace"]
+layout_mode = 0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
 
-[node name="BattleScreenClip" type="Control" parent="."]
+[node name="BattleScreenClip" type="Control" parent="HallWindow/HallSpace"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -91,154 +97,153 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("8_screen")
 
-[node name="Background" type="TextureRect" parent="BattleScreenClip"]
+[node name="Background" type="TextureRect" parent="HallWindow/HallSpace/BattleScreenClip"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="Battlefield" type="Node2D" parent="HallWindow/HallSpace/BattleScreenClip"]
+
+[node name="FloatingNumbers" type="Node2D" parent="HallWindow/HallSpace/BattleScreenClip"]
+script = ExtResource("8_floatingnumbers")
+
+[node name="HallOutline" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 14.5
+offset_top = 129.9
+offset_right = 785.5
+offset_bottom = 444.95
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hall_outline")
+
+[node name="TopPanel" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 13.73
+offset_top = 6.5
+offset_right = 787.48
+offset_bottom = 124.75
+mouse_filter = 2
+texture = ExtResource("9_toppanel")
+expand_mode = 1
+
+[node name="TopStatusBar" parent="." instance=ExtResource("10_topbar")]
+layout_mode = 0
+
+[node name="RadialMenu" parent="." instance=ExtResource("6_radial")]
+layout_mode = 0
+
+[node name="BottomBar" type="Control" parent="."]
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 575.0
+mouse_filter = 2
+
+[node name="Bar" parent="BottomBar" instance=ExtResource("2_bottombar")]
+
+[node name="StanceHost" type="Control" parent="BottomBar"]
+layout_mode = 0
+offset_left = 31.2
+offset_top = 473.5
+offset_right = 316.2
+offset_bottom = 504.8
+mouse_filter = 2
+
+[node name="Row5" parent="BottomBar/StanceHost" instance=ExtResource("11_stancerow")]
+
+[node name="Row3" parent="BottomBar/StanceHost" instance=ExtResource("11_stancerow")]
+
+[node name="RightPanel" type="Control" parent="BottomBar"]
+layout_mode = 0
+offset_left = 467.6
+offset_top = 453.8
+offset_right = 785.15
+offset_bottom = 562.2
+mouse_filter = 2
+
+[node name="CombatLogPanel" parent="BottomBar/RightPanel" instance=ExtResource("5_combatlog")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 6
+custom_minimum_size = Vector2(0, 0)
 
-[node name="Battlefield" type="Node2D" parent="BattleScreenClip"]
-
-[node name="FloatingNumbers" type="Node2D" parent="BattleScreenClip"]
-script = ExtResource("8_floatingnumbers")
-
-[node name="RadialMenu" parent="." instance=ExtResource("6_radial")]
-layout_mode = 0
-
-[node name="CombatLogPanel" parent="." instance=ExtResource("5_combatlog")]
+[node name="LogToggleButton" type="Button" parent="BottomBar/RightPanel"]
 layout_mode = 1
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 260.0
-offset_bottom = 180.0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -48.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 48.0
+grow_horizontal = 0
+text = "Log"
+tooltip_text = "Toggle the combat log"
 
-[node name="BottomBar" type="Control" parent="."]
+[node name="PassRing" type="Control" parent="BottomBar"]
 layout_mode = 0
-offset_left = 0.0
-offset_top = 445.0
-offset_right = 800.0
-offset_bottom = 575.0
+offset_left = 400.0
+offset_top = 507.75
+offset_right = 400.0
+offset_bottom = 507.75
 mouse_filter = 2
 
-[node name="Backdrop" type="TextureRect" parent="BottomBar"]
+[node name="AlertIcon" type="TextureRect" parent="BottomBar"]
 layout_mode = 0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 800.0
-offset_bottom = 130.0
-mouse_filter = 0
-texture = ExtResource("3_battlebar")
-expand_mode = 1
-stretch_mode = 6
-
-[node name="Panel1" type="TextureRect" parent="BottomBar"]
-layout_mode = 0
-offset_left = 12.0
-offset_top = 10.0
-offset_right = 332.0
-offset_bottom = 120.0
+offset_left = 385.0
+offset_top = 492.9
+offset_right = 415.0
+offset_bottom = 522.9
 mouse_filter = 2
-texture = ExtResource("2_hotbarbg")
+texture = ExtResource("3_alerticon")
 expand_mode = 1
-stretch_mode = 0
 
-[node name="Panel2" type="TextureRect" parent="BottomBar"]
+[node name="PassButton" type="Button" parent="BottomBar"]
 layout_mode = 0
-offset_left = 340.0
-offset_top = 10.0
-offset_right = 460.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("2_hotbarbg")
-expand_mode = 1
-stretch_mode = 0
+offset_left = 384.9888
+offset_top = 492.7388
+offset_right = 415.0113
+offset_bottom = 522.7613
+theme_override_styles/normal = SubResource("StyleBoxEmpty_pass")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_pass")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_pass")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_pass")
+tooltip_text = "Pass your turn"
 
-[node name="Panel3" type="TextureRect" parent="BottomBar"]
+[node name="RetreatButton" type="Button" parent="BottomBar"]
 layout_mode = 0
-offset_left = 468.0
-offset_top = 10.0
-offset_right = 788.0
-offset_bottom = 120.0
-mouse_filter = 2
-texture = ExtResource("2_hotbarbg")
-expand_mode = 1
-stretch_mode = 0
+offset_left = 436.0843
+offset_top = 464.3068
+offset_right = 454.1072
+offset_bottom = 482.3078
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_retreat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_retreat_hover")
+text = "x"
 
-[node name="CountdownRing" type="TextureRect" parent="BottomBar/Panel3"]
+[node name="CountdownRing" type="TextureRect" parent="BottomBar"]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 90.0
-offset_bottom = 90.0
+offset_left = 488.0
+offset_top = 475.0
+offset_right = 558.0
+offset_bottom = 545.0
 mouse_filter = 2
 texture = ExtResource("4_countdownring")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CountdownLabel" type="Label" parent="BottomBar/Panel3"]
+[node name="CountdownLabel" type="Label" parent="BottomBar"]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 45.0
-offset_right = 90.0
-offset_bottom = 65.0
+offset_left = 488.0
+offset_top = 500.0
+offset_right = 558.0
+offset_bottom = 520.0
 mouse_filter = 2
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.9, 0.9, 0.85, 1)
-
-[node name="LogToggleButton" type="Button" parent="BottomBar/Panel3"]
-layout_mode = 0
-offset_left = 260.0
-offset_top = 20.0
-offset_right = 300.0
-offset_bottom = 60.0
-text = "Log"
-tooltip_text = "Toggle the combat log"
-
-[node name="StanceHost" type="Control" parent="BottomBar"]
-layout_mode = 0
-offset_left = 24.0
-offset_top = 18.0
-offset_right = 400.0
-offset_bottom = 130.0
-mouse_filter = 2
-
-[node name="PassRing" type="Control" parent="BottomBar"]
-layout_mode = 0
-offset_left = 400.0
-offset_top = 65.0
-offset_right = 400.0
-offset_bottom = 65.0
-mouse_filter = 2
-
-[node name="PassButton" type="Button" parent="BottomBar"]
-layout_mode = 0
-offset_left = 372.0
-offset_top = 37.0
-offset_right = 428.0
-offset_bottom = 93.0
-theme_override_colors/font_color = Color(0.95, 0.75, 0.2, 1)
-theme_override_font_sizes/font_size = 22
-theme_override_styles/normal = SubResource("StyleBoxFlat_pass_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_pass_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pass_hover")
-text = "!"
-tooltip_text = "Pass your turn"
-
-[node name="RetreatButton" type="Button" parent="BottomBar"]
-layout_mode = 0
-offset_left = 442.0
-offset_top = 12.0
-offset_right = 468.0
-offset_bottom = 38.0
-theme_override_styles/normal = SubResource("StyleBoxFlat_retreat_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_retreat_hover")
-text = "x"
 
 [node name="CombatTextBanner" parent="." instance=ExtResource("7_banner")]
 layout_mode = 0
@@ -278,4 +283,4 @@ color = Color(0, 0, 0, 0)
 [connection signal="pick_refused" from="RadialMenu" to="CombatTextBanner" method="show_text"]
 [connection signal="pressed" from="BottomBar/PassButton" to="." method="_on_pass_pressed"]
 [connection signal="pressed" from="BottomBar/RetreatButton" to="." method="_on_retreat_pressed"]
-[connection signal="pressed" from="BottomBar/Panel3/LogToggleButton" to="." method="_on_log_toggle_pressed"]
+[connection signal="pressed" from="BottomBar/RightPanel/LogToggleButton" to="." method="_on_log_toggle_pressed"]
