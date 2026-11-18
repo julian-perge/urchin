@@ -837,8 +837,10 @@ func test_proceeding_after_a_win_that_levels_the_player_up_opens_the_abilities_w
 	assert_called(scene, "_on_continue_pressed")
 	assert_true(ZoneManager.open_abilities_on_load, "Proceed opens the Abilities window")
 	assert_false(ZoneManager.open_zone_map_on_load, "the zone map stays shut")
+	assert_eq(ZoneManager.hint_battle_after_close, 100, "the won battle's hint waits for the Inventory or Store close")
 
 	ZoneManager.open_abilities_on_load = false
+	ZoneManager.hint_battle_after_close = 0
 	ZoneManager.open_zone_map_on_load = false
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -867,6 +869,7 @@ func test_proceeding_after_a_win_with_no_level_up_leaves_the_abilities_window_sh
 
 	assert_called(scene, "_on_continue_pressed")
 	assert_false(ZoneManager.open_abilities_on_load, "the Abilities window stays shut")
+	assert_eq(ZoneManager.hint_battle_after_close, 0, "no hint waits")
 
 	ZoneManager.open_abilities_on_load = false
 	ZoneManager.open_zone_map_on_load = false

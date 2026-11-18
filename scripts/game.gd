@@ -14,6 +14,9 @@ const BATTLE_HINTS_FILE := "res://dev/converted_json/battle_hints.json"
 
 var _current_zone_scene: Node = null
 var _hint_used: bool = false
+# The battle whose hint waits for the player to close the Inventory or the Store.
+# 0 means none waits.
+var _hint_battle_waiting: int = 0
 
 
 # Every time the hub opens, after a load or on the return from a battle, this
@@ -43,6 +46,15 @@ func _ready():
 	if ZoneManager.open_abilities_on_load:
 		ZoneManager.open_abilities_on_load = false
 		$Hotbar.toggle_menu_screen("abilities_window")
+	# After a win that levelled the player up, Proceed shows no hint. The hint
+	# waits until the player closes the Inventory or the Store, and a new Hub
+	# (a new win or a load) starts with nothing waiting.
+	_hint_battle_waiting = ZoneManager.hint_battle_after_close
+	ZoneManager.hint_battle_after_close = 0
+	for group: StringName in [&"inventory_window", &"store_window"]:
+		var window: Node = get_tree().get_first_node_in_group(group)
+		if window != null:
+			window.get_node("WindowShell").close_pressed.connect(_on_hint_window_closed)
 
 
 func _load_zone(zone_id: int) -> void:
@@ -68,7 +80,8 @@ func set_art_visible(art_visible: bool) -> void:
 # needs no reset (DECODED_ALGORITHMS.md, "Post-battle hint"). battle_hints.json
 # gives each battle's index into NAVTITLE2 and NAVTEXT2. Battle 33 has an index
 # but no text, so it shows nothing. The Tutorial option is not checked, as in
-# the original. Nothing calls this method until #241 lands.
+# the original. _on_hint_window_closed() calls it for a win that levelled the
+# player up. Nothing else calls it until #241 lands.
 func show_battle_hint(battle_id: int) -> void:
 	if _hint_used:
 		return
@@ -81,6 +94,14 @@ func show_battle_hint(battle_id: int) -> void:
 	var index: int = int(hints.get(str(battle_id), -1))
 	if Strings.has("NAVTITLE2", index) and Strings.has("NAVTEXT2", index):
 		_hub_card.show_card(Strings.text("NAVTITLE2", index), Strings.text("NAVTEXT2", index))
+
+
+func _on_hint_window_closed() -> void:
+	if _hint_battle_waiting == 0:
+		return
+	var battle_id: int = _hint_battle_waiting
+	_hint_battle_waiting = 0
+	show_battle_hint(battle_id)
 
 
 func _sync_art_visibility() -> void:

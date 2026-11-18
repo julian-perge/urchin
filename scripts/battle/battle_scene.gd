@@ -1057,6 +1057,7 @@ func _on_victory_proceed() -> void:
 		# skills frame when the win filled the XP bar (DefineButton2_3004
 		# on(release), lines 17-29). The hub opens the Abilities window.
 		ZoneManager.open_abilities_on_load = true
+		ZoneManager.hint_battle_after_close = battle.id
 	_on_continue_pressed()
 
 
