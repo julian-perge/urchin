@@ -387,3 +387,187 @@ def test_lookup_imports_no_parser():
         [sys.executable, "-c", code], capture_output=True, text=True
     )
     assert result.returncode == 0, result.stderr
+
+
+def as_function(name: str, file: str, start: int, end: int) -> dict:
+    return {
+        "kind": "function",
+        "name": name,
+        "declared_as": "declaration",
+        "file": file,
+        "start": start,
+        "end": end,
+        "params": [],
+        "calls": [],
+        "writes": [],
+        "reads": [],
+    }
+
+
+def as_script(file: str, lines: int) -> dict:
+    return {
+        "kind": "script",
+        "file": file,
+        "lines": lines,
+        "owner": {},
+        "calls": [],
+        "writes": [],
+        "reads": [],
+    }
+
+
+def test_a_signal_name_prints_its_declaration_connects_and_emits(
+    as_records, gd_records
+):
+    code, out = run("proceed_pressed", as_records, gd_records)
+    assert code == 0
+    assert "signal proceed_pressed" in out.splitlines()
+    declared = section(out, "declared")
+    assert any(
+        row.startswith("  scripts/battle/victory_screen.gd:13  ") for row in declared
+    )
+    connects = section(out, "connects")
+    assert any(
+        row.startswith("  scripts/battle/battle_scene.gd:962  ")
+        and "victory.proceed_pressed -> _on_victory_proceed" in row
+        for row in connects
+    )
+    emits = section(out, "emits")
+    assert any(
+        row.startswith("  scripts/battle/victory_screen.gd:46  ") for row in emits
+    )
+
+
+def test_a_voice_cue_connect_names_its_target(as_records, gd_records):
+    _, out = run("voice_cue", as_records, gd_records)
+    assert any(
+        row.startswith("  scripts/battle/battle_scene.gd:360  ")
+        and "presenter.voice_cue -> AudioManagerAuto.voice" in row
+        for row in section(out, "connects")
+    )
+
+
+def test_a_signal_that_has_a_function_of_the_same_name_prints_both(tmp_path):
+    write_gd(tmp_path, "a.gd")
+    script = gd_script("a.gd")
+    script["signals"] = [{"name": "done", "line": 1, "params": ["x"]}]
+    gd = [script, gd_function("done", "a.gd", 2, 3)]
+    code, out = lookup("done", [], gd, root=tmp_path)
+    assert code == 0
+    assert "function owner.done()" in out.splitlines()
+    assert "signal done" in out.splitlines()
+    assert "  a.gd:1  done(x)" in section(out, "declared")
+
+
+def test_a_function_answer_lists_the_signals_it_connects_and_emits(tmp_path):
+    write_gd(tmp_path, "a.gd")
+    record = gd_function(
+        "setup",
+        "a.gd",
+        1,
+        8,
+        connects=[
+            {"signal": "died", "line": 2, "receiver": "unit", "target": "_on_died"}
+        ],
+    )
+    record["emits"] = [{"signal": "ready", "line": 5}]
+    code, out = lookup("setup", [], [gd_script("a.gd"), record], root=tmp_path)
+    assert code == 0
+    assert section(out, "signals") == [
+        "  connects  unit.died -> _on_died  2",
+        "  emits  ready  5",
+    ]
+
+
+def test_a_function_with_no_signals_prints_none(tmp_path):
+    write_gd(tmp_path, "a.gd")
+    gd = [gd_script("a.gd"), gd_function("go", "a.gd", 1, 2)]
+    _, out = lookup("go", [], gd, root=tmp_path)
+    assert section(out, "signals") == ["  none"]
+
+
+PORT_COMMENTS = (
+    "# frame_1/DoAction_1.as:82\n"
+    "func a():\n"
+    "\tpass\n"
+    "\n"
+    "# The conductor, frame_1/DoAction_1.as:40-64.\n"
+    "# More text.\n"
+    "func b():\n"
+    "\t# frame_1/DoAction_1.as:188, 261\n"
+    "\tpass\n"
+    "\n"
+    "func c():\n"
+    "\tpass\n"
+)
+
+
+def port_fixture(tmp_path):
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts/p.gd").write_text(PORT_COMMENTS)
+    gd = [
+        gd_script("scripts/p.gd", 12),
+        gd_function("a", "scripts/p.gd", 2, 3),
+        gd_function("b", "scripts/p.gd", 7, 9),
+        gd_function("c", "scripts/p.gd", 11, 12),
+    ]
+    as_records = [
+        as_script("frame_1/DoAction_1.as", 300),
+        as_function("one", "frame_1/DoAction_1.as", 80, 90),
+        as_function("two", "frame_1/DoAction_1.as", 30, 70),
+        as_function("three", "frame_1/DoAction_1.as", 180, 200),
+        as_function("four", "frame_1/DoAction_1.as", 250, 280),
+    ]
+    citations = as_lookup.read_citations(PORT_COMMENTS, "scripts/p.gd")
+    return as_records, gd, citations
+
+
+def ports(tmp_path, name: str) -> list[str]:
+    as_records, gd, citations = port_fixture(tmp_path)
+    code, out = lookup(name, as_records, gd, root=tmp_path, citations=citations)
+    assert code == 0
+    return section(out, "ports")
+
+
+def test_a_comment_above_a_func_is_a_port_of_that_func(tmp_path):
+    rows = ports(tmp_path, "a")
+    assert len(rows) == 1
+    assert "one" in rows[0]
+    assert "frame_1/DoAction_1.as:82" in rows[0]
+    assert "scripts/p.gd:1" in rows[0]
+
+
+def test_a_comment_block_above_a_func_and_a_comment_inside_it_both_count(tmp_path):
+    rows = ports(tmp_path, "b")
+    assert len(rows) == 3
+    holders = [row.split()[1] for row in rows]
+    assert holders == ["two", "three", "four"]
+    assert "frame_1/DoAction_1.as:40-64" in rows[0]
+
+
+def test_a_func_with_no_citation_has_no_ports(tmp_path):
+    assert ports(tmp_path, "c") == ["  none"]
+
+
+def test_a_cited_range_outside_every_function_names_the_script(tmp_path):
+    as_records, gd, citations = port_fixture(tmp_path)
+    as_records = as_records[:1]
+    _, out = lookup("a", as_records, gd, root=tmp_path, citations=citations)
+    assert section(out, "ports")[0].split()[1] == "script"
+
+
+def test_the_actionscript_answer_still_lists_the_gdscript_ports(tmp_path):
+    as_records, gd, citations = port_fixture(tmp_path)
+    export = tmp_path / "export/frame_1"
+    export.mkdir(parents=True)
+    (export / "DoAction_1.as").write_text("x\n" * 300)
+    code, out = lookup(
+        "one",
+        as_records,
+        gd,
+        root=tmp_path,
+        export=tmp_path / "export",
+        citations=citations,
+    )
+    assert code == 0
+    assert any(row.startswith("  scripts/p.gd:1  a") for row in section(out, "ports"))

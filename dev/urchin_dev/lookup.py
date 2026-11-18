@@ -151,11 +151,89 @@ def _calls(record: dict, functions: list[dict]) -> list[str]:
     return rows
 
 
+def _range_text(first: int, last: int) -> str:
+    return str(first) if first == last else f"{first}-{last}"
+
+
+def _signals(record: dict) -> list[str]:
+    rows = [
+        (c["line"], f"  connects  {_connected(c)}  {c['line']}")
+        for c in record["connects"]
+    ]
+    rows += [
+        (e["line"], f"  emits  {e['signal']}  {e['line']}") for e in record["emits"]
+    ]
+    return [row for _, row in sorted(rows)]
+
+
+def _connected(connect: dict) -> str:
+    signal = ".".join(filter(None, [connect["receiver"], connect["signal"]]))
+    return f"{signal} -> {connect['target']}"
+
+
+def _owned(record: dict, functions: list[dict], citation: Citation) -> bool:
+    """Whether a citation belongs to the function. A comment inside the range
+    does. A comment above a func belongs to the first func of that name that
+    starts below it, so two functions of one name in a file keep their own."""
+    if citation.gd != record["file"] or citation.function != record["name"]:
+        return False
+    if record["start"] <= citation.line <= record["end"]:
+        return True
+    below = [
+        r["start"]
+        for r in functions
+        if r["file"] == record["file"]
+        and r["name"] == record["name"]
+        and r["start"] > citation.line
+    ]
+    return citation.line < record["start"] and record["start"] == min(below)
+
+
+def _ports(
+    record: dict,
+    functions: list[dict],
+    as_records: list[dict],
+    citations: Sequence[Citation],
+) -> list[str]:
+    """The AS ranges that the comments of a function cite, each with the AS
+    function that holds the range."""
+    as_files = [r["file"] for r in as_records if r["kind"] == "script"]
+    as_functions = [r for r in as_records if r["kind"] == "function"]
+    rows = []
+    for cited in citations:
+        if not _owned(record, functions, cited):
+            continue
+        found = resolve(cited.path, as_files)
+        if len(found) != 1:
+            continue
+        path = f"{as_lookup.EXPORT}/{found[0]}"
+        for first, last in cited.lines or [None]:
+            if first is None:
+                where, holder = path, "script"
+            else:
+                holding = [
+                    r
+                    for r in as_functions
+                    if r["file"] == found[0] and r["start"] <= first <= r["end"]
+                ]
+                innermost = min(
+                    holding, key=lambda r: r["end"] - r["start"], default=None
+                )
+                where = f"{path}:{_range_text(first, last)}"
+                holder = innermost["name"] if innermost else "script"
+            rows.append(
+                f"  {where}  {holder}  {cited.gd}:{cited.line}  {cited.comment}"
+            )
+    return rows
+
+
 def _record_answer(
     record: dict,
     records: list[dict],
     source: bool | None,
     root: Path,
+    as_records: list[dict],
+    citations: Sequence[Citation],
     line: int | None = None,
 ) -> str:
     functions = [r for r in records if r["kind"] == "gd_function"]
@@ -196,6 +274,9 @@ def _record_answer(
     else:
         out += ["callers", *(_callers(record, functions) or ["  none"])]
         out += ["calls", *(_calls(record, functions) or ["  none"])]
+        out += ["signals", *(_signals(record) or ["  none"])]
+        ports = _ports(record, functions, as_records, citations)
+        out += ["ports", *(ports or ["  none"])]
     return "\n".join(out)
 
 
@@ -224,7 +305,13 @@ def _gd_path(path: str, records: list[dict]) -> dict | str:
 
 
 def _gd_line_query(
-    path: str, line: int, records: list[dict], source: bool | None, root: Path
+    path: str,
+    line: int,
+    records: list[dict],
+    source: bool | None,
+    root: Path,
+    as_records: list[dict],
+    citations: Sequence[Citation],
 ) -> tuple[int, str]:
     script = _gd_path(path, records)
     if isinstance(script, str):
@@ -239,17 +326,71 @@ def _gd_line_query(
         and r["start"] <= line <= r["end"]
     ]
     innermost = min(holders, key=lambda r: r["end"] - r["start"], default=script)
-    return 0, _record_answer(innermost, records, source, root, line)
+    answer = _record_answer(
+        innermost, records, source, root, as_records, citations, line
+    )
+    return 0, answer
 
 
-def _gd_name_matches(query: str, records: list[dict]) -> tuple[list[dict], bool]:
-    """-> the function records named `query`, and whether they match only
-    without case. An exact match wins over a match without case."""
+def _signal_names(records: list[dict]) -> set[str]:
+    """-> every signal name that a script declares, connects or emits."""
+    names = set()
+    for record in records:
+        if record["kind"] == "gd_script":
+            names.update(s["name"] for s in record["signals"])
+        else:
+            names.update(c["signal"] for c in record["connects"])
+            names.update(e["signal"] for e in record["emits"])
+    return names
+
+
+def _gd_name_matches(
+    query: str, records: list[dict]
+) -> tuple[list[dict], list[str], bool]:
+    """-> the function records and the signal names called `query`, and whether
+    they match only without case. An exact match wins over a match without
+    case."""
     functions = [r for r in records if r["kind"] == "gd_function"]
+    signals = _signal_names(records)
     exact = [r for r in functions if r["name"] == query]
-    if exact:
-        return exact, False
-    return [r for r in functions if r["name"].lower() == query.lower()], True
+    if exact or query in signals:
+        return exact, [query] * (query in signals), False
+    same = query.lower()
+    return (
+        [r for r in functions if r["name"].lower() == same],
+        sorted(n for n in signals if n.lower() == same),
+        True,
+    )
+
+
+def _signal_answer(name: str, records: list[dict]) -> str:
+    declared, connects, emits = [], [], []
+    for record in records:
+        if record["kind"] == "gd_script":
+            declared += [
+                f"  {record['file']}:{s['line']}  {name}({', '.join(s['params'])})"
+                for s in record["signals"]
+                if s["name"] == name
+            ]
+            continue
+        connects += [
+            f"  {record['file']}:{c['line']}  {record['name']}  {_connected(c)}"
+            for c in record["connects"]
+            if c["signal"] == name
+        ]
+        emits += [
+            f"  {record['file']}:{e['line']}  {record['name']}"
+            for e in record["emits"]
+            if e["signal"] == name
+        ]
+    out = [f"signal {name}"]
+    for head, rows in (
+        ("declared", declared),
+        ("connects", connects),
+        ("emits", emits),
+    ):
+        out += [head, *(rows or ["  none"])]
+    return "\n".join(out)
 
 
 def _near_names(query: str, gd: list[dict], as_text: str) -> str:
@@ -257,7 +398,8 @@ def _near_names(query: str, gd: list[dict], as_text: str) -> str:
     languages that hold it. The ActionScript names come from as_lookup's own
     no-match text."""
     languages: dict[str, set[str]] = {}
-    for name in difflib.get_close_matches(query, _gd_names(gd), _NEAREST):
+    known = sorted(set(_gd_names(gd)) | _signal_names(gd))
+    for name in difflib.get_close_matches(query, known, _NEAREST):
         languages.setdefault(name, set()).add("GDScript")
     lines = as_text.splitlines()
     if "nearest names" in lines:
@@ -280,7 +422,7 @@ def _name_query(
     root: Path,
     citations: Sequence[Citation],
 ) -> tuple[int, str]:
-    matches, gd_no_case = _gd_name_matches(query, gd)
+    matches, signals, gd_no_case = _gd_name_matches(query, gd)
     as_code, as_text = as_lookup.lookup(
         query, as_records, source=source, export=export, citations=citations
     )
@@ -288,19 +430,22 @@ def _name_query(
     as_no_case = as_code == 0 and as_text.startswith(note)
     if as_no_case:
         as_text = as_text.removeprefix(note).lstrip("\n")
-    if not matches and as_code == 1:
+    if not matches and not signals and as_code == 1:
         return 1, _near_names(query, gd, as_text)
     # An exact match in one language wins over a match without case in the
     # other, as it does inside one language.
-    if matches and as_code == 0 and gd_no_case != as_no_case:
+    if (matches or signals) and as_code == 0 and gd_no_case != as_no_case:
         if gd_no_case:
-            matches = []
+            matches, signals = [], []
         else:
             as_code = 1
     parts = []
-    if matches:
-        gd_text = "\n\n".join(_record_answer(r, gd, source, root) for r in matches)
-        parts.append(("GDScript", gd_text, gd_no_case))
+    if matches or signals:
+        answers = [
+            _record_answer(r, gd, source, root, as_records, citations) for r in matches
+        ]
+        answers += [_signal_answer(name, gd) for name in signals]
+        parts.append(("GDScript", "\n\n".join(answers), gd_no_case))
     if as_code == 0:
         parts.append(("ActionScript", as_text, as_no_case))
     body = (
@@ -325,18 +470,22 @@ def lookup(
 ) -> tuple[int, str]:
     """The exit code and the text for one query. `source` forces the source
     lines in or out, and None prints them for a range of 120 lines or less."""
-    as_args = dict(source=source, export=export, citations=citations)
+    as_args = {"source": source, "export": export, "citations": citations}
     if re.fullmatch(r".+\.as(?::\d+)?", query):
         return as_lookup.lookup(query, as_records, **as_args)
     with_line = re.fullmatch(r"(.+\.gd):(\d+)", query)
     if with_line:
         path, line = with_line.groups()
-        return _gd_line_query(path, int(line), gd_records, source, root)
+        return _gd_line_query(
+            path, int(line), gd_records, source, root, as_records, citations
+        )
     if query.endswith(".gd"):
         script = _gd_path(query, gd_records)
         if isinstance(script, str):
             return 1, script
-        return 0, _record_answer(script, gd_records, source, root)
+        return 0, _record_answer(
+            script, gd_records, source, root, as_records, citations
+        )
     return _name_query(query, as_records, gd_records, source, export, root, citations)
 
 
