@@ -71,7 +71,7 @@ What a doll shows from the buffs it holds: its color, its glow and its form. It 
 _Avoid_: Buff visual, buff filter
 
 **Ground shadow**:
-The shadow under a doll. It is the original's `shadower` clip, and it hides when the unit dies.
+The shadow under a doll. It is the original's `shadower` clip, and it goes with the doll when the unit dies.
 _Avoid_: Drop shadow
 
 **Stage**:

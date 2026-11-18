@@ -397,7 +397,7 @@ Ported: `CharacterVisual._play_death` and `FighterPresenter.die`. Frame counts b
 
 - The doll plays MODEL1's `dead` label, frames 313 to 371 (`frame_42/DoAction_8.as:104-107` and 208-211 for a move, `frame_42/DoAction_10.as:113` for a Buff tick). Frames 313 to 360 draw at
   full alpha. On 361 to 371 the label's own colour transforms fade every part from 233/256 to 0, and frame 371's script removes the doll before that frame is drawn
-  (`DefineSprite_166_MODEL1/frame_371/DoAction.as`), 58 frames after the death. Frame 360 hides the player clip's `shadower`, which the port has no counterpart for.
+  (`DefineSprite_166_MODEL1/frame_371/DoAction.as`), 58 frames after the death. Frame 360 runs `_parent.shadower._visible = false`, which hides nothing, so the Ground shadow goes with the doll on frame 371 (see "Doll ground shadow" in the audit table).
 - `lifeBarUpdate` plays the death voice and attaches LifeBarSmoother to the unit's bar with `deadNow` set (`frame_42/DoAction_8.as:345-347`). The clip's frame 18, 17 frames after the
   death, removes the buff icons `bshr0` to `bshr9` and sends the bar's `inner` clip (DefineSprite 3407, the name and the life and focus numbers) to its empty `third` frame. From the next
   frame, its frame 38 takes 5 off the whole bar's `_alpha` every frame, so the bar is at 0 on frame 37 and hidden on frame 38.
