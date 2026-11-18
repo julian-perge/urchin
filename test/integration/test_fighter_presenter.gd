@@ -308,6 +308,20 @@ func test_setup_stands_a_model5_smaller_and_lower():
 	assert_eq(_overlay.position, _doll.position, "with the overlay on it")
 
 
+func test_setup_puts_the_units_models_shadow_under_its_doll():
+	var unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+	unit.model = ["MODEL5", "ONE", "ONE", "M"]
+	_present(unit)
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/sprites/doll_shadow.json"))
+	var m: Array = layout["models"]["MODEL5"]
+	var shadow: Sprite2D = _doll.get_node("Body/Shadow")
+	var rect: Dictionary = layout["rect"]
+	var want: Rect2 = Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5])) * Rect2(rect["x"], rect["y"], rect["w"], rect["h"])
+	var got: Rect2 = shadow.transform * shadow.get_rect()
+	assert_true(got.position.is_equal_approx(want.position), "MODEL5's matrix, not MODEL1's")
+	assert_true(got.size.is_equal_approx(want.size))
+
+
 func test_setup_dresses_the_doll_from_the_item_table():
 	var unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
 	unit.equipment_ids = [0, 7]
@@ -407,6 +421,161 @@ func test_a_buff_landed_late_in_a_half_turn_shows_only_once_its_result_plays():
 	landing.target_after.buff_slots = [slot.duplicate()]
 	_presenter.show_result(landing, null)
 	assert_eq(_buff_icons().size(), 1, "the hit that lands it shows it, from the buff table")
+
+
+# applyChangesKrin recolors and glows the doll from the unit's FILTERSBUFFARRAY
+# (frame_42/DoAction_10.as:380-466), and the conductor runs it on a target after
+# each strike that lands (line 103). So the look waits for the event that lands
+# the buff, as the icon does.
+func _buff_of_filter_index(index: int) -> Buff:
+	var buff := Buff.new()
+	buff.internal_name = "FIRESAM"
+	buff.visual_filter_index = index
+	return buff
+
+
+func _doll_shader() -> ShaderMaterial:
+	return _doll.get_node("Body").material
+
+
+func test_a_poison_buff_shows_the_poison_color_and_a_frost_buff_the_frost_filter():
+	var looks: Dictionary = BuffLook.looks()
+	_present(_unit, {}, {1: _buff_of_filter_index(1), 2: _buff_of_filter_index(2)})
+	_unit.buff_slots[0] = {"cd": 3, "buff_id": 1, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_unit.buff_slots[1] = {"cd": 3, "buff_id": 2, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_presenter.snap_to_unit()
+	var poison: Array = looks["colors"]["Poison"]
+	assert_eq(_doll_shader().get_shader_parameter("buff_offset"), Vector3(poison[0], poison[1], poison[2]) / 255.0, "the Poison color")
+	var frost: Array = looks["filters"]["Frost"]
+	assert_eq(_doll_shader().get_shader_parameter("buff_glows"), frost.size(), "the Frost glows")
+	assert_eq(_doll_shader().get_shader_parameter("buff_color_b"), Color.html(frost[1]["color"]))
+
+
+func test_a_buff_look_shows_only_at_the_event_that_lands_the_buff_and_goes_with_it():
+	_present(_unit, {}, {2: _buff_of_filter_index(2)})
+	var slot: Dictionary = {"cd": 3, "buff_id": 2, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_unit.buff_slots[0] = slot.duplicate()
+
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	assert_eq(_doll_shader().get_shader_parameter("buff_glows"), 0, "a hit before the one that lands the buff shows no look")
+
+	var landing: MoveResult = _damage(10.0, 80.0)
+	landing.target_after.buff_slots = [slot.duplicate()]
+	_presenter.show_result(landing, null)
+	assert_gt(_doll_shader().get_shader_parameter("buff_glows"), 0, "the hit that lands it shows it")
+
+	var removing: MoveResult = _damage(10.0, 70.0)
+	removing.target_after.buff_slots = []
+	_presenter.show_result(removing, null)
+	assert_eq(_doll_shader().get_shader_parameter("buff_glows"), 0, "the event that removes it shows the plain doll again")
+
+
+func test_a_buff_tick_that_removes_the_buff_removes_the_look():
+	_present(_unit, {}, {2: _buff_of_filter_index(2)})
+	var slot: Dictionary = {"cd": 1, "buff_id": 2, "buff_value": 0.0, "shield_buff_value": 0.0}
+	_presenter.show_state(_snapshot_with([slot]))
+	assert_gt(_doll_shader().get_shader_parameter("buff_glows"), 0)
+	_presenter.show_state(_snapshot_with([]))
+	assert_eq(_doll_shader().get_shader_parameter("buff_glows"), 0)
+
+
+func _snapshot_with(slots: Array) -> UnitSnapshot:
+	var snapshot: UnitSnapshot = UnitSnapshot.of(_unit)
+	snapshot.buff_slots = slots.duplicate(true)
+	return snapshot
+
+
+# changeForm redraws the doll when applyChangesKrin finds a form buff, and
+# redraws it again when the buff goes (frame_42/DoAction_10.as:380-466 and
+# 483-537). The visual filter index of BARON is 4 and of HOUND is 16.
+func _chest_skin() -> Array:
+	var files: Array = []
+	for child in _doll._parts["chest"].get_children():
+		if child is Sprite2D and not child.is_queued_for_deletion():
+			files.append(child.texture.resource_path.get_file())
+	return files
+
+
+func _present_with_form_buffs() -> Dictionary:
+	_present(_unit, {}, {4: _buff_of_filter_index(4), 16: _buff_of_filter_index(16)})
+	return {
+		"baron": {"cd": 3, "buff_id": 4, "buff_value": 0.0, "shield_buff_value": 0.0},
+		"hound": {"cd": 3, "buff_id": 16, "buff_value": 0.0, "shield_buff_value": 0.0},
+	}
+
+
+func test_a_form_buff_shows_its_form_at_the_event_that_lands_it_and_the_units_own_when_it_goes():
+	var slots: Dictionary = _present_with_form_buffs()
+	assert_eq(_chest_skin(), ["M_SCHEST_ONE.png"], "the unit's own skin")
+	_unit.buff_slots[0] = slots["baron"].duplicate()
+
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	assert_eq(_chest_skin(), ["M_SCHEST_ONE.png"], "a hit before the one that lands the buff shows the own form")
+
+	var landing: MoveResult = _damage(10.0, 80.0)
+	landing.target_after.buff_slots = [slots["baron"].duplicate()]
+	_presenter.show_result(landing, null)
+	assert_eq(_chest_skin(), ["M_SCHEST_ZOMBIE2.png"], "the hit that lands it shows BARON")
+
+	var removing: MoveResult = _damage(10.0, 70.0)
+	removing.target_after.buff_slots = []
+	_presenter.show_result(removing, null)
+	assert_eq(_chest_skin(), ["M_SCHEST_ONE.png"], "the event that removes it shows the own form again")
+
+
+func test_a_form_that_is_already_worn_is_not_redrawn():
+	var slots: Dictionary = _present_with_form_buffs()
+	_presenter.show_state(_snapshot_with([slots["baron"].duplicate()]))
+	_doll.set_state(CharacterVisual.State.HIT)
+	_presenter.show_state(_snapshot_with([slots["baron"].duplicate()]))
+	assert_eq(_doll._state, CharacterVisual.State.HIT, "dressNow already says BARON, so changeForm does not run")
+
+
+func test_a_stunned_doll_stays_in_the_stun_loop_when_its_form_changes():
+	var slots: Dictionary = _present_with_form_buffs()
+	var stunned: UnitSnapshot = _snapshot_with([])
+	stunned.stun = 1.0
+	_presenter.show_state(stunned)
+	assert_eq(_doll._label, "stun", "the entry plays first")
+	var swapped: UnitSnapshot = _snapshot_with([slots["baron"].duplicate()])
+	swapped.stun = 1.0
+	_presenter.show_state(swapped)
+	assert_eq(_doll._state, STUN)
+	assert_eq(_doll._label, "stun2", "the swap puts the new clip in the stun loop")
+
+
+func test_a_form_change_that_also_raises_the_stun_plays_the_stun_entry():
+	var slots: Dictionary = _present_with_form_buffs()
+	var landing: UnitSnapshot = _snapshot_with([slots["baron"].duplicate()])
+	landing.stun = 1.0
+	_presenter.show_state(landing)
+	assert_eq(_doll._label, "stun", "the rise in the stun runs after changeForm, so it wins")
+
+
+func test_a_model5_form_stands_smaller_and_lower_and_the_units_own_form_stands_back():
+	var slots: Dictionary = _present_with_form_buffs()
+	_presenter.show_state(_snapshot_with([slots["hound"].duplicate()]))
+	assert_almost_eq(_doll.scale.x, -0.8, 0.001, "dressChar's 0.8x for a MODEL5 clip, still mirrored")
+	assert_eq(_doll.position, HOME + Vector2(0, 10), "10 px lower")
+	assert_eq(_presenter.rig_position(), _presenter.position + HOME, "the rig stays where it was")
+	_presenter.show_state(_snapshot_with([]))
+	assert_almost_eq(_doll.scale.x, -1.0, 0.001)
+	assert_eq(_doll.position, HOME)
+
+
+func test_a_model5_swap_during_a_swing_moves_the_saved_home_too():
+	var slots: Dictionary = _present_with_form_buffs()
+	_doll.play_melee(func(): return HOME + Vector2(200, 0), 0.0)
+	var home_before: Vector2 = _doll._home_position
+	_presenter.show_state(_snapshot_with([slots["hound"].duplicate()]))
+	assert_eq(_doll._home_position, home_before + Vector2(0, 10))
+
+
+func test_a_dead_fighter_keeps_its_form():
+	var slots: Dictionary = _present_with_form_buffs()
+	_presenter.die()
+	_presenter.show_state(_snapshot_with([slots["baron"].duplicate()]))
+	assert_eq(_chest_skin(), ["M_SCHEST_ONE.png"], "a dead doll is not redressed")
 
 
 # Shatter Bolt lands its stun as a buff, so its target shows the stun pose and

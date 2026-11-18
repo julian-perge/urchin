@@ -1,0 +1,299 @@
+{
+  "colors": {
+    "Enrage": [
+      30,
+      -130,
+      -130
+    ],
+    "Normal": [
+      0,
+      0,
+      0
+    ],
+    "Poison": [
+      -50,
+      0,
+      -225
+    ]
+  },
+  "color_by_index": [
+    [
+      1,
+      "Poison"
+    ],
+    [
+      7,
+      "Enrage"
+    ]
+  ],
+  "default_color": "Normal",
+  "filters": {
+    "Frost": [
+      {
+        "color": "ffffff",
+        "alpha": 1,
+        "blur_x": 14,
+        "blur_y": 14,
+        "strength": 1.4,
+        "quality": 1,
+        "inner": true,
+        "knockout": true
+      },
+      {
+        "color": "3399ff",
+        "alpha": 1,
+        "blur_x": 24,
+        "blur_y": 24,
+        "strength": 3.8,
+        "quality": 1,
+        "inner": false,
+        "knockout": false
+      }
+    ],
+    "FrostGreen": [
+      {
+        "color": "ffffff",
+        "alpha": 1,
+        "blur_x": 14,
+        "blur_y": 14,
+        "strength": 1.4,
+        "quality": 1,
+        "inner": true,
+        "knockout": true
+      },
+      {
+        "color": "33ff00",
+        "alpha": 1,
+        "blur_x": 24,
+        "blur_y": 24,
+        "strength": 3.8,
+        "quality": 1,
+        "inner": false,
+        "knockout": false
+      }
+    ],
+    "Icy": [
+      {
+        "color": "66ffff",
+        "alpha": 1,
+        "blur_x": 9,
+        "blur_y": 9,
+        "strength": 3.8,
+        "quality": 1,
+        "inner": false,
+        "knockout": false
+      }
+    ],
+    "None": [],
+    "Orange": [
+      {
+        "color": "33ffff",
+        "alpha": 1,
+        "blur_x": 12,
+        "blur_y": 12,
+        "strength": 1.5,
+        "quality": 1,
+        "inner": false,
+        "knockout": false
+      }
+    ],
+    "Red": [
+      {
+        "color": "ff6600",
+        "alpha": 1,
+        "blur_x": 10,
+        "blur_y": 10,
+        "strength": 1.7,
+        "quality": 1,
+        "inner": false,
+        "knockout": false
+      }
+    ],
+    "Shadow": [
+      {
+        "color": "000000",
+        "alpha": 1,
+        "blur_x": 18,
+        "blur_y": 18,
+        "strength": 5,
+        "quality": 1,
+        "inner": true,
+        "knockout": true
+      },
+      {
+        "color": "663366",
+        "alpha": 1,
+        "blur_x": 4,
+        "blur_y": 4,
+        "strength": 2.8,
+        "quality": 1,
+        "inner": false,
+        "knockout": false
+      }
+    ]
+  },
+  "filter_by_index": [
+    [
+      3,
+      "FrostGreen"
+    ],
+    [
+      18,
+      "Red"
+    ],
+    [
+      5,
+      "Shadow"
+    ],
+    [
+      6,
+      "Icy"
+    ],
+    [
+      8,
+      "Orange"
+    ],
+    [
+      2,
+      "Frost"
+    ]
+  ],
+  "default_filter": "None",
+  "forms": {
+    "BARON": {
+      "model": "MODEL1",
+      "skin": "ZOMBIE2",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "XADER2",
+      "weapon2": ""
+    },
+    "PREDATOR": {
+      "model": "MODEL1",
+      "skin": "PREDATOR",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "TOXICANT": {
+      "model": "MODEL1",
+      "skin": "TOXICANT",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "GUARDIAN": {
+      "model": "MODEL1",
+      "skin": "GUARDIAN",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "AVENGER": {
+      "model": "MODEL1",
+      "skin": "AVENGER",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "PSYCHO": {
+      "model": "MODEL1",
+      "skin": "PSYCHO",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "WRAITH": {
+      "model": "MODEL1",
+      "skin": "WRAITH",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "GHOSTBOSS": {
+      "model": "MODEL1",
+      "skin": "GHOSTBOSS",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "SHANK",
+      "weapon2": "SHANK"
+    },
+    "HOUND": {
+      "model": "MODEL5",
+      "skin": "HOUND",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "WEREWOLF": {
+      "model": "MODEL5",
+      "skin": "WEREWOLF",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "GHOSTBOSS2": {
+      "model": "MODEL1",
+      "skin": "GHOSTBOSS2",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "FELKNIFE2",
+      "weapon2": "FELKNIFE2"
+    }
+  },
+  "form_by_index": [
+    [
+      4,
+      "BARON"
+    ],
+    [
+      9,
+      "PREDATOR"
+    ],
+    [
+      10,
+      "TOXICANT"
+    ],
+    [
+      11,
+      "GUARDIAN"
+    ],
+    [
+      12,
+      "AVENGER"
+    ],
+    [
+      13,
+      "PSYCHO"
+    ],
+    [
+      14,
+      "WRAITH"
+    ],
+    [
+      15,
+      "GHOSTBOSS"
+    ],
+    [
+      16,
+      "HOUND"
+    ],
+    [
+      17,
+      "WEREWOLF"
+    ],
+    [
+      19,
+      "GHOSTBOSS2"
+    ]
+  ],
+  "default_form": "STANDARD"
+}

@@ -159,6 +159,11 @@ convert-items *args:
 convert-menu-math *args:
     uv run convert_menu_math "$@"
 
+[doc('Run convert_buff_looks, which reads how the buffs of a unit recolor and glow its doll into JSON')]
+[group('convert')]
+convert-buff-looks *args:
+    uv run convert_buff_looks "$@"
+
 [doc('Run convert_model1_sound_cues, which reads the sounds the MODEL1 doll clip plays into JSON')]
 [group('convert')]
 convert-model1-sound-cues *args:
@@ -228,6 +233,11 @@ extract-cutscenes *args: (require "ffdec" "java")
 [group('extract')]
 extract-doll-art *args: (require "ffdec" "java")
     uv run extract_doll_art "$@"
+
+[doc('Run extract_doll_shadow, which reads the SWF through ffdec')]
+[group('extract')]
+extract-doll-shadow *args: (require "ffdec" "java")
+    uv run extract_doll_shadow "$@"
 
 [doc('Run extract_faces, which reads the SWF through ffdec')]
 [group('extract')]

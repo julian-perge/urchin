@@ -49,6 +49,12 @@ var _hover_info: Label = null
 # setup() puts the doll this far from its home, and rig_position() takes it
 # back off.
 var _doll_offset: Vector2 = Vector2.ZERO
+# The unit's own equipment looks, which a form's empty weapon takes.
+var _equip_looks: Array = []
+# The form the doll wears, which the original keeps as dressNow.
+var _form: String = ""
+# Whether the doll is a MODEL5 clip, which dressChar lowers inside its rig.
+var _doll_is_model5: bool = false
 
 @onready var hit_area: Button = $Overlay/HitButton
 @onready var _doll: CharacterVisual = $Doll
@@ -74,24 +80,25 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	_doll.position = home
 	# The doll's swing plays its own sounds, such as the whoosh of sfx_swing.
 	_doll.sound_cue.connect(effect_cue.emit)
-	# The Shield clip is the rig's own, so the MODEL5 quirk below leaves it alone.
+	# The Shield clip is the rig's own, so the MODEL5 quirk of _set_doll_model leaves it alone.
 	_shield_clip.position = home
 	_speech_bubble.position = home
 	if unit.team_side == CombatUnit.Team.TWO:
 		_doll.scale.x = -1  # mirrored, facing left
 		_shield_clip.scale.x = -1
 		_speech_bubble.scale.x = -1
-	# dressChar's MODEL5 quirk: 0.8x scale, 10px lower.
-	if not unit.model.is_empty() and str(unit.model[0]) == "MODEL5":
-		_doll.scale *= 0.8
-		_doll.position.y += 10
-	_doll_offset = _doll.position - home
-	_doll.dress_from_model(unit.model, CharacterVisual.resolve_equip_looks(unit, items_by_id))
+	_set_doll_model(str(unit.model[0]) if not unit.model.is_empty() else "")
+	_equip_looks = CharacterVisual.resolve_equip_looks(unit, items_by_id)
+	_form = BuffLook.looks()["default_form"]
+	_doll.dress_from_model(unit.model, _equip_looks)
+	if not unit.model.is_empty():
+		_doll.show_shadow(str(unit.model[0]))
 	# The overlay is the doll's sibling because parenting it to a mirrored doll
 	# flipped its offsets on team 2.
 	_overlay.position = _doll.position
 	_status_bar.setup(unit.player_name)
 	_overlay.ring.draw.connect(_draw_ring)
+	_show_form(displayed)
 	_draw_status()
 
 
@@ -245,14 +252,66 @@ func die() -> void:
 # Shows the bars, the buff icons and the stun pose that an event left on this
 # fighter's unit.
 func show_state(state: UnitSnapshot) -> void:
+	# applyChangesKrin runs changeForm before it compares the stun, so a form
+	# change comes first and a rise in the stun then replays the stun entry.
+	_show_form(state)
 	_show_stun(state.stun)
 	displayed = state
 	_draw_status()
 
 
+# Dresses the doll in the form that the buffs of `state` give it, if it is not
+# wearing that form already, as applyChangesKrin does when dressNow differs from
+# its form (frame_42/DoAction_10.as:459-461). The original changes no dead unit's
+# doll here either, because a dead unit takes no new buff.
+func _show_form(state: UnitSnapshot) -> void:
+	if _dead:
+		return
+	var form: String = BuffLook.resolve(state.buff_slots, _buffs_by_id).form
+	if form == _form:
+		return
+	_form = form
+	var stunned: bool = state.stun > 0.0
+	var table: Dictionary = BuffLook.looks()
+	if form == table["default_form"]:
+		_set_doll_model(str(_unit.model[0]))
+		_doll.wear_own_form(_unit.model, _equip_looks, stunned)
+	else:
+		_set_doll_model(table["forms"][form]["model"])
+		_doll.wear_form(table["forms"][form], _equip_looks, stunned)
+
+
+# dressChar draws a MODEL5 doll 0.8x as big and 10 px lower inside its rig
+# (frame_217/DoAction_2.as:19-24), and a doll of another model at the rig's own
+# scale and place. Only the doll moves, so the rig and the overlay stay.
+func _set_doll_model(model: String) -> void:
+	var lowered: bool = model == "MODEL5"
+	if lowered == _doll_is_model5:
+		return
+	_doll_is_model5 = lowered
+	var size: float = 0.8 if lowered else 1.0
+	_doll.scale = Vector2(signf(_doll.scale.x) * size, size)
+	var drop: float = 10.0 if lowered else -10.0
+	_doll.shift_down(drop)
+	_doll_offset.y += drop
+	_overlay.position.y += drop
+
+
 func _draw_status() -> void:
 	_status_bar.show_status(displayed)
 	_status_bar.refresh_buffs(displayed.buff_slots, _buffs_by_id)
+	_draw_buff_look()
+
+
+# Gives the doll the color and the glow that its buffs give it, as
+# applyChangesKrin does after every result and every Buff tick on the unit
+# (frame_42/DoAction_10.as:380-466). The look comes from the snapshot the fighter
+# shows, so it waits for the event that lands the buff and goes at the event that
+# removes it.
+func _draw_buff_look() -> void:
+	var look: BuffLook = BuffLook.resolve(displayed.buff_slots, _buffs_by_id)
+	var looks: Dictionary = BuffLook.looks()
+	_doll.show_buff_look(looks["colors"][look.color], looks["filters"][look.filter])
 
 
 # Shows this fighter's unit as it is now. The scene calls this when the replay of a

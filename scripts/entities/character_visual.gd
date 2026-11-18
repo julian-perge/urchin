@@ -83,6 +83,12 @@ const BODY_SHADER: Shader = preload("res://scenes/doll_body.gdshader")
 # has no such number.
 const RESULT_FLASH_FIT_SPARE: float = 1.0
 
+# The Ground shadow's art and each model's matrix for it (extract_doll_shadow).
+const SHADOW_ART: String = SPRITE_ROOT + "/doll_shadow.png"
+const SHADOW_FILE: String = SPRITE_ROOT + "/doll_shadow.json"
+
+static var _shadow_layout: Dictionary = {}
+static var _shadow_layout_loaded: bool = false
 static var _offsets: Dictionary = {}
 static var _offsets_loaded: bool = false
 static var _animations: Dictionary = {}
@@ -121,6 +127,14 @@ const REST_POSE: Dictionary[Variant, Variant] = {
 var _parts: Dictionary = {}  # name -> Node2D holding the layered sprites
 var _body: CanvasGroup
 var _body_material: ShaderMaterial
+# The look the doll's buffs give it (show_buff_look): the color offsets and the
+# glows of the filter list, which are empty while the doll has no such look.
+var _buff_offsets: Array = []
+var _buff_glows: Array = []
+# The fit and clear margins, in stage px, that the Result flash and the buff
+# glows each need around the body. The body takes the larger of each.
+var _flash_margins: Vector2 = Vector2.ZERO
+var _buff_margins: Vector2 = Vector2.ZERO
 var _state: int = State.IDLE
 var _attack_fired: bool = false
 
@@ -172,6 +186,10 @@ func _ready():
 	_body_material.shader = BODY_SHADER
 	_body.material = _body_material
 	add_child(_body)
+	# A glow measures its blur in stage px, so a window that changes size changes
+	# what the buff glows ask of the shader.
+	get_viewport().size_changed.connect(_apply_buff_look)
+	_apply_buff_look()
 	var ordered: Array = REST_POSE.keys()
 	ordered.sort_custom(func(a, b): return REST_POSE[a]["z"] < REST_POSE[b]["z"])
 	for part_name in ordered:
@@ -187,6 +205,70 @@ func _ready():
 	# (menus) keep the rest pose above.
 	if animate:
 		set_state(State.IDLE)
+
+
+# Redraws the doll in `form`, one of the forms of buff_looks.json, as
+# changeForm's dressChar call does. dressChar passes "" as the armor set, so the
+# doll wears its skin set alone, with the form's weapons. A weapon of "" takes the
+# weapon of `equip_looks`, the unit's own looks. `stunned` is whether the unit
+# holds any stun.
+func wear_form(form: Dictionary, equip_looks: Array, stunned: bool) -> void:
+	var equip: Array = ["", "", "", "", "", form["weapon1"], form["weapon2"]]
+	for slot in [5, 6]:
+		if equip[slot] == "":
+			equip[slot] = equip_looks[slot]
+	dress(form["gender"], form["skin"], form["hair"], equip)
+	_start_new_clip(form["model"], stunned)
+
+
+# Redraws the doll as its unit's own form, which changeForm does for "STANDARD".
+func wear_own_form(model: Array, equip_looks: Array, stunned: bool) -> void:
+	dress_from_model(model, equip_looks)
+	_start_new_clip(str(model[0]), stunned)
+
+
+# Moves the doll `dy` px down inside its rig, and its saved home with it, so a
+# swing that is under way still ends at the doll's new home.
+func shift_down(dy: float) -> void:
+	position.y += dy
+	_home_position.y += dy
+
+
+# dressChar removes the doll's clip and attaches a new one, which starts on its
+# first frame, and the shadow is a part of that clip. changeForm then puts a
+# stunned unit's new clip in the stun loop (frame_42/DoAction_10.as:533-536).
+func _start_new_clip(model: String, stunned: bool) -> void:
+	show_shadow(model)
+	set_state(State.IDLE)
+	if stunned:
+		_state = State.STUN
+		_stun_phase = 1
+		_start_label("stun2")
+
+
+# Draws the Ground shadow that `model` places under its parts, at depth 1 of
+# the model clip. The shadow is part of the body, so the doll's modulate, fade
+# and Result flash reach it as they reach the original's whole `inner` clip.
+# A model with no placement in doll_shadow.json gets none.
+func show_shadow(model: String) -> void:
+	var old: Node = _body.get_node_or_null("Shadow")
+	if old != null:
+		_body.remove_child(old)
+		old.queue_free()
+	var layout: Dictionary = _load_shadow_layout()
+	var matrix: Array = layout.get("models", {}).get(model, [])
+	if matrix.is_empty():
+		return
+	var rect: Dictionary = layout["rect"]
+	var shadow := Sprite2D.new()
+	shadow.name = "Shadow"
+	shadow.texture = load(SHADOW_ART)
+	shadow.centered = false
+	var size: Vector2 = shadow.texture.get_size()
+	var placed := Transform2D(Vector2(matrix[0], matrix[1]), Vector2(matrix[2], matrix[3]), Vector2(matrix[4], matrix[5]))
+	shadow.transform = placed * Transform2D(0.0, Vector2(rect["w"] / size.x, rect["h"] / size.y), 0.0, Vector2(rect["x"], rect["y"]))
+	_body.add_child(shadow)
+	_body.move_child(shadow, 0)
 
 
 # dressChar port. gender "M"/"F", skin/hair keys, equip = 7-slot Array of
@@ -356,14 +438,60 @@ func show_result_flash(color: Color, white_glow: Dictionary, color_glow: Diction
 	_body_material.set_shader_parameter("white_strength", white_glow["strength"])
 	_body_material.set_shader_parameter("color_blur", color_glow["blur"])
 	_body_material.set_shader_parameter("color_strength", color_glow["strength"])
-	_body.fit_margin = (color_glow["blur"] / 2.0 + RESULT_FLASH_FIT_SPARE) * stage_scale
-	_body.clear_margin = white_glow["blur"] / 2.0 * stage_scale
+	_flash_margins = Vector2(color_glow["blur"] / 2.0 + RESULT_FLASH_FIT_SPARE, white_glow["blur"] / 2.0)
+	_apply_margins(stage_scale)
 
 
-# BATTLEFLASH puts back the filter the unit's buffs give its doll, and the port
-# draws no such filter, so the doll goes back to its plain look.
+# BATTLEFLASH puts back the filter and the color the unit's buffs give its doll,
+# so the doll goes back to the look that show_buff_look() set.
 func hide_result_flash() -> void:
 	_body_material.set_shader_parameter("result_flash", false)
+	_flash_margins = Vector2.ZERO
+	_apply_margins(get_viewport().get_final_transform().get_scale().x)
+
+
+# Gives the doll the look its buffs give it: `color_offsets` are the red, green
+# and blue offsets of the ColorTransform that krinChangeColor sets, each from
+# -255 to 255, and `glows` are the GlowFilters of the filter list that
+# applyChangesKrin sets, as buff_looks.json holds them. Empty arguments give the
+# doll back its plain look.
+#
+# A glow reaches half its blur past the px it reads. The body draws the outer
+# glows' reach and 1 px more past the doll, and clears the screen texture half
+# the largest blur past that, as the Result flash does for its glows.
+func show_buff_look(color_offsets: Array, glows: Array) -> void:
+	_buff_offsets = color_offsets
+	_buff_glows = glows
+	_apply_buff_look()
+
+
+func _apply_buff_look() -> void:
+	if _body_material == null:
+		return
+	var stage_scale: float = get_viewport().get_final_transform().get_scale().x
+	var offsets: Vector3 = Vector3.ZERO
+	if _buff_offsets.size() == 3:
+		offsets = Vector3(_buff_offsets[0], _buff_offsets[1], _buff_offsets[2]) / 255.0
+	_body_material.set_shader_parameter("buff_offset", offsets)
+	_body_material.set_shader_parameter("buff_glows", _buff_glows.size())
+	_body_material.set_shader_parameter("stage_scale", stage_scale)
+	var reach: float = 0.0
+	var clear: float = 0.0
+	for index in _buff_glows.size():
+		var glow: Dictionary = _buff_glows[index]
+		var slot: String = "a" if index == 0 else "b"
+		_body_material.set_shader_parameter("buff_color_" + slot, Color.html(glow["color"]))
+		_body_material.set_shader_parameter("buff_params_" + slot, Vector4(glow["blur_x"], glow["strength"], 1.0 if glow["inner"] else 0.0, 1.0 if glow["knockout"] else 0.0))
+		if not glow["inner"]:
+			reach += glow["blur_x"] / 2.0
+		clear = maxf(clear, glow["blur_x"] / 2.0)
+	_buff_margins = Vector2(reach + RESULT_FLASH_FIT_SPARE, clear) if not _buff_glows.is_empty() else Vector2.ZERO
+	_apply_margins(stage_scale)
+
+
+func _apply_margins(stage_scale: float) -> void:
+	_body.fit_margin = maxf(_flash_margins.x, _buff_margins.x) * stage_scale
+	_body.clear_margin = maxf(_flash_margins.y, _buff_margins.y) * stage_scale
 
 
 # The box around every part the doll draws in its current pose, in its parent's
@@ -493,6 +621,17 @@ static func _load_sound_cues() -> Dictionary:
 			if parsed is Dictionary:
 				_sound_cues = parsed
 	return _sound_cues
+
+
+static func _load_shadow_layout() -> Dictionary:
+	if not _shadow_layout_loaded:
+		_shadow_layout_loaded = true
+		var file: FileAccess = FileAccess.open(SHADOW_FILE, FileAccess.READ)
+		if file != null:
+			var parsed = JSON.parse_string(file.get_as_text())
+			if parsed is Dictionary:
+				_shadow_layout = parsed
+	return _shadow_layout
 
 
 static func _load_animations() -> Dictionary:
