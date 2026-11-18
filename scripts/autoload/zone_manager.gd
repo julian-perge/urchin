@@ -26,6 +26,12 @@ var open_zone_map_on_load: bool = false
 # and clears this, matching the original's Proceed, which opens the skills frame
 # when playerLeveled is set (DefineButton2_3004 on(release), lines 17-29).
 var open_abilities_on_load: bool = false
+# Set by battle_scene.gd right before it switches back to game.tscn on the same
+# win that sets open_abilities_on_load. It holds the id of the battle just won,
+# and 0 means no hint waits. game.gd's _ready() takes it and clears it, and shows
+# that battle's hint when the player closes the Inventory or the Store, as the
+# original's button 2853 does (DefineButton2_2853 on(press)).
+var hint_battle_after_close: int = 0
 # Tests point this at a temp file so they can grant Legend without touching the
 # player's real achievements.
 var achievements_path: String = Achievements.SAVE_PATH

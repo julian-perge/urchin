@@ -253,6 +253,61 @@ func test_a_hub_built_for_the_next_win_shows_the_hint_again():
 	assert_true((second.get_node("HubCard") as HubCard).visible)
 
 
+# A win that levelled the player up leaves the hint waiting until the player
+# closes the Inventory or the Store (button 2853, DefineButton2_2853 on(press)).
+func _hub_after_level_up_win(battle_id: int) -> Control:
+	GameData.current_save = PlayerSave.new_game("Hinter", 0)
+	ZoneManager.hint_battle_after_close = battle_id
+	return await _hub_scene()
+
+
+func _close_window(game: Control, group: String) -> void:
+	var window: Control = game.get_tree().get_first_node_in_group(group)
+	window.visible = true
+	window.get_node("WindowShell").close_pressed.emit()
+
+
+func test_closing_the_inventory_after_a_level_up_win_shows_the_hint_once():
+	var game: Control = await _hub_after_level_up_win(100)
+	var card: HubCard = game.get_node("HubCard")
+	assert_false(card.visible, "the hint waits for the close")
+	_close_window(game, "inventory_window")
+	assert_true(card.visible)
+	assert_eq((card.get_node("%Title") as Label).text, Strings.text("NAVTITLE2", _hint_index(100)))
+	card.hide_card()
+	_close_window(game, "inventory_window")
+	assert_false(card.visible, "the hint shows once")
+	_close_window(game, "store_window")
+	assert_false(card.visible, "the Store does not bring it back")
+	_free_hub(game)
+
+
+func test_closing_the_store_after_a_level_up_win_shows_the_hint():
+	var game: Control = await _hub_after_level_up_win(104)
+	_close_window(game, "store_window")
+	assert_true((game.get_node("HubCard") as HubCard).visible)
+	_free_hub(game)
+
+
+func test_closing_a_window_with_no_waiting_hint_shows_nothing():
+	GameData.current_save = PlayerSave.new_game("Hinter", 0)
+	ZoneManager.hint_battle_after_close = 0
+	var game: Control = await _hub_scene()
+	_close_window(game, "inventory_window")
+	assert_false((game.get_node("HubCard") as HubCard).visible)
+	_free_hub(game)
+
+
+func test_a_hub_takes_the_waiting_hint_so_the_next_hub_has_none():
+	var first: Control = await _hub_after_level_up_win(100)
+	_free_hub(first)
+	assert_eq(ZoneManager.hint_battle_after_close, 0, "the first Hub took it")
+	var second: Control = await _hub_scene()
+	_close_window(second, "inventory_window")
+	assert_false((second.get_node("HubCard") as HubCard).visible, "a load drops the wait")
+	_free_hub(second)
+
+
 # The tests above stack a hotbar and a card by hand. This one uses the real
 # scene, so it fails when scenes/game.tscn loses the card or puts it under the
 # Hotbar.
