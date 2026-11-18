@@ -22,9 +22,9 @@ has already made reading them.
 
 ## Find the place before you read it
 
-Run `just as-lookup <query>` before `rg` on the export. One lookup gives
-what `rg 'function X'` and a `sed -n` of a line range take several calls to
-find. It prints one answer for each kind of query:
+Run `just lookup <query>` before `rg` on the export. `just as-lookup` is an
+alias of it. One lookup gives what `rg 'function X'` and a `sed -n` of a line
+range take several calls to find. It prints one answer for each kind of query:
 
 - A function name, such as `executeMove`: the file and line range, the source
   lines (the outline of its blocks when the function has more than 120 lines),
@@ -36,9 +36,14 @@ find. It prints one answer for each kind of query:
   the same answer for the script, with the functions it defines.
 - A path with a line, such as `frame_42/DoAction_8.as:82`: the function that
   holds the line and the chain of blocks around the line.
+- A string value, such as `Angry_Dux`: each line of the export and of the
+  GDScript that holds that string.
 
-Each answer ends with `ports`, the GDScript comments that cite that range, so
-it shows where the port already implements the code.
+A name that is a function in both languages prints one section for each. Each
+answer ends with `ports`, the GDScript comments that cite that range, so it
+shows where the port already implements the code. It then lists `facts`, the
+sections of `DECODED_ALGORITHMS.md` that cite the range. A fact is a heading and
+its line, so open the file at that line.
 
 The lookup is for navigation only. Read the original lines before you port or
 decide anything, because the index is not an authority on behavior. It matches

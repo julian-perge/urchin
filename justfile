@@ -101,10 +101,15 @@ pytest *args:
 [group('python')]
 test: pytest gut
 
-[doc('Look up a function, a global, a script or a line of the original ActionScript')]
+[doc('Look up a function, a global, a script or a line of the GDScript or the original ActionScript')]
+[group('python')]
+lookup *args:
+    uv run lookup "$@"
+
+[doc('Alias of lookup, which also answers for GDScript')]
 [group('python')]
 as-lookup *args:
-    uv run as_lookup "$@"
+    uv run lookup "$@"
 
 [doc('Merge one ticket branch into the integration branch, then push it')]
 [group('python')]
@@ -253,6 +258,11 @@ extract-item-looks *args: (require "ffdec" "java")
 [group('extract')]
 extract-as-index *args: (require "ffdec" "java")
     uv run extract_as_index "$@"
+
+[doc('Run extract_gd_index, which reads the tracked .gd files and needs no SWF')]
+[group('extract')]
+extract-gd-index *args:
+    uv run extract_gd_index "$@"
 
 [doc('Run extract_label_xref, which reads the SWF through ffdec')]
 [group('extract')]

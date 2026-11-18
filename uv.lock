@@ -259,6 +259,17 @@ wheels = [
 ]
 
 [[package]]
+name = "tree-sitter-gdscript"
+version = "6.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d5/61/d681398e5551b27b3ae32026665392f41f8ca2764847acecc727312e462e/tree_sitter_gdscript-6.1.0.tar.gz", hash = "sha256:33c4406a47ca5e3c436849d2a9b878a161b6f4fda305cf5620f60abebf5acf9e", size = 107803, upload-time = "2026-09-04T09:04:59.03Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f4/2c/eab1b3890a99c85f97638b55d9d5745746fb3afc4b392e2363c7f8ed7d03/tree_sitter_gdscript-6.1.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:c588efba0ae4e1aa385caadcc19b3854b1270a855337ba5e4df1da4bbf5c38d1", size = 52192, upload-time = "2026-09-04T09:04:55.645Z" },
+    { url = "https://files.pythonhosted.org/packages/e6/96/f724d35e7dcb443f6c8b3bb73e8a211d96abed8d829078511cfa9af8b2b6/tree_sitter_gdscript-6.1.0-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:85558120e50ee87b6847bb81273f7a5c8fadcbc7d4ee531701f8ed403d8de33c", size = 76616, upload-time = "2026-09-04T09:04:56.771Z" },
+    { url = "https://files.pythonhosted.org/packages/34/10/58b1ad211163473162648a96be4ed3c25d98dfc1b2f846802b99e540424d/tree_sitter_gdscript-6.1.0-cp39-abi3-win_amd64.whl", hash = "sha256:b2b87ea4cf21b3c33a00406840936f073b0db344ac46215f88edb8f72c72c761", size = 51341, upload-time = "2026-09-04T09:04:57.985Z" },
+]
+
+[[package]]
 name = "tree-sitter-javascript"
 version = "0.25.0"
 source = { registry = "https://pypi.org/simple" }
@@ -285,6 +296,7 @@ dependencies = [
     { name = "pyoxipng-ng" },
     { name = "ruff" },
     { name = "tree-sitter" },
+    { name = "tree-sitter-gdscript" },
     { name = "tree-sitter-javascript" },
 ]
 
@@ -301,6 +313,7 @@ requires-dist = [
     { name = "pyoxipng-ng", specifier = "==10.0.0" },
     { name = "ruff", specifier = ">=0.15.15" },
     { name = "tree-sitter", specifier = ">=0.25,<0.26" },
+    { name = "tree-sitter-gdscript", specifier = "==6.1.0" },
     { name = "tree-sitter-javascript", specifier = ">=0.23,<0.26" },
 ]
 

@@ -18,9 +18,12 @@ such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
 - Extraction and conversion scripts are `[project.scripts]` entry points with
   a recipe each: `just extract-battle-screen`, `just convert-items`, and so on.
   Arguments pass through. `just` lists them.
-- `just as-lookup <name>` finds a function, a global, a script or a line of
-  the original ActionScript, with its callers and the GDScript that cites it.
-  Run it before `rg` on the export.
+- `just lookup <query>` finds a function, a signal, a string value, a script
+  or a line, in the GDScript and in the original ActionScript. It prints the
+  callers, the calls, the signals, the ActionScript that a function ports, and
+  the `DECODED_ALGORITHMS.md` sections that cite it. Run it before `rg` on
+  `.gd` files and on the export. `just as-lookup` is an alias. The answer says
+  where to look. It is not an authority on behavior.
 - `just trace-swf`, `just trace-run` and `just trace-diff` build a Traced
   copy of the original, play it and save its Trace log, and compare two Trace
   logs. See "Tracing the original" in `docs/agents/actionscript.md`.

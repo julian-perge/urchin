@@ -20,6 +20,7 @@ from urchin_dev.as_lookup import (
     read_citations,
     resolve,
     tracked_citations,
+    tracked_facts,
 )
 from urchin_dev.swf import as_index
 
@@ -391,7 +392,7 @@ def test_a_name_written_on_many_lines_prints_12_lines_and_the_count(records):
 def test_main_prints_the_answer_and_returns_the_exit_code(capsys):
     cited = tracked_citations()
     assert main(["executeMove"]) == 0
-    answer = lookup("executeMove", load(), citations=cited)[1]
+    answer = lookup("executeMove", load(), citations=cited, facts=tracked_facts())[1]
     assert capsys.readouterr().out == answer + "\n"
     assert section(answer, "ports") != ["  none"]
     assert main(["executeMoov"]) == 1
@@ -401,9 +402,11 @@ def test_main_prints_the_answer_and_returns_the_exit_code(capsys):
 def test_main_passes_the_source_flags_and_joins_a_path_with_spaces(capsys):
     records = load()
     cited = tracked_citations()
+    facts = tracked_facts()
 
     def answer(query: str, source: bool | None = None) -> str:
-        return lookup(query, records, source=source, citations=cited)[1] + "\n"
+        found = lookup(query, records, source=source, citations=cited, facts=facts)
+        return found[1] + "\n"
 
     assert main(["--source", "executeMove"]) == 0
     assert capsys.readouterr().out == answer("executeMove", True)
