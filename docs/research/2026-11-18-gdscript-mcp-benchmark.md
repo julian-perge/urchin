@@ -77,3 +77,26 @@ session was trying to find, not from a prompt. Each reference answer is in
 | U10: which function advances the animation label, and where the frame rate comes from | `850557e3`, 2026-11-16 | The session used one rg for 7 names and 3 Read calls with an offset in `character_visual.gd`. GDScript only, and the answer sits in one file. |
 
 U8 to U10 were not run yet. The run is task #355.
+
+## Rerun with `just lookup` (2026-11-18)
+
+Task #355 of spec #346. Conditions: `baseline` and `lookup`, both `mcp-none.json`, no hint, Opus, 10 questions (U1 to U10), 2 runs each, 40 runs. Setup as above, with these differences:
+
+- The two clones hold the same game code. `baseline` is at `9b530ecf` (before the lookup). `lookup` is at `671e2dab` (the #346 branch). No `.gd`, `.as` or `.tscn` file differs between them. The docs differ: only `lookup` tells the session to run `just lookup`. `baseline` still has the rule for `just as-lookup`.
+- `reference.md` and `keys.json` were checked at `9b530ecf`. Only the line numbers of U2 moved (the battle HUD merge changed `battle_scene.gd`).
+- The runs were one after another, so there was one Godot import at a time.
+
+| Condition | Runs | Context, U1 to U6 and U8 to U10 | Change | Tool calls (all 20 runs) | MCP calls | ToolSearch calls | Cost, all 20 runs |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `baseline` | 20 | 2,179k | 0% | 92 | 0 | 0 | $3.24 |
+| `lookup` | 20 | 2,470k | +13% | 101 | 0 | 0 | $3.26 |
+
+Control U7 context: `baseline` 458k, `lookup` 618k. Cost is the sum of `total_cost_usd` in `runs.jsonl`. The decision rests on context.
+
+Per question, median context (median tool calls): U1 95k (3) against 89k (2), U2 97k (3) against 100k (4), U3 160k (6) against 136k (4), U4 81k (2) against 117k (3), U6 110k (4) against 157k (5), U8 140k (4) against 142k (5), U9 128k (4) against 127k (4), U10 141k (6) against 226k (8), the first value for `baseline`. The question that cost the most extra is U10 (+85k), then U6 (+47k) and U4 (+36k).
+
+Grades: all 40 answers were graded by `grade.py` against `keys.json` with no missing key point. `contaminated.py` shows no read of `.godot/`, `.godot-mcp/` or `.venv/`.
+
+Discovery without a hint: all 20 `lookup` runs called `just lookup`, `just as-lookup` or `uv run lookup`, so sessions found the recipe from `AGENTS.md`. 10 of the 20 `baseline` runs called `just as-lookup`.
+
+Result: `lookup` used 13% more context than the new `baseline`, which is outside the 10% spread between runs. The target of spec #346 (at or below `baseline`) is not met. The cause is a guess: a lookup answer prints the whole source of a function of up to 120 lines, and a session that then reads the file again pays twice. Not tested.
