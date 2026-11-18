@@ -63,6 +63,13 @@ def invariant_failures(records: list[dict], lines_of) -> list[str]:
         if record["kind"] == "gd_script":
             if record["lines"] != len(lines):
                 failures.append(f"{where}: lines {record['lines']} != {len(lines)}")
+            for held in record["strings"]:
+                for line in held["lines"]:
+                    if (
+                        not 1 <= line <= len(lines)
+                        or held["value"] not in lines[line - 1]
+                    ):
+                        failures.append(f"{where}: no string {held['value']} on {line}")
             for signal in record["signals"]:
                 line = signal["line"]
                 if not 1 <= line <= len(lines) or "signal" not in lines[line - 1]:
@@ -92,6 +99,10 @@ def invariant_failures(records: list[dict], lines_of) -> list[str]:
             line = emit["line"]
             if not start <= line <= end or "emit" not in lines[line - 1]:
                 failures.append(f"{where}: no emit on line {line}")
+        for held in record["strings"]:
+            for line in held["lines"]:
+                if not start <= line <= end or held["value"] not in lines[line - 1]:
+                    failures.append(f"{where}: no string {held['value']} on {line}")
         for entry in record.get("outline", []):
             if not start <= entry["start"] <= entry["end"] <= end:
                 failures.append(f"{where}: outline entry outside the record")
@@ -345,3 +356,38 @@ def test_a_constructor_is_a_function_named_init():
     records = sample("func _init(a) -> void:\n\tpass\n")
     (init,) = functions(records)
     assert (init["name"], init["params"], init["start"]) == ("_init", ["a"], 1)
+
+
+def test_strings_are_the_name_like_literals_of_a_function_with_their_lines():
+    records = sample(
+        'const TOP = "top_level"\n'
+        "\n"
+        "func go():\n"
+        '\tprint("Angry_Dux")\n'
+        '\tvar d = {"Angry_Dux": 1, "ab": 2, "two words": 3, "": 4}\n'
+        '\tvar n = &"sn_name"\n'
+        '\tvar f = func(): print("in_lambda")\n'
+        "\n"
+        "func other():\n"
+        "\tpass\n"
+    )
+    script, go, other = records
+    assert script["strings"] == [{"value": "top_level", "lines": [1]}]
+    assert go["strings"] == [
+        {"value": "Angry_Dux", "lines": [4, 5]},
+        {"value": "in_lambda", "lines": [7]},
+        {"value": "sn_name", "lines": [6]},
+    ]
+    assert other["strings"] == []
+
+
+def test_the_real_index_finds_angry_dux_on_line_40_of_battle_scene(records):
+    lines = [
+        line
+        for r in records
+        if r["file"] == "scripts/battle/battle_scene.gd"
+        for held in r["strings"]
+        if held["value"] == "Angry_Dux"
+        for line in held["lines"]
+    ]
+    assert 40 in lines

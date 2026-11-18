@@ -30,8 +30,8 @@ from urchin_dev.as_lookup import (
 
 GD_INDEX = as_lookup.CONVERTED_JSON / "gd_index.jsonl"
 
-# At most this many callers print. The rest are counted.
-_CALLER_ROWS = 40
+# At most this many callers, or string lines, print. The rest are counted.
+_ROWS = 40
 
 _NO_CASE = "no exact match for {query}, so this is a match without case"
 _HANDLER = re.compile(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*")
@@ -135,10 +135,10 @@ def _callers(record: dict, functions: list[dict]) -> list[str]:
     sites.sort()
     rows = [
         f"  {file}:{line}  {holder}  {written}  {kind}"
-        for _, file, line, holder, written, kind in sites[:_CALLER_ROWS]
+        for _, file, line, holder, written, kind in sites[:_ROWS]
     ]
-    if len(sites) > _CALLER_ROWS:
-        rows.append(f"  ... {len(sites) - _CALLER_ROWS} more callers")
+    if len(sites) > _ROWS:
+        rows.append(f"  ... {len(sites) - _ROWS} more callers")
     return rows
 
 
@@ -475,6 +475,36 @@ def _near_names(query: str, gd: list[dict], as_text: str) -> str:
     return "\n".join(out)
 
 
+def _string_answer(
+    query: str, records: list[dict], prefix: str
+) -> tuple[str, bool] | None:
+    """-> the answer for a string value and whether it matches only without
+    case, or None when no record holds the value. Each row is the line of a
+    literal and the function that holds it, or `script` for a literal outside
+    every function. `prefix` starts each path."""
+    for no_case in (False, True):
+        rows = sorted(
+            (record["file"], line, record.get("name", "script"))
+            for record in records
+            for held in record.get("strings", [])
+            if (
+                held["value"].lower() == query.lower()
+                if no_case
+                else held["value"] == query
+            )
+            for line in held["lines"]
+        )
+        if rows:
+            break
+    else:
+        return None
+    shown = [f"  {prefix}{file}:{line}  {holder}" for file, line, holder in rows]
+    out = [f"string {query}", *shown[:_ROWS]]
+    if len(shown) > _ROWS:
+        out.append(f"  ... {len(shown) - _ROWS} more lines")
+    return "\n".join(out), no_case
+
+
 def _name_query(
     query: str,
     as_records: list[dict],
@@ -498,31 +528,38 @@ def _name_query(
     as_no_case = as_code == 0 and as_text.startswith(note)
     if as_no_case:
         as_text = as_text.removeprefix(note).lstrip("\n")
-    if not matches and not signals and as_code == 1:
-        return 1, _near_names(query, gd, as_text)
-    # An exact match in one language wins over a match without case in the
-    # other, as it does inside one language.
-    if (matches or signals) and as_code == 0 and gd_no_case != as_no_case:
-        if gd_no_case:
-            matches, signals = [], []
-        else:
-            as_code = 1
-    parts = []
-    if matches or signals:
+
+    # Each piece is one answer with its language and whether it matched only
+    # without case. An exact match wins over a match without case, in the same
+    # language and in the other.
+    pieces: list[tuple[str, str, bool]] = []
+    if matches:
         answers = [
             _record_answer(r, gd, source, root, as_records, citations, facts)
             for r in matches
         ]
-        answers += [_signal_answer(name, gd) for name in signals]
-        parts.append(("GDScript", "\n\n".join(answers), gd_no_case))
+        pieces.append(("GDScript", "\n\n".join(answers), gd_no_case))
+    if signals:
+        answers = [_signal_answer(name, gd) for name in signals]
+        pieces.append(("GDScript", "\n\n".join(answers), gd_no_case))
+    if found := _string_answer(query, gd, ""):
+        pieces.append(("GDScript", *found))
     if as_code == 0:
-        parts.append(("ActionScript", as_text, as_no_case))
-    body = (
-        parts[0][1]
-        if len(parts) == 1
-        else "\n\n".join(f"{head}\n{text}" for head, text, _ in parts)
-    )
-    if all(no_case for _, _, no_case in parts):
+        pieces.append(("ActionScript", as_text, as_no_case))
+    if found := _string_answer(query, as_records, f"{as_lookup.EXPORT}/"):
+        pieces.append(("ActionScript", *found))
+
+    if not pieces:
+        return 1, _near_names(query, gd, as_text)
+    if any(not no_case for _, _, no_case in pieces):
+        pieces = [piece for piece in pieces if not piece[2]]
+    languages = list(dict.fromkeys(language for language, _, _ in pieces))
+    blocks = []
+    for language in languages:
+        text = "\n\n".join(t for lang, t, _ in pieces if lang == language)
+        blocks.append(text if len(languages) == 1 else f"{language}\n{text}")
+    body = "\n\n".join(blocks)
+    if all(no_case for _, _, no_case in pieces):
         body = f"{note}\n\n{body}"
     return 0, body
 

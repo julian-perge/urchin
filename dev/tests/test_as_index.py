@@ -80,6 +80,12 @@ def invariant_failures(records: list[dict], lines_of) -> list[str]:
             for line in write["lines"]:
                 if not 1 <= line <= len(lines) or segment not in lines[line - 1]:
                     failures.append(f"{where}: no {write['name']} on line {line}")
+        for held in record["strings"]:
+            for line in held["lines"]:
+                if not 1 <= line <= len(lines) or held["value"] not in lines[line - 1]:
+                    failures.append(
+                        f"{where}: no string {held['value']} on line {line}"
+                    )
         first, last = (1, len(lines)) if record["kind"] == "script" else (start, end)
         for entry in record.get("outline", []):
             if not first <= entry["start"] <= entry["end"] <= last:
@@ -152,9 +158,9 @@ def test_declarations_match_a_regex_count_over_the_same_files(records):
 
 
 def test_only_the_fields_of_this_schema_are_written(records):
-    script = {"kind", "file", "lines", "owner", "calls", "writes", "reads"}
+    script = {"kind", "file", "lines", "owner", "calls", "writes", "reads", "strings"}
     function = {"kind", "name", "declared_as", "file", "start", "end", "params"}
-    function |= {"calls", "writes", "reads"}
+    function |= {"calls", "writes", "reads", "strings"}
     for record in records:
         fields = set(record) - {"outline"}
         if record["kind"] == "script":
@@ -505,3 +511,39 @@ def test_the_real_export_leaves_out_only_library_files(records):
     ]
     assert len(left_out) + len(game_files()) == len(list(ACTION_SCRIPT.rglob("*.as")))
     assert left_out
+
+
+def test_strings_are_the_name_like_literals_of_a_function_with_their_lines():
+    source = (
+        b"function go() {\n"
+        b'  a("Angry_Dux");\n'
+        b"  b('Angry_Dux', \"ab\", 'two words', 'x-y', '');\n"
+        b'  c("Zed");\n'
+        b"}\n"
+        b'var outside = "top_level";\n'
+    )
+    script = parse_script(source)
+    (function,) = script.functions
+    assert [(s.value, s.lines) for s in function.strings] == [
+        ("Angry_Dux", (2, 3)),
+        ("Zed", (4,)),
+    ]
+    assert [(s.value, s.lines) for s in script.strings] == [("top_level", (6,))]
+
+
+def test_a_string_in_a_computed_segment_or_an_argument_is_a_string():
+    script = parse_script(b'_root["Krin" + n].go("a_b_c");\n')
+    assert [s.value for s in script.strings] == ["Krin", "a_b_c"]
+
+
+def test_a_string_in_a_nested_function_belongs_to_that_function_only():
+    source = b'function outer() {\n  function inner() {\n    x("inner_one");\n  }\n}\n'
+    outer, inner = parse_script(source).functions
+    assert outer.strings == ()
+    assert [s.value for s in inner.strings] == ["inner_one"]
+
+
+def test_the_real_index_finds_angry_dux_on_line_38_of_execute_move(records):
+    (record,) = functions_named(records, "executeMove")
+    held = {s["value"]: s["lines"] for s in record["strings"]}
+    assert 38 in held["Angry_Dux"]

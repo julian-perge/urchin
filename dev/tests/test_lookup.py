@@ -61,11 +61,18 @@ def gd_function(
         "calls": calls or [],
         "connects": connects or [],
         "emits": [],
+        "strings": [],
     }
 
 
 def gd_script(file: str, lines: int = 10) -> dict:
-    return {"kind": "gd_script", "file": file, "lines": lines, "signals": []}
+    return {
+        "kind": "gd_script",
+        "file": file,
+        "lines": lines,
+        "signals": [],
+        "strings": [],
+    }
 
 
 def call(name: str, line: int, receiver: str | None = None) -> dict:
@@ -408,6 +415,7 @@ def as_function(name: str, file: str, start: int, end: int) -> dict:
         "calls": [],
         "writes": [],
         "reads": [],
+        "strings": [],
     }
 
 
@@ -420,6 +428,7 @@ def as_script(file: str, lines: int) -> dict:
         "calls": [],
         "writes": [],
         "reads": [],
+        "strings": [],
     }
 
 
@@ -698,3 +707,101 @@ def test_krin_melee_and_play_melee_print_the_krin_melee_section(as_records, gd_r
 def test_a_fact_prints_its_heading_and_never_its_text(as_records, gd_records):
     _, out = run("krinMelee", as_records, gd_records)
     assert "Constants (frame 42 globals)" not in out
+
+
+def test_a_string_value_prints_the_as_line_and_the_gd_line(as_records, gd_records):
+    code, out = run("Angry_Dux", as_records, gd_records)
+    assert code == 0
+    gd_part, as_part = out.split("\nActionScript\n")
+    assert gd_part.startswith("GDScript\nstring Angry_Dux\n")
+    assert any(
+        row.startswith("  scripts/battle/battle_scene.gd:40  ")
+        for row in gd_part.splitlines()
+    )
+    assert any(
+        row.startswith("  dev/source_files/action_script/frame_42/DoAction_8.as:38  ")
+        for row in as_part.splitlines()
+    )
+
+
+def test_a_string_row_names_the_function_that_holds_the_literal(tmp_path):
+    write_gd(tmp_path, "a.gd")
+    script = gd_script("a.gd")
+    script["strings"] = [{"value": "top_level", "lines": [1]}]
+    record = gd_function("go", "a.gd", 2, 4)
+    record["strings"] = [{"value": "top_level", "lines": [3, 4]}]
+    code, out = lookup("top_level", [], [script, record], root=tmp_path)
+    assert code == 0
+    assert section(out, "string top_level") == [
+        "  a.gd:1  script",
+        "  a.gd:3  go",
+        "  a.gd:4  go",
+    ]
+
+
+def test_a_string_matches_without_case_when_no_exact_match_exists(tmp_path):
+    write_gd(tmp_path, "a.gd")
+    record = gd_function("go", "a.gd", 2, 4)
+    record["strings"] = [{"value": "Angry_Dux", "lines": [3]}]
+    code, out = lookup("angry_dux", [], [gd_script("a.gd"), record], root=tmp_path)
+    assert code == 0
+    assert out.startswith("no exact match for angry_dux, so this is a match")
+    assert "  a.gd:3  go" in out
+
+
+def test_an_exact_string_wins_over_a_string_without_case(tmp_path):
+    write_gd(tmp_path, "a.gd")
+    record = gd_function("go", "a.gd", 2, 4)
+    record["strings"] = [
+        {"value": "Angry_Dux", "lines": [3]},
+        {"value": "angry_dux", "lines": [4]},
+    ]
+    _, out = lookup("angry_dux", [], [gd_script("a.gd"), record], root=tmp_path)
+    assert "a.gd:4" in out
+    assert "a.gd:3" not in out
+    assert "no exact match" not in out
+
+
+def test_a_query_with_a_name_match_and_a_string_match_prints_both(tmp_path):
+    write_gd(tmp_path, "a.gd")
+    named = gd_function("shared", "a.gd", 2, 3)
+    holder = gd_function("holder", "a.gd", 4, 5)
+    holder["strings"] = [{"value": "shared", "lines": [5]}]
+    gd = [gd_script("a.gd"), named, holder]
+    code, out = lookup("shared", [], gd, root=tmp_path)
+    assert code == 0
+    assert "function owner.shared()" in out.splitlines()
+    assert section(out, "string shared") == ["  a.gd:5  holder"]
+
+
+def test_an_exact_name_in_one_language_hides_a_string_without_case(tmp_path):
+    write_gd(tmp_path, "a.gd")
+    named = gd_function("Shared", "a.gd", 2, 3)
+    holder = gd_function("holder", "a.gd", 4, 5)
+    holder["strings"] = [{"value": "shared", "lines": [5]}]
+    gd = [gd_script("a.gd"), named, holder]
+    _, out = lookup("Shared", [], gd, root=tmp_path)
+    assert "string" not in out.replace("source", "")
+
+
+def test_a_string_in_only_the_actionscript_prints_without_a_language_header(tmp_path):
+    export = tmp_path / "export/frame_1"
+    export.mkdir(parents=True)
+    (export / "DoAction_1.as").write_text("a\nb\nc\n")
+    as_script_record = as_script("frame_1/DoAction_1.as", 3)
+    holder = as_function("go", "frame_1/DoAction_1.as", 1, 2)
+    holder["strings"] = [{"value": "snd_boom", "lines": [2]}]
+    code, out = lookup("snd_boom", [as_script_record, holder], [], root=tmp_path)
+    assert code == 0
+    assert out == (
+        "string snd_boom\n  dev/source_files/action_script/frame_1/DoAction_1.as:2  go"
+    )
+
+
+def test_a_string_list_over_40_rows_is_cut_and_counted(tmp_path):
+    record = gd_function("go", "a.gd", 1, 100)
+    record["strings"] = [{"value": "many_rows", "lines": list(range(1, 46))}]
+    _, out = lookup("many_rows", [], [gd_script("a.gd", 100), record], root=tmp_path)
+    rows = section(out, "string many_rows")
+    assert len(rows) == 41
+    assert rows[-1] == "  ... 5 more lines"

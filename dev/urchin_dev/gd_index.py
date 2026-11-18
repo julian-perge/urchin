@@ -30,9 +30,12 @@ from urchin_dev.swf.as_index import (
     _HEAD_LENGTH,
     _OUTLINE_DEPTH,
     _OUTLINED_LINES,
+    NAME_LIKE_STRING,
     Block,
     Call,
+    StringValue,
     dumps,
+    string_values,
 )
 
 OUT = CONVERTED_JSON / "gd_index.jsonl"
@@ -110,7 +113,7 @@ def _param_names(parameters: Node | None) -> list[str]:
 
 
 def _string_value(node: Node) -> str:
-    text = _text(node)
+    text = _text(node).removeprefix("&")
     quote = text[:3] if text[:3] in ('"""', "'''") else text[:1]
     return text[len(quote) : len(text) - len(quote)]
 
@@ -134,6 +137,7 @@ class _Body:
     calls: list[Call]
     connects: list[Connect]
     emits: list[Emit]
+    strings: dict[str, set[int]]
 
 
 def _record_call(node: Node, source: bytes, body: _Body) -> None:
@@ -220,6 +224,7 @@ class Function:
     calls: tuple[Call, ...]
     connects: tuple[Connect, ...]
     emits: tuple[Emit, ...]
+    strings: tuple[StringValue, ...]
     outline: tuple[Block, ...] | None
 
 
@@ -229,6 +234,7 @@ class ParsedFile:
     class_name: str | None
     extends: str | None
     signals: tuple[tuple[str, int, tuple[str, ...]], ...]
+    strings: tuple[StringValue, ...]
     functions: tuple[Function, ...]
 
 
@@ -249,6 +255,7 @@ def parse_file(source: bytes, stem: str) -> ParsedFile | None:
     file_owner = class_name or stem
 
     functions = []
+    script_strings: dict[str, set[int]] = {}
     # The walk is a loop with its own stack, because a long chain of "+" nests
     # deeper than Python's recursion limit. Each entry holds the owner and the
     # body that the node belongs to. Nodes are pushed last first, so calls come
@@ -265,10 +272,15 @@ def parse_file(source: bytes, stem: str) -> ParsedFile | None:
         if node.type == "class_definition":
             owner = _text(node.child_by_field_name("name"))
         elif node.type in _FUNCTIONS:
-            body = _Body([], [], [])
+            body = _Body([], [], [], {})
             found.append((node, owner, body))
         elif body is not None and node.type in ("call", "attribute_call"):
             _record_call(node, source, body)
+        elif node.type in ("string", "string_name"):
+            value = _string_value(node)
+            if NAME_LIKE_STRING.fullmatch(value):
+                held = script_strings if body is None else body.strings
+                held.setdefault(value, set()).add(node.start_point[0] + 1)
         stack.extend((child, owner, body) for child in reversed(node.named_children))
 
     for node, owner, body in found:
@@ -286,6 +298,7 @@ def parse_file(source: bytes, stem: str) -> ParsedFile | None:
                 tuple(body.calls),
                 tuple(body.connects),
                 tuple(body.emits),
+                string_values(body.strings),
                 outline,
             )
         )
@@ -295,8 +308,13 @@ def parse_file(source: bytes, stem: str) -> ParsedFile | None:
         class_name,
         extends,
         tuple(sorted(signals, key=lambda s: s[1])),
+        string_values(script_strings),
         tuple(functions),
     )
+
+
+def _strings(values: tuple[StringValue, ...]) -> list[dict]:
+    return [{"value": v.value, "lines": list(v.lines)} for v in values]
 
 
 def index_sources(sources: dict[str, bytes]) -> list[dict]:
@@ -320,6 +338,7 @@ def index_sources(sources: dict[str, bytes]) -> list[dict]:
                 {"name": name, "line": line, "params": list(params)}
                 for name, line, params in script.signals
             ],
+            "strings": _strings(script.strings),
         }
         if script.class_name is not None:
             record["class_name"] = script.class_name
@@ -338,6 +357,7 @@ def index_sources(sources: dict[str, bytes]) -> list[dict]:
                 "calls": [asdict(c) for c in function.calls if c.name in defined],
                 "connects": [asdict(c) for c in function.connects],
                 "emits": [asdict(e) for e in function.emits],
+                "strings": _strings(function.strings),
             }
             if function.outline is not None:
                 record["outline"] = [asdict(b) for b in function.outline]

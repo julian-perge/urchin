@@ -17,6 +17,11 @@
 # The parser is tree-sitter's JavaScript grammar. ffdec's AS1/2 output is
 # JavaScript once a handler's header line becomes a function header.
 #
+# A string literal is indexed when its text is a name: three or more letters,
+# digits or underscores. This covers sound names, frame labels and keys, and
+# leaves out sentences and format strings. `strings` holds each value with the
+# lines that have it, so a lookup finds a line by its value.
+#
 # Run: uv run extract_as_index
 from __future__ import annotations
 
@@ -59,6 +64,7 @@ _LOOPS = {"while_statement", "for_in_statement", "for_statement", "do_statement"
 _SCOPES = {"_root", "_global", "_parent", "this"}
 _PATH = {"identifier", "this", "member_expression", "subscript_expression"}
 _IDENTIFIER = re.compile(r"[A-Za-z_$][A-Za-z0-9_$]*")
+NAME_LIKE_STRING = re.compile(r"[A-Za-z0-9_]{3,}")
 _READ, _WRITE, _BOTH = "read", "write", "both"
 
 # A bare name that Flash defines is not a global of the game, so the index
@@ -108,6 +114,14 @@ class Write:
 
 
 @dataclass(frozen=True)
+class StringValue:
+    """One string value, with each line that holds a literal of it."""
+
+    value: str
+    lines: tuple[int, ...]
+
+
+@dataclass(frozen=True)
 class Block:
     """One outline entry: a statement of 15 lines or more. `head` is its
     first source line. An `else` is an entry at the depth of its `if`."""
@@ -134,6 +148,7 @@ class Function:
     calls: tuple[Call, ...]
     writes: tuple[Write, ...]
     reads: tuple[str, ...]
+    strings: tuple[StringValue, ...]
     outline: tuple[Block, ...] | None
 
 
@@ -151,6 +166,7 @@ class ParsedScript:
     functions: tuple[Function, ...]
     writes: tuple[Write, ...]
     reads: tuple[str, ...]
+    strings: tuple[StringValue, ...]
     outline: tuple[Block, ...] | None
 
 
@@ -193,12 +209,24 @@ class _Body:
         self.calls: list[Call] = []
         self.writes: dict[str, set[int]] = {}
         self.reads: set[str] = set()
+        self.strings: dict[str, set[int]] = {}
+
+    def strings_found(self) -> tuple[StringValue, ...]:
+        return string_values(self.strings)
 
     def written(self) -> tuple[Write, ...]:
         return tuple(
             Write(name, tuple(sorted(lines)))
             for name, lines in sorted(self.writes.items())
         )
+
+
+def string_values(found: dict[str, set[int]]) -> tuple[StringValue, ...]:
+    """-> the values with their lines, sorted by value."""
+    return tuple(
+        StringValue(value, tuple(sorted(lines)))
+        for value, lines in sorted(found.items())
+    )
 
 
 def _locals(function: Node) -> frozenset[str]:
@@ -410,6 +438,10 @@ def parse_script(source: bytes) -> ParsedScript:
                 stack.append((receiver, body, local, _READ))
             elif callee.type != "identifier":
                 stack.append((callee, body, local, _READ))
+        elif kind == "string":
+            value = _text(node)[1:-1]
+            if NAME_LIKE_STRING.fullmatch(value):
+                body.strings.setdefault(value, set()).add(node.start_point[0] + 1)
         elif kind in _PATH:
             inside = _record_path(node, body, local, use)
             stack.extend((child, body, local, _READ) for child in reversed(inside))
@@ -437,6 +469,7 @@ def parse_script(source: bytes) -> ParsedScript:
                 tuple(body.calls),
                 body.written(),
                 tuple(sorted(body.reads)),
+                body.strings_found(),
                 outline,
             )
         )
@@ -451,6 +484,7 @@ def parse_script(source: bytes) -> ParsedScript:
         tuple(sorted(functions, key=lambda f: (f.start, f.end))),
         script.written(),
         tuple(sorted(script.reads)),
+        script.strings_found(),
         outline,
     )
 
@@ -481,6 +515,9 @@ def _names(piece: ParsedScript | Function) -> dict:
     fields = {
         "writes": [{"name": w.name, "lines": list(w.lines)} for w in piece.writes],
         "reads": list(piece.reads),
+        "strings": [
+            {"value": held.value, "lines": list(held.lines)} for held in piece.strings
+        ],
     }
     if piece.outline is not None:
         fields["outline"] = [asdict(block) for block in piece.outline]
