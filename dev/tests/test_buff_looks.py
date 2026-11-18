@@ -59,6 +59,14 @@ function applyChangesKrin(ukcb)
    {
       statusOfF = KrinFilterRed;
    }
+   if(ukcb.FILTERSBUFFARRAY[4] > 0)
+   {
+      statusOfM = "BARON";
+   }
+   if(ukcb.FILTERSBUFFARRAY[16] > 0)
+   {
+      statusOfM = "HOUND";
+   }
    if(ukcb.FILTERSBUFFARRAY[7] > 0)
    {
       statusOfC = "Enrage";
@@ -70,6 +78,21 @@ function applyChangesKrin(ukcb)
    if(ukcb.dressNow != statusOfM)
    {
       changeForm(statusOfM,ukcb.playerID);
+   }
+}
+function changeForm(changeTo, p_id)
+{
+   if(changeTo == "BARON")
+   {
+      dressChar("BARON",p_id,"","MODEL1","ZOMBIE2","M","","XADER2","");
+   }
+   else if(changeTo == "STANDARD")
+   {
+      dressChar("STANDARD",p_id,"STANDARD","model","skin","gender","hair","wep1","wep2");
+   }
+   else if(changeTo == "HOUND")
+   {
+      dressChar("HOUND",p_id,"","MODEL5","HOUND","M","","NONE","NONE");
    }
 }
 """
@@ -119,6 +142,51 @@ def test_a_state_list_keeps_the_order_the_ifs_run_in_so_the_last_one_wins():
     assert result["filter_by_index"] == [[18, "Red"], [2, "Frost"]]
 
 
+def test_a_form_is_what_changeForm_hands_dressChar():
+    assert looks()["forms"] == {
+        "BARON": {
+            "model": "MODEL1",
+            "skin": "ZOMBIE2",
+            "gender": "M",
+            "hair": "",
+            "weapon1": "XADER2",
+            "weapon2": "",
+        },
+        "HOUND": {
+            "model": "MODEL5",
+            "skin": "HOUND",
+            "gender": "M",
+            "hair": "",
+            "weapon1": "NONE",
+            "weapon2": "NONE",
+        },
+    }
+
+
+def test_the_standard_form_is_the_default_and_holds_no_dress_of_its_own():
+    result = looks()
+    assert result["default_form"] == "STANDARD"
+    assert "STANDARD" not in result["forms"]
+
+
+def test_the_form_list_keeps_the_order_the_ifs_run_in_so_the_last_one_wins():
+    assert looks()["form_by_index"] == [[4, "BARON"], [16, "HOUND"]]
+
+
+def test_a_state_that_names_an_unknown_form_is_refused():
+    broken = APPLY.replace('statusOfM = "HOUND"', 'statusOfM = "MUMMY"')
+    with pytest.raises(ValueError, match="MUMMY"):
+        buff_looks.read_looks(COLORS, broken)
+
+
+def test_a_form_that_draws_an_armor_layer_is_refused():
+    broken = APPLY.replace(
+        'dressChar("BARON",p_id,"",', 'dressChar("BARON",p_id,"BARON",'
+    )
+    with pytest.raises(ValueError, match="BARON"):
+        buff_looks.read_looks(COLORS, broken)
+
+
 def test_a_state_that_names_an_unknown_filter_is_refused():
     broken = APPLY.replace("KrinFilterRed", "KrinFilterTeal")
     with pytest.raises(ValueError, match="KrinFilterTeal"):
@@ -153,3 +221,5 @@ def test_the_committed_output_holds_the_poison_color_and_the_frost_filter():
     assert committed["colors"]["Poison"] == [-50, 0, -225]
     assert len(committed["filters"]["Frost"]) == 2
     assert committed["filter_by_index"][-1] == [2, "Frost"]
+    assert committed["forms"]["BARON"]["skin"] == "ZOMBIE2"
+    assert committed["form_by_index"][-1] == [19, "GHOSTBOSS2"]

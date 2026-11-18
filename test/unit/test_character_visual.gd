@@ -669,3 +669,75 @@ func test_a_result_flash_keeps_the_buff_look_for_when_it_ends():
 	var frost: Array = _frost()
 	var stage_scale: float = visual.get_viewport().get_final_transform().get_scale().x
 	assert_almost_eq(visual.get_node("Body").clear_margin, frost[1]["blur_x"] / 2.0 * stage_scale, 0.0001, "the body is sized for the buff look again")
+
+
+# --- changeForm (convert_buff_looks) ------------------------------------------
+
+func _forms() -> Dictionary:
+	var looks: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/buff_looks.json"))
+	return looks["forms"]
+
+
+# The file names of the layers a part draws, such as "M_SCHEST_ZOMBIE2.png".
+func _layer_files(part_name: String) -> Array:
+	var files: Array = []
+	for child in visual._parts[part_name].get_children():
+		if child is Sprite2D and not child.is_queued_for_deletion():
+			files.append(child.texture.resource_path.get_file())
+	return files
+
+
+# dressChar passes "" as the armor set of every form, so the parts ask for clips
+# such as `M_CHEST_` that neither SWF has, and the doll wears its skin set alone.
+func test_a_form_wears_its_skin_set_and_no_armor():
+	visual.dress("M", "ONE", "ONE", ["ARCTIC", "ARCTIC", "ARCTIC", "ARCTIC", "ARCTIC", "AK", "AK"])
+	visual.wear_form(_forms()["BARON"], ["ARCTIC", "ARCTIC", "ARCTIC", "ARCTIC", "ARCTIC", "AK", "AK"], false)
+	assert_eq(_layer_files("chest"), ["M_SCHEST_ZOMBIE2.png"], "the form's skin, and none of the unit's armor")
+	assert_eq(_layer_files("head"), ["M_SHEAD_ZOMBIE2.png"], "and no hair")
+
+
+func test_a_form_takes_its_weapon_and_a_weapon_of_empty_takes_the_units_own():
+	var equip: Array = ["", "", "", "", "", "AK", "BATON"]
+	visual.wear_form(_forms()["BARON"], equip, false)
+	assert_eq(_layer_files("weapon1"), ["M_WEAPON_XADER2.png"], "BARON's own first weapon")
+	assert_eq(_layer_files("weapon2"), ["M_WEAPON_BATON.png"], "its second is empty, so the unit's slot 6")
+
+
+func test_a_form_with_the_weapon_none_wields_nothing():
+	visual.wear_form(_forms()["PREDATOR"], ["", "", "", "", "", "AK", "AK"], false)
+	assert_eq(_layer_files("weapon1"), [])
+	assert_eq(_layer_files("weapon2"), [])
+
+
+func test_the_standard_form_comes_back_from_the_unit():
+	var equip: Array = ["", "ARCTIC", "", "", "", "AK", ""]
+	visual.wear_form(_forms()["BARON"], equip, false)
+	visual.wear_own_form(["MODEL1", "ONE", "ONE", "M"], equip, false)
+	assert_eq(_layer_files("chest"), ["M_SCHEST_ONE.png", "M_CHEST_ARCTIC.png"])
+	assert_eq(_layer_files("head").size(), 2, "skin and hair")
+
+
+# changeForm puts a new clip of the model in the rig, which starts on its first
+# frame, and a stunned unit's doll goes straight to the stun loop
+# (frame_42/DoAction_10.as:533-536).
+func test_a_form_change_starts_the_new_clip_on_stand():
+	visual.set_state(CharacterVisual.State.HIT)
+	visual.wear_form(_forms()["BARON"], ["", "", "", "", "", "", ""], false)
+	assert_eq(visual._state, CharacterVisual.State.IDLE)
+	assert_eq(visual._label, "stand")
+
+
+func test_a_stunned_doll_is_in_the_stun_loop_after_a_form_change():
+	visual.set_state(CharacterVisual.State.STUN)
+	visual.wear_form(_forms()["BARON"], ["", "", "", "", "", "", ""], true)
+	assert_eq(visual._state, CharacterVisual.State.STUN)
+	assert_eq(visual._label, "stun2", "the loop, not the entry")
+	visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._label, "stun2", "and it stays there")
+
+
+func test_a_form_of_another_model_gets_that_models_shadow():
+	visual.show_shadow("MODEL1")
+	visual.wear_form(_forms()["HOUND"], ["", "", "", "", "", "", ""], false)
+	var got: Rect2 = _shadow_rect(visual.get_node("Body/Shadow"))
+	assert_true(got.size.is_equal_approx(_expected_shadow_rect("MODEL5").size))

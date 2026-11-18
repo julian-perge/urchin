@@ -207,6 +207,38 @@ func _ready():
 		set_state(State.IDLE)
 
 
+# Redraws the doll in `form`, one of the forms of buff_looks.json, as
+# changeForm's dressChar call does. dressChar passes "" as the armor set, so the
+# doll wears its skin set alone, with the form's weapons. A weapon of "" takes the
+# weapon of `equip_looks`, the unit's own looks. `stunned` is whether the unit
+# holds any stun.
+func wear_form(form: Dictionary, equip_looks: Array, stunned: bool) -> void:
+	var equip: Array = ["", "", "", "", "", form["weapon1"], form["weapon2"]]
+	for slot in [5, 6]:
+		if equip[slot] == "":
+			equip[slot] = equip_looks[slot]
+	dress(form["gender"], form["skin"], form["hair"], equip)
+	_start_new_clip(form["model"], stunned)
+
+
+# Redraws the doll as its unit's own form, which changeForm does for "STANDARD".
+func wear_own_form(model: Array, equip_looks: Array, stunned: bool) -> void:
+	dress_from_model(model, equip_looks)
+	_start_new_clip(str(model[0]), stunned)
+
+
+# dressChar removes the doll's clip and attaches a new one, which starts on its
+# first frame, and the shadow is a part of that clip. changeForm then puts a
+# stunned unit's new clip in the stun loop (frame_42/DoAction_10.as:533-536).
+func _start_new_clip(model: String, stunned: bool) -> void:
+	show_shadow(model)
+	set_state(State.IDLE)
+	if stunned:
+		_state = State.STUN
+		_stun_phase = 1
+		_start_label("stun2")
+
+
 # Draws the Ground shadow that `model` places under its parts, at depth 1 of
 # the model clip. The shadow is part of the body, so the doll's modulate, fade
 # and Result flash reach it as they reach the original's whole `inner` clip.

@@ -485,6 +485,91 @@ func _snapshot_with(slots: Array) -> UnitSnapshot:
 	return snapshot
 
 
+# changeForm redraws the doll when applyChangesKrin finds a form buff, and
+# redraws it again when the buff goes (frame_42/DoAction_10.as:380-466 and
+# 483-537). The visual filter index of BARON is 4 and of HOUND is 16.
+func _chest_skin() -> Array:
+	var files: Array = []
+	for child in _doll._parts["chest"].get_children():
+		if child is Sprite2D and not child.is_queued_for_deletion():
+			files.append(child.texture.resource_path.get_file())
+	return files
+
+
+func _present_with_form_buffs() -> Dictionary:
+	_present(_unit, {}, {4: _buff_of_filter_index(4), 16: _buff_of_filter_index(16)})
+	return {
+		"baron": {"cd": 3, "buff_id": 4, "buff_value": 0.0, "shield_buff_value": 0.0},
+		"hound": {"cd": 3, "buff_id": 16, "buff_value": 0.0, "shield_buff_value": 0.0},
+	}
+
+
+func test_a_form_buff_shows_its_form_at_the_event_that_lands_it_and_the_units_own_when_it_goes():
+	var slots: Dictionary = _present_with_form_buffs()
+	assert_eq(_chest_skin(), ["M_SCHEST_ONE.png"], "the unit's own skin")
+	_unit.buff_slots[0] = slots["baron"].duplicate()
+
+	_presenter.show_result(_damage(10.0, 90.0), null)
+	assert_eq(_chest_skin(), ["M_SCHEST_ONE.png"], "a hit before the one that lands the buff shows the own form")
+
+	var landing: MoveResult = _damage(10.0, 80.0)
+	landing.target_after.buff_slots = [slots["baron"].duplicate()]
+	_presenter.show_result(landing, null)
+	assert_eq(_chest_skin(), ["M_SCHEST_ZOMBIE2.png"], "the hit that lands it shows BARON")
+
+	var removing: MoveResult = _damage(10.0, 70.0)
+	removing.target_after.buff_slots = []
+	_presenter.show_result(removing, null)
+	assert_eq(_chest_skin(), ["M_SCHEST_ONE.png"], "the event that removes it shows the own form again")
+
+
+func test_a_form_that_is_already_worn_is_not_redrawn():
+	var slots: Dictionary = _present_with_form_buffs()
+	_presenter.show_state(_snapshot_with([slots["baron"].duplicate()]))
+	_doll.set_state(CharacterVisual.State.HIT)
+	_presenter.show_state(_snapshot_with([slots["baron"].duplicate()]))
+	assert_eq(_doll._state, CharacterVisual.State.HIT, "dressNow already says BARON, so changeForm does not run")
+
+
+func test_a_stunned_doll_stays_in_the_stun_loop_when_its_form_changes():
+	var slots: Dictionary = _present_with_form_buffs()
+	var stunned: UnitSnapshot = _snapshot_with([])
+	stunned.stun = 1.0
+	_presenter.show_state(stunned)
+	assert_eq(_doll._label, "stun", "the entry plays first")
+	var swapped: UnitSnapshot = _snapshot_with([slots["baron"].duplicate()])
+	swapped.stun = 1.0
+	_presenter.show_state(swapped)
+	assert_eq(_doll._state, STUN)
+	assert_eq(_doll._label, "stun2", "the swap puts the new clip in the stun loop")
+
+
+func test_a_form_change_that_also_raises_the_stun_plays_the_stun_entry():
+	var slots: Dictionary = _present_with_form_buffs()
+	var landing: UnitSnapshot = _snapshot_with([slots["baron"].duplicate()])
+	landing.stun = 1.0
+	_presenter.show_state(landing)
+	assert_eq(_doll._label, "stun", "the rise in the stun runs after changeForm, so it wins")
+
+
+func test_a_model5_form_stands_smaller_and_lower_and_the_units_own_form_stands_back():
+	var slots: Dictionary = _present_with_form_buffs()
+	_presenter.show_state(_snapshot_with([slots["hound"].duplicate()]))
+	assert_almost_eq(_doll.scale.x, -0.8, 0.001, "dressChar's 0.8x for a MODEL5 clip, still mirrored")
+	assert_eq(_doll.position, HOME + Vector2(0, 10), "10 px lower")
+	assert_eq(_presenter.rig_position(), _presenter.position + HOME, "the rig stays where it was")
+	_presenter.show_state(_snapshot_with([]))
+	assert_almost_eq(_doll.scale.x, -1.0, 0.001)
+	assert_eq(_doll.position, HOME)
+
+
+func test_a_dead_fighter_keeps_its_form():
+	var slots: Dictionary = _present_with_form_buffs()
+	_presenter.die()
+	_presenter.show_state(_snapshot_with([slots["baron"].duplicate()]))
+	assert_eq(_chest_skin(), ["M_SCHEST_ONE.png"], "a dead doll is not redressed")
+
+
 # Shatter Bolt lands its stun as a buff, so its target shows the stun pose and
 # the buff's icon. Both wait for the hit that lands them, where the original's
 # applyChangesKrin draws them (the conductor, line 103).

@@ -1,6 +1,6 @@
 # buff_look.gd
-# The look the buffs of a unit give its doll: a color state and a filter list,
-# which applyChangesKrin picks from the unit's FILTERSBUFFARRAY
+# The look the buffs of a unit give its doll: a color state, a filter list and a
+# form, which applyChangesKrin picks from the unit's FILTERSBUFFARRAY
 # (frame_42/DoAction_10.as:380-466). convert_buff_looks reads the rules into
 # dev/converted_json/buff_looks.json.
 class_name BuffLook
@@ -10,10 +10,11 @@ const LOOKS_PATH: String = "res://dev/converted_json/buff_looks.json"
 
 static var _looks: Dictionary = {}
 
-# The name of the color state and of the filter list, as buff_looks.json names
-# them.
+# The name of the color state, of the filter list and of the form, as
+# buff_looks.json names them. The form is the one changeForm dresses the doll in.
 var color: String = ""
 var filter: String = ""
+var form: String = ""
 
 
 static func looks() -> Dictionary:
@@ -40,10 +41,14 @@ static func resolve(buff_slots: Array, buffs_by_id: Dictionary) -> BuffLook:
 	var look := BuffLook.new()
 	look.color = table["default_color"]
 	look.filter = table["default_filter"]
+	look.form = table["default_form"]
 	for entry in table["color_by_index"]:
 		if held.has(int(entry[0])):
 			look.color = entry[1]
 	for entry in table["filter_by_index"]:
 		if held.has(int(entry[0])):
 			look.filter = entry[1]
+	for entry in table["form_by_index"]:
+		if held.has(int(entry[0])):
+			look.form = entry[1]
 	return look

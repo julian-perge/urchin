@@ -9,6 +9,7 @@
 #
 #   color_by_index   [[index, color name], ...], and default_color
 #   filter_by_index  [[index, filter name], ...], and default_filter
+#   form_by_index    [[index, form name], ...], and default_form
 #
 # krinChangeColor (frame_42/DoAction_3.as) turns a color name into a
 # ColorTransform whose three offsets (red, green, blue, each -255 to 255) it
@@ -19,6 +20,16 @@
 #   colors   {color name: [red, green, blue]}
 #   filters  {filter name: [glow, ...]}, a glow being a dictionary of those
 #            arguments, in the order the list pushes them
+#
+# A form is a call of dressChar in changeForm (frame_42/DoAction_10.as:483-537),
+# which redraws the doll: its model, its skin set, its gender, its hair and its
+# two weapons. The call passes "" for `standard`, which dressChar reads as the
+# name of the armor set, so every part asks for a clip such as `M_HEAD_` that
+# neither SWF has, and the doll wears its skin set alone. A weapon of "" takes
+# the weapon of the unit's own equipment instead. The standard form takes
+# everything from the unit, so `forms` does not hold it:
+#
+#   forms   {form name: {model, skin, gender, hair, weapon1, weapon2}}
 #
 # CharacterVisual draws them (scenes/doll_body.gdshader), which draws a glow of
 # full alpha, one pass and a square blur. read_looks() raises on one that differs.
@@ -41,12 +52,17 @@ OFFSET = re.compile(r"\.(red|green|blue)Offset = (-?\d+);")
 GLOW = re.compile(r"var (\w+) = new flash\.filters\.GlowFilter\(([^)]*)\);")
 LIST_DECLARATION = re.compile(r"var KrinFilter(\w+) = new Array\(\);")
 LIST_PUSH = re.compile(r"KrinFilter(\w+)\.push\((\w+)\);")
-DEFAULT = re.compile(r'statusOf([CF]) = (?:"(\w+)"|KrinFilter(\w+));')
+DEFAULT = re.compile(r'statusOf([CFM]) = (?:"(\w+)"|KrinFilter(\w+));')
 STATE = re.compile(
     r"if\(ukcb\.FILTERSBUFFARRAY\[(\d+)\] > 0\)\s*\{\s*"
     r'statusOf([CFM]) = (?:"(\w+)"|KrinFilter(\w+));\s*\}'
 )
 APPLY_FUNCTION = re.compile(r"function applyChangesKrin\(.*?\n\}", re.DOTALL)
+CHANGE_FORM_FUNCTION = re.compile(r"function changeForm\(.*?\n\}", re.DOTALL)
+DRESS_CALL = re.compile(
+    r'(?:else )?if\(changeTo == "(\w+)"\)\s*\{\s*dressChar\("(\w+)",p_id,"(\w*)",'
+    r'"(\w+)","(\w+)","(\w)","(\w*)","(\w+)","(\w*)"\);\s*\}'
+)
 
 
 def _number(text: str) -> int | float:
@@ -102,6 +118,43 @@ def read_filter_lists(text: str) -> dict[str, list[str]]:
     return lists
 
 
+def read_forms(text: str) -> dict[str, dict[str, str]]:
+    """-> the forms of changeForm's dressChar calls, without the standard form.
+    Raises ValueError on a call that names another form than its own `if` does,
+    and on one that passes a `standard` other than "" to a form of its own,
+    since CharacterVisual draws only the skin set of such a form."""
+    function = CHANGE_FORM_FUNCTION.search(text)
+    if function is None:
+        raise ValueError("no changeForm")
+    forms: dict[str, dict[str, str]] = {}
+    for (
+        name,
+        called,
+        standard,
+        model,
+        skin,
+        gender,
+        hair,
+        weapon1,
+        weapon2,
+    ) in DRESS_CALL.findall(function.group(0)):
+        if called != name:
+            raise ValueError(f"changeForm {name!r} dresses {called!r}")
+        if name == "STANDARD":
+            continue
+        if standard != "":
+            raise ValueError(f"form {name} passes the armor set {standard!r}")
+        forms[name] = {
+            "model": model,
+            "skin": skin,
+            "gender": gender,
+            "hair": hair,
+            "weapon1": weapon1,
+            "weapon2": weapon2,
+        }
+    return forms
+
+
 def read_looks(colors_text: str, apply_text: str) -> dict:
     """Read the colors and filters from the script of krinChangeColor and the
     filter lists, and the state lists from the script of applyChangesKrin. A
@@ -118,11 +171,12 @@ def read_looks(colors_text: str, apply_text: str) -> dict:
     defaults: dict[str, str] = {}
     for kind, color, filter_ in DEFAULT.findall(body):
         defaults.setdefault(kind, color or filter_)
-    by_index: dict[str, list[list]] = {"C": [], "F": []}
+    forms = read_forms(apply_text)
+    by_index: dict[str, list[list]] = {"C": [], "F": [], "M": []}
     for index, kind, color, filter_ in STATE.findall(body):
-        if kind == "M":
-            continue
         name = color or filter_
+        if kind == "M" and name not in forms:
+            raise ValueError(f"index {index} sets the unknown form {name!r}")
         if kind == "C" and name not in colors:
             raise ValueError(f"index {index} sets the unknown color {name!r}")
         if kind == "F" and name not in lists:
@@ -142,6 +196,9 @@ def read_looks(colors_text: str, apply_text: str) -> dict:
         },
         "filter_by_index": by_index["F"],
         "default_filter": defaults["F"],
+        "forms": forms,
+        "form_by_index": by_index["M"],
+        "default_form": defaults["M"],
     }
 
 

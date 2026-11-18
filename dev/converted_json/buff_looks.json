@@ -158,5 +158,142 @@
       "Frost"
     ]
   ],
-  "default_filter": "None"
+  "default_filter": "None",
+  "forms": {
+    "BARON": {
+      "model": "MODEL1",
+      "skin": "ZOMBIE2",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "XADER2",
+      "weapon2": ""
+    },
+    "PREDATOR": {
+      "model": "MODEL1",
+      "skin": "PREDATOR",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "TOXICANT": {
+      "model": "MODEL1",
+      "skin": "TOXICANT",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "GUARDIAN": {
+      "model": "MODEL1",
+      "skin": "GUARDIAN",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "AVENGER": {
+      "model": "MODEL1",
+      "skin": "AVENGER",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "PSYCHO": {
+      "model": "MODEL1",
+      "skin": "PSYCHO",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "WRAITH": {
+      "model": "MODEL1",
+      "skin": "WRAITH",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "GHOSTBOSS": {
+      "model": "MODEL1",
+      "skin": "GHOSTBOSS",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "SHANK",
+      "weapon2": "SHANK"
+    },
+    "HOUND": {
+      "model": "MODEL5",
+      "skin": "HOUND",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "WEREWOLF": {
+      "model": "MODEL5",
+      "skin": "WEREWOLF",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "NONE",
+      "weapon2": "NONE"
+    },
+    "GHOSTBOSS2": {
+      "model": "MODEL1",
+      "skin": "GHOSTBOSS2",
+      "gender": "M",
+      "hair": "",
+      "weapon1": "FELKNIFE2",
+      "weapon2": "FELKNIFE2"
+    }
+  },
+  "form_by_index": [
+    [
+      4,
+      "BARON"
+    ],
+    [
+      9,
+      "PREDATOR"
+    ],
+    [
+      10,
+      "TOXICANT"
+    ],
+    [
+      11,
+      "GUARDIAN"
+    ],
+    [
+      12,
+      "AVENGER"
+    ],
+    [
+      13,
+      "PSYCHO"
+    ],
+    [
+      14,
+      "WRAITH"
+    ],
+    [
+      15,
+      "GHOSTBOSS"
+    ],
+    [
+      16,
+      "HOUND"
+    ],
+    [
+      17,
+      "WEREWOLF"
+    ],
+    [
+      19,
+      "GHOSTBOSS2"
+    ]
+  ],
+  "default_form": "STANDARD"
 }

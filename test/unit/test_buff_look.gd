@@ -80,3 +80,27 @@ func test_a_buff_the_table_does_not_hold_counts_for_nothing():
 func test_a_buff_of_visual_filter_index_0_counts_for_nothing():
 	var look: BuffLook = BuffLook.resolve(_slots([0]), _buffs_by_id)
 	assert_eq(look.filter, _table()["default_filter"])
+
+
+func test_a_unit_with_no_form_buff_wears_its_own_form():
+	var look: BuffLook = BuffLook.resolve(_slots([1, 2]), _buffs_by_id)
+	assert_eq(look.form, _table()["default_form"])
+
+
+func test_a_form_buff_gives_its_form():
+	var look: BuffLook = BuffLook.resolve(_slots([4]), _buffs_by_id)
+	assert_eq(look.form, "BARON")
+
+
+func test_of_two_forms_the_one_that_runs_last_wins():
+	var order: Array = _table()["form_by_index"]
+	assert_gt(order.size(), 1, "sanity: the table has several forms")
+	for first in order.size():
+		for second in range(first + 1, order.size()):
+			var look: BuffLook = BuffLook.resolve(_slots([int(order[second][0]), int(order[first][0])]), _buffs_by_id)
+			assert_eq(look.form, order[second][1], "%s over %s" % [order[second][1], order[first][1]])
+
+
+func test_a_form_shows_with_a_color_and_a_filter():
+	var look: BuffLook = BuffLook.resolve(_slots([1, 2, 4]), _buffs_by_id)
+	assert_eq([look.color, look.filter, look.form], ["Poison", "Frost", "BARON"])
