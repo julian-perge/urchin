@@ -89,8 +89,10 @@ func request_new_game_fight() -> Dictionary:
 	return request_fight(ZoneProgression.FIRST_STORY_FIGHT)
 
 # New Game's handler with the Tutorial option on: the Tutorial fight, with its
-# Cutscene before it. The bar holds the Tutorial's moves for that fight.
+# Cutscene before it. The bar holds the Tutorial's moves for that fight, and
+# Sonny holds the gear and stats he has before frame_180 runs.
 func request_tutorial_fight() -> Dictionary:
+	GameData.current_save.enter_tutorial()
 	for i in ZoneProgression.TUTORIAL_MOVES.size():
 		GameData.current_save.move_matrix[i] = ZoneProgression.TUTORIAL_MOVES[i]
 	return request_fight(ZoneProgression.TUTORIAL_FIGHT)
