@@ -1252,6 +1252,10 @@ SCENES[BATTLE_SCENE] = Scene(
         ),
         "BottomBar/RightPanel/CombatLogPanel",
         "BottomBar/RightPanel/LogToggleButton",
+        # krinToMove, the picked ability's icon. battle_scene.gd places it from
+        # pass_button.json, which extract_pass_button measures off the SWF, and
+        # test_battle_scene.gd checks it there.
+        "BottomBar/MoveIcon",
         "CombatTextBanner",
         "UI",
         "Fade",

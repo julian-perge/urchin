@@ -230,8 +230,7 @@ func _dress_orb(bar_index: int, player: CombatUnit, target: CombatUnit) -> bool:
 	var turns_left: int = int(player.ability_cooldowns[bar_index]) if bar_index < player.ability_cooldowns.size() else 0
 	(orb.get_node("Cover") as TextureRect).visible = bad_target or turns_left > 0
 	(orb.get_node("Count") as Label).text = str(turns_left) if turns_left > 0 else ""
-	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
-	orb.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null
+	orb.icon = icon_texture(move)
 	_style_orb(orb, _move_color(move))
 	return true
 
@@ -297,10 +296,17 @@ func _move_color(move: Ability) -> Color:
 	return MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.5, 0.5, 0.5)
 
 
+# -> the icon that extract_ability_icons wrote for `move`, or null when it
+# wrote none. The pass button shows the picked move with it too.
+static func icon_texture(move: Ability) -> Texture2D:
+	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
+	return load(icon_path) if ResourceLoader.exists(icon_path) else null
+
+
 # Mirrors abilities_window.gd's own _sanitize_icon_key() - the same
 # assets/ui/abilities/ lookup key, built the same way, so a display name
 # with punctuation resolves to the file the extractor actually wrote.
-func _sanitize_icon_key(label: String) -> String:
+static func _sanitize_icon_key(label: String) -> String:
 	var result: String = ""
 	var last_was_sep: bool = false
 	for c in label:
