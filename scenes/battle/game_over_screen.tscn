@@ -28,7 +28,6 @@ theme_override_constants/line_spacing = -12
 theme_override_font_sizes/font_size = 30
 horizontal_alignment = 1
 autowrap_mode = 3
-text = "You're dead, Sonny..."
 
 [node name="ReloadLabel" type="Label" parent="."]
 layout_mode = 0
@@ -41,7 +40,6 @@ theme_type_variation = &"MenuCaption"
 theme_override_colors/font_color = Color(1, 0.8, 0, 1)
 theme_override_font_sizes/font_size = 14
 horizontal_alignment = 1
-text = "< Click here to Re-Load >"
 
 [node name="ReloadButton" type="Button" parent="."]
 layout_mode = 0
@@ -64,7 +62,6 @@ theme_type_variation = &"MenuCaption"
 theme_override_constants/line_spacing = -1
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
-text = "Having problems winning a fight? Observe your enemies carefully and try to find a weakness. Being victorious in Sonny is about having a successful strategy, so you may need to re-evaluate your ability configuration and execution. If you want guides on how to beat a specific stage, I recommend you to check out the ArmorGames or KrinLabs forums for some help."
 
 [node name="Back" parent="." instance=ExtResource("3_back")]
 layout_mode = 0
