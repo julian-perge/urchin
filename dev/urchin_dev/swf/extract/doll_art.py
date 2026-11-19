@@ -331,18 +331,14 @@ def render_glows(
     exported = {name: index.exports[name] for name in names if name in index.exports}
     blurs = {name: filter_blurs(index, cid) for name, cid in exported.items()}
     scales = glow_scales(sorted(exported), blurs, **context)
+    wanted = [(name, scale) for name in sorted(scales) for scale in scales[name][1:]]
     jobs = [
         render.Job(exported[name], 1, ZOOM, filter_scale=1.0 / scale)
-        for name in sorted(scales)
-        for scale in scales[name][1:]
+        for name, scale in wanted
     ]
     found: dict[str, list[dict]] = defaultdict(list)
     with render.frames(swf_path, jobs) as rendered:
-        for frame, (name, scale) in zip(
-            rendered,
-            [(name, scale) for name in sorted(scales) for scale in scales[name][1:]],
-            strict=True,
-        ):
+        for frame, (name, scale) in zip(rendered, wanted, strict=True):
             trimmed = render.trim(frame)
             art = glow_name(name, scale)
             png.save(trimmed.image, GLOW_DIR / (art + ".png"))
@@ -441,6 +437,11 @@ def main():
             STEAM_SWF, [name for name in rects if name not in web_names], context
         )
     )
+    # The .import files of the PNGs written again stay, so their uids do not
+    # change, and only those of PNGs no longer written go.
+    for imported in GLOW_DIR.glob("*.png.import"):
+        if not imported.with_suffix("").exists():
+            imported.unlink()
     GLOW_FILE.write_text(
         json.dumps(
             {
