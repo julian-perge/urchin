@@ -205,6 +205,14 @@ otherwise.
   player's slow-script warning. Nine captures made a 25 MB `flashlog.txt`, and
   a short script turned the `ROW` lines back into PNGs. The SWF is version 9,
   so AS2's `BitmapData` is there. The capture needs no screen recording.
+- **A throwaway Probe can start a battle with no clicks.** For #39 it waited for
+  the main menu (root frame 45), ran the Knight button's code
+  (`DefineButton2_2735`), went to `optionsMenu` (frame 93), set
+  `Krin.difficulty = 2` and `Krin.tutorOn = false`, and went to root frame 180,
+  which sets `BattlePick = 100` and loads the battle. That skips only CS_INTRO2.
+  On Heroic the player's half-turn passes by itself after 4 seconds, so the
+  battle plays on with no clicks. The Probe is
+  `references/traced_runs/cost_failure_probe.as`.
 - **A capture Probe that changes the game is kept next to its capture.** The
   #162 Probes jump from `mainMenu` to `LOADBATTLESCENE` with `BattlePick` 408,
   freeze the dolls and attach clips, so they are not in `dev/probes/`, where
