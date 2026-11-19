@@ -3794,7 +3794,7 @@ func test_a_missed_bolt_is_told_it_missed():
 	ZoneManager.auto_switch_scenes = true
 
 
-func test_shock_cast_tints_with_the_moves_own_visual_effect_color():
+func test_shock_cast_sets_colortobe_to_the_moves_own_visual_effect_color():
 	var save = PlayerSave.new_game("CastTintTest", 0)
 	GameData.current_save = save
 	ZoneManager.auto_switch_scenes = false
@@ -3812,12 +3812,10 @@ func test_shock_cast_tints_with_the_moves_own_visual_effect_color():
 		"caster_after_dispatch": scene._presenters[1].displayed,
 		"result": _move_result(MoveResult.Kind.HEAL, MoveResult.Direction.HEAL, 10.0),
 	}
-	scene._play_move_event(event)  # not awaited - modulate is set synchronously before the Shock branch's pause
+	scene._play_move_event(event)  # not awaited - colortobe is set synchronously before the Shock branch's pause
 
-	var expected: Color = move.visual_effect_color.lerp(Color.WHITE, 0.4)
-	assert_almost_eq(caster_visual.modulate.r, expected.r, 0.01)
-	assert_almost_eq(caster_visual.modulate.g, expected.g, 0.01)
-	assert_almost_eq(caster_visual.modulate.b, expected.b, 0.01)
+	assert_eq(caster_visual.colortobe, move.visual_effect_color)
+	assert_eq(caster_visual.modulate, Color.WHITE, "the doll itself is not tinted")
 
 	GameData.current_save = null
 	ZoneManager.auto_switch_scenes = true

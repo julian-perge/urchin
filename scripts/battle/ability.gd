@@ -34,7 +34,8 @@ extends Resource
 # clip for both Missile and Shock (frame217/onClipEvent(enterFrame).as:
 # 417,450), and the KrinTrail streak for Missile bolts - NOT the bolt
 # clip itself, which is shown untinted (its own art is pre-colored per
-# element). Melee never sets colortobe.
+# element). krinMelee sets it for a Melee move, and it tints the swing
+# trail (frame_42/DoAction_4.as:131).
 @export var visual_effect_color: Color = Color.WHITE
 @export var effect_category: String  # "Full Damage" / "Heal" / "Focus" / "Attack" (status effect only, see execute_move)
 @export var health_cost_percentage: float

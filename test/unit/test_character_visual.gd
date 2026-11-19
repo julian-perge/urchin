@@ -793,7 +793,10 @@ func test_each_model_draws_its_parts_in_its_own_depth_order():
 	visual.start_clip("MODEL4")
 	assert_lt(visual._parts["arm1"].get_index(), visual._parts["head"].get_index(), "MODEL4: head in front")
 	assert_eq(visual.get_node("Body").get_child(0).name, &"Shadow", "the shadow stays under every part")
-	var depths: Dictionary = _animations("MODEL4")["depths"]
+	var depths: Dictionary = _animations("MODEL4")["depths"].duplicate()
+	for frame in _pieces_of("MODEL4")["frames"]:
+		for depth in frame:
+			depths["Piece%s" % depth] = int(depth)
 	var order: Array = depths.keys()
 	order.sort_custom(func(a, b): return depths[a] < depths[b])
 	var drawn: Array = []
@@ -1048,7 +1051,7 @@ func test_a_new_clip_drops_the_last_models_pieces():
 func test_the_orb_plays_on_its_own_clock_through_the_stand_loop():
 	visual.start_clip("MODEL2")
 	var pieces: Dictionary = _pieces_of("MODEL2")
-	var loop: Array = pieces["loops"]["3"]
+	var loop: Array = pieces["clips"][pieces["frames"][0]["3"]["clip"]]["frames"]
 	var orb: Sprite2D = visual.get_node("Body/Piece3")
 	var stand: int = _frame_of("MODEL2", "stand", true)
 	for step in stand + 5:
@@ -1115,6 +1118,93 @@ func test_the_bomb_dies_on_its_dead_label_and_shows_its_blast():
 	for step in _frame_of("MODEL9", "dead", true) - _frame_of("MODEL9", "dead"):
 		visual._process(SWF_FRAME_SECONDS)
 	assert_false(visual.is_visible_in_tree(), "frame 192 removes the doll")
+
+
+# MODEL1's cast label places the cast glow (DefineSprite 162) on each of its
+# frames. Its part 161 runs setRGB(colortobe) as it loads
+# (DefineSprite_162/frame_1/PlaceObject2_161_1), so that part takes the doll's
+# colortobe, and the frame's colour transform fades the whole glow.
+func test_a_model1_cast_shows_the_cast_glow_in_colortobe_on_its_cast_frames():
+	visual.start_clip("MODEL1")
+	var pieces: Dictionary = _pieces_of("MODEL1")
+	var glow_clip: Dictionary = pieces["clips"]["162"]
+	var color := Color(0.2, 1.0, 0.0)
+	visual.colortobe = color
+	visual.set_state(CharacterVisual.State.CAST)
+	var glow: Sprite2D = visual.get_node("Body/Piece33")
+	var shown: int = 0
+	for index in range(_frame_of("MODEL1", "cast") - 1, _frame_of("MODEL1", "cast", true)):
+		assert_eq(visual._frame_index, index, "sanity: on cast frame %d" % (index + 1))
+		var entry = pieces["frames"][index].get("33")
+		if entry is Dictionary and entry["clip"] == "162":
+			shown += 1
+			var c: Array = entry["color"]
+			var tint: Sprite2D = glow.get_node("Tint")
+			assert_true(glow.visible and tint.visible, "frame %d shows the glow" % (index + 1))
+			assert_eq(glow.texture.resource_path, CharacterVisual.PIECE_ART % glow_clip["frames"][0])
+			assert_eq(tint.texture.resource_path, CharacterVisual.PIECE_ART % glow_clip["tints"][0])
+			var want := Vector4(c[0] * color.r + c[4], c[1] * color.g + c[5], c[2] * color.b + c[6], c[7])
+			assert_true((tint.material.get_shader_parameter("offset") as Vector4).is_equal_approx(want), "frame %d tints 161 in colortobe" % (index + 1))
+			assert_eq(tint.material.get_shader_parameter("multiplier"), Vector4(0.0, 0.0, 0.0, c[3]))
+		else:
+			assert_false(glow.visible, "frame %d shows no glow" % (index + 1))
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(shown, _frame_of("MODEL1", "cast", true) - _frame_of("MODEL1", "cast") + 1, "every cast frame places the glow")
+
+
+# MODEL1's stun2 label places the stun mark (DefineSprite 165, 30 frames, no
+# stop) on each of its 40 frames, and its last frame's script goes back to its
+# first (DefineSprite_166_MODEL1/frame_279). Flash keeps the mark through that
+# goto, so the mark loops on its own clock.
+func test_a_model1_stun_shows_the_stun_mark_on_its_own_clock_through_the_stun2_loop():
+	visual.start_clip("MODEL1")
+	var pieces: Dictionary = _pieces_of("MODEL1")
+	var mark: Array = pieces["clips"]["165"]["frames"]
+	var sprite: Sprite2D = visual.get_node("Body/Piece33")
+	visual.enter_stun()
+	while visual._label != "stun2":
+		assert_false(sprite.visible, "the stun label shows no mark")
+		visual._process(SWF_FRAME_SECONDS)
+	var stun2: int = _frame_of("MODEL1", "stun2", true) - _frame_of("MODEL1", "stun2") + 1
+	for age in stun2 * 2:
+		assert_eq(pieces["frames"][visual._frame_index]["33"]["clip"], "165", "sanity: stun2 places the mark")
+		assert_true(sprite.visible, "the mark shows %d frames into stun2" % age)
+		assert_eq(sprite.texture.resource_path, CharacterVisual.PIECE_ART % mark[age % mark.size()], "the mark is on its own frame %d" % (age % mark.size() + 1))
+		visual._process(SWF_FRAME_SECONDS)
+
+
+# Each MODEL1 swing places its trail on its label (149 on Attack_Upper, 153 on
+# Attack_Stab, and 158 on attack2, which Attack flows into). A trail plays its
+# 12 frames from where the label places it and holds its empty frame 12, and
+# its tinted part takes the colortobe that krinMelee set at the strike.
+func test_a_model1_swing_shows_its_trail_on_the_frames_its_label_places_it():
+	var pieces: Dictionary = _pieces_of("MODEL1")
+	var color := Color(1.0, 0.2, 0.4)
+	for case in [["Attack_Upper", "149"], ["Attack_Stab", "153"], ["Attack", "158"]]:
+		var clip: Dictionary = pieces["clips"][case[1]]
+		visual.start_clip("MODEL1")
+		visual.play_melee(func(): return Vector2(80, 0), 0.0, case[0], color)
+		var trail: Sprite2D = visual.get_node("Body/Piece33")
+		var shown: int = 0
+		for step in 200:
+			visual._process(SWF_FRAME_SECONDS)
+			if visual.is_idle():
+				break
+			var entry = pieces["frames"][visual._frame_index].get("33")
+			if not (entry is Dictionary and entry["clip"] == case[1]):
+				assert_false(trail.visible, "%s: no trail on frame %d" % [case[0], visual._frame_index + 1])
+				continue
+			var age: int = visual._frame_index + 1 - int(entry["since"])
+			var art: String = clip["frames"][mini(age, int(clip["hold"]) - 1)]
+			if not pieces["art"].has(art):
+				assert_null(trail.texture, "%s: the trail's frame %d draws nothing" % [case[0], age + 1])
+				continue
+			shown += 1
+			var tint: Sprite2D = trail.get_node("Tint")
+			assert_eq(trail.texture.resource_path, CharacterVisual.PIECE_ART % art, "%s: trail frame %d" % [case[0], age + 1])
+			assert_true(tint.visible, "%s: with its tinted part" % case[0])
+			assert_true((tint.material.get_shader_parameter("offset") as Vector4).is_equal_approx(Vector4(color.r, color.g, color.b, 0.0)), "%s: in colortobe" % case[0])
+		assert_eq(shown, clip["frames"].filter(func(name): return pieces["art"].has(name)).size(), "%s shows every frame of %s that draws" % [case[0], case[1]])
 
 
 func test_every_model_with_pieces_names_art_that_exists():

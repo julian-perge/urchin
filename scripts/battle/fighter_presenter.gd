@@ -386,15 +386,16 @@ func _relation_to_player() -> Relation:
 	return Relation.ALLY if _unit.team_side == CombatUnit.Team.ONE else Relation.ENEMY
 
 
-# Starts the caster's melee swing at `target` and returns at its Impact, once
-# on_impact has run. The doll runs toward where the target's rig stands on each
+# Starts the caster's melee swing of `move` at `target` and returns at its
+# Impact, once on_impact has run. The swing plays the move's label and tints its
+# trail with the move's colour. The doll runs toward where the target's rig stands on each
 # frame, and stops short of where it stood as the swing started by half of each
 # fighter's width. The doll's Runback then takes it home on its own while the
 # battle goes on. With wait false nothing waits for the swing, so on_impact runs
 # at once. If the presenter leaves the tree during the swing, on_impact doesn't
 # run.
-func melee(target: FighterPresenter, label: String, on_impact: Callable, wait: bool = true) -> void:
-	_doll.play_melee(_doll_spot_on.bind(target), target.rig_size().x / 2.0, label)
+func melee(target: FighterPresenter, move: Ability, on_impact: Callable, wait: bool = true) -> void:
+	_doll.play_melee(_doll_spot_on.bind(target), target.rig_size().x / 2.0, move.animation_label, move.visual_effect_color)
 	if wait:
 		await _doll.attack_connected
 		if not is_inside_tree():
@@ -410,13 +411,13 @@ func _doll_spot_on(other: FighterPresenter) -> Vector2:
 	return other.rig_position() - position + _doll_offset
 
 
+# The conductor sets colortobe to the move's colour before the cast's goto
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 417 and 450), so the cast
+# glow that the cast label places takes that colour. The rest of the doll keeps
+# its own colours.
 func cast(move: Ability) -> void:
+	_doll.colortobe = move.visual_effect_color
 	_doll.set_state(CharacterVisual.State.CAST)
-	# The real colortobe glow tint (frame217/onClipEvent(enterFrame).as:
-	# 417,450) - the move's own color, not an element-color
-	# approximation. set_state() resets modulate back to white when the
-	# cast label finishes.
-	_doll.modulate = move.visual_effect_color.lerp(Color.WHITE, 0.4)
 
 
 # Returns where the original's rig stands, the clip that dressChar puts the doll
