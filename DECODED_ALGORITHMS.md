@@ -188,7 +188,7 @@ Implemented in `scripts/ui/menu/menu_math.gd` and `scripts/ui/menu/element_bar.g
 - The name the game shows, and the label the icon lookup uses, is `KrinLang.ENGLISH.ITEMNAME[id]` (`frame_1/DoAction.as`). `frame_42/DoAction_16.as:23` writes it over the item record's own name
   at load. All 316 entries are unique and no two sanitize to the same key. `swf_items.json`'s `internal_name` is a different, dev-facing field that the icon path never reads, and it disagrees
   with the real names (id 311 is "Punisher Gloves" in `ITEMNAME` and "Warden's Grasp" in `internal_name`). The 133 ids with no `ITEMNAME` get no icon in the original either.
-- Four items have no label on 2064: Tool (id 1) and Golden Crowbar, Golden Pipe and Golden Axe (ids 681-683). They keep their `assets/item_slot_icons/` art. Item 0, `None`, has a label, a blank frame.
+- Four items have no label on 2064: Tool (id 1) and Golden Crowbar, Golden Pipe and Golden Axe (ids 681-683). Their `.tres` files have no `slot_image`, so `ItemSlot` draws the three Golden items' `sprite_image` and draws nothing for Tool. Item 0, `None`, has a label, a blank frame.
 
 ## Companion aggression stances (agModeAr)
 
@@ -275,7 +275,7 @@ save when the game starts, goes on to the first fight when it starts, and sends 
 - Sell-back = `ceil(price * 0.15)` (DefineButton2_3015).
 - Each party member's looks are fixed. `frame_42/DoAction_17.as:7-84` is top-level frame 42 code that sets `SkinSet`, `HairSet` and `GSet` for every character, and nothing else writes them, so the
   original has no appearance screen. The port keeps each character's looks in `Party`'s `model` entry.
-- The class name under each class-select card is a text field that the original fills from `KrinLang` at run time, so the port draws it as a Label.
+- The class name under each class-select card is a text field that the original fills from `KrinLang` `CLASS[0]` to `CLASS[2]` at run time (`frame_84/DoAction.as:2-4`), so the port draws it as a Label.
 
 ## Battle presentation per animation type (frame_217/PlaceObject2_3389_480 enterFrame, ~line 400)
 
@@ -784,7 +784,7 @@ Ported: `scripts/game.gd`'s `show_battle_hint` shows the card, and `convert_batt
 
 ## Stun, Silence and Reflect
 
-- A unit with `STUN` not 0 does nothing on its turn. The port gates this in `BattleRunner._execute_action()`.
+- A unit with `STUN` not 0 does nothing on its turn. The conductor runs a move only when `mCaster.STUN == 0` (conductor line 350). The port gates this in `BattleRunner._execute_action()`.
 - A move that is a Shock, or any move at a stunned target, hits without a roll (conductor line 360, `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as`). The port's `_accuracy_roll()` does the same.
 - Silence blocks any move with a focus cost, `cost * SILENCED == 0`. The AI's filter and the player's pick use the same test (see "Which moves can be picked" above).
 - Reflect is dead code. The full script export has exactly one `REFLECTDMG` reference, the initializer to 0 in frame 201, and none of the 470 buffs has a reflect delta that is not 0. The stat
@@ -796,7 +796,7 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
 
 - The learn button is `DefineButton2_3096` on the tree screen. It loops every `PRESKILL` entry of a node and refuses when any of them has rank 0, so a node with several prerequisites needs
   all of them. Each learn takes one skill point (`skillPoints--`).
-- A level-up grants one skill point (the victory screen's level-up code), and a new character starts with 5, `preStartSkill`. So a respec sets `skillPoints` to `Level - 1 + preStartSkill`.
+- A level-up grants one skill point (`skillPoints++` in the victory frame's level-up code, `DefineSprite_3142/frame_9/PlaceObject3_3002_1197/CLIPACTIONRECORD onClipEvent(enterFrame).as:31`), and a new character starts with 5, `preStartSkill` (`frame_41/DoAction_2.as:77-78`). So a respec sets `skillPoints` to `Level - 1 + preStartSkill`.
 - The learn button rebuilds `moveMatrix2` from the class's starting moves and every `skillAdderMatrix` entry that is not 0, in node order. It does not keep a running list.
 - `krinRemakeTree` builds each node's tooltip in four lines. The header is the rank over the maximum rank and the name, such as `"(2/4)  Vicious Strike"`. For a passive node
   (`CLASSIFY == 1`) the title and each rank's text come from `KrinLang.ENGLISH.BUFFSAY`, not from the buff record, and the cost line is `SKILLAURA`, "Passive Combat Effect". 9 of the 14 passive

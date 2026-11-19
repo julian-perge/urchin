@@ -115,8 +115,9 @@ name, so it misses a call in class-level code and a callable reference such as
   `@onready` references and methods that set `.text`, `.value` and
   `.visible` on nodes the scene already lays out, and does not build the
   nodes itself. Transient pieces that change on every use, such as floating
-  combat text and projectiles, stay in code. Each scene sets its own
-  `theme_override_*` properties. There is no shared Theme resource for these overrides.
+  combat text and projectiles, stay in code. The project theme,
+  `scenes/ui/project_theme.tres`, holds only the fonts and a few Label type
+  variations, so each scene sets its own `theme_override_*` properties.
 - Declare an enum next to the code that owns it, and pair it with a
   `Dictionary[EnumType, ValueType]` for lookups or an `Array[EnumType]` for
   ordered lists. Fields that are saved or exported, and values read straight
