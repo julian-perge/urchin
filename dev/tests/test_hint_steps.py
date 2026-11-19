@@ -65,6 +65,16 @@ def test_the_resting_frame_reads_its_first_tip_and_the_tip_count():
     assert hint_steps.tip_strings(["picker", "reader"], [43, 4]) == (43, 4)
 
 
-def test_a_resting_frame_that_does_not_pick_a_tip_is_refused():
-    with pytest.raises(RuntimeError, match="sets it to MENU|sets reader to MENU"):
-        hint_steps.tip_strings(["picker"], [43, 4])
+@pytest.mark.parametrize(
+    "targets",
+    [["picker"], ["reader", "picker"], []],
+    ids=["no reader", "reader first", "nothing"],
+)
+def test_a_resting_frame_that_does_not_end_on_reader_is_refused(targets):
+    with pytest.raises(RuntimeError, match="sets reader to MENU"):
+        hint_steps.tip_strings(targets, [43, 4])
+
+
+def test_a_resting_frame_whose_numbers_are_not_whole_is_refused():
+    with pytest.raises(RuntimeError, match="not whole"):
+        hint_steps.tip_strings(["picker", "reader"], [43.5, 4])

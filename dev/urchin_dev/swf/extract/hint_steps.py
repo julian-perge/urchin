@@ -126,13 +126,16 @@ def step_strings(targets: list[str], numbers: list[float]) -> tuple[int, int]:
 
 def tip_strings(targets: list[str], numbers: list[float]) -> tuple[int, int]:
     """-> (the first MENU index, the number of tips) of the resting frame's
-    script, `reader = MENU[first + random(count)]`. Raises unless it sets
-    reader alone and pushes those two numbers."""
-    if READER not in targets or len(numbers) != 2:
+    script, `picker = first + random(count)` and then `reader = MENU[picker]`.
+    Raises unless the last variable it sets is reader and it pushes those two
+    numbers, both whole."""
+    if not targets or targets[-1] != READER or len(numbers) != 2:
         raise RuntimeError(
             f"the resting frame sets {targets} and pushes {numbers}, where it"
             f" sets {READER} to MENU[first + random(count)]"
         )
+    if not all(float(n).is_integer() for n in numbers):
+        raise RuntimeError(f"the resting frame pushes {numbers}, which are not whole")
     return int(numbers[0]), int(numbers[1])
 
 

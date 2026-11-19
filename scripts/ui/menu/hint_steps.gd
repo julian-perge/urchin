@@ -71,7 +71,10 @@ func _ready() -> void:
 	add_child(_click_button)
 	_box_art = _new_art("BoxArt")
 	_pointer_art = _new_art("PointerArt")
-	_show(_layout["rest"])
+	# The step nodes stay hidden until open() picks the first label, which the
+	# window calls when it is ready and each time it opens.
+	for node: CanvasItem in [_step_label, _click_label, _click_button, _box_art, _pointer_art]:
+		node.visible = false
 
 
 func _process(delta: float) -> void:
@@ -191,9 +194,8 @@ func _place_label(label: Label, field: Dictionary, text: String) -> void:
 	label.add_theme_color_override("font_color", Color.html(field["color"]))
 	label.horizontal_alignment = ALIGNMENTS[field["align"]]
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if field["wrap"] else TextServer.AUTOWRAP_OFF
-	if field.has("line_pitch"):
-		var height: float = label.get_theme_font("font").get_height(font_size)
-		label.add_theme_constant_override("line_spacing", roundi(float(field["line_pitch"]) - height))
+	var height: float = label.get_theme_font("font").get_height(font_size)
+	label.add_theme_constant_override("line_spacing", roundi(float(field["line_pitch"]) - height))
 	var rect: Array = field["rect"]
 	label.position = Vector2(rect[0], rect[1])
 	label.size = Vector2(rect[2], rect[3])
