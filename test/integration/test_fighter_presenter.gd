@@ -322,6 +322,19 @@ func test_setup_puts_the_units_models_shadow_under_its_doll():
 	assert_true(got.size.is_equal_approx(want.size))
 
 
+# dressChar attaches the unit's model[0] clip (frame_217/DoAction_2.as:17), so
+# a MODEL4 unit's doll stands on MODEL4's first frame.
+func test_setup_plays_a_model4_units_own_clip():
+	var unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
+	unit.model = ["MODEL4", "FEL", "", "F"]
+	_present(unit)
+	var animations: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.animations_file("MODEL4")))
+	var m: Array = animations["frames"][0]["chest"]
+	var want := Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5]))
+	assert_true(_doll.get_node("Body/chest").transform.is_equal_approx(want), "MODEL4's frame 1, not MODEL1's")
+	assert_eq(_doll.get_node("Body").get_child(0).name, &"Shadow", "with the shadow under it")
+
+
 func test_setup_dresses_the_doll_from_the_item_table():
 	var unit: CombatUnit = _make_unit(CombatUnit.Team.ONE, ALLY_SLOT)
 	unit.equipment_ids = [0, 7]
