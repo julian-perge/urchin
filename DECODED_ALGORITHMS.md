@@ -564,7 +564,7 @@ Three Heroic cases, read from the code but not run, and not ported, since the po
 ## Heroic decision timer (frame_217/DoAction.as, the conductor)
 
 Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / BattleScreenClip.fps()` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
-and on Heroic once a half-turn ends with the player's unit dead, it waits for the player and hides the countdown label.
+and on Heroic once a half-turn ends with the player's unit dead, it waits for the player and `BattleClock` shows the whole ring.
 
 - `BattleTime = BattleTimeLimit = 120` (`frame_217/DoAction.as:1-3`). The conductor adds 1 to `BattleTimeNow` once per frame, and only while `turnBasedKrin` is false and the player's team is
   moving (conductor lines 593-596), so the window is 120 frames, 4 s at 30 fps.
@@ -576,7 +576,8 @@ and on Heroic once a half-turn ends with the player's unit dead, it waits for th
 - Running out is a pass. Every slot starts the battle holding move 0 (`frame_217/DoAction_2.as:313-318`) and each dispatch writes move 0 back for its caster (conductor lines 470-473), so
   a player who never picked passes. The pass button, DefineButton2_3383 (`krinToMove2` on the root timeline), also jumps the clock to `BattleTimeLimit - 5` (release lines 9-12).
 - The clock is `battleClocker` (DefineSprite 3389), placed at (400, 507.25) behind the pass button. Its two half-dials in DefineSprite 3386 turn with
-  `BattleTimeNow / (BattleTimeLimit / 2)` (`DefineSprite_3386/frame_1/PlaceObject2_3385_2` and `PlaceObject2_3385_6`, line 2), and none of its sprites holds a text field, so it shows no number.
+  `BattleTimeNow / (BattleTimeLimit / 2)` (`DefineSprite_3386/frame_1/PlaceObject2_3385_2` and `PlaceObject2_3385_6`, line 2), and none of its sprites holds a text field, so it shows no number. The port shows it as `BattleClock`, one render of the lit ring
+  for each `BattleTimeNow` from 0 to `BattleTimeLimit`, which `extract_battle_screen` writes.
 
 ## Battle speeches (frame_217/PlaceObject2_3389_480 enterFrame, lines 794-870)
 

@@ -41,10 +41,12 @@
 #             exists on the frame, so a wrong depth there is not caught.
 #   "art_set" - art that changes while the game runs, which a TextureRect shows
 #             from one of several PNGs that share one rect and one size. The
-#             Store keeper's seven shop PNGs are one. It is recorded as the rect
-#             and size of the shared crop, and the list of PNGs. The piece's
-#             depth must hold the character `character`, and the crop's rect is
-#             on the Stage already, so the placement matrix is not applied.
+#             piece's art names the set in art_set_sources: the Store keeper's
+#             seven shop PNGs are one, and the battle clock's lit rings
+#             another. It is recorded as the rect and size of the shared crop,
+#             and the list of PNGs. The piece's depth must hold the character
+#             `character`, and the crop's rect is on the Stage already, so the
+#             placement matrix is not applied.
 #   "face"  - the portrait clip 2978, which the port draws as a TextureRect that
 #             shows a different PNG for each fighter. It is recorded as the crop
 #             box that extract_faces cut every portrait to, placed with the
@@ -204,9 +206,9 @@ class Piece:
                 f"A piece needs a depth or an instance name, not both or neither:"
                 f" depth {self.depth}, instance {self.instance}"
             )
-        if self.kind == "art" and self.art is None:
+        if self.kind in ("art", "art_set") and self.art is None:
             raise ValueError(
-                f"An art piece needs the name of its art: depth {self.depth},"
+                f"An {self.kind} piece needs the name of its art: depth {self.depth},"
                 f" instance {self.instance}"
             )
         if self.kind == "centre" and self.inner_instance is None:
@@ -898,7 +900,9 @@ SCENES[STORE_SCENE] = Scene(
         "LeftPanel": Piece("panel", 11),
         "CentreTopPanel": Piece("panel", 21),
         "CentreBottomPanel": Piece("panel", 23),
-        "LeftPanel/Content/KeeperArt": Piece("art_set", 25, character=3036),
+        "LeftPanel/Content/KeeperArt": Piece(
+            "art_set", 25, art="store_keeper", character=3036
+        ),
         "LeftPanel/Content/KeeperLine": Piece("text", 1101, character=3019),
         "CentreBottomPanel/Content/Hint": Piece("text", 1102, character=3018),
         "CentreTopPanel/Content/EquipDollView/Doll": Piece(
@@ -1040,8 +1044,12 @@ SCENES[BATTLE_SCENE] = Scene(
         ),
         "BottomBar/RightPanel": Piece("shape", 1, via=(1, 1), path=2, character=3317),
         "BottomBar/PassButton": Piece("button", 498, character=3383),
-        "BottomBar/PassRing": Piece("point", 498, character=3383),
         "BottomBar/AlertIcon": Piece("art", 65, art="alert_icon", character=3460),
+        # The clock 3389: its dark ring, and its lit ring, which shows one render
+        # of thingerClock at a time.
+        "BottomBar/Clock": Piece("point", 480, character=3389),
+        "BottomBar/Clock/Disc": Piece("art", 480, art="clock_disc", character=3389),
+        "BottomBar/Clock/Ring": Piece("art_set", 480, art="clock_ring", character=3389),
         "BottomBar/RetreatButton": Piece("button", 644, character=3356),
         **top_bar_pieces(),
     },
@@ -1075,8 +1083,6 @@ SCENES[BATTLE_SCENE] = Scene(
         ),
         "BottomBar/RightPanel/CombatLogPanel",
         "BottomBar/RightPanel/LogToggleButton",
-        "BottomBar/CountdownRing",
-        "BottomBar/CountdownLabel",
         "CombatTextBanner",
         "UI",
         "Fade",
@@ -1305,6 +1311,7 @@ def art_sources() -> dict[str, tuple[dict, str]]:
         ("bottom_bar", battle_chrome_source("bottom_bar"), BATTLE_TEXTURES),
         ("top_panel", battle_chrome_source("top_panel"), BATTLE_TEXTURES),
         ("alert_icon", battle_chrome_source("alert_icon"), BATTLE_TEXTURES),
+        ("clock_disc", battle_chrome_source("clock_disc"), BATTLE_TEXTURES),
         *(
             (
                 name,
@@ -1384,6 +1391,33 @@ def art_record(
         "texture": f"{textures}/{name}.png",
         "size": chrome["size"],
         "zoom": chrome["zoom"] if scale == 1.0 else round(chrome["zoom"] / scale, 6),
+    }
+
+
+def art_set_sources() -> dict[str, tuple[dict, list[str]]]:
+    """-> the crop record and the res:// PNGs of every art set a piece can name.
+    The battle clock's PNGs are listed frame label first and then by time, as
+    extract_battle_screen names them."""
+    clock = json.loads(battle_screen.LAYOUT_JSON.read_text())["clock"]
+    folder = f"{BATTLE_TEXTURES}/{battle_screen.CLOCK_DIR.name}"
+    return {
+        "store_keeper": (
+            json.loads(store_art.RECORD.read_text()),
+            [f"{STORE_TEXTURES}/shop{shop}.png" for shop in store_art.SHOP_IDS],
+        ),
+        "clock_ring": (
+            {
+                "rect": [clock["rect"][key] for key in ("x", "y", "w", "h")],
+                "size": clock["size"],
+                "zoom": clock["zoom"],
+                "relative_to": "stage",
+            },
+            [
+                f"{folder}/{label}_{time_now:03d}.png"
+                for label in clock["labels"]
+                for time_now in range(clock["limit"] + 1)
+            ],
+        ),
     }
 
 
@@ -2069,11 +2103,7 @@ def scene_record(
                 piece.art, entry, sprite_origins, textures, art_scale
             )
         elif piece.kind == "art_set":
-            crop = json.loads(store_art.RECORD.read_text())
-            pieces[path] = art_set_record(
-                crop,
-                [f"{STORE_TEXTURES}/shop{shop}.png" for shop in store_art.SHOP_IDS],
-            )
+            pieces[path] = art_set_record(*art_set_sources()[piece.art])
         elif piece.kind == "face":
             if layer.character_id != faces.FACE_CLIP:
                 raise ValueError(

@@ -6,6 +6,8 @@
 #   assets/ui/battle/<NAME>.png                  - the four chrome characters
 #   assets/ui/battle/stance/<NAME>.png           - 5 stance icons + 2 covers
 #   assets/ui/battle/member_bar_panel.png        - the member bar's dark backing
+#   assets/ui/battle/clock_disc.png              - the clock's dark ring
+#   assets/ui/battle/clock/<SIDE>_<TIME>.png     - the clock's lit ring
 #   assets/backgrounds/battle/battle_layout.json - where those sit on the stage,
 #                                                  and blacker5's fade timing
 #
@@ -29,6 +31,7 @@
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import sys
 import tempfile
@@ -36,7 +39,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF, png
+from urchin_dev import ACTION_SCRIPT, FFDEC, REPO_ROOT, WEB_SWF, png
 from urchin_dev.run import run
 from urchin_dev.swf import render, strip, timeline
 from urchin_dev.swf.swf_index import (
@@ -128,6 +131,39 @@ SELECTOR = 3382
 SELECTOR_NAME = "selector"
 ORB_BUTTON_NAME = "thingo"
 ORB_COUNT = 8
+
+
+# The clock, battleClocker, which the battle frame places at depth 480. It is
+# the dark ring 3388 under thingerClock (3387), whose frames friend and enemy
+# differ only in the two Glow filters on its one child, sprite 3386. 3386 holds
+# two copies of the hand 3385, a white half ring, each under its own half-stage
+# mask: the hand at depth 2 shows through the right half and the hand at depth 6
+# through the left. Each hand's enterFrame script sets its _rotation from
+# BattleTimeNow and clamps it, so the ring is grey at 0, lights clockwise from
+# the top and is whole at BattleTimeLimit. A Traced run in Flash Player 14 read
+# the same rotations and pixels at 0, 30, 60, 90 and 120.
+#
+# ffdec runs no script and draws both hands where the tags place them, which
+# hides both under their masks. So each lit ring is rendered with the hands set
+# to the rotations the scripts give for one BattleTimeNow. The glow wraps the
+# cut ends of each hand, so one render cannot be turned in Godot to show
+# another time.
+CLOCK = 3389
+CLOCK_DISC_DEPTH = 2
+CLOCK_RING = 3387
+CLOCK_HANDS = 3386
+CLOCK_DIR = BATTLE_UI_DIR / "clock"
+HAND_SCRIPTS = ACTION_SCRIPT / f"DefineSprite_{CLOCK_HANDS}" / "frame_1"
+TIME_LIMIT_SCRIPT = ACTION_SCRIPT / "frame_217" / "DoAction.as"
+# Both hands compute -180 + 180 * (BattleTimeNow / (BattleTimeLimit / 2)), each
+# written its own way, and then set 0 in place of the angles on one side of 0.
+HAND_ANGLE = re.compile(
+    r"this\._rotation = (?:-180 \+ 180 \* \(_root\.BattleTimeNow / \(_root\.BattleTimeLimit / 2\)\)"
+    r"|180 \* \(_root\.BattleTimeNow / \(_root\.BattleTimeLimit / 2\)\) - 180);"
+    r"\s*if\((?:this\.)?_rotation (>=|<) 0\)\s*\{\s*_rotation = 0;\s*\}"
+)
+HAND_SCRIPT_DIR = re.compile(r"PlaceObject2_3385_(\d+)")
+TIME_LIMIT = re.compile(r"^BattleTimeLimit = (\d+);", re.MULTILINE)
 
 LAYOUT_JSON = HALL_DIR / "battle_layout.json"
 FRAME_LABEL = "KRINBATTLESCENE"
@@ -494,6 +530,120 @@ def radial_menu_layout(index: SwfIndex, battle_frame: int) -> dict:
     )
 
 
+def hand_clamp(script: str) -> str:
+    """-> the comparison, ">=" or "<", whose angles one hand's enterFrame script
+    sets to 0. Raises unless the script computes the angle both hands share."""
+    found = HAND_ANGLE.search(script)
+    if found is None:
+        raise RuntimeError(
+            f"a clock hand's script is not the angle this ports:\n{script}"
+        )
+    return found.group(1)
+
+
+def hand_rotation(clamp: str, time_now: float, limit: float) -> float:
+    """-> the _rotation that a hand whose script clamps with clamp sets when
+    BattleTimeNow is time_now and BattleTimeLimit is limit."""
+    angle = -180 + 180 * (time_now / (limit / 2))
+    if (clamp == ">=" and angle >= 0) or (clamp == "<" and angle < 0):
+        return 0.0
+    return angle
+
+
+def hand_clamps() -> dict[int, str]:
+    """-> {depth in sprite 3386: clamp} for both hands, read from their scripts."""
+    clamps = {}
+    for path in sorted(
+        HAND_SCRIPTS.glob("*/CLIPACTIONRECORD onClipEvent(enterFrame).as")
+    ):
+        depth = HAND_SCRIPT_DIR.fullmatch(path.parent.name)
+        if depth is None:
+            raise RuntimeError(f"{path.parent.name} is not a clock hand")
+        clamps[int(depth.group(1))] = hand_clamp(path.read_text("utf-8"))
+    if sorted(clamps.values()) != ["<", ">="]:
+        raise RuntimeError(f"the clock hands clamp {clamps}, want one each way")
+    return clamps
+
+
+def time_limit(script: str) -> int:
+    """-> BattleTimeLimit, which the battle frame's first script sets."""
+    found = TIME_LIMIT.findall(script)
+    if len(found) != 1:
+        raise RuntimeError(f"the battle frame sets BattleTimeLimit {len(found)} times")
+    return int(found[0])
+
+
+def clock_jobs(
+    index: SwfIndex, battle_frame: int, stripped: tuple[int, ...]
+) -> tuple[render.Job, dict[str, list[render.Job]], int]:
+    """-> the clock's dark ring job, the lit ring's jobs by frame label, one for
+    each BattleTimeNow from 0 to BattleTimeLimit, and that limit."""
+    clock_origin = render.placement_origin(index, 0, battle_frame, CLOCK)
+    inner = render.placement_origin(index, CLOCK, 1, CLOCK_RING)
+    ring_origin = (clock_origin[0] + inner[0], clock_origin[1] + inner[1])
+    disc = render.Job(
+        CLOCK,
+        1,
+        ZOOM,
+        origin=clock_origin,
+        strip=stripped,
+        only_depths=(CLOCK_DISC_DEPTH,),
+    )
+    clamps = hand_clamps()
+    limit = time_limit(TIME_LIMIT_SCRIPT.read_text("utf-8"))
+    rings = {
+        label: [
+            render.Job(
+                CLOCK_RING,
+                frame,
+                ZOOM,
+                origin=ring_origin,
+                strip=stripped,
+                rotate=tuple(
+                    (CLOCK_HANDS, depth, hand_rotation(clamp, time_now, limit))
+                    for depth, clamp in sorted(clamps.items())
+                ),
+            )
+            for time_now in range(limit + 1)
+        ]
+        for label, frame in sorted(sprite_label_frames(index, CLOCK_RING).items())
+    }
+    return disc, rings, limit
+
+
+def write_clock(
+    disc: render.Frame, rings: dict[str, list[render.Frame]], limit: int
+) -> tuple[dict, dict]:
+    """Write the dark ring and every lit ring, and return the dark ring's rect and
+    the lit rings' record. The lit rings share one crop, so one TextureRect at one
+    rect shows any of them."""
+    trimmed = render.trim(disc)
+    if trimmed is None:
+        raise RuntimeError(f"the clock's dark ring {CLOCK} rendered empty")
+    png.save(trimmed.image, BATTLE_UI_DIR / "clock_disc.png")
+    print(f"  {CLOCK} depth {CLOCK_DISC_DEPTH} -> clock_disc.png", file=sys.stderr)
+    labels = sorted(rings)
+    cut = render.trim_union([frame for label in labels for frame in rings[label]])
+    if cut is None:
+        raise RuntimeError(
+            f"the clock's ring {CLOCK_RING} rendered empty at every time"
+        )
+    CLOCK_DIR.mkdir(parents=True, exist_ok=True)
+    count = limit + 1
+    for n, label in enumerate(labels):
+        for time_now, piece in enumerate(cut[n * count : (n + 1) * count]):
+            png.save(piece.image, CLOCK_DIR / f"{label}_{time_now:03d}.png")
+    print(f"  {CLOCK_RING} {labels} x {count} -> clock/", file=sys.stderr)
+    record = {
+        "labels": labels,
+        "limit": limit,
+        "rect": rect_entry(cut[0].rect),
+        "size": list(cut[0].image.size),
+        "zoom": ZOOM,
+    }
+    return rect_entry(trimmed.rect), record
+
+
 def main():
     index = read_swf(WEB_SWF)
     halls = sprite_label_frames(index, HALL_SPRITE)
@@ -524,10 +674,18 @@ def main():
         for cid, (frames, origin) in wanted.items()
         for frame in sorted(frames)
     ]
+    disc_job, ring_jobs, limit = clock_jobs(index, battle_frame, stripped)
+    clock_start = len(jobs)
+    jobs += [
+        disc_job,
+        *(job for label in sorted(ring_jobs) for job in ring_jobs[label]),
+    ]
     # Every PNG and every rect below comes out of this one render, so no rect
     # can be measured off a different copy of the SWF than the PNG it
     # describes, which is how 5 of 10 hall rects went wrong in ecf28fd.
     with render.frames(WEB_SWF, jobs) as rendered:
+        clock = rendered[clock_start:]
+        rendered = rendered[:clock_start]
         by_sprite: dict[int, dict[int, render.Frame]] = {}
         for frame in rendered:
             by_sprite.setdefault(frame.job.timeline, {})[frame.job.frame] = frame
@@ -538,6 +696,16 @@ def main():
         layout["skies"] = write_labels(by_sprite[SKY_SPRITE], skies, SKY_DIR, "SKY_")
         print(f"chrome ({len(CHROME)}):", file=sys.stderr)
         layout["chrome"] = write_chrome({cid: by_sprite[cid][1] for cid in CHROME})
+        print("clock:", file=sys.stderr)
+        count = limit + 1
+        layout["chrome"]["clock_disc"], layout["clock"] = write_clock(
+            clock[0],
+            {
+                label: clock[1 + n * count : 1 + (n + 1) * count]
+                for n, label in enumerate(sorted(ring_jobs))
+            },
+            limit,
+        )
 
         print("stance button art:", file=sys.stderr)
         write_labels(by_sprite[STANCE_ICONS], icons, STANCE_DIR, "")

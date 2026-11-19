@@ -99,7 +99,9 @@ class Job:
     hides that depth of the owner's timeline on every frame, which reaches a
     sprite drawn inside the rendered frame. Each (depth, frame) in goto shows
     the sprite at that depth on its own 1-based frame, the way a gotoAndStop
-    would."""
+    would. Each (owner, depth, degrees) in rotate sets the _rotation of that
+    depth of the owner's timeline on every frame, the way a script's
+    _rotation = degrees would."""
 
     timeline: int
     frame: int
@@ -110,6 +112,7 @@ class Job:
     only_depths: tuple[int, ...] = ()
     hide_depths: tuple[tuple[int, int], ...] = ()
     goto: tuple[tuple[int, int], ...] = ()
+    rotate: tuple[tuple[int, int, float], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -189,6 +192,11 @@ def _request(job: Job, out: Path) -> dict:
         ]
     if job.goto:
         request["goto"] = [{"depth": d, "frame": f} for d, f in job.goto]
+    if job.rotate:
+        request["rotate_depths"] = [
+            {"owner": owner, "depth": depth, "degrees": degrees}
+            for owner, depth, degrees in job.rotate
+        ]
     return request
 
 
