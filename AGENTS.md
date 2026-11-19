@@ -95,6 +95,28 @@ lets every command run.
   `just extract-screen-rects`, and `test/unit/test_screen_rects.gd` checks
   where each piece lands, to 0.5 px.
 
+## Modules
+
+Each of these game and pipeline concepts sits behind one module. `GLOSSARY.md`
+defines the terms, and `DECODED_ALGORITHMS.md` says which part of the
+original each module ports or relies on.
+
+- Roster: `BattleSetup.build_units` in `scripts/battle/battle_setup.gd`
+  builds the Battle roster and records each unit's Origin.
+- Settlement: `BattleSettlement.settle` in
+  `scripts/battle/battle_settlement.gd` applies a finished battle to the save
+  and the achievements.
+- Fighter presenter: `scripts/battle/fighter_presenter.gd` owns one battle
+  slot's on-screen state.
+- Move legality: `MoveLegality` in `scripts/battle/move_legality.gd` decides
+  whether the player may pick a move, and gives the Refusal.
+- Timeline: `dev/urchin_dev/swf/timeline.py` folds a sprite's tags into the
+  display list on each frame.
+- Render-and-locate: `dev/urchin_dev/swf/render.py` draws chosen frames
+  through the ffdec_lib driver and gives each piece's rect on the Stage.
+- Stripped copy: `dev/urchin_dev/swf/strip.py` deletes the characters the
+  game never shows before ffdec draws, and refuses a clip mask.
+
 ## Read the doc that matches the task
 
 - Reading the ActionScript, porting the original's logic or data, or tracing
