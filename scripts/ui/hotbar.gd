@@ -69,7 +69,7 @@ func _ready():
 		button.mouse_entered.connect(_show_tooltip.bind(button))
 		button.mouse_exited.connect(GameTooltip.hide_tooltip)
 	_refresh(ZoneManager.current_zone)
-	for refusing: String in ["%RespecButton", "%OptionsButton"]:
+	for refusing: String in ["%RespecButton", "%OptionsButton", "%SaveButton", "%AbilitiesButton", "%AchievementsButton"]:
 		(get_node(refusing) as BaseButton).set_drag_forwarding(Callable(), _can_drop_item, _refuse_item_drop)
 
 
@@ -273,9 +273,12 @@ func _on_respec_pressed() -> void:
 		window.refresh()
 
 
-# The original's Respec and Options buttons (DefineButton2_3179 and
-# DefineButton2_3180 on(release)) refuse a release while an item is on the
-# cursor, with MENU[66]. In the port an item is on the cursor while the player drags it
+# The original's Respec, Options, Save, Abilities and Achievements buttons
+# (DefineButton2_3179, DefineButton2_3180, DefineButton2_3183,
+# DefineButton2_3184 and DefineButton2_3153 on(release)) refuse a release while
+# an item is on the cursor, with MENU[66]. World Map (DefineButton2_3177) checks
+# for the item but shows nothing, and Inventory and Quit do not check, so those
+# three take no drop. In the port an item is on the cursor while the player drags it
 # from an Inventory or equipment slot (ItemSlot._get_drag_data), and the release
 # ends that drag on a button, so the button takes the drop and refuses it. The
 # original checks this before PauseForScreen, so an inert hotbar refuses too. The

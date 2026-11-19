@@ -865,6 +865,10 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
   never limits respecs (#32). Every message goes through a bare `play()`, so it shows only when the banner is not already up. The port's item on the cursor is an item
   drag, so a drag released on the button is the `MENU[66]` case. The port keeps cooldowns only on a battle's units, so the respec has none to clear. Its `KrinScreen._visible = false` hides the zone screen (DefineSprite 3287), which
   the port hides whenever a Window shows. Its tooltip is `SYSTEM[32]` + ": EUR" + the cost over `SYSTEM[33]`, with the euro sign where this line says EUR.
+- Each hotbar button reads `Krin.mouseItem` in its own way (on(release) of each button). Respec (`DefineButton2_3179`), Options (3180), Save (3183), Abilities (3184) and
+  Achievements (3153) show `MENU[66]` with a bare `play()` while an item is on the cursor, and check this before `PauseForScreen`. World Map (3177) checks for the item but has no
+  `else`, so it shows nothing. Inventory (3185) and Quit (3178) do not check. Ported: `hotbar.gd`'s `_ready` gives the five refusing buttons `_can_drop_item` and
+  `_refuse_item_drop`. The other three take no drop, so the port's item drag ends on them with no effect and the item stays in its slot (#436, #437).
 
 ## The Abilities hint box and its tutorial steps (DefineSprite 3059, #387)
 
