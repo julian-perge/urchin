@@ -91,8 +91,11 @@ def count(calls: Sequence[Call]) -> dict[str, Counter[str]]:
         real = outcome(call.fields["real"], call.caster)
         if outcome(call.fields["none"], call.caster) != real:
             counts["replay_mismatch"] += 1
-        # The alive replay leaves counterFilter1 undefined, so its target is
-        # undefined exactly when the call reached lines 437-439.
+        # The alive replay rebuilds aliveEnemies and leaves counterFilter1
+        # undefined, so its target is undefined exactly when the call reaches
+        # lines 437-439 with that list. A real call whose left list is empty
+        # passes the turn at line 413 instead, and then shows as a changed
+        # move, not as a fallback.
         if call.fields["alive"].split(">")[1:2] == ["undefined"]:
             counts["fallback"] += 1
             if real.target != call.caster:

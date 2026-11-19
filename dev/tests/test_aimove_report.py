@@ -2,7 +2,11 @@
 # committed AIMOVE logs in references/traced_runs/. No SWF or player is needed.
 from __future__ import annotations
 
+import json
+import re
+
 import pytest
+from urchin_dev import CONVERTED_JSON, DEV_ROOT
 from urchin_dev.swf.aimove_report import Outcome, count, main, outcome, parse
 from urchin_dev.swf.trace import TRACED_RUNS
 
@@ -107,3 +111,29 @@ def test_every_committed_replay_with_nothing_reset_matches_the_real_call(name):
     calls = parse((TRACED_RUNS / name).read_text(encoding="utf-8"))
     assert calls
     assert all(counts["replay_mismatch"] == 0 for counts in count(calls).values())
+
+
+def test_the_probe_saves_every_global_that_its_replays_write():
+    # The replays in dev/probes/aimove.as leave the game as it was only when
+    # __aiNames lists every name that AImoveAdder and KRRR write. The Probe
+    # saves AI_CD_ARR and AI_CD_PUT of the caster, and the healedThisTurn
+    # keys, on their own, and a stub replaces krinAddMove during a replay.
+    probe = (DEV_ROOT / "probes" / "aimove.as").read_text(encoding="utf-8")
+    saved = set(
+        re.findall(r'"(\w+)"', re.search(r"__aiNames = \[(.*?)\];", probe).group(1))
+    )
+    written = set()
+    for record_line in (
+        (CONVERTED_JSON / "as_index.jsonl").read_text(encoding="utf-8").splitlines()
+    ):
+        record = json.loads(record_line)
+        if record.get("kind") == "function" and record.get("name") in (
+            "AImoveAdder",
+            "KRRR",
+        ):
+            written |= {
+                write["name"].removeprefix("_root.") for write in record["writes"]
+            }
+    assert {"focusMove", "D_Array_F", "KRSC"} <= written
+    separately_saved = {"pg.AI_CD_ARR", "pg.AI_CD_PUT", "healedThisTurn"}
+    assert sorted(written - separately_saved - saved) == []

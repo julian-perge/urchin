@@ -1130,7 +1130,7 @@ EXEC_AFTER unit=3 clipMoveBammer=true strikeSuccess=true FOCUSN=16 LIFEN=615 mov
 - The `D_Array_*` lists are rebuilt only on the non-absolute path (134-139). On the absolute path the heal scan (197-247) reads the lists of the last non-absolute caller, and line 398 sends a self-and-teammate move to the unit that scan found and adds its heal guess to that slot's `healedThisTurn`.
 - `aliveEnemies` and `counterFilter1` are rebuilt only for a move that hits enemies (352-391). Line 413 passes the turn on an empty list, and lines 437-439 fall back to `aliveEnemies[counterFilter1]` when the target is still 0.
 
-What the runs showed. Each count is from `just aimove-report` on the logs below. A call is changed when its real move, target or heal-guess slot differs from a replay of the same call, with the same dice, in which every value above starts as `BattleAI` starts it. The fallback column counts the calls that reached lines 437-439.
+What the runs showed. Each count is from `just aimove-report` on the logs below. A call is changed when its real move, target or heal-guess slot differs from a replay of the same call, with the same dice, in which every value above starts as `BattleAI` starts it. The fallback column counts the calls that reach lines 437-439 when `aliveEnemies` is rebuilt fresh. With an empty left list the real call would pass the turn at line 413 instead, which would count as a changed move, and no logged call did that.
 
 | Battle | Player | Calls | Absolute | Changed | Fallback |
 | --- | --- | --- | --- | --- | --- |
