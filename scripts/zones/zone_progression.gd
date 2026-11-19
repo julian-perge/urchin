@@ -80,12 +80,19 @@ const CUTSCENE_GOTO_SCENE: Dictionary = {
 # (DefineButton2_2770 on(release), lines 7-10), the clip's end goes on to
 # IntroSeq2 (frame_293/DoAction.as:1), and IntroSeq2's last frame starts
 # battle 100 with progressFight on (frame_180/DoAction.as:2-3). Nothing on that
-# path sets bossFight, so it is not a boss fight.
+# path sets bossFight, so it is not a boss fight. The same frame sets
+# soundPlayCounter to 3 and bangStart on (lines 4-6), so the fight starts
+# _music_battle2 at full volume. music_rotation is that counter, and the Battle
+# screen hands it to AudioManager.set_first_fight_music(). Line 5 also sets
+# soundModeKrin to 0, so the track starts even after the Tutorial's own battle
+# track. The port needs no such step: the Battle screen stops all sounds before
+# CS_INTRO2, and that sets the music mode to none.
 const FIRST_STORY_FIGHT: Dictionary = {
 	"battle_id": 100,
 	"is_story_progress": true,
 	"is_boss": false,
 	"cutscene_before": "CS_INTRO2",
+	"music_rotation": 3,
 }
 
 # The Tutorial is battle 2 (frame_165/DoAction.as:2).
@@ -96,12 +103,15 @@ const TUTORIAL_BATTLE_ID: int = 2
 # CS_INTRO when the option is on (DefineButton2_2770 on(release), lines 2-6), the
 # clip's end goes on to IntroSeq (the button's gotoSceneKrin), and IntroSeq's
 # last frame starts battle 2 with progressFight off (frame_165/DoAction.as:2-3).
-# Nothing on that path sets bossFight either.
+# Nothing on that path sets bossFight either. The same frame sets
+# soundPlayCounter to 1 and bangStart on (lines 4-5), so the fight starts
+# _music_battle1 at full volume, as music_rotation does for FIRST_STORY_FIGHT.
 const TUTORIAL_FIGHT: Dictionary = {
 	"battle_id": TUTORIAL_BATTLE_ID,
 	"is_story_progress": false,
 	"is_boss": false,
 	"cutscene_before": "CS_INTRO",
+	"music_rotation": 1,
 }
 
 # The moves IntroSeq puts on the first two bar slots for the Tutorial fight,
