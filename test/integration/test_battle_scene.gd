@@ -1452,6 +1452,33 @@ func test_heroic_countdown_stops_once_the_player_is_dead():
 	ZoneManager.auto_switch_scenes = true
 
 
+# The conductor picks the clock's frame from the player's teamSide alone, so
+# after the player dies his Companions' half-turns still show the blue frame
+# (onClipEvent(load), lines 9-16, and enterFrame, lines 297-310).
+func test_clock_stays_on_the_player_side_frame_after_the_player_dies():
+	var save = PlayerSave.new_game("DeadClock", 0)
+	save.difficulty = CombatUnit.Difficulty.NORMAL
+	GameData.current_save = save
+	ZoneManager.auto_switch_scenes = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.set_process(false)
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene.decision_open, 5)
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	player.life_n = 0.0
+	player.active = false
+	scene.runner.team_move_now = player.team_side
+	scene._set_clock_side()
+	scene._process(0.0)
+	assert_eq(_clock_shows(scene), "friend_120", "the player's side keeps the blue frame")
+
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+
+
 # Battle 600 runs the CHURCH hall under the ROME sky. The sky is a horizon
 # strip whose bottom sits on the ground line, and the layout JSON says that
 # line is y = 306.0 for ROME - not the 292.0 the old constant used.

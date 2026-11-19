@@ -245,8 +245,13 @@ func _decision_time_now() -> float:
 	return BattleRunner.BATTLE_TIME_LIMIT - _decision_timer * BattleScreenClip.fps()
 
 
+# The conductor compares only the player's teamSide with TeamMoveNow, so the
+# clock stays on the player's frame for the Companions' half-turns after the
+# player dies (onClipEvent(load), lines 9-16, and enterFrame, lines 297-310).
 func _set_clock_side() -> void:
-	_clock_side = BattleClock.Side.FRIEND if runner.is_player_turn() else BattleClock.Side.ENEMY
+	var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
+	var ours: bool = player != null and player.team_side == runner.team_move_now
+	_clock_side = BattleClock.Side.FRIEND if ours else BattleClock.Side.ENEMY
 
 
 # Combat debug log -> user://logs/battle.log (see LogManagerAuto).
@@ -523,7 +528,6 @@ func _battle_loop() -> void:
 		_pending_setup_events = []
 	while not runner.is_over():
 		_show_member_rows_for(runner.team_move_now)
-		_set_clock_side()
 		if runner.is_player_turn():
 			_refresh_member_rows()
 			decision_open = true
@@ -549,7 +553,10 @@ func _battle_loop() -> void:
 		await _play_events(events)
 		if not is_inside_tree() or _finished:
 			return
+		# The conductor sets BattleTimeNow to 0 and moves the clock to the next
+		# side's frame in the same frame (enterFrame, lines 143 and 297-310).
 		_battle_time_now = 0.0
+		_set_clock_side()
 		_refresh_bars()
 		var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
 		if player == null or not player.active:

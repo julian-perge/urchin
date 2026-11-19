@@ -15,6 +15,9 @@ const FRAMES: String = "res://assets/ui/battle/clock/%s_%03d.png"
 const LABELS: Dictionary = {Side.FRIEND: "friend", Side.ENEMY: "enemy"}
 
 @onready var _ring: TextureRect = $Ring
+# Each render once loaded, so a Heroic window loads each of its 121 PNGs once
+# per battle and not once per change.
+var _textures: Dictionary = {}
 
 
 # Shows the ring on the frame of `side` at `battle_time_now`, in SWF frames.
@@ -24,5 +27,6 @@ const LABELS: Dictionary = {Side.FRIEND: "friend", Side.ENEMY: "enemy"}
 func show_time(side: int, battle_time_now: float) -> void:
 	var frame: int = clampi(roundi(battle_time_now), 0, int(BattleRunner.BATTLE_TIME_LIMIT))
 	var path: String = FRAMES % [LABELS[side], frame]
-	if _ring.texture == null or _ring.texture.resource_path != path:
-		_ring.texture = load(path)
+	if not _textures.has(path):
+		_textures[path] = load(path)
+	_ring.texture = _textures[path]
