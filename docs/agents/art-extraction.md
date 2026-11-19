@@ -355,6 +355,13 @@ This tool checks how it looks: the art, the fills and the shadows.
   The score is p99 10, with the 20 px control at 114. On the pool's rect,
   (523.6, 274.2) 217.35x133.05, the backing, the frame's fades and the inner shadow overlay
   score p99 2, with the control at 90 (julian-perge/urchin#238).
+- **The World map score is `chrome` p99 11, with the 20 px control at 185.**
+  The `world_map` entry scores root frame `overMap` against `zone_map.tscn`
+  alone, which shows all seven zones with the open face, as ffdec draws them.
+  `hide_names` hides `Connectors`, because the game draws the links into the
+  empty `lineMC` while it runs, and `SCENES.compare_strip` takes the tooltip
+  2717 out of the reference. The rest of the error is on the edges of the map
+  art's ink lines.
 - **The Battle score covers the frame, not the fighters.** The `battle` entry uses
   `battle_scene.tscn` alone. `SCENES.compare_strip` takes the hall and its
   placeholder rigs, the sky, the fade, the clock, the pass and retreat buttons, the
