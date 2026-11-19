@@ -24,6 +24,8 @@
 # dev/urchin_dev/swf/extract/start_screens.py.
 extends Control
 
+const BattleSceneScript: GDScript = preload("res://scripts/battle/battle_scene.gd")
+
 # New Game and Load Game open the same slot list, and the original tells the
 # two apart by Krin.dataMode, which DefineButton2_2707 sets to "save" and
 # DefineButton2_2706 to "load".
@@ -77,8 +79,10 @@ func _ready():
 	_setup_class_cards()
 	# Quit, the battle's Quit and the game over go to resetHere, which recreates
 	# Krin with the sound on (frame_41/DoAction_2.as:7-9). This screen stands in
-	# for resetHere, so it turns the sound back on.
+	# for resetHere, so it turns the sound back on and clears the landing sounds
+	# that Krin held.
 	AudioManagerAuto.sound_enabled = true
+	BattleSceneScript.forget_landing_sounds()
 	AudioManagerAuto.play_menu_music()
 
 

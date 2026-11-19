@@ -1337,6 +1337,33 @@ func test_a_pass_after_a_cost_failure_with_no_tick_lands_move_0_and_changes_noth
 	assert_eq((moves[0]["result"] as MoveResult).buff_applied, "", "and no buff lands")
 
 
+# A dispatch whose target is no longer active fails the conductor's test at line
+# 350 and takes the stun path (lines 534-585), so after a cost failure whose tick
+# did nothing, its buff tick lands its bound move on the dead target. This is
+# read from the code, not run in the original.
+func test_a_move_at_a_dead_target_lands_on_it_after_a_cost_failure_with_no_tick():
+	var runner: BattleRunner = _sonny_holding([])
+	var player: CombatUnit = runner.units[1]
+	var guard: CombatUnit = runner.units[2]
+	player.focus_n = 0.0
+	BattleRunner.strike_success = true
+	runner._execute_action({"caster_slot": 1, "target_slot": 2, "move_id": 5})
+	guard.life_n = 0.0
+	guard.active = false
+	player.apply_buff(buffs_by_name["IDIGITALIS"], 1, guard)
+	player.apply_changes()
+
+	runner._execute_action({"caster_slot": 1, "target_slot": 2, "move_id": 434})
+
+	var moves: Array = runner.events.filter(func(event): return event["type"] == BattleRunner.EventType.MOVE)
+	assert_eq(moves.size(), 1, "Sonny's Shock Therapy lands")
+	if moves.size() != 1:
+		return
+	assert_true(moves[0].get("free", false), "for free")
+	assert_eq(moves[0]["target_slot"], 2, "on the dead guard")
+	assert_false((moves[0]["result"] as MoveResult).killed, "which it cannot kill again")
+
+
 # Sonny, fast enough to act first, with 100 Focus, and Veradux in slot 3 with only
 # Dux Electro to choose, 60 Focus and Digitalis on him, against a Prison Guard.
 func _disrupted_veradux_runner() -> BattleRunner:

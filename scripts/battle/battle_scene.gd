@@ -953,10 +953,10 @@ func _play_move_event(event: Dictionary) -> void:
 # The original's _root.Krin.soundToMake and missToMake, the sounds its impact
 # block plays for a hit and for a miss (the conductor, lines 19-21 and 105-108).
 # Each move that dispatches and pays sets both (see _set_landing_sounds), and
-# nothing else does. Krin is made once, when the game starts
-# (frame_41/DoAction_2.as:7), so a free move plays the sounds of the last paid
-# move of the session, from this battle or an earlier one. An empty name plays
-# nothing, as addSound plays nothing for undefined (frame_42/DoAction.as:7).
+# nothing else does. So a free move plays the sounds of the last paid move since
+# the game last reached resetHere (see forget_landing_sounds), from this battle
+# or an earlier one. An empty name plays nothing, as addSound plays nothing for
+# undefined (frame_42/DoAction.as:7).
 static var _sound_to_make: String = ""
 static var _miss_to_make: String = ""
 
@@ -976,6 +976,13 @@ func _set_landing_sounds(move: Ability) -> void:
 		"Shock":
 			_sound_to_make = ""
 			_miss_to_make = ""
+
+
+# The original's resetHere recreates Krin, which clears both sounds
+# (frame_41/DoAction_2.as:7). main_menu.gd stands in for resetHere and calls this.
+static func forget_landing_sounds() -> void:
+	_sound_to_make = ""
+	_miss_to_make = ""
 
 
 func _play_landing_sound(result: MoveResult) -> void:
