@@ -117,6 +117,15 @@ extracting it.
   frames, the CLI differs from the driver by at most 92 of 8.4 million pixels over
   19 frames sampled in that span. Those pixels sit in a box no larger than 43x41
   px, and no frame from 1915 on differs at all, so its export stays on the CLI.
+- **A filter's blur is in stage px in Flash, and ffdec bakes it at one scale.**
+  Flash draws a glow as wide whatever the scale of the clip and its parents,
+  but a baked PNG draws its glow scaled with the art. MODEL8 draws its parts
+  at about 0.67, so the Hydra's glow came out about 4.7 px wide where Flash
+  draws 7 (#471). ffdec multiplies the blur by the zoom only, never by a
+  matrix, so a job's `filter_scale` of 1 / s renders art for scale s.
+  `extract_doll_art` renders each filtered doll art at every scale a model
+  that wears it draws it at, into `resources/sprites/glow_scales/`, and
+  `CharacterVisual` shows the render nearest each part's stage scale.
 - **Render PNG frames through `dev/urchin_dev/swf/render.py`.** It runs the
   ffdec_lib driver once per SWF per extractor, deletes each strip list in
   memory, and hands back every canvas with the rects it was sized from, so a

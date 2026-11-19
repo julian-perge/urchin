@@ -29,6 +29,9 @@
 //                                          nested inside the rendered frame
 //       "rotate_depths": [{"owner": id, "depth": d, "degrees": 90.0}]  set the
 //                                          _rotation of a depth on every frame
+//       "filter_scale": 1.5                multiply the blur and the distance of
+//                                          every filter by this, for a sprite
+//                                          only
 //     }]
 //   }]}
 //
@@ -49,6 +52,16 @@
 // two axis vectors, the rotation is the x axis's angle and the skew is the y
 // axis's angle less the x axis's angle. So a layer placed turned 180 degrees
 // ends at the given angle, not 180 degrees past it.
+//
+// Flash draws a filter's blur in stage px, whatever the scale of the clip and
+// its parents. ffdec draws it at the blur times the zoom, which is the same
+// thing only when the game draws the art at scale 1. A job for art the game
+// draws at scale s passes filter_scale 1 / s, so the blur comes out as wide on
+// the stage as Flash draws it. The driver changes every filter of the SWF in
+// place, because a DepthState holds the same filter objects as its
+// PlaceObject. The sprite's Timeline keeps the filter margin it measured when
+// it was built, so the driver measures it again from the scaled filters, and
+// the canvas grows or shrinks with the blur.
 //
 // Every override and every delete refuses a layer with clipDepth > -1.
 // Timeline.toImage skips an invisible layer before it builds that layer's
@@ -86,8 +99,10 @@ import com.jpexs.decompiler.flash.timeline.Timeline;
 import com.jpexs.decompiler.flash.types.ColorTransform;
 import com.jpexs.decompiler.flash.types.MATRIX;
 import com.jpexs.decompiler.flash.types.RECT;
+import com.jpexs.decompiler.flash.types.filters.FILTER;
 import com.jpexs.helpers.SerializableImage;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -108,6 +123,8 @@ public class Render {
     private final Map<DepthState, boolean[]> savedVisible = new IdentityHashMap<>();
     private final Map<DepthState, int[]> savedTime = new IdentityHashMap<>();
     private final Map<DepthState, MATRIX[]> savedMatrix = new IdentityHashMap<>();
+    private final Map<FILTER, double[]> savedFilter = new IdentityHashMap<>();
+    private static final String[] FILTER_LENGTHS = {"blurX", "blurY", "distance"};
 
     Render(SWF swf) {
         this.swf = swf;
@@ -252,6 +269,52 @@ public class Render {
         layer.matrix = turned;
     }
 
+    void scaleFilters(double factor) throws ReflectiveOperationException {
+        for (Timeline t : allTimelines()) {
+            for (Frame f : t.getFrames()) {
+                for (DepthState layer : f.layers.values()) {
+                    if (layer.filters == null) {
+                        continue;
+                    }
+                    for (FILTER filter : layer.filters) {
+                        if (savedFilter.containsKey(filter)) {
+                            continue;
+                        }
+                        double[] saved = new double[FILTER_LENGTHS.length];
+                        for (int i = 0; i < FILTER_LENGTHS.length; i++) {
+                            Field field = lengthField(filter, FILTER_LENGTHS[i]);
+                            if (field != null) {
+                                saved[i] = field.getDouble(filter);
+                                field.setDouble(filter, saved[i] * factor);
+                            }
+                        }
+                        savedFilter.put(filter, saved);
+                    }
+                }
+            }
+        }
+    }
+
+    void restoreFilters() throws ReflectiveOperationException {
+        for (var entry : savedFilter.entrySet()) {
+            for (int i = 0; i < FILTER_LENGTHS.length; i++) {
+                Field field = lengthField(entry.getKey(), FILTER_LENGTHS[i]);
+                if (field != null) {
+                    field.setDouble(entry.getKey(), entry.getValue()[i]);
+                }
+            }
+        }
+        savedFilter.clear();
+    }
+
+    static Field lengthField(FILTER filter, String name) {
+        try {
+            return filter.getClass().getField(name);
+        } catch (NoSuchFieldException absent) {
+            return null;
+        }
+    }
+
     static int labelFrame(Timeline child, String label) {
         List<Frame> frames = child.getFrames();
         for (int i = 0; i < frames.size(); i++) {
@@ -274,7 +337,16 @@ public class Render {
         }
         Frame frame = tim.getFrame(frameIndex);
         String where = "timeline " + timelineId + " frame " + (frameIndex + 1);
+        Dimension savedFilterDimension = tim.filterDimension;
         try {
+            JsonValue filterScale = job.get("filter_scale");
+            if (filterScale != null) {
+                if (!(swf.getCharacter(timelineId) instanceof DefineSpriteTag sprite)) {
+                    throw new IllegalArgumentException("filter_scale needs a sprite, not " + where);
+                }
+                scaleFilters(filterScale.asDouble());
+                tim.filterDimension = sprite.getFilterDimensions();
+            }
             JsonValue only = job.get("only_depths");
             if (only != null) {
                 Set<Integer> keep = new HashSet<>();
@@ -400,6 +472,8 @@ public class Render {
             savedVisible.clear();
             savedTime.clear();
             savedMatrix.clear();
+            restoreFilters();
+            tim.filterDimension = savedFilterDimension;
         }
     }
 

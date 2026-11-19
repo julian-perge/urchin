@@ -105,7 +105,9 @@ class Job:
     timeline, which reaches a sprite drawn inside the rendered frame. Each
     (owner, depth, degrees) in rotate sets the _rotation of that
     depth of the owner's timeline on every frame, the way a script's
-    _rotation = degrees would."""
+    _rotation = degrees would. filter_scale multiplies the blur and the distance
+    of every filter, which keeps a filter as wide on the stage as Flash draws it
+    when the game draws the sprite at scale 1 / filter_scale."""
 
     timeline: int
     frame: int
@@ -118,6 +120,7 @@ class Job:
     goto: tuple[tuple[int, int], ...] = ()
     nested_goto: tuple[tuple[int, int, int], ...] = ()
     rotate: tuple[tuple[int, int, float], ...] = ()
+    filter_scale: float = 1.0
 
 
 @dataclass(frozen=True)
@@ -199,6 +202,8 @@ def _request(job: Job, out: Path) -> dict:
         request["goto"] = [{"depth": d, "frame": f} for d, f in job.goto] + [
             {"owner": owner, "depth": d, "frame": f} for owner, d, f in job.nested_goto
         ]
+    if job.filter_scale != 1.0:
+        request["filter_scale"] = job.filter_scale
     if job.rotate:
         request["rotate_depths"] = [
             {"owner": owner, "depth": depth, "degrees": degrees}
