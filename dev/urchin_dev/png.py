@@ -12,12 +12,21 @@ import oxipng
 from PIL import Image
 
 LEVEL = 2
+MIPMAPS_OFF = "mipmaps/generate=false"
+MIPMAPS_ON = "mipmaps/generate=true"
+# Godot fills in the uid, the paths and every other param of a .import file
+# that holds only these lines, and keeps the params it finds when it imports.
+MIPMAPPED_IMPORT = (
+    '[remap]\n\nimporter="texture"\ntype="CompressedTexture2D"\n\n'
+    f"[params]\n\n{MIPMAPS_ON}\n"
+)
 
 
-def save(image: Image.Image, path: Path) -> None:
+def save(image: Image.Image, path: Path, *, mipmaps: bool = False) -> None:
     """Write `image` to `path` as a PNG built from its RGBA pixels alone.
     oxipng may store it with fewer channels or a palette when no pixel
-    needs more, and the pixels read back the same."""
+    needs more, and the pixels read back the same. With `mipmaps`, the
+    PNG's .import file asks Godot to import it with mipmaps."""
     rgba = image.convert("RGBA")
     raw = oxipng.RawImage(
         rgba.tobytes(), rgba.width, rgba.height, color_type=oxipng.ColorType.rgba()
@@ -25,6 +34,28 @@ def save(image: Image.Image, path: Path) -> None:
     path.write_bytes(
         raw.create_optimized_png(level=LEVEL, strip=oxipng.StripChunks.safe())
     )
+    if mipmaps:
+        import_with_mipmaps(path)
+
+
+def import_with_mipmaps(path: Path) -> None:
+    """Turn mipmaps on in the .import file of the PNG at `path`, and keep the
+    rest of it, so the uid that scenes refer to stays. A PNG with no .import
+    file gets one that holds only the importer and the mipmaps param."""
+    sidecar = path.with_name(path.name + ".import")
+    if not sidecar.exists():
+        sidecar.write_text(MIPMAPPED_IMPORT)
+        return
+    text = sidecar.read_text()
+    if MIPMAPS_ON in text.splitlines():
+        return
+    if MIPMAPS_OFF in text.splitlines():
+        text = text.replace(MIPMAPS_OFF, MIPMAPS_ON)
+    elif "[params]\n\n" in text:
+        text = text.replace("[params]\n\n", f"[params]\n\n{MIPMAPS_ON}\n")
+    else:
+        raise ValueError(f"{sidecar} has no [params] section to turn mipmaps on in")
+    sidecar.write_text(text)
 
 
 def save_copy(source: Path, path: Path) -> None:

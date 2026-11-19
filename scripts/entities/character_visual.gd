@@ -138,6 +138,11 @@ static var _glow_renders_loaded: bool = false
 static var _animations: Dictionary = {}
 static var _sound_cues: Dictionary = {}
 static var _pieces: Dictionary = {}
+# The PIECE_SHADER material that every doll sprite with no colour transform of
+# its own shares, so that it samples its mipmaps with the shader's bias. Every
+# doll on screen draws with it, so a sprite that needs its own shader
+# parameters gets its own material first, as _apply_pieces does.
+static var _plain_piece_material: ShaderMaterial
 
 # dressChar's dollPartsArray. skin_code is the base-skin part code
 # (dollPartsCores2); equip_slot indexes the 7-slot equip_array
@@ -747,6 +752,7 @@ func _build_pieces() -> void:
 		sprite.name = "Piece%s" % depth
 		sprite.centered = false
 		sprite.visible = false
+		_sample_mipmaps(sprite)
 		_body.add_child(sprite)
 		_piece_nodes[depth] = sprite
 
@@ -774,7 +780,7 @@ func _apply_pieces(played_from: int = -1) -> void:
 		if entry == null:
 			continue
 		if entry is String:
-			sprite.material = null
+			sprite.material = _plain_material()
 			_show_piece_art(sprite, entry, Transform2D.IDENTITY)
 			_show_tint(sprite, "", Transform2D.IDENTITY, [], Color.WHITE)
 			continue
@@ -791,7 +797,7 @@ func _apply_pieces(played_from: int = -1) -> void:
 		var c: Array = entry["color"]
 		var placed := Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5]))
 		_show_piece_art(sprite, clip["frames"][frame], placed)
-		if sprite.material == null:
+		if sprite.material == _plain_material():
 			sprite.material = ShaderMaterial.new()
 			sprite.material.shader = PIECE_SHADER
 		sprite.material.set_shader_parameter("multiplier", Vector4(c[0], c[1], c[2], c[3]))
@@ -844,6 +850,7 @@ func _show_tint(sprite: Sprite2D, art: String, placed: Transform2D, color: Array
 		node.name = "Tint"
 		node.centered = false
 		node.show_behind_parent = true
+		node.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 		node.material = ShaderMaterial.new()
 		node.material.shader = PIECE_SHADER
 		sprite.add_child(node)
@@ -1076,6 +1083,7 @@ func _add_layer(part: Node2D, path: String) -> void:
 	sprite.position = Vector2(entry["x"], entry["y"])
 	var texture_size: Vector2 = sprite.texture.get_size()
 	sprite.scale = Vector2(entry["w"] / texture_size.x, entry["h"] / texture_size.y)
+	_sample_mipmaps(sprite)
 	var renders: Array = _load_glow_renders().get(path.get_file().get_basename(), [])
 	if not renders.is_empty():
 		sprite.set_meta("glow_renders", renders)
@@ -1116,6 +1124,20 @@ static func _load_glow_renders() -> Dictionary:
 		if parsed is Dictionary:
 			_glow_renders = parsed
 	return _glow_renders
+
+
+# Makes `sprite` draw its texture's mipmaps through PIECE_SHADER, which holds
+# the bias that keeps a part's edges sharp when the doll draws it small.
+static func _sample_mipmaps(sprite: Sprite2D) -> void:
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	sprite.material = _plain_material()
+
+
+static func _plain_material() -> ShaderMaterial:
+	if _plain_piece_material == null:
+		_plain_piece_material = ShaderMaterial.new()
+		_plain_piece_material.shader = PIECE_SHADER
+	return _plain_piece_material
 
 
 static func _load_offsets() -> Dictionary:

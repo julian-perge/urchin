@@ -25,7 +25,10 @@ name, so it misses a call in class-level code and a callable reference such as
   the 2D snap alone rounds every Control again. Art draws LINEAR and the
   `NearestText` autoload keeps text NEAREST, so text stays crisp at fractional
   positions and a filter change has to recheck it (julian-perge/urchin#128,
-  julian-perge/urchin#130).
+  julian-perge/urchin#130). Doll sprites draw LINEAR_WITH_MIPMAPS through
+  `scenes/doll_piece.gdshader`, whose mipmap bias keeps the doll's small parts
+  close to Flash (julian-perge/urchin#482). `Viewport.texture_mipmap_bias`
+  does not reach 2D, so the bias has to sit in the shader.
 - Use `FloatBox` (`scripts/ui/float_box.gd`) for every box whose pitches come
   from the SWF, even when the pitches are whole numbers. A stock BoxContainer
   takes its separation from a whole-pixel theme constant, so it cannot hold a

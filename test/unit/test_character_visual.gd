@@ -1342,6 +1342,54 @@ func test_model8_parts_land_where_the_flash_run_of_battle_408_put_them():
 	assert_eq(checked, 36, "6 parts on 2 frames for each of the 3 MODEL8 dolls, which Flash poses alike")
 
 
+# The doll part PNGs are rendered at 2x, and MODEL8 draws its parts at about
+# 0.67, so an 800x575 window shows each PNG at about a third of its size. Only a
+# mipmap level keeps those edges from aliasing (#482), so every sprite of the
+# doll except its shadow samples its mipmaps through doll_piece.gdshader, which
+# holds the bias, on every frame of every model with pieces.
+func test_every_doll_sprite_samples_its_mipmaps_through_the_piece_shader():
+	visual.dress("M", "ONE", "ONE", ["", "ARCTIC", "", "", "", "AK", ""])
+	var wrong: Array = []
+	var textures: Dictionary = {}
+	for model in CharacterVisual.CLIP_MODELS:
+		if not FileAccess.file_exists(CharacterVisual.pieces_file(model)):
+			continue
+		visual.start_clip(model)
+		for index in (_pieces_of(model)["frames"] as Array).size():
+			visual._frame_index = index
+			visual._apply_pieces()
+			_collect_doll_sprites(visual.get_node("Body"), "%s frame %d" % [model, index + 1], wrong, textures)
+	visual.start_clip("MODEL8")
+	visual.dress("M", "HYDRA2", "", ["", "", "", "", "", "", ""])
+	visual._fit_glow_renders()
+	_collect_doll_sprites(visual.get_node("Body"), "MODEL8 Hydra", wrong, textures)
+	var glow_renders: int = 0
+	for path in textures:
+		if (path as String).contains("/glow_scales/"):
+			glow_renders += 1
+	assert_gt(glow_renders, 0, "sanity: the walk saw the glow renders")
+	assert_eq(wrong, [], "every doll sprite samples its mipmaps through the piece shader")
+	assert_gt(textures.size(), 100, "sanity: the walk saw the layers, the pieces and the tints")
+	var flat: Array = []
+	for path in textures:
+		if not (textures[path] as Texture2D).get_image().has_mipmaps():
+			flat.append(path)
+	assert_eq(flat, [], "every doll PNG is imported with mipmaps")
+
+
+func _collect_doll_sprites(node: Node, where: String, wrong: Array, textures: Dictionary) -> void:
+	for child in node.get_children():
+		if child.name == &"Shadow" or child.is_queued_for_deletion():
+			continue
+		if child is Sprite2D and child.texture != null:
+			var sprite := child as Sprite2D
+			var shader: Shader = (sprite.material as ShaderMaterial).shader if sprite.material is ShaderMaterial else null
+			if sprite.texture_filter != CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS or shader != CharacterVisual.PIECE_SHADER:
+				wrong.append("%s: %s" % [where, sprite.get_path()])
+			textures[sprite.texture.resource_path] = sprite.texture
+		_collect_doll_sprites(child, where, wrong, textures)
+
+
 # Returns the layer of `part_name` whose art has renders in glow_scales.json.
 func _glow_layer(part_name: String) -> Sprite2D:
 	for child in visual._parts[part_name].get_children():

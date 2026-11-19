@@ -329,7 +329,7 @@ def render_swf(swf_path: Path, names: list[str]):
             ):
                 grown.append(name)
             rects[name] = trimmed.rect
-            png.save(trimmed.image, SPRITES / (name + ".png"))
+            png.save(trimmed.image, SPRITES / (name + ".png"), mipmaps=True)
     return rects, unresolved, grown
 
 
@@ -352,7 +352,7 @@ def render_glows(
         for frame, (name, scale) in zip(rendered, wanted, strict=True):
             trimmed = render.trim(frame)
             art = glow_name(name, scale)
-            png.save(trimmed.image, GLOW_DIR / (art + ".png"))
+            png.save(trimmed.image, GLOW_DIR / (art + ".png"), mipmaps=True)
             found[name].append(entry(scale, f"glow_scales/{art}", trimmed.rect))
     return found
 
