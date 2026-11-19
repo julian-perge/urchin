@@ -9,9 +9,10 @@ const CENTRE: Vector2 = Vector2(300, 300)
 const FAR: Vector2 = Vector2(-1000, -1000)
 const LEADING_STRIKE_ID: int = 1
 const DESTROY_ID: int = 2
+const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
 
+var _layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(BATTLE_LAYOUT_PATH))
 var _menu: RadialMenu
-var _hold: Control
 var _player: CombatUnit
 var _enemy: CombatUnit
 var _units: Dictionary
@@ -24,9 +25,6 @@ func before_each():
 	_enemy = _unit(CombatUnit.Team.TWO)
 	_units = {BattleRunner.PLAYER_SLOT: _player, ENEMY_SLOT: _enemy}
 	_moves = {LEADING_STRIKE_ID: _move("Leading Strike"), DESTROY_ID: _move("Destroy")}
-	_hold = add_child_autofree(Control.new())
-	_hold.position = CENTRE + Vector2(-28, -52)
-	_hold.size = Vector2(56, 100)
 	_menu = add_child_autofree(RadialMenuScene.instantiate())
 	_menu.set_process(false)
 	_menu.setup(_units, _moves, {})
@@ -56,11 +54,50 @@ func _move(display_name: String) -> Ability:
 
 
 func _open() -> void:
-	_menu.open(ENEMY_SLOT, CENTRE, _hold)
+	_menu.open(ENEMY_SLOT, CENTRE)
 
 
-func _hold_centre() -> Vector2:
-	return _hold.get_global_rect().get_center()
+# Steps the menu by whole SWF frames with the mouse at point. extract_battle_screen
+# writes the SWF's frame rate into battle_layout.json.
+func _step(point: Vector2, frames: int = 1) -> void:
+	for i in frames:
+		_menu.advance(_frame_time(), point)
+
+
+func _frame_time() -> float:
+	return 1.0 / float(_layout["fade"]["fps"])
+
+
+# Opens the menu and plays the three frames its fade-in takes, after which the
+# mouse counts.
+func _open_and_settle() -> void:
+	_open()
+	_step(CENTRE, 3)
+
+
+func _ring_scale() -> float:
+	return float(_layout["radial_menu"]["scale"])
+
+
+# Where orb bar_index sits on the stage: its button's rect from
+# battle_layout.json, scaled, around the menu's centre.
+func _orb_rect(bar_index: int) -> Rect2:
+	var rect: Dictionary = _layout["radial_menu"]["orb_rects"][bar_index]
+	return Rect2(CENTRE + Vector2(rect["x"], rect["y"]) * _ring_scale(), Vector2(rect["w"], rect["h"]) * _ring_scale())
+
+
+# The Radial menu clip's box on the stage, from battle_layout.json.
+func _box() -> Rect2:
+	var box: Dictionary = _layout["radial_menu"]["box"]
+	return Rect2(CENTRE + Vector2(box["x"], box["y"]) * _ring_scale(), Vector2(box["w"], box["h"]) * _ring_scale())
+
+
+func _gap_between_orbs(first: int, second: int) -> Vector2:
+	return (_orb_rect(first).get_center() + _orb_rect(second).get_center()) / 2.0
+
+
+func _on_any_orb(point: Vector2) -> bool:
+	return _menu.orbs.any(func(orb): return orb.get_global_rect().has_point(point))
 
 
 func _orb_centre(bar_index: int) -> Vector2:
@@ -89,7 +126,6 @@ func test_opening_centres_the_menu_and_shows_each_equipped_slot():
 	_open()
 	assert_true(_menu.visible)
 	assert_eq(_menu.position, CENTRE)
-	assert_eq(_menu.modulate.a, 1.0)
 	var shown: Array = _menu.orbs.map(func(orb): return orb.visible)
 	assert_eq(shown, [true, true, false, false, false, false, false, false])
 
@@ -100,8 +136,27 @@ func test_opening_centres_the_menu_and_shows_each_equipped_slot():
 func test_an_orb_sits_at_its_own_bar_slots_offset():
 	_player.ability_cooldowns[0] = 5
 	_open()
-	var orb: Button = _menu.orbs[1]
-	assert_eq(orb.position, RadialMenu.ORB_OFFSETS[1] - orb.size / 2.0)
+	assert_almost_eq(_orb_centre(1), _orb_rect(1).get_center(), Vector2(0.01, 0.01))
+
+
+# Each orb is its thingo button's rect, scaled by the Radial menu clip's scale,
+# which moves every orb out from the unit and grows it by that scale.
+func test_every_orb_is_its_buttons_rect_times_the_clips_scale():
+	assert_gt(_ring_scale(), 1.0, "sanity: the clip is scaled up")
+	_open()
+	for bar_index in _menu.orbs.size():
+		var orb_rect: Rect2 = _menu.orbs[bar_index].get_global_rect()
+		var want: Rect2 = _orb_rect(bar_index)
+		assert_almost_eq(orb_rect.position, want.position, Vector2(0.01, 0.01), "orb %d's corner" % bar_index)
+		assert_almost_eq(orb_rect.size, want.size, Vector2(0.01, 0.01), "orb %d's size" % bar_index)
+
+
+# The box hitTest uses holds every button, so the mouse on any part of a shown
+# orb keeps the menu open.
+func test_every_orb_lies_inside_the_clips_box():
+	_open()
+	for bar_index in _menu.orbs.size():
+		assert_true(_box().grow(0.01).encloses(_menu.orbs[bar_index].get_global_rect()), "orb %d" % bar_index)
 
 
 func test_the_menu_opens_when_every_equipped_move_is_refused():
@@ -163,10 +218,10 @@ func test_closing_the_decision_closes_the_menu():
 func test_clicking_a_dead_or_missing_unit_leaves_an_open_menu_up():
 	_open()
 	_enemy.active = false
-	_menu.open(ENEMY_SLOT, CENTRE + Vector2(50, 0), _hold)
+	_menu.open(ENEMY_SLOT, CENTRE + Vector2(50, 0))
 	assert_true(_menu.visible, "dead target")
 	assert_eq(_menu.position, CENTRE, "the open menu was not moved")
-	_menu.open(4, CENTRE + Vector2(50, 0), _hold)
+	_menu.open(4, CENTRE + Vector2(50, 0))
 	assert_true(_menu.visible, "empty slot")
 	assert_eq(_menu.position, CENTRE, "the open menu was not moved")
 
@@ -284,7 +339,8 @@ func test_a_refused_pick_leaves_the_next_orb_free_to_pick_the_move_and_close_the
 
 
 # The cover is DefineSprite 2241, a black disc 23 px across on the orb's centre,
-# which the ring's enterFrame sets to 85% alpha once it has faded in (line 42).
+# which the ring's enterFrame sets to 75% alpha while it fades in and 85% once
+# it has (lines 16 and 42).
 # The count is edit text 2245, 12 px grey and centred, laid out 2 px inside
 # bounds that the orb places 17.2 px left of and 8.65 px above its centre.
 func test_a_darkened_orb_takes_the_originals_cover_and_count():
@@ -294,7 +350,9 @@ func test_a_darkened_orb_takes_the_originals_cover_and_count():
 	var cover: TextureRect = _cover(0)
 	assert_almost_eq(cover.get_global_rect().position - centre, Vector2(-11.5, -11.5), Vector2(0.5, 0.5), "the disc sits on the centre")
 	assert_almost_eq(cover.size, Vector2(23, 23), Vector2(0.5, 0.5), "23 px across")
-	assert_almost_eq(cover.modulate.a, 0.85, 0.001, "at 85% alpha")
+	assert_almost_eq(cover.modulate.a, 0.75, 0.001, "at 75% alpha while the ring fades in")
+	_step(CENTRE, 3)
+	assert_almost_eq(cover.modulate.a, 0.85, 0.001, "and 85% once it has")
 	var count: Label = _count(0)
 	assert_almost_eq(count.get_global_rect().position - centre, Vector2(-15.2, -6.65), Vector2(0.001, 0.001), "where the count starts")
 	assert_almost_eq(count.size.x, 30.35, 0.001, "how wide it is")
@@ -303,62 +361,117 @@ func test_a_darkened_orb_takes_the_originals_cover_and_count():
 	assert_eq(count.horizontal_alignment, HORIZONTAL_ALIGNMENT_CENTER, "centred")
 
 
-func test_the_menu_is_whole_through_the_grace_period():
+# The original's ring adds 50 alpha a frame from the 0 a click shows it at, and
+# only tests the mouse once that is done (frame_217/DoAction_3.as:46-48,
+# frame_217/PlaceObject3_3382_500 enterFrame, lines 32-46).
+func test_a_new_menu_fades_in_over_two_frames_and_ignores_the_mouse_meanwhile():
 	_open()
-	_menu.advance(RadialMenu.LEAVE_GRACE, FAR)
-	assert_eq(_menu.modulate.a, 1.0)
+	assert_eq(_menu.modulate.a, 0.0, "a click shows the clip at alpha 0")
+	_step(FAR)
+	assert_almost_eq(_menu.modulate.a, 0.5, 0.001, "half after one frame")
+	_step(FAR)
+	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "full after two")
+	_step(FAR)
+	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "the third frame ends the fade-in")
+	_step(FAR)
+	assert_almost_eq(_menu.modulate.a, 0.9, 0.001, "and from the fourth the mouse counts")
 
 
-func test_the_menu_fades_after_the_grace_and_closes_when_the_fade_is_spent():
-	_open()
-	_menu.advance(RadialMenu.LEAVE_GRACE + RadialMenu.FADE_TIME * 0.5, FAR)
-	assert_almost_eq(_menu.modulate.a, 0.5, 0.001, "halfway through the fade")
+# hitTest with no shape flag tests the clip's bounding box, so the gaps between
+# orbs and the unit inside the ring count as over it (enterFrame line 48).
+func test_a_gap_between_two_orbs_and_the_unit_inside_the_ring_hold_the_menu():
+	_open_and_settle()
+	var gap: Vector2 = _gap_between_orbs(0, 1)
+	assert_false(_on_any_orb(gap), "sanity: the gap is on no orb")
+	assert_false(_on_any_orb(CENTRE), "sanity: the unit is on no orb")
+	_step(gap, 30)
+	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "the gap holds it at full alpha")
+	_step(CENTRE, 30)
+	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "and so does the unit")
 	assert_true(_menu.visible)
-	_menu.advance(RadialMenu.FADE_TIME * 0.5, FAR)
-	assert_false(_menu.visible)
 
 
-# The orbs fan out well outside the unit's hit area, so checking the unit alone
-# would close the menu as the player moved toward an orb.
-func test_the_hold_area_and_every_shown_orb_keep_the_menu_open():
+func test_the_clips_box_holds_the_menu_to_its_edge():
+	_open_and_settle()
+	var box: Rect2 = _box()
+	var inside: Vector2 = box.position + Vector2(0.5, 0.5)
+	assert_false(_on_any_orb(inside), "sanity: the corner is on no orb")
+	_step(inside, 30)
+	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "just inside the corner")
+	_step(box.position - Vector2(0.5, 0.5))
+	assert_almost_eq(_menu.modulate.a, 0.9, 0.001, "just outside it")
+
+
+# Off the clip the original takes 10 alpha a frame and hides the clip at 0, with
+# no grace (enterFrame lines 48-61).
+func test_off_the_clip_alpha_falls_a_tenth_a_frame_and_the_menu_closes_after_ten():
+	_open_and_settle()
+	for frame in range(1, 10):
+		_step(FAR)
+		assert_almost_eq(_menu.modulate.a, 1.0 - frame * 0.1, 0.001, "frame %d" % frame)
+		assert_true(_menu.visible, "still up on frame %d" % frame)
+	_step(FAR)
+	assert_false(_menu.visible, "closed on the tenth frame")
+
+
+# Back over the clip the original sets alpha straight to 100 (enterFrame line 64).
+func test_coming_back_mid_fade_puts_alpha_straight_back_to_full():
+	_open_and_settle()
+	_step(FAR, 5)
+	assert_almost_eq(_menu.modulate.a, 0.5, 0.001, "halfway through the fade")
+	_step(_gap_between_orbs(2, 3))
+	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "straight back to full")
+	_step(FAR)
+	assert_almost_eq(_menu.modulate.a, 0.9, 0.001, "and leaving again gets no grace")
+
+
+# _process() hands advance() each rendered frame's delta, which is not the
+# SWF's frame, so the menu steps only once a whole SWF frame has passed.
+func test_the_menu_steps_once_per_swf_frame_whatever_the_delta():
+	_open_and_settle()
+	_menu.advance(_frame_time() * 0.5, FAR)
+	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "half a frame changes nothing")
+	_menu.advance(_frame_time() * 0.5, FAR)
+	assert_almost_eq(_menu.modulate.a, 0.9, 0.001, "the second half completes the frame")
+	_menu.advance(_frame_time() * 3.0, FAR)
+	assert_almost_eq(_menu.modulate.a, 0.6, 0.001, "a long delta steps every frame it covers")
+
+
+# An empty slot's thingo is hidden, but the bounding box hitTest uses is the
+# whole clip's box, so the empty slot's place still holds the menu.
+func test_an_empty_slots_place_still_holds_the_menu():
+	_open_and_settle()
+	var empty_slot: Vector2 = _orb_centre(7)
+	assert_false(_menu.orbs[7].visible, "sanity: slot 7 is empty")
+	_step(empty_slot, 30)
+	assert_true(_menu.visible)
+	assert_almost_eq(_menu.modulate.a, 1.0, 0.001)
+
+
+# _process() runs while the menu is closed too, and that time must not play the
+# next menu's frames the moment it opens.
+func test_time_while_closed_does_not_carry_into_the_next_menu():
+	_open_and_settle()
+	_menu.decision_open = false
+	_menu.advance(10.0, FAR)
+	_menu.decision_open = true
 	_open()
-	var spent: float = RadialMenu.LEAVE_GRACE + RadialMenu.FADE_TIME
-	assert_false(_hold.get_global_rect().has_point(_orb_centre(1)), "sanity: orb 1 is outside the hold area")
-	_menu.advance(spent, _hold_centre())
-	assert_true(_menu.visible, "over the hold area")
-	_menu.advance(spent, _orb_centre(1))
-	assert_true(_menu.visible, "over an orb")
-
-
-func test_a_hidden_orb_does_not_keep_the_menu_open():
-	_open()
-	var hidden_orb_centre: Vector2 = _orb_centre(7)
-	assert_false(_hold.get_global_rect().has_point(hidden_orb_centre), "sanity: outside the hold area")
-	_menu.advance(RadialMenu.LEAVE_GRACE + RadialMenu.FADE_TIME, hidden_orb_centre)
-	assert_false(_menu.visible)
-
-
-func test_the_mouse_returning_mid_fade_snaps_back_and_restarts_the_grace():
-	_open()
-	_menu.advance(RadialMenu.LEAVE_GRACE + RadialMenu.FADE_TIME * 0.5, FAR)
-	_menu.advance(0.0, _hold_centre())
-	assert_eq(_menu.modulate.a, 1.0, "snapped back to whole")
-	_menu.advance(RadialMenu.LEAVE_GRACE, FAR)
-	assert_eq(_menu.modulate.a, 1.0, "the mouse leaving again gets a full grace")
+	_step(FAR)
+	assert_almost_eq(_menu.modulate.a, 0.5, 0.001, "one frame into the fade-in")
 
 
 # A Tween that outlived its menu once closed the next menu a moment later
 # (08dc6a7).
 func test_opening_on_another_unit_replaces_a_fading_menu():
-	_open()
-	_menu.advance(RadialMenu.LEAVE_GRACE + RadialMenu.FADE_TIME * 0.5, FAR)
+	_open_and_settle()
+	_step(FAR, 5)
 	assert_lt(_menu.modulate.a, 1.0, "the first menu is fading")
 
-	_menu.open(BattleRunner.PLAYER_SLOT, CENTRE + Vector2(100, 0), _hold)
-	assert_eq(_menu.modulate.a, 1.0, "the new menu starts whole")
-	_menu.advance(RadialMenu.LEAVE_GRACE, FAR)
-	assert_eq(_menu.modulate.a, 1.0, "with a full grace of its own")
-	_menu.advance(RadialMenu.FADE_TIME, _orb_centre(0))
+	_menu.open(BattleRunner.PLAYER_SLOT, CENTRE + Vector2(100, 0))
+	assert_eq(_menu.modulate.a, 0.0, "the new menu starts clear")
+	_step(FAR, 3)
+	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "and fades in whole")
+	_step(FAR, 9)
 	assert_true(_menu.visible, "well past where the first fade would have ended")
 
 	var picks: Array = []
@@ -395,6 +508,7 @@ func test_closing_drops_the_tooltip_an_orb_raised():
 
 func test_closing_leaves_a_tooltip_the_menu_did_not_raise():
 	_open()
-	GameTooltip.show_sections([{"bg_color": Color.BLACK, "lines": [{"text": "Quit", "color": Color.WHITE}]}], _hold)
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections([{"bg_color": Color.BLACK, "lines": [{"text": "Quit", "color": Color.WHITE}]}], anchor)
 	_menu.decision_open = false
 	assert_true(GameTooltip._root.visible)
