@@ -272,8 +272,10 @@ save when the game starts, goes on to the first fight when it starts, and sends 
 - The same frame also resets `StatSets0 = [5, 6, 5, 3, 0]` (`frame_180/DoAction.as:8`), which is exactly that gear's bonuses (life 5, strength 6, magic 5, speed 3). The class buttons had already
   added the 19 level-1 points, split by class ratio, onto `StatSets0` through `assignPointsStart` (`frame_42/DoAction_15.as:57-78`), and `statPoints` stays 0 (`frame_41/DoAction_2.as:79`), so
   the class split is thrown away and a new character holds only its gear bonuses. Every route from class select passes through frame 180 before battle 100, and the tutorial route
-  fights battle 2 on the way (`frame_165/DoAction.as`), still holding the class split because frame 180 has not run yet. The port's `PlayerSave.new_game` keeps only the split's rounding residue, and `GameData.new_game` equips the gear onto a zeroed
-  allocation.
+  fights battle 2 on the way (`frame_165/DoAction.as`), still holding the class split because frame 180 has not run yet. The port's `PlayerSave.new_game` keeps only the split's rounding residue, and `GameData.new_game` calls
+  `PlayerSave.start_story`, which sets the frame 180 gear and allocation. `ZoneManager.request_tutorial_fight` calls `PlayerSave.enter_tutorial`, which sets the frame 42 gear
+  (`frame_42/DoAction_17.as:50-51`: no White T-Shirt, `StatSets0 = [5, 6, 5, 3, 0]`) and adds the class split again. A Tutorial win calls `start_story` before battle 100. Both read the gear and allocation from
+  `dev/converted_json/starting_state.json`, which `just convert-starting-state` reads out of the two frame scripts.
 - Sell-back = `ceil(price * 0.15)` (DefineButton2_3015).
 - Each party member's looks are fixed. `frame_42/DoAction_17.as:7-84` is top-level frame 42 code that sets `SkinSet`, `HairSet` and `GSet` for every character, and nothing else writes them, so the
   original has no appearance screen. The port keeps each character's looks in `Party`'s `model` entry.
