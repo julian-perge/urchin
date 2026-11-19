@@ -2239,6 +2239,41 @@ def scene_record(
     }
 
 
+# The World map, root frame overMap (spec/107-world-map.md). krinMapper (4173)
+# at depth 1 holds the map art 4172 at its depth 1, the links at 53 and the
+# seven zone buttons mb1 to mb7 (4160) at depths 55 to 91. The map art's frame
+# is the outline 4162 at depth 51 of 4172. Each button draws its face, frame and
+# DropShadow as one render, and takes clicks on the hit shape 4155 at its depth
+# 5. The links are drawn while the game runs, so they have no piece.
+ZONE_MAP_SCENE = "res://scenes/zone_map.tscn"
+ZONE_MAP_BUTTONS = {1: 55, 2: 67, 3: 61, 4: 73, 5: 79, 6: 85, 7: 91}
+SCENES[ZONE_MAP_SCENE] = Scene(
+    timeline=0,
+    frame="overMap",
+    pieces={
+        "MapArt": Piece(
+            "art", zone_map.MAP_DEPTH, art="zone_map", inner_depth=zone_map.MAP_DEPTH
+        ),
+        "MapFrame": Piece(
+            "outline",
+            zone_map.MAP_DEPTH,
+            via=(zone_map.MAP_DEPTH, zone_map.FRAME_DEPTH),
+        ),
+        **{
+            f"Zones/Zone{zone}": Piece("hit", zone_map.MAP_DEPTH, via=(depth, 5))
+            for zone, depth in ZONE_MAP_BUTTONS.items()
+        },
+        **{
+            f"Zones/Zone{zone}/Art": Piece(
+                "art", zone_map.MAP_DEPTH, art="zone_button_open", inner_depth=depth
+            )
+            for zone, depth in ZONE_MAP_BUTTONS.items()
+        },
+    },
+    port_only=("Connectors",),
+)
+
+
 # The victory frame, "win" (spec/107-victory.md). The left Panel holds the
 # heading and the three experience rows, each a placement of sprite 3002: the
 # player's at depth 1197, then friendlySlotsFFTT[0] and [1] at 1111 and 1154.

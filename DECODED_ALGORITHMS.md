@@ -840,7 +840,7 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
 
 - After CS_CUT2 and CS_CUT4, which each unlock a zone, `gotoSceneKrin` (frame_219) opens the zone map. After CS_CUT3 it stays on the hub. Ported: `ZoneProgression.CUTSCENE_GOTO_SCENE` and
   `ZoneManager.open_zone_map_on_load`.
-- The zone map draws the lines between zones in code, `krinMapper.lineMC` on frame 449, colored by unlock state. Ported: `scripts/zones/zone_map_connectors.gd`.
+- The zone map draws the lines between zones in code, `krinMapper.lineMC` on frame 449, colored by unlock state. Ported: `scripts/zones/zone_map_connectors.gd`. lineMC carries a DropShadow (distance 5 at 45 degrees, blur 2, strength 0.61), which `extract_zone_map` writes to `assets/ui/zone_map/zone_map.json`. The port draws it without the blur.
 
 ## for..in order over arrays (Flash 14 and Ruffle 0.7.1, #38)
 
