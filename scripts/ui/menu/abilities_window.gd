@@ -1,8 +1,9 @@
 # abilities_window.gd
 # The abilities screen, rebuilt from frame 25 of the original menu clip
 # (spec/107-abilities.md). abilities_window.tscn holds the shell, the panels,
-# the titles, the points, the hint box and the attribute rows, and
-# test_screen_rects.gd checks them against the SWF.
+# the titles, the points, the hint box and the attribute rows. This script
+# places the tree nodes and the ring sockets. test_screen_rects.gd checks all
+# of them against the SWF.
 # - left: the class ability tree ('talenttreefull' sprite 3100), 28 nodes in
 #   4 columns and 7 rows. A click learns a talent by the TalentTree.learn
 #   rules: prerequisites, level tiers and 1 point.
@@ -19,19 +20,30 @@ extends Control
 const TalentNodeScene: PackedScene = preload("res://scenes/ui/menu/talent_node.tscn")
 const ICON_DIR: String = "res://assets/ui/abilities/"
 
-const TREE_ORIGIN: Vector2 = Vector2(45.4, 74.2)
+# Where the frame places 'talenttreefull', and the st0 to st27 placements
+# inside it, row by row.
+const TREE_ORIGIN: Vector2 = Vector2(45.4, 74.15)
 const TREE_COLUMNS_X: Array[float] = [41.4, 93.4, 145.4, 197.4]
-const TREE_ROWS_Y: Array[float] = [49.9, 89.8, 129.8, 169.8, 209.8, 249.8, 289.9]
+const TREE_ROWS_Y: Array[float] = [49.85, 89.85, 129.85, 169.85, 209.85, 249.85, 289.85]
 const NODE_SIZE: Vector2 = Vector2(32, 32)
 
+# Where the frame places the ring, sprite 3109, and its scale, which also
+# scales the thing0 to thing7 offsets inside it.
 const WHEEL_CENTER: Vector2 = Vector2(630.6, 172.2)
-# thing0-7 offsets inside the 'selector' clip.
+const WHEEL_SCALE: float = 1.0383
 const WHEEL_OFFSETS: Array[Vector2] = [
 	Vector2(0.0, -49.2), Vector2(34.8, -34.9), Vector2(49.5, 0.0),
 	Vector2(35.0, 35.3), Vector2(0.0, 49.8), Vector2(-35.2, 35.1),
 	Vector2(-49.5, 0.0), Vector2(-35.0, -34.7),
 ]
 const SOCKET_SIZE: Vector2 = Vector2(30, 30)
+
+# The DropShadows of 'talenttreefull' and the ring 3109. Flash draws each under
+# everything its sprite holds, and the port draws it under each node and each
+# socket. The offset is the distance at 45 degrees, and the alpha is the
+# strength.
+const TREE_SHADOW: Dictionary = {"size": 3, "offset": Vector2(2.1213, 2.1213), "color": Color(0, 0, 0, 1)}
+const WHEEL_SHADOW: Dictionary = {"size": 6, "offset": Vector2(2.8284, 2.8284), "color": Color(0, 0, 0, 173.0 / 255.0)}
 
 const POOL_VISIBLE_ROWS: int = 5
 
@@ -148,7 +160,7 @@ func _build_tree_panel() -> void:
 		node_button.pressed.connect(_on_tree_node_pressed.bind(node_index))
 		node_button.mouse_entered.connect(_on_tree_node_hovered.bind(node_index))
 		node_button.mouse_exited.connect(GameTooltip.hide_tooltip)
-		_style_circle_button(node_button, Color(0.1, 0.1, 0.11), Color(0.3, 0.3, 0.32))
+		_style_circle_button(node_button, Color(0.1, 0.1, 0.11), Color(0.3, 0.3, 0.32), TREE_SHADOW)
 		$TreeNodes.add_child(node_button)
 		_tree_buttons.append(node_button)
 		_tree_rank_labels.append(node_button.get_node("RankLabel"))
@@ -166,22 +178,25 @@ func _build_wheel_panel() -> void:
 		socket.name = "Socket%d" % i
 		socket.custom_minimum_size = SOCKET_SIZE
 		socket.size = SOCKET_SIZE
-		socket.position = WHEEL_CENTER + WHEEL_OFFSETS[i] - SOCKET_SIZE / 2.0
+		socket.position = WHEEL_CENTER + WHEEL_OFFSETS[i] * WHEEL_SCALE - SOCKET_SIZE / 2.0
 		socket.pressed.connect(_on_socket_pressed.bind(i))
 		socket.mouse_entered.connect(_on_socket_hovered.bind(i))
 		socket.mouse_exited.connect(GameTooltip.hide_tooltip)
-		_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24))
+		_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24), WHEEL_SHADOW)
 		add_child(socket)
 		_socket_buttons.append(socket)
 
 
-func _style_circle_button(button: Button, bg: Color, border: Color) -> void:
+func _style_circle_button(button: Button, bg: Color, border: Color, shadow: Dictionary) -> void:
 	for state in ["normal", "hover", "pressed"]:
 		var style: StyleBoxFlat = StyleBoxFlat.new()
 		style.bg_color = bg.lightened(0.12) if state != "normal" else bg
 		style.border_color = border
 		style.set_border_width_all(2)
 		style.set_corner_radius_all(99)
+		style.shadow_size = shadow["size"]
+		style.shadow_offset = shadow["offset"]
+		style.shadow_color = shadow["color"]
 		button.add_theme_stylebox_override(state, style)
 	button.add_theme_font_size_override("font_size", 9)
 
@@ -219,7 +234,8 @@ func _refresh_tree(save: PlayerSave) -> void:
 		_style_circle_button(
 			button,
 			color.darkened(0.55) if learned else Color(0.1, 0.1, 0.11),
-			color if learned else Color(0.3, 0.3, 0.32)
+			color if learned else Color(0.3, 0.3, 0.32),
+			TREE_SHADOW
 		)
 		_tree_rank_labels[node_index].text = "%d/%d" % [rank, int(node["max_rank"])]
 		var icon_rect: TextureRect = button.get_node("IconRect")
@@ -283,8 +299,7 @@ func _refresh_wheel(save: PlayerSave) -> void:
 		var move_id: int = int(save.move_matrix[i]) if i < save.move_matrix.size() else 0
 		if move_id == 0:
 			socket.icon = null
-			socket.tooltip_text = "Empty slot"
-			_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24))
+			_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24), WHEEL_SHADOW)
 			continue
 		var move: Ability = MoveManagerAuto.get_move(move_id)
 		var color: Color = _move_color(move)
@@ -292,8 +307,7 @@ func _refresh_wheel(save: PlayerSave) -> void:
 		socket.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null
 		socket.expand_icon = true
 		socket.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		socket.tooltip_text = ""
-		_style_circle_button(socket, color.darkened(0.45), color)
+		_style_circle_button(socket, color.darkened(0.45), color, WHEEL_SHADOW)
 
 
 func _on_socket_hovered(socket_index: int) -> void:
@@ -301,12 +315,13 @@ func _on_socket_hovered(socket_index: int) -> void:
 	if save == null:
 		return
 	var move_id: int = int(save.move_matrix[socket_index]) if socket_index < save.move_matrix.size() else 0
+	var button: Button = _socket_buttons[socket_index]
 	if move_id == 0:
+		GameTooltip.show_sections(AbilityTooltipBuilder.empty_socket_sections(), button, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY)
 		return
 	var move: Ability = MoveManagerAuto.get_move(move_id)
 	if move == null:
 		return
-	var button: Button = _socket_buttons[socket_index]
 	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move)
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
 	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null

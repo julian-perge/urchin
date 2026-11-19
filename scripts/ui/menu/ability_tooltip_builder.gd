@@ -90,3 +90,15 @@ static func build_sections(
 	if not next_rank_text.is_empty():
 		sections.append({"bg_color": TooltipTheme.BG_NEXT_RANK, "lines": [{"text": next_rank_text, "color": TooltipTheme.TEXT_NEXT_RANK}]})
 	return {"sections": sections, "icon_color": element_color}
+
+
+# DefineSprite_3142/frame_25/DoAction.as:85-88 gives an empty socket SKILLNONE
+# as its title, SKILLTUT2 as toolTip3 and SKILLTUT as toolTip. These are the
+# two fields that a move's cost and description fill, so they take the cost
+# and body sections that build_sections() gives a move.
+static func empty_socket_sections() -> Array:
+	return [
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": Strings.text("SKILLNONE"), "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_COST, "lines": [{"text": Strings.text("SKILLTUT2"), "color": TooltipTheme.TEXT_SUBHEADER}]},
+		{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": Strings.text("SKILLTUT"), "color": TooltipTheme.TEXT_BODY}]},
+	]
