@@ -86,6 +86,10 @@ var _bands: Dictionary = {"life": {}, "focus": {}}
 # change) can skip tearing down and rebuilding the row, which would otherwise
 # flicker and kill an open tooltip out from under a player mid-hover for no reason.
 var _last_signature: Array = []
+# The alpha the death fade has left the bar at. The fade goes to Clip's shader
+# and not to modulate, because the original fades p#BAR as one picture with its
+# shadow, and a modulate would fade each part on its own.
+var fade: float = 1.0
 var _frames_due: float = 0.0
 var _dead: bool = false
 var _frames_since_death: int = 0
@@ -348,8 +352,9 @@ func _advance_death() -> void:
 		return
 	clear_for_death()
 	var alpha_percent: int = 100 - int(death["fade_per_frame"]) * frames_since_clear
-	modulate.a = maxi(alpha_percent, 0) / 100.0
-	death_faded.emit(modulate.a)
+	fade = maxi(alpha_percent, 0) / 100.0
+	(clip.material as ShaderMaterial).set_shader_parameter("fade", fade)
+	death_faded.emit(fade)
 	if alpha_percent < 0:
 		hide()
 		_dead = false
@@ -488,6 +493,7 @@ func _set_shadow(shadow: Dictionary) -> void:
 	material.set_shader_parameter("distance", float(shadow["distance"]))
 	material.set_shader_parameter("angle", float(shadow["angle"]))
 	material.set_shader_parameter("strength", float(shadow["strength"]))
+	material.set_shader_parameter("fade", fade)
 	_fit_shadow()
 
 

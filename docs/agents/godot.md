@@ -58,6 +58,13 @@ name, so it misses a call in class-level code and a callable reference such as
   out. Measured on Godot 4.7.2 for julian-perge/urchin#152: with `COLOR` in, a
   cast-tinted doll drew as the plain doll times the tint again, and a doll faded
   to 0.55 drew at 0.56 of the plain doll's alpha.
+- A modulate on a CanvasGroup's parent fades each part inside it on its own,
+  so two opaque parts that overlap come out at 0.75 alpha when the modulate is
+  0.5, and a filter shader sees the faded parts. Flash fades a filtered clip as
+  one picture, so the status bar's death fade goes into the `fade` uniform of
+  `scenes/drop_shadow.gdshader` instead. Measured for julian-perge/urchin#382:
+  with the modulate, a bar at 0.5 drew p90 113 off half the full bar's alpha,
+  and with the uniform p90 0.5.
 - A CanvasGroup's `fit_margin` and `clear_margin` are in screen px, so they
   cover half as much of the stage in the 2x window, and `clear_margin` grows the
   rect that `fit_margin` already grew (Godot's renderer_canvas_cull.cpp).

@@ -67,6 +67,23 @@ func test_the_clip_margins_reach_as_far_as_the_shadow_at_the_windows_scale() -> 
 	assert_almost_eq(float((bar.clip.material as ShaderMaterial).get_shader_parameter("stage_scale")), stage_scale, 0.0001)
 
 
+# The death fade sets _alpha on p#BAR, the clip that carries the DropShadow
+# (DefineSprite_57_LifeBarSmoother/frame_38), so Flash fades the bar and its
+# shadow as one picture. Clip's shader applies the fade once, the parts stay
+# unfaded, and each bar fades on its own.
+func test_the_death_fade_reaches_the_shadow_of_that_bar_alone() -> void:
+	var dying: StatusBar = _bar(1)
+	var other: StatusBar = _bar(2)
+	assert_ne(dying.clip.material, other.clip.material, "each bar has its own material")
+	var death: Dictionary = StatusBar.record()["death"]
+	dying.die()
+	_advance(dying, int(death["clear_frame"]) + 3)
+	assert_lt(dying.fade, 1.0, "the bar is fading")
+	assert_eq(dying.modulate.a, 1.0, "the parts are not faded one by one")
+	assert_almost_eq(float((dying.clip.material as ShaderMaterial).get_shader_parameter("fade")), dying.fade, 0.0001)
+	assert_almost_eq(float((other.clip.material as ShaderMaterial).get_shader_parameter("fade")), 1.0, 0.0001)
+
+
 # Clip's shadow falls under the text, so a Label that drew its own shadow would
 # draw the text's shadow twice.
 func test_the_labels_draw_no_shadow_of_their_own() -> void:
@@ -310,11 +327,11 @@ func test_a_death_clears_on_frame_17_then_fades_5_a_frame_and_hides() -> void:
 	assert_true(bar.inner.visible, "not yet cleared the frame before")
 	_advance(bar, 1)
 	assert_false(bar.inner.visible, "cleared on the clear frame")
-	assert_eq(bar.modulate.a, 1.0)
+	assert_eq(bar.fade, 1.0)
 	_advance(bar, 1)
-	assert_almost_eq(bar.modulate.a, 1.0 - per_frame, 0.001, "its step off the alpha the frame after")
+	assert_almost_eq(bar.fade, 1.0 - per_frame, 0.001, "its step off the alpha the frame after")
 	_advance(bar, roundi(1.0 / per_frame) - 1)
-	assert_almost_eq(bar.modulate.a, 0.0, 0.001, "to 0")
+	assert_almost_eq(bar.fade, 0.0, 0.001, "to 0")
 	assert_true(bar.visible, "it hides on the frame after")
 	_advance(bar, 1)
 	assert_false(bar.visible)

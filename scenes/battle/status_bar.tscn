@@ -4,6 +4,7 @@
 [ext_resource type="Shader" path="res://scenes/drop_shadow.gdshader" id="2_shadow"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_shadow"]
+resource_local_to_scene = true
 shader = ExtResource("2_shadow")
 
 [node name="StatusBar" type="Control"]

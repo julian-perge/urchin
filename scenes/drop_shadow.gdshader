@@ -7,6 +7,11 @@
 // p#BAR placement. It leaves COLOR out, as scenes/doll_body.gdshader does,
 // because Godot already applies the modulate of the group's parents to what is
 // inside it.
+//
+// Flash fades a clip's filtered picture as one picture, shadow included. A
+// modulate on the group's parents would fade each part on its own, and two
+// parts that overlap would come out too dark. So a fade that has to match Flash
+// goes into `fade`, which multiplies the finished picture once.
 shader_type canvas_item;
 render_mode unshaded;
 
@@ -21,6 +26,7 @@ uniform float distance = 0.0;
 uniform float angle = 0.0;
 uniform float strength = 1.0;
 uniform float stage_scale = 1.0;
+uniform float fade = 1.0;
 uniform sampler2D picture : hint_screen_texture, repeat_disable, filter_linear;
 
 void fragment() {
@@ -32,6 +38,7 @@ void fragment() {
 	// the drawn pixel in that form, and the sum is turned back at the end.
 	vec4 drawn = texture(picture, SCREEN_UV);
 	drawn += vec4(shadow_color.rgb * shadow, shadow) * (1.0 - drawn.a);
+	drawn *= fade;
 	if (drawn.a > 0.0001) {
 		drawn.rgb /= drawn.a;
 	}
