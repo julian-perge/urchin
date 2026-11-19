@@ -1,8 +1,8 @@
 # options_panel.gd
 # The new-game settings Screen (scenes/ui/menu/options_panel.tscn), the
 # original's optionsMenu, root frame 93 (spec/433-new-game-settings.md). Class
-# select opens it, START begins the game, and Back is menu_back.tscn, which
-# main_menu.gd connects. ADR 0011 leaves out the original's Effects and
+# select opens it, START begins the game, and Back is a menu_back.tscn
+# instance that main_menu.tscn adds and connects. ADR 0011 leaves out the original's Effects and
 # Graphics rows, so the Screen shows two empty bands where they were.
 class_name OptionsPanel
 extends Control
