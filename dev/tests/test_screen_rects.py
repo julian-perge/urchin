@@ -842,10 +842,38 @@ def test_outline_record_refuses_paths_that_do_not_cover_the_shape():
         )
 
 
-def test_outline_record_refuses_a_shape_with_fill():
+# Shape 2812 of the Game Manual draws two boxes with one 20 twip white line
+# and one solid fill, black at alpha 100.
+def test_outline_record_of_a_filled_shape_records_its_fill():
+    styles = [
+        StyleSet(((0, 0, 0, 100),), ((20, (255, 255, 255, 255)),), frozenset({1}), {})
+    ]
+    entry = screen_rects.outline_record(
+        (-100, -200, 100, 200), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN, styles
+    )
+    assert entry == {
+        "kind": "outline",
+        "rect": [395.5, 212.4, 10.0, 20.0],
+        "line": "ffffffff",
+        "border": 1,
+        "fill": "00000064",
+    }
+
+
+@pytest.mark.parametrize(
+    "fills, used",
+    [
+        ((None,), frozenset({1})),
+        (((0, 0, 0, 100), (255, 0, 0, 255)), frozenset({1, 2})),
+        (((0, 0, 0, 100),), frozenset({2})),
+    ],
+    ids=["not solid", "two fills", "not fill 1"],
+)
+def test_outline_record_refuses_a_fill_that_is_not_one_solid_colour(fills, used):
+    styles = [StyleSet(fills, ((20, (255, 255, 255, 255)),), used, {})]
     with pytest.raises(ValueError, match="outline"):
         screen_rects.outline_record(
-            (0, 0, 100, 100), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN, [panel_styles()]
+            (0, 0, 100, 100), (1.0, 0.0, 0.0, 1.0, 0, 0), ORIGIN, styles
         )
 
 

@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/menu_back.tscn" id="12_back"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/mode_panel.tscn" id="13_mode"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/slot_panel.tscn" id="14_slots"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu/manual_panel.tscn" id="15_manual"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_difficulty"]
 
@@ -40,6 +41,11 @@ script = ExtResource("1_menu")
 visible = false
 
 [node name="Back" parent="ModePanel" instance=ExtResource("12_back")]
+
+[node name="ManualPanel" parent="." instance=ExtResource("15_manual")]
+visible = false
+
+[node name="Back" parent="ManualPanel" instance=ExtResource("12_back")]
 
 ; Every rect on the name screen is read from the original's root frame 64
 ; (nameMenu). A Label takes its edit text's rect and a flat Button its hit
@@ -431,6 +437,8 @@ text = "Click here to START!"
 [node name="Back" parent="OptionsPanel" instance=ExtResource("12_back")]
 
 [connection signal="play_pressed" from="TitlePanel" to="." method="_on_play_pressed"]
+[connection signal="game_manual_pressed" from="TitlePanel" to="." method="_on_game_manual_pressed"]
+[connection signal="pressed" from="ManualPanel/Back" to="." method="_on_back_pressed"]
 [connection signal="new_game_pressed" from="ModePanel" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="ModePanel/Back" to="." method="_on_back_pressed"]
 [connection signal="load_game_pressed" from="ModePanel" to="." method="_on_load_game_pressed"]

@@ -113,7 +113,12 @@ func _outline_problems(path: String, panel: Panel, entry: Dictionary) -> Array[S
 	var style: StyleBoxFlat = panel.get_theme_stylebox("panel") as StyleBoxFlat
 	if style == null:
 		return ["%s: outline is not a StyleBoxFlat" % path]
-	if style.draw_center:
+	if entry.has("fill"):
+		if not style.draw_center:
+			found.append("%s: outline has no fill" % path)
+		elif not _same_color(style.bg_color, entry["fill"]):
+			found.append("%s: outline fill %s, expected %s" % [path, style.bg_color.to_html(), entry["fill"]])
+	elif style.draw_center:
 		found.append("%s: outline has a fill" % path)
 	if style.shadow_size != 0 or panel.material != null:
 		found.append("%s: outline has a shadow" % path)
@@ -1056,6 +1061,25 @@ func test_control_an_inventory_outline_with_fill_or_shadow_fails() -> void:
 	_assert_one_problem(_scene_problems(root, _record()["scenes"][INVENTORY_SCENE]), "outline has a shadow")
 
 
+# An outline whose shape also has a solid fill, as shape 2812 of the Game Manual
+# has, draws its centre in that fill. The inventory's outline stands in for one
+# here, with a fill added to a copy of its entry.
+func test_control_a_filled_outline_needs_its_fill() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	var path: String = "CenterPanel/Content/StatsOutline"
+	var panel: Panel = root.get_node(path)
+	var entry: Dictionary = _record()["scenes"][INVENTORY_SCENE]["pieces"][path].duplicate()
+	entry["fill"] = "00000064"
+	_assert_one_problem(_outline_problems(path, panel, entry), "outline has no fill")
+	var style: StyleBoxFlat = panel.get_theme_stylebox("panel").duplicate()
+	panel.add_theme_stylebox_override("panel", style)
+	style.draw_center = true
+	style.bg_color = Color(1, 0, 0, 1)
+	_assert_one_problem(_outline_problems(path, panel, entry), "outline fill")
+	style.bg_color = Color.html("00000064")
+	assert_eq(_outline_problems(path, panel, entry), [] as Array[String])
+
+
 func test_control_a_zone_orb_moved_20_px_fails() -> void:
 	var path: String = "res://scenes/zones/zone1_prison.tscn"
 	var scenes: Dictionary = _record()["scenes"]
@@ -1222,6 +1246,26 @@ func test_control_a_top_status_bar_with_no_mirror_or_a_wrong_color_fails() -> vo
 	var found: Array[String] = _scene_problems(root, scene)
 	assert_gt(found.size(), 0, "a name in the wrong color passed")
 	assert_string_contains(found[0] if found else "", "TopStatusBar/Bar1/Inner/PlayerName")
+
+
+const MANUAL_SCENE: String = "res://scenes/ui/menu/manual_panel.tscn"
+
+
+func test_control_a_manual_topic_hit_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(MANUAL_SCENE)
+	(root.get_node("Topics/Topic2/HitButton") as Control).position.y += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][MANUAL_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "Topics/Topic2/HitButton: top left")
+
+
+func test_control_a_manual_panel_with_another_fill_fails() -> void:
+	var root: Control = await _laid_out(MANUAL_SCENE)
+	var panel: Panel = root.get_node("LeftPanel")
+	var style: StyleBoxFlat = panel.get_theme_stylebox("panel").duplicate()
+	panel.add_theme_stylebox_override("panel", style)
+	style.bg_color = Color(0, 0, 0, 1)
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][MANUAL_SCENE]), "LeftPanel: outline fill")
 
 
 const GAME_OVER_SCENE: String = "res://scenes/battle/game_over_screen.tscn"
