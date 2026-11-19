@@ -135,8 +135,8 @@ extracting it.
   the filter dimension around the timeline displayRect, and draws that grown
   rect with its left and top edges on the canvas's (0, 0). It rounds the
   canvas up to whole pixels on the right and bottom only. So a piece's rect on
-  the Stage is the left and top edges of the rect the driver reports, plus the crop's
-  offset, with no filter math. `render.py` does this for every extractor.
+  the Stage is the left and top edges of the rect the driver reports, plus the
+  crop's offset over the zoom, with no filter math. `render.py` does this for every extractor.
   Until #72 it put the canvas around the displayRect's centre, which placed
   every piece half the rounding up and to the left, up to 0.225 design px on a
   doll part at 2x. Inventing them instead drew the zone orb at twice its real
