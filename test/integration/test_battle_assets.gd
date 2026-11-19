@@ -1,34 +1,7 @@
 # These tests check the battle screen's extracted art and layout JSON, and the
-# stance row and game over screen instantiated on their own. None of them
+# stance row and ending screen instantiated on their own. None of them
 # builds battle_scene.tscn, which is why they live outside test_battle_scene.gd.
 extends GutTest
-
-
-# The texts sit at the rects of edit texts 2794, 2793, 2792 and 2703 in root
-# frame 104, and the Re-Load and Back hit areas at the rects of buttons 2791 and
-# 2702, whose only state is shape 291, a 30 px square. Heights are left out for
-# the texts, because a Label grows to fit Godot's font where it is taller than
-# Flash's.
-func test_game_over_screen_uses_the_frame_104_rects():
-	var game_over = add_child_autofree(load("res://scenes/battle/game_over_screen.tscn").instantiate())
-	var texts: Dictionary = {
-		"DeadLabel": Rect2(193.1, 93.75, 413.85, 45.35),
-		"ReloadLabel": Rect2(250.9, 172.4, 298.2, 33.05),
-		"TipLabel": Rect2(114.15, 231.65, 570.8, 115.35),
-		"BackLabel": Rect2(488.15, 532.15, 304.1, 30.85),
-	}
-	for node_name in texts:
-		var label: Label = game_over.get_node(node_name)
-		assert_almost_eq(label.position, texts[node_name].position, Vector2(0.01, 0.01), "%s position" % node_name)
-		assert_almost_eq(label.size.x, texts[node_name].size.x, 0.01, "%s width" % node_name)
-	var hit_areas: Dictionary = {
-		"ReloadButton": Rect2(255.54, 173.0, 288.92, 30.0),
-		"BackButton": Rect2(604.44, 534.45, 188.12, 26.8),
-	}
-	for node_name in hit_areas:
-		var button: Button = game_over.get_node(node_name)
-		assert_almost_eq(button.position, hit_areas[node_name].position, Vector2(0.01, 0.01), "%s position" % node_name)
-		assert_almost_eq(button.size, hit_areas[node_name].size, Vector2(0.01, 0.01), "%s size" % node_name)
 
 
 # The ending's two texts sit at the rects of edit text 2796 and static text 2799

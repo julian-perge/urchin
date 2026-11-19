@@ -1222,3 +1222,19 @@ func test_control_a_top_status_bar_with_no_mirror_or_a_wrong_color_fails() -> vo
 	var found: Array[String] = _scene_problems(root, scene)
 	assert_gt(found.size(), 0, "a name in the wrong color passed")
 	assert_string_contains(found[0] if found else "", "TopStatusBar/Bar1/Inner/PlayerName")
+
+
+const GAME_OVER_SCENE: String = "res://scenes/battle/game_over_screen.tscn"
+
+
+# Re-Load's hit button is a flat Button with no art, so only the rect test
+# keeps it over its caption.
+func test_control_the_game_over_reload_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(GAME_OVER_SCENE)
+	var scene: Dictionary = _record()["scenes"][GAME_OVER_SCENE]
+	assert_eq(_scene_problems(root, scene), [] as Array[String], "the unchanged screen passes")
+	(root.get_node("ReloadButton") as Control).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, scene)
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, "ReloadButton:")

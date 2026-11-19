@@ -897,7 +897,7 @@ func _assert_game_over_screen(scene: Control) -> void:
 		"Having problems winning a fight? Observe your enemies carefully and try to find a weakness. Being victorious in Sonny is about having a successful strategy, so you may need to re-evaluate your ability configuration and execution. If you want guides on how to beat a specific stage, I recommend you to check out the ArmorGames or KrinLabs forums for some help.",
 		"GOTIP[0]"
 	)
-	assert_eq(game_over.get_node("BackLabel").text, "Back", "MENU[26]")
+	assert_eq(game_over.get_node("Back/Caption").text, "Back", "MENU[26]")
 
 
 func test_a_loss_ends_the_game_on_the_game_over_screen():
