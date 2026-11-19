@@ -149,3 +149,38 @@ func test_loading_a_save_sets_the_sound_from_it() -> void:
 	AudioManagerAuto.sound_enabled = true
 	assert_true(GameData.load_game(1))
 	assert_false(AudioManagerAuto.sound_enabled)
+
+
+# DefineButton2_3180 on(release) refuses with MENU[66] while an item is on the
+# cursor, before it checks PauseForScreen. In the port that is a drag from an
+# Inventory or equipment slot that ends on the button.
+func test_options_refuses_a_release_with_an_item_on_the_cursor() -> void:
+	var save: PlayerSave = PlayerSave.new_game("Options")
+	GameData.current_save = save
+	save.equip_array[Equipment.MAIN_HAND_SLOT] = ItemManagerAuto.items_by_id.keys()[0]
+	for inert: bool in [false, true]:
+		var stage := SubViewport.new()
+		stage.size = Vector2i(800, 575)
+		add_child_autofree(stage)
+		var hub: Control = GameScene.instantiate()
+		stage.add_child(hub)
+		await wait_process_frames(2)
+		hub.get_node("Hotbar").set_inert(inert)
+		var button: BaseButton = hub.get_node("Hotbar").get_node("%OptionsButton")
+		var item: GameItem = ItemManagerAuto.items_by_id[int(save.equip_array[Equipment.MAIN_HAND_SLOT])]
+		button.force_drag({"item": item, "source": "equip", "index": Equipment.MAIN_HAND_SLOT}, Control.new())
+		var motion := InputEventMouseMotion.new()
+		motion.position = button.get_global_rect().get_center()
+		motion.global_position = motion.position
+		button.get_viewport().push_input(motion, true)
+		var release := InputEventMouseButton.new()
+		release.button_index = MOUSE_BUTTON_LEFT
+		release.pressed = false
+		release.position = motion.position
+		release.global_position = motion.position
+		button.get_viewport().push_input(release, true)
+		assert_false(hub.get_node("OptionsWindow").visible, "inert %s: the Window stays shut" % inert)
+		var banner: CombatTextBanner = hub.get_node("CombatTextBanner")
+		assert_true(banner.is_up(), "inert %s: the banner shows" % inert)
+		assert_eq(banner.label.text, Strings.menu(66), "inert %s" % inert)
+		stage.free()

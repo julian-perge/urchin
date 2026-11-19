@@ -13,7 +13,7 @@ Success is that every piece sits where the SWF places it, every row reads its te
 ## Assumptions
 
 - The Window is a `menu_screen` like the other hotbar Windows. A second press of Options closes it, as a second press closes Inventory, Abilities and Achievements in the port. In the original a second press goes to the same label again, so the Window stays open.
-- The original's guard against an item on the cursor (`MENU[66]`) does not apply, because the port has no item on the cursor. The hotbar's `set_inert` already stands in for `PauseForScreen`.
+- The original refuses a release with an item on the cursor (`MENU[66]`) before it checks `PauseForScreen`. In the port an item is on the cursor while the player drags it from an Inventory or equipment slot, so Options refuses that drop with `MENU[66]` as Respec does (#380), also while the hotbar is inert. The hotbar's `set_inert` stands in for `PauseForScreen`.
 - Names and paths marked "proposed" are this spec's choice.
 
 ## Pieces

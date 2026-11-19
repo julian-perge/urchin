@@ -69,7 +69,8 @@ func _ready():
 		button.mouse_entered.connect(_show_tooltip.bind(button))
 		button.mouse_exited.connect(GameTooltip.hide_tooltip)
 	_refresh(ZoneManager.current_zone)
-	(%RespecButton as BaseButton).set_drag_forwarding(Callable(), _can_drop_on_respec, _drop_on_respec)
+	for refusing: String in ["%RespecButton", "%OptionsButton"]:
+		(get_node(refusing) as BaseButton).set_drag_forwarding(Callable(), _can_drop_item, _refuse_item_drop)
 
 
 # The SWF draws the hover as one or two Glow filters on the icon, and every
@@ -272,17 +273,18 @@ func _on_respec_pressed() -> void:
 		window.refresh()
 
 
-# The original refuses a release on the button while an item is on the cursor,
-# with MENU[66]. In the port an item is on the cursor while the player drags it
+# The original's Respec and Options buttons (DefineButton2_3179 and
+# DefineButton2_3180 on(release)) refuse a release while an item is on the
+# cursor, with MENU[66]. In the port an item is on the cursor while the player drags it
 # from an Inventory or equipment slot (ItemSlot._get_drag_data), and the release
-# ends that drag on the button, so the button takes the drop and refuses it. The
+# ends that drag on a button, so the button takes the drop and refuses it. The
 # original checks this before PauseForScreen, so an inert hotbar refuses too. The
 # item stays in its slot, because only an ItemSlot moves an item on a drop.
-func _can_drop_on_respec(_at_position: Vector2, data: Variant) -> bool:
+func _can_drop_item(_at_position: Vector2, data: Variant) -> bool:
 	return data is Dictionary and data.has("item")
 
 
-func _drop_on_respec(_at_position: Vector2, _data: Variant) -> void:
+func _refuse_item_drop(_at_position: Vector2, _data: Variant) -> void:
 	_show_combat_text(Strings.menu(66))
 
 
