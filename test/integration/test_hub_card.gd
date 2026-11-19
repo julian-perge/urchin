@@ -253,6 +253,27 @@ func test_a_hub_built_for_the_next_win_shows_the_hint_again():
 	assert_true((second.get_node("HubCard") as HubCard).visible)
 
 
+# After a win with no cutscene, no zone map and no level-up, the original's
+# Proceed shows the hint at once (DefineButton2_3004 on(release), line 27).
+func test_a_hub_opened_by_a_plain_win_shows_its_hint_at_once():
+	GameData.current_save = PlayerSave.new_game("Hinter", 0)
+	ZoneManager.hint_battle_on_load = 101
+	var game: Control = await _hub_scene()
+	var card: HubCard = game.get_node("HubCard")
+	assert_true(card.visible)
+	assert_eq((card.get_node("%Title") as Label).text, Strings.text("NAVTITLE2", _hint_index(101)))
+	assert_eq(ZoneManager.hint_battle_on_load, 0, "the Hub took the hint")
+	_free_hub(game)
+
+
+func test_a_hub_opened_with_no_hint_shows_no_card():
+	GameData.current_save = PlayerSave.new_game("Hinter", 0)
+	ZoneManager.hint_battle_on_load = 0
+	var game: Control = await _hub_scene()
+	assert_false((game.get_node("HubCard") as HubCard).visible)
+	_free_hub(game)
+
+
 # A win that levelled the player up leaves the hint waiting until the player
 # closes the Inventory or the Store (button 2853, DefineButton2_2853 on(press)).
 func _hub_after_level_up_win(battle_id: int) -> Control:

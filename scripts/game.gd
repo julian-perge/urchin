@@ -55,6 +55,10 @@ func _ready():
 		var window: Node = get_tree().get_first_node_in_group(group)
 		if window != null:
 			window.get_node("WindowShell").close_pressed.connect(_on_hint_window_closed)
+	var hint_battle: int = ZoneManager.hint_battle_on_load
+	ZoneManager.hint_battle_on_load = 0
+	if hint_battle != 0:
+		show_battle_hint(hint_battle)
 
 
 func _load_zone(zone_id: int) -> void:
@@ -80,8 +84,8 @@ func set_art_visible(art_visible: bool) -> void:
 # needs no reset (DECODED_ALGORITHMS.md, "Post-battle hint"). battle_hints.json
 # gives each battle's index into NAVTITLE2 and NAVTEXT2. Battle 33 has an index
 # but no text, so it shows nothing. The Tutorial option is not checked, as in
-# the original. _on_hint_window_closed() calls it for a win that levelled the
-# player up. Nothing else calls it until #241 lands.
+# the original. _ready() calls it for a win with no cutscene, map or level-up,
+# and _on_hint_window_closed() calls it for a win that levelled the player up.
 func show_battle_hint(battle_id: int) -> void:
 	if _hint_used:
 		return

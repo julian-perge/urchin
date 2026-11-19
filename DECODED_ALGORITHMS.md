@@ -746,7 +746,7 @@ Ported: `scripts/ui/hotbar.gd`'s `_refresh` builds the right panel, and `scripts
 
 ## Post-battle hint (`krinNavTutSpeech`, frame_42/DoAction_21.as:26-76)
 
-Ported: `scripts/game.gd`'s `show_battle_hint` shows the card, and `convert_battle_hints` writes `dev/converted_json/battle_hints.json` from the table. Nothing calls `show_battle_hint` until #241 lands.
+Ported: `scripts/game.gd`'s `show_battle_hint` shows the card, and `convert_battle_hints` writes `dev/converted_json/battle_hints.json` from the table. After a win with no cutscene, no map and no level-up, `battle_scene.gd` puts the battle's id in `ZoneManager.hint_battle_on_load`, and the Hub's `_ready()` takes it, clears it and calls `show_battle_hint` (#16).
 
 - `Krin.progressSpeech[battle]` holds `[NAVTITLE2[n], NAVTEXT2[n]]` for six battles, in order: 100 to 104 get n 0 to 4, 504 gets 5, and 33 gets 6 (lines 26-61). `NAVTITLE2` and `NAVTEXT2` have
   entries 0 to 5, so the entry for battle 33 holds two undefined values. No battle 33 exists in `battles.json`, and the port skips that entry.
