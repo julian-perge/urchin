@@ -442,6 +442,17 @@ func test_the_title_turns_the_sound_back_on():
 	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.MENU, "and the menu music plays")
 
 
+# The same resetHere clears Krin.soundToMake and Krin.missToMake, the sounds that
+# a move whose cost failed plays when it lands for free (see AudioManager's
+# sound_to_make).
+func test_the_title_clears_the_landing_sounds_a_free_move_would_play():
+	AudioManagerAuto.sound_to_make = "sfx_boom"
+	AudioManagerAuto.miss_to_make = "sfx_magicmiss"
+	await _menu_without_scene_change()
+	assert_eq(AudioManagerAuto.sound_to_make, "", "the hit sound is cleared")
+	assert_eq(AudioManagerAuto.miss_to_make, "", "and so is the miss sound")
+
+
 # The Tutorial option is on until the player turns it off (frame_93/DoAction.as:7),
 # and this test leaves the row alone. With it on, the original's START plays
 # CS_INTRO (DefineButton2_2770 on(release), lines 2-6). The clip's end goes to
