@@ -1207,6 +1207,32 @@ func test_a_model1_swing_shows_its_trail_on_the_frames_its_label_places_it():
 		assert_eq(shown, clip["frames"].filter(func(name): return pieces["art"].has(name)).size(), "%s shows every frame of %s that draws" % [case[0], case[1]])
 
 
+# A slow frame can carry the playhead past the frame that places a clip. Flash
+# would have placed the clip on that frame and played it on each frame since, so
+# the clip shows the frame it has reached by now, not its frame 1.
+func test_a_slow_frame_past_a_trails_placement_shows_the_frame_the_trail_has_reached():
+	var pieces: Dictionary = _pieces_of("MODEL1")
+	var clip: Dictionary = pieces["clips"]["149"]
+	visual.start_clip("MODEL1")
+	visual.play_melee(func(): return Vector2(80, 0), 0.0, "Attack_Upper")
+	var since: int = -1
+	for index in pieces["frames"].size():
+		var entry = pieces["frames"][index].get("33")
+		if entry is Dictionary and entry["clip"] == "149":
+			since = int(entry["since"])
+			break
+	assert_gt(since, 0, "sanity: Attack_Upper places the trail")
+	for step in 200:
+		if visual._melee_phase == CharacterVisual.MeleePhase.STRIKE and visual._frame_index + 1 == since - 2:
+			break
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._frame_index + 1, since - 2, "sanity: two frames before the trail")
+	visual._process(SWF_FRAME_SECONDS * 3.0)
+	var age: int = visual._frame_index + 1 - since
+	assert_eq(age, 1, "sanity: the slow frame lands one frame past the placement")
+	assert_eq(visual.get_node("Body/Piece33").texture.resource_path, CharacterVisual.PIECE_ART % clip["frames"][age])
+
+
 func test_every_model_with_pieces_names_art_that_exists():
 	for model in CharacterVisual.CLIP_MODELS:
 		if not FileAccess.file_exists(CharacterVisual.pieces_file(model)):

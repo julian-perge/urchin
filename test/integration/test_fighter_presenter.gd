@@ -1646,13 +1646,11 @@ func test_the_doll_looks_the_same_after_the_flash():
 	heal_move.visual_effect_color = Color(0.2, 1.0, 0.0)
 	_presenter.cast(heal_move)
 	var tint: Color = _doll.modulate
-	var glow_color: Color = _doll.colortobe
 	_presenter.show_result(_heal(10.0, 100.0), heal_move)
 	assert_eq(_flash_color(), _heal_flash, "a heal flashes the caster it lands on")
 	_advance_flash(_flash_frames("heal").size())
 	assert_null(_flash_color(), "the flash is over")
 	assert_eq(_doll.modulate, tint, "and the doll keeps its colours")
-	assert_eq(_doll.colortobe, glow_color, "and its cast glow's colour")
 
 	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 	_stun()

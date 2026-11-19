@@ -643,27 +643,30 @@ func _advance_label(delta: float, loop: bool) -> void:
 	elif _label_frames >= length:
 		_label_frames = length
 		_label_finished = true
-	_apply_label_frame(_label, _label_frames)
+	_apply_label_frame(_label, _label_frames, true)
 
 
 # Applies the pose `frames` SWF frames into a labeled segment: every part gets
 # the original frame's full affine matrix (rotation, scale, AND skew).
-func _apply_label_frame(label: String, frames: float) -> void:
+func _apply_label_frame(label: String, frames: float, played: bool = false) -> void:
 	var animations: Dictionary = _timeline()
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return
 	var start: int = int(segment["start"]) - 1
 	var end: int = int(segment["end"]) - 1
-	_apply_frame_index(clampi(start + int(frames), start, end))
+	_apply_frame_index(clampi(start + int(frames), start, end), played)
 
 
-func _apply_frame_index(index: int) -> void:
+# Shows the model's frame `index`. `played` is true when the playhead plays on to
+# it, and false when a goto lands on it.
+func _apply_frame_index(index: int, played: bool = false) -> void:
 	var animations: Dictionary = _timeline()
 	var frames: Array = animations.get("frames", [])
 	if frames.is_empty():
 		return
 	var frame: int = clampi(index, 0, frames.size() - 1)
+	var previous: int = _frame_index
 	_frame_index = frame
 	var pose: Dictionary = frames[frame]
 	var alphas: Dictionary = animations["alphas"][frame]
@@ -681,7 +684,7 @@ func _apply_frame_index(index: int) -> void:
 		)
 		part.modulate.a = alphas.get(part_name, 1.0)
 	_apply_shadow(animations.get("shadow", []), frame)
-	_apply_pieces()
+	_apply_pieces(previous if played else -1)
 
 
 # Puts the shadow on `frame`'s matrix for it, or hides it on a frame that does
@@ -722,8 +725,11 @@ func _build_pieces() -> void:
 # shows the frame of its own clip that its clock has reached, with the model
 # frame's matrix and colour transform. Its clock runs on while the frame shows
 # the same placement, so a goto that lands on that placement, such as stun2's
-# goto back to its own first frame, does not restart it.
-func _apply_pieces() -> void:
+# goto back to its own first frame, does not restart it. `played_from` is the
+# 0-based frame the playhead played on from, or -1 after a goto. A clip that
+# the playhead played past the placing frame of, as a slow frame does, has played
+# one frame for each frame since, and a goto starts a clip on its frame 1.
+func _apply_pieces(played_from: int = -1) -> void:
 	if _piece_nodes.is_empty():
 		return
 	var data: Dictionary = _piece_data()
@@ -744,7 +750,10 @@ func _apply_pieces() -> void:
 			continue
 		var run: Dictionary = _piece_runs.get(depth, {})
 		if run.get("clip") != entry["clip"] or run.get("since") != entry["since"]:
-			run = {"clip": entry["clip"], "since": entry["since"], "start": _clip_frames, "tint": colortobe}
+			var skipped: int = 0
+			if played_from >= 0 and played_from + 1 < int(entry["since"]):
+				skipped = _frame_index + 1 - int(entry["since"])
+			run = {"clip": entry["clip"], "since": entry["since"], "start": _clip_frames - skipped, "tint": colortobe}
 			_piece_runs[depth] = run
 		var clip: Dictionary = data["clips"][entry["clip"]]
 		var frame: int = _clip_frame(clip, int(_clip_frames - run["start"]))
@@ -900,7 +909,7 @@ func _animate_melee(delta: float) -> void:
 		MeleePhase.DASH:
 			if _state == State.MELEE:
 				_playhead = minf(_playhead + frames, _label_end_frame("run"))
-				_apply_frame_index(int(_playhead))
+				_apply_frame_index(int(_playhead), true)
 			_step_toward_target(minf(1.5 - 1.45 * _go_rat(), 1.0), frames)
 			if _go_rat() >= 1.0:
 				_melee_phase = MeleePhase.STRIKE
@@ -961,7 +970,7 @@ func _show_swing_frame(frame: float, jumped: bool = false) -> void:
 		return
 	var before: int = int(frame) - 1 if jumped else int(_playhead)
 	_playhead = frame
-	_apply_frame_index(int(_playhead))
+	_apply_frame_index(int(_playhead), not jumped)
 	for index in range(before + 1, int(_playhead) + 1):
 		for cue in _cues().get(str(index + 1), []):
 			sound_cue.emit(cue)
@@ -978,7 +987,7 @@ func _play_runback_label(frames: float) -> void:
 	if _playhead > _label_end_frame("runback"):
 		set_state(State.IDLE)
 	else:
-		_apply_frame_index(int(_playhead))
+		_apply_frame_index(int(_playhead), true)
 
 
 func _step_home(frames: float) -> void:
@@ -1003,7 +1012,7 @@ func _play_death(delta: float) -> void:
 		visible = false
 		state_finished.emit(State.DEAD)
 		return
-	_apply_frame_index(int(_playhead))
+	_apply_frame_index(int(_playhead), true)
 
 
 # stun(one-shot, MODEL1's 220-239) -> stun2(loop, MODEL1's 240-279 - the clip
