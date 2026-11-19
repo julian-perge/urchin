@@ -625,9 +625,8 @@ SCENES: dict[str, Scene] = {
         timeline=0, frame=TITLE_FRAME, pieces=TITLE_PIECES
     ),
     # Depths 38 and 41 are the Armor Games line and logo, as on the title. The
-    # "Play MORE Games!" caption and its link are left out too, and are not
-    # listed, because an edit text and a hit button draw nothing in the
-    # reference.
+    # other left-out depths need no entry, because the compare tool's chrome
+    # mode strips every edit text and a hit button has no art.
     "res://scenes/battle/ending_screen.tscn": Scene(
         timeline=0,
         frame=ENDING_FRAME,

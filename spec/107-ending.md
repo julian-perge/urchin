@@ -32,15 +32,16 @@ Frame 116 places these characters:
 | Depth | cid | Piece | Box | Look | Port |
 | --- | --- | --- | --- | --- | --- |
 | 1, 2, 5 | 2701, 307, 2700 | the menu background | the Stage | title-slots | `Background`, an instance of `menu_background.tscn` |
-| 6 | 2799 | "OK!", static text | (221.00, 410.10) 342.10x51.30 | `_sans` bold 36 #ffcc00 center | `OkLabel`, `MenuCaption` |
+| 6 | 2799 | "OK!", static text | (221.00, 410.10) 342.10x51.30 | `_sans` bold 36 #ffcc00 center, Glow and DropShadow | `OkLabel`, `MenuCaption` |
 | 7 | 2798 | `whatToSay3`, "Play MORE Games!" | | | left out, ADR 0002 |
 | 8 | 2688 | its link to the publisher | | | left out, ADR 0002 |
 | 10 | 2797 | the OK! hit button | (340.43, 412.40) 104.04x40.00 | none | `OkButton`, a flat Button |
-| 12 | 2796 | `enderText` | (195.30, 109.45) 418.05x275.20 | `_sans` bold 14 #ffffff left, multiline, word wrap, 8 px leading | `EndingLabel`, `MenuCaption` |
+| 12 | 2796 | `enderText` | (195.30, 109.45) 418.05x275.20 | `_sans` bold 14 #ffffff left, multiline, word wrap, 8 px leading, Glow and DropShadow | `EndingLabel`, `MenuCaption` |
 | 38, 39, 41 | 2689, 2688, 294 | the copyright line, its link and the logo | | | left out, ADR 0002 |
 
 - `Background` replaces the scene's own TextureRect of `start_background.png`. `menu_background.tscn` is the same PNG at the same rect, so the Screen reuses it, as the choice and slot list Screens do.
 - `OkLabel` keeps "OK!" in the `.tscn`, because 2799 is static text and the record holds its text. `MenuCaption` is white, so `OkLabel` overrides the colour to #ffcc00.
+- Frame 116 places 2796 and 2799 with the filters the title captions have: a Glow (#000000, blur 3, strength 10) and a DropShadow (#000000, blur 8, distance 2), read from `sonny-2-2900.xml`. So `MenuCaption` is their look, for the same reason as on the title.
 - `EndingLabel` reads `Strings.text("ENDING")` when the Screen is ready. The `.tscn` holds no text for it.
 - The rect, size, colour, alignment and line pitch of each piece come from the record. The scene's numbers stay typed in the `.tscn`, which AGENTS.md allows once the rect test checks them.
 
