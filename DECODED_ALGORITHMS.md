@@ -724,6 +724,22 @@ Ported: `CutscenePlayer` places the button and its text from `assets/cutscenes/s
   frame 2424 (`DefineSprite_4153`). The port first faded in over an empty video, which showed the battle under it, or the Victory screen after Proceed, for 0.67 s before the clip started. A black rect
   under the video now stands in for the original's own root frame, which shows nothing of the battle.
 
+## The Cutscene camera (DefineSprite 3478, and 3645, 3812, 3962 and 4041)
+
+Ported: `extract_cutscenes` bakes it into each clip. `cutscenes.camera_view` computes the animation's placement, and `write_cutscene_swf` writes it as one PlaceObject2 move per frame into the wrapper.
+
+- Each animation of CS_INTRO2 and CS_CUT1 to CS_CUT5 places one Cutscene camera on every frame. CS_CUT1 and CS_CUT3 share 3812. All five clips run the same script
+  (`DefineSprite_3478/frame_1/DoAction.as`), which hides the clip and calls `camControl()` on its first frame and on every `onEnterFrame`.
+- `camControl()` sets the animation's `_xscale` to 100 * 533 / the Cutscene camera's `_width`, and `_yscale` to 100 * 300 / its `_height`. The clip draws only shape 3477, whose bounds are
+  10660x6000 twips, so the zoom is 1 / the Cutscene camera's scale on each axis. Then `_x` = 266.5 - the Cutscene camera's `_x` * x zoom and `_y` = 150 - its `_y` * y zoom. These are absolute, so
+  they replace the wrapper's own (269.75, 152.45) offset of the animation. The point (266.5, 150) is the centre of the wrapper's 533x300 clip mask.
+- `parentColor.setTransform(camColor.getTransform())` copies the Cutscene camera's color transform onto the animation every frame. A Cutscene camera with no color transform gives the identity. Five of the six
+  animations open with their Cutscene camera multiplying red, green and blue by 0, so they fade in from black. CS_CUT5's Cutscene camera has no color transform on its frame 1.
+- The Cutscene cameras never rotate. The zoom runs from 0.65 (CS_CUT5) to 4.32 (CS_INTRO2), and on frame 240 of CS_INTRO2 the Cutscene camera sits at scale 0.428 around (-108.35, -81.25), a 2.34x zoom.
+- Under the wrapper, at root depth 1, every cutscene frame shows shape 3475, a dark full-stage shape. It shows wherever the animation leaves the mask transparent.
+- Guess, not checked in a live run: frame N of the animation shows the Cutscene camera of frame N, with no one-frame lag. `onEnterFrame` runs after the frame's tags are placed.
+- `resetStage()` on unload sets the parent back to identity. Nothing in the port needs it, because the clip ends with the cutscene.
+
 ## Zone hub orbs (DefineSprite 3287)
 
 Ported: `ZoneProgression.pick_story_battle` and `pick_training_battle` carry each orb's flags, and `scenes/zones/zone*.tscn` place the orbs.

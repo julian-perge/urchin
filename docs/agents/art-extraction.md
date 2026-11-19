@@ -45,7 +45,7 @@ extracting it.
   fills, colorTransforms. 159 of 789 doll sprites carry a filter and 56 carry a
   colorTransform, and ability icons visibly spilled outside their orb without
   the mask (`6928366`).
-- **ffdec does not run ActionScript.** Four consequences, all of which have
+- **ffdec does not run ActionScript.** Five consequences, all of which have
   bitten:
   1. A character can be fully opaque in the tag data and never visible in the
      game because AS hides it. ffdec draws it and ruins the export. This is the
@@ -72,6 +72,17 @@ extracting it.
      `played_frames()`. When a `gotoAndPlay()` or a `play()` starts the clip
      past a `stop()`, as the Shield clip's `play()` does, pass that frame as
      `start`.
+  5. A script that moves its parent never runs. Each Cutscene camera sets the
+     _x, _y, _xscale, _yscale and color transform of the animation that places
+     it on every frame, so the 533x300 view pans, zooms and tints. Every
+     shipped clip showed the whole animation unzoomed and untinted until #13,
+     and CS_CUT4 opened on a white frame where the game fades in from black.
+     `cutscenes.py` writes the Cutscene camera's view as one PlaceObject2
+     move per frame into the wrapper, so ffdec draws it. A zoomed sprite
+     export then grows to the union of the zoomed art, 16695x8756 px for
+     CS_INTRO2, because ffdec ignores the clip mask when it sizes a sprite.
+     So the extractor exports the root timeline, which ffdec sizes to the
+     stage.
 - **Strip authoring-only characters through `dev/urchin_dev/swf/strip.py`.**
   Each extractor keeps its own `{characterId: reason}` and renders and
   measures from the one copy or hide list it gets back. Every battle hall

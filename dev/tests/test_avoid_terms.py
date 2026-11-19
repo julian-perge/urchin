@@ -6,6 +6,7 @@ from urchin_dev.checks.avoid_terms import (
     added_lines,
     avoid_terms,
     avoided_uses,
+    defined_terms,
     fenced_lines,
 )
 
@@ -68,3 +69,16 @@ def test_text_in_backticks_is_skipped_and_the_prose_around_it_is_checked():
 def test_a_backticked_name_in_a_gdscript_comment_is_skipped():
     added = [(1, "# The original's `absorb` clip.")]
     assert avoided_uses("a.gd", added, ["Absorb"]) == []
+
+
+def test_each_bold_entry_gives_a_defined_term():
+    assert defined_terms(GLOSSARY) == ["Shield block", "Battle roster"]
+
+
+def test_a_defined_term_that_holds_an_avoid_term_passes():
+    # GLOSSARY.md defines Cutscene camera and lists Camera to avoid, so only
+    # the bare word fails.
+    added = [(1, "The Cutscene camera zooms."), (2, "The camera zooms.")]
+    assert avoided_uses("a.md", added, ["Camera"], defined=["Cutscene camera"]) == [
+        (2, "camera")
+    ]
