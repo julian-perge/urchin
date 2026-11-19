@@ -262,6 +262,100 @@
   }
  },
  "scenes": {
+  "res://scenes/battle/game_over_screen.tscn": {
+   "frame": "gameOverMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Back/Caption": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 24.0,
+     "kind": "text",
+     "rect": [
+      490.15,
+      534.15,
+      300.1,
+      26.85
+     ]
+    },
+    "Back/HitButton": {
+     "kind": "hit",
+     "rect": [
+      604.4392,
+      534.4501,
+      188.1216,
+      26.7998
+     ]
+    },
+    "Background": {
+     "kind": "art",
+     "rect": [
+      0.0,
+      0.0,
+      800.0,
+      575.0
+     ],
+     "size": [
+      1600,
+      1150
+     ],
+     "texture": "res://assets/ui/menu/start_background.png",
+     "zoom": 2.0
+    },
+    "DeadLabel": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 30.0,
+     "kind": "text",
+     "line_pitch": 32.0,
+     "rect": [
+      195.1,
+      95.75,
+      409.85,
+      41.35
+     ]
+    },
+    "ReloadButton": {
+     "kind": "hit",
+     "rect": [
+      255.5364,
+      173.0,
+      288.9272,
+      30.0
+     ]
+    },
+    "ReloadLabel": {
+     "align": "center",
+     "color": "ffcc00ff",
+     "font_size": 14.0,
+     "kind": "text",
+     "rect": [
+      252.9,
+      174.4,
+      294.2,
+      29.05
+     ]
+    },
+    "TipLabel": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 14.0,
+     "kind": "text",
+     "line_pitch": 20.0,
+     "rect": [
+      116.15,
+      233.65,
+      566.8,
+      111.35
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
   "res://scenes/battle_scene.tscn": {
    "frame": "KRINBATTLESCENE",
    "origin": [

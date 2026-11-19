@@ -643,6 +643,27 @@ SCENES: dict[str, Scene] = {
         ),
         left_out=(38, 41),
     ),
+    # The Game over Screen, gameOverMenu (spec/107-game-over.md). The frame
+    # keeps Back at depths 35 and 36 from the menu frames before it. It also
+    # places "Play MORE Games!" at depth 6 with its link at depth 8, and the
+    # Armor Games line, link and logo at depths 38, 39 and 41, which the port
+    # leaves out (docs/adr/0002-leave-out-the-armor-games-branding.md). Only
+    # 38 and 41 are listed, because an edit text and a hit button draw nothing
+    # in the compare tool's reference.
+    "res://scenes/battle/game_over_screen.tscn": Scene(
+        timeline=0,
+        frame="gameOverMenu",
+        pieces={
+            "Background": Piece("art", 1, art="start_background"),
+            "DeadLabel": Piece("text", 10),
+            "ReloadLabel": Piece("text", 11),
+            "TipLabel": Piece("text", 12),
+            "ReloadButton": Piece("hit", 13),
+            "Back/Caption": Piece("text", 35),
+            "Back/HitButton": Piece("hit", 36),
+        },
+        left_out=(38, 41),
+    ),
     # The bottom bar body 3317, which the hub frame and the battle frame both
     # place at depth 1 (spec/107-hub.md, The bottom bar body). The scene's root
     # is the piece.
