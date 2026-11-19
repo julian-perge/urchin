@@ -126,7 +126,7 @@ func setup(units: Dictionary, moves_by_id: Dictionary, buffs_by_id: Dictionary) 
 # hold_area is the clicked unit's hit area, which keeps the menu open along with
 # the orbs. The orbs fan out about 62px from the unit, well outside that area,
 # so the unit alone would close the menu as the player moved toward an orb.
-func open(target_slot: int, centre: Vector2, hold_area: Control) -> void:
+func open(target_slot: int, centre: Vector2, hold_area: Control = null) -> void:
 	if not decision_open:
 		return
 	var target: CombatUnit = _units.get(target_slot)
