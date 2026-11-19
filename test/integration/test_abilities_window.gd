@@ -157,7 +157,7 @@ func test_a_pool_row_places_its_ability_and_a_socket_click_sends_it_back() -> vo
 	assert_gt(owned.size(), 0, "a new game owns an ability")
 	save.move_matrix.fill(0)
 	var window: Control = _window()
-	(window.get_node("PoolRows/PoolRow0") as Button).pressed.emit()
+	(window.get_node("Pool/Mask/Rows/PoolRow0") as Button).pressed.emit()
 	assert_eq(int(save.move_matrix[0]), int(owned[0]), "the first free socket holds it")
 	(window.get_node("Socket0") as Button).pressed.emit()
 	assert_eq(int(save.move_matrix[0]), 0, "the socket is empty again")

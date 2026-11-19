@@ -132,5 +132,32 @@
     ]
    }
   }
+ },
+ "abilities": {
+  "scene": "res://scenes/ui/menu/abilities_window.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 61,
+    "hide_names": [
+     "TreeLines",
+     "TreeNodes",
+     "Socket0",
+     "Socket1",
+     "Socket2",
+     "Socket3",
+     "Socket4",
+     "Socket5",
+     "Socket6",
+     "Socket7",
+     "Rows",
+     "VitalityPlus",
+     "StrengthPlus",
+     "InstinctPlus",
+     "SpeedPlus",
+     "ScrollUpButton",
+     "ScrollDownButton"
+    ]
+   }
+  }
  }
 }
