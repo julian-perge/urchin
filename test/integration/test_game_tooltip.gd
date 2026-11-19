@@ -30,8 +30,7 @@ func test_show_sections_builds_one_panel_per_section_with_right_colors_and_lines
 
 	assert_eq(GameTooltip._sections.get_child_count(), 2, "one PanelContainer per section")
 	var header_panel: PanelContainer = GameTooltip._sections.get_child(0)
-	var header_style: StyleBoxFlat = header_panel.get_theme_stylebox("panel")
-	assert_eq(header_style.bg_color, TooltipTheme.BG_HEADER)
+	assert_eq(_gloss_colors(header_panel), _expected_gloss([0, 0, 0]), "the title draws the untinted 2715 gradient")
 	var header_label: Label = header_panel.get_child(0).get_child(0)
 	assert_eq(header_label.text, "Title")
 	assert_eq(header_label.get_theme_color("font_color"), TooltipTheme.TEXT_TITLE)
@@ -163,3 +162,106 @@ func test_position_clamps_at_the_left_and_top_edges():
 	await wait_process_frames(1)
 	assert_true(GameTooltip._root.position.x >= 0.0, "never positioned off the left edge")
 	assert_true(GameTooltip._root.position.y >= 0.0, "never positioned off the top edge")
+
+
+var _look: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/tooltip_look.json"))
+
+
+# -> the gradient stops of tooltip_look.json with add applied and clamped, read
+# by this test itself so a value typed into the port fails it.
+func _expected_gloss(add: Array) -> PackedColorArray:
+	var colors: PackedColorArray = PackedColorArray()
+	for stop: Dictionary in _look["gloss_stops"]:
+		var c: Array = stop["color"]
+		colors.append(Color8(
+			clampi(int(c[0]) + int(add[0]), 0, 255),
+			clampi(int(c[1]) + int(add[1]), 0, 255),
+			clampi(int(c[2]) + int(add[2]), 0, 255),
+			int(c[3])
+		))
+	return colors
+
+
+func _gloss_colors(panel: Control) -> PackedColorArray:
+	var gloss: TextureRect = panel.get_node_or_null("Gloss")
+	if gloss == null:
+		return PackedColorArray()
+	return (gloss.texture as GradientTexture2D).gradient.colors
+
+
+func _rare_item() -> GameItem:
+	for item: GameItem in ItemManagerAuto.items_by_id.values():
+		if item.rarity == GameItem.Rarity.RARE and item.item_type >= GameItem.ItemType.HEAD:
+			return item
+	return null
+
+
+func test_a_rare_items_title_bar_carries_the_rare_add_terms():
+	var slot: ItemSlot = add_child_autofree(preload("res://scenes/ui/item_slot.tscn").instantiate())
+	var item: GameItem = _rare_item()
+	assert_not_null(item, "items.json holds a Rare item")
+	slot.set_item(item)
+	slot.mouse_entered.emit()
+	var title: Control = GameTooltip._sections.get_child(0)
+	assert_eq(_gloss_colors(title), _expected_gloss(_look["rarity_add"]["Rare"]))
+	var level_line: Control = GameTooltip._sections.get_child(1)
+	assert_eq(_gloss_colors(level_line), _expected_gloss([0, 0, 0]), "only the title takes the rarity")
+
+
+# The original keeps the last item's rarity for a tooltip whose caller sets
+# none, because its frame 1 resets colorChage. ADR 0005 fixes that.
+func test_a_tooltip_with_no_rarity_after_a_rare_item_is_untinted():
+	var slot: ItemSlot = add_child_autofree(preload("res://scenes/ui/item_slot.tscn").instantiate())
+	slot.set_item(_rare_item())
+	slot.mouse_entered.emit()
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	assert_eq(_gloss_colors(GameTooltip._sections.get_child(0)), _expected_gloss([0, 0, 0]))
+
+
+func test_the_cost_bar_draws_the_gradient_with_the_go2_add_terms():
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections([
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": "Title", "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_COST, "lines": [{"text": "Cost", "color": TooltipTheme.TEXT_SUBHEADER}]},
+	], anchor)
+	assert_eq(_gloss_colors(GameTooltip._sections.get_child(1)), _expected_gloss(_look["subheader_add"]["GO2"]))
+
+
+func test_a_flat_section_has_no_gradient():
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	assert_null(GameTooltip._sections.get_child(1).get_node_or_null("Gloss"))
+
+
+func _assert_every_section_has_a_black_1_px_border() -> void:
+	assert_gt(GameTooltip._sections.get_child_count(), 0)
+	for panel: Control in GameTooltip._sections.get_children():
+		var border: Panel = panel.get_node_or_null("Border")
+		assert_not_null(border, "%s has a border" % panel.name)
+		if border == null:
+			continue
+		var style: StyleBoxFlat = border.get_theme_stylebox("panel")
+		assert_false(style.draw_center)
+		assert_eq(style.border_color, Color.BLACK)
+		for side in [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]:
+			assert_eq(style.get_border_width(side), 1)
+
+
+func test_every_section_of_an_item_tooltip_has_its_border():
+	var slot: ItemSlot = add_child_autofree(preload("res://scenes/ui/item_slot.tscn").instantiate())
+	slot.set_item(_rare_item())
+	slot.mouse_entered.emit()
+	_assert_every_section_has_a_black_1_px_border()
+
+
+func test_every_section_of_an_ability_tooltip_has_its_border():
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections([
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": "Title", "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_COST, "lines": [{"text": "Cost", "color": TooltipTheme.TEXT_SUBHEADER}]},
+		{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": "Body", "color": TooltipTheme.TEXT_BODY}]},
+		{"bg_color": TooltipTheme.BG_NEXT_RANK, "lines": [{"text": "Next", "color": TooltipTheme.TEXT_NEXT_RANK}]},
+	], anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY)
+	assert_eq(GameTooltip._sections.get_child_count(), 4)
+	_assert_every_section_has_a_black_1_px_border()

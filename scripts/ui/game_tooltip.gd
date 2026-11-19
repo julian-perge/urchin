@@ -10,6 +10,14 @@ extends CanvasLayer
 
 const EDGE_MARGIN: float = 4.0
 const ANCHOR_GAP: float = 8.0
+# Every text field KrinToolTipper draws a backer behind has border = true, and
+# no script sets borderColor, so Flash draws a 1 px black line at the field's
+# edges (DefineSprite_2717/frame_4/DoAction.as:36 and 54,
+# DefineSprite_2717/frame_13/DoAction.as:28, 88 and 98, and
+# DefineSprite_2717/frame_17/DoAction.as:24, 41, 65 and 83). Each section
+# stands in for one bordered field.
+const BORDER_WIDTH: int = 1
+const BORDER_COLOR: Color = Color.BLACK
 # A Flash text field keeps 2 px between its edges and its text. Each line
 # stands in for one of KrinToolTipper's text fields, so every line pads its
 # own text by 2 px on each side and a section's backing adds nothing around
@@ -37,12 +45,16 @@ func _ready() -> void:
 # icon/icon_color are optional - only the abilities screen uses them today.
 # text_width: the width every line wraps at, one of TooltipTheme's
 # TEXT_WIDTH_* for the original layout the tooltip stands in for.
+# rarity: the original's name for an item's rarity, such as "Rare", which tints
+# the title's gradient. Only item slots pass one, so every other tooltip's
+# title is untinted (ADR 0005).
 func show_sections(
 	sections: Array,
 	anchor: Control,
 	icon: Texture2D = null,
 	icon_color: Color = Color.WHITE,
-	text_width: float = TooltipTheme.TEXT_WIDTH_PLAIN
+	text_width: float = TooltipTheme.TEXT_WIDTH_PLAIN,
+	rarity: String = ""
 ) -> void:
 	for child in _sections.get_children():
 		child.free()
@@ -52,9 +64,13 @@ func show_sections(
 	for section_index in sections.size():
 		var section: Dictionary = sections[section_index]
 		var panel: PanelContainer = PanelContainer.new()
-		var style: StyleBoxFlat = StyleBoxFlat.new()
-		style.bg_color = section["bg_color"]
-		panel.add_theme_stylebox_override("panel", style)
+		var gloss_add: Variant = _gloss_add(section, section_index, rarity)
+		if gloss_add == null:
+			var style: StyleBoxFlat = StyleBoxFlat.new()
+			style.bg_color = section["bg_color"]
+			panel.add_theme_stylebox_override("panel", style)
+		else:
+			panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var lines_box: VBoxContainer = VBoxContainer.new()
 		lines_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -81,6 +97,9 @@ func show_sections(
 			label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			lines_box.add_child(label)
 		panel.add_child(lines_box)
+		if gloss_add != null:
+			panel.add_child(_gloss_rect(gloss_add))
+		panel.add_child(_border())
 		_sections.add_child(panel)
 	_icon_backing.visible = icon != null
 	if icon != null:
@@ -102,6 +121,65 @@ func show_title_and_body(title: String, body: String, anchor: Control) -> void:
 
 func hide_tooltip() -> void:
 	_root.visible = false
+
+
+# -> the add terms to draw a section's 2715 gradient with, or null for a section
+# with a flat fill. BG_HEADER and BG_COST name the two gradient bars
+# (scripts/ui/tooltip_theme.gd). The title takes the rarity's terms, as
+# krinChangeColor tints fontBacker2 in the GO and GO4 layouts
+# (DefineSprite_2717/frame_4/DoAction.as:6-9).
+func _gloss_add(section: Dictionary, section_index: int, rarity: String) -> Variant:
+	var color: Color = section["bg_color"]
+	if color == TooltipTheme.BG_COST:
+		return TooltipTheme.look()["subheader_add"]["GO2"]
+	if color != TooltipTheme.BG_HEADER:
+		return null
+	if section_index == 0 and rarity != "":
+		return TooltipTheme.look()["rarity_add"][rarity]
+	return [0, 0, 0]
+
+
+# The gradient runs from the field's top edge to its bottom edge whatever the
+# field's height, because the frame scripts stretch the backer to the field.
+# It draws behind its section's lines through show_behind_parent, so the lines
+# stay the section's first child.
+func _gloss_rect(add: Array) -> TextureRect:
+	var gradient: Gradient = Gradient.new()
+	var offsets: PackedFloat32Array = PackedFloat32Array()
+	var colors: PackedColorArray = PackedColorArray()
+	for stop: Array in TooltipTheme.gloss_stops(add):
+		offsets.append(stop[0])
+		colors.append(stop[1])
+	gradient.offsets = offsets
+	gradient.colors = colors
+	var texture: GradientTexture2D = GradientTexture2D.new()
+	texture.gradient = gradient
+	texture.fill_from = Vector2(0.0, 0.0)
+	texture.fill_to = Vector2(0.0, 1.0)
+	texture.width = 1
+	texture.height = 256
+	var rect: TextureRect = TextureRect.new()
+	rect.name = "Gloss"
+	rect.texture = texture
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_SCALE
+	rect.show_behind_parent = true
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return rect
+
+
+# The border draws over the section's fill and inside its 2 px text gutter, so
+# it changes no size.
+func _border() -> Panel:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.draw_center = false
+	style.set_border_width_all(BORDER_WIDTH)
+	style.border_color = BORDER_COLOR
+	var border: Panel = Panel.new()
+	border.name = "Border"
+	border.add_theme_stylebox_override("panel", style)
+	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return border
 
 
 # Deferred so the just-built section Labels' autowrap has actually resolved

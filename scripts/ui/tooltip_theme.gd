@@ -12,6 +12,15 @@ extends RefCounted
 
 const LOOK_FILE := "res://dev/converted_json/tooltip_look.json"
 
+# The original's names for the rarities, which key rarity_add in LOOK_FILE. An
+# item slot passes the item's KRINITEM[2] (DefineButton2_2985 on(rollOver).as:3).
+# No item in items.json is EPIC or LEGENDARY, so they have no name.
+const RARITY_NAMES: Dictionary = {
+	GameItem.Rarity.COMMON: "Common",
+	GameItem.Rarity.UNCOMMON: "Uncommon",
+	GameItem.Rarity.RARE: "Rare",
+}
+
 static var _look: Dictionary = {}
 
 # The four backer colors are static vars and not consts, because they come

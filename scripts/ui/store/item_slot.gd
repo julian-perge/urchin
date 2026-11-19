@@ -26,7 +26,9 @@ func _ready():
 	mouse_entered.connect(func():
 		_highlight.visible = true
 		if item != null:
-			GameTooltip.show_sections(_tooltip_sections(), self, null, Color.WHITE, _tooltip_width())
+			GameTooltip.show_sections(
+				_tooltip_sections(), self, null, Color.WHITE, _tooltip_width(), TooltipTheme.RARITY_NAMES.get(item.rarity, "")
+			)
 		elif empty_slot_type != GameItem.ItemType.NONE:
 			GameTooltip.show_sections(_empty_slot_sections(), self))
 	mouse_exited.connect(func():
