@@ -156,6 +156,13 @@ extracting it.
   `pyoxipng-ng` version. That version is pinned exactly, because a new one
   rewrites every PNG, so change it in a PR of its own that regenerates them.
   `dev/tests/test_png.py` fails when an extractor writes a PNG another way.
+- **Save doll art with `png.save(..., mipmaps=True)`.** It turns on
+  mipmaps in the PNG's `.import` file, and writes a stub `.import`
+  that Godot fills in when the PNG has none. A doll draws its 2x PNGs at about
+  a third of their size in an 800x575 window, and with no mipmaps the edges
+  alias: `M_SFOOT_HYDRA2` at 66.9% had a white core of 21 px against Flash's
+  16 (julian-perge/urchin#482). `dev/tests/test_doll_mipmaps.py` fails when a
+  doll PNG under `resources/sprites/` is imported without mipmaps.
 - **Recover positions, never invent them.** ffdec grows the export canvas by
   the filter dimension around the timeline displayRect, and draws that grown
   rect with its left and top edges on the canvas's (0, 0). It rounds the

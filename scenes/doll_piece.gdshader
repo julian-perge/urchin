@@ -12,8 +12,10 @@
 // level. Measured for #482 against the Flash capture in
 // references/traced_runs/zone4_boss/glow_scales.png, M_SFOOT_HYDRA2 at 66.9% has
 // a white core of 16 px in Flash, 21 px with no mipmaps, 10 px with a bias of 0
-// and 16 px with this bias. The 1600x1150 window draws a part at 0.67 or more
-// of its PNG, where the bias leaves the sharpest level in use.
+// and 16 px with this bias. The bias has a cost in an 800x575 window: a part at
+// 100% there draws a little softer than with no mipmaps. The 1600x1150 window
+// draws a part at 100% from the full-size level only, and a part at 66.9%
+// almost only from it.
 shader_type canvas_item;
 
 const float MIPMAP_BIAS = -0.5;
