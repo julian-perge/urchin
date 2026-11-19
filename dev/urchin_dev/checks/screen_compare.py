@@ -49,7 +49,7 @@
 #   - In alpha mode, a pixel's alpha is 1 minus its mean channel difference
 #     between the two captures over 255, and its difference is how far that
 #     alpha is from the reference's, 0 to 255. Every pixel that either side
-#     draws is scored, and no mask is used.
+#     draws is scored, less those that both draw opaque, and no mask is used.
 #   - The must-fail control scores the same capture against the reference
 #     moved 20 px to the right. In alpha mode it scores the control captures,
 #     with the material off the nodes, against the same reference. A mode
@@ -249,6 +249,8 @@ def capture_args(
 def capture_path(
     shots: Path, entry: str, mode: str, background: str, control: bool = False
 ) -> Path:
+    """-> where one capture of the entry's mode is saved, and where the tool
+    looks for it."""
     return shots / entry / f"{mode}{'_control' if control else ''}_{background}.png"
 
 
@@ -306,15 +308,18 @@ def alpha_difference(
     alpha: np.ndarray, reference: np.ndarray
 ) -> tuple[np.ndarray, np.ndarray]:
     """-> how far, 0 to 255, the alpha of each pixel is from the alpha of an
-    RGBA reference, and the pixels that either of the two draws."""
-    port = alpha * 255.0
-    drawn = (np.rint(port) > 0) | (reference[:, :, 3] > 0)
-    return np.abs(port - reference[:, :, 3]), drawn
+    RGBA reference, and the pixels that either of the two draws, less those
+    that both draw opaque. An opaque pixel on both sides always matches, and
+    it would only pull the percentiles down."""
+    port = np.rint(alpha * 255.0)
+    ours = reference[:, :, 3]
+    drawn = ((port > 0) | (ours > 0)) & ~((port == 255) & (ours == 255))
+    return np.abs(alpha * 255.0 - ours), drawn
 
 
 def alpha_score(alpha: np.ndarray, reference: np.ndarray) -> Score:
     """-> the score of a capture's alpha against an RGBA reference, over every
-    pixel that either of the two draws."""
+    pixel that either of the two draws, less those that both draw opaque."""
     values, drawn = alpha_difference(alpha, reference)
     if not drawn.any():
         raise CompareError("no pixels to score: neither side draws anything")

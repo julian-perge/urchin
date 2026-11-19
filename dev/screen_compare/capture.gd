@@ -18,8 +18,8 @@
 #                              Label and every node that is not one of the
 #                              entry's `nodes` or under one of them
 #   --background=magenta|green the colour behind the scene
-#   --control                  takes the material off each of the entry's
-#                              `nodes`, for the control capture of alpha mode
+#   --control                  in alpha mode, takes the material off each of
+#                              the entry's `nodes`, for the control capture
 extends Node
 
 const CONFIG: String = "res://dev/screen_compare/screens.json"
@@ -62,7 +62,7 @@ func _ready() -> void:
 		keep.append(screen.get_node(path))
 	var hide_names: Array = entry["modes"][mode].get("hide_names", [])
 	_hide(screen, mode, keep, hide_names)
-	if "--control" in OS.get_cmdline_user_args():
+	if mode == "alpha" and "--control" in OS.get_cmdline_user_args():
 		for node: Node in keep:
 			node.material = null
 

@@ -677,18 +677,20 @@ def test_the_alpha_of_a_capture_comes_from_its_magenta_and_green_copies():
     assert alpha[1, 2] == pytest.approx(0.6, abs=0.005)
 
 
-def test_the_alpha_score_counts_every_pixel_either_side_draws():
+def test_the_alpha_score_counts_every_pixel_either_side_draws_short_of_opaque():
     port = np.zeros((4, 4))
     port[1, 1] = 1.0
+    port[0, 0] = 1.0
     reference = np.zeros((4, 4, 4), dtype=np.int16)
     reference[1, 1, 3] = 255
+    reference[0, 0, 3] = 204
     reference[2, 2, 3] = 102
 
     found = screen_compare.alpha_score(port, reference)
 
     assert found.pixels == 2
-    assert found.p50 == pytest.approx(51.0)
-    assert found.p99 == pytest.approx(101.0, abs=0.1)
+    assert found.p50 == pytest.approx(76.5)
+    assert found.p99 == pytest.approx(101.49, abs=0.1)
 
 
 def test_an_alpha_score_with_nothing_drawn_is_an_error():
