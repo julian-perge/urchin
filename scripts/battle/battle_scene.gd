@@ -395,7 +395,7 @@ func _spawn_visuals() -> void:
 		presenter.effect_cue.connect(AudioManagerAuto.play_effect)
 		presenter.hit_area.mouse_entered.connect(_on_unit_hovered.bind(slot, true))
 		presenter.hit_area.mouse_exited.connect(_on_unit_hovered.bind(slot, false))
-		presenter.hit_area.pressed.connect(radial_menu.open.bind(slot, home, presenter.hit_area))
+		presenter.hit_area.pressed.connect(radial_menu.open.bind(slot, home))
 		_presenters[slot] = presenter
 	top_status_bar.show_active(units)
 
