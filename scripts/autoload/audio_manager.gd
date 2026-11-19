@@ -88,8 +88,10 @@ func play_effect(cue: String) -> void:
 	effect_played.emit(cue)
 
 
+# addSound does nothing at all while Krin.sound is off (frame_42/DoAction.as:3),
+# so the music mode and the rotation do not change either.
 func play_menu_music() -> void:
-	if _music_mode == MusicMode.MENU:
+	if not sound_enabled or _music_mode == MusicMode.MENU:
 		return
 	_music_mode = MusicMode.MENU
 	_start_music(_next_rotation_cue(), false)
@@ -98,7 +100,7 @@ func play_menu_music() -> void:
 # hard_start = the original's bangStart (battle entry cuts straight to full
 # volume instead of crossfading).
 func play_battle_music(is_boss: bool, hard_start: bool = false) -> void:
-	if _music_mode == MusicMode.BATTLE:
+	if not sound_enabled or _music_mode == MusicMode.BATTLE:
 		return
 	_music_mode = MusicMode.BATTLE
 	var cue: String = "_music_boss" if is_boss else _next_rotation_cue()
@@ -146,8 +148,6 @@ func _next_rotation_cue() -> String:
 
 
 func _start_music(cue: String, hard_start: bool) -> void:
-	if not sound_enabled:
-		return
 	var stream: AudioStream = _stream(cue)
 	if stream == null:
 		return

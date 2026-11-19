@@ -6865,6 +6865,188 @@
    "port_only": [],
    "timeline": 0
   },
+  "res://scenes/ui/menu/options_window.tscn": {
+   "frame": "options",
+   "origin": [
+    400.5,
+    222.4
+   ],
+   "pieces": {
+    "AutosaveButton": {
+     "kind": "hit",
+     "rect": [
+      304.3946,
+      192.6465,
+      160.5107,
+      21.8069
+     ]
+    },
+    "AutosaveLabel": {
+     "align": "right",
+     "color": "d56666ff",
+     "font_size": 14.0,
+     "kind": "text",
+     "rect": [
+      232.4,
+      194.85,
+      160.1,
+      26.85
+     ]
+    },
+    "AutosaveValue": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 14.0,
+     "kind": "text",
+     "rect": [
+      403.5,
+      194.85,
+      117.0,
+      26.85
+     ]
+    },
+    "DifficultyLabel": {
+     "align": "right",
+     "color": "8d8061ff",
+     "font_size": 14.0,
+     "kind": "text",
+     "rect": [
+      232.4,
+      252.85,
+      160.1,
+      26.85
+     ]
+    },
+    "DifficultyValue": {
+     "align": "left",
+     "color": "aca086ff",
+     "font_size": 14.0,
+     "kind": "text",
+     "rect": [
+      403.5,
+      252.85,
+      117.0,
+      26.85
+     ]
+    },
+    "Heading": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 16.0,
+     "kind": "text",
+     "rect": [
+      197.55,
+      101.1,
+      405.95,
+      20.1
+     ]
+    },
+    "HelpText": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      112.5,
+      291.8,
+      582.3,
+      109.55
+     ]
+    },
+    "SoundButton": {
+     "kind": "hit",
+     "rect": [
+      305.9446,
+      134.8965,
+      160.5107,
+      21.8069
+     ]
+    },
+    "SoundLabel": {
+     "align": "right",
+     "color": "d56666ff",
+     "font_size": 14.0,
+     "kind": "text",
+     "rect": [
+      232.4,
+      137.85,
+      160.1,
+      26.85
+     ]
+    },
+    "SoundValue": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 14.0,
+     "kind": "text",
+     "rect": [
+      403.5,
+      137.85,
+      115.0,
+      26.85
+     ]
+    },
+    "TallPanel": {
+     "border": 2,
+     "fill": "373737ff",
+     "kind": "panel",
+     "line": "000000ff",
+     "rect": [
+      75.2669,
+      81.9672,
+      650.4969,
+      300.8218
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
+    "WindowShell/Backdrop": {
+     "kind": "art",
+     "rect": [
+      13.25,
+      14.25,
+      776.75,
+      433.0
+     ],
+     "size": [
+      3107,
+      1732
+     ],
+     "texture": "res://assets/ui/window/backdrop.png",
+     "zoom": 4.0
+    },
+    "WindowShell/CloseArt": {
+     "kind": "art",
+     "rect": [
+      734.4,
+      29.75,
+      37.0,
+      36.5
+     ],
+     "size": [
+      148,
+      146
+     ],
+     "texture": "res://assets/ui/window/close_x.png",
+     "zoom": 4.0
+    },
+    "WindowShell/CloseButton": {
+     "kind": "hit",
+     "rect": [
+      738.6,
+      32.7,
+      30.0,
+      30.0
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 3142
+  },
   "res://scenes/ui/menu/slot_panel.tscn": {
    "frame": "dataMenu",
    "origin": [

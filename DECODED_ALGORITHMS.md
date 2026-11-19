@@ -852,7 +852,8 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
   achievements.
 - The hotbar's Options button, `DefineButton2_3180`, sends `KRINMENU` to `options` unless an item is on the cursor (`MENU[66]`) or `PauseForScreen` is set. Frame 39's script fills the
   rows: Sound, Effects (`Krin.graphics`), Graphics (`Krin.qual`), Autosave, the difficulty and the help text `MENU[34]` (`DefineSprite_3142/frame_39/DoAction.as`). ADR 0011 leaves out
-  Effects and Graphics.
+  Effects and Graphics. The difficulty row has no button. Ported: `OptionsWindow` (`scripts/ui/menu/options_window.gd`). Its Sound row
+  writes `PlayerSave.sound` and `AudioManager.sound_enabled`, the port's `Krin.sound`.
 - The face clip, DefineSprite 2978, holds 40 named portraits: the 5 companions, the player and every named story NPC, such as `Doctor Hedger`, `The Warden` and `Clemons The Deceiver`.
 
 ## Where a cutscene goes, and the zone map lines
