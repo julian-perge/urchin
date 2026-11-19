@@ -93,7 +93,7 @@ func test_veradux_and_roald_keep_the_seed_stats_with_their_seed_gear() -> void:
 func test_the_class_check_uses_the_companions_class_stats() -> void:
 	var items: Dictionary = ItemManagerAuto.items_by_id
 	var veradux_gear: GameItem = items[int(Party.COMPANIONS[1]["equipment"][0])]
-	assert_eq(veradux_gear.required_unit_id, 4, "the Medic-B gear is for unit 4")
+	assert_eq(veradux_gear.required_unit_id, Party.COMPANIONS[1]["unit_id"], "the Medic-B gear is for Veradux's class")
 	var veradux: Equipment.Wearer = Party.companion_wearer(save, 1, items)
 	var roald: Equipment.Wearer = Party.companion_wearer(save, 2, items)
 	assert_eq(Equipment.can_equip(veradux, veradux_gear, Equipment.EquipSlot.HEAD), Equipment.EquipResult.OK)
@@ -124,7 +124,13 @@ func test_unequip_and_equip_through_the_menu_change_the_companions_battle_unit()
 	var bare: CombatUnit = Party.build_companion_unit(save, FELICITY, UnitManagerAuto.units_by_id, ItemManagerAuto.items_by_id, 3)
 	assert_eq(bare.base_speed, float(FELICITY_NO_GEAR[3]))
 	assert_eq(bare.base_strength, float(FELICITY_NO_GEAR[1]))
-	assert_eq(bare.base_per[CombatUnit.Element.PHYSICAL], geared.base_per[CombatUnit.Element.PHYSICAL] - 397.0, "the gear's piercing goes")
+	var gear_piercing: float = 0.0
+	for item_id in removed:
+		var item: GameItem = ItemManagerAuto.items_by_id.get(item_id)
+		if item != null:
+			gear_piercing += float(item.stats.get("piercing", {}).get("Physical", 0))
+	assert_gt(gear_piercing, 0.0, "her gear has Physical piercing")
+	assert_eq(bare.base_per[CombatUnit.Element.PHYSICAL], geared.base_per[CombatUnit.Element.PHYSICAL] - gear_piercing, "the gear's piercing goes")
 	assert_eq(bare.equipment_ids, [0, 0, 0, 0, 0, 0, 0], "the battle doll wears what she wears")
 
 	for item_id in removed:
