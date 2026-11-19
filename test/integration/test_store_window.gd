@@ -8,6 +8,7 @@ const StoreWindowScene = preload("res://scenes/ui/store/store_window.tscn")
 
 func after_each():
 	GameData.current_save = null
+	GameData.menu_party_id = Party.PLAYER_PARTY_ID
 
 
 const STRINGS_PATH: String = "res://dev/converted_json/strings.json"
@@ -298,3 +299,14 @@ func test_equip_doll_view_setup_takes_no_arguments_and_needs_the_scene_doll():
 		if method["name"] == "setup":
 			assert_eq((method["args"] as Array).size(), 0, "setup() has no placement parameters")
 	assert_eq(view.find_children("*", "CharacterVisual", true, false).size(), 0, "a bare view builds no doll")
+
+
+# The Store's equip slots are the player's: opening the Store puts
+# Krin.MenuPlayerSelect back to 0 (DefineSprite_3142/frame_16/DoAction.as:60),
+# even when the Inventory had a Companion selected.
+func test_opening_the_store_puts_the_equip_target_back_on_the_player():
+	GameData.current_save = PlayerSave.new_game("Store", 0)
+	GameData.menu_party_id = 3
+	var window = add_child_autofree(StoreWindowScene.instantiate())
+	window.open_store()
+	assert_eq(GameData.menu_party_id, Party.PLAYER_PARTY_ID)
