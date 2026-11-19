@@ -49,6 +49,9 @@ const SKIP_LAYOUT_PATH: String = "res://assets/cutscenes/skip_button.json"
 # (frame_263/PlaceObject2_3466_80 enterFrame, lines 2-11). The alpha is in
 # Flash's 1/256 steps (FlashAlpha).
 const FADE_STEP: float = 5.0
+# Render deltas that add up to a whole SWF frame can fall short of it by a float
+# rounding error, so a frame counts as passed within this margin.
+const FRAME_EPSILON: float = 0.000001
 
 # How much longer than the clip's own reported length play() will wait for
 # the video to report it finished before giving up on it.
@@ -216,6 +219,7 @@ func _await_playback_end() -> void:
 # once, as the original's SKIP does by setting cutSceneEnd. With cut_scene_end
 # true it ends when the clip is black, where the original jumps to
 # gotoSceneKrin. At an animation_speed of 0 or below it shows the end at once.
+# A player that leaves the tree mid-fade stops the fade where it is.
 func _fade(cut_scene_end: bool) -> void:
 	if animation_speed <= 0.0:
 		_fade_alpha = FlashAlpha.STEPS if cut_scene_end else 0
@@ -224,8 +228,10 @@ func _fade(cut_scene_end: bool) -> void:
 	_fade_frames_due = 0.0
 	while not _fade_ended(cut_scene_end):
 		await get_tree().process_frame
+		if not is_inside_tree():
+			return
 		_fade_frames_due += get_process_delta_time() * BattleScreenClip.fps() * animation_speed
-		while _fade_frames_due >= 1.0 and not _fade_ended(cut_scene_end):
+		while _fade_frames_due >= 1.0 - FRAME_EPSILON and not _fade_ended(cut_scene_end):
 			_fade_frames_due -= 1.0
 			step_fade(cut_scene_end)
 

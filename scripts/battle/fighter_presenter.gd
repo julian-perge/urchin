@@ -72,6 +72,11 @@ var _doll_is_model5: bool = false
 @onready var _speech_bubble: SpeechBubble = $SpeechBubble
 
 
+# The ring has nothing to fade until setup() has run and show_hover() starts it.
+func _ready() -> void:
+	set_process(false)
+
+
 # Call once, after the presenter is in the tree. It leaves the fighter drawn.
 # `status_bar` is the fighter's entry in the top status bar.
 # Floating numbers go on the battle's one FloatingNumberLayer rather than on this

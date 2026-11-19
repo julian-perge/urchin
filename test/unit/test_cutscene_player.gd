@@ -49,7 +49,8 @@ func test_play_fades_in_plays_video_then_fades_out_and_finishes():
 	var got_finished: bool = await wait_for_signal(player.finished, 2.0)
 	assert_true(got_finished, "CutscenePlayer.finished fired")
 	assert_true(result.finished, "finished handler ran")
-	assert_gte(result.alpha_at_finish, 1.0, "fully opaque again when finished fires")
+	var measured: Array[float] = AlphaSteps.values("FADE", "cutscene")
+	assert_eq(result.alpha_at_finish, measured[AlphaSteps.event_frame("cutscene", "gone")] / 100.0, "black at the alpha the original jumps away on")
 
 
 func test_the_fade_clip_steps_on_the_frames_the_traced_run_measured():
