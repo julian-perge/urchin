@@ -9,8 +9,7 @@
 class_name VictoryWindow
 extends Control
 
-# The battle scene listens until the Hub opens this Window (#241). Proceed
-# emits it once.
+# The Hub (game.gd) runs the original's Proceed when this fires. It fires once.
 signal proceed_pressed
 
 const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
@@ -119,8 +118,8 @@ func _on_drop_clicked(slot: ItemSlot) -> void:
 
 
 # The original's Proceed works once, because its release always leaves the frame
-# this Window is drawn on (DefineButton2_3004 on(release)). The battle scene
-# keeps this Window under the cutscene and the ending screen, and a click leaves
+# this Window is drawn on (DefineButton2_3004 on(release)). The Hub keeps this
+# Window under the cutscene and the ending screen, and a click leaves
 # the keyboard focus on the button, so the button is disabled once pressed and
 # Enter or Space can't press it a second time. Before the player's row has run
 # its frames, Proceed does nothing, as with PauseForScreen2 in the original.

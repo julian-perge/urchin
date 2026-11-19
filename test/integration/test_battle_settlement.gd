@@ -44,12 +44,12 @@ func _settle(battle_id: int, save: PlayerSave, outcome: BattleRunner.Outcome, pi
 func _story_pick(save: PlayerSave, zone: int) -> Dictionary:
 	var previous_zone: int = ZoneManager.current_zone
 	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
+	ZoneManager.auto_switch_scenes = false
 	ZoneManager.current_zone = zone
 	var pick: Dictionary = ZoneManager.request_story_fight()
 	ZoneManager.pending_battle = {}
 	ZoneManager.current_zone = previous_zone
-	ZoneManager.auto_start_battles = true
+	ZoneManager.auto_switch_scenes = true
 	GameData.current_save = null
 	return pick
 

@@ -441,24 +441,24 @@ def test_a_signal_name_prints_its_declaration_connects_and_emits(
     assert "signal proceed_pressed" in out.splitlines()
     declared = section(out, "declared")
     assert any(
-        row.startswith("  scripts/ui/menu/victory_window.gd:14  ") for row in declared
+        row.startswith("  scripts/ui/menu/victory_window.gd:13  ") for row in declared
     )
     connects = section(out, "connects")
     assert any(
-        row.startswith("  scripts/battle/battle_scene.gd:985  ")
-        and "victory.proceed_pressed -> _on_victory_proceed" in row
+        row.startswith("  scripts/game.gd:53  ")
+        and "$VictoryWindow.proceed_pressed -> _on_victory_proceed" in row
         for row in connects
     )
     emits = section(out, "emits")
     assert any(
-        row.startswith("  scripts/ui/menu/victory_window.gd:131  ") for row in emits
+        row.startswith("  scripts/ui/menu/victory_window.gd:130  ") for row in emits
     )
 
 
 def test_a_voice_cue_connect_names_its_target(as_records, gd_records):
     _, out = run("voice_cue", as_records, gd_records)
     assert any(
-        row.startswith("  scripts/battle/battle_scene.gd:368  ")
+        row.startswith("  scripts/battle/battle_scene.gd:365  ")
         and "presenter.voice_cue -> AudioManagerAuto.voice" in row
         for row in section(out, "connects")
     )

@@ -102,9 +102,6 @@ var _finished: bool = false
 # frame_217/PlaceObject2_3367_634 onClipEvent(keyDown)), which loads after the
 # Cutscene, so _input ignores both until the clip has ended.
 var _cutscene_playing: bool = false
-var _pending_cutscene: String = ""  # set by _finish_battle() on a cutscene-triggering win
-var _pending_goto_scene: String = ""  # ZoneProgression.CUTSCENE_GOTO_SCENE for that cutscene
-var _player_leveled: bool = false  # set by _finish_battle() on a win whose XP filled the bar, like playerLeveled
 var _pending_setup_events: Array = []  # runner.setup()'s return - played first by _battle_loop()
 # The SPEECH event _play_speech has on screen, or {} when no line is up.
 var _line_on_screen: Dictionary = {}
@@ -973,23 +970,15 @@ func _finish_battle() -> void:
 	var save: PlayerSave = GameData.current_save
 	var settlement := BattleSettlement.settle(runner, save, battle_info, ZoneManager.achievements_path, GameData.slot_saves())
 	if settlement.outcome == BattleRunner.Outcome.WIN and settlement.next_fight.is_empty():
-		_pending_cutscene = settlement.cutscene
-		_pending_goto_scene = settlement.goto_scene
-		_player_leveled = settlement.levels_gained > 0
-		# Drops are click-to-keep on the victory screen (VICTORY[1]); the
-		# autosave happens on Proceed, like the original.
-		var victory: VictoryWindow = preload("res://scenes/ui/menu/victory_window.tscn").instantiate()
-		victory.name = "VictoryWindow"
-		add_child(victory)
-		victory.setup(save, settlement)
-		victory.proceed_pressed.connect(_on_victory_proceed)
-		# The original never had a turn label, and it draws its victory screen on
-		# Navigation, the hub's frame, once a win has left the battle's frame
-		# (frame_219/DoAction.as:78-81, frame_181/PlaceObject3_3142_175
-		# onClipEvent(load), lines 3-7). The turn label sits on the UI layer above
-		# this screen, so it is hidden here instead of still showing whose turn it
-		# was across the top of the screen.
-		turn_label.hide()
+		# The Hub opens the Victory Window from this result, and its Proceed
+		# autosaves, as the original's does (DefineButton2_3004 on(release)).
+		# bossJustPwned2 is bossFight at the win (frame_219/DoAction.as:9-16).
+		ZoneManager.pending_victory = {
+			"settlement": settlement,
+			"battle_id": battle.id,
+			"is_boss": bool(battle_info.get("is_boss", false)),
+		}
+		_go_to_hub()
 	elif settlement.outcome == BattleRunner.Outcome.WIN:
 		# A win that goes straight on opens no victory screen and so has no Proceed,
 		# which is where the autosave is. It requests the next fight, as the
@@ -1004,70 +993,15 @@ func _finish_battle() -> void:
 	battle_finished.emit(settlement.outcome)
 
 
-func _on_victory_proceed() -> void:
-	# The original autosaves on Proceed (when the option is on).
-	if GameData.current_save != null and GameData.current_save.autosave:
-		GameData.save_game()
-	if not _pending_cutscene.is_empty():
-		# Cleared before the await, not after, so a second call can't start a
-		# second copy of the same clip on top of the first. VictoryWindow
-		# disables Proceed once it's pressed, so the button can't make that call.
-		var cutscene_id: String = _pending_cutscene
-		var goto_scene: String = _pending_goto_scene
-		_pending_cutscene = ""
-		_pending_goto_scene = ""
-		# The original stops every sound before it jumps to a cutscene
-		# (DefineButton2_3004's release handler calls stopAllSounds). Without
-		# this the battle music keeps playing under the cutscene's own audio
-		# until _on_continue_pressed() swaps in the menu track, and an effect
-		# still playing, such as the last death cry, plays over the clip's start.
-		AudioManagerAuto.stop_all_sounds()
-		var cutscene: CutscenePlayer = preload("res://scenes/cutscenes/cutscene_player.tscn").instantiate()
-		cutscene.animation_speed = animation_speed
-		add_child(cutscene)
-		await cutscene.play(cutscene_id)
-		# The original's cutscene clip starts the music rotation over when the clip
-		# ends, before it starts the menu music (frame_263/PlaceObject2_3466_80
-		# enterFrame, lines 15-31), so _on_continue_pressed() plays the first menu
-		# track.
-		AudioManagerAuto.reset_music_rotation()
-		# Matches gotoSceneKrin (frame_219): CS_CUT5 ends on the ending screen,
-		# and a cutscene that just unlocked a new zone opens the zone map on
-		# landing instead of the same hub. The original starts no music for the
-		# ending screen (frame_263/PlaceObject2_3466_80 enterFrame, lines 15-19),
-		# so the menu track waits until its OK! reaches the hub. The screen goes
-		# on the UI layer, like the game over screen, so the speech label there
-		# can't draw over it.
-		if goto_scene == "endMenu":
-			var ending: EndingScreen = preload("res://scenes/battle/ending_screen.tscn").instantiate()
-			ending.name = "EndingScreen"
-			ending.ok_pressed.connect(_on_continue_pressed)
-			$UI.add_child(ending)
-			return
-		if goto_scene == "overMap":
-			ZoneManager.open_zone_map_on_load = true
-	elif bool(battle_info.get("is_boss", false)):
-		# With no cutscene queued, the original opens the zone map after any
-		# fight with bossFight on, a first win and a Boss replay alike
-		# (DefineButton2_3004 on(release), lines 13-16, and
-		# frame_219/DoAction.as:9-16).
-		ZoneManager.open_zone_map_on_load = true
-	elif _player_leveled:
-		# Neither a cutscene nor the map comes next, so the original shows its
-		# skills frame when the win filled the XP bar (DefineButton2_3004
-		# on(release), lines 17-29). The hub opens the Abilities window.
-		ZoneManager.open_abilities_on_load = true
-		ZoneManager.hint_battle_after_close = battle.id
-	else:
-		# With no cutscene, map or level-up, the original's Proceed shows the
-		# hint of the battle just won (DefineButton2_3004 on(release), line 27).
-		ZoneManager.hint_battle_on_load = battle.id
-	_on_continue_pressed()
-
-
-func _on_continue_pressed() -> void:
-	AudioManagerAuto.play_menu_music()
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
+# The original's win leaves the battle through root frames 218 and 219, which
+# show black shape 333 over the whole stage, and goes on to Navigation, where the
+# Victory Window opens (frame_219/DoAction.as:78-81, frame_181/PlaceObject3_3142_175
+# onClipEvent(load), lines 3-7). So the black stays up and the Hub opens with no
+# fade in. ZoneManager.auto_switch_scenes off keeps the scene for the tests.
+func _go_to_hub() -> void:
+	_fade_black.color.a = 1.0
+	if ZoneManager.auto_switch_scenes:
+		get_tree().change_scene_to_file("res://scenes/game.tscn")
 
 
 # Waits `seconds` on the battle clock, for the waits the battle data gives in
