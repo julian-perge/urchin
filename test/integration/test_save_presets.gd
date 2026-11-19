@@ -83,7 +83,7 @@ func _past_zones(last_zone: int) -> Dictionary:
 func _fight_next_story_battle(save: PlayerSave, attack: bool) -> Dictionary:
 	var pick: Dictionary = ZoneProgression.pick_story_battle(save)
 	var battle: BattleFight = BattleSetup.load_battle(pick["battle_id"])
-	var units: Dictionary = BattleSetup.build_units(battle, save, UnitManagerAuto.units_by_id, save.difficulty)
+	var units: Dictionary = BattleSetup.build_units(battle, save, UnitManagerAuto.units_by_id, ItemManagerAuto.items_by_id, save.difficulty)
 	var runner: BattleRunner = BattleRunner.new()
 	runner.setup(
 		units, battle, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id,
