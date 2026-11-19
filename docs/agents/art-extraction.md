@@ -275,6 +275,16 @@ This tool checks how it looks: the art, the fills and the shadows.
   Flash Player draws a soft glow there, as `references/sonny2_zone1_prison.png`
   shows, and so does the port, from the fill rendered alone. Do not re-extract
   `zone_fill.png` from the root frame to lower this score.
+- **The Victory score is `chrome` p99 63 and `panels` p99 9, with the 20 px
+  controls at 122 and 119.** The `victory` entry scores KRINMENU's `win`
+  frame against `victory_window.tscn` with no data, so all 15 drop slots show
+  empty, as ffdec draws them. `panels` scores the backdrop and the four panels.
+  Every `chrome` pixel at 63 or more is on the backdrop's left, top and bottom
+  edges, in the outer 4 px. The port is right there. The `chrome` reference
+  renders KRINMENU's own timeline, so it loses the Bevel of KRINMENU's Stage
+  placement, as `reference_job` in `screen_compare.py` says for `panels`.
+  The `panels` reference keeps the Bevel and matches the port on those edges.
+  The rims around the three masked faces come next, from 32 up.
 - **The Abilities score covers the panels and the ability pool.** The
   `abilities` entry scores `abilities_window.tscn` alone, with `hide_names`
   hiding the tree lines and nodes, the eight sockets, the pool's rows, the plus
