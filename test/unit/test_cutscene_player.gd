@@ -422,9 +422,14 @@ func test_pressing_skip_during_the_fade_in_stops_the_clip_that_plays_under_it():
 	player.animation_speed = 1000.0
 	viewport.add_child(player)
 	var result := {"clip_playing": true, "lowest": 1.0}
-	player.finished.connect(func(): result.clip_playing = player.video.is_playing())
-	var track: Callable = func(): result.lowest = minf(result.lowest, player.fade_rect.color.a)
+	var track: Callable = func():
+		if is_instance_valid(player):
+			result.lowest = minf(result.lowest, player.fade_rect.color.a)
 	get_tree().process_frame.connect(track)
+	player.finished.connect(func():
+		result.clip_playing = player.video.is_playing()
+		get_tree().process_frame.disconnect(track)
+	)
 
 	player.play("CS_CUT4")
 	assert_gt(player.fade_rect.color.a, 0.5, "the fade-in has just started")
@@ -435,7 +440,6 @@ func test_pressing_skip_during_the_fade_in_stops_the_clip_that_plays_under_it():
 	var got_finished: bool = await wait_for_signal(player.finished, 2.0)
 	assert_true(got_finished, "the early press skipped the cutscene")
 	assert_false(result.clip_playing, "and stopped the clip")
-	get_tree().process_frame.disconnect(track)
 	assert_gt(result.lowest, 0.0, "the press turned the fade around before it cleared, as cutSceneEnd does")
 
 
