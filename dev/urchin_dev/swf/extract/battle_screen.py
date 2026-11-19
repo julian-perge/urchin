@@ -42,7 +42,14 @@ from PIL import Image
 from urchin_dev import ACTION_SCRIPT, FFDEC, REPO_ROOT, WEB_SWF, png
 from urchin_dev.run import run
 from urchin_dev.swf import render, strip, timeline
-from urchin_dev.swf.swf_index import SwfIndex, first_fill_color, read_swf, shape_bounds
+from urchin_dev.swf.swf_index import (
+    SwfIndex,
+    button_records,
+    character_kind,
+    first_fill_color,
+    read_swf,
+    shape_bounds,
+)
 
 HALL_DIR = REPO_ROOT / "assets" / "backgrounds" / "battle"
 SKY_DIR = REPO_ROOT / "assets" / "backgrounds" / "sky"
@@ -114,6 +121,17 @@ FADE_RESULT_FRAME = 85
 # A colour transform that leaves a shape as it is: four multiply terms of 1.0,
 # which the SWF stores as 256, and four add terms of 0.
 IDENTITY_COLOR_TRANSFORM = (256, 256, 256, 256, 0, 0, 0, 0)
+
+# The Radial menu, which the battle frame places as "selector". thing0 to thing7
+# are its move icons and thingo0 to thingo7 the buttons over them, which
+# RadialMenu builds its orbs from. Its enterFrame tests the mouse with hitTest
+# and no shape flag, which tests the bounding box of everything the clip draws
+# (frame_217/PlaceObject3_3382_500 enterFrame, line 48).
+SELECTOR = 3382
+SELECTOR_NAME = "selector"
+ORB_BUTTON_NAME = "thingo"
+ORB_COUNT = 8
+
 
 # The clock, battleClocker, which the battle frame places at depth 480. It is
 # the dark ring 3388 under thingerClock (3387), whose frames friend and enemy
@@ -395,6 +413,123 @@ def fade_layout(index: SwfIndex, battle_frame: int) -> dict:
     }
 
 
+def compose(outer, inner) -> tuple[float, float, float, float, float, float]:
+    """-> the matrix that places a point as `inner` and then `outer` would.
+    Both matrices may only scale and translate."""
+    for matrix in (outer, inner):
+        if matrix[1] or matrix[2]:
+            raise RuntimeError(f"matrix {matrix} rotates or skews")
+    return (
+        outer[0] * inner[0],
+        0.0,
+        0.0,
+        outer[3] * inner[3],
+        outer[4] + outer[0] * inner[4],
+        outer[5] + outer[3] * inner[5],
+    )
+
+
+def union(rects) -> tuple[float, float, float, float]:
+    """-> the smallest (xmin, ymin, xmax, ymax) that holds every rect given."""
+    rects = list(rects)
+    if not rects:
+        raise RuntimeError("no rects to join")
+    return (
+        min(r[0] for r in rects),
+        min(r[1] for r in rects),
+        max(r[2] for r in rects),
+        max(r[3] for r in rects),
+    )
+
+
+def drawn_bounds(
+    index: SwfIndex, cid: int, matrix
+) -> tuple[float, float, float, float]:
+    """-> the bounds of what `cid` draws before any script runs, placed by
+    `matrix`, as (xmin, ymin, xmax, ymax) in twips: a shape's ShapeBounds, a
+    sprite's frame 1 and a button's up state. A clip mask counts with its own
+    bounds. On the selector this choice changes nothing: each icon's frame 1
+    holds only its mask and the disc under it, which have the same bounds.
+
+    It reads the tags rather than a render's rect, because hitTest leaves out
+    the filters that a render's canvas grows by."""
+    kind = character_kind(index, cid)
+    if kind == "shape":
+        return placed_rect(matrix, timeline.IDENTITY, shape_bounds(index, cid))
+    if kind == "sprite":
+        layers = timeline.frames(index, cid)[0].values()
+        return union(
+            drawn_bounds(index, layer.character_id, compose(matrix, layer.matrix))
+            for layer in layers
+        )
+    if kind == "button":
+        return union(
+            drawn_bounds(index, record.character_id, compose(matrix, record.matrix))
+            for record in button_records(index, cid)
+            if "up" in record.states
+        )
+    raise RuntimeError(f"character {cid} is a {kind}, which drawn_bounds can't measure")
+
+
+def px_rect(rect) -> dict[str, float]:
+    """-> an (xmin, ymin, xmax, ymax) rect in twips as rect_entry() records it,
+    in px."""
+    twips = render.TWIPS
+    return rect_entry(
+        (
+            rect[0] / twips,
+            rect[1] / twips,
+            (rect[2] - rect[0]) / twips,
+            (rect[3] - rect[1]) / twips,
+        )
+    )
+
+
+def ring_layout(selector_matrix, orb_rects, child_bounds) -> dict:
+    """-> what RadialMenu needs from the Radial menu clip: the scale the battle
+    frame places it at, the rect of each orb's button in the clip's own px, and
+    the box of everything the clip draws in its own px. orb_rects and
+    child_bounds are (xmin, ymin, xmax, ymax) rects in twips, orb_rects in orb
+    order."""
+    scale_x, skew0, skew1, scale_y = selector_matrix[:4]
+    if skew0 or skew1 or scale_x != scale_y:
+        raise RuntimeError(f"the Radial menu clip is placed with {selector_matrix}")
+    return {
+        "box": px_rect(union(child_bounds)),
+        "orb_rects": [px_rect(rect) for rect in orb_rects],
+        "scale": round(scale_x, 4),
+    }
+
+
+def radial_menu_layout(index: SwfIndex, battle_frame: int) -> dict:
+    """-> ring_layout() for the Radial menu clip the battle frame places."""
+    placed = [
+        layer
+        for layer in timeline.frames(index, 0)[battle_frame - 1].values()
+        if layer.character_id == SELECTOR
+    ]
+    if len(placed) != 1 or placed[0].name != SELECTOR_NAME:
+        raise RuntimeError(
+            f"the battle frame places {SELECTOR} as {[p.name for p in placed]},"
+            f" want one {SELECTOR_NAME!r}"
+        )
+    frames = timeline.frames(index, SELECTOR)
+    if len(frames) != 1:
+        raise RuntimeError(f"{SELECTOR} has {len(frames)} frames, want 1")
+    layers = frames[0].values()
+    by_name = {layer.name: layer for layer in layers}
+    buttons = [by_name.get(f"{ORB_BUTTON_NAME}{i}") for i in range(ORB_COUNT)]
+    if None in buttons:
+        raise RuntimeError(
+            f"{SELECTOR} names {sorted(by_name)}, want {ORB_BUTTON_NAME}0 to 7"
+        )
+    return ring_layout(
+        placed[0].matrix,
+        [drawn_bounds(index, b.character_id, b.matrix) for b in buttons],
+        [drawn_bounds(index, layer.character_id, layer.matrix) for layer in layers],
+    )
+
+
 def hand_clamp(script: str) -> str:
     """-> the comparison, ">=" or "<", whose angles one hand's enterFrame script
     sets to 0. Raises unless the script computes the angle both hands share."""
@@ -581,6 +716,7 @@ def main():
         )
 
     layout["fade"] = fade_layout(index, battle_frame)
+    layout["radial_menu"] = radial_menu_layout(index, battle_frame)
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
     print(f"wrote {LAYOUT_JSON}", file=sys.stderr)
 

@@ -8,9 +8,10 @@
 # selector clip holds thing0 to thing7. Opening dresses them for the current bar
 # and closing hides them, so no orb is ever created or freed.
 #
-# The time the mouse has been away is one number that advance() steps, rather
-# than a Timer and a Tween. With neither of those, nothing can outlive a menu.
-# A Tween that outlived its menu once closed the next menu to open (08dc6a7).
+# advance() plays the original ring's enterFrame once per SWF frame, from a clock
+# the menu keeps itself, rather than through a Timer and a Tween. With neither
+# of those, nothing can outlive a menu. A Tween that outlived its menu once
+# closed the next menu to open (08dc6a7).
 extends Control
 class_name RadialMenu
 
@@ -19,32 +20,28 @@ signal move_picked(bar_index: int, move_id: int, target_slot: int)
 # Combat text banner shows for its Refusal. The menu stays open.
 signal pick_refused(message: String)
 
-const ORB_RADIUS: float = 15.0
 const ICON_DIR: String = "res://assets/ui/abilities/"
-# The 8 fixed positions of the original's "selector" clip (thing0-7) - the
-# same real extracted offsets as abilities_window.gd's WHEEL_OFFSETS (that
-# clip is placed on the battle scene itself too, per
-# frame_217/PlaceObject3_3382_500/.../onClipEvent(load).as's refreshOrbs()).
-# Duplicated here rather than imported since abilities_window.gd has no
-# class_name to reach its consts from.
-const ORB_OFFSETS: Array[Vector2] = [
-	Vector2(0.0, -49.2), Vector2(34.8, -34.9), Vector2(49.5, 0.0),
-	Vector2(35.0, 35.3), Vector2(0.0, 49.8), Vector2(-35.2, 35.1),
-	Vector2(-49.5, 0.0), Vector2(-35.0, -34.7),
-]
-# How long the mouse may be away before the menu starts to fade, and how long
-# the fade takes. Both are the port's own numbers. The original fades the clip
-# out over 10 frames with no grace (frame_217/PlaceObject3_3382_500 enterFrame).
-const LEAVE_GRACE: float = 0.15
-const FADE_TIME: float = 0.67
+# extract_battle_screen writes the Radial menu clip's scale, the rects of its
+# thingo0 to thingo7 buttons that the orbs are built from, and the box of
+# everything it draws into the radial_menu entry, and the SWF's frame rate into
+# the fade entry.
+const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
+# The ring's enterFrame adds 50 to the clip's alpha each frame while it fades in
+# and takes 10 each frame the mouse is off it (frame_217/PlaceObject3_3382_500
+# enterFrame, lines 32-35 and 50). Alpha runs from 0 to 100, as the original's
+# _alpha does.
+const FADE_IN_STEP: int = 50
+const FADE_OUT_STEP: int = 10
+# Render deltas that add up to a whole SWF frame can fall short of it by a float
+# rounding error, so a frame counts as passed within this margin.
+const FRAME_EPSILON: float = 0.000001
 # extract_ability_icons writes the black disc a darkened orb is covered with and
 # where it and the cooldown count sit on the orb.
 const COOLDOWN_LAYOUT_PATH: String = "res://assets/ui/abilities/cooldown.json"
 const COVER_PATH: String = "res://assets/ui/abilities/cooldown_cover.png"
-# The ring's enterFrame sets the disc to 85% alpha once the ring has faded in.
-# It uses 75% only on the two frames the fade-in takes, and the port's ring opens
-# whole with no fade-in (frame_217/PlaceObject3_3382_500 enterFrame, lines 16
-# and 42).
+# The ring's enterFrame sets the disc to 75% alpha while the ring fades in and to
+# 85% once it has (frame_217/PlaceObject3_3382_500 enterFrame, lines 16 and 42).
+const COVER_ALPHA_FADING_IN: float = 0.75
 const COVER_ALPHA: float = 0.85
 
 # Setting this false closes any menu that is up, and open() does nothing until
@@ -59,21 +56,33 @@ var _units: Dictionary = {}
 var _moves_by_id: Dictionary = {}
 var _buffs_by_id: Dictionary = {}
 var _target_slot: int = -1
-var _hold_area: Control = null
-var _away_seconds: float = 0.0
 var _tooltip_up: bool = false
+var _frame_time: float = 0.0
+var _frame_clock: float = 0.0
+var _alpha: int = 0
+# The original's "clicker" flag: true from the click until the fade-in ends.
+var _fading_in: bool = false
+# The Radial menu clip's box in the menu's own coordinates, already scaled.
+var _box: Rect2
 
 @onready var orbs: Array[Button] = [$Orb0, $Orb1, $Orb2, $Orb3, $Orb4, $Orb5, $Orb6, $Orb7]
 
 
 func _ready() -> void:
 	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(COOLDOWN_LAYOUT_PATH))
+	var battle_layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(BATTLE_LAYOUT_PATH))
+	var ring: Dictionary = battle_layout["radial_menu"]
+	var ring_scale: float = float(ring["scale"])
+	var box: Dictionary = ring["box"]
+	_box = Rect2(Vector2(box["x"], box["y"]) * ring_scale, Vector2(box["w"], box["h"]) * ring_scale)
+	_frame_time = 1.0 / float(battle_layout["fade"]["fps"])
 	var cover_texture: Texture2D = load(COVER_PATH)
 	for bar_index in orbs.size():
 		var orb: Button = orbs[bar_index]
-		orb.custom_minimum_size = Vector2(ORB_RADIUS * 2, ORB_RADIUS * 2)
+		var rect: Dictionary = ring["orb_rects"][bar_index]
+		orb.custom_minimum_size = Vector2(rect["w"], rect["h"]) * ring_scale
 		orb.size = orb.custom_minimum_size
-		orb.position = ORB_OFFSETS[bar_index] - orb.size / 2.0
+		orb.position = Vector2(rect["x"], rect["y"]) * ring_scale
 		orb.expand_icon = true
 		orb.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		orb.add_child(_make_cover(cover_texture, layout["cover"], orb.size / 2.0))
@@ -123,10 +132,9 @@ func setup(units: Dictionary, moves_by_id: Dictionary, buffs_by_id: Dictionary) 
 	_buffs_by_id = buffs_by_id
 
 
-# hold_area is the clicked unit's hit area, which keeps the menu open along with
-# the orbs. The orbs fan out about 62px from the unit, well outside that area,
-# so the unit alone would close the menu as the player moved toward an orb.
-func open(target_slot: int, centre: Vector2, hold_area: Control) -> void:
+# A click shows the clip at alpha 0 and starts its fade-in
+# (frame_217/DoAction_3.as:46-48).
+func open(target_slot: int, centre: Vector2) -> void:
 	if not decision_open:
 		return
 	var target: CombatUnit = _units.get(target_slot)
@@ -143,39 +151,67 @@ func open(target_slot: int, centre: Vector2, hold_area: Control) -> void:
 	if not any_orb_shown:
 		return
 	_target_slot = target_slot
-	_hold_area = hold_area
 	position = centre
-	modulate.a = 1.0
+	_alpha = 0
+	_fading_in = true
+	_set_cover_alpha(COVER_ALPHA_FADING_IN)
+	modulate.a = 0.0
 	visible = true
 
 
-# Steps the leave fade by one frame. _process() passes the real mouse, and a test
-# calls this directly after set_process(false) to pass a known point.
+# Plays one enterFrame of the ring for each whole SWF frame that delta completes,
+# with the mouse at pointer. _process() passes the real mouse, and a test calls
+# this directly after set_process(false) to pass a known point.
 func advance(delta: float, pointer: Vector2) -> void:
 	if not visible:
 		return
-	_away_seconds = 0.0 if _is_over_menu(pointer) else _away_seconds + delta
-	modulate.a = clampf(1.0 - (_away_seconds - LEAVE_GRACE) / FADE_TIME, 0.0, 1.0)
-	if _away_seconds >= LEAVE_GRACE + FADE_TIME:
-		_close()
+	_frame_clock += delta
+	while visible and _frame_clock >= _frame_time - FRAME_EPSILON:
+		_frame_clock -= _frame_time
+		_play_frame(pointer)
+
+
+# One enterFrame of the ring (frame_217/PlaceObject3_3382_500 enterFrame). The
+# fade-in runs to 100 and ends on the frame after, and only then does the mouse
+# count. Off the clip alpha falls until the clip hides at 0, and over it alpha
+# goes straight back to 100.
+func _play_frame(pointer: Vector2) -> void:
+	if _fading_in:
+		if _alpha < 100:
+			_alpha += FADE_IN_STEP
+		else:
+			_alpha = 100
+			_fading_in = false
+			_set_cover_alpha(COVER_ALPHA)
+	elif not _is_over_menu(pointer):
+		_alpha -= FADE_OUT_STEP
+		if _alpha <= 0:
+			_close()
+			return
+	else:
+		_alpha = 100
+	modulate.a = _alpha / 100.0
+
+
+func _set_cover_alpha(alpha: float) -> void:
+	for orb in orbs:
+		(orb.get_node("Cover") as TextureRect).modulate.a = alpha
 
 
 func _close() -> void:
 	visible = false
-	_hold_area = null
-	_away_seconds = 0.0
+	_fading_in = false
+	_frame_clock = 0.0
 	if _tooltip_up:
 		_tooltip_up = false
 		GameTooltip.hide_tooltip()
 
 
+# The original tests the mouse with hitTest and no shape flag, which tests the
+# clip's bounding box, so the gaps between orbs, an empty slot and the unit
+# inside the ring all count as over it (enterFrame line 48).
 func _is_over_menu(point: Vector2) -> bool:
-	if _hold_area != null and _hold_area.get_global_rect().has_point(point):
-		return true
-	for orb in orbs:
-		if orb.visible and orb.get_global_rect().has_point(point):
-			return true
-	return false
+	return (get_global_transform() * _box).has_point(point)
 
 
 # Returns whether this bar slot shows an orb.
