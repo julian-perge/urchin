@@ -509,6 +509,25 @@ Ported: `RadialMenu` plays the enterFrame below once per SWF frame. It tests the
 - A release on an orb casts at once. The orb buttons' on(release) calls `addMoveForPlayer` (`DefineButton2_3374`, for example), which takes its battle branch when `menuMode` is off. The
   cursor pick-up, `UITmouseHold`, is the Abilities window's alone (see "Talent tree, its tooltips and the respec" below). The port casts on click too.
 
+## The ability icon's disc (DefineSprite 2427, `moveColor`, #439)
+
+- From frame 15 on, the icon sheet, DefineSprite 2427, places DefineSprite 2244 (shape 2243, #262626) at depth 1 as `moveColor`, under the clip mask at depth 3. It places it once and
+  keeps it to frame 985. Its load script runs `new Color(this).setRGB(_parent.KNcolor2)` (`DefineSprite_2427/frame_15/PlaceObject2_2244_1`), and setRGB replaces the colour and keeps the
+  alpha. The "Empty" frames, 7 to 14, place the same sprite at depth 4 with no name and no script, so an empty socket's disc stays grey. "None" and "Empty2" show no disc.
+- Each owner sets `KNcolor2` right after its `gotoAndStop`, to the `elementColorArray` entry of the move's element, `KRINABILITYB[id][0]`: the orbs
+  (`frame_217/PlaceObject3_3382_500` load, line 15), the pool and the ring (`DefineSprite_3142/frame_25/DoAction.as:51-57` and 75-81), the tree
+  (`DefineSprite_3142/frame_25/PlaceObject3_3100_153` load, lines 51-57), and the held icon (`DefineButton2_2437` on(press)). The pass button's icon also calls setRGB itself
+  (`frame_42/DoAction_11.as:112-120`). A passive tree node's `ID` is 0, and move 0's element is Physical. Each of the 479 move rows names one of the eight elements.
+- A throwaway Probe measured this in the Flash 14 debug player. A `KNcolor2` set in the same script as the `gotoAndStop` tints the new disc, because the load script runs after
+  that script. A clip that goes from one move's frame straight to another, forward or back, keeps the same disc and its first colour. A clip that passes through "Empty" or "Empty2"
+  gets a new disc in the new colour.
+- So the orbs, the pool, the tree, the held icon and the pass button always show the current move's colour: the orbs are new each battle, the pool rows are attached again on each
+  refresh, the held icon goes to "Empty2" or "None" on each drop, and the pass button sets its colour on each pick. A ring socket that takes an ability on top of another keeps the
+  first colour until it empties or the menu clip enters "skills" again. The ring, DefineSprite 3109, is on KRINMENU frames 25 to 31 only. `AbilityIcon` draws the icons, and
+  `abilities_window.gd` keeps each socket's colour.
+- Most icons cover all of the disc but its anti-aliased rim. `extract_ability_icons` measures how much of the disc's alpha the art leaves showing: median 1.3%, from 0.9%
+  (Superconductor) to 71.5% (Ghost State).
+
 ## Required target buffs (frame_42/DoAction_11.as)
 
 Ported: `Ability.required_buff_element` and `required_buff_count` carry fields 23 and 24, and `MoveLegality.refusal` returns `TARGET_STATUS` when the target falls short, so a click on the orb says so in the Combat text banner.

@@ -52,7 +52,10 @@ extracting it.
      black disc over the ability icons: DefineSprite 2241 "bfilter" hides
      itself in `onLoad`, with DefineEditText 2245 the "00" counter on top of
      it. `ability_icons.py` hands both to `render.py`, which deletes them in
-     memory, and its `COOLDOWN_DISPLAY` carries the decoded bytecode.
+     memory, and its `COOLDOWN_DISPLAY` carries the decoded bytecode. The
+     orb's back disc, `moveColor`, is the other way round: a script tints it,
+     so `ability_icons.py` renders each icon without it and writes it once in
+     white for `AbilityIcon` to tint (julian-perge/urchin#439).
   2. **Never strip or hide a clip mask.** A mask looks exactly like an
      unwanted shape on top of the art, and removing one unclips everything it
      covered. DefineShape 1913 was stripped on that assumption and item 69 "A
