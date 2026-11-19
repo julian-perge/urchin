@@ -21,34 +21,34 @@
 # An earlier version of this script exported the *animation* sprite directly,
 # which skipped both. That shipped four clips at four different aspect ratios,
 # each one the animation's own full untrimmed bounding box - unmasked, unplaced
-# and mostly empty. Exporting the wrapper instead hands the masking and the
-# placement to ffdec's own renderer, which honours the clipDepth correctly
-# (verified by inspecting the exported frames: content stops dead at the mask
-# edge).
+# and mostly empty. Exporting through the wrapper instead hands the masking
+# and the placement to ffdec's own renderer, which honours the clipDepth.
 #
-# Exporting the wrapper has one catch: ffdec renders exactly as many frames as
-# the selected sprite declares, and the wrapper declares frameCount="1", so a
-# plain `-export sprite` on it yields a single correctly-framed still. The fix
-# is patch_sprite_frame_count() below, which rewrites the wrapper's
-# DefineSprite tag in a working copy of the SWF to declare the animation's own
-# frame count and pads its timeline with that many ShowFrame tags. ffdec then
-# ticks the nested animation sprite forward in step with the wrapper, one
-# frame per frame - the same nested-clip behaviour faces.py relies on - so the
-# export comes out correctly framed *and* correctly animated.
+# Every animation sprite places a Cutscene camera as a direct child (3478,
+# 3645, 3812, 3962 and 4041 all run the same frame script,
+# DefineSprite_3478/frame_1/DoAction.as). Its own art is a red bounding box, a
+# center crosshair and a color-bar swatch, which the original never shows: the
+# script hides the clip on its first frame, then every frame it moves, scales
+# and tints the parent animation so that the camera's box fills the 533x300
+# view. ffdec does not run ActionScript, so this script does both halves
+# itself. It strips the clip, because ffdec would draw the box, and
+# camera_view() turns each frame's camera placement into the animation's
+# placement, which write_cutscene_swf() writes into the wrapper as one
+# PlaceObject2 move per frame. ffdec's -removeCharacterWithDependencies was
+# tried for the strip first and rejected: it cascades and deletes the
+# *parent* cutscene sprite too, because the parent places the camera clip as
+# a child of itself. Plain -removeCharacter only drops that one placement.
 #
-# Every animation sprite places a virtual camera clip as a direct child
-# (3478, 3645, 3812, 3962 and 4041 all run the same frame script,
-# DefineSprite_3478/frame_1/DoAction.as). Its own art is a red bounding box,
-# a center crosshair and a color-bar swatch, which the original never shows:
-# the script hides the clip on its first frame, then every frame it moves,
-# scales and tints the parent animation so that the camera's box fills the
-# 533x300 view. ffdec does not run ActionScript, so its export draws the box
-# unless this script strips the clip (task-1-report.md diffs a rendered frame
-# with and without the strip), and it never applies the camera's pan, zoom or
-# tint either way. ffdec's -removeCharacterWithDependencies was tried first
-# and rejected: it cascades and deletes the *parent* cutscene sprite too,
-# because the parent places the camera clip as a child of itself. Plain
-# -removeCharacter only drops that one placement.
+# The wrapper declares frameCount="1", and ffdec sizes a sprite export to the
+# union of all its children's bounds, clip mask or not, which a zoomed camera
+# makes as large as 16695x8756 px. So write_cutscene_swf() also gives the
+# working copy a new root timeline, as long as the animation, that places
+# what the game's root shows on the cutscene's frame: the dark backdrop shape
+# 3475 and the wrapper over it. ffdec sizes a root export to the 800x575
+# stage, renders as many frames as the header declares, and ticks the nested
+# wrapper and animation forward one frame per frame. The backdrop fills what
+# the animation leaves transparent, which the sprite export used to fill
+# white: 83% of CS_CUT4's first frame and a strip down CS_CUT2's left edge.
 #
 # Each label's wrapper is the one sprite the root timeline places on that
 # label's own frame, which label_xref.json records as the label's "places" and
@@ -60,7 +60,7 @@
 # The frame counts are each animation sprite's own frameCount, and each camera
 # clip is a sprite the animation places directly on its frame 1.
 #
-# ffdec's sprite:avi export renders video only (no audio track) - each
+# ffdec's frame:avi export renders video only (no audio track) - each
 # cutscene's dialogue/music is a SoundStreamBlockTag-per-frame MP3 stream
 # attached to the *animation* sprite's timeline (not the wrapper's and not the
 # main timeline), so it has to be reconstructed by hand: per the SWF10 spec,
@@ -119,11 +119,12 @@ from PIL import Image, ImageChops, ImageFilter, ImageStat
 
 from urchin_dev import FFDEC, REPO_ROOT, WEB_SWF
 from urchin_dev.run import run
-from urchin_dev.swf import strip
+from urchin_dev.swf import strip, timeline
 from urchin_dev.swf.swf_index import (
     SHAPE_TAGS,
     SwfIndex,
     read_swf,
+    shape_bounds,
     shape_styles,
     sound_stream,
 )
@@ -155,8 +156,10 @@ def tool(name: str) -> Path:
 
 
 # label -> (animation sprite chid, wrapper sprite chid, frame count,
-# camera clip chid to strip). The frame count is the *animation* sprite's;
-# the wrapper always declares 1 and gets patched up to this (see file header).
+# camera clip chid to strip). The frame count is the *animation* sprite's.
+# The wrapper declares 1, and write_cutscene_swf() gives the wrapper and the
+# root timeline of the working copy one frame per camera view, which is this
+# count (see file header).
 # CS_CUT1 and CS_CUT3 place the same camera clip, 3812.
 CUTSCENES: dict[str, tuple[int, int, int, int]] = {
     "CS_INTRO2": (3643, 3644, 2084, 3478),
@@ -171,13 +174,14 @@ CUTSCENES: dict[str, tuple[int, int, int, int]] = {
 # from the wrapper's own origin, and there are 20 twips to a pixel.
 MASK_W, MASK_H = 533, 300
 
-# The SWF stage is 16000x11500 twips (800x575 px) and each wrapper sits on it
-# at (2670, 2750) twips = (133.5, 137.5) px, which centers the 533x300 mask
-# exactly. Godot's viewport is the same 800x575 (project.godot), so a clip
-# with the mask box centered in an 800x575 frame is the whole Stage, and
-# cutscene_player.tscn's VideoStreamPlayer fills the viewport with it and
-# does not scale it. The pad filter takes whole pixels, so the box lands at
-# (133, 137), half a pixel up and left of the original.
+# The SWF stage is 16000x11500 twips (800x575 px). Five wrappers sit on it at
+# (2670, 2750) twips = (133.5, 137.5) px, which centers the 533x300 mask
+# exactly, and CS_CUT5's sits at (2811, 2831). Godot's viewport is the same
+# 800x575 (project.godot), so a clip with the mask box centered in an 800x575
+# frame is the whole Stage, and cutscene_player.tscn's VideoStreamPlayer fills
+# the viewport with it and does not scale it. stage_layers() moves every
+# cutscene's root layers so the box lands on whole pixels at (133, 137), half
+# a pixel up and left of the five centered wrappers.
 OUT_W, OUT_H = 800, 575
 CONTENT_X, CONTENT_Y = (OUT_W - MASK_W) // 2, (OUT_H - MASK_H) // 2
 
@@ -207,10 +211,26 @@ TOLERATED_NOISE_FRAMES = {"CS_INTRO2": 3, "CS_CUT2": 3}
 
 MISSING_BITMAP = 65535
 
-# SWF tag encoding, used by patch_sprite_frame_count().
+# SWF tag encoding, used by write_cutscene_swf().
 DEFINE_SPRITE_TAG = 39
+PLACE_OBJECT2_TAG = 26
+SHOW_FRAME_CODE = 1
+# The root tags that show, place, remove, label, script or stream a frame.
+# write_cutscene_swf() drops them and keeps every definition.
+ROOT_FRAME_TAGS = frozenset({0, 1, 4, 5, 12, 15, 18, 19, 26, 28, 43, 45, 70, 89})
 SHOW_FRAME_TAG = b"\x40\x00"  # UI16 0x0040 - tag code 1, body length 0
 END_TAG = b"\x00\x00"
+
+Matrix = tuple[float, float, float, float, int, int]
+IDENTITY_MATRIX: Matrix = (1.0, 0.0, 0.0, 1.0, 0, 0)
+IDENTITY_COLOR = (256, 256, 256, 256, 0, 0, 0, 0)
+
+# The view that camControl() in DefineSprite_3478/frame_1/DoAction.as fills
+# with the camera's box: its cX, cY, sX and sY, in pixels. It is the wrapper's
+# 533x300 clip mask.
+VIEW_CENTER_X, VIEW_CENTER_Y, VIEW_W, VIEW_H = 266.5, 150, 533, 300
+# The red box, crosshair and color bars that every camera clip places alone.
+CAMERA_SHAPE = 3477
 
 
 def _swf_body(path: Path) -> tuple[int, bytes]:
@@ -243,54 +263,254 @@ def _walk_tags(body: bytes, start: int):
             return
 
 
-def patch_sprite_frame_count(
-    src: Path, dest: Path, sprite_id: int, frames: int
+def camera_view(
+    camera_matrix: Matrix,
+    camera_color: tuple[int, ...] | None,
+    camera_size: tuple[int, int],
+) -> tuple[Matrix, tuple[int, ...]]:
+    """The animation's placement in its wrapper, in twips, for one frame of
+    its camera clip, as camControl() in DefineSprite_3478/frame_1/DoAction.as
+    sets it.
+
+    The script scales the animation by 533 over the camera's _width and 300
+    over its _height. Its _x and _y become 266.5 and 150 minus the camera's
+    position times those scales. The camera's color transform replaces the
+    animation's own, and a camera with none gives the identity.
+    camera_size is the camera clip's own width and height in twips.
+    """
+    scale_x, skew0, skew1, scale_y, tx, ty = camera_matrix
+    if skew0 or skew1:
+        raise ValueError(f"camera matrix {camera_matrix} rotates or skews")
+    zoom_x = VIEW_W * 20 / (camera_size[0] * scale_x)
+    zoom_y = VIEW_H * 20 / (camera_size[1] * scale_y)
+    matrix = (
+        zoom_x,
+        0.0,
+        0.0,
+        zoom_y,
+        round(VIEW_CENTER_X * 20 - tx * zoom_x),
+        round(VIEW_CENTER_Y * 20 - ty * zoom_y),
+    )
+    return matrix, camera_color or IDENTITY_COLOR
+
+
+def camera_views(
+    index: SwfIndex, animation_id: int, camera_id: int
+) -> list[tuple[Matrix, tuple[int, ...]]]:
+    """The animation's placement for each of its frames, from the camera clip
+    it places on that frame."""
+    camera_places = [p for p in index.placements if p.owner == camera_id]
+    if [p.character_id for p in camera_places] != [CAMERA_SHAPE] or camera_places[
+        0
+    ].matrix not in (None, IDENTITY_MATRIX):
+        raise RuntimeError(
+            f"camera {camera_id} does not place shape {CAMERA_SHAPE} alone at "
+            "its origin, so its _width is not that shape's width"
+        )
+    x0, y0, x1, y1 = shape_bounds(index, CAMERA_SHAPE)
+    camera_size = (x1 - x0, y1 - y0)
+    views = []
+    for number, shown in enumerate(timeline.frames(index, animation_id), 1):
+        cameras = [layer for layer in shown.values() if layer.character_id == camera_id]
+        if len(cameras) != 1:
+            raise RuntimeError(
+                f"sprite {animation_id} frame {number} shows camera {camera_id} "
+                f"{len(cameras)} times"
+            )
+        views.append(
+            camera_view(cameras[0].matrix, cameras[0].color_transform, camera_size)
+        )
+    return views
+
+
+def stage_layers(
+    index: SwfIndex, label: str, wrapper_id: int
+) -> list[tuple[int, int, Matrix]]:
+    """What the root timeline shows on the label's frame, from depth 1 up to
+    the wrapper, as (depth, character id, matrix). Every layer moves by the
+    same offset, so the wrapper's clip mask lands on whole pixels at
+    (CONTENT_X, CONTENT_Y), where the encode crops it. Below the wrapper the
+    game shows shape 3475, the dark backdrop."""
+    shown = timeline.frames(index, 0)[timeline.frame_of(index, 0, label) - 1]
+    wrapper_depth = next(
+        depth for depth, layer in shown.items() if layer.character_id == wrapper_id
+    )
+    wrapper = shown[wrapper_depth]
+    dx = CONTENT_X * 20 - wrapper.matrix[4]
+    dy = CONTENT_Y * 20 - wrapper.matrix[5]
+    layers = []
+    for depth, layer in sorted(shown.items()):
+        if depth > wrapper_depth:
+            continue
+        if (
+            layer.matrix[:4] != IDENTITY_MATRIX[:4]
+            or layer.color_transform
+            or layer.clip_depth
+        ):
+            raise RuntimeError(
+                f"{label}: root depth {depth} scales, tints or masks, which the "
+                "cutscene export does not copy"
+            )
+        tx, ty = layer.matrix[4] + dx, layer.matrix[5] + dy
+        layers.append((depth, layer.character_id, (1.0, 0.0, 0.0, 1.0, tx, ty)))
+    return layers
+
+
+def _signed_bits(*values: int) -> int:
+    return max(1, *((v if v >= 0 else ~v).bit_length() + 1 for v in values))
+
+
+def _pack_bits(fields: list[tuple[int, int]]) -> bytes:
+    """Pack (value, width) fields big-endian into whole bytes, as the SWF bit
+    records store them."""
+    text = "".join(format(v & ((1 << w) - 1), f"0{w}b") for v, w in fields)
+    text += "0" * (-len(text) % 8)
+    return int(text, 2).to_bytes(len(text) // 8, "big")
+
+
+def _matrix_record(matrix: Matrix) -> bytes:
+    scale_x, _skew0, _skew1, scale_y, tx, ty = matrix
+    fixed_x, fixed_y = round(scale_x * 65536), round(scale_y * 65536)
+    scale_bits = _signed_bits(fixed_x, fixed_y)
+    move_bits = _signed_bits(tx, ty)
+    return _pack_bits(
+        [(1, 1), (scale_bits, 5), (fixed_x, scale_bits), (fixed_y, scale_bits)]
+        + [(0, 1), (move_bits, 5), (tx, move_bits), (ty, move_bits)]
+    )
+
+
+def _color_record(color: tuple[int, ...]) -> bytes:
+    n = _signed_bits(*color)
+    return _pack_bits([(1, 1), (1, 1), (n, 4)] + [(term, n) for term in color])
+
+
+def _tag(code: int, body: bytes) -> bytes:
+    return (
+        ((code << 6) | 0x3F).to_bytes(2, "little")
+        + len(body).to_bytes(4, "little")
+        + body
+    )
+
+
+def _place(depth: int, flags: int, character_id: int | None, *records: bytes) -> bytes:
+    body = bytes([flags]) + depth.to_bytes(2, "little")
+    if character_id is not None:
+        body += character_id.to_bytes(2, "little")
+    return _tag(PLACE_OBJECT2_TAG, body + b"".join(records))
+
+
+def _camera_wrapper(
+    tag_body: bytes,
+    animation_id: int,
+    animation_depth: int,
+    views: list[tuple[Matrix, tuple[int, ...]]],
+) -> bytes:
+    """The DefineSprite body of a wrapper, as long as views, that moves the
+    animation by its camera on every frame.
+
+    Frame 1 places the animation with the first view in place of the
+    wrapper's own placement. Each later frame whose view differs from the one
+    before gets a PlaceObject2 move, which ffdec draws as it draws any other
+    keyframe.
+    """
+    wrapper_id = int.from_bytes(tag_body[:2], "little")
+    inner = b""
+    placed = False
+    for pos, code, header, length in _walk_tags(tag_body, 4):
+        fields = tag_body[pos + header : pos + header + length]
+        if code in (SHOW_FRAME_CODE, 0):
+            break
+        if (
+            code == PLACE_OBJECT2_TAG
+            and int.from_bytes(fields[1:3], "little") == animation_depth
+        ):
+            if (
+                fields[0] != 0x06
+                or int.from_bytes(fields[3:5], "little") != animation_id
+            ):
+                raise RuntimeError(
+                    f"wrapper {wrapper_id} depth {animation_depth} is not a plain "
+                    f"placement of sprite {animation_id}"
+                )
+            matrix, color = views[0]
+            inner += _place(
+                animation_depth,
+                0x0E,
+                animation_id,
+                _matrix_record(matrix),
+                _color_record(color),
+            )
+            placed = True
+        else:
+            inner += tag_body[pos : pos + header + length]
+    if not placed:
+        raise RuntimeError(f"wrapper {wrapper_id} does not place sprite {animation_id}")
+    inner += SHOW_FRAME_TAG
+    for previous, (matrix, color) in zip(views, views[1:]):
+        if (matrix, color) != previous:
+            inner += _place(
+                animation_depth,
+                0x0D,
+                None,
+                _matrix_record(matrix),
+                _color_record(color),
+            )
+        inner += SHOW_FRAME_TAG
+    return tag_body[:2] + len(views).to_bytes(2, "little") + inner + END_TAG
+
+
+def write_cutscene_swf(
+    src: Path,
+    dest: Path,
+    wrapper_id: int,
+    animation_id: int,
+    animation_depth: int,
+    views: list[tuple[Matrix, tuple[int, ...]]],
+    stage: list[tuple[int, int, Matrix]],
 ) -> None:
-    """Write src to dest with DefineSprite sprite_id re-declared as `frames`
-    frames long, its timeline padded out with ShowFrame tags to match.
+    """Write src to dest as a movie that only plays one cutscene: its root
+    timeline places the stage layers and runs as many frames as views, and
+    the wrapper moves the animation by its camera on every frame.
 
-    This is what makes a static frameCount=1 wrapper sprite exportable as an
-    animation: ffdec renders as many frames as the sprite declares, and ticks
-    nested sprites along with it, so a wrapper stretched to its inner clip's
-    length renders that clip's whole animation with the wrapper's own
-    placement and clip mask applied. Nothing else in the sprite changes - the
-    padding tags carry no body, so every existing PlaceObject stays on frame 1
-    and simply persists for the rest of the timeline.
-
-    dest is written uncompressed (FWS); ffdec reads that as happily as the
+    ffdec sizes a sprite's export to the union of every child's bounds and
+    ignores the clip mask, so a camera that zooms in 4.3x made a 16695x8756
+    px export of the CS_INTRO2 wrapper. It sizes the root timeline's export
+    to the stage, which the header gives. ffdec renders as many root frames
+    as the header declares and ticks nested sprites along with it, so the
+    one-frame wrapper renders the whole animation. Every other root tag that
+    shows, plays or labels a frame is dropped, and every definition is kept.
+    dest is written uncompressed (FWS), which ffdec reads as well as the
     zlib-compressed original.
     """
     version, body = _swf_body(src)
     # The tag area starts after the frame-size RECT (5 bits of bit-width, then
     # 4 fields of that width), the frame rate and the frame count.
     rect_bytes = (5 + 4 * (body[0] >> 3) + 7) // 8
+    out = body[: rect_bytes + 2] + len(views).to_bytes(2, "little")
+    found = False
     for pos, code, header, length in _walk_tags(body, rect_bytes + 4):
-        if code != DEFINE_SPRITE_TAG:
-            continue
         tag_body = body[pos + header : pos + header + length]
-        if int.from_bytes(tag_body[:2], "little") != sprite_id:
+        if code in ROOT_FRAME_TAGS:
             continue
-        if tag_body[-2:] != END_TAG:
-            raise RuntimeError(f"DefineSprite {sprite_id} does not end with an End tag")
-        patched = (
-            tag_body[:2]
-            + frames.to_bytes(2, "little")
-            + tag_body[4:-2]
-            + SHOW_FRAME_TAG * (frames - 1)
-            + END_TAG
-        )
-        new_header = ((DEFINE_SPRITE_TAG << 6) | 0x3F).to_bytes(2, "little") + len(
-            patched
-        ).to_bytes(4, "little")
-        new_body = body[:pos] + new_header + patched + body[pos + header + length :]
-        dest.write_bytes(
-            b"FWS"
-            + bytes([version])
-            + (8 + len(new_body)).to_bytes(4, "little")
-            + new_body
-        )
-        return
-    raise RuntimeError(f"DefineSprite {sprite_id} not found in {src}")
+        if (
+            code == DEFINE_SPRITE_TAG
+            and int.from_bytes(tag_body[:2], "little") == wrapper_id
+        ):
+            out += _tag(
+                DEFINE_SPRITE_TAG,
+                _camera_wrapper(tag_body, animation_id, animation_depth, views),
+            )
+            found = True
+        else:
+            out += body[pos : pos + header + length]
+    if not found:
+        raise RuntimeError(f"DefineSprite {wrapper_id} not found in {src}")
+    for depth, character_id, matrix in stage:
+        out += _place(depth, 0x06, character_id, _matrix_record(matrix))
+    out += SHOW_FRAME_TAG * len(views) + END_TAG
+    dest.write_bytes(
+        b"FWS" + bytes([version]) + (8 + len(out)).to_bytes(4, "little") + out
+    )
 
 
 def extract_mp3(index: SwfIndex, sprite_id: int, out_path: Path) -> int:
@@ -326,85 +546,6 @@ def find_broken_bitmap_fill_cids(index: SwfIndex, sprite_id: int) -> set[int]:
             for styles in shape_styles(index, cid)
         )
     }
-
-
-def mask_crop_origin(
-    label: str, wrapper_chid: int, swf_path: Path, avi_path: Path, work_dir: Path
-) -> tuple[int, int]:
-    """Locate the clip mask's 533x300 box inside the wrapper's rendered frame.
-
-    ffdec sizes a sprite export to that sprite's whole bounding box, which
-    here is the union of the mask, the border and the animation sprite's own
-    (much larger, mostly clipped away) extent - so where the mask lands inside
-    the exported frame differs per cutscene and has to be measured rather than
-    assumed.
-
-    Measuring is unambiguous because of what the wrapper places at the depth
-    just above the mask's clipDepth: DefineShape 3476, a 1px black outline
-    tracing the mask rectangle exactly. It is the only thing in the wrapper
-    the mask does not clip, so the transparency bounds of any rendered frame
-    are that outline, and the mask box is the outline's interior.
-
-    Frame 1 is re-exported as a PNG rather than pulled out of the AVI because
-    the AVI's frames come back fully opaque once decoded - the surrounding
-    transparency the measurement depends on only survives in ffdec's own PNG
-    output. Both exports are sized from the same bounds, which the check
-    below confirms before trusting one to crop the other.
-    """
-    png_dir = work_dir / "probe_png"
-    run(
-        [
-            str(FFDEC),
-            "-select",
-            f"{wrapper_chid}:1",
-            "-format",
-            "sprite:png",
-            "-selectid",
-            str(wrapper_chid),
-            "-export",
-            "sprite",
-            str(png_dir),
-            str(swf_path),
-        ]
-    )
-    probe_png = png_dir / f"DefineSprite_{wrapper_chid}" / "1.png"
-    if not probe_png.exists():
-        raise RuntimeError(f"{label}: expected probe frame not found at {probe_png}")
-    probe = Image.open(probe_png)
-    avi_size = run(
-        [
-            str(tool("ffprobe")),
-            "-v",
-            "error",
-            "-select_streams",
-            "v:0",
-            "-show_entries",
-            "stream=width,height",
-            "-of",
-            "csv=p=0:s=x",
-            str(avi_path),
-        ]
-    ).stdout.strip()
-    if avi_size != f"{probe.size[0]}x{probe.size[1]}":
-        raise RuntimeError(
-            f"{label}: the AVI export is {avi_size} but the PNG probe frame is "
-            f"{probe.size[0]}x{probe.size[1]} - they are not the same crop space"
-        )
-    bbox = probe.getchannel("A").getbbox()
-    if bbox is None:
-        raise RuntimeError(f"{label}: exported frame 1 is fully transparent")
-    x0, y0, x1, y1 = bbox
-    width, height = x1 - x0, y1 - y0
-    # The outline straddles the mask edge and antialiases across it, so it
-    # reads 1-2px wider than the mask on each axis. Anything outside that
-    # means the frame is not bounded by the outline and the crop below would
-    # be meaningless.
-    if not (MASK_W < width <= MASK_W + 2 and MASK_H < height <= MASK_H + 2):
-        raise RuntimeError(
-            f"{label}: opaque bounds of the wrapper's frame 1 are {width}x{height}, "
-            f"expected the {MASK_W}x{MASK_H} clip mask plus its outline"
-        )
-    return x0 + (width - MASK_W) // 2, y0 + (height - MASK_H) // 2
 
 
 def _frame_noise(png_path: Path) -> tuple[float, float]:
@@ -586,9 +727,18 @@ def process_cutscene(
             )
         strip_ids = {overlay_chid: "the camera clip, which hides itself on frame 1"}
 
-        animated_swf = work_dir / "animated_wrapper.swf"
+        views = camera_views(index, chid, overlay_chid)
+        depth = next(
+            p.depth
+            for p in index.placements
+            if p.owner == wrapper_chid and p.character_id == chid
+        )
+        stage = stage_layers(index, label, wrapper_chid)
+        movie_swf = work_dir / "cutscene.swf"
         with strip.stripped_copy(WEB_SWF, strip_ids) as stripped:
-            patch_sprite_frame_count(stripped, animated_swf, wrapper_chid, frames)
+            write_cutscene_swf(
+                stripped, movie_swf, wrapper_chid, chid, depth, views, stage
+            )
 
         avi_dir = work_dir / "avi"
         run(
@@ -603,26 +753,16 @@ def process_cutscene(
                 "-config",
                 "boxBlurPixelsLimit=2147483647",
                 "-format",
-                "sprite:avi",
-                "-selectid",
-                str(wrapper_chid),
+                "frame:avi",
                 "-export",
-                "sprite",
+                "frame",
                 str(avi_dir),
-                str(animated_swf),
+                str(movie_swf),
             ]
         )
-        avi_path = avi_dir / f"DefineSprite_{wrapper_chid}" / "frames.avi"
+        avi_path = avi_dir / "frames.avi"
         if not avi_path.exists():
             raise RuntimeError(f"{label}: expected AVI not found at {avi_path}")
-
-        crop_x, crop_y = mask_crop_origin(
-            label, wrapper_chid, animated_swf, avi_path, work_dir
-        )
-        print(
-            f"{label}: clip mask found at ({crop_x}, {crop_y}) in the export",
-            file=sys.stderr,
-        )
 
         mp3_path = work_dir / "audio.mp3"
         n_blocks = extract_mp3(index, chid, mp3_path)
@@ -640,7 +780,7 @@ def process_cutscene(
             # OUT_W x OUT_H frame the way the original centers it on the
             # stage.
             "-vf",
-            f"crop={MASK_W}:{MASK_H}:{crop_x}:{crop_y},pad={OUT_W}:{OUT_H}:{CONTENT_X}:{CONTENT_Y}:black",
+            f"crop={MASK_W}:{MASK_H}:{CONTENT_X}:{CONTENT_Y},pad={OUT_W}:{OUT_H}:{CONTENT_X}:{CONTENT_Y}:black",
             "-pix_fmt",
             "yuv420p",
             "-c:v",
