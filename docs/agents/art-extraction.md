@@ -82,7 +82,8 @@ extracting it.
      export then grows to the union of the zoomed art, 16695x8756 px for
      CS_INTRO2, because ffdec ignores the clip mask when it sizes a sprite.
      So the extractor exports the root timeline, which ffdec sizes to the
-     stage.
+     stage, and keeps every root layer where the game places it. A Traced run
+     in the Flash debug player matched the clips frame for frame (#411).
 - **Strip authoring-only characters through `dev/urchin_dev/swf/strip.py`.**
   Each extractor keeps its own `{characterId: reason}` and renders and
   measures from the one copy or hide list it gets back. Every battle hall

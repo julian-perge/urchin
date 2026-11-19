@@ -8,7 +8,7 @@ import json
 import struct
 from pathlib import Path
 
-from test_swf_index import IDENTITY_MATRIX, bits, place2, swf, tag
+from test_swf_index import IDENTITY_MATRIX, bits, label as frame_label, place2, swf, tag
 from urchin_dev.swf.extract.cutscenes import (
     CUTSCENES,
     IDENTITY_COLOR,
@@ -17,6 +17,7 @@ from urchin_dev.swf.extract.cutscenes import (
     OUT_W,
     camera_view,
     find_broken_bitmap_fill_cids,
+    stage_layers,
     write_cutscene_swf,
 )
 from urchin_dev.swf.label_xref import OUT
@@ -287,3 +288,29 @@ def test_the_cutscene_movie_plays_the_wrapper_and_moves_its_animation(tmp_path):
     # Frame 2 repeats frame 1, so the wrapper writes no move for it.
     moves = [p for p in index.placements if p.owner == 9 and p.move]
     assert [p.frame for p in moves] == [3]
+
+
+def test_each_root_layer_stays_where_the_game_places_it():
+    # The root frame of CS_CUT5 places backdrop 3475 at depth 1 and wrapper
+    # 4154 at (2811, 2831) twips, where a Traced run of the Flash debug player
+    # read it at (140.55, 141.55) px (#411). The other five wrappers sit at
+    # (2670, 2750). The movie keeps every layer where the root places it, so
+    # each clip shows its box where the game does.
+    backdrop = bits((0, 1), (0, 1), (14, 5), (-120, 14), (-80, 14))
+    wrapper = bits((0, 1), (0, 1), (14, 5), (2811, 14), (2831, 14))
+    index = parse_swf(
+        swf(
+            tag(TAG_SHOW_FRAME),
+            frame_label("CS_CUT5"),
+            place2(1, cid=3475, matrix=backdrop),
+            place2(2, cid=4154, matrix=wrapper),
+            place2(3, cid=3466, matrix=IDENTITY_MATRIX),
+            tag(TAG_SHOW_FRAME),
+            frames=2,
+        )
+    )
+
+    assert stage_layers(index, "CS_CUT5", 4154) == [
+        (1, 3475, (1.0, 0.0, 0.0, 1.0, -120, -80)),
+        (2, 4154, (1.0, 0.0, 0.0, 1.0, 2811, 2831)),
+    ]

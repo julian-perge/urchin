@@ -69,8 +69,8 @@
 # header from every block in frame order and concatenating gives a valid,
 # playable MP3.
 #
-# The exported AVI stores frames as PNG-in-AVI, and one ffmpeg pass crops
-# and pads them, encodes them as Theora and the MP3 as Vorbis, and writes the
+# The exported AVI stores frames as PNG-in-AVI, and one ffmpeg pass encodes
+# them as Theora and the MP3 as Vorbis, and writes the
 # Ogg file. ffmpeg needs libtheora and libvorbis for that, which Homebrew's
 # ffmpeg-full has. The settings match what the Theora and Vorbis
 # identification headers of the clips this replaced carry: Theora quality 38
@@ -176,14 +176,13 @@ MASK_W, MASK_H = 533, 300
 
 # The SWF stage is 16000x11500 twips (800x575 px). Five wrappers sit on it at
 # (2670, 2750) twips = (133.5, 137.5) px, which centers the 533x300 mask
-# exactly, and CS_CUT5's sits at (2811, 2831). Godot's viewport is the same
-# 800x575 (project.godot), so a clip with the mask box centered in an 800x575
-# frame is the whole Stage, and cutscene_player.tscn's VideoStreamPlayer fills
-# the viewport with it and does not scale it. stage_layers() moves every
-# cutscene's root layers so the box lands on whole pixels at (133, 137), half
-# a pixel up and left of the five centered wrappers.
+# exactly, and CS_CUT5's sits at (2811, 2831), 7 px right and 4 px down. A
+# Traced run in the Flash debug player read the same positions (#411). Godot's
+# viewport is the same 800x575 (project.godot), and
+# cutscene_player.tscn's VideoStreamPlayer fills the viewport with the clip and
+# does not scale it. So each clip is the whole stage as the root shows it, with
+# every root layer at its own position and the backdrop around the box.
 OUT_W, OUT_H = 800, 575
-CONTENT_X, CONTENT_Y = (OUT_W - MASK_W) // 2, (OUT_H - MASK_H) // 2
 
 # Verification thresholds - see verify_output()'s and _frame_noise()'s
 # docstrings. A frame has to clear both noise bars to be called static.
@@ -327,17 +326,13 @@ def stage_layers(
     index: SwfIndex, label: str, wrapper_id: int
 ) -> list[tuple[int, int, Matrix]]:
     """What the root timeline shows on the label's frame, from depth 1 up to
-    the wrapper, as (depth, character id, matrix). Every layer moves by the
-    same offset, so the wrapper's clip mask lands on whole pixels at
-    (CONTENT_X, CONTENT_Y), where the encode crops it. Below the wrapper the
-    game shows shape 3475, the dark backdrop."""
+    the wrapper, as (depth, character id, matrix). Each layer keeps the
+    position the root gives it. Below the wrapper the game shows shape 3475,
+    the dark backdrop."""
     shown = timeline.frames(index, 0)[timeline.frame_of(index, 0, label) - 1]
     wrapper_depth = next(
         depth for depth, layer in shown.items() if layer.character_id == wrapper_id
     )
-    wrapper = shown[wrapper_depth]
-    dx = CONTENT_X * 20 - wrapper.matrix[4]
-    dy = CONTENT_Y * 20 - wrapper.matrix[5]
     layers = []
     for depth, layer in sorted(shown.items()):
         if depth > wrapper_depth:
@@ -351,8 +346,7 @@ def stage_layers(
                 f"{label}: root depth {depth} scales, tints or masks, which the "
                 "cutscene export does not copy"
             )
-        tx, ty = layer.matrix[4] + dx, layer.matrix[5] + dy
-        layers.append((depth, layer.character_id, (1.0, 0.0, 0.0, 1.0, tx, ty)))
+        layers.append((depth, layer.character_id, layer.matrix))
     return layers
 
 
@@ -578,7 +572,12 @@ def _frame_noise(png_path: Path) -> tuple[float, float]:
 
 
 def verify_output(
-    label: str, ogv_path: Path, expected_frames: int, has_audio: bool, work_dir: Path
+    label: str,
+    ogv_path: Path,
+    expected_frames: int,
+    has_audio: bool,
+    work_dir: Path,
+    box: tuple[int, int],
 ) -> tuple[int, int]:
     """Fail loudly instead of shipping a silently-corrupt or mis-framed file -
     except for up to MAX_TOLERATED_NOISE_FRAMES isolated noise hits (a clip
@@ -597,9 +596,10 @@ def verify_output(
     (not just a start/midpoint spot check) for high-frequency noise via
     _frame_noise(), which catches a render that comes out as static.
 
-    The noise sweep crops back down to the cutscene box before measuring,
-    since the surrounding letterbox is flat black and would otherwise dilute
-    the measurement far enough to hide real static.
+    The noise sweep crops down to the cutscene box, whose top left corner is
+    box in whole pixels, before measuring, since the backdrop around it is
+    nearly flat and would otherwise dilute the measurement far enough to hide
+    real static.
     """
     probe = run(
         [
@@ -632,8 +632,8 @@ def verify_output(
     width, height = int(width_match.group(1)), int(height_match.group(1))
     if (width, height) != (OUT_W, OUT_H):
         raise RuntimeError(
-            f"{label}: frame is {width}x{height}, expected {OUT_W}x{OUT_H} - "
-            "the clip mask crop or the stage-centering pad is wrong"
+            f"{label}: frame is {width}x{height}, expected {OUT_W}x{OUT_H}, "
+            "the size of the stage"
         )
     dur_match = re.search(r"duration=([\d.]+)", probe)
     if dur_match is None:
@@ -667,7 +667,7 @@ def verify_output(
                 "-frames:v",
                 "1",
                 "-vf",
-                f"crop={MASK_W}:{MASK_H}:{CONTENT_X}:{CONTENT_Y}",
+                f"crop={MASK_W}:{MASK_H}:{box[0]}:{box[1]}",
                 str(frame_path),
             ]
         )
@@ -776,11 +776,6 @@ def process_cutscene(
         if n_blocks:
             encode_cmd += ["-i", str(mp3_path), "-map", "0:v", "-map", "1:a"]
         encode_cmd += [
-            # Crop to the wrapper's clip mask, then re-center that box in an
-            # OUT_W x OUT_H frame the way the original centers it on the
-            # stage.
-            "-vf",
-            f"crop={MASK_W}:{MASK_H}:{CONTENT_X}:{CONTENT_Y},pad={OUT_W}:{OUT_H}:{CONTENT_X}:{CONTENT_Y}:black",
             "-pix_fmt",
             "yuv420p",
             "-c:v",
@@ -802,7 +797,11 @@ def process_cutscene(
 
         # Verified in scratch first, so a failed encode or check leaves the
         # committed clip in assets/ untouched.
-        resolution = verify_output(label, ogv_path, frames, bool(n_blocks), work_dir)
+        wrapper_x, wrapper_y = stage[-1][2][4:]
+        box = (round(wrapper_x / 20), round(wrapper_y / 20))
+        resolution = verify_output(
+            label, ogv_path, frames, bool(n_blocks), work_dir, box
+        )
         shutil.copyfile(ogv_path, OUT_DIR / ogv_path.name)
         print(f"{label}: verified OK, copied to {OUT_DIR}", file=sys.stderr)
         return resolution
