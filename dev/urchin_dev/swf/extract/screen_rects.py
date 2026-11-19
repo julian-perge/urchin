@@ -119,6 +119,7 @@ from urchin_dev.swf.extract import (
     store_art,
     window_chrome,
     zone_hub,
+    zone_map,
 )
 from urchin_dev.swf.swf_index import (
     ButtonRecord,
@@ -1367,6 +1368,10 @@ def art_sources() -> dict[str, tuple[dict, str]]:
             {**entry, "relative_to": "stage"},
             "res://assets/backgrounds/hub",
         )
+    for name, entry in json.loads(zone_map.RECORD.read_text())["art"].items():
+        if name in sources:
+            raise ValueError(f"two art sources are named {name}")
+        sources[name] = (entry, "res://assets/ui/zone_map")
     return sources
 
 

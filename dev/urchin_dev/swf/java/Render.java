@@ -22,7 +22,11 @@
 //       "goto": [{"depth": 89, "label": "CHURCH"}]  move the sprite at that
 //                                          depth of the rendered frame to the
 //                                          label, or with "frame": 12 in place
-//                                          of the label, to that 1-based frame
+//                                          of the label, to that 1-based frame.
+//                                          With "owner": id, it moves the sprite
+//                                          at that depth of the owner's timeline
+//                                          on every frame, which reaches a sprite
+//                                          nested inside the rendered frame
 //       "rotate_depths": [{"owner": id, "depth": d, "degrees": 90.0}]  set the
 //                                          _rotation of a depth on every frame
 //     }]
@@ -303,26 +307,43 @@ public class Render {
             for (JsonValue value : array(job, "goto")) {
                 JsonObject target = value.asObject();
                 int depth = target.get("depth").asInt();
-                DepthState layer = frame.layers.get(depth);
-                if (layer == null) {
-                    throw new IllegalArgumentException(where + " has nothing at depth " + depth);
-                }
-                Timeline child = timeline(layer.characterId);
-                int time;
-                if (target.get("frame") != null) {
-                    time = target.get("frame").asInt() - 1;
-                    if (time < 0 || time >= child.getFrameCount()) {
-                        throw new IllegalArgumentException("sprite " + layer.characterId + " has no frame " + (time + 1));
+                List<DepthState> layers = new ArrayList<>();
+                if (target.get("owner") != null) {
+                    int owner = target.get("owner").asInt();
+                    for (Frame ownerFrame : timeline(owner).getFrames()) {
+                        DepthState layer = ownerFrame.layers.get(depth);
+                        if (layer != null) {
+                            layers.add(layer);
+                        }
+                    }
+                    if (layers.isEmpty()) {
+                        throw new IllegalArgumentException("timeline " + owner + " has nothing at depth " + depth);
                     }
                 } else {
-                    String label = target.get("label").asString();
-                    time = labelFrame(child, label);
-                    if (time < 0) {
-                        throw new IllegalArgumentException("sprite " + layer.characterId + " has no label " + label);
+                    DepthState layer = frame.layers.get(depth);
+                    if (layer == null) {
+                        throw new IllegalArgumentException(where + " has nothing at depth " + depth);
                     }
+                    layers.add(layer);
                 }
-                savedTime.putIfAbsent(layer, new int[] {layer.time});
-                layer.time = time;
+                for (DepthState layer : layers) {
+                    Timeline child = timeline(layer.characterId);
+                    int time;
+                    if (target.get("frame") != null) {
+                        time = target.get("frame").asInt() - 1;
+                        if (time < 0 || time >= child.getFrameCount()) {
+                            throw new IllegalArgumentException("sprite " + layer.characterId + " has no frame " + (time + 1));
+                        }
+                    } else {
+                        String label = target.get("label").asString();
+                        time = labelFrame(child, label);
+                        if (time < 0) {
+                            throw new IllegalArgumentException("sprite " + layer.characterId + " has no label " + label);
+                        }
+                    }
+                    savedTime.putIfAbsent(layer, new int[] {layer.time});
+                    layer.time = time;
+                }
             }
             for (JsonValue value : array(job, "rotate_depths")) {
                 JsonObject target = value.asObject();

@@ -334,6 +334,11 @@ extract-start-screens *args: (require "ffdec" "java")
 extract-zone-hub *args: (require "ffdec" "java")
     uv run extract_zone_hub "$@"
 
+[doc('Run extract_zone_map, which reads the SWF through ffdec')]
+[group('extract')]
+extract-zone-map *args: (require "ffdec" "java")
+    uv run extract_zone_map "$@"
+
 [doc('Run extract_store_art, which reads the SWF through ffdec')]
 [group('extract')]
 extract-store-art *args: (require "ffdec" "java")
