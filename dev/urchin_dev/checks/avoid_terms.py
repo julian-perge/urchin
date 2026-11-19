@@ -21,6 +21,7 @@ from urchin_dev.run import run
 
 GLOSSARY = "GLOSSARY.md"
 AVOID_LINE = re.compile(r"^_Avoid_:\s*(.*)$", re.MULTILINE)
+DEFINED_LINE = re.compile(r"^\*\*(.+?)\*\*:", re.MULTILINE)
 HUNK = re.compile(r"^@@ -\S+ \+(\d+)(?:,\d+)? @@")
 
 
@@ -32,6 +33,11 @@ def avoid_terms(glossary: str) -> list[str]:
     for line in AVOID_LINE.findall(glossary):
         terms += [term.strip() for term in line.split(", which ", 1)[0].split(",")]
     return [term for term in terms if term]
+
+
+def defined_terms(glossary: str) -> list[str]:
+    """Each entry starts with its term in bold, followed by a colon."""
+    return DEFINED_LINE.findall(glossary)
 
 
 def term_pattern(terms: Iterable[str]) -> re.Pattern[str]:
@@ -88,17 +94,24 @@ def avoided_uses(
     added: Iterable[tuple[int, str]],
     terms: Collection[str],
     fenced: Collection[int] = (),
+    defined: Collection[str] = (),
 ) -> list[tuple[int, str]]:
     """`fenced` holds the numbers of the lines in fenced code blocks, which
-    are skipped."""
+    are skipped. `defined` holds the glossary's own terms. A defined term
+    that holds an avoid term, such as Cutscene camera, matches as itself and
+    passes, and the avoid term alone still fails."""
     if not terms or path == GLOSSARY:
         return []
-    pattern = term_pattern(terms)
+    pattern = term_pattern([*terms, *defined])
+    avoided = {term.casefold() for term in terms} - {
+        term.casefold() for term in defined
+    }
     return [
         (number, match.group(0))
         for number, line in added
         if number not in fenced
         for match in pattern.finditer(checked_text(path, line))
+        if re.sub(r"\s+", " ", match.group(0)).casefold() in avoided
     ]
 
 
@@ -143,16 +156,18 @@ def main() -> int:
     )
     args = parser.parse_args()
     allowed = {term.casefold() for term in args.allow}
-    terms = [
-        term
-        for term in avoid_terms(Path(GLOSSARY).read_text())
-        if term.casefold() not in allowed
-    ]
+    glossary = Path(GLOSSARY).read_text()
+    terms = [term for term in avoid_terms(glossary) if term.casefold() not in allowed]
+    defined = defined_terms(glossary)
     failures = [
         f"{path}:{number}: {term!r} is an _Avoid_ term in {GLOSSARY}"
         for path in args.paths
         for number, term in avoided_uses(
-            path, added_lines(staged_diff(path)), terms, staged_fenced_lines(path)
+            path,
+            added_lines(staged_diff(path)),
+            terms,
+            staged_fenced_lines(path),
+            defined,
         )
     ]
     for failure in failures:
