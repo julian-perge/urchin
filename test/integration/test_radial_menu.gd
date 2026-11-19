@@ -15,6 +15,10 @@ const RING_LAYOUT_PATH: String = "res://assets/ui/battle/pass_button.json"
 
 var _layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(BATTLE_LAYOUT_PATH))
 var _ring_layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RING_LAYOUT_PATH))
+# Where the cover and the count sit, as extract_ability_icons writes them, and
+# the cover's alphas, as extract_fade_steps writes them.
+var _cooldown: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RadialMenu.COOLDOWN_LAYOUT_PATH))
+var _fade: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RadialMenu.FADE_PATH))
 # The orb ring's alpha on each frame of the Traced run's replay of its enterFrame:
 # opened at 0 on frame 0, and with the mouse off it from frame 3, the frame on
 # which its fade-in ends (FADE case "radial" of alpha_steps_probe.as).
@@ -370,26 +374,32 @@ func test_a_refused_pick_leaves_the_next_orb_free_to_pick_the_move_and_close_the
 	assert_false(_menu.visible, "and closes the menu")
 
 
-# The cover is DefineSprite 2241, a black disc 23 px across on the icon's centre,
-# which the ring's enterFrame sets to 75% alpha while it fades in and 85% once
-# it has (lines 16 and 42).
-# The count is edit text 2245, 12 px grey and centred, laid out 2 px inside
-# bounds that the icon sheet places 17.2 px left of and 8.65 px above its centre.
+# The cover is DefineSprite 2241, a black disc on the icon's centre, which the
+# ring's enterFrame sets to one alpha while it fades in and to a higher one once
+# it has (lines 16 and 42). Flash stores each alpha in 1/256 steps.
+# The count is edit text 2245, grey and centred, in the bounds that the icon
+# sheet places around the icon's centre.
 func test_a_darkened_orb_takes_the_originals_cover_and_count():
 	_player.ability_cooldowns[0] = 3
 	_open()
 	var centre: Vector2 = _icon(0).get_global_rect().get_center()
 	var cover: TextureRect = _cover(0)
-	assert_almost_eq(cover.get_global_rect().position - centre, Vector2(-11.5, -11.5), Vector2(0.5, 0.5), "the disc sits on the centre")
-	assert_almost_eq(cover.size, Vector2(23, 23), Vector2(0.5, 0.5), "23 px across")
-	assert_almost_eq(cover.modulate.a, 0.75, 0.001, "at 75% alpha while the ring fades in")
+	var cover_rect: Dictionary = _cooldown["cover"]
+	assert_almost_eq(cover.get_global_rect().position - centre, Vector2(cover_rect["x"], cover_rect["y"]), Vector2(0.5, 0.5), "the disc sits on the centre")
+	assert_almost_eq(cover.size, Vector2(cover_rect["w"], cover_rect["h"]), Vector2(0.5, 0.5), "as wide as the disc")
+	var fading_in: int = FlashAlpha.from_percent(float(_fade["cover_percent_fading_in"]))
+	assert_eq(cover.modulate.a, fading_in / 256.0, "at the cover's alpha while the ring fades in")
 	_step(CENTRE, 3)
-	assert_eq(cover.modulate.a, 217.0 / 256.0, "and 85% once it has, which Flash stores as 217/256")
+	var shown: int = FlashAlpha.from_percent(float(_fade["cover_percent"]))
+	assert_eq(cover.modulate.a, shown / 256.0, "and at the higher alpha once it has")
+	assert_gt(shown, fading_in, "the cover darkens once the ring is in")
+	var count_layout: Dictionary = _cooldown["count"]
+	var count_rect: Dictionary = count_layout["rect"]
 	var count: Label = _count(0)
-	assert_almost_eq(count.get_global_rect().position - centre, Vector2(-15.2, -6.65), Vector2(0.001, 0.001), "where the count starts")
-	assert_almost_eq(count.size.x, 30.35, 0.001, "how wide it is")
-	assert_eq(count.get_theme_font_size("font_size"), 12, "12 px")
-	assert_eq(count.get_theme_color("font_color"), Color8(153, 153, 153), "grey")
+	assert_almost_eq(count.get_global_rect().position - centre, Vector2(count_rect["x"], count_rect["y"]), Vector2(0.001, 0.001), "where the count starts")
+	assert_almost_eq(count.size.x, float(count_rect["w"]), 0.001, "how wide it is")
+	assert_eq(count.get_theme_font_size("font_size"), int(count_layout["size"]), "its size")
+	assert_eq(count.get_theme_color("font_color"), Color(count_layout["color"]), "grey")
 	assert_eq(count.horizontal_alignment, HORIZONTAL_ALIGNMENT_CENTER, "centred")
 
 

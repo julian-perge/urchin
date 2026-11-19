@@ -48,6 +48,15 @@ const WHEEL_SHADOW: Dictionary = {"size": 6, "offset": Vector2(2.8284, 2.8284), 
 
 const POOL_VISIBLE_ROWS: int = 5
 
+# Each tree icon holds a black disc, "bfilter", over its art.
+# extract_ability_icons renders the disc and writes where it sits on the icon.
+# extract_fade_steps writes the alpha that krinRemakeTree gives it on a node
+# with no point (DefineSprite_3142/frame_25/PlaceObject3_3100_153 load, lines
+# 59-67).
+const COVER_LAYOUT_PATH: String = "res://assets/ui/abilities/cooldown.json"
+const COVER_PATH: String = "res://assets/ui/abilities/cooldown_cover.png"
+const TALENT_COVER_PATH: String = "res://assets/ui/abilities/talent_cover.json"
+
 # The Hub's Combat text banner, which shows SKILLERROR. hotbar.gd reaches it
 # through the same group.
 const BANNER_GROUP: StringName = &"combat_text_banner"
@@ -162,6 +171,7 @@ func _style_plus_buttons() -> void:
 
 func _build_tree_panel() -> void:
 	var tree: Array = TalentTree.TREES.get(_player_class(), TalentTree.TREES[PlayerSave.PlayerClass.BIOLOGICAL])
+	var cover_look: Dictionary = _talent_cover_look()
 	for node_index in tree.size():
 		var node_button: Button = TalentNodeScene.instantiate()
 		node_button.name = "Node%d" % node_index
@@ -171,8 +181,41 @@ func _build_tree_panel() -> void:
 		node_button.mouse_exited.connect(GameTooltip.hide_tooltip)
 		_style_circle_button(node_button, Color(0.1, 0.1, 0.11), Color(0.3, 0.3, 0.32), TREE_SHADOW)
 		$TreeNodes.add_child(node_button)
+		_add_talent_cover(node_button.get_node("IconRect"), cover_look)
 		_tree_buttons.append(node_button)
 		_tree_rank_labels.append(node_button.get_node("RankLabel"))
+
+
+# The disc's texture, its rect on the icon in stage px, its alpha on a node with
+# no point, and the icon's size in stage px. Every icon file is cut to the box
+# of disc.png at the zoom the disc is rendered at, which gives the icon's size.
+func _talent_cover_look() -> Dictionary:
+	var rect: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(COVER_LAYOUT_PATH))["cover"]
+	var texture: Texture2D = load(COVER_PATH)
+	var zoom: float = texture.get_width() / float(rect["w"])
+	return {
+		"texture": texture,
+		"rect": rect,
+		"percent": float(JSON.parse_string(FileAccess.get_file_as_string(TALENT_COVER_PATH))["cover_percent"]),
+		"icon_size": (load(AbilityIcon.DISC_PATH) as Texture2D).get_width() / zoom,
+	}
+
+
+# Lays the icon's black disc over a tree node's icon, where the icon art holds
+# it. The tree places each icon at its own size and the port draws it at the
+# size of IconRect, so the disc is scaled by the same amount.
+func _add_talent_cover(icon_rect: TextureRect, look: Dictionary) -> void:
+	var rect: Dictionary = look["rect"]
+	var icon_scale: float = icon_rect.size.x / float(look["icon_size"])
+	var cover := TextureRect.new()
+	cover.name = "Cover"
+	cover.texture = look["texture"]
+	cover.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	cover.position = icon_rect.size / 2.0 + Vector2(rect["x"], rect["y"]) * icon_scale
+	cover.size = Vector2(rect["w"], rect["h"]) * icon_scale
+	cover.modulate.a = FlashAlpha.multiplier(FlashAlpha.from_percent(float(look["percent"])))
+	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icon_rect.add_child(cover)
 
 
 # The wheel's 8 sockets sit on a circular (non-uniform) pitch and their style
@@ -252,6 +295,7 @@ func _refresh_tree(save: PlayerSave) -> void:
 		_tree_rank_labels[node_index].text = "%d/%d" % [rank, int(node["max_rank"])]
 		var icon_rect: TextureRect = button.get_node("IconRect")
 		icon_rect.texture = _tree_node_icon(node)
+		(icon_rect.get_node("Cover") as TextureRect).visible = not learned
 
 
 func _node_color(_save: PlayerSave, _node_index: int, node: Dictionary) -> Color:

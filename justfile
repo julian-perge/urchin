@@ -274,6 +274,11 @@ extract-tooltip-look *args:
 extract-hint-steps *args: (require "ffdec" "java")
     uv run extract_hint_steps "$@"
 
+[doc('Run extract_fade_steps, which reads the ActionScript without ffdec')]
+[group('extract')]
+extract-fade-steps *args:
+    uv run extract_fade_steps "$@"
+
 [doc('Run extract_hub_fade, which reads the SWF without ffdec')]
 [group('extract')]
 extract-hub-fade *args:
