@@ -25,10 +25,10 @@ script = ExtResource("1_script")
 
 [node name="MapArt" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 19.75
-offset_top = 22.95
-offset_right = 781
-offset_bottom = 527.95
+offset_left = 19.85
+offset_top = 23
+offset_right = 781.1
+offset_bottom = 528
 mouse_filter = 2
 texture = ExtResource("3_map")
 expand_mode = 1
@@ -70,9 +70,9 @@ offset_bottom = 470.7
 
 [node name="Art" type="TextureRect" parent="Zones/Zone1"]
 layout_mode = 0
-offset_left = -1.125
+offset_left = -1.1
 offset_top = -1.15
-offset_right = 35.675
+offset_right = 35.7
 offset_bottom = 35.65
 mouse_filter = 2
 texture = ExtResource("4_open")
@@ -87,9 +87,9 @@ offset_bottom = 370.8
 
 [node name="Art" type="TextureRect" parent="Zones/Zone2"]
 layout_mode = 0
-offset_left = -1.125
+offset_left = -1.1
 offset_top = -1.15
-offset_right = 35.675
+offset_right = 35.7
 offset_bottom = 35.65
 mouse_filter = 2
 texture = ExtResource("4_open")
@@ -104,9 +104,9 @@ offset_bottom = 458.1
 
 [node name="Art" type="TextureRect" parent="Zones/Zone3"]
 layout_mode = 0
-offset_left = -1.125
+offset_left = -1.1
 offset_top = -1.15
-offset_right = 35.675
+offset_right = 35.7
 offset_bottom = 35.65
 mouse_filter = 2
 texture = ExtResource("4_open")
@@ -121,9 +121,9 @@ offset_bottom = 365.3
 
 [node name="Art" type="TextureRect" parent="Zones/Zone4"]
 layout_mode = 0
-offset_left = -1.125
+offset_left = -1.1
 offset_top = -1.15
-offset_right = 35.675
+offset_right = 35.7
 offset_bottom = 35.65
 mouse_filter = 2
 texture = ExtResource("4_open")
@@ -138,9 +138,9 @@ offset_bottom = 230.4
 
 [node name="Art" type="TextureRect" parent="Zones/Zone5"]
 layout_mode = 0
-offset_left = -1.125
+offset_left = -1.1
 offset_top = -1.15
-offset_right = 35.675
+offset_right = 35.7
 offset_bottom = 35.65
 mouse_filter = 2
 texture = ExtResource("4_open")
@@ -155,9 +155,9 @@ offset_bottom = 153.95
 
 [node name="Art" type="TextureRect" parent="Zones/Zone6"]
 layout_mode = 0
-offset_left = -1.125
+offset_left = -1.1
 offset_top = -1.15
-offset_right = 35.675
+offset_right = 35.7
 offset_bottom = 35.65
 mouse_filter = 2
 texture = ExtResource("4_open")
@@ -172,9 +172,9 @@ offset_bottom = 200.4
 
 [node name="Art" type="TextureRect" parent="Zones/Zone7"]
 layout_mode = 0
-offset_left = -1.125
+offset_left = -1.1
 offset_top = -1.15
-offset_right = 35.675
+offset_right = 35.7
 offset_bottom = 35.65
 mouse_filter = 2
 texture = ExtResource("4_open")
