@@ -11,6 +11,7 @@ const OVERLAY_SHADER: String = "res://scenes/ui/menu/pool_shadow.gdshader"
 const INCLUDE_PATH: String = "res://scenes/ui/panel_shadow.gdshaderinc"
 const RAMP_CALL: String = "shadow_ramp(local, blur, distance, angle)"
 const PARAMETERS: Array[String] = ["blur", "distance", "angle"]
+const RAMP_MATH: Array[String] = ["clamp(", "smoothstep(", "min(", "max(", "step(", "radians(", "cos(", "sin("]
 
 
 func _window() -> Control:
@@ -89,7 +90,7 @@ func test_control_an_overlay_wider_than_the_pool_fails() -> void:
 	assert_string_contains(found[0] if found else "", "covers")
 
 
-func test_a_pool_row_still_takes_a_click_through_the_overlay() -> void:
+func test_a_pool_row_lies_under_the_overlay_and_stops_the_mouse() -> void:
 	var window: Control = await _window()
 	var row: Control = window.get_node("Pool/Mask/Rows/PoolRow0")
 	var overlay: Control = window.get_node("Pool/Shadow")
@@ -105,13 +106,15 @@ func test_the_include_holds_the_one_ramp() -> void:
 
 # The overlay's ramp equals the Panels' on the same inputs when both shaders
 # call the one function of the include with the same arguments and neither
-# computes a ramp of its own.
+# computes a ramp of its own. RAMP_MATH lists the calls that a ramp written
+# in a shader itself would need.
 func test_the_overlay_and_the_panels_call_the_same_ramp() -> void:
 	var shaders: Array[Shader] = [PanelRecipe.SHADOW_MATERIAL.shader, _overlay_material().shader]
 	for shader: Shader in shaders:
 		assert_string_contains(shader.code, '#include "%s"' % INCLUDE_PATH)
 		assert_string_contains(shader.code, RAMP_CALL)
-		assert_false(shader.code.contains("clamp("), "%s computes a ramp of its own" % shader.resource_path)
+		for call: String in RAMP_MATH:
+			assert_false(shader.code.contains(call), "%s computes a ramp of its own with %s" % [shader.resource_path, call])
 
 
 func test_the_overlay_multiplies_what_is_under_it() -> void:

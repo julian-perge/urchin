@@ -161,6 +161,26 @@ def test_inner_shadow_record_refuses_a_shadow_the_ramp_cannot_draw(change, messa
         )
 
 
+def test_an_inner_shadow_piece_in_a_sprite_with_no_drop_shadow_is_refused(monkeypatch):
+    from types import SimpleNamespace
+
+    identity = (1.0, 0.0, 0.0, 1.0, 0, 0)
+    pool = SimpleNamespace(
+        character_id=3120, matrix=POOL_MATRIX, filters=(), filter_records=()
+    )
+    mask = SimpleNamespace(character_id=3117, matrix=identity)
+    frames = {0: [{9: pool}], 3120: [{1: mask}]}
+    monkeypatch.setattr(screen_rects.timeline, "frame_of", lambda *_: 1)
+    monkeypatch.setattr(screen_rects.timeline, "frames", lambda _, owner: frames[owner])
+    monkeypatch.setattr(screen_rects, "art_sources", lambda: {})
+    monkeypatch.setattr(screen_rects, "character_kind", lambda *_: "shape")
+    scene = screen_rects.Scene(
+        0, "skills", {"Shadow": screen_rects.Piece("inner_shadow", 9, inner_depth=1)}
+    )
+    with pytest.raises(ValueError, match="DropShadow"):
+        screen_rects.scene_record(None, scene)
+
+
 def test_text_record_is_the_field_inside_its_gutter_with_its_size_and_colour():
     entry = screen_rects.text_record(
         field(), (1.0, 0.0, 0.0, 1.0, -7144, -2666), ORIGIN
