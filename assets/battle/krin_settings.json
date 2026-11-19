@@ -1,8 +1,15 @@
 {
  "krinBodyMove": 10,
  "krinBoltIncrease": 1.1500000000000001,
+ "krinBoltMissX": 500,
  "krinBoltSpeed": 1,
  "krinBoltTime": 60,
+ "krinBoltTrailGrowth": 8.3,
  "krinMeleeAttackCD": 15,
- "krinMeleeAttackEndCD": 15
+ "krinMeleeAttackEndCD": 15,
+ "krinMeleeDashBase": 1.5,
+ "krinMeleeDashSlope": 1.45,
+ "krinMeleeHomeTolerance": 1e-06,
+ "krinMeleeRunbackSlope": 1.45,
+ "krinMeleeStepCap": 1
 }

@@ -11,8 +11,25 @@
 #   krinMeleeAttackEndCD - the frames from Impact to the Runback, counting the
 #                         frame of Impact
 #
-# They go to assets/battle/krin_settings.json, under their ActionScript names.
-# Projectile and CharacterVisual read it.
+# The two functions also write numbers of their own as literals. LITERALS reads
+# each one by the line that writes it and gives it a name, since the
+# ActionScript names none:
+#
+#   krinBoltTrailGrowth    - the trail's _xscale grows by this many percent of
+#                            the bolt's step length each frame (lines 200, 209)
+#   krinBoltMissX          - a missed bolt goes once its x is more than this
+#                            either side of BATTLESCREEN's origin (line 201)
+#   krinMeleeDashBase,
+#   krinMeleeDashSlope     - the dash's coefficient is base - slope * goRat
+#                            (line 102)
+#   krinMeleeRunbackSlope  - the Runback's coefficient is slope * goRat
+#                            (line 106)
+#   krinMeleeStepCap       - either coefficient is at most this (lines 108-111)
+#   krinMeleeHomeTolerance - the Runback ends once relX is no more than this
+#                            on the target's side (line 117)
+#
+# They all go to assets/battle/krin_settings.json. Projectile and
+# CharacterVisual read it.
 #
 # Run: uv run extract_krin_settings
 from __future__ import annotations
@@ -48,8 +65,55 @@ def settings(text: str) -> dict:
     return numbers
 
 
+# name -> (pattern, how many lines match it). Every number that the matches
+# capture must be the same, because the port keeps one value for each name.
+LITERALS = {
+    "krinBoltTrailGrowth": (r"inner\._xscale \+= ([0-9.]+) \* \(Math\.sqrt", 2),
+    "krinBoltMissX": (r"this\._x > ([0-9.]+) \|\| this\._x < -([0-9.]+)\)", 1),
+    "krinMeleeDashBase": (
+        r"this\.spdXCoEFFER = ([0-9.]+) - [0-9.]+ \* this\.goRat;",
+        1,
+    ),
+    "krinMeleeDashSlope": (
+        r"this\.spdXCoEFFER = [0-9.]+ - ([0-9.]+) \* this\.goRat;",
+        1,
+    ),
+    "krinMeleeRunbackSlope": (r"this\.spdXCoEFFER = ([0-9.]+) \* this\.goRat;", 1),
+    "krinMeleeStepCap": (
+        r"if\(this\.spdXCoEFFER > ([0-9.]+)\)\s*\{\s*this\.spdXCoEFFER = ([0-9.]+);",
+        1,
+    ),
+    "krinMeleeHomeTolerance": (r"this\.relX \* this\.faceing <= ([0-9.]+) &&", 1),
+}
+
+
+def literals(text: str) -> dict:
+    """-> {name: number} for each of LITERALS. Raises unless the pattern
+    matches the expected number of lines and they all write one number."""
+    numbers = {}
+    for name, (pattern, count) in LITERALS.items():
+        found = re.findall(pattern, text)
+        if len(found) != count:
+            raise RuntimeError(f"{name}: {len(found)} matches, want {count}")
+        written = sorted(
+            {
+                group
+                for match in found
+                for group in ((match,) if isinstance(match, str) else match)
+            }
+        )
+        if len(written) != 1:
+            raise RuntimeError(
+                f"{name}: the script writes {' and '.join(written)}, want one number"
+            )
+        value = float(written[0])
+        numbers[name] = int(value) if value.is_integer() else value
+    return numbers
+
+
 def main():
-    numbers = settings(SCRIPT.read_text())
+    text = SCRIPT.read_text()
+    numbers = settings(text) | literals(text)
     JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
     JSON_PATH.write_text(json.dumps(numbers, indent=1, sort_keys=True) + "\n")
     print(f"wrote {JSON_PATH}: {numbers}", file=sys.stderr)

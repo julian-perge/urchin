@@ -71,19 +71,21 @@ const PIECE_SHADER: Shader = preload("res://scenes/doll_piece.gdshader")
 #   swing started to where the target stands that frame, times a coefficient.
 #   The sixth is krinBodyMove (10) over krinBoltTime (60) (lines 38-39, 112-116
 #   and 213-216).
-# - The dash's coefficient is min(1.5 - 1.45 * goRat, 1), where goRat is the
-#   share of the dash's x distance covered so far. The dash ends on the first
-#   frame that covers it all, and the strike label cuts the run label off. The
-#   dash runs to the target's x less both fighters' half-widths, read once when
-#   the swing starts (lines 46-56). So it takes 13 frames with no half-widths,
-#   11 at 300 px with 60 px of half-widths and 4 at 150 px with 100 px.
+# - The dash's coefficient is krinMeleeDashBase - krinMeleeDashSlope * goRat,
+#   at most krinMeleeStepCap, where goRat is the share of the dash's x distance
+#   covered so far (lines 99-111). The dash ends on the first frame that covers
+#   it all, and the strike label cuts the run label off. The dash runs to the
+#   target's x less both fighters' half-widths, read once when the swing starts
+#   (lines 46-56), so half-widths that take up more of the distance make the
+#   dash shorter.
 # - Impact comes krinMeleeAttackCD (15) frames after the strike label starts.
 #   krinMeleeAttackEndCD is 15 too, but its count starts on the frame that
 #   raised the impact flag (lines 87-95), so the Runback starts 14 frames
 #   after Impact.
-# - The Runback steps back toward home with the coefficient min(1.45 * goRat,
-#   1). It puts the fighter home on the first frame that leaves it no more
-#   than MELEE_HOME_TOLERANCE px from home along x, on the target's side
+# - The Runback steps back toward home with the coefficient
+#   krinMeleeRunbackSlope * goRat, at most krinMeleeStepCap. It puts the
+#   fighter home on the first frame that leaves it no more than
+#   krinMeleeHomeTolerance px from home along x, on the target's side
 #   (lines 117-123). The original's home is where the swing started. The
 #   port's is the doll's own, and the port measures the Runback from it (see
 #   play_melee).
@@ -91,8 +93,9 @@ const PIECE_SHADER: Shader = preload("res://scenes/doll_piece.gdshader")
 # clip can lack.
 const STATE_LABELS: Dictionary = {State.HIT: "hit", State.CAST: "cast", State.STUN: "stun"}
 # krinMelee reads krinBodyMove, krinBoltTime, krinMeleeAttackCD and
-# krinMeleeAttackEndCD, which frame_42/DoAction_4.as sets at lines 213-218.
-# extract_krin_settings writes them to this file.
+# krinMeleeAttackEndCD, which frame_42/DoAction_4.as sets at lines 213-218, and
+# writes the krinMeleeDash, Runback, StepCap and HomeTolerance numbers as
+# literals at lines 102-117. extract_krin_settings writes them all to this file.
 const KRIN_SETTINGS_PATH: String = "res://assets/battle/krin_settings.json"
 static var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(KRIN_SETTINGS_PATH))
 static var _melee_step_share: float = float(_krin["krinBodyMove"]) / float(_krin["krinBoltTime"])
@@ -100,7 +103,11 @@ static var _melee_impact_frames: float = float(_krin["krinMeleeAttackCD"])
 # The end counter counts the frame of Impact, so the Runback starts one frame
 # before krinMeleeAttackEndCD frames have passed after Impact.
 static var _melee_runback_frames: float = float(_krin["krinMeleeAttackEndCD"]) - 1.0
-const MELEE_HOME_TOLERANCE: float = 0.000001
+static var _melee_dash_base: float = float(_krin["krinMeleeDashBase"])
+static var _melee_dash_slope: float = float(_krin["krinMeleeDashSlope"])
+static var _melee_runback_slope: float = float(_krin["krinMeleeRunbackSlope"])
+static var _melee_step_cap: float = float(_krin["krinMeleeStepCap"])
+static var _melee_home_tolerance: float = float(_krin["krinMeleeHomeTolerance"])
 
 const BODY_SHADER: Shader = preload("res://scenes/doll_body.gdshader")
 # The stage px the body draws past the reach of the Result flash's colored
@@ -917,7 +924,7 @@ func _animate_melee(delta: float) -> void:
 			if _state == State.MELEE:
 				_playhead = minf(_playhead + frames, _label_end_frame("run"))
 				_apply_frame_index(int(_playhead), true)
-			_step_toward_target(minf(1.5 - 1.45 * _go_rat(), 1.0), frames)
+			_step_toward_target(minf(_melee_dash_base - _melee_dash_slope * _go_rat(), _melee_step_cap), frames)
 			if _go_rat() >= 1.0:
 				_melee_phase = MeleePhase.STRIKE
 				_strike_frames = 0.0
@@ -998,8 +1005,8 @@ func _play_runback_label(frames: float) -> void:
 
 
 func _step_home(frames: float) -> void:
-	_step_toward_target(-minf(1.45 * _go_rat(), 1.0), frames)
-	if _rel_x * _facing <= MELEE_HOME_TOLERANCE:
+	_step_toward_target(-minf(_melee_runback_slope * _go_rat(), _melee_step_cap), frames)
+	if _rel_x * _facing <= _melee_home_tolerance:
 		position = _home_position
 		_melee_phase = MeleePhase.NONE
 		melee_finished.emit()

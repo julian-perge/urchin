@@ -9,6 +9,7 @@ const GameItemScript = preload("res://scripts/entities/game_item.gd")
 const SWF_FRAME_SECONDS: float = 1.0 / 30.0
 
 var visual: CharacterVisual
+var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.KRIN_SETTINGS_PATH))
 
 
 func before_each():
@@ -122,20 +123,41 @@ func _bare_doll(spot: Vector2) -> CharacterVisual:
 	return doll
 
 
-# Each frame krinMelee moves the caster a sixth of the way from its home to the
-# target's center, times min(1, 1.5 - 1.45 * relX / slowPoint), and the dash
-# ends on the first frame that has covered slowPoint, the distance less both
-# half-widths (frame_42/DoAction_4.as:46-56 and 97-133). So the dash takes 13
-# frames with no half-widths at any distance, and fewer the more of the
-# distance the half-widths take up (DECODED_ALGORITHMS.md, "krinMelee").
+# Returns the frames that krinMelee's dash takes over `distance` px when both
+# half-widths add up to `half_widths`. It steps relX with the numbers in
+# krin_settings.json the way frame_42/DoAction_4.as:99-124 does, with no doll:
+# each frame adds the coefficient times krinBodyMove / krinBoltTime of the
+# distance, and the dash ends on the first frame that covers slowPoint.
+func _dash_frames(distance: float, half_widths: float) -> int:
+	var slow_point: float = distance - half_widths
+	var step: float = distance * float(_krin["krinBodyMove"]) / float(_krin["krinBoltTime"])
+	var rel_x: float = 0.0
+	var frames: int = 0
+	while rel_x / slow_point < 1.0:
+		var go_rat: float = rel_x / slow_point
+		rel_x += minf(float(_krin["krinMeleeDashBase"]) - float(_krin["krinMeleeDashSlope"]) * go_rat, float(_krin["krinMeleeStepCap"])) * step
+		frames += 1
+	return frames
+
+
+# Each frame krinMelee moves the caster krinBodyMove / krinBoltTime of the way
+# from its home to the target's center, times the dash's coefficient, and the
+# dash ends on the first frame that has covered slowPoint, the distance less
+# both half-widths (frame_42/DoAction_4.as:46-56 and 97-133). So the dash takes
+# the same frames with no half-widths at any distance, and fewer the more of
+# the distance the half-widths take up (DECODED_ALGORITHMS.md, "krinMelee").
 func test_the_dash_reaches_its_end_point_in_the_original_number_of_frames():
 	var cases: Array = [
-		{"distance": 300.0, "half_widths": 0.0, "frames": 13},
-		{"distance": 477.0, "half_widths": 0.0, "frames": 13},
-		{"distance": 300.0, "half_widths": 60.0, "frames": 11},
-		{"distance": 150.0, "half_widths": 100.0, "frames": 4},
+		{"distance": 300.0, "half_widths": 0.0},
+		{"distance": 477.0, "half_widths": 0.0},
+		{"distance": 300.0, "half_widths": 60.0},
+		{"distance": 150.0, "half_widths": 100.0},
 	]
+	assert_eq(_dash_frames(477.0, 0.0), _dash_frames(300.0, 0.0), "sanity: with no half-widths the distance makes no difference")
+	assert_lt(_dash_frames(150.0, 100.0), _dash_frames(300.0, 60.0), "sanity: half-widths that take up more of the distance make the dash shorter")
+	assert_lt(_dash_frames(300.0, 60.0), _dash_frames(300.0, 0.0), "sanity: and any half-widths make it shorter than none")
 	for case in cases:
+		case["frames"] = _dash_frames(case["distance"], case["half_widths"])
 		var caster: CharacterVisual = _bare_doll(Vector2(100, 100))
 		assert_eq(caster.get_bounds().size.x, 0.0, "sanity: a doll with no art has no width")
 		var target: Vector2 = Vector2(100.0 + case["distance"], 100.0)
@@ -201,8 +223,9 @@ func test_the_dash_chases_a_target_that_runs_on():
 			reached["chaser"] = frame
 		if still.position.x >= 400.0 and not reached.has("still"):
 			reached["still"] = frame
-	assert_eq(reached.get("still"), 13, "sanity: the dash at a target that stands still")
-	assert_lt(reached.get("chaser", 99), 13, "the dash after a target that runs on")
+	var still_frames: int = _dash_frames(300.0, 0.0)
+	assert_eq(reached.get("still"), still_frames, "sanity: the dash at a target that stands still")
+	assert_lt(reached.get("chaser", still_frames + 1), still_frames, "the dash after a target that runs on")
 
 
 # krinMelee moves y by the same share of the way to the target's center as x,
@@ -218,17 +241,20 @@ func test_the_dash_runs_along_the_line_to_the_targets_center():
 	assert_gt(caster.position.y, 170.0, "sanity: the caster got most of the way down")
 
 
-# krinMelee: the dash with no half-widths arrives 13 frames in, Impact comes
-# 15 frames after arrival, and the Runback starts 14 frames after Impact and
-# eases home.
+# krinMelee: the dash with no half-widths arrives in the frames _dash_frames
+# works out, Impact comes krinMeleeAttackCD frames after arrival, and the
+# Runback starts krinMeleeAttackEndCD - 1 frames after Impact and eases home.
 func test_melee_runs_strikes_and_returns_home():
 	watch_signals(visual)
 	visual.position = Vector2(100, 100)
 	visual.play_melee(func(): return Vector2(180, 100), 0.0)
-	for frame in 6:
+	var dash_frames: int = _dash_frames(80.0, 0.0)
+	var mid_dash: int = int(dash_frames / 2.0)
+	for frame in mid_dash:
 		visual._process(SWF_FRAME_SECONDS)
 	assert_gt(visual.position.x, 130.0, "mid-dash: moved toward the target")
-	for frame in 7:
+	assert_lt(visual.position.x, 180.0, "but not there yet")
+	for frame in dash_frames - mid_dash:
 		visual._process(SWF_FRAME_SECONDS)
 	assert_almost_eq(visual.position.x, 180.0, 1.0, "arrived at the target")
 	for frame in 120:
@@ -237,6 +263,37 @@ func test_melee_runs_strikes_and_returns_home():
 	assert_signal_emitted(visual, "melee_finished")
 	assert_eq(visual._state, CharacterVisual.State.IDLE, "sequence recovers to idle")
 	assert_eq(visual.position, Vector2(100, 100), "back home after runback")
+
+
+# krinMelee's Runback takes krinMeleeRunbackSlope * goRat steps, at most
+# krinMeleeStepCap, back toward home, and snaps home on the first frame that
+# leaves relX at krinMeleeHomeTolerance or less (frame_42/DoAction_4.as:99-123).
+# This steps relX the same way from where the strike stood, with the numbers in
+# krin_settings.json, and the doll has to match it on every frame.
+func test_the_runback_eases_home_and_snaps_there_on_the_originals_frame():
+	var doll: CharacterVisual = _bare_doll(Vector2(100, 100))
+	watch_signals(doll)
+	doll.play_melee(func(): return Vector2(180, 100), 0.0)
+	for frame in 120:
+		if get_signal_emit_count(doll, "attack_connected") > 0:
+			break
+		doll._process(SWF_FRAME_SECONDS)
+	for frame in int(_krin["krinMeleeAttackEndCD"]) - 2:
+		doll._process(SWF_FRAME_SECONDS)
+	var rel_x: float = doll.position.x - 100.0
+	assert_almost_eq(rel_x, 80.0, 0.1, "sanity: the Runback starts from the strike")
+	var step: float = 80.0 * float(_krin["krinBodyMove"]) / float(_krin["krinBoltTime"])
+	var tolerance: float = float(_krin["krinMeleeHomeTolerance"])
+	var frames: int = 0
+	while rel_x > tolerance:
+		assert_eq(get_signal_emit_count(doll, "melee_finished"), 0, "not home before frame %d" % (frames + 1))
+		rel_x -= minf(float(_krin["krinMeleeRunbackSlope"]) * rel_x / 80.0, float(_krin["krinMeleeStepCap"])) * step
+		frames += 1
+		doll._process(SWF_FRAME_SECONDS)
+		if rel_x > tolerance:
+			assert_almost_eq(doll.position.x, 100.0 + rel_x, 0.0001, "Runback frame %d" % frames)
+	assert_eq(doll.position, Vector2(100, 100), "home on Runback frame %d" % frames)
+	assert_signal_emit_count(doll, "melee_finished", 1, "and the swing ends then")
 
 
 # krinMelee's end counter counts the frame that raised the impact flag, so the
@@ -253,8 +310,7 @@ func test_a_caster_hit_in_its_runback_keeps_sliding_home_while_it_plays_hit():
 		visual._process(SWF_FRAME_SECONDS)
 	var strike_spot: Vector2 = visual.position
 	assert_almost_eq(strike_spot, Vector2(180, 100), Vector2(0.1, 0.0), "sanity: Impact comes at the target")
-	var krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.KRIN_SETTINGS_PATH))
-	var runback_frame: int = int(krin["krinMeleeAttackEndCD"]) - 1
+	var runback_frame: int = int(_krin["krinMeleeAttackEndCD"]) - 1
 	for frame in runback_frame - 1:
 		visual._process(SWF_FRAME_SECONDS)
 	assert_eq(visual.position, strike_spot, "%d frames after Impact the caster still stands where it struck" % (runback_frame - 1))
