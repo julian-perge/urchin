@@ -83,6 +83,26 @@
    }
   }
  },
+ "inventory": {
+  "scene": "res://scenes/ui/menu/inventory_window.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 48
+   },
+   "panels": {
+    "nodes": [
+     "WindowShell/Backdrop",
+     "LeftPanel",
+     "PartyBar",
+     "CenterPanel",
+     "ExpLeftBox",
+     "ExpFill",
+     "ExpGloss"
+    ],
+    "bar": 8
+   }
+  }
+ },
  "hub": {
   "scene": "res://test/fixtures/screen_rects/hub_chrome.tscn",
   "modes": {
