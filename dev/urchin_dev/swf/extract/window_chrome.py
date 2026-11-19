@@ -77,6 +77,15 @@
 # on the row's placement draws around 3001 alone. The two other rows are the
 # same art, so its rect is measured from the row sprite's origin.
 #
+# THE POOL FRAME is shape 3116, which the ability pool, sprite 3120, places at
+# its depth 7 above its rows. It is not a plain outline: it strokes a 1 px black
+# line around the pool and fills it with a linear gradient that is opaque black
+# at the top and bottom edges and clear from ratio 53 to 197, so the rows fade
+# into the frame's top and bottom 28 px. It is rendered from inside 3120, with
+# no DropShadow, because the pool's inner shadow is on 3120's placement and the
+# port draws it as an overlay (julian-perge/urchin#190). The Abilities Window
+# is the only place it appears, but its rect is measured from 3120's origin.
+#
 # WHAT RECTS MEAN. A piece rendered as a sprite of its own has a rect measured
 # from that sprite's origin, "relative_to": "sprite <id>", because the game
 # places the sprite in more than one spot. Every other piece is placed on the
@@ -153,6 +162,9 @@ CARD_PROMPT_DEPTH = 5
 CARD_CLOSE_DEPTH = 6
 CARD_FRAME_SPRITE = 2846
 CARD_FACE_DEPTH = 2
+# The ability pool and its frame shape 3116 (see THE POOL FRAME).
+POOL_SPRITE = 3120
+POOL_FRAME_DEPTH = 7
 
 PIECES: dict[str, str] = {
     "backdrop": "KRINMENU's backdrop under its Bevel, Glow and DropShadow",
@@ -177,6 +189,7 @@ PIECES: dict[str, str] = {
     "hub_card_face": "the info card's face (2844), under its own DropShadow",
     "zone_track": "the Hub's zone progress track (3149), under its DropShadow",
     "zone_fill": "the Hub's zone progress bar (3147), full width, no DropShadow",
+    "pool_frame": "the ability pool's frame (3116 in 3120), no DropShadow",
 }
 
 
@@ -257,7 +270,25 @@ def jobs(index: SwfIndex, plate_strip: tuple[int, ...]) -> dict[str, render.Job]
         "zone_fill": render.Job(
             ZONE_BAR_SPRITE, 1, ZOOM, bar_origin, only_depths=(ZONE_BAR_FILL_DEPTH,)
         ),
+        "pool_frame": pool_frame(index),
     }
+
+
+def pool_frame(index: SwfIndex) -> render.Job:
+    """-> the job that renders sprite 3120 with only its frame shape shown. The
+    clip mask at depth 1 stays, because the driver refuses to hide a mask. It
+    clips only the depths under the frame, and they are hidden."""
+    first = timeline.frames(index, POOL_SPRITE)[0]
+    return render.Job(
+        POOL_SPRITE,
+        1,
+        ZOOM,
+        hide_depths=tuple(
+            (POOL_SPRITE, depth)
+            for depth, layer in sorted(first.items())
+            if depth != POOL_FRAME_DEPTH and layer.clip_depth is None
+        ),
+    )
 
 
 def victory_row(index: SwfIndex, depth: int) -> render.Job:

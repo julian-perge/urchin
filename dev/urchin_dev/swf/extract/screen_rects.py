@@ -64,6 +64,13 @@
 #             ShapeBounds through the placement matrix, and the port puts a
 #             plain Control on it. The zone fill is one: the game scales it
 #             from the shape's left edge, and its art is wider than the shape.
+#   "inner_shadow" - an overlay that draws the inner DropShadow of a sprite's
+#             placement over everything the sprite holds, rows that the game
+#             adds while it runs included. The ability pool, sprite 3120, is
+#             the one (julian-perge/urchin#190). It is recorded as the rect of
+#             the sprite's clip mask, at the piece's inner_depth, and as the
+#             shadow's blur, distance and angle, which the overlay's shader
+#             takes.
 #   "doll"  - the doll that a frame places as loose part clips, which the port
 #             draws as one CharacterVisual. It is recorded as the position and
 #             scale that put the rig's stand pose where the clips sit, and as
@@ -464,9 +471,13 @@ SCENES: dict[str, Scene] = {
             ),
         ),
     ),
-    # The skills frame (spec/107-abilities.md). The pool is port only here
-    # until #238 records it. StatusLabel has no piece in the SWF, and the
-    # icon and rank text on each tree node are the port's own.
+    # The skills frame (spec/107-abilities.md). StatusLabel has no piece in the
+    # SWF, and the icon and rank text on each tree node are the port's own. The
+    # ability pool is sprite 3120, `talentPool`. Its clip mask 3117 at depth 1
+    # clips the backing 3119 at depth 2 and the rows the game adds to
+    # talentPool2 at depth 3. The frame 3116 at depth 7 and the scroll buttons
+    # at depths 8 and 11 sit outside the mask. The pool's rows are the port's
+    # own design (ADR 0007), so they have no piece.
     "res://scenes/ui/menu/abilities_window.tscn": Scene(
         timeline=KRINMENU,
         frame="skills",
@@ -517,13 +528,25 @@ SCENES: dict[str, Scene] = {
                 )
                 for n in range(RING_SOCKETS)
             },
+            "Pool": Piece("shape", None, instance="talentPool", inner_depth=1),
+            "Pool/Mask": Piece("shape", None, instance="talentPool", inner_depth=1),
+            "Pool/Mask/Backing": Piece(
+                "box", None, instance="talentPool", inner_depth=2
+            ),
+            "Pool/Frame": Piece("art", None, art="pool_frame", instance="talentPool"),
+            "Pool/ScrollUpButton": Piece(
+                "button", None, instance="talentPool", inner_depth=8
+            ),
+            "Pool/ScrollDownButton": Piece(
+                "button", None, instance="talentPool", inner_depth=11
+            ),
+            "Pool/Shadow": Piece(
+                "inner_shadow", None, instance="talentPool", inner_depth=1
+            ),
         },
         port_only=(
             "StatusLabel",
-            "PoolBackdrop",
-            "PoolRows",
-            "ScrollUpButton",
-            "ScrollDownButton",
+            "Pool/Mask/Rows",
             *(
                 f"TreeNodes/Node{n}/{node}"
                 for n in range(TREE_NODES)
@@ -1191,8 +1214,16 @@ def _check_shadow(shadow: DropShadow) -> None:
         raise ValueError(f"{shadow} has a strength other than 1")
 
 
-def panel_record(*, bounds, line_width, matrix, origin, fill, line, shadow) -> dict:
+def shadow_entry(shadow: DropShadow) -> dict:
+    """-> the blur, distance and angle that the inner shadow ramp of
+    scenes/ui/panel_shadow.gdshaderinc takes, once _check_shadow() has said
+    that the ramp can draw `shadow`."""
     _check_shadow(shadow)
+    return {"angle": shadow.angle, "blur": shadow.blur_x, "distance": shadow.distance}
+
+
+def panel_record(*, bounds, line_width, matrix, origin, fill, line, shadow) -> dict:
+    shadow_record = shadow_entry(shadow)
     border = border_width(line_width, _scale(matrix))
     x, y, w, h = fill_rect(bounds, line_width, matrix, origin)
     grow = border / 2
@@ -1202,11 +1233,7 @@ def panel_record(*, bounds, line_width, matrix, origin, fill, line, shadow) -> d
         "fill": color_hex(fill),
         "line": color_hex(line),
         "border": border,
-        "shadow": {
-            "angle": shadow.angle,
-            "blur": shadow.blur_x,
-            "distance": shadow.distance,
-        },
+        "shadow": shadow_record,
     }
 
 
@@ -1413,6 +1440,16 @@ def box_record(bounds, matrix, origin, fill: tuple[int, int, int, int]) -> dict:
         "kind": "box",
         "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
         "fill": color_hex(fill),
+    }
+
+
+def inner_shadow_record(bounds, matrix, origin, shadow: DropShadow) -> dict:
+    """-> the record of an overlay on the clip mask whose ShapeBounds are
+    `bounds`, which draws `shadow` over what the mask's sprite holds."""
+    return {
+        "kind": "inner_shadow",
+        "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
+        "shadow": shadow_entry(shadow),
     }
 
 
@@ -2093,6 +2130,16 @@ def scene_record(
             )
         elif piece.kind == "shape":
             pieces[path] = _shape(index, layer, piece_origin)
+        elif piece.kind == "inner_shadow":
+            if holder_shadow is None:
+                raise ValueError(
+                    f"{path}: an inner_shadow piece needs an inner_depth inside a"
+                    " sprite placed with a DropShadow"
+                )
+            shape, matrix = through_sprites(index, layer)
+            pieces[path] = inner_shadow_record(
+                shape_bounds(index, shape), matrix, piece_origin, holder_shadow
+            )
         elif piece.kind == "outline":
             pieces[path] = outline_record(
                 shape_bounds(index, layer.character_id),

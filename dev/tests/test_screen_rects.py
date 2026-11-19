@@ -129,6 +129,38 @@ def test_panel_record_refuses_a_shadow_the_shared_material_cannot_draw(change, m
         )
 
 
+# The ability pool: KRINMENU's skills frame places sprite 3120 at depth 9 with
+# this matrix, and its clip mask 3117 has these ShapeBounds.
+POOL_MATRIX = (1.0, 0.0, 0.0, 1.0, 2462, 1036)
+POOL_MASK_BOUNDS = (0, 0, 4347, 2661)
+
+
+def test_inner_shadow_record_is_the_mask_through_the_placement_with_the_shadow():
+    entry = screen_rects.inner_shadow_record(
+        POOL_MASK_BOUNDS, POOL_MATRIX, ORIGIN, shadow()
+    )
+    assert entry["kind"] == "inner_shadow"
+    assert entry["rect"] == pytest.approx([523.6, 274.2, 217.35, 133.05], abs=1e-4)
+    assert entry["shadow"] == {"angle": 45.0, "blur": 5.0, "distance": 5.0}
+
+
+@pytest.mark.parametrize(
+    "change, message",
+    [
+        ({"inner": False}, "inner"),
+        ({"knockout": True}, "knockout"),
+        ({"blur_y": 4.0}, "blur"),
+        ({"color": (0, 0, 0, 128)}, "colour"),
+        ({"strength": 2.0}, "strength"),
+    ],
+)
+def test_inner_shadow_record_refuses_a_shadow_the_ramp_cannot_draw(change, message):
+    with pytest.raises(ValueError, match=message):
+        screen_rects.inner_shadow_record(
+            POOL_MASK_BOUNDS, POOL_MATRIX, ORIGIN, shadow(**change)
+        )
+
+
 def test_text_record_is_the_field_inside_its_gutter_with_its_size_and_colour():
     entry = screen_rects.text_record(
         field(), (1.0, 0.0, 0.0, 1.0, -7144, -2666), ORIGIN
