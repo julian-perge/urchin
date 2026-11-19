@@ -103,7 +103,11 @@ def test_distinct_drops_a_scale_whose_blurs_round_like_an_earlier_ones():
 def test_glow_scales_spans_the_models_that_wear_an_art():
     found = doll_art.glow_scales(
         ["M_SFOOT_HYDRA2", "M_CHEST_ULTI", "M_SFOOT_PLAIN"],
-        {"M_SFOOT_HYDRA2": [7.0, 7.0], "M_CHEST_ULTI": [7.0, 7.0], "M_SFOOT_PLAIN": []},
+        {
+            "M_SFOOT_HYDRA2": ([7.0, 7.0], []),
+            "M_CHEST_ULTI": ([7.0, 7.0], []),
+            "M_SFOOT_PLAIN": ([], []),
+        },
         parts_by_code={"FOOT": ["foot1", "foot2"], "CHEST": ["chest"]},
         skins={"HYDRA2": {"MODEL8"}},
         looks={},
@@ -115,3 +119,11 @@ def test_glow_scales_spans_the_models_that_wear_an_art():
     assert [round(s, 4) for s in found["M_SFOOT_HYDRA2"]] == [1.0, 0.7561, 0.6575]
     assert [round(s, 4) for s in found["M_CHEST_ULTI"]] == [1.0, 1.15, 1.3225]
     assert "M_SFOOT_PLAIN" not in found
+
+
+def test_distinct_keeps_a_scale_whose_distance_differs_when_its_blurs_round_alike():
+    assert doll_art.distinct([1.0, 0.8696, 0.7561], [2.0], [4.0]) == [
+        1.0,
+        0.8696,
+        0.7561,
+    ]

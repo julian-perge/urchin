@@ -1315,7 +1315,6 @@ func _assert_nearest_render(layer: Sprite2D) -> Dictionary:
 func test_a_model8_hydra_part_shows_the_glow_render_for_the_scale_it_is_drawn_at():
 	visual.start_clip("MODEL8")
 	visual.dress("M", "HYDRA2", "", ["", "", "", "", "", "", ""])
-	visual._fit_glow_renders()
 	var layer: Sprite2D = _glow_layer("foot1")
 	assert_not_null(layer, "M_SFOOT_HYDRA2 has glow renders")
 	if layer == null:
@@ -1323,12 +1322,18 @@ func test_a_model8_hydra_part_shows_the_glow_render_for_the_scale_it_is_drawn_at
 	assert_lt(float(_assert_nearest_render(layer)["scale"]), 1.0)
 
 
-# The inventory draws its doll 1.3075x as big, and Flash still draws the chest's
-# glow at its stage width there.
+# The inventory draws its doll bigger than the battle does, and Flash still draws
+# the chest's glow at its stage width there.
 func test_a_menu_sized_doll_shows_the_glow_render_for_its_larger_scale():
-	visual.scale = Vector2(-1.3075, 1.3075)
+	var state: SceneState = load("res://scenes/ui/menu/inventory_window.tscn").get_state()
+	for node in state.get_node_count():
+		if state.get_node_name(node) != "Doll":
+			continue
+		for property in state.get_node_property_count(node):
+			if state.get_node_property_name(node, property) == "scale":
+				visual.scale = state.get_node_property_value(node, property)
+	assert_gt(absf(visual.scale.y), 1.0, "the inventory's Doll is drawn bigger than 1")
 	visual.dress("M", "ONE", "", ["", "ULTI", "", "", "", "", ""])
-	visual._fit_glow_renders()
 	var layer: Sprite2D = _glow_layer("chest")
 	assert_not_null(layer, "M_CHEST_ULTI has glow renders")
 	if layer == null:

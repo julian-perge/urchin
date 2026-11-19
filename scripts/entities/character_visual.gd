@@ -366,6 +366,7 @@ func dress(gender: String, skin: String, hair: String, equip: Array) -> void:
 		var show_hair: bool = _equip_looks(equip, 0) == "" or gender == "F"
 		if part_name == "head" and show_hair and hair != "" and hair != "0":
 			_add_layer(part, "%s/HAIR_%s.png" % [SPRITE_ROOT, hair])
+	_fit_glow_renders()
 
 
 # Convenience: dress straight from a CombatUnit-style model array

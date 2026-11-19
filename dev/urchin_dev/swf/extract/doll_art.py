@@ -199,27 +199,33 @@ def grid(low: float, high: float) -> list[float]:
     return [GLOW_STEP**k for k in steps]
 
 
-def distinct(scales: list[float], blurs: list[float]) -> list[float]:
-    """-> scales without the ones whose blurs ffdec draws as wide as an earlier
-    one's. ffdec draws a blur at Math.round(blur * zoom) px (GLOWFILTER.apply
-    at jpexs cde1cc21a), and a render for scale s divides it by s."""
+def distinct(
+    scales: list[float], blurs: list[float], distances: list[float] = ()
+) -> list[float]:
+    """-> scales without the ones that ffdec draws the same as an earlier one.
+    ffdec draws a blur at Math.round(blur * zoom) px (GLOWFILTER.apply at
+    jpexs cde1cc21a) but a distance as it is, and a render for scale s divides
+    both by s."""
     kept: list[float] = []
-    seen: set[tuple[int, ...]] = set()
+    seen: set[tuple] = set()
     for scale in scales:
-        widths = tuple(math.floor(blur * ZOOM / scale + 0.5) for blur in blurs)
+        widths = tuple(math.floor(blur * ZOOM / scale + 0.5) for blur in blurs) + tuple(
+            round(distance * ZOOM / scale, 6) for distance in distances
+        )
         if widths not in seen:
             seen.add(widths)
             kept.append(scale)
     return kept
 
 
-def filter_blurs(index: SwfIndex, character: int) -> list[float]:
-    """-> the blurX and blurY of every filter that any timeline under a
-    sprite places, the sprite's own included."""
+def filter_lengths(index: SwfIndex, character: int) -> tuple[list[float], list[float]]:
+    """-> (the blurX and blurY, the nonzero distances) of every filter that any
+    timeline under a sprite places, the sprite's own included."""
     by_owner = defaultdict(list)
     for placement in index.placements:
         by_owner[placement.owner].append(placement)
     blurs: list[float] = []
+    distances: list[float] = []
     stack, seen = [character], set()
     while stack:
         owner = stack.pop()
@@ -230,14 +236,16 @@ def filter_blurs(index: SwfIndex, character: int) -> list[float]:
             for record in placement.filter_records or ():
                 found = filter_of(record)
                 blurs += [found.blur_x, found.blur_y]
+                if found.distance:
+                    distances.append(found.distance)
             if placement.character_id in index.sprite_frames:
                 stack.append(placement.character_id)
-    return blurs
+    return blurs, distances
 
 
 def glow_scales(
     names: list[str],
-    blurs: dict[str, list[float]],
+    lengths: dict[str, tuple[list[float], list[float]]],
     parts_by_code: dict[str, list[str]],
     skins: dict[str, set[str]],
     looks: dict[str, set[str]],
@@ -246,17 +254,21 @@ def glow_scales(
     peak: float,
     menus: list[tuple[str, float]],
 ) -> dict[str, list[float]]:
-    """-> the scales to render each art with a filter at, 1.0 first. Every
-    menu doll's rest model can wear any item, because the player can."""
+    """-> the scales to render each art with a filter at, 1.0 first. lengths
+    holds each art's filter_lengths(). Every menu doll's rest model can wear
+    any item, because the player can."""
     players = {model for model, _ in menus}
     found: dict[str, list[float]] = {}
     for name in names:
-        if not blurs.get(name):
+        blurs, distances = lengths.get(name, ([], []))
+        if not blurs:
             continue
         key = art_key(name, set(parts_by_code))
         if key is None:
             continue
         code, worn, is_skin = key
+        # A skin needs no player models of its own: each party member's skin is
+        # its unit's, so wearers() already has the model that shows it.
         models = (
             set(skins.get(worn, ())) if is_skin else set(looks.get(worn, ())) | players
         )
@@ -273,7 +285,7 @@ def glow_scales(
                     if menu_model == model:
                         high = max(high, most * menu_scale)
         if high > 0.0:
-            found[name] = distinct(grid(low, high), blurs[name])
+            found[name] = distinct(grid(low, high), blurs, distances)
     return found
 
 
@@ -322,15 +334,14 @@ def render_swf(swf_path: Path, names: list[str]):
 
 
 def render_glows(
-    swf_path: Path, names: list[str], context: dict
+    swf_path: Path, index: SwfIndex, names: list[str], context: dict
 ) -> dict[str, list[dict]]:
     """Render every art of names that the SWF exports at each of its glow
     scales but 1.0, into GLOW_DIR. -> each art's renders, as glow_scales.json
-    holds them, without the one at scale 1.0."""
-    index = read_swf(swf_path)
+    holds them, without the one at scale 1.0. index is the SWF's read_swf()."""
     exported = {name: index.exports[name] for name in names if name in index.exports}
-    blurs = {name: filter_blurs(index, cid) for name, cid in exported.items()}
-    scales = glow_scales(sorted(exported), blurs, **context)
+    lengths = {name: filter_lengths(index, cid) for name, cid in exported.items()}
+    scales = glow_scales(sorted(exported), lengths, **context)
     wanted = [(name, scale) for name in sorted(scales) for scale in scales[name][1:]]
     jobs = [
         render.Job(exported[name], 1, ZOOM, filter_scale=1.0 / scale)
@@ -430,13 +441,12 @@ def main():
     for stale in GLOW_DIR.glob("*.png"):
         stale.unlink()
     context = glow_context()
-    web_names = [name for name in rects if name in read_swf(WEB_SWF).exports]
-    glows = render_glows(WEB_SWF, web_names, context)
-    glows.update(
-        render_glows(
-            STEAM_SWF, [name for name in rects if name not in web_names], context
-        )
-    )
+    web = read_swf(WEB_SWF)
+    web_names = [name for name in rects if name in web.exports]
+    glows = render_glows(WEB_SWF, web, web_names, context)
+    steam_names = [name for name in rects if name not in web_names]
+    if steam_names:
+        glows.update(render_glows(STEAM_SWF, read_swf(STEAM_SWF), steam_names, context))
     # The .import files of the PNGs written again stay, so their uids do not
     # change, and only those of PNGs no longer written go.
     for imported in GLOW_DIR.glob("*.png.import"):
