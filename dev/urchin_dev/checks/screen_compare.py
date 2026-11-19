@@ -287,6 +287,20 @@ def left_out_ids(layers: dict[int, int], depths: Iterable[int], where: str) -> s
     return found
 
 
+def through_hub(index: SwfIndex, frame: int, **job) -> render.Job:
+    """-> a job that renders KRINMENU on `frame` inside the Hub frame. The
+    backdrop's Bevel, Glow and DropShadow belong to KRINMENU's Stage placement,
+    so a render of KRINMENU's own timeline loses them."""
+    return render.Job(
+        0,
+        window_chrome.hub_frame(index),
+        ZOOM,
+        only_depths=(window_chrome.KRINMENU_ROOT_DEPTH,),
+        goto=((window_chrome.KRINMENU_ROOT_DEPTH, frame),),
+        **job,
+    )
+
+
 def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
     origin = screen_rects.origin_of(index, entry.timeline)
     frame = timeline.frame_of(index, entry.timeline, entry.frame)
@@ -296,23 +310,18 @@ def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
             entry.timeline == window_chrome.KRINMENU
             and window_chrome.BACKDROP_DEPTH in depths
         ):
-            # The backdrop's Bevel, Glow and DropShadow belong to KRINMENU's
-            # Stage placement, so rendering its own timeline loses them.
             all_depths = {
                 depth
                 for layers in timeline.frames(index, entry.timeline)
                 for depth in layers
             }
-            return render.Job(
-                0,
-                window_chrome.hub_frame(index),
-                ZOOM,
-                only_depths=(window_chrome.KRINMENU_ROOT_DEPTH,),
+            return through_hub(
+                index,
+                frame,
                 hide_depths=tuple(
                     (entry.timeline, depth)
                     for depth in sorted(all_depths - set(depths))
                 ),
-                goto=((window_chrome.KRINMENU_ROOT_DEPTH, frame),),
             )
         return render.Job(entry.timeline, frame, ZOOM, origin, only_depths=depths)
 
@@ -331,8 +340,10 @@ def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
         reasons[cid] = "a character the port leaves out"
     for cid in entry.compare_strip:
         reasons[cid] = "outside the static chrome comparison"
-    stripped = strip.strip_list(WEB_SWF, reasons) if reasons else []
-    return render.Job(entry.timeline, frame, ZOOM, origin, strip=tuple(stripped))
+    stripped = tuple(strip.strip_list(WEB_SWF, reasons)) if reasons else ()
+    if entry.timeline == window_chrome.KRINMENU:
+        return through_hub(index, frame, strip=stripped)
+    return render.Job(entry.timeline, frame, ZOOM, origin, strip=stripped)
 
 
 def render_reference(index: SwfIndex, entry: Entry, mode: str) -> Image.Image:
