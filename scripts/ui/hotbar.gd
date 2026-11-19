@@ -184,7 +184,8 @@ func hover_frame(slot: String) -> int:
 # krinNavHideUI, which toggles on PauseForScreen. The port's spot ignores the
 # press instead. The roll over still plays. An orb and an info spot read
 # is_inert() on each click (orb_base.gd, info_spot.gd), so one made while it is
-# set is inert too. Nothing sets it until the Victory Window does (#241).
+# set is inert too. The Hub sets it while the Victory Window shows (game.gd,
+# _open_victory) and clears it on Proceed.
 func set_inert(inert: bool) -> void:
 	_inert = inert
 	for button: BaseButton in find_children("*", "BaseButton"):

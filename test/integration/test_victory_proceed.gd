@@ -8,15 +8,17 @@ extends GutTest
 const GameScene: PackedScene = preload("res://scenes/game.tscn")
 const TEST_SAVE_DIR := "user://test_victory_proceed_saves/"
 
-# Each case names the result a win hands the Hub and what Proceed then shows.
-# The cutscene comes first, then the map after a boss win, and only then the
-# Abilities Window after a level-up or the Hub with its hint.
+# Each case names the result a win hands the Hub and everything Proceed then
+# shows. The cutscene comes first, then the map after a boss win, and only then
+# the Abilities Window after a level-up or the Hub with its hint. The Victory
+# Window stays under the cutscene. A boss win that also levels the player up
+# opens only the map.
 const PROCEED_CASES: Array[Dictionary] = [
-	{"case": "a pending cutscene", "cutscene": "CS_CUT3", "goto": "Navigation", "is_boss": false, "levels": 1, "outcome": "cutscene", "inert": true},
-	{"case": "a boss win with a level-up", "cutscene": "", "goto": "", "is_boss": true, "levels": 1, "outcome": "map", "inert": false},
-	{"case": "a boss win without one", "cutscene": "", "goto": "", "is_boss": true, "levels": 0, "outcome": "map", "inert": false},
-	{"case": "a level-up without a boss win", "cutscene": "", "goto": "", "is_boss": false, "levels": 1, "outcome": "abilities", "inert": false},
-	{"case": "a plain win", "cutscene": "", "goto": "", "is_boss": false, "levels": 0, "outcome": "hub with hint", "inert": false},
+	{"case": "a pending cutscene", "cutscene": "CS_CUT3", "goto": "Navigation", "is_boss": false, "levels": 1, "outcome": ["cutscene", "victory"], "inert": true},
+	{"case": "a boss win with a level-up", "cutscene": "", "goto": "", "is_boss": true, "levels": 1, "outcome": ["map"], "inert": false},
+	{"case": "a boss win without one", "cutscene": "", "goto": "", "is_boss": true, "levels": 0, "outcome": ["map"], "inert": false},
+	{"case": "a level-up without a boss win", "cutscene": "", "goto": "", "is_boss": false, "levels": 1, "outcome": ["abilities"], "inert": false},
+	{"case": "a plain win", "cutscene": "", "goto": "", "is_boss": false, "levels": 0, "outcome": ["hint"], "inert": false},
 ]
 
 var _save_before: PlayerSave
@@ -83,16 +85,20 @@ func _proceed(game: Control) -> void:
 	(game.get_node("VictoryWindow") as VictoryWindow)._on_proceed_pressed()
 
 
-func _outcome(game: Control) -> String:
+# Every outcome that shows, so a case that opens a second one fails.
+func _outcomes(game: Control) -> Array[String]:
+	var shown: Array[String] = []
 	if game.get_node_or_null("CutscenePlayer") != null:
-		return "cutscene"
+		shown.append("cutscene")
+	if game.get_node("VictoryWindow").visible:
+		shown.append("victory")
 	if game.get_node("ZoneMapOverlay").visible:
-		return "map"
+		shown.append("map")
 	if game.get_node("AbilitiesWindow").visible:
-		return "abilities"
-	if not game.get_node("VictoryWindow").visible and game.get_node("HubCard").visible:
-		return "hub with hint"
-	return "nothing"
+		shown.append("abilities")
+	if game.get_node("HubCard").visible:
+		shown.append("hint")
+	return shown
 
 
 func test_the_hub_opens_the_victory_window_with_the_hotbar_inert_and_the_art_hidden():
@@ -114,11 +120,11 @@ func test_proceed_follows_the_originals_order():
 	for c: Dictionary in PROCEED_CASES:
 		var game: Control = _hub(_victory(c["cutscene"], c["goto"], c["is_boss"], c["levels"]))
 		_proceed(game)
-		assert_eq(_outcome(game), c["outcome"], c["case"])
+		assert_eq(_outcomes(game), c["outcome"], c["case"])
 		assert_eq(game.get_node("Hotbar").is_inert(), c["inert"], "%s: the hotbar" % c["case"])
-		if c["outcome"] == "hub with hint":
+		if c["outcome"] == ["hint"]:
 			assert_true(game.zone_host.visible, "%s: the Hub art shows" % c["case"])
-		if c["outcome"] == "cutscene":
+		if c["outcome"].has("cutscene"):
 			assert_not_called(game, "_reload_hub")
 			game.get_node("CutscenePlayer").video.finished.emit()
 			assert_called(game, "_reload_hub")
