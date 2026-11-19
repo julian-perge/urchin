@@ -262,6 +262,67 @@
   }
  },
  "scenes": {
+  "res://scenes/battle/ending_screen.tscn": {
+   "frame": "endMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Background": {
+     "kind": "art",
+     "rect": [
+      0.0,
+      0.0,
+      800.0,
+      575.0
+     ],
+     "size": [
+      1600,
+      1150
+     ],
+     "texture": "res://assets/ui/menu/start_background.png",
+     "zoom": 2.0
+    },
+    "EndingLabel": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 14.0,
+     "kind": "text",
+     "line_pitch": 22.0,
+     "rect": [
+      197.3,
+      111.45,
+      414.05,
+      271.2
+     ]
+    },
+    "OkButton": {
+     "kind": "hit",
+     "rect": [
+      340.4313,
+      412.4001,
+      104.0373,
+      39.9998
+     ]
+    },
+    "OkLabel": {
+     "align": "center",
+     "color": "ffcc00ff",
+     "font_size": 36.0,
+     "kind": "text",
+     "rect": [
+      223.0,
+      412.1,
+      338.1,
+      47.3
+     ],
+     "text": "OK!"
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
   "res://scenes/battle/game_over_screen.tscn": {
    "frame": "gameOverMenu",
    "origin": [

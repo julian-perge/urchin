@@ -399,6 +399,11 @@ SLOT_PIECES = {
     for row, depths in SLOT_ROW_DEPTHS.items()
     for node, depth in depths.items()
 }
+# The Ending Screen, root frame 116 (spec/107-ending.md). The frame also
+# places "Play MORE Games!" at depth 7 and its link at depth 8, which the port
+# leaves out with the other branding
+# (docs/adr/0002-leave-out-the-armor-games-branding.md).
+ENDING_FRAME = "endMenu"
 
 SCENES: dict[str, Scene] = {
     # The victory frame's left Panel and the field at its top. It is a test
@@ -618,6 +623,20 @@ SCENES: dict[str, Scene] = {
     ),
     "res://scenes/ui/menu/title_panel.tscn": Scene(
         timeline=0, frame=TITLE_FRAME, pieces=TITLE_PIECES
+    ),
+    # Depths 38 and 41 are the Armor Games line and logo, as on the title. The
+    # other left-out depths need no entry, because the compare tool's chrome
+    # mode strips every edit text and a hit button has no art.
+    "res://scenes/battle/ending_screen.tscn": Scene(
+        timeline=0,
+        frame=ENDING_FRAME,
+        pieces={
+            "Background": Piece("art", 1, art="start_background"),
+            "EndingLabel": Piece("text", 12, character=2796),
+            "OkLabel": Piece("text", 6, character=2799),
+            "OkButton": Piece("hit", 10, character=2797),
+        },
+        left_out=(38, 41),
     ),
     # The menu opens on the title, so it is the scene the compare tool scores
     # against the title frame, and the record checks that its instances of the
