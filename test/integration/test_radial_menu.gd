@@ -500,7 +500,7 @@ func test_an_orb_shows_the_moves_icon_art_not_initials():
 	_open()
 	var orb: Button = _menu.orbs[0]
 	assert_not_null(orb.icon, "loaded the move's real extracted icon art")
-	assert_eq(orb.icon.resource_path, "res://assets/ui/abilities/Leading_Strike.png")
+	assert_eq(orb.icon, AbilityIcon.texture("Leading_Strike", AbilityIcon.element_color(_moves[LEADING_STRIKE_ID])))
 	assert_eq(orb.text, "", "no 2-letter initials now that real art is shown")
 
 
@@ -518,3 +518,14 @@ func test_closing_leaves_a_tooltip_the_menu_did_not_raise():
 	GameTooltip.show_sections([{"bg_color": Color.BLACK, "lines": [{"text": "Quit", "color": Color.WHITE}]}], anchor)
 	_menu.decision_open = false
 	assert_true(GameTooltip._root.visible)
+
+
+# refreshOrbs gives each orb the element colour of its move, and the orb's disc
+# takes it (frame_217/PlaceObject3_3382_500 load, line 15).
+func test_an_orbs_disc_takes_the_moves_element_colour():
+	_open()
+	var move: Ability = _moves[LEADING_STRIKE_ID]
+	var expected: Color = MenuTheme.ELEMENT_COLORS[move.damage_element_type]
+	var read: Color = preload("res://test/disc_reader.gd").disc_color(_menu.orbs[0].icon, "Leading_Strike")
+	for channel in 3:
+		assert_almost_eq(read[channel], expected[channel], 0.02, "channel %d" % channel)

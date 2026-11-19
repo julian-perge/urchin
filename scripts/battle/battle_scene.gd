@@ -691,7 +691,7 @@ func _reset_pass_button() -> void:
 # its target in the tooltip (frame_42/DoAction_11.as:105-109).
 func _show_pick_on_pass_button(move_id: int, target_slot: int) -> void:
 	var move: Ability = MoveManagerAuto.moves_by_id[move_id]
-	_move_icon.texture = RadialMenu.icon_texture(move)
+	_move_icon.texture = AbilityIcon.for_move(move)
 	_move_icon.visible = true
 	_pass_title = move.display_name
 	_pass_body = TooltipTheme.look()["pass_button"]["picked"] % units[target_slot].player_name

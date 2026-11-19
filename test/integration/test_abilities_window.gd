@@ -5,6 +5,9 @@ extends GutTest
 
 const SCENE: String = "res://scenes/ui/menu/abilities_window.tscn"
 const ROWS: Array[String] = ["Vitality", "Strength", "Instinct", "Speed"]
+const DiscReader = preload("res://test/disc_reader.gd")
+const ADRENALINE_ID: int = 120
+const LEADING_STRIKE_ID: int = 1
 
 
 func before_each() -> void:
@@ -207,7 +210,7 @@ func test_a_held_pool_ability_goes_to_the_socket_it_is_released_on() -> void:
 	_hold_first_row(window)
 	var icon: TextureRect = window.get_node("HeldIcon")
 	assert_true(icon.visible, "the held icon shows")
-	assert_eq(icon.texture, RadialMenu.icon_texture(MoveManagerAuto.get_move(move_id)))
+	assert_eq(icon.texture, AbilityIcon.for_move(MoveManagerAuto.get_move(move_id)))
 	assert_eq(int(save.move_matrix[5]), 0, "a press places nothing")
 	_socket(window, 5).pressed.emit()
 	var expected: Array = [0, 0, 0, 0, 0, move_id, 0, 0]
@@ -368,3 +371,85 @@ func test_the_pool_rows_walk_move_matrix2_from_the_end() -> void:
 		var row: AbilityPoolRow = window.get_node("Pool/Mask/Rows/PoolRow%d" % i)
 		assert_eq(row.name_label.text, MoveManagerAuto.get_move(expected[i]).display_name, "row %d" % i)
 	assert_false((window.get_node("Pool/Mask/Rows/PoolRow4") as AbilityPoolRow).visible, "row 4 is empty")
+
+
+func _disc(texture: Texture2D, move_id: int) -> Color:
+	return DiscReader.disc_color(texture, AbilityIcon.key(MoveManagerAuto.get_move(move_id).display_name))
+
+
+func _element(move_id: int) -> Color:
+	return MenuTheme.ELEMENT_COLORS[MoveManagerAuto.get_move(move_id).damage_element_type]
+
+
+func _assert_color(actual: Color, expected: Color, text: String) -> void:
+	for channel in 3:
+		assert_almost_eq(actual[channel], expected[channel], 0.02, "%s, channel %d" % [text, channel])
+
+
+# KrinCreateAbilityMatrix gives each pool icon and each ring socket the
+# element colour of its move (DefineSprite_3142/frame_25/DoAction.as:51-57 and
+# 75-81), and DefineButton2_2437 gives the held icon its colour.
+func test_the_pool_the_ring_and_the_held_icon_tint_the_disc_with_the_moves_element() -> void:
+	var save: PlayerSave = GameData.current_save
+	save.move_matrix2.clear()
+	save.move_matrix2.append(LEADING_STRIKE_ID)
+	save.move_matrix2.append(ADRENALINE_ID)
+	save.move_matrix.fill(0)
+	save.move_matrix[2] = ADRENALINE_ID
+	var window: Control = _window()
+	var row: AbilityPoolRow = window.get_node("Pool/Mask/Rows/PoolRow0")
+	assert_eq(row.name_label.text, "Adrenaline", "sanity: the pool lists the last owned first")
+	_assert_color(_disc(row.icon_rect.texture, ADRENALINE_ID), _element(ADRENALINE_ID), "pool row")
+	_assert_color(_disc(_socket(window, 2).icon, ADRENALINE_ID), _element(ADRENALINE_ID), "socket")
+	_hold_first_row(window)
+	var held: TextureRect = window.get_node("HeldIcon")
+	_assert_color(_disc(held.texture, ADRENALINE_ID), _element(ADRENALINE_ID), "held icon")
+	row.mouse_entered.emit()
+	_assert_color(_disc(GameTooltip._icon.texture, ADRENALINE_ID), _element(ADRENALINE_ID), "pool tooltip")
+
+
+# krinRemakeTree gives a node the element of its ID's move, and a passive
+# node's ID is 0, whose move is Physical
+# (DefineSprite_3142/frame_25/PlaceObject3_3100_153 load, lines 51-57).
+func test_a_tree_nodes_disc_takes_the_element_of_its_moves_row() -> void:
+	var window: Control = _window()
+	var tree: Array = TalentTree.TREES[PlayerSave.PlayerClass.BIOLOGICAL]
+	assert_eq(tree[1]["buff_family"], "INTEGRITY", "sanity: node 1 is a passive")
+	assert_eq(int(tree[5]["move_id"]), ADRENALINE_ID, "sanity: node 5 grants Adrenaline")
+	var passive: TextureRect = window.find_child("Node1", true, false).get_node("IconRect")
+	_assert_color(DiscReader.disc_color(passive.texture, "INTEGRITY"), MenuTheme.ELEMENT_COLORS[MoveManagerAuto.get_move(0).damage_element_type], "passive")
+	var active: TextureRect = window.find_child("Node5", true, false).get_node("IconRect")
+	_assert_color(_disc(active.texture, ADRENALINE_ID), _element(ADRENALINE_ID), "active")
+	window._on_tree_node_hovered(5)
+	_assert_color(_disc(GameTooltip._icon.texture, ADRENALINE_ID), _element(ADRENALINE_ID), "tree tooltip")
+
+
+# A socket that goes from one ability straight to another stays on a frame
+# that holds the disc, so Flash keeps the disc and its load script does not run
+# again. The disc keeps the first ability's colour until the socket empties
+# ("Empty" holds no tinted disc) or the window opens again. A throwaway Probe
+# measured this in the Flash debug player for #439.
+func test_a_socket_keeps_its_discs_colour_until_it_empties_or_the_window_reopens() -> void:
+	var save: PlayerSave = GameData.current_save
+	assert_ne(_element(LEADING_STRIKE_ID), _element(ADRENALINE_ID), "sanity: two elements")
+	save.move_matrix2.clear()
+	save.move_matrix2.append(LEADING_STRIKE_ID)
+	save.move_matrix2.append(ADRENALINE_ID)
+	save.move_matrix.fill(0)
+	save.move_matrix[0] = LEADING_STRIKE_ID
+	var window: Control = _window()
+	_hold_first_row(window)
+	_socket(window, 0).pressed.emit()
+	assert_eq(int(save.move_matrix[0]), ADRENALINE_ID, "sanity: the socket took Adrenaline")
+	_assert_color(_disc(_socket(window, 0).icon, ADRENALINE_ID), _element(LEADING_STRIKE_ID), "the first colour stays")
+	_socket(window, 0).pressed.emit()
+	assert_eq(int(save.move_matrix[0]), 0, "sanity: an empty-handed click empties it")
+	_hold_first_row(window)
+	_socket(window, 0).pressed.emit()
+	_assert_color(_disc(_socket(window, 0).icon, ADRENALINE_ID), _element(ADRENALINE_ID), "a new disc after the empty socket")
+	save.move_matrix[0] = LEADING_STRIKE_ID
+	window.refresh()
+	_assert_color(_disc(_socket(window, 0).icon, LEADING_STRIKE_ID), _element(ADRENALINE_ID), "sanity: still the old colour")
+	window.visible = false
+	window.visible = true
+	_assert_color(_disc(_socket(window, 0).icon, LEADING_STRIKE_ID), _element(LEADING_STRIKE_ID), "reopening makes the ring again")
