@@ -361,6 +361,45 @@ def test_a_window_backdrop_reference_keeps_its_stage_filters(monkeypatch):
     assert job.goto == ((window_chrome.KRINMENU_ROOT_DEPTH, 1),)
 
 
+def test_a_window_chrome_reference_keeps_the_backdrop_stage_filters(monkeypatch):
+    from types import SimpleNamespace
+
+    from urchin_dev.swf.extract import window_chrome
+
+    monkeypatch.setattr(
+        screen_compare.screen_rects, "origin_of", lambda *_: (400.5, 222.4)
+    )
+    monkeypatch.setattr(
+        screen_compare.timeline,
+        "frame_of",
+        lambda _, owner, label: 181 if owner == 0 else 16,
+    )
+    frame_16 = {2: SimpleNamespace(character_id=2994)}
+    monkeypatch.setattr(
+        screen_compare.timeline, "frames", lambda *_: [{}] * 15 + [frame_16]
+    )
+    monkeypatch.setattr(screen_compare, "character_kind", lambda *_: "shape")
+    monkeypatch.setattr(
+        screen_compare.strip, "strip_list", lambda _, reasons: sorted(reasons)
+    )
+    entry = screen_compare.Entry(
+        "res://window.tscn",
+        window_chrome.KRINMENU,
+        "shop",
+        {"chrome": screen_compare.Mode(None, ())},
+        compare_strip=(3196,),
+    )
+
+    job = screen_compare.reference_job(None, entry, "chrome")
+
+    assert job.timeline == 0
+    assert job.frame == 181
+    assert job.origin == (0.0, 0.0)
+    assert job.only_depths == (window_chrome.KRINMENU_ROOT_DEPTH,)
+    assert job.goto == ((window_chrome.KRINMENU_ROOT_DEPTH, 16),)
+    assert job.strip == (3196,)
+
+
 def test_an_entry_carries_its_static_chrome_strip_list(tmp_path):
     scenes = {
         SCENE: Scene(
