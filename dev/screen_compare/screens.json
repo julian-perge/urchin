@@ -220,5 +220,13 @@
     "bar": 6
    }
   }
+ },
+ "options": {
+  "scene": "res://scenes/ui/menu/options_window.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 9
+   }
+  }
  }
 }

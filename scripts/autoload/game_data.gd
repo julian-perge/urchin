@@ -86,6 +86,9 @@ func load_game(slot: int) -> bool:
 	Party.ensure_party_equip(save)
 	current_slot = slot
 	current_save = save
+	# The original loads Krin.sound with the rest of the save
+	# (frame_42/DoAction_20.as:296), and addSound plays nothing while it is off.
+	AudioManagerAuto.sound_enabled = save.sound
 	menu_party_id = Party.PLAYER_PARTY_ID
 	save_loaded.emit(slot)
 	return true

@@ -72,3 +72,14 @@ func test_an_effect_that_starts_playing_is_announced():
 	manager.play_effect("hit_sonny2")
 	assert_signal_emit_count(manager, "effect_played", 1)
 	assert_signal_emitted_with_parameters(manager, "effect_played", ["hit_sonny1"])
+
+
+# addSound does nothing at all while Krin.sound is off (frame_42/DoAction.as:3),
+# so the music mode and the rotation stay where they were.
+func test_music_leaves_the_mode_and_the_rotation_alone_while_the_sound_is_off():
+	manager.sound_enabled = false
+	manager.play_menu_music()
+	manager.play_battle_music(false)
+	manager.play_battle_music(true)
+	assert_eq(manager._music_mode, manager.MusicMode.NONE)
+	assert_eq(manager._rotation_counter, 0)
