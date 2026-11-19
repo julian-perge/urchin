@@ -11,7 +11,6 @@ from urchin_dev.swf.swf_index import (
     TAG_DEFINE_EDIT_TEXT,
     TAG_DEFINE_FONT3,
     TAG_DEFINE_SHAPE,
-    TAG_DEFINE_SHAPE3,
     TAG_DEFINE_SHAPE4,
     TAG_DEFINE_SPRITE,
     TAG_DO_ACTION,
@@ -32,7 +31,6 @@ from urchin_dev.swf.swf_index import (
     button_records,
     drop_shadow,
     edit_text,
-    first_fill_bitmap_id,
     first_line_style,
     font,
     parse_swf,
@@ -251,25 +249,6 @@ def test_shape_bounds_reads_the_rect_in_twips():
     body = struct.pack("<H", 30) + rect + b"\0\0\0\0"
     index = parse_swf(swf(tag(TAG_DEFINE_SHAPE, body), tag(TAG_SHOW_FRAME)))
     assert shape_bounds(index, 30) == (-20, 0, 300, 40)
-
-
-def test_first_fill_bitmap_id_reads_only_the_first_fill_style():
-    solid = bytes([0x00]) + b"\0\0\0\xff"
-    missing = bytes([0x40]) + struct.pack("<H", 65535) + IDENTITY_MATRIX
-    bitmap = bytes([0x41]) + struct.pack("<H", 7) + IDENTITY_MATRIX
-    # A RECT, the fill styles, no line styles, zero style bits, EndShapeRecord.
-    second = b"\0" + bytes([2]) + solid + missing + b"\0\0\0"
-    first = b"\0" + bytes([1]) + bitmap + b"\0\0\0"
-    none = b"\0\0\0\0\0"
-    index = parse_swf(
-        swf(
-            tag(TAG_DEFINE_SHAPE3, struct.pack("<H", 1) + second),
-            tag(TAG_DEFINE_SHAPE3, struct.pack("<H", 2) + first),
-            tag(TAG_DEFINE_SHAPE3, struct.pack("<H", 3) + none),
-            tag(TAG_SHOW_FRAME),
-        )
-    )
-    assert [first_fill_bitmap_id(index, cid) for cid in (1, 2, 3)] == [None, 7, None]
 
 
 def test_edit_text_reads_its_bounds_font_colour_and_layout():
@@ -521,6 +500,7 @@ def test_shape_styles_reads_each_style_set_and_what_its_edges_use():
             used_fills=frozenset({1}),
             line_bounds={},
             paths=(),
+            bitmaps=(None,),
         ),
         StyleSet(
             fills=((102, 102, 102, 255),),
@@ -528,5 +508,6 @@ def test_shape_styles_reads_each_style_set_and_what_its_edges_use():
             used_fills=frozenset(),
             line_bounds={1: (-10, -10, 190, 90)},
             paths=((-10, -10, 190, 90),),
+            bitmaps=(None,),
         ),
     ]

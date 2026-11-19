@@ -8,7 +8,7 @@ import json
 import struct
 from pathlib import Path
 
-from test_swf_index import IDENTITY_MATRIX, place2, swf, tag
+from test_swf_index import IDENTITY_MATRIX, bits, place2, swf, tag
 from urchin_dev.swf.extract.cutscenes import (
     CUTSCENES,
     OUT_DIR,
@@ -103,26 +103,29 @@ def test_each_extracted_clip_is_the_size_of_the_stage():
         assert ogv_picture_size(OUT_DIR / f"{label}.ogv") == (OUT_W, OUT_H), label
 
 
-def test_only_shapes_whose_first_fill_is_the_missing_bitmap_get_stripped():
-    def shape3(cid: int, *fills: bytes) -> bytes:
-        styles = bytes([len(fills)]) + b"".join(fills) + b"\0\0\0"
-        return tag(TAG_DEFINE_SHAPE3, struct.pack("<H", cid) + b"\0" + styles)
+def test_a_missing_bitmap_fill_counts_only_when_an_edge_paints_with_it():
+    # Shapes 3997 and 4018 of CS_CUT4 hold bitmap 65535 as fill 1 of a style
+    # set whose edges paint only with fill 2, a real bitmap. Shape 1 is like
+    # them, and shape 2 is the same shape with its edges painting fill 1.
+    def shape3(cid: int, painted: int) -> bytes:
+        missing = bytes([0x43]) + struct.pack("<H", 65535) + IDENTITY_MATRIX
+        bitmap = bytes([0x43]) + struct.pack("<H", 7) + IDENTITY_MATRIX
+        styles = bytes([2]) + missing + bitmap + bytes([0]) + bytes([0x20])
+        # A StyleChangeRecord that sets FillStyle1, one straight edge, and
+        # an EndShapeRecord.
+        records = bits(
+            (0, 1), (0b00100, 5), (painted, 2),
+            (1, 1), (1, 1), (0, 4), (0, 1), (0, 1), (1, 2),
+            (0, 1), (0, 5),
+        )  # fmt: skip
+        return tag(TAG_DEFINE_SHAPE3, struct.pack("<H", cid) + b"\0" + styles + records)
 
-    solid = bytes([0x00]) + b"\0\0\0\xff"
-    missing = bytes([0x40]) + struct.pack("<H", 65535) + IDENTITY_MATRIX
-    placed = place2(1, cid=1) + place2(2, cid=2) + place2(3, cid=3)
+    placed = place2(1, cid=1) + place2(2, cid=2)
     sprite = tag(
         TAG_DEFINE_SPRITE,
         struct.pack("<HH", 9, 1) + placed + tag(TAG_SHOW_FRAME) + tag(TAG_END),
     )
     index = parse_swf(
-        swf(
-            shape3(1, missing),
-            shape3(2, solid, missing),
-            shape3(3, solid),
-            shape3(4, missing),
-            sprite,
-            tag(TAG_SHOW_FRAME),
-        )
+        swf(shape3(1, painted=2), shape3(2, painted=1), sprite, tag(TAG_SHOW_FRAME))
     )
-    assert find_broken_bitmap_fill_cids(index, 9) == {1}
+    assert find_broken_bitmap_fill_cids(index, 9) == {2}

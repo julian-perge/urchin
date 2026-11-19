@@ -84,23 +84,19 @@
 # new sound block), and trimming to the shorter stream would clip the tail
 # of the video instead of just leaving it silent.
 #
-# Animation sprite 3960 (CS_CUT3, shipped as CS_CUT4 under the old mapping)
-# originally came out with ~11 frames of rendered static/noise near its tail
-# (frames ~467-477 of 501, confirmed present in ffdec's export of
-# both the stripped AND unstripped source, so it wasn't something this
-# script's own processing introduced). Root cause: those frames place
-# shapes (chids 3951/3953/3955/3957) whose fill references bitmapId "65535"
-# - the SWF sentinel for "no such bitmap character" - with no matching
-# DefineBits* tag anywhere in the file, and no ActionScript on this
-# sprite's timeline that would bind a real bitmap into that slot at
-# runtime. It's a dangling fill reference, not real cutscene content;
-# ffdec's renderer fills the gap with visual noise instead of leaving it
-# blank. find_broken_bitmap_fill_cids() below scans every cutscene sprite's
-# directly-placed shapes for this exact pattern and strips any it finds
-# alongside the camera clip, so a similar dangling reference in another
-# cutscene gets caught automatically instead of silently shipping noise
-# again. (Scoped to each sprite's directly-placed children, same as the
-# camera clip strip - does not recurse into nested sprites.)
+# Twenty shapes of the web SWF hold a fill of bitmap 65535, the SWF id for
+# "no such bitmap", and the SWF defines no bitmap with that id. In every one of
+# them, no edge paints with that fill, so it draws nothing. CS_CUT3 (sprite
+# 3960) and CS_CUT4 (sprite 4038) place nine of these shapes. Their edges
+# paint with the other fill, a real bitmap. In CS_CUT3, that bitmap is one of
+# four frames of grey TV static (bitmaps 3950 to 3956). In CS_CUT4, it is the
+# skull and blood art. The Steam SWF has the same four static bitmaps in shapes
+# 3883 to 3889, with no 65535 fill. Until #81, this script stripped every
+# shape whose first fill was 65535, and read the static on frames 467 to 477
+# of CS_CUT3 as an ffdec fault, so both clips lost art the original shows.
+# find_broken_bitmap_fill_cids() now finds only a shape that paints with
+# bitmap 65535. No shape does, and the extract stops if one ever does, because
+# nothing shows how Flash Player draws a fill with no bitmap.
 #
 # Requires ffdec (~/.local/bin/ffdec) for the character-strip and video
 # export, and an ffmpeg with libtheora and libvorbis (`brew install
@@ -127,8 +123,8 @@ from urchin_dev.swf import strip
 from urchin_dev.swf.swf_index import (
     SHAPE_TAGS,
     SwfIndex,
-    first_fill_bitmap_id,
     read_swf,
+    shape_styles,
     sound_stream,
 )
 
@@ -311,14 +307,10 @@ def extract_mp3(index: SwfIndex, sprite_id: int, out_path: Path) -> int:
 
 
 def find_broken_bitmap_fill_cids(index: SwfIndex, sprite_id: int) -> set[int]:
-    """Shapes placed directly in this cutscene sprite whose first fill style
-    references bitmapId 65535, SWF's sentinel for "no such bitmap
-    character" - a dangling bitmap-fill reference that ffdec's renderer
-    fills in with visual static/noise instead of leaving it blank. Confirmed as
-    the root cause of sprite 3960's corrupted tail frames (chids
-    3951/3953/3955/3957) - see task-1-report.md. Auto-detected here rather than
-    hardcoded so the same class of bug in another cutscene gets caught and
-    stripped too.
+    """Shapes placed directly in this cutscene sprite where an edge paints
+    with a fill of bitmap 65535, which the SWF does not define. A 65535 fill
+    that no edge paints with draws nothing, so it does not count. The file
+    header says why no shape in the game is on this list.
     """
     placed = {p.character_id for p in index.placements if p.owner == sprite_id}
     return {
@@ -326,7 +318,11 @@ def find_broken_bitmap_fill_cids(index: SwfIndex, sprite_id: int) -> set[int]:
         for cid in placed
         if cid is not None
         and index.characters[cid][0] in SHAPE_TAGS
-        and first_fill_bitmap_id(index, cid) == MISSING_BITMAP
+        and any(
+            styles.bitmaps[fill - 1] == MISSING_BITMAP
+            for styles in shape_styles(index, cid)
+            for fill in styles.used_fills
+        )
     }
 
 
@@ -580,16 +576,14 @@ def process_cutscene(
     )
     work_dir = Path(tempfile.mkdtemp(prefix=f"cutscene_{label}_"))
     try:
-        extra = sorted(find_broken_bitmap_fill_cids(index, chid) - {overlay_chid})
-        if extra:
-            print(
-                f"{label}: also stripping suspected dangling bitmap-fill shape(s) {extra}",
-                file=sys.stderr,
+        broken = sorted(find_broken_bitmap_fill_cids(index, chid))
+        if broken:
+            raise RuntimeError(
+                f"{label}: shape(s) {broken} paint with bitmap 65535, which the "
+                "SWF does not define. Check what the original game shows "
+                "before you strip or keep them."
             )
         strip_ids = {overlay_chid: "the camera clip, which hides itself on frame 1"}
-        strip_ids |= {
-            cid: "its first fill is the missing bitmap 65535" for cid in extra
-        }
 
         animated_swf = work_dir / "animated_wrapper.swf"
         with strip.stripped_copy(WEB_SWF, strip_ids) as stripped:

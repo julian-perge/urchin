@@ -5,8 +5,8 @@
 # much of each tag as it needs to reach the fields it records. timeline.py
 # folds the placements and removals into each frame's display list.
 #
-# Shapes are only read for their bounds and for the bitmap their first fill
-# style uses, on demand from the bytes the index keeps. Art is rendered through
+# Shapes are only read for their bounds and their styles, on demand from the
+# bytes the index keeps. Art is rendered through
 # ffdec and never composited in Python (docs/agents/art-extraction.md).
 #
 # Owner ids: 0 is the root timeline, any other id is the DefineSprite whose
@@ -291,8 +291,8 @@ class SwfIndex:
     """display holds each timeline's placements and removals in tag order,
     which is the order timeline.py applies them in. characters maps each
     character id to its defining tag's code and the start and end of that
-    tag's body in data, so shape_bounds() and first_fill_bitmap_id() can parse
-    a shape later. fonts does the same for each DefineFont2 and DefineFont3,
+    tag's body in data, so shape_bounds() and shape_styles() can parse a shape
+    later. fonts does the same for each DefineFont2 and DefineFont3,
     keyed by font id. sound_blocks holds the body spans of each timeline's
     SoundStreamBlock tags. stage is the header's FrameSize in twips, as
     (xmin, ymin, xmax, ymax), and frame_rate is the header's frames a second."""
@@ -850,16 +850,6 @@ def sound_stream(index: SwfIndex, owner: int) -> list[bytes]:
     return [index.data[start:end] for start, end in index.sound_blocks.get(owner, [])]
 
 
-def first_fill_bitmap_id(index: SwfIndex, cid: int) -> int | None:
-    """-> the bitmap id a DefineShape's first fill style points at, or None
-    when the shape has no fill styles or its first one isn't a bitmap."""
-    code, pos = _fill_style_array(index, cid)
-    count, pos = _fill_style_count(index.data, pos, code)
-    if count == 0 or index.data[pos] not in BITMAP_FILL_TYPES:
-        return None
-    return struct.unpack_from("<H", index.data, pos + 1)[0]
-
-
 def first_fill_color(index: SwfIndex, cid: int) -> tuple[int, int, int, int] | None:
     """-> the (r, g, b, a) a DefineShape's first fill style paints, or None
     when the shape has no fill styles or its first one isn't a solid colour.
@@ -910,7 +900,8 @@ def first_line_style(
 class StyleSet:
     """One style set of a DefineShape: the shape's first one, or one that a
     StyleChangeRecord declares partway through. fills holds each fill's
-    (r, g, b, a), or None for a fill that is not a solid colour. lines holds
+    (r, g, b, a), or None for a fill that is not a solid colour. bitmaps holds
+    each fill's bitmap id, or None for a fill that is not a bitmap. lines holds
     each line's (width in twips, (r, g, b, a)). used_fills holds the 1-based
     fill indices that some edge fills with, and line_bounds the (xmin, ymin,
     xmax, ymax) in twips of the edges each used 1-based line index strokes.
@@ -922,6 +913,7 @@ class StyleSet:
     used_fills: frozenset[int]
     line_bounds: dict[int, tuple[int, int, int, int]]
     paths: tuple[tuple[int, int, int, int], ...] = ()
+    bitmaps: tuple[int | None, ...] = ()
 
 
 def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
@@ -931,7 +923,7 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
     code, pos = _fill_style_array(index, cid)
     data = index.data
     sets: list[StyleSet] = []
-    fills, lines, pos = _style_arrays(data, pos, code)
+    fills, bitmaps, lines, pos = _style_arrays(data, pos, code)
     fill_bits, line_bits = data[pos] >> 4, data[pos] & 0x0F
     bits = _Bits(data, pos + 1)
     used_fills: set[int] = set()
@@ -948,6 +940,7 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
                 used_fills=frozenset(used_fills),
                 line_bounds={k: tuple(v) for k, v in sorted(line_bounds.items())},
                 paths=tuple(tuple(box) for box in paths),
+                bitmaps=bitmaps,
             )
         )
 
@@ -1003,7 +996,7 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
             used_fills, line_bounds = set(), {}
             paths, new_path = [], True
             fill0 = fill1 = line = 0
-            fills, lines, pos = _style_arrays(data, bits.align(), code)
+            fills, bitmaps, lines, pos = _style_arrays(data, bits.align(), code)
             fill_bits, line_bits = data[pos] >> 4, data[pos] & 0x0F
             bits = _Bits(data, pos + 1)
     close_set()
@@ -1011,10 +1004,11 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
 
 
 def _style_arrays(data: bytes, pos: int, code: int):
-    """-> (fills, lines, offset past them) for the FILLSTYLEARRAY at pos and
-    the LINESTYLEARRAY after it."""
+    """-> (fills, bitmaps, lines, offset past them) for the FILLSTYLEARRAY at
+    pos and the LINESTYLEARRAY after it."""
     rgba = code in (TAG_DEFINE_SHAPE3, TAG_DEFINE_SHAPE4)
     fills = []
+    bitmaps = []
     count, pos = _fill_style_count(data, pos, code)
     for _ in range(count):
         solid = data[pos] == SOLID_FILL_TYPE
@@ -1022,6 +1016,8 @@ def _style_arrays(data: bytes, pos: int, code: int):
             tuple(data[pos + 1 : pos + 5]) if rgba else (*data[pos + 1 : pos + 4], 255)
         )
         fills.append(color if solid else None)
+        bitmap = data[pos] in BITMAP_FILL_TYPES
+        bitmaps.append(struct.unpack_from("<H", data, pos + 1)[0] if bitmap else None)
         pos = _skip_fill_style(data, pos, code)
     lines = []
     count, pos = _fill_style_count(data, pos, code)
@@ -1038,7 +1034,7 @@ def _style_arrays(data: bytes, pos: int, code: int):
         color = tuple(data[pos : pos + 4]) if rgba else (*data[pos : pos + 3], 255)
         pos += 4 if rgba else 3
         lines.append((width, color))
-    return tuple(fills), tuple(lines), pos
+    return tuple(fills), tuple(bitmaps), tuple(lines), pos
 
 
 def drop_shadow(record: bytes) -> DropShadow:
