@@ -85,6 +85,17 @@ func test_the_fade_steps_once_for_each_frame_of_the_swf_and_never_skips_one():
 	assert_almost_eq(fade.color.a, _expected_alphas()[1], 0.0001, "a long frame steps once")
 
 
+# A display whose frames do not divide the SWF's frame time must still step at
+# the SWF's rate. Nine deltas of 0.7 frames are 6.3 frames, so the fade steps 6
+# times. A fade that dropped the time each step ran over would step only 4 times.
+func test_the_fade_keeps_the_swf_frame_rate_when_the_deltas_do_not_divide_it():
+	var fade: HubFade = _fade()
+	var frame_seconds: float = 1.0 / float(_layout()["fps"])
+	for _delta: int in 9:
+		fade._process(frame_seconds * 0.7)
+	assert_almost_eq(fade.color.a, _expected_alphas()[5], 0.0001, "six steps in 6.3 frames")
+
+
 func test_after_a_win_the_hub_and_the_victory_window_show_under_the_fade_until_it_clears():
 	var settlement := BattleSettlement.new()
 	settlement.fighters[0] = BattleSettlement.FighterExperience.new()

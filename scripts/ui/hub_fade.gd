@@ -34,12 +34,16 @@ func _ready() -> void:
 
 
 # Flash plays a slow frame late and drops none, so a long delta still steps
-# only once.
+# only once and drops the time it ran over. A delta of a normal length keeps the
+# time it ran over, so the steps keep the SWF's frame rate when the frames of
+# the display do not divide it evenly.
 func _process(delta: float) -> void:
 	_elapsed += delta
 	if _elapsed < _frame_seconds:
 		return
-	_elapsed = 0.0
+	_elapsed -= _frame_seconds
+	if _elapsed >= _frame_seconds:
+		_elapsed = 0.0
 	step_frame()
 	if _alpha <= 0:
 		set_process(false)
