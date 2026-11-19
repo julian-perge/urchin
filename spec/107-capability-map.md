@@ -1,6 +1,6 @@
 # Capability map: UI overhaul, menus and Windows
 
-Source issue: [#107](https://github.com/julian-perge/urchin/issues/107). This map covers Title and slots, Hub, Inventory, Store, Abilities, Victory and Ending. The other Screens (Game Manual, Credits, World map, Game over) and the tooltips get their own spec sessions and are not in this map.
+Source issue: [#107](https://github.com/julian-perge/urchin/issues/107). This map covers Title and slots, Hub, Inventory, Store, Abilities and Victory. The other Screens (Game Manual, Credits, World map) and the tooltips get their own spec sessions and are not in this map. Game over and Ending got their own spec sessions and are in the map as `game-over` and `ending`.
 
 Commands, project structure and code style are in [AGENTS.md](../AGENTS.md). Terms are in [GLOSSARY.md](../GLOSSARY.md). The workflow is in `docs/agents/workflow.md`.
 
@@ -15,10 +15,11 @@ Commands, project structure and code style are in [AGENTS.md](../AGENTS.md). Ter
 | inventory | KRINMENU labels `inventory` and `normal`: doll, equip slots, stats, element bars, party faces and the party bar ([#11](https://github.com/julian-perge/urchin/issues/11)) | [107-inventory.md](107-inventory.md) | window-shell |
 | store | KRINMENU label `shop`: keeper scene, wares, equip slots, small doll | [107-store.md](107-store.md) | window-shell, inventory |
 | abilities | KRINMENU label `skills`: talent tree, stats, action bar ring, ability pool ([#52](https://github.com/julian-perge/urchin/issues/52) opens it after a level-up) | [107-abilities.md](107-abilities.md) | window-shell |
+| game-over | `gameOverMenu` (104): the Game over Screen on the rect record, `MenuCaption` and `menu_back.tscn`, with its texts from `strings.json` ([#362](https://github.com/julian-perge/urchin/issues/362)) | [107-game-over.md](107-game-over.md) | ui-foundation, title-slots |
 | victory | KRINMENU label `win`, a Window on the Hub: XP rows, drops, Proceed ([#122](https://github.com/julian-perge/urchin/issues/122)) | [107-victory.md](107-victory.md) | window-shell, hub, inventory |
 | ending | `endMenu` (116), the Ending Screen after CS_CUT5: the `ENDING` text and OK! ([#363](https://github.com/julian-perge/urchin/issues/363)) | [107-ending.md](107-ending.md) | ui-foundation, title-slots |
 
-Build order: ui-foundation, then window-shell, title-slots and hub (independent of each other), then inventory, then store, abilities and victory.
+Build order: ui-foundation, then window-shell, title-slots and hub (independent of each other), then inventory, then store, abilities and victory. game-over and ending need only title-slots.
 
 Spec order: the same order. Each spec is approved before the next one is written.
 
