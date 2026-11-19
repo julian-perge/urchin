@@ -80,7 +80,7 @@ def render_swf(swf_path: Path, names: list[str]):
             ):
                 grown.append(name)
             rects[name] = trimmed.rect
-            png.save(trimmed.image, SPRITES / (name + ".png"))
+            png.save(trimmed.image, SPRITES / (name + ".png"), mipmaps=True)
     return rects, unresolved, grown
 
 

@@ -314,7 +314,7 @@ def render_model(index: SwfIndex, model: str, planned: Plan) -> dict | None:
             if trimmed is None:
                 art[name] = None
                 continue
-            png.save(trimmed.image, ART / f"{name}.png")
+            png.save(trimmed.image, ART / f"{name}.png", mipmaps=True)
             art[name] = rect_entry(trimmed.rect)
     frames = []
     for shown in planned.frames:

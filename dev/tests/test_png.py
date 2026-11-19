@@ -62,3 +62,31 @@ def test_no_extractor_writes_a_png_without_png_save():
     ]
     # cutscenes.py copies the encoded video, which is not a PNG.
     assert found == ["cutscenes.py: shutil.copyfile(ogv_path, OUT_DIR / ogv_path.name)"]
+
+
+def test_a_mipmapped_save_writes_an_import_that_asks_godot_for_mipmaps(tmp_path):
+    out = tmp_path / "a.png"
+    png.save(sample(), out, mipmaps=True)
+    sidecar = (tmp_path / "a.png.import").read_text()
+    assert 'importer="texture"' in sidecar
+    assert "mipmaps/generate=true" in sidecar.splitlines()
+
+
+def test_a_mipmapped_save_turns_on_mipmaps_and_keeps_the_rest_of_the_import(tmp_path):
+    out = tmp_path / "a.png"
+    sidecar = tmp_path / "a.png.import"
+    sidecar.write_text(
+        '[remap]\n\nimporter="texture"\nuid="uid://abc"\n\n[params]\n\n'
+        "compress/mode=0\nmipmaps/generate=false\nmipmaps/limit=-1\n"
+    )
+    png.save(sample(), out, mipmaps=True)
+    assert sidecar.read_text() == (
+        '[remap]\n\nimporter="texture"\nuid="uid://abc"\n\n[params]\n\n'
+        "compress/mode=0\nmipmaps/generate=true\nmipmaps/limit=-1\n"
+    )
+
+
+def test_a_plain_save_leaves_the_import_alone(tmp_path):
+    out = tmp_path / "a.png"
+    png.save(sample(), out)
+    assert not (tmp_path / "a.png.import").exists()
