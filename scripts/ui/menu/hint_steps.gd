@@ -75,14 +75,18 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	advance(delta)
+	if is_visible_in_tree():
+		advance(delta)
 
 
 # The clip's onClipEvent(load), which runs each time the window opens. It goes
 # to the first step when the player has ability or attribute points to spend,
-# and rests on the tip otherwise.
+# and rests on the tip otherwise. The clip is placed new on each opening, so
+# the box starts again from its first frame even when the window closed on a
+# step.
 func open(save: PlayerSave) -> void:
 	var points: int = 0 if save == null else save.skill_points + save.stat_points
+	state = ""
 	_show(_layout["start"] if points > 0 else _layout["rest"])
 
 

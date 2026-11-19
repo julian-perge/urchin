@@ -150,6 +150,22 @@ func test_reopening_the_window_starts_the_steps_again() -> void:
 	assert_eq(steps.state, _layout["start"], "the clip loads again on its first step")
 
 
+# The original places the clip again each time the menu enters the Abilities
+# frame, so the box starts again from its first frame even when the window
+# closed on a step.
+func test_reopening_the_window_on_a_step_starts_the_box_again() -> void:
+	GameData.current_save.skill_points = 1
+	var window: Control = _window()
+	var steps: HintSteps = _steps(window)
+	for i in 5:
+		steps.advance(1.0 / float(_layout["fps"]))
+	assert_eq(steps.box_frame, 6)
+	window.hide()
+	window.show()
+	assert_eq(steps.state, _layout["start"])
+	assert_eq(steps.box_frame, 1, "the box starts again from its first frame")
+
+
 func test_each_step_draws_its_glow_art_at_the_rendered_rect() -> void:
 	GameData.current_save.skill_points = 1
 	var window: Control = _window()
