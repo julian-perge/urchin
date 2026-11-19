@@ -279,9 +279,12 @@ This tool checks how it looks: the art, the fills and the shadows.
   controls at 122 and 119.** The `victory` entry scores KRINMENU's `win`
   frame against `victory_window.tscn` with no data, so all 15 drop slots show
   empty, as ffdec draws them. `panels` scores the backdrop and the four panels.
-  Most of the `chrome` pixels at 63 or more are on the backdrop's outer 3 px
-  edge, all the way round. The rest are the rims around the three masked faces,
-  the lines of the three XP bars and the centre panel's side edges.
+  Every `chrome` pixel at 63 or more is on the backdrop's left, top and bottom
+  edges, in the outer 4 px. The port is right there. The `chrome` reference
+  renders KRINMENU's own timeline, so it loses the Bevel of KRINMENU's Stage
+  placement, as `reference_job` in `screen_compare.py` says for `panels`.
+  The `panels` reference keeps the Bevel and matches the port on those edges.
+  The rims around the three masked faces come next, from 32 up.
 - **The Battle score covers the frame, not the fighters.** The `battle` entry uses
   `battle_scene.tscn` alone. `SCENES.compare_strip` takes the hall and its
   placeholder rigs, the sky, the fade, the clock, the pass and retreat buttons, the
