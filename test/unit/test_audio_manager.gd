@@ -83,3 +83,45 @@ func test_music_leaves_the_mode_and_the_rotation_alone_while_the_sound_is_off():
 	manager.play_battle_music(true)
 	assert_eq(manager._music_mode, manager.MusicMode.NONE)
 	assert_eq(manager._rotation_counter, 0)
+
+
+# Frames 165 and 180 set the rotation and bangStart before a new game's first
+# fights (frame_165/DoAction.as:4-5, frame_180/DoAction.as:4-6). The battle track
+# that uses bangStart cuts the old track off and starts at full volume
+# (frame_42/DoAction.as:85-91).
+func test_the_first_fight_music_starts_its_track_at_full_volume():
+	manager.play_menu_music()
+	manager.set_first_fight_music(3)
+	manager.play_battle_music(false)
+	var music: AudioStreamPlayer = manager._music_players[manager._active_music]
+	assert_eq(music.stream.resource_path, "res://assets/audio/_music_battle2.mp3", "the counter picks the track")
+	assert_almost_eq(music.volume_db, manager._level_db(), 0.001, "at full volume")
+	assert_false(manager._music_players[1 - manager._active_music].playing, "the menu track is cut off")
+	assert_false(manager.bang_start, "and the track uses bangStart up")
+
+
+# Only the battle track after frame 165 or 180 uses bangStart. Every later battle
+# track fades in from silence (frame_42/DoAction.as:92-96).
+func test_the_battle_track_after_the_first_fight_fades_in_again():
+	manager.set_first_fight_music(1)
+	manager.play_battle_music(false)
+	manager.play_menu_music()
+	manager.play_battle_music(false)
+	var music: AudioStreamPlayer = manager._music_players[manager._active_music]
+	assert_lt(music.volume_db, manager._level_db() - 10.0, "the next battle track starts low and fades in")
+
+
+# Frames 165 and 180 set the counter and bangStart even while the sound is off,
+# and addSound does nothing then (frame_42/DoAction.as:3). So bangStart waits for
+# the first battle track that does play.
+func test_bang_start_waits_while_the_sound_is_off():
+	manager.sound_enabled = false
+	manager.set_first_fight_music(1)
+	manager.play_battle_music(false)
+	assert_eq(manager._rotation_counter, 1, "the frame sets the counter with the sound off")
+	assert_true(manager.bang_start, "and bangStart stays on")
+	manager.sound_enabled = true
+	manager.play_battle_music(false)
+	var music: AudioStreamPlayer = manager._music_players[manager._active_music]
+	assert_eq(music.stream.resource_path, "res://assets/audio/_music_battle1.mp3")
+	assert_almost_eq(music.volume_db, manager._level_db(), 0.001, "the first battle track that plays starts at full volume")

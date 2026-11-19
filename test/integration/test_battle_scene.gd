@@ -816,6 +816,85 @@ func test_winning_the_tutorial_goes_on_to_battle_100_after_cs_intro2():
 	ZoneManager.auto_switch_scenes = true
 
 
+# START with the Tutorial off goes through CS_INTRO2 to IntroSeq2's last frame,
+# which sets soundPlayCounter to 3 and bangStart on (frame_180/DoAction.as:4-6).
+# So battle 100 plays _music_battle2 and starts it at full volume.
+func test_a_new_game_without_the_tutorial_plays_battle2_at_full_volume_in_battle_100():
+	_start_the_main_menu_music()
+	GameData.current_save = PlayerSave.new_game("FirstFightMusic", 0)
+	ZoneManager.auto_switch_scenes = false
+	var pick: Dictionary = ZoneManager.request_new_game_fight()
+	ZoneManager.pending_battle = {}
+
+	_start_pick_past_its_cutscene(pick)
+	_assert_the_track_plays_at_full_volume("_music_battle2", "battle 100")
+
+	AudioManagerAuto.stop_music()
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+
+
+# START with the Tutorial on goes through CS_INTRO to IntroSeq's last frame, which
+# sets soundPlayCounter to 1 and bangStart on (frame_165/DoAction.as:4-5), so
+# battle 2 plays _music_battle1 at full volume. The win goes through CS_INTRO2 to
+# IntroSeq2, which sets the counter to 3 and bangStart on again
+# (frame_180/DoAction.as:4-6), so battle 100 plays _music_battle2 at full volume.
+func test_the_tutorial_and_the_battle_100_after_it_play_the_original_tracks():
+	_start_the_main_menu_music()
+	GameData.current_save = PlayerSave.new_game("TutorialMusic", 0)
+	ZoneManager.auto_switch_scenes = false
+	var tutorial_pick: Dictionary = ZoneManager.request_tutorial_fight()
+	ZoneManager.pending_battle = {}
+
+	var tutorial: Control = _start_pick_past_its_cutscene(tutorial_pick)
+	_assert_the_track_plays_at_full_volume("_music_battle1", "the Tutorial's battle 2")
+	tutorial.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(tutorial.battle_finished, 5)
+	var next_pick: Dictionary = ZoneManager.pending_battle
+	ZoneManager.pending_battle = {}
+	assert_eq(next_pick.get("battle_id"), 100, "sanity: the Tutorial win goes on to battle 100")
+
+	_start_pick_past_its_cutscene(next_pick)
+	_assert_the_track_plays_at_full_volume("_music_battle2", "battle 100 after the Tutorial")
+
+	AudioManagerAuto.stop_music()
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+
+
+# The main menu starts the rotation's first track, as a fresh start of the game
+# does, so each test begins where a new game begins.
+func _start_the_main_menu_music() -> void:
+	AudioManagerAuto.stop_music()
+	AudioManagerAuto.reset_music_rotation()
+	AudioManagerAuto.bang_start = false
+	AudioManagerAuto.play_menu_music()
+
+
+# Starts the pick at animation_speed 0 and ends its Cutscene at once, so the
+# battle music starts as it does at the clip's end.
+func _start_pick_past_its_cutscene(pick: Dictionary) -> Control:
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle(pick)
+	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
+	assert_not_null(cutscene, "the pick's Cutscene plays first")
+	if cutscene != null:
+		cutscene.video.finished.emit()
+	return scene
+
+
+# Full volume means the track starts at the level that music_level asks for, with
+# no fade running and no other track still playing.
+func _assert_the_track_plays_at_full_volume(cue: String, fight: String) -> void:
+	var music: AudioStreamPlayer = AudioManagerAuto._music_players[AudioManagerAuto._active_music]
+	var other: AudioStreamPlayer = AudioManagerAuto._music_players[1 - AudioManagerAuto._active_music]
+	assert_eq(music.stream.resource_path, "res://assets/audio/%s.mp3" % cue, "%s plays %s" % [fight, cue])
+	assert_true(music.playing, "and the track is playing")
+	assert_almost_eq(music.volume_db, AudioManagerAuto._level_db(), 0.001, "%s starts at full volume" % fight)
+	var fade: Tween = AudioManagerAuto._fade_tween
+	assert_false(fade != null and fade.is_running(), "with no fade running")
+	assert_false(other.playing, "and no other track playing")
 
 
 # A left click on the control's center, pushed through the viewport's GUI input.

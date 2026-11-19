@@ -258,10 +258,12 @@ save when the game starts, goes on to the first fight when it starts, and sends 
   battle 2 after it puts `TalentTree.STARTING_MOVES` back, and sets `next_fight` to `ZoneProgression.FIGHT_AFTER_TUTORIAL`, which is `FIRST_STORY_FIGHT`. The Battle screen opens no
   victory screen for such a win and requests that fight through `ZoneManager.request_fight`.
 - Frame 180 also sets `soundPlayCounter` to 3, `soundModeKrin` to 0 and `bangStart` on (lines 4-6). So the first fight plays `_music_battle2`, entry 3 of `soundPlayArray`
-  (`frame_41/DoAction_2.as:11`), and starts it at full volume at once (`frame_42/DoAction.as`, `addSound` with "Music" and 2). The port does not do this. Its Battle screen starts the
-  rotation's next track and fades it in, as it does for every fight. The Tutorial's battle 2 sets `soundPlayCounter` to 1 and `bangStart` on the same way (`frame_165/DoAction.as:4-5`).
-  With the Tutorial on, the next track after battle 2's `_music_battle1` is `_music_menu2`, because no menu track plays between the two fights, so battle 100 plays a menu track. A
-  headless run measured this on 2026-11-11: the menu track, then battle 2, then battle 100 played `_music_menu1`, `_music_battle1` and `_music_menu2`.
+  (`frame_41/DoAction_2.as:11`), and starts it at full volume at once, cutting off the track before it (`frame_42/DoAction.as:85-91`, `addSound` with "Music" and 2). The Tutorial's
+  battle 2 sets `soundPlayCounter` to 1 and `bangStart` on the same way (`frame_165/DoAction.as:4-5`), so it plays `_music_battle1` at full volume, and battle 100 after it plays
+  `_music_battle2` at full volume again. The port carries each counter as the `music_rotation` of `ZoneProgression.TUTORIAL_FIGHT` and `FIRST_STORY_FIGHT`. The Battle screen hands it
+  to `AudioManager.set_first_fight_music()` when the Cutscene ends, and `AudioManager.bang_start` is `bangStart`: the next battle track that starts uses it up, and it waits while the
+  sound is off, as frames 165 and 180 set it without `addSound`. Before this ([#384](https://github.com/julian-perge/urchin/issues/384)) a headless run on 2026-11-11 played
+  `_music_menu1`, `_music_battle1` and `_music_menu2` for the menu, battle 2 and battle 100, all faded in. `test_battle_scene.gd` checks both paths.
 
 ## Starting state (new game)
 
@@ -946,5 +948,5 @@ Everything below still stands in for original behavior, except the rows marked D
 | Abilities tutorial callout ([#387](https://github.com/julian-perge/urchin/issues/387)) | skipped | texts 3063 + glow box sprite 3059 (frame 25) |
 | Sky horizon | **DONE (2026-08-22)**: the strip position comes from `battle_layout.json` (`BATTLE_LAYOUT_PATH` in `battle_scene.gd`), no longer an empirical y = 292 | background clips' own art timelines (sky placement baked per zone) |
 | Start-menu flow | slot -> name+class -> options | original: PLAY -> name entry (root ~65) -> slot select (~75) -> class (~85) -> options (~95) |
-| Music of a new game's first fight ([#384](https://github.com/julian-perge/urchin/issues/384)) | the rotation's next track, faded in, as for any fight | `frame_180/DoAction.as:4-6` sets `soundPlayCounter` 3 (`_music_battle2`) and `bangStart`, so it starts at full volume. See "New Game and Load Game" above |
+| Music of a new game's first fight ([#384](https://github.com/julian-perge/urchin/issues/384)) | **DONE (2026-11-19)**: the Tutorial's battle 2 plays `_music_battle1` and battle 100 plays `_music_battle2`, both at full volume. See "New Game and Load Game" above | `frame_180/DoAction.as:4-6` sets `soundPlayCounter` 3 (`_music_battle2`) and `bangStart`, so it starts at full volume. See "New Game and Load Game" above |
 | Battle countdown | **DONE (2026-11-08)** for the timing: 4 s on Heroic only, running out passes the turn, and Easy and Normal wait with the label hidden. The display is still a number in the bottom bar's `Panel3` | 120 frames (4 s at 30 fps) on Heroic only, and the half-turn starts when it runs out: see "Heroic decision timer" above. The original shows no number: `battleClocker` (DefineSprite 3389) sits behind the pass button and fills the two half-dials of DefineSprite 3386 from `BattleTimeNow` |
