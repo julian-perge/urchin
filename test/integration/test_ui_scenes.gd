@@ -41,7 +41,7 @@ func test_main_menu_builds_slot_rows():
 	# Count the cards, not every child - the picker also holds a name label per card.
 	var cards = menu.class_picker.get_children().filter(func(c): return c is TextureButton)
 	assert_eq(cards.size(), 3, "three class cards")
-	assert_eq(menu.difficulty_picker.get_child_count(), 3, "three difficulties")
+	assert_false(menu.options_panel.visible, "the settings start hidden")
 
 
 func test_class_cards_show_the_shared_tooltip_on_hover():
@@ -422,7 +422,7 @@ func test_the_new_game_sound_row_reaches_the_new_save():
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	_slot_button(menu, 1).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
-	menu.get_node("OptionsPanel/SoundToggle").button_pressed = false
+	menu.get_node("OptionsPanel/SoundButton").pressed.emit()
 	assert_false(AudioManagerAuto.sound_enabled, "the row turns the sound off")
 	assert_false(AudioServer.is_bus_mute(0), "and leaves the bus alone")
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
@@ -443,7 +443,7 @@ func test_the_title_turns_the_sound_back_on():
 
 
 # The Tutorial option is on until the player turns it off (frame_93/DoAction.as:7),
-# and this test leaves the toggle alone. With it on, the original's START plays
+# and this test leaves the row alone. With it on, the original's START plays
 # CS_INTRO (DefineButton2_2770 on(release), lines 2-6). The clip's end goes to
 # IntroSeq, which starts battle 2 with progressFight off
 # (frame_165/DoAction.as:2-3). The pick waits in ZoneManager for the Battle screen.
@@ -454,7 +454,7 @@ func test_new_game_with_the_tutorial_on_goes_on_to_battle_2_after_cs_intro():
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	_slot_button(menu, 1).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
-	assert_true(menu.get_node("OptionsPanel/TutorialToggle").button_pressed, "the toggle starts on")
+	assert_true(menu.options_panel.tutorial, "the row starts on")
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
 
 	var pick: Dictionary = ZoneManager.pending_battle
@@ -494,7 +494,7 @@ func test_new_game_with_the_tutorial_off_goes_on_to_battle_100_after_cs_intro2()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	_slot_button(menu, 1).pressed.emit()
 	menu.class_picker.get_node("Biological").pressed.emit()
-	menu.get_node("OptionsPanel/TutorialToggle").button_pressed = false
+	menu.get_node("OptionsPanel/TutorialButton").pressed.emit()
 	menu.get_node("OptionsPanel/StartButton").pressed.emit()
 
 	var pick: Dictionary = ZoneManager.pending_battle
@@ -709,6 +709,50 @@ func test_the_game_calls_the_player_sonny_whatever_the_save_is_named():
 	inventory.refresh()
 	assert_eq(inventory._name_label.text, "Sonny", "the inventory window")
 	assert_eq(inventory._party_faces[0].tooltip().get("title"), "Sonny", "the player's face in the inventory window")
+
+
+# START copies the rows into the new game: the difficulty Krin.difficulty, the
+# Autosave row Krin.autoSaver and the Sound row Krin.sound.
+func test_start_copies_the_settings_rows_into_the_new_game():
+	_write_test_slots([])
+	var menu = await _menu_without_scene_change()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	_slot_button(menu, 1).pressed.emit()
+	menu.class_picker.get_node("Biological").pressed.emit()
+	for _step in 2:
+		menu.get_node("OptionsPanel/DifficultyButton").pressed.emit()
+	menu.get_node("OptionsPanel/AutosaveButton").pressed.emit()
+	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+	assert_eq(GameData.current_save.difficulty, CombatUnit.Difficulty.HARD, "two presses reach Heroic")
+	assert_false(GameData.current_save.autosave, "the Autosave row reaches the new save")
+	assert_true(GameData.current_save.sound, "and the Sound row stays on")
+	_clear_test_slots()
+
+
+# Frame 93 resets the rows each time it plays (frame_93/DoAction.as), so a
+# player who changes them, goes Back and comes again finds the defaults.
+func test_the_settings_rows_reset_each_time_the_screen_opens():
+	var menu = await _menu_without_scene_change()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	_slot_button(menu, 1).pressed.emit()
+	menu.class_picker.get_node("Biological").pressed.emit()
+	for node in ["DifficultyButton", "TutorialButton", "SoundButton", "AutosaveButton"]:
+		menu.get_node("OptionsPanel/%s" % node).pressed.emit()
+	menu.get_node("OptionsPanel/Back/HitButton").pressed.emit()
+
+	menu.get_node("TitlePanel/Captions/PlaySlot/HitButton").pressed.emit()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	_slot_button(menu, 1).pressed.emit()
+	menu.class_picker.get_node("Biological").pressed.emit()
+	assert_true(menu.options_panel.visible, "the settings show again")
+	assert_eq(menu.options_panel.difficulty, CombatUnit.Difficulty.EASY, "at Easy")
+	assert_true(menu.options_panel.tutorial, "with the Tutorial on")
+	assert_true(menu.options_panel.sound, "the sound on")
+	assert_true(menu.options_panel.autosave, "and Autosave on")
+	assert_true(AudioManagerAuto.sound_enabled, "and the sound plays again")
 
 
 # Back on settings goes to mainMenu (DefineButton2_2702 on(release), line 2),

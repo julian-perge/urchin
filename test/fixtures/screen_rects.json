@@ -6728,6 +6728,195 @@
    "port_only": [],
    "timeline": 0
   },
+  "res://scenes/ui/menu/options_panel.tscn": {
+   "frame": "optionsMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "AutosaveButton": {
+     "kind": "hit",
+     "rect": [
+      273.6108,
+      253.9,
+      229.1785,
+      30.0
+     ]
+    },
+    "AutosaveLabel": {
+     "align": "right",
+     "color": "9dee66ff",
+     "font_size": 16.0,
+     "kind": "text",
+     "rect": [
+      238.9,
+      254.9,
+      160.1,
+      26.85
+     ]
+    },
+    "AutosaveValue": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 16.0,
+     "kind": "text",
+     "rect": [
+      410.0,
+      254.9,
+      117.0,
+      26.85
+     ]
+    },
+    "DifficultyButton": {
+     "kind": "hit",
+     "rect": [
+      162.6518,
+      114.95,
+      439.5964,
+      30.0
+     ]
+    },
+    "DifficultyLabel": {
+     "align": "right",
+     "color": "ff9900ff",
+     "font_size": 23.0,
+     "kind": "text",
+     "rect": [
+      90.65,
+      116.95,
+      308.15,
+      25.7
+     ]
+    },
+    "DifficultyValue": {
+     "align": "left",
+     "color": "ffff33ff",
+     "font_size": 23.0,
+     "kind": "text",
+     "rect": [
+      410.0,
+      116.95,
+      301.35,
+      25.7
+     ]
+    },
+    "Heading": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 16.0,
+     "kind": "text",
+     "rect": [
+      197.05,
+      72.2,
+      405.95,
+      20.1
+     ]
+    },
+    "HelpText": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 14.0,
+     "kind": "text",
+     "line_pitch": 16.0,
+     "rect": [
+      121.45,
+      325.05,
+      555.15,
+      105.75
+     ]
+    },
+    "SoundButton": {
+     "kind": "hit",
+     "rect": [
+      275.8608,
+      187.8,
+      229.1785,
+      30.0
+     ]
+    },
+    "SoundLabel": {
+     "align": "right",
+     "color": "9dee66ff",
+     "font_size": 16.0,
+     "kind": "text",
+     "rect": [
+      238.9,
+      189.8,
+      160.1,
+      26.85
+     ]
+    },
+    "SoundValue": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 16.0,
+     "kind": "text",
+     "rect": [
+      410.0,
+      189.8,
+      115.0,
+      26.85
+     ]
+    },
+    "StartButton": {
+     "kind": "hit",
+     "rect": [
+      203.6861,
+      456.8001,
+      391.2277,
+      26.7998
+     ]
+    },
+    "StartCaption": {
+     "align": "center",
+     "color": "60ef21ff",
+     "font_size": 24.0,
+     "kind": "text",
+     "rect": [
+      161.55,
+      456.6,
+      476.95,
+      26.85
+     ]
+    },
+    "TutorialButton": {
+     "kind": "hit",
+     "rect": [
+      162.6518,
+      150.6,
+      439.5964,
+      30.0
+     ]
+    },
+    "TutorialLabel": {
+     "align": "right",
+     "color": "ff9900ff",
+     "font_size": 23.0,
+     "kind": "text",
+     "rect": [
+      98.85,
+      152.6,
+      300.15,
+      26.85
+     ]
+    },
+    "TutorialValue": {
+     "align": "left",
+     "color": "ffff33ff",
+     "font_size": 23.0,
+     "kind": "text",
+     "rect": [
+      410.0,
+      152.6,
+      301.7,
+      25.7
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
   "res://scenes/ui/menu/options_window.tscn": {
    "frame": "options",
    "origin": [
@@ -12759,6 +12948,231 @@
       365.7002,
       228.8882,
       25.9996
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
+  "res://test/fixtures/screen_rects/settings_screen.tscn": {
+   "frame": "optionsMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Back/Caption": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 24.0,
+     "kind": "text",
+     "rect": [
+      490.15,
+      534.15,
+      300.1,
+      26.85
+     ]
+    },
+    "Back/HitButton": {
+     "kind": "hit",
+     "rect": [
+      604.4392,
+      534.4501,
+      188.1216,
+      26.7998
+     ]
+    },
+    "Background": {
+     "kind": "art",
+     "rect": [
+      0.0,
+      0.0,
+      800.0,
+      575.0
+     ],
+     "size": [
+      1600,
+      1150
+     ],
+     "texture": "res://assets/ui/menu/start_background.png",
+     "zoom": 2.0
+    },
+    "OptionsPanel/AutosaveButton": {
+     "kind": "hit",
+     "rect": [
+      273.6108,
+      253.9,
+      229.1785,
+      30.0
+     ]
+    },
+    "OptionsPanel/AutosaveLabel": {
+     "align": "right",
+     "color": "9dee66ff",
+     "font_size": 16.0,
+     "kind": "text",
+     "rect": [
+      238.9,
+      254.9,
+      160.1,
+      26.85
+     ]
+    },
+    "OptionsPanel/AutosaveValue": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 16.0,
+     "kind": "text",
+     "rect": [
+      410.0,
+      254.9,
+      117.0,
+      26.85
+     ]
+    },
+    "OptionsPanel/DifficultyButton": {
+     "kind": "hit",
+     "rect": [
+      162.6518,
+      114.95,
+      439.5964,
+      30.0
+     ]
+    },
+    "OptionsPanel/DifficultyLabel": {
+     "align": "right",
+     "color": "ff9900ff",
+     "font_size": 23.0,
+     "kind": "text",
+     "rect": [
+      90.65,
+      116.95,
+      308.15,
+      25.7
+     ]
+    },
+    "OptionsPanel/DifficultyValue": {
+     "align": "left",
+     "color": "ffff33ff",
+     "font_size": 23.0,
+     "kind": "text",
+     "rect": [
+      410.0,
+      116.95,
+      301.35,
+      25.7
+     ]
+    },
+    "OptionsPanel/Heading": {
+     "align": "center",
+     "color": "ffffffff",
+     "font_size": 16.0,
+     "kind": "text",
+     "rect": [
+      197.05,
+      72.2,
+      405.95,
+      20.1
+     ]
+    },
+    "OptionsPanel/HelpText": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 14.0,
+     "kind": "text",
+     "line_pitch": 16.0,
+     "rect": [
+      121.45,
+      325.05,
+      555.15,
+      105.75
+     ]
+    },
+    "OptionsPanel/SoundButton": {
+     "kind": "hit",
+     "rect": [
+      275.8608,
+      187.8,
+      229.1785,
+      30.0
+     ]
+    },
+    "OptionsPanel/SoundLabel": {
+     "align": "right",
+     "color": "9dee66ff",
+     "font_size": 16.0,
+     "kind": "text",
+     "rect": [
+      238.9,
+      189.8,
+      160.1,
+      26.85
+     ]
+    },
+    "OptionsPanel/SoundValue": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 16.0,
+     "kind": "text",
+     "rect": [
+      410.0,
+      189.8,
+      115.0,
+      26.85
+     ]
+    },
+    "OptionsPanel/StartButton": {
+     "kind": "hit",
+     "rect": [
+      203.6861,
+      456.8001,
+      391.2277,
+      26.7998
+     ]
+    },
+    "OptionsPanel/StartCaption": {
+     "align": "center",
+     "color": "60ef21ff",
+     "font_size": 24.0,
+     "kind": "text",
+     "rect": [
+      161.55,
+      456.6,
+      476.95,
+      26.85
+     ]
+    },
+    "OptionsPanel/TutorialButton": {
+     "kind": "hit",
+     "rect": [
+      162.6518,
+      150.6,
+      439.5964,
+      30.0
+     ]
+    },
+    "OptionsPanel/TutorialLabel": {
+     "align": "right",
+     "color": "ff9900ff",
+     "font_size": 23.0,
+     "kind": "text",
+     "rect": [
+      98.85,
+      152.6,
+      300.15,
+      26.85
+     ]
+    },
+    "OptionsPanel/TutorialValue": {
+     "align": "left",
+     "color": "ffff33ff",
+     "font_size": 23.0,
+     "kind": "text",
+     "rect": [
+      410.0,
+      152.6,
+      301.7,
+      25.7
      ]
     }
    },

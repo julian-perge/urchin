@@ -465,6 +465,35 @@ CREDITS_PIECES = {
         for node, (depth, character) in zip(("Role", "Name"), fields, strict=True)
     },
 }
+# The new-game settings Screen's pieces, by their path in options_panel.tscn
+# (spec/433-new-game-settings.md). Each row is a caption, its value and the hit
+# button over the value, by depth and character. The frame also places the
+# Effects row at depths 7, 9 and 25 and the Graphics row at depths 15, 16 and
+# 29, which the port leaves out
+# (docs/adr/0011-leave-out-the-effects-and-graphics-options.md).
+SETTINGS_FRAME = "optionsMenu"
+SETTINGS_LEFT_OUT = (7, 9, 25, 15, 16, 29)
+SETTINGS_ROWS = {
+    "Difficulty": ((17, 2779), (18, 2778), (21, 2775)),
+    "Tutorial": ((19, 2777), (20, 2776), (33, 2769)),
+    "Sound": ((6, 2790), (8, 2788), (23, 2774)),
+    "Autosave": ((11, 2785), (12, 2784), (27, 2772)),
+}
+SETTINGS_PIECES = {
+    "Heading": Piece("text", 10, character=2786),
+    **{
+        f"{row}{node}": Piece(kind, depth, character=character)
+        for row, fields in SETTINGS_ROWS.items()
+        for (node, kind), (depth, character) in zip(
+            (("Label", "text"), ("Value", "text"), ("Button", "hit")),
+            fields,
+            strict=True,
+        )
+    },
+    "HelpText": Piece("text", 13, character=2783),
+    "StartCaption": Piece("text", 14, character=2782),
+    "StartButton": Piece("hit", 31, character=2770),
+}
 # The Ending Screen, root frame 116 (spec/107-ending.md). The frame also
 # places "Play MORE Games!" at depth 7 and its link at depth 8, which the port
 # leaves out with the other branding
@@ -782,6 +811,26 @@ SCENES: dict[str, Scene] = {
             "CreditsPanel",
         ),
         left_out=(38, 41),
+    ),
+    "res://scenes/ui/menu/options_panel.tscn": Scene(
+        timeline=0, frame=SETTINGS_FRAME, pieces=SETTINGS_PIECES
+    ),
+    # The settings Screen as the menu shows it: the background, the rows and
+    # Back, for the compare tool, as choice_screen.tscn is for the choice.
+    # Depths 38 and 41 are the Armor Games line and logo, as on the title, and
+    # the rest of left_out is the Effects and Graphics rows.
+    "res://test/fixtures/screen_rects/settings_screen.tscn": Scene(
+        timeline=0,
+        frame=SETTINGS_FRAME,
+        pieces={
+            "Background": Piece("art", 1, art="start_background"),
+            **{
+                f"OptionsPanel/{path}": piece for path, piece in SETTINGS_PIECES.items()
+            },
+            "Back/Caption": Piece("text", 35),
+            "Back/HitButton": Piece("hit", 36),
+        },
+        left_out=(*SETTINGS_LEFT_OUT, 38, 41),
     ),
     "res://scenes/ui/menu/manual_panel.tscn": Scene(
         timeline=0, frame=MANUAL_FRAME, pieces=MANUAL_PIECES
