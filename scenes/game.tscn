@@ -62,6 +62,7 @@ visible = false
 layout_mode = 1
 
 [node name="ZoneMapOverlay" parent="." groups=["menu_screen"] instance=ExtResource("3_map")]
+visible = false
 layout_mode = 1
 
 [node name="Hotbar" parent="." instance=ExtResource("4_hotbar")]

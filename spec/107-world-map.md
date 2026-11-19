@@ -63,7 +63,7 @@ From `frame_449/DoAction.as` and `DefineButton2_4155`:
 - **Open zone** (`canUse`): zone 1, or a zone whose linked zone is beaten. It shows the open face. A click sets the zone and goes to Navigation, as `_on_zone_selected` does today.
 - **Locked zone**: it shows the `blank` face and a click does nothing.
 - **Tooltip**: rollOver shows `ZONES[n]` over `ZONES2[n]` in the `GO` layout, the header and body sections that the hotbar's tooltip uses. rollOut hides it. Open and locked zones both show it.
-- **Links**: each link is a 6 px black line, then a 2 px line, #3189df when the linked zone is beaten and #333333 when not, as today. The links now also draw `lineMC`'s DropShadow, read from `zone_map.json`. Godot's `draw_line` has no blur, so the shadow is the lines again, moved by the shadow's distance at its angle, in its colour with its alpha times its strength.
+- **Links**: each link is a 6 px black line, then a 2 px line, #3189df when the linked zone is beaten and #333333 when not, as today. The links now also draw `lineMC`'s DropShadow, read from `zone_map.json`. The shadow is the lines again, moved by the shadow's distance at its angle, in one CanvasGroup whose shader `scenes/ui/zone_map_shadow.gdshader` blurs them by the shadow's blur and paints its colour at its alpha times its strength. Each line has round caps, because `lineStyle` gets no caps argument and Flash then rounds both ends.
 - **Hotbar**: it hides while the map shows, as today.
 - **Zone art**: it hides while the map shows. `ZoneMapOverlay` joins the `menu_screen` group in `game.tscn`, so `game.gd`'s `_sync_art_visibility` covers it.
 
@@ -97,6 +97,7 @@ As in ui-foundation. The scene types its numbers into its `.tscn`, and the rect 
 - **Zone art.** The zone art hides while the map shows and comes back when it closes.
 - **Extractor (pytest).** The record's math, with no SWF: the union crop gives both PNGs one rect, and the rect is moved to sprite 4160's origin.
 - **Must-fail control.** Move `Zone3` 20 px in the scene and expect the rect test to fail.
+- **Compare tool.** The `world_map` entry in `dev/screen_compare/screens.json` scores `zone_map.tscn` against root frame 449, with `Connectors` hidden, because `lineMC` is empty in the SWF.
 - **Whole suite.** `just gut` and `just pytest` pass before each commit.
 
 ## Boundaries
@@ -109,7 +110,6 @@ As in ui-foundation. The scene types its numbers into its `.tscn`, and the rect 
 
 - When Victory's Proceed opens the map (#241).
 - The tooltip's own layout and colours, which the tooltip spec owns.
-- A compare-tool entry for frame 449. The rect test checks the places, and the art comes from one render each.
 
 ## Success criteria
 

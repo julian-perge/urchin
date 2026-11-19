@@ -196,6 +196,15 @@
    }
   }
  },
+ "world_map": {
+  "scene": "res://scenes/zone_map.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 11,
+    "hide_names": ["Connectors"]
+   }
+  }
+ },
  "credits": {
   "scene": "res://test/fixtures/screen_rects/credits_screen.tscn",
   "modes": {
