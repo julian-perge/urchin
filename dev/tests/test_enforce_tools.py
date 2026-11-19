@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -52,6 +53,10 @@ def run_hook(command: str, cwd: Path = REPO) -> subprocess.CompletedProcess[str]
         ("just gut 2>&1 | tee gut.log", "Do not pipe 'just gut'"),
         ("just test |& tail", "Do not pipe 'just test'"),
         ("agent-skills run -- just gut | tail", "Do not pipe 'just gut'"),
+        ("(just gut) | tail -1", "Do not pipe a ( ) group"),
+        ("{ just gut; } | tail -1", "Do not pipe a { } group"),
+        ("${GODOT_BIN:-godot} --version", "Run Godot through just"),
+        ("flock /tmp/other.lock -c 'just extract-faces'", "two ffdec processes"),
     ],
 )
 def test_blocks(command: str, message: str) -> None:
@@ -65,6 +70,10 @@ def test_blocks(command: str, message: str) -> None:
     [
         "just gut",
         "just gut || echo failed",
+        "(just gut) && echo passed",
+        "{ just gut; } || echo failed",
+        "just gut; (echo hi) | cat",
+        "flock /tmp/urchin-ffdec.lock -c 'just extract-faces'",
         "agent-skills run -- just gut",
         "just godot --headless --check-only -s res://scripts/x.gd --path .",
         "uv run ruff check",
@@ -98,6 +107,7 @@ def repo(tmp_path: Path) -> Path:
     (tmp_path / "clean.py").write_text("x = 1\n")
     git(tmp_path, "add", "clean.py")
     git(tmp_path, "commit", "-q", "-m", "start")
+    (tmp_path / "pyproject.toml").write_text('[project]\nname = "urchin-dev"\n')
     return tmp_path
 
 
@@ -140,3 +150,37 @@ def test_commit_all_checks_unstaged_tracked_python(repo: Path) -> None:
     (repo / "clean.py").write_text("x=1\n")
     assert run_hook("git commit -m 'feat: x'", repo).returncode == 0
     assert run_hook("git commit -am 'feat: x'", repo).returncode == 2
+
+
+def test_commit_outside_an_urchin_checkout_passes(repo: Path) -> None:
+    (repo / "pyproject.toml").write_text('[project]\nname = "other"\n')
+    (repo / "bad.py").write_text("x=1\n")
+    git(repo, "add", "bad.py")
+    assert run_hook("git commit -m 'feat: x'", repo).returncode == 0
+
+
+def test_commit_passes_with_a_warning_when_uv_cannot_run(
+    repo: Path, tmp_path_factory: pytest.TempPathFactory
+) -> None:
+    (repo / "bad.py").write_text("x=1\n")
+    git(repo, "add", "bad.py")
+    bin_dir = tmp_path_factory.mktemp("bin")
+    for tool in ("bash", "cat", "jq", "git", "dirname", "grep"):
+        found = shutil.which(tool)
+        assert found
+        (bin_dir / tool).symlink_to(found)
+    payload = {
+        "tool_name": "Bash",
+        "tool_input": {"command": "git commit -m x"},
+        "cwd": str(repo),
+    }
+    result = subprocess.run(
+        [str(HOOK)],
+        input=json.dumps(payload),
+        capture_output=True,
+        text=True,
+        check=False,
+        env={"PATH": str(bin_dir), "HOME": str(repo)},
+    )
+    assert result.returncode == 0, result.stderr
+    assert "could not start ruff" in json.loads(result.stdout)["systemMessage"]

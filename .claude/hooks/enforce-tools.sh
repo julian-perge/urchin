@@ -21,6 +21,10 @@ LC_ALL=C
 PIPED=0
 # FFDEC_LOCKED is 1 while the parser checks a command that runs under the ffdec lock.
 FFDEC_LOCKED=0
+# GUT_RUNS counts the just gut and just test runs parsed so far. BRACE_MARKS holds its value at each open { group, so a pipe after the group can tell whether the group ran the suite.
+GUT_RUNS=0
+BRACE_MARKS=()
+GROUP_RAN_GUT=0
 RUNS_GIT_COMMIT=0
 COMMIT_DIR=
 COMMIT_ALL=0
@@ -51,6 +55,10 @@ recipe_runs_ffdec() {
   ' "$JUSTFILE"
 }
 
+block_piped_suite() {
+  block "Do not pipe $1 into another command: the pipe gives the exit code of the last command (docs/agents/multi-model.md). Run 'agent-skills run -- just gut' for a short summary and the exit code."
+}
+
 require_ffdec_lock() {
   ((FFDEC_LOCKED)) && return
   block "'$1' runs ffdec, and two ffdec processes must never run at once (docs/agents/art-extraction.md). Run it as 'lockf -k $FFDEC_LOCK $1 ...'. To hold the lock over a trace-swf, trace-run and log copy, wrap all three in one lockf with bash -c."
@@ -73,8 +81,9 @@ check_just() {
   done
   recipe=${1-}
   [[ -z $recipe ]] && return
-  if [[ $recipe == gut || $recipe == test ]] && ((PIPED)); then
-    block "Do not pipe 'just $recipe' into another command: the pipe gives the exit code of the last command (docs/agents/multi-model.md). Run 'agent-skills run -- just $recipe' for a short summary and the exit code."
+  if [[ $recipe == gut || $recipe == test ]]; then
+    ((GUT_RUNS++))
+    ((PIPED)) && block_piped_suite "'just $recipe'"
   fi
   recipe_runs_ffdec "$recipe" && require_ffdec_lock "just $recipe"
 }
@@ -118,12 +127,16 @@ check_git() {
 }
 
 check_command() {
-  local name arg previous_lock
+  local name arg previous_lock n mark
 
   # Each pass removes one layer that runs another program, such as a keyword, a variable assignment or a wrapper like env or xargs.
   while (($#)); do
     case "$1" in
-      if | then | elif | else | while | until | do | '!' | '{' | time)
+      if | then | elif | else | while | until | do | '!' | time)
+        shift
+        ;;
+      '{')
+        BRACE_MARKS+=("$GUT_RUNS")
         shift
         ;;
       env)
@@ -182,7 +195,11 @@ check_command() {
         previous_lock=$FFDEC_LOCKED
         [[ ${1-} == "$FFDEC_LOCK" ]] && FFDEC_LOCKED=1
         (($#)) && shift
-        check_command "$@"
+        if [[ ${1-} == -c || ${1-} == --command ]]; then
+          analyze_text "${2-}"
+        else
+          check_command "$@"
+        fi
         FFDEC_LOCKED=$previous_lock
         return
         ;;
@@ -237,7 +254,14 @@ check_command() {
   shift
 
   case "$name" in
-    godot | Godot | */Godot.app/Contents/MacOS/Godot | '$GODOT_BIN' | '${GODOT_BIN}')
+    '}')
+      n=${#BRACE_MARKS[@]}
+      ((n)) || return
+      mark=${BRACE_MARKS[n-1]}
+      unset "BRACE_MARKS[n-1]"
+      ((PIPED && GUT_RUNS > mark)) && block_piped_suite "a { } group that runs just gut or just test"
+      ;;
+    godot | Godot | */Godot.app/Contents/MacOS/Godot | '$GODOT_BIN' | '${GODOT_BIN'*)
       block "Run Godot through just: 'just godot <arguments>', 'just gut' or 'just import'. just picks the binary and takes a Godot slot (AGENTS.md, Commands)."
       ;;
     ffdec | ffdec.sh | */ffdec | */ffdec.sh)
@@ -394,7 +418,7 @@ end_command() {
 # Parses commands until the end of the text, or until the closing parenthesis when $1 is ')', and checks each simple command as it ends.
 # It leaves `pos` just past what it consumed, which is how a nested $(...) hands control back to the word it sits inside.
 parse_list() {
-  local stop=$1 c next rest plain word="" has_word=0 redirect_target=0 case_depth=0
+  local stop=$1 group_mark c next rest plain word="" has_word=0 redirect_target=0 case_depth=0
   local -a words=() heredocs=()
   while ((pos < len)); do
     c=${s:pos:1}
@@ -458,16 +482,23 @@ parse_list() {
       ';' | '&' | '|')
         end_word
         # A single | or a |& sends the output of the command that ends here into the next one, and a || does not.
-        [[ $c == '|' && ${s:pos+1:1} != '|' && ${s:pos-1:1} != '|' ]] && PIPED=1
+        if [[ $c == '|' && ${s:pos+1:1} != '|' && ${s:pos-1:1} != '|' ]]; then
+          PIPED=1
+          # A ( ) group leaves no words before the pipe, so the pipe is checked against the suite runs inside the group.
+          ((GROUP_RAN_GUT && ${#words[@]} == 0)) && block_piped_suite "a ( ) group that runs just gut or just test"
+        fi
         end_command
         PIPED=0
+        GROUP_RAN_GUT=0
         ((pos++))
         ;;
       '(')
         end_word
         end_command
         ((pos++))
+        group_mark=$GUT_RUNS
         parse_list ')'
+        ((GUT_RUNS > group_mark)) && GROUP_RAN_GUT=1
         ;;
       ')')
         end_word
@@ -537,9 +568,26 @@ analyze_text() {
 }
 analyze_text "$COMMAND"
 
-# ruff reads each file as it is on disk, which differs from the staged copy when the file also has unstaged edits.
+# Prints a warning that Claude Code shows to the user, and lets the command run.
+warn() {
+  jq -n --arg message "$1" '{systemMessage: $message}'
+  exit 0
+}
+
+# ruff exits 1 for findings and 2 when it cannot run. Only findings block the commit, so that an agent does not edit clean code because uv or ruff failed.
+run_ruff() {
+  local status=0
+  output=$(cd "$top" && uv run --quiet --project "$REPO" ruff "$@" --force-exclude -- "${files[@]}" 2>&1) || status=$?
+  ((status > 1)) && warn "The enforce-tools hook could not run 'ruff $*' (exit $status), so it did not check this commit:
+$output"
+  return "$status"
+}
+
+# Only an urchin checkout follows urchin's ruff rules, so a commit in any other repo passes.
+# ruff reads each file as it is on disk, so a file with unstaged edits passes or fails on those edits and not on its staged copy.
 if ((RUNS_GIT_COMMIT)); then
   top=$(git -C "$COMMIT_DIR" rev-parse --show-toplevel 2>/dev/null) || exit 0
+  grep -qx 'name = "urchin-dev"' "$top/pyproject.toml" 2>/dev/null || exit 0
   files=()
   while IFS= read -r -d '' f; do
     files+=("$f")
@@ -548,10 +596,12 @@ if ((RUNS_GIT_COMMIT)); then
     ((COMMIT_ALL)) && git -C "$top" diff --name-only --diff-filter=ACMR -z -- '*.py'
   )
   ((${#files[@]})) || exit 0
-  output=$(cd "$top" && uv run --quiet --project "$REPO" ruff format --check --force-exclude -- "${files[@]}" 2>&1) ||
+  (cd "$top" && uv run --quiet --project "$REPO" ruff --version) >/dev/null 2>&1 ||
+    warn "The enforce-tools hook could not start ruff through uv, so it did not check this commit."
+  run_ruff format --check ||
     block "Staged Python fails 'uv run ruff format --check'. Run 'uv run ruff format' on these files and stage the result:
 $output"
-  output=$(cd "$top" && uv run --quiet --project "$REPO" ruff check --force-exclude -- "${files[@]}" 2>&1) ||
+  run_ruff check ||
     block "Staged Python fails 'uv run ruff check'. Fix these findings, or run 'uv run ruff check --fix', and stage the result:
 $output"
 fi
