@@ -269,6 +269,11 @@ extract-floating-numbers *args: (require "ffdec" "java")
 extract-tooltip-look *args:
     uv run extract_tooltip_look "$@"
 
+[doc('Run extract_hint_steps, which reads the SWF through ffdec')]
+[group('extract')]
+extract-hint-steps *args: (require "ffdec" "java")
+    uv run extract_hint_steps "$@"
+
 [doc('Run extract_hub_fade, which reads the SWF without ffdec')]
 [group('extract')]
 extract-hub-fade *args:

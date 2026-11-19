@@ -859,6 +859,36 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
   drag, so a drag released on the button is the `MENU[66]` case. The port keeps cooldowns only on a battle's units, so the respec has none to clear. Its `KrinScreen._visible = false` hides the zone screen (DefineSprite 3287), which
   the port hides whenever a Window shows. Its tooltip is `SYSTEM[32]` + ": EUR" + the cost over `SYSTEM[33]`, with the euro sign where this line says EUR.
 
+## The Abilities hint box and its tutorial steps (DefineSprite 3059, #387)
+
+The hint box on the Abilities frame is DefineSprite 3059 at depth 675. Its
+labels are `stable` (1), `level` (7), `part1` (12), `part2` (56), `part3`
+(107) and `part4` (151). `extract_hint_steps` reads all of this from the SWF
+into `assets/ui/menu/hint_steps/hint_steps.json`.
+
+- **When the steps start.** The clip's onClipEvent(load) runs
+  `gotoAndStop("level")` when `_root.Krin.skillPoints + _root.Krin.statPoints
+  > 0` (DefineSprite_3142/frame_25/PlaceObject2_3059_675). Otherwise the clip
+  stays on `stable`, whose frame 1 script sets `reader` to
+  `MENU[43 + random(4)]`. The load runs each time the menu enters the
+  Abilities frame, so the prompt shows again on every opening while points
+  are left. A new game starts with ability points, so its first opening shows
+  the prompt.
+- **What each label shows.** `level` sets `reader` to MENU[7], `part1` to
+  MENU[8], `part2` to MENU[9], `part3` to MENU[10] and `part4` to MENU[43].
+  Each sets `clicker` to MENU[11], "< Click Here >".
+- **How a click moves.** Each label places one button over the whole box.
+  Buttons 3041, 3047 and 3050 run `gotoAndStop` to `part1`, `part2` and
+  `part3` and then `play()`. Button 3053 goes to `part4`, and button 3056
+  on `part4` goes back to `stable`, which runs frame 1 again and picks a new
+  tip.
+- **The glow.** Depth 5 holds the 40-frame box, sprite 3040. `level` places it
+  once and every later label only moves and scales it, so it plays on across
+  the labels. `part1` to `part3` also animate a bar and an arrow at depths 7
+  and 9, with green (#99FF00) Glow filters, toward the tree, the attribute
+  points and the action bar. Frames 55, 106 and 150 jump back to their label
+  and play, so those labels loop on frames 12 to 54, 56 to 105 and 107 to 149.
+
 ## The menu clip's frames (DefineSprite 3142, `KRINMENU`)
 
 - `KRINMENU` sits at stage origin (400.5, 222.4). Frame 1 is the inventory, 9 the victory screen, 16 the store, 25 the abilities window (`skills`), 39 the options (`options`) and 45 the

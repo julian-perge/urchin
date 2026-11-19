@@ -7,9 +7,9 @@
 # - left: the class ability tree ('talenttreefull' sprite 3100), 28 nodes in
 #   4 columns and 7 rows. A click learns a talent by the TalentTree.learn
 #   rules: prerequisites, level tiers and 1 point.
-# - middle: name and level, the ability points and attribute points, a random
-#   tip, and the four attribute rows with '+' spend buttons. The original has
-#   no Focus row.
+# - middle: name and level, the ability points and attribute points, the hint
+#   box with a random tip or the tutorial steps (HintSteps), and the four
+#   attribute rows with '+' spend buttons. The original has no Focus row.
 # - right: the Combat Action Bar wheel ('selector' sprite 3109) with 8
 #   sockets, and the Ability Pool list ('talentPool' sprite 3120).
 #
@@ -53,11 +53,6 @@ const POOL_VISIBLE_ROWS: int = 5
 # through the same group.
 const BANNER_GROUP: StringName = &"combat_text_banner"
 
-# The reader clip shows MENU[43 + random(4)] when the frame opens
-# (DefineSprite_3059/frame_1/DoAction.as).
-const FIRST_TIP: int = 43
-const TIP_COUNT: int = 4
-
 
 var _tree_buttons: Array[Button] = []
 var _tree_rank_labels: Array[Label] = []
@@ -91,7 +86,7 @@ var _held_icon_offset: Vector2 = Vector2.ZERO
 	$PlusColumn/VitalitySlot/VitalityPlus, $PlusColumn/StrengthSlot/StrengthPlus,
 	$PlusColumn/InstinctSlot/InstinctPlus, $PlusColumn/SpeedSlot/SpeedPlus,
 ]
-@onready var _hint_label: Label = $HintLabel
+@onready var _hint_steps: HintSteps = $HintSteps
 @onready var _status_label: Label = $StatusLabel
 
 
@@ -99,9 +94,13 @@ func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_set_static_text()
 	_style_plus_buttons()
-	_pick_tip()
 	_build_tree_panel()
 	_build_wheel_panel()
+	# The original places the hint box at depth 675, above the tree and the
+	# ring, and its arrows reach over both. The sockets are added above, so the
+	# box moves back on top.
+	move_child(_hint_steps, -1)
+	_hint_steps.open(GameData.current_save)
 	# The sockets are added after the scene's own nodes, so the held icon moves
 	# back to the end to draw over them, as the tooltip clip draws over the menu.
 	move_child(_held_icon, -1)
@@ -116,7 +115,7 @@ func _ready():
 	visibility_changed.connect(func():
 		_set_held(0)
 		if visible:
-			_pick_tip()
+			_hint_steps.open(GameData.current_save)
 			refresh())
 
 
@@ -152,10 +151,6 @@ func _style_plus_buttons() -> void:
 		# the button focus, so a filled focus style would hide the hover and
 		# pressed fills after the first click.
 		_plus_buttons[i].add_theme_stylebox_override("focus", StyleBoxEmpty.new())
-
-
-func _pick_tip() -> void:
-	_hint_label.text = Strings.menu(FIRST_TIP + randi() % TIP_COUNT)
 
 
 static func _sanitize_icon_key(label: String) -> String:

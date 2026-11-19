@@ -614,6 +614,10 @@ SCENES: dict[str, Scene] = {
             "StatusLabel",
             "HeldIcon",
             "Pool/Mask/Rows",
+            # The tutorial steps of the hint box come from extract_hint_steps,
+            # whose hint_steps.json places them, and test_hint_steps.gd checks
+            # them against that file.
+            "HintSteps",
             *(
                 f"TreeNodes/Node{n}/{node}"
                 for n in range(TREE_NODES)
