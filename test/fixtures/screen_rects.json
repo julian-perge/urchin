@@ -4779,6 +4779,28 @@
       1.3075
      ]
     },
+    "LeftPanel/Content/EquipDollView/DollF": {
+     "kind": "doll",
+     "look": {
+      "gender": "F",
+      "hair": "",
+      "skin": "FEL"
+     },
+     "position": [
+      195.8899,
+      208.5087
+     ],
+     "rect": [
+      174.6608,
+      151.2839,
+      35.5118,
+      112.063
+     ],
+     "scale": [
+      -1.4249,
+      1.2709
+     ]
+    },
     "LeftPanel/Content/EquipDollView/Slot0": {
      "kind": "art",
      "rect": [
@@ -6296,6 +6318,7 @@
    "port_only": [
     "LeftPanel/Content/StatusLabel",
     "LeftPanel/Content/EquipDollView/Doll/Body",
+    "LeftPanel/Content/EquipDollView/DollF/Body",
     "LeftPanel/Content/EquipDollView/Slot0/ItemIcon",
     "LeftPanel/Content/EquipDollView/Slot0/Highlight",
     "LeftPanel/Content/EquipDollView/Slot1/ItemIcon",
@@ -8953,7 +8976,7 @@
      },
      "position": [
       396.8755,
-      151.4551
+      151.4552
      ],
      "rect": [
       377.1825,

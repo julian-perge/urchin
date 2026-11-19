@@ -63,11 +63,11 @@ func test_the_doll_stands_where_the_part_placements_put_it_behind_the_scene_slot
 		assert_lt(doll.get_index(), window.equip_view.get_node("Slot%d" % i).get_index())
 
 
-func test_the_window_keeps_the_scene_doll_and_has_no_second_one() -> void:
+func test_the_window_keeps_the_scenes_male_and_female_dolls_and_adds_none() -> void:
 	GameData.current_save = PlayerSave.new_game("Inventory", 0)
 	var window: Control = add_child_autofree(SCENE.instantiate())
 	var dolls: Array[Node] = window.equip_view.find_children("*", "CharacterVisual", true, false)
-	assert_eq(dolls.size(), 1)
+	assert_eq(dolls.map(func(doll: Node) -> String: return doll.name), ["Doll", "DollF"])
 	window.refresh()
 	assert_eq(window.equip_view.find_children("*", "CharacterVisual", true, false), dolls)
 
@@ -205,6 +205,32 @@ func _window_with_felicity_selected() -> Control:
 	assert_eq(face.party_id, 3)
 	face.chosen.emit(3, false)
 	return window
+
+
+# updateDoll shows the male set of part clips for a male member and the _f set
+# for any other (DefineSprite_3142/frame_1/DoAction.as:32-51). The _f set holds
+# MODEL4's first frame, which DollF holds.
+func test_a_female_member_shows_the_female_doll_in_model4s_first_pose() -> void:
+	var window: Control = _window_with_felicity_selected()
+	var male: CharacterVisual = window.equip_view.get_node("Doll")
+	var female: CharacterVisual = window.equip_view.get_node("DollF")
+	assert_false(male.visible, "the male doll hides")
+	assert_true(female.visible, "the female doll shows")
+	assert_gt(female.get_bounds().size.x, 0.0, "and is dressed")
+	var skin: Sprite2D = female._parts["head"].get_child(0)
+	assert_eq(skin.texture.resource_path, CharacterVisual.SPRITE_ROOT + "/F_SHEAD_FEL.png")
+	var rig: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.animations_file("MODEL4")))
+	for part: String in CharacterVisual.DOLL_PARTS:
+		var m: Array = rig["frames"][0][part]
+		var expected := Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5]))
+		assert_true(female._parts[part].transform.is_equal_approx(expected), "%s holds MODEL4's first frame" % part)
+
+
+func test_a_male_member_shows_the_male_doll_again() -> void:
+	var window: Control = _window_with_felicity_selected()
+	window._party_faces[0].chosen.emit(0, false)
+	assert_true((window.equip_view.get_node("Doll") as CharacterVisual).visible)
+	assert_false((window.equip_view.get_node("DollF") as CharacterVisual).visible)
 
 
 func test_a_click_on_a_companions_face_shows_that_companion() -> void:

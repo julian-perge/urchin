@@ -101,6 +101,14 @@ scale = Vector2(-1.3075, 1.3075)
 script = ExtResource("22_visual")
 animate = false
 
+[node name="DollF" type="Node2D" parent="LeftPanel/Content/EquipDollView"]
+visible = false
+position = Vector2(148.3899, 121.9087)
+scale = Vector2(-1.4249, 1.2709)
+script = ExtResource("22_visual")
+animate = false
+rest_model = "MODEL4"
+
 [node name="Slot0" parent="LeftPanel/Content/EquipDollView" instance=ExtResource("15_itemslot")]
 offset_left = 19
 offset_top = 69.85
