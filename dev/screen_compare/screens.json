@@ -87,7 +87,7 @@
   "scene": "res://scenes/ui/menu/inventory_window.tscn",
   "modes": {
    "chrome": {
-    "bar": 67
+    "bar": 48
    }
   }
  },
@@ -103,7 +103,7 @@
   "scene": "res://scenes/ui/store/store_window.tscn",
   "modes": {
    "chrome": {
-    "bar": 63,
+    "bar": 16,
     "hide_names": ["ItemIcon", "Highlight", "Body"]
    }
   }
@@ -112,7 +112,7 @@
   "scene": "res://scenes/ui/menu/victory_window.tscn",
   "modes": {
    "chrome": {
-    "bar": 63
+    "bar": 14
    },
    "panels": {
     "nodes": [
@@ -145,7 +145,7 @@
   "scene": "res://scenes/ui/menu/abilities_window.tscn",
   "modes": {
    "chrome": {
-    "bar": 61,
+    "bar": 10,
     "hide_names": [
      "TreeLines",
      "TreeNodes",

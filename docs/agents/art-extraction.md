@@ -251,7 +251,7 @@ This tool checks how it looks: the art, the fills and the shadows.
   `chrome` render of KRINMENU's `win` frame shows one face in all three rows.
 - **Captures load as they are.** The godot-mcp captures are sRGB at the Stage
   size, 800x575. The tool refuses any other size.
-- **The Store score is p99 63, with the 20 px control at 127.** The `store`
+- **The Store score is p99 16, with the 20 px control at 137.** The `store`
   entry sets `hide_names` (`ItemIcon`, `Highlight`, `Body`), which hides the
   item icons and the doll that the game sets from its data. In the diff, the
   seven empty ware slots are the largest error: the original hides them with a
@@ -275,25 +275,30 @@ This tool checks how it looks: the art, the fills and the shadows.
   Flash Player draws a soft glow there, as `references/sonny2_zone1_prison.png`
   shows, and so does the port, from the fill rendered alone. Do not re-extract
   `zone_fill.png` from the root frame to lower this score.
-- **The Victory score is `chrome` p99 63 and `panels` p99 9, with the 20 px
-  controls at 122 and 119.** The `victory` entry scores KRINMENU's `win`
+- **The Victory score is `chrome` p99 14 and `panels` p99 9, with the 20 px
+  controls at 130 and 119.** The `victory` entry scores KRINMENU's `win`
   frame against `victory_window.tscn` with no data, so all 15 drop slots show
   empty, as ffdec draws them. `panels` scores the backdrop and the four panels.
-  Every `chrome` pixel at 63 or more is on the backdrop's left, top and bottom
-  edges, in the outer 4 px. The port is right there. The `chrome` reference
-  renders KRINMENU's own timeline, so it loses the Bevel of KRINMENU's Stage
-  placement, as `reference_job` in `screen_compare.py` says for `panels`.
-  The `panels` reference keeps the Bevel and matches the port on those edges.
-  The rims around the three masked faces come next, from 32 up.
-- **The Inventory score is `chrome` p99 67, with the 20 px control at 217.**
+  The rims around the three masked faces are the largest error.
+- **The Inventory score is `chrome` p99 48, with the 20 px control at 220.**
   The `inventory` entry scores KRINMENU's `inventory` frame against
   `inventory_window.tscn` with no data. `SCENES.compare_strip` takes the 31
   doll clips (`DOLL_CHARACTERS`) out of the reference, because ffdec draws
-  them with blades that reach outside the doll's rect. Of the pixels at 60 or
-  more, about 80% are on the backdrop's outer 6 px. That is the same Bevel loss
-  as in the Victory score, and the `window-shell` entry scores that backdrop
-  with the Bevel. The rest is on the 16 element bars: ffdec runs no script and
-  draws them white, and the port tints them from `elementColorArray`.
+  them with blades that reach outside the doll's rect. Almost every pixel at
+  60 or more is in the glow around the 16 element bars. ffdec runs no script,
+  so it draws each glow white, and the port tints it from `elementColorArray`.
+  The hue is about three quarters of that error. The rest is brightness: the
+  port's glow is narrower than ffdec's. The port reads the glow's blur,
+  strength and passes from `menu_math.json`, and no Flash Player capture of
+  full-height bars exists to show which of the two is right.
+- **A KRINMENU reference is rendered through the Hub frame.** The backdrop's
+  Bevel, Glow and DropShadow are on KRINMENU's placement on the root frame, so
+  a render of KRINMENU's own timeline loses them. `reference_job` in
+  `screen_compare.py` renders the root `Navigation` frame with only
+  KRINMENU's depth kept, and sends KRINMENU to the entry's frame, in both
+  modes. Before it did this in `chrome` mode, the backdrop's left, top and
+  bottom edges set the `chrome` p99 of `victory` and `store` to 63 and of
+  `abilities` to 61 (julian-perge/urchin#374).
 - **The Abilities score covers the panels and the ability pool.** The
   `abilities` entry scores `abilities_window.tscn` alone, with `hide_names`
   hiding the tree lines and nodes, the eight sockets, the pool's rows, the plus
@@ -301,9 +306,8 @@ This tool checks how it looks: the art, the fills and the shadows.
   the ring (3109), the plus buttons (3068 to 3071), their plates (3075) and the
   scroll buttons (3114, 3115) out of the reference. The port draws those as
   native Buttons and code-drawn nodes (ADR 0007), so the rect test checks them.
-  The score is p99 61, with the 20 px control at 109. The backdrop's outer rim
-  is most of it, as in the Store. On the pool's rect, (523.6, 274.2)
-  217.35x133.05, the backing, the frame's fades and the inner shadow overlay
+  The score is p99 10, with the 20 px control at 114. On the pool's rect,
+  (523.6, 274.2) 217.35x133.05, the backing, the frame's fades and the inner shadow overlay
   score p99 2, with the control at 90 (julian-perge/urchin#238).
 - **The Battle score covers the frame, not the fighters.** The `battle` entry uses
   `battle_scene.tscn` alone. `SCENES.compare_strip` takes the hall and its
