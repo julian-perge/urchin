@@ -277,8 +277,9 @@ func _on_respec_pressed() -> void:
 # (DefineButton2_3179, DefineButton2_3180, DefineButton2_3183,
 # DefineButton2_3184 and DefineButton2_3153 on(release)) refuse a release while
 # an item is on the cursor, with MENU[66]. World Map (DefineButton2_3177) checks
-# for the item but shows nothing, and Inventory and Quit do not check, so those
-# three take no drop. In the port an item is on the cursor while the player drags it
+# for the item and does nothing. Inventory and Quit do not check, so the
+# original opens the Inventory or quits. The port's three take no drop, so the
+# drag ends on them with no effect. In the port an item is on the cursor while the player drags it
 # from an Inventory or equipment slot (ItemSlot._get_drag_data), and the release
 # ends that drag on a button, so the button takes the drop and refuses it. The
 # original checks this before PauseForScreen, so an inert hotbar refuses too. The

@@ -97,11 +97,12 @@ func test_save_abilities_and_achievements_refuse_a_dropped_item_with_menu_66():
 			hub.get_parent().free()
 
 
-# World Map (DefineButton2_3177 on(release)) checks Krin.mouseItem but shows no
-# text, and Inventory and Quit (DefineButton2_3185 and DefineButton2_3178
-# on(release)) do not check it. A release on them with an item on the cursor
-# does nothing in the original, because the item stays on the cursor. In the
-# port the drop is not taken, so the item goes back to its slot.
+# World Map (DefineButton2_3177 on(release)) checks Krin.mouseItem and does
+# nothing while an item is on the cursor. Inventory and Quit
+# (DefineButton2_3185 and DefineButton2_3178 on(release)) do not check it, so
+# in the original they open the Inventory or quit with the item still on the
+# cursor. The port's three buttons take no drop, so the drag ends with no
+# effect and the item goes back to its slot.
 func test_world_map_inventory_and_quit_ignore_a_dropped_item():
 	for button_name: String in ["ZoneMapButton", "InventoryButton", "QuitButton"]:
 		var save: PlayerSave = GameData.current_save
