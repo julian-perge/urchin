@@ -55,12 +55,31 @@ static func member_rows() -> Dictionary:
 	return _member_rows
 
 
+# The stance button's tooltip, MENU[54 + n] + " " + MENU[64] over MENU[59 + n]
+# for mode n (DefineSprite_3306, the enterFrame of PlaceObject2_3305_1).
+const STANCE_NAMES: int = 54
+const STANCE_TEXTS: int = 59
+const MODE_WORD: int = 64
+
+
+static func stance_title(mode: int) -> String:
+	return "%s %s" % [Strings.menu(STANCE_NAMES + mode), Strings.menu(MODE_WORD)]
+
+
+static func stance_text(mode: int) -> String:
+	return Strings.menu(STANCE_TEXTS + mode)
+
+
 # -> how far apart two rows sit, so battle_scene.gd does not carry its own copy.
 static func row_pitch() -> float:
 	return float(layout()["row_pitch"])
 
 
 func _ready() -> void:
+	for mode in buttons.size():
+		var button: TextureButton = buttons[mode]
+		button.mouse_entered.connect(func(): GameTooltip.show_title_and_body(stance_title(mode), stance_text(mode), button))
+		button.mouse_exited.connect(GameTooltip.hide_tooltip)
 	var rect: Dictionary = layout()
 	if rect.is_empty():
 		return

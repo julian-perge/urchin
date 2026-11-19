@@ -79,3 +79,38 @@ func test_an_empty_ability_socket_shows_the_skill_strings():
 	window.refresh()
 	window.get_node("Socket3").mouse_entered.emit()
 	assert_eq(_tooltip_texts(), [_strings["SKILLNONE"], _strings["SKILLTUT2"], _strings["SKILLTUT"]])
+
+
+# DefineSprite_3306, the enterFrame of PlaceObject2_3305_1: MENU[54 + n] + " " +
+# MENU[64] over MENU[59 + n] for stance button n.
+func test_each_stance_button_shows_its_mode_name_over_its_description():
+	var row: StanceRow = add_child_autofree(load("res://scenes/battle/stance_row.tscn").instantiate())
+	assert_eq(row.buttons.size(), 5)
+	for n in row.buttons.size():
+		row.buttons[n].mouse_entered.emit()
+		assert_eq(_tooltip_texts(), [_menu(54 + n) + " " + _menu(64), _menu(59 + n)], "stance %d" % n)
+		row.buttons[n].mouse_exited.emit()
+		assert_false(GameTooltip._root.visible)
+
+
+func _files_under(dir: String, extensions: Array) -> Array:
+	var found: Array = []
+	for name in DirAccess.get_files_at(dir):
+		if extensions.has(name.get_extension()):
+			found.append(dir.path_join(name))
+	for sub in DirAccess.get_directories_at(dir):
+		found.append_array(_files_under(dir.path_join(sub), extensions))
+	return found
+
+
+# Every tooltip goes through GameTooltip, so no scene or script sets Godot's own.
+func test_no_scene_or_script_sets_a_native_tooltip():
+	var setter: RegEx = RegEx.create_from_string("(^|\\.)tooltip_text\\s*=")
+	var found: Array = []
+	for path in _files_under("res://scenes", ["tscn"]) + _files_under("res://scripts", ["gd"]):
+		var lines: PackedStringArray = FileAccess.get_file_as_string(path).split("\n")
+		for i in lines.size():
+			var line: String = lines[i].strip_edges()
+			if not line.begins_with("#") and setter.search(line) != null:
+				found.append("%s:%d" % [path, i + 1])
+	assert_eq(found, [])

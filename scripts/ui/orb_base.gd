@@ -47,11 +47,3 @@ func interact():
 	print("Emitting event for %s" % name)
 	pass
 
-#func _make_custom_tooltip(for_text: String) -> Control:
-	#print("_make_custom_tooltip, name %s , text %s" % [name, for_text])
-	##var tooltip = tooltip_scene.instantiate()
-	##tooltip.get_node("MarginContainer/VBoxContainer/Title").text = for_text
-	##tooltip.tooltip_text = for_text
-	#var tooltip = Label.new()
-	#tooltip.text = for_text
-	#return tooltip

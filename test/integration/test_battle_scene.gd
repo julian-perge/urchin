@@ -1198,6 +1198,39 @@ func test_the_retreat_button_shows_the_original_quit_tooltip():
 
 	GameTooltip.hide_tooltip()
 	GameData.current_save = null
+
+
+# The pass button covers krinToMove, whose load script sets its tooltip for
+# each mode (frame_217/PlaceObject2_2427_484/CLIPACTIONRECORD
+# onClipEvent(load).as). The test reads the texts from tooltip_look.json.
+func test_the_pass_button_shows_the_original_idle_tooltip_for_the_mode():
+	var texts: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/tooltip_look.json"))["pass_button"]
+	GameData.current_save = PlayerSave.new_game("PassTooltipTest", 0)
+	ZoneManager.auto_switch_scenes = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	var pass_button: Button = scene.get_node("BottomBar/PassButton")
+	assert_true(scene._turn_based, "a new game's difficulty is turn-based")
+	pass_button.mouse_entered.emit()
+	assert_eq(_shown_tooltip_texts(), [texts["title"], texts["turn_based"]])
+	pass_button.mouse_exited.emit()
+	assert_false(GameTooltip._root.visible)
+	scene._turn_based = false
+	pass_button.mouse_entered.emit()
+	assert_eq(_shown_tooltip_texts(), [texts["title"], texts["real_time"]])
+	GameTooltip.hide_tooltip()
+	GameData.current_save = null
+
+
+func _shown_tooltip_texts() -> Array:
+	var shown: Array = []
+	if GameTooltip._root.visible:
+		for section in GameTooltip._sections.get_children():
+			for label in section.get_child(0).get_children():
+				shown.append(label.text)
+	return shown
 	ZoneManager.auto_switch_scenes = true
 
 
