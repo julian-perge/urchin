@@ -50,11 +50,11 @@ const DEFAULT_MODEL: String = "MODEL1"
 # Each model's keyframe animations (animations_file): per-frame full affine
 # matrices per part, 30 fps, labeled segments (stand/run/Attack/runback/hit/
 # dead/... - see DECODED_ALGORITHMS.md), and each part's depth.
-const ANIMATIONS_FILE: String = SPRITE_ROOT + "/%s_animations.json"
+const ANIMATIONS_PATTERN: String = SPRITE_ROOT + "/%s_animations.json"
 # The sounds each model's frame scripts play (sound_cues_file): the 1-based
 # frame as a string -> the cue names of that frame. Only the swing labels hold
 # a cue, "sfx_swing".
-const SOUND_CUES_FILE: String = "res://dev/converted_json/%s_sound_cues.json"
+const SOUND_CUES_PATTERN: String = "res://dev/converted_json/%s_sound_cues.json"
 
 # krinMelee (frame_42/DoAction_4.as:36-135) moves the fighter on every frame of
 # its swing:
@@ -620,11 +620,11 @@ func _label_end_frame(label: String) -> float:
 
 
 static func animations_file(model: String) -> String:
-	return ANIMATIONS_FILE % model.to_lower()
+	return ANIMATIONS_PATTERN % model.to_lower()
 
 
 static func sound_cues_file(model: String) -> String:
-	return SOUND_CUES_FILE % model.to_lower()
+	return SOUND_CUES_PATTERN % model.to_lower()
 
 
 # Puts the parts in the model's depth order, back to front, after the shadow.
@@ -639,6 +639,10 @@ func _order_parts() -> void:
 
 func _timeline() -> Dictionary:
 	return _load_json(_animations, _model, animations_file(_model))
+
+
+func _cues() -> Dictionary:
+	return _load_json(_sound_cues, _model, sound_cues_file(_model))
 
 
 static func _load_json(cache: Dictionary, model: String, path: String) -> Dictionary:
@@ -731,7 +735,7 @@ func _show_swing_frame(frame: float, jumped: bool = false) -> void:
 	_playhead = frame
 	_apply_frame_index(int(_playhead))
 	for index in range(before + 1, int(_playhead) + 1):
-		for cue in _load_json(_sound_cues, _model, sound_cues_file(_model)).get(str(index + 1), []):
+		for cue in _cues().get(str(index + 1), []):
 			sound_cue.emit(cue)
 
 

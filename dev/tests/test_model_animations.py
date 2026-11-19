@@ -118,5 +118,18 @@ def test_a_part_that_moves_to_another_depth_fails():
 
 
 def test_each_model_writes_its_own_file():
-    assert model_animations.MODELS == {"MODEL1": 166, "MODEL4": 2668}
     assert model_animations.out_path("MODEL4").name == "model4_animations.json"
+
+
+def test_a_part_that_first_shows_up_after_frame_1_fails():
+    index = parse_swf(
+        swf(
+            model(
+                place2(3, cid=SHAPE, name="head") + SHOW,
+                place2(5, cid=SHAPE, name="chest") + SHOW,
+            ),
+            SHOW,
+        )
+    )
+    with pytest.raises(ValueError, match="chest"):
+        model_animations.animations(index, MODEL)

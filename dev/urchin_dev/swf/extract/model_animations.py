@@ -17,7 +17,8 @@
 #
 # depths holds the depth each part has on frame 1, which is its draw order: a
 # higher depth draws in front. No part of MODEL1 or MODEL4 changes its depth
-# on a later frame, and animations() fails if one does.
+# on a later frame or first shows up after frame 1, and animations() fails if
+# one does.
 #
 # MODEL5 to MODEL8 are left out. They have fewer named parts than the 15 that
 # CharacterVisual draws (MODEL8 also places unnamed clips), and MODEL2 and
@@ -87,7 +88,12 @@ def animations(index: SwfIndex, sprite: int) -> dict:
             part = layer.name
             if part not in PART_NAMES:
                 continue
-            if depths.get(part, depth) != depth:
+            if part not in depths:
+                raise ValueError(
+                    f"frame {len(frames) + 1}: {part} first shows up after"
+                    " frame 1, so it has no depth to draw it at"
+                )
+            if depths[part] != depth:
                 raise ValueError(
                     f"frame {len(frames) + 1}: {part} moved from depth"
                     f" {depths[part]} to {depth}"
