@@ -431,6 +431,17 @@ func test_the_new_game_sound_row_reaches_the_new_save():
 	_clear_test_slots()
 
 
+# Quit, the battle's Quit and the game over go to resetHere, which recreates
+# Krin with the sound on (frame_41/DoAction_2.as:7-9). The port's title stands
+# in for it, so a game with the sound off does not leave the title silent.
+func test_the_title_turns_the_sound_back_on():
+	AudioManagerAuto.sound_enabled = false
+	AudioManagerAuto.stop_music()
+	await _menu_without_scene_change()
+	assert_true(AudioManagerAuto.sound_enabled, "the sound is on again")
+	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.MENU, "and the menu music plays")
+
+
 # The Tutorial option is on until the player turns it off (frame_93/DoAction.as:7),
 # and this test leaves the toggle alone. With it on, the original's START plays
 # CS_INTRO (DefineButton2_2770 on(release), lines 2-6). The clip's end goes to

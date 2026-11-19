@@ -55,6 +55,8 @@ The original keeps `Krin.sound` in each save (`saveArray1`, `frame_42/DoAction_2
 - The new-game screen's Sound row sets `AudioManager.sound_enabled`, as `DefineButton2_2774` sets `Krin.sound`, and START writes it to the new save.
 - Loading a save sets `AudioManager.sound_enabled` from `PlayerSave.sound`.
 - The Options Window's Sound row sets both.
+- The title screen turns `AudioManager.sound_enabled` back on, as `resetHere` recreates `Krin` with the sound on (`frame_41/DoAction_2.as:7-9`). Quit, the battle's Quit and the game over all go there.
+- While the sound is off, `play_menu_music` and `play_battle_music` change neither the music mode nor the rotation, as `addSound` does nothing at all.
 
 ## Project structure
 

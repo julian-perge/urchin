@@ -79,6 +79,10 @@ func _ready():
 	_show_screen(title_panel)
 	_refresh_slot_names()
 	_setup_class_cards()
+	# Quit, the battle's Quit and the game over go to resetHere, which recreates
+	# Krin with the sound on (frame_41/DoAction_2.as:7-9). This screen stands in
+	# for resetHere, so it turns the sound back on.
+	AudioManagerAuto.sound_enabled = true
 	AudioManagerAuto.play_menu_music()
 
 
