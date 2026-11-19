@@ -44,6 +44,16 @@ var sound_enabled: bool = true
 # volume, where every other battle track fades in (frame_42/DoAction.as:85-97).
 # While the sound is off no battle track starts, so the flag stays on.
 var bang_start: bool = false
+# The original's Krin.soundToMake and Krin.missToMake, the sounds its impact
+# block plays for a hit and for a miss (the conductor, lines 19-21 and 105-108).
+# Each move that dispatches and pays sets both (see battle_scene.gd's
+# _set_landing_sounds), and nothing else does, so a move that lands for free
+# plays the sounds of the last paid move. resetHere recreates Krin
+# (frame_41/DoAction_2.as:7), so main_menu.gd clears both with
+# forget_landing_sounds(). An empty name plays nothing, as addSound plays nothing
+# for undefined (frame_42/DoAction.as:7).
+var sound_to_make: String = ""
+var miss_to_make: String = ""
 # How loud the music plays, as a percentage of full volume. The battle's Speech
 # box sets it to 100 - _alpha / 1.2 while it fades, which drops the music to about
 # 17 percent under a line (frame_217/PlaceObject2_3367_634 enterFrame, line 2).
@@ -113,6 +123,11 @@ func play_battle_music(is_boss: bool) -> void:
 		_next_rotation_cue()  # the original advances the rotation either way
 	_start_music(cue, bang_start)
 	bang_start = false
+
+
+func forget_landing_sounds() -> void:
+	sound_to_make = ""
+	miss_to_make = ""
 
 
 func stop_music() -> void:

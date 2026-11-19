@@ -950,17 +950,6 @@ func _play_move_event(event: Dictionary) -> void:
 	_count_from_impact(event)
 
 
-# The original's _root.Krin.soundToMake and missToMake, the sounds its impact
-# block plays for a hit and for a miss (the conductor, lines 19-21 and 105-108).
-# Each move that dispatches and pays sets both (see _set_landing_sounds), and
-# nothing else does. So a free move plays the sounds of the last paid move since
-# the game last reached resetHere (see forget_landing_sounds), from this battle
-# or an earlier one. An empty name plays nothing, as addSound plays nothing for
-# undefined (frame_42/DoAction.as:7).
-static var _sound_to_make: String = ""
-static var _miss_to_make: String = ""
-
-
 # A Melee move sets soundToMake to its own sound and missToMake to undefined, so
 # its miss is silent. A Missile sets its own sound and sfx_magicmiss. A Shock
 # plays its own sound at Dispatch and sets both to undefined (the conductor,
@@ -968,27 +957,21 @@ static var _miss_to_make: String = ""
 func _set_landing_sounds(move: Ability) -> void:
 	match move.attack_animation_type:
 		"Melee":
-			_sound_to_make = move.sound_effect_name
-			_miss_to_make = ""
+			AudioManagerAuto.sound_to_make = move.sound_effect_name
+			AudioManagerAuto.miss_to_make = ""
 		"Missile":
-			_sound_to_make = move.sound_effect_name
-			_miss_to_make = "sfx_magicmiss"
+			AudioManagerAuto.sound_to_make = move.sound_effect_name
+			AudioManagerAuto.miss_to_make = "sfx_magicmiss"
 		"Shock":
-			_sound_to_make = ""
-			_miss_to_make = ""
+			AudioManagerAuto.sound_to_make = ""
+			AudioManagerAuto.miss_to_make = ""
 
 
-# The original's resetHere recreates Krin, which clears both sounds
-# (frame_41/DoAction_2.as:7). main_menu.gd stands in for resetHere and calls this.
-static func forget_landing_sounds() -> void:
-	_sound_to_make = ""
-	_miss_to_make = ""
-
-
+# Plays the sound that AudioManager.sound_to_make or miss_to_make holds for the
+# result, as the conductor's impact block does.
 func _play_landing_sound(result: MoveResult) -> void:
-	var sound: String = _miss_to_make if result.kind == MoveResult.Kind.MISS else _sound_to_make
-	if not sound.is_empty():
-		AudioManagerAuto.play_effect(sound)
+	var miss: bool = result.kind == MoveResult.Kind.MISS
+	AudioManagerAuto.play_effect(AudioManagerAuto.miss_to_make if miss else AudioManagerAuto.sound_to_make)
 
 
 # At Dispatch the conductor zooms GridZoomer toward the target of every move
