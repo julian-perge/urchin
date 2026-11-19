@@ -51,11 +51,13 @@
 # sanitize()d name as the clip's folder. A glow filter's footprint is baked
 # into ffdec's canvas, so w and h are the canvas size, and x and y are the
 # left and top edges of the rect the driver sized that canvas from, where
-# ffdec puts the canvas's (0, 0). The padding is symmetric: Krin.Firebolt's
-# opaque core has its centroid at (97.9, 98.0) in a 196x196 canvas centred on
-# (98.0, 98.0). Until julian-perge/urchin#72 x and y put the canvas around the
-# displayRect's centre, which sat half the canvas's rounding up and to the
-# left of the real origin. Until julian-perge/urchin#43 the bounds came from
+# ffdec puts the canvas's (0, 0). The filter margin is symmetric, and
+# rounding the canvas up to whole pixels then adds less than one pixel on the
+# right and bottom only: Krin.Firebolt's opaque core has its centroid at
+# (97.9, 98.0) in a 196x196 canvas centred on (98.0, 98.0). Until
+# julian-perge/urchin#72 x and y put the canvas around the displayRect's
+# centre, which sat half the canvas's rounding up and to the left of the real
+# origin. Until julian-perge/urchin#43 the bounds came from
 # make_timeline_bounds, a Python walk of the XML dump, and the frames had to
 # be extracted before a separate script could measure them.
 #

@@ -40,4 +40,6 @@ def test_a_clip_offset_starts_at_the_canvas_origin():
     )
     offset, pad_x, pad_y = vfx.clip_offset(frame)
     assert offset == {"x": -9.0, "y": -3.5, "w": 23.5, "h": 23.5}
-    assert pad_x == pytest.approx(pad_y)
+    # The padding is half of the 23.5 px canvas less the 20.05 px displayRect.
+    assert pad_x == pytest.approx(1.725)
+    assert pad_y == pytest.approx(1.725)
