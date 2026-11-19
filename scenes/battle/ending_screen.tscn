@@ -16,8 +16,7 @@ script = ExtResource("1_ending")
 
 ; The numbers below are root frame 116's, which test/unit/test_screen_rects.gd
 ; checks against the rect record. EndingLabel is edit text 2796, OkLabel is
-; static text 2799 and OkButton is hit button 2797. The black outline stands for
-; the glow filter the original puts on both texts.
+; static text 2799 and OkButton is hit button 2797.
 [node name="EndingLabel" type="Label" parent="."]
 layout_mode = 0
 offset_left = 197.3
@@ -25,13 +24,10 @@ offset_top = 111.45
 offset_right = 611.35
 offset_bottom = 382.65
 mouse_filter = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
+theme_type_variation = &"MenuCaption"
 theme_override_constants/line_spacing = 1
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
-text = "Congratulations! You've beaten the game. So what now? If you haven't already, I recommend you to try the game on 'Heroic' difficulty, the way that it was designed to be played! Or perhaps pitch your own character against a friend's, using the 'PvP Arena' option. Visit www.ArmorGames.com for more games (including the first chapter of Sonny) and check for updates, in case we add some new Zones for you to play in. Seeya next time!"
 
 [node name="OkLabel" type="Label" parent="."]
 layout_mode = 0
@@ -40,9 +36,8 @@ offset_top = 412.1
 offset_right = 561.1
 offset_bottom = 459.4
 mouse_filter = 2
+theme_type_variation = &"MenuCaption"
 theme_override_colors/font_color = Color(1, 0.8, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 36
 horizontal_alignment = 1
 text = "OK!"

@@ -31,6 +31,18 @@ func test_game_over_screen_uses_the_frame_104_rects():
 		assert_almost_eq(button.size, hit_areas[node_name].size, Vector2(0.01, 0.01), "%s size" % node_name)
 
 
+# The Ending Screen fills enderText, edit text 2796, from ENDING
+# (frame_116/DoAction.as:1), word for word as ADR 0002 and ADR 0006 keep it, and
+# both of its captions draw in the menu caption look (spec/107-ending.md).
+func test_the_ending_screen_shows_ending_from_strings_json_in_the_caption_look():
+	var strings: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/strings.json"))
+	var ending = add_child_autofree(load("res://scenes/battle/ending_screen.tscn").instantiate())
+	assert_eq(ending.get_node("EndingLabel").text, strings["ENDING"], "ENDING")
+	for node_name in ["EndingLabel", "OkLabel"]:
+		var label: Label = ending.get_node(node_name)
+		assert_eq(label.theme_type_variation, &"MenuCaption", "%s uses MenuCaption" % node_name)
+
+
 # The layout JSON carries where each hall, sky and chrome character actually
 # sits on the stage, recovered from the SWF placement rather than tuned by
 # hand. The ROME sky's bottom edge lands at y = 306.0, which is what

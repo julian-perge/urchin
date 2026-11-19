@@ -212,11 +212,8 @@ func test_cs_cut5_ends_on_the_silent_ending_screen_and_ok_goes_to_the_hub():
 	if ending == null:
 		return
 	assert_true(ending.is_visible_in_tree(), "and showing")
-	assert_eq(
-		ending.get_node("EndingLabel").text,
-		"Congratulations! You've beaten the game. So what now? If you haven't already, I recommend you to try the game on 'Heroic' difficulty, the way that it was designed to be played! Or perhaps pitch your own character against a friend's, using the 'PvP Arena' option. Visit www.ArmorGames.com for more games (including the first chapter of Sonny) and check for updates, in case we add some new Zones for you to play in. Seeya next time!",
-		"ENDING"
-	)
+	var strings: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/strings.json"))
+	assert_eq(ending.get_node("EndingLabel").text, strings["ENDING"], "ENDING")
 	assert_eq(ending.get_node("OkLabel").text, "OK!", "static text 2799")
 	ending.get_node("OkButton").pressed.emit()
 	assert_called(game, "_reload_hub")
