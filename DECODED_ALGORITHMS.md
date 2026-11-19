@@ -1051,7 +1051,7 @@ FORIN	so_memory_loaded_into_new_Array	4	3,2,1,0
 
 ## A cost failure at dispatch can still land the move (the conductor, lines 12-111 and 475-585, #39)
 
-When a unit cannot pay for its move at dispatch, the move still lands when a buff ticks on the unit, and nothing is paid. Two players measured it (see the evidence below). Not ported yet: `BattleRunner._execute_move_action` logs MOVE_FAILED and stops (#469).
+When a unit cannot pay for its move at dispatch, the move still lands when a buff ticks on the unit, and nothing is paid. Two players measured it (see the evidence below). The port lands it in `BattleRunner._land_bound_move` as a MOVE event marked free, and `battle_scene.gd` shows only its sound and result, 1 frame after the tick (#469).
 
 - At dispatch the conductor binds the move and the units (lines 324-329), and sets its own `moveBammer` to false (line 354) before the cost check (line 355).
 - When the check fails (lines 475-531), the conductor files move 0 for the caster and runs `buffTicker` on it. When the tick does something (`buffTickChecker` is not 0) and the caster is alive, it raises `_root.BAMBAMBAM` and writes `_root.moveBammer = true` (lines 513-520). That write goes to `_root`, not to the conductor's own `moveBammer`, which stays false.

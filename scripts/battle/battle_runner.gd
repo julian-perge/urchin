@@ -83,6 +83,18 @@ var healed_this_turn: Dictionary = {}
 var speech_cursor: int = 0  # speechOn
 var events: Array = []  # full battle log; advance_half_turn() also returns its slice
 
+# The last hit roll of any unit, the original's _root.strikeSuccess. A move whose
+# caster could not pay for it can still land with this roll (see
+# _land_bound_move). The original keeps it on _root for the whole session, so it
+# carries over from one battle to the next.
+static var strike_success: bool = false
+
+# True from the cost check of a move's dispatch until a move resolves. It is the
+# opposite of the conductor's own moveBammer, which its onClipEvent(load) never
+# sets, so it starts each battle neither true nor false, and no bound move can
+# land before the first cost check (see _land_bound_move).
+var _bound_move_waiting: bool = false
+
 
 # Returns any events generated during setup itself (currently just a
 # turnTime:0 speech, if the battle has one) - the caller must play these the
@@ -248,6 +260,8 @@ func _execute_action(action: Dictionary) -> void:
 		_log({"type": EventType.BUFF_TICK, "caster_slot": action["caster_slot"], "tick": tick})
 		if not caster.active:
 			_log({"type": EventType.DEATH, "slot": action["caster_slot"], "cause": DeathCause.DAMAGE_OVER_TIME})
+		elif _bound_move_waiting and tick.did_something():
+			_land_bound_move(action, caster, target)
 
 
 func _execute_move_action(action: Dictionary, caster: CombatUnit, target: CombatUnit) -> void:
@@ -256,6 +270,7 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 		push_warning("advance_half_turn: unknown move id %d" % action["move_id"])
 		return
 
+	_bound_move_waiting = true
 	var life_cost = move.flat_life_cost + round(caster.life_u * move.health_cost_percentage)
 	if caster.focus_n < move.focus_cost or caster.life_n <= life_cost:
 		# A caster short of both fails with the Health reason, because the
@@ -286,7 +301,9 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 	elif action.get("bar_index", -1) >= 0 and action["bar_index"] < caster.ability_cooldowns.size():
 		caster.ability_cooldowns[action["bar_index"]] = move.cooldown_turns
 
-	if not _accuracy_roll(caster, target, move):
+	strike_success = _accuracy_roll(caster, target, move)
+	_bound_move_waiting = false
+	if not strike_success:
 		# A miss is still a "move" event, not its own separate one - the
 		# original always plays the caster's run/swing/cast animation for
 		# the move's own type (dispatched on addNewMove param 10, gated by
@@ -302,6 +319,30 @@ func _execute_move_action(action: Dictionary, caster: CombatUnit, target: Combat
 		_log({"type": EventType.DISPEL, "caster_slot": caster.player_id, "target_slot": target.player_id, "removed": dispelled})
 
 	_log_move_result(caster, target, move, BattleManager.execute_move(move, caster, target, buffs_by_name), caster_after_dispatch)
+
+
+# A buff tick that did something raises the original's impact flag. When no move
+# has resolved since the last cost check, the conductor's impact block then runs
+# the move bound at this action's dispatch, on the next frame, with no payment and
+# no new hit roll (the conductor, lines 12-111, 513-520 and 569-575). That is a
+# move whose cost failed, or, after a cost failure whose tick did nothing, the
+# move of a stunned caster, of a caster whose target is dead, or the move 0 of a
+# pass. DECODED_ALGORITHMS.md, "A cost failure at dispatch can still land the
+# move", has the Trace logs. The MOVE event is marked free, so the scene shows
+# only its result.
+func _land_bound_move(action: Dictionary, caster: CombatUnit, target: CombatUnit) -> void:
+	_bound_move_waiting = false
+	var move: Ability = moves_by_id.get(int(action["move_id"]))
+	if move == null or target == null:
+		return
+	var caster_now: UnitSnapshot = UnitSnapshot.of(caster)
+	if not strike_success:
+		_log_move_result(caster, target, move, BattleManager.miss(target), caster_now, true)
+		return
+	var dispelled: Array = _resolve_dispels(move, target)
+	if not dispelled.is_empty():
+		_log({"type": EventType.DISPEL, "caster_slot": caster.player_id, "target_slot": target.player_id, "removed": dispelled})
+	_log_move_result(caster, target, move, BattleManager.execute_move(move, caster, target, buffs_by_name), caster_now, true)
 
 
 # The hit/miss roll, separate from the crit roll inside execute_move().
@@ -593,7 +634,7 @@ func hard_skip(speech_index: int) -> void:
 	speech_cursor += 1
 
 
-func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, result: MoveResult, caster_after_dispatch: UnitSnapshot) -> void:
+func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, result: MoveResult, caster_after_dispatch: UnitSnapshot, free: bool = false) -> void:
 	var entry: Dictionary[Variant, Variant] = {
 		"type": EventType.MOVE,
 		"caster_slot": caster.player_id,
@@ -602,6 +643,7 @@ func _log_move_result(caster: CombatUnit, target: CombatUnit, move: Ability, res
 		"move_name": move.display_name,
 		"caster_after_dispatch": caster_after_dispatch,
 		"result": result,
+		"free": free,
 	}
 	_log(entry)
 	if result.killed:

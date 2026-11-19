@@ -776,6 +776,8 @@ func _wait_until_due(event: Dictionary) -> void:
 	match event["type"]:
 		BattleRunner.EventType.DEATH:
 			return
+		BattleRunner.EventType.MOVE when event.get("free", false):
+			await _reach_free_move_impact()
 		BattleRunner.EventType.MOVE, BattleRunner.EventType.STUNNED, BattleRunner.EventType.MOVE_FAILED, BattleRunner.EventType.PASSED:
 			await _wait_for_dispatch()
 			_start_action(event["type"] == BattleRunner.EventType.MOVE)
@@ -785,6 +787,16 @@ func _wait_until_due(event: Dictionary) -> void:
 			await _reach_buff_tick()
 		_:
 			await _wait_for_dispatch()
+
+
+# A free move (see BattleRunner._land_bound_move) follows the Buff tick that
+# raised the impact flag, and the conductor's impact block runs it on the next
+# frame (the conductor, lines 12-19). That frame is one of the frames the tick
+# holds the next Dispatch back for, so the free move does not move the next
+# Dispatch.
+func _reach_free_move_impact() -> void:
+	_frames_to_dispatch -= 1
+	await _wait_frames(1)
 
 
 # Waits out the frames the last action holds the next Dispatch back for.
@@ -853,6 +865,14 @@ func _play_move_event(event: Dictionary) -> void:
 	var target_slot: int = int(event["target_slot"])
 	var move: Ability = MoveManagerAuto.get_move(int(event["move_id"]))
 	var caster: FighterPresenter = _presenters.get(caster_slot)
+	if event.get("free", false):
+		# The original runs a free move in its impact block only, so it plays no
+		# zoom, no swing or cast and no impact clip (the conductor, lines 12-111).
+		_play_landing_sound(event["result"])
+		_show_move_result(event, target_slot)
+		return
+	if move != null:
+		_set_landing_sounds(move)
 	_start_camera(move, target_slot)
 	# The caster paid the move's costs as it dispatched, and the original redraws
 	# its bars right there (the conductor, line 359), before any swing or cast.
@@ -870,7 +890,7 @@ func _play_move_event(event: Dictionary) -> void:
 			_log("melee impact: caster=%d move=%s +%dms" % [
 				caster_slot, move.display_name, Time.get_ticks_msec() - start_ms,
 			])
-			_play_landing_sound(move, event["result"])
+			_play_landing_sound(event["result"])
 			_spawn_impact(target_slot, move, event["result"])
 			_show_move_result(event, target_slot)
 		_log("melee start: caster=%d target=%d move=%s label=%s" % [
@@ -910,7 +930,7 @@ func _play_move_event(event: Dictionary) -> void:
 			var bolt: Projectile = await _fire_projectile(caster_slot, target_slot, move, event["result"])
 			if not is_inside_tree():
 				return
-			_play_landing_sound(move, event["result"])
+			_play_landing_sound(event["result"])
 			_show_move_result(event, target_slot)
 			# A missed bolt flies on and raises the impact flag again on every
 			# frame until it is gone (frame_42/DoAction_4.as:188-205), so the
@@ -930,16 +950,38 @@ func _play_move_event(event: Dictionary) -> void:
 	_count_from_impact(event)
 
 
-# The original plays a move's own sound only when the move lands (the conductor,
-# lines 19-21). A miss plays missToMake instead (lines 105-108), which a Missile
-# sets to sfx_magicmiss (line 415). A Melee move sets missToMake to undefined on
-# purpose (line 407), and addSound plays nothing for undefined
-# (frame_42/DoAction.as:7), so a Melee miss is silent.
-func _play_landing_sound(move: Ability, result: MoveResult) -> void:
-	if result.kind != MoveResult.Kind.MISS:
-		AudioManagerAuto.play_effect(move.sound_effect_name)
-	elif move.attack_animation_type == "Missile":
-		AudioManagerAuto.play_effect("sfx_magicmiss")
+# The original's _root.Krin.soundToMake and missToMake, the sounds its impact
+# block plays for a hit and for a miss (the conductor, lines 19-21 and 105-108).
+# Each move that dispatches and pays sets both (see _set_landing_sounds), and
+# nothing else does. Krin is made once, when the game starts
+# (frame_41/DoAction_2.as:7), so a free move plays the sounds of the last paid
+# move of the session, from this battle or an earlier one. An empty name plays
+# nothing, as addSound plays nothing for undefined (frame_42/DoAction.as:7).
+static var _sound_to_make: String = ""
+static var _miss_to_make: String = ""
+
+
+# A Melee move sets soundToMake to its own sound and missToMake to undefined, so
+# its miss is silent. A Missile sets its own sound and sfx_magicmiss. A Shock
+# plays its own sound at Dispatch and sets both to undefined (the conductor,
+# lines 405-448).
+func _set_landing_sounds(move: Ability) -> void:
+	match move.attack_animation_type:
+		"Melee":
+			_sound_to_make = move.sound_effect_name
+			_miss_to_make = ""
+		"Missile":
+			_sound_to_make = move.sound_effect_name
+			_miss_to_make = "sfx_magicmiss"
+		"Shock":
+			_sound_to_make = ""
+			_miss_to_make = ""
+
+
+func _play_landing_sound(result: MoveResult) -> void:
+	var sound: String = _miss_to_make if result.kind == MoveResult.Kind.MISS else _sound_to_make
+	if not sound.is_empty():
+		AudioManagerAuto.play_effect(sound)
 
 
 # At Dispatch the conductor zooms GridZoomer toward the target of every move
