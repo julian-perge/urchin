@@ -114,7 +114,7 @@ const MENU_SAVE_DIR: String = "user://test_main_menu_saves/"
 
 
 const TITLE_CAPTIONS: String = "TitlePanel/Captions"
-const BACK_PANELS: Array[String] = ["ModePanel", "NamePanel", "SlotPanel", "NewGamePanel", "OptionsPanel", "CreditsPanel"]
+const BACK_PANELS: Array[String] = ["ModePanel", "ManualPanel", "NamePanel", "SlotPanel", "NewGamePanel", "OptionsPanel", "CreditsPanel"]
 
 
 # The original opens on mainMenu, root frame 46, whose captions are MENU[18],
@@ -159,18 +159,29 @@ func test_the_choice_shows_the_logo_and_no_arena_caption():
 	assert_eq(choice.size, Vector2(800.0, 575.0))
 
 
-# Game Manual opens a Screen the port does not have yet, so a click on it
-# leaves the title up (spec/107-title-slots.md, The title).
-func test_game_manual_leaves_the_title_up():
+# The title's Game Manual button, 2693, goes to designMenu, root frame 124
+# (spec/107-game-manual.md).
+func test_game_manual_on_the_title_shows_the_manual():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	var title: TitlePanel = menu.get_node("TitlePanel")
-	watch_signals(title)
 	menu.get_node(TITLE_CAPTIONS + "/GameManualSlot/HitButton").pressed.emit()
-	assert_signal_emitted(title, "game_manual_pressed")
-	assert_true(title.visible, "the title stays up")
-	for panel in BACK_PANELS:
-		assert_false(menu.get_node(panel).visible, "%s stays hidden" % panel)
+	assert_true(menu.get_node("ManualPanel").visible, "Game Manual shows the manual")
+	assert_false(menu.get_node("TitlePanel").visible, "in place of the title")
+	assert_eq(menu.get_node("ManualPanel/Body").text, "Please select a topic.")
+
+
+# frame_124/DoAction.as sets the body to EXPLAINEXTRA on every entry to
+# designMenu, so a topic read before Back does not stay on the next open.
+func test_the_manual_asks_for_a_topic_again_on_each_open():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	var game_manual: Button = menu.get_node(TITLE_CAPTIONS + "/GameManualSlot/HitButton")
+	game_manual.pressed.emit()
+	menu.get_node("ManualPanel/Topics/Topic1/HitButton").pressed.emit()
+	assert_ne(menu.get_node("ManualPanel/Body").text, "Please select a topic.", "a topic is shown")
+	menu.get_node("ManualPanel/Back/HitButton").pressed.emit()
+	game_manual.pressed.emit()
+	assert_eq(menu.get_node("ManualPanel/Body").text, "Please select a topic.")
 
 
 # The title's Credits hit button, DefineButton2_2690, goes to creditMenu, root

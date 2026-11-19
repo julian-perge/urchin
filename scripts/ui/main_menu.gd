@@ -2,9 +2,9 @@
 # The starting screen (scenes/main_menu.tscn), the original's menu from its
 # mainMenu frame on. references/2026_07_18_flashpoint/4-8 show screens 4 to 6.
 #   1. The title (root frame 46, scenes/ui/menu/title_panel.tscn). Its first
-#      caption goes on to screen 2, and Credits opens the Credits Screen (root
-#      frame 134, scenes/ui/menu/credits_panel.tscn). Game Manual is not wired,
-#      because its Screen does not exist yet.
+#      caption goes on to screen 2, Game Manual opens the Game Manual (root
+#      frame 124, scenes/ui/menu/manual_panel.tscn), and Credits opens the
+#      Credits Screen (root frame 134, scenes/ui/menu/credits_panel.tscn).
 #   2. New Game or Load Game (root frame 56, scenes/ui/menu/mode_panel.tscn).
 #      The original's third choice, PvP Arena, is left out with the rest of
 #      the arena (docs/adr/0006-leave-out-the-pvp-arena.md).
@@ -55,6 +55,7 @@ var _card_fades: Dictionary = {}  # card node name -> its running color fade
 
 @onready var title_panel: TitlePanel = $TitlePanel
 @onready var mode_panel: ModePanel = $ModePanel
+@onready var manual_panel: ManualPanel = $ManualPanel
 @onready var name_panel: Control = $NamePanel
 @onready var slot_panel: SlotPanel = $SlotPanel
 @onready var credits_panel: CreditsPanel = $CreditsPanel
@@ -82,7 +83,7 @@ func _ready():
 
 
 func _show_screen(screen: Control) -> void:
-	for panel in [title_panel, mode_panel, name_panel, slot_panel, new_game_panel, options_panel, credits_panel]:
+	for panel in [title_panel, mode_panel, manual_panel, name_panel, slot_panel, new_game_panel, options_panel, credits_panel]:
 		panel.visible = panel == screen
 
 
@@ -98,6 +99,13 @@ func _on_back_pressed() -> void:
 # DefineButton2_2692 on(release) goes to subMenu.
 func _on_play_pressed() -> void:
 	_show_screen(mode_panel)
+
+
+# DefineButton2_2693 on(release) goes to designMenu, whose frame script asks
+# for a topic again each time (frame_124/DoAction.as).
+func _on_game_manual_pressed() -> void:
+	manual_panel.open()
+	_show_screen(manual_panel)
 
 
 # DefineButton2_2690 on(release) goes to creditMenu.

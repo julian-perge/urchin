@@ -1,6 +1,6 @@
 # Capability map: UI overhaul, menus and Windows
 
-Source issue: [#107](https://github.com/julian-perge/urchin/issues/107). This map covers Title and slots, Hub, Inventory, Store, Abilities and Victory. The other Screens (Game Manual) and the tooltips get their own spec sessions and are not in this map. Game over, Ending, the World map and Credits got their own spec sessions and are in the map as `game-over`, `ending`, `world-map` and `credits`.
+Source issue: [#107](https://github.com/julian-perge/urchin/issues/107). This map covers Title and slots, Hub, Inventory, Store, Abilities and Victory. The tooltips get their own spec session and are not in this map. Game over, Ending, the World map, Game Manual and Credits got their own spec sessions and are in the map as `game-over`, `ending`, `world-map`, `game-manual` and `credits`.
 
 Commands, project structure and code style are in [AGENTS.md](../AGENTS.md). Terms are in [GLOSSARY.md](../GLOSSARY.md). The workflow is in `docs/agents/workflow.md`.
 
@@ -19,9 +19,10 @@ Commands, project structure and code style are in [AGENTS.md](../AGENTS.md). Ter
 | victory | KRINMENU label `win`, a Window on the Hub: XP rows, drops, Proceed ([#122](https://github.com/julian-perge/urchin/issues/122)) | [107-victory.md](107-victory.md) | window-shell, hub, inventory |
 | ending | `endMenu` (116), the Ending Screen after CS_CUT5: the `ENDING` text and OK! ([#363](https://github.com/julian-perge/urchin/issues/363)) | [107-ending.md](107-ending.md) | ui-foundation, title-slots |
 | world-map | Root frame `overMap`: the map art and frame, the zone buttons and their faces, the links and the zone tooltip ([#361](https://github.com/julian-perge/urchin/issues/361)) | [107-world-map.md](107-world-map.md) | ui-foundation, hub |
+| game-manual | `designMenu` (124), the Game Manual Screen: two panels, five topics and the body text, opened from the title ([#365](https://github.com/julian-perge/urchin/issues/365)) | [107-game-manual.md](107-game-manual.md) | ui-foundation, title-slots |
 | credits | `creditMenu` (134): the Credits Screen, its seven role and name pairs and Back, opened from the title ([#366](https://github.com/julian-perge/urchin/issues/366)) | [107-credits.md](107-credits.md) | ui-foundation, title-slots |
 
-Build order: ui-foundation, then window-shell, title-slots and hub (independent of each other), then inventory, then store, abilities and victory. game-over, ending and credits need only title-slots. world-map needs only ui-foundation and hub.
+Build order: ui-foundation, then window-shell, title-slots and hub (independent of each other), then inventory, then store, abilities and victory. game-over, ending, game-manual and credits need only title-slots. world-map needs only ui-foundation and hub.
 
 Spec order: the same order. Each spec is approved before the next one is written.
 

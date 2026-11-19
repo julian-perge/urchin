@@ -23,6 +23,14 @@
    }
   }
  },
+ "game_manual": {
+  "scene": "res://test/fixtures/screen_rects/manual_screen.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 14
+   }
+  }
+ },
  "game_over": {
   "scene": "res://scenes/battle/game_over_screen.tscn",
   "modes": {
