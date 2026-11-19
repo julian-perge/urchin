@@ -8,6 +8,7 @@ extends GutTest
 const RECORD_PATH: String = "res://test/fixtures/screen_rects.json"
 const TEST_SCENE: String = "res://test/fixtures/screen_rects/victory_left_panel.tscn"
 const TOLERANCE: float = 0.5
+const DROP_SHADOW_SHADER: String = "res://scenes/drop_shadow.gdshader"
 
 var _save_before: PlayerSave
 
@@ -224,6 +225,32 @@ func _box_shadow_problems(path: String, node: Control, shadow: Dictionary) -> Ar
 # the port draws MODEL1's exact frame 1 matrices.
 
 
+# A drop_shadow piece is a CanvasGroup whose scenes/drop_shadow.gdshader draws the
+# DropShadow of a sprite's placement under everything the group holds. It has no
+# rect, so only the shader and the values of its uniforms are checked.
+func _drop_shadow_problems(root: Control, path: String, shadow: Dictionary) -> Array[String]:
+	var group: CanvasGroup = root.get_node_or_null(path) as CanvasGroup
+	if group == null:
+		return ["%s: no such CanvasGroup in the scene" % path]
+	var material: ShaderMaterial = group.material as ShaderMaterial
+	if material == null or material.shader == null or material.shader.resource_path != DROP_SHADOW_SHADER:
+		return ["%s: DropShadow: no ShaderMaterial with %s" % [path, DROP_SHADOW_SHADER]]
+	var found: Array[String] = []
+	for parameter: String in shadow:
+		var value: Variant = material.get_shader_parameter(parameter)
+		var expected: Variant = shadow[parameter]
+		var same: bool = false
+		if expected is String:
+			same = value is Color and _same_color(value, expected)
+		elif expected is Array:
+			same = value is Vector2 and (value as Vector2).is_equal_approx(Vector2(expected[0], expected[1]))
+		else:
+			same = (value is float or value is int) and is_equal_approx(float(value), float(expected))
+		if not same:
+			found.append("%s: shadow %s %s, expected %s" % [path, parameter, value, expected])
+	return found
+
+
 # An inner shadow overlay draws the DropShadow of a sprite's placement with a
 # ShaderMaterial, which takes the shadow's blur, distance and angle as they are.
 func _inner_shadow_problems(path: String, node: Control, shadow: Dictionary) -> Array[String]:
@@ -275,6 +302,9 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 		var entry: Dictionary = pieces[path]
 		if entry["kind"] == "doll":
 			found.append_array(_doll_problems(root, path, entry))
+			continue
+		if entry["kind"] == "drop_shadow":
+			found.append_array(_drop_shadow_problems(root, path, entry["shadow"]))
 			continue
 		if entry["kind"] == "point":
 			# A Node2D sits at the point with the placement's scale. A plain Control
@@ -1196,7 +1226,7 @@ func test_control_a_battle_piece_moved_20_px_fails() -> void:
 func test_control_a_top_status_bar_piece_moved_20_px_fails() -> void:
 	var pieces: Array[String] = []
 	for bar: String in ["Bar1", "Bar2"]:
-		for part: String in ["Inner/Backing", "Inner/PlayerName", "Inner/LifeNow", "Inner2/LifeFill", "Inner2/FocusFill", "Inner2/Frame"]:
+		for part: String in ["Clip/Inner/Backing", "Clip/Inner/PlayerName", "Clip/Inner/LifeNow", "Clip/Inner2/LifeFill", "Clip/Inner2/FocusFill", "Clip/Inner2/Frame"]:
 			pieces.append("TopStatusBar/%s/%s" % [bar, part])
 	for piece: String in pieces:
 		var root: Control = await _laid_out(BATTLE_SCENE)
@@ -1232,17 +1262,30 @@ func test_control_a_member_row_piece_moved_20_px_fails() -> void:
 func test_control_a_top_status_bar_with_no_mirror_or_a_wrong_color_fails() -> void:
 	var root: Control = await _laid_out(BATTLE_SCENE)
 	var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
-	(root.get_node("TopStatusBar/Bar2/Inner2") as Control).scale.x = 1.0
+	(root.get_node("TopStatusBar/Bar2/Clip/Inner2") as Control).scale.x = 1.0
 	await wait_process_frames(2)
 	assert_gt(_scene_problems(root, scene).size(), 0, "a right-hand bar with no mirror passed")
-	(root.get_node("TopStatusBar/Bar2/Inner2") as Control).scale.x = -1.0
+	(root.get_node("TopStatusBar/Bar2/Clip/Inner2") as Control).scale.x = -1.0
 	await wait_process_frames(2)
 	assert_eq(_scene_problems(root, scene), [] as Array[String], "the mirror restored passes")
-	(root.get_node("TopStatusBar/Bar1/Inner/PlayerName") as Label).add_theme_color_override("font_color", Color.MAGENTA)
+	(root.get_node("TopStatusBar/Bar1/Clip/Inner/PlayerName") as Label).add_theme_color_override("font_color", Color.MAGENTA)
 	await wait_process_frames(2)
 	var found: Array[String] = _scene_problems(root, scene)
 	assert_gt(found.size(), 0, "a name in the wrong color passed")
-	assert_string_contains(found[0] if found else "", "TopStatusBar/Bar1/Inner/PlayerName")
+	assert_string_contains(found[0] if found else "", "TopStatusBar/Bar1/Clip/Inner/PlayerName")
+
+
+# Each status bar's Clip draws the DropShadow of its placement. A blur other than
+# the SWF's, or a Clip with no shader, fails.
+func test_control_a_status_bar_shadow_with_another_blur_or_no_shader_fails() -> void:
+	var root: Control = await _laid_out(BATTLE_SCENE)
+	var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
+	var clip: CanvasGroup = root.get_node("TopStatusBar/Bar3/Clip")
+	var material: ShaderMaterial = clip.material
+	material.set_shader_parameter("blur", Vector2(4.0, 5.0))
+	_assert_one_problem(_scene_problems(root, scene), "TopStatusBar/Bar3/Clip: shadow blur")
+	clip.material = null
+	_assert_one_problem(_scene_problems(root, scene), "TopStatusBar/Bar3/Clip: DropShadow: no ShaderMaterial")
 
 
 const MANUAL_SCENE: String = "res://scenes/ui/menu/manual_panel.tscn"

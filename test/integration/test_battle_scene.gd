@@ -1280,29 +1280,107 @@ func test_the_retreat_button_shows_the_original_quit_tooltip():
 	ZoneManager.auto_switch_scenes = true
 
 
-# The pass button covers krinToMove, whose load script sets its tooltip for
-# each mode (frame_217/PlaceObject2_2427_484/CLIPACTIONRECORD
-# onClipEvent(load).as). The test reads the texts from tooltip_look.json.
-func test_the_pass_button_shows_the_original_idle_tooltip_for_the_mode():
-	var texts: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/tooltip_look.json"))["pass_button"]
-	GameData.current_save = PlayerSave.new_game("PassTooltipTest", 0)
-	ZoneManager.auto_switch_scenes = false
-	ZoneManager.pending_battle = {}
-	var scene = add_child_autofree(BattleSceneRes.instantiate())
-	scene.animation_speed = 0.0
-	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+# The pass button covers krinToMove, whose load script sets its idle tooltip
+# for the battle's mode once, when the battle loads
+# (frame_217/PlaceObject2_2427_484/CLIPACTIONRECORD onClipEvent(load).as). So a
+# mode that changes later, as it does when the player dies on Heroic, leaves
+# the texts as they are. The test reads them from tooltip_look.json.
+func test_the_pass_button_shows_the_idle_tooltip_of_the_mode_the_battle_loaded_in():
+	var texts: Dictionary = _pass_texts()
+	for mode in [["turn_based", CombatUnit.Difficulty.NORMAL], ["real_time", CombatUnit.Difficulty.HARD]]:
+		GameData.current_save = PlayerSave.new_game("PassTooltipTest", 0)
+		GameData.current_save.difficulty = mode[1]
+		ZoneManager.auto_switch_scenes = false
+		ZoneManager.pending_battle = {}
+		var scene = add_child_autofree(BattleSceneRes.instantiate())
+		scene.animation_speed = 0.0
+		scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+		var pass_button: Button = scene.get_node("BottomBar/PassButton")
+		scene._turn_based = not scene._turn_based
+		pass_button.mouse_entered.emit()
+		assert_eq(_shown_tooltip_texts(), [texts["title"], texts[mode[0]]["idle"]], mode[0])
+		pass_button.mouse_exited.emit()
+		assert_false(GameTooltip._root.visible)
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+
+
+# A pick shows the ability's icon over the alert icon, and krinToMove's tooltip
+# names the ability and its target (frame_42/DoAction_11.as:105-109). When the
+# fight starts, the body says the pick can't be undone, and the player's own
+# action hides the icon and puts the idle texts back
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 396-399 and 777-781).
+# Veradux acts first here, so the fight text stays up through his action.
+func test_a_pick_shows_its_icon_and_text_on_the_pass_button_until_the_players_action():
+	var texts: Dictionary = _pass_texts()
+	var scene = _battle_100_in_its_own_viewport("PassIcon")
+	var icon: TextureRect = scene.get_node("BottomBar/MoveIcon")
 	var pass_button: Button = scene.get_node("BottomBar/PassButton")
-	assert_true(scene._turn_based, "a new game's difficulty is turn-based")
+	assert_false(icon.visible, "no pick, so the alert icon under it shows")
+	await wait_until(func(): return scene.decision_open, 5)
+	scene.units[3].team_adder = scene.units[1].team_adder - 1
+	scene.animation_speed = 2.0
+
+	_pick_the_first_move_on_the_enemy(scene)
+	var move: Ability = MoveManagerAuto.moves_by_id[int(scene.units[1].equipped_moves[0])]
+	assert_true(icon.visible, "the pick shows its icon")
+	assert_eq(icon.texture, RadialMenu.icon_texture(move))
+	assert_not_null(icon.texture, "sanity: the move has an icon")
 	pass_button.mouse_entered.emit()
-	assert_eq(_shown_tooltip_texts(), [texts["title"], texts["turn_based"]])
-	pass_button.mouse_exited.emit()
-	assert_false(GameTooltip._root.visible)
-	scene._turn_based = false
-	pass_button.mouse_entered.emit()
-	assert_eq(_shown_tooltip_texts(), [texts["title"], texts["real_time"]])
+	assert_eq(_shown_tooltip_texts(), [move.display_name, texts["picked"] % scene.units[2].player_name])
+
+	var fight_texts: Array = [move.display_name, texts["turn_based"]["action"]]
+	assert_true(await wait_until(func(): return _shown_tooltip_texts() == fight_texts, 5), "the fight text shows")
+	assert_true(icon.visible, "the icon stays until the player acts")
+	assert_true(await wait_until(func(): return not icon.visible, 10), "the player's action hides the icon")
+	assert_true(scene.get_node("BottomBar/AlertIcon").visible)
+	assert_eq(_shown_tooltip_texts(), [texts["title"], texts["turn_based"]["idle"]])
+
 	GameTooltip.hide_tooltip()
 	GameData.current_save = null
 	ZoneManager.auto_switch_scenes = true
+
+
+# Button 3383 draws a thin ring in its up state and a thick one in its over and
+# down states, and krinToMove sits under it. extract_pass_button writes each
+# state's art and where it goes, and the up state's rect is the button's own.
+func test_the_pass_button_draws_each_states_extracted_art_where_the_swf_puts_it():
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ui/battle/pass_button.json"))
+	var scene = _battle_100_in_its_own_viewport("PassArt")
+	var pass_button: Button = scene.get_node("BottomBar/PassButton")
+	var up: Rect2 = _json_rect(layout["states"]["up"]["rect"])
+	assert_true(_rects_close(pass_button.get_global_rect(), up), "the button covers its up art")
+	for pair in [["normal", "up"], ["hover", "over"], ["pressed", "down"]]:
+		var style := pass_button.get_theme_stylebox(pair[0]) as StyleBoxTexture
+		assert_not_null(style, "%s draws a texture" % pair[0])
+		if style == null:
+			continue
+		var state: Dictionary = layout["states"][pair[1]]
+		assert_eq(style.texture, load(state["texture"]), pair[0])
+		var drawn := Rect2(
+			up.position - Vector2(style.expand_margin_left, style.expand_margin_top),
+			up.size + Vector2(style.expand_margin_left + style.expand_margin_right, style.expand_margin_top + style.expand_margin_bottom)
+		)
+		assert_true(_rects_close(drawn, _json_rect(state["rect"])), "%s art at %s" % [pair[0], drawn])
+	var icon: TextureRect = scene.get_node("BottomBar/MoveIcon")
+	assert_true(_rects_close(icon.get_global_rect(), _json_rect(layout["icon"])), "the icon at %s" % icon.get_global_rect())
+	var bar: Node = scene.get_node("BottomBar")
+	assert_true(bar.get_node("AlertIcon").get_index() < icon.get_index() and icon.get_index() < pass_button.get_index(), "the icon draws over the alert icon and under the button")
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+
+
+func _pass_texts() -> Dictionary:
+	return JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/tooltip_look.json"))["pass_button"]
+
+
+func _json_rect(entry: Dictionary) -> Rect2:
+	return Rect2(entry["x"], entry["y"], entry["w"], entry["h"])
+
+
+# pass_button.json rounds its rects to 0.01 px.
+func _rects_close(a: Rect2, b: Rect2) -> bool:
+	return a.position.distance_to(b.position) < 0.01 and a.end.distance_to(b.end) < 0.01
 
 
 func _shown_tooltip_texts() -> Array:

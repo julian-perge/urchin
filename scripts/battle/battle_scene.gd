@@ -63,6 +63,9 @@ const COST_FAILURE_MESSAGES: Dictionary[BattleRunner.FailReason, String] = {
 # MENU[37] (frame_1/DoAction.as:245), which the original's click listener puts
 # in the Combat text banner.
 const CANNOT_MOVE_YET_MESSAGE: String = "You cannot move yet. Please wait until the 'ring' is blue, then click on a target."
+# extract_pass_button writes where the pass button's art for each state and the
+# picked ability's icon go.
+const PASS_LAYOUT_PATH: String = "res://assets/ui/battle/pass_button.json"
 
 # At 1.0 the battle plays at the original's pace, and at 0.0 it plays at once,
 # as the tests run it. It scales the battle clock.
@@ -95,6 +98,16 @@ var _decision_timer: float = 0.0
 # a half-turn ends with the player's unit dead (conductor lines 200-202). While
 # it is true the decision waits for the player and the clock does not move.
 var _turn_based: bool = true
+# The tooltip of krinToMove, the icon under the pass button. Its load script
+# sets the idle texts of the battle's mode, a pick names the ability and its
+# target, the fight swaps a pick's body for the mode's action text, and the
+# player's own action puts the idle texts back.
+var _pass_title: String = ""
+var _pass_body: String = ""
+# The idle and action bodies of the mode the battle loaded in. The load script
+# reads turnBasedKrin once, so a later change of mode keeps them.
+var _pass_bodies: Dictionary = {}
+var _pass_hovered: bool = false
 # The original's BattleTimeNow, in SWF frames, which the clock shows. The
 # conductor sets it to 0 when a half-turn ends and to BattleTimeLimit while the
 # other side decides or a half-turn plays (frame_217/PlaceObject2_3389_480
@@ -165,6 +178,8 @@ var _buff_tick_due: bool = false
 @onready var stance_host: Control = $BottomBar/StanceHost
 @onready var _combat_log: CombatLogPanel = $BottomBar/RightPanel/CombatLogPanel
 @onready var _fade_black: ColorRect = $Fade/Black
+@onready var _pass_button: Button = $BottomBar/PassButton
+@onready var _move_icon: TextureRect = $BottomBar/MoveIcon
 
 
 func _ready():
@@ -182,15 +197,13 @@ func _ready():
 	]
 	retreat.mouse_entered.connect(func(): GameTooltip.show_sections(quit_sections, retreat))
 	retreat.mouse_exited.connect(GameTooltip.hide_tooltip)
-	# The pass button covers krinToMove, the ability icon at the clock's
-	# centre, whose idle tooltip names no ability and says what a click does in
-	# each mode (frame_217/PlaceObject2_2427_484/CLIPACTIONRECORD
-	# onClipEvent(load).as). Its parent sets chimney, so it shows at once.
-	var pass_button: Button = $BottomBar/PassButton
-	pass_button.mouse_entered.connect(func():
-		var texts: Dictionary = TooltipTheme.look()["pass_button"]
-		GameTooltip.show_title_and_body(texts["title"], texts["turn_based" if _turn_based else "real_time"], pass_button))
-	pass_button.mouse_exited.connect(GameTooltip.hide_tooltip)
+	_dress_pass_button()
+	_pass_button.mouse_entered.connect(func():
+		_pass_hovered = true
+		_show_pass_tooltip())
+	_pass_button.mouse_exited.connect(func():
+		_pass_hovered = false
+		GameTooltip.hide_tooltip())
 	if not ZoneManager.pending_battle.is_empty():
 		start_battle(ZoneManager.pending_battle)
 		ZoneManager.pending_battle = {}
@@ -276,6 +289,8 @@ func start_battle(info: Dictionary) -> void:
 	_log("=== battle %s start: %s ===" % [info.get("battle_id"), str(info)])
 	var save: PlayerSave = GameData.current_save
 	_turn_based = save.difficulty != CombatUnit.Difficulty.HARD
+	_pass_bodies = TooltipTheme.look()["pass_button"]["turn_based" if _turn_based else "real_time"]
+	_reset_pass_button()
 	units = BattleSetup.build_units(
 		battle, save, UnitManagerAuto.units_by_id, ItemManagerAuto.items_by_id, save.difficulty,
 		int(info.get("train_cap", BattleSetup.DEFAULT_TRAIN_CAP))
@@ -438,6 +453,7 @@ func _spawn_impact(target_slot: int, move: Ability, result: MoveResult) -> void:
 func _on_radial_move_picked(bar_index: int, move_id: int, target_slot: int) -> void:
 	_selected_move = {"bar_index": bar_index, "move_id": move_id, "target_slot": target_slot}
 	decision_open = false
+	_show_pick_on_pass_button(move_id, target_slot)
 
 
 # --- bottom bar: stances + clock + retreat ---------------------------------
@@ -554,6 +570,7 @@ func _battle_loop() -> void:
 		if not is_inside_tree() or _finished:
 			return
 		_battle_time_now = BattleRunner.BATTLE_TIME_LIMIT
+		_lock_pass_button_for_the_fight()
 		var action: Dictionary = _selected_move.duplicate()
 		_selected_move = {}
 		if not action.is_empty():
@@ -599,6 +616,75 @@ func _on_pass_pressed() -> void:
 		return
 	_selected_move = {}
 	decision_open = false
+
+
+# Gives the pass button the art of each state from extract_pass_button. The
+# scene puts the button on its up art's rect, so the art of each other state
+# reaches past the button by the space between the two rects. krinToMove's
+# icon goes where the layout puts it.
+func _dress_pass_button() -> void:
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(PASS_LAYOUT_PATH))
+	var states: Dictionary = layout["states"]
+	var up: Rect2 = _layout_rect(states["up"]["rect"])
+	for pair in [["normal", "up"], ["hover", "over"], ["pressed", "down"]]:
+		var state: Dictionary = states[pair[1]]
+		var art: Rect2 = _layout_rect(state["rect"])
+		var style := StyleBoxTexture.new()
+		style.texture = load(state["texture"])
+		style.expand_margin_left = up.position.x - art.position.x
+		style.expand_margin_top = up.position.y - art.position.y
+		style.expand_margin_right = art.end.x - up.end.x
+		style.expand_margin_bottom = art.end.y - up.end.y
+		_pass_button.add_theme_stylebox_override(pair[0], style)
+	var icon: Rect2 = _layout_rect(layout["icon"])
+	_move_icon.global_position = icon.position
+	_move_icon.size = icon.size
+
+
+func _layout_rect(entry: Dictionary) -> Rect2:
+	return Rect2(entry["x"], entry["y"], entry["w"], entry["h"])
+
+
+# Shows krinToMove's tooltip while the pointer is on the pass button. The icon's
+# parent sets chimney, so the tooltip shows at once, and the icon sets the
+# texts again on every frame, so a change shows while the pointer stays
+# (DefineSprite_2427/frame_1/PlaceObject2_2241_11 onClipEvent(enterFrame)).
+func _show_pass_tooltip() -> void:
+	if _pass_hovered:
+		GameTooltip.show_title_and_body(_pass_title, _pass_body, _pass_button)
+
+
+# Hides the icon, so the alert icon under it shows, and sets the idle texts.
+# The load script does this when the battle loads, and the conductor does it
+# when the player's own action dispatches, whatever that action does
+# (frame_217/PlaceObject2_2427_484 onClipEvent(load) and
+# frame_217/PlaceObject2_3389_480 enterFrame, lines 393-399, 496-498 and
+# 546-548).
+func _reset_pass_button() -> void:
+	_move_icon.visible = false
+	_pass_title = TooltipTheme.look()["pass_button"]["title"]
+	_pass_body = _pass_bodies["idle"]
+	_show_pass_tooltip()
+
+
+# addMoveForPlayer shows the picked ability's icon and names the ability and
+# its target in the tooltip (frame_42/DoAction_11.as:105-109).
+func _show_pick_on_pass_button(move_id: int, target_slot: int) -> void:
+	var move: Ability = MoveManagerAuto.moves_by_id[move_id]
+	_move_icon.texture = RadialMenu.icon_texture(move)
+	_move_icon.visible = true
+	_pass_title = move.display_name
+	_pass_body = TooltipTheme.look()["pass_button"]["picked"] % units[target_slot].player_name
+	_show_pass_tooltip()
+
+
+# When the fight starts, the conductor swaps a pick's body for the mode's
+# action text, and leaves an idle body as it is (frame_217/PlaceObject2_3389_480
+# enterFrame, lines 777-781).
+func _lock_pass_button_for_the_fight() -> void:
+	if _pass_body != _pass_bodies["idle"]:
+		_pass_body = _pass_bodies["action"]
+		_show_pass_tooltip()
 
 
 func _on_log_toggle_pressed() -> void:
@@ -673,6 +759,8 @@ func _wait_until_due(event: Dictionary) -> void:
 		BattleRunner.EventType.MOVE, BattleRunner.EventType.STUNNED, BattleRunner.EventType.MOVE_FAILED, BattleRunner.EventType.PASSED:
 			await _wait_for_dispatch()
 			_start_action(event["type"] == BattleRunner.EventType.MOVE)
+			if int(event["caster_slot"]) == BattleRunner.PLAYER_SLOT:
+				_reset_pass_button()
 		BattleRunner.EventType.BUFF_TICK:
 			await _reach_buff_tick()
 		_:
