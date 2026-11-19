@@ -33,6 +33,12 @@
 #     capture. Only pixels where the shrunk reference is opaque are scored.
 #   - A pixel's difference is the largest of its three channel differences,
 #     and the score is the 99th percentile, as verify_battle_screen.py reads.
+#   - A piece with a `steam` placement in SCENES is drawn where the Steam
+#     build, SONNY2.swf, places it, because the port puts it there and the
+#     rect test checks it against that build. The frame is rendered as runs of
+#     consecutive depths, each run moved by its pieces' offset or not moved,
+#     and the runs are drawn over each other in depth order, so the pieces
+#     between them keep their stacking.
 #   - The must-fail control scores the same capture against the reference
 #     moved 20 px to the right. A mode passes when its score is at or under
 #     its bar and the control is over the bar.
@@ -45,13 +51,13 @@ import argparse
 import json
 import math
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
 
-from urchin_dev import REPO_ROOT, WEB_SWF
+from urchin_dev import REPO_ROOT, STEAM_SWF, WEB_SWF
 from urchin_dev.swf import render, strip, timeline
 from urchin_dev.swf.extract import screen_rects, window_chrome
 from urchin_dev.swf.swf_index import SwfIndex, character_kind, read_swf
@@ -90,6 +96,9 @@ class Entry:
     modes: dict[str, Mode]
     left_out: tuple[int, ...] = ()
     compare_strip: tuple[int, ...] = ()
+    # (web, steam) for each piece the port puts where the Steam build places
+    # it: the depth or instance name of its placement in each build.
+    steam: tuple[tuple[int | str, int | str], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -114,6 +123,26 @@ def panel_depths(
             )
         depths.append(piece.depth)
     return tuple(depths)
+
+
+def steam_pairs(
+    scene: screen_rects.Scene, where: str
+) -> tuple[tuple[int | str, int | str], ...]:
+    """-> (web, steam) for each piece of `scene` with a Steam placement, once
+    for each pair."""
+    pairs = []
+    for node, piece in scene.pieces.items():
+        if piece.steam is None:
+            continue
+        if piece.inner_depth is not None or piece.via:
+            raise CompareError(
+                f"{where}: {node} has a Steam placement inside a sprite, and only"
+                " a depth of the frame can be moved"
+            )
+        pair = (piece.depth if piece.instance is None else piece.instance, piece.steam)
+        if pair not in pairs:
+            pairs.append(pair)
+    return tuple(pairs)
 
 
 def load_config(
@@ -165,6 +194,7 @@ def load_config(
             modes,
             scene.left_out,
             scene.compare_strip,
+            steam_pairs(scene, name),
         )
     return entries
 
@@ -287,6 +317,69 @@ def left_out_ids(layers: dict[int, int], depths: Iterable[int], where: str) -> s
     return found
 
 
+def steam_offsets(
+    layers: dict[int, timeline.Layer],
+    steam_layers: dict[int, timeline.Layer],
+    pairs: Iterable[tuple[int | str, int | str]],
+    where: str,
+) -> dict[int, tuple[float, float]]:
+    """-> the web depth of each piece in `pairs` and how far, in design px,
+    the Steam build moves it. layers and steam_layers are the same frame of
+    the web and the Steam build."""
+    offsets: dict[int, tuple[float, float]] = {}
+    for web, steam in pairs:
+        try:
+            layer = screen_rects.placed_layer(layers, web, str(web), where)
+            steam_layer = screen_rects.placed_layer(
+                steam_layers, steam, str(steam), f"{where} of the Steam build"
+            )
+            offset = screen_rects.steam_offset(layer.matrix, steam_layer.matrix)
+        except ValueError as error:
+            raise CompareError(str(error)) from error
+        depth = next(d for d, placed in layers.items() if placed is layer)
+        if offsets.setdefault(depth, offset) != offset:
+            raise CompareError(
+                f"{where}: depth {depth} moves by {offsets[depth]} and by {offset}"
+            )
+    return offsets
+
+
+def depth_runs(
+    layers: dict[int, timeline.Layer], offsets: dict[int, tuple[float, float]]
+) -> list[tuple[tuple[int, ...], tuple[float, float]]]:
+    """-> the depths of `layers` in order, cut into runs of consecutive depths
+    that move by the same offset, each with its offset. Raises when a clip
+    mask and a depth it clips fall in two runs, since a render of one run
+    draws no mask from another. Raises too when a depth after the first run
+    has a blend mode that mixes with what lies under it, since a render of
+    one run draws nothing from the runs under it."""
+    runs: list[tuple[list[int], tuple[float, float]]] = []
+    for depth in sorted(layers):
+        offset = offsets.get(depth, (0.0, 0.0))
+        if runs and runs[-1][1] == offset:
+            runs[-1][0].append(depth)
+        else:
+            runs.append(([depth], offset))
+    run_of = {depth: n for n, (depths, _) in enumerate(runs) for depth in depths}
+    for depth, layer in layers.items():
+        if layer.clip_depth is None:
+            continue
+        clipped = [d for d in layers if depth < d <= layer.clip_depth]
+        if any(run_of[d] != run_of[depth] for d in clipped):
+            raise CompareError(
+                f"the clip mask at depth {depth} clips depths that move apart from it"
+            )
+    for depth, layer in layers.items():
+        # Blend modes 0 and 1 are normal and 2 is layer. These three draw the
+        # same with nothing under them, and every higher mode does not.
+        if run_of[depth] > 0 and (layer.blend_mode or 0) > 2:
+            raise CompareError(
+                f"the blend mode at depth {depth} mixes with depths in an earlier"
+                " run, which its own render does not draw"
+            )
+    return [(tuple(depths), offset) for depths, offset in runs]
+
+
 def through_hub(index: SwfIndex, frame: int, **job) -> render.Job:
     """-> a job that renders KRINMENU on `frame` inside the Hub frame. The
     backdrop's Bevel, Glow and DropShadow belong to KRINMENU's Stage placement,
@@ -346,15 +439,64 @@ def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
     return render.Job(entry.timeline, frame, ZOOM, origin, strip=stripped)
 
 
-def render_reference(index: SwfIndex, entry: Entry, mode: str) -> Image.Image:
+def reference_jobs(
+    index: SwfIndex, entry: Entry, mode: str, steam_index: SwfIndex | None
+) -> list[tuple[render.Job, tuple[float, float]]]:
+    """-> the jobs that render the entry's reference, each with how far, in
+    design px, to move what it draws. An entry with no Steam piece is one job
+    that is not moved."""
+    job = reference_job(index, entry, mode)
+    if not entry.steam:
+        return [(job, (0.0, 0.0))]
+    if entry.timeline == window_chrome.KRINMENU:
+        raise CompareError(
+            f"{entry.frame}: a KRINMENU reference renders through the Hub frame,"
+            " and it cannot move a Steam piece"
+        )
+    if steam_index is None:
+        raise CompareError(
+            f"{entry.frame}: the entry has Steam pieces, and no Steam build was given"
+        )
+    frame = timeline.frame_of(index, entry.timeline, entry.frame)
+    layers = timeline.frames(index, entry.timeline)[frame - 1]
+    steam_frame = timeline.frame_of(steam_index, entry.timeline, entry.frame)
+    steam_layers = timeline.frames(steam_index, entry.timeline)[steam_frame - 1]
+    offsets = steam_offsets(layers, steam_layers, entry.steam, entry.frame)
+    if job.only_depths:
+        layers = {d: layer for d, layer in layers.items() if d in job.only_depths}
+    return [
+        (replace(job, only_depths=depths), offset)
+        for depths, offset in depth_runs(layers, offsets)
+    ]
+
+
+def composite(
+    cuts: Iterable[tuple[tuple[float, float], Image.Image, tuple[float, float]]],
+    size: tuple[int, int],
+    zoom: float,
+) -> Image.Image:
+    """-> each cut, given as (its x and y on the Stage, its image, its offset),
+    drawn in order on a clear canvas of `size` pixels at `zoom`."""
+    canvas = Image.new("RGBA", size, (0, 0, 0, 0))
+    for (x, y), image, (dx, dy) in cuts:
+        canvas.alpha_composite(image, (round((x + dx) * zoom), round((y + dy) * zoom)))
+    return canvas
+
+
+def render_reference(
+    index: SwfIndex, entry: Entry, mode: str, steam_index: SwfIndex | None = None
+) -> Image.Image:
     """-> ffdec's render of the entry's frame on a Stage canvas, at 1x."""
-    with render.frames(WEB_SWF, [reference_job(index, entry, mode)]) as (frame,):
-        cut = render.trim(frame)
-        if cut is None:
+    jobs = reference_jobs(index, entry, mode, steam_index)
+    with render.frames(WEB_SWF, [job for job, _ in jobs]) as rendered:
+        cuts = []
+        for frame, (_job, offset) in zip(rendered, jobs, strict=True):
+            cut = render.trim(frame)
+            if cut is not None:
+                cuts.append((cut.rect[:2], cut.image, offset))
+        if not cuts:
             raise CompareError(f"{entry.frame}, mode {mode}: ffdec drew nothing")
-        canvas = Image.new("RGBA", (STAGE[0] * ZOOM, STAGE[1] * ZOOM), (0, 0, 0, 0))
-        at = (round(cut.rect[0] * ZOOM), round(cut.rect[1] * ZOOM))
-        canvas.alpha_composite(cut.image, at)
+        canvas = composite(cuts, (STAGE[0] * ZOOM, STAGE[1] * ZOOM), ZOOM)
     return canvas.resize(STAGE, Image.Resampling.LANCZOS)
 
 
@@ -385,7 +527,14 @@ def missing_captures(shots: Path, name: str, modes: Iterable[str]) -> list[str]:
     return lines
 
 
-def compare(index: SwfIndex, name: str, entry: Entry, mode: str, shots: Path) -> bool:
+def compare(
+    index: SwfIndex,
+    name: str,
+    entry: Entry,
+    mode: str,
+    shots: Path,
+    steam_index: SwfIndex | None = None,
+) -> bool:
     """Score one mode, print its line and save its reference and its diff.
     -> whether it passes."""
     magenta, green = (
@@ -395,7 +544,7 @@ def compare(index: SwfIndex, name: str, entry: Entry, mode: str, shots: Path) ->
     record = json.loads(screen_rects.RECORD.read_text())
     for rect in masked_boxes(record, entry.scene):
         mask &= ~box_mask(mask.shape, rect)
-    image = render_reference(index, entry, mode)
+    image = render_reference(index, entry, mode, steam_index)
     image.save(shots / name / f"{mode}_reference.png")
     reference = np.asarray(image, dtype=np.int16)
     found = score(magenta, reference, mask)
@@ -445,7 +594,11 @@ def main():
             " savePath:\n" + "\n".join(missing)
         )
     index = read_swf(WEB_SWF)
-    results = [compare(index, args.entry, entry, mode, args.shots) for mode in modes]
+    steam_index = read_swf(STEAM_SWF) if entry.steam else None
+    results = [
+        compare(index, args.entry, entry, mode, args.shots, steam_index)
+        for mode in modes
+    ]
     if not all(results):
         raise SystemExit(1)
 
