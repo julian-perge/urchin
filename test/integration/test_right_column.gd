@@ -112,14 +112,13 @@ func test_show_sell_button_shows_and_hides_the_sell_slot():
 func test_a_hidden_sell_slot_refuses_a_drop_and_sells_nothing():
 	var column: RightColumn = add_child_autofree(RightColumnScene.instantiate())
 	var item: GameItem = _make_item(100.0)
-	var default_tooltip: String = column.sell_button.tooltip_text
 	var at_position: Vector2 = column.sell_button.get_rect().get_center()
 	column.show_sell_button(false)
 	watch_signals(column)
 	assert_false(column._can_drop_data(at_position, {"item": item}))
 	column._drop_data(at_position, {"item": item})
 	assert_signal_not_emitted(column, "sell_pressed")
-	assert_eq(column.sell_button.tooltip_text, default_tooltip)
+	assert_false(GameTooltip._root.visible, "a hidden sell slot shows no price")
 
 
 func test_the_grid_holds_36_slots_in_save_order():

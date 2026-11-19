@@ -1198,6 +1198,7 @@ func test_the_retreat_button_shows_the_original_quit_tooltip():
 
 	GameTooltip.hide_tooltip()
 	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
 
 
 # The pass button covers krinToMove, whose load script sets its tooltip for
@@ -1222,6 +1223,7 @@ func test_the_pass_button_shows_the_original_idle_tooltip_for_the_mode():
 	assert_eq(_shown_tooltip_texts(), [texts["title"], texts["real_time"]])
 	GameTooltip.hide_tooltip()
 	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
 
 
 func _shown_tooltip_texts() -> Array:
@@ -1231,7 +1233,6 @@ func _shown_tooltip_texts() -> Array:
 			for label in section.get_child(0).get_children():
 				shown.append(label.text)
 	return shown
-	ZoneManager.auto_switch_scenes = true
 
 
 # A heal bigger than an sswitch target's life kills it, and the original plays
