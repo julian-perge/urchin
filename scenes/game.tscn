@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b72a78kxlnpmh"]
+[gd_scene load_steps=11 format=3 uid="uid://b72a78kxlnpmh"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="PackedScene" uid="uid://brmx4sa7xb3xq" path="res://scenes/ui/store/store_window.tscn" id="2_store"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/achievements_window.tscn" id="7_achwin"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hub_card.tscn" id="8_hubcard"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/victory_window.tscn" id="9_victory"]
+[ext_resource type="Script" path="res://scripts/ui/hub_fade.gd" id="10_fade"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -66,3 +67,8 @@ layout_mode = 1
 [node name="Hotbar" parent="." instance=ExtResource("4_hotbar")]
 
 [node name="HubCard" parent="." instance=ExtResource("8_hubcard")]
+
+[node name="HubFade" type="ColorRect" parent="."]
+layout_mode = 0
+mouse_filter = 2
+script = ExtResource("10_fade")

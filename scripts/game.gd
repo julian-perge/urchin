@@ -51,6 +51,7 @@ func _ready():
 		if window != null:
 			window.get_node("WindowShell").close_pressed.connect(_on_hint_window_closed)
 	$VictoryWindow.proceed_pressed.connect(_on_victory_proceed)
+	$ZoneMapOverlay.zone_picked.connect($HubFade.restart.unbind(1))
 	if not ZoneManager.pending_victory.is_empty():
 		_open_victory(ZoneManager.pending_victory)
 		ZoneManager.pending_victory = {}
