@@ -77,7 +77,7 @@ res://
 │   │                              #   the 3 orbs at positions extracted from the original SWF
 │   ├── zone_map.tscn              # World map overlay (7 buttons at SWF-extracted positions)
 │   ├── battle_scene.tscn          # Playable battle screen (dolls, input, audio, victory flow)
-│   ├── character_visual.tscn      # Paper-doll character (plain Node2D parts, MODEL1 rest pose)
+│   ├── character_visual.tscn      # Paper-doll character (plain Node2D parts, the model's rest pose)
 │   ├── orb.tscn                   # Base interactive zone orb visual
 │   ├── button.gdshader, orb.gdshader
 │   └── ui/
@@ -104,7 +104,7 @@ res://
 │   │   ├── party.gd               # Story companions: roster/joins/deployment, stats, XP
 │   │   ├── equipment.gd           # Equip validation (slot/level/unit rules) + stat transfer
 │   │   ├── achievements.gd        # Grant table, battle counters, global persistence
-│   │   ├── character_visual.gd    # Paper-doll: MODEL1 rest pose, dressChar port, animation states
+│   │   ├── character_visual.gd    # Paper-doll: MODEL1 and MODEL4 clips, dressChar port, animation states
 │   │   └── enemy.gd, player.gd    # still empty stubs
 │   ├── zones/                     # Zone navigation (map panel, background sync) + zone_progression.gd
 │   │                              #   (story/training battle selection, quest progress, zone unlocks)
