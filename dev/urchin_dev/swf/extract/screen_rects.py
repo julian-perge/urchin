@@ -2074,9 +2074,9 @@ def _doll_scale(placed: dict[str, timeline.Layer], rig: dict) -> tuple[float, fl
     """-> the x and y scale (sx, sy) of the doll, where each placed part's
     matrix is the rig's matrix for that part with its x row times sx and its y
     row times sy. Each is the least squares fit over every part. The male set
-    has sx = -sy, and the _f set has a larger sx than sy. Raises when a part is
-    a different pose, another rotation or another scale, or when the doll is
-    not mirrored and upright."""
+    has sx = -sy, and the _f set's sx is further from 0 than its sy. Raises
+    when a part is a different pose, another rotation or another scale, or when
+    the doll is not mirrored and upright."""
     x_top = x_bottom = y_top = y_bottom = 0.0
     for name, layer in placed.items():
         a, b, c, d = layer.matrix[:4]
