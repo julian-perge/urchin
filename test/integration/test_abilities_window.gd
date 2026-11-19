@@ -433,21 +433,23 @@ func test_a_tree_node_with_no_point_is_covered_until_it_takes_one() -> void:
 
 # The tree places each icon, thing2, at its own size, so the disc covers the
 # same part of the icon as it does on a Radial menu orb. The port draws the
-# tree's icons smaller, and the disc shrinks with them. Every icon file is cut
-# to the box of disc.png, and the cover is rendered at the same zoom, so the
-# icon's size in stage px is disc.png's size over that zoom.
+# tree's icons smaller, and the disc shrinks with them. extract_ability_icons
+# renders the disc and cuts every icon to the box of disc.png at one zoom, so
+# the disc is as wide against the icon as cooldown_cover.png is against
+# disc.png.
 func test_the_talent_cover_sits_on_the_icons_centre_at_the_icons_scale() -> void:
 	var window: Control = _window()
 	var icon_rect: TextureRect = window.get_node("TreeNodes/Node0/IconRect")
 	var cover: TextureRect = _talent_cover(window, 0)
 	var rect: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ui/abilities/cooldown.json"))["cover"]
 	var cover_texture: Texture2D = load("res://assets/ui/abilities/cooldown_cover.png")
-	var zoom: float = cover_texture.get_width() / float(rect["w"])
-	var icon_size: float = (load(AbilityIcon.DISC_PATH) as Texture2D).get_width() / zoom
-	var icon_scale: float = icon_rect.size.x / icon_size
+	var icon_texture: Texture2D = load(AbilityIcon.DISC_PATH)
 	assert_eq(cover.texture, cover_texture, "the black disc that the Radial menu shows")
-	assert_almost_eq(cover.get_global_rect().get_center(), icon_rect.get_global_rect().get_center() + Vector2(rect["x"] + rect["w"] / 2.0, rect["y"] + rect["h"] / 2.0) * icon_scale, Vector2(0.01, 0.01), "on the icon's centre")
-	assert_almost_eq(cover.size, Vector2(rect["w"], rect["h"]) * icon_scale, Vector2(0.01, 0.01), "at the icon's scale")
+	assert_almost_eq(cover.size.x / icon_rect.size.x, float(cover_texture.get_width()) / icon_texture.get_width(), 0.0001, "as wide against the icon as in the art")
+	assert_almost_eq(cover.size.y / cover.size.x, float(rect["h"]) / float(rect["w"]), 0.0001, "and as tall against its width")
+	var px_per_stage_px: float = cover.size.x / float(rect["w"])
+	var rect_centre: Vector2 = Vector2(rect["x"] + rect["w"] / 2.0, rect["y"] + rect["h"] / 2.0)
+	assert_almost_eq(cover.get_global_rect().get_center(), icon_rect.get_global_rect().get_center() + rect_centre * px_per_stage_px, Vector2(0.01, 0.01), "on the icon's centre")
 
 
 # krinRemakeTree gives a node the element of its ID's move, and a passive

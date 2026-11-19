@@ -32,7 +32,7 @@ const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layou
 # and 50). extract_fade_steps writes the two steps and the two cover alphas to
 # this file. The alpha is in Flash's 1/256 steps (FlashAlpha).
 const FADE_PATH: String = "res://assets/ui/battle/radial_menu_fade.json"
-static var _fade_steps: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(FADE_PATH))
+static var _fade: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(FADE_PATH))
 # Render deltas that add up to a whole SWF frame can fall short of it by a float
 # rounding error, so a frame counts as passed within this margin.
 const FRAME_EPSILON: float = 0.000001
@@ -121,7 +121,7 @@ func _make_cover(texture: Texture2D, rect: Dictionary, centre: Vector2) -> Textu
 	cover.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	cover.position = centre + Vector2(rect["x"], rect["y"])
 	cover.size = Vector2(rect["w"], rect["h"])
-	cover.modulate.a = FlashAlpha.multiplier(FlashAlpha.from_percent(float(_fade_steps["cover_percent"])))
+	cover.modulate.a = FlashAlpha.multiplier(FlashAlpha.from_percent(float(_fade["cover_percent"])))
 	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	cover.visible = false
 	return cover
@@ -220,7 +220,7 @@ func open(target_slot: int, centre: Vector2) -> void:
 	position = centre
 	_alpha = 0
 	_fading_in = true
-	_set_cover_alpha(float(_fade_steps["cover_percent_fading_in"]))
+	_set_cover_alpha(float(_fade["cover_percent_fading_in"]))
 	modulate.a = 0.0
 	visible = true
 
@@ -244,13 +244,13 @@ func advance(delta: float, pointer: Vector2) -> void:
 func _play_frame(pointer: Vector2) -> void:
 	if _fading_in:
 		if FlashAlpha.to_percent(_alpha) < 100.0:
-			_alpha = FlashAlpha.add(_alpha, float(_fade_steps["fade_in_step"]))
+			_alpha = FlashAlpha.add(_alpha, float(_fade["fade_in_step"]))
 		else:
 			_alpha = FlashAlpha.from_percent(100.0)
 			_fading_in = false
-			_set_cover_alpha(float(_fade_steps["cover_percent"]))
+			_set_cover_alpha(float(_fade["cover_percent"]))
 	elif not _is_over_menu(pointer):
-		_alpha = FlashAlpha.add(_alpha, -float(_fade_steps["fade_out_step"]))
+		_alpha = FlashAlpha.add(_alpha, -float(_fade["fade_out_step"]))
 		if _alpha <= 0:
 			_close()
 			return
