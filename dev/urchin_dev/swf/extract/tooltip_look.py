@@ -15,6 +15,10 @@
 # that the sell slot names and pays.
 # spec/107-tooltips.md describes each one.
 #
+# From the SWF too: where the clip's inner2, the ability icon sheet, draws the
+# icon of the ability that the player holds in the Abilities window, from the
+# mouse.
+#
 # Run: uv run extract_tooltip_look
 from __future__ import annotations
 
@@ -23,7 +27,9 @@ import re
 import sys
 
 from urchin_dev import ACTION_SCRIPT, CONVERTED_JSON, WEB_SWF
+from urchin_dev.swf.extract import ability_icons, pass_button
 from urchin_dev.swf.swf_index import (
+    Placement,
     SwfIndex,
     first_fill_color,
     first_gradient,
@@ -39,6 +45,10 @@ BODY_BACKER = 2716
 # The labels whose frame scripts build text fields. GO5 only removes the stat
 # lines and goes to GO4 (DefineSprite_2717/frame_16/DoAction.as).
 LAYOUTS = ("GO", "GO2", "GO3", "GO4", "GO7")
+# The instance that shows the held ability's icon at the mouse. A press on a
+# pool ability sends it to that ability's frame
+# (DefineButton2_2437/BUTTONCONDACTION on(press).as).
+HELD_ICON_NAME = "inner2"
 # The names krinChangeColor gives an item rarity. Its other names tint other
 # clips.
 RARITIES = ("Common", "Uncommon", "Rare", "Orange", "Unique")
@@ -265,6 +275,34 @@ def backer_transforms(index: SwfIndex) -> tuple[dict, dict]:
     }
 
 
+def held_icon_placement(placements: list) -> Placement:
+    """-> the one placement of the tooltip clip that shows the held ability's
+    icon. Raises unless the clip places the icon sheet under that name once,
+    and nothing else at its depth."""
+    named = [p for p in placements if getattr(p, "name", None) == HELD_ICON_NAME]
+    if len(named) != 1 or named[0].character_id != ability_icons.ICON_SPRITE:
+        raise ValueError(
+            f"{TOOLTIP} places {HELD_ICON_NAME} {len(named)} times, want once"
+            f" as {ability_icons.ICON_SPRITE}"
+        )
+    (icon,) = named
+    others = [p for p in placements if p.depth == icon.depth and p is not icon]
+    if others:
+        raise ValueError(
+            f"{TOOLTIP} changes depth {icon.depth} after {HELD_ICON_NAME}: {others}"
+        )
+    return icon
+
+
+def held_icon(index: SwfIndex) -> dict[str, float]:
+    """-> the rect of the held ability's icon, in px from the mouse, which is
+    the tooltip clip's origin. The icon PNGs are centred on the orb, so this
+    raises unless the orb's mask is centred on the icon sheet's origin."""
+    icon = held_icon_placement(index.display.get(TOOLTIP, []))
+    pass_button.check_mask_centred(index)
+    return pass_button.icon_rect(icon.matrix, ability_icons.ICON_HALF)
+
+
 def tooltip_look(index: SwfIndex) -> dict:
     frames = {
         label.name: label.frame for label in index.labels if label.owner == TOOLTIP
@@ -289,6 +327,7 @@ def tooltip_look(index: SwfIndex) -> dict:
         ),
         "frame_rate": index.frame_rate,
         "gloss_stops": gloss_stops(index),
+        "held_icon": held_icon(index),
         "layouts": layouts,
         "next_rank": next_rank,
         "pass_button": pass_texts(

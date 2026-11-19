@@ -1035,13 +1035,12 @@ func test_abilities_window_edits_action_bar():
 	var window = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())
 	window.refresh()
 	assert_eq(GameData.current_save.move_matrix.slice(0, 2), [1, 6], "new game seeds the bar")
-	assert_eq(window._pool_move_ids, [], "both known moves already on the bar")
+	assert_eq(window._pool_move_ids, [1, 6], "the pool lists the moves on the bar too")
 	window._on_socket_pressed(0)
-	assert_eq(int(GameData.current_save.move_matrix[0]), 0, "socket click removes the move")
-	assert_eq(window._pool_move_ids, [1], "removed move lands in the pool")
-	window._on_pool_row_pressed(0)
-	assert_eq(int(GameData.current_save.move_matrix[0]), 1, "pool click fills the first free socket")
-	assert_eq(window._pool_move_ids, [], "pool empties again")
+	assert_eq(int(GameData.current_save.move_matrix[0]), 0, "a socket click with nothing held removes the move")
+	window._on_pool_row_held(0)
+	window._on_socket_pressed(3)
+	assert_eq(int(GameData.current_save.move_matrix[3]), 1, "the held move goes to the clicked socket")
 
 
 func test_achievements_window_builds_ten_plates():
