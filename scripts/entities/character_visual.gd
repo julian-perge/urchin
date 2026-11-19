@@ -127,6 +127,10 @@ const DOLL_PARTS: Dictionary[String, Dictionary] = {
 # Menus show the doll as a static mannequin (the original only animates in
 # battle and cutscenes) - flip this off to freeze the rest pose.
 @export var animate: bool = true
+# The model whose clip the doll plays until start_clip() picks another. The
+# Inventory's female doll is MODEL4, because the original menu's _f part clips
+# hold MODEL4's first frame, as its male clips hold MODEL1's.
+@export var rest_model: String = DEFAULT_MODEL
 
 var _parts: Dictionary = {}  # name -> Node2D holding the layered sprites
 # The model whose clip the doll plays, one of CLIP_MODELS.
@@ -192,6 +196,9 @@ func _ready():
 	_body_material.shader = BODY_SHADER
 	_body.material = _body_material
 	add_child(_body)
+	if not CLIP_MODELS.has(rest_model):
+		push_error("%s: rest_model %s is not one of %s" % [get_path(), rest_model, CLIP_MODELS])
+	_model = rest_model if CLIP_MODELS.has(rest_model) else DEFAULT_MODEL
 	# A glow measures its blur in stage px, so a window that changes size changes
 	# what the buff glows ask of the shader.
 	get_viewport().size_changed.connect(_apply_buff_look)
@@ -203,7 +210,7 @@ func _ready():
 		_parts[part_name] = part
 	_order_parts()
 	# Animated dolls start on the original stand loop; static mannequins
-	# (menus) keep MODEL1's rest pose.
+	# (menus) keep the first frame of rest_model.
 	_apply_frame_index(0)
 	if animate:
 		set_state(State.IDLE)
