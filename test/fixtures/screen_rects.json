@@ -3854,6 +3854,7 @@
    "port_only": [
     "StatusLabel",
     "Pool/Mask/Rows",
+    "HintSteps",
     "TreeNodes/Node0/IconRect",
     "TreeNodes/Node0/RankLabel",
     "TreeNodes/Node1/IconRect",

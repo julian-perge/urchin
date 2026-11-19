@@ -612,6 +612,10 @@ SCENES: dict[str, Scene] = {
         port_only=(
             "StatusLabel",
             "Pool/Mask/Rows",
+            # The tutorial steps of the hint box come from extract_hint_steps,
+            # whose hint_steps.json places them, and test_abilities_window.gd
+            # checks them against that file.
+            "HintSteps",
             *(
                 f"TreeNodes/Node{n}/{node}"
                 for n in range(TREE_NODES)

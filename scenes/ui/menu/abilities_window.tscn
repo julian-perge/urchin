@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/ability_pool_row.tscn" id="7_poolrow"]
 [ext_resource type="Texture2D" path="res://assets/ui/window/pool_frame.png" id="8_poolframe"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/pool_shadow.tscn" id="9_poolshadow"]
+[ext_resource type="Script" path="res://scripts/ui/menu/hint_steps.gd" id="10_hintsteps"]
 
 [node name="AbilitiesWindow" type="Control" groups=["abilities_window", "menu_screen"]]
 layout_mode = 3
@@ -449,6 +450,14 @@ offset_bottom = 434.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_font_sizes/font_size = 12
+
+[node name="HintSteps" type="Control" parent="." node_paths=PackedStringArray("tip_label")]
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 575.0
+mouse_filter = 2
+script = ExtResource("10_hintsteps")
+tip_label = NodePath("../HintLabel")
 
 [connection signal="close_pressed" from="WindowShell" to="." method="hide"]
 [connection signal="pressed" from="PlusColumn/VitalitySlot/VitalityPlus" to="." method="_on_attribute_plus_pressed" binds=[0]]
