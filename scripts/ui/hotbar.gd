@@ -7,7 +7,7 @@
 # game.gd's _enter_tree() has just restored. After that, picking a zone on the
 # world map repaints it through ZoneManager.zone_changed.
 #
-# Three buttons open a Window (group "menu_screen"). The original has no
+# Four buttons open a Window (group "menu_screen"). The original has no
 # open-Window state on the hotbar, so nothing here follows a Window's
 # visibility.
 extends Control

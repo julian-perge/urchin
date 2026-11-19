@@ -382,6 +382,25 @@ func test_starting_a_new_game_in_an_empty_slot_writes_no_save():
 	_clear_test_slots()
 
 
+# The new-game screen's Sound row sets Krin.sound, as DefineButton2_2774 does,
+# and the new game keeps it. It does not mute the audio bus, so the in-game
+# Options Window can turn the sound back on.
+func test_the_new_game_sound_row_reaches_the_new_save():
+	_write_test_slots([])
+	var menu = await _menu_without_scene_change()
+	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
+	menu.get_node("NamePanel/OkButton").pressed.emit()
+	_slot_button(menu, 1).pressed.emit()
+	menu.class_picker.get_node("Biological").pressed.emit()
+	menu.get_node("OptionsPanel/SoundToggle").button_pressed = false
+	assert_false(AudioManagerAuto.sound_enabled, "the row turns the sound off")
+	assert_false(AudioServer.is_bus_mute(0), "and leaves the bus alone")
+	menu.get_node("OptionsPanel/StartButton").pressed.emit()
+	assert_false(GameData.current_save.sound, "the new game keeps the setting")
+	AudioManagerAuto.sound_enabled = true
+	_clear_test_slots()
+
+
 # The Tutorial option is on until the player turns it off (frame_93/DoAction.as:7),
 # and this test leaves the toggle alone. With it on, the original's START plays
 # CS_INTRO (DefineButton2_2770 on(release), lines 2-6). The clip's end goes to

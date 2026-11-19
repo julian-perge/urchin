@@ -241,7 +241,9 @@ func _on_tutorial_toggled(pressed: bool) -> void:
 func _on_sound_toggled(pressed: bool) -> void:
 	$OptionsPanel/SoundToggle.text = "On" if pressed else "Off"
 	_sound_enabled = pressed
-	AudioServer.set_bus_mute(0, not pressed)
+	# DefineButton2_2774 on(release) only flips Krin.sound, so the music that
+	# plays now goes on, and nothing starts while it is off.
+	AudioManagerAuto.sound_enabled = pressed
 
 
 func _on_autosave_toggled(pressed: bool) -> void:
@@ -267,6 +269,7 @@ func _on_start_new_game() -> void:
 	GameData.new_game(_selected_slot, name_input.text, _selected_class)
 	GameData.current_save.difficulty = _selected_difficulty
 	GameData.current_save.autosave = _autosave_enabled
+	GameData.current_save.sound = _sound_enabled
 	if _tutorial_enabled:
 		ZoneManager.request_tutorial_fight()
 	else:

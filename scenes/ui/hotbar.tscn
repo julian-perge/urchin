@@ -187,7 +187,6 @@ offset_bottom = 46.7905
 focus_mode = 0
 
 [node name="OptionsSlot" type="Control" parent="."]
-modulate = Color(1, 1, 1, 0.5)
 layout_mode = 0
 offset_left = 171.0
 offset_top = 480.25
@@ -524,5 +523,6 @@ horizontal_alignment = 2
 [connection signal="pressed" from="InventorySlot/InventoryButton" to="." method="_on_menu_button_pressed" binds=["inventory_window"]]
 [connection signal="pressed" from="AbilitiesSlot/AbilitiesButton" to="." method="_on_menu_button_pressed" binds=["abilities_window"]]
 [connection signal="pressed" from="AchievementsSlot/AchievementsButton" to="." method="_on_menu_button_pressed" binds=["achievements_window"]]
+[connection signal="pressed" from="OptionsSlot/OptionsButton" to="." method="_on_menu_button_pressed" binds=["options_window"]]
 [connection signal="pressed" from="SaveSlot/SaveButton" to="." method="_on_save_pressed"]
 [connection signal="pressed" from="QuitSlot/QuitButton" to="." method="_on_quit_pressed"]
