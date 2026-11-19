@@ -17,8 +17,8 @@
 # ability's icon from extract_ability_icons in its place. Those icons are
 # centred on the orb's clip mask 2242, so the icon's rect is the placement's
 # centre plus and minus ability_icons.ICON_HALF at the placement's scale. This
-# raises unless every labelled frame of 2427 places that mask centred on the
-# sprite's origin.
+# raises unless the mask is centred on its own origin and every labelled
+# frame of 2427 that places the mask places it at the sprite's origin.
 #
 # Requires ffdec.
 # Run: uv run extract_pass_button
