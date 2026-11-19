@@ -79,6 +79,11 @@ resolved the two bugs below.
   `ExpPercentLabel` (-0.22) raise their text further to match the capture. The percent needs the most, because Flash draws it about 2 px above its field's top. The offset does not scale with size, so 14 px text
   still sits about 1 px low. These offsets are fitted to one capture, not read from the SWF.
 
+- **The web build's Wolfgang and Amber portraits are blank (web build only, Steam not checked).** The face clip's frames for party ids 4 and 5 are empty at their labels, so the extracted portraits are blank frames. The
+  party data names those ids Teco and Catelin, from the companion seeds, while the face clip's labels say Wolfgang (Rockstar) and Amber. Neither point shows in the web build, because
+  party ids 4 and 5 never join there: the only roster writes are `frame_42/DoAction_17.as:10` and `frame_219/DoAction.as:59, 63`, and the last of them stops at party id 3. The names
+  are not checked against the Steam build.
+
 ## Dropped on purpose (not differences, but scoped out from both)
 
 - The PvP share-code and anti-cheat system (the arena's character codes and their save-code checksums) exists in both releases and is deliberately not being ported (project decision, 2026-07-18).

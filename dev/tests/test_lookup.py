@@ -682,7 +682,7 @@ def test_a_missing_facts_file_prints_no_facts_section(tmp_path):
     assert facts_of(tmp_path, "two", text=None) == []
 
 
-def test_known_gaps_and_research_notes_are_not_read(tmp_path):
+def test_notes_outside_decoded_algorithms_are_not_read(tmp_path):
     (tmp_path / "KNOWN_GAPS.md").write_text(FACTS)
     (tmp_path / "docs/research").mkdir(parents=True)
     (tmp_path / "docs/research/note.md").write_text(FACTS)
