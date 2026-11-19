@@ -51,8 +51,10 @@ def import_with_mipmaps(path: Path) -> None:
         return
     if MIPMAPS_OFF in text.splitlines():
         text = text.replace(MIPMAPS_OFF, MIPMAPS_ON)
-    else:
+    elif "[params]\n\n" in text:
         text = text.replace("[params]\n\n", f"[params]\n\n{MIPMAPS_ON}\n")
+    else:
+        raise ValueError(f"{sidecar} has no [params] section to turn mipmaps on in")
     sidecar.write_text(text)
 
 

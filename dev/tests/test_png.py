@@ -7,6 +7,7 @@ from __future__ import annotations
 import io
 import re
 
+import pytest
 from PIL import Image
 from urchin_dev import REPO_ROOT, png
 
@@ -90,3 +91,12 @@ def test_a_plain_save_leaves_the_import_alone(tmp_path):
     out = tmp_path / "a.png"
     png.save(sample(), out)
     assert not (tmp_path / "a.png.import").exists()
+
+
+def test_a_mipmapped_save_refuses_an_import_it_cannot_change(tmp_path):
+    out = tmp_path / "a.png"
+    sidecar = tmp_path / "a.png.import"
+    sidecar.write_text('[remap]\n\nimporter="texture"\n')
+    with pytest.raises(ValueError, match="no \\[params\\] section"):
+        png.save(sample(), out, mipmaps=True)
+    assert sidecar.read_text() == '[remap]\n\nimporter="texture"\n'
