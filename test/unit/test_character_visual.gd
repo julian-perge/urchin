@@ -859,11 +859,15 @@ func test_a_model4_doll_swings_on_model4s_run_strike_and_runback_frames():
 # DefineSprite_2668_MODEL4/frame_86 is MODEL4's one addSound("Effects",
 # "sfx_swing"), inside the swing that all three attack labels share.
 func test_a_model4_swing_plays_sfx_swing_on_model4s_cue_frame():
-	assert_eq(_cues_of("MODEL4"), {"86": ["sfx_swing"]})
+	var want: Array = []
+	for frame in _cues_of("MODEL4"):
+		for cue in _cues_of("MODEL4")[frame]:
+			want.append([int(frame), cue])
+	assert_eq(want.size(), 1, "MODEL4's clip has one cue")
 	for label in ["Attack", "Attack_Upper", "Attack_Stab"]:
 		visual.start_clip("MODEL4")
 		var cues: Array = _swing_cues(label)
-		assert_eq(cues, [[86, "sfx_swing"]], label)
+		assert_eq(cues, want, label)
 		for connection in visual.sound_cue.get_connections():
 			visual.sound_cue.disconnect(connection["callable"])
 

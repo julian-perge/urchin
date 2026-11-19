@@ -10,7 +10,7 @@
 # origin=(tx,ty) - translations converted from twips to px.
 #
 # alphas has one entry per frame, listing each part whose colour transform
-# fades it below full alpha. The dead label fades every part this way on
+# fades it below full alpha. MODEL1's dead label fades every part this way on
 # frames 361 to 371. The red, green and blue multipliers are left out, so the
 # back limbs that MODEL1 darkens to 154/256 on every frame draw at full
 # brightness in the port.

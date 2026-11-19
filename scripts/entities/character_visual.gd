@@ -759,8 +759,8 @@ func _step_home(frames: float) -> void:
 
 # The dead label plays through once, and the script on its last frame removes
 # the doll before Flash draws that frame (MODEL1's frame 371,
-# DefineSprite_166_MODEL1/frame_371/DoAction.as, and MODEL4's frame 306). The playhead counts frames,
-# not seconds, because a sum of 1/30 s steps drifts off whole frames and would
+# DefineSprite_166_MODEL1/frame_371/DoAction.as, and MODEL4's frame 306). The
+# playhead counts frames, not seconds, because a sum of 1/30 s steps drifts off whole frames and would
 # remove the doll a frame early or late.
 func _play_death(delta: float) -> void:
 	if _label_finished:
