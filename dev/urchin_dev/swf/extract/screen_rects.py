@@ -652,6 +652,22 @@ SCENES: dict[str, Scene] = {
     "res://scenes/ui/menu/credits_panel.tscn": Scene(
         timeline=0, frame=CREDITS_FRAME, pieces=CREDITS_PIECES
     ),
+    # The Credits Screen as the menu shows it: the background, the panel and
+    # Back, for the compare tool, as choice_screen.tscn is for the choice. Frame
+    # 134 places its own Back caption, 2813, a copy of the other frames' 2703,
+    # at depth 24 over hit button 2702 at depth 25. Depths 38 and 41 are the
+    # Armor Games line and logo, as on the title.
+    "res://test/fixtures/screen_rects/credits_screen.tscn": Scene(
+        timeline=0,
+        frame=CREDITS_FRAME,
+        pieces={
+            "Background": Piece("art", 1, art="start_background"),
+            **{f"CreditsPanel/{path}": piece for path, piece in CREDITS_PIECES.items()},
+            "Back/Caption": Piece("text", 24, character=2813),
+            "Back/HitButton": Piece("hit", 25, character=2702),
+        },
+        left_out=(38, 41),
+    ),
     # Depths 38 and 41 are the Armor Games line and logo, as on the title. The
     # other left-out depths need no entry, because the compare tool's chrome
     # mode strips every edit text and a hit button has no art.

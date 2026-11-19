@@ -11686,6 +11686,243 @@
    "port_only": [],
    "timeline": 0
   },
+  "res://test/fixtures/screen_rects/credits_screen.tscn": {
+   "frame": "creditMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Back/Caption": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 24.0,
+     "kind": "text",
+     "rect": [
+      490.15,
+      534.15,
+      300.1,
+      26.85
+     ]
+    },
+    "Back/HitButton": {
+     "kind": "hit",
+     "rect": [
+      604.4392,
+      534.4501,
+      188.1216,
+      26.7998
+     ]
+    },
+    "Background": {
+     "kind": "art",
+     "rect": [
+      0.0,
+      0.0,
+      800.0,
+      575.0
+     ],
+     "size": [
+      1600,
+      1150
+     ],
+     "texture": "res://assets/ui/menu/start_background.png",
+     "zoom": 2.0
+    },
+    "CreditsPanel/Logo": {
+     "kind": "art",
+     "rect": [
+      106.25,
+      102.75,
+      583.75,
+      131.75
+     ],
+     "size": [
+      2335,
+      527
+     ],
+     "texture": "res://assets/ui/menu/logo.png",
+     "zoom": 4.0
+    },
+    "CreditsPanel/Rows/Row1/Name": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      401.1,
+      273.65,
+      338.1,
+      23.1
+     ],
+     "text": "Jakrin Juangbhanich"
+    },
+    "CreditsPanel/Rows/Row1/Role": {
+     "align": "right",
+     "color": "a6f76fff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      81.1,
+      273.65,
+      300.1,
+      20.1
+     ]
+    },
+    "CreditsPanel/Rows/Row2/Name": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      401.1,
+      303.65,
+      338.1,
+      23.1
+     ],
+     "text": "Philipp Knothe"
+    },
+    "CreditsPanel/Rows/Row2/Role": {
+     "align": "right",
+     "color": "a6f76fff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      81.1,
+      303.65,
+      300.1,
+      20.1
+     ]
+    },
+    "CreditsPanel/Rows/Row3/Name": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      401.1,
+      333.65,
+      338.1,
+      23.1
+     ],
+     "text": "David Orr"
+    },
+    "CreditsPanel/Rows/Row3/Role": {
+     "align": "right",
+     "color": "a6f76fff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      81.1,
+      333.65,
+      300.1,
+      20.1
+     ]
+    },
+    "CreditsPanel/Rows/Row4/Name": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      401.1,
+      363.65,
+      338.1,
+      23.1
+     ],
+     "text": "William Arbuckle"
+    },
+    "CreditsPanel/Rows/Row4/Role": {
+     "align": "right",
+     "color": "a6f76fff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      81.1,
+      363.65,
+      300.1,
+      20.1
+     ]
+    },
+    "CreditsPanel/Rows/Row5/Name": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      401.1,
+      393.65,
+      338.1,
+      23.1
+     ],
+     "text": "Joan C.G."
+    },
+    "CreditsPanel/Rows/Row5/Role": {
+     "align": "right",
+     "color": "a6f76fff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      81.1,
+      393.65,
+      300.1,
+      20.1
+     ]
+    },
+    "CreditsPanel/Rows/Row6/Name": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      401.1,
+      423.65,
+      338.1,
+      23.1
+     ],
+     "text": "Andy Dennis"
+    },
+    "CreditsPanel/Rows/Row6/Role": {
+     "align": "right",
+     "color": "a6f76fff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      81.1,
+      423.65,
+      300.1,
+      20.1
+     ]
+    },
+    "CreditsPanel/Rows/Row7/Name": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      401.1,
+      453.65,
+      338.1,
+      23.1
+     ],
+     "text": "Mandi N."
+    },
+    "CreditsPanel/Rows/Row7/Role": {
+     "align": "right",
+     "color": "a6f76fff",
+     "font_size": 18.0,
+     "kind": "text",
+     "rect": [
+      81.1,
+      453.65,
+      300.1,
+      20.1
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
   "res://test/fixtures/screen_rects/hub_chrome.tscn": {
    "frame": "Navigation",
    "origin": [
