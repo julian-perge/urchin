@@ -80,9 +80,9 @@ var _presenters: Dictionary = {}  # slot -> FighterPresenter
 var _stance_rows: Dictionary = {}  # party_id -> StanceRow
 var _member_rows_enabled: bool = true
 var _selected_move: Dictionary = {}
-# True while the turn loop waits for the player's pick. The menu follows it
-# through this setter, so the end of the Decision closes the menu by clearing
-# it.
+# True while the turn loop waits for the player's pick or pass, and on Heroic
+# also for the pick delay after it. The menu follows it through this setter,
+# so the end of the Decision closes the menu by clearing it.
 var decision_open: bool = false:
 	set(value):
 		decision_open = value
@@ -257,8 +257,9 @@ func _reset_decision_timer() -> void:
 	_decision_timer = BattleRunner.BATTLE_TIME_LIMIT / BattleScreenClip.fps()
 
 
-# -> BattleTimeNow while the player decides. On Heroic it is the frames the
-# window has run. On Easy and Normal the conductor holds it just under
+# -> BattleTimeNow while the player decides. On Heroic it is BattleTimeLimit
+# less the frames left on the decision timer, so a pick or a pass moves it back
+# to the start of the pick delay. On Easy and Normal the conductor holds it just under
 # BattleTimeLimit until the player picks (enterFrame, lines 639-642).
 func _decision_time_now() -> float:
 	if _turn_based:
