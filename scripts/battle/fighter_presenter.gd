@@ -425,9 +425,9 @@ func _relation_to_player() -> Relation:
 
 # Starts the caster's melee swing of `move` at `target` and returns at its
 # Impact, once on_impact has run. The swing plays the move's label and tints its
-# trail with the move's colour. The doll runs toward where the target's rig stands on each
-# frame, and stops short of where it stood as the swing started by half of each
-# fighter's width. The doll's Runback then takes it home on its own while the
+# trail with the move's colour. The doll runs toward where the target's rig
+# stands on each frame, and stops short of where it stood as the swing started
+# by half of each fighter's width. The doll's Runback then takes it home on its own while the
 # battle goes on. With wait false nothing waits for the swing, so on_impact runs
 # at once. If the presenter leaves the tree during the swing, on_impact doesn't
 # run.

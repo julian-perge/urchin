@@ -160,7 +160,8 @@ var _piece_runs: Dictionary = {}
 # and 450, and frame_42/DoAction_4.as:130-131).
 var colortobe: Color = Color.WHITE
 # The 0-based model frame the doll shows, and the SWF frames since the clip
-# started, which is the clock that a looping piece plays on.
+# started. A clip piece shows the frame of its own clip that this count has
+# reached since the model placed it.
 var _frame_index: int = 0
 var _clip_frames: float = 0.0
 # The model whose clip the doll plays, one of CLIP_MODELS.
