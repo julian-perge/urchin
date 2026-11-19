@@ -411,3 +411,238 @@ def test_an_entry_carries_its_static_chrome_strip_list(tmp_path):
         2837,
         3196,
     )
+
+
+def test_an_entry_carries_where_each_steam_piece_is_placed_in_both_builds(tmp_path):
+    scenes = {
+        SCENE: Scene(
+            timeline=0,
+            frame="Navigation",
+            pieces={
+                "Square": Piece("art", 126, art="hotbar_square", steam=126),
+                "Button": Piece("button", 126, steam=126),
+                "Icon": Piece(
+                    "art", None, art="save", instance="ui_but1", steam="ui_but1"
+                ),
+                "Late": Piece("button", 165, steam=157),
+                "Bar": Piece("art", 1, art="bottom_bar"),
+            },
+        )
+    }
+    config = write_config(tmp_path, {"hub": entry(chrome={"bar": 37})})
+
+    found = screen_compare.load_config(config, scenes)["hub"].steam
+
+    assert found == ((126, 126), ("ui_but1", "ui_but1"), (165, 157))
+
+
+def layer(character: int, x: int, y: int, scale: float = 1.0, **more):
+    from urchin_dev.swf.timeline import Layer
+
+    return Layer(character, matrix=(scale, 0.0, 0.0, scale, x, y), **more)
+
+
+def test_each_steam_piece_moves_its_web_depth_by_the_steam_placement_difference():
+    web = {
+        126: layer(3185, 1033, 9878),
+        153: layer(3171, 1022, 9871, name="ui_but1"),
+        165: layer(3153, 5909, 9878),
+    }
+    steam = {
+        126: layer(3185, 1033, 10138),
+        150: layer(3171, 1022, 10131, name="ui_but1"),
+        157: layer(3153, 5909, 10138),
+    }
+    pairs = ((126, 126), ("ui_but1", "ui_but1"), (165, 157))
+
+    offsets = screen_compare.steam_offsets(web, steam, pairs, "hub")
+
+    assert offsets == {126: (0.0, 13.0), 153: (0.0, 13.0), 165: (0.0, 13.0)}
+
+
+def test_a_steam_piece_at_another_scale_is_refused():
+    web = {126: layer(3185, 0, 0, scale=0.67)}
+    steam = {126: layer(3185, 0, 260, scale=0.7)}
+
+    with pytest.raises(screen_compare.CompareError, match="scale"):
+        screen_compare.steam_offsets(web, steam, ((126, 126),), "hub")
+
+
+def test_one_depth_with_two_steam_offsets_is_refused():
+    web = {126: layer(3185, 0, 0)}
+    steam = {126: layer(3185, 0, 260), 157: layer(3185, 0, 300)}
+
+    with pytest.raises(screen_compare.CompareError, match="depth 126"):
+        screen_compare.steam_offsets(web, steam, ((126, 126), (126, 157)), "hub")
+
+
+def test_the_frame_splits_into_runs_of_depths_that_move_together_in_depth_order():
+    layers = {d: layer(d, 0, 0) for d in (1, 59, 126, 128, 132, 152, 153, 155, 169)}
+    moved = {126: (0.0, 13.0), 128: (0.0, 13.0), 153: (0.0, 13.0), 155: (0.0, 13.0)}
+
+    runs = screen_compare.depth_runs(layers, moved)
+
+    assert runs == [
+        ((1, 59), (0.0, 0.0)),
+        ((126, 128), (0.0, 13.0)),
+        ((132, 152), (0.0, 0.0)),
+        ((153, 155), (0.0, 13.0)),
+        ((169,), (0.0, 0.0)),
+    ]
+
+
+def test_a_clip_mask_that_spans_two_runs_is_refused():
+    layers = {1: layer(1, 0, 0, clip_depth=3), 2: layer(2, 0, 0), 3: layer(3, 0, 0)}
+
+    with pytest.raises(screen_compare.CompareError, match="clip"):
+        screen_compare.depth_runs(layers, {3: (0.0, 13.0)})
+
+
+def test_a_steam_reference_renders_each_run_on_its_own_with_the_strip(monkeypatch):
+    web = {1: layer(1, 0, 0), 126: layer(3185, 0, 0), 152: layer(3172, 0, 0)}
+    steam = {126: layer(3185, 0, 260), 152: layer(3172, 0, 0)}
+    monkeypatch.setattr(screen_compare.screen_rects, "origin_of", lambda *_: (0, 0))
+    monkeypatch.setattr(screen_compare.timeline, "frame_of", lambda *_: 1)
+    monkeypatch.setattr(
+        screen_compare.timeline,
+        "frames",
+        lambda index, owner: [web if index == "web" else steam],
+    )
+    monkeypatch.setattr(screen_compare, "character_kind", lambda *_: "shape")
+    monkeypatch.setattr(
+        screen_compare.strip, "strip_list", lambda _, reasons: sorted(reasons)
+    )
+    hub = screen_compare.Entry(
+        "res://hub.tscn",
+        0,
+        "Navigation",
+        {"chrome": screen_compare.Mode(None, ())},
+        compare_strip=(2837,),
+        steam=((126, 126),),
+    )
+
+    jobs = screen_compare.reference_jobs("web", hub, "chrome", "steam")
+
+    assert [(job.only_depths, offset) for job, offset in jobs] == [
+        ((1,), (0.0, 0.0)),
+        ((126,), (0.0, 13.0)),
+        ((152,), (0.0, 0.0)),
+    ]
+    assert all(job.strip == (2837,) for job, _ in jobs)
+
+
+def test_a_steam_reference_needs_the_steam_build(monkeypatch):
+    monkeypatch.setattr(screen_compare, "reference_job", lambda *_: None)
+    hub = screen_compare.Entry(
+        "res://hub.tscn",
+        0,
+        "Navigation",
+        {"chrome": screen_compare.Mode(None, ())},
+        steam=((126, 126),),
+    )
+
+    with pytest.raises(screen_compare.CompareError, match="no Steam build"):
+        screen_compare.reference_jobs("web", hub, "chrome", None)
+
+
+def test_a_reference_with_no_steam_piece_is_one_render(monkeypatch):
+    from types import SimpleNamespace
+
+    job = SimpleNamespace()
+    monkeypatch.setattr(screen_compare, "reference_job", lambda *_: job)
+    entry = screen_compare.Entry(
+        "res://a.tscn", 0, "x", {"chrome": screen_compare.Mode(None, ())}
+    )
+
+    jobs = screen_compare.reference_jobs(None, entry, "chrome", None)
+
+    assert jobs == [(job, (0.0, 0.0))]
+
+
+def test_runs_are_drawn_in_order_with_each_moved_by_its_offset():
+    red = Image.new("RGBA", (2, 2), (255, 0, 0, 255))
+    blue = Image.new("RGBA", (2, 2), (0, 0, 255, 255))
+    cuts = [((1.0, 1.0), red, (0.0, 0.0)), ((1.0, 1.0), blue, (0.0, 1.0))]
+
+    canvas = np.asarray(screen_compare.composite(cuts, (6, 8), zoom=2))
+
+    assert tuple(canvas[2, 2]) == (255, 0, 0, 255)
+    assert tuple(canvas[4, 2]) == (0, 0, 255, 255)
+    assert tuple(canvas[5, 3]) == (0, 0, 255, 255)
+    assert canvas[1, 2, 3] == 0
+
+
+@pytest.mark.parametrize(
+    "piece",
+    [
+        Piece("button", 126, inner_depth=2, steam=126),
+        Piece("button", 126, via=(3149,), steam=126),
+    ],
+)
+def test_a_steam_piece_inside_a_sprite_is_refused(tmp_path, piece):
+    scenes = {SCENE: Scene(timeline=0, frame="Navigation", pieces={"In": piece})}
+    config = write_config(tmp_path, {"hub": entry(chrome={"bar": 37})})
+
+    with pytest.raises(screen_compare.CompareError, match="inside a sprite"):
+        screen_compare.load_config(config, scenes)
+
+
+def test_a_blend_mode_over_an_earlier_run_is_refused():
+    layers = {1: layer(1, 0, 0), 2: layer(2, 0, 0, blend_mode=3)}
+
+    with pytest.raises(screen_compare.CompareError, match="blend mode at depth 2"):
+        screen_compare.depth_runs(layers, {2: (0.0, 13.0)})
+
+
+def test_a_layer_blend_mode_over_an_earlier_run_is_kept():
+    layers = {1: layer(1, 0, 0), 2: layer(2, 0, 0, blend_mode=2)}
+
+    runs = screen_compare.depth_runs(layers, {2: (0.0, 13.0)})
+
+    assert runs == [((1,), (0.0, 0.0)), ((2,), (0.0, 13.0))]
+
+
+def test_a_steam_piece_in_a_krinmenu_entry_is_refused(monkeypatch):
+    monkeypatch.setattr(screen_compare, "reference_job", lambda *_: None)
+    menu = screen_compare.Entry(
+        "res://a.tscn",
+        screen_compare.window_chrome.KRINMENU,
+        "win",
+        {"chrome": screen_compare.Mode(None, ())},
+        steam=((126, 126),),
+    )
+
+    with pytest.raises(screen_compare.CompareError, match="KRINMENU"):
+        screen_compare.reference_jobs(None, menu, "chrome", None)
+
+
+def test_a_steam_reference_splits_only_the_depths_its_mode_renders(monkeypatch):
+    from urchin_dev.swf import render
+
+    web = {1: layer(1, 0, 0), 126: layer(3185, 0, 0), 152: layer(3172, 0, 0)}
+    steam = {126: layer(3185, 0, 260)}
+    monkeypatch.setattr(
+        screen_compare,
+        "reference_job",
+        lambda *_: render.Job(0, 1, 4, only_depths=(1, 126)),
+    )
+    monkeypatch.setattr(screen_compare.timeline, "frame_of", lambda *_: 1)
+    monkeypatch.setattr(
+        screen_compare.timeline,
+        "frames",
+        lambda index, owner: [web if index == "web" else steam],
+    )
+    panels = screen_compare.Entry(
+        "res://hub.tscn",
+        0,
+        "Navigation",
+        {"panels": screen_compare.Mode(None, ())},
+        steam=((126, 126),),
+    )
+
+    jobs = screen_compare.reference_jobs("web", panels, "panels", "steam")
+
+    assert [(job.only_depths, offset) for job, offset in jobs] == [
+        ((1,), (0.0, 0.0)),
+        ((126,), (0.0, 13.0)),
+    ]

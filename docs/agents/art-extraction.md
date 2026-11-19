@@ -280,15 +280,25 @@ This tool checks how it looks: the art, the fills and the shadows.
   `SCENES.compare_strip` removes the fade (2837), Windows, card, banners,
   tooltip, animated orbs and member bars from frame 181. Orb positions,
   scales and button rects are checked in all seven zone records instead.
-  The score is p99 74, with the 20 px control at 195. It was 37 until the six
-  hotbar squares moved 13 px down to the Steam build's row. The reference is
-  the web build, which holds them higher, so the six squares are the whole
-  rise in the diff. The rect test checks their place against the Steam build.
-  Two more things in the diff are not port faults to fix here. The port draws
-  the Options and Re-Spec icons at half alpha, and their behavior stays with
-  their own tasks. ffdec cuts the zone fill's Glow off at a hard box,
-  (496, 506.5) 269.25x31.75, when it renders the fill inside sprite 3149,
-  whose placement has a DropShadow.
+  The score is p99 36, with the 20 px control at 195. The port puts the six
+  hotbar squares and their icons on the Steam build's row, 13 px below the
+  web build's. The reference draws each piece that has a `steam` placement in
+  `SCENES` where the Steam build places it, so the squares leave only their
+  edges in the diff (julian-perge/urchin#298). With the web row, the score is
+  p99 74.
+- **A Steam piece moves its whole depth in the reference.** `reference_jobs`
+  in `screen_compare.py` cuts the frame into runs of consecutive depths, moves
+  each run that holds a Steam piece by the Steam placement minus the web
+  placement, and draws the runs in depth order. The shape at depth 152 lies
+  between the squares and the icons, and the run order keeps it there. The
+  tool refuses a clip mask that a run boundary cuts, a blend mode that mixes
+  with an earlier run, and a Steam piece in a KRINMENU entry, which renders
+  through the Hub frame.
+- **The Hub diff has two more differences that are not port faults to fix
+  here.** The port draws the Options and Re-Spec icons at half alpha, and
+  their behavior stays with their own tasks. ffdec cuts the zone fill's Glow
+  off at a hard box, (496, 506.5) 269.25x31.75, when it renders the fill
+  inside sprite 3149, whose placement has a DropShadow.
   Flash Player draws a soft glow there, as `references/traced_runs/steam_flash_hub.png`
   shows, and so does the port, from the fill rendered alone. Do not re-extract
   `zone_fill.png` from the root frame to lower this score.
