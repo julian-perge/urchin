@@ -309,6 +309,11 @@ extract-member-rows *args:
 extract-model-animations *args:
     uv run extract_model_animations "$@"
 
+[doc('Run extract_pass_button, which reads the SWF through ffdec')]
+[group('extract')]
+extract-pass-button *args: (require "ffdec" "java")
+    uv run extract_pass_button "$@"
+
 [doc('Run extract_result_flash, which reads the SWF without ffdec')]
 [group('extract')]
 extract-result-flash *args:

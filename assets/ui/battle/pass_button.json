@@ -1,0 +1,38 @@
+{
+ "icon": {
+  "h": 38.11,
+  "w": 38.11,
+  "x": 380.94,
+  "y": 488.44
+ },
+ "states": {
+  "down": {
+   "rect": {
+    "h": 32.17,
+    "w": 32.17,
+    "x": 383.92,
+    "y": 491.67
+   },
+   "texture": "res://assets/ui/battle/pass_button_over.png"
+  },
+  "over": {
+   "rect": {
+    "h": 32.17,
+    "w": 32.17,
+    "x": 383.92,
+    "y": 491.67
+   },
+   "texture": "res://assets/ui/battle/pass_button_over.png"
+  },
+  "up": {
+   "rect": {
+    "h": 30.02,
+    "w": 30.02,
+    "x": 384.99,
+    "y": 492.74
+   },
+   "texture": "res://assets/ui/battle/pass_button_up.png"
+  }
+ },
+ "zoom": 4.0
+}

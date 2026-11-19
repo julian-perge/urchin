@@ -11,7 +11,8 @@
 # From the AS export: the add terms that krinChangeColor gives each rarity,
 # each layout's field width and its offsets from the mouse, how many frames
 # the ability icon shows the title alone, the texts of the pass button's
-# tooltip, and the share of the price that the sell slot names and pays.
+# tooltip in each mode, before and after a pick, and the share of the price
+# that the sell slot names and pays.
 # spec/107-tooltips.md describes each one.
 #
 # Run: uv run extract_tooltip_look
@@ -56,6 +57,9 @@ PASS_SCRIPT = (
     / "PlaceObject2_2427_484"
     / "CLIPACTIONRECORD onClipEvent(load).as"
 )
+
+# addMoveForPlayer, which sets krinToMove's tooltip when the player picks.
+PICK_SCRIPT = ACTION_SCRIPT / "frame_42" / "DoAction_11.as"
 
 SELL_SCRIPTS = ACTION_SCRIPT / "DefineButton2_3015"
 SELL_ROLL_OVER = SELL_SCRIPTS / "BUTTONCONDACTION on(rollOver).as"
@@ -132,9 +136,12 @@ def detail_delay_frames(script: str) -> int:
     return int(one(r"if\(hitter == (\d+)\)", script, "ability icon"))
 
 
-def pass_texts(script: str) -> dict[str, str]:
-    """-> the pass button's tooltip: one title, and the body of the real-time
-    and the turn-based mode. Raises unless both modes set the same title."""
+def pass_texts(script: str, pick_script: str) -> dict:
+    """-> the pass button's tooltip: one title, the bodies of the real-time and
+    the turn-based mode while the player picks ("idle") and while a picked
+    ability waits for its turn in the fight ("action"), and the body a pick
+    shows, with %s where the target's name goes. Raises unless both modes set
+    the same title."""
     real_time, turn_based = one(
         r"if\(!_root\.turnBasedKrin\)\s*\{(.*?)\}\s*else\s*\{(.*?)\}",
         script,
@@ -148,10 +155,35 @@ def pass_texts(script: str) -> dict[str, str]:
     if len(titles) != 1:
         raise ValueError(f"pass button: the two modes set titles {titles}")
     return {
-        "real_time": one(r'thinger2 = "([^"]*)";', real_time, "pass button"),
+        "picked": picked_text(pick_script),
+        "real_time": mode_texts(real_time),
         "title": titles.pop(),
-        "turn_based": one(r'thinger2 = "([^"]*)";', turn_based, "pass button"),
+        "turn_based": mode_texts(turn_based),
     }
+
+
+def mode_texts(branch: str) -> dict[str, str]:
+    """-> the idle body (thinger2) and the action body (thinger3) that one
+    mode's branch of the load script sets."""
+    return {
+        "action": one(r'thinger3 = "([^"]*)";', branch, "pass button"),
+        "idle": one(r'thinger2 = "([^"]*)";', branch, "pass button"),
+    }
+
+
+def picked_text(script: str) -> str:
+    """-> the body that addMoveForPlayer gives krinToMove on a pick, with %s in
+    place of the target's playerName. Raises when the text holds a % of its
+    own, which the port's format would read as a placeholder."""
+    before, after = one(
+        r'_root\.krinToMove\.toolTip = "([^"]*)" \+ _root\["playerKrin" \+'
+        r' _root\.theEnemyToMoveVS\]\.playerName \+ "([^"]*)";',
+        script,
+        "pick",
+    )
+    if "%" in before + after:
+        raise ValueError(f"pick: the text {before!r} {after!r} holds a %")
+    return f"{before}%s{after}"
 
 
 def sell_ratio(roll_over: str, press: str) -> float:
@@ -259,7 +291,10 @@ def tooltip_look(index: SwfIndex) -> dict:
         "gloss_stops": gloss_stops(index),
         "layouts": layouts,
         "next_rank": next_rank,
-        "pass_button": pass_texts(PASS_SCRIPT.read_text(encoding="utf-8")),
+        "pass_button": pass_texts(
+            PASS_SCRIPT.read_text(encoding="utf-8"),
+            PICK_SCRIPT.read_text(encoding="utf-8"),
+        ),
         "rarity_add": rarity_add(CHANGE_COLOR_SCRIPT.read_text(encoding="utf-8")),
         "sell_ratio": sell_ratio(
             SELL_ROLL_OVER.read_text(encoding="utf-8"),

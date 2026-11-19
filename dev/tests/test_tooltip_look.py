@@ -101,6 +101,11 @@ onClipEvent(load){
 }
 """
 
+PICK = """
+         _root.krinToMove.toolTipTitle = mAry5[0];
+         _root.krinToMove.toolTip = "You will use this ability on " + _root["playerKrin" + _root.theEnemyToMoveVS].playerName + ". Click to cancel this ability.";
+"""
+
 
 def test_rarity_add_reads_each_rarity_and_skips_other_names():
     terms = tooltip_look.rarity_add(CHANGE_COLOR)
@@ -158,12 +163,24 @@ def test_detail_delay_frames_reads_the_hitter_threshold():
         tooltip_look.detail_delay_frames("hitter++;")
 
 
-def test_pass_texts_reads_both_modes():
-    assert tooltip_look.pass_texts(PASS) == {
-        "real_time": "First select your target then choose an ability to use.",
+def test_pass_texts_reads_both_modes_and_the_pick():
+    assert tooltip_look.pass_texts(PASS, PICK) == {
+        "picked": "You will use this ability on %s. Click to cancel this ability.",
+        "real_time": {
+            "action": "Cannot cancel during action.",
+            "idle": "First select your target then choose an ability to use.",
+        },
         "title": "No ability selected!",
-        "turn_based": "You may click here to skip your turn.",
+        "turn_based": {
+            "action": "Cannot skip during action.",
+            "idle": "You may click here to skip your turn.",
+        },
     }
+
+
+def test_picked_text_raises_on_a_percent_sign():
+    with pytest.raises(ValueError, match="holds a %"):
+        tooltip_look.picked_text(PICK.replace("this ability.", "this 100% ability."))
 
 
 def test_pass_texts_raises_when_the_titles_differ():
@@ -171,7 +188,7 @@ def test_pass_texts_raises_when_the_titles_differ():
         'thinger1 = "No ability selected!";', 'thinger1 = "Other";', 1
     )
     with pytest.raises(ValueError, match="titles"):
-        tooltip_look.pass_texts(broken)
+        tooltip_look.pass_texts(broken, PICK)
 
 
 def gradient_shape(cid: int) -> bytes:

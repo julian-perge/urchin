@@ -94,9 +94,16 @@
   ]
  },
  "pass_button": {
-  "real_time": "First select your target then choose an ability to use.",
+  "picked": "You will use this ability on %s. Click to cancel this ability.",
+  "real_time": {
+   "action": "Cannot cancel during action.",
+   "idle": "First select your target then choose an ability to use."
+  },
   "title": "No ability selected!",
-  "turn_based": "You may click here to skip your turn."
+  "turn_based": {
+   "action": "Cannot skip during action.",
+   "idle": "You may click here to skip your turn."
+  }
  },
  "rarity_add": {
   "Common": [

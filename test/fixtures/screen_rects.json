@@ -2186,6 +2186,7 @@
     "BottomBar/StanceHost/Row3/Mode4",
     "BottomBar/RightPanel/CombatLogPanel",
     "BottomBar/RightPanel/LogToggleButton",
+    "BottomBar/MoveIcon",
     "CombatTextBanner",
     "UI",
     "Fade"
