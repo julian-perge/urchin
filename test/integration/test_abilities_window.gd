@@ -151,16 +151,183 @@ func test_an_empty_socket_tooltip_reads_strings_json() -> void:
 	assert_eq(socket.tooltip_text, "", "no native tooltip shows over the rich one")
 
 
-func test_a_pool_row_places_its_ability_and_a_socket_click_sends_it_back() -> void:
-	var save: PlayerSave = GameData.current_save
-	var owned: Array = save.move_matrix2.filter(func(move_id): return int(move_id) != 0)
+# -> the first ability a new game owns. The tests below read its copy limit,
+# KRINABILITY[8], from the move data.
+func _first_owned() -> int:
+	var owned: Array = GameData.current_save.move_matrix2.filter(func(move_id): return int(move_id) != 0)
 	assert_gt(owned.size(), 0, "a new game owns an ability")
+	return int(owned[0])
+
+
+func _limit(move_id: int) -> int:
+	return MoveManagerAuto.get_move(move_id).hotbar_slot_limit
+
+
+func _banner() -> CombatTextBanner:
+	var banner: CombatTextBanner = add_child_autofree(load("res://scenes/battle/combat_text_banner.tscn").instantiate())
+	banner.placement = "hub"
+	banner.add_to_group(&"combat_text_banner")
+	banner.set_process(false)
+	return banner
+
+
+func _socket(window: Control, index: int) -> Button:
+	return window.get_node("Socket%d" % index)
+
+
+func _hold_first_row(window: Control) -> void:
+	(window.get_node("Pool/Mask/Rows/PoolRow0") as Button).button_down.emit()
+
+
+func _mouse_down() -> InputEventMouseButton:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = true
+	return event
+
+
+# A press on a pool ability holds it and shows its icon at the mouse
+# (DefineButton2_2437 on(press)). A release on a ring socket puts it there
+# (DefineButton2_3101 to 3108 on(release), frame_42/DoAction_11.as:11-32).
+func test_a_held_pool_ability_goes_to_the_socket_it_is_released_on() -> void:
+	var save: PlayerSave = GameData.current_save
+	var move_id: int = _first_owned()
 	save.move_matrix.fill(0)
 	var window: Control = _window()
-	(window.get_node("Pool/Mask/Rows/PoolRow0") as Button).pressed.emit()
-	assert_eq(int(save.move_matrix[0]), int(owned[0]), "the first free socket holds it")
-	(window.get_node("Socket0") as Button).pressed.emit()
-	assert_eq(int(save.move_matrix[0]), 0, "the socket is empty again")
+	_hold_first_row(window)
+	var icon: TextureRect = window.get_node("HeldIcon")
+	assert_true(icon.visible, "the held icon shows")
+	assert_eq(icon.texture, RadialMenu.icon_texture(MoveManagerAuto.get_move(move_id)))
+	assert_eq(int(save.move_matrix[5]), 0, "a press places nothing")
+	_socket(window, 5).pressed.emit()
+	var expected: Array = [0, 0, 0, 0, 0, move_id, 0, 0]
+	assert_eq(save.move_matrix.map(func(id): return int(id)), expected, "only socket 5 holds it")
+	assert_false(icon.visible, "the hold ends")
+
+
+# addMoveForPlayer counts the copies on the ring, the one in the target socket
+# included, and refuses a copy past KRINABILITY[8] with SKILLERROR. The hold ends
+# either way (frame_42/DoAction_11.as:14-32).
+func test_a_copy_past_the_limit_shows_skillerror_and_leaves_the_ring() -> void:
+	var save: PlayerSave = GameData.current_save
+	var move_id: int = _first_owned()
+	var limit: int = _limit(move_id)
+	assert_between(limit, 1, 7, "the limit leaves a free socket")
+	save.move_matrix.fill(0)
+	for i in limit:
+		save.move_matrix[i] = move_id
+	var before: Array = save.move_matrix.duplicate()
+	var banner: CombatTextBanner = _banner()
+	var window: Control = _window()
+	_hold_first_row(window)
+	_socket(window, limit).pressed.emit()
+	assert_eq(save.move_matrix, before, "the free socket stays empty")
+	assert_true(banner.is_up(), "the banner shows")
+	assert_eq(banner.label.text, Strings.text("SKILLERROR"))
+	assert_false((window.get_node("HeldIcon") as TextureRect).visible, "the hold ends")
+
+
+func test_a_copy_under_the_limit_goes_on_the_ring() -> void:
+	var save: PlayerSave = GameData.current_save
+	var move_id: int = _first_owned()
+	var limit: int = _limit(move_id)
+	save.move_matrix.fill(0)
+	for i in limit - 1:
+		save.move_matrix[i] = move_id
+	var banner: CombatTextBanner = _banner()
+	var window: Control = _window()
+	_hold_first_row(window)
+	_socket(window, 7).pressed.emit()
+	assert_eq(int(save.move_matrix[7]), move_id)
+	assert_false(banner.is_up(), "no refusal")
+
+
+# The count includes the copy in the target socket, so a release on the socket
+# that already holds the last allowed copy is refused too.
+func test_the_count_includes_the_copy_in_the_target_socket() -> void:
+	var save: PlayerSave = GameData.current_save
+	var move_id: int = _first_owned()
+	save.move_matrix.fill(0)
+	for i in _limit(move_id):
+		save.move_matrix[i] = move_id
+	var banner: CombatTextBanner = _banner()
+	var window: Control = _window()
+	_hold_first_row(window)
+	_socket(window, 0).pressed.emit()
+	assert_eq(int(save.move_matrix[0]), move_id)
+	assert_eq(banner.label.text, Strings.text("SKILLERROR"))
+
+
+# A release with nothing held empties the socket (frame_42/DoAction_11.as:7-10).
+func test_a_release_with_nothing_held_empties_the_socket() -> void:
+	var save: PlayerSave = GameData.current_save
+	save.move_matrix[2] = _first_owned()
+	var window: Control = _window()
+	_socket(window, 2).pressed.emit()
+	assert_eq(int(save.move_matrix[2]), 0)
+
+
+# The menu frame's onMouseDown drops a held ability unless the mouse is over a
+# ring socket, whose rollOver sets UITdrop (frame_181/DoAction_2.as:10-14).
+func test_a_mouse_down_off_the_ring_drops_the_held_ability() -> void:
+	var save: PlayerSave = GameData.current_save
+	save.move_matrix.fill(0)
+	var window: Control = _window()
+	_hold_first_row(window)
+	window._input(_mouse_down())
+	assert_false((window.get_node("HeldIcon") as TextureRect).visible, "the hold ends")
+	_socket(window, 1).pressed.emit()
+	assert_eq(int(save.move_matrix[1]), 0, "a release with nothing held places nothing")
+
+
+func test_a_mouse_down_on_a_socket_keeps_the_held_ability() -> void:
+	var save: PlayerSave = GameData.current_save
+	save.move_matrix.fill(0)
+	var window: Control = _window()
+	_hold_first_row(window)
+	_socket(window, 1).mouse_entered.emit()
+	window._input(_mouse_down())
+	_socket(window, 1).pressed.emit()
+	assert_eq(int(save.move_matrix[1]), _first_owned())
+	_socket(window, 1).mouse_exited.emit()
+
+
+# The frame's script sets UITmouseHold to 0 as the window opens
+# (DefineSprite_3142/frame_25/DoAction.as:1).
+func test_reopening_the_window_drops_the_held_ability() -> void:
+	var window: Control = _window()
+	_hold_first_row(window)
+	window.hide()
+	window.show()
+	assert_false((window.get_node("HeldIcon") as TextureRect).visible)
+
+
+# KrinCreateAbilityMatrix lists every ability in moveMatrix2, the ones on the
+# ring too, so a second copy can be taken from the pool
+# (DefineSprite_3142/frame_25/DoAction.as:35-44).
+func test_the_pool_lists_the_abilities_on_the_ring_too() -> void:
+	var save: PlayerSave = GameData.current_save
+	var move_id: int = _first_owned()
+	save.move_matrix.fill(0)
+	save.move_matrix[0] = move_id
+	var window: Control = _window()
+	var row: AbilityPoolRow = window.get_node("Pool/Mask/Rows/PoolRow0")
+	assert_true(row.visible)
+	assert_eq(row.name_label.text, MoveManagerAuto.get_move(move_id).display_name)
+
+
+# The tooltip clip follows the mouse and places inner2, the icon sheet, at its
+# origin, so the icon's rect from the mouse is the one extract_tooltip_look
+# writes.
+func test_the_held_icon_sits_on_the_mouse_as_the_tooltip_clip_places_it() -> void:
+	var rect: Dictionary = TooltipTheme.look()["held_icon"]
+	var window: Control = _window()
+	_hold_first_row(window)
+	var mouse := Vector2(400, 300)
+	window._place_held_icon(mouse)
+	var icon: TextureRect = window.get_node("HeldIcon")
+	assert_eq(icon.global_position, mouse + Vector2(rect["x"], rect["y"]))
+	assert_eq(icon.size, Vector2(rect["w"], rect["h"]))
 
 
 func test_the_close_button_hides_the_window() -> void:

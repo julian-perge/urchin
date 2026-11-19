@@ -13,8 +13,10 @@
 # - right: the Combat Action Bar wheel ('selector' sprite 3109) with 8
 #   sockets, and the Ability Pool list ('talentPool' sprite 3120).
 #
-# Click a pool ability to place it in the first free socket; click a socket
-# to send its ability back to the pool.
+# A press on a pool ability holds it, and its icon follows the mouse. A
+# release on a ring socket puts the held ability there, unless the ring already
+# holds its limit of copies, and a release with nothing held empties the
+# socket. A mouse-down anywhere but on a socket drops the held ability.
 extends Control
 
 const TalentNodeScene: PackedScene = preload("res://scenes/ui/menu/talent_node.tscn")
@@ -47,6 +49,10 @@ const WHEEL_SHADOW: Dictionary = {"size": 6, "offset": Vector2(2.8284, 2.8284), 
 
 const POOL_VISIBLE_ROWS: int = 5
 
+# The Hub's Combat text banner, which shows SKILLERROR. hotbar.gd reaches it
+# through the same group.
+const BANNER_GROUP: StringName = &"combat_text_banner"
+
 # The reader clip shows MENU[43 + random(4)] when the frame opens
 # (DefineSprite_3059/frame_1/DoAction.as).
 const FIRST_TIP: int = 43
@@ -62,6 +68,12 @@ var _socket_buttons: Array[Button] = []
 ]
 var _pool_scroll: int = 0
 var _pool_move_ids: Array = []
+# The original's UITmouseHold: the ability a pool press holds, or 0.
+var _held_move_id: int = 0
+# The original's UITdrop: true while the mouse is over a ring socket.
+var _over_socket: bool = false
+var _held_icon_offset: Vector2 = Vector2.ZERO
+@onready var _held_icon: TextureRect = $HeldIcon
 
 @onready var _name_label: Label = $NameLabel
 @onready var _level_label: Label = $LevelLabel
@@ -90,11 +102,19 @@ func _ready():
 	_pick_tip()
 	_build_tree_panel()
 	_build_wheel_panel()
+	# The sockets are added after the scene's own nodes, so the held icon moves
+	# back to the end to draw over them, as the tooltip clip draws over the menu.
+	move_child(_held_icon, -1)
+	var held_rect: Dictionary = TooltipTheme.look()["held_icon"]
+	_held_icon_offset = Vector2(held_rect["x"], held_rect["y"])
+	_held_icon.size = Vector2(held_rect["w"], held_rect["h"])
+	_set_held(0)
 	for i in _pool_rows.size():
-		_pool_rows[i].pressed.connect(_on_pool_row_pressed.bind(i))
+		_pool_rows[i].button_down.connect(_on_pool_row_held.bind(i))
 		_pool_rows[i].mouse_entered.connect(_on_pool_row_hovered.bind(i))
 		_pool_rows[i].mouse_exited.connect(GameTooltip.hide_tooltip)
 	visibility_changed.connect(func():
+		_set_held(0)
 		if visible:
 			_pick_tip()
 			refresh())
@@ -181,7 +201,9 @@ func _build_wheel_panel() -> void:
 		socket.position = WHEEL_CENTER + WHEEL_OFFSETS[i] * WHEEL_SCALE - SOCKET_SIZE / 2.0
 		socket.pressed.connect(_on_socket_pressed.bind(i))
 		socket.mouse_entered.connect(_on_socket_hovered.bind(i))
+		socket.mouse_entered.connect(func(): _over_socket = true)
 		socket.mouse_exited.connect(GameTooltip.hide_tooltip)
+		socket.mouse_exited.connect(func(): _over_socket = false)
 		_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24), WHEEL_SHADOW)
 		add_child(socket)
 		_socket_buttons.append(socket)
@@ -330,12 +352,11 @@ func _on_socket_hovered(socket_index: int) -> void:
 
 func _refresh_pool(save: PlayerSave) -> void:
 	_pool_move_ids = []
-	# JSON-loaded saves hold floats - compare as ints.
-	var bar_ids: Array[Variant] = []
-	for bar_move in save.move_matrix:
-		bar_ids.append(int(bar_move))
+	# KrinCreateAbilityMatrix lists every owned ability, the ones on the ring
+	# too, so the player can take another copy up to the ability's limit
+	# (DefineSprite_3142/frame_25/DoAction.as:35-44).
 	for move_id in save.move_matrix2:
-		if int(move_id) != 0 and not bar_ids.has(int(move_id)):
+		if int(move_id) != 0:
 			_pool_move_ids.append(int(move_id))
 	_pool_scroll = clamp(_pool_scroll, 0, max(0, _pool_move_ids.size() - POOL_VISIBLE_ROWS))
 	for i in _pool_rows.size():
@@ -414,28 +435,75 @@ func _on_attribute_plus_pressed(stat_index: Leveling.Stat) -> void:
 	refresh()
 
 
+# A socket's pressed signal comes on a release over the socket that took the
+# press, as the original's on(release) does, so the player presses a pool
+# ability, then clicks a socket. This ports addMoveForPlayer's menu branch: the
+# count of copies on the ring includes the one in the target socket, and a
+# refusal shows SKILLERROR with a bare play() (frame_42/DoAction_11.as:4-44).
 func _on_socket_pressed(socket_index: int) -> void:
 	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return
-	if int(save.move_matrix[socket_index]) != 0:
+	if _held_move_id == 0:
 		save.move_matrix[socket_index] = 0
+	else:
+		var copies: int = 0
+		for move_id in save.move_matrix:
+			if int(move_id) == _held_move_id:
+				copies += 1
+		if copies < MoveManagerAuto.get_move(_held_move_id).hotbar_slot_limit:
+			save.move_matrix[socket_index] = _held_move_id
+		else:
+			_show_combat_text(Strings.text("SKILLERROR"))
+		_set_held(0)
 	refresh()
 
 
-func _on_pool_row_pressed(row_index: int) -> void:
-	var save: PlayerSave = GameData.current_save
-	if save == null:
+func _show_combat_text(text: String) -> void:
+	var banner: CombatTextBanner = get_tree().get_first_node_in_group(BANNER_GROUP)
+	if banner == null:
+		push_error("abilities_window: no Combat text banner in the scene to show %s" % text)
 		return
+	banner.show_if_idle(text)
+
+
+# DefineButton2_2437 on(press), which a Button's button_down matches.
+func _on_pool_row_held(row_index: int) -> void:
 	var pool_index: int = _pool_scroll + row_index
-	if pool_index >= _pool_move_ids.size():
+	if pool_index < _pool_move_ids.size():
+		_set_held(_pool_move_ids[pool_index])
+
+
+func _set_held(move_id: int) -> void:
+	_held_move_id = move_id
+	var move: Ability = MoveManagerAuto.get_move(move_id) if move_id != 0 else null
+	_held_icon.texture = RadialMenu.icon_texture(move) if move != null else null
+	_held_icon.visible = move != null
+	set_process(move != null)
+	if move != null:
+		_place_held_icon(get_global_mouse_position())
+
+
+func _process(_delta: float) -> void:
+	_place_held_icon(get_global_mouse_position())
+
+
+# The tooltip clip moves its origin to the mouse on every frame, and its inner2
+# shows the held ability's icon at that origin. tooltip_look.json has the
+# icon's rect from the origin.
+func _place_held_icon(mouse: Vector2) -> void:
+	_held_icon.global_position = mouse + _held_icon_offset
+
+
+# The menu frame's onMouseDown drops a held ability unless UITdrop says the
+# mouse is over a ring socket (frame_181/DoAction_2.as:10-14). This reads the
+# press before the Buttons do, so a press on another pool ability drops the
+# first and then holds the second, as in the original.
+func _input(event: InputEvent) -> void:
+	if _held_move_id == 0 or not is_visible_in_tree():
 		return
-	var empty_socket: int = save.move_matrix.find(0)
-	if empty_socket == -1:
-		_status_label.text = "Your Combat Action Bar is full."
-		return
-	save.move_matrix[empty_socket] = _pool_move_ids[pool_index]
-	refresh()
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and not _over_socket:
+		_set_held(0)
 
 
 func _on_pool_scrolled(direction: int) -> void:
