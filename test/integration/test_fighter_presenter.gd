@@ -1236,7 +1236,7 @@ func _start_melee(on_impact: Callable) -> Array:
 	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT), HOME - Vector2(200, 0))
 	var returned: Array = []
 	var run: Callable = func():
-		await _presenter.melee(target, "Attack", on_impact)
+		await _presenter.melee(target, _swing("Attack"), on_impact)
 		returned.append(true)
 	run.call()
 	return returned
@@ -1267,7 +1267,7 @@ func test_melee_reaches_impact_once_and_returns_at_it():
 func test_melee_without_waiting_reaches_impact_at_once():
 	var impacts: Array = []
 	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT), HOME - Vector2(200, 0))
-	await _presenter.melee(target, "Attack", func(): impacts.append(true), false)
+	await _presenter.melee(target, _swing("Attack"), func(): impacts.append(true), false)
 	assert_eq(impacts.size(), 1, "Impact comes without the swing being played")
 
 
@@ -1304,7 +1304,7 @@ func _impact_spot(caster: FighterPresenter, target: FighterPresenter) -> Vector2
 	var doll: CharacterVisual = caster.get_node("Doll")
 	var spots: Array = []
 	# Nothing awaits the swing, because the test steps it.
-	caster.melee(target, "Attack", func(): spots.append(doll.position))
+	caster.melee(target, _swing("Attack"), func(): spots.append(doll.position))
 	for frame in 60:
 		if not spots.is_empty():
 			break
@@ -1366,16 +1366,39 @@ func test_a_cast_asks_for_no_swing_sound():
 	assert_eq(_cues, [])
 
 
-# The real colortobe glow tint (frame217/onClipEvent(enterFrame).as: 417,450).
-func test_cast_plays_the_cast_state_tinted_with_the_moves_color():
+# Returns a Melee move that swings on `label`, in a colour of its own.
+func _swing(label: String) -> Ability:
+	var move := Ability.new()
+	move.animation_label = label
+	move.visual_effect_color = Color(1.0, 0.2, 0.4)
+	return move
+
+
+# The conductor sets colortobe to the move's param 11 before the cast's goto
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 417 and 450). Only the
+# cast glow takes it, and the doll keeps its own colours.
+func test_cast_plays_the_cast_state_with_colortobe_set_to_the_moves_color():
 	var move := Ability.new()
 	move.visual_effect_color = Color(0.2, 1.0, 0.0)
 	_presenter.cast(move)
 	assert_eq(_doll._state, CharacterVisual.State.CAST, "the cast state")
-	var expected: Color = move.visual_effect_color.lerp(Color.WHITE, 0.4)
-	assert_almost_eq(_doll.modulate.r, expected.r, 0.01, "tinted red")
-	assert_almost_eq(_doll.modulate.g, expected.g, 0.01, "tinted green")
-	assert_almost_eq(_doll.modulate.b, expected.b, 0.01, "tinted blue")
+	assert_eq(_doll.colortobe, move.visual_effect_color)
+	assert_eq(_doll.modulate, Color.WHITE, "the doll itself is not tinted")
+
+
+# krinMelee sets colortobe to the move's param 11 as the strike starts
+# (frame_42/DoAction_4.as:130-131).
+func test_a_swing_sets_colortobe_to_the_moves_color_at_the_strike():
+	_doll.set_process(false)
+	var target: FighterPresenter = _fighter_at(_make_unit(CombatUnit.Team.ONE, ALLY_SLOT), HOME - Vector2(200, 0))
+	var move: Ability = _swing("Attack")
+	_presenter.melee(target, move, func(): pass, false)
+	assert_ne(_doll.colortobe, move.visual_effect_color, "sanity: the dash has not set it")
+	for frame in 120:
+		if _doll._melee_phase == CharacterVisual.MeleePhase.STRIKE:
+			break
+		_doll._process(1.0 / 30.0)
+	assert_eq(_doll.colortobe, move.visual_effect_color)
 
 
 # The color of the Result flash the doll shows, or null while it shows none. The
@@ -1616,7 +1639,8 @@ func test_the_flash_hands_the_shader_the_extracted_glows_and_sizes_the_body_for_
 
 # The flash only puts its filter on the doll's body and takes it off, so the doll
 # ends it looking the way it did before. A caster that heals itself keeps the
-# cast tint it had when its heal landed, and a stunned doll keeps its stun pose.
+# cast glow colour it had when its heal landed, and a stunned doll keeps its
+# stun pose.
 func test_the_doll_looks_the_same_after_the_flash():
 	var heal_move := Ability.new()
 	heal_move.visual_effect_color = Color(0.2, 1.0, 0.0)
@@ -1626,7 +1650,7 @@ func test_the_doll_looks_the_same_after_the_flash():
 	assert_eq(_flash_color(), _heal_flash, "a heal flashes the caster it lands on")
 	_advance_flash(_flash_frames("heal").size())
 	assert_null(_flash_color(), "the flash is over")
-	assert_eq(_doll.modulate, tint, "and the cast tint is still on")
+	assert_eq(_doll.modulate, tint, "and the doll keeps its colours")
 
 	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 	_stun()
