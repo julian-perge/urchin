@@ -71,6 +71,7 @@ As [AGENTS.md](../AGENTS.md) and `CODING_STANDARDS.md` say. Each `Piece` with a 
 - **Must-fail control.** Move `OkButton` 20 px in a working copy and watch the rect test name it. Do not commit the move.
 - **Text (GUT).** A test opens the Screen and compares `EndingLabel.text` with `Strings.text("ENDING")` read from `strings.json`, and checks that both Labels use `MenuCaption`.
 - **Flow (GUT).** `test_cs_cut5_ends_on_the_silent_ending_screen_and_ok_goes_to_the_hub` in `test/integration/test_victory_proceed.gd` still passes. The issue names it `test_the_first_513_win_ends_on_the_ending_screen_after_cs_cut5`, a name no test has.
+- **Compare tool.** An entry `ending` in `dev/screen_compare/screens.json` scores the scene against frame 116 in `chrome` mode. The bar comes from the first passing run. PR #412 added it after #410, with p99 1 and the 20 px control at p99 117.
 - **Whole suite.** `just gut` and `just pytest` pass before each commit.
 
 ## Boundaries
@@ -82,7 +83,6 @@ As [AGENTS.md](../AGENTS.md) and `CODING_STANDARDS.md` say. Each `Piece` with a 
 ## Out of scope
 
 - The Game over Screen, frame 104, which is in the same state. It gets its own issue.
-- A compare tool entry for frame 116. The `left_out` depths make the scene ready for one.
 - Music on the Screen. The original starts none, and the port already plays none.
 
 ## Success criteria
