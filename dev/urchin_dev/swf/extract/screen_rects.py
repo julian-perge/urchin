@@ -400,6 +400,30 @@ SLOT_PIECES = {
     for row, depths in SLOT_ROW_DEPTHS.items()
     for node, depth in depths.items()
 }
+# The Credits Screen's pieces, by their path in credits_panel.tscn
+# (spec/107-credits.md). Row n holds the role field that frame_134/DoAction.as
+# fills with MENU[91 + n] and the static name field at the same height, by
+# their depth and character. The frame also places button 2814 over David
+# Orr's name at depth 22, which the port leaves out
+# (docs/adr/0002-leave-out-the-armor-games-branding.md).
+CREDITS_FRAME = "creditMenu"
+CREDITS_ROWS = {
+    1: ((14, 2822), (8, 2828)),
+    2: ((15, 2821), (9, 2827)),
+    3: ((16, 2820), (10, 2826)),
+    4: ((17, 2819), (11, 2825)),
+    5: ((18, 2818), (12, 2824)),
+    6: ((19, 2817), (13, 2823)),
+    7: ((21, 2815), (20, 2816)),
+}
+CREDITS_PIECES = {
+    "Logo": Piece("art", 6, art="logo"),
+    **{
+        f"Rows/Row{row}/{node}": Piece("text", depth, character=character)
+        for row, fields in CREDITS_ROWS.items()
+        for node, (depth, character) in zip(("Role", "Name"), fields, strict=True)
+    },
+}
 # The Ending Screen, root frame 116 (spec/107-ending.md). The frame also
 # places "Play MORE Games!" at depth 7 and its link at depth 8, which the port
 # leaves out with the other branding
@@ -624,6 +648,9 @@ SCENES: dict[str, Scene] = {
     ),
     "res://scenes/ui/menu/title_panel.tscn": Scene(
         timeline=0, frame=TITLE_FRAME, pieces=TITLE_PIECES
+    ),
+    "res://scenes/ui/menu/credits_panel.tscn": Scene(
+        timeline=0, frame=CREDITS_FRAME, pieces=CREDITS_PIECES
     ),
     # Depths 38 and 41 are the Armor Games line and logo, as on the title. The
     # other left-out depths need no entry, because the compare tool's chrome
