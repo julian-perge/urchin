@@ -8,15 +8,19 @@ import json
 import struct
 from pathlib import Path
 
+from PIL import Image
 from test_swf_index import IDENTITY_MATRIX, bits, label as frame_label, place2, swf, tag
+from urchin_dev import REPO_ROOT
 from urchin_dev.swf.extract.cutscenes import (
     CUTSCENES,
     IDENTITY_COLOR,
+    MAX_ENCODE_DIFFERENCE,
     OUT_DIR,
     OUT_H,
     OUT_W,
     camera_view,
     find_broken_bitmap_fill_cids,
+    mean_difference,
     stage_layers,
     write_cutscene_swf,
 )
@@ -290,27 +294,66 @@ def test_the_cutscene_movie_plays_the_wrapper_and_moves_its_animation(tmp_path):
     assert [p.frame for p in moves] == [3]
 
 
-def test_each_root_layer_stays_where_the_game_places_it():
-    # The root frame of CS_CUT5 places backdrop 3475 at depth 1 and wrapper
-    # 4154 at (2811, 2831) twips, where a Traced run of the Flash debug player
-    # read it at (140.55, 141.55) px (#411). The other five wrappers sit at
-    # (2670, 2750). The movie keeps every layer where the root places it, so
-    # each clip shows its box where the game does.
-    backdrop = bits((0, 1), (0, 1), (14, 5), (-120, 14), (-80, 14))
-    wrapper = bits((0, 1), (0, 1), (14, 5), (2811, 14), (2831, 14))
-    index = parse_swf(
-        swf(
-            tag(TAG_SHOW_FRAME),
-            frame_label("CS_CUT5"),
-            place2(1, cid=3475, matrix=backdrop),
-            place2(2, cid=4154, matrix=wrapper),
-            place2(3, cid=3466, matrix=IDENTITY_MATRIX),
-            tag(TAG_SHOW_FRAME),
-            frames=2,
-        )
-    )
+TRACED_CAMERA_LOG = (
+    REPO_ROOT / "references/traced_runs/cutscene_camera/camera_web_flash.txt"
+)
 
-    assert stage_layers(index, "CS_CUT5", 4154) == [
-        (1, 3475, (1.0, 0.0, 0.0, 1.0, -120, -80)),
-        (2, 4154, (1.0, 0.0, 0.0, 1.0, 2811, 2831)),
-    ]
+
+def traced_wrapper_positions() -> dict[str, tuple[int, int]]:
+    """The root position of each cutscene wrapper, in twips, as the Flash debug
+    player read it in the Traced run of #411. Columns 15 and 16 of a CAM line
+    are the wrapper's _x and _y."""
+    positions = {}
+    for line in TRACED_CAMERA_LOG.read_text().splitlines():
+        fields = line.split("\t")
+        if fields[0] == "CAM":
+            positions[fields[1]] = (
+                round(float(fields[14]) * 20),
+                round(float(fields[15]) * 20),
+            )
+    return positions
+
+
+def test_the_traced_run_read_cs_cut5_off_the_centre_of_the_stage():
+    positions = traced_wrapper_positions()
+    assert positions["CS_CUT5"] == (2811, 2831)
+    assert positions["CS_INTRO2"] == positions["CS_CUT4"] == (2670, 2750)
+
+
+def test_each_root_layer_stays_where_the_game_places_it():
+    # Each wrapper sits where the Traced run read it, over backdrop 3475 at
+    # depth 1, with the fade clip 3466 above it. The movie keeps every layer
+    # up to the wrapper where the root places it, so each clip shows its box
+    # where the game does. The old code moved CS_CUT5's box to (133, 137).
+    backdrop = bits((0, 1), (0, 1), (14, 5), (-120, 14), (-80, 14))
+    for label, (x, y) in traced_wrapper_positions().items():
+        wrapper = bits((0, 1), (0, 1), (14, 5), (x, 14), (y, 14))
+        index = parse_swf(
+            swf(
+                tag(TAG_SHOW_FRAME),
+                frame_label(label),
+                place2(1, cid=3475, matrix=backdrop),
+                place2(2, cid=4154, matrix=wrapper),
+                place2(3, cid=3466, matrix=IDENTITY_MATRIX),
+                tag(TAG_SHOW_FRAME),
+                frames=2,
+            )
+        )
+
+        assert stage_layers(index, label, 4154) == [
+            (1, 3475, (1.0, 0.0, 0.0, 1.0, -120, -80)),
+            (2, 4154, (1.0, 0.0, 0.0, 1.0, x, y)),
+        ], label
+
+
+def test_a_moved_encode_differs_from_the_render_past_the_limit():
+    # A frame with a 533x300 box of stripes over a dark stage, and the same
+    # frame moved 7 px left and 4 px up, as the old crop and pad moved CS_CUT5.
+    render = Image.new("RGB", (OUT_W, OUT_H), (20, 24, 26))
+    for x in range(141, 674, 6):
+        render.paste((230, 200, 40), (x, 142, x + 3, 442))
+    moved = Image.new("RGB", (OUT_W, OUT_H), (20, 24, 26))
+    moved.paste(render.crop((140, 141, 673, 441)), (133, 137))
+
+    assert mean_difference(render, render) == 0
+    assert mean_difference(render, moved) > MAX_ENCODE_DIFFERENCE

@@ -108,8 +108,10 @@
 from __future__ import annotations
 
 import functools
+import itertools
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import zlib
@@ -187,6 +189,11 @@ OUT_W, OUT_H = 800, 575
 # Verification thresholds - see verify_output()'s and _frame_noise()'s
 # docstrings. A frame has to clear both noise bars to be called static.
 DURATION_TOLERANCE_S = 2.0
+# check_encode_matches_render() allows this mean difference, out of 255,
+# between a frame of the encoded clip and ffdec's render of it. Theora at
+# quality 38 gave 1.51 on CS_CUT3's middle frame. The same encode with the old
+# crop and black pad, shifted 7 px left and 4 px up, gave 11.47 (#411).
+MAX_ENCODE_DIFFERENCE = 6.0
 NOISE_RESIDUAL_THRESHOLD = 20.0
 NOISE_RATIO_THRESHOLD = 0.35
 NOISE_SAMPLE_INTERVAL_S = 1.0
@@ -440,7 +447,7 @@ def _camera_wrapper(
     if not placed:
         raise RuntimeError(f"wrapper {wrapper_id} does not place sprite {animation_id}")
     inner += SHOW_FRAME_TAG
-    for previous, (matrix, color) in zip(views, views[1:]):
+    for previous, (matrix, color) in itertools.pairwise(views):
         if (matrix, color) != previous:
             inner += _place(
                 animation_depth,
@@ -571,6 +578,49 @@ def _frame_noise(png_path: Path) -> tuple[float, float]:
     return residual_std, residual_std / (frame_std + 1e-6)
 
 
+def _decoded_frame(video: Path, index: int) -> Image.Image:
+    """Frame index (0-based) of a video, read by decoding the whole stream in
+    order. ffmpeg's select=eq(n,N) returned a frame of another shot of
+    CS_CUT4.ogv (#411), so this does not use it."""
+    size = OUT_W * OUT_H * 3
+    with subprocess.Popen(
+        [str(tool("ffmpeg")), "-v", "error", "-i", str(video)]
+        + ["-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
+        stdout=subprocess.PIPE,
+    ) as decoder:
+        for _ in range(index):
+            decoder.stdout.read(size)
+        frame = decoder.stdout.read(size)
+        decoder.kill()
+    if len(frame) != size:
+        raise RuntimeError(f"{video} has no frame {index} of {OUT_W}x{OUT_H}")
+    return Image.frombytes("RGB", (OUT_W, OUT_H), frame)
+
+
+def mean_difference(a: Image.Image, b: Image.Image) -> float:
+    """The mean of the per-channel difference between two frames, 0 to 255."""
+    return sum(ImageStat.Stat(ImageChops.difference(a, b)).mean) / 3
+
+
+def check_encode_matches_render(
+    label: str, avi_path: Path, ogv_path: Path, index: int
+) -> None:
+    """Stop when frame index of the encoded clip does not show what ffdec
+    rendered on that frame. ffdec renders the stage as the game's root shows
+    it, so an encode that moves, crops or pads the picture fails here. Until
+    #411 the encode cropped the 533x300 box and padded it with black, which
+    put CS_CUT5's box 7 px left and 4 px up of where the game shows it.
+    """
+    difference = mean_difference(
+        _decoded_frame(avi_path, index), _decoded_frame(ogv_path, index)
+    )
+    if difference > MAX_ENCODE_DIFFERENCE:
+        raise RuntimeError(
+            f"{label}: frame {index} of the clip differs from ffdec's render by "
+            f"{difference:.2f} on average, over {MAX_ENCODE_DIFFERENCE}"
+        )
+
+
 def verify_output(
     label: str,
     ogv_path: Path,
@@ -597,7 +647,8 @@ def verify_output(
     _frame_noise(), which catches a render that comes out as static.
 
     The noise sweep crops each frame to the 533x300 cutscene box before it
-    measures. box is the top left corner of that box, rounded to whole pixels.
+    measures. box is the top left corner of that box, rounded down to whole
+    pixels.
     The backdrop around the box is nearly flat, so without the crop it would
     dilute the measurement far enough to hide real static.
     """
@@ -798,7 +849,8 @@ def process_cutscene(
         # Verified in scratch first, so a failed encode or check leaves the
         # committed clip in assets/ untouched.
         wrapper_x, wrapper_y = stage[-1][2][4:]
-        box = (round(wrapper_x / 20), round(wrapper_y / 20))
+        box = (wrapper_x // 20, wrapper_y // 20)
+        check_encode_matches_render(label, avi_path, ogv_path, frames // 2)
         resolution = verify_output(
             label, ogv_path, frames, bool(n_blocks), work_dir, box
         )
