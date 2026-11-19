@@ -17,17 +17,20 @@ uniform float strength = 1.0;
 uniform float stage_scale = 1.0;
 uniform sampler2D lines : hint_screen_texture, repeat_disable, filter_linear;
 
-const int TAPS = 6;
+// Each sample sits at the centre of one cell of a 5 by 5 grid over the box, as
+// in scenes/doll_body.gdshader, so the samples cover a box exactly as wide as
+// the blur.
+const int SAMPLES = 5;
 
 void fragment() {
 	vec2 stage_pixel = SCREEN_PIXEL_SIZE * stage_scale;
 	float sum = 0.0;
-	for (int x = -TAPS; x <= TAPS; x++) {
-		for (int y = -TAPS; y <= TAPS; y++) {
-			vec2 at = SCREEN_UV + vec2(float(x), float(y)) / float(2 * TAPS) * blur * stage_pixel;
-			sum += texture(lines, at).a;
+	for (int i = 0; i < SAMPLES; i++) {
+		for (int j = 0; j < SAMPLES; j++) {
+			vec2 offset = (vec2(float(i), float(j)) + 0.5) / float(SAMPLES) - 0.5;
+			sum += texture(lines, SCREEN_UV + offset * blur * stage_pixel).a;
 		}
 	}
-	float cover = sum / float((2 * TAPS + 1) * (2 * TAPS + 1));
+	float cover = sum / float(SAMPLES * SAMPLES);
 	COLOR = vec4(shadow_color.rgb, shadow_color.a * clamp(cover * strength, 0.0, 1.0));
 }
