@@ -188,8 +188,8 @@ func test_credits_on_the_title_shows_the_credits_screen():
 
 # The original's button 2814 over David Orr's name opens davidorr.net. The port
 # leaves it out (docs/adr/0002-leave-out-the-armor-games-branding.md), so the
-# only button on the Credits Screen is Back's, and no button of the menu lies
-# under the name.
+# only button on the Credits Screen is Back's, no button of the menu lies under
+# the name, and no Control of the Screen over the name stops the mouse.
 func test_david_orrs_name_opens_nothing():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
@@ -203,6 +203,10 @@ func test_david_orrs_name_opens_nothing():
 	for button: Node in menu.find_children("*", "BaseButton", true, false):
 		if (button as Control).is_visible_in_tree():
 			assert_false((button as Control).get_global_rect().intersects(name_rect), "%s lies under David Orr's name" % menu.get_path_to(button))
+	for node: Node in credits.find_children("*", "Control", true, false):
+		var control: Control = node
+		if control.is_visible_in_tree() and control.mouse_filter == Control.MOUSE_FILTER_STOP:
+			assert_false(control.get_global_rect().intersects(name_rect), "%s stops the mouse over David Orr's name" % credits.get_path_to(control))
 
 
 # Returns one message for each panel whose Back does not swap that panel for
