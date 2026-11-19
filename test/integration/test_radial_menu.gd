@@ -11,8 +11,10 @@ const FAR: Vector2 = Vector2(-1000, -1000)
 const LEADING_STRIKE_ID: int = 1
 const DESTROY_ID: int = 2
 const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
+const RING_LAYOUT_PATH: String = "res://assets/ui/battle/pass_button.json"
 
 var _layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(BATTLE_LAYOUT_PATH))
+var _ring_layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RING_LAYOUT_PATH))
 # The orb ring's alpha on each frame of the Traced run's replay of its enterFrame:
 # opened at 0 on frame 0, and with the mouse off it from frame 3, the frame on
 # which its fade-in ends (FADE case "radial" of alpha_steps_probe.as).
@@ -117,6 +119,31 @@ func _cover(bar_index: int) -> TextureRect:
 # The turns left on a cooldown, the original's "ACD" field.
 func _count(bar_index: int) -> Label:
 	return _menu.orbs[bar_index].get_node("Count")
+
+
+# The move's icon, the original's thing0 to thing7.
+func _icon(bar_index: int) -> TextureRect:
+	return _menu.orbs[bar_index].get_node("Icon")
+
+
+# The art the orb's thingo button draws over its icon.
+func _ring(bar_index: int) -> TextureRect:
+	return _menu.orbs[bar_index].get_node("Ring")
+
+
+# Where orb bar_index's art for a button state sits on the stage:
+# extract_pass_button's rect for it, scaled, around the menu's centre.
+func _ring_rect(bar_index: int, state: String) -> Rect2:
+	var rect: Dictionary = _ring_layout["orbs"][bar_index]["states"][state]["rect"]
+	return Rect2(CENTRE + Vector2(rect["x"], rect["y"]) * _ring_scale(), Vector2(rect["w"], rect["h"]) * _ring_scale())
+
+
+func _assert_ring(bar_index: int, state: String) -> void:
+	var ring: TextureRect = _ring(bar_index)
+	var want: Rect2 = _ring_rect(bar_index, state)
+	assert_eq(ring.texture, load(_ring_layout["orbs"][bar_index]["states"][state]["texture"]), "the %s art" % state)
+	assert_almost_eq(ring.get_global_rect().position, want.position, Vector2(0.01, 0.01), "where the %s art starts" % state)
+	assert_almost_eq(ring.size, want.size, Vector2(0.01, 0.01), "how big the %s art is" % state)
 
 
 func _tooltip_lines() -> Array:
@@ -343,15 +370,15 @@ func test_a_refused_pick_leaves_the_next_orb_free_to_pick_the_move_and_close_the
 	assert_false(_menu.visible, "and closes the menu")
 
 
-# The cover is DefineSprite 2241, a black disc 23 px across on the orb's centre,
+# The cover is DefineSprite 2241, a black disc 23 px across on the icon's centre,
 # which the ring's enterFrame sets to 75% alpha while it fades in and 85% once
 # it has (lines 16 and 42).
 # The count is edit text 2245, 12 px grey and centred, laid out 2 px inside
-# bounds that the orb places 17.2 px left of and 8.65 px above its centre.
+# bounds that the icon sheet places 17.2 px left of and 8.65 px above its centre.
 func test_a_darkened_orb_takes_the_originals_cover_and_count():
 	_player.ability_cooldowns[0] = 3
 	_open()
-	var centre: Vector2 = _orb_centre(0)
+	var centre: Vector2 = _icon(0).get_global_rect().get_center()
 	var cover: TextureRect = _cover(0)
 	assert_almost_eq(cover.get_global_rect().position - centre, Vector2(-11.5, -11.5), Vector2(0.5, 0.5), "the disc sits on the centre")
 	assert_almost_eq(cover.size, Vector2(23, 23), Vector2(0.5, 0.5), "23 px across")
@@ -499,8 +526,9 @@ func test_an_orbs_tooltip_carries_the_moves_description():
 func test_an_orb_shows_the_moves_icon_art_not_initials():
 	_open()
 	var orb: Button = _menu.orbs[0]
-	assert_not_null(orb.icon, "loaded the move's real extracted icon art")
-	assert_eq(orb.icon, AbilityIcon.texture("Leading_Strike", AbilityIcon.element_color(_moves[LEADING_STRIKE_ID])))
+	var icon: TextureRect = _icon(0)
+	assert_not_null(icon.texture, "loaded the move's real extracted icon art")
+	assert_eq(icon.texture, AbilityIcon.texture("Leading_Strike", AbilityIcon.element_color(_moves[LEADING_STRIKE_ID])))
 	assert_eq(orb.text, "", "no 2-letter initials now that real art is shown")
 
 
@@ -526,6 +554,119 @@ func test_an_orbs_disc_takes_the_moves_element_colour():
 	_open()
 	var move: Ability = _moves[LEADING_STRIKE_ID]
 	var expected: Color = MenuTheme.ELEMENT_COLORS[move.damage_element_type]
-	var read: Color = preload("res://test/disc_reader.gd").disc_color(_menu.orbs[0].icon, "Leading_Strike")
+	var read: Color = preload("res://test/disc_reader.gd").disc_color(_icon(0).texture, "Leading_Strike")
 	for channel in 3:
 		assert_almost_eq(read[channel], expected[channel], 0.02, "channel %d" % channel)
+
+
+# Each thingo button draws shape 2434, a thin black ring, in its up state and
+# the thicker shape 2435 on over and down. DefineSprite 3382 places the buttons
+# at depths 113 to 127, above the icons at depths 1 to 99, so the ring is the
+# orb's last child, over the icon, the cover and the count.
+func test_an_idle_orb_draws_its_up_ring_and_a_hovered_orb_its_over_ring():
+	var viewport: SubViewport = _menu_in_own_viewport()
+	_open_and_settle()
+	var orb: Button = _menu.orbs[0]
+	assert_eq(orb.get_child(orb.get_child_count() - 1), _ring(0), "the ring draws over everything else on the orb")
+	_assert_ring(0, "up")
+	_move_mouse(viewport, _orb_centre(0), 0)
+	await wait_process_frames(1)
+	_assert_ring(0, "over")
+	_assert_ring(1, "up")
+	_move_mouse(viewport, FAR, 0)
+	await wait_process_frames(1)
+	_assert_ring(0, "up")
+
+
+# The ring art is all the original draws around an orb, so the Button draws no
+# box or border of its own in any state. The move's element colour shows on the
+# icon's disc instead.
+func test_an_orb_draws_no_box_or_border_of_its_own():
+	_open()
+	var orb: Button = _menu.orbs[0]
+	for state in ["normal", "hover", "pressed", "hover_pressed", "disabled", "focus"]:
+		assert_is(orb.get_theme_stylebox(state), StyleBoxEmpty, state)
+
+
+# The Radial menu clip places each icon, thing0 to thing7, on its own spot near
+# its button, and extract_pass_button writes that rect. The icon is the orb's
+# first child, so the cover, the count and the ring draw over it. Each orb's
+# idle ring sits where its own thingo button places shape 2434.
+func test_every_orbs_icon_sits_where_the_clip_places_its_thing():
+	_open()
+	assert_eq(_menu.orbs.size(), _ring_layout["orbs"].size(), "one extracted layout for each orb")
+	for bar_index in _menu.orbs.size():
+		_assert_ring(bar_index, "up")
+		var icon: TextureRect = _icon(bar_index)
+		var rect: Dictionary = _ring_layout["orbs"][bar_index]["icon"]
+		var want := Rect2(CENTRE + Vector2(rect["x"], rect["y"]) * _ring_scale(), Vector2(rect["w"], rect["h"]) * _ring_scale())
+		assert_eq(_menu.orbs[bar_index].get_child(0), icon, "orb %d's icon draws under the rest" % bar_index)
+		assert_almost_eq(icon.get_global_rect().position, want.position, Vector2(0.01, 0.01), "orb %d's icon corner" % bar_index)
+		assert_almost_eq(icon.size, want.size, Vector2(0.01, 0.01), "orb %d's icon size" % bar_index)
+		assert_null(_menu.orbs[bar_index].icon, "the Button draws no icon of its own")
+
+
+# A Flash button that is pressed and then dragged off shows its over art until
+# the release (Ruffle's DragOut arm in avm1_button.rs). A Godot Button draws in
+# DRAW_NORMAL then, and only is_pressed() still says the press is held.
+func test_an_orb_pressed_and_dragged_off_shows_its_over_ring():
+	var viewport: SubViewport = _menu_in_own_viewport()
+	_open_and_settle()
+	var orb: Button = _menu.orbs[0]
+	_press(viewport, _orb_centre(0))
+	await wait_process_frames(1)
+	_assert_ring(0, "down")
+	_drag_to(viewport, FAR)
+	await wait_process_frames(1)
+	assert_true(orb.is_pressed(), "sanity: the press is still held")
+	_assert_ring(0, "over")
+	_release(viewport, FAR)
+	await wait_process_frames(1)
+	_assert_ring(0, "up")
+
+
+# GUT's window sits above everything in the root viewport and would take the
+# mouse, so a test that moves the mouse puts a new menu in a viewport of its own
+# and returns that viewport.
+func _menu_in_own_viewport() -> SubViewport:
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 575)
+	add_child_autofree(viewport)
+	_menu = RadialMenuScene.instantiate()
+	viewport.add_child(_menu)
+	_menu.set_process(false)
+	_menu.setup(_units, _moves, {})
+	_menu.decision_open = true
+	return viewport
+
+
+# Moves the mouse to point with no button held, then presses the left button.
+func _press(viewport: Viewport, point: Vector2) -> void:
+	_move_mouse(viewport, point, 0)
+	_left_button(viewport, point, true)
+
+
+# Moves the mouse to point with the left button held.
+func _drag_to(viewport: Viewport, point: Vector2) -> void:
+	_move_mouse(viewport, point, MOUSE_BUTTON_MASK_LEFT)
+
+
+func _release(viewport: Viewport, point: Vector2) -> void:
+	_left_button(viewport, point, false)
+
+
+func _move_mouse(viewport: Viewport, point: Vector2, button_mask: int) -> void:
+	var motion := InputEventMouseMotion.new()
+	motion.position = point
+	motion.global_position = point
+	motion.button_mask = button_mask
+	viewport.push_input(motion)
+
+
+func _left_button(viewport: Viewport, point: Vector2, pressed: bool) -> void:
+	var click := InputEventMouseButton.new()
+	click.position = point
+	click.global_position = point
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = pressed
+	viewport.push_input(click)
