@@ -601,3 +601,48 @@ func test_every_orbs_icon_sits_where_the_clip_places_its_thing():
 		assert_almost_eq(icon.get_global_rect().position, want.position, Vector2(0.01, 0.01), "orb %d's icon corner" % bar_index)
 		assert_almost_eq(icon.size, want.size, Vector2(0.01, 0.01), "orb %d's icon size" % bar_index)
 		assert_null(_menu.orbs[bar_index].icon, "the Button draws no icon of its own")
+
+
+# A Flash button that is pressed and then dragged off shows its over art until
+# the release (Ruffle's DragOut arm in avm1_button.rs). A Godot Button draws in
+# DRAW_NORMAL then, and only is_pressed() still says the press is held.
+func test_an_orb_pressed_and_dragged_off_shows_its_over_ring():
+	# GUT's window sits above everything in the root viewport and would take
+	# the mouse, so this menu gets a viewport of its own.
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 575)
+	add_child_autofree(viewport)
+	_menu = RadialMenuScene.instantiate()
+	viewport.add_child(_menu)
+	_menu.set_process(false)
+	_menu.setup(_units, _moves, {})
+	_menu.decision_open = true
+	_open_and_settle()
+	var orb: Button = _menu.orbs[0]
+	_send_mouse(viewport, _orb_centre(0), true, true)
+	await wait_process_frames(1)
+	_assert_ring(0, "down")
+	_send_mouse(viewport, FAR, false, true)
+	await wait_process_frames(1)
+	assert_true(orb.is_pressed(), "sanity: the press is still held")
+	_assert_ring(0, "over")
+	_send_mouse(viewport, FAR, true, false)
+	await wait_process_frames(1)
+	_assert_ring(0, "up")
+
+
+# Sends a mouse motion to point, then a left button press or release there when
+# button is true.
+func _send_mouse(viewport: Viewport, point: Vector2, button: bool, pressed: bool) -> void:
+	var motion := InputEventMouseMotion.new()
+	motion.position = point
+	motion.global_position = point
+	motion.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed and not button else 0
+	viewport.push_input(motion)
+	if button:
+		var click := InputEventMouseButton.new()
+		click.position = point
+		click.global_position = point
+		click.button_index = MOUSE_BUTTON_LEFT
+		click.pressed = pressed
+		viewport.push_input(click)

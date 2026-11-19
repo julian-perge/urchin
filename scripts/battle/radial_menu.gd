@@ -43,8 +43,8 @@ const COVER_PATH: String = "res://assets/ui/abilities/cooldown_cover.png"
 # the same two rings as the pass button, so they share its PNGs.
 const RING_LAYOUT_PATH: String = "res://assets/ui/battle/pass_button.json"
 # The thingo button state whose art the orb shows for each draw mode of its
-# Button. A Flash button pressed and then dragged off shows its up art, and a
-# Godot Button in that case draws in DRAW_NORMAL, so the two agree.
+# Button. _show_ring() handles the one case this misses: a press dragged off
+# the orb.
 const RING_STATES: Dictionary = {
 	BaseButton.DRAW_NORMAL: "up",
 	BaseButton.DRAW_DISABLED: "up",
@@ -180,9 +180,15 @@ func _clear_orb_styles(orb: Button) -> void:
 
 
 # The Button redraws whenever its draw mode changes, so each redraw shows the
-# art of the state the Button is in.
+# art of the state the Button is in. A Flash button that is pressed and then
+# dragged off shows its over art until the release, as Ruffle's DragOut arm in
+# avm1_button.rs does. A Godot Button draws in DRAW_NORMAL then, and only
+# is_pressed() says the press is still held.
 func _show_ring(orb: Button) -> void:
-	_set_ring_state(orb.get_node("Ring") as TextureRect, RING_STATES[orb.get_draw_mode()])
+	var state: String = RING_STATES[orb.get_draw_mode()]
+	if orb.get_draw_mode() == BaseButton.DRAW_NORMAL and orb.is_pressed():
+		state = "over"
+	_set_ring_state(orb.get_node("Ring") as TextureRect, state)
 
 
 func _set_ring_state(ring: TextureRect, state: String) -> void:
