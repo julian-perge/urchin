@@ -745,9 +745,10 @@ def test_an_alpha_reference_keeps_only_the_depths_of_its_nodes_with_no_text(
     from types import SimpleNamespace
 
     layers = {
-        72: SimpleNamespace(character_id=333, name=None),
-        342: SimpleNamespace(character_id=3414, name="p5BAR"),
-        360: SimpleNamespace(character_id=3414, name="p1BAR"),
+        72: SimpleNamespace(character_id=333, name=None, clip_depth=340),
+        342: SimpleNamespace(character_id=3414, name="p5BAR", clip_depth=None),
+        360: SimpleNamespace(character_id=3414, name="p1BAR", clip_depth=None),
+        378: SimpleNamespace(character_id=3414, name="p3BAR", clip_depth=None),
     }
     monkeypatch.setattr(screen_compare.screen_rects, "origin_of", lambda *_: (0, 0))
     monkeypatch.setattr(screen_compare.timeline, "frame_of", lambda *_: 1)
@@ -773,7 +774,7 @@ def test_an_alpha_reference_keeps_only_the_depths_of_its_nodes_with_no_text(
     job = screen_compare.reference_job(None, bars, "alpha")
 
     assert job.timeline == 0
-    assert job.only_depths == (342, 360)
+    assert job.only_depths == (72, 342, 360)
     assert job.strip == (3407,)
 
 

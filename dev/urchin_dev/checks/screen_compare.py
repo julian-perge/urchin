@@ -29,9 +29,9 @@
 # The method, generalized from the victory prototype's compare.py on the
 # branch prototype/victory-containers:
 #   - Each mode needs two captures of the same scene, one over magenta and one
-#     over green. A pixel the scene covers completely is the same in both, so
-#     the mask is every pixel that matches, shrunk by one pixel so that no
-#     resampled edge counts.
+#     over green, and alpha mode needs two more for its control. A pixel the
+#     scene covers completely is the same in both, so the mask is every pixel
+#     that matches, shrunk by one pixel so that no resampled edge counts.
 #   - The faces of the scene in test/fixtures/screen_rects.json are left out
 #     of the mask, because the game sets each face from its data and ffdec
 #     runs no ActionScript, so the reference cannot hold the same face.
@@ -46,9 +46,15 @@
 #     consecutive depths, each run moved by its pieces' offset or not moved,
 #     and the runs are drawn over each other in depth order, so the pieces
 #     between them keep their stacking.
+#   - In alpha mode, a pixel's alpha is 1 minus its mean channel difference
+#     between the two captures over 255, and its difference is how far that
+#     alpha is from the reference's, 0 to 255. Every pixel that either side
+#     draws is scored, and no mask is used.
 #   - The must-fail control scores the same capture against the reference
-#     moved 20 px to the right. A mode passes when its score is at or under
-#     its bar and the control is over the bar.
+#     moved 20 px to the right. In alpha mode it scores the control captures,
+#     with the material off the nodes, against the same reference. A mode
+#     passes when its score is at or under its bar and the control is over the
+#     bar.
 #
 # Run: just compare-screen <entry> [--mode chrome|panels|alpha] [--shots <folder>]
 #      just compare-screen --list
@@ -508,18 +514,23 @@ def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
     if mode == "alpha":
         layers = timeline.frames(index, entry.timeline)[frame - 1]
         reasons = dict.fromkeys(texts, "an edit text, hidden in alpha mode")
+        # ffdec's driver refuses to hide a clip mask, so every mask of the frame
+        # stays. A mask draws nothing itself, and it clips the nodes only where
+        # Flash clips them too.
+        masks = {
+            depth for depth, layer in layers.items() if layer.clip_depth is not None
+        }
+        nodes = {
+            placed_depth(layers, place, entry.frame)
+            for place in entry.modes[mode].places
+        }
         return render.Job(
             entry.timeline,
             frame,
             ZOOM,
             origin,
             strip=tuple(strip.strip_list(WEB_SWF, reasons)) if reasons else (),
-            only_depths=tuple(
-                sorted(
-                    placed_depth(layers, place, entry.frame)
-                    for place in entry.modes[mode].places
-                )
-            ),
+            only_depths=tuple(sorted(masks | nodes)),
         )
     reasons = dict.fromkeys(texts, "an edit text, hidden in chrome mode")
     layers = characters(entry.timeline)[frame - 1]

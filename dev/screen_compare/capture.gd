@@ -9,13 +9,17 @@
 # Run it with the godot-mcp run_scene tool, embedded, with these arguments,
 # then capture_screenshot:
 #   --entry=<name>             an entry of screens.json
-#   --mode=chrome|panels       chrome hides every Label, and panels hides
+#   --mode=chrome|panels|alpha chrome hides every Label, and panels hides
 #                              every node that the entry's `nodes` does not name.
 #                              A chrome mode with "hide_names" also hides every
 #                              node with one of those names, and what is under
 #                              it: art that the game sets from its data, such
-#                              as item icons and the doll
+#                              as item icons and the doll. alpha hides every
+#                              Label and every node that is not one of the
+#                              entry's `nodes` or under one of them
 #   --background=magenta|green the colour behind the scene
+#   --control                  takes the material off each of the entry's
+#                              `nodes`, for the control capture of alpha mode
 extends Node
 
 const CONFIG: String = "res://dev/screen_compare/screens.json"
@@ -58,15 +62,23 @@ func _ready() -> void:
 		keep.append(screen.get_node(path))
 	var hide_names: Array = entry["modes"][mode].get("hide_names", [])
 	_hide(screen, mode, keep, hide_names)
+	if "--control" in OS.get_cmdline_user_args():
+		for node: Node in keep:
+			node.material = null
 
 
 # A hidden node keeps its place in the layout, because only what it draws
 # itself turns clear. Setting `visible` would take it out of a FloatBox.
-func _hide(node: Node, mode: String, keep: Array[Node], hide_names: Array, under_hidden_name: bool = false) -> void:
+func _hide(node: Node, mode: String, keep: Array[Node], hide_names: Array, under_hidden_name: bool = false, under_kept: bool = false) -> void:
 	var is_named: bool = under_hidden_name or hide_names.has(str(node.name))
+	var is_kept: bool = under_kept or node in keep
 	if node is CanvasItem:
 		var is_text: bool = node is Label or node is RichTextLabel
-		if (mode == "chrome" and (is_text or is_named)) or (mode == "panels" and node not in keep):
+		if (
+			(mode == "chrome" and (is_text or is_named))
+			or (mode == "panels" and node not in keep)
+			or (mode == "alpha" and (is_text or not is_kept))
+		):
 			node.self_modulate.a = 0.0
 	for child: Node in node.get_children():
-		_hide(child, mode, keep, hide_names, is_named)
+		_hide(child, mode, keep, hide_names, is_named, is_kept)
