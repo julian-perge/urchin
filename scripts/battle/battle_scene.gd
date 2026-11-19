@@ -1018,8 +1018,9 @@ func _finish_battle() -> void:
 # The original's win leaves the battle through root frames 218 and 219, which
 # show black shape 333 over the whole stage, and goes on to Navigation, where the
 # Victory Window opens (frame_219/DoAction.as:78-81, frame_181/PlaceObject3_3142_175
-# onClipEvent(load), lines 3-7). So the black stays up and the Hub opens with no
-# fade in. ZoneManager.auto_switch_scenes off keeps the scene for the tests.
+# onClipEvent(load), lines 3-7). So the black stays up until the Hub's own fade,
+# clip 2837, clears it over the Hub and the Window (scripts/ui/hub_fade.gd).
+# ZoneManager.auto_switch_scenes off keeps the scene for the tests.
 func _go_to_hub() -> void:
 	_fade_black.color.a = 1.0
 	if ZoneManager.auto_switch_scenes:

@@ -782,6 +782,19 @@ Ported: `scripts/game.gd`'s `show_battle_hint` shows the card, and `convert_batt
 - The port's `show_battle_hint(battle_id)` keeps `tutSpeecher` as `_hint_used`, a field of the Hub. The port builds a new Hub after every win and every load, so the field is false in each
   new Hub, which is the reset on a win. A load never calls the method, which is what the set-on-load does. After a level-up win, the Hub's Victory Proceed keeps the won battle's id, and the Hub calls `show_battle_hint` when the close X of the Inventory or the Store is pressed (#325). After a win with no level-up, Proceed calls it at once (#241). Only that close button calls it, as 2853 does: the hotbar buttons that toggle the Windows do not.
 
+## Hub fade-in (clip 2837, frame_181/PlaceObject2_2837_1660)
+
+Ported: `scripts/ui/hub_fade.gd` is the last child of `scenes/game.tscn`, and `extract_hub_fade` writes its numbers, colour and rect to `assets/ui/hub_fade.json` (#371).
+
+- The Navigation frame places sprite 2837 at depth 1660, above KRINMENU (3142) at 175 and the Info card (2848) at 1651. The sprite is shape 333, black, scaled to cover the stage from
+  (-3.77, -3.74) to (801.83, 573.31), so a strip of about 1.7 px at the bottom stays uncovered.
+- `onClipEvent(load)` sets `_alpha = 99` and `frameGo = undefined`. `onClipEvent(enterFrame)` takes 15 off `_alpha` while it is above 0, so the black shows at 99, 84, 69, 54, 39, 24 and 9,
+  and clears on the 7th step. At 30 fps that is about 0.23 s. A win leaves the battle on full black and opens the Victory Window on Navigation's load, so the Hub and the Window fade in together.
+- When `frameGo` is set, the handler adds 15 a frame up to 100 and then calls `_root.gotoAndStop(frameGo)`. No script in the web build writes `frameGo`, and the placement has no instance
+  name to reach the clip by, so that branch never runs and the port has no fade-out (`label_xref.json` lists the jump as unresolved).
+- A zone button on the World map jumps to Navigation (`DefineButton2_4155` on(release), lines 4-5), so the Hub fades in after each zone pick. The port keeps the Hub open under its
+  map, so `zone_map.gd` emits `zone_picked` and the Hub calls `HubFade.restart()`. Every other jump to Navigation builds a new Hub in the port.
+
 ## Stun, Silence and Reflect
 
 - A unit with `STUN` not 0 does nothing on its turn. The conductor runs a move only when `mCaster.STUN == 0` (conductor line 350). The port gates this in `BattleRunner._execute_action()`.
