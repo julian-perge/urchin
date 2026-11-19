@@ -117,6 +117,29 @@ def test_a_part_that_moves_to_another_depth_fails():
         model_animations.animations(index, MODEL)
 
 
+def test_shadow_lists_the_shadow_matrix_of_each_frame_and_null_without_one():
+    # MODEL8 moves its shadow on later frames, and MODEL2 removes it before its
+    # last frames.
+    def at(tx: int, ty: int) -> bytes:
+        return bits((0, 1), (0, 1), (12, 5), (tx, 12), (ty, 12))
+
+    index = parse_swf(
+        swf(
+            model(
+                place2(1, cid=SHAPE, name="shadower", matrix=at(200, 400)) + SHOW,
+                place2(1, move=True, matrix=at(400, 400)) + SHOW,
+                tag(TAG_REMOVE_OBJECT2, struct.pack("<H", 1)) + SHOW,
+            ),
+            SHOW,
+        )
+    )
+    assert model_animations.animations(index, MODEL)["shadow"] == [
+        [1.0, 0.0, 0.0, 1.0, 10.0, 20.0],
+        [1.0, 0.0, 0.0, 1.0, 20.0, 20.0],
+        None,
+    ]
+
+
 def test_each_model_writes_its_own_file():
     assert model_animations.out_path("MODEL4").name == "model4_animations.json"
 

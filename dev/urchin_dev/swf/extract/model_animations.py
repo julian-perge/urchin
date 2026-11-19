@@ -5,7 +5,8 @@
 # model4_animations.json, each
 #   {"fps": 30, "labels": {name: {"start": 1-based, "end": inclusive}},
 #    "frames": [ {part: [a, b, c, d, tx_px, ty_px]}, ... ],
-#    "alphas": [ {part: alpha}, ... ], "depths": {part: depth}}
+#    "alphas": [ {part: alpha}, ... ], "depths": {part: depth},
+#    "shadow": [ [a, b, c, d, tx_px, ty_px] or null, ... ]}
 # where the matrix columns are Godot Transform2D's x=(a,b), y=(c,d),
 # origin=(tx,ty) - translations converted from twips to px.
 #
@@ -16,13 +17,18 @@
 # brightness in the port.
 #
 # depths holds the depth each part has on frame 1, which is its draw order: a
-# higher depth draws in front. No part of MODEL1 or MODEL4 changes its depth
-# on a later frame or first shows up after frame 1, and animations() fails if
-# one does.
+# higher depth draws in front. No part of any model changes its depth on a
+# later frame or first shows up after frame 1, and animations() fails if one
+# does.
 #
-# MODEL5 to MODEL8 are left out. They have fewer named parts than the 15 that
-# CharacterVisual draws (MODEL8 also places unnamed clips), and MODEL2 and
-# MODEL9 name no parts at all, so drawing them needs more than their timelines.
+# A model can name fewer parts than the 15 that CharacterVisual draws. MODEL5
+# and MODEL6 name 11, MODEL7 names 7, MODEL8 names 6, and MODEL2 and MODEL9
+# name none. A part that a frame does not list is hidden on that frame. The art
+# that a model places with no part name is extract_model_pieces' output.
+#
+# shadow has one entry per frame: the matrix of the clip named shadower, which
+# MODEL5, MODEL7 and MODEL8 move on later frames, or null on a frame that does
+# not place it. extract_doll_shadow renders the clip.
 #
 # Run: uv run extract_model_animations
 from __future__ import annotations
@@ -36,7 +42,17 @@ from urchin_dev.swf.swf_index import SwfIndex, read_swf
 
 SPRITES = REPO_ROOT / "resources" / "sprites"
 # Each model's DefineSprite in the web SWF.
-MODELS = {"MODEL1": 166, "MODEL4": 2668}
+MODELS = {
+    "MODEL1": 166,
+    "MODEL2": 1795,
+    "MODEL4": 2668,
+    "MODEL5": 2664,
+    "MODEL6": 2608,
+    "MODEL7": 2631,
+    "MODEL8": 2542,
+    "MODEL9": 2469,
+}
+SHADOW = "shadower"
 FPS = 30.0
 
 PART_NAMES = {
@@ -81,11 +97,15 @@ def animations(index: SwfIndex, sprite: int) -> dict:
 
     frames = []
     alphas = []
+    shadows = []
     for snap in snaps:
         pose = {}
         faded = {}
+        shadow = None
         for depth, layer in snap.items():
             part = layer.name
+            if part == SHADOW:
+                shadow = _matrix(layer.matrix)
             if part not in PART_NAMES:
                 continue
             if part not in depths:
@@ -98,28 +118,35 @@ def animations(index: SwfIndex, sprite: int) -> dict:
                     f"frame {len(frames) + 1}: {part} moved from depth"
                     f" {depths[part]} to {depth}"
                 )
-            a, b, c, d, tx, ty = layer.matrix
-            pose[part] = [
-                round(a, 4),
-                round(b, 4),
-                round(c, 4),
-                round(d, 4),
-                round(tx / 20.0, 2),
-                round(ty / 20.0, 2),
-            ]
+            pose[part] = _matrix(layer.matrix)
             if layer.color_transform is not None:
                 alpha_multiplier = max(0, min(layer.color_transform[3], 256))
                 if alpha_multiplier < 256:
                     faded[part] = round(alpha_multiplier / 256, 4)
         frames.append(pose)
         alphas.append(faded)
+        shadows.append(shadow)
     return {
         "fps": FPS,
         "labels": label_ranges,
         "frames": frames,
         "alphas": alphas,
         "depths": depths,
+        "shadow": shadows,
     }
+
+
+def _matrix(matrix) -> list[float]:
+    """-> a placement matrix with its translation in px instead of twips."""
+    a, b, c, d, tx, ty = matrix
+    return [
+        round(a, 4),
+        round(b, 4),
+        round(c, 4),
+        round(d, 4),
+        round(tx / 20.0, 2),
+        round(ty / 20.0, 2),
+    ]
 
 
 def out_path(model: str):
