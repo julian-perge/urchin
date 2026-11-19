@@ -405,9 +405,9 @@ color = Color(0.0666667, 0.0666667, 0.0666667, 1)
 
 [node name="ExpFill" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 172.525
+offset_left = 172.6
 offset_top = 283.3
-offset_right = 267.775
+offset_right = 267.85
 offset_bottom = 302.05
 mouse_filter = 2
 texture = ExtResource("23_xpbar")

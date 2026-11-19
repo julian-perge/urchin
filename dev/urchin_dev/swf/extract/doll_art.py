@@ -16,10 +16,10 @@
 # not what the shape geometry says, or every filtered part would be scaled
 # down and shifted by the width of its own glow.
 #
-# render.py works out where each part goes. ffdec grows the canvas by the
-# filter margin on both sides of the timeline's displayRect, so the canvas
-# keeps the displayRect's centre, and the driver reports that displayRect
-# with every frame, so the rect needs no filter math of its own. Before
+# render.py works out where each part goes. The driver reports with every
+# frame the rect ffdec sized the canvas from, filter margin included, and
+# ffdec puts that rect's left and top edges on the canvas's (0, 0), so the
+# rect needs no filter math of its own. Before
 # julian-perge/urchin#43 this file read the displayRect off a second ffdec
 # pass in SVG, and before that it walked the XML dump in Python, which took
 # 28.2s against the SVG pass's 4.1s.

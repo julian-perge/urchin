@@ -57,8 +57,9 @@ def result(width, height, canvas, display):
 
 
 def old_content_rect(origin, display_rect, canvas, bbox, zoom):
-    """battle_screen.content_rect and start_screens.content_rect as they were
-    before this module, with display_rect as (x, y, w, h) in design px."""
+    """The rect render.py gave before julian-perge/urchin#72, which put the
+    canvas around the displayRect's centre. display_rect is (x, y, w, h) in
+    design px."""
     centre_x = origin[0] + display_rect[0] + display_rect[2] / 2
     centre_y = origin[1] + display_rect[1] + display_rect[3] / 2
     canvas_x = centre_x - canvas[0] / zoom / 2
@@ -78,17 +79,43 @@ CANVAS = (-180, -70, 280, 390)
 DISPLAY = (-150, -40, 250, 360)
 
 
-def test_trim_keeps_the_old_centre_formula(tmp_path, monkeypatch):
+# The same sprite one twip wider and taller on the right and bottom: 461
+# twips at 4x is 92.2 px, which ffdec rounds up to a 93x93 canvas.
+ROUNDED_CANVAS = (-180, -70, 281, 391)
+ROUNDED_DISPLAY = (-150, -40, 251, 361)
+
+
+def test_trim_places_the_piece_from_the_canvas_origin(tmp_path, monkeypatch):
+    # ffdec draws the rect it sized the canvas from with its left and top
+    # edges on the canvas's (0, 0) (SWF.frameToImageGet at jpexs cde1cc21a),
+    # and the extra 0.8 px of rounding all goes on the right and bottom.
+    fake_driver(
+        monkeypatch,
+        [result(93, 93, ROUNDED_CANVAS, ROUNDED_DISPLAY)],
+        [(10, 20, 40, 50)],
+    )
+    job = Job(timeline=7, frame=1, zoom=4.0, origin=(100.5, 33.25))
+    with render.frames(tmp_path / "a.swf", [job]) as (frame,):
+        trimmed = render.trim(frame)
+    assert trimmed.rect == pytest.approx((100.5 - 9 + 2.5, 33.25 - 3.5 + 5, 7.5, 7.5))
+    assert trimmed.image.size == (30, 30)
+    old = old_content_rect(
+        (100.5, 33.25), (-7.5, -2.0, 20.05, 20.05), (93, 93), (10, 20, 40, 50), 4.0
+    )
+    half_rounding = (93 / 4 - 461 / 20) / 2
+    assert trimmed.rect[0] - old[0] == pytest.approx(half_rounding)
+    assert trimmed.rect[1] - old[1] == pytest.approx(half_rounding)
+
+
+def test_without_rounding_the_origin_and_the_old_centre_agree(tmp_path, monkeypatch):
     fake_driver(monkeypatch, [result(92, 92, CANVAS, DISPLAY)], [(10, 20, 40, 50)])
     job = Job(timeline=7, frame=1, zoom=4.0, origin=(100.5, 33.25))
     with render.frames(tmp_path / "a.swf", [job]) as (frame,):
         trimmed = render.trim(frame)
-    display_px = (-7.5, -2.0, 20.0, 20.0)
     expected = old_content_rect(
-        (100.5, 33.25), display_px, (92, 92), (10, 20, 40, 50), 4.0
+        (100.5, 33.25), (-7.5, -2.0, 20.0, 20.0), (92, 92), (10, 20, 40, 50), 4.0
     )
-    assert trimmed.rect == expected
-    assert trimmed.image.size == (30, 30)
+    assert trimmed.rect == pytest.approx(expected)
     assert trimmed.rect[2] * 4.0 == trimmed.image.width
 
 

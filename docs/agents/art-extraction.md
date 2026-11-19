@@ -132,10 +132,14 @@ extracting it.
   rewrites every PNG, so change it in a PR of its own that regenerates them.
   `dev/tests/test_png.py` fails when an extractor writes a PNG another way.
 - **Recover positions, never invent them.** ffdec grows the export canvas by
-  the filter dimension symmetrically around the timeline displayRect, so the
-  canvas keeps the displayRect's centre and the stage rect follows from that
-  centre plus the canvas size with no filter math. `render.py` does this for
-  every extractor. Inventing them instead drew the zone orb at twice its real
+  the filter dimension around the timeline displayRect, and draws that grown
+  rect with its left and top edges on the canvas's (0, 0). It rounds the
+  canvas up to whole pixels on the right and bottom only. So a piece's rect on
+  the Stage is the left and top edges of the rect the driver reports, plus the
+  crop's offset over the zoom, with no filter math. `render.py` does this for every extractor.
+  Until #72 it put the canvas around the displayRect's centre, which placed
+  every piece half the rounding up and to the left, up to 0.225 design px on a
+  doll part at 2x. Inventing them instead drew the zone orb at twice its real
   size, which every zone scene then cancelled with `scale = 0.4` (`8ef2139`).
 - **Read the displayRect from the render, not a Python re-walk.** The driver
   reports the rect it sized each canvas from, with and without the filter
