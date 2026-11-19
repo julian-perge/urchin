@@ -450,6 +450,13 @@ mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_font_sizes/font_size = 12
 
+[node name="HeldIcon" type="TextureRect" parent="."]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
 [connection signal="close_pressed" from="WindowShell" to="." method="hide"]
 [connection signal="pressed" from="PlusColumn/VitalitySlot/VitalityPlus" to="." method="_on_attribute_plus_pressed" binds=[0]]
 [connection signal="pressed" from="PlusColumn/StrengthSlot/StrengthPlus" to="." method="_on_attribute_plus_pressed" binds=[1]]
