@@ -1275,4 +1275,4 @@ func test_model8_parts_land_where_the_flash_run_of_battle_408_put_them():
 			assert_almost_eq(part.transform.get_scale().y * 100.0, float(f[10]), 0.05, where)
 			assert_almost_eq(rad_to_deg(part.transform.get_rotation()), float(f[11]), 0.05, where)
 			checked += 1
-	assert_eq(checked, 36, "6 parts of 3 dolls on 2 frames")
+	assert_eq(checked, 36, "6 parts on 2 frames for each of the 3 MODEL8 dolls, which Flash poses alike")
