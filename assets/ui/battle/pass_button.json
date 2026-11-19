@@ -5,6 +5,240 @@
   "x": 380.94,
   "y": 488.44
  },
+ "orbs": [
+  {
+   "down": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": -13.08,
+     "y": -62.23
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "over": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": -13.08,
+     "y": -62.23
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "up": {
+    "rect": {
+     "h": 24.42,
+     "w": 24.42,
+     "x": -12.21,
+     "y": -61.36
+    },
+    "texture": "res://assets/ui/battle/pass_button_up.png"
+   }
+  },
+  {
+   "down": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": 21.92,
+     "y": -47.68
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "over": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": 21.92,
+     "y": -47.68
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "up": {
+    "rect": {
+     "h": 24.42,
+     "w": 24.42,
+     "x": 22.79,
+     "y": -46.81
+    },
+    "texture": "res://assets/ui/battle/pass_button_up.png"
+   }
+  },
+  {
+   "down": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": 36.42,
+     "y": -12.73
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "over": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": 36.42,
+     "y": -12.73
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "up": {
+    "rect": {
+     "h": 24.42,
+     "w": 24.42,
+     "x": 37.29,
+     "y": -11.86
+    },
+    "texture": "res://assets/ui/battle/pass_button_up.png"
+   }
+  },
+  {
+   "down": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": 21.92,
+     "y": 22.32
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "over": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": 21.92,
+     "y": 22.32
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "up": {
+    "rect": {
+     "h": 24.42,
+     "w": 24.42,
+     "x": 22.79,
+     "y": 23.19
+    },
+    "texture": "res://assets/ui/battle/pass_button_up.png"
+   }
+  },
+  {
+   "down": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": -13.08,
+     "y": 36.82
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "over": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": -13.08,
+     "y": 36.82
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "up": {
+    "rect": {
+     "h": 24.42,
+     "w": 24.42,
+     "x": -12.21,
+     "y": 37.69
+    },
+    "texture": "res://assets/ui/battle/pass_button_up.png"
+   }
+  },
+  {
+   "down": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": -48.13,
+     "y": 22.37
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "over": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": -48.13,
+     "y": 22.37
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "up": {
+    "rect": {
+     "h": 24.42,
+     "w": 24.42,
+     "x": -47.26,
+     "y": 23.24
+    },
+    "texture": "res://assets/ui/battle/pass_button_up.png"
+   }
+  },
+  {
+   "down": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": -62.63,
+     "y": -12.73
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "over": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": -62.63,
+     "y": -12.73
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "up": {
+    "rect": {
+     "h": 24.42,
+     "w": 24.42,
+     "x": -61.76,
+     "y": -11.86
+    },
+    "texture": "res://assets/ui/battle/pass_button_up.png"
+   }
+  },
+  {
+   "down": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": -48.13,
+     "y": -47.73
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "over": {
+    "rect": {
+     "h": 26.16,
+     "w": 26.16,
+     "x": -48.13,
+     "y": -47.73
+    },
+    "texture": "res://assets/ui/battle/pass_button_over.png"
+   },
+   "up": {
+    "rect": {
+     "h": 24.42,
+     "w": 24.42,
+     "x": -47.26,
+     "y": -46.86
+    },
+    "texture": "res://assets/ui/battle/pass_button_up.png"
+   }
+  }
+ ],
  "states": {
   "down": {
    "rect": {

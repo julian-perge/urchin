@@ -64,3 +64,41 @@ def test_the_icon_rect_is_the_half_size_scaled_around_the_placement():
 def test_an_unevenly_scaled_icon_is_refused():
     with pytest.raises(RuntimeError, match="unevenly"):
         pass_button.icon_rect((1.0, 0.0, 0.0, 2.0, 0, 0), 15.5)
+
+
+# Thingo0's placement in the Radial menu clip: a scale of 1.1627960205078125
+# at (0, -983) twips.
+THINGO0_MATRIX = (1.1627960205078125, 0.0, 0.0, 1.1627960205078125, 0, -983)
+RING_BOUNDS = {UP_RING: (-210, -210, 210, 210), OVER_RING: (-225, -225, 225, 225)}
+
+
+def test_each_states_rect_is_its_shape_placed_by_the_button():
+    shapes = {"up": UP_RING, "over": OVER_RING, "down": OVER_RING}
+    names = pass_button.texture_names(shapes)
+    states = pass_button.state_rects(THINGO0_MATRIX, shapes, RING_BOUNDS, names)
+    assert states["up"] == {
+        "rect": {"x": -12.21, "y": -61.36, "w": 24.42, "h": 24.42},
+        "texture": "res://assets/ui/battle/pass_button_up.png",
+    }
+    assert states["over"] == states["down"]
+    assert states["over"] == {
+        "rect": {"x": -13.08, "y": -62.23, "w": 26.16, "h": 26.16},
+        "texture": "res://assets/ui/battle/pass_button_over.png",
+    }
+
+
+def test_an_orb_that_draws_the_pass_buttons_shapes_no_larger_passes():
+    shapes = {"up": UP_RING, "over": OVER_RING, "down": OVER_RING}
+    pass_button.check_orb(3379, shapes, dict(shapes), 1.2, 1.4)
+
+
+def test_an_orb_that_draws_other_shapes_is_refused():
+    shapes = {"up": UP_RING, "over": OVER_RING, "down": OVER_RING}
+    with pytest.raises(RuntimeError, match="the pass button"):
+        pass_button.check_orb(3379, shapes, {**shapes, "down": UP_RING}, 1.2, 1.4)
+
+
+def test_an_orb_that_draws_the_art_larger_than_the_pass_button_is_refused():
+    shapes = {"up": UP_RING, "over": OVER_RING, "down": OVER_RING}
+    with pytest.raises(RuntimeError, match="larger than"):
+        pass_button.check_orb(3379, shapes, dict(shapes), 1.5, 1.4)

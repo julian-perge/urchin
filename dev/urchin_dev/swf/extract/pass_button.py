@@ -5,7 +5,9 @@
 #   assets/ui/battle/pass_button_over.png - what it draws in its over and down
 #                                           states
 #   assets/ui/battle/pass_button.json     - where each state's art and the icon
-#                                           go on the Stage
+#                                           go on the Stage, and where each
+#                                           state's art goes on each orb of
+#                                           the Radial menu
 #
 # The frame places button 3383 as krinToMove2 at depth 498, over krinToMove,
 # the ability icon sheet 2427 at depth 484. The button's up state is a thin
@@ -19,6 +21,14 @@
 # centre plus and minus ability_icons.ICON_HALF at the placement's scale. This
 # raises unless the mask is centred on its own origin and every labelled
 # frame of 2427 that places the mask places it at the sprite's origin.
+#
+# The Radial menu's buttons thingo0 to thingo7 draw the same two rings over
+# their icons, so the port draws each orb with these PNGs too. For each orb,
+# "orbs" holds each state's rect in the Radial menu clip's own px, as
+# battle_layout.json's orb_rects does. This raises unless every orb draws the
+# same shape in each state as the pass button, and unless no orb draws them
+# larger on the Stage than the pass button does, so each PNG holds at least
+# ZOOM pixels for each Stage px on an orb too.
 #
 # Requires ffdec.
 # Run: uv run extract_pass_button
@@ -39,6 +49,10 @@ from urchin_dev.swf.extract import ability_icons
 from urchin_dev.swf.extract.battle_screen import (
     BATTLE_UI_DIR,
     FRAME_LABEL,
+    ORB_BUTTON_NAME,
+    ORB_COUNT,
+    SELECTOR,
+    SELECTOR_NAME,
     ZOOM,
     placed_rect,
     px_rect,
@@ -82,22 +96,24 @@ def placement(layers: dict, character: int, name: str) -> timeline.Layer:
     return layer
 
 
-def state_shapes(records: list[ButtonRecord], is_shape) -> dict[str, int]:
-    """-> the shape each visible state of the button draws. Raises unless each
-    state draws one shape with no matrix of its own."""
+def state_shapes(
+    records: list[ButtonRecord], is_shape, button: int = BUTTON
+) -> dict[str, int]:
+    """-> the shape each visible state of `button` draws, from its records.
+    Raises unless each state draws one shape with no matrix of its own."""
     shapes = {}
     for state in STATES:
         drawn = [r for r in records if state in r.states]
         if len(drawn) != 1:
-            raise RuntimeError(f"button {BUTTON} draws {len(drawn)} records in {state}")
+            raise RuntimeError(f"button {button} draws {len(drawn)} records in {state}")
         (record,) = drawn
         if record.matrix != timeline.IDENTITY:
             raise RuntimeError(
-                f"button {BUTTON} moves its {state} art: {record.matrix}"
+                f"button {button} moves its {state} art: {record.matrix}"
             )
         if not is_shape(record.character_id):
             raise RuntimeError(
-                f"button {BUTTON} draws {record.character_id} in {state}, not a shape"
+                f"button {button} draws {record.character_id} in {state}, not a shape"
             )
         shapes[state] = record.character_id
     return shapes
@@ -109,6 +125,75 @@ def texture_names(shapes: dict[str, int]) -> dict[int, str]:
     for state in STATES:
         names.setdefault(shapes[state], f"pass_button_{state}.png")
     return names
+
+
+def state_rects(
+    matrix, shapes: dict[str, int], bounds: dict[int, tuple], names: dict[int, str]
+) -> dict[str, dict]:
+    """-> the rect and the texture of each state, for a button that `matrix`
+    places and whose states draw `shapes`. `bounds` holds each shape's
+    bounds in twips."""
+    return {
+        state: {
+            "rect": px_rect(placed_rect(matrix, timeline.IDENTITY, bounds[cid])),
+            "texture": f"{TEXTURES}/{names[cid]}",
+        }
+        for state, cid in shapes.items()
+    }
+
+
+def check_orb(
+    button: int,
+    shapes: dict[str, int],
+    pass_shapes: dict[str, int],
+    stage_scale: float,
+    pass_scale: float,
+) -> None:
+    """Raises unless the orb's button draws the pass button's shape in each
+    state, at a Stage scale no larger than the pass button's."""
+    if shapes != pass_shapes:
+        raise RuntimeError(
+            f"orb button {button} draws {shapes}, the pass button {pass_shapes}"
+        )
+    if stage_scale > pass_scale:
+        raise RuntimeError(
+            f"orb button {button} draws its art at {stage_scale},"
+            f" larger than the pass button's {pass_scale}"
+        )
+
+
+def orb_layouts(
+    index: SwfIndex,
+    layers: dict,
+    pass_shapes: dict[str, int],
+    names: dict[int, str],
+    pass_scale: float,
+) -> list[dict]:
+    """-> state_rects() for each orb button of the Radial menu clip, in the
+    clip's own px, in orb order."""
+    selector = placement(layers, SELECTOR, SELECTOR_NAME)
+    if selector.matrix[0] != selector.matrix[3]:
+        raise RuntimeError(f"{SELECTOR_NAME} is scaled unevenly: {selector.matrix}")
+    by_name = {
+        layer.name: layer for layer in timeline.frames(index, SELECTOR)[0].values()
+    }
+    bounds = {cid: shape_bounds(index, cid) for cid in names}
+    orbs = []
+    for n in range(ORB_COUNT):
+        button = by_name[f"{ORB_BUTTON_NAME}{n}"]
+        if button.matrix[1] or button.matrix[2] or button.matrix[0] != button.matrix[3]:
+            raise RuntimeError(f"{button.name} is not scaled evenly: {button.matrix}")
+        cid = button.character_id
+        shapes = state_shapes(
+            button_records(index, cid),
+            lambda c: character_kind(index, c) == "shape",
+            cid,
+        )
+        check_orb(
+            cid, shapes, pass_shapes, selector.matrix[0] * button.matrix[0], pass_scale
+        )
+        orbs.append(state_rects(button.matrix, shapes, bounds, names))
+    return orbs
 
 
 def icon_rect(matrix, half: float) -> dict[str, float]:
@@ -150,18 +235,13 @@ def pass_layout(index: SwfIndex) -> tuple[dict, dict[int, str], float]:
         button_records(index, BUTTON), lambda cid: character_kind(index, cid) == "shape"
     )
     names = texture_names(shapes)
-    states = {
-        state: {
-            "rect": px_rect(
-                placed_rect(button.matrix, timeline.IDENTITY, shape_bounds(index, cid))
-            ),
-            "texture": f"{TEXTURES}/{names[cid]}",
-        }
-        for state, cid in shapes.items()
-    }
+    bounds = {cid: shape_bounds(index, cid) for cid in names}
+    if button.matrix[0] != button.matrix[3]:
+        raise RuntimeError(f"{BUTTON_NAME} is scaled unevenly: {button.matrix}")
     layout = {
         "icon": icon_rect(icon.matrix, ability_icons.ICON_HALF),
-        "states": states,
+        "orbs": orb_layouts(index, layers, shapes, names, button.matrix[0]),
+        "states": state_rects(button.matrix, shapes, bounds, names),
         "zoom": ZOOM,
     }
     return layout, names, ZOOM * button.matrix[0]
