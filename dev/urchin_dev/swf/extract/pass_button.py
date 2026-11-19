@@ -137,9 +137,10 @@ def check_mask_centred(index: SwfIndex) -> None:
                 raise RuntimeError(f"{label} moves the mask: {layer.matrix}")
 
 
-def pass_layout(index: SwfIndex) -> tuple[dict, dict[int, str]]:
-    """-> the JSON layout of the button's states and the icon, and the PNG name
-    of each shape the states draw."""
+def pass_layout(index: SwfIndex) -> tuple[dict, dict[int, str], float]:
+    """-> the JSON layout of the button's states and the icon, the PNG name of
+    each shape the states draw, and the zoom to export the shapes at, so that
+    each PNG holds ZOOM pixels for each Stage px at the button's scale."""
     frame = timeline.frame_of(index, 0, FRAME_LABEL)
     layers = timeline.frames(index, 0)[frame - 1]
     button = placement(layers, BUTTON, BUTTON_NAME)
@@ -163,27 +164,28 @@ def pass_layout(index: SwfIndex) -> tuple[dict, dict[int, str]]:
         "states": states,
         "zoom": ZOOM,
     }
-    return layout, names
+    return layout, names, ZOOM * button.matrix[0]
 
 
-def render_shapes(index: SwfIndex, names: dict[int, str]) -> None:
-    """Export each shape through ffdec at ZOOM and write it as its PNG. Raises
-    unless each PNG is the shape's bounds at ZOOM, so the rect that the layout
-    gives a state is the rect its PNG covers."""
+def render_shapes(names: dict[int, str], zoom: float, layout: dict) -> None:
+    """Export each shape through ffdec at `zoom` and write it as its PNG.
+    Raises unless each PNG is its state's Stage rect at ZOOM, to within the
+    pixel that ffdec rounds a fractional size up by, so the rect that the
+    layout gives a state is the rect its PNG covers."""
     work = Path(tempfile.mkdtemp(prefix="pass_button_"))
     try:
         ids = ",".join(str(cid) for cid in sorted(names))
-        run([FFDEC, "-zoom", str(ZOOM), "-format", "shape:png", "-selectid", ids,
+        run([FFDEC, "-zoom", str(zoom), "-format", "shape:png", "-selectid", ids,
              "-export", "shape", work, WEB_SWF])  # fmt: skip
         BATTLE_UI_DIR.mkdir(parents=True, exist_ok=True)
+        rects = {
+            state["texture"].rsplit("/", 1)[1]: state["rect"]
+            for state in layout["states"].values()
+        }
         for cid, name in sorted(names.items()):
             image = Image.open(work / f"{cid}.png").convert("RGBA")
-            xmin, ymin, xmax, ymax = shape_bounds(index, cid)
-            want = (
-                round((xmax - xmin) * ZOOM / render.TWIPS),
-                round((ymax - ymin) * ZOOM / render.TWIPS),
-            )
-            if image.size != want:
+            want = (rects[name]["w"] * ZOOM, rects[name]["h"] * ZOOM)
+            if any(not 0 <= got - size < 1 for got, size in zip(image.size, want)):
                 raise RuntimeError(f"shape {cid} rendered {image.size}, want {want}")
             png.save(image, BATTLE_UI_DIR / name)
             print(f"  {cid} -> {name} {image.size}", file=sys.stderr)
@@ -193,8 +195,8 @@ def render_shapes(index: SwfIndex, names: dict[int, str]) -> None:
 
 def main():
     index = read_swf(WEB_SWF)
-    layout, names = pass_layout(index)
-    render_shapes(index, names)
+    layout, names, zoom = pass_layout(index)
+    render_shapes(names, zoom, layout)
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")
     print(f"wrote {LAYOUT_JSON}", file=sys.stderr)
 
