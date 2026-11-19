@@ -847,9 +847,9 @@ Everything below still stands in for original behavior, except the rows marked D
 | Stun/cast animations | **DONE (2026-07-21)**: the port plays the real labels (see the stun family section above), no longer a code-driven slump/raise | labels `cast` 189-219, `stun` 220-239 -> `stun2` 240-279 loop (frame 279 goto), `outofstun` 280-295 -> stand |
 | Hover ring / radial menu / pass ring | modern inventions (kept by design) | original UX: `KrinSelector` clips + `KrinToolTipper` tooltip system |
 | Victory screen layout | inventory-window geometry + reference screenshot | menu clip 3142 frame 9 placements (never dumped precisely) |
-| Options screen | invented layout from reference | menu clip 3142 frame 39 |
-| Abilities tutorial callout | skipped | texts 3063 + glow box sprite 3059 (frame 25) |
+| Options screen ([#379](https://github.com/julian-perge/urchin/issues/379)) | invented layout from reference | menu clip 3142 frame 39 |
+| Abilities tutorial callout ([#387](https://github.com/julian-perge/urchin/issues/387)) | skipped | texts 3063 + glow box sprite 3059 (frame 25) |
 | Sky horizon | **DONE (2026-08-22)**: the strip position comes from `battle_layout.json` (`BATTLE_LAYOUT_PATH` in `battle_scene.gd`), no longer an empirical y = 292 | background clips' own art timelines (sky placement baked per zone) |
 | Start-menu flow | slot -> name+class -> options | original: PLAY -> name entry (root ~65) -> slot select (~75) -> class (~85) -> options (~95) |
-| Music of a new game's first fight | the rotation's next track, faded in, as for any fight | `frame_180/DoAction.as:4-6` sets `soundPlayCounter` 3 (`_music_battle2`) and `bangStart`, so it starts at full volume. See "New Game and Load Game" above |
+| Music of a new game's first fight ([#384](https://github.com/julian-perge/urchin/issues/384)) | the rotation's next track, faded in, as for any fight | `frame_180/DoAction.as:4-6` sets `soundPlayCounter` 3 (`_music_battle2`) and `bangStart`, so it starts at full volume. See "New Game and Load Game" above |
 | Battle countdown | **DONE (2026-11-08)** for the timing: 4 s on Heroic only, running out passes the turn, and Easy and Normal wait with the label hidden. The display is still a number in the bottom bar's `Panel3` | 120 frames (4 s at 30 fps) on Heroic only, and the half-turn starts when it runs out: see "Heroic decision timer" above. The original shows no number: `battleClocker` (DefineSprite 3389) sits behind the pass button and fills the two half-dials of DefineSprite 3386 from `BattleTimeNow` |

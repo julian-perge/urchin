@@ -43,7 +43,7 @@ const SPRITE_ROOT: String = "res://resources/sprites"
 const OFFSETS_FILE: String = SPRITE_ROOT + "/doll_offsets.json"
 # The original MODEL1 keyframe animations (extract_model1_animations.py):
 # per-frame full affine matrices per part, 30 fps, labeled segments
-# (stand/run/Attack/runback/hit/dead/... - see NEXT_PHASES).
+# (stand/run/Attack/runback/hit/dead/... - see DECODED_ALGORITHMS.md).
 const ANIMATIONS_FILE: String = SPRITE_ROOT + "/model1_animations.json"
 # The sounds the MODEL1 clip's frame scripts play (convert_model1_sound_cues):
 # the 1-based frame as a string -> the cue names of that frame. The three swing
