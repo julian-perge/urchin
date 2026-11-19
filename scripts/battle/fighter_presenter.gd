@@ -92,7 +92,7 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	_form = BuffLook.looks()["default_form"]
 	_doll.dress_from_model(unit.model, _equip_looks)
 	if not unit.model.is_empty():
-		_doll.show_shadow(str(unit.model[0]))
+		_doll.start_clip(str(unit.model[0]))
 	# The overlay is the doll's sibling because parenting it to a mirrored doll
 	# flipped its offsets on team 2.
 	_overlay.position = _doll.position

@@ -220,11 +220,8 @@ func _box_shadow_problems(path: String, node: Control, shadow: Dictionary) -> Ar
 # A doll is a CharacterVisual, whose art is a set of rotated and scaled parts, so
 # no rect holds it. The record holds the position and scale that put it where the
 # SWF's 31 part clips sit, and the union rect of the art of the unequipped male
-# doll. The union rect is held to 1 px and not 0.5. The record's rect is the art
-# under the SWF's placements, and the port draws the rig's REST_POSE, which has
-# the same part origins as the SWF's pose but not every part's scale and
-# rotation, so its art reaches 0.9 to 1 px less far on the left and on the right.
-const DOLL_TOLERANCE: float = 1.0
+# doll. The union rect is held to the same 0.5 px as every other rect, because
+# the port draws MODEL1's exact frame 1 matrices.
 
 
 # An inner shadow overlay draws the DropShadow of a sprite's placement with a
@@ -261,7 +258,7 @@ func _doll_problems(root: Control, path: String, entry: Dictionary) -> Array[Str
 		bounds.position.x - expected.position.x, bounds.position.y - expected.position.y,
 		bounds.end.x - expected.end.x, bounds.end.y - expected.end.y]
 	for off: float in corners:
-		if absf(off) > DOLL_TOLERANCE:
+		if absf(off) > TOLERANCE:
 			found.append("%s: union rect %s, expected %s" % [path, bounds, expected])
 			break
 	return found

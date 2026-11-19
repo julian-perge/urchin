@@ -1,19 +1,17 @@
-# The sounds the MODEL1 doll clip plays from its own frame scripts, such as the
-# swing whoosh on the frames of its attack labels. Output:
-# dev/converted_json/model1_sound_cues.json, {"<1-based frame>": ["<cue>", ...]}
-# in frame order. CharacterVisual plays a cue when the doll's playhead reaches
-# its frame.
+# The sounds each doll model of extract_model_animations plays from its own
+# frame scripts, such as the swing whoosh on the frames of its attack labels.
+# Output: dev/converted_json/<model>_sound_cues.json, such as
+# model4_sound_cues.json, each {"<1-based frame>": ["<cue>", ...]} in frame
+# order. CharacterVisual plays a cue when the doll's playhead reaches its frame.
 #
-# Run: uv run convert_model1_sound_cues
+# Run: uv run convert_model_sound_cues
 from __future__ import annotations
 
 import json
 import re
 
 from urchin_dev import ACTION_SCRIPT, CONVERTED_JSON
-
-SOURCE = ACTION_SCRIPT / "DefineSprite_166_MODEL1"
-OUTPUT = CONVERTED_JSON / "model1_sound_cues.json"
+from urchin_dev.swf.extract.model_animations import MODELS
 
 ADD_SOUND = re.compile(r'_root\.addSound\("Effects","(?P<cue>\w+)"\);')
 
@@ -49,14 +47,23 @@ def read_cues(folder) -> dict[str, list[str]]:
     return cues
 
 
+def source(model: str):
+    return ACTION_SCRIPT / f"DefineSprite_{MODELS[model]}_{model}"
+
+
+def output(model: str):
+    return CONVERTED_JSON / f"{model.lower()}_sound_cues.json"
+
+
 def dumps(cues: dict[str, list[str]]) -> str:
     return json.dumps(cues, indent=2) + "\n"
 
 
 def main() -> None:
-    cues = read_cues(SOURCE)
-    OUTPUT.write_text(dumps(cues), encoding="utf-8", newline="\n")
-    print(f"Wrote the sound cues of {len(cues)} MODEL1 frames to {OUTPUT}")
+    for model in MODELS:
+        cues = read_cues(source(model))
+        output(model).write_text(dumps(cues), encoding="utf-8", newline="\n")
+        print(f"Wrote the sound cues of {len(cues)} {model} frames to {output(model)}")
 
 
 if __name__ == "__main__":
