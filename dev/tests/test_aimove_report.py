@@ -24,7 +24,7 @@ def line(number, caster, absolute, real, replays, battle="212"):
     return f"INFO avm_trace: AIMOVE\t{number}\t{battle}\t2\t{caster}\t6\t{str(absolute).lower()}\t{ENTRY}\treal={real}\t{tail}"
 
 
-def test_parse_reads_the_entry_fields_by_position():
+def test_parse_reads_the_fields_by_key():
     calls = parse("noise\n" + line(9, "4", True, "550>6>h6", {}))
     assert len(calls) == 1
     assert calls[0].caster == "4"
@@ -86,6 +86,20 @@ def test_main_needs_a_log(tmp_path):
         main([])
     with pytest.raises(SystemExit):
         main([str(tmp_path / "missing.txt")])
+
+
+@pytest.mark.parametrize(
+    ("name", "changed"),
+    [("aimove_web_ruffle.txt", {"212": 8}), ("aimove_web_flash.txt", {"212": 8})],
+)
+def test_the_committed_logs_give_the_changed_calls_in_decoded_algorithms(name, changed):
+    # DECODED_ALGORITHMS.md, "Left-behind globals in AImoveAdder", cites these
+    # counts, and every changed call there is the Medic's Med Buff 1 target.
+    counts = count(parse((TRACED_RUNS / name).read_text(encoding="utf-8")))
+    assert {
+        battle: c["changed"] for battle, c in counts.items() if c["changed"]
+    } == changed
+    assert all(c["changed"] == c["changed_target"] for c in counts.values())
 
 
 @pytest.mark.parametrize("name", ["aimove_web_ruffle.txt", "aimove_web_flash.txt"])

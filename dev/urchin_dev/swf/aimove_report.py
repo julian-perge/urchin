@@ -10,7 +10,7 @@
 # and each other replay resets one group of them. A call counts as changed
 # when the real outcome differs from the "all" replay.
 #
-# Run: uv run aimove_report <log> [<log> ...]
+# Run: just aimove-report <log> [<log> ...]
 from __future__ import annotations
 
 import re
@@ -21,7 +21,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 MARK = "AIMOVE\t"
-ENTRY_KEYS = ("fc", "pfc", "fm", "nlk", "ae", "cf1", "D", "real")
 GROUPS = ("focus", "fmove", "darr", "alive", "lock")
 
 
@@ -55,9 +54,9 @@ def parse(text: str) -> list[Call]:
         call = Call(
             int(parts[1]), parts[2], parts[3], parts[4], parts[5], parts[6] == "true"
         )
-        for index, item in enumerate(parts[7:]):
+        for item in parts[7:]:
             key, _, value = item.partition("=")
-            call.fields[ENTRY_KEYS[index] if index < len(ENTRY_KEYS) else key] = value
+            call.fields[key] = value
         calls.append(call)
     return calls
 
