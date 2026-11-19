@@ -1,0 +1,211 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/menu/manual_panel.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/ui/float_box.gd" id="2_float_box"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0, 0, 0, 0.39215687)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 1)
+anti_aliasing = false
+
+[node name="ManualPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 800.0
+offset_bottom = 575.0
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="LeftPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 75.55
+offset_top = 90.8
+offset_right = 384.25
+offset_bottom = 470.95
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="RightPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 411.55
+offset_top = 90.8
+offset_right = 720.25
+offset_bottom = 470.95
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Topics" type="Container" parent="."]
+layout_mode = 0
+offset_left = 121.4
+offset_top = 155.5
+offset_right = 343.15
+offset_bottom = 399.3
+mouse_filter = 2
+script = ExtResource("2_float_box")
+
+[node name="Topic0" type="Control" parent="Topics"]
+custom_minimum_size = Vector2(0, 52.5)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Caption" type="Label" parent="Topics/Topic0"]
+layout_mode = 0
+offset_left = 0
+offset_top = 0
+offset_right = 221.75
+offset_bottom = 33.4
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+autowrap_mode = 3
+
+[node name="HitButton" type="Button" parent="Topics/Topic0"]
+layout_mode = 0
+offset_left = -0.3441
+offset_top = 0.2002
+offset_right = 228.5441
+offset_bottom = 26.1998
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Topic1" type="Control" parent="Topics"]
+custom_minimum_size = Vector2(0, 52.5)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Caption" type="Label" parent="Topics/Topic1"]
+layout_mode = 0
+offset_left = 0
+offset_top = 0
+offset_right = 219.65
+offset_bottom = 32.95
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+autowrap_mode = 3
+
+[node name="HitButton" type="Button" parent="Topics/Topic1"]
+layout_mode = 0
+offset_left = -0.3441
+offset_top = 0.2002
+offset_right = 228.5441
+offset_bottom = 26.1998
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Topic2" type="Control" parent="Topics"]
+custom_minimum_size = Vector2(0, 52.5)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Caption" type="Label" parent="Topics/Topic2"]
+layout_mode = 0
+offset_left = 0
+offset_top = 0
+offset_right = 221.75
+offset_bottom = 32.55
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+autowrap_mode = 3
+
+[node name="HitButton" type="Button" parent="Topics/Topic2"]
+layout_mode = 0
+offset_left = -0.3441
+offset_top = 0.2002
+offset_right = 228.5441
+offset_bottom = 26.1998
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Topic3" type="Control" parent="Topics"]
+custom_minimum_size = Vector2(0, 52.5)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Caption" type="Label" parent="Topics/Topic3"]
+layout_mode = 0
+offset_left = 0
+offset_top = 0
+offset_right = 219.65
+offset_bottom = 36.3
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+autowrap_mode = 3
+
+[node name="HitButton" type="Button" parent="Topics/Topic3"]
+layout_mode = 0
+offset_left = -0.3441
+offset_top = 0.2002
+offset_right = 228.5441
+offset_bottom = 26.1998
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Topic4" type="Control" parent="Topics"]
+custom_minimum_size = Vector2(0, 52.5)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Caption" type="Label" parent="Topics/Topic4"]
+layout_mode = 0
+offset_left = 0
+offset_top = 0
+offset_right = 217.6
+offset_bottom = 33.8
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+autowrap_mode = 3
+
+[node name="HitButton" type="Button" parent="Topics/Topic4"]
+layout_mode = 0
+offset_left = -0.3441
+offset_top = 0.2002
+offset_right = 228.5441
+offset_bottom = 26.1998
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Body" type="Label" parent="."]
+layout_mode = 0
+offset_left = 427.2
+offset_top = 107.45
+offset_right = 701.8
+offset_bottom = 447.75
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+
+[connection signal="pressed" from="Topics/Topic0/HitButton" to="." method="show_topic" binds=[0]]
+[connection signal="pressed" from="Topics/Topic1/HitButton" to="." method="show_topic" binds=[1]]
+[connection signal="pressed" from="Topics/Topic2/HitButton" to="." method="show_topic" binds=[2]]
+[connection signal="pressed" from="Topics/Topic3/HitButton" to="." method="show_topic" binds=[3]]
+[connection signal="pressed" from="Topics/Topic4/HitButton" to="." method="show_topic" binds=[4]]
