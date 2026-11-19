@@ -1049,6 +1049,76 @@ FORIN	so_memory_saved_copy	4	0,1,2,3
 FORIN	so_memory_loaded_into_new_Array	4	3,2,1,0
 ```
 
+## A cost failure at dispatch can still land the move (the conductor, lines 12-111 and 475-585, #39)
+
+When a unit cannot pay for its move at dispatch, the move still lands when a buff ticks on the unit, and nothing is paid. Two players measured it (see the evidence below). Not ported yet: `BattleRunner._execute_move_action` logs MOVE_FAILED and stops (#469).
+
+- At dispatch the conductor binds the move and the units (lines 324-329), and sets its own `moveBammer` to false (line 354) before the cost check (line 355).
+- When the check fails (lines 475-531), the conductor files move 0 for the caster and runs `buffTicker` on it. When the tick does something (`buffTickChecker` is not 0) and the caster is alive, it raises `_root.BAMBAMBAM` and writes `_root.moveBammer = true` (lines 513-520). That write goes to `_root`, not to the conductor's own `moveBammer`, which stays false.
+- On the next frame the impact block (lines 12-19) sees `BAMBAMBAM` and its own `moveBammer` false. It sets the flag to true and reads `_root.strikeSuccess`, which still holds the last hit roll of any unit (lines 376-385). When that is true, the move runs: the hit sound, the dispel, `executeMove` and the status effect (lines 21-103). When it is false, the target shows "miss" (lines 105-109). The move is not paid and no new hit roll is made.
+- When the tick does nothing, the flag stays false. The next action that reaches the impact block through a buff tick, not through a dispatch, runs its own bound move in the same way. Only the stun path (lines 534-585) does that. A dispatch takes that path when its move is 0 (a pass), when the caster is stunned, or when the target is no longer active, because each of these fails the test at line 350. A pass binds move 0 ("None"), whose `executeMove` changed nothing in the runs. A stunned unit, or a unit whose target is no longer active, binds the move it picked, so that move would land, on the inactive target in the second case. Neither of these two cases was run. They are the same lines as the pass.
+- `_root.moveBammer` is read nowhere, so the wrong write has no other effect.
+
+How a unit can fail its cost at dispatch in normal play. Both the player's pick (`frame_42/DoAction_11.as:65, 80`) and `AImoveAdder` (`frame_42/DoAction_9.as:52, 87, 128`) check the same Focus and Health costs, so a teammate or the other side must change the unit between its decision and its dispatch:
+
+- The player can learn Disrupt (110). It is a Shock move that costs 20 Focus, can target a Companion (`KRINABILITY110[4] = 1`) and takes 50 Focus (`KRINABILITYB110[9] = -50`, `executeMove` lines 232-242 of `frame_42/DoAction_8.as`). The Companions decide before the player's half-turn starts (conductor lines 643-698), and that side acts in speed order. So a player who is faster than a Companion can drain the Companion after it decided. A Shock always sets `strikeSuccess` to true (line 385), so the Companion's move then lands for free when a buff ticks on the Companion. Run D below measured this.
+- In KBR701, North Guardian owns Disrupt (111) and can target South Guardian, and both have speed 10. Read from the code and data, not run. It also needs South to pick a Focus move from his absolute list.
+- On Heroic, a late pick can make the other side decide a half-turn early (see "Turn order and queued heals"). The player's side then acts against those units before they dispatch, so a drain or damage below a percent life cost (for example Bloodshed, 8%) can make the picked move fail. Read from the code, not run.
+- No move has a flat life cost (`KRINABILITY[6]` is 0 for all 479 moves), and a unit's own buffs tick only after its own action.
+
+Evidence: a throwaway Probe, `references/traced_runs/cost_failure_probe.as`, starts battle 100 on Heroic with no clicks. It refills every unit's life at each AI decision and traces the conductor's own `moveBammer` (`_root.battleClocker.moveBammer`), `_root.moveBammer`, `_root.strikeSuccess` and each `executeMove`. It is not in `dev/probes`, because it changes what the game does. The web build ran under Flash 14 and Ruffle 0.7.1, and both logged the same outcome for each branch. Case C took a different branch in some attempts, as given below. The COST lines are in `references/traced_runs/cost_failure_web_flash.txt` and `cost_failure_web_ruffle.txt`. A `PAID` line comes from `lifeBarUpdate`, which `buffTicker` also calls, so a `PAID` line after `TICK_BEFORE` is not a payment. `moveId` is the move filed in the dispatch slot, which the failure branch has already set to 0, and `focusCost` is the bound move's cost.
+
+- A: after an enemy decides, its Focus is set to -1 and it gets Digitalis. Every attempt landed the bound move for free (Flash 2 of 2, Ruffle 2 of 2, and 8 of 8 in an earlier Flash run whose log is not kept). In this case Gouge (15 Focus) hit the player for 31:
+
+```
+DRAIN_A unit=2 clipMoveBammer=true strikeSuccess=true FOCUSN=-1 LIFEN=250 moveId=523 focusCost=undefined frame=725
+TICK_BEFORE unit=2 clipMoveBammer=false strikeSuccess=true FOCUSN=-1 LIFEN=250 moveId=0 focusCost=15 frame=726
+PAID unit=2 clipMoveBammer=false strikeSuccess=true FOCUSN=0 LIFEN=238 moveId=0 focusCost=15 frame=726
+TICK_AFTER unit=2 clipMoveBammer=false strikeSuccess=true FOCUSN=0 LIFEN=238 moveId=0 focusCost=15 buffTickChecker=12 frame=726
+EXEC_BEFORE unit=2 clipMoveBammer=true strikeSuccess=true FOCUSN=0 LIFEN=238 moveId=0 focusCost=15 target=1 targetLife=297 targetFocus=100 frame=727
+EXEC_AFTER unit=2 clipMoveBammer=true strikeSuccess=true FOCUSN=0 LIFEN=238 moveId=0 focusCost=15 target=1 targetLife=266 targetFocus=100 frame=727
+```
+
+- B: as A, with `_root.strikeSuccess` set to false, as a missed earlier roll leaves it. Each attempt showed "miss" and did not run `executeMove` (2 of 2 in each player). Another Flash run also showed this once with no forced value, because the roll before it had missed:
+
+```
+DRAIN_B_STALE_MISS unit=2 clipMoveBammer=true strikeSuccess=false FOCUSN=-1 LIFEN=250 moveId=15 focusCost=undefined frame=1176
+TICK_BEFORE unit=2 clipMoveBammer=false strikeSuccess=false FOCUSN=-1 LIFEN=250 moveId=0 focusCost=0 frame=1177
+PAID unit=2 clipMoveBammer=false strikeSuccess=false FOCUSN=7 LIFEN=238 moveId=0 focusCost=0 frame=1177
+TICK_AFTER unit=2 clipMoveBammer=false strikeSuccess=false FOCUSN=7 LIFEN=238 moveId=0 focusCost=0 buffTickChecker=12 frame=1177
+MISS unit=2 clipMoveBammer=true strikeSuccess=false FOCUSN=7 LIFEN=238 moveId=0 focusCost=0 frame=1178 who=player1
+```
+
+- C: the Companion's Focus is set to -1 and no buff ticks on it, so the conductor's `moveBammer` stays false. The player passes, Digitalis ticks on the player, and `executeMove` runs move 0 with the player as both the caster and the target. Life and Focus did not change (Flash 3 of 3, Ruffle 1 of 3). In the other 2 Ruffle attempts a buff did tick on the Companion, and the Companion's own move landed as in A.
+
+```
+DRAIN_C_ALLY unit=3 clipMoveBammer=true strikeSuccess=true FOCUSN=-1 LIFEN=627 moveId=9 focusCost=undefined frame=1554
+TICK_BEFORE unit=3 clipMoveBammer=false strikeSuccess=true FOCUSN=-1 LIFEN=627 moveId=9 focusCost=0 frame=1556
+PAID unit=3 clipMoveBammer=false strikeSuccess=true FOCUSN=0 LIFEN=627 moveId=9 focusCost=0 frame=1556
+TICK_AFTER unit=3 clipMoveBammer=false strikeSuccess=true FOCUSN=0 LIFEN=627 moveId=9 focusCost=0 buffTickChecker=0 frame=1556
+TICK_BEFORE unit=1 clipMoveBammer=false strikeSuccess=true FOCUSN=100 LIFEN=297 moveId=0 focusCost=undefined frame=1557
+PAID unit=1 clipMoveBammer=false strikeSuccess=true FOCUSN=100 LIFEN=283 moveId=0 focusCost=undefined frame=1557
+TICK_AFTER unit=1 clipMoveBammer=false strikeSuccess=true FOCUSN=100 LIFEN=283 moveId=0 focusCost=undefined buffTickChecker=14 frame=1557
+EXEC_BEFORE unit=1 clipMoveBammer=true strikeSuccess=true FOCUSN=100 LIFEN=283 moveId=0 focusCost=undefined target=1 targetLife=283 targetFocus=100 frame=1558
+EXEC_AFTER unit=1 clipMoveBammer=true strikeSuccess=true FOCUSN=100 LIFEN=283 moveId=0 focusCost=undefined target=1 targetLife=283 targetFocus=100 frame=1558
+```
+
+- D: the Companion's pick is refiled as Dux Electro (20 Focus) and its Focus is set to 60. The player casts Disrupt on it, and the two swap `teamAdder` so that the player acts first. Disrupt takes the Companion to 10 Focus, the Companion fails its cost, Digitalis ticks on it, and Dux Electro hits for 166 or 101 with 16 Focus left (Flash 2 of 3, Ruffle 3 of 3). In the second Flash attempt the player took the stun path, so Disrupt did not run and the Companion paid as usual.
+
+```
+SETUP_D_DISRUPT unit=3 clipMoveBammer=true strikeSuccess=true FOCUSN=60 LIFEN=627 moveId=110 focusCost=undefined frame=2169
+PAID unit=1 clipMoveBammer=false strikeSuccess=true FOCUSN=80 LIFEN=297 moveId=110 focusCost=20 frame=2171
+EXEC_BEFORE unit=1 clipMoveBammer=true strikeSuccess=true FOCUSN=80 LIFEN=297 moveId=110 focusCost=20 target=3 targetLife=627 targetFocus=60 frame=2172
+EXEC_AFTER unit=1 clipMoveBammer=true strikeSuccess=true FOCUSN=80 LIFEN=297 moveId=110 focusCost=20 target=3 targetLife=627 targetFocus=10 frame=2172
+TICK_BEFORE unit=1 clipMoveBammer=true strikeSuccess=true FOCUSN=80 LIFEN=297 moveId=110 focusCost=20 frame=2197
+TICK_AFTER unit=1 clipMoveBammer=true strikeSuccess=true FOCUSN=80 LIFEN=279 moveId=110 focusCost=20 buffTickChecker=18 frame=2197
+TICK_BEFORE unit=3 clipMoveBammer=false strikeSuccess=true FOCUSN=10 LIFEN=627 moveId=10 focusCost=20 frame=2223
+PAID unit=3 clipMoveBammer=false strikeSuccess=true FOCUSN=16 LIFEN=615 moveId=10 focusCost=20 frame=2223
+TICK_AFTER unit=3 clipMoveBammer=false strikeSuccess=true FOCUSN=16 LIFEN=615 moveId=10 focusCost=20 buffTickChecker=12 frame=2223
+EXEC_BEFORE unit=3 clipMoveBammer=true strikeSuccess=true FOCUSN=16 LIFEN=615 moveId=10 focusCost=20 target=2 targetLife=250 targetFocus=16 frame=2224
+EXEC_AFTER unit=3 clipMoveBammer=true strikeSuccess=true FOCUSN=16 LIFEN=615 moveId=10 focusCost=20 target=2 targetLife=84 targetFocus=16 frame=2224
+```
+
 ## Approximation audit (2026-07-21) - port pieces NOT yet source-faithful
 
 Everything below still stands in for original behavior, except the rows marked DONE; the ActionScript truth is already located, so no re-decoding is needed:
