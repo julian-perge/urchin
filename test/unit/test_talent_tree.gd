@@ -53,7 +53,9 @@ func test_known_moves_rebuild_in_descending_node_order():
 	save.skill_points = 20
 	assert_eq(TalentTree.learn(save, 0), TalentTree.LearnResult.OK)
 	assert_eq(TalentTree.learn(save, 2), TalentTree.LearnResult.OK)
-	assert_eq(save.move_matrix2, [1, 6, 126, 100], "node 2 before node 0, after the starting moves")
+	var node_0_move: int = save.skill_adder_matrix[0]
+	var node_2_move: int = save.skill_adder_matrix[2]
+	assert_eq(save.move_matrix2, [1, 6, node_2_move, node_0_move], "node 2 before node 0, after the starting moves")
 
 
 func test_level_gates():
