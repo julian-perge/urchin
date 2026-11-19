@@ -33,6 +33,10 @@ such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
   script or parse error, or no tests run. It takes a Godot slot itself.
 - The Python package's tests are `just pytest`, under `dev/tests/`. They never
   read the SWF or the XML dump, so they pass on a fresh checkout.
+- After a merge conflict, `git add` the resolved files before you run
+  `just extract-gd-index`. The index reads git's list of tracked files, and
+  that list leaves out unmerged files. This made `test_gd_index` fail in the
+  merge of #408 in PR #410.
 - After writing anything under `assets/`, run `just import` or tests fail with
   "No loader found for resource". `just gut` runs this import by itself only in
   a checkout with no `.godot` folder.
@@ -42,10 +46,33 @@ such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
   `prek.log` stopped the #220 checks before any hook ran; the same checks
   passed with escalation. Do not treat that error as a failed code check.
 
+## Hooks
+
+`.claude/settings.json` runs `.claude/hooks/enforce-tools.sh` before each Bash
+command. The hook stops a command that breaks one of these rules, and its
+message says what to run instead. After a restart of Claude Code, run the
+command after "Try" for a rule. Claude Code must show the block message and
+must not run the command.
+
+- Godot runs only through `just`. Try `godot --version`.
+- A script that has a recipe runs through the recipe, not `uv run`. Try
+  `uv run gut`.
+- `just --command` runs only `uv`. Run plain tools directly. Try
+  `just --command git status`.
+- ffdec, java with ffdec, and each recipe that requires ffdec run under
+  `lockf -k /tmp/urchin-ffdec.lock`. Try `just extract-faces --help`.
+- `just gut` and `just test` do not go into a pipe. Try `just gut | tail -1`.
+- `git commit` stops when staged Python fails `uv run ruff check` or
+  `uv run ruff format --check`. Try it with a staged file that holds `x=1`.
+
+`dev/tests/test_enforce_tools.py` sends sample commands to the hook for each
+rule, with no restart. The hook reads its input with `jq`. Without `jq` it
+lets every command run.
+
 ## Setup
 
-- Install `just`, `uv`, `prek`, Godot 4.7.2, and for the extractors a JDK and
-  the ffdec build in `docs/agents/art-extraction.md`.
+- Install `just`, `uv`, `prek`, `jq`, Godot 4.7.2, and for the extractors a
+  JDK and the ffdec build in `docs/agents/art-extraction.md`.
 - `GODOT_BIN` is the app bundle on macOS and `godot` on `PATH` elsewhere. To
   change it, or to limit the Godot processes that run at once with
   `GODOT_SLOTS` (default `auto`, the number of CPU cores), copy `.env.example`
