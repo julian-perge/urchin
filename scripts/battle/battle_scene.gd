@@ -1058,6 +1058,10 @@ func _on_victory_proceed() -> void:
 		# on(release), lines 17-29). The hub opens the Abilities window.
 		ZoneManager.open_abilities_on_load = true
 		ZoneManager.hint_battle_after_close = battle.id
+	else:
+		# With no cutscene, map or level-up, the original's Proceed shows the
+		# hint of the battle just won (DefineButton2_3004 on(release), line 27).
+		ZoneManager.hint_battle_on_load = battle.id
 	_on_continue_pressed()
 
 

@@ -822,6 +822,7 @@ func test_proceeding_after_a_win_that_levels_the_player_up_opens_the_abilities_w
 	ZoneManager.pending_battle = {}
 	ZoneManager.open_zone_map_on_load = false
 	ZoneManager.open_abilities_on_load = false
+	ZoneManager.hint_battle_on_load = 0
 
 	var scene = partial_double(BattleSceneRes).instantiate()
 	stub(scene, "_on_continue_pressed").to_do_nothing()
@@ -838,6 +839,7 @@ func test_proceeding_after_a_win_that_levels_the_player_up_opens_the_abilities_w
 	assert_true(ZoneManager.open_abilities_on_load, "Proceed opens the Abilities window")
 	assert_false(ZoneManager.open_zone_map_on_load, "the zone map stays shut")
 	assert_eq(ZoneManager.hint_battle_after_close, 100, "the won battle's hint waits for the Inventory or Store close")
+	assert_eq(ZoneManager.hint_battle_on_load, 0, "the Hub shows no hint when it opens")
 
 	ZoneManager.open_abilities_on_load = false
 	ZoneManager.hint_battle_after_close = 0
@@ -856,6 +858,7 @@ func test_proceeding_after_a_win_with_no_level_up_leaves_the_abilities_window_sh
 	ZoneManager.pending_battle = {}
 	ZoneManager.open_zone_map_on_load = false
 	ZoneManager.open_abilities_on_load = false
+	ZoneManager.hint_battle_on_load = 0
 
 	var scene = partial_double(BattleSceneRes).instantiate()
 	stub(scene, "_on_continue_pressed").to_do_nothing()
@@ -870,8 +873,10 @@ func test_proceeding_after_a_win_with_no_level_up_leaves_the_abilities_window_sh
 	assert_called(scene, "_on_continue_pressed")
 	assert_false(ZoneManager.open_abilities_on_load, "the Abilities window stays shut")
 	assert_eq(ZoneManager.hint_battle_after_close, 0, "no hint waits")
+	assert_eq(ZoneManager.hint_battle_on_load, 100, "the Hub shows the won battle's hint when it opens")
 
 	ZoneManager.open_abilities_on_load = false
+	ZoneManager.hint_battle_on_load = 0
 	ZoneManager.open_zone_map_on_load = false
 	GameData.current_save = null
 	ZoneManager.auto_start_battles = true
@@ -891,6 +896,7 @@ func test_proceeding_after_a_boss_win_that_levels_the_player_up_opens_only_the_z
 	ZoneManager.pending_battle = {}
 	ZoneManager.open_zone_map_on_load = false
 	ZoneManager.open_abilities_on_load = false
+	ZoneManager.hint_battle_on_load = 0
 
 	var scene = partial_double(BattleSceneRes).instantiate()
 	stub(scene, "_on_continue_pressed").to_do_nothing()
@@ -905,6 +911,7 @@ func test_proceeding_after_a_boss_win_that_levels_the_player_up_opens_only_the_z
 	assert_called(scene, "_on_continue_pressed")
 	assert_true(ZoneManager.open_zone_map_on_load, "Proceed opens the zone map")
 	assert_false(ZoneManager.open_abilities_on_load, "the Abilities window stays shut")
+	assert_eq(ZoneManager.hint_battle_on_load, 0, "the Hub shows no hint")
 
 	ZoneManager.open_abilities_on_load = false
 	ZoneManager.open_zone_map_on_load = false
@@ -927,6 +934,7 @@ func test_proceeding_after_a_level_up_win_that_queues_a_cutscene_leaves_the_abil
 	ZoneManager.pending_battle = {}
 	ZoneManager.open_zone_map_on_load = false
 	ZoneManager.open_abilities_on_load = false
+	ZoneManager.hint_battle_on_load = 0
 
 	var scene = partial_double(BattleSceneRes).instantiate()
 	stub(scene, "_on_continue_pressed").to_do_nothing()
@@ -943,6 +951,7 @@ func test_proceeding_after_a_level_up_win_that_queues_a_cutscene_leaves_the_abil
 	assert_called(scene, "_on_continue_pressed")
 	assert_false(ZoneManager.open_abilities_on_load, "the Abilities window stays shut")
 	assert_false(ZoneManager.open_zone_map_on_load, "and so does the zone map")
+	assert_eq(ZoneManager.hint_battle_on_load, 0, "the Hub shows no hint")
 
 	ZoneManager.open_abilities_on_load = false
 	ZoneManager.open_zone_map_on_load = false
