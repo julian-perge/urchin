@@ -10324,6 +10324,213 @@
    "port_only": [],
    "timeline": 3142
   },
+  "res://scenes/zone_map.tscn": {
+   "frame": "overMap",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "MapArt": {
+     "kind": "art",
+     "rect": [
+      19.85,
+      23.0,
+      761.25,
+      505.0
+     ],
+     "size": [
+      3045,
+      2020
+     ],
+     "texture": "res://assets/ui/zone_map/zone_map.png",
+     "zoom": 4.0
+    },
+    "MapFrame": {
+     "border": 1,
+     "kind": "outline",
+     "line": "000000ff",
+     "rect": [
+      19.5,
+      22.5,
+      761.95,
+      505.95
+     ]
+    },
+    "Zones/Zone1": {
+     "kind": "hit",
+     "rect": [
+      102.45,
+      440.7,
+      30.0,
+      30.0
+     ]
+    },
+    "Zones/Zone1/Art": {
+     "kind": "art",
+     "rect": [
+      101.35,
+      439.55,
+      36.8,
+      36.8
+     ],
+     "size": [
+      184,
+      184
+     ],
+     "texture": "res://assets/ui/zone_map/zone_button_open.png",
+     "zoom": 5.0
+    },
+    "Zones/Zone2": {
+     "kind": "hit",
+     "rect": [
+      298.2,
+      340.8,
+      30.0,
+      30.0
+     ]
+    },
+    "Zones/Zone2/Art": {
+     "kind": "art",
+     "rect": [
+      297.1,
+      339.65,
+      36.8,
+      36.8
+     ],
+     "size": [
+      184,
+      184
+     ],
+     "texture": "res://assets/ui/zone_map/zone_button_open.png",
+     "zoom": 5.0
+    },
+    "Zones/Zone3": {
+     "kind": "hit",
+     "rect": [
+      648.7,
+      428.1,
+      30.0,
+      30.0
+     ]
+    },
+    "Zones/Zone3/Art": {
+     "kind": "art",
+     "rect": [
+      647.6,
+      426.95,
+      36.8,
+      36.8
+     ],
+     "size": [
+      184,
+      184
+     ],
+     "texture": "res://assets/ui/zone_map/zone_button_open.png",
+     "zoom": 5.0
+    },
+    "Zones/Zone4": {
+     "kind": "hit",
+     "rect": [
+      725.35,
+      335.3,
+      30.0,
+      30.0
+     ]
+    },
+    "Zones/Zone4/Art": {
+     "kind": "art",
+     "rect": [
+      724.25,
+      334.15,
+      36.8,
+      36.8
+     ],
+     "size": [
+      184,
+      184
+     ],
+     "texture": "res://assets/ui/zone_map/zone_button_open.png",
+     "zoom": 5.0
+    },
+    "Zones/Zone5": {
+     "kind": "hit",
+     "rect": [
+      597.65,
+      200.4,
+      30.0,
+      30.0
+     ]
+    },
+    "Zones/Zone5/Art": {
+     "kind": "art",
+     "rect": [
+      596.55,
+      199.25,
+      36.8,
+      36.8
+     ],
+     "size": [
+      184,
+      184
+     ],
+     "texture": "res://assets/ui/zone_map/zone_button_open.png",
+     "zoom": 5.0
+    },
+    "Zones/Zone6": {
+     "kind": "hit",
+     "rect": [
+      491.35,
+      123.95,
+      30.0,
+      30.0
+     ]
+    },
+    "Zones/Zone6/Art": {
+     "kind": "art",
+     "rect": [
+      490.25,
+      122.8,
+      36.8,
+      36.8
+     ],
+     "size": [
+      184,
+      184
+     ],
+     "texture": "res://assets/ui/zone_map/zone_button_open.png",
+     "zoom": 5.0
+    },
+    "Zones/Zone7": {
+     "kind": "hit",
+     "rect": [
+      94.35,
+      170.4,
+      30.0,
+      30.0
+     ]
+    },
+    "Zones/Zone7/Art": {
+     "kind": "art",
+     "rect": [
+      93.25,
+      169.25,
+      36.8,
+      36.8
+     ],
+     "size": [
+      184,
+      184
+     ],
+     "texture": "res://assets/ui/zone_map/zone_button_open.png",
+     "zoom": 5.0
+    }
+   },
+   "port_only": [
+    "Connectors"
+   ],
+   "timeline": 0
+  },
   "res://scenes/zones/zone1_prison.tscn": {
    "frame": "PRISON",
    "origin": [

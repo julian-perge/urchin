@@ -90,6 +90,16 @@ func show_sections(
 	_position_near.call_deferred(anchor)
 
 
+# This shows the GO layout of the original's KrinToolTipper, the title field tt
+# over the text field t. The hotbar buttons, the orbs and the World map's zones
+# all set the tooltip this way.
+func show_title_and_body(title: String, body: String, anchor: Control) -> void:
+	show_sections([
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": title, "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": body, "color": TooltipTheme.TEXT_BODY}]},
+	], anchor)
+
+
 func hide_tooltip() -> void:
 	_root.visible = false
 

@@ -208,11 +208,7 @@ func _show_tooltip(button: BaseButton) -> void:
 	# the Hub opened changes the next tooltip (DefineButton2_3179, on(rollOver)).
 	if button.name == "RespecButton" and GameData.current_save != null:
 		title += ": €%d" % Leveling.respec_cost(GameData.current_save.level)
-	var sections: Array = [
-		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": title, "color": TooltipTheme.TEXT_TITLE}]},
-		{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": Strings.system(indices[1]), "color": TooltipTheme.TEXT_BODY}]},
-	]
-	GameTooltip.show_sections(sections, button)
+	GameTooltip.show_title_and_body(title, Strings.system(indices[1]), button)
 
 
 func _on_menu_button_pressed(group: String) -> void:
