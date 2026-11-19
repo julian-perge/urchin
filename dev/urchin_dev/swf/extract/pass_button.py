@@ -249,8 +249,8 @@ def pass_layout(index: SwfIndex) -> tuple[dict, dict[int, str], float]:
     )
     names = texture_names(shapes)
     bounds = {cid: shape_bounds(index, cid) for cid in names}
-    if button.matrix[0] != button.matrix[3]:
-        raise RuntimeError(f"{BUTTON_NAME} is scaled unevenly: {button.matrix}")
+    if button.matrix[1] or button.matrix[2] or button.matrix[0] != button.matrix[3]:
+        raise RuntimeError(f"{BUTTON_NAME} is not scaled evenly: {button.matrix}")
     layout = {
         "icon": icon_rect(icon.matrix, ability_icons.ICON_HALF),
         "orbs": orb_layouts(index, layers, shapes, names, button.matrix[0]),

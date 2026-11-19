@@ -584,16 +584,19 @@ func test_an_idle_orb_draws_its_up_ring_and_a_hovered_orb_its_over_ring():
 func test_an_orb_draws_no_box_or_border_of_its_own():
 	_open()
 	var orb: Button = _menu.orbs[0]
-	for state in ["normal", "hover", "pressed", "disabled", "focus"]:
+	for state in ["normal", "hover", "pressed", "hover_pressed", "disabled", "focus"]:
 		assert_is(orb.get_theme_stylebox(state), StyleBoxEmpty, state)
 
 
 # The Radial menu clip places each icon, thing0 to thing7, on its own spot near
 # its button, and extract_pass_button writes that rect. The icon is the orb's
-# first child, so the cover, the count and the ring draw over it.
+# first child, so the cover, the count and the ring draw over it. Each orb's
+# idle ring sits where its own thingo button places shape 2434.
 func test_every_orbs_icon_sits_where_the_clip_places_its_thing():
 	_open()
-	for bar_index in 2:
+	assert_eq(_menu.orbs.size(), _ring_layout["orbs"].size(), "one extracted layout for each orb")
+	for bar_index in _menu.orbs.size():
+		_assert_ring(bar_index, "up")
 		var icon: TextureRect = _icon(bar_index)
 		var rect: Dictionary = _ring_layout["orbs"][bar_index]["icon"]
 		var want := Rect2(CENTRE + Vector2(rect["x"], rect["y"]) * _ring_scale(), Vector2(rect["w"], rect["h"]) * _ring_scale())
