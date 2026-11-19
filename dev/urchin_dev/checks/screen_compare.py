@@ -348,7 +348,9 @@ def depth_runs(
     """-> the depths of `layers` in order, cut into runs of consecutive depths
     that move by the same offset, each with its offset. Raises when a clip
     mask and a depth it clips fall in two runs, since a render of one run
-    draws no mask from another."""
+    draws no mask from another. Raises too when a depth after the first run
+    has a blend mode that mixes with what lies under it, since a render of
+    one run draws nothing from the runs under it."""
     runs: list[tuple[list[int], tuple[float, float]]] = []
     for depth in sorted(layers):
         offset = offsets.get(depth, (0.0, 0.0))
@@ -364,6 +366,14 @@ def depth_runs(
         if any(run_of[d] != run_of[depth] for d in clipped):
             raise CompareError(
                 f"the clip mask at depth {depth} clips depths that move apart from it"
+            )
+    for depth, layer in layers.items():
+        # Blend modes 0 and 1 are normal and 2 is layer. These three draw the
+        # same with nothing under them, and every higher mode does not.
+        if run_of[depth] > 0 and (layer.blend_mode or 0) > 2:
+            raise CompareError(
+                f"the blend mode at depth {depth} mixes with depths in an earlier"
+                " run, which its own render does not draw"
             )
     return [(tuple(depths), offset) for depths, offset in runs]
 

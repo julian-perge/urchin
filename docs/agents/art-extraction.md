@@ -277,13 +277,14 @@ This tool checks how it looks: the art, the fills and the shadows.
   each run that holds a Steam piece by the Steam placement minus the web
   placement, and draws the runs in depth order. The shape at depth 152 lies
   between the squares and the icons, and the run order keeps it there. The
-  tool refuses a clip mask that a run boundary cuts, and a Steam piece in a
-  KRINMENU entry, which renders through the Hub frame.
+  tool refuses a clip mask that a run boundary cuts, a blend mode that mixes
+  with an earlier run, and a Steam piece in a KRINMENU entry, which renders
+  through the Hub frame.
 - **The Hub diff has two more differences that are not port faults to fix
   here.** The port draws the Options and Re-Spec icons at half alpha, and
-  their behavior stays with their own tasks. ffdec cuts the zone fill's Glow off at a hard box,
-  (496, 506.5) 269.25x31.75, when it renders the fill inside sprite 3149,
-  whose placement has a DropShadow.
+  their behavior stays with their own tasks. ffdec cuts the zone fill's Glow
+  off at a hard box, (496, 506.5) 269.25x31.75, when it renders the fill
+  inside sprite 3149, whose placement has a DropShadow.
   Flash Player draws a soft glow there, as `references/sonny2_zone1_prison.png`
   shows, and so does the port, from the fill rendered alone. Do not re-extract
   `zone_fill.png` from the root frame to lower this score.
