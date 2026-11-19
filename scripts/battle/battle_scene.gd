@@ -93,6 +93,10 @@ var decision_open: bool = false:
 # player picked (frame_217/PlaceObject2_3389_480 enterFrame, lines 593-596 and
 # 769-792), so _process passes for the player when this reaches 0.
 var _decision_timer: float = 0.0
+# Render deltas that add up to a whole number of SWF frames can fall short of it
+# by a float rounding error, so the decision timer counts as run out within this
+# margin, in seconds.
+const DECISION_TIMER_EPSILON: float = 0.000001
 # Mirrors the original's turnBasedKrin, which is true on Easy and Normal
 # (frame_201/DoAction.as:65-79) and becomes true for the rest of the battle once
 # a half-turn ends with the player's unit dead (conductor lines 200-202). While
@@ -235,7 +239,7 @@ func _process(delta: float) -> void:
 	battle_screen_clip.advance(delta * animation_speed)
 	if decision_open and not _turn_based:
 		_decision_timer = maxf(_decision_timer - delta, 0.0)
-		if _decision_timer == 0.0:
+		if _decision_timer < DECISION_TIMER_EPSILON:
 			decision_open = false
 	if decision_open:
 		_battle_time_now = _decision_time_now()

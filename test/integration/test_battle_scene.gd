@@ -1593,7 +1593,7 @@ func _clock_shows(scene) -> String:
 # (DefineSprite_3386/frame_1, PlaceObject2_3385_2 and PlaceObject2_3385_6). A
 # Traced run in Flash Player 14 read the ring grey at 0, its top right quarter
 # lit at 30 and three quarters lit at 90.
-func test_heroic_clock_lights_the_ring_over_the_decision_window():
+func test_heroic_clock_lights_the_ring_over_the_decision():
 	var save = PlayerSave.new_game("HeroicClock", 0)
 	save.difficulty = CombatUnit.Difficulty.HARD
 	GameData.current_save = save
@@ -1648,7 +1648,7 @@ func test_clock_is_whole_on_enemy_during_the_enemy_half_turn():
 # BattleTimeLimit is 120 (frame_217/DoAction.as:2) and the SWF runs at 30 fps,
 # so the window is 4 seconds. The player's slot still holds the pass that every
 # dispatch leaves behind (lines 470-473), so running out is a pass.
-func test_heroic_decision_passes_the_turn_when_the_window_runs_out():
+func test_heroic_decision_passes_the_turn_when_the_timer_runs_out():
 	var save = PlayerSave.new_game("HeroicWindow", 0)
 	save.difficulty = CombatUnit.Difficulty.HARD
 	GameData.current_save = save
@@ -1718,10 +1718,11 @@ func test_a_pass_before_the_fight_starts_on_heroic_replaces_the_pick():
 	assert_eq(_shown_tooltip_texts(), [move.display_name, texts["picked"] % scene.units[2].player_name], "and the pick's text")
 	pass_button.mouse_exited.emit()
 
-	scene._process((delay - 0.5) / fps)
-	assert_true(scene.decision_open, "the delay runs from the pass")
+	for frame in int(delay) - 1:
+		scene._process(1.0 / fps)
+	assert_true(scene.decision_open, "the delay runs from the pass, 1 frame short")
 	scene._process(1.0 / fps)
-	assert_false(scene.decision_open, "the delay ends with the fight's start")
+	assert_false(scene.decision_open, "the fight starts on the delay's last frame")
 	await wait_until(func(): return scene.runner.turn_count > turn, 5)
 	var player_events: Array = scene.runner.events.slice(first_event).filter(
 		func(event): return event["turn"] == turn and int(event.get("caster_slot", 0)) == BattleRunner.PLAYER_SLOT
