@@ -109,6 +109,28 @@ name, so it misses a call in class-level code and a callable reference such as
   A multi-line edit once joined a comment to the line below it, and the full
   suite then failed 92 tests with "Cannot infer the type" errors that named
   none of it.
+- Build a repeated piece as one small `.tscn` and instance it with
+  `PackedScene.instantiate()` per use, as `item_slot.tscn`,
+  `talent_node.tscn` and `victory_exp_row.tscn` are. The script holds
+  `@onready` references and methods that set `.text`, `.value` and
+  `.visible` on nodes the scene already lays out, and does not build the
+  nodes itself. Transient pieces that change on every use, such as floating
+  combat text and projectiles, stay in code. Each scene sets its own
+  `theme_override_*` properties. There is no shared Theme resource for these overrides.
+- Declare an enum next to the code that owns it, and pair it with a
+  `Dictionary[EnumType, ValueType]` for lookups or an `Array[EnumType]` for
+  ordered lists. Fields that are saved or exported, and values read straight
+  from data, stay plain `int` or `String` (`PlayerSave.difficulty`,
+  `Ability.effect_category`), so `.tres` files and data loading stay simple.
+  Only parameters, locals and match targets take the enum type. Id-keyed
+  content tables, such as `ZoneManager.ZONES` and `Achievements.NAMES`, are
+  not enums. Retyping a saved field's keys changes every save file's shape: the
+  `CombatUnit.Element` keys of `PlayerSave.per` and `def` broke older saves
+  with "Unable to convert key from String to int".
+- After a new `class_name` script lands, run `just import` in each checkout
+  that compiles it. Without it, the class cache is stale and Godot reports
+  false "not declared" errors, even when the branch that added the class
+  passed.
 
 ## QA save presets
 

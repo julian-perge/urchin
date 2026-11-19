@@ -71,6 +71,8 @@ Sequence:
 The Godot port fires a single bolt per `_play_move_event` call and has no multi-target path. `BattleRunner` ran a move on every living enemy when `Ability.hits_all_enemies` was set
 until issue 47 deleted that branch, since no move sets `[20]`. **DONE (2026-08-19)**, see `tasks/old/2026-08-18-missile-projectile-art.md`: distinct clip art per `projectileModel` name (e.g. `Krin.Firebolt`) is extracted and rendered untinted; `KrinTrail`'s real 33-frame fade-in/fade-out pulse (not a generic tinted circle+line) plays alongside it, tinted by the move's real `colortobe` value; and a miss now flies the bolt fully past the target off-screen instead of always resolving as a hit on arrival, matching `strikeSuccess`'s hit/miss branch (`Projectile.did_hit` gates whether `reached_target` frees the bolt immediately or lets it keep flying). Both the bolt and the trail come from a generated scene of their own under `scenes/battle/vfx/`, which `Projectile` instantiates by clip name - each one already carries that clip's frames and the registration point the source SWF drew it around, so nothing here positions or scales art at play time (**DONE (2026-08-20)**, see `.superpowers/sdd/2026-08-19-vfx-registration-scenes/`).
 
+The original never removes the impact clips it attaches (`"bbb"+counter` in `krinBoltMake`). The port's `ImpactEffect` frees itself when its animation ends, which no player can see.
+
 ## "cast" label dispatch and timing (frame_217/PlaceObject2_3389_480 enterFrame, ~line 400-469)
 
 Implemented in `scripts/entities/character_visual.gd` (real MODEL1 label playback, frames 189-219) and `scripts/battle/battle_scene.gd` (`_play_move_event`).
@@ -165,6 +167,11 @@ Ported: `StatusBar.refresh_buffs` (`scripts/battle/status_bar.gd`). The row used
 - The port's row used to sort the slots with turns left again with `sort_custom`, which moved tied buffs once a unit held more than 16 of them and changed the 7 icons it showed in 212
   of 20,000 sorted states. The port's tooltip title also adds the turns left, which the original's doesn't.
 
+- The icon is a frame label, not a number. Each buff registers under its name (`addNewBuffKrin("TWINGUARDIANS", ...)`, `dev/source_files/action_script_curated/frame42/sonny2_addNewBuffKrin.txt:543`),
+  and a move names the buff it applies as a string, so `buffIcon.gotoAndStop(buffId)` gets that name and Flash resolves it as a label of the buff icon sheet, DefineSprite 100. `buffs.json`'s
+  numeric `id` is only the order of the 470 registration calls and never reaches the sheet. The sheet holds 33 drawings across 400 frames and labels several buffs onto each, so 8 of the 419
+  extracted icons, FIRESAM and TWINGUARDIANS among them, share frame 1, a plain filled rounded rectangle. Buff id 0, TWINGUARDIANS, is a real buff. The empty slot is `buff_id: -1`.
+
 ## Menu piercing/defense bars (DefineSprite_3142/frame_1)
 
 Implemented in `scripts/ui/menu/menu_math.gd` and `scripts/ui/menu/element_bar.gd`. The numbers are in `dev/converted_json/menu_math.json`, which `uv run convert_menu_math` writes. Value = allocation + ceil(100 + 15 * level), and x = value / (100 + 15 * level), where the average is not rounded.
@@ -178,6 +185,10 @@ Implemented in `scripts/ui/menu/menu_math.gd` and `scripts/ui/menu/element_bar.g
 
 - `looks` art keys: `gghhjjuu.looks = "X"` assignments in frame_42/DoAction_16.as after each `createNewItemKrin` (wearable default "NINJA"; id counter jumps at 99/299/499).
 - Slot icons: the icon clip (DefineSprite 2064) has one labeled frame per item name; shape 1913 is a clip mask: its first placement, on frame 16 at depth 2, carries clipDepth 15, so stripping it unclips every icon under it (item 69 went from 63x63 to 101x140, see docs/agents/art-extraction.md). It is placed once more later in the clip at depth 1 without a clip. `gotoAndStop(ITEMNAME[id])`.
+- The name the game shows, and the label the icon lookup uses, is `KrinLang.ENGLISH.ITEMNAME[id]` (`frame_1/DoAction.as`). `frame_42/DoAction_16.as:23` writes it over the item record's own name
+  at load. All 316 entries are unique and no two sanitize to the same key. `swf_items.json`'s `internal_name` is a different, dev-facing field that the icon path never reads, and it disagrees
+  with the real names (id 311 is "Punisher Gloves" in `ITEMNAME` and "Warden's Grasp" in `internal_name`). The 133 ids with no `ITEMNAME` get no icon in the original either.
+- Four items have no label on 2064: Tool (id 1) and Golden Crowbar, Golden Pipe and Golden Axe (ids 681-683). They keep their `assets/item_slot_icons/` art. Item 0, `None`, has a label, a blank frame.
 
 ## Companion aggression stances (agModeAr)
 
@@ -262,6 +273,9 @@ save when the game starts, goes on to the first fight when it starts, and sends 
   fights battle 2 on the way (`frame_165/DoAction.as`), still holding the class split because frame 180 has not run yet. The port's `PlayerSave.new_game` keeps only the split's rounding residue, and `GameData.new_game` equips the gear onto a zeroed
   allocation.
 - Sell-back = `ceil(price * 0.15)` (DefineButton2_3015).
+- Each party member's looks are fixed. `frame_42/DoAction_17.as:7-84` is top-level frame 42 code that sets `SkinSet`, `HairSet` and `GSet` for every character, and nothing else writes them, so the
+  original has no appearance screen. The port keeps each character's looks in `Party`'s `model` entry.
+- The class name under each class-select card is a text field that the original fills from `KrinLang` at run time, so the port draws it as a Label.
 
 ## Battle presentation per animation type (frame_217/PlaceObject2_3389_480 enterFrame, ~line 400)
 
@@ -321,7 +335,7 @@ Ported: `BattleManager.execute_move` returns a `MoveResult` that states which br
   flash (203), the `hit` label unless STUN is set (204-207) and `dead` at 0 (208-211). It plays no hit voice, but its `lifeBarUpdate` (198) plays the target's `voiceDie` when LIFEN
   reaches 0, as the one at 150 does.
 - **Focus** adds `[9]` to FOCUSN, kept between 0 and FOCUSU, and plays the `focus` flash. It draws no number (232-249).
-- Any other category does nothing in `executeMove`. Shatter Bolt is the only such move, and its status effect still lands after it (`KNOWN_GAPS.md`, the "Attack" entry).
+- Any other category does nothing in `executeMove`. Shatter Bolt is the only such move, and its status effect still lands after it. The conductor applies a move's status effect after `executeMove()` whatever its category (conductor lines 70-102). Shatter Bolt's proc chance is 2.4, so every hit applies `SHATTERBOLT`, a unique Ice debuff with stun contribution 1 and duration 2 (`frame_42/DoAction_6.as:1716-1719`, `frame_42/DoAction_10.as:1629-1636`), and the move stuns its target. Frost Terror is the unit that uses it. The port's `BattleManager.execute_move()` returns a `STATUS_ONLY` result with no amount for such a category and applies the status after it (`test_shatter_bolt_stuns_its_target`).
 - The life bar redraws in `executeMove` (150, 187, 198 and 248) and again in `applyChangesKrin` (`frame_42/DoAction_10.as:342`), which the conductor runs on the target after the
   move's status effect (conductor line 103). So a move leaves the bar on the life after that recompute, which is the life `MoveResult.target_after` holds. The recompute moves life when the
   move lands, or dispels, a buff that changes max life: Edge Of Death's EDGEOFDEATH takes 85% off.
@@ -474,6 +488,9 @@ Ported: `RadialMenu` plays the enterFrame below once per SWF frame. It tests the
   also writes its turns left to the orb's `ACD` field, edit text 2245, and an empty string once it is 0 (lines 23-28). Ported: `RadialMenu` draws the disc at 85 alpha and the count, both
   from `extract_ability_icons`, and a click on any refused orb shows `MoveLegality.message()` in the Combat text banner. Not ported: the ring also empties every `ACD` while the mouse is
   away (lines 52-56).
+
+- A release on an orb casts at once. The orb buttons' on(release) calls `addMoveForPlayer` (`DefineButton2_3374`, for example), which takes its battle branch when `menuMode` is off. The
+  cursor pick-up, `UITmouseHold`, is the Abilities window's alone (see "Talent tree, its tooltips and the respec" below). The port casts on click too.
 
 ## Required target buffs (frame_42/DoAction_11.as)
 
@@ -764,6 +781,53 @@ Ported: `scripts/game.gd`'s `show_battle_hint` shows the card, and `convert_batt
   load ends the wait. This is read from the AS and not confirmed in a live run.
 - The port's `show_battle_hint(battle_id)` keeps `tutSpeecher` as `_hint_used`, a field of the Hub. The port builds a new Hub after every win and every load, so the field is false in each
   new Hub, which is the reset on a win. A load never calls the method, which is what the set-on-load does. After a level-up win, the Hub's Victory Proceed keeps the won battle's id, and the Hub calls `show_battle_hint` when the close X of the Inventory or the Store is pressed (#325). After a win with no level-up, Proceed calls it at once (#241). Only that close button calls it, as 2853 does: the hotbar buttons that toggle the Windows do not.
+
+## Stun, Silence and Reflect
+
+- A unit with `STUN` not 0 does nothing on its turn. The port gates this in `BattleRunner._execute_action()`.
+- A move that is a Shock, or any move at a stunned target, hits without a roll (conductor line 360, `frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as`). The port's `_accuracy_roll()` does the same.
+- Silence blocks any move with a focus cost, `cost * SILENCED == 0`. The AI's filter and the player's pick use the same test (see "Which moves can be picked" above).
+- Reflect is dead code. The full script export has exactly one `REFLECTDMG` reference, the initializer to 0 in frame 201, and none of the 470 buffs has a reflect delta that is not 0. The stat
+  exists on `CombatUnit` and does nothing, as in the original.
+
+## Talent tree, its tooltips and the respec (DefineSprite_3142 frame 25)
+
+Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
+
+- The learn button is `DefineButton2_3096` on the tree screen. It loops every `PRESKILL` entry of a node and refuses when any of them has rank 0, so a node with several prerequisites needs
+  all of them. Each learn takes one skill point (`skillPoints--`).
+- A level-up grants one skill point (the victory screen's level-up code), and a new character starts with 5, `preStartSkill`. So a respec sets `skillPoints` to `Level - 1 + preStartSkill`.
+- The learn button rebuilds `moveMatrix2` from the class's starting moves and every `skillAdderMatrix` entry that is not 0, in node order. It does not keep a running list.
+- `krinRemakeTree` builds each node's tooltip in four lines. The header is the rank over the maximum rank and the name, such as `"(2/4)  Vicious Strike"`. For a passive node
+  (`CLASSIFY == 1`) the title and each rank's text come from `KrinLang.ENGLISH.BUFFSAY`, not from the buff record, and the cost line is `SKILLAURA`, "Passive Combat Effect". 9 of the 14 passive
+  families have a title that is not their family name, for example Marathon is "Endurance". The bottom line names the next tier's level and what it grants, from `BUFFSAY[family + rank]` for a
+  passive and `KRINABILITYB[id + rank][17]` for an active. A maxed node shows `SKILLTALENTTIP3`, "This ability is at its maximum tier.". A node with no rank shows `SKILLTALENTTIP2`, "You have no
+  points in this ability yet.", and leaves rank 1's text to the bottom line.
+- The next-rank text shows a few frames after the rest of the tooltip. The icon's enterFrame sends `KrinToolTipper` to its `GO7` label
+  (`DefineSprite_2427/frame_1/PlaceObject2_2241_11/CLIPACTIONRECORD onClipEvent(enterFrame).as:22`). The port shows every line at once. #364 matches the tooltip to `KrinToolTipper`.
+- In the Abilities window a press on a pool ability picks it up: `DefineButton2_2437` on(press) sets `UITmouseHold` to the ability and shows its icon on the cursor. A release over a ring
+  socket calls `addMoveForPlayer` in its `menuMode` branch, which places the held ability in that socket, or shows `SKILLERROR` when the ring already holds the ability's limit
+  (`KRINABILITY<id>[8]`) of copies (`frame_42/DoAction_11.as:1-32`). A release with nothing held empties the socket. `frame_181/DoAction_2.as:10-14` drops a held ability.
+- The Respec button on the hotbar, `DefineButton2_3179`, refuses with `MENU[66]` while an item is on the cursor and does nothing while `PauseForScreen` is set. It costs
+  `round(0.7 * respecValue(Level))` euros and refuses with `MENU[42]` when the player has less. Otherwise it sets the skill points as above and the stat points to `givePoints(Level, true)`,
+  puts the class's two starting moves back as the only moves, clears the cooldowns, `skillAdderMatrix`, `buffAdderMatrix` and `talentMainArray`, rebuilds `StatSets0` from the equipped
+  gear, shows `MENU[67]` in the Combat text banner and opens the `skills` frame of `KRINMENU`. It also counts `respecSet` down from 5 each day, but nothing reads that count, so the original
+  never limits respecs (#32). Its tooltip is `SYSTEM[32]` + ": EUR" + the cost over `SYSTEM[33]`, with the euro sign where this line says EUR.
+
+## The menu clip's frames (DefineSprite 3142, `KRINMENU`)
+
+- `KRINMENU` sits at stage origin (400.5, 222.4). Frame 1 is the inventory, 9 the victory screen, 16 the store, 25 the abilities window (`skills`), 39 the options (`options`) and 45 the
+  achievements.
+- The hotbar's Options button, `DefineButton2_3180`, sends `KRINMENU` to `options` unless an item is on the cursor (`MENU[66]`) or `PauseForScreen` is set. Frame 39's script fills the
+  rows: Sound, Effects (`Krin.graphics`), Graphics (`Krin.qual`), Autosave, the difficulty and the help text `MENU[34]` (`DefineSprite_3142/frame_39/DoAction.as`). ADR 0011 leaves out
+  Effects and Graphics.
+- The face clip, DefineSprite 2978, holds 40 named portraits: the 5 companions, the player and every named story NPC, such as `Doctor Hedger`, `The Warden` and `Clemons The Deceiver`.
+
+## Where a cutscene goes, and the zone map lines
+
+- After CS_CUT2 and CS_CUT4, which each unlock a zone, `gotoSceneKrin` (frame_219) opens the zone map. After CS_CUT3 it stays on the hub. Ported: `ZoneProgression.CUTSCENE_GOTO_SCENE` and
+  `ZoneManager.open_zone_map_on_load`.
+- The zone map draws the lines between zones in code, `krinMapper.lineMC` on frame 449, colored by unlock state. Ported: `scripts/zones/zone_map_connectors.gd`.
 
 ## Approximation audit (2026-07-21) - port pieces NOT yet source-faithful
 
