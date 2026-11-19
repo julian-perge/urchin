@@ -60,7 +60,7 @@ func test_battle_layout_json_carries_real_stage_rects():
 	assert_not_null(layout, "battle_layout.json parses")
 	assert_eq(layout["halls"].size(), 10, "one entry per hall label")
 	assert_eq(layout["skies"].size(), 9, "one entry per sky label")
-	assert_eq(layout["chrome"].size(), 4, "one entry per chrome character")
+	assert_eq(layout["chrome"].size(), 5, "one entry per chrome character, and the clock's dark ring")
 
 	var rome: Dictionary = layout["skies"]["ROME"]
 	assert_almost_eq(float(rome["y"]), 130.0, 0.01, "ROME sky top")

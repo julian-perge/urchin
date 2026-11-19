@@ -847,6 +847,15 @@ func test_a_win_unlocks_into_zone_managers_achievements_file():
 	ZoneManager.auto_switch_scenes = true
 
 
+# The original writes no text for whose half-turn it is, and its clock has no
+# number: DefineSprite 3386 holds only the two hands and their masks. The clock
+# ring shows whose half-turn it is instead.
+func test_the_battle_screen_has_no_turn_label_or_countdown_number():
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	assert_null(scene.get_node_or_null("UI/TurnLabel"), "no turn label")
+	assert_null(scene.get_node_or_null("BottomBar/CountdownLabel"), "no countdown number")
+	assert_null(scene.get_node_or_null("BottomBar/CountdownRing"), "no countdown ring of the port's own")
+	assert_null(scene.get_node_or_null("BottomBar/PassRing"), "no ring drawn in code")
 
 
 # Battle 100 with its outcome set before the battle loop starts, so the loop
@@ -1282,6 +1291,69 @@ func test_decision_timer_does_not_tick_while_the_decision_is_closed():
 	ZoneManager.auto_switch_scenes = true
 
 
+const CLOCK_RING: String = "BottomBar/Clock/Ring"
+
+
+# -> the name of the clock render the scene shows, such as "friend_030".
+func _clock_shows(scene) -> String:
+	var texture: Texture2D = (scene.get_node(CLOCK_RING) as TextureRect).texture
+	return texture.resource_path.get_file().get_basename() if texture else ""
+
+
+# On Heroic the conductor adds 1 to BattleTimeNow each frame of the player's
+# decision, from the 0 it set when the last half-turn ended (enterFrame, lines
+# 143 and 593-596). The two hands light the ring with it
+# (DefineSprite_3386/frame_1, PlaceObject2_3385_2 and PlaceObject2_3385_6). A
+# Traced run in Flash Player 14 read the ring grey at 0, its top right quarter
+# lit at 30 and three quarters lit at 90.
+func test_heroic_clock_lights_the_ring_over_the_decision_window():
+	var save = PlayerSave.new_game("HeroicClock", 0)
+	save.difficulty = CombatUnit.Difficulty.HARD
+	GameData.current_save = save
+	ZoneManager.auto_switch_scenes = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.set_process(false)
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene.decision_open, 5)
+	scene._process(0.0)
+	assert_eq(_clock_shows(scene), "friend_000", "the window opens on the grey ring")
+	scene._process(1.0)
+	assert_eq(_clock_shows(scene), "friend_030", "1 second is 30 SWF frames")
+	scene._process(2.0)
+	assert_eq(_clock_shows(scene), "friend_090")
+
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+
+
+# The conductor puts thingerClock on enemy when the other side's half-turn
+# starts, and sets BattleTimeNow to BattleTimeLimit for every frame of it
+# (enterFrame, lines 297-310, 597-600 and 750-754). The test runs the battle at
+# a speed above 0, because at 0 a half-turn ends inside one frame.
+func test_clock_is_whole_on_enemy_during_the_enemy_half_turn():
+	var save = PlayerSave.new_game("EnemyClock", 0)
+	save.difficulty = CombatUnit.Difficulty.NORMAL
+	GameData.current_save = save
+	ZoneManager.auto_switch_scenes = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 4.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene.decision_open, 10)
+	await wait_process_frames(1)
+	assert_eq(_clock_shows(scene), "friend_120", "the player's half-turn is on friend")
+	scene._on_pass_pressed()
+	var seen: bool = await wait_until(func(): return _clock_shows(scene) == "enemy_120", 20)
+	assert_true(seen, "the enemy's half-turn shows the whole ring on enemy")
+
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+
+
 # On Heroic the original's conductor adds 1 to BattleTimeNow every frame while
 # the player's team decides, and starts the half-turn when it reaches
 # BattleTimeLimit whether or not the player picked
@@ -1342,7 +1414,7 @@ func test_normal_decision_waits_for_the_player_with_no_countdown():
 		scene._process(1.0)
 	assert_true(scene.decision_open, "10 seconds without a pick still waits for the player")
 	assert_eq(scene._decision_timer, time_left, "nothing counts down")
-	assert_false(scene._countdown_label.visible, "Normal shows no countdown")
+	assert_eq(_clock_shows(scene), "friend_120", "and the clock shows the whole ring, which never moves")
 
 	GameData.current_save = null
 	ZoneManager.auto_switch_scenes = true
@@ -1365,8 +1437,8 @@ func test_heroic_countdown_stops_once_the_player_is_dead():
 	scene.set_process(false)
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	await wait_until(func(): return scene.decision_open, 5)
-	scene._process(0.0)
-	assert_true(scene._countdown_label.visible, "Heroic shows the countdown while the player is alive")
+	scene._process(1.0)
+	assert_eq(_clock_shows(scene), "friend_030", "the clock runs while the player is alive")
 
 	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
 	player.life_n = 0.0
@@ -1374,8 +1446,34 @@ func test_heroic_countdown_stops_once_the_player_is_dead():
 	scene._on_pass_pressed()
 	var finished: bool = await wait_for_signal(scene.battle_finished, 30)
 	assert_true(finished, "the rest of the battle never waits on the dead player")
+	assert_true(scene._turn_based, "the clock stays parked for the rest of the battle")
+
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+
+
+# The conductor picks the clock's frame from the player's teamSide alone, so
+# after the player dies his Companions' half-turns still show the blue frame
+# (onClipEvent(load), lines 9-16, and enterFrame, lines 297-310).
+func test_clock_stays_on_the_player_side_frame_after_the_player_dies():
+	var save = PlayerSave.new_game("DeadClock", 0)
+	save.difficulty = CombatUnit.Difficulty.NORMAL
+	GameData.current_save = save
+	ZoneManager.auto_switch_scenes = false
+	ZoneManager.pending_battle = {}
+
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.set_process(false)
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	await wait_until(func(): return scene.decision_open, 5)
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	player.life_n = 0.0
+	player.active = false
+	scene.runner.team_move_now = player.team_side
+	scene._set_clock_side()
 	scene._process(0.0)
-	assert_false(scene._countdown_label.visible, "the countdown is gone for the rest of the battle")
+	assert_eq(_clock_shows(scene), "friend_120", "the player's side keeps the blue frame")
 
 	GameData.current_save = null
 	ZoneManager.auto_switch_scenes = true

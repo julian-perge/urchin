@@ -1155,7 +1155,8 @@ const BATTLE_SCENE: String = "res://scenes/battle_scene.tscn"
 func test_control_a_battle_piece_moved_20_px_fails() -> void:
 	var pieces: Array[String] = [
 		"TopPanel", "HallWindow", "HallOutline", "BottomBar/Bar", "BottomBar/StanceHost", "BottomBar/RightPanel",
-		"BottomBar/PassButton", "BottomBar/PassRing", "BottomBar/AlertIcon", "BottomBar/RetreatButton",
+		"BottomBar/PassButton", "BottomBar/AlertIcon", "BottomBar/RetreatButton",
+		"BottomBar/Clock", "BottomBar/Clock/Disc", "BottomBar/Clock/Ring",
 	]
 	for piece: String in pieces:
 		var root: Control = await _laid_out(BATTLE_SCENE)
@@ -1165,7 +1166,7 @@ func test_control_a_battle_piece_moved_20_px_fails() -> void:
 		await wait_process_frames(2)
 		var found: Array[String] = _scene_problems(root, scene)
 		assert_gt(found.size(), 0, "%s moved 20 px and passed" % piece)
-		var what: String = "position" if piece == "BottomBar/PassRing" else "top left"
+		var what: String = "position" if piece == "BottomBar/Clock" else "top left"
 		assert_string_contains(found[0] if found else "", "%s: %s" % [piece, what])
 
 
