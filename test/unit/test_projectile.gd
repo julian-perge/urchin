@@ -6,6 +6,31 @@ extends GutTest
 
 const AlphaSteps = preload("res://test/alpha_steps.gd")
 const ProjectileScene = preload("res://scenes/battle/projectile.tscn")
+# krinBoltMake's settings, as extract_krin_settings read them out of
+# frame_42/DoAction_4.as.
+const KRIN_SETTINGS_PATH: String = "res://assets/battle/krin_settings.json"
+
+var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(KRIN_SETTINGS_PATH))
+
+
+# Each frame krinBoltMake moves the bolt by the distance it measured at the
+# start over krinBoltTime, times SpeedConst, and then multiplies SpeedConst by
+# krinBoltIncrease. SpeedConst starts at krinBoltSpeed
+# (frame_42/DoAction_4.as:146 and 165-171).
+func test_the_bolt_speeds_up_by_krin_bolt_increase_each_frame():
+	var bolt: Projectile = add_child_autofree(ProjectileScene.instantiate())
+	bolt.clip_name = "Krin.Firebolt"
+	bolt.start(Vector2(-400, 100), Vector2(400, 100))
+	bolt.set_process(false)
+	var step: float = 800.0 / float(_krin["krinBoltTime"])
+	var speed: float = float(_krin["krinBoltSpeed"])
+	var expected_x: float = -400.0
+	for frame: int in 10:
+		bolt._process(1.0 / BattleScreenClip.fps())
+		expected_x += step * speed
+		speed *= float(_krin["krinBoltIncrease"])
+		assert_almost_eq(bolt.position.x, expected_x, 0.001, "frame %d" % (frame + 1))
+	bolt._trail_root.queue_free()
 
 
 # The Traced run replayed the bolt's onEnterFrame fade from its attach at 0
@@ -66,7 +91,7 @@ func test_trail_art_is_halved_and_grows_from_that_baseline():
 	# One tick of growth is 0.083 * step length * speed_const on top of a
 	# 1.0 baseline, then the whole thing is halved (the trail scene's own
 	# baked scale).
-	var step_length: float = (Vector2(300, 100) - Vector2(100, 100)).length() / Projectile.BOLT_TIME
+	var step_length: float = (Vector2(300, 100) - Vector2(100, 100)).length() / float(_krin["krinBoltTime"])
 	assert_almost_eq(bolt._trail_sprite.scale.x, 0.5 * (1.0 + 0.083 * step_length), 0.001,
 		"growth is a multiple of the halved baseline, not an unscaled increment")
 

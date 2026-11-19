@@ -253,11 +253,13 @@ func test_a_caster_hit_in_its_runback_keeps_sliding_home_while_it_plays_hit():
 		visual._process(SWF_FRAME_SECONDS)
 	var strike_spot: Vector2 = visual.position
 	assert_almost_eq(strike_spot, Vector2(180, 100), Vector2(0.1, 0.0), "sanity: Impact comes at the target")
-	for frame in 13:
+	var krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.KRIN_SETTINGS_PATH))
+	var runback_frame: int = int(krin["krinMeleeAttackEndCD"]) - 1
+	for frame in runback_frame - 1:
 		visual._process(SWF_FRAME_SECONDS)
-	assert_eq(visual.position, strike_spot, "13 frames after Impact the caster still stands where it struck")
+	assert_eq(visual.position, strike_spot, "%d frames after Impact the caster still stands where it struck" % (runback_frame - 1))
 	visual._process(SWF_FRAME_SECONDS)
-	assert_lt(visual.position.x, strike_spot.x, "and the 14th frame starts its Runback")
+	assert_lt(visual.position.x, strike_spot.x, "and frame %d starts its Runback" % runback_frame)
 
 	visual.set_state(CharacterVisual.State.HIT)
 	var hit: Dictionary = _animations()["labels"]["hit"]
