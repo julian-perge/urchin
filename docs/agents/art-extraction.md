@@ -275,6 +275,17 @@ This tool checks how it looks: the art, the fills and the shadows.
   Flash Player draws a soft glow there, as `references/sonny2_zone1_prison.png`
   shows, and so does the port, from the fill rendered alone. Do not re-extract
   `zone_fill.png` from the root frame to lower this score.
+- **The Abilities score covers the panels and the ability pool.** The
+  `abilities` entry scores `abilities_window.tscn` alone, with `hide_names`
+  hiding the tree lines and nodes, the eight sockets, the pool's rows, the plus
+  buttons and the scroll buttons. `SCENES.compare_strip` takes the tree (3100),
+  the ring (3109), the plus buttons (3068 to 3071), their plates (3075) and the
+  scroll buttons (3114, 3115) out of the reference. The port draws those as
+  native Buttons and code-drawn nodes (ADR 0007), so the rect test checks them.
+  The score is p99 61, with the 20 px control at 109. The backdrop's outer rim
+  is most of it, as in the Store. On the pool's rect, (523.6, 274.2)
+  217.35x133.05, the backing, the frame's fades and the inner shadow overlay
+  score p99 2, with the control at 90 (julian-perge/urchin#238).
 - **The Battle score covers the frame, not the fighters.** The `battle` entry uses
   `battle_scene.tscn` alone. `SCENES.compare_strip` takes the hall and its
   placeholder rigs, the sky, the fade, the clock, the pass and retreat buttons, the
