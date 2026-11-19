@@ -168,7 +168,7 @@ As in ui-foundation. A comment passes the three tests. A string index is a named
 - The zone tooltips on the World map, which the world-map spec owns.
 - The pass tooltip's other texts. The original changes it to the queued ability's name and "You will use this ability on ..." while a pick waits, and to "Cannot skip during action." during a move (`frame_217/PlaceObject2_3389_480/CLIPACTIONRECORD onClipEvent(enterFrame).as:393-399, 756-780`). The port shows the idle text only. A battle HUD issue can add the others.
 - The first-line indent of each field (2 px, 3 px on the title), which `Label` cannot draw.
-- The original's `data` frame: button 3121 shows the sell tooltip over a save slot. That is title-slots' piece.
+- KRINMENU's `data` frame and its button 3121, which shows the sell tooltip. No player can open that frame, and it is not the save slot list (DECODED_ALGORITHMS.md, #432).
 
 ## Success criteria
 
