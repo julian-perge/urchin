@@ -17,6 +17,16 @@ Constants (frame 42 globals). `just extract-krin-settings` (`dev/urchin_dev/swf/
 | `krinMeleeAttackCD` | 15 | frames from strike start to impact (0.5 s) |
 | `krinMeleeAttackEndCD` | 15 | frames the end counter counts before the runback goto, the impact frame included, so the goto comes 14 frames after impact |
 
+`krinMelee` also writes these numbers as literals (`frame_42/DoAction_4.as:102-117`). The extractor names them, since the ActionScript does not, and writes them to the same file. It refuses a script whose cap check and the value the cap sets write different numbers:
+
+| Name | Value | Meaning |
+|---|---|---|
+| `krinMeleeDashBase` | 1.5 | the dash's coefficient is this minus `krinMeleeDashSlope * goRat` (line 102) |
+| `krinMeleeDashSlope` | 1.45 | see `krinMeleeDashBase` |
+| `krinMeleeRunbackSlope` | 1.45 | the runback's coefficient is this times `goRat` (line 106) |
+| `krinMeleeStepCap` | 1 | either coefficient is at most this (lines 108-111) |
+| `krinMeleeHomeTolerance` | 0.000001 | the runback snaps home once `relX * faceing` is this or less (line 117) |
+
 Sequence:
 
 1. **Dash out.** The doll's clip plays `run`; the body translates each frame by `spdXCoEFFER * (distance / 60) * 10` where `goRat` = fraction traveled and `spdXCoEFFER = min(1.5 - 1.45 * goRat, 1)`
@@ -52,6 +62,13 @@ Constants (frame 42 globals). `just extract-krin-settings` reads them into `asse
 | `krinBoltTime` | 60 | step divisor: step = distance / 60, fixed at spawn (never recomputed against the bolt's live position) |
 | `krinBoltSpeed` | 1 | initial `SpeedConst` |
 | `krinBoltIncrease` | 1.15 | `SpeedConst *= 1.15` every original frame - the bolt ACCELERATES exponentially, it does not move at constant speed |
+
+`krinBoltMake` also writes these numbers as literals. The extractor names them and writes them to the same file. It refuses a script whose two trail lines, or whose two miss bounds, write different numbers:
+
+| Name | Value | Meaning |
+|---|---|---|
+| `krinBoltTrailGrowth` | 8.3 | the trail's `inner._xscale` grows by this many percent of the step length each frame (lines 200 and 209) |
+| `krinBoltMissX` | 500 | a missed bolt removes itself once `_x` is more than this either side of BATTLESCREEN's origin (line 201) |
 
 Sequence:
 

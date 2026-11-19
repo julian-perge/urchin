@@ -33,10 +33,19 @@ signal reached_target
 signal flight_ended
 
 # krinBoltMake reads krinBoltTime, krinBoltSpeed and krinBoltIncrease, which
-# frame_42/DoAction_4.as sets at lines 213-215. extract_krin_settings writes
-# them to this file.
+# frame_42/DoAction_4.as sets at lines 213-215, and writes krinBoltTrailGrowth
+# and krinBoltMissX as literals at lines 200-209. extract_krin_settings writes
+# them all to this file.
 const KRIN_SETTINGS_PATH: String = "res://assets/battle/krin_settings.json"
 static var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(KRIN_SETTINGS_PATH))
+# krinBoltMake grows the trail's _xscale, which counts in percent, so the share
+# of the trail's own length is the growth over 100.
+static var _trail_growth_share: float = float(_krin["krinBoltTrailGrowth"]) / 100.0
+# krinBoltMake removes a missed bolt once its x is more than krinBoltMissX
+# either side of the origin of BATTLESCREEN, the clip it flies in
+# (frame_42/DoAction_4.as:201). On the battlefield the bolt flies over, that
+# origin is battle_screen_x.
+static var _miss_range: float = float(_krin["krinBoltMissX"])
 # The bolt's onEnterFrame adds a step to its _alpha while the alpha is under 100
 # (frame_42/DoAction_4.as:161-164). extract_fade_steps writes the step to this
 # file.
@@ -47,11 +56,6 @@ static var _bolt_fade: Dictionary = JSON.parse_string(FileAccess.get_file_as_str
 const FRAME_EPSILON: float = 0.000001
 const BOLT_SCENE_DIR := "res://scenes/battle/vfx/bolts/"
 const TRAIL_SCENE: PackedScene = preload("res://scenes/battle/vfx/trail/krintrail.tscn")
-# krinBoltMake removes a missed bolt once its x is more than 500 px either side
-# of the origin of BATTLESCREEN, the clip it flies in
-# (frame_42/DoAction_4.as:201). On the battlefield the bolt flies over, that
-# origin is battle_screen_x.
-const MISS_RANGE := 500.0
 # Safety net for the miss fly-past below. A move whose caster and target
 # share an x coordinate would give the bolt a zero x-step, so its x would
 # never change and the off-screen test could never become true - the
@@ -68,7 +72,7 @@ var trail_color: Color = Color.WHITE
 # frees the bolt the instant it reaches the target (matching source: the
 # bolt is destroyed the same tick its impact clip appears). A miss keeps
 # the bolt (and its growing trail) moving past the target until it is
-# MISS_RANGE from BATTLESCREEN's origin. reached_target fires at the same
+# _miss_range from BATTLESCREEN's origin. reached_target fires at the same
 # coordinate-cross tick either way, so the audio and the floatie land where
 # they do on a hit, and flight_ended fires when the bolt is gone.
 var did_hit: bool = true
@@ -170,7 +174,7 @@ func _process(delta: float) -> void:
 		# a long miss happens while the bolt is still flying - so this has
 		# to check the node is still there before touching it.
 		if is_instance_valid(_trail_root) and _trail_root.visible:
-			_trail_growth += 0.083 * _step.length() * _speed_const
+			_trail_growth += _trail_growth_share * _step.length() * _speed_const
 			_trail_sprite.scale = Vector2(_trail_base_scale.x * _trail_growth, _trail_base_scale.y)
 		_speed_const *= float(_krin["krinBoltIncrease"])
 		if not _reached and (_target_x - position.x) * _checker <= 0.0:
@@ -179,7 +183,7 @@ func _process(delta: float) -> void:
 			if did_hit:
 				_end_flight()
 				return
-		if _reached and (absf(position.x - battle_screen_x) > MISS_RANGE or _ticks >= MAX_FLIGHT_TICKS):
+		if _reached and (absf(position.x - battle_screen_x) > _miss_range or _ticks >= MAX_FLIGHT_TICKS):
 			_end_flight()
 			return
 	queue_redraw()
