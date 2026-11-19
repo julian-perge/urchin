@@ -564,16 +564,16 @@ func test_an_orbs_disc_takes_the_moves_element_colour():
 # at depths 113 to 127, above the icons at depths 1 to 99, so the ring is the
 # orb's last child, over the icon, the cover and the count.
 func test_an_idle_orb_draws_its_up_ring_and_a_hovered_orb_its_over_ring():
-	_open()
-	await wait_process_frames(1)
+	var viewport: SubViewport = _menu_in_own_viewport()
+	_open_and_settle()
 	var orb: Button = _menu.orbs[0]
 	assert_eq(orb.get_child(orb.get_child_count() - 1), _ring(0), "the ring draws over everything else on the orb")
 	_assert_ring(0, "up")
-	orb.notification(Control.NOTIFICATION_MOUSE_ENTER)
+	_move_mouse(viewport, _orb_centre(0), 0)
 	await wait_process_frames(1)
 	_assert_ring(0, "over")
 	_assert_ring(1, "up")
-	orb.notification(Control.NOTIFICATION_MOUSE_EXIT)
+	_move_mouse(viewport, FAR, 0)
 	await wait_process_frames(1)
 	_assert_ring(0, "up")
 
@@ -610,8 +610,25 @@ func test_every_orbs_icon_sits_where_the_clip_places_its_thing():
 # the release (Ruffle's DragOut arm in avm1_button.rs). A Godot Button draws in
 # DRAW_NORMAL then, and only is_pressed() still says the press is held.
 func test_an_orb_pressed_and_dragged_off_shows_its_over_ring():
-	# GUT's window sits above everything in the root viewport and would take
-	# the mouse, so this menu gets a viewport of its own.
+	var viewport: SubViewport = _menu_in_own_viewport()
+	_open_and_settle()
+	var orb: Button = _menu.orbs[0]
+	_press(viewport, _orb_centre(0))
+	await wait_process_frames(1)
+	_assert_ring(0, "down")
+	_drag_to(viewport, FAR)
+	await wait_process_frames(1)
+	assert_true(orb.is_pressed(), "sanity: the press is still held")
+	_assert_ring(0, "over")
+	_release(viewport, FAR)
+	await wait_process_frames(1)
+	_assert_ring(0, "up")
+
+
+# GUT's window sits above everything in the root viewport and would take the
+# mouse, so a test that moves the mouse puts a new menu in a viewport of its own
+# and returns that viewport.
+func _menu_in_own_viewport() -> SubViewport:
 	var viewport := SubViewport.new()
 	viewport.size = Vector2i(800, 575)
 	add_child_autofree(viewport)
@@ -620,32 +637,36 @@ func test_an_orb_pressed_and_dragged_off_shows_its_over_ring():
 	_menu.set_process(false)
 	_menu.setup(_units, _moves, {})
 	_menu.decision_open = true
-	_open_and_settle()
-	var orb: Button = _menu.orbs[0]
-	_send_mouse(viewport, _orb_centre(0), true, true)
-	await wait_process_frames(1)
-	_assert_ring(0, "down")
-	_send_mouse(viewport, FAR, false, true)
-	await wait_process_frames(1)
-	assert_true(orb.is_pressed(), "sanity: the press is still held")
-	_assert_ring(0, "over")
-	_send_mouse(viewport, FAR, true, false)
-	await wait_process_frames(1)
-	_assert_ring(0, "up")
+	return viewport
 
 
-# Sends a mouse motion to point, then a left button press or release there when
-# button is true.
-func _send_mouse(viewport: Viewport, point: Vector2, button: bool, pressed: bool) -> void:
+# Moves the mouse to point with no button held, then presses the left button.
+func _press(viewport: Viewport, point: Vector2) -> void:
+	_move_mouse(viewport, point, 0)
+	_left_button(viewport, point, true)
+
+
+# Moves the mouse to point with the left button held.
+func _drag_to(viewport: Viewport, point: Vector2) -> void:
+	_move_mouse(viewport, point, MOUSE_BUTTON_MASK_LEFT)
+
+
+func _release(viewport: Viewport, point: Vector2) -> void:
+	_left_button(viewport, point, false)
+
+
+func _move_mouse(viewport: Viewport, point: Vector2, button_mask: int) -> void:
 	var motion := InputEventMouseMotion.new()
 	motion.position = point
 	motion.global_position = point
-	motion.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed and not button else 0
+	motion.button_mask = button_mask
 	viewport.push_input(motion)
-	if button:
-		var click := InputEventMouseButton.new()
-		click.position = point
-		click.global_position = point
-		click.button_index = MOUSE_BUTTON_LEFT
-		click.pressed = pressed
-		viewport.push_input(click)
+
+
+func _left_button(viewport: Viewport, point: Vector2, pressed: bool) -> void:
+	var click := InputEventMouseButton.new()
+	click.position = point
+	click.global_position = point
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = pressed
+	viewport.push_input(click)

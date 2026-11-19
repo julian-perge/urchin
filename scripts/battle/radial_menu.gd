@@ -42,16 +42,6 @@ const COVER_PATH: String = "res://assets/ui/abilities/cooldown_cover.png"
 # each state and where that art sits in the Radial menu clip. The buttons draw
 # the same two rings as the pass button, so they share its PNGs.
 const RING_LAYOUT_PATH: String = "res://assets/ui/battle/pass_button.json"
-# The thingo button state whose art the orb shows for each draw mode of its
-# Button. _show_ring() handles the one case this misses: a press dragged off
-# the orb.
-const RING_STATES: Dictionary = {
-	BaseButton.DRAW_NORMAL: "up",
-	BaseButton.DRAW_DISABLED: "up",
-	BaseButton.DRAW_HOVER: "over",
-	BaseButton.DRAW_PRESSED: "down",
-	BaseButton.DRAW_HOVER_PRESSED: "down",
-}
 # The ring's enterFrame sets the disc's _alpha to 75 while the ring fades in and
 # to 85 once it has (frame_217/PlaceObject3_3382_500 enterFrame, lines 16 and
 # 42). Flash stores 85 as 217/256 (FlashAlpha).
@@ -106,7 +96,8 @@ func _ready() -> void:
 		orb.add_child(_make_count(layout["count"], icon_centre))
 		orb.add_child(_make_ring(orb_layout["states"], Vector2(rect["x"], rect["y"]), ring_scale))
 		_clear_orb_styles(orb)
-		orb.draw.connect(_show_ring.bind(orb))
+		for change in [orb.mouse_entered, orb.mouse_exited, orb.button_down, orb.button_up]:
+			change.connect(_show_ring.bind(orb), CONNECT_DEFERRED)
 		orb.pressed.connect(_on_orb_pressed.bind(bar_index))
 		orb.mouse_entered.connect(_on_orb_entered.bind(bar_index))
 		orb.mouse_exited.connect(_on_orb_exited)
@@ -179,14 +170,16 @@ func _clear_orb_styles(orb: Button) -> void:
 		orb.add_theme_stylebox_override(state, StyleBoxEmpty.new())
 
 
-# The Button redraws whenever its draw mode changes, so each redraw shows the
-# art of the state the Button is in. A Flash button that is pressed and then
+# Shows the art of the thingo button state that the orb is in. It runs deferred
+# after each mouse or press change, because Control emits mouse_entered before
+# the Button marks itself hovered. A Flash button that is pressed and then
 # dragged off shows its over art until the release, as Ruffle's DragOut arm in
-# avm1_button.rs does. A Godot Button draws in DRAW_NORMAL then, and only
-# is_pressed() says the press is still held.
+# avm1_button.rs does, so a held press off the orb is "over".
 func _show_ring(orb: Button) -> void:
-	var state: String = RING_STATES[orb.get_draw_mode()]
-	if orb.get_draw_mode() == BaseButton.DRAW_NORMAL and orb.is_pressed():
+	var state: String = "up"
+	if orb.is_pressed():
+		state = "down" if orb.is_hovered() else "over"
+	elif orb.is_hovered():
 		state = "over"
 	_set_ring_state(orb.get_node("Ring") as TextureRect, state)
 
