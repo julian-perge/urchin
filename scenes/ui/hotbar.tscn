@@ -526,3 +526,4 @@ horizontal_alignment = 2
 [connection signal="pressed" from="AchievementsSlot/AchievementsButton" to="." method="_on_menu_button_pressed" binds=["achievements_window"]]
 [connection signal="pressed" from="SaveSlot/SaveButton" to="." method="_on_save_pressed"]
 [connection signal="pressed" from="QuitSlot/QuitButton" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="RespecSlot/RespecButton" to="." method="_on_respec_pressed"]

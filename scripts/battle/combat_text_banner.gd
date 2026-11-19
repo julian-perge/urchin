@@ -2,7 +2,8 @@
 # The Combat text banner, the original's KrinCombatText (DefineSprite 2852): a
 # line of text over a pink band near the top of the Battle screen. It tells the
 # player the Refusal of a pick they cannot make, or why their own move failed as
-# it dispatched. extract_combat_text writes where the banner sits, where its band
+# it dispatched. The Hub shows the same clip higher up, for the hotbar's Respec
+# button. extract_combat_text writes where the banner sits, where its band
 # and text go and how it slides and fades into combat_text.json, and this plays
 # it from there.
 #
@@ -25,6 +26,9 @@ const LAYOUT_PATH: String = "res://assets/ui/battle/combat_text.json"
 # The frame that runs stop() and shows nothing, which the clip loops back to.
 const IDLE_FRAME: int = 1
 
+# The root frame whose place for the clip this banner takes: "battle" or "hub".
+@export_enum("battle", "hub") var placement: String = "battle"
+
 var _origin: Vector2 = Vector2.ZERO
 var _go_frame: int = 0
 var _clear_frame: int = 0
@@ -43,7 +47,8 @@ var _frames_due: float = 0.0
 
 func _ready() -> void:
 	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(LAYOUT_PATH))
-	_origin = Vector2(layout["position"]["x"], layout["position"]["y"])
+	var place: Dictionary = layout["positions"][placement]
+	_origin = Vector2(place["x"], place["y"])
 	_go_frame = int(layout["go_frame"])
 	_clear_frame = int(layout["clear_frame"])
 	_fps = float(layout["fps"])

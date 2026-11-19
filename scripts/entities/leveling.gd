@@ -151,8 +151,9 @@ static func grant_experience(save: PlayerSave, xp_amount: float) -> Dictionary:
 # and refuses only when euro is short of that, never for a daily count
 # (see the header). Resets talents/action bar/allocation; skill points
 # back to level - 1 + the 5 starting points; stat points to the full grant.
-# equipment_stat_bonuses = the summed statUpdater values of equipped items
-# (StatSets0 re-seed) - pass zeros until the equip system exists. `today`
+# equipment_stat_bonuses is the sum of the equipped items' statUpdater values,
+# which the original puts back in StatSets0. The hotbar's Respec button passes
+# Equipment.total_stat_bonuses of the equipped gear. `today`
 # is injectable for tests; defaults to the system date.
 static func respec(save: PlayerSave, equipment_stat_bonuses: Array = [0, 0, 0, 0, 0], today: String = "") -> bool:
 	if today == "":
