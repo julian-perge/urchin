@@ -108,10 +108,8 @@
     "hide_names": [
      "TopStatusBar",
      "StanceHost",
-     "PassRing",
      "LogToggleButton",
-     "CountdownRing",
-     "CountdownLabel",
+     "Clock",
      "RetreatButton"
     ]
    }

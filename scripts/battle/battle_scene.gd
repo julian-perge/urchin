@@ -93,9 +93,19 @@ var _decision_timer: float = 0.0
 # Mirrors the original's turnBasedKrin, which is true on Easy and Normal
 # (frame_201/DoAction.as:65-79) and becomes true for the rest of the battle once
 # a half-turn ends with the player's unit dead (conductor lines 200-202). While
-# it is true the decision waits for the player and the countdown label is
-# hidden, because the original's clock does not move then.
+# it is true the decision waits for the player and the clock does not move.
 var _turn_based: bool = true
+# The original's BattleTimeNow, in SWF frames, which the clock shows. The
+# conductor sets it to 0 when a half-turn ends and to BattleTimeLimit while the
+# other side decides or a half-turn plays (frame_217/PlaceObject2_3389_480
+# enterFrame, lines 143, 597-600 and 666-671). _process sets it while the
+# player decides.
+var _battle_time_now: float = 0.0
+# Which frame of thingerClock the clock is on: blue for the player's side and
+# orange for the other side.
+# The conductor sets it when the battle loads and when the other side's turn
+# starts (onClipEvent(load), lines 9-16, and enterFrame, lines 297-310).
+var _clock_side: int = BattleClock.Side.FRIEND
 var _finished: bool = false
 # True while the Cutscene a pick names plays. The original's click and Space
 # listeners come with the battle frame (frame_217/DoAction.as:18-27 and
@@ -146,9 +156,8 @@ var _buff_tick_due: bool = false
 # So battle_scene.tscn puts this node in BattleScreenClip right after
 # Battlefield, which holds all of those.
 @onready var floating_numbers: FloatingNumberLayer = $HallWindow/HallSpace/BattleScreenClip/FloatingNumbers
-@onready var turn_label: Label = $UI/TurnLabel
 @onready var speech_box: SpeechBox = $UI/SpeechBox
-@onready var _pass_ring: Control = $BottomBar/PassRing
+@onready var clock: BattleClock = $BottomBar/Clock
 @onready var top_status_bar: TopStatusBar = $TopStatusBar
 @onready var radial_menu: RadialMenu = $RadialMenu
 # The battle frame places KrinCombatText at depth 630, above the orb ring at 500
@@ -157,7 +166,6 @@ var _buff_tick_due: bool = false
 # UI layer, which draws over both.
 @onready var combat_text_banner: CombatTextBanner = $CombatTextBanner
 @onready var stance_host: Control = $BottomBar/StanceHost
-@onready var _countdown_label: Label = $BottomBar/CountdownLabel
 @onready var _combat_log: CombatLogPanel = $BottomBar/RightPanel/CombatLogPanel
 @onready var _fade_black: ColorRect = $Fade/Black
 
@@ -211,8 +219,9 @@ func _process(delta: float) -> void:
 		_decision_timer = maxf(_decision_timer - delta, 0.0)
 		if _decision_timer == 0.0:
 			_on_pass_pressed()
-	_countdown_label.visible = not _turn_based
-	_countdown_label.text = str(int(ceil(_decision_timer)))
+	if decision_open:
+		_battle_time_now = _decision_time_now()
+	clock.show_time(_clock_side, _battle_time_now)
 	if animation_speed > 0.0:
 		var frames: float = delta * BattleScreenClip.fps() * animation_speed
 		speech_box.advance(frames)
@@ -228,6 +237,19 @@ func _exit_tree() -> void:
 
 func _reset_decision_timer() -> void:
 	_decision_timer = BattleRunner.BATTLE_TIME_LIMIT / BattleScreenClip.fps()
+
+
+# -> BattleTimeNow while the player decides. On Heroic it is the frames the
+# window has run. On Easy and Normal the conductor holds it just under
+# BattleTimeLimit until the player picks (enterFrame, lines 639-642).
+func _decision_time_now() -> float:
+	if _turn_based:
+		return BattleRunner.BATTLE_TIME_LIMIT - 0.000001
+	return BattleRunner.BATTLE_TIME_LIMIT - _decision_timer * BattleScreenClip.fps()
+
+
+func _set_clock_side() -> void:
+	_clock_side = BattleClock.Side.FRIEND if runner.is_player_turn() else BattleClock.Side.ENEMY
 
 
 # Combat debug log -> user://logs/battle.log (see LogManagerAuto).
@@ -264,6 +286,8 @@ func start_battle(info: Dictionary) -> void:
 		BuffManagerAuto.buffs_by_internal_name, TalentTree.get_passive_buff_names(save)
 	)
 	radial_menu.setup(units, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id)
+	_battle_time_now = 0.0
+	_set_clock_side()
 	_load_background()
 	_spawn_visuals()
 	_populate_stance_rows()
@@ -402,14 +426,7 @@ func _on_radial_move_picked(bar_index: int, move_id: int, target_slot: int) -> v
 	decision_open = false
 
 
-# --- bottom bar: stances + pass ring + retreat -----------------------------
-
-func _draw_pass_ring() -> void:
-	var active: bool = decision_open
-	var color: Color = Color(0.4, 0.75, 1.0, 0.95) if active else Color(0.35, 0.35, 0.38, 0.7)
-	_pass_ring.draw_arc(Vector2.ZERO, 36.0, 0.0, TAU, 64, color, 5.0, true)
-	if active:
-		_pass_ring.draw_arc(Vector2.ZERO, 41.0, 0.0, TAU, 64, Color(0.4, 0.75, 1.0, 0.35), 7.0, true)
+# --- bottom bar: stances + clock + retreat ---------------------------------
 
 
 # The slots whose member rows the bottom bar shows, upper row first. The original's
@@ -509,23 +526,21 @@ func _battle_loop() -> void:
 		_pending_setup_events = []
 	while not runner.is_over():
 		_show_member_rows_for(runner.team_move_now)
+		_set_clock_side()
 		if runner.is_player_turn():
 			_refresh_member_rows()
 			decision_open = true
 			_reset_decision_timer()
-			turn_label.text = "Your move"
 			_log("half-turn %d: waiting for player" % runner.turn_count)
-			_pass_ring.queue_redraw()
 			while decision_open:
 				if not is_inside_tree():
 					return  # retreat freed the scene mid-wait
 				await get_tree().process_frame
 		else:
-			turn_label.text = "Enemy turn" if runner.team_move_now == 2 else "Ally turn"
 			_log("half-turn %d: AI side %d acts" % [runner.turn_count, runner.team_move_now])
 		if not is_inside_tree() or _finished:
 			return
-		_pass_ring.queue_redraw()
+		_battle_time_now = BattleRunner.BATTLE_TIME_LIMIT
 		var action: Dictionary = _selected_move.duplicate()
 		_selected_move = {}
 		if not action.is_empty():
@@ -537,6 +552,7 @@ func _battle_loop() -> void:
 		await _play_events(events)
 		if not is_inside_tree() or _finished:
 			return
+		_battle_time_now = 0.0
 		_refresh_bars()
 		var player: CombatUnit = units.get(BattleRunner.PLAYER_SLOT)
 		if player == null or not player.active:
@@ -983,21 +999,13 @@ func _finish_battle() -> void:
 		add_child(victory)
 		victory.setup(save, settlement)
 		victory.proceed_pressed.connect(_on_victory_proceed)
-		# The original never had a turn label, and it draws its victory screen on
-		# Navigation, the hub's frame, once a win has left the battle's frame
-		# (frame_219/DoAction.as:78-81, frame_181/PlaceObject3_3142_175
-		# onClipEvent(load), lines 3-7). The turn label sits on the UI layer above
-		# this screen, so it is hidden here instead of still showing whose turn it
-		# was across the top of the screen.
-		turn_label.hide()
 	elif settlement.outcome == BattleRunner.Outcome.WIN:
 		# A win that goes straight on opens no victory screen and so has no Proceed,
 		# which is where the autosave is. It requests the next fight, as the
 		# original's Tutorial win jumps to CS_INTRO2 (frame_219/DoAction.as:73-77).
 		ZoneManager.request_fight(settlement.next_fight)
 	elif settlement.game_over:
-		# The screen goes on the UI layer so the turn label there can't draw over
-		# it.
+		# The screen goes on the UI layer, so it draws over the whole battle screen.
 		var game_over: GameOverScreen = preload("res://scenes/battle/game_over_screen.tscn").instantiate()
 		game_over.name = "GameOverScreen"
 		$UI.add_child(game_over)

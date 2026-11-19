@@ -136,7 +136,6 @@ Scoped-out edges from the playtest-feedback batch:
 
 What the original does and the port does not yet, found while building the top status bar:
 
-- **The clock ring is not built**: the original shows a ring around the pass button that turns blue during the player's half-turn and orange during the other side's (`thingerClock`, frames `friend` and `enemy`, each with two Glow filters). It is also the turn timer: two hands that script rotates through two mask rects. ffdec cannot render it, because it draws almost nothing at the clip's start state. The port keeps the `TurnLabel` text and the old countdown art until julian-perge/urchin#339 lands.
 - **The pass button does not show the chosen ability**: the original swaps the alert icon for the ability's icon (`krinToMove`, sprite 2427), and gives the button separate over and down art (shape 2435). The port always shows the alert icon.
 - **A Guest in slot 3 or 5 has no member row**: what the original shows for it is not known. Only battle 508 has such a Guest. The port hides its row.
 - **The bars have no DropShadow**: the original's sprite 3414 has a DropShadow (blur 5, distance 3). The port gives the bar's text its shadow and draws no shadow under the art.

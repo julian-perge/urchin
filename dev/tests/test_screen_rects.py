@@ -956,6 +956,19 @@ def test_an_art_piece_needs_the_name_of_its_art():
         screen_rects.Piece("art", 7)
 
 
+def test_an_art_set_piece_needs_the_name_of_its_set():
+    with pytest.raises(ValueError, match="needs the name of its art"):
+        screen_rects.Piece("art_set", 7)
+
+
+def test_the_clock_ring_set_lists_every_render_of_both_frames():
+    crop, textures = screen_rects.art_set_sources()["clock_ring"]
+    assert crop["relative_to"] == "stage"
+    assert len(textures) == 2 * 121
+    assert textures[0] == "res://assets/ui/battle/clock/enemy_000.png"
+    assert textures[-1] == "res://assets/ui/battle/clock/friend_120.png"
+
+
 # A Panel's shape is one solid fill and one stroked line in one style set. 2989
 # is the victory frame's left Panel: a 20 twip black line round a #373737 fill.
 PANEL_FILL = (55, 55, 55, 255)

@@ -1,7 +1,8 @@
 // Renders SWF frames through ffdec's own Java library, with what the ffdec CLI
 // cannot do in one run: delete characters in memory instead of writing a
-// stripped copy, hide layers the game hides from ActionScript, and move a
-// nested sprite to the frame a gotoAndStop would select.
+// stripped copy, hide layers the game hides from ActionScript, move a nested
+// sprite to the frame a gotoAndStop would select, and turn a layer the way a
+// script's _rotation does.
 //
 // Run with no build step, as Java's single-file source launcher:
 //   java -cp "<jpexs>/dist/lib/*" Render.java job.json
@@ -22,6 +23,8 @@
 //                                          depth of the rendered frame to the
 //                                          label, or with "frame": 12 in place
 //                                          of the label, to that 1-based frame
+//       "rotate_depths": [{"owner": id, "depth": d, "degrees": 90.0}]  set the
+//                                          _rotation of a depth on every frame
 //     }]
 //   }]}
 //
@@ -36,6 +39,12 @@
 // case-insensitively, as AVM1 matches them, and the first frame carrying the
 // label wins. A missing label or a frame past the sprite's last fails the job
 // instead of rendering another frame.
+//
+// A rotation keeps the layer's scale and skew and replaces its rotation, as
+// Ruffle's DisplayObject::set_rotation does: the scales are the lengths of the
+// two axis vectors, the rotation is the x axis's angle and the skew is the y
+// axis's angle less the x axis's angle. So a layer placed turned 180 degrees
+// ends at the given angle, not 180 degrees past it.
 //
 // Every override and every delete refuses a layer with clipDepth > -1.
 // Timeline.toImage skips an invisible layer before it builds that layer's
@@ -71,6 +80,7 @@ import com.jpexs.decompiler.flash.timeline.DepthState;
 import com.jpexs.decompiler.flash.timeline.Frame;
 import com.jpexs.decompiler.flash.timeline.Timeline;
 import com.jpexs.decompiler.flash.types.ColorTransform;
+import com.jpexs.decompiler.flash.types.MATRIX;
 import com.jpexs.decompiler.flash.types.RECT;
 import com.jpexs.helpers.SerializableImage;
 import java.awt.Color;
@@ -93,6 +103,7 @@ public class Render {
     private final SWF swf;
     private final Map<DepthState, boolean[]> savedVisible = new IdentityHashMap<>();
     private final Map<DepthState, int[]> savedTime = new IdentityHashMap<>();
+    private final Map<DepthState, MATRIX[]> savedMatrix = new IdentityHashMap<>();
 
     Render(SWF swf) {
         this.swf = swf;
@@ -212,6 +223,31 @@ public class Render {
         layer.isVisible = false;
     }
 
+    void rotate(DepthState layer, double degrees, String where) {
+        if (layer.clipDepth > -1) {
+            throw new IllegalArgumentException("refusing to rotate clip mask " + where
+                    + " (character " + layer.characterId + ", clipDepth " + layer.clipDepth + ")");
+        }
+        MATRIX placed = layer.matrix == null ? new MATRIX() : layer.matrix;
+        double a = placed.getScaleXFloat();
+        double b = placed.getRotateSkew0Float();
+        double c = placed.getRotateSkew1Float();
+        double d = placed.getScaleYFloat();
+        double skew = Math.atan2(-c, d) - Math.atan2(b, a);
+        double scaleX = Math.hypot(a, b);
+        double scaleY = Math.hypot(c, d);
+        double radians = Math.toRadians(degrees);
+        MATRIX turned = new MATRIX(placed);
+        turned.hasScale = true;
+        turned.hasRotate = true;
+        turned.scaleX = (float) (scaleX * Math.cos(radians));
+        turned.rotateSkew0 = (float) (scaleX * Math.sin(radians));
+        turned.rotateSkew1 = (float) (scaleY * -Math.sin(radians + skew));
+        turned.scaleY = (float) (scaleY * Math.cos(radians + skew));
+        savedMatrix.putIfAbsent(layer, new MATRIX[] {layer.matrix});
+        layer.matrix = turned;
+    }
+
     static int labelFrame(Timeline child, String label) {
         List<Frame> frames = child.getFrames();
         for (int i = 0; i < frames.size(); i++) {
@@ -288,6 +324,24 @@ public class Render {
                 savedTime.putIfAbsent(layer, new int[] {layer.time});
                 layer.time = time;
             }
+            for (JsonValue value : array(job, "rotate_depths")) {
+                JsonObject target = value.asObject();
+                int owner = target.getInt("owner", 0);
+                int depth = target.get("depth").asInt();
+                double degrees = target.get("degrees").asDouble();
+                int found = 0;
+                List<Frame> frames = timeline(owner).getFrames();
+                for (int i = 0; i < frames.size(); i++) {
+                    DepthState layer = frames.get(i).layers.get(depth);
+                    if (layer != null) {
+                        rotate(layer, degrees, "timeline " + owner + " frame " + (i + 1) + " depth " + depth);
+                        found++;
+                    }
+                }
+                if (found == 0) {
+                    throw new IllegalArgumentException("timeline " + owner + " has nothing at depth " + depth);
+                }
+            }
 
             Color background = null;
             SetBackgroundColorTag tag = swf.getBackgroundColor();
@@ -319,8 +373,12 @@ public class Render {
             for (var entry : savedTime.entrySet()) {
                 entry.getKey().time = entry.getValue()[0];
             }
+            for (var entry : savedMatrix.entrySet()) {
+                entry.getKey().matrix = entry.getValue()[0];
+            }
             savedVisible.clear();
             savedTime.clear();
+            savedMatrix.clear();
         }
     }
 
