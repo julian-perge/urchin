@@ -61,7 +61,7 @@ func test_the_clip_margins_reach_as_far_as_the_shadow_at_the_windows_scale() -> 
 	var bar: StatusBar = _bar(1)
 	var shadow: Dictionary = StatusBar.record()["shadow"]
 	var stage_scale: float = bar.get_viewport().get_final_transform().get_scale().x
-	var reach: float = (float(shadow["distance"]) + float(shadow["blur_x"]) / 2.0) * stage_scale
+	var reach: float = (float(shadow["distance"]) + maxf(float(shadow["blur_x"]), float(shadow["blur_y"])) / 2.0) * stage_scale
 	assert_gte(bar.clip.fit_margin, reach)
 	assert_gte(bar.clip.clear_margin, reach)
 	assert_almost_eq(float((bar.clip.material as ShaderMaterial).get_shader_parameter("stage_scale")), stage_scale, 0.0001)
