@@ -852,7 +852,20 @@
      "texture": "res://assets/ui/battle/top_panel.png",
      "zoom": 4.0
     },
-    "TopStatusBar/Bar1/Inner/Backing": {
+    "TopStatusBar/Bar1/Clip": {
+     "kind": "drop_shadow",
+     "shadow": {
+      "angle": 45.0,
+      "blur": [
+       5.0,
+       5.0
+      ],
+      "distance": 3.0,
+      "shadow_color": "000000ff",
+      "strength": 0.71875
+     }
+    },
+    "TopStatusBar/Bar1/Clip/Inner/Backing": {
      "kind": "art",
      "rect": [
       197.906,
@@ -870,7 +883,7 @@
       3.4466329437286487
      ]
     },
-    "TopStatusBar/Bar1/Inner/FocusMax": {
+    "TopStatusBar/Bar1/Clip/Inner/FocusMax": {
      "align": "left",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -880,17 +893,9 @@
       64.5284,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar1/Inner/FocusNow": {
+    "TopStatusBar/Bar1/Clip/Inner/FocusNow": {
      "align": "right",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -900,17 +905,9 @@
       64.5284,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar1/Inner/LifeMax": {
+    "TopStatusBar/Bar1/Clip/Inner/LifeMax": {
      "align": "left",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -920,17 +917,9 @@
       50.6018,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar1/Inner/LifeNow": {
+    "TopStatusBar/Bar1/Clip/Inner/LifeNow": {
      "align": "right",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -940,17 +929,9 @@
       50.6018,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar1/Inner/PlayerName": {
+    "TopStatusBar/Bar1/Clip/Inner/PlayerName": {
      "align": "left",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -960,17 +941,9 @@
       49.7314,
       104.4099,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar1/Inner2/Black": {
+    "TopStatusBar/Bar1/Clip/Inner2/Black": {
      "kind": "art",
      "rect": [
       198.5572,
@@ -988,7 +961,7 @@
       3.4466386480735753
      ]
     },
-    "TopStatusBar/Bar1/Inner2/FocusBack": {
+    "TopStatusBar/Bar1/Clip/Inner2/FocusBack": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -1006,7 +979,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar1/Inner2/FocusFill": {
+    "TopStatusBar/Bar1/Clip/Inner2/FocusFill": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -1024,7 +997,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar1/Inner2/Frame": {
+    "TopStatusBar/Bar1/Clip/Inner2/Frame": {
      "kind": "art",
      "rect": [
       27.0731,
@@ -1042,7 +1015,7 @@
       3.4466302561111406
      ]
     },
-    "TopStatusBar/Bar1/Inner2/LifeBack": {
+    "TopStatusBar/Bar1/Clip/Inner2/LifeBack": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -1060,7 +1033,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar1/Inner2/LifeFill": {
+    "TopStatusBar/Bar1/Clip/Inner2/LifeFill": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -1078,7 +1051,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar1/Inner2/Shade": {
+    "TopStatusBar/Bar1/Clip/Inner2/Shade": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -1096,7 +1069,20 @@
       3.4466340243183127
      ]
     },
-    "TopStatusBar/Bar2/Inner/Backing": {
+    "TopStatusBar/Bar2/Clip": {
+     "kind": "drop_shadow",
+     "shadow": {
+      "angle": 45.0,
+      "blur": [
+       5.0,
+       5.0
+      ],
+      "distance": 3.0,
+      "shadow_color": "000000ff",
+      "strength": 0.71875
+     }
+    },
+    "TopStatusBar/Bar2/Clip/Inner/Backing": {
      "kind": "art",
      "rect": [
       602.1129,
@@ -1114,7 +1100,7 @@
       3.4466329437286487
      ]
     },
-    "TopStatusBar/Bar2/Inner/FocusMax": {
+    "TopStatusBar/Bar2/Clip/Inner/FocusMax": {
      "align": "right",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -1124,17 +1110,9 @@
       64.5284,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar2/Inner/FocusNow": {
+    "TopStatusBar/Bar2/Clip/Inner/FocusNow": {
      "align": "left",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1144,17 +1122,9 @@
       64.5284,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar2/Inner/LifeMax": {
+    "TopStatusBar/Bar2/Clip/Inner/LifeMax": {
      "align": "right",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -1164,17 +1134,9 @@
       50.6018,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar2/Inner/LifeNow": {
+    "TopStatusBar/Bar2/Clip/Inner/LifeNow": {
      "align": "left",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1184,17 +1146,9 @@
       50.6018,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar2/Inner/PlayerName": {
+    "TopStatusBar/Bar2/Clip/Inner/PlayerName": {
      "align": "right",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1204,17 +1158,9 @@
       49.7314,
       104.4099,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar2/Inner2/Black": {
+    "TopStatusBar/Bar2/Clip/Inner2/Black": {
      "kind": "art",
      "rect": [
       556.3658,
@@ -1232,7 +1178,7 @@
       3.4466386480735753
      ]
     },
-    "TopStatusBar/Bar2/Inner2/FocusBack": {
+    "TopStatusBar/Bar2/Clip/Inner2/FocusBack": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -1250,7 +1196,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar2/Inner2/FocusFill": {
+    "TopStatusBar/Bar2/Clip/Inner2/FocusFill": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -1268,7 +1214,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar2/Inner2/Frame": {
+    "TopStatusBar/Bar2/Clip/Inner2/Frame": {
      "kind": "art",
      "rect": [
       555.8231,
@@ -1286,7 +1232,7 @@
       3.4466302561111406
      ]
     },
-    "TopStatusBar/Bar2/Inner2/LifeBack": {
+    "TopStatusBar/Bar2/Clip/Inner2/LifeBack": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -1304,7 +1250,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar2/Inner2/LifeFill": {
+    "TopStatusBar/Bar2/Clip/Inner2/LifeFill": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -1322,7 +1268,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar2/Inner2/Shade": {
+    "TopStatusBar/Bar2/Clip/Inner2/Shade": {
      "kind": "art",
      "rect": [
       602.4928,
@@ -1340,7 +1286,20 @@
       3.4466340243183127
      ]
     },
-    "TopStatusBar/Bar3/Inner/Backing": {
+    "TopStatusBar/Bar3/Clip": {
+     "kind": "drop_shadow",
+     "shadow": {
+      "angle": 45.0,
+      "blur": [
+       5.0,
+       5.0
+      ],
+      "distance": 3.0,
+      "shadow_color": "000000ff",
+      "strength": 0.71875
+     }
+    },
+    "TopStatusBar/Bar3/Clip/Inner/Backing": {
      "kind": "art",
      "rect": [
       197.906,
@@ -1358,7 +1317,7 @@
       3.4466329437286487
      ]
     },
-    "TopStatusBar/Bar3/Inner/FocusMax": {
+    "TopStatusBar/Bar3/Clip/Inner/FocusMax": {
      "align": "left",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -1368,17 +1327,9 @@
       99.3284,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar3/Inner/FocusNow": {
+    "TopStatusBar/Bar3/Clip/Inner/FocusNow": {
      "align": "right",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1388,17 +1339,9 @@
       99.3284,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar3/Inner/LifeMax": {
+    "TopStatusBar/Bar3/Clip/Inner/LifeMax": {
      "align": "left",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -1408,17 +1351,9 @@
       85.4018,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar3/Inner/LifeNow": {
+    "TopStatusBar/Bar3/Clip/Inner/LifeNow": {
      "align": "right",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1428,17 +1363,9 @@
       85.4018,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar3/Inner/PlayerName": {
+    "TopStatusBar/Bar3/Clip/Inner/PlayerName": {
      "align": "left",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1448,17 +1375,9 @@
       84.5314,
       104.4099,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar3/Inner2/Black": {
+    "TopStatusBar/Bar3/Clip/Inner2/Black": {
      "kind": "art",
      "rect": [
       198.5572,
@@ -1476,7 +1395,7 @@
       3.4466386480735753
      ]
     },
-    "TopStatusBar/Bar3/Inner2/FocusBack": {
+    "TopStatusBar/Bar3/Clip/Inner2/FocusBack": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -1494,7 +1413,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar3/Inner2/FocusFill": {
+    "TopStatusBar/Bar3/Clip/Inner2/FocusFill": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -1512,7 +1431,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar3/Inner2/Frame": {
+    "TopStatusBar/Bar3/Clip/Inner2/Frame": {
      "kind": "art",
      "rect": [
       27.0731,
@@ -1530,7 +1449,7 @@
       3.4466302561111406
      ]
     },
-    "TopStatusBar/Bar3/Inner2/LifeBack": {
+    "TopStatusBar/Bar3/Clip/Inner2/LifeBack": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -1548,7 +1467,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar3/Inner2/LifeFill": {
+    "TopStatusBar/Bar3/Clip/Inner2/LifeFill": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -1566,7 +1485,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar3/Inner2/Shade": {
+    "TopStatusBar/Bar3/Clip/Inner2/Shade": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -1584,7 +1503,20 @@
       3.4466340243183127
      ]
     },
-    "TopStatusBar/Bar4/Inner/Backing": {
+    "TopStatusBar/Bar4/Clip": {
+     "kind": "drop_shadow",
+     "shadow": {
+      "angle": 45.0,
+      "blur": [
+       5.0,
+       5.0
+      ],
+      "distance": 3.0,
+      "shadow_color": "000000ff",
+      "strength": 0.71875
+     }
+    },
+    "TopStatusBar/Bar4/Clip/Inner/Backing": {
      "kind": "art",
      "rect": [
       602.1129,
@@ -1602,7 +1534,7 @@
       3.4466329437286487
      ]
     },
-    "TopStatusBar/Bar4/Inner/FocusMax": {
+    "TopStatusBar/Bar4/Clip/Inner/FocusMax": {
      "align": "right",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -1612,17 +1544,9 @@
       99.3284,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar4/Inner/FocusNow": {
+    "TopStatusBar/Bar4/Clip/Inner/FocusNow": {
      "align": "left",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1632,17 +1556,9 @@
       99.3284,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar4/Inner/LifeMax": {
+    "TopStatusBar/Bar4/Clip/Inner/LifeMax": {
      "align": "right",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -1652,17 +1568,9 @@
       85.4018,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar4/Inner/LifeNow": {
+    "TopStatusBar/Bar4/Clip/Inner/LifeNow": {
      "align": "left",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1672,17 +1580,9 @@
       85.4018,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar4/Inner/PlayerName": {
+    "TopStatusBar/Bar4/Clip/Inner/PlayerName": {
      "align": "right",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1692,17 +1592,9 @@
       84.5314,
       104.4099,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar4/Inner2/Black": {
+    "TopStatusBar/Bar4/Clip/Inner2/Black": {
      "kind": "art",
      "rect": [
       556.3658,
@@ -1720,7 +1612,7 @@
       3.4466386480735753
      ]
     },
-    "TopStatusBar/Bar4/Inner2/FocusBack": {
+    "TopStatusBar/Bar4/Clip/Inner2/FocusBack": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -1738,7 +1630,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar4/Inner2/FocusFill": {
+    "TopStatusBar/Bar4/Clip/Inner2/FocusFill": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -1756,7 +1648,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar4/Inner2/Frame": {
+    "TopStatusBar/Bar4/Clip/Inner2/Frame": {
      "kind": "art",
      "rect": [
       555.8231,
@@ -1774,7 +1666,7 @@
       3.4466302561111406
      ]
     },
-    "TopStatusBar/Bar4/Inner2/LifeBack": {
+    "TopStatusBar/Bar4/Clip/Inner2/LifeBack": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -1792,7 +1684,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar4/Inner2/LifeFill": {
+    "TopStatusBar/Bar4/Clip/Inner2/LifeFill": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -1810,7 +1702,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar4/Inner2/Shade": {
+    "TopStatusBar/Bar4/Clip/Inner2/Shade": {
      "kind": "art",
      "rect": [
       602.4928,
@@ -1828,7 +1720,20 @@
       3.4466340243183127
      ]
     },
-    "TopStatusBar/Bar5/Inner/Backing": {
+    "TopStatusBar/Bar5/Clip": {
+     "kind": "drop_shadow",
+     "shadow": {
+      "angle": 45.0,
+      "blur": [
+       5.0,
+       5.0
+      ],
+      "distance": 3.0,
+      "shadow_color": "000000ff",
+      "strength": 0.71875
+     }
+    },
+    "TopStatusBar/Bar5/Clip/Inner/Backing": {
      "kind": "art",
      "rect": [
       197.906,
@@ -1846,7 +1751,7 @@
       3.4466329437286487
      ]
     },
-    "TopStatusBar/Bar5/Inner/FocusMax": {
+    "TopStatusBar/Bar5/Clip/Inner/FocusMax": {
      "align": "left",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -1856,17 +1761,9 @@
       29.4784,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar5/Inner/FocusNow": {
+    "TopStatusBar/Bar5/Clip/Inner/FocusNow": {
      "align": "right",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1876,17 +1773,9 @@
       29.4784,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar5/Inner/LifeMax": {
+    "TopStatusBar/Bar5/Clip/Inner/LifeMax": {
      "align": "left",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -1896,17 +1785,9 @@
       15.5518,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar5/Inner/LifeNow": {
+    "TopStatusBar/Bar5/Clip/Inner/LifeNow": {
      "align": "right",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1916,17 +1797,9 @@
       15.5518,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar5/Inner/PlayerName": {
+    "TopStatusBar/Bar5/Clip/Inner/PlayerName": {
      "align": "left",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -1936,17 +1809,9 @@
       14.6814,
       104.4099,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar5/Inner2/Black": {
+    "TopStatusBar/Bar5/Clip/Inner2/Black": {
      "kind": "art",
      "rect": [
       198.5572,
@@ -1964,7 +1829,7 @@
       3.4466386480735753
      ]
     },
-    "TopStatusBar/Bar5/Inner2/FocusBack": {
+    "TopStatusBar/Bar5/Clip/Inner2/FocusBack": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -1982,7 +1847,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar5/Inner2/FocusFill": {
+    "TopStatusBar/Bar5/Clip/Inner2/FocusFill": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -2000,7 +1865,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar5/Inner2/Frame": {
+    "TopStatusBar/Bar5/Clip/Inner2/Frame": {
      "kind": "art",
      "rect": [
       27.0731,
@@ -2018,7 +1883,7 @@
       3.4466302561111406
      ]
     },
-    "TopStatusBar/Bar5/Inner2/LifeBack": {
+    "TopStatusBar/Bar5/Clip/Inner2/LifeBack": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -2036,7 +1901,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar5/Inner2/LifeFill": {
+    "TopStatusBar/Bar5/Clip/Inner2/LifeFill": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -2054,7 +1919,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar5/Inner2/Shade": {
+    "TopStatusBar/Bar5/Clip/Inner2/Shade": {
      "kind": "art",
      "rect": [
       27.6158,
@@ -2072,7 +1937,20 @@
       3.4466340243183127
      ]
     },
-    "TopStatusBar/Bar6/Inner/Backing": {
+    "TopStatusBar/Bar6/Clip": {
+     "kind": "drop_shadow",
+     "shadow": {
+      "angle": 45.0,
+      "blur": [
+       5.0,
+       5.0
+      ],
+      "distance": 3.0,
+      "shadow_color": "000000ff",
+      "strength": 0.71875
+     }
+    },
+    "TopStatusBar/Bar6/Clip/Inner/Backing": {
      "kind": "art",
      "rect": [
       602.1129,
@@ -2090,7 +1968,7 @@
       3.4466329437286487
      ]
     },
-    "TopStatusBar/Bar6/Inner/FocusMax": {
+    "TopStatusBar/Bar6/Clip/Inner/FocusMax": {
      "align": "right",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -2100,17 +1978,9 @@
       29.4784,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar6/Inner/FocusNow": {
+    "TopStatusBar/Bar6/Clip/Inner/FocusNow": {
      "align": "left",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -2120,17 +1990,9 @@
       29.4784,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar6/Inner/LifeMax": {
+    "TopStatusBar/Bar6/Clip/Inner/LifeMax": {
      "align": "right",
      "color": "9d9d9dff",
      "font_size": 9.0,
@@ -2140,17 +2002,9 @@
       15.5518,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar6/Inner/LifeNow": {
+    "TopStatusBar/Bar6/Clip/Inner/LifeNow": {
      "align": "left",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -2160,17 +2014,9 @@
       15.5518,
       42.2198,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar6/Inner/PlayerName": {
+    "TopStatusBar/Bar6/Clip/Inner/PlayerName": {
      "align": "right",
      "color": "ffffffff",
      "font_size": 9.0,
@@ -2180,17 +2026,9 @@
       14.6814,
       104.4099,
       13.9266
-     ],
-     "shadow": {
-      "blur": 5.0,
-      "color": "000000b7",
-      "offset": [
-       2.3024,
-       2.4619
-      ]
-     }
+     ]
     },
-    "TopStatusBar/Bar6/Inner2/Black": {
+    "TopStatusBar/Bar6/Clip/Inner2/Black": {
      "kind": "art",
      "rect": [
       556.3658,
@@ -2208,7 +2046,7 @@
       3.4466386480735753
      ]
     },
-    "TopStatusBar/Bar6/Inner2/FocusBack": {
+    "TopStatusBar/Bar6/Clip/Inner2/FocusBack": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -2226,7 +2064,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar6/Inner2/FocusFill": {
+    "TopStatusBar/Bar6/Clip/Inner2/FocusFill": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -2244,7 +2082,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar6/Inner2/Frame": {
+    "TopStatusBar/Bar6/Clip/Inner2/Frame": {
      "kind": "art",
      "rect": [
       555.8231,
@@ -2262,7 +2100,7 @@
       3.4466302561111406
      ]
     },
-    "TopStatusBar/Bar6/Inner2/LifeBack": {
+    "TopStatusBar/Bar6/Clip/Inner2/LifeBack": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -2280,7 +2118,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar6/Inner2/LifeFill": {
+    "TopStatusBar/Bar6/Clip/Inner2/LifeFill": {
      "kind": "art",
      "rect": [
       602.6007,
@@ -2298,7 +2136,7 @@
       3.446641678514497
      ]
     },
-    "TopStatusBar/Bar6/Inner2/Shade": {
+    "TopStatusBar/Bar6/Clip/Inner2/Shade": {
      "kind": "art",
      "rect": [
       602.4928,
@@ -2320,18 +2158,18 @@
    "port_only": [
     "HallWindow/HallSpace",
     "RadialMenu",
-    "TopStatusBar/Bar1/Inner2/LifeSmoother",
-    "TopStatusBar/Bar1/Inner2/FocusSmoother",
-    "TopStatusBar/Bar2/Inner2/LifeSmoother",
-    "TopStatusBar/Bar2/Inner2/FocusSmoother",
-    "TopStatusBar/Bar3/Inner2/LifeSmoother",
-    "TopStatusBar/Bar3/Inner2/FocusSmoother",
-    "TopStatusBar/Bar4/Inner2/LifeSmoother",
-    "TopStatusBar/Bar4/Inner2/FocusSmoother",
-    "TopStatusBar/Bar5/Inner2/LifeSmoother",
-    "TopStatusBar/Bar5/Inner2/FocusSmoother",
-    "TopStatusBar/Bar6/Inner2/LifeSmoother",
-    "TopStatusBar/Bar6/Inner2/FocusSmoother",
+    "TopStatusBar/Bar1/Clip/Inner2/LifeSmoother",
+    "TopStatusBar/Bar1/Clip/Inner2/FocusSmoother",
+    "TopStatusBar/Bar2/Clip/Inner2/LifeSmoother",
+    "TopStatusBar/Bar2/Clip/Inner2/FocusSmoother",
+    "TopStatusBar/Bar3/Clip/Inner2/LifeSmoother",
+    "TopStatusBar/Bar3/Clip/Inner2/FocusSmoother",
+    "TopStatusBar/Bar4/Clip/Inner2/LifeSmoother",
+    "TopStatusBar/Bar4/Clip/Inner2/FocusSmoother",
+    "TopStatusBar/Bar5/Clip/Inner2/LifeSmoother",
+    "TopStatusBar/Bar5/Clip/Inner2/FocusSmoother",
+    "TopStatusBar/Bar6/Clip/Inner2/LifeSmoother",
+    "TopStatusBar/Bar6/Clip/Inner2/FocusSmoother",
     "BottomBar/StanceHost/Row5/Panel",
     "BottomBar/StanceHost/Row5/InactiveLabel",
     "BottomBar/StanceHost/Row5/Mode0",
@@ -2348,6 +2186,7 @@
     "BottomBar/StanceHost/Row3/Mode4",
     "BottomBar/RightPanel/CombatLogPanel",
     "BottomBar/RightPanel/LogToggleButton",
+    "BottomBar/MoveIcon",
     "CombatTextBanner",
     "UI",
     "Fade"

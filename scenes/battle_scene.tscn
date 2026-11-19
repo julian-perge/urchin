@@ -223,15 +223,18 @@ mouse_filter = 2
 texture = ExtResource("15_clockring")
 expand_mode = 1
 
+[node name="MoveIcon" type="TextureRect" parent="BottomBar"]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+
 [node name="PassButton" type="Button" parent="BottomBar"]
 layout_mode = 0
 offset_left = 384.9888
 offset_top = 492.7388
 offset_right = 415.0113
 offset_bottom = 522.7613
-theme_override_styles/normal = SubResource("StyleBoxEmpty_pass")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_pass")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_pass")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_pass")
 
 [node name="RetreatButton" type="Button" parent="BottomBar"]

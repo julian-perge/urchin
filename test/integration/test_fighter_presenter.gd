@@ -714,7 +714,7 @@ func test_the_buff_icons_name_and_number_clear_on_the_clear_frame_after_a_killin
 
 # Returns the alpha the status bar is drawn at, which is 0 once it is hidden.
 func _overlay_alpha() -> float:
-	return _bar.modulate.a if _bar.is_visible_in_tree() else 0.0
+	return _bar.fade if _bar.is_visible_in_tree() else 0.0
 
 
 # The bar's alpha on each frame of a death in a Traced run of the web build in

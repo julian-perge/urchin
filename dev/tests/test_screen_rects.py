@@ -381,6 +381,7 @@ BAR = {
         "strength": 0.5,
         "color": "000000ff",
         "blur_x": 5.0,
+        "blur_y": 4.0,
     },
 }
 
@@ -407,12 +408,32 @@ def test_a_right_hand_bar_takes_its_second_frame_and_mirrors_inner2():
     assert unmirrored["rect"][0] == pytest.approx(100.0 + 2 * -100.0)
 
 
-def test_a_bar_text_part_is_placed_with_the_shadow_scaled_and_its_strength_in_the_alpha():
+def test_a_bar_text_part_is_placed_with_no_shadow_of_its_own():
     entry = screen_rects.bar_part_record("text:lifeNow", BAR_MATRIX, BAR, "p1BAR")
     assert entry["rect"] == [140.0, 16.0, 60.0, 36.0]
     assert entry["font_size"] == 9.0
-    assert entry["shadow"]["color"] == "00000080"
-    assert entry["shadow"]["offset"] == pytest.approx([0.0, 9.0])
+    assert "shadow" not in entry
+
+
+def test_the_bar_filter_part_is_the_drop_shadow_of_the_placement():
+    entry = screen_rects.bar_part_record("filter", BAR_MATRIX, BAR, "p1BAR")
+    assert entry == {
+        "kind": "drop_shadow",
+        "shadow": {
+            "angle": 90.0,
+            "blur": [5.0, 4.0],
+            "distance": 3.0,
+            "shadow_color": "000000ff",
+            "strength": 0.5,
+        },
+    }
+
+
+def test_a_bar_filter_that_is_inner_or_a_knockout_is_refused():
+    for flag in ("inner", "knockout"):
+        bar = {**BAR, "shadow": {**BAR["shadow"], flag: True}}
+        with pytest.raises(ValueError, match=flag):
+            screen_rects.bar_part_record("filter", BAR_MATRIX, bar, "p1BAR")
 
 
 def test_a_bar_part_that_is_not_one_is_refused():

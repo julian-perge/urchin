@@ -80,6 +80,10 @@
 #             the sprite's clip mask, at the piece's inner_depth, and as the
 #             shadow's blur, distance and angle, which the overlay's shader
 #             takes.
+#   "drop_shadow" - the DropShadow on a status bar's placement, which the port
+#             draws with scenes/drop_shadow.gdshader on the CanvasGroup that
+#             holds the bar's parts. It is recorded as the values of that
+#             shader's uniforms, and it has no rect.
 #   "doll"  - the doll that a frame places as loose part clips, which the port
 #             draws as one CharacterVisual. It is recorded as the position and
 #             scale that put the rig's stand pose where the clips sit, and as
@@ -1190,7 +1194,8 @@ def top_bar_pieces() -> dict[str, Piece]:
     pieces = {}
     for slot in range(1, 7):
         name = f"p{slot}BAR"
-        base = f"TopStatusBar/Bar{slot}"
+        base = f"TopStatusBar/Bar{slot}/Clip"
+        pieces[base] = Piece("bar_part", None, instance=name, art="filter")
         pieces[f"{base}/Inner/Backing"] = Piece(
             "bar_part", None, instance=name, art="backing"
         )
@@ -1257,7 +1262,7 @@ SCENES[BATTLE_SCENE] = Scene(
         "RadialMenu",
         # The smoothers' bands, which the bar shows only while a change plays.
         *(
-            f"TopStatusBar/Bar{slot}/Inner2/{band}"
+            f"TopStatusBar/Bar{slot}/Clip/Inner2/{band}"
             for slot in range(1, 7)
             for band in ("LifeSmoother", "FocusSmoother")
         ),
@@ -1280,6 +1285,10 @@ SCENES[BATTLE_SCENE] = Scene(
         ),
         "BottomBar/RightPanel/CombatLogPanel",
         "BottomBar/RightPanel/LogToggleButton",
+        # krinToMove, the picked ability's icon. battle_scene.gd places it from
+        # pass_button.json, which extract_pass_button measures off the SWF, and
+        # test_battle_scene.gd checks it there.
+        "BottomBar/MoveIcon",
         "CombatTextBanner",
         "UI",
         "Fade",
@@ -1737,13 +1746,35 @@ def path_shape_record(styles: list[StyleSet], path: int, matrix, origin) -> dict
     return shape_record(boxes[path], matrix, origin)
 
 
+def bar_filter_record(shadow: dict) -> dict:
+    """-> the record of the DropShadow on a bar's placement, as `shadow` from
+    top_bar.json holds it, under the names of the uniforms of
+    scenes/drop_shadow.gdshader. That shader draws an outer shadow only, so an
+    inner or knockout shadow is refused."""
+    for flag in ("inner", "knockout"):
+        if shadow.get(flag):
+            raise ValueError(
+                f"the bar's DropShadow is {flag}, which the shader can't draw"
+            )
+    return {
+        "kind": "drop_shadow",
+        "shadow": {
+            "angle": shadow["angle"],
+            "blur": [shadow["blur_x"], shadow["blur_y"]],
+            "distance": shadow["distance"],
+            "shadow_color": shadow["color"],
+            "strength": shadow["strength"],
+        },
+    }
+
+
 def bar_part_record(part: str, matrix, bar: dict, name: str) -> dict:
     """-> the record of one part of the status bar that the battle frame places
     as `name` with `matrix`. `bar` is top_bar.json. The part is an art piece, a
-    fill at its full width or a text field. Every rect in that file is in the bar
-    sprite's design px, or in `inner2`'s, which the right-hand bars mirror, so this
-    puts it through the placement. The bar's scale is not the same in x and y, so
-    an art piece has a zoom for each axis."""
+    fill at its full width, a text field or the placement's DropShadow. Every
+    rect in that file is in the bar sprite's design px, or in `inner2`'s, which
+    the right-hand bars mirror, so this puts it through the placement. The bar's
+    scale is not the same in x and y, so an art piece has a zoom for each axis."""
     sx, skew0, skew1, sy, tx, ty = matrix
     if skew0 or skew1:
         raise ValueError(f"{name} is placed with {matrix}")
@@ -1775,26 +1806,16 @@ def bar_part_record(part: str, matrix, bar: dict, name: str) -> dict:
     if part == "backing":
         entry = frame["art"]
         return art(entry, entry["rect"], False)
+    if part == "filter":
+        return bar_filter_record(bar["shadow"])
     if kind == "text":
         field = next(f for f in frame["fields"] if f["variable"] == which)
-        shadow = bar["shadow"]
-        angle = math.radians(shadow["angle"])
-        alpha = int(shadow["color"][6:8], 16)
         return {
             "kind": "text",
             "rect": on_stage(field["rect"], False),
             "font_size": field["font_size"],
             "color": field["color"],
             "align": field["align"],
-            "shadow": {
-                "offset": [
-                    round(sx * shadow["distance"] * math.cos(angle), 4),
-                    round(sy * shadow["distance"] * math.sin(angle), 4),
-                ],
-                "color": shadow["color"][:6]
-                + f"{min(255, round(alpha * shadow['strength'])):02x}",
-                "blur": shadow["blur_x"],
-            },
         }
     if kind == "inner2":
         entry = bar["inner2"]["art"][which]
