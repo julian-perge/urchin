@@ -1248,6 +1248,26 @@ func test_control_a_top_status_bar_with_no_mirror_or_a_wrong_color_fails() -> vo
 	assert_string_contains(found[0] if found else "", "TopStatusBar/Bar1/Inner/PlayerName")
 
 
+const MANUAL_SCENE: String = "res://scenes/ui/menu/manual_panel.tscn"
+
+
+func test_control_a_manual_topic_hit_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(MANUAL_SCENE)
+	(root.get_node("Topics/Topic2/HitButton") as Control).position.y += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][MANUAL_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "Topics/Topic2/HitButton: top left")
+
+
+func test_control_a_manual_panel_with_another_fill_fails() -> void:
+	var root: Control = await _laid_out(MANUAL_SCENE)
+	var panel: Panel = root.get_node("LeftPanel")
+	var style: StyleBoxFlat = panel.get_theme_stylebox("panel").duplicate()
+	panel.add_theme_stylebox_override("panel", style)
+	style.bg_color = Color(0, 0, 0, 1)
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][MANUAL_SCENE]), "LeftPanel: outline fill")
+
+
 const GAME_OVER_SCENE: String = "res://scenes/battle/game_over_screen.tscn"
 
 

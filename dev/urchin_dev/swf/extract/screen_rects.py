@@ -323,6 +323,28 @@ CHOICE_PIECES = {
     "Captions/LoadGameSlot/HitButton": Piece("hit", 12),
 }
 
+# The Game Manual's pieces, by their path in manual_panel.tscn
+# (spec/107-game-manual.md, Pieces). Shape 2812 draws both panels as two boxes
+# of one shape, left first. The five topic fields xRx1 to xRx5 and the hit
+# buttons over them are listed top down, by the depths of field and button:
+# the buttons are 2800, 2804, 2803, 2802 and 2801, which show MANUALEX[0] to
+# MANUALEX[4] in that order.
+MANUAL_FRAME = "designMenu"
+MANUAL_TOPICS = ((8, 35), (9, 27), (10, 29), (11, 31), (12, 33))
+MANUAL_PIECES = {
+    "LeftPanel": Piece("outline", 6, path=0, character=2812),
+    "RightPanel": Piece("outline", 6, path=1, character=2812),
+    **{
+        f"Topics/Topic{n}/{node}": Piece(kind, depth)
+        for n, (caption, hit) in enumerate(MANUAL_TOPICS)
+        for node, kind, depth in (
+            ("Caption", "text", caption),
+            ("HitButton", "hit", hit),
+        )
+    },
+    "Body": Piece("text", 7),
+}
+
 # The six hotbar slots that share the 0.671 square, by their slot node in
 # hotbar.tscn: the depth of the slot's button and the name of its icon art
 # (spec/107-hub.md, The hotbar). The button draws the square, so the square's
@@ -668,6 +690,27 @@ SCENES: dict[str, Scene] = {
             "NewGamePanel",
             "OptionsPanel",
         ),
+        left_out=(38, 41),
+    ),
+    "res://scenes/ui/menu/manual_panel.tscn": Scene(
+        timeline=0, frame=MANUAL_FRAME, pieces=MANUAL_PIECES
+    ),
+    # The Game Manual as the menu shows it: the background, the panel and Back,
+    # for the compare tool, as choice_screen.tscn is for the choice. Frame 124
+    # places Back as caption 2805 at depth 13 and button 2702 at depth 25, at
+    # the spots of 2703 and 2702 on the other menu frames. Depths 38 and 41 are
+    # the Armor Games line and logo, as on the title. Its link at depth 39 is
+    # left out too, and is not listed, because a hit button draws nothing in the
+    # reference.
+    "res://test/fixtures/screen_rects/manual_screen.tscn": Scene(
+        timeline=0,
+        frame=MANUAL_FRAME,
+        pieces={
+            "Background": Piece("art", 1, art="start_background"),
+            **{f"ManualPanel/{path}": piece for path, piece in MANUAL_PIECES.items()},
+            "Back/Caption": Piece("text", 13),
+            "Back/HitButton": Piece("hit", 25),
+        },
         left_out=(38, 41),
     ),
     # The Game over Screen, gameOverMenu (spec/107-game-over.md). The frame

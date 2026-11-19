@@ -29,13 +29,14 @@ All numbers are Stage px from `timeline.frames()` of the web build, at the label
 | 1, 2, 5 | 2701, 307, 2700 | the menu background | the Stage | | an instance of `menu_background.tscn` |
 | 6 | 2812 | the two panels: one shape with two closed rects | edges (76.05, 91.30) to (383.75, 470.45) and (412.05, 91.30) to (719.75, 470.45) | fill #000000 at alpha 100, 1 px #ffffff line | two Panels with a StyleBoxFlat, `LeftPanel` and `RightPanel` |
 | 7 | 2811 | `xRx6`, the body | (425.20, 105.45) 278.60x344.30 | `_sans` 12 #ffffff left, wraps | Label, `MenuCaption` |
-| 8 to 12 | 2810, 2809, 2808, 2807, 2806 | `xRx1` to `xRx5`, the five topics, top down | (119.40, 153.50) 225.75x37.40, then 52.5 px apart | `_sans` 12 #ffcc00 center, wraps | Label, `MenuCaption`, color override |
+| 8 to 12 | 2810, 2809, 2808, 2807, 2806 | `xRx1` to `xRx5`, the five topics, top down | (119.40, 153.50) 225.75x37.40, then 52.5 px apart | `_sans` 12 #ffcc00 right, wraps | Label, `MenuCaption`, color override |
 | 35, 27, 29, 31, 33 | 2800, 2804, 2803, 2802, 2801 | the topic hit buttons, top down | their hit squares through the matrix | none | flat Button |
 | 13, 25 | 2805, 2702 | Back caption and hit button | as in title-slots | | an instance of `menu_back.tscn` |
 | 38, 39, 41 | 2689, 2688, 294 | the Armor Games line, its link and its logo | | | left out, ADR 0002 |
 
 - The record turns a field's bounds into the rect Flash lays its text out in (`label_layout.text_rect`). The scene types the record's numbers, not the field bounds above.
 - Frame 124 places Back as edit text 2805 at depth 13 and hit button 2702 at depth 25. The other menu frames place 2703 and 2702 at depths 35 and 36. Edit text 2805 has the bounds, the font, the size and the color of 2703, and both are placed at (490.15, 534.15), so `menu_back.tscn` draws Back here too. The record checks it at depths 13 and 25.
+- The topic fields are right-aligned: their DefineEditText align is 1. The body is left-aligned.
 - Every edit text on the frame has the menu captions' Glow and DropShadow. `MenuCaption` draws them, as on the title.
 - The topics are a `FloatBox` column of five fixed-height slots, 52.5 px apart. Each slot holds its caption and its hit button at their SWF offsets, as the title's slots do.
 - Shape 2812 needs no PNG. Each of its two rects is a solid fill with a 1 px line and square corners, which a StyleBoxFlat draws. The record's `outline` kind gains an optional fill for it (see Testing strategy).

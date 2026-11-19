@@ -6377,6 +6377,164 @@
    ],
    "timeline": 3142
   },
+  "res://scenes/ui/menu/manual_panel.tscn": {
+   "frame": "designMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Body": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      427.2,
+      107.45,
+      274.6,
+      340.3
+     ]
+    },
+    "LeftPanel": {
+     "border": 1,
+     "fill": "00000064",
+     "kind": "outline",
+     "line": "ffffffff",
+     "rect": [
+      75.55,
+      90.8,
+      308.7,
+      380.15
+     ]
+    },
+    "RightPanel": {
+     "border": 1,
+     "fill": "00000064",
+     "kind": "outline",
+     "line": "ffffffff",
+     "rect": [
+      411.55,
+      90.8,
+      308.7,
+      380.15
+     ]
+    },
+    "Topics/Topic0/Caption": {
+     "align": "right",
+     "color": "ffcc00ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      121.4,
+      155.5,
+      221.75,
+      33.4
+     ]
+    },
+    "Topics/Topic0/HitButton": {
+     "kind": "hit",
+     "rect": [
+      121.0559,
+      155.7002,
+      228.8882,
+      25.9996
+     ]
+    },
+    "Topics/Topic1/Caption": {
+     "align": "right",
+     "color": "ffcc00ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      121.4,
+      208.0,
+      219.65,
+      32.95
+     ]
+    },
+    "Topics/Topic1/HitButton": {
+     "kind": "hit",
+     "rect": [
+      121.0559,
+      208.2002,
+      228.8882,
+      25.9996
+     ]
+    },
+    "Topics/Topic2/Caption": {
+     "align": "right",
+     "color": "ffcc00ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      121.4,
+      260.5,
+      221.75,
+      32.55
+     ]
+    },
+    "Topics/Topic2/HitButton": {
+     "kind": "hit",
+     "rect": [
+      121.0559,
+      260.7002,
+      228.8882,
+      25.9996
+     ]
+    },
+    "Topics/Topic3/Caption": {
+     "align": "right",
+     "color": "ffcc00ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      121.4,
+      313.0,
+      219.65,
+      36.3
+     ]
+    },
+    "Topics/Topic3/HitButton": {
+     "kind": "hit",
+     "rect": [
+      121.0559,
+      313.2002,
+      228.8882,
+      25.9996
+     ]
+    },
+    "Topics/Topic4/Caption": {
+     "align": "right",
+     "color": "ffcc00ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      121.4,
+      365.5,
+      217.6,
+      33.8
+     ]
+    },
+    "Topics/Topic4/HitButton": {
+     "kind": "hit",
+     "rect": [
+      121.0559,
+      365.7002,
+      228.8882,
+      25.9996
+     ]
+    }
+   },
+   "port_only": [],
+   "timeline": 0
+  },
   "res://scenes/ui/menu/menu_back.tscn": {
    "frame": "subMenu",
    "origin": [
@@ -11925,6 +12083,200 @@
     "Hotbar/ZoneMapSlot/Glow",
     "Hotbar/ZoneMapSlot/InnerGlow"
    ],
+   "timeline": 0
+  },
+  "res://test/fixtures/screen_rects/manual_screen.tscn": {
+   "frame": "designMenu",
+   "origin": [
+    0.0,
+    0.0
+   ],
+   "pieces": {
+    "Back/Caption": {
+     "align": "right",
+     "color": "ffffffff",
+     "font_size": 24.0,
+     "kind": "text",
+     "rect": [
+      490.15,
+      534.15,
+      300.1,
+      26.85
+     ]
+    },
+    "Back/HitButton": {
+     "kind": "hit",
+     "rect": [
+      604.4392,
+      534.4501,
+      188.1216,
+      26.7998
+     ]
+    },
+    "Background": {
+     "kind": "art",
+     "rect": [
+      0.0,
+      0.0,
+      800.0,
+      575.0
+     ],
+     "size": [
+      1600,
+      1150
+     ],
+     "texture": "res://assets/ui/menu/start_background.png",
+     "zoom": 2.0
+    },
+    "ManualPanel/Body": {
+     "align": "left",
+     "color": "ffffffff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      427.2,
+      107.45,
+      274.6,
+      340.3
+     ]
+    },
+    "ManualPanel/LeftPanel": {
+     "border": 1,
+     "fill": "00000064",
+     "kind": "outline",
+     "line": "ffffffff",
+     "rect": [
+      75.55,
+      90.8,
+      308.7,
+      380.15
+     ]
+    },
+    "ManualPanel/RightPanel": {
+     "border": 1,
+     "fill": "00000064",
+     "kind": "outline",
+     "line": "ffffffff",
+     "rect": [
+      411.55,
+      90.8,
+      308.7,
+      380.15
+     ]
+    },
+    "ManualPanel/Topics/Topic0/Caption": {
+     "align": "right",
+     "color": "ffcc00ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      121.4,
+      155.5,
+      221.75,
+      33.4
+     ]
+    },
+    "ManualPanel/Topics/Topic0/HitButton": {
+     "kind": "hit",
+     "rect": [
+      121.0559,
+      155.7002,
+      228.8882,
+      25.9996
+     ]
+    },
+    "ManualPanel/Topics/Topic1/Caption": {
+     "align": "right",
+     "color": "ffcc00ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      121.4,
+      208.0,
+      219.65,
+      32.95
+     ]
+    },
+    "ManualPanel/Topics/Topic1/HitButton": {
+     "kind": "hit",
+     "rect": [
+      121.0559,
+      208.2002,
+      228.8882,
+      25.9996
+     ]
+    },
+    "ManualPanel/Topics/Topic2/Caption": {
+     "align": "right",
+     "color": "ffcc00ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      121.4,
+      260.5,
+      221.75,
+      32.55
+     ]
+    },
+    "ManualPanel/Topics/Topic2/HitButton": {
+     "kind": "hit",
+     "rect": [
+      121.0559,
+      260.7002,
+      228.8882,
+      25.9996
+     ]
+    },
+    "ManualPanel/Topics/Topic3/Caption": {
+     "align": "right",
+     "color": "ffcc00ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      121.4,
+      313.0,
+      219.65,
+      36.3
+     ]
+    },
+    "ManualPanel/Topics/Topic3/HitButton": {
+     "kind": "hit",
+     "rect": [
+      121.0559,
+      313.2002,
+      228.8882,
+      25.9996
+     ]
+    },
+    "ManualPanel/Topics/Topic4/Caption": {
+     "align": "right",
+     "color": "ffcc00ff",
+     "font_size": 12.0,
+     "kind": "text",
+     "line_pitch": 14.0,
+     "rect": [
+      121.4,
+      365.5,
+      217.6,
+      33.8
+     ]
+    },
+    "ManualPanel/Topics/Topic4/HitButton": {
+     "kind": "hit",
+     "rect": [
+      121.0559,
+      365.7002,
+      228.8882,
+      25.9996
+     ]
+    }
+   },
+   "port_only": [],
    "timeline": 0
   },
   "res://test/fixtures/screen_rects/shell_panel_fills.tscn": {
