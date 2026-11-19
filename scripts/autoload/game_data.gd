@@ -33,6 +33,13 @@ signal inventory_changed
 
 var current_slot: int = -1
 var current_save: PlayerSave = null
+# The party member whose gear the menus change, Krin.MenuPlayerSelect in the
+# original: 0 for the player, or a Companion's party id. A click on a party
+# face in the Inventory sets it. The Inventory and the Store put it back to
+# the player when they open, as the original does
+# (DefineSprite_3142/frame_25/DoAction.as:7 and
+# DefineSprite_3142/frame_16/DoAction.as:60).
+var menu_party_id: int = Party.PLAYER_PARTY_ID
 # Tests point this at a folder of their own so they can write a slot without
 # touching the player's real saves.
 var save_dir: String = SAVE_DIR
@@ -54,10 +61,11 @@ const STARTING_EQUIPMENT: Dictionary[int, int] = {1: 11, 3: 4, 4: 8, 5: 5}
 func new_game(slot: int, player_name: String, player_class: PlayerSave.PlayerClass = PlayerSave.PlayerClass.BIOLOGICAL) -> void:
 	current_slot = slot
 	current_save = PlayerSave.new_game(player_name, player_class)
+	menu_party_id = Party.PLAYER_PARTY_ID
 	for equip_slot in STARTING_EQUIPMENT:
 		var item: GameItem = ItemManagerAuto.get_item(STARTING_EQUIPMENT[equip_slot])
 		if item != null:
-			Equipment.equip(current_save, item, equip_slot, ItemManagerAuto.items_by_id)
+			Equipment.equip(Equipment.Wearer.for_player(current_save), item, equip_slot, ItemManagerAuto.items_by_id)
 
 func load_game(slot: int) -> bool:
 	if not has_save(slot):
@@ -75,8 +83,10 @@ func load_game(slot: int) -> bool:
 		var starting_moves: Array = TalentTree.STARTING_MOVES.get(save.player_class, [])
 		for i in starting_moves.size():
 			save.move_matrix[i] = starting_moves[i]
+	Party.ensure_party_equip(save)
 	current_slot = slot
 	current_save = save
+	menu_party_id = Party.PLAYER_PARTY_ID
 	save_loaded.emit(slot)
 	return true
 
@@ -119,6 +129,13 @@ func get_store_inventory() -> Array[GameItem]:
 func can_afford_item(item: GameItem) -> bool:
 	return current_save != null and current_save.euro >= item.price
 
+# The member that menu_party_id names, as the wearer that equip and unequip
+# change.
+func menu_wearer() -> Equipment.Wearer:
+	if menu_party_id == Party.PLAYER_PARTY_ID:
+		return Equipment.Wearer.for_player(current_save)
+	return Party.companion_wearer(current_save, menu_party_id, ItemManagerAuto.items_by_id)
+
 func purchase_item(item: GameItem) -> bool:
 	if not can_afford_item(item):
 		return false
@@ -133,8 +150,9 @@ func purchase_item(item: GameItem) -> bool:
 	return true
 
 # Equips the item sitting in inventory slot inventory_index into equip slot
-# equip_slot (see Equipment.EQUIP_SLOT_TYPES; pass -1 to use the item's
-# natural slot). Any displaced item swaps back into that inventory slot.
+# equip_slot of the menu_party_id member (see Equipment.EQUIP_SLOT_TYPES; pass
+# -1 to use the item's natural slot). Any displaced item swaps back into that
+# inventory slot.
 # Returns the Equipment.EquipResult.
 func equip_from_inventory(inventory_index: int, equip_slot: int = -1) -> int:
 	if current_save == null or inventory_index < 0 or inventory_index >= current_save.item_array.size():
@@ -144,14 +162,15 @@ func equip_from_inventory(inventory_index: int, equip_slot: int = -1) -> int:
 		return Equipment.EquipResult.INVALID
 	if equip_slot == -1:
 		equip_slot = Equipment.slot_for_item(item)
-	var outcome: Dictionary = Equipment.equip(current_save, item, equip_slot, ItemManagerAuto.items_by_id)
+	var outcome: Dictionary = Equipment.equip(menu_wearer(), item, equip_slot, ItemManagerAuto.items_by_id)
 	if outcome["result"] == Equipment.EquipResult.OK:
 		current_save.item_array[inventory_index] = outcome["previous_item_id"]
 		inventory_changed.emit()
 	return outcome["result"]
 
 
-# Unequips equip slot equip_slot into the first empty inventory slot.
+# Unequips equip slot equip_slot of the menu_party_id member into the first
+# empty inventory slot.
 func unequip_to_inventory(equip_slot: int) -> bool:
 	if current_save == null:
 		return false
@@ -159,7 +178,7 @@ func unequip_to_inventory(equip_slot: int) -> bool:
 	if empty_slot == -1:
 		push_warning("unequip_to_inventory: inventory full")
 		return false
-	var item_id: int = Equipment.unequip(current_save, equip_slot, ItemManagerAuto.items_by_id)
+	var item_id: int = Equipment.unequip(menu_wearer(), equip_slot, ItemManagerAuto.items_by_id)
 	if item_id == 0:
 		return false
 	current_save.item_array[empty_slot] = item_id
@@ -193,7 +212,7 @@ func unequip_to_slot(equip_slot: int, inventory_index: int) -> bool:
 		return false
 	if inventory_index < 0 or inventory_index >= current_save.item_array.size():
 		return false
-	var item_id: int = Equipment.unequip(current_save, equip_slot, ItemManagerAuto.items_by_id)
+	var item_id: int = Equipment.unequip(menu_wearer(), equip_slot, ItemManagerAuto.items_by_id)
 	if item_id == 0:
 		return false
 	var displaced_id: int = int(current_save.item_array[inventory_index])

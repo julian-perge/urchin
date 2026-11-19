@@ -222,6 +222,20 @@ func _box_shadow_problems(path: String, node: Control, shadow: Dictionary) -> Ar
 const DOLL_TOLERANCE: float = 1.0
 
 
+# An inner shadow overlay draws the DropShadow of a sprite's placement with a
+# ShaderMaterial, which takes the shadow's blur, distance and angle as they are.
+func _inner_shadow_problems(path: String, node: Control, shadow: Dictionary) -> Array[String]:
+	var material: ShaderMaterial = node.material as ShaderMaterial
+	if material == null:
+		return ["%s: inner shadow: no ShaderMaterial" % path]
+	var found: Array[String] = []
+	for parameter: String in shadow:
+		var value: float = material.get_shader_parameter(parameter)
+		if not is_equal_approx(value, float(shadow[parameter])):
+			found.append("%s: shadow %s %s, expected %s" % [path, parameter, value, shadow[parameter]])
+	return found
+
+
 func _doll_problems(root: Control, path: String, entry: Dictionary) -> Array[String]:
 	var found: Array[String] = []
 	var doll: CharacterVisual = root.get_node_or_null(path) as CharacterVisual
@@ -338,6 +352,9 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 					found.append("%s: a box piece that is not a ColorRect" % path)
 			"shape":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+			"inner_shadow":
+				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+				found.append_array(_inner_shadow_problems(path, node, entry["shadow"]))
 			"centre":
 				var expected_centre := Vector2(entry["position"][0], entry["position"][1])
 				var centre: Vector2 = actual.get_center()
@@ -625,6 +642,23 @@ func test_control_a_socket_with_no_shadow_fails() -> void:
 	var style: StyleBoxFlat = (root.get_node("Socket2") as Control).get_theme_stylebox("normal")
 	style.shadow_size = 0
 	_assert_one_problem(_scene_problems(root, _record()["scenes"][ABILITIES_SCENE]), "Socket2: shadow size")
+
+
+func test_control_a_pool_scroll_button_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(ABILITIES_SCENE)
+	(root.get_node("Pool/ScrollDownButton") as Control).position.y += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][ABILITIES_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	assert_string_contains(found[0] if found else "", "Pool/ScrollDownButton: top left")
+
+
+func test_control_a_pool_shadow_with_another_blur_fails() -> void:
+	var root: Control = await _laid_out(ABILITIES_SCENE)
+	var overlay: Control = root.get_node("Pool/Shadow")
+	var material: ShaderMaterial = (overlay.material as ShaderMaterial).duplicate()
+	material.set_shader_parameter("blur", 4.0)
+	overlay.material = material
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][ABILITIES_SCENE]), "Pool/Shadow: shadow blur")
 
 
 const RIGHT_COLUMN_SCENE: String = "res://scenes/ui/window/right_column.tscn"

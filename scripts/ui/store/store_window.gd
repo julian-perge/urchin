@@ -60,6 +60,7 @@ func _build_middle() -> void:
 
 
 func open_store():
+	GameData.menu_party_id = Party.PLAYER_PARTY_ID
 	show()
 	refresh_store()
 
@@ -75,7 +76,7 @@ func refresh_store():
 	var save: PlayerSave = GameData.current_save
 	if save != null:
 		right_column.populate_from_save(save, ItemManagerAuto.items_by_id)
-		equip_view.refresh(save, ItemManagerAuto.items_by_id)
+		equip_view.refresh(CombatUnit.from_player_save(save), ItemManagerAuto.items_by_id)
 
 
 # A ware slot with no ware is hidden, as the original does with _visible = false

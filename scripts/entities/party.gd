@@ -44,15 +44,18 @@ const AGGRESSION_NAMES: Array[String] = ["Phalanx", "Defensive", "Tactical", "Ag
 # agModeAr column 2 ("Tactical") - the default companion tuning.
 const COMPANION_AI_TUNING: Array[float] = [50.0, 75.0, 35.0, 70.0, 30.0]
 
-# Static companion definitions (frame_42/DoAction_17). stat_allocated is the
-# StatSets seed [life, strength, magic, speed, focus]; per/def_allocated are
-# elemental point seeds in ELEMENT_ORDER; equipment is the seed gear, which
-# here only dresses the doll. The original lets the player equip companions
-# under the same rules as the player, stats included: a plain click on a
-# party member selects them (DefineButton2_2895 on(press) lines 30-37) and
-# DefineButton2_2981 on(press) swaps the item and adds and removes its stat,
-# piercing and defense bonuses. The port has no companion equipping yet, so
-# here the allocations never change - only level/exp do.
+# Static companion definitions (frame_42/DoAction_17). unit_id is the
+# Companion's ClassStats entry, which the original uses both as the unit
+# template (KNU) and as the class that an item's class requirement checks.
+# stat_allocated is the StatSets seed [life, strength, magic, speed, focus];
+# per/def_allocated are the PerSets/DefSets seeds in ELEMENT_ORDER. equipment
+# is the seed gear (equipArray1-5), the gear a save without party_equip starts
+# from. The original adds and removes each item's bonuses on top of the seeds
+# as the player equips the Companion (DefineButton2_2981 on(press)), and
+# companion_wearer gives the same result from the saved gear. The seeds are
+# not always the seed gear's sum: Felicity's StatSets3 Speed is 105 while her
+# gear gives 126, so the original shows Speed 171 with her gear and 45 without
+# it at level 22, 21 below the gear alone (#195).
 const COMPANIONS: Dictionary = {
 	1: {
 		"name": "Veradux",
@@ -116,6 +119,61 @@ static func initialize_save(save: PlayerSave) -> void:
 	save.party_exp = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 	for party_id in COMPANIONS:
 		save.party_levels[party_id] = COMPANIONS[party_id]["starting_level"]
+	save.party_equip = []
+	ensure_party_equip(save)
+
+
+# Gives every Companion the seed gear from COMPANIONS when the save has no
+# party_equip, which is the case for a save written before #195. Entry 0
+# stays empty, because the player's gear is in equip_array.
+static func ensure_party_equip(save: PlayerSave) -> void:
+	if not save.party_equip.is_empty():
+		return
+	save.party_equip = [[]]
+	for party_id in COMPANIONS:
+		while save.party_equip.size() <= party_id:
+			save.party_equip.append([])
+		save.party_equip[party_id] = COMPANIONS[party_id]["equipment"].duplicate()
+
+
+# The Companion's 7-slot equip array in the save, equipArray1-5 in the
+# original. A change to it is a change to the save.
+static func companion_equip(save: PlayerSave, party_id: int) -> Array:
+	ensure_party_equip(save)
+	return save.party_equip[party_id]
+
+
+# The Companion as an Equipment.Wearer: their saved gear, level and class.
+# The bonus pools are the original's StatSets, PerSets and DefSets after the
+# player swapped the seed gear for the saved gear: the seeds, less the seed
+# gear's bonuses, plus the saved gear's bonuses.
+static func companion_wearer(save: PlayerSave, party_id: int, items_by_id: Dictionary) -> Equipment.Wearer:
+	var definition: Dictionary = COMPANIONS[party_id]
+	var wearer := Equipment.Wearer.new(companion_equip(save, party_id), int(save.party_levels[party_id]), definition["unit_id"])
+	wearer.stat_allocated = definition["stat_allocated"].duplicate()
+	for element in CombatUnit.ELEMENT_ORDER.size():
+		wearer.per[element] = float(definition["per_allocated"][element])
+		wearer.def[element] = float(definition["def_allocated"][element])
+	for item_id in definition["equipment"]:
+		Equipment.apply_item_stats(wearer, items_by_id.get(int(item_id)), -1)
+	for item_id in wearer.equip:
+		Equipment.apply_item_stats(wearer, items_by_id.get(int(item_id)), 1)
+	return wearer
+
+
+# The five stats [life, strength, magic, speed, focus] that the Inventory
+# shows for a Companion: gear bonuses plus the template's level curve
+# (updateStatus, DefineSprite_3142/frame_1/DoAction.as:93-97). Life is the
+# Vitality value, before the battle unit multiplies it.
+static func companion_stats(wearer: Equipment.Wearer, template: Character) -> Array:
+	var allocated: Array = wearer.stat_allocated
+	return [
+		allocated[0] + ceil(CombatUnit.get_stat(template.vitality, wearer.level, true)),
+		allocated[1] + ceil(CombatUnit.get_stat(template.strength, wearer.level, true)),
+		allocated[2] + ceil(CombatUnit.get_stat(template.magic, wearer.level, true)),
+		allocated[3] + ceil(CombatUnit.get_stat(template.speed, wearer.level, true)),
+		allocated[4] + ceil(template.focus),
+	]
 
 
 # frame_219 roster rules, checked after every battle: Roald joins once zone 2
@@ -184,8 +242,9 @@ static func apply_aggression_mode(unit: CombatUnit, mode: AggressionStance) -> v
 # Companion battle unit - krinAddNewUnit's companion branch. Same stat model
 # as the player (allocation + class curve; PER/DEF = allocation + 100 +
 # 15/level) with one faithful quirk: Lightning DEFENSE uses 5 per level, not
-# 15 (original's line does `LevelStats * 5` for that one element).
-static func build_companion_unit(save: PlayerSave, party_id: int, unit_templates: Dictionary, slot: int) -> CombatUnit:
+# 15 (original's line does `LevelStats * 5` for that one element). The
+# allocations come from the Companion's saved gear (companion_wearer).
+static func build_companion_unit(save: PlayerSave, party_id: int, unit_templates: Dictionary, items_by_id: Dictionary, slot: int) -> CombatUnit:
 	var definition: Dictionary = COMPANIONS.get(party_id, {})
 	if definition.is_empty():
 		return null
@@ -193,29 +252,30 @@ static func build_companion_unit(save: PlayerSave, party_id: int, unit_templates
 	if template == null:
 		push_warning("build_companion_unit: no unit template %d" % definition["unit_id"])
 		return null
-	var level: int = int(save.party_levels[party_id])
-	var allocated: Array = definition["stat_allocated"]
+	var wearer: Equipment.Wearer = companion_wearer(save, party_id, items_by_id)
+	var level: int = wearer.level
+	var stats: Array = companion_stats(wearer, template)
 
 	var unit: CombatUnit = CombatUnit.new()
 	unit.player_id = slot
 	unit.player_name = definition["name"]
 	unit.plevel = level
-	unit.base_life = round(allocated[0] + ceil(CombatUnit.get_stat(template.vitality, level, true))) * CombatUnit.VIT_LIFE_FACTOR
-	unit.base_strength = round(allocated[1] + ceil(CombatUnit.get_stat(template.strength, level, true)))
-	unit.base_magic = round(allocated[2] + ceil(CombatUnit.get_stat(template.magic, level, true)))
-	unit.base_speed = round(allocated[3] + ceil(CombatUnit.get_stat(template.speed, level, true)))
-	unit.base_focus = round(allocated[4] + ceil(template.focus))
+	unit.base_life = round(stats[0]) * CombatUnit.VIT_LIFE_FACTOR
+	unit.base_strength = round(stats[1])
+	unit.base_magic = round(stats[2])
+	unit.base_speed = round(stats[3])
+	unit.base_focus = round(stats[4])
 
 	for i in CombatUnit.ELEMENT_ORDER.size():
-		unit.base_per[i] = 100.0 + level * 15.0 + definition["per_allocated"][i]
+		unit.base_per[i] = 100.0 + level * 15.0 + wearer.per[i]
 		var defense_per_level: float = 5.0 if i == CombatUnit.Element.LIGHTNING else 15.0
-		unit.base_def[i] = 100.0 + level * defense_per_level + definition["def_allocated"][i]
+		unit.base_def[i] = 100.0 + level * defense_per_level + wearer.def[i]
 
 	var voice = template.visuals.get("voice", {})
 	unit.voice_hit = voice.get("hit", [])
 	unit.voice_die = voice.get("die", "")
 	unit.model = definition["model"].duplicate()
-	unit.equipment_ids = definition["equipment"].duplicate()
+	unit.equipment_ids = wearer.equip.duplicate()
 
 	unit.ai_enabled = true
 	apply_aggression_mode(unit, AggressionStance.TACTICAL)
