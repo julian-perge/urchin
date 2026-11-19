@@ -1281,7 +1281,9 @@ func test_control_a_status_bar_shadow_with_another_blur_or_no_shader_fails() -> 
 	var root: Control = await _laid_out(BATTLE_SCENE)
 	var scene: Dictionary = _record()["scenes"][BATTLE_SCENE]
 	var clip: CanvasGroup = root.get_node("TopStatusBar/Bar3/Clip")
-	var material: ShaderMaterial = clip.material
+	# The six bars share the scene's material, so only a copy breaks one bar.
+	var material: ShaderMaterial = clip.material.duplicate()
+	clip.material = material
 	material.set_shader_parameter("blur", Vector2(4.0, 5.0))
 	_assert_one_problem(_scene_problems(root, scene), "TopStatusBar/Bar3/Clip: shadow blur")
 	clip.material = null
