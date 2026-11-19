@@ -6,7 +6,7 @@ How `assets/ui/items/*.png` gets generated from the web SWF's item-icon sheet
 
 Note: this is a different asset tree from `assets/item_slot_icons/`. That
 directory has no known SWF source - investigated and confirmed a dead end
-(`KNOWN_GAPS.md`, "11 numeric-named asset stragglers are untraceable",
+(`docs/adr/0010-keep-numeric-names-for-unnamed-swf-art.md`,
 2026-07-18): no `ExportAssetsTag` linkage name, no frame-label timeline like
 `DefineSprite 2064` has. It's legacy database-named fallback art. No committed
 item references it, and `scripts/editor/items.gd` only looks there when an item

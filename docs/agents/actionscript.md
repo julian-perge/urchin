@@ -17,8 +17,10 @@ has already made reading them.
   `Strings.system(17)`, and does not type the text as a literal.
 - `DECODED_ALGORITHMS.md` holds behavior already decoded from the AS so it
   never has to be re-derived. Check it before reading the AS yourself.
-- `KNOWN_GAPS.md` is deliberate scoped-out gaps. `NEXT_PHASES.md` is what has
-  not been built. Both carry DONE entries with what was found.
+- Open work is tracked in GitHub issues, not in a file. A deliberate departure
+  from the original is an ADR in `docs/adr/`. What a finished task found about
+  the original goes into `DECODED_ALGORITHMS.md`, or into `SWF_DIFFERENCES.md`
+  when it is about the two builds.
 
 ## Find the place before you read it
 
