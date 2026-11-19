@@ -77,6 +77,13 @@ name, so it misses a call in class-level code and a callable reference such as
   `root.get_texture().get_image()`. That script has to `load()` the scenes it
   uses, because autoloads such as `GameTooltip` don't exist yet when it
   compiles.
+- A headless run still compiles a shader, but only when something first asks
+  the renderer for it, such as `get_shader_uniform_list()` or a node that
+  draws with it. Loading or preloading the `.gdshader` compiles nothing.
+  `test/unit/test_shaders.gd` compiles every shader and checks that some
+  shader includes each `.gdshaderinc`. The `shader-compile` commit hook runs
+  it when a commit stages a shader, and `just gut` fails a run whose log has
+  `SHADER ERROR` (julian-perge/urchin#426).
 - A windowed run shows on the user's screen. The script sets its window title
   to `AGENT RENDER - <what>` with `DisplayServer.window_set_title()` as it
   starts, and quits when it is done. The user once took such a render for a bug

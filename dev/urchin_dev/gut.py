@@ -6,6 +6,10 @@
 # fails a run whose log has a script or parse error, or that ran no tests.
 # It also fails a run in which Godot reports objects or resources still alive
 # at exit, because such a leak shows no failing test (julian-perge/urchin#187).
+# It also fails a run that logs a shader compile error. GUT fails a test only
+# for an error logged while that test runs, so a shader that compiles outside
+# every test, for example in before_all, does not fail one
+# (julian-perge/urchin#426).
 from __future__ import annotations
 
 import re
@@ -46,6 +50,7 @@ def failures(code: int, log: str) -> list[str]:
         reasons.append(f"Godot exited with code {code}")
     for marker in (
         "SCRIPT ERROR",
+        "SHADER ERROR",
         "Parse Error",
         "leaked at exit",
         "still in use at exit",

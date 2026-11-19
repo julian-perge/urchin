@@ -50,6 +50,16 @@ language = "system"
 entry = "just gd-parse"
 files = "\\.gd$"
 
+# test_shaders.gd compiles every shader. A headless run compiles a shader only
+# when a test asks for it, so a broken shader passes every other test.
+[[repos.hooks]]
+id = "shader-compile"
+name = "Every shader compiles"
+language = "system"
+entry = "just gut test/unit/test_shaders.gd"
+files = "\\.gdshader(inc)?$"
+pass_filenames = false
+
 [[repos.hooks]]
 id = "as-citations"
 name = "ActionScript citations in .gd files exist"
