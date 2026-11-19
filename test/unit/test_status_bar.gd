@@ -312,8 +312,9 @@ func test_a_bar_that_runs_steps_its_clips_at_the_swf_frame_rate() -> void:
 	assert_false(bar.is_processing(), "and the bar stops running")
 
 
-# The death, which die() starts, clears the bar on frame 17 and then fades it.
-func test_a_death_clears_on_frame_17_then_fades_5_a_frame_and_hides() -> void:
+# The death, which die() starts, clears the bar on frame 17 and then fades it by
+# 5 points of Flash's _alpha a frame, which Flash stores as 13/256.
+func test_a_death_clears_on_frame_17_then_fades_13_256ths_a_frame_and_hides() -> void:
 	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0))
 	bar.show_status(_state(0.0, 250.0))
 	bar.die()
@@ -322,21 +323,35 @@ func test_a_death_clears_on_frame_17_then_fades_5_a_frame_and_hides() -> void:
 	watch_signals(bar)
 	var death: Dictionary = StatusBar.record()["death"]
 	var clear_frame: int = int(death["clear_frame"])
-	var per_frame: float = float(death["fade_per_frame"]) / 100.0
 	_advance(bar, clear_frame - 1)
 	assert_true(bar.inner.visible, "not yet cleared the frame before")
 	_advance(bar, 1)
 	assert_false(bar.inner.visible, "cleared on the clear frame")
 	assert_eq(bar.fade, 1.0)
+	var traced: Dictionary = _traced_death_alphas()
 	_advance(bar, 1)
-	assert_almost_eq(bar.fade, 1.0 - per_frame, 0.001, "its step off the alpha the frame after")
-	_advance(bar, roundi(1.0 / per_frame) - 1)
-	assert_almost_eq(bar.fade, 0.0, 0.001, "to 0")
+	assert_eq(bar.fade, traced[clear_frame + 1], "its step off the alpha the frame after")
+	_advance(bar, 18)
+	assert_eq(bar.fade, traced[clear_frame + 19], "the last step above 0")
+	_advance(bar, 1)
+	assert_eq(bar.fade, 0.0, "to 0")
 	assert_true(bar.visible, "it hides on the frame after")
 	_advance(bar, 1)
 	assert_false(bar.visible)
 	assert_signal_emitted(bar, "death_hidden")
 	assert_eq(fades[0], 1.0, "the first fade is the clear frame's")
+
+
+# The bar's alpha out of 1 on each frame after the death, from the Traced run's
+# log of a death in the Flash debug player. Each frame line holds the frame in
+# its third field and the bar's _alpha in its fifth.
+func _traced_death_alphas() -> Dictionary:
+	var alphas: Dictionary = {}
+	for line in FileAccess.get_file_as_string("res://references/traced_runs/death_fade_web_flash.txt").split("\n"):
+		var fields: PackedStringArray = line.split("\t")
+		if fields.size() >= 5 and fields[1] == "frame":
+			alphas[int(fields[2])] = float(fields[4]) / 100.0
+	return alphas
 
 
 func _unit(active: bool) -> CombatUnit:
