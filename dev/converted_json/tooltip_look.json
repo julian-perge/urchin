@@ -1,0 +1,151 @@
+{
+ "body_fill": [
+  0,
+  0,
+  0,
+  230
+ ],
+ "detail_delay_frames": 5,
+ "frame_rate": 30.0,
+ "gloss_stops": [
+  {
+   "color": [
+    255,
+    255,
+    255,
+    255
+   ],
+   "ratio": 0
+  },
+  {
+   "color": [
+    170,
+    170,
+    170,
+    217
+   ],
+   "ratio": 60
+  },
+  {
+   "color": [
+    255,
+    255,
+    255,
+    217
+   ],
+   "ratio": 177
+  },
+  {
+   "color": [
+    255,
+    255,
+    255,
+    255
+   ],
+   "ratio": 255
+  }
+ ],
+ "layouts": {
+  "GO": {
+   "far_x": -183,
+   "field_width": 170,
+   "low_shift_y": -50,
+   "mouse_x_limit": 570,
+   "mouse_y_limit": 500,
+   "near_x": 13
+  },
+  "GO2": {
+   "far_x": -163,
+   "field_width": 150,
+   "mouse_x_limit": 570,
+   "near_x": 13
+  },
+  "GO3": {
+   "far_x": -163,
+   "field_width": 150,
+   "mouse_x_limit": 570,
+   "near_x": 13
+  },
+  "GO4": {
+   "far_x": -213,
+   "field_width": 200,
+   "mouse_x_limit": 570,
+   "near_x": 13
+  },
+  "GO7": {
+   "far_x": -163,
+   "field_width": 150,
+   "mouse_x_limit": 570,
+   "near_x": 13
+  }
+ },
+ "next_rank": {
+  "add": [
+   50,
+   40,
+   53,
+   0
+  ],
+  "multiply": [
+   0,
+   0,
+   0,
+   256
+  ]
+ },
+ "pass_button": {
+  "real_time": "First select your target then choose an ability to use.",
+  "title": "No ability selected!",
+  "turn_based": "You may click here to skip your turn."
+ },
+ "rarity_add": {
+  "Common": [
+   0,
+   0,
+   0
+  ],
+  "Orange": [
+   126,
+   15,
+   -200
+  ],
+  "Rare": [
+   86,
+   0,
+   -164
+  ],
+  "Uncommon": [
+   -62,
+   -51,
+   0
+  ],
+  "Unique": [
+   -67,
+   0,
+   -159
+  ]
+ },
+ "sell_ratio": 0.15,
+ "subheader_add": {
+  "GO2": [
+   -31,
+   -6,
+   0
+  ],
+  "GO3": [
+   5,
+   -41,
+   96
+  ],
+  "GO4": [
+   0,
+   0,
+   0
+  ],
+  "GO7": [
+   -31,
+   -6,
+   0
+  ]
+ }
+}

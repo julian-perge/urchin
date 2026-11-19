@@ -7,8 +7,20 @@
 extends GutTest
 
 
+var _default_mouse_source: Callable
+
+
+func before_all():
+	_default_mouse_source = GameTooltip.mouse_source
+
+
 func after_each():
 	GameTooltip.hide_tooltip()
+	GameTooltip.mouse_source = _default_mouse_source
+
+
+func _put_mouse_at(point: Vector2) -> void:
+	GameTooltip.mouse_source = func() -> Vector2: return point
 
 
 func _sections_fixture() -> Array:
@@ -30,8 +42,7 @@ func test_show_sections_builds_one_panel_per_section_with_right_colors_and_lines
 
 	assert_eq(GameTooltip._sections.get_child_count(), 2, "one PanelContainer per section")
 	var header_panel: PanelContainer = GameTooltip._sections.get_child(0)
-	var header_style: StyleBoxFlat = header_panel.get_theme_stylebox("panel")
-	assert_eq(header_style.bg_color, TooltipTheme.BG_HEADER)
+	assert_eq(_gloss_colors(header_panel), _expected_gloss([0, 0, 0]), "the title draws the untinted 2715 gradient")
 	var header_label: Label = header_panel.get_child(0).get_child(0)
 	assert_eq(header_label.text, "Title")
 	assert_eq(header_label.get_theme_color("font_color"), TooltipTheme.TEXT_TITLE)
@@ -75,53 +86,6 @@ func test_show_sections_makes_the_tooltip_visible_and_hide_tooltip_hides_it():
 	assert_false(GameTooltip._root.visible)
 
 
-func test_position_lands_beside_the_anchor_when_there_is_room():
-	var anchor: Control = add_child_autofree(Control.new())
-	anchor.position = Vector2(100, 100)
-	anchor.size = Vector2(30, 30)
-	GameTooltip.show_sections(_sections_fixture(), anchor)
-	await wait_process_frames(1)
-	assert_eq(
-		GameTooltip._root.position,
-		anchor.global_position + Vector2(anchor.size.x + GameTooltip.ANCHOR_GAP, 0.0)
-	)
-
-
-func test_position_flips_to_the_left_instead_of_covering_its_anchor():
-	var anchor: Control = add_child_autofree(Control.new())
-	# Far enough right that the tooltip cannot fit beside it, but with room to
-	# spare on the left - the rightmost class-select card's situation.
-	anchor.position = Vector2(600, 100)
-	anchor.size = Vector2(180, 300)
-	GameTooltip.show_sections(_sections_fixture(), anchor)
-	await wait_process_frames(1)
-	var tooltip_right: float = GameTooltip._root.position.x + GameTooltip._root.size.x
-	assert_almost_eq(
-		GameTooltip._root.position.x,
-		anchor.global_position.x - GameTooltip._root.size.x - GameTooltip.ANCHOR_GAP,
-		0.01,
-		"sits just left of the anchor"
-	)
-	assert_lt(tooltip_right, anchor.global_position.x, "clears the anchor entirely")
-
-
-func test_position_clamps_at_the_right_and_bottom_edges():
-	var anchor: Control = add_child_autofree(Control.new())
-	anchor.position = Vector2(790, 590)
-	anchor.size = Vector2(30, 30)
-	GameTooltip.show_sections(_sections_fixture(), anchor)
-	await wait_process_frames(1)
-	var viewport_size: Vector2 = GameTooltip.get_viewport().get_visible_rect().size
-	assert_true(
-		GameTooltip._root.position.x + GameTooltip._root.size.x <= viewport_size.x,
-		"tooltip stays inside the viewport's right edge"
-	)
-	assert_true(
-		GameTooltip._root.position.y + GameTooltip._root.size.y <= viewport_size.y,
-		"tooltip stays inside the viewport's bottom edge"
-	)
-
-
 # A Flash text field keeps 2 px between its edges and its text, and each line
 # stands in for one of KrinToolTipper's text fields, so every line pads its
 # text by 2 px and the box is its layout's text width plus 4.
@@ -154,12 +118,187 @@ func test_fields_stack_2_px_apart():
 	var lines: Array = body.get_child(0).get_children()
 	assert_eq(lines[1].position.y - lines[0].position.y - lines[0].size.y, 2.0, "2 px between the lines of a section")
 
+var _look: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/tooltip_look.json"))
 
-func test_position_clamps_at_the_left_and_top_edges():
+
+# -> the gradient stops of tooltip_look.json with add applied and clamped, read
+# by this test itself so a value typed into the port fails it.
+func _expected_gloss(add: Array) -> PackedColorArray:
+	var colors: PackedColorArray = PackedColorArray()
+	for stop: Dictionary in _look["gloss_stops"]:
+		var c: Array = stop["color"]
+		colors.append(Color8(
+			clampi(int(c[0]) + int(add[0]), 0, 255),
+			clampi(int(c[1]) + int(add[1]), 0, 255),
+			clampi(int(c[2]) + int(add[2]), 0, 255),
+			int(c[3])
+		))
+	return colors
+
+
+func _gloss_colors(panel: Control) -> PackedColorArray:
+	var gloss: TextureRect = panel.get_node_or_null("Gloss")
+	if gloss == null:
+		return PackedColorArray()
+	return (gloss.texture as GradientTexture2D).gradient.colors
+
+
+func _rare_item() -> GameItem:
+	for item: GameItem in ItemManagerAuto.items_by_id.values():
+		if item.rarity == GameItem.Rarity.RARE and item.item_type >= GameItem.ItemType.HEAD:
+			return item
+	return null
+
+
+func test_a_rare_items_title_bar_carries_the_rare_add_terms():
+	var slot: ItemSlot = add_child_autofree(preload("res://scenes/ui/item_slot.tscn").instantiate())
+	var item: GameItem = _rare_item()
+	assert_not_null(item, "items.json holds a Rare item")
+	slot.set_item(item)
+	slot.mouse_entered.emit()
+	var title: Control = GameTooltip._sections.get_child(0)
+	assert_eq(_gloss_colors(title), _expected_gloss(_look["rarity_add"]["Rare"]))
+	var level_line: Control = GameTooltip._sections.get_child(1)
+	assert_eq(_gloss_colors(level_line), _expected_gloss([0, 0, 0]), "only the title takes the rarity")
+
+
+# The original keeps the last item's rarity for a tooltip whose caller sets
+# none, because its frame 1 resets colorChage. ADR 0005 fixes that.
+func test_a_tooltip_with_no_rarity_after_a_rare_item_is_untinted():
+	var slot: ItemSlot = add_child_autofree(preload("res://scenes/ui/item_slot.tscn").instantiate())
+	slot.set_item(_rare_item())
+	slot.mouse_entered.emit()
 	var anchor: Control = add_child_autofree(Control.new())
-	anchor.position = Vector2(-50, -50)
-	anchor.size = Vector2(10, 10)
 	GameTooltip.show_sections(_sections_fixture(), anchor)
+	assert_eq(_gloss_colors(GameTooltip._sections.get_child(0)), _expected_gloss([0, 0, 0]))
+
+
+func test_the_cost_bar_draws_the_gradient_with_the_go2_add_terms():
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections([
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": "Title", "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_COST, "lines": [{"text": "Cost", "color": TooltipTheme.TEXT_SUBHEADER}]},
+	], anchor)
+	assert_eq(_gloss_colors(GameTooltip._sections.get_child(1)), _expected_gloss(_look["subheader_add"]["GO2"]))
+
+
+func test_a_flat_section_has_no_gradient():
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	assert_null(GameTooltip._sections.get_child(1).get_node_or_null("Gloss"))
+
+
+func _assert_every_section_has_a_black_1_px_border() -> void:
+	assert_gt(GameTooltip._sections.get_child_count(), 0)
+	for panel: Control in GameTooltip._sections.get_children():
+		var border: Panel = panel.get_node_or_null("Border")
+		assert_not_null(border, "%s has a border" % panel.name)
+		if border == null:
+			continue
+		var style: StyleBoxFlat = border.get_theme_stylebox("panel")
+		assert_false(style.draw_center)
+		assert_eq(style.border_color, Color.BLACK)
+		for side in [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]:
+			assert_eq(style.get_border_width(side), 1)
+
+
+func test_every_section_of_an_item_tooltip_has_its_border():
+	var slot: ItemSlot = add_child_autofree(preload("res://scenes/ui/item_slot.tscn").instantiate())
+	slot.set_item(_rare_item())
+	slot.mouse_entered.emit()
+	_assert_every_section_has_a_black_1_px_border()
+
+
+func test_every_section_of_an_ability_tooltip_has_its_border():
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections([
+		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": "Title", "color": TooltipTheme.TEXT_TITLE}]},
+		{"bg_color": TooltipTheme.BG_COST, "lines": [{"text": "Cost", "color": TooltipTheme.TEXT_SUBHEADER}]},
+		{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": "Body", "color": TooltipTheme.TEXT_BODY}]},
+		{"bg_color": TooltipTheme.BG_NEXT_RANK, "lines": [{"text": "Next", "color": TooltipTheme.TEXT_NEXT_RANK}]},
+	], anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY)
+	assert_eq(GameTooltip._sections.get_child_count(), 4)
+	_assert_every_section_has_a_black_1_px_border()
+
+
+# -> where the sections' left edge and the title's top land for a mouse at
+# point, after two frames so the containers have sorted the new Labels.
+func _placed_at(point: Vector2) -> Vector2:
+	_put_mouse_at(point)
+	await wait_process_frames(2)
+	return Vector2(GameTooltip._sections.global_position.x, GameTooltip._root.position.y)
+
+
+func test_the_tooltip_moves_with_the_mouse():
+	var anchor: Control = add_child_autofree(Control.new())
+	var layout: Dictionary = _look["layouts"]["GO"]
+	_put_mouse_at(Vector2(100, 100))
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	var first: Vector2 = await _placed_at(Vector2(100, 100))
+	assert_eq(first, Vector2(100 + float(layout["near_x"]), 100))
+	var second: Vector2 = await _placed_at(Vector2(220, 160))
+	assert_eq(second, Vector2(220 + float(layout["near_x"]), 160), "the tooltip follows a moved mouse")
+
+
+func test_the_fields_flip_to_the_mouses_left_at_the_limit():
+	var anchor: Control = add_child_autofree(Control.new())
+	var layout: Dictionary = _look["layouts"]["GO4"]
+	var x: float = float(layout["mouse_x_limit"])
+	_put_mouse_at(Vector2(x, 100))
+	GameTooltip.show_sections(_sections_fixture(), anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ITEM)
+	var placed: Vector2 = await _placed_at(Vector2(x, 100))
+	assert_eq(placed.x, x + float(layout["far_x"]))
+	var left_of_limit: Vector2 = await _placed_at(Vector2(x - 1, 100))
+	assert_eq(left_of_limit.x, x - 1 + float(layout["near_x"]))
+
+
+func test_the_plain_layout_moves_up_low_on_the_stage_and_the_item_layout_does_not():
+	var anchor: Control = add_child_autofree(Control.new())
+	var plain: Dictionary = _look["layouts"]["GO"]
+	var y: float = float(plain["mouse_y_limit"]) + 1
+	_put_mouse_at(Vector2(100, y))
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	assert_eq((await _placed_at(Vector2(100, y))).y, y + float(plain["low_shift_y"]))
+	assert_false(_look["layouts"]["GO4"].has("low_shift_y"), "the item layout has no move up")
+	GameTooltip.show_sections(_sections_fixture(), anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ITEM)
+	assert_eq((await _placed_at(Vector2(100, 400))).y, 400.0)
+
+
+# ADR 0012: a tooltip that would run past the Stage's bottom edge slides up.
+func test_a_tooltip_that_does_not_fit_stays_on_the_stage():
+	var anchor: Control = add_child_autofree(Control.new())
+	_put_mouse_at(Vector2(100, 560))
+	GameTooltip.show_sections(_sections_fixture(), anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ITEM)
+	await _placed_at(Vector2(100, 560))
+	var stage: Vector2 = GameTooltip.get_viewport().get_visible_rect().size
+	assert_almost_eq(GameTooltip._root.position.y + GameTooltip._root.size.y, stage.y, 0.01)
+	await _placed_at(Vector2(-40, -40))
+	assert_eq(GameTooltip._root.position, Vector2.ZERO, "and stays inside the top left corner")
+
+
+func test_the_tooltip_hides_when_its_anchor_leaves_the_tree():
+	var anchor: Control = Control.new()
+	add_child(anchor)
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	anchor.free()
 	await wait_process_frames(1)
-	assert_true(GameTooltip._root.position.x >= 0.0, "never positioned off the left edge")
-	assert_true(GameTooltip._root.position.y >= 0.0, "never positioned off the top edge")
+	assert_false(GameTooltip._root.visible)
+
+
+func test_an_ability_icons_tooltip_shows_the_title_alone_first():
+	var anchor: Control = add_child_autofree(Control.new())
+	var sections: Array = _sections_fixture()
+	GameTooltip.show_sections(sections, anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
+	var delay: float = float(_look["detail_delay_frames"]) / float(_look["frame_rate"])
+	assert_true(GameTooltip._sections.get_child(0).visible, "the title shows at once")
+	assert_false(GameTooltip._sections.get_child(1).visible, "the body waits")
+	GameTooltip._process(delay * 0.9)
+	assert_false(GameTooltip._sections.get_child(1).visible, "still waiting just before the delay ends")
+	GameTooltip._process(delay * 0.2)
+	assert_true(GameTooltip._sections.get_child(1).visible, "the body shows after the delay")
+
+
+func test_a_tooltip_without_the_delay_shows_every_section_at_once():
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	assert_true(GameTooltip._sections.get_child(1).visible)

@@ -89,6 +89,7 @@ BUTTON_HAS_BLEND_MODE = 0x20
 # The four FILLSTYLE types that point at a bitmap character.
 BITMAP_FILL_TYPES = (0x40, 0x41, 0x42, 0x43)
 SOLID_FILL_TYPE = 0x00
+LINEAR_GRADIENT_FILL_TYPE = 0x10
 
 ACTION_END = 0x00
 ACTION_NEXT_FRAME = 0x04
@@ -863,6 +864,34 @@ def first_fill_color(index: SwfIndex, cid: int) -> tuple[int, int, int, int] | N
         return r, g, b, a
     r, g, b = index.data[pos + 1 : pos + 4]
     return r, g, b, 255
+
+
+def first_gradient(
+    index: SwfIndex, cid: int
+) -> tuple[tuple, tuple[tuple[int, tuple[int, int, int, int]], ...]] | None:
+    """-> (matrix, stops) of a DefineShape's first fill style when it is a
+    linear gradient, or None when it is another fill or the shape has none.
+    matrix is as _read_matrix() reads it, and maps the gradient square, -16384
+    to 16384 on each axis, into the shape. Each stop is (ratio, (r, g, b, a)),
+    and DefineShape and DefineShape2 store no alpha, so theirs reads as 255."""
+    code, pos = _fill_style_array(index, cid)
+    data = index.data
+    count, pos = _fill_style_count(data, pos, code)
+    if count == 0 or data[pos] != LINEAR_GRADIENT_FILL_TYPE:
+        return None
+    matrix, pos = _read_matrix(data, pos + 1)
+    stop_count = data[pos] & 0x0F
+    pos += 1
+    rgba = code in (TAG_DEFINE_SHAPE3, TAG_DEFINE_SHAPE4)
+    stops = []
+    for _ in range(stop_count):
+        ratio = data[pos]
+        color = (
+            tuple(data[pos + 1 : pos + 5]) if rgba else (*data[pos + 1 : pos + 4], 255)
+        )
+        stops.append((ratio, color))
+        pos += 5 if rgba else 4
+    return matrix, tuple(stops)
 
 
 def first_line_style(
