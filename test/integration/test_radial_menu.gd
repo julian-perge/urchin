@@ -10,8 +10,10 @@ const FAR: Vector2 = Vector2(-1000, -1000)
 const LEADING_STRIKE_ID: int = 1
 const DESTROY_ID: int = 2
 const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
+const RING_LAYOUT_PATH: String = "res://assets/ui/battle/pass_button.json"
 
 var _layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(BATTLE_LAYOUT_PATH))
+var _ring_layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RING_LAYOUT_PATH))
 var _menu: RadialMenu
 var _player: CombatUnit
 var _enemy: CombatUnit
@@ -112,6 +114,26 @@ func _cover(bar_index: int) -> TextureRect:
 # The turns left on a cooldown, the original's "ACD" field.
 func _count(bar_index: int) -> Label:
 	return _menu.orbs[bar_index].get_node("Count")
+
+
+# The art the orb's thingo button draws over its icon.
+func _ring(bar_index: int) -> TextureRect:
+	return _menu.orbs[bar_index].get_node("Ring")
+
+
+# Where orb bar_index's art for a button state sits on the stage:
+# extract_pass_button's rect for it, scaled, around the menu's centre.
+func _ring_rect(bar_index: int, state: String) -> Rect2:
+	var rect: Dictionary = _ring_layout["orbs"][bar_index][state]["rect"]
+	return Rect2(CENTRE + Vector2(rect["x"], rect["y"]) * _ring_scale(), Vector2(rect["w"], rect["h"]) * _ring_scale())
+
+
+func _assert_ring(bar_index: int, state: String) -> void:
+	var ring: TextureRect = _ring(bar_index)
+	var want: Rect2 = _ring_rect(bar_index, state)
+	assert_eq(ring.texture, load(_ring_layout["orbs"][bar_index][state]["texture"]), "the %s art" % state)
+	assert_almost_eq(ring.get_global_rect().position, want.position, Vector2(0.01, 0.01), "where the %s art starts" % state)
+	assert_almost_eq(ring.size, want.size, Vector2(0.01, 0.01), "how big the %s art is" % state)
 
 
 func _tooltip_lines() -> Array:
@@ -523,3 +545,32 @@ func test_an_orbs_disc_takes_the_moves_element_colour():
 	var read: Color = preload("res://test/disc_reader.gd").disc_color(_menu.orbs[0].icon, "Leading_Strike")
 	for channel in 3:
 		assert_almost_eq(read[channel], expected[channel], 0.02, "channel %d" % channel)
+
+
+# Each thingo button draws shape 2434, a thin black ring, in its up state and
+# the thicker shape 2435 on over and down. DefineSprite 3382 places the buttons
+# at depths 113 to 127, above the icons at depths 1 to 99, so the ring is the
+# orb's last child, over the icon, the cover and the count.
+func test_an_idle_orb_draws_its_up_ring_and_a_hovered_orb_its_over_ring():
+	_open()
+	await wait_process_frames(1)
+	var orb: Button = _menu.orbs[0]
+	assert_eq(orb.get_child(orb.get_child_count() - 1), _ring(0), "the ring draws over everything else on the orb")
+	_assert_ring(0, "up")
+	orb.notification(Control.NOTIFICATION_MOUSE_ENTER)
+	await wait_process_frames(1)
+	_assert_ring(0, "over")
+	_assert_ring(1, "up")
+	orb.notification(Control.NOTIFICATION_MOUSE_EXIT)
+	await wait_process_frames(1)
+	_assert_ring(0, "up")
+
+
+# The ring art is all the original draws around an orb, so the Button draws no
+# box or border of its own in any state. The move's element colour shows on the
+# icon's disc instead.
+func test_an_orb_draws_no_box_or_border_of_its_own():
+	_open()
+	var orb: Button = _menu.orbs[0]
+	for state in ["normal", "hover", "pressed", "disabled", "focus"]:
+		assert_is(orb.get_theme_stylebox(state), StyleBoxEmpty, state)

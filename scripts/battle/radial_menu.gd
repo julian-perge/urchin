@@ -38,6 +38,20 @@ const FRAME_EPSILON: float = 0.000001
 # where it and the cooldown count sit on the orb.
 const COOLDOWN_LAYOUT_PATH: String = "res://assets/ui/abilities/cooldown.json"
 const COVER_PATH: String = "res://assets/ui/abilities/cooldown_cover.png"
+# extract_pass_button writes, for each orb, which art its thingo button draws in
+# each state and where that art sits in the Radial menu clip. The buttons draw
+# the same two rings as the pass button, so they share its PNGs.
+const RING_LAYOUT_PATH: String = "res://assets/ui/battle/pass_button.json"
+# The thingo button state whose art the orb shows for each draw mode of its
+# Button. A Flash button pressed and then dragged off shows its up art, and a
+# Godot Button in that case draws in DRAW_NORMAL, so the two agree.
+const RING_STATES: Dictionary = {
+	BaseButton.DRAW_NORMAL: "up",
+	BaseButton.DRAW_DISABLED: "up",
+	BaseButton.DRAW_HOVER: "over",
+	BaseButton.DRAW_PRESSED: "down",
+	BaseButton.DRAW_HOVER_PRESSED: "down",
+}
 # The ring's enterFrame sets the disc to 75% alpha while the ring fades in and to
 # 85% once it has (frame_217/PlaceObject3_3382_500 enterFrame, lines 16 and 42).
 const COVER_ALPHA_FADING_IN: float = 0.75
@@ -76,6 +90,7 @@ func _ready() -> void:
 	_box = Rect2(Vector2(box["x"], box["y"]) * ring_scale, Vector2(box["w"], box["h"]) * ring_scale)
 	_frame_time = 1.0 / float(battle_layout["fade"]["fps"])
 	var cover_texture: Texture2D = load(COVER_PATH)
+	var ring_layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RING_LAYOUT_PATH))
 	for bar_index in orbs.size():
 		var orb: Button = orbs[bar_index]
 		var rect: Dictionary = ring["orb_rects"][bar_index]
@@ -86,6 +101,9 @@ func _ready() -> void:
 		orb.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		orb.add_child(_make_cover(cover_texture, layout["cover"], orb.size / 2.0))
 		orb.add_child(_make_count(layout["count"], orb.size / 2.0))
+		orb.add_child(_make_ring(ring_layout["orbs"][bar_index], Vector2(rect["x"], rect["y"]), ring_scale))
+		_clear_orb_styles(orb)
+		orb.draw.connect(_show_ring.bind(orb))
 		orb.pressed.connect(_on_orb_pressed.bind(bar_index))
 		orb.mouse_entered.connect(_on_orb_entered.bind(bar_index))
 		orb.mouse_exited.connect(_on_orb_exited)
@@ -119,6 +137,43 @@ func _make_count(text_layout: Dictionary, centre: Vector2) -> Label:
 	count.add_theme_color_override("font_color", Color(text_layout["color"]))
 	count.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return count
+
+
+# The art of the orb's thingo button. It holds each state's texture and rect,
+# in the orb's own coordinates, as metadata, and _show_ring() picks one.
+func _make_ring(states: Dictionary, orb_origin: Vector2, ring_scale: float) -> TextureRect:
+	var ring := TextureRect.new()
+	ring.name = "Ring"
+	ring.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for state in states:
+		var rect: Dictionary = states[state]["rect"]
+		ring.set_meta(state, {
+			"texture": load(states[state]["texture"]),
+			"rect": Rect2((Vector2(rect["x"], rect["y"]) - orb_origin) * ring_scale, Vector2(rect["w"], rect["h"]) * ring_scale),
+		})
+	_set_ring_state(ring, "up")
+	return ring
+
+
+# The thingo button art is all the original draws around an orb, so the Button
+# draws no box of its own.
+func _clear_orb_styles(orb: Button) -> void:
+	for state in ["normal", "hover", "pressed", "hover_pressed", "disabled", "focus"]:
+		orb.add_theme_stylebox_override(state, StyleBoxEmpty.new())
+
+
+# The Button redraws whenever its draw mode changes, so each redraw shows the
+# art of the state the Button is in.
+func _show_ring(orb: Button) -> void:
+	_set_ring_state(orb.get_node("Ring") as TextureRect, RING_STATES[orb.get_draw_mode()])
+
+
+func _set_ring_state(ring: TextureRect, state: String) -> void:
+	var art: Dictionary = ring.get_meta(state)
+	ring.texture = art["texture"]
+	ring.position = art["rect"].position
+	ring.size = art["rect"].size
 
 
 func _process(delta: float) -> void:
@@ -230,7 +285,6 @@ func _dress_orb(bar_index: int, player: CombatUnit, target: CombatUnit) -> bool:
 	(orb.get_node("Cover") as TextureRect).visible = bad_target or turns_left > 0
 	(orb.get_node("Count") as Label).text = str(turns_left) if turns_left > 0 else ""
 	orb.icon = AbilityIcon.for_move(move)
-	_style_orb(orb, _move_color(move))
 	return true
 
 
@@ -289,19 +343,3 @@ func _tooltip_sections(move: Ability) -> Array:
 		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": body_lines})
 	return sections
 
-
-func _move_color(move: Ability) -> Color:
-	var element_index: CombatUnit.Element = move.damage_element_type
-	return MenuTheme.ELEMENT_COLORS[element_index] if element_index != -1 else Color(0.5, 0.5, 0.5)
-
-
-func _style_orb(orb: Button, color: Color) -> void:
-	for state in ["normal", "hover", "pressed"]:
-		var style: StyleBoxFlat = StyleBoxFlat.new()
-		var bg: Color = Color(0.08, 0.08, 0.1)
-		style.bg_color = bg.lightened(0.1) if state == "hover" else bg
-		style.border_color = color
-		style.set_border_width_all(2)
-		style.set_corner_radius_all(99)
-		orb.add_theme_stylebox_override(state, style)
-	orb.add_theme_font_size_override("font_size", 9)
