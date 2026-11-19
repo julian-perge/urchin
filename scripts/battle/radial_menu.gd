@@ -98,16 +98,31 @@ func _ready() -> void:
 		orb.custom_minimum_size = Vector2(rect["w"], rect["h"]) * ring_scale
 		orb.size = orb.custom_minimum_size
 		orb.position = Vector2(rect["x"], rect["y"]) * ring_scale
-		orb.expand_icon = true
-		orb.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		orb.add_child(_make_cover(cover_texture, layout["cover"], orb.size / 2.0))
-		orb.add_child(_make_count(layout["count"], orb.size / 2.0))
-		orb.add_child(_make_ring(ring_layout["orbs"][bar_index], Vector2(rect["x"], rect["y"]), ring_scale))
+		var orb_layout: Dictionary = ring_layout["orbs"][bar_index]
+		var icon: TextureRect = _make_icon(orb_layout["icon"], Vector2(rect["x"], rect["y"]), ring_scale)
+		var icon_centre: Vector2 = icon.position + icon.size / 2.0
+		orb.add_child(icon)
+		orb.add_child(_make_cover(cover_texture, layout["cover"], icon_centre))
+		orb.add_child(_make_count(layout["count"], icon_centre))
+		orb.add_child(_make_ring(orb_layout["states"], Vector2(rect["x"], rect["y"]), ring_scale))
 		_clear_orb_styles(orb)
 		orb.draw.connect(_show_ring.bind(orb))
 		orb.pressed.connect(_on_orb_pressed.bind(bar_index))
 		orb.mouse_entered.connect(_on_orb_entered.bind(bar_index))
 		orb.mouse_exited.connect(_on_orb_exited)
+
+
+# The move's icon, the original's thing0 to thing7, which the clip places near
+# its button but not on its centre. The cover and the count are part of the
+# icon sheet in the original, so they centre on the icon too.
+func _make_icon(rect: Dictionary, orb_origin: Vector2, ring_scale: float) -> TextureRect:
+	var icon := TextureRect.new()
+	icon.name = "Icon"
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.position = (Vector2(rect["x"], rect["y"]) - orb_origin) * ring_scale
+	icon.size = Vector2(rect["w"], rect["h"]) * ring_scale
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return icon
 
 
 # The original's "bfilter", the black disc over a darkened orb.
@@ -285,7 +300,7 @@ func _dress_orb(bar_index: int, player: CombatUnit, target: CombatUnit) -> bool:
 	var turns_left: int = int(player.ability_cooldowns[bar_index]) if bar_index < player.ability_cooldowns.size() else 0
 	(orb.get_node("Cover") as TextureRect).visible = bad_target or turns_left > 0
 	(orb.get_node("Count") as Label).text = str(turns_left) if turns_left > 0 else ""
-	orb.icon = AbilityIcon.for_move(move)
+	(orb.get_node("Icon") as TextureRect).texture = AbilityIcon.for_move(move)
 	return true
 
 

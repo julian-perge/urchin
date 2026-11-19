@@ -102,3 +102,8 @@ def test_an_orb_that_draws_the_art_larger_than_the_pass_button_is_refused():
     shapes = {"up": UP_RING, "over": OVER_RING, "down": OVER_RING}
     with pytest.raises(RuntimeError, match="larger than"):
         pass_button.check_orb(3379, shapes, dict(shapes), 1.5, 1.4)
+
+
+def test_an_orbs_icon_rect_is_named_for_its_placement_when_it_stretches():
+    with pytest.raises(RuntimeError, match="thing3 is scaled unevenly"):
+        pass_button.icon_rect((1.0, 0.0, 0.0, 2.0, 0, 0), 15.5, "thing3")

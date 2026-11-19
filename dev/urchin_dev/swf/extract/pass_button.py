@@ -25,10 +25,11 @@
 # The Radial menu's buttons thingo0 to thingo7 draw the same two rings over
 # their icons, so the port draws each orb with these PNGs too. For each orb,
 # "orbs" holds each state's rect in the Radial menu clip's own px, as
-# battle_layout.json's orb_rects does. This raises unless every orb draws the
-# same shape in each state as the pass button, and unless no orb draws them
-# larger on the Stage than the pass button does, so each PNG holds at least
-# ZOOM pixels for each Stage px on an orb too.
+# battle_layout.json's orb_rects does. It also holds the rect of the icon under
+# each orb, thing0 to thing7, worked out as krinToMove's is. This raises unless
+# every orb draws the same shape in each state as the pass button, and unless no
+# orb draws them larger on the Stage than the pass button does, so each PNG
+# holds at least ZOOM pixels for each Stage px on an orb too.
 #
 # Requires ffdec.
 # Run: uv run extract_pass_button
@@ -73,6 +74,8 @@ BUTTON = 3383
 BUTTON_NAME = "krinToMove2"
 ICON_NAME = "krinToMove"
 ICON_MASK = 2242
+# The Radial menu clip names the icon under each orb button thing0 to thing7.
+ORB_ICON_NAME = "thing"
 # The states a player sees, in the order that names a PNG: a shape that two
 # states draw is named for the first of them.
 STATES = ("up", "over", "down")
@@ -169,8 +172,8 @@ def orb_layouts(
     names: dict[int, str],
     pass_scale: float,
 ) -> list[dict]:
-    """-> state_rects() for each orb button of the Radial menu clip, in the
-    clip's own px, in orb order."""
+    """-> for each orb of the Radial menu clip, in orb order, the rect of its
+    icon and state_rects() for its button, in the clip's own px."""
     selector = placement(layers, SELECTOR, SELECTOR_NAME)
     if selector.matrix[0] != selector.matrix[3]:
         raise RuntimeError(f"{SELECTOR_NAME} is scaled unevenly: {selector.matrix}")
@@ -192,15 +195,25 @@ def orb_layouts(
         check_orb(
             cid, shapes, pass_shapes, selector.matrix[0] * button.matrix[0], pass_scale
         )
-        orbs.append(state_rects(button.matrix, shapes, bounds, names))
+        icon = by_name[f"{ORB_ICON_NAME}{n}"]
+        if icon.character_id != ability_icons.ICON_SPRITE:
+            raise RuntimeError(
+                f"{icon.name} shows {icon.character_id}, not the icon sheet"
+            )
+        orbs.append(
+            {
+                "icon": icon_rect(icon.matrix, ability_icons.ICON_HALF, icon.name),
+                "states": state_rects(button.matrix, shapes, bounds, names),
+            }
+        )
     return orbs
 
 
-def icon_rect(matrix, half: float) -> dict[str, float]:
-    """-> the Stage rect of an icon `half` px from its centre on each side,
-    which `matrix` places and scales."""
+def icon_rect(matrix, half: float, name: str = ICON_NAME) -> dict[str, float]:
+    """-> the rect of an icon `half` px from its centre on each side, which
+    `matrix` places and scales, in the px of the clip that places it."""
     if matrix[0] != matrix[3]:
-        raise RuntimeError(f"{ICON_NAME} is scaled unevenly: {matrix}")
+        raise RuntimeError(f"{name} is scaled unevenly: {matrix}")
     twips = half * render.TWIPS
     return px_rect(
         placed_rect(matrix, timeline.IDENTITY, (-twips, -twips, twips, twips))

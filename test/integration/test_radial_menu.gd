@@ -121,6 +121,11 @@ func _count(bar_index: int) -> Label:
 	return _menu.orbs[bar_index].get_node("Count")
 
 
+# The move's icon, the original's thing0 to thing7.
+func _icon(bar_index: int) -> TextureRect:
+	return _menu.orbs[bar_index].get_node("Icon")
+
+
 # The art the orb's thingo button draws over its icon.
 func _ring(bar_index: int) -> TextureRect:
 	return _menu.orbs[bar_index].get_node("Ring")
@@ -129,14 +134,14 @@ func _ring(bar_index: int) -> TextureRect:
 # Where orb bar_index's art for a button state sits on the stage:
 # extract_pass_button's rect for it, scaled, around the menu's centre.
 func _ring_rect(bar_index: int, state: String) -> Rect2:
-	var rect: Dictionary = _ring_layout["orbs"][bar_index][state]["rect"]
+	var rect: Dictionary = _ring_layout["orbs"][bar_index]["states"][state]["rect"]
 	return Rect2(CENTRE + Vector2(rect["x"], rect["y"]) * _ring_scale(), Vector2(rect["w"], rect["h"]) * _ring_scale())
 
 
 func _assert_ring(bar_index: int, state: String) -> void:
 	var ring: TextureRect = _ring(bar_index)
 	var want: Rect2 = _ring_rect(bar_index, state)
-	assert_eq(ring.texture, load(_ring_layout["orbs"][bar_index][state]["texture"]), "the %s art" % state)
+	assert_eq(ring.texture, load(_ring_layout["orbs"][bar_index]["states"][state]["texture"]), "the %s art" % state)
 	assert_almost_eq(ring.get_global_rect().position, want.position, Vector2(0.01, 0.01), "where the %s art starts" % state)
 	assert_almost_eq(ring.size, want.size, Vector2(0.01, 0.01), "how big the %s art is" % state)
 
@@ -365,15 +370,15 @@ func test_a_refused_pick_leaves_the_next_orb_free_to_pick_the_move_and_close_the
 	assert_false(_menu.visible, "and closes the menu")
 
 
-# The cover is DefineSprite 2241, a black disc 23 px across on the orb's centre,
+# The cover is DefineSprite 2241, a black disc 23 px across on the icon's centre,
 # which the ring's enterFrame sets to 75% alpha while it fades in and 85% once
 # it has (lines 16 and 42).
 # The count is edit text 2245, 12 px grey and centred, laid out 2 px inside
-# bounds that the orb places 17.2 px left of and 8.65 px above its centre.
+# bounds that the icon sheet places 17.2 px left of and 8.65 px above its centre.
 func test_a_darkened_orb_takes_the_originals_cover_and_count():
 	_player.ability_cooldowns[0] = 3
 	_open()
-	var centre: Vector2 = _orb_centre(0)
+	var centre: Vector2 = _icon(0).get_global_rect().get_center()
 	var cover: TextureRect = _cover(0)
 	assert_almost_eq(cover.get_global_rect().position - centre, Vector2(-11.5, -11.5), Vector2(0.5, 0.5), "the disc sits on the centre")
 	assert_almost_eq(cover.size, Vector2(23, 23), Vector2(0.5, 0.5), "23 px across")
@@ -521,8 +526,9 @@ func test_an_orbs_tooltip_carries_the_moves_description():
 func test_an_orb_shows_the_moves_icon_art_not_initials():
 	_open()
 	var orb: Button = _menu.orbs[0]
-	assert_not_null(orb.icon, "loaded the move's real extracted icon art")
-	assert_eq(orb.icon, AbilityIcon.texture("Leading_Strike", AbilityIcon.element_color(_moves[LEADING_STRIKE_ID])))
+	var icon: TextureRect = _icon(0)
+	assert_not_null(icon.texture, "loaded the move's real extracted icon art")
+	assert_eq(icon.texture, AbilityIcon.texture("Leading_Strike", AbilityIcon.element_color(_moves[LEADING_STRIKE_ID])))
 	assert_eq(orb.text, "", "no 2-letter initials now that real art is shown")
 
 
@@ -548,7 +554,7 @@ func test_an_orbs_disc_takes_the_moves_element_colour():
 	_open()
 	var move: Ability = _moves[LEADING_STRIKE_ID]
 	var expected: Color = MenuTheme.ELEMENT_COLORS[move.damage_element_type]
-	var read: Color = preload("res://test/disc_reader.gd").disc_color(_menu.orbs[0].icon, "Leading_Strike")
+	var read: Color = preload("res://test/disc_reader.gd").disc_color(_icon(0).texture, "Leading_Strike")
 	for channel in 3:
 		assert_almost_eq(read[channel], expected[channel], 0.02, "channel %d" % channel)
 
@@ -580,3 +586,18 @@ func test_an_orb_draws_no_box_or_border_of_its_own():
 	var orb: Button = _menu.orbs[0]
 	for state in ["normal", "hover", "pressed", "disabled", "focus"]:
 		assert_is(orb.get_theme_stylebox(state), StyleBoxEmpty, state)
+
+
+# The Radial menu clip places each icon, thing0 to thing7, on its own spot near
+# its button, and extract_pass_button writes that rect. The icon is the orb's
+# first child, so the cover, the count and the ring draw over it.
+func test_every_orbs_icon_sits_where_the_clip_places_its_thing():
+	_open()
+	for bar_index in 2:
+		var icon: TextureRect = _icon(bar_index)
+		var rect: Dictionary = _ring_layout["orbs"][bar_index]["icon"]
+		var want := Rect2(CENTRE + Vector2(rect["x"], rect["y"]) * _ring_scale(), Vector2(rect["w"], rect["h"]) * _ring_scale())
+		assert_eq(_menu.orbs[bar_index].get_child(0), icon, "orb %d's icon draws under the rest" % bar_index)
+		assert_almost_eq(icon.get_global_rect().position, want.position, Vector2(0.01, 0.01), "orb %d's icon corner" % bar_index)
+		assert_almost_eq(icon.size, want.size, Vector2(0.01, 0.01), "orb %d's icon size" % bar_index)
+		assert_null(_menu.orbs[bar_index].icon, "the Button draws no icon of its own")
