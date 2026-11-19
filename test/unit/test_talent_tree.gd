@@ -46,6 +46,16 @@ func test_active_node_rank_up_replaces_move_everywhere():
 	assert_eq(save.skill_points, 16, "1 point per rank")
 
 
+# The original rebuilds moveMatrix2 with for..in over skillAdderMatrix, which
+# walks the array from node 37 down to node 0 (DECODED_ALGORITHMS.md, "for..in
+# order over arrays"), so a higher node's move comes before a lower node's move.
+func test_known_moves_rebuild_in_descending_node_order():
+	save.skill_points = 20
+	assert_eq(TalentTree.learn(save, 0), TalentTree.LearnResult.OK)
+	assert_eq(TalentTree.learn(save, 2), TalentTree.LearnResult.OK)
+	assert_eq(save.move_matrix2, [1, 6, 126, 100], "node 2 before node 0, after the starting moves")
+
+
 func test_level_gates():
 	save.skill_points = 20
 	TalentTree.learn(save, 0)  # node 4's prerequisite
