@@ -164,10 +164,10 @@ convert-menu-math *args:
 convert-buff-looks *args:
     uv run convert_buff_looks "$@"
 
-[doc('Run convert_model1_sound_cues, which reads the sounds the MODEL1 doll clip plays into JSON')]
+[doc('Run convert_model_sound_cues, which reads the sounds the MODEL1 and MODEL4 doll clips play into JSON')]
 [group('convert')]
-convert-model1-sound-cues *args:
-    uv run convert_model1_sound_cues "$@"
+convert-model-sound-cues *args:
+    uv run convert_model_sound_cues "$@"
 
 [doc('Run convert_moves, which converts the extracted data into JSON and Godot resources')]
 [group('convert')]
@@ -294,15 +294,15 @@ extract-gd-index *args:
 extract-label-xref *args: (require "ffdec" "java")
     uv run extract_label_xref "$@"
 
-[doc('Run extract_model1_animations, which reads the SWF through ffdec')]
-[group('extract')]
-extract-model1-animations *args: (require "ffdec" "java")
-    uv run extract_model1_animations "$@"
-
 [doc('Run extract_member_rows, which reads the SWF without ffdec')]
 [group('extract')]
 extract-member-rows *args:
     uv run extract_member_rows "$@"
+
+[doc('Run extract_model_animations, which reads the SWF without ffdec')]
+[group('extract')]
+extract-model-animations *args:
+    uv run extract_model_animations "$@"
 
 [doc('Run extract_result_flash, which reads the SWF without ffdec')]
 [group('extract')]

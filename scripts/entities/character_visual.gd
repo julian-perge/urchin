@@ -1,17 +1,16 @@
 # character_visual.gd
 # 2D paper-doll character, the replacement for the abandoned Skeleton2D + IK
-# rig. Ported from the original Flash MODEL1 clip + dressChar()
-# (frame217_KRIN_BATTLE_SCENE/2_dressing_chars.txt):
+# rig. Ported from the original Flash model clips (MODEL1, and MODEL4 for the
+# female units) + dressChar() (frame217_KRIN_BATTLE_SCENE/2_dressing_chars.txt):
 #
 # - The doll is a flat set of Sprite2D "parts" (head/chest/arms/legs/weapons),
-#   each at a fixed rest transform pulled directly from the MODEL1 timeline
-#   (exact translate/scale/rotate from the SWF, twips -> px). No bones, no IK -
-#   the original was nested MovieClips with keyframe tweens, which maps to plain
-#   Node2D transforms.
+#   whose rest pose is frame 1 of the model's timeline (the exact affine matrix
+#   from the SWF, twips -> px). No bones, no IK - the original was nested
+#   MovieClips with keyframe tweens, which maps to plain Node2D transforms.
 # - Each part composites up to three texture layers: the base skin
 #   (<G>_S<CODE>_<skin>), the equipped-item art (<G>_<CODE>_<looks> for armor,
 #   M_<CODE>_<looks> for weapons), and hair on the head. dress() rebuilds them.
-# - Animation plays the original MODEL1 keyframe timeline directly (stand/
+# - Animation plays the model's original keyframe timeline directly (stand/
 #   run/Attack*/runback/cast/stun/stun2/outofstun/hit/dead); only the melee
 #   run-to-target motion is code-driven (the original's krinMelee/krinBoltMake
 #   were code too, not a skeletal solve) - see DECODED_ALGORITHMS.md.
@@ -25,7 +24,7 @@ signal attack_connected
 signal state_finished(state: int)
 # Emitted once the Runback has brought the doll home.
 signal melee_finished
-# Emitted on the frame of a swing whose script in the MODEL1 clip plays a sound,
+# Emitted on the frame of a swing whose script in the model's clip plays a sound,
 # with that sound's name for the audio manager, such as "sfx_swing".
 signal sound_cue(cue: String)
 
@@ -41,14 +40,21 @@ const SPRITE_ROOT: String = "res://resources/sprites"
 # each layer is positioned at (x, y) and scaled to w/h - without this every
 # part draws top-left-at-joint at export resolution (the giant-blob bug).
 const OFFSETS_FILE: String = SPRITE_ROOT + "/doll_offsets.json"
-# The original MODEL1 keyframe animations (extract_model1_animations.py):
-# per-frame full affine matrices per part, 30 fps, labeled segments
-# (stand/run/Attack/runback/hit/dead/... - see DECODED_ALGORITHMS.md).
-const ANIMATIONS_FILE: String = SPRITE_ROOT + "/model1_animations.json"
-# The sounds the MODEL1 clip's frame scripts play (convert_model1_sound_cues):
-# the 1-based frame as a string -> the cue names of that frame. The three swing
-# labels each hold one "sfx_swing", and no other frame has a cue.
-const SOUND_CUES_FILE: String = "res://dev/converted_json/model1_sound_cues.json"
+# The models whose own clip the doll plays, as extract_model_animations and
+# convert_model_sound_cues write them. dressChar attaches the unit's model[0]
+# clip (frame_217/DoAction_2.as:17). Every other model plays MODEL1's clip,
+# because MODEL5 to MODEL8 have fewer named parts than the doll's 15 and MODEL2
+# and MODEL9 name none.
+const CLIP_MODELS: Array[String] = ["MODEL1", "MODEL4"]
+const DEFAULT_MODEL: String = "MODEL1"
+# Each model's keyframe animations (animations_file): per-frame full affine
+# matrices per part, 30 fps, labeled segments (stand/run/Attack/runback/hit/
+# dead/... - see DECODED_ALGORITHMS.md), and each part's depth.
+const ANIMATIONS_FILE: String = SPRITE_ROOT + "/%s_animations.json"
+# The sounds each model's frame scripts play (sound_cues_file): the 1-based
+# frame as a string -> the cue names of that frame. Only the swing labels hold
+# a cue, "sfx_swing".
+const SOUND_CUES_FILE: String = "res://dev/converted_json/%s_sound_cues.json"
 
 # krinMelee (frame_42/DoAction_4.as:36-135) moves the fighter on every frame of
 # its swing:
@@ -91,33 +97,31 @@ static var _shadow_layout: Dictionary = {}
 static var _shadow_layout_loaded: bool = false
 static var _offsets: Dictionary = {}
 static var _offsets_loaded: bool = false
+# model -> the parsed animations_file and sound_cues_file of that model.
 static var _animations: Dictionary = {}
-static var _animations_loaded: bool = false
 static var _sound_cues: Dictionary = {}
-static var _sound_cues_loaded: bool = false
 
-# dollPartsArray order (also the back-to-front draw order once sorted by z).
-# tx/ty/sx/sy/rot are the exact MODEL1 rest-pose matrix (SWF twips converted
-# to px); z is the original depth (higher = drawn in front). skin_code is the
-# base-skin part code (dollPartsCores2); equip_slot indexes the 7-slot
-# equip_array (dollPartsCores). Thighs (leg1/leg2) reuse the ARM art, exactly
-# as the original does.
-const REST_POSE: Dictionary[Variant, Variant] = {
-	"arm2":     {"tx": 7.9,   "ty": -18.4, "sx": 0.80,  "sy": 0.80, "rot": -2,  "z": 3,  "skin_code": "ARM",      "equip_slot": 1},
-	"hand2":    {"tx": 11.6,  "ty": -8.5,  "sx": -0.71, "sy": 0.71, "rot": 153, "z": 5,  "skin_code": "HAND",     "equip_slot": 2},
-	"weapon2":  {"tx": 18.8,  "ty": -17.9, "sx": 0.76,  "sy": 0.76, "rot": 19,  "z": 7,  "skin_code": "WEAPON",   "equip_slot": 6},
-	"foot2":    {"tx": 10.9,  "ty": 32.7,  "sx": 0.80,  "sy": 0.80, "rot": 0,   "z": 9,  "skin_code": "FOOT",     "equip_slot": 4},
-	"leg2":     {"tx": 6.0,   "ty": 4.8,   "sx": 0.79,  "sy": 0.66, "rot": -35, "z": 11, "skin_code": "ARM",      "equip_slot": 3},
-	"leg4":     {"tx": 9.3,   "ty": 21.4,  "sx": 0.80,  "sy": 0.80, "rot": 1,   "z": 13, "skin_code": "LEG2",     "equip_slot": 4},
-	"foot1":    {"tx": -11.1, "ty": 37.4,  "sx": 1.00,  "sy": 1.00, "rot": -2,  "z": 15, "skin_code": "FOOT",     "equip_slot": 4},
-	"leg1":     {"tx": -2.4,  "ty": 3.7,   "sx": 1.18,  "sy": 0.99, "rot": 8,   "z": 17, "skin_code": "ARM",      "equip_slot": 3},
-	"leg3":     {"tx": -8.6,  "ty": 24.2,  "sx": 0.93,  "sy": 0.93, "rot": 21,  "z": 19, "skin_code": "LEG2",     "equip_slot": 4},
-	"chest":    {"tx": 0.5,   "ty": -16.9, "sx": 0.99,  "sy": 0.99, "rot": 7,   "z": 21, "skin_code": "CHEST",    "equip_slot": 1},
-	"head":     {"tx": 4.8,   "ty": -33.8, "sx": 1.00,  "sy": 1.00, "rot": 0,   "z": 23, "skin_code": "HEAD",     "equip_slot": 0},
-	"arm1":     {"tx": -7.1,  "ty": -20.0, "sx": 0.88,  "sy": 0.88, "rot": 28,  "z": 25, "skin_code": "ARM",      "equip_slot": 1},
-	"shoulder": {"tx": -4.5,  "ty": -27.1, "sx": 1.00,  "sy": 1.00, "rot": 0,   "z": 27, "skin_code": "SHOULDER", "equip_slot": 1},
-	"weapon1":  {"tx": 9.2,   "ty": -19.2, "sx": 0.87,  "sy": 0.87, "rot": 30,  "z": 29, "skin_code": "WEAPON",   "equip_slot": 5},
-	"hand1":    {"tx": -5.4,  "ty": -7.5,  "sx": 0.69,  "sy": 0.69, "rot": -47, "z": 31, "skin_code": "HAND",     "equip_slot": 5},
+# dressChar's dollPartsArray. skin_code is the base-skin part code
+# (dollPartsCores2); equip_slot indexes the 7-slot equip_array
+# (dollPartsCores). Thighs (leg1/leg2) reuse the ARM art, exactly as the
+# original does. Each part's place and draw order come from the model's
+# timeline.
+const DOLL_PARTS: Dictionary[String, Dictionary] = {
+	"head":     {"skin_code": "HEAD",     "equip_slot": 0},
+	"chest":    {"skin_code": "CHEST",    "equip_slot": 1},
+	"arm1":     {"skin_code": "ARM",      "equip_slot": 1},
+	"arm2":     {"skin_code": "ARM",      "equip_slot": 1},
+	"hand1":    {"skin_code": "HAND",     "equip_slot": 2},
+	"hand2":    {"skin_code": "HAND",     "equip_slot": 2},
+	"leg1":     {"skin_code": "ARM",      "equip_slot": 3},
+	"leg2":     {"skin_code": "ARM",      "equip_slot": 3},
+	"leg3":     {"skin_code": "LEG2",     "equip_slot": 4},
+	"leg4":     {"skin_code": "LEG2",     "equip_slot": 4},
+	"foot1":    {"skin_code": "FOOT",     "equip_slot": 4},
+	"foot2":    {"skin_code": "FOOT",     "equip_slot": 4},
+	"weapon1":  {"skin_code": "WEAPON",   "equip_slot": 5},
+	"weapon2":  {"skin_code": "WEAPON",   "equip_slot": 6},
+	"shoulder": {"skin_code": "SHOULDER", "equip_slot": 1},
 }
 
 # Menus show the doll as a static mannequin (the original only animates in
@@ -125,6 +129,8 @@ const REST_POSE: Dictionary[Variant, Variant] = {
 @export var animate: bool = true
 
 var _parts: Dictionary = {}  # name -> Node2D holding the layered sprites
+# The model whose clip the doll plays, one of CLIP_MODELS.
+var _model: String = DEFAULT_MODEL
 var _body: CanvasGroup
 var _body_material: ShaderMaterial
 # The look the doll's buffs give it (show_buff_look): the color offsets and the
@@ -138,7 +144,7 @@ var _buff_margins: Vector2 = Vector2.ZERO
 var _state: int = State.IDLE
 var _attack_fired: bool = false
 
-# Timeline playback (labels from model1_animations.json).
+# Timeline playback (labels from the model's animations file).
 var _label: String = ""
 var _label_frames: float = 0.0
 var _label_finished: bool = false
@@ -190,19 +196,15 @@ func _ready():
 	# what the buff glows ask of the shader.
 	get_viewport().size_changed.connect(_apply_buff_look)
 	_apply_buff_look()
-	var ordered: Array = REST_POSE.keys()
-	ordered.sort_custom(func(a, b): return REST_POSE[a]["z"] < REST_POSE[b]["z"])
-	for part_name in ordered:
-		var pose = REST_POSE[part_name]
+	for part_name in DOLL_PARTS:
 		var part: Node2D = Node2D.new()
 		part.name = part_name
-		part.position = Vector2(pose["tx"], pose["ty"])
-		part.scale = Vector2(pose["sx"], pose["sy"])
-		part.rotation_degrees = pose["rot"]
 		_body.add_child(part)
 		_parts[part_name] = part
+	_order_parts()
 	# Animated dolls start on the original stand loop; static mannequins
-	# (menus) keep the rest pose above.
+	# (menus) keep MODEL1's rest pose.
+	_apply_frame_index(0)
 	if animate:
 		set_state(State.IDLE)
 
@@ -218,13 +220,13 @@ func wear_form(form: Dictionary, equip_looks: Array, stunned: bool) -> void:
 		if equip[slot] == "":
 			equip[slot] = equip_looks[slot]
 	dress(form["gender"], form["skin"], form["hair"], equip)
-	_start_new_clip(form["model"], stunned)
+	start_clip(form["model"], stunned)
 
 
 # Redraws the doll as its unit's own form, which changeForm does for "STANDARD".
 func wear_own_form(model: Array, equip_looks: Array, stunned: bool) -> void:
 	dress_from_model(model, equip_looks)
-	_start_new_clip(str(model[0]), stunned)
+	start_clip(str(model[0]), stunned)
 
 
 # Moves the doll `dy` px down inside its rig, and its saved home with it, so a
@@ -234,11 +236,16 @@ func shift_down(dy: float) -> void:
 	_home_position.y += dy
 
 
-# dressChar removes the doll's clip and attaches a new one, which starts on its
-# first frame, and the shadow is a part of that clip. changeForm then puts a
-# stunned unit's new clip in the stun loop (frame_42/DoAction_10.as:533-536).
-func _start_new_clip(model: String, stunned: bool) -> void:
+# dressChar removes the doll's clip and attaches a new clip of `model`, which
+# starts on its first frame, and the shadow is a part of that clip. From then on
+# the doll draws its parts in the model's depth order and plays the model's
+# labels and sound cues, or MODEL1's for a model outside CLIP_MODELS. changeForm
+# then puts a stunned unit's new clip in the stun loop
+# (frame_42/DoAction_10.as:533-536).
+func start_clip(model: String, stunned: bool = false) -> void:
 	show_shadow(model)
+	_model = model if CLIP_MODELS.has(model) else DEFAULT_MODEL
+	_order_parts()
 	set_state(State.IDLE)
 	if stunned:
 		_state = State.STUN
@@ -278,7 +285,7 @@ func dress(gender: String, skin: String, hair: String, equip: Array) -> void:
 		var part: Node2D = _parts[part_name]
 		for child in part.get_children():
 			child.queue_free()
-		var pose = REST_POSE[part_name]
+		var pose: Dictionary = DOLL_PARTS[part_name]
 		# Base skin layer (weapons have no skin layer - only equipped art).
 		if pose["skin_code"] != "WEAPON":
 			_add_layer(part, "%s/%s_S%s_%s.png" % [SPRITE_ROOT, gender, pose["skin_code"], skin])
@@ -408,7 +415,7 @@ func exit_stun() -> void:
 
 
 func _valid_attack_label(label: String) -> String:
-	var animations: Dictionary = _load_animations()
+	var animations: Dictionary = _timeline()
 	if animations.get("labels", {}).has(label):
 		return label
 	return "Attack"
@@ -535,7 +542,7 @@ func _process(delta: float) -> void:
 			_play_death(delta)
 
 
-# --- timeline playback (model1_animations.json) ------------------------------
+# --- timeline playback (the model's animations file) --------------------------
 
 func _start_label(label: String) -> void:
 	_label = label
@@ -546,7 +553,7 @@ func _start_label(label: String) -> void:
 
 # Returns how many SWF frames `label` lasts.
 func _label_length(label: String) -> float:
-	var animations: Dictionary = _load_animations()
+	var animations: Dictionary = _timeline()
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return 15.0
@@ -570,7 +577,7 @@ func _advance_label(delta: float, loop: bool) -> void:
 # Applies the pose `frames` SWF frames into a labeled segment: every part gets
 # the original frame's full affine matrix (rotation, scale, AND skew).
 func _apply_label_frame(label: String, frames: float) -> void:
-	var animations: Dictionary = _load_animations()
+	var animations: Dictionary = _timeline()
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return
@@ -580,7 +587,7 @@ func _apply_label_frame(label: String, frames: float) -> void:
 
 
 func _apply_frame_index(index: int) -> void:
-	var animations: Dictionary = _load_animations()
+	var animations: Dictionary = _timeline()
 	var frames: Array = animations.get("frames", [])
 	if frames.is_empty():
 		return
@@ -603,24 +610,46 @@ func _apply_frame_index(index: int) -> void:
 
 
 func _label_start_frame(label: String) -> float:
-	var segment: Dictionary = _load_animations().get("labels", {}).get(label, {})
+	var segment: Dictionary = _timeline().get("labels", {}).get(label, {})
 	return float(int(segment.get("start", 1)) - 1)
 
 
 func _label_end_frame(label: String) -> float:
-	var segment: Dictionary = _load_animations().get("labels", {}).get(label, {})
+	var segment: Dictionary = _timeline().get("labels", {}).get(label, {})
 	return float(int(segment.get("end", 1)) - 1)
 
 
-static func _load_sound_cues() -> Dictionary:
-	if not _sound_cues_loaded:
-		_sound_cues_loaded = true
-		var file: FileAccess = FileAccess.open(SOUND_CUES_FILE, FileAccess.READ)
+static func animations_file(model: String) -> String:
+	return ANIMATIONS_FILE % model.to_lower()
+
+
+static func sound_cues_file(model: String) -> String:
+	return SOUND_CUES_FILE % model.to_lower()
+
+
+# Puts the parts in the model's depth order, back to front, after the shadow.
+func _order_parts() -> void:
+	var depths: Dictionary = _timeline().get("depths", {})
+	var ordered: Array = DOLL_PARTS.keys()
+	ordered.sort_custom(func(a, b): return depths.get(a, 0) < depths.get(b, 0))
+	var first: int = 1 if _body.get_node_or_null("Shadow") != null else 0
+	for index in ordered.size():
+		_body.move_child(_parts[ordered[index]], first + index)
+
+
+func _timeline() -> Dictionary:
+	return _load_json(_animations, _model, animations_file(_model))
+
+
+static func _load_json(cache: Dictionary, model: String, path: String) -> Dictionary:
+	if not cache.has(model):
+		cache[model] = {}
+		var file: FileAccess = FileAccess.open(path, FileAccess.READ)
 		if file != null:
 			var parsed = JSON.parse_string(file.get_as_text())
 			if parsed is Dictionary:
-				_sound_cues = parsed
-	return _sound_cues
+				cache[model] = parsed
+	return cache[model]
 
 
 static func _load_shadow_layout() -> Dictionary:
@@ -632,17 +661,6 @@ static func _load_shadow_layout() -> Dictionary:
 			if parsed is Dictionary:
 				_shadow_layout = parsed
 	return _shadow_layout
-
-
-static func _load_animations() -> Dictionary:
-	if not _animations_loaded:
-		_animations_loaded = true
-		var file: FileAccess = FileAccess.open(ANIMATIONS_FILE, FileAccess.READ)
-		if file != null:
-			var parsed = JSON.parse_string(file.get_as_text())
-			if parsed is Dictionary:
-				_animations = parsed
-	return _animations
 
 
 # Moves the doll through one frame of krinMelee's swing. The dash eases out
@@ -713,12 +731,13 @@ func _show_swing_frame(frame: float, jumped: bool = false) -> void:
 	_playhead = frame
 	_apply_frame_index(int(_playhead))
 	for index in range(before + 1, int(_playhead) + 1):
-		for cue in _load_sound_cues().get(str(index + 1), []):
+		for cue in _load_json(_sound_cues, _model, sound_cues_file(_model)).get(str(index + 1), []):
 			sound_cue.emit(cue)
 
 
 # The runback label plays to its end and then falls into stand, as its last
-# frame's script does (DefineSprite_166_MODEL1/frame_188), whether or not the
+# frame's script does (DefineSprite_166_MODEL1/frame_188 and
+# DefineSprite_2668_MODEL4/frame_123), whether or not the
 # doll is home yet.
 func _play_runback_label(frames: float) -> void:
 	if _state != State.MELEE:
@@ -738,9 +757,9 @@ func _step_home(frames: float) -> void:
 		melee_finished.emit()
 
 
-# The dead label plays through once, and the script on its last frame, 371,
-# removes the doll before Flash draws that frame
-# (DefineSprite_166_MODEL1/frame_371/DoAction.as). The playhead counts frames,
+# The dead label plays through once, and the script on its last frame removes
+# the doll before Flash draws that frame (MODEL1's frame 371,
+# DefineSprite_166_MODEL1/frame_371/DoAction.as, and MODEL4's frame 306). The playhead counts frames,
 # not seconds, because a sum of 1/30 s steps drifts off whole frames and would
 # remove the doll a frame early or late.
 func _play_death(delta: float) -> void:
@@ -755,9 +774,10 @@ func _play_death(delta: float) -> void:
 	_apply_frame_index(int(_playhead))
 
 
-# stun(220-239, one-shot) -> stun2(240-279, loop - the clip flows into this
-# on its own via its own frame-279 goto, so phase 1 just keeps looping the
-# label) -> outofstun(280-295, one-shot) triggered by exit_stun().
+# stun(one-shot, MODEL1's 220-239) -> stun2(loop, MODEL1's 240-279 - the clip
+# flows into this on its own via the goto on the label's last frame, so phase 1
+# just keeps looping the label) -> outofstun(one-shot, MODEL1's 280-295)
+# triggered by exit_stun().
 func _animate_stun(delta: float) -> void:
 	match _stun_phase:
 		0:

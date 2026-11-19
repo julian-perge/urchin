@@ -1,5 +1,5 @@
 # Unit tests for the CharacterVisual paper doll - part assembly from the
-# extracted MODEL1 rest pose, the dressChar() texture layering, equip-looks
+# extracted rest pose of MODEL1 and MODEL4, the dressChar() texture layering, equip-looks
 # resolution, and the code-driven animation states.
 extends GutTest
 
@@ -14,14 +14,18 @@ func before_each():
 	visual = add_child_autofree(CharacterVisualScene.instantiate())
 
 
-func _animations() -> Dictionary:
-	return JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.ANIMATIONS_FILE))
+func _animations(model: String = "MODEL1") -> Dictionary:
+	return JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.animations_file(model)))
 
 
-# Returns the MODEL1 frame the doll's parts show, numbered from 1 like the
-# SWF's, or 0 when the pose matches no frame.
-func _shown_frame() -> int:
-	var frames: Array = _animations()["frames"]
+func _cues_of(model: String = "MODEL1") -> Dictionary:
+	return JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.sound_cues_file(model)))
+
+
+# Returns the frame of `model` that the doll's parts show, numbered from 1 like
+# the SWF's, or 0 when the pose matches no frame.
+func _shown_frame(model: String = "MODEL1") -> int:
+	var frames: Array = _animations(model)["frames"]
 	for index in frames.size():
 		if _shows_pose(frames[index]):
 			return index + 1
@@ -347,7 +351,7 @@ func _swing_cues(label: String) -> Array:
 # read from the same file and labels the game reads.
 func _cue_frame_in(label: String) -> int:
 	var segment: Dictionary = _animations()["labels"][label]
-	var cues: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.SOUND_CUES_FILE))
+	var cues: Dictionary = _cues_of()
 	var inside: Array = []
 	for frame in cues:
 		if int(frame) >= segment["start"] and int(frame) <= segment["end"]:
@@ -382,7 +386,7 @@ func test_a_caster_hit_before_the_cue_frame_plays_no_swing_sound():
 func test_every_sound_cue_frame_lies_inside_a_swing_label():
 	var labels: Dictionary = _animations()["labels"]
 	var swings: Array = ["Attack_Upper", "Attack_Stab", "Attack", "attack2"]
-	var cues: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.SOUND_CUES_FILE))
+	var cues: Dictionary = _cues_of()
 	assert_false(cues.is_empty(), "the file lists cues")
 	for frame in cues:
 		var inside := false
@@ -531,8 +535,8 @@ func test_matrixless_placement_keeps_its_depths_matrix():
 	# Frame 123 of MODEL1 (sprite 166) moves foot2 at depth 9 with a blur filter
 	# and no matrix, so foot2 keeps frame 122's matrix: scale 0.8 at (216, 654)
 	# twips. The extractor once took weapon2's matrix from the next placement.
-	var file: FileAccess = FileAccess.open(CharacterVisual.ANIMATIONS_FILE, FileAccess.READ)
-	assert_not_null(file, CharacterVisual.ANIMATIONS_FILE)
+	var file: FileAccess = FileAccess.open(CharacterVisual.animations_file("MODEL1"), FileAccess.READ)
+	assert_not_null(file, CharacterVisual.animations_file("MODEL1"))
 	if file == null:
 		return
 	var frames: Array = JSON.parse_string(file.get_as_text())["frames"]
@@ -741,3 +745,138 @@ func test_a_form_of_another_model_gets_that_models_shadow():
 	visual.wear_form(_forms()["HOUND"], ["", "", "", "", "", "", ""], false)
 	var got: Rect2 = _shadow_rect(visual.get_node("Body/Shadow"))
 	assert_true(got.size.is_equal_approx(_expected_shadow_rect("MODEL5").size))
+
+
+# --- MODEL4, the female clip (extract_model_animations) -----------------------
+
+# Returns the 1-based frame of each label of MODEL4, as model4_animations.json
+# gives it, for the label's first frame or, with `last` true, its last.
+func _model4_frame(label: String, last: bool = false) -> int:
+	return int(_animations("MODEL4")["labels"][label]["end" if last else "start"])
+
+
+# dressChar attaches the unit's model[0] clip (frame_217/DoAction_2.as:17), and
+# a new clip starts on its first frame, MODEL4's rest pose.
+func test_a_model4_doll_stands_on_model4s_frame_1_matrices():
+	visual.dress_from_model(["MODEL4", "FEL", "", "F"], ["", "", "", "", "", "", ""])
+	visual.start_clip("MODEL4")
+	var pose: Dictionary = _animations("MODEL4")["frames"][0]
+	assert_eq(pose.size(), 15, "sanity: frame 1 places every part")
+	for part_name in pose:
+		var m: Array = pose[part_name]
+		var want := Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5]))
+		assert_true(visual._parts[part_name].transform.is_equal_approx(want), part_name)
+	assert_false(_shows_pose(_animations("MODEL1")["frames"][0]), "and not MODEL1's")
+
+
+func test_a_static_model4_doll_holds_model4s_frame_1():
+	var doll: CharacterVisual = CharacterVisualScene.instantiate()
+	doll.animate = false
+	add_child_autofree(doll)
+	doll.start_clip("MODEL4")
+	var m: Array = _animations("MODEL4")["frames"][0]["chest"]
+	assert_true(doll._parts["chest"].transform.is_equal_approx(Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5]))))
+
+
+# MODEL4 places head at depth 25 over arm1 at 23, and MODEL1 places arm1 at 25
+# over head at 23.
+func test_each_model_draws_its_parts_in_its_own_depth_order():
+	assert_lt(visual._parts["head"].get_index(), visual._parts["arm1"].get_index(), "MODEL1: arm1 in front")
+	visual.show_shadow("MODEL4")
+	visual.start_clip("MODEL4")
+	assert_lt(visual._parts["arm1"].get_index(), visual._parts["head"].get_index(), "MODEL4: head in front")
+	assert_eq(visual.get_node("Body").get_child(0).name, &"Shadow", "the shadow stays under every part")
+	var depths: Dictionary = _animations("MODEL4")["depths"]
+	var order: Array = depths.keys()
+	order.sort_custom(func(a, b): return depths[a] < depths[b])
+	var drawn: Array = []
+	for child in visual.get_node("Body").get_children():
+		if child.name != &"Shadow":
+			drawn.append(str(child.name))
+	assert_eq(drawn, order)
+
+
+func test_a_model4_doll_plays_each_state_label_on_model4s_frames():
+	visual.start_clip("MODEL4")
+	assert_eq(_shown_frame("MODEL4"), _model4_frame("stand"), "stand")
+	var one_shots: Dictionary = {"cast": CharacterVisual.State.CAST, "hit": CharacterVisual.State.HIT, "stun": CharacterVisual.State.STUN}
+	for label in one_shots:
+		visual.set_state(one_shots[label])
+		assert_true(_shows_pose(_animations("MODEL4")["frames"][_model4_frame(label) - 1]), "%s starts on frame %d" % [label, _model4_frame(label)])
+		for step in _model4_frame(label, true) - _model4_frame(label):
+			visual._process(SWF_FRAME_SECONDS)
+		assert_true(_shows_pose(_animations("MODEL4")["frames"][_model4_frame(label, true) - 1]), "%s ends on frame %d" % [label, _model4_frame(label, true)])
+	visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._label, "stun2", "stun flows into stun2")
+	assert_true(_shows_pose(_animations("MODEL4")["frames"][_model4_frame("stun2") - 1]), "stun2 starts on its own frame")
+	visual.exit_stun()
+	assert_true(_shows_pose(_animations("MODEL4")["frames"][_model4_frame("outofstun") - 1]), "outofstun starts on its own frame")
+
+
+# MODEL4's dead label is frames 248 to 306, and the script on frame 306 removes
+# the doll (DefineSprite_2668_MODEL4/frame_306/DoAction.as).
+func test_a_model4_doll_dies_on_model4s_dead_label():
+	visual.start_clip("MODEL4")
+	visual.set_state(CharacterVisual.State.DEAD)
+	assert_true(_shows_pose(_animations("MODEL4")["frames"][_model4_frame("dead") - 1]), "frame 248")
+	var length: int = _model4_frame("dead", true) - _model4_frame("dead")
+	for frame in length - 1:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_true(visual.is_visible_in_tree(), "frame 305 is drawn")
+	visual._process(SWF_FRAME_SECONDS)
+	assert_false(visual.is_visible_in_tree(), "frame 306 is not")
+
+
+# Returns the 1-based MODEL4 frames that a swing shows, one per SWF frame, until
+# the doll is idle again.
+func _model4_swing_frames(label: String) -> Array:
+	visual.start_clip("MODEL4")
+	visual.play_melee(func(): return Vector2(80, 0), 0.0, label)
+	var shown: Array = [int(visual._playhead) + 1]
+	for frame in 120:
+		visual._process(SWF_FRAME_SECONDS)
+		if visual.is_idle():
+			break
+		shown.append(int(visual._playhead) + 1)
+	return shown
+
+
+# MODEL4 starts Attack, Attack_Upper and Attack_Stab all on frame 78, so every
+# swing runs 46 to 77, strikes from 78 through attack2, and runs back on 108 to
+# 123, whose script falls into stand (DefineSprite_2668_MODEL4/frame_123).
+func test_a_model4_doll_swings_on_model4s_run_strike_and_runback_frames():
+	for label in ["Attack", "Attack_Upper", "Attack_Stab"]:
+		var shown: Array = _model4_swing_frames(label)
+		assert_eq(shown[0], _model4_frame("run"), "%s: the run starts on frame 46" % label)
+		var strike: int = shown.find(_model4_frame(label))
+		assert_gt(strike, 0, "%s: the strike starts on frame 78" % label)
+		assert_eq(shown[strike - 1], _model4_frame("run", true), "%s: after the run's last frame" % label)
+		assert_true(shown.has(_model4_frame("runback")), "%s: the runback starts on frame 108" % label)
+		assert_eq(shown[-1], _model4_frame("runback", true), "%s: and ends on frame 123" % label)
+
+
+# DefineSprite_2668_MODEL4/frame_86 is MODEL4's one addSound("Effects",
+# "sfx_swing"), inside the swing that all three attack labels share.
+func test_a_model4_swing_plays_sfx_swing_on_model4s_cue_frame():
+	assert_eq(_cues_of("MODEL4"), {"86": ["sfx_swing"]})
+	for label in ["Attack", "Attack_Upper", "Attack_Stab"]:
+		visual.start_clip("MODEL4")
+		var cues: Array = _swing_cues(label)
+		assert_eq(cues, [[86, "sfx_swing"]], label)
+		for connection in visual.sound_cue.get_connections():
+			visual.sound_cue.disconnect(connection["callable"])
+
+
+# MODEL5 to MODEL8 have fewer named parts than the doll's 15, and MODEL2 and
+# MODEL9 name none, so the port plays MODEL1's clip for them, as it did for
+# every model before (#378).
+func test_a_model_with_no_timeline_of_its_own_plays_model1s():
+	visual.start_clip("MODEL5")
+	assert_eq(visual._model, "MODEL1")
+	assert_eq(_shown_frame(), 1)
+
+
+func test_every_model_with_its_own_clip_has_its_timeline_and_cues():
+	for model in CharacterVisual.CLIP_MODELS:
+		assert_true(FileAccess.file_exists(CharacterVisual.animations_file(model)), model)
+		assert_true(FileAccess.file_exists(CharacterVisual.sound_cues_file(model)), model)

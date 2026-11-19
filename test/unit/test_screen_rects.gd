@@ -216,7 +216,7 @@ func _box_shadow_problems(path: String, node: Control, shadow: Dictionary) -> Ar
 # no rect holds it. The record holds the position and scale that put it where the
 # SWF's 31 part clips sit, and the union rect of the art of the unequipped male
 # doll. The union rect is held to 1 px and not 0.5. The record's rect is the art
-# under the SWF's placements, and the port draws the rig's REST_POSE, which has
+# under the SWF's placements, and the port draws MODEL1's frame 1, which has
 # the same part origins as the SWF's pose but not every part's scale and
 # rotation, so its art reaches 0.9 to 1 px less far on the left and on the right.
 const DOLL_TOLERANCE: float = 1.0
