@@ -61,6 +61,16 @@ func test_drag_preview_takes_the_size_of_its_slot():
 	assert_eq(preview.custom_minimum_size, Vector2(40, 40))
 
 
+func test_drag_preview_takes_the_scaled_size_its_slot_shows_at():
+	var holder: Control = add_child_autofree(Control.new())
+	holder.scale = Vector2(0.5, 0.5)
+	var slot: ItemSlot = ItemSlotScene.instantiate()
+	holder.add_child(slot)
+	slot.set_item(ItemManagerAuto.items_by_id.values()[0])
+	var preview: Control = autofree(slot._build_drag_preview())
+	assert_eq(preview.size, Vector2(15.5, 15.5))
+
+
 # Drop target (.claude/plan_item_drag_and_drop.md Task 3) - inventory<->
 # inventory swaps, inventory<->equip equips/unequips.
 func after_each():
