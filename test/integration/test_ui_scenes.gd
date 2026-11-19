@@ -114,7 +114,7 @@ const MENU_SAVE_DIR: String = "user://test_main_menu_saves/"
 
 
 const TITLE_CAPTIONS: String = "TitlePanel/Captions"
-const BACK_PANELS: Array[String] = ["ModePanel", "ManualPanel", "NamePanel", "SlotPanel", "NewGamePanel", "OptionsPanel"]
+const BACK_PANELS: Array[String] = ["ModePanel", "ManualPanel", "NamePanel", "SlotPanel", "NewGamePanel", "OptionsPanel", "CreditsPanel"]
 
 
 # The original opens on mainMenu, root frame 46, whose captions are MENU[18],
@@ -159,20 +159,6 @@ func test_the_choice_shows_the_logo_and_no_arena_caption():
 	assert_eq(choice.size, Vector2(800.0, 575.0))
 
 
-# Credits opens a Screen the port does not have yet, so a click on it leaves
-# the title up (spec/107-title-slots.md, The title).
-func test_credits_leaves_the_title_up():
-	var menu = add_child_autofree(MainMenuScene.instantiate())
-	await get_tree().process_frame
-	var title: TitlePanel = menu.get_node("TitlePanel")
-	watch_signals(title)
-	menu.get_node(TITLE_CAPTIONS + "/CreditsSlot/HitButton").pressed.emit()
-	assert_signal_emitted(title, "credits_pressed")
-	assert_true(title.visible, "the title stays up")
-	for panel in BACK_PANELS:
-		assert_false(menu.get_node(panel).visible, "%s stays hidden" % panel)
-
-
 # The title's Game Manual button, 2693, goes to designMenu, root frame 124
 # (spec/107-game-manual.md).
 func test_game_manual_on_the_title_shows_the_manual():
@@ -196,6 +182,42 @@ func test_the_manual_asks_for_a_topic_again_on_each_open():
 	menu.get_node("ManualPanel/Back/HitButton").pressed.emit()
 	game_manual.pressed.emit()
 	assert_eq(menu.get_node("ManualPanel/Body").text, "Please select a topic.")
+
+
+# The title's Credits hit button, DefineButton2_2690, goes to creditMenu, root
+# frame 134 (spec/107-credits.md).
+func test_credits_on_the_title_shows_the_credits_screen():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node(TITLE_CAPTIONS + "/CreditsSlot/HitButton").pressed.emit()
+	assert_true(menu.get_node("CreditsPanel").visible, "Credits shows the Credits Screen")
+	assert_false(menu.get_node("TitlePanel").visible, "in place of the title")
+	menu.get_node("CreditsPanel/Back/HitButton").pressed.emit()
+	assert_true(menu.get_node("TitlePanel").visible, "Back on the Credits Screen returns to the title")
+	assert_false(menu.get_node("CreditsPanel").visible)
+
+
+# The original's button 2814 over David Orr's name opens davidorr.net. The port
+# leaves it out (docs/adr/0002-leave-out-the-armor-games-branding.md), so the
+# only button on the Credits Screen is Back's, no button of the menu lies under
+# the name, and no Control of the Screen over the name stops the mouse.
+func test_david_orrs_name_opens_nothing():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node(TITLE_CAPTIONS + "/CreditsSlot/HitButton").pressed.emit()
+	var credits: Control = menu.get_node("CreditsPanel")
+	var buttons: Array[Node] = credits.find_children("*", "BaseButton", true, false)
+	assert_eq(buttons.map(func(button: Node) -> NodePath: return credits.get_path_to(button)), [NodePath("Back/HitButton")])
+	var name_label: Label = credits.get_node("Rows/Row3/Name")
+	assert_eq(name_label.text, "David Orr")
+	var name_rect: Rect2 = name_label.get_global_rect()
+	for button: Node in menu.find_children("*", "BaseButton", true, false):
+		if (button as Control).is_visible_in_tree():
+			assert_false((button as Control).get_global_rect().intersects(name_rect), "%s lies under David Orr's name" % menu.get_path_to(button))
+	for node: Node in credits.find_children("*", "Control", true, false):
+		var control: Control = node
+		if control.is_visible_in_tree() and control.mouse_filter == Control.MOUSE_FILTER_STOP:
+			assert_false(control.get_global_rect().intersects(name_rect), "%s stops the mouse over David Orr's name" % credits.get_path_to(control))
 
 
 # Returns one message for each panel whose Back does not swap that panel for

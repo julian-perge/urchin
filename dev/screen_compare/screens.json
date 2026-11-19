@@ -212,5 +212,13 @@
     "hide_names": ["Connectors"]
    }
   }
+ },
+ "credits": {
+  "scene": "res://test/fixtures/screen_rects/credits_screen.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 6
+   }
+  }
  }
 }
