@@ -178,6 +178,29 @@ func test_game_over_text_is_bold():
 	})
 
 
+# Every edit text on root frame 134 (creditMenu) uses font 65: the roles 2822
+# to 2817 and 2815, the names 2828 to 2823 and 2816, and the Back caption 2813.
+func test_credits_text_is_bold():
+	var screen = add_child_autofree(load("res://test/fixtures/screen_rects/credits_screen.tscn").instantiate())
+	_assert_fonts(screen, {
+		"CreditsPanel/Rows/Row1/Role": [2822, 65],
+		"CreditsPanel/Rows/Row2/Role": [2821, 65],
+		"CreditsPanel/Rows/Row3/Role": [2820, 65],
+		"CreditsPanel/Rows/Row4/Role": [2819, 65],
+		"CreditsPanel/Rows/Row5/Role": [2818, 65],
+		"CreditsPanel/Rows/Row6/Role": [2817, 65],
+		"CreditsPanel/Rows/Row7/Role": [2815, 65],
+		"CreditsPanel/Rows/Row1/Name": [2828, 65],
+		"CreditsPanel/Rows/Row2/Name": [2827, 65],
+		"CreditsPanel/Rows/Row3/Name": [2826, 65],
+		"CreditsPanel/Rows/Row4/Name": [2825, 65],
+		"CreditsPanel/Rows/Row5/Name": [2824, 65],
+		"CreditsPanel/Rows/Row6/Name": [2823, 65],
+		"CreditsPanel/Rows/Row7/Name": [2816, 65],
+		"Back/Caption": [2813, 65],
+	})
+
+
 # The hub panel's three lines are klt1, klt2 and klt3, which root frame 181
 # (Navigation) fills in (frame_181/DoAction.as:12-14).
 func test_hub_panel_text_is_bold():
