@@ -459,7 +459,10 @@ Ported: `MoveLegality`. `refusal` is the player's rule and `can_afford` is the p
 
 ## The orb ring's hover and fade (frame_217/PlaceObject3_3382_500 enterFrame)
 
-Not ported: `RadialMenu` keeps the port's own numbers, 0.15 s of grace and a 0.67 s fade, tested against each orb and the unit's hit button.
+Ported: `RadialMenu` plays the enterFrame below once per SWF frame. It tests the mouse against the clip's box and places its orbs at the clip's offsets times its scale, all of which `extract_battle_screen` writes to the `radial_menu` entry of `battle_layout.json`.
+
+- Root frame 217 places the Radial menu clip, DefineSprite 3382, at 1.0383 scale, so every orb sits 1.0383 times its `thing` offset from the clicked unit. Nothing in the ActionScript sets the clip's scale.
+- The box is the union of `thingo0` to `thingo7` in their up state and `thing0` to `thing7` at frame 1, about 128 px square on the stage. It counts an empty slot's hidden `thingo` too, because Flash counts a hidden child in its parent's bounds. Once the ring shows a move's icon, an icon wider than its button widens the original's box at that slot, by up to 21 px in the clip's own px. The port keeps the frame 1 box.
 
 - A click shows the clip at alpha 0 (`frame_217/DoAction_3.as:46-48`), and it gains 50 per frame (enterFrame lines 32-35).
 - While `this.hitTest(_root._xmouse, _root._ymouse)` is false the clip loses 10 alpha per frame and hides at 0, so the fade takes 10 frames, 0.33 s at 30 fps, with no grace (lines 48-61).
