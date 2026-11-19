@@ -87,7 +87,7 @@
   "scene": "res://test/fixtures/screen_rects/hub_chrome.tscn",
   "modes": {
    "chrome": {
-    "bar": 74
+    "bar": 36
    }
   }
  },

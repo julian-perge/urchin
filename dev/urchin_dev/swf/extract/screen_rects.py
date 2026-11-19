@@ -2020,18 +2020,26 @@ def placed_layer(
     return named[0]
 
 
-def moved_to_steam(record: dict, matrix, steam_matrix) -> dict:
-    """-> `record`, which holds the rect of a piece the web build places with
-    `matrix`, moved to where the Steam build places the same piece with
-    `steam_matrix`."""
+def steam_offset(matrix, steam_matrix) -> tuple[float, float]:
+    """-> how far, in design px, the Steam build's placement `steam_matrix`
+    moves a piece that the web build places with `matrix`."""
     if _scale(matrix) != _scale(steam_matrix):
         raise ValueError(
             f"the Steam placement {steam_matrix} does not have the scale of"
             f" {matrix}, so the piece is another size there"
         )
+    return (
+        (steam_matrix[4] - matrix[4]) / render.TWIPS,
+        (steam_matrix[5] - matrix[5]) / render.TWIPS,
+    )
+
+
+def moved_to_steam(record: dict, matrix, steam_matrix) -> dict:
+    """-> `record`, which holds the rect of a piece the web build places with
+    `matrix`, moved to where the Steam build places the same piece with
+    `steam_matrix`."""
+    dx, dy = steam_offset(matrix, steam_matrix)
     x, y, w, h = record["rect"]
-    dx = (steam_matrix[4] - matrix[4]) / render.TWIPS
-    dy = (steam_matrix[5] - matrix[5]) / render.TWIPS
     return {**record, "rect": [round(x + dx, 4), round(y + dy, 4), w, h]}
 
 
