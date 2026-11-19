@@ -251,8 +251,11 @@ func open_menu_screen(group: String) -> Node:
 # rebuilds StatSets0 from the equipped gear, which is the bonus list given here.
 # It also clears the ability cooldowns, which the port keeps only on a battle's
 # units and starts at zero in every battle (CombatUnit.ability_cooldowns). On a
-# success it shows MENU[67] and goes to the Abilities Window. The Window
-# refreshes when it opens, and it refreshes here too in case it was open already.
+# success it shows MENU[67] and goes to the Abilities Window. Its
+# KrinScreen._visible = false hides the Hub's zone screen, which game.gd's
+# _sync_art_visibility() does in the port whenever a Window shows. A Window
+# refreshes itself when it opens, so only a Window that was open already is
+# refreshed here.
 func _on_respec_pressed() -> void:
 	var save: PlayerSave = GameData.current_save
 	if save == null:
@@ -262,8 +265,10 @@ func _on_respec_pressed() -> void:
 		_show_combat_text(Strings.menu(42))
 		return
 	_show_combat_text(Strings.menu(67))
-	var window: Node = open_menu_screen("abilities_window")
-	if window != null:
+	var window: Node = get_tree().get_first_node_in_group("abilities_window")
+	var was_open: bool = window != null and window.visible
+	open_menu_screen("abilities_window")
+	if was_open:
 		window.refresh()
 
 

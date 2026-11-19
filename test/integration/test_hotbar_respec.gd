@@ -126,6 +126,7 @@ func test_a_click_with_enough_money_respecs_and_opens_the_abilities_window():
 		assert_eq(TalentTree.get_rank(save, node), 0, "talent %d" % node)
 	assert_eq(save.buff_adder_matrix, TalentTree._zero_array(TalentTree.NODE_ARRAY_SIZE), "passives cleared")
 	assert_true(hub.get_node("AbilitiesWindow").visible, "the Abilities Window opens")
+	assert_false(hub.get_node("ZoneHost").is_visible_in_tree(), "the zone screen hides, as KrinScreen does")
 	assert_eq(hub.get_node("AbilitiesWindow")._ability_points_value.text, "9", "the Window shows the new points")
 	var banner: CombatTextBanner = hub.get_node("CombatTextBanner")
 	assert_true(banner.is_up())

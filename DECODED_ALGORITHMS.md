@@ -843,7 +843,8 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
   puts the class's two starting moves back as the only moves, clears the cooldowns, `skillAdderMatrix`, `buffAdderMatrix` and `talentMainArray`, rebuilds `StatSets0` from the equipped
   gear, shows `MENU[67]` in the Combat text banner and opens the `skills` frame of `KRINMENU`. It also counts `respecSet` down from 5 each day, but nothing reads that count, so the original
   never limits respecs (#32). Every message goes through a bare `play()`, so it shows only when the banner is not already up. The port's item on the cursor is an item
-  drag, so a drag released on the button is the `MENU[66]` case. The port keeps cooldowns only on a battle's units, so the respec has none to clear. Its tooltip is `SYSTEM[32]` + ": EUR" + the cost over `SYSTEM[33]`, with the euro sign where this line says EUR.
+  drag, so a drag released on the button is the `MENU[66]` case. The port keeps cooldowns only on a battle's units, so the respec has none to clear. Its `KrinScreen._visible = false` hides the zone screen (DefineSprite 3287), which
+  the port hides whenever a Window shows. Its tooltip is `SYSTEM[32]` + ": EUR" + the cost over `SYSTEM[33]`, with the euro sign where this line says EUR.
 
 ## The menu clip's frames (DefineSprite 3142, `KRINMENU`)
 
