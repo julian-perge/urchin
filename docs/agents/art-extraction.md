@@ -170,12 +170,15 @@ extracting it.
   removes the container only, and the characters nested in it still render.
   It also shrinks the container's union bounds, so `content_rect` reports a new
   origin for art whose pixels did not move.
-- **A shape with a bitmap fill of id 65535 renders as static.** The source SWF
-  has no DefineBits for it, so this is an authoring fault, not a pipeline
-  fault. It put about 1.1s of noise at the end of one cutscene and more in the
-  middle of another. `cutscenes.py` finds these shapes with
-  `find_broken_bitmap_fill_cids` and strips them, so a new cutscene needs no
-  hand-made id list. Its header comment records the encoder settings.
+- **A fill of bitmap id 65535 that no edge paints draws nothing.** The web
+  SWF has 20 shapes with such a fill and no DefineBits for id 65535. Each of
+  them paints with its other fill, a real bitmap. Until #81, `cutscenes.py`
+  stripped them and called the static at the end of CS_CUT3 an ffdec fault.
+  That static is bitmaps 3950 to 3956, which the Steam SWF also has, and the
+  strip also cut the skull art out of CS_CUT4. Before you strip a shape for
+  how it renders, render the shape alone and read the bitmaps its edges use.
+  `find_broken_bitmap_fill_cids` now finds only a shape that paints with
+  bitmap 65535, and the extract stops on one.
 - **Leave the headless setting alone.** `dev/urchin_dev/__init__.py` sets
   `JAVA_TOOL_OPTIONS=-Djava.awt.headless=true` because ffdec's launcher adds
   `-Xdock` flags that register a macOS Dock app which can steal focus mid-run.
