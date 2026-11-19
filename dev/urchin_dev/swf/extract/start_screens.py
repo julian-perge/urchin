@@ -41,10 +41,10 @@
 # WHERE EACH CARD GOES. A card sprite renders onto a canvas bigger than the
 # card, because the art is placed through a bevel, a glow and a drop shadow,
 # and ffdec grows the canvas by the filter's dimension on both sides of the
-# timeline's displayRect. Symmetric growth means the canvas keeps the
-# displayRect's centre, so the centre plus the canvas size locates every
-# rendered pixel without any filter math here - the recovery render.py
-# does. Each PNG is then trimmed to its own opaque content and the printed
+# timeline's displayRect. The driver reports that grown rect, and ffdec puts
+# its left and top edges on the canvas's (0, 0), so render.py locates every
+# rendered pixel from them without any filter math here. Each PNG is then
+# trimmed to its own opaque content and the printed
 # rect says where that trimmed image belongs on the 800x575 stage.
 #
 # These renders need java/Render.java. Each card's art sits behind a clip mask

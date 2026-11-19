@@ -52,4 +52,4 @@ func test_impact_sits_at_the_offset_recorded_for_its_clip():
 	# and no multi-frame placement, so it stayed correct throughout.
 	var effect: ImpactEffect = add_child_autofree(ImpactEffectScene.instantiate())
 	effect.play("BOOM_SPARK")
-	assert_eq(effect._anim_sprite.position, Vector2(-91.88, -79.12), "baked from vfx_offsets.json's boom_spark entry")
+	assert_eq(effect._anim_sprite.position, Vector2(-91.75, -78.9), "baked from vfx_offsets.json's boom_spark entry")
