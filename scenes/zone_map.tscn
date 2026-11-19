@@ -52,6 +52,11 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("2_connectors")
 
+[node name="Shadow" type="CanvasGroup" parent="Connectors"]
+show_behind_parent = true
+
+[node name="Lines" type="Node2D" parent="Connectors/Shadow"]
+
 [node name="Zones" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15

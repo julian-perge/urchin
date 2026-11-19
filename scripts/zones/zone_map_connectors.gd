@@ -9,9 +9,12 @@
 # the buttons, as lineMC sits between them in sprite 4173.
 #
 # lineMC carries a DropShadow, which extract_zone_map writes to zone_map.json.
-# draw_line() has no blur, so the shadow is every line drawn again first, moved
-# by the shadow's distance at its angle, in its colour at its alpha times its
-# strength. The blur of 2 px is left out.
+# The child CanvasGroup Shadow draws behind the lines. Its Lines node draws
+# every line again, opaque and moved by the shadow's distance at its angle, and
+# the group tints them all at once to the shadow's colour, at its alpha times
+# its strength. So two shadow lines that cross stay one shade, as Flash's one
+# shadow of the whole lineMC does. draw_line() has no blur, so the shadow's
+# 2 px blur is left out.
 extends Control
 
 const RECORD_FILE := "res://assets/ui/zone_map/zone_map.json"
@@ -21,27 +24,36 @@ const UNLOCKED_COLOR: Color = Color8(49, 137, 223)
 const LOCKED_COLOR: Color = Color8(51, 51, 51)
 const LINE_WIDTH: float = 2.0
 
-var _shadow_offset: Vector2 = Vector2.ZERO
-var _shadow_color: Color = Color.TRANSPARENT
+@onready var _shadow: CanvasGroup = $Shadow
+@onready var _shadow_lines: Node2D = $Shadow/Lines
 
 
 func _ready() -> void:
-	visibility_changed.connect(queue_redraw)
-	var file := FileAccess.open(RECORD_FILE, FileAccess.READ)
-	if file == null:
-		push_error("zone map: cannot open %s" % RECORD_FILE)
+	visibility_changed.connect(_redraw)
+	_shadow_lines.draw.connect(_draw_shadow)
+	var record: Variant = JSON.parse_string(FileAccess.get_file_as_string(RECORD_FILE))
+	if not (record is Dictionary and (record as Dictionary).has("line_shadow")):
+		push_error("zone map: %s holds no line_shadow" % RECORD_FILE)
 		return
-	var shadow: Dictionary = JSON.parse_string(file.get_as_text())["line_shadow"]
-	_shadow_offset = Vector2.from_angle(deg_to_rad(float(shadow["angle"]))) * float(shadow["distance"])
-	_shadow_color = Color.html(str(shadow["color"]))
-	_shadow_color.a = minf(float(shadow["alpha"]) * float(shadow["strength"]), 1.0)
+	var shadow: Dictionary = record["line_shadow"]
+	_shadow_lines.position = Vector2.from_angle(deg_to_rad(float(shadow["angle"]))) * float(shadow["distance"])
+	var tint := Color.html(str(shadow["color"]))
+	tint.a = minf(float(shadow["alpha"]) * float(shadow["strength"]), 1.0)
+	_shadow.self_modulate = tint
+
+
+func _redraw() -> void:
+	queue_redraw()
+	_shadow_lines.queue_redraw()
+
+
+func _draw_shadow() -> void:
+	for link: Dictionary in _links():
+		_shadow_lines.draw_line(link["from"], link["to"], Color.WHITE, BACKING_WIDTH)
 
 
 func _draw() -> void:
-	var links: Array[Dictionary] = _links()
-	for link: Dictionary in links:
-		draw_line(link["from"] + _shadow_offset, link["to"] + _shadow_offset, _shadow_color, BACKING_WIDTH)
-	for link: Dictionary in links:
+	for link: Dictionary in _links():
 		draw_line(link["from"], link["to"], BACKING_COLOR, BACKING_WIDTH)
 		draw_line(link["from"], link["to"], UNLOCKED_COLOR if link["unlocked"] else LOCKED_COLOR, LINE_WIDTH)
 
