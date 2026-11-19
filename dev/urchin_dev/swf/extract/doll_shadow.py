@@ -11,8 +11,8 @@
 # and skew it, so the port places the clip with the whole matrix.
 #
 # MODEL5 and MODEL8 and MODEL7 move the shadow on later frames of their own
-# clips (frames 71 and 108, and frame 174). The port plays MODEL1's timeline for
-# every model, so only the frame 1 placement is read.
+# clips (frames 71 and 108, and frame 174). This file holds the frame 1
+# placement, and extract_model_animations writes the matrix of every frame.
 #
 # Frame 360 of MODEL1 and frame 295 of MODEL4 run `_parent.shadower._visible =
 # false`. `_parent` is the unit's rig (DefineSprite 2676), which holds no clip

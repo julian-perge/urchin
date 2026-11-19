@@ -1,7 +1,7 @@
 # character_visual.gd
 # 2D paper-doll character, the replacement for the abandoned Skeleton2D + IK
-# rig. Ported from the original Flash model clips (MODEL1, and MODEL4 for the
-# female units) + dressChar() (frame217_KRIN_BATTLE_SCENE/2_dressing_chars.txt):
+# rig. Ported from the original Flash model clips (MODEL1, MODEL2 and MODEL4 to
+# MODEL9) + dressChar() (frame217_KRIN_BATTLE_SCENE/2_dressing_chars.txt):
 #
 # - The doll is a flat set of Sprite2D "parts" (head/chest/arms/legs/weapons),
 #   whose rest pose is frame 1 of the model's timeline (the exact affine matrix
@@ -10,6 +10,10 @@
 # - Each part composites up to three texture layers: the base skin
 #   (<G>_S<CODE>_<skin>), the equipped-item art (<G>_<CODE>_<looks> for armor,
 #   M_<CODE>_<looks> for weapons), and hair on the head. dress() rebuilds them.
+#   A part that the model's frame does not place is hidden.
+# - The art a model places with no part name, such as MODEL8's body and
+#   MODEL2's orb, draws as "pieces" between the parts in the model's depth
+#   order (extract_model_pieces).
 # - Animation plays the model's original keyframe timeline directly (stand/
 #   run/Attack*/runback/cast/stun/stun2/outofstun/hit/dead); only the melee
 #   run-to-target motion is code-driven (the original's krinMelee/krinBoltMake
@@ -41,11 +45,10 @@ const SPRITE_ROOT: String = "res://resources/sprites"
 # part draws top-left-at-joint at export resolution (the giant-blob bug).
 const OFFSETS_FILE: String = SPRITE_ROOT + "/doll_offsets.json"
 # The models whose own clip the doll plays, as extract_model_animations and
-# convert_model_sound_cues write them. dressChar attaches the unit's model[0]
-# clip (frame_217/DoAction_2.as:17). Every other model plays MODEL1's clip,
-# because MODEL5 to MODEL8 have fewer named parts than the doll's 15 and MODEL2
-# and MODEL9 name none.
-const CLIP_MODELS: Array[String] = ["MODEL1", "MODEL4"]
+# convert_model_sound_cues write them, which is every model the SWF exports.
+# dressChar attaches the unit's model[0] clip (frame_217/DoAction_2.as:17). A
+# model outside this list plays MODEL1's clip.
+const CLIP_MODELS: Array[String] = ["MODEL1", "MODEL2", "MODEL4", "MODEL5", "MODEL6", "MODEL7", "MODEL8", "MODEL9"]
 const DEFAULT_MODEL: String = "MODEL1"
 # Each model's keyframe animations (animations_file): per-frame full affine
 # matrices per part, 30 fps, labeled segments (stand/run/Attack/runback/hit/
@@ -55,6 +58,11 @@ const ANIMATIONS_PATTERN: String = SPRITE_ROOT + "/%s_animations.json"
 # frame as a string -> the cue names of that frame. Only the swing labels hold
 # a cue, "sfx_swing".
 const SOUND_CUES_PATTERN: String = "res://dev/converted_json/%s_sound_cues.json"
+# The art each model places with no part name (pieces_file), and its PNGs. A
+# model with no such art has no file.
+const PIECES_PATTERN: String = SPRITE_ROOT + "/%s_pieces.json"
+const PIECE_ART: String = SPRITE_ROOT + "/model_pieces/%s.png"
+const PIECE_SHADER: Shader = preload("res://scenes/doll_piece.gdshader")
 
 # krinMelee (frame_42/DoAction_4.as:36-135) moves the fighter on every frame of
 # its swing:
@@ -100,6 +108,7 @@ static var _offsets_loaded: bool = false
 # model -> the parsed animations_file and sound_cues_file of that model.
 static var _animations: Dictionary = {}
 static var _sound_cues: Dictionary = {}
+static var _pieces: Dictionary = {}
 
 # dressChar's dollPartsArray. skin_code is the base-skin part code
 # (dollPartsCores2); equip_slot indexes the 7-slot equip_array
@@ -129,6 +138,12 @@ const DOLL_PARTS: Dictionary[String, Dictionary] = {
 @export var animate: bool = true
 
 var _parts: Dictionary = {}  # name -> Node2D holding the layered sprites
+# The model's depth as a String -> the Sprite2D that draws its piece there.
+var _piece_nodes: Dictionary = {}
+# The 0-based model frame the doll shows, and the SWF frames since the clip
+# started, which is the clock that a looping piece plays on.
+var _frame_index: int = 0
+var _clip_frames: float = 0.0
 # The model whose clip the doll plays, one of CLIP_MODELS.
 var _model: String = DEFAULT_MODEL
 var _body: CanvasGroup
@@ -238,16 +253,18 @@ func shift_down(dy: float) -> void:
 
 # dressChar removes the doll's clip and attaches a new clip of `model`, which
 # starts on its first frame, and the shadow is a part of that clip. From then on
-# the doll draws its parts in the model's depth order and plays the model's
-# labels and sound cues, or MODEL1's for a model outside CLIP_MODELS. changeForm
-# then puts a stunned unit's new clip in the stun loop
+# the doll draws its parts and pieces in the model's depth order and plays the
+# model's labels and sound cues, or MODEL1's for a model outside CLIP_MODELS.
+# changeForm then puts a stunned unit's new clip in the stun loop
 # (frame_42/DoAction_10.as:533-536).
 func start_clip(model: String, stunned: bool = false) -> void:
 	show_shadow(model)
 	_model = model if CLIP_MODELS.has(model) else DEFAULT_MODEL
+	_clip_frames = 0.0
+	_build_pieces()
 	_order_parts()
 	set_state(State.IDLE)
-	if stunned:
+	if stunned and _has_label("stun2"):
 		_state = State.STUN
 		_stun_phase = 1
 		_start_label("stun2")
@@ -273,7 +290,9 @@ func show_shadow(model: String) -> void:
 	shadow.centered = false
 	var size: Vector2 = shadow.texture.get_size()
 	var placed := Transform2D(Vector2(matrix[0], matrix[1]), Vector2(matrix[2], matrix[3]), Vector2(matrix[4], matrix[5]))
-	shadow.transform = placed * Transform2D(0.0, Vector2(rect["w"] / size.x, rect["h"] / size.y), 0.0, Vector2(rect["x"], rect["y"]))
+	var art := Transform2D(0.0, Vector2(rect["w"] / size.x, rect["h"] / size.y), 0.0, Vector2(rect["x"], rect["y"]))
+	shadow.set_meta("art", art)
+	shadow.transform = placed * art
 	_body.add_child(shadow)
 	_body.move_child(shadow, 0)
 
@@ -317,7 +336,13 @@ func dress_from_model(model: Array, equip_looks: Array) -> void:
 	dress(gender, skin, hair, equip_looks)
 
 
+# A state whose label the model's clip lacks changes nothing, such as a hit on
+# MODEL2, which has no hit label, because Flash ignores a goto to a label the
+# clip does not have and the clip plays on.
 func set_state(new_state: State) -> void:
+	var labels: Dictionary = {State.HIT: "hit", State.CAST: "cast", State.STUN: "stun"}
+	if labels.has(new_state) and not _has_label(labels[new_state]):
+		return
 	_state = new_state
 	_attack_fired = false
 	_label_frames = 0.0
@@ -392,6 +417,8 @@ func _measure_from(origin: Vector2) -> void:
 # frame 220 rather than being ignored). Callers should invoke this whenever
 # the unit's total stun value goes up.
 func enter_stun() -> void:
+	if not _has_label("stun"):
+		return
 	if _state != State.STUN:
 		set_state(State.STUN)
 	else:
@@ -414,11 +441,17 @@ func exit_stun() -> void:
 	_start_label("outofstun")
 
 
+# krinMelee sends the clip to the move's label with gotoAndPlay
+# (frame_42/DoAction_4.as:130). Flash ignores a goto to a label the clip does
+# not have, as Ruffle's goto_frame does (core/src/avm1/globals/movie_clip.rs),
+# so Gregor's Attack_Stab on MODEL7 leaves the doll in its run label. This
+# returns "" for such a label.
 func _valid_attack_label(label: String) -> String:
-	var animations: Dictionary = _timeline()
-	if animations.get("labels", {}).has(label):
-		return label
-	return "Attack"
+	return label if _has_label(label) else ""
+
+
+func _has_label(label: String) -> bool:
+	return _timeline().get("labels", {}).has(label)
 
 
 func is_idle() -> bool:
@@ -518,12 +551,19 @@ func get_bounds() -> Rect2:
 			var rect: Rect2 = to_parent * layer.get_rect()
 			bounds = bounds.merge(rect) if found else rect
 			found = true
+	for piece in _piece_nodes.values():
+		if not piece.visible or piece.texture == null:
+			continue
+		var rect: Rect2 = transform * _body.transform * piece.transform * piece.get_rect()
+		bounds = bounds.merge(rect) if found else rect
+		found = true
 	return bounds
 
 
 func _process(delta: float) -> void:
 	if not animate:
 		return
+	_clip_frames += delta * BattleScreenClip.fps()
 	_animate_melee(delta)
 	match _state:
 		State.IDLE:
@@ -592,6 +632,7 @@ func _apply_frame_index(index: int) -> void:
 	if frames.is_empty():
 		return
 	var frame: int = clampi(index, 0, frames.size() - 1)
+	_frame_index = frame
 	var pose: Dictionary = frames[frame]
 	var alphas: Dictionary = animations["alphas"][frame]
 	for part_name in _parts:
@@ -607,6 +648,84 @@ func _apply_frame_index(index: int) -> void:
 			Vector2(matrix[4], matrix[5])
 		)
 		part.modulate.a = alphas.get(part_name, 1.0)
+	_apply_shadow(animations.get("shadow", []), frame)
+	_apply_pieces()
+
+
+# Puts the shadow on `frame`'s matrix for it, or hides it on a frame that does
+# not place it. A timeline with no shadow list leaves it where show_shadow put
+# it.
+func _apply_shadow(shadows: Array, frame: int) -> void:
+	var shadow: Node2D = _body.get_node_or_null("Shadow")
+	if shadow == null or frame >= shadows.size():
+		return
+	var matrix = shadows[frame]
+	shadow.visible = matrix != null
+	if matrix != null:
+		shadow.transform = Transform2D(Vector2(matrix[0], matrix[1]), Vector2(matrix[2], matrix[3]), Vector2(matrix[4], matrix[5])) * shadow.get_meta("art")
+
+
+# Makes one Sprite2D for each depth at which the model places a piece, in place
+# of the last model's.
+func _build_pieces() -> void:
+	for node in _piece_nodes.values():
+		_body.remove_child(node)
+		node.queue_free()
+	_piece_nodes.clear()
+	var depths: Dictionary = {}
+	for shown in _piece_data().get("frames", []):
+		for depth in shown:
+			depths[depth] = true
+	for depth in depths:
+		var sprite := Sprite2D.new()
+		sprite.name = "Piece%s" % depth
+		sprite.centered = false
+		sprite.visible = false
+		_body.add_child(sprite)
+		_piece_nodes[depth] = sprite
+
+
+# Shows each piece as the model's frame _frame_index places it. A looping piece
+# shows the frame of its own clip that _clip_frames has reached, with the
+# frame's matrix and colour transform.
+func _apply_pieces() -> void:
+	if _piece_nodes.is_empty():
+		return
+	var data: Dictionary = _piece_data()
+	var frames: Array = data["frames"]
+	var shown: Dictionary = frames[mini(_frame_index, frames.size() - 1)]
+	for depth in _piece_nodes:
+		var sprite: Sprite2D = _piece_nodes[depth]
+		var entry = shown.get(depth)
+		sprite.visible = entry != null
+		if entry == null:
+			continue
+		if entry is String:
+			sprite.material = null
+			_show_piece_art(sprite, entry, Transform2D.IDENTITY)
+			continue
+		var loop: Array = data["loops"][depth]
+		var m: Array = entry["matrix"]
+		var c: Array = entry["color"]
+		var art: String = loop[int(_clip_frames) % loop.size()]
+		_show_piece_art(sprite, art, Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5])))
+		if sprite.material == null:
+			sprite.material = ShaderMaterial.new()
+			sprite.material.shader = PIECE_SHADER
+		sprite.material.set_shader_parameter("multiplier", Vector4(c[0], c[1], c[2], c[3]))
+		sprite.material.set_shader_parameter("offset", Vector4(c[4], c[5], c[6], c[7]))
+
+
+# Draws the PNG `art` at its rect, under `placed`. A frame of a looping clip
+# that drew nothing has no rect and shows nothing.
+func _show_piece_art(sprite: Sprite2D, art: String, placed: Transform2D) -> void:
+	var rect: Dictionary = _piece_data()["art"].get(art, {})
+	if rect.is_empty():
+		sprite.visible = false
+		return
+	sprite.texture = load(PIECE_ART % art)
+	var size: Vector2 = sprite.texture.get_size()
+	sprite.transform = placed * Transform2D(0.0, Vector2(rect["w"] / size.x, rect["h"] / size.y), 0.0, Vector2(rect["x"], rect["y"]))
 
 
 func _label_start_frame(label: String) -> float:
@@ -627,14 +746,23 @@ static func sound_cues_file(model: String) -> String:
 	return SOUND_CUES_PATTERN % model.to_lower()
 
 
-# Puts the parts in the model's depth order, back to front, after the shadow.
+static func pieces_file(model: String) -> String:
+	return PIECES_PATTERN % model.to_lower()
+
+
+# Puts the parts and the pieces in the model's depth order, back to front, after
+# the shadow.
 func _order_parts() -> void:
 	var depths: Dictionary = _timeline().get("depths", {})
-	var ordered: Array = DOLL_PARTS.keys()
-	ordered.sort_custom(func(a, b): return depths.get(a, 0) < depths.get(b, 0))
+	var ordered: Array = []
+	for part_name in DOLL_PARTS:
+		ordered.append([depths.get(part_name, 0), _parts[part_name]])
+	for depth in _piece_nodes:
+		ordered.append([int(depth), _piece_nodes[depth]])
+	ordered.sort_custom(func(a, b): return a[0] < b[0])
 	var first: int = 1 if _body.get_node_or_null("Shadow") != null else 0
 	for index in ordered.size():
-		_body.move_child(_parts[ordered[index]], first + index)
+		_body.move_child(ordered[index][1], first + index)
 
 
 func _timeline() -> Dictionary:
@@ -643,6 +771,10 @@ func _timeline() -> Dictionary:
 
 func _cues() -> Dictionary:
 	return _load_json(_sound_cues, _model, sound_cues_file(_model))
+
+
+func _piece_data() -> Dictionary:
+	return _load_json(_pieces, _model, pieces_file(_model))
 
 
 static func _load_json(cache: Dictionary, model: String, path: String) -> Dictionary:
@@ -684,10 +816,16 @@ func _animate_melee(delta: float) -> void:
 			if _go_rat() >= 1.0:
 				_melee_phase = MeleePhase.STRIKE
 				_strike_frames = 0.0
-				_show_swing_frame(_label_start_frame(_attack_label), true)
+				if _attack_label != "":
+					_show_swing_frame(_label_start_frame(_attack_label), true)
 		MeleePhase.STRIKE:
 			_strike_frames += frames
-			_show_swing_frame(_playhead + frames)
+			if _attack_label != "":
+				_show_swing_frame(_playhead + frames)
+			else:
+				# The run label plays on to its last frame, whose script runs stop()
+				# (DefineSprite_2631_MODEL7/frame_59), and holds it until the Runback.
+				_show_swing_frame(minf(_playhead + frames, _label_end_frame("run")))
 			if not _impact_fired and _strike_frames >= MELEE_IMPACT_FRAMES:
 				_impact_fired = true
 				attack_connected.emit()

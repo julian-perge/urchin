@@ -59,9 +59,14 @@ def test_a_sound_call_of_another_shape_fails_naming_its_frame(tmp_path):
         model_sound_cues.read_cues(tmp_path)
 
 
-def test_a_folder_with_no_cue_fails(tmp_path):
+def test_a_folder_with_scripts_and_no_cue_gives_no_cues(tmp_path):
+    # MODEL8's frame scripts only move its playhead.
     write_script(tmp_path, 30, 'gotoAndStop("stand");\n')
-    with pytest.raises(ValueError, match="no sound cues"):
+    assert model_sound_cues.read_cues(tmp_path) == {}
+
+
+def test_a_folder_with_no_frame_script_fails(tmp_path):
+    with pytest.raises(ValueError, match="no frame scripts"):
         model_sound_cues.read_cues(tmp_path)
 
 
