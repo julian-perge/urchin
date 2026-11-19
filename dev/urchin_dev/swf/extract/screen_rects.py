@@ -307,7 +307,6 @@ TITLE_PIECES = {
 # depth 14 and its hit button at depth 15, which the port leaves out
 # (docs/adr/0006-leave-out-the-pvp-arena.md).
 CHOICE_FRAME = "subMenu"
-GAME_OVER_FRAME = "gameOverMenu"
 CHOICE_PIECES = {
     "Logo": Piece("art", 6, art="logo"),
     "Captions/NewGameSlot/Caption": Piece("text", 8),
@@ -653,7 +652,7 @@ SCENES: dict[str, Scene] = {
     # in the compare tool's reference.
     "res://scenes/battle/game_over_screen.tscn": Scene(
         timeline=0,
-        frame=GAME_OVER_FRAME,
+        frame="gameOverMenu",
         pieces={
             "Background": Piece("art", 1, art="start_background"),
             "DeadLabel": Piece("text", 10),
