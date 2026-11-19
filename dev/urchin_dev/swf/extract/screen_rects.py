@@ -61,6 +61,13 @@
 #   "box"   - a shape of one solid fill and no line, which the port draws as a
 #             ColorRect, recorded as its ShapeBounds through the placement
 #             matrix with its fill colour.
+#   "outline" - a shape that strokes one or more boxes with one line, which
+#             the port draws as a Panel whose StyleBoxFlat has that border. It
+#             is recorded as the shape's bounds, or as one box's edges grown by
+#             half the line when the piece names a `path`, with the line's
+#             colour and width. A shape that also fills its boxes with one solid
+#             colour, as shape 2812 of the Game Manual does, records that colour
+#             as the fill, and the Panel draws its centre in it.
 #   "shape" - a shape that an "art" piece draws with a filter around it, where
 #             the port also needs the shape's own rect. It is recorded as the
 #             ShapeBounds through the placement matrix, and the port puts a
@@ -1556,10 +1563,19 @@ def outline_record(
     """-> the record of an outline shape, or of its `path`th stroked path, from
     the top down, when the shape draws several boxes with one line. A path's
     rect is its edges grown by half the line, as the whole shape's bounds are,
-    and the paths' rects must cover the shape's bounds exactly."""
+    and the paths' rects must cover the shape's bounds exactly. A shape that
+    also fills its boxes with one solid colour, as shape 2812 of the Game
+    Manual does, records that colour as the fill."""
     only = styles[0] if len(styles) == 1 else None
-    if only is None or only.fills or only.used_fills or len(only.lines) != 1:
-        raise ValueError("an outline needs one line and no fill")
+    if only is None or len(only.lines) != 1:
+        raise ValueError("an outline needs one line")
+    fill = None
+    if only.fills or only.used_fills:
+        if len(only.fills) != 1 or only.used_fills != {1} or only.fills[0] is None:
+            raise ValueError(
+                "an outline's fill must be one solid colour, used as fill 1"
+            )
+        fill = only.fills[0]
     width, color = only.lines[0]
     if color is None:
         raise ValueError("a filled line style has no one colour")
@@ -1582,12 +1598,15 @@ def outline_record(
                 f"the outline's {len(grown)} paths cover {covered}, not its bounds {bounds}"
             )
         bounds = grown[path]
-    return {
+    entry = {
         "kind": "outline",
         "rect": [round(v, 4) for v in stage_rect(bounds, matrix, origin)],
         "line": color_hex(color),
         "border": border_width(width, _scale(matrix)),
     }
+    if fill is not None:
+        entry["fill"] = color_hex(fill)
+    return entry
 
 
 def path_shape_record(styles: list[StyleSet], path: int, matrix, origin) -> dict:

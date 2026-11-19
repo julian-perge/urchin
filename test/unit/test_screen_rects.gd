@@ -113,7 +113,12 @@ func _outline_problems(path: String, panel: Panel, entry: Dictionary) -> Array[S
 	var style: StyleBoxFlat = panel.get_theme_stylebox("panel") as StyleBoxFlat
 	if style == null:
 		return ["%s: outline is not a StyleBoxFlat" % path]
-	if style.draw_center:
+	if entry.has("fill"):
+		if not style.draw_center:
+			found.append("%s: outline has no fill" % path)
+		elif not _same_color(style.bg_color, entry["fill"]):
+			found.append("%s: outline fill %s, expected %s" % [path, style.bg_color.to_html(), entry["fill"]])
+	elif style.draw_center:
 		found.append("%s: outline has a fill" % path)
 	if style.shadow_size != 0 or panel.material != null:
 		found.append("%s: outline has a shadow" % path)
@@ -1054,6 +1059,25 @@ func test_control_an_inventory_outline_with_fill_or_shadow_fails() -> void:
 	style.draw_center = false
 	style.shadow_size = 5
 	_assert_one_problem(_scene_problems(root, _record()["scenes"][INVENTORY_SCENE]), "outline has a shadow")
+
+
+# An outline whose shape also has a solid fill, as shape 2812 of the Game Manual
+# has, draws its centre in that fill. The inventory's outline stands in for one
+# here, with a fill added to a copy of its entry.
+func test_control_a_filled_outline_needs_its_fill() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	var path: String = "CenterPanel/Content/StatsOutline"
+	var panel: Panel = root.get_node(path)
+	var entry: Dictionary = _record()["scenes"][INVENTORY_SCENE]["pieces"][path].duplicate()
+	entry["fill"] = "00000064"
+	_assert_one_problem(_outline_problems(path, panel, entry), "outline has no fill")
+	var style: StyleBoxFlat = panel.get_theme_stylebox("panel").duplicate()
+	panel.add_theme_stylebox_override("panel", style)
+	style.draw_center = true
+	style.bg_color = Color(1, 0, 0, 1)
+	_assert_one_problem(_outline_problems(path, panel, entry), "outline fill")
+	style.bg_color = Color.html("00000064")
+	assert_eq(_outline_problems(path, panel, entry), [] as Array[String])
 
 
 func test_control_a_zone_orb_moved_20_px_fails() -> void:
