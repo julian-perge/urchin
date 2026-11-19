@@ -164,6 +164,14 @@ HAND_ANGLE = re.compile(
 )
 HAND_SCRIPT_DIR = re.compile(r"PlaceObject2_3385_(\d+)")
 TIME_LIMIT = re.compile(r"^BattleTimeLimit = (\d+);", re.MULTILINE)
+# On Heroic a pick (addMoveForPlayer) and a pass (button 3383's release) both
+# set BattleTimeNow this many frames short of BattleTimeLimit, so the half-turn
+# starts that many frames after the player's last pick or pass.
+PICK_SCRIPTS = (
+    ACTION_SCRIPT / "frame_42" / "DoAction_11.as",
+    ACTION_SCRIPT / "DefineButton2_3383" / "BUTTONCONDACTION on(release).as",
+)
+PICK_DELAY = re.compile(r"_root\.BattleTimeNow = _root\.BattleTimeLimit - (\d+);")
 
 LAYOUT_JSON = HALL_DIR / "battle_layout.json"
 FRAME_LABEL = "KRINBATTLESCENE"
@@ -573,6 +581,15 @@ def time_limit(script: str) -> int:
     return int(found[0])
 
 
+def pick_delay(scripts: list[str]) -> int:
+    """-> the frames between the player's last pick or pass and the half-turn's
+    start. Raises unless each script sets it once and all of them agree."""
+    found = [PICK_DELAY.findall(script) for script in scripts]
+    if any(len(each) != 1 for each in found) or len({each[0] for each in found}) != 1:
+        raise RuntimeError(f"the pick and the pass set BattleTimeNow as {found}")
+    return int(found[0][0])
+
+
 def clock_jobs(
     index: SwfIndex, battle_frame: int, stripped: tuple[int, ...]
 ) -> tuple[render.Job, dict[str, list[render.Job]], int]:
@@ -715,6 +732,9 @@ def main():
             index, by_sprite[MEMBER_BAR][1], by_sprite[STANCE_ICONS][1]
         )
 
+    layout["clock"]["pick_delay"] = pick_delay(
+        [path.read_text("utf-8") for path in PICK_SCRIPTS]
+    )
     layout["fade"] = fade_layout(index, battle_frame)
     layout["radial_menu"] = radial_menu_layout(index, battle_frame)
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")

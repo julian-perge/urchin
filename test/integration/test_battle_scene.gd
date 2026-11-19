@@ -1681,6 +1681,124 @@ func test_heroic_decision_passes_the_turn_when_the_window_runs_out():
 	ZoneManager.auto_switch_scenes = true
 
 
+# On Heroic a pick and a pass both set BattleTimeNow to BattleTimeLimit less
+# the pick delay, and the fight starts when BattleTimeNow reaches
+# BattleTimeLimit (frame_42/DoAction_11.as:98-101, DefineButton2_3383
+# on(release), lines 9-12, and frame_217/PlaceObject2_3389_480 enterFrame,
+# lines 769-792). InBattle stays false until then, so the pass button still
+# queues a pass that replaces the pick. The pass does not touch krinToMove, so
+# the pick's icon and its "Click to cancel this ability." text stay up.
+func test_a_pass_before_the_fight_starts_on_heroic_replaces_the_pick():
+	var texts: Dictionary = _pass_texts()
+	var delay: float = _pick_delay()
+	var fps: float = BattleScreenClip.fps()
+	var delay_start: String = "friend_%03d" % int(BattleRunner.BATTLE_TIME_LIMIT - delay)
+	var scene = _heroic_battle_100_with_process_stepped("HeroicCancel")
+	await wait_until(func(): return scene.decision_open, 5)
+	var icon: TextureRect = scene.get_node("BottomBar/MoveIcon")
+	var pass_button: Button = scene.get_node("BottomBar/PassButton")
+	var turn: int = scene.runner.turn_count
+	var first_event: int = scene.runner.events.size()
+
+	_pick_the_first_move_on_the_enemy(scene)
+	var move: Ability = MoveManagerAuto.moves_by_id[int(scene.units[1].equipped_moves[0])]
+	assert_true(scene.decision_open, "the pick leaves the decision open")
+	scene._process(0.0)
+	assert_eq(_clock_shows(scene), delay_start, "the pick moves the clock to the delay's start")
+	scene._process((delay - 1.0) / fps)
+	assert_true(scene.decision_open, "1 frame of the delay is left")
+
+	_click(scene.get_viewport(), pass_button)
+	assert_true(scene.decision_open, "the pass leaves the decision open too")
+	scene._process(0.0)
+	assert_eq(_clock_shows(scene), delay_start, "the pass moves the clock back to the delay's start")
+	assert_true(icon.visible, "the pass leaves the pick's icon up")
+	assert_eq(icon.texture, RadialMenu.icon_texture(move))
+	pass_button.mouse_entered.emit()
+	assert_eq(_shown_tooltip_texts(), [move.display_name, texts["picked"] % scene.units[2].player_name], "and the pick's text")
+	pass_button.mouse_exited.emit()
+
+	scene._process((delay - 0.5) / fps)
+	assert_true(scene.decision_open, "the delay runs from the pass")
+	scene._process(1.0 / fps)
+	assert_false(scene.decision_open, "the delay ends with the fight's start")
+	await wait_until(func(): return scene.runner.turn_count > turn, 5)
+	var player_events: Array = scene.runner.events.slice(first_event).filter(
+		func(event): return event["turn"] == turn and int(event.get("caster_slot", 0)) == BattleRunner.PLAYER_SLOT
+	)
+	assert_eq(player_events.map(func(event): return event["type"]), [BattleRunner.EventType.PASSED, BattleRunner.EventType.BUFF_TICK], "the player passed")
+
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+
+
+# The target click that opens the menu checks InBattle and not moveChoosen
+# (frame_217/DoAction_3.as:18), so on Heroic the player can pick again inside
+# the pick delay. krinAddMove files the second pick in the same MoveArrayFINAL box
+# as the first (frame_42/DoAction_4.as:28-33), so the second pick replaces the
+# first, and it moves the clock back as the first did.
+func test_a_second_pick_before_the_fight_starts_on_heroic_replaces_the_first():
+	var delay: float = _pick_delay()
+	var fps: float = BattleScreenClip.fps()
+	var scene = _heroic_battle_100_with_process_stepped("HeroicRepick")
+	await wait_until(func(): return scene.decision_open, 5)
+	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+	var enemy: CombatUnit = scene.units[2]
+	var first_id: int = int(player.equipped_moves[0])
+	var second: Ability = MoveManagerAuto.moves_by_id.values().filter(func(move):
+		return move.id not in [0, first_id] and MoveLegality.refusal(player, move, 1, enemy, scene.radial_menu._buffs_by_id) == MoveLegality.Refusal.NONE
+	)[0]
+	if player.equipped_moves.size() < 2:
+		player.equipped_moves.resize(2)
+	player.equipped_moves[1] = second.id
+	var turn: int = scene.runner.turn_count
+	var first_event: int = scene.runner.events.size()
+
+	_pick_the_first_move_on_the_enemy(scene)
+	scene._process((delay - 1.0) / fps)
+	_click(scene.get_viewport(), scene._presenters[2].hit_area)
+	_click(scene.get_viewport(), scene.radial_menu.orbs[1])
+	assert_true(scene.decision_open, "the second pick leaves the decision open")
+	scene._process((delay - 0.5) / fps)
+	assert_true(scene.decision_open, "the delay runs from the second pick")
+	scene._process(1.0 / fps)
+	assert_false(scene.decision_open)
+	await wait_until(func(): return scene.runner.turn_count > turn, 5)
+	var player_moves: Array = scene.runner.events.slice(first_event).filter(
+		func(event): return event["turn"] == turn and event["type"] == BattleRunner.EventType.MOVE and int(event["caster_slot"]) == BattleRunner.PLAYER_SLOT
+	)
+	assert_eq(player_moves.map(func(event): return event["move_id"]), [second.id], "the player uses the second pick")
+
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+
+
+# extract_battle_screen reads the pick delay from the pick and the pass.
+func _pick_delay() -> float:
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/backgrounds/battle/battle_layout.json"))
+	return float(layout["clock"]["pick_delay"])
+
+
+# Battle 100 on Heroic in a viewport of its own, so clicks reach its units and
+# the pass button. The test steps _process by hand, so real frames never run
+# out the Heroic decision timer.
+func _heroic_battle_100_with_process_stepped(save_name: String) -> Control:
+	var save: PlayerSave = PlayerSave.new_game(save_name, 0)
+	save.difficulty = CombatUnit.Difficulty.HARD
+	GameData.current_save = save
+	ZoneManager.auto_switch_scenes = false
+	ZoneManager.pending_battle = {}
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(800, 575)
+	add_child_autofree(viewport)
+	var scene = BattleSceneRes.instantiate()
+	viewport.add_child(scene)
+	scene.animation_speed = 0.0
+	scene.set_process(false)
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+	return scene
+
+
 # Easy and Normal set turnBasedKrin (frame_201/DoAction.as:65-79). There the
 # conductor holds the clock just under the limit until the player picks (lines
 # 639-642), so the decision never runs out and the clock never moves.
@@ -1731,6 +1849,7 @@ func test_heroic_countdown_stops_once_the_player_is_dead():
 	player.life_n = 0.0
 	player.active = false
 	scene._on_pass_pressed()
+	scene._process(1.0)
 	var finished: bool = await wait_for_signal(scene.battle_finished, 30)
 	assert_true(finished, "the rest of the battle never waits on the dead player")
 	assert_true(scene._turn_based, "the clock stays parked for the rest of the battle")

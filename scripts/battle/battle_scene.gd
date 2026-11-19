@@ -81,8 +81,8 @@ var _stance_rows: Dictionary = {}  # party_id -> StanceRow
 var _member_rows_enabled: bool = true
 var _selected_move: Dictionary = {}
 # True while the turn loop waits for the player's pick. The menu follows it
-# through this setter, so a pick, a pass and the Heroic timeout all close the
-# menu by clearing it.
+# through this setter, so the end of the Decision closes the menu by clearing
+# it.
 var decision_open: bool = false:
 	set(value):
 		decision_open = value
@@ -236,7 +236,7 @@ func _process(delta: float) -> void:
 	if decision_open and not _turn_based:
 		_decision_timer = maxf(_decision_timer - delta, 0.0)
 		if _decision_timer == 0.0:
-			_on_pass_pressed()
+			decision_open = false
 	if decision_open:
 		_battle_time_now = _decision_time_now()
 	clock.show_time(_clock_side, _battle_time_now)
@@ -452,8 +452,8 @@ func _spawn_impact(target_slot: int, move: Ability, result: MoveResult) -> void:
 
 func _on_radial_move_picked(bar_index: int, move_id: int, target_slot: int) -> void:
 	_selected_move = {"bar_index": bar_index, "move_id": move_id, "target_slot": target_slot}
-	decision_open = false
 	_show_pick_on_pass_button(move_id, target_slot)
+	_end_decision_soon()
 
 
 # --- bottom bar: stances + clock + retreat ---------------------------------
@@ -615,7 +615,22 @@ func _on_pass_pressed() -> void:
 	if not decision_open:
 		return
 	_selected_move = {}
-	decision_open = false
+	_end_decision_soon()
+
+
+# On Easy and Normal the conductor starts the half-turn on its next frame after
+# a pick or a pass (enterFrame, lines 643-672). On Heroic a pick and a pass both
+# set BattleTimeNow to BattleTimeLimit less the pick delay that
+# extract_battle_screen reads (frame_42/DoAction_11.as:98-101 and
+# DefineButton2_3383 on(release), lines 9-12). So the Decision stays open for
+# that many frames, and a later pick or pass replaces this one and starts the
+# delay again. When the delay runs out, _process closes the Decision with
+# whatever the player chose last.
+func _end_decision_soon() -> void:
+	if _turn_based:
+		decision_open = false
+		return
+	_decision_timer = float(_layout()["clock"]["pick_delay"]) / BattleScreenClip.fps()
 
 
 # Gives the pass button the art of each state from extract_pass_button. The
