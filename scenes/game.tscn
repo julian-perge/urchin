@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://b72a78kxlnpmh"]
+[gd_scene load_steps=13 format=3 uid="uid://b72a78kxlnpmh"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="PackedScene" uid="uid://brmx4sa7xb3xq" path="res://scenes/ui/store/store_window.tscn" id="2_store"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hub_card.tscn" id="8_hubcard"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/victory_window.tscn" id="9_victory"]
 [ext_resource type="Script" path="res://scripts/ui/hub_fade.gd" id="10_fade"]
+[ext_resource type="PackedScene" path="res://scenes/battle/combat_text_banner.tscn" id="11_banner"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/options_window.tscn" id="11_options"]
 
 [node name="Game" type="Control"]
@@ -71,6 +72,9 @@ visible = false
 layout_mode = 1
 
 [node name="Hotbar" parent="." instance=ExtResource("4_hotbar")]
+
+[node name="CombatTextBanner" parent="." groups=["combat_text_banner"] instance=ExtResource("11_banner")]
+placement = "hub"
 
 [node name="HubCard" parent="." instance=ExtResource("8_hubcard")]
 

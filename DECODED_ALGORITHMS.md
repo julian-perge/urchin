@@ -508,7 +508,8 @@ Ported: `CombatTextBanner` (`scripts/battle/combat_text_banner.gd`) plays it fro
 player's own failed moves in it, and "You cannot move yet" for a click outside a Decision.
 
 - Root frame 217 places it at depth 630, at (400, 148.5), above the orb ring at 500 and below the speech box at 634, with a red Glow filter (blur 10 by 5, strength 1) that turns its
-  translucent white band pink and haloes its text. Root frame 181 places the same clip at (400, 48.95) for the hub, which the port does not show yet.
+  translucent white band pink and haloes its text. Root frame 181, Navigation, places the same clip with the same Glow at (400, 48.95) and depth 1610, above `KRINMENU` at 175 and below
+  the Info card at 1651. Ported: the Hub's `CombatTextBanner` in `scenes/game.tscn`, with `placement` set to `hub`. It shows the hotbar's messages, such as the respec button's.
 - Frame 1 runs `stop()` and shows nothing. `gotoAndPlay("GO")` jumps to frame 2, which copies `combatTexter` into the text field through `inner.combatText`
   (`DefineSprite_2852/frame_2/DoAction.as`). Frames 2 to 12 slide the inner clip up from 10 px below its place and fade it in from 0 to full, frames 13 to 125 hold it, frame 125 empties the
   text (`DefineSprite_2852/frame_125/DoAction.as`), and frames 126 to 136 slide it back down as it fades out. The clip then loops to frame 1 and stops, 4.5 s after the GO frame at 30 fps.
@@ -837,11 +838,13 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
 - In the Abilities window a press on a pool ability picks it up: `DefineButton2_2437` on(press) sets `UITmouseHold` to the ability and shows its icon on the cursor. A release over a ring
   socket calls `addMoveForPlayer` in its `menuMode` branch, which places the held ability in that socket, or shows `SKILLERROR` when the ring already holds the ability's limit
   (`KRINABILITY<id>[8]`) of copies (`frame_42/DoAction_11.as:1-32`). A release with nothing held empties the socket. `frame_181/DoAction_2.as:10-14` drops a held ability.
-- The Respec button on the hotbar, `DefineButton2_3179`, refuses with `MENU[66]` while an item is on the cursor and does nothing while `PauseForScreen` is set. It costs
+- Ported: `hotbar.gd`'s `_on_respec_pressed`. The Respec button on the hotbar, `DefineButton2_3179`, refuses with `MENU[66]` while an item is on the cursor and does nothing while `PauseForScreen` is set. It costs
   `round(0.7 * respecValue(Level))` euros and refuses with `MENU[42]` when the player has less. Otherwise it sets the skill points as above and the stat points to `givePoints(Level, true)`,
   puts the class's two starting moves back as the only moves, clears the cooldowns, `skillAdderMatrix`, `buffAdderMatrix` and `talentMainArray`, rebuilds `StatSets0` from the equipped
   gear, shows `MENU[67]` in the Combat text banner and opens the `skills` frame of `KRINMENU`. It also counts `respecSet` down from 5 each day, but nothing reads that count, so the original
-  never limits respecs (#32). Its tooltip is `SYSTEM[32]` + ": EUR" + the cost over `SYSTEM[33]`, with the euro sign where this line says EUR.
+  never limits respecs (#32). Every message goes through a bare `play()`, so it shows only when the banner is not already up. The port's item on the cursor is an item
+  drag, so a drag released on the button is the `MENU[66]` case. The port keeps cooldowns only on a battle's units, so the respec has none to clear. Its `KrinScreen._visible = false` hides the zone screen (DefineSprite 3287), which
+  the port hides whenever a Window shows. Its tooltip is `SYSTEM[32]` + ": EUR" + the cost over `SYSTEM[33]`, with the euro sign where this line says EUR.
 
 ## The menu clip's frames (DefineSprite 3142, `KRINMENU`)
 
