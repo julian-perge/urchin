@@ -763,7 +763,7 @@ Ported: `scripts/ui/hotbar.gd`'s `_refresh` builds the right panel, and `scripts
 - The hub art picks its frame from the same variable on the same frame, through `Krin.zoneName[sectionIn]` (line 2 of `frame_181/PlaceObject3_3287_59`'s onClipEvent(load)), so the panel
   always names the hub on screen.
 - The world map's zone buttons are the only other readers of these strings. They show `ZONES[sectionID]` and `ZONES2[sectionID]` as their tooltip's title and body (`DefineButton2_4155`
-  on(rollOver), lines 3-4), and the port's map has no tooltips yet.
+  on(rollOver), lines 3-4). The port's `zone_map.gd` shows them through `GameTooltip.show_title_and_body`, for locked zones too, because the rollOver reads no `canUse`.
 
 ## Post-battle hint (`krinNavTutSpeech`, frame_42/DoAction_21.as:26-76)
 

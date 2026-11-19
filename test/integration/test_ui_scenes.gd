@@ -1083,6 +1083,28 @@ func test_zone_map_button_states_follow_unlocks():
 	assert_true(is_instance_valid(map.get_node("Connectors")), "connector lines node exists and drew without error")
 
 
+# DefineButton2_4155 on(rollOver) sets the tooltip's title to ZONES[sectionID]
+# and its text to ZONES2[sectionID], with no canUse check, and on(rollOut)
+# clears it.
+func test_a_zone_shows_its_name_in_the_tooltip_open_or_locked():
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var map = game.get_node("ZoneMapOverlay")
+	map.visible = true
+	var strings: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Strings.STRINGS_FILE))
+	var zones = map.get_node("Zones")
+	assert_true(zones.get_node("Zone2").disabled, "zone 2 is locked for this check")
+	for zone_id: int in [1, 2]:
+		zones.get_node("Zone%d" % zone_id).mouse_entered.emit()
+		assert_true(GameTooltip._root.visible, "zone %d shows the tooltip" % zone_id)
+		var lines: Array[String] = []
+		for label: Label in GameTooltip._sections.find_children("*", "Label", true, false):
+			lines.append(label.text)
+		assert_eq(lines, [strings["ZONES"][zone_id], strings["ZONES2"][zone_id]], "zone %d" % zone_id)
+		zones.get_node("Zone%d" % zone_id).mouse_exited.emit()
+		assert_false(GameTooltip._root.visible, "zone %d hides the tooltip on roll out" % zone_id)
+
+
 func _zone_face(zones: Node, zone_id: int) -> String:
 	return (zones.get_node("Zone%d/Art" % zone_id) as TextureRect).texture.resource_path
 

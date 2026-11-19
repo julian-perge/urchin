@@ -19,6 +19,8 @@ func _ready():
 	for zone_button in $Zones.get_children():
 		var zone_id: int = int(zone_button.name.trim_prefix("Zone"))
 		zone_button.pressed.connect(_on_zone_selected.bind(zone_id))
+		zone_button.mouse_entered.connect(_show_tooltip.bind(zone_button, zone_id))
+		zone_button.mouse_exited.connect(GameTooltip.hide_tooltip)
 	visibility_changed.connect(_on_visibility_changed)
 
 
@@ -48,6 +50,12 @@ func _refresh_button_states():
 		var usable: bool = ZoneManager.can_access_zone(zone_id)
 		zone_button.disabled = not usable
 		(zone_button.get_node("Art") as TextureRect).texture = OPEN_FACE if usable else LOCKED_FACE
+
+
+# DefineButton2_4155 on(rollOver) reads no canUse, so a locked zone shows its
+# name too.
+func _show_tooltip(zone_button: Control, zone_id: int) -> void:
+	GameTooltip.show_title_and_body(Strings.text("ZONES", zone_id), Strings.text("ZONES2", zone_id), zone_button)
 
 
 func _on_zone_selected(zone_id: int):
