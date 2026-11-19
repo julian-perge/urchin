@@ -424,3 +424,27 @@ def test_hide_depths_reach_the_driver_as_owner_and_depth(tmp_path, monkeypatch):
         {"owner": 3142, "depth": 9},
     ]
     assert "hide_depths" not in seen[1]
+
+
+def test_rotate_depths_reach_the_driver_as_owner_depth_and_degrees(
+    tmp_path, monkeypatch
+):
+    # The battle clock sets the _rotation of the two hands in sprite 3386, which
+    # thingerClock draws, so a job has to carry the owner with each depth.
+    fake_driver(monkeypatch, [result(92, 92, CANVAS, DISPLAY)] * 2, [None, None])
+    real = ffdec_lib.render
+    seen: list[dict] = []
+
+    def spy(swf_path, jobs):
+        seen.extend(jobs)
+        return real(swf_path, jobs)
+
+    monkeypatch.setattr(ffdec_lib, "render", spy)
+    jobs = [Job(7, 1, 4.0, rotate=((3386, 2, -90.0), (3386, 6, 0.0))), Job(7, 1, 4.0)]
+    with render.frames(tmp_path / "a.swf", jobs):
+        pass
+    assert seen[0]["rotate_depths"] == [
+        {"owner": 3386, "depth": 2, "degrees": -90.0},
+        {"owner": 3386, "depth": 6, "degrees": 0.0},
+    ]
+    assert "rotate_depths" not in seen[1]
