@@ -259,6 +259,11 @@ extract-speech-bubble *args: (require "ffdec" "java")
 extract-floating-numbers *args: (require "ffdec" "java")
     uv run extract_floating_numbers "$@"
 
+[doc('Run extract_tooltip_look, which reads the SWF without ffdec')]
+[group('extract')]
+extract-tooltip-look *args:
+    uv run extract_tooltip_look "$@"
+
 [doc('Run extract_hub_fade, which reads the SWF without ffdec')]
 [group('extract')]
 extract-hub-fade *args:

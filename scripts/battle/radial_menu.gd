@@ -264,7 +264,7 @@ func _on_orb_pressed(bar_index: int) -> void:
 func _on_orb_entered(bar_index: int) -> void:
 	var move: Ability = _move_on_bar(_units[BattleRunner.PLAYER_SLOT], bar_index)
 	GameTooltip.show_sections(
-		_tooltip_sections(move), orbs[bar_index], null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY
+		_tooltip_sections(move), orbs[bar_index], null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY, "", true
 	)
 	_tooltip_up = true
 

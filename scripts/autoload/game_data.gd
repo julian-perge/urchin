@@ -227,8 +227,13 @@ func unequip_to_slot(equip_slot: int, inventory_index: int) -> bool:
 	return true
 
 
-# Sells back at 15% of list price - the shop sell button's handler
-# (DefineButton2_3015): Euro += Math.ceil(KRINITEM[5] * 0.15).
+# The shop's sell slot pays a share of the list price, rounded up, and its
+# tooltip names the same amount (DefineButton2_3015 on(press) and
+# on(rollOver)). extract_tooltip_look reads the share into tooltip_look.json.
+func sell_price(item: GameItem) -> int:
+	return int(ceil(item.price * float(TooltipTheme.look()["sell_ratio"])))
+
+
 func sell_item(item: GameItem) -> bool:
 	if current_save == null:
 		return false
@@ -236,7 +241,7 @@ func sell_item(item: GameItem) -> bool:
 	if slot_index == -1:
 		return false
 	current_save.item_array[slot_index] = 0
-	current_save.euro += ceil(item.price * 0.15)
+	current_save.euro += sell_price(item)
 	gold_changed.emit(current_save.euro)
 	inventory_changed.emit()
 	return true

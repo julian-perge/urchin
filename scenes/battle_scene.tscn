@@ -183,7 +183,6 @@ offset_right = -8.0
 offset_bottom = 48.0
 grow_horizontal = 0
 text = "Log"
-tooltip_text = "Toggle the combat log"
 
 [node name="AlertIcon" type="TextureRect" parent="BottomBar"]
 layout_mode = 0
@@ -234,7 +233,6 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_pass")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_pass")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_pass")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_pass")
-tooltip_text = "Pass your turn"
 
 [node name="RetreatButton" type="Button" parent="BottomBar"]
 layout_mode = 0

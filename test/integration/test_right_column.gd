@@ -1,7 +1,7 @@
 # RightColumn (spec/107-window-shell.md): the sell slot as a drop target, the
 # money bar's two Labels, the grid, and the Inventory and Victory hosts.
 # test_store_window.gd checks the Store host.
-# Over the sell slot, a dragged item shows its price in the slot's tooltip, and
+# Over the sell slot, a dragged item shows its price in the shared tooltip, and
 # a drop sells it through sell_pressed, as a click does.
 extends GutTest
 
@@ -11,6 +11,7 @@ const InventoryWindowScene = preload("res://scenes/ui/menu/inventory_window.tscn
 
 func after_each():
 	GameData.current_save = null
+	GameTooltip.hide_tooltip()
 
 
 func _make_item(price: float) -> GameItem:
@@ -23,45 +24,61 @@ func _make_item(price: float) -> GameItem:
 	return item
 
 
+func _menu(index: int) -> String:
+	var strings: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/strings.json"))
+	return strings["MENU"][index]
+
+
+func _tooltip_texts() -> Array:
+	var texts: Array = []
+	for section in GameTooltip._sections.get_children():
+		for label in section.get_child(0).get_children():
+			texts.append(label.text)
+	return texts
+
+
+# DefineButton2_3015 on(rollOver): MENU[3] over MENU[4] + " €" + the price,
+# which is Math.ceil(KRINITEM[5] * the sell ratio in tooltip_look.json).
 func test_can_drop_data_over_sell_button_previews_price_and_accepts():
 	var panel: RightColumn = add_child_autofree(RightColumnScene.instantiate())
 	panel.show_sell_button(true)
 	var item: GameItem = _make_item(100.0)
 	var at_position: Vector2 = panel.sell_button.get_rect().get_center()
 	assert_true(panel._can_drop_data(at_position, {"item": item}))
-	assert_eq(panel.sell_button.tooltip_text, "Sell for €15", "15%% of 100, rounded up")
+	var look: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/tooltip_look.json"))
+	var price: int = ceili(100.0 * float(look["sell_ratio"]))
+	assert_eq(_tooltip_texts(), [_menu(3), "%s €%d" % [_menu(4), price]], "the sell ratio of 100, rounded up")
 
 
-func test_can_drop_data_outside_sell_button_rejects_and_leaves_tooltip():
+func test_can_drop_data_outside_sell_button_rejects_and_shows_no_tooltip():
 	var panel: RightColumn = add_child_autofree(RightColumnScene.instantiate())
 	var item: GameItem = _make_item(100.0)
-	var default_tooltip: String = panel.sell_button.tooltip_text
 	assert_false(panel._can_drop_data(Vector2(-500, -500), {"item": item}))
-	assert_eq(panel.sell_button.tooltip_text, default_tooltip, "unchanged when not over the button")
+	assert_false(GameTooltip._root.visible, "no tooltip when not over the button")
 
 
-func test_drop_data_on_sell_button_emits_sell_pressed_and_resets_tooltip():
+# The original's sell press empties the mouse and sets the body to MENU[5]
+# (DefineButton2_3015 on(press)).
+func test_drop_data_on_sell_button_emits_sell_pressed_and_shows_the_empty_text():
 	var panel: RightColumn = add_child_autofree(RightColumnScene.instantiate())
 	panel.show_sell_button(true)
 	var item: GameItem = _make_item(100.0)
-	var default_tooltip: String = panel.sell_button.tooltip_text
 	var at_position: Vector2 = panel.sell_button.get_rect().get_center()
 	watch_signals(panel)
 	panel._can_drop_data(at_position, {"item": item})  # the real drag flow always previews first
 	panel._drop_data(at_position, {"item": item})
 	assert_signal_emitted_with_parameters(panel, "sell_pressed", [item])
-	assert_eq(panel.sell_button.tooltip_text, default_tooltip, "restored after a completed sell")
+	assert_eq(_tooltip_texts(), [_menu(3), _menu(5)], "the body goes back to MENU[5] after a sale")
 
 
-func test_drag_end_notification_resets_tooltip():
+func test_drag_end_notification_hides_the_price_preview():
 	var panel: RightColumn = add_child_autofree(RightColumnScene.instantiate())
 	panel.show_sell_button(true)
 	var item: GameItem = _make_item(100.0)
-	var default_tooltip: String = panel.sell_button.tooltip_text
 	panel._can_drop_data(panel.sell_button.get_rect().get_center(), {"item": item})
-	assert_ne(panel.sell_button.tooltip_text, default_tooltip, "price preview showing mid-drag")
+	assert_true(GameTooltip._root.visible, "price preview showing mid-drag")
 	panel._notification(NOTIFICATION_DRAG_END)
-	assert_eq(panel.sell_button.tooltip_text, default_tooltip, "restored on a cancelled drag")
+	assert_false(GameTooltip._root.visible, "hidden on a cancelled drag")
 
 
 # The character is the one extract_screen_rects read from edit text 2861, so the
@@ -97,14 +114,13 @@ func test_show_sell_button_shows_and_hides_the_sell_slot():
 func test_a_hidden_sell_slot_refuses_a_drop_and_sells_nothing():
 	var column: RightColumn = add_child_autofree(RightColumnScene.instantiate())
 	var item: GameItem = _make_item(100.0)
-	var default_tooltip: String = column.sell_button.tooltip_text
 	var at_position: Vector2 = column.sell_button.get_rect().get_center()
 	column.show_sell_button(false)
 	watch_signals(column)
 	assert_false(column._can_drop_data(at_position, {"item": item}))
 	column._drop_data(at_position, {"item": item})
 	assert_signal_not_emitted(column, "sell_pressed")
-	assert_eq(column.sell_button.tooltip_text, default_tooltip)
+	assert_false(GameTooltip._root.visible, "a hidden sell slot shows no price")
 
 
 func test_the_grid_holds_36_slots_in_save_order():

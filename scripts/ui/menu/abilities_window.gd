@@ -290,7 +290,7 @@ func _on_tree_node_hovered(node_index: int) -> void:
 	var result: Dictionary = AbilityTooltipBuilder.build_sections(node, save, move, next_move)
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _tree_node_icon_key(node)]
 	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
-	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY)
+	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
 
 
 func _refresh_wheel(save: PlayerSave) -> void:
@@ -317,7 +317,7 @@ func _on_socket_hovered(socket_index: int) -> void:
 	var move_id: int = int(save.move_matrix[socket_index]) if socket_index < save.move_matrix.size() else 0
 	var button: Button = _socket_buttons[socket_index]
 	if move_id == 0:
-		GameTooltip.show_sections(AbilityTooltipBuilder.empty_socket_sections(), button, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY)
+		GameTooltip.show_sections(AbilityTooltipBuilder.empty_socket_sections(), button, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
 		return
 	var move: Ability = MoveManagerAuto.get_move(move_id)
 	if move == null:
@@ -325,7 +325,7 @@ func _on_socket_hovered(socket_index: int) -> void:
 	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move)
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
 	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
-	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY)
+	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
 
 
 func _refresh_pool(save: PlayerSave) -> void:
@@ -361,7 +361,7 @@ func _on_pool_row_hovered(row_index: int) -> void:
 	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move)
 	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
 	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
-	GameTooltip.show_sections(result["sections"], row, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY)
+	GameTooltip.show_sections(result["sections"], row, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
 
 
 func _move_color(move: Ability) -> Color:

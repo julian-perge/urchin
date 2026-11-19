@@ -18,6 +18,13 @@ signal sell_pressed(item: GameItem)
 signal delete_pressed(slot: ItemSlot)
 
 const ItemSlotScene: PackedScene = preload("res://scenes/ui/item_slot.tscn")
+# The MENU strings of the delete slot's tooltip (DefineButton2_2858 on(rollOver),
+# lines 5-6) and the sell slot's (DefineButton2_3015 on(rollOver), lines 5-13).
+const DELETE_TITLE: int = 1
+const DELETE_BODY: int = 2
+const SELL_TITLE: int = 3
+const SELL_FOR: int = 4
+const SELL_EMPTY: int = 5
 const SLOTS_PER_ROW: int = 6
 var selected_slot: ItemSlot = null
 # The 36 slots in grid order, row by row.
@@ -26,14 +33,18 @@ var slots: Array[ItemSlot] = []
 @onready var amount_label: Label = $Amount
 @onready var sell_button: Button = $SellSlot
 @onready var delete_button: Button = $DeleteSlot
-# _can_drop_data shows a price in the sell slot's tooltip during a drag. This
-# is the tooltip that right_column.tscn gives the slot, which a sale or the end
-# of the drag puts back.
-@onready var _default_sell_tooltip: String = sell_button.tooltip_text
+# Whether the sell slot's tooltip shows, and the item whose price it names.
+var _sell_tooltip_shown: bool = false
+var _sell_tooltip_item: GameItem = null
 
 
 func _ready() -> void:
 	$Title.text = Strings.menu(14)
+	sell_button.mouse_entered.connect(func(): _show_sell_tooltip(_held_item()))
+	sell_button.mouse_exited.connect(_hide_sell_tooltip)
+	delete_button.mouse_entered.connect(func():
+		GameTooltip.show_title_and_body(Strings.menu(DELETE_TITLE), Strings.menu(DELETE_BODY), delete_button))
+	delete_button.mouse_exited.connect(GameTooltip.hide_tooltip)
 	for row: Node in $Grid.get_children():
 		for column in SLOTS_PER_ROW:
 			var slot: ItemSlot = ItemSlotScene.instantiate()
@@ -43,6 +54,9 @@ func _ready() -> void:
 			# from. A slot never moves, so they are set once here.
 			slot.set_meta("drag_source", "inventory")
 			slot.set_meta("drag_index", slots.size())
+			# A backpack cell shows item 0's tooltip when empty, as the
+			# original's cell 2985 does.
+			slot.shows_empty_item = true
 			row.add_child(slot)
 			slots.append(slot)
 
@@ -50,6 +64,8 @@ func _ready() -> void:
 func _on_sell_pressed() -> void:
 	if selected_slot != null and selected_slot.item != null:
 		sell_pressed.emit(selected_slot.item)
+		if _sell_tooltip_shown:
+			_show_sell_tooltip(_held_item())
 
 
 func _on_delete_pressed() -> void:
@@ -107,7 +123,8 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	if not _over_shown_sell_slot(at_position):
 		return false
 	var item: GameItem = data["item"]
-	sell_button.tooltip_text = "Sell for €%d" % int(ceil(item.price * 0.15))
+	if not _sell_tooltip_shown or _sell_tooltip_item != item:
+		_show_sell_tooltip(item)
 	return true
 
 
@@ -118,7 +135,9 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 	if item == null:
 		return
 	sell_pressed.emit(item)
-	sell_button.tooltip_text = _default_sell_tooltip
+	# The original's sell press empties the mouse and sets the body to MENU[5]
+	# while the pointer stays on the slot (DefineButton2_3015 on(press)).
+	_show_sell_tooltip(null)
 
 
 func _over_shown_sell_slot(at_position: Vector2) -> bool:
@@ -126,5 +145,33 @@ func _over_shown_sell_slot(at_position: Vector2) -> bool:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_DRAG_END:
-		sell_button.tooltip_text = _default_sell_tooltip
+	if what == NOTIFICATION_DRAG_END and _sell_tooltip_item != null:
+		_hide_sell_tooltip()
+
+
+# The original's sell tooltip names the price of the item on the mouse,
+# Krin.mouseItem. The port's nearest match is the item being dragged, or else
+# the selected item, because a click on the sell slot sells the selected item.
+func _held_item() -> GameItem:
+	if is_inside_tree() and get_viewport().gui_is_dragging():
+		var data: Variant = get_viewport().gui_get_drag_data()
+		if data is Dictionary and data.get("item") is GameItem:
+			return data["item"]
+	if selected_slot != null:
+		return selected_slot.item
+	return null
+
+
+func _show_sell_tooltip(item: GameItem) -> void:
+	var body: String = Strings.menu(SELL_EMPTY)
+	if item != null:
+		body = "%s €%d" % [Strings.menu(SELL_FOR), GameData.sell_price(item)]
+	GameTooltip.show_title_and_body(Strings.menu(SELL_TITLE), body, sell_button)
+	_sell_tooltip_shown = true
+	_sell_tooltip_item = item
+
+
+func _hide_sell_tooltip() -> void:
+	_sell_tooltip_shown = false
+	_sell_tooltip_item = null
+	GameTooltip.hide_tooltip()

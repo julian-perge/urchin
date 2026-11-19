@@ -173,9 +173,8 @@ func _ready():
 	speech_box.alpha_changed.connect(_on_speech_box_alpha_changed)
 	# The retreat button is the original's battle Quit button,
 	# DefineButton2_3356, which shows SYSTEM[25] over SYSTEM[26]
-	# (frame_1/DoAction.as:92-93). The pass button, DefineButton2_3383, shows
-	# no tooltip in the original and the original has no log toggle, so both
-	# keep the port's own native tooltips.
+	# (frame_1/DoAction.as:92-93). The original has no log toggle, so the
+	# toggle shows no tooltip.
 	var retreat: Button = $BottomBar/RetreatButton
 	var quit_sections: Array = [
 		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": "Quit", "color": TooltipTheme.TEXT_TITLE}]},
@@ -183,6 +182,15 @@ func _ready():
 	]
 	retreat.mouse_entered.connect(func(): GameTooltip.show_sections(quit_sections, retreat))
 	retreat.mouse_exited.connect(GameTooltip.hide_tooltip)
+	# The pass button covers krinToMove, the ability icon at the clock's
+	# centre, whose idle tooltip names no ability and says what a click does in
+	# each mode (frame_217/PlaceObject2_2427_484/CLIPACTIONRECORD
+	# onClipEvent(load).as). Its parent sets chimney, so it shows at once.
+	var pass_button: Button = $BottomBar/PassButton
+	pass_button.mouse_entered.connect(func():
+		var texts: Dictionary = TooltipTheme.look()["pass_button"]
+		GameTooltip.show_title_and_body(texts["title"], texts["turn_based" if _turn_based else "real_time"], pass_button))
+	pass_button.mouse_exited.connect(GameTooltip.hide_tooltip)
 	if not ZoneManager.pending_battle.is_empty():
 		start_battle(ZoneManager.pending_battle)
 		ZoneManager.pending_battle = {}

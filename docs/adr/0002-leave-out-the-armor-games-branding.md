@@ -36,7 +36,7 @@ The original's title, root frame 46 (`mainMenu`), shows five captions. Two of th
 
 The port's title leaves out both captions and both buttons, with the logo and the copyright line. The three captions that stay, `MENU[18]`, "Game Manual" and "Credits", keep their SWF positions. A player of the original will see a gap of 90 px between "Game Manual" and "Credits", where the two links were.
 
-The Credits Screen is not built yet. When it is, its link to davidorr.net is shown as text and opens nothing, as #121 decided.
+The Credits Screen, `scenes/ui/menu/credits_panel.tscn`, added for [#366](https://github.com/julian-perge/urchin/issues/366), shows David Orr's name as text and opens nothing, as #121 decided. The original places DefineButton2 2814 over that name, at depth 22 of root frame 134 (`creditMenu`), and its release opens http://davidorr.net/ (`DefineButton2_2814/BUTTONCONDACTION on(release).as:2`). The port places no button there.
 
 The compare tool scores the port's title against ffdec's render of frame 46. `SCENES` in `dev/urchin_dev/swf/extract/screen_rects.py` names depths 38 and 41, the copyright line and the logo, as left out, so the tool takes them out of its reference.
 

@@ -32,7 +32,6 @@ layout_mode = 0
 texture_normal = ExtResource("3_m0")
 ignore_texture_size = true
 stretch_mode = 0
-tooltip_text = "Phalanx"
 
 [node name="Cover" type="TextureRect" parent="Mode0"]
 layout_mode = 0
@@ -45,7 +44,6 @@ layout_mode = 0
 texture_normal = ExtResource("4_m1")
 ignore_texture_size = true
 stretch_mode = 0
-tooltip_text = "Defensive"
 
 [node name="Cover" type="TextureRect" parent="Mode1"]
 layout_mode = 0
@@ -58,7 +56,6 @@ layout_mode = 0
 texture_normal = ExtResource("5_m2")
 ignore_texture_size = true
 stretch_mode = 0
-tooltip_text = "Tactical"
 
 [node name="Cover" type="TextureRect" parent="Mode2"]
 layout_mode = 0
@@ -71,7 +68,6 @@ layout_mode = 0
 texture_normal = ExtResource("6_m3")
 ignore_texture_size = true
 stretch_mode = 0
-tooltip_text = "Aggressive"
 
 [node name="Cover" type="TextureRect" parent="Mode3"]
 layout_mode = 0
@@ -84,7 +80,6 @@ layout_mode = 0
 texture_normal = ExtResource("7_m4")
 ignore_texture_size = true
 stretch_mode = 0
-tooltip_text = "Relentless"
 
 [node name="Cover" type="TextureRect" parent="Mode4"]
 layout_mode = 0
