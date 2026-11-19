@@ -269,7 +269,7 @@ func start_battle(info: Dictionary) -> void:
 	var save: PlayerSave = GameData.current_save
 	_turn_based = save.difficulty != CombatUnit.Difficulty.HARD
 	units = BattleSetup.build_units(
-		battle, save, UnitManagerAuto.units_by_id, save.difficulty,
+		battle, save, UnitManagerAuto.units_by_id, ItemManagerAuto.items_by_id, save.difficulty,
 		int(info.get("train_cap", BattleSetup.DEFAULT_TRAIN_CAP))
 	)
 	for slot in units:

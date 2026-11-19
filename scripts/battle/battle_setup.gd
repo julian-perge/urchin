@@ -10,8 +10,8 @@
 # players_levels entries can be "X" (player level - 2) or "Z" (player level
 # + 5), both clamped to [1, train_cap] (finalTrainCap).
 #
-# No autoload references - unit templates and the battle resource come in as
-# parameters. load_battle() is the one filesystem touch (the generated
+# No autoload references - unit templates, the item lookup and the battle
+# resource come in as parameters. load_battle() is the one filesystem touch (the generated
 # resources/battles/*.tres files).
 class_name BattleSetup
 extends RefCounted
@@ -33,7 +33,7 @@ static func load_battle(battle_id: int) -> BattleFight:
 # with TalentTree.get_passive_buff_names(save). This is the only place that
 # knows where each unit came from, so it records that on the unit as origin
 # and, for a companion, party_id.
-static func build_units(battle: BattleFight, save: PlayerSave, unit_templates: Dictionary, difficulty: int, train_cap: int = DEFAULT_TRAIN_CAP) -> Dictionary:
+static func build_units(battle: BattleFight, save: PlayerSave, unit_templates: Dictionary, items_by_id: Dictionary, difficulty: int, train_cap: int = DEFAULT_TRAIN_CAP) -> Dictionary:
 	var units: Dictionary[Variant, Variant] = {}
 	for i in battle.players.size():
 		var entry = battle.players[i]
@@ -51,7 +51,7 @@ static func build_units(battle: BattleFight, save: PlayerSave, unit_templates: D
 		elif template_id < 0:
 			var party_id: int = Party.deployed_party_id(save, template_id)
 			if party_id > 0:
-				var companion: CombatUnit = Party.build_companion_unit(save, party_id, unit_templates, slot)
+				var companion: CombatUnit = Party.build_companion_unit(save, party_id, unit_templates, items_by_id, slot)
 				if companion != null:
 					companion.origin = CombatUnit.Origin.COMPANION
 					companion.party_id = party_id

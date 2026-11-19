@@ -69,7 +69,7 @@ func test_every_factory_starts_its_unit_at_full_life_and_focus():
 	var built: Array = [
 		CombatUnit.from_player_save(save),
 		CombatUnit.from_character(unit_templates[5], 10, CombatUnit.Difficulty.NORMAL, 2),
-		Party.build_companion_unit(save, 1, unit_templates, 3),
+		Party.build_companion_unit(save, 1, unit_templates, ItemManagerAuto.items_by_id, 3),
 	]
 	for unit in built:
 		assert_gt(unit.base_life, 0.0, "%s has life to start with" % unit.player_name)
@@ -91,7 +91,7 @@ func test_a_units_moves_come_from_its_template_with_every_cooldown_at_zero():
 	assert_eq(boss.cooldowns_defense.size(), boss.move_pool_defense.size())
 
 	var save: PlayerSave = PlayerSave.new_game("Moves", PlayerSave.PlayerClass.BIOLOGICAL)
-	var veradux: CombatUnit = Party.build_companion_unit(save, 1, unit_templates, 3)
+	var veradux: CombatUnit = Party.build_companion_unit(save, 1, unit_templates, ItemManagerAuto.items_by_id, 3)
 	var template_moves: Array = unit_templates[4].moves["attack"]
 	assert_eq(veradux.move_pool_attack, template_moves)
 	assert_not_same(veradux.move_pool_attack, template_moves, "the unit's pool is its own copy")
@@ -269,7 +269,7 @@ func test_frost_takes_30_percent_off_speed_for_a_player_an_enemy_and_a_companion
 	var cases: Array = [
 		["the level 10 player", CombatUnit.from_player_save(save), 17.0, 12.0],
 		["a level 10 Prison Guard", CombatUnit.from_character(unit_templates[5], 10, CombatUnit.Difficulty.NORMAL, 2), 51.0, 36.0],
-		["Veradux at level 1", Party.build_companion_unit(save, 1, unit_templates, 3), 19.0, 14.0],
+		["Veradux at level 1", Party.build_companion_unit(save, 1, unit_templates, ItemManagerAuto.items_by_id, 3), 19.0, 14.0],
 	]
 	for case in cases:
 		var unit: CombatUnit = case[1]
@@ -1528,7 +1528,7 @@ func _save_for(battle: BattleFight) -> PlayerSave:
 func _roster_for(battle: BattleFight, save: PlayerSave = null) -> Dictionary:
 	if save == null:
 		save = _save_for(battle)
-	return BattleSetup.build_units(battle, save, unit_templates, CombatUnit.Difficulty.HARD)
+	return BattleSetup.build_units(battle, save, unit_templates, ItemManagerAuto.items_by_id, CombatUnit.Difficulty.HARD)
 
 
 # Sonny is the one unit the AI doesn't control, so this turns the AI on for the

@@ -3,8 +3,8 @@
 # saveArray1/saveArray2 (frame42/sonny2_savingdata_pvpcode.txt, cross-checked
 # against resources/example_save_file.json) - dropped everything that only
 # exists for the arena/friend-battle system (friendArray, friendArrayX,
-# ClassStats, LevelStats, equipArray1-5, PerSets0-5, DefSets0-5, StatSets0-5,
-# ExpSets, skillAdderMatrixOld), since PvP/arena is out of scope for this
+# ClassStats, LevelStats, PerSets0-5, DefSets0-5, StatSets0-5, ExpSets,
+# skillAdderMatrixOld), since PvP/arena is out of scope for this
 # project. agMode (the companion aggression stance) is kept as ag_mode
 # below even though nothing reads it, the same as in the original.
 # (buffAdderMatrix was originally on the dropped list by mistake - it's the
@@ -81,6 +81,11 @@ const CLASS_DESCRIPTIONS: Array[String] = [
 @export var party_deployed: Array = []
 @export var party_levels: Array = []
 @export var party_exp: Array = []
+# Each Companion's 7 equipped item ids by party id (AS3 equipArray1-5), managed
+# by Party. Entry 0 is empty, because the player's gear is in equip_array. Only
+# the ids are saved: a Companion's stats are worked out from the seeds and the
+# gear when they are needed (Party.companion_wearer).
+@export var party_equip: Array = []
 # The original's Krin.agMode holds one companion aggression stance per party
 # id. It seeds every entry to 2, Tactical (frame_42/DoAction_17.as:42), and
 # carries it through save and load, but nothing else reads it, since each
