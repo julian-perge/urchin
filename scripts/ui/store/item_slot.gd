@@ -19,6 +19,10 @@ var show_price: bool = false
 # The type an empty equip slot names in its tooltip. EquipDollView sets it on
 # its slots, and every other slot keeps NONE and shows nothing while empty.
 var empty_slot_type: GameItem.ItemType = GameItem.ItemType.NONE
+# Whether an empty slot shows item 0's tooltip, as the original's backpack
+# cell does: its rollOver reads KRINITEM0, "None" over "This slot is empty."
+# (DefineButton2_2985 on(rollOver)). RightColumn sets it on its 36 cells.
+var shows_empty_item: bool = false
 
 
 func _ready():
@@ -26,11 +30,11 @@ func _ready():
 	mouse_entered.connect(func():
 		_highlight.visible = true
 		if item != null:
-			GameTooltip.show_sections(
-				_tooltip_sections(), self, null, Color.WHITE, _tooltip_width(), TooltipTheme.RARITY_NAMES.get(item.rarity, "")
-			)
+			_show_item_tooltip(item)
 		elif empty_slot_type != GameItem.ItemType.NONE:
-			GameTooltip.show_sections(_empty_slot_sections(), self))
+			GameTooltip.show_sections(_empty_slot_sections(), self)
+		elif shows_empty_item:
+			_show_item_tooltip(ItemManagerAuto.get_item(0)))
 	mouse_exited.connect(func():
 		_highlight.visible = false
 		GameTooltip.hide_tooltip())
@@ -66,40 +70,43 @@ func _refresh() -> void:
 # item, whose KRINITEM[1] type is under 2, in its plain layout, which fills
 # only a title and a white body from the item's name and flavor text
 # (DefineButton2_3012 on(rollOver), lines 4-15).
-func _is_equipment() -> bool:
-	return item.item_type >= GameItem.ItemType.HEAD
+func _is_equipment(shown: GameItem) -> bool:
+	return shown.item_type >= GameItem.ItemType.HEAD
 
 
-func _tooltip_width() -> float:
-	return TooltipTheme.TEXT_WIDTH_ITEM if _is_equipment() else TooltipTheme.TEXT_WIDTH_PLAIN
+func _show_item_tooltip(shown: GameItem) -> void:
+	var width: float = TooltipTheme.TEXT_WIDTH_ITEM if _is_equipment(shown) else TooltipTheme.TEXT_WIDTH_PLAIN
+	GameTooltip.show_sections(
+		_tooltip_sections(shown), self, null, Color.WHITE, width, TooltipTheme.RARITY_NAMES.get(shown.rarity, "")
+	)
 
 
 # Built fresh on hover rather than kept in sync on every _refresh() - the
 # tooltip only needs to exist while the mouse is actually over this slot.
-func _tooltip_sections() -> Array:
-	var title: String = item.display_name
+func _tooltip_sections(shown: GameItem) -> Array:
+	var title: String = shown.display_name
 	if show_price:
-		title = "€%d - %s" % [int(item.price), item.display_name]
+		title = "€%d - %s" % [int(shown.price), shown.display_name]
 	var sections: Array = [
 		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": title, "color": TooltipTheme.TEXT_TITLE}]},
 	]
-	var has_flavor: bool = item.tooltip is String and str(item.tooltip) != ""
-	if not _is_equipment():
+	var has_flavor: bool = shown.tooltip is String and str(shown.tooltip) != ""
+	if not _is_equipment(shown):
 		if has_flavor:
-			sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": str(item.tooltip), "color": TooltipTheme.TEXT_BODY}]})
+			sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": str(shown.tooltip), "color": TooltipTheme.TEXT_BODY}]})
 		return sections
 	sections.append({
 		"bg_color": TooltipTheme.BG_HEADER,
 		"lines": [{
-			"text": "Lvl. %d %s" % [item.required_level, item.slot_type_display_name()],
+			"text": "Lvl. %d %s" % [shown.required_level, shown.slot_type_display_name()],
 			"color": TooltipTheme.TEXT_REQUIREMENT,
 		}],
 	})
 	var body_lines: Array = []
-	for stat_line in item.tooltipAlt:
+	for stat_line in shown.tooltipAlt:
 		body_lines.append({"text": str(stat_line), "color": TooltipTheme.TEXT_STAT})
 	if has_flavor:
-		body_lines.append({"text": str(item.tooltip), "color": TooltipTheme.TEXT_FLAVOR})
+		body_lines.append({"text": str(shown.tooltip), "color": TooltipTheme.TEXT_FLAVOR})
 	if not body_lines.is_empty():
 		sections.append({"bg_color": TooltipTheme.BG_BODY, "lines": body_lines})
 	return sections
