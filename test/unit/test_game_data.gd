@@ -8,6 +8,7 @@ var save: PlayerSave
 
 
 const SCAN_DIR: String = "user://test_game_data_slot_scan/"
+const OLD_SAVE_DIR: String = "user://test_game_data_auto_saver/"
 
 var real_save_dir: String
 
@@ -21,6 +22,10 @@ func before_each():
 func after_each():
 	GameData.current_save = null
 	GameData.save_dir = real_save_dir
+	if DirAccess.dir_exists_absolute(OLD_SAVE_DIR):
+		for file: String in DirAccess.get_files_at(OLD_SAVE_DIR):
+			DirAccess.remove_absolute(OLD_SAVE_DIR + file)
+		DirAccess.remove_absolute(OLD_SAVE_DIR)
 
 
 func _find_basic_equippable(exclude_id: int = -1) -> GameItem:
@@ -111,3 +116,21 @@ func test_slot_saves_reads_each_saved_slot_and_leaves_the_live_game_alone():
 	assert_eq(saves.size(), 2, "the two used slots, not the empty ones")
 	assert_eq(saves.map(func(slot_save): return slot_save.name_user), ["ScanOne", "ScanFour"])
 	assert_eq(GameData.current_save, save, "the live game is still the one loaded")
+
+
+# PlayerSave had an auto_saver field that nothing read, and #433 removed it.
+# A save written before that still holds the line, and it has to load.
+func test_a_save_with_the_removed_auto_saver_field_still_loads():
+	GameData.save_dir = OLD_SAVE_DIR
+	DirAccess.make_dir_recursive_absolute(OLD_SAVE_DIR)
+	save.autosave = false
+	assert_eq(ResourceSaver.save(save, GameData._slot_path(1)), OK)
+	var text: String = FileAccess.get_file_as_string(GameData._slot_path(1))
+	assert_true(text.contains("\n[resource]\n"), "the save has a resource section")
+	var old_file := FileAccess.open(GameData._slot_path(1), FileAccess.WRITE)
+	old_file.store_string(text.replace("\n[resource]\n", "\n[resource]\nauto_saver = true\n"))
+	old_file.close()
+
+	assert_true(GameData.load_game(1), "the old save loads")
+	assert_eq(GameData.current_save.name_user, "DragTest", "with its own data")
+	assert_false(GameData.current_save.autosave, "and its autosave setting")
