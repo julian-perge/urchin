@@ -570,8 +570,8 @@ player's own failed moves in it, and "You cannot move yet" for a click outside a
 ## Turn order and queued heals (frame_217/DoAction_2.as, frame_42/DoAction_4.as and DoAction_11.as, the conductor)
 
 Ported: `BattleRunner._team_select` writes each unit's `team_adder` once per full turn, and `advance_half_turn` builds the queue and runs the AI in `team_adder` order. It also adds the
-player's Heal estimate through `BattleAI.heal_guess` before any AI unit decides. `battle_scene.gd` calls `advance_half_turn` once the player picks, or with `{}` on a pass or when the Heroic
-window runs out.
+player's Heal estimate through `BattleAI.heal_guess` before any AI unit decides. `battle_scene.gd` calls `advance_half_turn` with the player's last pick, or with `{}` after a pass or when
+the Heroic timer runs out with no pick. On Easy and Normal it calls it on the frame after the pick or pass, and on Heroic 5 frames after it (see "Heroic decision timer").
 
 - `TeamSelect` runs once at battle start (`frame_217/DoAction_2.as:311`) and then only when `TurnTime` reaches 0 (conductor lines 147 and 262-264). It sets `TurnTime = 2` (line 142), so it
   runs once per full turn, and the other half-turn only flips `TeamMoveNow` (conductor lines 283-311). It averages SPEEDU over each team's active units (lines 70-93), lets `absoluteStart`
@@ -617,7 +617,9 @@ Three Heroic cases, read from the code but not run, and not ported, since the po
 
 ## Heroic decision timer (frame_217/DoAction.as, the conductor)
 
-Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / BattleScreenClip.fps()` seconds of `_process` time and passes for them when it runs out. On Easy and Normal,
+Ported: on Heroic, `battle_scene.gd` gives the player `BattleRunner.BATTLE_TIME_LIMIT / BattleScreenClip.fps()` seconds of `_process` time, and when it runs out it takes the player's last
+pick, or a pass when there is none. A pick or a pass sets the time left to the clock's `pick_delay` in `battle_layout.json`, 5 frames, which `extract_battle_screen` reads from
+`addMoveForPlayer` and the pass button, so a later pick or pass replaces it (#443). On Easy and Normal,
 and on Heroic once a half-turn ends with the player's unit dead, it waits for the player and `BattleClock` shows the whole ring.
 
 - `BattleTime = BattleTimeLimit = 120` (`frame_217/DoAction.as:1-3`). The conductor adds 1 to `BattleTimeNow` once per frame, and only while `turnBasedKrin` is false and the player's team is
@@ -627,6 +629,10 @@ and on Heroic once a half-turn ends with the player's unit dead, it waits for th
 - At `BattleTimeLimit - 1` the AI allies decide (conductor lines 674-698), and at `BattleTimeLimit` the half-turn starts whether or not the player has picked (conductor lines 769-792).
 - Picking a move jumps the clock to `BattleTimeLimit - 5` (`frame_42/DoAction_11.as:98-101`), and once the player's unit dies the conductor sets `turnBasedKrin = true` (conductor lines
   200-202).
+- Until the half-turn starts, `InBattle` is false, so the player can pick again or pass. The target click that opens the menu checks `InBattle`, `timerWait`, `winCondition` and
+  `speechDone`, not `moveChoosen` (`frame_217/DoAction_3.as:18`), and `krinAddMove` files a second pick or a pass in the same `MoveArrayFINAL` box as the first pick
+  (`frame_42/DoAction_4.as:28-33`), so the last one replaces the others. Each one jumps the clock back to `BattleTimeLimit - 5`. The pass button's release does not touch
+  `krinToMove`, so after a pass the button keeps the pick's icon and its "Click to cancel this ability." text until the fight swaps the text and the player's own action hides the icon.
 - Running out is a pass. Every slot starts the battle holding move 0 (`frame_217/DoAction_2.as:313-318`) and each dispatch writes move 0 back for its caster (conductor lines 470-473), so
   a player who never picked passes. The pass button, DefineButton2_3383 (`krinToMove2` on the root timeline), also jumps the clock to `BattleTimeLimit - 5` (release lines 9-12).
 - The clock is `battleClocker` (DefineSprite 3389), placed at (400, 507.25) behind the pass button. Its two half-dials in DefineSprite 3386 turn with

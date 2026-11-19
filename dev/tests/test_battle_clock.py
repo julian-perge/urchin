@@ -50,3 +50,25 @@ def test_time_limit_is_read_from_the_battle_frame():
 def test_time_limit_refuses_a_script_that_never_sets_it():
     with pytest.raises(RuntimeError, match="0 times"):
         battle_screen.time_limit("BattleTimeNow = 0;")
+
+
+def test_pick_delay_is_read_from_the_pick_and_the_pass():
+    scripts = [path.read_text("utf-8") for path in battle_screen.PICK_SCRIPTS]
+    assert battle_screen.pick_delay(scripts) == 5
+
+
+def test_pick_delay_refuses_a_script_that_never_sets_it():
+    with pytest.raises(RuntimeError, match="set BattleTimeNow"):
+        battle_screen.pick_delay(
+            ["_root.BattleTimeNow = _root.BattleTimeLimit - 5;", "x = 1;"]
+        )
+
+
+def test_pick_delay_refuses_a_pick_and_a_pass_that_disagree():
+    with pytest.raises(RuntimeError, match="set BattleTimeNow"):
+        battle_screen.pick_delay(
+            [
+                "_root.BattleTimeNow = _root.BattleTimeLimit - 5;",
+                "_root.BattleTimeNow = _root.BattleTimeLimit - 4;",
+            ]
+        )

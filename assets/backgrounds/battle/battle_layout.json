@@ -37,6 +37,7 @@
    "friend"
   ],
   "limit": 120,
+  "pick_delay": 5,
   "rect": {
    "h": 87.75,
    "w": 87.5,
