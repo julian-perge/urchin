@@ -11,6 +11,12 @@
 #   FIRST friend slot's ratio, not the current candidate's (AS3 line 215).
 # - focusMove selection indexes the cooldown-filtered attack list (A0), not
 #   the fully filtered one (A2).
+# - AS2 for..in walks an array from its newest key to its oldest
+#   (DECODED_ALGORITHMS.md "for..in order over arrays"). The original builds
+#   each filter with push while it walks the one before, so each step flips
+#   the order. The absolute list and the heal-filtered defense list end in
+#   descending pool order, the focus scan walks from the last move down, and
+#   the attack list (A2) and the plain defense list end ascending.
 #
 # No autoload references (same rule as CombatUnit) - the move lookup comes in
 # as a parameter.
@@ -37,7 +43,7 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 	var has_friends: bool = false
 	var friend_lock_slot: int = 0  # numberLockKrin - last living friend found
 	var lowest_focus = INF
-	var lowest_focus_slot: int = 0  # playerFocusCheck
+	var lowest_focus_slot: int = 0  # first value of playerFocusCheck
 	for slot in friend_slots:
 		var friend: CombatUnit = units.get(slot)
 		if friend != null and friend.active and slot != caster_slot:
@@ -51,7 +57,7 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 	# unconditionally and the attack/defense pools are ignored.
 	var absolute_ids: Array[Variant] = []
 	var absolute_indices: Array[Variant] = []
-	for i in caster.move_pool_absolute.size():
+	for i in range(caster.move_pool_absolute.size() - 1, -1, -1):
 		if caster.cooldowns_absolute[i] != 0:
 			continue
 		var entry = caster.move_pool_absolute[i]
@@ -73,7 +79,12 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 	var attack_indices: Array[Variant] = []
 	var focus_move: bool = false
 	var focus_pick_index: int = -1  # indexes attack_ids_cd (A0), matching the original
-	var focus_target_slot: int = 0
+	# playerFocusCheck (frame_42/DoAction_9.as:13-33, 93-106, 407) starts at the
+	# teammate lowest on focus. When the focus scan finds a move that restores
+	# the caster's own focus, it changes to the caster, and the teammate focus
+	# moves that the scan walks after that move no longer count. The chosen
+	# focus move targets it.
+	var focus_target_slot: int = lowest_focus_slot
 	# --- Defense pool (D0 -> D1 -> D2) + ally/self/enemy splits.
 	var defense_ids: Array[Variant] = []  # D2
 	var defense_indices: Array[Variant] = []
@@ -86,24 +97,23 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 			if caster.cooldowns_attack[i] == 0:
 				attack_ids_cd.append(caster.move_pool_attack[i])
 				attack_indices_cd.append(i)
-		for i in attack_ids_cd.size():
+		for i in range(attack_ids_cd.size() - 1, -1, -1):
 			var move: Ability = moves_by_id.get(attack_ids_cd[i])
 			if move == null or not MoveLegality.can_afford(caster, move):
 				continue
 			var restores_ally_focus: bool = move.targets_allies and lowest_focus < caster.focus_regen_limit
 			var restores_own_focus: bool = move.can_target_self and caster.focus_n < caster.focus_regen_limit
 			if move.effect_category != "Focus" or restores_ally_focus or restores_own_focus:
-				if restores_ally_focus and lowest_focus_slot != caster_slot and lowest_focus_slot != 0:
+				if restores_ally_focus and focus_target_slot != caster_slot and focus_target_slot != 0:
 					focus_move = true
 					focus_pick_index = i
-					focus_target_slot = lowest_focus_slot
 				if restores_own_focus:
 					focus_move = true
 					focus_pick_index = i
 					focus_target_slot = caster_slot
 				if move.can_target_self or move.can_target_others or has_friends:
-					attack_ids.append(attack_ids_cd[i])
-					attack_indices.append(attack_indices_cd[i])
+					attack_ids.push_front(attack_ids_cd[i])
+					attack_indices.push_front(attack_indices_cd[i])
 
 		for i in caster.move_pool_defense.size():
 			if caster.cooldowns_defense[i] != 0:
@@ -191,7 +201,7 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 		if heal_candidate_slot != 0:
 			final_ids = []
 			final_indices = []
-			for i in defense_ids.size():
+			for i in range(defense_ids.size() - 1, -1, -1):
 				var move: Ability = moves_by_id.get(defense_ids[i])
 				if move == null:
 					continue
