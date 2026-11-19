@@ -100,6 +100,24 @@
    }
   }
  },
+ "victory": {
+  "scene": "res://scenes/ui/menu/victory_window.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 63
+   },
+   "panels": {
+    "nodes": [
+     "WindowShell/Backdrop",
+     "LeftPanel",
+     "CentrePanel",
+     "RightColumn/TallPanel",
+     "RightColumn/BarPanel"
+    ],
+    "bar": 9
+   }
+  }
+ },
  "battle": {
   "scene": "res://scenes/battle_scene.tscn",
   "modes": {
