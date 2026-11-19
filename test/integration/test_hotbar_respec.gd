@@ -124,12 +124,18 @@ func test_a_click_with_enough_money_respecs_and_opens_the_abilities_window():
 
 func test_respec_reseeds_the_attributes_from_the_equipped_gear():
 	var save: PlayerSave = _trained_save(100.0)
+	var wearer: Equipment.Wearer = Equipment.Wearer.for_player(save)
 	var weapon: GameItem = null
 	for item: GameItem in ItemManagerAuto.items_by_id.values():
-		if item.item_type == GameItem.ItemType.MAINHAND and not item.stats.get("attributes", {}).is_empty():
+		if item.item_type != GameItem.ItemType.MAINHAND:
+			continue
+		if Equipment.total_stat_bonuses([item.id], ItemManagerAuto.items_by_id) == [0, 0, 0, 0, 0]:
+			continue
+		if Equipment.can_equip_with_lookup(wearer, item, Equipment.MAIN_HAND_SLOT, ItemManagerAuto.items_by_id) == Equipment.EquipResult.OK:
 			weapon = item
 			break
-	Equipment.equip(Equipment.Wearer.for_player(save), weapon, Equipment.MAIN_HAND_SLOT, ItemManagerAuto.items_by_id)
+	assert_not_null(weapon, "a level 5 player can wield a weapon with attribute bonuses")
+	Equipment.equip(wearer, weapon, Equipment.MAIN_HAND_SLOT, ItemManagerAuto.items_by_id)
 	var bonuses: Array = Equipment.total_stat_bonuses(save.equip_array, ItemManagerAuto.items_by_id)
 	assert_ne(bonuses, [0, 0, 0, 0, 0], "the weapon has attribute bonuses")
 	var hub: Control = await _hub()
