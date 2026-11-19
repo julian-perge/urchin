@@ -1,0 +1,828 @@
+RUN	2
+AIMOVE_HOOK	installed	44
+AIDRIVE	start	109	10
+AIMOVE	1	109	1	2	0	true	fc=undefined	pfc=undefined	fm=undefined	nlk=undefined	ae=u	cf1=undefined	D=undefined,undefined,undefined	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	2	109	1	5	2	false	fc=undefined	pfc=undefined	fm=undefined	nlk=undefined	ae=[5 3 1]	cf1=undefined	D=undefined,undefined,undefined	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	3	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[2]	cf1=undefined	D=1,1,0	real=10>2>	none=10>2>	all=10>2>	focus=10>2>	fmove=10>2>	darr=10>2>	alive=10>2>	lock=10>2>
+AIMOVE	4	109	1	2	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[2]	cf1=undefined	D=1,1,0	real=531>2>	none=531>2>	all=531>undefined>hfalse	focus=531>2>	fmove=531>2>	darr=531>undefined>hfalse	alive=531>2>	lock=531>2>
+AIMOVE	5	109	1	5	2	false	fc=100	pfc=1	fm=false	nlk=5	ae=[2]	cf1=undefined	D=1,1,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	6	109	1	3	5	false	fc=80	pfc=3	fm=false	nlk=3	ae=[2]	cf1=undefined	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	7	109	1	2	3	true	fc=80	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	8	109	1	5	2	false	fc=80	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=535>2>	none=535>2>	all=535>2>	focus=535>2>	fmove=535>2>	darr=535>2>	alive=535>2>	lock=535>2>
+AIMOVE	9	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	10	109	1	2	3	true	fc=60	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	11	109	1	5	2	false	fc=60	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	12	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	13	109	1	2	3	true	fc=45	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	14	109	1	5	2	false	fc=45	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	15	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[5 3 1]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	16	109	1	2	3	true	fc=25	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	17	109	1	5	2	false	fc=25	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	18	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	19	109	1	2	3	false	fc=10	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	20	109	1	5	2	false	fc=10	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=0,0,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	21	109	1	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	22	109	1	2	3	true	fc=45	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=531>2>	none=531>2>	all=531>undefined>hfalse	focus=531>2>	fmove=531>2>	darr=531>2>hfalse	alive=531>2>	lock=531>2>
+AIMOVE	23	109	1	5	2	false	fc=45	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=535>2>	none=535>2>	all=535>2>	focus=535>2>	fmove=535>2>	darr=535>2>	alive=535>2>	lock=535>2>
+AIMOVE	24	109	1	3	5	false	fc=70	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	25	109	1	2	3	true	fc=25	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=531>2>	none=531>2>	all=531>undefined>hfalse	focus=531>2>	fmove=531>2>	darr=531>2>hfalse	alive=531>2>	lock=531>2>
+AIMOVE	26	109	1	5	2	false	fc=25	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	27	109	1	3	5	false	fc=55	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	28	109	1	2	3	true	fc=10	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	29	109	1	5	2	false	fc=10	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	30	109	1	3	5	false	fc=40	pfc=3	fm=false	nlk=3	ae=[5 3 1]	cf1=0	D=1,1,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	31	109	1	2	3	true	fc=45	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=531>2>	none=531>2>	all=531>undefined>hfalse	focus=531>2>	fmove=531>2>	darr=531>5>hfalse	alive=531>2>	lock=531>2>
+AIMOVE	32	109	1	5	2	false	fc=45	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	33	109	1	3	5	false	fc=25	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	34	109	1	2	3	false	fc=30	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	35	109	1	5	2	false	fc=30	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	36	109	1	3	5	false	fc=10	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	37	109	1	2	3	true	fc=10	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	38	109	1	5	2	false	fc=10	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=0,0,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	39	109	1	3	5	false	fc=45	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	40	109	1	2	3	true	fc=45	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	41	109	1	5	2	false	fc=45	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	42	109	1	3	5	false	fc=30	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	43	109	1	5	3	false	fc=25	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=535>2>	none=535>2>	all=535>2>	focus=535>2>	fmove=535>2>	darr=535>2>	alive=535>2>	lock=535>2>
+AIMOVE	44	109	1	3	5	false	fc=25	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	45	109	1	2	3	false	fc=25	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	46	109	1	5	2	false	fc=25	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=1	D=0,0,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	47	109	1	3	5	false	fc=25	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=10>2>	none=10>2>	all=10>2>	focus=10>2>	fmove=10>2>	darr=10>2>	alive=10>2>	lock=10>2>
+AIMOVE	48	109	2	2	3	true	fc=25	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=530>2>	none=530>2>	all=530>2>	focus=530>2>	fmove=530>2>	darr=530>2>	alive=530>2>	lock=530>2>
+AIMOVE	49	109	2	5	2	false	fc=25	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	50	109	2	3	5	false	fc=25	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	51	109	2	2	3	false	fc=25	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=533>3>	none=533>3>	all=533>3>	focus=533>3>	fmove=533>3>	darr=533>3>	alive=533>3>	lock=533>3>
+AIMOVE	52	109	2	5	2	false	fc=25	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=1	D=0,0,2	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	53	109	2	3	5	false	fc=25	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	54	109	2	2	3	false	fc=5	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=524>3>	none=524>3>	all=524>3>	focus=524>3>	fmove=524>3>	darr=524>3>	alive=524>3>	lock=524>3>
+AIMOVE	55	109	2	5	2	false	fc=5	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=0,0,2	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	56	109	2	3	5	false	fc=5	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	57	109	3	2	3	true	fc=5	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=0,0,0	real=163>2>hfalse	none=163>2>hfalse	all=163>undefined>hfalse	focus=163>2>hfalse	fmove=163>2>hfalse	darr=163>2>hfalse	alive=163>undefined>hfalse	lock=163>2>hfalse
+AIMOVE	58	109	3	2	2	false	fc=5	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=0,0,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	59	109	3	5	2	false	fc=5	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=0,0,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	60	109	3	3	5	false	fc=5	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	61	109	3	2	3	true	fc=5	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=0,0,0	real=136>3>	none=136>3>	all=136>3>	focus=136>3>	fmove=136>3>	darr=136>3>	alive=136>3>	lock=136>3>
+AIMOVE	62	109	3	5	2	false	fc=5	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	63	109	3	3	5	false	fc=5	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	64	109	3	5	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	65	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	66	109	3	2	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=523>3>	none=523>3>	all=523>3>	focus=523>3>	fmove=523>3>	darr=523>3>	alive=523>3>	lock=523>3>
+AIMOVE	67	109	3	5	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=0,0,1	real=535>2>	none=535>2>	all=535>2>	focus=535>2>	fmove=535>2>	darr=535>2>	alive=535>2>	lock=535>2>
+AIMOVE	68	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	69	109	3	2	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=524>3>	none=524>3>	all=524>3>	focus=524>3>	fmove=524>3>	darr=524>3>	alive=524>3>	lock=524>3>
+AIMOVE	70	109	3	5	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=1	D=0,0,2	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	71	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	72	109	3	2	3	true	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=163>2>	none=163>2>	all=163>undefined>	focus=163>2>	fmove=163>2>	darr=163>2>	alive=163>2>	lock=163>2>
+AIMOVE	73	109	3	2	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=524>5>	none=524>5>	all=524>5>	focus=524>5>	fmove=524>5>	darr=524>5>	alive=524>5>	lock=524>5>
+AIMOVE	74	109	3	5	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=0,0,2	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	75	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	76	109	3	2	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	77	109	3	5	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=1	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	78	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	79	109	3	5	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	80	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	81	109	3	2	3	true	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=1	D=1,1,0	real=136>3>	none=136>3>	all=136>3>	focus=136>3>	fmove=136>3>	darr=136>3>	alive=136>3>	lock=136>3>
+AIMOVE	82	109	3	5	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	83	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	84	109	3	2	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=1	D=1,1,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	85	109	3	5	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=0,0,1	real=536>3>h3	none=536>3>h3	all=536>3>h3	focus=536>3>h3	fmove=536>3>h3	darr=536>3>h3	alive=536>3>h3	lock=536>3>h3
+AIMOVE	86	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[5 3]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	87	109	3	2	3	true	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=163>2>	none=163>2>	all=163>undefined>	focus=163>2>	fmove=163>2>	darr=163>2>	alive=163>2>	lock=163>2>
+AIMOVE	88	109	3	2	2	true	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=136>3>	none=136>3>	all=136>3>	focus=136>3>	fmove=136>3>	darr=136>3>	alive=136>3>	lock=136>3>
+AIMOVE	89	109	3	5	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	90	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	91	109	3	2	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=533>3>	none=533>3>	all=533>3>	focus=533>3>	fmove=533>3>	darr=533>3>	alive=533>3>	lock=533>3>
+AIMOVE	92	109	3	5	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=0,0,2	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	93	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	94	109	3	5	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	95	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIDRIVE	end	109	1	392
+AIDRIVE	start	212	14
+AIMOVE	96	212	1	6	3	true	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=544>6>	none=544>6>	all=544>6>	focus=544>6>	fmove=544>6>	darr=544>6>	alive=544>6>	lock=544>6>
+AIMOVE	97	212	1	4	6	true	fc=100	pfc=2	fm=false	nlk=4	ae=[2]	cf1=0	D=1,1,0	real=544>4>	none=544>4>	all=544>4>	focus=544>4>	fmove=544>4>	darr=544>4>	alive=544>4>	lock=544>4>
+AIMOVE	98	212	1	2	4	false	fc=100	pfc=2	fm=false	nlk=6	ae=[2]	cf1=0	D=1,1,0	real=157>3>	none=157>3>	all=157>3>	focus=157>3>	fmove=157>3>	darr=157>3>	alive=157>3>	lock=157>3>
+AIMOVE	99	212	2	5	2	false	fc=100	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=0,0,1	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	100	212	2	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[6 4 2]	cf1=2	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	101	212	2	6	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[6 4 2]	cf1=2	D=1,1,0	real=552>6>	none=552>6>	all=552>6>	focus=552>6>	fmove=552>6>	darr=552>6>	alive=552>6>	lock=552>6>
+AIMOVE	102	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=2	D=1,1,0	real=550>2>h2	none=550>2>h2	all=550>undefined>hfalse	focus=550>2>h2	fmove=550>2>h2	darr=550>2>hfalse	alive=550>2>h2	lock=550>2>h2
+AIMOVE	103	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=1,1,0	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	104	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=2	D=0,0,1	real=535>6>	none=535>6>	all=535>6>	focus=535>6>	fmove=535>6>	darr=535>6>	alive=535>6>	lock=535>6>
+AIMOVE	105	212	2	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[6 4 2]	cf1=2	D=1,1,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	106	212	2	6	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[6 4 2]	cf1=2	D=1,1,0	real=553>6>	none=553>6>	all=553>6>	focus=553>6>	fmove=553>6>	darr=553>6>	alive=553>6>	lock=553>6>
+AIMOVE	107	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=2	D=1,1,0	real=551>4>	none=551>4>	all=551>4>	focus=551>4>	fmove=551>4>	darr=551>4>	alive=551>4>	lock=551>4>
+AIMOVE	108	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=1,1,0	real=545>3>	none=545>3>	all=545>3>	focus=545>3>	fmove=545>3>	darr=545>3>	alive=545>3>	lock=545>3>
+AIMOVE	109	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=0,0,1	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	110	212	2	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[5 3 1]	cf1=1	D=1,1,0	real=10>6>	none=10>6>	all=10>6>	focus=10>6>	fmove=10>6>	darr=10>6>	alive=10>6>	lock=10>6>
+AIMOVE	111	212	2	6	3	false	fc=85	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=548>3>	none=548>3>	all=548>3>	focus=548>3>	fmove=548>3>	darr=548>3>	alive=548>3>	lock=548>3>
+AIMOVE	112	212	2	4	6	false	fc=80	pfc=2	fm=false	nlk=4	ae=[5 3 1]	cf1=1	D=0,0,1	real=549>2>h2	none=549>2>h2	all=549>2>h2	focus=549>2>h2	fmove=549>2>h2	darr=549>2>h2	alive=549>2>h2	lock=549>2>h2
+AIMOVE	113	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=1,1,0	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	114	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=0,0,1	real=19>4>	none=19>4>	all=19>4>	focus=19>4>	fmove=19>4>	darr=19>4>	alive=19>4>	lock=19>4>
+AIMOVE	115	212	2	6	5	true	fc=100	pfc=1	fm=false	nlk=1	ae=[6 4 2]	cf1=1	D=0,0,0	real=552>6>	none=552>6>	all=552>6>	focus=552>6>	fmove=552>6>	darr=552>6>	alive=552>6>	lock=552>6>
+AIMOVE	116	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=1	D=0,0,0	real=550>4>hfalse	none=550>4>hfalse	all=550>undefined>hfalse	focus=550>4>hfalse	fmove=550>4>hfalse	darr=550>4>hfalse	alive=550>undefined>hfalse	lock=550>4>hfalse
+AIMOVE	117	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	118	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 1]	cf1=1	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	119	212	2	5	5	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	120	212	2	6	5	true	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=553>6>	none=553>6>	all=553>6>	focus=553>6>	fmove=553>6>	darr=553>6>	alive=553>6>	lock=553>6>
+AIMOVE	121	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=1	D=0,0,0	real=551>4>	none=551>4>	all=551>4>	focus=551>4>	fmove=551>4>	darr=551>4>	alive=551>4>	lock=551>4>
+AIMOVE	122	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=545>5>	none=545>5>	all=545>5>	focus=545>5>	fmove=545>5>	darr=545>5>	alive=545>5>	lock=545>5>
+AIMOVE	123	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=535>4>	none=535>4>	all=535>4>	focus=535>4>	fmove=535>4>	darr=535>4>	alive=535>4>	lock=535>4>
+AIMOVE	124	212	2	6	5	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=548>5>	none=548>5>	all=548>5>	focus=548>5>	fmove=548>5>	darr=548>5>	alive=548>5>	lock=548>5>
+AIMOVE	125	212	2	4	6	false	fc=80	pfc=2	fm=false	nlk=4	ae=[5]	cf1=1	D=0,0,1	real=549>6>h6	none=549>6>h6	all=549>6>h6	focus=549>6>h6	fmove=549>6>h6	darr=549>6>h6	alive=549>6>h6	lock=549>6>h6
+AIMOVE	126	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5]	cf1=1	D=1,1,0	real=157>5>	none=157>5>	all=157>5>	focus=157>5>	fmove=157>5>	darr=157>5>	alive=157>5>	lock=157>5>
+AIDRIVE	end	212	0	120
+AIMOVE_HOOK	installed	104
+AIDRIVE	start	513	27
+AIMOVE	127	513	1	2	2	true	fc=80	pfc=2	fm=false	nlk=6	ae=[5]	cf1=1	D=0,0,1	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	128	513	1	6	2	true	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=0,0,1	real=781>6>	none=781>6>	all=781>6>	focus=781>6>	fmove=781>6>	darr=781>6>	alive=781>6>	lock=781>6>
+AIMOVE	129	513	1	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3 1]	cf1=1	D=0,0,1	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	130	513	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[5 3 1]	cf1=1	D=1,1,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	131	513	1	2	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[5 3 1]	cf1=1	D=1,1,0	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	132	513	1	6	2	false	fc=0	pfc=6	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=1,1,0	real=276>1>	none=276>1>	all=276>1>	focus=276>1>	fmove=276>1>	darr=276>1>	alive=276>1>	lock=276>1>
+AIMOVE	133	513	1	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3 1]	cf1=1	D=0,0,0	real=524>6>	none=524>6>	all=524>6>	focus=524>6>	fmove=524>6>	darr=524>6>	alive=524>6>	lock=524>6>
+AIMOVE	134	513	1	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=10>2>	none=10>2>	all=10>2>	focus=10>2>	fmove=10>2>	darr=10>2>	alive=10>2>	lock=10>2>
+AIMOVE	135	513	1	2	3	true	fc=85	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	136	513	1	6	2	false	fc=12	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,1,0	real=276>5>	none=276>5>	all=276>5>	focus=276>5>	fmove=276>5>	darr=276>5>	alive=276>5>	lock=276>5>
+AIMOVE	137	513	1	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	138	513	1	3	5	false	fc=65	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=0	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	139	513	2	2	3	true	fc=65	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	140	513	2	6	2	false	fc=36	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=276>5>	none=276>5>	all=276>5>	focus=276>5>	fmove=276>5>	darr=276>5>	alive=276>5>	lock=276>5>
+AIMOVE	141	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=0,0,0	real=535>6>	none=535>6>	all=535>6>	focus=535>6>	fmove=535>6>	darr=535>6>	alive=535>6>	lock=535>6>
+AIMOVE	142	513	2	3	5	false	fc=100	pfc=2	fm=false	nlk=3	ae=[6 2]	cf1=0	D=0,0,0	real=8>5>h5	none=8>5>h5	all=8>5>h5	focus=8>5>h5	fmove=8>5>h5	darr=8>5>h5	alive=8>5>h5	lock=8>5>h5
+AIMOVE	143	513	2	2	3	true	fc=100	pfc=2	fm=false	nlk=5	ae=[6 2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	144	513	2	6	2	true	fc=72	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=780>3>	none=780>3>	all=780>3>	focus=780>3>	fmove=780>3>	darr=780>3>	alive=780>3>	lock=780>3>
+AIMOVE	145	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=1,1,0	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	146	513	2	2	5	true	fc=100	pfc=2	fm=false	nlk=2	ae=[6 2]	cf1=0	D=0,0,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	147	513	2	6	2	false	fc=0	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,0	real=276>5>	none=276>5>	all=276>5>	focus=276>5>	fmove=276>5>	darr=276>5>	alive=276>5>	lock=276>5>
+AIMOVE	148	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5]	cf1=0	D=0,0,0	real=536>5>h5	none=536>5>h5	all=536>5>h5	focus=536>5>h5	fmove=536>5>h5	darr=536>5>h5	alive=536>5>h5	lock=536>5>h5
+AIMOVE	149	513	2	2	5	true	fc=100	pfc=2	fm=false	nlk=2	ae=[5]	cf1=0	D=1,1,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	150	513	2	6	2	false	fc=24	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=1,1,0	real=276>5>	none=276>5>	all=276>5>	focus=276>5>	fmove=276>5>	darr=276>5>	alive=276>5>	lock=276>5>
+AIMOVE	151	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5]	cf1=0	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	152	513	2	2	5	true	fc=100	pfc=2	fm=false	nlk=2	ae=[6 2]	cf1=0	D=0,0,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	153	513	2	6	2	true	fc=48	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,0	real=780>5>	none=780>5>	all=780>5>	focus=780>5>	fmove=780>5>	darr=780>5>	alive=780>5>	lock=780>5>
+AIDRIVE	end	513	0	130
+AIMOVE_HOOK	installed	104
+AIDRIVE	done
+RUN	3
+AIMOVE_HOOK	installed	44
+AIDRIVE	start	212	25
+AIMOVE	1	212	1	6	0	true	fc=undefined	pfc=undefined	fm=undefined	nlk=undefined	ae=u	cf1=undefined	D=undefined,undefined,undefined	real=544>6>	none=544>6>	all=544>6>	focus=544>6>	fmove=544>6>	darr=544>6>	alive=544>6>	lock=544>6>
+AIMOVE	2	212	1	4	6	true	fc=100	pfc=2	fm=undefined	nlk=4	ae=u	cf1=undefined	D=undefined,undefined,undefined	real=544>4>	none=544>4>	all=544>4>	focus=544>4>	fmove=544>4>	darr=544>4>	alive=544>4>	lock=544>4>
+AIMOVE	3	212	1	2	4	false	fc=100	pfc=2	fm=undefined	nlk=6	ae=u	cf1=undefined	D=undefined,undefined,undefined	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	4	212	2	5	2	false	fc=100	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=undefined	D=0,0,1	real=19>4>	none=19>4>	all=19>4>	focus=19>4>	fmove=19>4>	darr=19>4>	alive=19>4>	lock=19>4>
+AIMOVE	5	212	2	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=1,1,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	6	212	2	5	3	false	fc=100	pfc=1	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	7	212	2	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=1,1,0	real=10>4>	none=10>4>	all=10>4>	focus=10>4>	fmove=10>4>	darr=10>4>	alive=10>4>	lock=10>4>
+AIMOVE	8	212	2	6	3	true	fc=80	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=553>6>	none=553>6>	all=553>6>	focus=553>6>	fmove=553>6>	darr=553>6>	alive=553>6>	lock=553>6>
+AIMOVE	9	212	2	4	6	true	fc=100	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=1	D=1,1,0	real=550>6>h6	none=550>6>h6	all=550>undefined>hfalse	focus=550>6>h6	fmove=550>6>h6	darr=550>4>hfalse	alive=550>6>h6	lock=550>6>h6
+AIMOVE	10	212	2	2	4	false	fc=100	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=1,1,0	real=157>1>	none=157>1>	all=157>1>	focus=157>1>	fmove=157>1>	darr=157>1>	alive=157>1>	lock=157>1>
+AIMOVE	11	212	2	5	2	false	fc=100	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=0,0,1	real=19>4>	none=19>4>	all=19>4>	focus=19>4>	fmove=19>4>	darr=19>4>	alive=19>4>	lock=19>4>
+AIMOVE	12	212	2	3	5	false	fc=80	pfc=3	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	13	212	2	6	3	true	fc=65	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=552>6>	none=552>6>	all=552>6>	focus=552>6>	fmove=552>6>	darr=552>6>	alive=552>6>	lock=552>6>
+AIMOVE	14	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=1	D=1,1,0	real=551>4>	none=551>4>	all=551>4>	focus=551>4>	fmove=551>4>	darr=551>4>	alive=551>4>	lock=551>4>
+AIMOVE	15	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=1,1,0	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	16	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=0,0,1	real=524>4>	none=524>4>	all=524>4>	focus=524>4>	fmove=524>4>	darr=524>4>	alive=524>4>	lock=524>4>
+AIMOVE	17	212	2	3	5	false	fc=94	pfc=1	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	18	212	2	6	3	false	fc=45	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=548>5>	none=548>5>	all=548>5>	focus=548>5>	fmove=548>5>	darr=548>5>	alive=548>5>	lock=548>5>
+AIMOVE	19	212	2	4	6	false	fc=80	pfc=2	fm=false	nlk=4	ae=[5 3 1]	cf1=0	D=0,0,1	real=547>1>	none=547>1>	all=547>1>	focus=547>1>	fmove=547>1>	darr=547>1>	alive=547>1>	lock=547>1>
+AIMOVE	20	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,0	real=545>5>	none=545>5>	all=545>5>	focus=545>5>	fmove=545>5>	darr=545>5>	alive=545>5>	lock=545>5>
+AIMOVE	21	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	22	212	2	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=0,0,0	real=8>5>h5	none=8>5>h5	all=8>5>h5	focus=8>5>h5	fmove=8>5>h5	darr=8>5>h5	alive=8>5>h5	lock=8>5>h5
+AIMOVE	23	212	2	6	3	true	fc=30	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=553>6>	none=553>6>	all=553>6>	focus=553>6>	fmove=553>6>	darr=553>6>	alive=553>6>	lock=553>6>
+AIMOVE	24	212	2	4	6	false	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=1,1,0	real=547>5>	none=547>5>	all=547>5>	focus=547>5>	fmove=547>5>	darr=547>5>	alive=547>5>	lock=547>5>
+AIMOVE	25	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,0	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	26	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	27	212	2	3	5	false	fc=70	pfc=3	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	28	212	2	6	3	true	fc=65	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=552>6>	none=552>6>	all=552>6>	focus=552>6>	fmove=552>6>	darr=552>6>	alive=552>6>	lock=552>6>
+AIMOVE	29	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=1,1,0	real=550>6>h6	none=550>6>h6	all=550>undefined>hfalse	focus=550>6>h6	fmove=550>6>h6	darr=550>6>hfalse	alive=550>6>h6	lock=550>6>h6
+AIMOVE	30	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=1,1,0	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	31	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	32	212	2	3	5	false	fc=55	pfc=3	fm=false	nlk=3	ae=[5 3 1]	cf1=0	D=1,1,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	33	212	2	6	3	false	fc=76	pfc=1	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=548>5>	none=548>5>	all=548>5>	focus=548>5>	fmove=548>5>	darr=548>5>	alive=548>5>	lock=548>5>
+AIMOVE	34	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[5 3 1]	cf1=0	D=0,0,1	real=551>4>	none=551>4>	all=551>4>	focus=551>4>	fmove=551>4>	darr=551>4>	alive=551>4>	lock=551>4>
+AIMOVE	35	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=157>5>	none=157>5>	all=157>5>	focus=157>5>	fmove=157>5>	darr=157>5>	alive=157>5>	lock=157>5>
+AIMOVE	36	212	2	3	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	37	212	2	6	3	true	fc=76	pfc=1	fm=false	nlk=1	ae=[6 4 2]	cf1=0	D=1,1,0	real=553>6>	none=553>6>	all=553>6>	focus=553>6>	fmove=553>6>	darr=553>6>	alive=553>6>	lock=553>6>
+AIMOVE	38	212	2	4	6	false	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=1,1,0	real=549>6>h6	none=549>6>h6	all=549>6>h6	focus=549>6>h6	fmove=549>6>h6	darr=549>6>h6	alive=549>6>h6	lock=549>6>h6
+AIMOVE	39	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=1,1,0	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	40	212	2	3	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[3 1]	cf1=1	D=0,0,1	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	41	212	2	6	3	true	fc=76	pfc=1	fm=false	nlk=1	ae=[6 4 2]	cf1=2	D=1,1,0	real=552>6>	none=552>6>	all=552>6>	focus=552>6>	fmove=552>6>	darr=552>6>	alive=552>6>	lock=552>6>
+AIMOVE	42	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=2	D=1,1,0	real=550>2>h2	none=550>2>h2	all=550>undefined>hfalse	focus=550>2>h2	fmove=550>2>h2	darr=550>2>hfalse	alive=550>2>h2	lock=550>2>h2
+AIMOVE	43	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=1,1,0	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	44	212	2	3	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[3 1]	cf1=2	D=0,0,1	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	45	212	2	6	3	false	fc=76	pfc=1	fm=false	nlk=1	ae=[6 4 2]	cf1=2	D=1,1,0	real=548>1>	none=548>1>	all=548>1>	focus=548>1>	fmove=548>1>	darr=548>1>	alive=548>1>	lock=548>1>
+AIMOVE	46	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[3 1]	cf1=2	D=0,0,1	real=551>4>	none=551>4>	all=551>4>	focus=551>4>	fmove=551>4>	darr=551>4>	alive=551>4>	lock=551>4>
+AIMOVE	47	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[3 1]	cf1=2	D=0,0,1	real=157>1>	none=157>1>	all=157>1>	focus=157>1>	fmove=157>1>	darr=157>1>	alive=157>1>	lock=157>1>
+AIMOVE	48	212	2	3	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[3 1]	cf1=2	D=0,0,1	real=10>4>	none=10>4>	all=10>4>	focus=10>4>	fmove=10>4>	darr=10>4>	alive=10>4>	lock=10>4>
+AIMOVE	49	212	2	6	3	true	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=1,1,0	real=553>6>	none=553>6>	all=553>6>	focus=553>6>	fmove=553>6>	darr=553>6>	alive=553>6>	lock=553>6>
+AIMOVE	50	212	2	4	6	false	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=2	D=1,1,0	real=549>4>h4	none=549>4>h4	all=549>4>h4	focus=549>4>h4	fmove=549>4>h4	darr=549>4>h4	alive=549>4>h4	lock=549>4>h4
+AIMOVE	51	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=1,1,0	real=157>3>	none=157>3>	all=157>3>	focus=157>3>	fmove=157>3>	darr=157>3>	alive=157>3>	lock=157>3>
+AIMOVE	52	212	2	3	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[3]	cf1=2	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	53	212	2	6	3	true	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=1,1,0	real=552>6>	none=552>6>	all=552>6>	focus=552>6>	fmove=552>6>	darr=552>6>	alive=552>6>	lock=552>6>
+AIMOVE	54	212	2	4	6	true	fc=60	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=1,1,0	real=550>2>h2	none=550>2>h2	all=550>undefined>hfalse	focus=550>2>h2	fmove=550>2>h2	darr=550>6>hfalse	alive=550>2>h2	lock=550>2>h2
+AIMOVE	55	212	2	2	4	false	fc=60	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=1,1,0	real=545>3>	none=545>3>	all=545>3>	focus=545>3>	fmove=545>3>	darr=545>3>	alive=545>3>	lock=545>3>
+AIMOVE	56	212	2	3	2	false	fc=60	pfc=2	fm=false	nlk=6	ae=[3]	cf1=0	D=0,0,1	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	57	212	2	6	3	false	fc=60	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=1,1,0	real=548>3>	none=548>3>	all=548>3>	focus=548>3>	fmove=548>3>	darr=548>3>	alive=548>3>	lock=548>3>
+AIMOVE	58	212	2	4	6	true	fc=60	pfc=2	fm=false	nlk=4	ae=[3]	cf1=0	D=0,0,1	real=551>4>	none=551>4>	all=551>4>	focus=551>4>	fmove=551>4>	darr=551>4>	alive=551>4>	lock=551>4>
+AIMOVE	59	212	2	2	4	false	fc=60	pfc=2	fm=false	nlk=6	ae=[3]	cf1=0	D=0,0,1	real=545>3>	none=545>3>	all=545>3>	focus=545>3>	fmove=545>3>	darr=545>3>	alive=545>3>	lock=545>3>
+AIMOVE	60	212	2	3	2	false	fc=60	pfc=2	fm=false	nlk=6	ae=[3]	cf1=0	D=0,0,1	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	61	212	2	6	3	true	fc=60	pfc=2	fm=false	nlk=6	ae=[3]	cf1=0	D=1,1,0	real=553>6>	none=553>6>	all=553>6>	focus=553>6>	fmove=553>6>	darr=553>6>	alive=553>6>	lock=553>6>
+AIMOVE	62	212	2	4	6	false	fc=60	pfc=2	fm=false	nlk=4	ae=[3]	cf1=0	D=1,1,0	real=549>4>h4	none=549>4>h4	all=549>4>h4	focus=549>4>h4	fmove=549>4>h4	darr=549>4>h4	alive=549>4>h4	lock=549>4>h4
+AIMOVE	63	212	2	2	4	false	fc=60	pfc=2	fm=false	nlk=6	ae=[3]	cf1=0	D=1,1,0	real=545>3>	none=545>3>	all=545>3>	focus=545>3>	fmove=545>3>	darr=545>3>	alive=545>3>	lock=545>3>
+AIMOVE	64	212	2	3	2	false	fc=60	pfc=2	fm=false	nlk=6	ae=[3]	cf1=0	D=0,0,1	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	65	212	2	6	3	false	fc=60	pfc=2	fm=false	nlk=6	ae=[3]	cf1=0	D=1,1,0	real=547>3>	none=547>3>	all=547>3>	focus=547>3>	fmove=547>3>	darr=547>3>	alive=547>3>	lock=547>3>
+AIMOVE	66	212	2	4	6	false	fc=0	pfc=4	fm=false	nlk=4	ae=[3]	cf1=0	D=0,0,1	real=547>3>	none=547>3>	all=547>3>	focus=547>3>	fmove=547>3>	darr=547>3>	alive=547>3>	lock=547>3>
+AIMOVE	67	212	2	2	4	false	fc=0	pfc=6	fm=false	nlk=6	ae=[3]	cf1=0	D=0,0,0	real=545>3>	none=545>3>	all=545>3>	focus=545>3>	fmove=545>3>	darr=545>3>	alive=545>3>	lock=545>3>
+AIDRIVE	end	212	0	260
+AIMOVE_HOOK	installed	104
+AIDRIVE	start	513	45
+AIMOVE	68	513	1	2	2	true	fc=0	pfc=6	fm=false	nlk=6	ae=[3]	cf1=0	D=0,0,1	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	69	513	1	6	2	true	fc=0	pfc=6	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=781>6>	none=781>6>	all=781>6>	focus=781>6>	fmove=781>6>	darr=781>6>	alive=781>6>	lock=781>6>
+AIMOVE	70	513	1	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3 1]	cf1=0	D=0,0,1	real=524>2>	none=524>2>	all=524>2>	focus=524>2>	fmove=524>2>	darr=524>2>	alive=524>2>	lock=524>2>
+AIMOVE	71	513	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[6 2]	cf1=1	D=1,1,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	72	513	1	2	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	73	513	1	6	2	false	fc=0	pfc=6	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=1,1,0	real=276>1>	none=276>1>	all=276>1>	focus=276>1>	fmove=276>1>	darr=276>1>	alive=276>1>	lock=276>1>
+AIMOVE	74	513	1	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3 1]	cf1=2	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	75	513	1	3	5	false	fc=100	pfc=2	fm=false	nlk=3	ae=[6 2]	cf1=2	D=1,1,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	76	513	1	2	3	true	fc=85	pfc=5	fm=false	nlk=5	ae=[6 2]	cf1=2	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	77	513	1	6	2	false	fc=12	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=2	D=1,1,0	real=276>5>	none=276>5>	all=276>5>	focus=276>5>	fmove=276>5>	darr=276>5>	alive=276>5>	lock=276>5>
+AIMOVE	78	513	1	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	79	513	1	3	5	false	fc=100	pfc=2	fm=false	nlk=3	ae=[6 2]	cf1=0	D=1,1,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	80	513	2	2	3	true	fc=100	pfc=2	fm=false	nlk=5	ae=[6 2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	81	513	2	6	2	true	fc=36	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=780>3>	none=780>3>	all=780>3>	focus=780>3>	fmove=780>3>	darr=780>3>	alive=780>3>	lock=780>3>
+AIMOVE	82	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=1,1,0	real=536>3>h3	none=536>3>h3	all=536>3>h3	focus=536>3>h3	fmove=536>3>h3	darr=536>3>h3	alive=536>3>h3	lock=536>3>h3
+AIMOVE	83	513	2	3	5	false	fc=100	pfc=2	fm=false	nlk=3	ae=[5 3]	cf1=0	D=1,1,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	84	513	2	2	3	true	fc=100	pfc=2	fm=false	nlk=5	ae=[5 3]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	85	513	2	6	2	false	fc=0	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	86	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	87	513	2	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	88	513	2	2	3	true	fc=85	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	89	513	2	6	2	false	fc=24	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,1,0	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	90	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=0,0,0	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	91	513	2	3	5	false	fc=70	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=10>2>	none=10>2>	all=10>2>	focus=10>2>	fmove=10>2>	darr=10>2>	alive=10>2>	lock=10>2>
+AIMOVE	92	513	2	2	3	true	fc=70	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	93	513	2	6	2	true	fc=48	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,1,0	real=780>3>	none=780>3>	all=780>3>	focus=780>3>	fmove=780>3>	darr=780>3>	alive=780>3>	lock=780>3>
+AIMOVE	94	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=1,1,0	real=524>6>	none=524>6>	all=524>6>	focus=524>6>	fmove=524>6>	darr=524>6>	alive=524>6>	lock=524>6>
+AIMOVE	95	513	2	3	5	false	fc=50	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	96	513	2	2	3	true	fc=50	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	97	513	2	6	2	false	fc=50	pfc=3	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,1,0	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	98	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=0,0,0	real=535>6>	none=535>6>	all=535>6>	focus=535>6>	fmove=535>6>	darr=535>6>	alive=535>6>	lock=535>6>
+AIMOVE	99	513	2	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	100	513	2	2	3	true	fc=65	pfc=5	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	101	513	2	6	2	false	fc=65	pfc=5	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,1,0	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	102	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	103	513	2	3	5	false	fc=70	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	104	513	2	2	3	true	fc=50	pfc=5	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	105	513	2	6	2	true	fc=50	pfc=5	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,1,0	real=780>5>	none=780>5>	all=780>5>	focus=780>5>	fmove=780>5>	darr=780>5>	alive=780>5>	lock=780>5>
+AIMOVE	106	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=1,1,0	real=536>5>h5	none=536>5>h5	all=536>5>h5	focus=536>5>h5	fmove=536>5>h5	darr=536>5>h5	alive=536>5>h5	lock=536>5>h5
+AIMOVE	107	513	2	3	5	false	fc=100	pfc=2	fm=false	nlk=3	ae=[5 3]	cf1=0	D=1,1,0	real=8>5>h5	none=8>5>h5	all=8>5>h5	focus=8>5>h5	fmove=8>5>h5	darr=8>5>h5	alive=8>5>h5	lock=8>5>h5
+AIMOVE	108	513	2	2	3	true	fc=85	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=1,1,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	109	513	2	6	2	false	fc=23	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	110	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	111	513	2	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=8>5>h5	none=8>5>h5	all=8>5>h5	focus=8>5>h5	fmove=8>5>h5	darr=8>5>h5	alive=8>5>h5	lock=8>5>h5
+AIMOVE	112	513	2	2	3	true	fc=70	pfc=5	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	113	513	2	6	2	false	fc=47	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,1,0	real=276>5>	none=276>5>	all=276>5>	focus=276>5>	fmove=276>5>	darr=276>5>	alive=276>5>	lock=276>5>
+AIMOVE	114	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	115	513	2	3	5	false	fc=70	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	116	513	3	2	3	true	fc=70	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=768>2>	none=768>2>	all=768>2>	focus=768>2>	fmove=768>2>	darr=768>2>	alive=768>2>	lock=768>2>
+AIMOVE	117	513	3	6	2	true	fc=70	pfc=3	fm=false	nlk=6	ae=[6 2]	cf1=1	D=1,1,0	real=780>5>	none=780>5>	all=780>5>	focus=780>5>	fmove=780>5>	darr=780>5>	alive=780>5>	lock=780>5>
+AIMOVE	118	513	3	3	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=1,1,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	119	513	3	2	3	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=1,1,0	real=775>3>	none=775>3>	all=775>3>	focus=775>3>	fmove=775>3>	darr=775>3>	alive=775>3>	lock=775>3>
+AIMOVE	120	513	3	6	2	false	fc=0	pfc=6	fm=false	nlk=6	ae=[3]	cf1=0	D=0,1,1	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	121	513	3	3	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[3]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	122	513	3	2	3	false	fc=100	pfc=2	fm=false	nlk=2	ae=[3]	cf1=0	D=1,1,0	real=773>3>	none=773>3>	all=773>3>	focus=773>3>	fmove=773>3>	darr=773>3>	alive=773>3>	lock=773>3>
+AIMOVE	123	513	3	6	2	false	fc=24	pfc=6	fm=false	nlk=6	ae=[3]	cf1=0	D=0,1,1	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIDRIVE	end	513	0	231
+AIMOVE_HOOK	installed	104
+AIDRIVE	start	212	25
+AIMOVE	124	212	1	6	6	true	fc=90	pfc=2	fm=false	nlk=2	ae=[3]	cf1=0	D=0,0,0	real=544>6>	none=544>6>	all=544>6>	focus=544>6>	fmove=544>6>	darr=544>6>	alive=544>6>	lock=544>6>
+AIMOVE	125	212	1	4	6	true	fc=100	pfc=2	fm=false	nlk=4	ae=[3]	cf1=0	D=0,0,0	real=544>4>	none=544>4>	all=544>4>	focus=544>4>	fmove=544>4>	darr=544>4>	alive=544>4>	lock=544>4>
+AIMOVE	126	212	1	2	4	false	fc=100	pfc=2	fm=false	nlk=6	ae=[3]	cf1=0	D=0,0,0	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	127	212	2	5	2	false	fc=100	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=2	D=0,0,1	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	128	212	2	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[5 3 1]	cf1=2	D=1,1,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	129	212	2	5	3	false	fc=100	pfc=1	fm=false	nlk=5	ae=[5 3 1]	cf1=2	D=1,1,0	real=524>6>	none=524>6>	all=524>6>	focus=524>6>	fmove=524>6>	darr=524>6>	alive=524>6>	lock=524>6>
+AIMOVE	130	212	2	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[6 4 2]	cf1=2	D=0,0,0	real=10>4>	none=10>4>	all=10>4>	focus=10>4>	fmove=10>4>	darr=10>4>	alive=10>4>	lock=10>4>
+AIMOVE	131	212	2	6	3	false	fc=85	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=547>1>	none=547>1>	all=547>1>	focus=547>1>	fmove=547>1>	darr=547>1>	alive=547>1>	lock=547>1>
+AIMOVE	132	212	2	4	6	true	fc=100	pfc=2	fm=false	nlk=4	ae=[5 3 1]	cf1=1	D=0,0,1	real=550>6>h6	none=550>6>h6	all=550>undefined>hfalse	focus=550>6>h6	fmove=550>6>h6	darr=550>3>hfalse	alive=550>6>h6	lock=550>6>h6
+AIMOVE	133	212	2	2	4	false	fc=100	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=0,0,1	real=157>1>	none=157>1>	all=157>1>	focus=157>1>	fmove=157>1>	darr=157>1>	alive=157>1>	lock=157>1>
+AIMOVE	134	212	2	5	2	false	fc=100	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=0,0,1	real=19>4>	none=19>4>	all=19>4>	focus=19>4>	fmove=19>4>	darr=19>4>	alive=19>4>	lock=19>4>
+AIMOVE	135	212	2	3	5	false	fc=65	pfc=3	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	136	212	2	6	3	false	fc=70	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=547>1>	none=547>1>	all=547>1>	focus=547>1>	fmove=547>1>	darr=547>1>	alive=547>1>	lock=547>1>
+AIMOVE	137	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[5 3 1]	cf1=2	D=0,0,1	real=551>4>	none=551>4>	all=551>4>	focus=551>4>	fmove=551>4>	darr=551>4>	alive=551>4>	lock=551>4>
+AIMOVE	138	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=2	D=0,0,1	real=545>3>	none=545>3>	all=545>3>	focus=545>3>	fmove=545>3>	darr=545>3>	alive=545>3>	lock=545>3>
+AIMOVE	139	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=0,0,1	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	140	212	2	3	5	false	fc=94	pfc=1	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	141	212	2	6	3	true	fc=50	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=552>6>	none=552>6>	all=552>6>	focus=552>6>	fmove=552>6>	darr=552>6>	alive=552>6>	lock=552>6>
+AIMOVE	142	212	2	4	6	false	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=1	D=1,1,0	real=549>6>h6	none=549>6>h6	all=549>6>h6	focus=549>6>h6	fmove=549>6>h6	darr=549>6>h6	alive=549>6>h6	lock=549>6>h6
+AIMOVE	143	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=1,1,0	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	144	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=0,0,1	real=535>6>	none=535>6>	all=535>6>	focus=535>6>	fmove=535>6>	darr=535>6>	alive=535>6>	lock=535>6>
+AIMOVE	145	212	2	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	146	212	2	6	3	true	fc=85	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=2	D=1,1,0	real=553>6>	none=553>6>	all=553>6>	focus=553>6>	fmove=553>6>	darr=553>6>	alive=553>6>	lock=553>6>
+AIMOVE	147	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=2	D=1,1,0	real=550>2>h2	none=550>2>h2	all=550>undefined>hfalse	focus=550>2>h2	fmove=550>2>h2	darr=550>2>hfalse	alive=550>2>h2	lock=550>2>h2
+AIMOVE	148	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=1,1,0	real=545>1>	none=545>1>	all=545>1>	focus=545>1>	fmove=545>1>	darr=545>1>	alive=545>1>	lock=545>1>
+AIMOVE	149	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=2	D=0,0,1	real=19>4>	none=19>4>	all=19>4>	focus=19>4>	fmove=19>4>	darr=19>4>	alive=19>4>	lock=19>4>
+AIMOVE	150	212	2	3	5	false	fc=80	pfc=2	fm=false	nlk=3	ae=[6 4 2]	cf1=2	D=1,1,0	real=10>2>	none=10>2>	all=10>2>	focus=10>2>	fmove=10>2>	darr=10>2>	alive=10>2>	lock=10>2>
+AIMOVE	151	212	2	6	3	false	fc=70	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=2	D=1,1,0	real=548>3>	none=548>3>	all=548>3>	focus=548>3>	fmove=548>3>	darr=548>3>	alive=548>3>	lock=548>3>
+AIMOVE	152	212	2	4	6	true	fc=80	pfc=2	fm=false	nlk=4	ae=[5 3]	cf1=2	D=0,0,1	real=551>4>	none=551>4>	all=551>4>	focus=551>4>	fmove=551>4>	darr=551>4>	alive=551>4>	lock=551>4>
+AIMOVE	153	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=2	D=0,0,1	real=545>3>	none=545>3>	all=545>3>	focus=545>3>	fmove=545>3>	darr=545>3>	alive=545>3>	lock=545>3>
+AIMOVE	154	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	155	212	2	6	5	true	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=1,1,0	real=552>6>	none=552>6>	all=552>6>	focus=552>6>	fmove=552>6>	darr=552>6>	alive=552>6>	lock=552>6>
+AIMOVE	156	212	2	4	6	false	fc=80	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=1,1,0	real=549>2>h2	none=549>2>h2	all=549>2>h2	focus=549>2>h2	fmove=549>2>h2	darr=549>2>h2	alive=549>2>h2	lock=549>2>h2
+AIMOVE	157	212	2	2	4	false	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=1,1,0	real=157>5>	none=157>5>	all=157>5>	focus=157>5>	fmove=157>5>	darr=157>5>	alive=157>5>	lock=157>5>
+AIMOVE	158	212	2	5	2	false	fc=80	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=524>4>	none=524>4>	all=524>4>	focus=524>4>	fmove=524>4>	darr=524>4>	alive=524>4>	lock=524>4>
+AIMOVE	159	212	2	6	5	true	fc=80	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=1,1,0	real=553>6>	none=553>6>	all=553>6>	focus=553>6>	fmove=553>6>	darr=553>6>	alive=553>6>	lock=553>6>
+AIMOVE	160	212	2	4	6	false	fc=60	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=1,1,0	real=547>5>	none=547>5>	all=547>5>	focus=547>5>	fmove=547>5>	darr=547>5>	alive=547>5>	lock=547>5>
+AIMOVE	161	212	2	2	4	false	fc=60	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,0	real=545>5>	none=545>5>	all=545>5>	focus=545>5>	fmove=545>5>	darr=545>5>	alive=545>5>	lock=545>5>
+AIMOVE	162	212	2	5	2	false	fc=60	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=19>4>	none=19>4>	all=19>4>	focus=19>4>	fmove=19>4>	darr=19>4>	alive=19>4>	lock=19>4>
+AIMOVE	163	212	2	6	5	false	fc=60	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=1,1,0	real=548>5>	none=548>5>	all=548>5>	focus=548>5>	fmove=548>5>	darr=548>5>	alive=548>5>	lock=548>5>
+AIMOVE	164	212	2	4	6	false	fc=60	pfc=2	fm=false	nlk=4	ae=[5]	cf1=0	D=0,0,1	real=547>5>	none=547>5>	all=547>5>	focus=547>5>	fmove=547>5>	darr=547>5>	alive=547>5>	lock=547>5>
+AIMOVE	165	212	2	2	4	false	fc=60	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,0	real=545>5>	none=545>5>	all=545>5>	focus=545>5>	fmove=545>5>	darr=545>5>	alive=545>5>	lock=545>5>
+AIMOVE	166	212	2	5	2	false	fc=60	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=536>5>h5	none=536>5>h5	all=536>5>h5	focus=536>5>h5	fmove=536>5>h5	darr=536>5>h5	alive=536>5>h5	lock=536>5>h5
+AIMOVE	167	212	2	6	5	true	fc=60	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=1,1,0	real=552>6>	none=552>6>	all=552>6>	focus=552>6>	fmove=552>6>	darr=552>6>	alive=552>6>	lock=552>6>
+AIMOVE	168	212	2	4	6	true	fc=60	pfc=2	fm=false	nlk=4	ae=[5]	cf1=0	D=1,1,0	real=550>2>h2	none=550>2>h2	all=550>undefined>hfalse	focus=550>2>h2	fmove=550>2>h2	darr=550>5>hfalse	alive=550>2>h2	lock=550>2>h2
+AIMOVE	169	212	2	2	4	false	fc=60	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=1,1,0	real=545>5>	none=545>5>	all=545>5>	focus=545>5>	fmove=545>5>	darr=545>5>	alive=545>5>	lock=545>5>
+AIMOVE	170	212	2	5	2	false	fc=60	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=535>4>	none=535>4>	all=535>4>	focus=535>4>	fmove=535>4>	darr=535>4>	alive=535>4>	lock=535>4>
+AIMOVE	171	212	2	6	5	true	fc=60	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,0	real=553>6>	none=553>6>	all=553>6>	focus=553>6>	fmove=553>6>	darr=553>6>	alive=553>6>	lock=553>6>
+AIMOVE	172	212	2	4	6	true	fc=60	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=0,0,0	real=551>4>	none=551>4>	all=551>4>	focus=551>4>	fmove=551>4>	darr=551>4>	alive=551>4>	lock=551>4>
+AIMOVE	173	212	2	2	4	false	fc=60	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,0	real=545>5>	none=545>5>	all=545>5>	focus=545>5>	fmove=545>5>	darr=545>5>	alive=545>5>	lock=545>5>
+AIMOVE	174	212	2	5	2	false	fc=60	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	175	212	2	6	5	false	fc=60	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=548>5>	none=548>5>	all=548>5>	focus=548>5>	fmove=548>5>	darr=548>5>	alive=548>5>	lock=548>5>
+AIMOVE	176	212	2	4	6	false	fc=60	pfc=2	fm=false	nlk=4	ae=[5]	cf1=0	D=0,0,1	real=549>2>h2	none=549>2>h2	all=549>2>h2	focus=549>2>h2	fmove=549>2>h2	darr=549>2>h2	alive=549>2>h2	lock=549>2>h2
+AIMOVE	177	212	2	2	4	false	fc=60	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=1,1,0	real=545>5>	none=545>5>	all=545>5>	focus=545>5>	fmove=545>5>	darr=545>5>	alive=545>5>	lock=545>5>
+AIDRIVE	end	212	0	263
+AIMOVE_HOOK	installed	104
+AIDRIVE	start	513	45
+AIMOVE	178	513	1	2	2	true	fc=60	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	179	513	1	6	2	true	fc=60	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=781>6>	none=781>6>	all=781>6>	focus=781>6>	fmove=781>6>	darr=781>6>	alive=781>6>	lock=781>6>
+AIMOVE	180	513	1	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3 1]	cf1=0	D=0,0,1	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	181	513	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[5 3 1]	cf1=0	D=1,1,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	182	513	1	2	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[6 2]	cf1=0	D=1,1,0	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	183	513	1	6	2	false	fc=0	pfc=6	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=1,1,0	real=276>5>	none=276>5>	all=276>5>	focus=276>5>	fmove=276>5>	darr=276>5>	alive=276>5>	lock=276>5>
+AIMOVE	184	513	1	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3 1]	cf1=0	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	185	513	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[6 2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	186	513	1	2	3	true	fc=85	pfc=5	fm=false	nlk=5	ae=[6 2]	cf1=0	D=1,1,0	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	187	513	1	6	2	false	fc=12	pfc=6	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=1,1,0	real=276>1>	none=276>1>	all=276>1>	focus=276>1>	fmove=276>1>	darr=276>1>	alive=276>1>	lock=276>1>
+AIMOVE	188	513	1	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3 1]	cf1=0	D=0,0,0	real=535>6>	none=535>6>	all=535>6>	focus=535>6>	fmove=535>6>	darr=535>6>	alive=535>6>	lock=535>6>
+AIMOVE	189	513	1	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	190	513	2	2	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[6 2]	cf1=0	D=1,1,0	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	191	513	2	6	2	true	fc=36	pfc=6	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=1,1,0	real=780>1>	none=780>1>	all=780>1>	focus=780>1>	fmove=780>1>	darr=780>1>	alive=780>1>	lock=780>1>
+AIMOVE	192	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3 1]	cf1=0	D=1,1,0	real=524>2>	none=524>2>	all=524>2>	focus=524>2>	fmove=524>2>	darr=524>2>	alive=524>2>	lock=524>2>
+AIMOVE	193	513	2	3	5	false	fc=70	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	194	513	2	2	3	true	fc=70	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	195	513	2	6	2	false	fc=0	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,1,0	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	196	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	197	513	2	3	5	false	fc=100	pfc=2	fm=false	nlk=3	ae=[6 2]	cf1=0	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	198	513	2	2	3	true	fc=70	pfc=5	fm=false	nlk=5	ae=[6 2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	199	513	2	6	2	false	fc=24	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	200	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	201	513	2	3	5	false	fc=100	pfc=2	fm=false	nlk=3	ae=[6 2]	cf1=0	D=1,1,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	202	513	2	2	3	true	fc=100	pfc=2	fm=false	nlk=5	ae=[6 2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	203	513	2	6	2	true	fc=48	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=780>3>	none=780>3>	all=780>3>	focus=780>3>	fmove=780>3>	darr=780>3>	alive=780>3>	lock=780>3>
+AIMOVE	204	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=1,1,0	real=536>3>h3	none=536>3>h3	all=536>3>h3	focus=536>3>h3	fmove=536>3>h3	darr=536>3>h3	alive=536>3>h3	lock=536>3>h3
+AIMOVE	205	513	2	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[5 3]	cf1=0	D=1,1,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	206	513	2	2	3	true	fc=85	pfc=3	fm=false	nlk=5	ae=[5 3]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	207	513	2	6	2	false	fc=0	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	208	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=0,0,0	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	209	513	2	3	5	false	fc=70	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=0	D=0,0,0	real=10>6>	none=10>6>	all=10>6>	focus=10>6>	fmove=10>6>	darr=10>6>	alive=10>6>	lock=10>6>
+AIMOVE	210	513	2	2	3	true	fc=70	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	211	513	2	6	2	false	fc=24	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	212	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=0,0,0	real=535>2>	none=535>2>	all=535>2>	focus=535>2>	fmove=535>2>	darr=535>2>	alive=535>2>	lock=535>2>
+AIMOVE	213	513	2	3	5	false	fc=50	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	214	513	2	2	3	true	fc=50	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	215	513	2	6	2	true	fc=48	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,1,0	real=780>3>	none=780>3>	all=780>3>	focus=780>3>	fmove=780>3>	darr=780>3>	alive=780>3>	lock=780>3>
+AIMOVE	216	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=1,1,0	real=524>2>	none=524>2>	all=524>2>	focus=524>2>	fmove=524>2>	darr=524>2>	alive=524>2>	lock=524>2>
+AIMOVE	217	513	2	3	5	false	fc=35	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	218	513	2	2	3	true	fc=35	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	219	513	2	6	2	false	fc=0	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,1,0	real=276>5>	none=276>5>	all=276>5>	focus=276>5>	fmove=276>5>	darr=276>5>	alive=276>5>	lock=276>5>
+AIMOVE	220	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=0,0,0	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	221	513	2	3	5	false	fc=20	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	222	513	2	2	3	true	fc=20	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	223	513	2	6	2	false	fc=20	pfc=3	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=276>5>	none=276>5>	all=276>5>	focus=276>5>	fmove=276>5>	darr=276>5>	alive=276>5>	lock=276>5>
+AIMOVE	224	513	2	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=0	D=0,0,0	real=536>3>h3	none=536>3>h3	all=536>3>h3	focus=536>3>h3	fmove=536>3>h3	darr=536>3>h3	alive=536>3>h3	lock=536>3>h3
+AIMOVE	225	513	2	3	5	false	fc=5	pfc=3	fm=false	nlk=3	ae=[5 3]	cf1=0	D=1,1,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	226	513	3	2	3	true	fc=5	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=0	D=0,0,0	real=768>2>	none=768>2>	all=768>2>	focus=768>2>	fmove=768>2>	darr=768>2>	alive=768>2>	lock=768>2>
+AIMOVE	227	513	3	6	2	true	fc=5	pfc=3	fm=false	nlk=6	ae=[6 2]	cf1=0	D=0,0,0	real=780>3>	none=780>3>	all=780>3>	focus=780>3>	fmove=780>3>	darr=780>3>	alive=780>3>	lock=780>3>
+AIMOVE	228	513	3	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	229	513	3	3	5	false	fc=40	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	230	513	3	2	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=774>3>	none=774>3>	all=774>3>	focus=774>3>	fmove=774>3>	darr=774>3>	alive=774>3>	lock=774>3>
+AIMOVE	231	513	3	6	2	false	fc=0	pfc=5	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,1,1	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	232	513	3	5	6	false	fc=100	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=0,0,0	real=535>6>	none=535>6>	all=535>6>	focus=535>6>	fmove=535>6>	darr=535>6>	alive=535>6>	lock=535>6>
+AIMOVE	233	513	3	3	5	false	fc=25	pfc=3	fm=false	nlk=3	ae=[6 2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	234	513	3	2	3	false	fc=25	pfc=3	fm=false	nlk=5	ae=[6 2]	cf1=1	D=1,1,0	real=773>3>	none=773>3>	all=773>3>	focus=773>3>	fmove=773>3>	darr=773>3>	alive=773>3>	lock=773>3>
+AIMOVE	235	513	3	6	2	false	fc=24	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,1,1	real=276>3>	none=276>3>	all=276>3>	focus=276>3>	fmove=276>3>	darr=276>3>	alive=276>3>	lock=276>3>
+AIMOVE	236	513	3	5	6	false	fc=88	pfc=2	fm=false	nlk=2	ae=[5 3]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	237	513	3	5	5	false	fc=88	pfc=2	fm=false	nlk=2	ae=[6 2]	cf1=1	D=0,0,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	238	513	3	2	5	false	fc=88	pfc=2	fm=false	nlk=2	ae=[6 2]	cf1=1	D=0,0,0	real=776>5>	none=776>5>	all=776>5>	focus=776>5>	fmove=776>5>	darr=776>5>	alive=776>5>	lock=776>5>
+AIMOVE	239	513	3	6	2	true	fc=36	pfc=6	fm=false	nlk=6	ae=[5]	cf1=1	D=0,1,1	real=780>5>	none=780>5>	all=780>5>	focus=780>5>	fmove=780>5>	darr=780>5>	alive=780>5>	lock=780>5>
+AIMOVE	240	513	3	5	6	false	fc=76	pfc=2	fm=false	nlk=2	ae=[5]	cf1=0	D=0,1,1	real=536>5>h5	none=536>5>h5	all=536>5>h5	focus=536>5>h5	fmove=536>5>h5	darr=536>5>h5	alive=536>5>h5	lock=536>5>h5
+AIMOVE	241	513	3	2	5	false	fc=76	pfc=2	fm=false	nlk=2	ae=[5]	cf1=0	D=1,1,0	real=775>5>	none=775>5>	all=775>5>	focus=775>5>	fmove=775>5>	darr=775>5>	alive=775>5>	lock=775>5>
+AIMOVE	242	513	3	6	2	false	fc=0	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=0,1,1	real=276>5>	none=276>5>	all=276>5>	focus=276>5>	fmove=276>5>	darr=276>5>	alive=276>5>	lock=276>5>
+AIMOVE	243	513	3	5	6	false	fc=58	pfc=2	fm=false	nlk=2	ae=[5]	cf1=0	D=0,0,0	real=524>2>	none=524>2>	all=524>2>	focus=524>2>	fmove=524>2>	darr=524>2>	alive=524>2>	lock=524>2>
+AIMOVE	244	513	3	2	5	false	fc=58	pfc=2	fm=false	nlk=2	ae=[6 2]	cf1=1	D=0,0,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	245	513	3	6	2	false	fc=12	pfc=6	fm=false	nlk=6	ae=[5]	cf1=1	D=0,1,1	real=276>5>	none=276>5>	all=276>5>	focus=276>5>	fmove=276>5>	darr=276>5>	alive=276>5>	lock=276>5>
+AIMOVE	246	513	3	5	6	false	fc=48	pfc=2	fm=false	nlk=2	ae=[5]	cf1=0	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	247	513	3	2	5	false	fc=48	pfc=2	fm=false	nlk=2	ae=[6 2]	cf1=0	D=0,0,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	248	513	3	6	2	true	fc=36	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=0,1,1	real=780>5>	none=780>5>	all=780>5>	focus=780>5>	fmove=780>5>	darr=780>5>	alive=780>5>	lock=780>5>
+AIDRIVE	end	513	0	282
+AIMOVE_HOOK	installed	104
+AIDRIVE	start	109	12
+AIMOVE	249	109	1	5	6	false	fc=98	pfc=2	fm=false	nlk=2	ae=[5]	cf1=0	D=0,1,1	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	250	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	251	109	1	2	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=531>2>	none=531>2>	all=531>undefined>hfalse	focus=531>2>	fmove=531>2>	darr=531>2>hfalse	alive=531>2>	lock=531>2>
+AIMOVE	252	109	1	5	2	false	fc=100	pfc=1	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	253	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=10>2>	none=10>2>	all=10>2>	focus=10>2>	fmove=10>2>	darr=10>2>	alive=10>2>	lock=10>2>
+AIMOVE	254	109	1	2	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	255	109	1	5	2	false	fc=100	pfc=1	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=524>2>	none=524>2>	all=524>2>	focus=524>2>	fmove=524>2>	darr=524>2>	alive=524>2>	lock=524>2>
+AIMOVE	256	109	1	3	5	false	fc=80	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	257	109	1	2	3	false	fc=80	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	258	109	1	5	2	false	fc=80	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=1	D=0,0,0	real=535>2>	none=535>2>	all=535>2>	focus=535>2>	fmove=535>2>	darr=535>2>	alive=535>2>	lock=535>2>
+AIMOVE	259	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[2]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	260	109	1	2	3	false	fc=65	pfc=5	fm=false	nlk=5	ae=[2]	cf1=1	D=1,1,0	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	261	109	1	5	2	false	fc=65	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=2	D=0,0,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	262	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[2]	cf1=2	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	263	109	1	2	3	true	fc=50	pfc=5	fm=false	nlk=5	ae=[2]	cf1=2	D=1,1,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	264	109	1	5	2	false	fc=50	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=2	D=1,1,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	265	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=10>2>	none=10>2>	all=10>2>	focus=10>2>	fmove=10>2>	darr=10>2>	alive=10>2>	lock=10>2>
+AIMOVE	266	109	1	2	3	true	fc=30	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	267	109	1	5	2	false	fc=30	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	268	109	1	3	5	false	fc=80	pfc=3	fm=false	nlk=3	ae=[2]	cf1=1	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	269	109	1	2	3	true	fc=10	pfc=5	fm=false	nlk=5	ae=[2]	cf1=1	D=1,1,0	real=531>2>	none=531>2>	all=531>undefined>hfalse	focus=531>2>	fmove=531>2>	darr=531>undefined>hfalse	alive=531>2>	lock=531>2>
+AIMOVE	270	109	1	5	2	false	fc=10	pfc=5	fm=false	nlk=5	ae=[2]	cf1=1	D=1,1,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	271	109	1	3	5	false	fc=65	pfc=3	fm=false	nlk=3	ae=[2]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	272	109	1	2	3	true	fc=45	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=531>2>	none=531>2>	all=531>undefined>hfalse	focus=531>2>	fmove=531>2>	darr=531>2>hfalse	alive=531>2>	lock=531>2>
+AIMOVE	273	109	1	5	2	false	fc=45	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	274	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	275	109	1	2	3	true	fc=25	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	276	109	1	5	2	false	fc=25	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	277	109	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	278	109	1	2	3	true	fc=10	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	279	109	1	5	2	false	fc=10	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	280	109	1	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	281	109	1	2	3	false	fc=45	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	282	109	1	5	2	false	fc=45	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	283	109	1	3	5	false	fc=70	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	284	109	1	2	3	true	fc=80	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	285	109	1	5	2	false	fc=80	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	286	109	1	3	5	false	fc=55	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	287	109	1	2	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	288	109	1	5	2	false	fc=100	pfc=1	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	289	109	1	3	5	false	fc=40	pfc=3	fm=false	nlk=3	ae=[5 3 1]	cf1=0	D=1,1,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	290	109	1	2	3	false	fc=100	pfc=1	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	291	109	1	5	2	false	fc=100	pfc=1	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=0,0,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	292	109	1	3	5	false	fc=25	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	293	109	2	2	3	true	fc=85	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=530>2>	none=530>2>	all=530>2>	focus=530>2>	fmove=530>2>	darr=530>2>	alive=530>2>	lock=530>2>
+AIMOVE	294	109	2	5	2	false	fc=85	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=524>2>	none=524>2>	all=524>2>	focus=524>2>	fmove=524>2>	darr=524>2>	alive=524>2>	lock=524>2>
+AIMOVE	295	109	2	3	5	false	fc=10	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	296	109	2	2	3	false	fc=65	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=0,0,0	real=1>1>	none=1>1>	all=1>1>	focus=1>1>	fmove=1>1>	darr=1>1>	alive=1>1>	lock=1>1>
+AIMOVE	297	109	2	5	2	false	fc=65	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=0,0,0	real=535>2>	none=535>2>	all=535>2>	focus=535>2>	fmove=535>2>	darr=535>2>	alive=535>2>	lock=535>2>
+AIMOVE	298	109	2	3	5	false	fc=45	pfc=3	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=10>2>	none=10>2>	all=10>2>	focus=10>2>	fmove=10>2>	darr=10>2>	alive=10>2>	lock=10>2>
+AIMOVE	299	109	2	2	3	false	fc=45	pfc=3	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	300	109	2	5	2	false	fc=45	pfc=3	fm=false	nlk=5	ae=[5 3]	cf1=1	D=0,0,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	301	109	2	3	5	false	fc=25	pfc=3	fm=false	nlk=3	ae=[2]	cf1=1	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	302	109	2	2	3	false	fc=25	pfc=3	fm=false	nlk=5	ae=[2]	cf1=1	D=1,1,0	real=524>3>	none=524>3>	all=524>3>	focus=524>3>	fmove=524>3>	darr=524>3>	alive=524>3>	lock=524>3>
+AIMOVE	303	109	2	5	2	false	fc=25	pfc=3	fm=false	nlk=5	ae=[5 3]	cf1=1	D=0,0,2	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	304	109	2	3	5	false	fc=25	pfc=3	fm=false	nlk=3	ae=[2]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	305	109	3	2	3	true	fc=15	pfc=5	fm=false	nlk=5	ae=[2]	cf1=1	D=0,0,0	real=163>undefined>hfalse	none=163>undefined>hfalse	all=163>undefined>hfalse	focus=163>undefined>hfalse	fmove=163>undefined>hfalse	darr=163>undefined>hfalse	alive=163>undefined>hfalse	lock=163>undefined>hfalse
+AIMOVE	306	109	3	5	2	false	fc=15	pfc=5	fm=false	nlk=5	ae=[2]	cf1=1	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	307	109	3	3	5	false	fc=15	pfc=5	fm=false	nlk=3	ae=[2]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	308	109	3	2	3	true	fc=15	pfc=5	fm=false	nlk=5	ae=[2]	cf1=1	D=0,0,0	real=163>undefined>	none=163>undefined>	all=163>undefined>	focus=163>undefined>	fmove=163>undefined>	darr=163>undefined>	alive=163>undefined>	lock=163>undefined>
+AIMOVE	309	109	3	5	2	false	fc=15	pfc=5	fm=false	nlk=5	ae=[2]	cf1=1	D=0,0,0	real=535>2>	none=535>2>	all=535>2>	focus=535>2>	fmove=535>2>	darr=535>2>	alive=535>2>	lock=535>2>
+AIMOVE	310	109	3	3	5	false	fc=15	pfc=5	fm=false	nlk=3	ae=[2]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	311	109	3	2	3	true	fc=15	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=163>2>	none=163>2>	all=163>undefined>	focus=163>2>	fmove=163>2>	darr=163>2>	alive=163>2>	lock=163>2>
+AIMOVE	312	109	3	2	2	true	fc=15	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=136>5>	none=136>5>	all=136>5>	focus=136>5>	fmove=136>5>	darr=136>5>	alive=136>5>	lock=136>5>
+AIMOVE	313	109	3	5	2	false	fc=15	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=1,1,0	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	314	109	3	3	5	false	fc=15	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=10>2>	none=10>2>	all=10>2>	focus=10>2>	fmove=10>2>	darr=10>2>	alive=10>2>	lock=10>2>
+AIMOVE	315	109	3	2	3	false	fc=15	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=533>3>	none=533>3>	all=533>3>	focus=533>3>	fmove=533>3>	darr=533>3>	alive=533>3>	lock=533>3>
+AIMOVE	316	109	3	5	2	false	fc=15	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=1	D=0,0,2	real=19>2>	none=19>2>	all=19>2>	focus=19>2>	fmove=19>2>	darr=19>2>	alive=19>2>	lock=19>2>
+AIMOVE	317	109	3	3	5	false	fc=15	pfc=5	fm=false	nlk=3	ae=[2]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	318	109	3	5	3	false	fc=15	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=536>3>h3	none=536>3>h3	all=536>3>h3	focus=536>3>h3	fmove=536>3>h3	darr=536>3>h3	alive=536>3>h3	lock=536>3>h3
+AIMOVE	319	109	3	3	5	false	fc=15	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	320	109	3	2	3	false	fc=15	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	321	109	3	5	2	false	fc=15	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=0,0,2	real=535>2>	none=535>2>	all=535>2>	focus=535>2>	fmove=535>2>	darr=535>2>	alive=535>2>	lock=535>2>
+AIMOVE	322	109	3	3	5	false	fc=15	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	323	109	3	2	3	true	fc=15	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=136>3>	none=136>3>	all=136>3>	focus=136>3>	fmove=136>3>	darr=136>3>	alive=136>3>	lock=136>3>
+AIMOVE	324	109	3	5	2	false	fc=15	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	325	109	3	3	5	false	fc=15	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	326	109	3	2	3	true	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=163>2>	none=163>2>	all=163>undefined>	focus=163>2>	fmove=163>2>	darr=163>2>	alive=163>2>	lock=163>2>
+AIMOVE	327	109	3	2	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=524>5>	none=524>5>	all=524>5>	focus=524>5>	fmove=524>5>	darr=524>5>	alive=524>5>	lock=524>5>
+AIMOVE	328	109	3	5	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=0,0,2	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	329	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	330	109	3	2	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=523>3>	none=523>3>	all=523>3>	focus=523>3>	fmove=523>3>	darr=523>3>	alive=523>3>	lock=523>3>
+AIMOVE	331	109	3	5	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=0,0,1	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	332	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	333	109	3	5	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=536>5>h5	none=536>5>h5	all=536>5>h5	focus=536>5>h5	fmove=536>5>h5	darr=536>5>h5	alive=536>5>h5	lock=536>5>h5
+AIMOVE	334	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=1,1,0	real=8>5>h5	none=8>5>h5	all=8>5>h5	focus=8>5>h5	fmove=8>5>h5	darr=8>5>h5	alive=8>5>h5	lock=8>5>h5
+AIMOVE	335	109	3	2	3	false	fc=0	pfc=5	fm=false	nlk=5	ae=[2]	cf1=0	D=1,1,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	336	109	3	5	2	false	fc=0	pfc=5	fm=false	nlk=5	ae=[5 3]	cf1=0	D=0,0,0	real=535>2>	none=535>2>	all=535>2>	focus=535>2>	fmove=535>2>	darr=535>2>	alive=535>2>	lock=535>2>
+AIMOVE	337	109	3	3	5	false	fc=0	pfc=5	fm=false	nlk=3	ae=[2]	cf1=0	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIDRIVE	end	109	1	403
+AIDRIVE	done
+RUN	4
+AIMOVE_HOOK	installed	44
+AIDRIVE	start	307	18
+AIMOVE	1	307	1	4	0	true	fc=undefined	pfc=undefined	fm=undefined	nlk=undefined	ae=u	cf1=undefined	D=undefined,undefined,undefined	real=573>1>	none=573>1>	all=573>1>	focus=573>1>	fmove=573>1>	darr=573>1>	alive=573>1>	lock=573>1>
+AIMOVE	2	307	1	6	4	true	fc=100	pfc=2	fm=undefined	nlk=6	ae=[5 3 1]	cf1=2	D=undefined,undefined,undefined	real=573>5>	none=573>5>	all=573>5>	focus=573>5>	fmove=573>5>	darr=573>5>	alive=573>5>	lock=573>5>
+AIMOVE	3	307	1	2	6	true	fc=100	pfc=2	fm=undefined	nlk=4	ae=[5 3 1]	cf1=0	D=undefined,undefined,undefined	real=573>5>	none=573>5>	all=573>5>	focus=573>5>	fmove=573>5>	darr=573>5>	alive=573>5>	lock=573>5>
+AIMOVE	4	307	1	5	2	false	fc=100	pfc=2	fm=undefined	nlk=6	ae=[5 3 1]	cf1=0	D=undefined,undefined,undefined	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	5	307	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[5 3 1]	cf1=0	D=1,1,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	6	307	1	4	3	false	fc=100	pfc=1	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=574>4>	none=574>4>	all=574>4>	focus=574>4>	fmove=574>4>	darr=574>4>	alive=574>4>	lock=574>4>
+AIMOVE	7	307	1	6	4	false	fc=88	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=574>6>	none=574>6>	all=574>6>	focus=574>6>	fmove=574>6>	darr=574>6>	alive=574>6>	lock=574>6>
+AIMOVE	8	307	1	2	6	false	fc=88	pfc=2	fm=false	nlk=4	ae=[5 3 1]	cf1=0	D=0,0,1	real=575>3>	none=575>3>	all=575>3>	focus=575>3>	fmove=575>3>	darr=575>3>	alive=575>3>	lock=575>3>
+AIMOVE	9	307	1	5	2	false	fc=88	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=1	D=0,0,1	real=524>2>	none=524>2>	all=524>2>	focus=524>2>	fmove=524>2>	darr=524>2>	alive=524>2>	lock=524>2>
+AIMOVE	10	307	1	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[6 4 2]	cf1=2	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	11	307	1	4	3	false	fc=85	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=260>1>	none=260>1>	all=260>1>	focus=260>1>	fmove=260>1>	darr=260>1>	alive=260>1>	lock=260>1>
+AIMOVE	12	307	1	6	4	false	fc=73	pfc=6	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=572>3>	none=572>3>	all=572>3>	focus=572>3>	fmove=572>3>	darr=572>3>	alive=572>3>	lock=572>3>
+AIMOVE	13	307	1	2	6	false	fc=73	pfc=4	fm=false	nlk=4	ae=[5 3 1]	cf1=1	D=0,0,1	real=260>1>	none=260>1>	all=260>1>	focus=260>1>	fmove=260>1>	darr=260>1>	alive=260>1>	lock=260>1>
+AIMOVE	14	307	1	5	2	false	fc=73	pfc=4	fm=false	nlk=6	ae=[5 3 1]	cf1=2	D=0,0,1	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	15	307	1	3	5	false	fc=73	pfc=4	fm=false	nlk=3	ae=[6 4 2]	cf1=2	D=0,0,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	16	307	1	4	3	true	fc=70	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=2	D=1,1,0	real=573>5>	none=573>5>	all=573>5>	focus=573>5>	fmove=573>5>	darr=573>5>	alive=573>5>	lock=573>5>
+AIMOVE	17	307	1	6	4	true	fc=61	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=573>5>	none=573>5>	all=573>5>	focus=573>5>	fmove=573>5>	darr=573>5>	alive=573>5>	lock=573>5>
+AIMOVE	18	307	1	2	6	false	fc=73	pfc=4	fm=false	nlk=4	ae=[5 3]	cf1=0	D=1,1,0	real=260>3>	none=260>3>	all=260>3>	focus=260>3>	fmove=260>3>	darr=260>3>	alive=260>3>	lock=260>3>
+AIMOVE	19	307	1	5	2	false	fc=61	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	20	307	1	3	5	false	fc=61	pfc=6	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	21	307	1	4	3	false	fc=50	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=575>3>	none=575>3>	all=575>3>	focus=575>3>	fmove=575>3>	darr=575>3>	alive=575>3>	lock=575>3>
+AIMOVE	22	307	1	6	4	true	fc=61	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=573>5>	none=573>5>	all=573>5>	focus=573>5>	fmove=573>5>	darr=573>5>	alive=573>5>	lock=573>5>
+AIMOVE	23	307	1	2	6	true	fc=61	pfc=4	fm=false	nlk=4	ae=[5 3]	cf1=0	D=0,0,1	real=573>3>	none=573>3>	all=573>3>	focus=573>3>	fmove=573>3>	darr=573>3>	alive=573>3>	lock=573>3>
+AIMOVE	24	307	1	5	2	false	fc=61	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	25	307	1	3	5	false	fc=61	pfc=4	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	26	307	1	4	3	false	fc=61	pfc=4	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=572>5>	none=572>5>	all=572>5>	focus=572>5>	fmove=572>5>	darr=572>5>	alive=572>5>	lock=572>5>
+AIMOVE	27	307	1	6	4	true	fc=61	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=573>3>	none=573>3>	all=573>3>	focus=573>3>	fmove=573>3>	darr=573>3>	alive=573>3>	lock=573>3>
+AIMOVE	28	307	1	2	6	false	fc=51	pfc=4	fm=false	nlk=4	ae=[5 3]	cf1=0	D=0,0,1	real=260>3>	none=260>3>	all=260>3>	focus=260>3>	fmove=260>3>	darr=260>3>	alive=260>3>	lock=260>3>
+AIMOVE	29	307	1	5	2	false	fc=51	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=536>5>h5	none=536>5>h5	all=536>5>h5	focus=536>5>h5	fmove=536>5>h5	darr=536>5>h5	alive=536>5>h5	lock=536>5>h5
+AIMOVE	30	307	1	5	5	false	fc=51	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	31	307	1	4	5	true	fc=51	pfc=4	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,0	real=573>5>	none=573>5>	all=573>5>	focus=573>5>	fmove=573>5>	darr=573>5>	alive=573>5>	lock=573>5>
+AIMOVE	32	307	1	6	4	false	fc=49	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,0	real=260>5>	none=260>5>	all=260>5>	focus=260>5>	fmove=260>5>	darr=260>5>	alive=260>5>	lock=260>5>
+AIMOVE	33	307	1	2	6	false	fc=39	pfc=4	fm=false	nlk=4	ae=[5]	cf1=0	D=0,0,1	real=572>5>	none=572>5>	all=572>5>	focus=572>5>	fmove=572>5>	darr=572>5>	alive=572>5>	lock=572>5>
+AIDRIVE	end	307	0	117
+AIMOVE_HOOK	installed	104
+AIDRIVE	start	510	27
+AIMOVE	34	510	1	4	2	false	fc=39	pfc=4	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=721>4>	none=721>4>	all=721>4>	focus=721>4>	fmove=721>4>	darr=721>4>	alive=721>4>	lock=721>4>
+AIMOVE	35	510	1	2	4	true	fc=100	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=710>2>	none=710>2>	all=710>2>	focus=710>2>	fmove=710>2>	darr=710>2>	alive=710>2>	lock=710>2>
+AIMOVE	36	510	1	6	2	false	fc=100	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=723>6>	none=723>6>	all=723>6>	focus=723>6>	fmove=723>6>	darr=723>6>	alive=723>6>	lock=723>6>
+AIMOVE	37	510	1	5	6	false	fc=100	pfc=4	fm=false	nlk=4	ae=[5]	cf1=0	D=1,2,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	38	510	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=1,1,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	39	510	1	4	3	false	fc=100	pfc=1	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=524>5>	none=524>5>	all=524>5>	focus=524>5>	fmove=524>5>	darr=524>5>	alive=524>5>	lock=524>5>
+AIMOVE	40	510	1	2	4	false	fc=90	pfc=6	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=713>1>	none=713>1>	all=713>1>	focus=713>1>	fmove=713>1>	darr=713>1>	alive=713>1>	lock=713>1>
+AIMOVE	41	510	1	6	2	false	fc=85	pfc=4	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=1,0,0	real=725>1>	none=725>1>	all=725>1>	focus=725>1>	fmove=725>1>	darr=725>1>	alive=725>1>	lock=725>1>
+AIMOVE	42	510	1	5	6	false	fc=85	pfc=4	fm=false	nlk=4	ae=[5 3 1]	cf1=0	D=1,2,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	43	510	1	3	5	false	fc=85	pfc=4	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=0,0,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	44	510	1	4	3	false	fc=85	pfc=4	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=718>3>	none=718>3>	all=718>3>	focus=718>3>	fmove=718>3>	darr=718>3>	alive=718>3>	lock=718>3>
+AIMOVE	45	510	1	2	4	false	fc=90	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=223>3>	none=223>3>	all=223>3>	focus=223>3>	fmove=223>3>	darr=223>3>	alive=223>3>	lock=223>3>
+AIMOVE	46	510	1	6	2	false	fc=70	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,0,0	real=725>5>	none=725>5>	all=725>5>	focus=725>5>	fmove=725>5>	darr=725>5>	alive=725>5>	lock=725>5>
+AIMOVE	47	510	1	5	6	false	fc=70	pfc=4	fm=false	nlk=4	ae=[5 3]	cf1=0	D=1,2,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	48	510	1	3	5	false	fc=70	pfc=4	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	49	510	1	4	3	false	fc=70	pfc=4	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=523>5>	none=523>5>	all=523>5>	focus=523>5>	fmove=523>5>	darr=523>5>	alive=523>5>	lock=523>5>
+AIMOVE	50	510	1	2	4	false	fc=78	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=223>3>	none=223>3>	all=223>3>	focus=223>3>	fmove=223>3>	darr=223>3>	alive=223>3>	lock=223>3>
+AIMOVE	51	510	1	6	2	false	fc=58	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,0,0	real=9>5>	none=9>5>	all=9>5>	focus=9>5>	fmove=9>5>	darr=9>5>	alive=9>5>	lock=9>5>
+AIMOVE	52	510	1	5	6	false	fc=58	pfc=4	fm=false	nlk=4	ae=[5 3]	cf1=0	D=1,2,0	real=536>5>h5	none=536>5>h5	all=536>5>h5	focus=536>5>h5	fmove=536>5>h5	darr=536>5>h5	alive=536>5>h5	lock=536>5>h5
+AIMOVE	53	510	1	3	5	false	fc=58	pfc=4	fm=false	nlk=3	ae=[5 3]	cf1=0	D=1,1,0	real=8>5>h5	none=8>5>h5	all=8>5>h5	focus=8>5>h5	fmove=8>5>h5	darr=8>5>h5	alive=8>5>h5	lock=8>5>h5
+AIMOVE	54	510	1	4	3	false	fc=58	pfc=4	fm=false	nlk=5	ae=[5 3]	cf1=0	D=1,1,0	real=717>3>	none=717>3>	all=717>3>	focus=717>3>	fmove=717>3>	darr=717>3>	alive=717>3>	lock=717>3>
+AIMOVE	55	510	1	2	4	true	fc=100	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=710>2>	none=710>2>	all=710>2>	focus=710>2>	fmove=710>2>	darr=710>2>	alive=710>2>	lock=710>2>
+AIMOVE	56	510	1	6	2	false	fc=43	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=726>4>	none=726>4>	all=726>4>	focus=726>4>	fmove=726>4>	darr=726>4>	alive=726>4>	lock=726>4>
+AIMOVE	57	510	1	5	6	false	fc=43	pfc=4	fm=false	nlk=4	ae=[5 3]	cf1=1	D=1,2,0	real=19>4>	none=19>4>	all=19>4>	focus=19>4>	fmove=19>4>	darr=19>4>	alive=19>4>	lock=19>4>
+AIMOVE	58	510	1	3	5	false	fc=43	pfc=4	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	59	510	1	4	3	false	fc=43	pfc=4	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	60	510	1	2	4	false	fc=91	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=712>3>	none=712>3>	all=712>3>	focus=712>3>	fmove=712>3>	darr=712>3>	alive=712>3>	lock=712>3>
+AIMOVE	61	510	1	6	2	false	fc=31	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,0,0	real=734>3>	none=734>3>	all=734>3>	focus=734>3>	fmove=734>3>	darr=734>3>	alive=734>3>	lock=734>3>
+AIMOVE	62	510	1	5	6	false	fc=31	pfc=4	fm=false	nlk=4	ae=[5 3]	cf1=1	D=1,2,0	real=524>4>	none=524>4>	all=524>4>	focus=524>4>	fmove=524>4>	darr=524>4>	alive=524>4>	lock=524>4>
+AIMOVE	63	510	1	4	5	false	fc=31	pfc=4	fm=false	nlk=4	ae=[6 4 2]	cf1=1	D=0,0,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	64	510	1	2	4	false	fc=91	pfc=6	fm=false	nlk=6	ae=[5]	cf1=1	D=0,0,1	real=223>5>	none=223>5>	all=223>5>	focus=223>5>	fmove=223>5>	darr=223>5>	alive=223>5>	lock=223>5>
+AIMOVE	65	510	1	6	2	false	fc=6	pfc=4	fm=false	nlk=6	ae=[5]	cf1=1	D=1,0,0	real=734>5>	none=734>5>	all=734>5>	focus=734>5>	fmove=734>5>	darr=734>5>	alive=734>5>	lock=734>5>
+AIDRIVE	end	510	0	101
+AIMOVE_HOOK	installed	104
+AIDRIVE	start	703	34
+AIMOVE	66	703	1	6	6	true	fc=6	pfc=4	fm=false	nlk=4	ae=[5]	cf1=0	D=1,2,0	real=805>6>	none=805>6>	all=805>6>	focus=805>6>	fmove=805>6>	darr=805>6>	alive=805>6>	lock=805>6>
+AIMOVE	67	703	1	4	6	true	fc=100	pfc=2	fm=false	nlk=4	ae=[5]	cf1=0	D=1,2,0	real=803>4>	none=803>4>	all=803>4>	focus=803>4>	fmove=803>4>	darr=803>4>	alive=803>4>	lock=803>4>
+AIMOVE	68	703	1	2	4	false	fc=100	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=1,2,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	69	703	1	5	2	false	fc=100	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	70	703	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[5 3 1]	cf1=0	D=1,1,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	71	703	1	6	3	false	fc=100	pfc=1	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=1,1,0	real=806>4>hfalse	none=806>4>hfalse	all=806>4>hfalse	focus=806>4>hfalse	fmove=806>4>hfalse	darr=806>4>hfalse	alive=806>4>hfalse	lock=806>4>hfalse
+AIMOVE	72	703	1	4	6	false	fc=75	pfc=2	fm=false	nlk=4	ae=[5 3 1]	cf1=0	D=0,0,0	real=798>6>	none=798>6>	all=798>6>	focus=798>6>	fmove=798>6>	darr=798>6>	alive=798>6>	lock=798>6>
+AIMOVE	73	703	1	2	4	false	fc=75	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	74	703	1	5	2	false	fc=75	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	75	703	1	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	76	703	1	6	3	false	fc=85	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	77	703	1	4	6	false	fc=50	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	78	703	1	2	4	false	fc=50	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,0	real=532>1>	none=532>1>	all=532>1>	focus=532>1>	fmove=532>1>	darr=532>1>	alive=532>1>	lock=532>1>
+AIMOVE	79	703	1	5	2	false	fc=50	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	80	703	1	3	5	false	fc=50	pfc=2	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	81	703	1	6	3	false	fc=50	pfc=2	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	82	703	1	4	6	false	fc=25	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	83	703	1	2	4	false	fc=25	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	84	703	1	5	2	false	fc=25	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	85	703	1	3	5	false	fc=25	pfc=2	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	86	703	1	6	3	false	fc=25	pfc=2	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=806>2>	none=806>2>	all=806>2>	focus=806>2>	fmove=806>2>	darr=806>2>	alive=806>2>	lock=806>2>
+AIMOVE	87	703	1	4	6	false	fc=0	pfc=2	fm=true	nlk=4	ae=[6 4 2]	cf1=1	D=0,0,0	real=798>2>	none=798>2>	all=798>2>	focus=798>2>	fmove=798>2>	darr=798>2>	alive=798>2>	lock=798>2>
+AIMOVE	88	703	1	2	4	false	fc=0	pfc=2	fm=true	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	89	703	1	5	2	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	90	703	1	3	5	false	fc=0	pfc=2	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	91	703	1	6	3	false	fc=0	pfc=2	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	92	703	1	4	6	false	fc=50	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=1	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	93	703	1	2	4	false	fc=50	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	94	703	1	5	2	false	fc=50	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	95	703	1	3	5	false	fc=50	pfc=2	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=1,1,0	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	96	703	1	6	3	false	fc=50	pfc=2	fm=false	nlk=5	ae=[6 4 2]	cf1=2	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	97	703	1	4	6	false	fc=25	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	98	703	1	2	4	false	fc=25	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	99	703	1	5	2	false	fc=25	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=2	D=0,0,1	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	100	703	1	3	5	false	fc=25	pfc=2	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=1,1,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	101	703	1	6	3	false	fc=25	pfc=2	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=806>2>	none=806>2>	all=806>2>	focus=806>2>	fmove=806>2>	darr=806>2>	alive=806>2>	lock=806>2>
+AIMOVE	102	703	1	4	6	false	fc=0	pfc=2	fm=true	nlk=4	ae=[6 4 2]	cf1=0	D=0,0,0	real=798>2>	none=798>2>	all=798>2>	focus=798>2>	fmove=798>2>	darr=798>2>	alive=798>2>	lock=798>2>
+AIMOVE	103	703	1	2	4	false	fc=0	pfc=2	fm=true	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	104	703	1	5	2	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=536>3>h3	none=536>3>h3	all=536>3>h3	focus=536>3>h3	fmove=536>3>h3	darr=536>3>h3	alive=536>3>h3	lock=536>3>h3
+AIMOVE	105	703	1	3	5	false	fc=0	pfc=2	fm=false	nlk=3	ae=[5 3]	cf1=0	D=1,1,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	106	703	1	6	3	false	fc=0	pfc=2	fm=false	nlk=5	ae=[5 3]	cf1=0	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	107	703	1	4	6	false	fc=25	pfc=4	fm=false	nlk=4	ae=[5 3]	cf1=0	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	108	703	1	2	4	false	fc=50	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	109	703	1	5	2	false	fc=25	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=524>6>	none=524>6>	all=524>6>	focus=524>6>	fmove=524>6>	darr=524>6>	alive=524>6>	lock=524>6>
+AIMOVE	110	703	1	3	5	false	fc=25	pfc=4	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	111	703	1	6	3	false	fc=25	pfc=4	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	112	703	1	4	6	false	fc=25	pfc=2	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	113	703	1	2	4	false	fc=25	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	114	703	1	5	2	false	fc=25	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	115	703	1	3	5	false	fc=25	pfc=2	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	116	703	1	6	3	false	fc=10	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=806>2>	none=806>2>	all=806>2>	focus=806>2>	fmove=806>2>	darr=806>2>	alive=806>2>	lock=806>2>
+AIMOVE	117	703	1	4	6	false	fc=0	pfc=2	fm=true	nlk=4	ae=[6 4 2]	cf1=1	D=0,0,0	real=798>2>	none=798>2>	all=798>2>	focus=798>2>	fmove=798>2>	darr=798>2>	alive=798>2>	lock=798>2>
+AIMOVE	118	703	1	2	4	false	fc=0	pfc=2	fm=true	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	119	703	1	5	2	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	120	703	1	3	5	false	fc=0	pfc=2	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	121	703	1	6	3	false	fc=0	pfc=2	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	122	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=1	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	123	703	1	2	4	false	fc=50	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	124	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	125	703	1	3	5	false	fc=0	pfc=4	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	126	703	1	6	3	false	fc=0	pfc=4	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	127	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=1	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	128	703	1	2	4	false	fc=25	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	129	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	130	703	1	3	5	false	fc=0	pfc=4	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	131	703	1	6	3	false	fc=0	pfc=4	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=0,0,0	real=806>2>	none=806>2>	all=806>2>	focus=806>2>	fmove=806>2>	darr=806>2>	alive=806>2>	lock=806>2>
+AIMOVE	132	703	1	4	6	false	fc=0	pfc=2	fm=true	nlk=4	ae=[6 4 2]	cf1=1	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	133	703	1	2	4	false	fc=0	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=1>3>	none=1>3>	all=1>3>	focus=1>3>	fmove=1>3>	darr=1>3>	alive=1>3>	lock=1>3>
+AIMOVE	134	703	1	5	2	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=536>3>h3	none=536>3>h3	all=536>3>h3	focus=536>3>h3	fmove=536>3>h3	darr=536>3>h3	alive=536>3>h3	lock=536>3>h3
+AIMOVE	135	703	1	3	5	false	fc=0	pfc=2	fm=false	nlk=3	ae=[5 3]	cf1=1	D=1,1,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	136	703	1	6	3	false	fc=0	pfc=2	fm=false	nlk=5	ae=[5 3]	cf1=1	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	137	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[5 3]	cf1=1	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	138	703	1	2	4	false	fc=50	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	139	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	140	703	1	3	5	false	fc=0	pfc=4	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	141	703	1	6	3	false	fc=0	pfc=4	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	142	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=1	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	143	703	1	2	4	false	fc=25	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=532>3>	none=532>3>	all=532>3>	focus=532>3>	fmove=532>3>	darr=532>3>	alive=532>3>	lock=532>3>
+AIMOVE	144	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	145	703	1	6	5	false	fc=0	pfc=4	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=806>2>	none=806>2>	all=806>2>	focus=806>2>	fmove=806>2>	darr=806>2>	alive=806>2>	lock=806>2>
+AIMOVE	146	703	1	4	6	false	fc=0	pfc=2	fm=true	nlk=4	ae=[6 4 2]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	147	703	1	2	4	false	fc=0	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	148	703	1	5	2	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,1	real=524>6>	none=524>6>	all=524>6>	focus=524>6>	fmove=524>6>	darr=524>6>	alive=524>6>	lock=524>6>
+AIMOVE	149	703	1	6	5	false	fc=0	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	150	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	151	703	1	2	4	false	fc=50	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	152	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,1	real=535>6>	none=535>6>	all=535>6>	focus=535>6>	fmove=535>6>	darr=535>6>	alive=535>6>	lock=535>6>
+AIMOVE	153	703	1	6	5	false	fc=0	pfc=4	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	154	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	155	703	1	2	4	false	fc=25	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	156	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,1	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	157	703	1	6	5	false	fc=0	pfc=4	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=1,1,0	real=806>2>	none=806>2>	all=806>2>	focus=806>2>	fmove=806>2>	darr=806>2>	alive=806>2>	lock=806>2>
+AIMOVE	158	703	1	4	6	false	fc=0	pfc=2	fm=true	nlk=4	ae=[6 4 2]	cf1=0	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	159	703	1	2	4	false	fc=0	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	160	703	1	5	2	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	161	703	1	6	5	false	fc=0	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	162	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=0	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	163	703	1	2	4	false	fc=50	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	164	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=19>6>	none=19>6>	all=19>6>	focus=19>6>	fmove=19>6>	darr=19>6>	alive=19>6>	lock=19>6>
+AIMOVE	165	703	1	6	5	false	fc=0	pfc=4	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	166	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=0	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	167	703	1	2	4	false	fc=25	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	168	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=536>5>h5	none=536>5>h5	all=536>5>h5	focus=536>5>h5	fmove=536>5>h5	darr=536>5>h5	alive=536>5>h5	lock=536>5>h5
+AIMOVE	169	703	1	6	5	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=0	D=1,1,0	real=806>2>	none=806>2>	all=806>2>	focus=806>2>	fmove=806>2>	darr=806>2>	alive=806>2>	lock=806>2>
+AIMOVE	170	703	1	4	6	false	fc=0	pfc=2	fm=true	nlk=4	ae=[5]	cf1=0	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	171	703	1	2	4	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	172	703	1	5	2	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=535>2>	none=535>2>	all=535>2>	focus=535>2>	fmove=535>2>	darr=535>2>	alive=535>2>	lock=535>2>
+AIMOVE	173	703	1	6	5	false	fc=0	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	174	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	175	703	1	2	4	false	fc=50	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	176	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,1	real=524>6>	none=524>6>	all=524>6>	focus=524>6>	fmove=524>6>	darr=524>6>	alive=524>6>	lock=524>6>
+AIMOVE	177	703	1	6	5	false	fc=0	pfc=4	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	178	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	179	703	1	2	4	false	fc=25	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	180	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	181	703	1	6	5	false	fc=0	pfc=4	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=806>2>	none=806>2>	all=806>2>	focus=806>2>	fmove=806>2>	darr=806>2>	alive=806>2>	lock=806>2>
+AIMOVE	182	703	1	4	6	false	fc=0	pfc=2	fm=true	nlk=4	ae=[6 4 2]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	183	703	1	2	4	false	fc=0	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	184	703	1	5	2	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	185	703	1	6	5	false	fc=0	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	186	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	187	703	1	2	4	false	fc=50	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	188	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,1	real=536>5>h5	none=536>5>h5	all=536>5>h5	focus=536>5>h5	fmove=536>5>h5	darr=536>5>h5	alive=536>5>h5	lock=536>5>h5
+AIMOVE	189	703	1	6	5	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=2	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	190	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[5]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	191	703	1	2	4	false	fc=25	pfc=2	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	192	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	193	703	1	6	5	false	fc=0	pfc=4	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=806>2>	none=806>2>	all=806>2>	focus=806>2>	fmove=806>2>	darr=806>2>	alive=806>2>	lock=806>2>
+AIMOVE	194	703	1	4	6	false	fc=0	pfc=2	fm=true	nlk=4	ae=[6 4 2]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	195	703	1	2	4	false	fc=0	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	196	703	1	5	2	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,1	real=524>4>	none=524>4>	all=524>4>	focus=524>4>	fmove=524>4>	darr=524>4>	alive=524>4>	lock=524>4>
+AIMOVE	197	703	1	6	5	false	fc=0	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	198	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	199	703	1	2	4	false	fc=50	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	200	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,1	real=19>4>	none=19>4>	all=19>4>	focus=19>4>	fmove=19>4>	darr=19>4>	alive=19>4>	lock=19>4>
+AIMOVE	201	703	1	6	5	false	fc=0	pfc=4	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	202	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[6 4 2]	cf1=2	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	203	703	1	2	4	false	fc=25	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=2	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIMOVE	204	703	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=2	D=0,0,1	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	205	703	1	6	5	false	fc=0	pfc=4	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=806>2>	none=806>2>	all=806>2>	focus=806>2>	fmove=806>2>	darr=806>2>	alive=806>2>	lock=806>2>
+AIMOVE	206	703	1	4	6	false	fc=0	pfc=2	fm=true	nlk=4	ae=[6 4 2]	cf1=1	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	207	703	1	2	4	false	fc=0	pfc=2	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=1>5>	none=1>5>	all=1>5>	focus=1>5>	fmove=1>5>	darr=1>5>	alive=1>5>	lock=1>5>
+AIMOVE	208	703	1	5	2	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5]	cf1=1	D=0,0,1	real=536>5>h5	none=536>5>h5	all=536>5>h5	focus=536>5>h5	fmove=536>5>h5	darr=536>5>h5	alive=536>5>h5	lock=536>5>h5
+AIMOVE	209	703	1	6	5	false	fc=0	pfc=2	fm=false	nlk=6	ae=[5]	cf1=1	D=1,1,0	real=806>4>	none=806>4>	all=806>4>	focus=806>4>	fmove=806>4>	darr=806>4>	alive=806>4>	lock=806>4>
+AIMOVE	210	703	1	4	6	false	fc=0	pfc=4	fm=true	nlk=4	ae=[5]	cf1=1	D=0,0,0	real=0>4>	none=0>4>	all=0>4>	focus=0>4>	fmove=0>4>	darr=0>4>	alive=0>4>	lock=0>4>
+AIMOVE	211	703	1	2	4	false	fc=50	pfc=2	fm=false	nlk=6	ae=[5]	cf1=1	D=0,0,0	real=532>5>	none=532>5>	all=532>5>	focus=532>5>	fmove=532>5>	darr=532>5>	alive=532>5>	lock=532>5>
+AIDRIVE	end	703	0	463
+AIMOVE_HOOK	installed	104
+AIDRIVE	start	104	7
+AIMOVE	212	104	1	5	2	false	fc=0	pfc=4	fm=false	nlk=6	ae=[5]	cf1=1	D=0,0,1	real=9>2>	none=9>2>	all=9>2>	focus=9>2>	fmove=9>2>	darr=9>2>	alive=9>2>	lock=9>2>
+AIMOVE	213	104	1	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=1,1,0	real=10>2>	none=10>2>	all=10>2>	focus=10>2>	fmove=10>2>	darr=10>2>	alive=10>2>	lock=10>2>
+AIMOVE	214	104	2	6	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[6 4 2]	cf1=2	D=1,1,0	real=15>1>	none=15>1>	all=15>1>	focus=15>1>	fmove=15>1>	darr=15>1>	alive=15>1>	lock=15>1>
+AIMOVE	215	104	2	4	6	true	fc=100	pfc=1	fm=false	nlk=4	ae=[5 3 1]	cf1=2	D=1,1,0	real=523>5>	none=523>5>	all=523>5>	focus=523>5>	fmove=523>5>	darr=523>5>	alive=523>5>	lock=523>5>
+AIMOVE	216	104	3	5	4	false	fc=100	pfc=1	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=1,1,0	real=524>6>	none=524>6>	all=524>6>	focus=524>6>	fmove=524>6>	darr=524>6>	alive=524>6>	lock=524>6>
+AIMOVE	217	104	3	3	5	false	fc=80	pfc=3	fm=false	nlk=3	ae=[6 4]	cf1=0	D=1,1,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	218	104	3	6	3	false	fc=100	pfc=1	fm=false	nlk=5	ae=[6 4]	cf1=0	D=1,1,0	real=2>1>	none=2>1>	all=2>1>	focus=2>1>	fmove=2>1>	darr=2>1>	alive=2>1>	lock=2>1>
+AIMOVE	219	104	3	4	6	true	fc=85	pfc=4	fm=false	nlk=4	ae=[5 3 1]	cf1=2	D=0,0,0	real=15>1>	none=15>1>	all=15>1>	focus=15>1>	fmove=15>1>	darr=15>1>	alive=15>1>	lock=15>1>
+AIMOVE	220	104	3	5	4	false	fc=85	pfc=4	fm=false	nlk=6	ae=[5 3 1]	cf1=2	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	221	104	3	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[6 4]	cf1=2	D=1,1,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	222	104	3	4	3	true	fc=85	pfc=5	fm=false	nlk=5	ae=[6 4]	cf1=2	D=1,1,0	real=523>1>	none=523>1>	all=523>1>	focus=523>1>	fmove=523>1>	darr=523>1>	alive=523>1>	lock=523>1>
+AIMOVE	223	104	3	5	4	false	fc=85	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=2	D=1,1,0	real=536>1>h1	none=536>1>h1	all=536>1>h1	focus=536>1>h1	fmove=536>1>h1	darr=536>1>h1	alive=536>1>h1	lock=536>1>h1
+AIMOVE	224	104	3	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[5 3 1]	cf1=2	D=1,1,0	real=10>4>	none=10>4>	all=10>4>	focus=10>4>	fmove=10>4>	darr=10>4>	alive=10>4>	lock=10>4>
+AIMOVE	225	104	3	4	3	false	fc=100	pfc=1	fm=false	nlk=5	ae=[4]	cf1=0	D=1,1,0	real=2>1>	none=2>1>	all=2>1>	focus=2>1>	fmove=2>1>	darr=2>1>	alive=2>1>	lock=2>1>
+AIMOVE	226	104	3	5	4	false	fc=100	pfc=1	fm=false	nlk=5	ae=[5 3 1]	cf1=0	D=0,1,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	227	104	3	3	5	false	fc=80	pfc=3	fm=false	nlk=3	ae=[4]	cf1=0	D=0,0,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	228	104	3	4	3	true	fc=85	pfc=5	fm=false	nlk=5	ae=[4]	cf1=0	D=1,1,0	real=15>1>	none=15>1>	all=15>1>	focus=15>1>	fmove=15>1>	darr=15>1>	alive=15>1>	lock=15>1>
+AIMOVE	229	104	3	5	4	false	fc=85	pfc=5	fm=false	nlk=5	ae=[5 3 1]	cf1=2	D=1,1,0	real=535>4>	none=535>4>	all=535>4>	focus=535>4>	fmove=535>4>	darr=535>4>	alive=535>4>	lock=535>4>
+AIMOVE	230	104	3	3	5	false	fc=100	pfc=1	fm=false	nlk=3	ae=[4]	cf1=2	D=0,0,0	real=8>1>h1	none=8>1>h1	all=8>1>h1	focus=8>1>h1	fmove=8>1>h1	darr=8>1>h1	alive=8>1>h1	lock=8>1>h1
+AIMOVE	231	104	3	4	3	true	fc=100	pfc=1	fm=false	nlk=5	ae=[4]	cf1=2	D=1,1,0	real=523>1>	none=523>1>	all=523>1>	focus=523>1>	fmove=523>1>	darr=523>1>	alive=523>1>	lock=523>1>
+AIMOVE	232	104	3	5	4	false	fc=100	pfc=1	fm=false	nlk=5	ae=[5 3 1]	cf1=2	D=1,1,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	233	104	3	3	5	false	fc=85	pfc=3	fm=false	nlk=3	ae=[4]	cf1=2	D=0,0,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIDRIVE	end	104	1	138
+AIDRIVE	start	307	18
+AIMOVE	234	307	1	4	3	true	fc=85	pfc=5	fm=false	nlk=5	ae=[4]	cf1=0	D=1,1,0	real=573>1>	none=573>1>	all=573>1>	focus=573>1>	fmove=573>1>	darr=573>1>	alive=573>1>	lock=573>1>
+AIMOVE	235	307	1	6	4	true	fc=100	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=2	D=1,1,0	real=573>5>	none=573>5>	all=573>5>	focus=573>5>	fmove=573>5>	darr=573>5>	alive=573>5>	lock=573>5>
+AIMOVE	236	307	1	2	6	true	fc=100	pfc=2	fm=false	nlk=4	ae=[5 3 1]	cf1=0	D=1,1,0	real=573>1>	none=573>1>	all=573>1>	focus=573>1>	fmove=573>1>	darr=573>1>	alive=573>1>	lock=573>1>
+AIMOVE	237	307	1	5	2	false	fc=100	pfc=2	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=1,1,0	real=535>6>	none=535>6>	all=535>6>	focus=535>6>	fmove=535>6>	darr=535>6>	alive=535>6>	lock=535>6>
+AIMOVE	238	307	1	3	5	false	fc=100	pfc=2	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=1,1,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	239	307	1	4	3	false	fc=100	pfc=2	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=260>3>	none=260>3>	all=260>3>	focus=260>3>	fmove=260>3>	darr=260>3>	alive=260>3>	lock=260>3>
+AIMOVE	240	307	1	6	4	false	fc=88	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=575>3>	none=575>3>	all=575>3>	focus=575>3>	fmove=575>3>	darr=575>3>	alive=575>3>	lock=575>3>
+AIMOVE	241	307	1	2	6	false	fc=88	pfc=2	fm=false	nlk=4	ae=[5 3]	cf1=0	D=0,0,1	real=575>3>	none=575>3>	all=575>3>	focus=575>3>	fmove=575>3>	darr=575>3>	alive=575>3>	lock=575>3>
+AIMOVE	242	307	1	5	2	false	fc=88	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	243	307	1	3	5	false	fc=88	pfc=2	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=1,1,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	244	307	1	4	3	false	fc=85	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=260>3>	none=260>3>	all=260>3>	focus=260>3>	fmove=260>3>	darr=260>3>	alive=260>3>	lock=260>3>
+AIMOVE	245	307	1	6	4	false	fc=78	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=574>6>	none=574>6>	all=574>6>	focus=574>6>	fmove=574>6>	darr=574>6>	alive=574>6>	lock=574>6>
+AIMOVE	246	307	1	2	6	false	fc=78	pfc=2	fm=false	nlk=4	ae=[5 3]	cf1=0	D=0,0,1	real=572>3>	none=572>3>	all=572>3>	focus=572>3>	fmove=572>3>	darr=572>3>	alive=572>3>	lock=572>3>
+AIMOVE	247	307	1	5	2	false	fc=78	pfc=2	fm=false	nlk=6	ae=[5 3]	cf1=0	D=0,0,1	real=536>3>h3	none=536>3>h3	all=536>3>h3	focus=536>3>h3	fmove=536>3>h3	darr=536>3>h3	alive=536>3>h3	lock=536>3>h3
+AIMOVE	248	307	1	3	5	false	fc=78	pfc=2	fm=false	nlk=3	ae=[5 3]	cf1=0	D=1,1,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	249	307	1	6	3	true	fc=78	pfc=2	fm=false	nlk=5	ae=[5 3]	cf1=0	D=1,1,0	real=573>5>	none=573>5>	all=573>5>	focus=573>5>	fmove=573>5>	darr=573>5>	alive=573>5>	lock=573>5>
+AIMOVE	250	307	1	4	6	true	fc=66	pfc=2	fm=false	nlk=4	ae=[5 3]	cf1=0	D=1,1,0	real=573>5>	none=573>5>	all=573>5>	focus=573>5>	fmove=573>5>	darr=573>5>	alive=573>5>	lock=573>5>
+AIMOVE	251	307	1	2	4	true	fc=63	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=573>3>	none=573>3>	all=573>3>	focus=573>3>	fmove=573>3>	darr=573>3>	alive=573>3>	lock=573>3>
+AIMOVE	252	307	1	5	2	false	fc=63	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=0	D=1,1,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	253	307	1	3	5	false	fc=63	pfc=6	fm=false	nlk=3	ae=[6 4 2]	cf1=0	D=0,0,0	real=8>3>h3	none=8>3>h3	all=8>3>h3	focus=8>3>h3	fmove=8>3>h3	darr=8>3>h3	alive=8>3>h3	lock=8>3>h3
+AIMOVE	254	307	1	6	3	false	fc=63	pfc=6	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=1,1,0	real=260>3>	none=260>3>	all=260>3>	focus=260>3>	fmove=260>3>	darr=260>3>	alive=260>3>	lock=260>3>
+AIMOVE	255	307	1	4	6	false	fc=54	pfc=2	fm=false	nlk=4	ae=[5 3]	cf1=1	D=0,0,1	real=575>3>	none=575>3>	all=575>3>	focus=575>3>	fmove=575>3>	darr=575>3>	alive=575>3>	lock=575>3>
+AIMOVE	256	307	1	2	4	false	fc=51	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=260>3>	none=260>3>	all=260>3>	focus=260>3>	fmove=260>3>	darr=260>3>	alive=260>3>	lock=260>3>
+AIMOVE	257	307	1	5	2	false	fc=51	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=524>6>	none=524>6>	all=524>6>	focus=524>6>	fmove=524>6>	darr=524>6>	alive=524>6>	lock=524>6>
+AIMOVE	258	307	1	6	5	false	fc=51	pfc=6	fm=false	nlk=6	ae=[6 4 2]	cf1=1	D=0,0,0	real=260>5>	none=260>5>	all=260>5>	focus=260>5>	fmove=260>5>	darr=260>5>	alive=260>5>	lock=260>5>
+AIMOVE	259	307	1	4	6	false	fc=54	pfc=2	fm=false	nlk=4	ae=[5]	cf1=1	D=0,0,1	real=260>5>	none=260>5>	all=260>5>	focus=260>5>	fmove=260>5>	darr=260>5>	alive=260>5>	lock=260>5>
+AIMOVE	260	307	1	2	4	false	fc=51	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=574>2>	none=574>2>	all=574>2>	focus=574>2>	fmove=574>2>	darr=574>2>	alive=574>2>	lock=574>2>
+AIDRIVE	end	307	0	92
+AIMOVE_HOOK	installed	104
+AIDRIVE	start	510	27
+AIMOVE	261	510	1	4	2	false	fc=51	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=716>1>	none=716>1>	all=716>1>	focus=716>1>	fmove=716>1>	darr=716>1>	alive=716>1>	lock=716>1>
+AIMOVE	262	510	1	2	4	true	fc=100	pfc=6	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=710>2>	none=710>2>	all=710>2>	focus=710>2>	fmove=710>2>	darr=710>2>	alive=710>2>	lock=710>2>
+AIMOVE	263	510	1	6	2	false	fc=100	pfc=6	fm=false	nlk=6	ae=[5 3 1]	cf1=0	D=0,0,1	real=9>1>	none=9>1>	all=9>1>	focus=9>1>	fmove=9>1>	darr=9>1>	alive=9>1>	lock=9>1>
+AIMOVE	264	510	1	5	6	false	fc=100	pfc=4	fm=false	nlk=4	ae=[5 3 1]	cf1=2	D=1,2,0	real=535>4>	none=535>4>	all=535>4>	focus=535>4>	fmove=535>4>	darr=535>4>	alive=535>4>	lock=535>4>
+AIMOVE	265	510	1	3	5	false	fc=100	pfc=4	fm=false	nlk=3	ae=[6 4 2]	cf1=2	D=1,1,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	266	510	1	4	3	false	fc=100	pfc=4	fm=false	nlk=5	ae=[6 4 2]	cf1=2	D=1,1,0	real=720>3>	none=720>3>	all=720>3>	focus=720>3>	fmove=720>3>	darr=720>3>	alive=720>3>	lock=720>3>
+AIMOVE	267	510	1	2	4	false	fc=100	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=2	D=0,0,1	real=713>3>	none=713>3>	all=713>3>	focus=713>3>	fmove=713>3>	darr=713>3>	alive=713>3>	lock=713>3>
+AIMOVE	268	510	1	6	2	false	fc=94	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,0,0	real=9>5>	none=9>5>	all=9>5>	focus=9>5>	fmove=9>5>	darr=9>5>	alive=9>5>	lock=9>5>
+AIMOVE	269	510	1	5	6	false	fc=94	pfc=4	fm=false	nlk=4	ae=[5 3]	cf1=0	D=1,2,0	real=536>3>h3	none=536>3>h3	all=536>3>h3	focus=536>3>h3	fmove=536>3>h3	darr=536>3>h3	alive=536>3>h3	lock=536>3>h3
+AIMOVE	270	510	1	3	5	false	fc=94	pfc=4	fm=false	nlk=3	ae=[5 3]	cf1=0	D=1,1,0	real=9>4>	none=9>4>	all=9>4>	focus=9>4>	fmove=9>4>	darr=9>4>	alive=9>4>	lock=9>4>
+AIMOVE	271	510	1	4	3	false	fc=85	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=1	D=1,1,0	real=524>3>	none=524>3>	all=524>3>	focus=524>3>	fmove=524>3>	darr=524>3>	alive=524>3>	lock=524>3>
+AIMOVE	272	510	1	2	4	false	fc=100	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=223>3>	none=223>3>	all=223>3>	focus=223>3>	fmove=223>3>	darr=223>3>	alive=223>3>	lock=223>3>
+AIMOVE	273	510	1	6	2	false	fc=85	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,0,0	real=723>6>	none=723>6>	all=723>6>	focus=723>6>	fmove=723>6>	darr=723>6>	alive=723>6>	lock=723>6>
+AIMOVE	274	510	1	5	6	false	fc=85	pfc=4	fm=false	nlk=4	ae=[5 3]	cf1=1	D=1,2,0	real=524>4>	none=524>4>	all=524>4>	focus=524>4>	fmove=524>4>	darr=524>4>	alive=524>4>	lock=524>4>
+AIMOVE	275	510	1	3	5	false	fc=85	pfc=4	fm=false	nlk=3	ae=[6 4 2]	cf1=1	D=0,0,0	real=9>6>	none=9>6>	all=9>6>	focus=9>6>	fmove=9>6>	darr=9>6>	alive=9>6>	lock=9>6>
+AIMOVE	276	510	1	4	3	false	fc=70	pfc=5	fm=false	nlk=5	ae=[6 4 2]	cf1=0	D=0,0,0	real=718>3>	none=718>3>	all=718>3>	focus=718>3>	fmove=718>3>	darr=718>3>	alive=718>3>	lock=718>3>
+AIMOVE	277	510	1	2	4	false	fc=90	pfc=6	fm=false	nlk=6	ae=[5 3]	cf1=1	D=0,0,1	real=712>3>	none=712>3>	all=712>3>	focus=712>3>	fmove=712>3>	darr=712>3>	alive=712>3>	lock=712>3>
+AIMOVE	278	510	1	6	2	false	fc=70	pfc=4	fm=false	nlk=6	ae=[5 3]	cf1=1	D=1,0,0	real=725>5>	none=725>5>	all=725>5>	focus=725>5>	fmove=725>5>	darr=725>5>	alive=725>5>	lock=725>5>
+AIMOVE	279	510	1	5	6	false	fc=70	pfc=4	fm=false	nlk=4	ae=[5 3]	cf1=0	D=1,2,0	real=535>4>	none=535>4>	all=535>4>	focus=535>4>	fmove=535>4>	darr=535>4>	alive=535>4>	lock=535>4>
+AIMOVE	280	510	1	4	5	false	fc=70	pfc=4	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=0,0,0	real=721>4>	none=721>4>	all=721>4>	focus=721>4>	fmove=721>4>	darr=721>4>	alive=721>4>	lock=721>4>
+AIMOVE	281	510	1	2	4	true	fc=78	pfc=6	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,1	real=710>2>	none=710>2>	all=710>2>	focus=710>2>	fmove=710>2>	darr=710>2>	alive=710>2>	lock=710>2>
+AIMOVE	282	510	1	6	2	false	fc=58	pfc=4	fm=false	nlk=6	ae=[6 4 2]	cf1=0	D=0,0,1	real=726>4>	none=726>4>	all=726>4>	focus=726>4>	fmove=726>4>	darr=726>4>	alive=726>4>	lock=726>4>
+AIMOVE	283	510	1	5	6	false	fc=58	pfc=4	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=1,2,0	real=19>4>	none=19>4>	all=19>4>	focus=19>4>	fmove=19>4>	darr=19>4>	alive=19>4>	lock=19>4>
+AIMOVE	284	510	1	4	5	false	fc=58	pfc=4	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=0,0,0	real=523>5>	none=523>5>	all=523>5>	focus=523>5>	fmove=523>5>	darr=523>5>	alive=523>5>	lock=523>5>
+AIMOVE	285	510	1	2	4	false	fc=69	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=223>5>	none=223>5>	all=223>5>	focus=223>5>	fmove=223>5>	darr=223>5>	alive=223>5>	lock=223>5>
+AIMOVE	286	510	1	6	2	false	fc=43	pfc=4	fm=false	nlk=6	ae=[5]	cf1=0	D=1,0,0	real=728>5>	none=728>5>	all=728>5>	focus=728>5>	fmove=728>5>	darr=728>5>	alive=728>5>	lock=728>5>
+AIMOVE	287	510	1	5	6	false	fc=43	pfc=4	fm=false	nlk=4	ae=[5]	cf1=0	D=1,2,0	real=19>4>	none=19>4>	all=19>4>	focus=19>4>	fmove=19>4>	darr=19>4>	alive=19>4>	lock=19>4>
+AIMOVE	288	510	1	4	5	false	fc=43	pfc=4	fm=false	nlk=4	ae=[6 4 2]	cf1=0	D=0,0,0	real=716>5>	none=716>5>	all=716>5>	focus=716>5>	fmove=716>5>	darr=716>5>	alive=716>5>	lock=716>5>
+AIMOVE	289	510	1	2	4	false	fc=59	pfc=6	fm=false	nlk=6	ae=[5]	cf1=0	D=0,0,1	real=712>5>	none=712>5>	all=712>5>	focus=712>5>	fmove=712>5>	darr=712>5>	alive=712>5>	lock=712>5>
+AIMOVE	290	510	1	6	2	false	fc=28	pfc=4	fm=false	nlk=6	ae=[5]	cf1=0	D=1,0,0	real=9>5>	none=9>5>	all=9>5>	focus=9>5>	fmove=9>5>	darr=9>5>	alive=9>5>	lock=9>5>
+AIDRIVE	end	510	0	92
+AIMOVE_HOOK	installed	104
+AIDRIVE	done

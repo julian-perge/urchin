@@ -183,10 +183,16 @@ otherwise.
   `~/Library/Containers/rs.ruffle.ruffle/Data/urchin_traced/`. Ruffle writes
   the `trace()` lines to stdout as `INFO avm_trace: ...`, with colour codes
   in front. `trace-run` saves stdout and stderr together.
-- **Only one Traced run can play at a time.** Two runs share the screen, and
-  two Flash runs share `flashlog.txt`. This follows from the facts above. No
-  session tried two runs at once. Before you start a run, check that no Flash
-  player or Ruffle process is running.
+- **Only one Traced run can play at a time.** Two runs share the Traced copy
+  in `$URCHIN_SWF_DIR/traced/`, and two Flash runs share `flashlog.txt`. In
+  #37 a second agent's `trace-run` started 30 seconds after the first one,
+  rebuilt the Traced copy with its own Probes and emptied `flashlog.txt`, so
+  the first run's log was lost. A `pgrep` check before the start did not
+  prevent it. Hold `lockf -k /tmp/urchin-ffdec.lock` for the whole build, run
+  and log copy. A long run that only measures can instead build under the
+  lock, copy the Traced copy to a scratch folder, and play that copy in Ruffle
+  from its own subfolder of the container, with stdout to a scratch file. Two
+  such Ruffle runs played side by side in #37.
 - Flash reports `_currentframe` 0 for an empty clip and Ruffle reports 1.
 - **`trace-run` overwrites the committed Trace log.** A run for a logic Probe
   still saves to `references/traced_runs/<build>_<player>.txt`. Copy its lines
@@ -197,6 +203,13 @@ otherwise.
   used a throwaway Probe file that ran the English button's code
   (`DefineButton2_298`) and called `_root.play()` on those frames. It was not
   committed, because it changes what the game does.
+- **A throwaway Probe can start any battle.** For #37 it waited for the main
+  menu (root frame 46), set `Krin.difficulty = 2`, `Krin.LevelStats`,
+  `Krin.friendArray` and `Krin.friendArrayX`, then set `Krin.BattlePick` and
+  called `_root.gotoAndPlay("LOADBATTLESCENE")`, as the hub's fight button
+  does. It started the next battle a few seconds after `_root.winCondition`
+  left -1. On Heroic the player's half-turn passes by itself, so only AI units
+  act. The file is `references/traced_runs/aimove_drive_probe.as`.
 - **A throwaway Probe can capture what the stage shows.** For #411 it jumped
   to a `CS_` label from `mainMenu`, stopped the animation on the target frame,
   waited 3 frames, drew the stage with
@@ -233,7 +246,12 @@ otherwise.
    uppercase name sorts before every lowercase one.
 3. Do not change what the game does. Wrap a function, call the original with
    `apply(this, arguments)`, and only add `trace()` calls, as
-   `dev/probes/goto.as` does. A Probe runs once, before the rest of frame 1. It
+   `dev/probes/goto.as` does. To measure what a call would do from other
+   values, `dev/probes/aimove.as` saves every global the function writes,
+   replays the call with the dice counter `KRSC` set back and a stub in place
+   of the function that queues the move, and then puts every global back. Its
+   replay with nothing changed must match the real call, and in #37 it did in
+   all 924 calls. A Probe runs once, before the rest of frame 1. It
    cannot put a `trace()` inside a loop of a later frame script.
 4. Start each line it traces with its own mark, not `GOTO<tab>` or `HOOK`.
    The parser reads every line that has `GOTO<tab>` as a goto record.
