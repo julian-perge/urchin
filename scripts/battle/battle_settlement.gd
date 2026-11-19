@@ -65,11 +65,10 @@ static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, ach
 	# (frame_219/DoAction.as:65-69) and goes straight on to the next fight. The
 	# gear and stats go to what frame_180 sets before that fight
 	# (frame_180/DoAction.as:7-8), because nothing between the win and battle 100
-	# reads them. It pays
-	# nothing and settles nothing else, because the original applies a win's money,
-	# XP, drops and achievements on the victory screen (DefineSprite_3142/frame_9),
-	# which a Tutorial win never opens (frame_181/PlaceObject3_3142_175
-	# onClipEvent(load), lines 3-7).
+	# reads them. It pays nothing and settles nothing else, because the original
+	# applies a win's money, XP, drops and achievements on the victory screen
+	# (DefineSprite_3142/frame_9), which a Tutorial win never opens
+	# (frame_181/PlaceObject3_3142_175 onClipEvent(load), lines 3-7).
 	if runner.battle.id == ZoneProgression.TUTORIAL_BATTLE_ID:
 		var starting_moves: Array = TalentTree.STARTING_MOVES.get(save.player_class, [])
 		for i in starting_moves.size():
