@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://b72a78kxlnpmh"]
+[gd_scene load_steps=12 format=3 uid="uid://b72a78kxlnpmh"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="PackedScene" uid="uid://brmx4sa7xb3xq" path="res://scenes/ui/store/store_window.tscn" id="2_store"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hub_card.tscn" id="8_hubcard"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/victory_window.tscn" id="9_victory"]
 [ext_resource type="Script" path="res://scripts/ui/hub_fade.gd" id="10_fade"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu/options_window.tscn" id="11_options"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -54,6 +55,10 @@ visible = false
 layout_mode = 1
 
 [node name="AchievementsWindow" parent="." instance=ExtResource("7_achwin")]
+visible = false
+layout_mode = 1
+
+[node name="OptionsWindow" parent="." instance=ExtResource("11_options")]
 visible = false
 layout_mode = 1
 

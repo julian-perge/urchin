@@ -598,6 +598,34 @@ SCENES: dict[str, Scene] = {
         # hides them.
         compare_strip=(3100, 3109, 3068, 3069, 3070, 3071, 3075, 3114, 3115),
     ),
+    # The options frame (spec/379-options-window.md). Effects (depths 8, 10
+    # and 13) and Graphics (depths 21, 22 and 23) are left out by ADR 0011. The
+    # difficulty row has no button, because the game cannot change it.
+    "res://scenes/ui/menu/options_window.tscn": Scene(
+        timeline=KRINMENU,
+        frame="options",
+        pieces={
+            "WindowShell/Backdrop": Piece(
+                "art", window_chrome.BACKDROP_DEPTH, art="backdrop"
+            ),
+            "WindowShell/CloseArt": Piece(
+                "art", window_chrome.CLOSE_X_DEPTH, art="close_x"
+            ),
+            "WindowShell/CloseButton": Piece("hit", 1434),
+            "TallPanel": Piece("panel", 5, character=2990),
+            "Heading": Piece("text", 15, character=3130),
+            "SoundLabel": Piece("text", 7, character=3135),
+            "SoundValue": Piece("text", 9, character=3133),
+            "SoundButton": Piece("hit", 11, character=3131),
+            "AutosaveLabel": Piece("text", 16, character=3129),
+            "AutosaveValue": Piece("text", 17, character=3128),
+            "AutosaveButton": Piece("hit", 18, character=2772),
+            "DifficultyLabel": Piece("text", 25, character=3123),
+            "DifficultyValue": Piece("text", 26, character=3122),
+            "HelpText": Piece("text", 20, character=3127),
+        },
+        left_out=(8, 10, 13, 21, 22, 23),
+    ),
     # The background that every menu frame from mainMenu to endMenu places at
     # depths 1, 2 and 5: the backdrop 2701, the swirl 307 and the splatter 2700.
     # extract_start_screens renders the three as one PNG of the whole Stage, so
