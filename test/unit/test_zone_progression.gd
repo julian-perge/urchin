@@ -400,3 +400,19 @@ func test_companion_experience_no_points():
 	assert_eq(save.stat_points, stat_points_before)
 	save.party_levels[1] = Leveling.MAX_LEVEL
 	assert_eq(Party.grant_companion_experience(save, 1, 500.0), 0, "capped at 30")
+
+
+# The last frames of IntroSeq and IntroSeq2 set soundPlayCounter before the
+# Tutorial and battle 100 (frame_165/DoAction.as:4, frame_180/DoAction.as:4).
+# Each pick's music_rotation must be the counter its frame sets.
+func test_the_first_fights_set_the_rotation_their_frames_set():
+	var frames: Dictionary = {
+		"res://dev/source_files/action_script/frame_165/DoAction.as": ZoneProgression.TUTORIAL_FIGHT,
+		"res://dev/source_files/action_script/frame_180/DoAction.as": ZoneProgression.FIRST_STORY_FIGHT,
+	}
+	var counter_line := RegEx.create_from_string("(?m)^soundPlayCounter = (\\d+);$")
+	for path: String in frames:
+		var found: RegExMatch = counter_line.search(FileAccess.get_file_as_string(path))
+		assert_not_null(found, "%s sets soundPlayCounter" % path)
+		if found != null:
+			assert_eq(frames[path].get("music_rotation"), int(found.get_string(1)), "the pick for %s" % path)

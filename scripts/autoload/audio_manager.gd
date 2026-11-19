@@ -13,6 +13,7 @@
 #   stop_all_sounds()            <- stopAllSounds()
 #   stop_effects()               <- my_sound1.stop() to my_sound3.stop()
 #   reset_music_rotation()       <- soundPlayCounter = 0 and soundModeKrin = 0
+#   set_first_fight_music(n)     <- soundPlayCounter = n and bangStart = true
 # The menu/battle rotation cycles soundPlayArray exactly like the original.
 extends Node
 
@@ -37,6 +38,12 @@ const MUSIC_ROTATION: Array[Variant] = [
 enum MusicMode { NONE = 0, MENU = 1, BATTLE = 2 }
 
 var sound_enabled: bool = true
+# The original's bangStart. Frames 165 and 180 turn it on before a new game's
+# first fights (see set_first_fight_music()). The next battle track that starts
+# turns it off again. That track cuts off the track before it and starts at full
+# volume, where every other battle track fades in (frame_42/DoAction.as:85-97).
+# While the sound is off no battle track starts, so the flag stays on.
+var bang_start: bool = false
 # How loud the music plays, as a percentage of full volume. The battle's Speech
 # box sets it to 100 - _alpha / 1.2 while it fades, which drops the music to about
 # 17 percent under a line (frame_217/PlaceObject2_3367_634 enterFrame, line 2).
@@ -97,16 +104,15 @@ func play_menu_music() -> void:
 	_start_music(_next_rotation_cue(), false)
 
 
-# hard_start = the original's bangStart (battle entry cuts straight to full
-# volume instead of crossfading).
-func play_battle_music(is_boss: bool, hard_start: bool = false) -> void:
+func play_battle_music(is_boss: bool) -> void:
 	if not sound_enabled or _music_mode == MusicMode.BATTLE:
 		return
 	_music_mode = MusicMode.BATTLE
 	var cue: String = "_music_boss" if is_boss else _next_rotation_cue()
 	if is_boss:
 		_next_rotation_cue()  # the original advances the rotation either way
-	_start_music(cue, hard_start)
+	_start_music(cue, bang_start)
+	bang_start = false
 
 
 func stop_music() -> void:
@@ -134,6 +140,15 @@ func stop_all_sounds() -> void:
 func reset_music_rotation() -> void:
 	_music_mode = MusicMode.NONE
 	_rotation_counter = 0
+
+
+# The last frames of IntroSeq and IntroSeq2 set soundPlayCounter and turn
+# bangStart on before the Tutorial and before battle 100
+# (frame_165/DoAction.as:4-5, frame_180/DoAction.as:4-6). They do it whether the
+# sound is on or off, because they do not go through addSound.
+func set_first_fight_music(rotation_counter: int) -> void:
+	_rotation_counter = rotation_counter
+	bang_start = true
 
 
 func voice(unit_cues: Array) -> void:

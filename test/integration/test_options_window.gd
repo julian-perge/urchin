@@ -72,7 +72,7 @@ func test_the_values_follow_the_save_each_time_the_window_shows() -> void:
 # music from the start of its rotation.
 func test_sound_turns_every_sound_off_and_back_on_with_the_menu_music() -> void:
 	var window: Control = _window()
-	AudioManagerAuto.play_battle_music(false, true)
+	AudioManagerAuto.play_battle_music(false)
 	(window.get_node("SoundButton") as BaseButton).pressed.emit()
 	assert_false(GameData.current_save.sound, "the save keeps the setting")
 	assert_false(AudioManagerAuto.sound_enabled, "and the audio follows it")
