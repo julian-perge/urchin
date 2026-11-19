@@ -95,3 +95,10 @@ def test_a_literal_the_script_does_not_write_is_refused():
     )
     with pytest.raises(RuntimeError, match="krinMeleeHomeTolerance: 0 matches"):
         krin_settings.literals(script)
+
+
+def test_one_number_written_two_ways_is_read_once():
+    # The two lines of the cap agree when they write the same number, even as
+    # different text.
+    script = _original_with("this.spdXCoEFFER = 1;", "this.spdXCoEFFER = 1.0;")
+    assert krin_settings.literals(script)["krinMeleeStepCap"] == 1

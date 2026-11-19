@@ -10,6 +10,10 @@ const SWF_FRAME_SECONDS: float = 1.0 / 30.0
 
 var visual: CharacterVisual
 var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.KRIN_SETTINGS_PATH))
+# The most frames that the tests below step relX before they give up, so that a
+# coefficient of 0 or less in krin_settings.json fails a test instead of hanging
+# GUT. The test chose it. The original has no such number.
+const RELX_STEP_LIMIT: int = 1000
 
 
 func before_each():
@@ -133,10 +137,11 @@ func _dash_frames(distance: float, half_widths: float) -> int:
 	var step: float = distance * float(_krin["krinBodyMove"]) / float(_krin["krinBoltTime"])
 	var rel_x: float = 0.0
 	var frames: int = 0
-	while rel_x / slow_point < 1.0:
+	while rel_x / slow_point < 1.0 and frames < RELX_STEP_LIMIT:
 		var go_rat: float = rel_x / slow_point
 		rel_x += minf(float(_krin["krinMeleeDashBase"]) - float(_krin["krinMeleeDashSlope"]) * go_rat, float(_krin["krinMeleeStepCap"])) * step
 		frames += 1
+	assert_lt(frames, RELX_STEP_LIMIT, "the dash ends within %d frames" % RELX_STEP_LIMIT)
 	return frames
 
 
@@ -285,13 +290,14 @@ func test_the_runback_eases_home_and_snaps_there_on_the_originals_frame():
 	var step: float = 80.0 * float(_krin["krinBodyMove"]) / float(_krin["krinBoltTime"])
 	var tolerance: float = float(_krin["krinMeleeHomeTolerance"])
 	var frames: int = 0
-	while rel_x > tolerance:
+	while rel_x > tolerance and frames < RELX_STEP_LIMIT:
 		assert_eq(get_signal_emit_count(doll, "melee_finished"), 0, "not home before frame %d" % (frames + 1))
 		rel_x -= minf(float(_krin["krinMeleeRunbackSlope"]) * rel_x / 80.0, float(_krin["krinMeleeStepCap"])) * step
 		frames += 1
 		doll._process(SWF_FRAME_SECONDS)
 		if rel_x > tolerance:
 			assert_almost_eq(doll.position.x, 100.0 + rel_x, 0.0001, "Runback frame %d" % frames)
+	assert_lt(frames, RELX_STEP_LIMIT, "the Runback ends within %d frames" % RELX_STEP_LIMIT)
 	assert_eq(doll.position, Vector2(100, 100), "home on Runback frame %d" % frames)
 	assert_signal_emit_count(doll, "melee_finished", 1, "and the swing ends then")
 

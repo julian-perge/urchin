@@ -100,13 +100,15 @@ def literals(text: str) -> dict:
                 group
                 for match in found
                 for group in ((match,) if isinstance(match, str) else match)
-            }
+            },
+            key=float,
         )
-        if len(written) != 1:
+        values = {float(group) for group in written}
+        if len(values) != 1:
             raise RuntimeError(
                 f"{name}: the script writes {' and '.join(written)}, want one number"
             )
-        value = float(written[0])
+        value = values.pop()
         numbers[name] = int(value) if value.is_integer() else value
     return numbers
 
