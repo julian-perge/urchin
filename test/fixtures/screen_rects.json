@@ -2457,6 +2457,7 @@
    },
    "port_only": [
     "ModePanel",
+    "ManualPanel",
     "NamePanel",
     "SlotPanel",
     "NewGamePanel",

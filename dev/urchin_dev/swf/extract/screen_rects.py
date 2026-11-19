@@ -685,6 +685,7 @@ SCENES: dict[str, Scene] = {
         },
         port_only=(
             "ModePanel",
+            "ManualPanel",
             "NamePanel",
             "SlotPanel",
             "NewGamePanel",
