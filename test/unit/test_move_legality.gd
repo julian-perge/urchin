@@ -7,6 +7,10 @@ extends GutTest
 const Refusal = MoveLegality.Refusal
 
 
+func before_each():
+	BattleAI.reset_scratch()
+
+
 func _unit(team: CombatUnit.Team) -> CombatUnit:
 	var unit := CombatUnit.new()
 	unit.team_side = team
