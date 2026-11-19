@@ -39,7 +39,7 @@ The 770 by 314 px area of the Battle screen that the hall, the sky and the fight
 _Avoid_: Stage rect, viewport
 
 **Decision**:
-The part of the player's half-turn when the turn loop waits for a pick or a pass.
+The part of the player's half-turn when the turn loop waits for a pick or a pass. On Heroic it stays open for 5 frames after each pick or pass, and the last pick or pass in that time is the player's action.
 _Avoid_: Window, decision window
 
 **Radial menu**:
