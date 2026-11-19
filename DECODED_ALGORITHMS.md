@@ -754,8 +754,17 @@ Ported: `extract_cutscenes` bakes it into each clip. `cutscenes.camera_view` com
 - `parentColor.setTransform(camColor.getTransform())` copies the Cutscene camera's color transform onto the animation every frame. A Cutscene camera with no color transform gives the identity. Five of the six
   animations open with their Cutscene camera multiplying red, green and blue by 0, so they fade in from black. CS_CUT5's Cutscene camera has no color transform on its frame 1.
 - The Cutscene cameras never rotate. The zoom runs from 0.65 (CS_CUT5) to 4.32 (CS_INTRO2), and on frame 240 of CS_INTRO2 the Cutscene camera sits at scale 0.428 around (-108.35, -81.25), a 2.34x zoom.
-- Under the wrapper, at root depth 1, every cutscene frame shows shape 3475, a dark full-stage shape. It shows wherever the animation leaves the mask transparent.
-- Guess, not checked in a live run: frame N of the animation shows the Cutscene camera of frame N, with no one-frame lag. `onEnterFrame` runs after the frame's tags are placed.
+- Under the wrapper, at root depth 1, every cutscene frame shows shape 3475, a dark full-stage shape. It shows around the 533x300 box and wherever the animation leaves the mask transparent. Each clip is the whole
+  800x575 stage with every root layer where the root places it. Five wrappers sit at (133.5, 137.5) px, and CS_CUT5's wrapper 4154 sits at (140.55, 141.55), 7 px right and 4 px down (#411).
+- Measured in a Traced run of the web build in the Flash debug player (#411), which logged the Cutscene camera and the animation on every frame up to CS_INTRO2 240, CS_CUT4 860 and CS_CUT5 1200
+  (`references/traced_runs/cutscene_camera/camera_web_flash.txt`). On all 2297 frames, the Cutscene camera holds the placement of the animation's current frame when `camControl()` runs, so frame N shows the
+  Cutscene camera of frame N, with no one-frame lag. The wrapper positions above are the ones the run read. Each `CAM` line holds, in order: the label, the animation's `_currentframe`, the Cutscene camera's `_x`, `_y`,
+  `_width`, `_height`, `_xscale` and `_yscale`, the animation's `_x`, `_y`, `_xscale` and `_yscale`, its color transform as ra, rb, ga, gb, ba, bb, aa, ab, the wrapper's `_x` and `_y`, and the depths of the wrapper and the animation.
+- Flash reads the Cutscene camera's `_width` and `_height` in whole twips, and `cutscenes.camera_view()` uses the exact scale. So the extractor's zoom differs from the game's by at most 0.13%, and its translation
+  by at most 3 twips (0.15 px). That is under a pixel, so the extractor keeps the exact scale.
+- The same run drew the stage with `BitmapData.draw(_root)` on CS_INTRO2 frame 240, CS_CUT4 frames 533, 590, 650, 761, 810 and 860, and CS_CUT5 frames 300 and 1200. Against frame N of the clips, outside the
+  SKIP text, the mean difference is 1.7 to 2.5 of 255 and the 99th percentile 13 to 38, which is antialiased edges and Theora compression. Frames N-1 and N+1 score the same or worse. The captures, with the clip
+  frame and the difference beside each one, are in `references/traced_runs/cutscene_camera/`.
 - `resetStage()` on unload sets the parent back to identity. Nothing in the port needs it, because the clip ends with the cutscene.
 
 ## Zone hub orbs (DefineSprite 3287)
