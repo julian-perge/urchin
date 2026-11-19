@@ -197,6 +197,17 @@ otherwise.
   used a throwaway Probe file that ran the English button's code
   (`DefineButton2_298`) and called `_root.play()` on those frames. It was not
   committed, because it changes what the game does.
+- **A throwaway Probe can capture what the stage shows.** For #411 it jumped
+  to a `CS_` label from `mainMenu`, stopped the animation on the target frame,
+  waited 3 frames, drew the stage with
+  `new flash.display.BitmapData(800, 575, false, 0).draw(_root)`, and traced 20
+  rows of hex pixels a frame, so no frame ran long enough for the debug
+  player's slow-script warning. Nine captures made a 25 MB `flashlog.txt`, and
+  a short script turned the `ROW` lines back into PNGs. The SWF is version 9,
+  so AS2's `BitmapData` is there. The capture needs no screen recording.
+- **ffmpeg's `select=eq(n,N)` picks the wrong frame of a Theora clip.** In
+  #411 it returned a frame of another shot of CS_CUT4. To read frame N of a
+  clip, decode the whole clip as a stream and count the frames.
 
 ### Add a Probe
 
