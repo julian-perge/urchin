@@ -269,10 +269,11 @@ func test_a_death_clears_on_frame_17_then_fades_13_256ths_a_frame_and_hides() ->
 	_advance(bar, 1)
 	assert_false(bar.inner.visible, "cleared on the clear frame")
 	assert_eq(bar.modulate.a, 1.0)
+	var traced: Dictionary = _traced_death_alphas()
 	_advance(bar, 1)
-	assert_eq(bar.modulate.a, 243.0 / 256.0, "its step off the alpha the frame after")
+	assert_eq(bar.modulate.a, traced[clear_frame + 1], "its step off the alpha the frame after")
 	_advance(bar, 18)
-	assert_eq(bar.modulate.a, 9.0 / 256.0, "the last step above 0")
+	assert_eq(bar.modulate.a, traced[clear_frame + 19], "the last step above 0")
 	_advance(bar, 1)
 	assert_eq(bar.modulate.a, 0.0, "to 0")
 	assert_true(bar.visible, "it hides on the frame after")
@@ -280,6 +281,18 @@ func test_a_death_clears_on_frame_17_then_fades_13_256ths_a_frame_and_hides() ->
 	assert_false(bar.visible)
 	assert_signal_emitted(bar, "death_hidden")
 	assert_eq(fades[0], 1.0, "the first fade is the clear frame's")
+
+
+# The bar's alpha out of 1 on each frame after the death, from the Traced run's
+# log of a death in the Flash debug player. Each frame line holds the frame in
+# its third field and the bar's _alpha in its fifth.
+func _traced_death_alphas() -> Dictionary:
+	var alphas: Dictionary = {}
+	for line in FileAccess.get_file_as_string("res://references/traced_runs/death_fade_web_flash.txt").split("\n"):
+		var fields: PackedStringArray = line.split("\t")
+		if fields.size() >= 5 and fields[1] == "frame":
+			alphas[int(fields[2])] = float(fields[4]) / 100.0
+	return alphas
 
 
 func _unit(active: bool) -> CombatUnit:
