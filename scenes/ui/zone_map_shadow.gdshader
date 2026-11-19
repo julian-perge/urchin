@@ -4,9 +4,9 @@
 // averages their alpha over a box as wide as the blur, multiplies that by the
 // strength, limits it to 1, and paints the shadow's colour at that amount times
 // the colour's own alpha. So two links that cross make one shadow, as Flash's
-// one filter on the whole of lineMC does. It leaves COLOR out, as
-// scenes/doll_body.gdshader does, because Godot already applies the modulate of
-// the group's parents to the lines inside it.
+// one filter on the whole of lineMC does. It does not multiply by the COLOR that
+// comes in, as scenes/doll_body.gdshader does not, because Godot already applies
+// the modulate of the group's parents to the lines inside it.
 shader_type canvas_item;
 render_mode unshaded;
 

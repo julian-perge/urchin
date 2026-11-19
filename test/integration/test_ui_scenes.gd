@@ -1126,6 +1126,21 @@ func test_the_zone_links_read_their_shadow_from_the_record():
 	assert_almost_eq(float(material.get_shader_parameter("strength")), float(shadow["strength"]), 0.0001)
 
 
+# The shadow's blur is in stage px, so the connectors read the screen px for each
+# stage px again when the window's size changes, not only when the map opens.
+func test_the_zone_links_read_the_stage_scale_again_when_the_window_resizes():
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	game.get_node("ZoneMapOverlay").visible = true
+	await get_tree().process_frame
+	var material: ShaderMaterial = game.get_node("ZoneMapOverlay/Connectors/Shadow").material
+	material.set_shader_parameter("stage_scale", -1.0)
+	get_viewport().size_changed.emit()
+	await get_tree().process_frame
+	var expected: float = get_viewport().get_final_transform().get_scale().x
+	assert_almost_eq(float(material.get_shader_parameter("stage_scale")), expected, 0.0001)
+
+
 func _zone_face(zones: Node, zone_id: int) -> String:
 	return (zones.get_node("Zone%d/Art" % zone_id) as TextureRect).texture.resource_path
 

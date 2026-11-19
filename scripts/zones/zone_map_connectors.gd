@@ -32,6 +32,7 @@ const LINE_WIDTH: float = 2.0
 
 func _ready() -> void:
 	visibility_changed.connect(_redraw)
+	get_viewport().size_changed.connect(_redraw)
 	_shadow_lines.draw.connect(_draw_shadow)
 	var record: Variant = JSON.parse_string(FileAccess.get_file_as_string(RECORD_FILE))
 	if not (record is Dictionary and (record as Dictionary).has("line_shadow")):
@@ -41,10 +42,10 @@ func _ready() -> void:
 	_shadow_lines.position = Vector2.from_angle(deg_to_rad(float(shadow["angle"]))) * float(shadow["distance"])
 	var tint := Color.html(str(shadow["color"]))
 	tint.a = float(shadow["alpha"])
-	var material := _shadow.material as ShaderMaterial
-	material.set_shader_parameter("shadow_color", tint)
-	material.set_shader_parameter("blur", Vector2(float(shadow["blur"][0]), float(shadow["blur"][1])))
-	material.set_shader_parameter("strength", float(shadow["strength"]))
+	var shadow_material := _shadow.material as ShaderMaterial
+	shadow_material.set_shader_parameter("shadow_color", tint)
+	shadow_material.set_shader_parameter("blur", Vector2(float(shadow["blur"][0]), float(shadow["blur"][1])))
+	shadow_material.set_shader_parameter("strength", float(shadow["strength"]))
 
 
 func _redraw() -> void:
@@ -53,7 +54,8 @@ func _redraw() -> void:
 
 
 # Flash measures the blur in stage px, so the shader needs the screen px for each
-# stage px, which changes with the window's size.
+# stage px. That changes with the window's size, so _ready() also redraws the
+# lines when the window's size changes.
 func _draw_shadow() -> void:
 	var stage_scale: float = get_viewport().get_final_transform().get_scale().x
 	(_shadow.material as ShaderMaterial).set_shader_parameter("stage_scale", stage_scale)
