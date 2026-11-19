@@ -255,10 +255,22 @@ func test_a_hub_built_for_the_next_win_shows_the_hint_again():
 
 # A win that levelled the player up leaves the hint waiting until the player
 # closes the Inventory or the Store (button 2853, DefineButton2_2853 on(press)).
+# The Hub opens on that win, and Proceed switches it to the Abilities Window.
 func _hub_after_level_up_win(battle_id: int) -> Control:
-	GameData.current_save = PlayerSave.new_game("Hinter", 0)
-	ZoneManager.hint_battle_after_close = battle_id
-	return await _hub_scene()
+	var save := PlayerSave.new_game("Hinter", 0)
+	save.autosave = false
+	GameData.current_save = save
+	var settlement := BattleSettlement.new()
+	settlement.fighters[0] = BattleSettlement.FighterExperience.new()
+	settlement.levels_gained = 1
+	ZoneManager.pending_victory = {"settlement": settlement, "battle_id": battle_id, "is_boss": false}
+	var game: Control = await _hub_scene()
+	var victory: VictoryWindow = game.get_node("VictoryWindow")
+	var row: VictoryExpRow = victory.get_node("ExpRows/PlayerSlot/Row")
+	while not row.is_finished():
+		row.step()
+	victory._on_proceed_pressed()
+	return game
 
 
 func _close_window(game: Control, group: String) -> void:
@@ -270,6 +282,7 @@ func _close_window(game: Control, group: String) -> void:
 func test_closing_the_inventory_after_a_level_up_win_shows_the_hint_once():
 	var game: Control = await _hub_after_level_up_win(100)
 	var card: HubCard = game.get_node("HubCard")
+	assert_true(game.get_node("AbilitiesWindow").visible, "Proceed opened the Abilities Window")
 	assert_false(card.visible, "the hint waits for the close")
 	_close_window(game, "inventory_window")
 	assert_true(card.visible)
@@ -291,7 +304,6 @@ func test_closing_the_store_after_a_level_up_win_shows_the_hint():
 
 func test_closing_a_window_with_no_waiting_hint_shows_nothing():
 	GameData.current_save = PlayerSave.new_game("Hinter", 0)
-	ZoneManager.hint_battle_after_close = 0
 	var game: Control = await _hub_scene()
 	_close_window(game, "inventory_window")
 	assert_false((game.get_node("HubCard") as HubCard).visible)
@@ -301,7 +313,7 @@ func test_closing_a_window_with_no_waiting_hint_shows_nothing():
 func test_a_hub_takes_the_waiting_hint_so_the_next_hub_has_none():
 	var first: Control = await _hub_after_level_up_win(100)
 	_free_hub(first)
-	assert_eq(ZoneManager.hint_battle_after_close, 0, "the first Hub took it")
+	assert_true(ZoneManager.pending_victory.is_empty(), "the first Hub took the win")
 	var second: Control = await _hub_scene()
 	_close_window(second, "inventory_window")
 	assert_false((second.get_node("HubCard") as HubCard).visible, "a load drops the wait")

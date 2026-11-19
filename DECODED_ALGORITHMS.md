@@ -645,13 +645,13 @@ Every battle fades in from black, and a win, a loss and a draw all fade to black
 
 ## End menu after CS_CUT5 (root frame 116, `endMenu`)
 
-Ported: once CS_CUT5 ends, `battle_scene.gd`'s `_on_victory_proceed` opens `EndingScreen` (`scripts/battle/ending_screen.gd`), and its OK! goes to the hub through
-`_on_continue_pressed`.
+Ported: once CS_CUT5 ends, `game.gd`'s `_on_victory_proceed` opens `EndingScreen` (`scripts/battle/ending_screen.gd`), and its OK! builds a new hub through
+`_reload_hub`.
 
 - The first win of 513 sets `afterCut = "CS_CUT5"` and `gotoSceneKrin = "endMenu"` (`frame_219/DoAction.as:51-55`). Proceed autosaves when autosave is on, stops every sound and plays the
   cutscene (`DefineButton2_3004` on(release), lines 4-11).
 - When the cutscene ends, its fade clip sets `soundModeKrin` and `soundPlayCounter` to 0 and goes to `endMenu` without starting any music (`frame_263/PlaceObject2_3466_80` enterFrame, lines
-  15-19 and 33). Only `overMap` and `Navigation` get `addSound("Music", 1)` there (lines 20-31). The port's `_on_victory_proceed` calls `AudioManager.reset_music_rotation()` when any
+  15-19 and 33). Only `overMap` and `Navigation` get `addSound("Music", 1)` there (lines 20-31). The port's `_on_victory_proceed` (in `game.gd`) calls `AudioManager.reset_music_rotation()` when any
   cutscene ends, so the ending screen stays silent and the hub that OK! opens starts on `_music_menu1`, the same as the original.
 - Frame 116 fills `enderText`, edit text 2796, with `ENDING` (`frame_116/DoAction.as:1`, the string at `frame_1/DoAction.as:2240`). It also sets `whatToSay1` to `MENU[18]` "Start!" (line 2),
   which no text field on the frame shows, and `whatToSay3` to `MENU[19]` "Play MORE Games!" (line 3), the caption of edit text 2798 under a copy of the Armor Games link 2688.
@@ -759,7 +759,7 @@ Ported: `scripts/game.gd`'s `show_battle_hint` shows the card, and `convert_batt
   of those two Windows. After a win that levelled the player up, Proceed calls nothing, so the hint waits until the player next closes the Inventory or the Store with 2853. A new win or a
   load ends the wait. This is read from the AS and not confirmed in a live run.
 - The port's `show_battle_hint(battle_id)` keeps `tutSpeecher` as `_hint_used`, a field of the Hub. The port builds a new Hub after every win and every load, so the field is false in each
-  new Hub, which is the reset on a win. A load never calls the method, which is what the set-on-load does. A level-up win leaves the won battle's id in `ZoneManager.hint_battle_after_close`. The Hub takes it in `_ready()` and clears it, and calls `show_battle_hint` when the close X of the Inventory or the Store is pressed (#325). Only that close button calls it, as 2853 does: the hotbar buttons that toggle the Windows do not.
+  new Hub, which is the reset on a win. A load never calls the method, which is what the set-on-load does. After a level-up win, the Hub's Victory Proceed keeps the won battle's id, and the Hub calls `show_battle_hint` when the close X of the Inventory or the Store is pressed (#325). After a win with no level-up, Proceed calls it at once (#241). Only that close button calls it, as 2853 does: the hotbar buttons that toggle the Windows do not.
 
 ## Approximation audit (2026-07-21) - port pieces NOT yet source-faithful
 
