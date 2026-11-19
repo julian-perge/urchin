@@ -11,10 +11,13 @@ from pathlib import Path
 from test_swf_index import IDENTITY_MATRIX, bits, place2, swf, tag
 from urchin_dev.swf.extract.cutscenes import (
     CUTSCENES,
+    IDENTITY_COLOR,
     OUT_DIR,
     OUT_H,
     OUT_W,
+    camera_view,
     find_broken_bitmap_fill_cids,
+    write_cutscene_swf,
 )
 from urchin_dev.swf.label_xref import OUT
 from urchin_dev.swf.swf_index import (
@@ -25,6 +28,7 @@ from urchin_dev.swf.swf_index import (
     TAG_SHOW_FRAME,
     parse_swf,
 )
+from urchin_dev.swf.timeline import frames as timeline_frames
 
 
 def test_each_cutscene_uses_the_wrapper_on_its_own_label_frame():
@@ -174,3 +178,112 @@ def test_a_line_that_bitmap_65535_paints_counts_only_when_an_edge_strokes_it():
         swf(shape4(1, line=1), shape4(2, line=0), sprite, tag(TAG_SHOW_FRAME))
     )
     assert find_broken_bitmap_fill_cids(index, 9) == {1}
+
+
+# The camera's own art, shape 3477, is 10660x6000 twips, the 533x300 view.
+CAMERA_SIZE = (10660, 6000)
+
+
+def test_the_camera_at_frame_240_of_cs_intro2_blows_its_region_up():
+    # Sprite 3643 places camera 3478 with this matrix on frame 240. The
+    # script sets the parent's scale to 533 / the camera's width, and its x to
+    # 266.5 minus the camera's x times that scale.
+    camera = (0.4281463623046875, 0.0, 0.0, 0.428131103515625, -2167, -1625)
+    matrix, color = camera_view(camera, None, CAMERA_SIZE)
+    scale_x, skew0, skew1, scale_y, tx, ty = matrix
+    assert abs(scale_x - 2.3356) < 1e-4
+    assert abs(scale_y - 2.3357) < 1e-4
+    assert (skew0, skew1) == (0.0, 0.0)
+    assert (tx, ty) == (
+        5330 + round(2167 / 0.4281463623046875),
+        3000 + round(1625 / 0.428131103515625),
+    )
+    assert color == IDENTITY_COLOR
+
+
+def test_the_camera_size_sets_the_zoom():
+    # A camera twice the view's size at scale 1 shows the animation at half size.
+    matrix, _color = camera_view((1.0, 0.0, 0.0, 1.0, 0, 0), None, (21320, 12000))
+    assert matrix == (0.5, 0.0, 0.0, 0.5, 5330, 3000)
+
+
+def test_the_camera_color_transform_passes_to_the_animation_unchanged():
+    # Five of the six animations open with their camera multiplying red, green
+    # and blue by 0, so the cutscene fades in from black.
+    black = (0, 0, 0, 256, 0, 0, 0, 0)
+    _matrix, color = camera_view((1.0, 0.0, 0.0, 1.0, 0, 0), black, CAMERA_SIZE)
+    assert color == black
+
+
+def test_a_rotated_camera_is_refused():
+    try:
+        camera_view((1.0, 0.5, -0.5, 1.0, 0, 0), None, CAMERA_SIZE)
+    except ValueError:
+        return
+    raise AssertionError("a rotated camera passed")
+
+
+def test_the_cutscene_movie_plays_the_wrapper_and_moves_its_animation(tmp_path):
+    # Wrapper 9 has the layout of the game's wrappers: a mask at depth 1 that
+    # clips to 72, animation 7 at depth 2 and an outline at depth 73. The root
+    # timeline plays two frames of something else, which the movie drops.
+    mask = (
+        bytes([0x46])
+        + struct.pack("<HH", 1, 5)
+        + IDENTITY_MATRIX
+        + struct.pack("<H", 72)
+    )
+    animation_matrix = bits((0, 1), (0, 1), (14, 5), (5395, 14), (3049, 14))
+    wrapper = tag(
+        TAG_DEFINE_SPRITE,
+        struct.pack("<HH", 9, 1)
+        + tag(26, mask)
+        + place2(2, cid=7, matrix=animation_matrix)
+        + place2(73, cid=6, matrix=IDENTITY_MATRIX)
+        + tag(TAG_SHOW_FRAME)
+        + tag(TAG_END),
+    )
+    src = tmp_path / "src.swf"
+    src.write_bytes(
+        swf(
+            wrapper,
+            place2(5, cid=8),
+            tag(TAG_SHOW_FRAME),
+            tag(TAG_SHOW_FRAME),
+            frames=2,
+        )
+    )
+    dark = (128, 64, 32, 256, 10, -20, 30, 0)
+    views = [
+        ((2.5, 0.0, 0.0, 2.25, -1000, 2000), (0, 0, 0, 256, 0, 0, 0, 0)),
+        ((2.5, 0.0, 0.0, 2.25, -1000, 2000), (0, 0, 0, 256, 0, 0, 0, 0)),
+        ((0.75, 0.0, 0.0, 0.75, 5330, 3000), dark),
+    ]
+    stage = [
+        (1, 4, (1.0, 0.0, 0.0, 1.0, -10, -10)),
+        (2, 9, (1.0, 0.0, 0.0, 1.0, 2660, 2740)),
+    ]
+    dest = tmp_path / "dest.swf"
+
+    write_cutscene_swf(src, dest, 9, 7, 2, views, stage)
+
+    index = parse_swf(dest.read_bytes())
+    assert index.root_frames == 3
+    root = timeline_frames(index, 0)
+    assert len(root) == 3
+    for frame in root:
+        assert [
+            (d, layer.character_id, layer.matrix) for d, layer in frame.items()
+        ] == stage
+    assert index.sprite_frames[9] == 3
+    shown = timeline_frames(index, 9)
+    assert len(shown) == 3
+    for frame, (matrix, color) in zip(shown, views, strict=True):
+        assert sorted(frame) == [1, 2, 73]
+        assert frame[1].clip_depth == 72
+        assert frame[2].character_id == 7
+        assert frame[2].matrix == matrix
+        assert frame[2].color_transform == color
+    # Frame 2 repeats frame 1, so the wrapper writes no move for it.
+    moves = [p for p in index.placements if p.owner == 9 and p.move]
+    assert [p.frame for p in moves] == [3]
