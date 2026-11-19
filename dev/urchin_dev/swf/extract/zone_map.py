@@ -43,6 +43,8 @@ MAP_SPRITE = 4172
 MAP_DEPTH = 1
 FRAME_DEPTH = 51
 LINES_DEPTH = 53
+LINES_SPRITE = 4161
+LINES_NAME = "lineMC"
 BUTTON_SPRITE = 4160
 BUTTON_DEPTH = 55
 BUTTON_NAME = "mb1"
@@ -118,7 +120,7 @@ def checked_layers(index: SwfIndex) -> dict[int, timeline.Layer]:
     layers = timeline.frames(index, MAP_HOLDER)[0]
     expected = {
         MAP_DEPTH: (MAP_SPRITE, None),
-        LINES_DEPTH: (4161, "lineMC"),
+        LINES_DEPTH: (LINES_SPRITE, LINES_NAME),
         BUTTON_DEPTH: (BUTTON_SPRITE, BUTTON_NAME),
     }
     for depth, (character, name) in expected.items():

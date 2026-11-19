@@ -1105,6 +1105,22 @@ func test_a_zone_shows_its_name_in_the_tooltip_open_or_locked():
 		assert_false(GameTooltip._root.visible, "zone %d hides the tooltip on roll out" % zone_id)
 
 
+# lineMC's DropShadow comes from zone_map.json, which extract_zone_map writes
+# from the SWF. The connectors draw it as the lines again, moved by its distance
+# at its angle, in its colour at its alpha times its strength.
+func test_the_zone_links_read_their_shadow_from_the_record():
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var connectors = game.get_node("ZoneMapOverlay/Connectors")
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(connectors.RECORD_FILE))
+	var shadow: Dictionary = record["line_shadow"]
+	var offset: Vector2 = Vector2.from_angle(deg_to_rad(float(shadow["angle"]))) * float(shadow["distance"])
+	assert_almost_eq(connectors._shadow_offset, offset, Vector2(0.001, 0.001))
+	var color: Color = Color.html(str(shadow["color"]))
+	color.a = float(shadow["alpha"]) * float(shadow["strength"])
+	assert_true(connectors._shadow_color.is_equal_approx(color), "shadow colour %s, record %s" % [connectors._shadow_color, color])
+
+
 func _zone_face(zones: Node, zone_id: int) -> String:
 	return (zones.get_node("Zone%d/Art" % zone_id) as TextureRect).texture.resource_path
 
