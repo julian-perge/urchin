@@ -1255,8 +1255,8 @@ func test_the_shadow_layout_and_each_timelines_first_shadow_agree():
 
 # The Flash run of battle 408 (references/traced_runs/zone4_boss) froze the
 # Hydra and both Fire Claws on stand frames 1 and 16 and logged each MODEL8
-# part's _x, _y, _xscale and _rotation, which Flash keeps in twips and
-# hundredths of a degree.
+# part's _x, _y, _xscale, _yscale and _rotation. Flash rounds _x and _y to
+# twips, which is 0.05 px, and the test allows the same 0.05 on every value.
 func test_model8_parts_land_where_the_flash_run_of_battle_408_put_them():
 	var lines: PackedStringArray = FileAccess.get_file_as_string("res://references/traced_runs/zone4_boss/dolls_web_flash.txt").split("\n")
 	visual.start_clip("MODEL8")
@@ -1272,6 +1272,7 @@ func test_model8_parts_land_where_the_flash_run_of_battle_408_put_them():
 			assert_true(part.visible, where)
 			assert_almost_eq(part.position, Vector2(float(f[7]), float(f[8])), Vector2(0.05, 0.05), where)
 			assert_almost_eq(part.transform.get_scale().x * 100.0, float(f[9]), 0.05, where)
+			assert_almost_eq(part.transform.get_scale().y * 100.0, float(f[10]), 0.05, where)
 			assert_almost_eq(rad_to_deg(part.transform.get_rotation()), float(f[11]), 0.05, where)
 			checked += 1
 	assert_eq(checked, 36, "6 parts of 3 dolls on 2 frames")
