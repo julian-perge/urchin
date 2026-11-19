@@ -2284,7 +2284,8 @@ def scene_record(
 # seven zone buttons mb1 to mb7 (4160) at depths 55 to 91. The map art's frame
 # is the outline 4162 at depth 51 of 4172. Each button draws its face, frame and
 # DropShadow as one render, and takes clicks on the hit shape 4155 at its depth
-# 5. The links are drawn while the game runs, so they have no piece.
+# 5. The links are drawn while the game runs, so they have no piece, and the
+# world_map compare entry hides them.
 ZONE_MAP_SCENE = "res://scenes/zone_map.tscn"
 ZONE_MAP_BUTTONS = {1: 55, 2: 67, 3: 61, 4: 73, 5: 79, 6: 85, 7: 91}
 SCENES[ZONE_MAP_SCENE] = Scene(
@@ -2311,6 +2312,9 @@ SCENES[ZONE_MAP_SCENE] = Scene(
         },
     },
     port_only=("Connectors",),
+    # The tooltip KrinToolTipper (2717) waits off the Stage until a zone's
+    # rollOver fills it.
+    compare_strip=(2717,),
 )
 
 

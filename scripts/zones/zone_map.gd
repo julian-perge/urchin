@@ -15,7 +15,6 @@ const LOCKED_FACE: Texture2D = preload("res://assets/ui/zone_map/zone_button_loc
 
 func _ready():
 	add_to_group("zone_map_panel")
-	visible = false
 	for zone_button in $Zones.get_children():
 		var zone_id: int = int(zone_button.name.trim_prefix("Zone"))
 		zone_button.pressed.connect(_on_zone_selected.bind(zone_id))
