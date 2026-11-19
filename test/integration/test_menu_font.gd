@@ -174,7 +174,7 @@ func test_game_over_text_is_bold():
 		"DeadLabel": [2794, 65],
 		"ReloadLabel": [2793, 65],
 		"TipLabel": [2792, 65],
-		"BackLabel": [2795, 65],
+		"Back/Caption": [2703, 65],
 	})
 
 

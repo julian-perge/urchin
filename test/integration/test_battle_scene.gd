@@ -890,14 +890,11 @@ func _assert_game_over_screen(scene: Control) -> void:
 	if game_over == null:
 		return
 	assert_true(game_over.is_visible_in_tree(), "and showing")
-	assert_eq(game_over.get_node("DeadLabel").text, "You're dead, Sonny...", "MENU[50]")
-	assert_eq(game_over.get_node("ReloadLabel").text, "< Click here to Re-Load >", "MENU[51] between angle brackets")
-	assert_eq(
-		game_over.get_node("TipLabel").text,
-		"Having problems winning a fight? Observe your enemies carefully and try to find a weakness. Being victorious in Sonny is about having a successful strategy, so you may need to re-evaluate your ability configuration and execution. If you want guides on how to beat a specific stage, I recommend you to check out the ArmorGames or KrinLabs forums for some help.",
-		"GOTIP[0]"
-	)
-	assert_eq(game_over.get_node("BackLabel").text, "Back", "MENU[26]")
+	var strings: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/strings.json"))
+	assert_eq(game_over.get_node("DeadLabel").text, strings["MENU"][50], "MENU[50]")
+	assert_eq(game_over.get_node("ReloadLabel").text, "< %s >" % strings["MENU"][51], "MENU[51] between angle brackets")
+	assert_eq(game_over.get_node("TipLabel").text, strings["GOTIP"][0], "GOTIP[0]")
+	assert_eq(game_over.get_node("Back/Caption").text, strings["MENU"][26], "MENU[26]")
 
 
 func test_a_loss_ends_the_game_on_the_game_over_screen():
