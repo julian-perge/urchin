@@ -89,10 +89,11 @@ var events: Array = []  # full battle log; advance_half_turn() also returns its 
 # carries over from one battle to the next.
 static var strike_success: bool = false
 
-# True from the cost check of a move's dispatch until a move resolves. It is the
-# opposite of the conductor's own moveBammer, which its onClipEvent(load) never
-# sets, so it starts each battle neither true nor false, and no bound move can
-# land before the first cost check (see _land_bound_move).
+# True from the cost check of a move's dispatch until a move resolves, the
+# opposite of the conductor's own moveBammer. The conductor's onClipEvent(load)
+# never sets moveBammer, and undefined == false is false in ActionScript 2, so no
+# bound move can land before the first cost check of a battle (see
+# _land_bound_move).
 var _bound_move_waiting: bool = false
 
 
