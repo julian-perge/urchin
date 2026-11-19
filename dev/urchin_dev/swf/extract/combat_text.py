@@ -1,5 +1,6 @@
 # The Combat text banner, the original's KrinCombatText (DefineSprite 2852),
-# which the battle frame places at (400, 148.5):
+# which the battle frame places at (400, 148.5) and the Hub frame, Navigation,
+# at (400, 48.95):
 #
 #   assets/ui/battle/combat_text_backdrop.png - the band behind the text
 #   assets/ui/battle/combat_text.json         - where the banner, its band and
@@ -21,7 +22,10 @@
 # text. The band is rendered from root frame KRINBATTLESCENE with every other
 # depth hidden and the clip moved to its first frame at rest, so ffdec bakes
 # the glow in. The placeholder text, "combat text goes here", is stripped
-# first, so the text's own share of the glow is left out of the band.
+# first, so the text's own share of the glow is left out of the band. The Hub
+# frame places the clip with the same Glow, so the Hub's banner shows the same
+# band, and the JSON carries both places. The script raises when the two Glows
+# differ.
 #
 # THE TEXT IS DRAWN BY THE PORT. Edit text 2849 is filled at runtime, so the
 # JSON carries its rect, size, colour and alignment for a Label instead. Its
@@ -60,6 +64,7 @@ BANNER = 2852
 INNER_NAME = "inner"
 # The variable of the text field the GO frame fills and frame 125 empties.
 TEXT_VARIABLE = "combatText"
+HUB_FRAME = "Navigation"
 GO_LABEL = "GO"
 STOP_FRAME = 1
 CLEAR_FRAME = 125
@@ -135,6 +140,18 @@ def main():
     layers = timeline.frames(index, 0)[battle_frame - 1]
     (depth,) = [d for d, layer in layers.items() if layer.character_id == BANNER]
     position = render.placement_origin(index, 0, battle_frame, BANNER)
+    hub_frame = timeline.frame_of(index, 0, HUB_FRAME)
+    (hub_layer,) = [
+        layer
+        for layer in timeline.frames(index, 0)[hub_frame - 1].values()
+        if layer.character_id == BANNER
+    ]
+    if hub_layer.filter_records != layers[depth].filter_records:
+        raise RuntimeError(
+            f"{HUB_FRAME} places {BANNER} with other filters than"
+            f" {FRAME_LABEL}, so the band rendered on {FRAME_LABEL} does not fit"
+        )
+    hub_position = render.placement_origin(index, 0, hub_frame, BANNER)
 
     go_frame = timeline.frame_of(index, BANNER, GO_LABEL)
     check_scripts(index, go_frame)
@@ -185,7 +202,10 @@ def main():
         "fps": index.frame_rate,
         "go_frame": go_frame,
         "offsets": offsets,
-        "position": {"x": position[0], "y": position[1]},
+        "positions": {
+            "battle": {"x": position[0], "y": position[1]},
+            "hub": {"x": hub_position[0], "y": hub_position[1]},
+        },
         "text": label_layout.text_layout(field, placed),
     }
     LAYOUT_JSON.write_text(json.dumps(layout, indent=1, sort_keys=True) + "\n")

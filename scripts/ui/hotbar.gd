@@ -7,9 +7,9 @@
 # game.gd's _enter_tree() has just restored. After that, picking a zone on the
 # world map repaints it through ZoneManager.zone_changed.
 #
-# Three buttons open a Window (group "menu_screen"). The original has no
-# open-Window state on the hotbar, so nothing here follows a Window's
-# visibility.
+# Three buttons open a Window (group "menu_screen"), and Respec opens the
+# Abilities Window when it succeeds. The original has no open-Window state on
+# the hotbar, so nothing here follows a Window's visibility.
 extends Control
 
 const TOOLTIP_INDICES: Dictionary[String, Array] = {
@@ -38,6 +38,8 @@ const ICON_SLOTS: Dictionary[String, String] = {
 	"ZoneMap": "world_map",
 }
 const GLOW_SHADER: Shader = preload("res://scenes/ui/hotbar_glow.gdshader")
+# The Hub's Combat text banner (scenes/game.tscn) is in this group.
+const BANNER_GROUP: StringName = &"combat_text_banner"
 
 @onready var zone_title: Label = %ZoneTitle
 @onready var zone_subtitle: Label = %ZoneSubtitle
@@ -67,6 +69,7 @@ func _ready():
 		button.mouse_entered.connect(_show_tooltip.bind(button))
 		button.mouse_exited.connect(GameTooltip.hide_tooltip)
 	_refresh(ZoneManager.current_zone)
+	(%RespecButton as BaseButton).set_drag_forwarding(Callable(), _can_drop_on_respec, _drop_on_respec)
 
 
 # The SWF draws the hover as one or two Glow filters on the icon, and every
@@ -222,10 +225,70 @@ func toggle_menu_screen(group: String) -> void:
 	var target: Node = get_tree().get_first_node_in_group(group)
 	if target == null:
 		return
-	var opening: bool = not target.visible
+	if target.visible:
+		target.visible = false
+	else:
+		open_menu_screen(group)
+
+
+# Shows one of the full-screen menu overlays and hides the others. A Window that
+# is already open stays open. Returns the Window, or null when the scene has none.
+func open_menu_screen(group: String) -> Node:
+	var target: Node = get_tree().get_first_node_in_group(group)
+	if target == null:
+		return null
 	for screen in get_tree().get_nodes_in_group("menu_screen"):
-		screen.visible = false
-	target.visible = opening
+		if screen != target:
+			screen.visible = false
+	target.visible = true
+	return target
+
+
+# The original's respec button (DefineButton2_3179 on(release)). The button is
+# disabled while the hotbar is inert, which is the original's PauseForScreen
+# check. Leveling.respec takes the money and resets the points, the moves and the
+# talents, or refuses when the player has less than the cost. The original then
+# rebuilds StatSets0 from the equipped gear, which is the bonus list given here.
+# It also clears the ability cooldowns, which the port keeps only on a battle's
+# units and starts at zero in every battle (CombatUnit.ability_cooldowns). On a
+# success it shows MENU[67] and goes to the Abilities Window. The Window
+# refreshes when it opens, and it refreshes here too in case it was open already.
+func _on_respec_pressed() -> void:
+	var save: PlayerSave = GameData.current_save
+	if save == null:
+		return
+	var bonuses: Array = Equipment.total_stat_bonuses(save.equip_array, ItemManagerAuto.items_by_id)
+	if not Leveling.respec(save, bonuses):
+		_show_combat_text(Strings.menu(42))
+		return
+	_show_combat_text(Strings.menu(67))
+	var window: Node = open_menu_screen("abilities_window")
+	if window != null:
+		window.refresh()
+
+
+# The original refuses a release on the button while an item is on the cursor,
+# with MENU[66]. In the port an item is on the cursor while the player drags it
+# from an Inventory or equipment slot (ItemSlot._get_drag_data), and the release
+# ends that drag on the button, so the button takes the drop and refuses it. The
+# original checks this before PauseForScreen, so an inert hotbar refuses too. The
+# item stays in its slot, because only an ItemSlot moves an item on a drop.
+func _can_drop_on_respec(_at_position: Vector2, data: Variant) -> bool:
+	return data is Dictionary and data.has("item")
+
+
+func _drop_on_respec(_at_position: Vector2, _data: Variant) -> void:
+	_show_combat_text(Strings.menu(66))
+
+
+# The original sets the banner's text and calls a bare play(), which shows the
+# text only when the banner is not up already.
+func _show_combat_text(text: String) -> void:
+	var banner: CombatTextBanner = get_tree().get_first_node_in_group(BANNER_GROUP)
+	if banner == null:
+		push_error("hotbar: no Combat text banner in the scene to show %s" % text)
+		return
+	banner.show_if_idle(text)
 
 
 func _on_zone_changed(zone_id: int) -> void:
