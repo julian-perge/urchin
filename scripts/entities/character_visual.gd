@@ -541,10 +541,10 @@ func _apply_margins(stage_scale: float) -> void:
 	_body.clear_margin = maxf(_flash_margins.y, _buff_margins.y) * stage_scale
 
 
-# The box around every part the doll draws in its current pose, in its parent's
-# space, which is where Flash measures a clip's _width and _height. Flash
-# measures the parts' shapes without their filters, and some part PNGs carry a
-# filter's glow, so this box can come out bigger than the original's.
+# The box around every part and piece the doll draws in its current pose, in
+# its parent's space, which is where Flash measures a clip's _width and _height.
+# Flash measures the parts' shapes without their filters, and some part PNGs
+# carry a filter's glow, so this box can come out bigger than the original's.
 func get_bounds() -> Rect2:
 	var bounds := Rect2()
 	var found: bool = false

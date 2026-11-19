@@ -1,6 +1,6 @@
 # The art each doll model of extract_model_animations places with no part name,
 # which dressChar does not dress and which CharacterVisual draws as it is:
-# MODEL8's two body clips at depths 9 and 10, MODEL2's orb (DefineSprite 1768)
+# MODEL8's two body shapes at depths 9 and 10, MODEL2's orb (DefineSprite 1768)
 # and MODEL9's bomb (DefineSprite 2468), and the clips that MODEL2, MODEL7 and
 # MODEL9 play on their cast, hit or dead frames. Output:
 #

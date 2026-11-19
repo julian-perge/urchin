@@ -1,6 +1,7 @@
 # Unit tests for the CharacterVisual paper doll - part assembly from the
-# extracted rest pose of each model, the pieces each model places with no name, the dressChar() texture layering, equip-looks
-# resolution, and the code-driven animation states.
+# extracted rest pose of each model, the pieces each model places with no name,
+# the dressChar() texture layering, equip-looks resolution, and the code-driven
+# animation states.
 extends GutTest
 
 const CharacterVisualScene = preload("res://scenes/character_visual.tscn")
@@ -1018,7 +1019,7 @@ func test_a_hit_or_stun_on_a_model_without_that_label_leaves_the_doll_as_it_was(
 	assert_eq(visual._frame_index, 6)
 
 
-# MODEL8 places two unnamed clips at depths 9 and 10, between leg3 at 7 and
+# MODEL8 places two unnamed shapes at depths 9 and 10, between leg3 at 7 and
 # chest at 11, and dressChar does not dress them.
 func test_model8_draws_its_unnamed_clips_between_its_parts_in_depth_order():
 	visual.start_clip("MODEL8")
