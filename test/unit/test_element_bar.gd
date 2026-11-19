@@ -205,21 +205,21 @@ func test_hovering_a_bar_shows_its_title_and_body_in_the_shared_tooltip_and_leav
 	var bar: ElementBar = _bar(ElementBar.Kind.PIERCING, 2)
 	bar.show_value(115.0, LEVEL)
 	bar.mouse_entered.emit()
-	assert_true(GameTooltip._root.visible)
-	assert_eq(GameTooltip._sections.get_child_count(), 2, "a title section and a body section")
-	var title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
-	var body: Label = GameTooltip._sections.get_child(1).get_child(0).get_child(0)
+	assert_true(GameTooltip.is_showing())
+	assert_eq(GameTooltip.sections().size(), 2, "a title section and a body section")
+	var title: Label = GameTooltip.line_label(0)
+	var body: Label = GameTooltip.line_label(1)
 	assert_eq(title.text, bar.tooltip()["title"])
 	assert_eq(body.text, bar.tooltip()["body"])
 	bar.mouse_exited.emit()
-	assert_false(GameTooltip._root.visible)
+	assert_false(GameTooltip.is_showing())
 
 
 func test_hovering_a_bar_with_no_value_shows_no_tooltip() -> void:
 	GameTooltip.hide_tooltip()
 	var bar: ElementBar = _bar()
 	bar.mouse_entered.emit()
-	assert_false(GameTooltip._root.visible)
+	assert_false(GameTooltip.is_showing())
 
 
 func test_a_whole_value_prints_without_a_fraction_and_a_fractional_one_keeps_it() -> void:

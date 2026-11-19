@@ -44,6 +44,13 @@ static func has(name: String, index: int) -> bool:
 	return index >= 0 and index < value.size() and value[index] != null
 
 
+# Replaces the loaded table, so a test can tell text read through this class
+# from a copy of the English text. An empty table makes the next read load
+# STRINGS_FILE again.
+static func use_table(table: Dictionary) -> void:
+	_table = table
+
+
 static func _load() -> Dictionary:
 	if _table.is_empty():
 		var file := FileAccess.open(STRINGS_FILE, FileAccess.READ)

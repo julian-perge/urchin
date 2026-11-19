@@ -139,6 +139,6 @@ func test_a_spot_draws_nothing_and_shows_no_tooltip():
 		assert_null(spot.texture_pressed, "%s has no pressed look" % spot.name)
 		assert_eq(spot.tooltip_text, "", "%s has no native tooltip" % spot.name)
 		spot.mouse_entered.emit()
-		assert_false(GameTooltip._root.visible, "%s shows no tooltip" % spot.name)
+		assert_false(GameTooltip.is_showing(), "%s shows no tooltip" % spot.name)
 		spot.mouse_exited.emit()
 		assert_eq(spot.mouse_default_cursor_shape, Control.CURSOR_POINTING_HAND, "%s" % spot.name)

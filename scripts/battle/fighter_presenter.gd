@@ -465,6 +465,11 @@ func rig_position() -> Vector2:
 	return position + _doll.position - _doll_offset
 
 
+# -> the top status bar entry that setup() gave this presenter to write to.
+func status_bar() -> StatusBar:
+	return _status_bar
+
+
 # Returns the rig's _width and _height, which is the size of the box around
 # everything its doll draws right now.
 func rig_size() -> Vector2:

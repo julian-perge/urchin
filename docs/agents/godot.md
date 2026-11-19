@@ -106,6 +106,12 @@ name, so it misses a call in class-level code and a callable reference such as
   global RNG back with `randomize()` when it finishes. A drifting assert count
   means a new test has reintroduced unseeded RNG, so track it down rather than
   ignoring it.
+- A test reads another module only through that module's public members: a
+  public method or variable, a signal, or a node path in its scene. To run a
+  button's handler, emit the button's signal, such as `pressed` or
+  `slot_clicked`. Only a module's own test may read its private members. #1
+  replaced about 200 reads of other modules' private members, such as
+  `GameTooltip._sections` and a doll's `_state`, with public accessors.
 - GUT has no seeding support, so a test that needs a deterministic run seeds
   Godot's global RNG itself. `partial_double` plus `stub()` is the other option
   and its stubs do intercept calls an object makes on itself, but stubbing one

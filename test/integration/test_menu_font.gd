@@ -278,8 +278,8 @@ func test_tooltips_bold_the_title_and_keep_the_body_regular():
 		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": "Biological", "color": TooltipTheme.TEXT_TITLE}]},
 		{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": "Wild and animalistic.", "color": TooltipTheme.TEXT_BODY}]},
 	], anchor)
-	var title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
-	var body: Label = GameTooltip._sections.get_child(1).get_child(0).get_child(0)
+	var title: Label = GameTooltip.line_label(0)
+	var body: Label = GameTooltip.line_label(1)
 	_assert_font(title, 65, "the tooltip title, my_txt2")
 	_assert_font(body, 295, "the tooltip body, my_txt")
 
@@ -333,7 +333,7 @@ func test_embedded_fonts_keep_their_edit_text_sizes():
 
 func _tooltip_labels() -> Array:
 	var labels: Array = []
-	for section in GameTooltip._sections.get_children():
+	for section in GameTooltip.sections():
 		for label in section.get_child(0).get_children():
 			labels.append(label)
 	return labels
@@ -368,7 +368,7 @@ func _equipment_with_flavor() -> GameItem:
 func test_tooltips_use_the_original_text_size_and_colors():
 	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())
 	abilities.refresh()
-	abilities._on_tree_node_hovered(0)
+	(abilities.get_node("TreeNodes/Node0") as Control).mouse_entered.emit()
 	_assert_tooltip_fields(
 		[Color("000000"), Color("000033"), Color("ffffff"), Color("ffcc00")], "an ability tree node"
 	)
@@ -405,10 +405,10 @@ func test_tooltips_wrap_onto_as_many_lines_as_the_reference_captures():
 	assert_eq(_tooltip_labels()[1].get_line_count(), 5, "the New Game warning")
 	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())
 	abilities.refresh()
-	abilities._on_socket_hovered(0)
+	(abilities.get_node("Socket0") as Control).mouse_entered.emit()
 	# The socket's tooltip shows the title alone first, as the original's
 	# ability icon does, so the test steps past that delay.
-	assert_false(GameTooltip._sections.get_child(1).visible, "the socket's tooltip waits before its details")
+	assert_false(GameTooltip.sections()[1].visible, "the socket's tooltip waits before its details")
 	GameTooltip._process(1.0)
 	await wait_process_frames(2)
 	var description: Label = _tooltip_labels()[2]

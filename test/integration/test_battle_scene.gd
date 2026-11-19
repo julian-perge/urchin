@@ -455,7 +455,7 @@ func _pauses_to_first_decision(battle_id: int, difficulty: CombatUnit.Difficulty
 
 
 func _an_effect_is_playing() -> bool:
-	return AudioManagerAuto._effect_players.any(func(player): return player.is_playing())
+	return AudioManagerAuto.is_effect_playing()
 
 
 # Battle 100 started at animation_speed 0 from a pick that holds `extra` as well,
@@ -488,7 +488,7 @@ func test_a_pick_with_a_cutscene_stops_every_sound_and_plays_it_before_the_fight
 	assert_not_null(cutscene, "the Cutscene is playing")
 	if cutscene != null:
 		assert_eq(cutscene.video.stream.resource_path, "res://assets/cutscenes/CS_INTRO2.ogv", "and it is the pick's")
-	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "no music plays under it")
+	assert_eq(AudioManagerAuto.music_mode, AudioManagerAuto.MusicMode.NONE, "no music plays under it")
 	assert_false(_an_effect_is_playing(), "and no effect plays on into it")
 	await wait_process_frames(3)
 	assert_false(scene.decision_open, "the fight has not reached its first half-turn")
@@ -505,13 +505,13 @@ func test_the_battle_music_and_the_first_half_turn_start_once_the_cutscene_ends(
 	var scene = _start_battle_100_with({"cutscene_before": "CS_INTRO2"})
 	var cutscene: CutscenePlayer = scene.get_node_or_null("CutscenePlayer")
 	assert_not_null(cutscene, "the Cutscene is playing")
-	assert_ne(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music has not started while the clip plays")
+	assert_ne(AudioManagerAuto.music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music has not started while the clip plays")
 	await wait_process_frames(3)
 	assert_false(scene.decision_open, "and the first half-turn has not opened its Decision")
 	if cutscene != null:
 		cutscene.video.finished.emit()
 
-	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music starts as the clip ends")
+	assert_eq(AudioManagerAuto.music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music starts as the clip ends")
 	await wait_until(func(): return scene.decision_open, 5)
 	assert_true(scene.decision_open, "and the first half-turn opens its Decision")
 
@@ -552,7 +552,7 @@ func _assert_the_fight_starts_at_once(extra: Dictionary) -> void:
 	AudioManagerAuto.stop_music()
 	var scene = _start_battle_100_with(extra)
 	assert_null(scene.get_node_or_null("CutscenePlayer"), "no Cutscene plays")
-	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music starts with the fight")
+	assert_eq(AudioManagerAuto.music_mode, AudioManagerAuto.MusicMode.BATTLE, "the battle music starts with the fight")
 	await wait_until(func(): return scene.decision_open, 5)
 	assert_true(scene.decision_open, "and the first half-turn opens its Decision")
 
@@ -926,12 +926,12 @@ func _start_pick_past_its_cutscene(pick: Dictionary) -> Control:
 # Full volume means the track starts at the level that music_level asks for, with
 # no fade running and no other track still playing.
 func _assert_the_track_plays_at_full_volume(cue: String, fight: String) -> void:
-	var music: AudioStreamPlayer = AudioManagerAuto._music_players[AudioManagerAuto._active_music]
-	var other: AudioStreamPlayer = AudioManagerAuto._music_players[1 - AudioManagerAuto._active_music]
+	var music: AudioStreamPlayer = AudioManagerAuto.music_player()
+	var other: AudioStreamPlayer = AudioManagerAuto.previous_music_player()
 	assert_eq(music.stream.resource_path, "res://assets/audio/%s.mp3" % cue, "%s plays %s" % [fight, cue])
 	assert_true(music.playing, "and the track is playing")
-	assert_almost_eq(music.volume_db, AudioManagerAuto._level_db(), 0.001, "%s starts at full volume" % fight)
-	var fade: Tween = AudioManagerAuto._fade_tween
+	assert_almost_eq(music.volume_db, AudioManagerAuto.level_db(), 0.001, "%s starts at full volume" % fight)
+	var fade: Tween = AudioManagerAuto.music_fade()
 	assert_false(fade != null and fade.is_running(), "with no fade running")
 	assert_false(other.playing, "and no other track playing")
 
@@ -974,14 +974,14 @@ func test_the_first_409_fight_plays_the_rotation_track_and_the_replay_the_boss_t
 	for progress in [9, 10]:
 		save.quest_progress[4] = progress
 		AudioManagerAuto.stop_music()
-		var cue: String = "_music_boss" if progress == 10 else AudioManagerAuto.MUSIC_ROTATION[AudioManagerAuto._rotation_counter]
+		var cue: String = "_music_boss" if progress == 10 else AudioManagerAuto.MUSIC_ROTATION[AudioManagerAuto.rotation_counter]
 		var info: Dictionary = ZoneManager.request_story_fight()
 		ZoneManager.pending_battle = {}
 		assert_eq(info.get("battle_id"), 409 if progress == 9 else 408, "the orb's pick at progress %d" % progress)
 		var scene = add_child_autofree(BattleSceneRes.instantiate())
 		scene.animation_speed = 0.0
 		scene.start_battle(info)
-		var music: AudioStreamPlayer = AudioManagerAuto._music_players[AudioManagerAuto._active_music]
+		var music: AudioStreamPlayer = AudioManagerAuto.music_player()
 		assert_eq(music.stream.resource_path, "res://assets/audio/%s.mp3" % cue, "battle %d's track" % info.get("battle_id"))
 
 	AudioManagerAuto.stop_music()
@@ -1005,7 +1005,9 @@ func test_the_hub_opens_the_victory_window_on_the_battles_settlement():
 	assert_true(victory.visible, "the Hub opens the Victory Window")
 	assert_eq(victory.get_node("MoneyValue").text, String.chr(0x20ac) + "7", "with the money the win paid")
 	assert_eq(victory.get_node("ExpValue").text, "90%", "the XP Sonny earned")
-	var drop_slots: Array = victory._drop_slots.filter(func(slot): return slot.item != null)
+	var drop_slots: Array = []
+	for row: Node in victory.get_node("Drops").get_children():
+		drop_slots.append_array(row.get_children().filter(func(slot): return slot is ItemSlot and slot.item != null))
 	var rare_pool: Array = [300, 301, 302, 303, 304, 500]
 	assert_eq(drop_slots.map(func(slot): return slot.item.id in rare_pool), [true], "the drop")
 	var rows: Array = ["PlayerSlot", "CompanionSlot0", "CompanionSlot1"].map(
@@ -1014,7 +1016,7 @@ func test_the_hub_opens_the_victory_window_on_the_battles_settlement():
 	assert_eq(shown.map(func(row): return row.name_label.text), ["Sonny", "Veradux"], "and rows for Sonny and Veradux alone")
 	var drop: ItemSlot = drop_slots[0]
 	var item_id: int = drop.item.id
-	victory._on_drop_clicked(drop)
+	drop.slot_clicked.emit(drop)
 	assert_has(save.item_array, item_id, "a clicked drop lands in the inventory")
 
 
@@ -1078,7 +1080,7 @@ func _assert_game_over_screen(scene: Control) -> void:
 	assert_true(ZoneManager.pending_victory.is_empty(), "no Victory Window waits")
 	var texts: Array = scene.find_children("*", "Label", true, false).map(func(label): return label.text)
 	assert_false("Defeat..." in texts or "Draw." in texts, "the port's old result text is gone")
-	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "the music stops")
+	assert_eq(AudioManagerAuto.music_mode, AudioManagerAuto.MusicMode.NONE, "the music stops")
 	var game_over = scene.get_node_or_null("UI/GameOverScreen")
 	assert_not_null(game_over, "the game over screen is up")
 	if game_over == null:
@@ -1239,7 +1241,7 @@ func test_the_game_over_screen_stops_sound_effects_too():
 # and returns the cue it picked.
 func _hub_menu_track() -> String:
 	AudioManagerAuto.play_menu_music()
-	var player: AudioStreamPlayer = AudioManagerAuto._music_players[AudioManagerAuto._active_music]
+	var player: AudioStreamPlayer = AudioManagerAuto.music_player()
 	return player.stream.resource_path.get_file().get_basename()
 # The reset before gameOverMenu also sets soundPlayCounter and soundModeKrin back
 # to 0 (frame_41/DoAction_2.as:12-14), so the hub that Re-Load opens starts the
@@ -1255,7 +1257,7 @@ func test_the_game_over_screen_starts_the_menu_rotation_over():
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": false, "is_boss": false, "train_cap": 9})
 	scene.runner.win_condition = BattleRunner.Outcome.LOSS
-	AudioManagerAuto._rotation_counter = 2
+	AudioManagerAuto.rotation_counter = 2
 	await wait_for_signal(scene.battle_finished, 5)
 	assert_not_null(scene.get_node_or_null("UI/GameOverScreen"), "the loss shows the game over screen")
 	assert_eq(_hub_menu_track(), "_music_menu1", "and the hub Re-Load opens starts on the first menu track")
@@ -1382,13 +1384,13 @@ func test_the_retreat_button_shows_the_original_quit_tooltip():
 	assert_eq(retreat.tooltip_text, "", "no native tooltip")
 	retreat.mouse_entered.emit()
 	var texts: Array = []
-	if GameTooltip._root.visible:
-		for section in GameTooltip._sections.get_children():
+	if GameTooltip.is_showing():
+		for section in GameTooltip.sections():
 			for label in section.get_child(0).get_children():
 				texts.append(label.text)
 	assert_eq(texts, ["Quit", "Click here to exit. Warning! All unsaved progress will be lost!"])
 	retreat.mouse_exited.emit()
-	assert_false(GameTooltip._root.visible, "leaving the button hides it")
+	assert_false(GameTooltip.is_showing(), "leaving the button hides it")
 
 	GameTooltip.hide_tooltip()
 	GameData.current_save = null
@@ -1415,7 +1417,7 @@ func test_the_pass_button_shows_the_idle_tooltip_of_the_mode_the_battle_loaded_i
 		pass_button.mouse_entered.emit()
 		assert_eq(_shown_tooltip_texts(), [texts["title"], texts[mode[0]]["idle"]], mode[0])
 		pass_button.mouse_exited.emit()
-		assert_false(GameTooltip._root.visible)
+		assert_false(GameTooltip.is_showing())
 	GameData.current_save = null
 	ZoneManager.auto_switch_scenes = true
 
@@ -1504,8 +1506,8 @@ func _rects_close(a: Rect2, b: Rect2) -> bool:
 
 func _shown_tooltip_texts() -> Array:
 	var shown: Array = []
-	if GameTooltip._root.visible:
-		for section in GameTooltip._sections.get_children():
+	if GameTooltip.is_showing():
+		for section in GameTooltip.sections():
 			for label in section.get_child(0).get_children():
 				shown.append(label.text)
 	return shown
@@ -1541,7 +1543,7 @@ func test_heal_that_kills_an_sswitch_target_plays_the_death():
 	])
 
 	var presenter: FighterPresenter = scene._presenters[target_slot]
-	assert_eq(presenter.get_node("Doll")._state, CharacterVisual.State.DEAD, "the heal killed the target, so its doll plays the death")
+	assert_eq(presenter.get_node("Doll").current_state(), CharacterVisual.State.DEAD, "the heal killed the target, so its doll plays the death")
 	assert_eq(presenter.displayed.life, 0.0, "the bar drops to empty")
 	assert_eq(
 		scene._combat_log._log_text.text,
@@ -1767,7 +1769,7 @@ func test_a_second_pick_before_the_fight_starts_on_heroic_replaces_the_first():
 	var enemy: CombatUnit = scene.units[2]
 	var first_id: int = int(player.equipped_moves[0])
 	var second: Ability = MoveManagerAuto.moves_by_id.values().filter(func(move):
-		return move.id not in [0, first_id] and MoveLegality.refusal(player, move, 1, enemy, scene.radial_menu._buffs_by_id) == MoveLegality.Refusal.NONE
+		return move.id not in [0, first_id] and MoveLegality.refusal(player, move, 1, enemy, BuffManagerAuto.buffs_by_id) == MoveLegality.Refusal.NONE
 	)[0]
 	if player.equipped_moves.size() < 2:
 		player.equipped_moves.resize(2)
@@ -2438,7 +2440,7 @@ func _move_event(scene, caster_slot: int, target_slot: int, move_id: int, result
 
 # Returns the status bar that a presenter writes to.
 func _status_bar_of(presenter: FighterPresenter) -> StatusBar:
-	return presenter._status_bar
+	return presenter.status_bar()
 
 
 func _buff_icons(presenter: FighterPresenter) -> Array:
@@ -2469,12 +2471,12 @@ func test_an_impact_and_each_event_leave_a_bystander_as_it_was():
 	scene._show_move_result(_move_event(scene, 2, 3, 1, _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0)), 3)
 	assert_eq(bar.focus, focus_shown, "an impact on someone else leaves this fighter's Focus")
 	assert_eq(_buff_icons(presenter).size(), 0, "and its buff icons")
-	assert_ne(doll._state, CharacterVisual.State.STUN, "and its pose")
+	assert_ne(doll.current_state(), CharacterVisual.State.STUN, "and its pose")
 
 	await scene._play_events([{"type": BattleRunner.EventType.DISPEL, "caster_slot": 2, "target_slot": 3, "removed": []}])
 	assert_eq(bar.focus, focus_shown, "so does any other event")
 	assert_eq(_buff_icons(presenter).size(), 0, "with its buff icons")
-	assert_ne(doll._state, CharacterVisual.State.STUN, "and its pose")
+	assert_ne(doll.current_state(), CharacterVisual.State.STUN, "and its pose")
 
 	GameData.current_save = null
 	ZoneManager.auto_switch_scenes = true
@@ -2507,11 +2509,11 @@ func test_a_buff_landed_late_in_a_half_turn_shows_its_icon_only_once_its_result_
 
 	await scene._play_events([_move_event(scene, 2, BattleRunner.PLAYER_SLOT, 1, first_hit)])
 	assert_eq(_buff_icons(presenter).size(), 0, "after the guard's first hit Veradux shows no icon")
-	assert_ne(doll._state, CharacterVisual.State.STUN, "and no stun")
+	assert_ne(doll.current_state(), CharacterVisual.State.STUN, "and no stun")
 
 	await scene._play_events([_move_event(scene, 2, 3, 521, bolt)])
 	assert_eq(_buff_icons(presenter).size(), 1, "the bolt's result shows its icon")
-	assert_eq(doll._state, CharacterVisual.State.STUN, "and starts the stun")
+	assert_eq(doll.current_state(), CharacterVisual.State.STUN, "and starts the stun")
 
 	GameData.current_save = null
 	ZoneManager.auto_switch_scenes = true
@@ -2574,14 +2576,14 @@ func test_a_stun_starts_at_the_hit_that_lands_it_and_outlasts_its_flinch():
 	scene.units[2].stun = 1.0
 
 	await scene._play_events([{"type": BattleRunner.EventType.DISPEL, "caster_slot": 1, "target_slot": 3, "removed": []}])
-	assert_ne(doll._state, CharacterVisual.State.STUN, "an earlier event doesn't start the stun")
+	assert_ne(doll.current_state(), CharacterVisual.State.STUN, "an earlier event doesn't start the stun")
 
 	var stunning_hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)
 	stunning_hit.target_after = UnitSnapshot.of(scene.units[2])
 	scene._show_move_result({"type": BattleRunner.EventType.MOVE, "caster_slot": 1, "target_slot": 2, "move_id": 434, "result": stunning_hit}, 2)
 	for frame in 60:
 		doll._process(1.0 / 30.0)
-	assert_eq(doll._state, CharacterVisual.State.STUN, "the hit that lands it leaves the doll stunned")
+	assert_eq(doll.current_state(), CharacterVisual.State.STUN, "the hit that lands it leaves the doll stunned")
 
 	GameData.current_save = null
 	ZoneManager.auto_switch_scenes = true
@@ -2907,10 +2909,10 @@ func test_the_death_event_plays_only_the_deaths_no_move_landed():
 	var doll: CharacterVisual = scene._presenters[2].get_node("Doll")
 
 	await scene._play_events([{"type": BattleRunner.EventType.DEATH, "slot": 2, "cause": BattleRunner.DeathCause.MOVE}])
-	assert_ne(doll._state, CharacterVisual.State.DEAD, "a move's DEATH event plays nothing")
+	assert_ne(doll.current_state(), CharacterVisual.State.DEAD, "a move's DEATH event plays nothing")
 
 	await scene._play_events([{"type": BattleRunner.EventType.DEATH, "slot": 2, "cause": BattleRunner.DeathCause.DAMAGE_OVER_TIME}])
-	assert_eq(doll._state, CharacterVisual.State.DEAD, "a Buff tick's death plays here")
+	assert_eq(doll.current_state(), CharacterVisual.State.DEAD, "a Buff tick's death plays here")
 
 	GameData.current_save = null
 	ZoneManager.auto_switch_scenes = true
@@ -3093,9 +3095,9 @@ func test_a_shock_lands_1_frame_after_its_dispatch_and_the_count_starts_there():
 		])
 		var frames: Dictionary = {}
 		for frame in 300:
-			if guard_doll._state == CharacterVisual.State.CAST and not frames.has("dispatch"):
+			if guard_doll.current_state() == CharacterVisual.State.CAST and not frames.has("dispatch"):
 				frames["dispatch"] = frame
-			if player_doll._state == CharacterVisual.State.CAST and not frames.has("next dispatch"):
+			if player_doll.current_state() == CharacterVisual.State.CAST and not frames.has("next dispatch"):
 				frames["next dispatch"] = frame
 			for text in _floating_texts(scene):
 				if not frames.has(text):
@@ -3277,7 +3279,7 @@ func test_a_buff_tick_that_kills_its_caster_holds_the_next_action_to_frame_51():
 	])
 	var frames: Dictionary = {}
 	for frame in 300:
-		if doll._state == CharacterVisual.State.DEAD and not frames.has("death"):
+		if doll.current_state() == CharacterVisual.State.DEAD and not frames.has("death"):
 			frames["death"] = frame
 		for text in _floating_texts(scene):
 			if not frames.has(text):
@@ -3560,7 +3562,7 @@ func test_a_melee_move_swings_at_its_target_with_its_own_label():
 	scene._play_move_event(event)  # Nothing awaits this, because the test steps the swing.
 	assert_eq(_count_impact_effects(scene), impacts + 1, "at full speed Impact waits for the swing")
 	var doll: CharacterVisual = scene._presenters[1].get_node("Doll")
-	assert_eq(doll._attack_label, move.animation_label, "the move's own swing")
+	assert_eq(doll.attack_label(), move.animation_label, "the move's own swing")
 	for frame in 60:
 		if _count_impact_effects(scene) > impacts + 1:
 			break
@@ -3587,7 +3589,7 @@ func test_a_fighter_wears_its_items_and_shows_its_buffs_from_the_real_tables():
 	scene.animation_speed = 0.0
 	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
 	var presenter: FighterPresenter = scene._presenters[BattleRunner.PLAYER_SLOT]
-	assert_eq(presenter.get_node("Doll")._parts["chest"].get_child_count(), 2, "the chest's skin plus the armor")
+	assert_eq(presenter.get_node("Doll").part("chest").get_child_count(), 2, "the chest's skin plus the armor")
 
 	var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
 	player.apply_buff(BuffManagerAuto.get_buff_by_name("TIEDYE"), 1, player)

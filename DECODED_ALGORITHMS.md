@@ -480,7 +480,7 @@ Implemented in `scripts/battle/battle_rewards.gd`: `money_levels` picks the slot
 
 ## Companion XP (frame_42/DoAction_14.as `krinAddNewUnit`, DefineSprite_3142/frame_9)
 
-Implemented in `scripts/battle/battle_settlement.gd`: `_fighting_party` lists the companions `BattleSetup.build_units` placed, in slot order, and `BattleRewards.apply_victory` pays
+Implemented in `scripts/battle/battle_settlement.gd`: `_fighting_party` lists the companions in the Battle roster, which `BattleSetup.build_units` builds (#45), in slot order, and `BattleRewards.apply_victory` pays
 each of them.
 
 - Frame 201 empties `Krin.friendlySlotsFFTT` at every battle load (`frame_201/DoAction.as:116`) and then spawns slots 1 to 6 in order (lines 125 and 206).
@@ -495,7 +495,7 @@ each of them.
 
 ## Which moves can be picked (frame_42/DoAction_11.as, frame_42/DoAction_9.as)
 
-Ported: `MoveLegality`. `refusal` is the player's rule and `can_afford` is the part the AI shares.
+Ported: `MoveLegality`, the Move legality rule (#41). `refusal` is the player's rule and `can_afford` is the part the AI shares.
 
 - The player's pick runs six checks in order: target buffs (line 60), focus (65), silence (70), bar cooldown (75), life (80) and target relation (85). Each failure overwrites one message
   and `KrinCombatText` plays after all six, so the last failure is the one shown. A bad target beats everything, and a missing target buff only shows when nothing else failed.
@@ -1167,6 +1167,15 @@ What the runs showed. Each count is from `just aimove-report` on the logs below.
 - #475 ports the carry-over of every value above. An unset global is undefined in the original. `BattleAI` holds an undefined `focusCheck` as NaN, because every comparison with either is false, and an undefined slot as `UNDEFINED_SLOT`. An undefined list of defense moves counts as empty. `choose_move` returns an undefined target as target 0, and `BattleRunner` then passes the turn, as it does for a dead target. `test/unit/test_battle_ai.gd` replays Ruffle run 3 call 9, Flash call 64 and Ruffle call 305.
 
 Evidence: the Probe `dev/probes/aimove.as` wraps `_root.AImoveAdder` once frame 42 defines it. The real call runs unchanged. The Probe then replays the call from the globals it started with, once with nothing reset (`none`), once with every value above reset (`all`), and once for each group (`focus`, `fmove`, `darr`, `alive`, `lock`). Each replay sets `KRSC` back, so `KRRR` gives it the same dice, and a stub `krinAddMove` records the move. Then the Probe puts back every global the function writes. `none` matched the real call in all 924 calls. A throwaway Probe, kept as `references/traced_runs/aimove_drive_probe.as`, set Heroic and a four-member party on the main menu and started each battle through `LOADBATTLESCENE`. On Heroic the player's half-turn passes by itself, so only AI units chose moves, and most battles ended in a loss after one to five minutes. The lines are in `references/traced_runs/aimove_web_ruffle.txt` (runs 2 to 4) and `aimove_web_flash.txt` (run 5). The Steam build was not run. Its `AImoveAdder` (in its `frame_42/DoAction_2.as`) is line for line the same as the web build's, and its `KRRR` and `krinAddMove` differ only in writing `x += 1` where the web build has `x = x + 1`.
+
+## What ffdec draws from a SWF (the Timeline, Render-and-locate and Stripped copy)
+
+The art pipeline reads the SWF's timelines and draws them with ffdec, which runs no ActionScript. These are the rules that the three pipeline modules rely on.
+
+- **Timeline** (`dev/urchin_dev/swf/timeline.py`, #36). A place on an empty depth begins from the identity matrix with nothing else set. A move keeps every field it does not carry. A replace, which is a move with a character, swaps the character and keeps the rest. A RemoveObject empties the depth. ffdec and Ruffle agree on these four rules, and no tag in either SWF falls outside them. The two players disagree on other cases, so the walk refuses them and names the timeline, frame and depth.
+- **Render-and-locate** (`dev/urchin_dev/swf/render.py`, #43). ffdec draws a frame's rect with its left and top edges on pixel (0, 0) of the image, and rounds the image size up to whole pixels on the right and bottom only (`SWF.frameToImageGet` at jpexs cde1cc21a). So a piece's rect on the Stage is the job's origin, plus the left and top edges of the rect that the image was sized from, plus the crop's offset over the zoom. Until #72 the port put the image around the rect's centre, which placed every piece up and to the left of where ffdec drew it, by half that rounding.
+- ffdec draws every frame of a clip, the frames past a `stop()` too, and draws a nested clip on its age modulo its frame count. So `render.played_frames` ends a clip on the frame whose script runs `stop()`, and refuses a clip that still draws after a nested clip stops. BOOM_SPARK (DefineSprite 1712) drew its spark a second time on frames 21 to 24 because of this.
+- **Stripped copy** (`dev/urchin_dev/swf/strip.py`, #40). A clip mask looks like an unwanted shape on top of the art, but deleting it unclips everything under it. Shape 1913 masks the item sheet 2064, and deleting it took item 69 from 63x63 to 101x140 (6622d79). So a Stripped copy refuses an id that any placement uses as a clip mask, and an id that nothing places. An extractor measures from the same Stripped copy that it draws from: ecf28fd fixed 5 of 10 hall rects that were measured from the full SWF while their PNGs came from the stripped one.
 
 ## Approximation audit (2026-07-21) - port pieces NOT yet source-faithful
 

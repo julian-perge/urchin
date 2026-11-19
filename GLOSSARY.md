@@ -132,6 +132,10 @@ _Avoid_: Return
 The reason the player may not pick a move on a target right now: a bad target, too little life or Focus, a cooldown, silence, or a target missing a required buff. When several apply, the Refusal is the one the original would show.
 _Avoid_: Failure, which is a move that was picked but could not run
 
+**Move legality**:
+The rule that decides whether the player may pick a move on a target now, and gives the Refusal when not, as `MoveLegality.refusal` does. The AI uses only its cost check, `MoveLegality.can_afford`.
+_Avoid_: Move validation
+
 **Move result**:
 What one move did to its target, as `BattleManager` resolved it: what kind of move it was, which way it pushed the target's life once sswitch had its say, how much damage, heal or focus change it made, the target's life before it and whether the target was stunned when it landed, and the target's life, Focus, stun and buffs after it.
 _Avoid_: Hit, outcome
@@ -175,6 +179,20 @@ _Avoid_: Quirk
 **Quirk**:
 Odd behavior that follows consistently from the original's rules. The port keeps it, and notes it in case it is readdressed later.
 _Avoid_: Original bug
+
+### Art pipeline
+
+**Timeline**:
+The display list on each frame of a sprite or of the root, folded from the SWF's PlaceObject and RemoveObject tags by `dev/urchin_dev/swf/timeline.py`. It runs no ActionScript, so it shows each clip as the tags leave it.
+_Avoid_: Display walk
+
+**Render-and-locate**:
+Drawing chosen frames through the ffdec_lib driver and working out the rect that each drawn piece takes on the Stage, as `dev/urchin_dev/swf/render.py` does for every extractor.
+_Avoid_: ffdec wrapper
+
+**Stripped copy**:
+A copy of a SWF with the characters the game never shows deleted, so that ffdec does not draw them, as `dev/urchin_dev/swf/strip.py` builds it. It refuses to delete a clip mask.
+_Avoid_: Cleaned SWF
 
 ### Tracing the original
 

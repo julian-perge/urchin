@@ -65,14 +65,14 @@ var music_level: float = 100.0:
 		if _fade_tween != null and _fade_tween.is_running():
 			return
 		var player: AudioStreamPlayer = _music_players[_active_music]
-		player.volume_db = _level_db()
+		player.volume_db = level_db()
 
 var _effect_players: Array[AudioStreamPlayer] = []
 var _effect_counter: int = 0
 var _music_players: Array[AudioStreamPlayer] = []
 var _active_music: int = 0
-var _music_mode: int = MusicMode.NONE
-var _rotation_counter: int = 0
+var music_mode: int = MusicMode.NONE
+var rotation_counter: int = 0
 var _streams: Dictionary = {}
 var _fade_tween: Tween = null
 
@@ -108,16 +108,16 @@ func play_effect(cue: String) -> void:
 # addSound does nothing at all while Krin.sound is off (frame_42/DoAction.as:3),
 # so the music mode and the rotation do not change either.
 func play_menu_music() -> void:
-	if not sound_enabled or _music_mode == MusicMode.MENU:
+	if not sound_enabled or music_mode == MusicMode.MENU:
 		return
-	_music_mode = MusicMode.MENU
+	music_mode = MusicMode.MENU
 	_start_music(_next_rotation_cue(), false)
 
 
 func play_battle_music(is_boss: bool) -> void:
-	if not sound_enabled or _music_mode == MusicMode.BATTLE:
+	if not sound_enabled or music_mode == MusicMode.BATTLE:
 		return
-	_music_mode = MusicMode.BATTLE
+	music_mode = MusicMode.BATTLE
 	var cue: String = "_music_boss" if is_boss else _next_rotation_cue()
 	if is_boss:
 		_next_rotation_cue()  # the original advances the rotation either way
@@ -131,7 +131,7 @@ func forget_landing_sounds() -> void:
 
 
 func stop_music() -> void:
-	_music_mode = MusicMode.NONE
+	music_mode = MusicMode.NONE
 	for player in _music_players:
 		player.stop()
 
@@ -153,17 +153,36 @@ func stop_all_sounds() -> void:
 
 
 func reset_music_rotation() -> void:
-	_music_mode = MusicMode.NONE
-	_rotation_counter = 0
+	music_mode = MusicMode.NONE
+	rotation_counter = 0
 
 
 # The last frames of IntroSeq and IntroSeq2 set soundPlayCounter and turn
 # bangStart on before the Tutorial and before battle 100
 # (frame_165/DoAction.as:4-5, frame_180/DoAction.as:4-6). They do it whether the
 # sound is on or off, because they do not go through addSound.
-func set_first_fight_music(rotation_counter: int) -> void:
-	_rotation_counter = rotation_counter
+func set_first_fight_music(counter: int) -> void:
+	rotation_counter = counter
 	bang_start = true
+
+
+func is_effect_playing() -> bool:
+	return _effect_players.any(func(player: AudioStreamPlayer) -> bool: return player.playing)
+
+
+# -> the music channel that plays the current track, or that fades it in.
+func music_player() -> AudioStreamPlayer:
+	return _music_players[_active_music]
+
+
+# -> the music channel that played the track before, which a crossfade fades out.
+func previous_music_player() -> AudioStreamPlayer:
+	return _music_players[1 - _active_music]
+
+
+# -> the running crossfade, or null when no track has crossfaded in yet.
+func music_fade() -> Tween:
+	return _fade_tween
 
 
 func voice(unit_cues: Array) -> void:
@@ -172,8 +191,8 @@ func voice(unit_cues: Array) -> void:
 
 
 func _next_rotation_cue() -> String:
-	var cue = MUSIC_ROTATION[_rotation_counter]
-	_rotation_counter = (_rotation_counter + 1) % MUSIC_ROTATION.size()
+	var cue = MUSIC_ROTATION[rotation_counter]
+	rotation_counter = (rotation_counter + 1) % MUSIC_ROTATION.size()
 	return cue
 
 
@@ -187,7 +206,7 @@ func _start_music(cue: String, hard_start: bool) -> void:
 	new_player.stream = stream
 	if _fade_tween != null:
 		_fade_tween.kill()
-	var target_db: float = _level_db()
+	var target_db: float = level_db()
 	if hard_start:
 		old_player.stop()
 		new_player.volume_db = target_db
@@ -203,7 +222,7 @@ func _start_music(cue: String, hard_start: bool) -> void:
 
 
 # The volume that music_level asks for.
-func _level_db() -> float:
+func level_db() -> float:
 	return FULL_VOLUME_DB + linear_to_db(maxf(music_level, 0.001) / 100.0)
 
 

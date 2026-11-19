@@ -82,14 +82,14 @@ func test_hovering_a_face_shows_its_title_and_body_in_the_shared_tooltip_and_lea
 	var face: PartyFace = _face()
 	face.show_member(2, false, false)
 	face.hit_button.mouse_entered.emit()
-	assert_true(GameTooltip._root.visible)
-	assert_eq(GameTooltip._sections.get_child_count(), 2, "a title section and a body section")
-	var title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
-	var body: Label = GameTooltip._sections.get_child(1).get_child(0).get_child(0)
+	assert_true(GameTooltip.is_showing())
+	assert_eq(GameTooltip.sections().size(), 2, "a title section and a body section")
+	var title: Label = GameTooltip.line_label(0)
+	var body: Label = GameTooltip.line_label(1)
 	assert_eq(title.text, face.tooltip()["title"])
 	assert_eq(body.text, face.tooltip()["body"])
 	face.hit_button.mouse_exited.emit()
-	assert_false(GameTooltip._root.visible)
+	assert_false(GameTooltip.is_showing())
 
 
 func test_an_unjoined_face_has_no_tooltip() -> void:

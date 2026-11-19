@@ -140,7 +140,7 @@ func test_a_tree_node_click_learns_the_talent() -> void:
 
 func _tooltip_texts() -> Array[String]:
 	var texts: Array[String] = []
-	for section: Node in GameTooltip._sections.get_children():
+	for section: Node in GameTooltip.sections():
 		for label: Node in section.get_child(0).get_children():
 			texts.append((label as Label).text)
 	return texts
@@ -158,7 +158,7 @@ func test_an_empty_socket_tooltip_reads_strings_json() -> void:
 	var expected: Array[String] = [
 		Strings.text("SKILLNONE"), Strings.text("SKILLTUT2"), Strings.text("SKILLTUT"),
 	]
-	assert_true(GameTooltip._root.visible, "the tooltip shows")
+	assert_true(GameTooltip.is_showing(), "the tooltip shows")
 	assert_eq(_tooltip_texts(), expected)
 	assert_eq(socket.tooltip_text, "", "no native tooltip shows over the rich one")
 
@@ -405,7 +405,7 @@ func test_the_pool_the_ring_and_the_held_icon_tint_the_disc_with_the_moves_eleme
 	var held: TextureRect = window.get_node("HeldIcon")
 	_assert_color(_disc(held.texture, ADRENALINE_ID), _element(ADRENALINE_ID), "held icon")
 	row.mouse_entered.emit()
-	_assert_color(_disc(GameTooltip._icon.texture, ADRENALINE_ID), _element(ADRENALINE_ID), "pool tooltip")
+	_assert_color(_disc(GameTooltip.icon_texture(), ADRENALINE_ID), _element(ADRENALINE_ID), "pool tooltip")
 
 
 func _talent_cover(window: Control, node_index: int) -> TextureRect:
@@ -465,7 +465,7 @@ func test_a_tree_nodes_disc_takes_the_element_of_its_moves_row() -> void:
 	var active: TextureRect = window.find_child("Node5", true, false).get_node("IconRect")
 	_assert_color(_disc(active.texture, ADRENALINE_ID), _element(ADRENALINE_ID), "active")
 	window._on_tree_node_hovered(5)
-	_assert_color(_disc(GameTooltip._icon.texture, ADRENALINE_ID), _element(ADRENALINE_ID), "tree tooltip")
+	_assert_color(_disc(GameTooltip.icon_texture(), ADRENALINE_ID), _element(ADRENALINE_ID), "tree tooltip")
 
 
 # A socket that goes from one ability straight to another stays on a frame

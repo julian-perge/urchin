@@ -152,7 +152,7 @@ func _assert_ring(bar_index: int, state: String) -> void:
 
 func _tooltip_lines() -> Array:
 	var texts: Array = []
-	for section in GameTooltip._sections.get_children():
+	for section in GameTooltip.sections():
 		for label in section.get_child(0).get_children():
 			texts.append(label.text)
 	return texts
@@ -530,7 +530,7 @@ func test_an_orbs_tooltip_carries_the_moves_description():
 	_menu.orbs[0].mouse_entered.emit()
 	assert_eq(_tooltip_lines(), ["Leading Strike", "This move costs nothing", "Attack the enemy.", "Cooldown: 3 turns"])
 	_menu.orbs[0].mouse_exited.emit()
-	assert_false(GameTooltip._root.visible, "leaving the orb hides it")
+	assert_false(GameTooltip.is_showing(), "leaving the orb hides it")
 
 
 func test_an_orb_shows_the_moves_icon_art_not_initials():
@@ -545,9 +545,9 @@ func test_an_orb_shows_the_moves_icon_art_not_initials():
 func test_closing_drops_the_tooltip_an_orb_raised():
 	_open()
 	_menu.orbs[0].mouse_entered.emit()
-	assert_true(GameTooltip._root.visible, "the orb raised it")
+	assert_true(GameTooltip.is_showing(), "the orb raised it")
 	_menu.decision_open = false
-	assert_false(GameTooltip._root.visible)
+	assert_false(GameTooltip.is_showing())
 
 
 func test_closing_leaves_a_tooltip_the_menu_did_not_raise():
@@ -555,7 +555,7 @@ func test_closing_leaves_a_tooltip_the_menu_did_not_raise():
 	var anchor: Control = add_child_autofree(Control.new())
 	GameTooltip.show_sections([{"bg_color": Color.BLACK, "lines": [{"text": "Quit", "color": Color.WHITE}]}], anchor)
 	_menu.decision_open = false
-	assert_true(GameTooltip._root.visible)
+	assert_true(GameTooltip.is_showing())
 
 
 # refreshOrbs gives each orb the element colour of its move, and the orb's disc

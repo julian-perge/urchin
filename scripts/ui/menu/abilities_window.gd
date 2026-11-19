@@ -391,6 +391,11 @@ func _on_socket_hovered(socket_index: int) -> void:
 	GameTooltip.show_sections(result["sections"], button, button.icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
 
 
+# -> the move ids the pool lists, top row first, as refresh() last built them.
+func pool_move_ids() -> Array:
+	return _pool_move_ids
+
+
 func _refresh_pool(save: PlayerSave) -> void:
 	_pool_move_ids = []
 	# KrinCreateAbilityMatrix lists every owned ability, the ones on the ring

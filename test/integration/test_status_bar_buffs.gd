@@ -41,12 +41,12 @@ func test_refresh_buffs_includes_buff_id_zero():
 	var second: Control = bar.buff_row.get_child(1)
 
 	first.mouse_entered.emit()
-	var first_title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	var first_title: Label = GameTooltip.line_label(0)
 	assert_string_contains(first_title.text, "Twin Guardians", "slot 0 shows first")
 	first.mouse_exited.emit()
 
 	second.mouse_entered.emit()
-	var second_title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	var second_title: Label = GameTooltip.line_label(0)
 	assert_string_contains(second_title.text, "The Immortal Flame", "slot 1 shows second")
 	second.mouse_exited.emit()
 
@@ -195,7 +195,7 @@ func test_buff_tooltip_title_is_the_name_alone_and_the_icon_counts_the_turns():
 	assert_eq(_find(buff, "Label").text, "3", "the icon's counter shows the turns left")
 	buff.mouse_entered.emit()
 	await wait_process_frames(2)
-	var title: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	var title: Label = GameTooltip.line_label(0)
 	assert_eq(title.text, "Seek and Destroy", "the title is the name alone")
 	assert_eq(title.get_line_count(), 1, "and fits on one line")
 

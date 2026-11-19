@@ -72,7 +72,7 @@ func _ready():
 		style.set_content_margin(SIDE_TOP, 3.5)
 		style.set_content_margin(SIDE_BOTTOM, 3.5)
 		name_input.add_theme_stylebox_override(style_name, style)
-	_show_screen(title_panel)
+	show_screen(title_panel)
 	_refresh_slot_names()
 	_setup_class_cards()
 	# Quit, the battle's Quit and the game over go to resetHere, which recreates
@@ -84,7 +84,7 @@ func _ready():
 	AudioManagerAuto.play_menu_music()
 
 
-func _show_screen(screen: Control) -> void:
+func show_screen(screen: Control) -> void:
 	for panel in [title_panel, mode_panel, manual_panel, name_panel, slot_panel, new_game_panel, options_panel, credits_panel]:
 		panel.visible = panel == screen
 
@@ -93,26 +93,26 @@ func _show_screen(screen: Control) -> void:
 # DefineButton2_2702, goes to mainMenu from all of them (on(release), line 2).
 func _on_back_pressed() -> void:
 	GameTooltip.hide_tooltip()
-	_show_screen(title_panel)
+	show_screen(title_panel)
 
 
 # --- screen 1: the title -----------------------------------------------------
 
 # DefineButton2_2692 on(release) goes to subMenu.
 func _on_play_pressed() -> void:
-	_show_screen(mode_panel)
+	show_screen(mode_panel)
 
 
 # DefineButton2_2693 on(release) goes to designMenu, whose frame script asks
 # for a topic again each time (frame_124/DoAction.as).
 func _on_game_manual_pressed() -> void:
 	manual_panel.open()
-	_show_screen(manual_panel)
+	show_screen(manual_panel)
 
 
 # DefineButton2_2690 on(release) goes to creditMenu.
 func _on_credits_pressed() -> void:
-	_show_screen(credits_panel)
+	show_screen(credits_panel)
 
 
 # --- screen 2: New Game or Load Game -----------------------------------------
@@ -120,18 +120,18 @@ func _on_credits_pressed() -> void:
 func _on_new_game_pressed() -> void:
 	_slot_mode = SlotMode.NEW_GAME
 	name_input.text = NAME_PROMPT
-	_show_screen(name_panel)
+	show_screen(name_panel)
 
 
 func _on_load_game_pressed() -> void:
 	_slot_mode = SlotMode.LOAD_GAME
-	_show_screen(slot_panel)
+	show_screen(slot_panel)
 
 
 # --- screen 3: name ----------------------------------------------------------
 
 func _on_name_confirmed() -> void:
-	_show_screen(slot_panel)
+	show_screen(slot_panel)
 
 
 # --- screen 4: save slots ----------------------------------------------------
@@ -179,7 +179,7 @@ func _on_slot_pressed(slot: int) -> void:
 	if _slot_mode == SlotMode.NEW_GAME:
 		_selected_slot = slot
 		GameTooltip.hide_tooltip()
-		_show_screen(new_game_panel)
+		show_screen(new_game_panel)
 	elif GameData.load_game(slot):
 		_enter_game()
 
@@ -229,10 +229,15 @@ func _fade_card(card: TextureButton, to_alpha: float, duration: float) -> void:
 	_card_fades[card.name] = tween
 
 
+# -> the running color fade of one class card, by the card's node name.
+func card_fade(card_name: String) -> Tween:
+	return _card_fades.get(card_name)
+
+
 func _on_class_picked(class_id: PlayerSave.PlayerClass) -> void:
 	_selected_class = class_id
 	options_panel.open()
-	_show_screen(options_panel)
+	show_screen(options_panel)
 
 
 # --- screen 6: settings -------------------------------------------------------

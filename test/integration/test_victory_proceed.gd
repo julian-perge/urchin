@@ -82,7 +82,7 @@ func _finish_player_row(game: Control) -> void:
 
 func _proceed(game: Control) -> void:
 	_finish_player_row(game)
-	(game.get_node("VictoryWindow") as VictoryWindow)._on_proceed_pressed()
+	(game.get_node("VictoryWindow/ProceedButton") as Button).pressed.emit()
 
 
 # Every outcome that shows, so a case that opens a second one fails.
@@ -148,14 +148,14 @@ func test_proceed_autosaves_only_when_the_option_is_on():
 
 
 func _an_effect_is_playing() -> bool:
-	return AudioManagerAuto._effect_players.any(func(player): return player.is_playing())
+	return AudioManagerAuto.is_effect_playing()
 
 
 # Starts the menu music the way the Hub does when it opens (game.gd's _ready())
 # and returns the cue it picked.
 func _hub_menu_track() -> String:
 	AudioManagerAuto.play_menu_music()
-	var player: AudioStreamPlayer = AudioManagerAuto._music_players[AudioManagerAuto._active_music]
+	var player: AudioStreamPlayer = AudioManagerAuto.music_player()
 	return player.stream.resource_path.get_file().get_basename()
 
 
@@ -172,7 +172,7 @@ func test_proceeding_into_a_cutscene_stops_sound_effects_too():
 	if cutscene != null:
 		assert_eq(cutscene.video.stream.resource_path, "res://assets/cutscenes/CS_CUT2.ogv", "and it is the win's CS_CUT2")
 	assert_false(_an_effect_is_playing(), "and no effect plays on into it")
-	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "and the menu music stops")
+	assert_eq(AudioManagerAuto.music_mode, AudioManagerAuto.MusicMode.NONE, "and the menu music stops")
 
 
 # When a cutscene ends, the original's cutscene clip sets soundPlayCounter and
@@ -182,7 +182,7 @@ func test_proceeding_into_a_cutscene_stops_sound_effects_too():
 # (frame_219/DoAction.as), so the next Hub opens the map.
 func test_a_cutscene_starts_the_menu_rotation_over_and_overmap_opens_the_map_next():
 	var game: Control = _hub(_victory("CS_CUT2", "overMap", true, 0))
-	AudioManagerAuto._rotation_counter = 2
+	AudioManagerAuto.rotation_counter = 2
 	_proceed(game)
 	game.get_node("CutscenePlayer").video.finished.emit()
 	assert_called(game, "_reload_hub")
@@ -198,7 +198,7 @@ func test_a_cutscene_starts_the_menu_rotation_over_and_overmap_opens_the_map_nex
 # starts the rotation over (frame_181/DoAction.as:15).
 func test_cs_cut5_ends_on_the_silent_ending_screen_and_ok_goes_to_the_hub():
 	var game: Control = _hub(_victory("CS_CUT5", "endMenu", true, 0))
-	AudioManagerAuto._rotation_counter = 2
+	AudioManagerAuto.rotation_counter = 2
 	_proceed(game)
 	var cutscene: CutscenePlayer = game.get_node("CutscenePlayer")
 	assert_eq(cutscene.video.stream.resource_path, "res://assets/cutscenes/CS_CUT5.ogv")
@@ -206,7 +206,7 @@ func test_cs_cut5_ends_on_the_silent_ending_screen_and_ok_goes_to_the_hub():
 
 	assert_not_called(game, "_reload_hub")
 	assert_false(ZoneManager.open_zone_map_on_load, "the zone map stays shut")
-	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "no music plays on the ending screen")
+	assert_eq(AudioManagerAuto.music_mode, AudioManagerAuto.MusicMode.NONE, "no music plays on the ending screen")
 	var ending: EndingScreen = game.get_node_or_null("EndingScreen")
 	assert_not_null(ending, "the ending screen is up")
 	if ending == null:

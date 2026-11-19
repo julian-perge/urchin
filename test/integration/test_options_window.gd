@@ -76,15 +76,15 @@ func test_sound_turns_every_sound_off_and_back_on_with_the_menu_music() -> void:
 	(window.get_node("SoundButton") as BaseButton).pressed.emit()
 	assert_false(GameData.current_save.sound, "the save keeps the setting")
 	assert_false(AudioManagerAuto.sound_enabled, "and the audio follows it")
-	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.NONE, "the music stops")
+	assert_eq(AudioManagerAuto.music_mode, AudioManagerAuto.MusicMode.NONE, "the music stops")
 	assert_eq(_text(window, "SoundValue"), _menu[30])
 
-	AudioManagerAuto._rotation_counter = 5
+	AudioManagerAuto.rotation_counter = 5
 	(window.get_node("SoundButton") as BaseButton).pressed.emit()
 	assert_true(GameData.current_save.sound)
 	assert_true(AudioManagerAuto.sound_enabled)
-	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.MENU, "the menu music starts")
-	assert_eq(AudioManagerAuto._rotation_counter, 1, "from the first track of the rotation")
+	assert_eq(AudioManagerAuto.music_mode, AudioManagerAuto.MusicMode.MENU, "the menu music starts")
+	assert_eq(AudioManagerAuto.rotation_counter, 1, "from the first track of the rotation")
 	assert_eq(_text(window, "SoundValue"), _menu[29])
 
 
