@@ -10,12 +10,13 @@
 # margin. crop(), trim() and trim_union() cut a canvas down and give the
 # piece's rect on the stage in design px.
 #
-# The rect keeps the formula every extractor used before this module: the
-# displayRect's centre plus the job's origin, minus half the canvas, plus the
-# crop's offset. ffdec grows the canvas by the filter margin on both sides,
-# so the canvas keeps the displayRect's centre. It also rounds the canvas up
-# to whole pixels on the right and bottom only, so this formula sits half
-# that rounding off the exact origin, which is julian-perge/urchin#72.
+# A piece's rect is the job's origin, plus the left and top edges of the rect
+# the canvas was sized from, plus the crop's offset over the zoom. ffdec draws
+# that rect with its left and top edges on the canvas's (0, 0)
+# (SWF.frameToImageGet at jpexs cde1cc21a) and rounds the canvas up to whole
+# pixels on the right and bottom only. Until julian-perge/urchin#72 the rect
+# put the canvas around the displayRect's centre instead, which placed every
+# piece half that rounding up and to the left of where ffdec drew it.
 #
 # Two checks guard every canvas: its size has to be the sized-from rect times
 # the zoom, rounded up as ffdec rounds it, and it can't be smaller than the
@@ -240,12 +241,8 @@ def crop(frame: Frame, bbox: tuple[int, int, int, int]) -> Trimmed:
 
 def _crop(frame: Frame, canvas: Image.Image, bbox) -> Trimmed:
     zoom = frame.job.zoom
-    x0, y0, x1, y1 = frame.display_rect
-    width, height = (x1 - x0) / TWIPS, (y1 - y0) / TWIPS
-    centre_x = frame.job.origin[0] + x0 / TWIPS + width / 2
-    centre_y = frame.job.origin[1] + y0 / TWIPS + height / 2
-    canvas_x = centre_x - frame.size[0] / zoom / 2
-    canvas_y = centre_y - frame.size[1] / zoom / 2
+    canvas_x = frame.job.origin[0] + frame.canvas_rect[0] / TWIPS
+    canvas_y = frame.job.origin[1] + frame.canvas_rect[1] / TWIPS
     rect = (
         canvas_x + bbox[0] / zoom,
         canvas_y + bbox[1] / zoom,
