@@ -20,7 +20,8 @@
 #             the child's instance name. A tree node of the Abilities Window is
 #             one. It is recorded as that point on the Stage, and as the
 #             sprite's DropShadow when it has one, which the port draws as the
-#             Control's StyleBoxFlat shadow.
+#             Control's StyleBoxFlat shadow. The Control's size is the port's
+#             own, so the record holds no rect for it.
 #   "panel" - a flat Panel (Part 3): a sprite whose one shape has a solid fill
 #             and a line, under an inner DropShadow. Its rect is the fill rect
 #             grown by half the border. The fill rect is ShapeBounds through

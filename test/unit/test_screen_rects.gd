@@ -203,7 +203,7 @@ func _box_shadow_problems(path: String, node: Control, shadow: Dictionary) -> Ar
 		return ["%s: shadow: the normal style is not a StyleBoxFlat" % path]
 	var found: Array[String] = []
 	if style.shadow_size != roundi(shadow["blur"]):
-		found.append("%s: shadow size %d, expected %s" % [path, style.shadow_size, shadow["blur"]])
+		found.append("%s: shadow size %d, expected %d" % [path, style.shadow_size, roundi(shadow["blur"])])
 	var offset := Vector2(shadow["offset"][0], shadow["offset"][1])
 	if not (_close(style.shadow_offset.x, offset.x) and _close(style.shadow_offset.y, offset.y)):
 		found.append("%s: shadow offset %s, expected %s" % [path, style.shadow_offset, offset])
