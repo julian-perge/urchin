@@ -172,7 +172,7 @@ def test_an_inner_shadow_piece_in_a_sprite_with_no_drop_shadow_is_refused(monkey
     frames = {0: [{9: pool}], 3120: [{1: mask}]}
     monkeypatch.setattr(screen_rects.timeline, "frame_of", lambda *_: 1)
     monkeypatch.setattr(screen_rects.timeline, "frames", lambda _, owner: frames[owner])
-    monkeypatch.setattr(screen_rects, "art_sources", lambda: {})
+    monkeypatch.setattr(screen_rects, "art_sources", dict)
     monkeypatch.setattr(screen_rects, "character_kind", lambda *_: "shape")
     scene = screen_rects.Scene(
         0, "skills", {"Shadow": screen_rects.Piece("inner_shadow", 9, inner_depth=1)}
