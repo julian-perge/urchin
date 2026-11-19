@@ -418,7 +418,7 @@ Ported: `CharacterVisual._play_death` and `FighterPresenter.die`. Frame counts b
   second frame. Flash keeps `_alpha` in steps of 1/256 and drops the rest on each write, so each step takes 13/256 off: 100, 94.921875, 89.84375, and so on to 3.515625 on frame 36 and
   -1.171875 on frame 37. Frame 38 finds the alpha not above 0 and hides `inner2`. So the fade takes 20 frames, the bar draws nothing from frame 37, and it is hidden on frame 38, 38
   frames after the death. Traced runs of the web build measured this frame by frame, with the same values in the Flash 14 debug player and in Ruffle 0.7.1
-  (`references/traced_runs/death_fade_web_flash.txt` and `death_fade_web_ruffle.txt`, #383). `StatusBar._advance_death` steps in 1/256 units, and
+  (`references/traced_runs/death_fade_web_flash.txt` and `death_fade_web_ruffle.txt`, #383). The Steam build logged the same values in the Flash 14 debug player. `StatusBar._advance_death` steps in 1/256 units, and
   `test_the_bar_fades_and_hides_on_the_frames_the_traced_run_measured` checks every logged frame.
 - `lifeBarUpdate` does none of that when the bar's rounded percent hasn't changed (295-298), so a unit killed from under 0.5% life dies with no voice and no fade. ADR 0005 counts that as
   an Original bug, and the port plays both on every death.
