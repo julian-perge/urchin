@@ -3853,6 +3853,7 @@
    },
    "port_only": [
     "StatusLabel",
+    "HeldIcon",
     "Pool/Mask/Rows",
     "HintSteps",
     "TreeNodes/Node0/IconRect",

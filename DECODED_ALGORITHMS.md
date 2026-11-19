@@ -272,8 +272,10 @@ save when the game starts, goes on to the first fight when it starts, and sends 
 - The same frame also resets `StatSets0 = [5, 6, 5, 3, 0]` (`frame_180/DoAction.as:8`), which is exactly that gear's bonuses (life 5, strength 6, magic 5, speed 3). The class buttons had already
   added the 19 level-1 points, split by class ratio, onto `StatSets0` through `assignPointsStart` (`frame_42/DoAction_15.as:57-78`), and `statPoints` stays 0 (`frame_41/DoAction_2.as:79`), so
   the class split is thrown away and a new character holds only its gear bonuses. Every route from class select passes through frame 180 before battle 100, and the tutorial route
-  fights battle 2 on the way (`frame_165/DoAction.as`), still holding the class split because frame 180 has not run yet. The port's `PlayerSave.new_game` keeps only the split's rounding residue, and `GameData.new_game` equips the gear onto a zeroed
-  allocation.
+  fights battle 2 on the way (`frame_165/DoAction.as`), still holding the class split because frame 180 has not run yet. The port's `PlayerSave.new_game` keeps only the split's rounding residue, and `GameData.new_game` calls
+  `PlayerSave.start_story`, which sets the frame 180 gear and allocation. `ZoneManager.request_tutorial_fight` calls `PlayerSave.enter_tutorial`, which sets the frame 42 gear
+  (`frame_42/DoAction_17.as:50-51`: no White T-Shirt, `StatSets0 = [5, 6, 5, 3, 0]`) and adds the class split again. A Tutorial win calls `start_story` before battle 100. Both read the gear and allocation from
+  `dev/converted_json/starting_state.json`, which `just convert-starting-state` reads out of the two frame scripts.
 - Sell-back = `ceil(price * 0.15)` (DefineButton2_3015).
 - Each party member's looks are fixed. `frame_42/DoAction_17.as:7-84` is top-level frame 42 code that sets `SkinSet`, `HairSet` and `GSet` for every character, and nothing else writes them, so the
   original has no appearance screen. The port keeps each character's looks in `Party`'s `model` entry.
@@ -846,6 +848,9 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
 - In the Abilities window a press on a pool ability picks it up: `DefineButton2_2437` on(press) sets `UITmouseHold` to the ability and shows its icon on the cursor. A release over a ring
   socket calls `addMoveForPlayer` in its `menuMode` branch, which places the held ability in that socket, or shows `SKILLERROR` when the ring already holds the ability's limit
   (`KRINABILITY<id>[8]`) of copies (`frame_42/DoAction_11.as:1-32`). A release with nothing held empties the socket. `frame_181/DoAction_2.as:10-14` drops a held ability.
+  `KrinCreateAbilityMatrix` lists every ability in `moveMatrix2` in the pool, the ones on the ring too. Ported: `abilities_window.gd`'s `_on_pool_row_held`, `_on_socket_pressed` and
+  `_input` (#386). Flash runs `on(release)` only on the button that took the press, so the player presses a pool ability and then clicks a socket. The held icon sits where the tooltip clip
+  places `inner2`, which `extract_tooltip_look` writes as `held_icon`.
 - Ported: `hotbar.gd`'s `_on_respec_pressed`. The Respec button on the hotbar, `DefineButton2_3179`, refuses with `MENU[66]` while an item is on the cursor and does nothing while `PauseForScreen` is set. It costs
   `round(0.7 * respecValue(Level))` euros and refuses with `MENU[42]` when the player has less. Otherwise it sets the skill points as above and the stat points to `givePoints(Level, true)`,
   puts the class's two starting moves back as the only moves, clears the cooldowns, `skillAdderMatrix`, `buffAdderMatrix` and `talentMainArray`, rebuilds `StatSets0` from the equipped
@@ -883,7 +888,7 @@ AS2 `for..in` walks an array's keys in the reverse of the order the keys were cr
 
 What it means for the port:
 
-- `AImoveAdder` (`frame_42/DoAction_9.as`): `CDArrayA`, `CDArrayD` and `CDArrayABS` are copied from the unit's literal move lists by `for..in` (`frame_42/DoAction_14.as:113-127,193-206`), so they walk ascending and pool index `i` is the literal's index `i`. `moveFilterA2` and the plain `moveFilterD2` pass through two flips and end ascending, as in `BattleAI`. `moveFilterABS1` (line 50) and the heal-filtered `moveFilterD2` (line 305) pass through one flip and end descending. The focus scan at line 85 walks `moveFilterA0` descending, so `focusSelectNum` ends on the lowest matching index. `BattleAI` does all three the other way: #391.
+- `AImoveAdder` (`frame_42/DoAction_9.as`): `CDArrayA`, `CDArrayD` and `CDArrayABS` are copied from the unit's literal move lists by `for..in` (`frame_42/DoAction_14.as:113-127,193-206`), so they walk ascending and pool index `i` is the literal's index `i`. `moveFilterA2` and the plain `moveFilterD2` pass through two flips and end ascending, as in `BattleAI`. `moveFilterABS1` (line 50) and the heal-filtered `moveFilterD2` (line 305) pass through one flip and end descending. The focus scan at line 85 walks `moveFilterA0` descending, so `focusSelectNum` ends on the lowest matching index, and a move that restores the caster's own focus sets `playerFocusCheck` to the caster (line 105), which stops the teammate focus moves walked after it. `BattleAI.choose_move` walks all three in the same order (#391), and `test/unit/test_battle_ai.gd` checks each one with a pool of three moves.
 - The `moveMatrix2` rebuild (`DefineButton2_3096` on(release), lines 48-58) walks the 38-zero literal `skillAdderMatrix` from node 37 down. `TalentTree._rebuild_known_moves` walks it from node 0 up: #392.
 - `KrinCreateAbilityMatrix` (`DefineSprite_3142/frame_25/DoAction.as:37`) draws the Abilities pool rows by walking the push-built `moveMatrix2`, so the rows come newest first: node 0 up to node 37, then `startSkill2`, then `startSkill1`. `AbilitiesWindow._refresh_pool` draws them in array order: #395.
 - `B3012` (`DefineButton2_3012` on(press), lines 3-9) walks `Krin.itemArray` from 36 down and keeps the last empty slot, which is the lowest empty index. That is `item_array.find(0)`, so the port's slot pick already matches.

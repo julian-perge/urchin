@@ -54,18 +54,13 @@ func _slot_path(slot: int) -> String:
 func has_save(slot: int) -> bool:
 	return FileAccess.file_exists(_slot_path(slot))
 
-# Sonny's starting outfit (frame_180: equipArray0 = [0,11,0,4,8,5,0]) -
-# White T-Shirt, Levo Jeans, Proverse All Stars, A Broken Pipe.
-const STARTING_EQUIPMENT: Dictionary[int, int] = {1: 11, 3: 4, 4: 8, 5: 5}
-
+# A new game starts in the state that battle 100 needs. The Tutorial route
+# changes it with PlayerSave.enter_tutorial before battle 2.
 func new_game(slot: int, player_name: String, player_class: PlayerSave.PlayerClass = PlayerSave.PlayerClass.BIOLOGICAL) -> void:
 	current_slot = slot
 	current_save = PlayerSave.new_game(player_name, player_class)
 	menu_party_id = Party.PLAYER_PARTY_ID
-	for equip_slot in STARTING_EQUIPMENT:
-		var item: GameItem = ItemManagerAuto.get_item(STARTING_EQUIPMENT[equip_slot])
-		if item != null:
-			Equipment.equip(Equipment.Wearer.for_player(current_save), item, equip_slot, ItemManagerAuto.items_by_id)
+	current_save.start_story()
 
 func load_game(slot: int) -> bool:
 	if not has_save(slot):

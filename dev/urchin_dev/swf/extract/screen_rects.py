@@ -542,7 +542,8 @@ SCENES: dict[str, Scene] = {
     # clips the backing 3119 at depth 2 and the rows the game adds to
     # talentPool2 at depth 3. The frame 3116 at depth 7 and the scroll buttons
     # at depths 8 and 11 sit outside the mask. The pool's rows are the port's
-    # own design (ADR 0007), so they have no piece.
+    # own design (ADR 0007), so they have no piece. HeldIcon follows the mouse,
+    # as the tooltip clip's inner2 does, so it has no place on the frame.
     "res://scenes/ui/menu/abilities_window.tscn": Scene(
         timeline=KRINMENU,
         frame="skills",
@@ -611,6 +612,7 @@ SCENES: dict[str, Scene] = {
         },
         port_only=(
             "StatusLabel",
+            "HeldIcon",
             "Pool/Mask/Rows",
             # The tutorial steps of the hint box come from extract_hint_steps,
             # whose hint_steps.json places them, and test_abilities_window.gd

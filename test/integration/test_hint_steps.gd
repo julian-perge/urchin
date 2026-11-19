@@ -194,4 +194,7 @@ func test_the_box_plays_on_across_steps_and_the_pointer_loops_its_label() -> voi
 
 func test_the_hint_box_draws_over_the_tree_and_the_ring() -> void:
 	var window: Control = _window()
-	assert_eq(window.get_node("HintSteps").get_index(), window.get_child_count() - 1)
+	var index: int = window.get_node("HintSteps").get_index()
+	assert_gt(index, window.get_node("TreeNodes").get_index(), "over the tree")
+	assert_gt(index, window.get_node("Socket7").get_index(), "over the ring")
+	assert_eq(window.get_node("HeldIcon").get_index(), index + 1, "under the held icon only")

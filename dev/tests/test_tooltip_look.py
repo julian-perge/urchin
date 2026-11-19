@@ -7,7 +7,13 @@ import struct
 import pytest
 from test_swf_index import bits, swf, tag
 from urchin_dev.swf.extract import tooltip_look
-from urchin_dev.swf.swf_index import TAG_DEFINE_SHAPE3, first_gradient, parse_swf
+from urchin_dev.swf.swf_index import (
+    TAG_DEFINE_SHAPE3,
+    Placement,
+    Removal,
+    first_gradient,
+    parse_swf,
+)
 
 CHANGE_COLOR = """
 function krinChangeColor(target, colorType)
@@ -222,3 +228,30 @@ def test_sell_ratio_reads_the_share_both_scripts_use():
 def test_sell_ratio_raises_when_the_tooltip_and_the_press_differ():
     with pytest.raises(ValueError, match="names 0.15"):
         tooltip_look.sell_ratio(SELL_LINE, SELL_LINE.replace("0.15", "0.2"))
+
+
+def placed(depth: int, character: int | None, name: str | None) -> Placement:
+    return Placement(owner=2717, frame=1, depth=depth, character_id=character,
+                     name=name, clip_depth=None, tag=26, move=False,
+                     matrix=(1.0, 0.0, 0.0, 1.0, 0, 0), color_transform=None,
+                     ratio=None, filters=None, filter_records=None,
+                     blend_mode=None, clip_actions=None, filters_at=None)  # fmt: skip
+
+
+def test_held_icon_placement_finds_inner2_among_the_other_layers():
+    icon = placed(18, 2427, "inner2")
+    layers = [placed(1, 2064, "inner"), Removal(2717, 3, 5, 28), icon]
+    assert tooltip_look.held_icon_placement(layers) is icon
+
+
+def test_held_icon_placement_raises_when_inner2_is_not_the_icon_sheet():
+    with pytest.raises(ValueError, match="want once"):
+        tooltip_look.held_icon_placement([placed(18, 2064, "inner2")])
+    with pytest.raises(ValueError, match="want once"):
+        tooltip_look.held_icon_placement([placed(1, 2064, "inner")])
+
+
+def test_held_icon_placement_raises_when_its_depth_changes_later():
+    layers = [placed(18, 2427, "inner2"), Removal(2717, 4, 18, 28)]
+    with pytest.raises(ValueError, match="changes depth 18"):
+        tooltip_look.held_icon_placement(layers)

@@ -26,6 +26,11 @@ const CLASS_DESCRIPTIONS: Array[String] = [
 	"Strong and stable, the Hydraulic line derives its power from its mastery of water. You can use it to bolster your physical strength, or channel it against the enemy to bring about their icy doom. Wielding such powers allows you greater control over the battle, as well as powerful survival and team support options.",
 ]
 
+# Sonny's gear and stat allocation before frame_180 runs ("before_story") and
+# from frame_180 on ("story"). uv run convert_starting_state reads them out of
+# frame_42/DoAction_17.as:50-51 and frame_180/DoAction.as:7-8.
+const STARTING_STATE_FILE: String = "res://dev/converted_json/starting_state.json"
+
 @export var name_user: String = "Sonny"
 @export var euro: float = 0.0
 @export var player_class: int = 0
@@ -146,10 +151,47 @@ static func new_game(player_name: String, new_player_class: PlayerClass = Player
 	# (assignPointsStart), but frame_180/DoAction.as:7-8 then overwrites
 	# StatSets0 with the starting gear's bonuses before battle 100. So the
 	# spread is dropped here and only its rounding residue is kept, and
-	# GameData.new_game then equips that gear, which adds its bonuses onto the
-	# zeroed allocation.
+	# GameData.new_game then calls start_story, which puts on that gear and its
+	# bonuses. Only the Tutorial fights with the spread, through enter_tutorial.
 	save.stat_allocated = [0, 0, 0, 0, 0]
 	Leveling.assign_points_start(save)
 	save.stat_allocated = [0, 0, 0, 0, 0]
 	Leveling.compute_stats(save)
 	return save
+
+
+# Puts Sonny in the state the Tutorial route fights battle 2 in, because that
+# route reaches battle 2 (frame_165/DoAction.as) before frame_180 runs.
+# frame_42/DoAction_17.as:50-51 sets the gear without the White T-Shirt and
+# StatSets0 to the four items' bonuses, and the class button then adds the
+# level 1 spread (assignPointsStart). assign_points_start sets point_residue
+# again before it spreads, so the residue stays what new_game left.
+func enter_tutorial() -> void:
+	var state: Dictionary = starting_state("before_story")
+	equip_array = state["equip"]
+	stat_allocated = state["stat_allocation"]
+	Leveling.assign_points_start(self)
+
+
+# Puts Sonny in the state frame_180/DoAction.as:7-8 sets before battle 100 on
+# every route from class select: the full starting gear, and StatSets0 reset to
+# that gear's bonuses. None of the four items has piercing or defense, and the
+# original does not touch PerSets0 or DefSets0 here.
+func start_story() -> void:
+	var state: Dictionary = starting_state("story")
+	equip_array = state["equip"]
+	stat_allocated = state["stat_allocation"]
+	Leveling.compute_stats(self)
+
+
+# The "before_story" or "story" entry of starting_state.json, with new arrays
+# of ints each call, so the caller can change them. JSON reads every number as a
+# float, and the equip and allocation arrays hold ints everywhere else.
+static func starting_state(point: String) -> Dictionary:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(STARTING_STATE_FILE))
+	assert(parsed is Dictionary and parsed.has(point), "could not read %s from %s" % [point, STARTING_STATE_FILE])
+	var state: Dictionary = parsed[point]
+	return {
+		"equip": state["equip"].map(func(value): return int(value)),
+		"stat_allocation": state["stat_allocation"].map(func(value): return int(value)),
+	}

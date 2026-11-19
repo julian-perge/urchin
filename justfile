@@ -159,6 +159,11 @@ convert-items *args:
 convert-menu-math *args:
     uv run convert_menu_math "$@"
 
+[doc('Run convert_starting_state, which reads the gear and stat allocation a new game gives Sonny into JSON')]
+[group('convert')]
+convert-starting-state *args:
+    uv run convert_starting_state "$@"
+
 [doc('Run convert_buff_looks, which reads how the buffs of a unit recolor and glow its doll into JSON')]
 [group('convert')]
 convert-buff-looks *args:
