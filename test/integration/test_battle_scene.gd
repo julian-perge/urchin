@@ -1423,8 +1423,12 @@ func test_a_pick_shows_its_icon_and_text_on_the_pass_button_until_the_players_ac
 	_pick_the_first_move_on_the_enemy(scene)
 	var move: Ability = MoveManagerAuto.moves_by_id[int(scene.units[1].equipped_moves[0])]
 	assert_true(icon.visible, "the pick shows its icon")
-	assert_eq(icon.texture, RadialMenu.icon_texture(move))
 	assert_not_null(icon.texture, "sanity: the move has an icon")
+	# addMoveForPlayer tints krinToMove's disc with the move's element colour
+	# (frame_42/DoAction_11.as:112-120).
+	var disc: Color = preload("res://test/disc_reader.gd").disc_color(icon.texture, AbilityIcon.key(move.display_name))
+	for channel in 3:
+		assert_almost_eq(disc[channel], MenuTheme.ELEMENT_COLORS[move.damage_element_type][channel], 0.02, "the disc takes the element colour")
 	pass_button.mouse_entered.emit()
 	assert_eq(_shown_tooltip_texts(), [move.display_name, texts["picked"] % scene.units[2].player_name])
 
@@ -1713,7 +1717,7 @@ func test_a_pass_before_the_fight_starts_on_heroic_replaces_the_pick():
 	scene._process(0.0)
 	assert_eq(_clock_shows(scene), delay_start, "the pass moves the clock back to the delay's start")
 	assert_true(icon.visible, "the pass leaves the pick's icon up")
-	assert_eq(icon.texture, RadialMenu.icon_texture(move))
+	assert_eq(icon.texture, AbilityIcon.for_move(move))
 	pass_button.mouse_entered.emit()
 	assert_eq(_shown_tooltip_texts(), [move.display_name, texts["picked"] % scene.units[2].player_name], "and the pick's text")
 	pass_button.mouse_exited.emit()

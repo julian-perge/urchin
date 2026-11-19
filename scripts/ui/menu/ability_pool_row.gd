@@ -10,10 +10,10 @@ class_name AbilityPoolRow
 @onready var name_label: Label = $HBox/NameLabel
 
 
-func populate(move: Ability, icon_path: String) -> void:
+func populate(move: Ability, icon: Texture2D) -> void:
 	visible = true
 	name_label.text = move.display_name if move != null else ""
-	icon_rect.texture = load(icon_path) if ResourceLoader.exists(icon_path) else null
+	icon_rect.texture = icon
 
 
 func clear() -> void:
