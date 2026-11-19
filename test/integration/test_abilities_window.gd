@@ -26,6 +26,11 @@ func _text(window: Control, path: String) -> String:
 	return (window.get_node(path) as Label).text
 
 
+func _spend_all_points() -> void:
+	GameData.current_save.skill_points = 0
+	GameData.current_save.stat_points = 0
+
+
 func _tips() -> Array[String]:
 	var tips: Array[String] = []
 	for index in range(43, 47):
@@ -34,13 +39,17 @@ func _tips() -> Array[String]:
 
 
 # The reader clip's first frame shows MENU[43 + random(4)]
-# (DefineSprite_3059/frame_1/DoAction.as).
+# (DefineSprite_3059/frame_1/DoAction.as) when the player has no points.
 func test_the_hint_box_shows_one_of_the_four_tips() -> void:
+	_spend_all_points()
 	var window: Control = _window()
 	assert_has(_tips(), _text(window, "HintLabel"))
+	assert_true((window.get_node("HintLabel") as Label).visible, "the tip shows")
+	assert_false((window.get_node("HintSteps/StepLabel") as Label).visible, "no step shows")
 
 
 func test_the_hint_box_picks_a_tip_each_time_the_window_opens() -> void:
+	_spend_all_points()
 	seed(236)
 	var window: Control = _window()
 	var shown: Dictionary = {}

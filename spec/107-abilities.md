@@ -187,5 +187,5 @@ The snippet shows style only. `shadow_ramp` stands for the include's function, a
 
 1. **The pool's frame.** Whether shape 3116 is a plain outline or has more to it is not read yet. The build issue reads it and says which way it goes.
 2. **Plus button color.** The spec fills each plus button with its row's stat color. The SWF tints the plates through `statColor` (3075), and the build issue checks that the tint matches the row color.
-3. **Hint box default.** The spec assumes the random tip shows when the player has no upgrade points. The AS that starts the tutorial steps is read in the follow-up issue, so this spec does not say when the tip changes to a step.
+3. **Hint box default.** The spec assumes the random tip shows when the player has no upgrade points. The AS that starts the tutorial steps is read in the follow-up issue, so this spec does not say when the tip changes to a step. #387 answered it: the steps start when the window opens with ability or attribute points. See "The Abilities hint box and its tutorial steps" in `DECODED_ALGORITHMS.md`.
 4. **ADR scope.** One ADR covers all four departures. Say if you want them split.
