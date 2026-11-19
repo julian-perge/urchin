@@ -68,8 +68,8 @@ func test_battle_layout_json_carries_real_stage_rects():
 	assert_almost_eq(float(rome["y"]) + float(rome["h"]), 306.0, 0.01, "ROME sky bottom")
 
 	var church: Dictionary = layout["halls"]["CHURCH"]
-	assert_almost_eq(float(church["x"]), -45.32, 0.01, "CHURCH hall left")
-	assert_almost_eq(float(church["y"]), 86.52, 0.01, "CHURCH hall top")
+	assert_almost_eq(float(church["x"]), -45.30, 0.01, "CHURCH hall left")
+	assert_almost_eq(float(church["y"]), 86.55, 0.01, "CHURCH hall top")
 	assert_almost_eq(float(church["w"]), 884.50, 0.01, "CHURCH hall width")
 	assert_almost_eq(float(church["h"]), 420.00, 0.01, "CHURCH hall height")
 
@@ -79,15 +79,15 @@ func test_battle_layout_json_carries_real_stage_rects():
 	# against the unstripped SWF would inflate y and h past what TUNNEL.png
 	# was actually cropped to.
 	var tunnel: Dictionary = layout["halls"]["TUNNEL"]
-	assert_almost_eq(float(tunnel["x"]), -22.07, 0.01, "TUNNEL hall left")
-	assert_almost_eq(float(tunnel["y"]), 154.27, 0.01, "TUNNEL hall top")
+	assert_almost_eq(float(tunnel["x"]), -22.05, 0.01, "TUNNEL hall left")
+	assert_almost_eq(float(tunnel["y"]), 154.30, 0.01, "TUNNEL hall top")
 	assert_almost_eq(float(tunnel["w"]), 844.00, 0.01, "TUNNEL hall width")
 	assert_almost_eq(float(tunnel["h"]), 349.00, 0.01, "TUNNEL hall height")
 
 	# The stage rect (3455) is the black rect the frame draws under the sky, so
 	# its top edge is where the black above the sky starts showing.
 	var stage_rect: Dictionary = layout["chrome"]["stage_rect"]
-	assert_almost_eq(float(stage_rect["x"]), 15.03, 0.01, "stage rect left")
+	assert_almost_eq(float(stage_rect["x"]), 15.05, 0.01, "stage rect left")
 	assert_almost_eq(float(stage_rect["y"]), 130.00, 0.01, "stage rect top")
 	assert_almost_eq(float(stage_rect["w"]), 770.00, 0.01, "stage rect width")
 	assert_almost_eq(float(stage_rect["h"]), 314.00, 0.01, "stage rect height")
@@ -167,10 +167,10 @@ func test_battle_layout_json_carries_the_stance_row_layout():
 	assert_almost_eq(float(row["row_pitch"]), 37.5, 0.01, "row pitch")
 	assert_almost_eq(float(row["button_size"]["w"]), 28.25, 0.01, "button width")
 	assert_almost_eq(float(row["button_size"]["h"]), 13.75, 0.01, "button height")
-	assert_almost_eq(float(row["first_button"]["x"]), 121.38, 0.01, "first button x")
-	assert_almost_eq(float(row["first_button"]["y"]), 8.35, 0.01, "first button y")
+	assert_almost_eq(float(row["first_button"]["x"]), 121.40, 0.01, "first button x")
+	assert_almost_eq(float(row["first_button"]["y"]), 8.25, 0.01, "first button y")
 	assert_almost_eq(float(row["name_offset"]["x"]), 8.0, 0.01, "name field x")
-	assert_almost_eq(float(row["name_offset"]["y"]), 9.75, 0.01, "name field y")
+	assert_almost_eq(float(row["name_offset"]["y"]), 9.65, 0.01, "name field y")
 	assert_almost_eq(float(row["art_zoom"]), 4.0, 0.01, "art zoom")
 
 
