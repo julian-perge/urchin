@@ -5,9 +5,9 @@
 # piece goes into speech_box.json and renders the frame, and extract_faces
 # renders the faces.
 #
-# The box fades at 5 alpha a frame on the original's 0 to 100 scale, so it takes
-# 20 frames to fade in and 20 to fade out. show_line() is what the conductor does
-# to start a line (frame_217/PlaceObject2_3389_480 enterFrame, lines 819-831): it
+# The box steps its _alpha by 5 a frame in Flash's 1/256 steps (FlashAlpha), so
+# it takes 22 frames to fade in and 20 to fade out. show_line() is what the
+# conductor does to start a line (frame_217/PlaceObject2_3389_480 enterFrame, lines 819-831): it
 # moves the box, fills the two fields and sends the face clip to the frame named
 # after the speaker. The box then fades in until hide_line() is called, which
 # is the original's nextSpeechKKK, and fades out from there. A line that
@@ -21,18 +21,24 @@
 class_name SpeechBox
 extends Control
 
-# Emitted whenever the box's alpha changes, on the original's 0 to 100 scale. The
-# battle scene sets the music's level from it (see battle_scene.gd).
+# Emitted whenever the box's alpha changes, with the value that a read of the
+# original's _alpha gives, which passes 100 at the end of a fade in and ends a
+# fade out below 0. The battle scene sets the music's level from it (see
+# battle_scene.gd).
 signal alpha_changed(alpha: float)
 
 const LAYOUT_PATH: String = "res://assets/ui/battle/speech_box.json"
 const PORTRAIT_DIR: String = "res://assets/ui/menu/portraits/"
 const PIXEL_FONT_PATH: String = "res://assets/fonts/3307_copy 10_65.ttf"
+# Render deltas that add up to a whole SWF frame can fall short of it by a float
+# rounding error, so a frame counts as passed within this margin.
+const FRAME_EPSILON: float = 0.000001
 # What the box shows: the face clip's frame label ("" for an empty face well),
 # and whether a line is up. A line that has gone down leaves its text
 # in the fields, as the original's box does.
 var face_name: String = ""
 var showing: bool = false
+# The box's _alpha as a read of it gives it, from _alpha_steps.
 var alpha: float = 0.0
 # The numbers of the original's scripts, which speech_box.json carries: the box's
 # x for a speaker on side 2 and for anyone else, its y, how far _alpha moves each
@@ -52,6 +58,8 @@ var _hint_base: Color
 var _hint_colors: Array = []
 var _hint_frame: int = 0
 var _hint_frames_due: float = 0.0
+# The box's _alpha in Flash's 1/256 steps (FlashAlpha).
+var _alpha_steps: int = 0
 
 
 func _ready() -> void:
@@ -104,21 +112,34 @@ func hide_line() -> void:
 # directly after set_process(false).
 func advance(frames: float) -> void:
 	_hint_frames_due += frames
-	while _hint_frames_due >= 1.0:
+	var before: float = alpha
+	while _hint_frames_due >= 1.0 - FRAME_EPSILON:
 		_hint_frames_due -= 1.0
 		_hint_frame = (_hint_frame + 1) % _hint_colors.size()
-	var before: float = alpha
-	if showing:
-		alpha = minf(alpha + alpha_step * frames, 100.0)
-	else:
-		alpha = maxf(alpha - alpha_step * frames, 0.0)
+		_step_alpha()
+	alpha = FlashAlpha.to_percent(_alpha_steps)
 	_show_frame()
 	if alpha != before:
 		alpha_changed.emit(alpha)
 
 
+# One run of the box's enterFrame on its _alpha
+# (frame_217/PlaceObject2_3367_634 enterFrame, lines 3-12 and 19-22). While a
+# line is up it adds the step under 100 and sets 100 once it is not, so a fade in
+# passes 100 for one frame. After the line it takes the step off while the alpha
+# is above 0.
+func _step_alpha() -> void:
+	if showing:
+		if FlashAlpha.to_percent(_alpha_steps) < 100.0:
+			_alpha_steps = FlashAlpha.add(_alpha_steps, alpha_step)
+		else:
+			_alpha_steps = FlashAlpha.from_percent(100.0)
+	elif _alpha_steps > 0:
+		_alpha_steps = FlashAlpha.add(_alpha_steps, -alpha_step)
+
+
 func _show_frame() -> void:
-	modulate.a = alpha / 100.0
+	modulate.a = FlashAlpha.multiplier(_alpha_steps)
 	var step: Dictionary = _hint_colors[_hint_frame]
 	var mult: Array = step["mult"]
 	var add: Array = step["add"]

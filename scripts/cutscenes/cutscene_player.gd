@@ -44,9 +44,14 @@ signal _playback_settled
 # extract_cutscene_skip writes this file.
 const SKIP_LAYOUT_PATH: String = "res://assets/cutscenes/skip_button.json"
 
-# The original's fade steps _alpha by 5 per frame at 30fps, so a full
-# 0-100 sweep is 20 frames = 0.667s. Matched here for both fade directions.
-const FADE_SECONDS: float = 20.0 / 30.0
+# The fade clip takes 5 off its _alpha each frame while cutSceneEnd is false
+# and the alpha is above 0, and adds 5 each frame once cutSceneEnd is true
+# (frame_263/PlaceObject2_3466_80 enterFrame, lines 2-11). The alpha is in
+# Flash's 1/256 steps (FlashAlpha).
+const FADE_STEP: float = 5.0
+# Render deltas that add up to a whole SWF frame can fall short of it by a float
+# rounding error, so a frame counts as passed within this margin.
+const FRAME_EPSILON: float = 0.000001
 
 # How much longer than the clip's own reported length play() will wait for
 # the video to report it finished before giving up on it.
@@ -76,6 +81,10 @@ var _started: bool = false
 # the clip or for CS_INTRO's hold emits _playback_settled with nothing listening,
 # so play() and _hold() check this.
 var _skipped: bool = false
+
+# The fade clip's _alpha in Flash's 1/256 steps. The clip starts opaque.
+var _fade_alpha: int = FlashAlpha.STEPS
+var _fade_frames_due: float = 0.0
 
 @onready var overlay: CanvasLayer = $Overlay
 @onready var video: VideoStreamPlayer = $Overlay/Video
@@ -127,12 +136,12 @@ func play(cutscene_id: String) -> void:
 	# (frame_263/PlaceObject2_3466_80 enterFrame, lines 2-8). A SKIP press
 	# during the fade-in stops it.
 	video.stream = stream
-	fade_rect.color.a = 1.0
+	_show_fade()
 	video.play()
-	await _fade(0.0)
+	await _fade(false)
 	if not _skipped:
 		await _await_playback_end()
-	await _fade(1.0)
+	await _fade(true)
 	finished.emit()
 	queue_free()
 
@@ -143,10 +152,10 @@ func _play_intro() -> void:
 	var intro: CsIntro = CsIntroScene.instantiate()
 	overlay.add_child(intro)
 	overlay.move_child(intro, video.get_index() + 1)
-	fade_rect.color.a = 1.0
-	await _fade(0.0)
+	_show_fade()
+	await _fade(false)
 	await _hold(intro.hold_seconds)
-	await _fade(1.0)
+	await _fade(true)
 	finished.emit()
 	queue_free()
 
@@ -204,12 +213,49 @@ func _await_playback_end() -> void:
 		timer.timeout.disconnect(settle)
 
 
-# Tweens the fade overlay's alpha to target_alpha over FADE_SECONDS (scaled
-# by animation_speed), skipping straight there if animation_speed <= 0.
-func _fade(target_alpha: float) -> void:
+# Runs the fade clip's enterFrame once for each SWF frame of display time, scaled
+# by animation_speed, until the fade ends. With cut_scene_end false it ends when
+# the clip is clear or the player presses SKIP, which turns the fade around at
+# once, as the original's SKIP does by setting cutSceneEnd. With cut_scene_end
+# true it ends when the clip is black, where the original jumps to
+# gotoSceneKrin. At an animation_speed of 0 or below it shows the end at once.
+# A player that leaves the tree mid-fade stops the fade where it is.
+func _fade(cut_scene_end: bool) -> void:
 	if animation_speed <= 0.0:
-		fade_rect.color.a = target_alpha
+		_fade_alpha = FlashAlpha.STEPS if cut_scene_end else 0
+		_show_fade()
 		return
-	var tween: Tween = create_tween()
-	tween.tween_property(fade_rect, "color:a", target_alpha, FADE_SECONDS / animation_speed)
-	await tween.finished
+	_fade_frames_due = 0.0
+	while not _fade_ended(cut_scene_end):
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+		_fade_frames_due += get_process_delta_time() * BattleScreenClip.fps() * animation_speed
+		while _fade_frames_due >= 1.0 - FRAME_EPSILON and not _fade_ended(cut_scene_end):
+			_fade_frames_due -= 1.0
+			step_fade(cut_scene_end)
+
+
+func _fade_ended(cut_scene_end: bool) -> bool:
+	if cut_scene_end:
+		return is_black()
+	return _skipped or _fade_alpha <= 0
+
+
+# One run of the fade clip's enterFrame.
+func step_fade(cut_scene_end: bool) -> void:
+	if cut_scene_end:
+		_fade_alpha = FlashAlpha.add(_fade_alpha, FADE_STEP)
+	elif _fade_alpha > 0:
+		_fade_alpha = FlashAlpha.add(_fade_alpha, -FADE_STEP)
+	_show_fade()
+
+
+# Whether the fade clip has reached the "_alpha >= 100" that sends the original
+# to gotoSceneKrin.
+func is_black() -> bool:
+	return FlashAlpha.to_percent(_fade_alpha) >= 100.0
+
+
+func _show_fade() -> void:
+	fade_rect.color.a = FlashAlpha.multiplier(_fade_alpha)

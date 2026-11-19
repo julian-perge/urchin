@@ -55,7 +55,7 @@ Constants (frame 42 globals):
 
 Sequence:
 
-1. **Spawn.** The bolt clip attaches at `shooter.x, shooter.y - 15` with `_alpha = 0`, fading in `+10/frame` (opaque after 10 frames). `boltx`/`bolty` (the spawn position) are cached once and used as the
+1. **Spawn.** The bolt clip attaches at `shooter.x, shooter.y - 15` with `_alpha = 0`, fading in `+10/frame`, which is opaque after 11 frames in Flash's 1/256 steps (see "A clip's `_alpha` in 1/256 steps"). `boltx`/`bolty` (the spawn position) are cached once and used as the
    fixed reference for the per-frame step - `xLPiece = (target.x - boltx) / 60` is NOT recomputed from the bolt's current position each frame.
 2. **Flight.** Each frame: `_x += xLPiece * SpeedConst; _y += yLPiece * SpeedConst; SpeedConst *= 1.15`. A separate `"KrinTrail"` clip spawns on the first frame, tinted via `Color.setRGB(tColorKrin)` (the
    same `colortobe` value used for the caster's cast glow), rotated to face the shooter->target line, and stretched (`inner._xscale += 8.3 * step_magnitude`) every frame while the bolt flies - the
@@ -426,11 +426,11 @@ Ported: `CharacterVisual._play_death` and `FighterPresenter.die`. Frame counts b
 - `lifeBarUpdate` plays the death voice and attaches LifeBarSmoother to the unit's bar with `deadNow` set (`frame_42/DoAction_8.as:345-347`). The clip's frame 18, 17 frames after the
   death, removes the buff icons `bshr0` to `bshr9` and sends the bar's `inner` clip (DefineSprite 3407, the name and the life and focus numbers) to its empty `third` frame. From the next
   frame, its frame 38 takes 5 off the whole bar's `_alpha` every frame and jumps back to `dead` (frame 37). The jump lands in the same frame, so the step runs on every frame, not on every
-  second frame. Flash keeps `_alpha` in steps of 1/256 and drops the rest on each write, so each step takes 13/256 off: 100, 94.921875, 89.84375, and so on to 3.515625 on frame 36 and
+  second frame. Flash keeps `_alpha` in 1/256 steps (see "A clip's `_alpha` in 1/256 steps"), so each step takes 13/256 off: 100, 94.921875, 89.84375, and so on to 3.515625 on frame 36 and
   -1.171875 on frame 37. Frame 38 finds the alpha not above 0 and hides `inner2`. So the fade takes 20 frames, the bar draws nothing from frame 37, and it is hidden on frame 38, 38
   frames after the death. Traced runs of the web build measured this frame by frame, with the same values in the Flash 14 debug player and in Ruffle 0.7.1
   (`references/traced_runs/death_fade_web_flash.txt` and `death_fade_web_ruffle.txt`, #383). The Steam build logged the same values in the Flash 14
-  debug player. `StatusBar._advance_death` steps in 1/256 units, and
+  debug player. `StatusBar._advance_death` steps with `FlashAlpha`, and
   `test_the_bar_fades_and_hides_on_the_frames_the_traced_run_measured` checks every logged frame.
 - `lifeBarUpdate` does none of that when the bar's rounded percent hasn't changed (295-298), so a unit killed from under 0.5% life dies with no voice and no fade. ADR 0005 counts that as
   an Original bug, and the port plays both on every death.
@@ -496,12 +496,12 @@ Ported: `RadialMenu` plays the enterFrame below once per SWF frame. It tests the
 - The box is the union of `thingo0` to `thingo7` in their up state and `thing0` to `thing7` at frame 1, about 128 px square on the stage. It counts an empty slot's hidden `thingo` too, because Flash counts a hidden child in its parent's bounds. Once the ring shows a move's icon, an icon wider than its button widens the original's box at that slot, by up to 21 px in the clip's own px. The port keeps the frame 1 box.
 
 - A click shows the clip at alpha 0 (`frame_217/DoAction_3.as:46-48`), and it gains 50 per frame (enterFrame lines 32-35).
-- While `this.hitTest(_root._xmouse, _root._ymouse)` is false the clip loses 10 alpha per frame and hides at 0, so the fade takes 10 frames, 0.33 s at 30 fps, with no grace (lines 48-61).
+- While `this.hitTest(_root._xmouse, _root._ymouse)` is false the clip loses 10 alpha per frame and hides at 0 or below, with no grace (lines 48-61). In Flash's 1/256 steps each loss is 26 steps (see "A clip's `_alpha` in 1/256 steps"), so the alpha reads 89.84375, 79.6875 and so on, and the clip hides on the 10th frame, 0.33 s at 30 fps.
   `hitTest` with no shape flag tests the clip's bounding box, so the gaps between orbs and the unit inside the ring count as over it.
 - While it is true, alpha goes straight back to 100 (line 64).
 - An orb darkens only for a bad target or a cooldown (lines 15-29). The buttons on the orbs, `DefineButton2_3374` to `3381`, call `addMoveForPlayer` with no gate of their own, so a darkened orb
   still answers a click with its refusal message.
-- The darkening is the orb's `bfilter`, DefineSprite 2241, a black disc 23 px across. It is at 75 alpha on the two frames the ring fades in and 85 from then on (lines 16 and 42). A cooldown
+- The darkening is the orb's `bfilter`, DefineSprite 2241, a black disc 23 px across. It is at 75 alpha on the two frames the ring fades in and 85 from then on (lines 16 and 42). Flash stores 85 as 217/256. A cooldown
   also writes its turns left to the orb's `ACD` field, edit text 2245, and an empty string once it is 0 (lines 23-28). Ported: `RadialMenu` draws the disc at 85 alpha and the count, both
   from `extract_ability_icons`, and a click on any refused orb shows `MoveLegality.message()` in the Combat text banner. Not ported: the ring also empties every `ACD` while the mouse is
   away (lines 52-56).
@@ -662,7 +662,7 @@ Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with
   speaker's `playerName` into `inner.combatTextName`, and sends the face clip `inner.inner2`, DefineSprite 2978, to the frame labelled with that name (lines 829-831). 11 speakers of the
   records have no label in that clip: Metabii, Frost Terror, Frost Lord, Cult Leader, Tunnel Beast, Shunny, Bunny, Flower Zombie, Nostalgia, Doctor Klima and Versu the Corruptor.
   `gotoAndStop` with a missing label does nothing, so their lines show the last face. The port shows an empty face well instead, by the user's choice on #156. The speaker's own `speech` clip, 57 frames, plays over their head (line 842).
-- The box fades at 5 alpha a frame on a 0 to 100 scale, so 20 frames in and 20 out, and sets the music to `100 - _alpha / 1.2` percent every frame, about 16.7 percent when it is fully up
+- The box fades at 5 alpha a frame, in Flash's 1/256 steps (see "A clip's `_alpha` in 1/256 steps"), so it passes 100 on its 22nd frame in and is clear on its 20th frame out. It sets the music to `100 - _alpha / 1.2` percent every frame, about 16.7 percent when it is fully up
   (`PlaceObject2_3367_634` enterFrame, lines 2-12 and 19-22). `nextSpeechKKK` turns true when `timeX` reaches `timeSpeechKKKUP`, which starts the fade out, and the next line only waits for
   that flag, so it starts while the box is still fading. A "Press SPACEBAR to Skip" hint, DefineSprite 3359 holding MENU[53], pulses above the box and fades with it.
 - `speechDone` stays false until the last line ends, and the whole decision block waits for it (conductor lines 591-793), so neither the clock nor the AI's picks nor the half-turn start
@@ -674,7 +674,7 @@ Ported: `BattleRunner._drain_speeches` picks the lines, names each speaker, with
   entry has lines. 210, 409, 504 and 508 push their only phase entry, flagged endGame, as `phases[0]` (`frame_42/DoAction_14.as:1093` for 504), so each is won as soon as its
   opening lines are done, before anyone fights. 109, 201 and 212 flag `phases[3]`, `phases[1]` and `phases[3]`, so each is won once the next phase's opening lines are done.
 - The box sits at x 473.3 for a team 2 speaker and at x 21.8 otherwise (lines 819-828), sends a child clip to the frame named after the speaker (831) and plays the speaker's own `speech`
-  clip (842). It fades in and out by 5 alpha a frame (speech box enterFrame lines 5-12 and 19-22).
+  clip (842). It fades in and out by 5 alpha a frame, as above (speech box enterFrame lines 5-12 and 19-22).
 - Space ends the current line and sets `hardSkip` (`PlaceObject2_3367_634` onClipEvent(keyDown), lines 2-9). Line 815 then skips the next line too, which strands the line after it as
   above. `hardSkip` clears once the box has faded out (enterFrame line 25) or the decision starts (conductor line 701), so outside a line Space only does the rest of what the
   handler does: it stops `my_sound1` to `my_sound3` (lines 6-8), the three channels `addSound("Effects")` plays every cue on in turn (`frame_42/DoAction.as:5-15` and 119-121).
@@ -742,7 +742,7 @@ its `cutscene_before`, and the Battle screen plays it before the fight.
   wakes up on the ship." The other three bake in the same words as `MENU[87]` to `MENU[89]`. Edit text 3467 shows nothing, because no script sets its variable, `subText`.
 - DefineSprite 3470 draws nothing and plays no sound. Its last frame, frame 401, runs `_root.cutSceneEnd = true` and `stop()` (`DefineSprite_3470/frame_401/DoAction.as`). The fade clip
   starts opaque and loses 5 alpha points a frame until `cutSceneEnd` is true. Then it gains 5 a frame, and at full alpha it goes to `gotoSceneKrin` (`frame_263/PlaceObject2_3466_80`
-  enterFrame). Each fade is 20 frames. The timer runs under the first fade, so the original leaves about 420 frames after it starts.
+  enterFrame). In Flash's 1/256 steps (see "A clip's `_alpha` in 1/256 steps") the first fade is 20 frames and ends at -1.171875, and the fade to black from there is 22. The timer runs under the first fade, so the original leaves about 420 frames after it starts.
 - The port holds the lines for the timer's 401 frames at 30 fps, which is 13.37 s, after its fade-in, as it plays a clip after the fade-in. So it runs about 20 frames longer than the original.
   A press of SKIP ends the hold at once, as it ends a clip, and a press during the fade-in skips the hold.
 - The gradient is a radial gradient from (30, 36, 38) at its center to black. The shape is a little bigger than the Stage, from -6 to 804 px by -4 to 584 px, and the render keeps the part
@@ -856,8 +856,8 @@ Ported: `scripts/ui/hub_fade.gd` is the last child of `scenes/game.tscn`, and `e
 
 - The Navigation frame places sprite 2837 at depth 1660, above KRINMENU (3142) at 175 and the Info card (2848) at 1651. The sprite is shape 333, black, scaled to cover the stage from
   (-3.77, -3.74) to (801.83, 573.31), so a strip of about 1.7 px at the bottom stays uncovered.
-- `onClipEvent(load)` sets `_alpha = 99` and `frameGo = undefined`. `onClipEvent(enterFrame)` takes 15 off `_alpha` while it is above 0, so the black shows at 99, 84, 69, 54, 39, 24 and 9,
-  and clears on the 7th step. At 30 fps that is about 0.23 s. A win leaves the battle on full black and opens the Victory Window on Navigation's load, so the Hub and the Window fade in together.
+- `onClipEvent(load)` sets `_alpha = 99` and `frameGo = undefined`. `onClipEvent(enterFrame)` takes 15 off `_alpha` while it is above 0. In Flash's 1/256 steps (see "A clip's `_alpha` in 1/256 steps") the
+  black shows at 98.828125, 83.59375, 68.359375, 53.125, 37.890625, 22.65625 and 7.421875, and clears on the 7th step. At 30 fps that is about 0.23 s. A win leaves the battle on full black and opens the Victory Window on Navigation's load, so the Hub and the Window fade in together.
 - When `frameGo` is set, the handler adds 15 a frame up to 100 and then calls `_root.gotoAndStop(frameGo)`. No script in the web build writes `frameGo`, and the placement has no instance
   name to reach the clip by, so that branch never runs and the port has no fade-out (`label_xref.json` lists the jump as unresolved).
 - A zone button on the World map jumps to Navigation (`DefineButton2_4155` on(release), lines 4-5), so the Hub fades in after each zone pick. The port keeps the Hub open under its
@@ -951,6 +951,26 @@ into `assets/ui/menu/hint_steps/hint_steps.json`.
 - After CS_CUT2 and CS_CUT4, which each unlock a zone, `gotoSceneKrin` (frame_219) opens the zone map. After CS_CUT3 it stays on the hub. Ported: `ZoneProgression.CUTSCENE_GOTO_SCENE` and
   `ZoneManager.open_zone_map_on_load`.
 - The zone map draws the lines between zones in code, `krinMapper.lineMC` on frame 449, colored by unlock state. Ported: `scripts/zones/zone_map_connectors.gd`. lineMC carries a DropShadow (distance 5 at 45 degrees, blur 2, strength 0.61), which `extract_zone_map` writes to `assets/ui/zone_map/zone_map.json`. The port draws it without the blur.
+
+## A clip's `_alpha` in 1/256 steps (Flash 14 and Ruffle 0.7.1, #383 and #442)
+
+Flash keeps a clip's `_alpha` as a whole number of 1/256 steps. A write stores the whole steps of the new percent, `int(percent * 256 / 100)`, and drops the rest toward 0. A read gives the steps back as `steps * 100 / 256`. So `_alpha = 99` reads back 98.828125, and `_alpha = 85` reads back 84.765625.
+
+- `_alpha += 5` from 0 adds 12 steps a frame (4.6875, 9.375, ...), and `_alpha -= 5` from 100 takes 13 off (94.921875, 89.84375, ...). The same holds for every step that is not a whole number of 1/256 steps: +10 adds 25, +15 adds 38, +20 adds 51, -10 takes 26 off and -15 takes 39 off. Only a step of 25 or a multiple of it, such as +50, is exact. So a fade in from 0 takes more frames than the same fade out from 100.
+- Below 0, the drop toward 0 takes one step less: `_alpha -= 5` from 3.515625 gives -1.171875, and `_alpha += 5` from -1.171875 gives 3.515625.
+- Nothing holds the value between 0 and 100. `_alpha += 20` from 99.609375 gives 119.53125, and a fade that tests `_alpha < 100` stops there. Flash draws a value below 0 as clear.
+- Evidence: a throwaway Probe stepped the `_alpha` of empty clips by +5, +10, +15, +20, +50, -5, -10, -15 and -20 for 80 frames, and replayed the enterFrame logic of each fade below on an empty clip. The web build logged the same 1300 values in the Flash 14 debug player and in Ruffle 0.7.1 (`references/traced_runs/alpha_steps_web_flash.txt` and `alpha_steps_web_ruffle.txt`). The Probe is `references/traced_runs/alpha_steps_probe.as`. It was not kept in `dev/probes`, because it adds clips to the stage and quits the player. The death fade's own runs (#383) agree.
+- Ported: `FlashAlpha` (`scripts/flash_alpha.gd`) does this arithmetic, and `test_flash_alpha.gd` checks it against every ALPHA line of the log. Each fade keeps its alpha in steps and its test checks every frame against the FADE line of its own replay:
+
+| Fade | Original | Port | Frames |
+| --- | --- | --- | --- |
+| Hover ring | `frame_217/PlaceObject3_3394_*`, +20 under 100 while hovered, -5 above 0 | `FighterPresenter.step_ring_frame` | in 6, to 119.53125; out 24 |
+| Speech box | `frame_217/PlaceObject2_3367_634`, +5 under 100, else 100, while a line is up; -5 above 0 | `SpeechBox._step_alpha` | in 22, to 103.125, and 100 on the next frame; out 20 |
+| Orb ring | `frame_217/PlaceObject3_3382_500`, +50 under 100; -10 off the clip | `RadialMenu._play_frame` | in 2; hides on the 10th frame out |
+| Hub fade-in | `frame_181/PlaceObject2_2837_1660`, load 99, -15 above 0 | `HubFade.step_frame` | 7 |
+| Cutscene fade | `frame_263/PlaceObject2_3466_80`, placed at 100, -5 above 0; +5 once `cutSceneEnd` is true, and away at 100 or above | `CutscenePlayer.step_fade` | out 20; in 22 from -1.171875 |
+| Bolt | `frame_42/DoAction_4.as:161-164`, attached at 0, +10 under 100 | `Projectile._process` | 11, to 107.421875 |
+| Death fade | `DefineSprite_57_LifeBarSmoother/frame_38`, -5 | `StatusBar._advance_death` | 20 (see "A death") |
 
 ## for..in order over arrays (Flash 14 and Ruffle 0.7.1, #38)
 

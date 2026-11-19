@@ -22,11 +22,15 @@ const RING_COLORS: Dictionary[Relation, Color] = {
 	Relation.ALLY: Color(0.35, 0.9, 0.25),
 	Relation.ENEMY: Color(0.95, 0.25, 0.15),
 }
-# Source-verified (frame_217/PlaceObject3_3394_450 and 5 sibling files):
-# the hover ring fades in at +20/frame and out at -5/frame at the
-# original's 30fps - a ~4x faster fade-in than fade-out.
-const RING_FADE_IN_TIME: float = 0.17
-const RING_FADE_OUT_TIME: float = 0.67
+# The ring's enterFrame adds 20 to its _alpha while the mouse is over the fighter
+# and the alpha is under 100, and takes 5 off while the mouse is off it and the
+# alpha is above 0 (frame_217/PlaceObject3_3394_450 and its 5 sibling files,
+# lines 2-17). The alpha is in Flash's 1/256 steps (FlashAlpha).
+const RING_FADE_IN_STEP: float = 20.0
+const RING_FADE_OUT_STEP: float = 5.0
+# Render deltas that add up to a whole SWF frame can fall short of it by a float
+# rounding error, so a frame counts as passed within this margin.
+const FRAME_EPSILON: float = 0.000001
 # What the fighter shows: the life, Focus, stun and buff slots that the last
 # event shown on it left on its unit. The runner resolves a whole half-turn
 # before the replay starts, so the bars, the stun pose and the buff icons follow
@@ -44,7 +48,11 @@ var _floating_numbers: FloatingNumberLayer
 # so the rig and every Floating number on the unit stay here.
 var _home: Vector2
 var _dead: bool = false
-var _ring_fade: Tween = null
+# The ring's _alpha in Flash's 1/256 steps, whether the mouse is over the
+# fighter, and the SWF frames that _process() has counted toward the next step.
+var _ring_alpha: int = 0
+var _ring_hovered: bool = false
+var _ring_frames_due: float = 0.0
 var _hover_info: Label = null
 # setup() puts the doll this far from its home, and rig_position() takes it
 # back off.
@@ -62,6 +70,11 @@ var _doll_is_model5: bool = false
 @onready var _flash: ResultFlash = $ResultFlash
 @onready var _shield_clip: ShieldClip = $ShieldClip
 @onready var _speech_bubble: SpeechBubble = $SpeechBubble
+
+
+# The ring has nothing to fade until setup() has run and show_hover() starts it.
+func _ready() -> void:
+	set_process(false)
 
 
 # Call once, after the presenter is in the tree. It leaves the fighter drawn.
@@ -98,6 +111,8 @@ func setup(unit: CombatUnit, home: Vector2, items_by_id: Dictionary, buffs_by_id
 	_overlay.position = _doll.position
 	_status_bar.setup(unit.player_name)
 	_overlay.ring.draw.connect(_draw_ring)
+	_overlay.ring.modulate.a = FlashAlpha.multiplier(_ring_alpha)
+	set_process(false)
 	_show_form(displayed)
 	_draw_status()
 
@@ -345,12 +360,9 @@ func _show_stun(stun: float) -> void:
 func show_hover(showing: bool) -> void:
 	if not _unit.active:
 		return
-	var ring: Control = _overlay.ring
-	ring.queue_redraw()
-	if _ring_fade != null:
-		_ring_fade.kill()
-	_ring_fade = create_tween()
-	_ring_fade.tween_property(ring, "modulate:a", 1.0 if showing else 0.0, RING_FADE_IN_TIME if showing else RING_FADE_OUT_TIME)
+	_overlay.ring.queue_redraw()
+	_ring_hovered = showing
+	set_process(true)
 	if _hover_info != null:
 		_hover_info.queue_free()
 		_hover_info = null
@@ -364,6 +376,31 @@ func show_hover(showing: bool) -> void:
 		_hover_info.add_theme_color_override("font_color", RING_COLORS[_relation_to_player()])
 		_hover_info.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_overlay.add_child(_hover_info)
+
+
+# Runs the ring's enterFrame once for each whole SWF frame that the deltas add
+# up to, and stops once the ring is fully in or fully out.
+func _process(delta: float) -> void:
+	_ring_frames_due += delta * BattleScreenClip.fps()
+	while _ring_frames_due >= 1.0 - FRAME_EPSILON:
+		_ring_frames_due -= 1.0
+		step_ring_frame()
+	var fully_in: bool = _ring_hovered and FlashAlpha.to_percent(_ring_alpha) >= 100.0
+	var fully_out: bool = not _ring_hovered and _ring_alpha <= 0
+	if fully_in or fully_out:
+		_ring_frames_due = 0.0
+		set_process(false)
+
+
+# One run of the ring's enterFrame. battle_scene.gd hovers the fighter only during
+# a Decision, which stands in for the original's "_root.InBattle == false" test.
+func step_ring_frame() -> void:
+	if _ring_hovered:
+		if FlashAlpha.to_percent(_ring_alpha) < 100.0:
+			_ring_alpha = FlashAlpha.add(_ring_alpha, RING_FADE_IN_STEP)
+	elif _ring_alpha > 0:
+		_ring_alpha = FlashAlpha.add(_ring_alpha, -RING_FADE_OUT_STEP)
+	_overlay.ring.modulate.a = FlashAlpha.multiplier(_ring_alpha)
 
 
 # The original's target ring: a thick circle with four tick marks.

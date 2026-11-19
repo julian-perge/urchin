@@ -12,11 +12,11 @@ extends ColorRect
 
 const LAYOUT_FILE := "res://assets/ui/hub_fade.json"
 
-# The clip's _alpha, on Flash's 0 to 100 scale. It goes below 0 on its last
-# step, as in the original, and Flash draws that as clear.
+# The clip's _alpha in Flash's 1/256 steps (FlashAlpha). It goes below 0 on its
+# last step, as in the original, and Flash draws that as clear.
 var _alpha: int = 0
-var _start_alpha: int = 0
-var _step: int = 0
+var _start_alpha: float = 0.0
+var _step: float = 0.0
 var _frame_seconds: float = 0.0
 var _elapsed: float = 0.0
 
@@ -28,8 +28,8 @@ func _ready() -> void:
 	size = Vector2(rect["w"], rect["h"])
 	color = Color(layout["color"])
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_start_alpha = int(layout["start_alpha"])
-	_step = int(layout["alpha_step"])
+	_start_alpha = float(layout["start_alpha"])
+	_step = float(layout["alpha_step"])
 	_frame_seconds = 1.0 / float(layout["fps"])
 	restart()
 
@@ -37,7 +37,7 @@ func _ready() -> void:
 # Shows the black at the load alpha again and starts the steps over, as the
 # original does each time a jump to Navigation places the clip again.
 func restart() -> void:
-	_alpha = _start_alpha
+	_alpha = FlashAlpha.from_percent(_start_alpha)
 	_elapsed = 0.0
 	_show_alpha()
 	set_process(true)
@@ -67,9 +67,9 @@ func advance(delta: float) -> void:
 # One run of the clip's enterFrame handler.
 func step_frame() -> void:
 	if _alpha > 0:
-		_alpha -= _step
+		_alpha = FlashAlpha.add(_alpha, -_step)
 	_show_alpha()
 
 
 func _show_alpha() -> void:
-	color.a = maxf(_alpha, 0) / 100.0
+	color.a = FlashAlpha.multiplier(_alpha)
