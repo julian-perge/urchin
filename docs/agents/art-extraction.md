@@ -283,17 +283,21 @@ This tool checks how it looks: the art, the fills and the shadows.
   frame against `victory_window.tscn` with no data, so all 15 drop slots show
   empty, as ffdec draws them. `panels` scores the backdrop and the four panels.
   The rims around the three masked faces are the largest error.
-- **The Inventory score is `chrome` p99 48, with the 20 px control at 220.**
-  The `inventory` entry scores KRINMENU's `inventory` frame against
-  `inventory_window.tscn` with no data. `SCENES.compare_strip` takes the 31
-  doll clips (`DOLL_CHARACTERS`) out of the reference, because ffdec draws
-  them with blades that reach outside the doll's rect. Almost every pixel at
+- **The Inventory score is `chrome` p99 48 and `panels` p99 8, with the
+  20 px controls at 220 and 119.** The `inventory` entry scores KRINMENU's
+  `inventory` frame against `inventory_window.tscn` with no data.
+  `SCENES.compare_strip` takes the 31 doll clips (`DOLL_CHARACTERS`) out of
+  the reference, because ffdec draws them with blades that reach outside the
+  doll's rect. Almost every pixel at
   60 or more is in the glow around the 16 element bars. ffdec runs no script,
   so it draws each glow white, and the port tints it from `elementColorArray`.
   The hue is about three quarters of that error. The rest is brightness: the
   port's glow is narrower than ffdec's. The port reads the glow's blur,
   strength and passes from `menu_math.json`, and no Flash Player capture of
-  full-height bars exists to show which of the two is right.
+  full-height bars exists to show which of the two is right. The bar glows
+  set the `chrome` p99, so a small fault elsewhere can stay under its bar.
+  `panels` scores the backdrop, the three panels and the experience row
+  without the bars, for that reason.
 - **A KRINMENU reference is rendered through the Hub frame.** The backdrop's
   Bevel, Glow and DropShadow are on KRINMENU's placement on the root frame, so
   a render of KRINMENU's own timeline loses them. `reference_job` in

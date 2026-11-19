@@ -88,6 +88,18 @@
   "modes": {
    "chrome": {
     "bar": 48
+   },
+   "panels": {
+    "nodes": [
+     "WindowShell/Backdrop",
+     "LeftPanel",
+     "PartyBar",
+     "CenterPanel",
+     "ExpLeftBox",
+     "ExpFill",
+     "ExpGloss"
+    ],
+    "bar": 8
    }
   }
  },
