@@ -74,6 +74,18 @@ static func look() -> Dictionary:
 	return _look
 
 
+# -> the layout record of LOOK_FILE that a GameTooltip text width stands for:
+# GO for a plain tooltip, GO4 for an item and GO7 for an ability. GO2 and GO3,
+# the ability icon's other layouts, have GO7's width and offsets.
+static func layout_for_width(text_width: float) -> Dictionary:
+	var label: String = "GO"
+	if text_width == TEXT_WIDTH_ITEM:
+		label = "GO4"
+	elif text_width == TEXT_WIDTH_ABILITY:
+		label = "GO7"
+	return look()["layouts"][label]
+
+
 # -> a Color from 0..255 channel values, with alpha 255 when there are three.
 static func color_of(channels: Array) -> Color:
 	var alpha: float = float(channels[3]) if channels.size() > 3 else 255.0

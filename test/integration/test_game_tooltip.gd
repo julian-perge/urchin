@@ -7,8 +7,20 @@
 extends GutTest
 
 
+var _default_mouse_source: Callable
+
+
+func before_all():
+	_default_mouse_source = GameTooltip.mouse_source
+
+
 func after_each():
 	GameTooltip.hide_tooltip()
+	GameTooltip.mouse_source = _default_mouse_source
+
+
+func _put_mouse_at(point: Vector2) -> void:
+	GameTooltip.mouse_source = func() -> Vector2: return point
 
 
 func _sections_fixture() -> Array:
@@ -74,53 +86,6 @@ func test_show_sections_makes_the_tooltip_visible_and_hide_tooltip_hides_it():
 	assert_false(GameTooltip._root.visible)
 
 
-func test_position_lands_beside_the_anchor_when_there_is_room():
-	var anchor: Control = add_child_autofree(Control.new())
-	anchor.position = Vector2(100, 100)
-	anchor.size = Vector2(30, 30)
-	GameTooltip.show_sections(_sections_fixture(), anchor)
-	await wait_process_frames(1)
-	assert_eq(
-		GameTooltip._root.position,
-		anchor.global_position + Vector2(anchor.size.x + GameTooltip.ANCHOR_GAP, 0.0)
-	)
-
-
-func test_position_flips_to_the_left_instead_of_covering_its_anchor():
-	var anchor: Control = add_child_autofree(Control.new())
-	# Far enough right that the tooltip cannot fit beside it, but with room to
-	# spare on the left - the rightmost class-select card's situation.
-	anchor.position = Vector2(600, 100)
-	anchor.size = Vector2(180, 300)
-	GameTooltip.show_sections(_sections_fixture(), anchor)
-	await wait_process_frames(1)
-	var tooltip_right: float = GameTooltip._root.position.x + GameTooltip._root.size.x
-	assert_almost_eq(
-		GameTooltip._root.position.x,
-		anchor.global_position.x - GameTooltip._root.size.x - GameTooltip.ANCHOR_GAP,
-		0.01,
-		"sits just left of the anchor"
-	)
-	assert_lt(tooltip_right, anchor.global_position.x, "clears the anchor entirely")
-
-
-func test_position_clamps_at_the_right_and_bottom_edges():
-	var anchor: Control = add_child_autofree(Control.new())
-	anchor.position = Vector2(790, 590)
-	anchor.size = Vector2(30, 30)
-	GameTooltip.show_sections(_sections_fixture(), anchor)
-	await wait_process_frames(1)
-	var viewport_size: Vector2 = GameTooltip.get_viewport().get_visible_rect().size
-	assert_true(
-		GameTooltip._root.position.x + GameTooltip._root.size.x <= viewport_size.x,
-		"tooltip stays inside the viewport's right edge"
-	)
-	assert_true(
-		GameTooltip._root.position.y + GameTooltip._root.size.y <= viewport_size.y,
-		"tooltip stays inside the viewport's bottom edge"
-	)
-
-
 # A Flash text field keeps 2 px between its edges and its text, and each line
 # stands in for one of KrinToolTipper's text fields, so every line pads its
 # text by 2 px and the box is its layout's text width plus 4.
@@ -152,17 +117,6 @@ func test_fields_stack_2_px_apart():
 	assert_eq(body.get_child(0).position.y, 0.0, "a section adds nothing above its first line")
 	var lines: Array = body.get_child(0).get_children()
 	assert_eq(lines[1].position.y - lines[0].position.y - lines[0].size.y, 2.0, "2 px between the lines of a section")
-
-
-func test_position_clamps_at_the_left_and_top_edges():
-	var anchor: Control = add_child_autofree(Control.new())
-	anchor.position = Vector2(-50, -50)
-	anchor.size = Vector2(10, 10)
-	GameTooltip.show_sections(_sections_fixture(), anchor)
-	await wait_process_frames(1)
-	assert_true(GameTooltip._root.position.x >= 0.0, "never positioned off the left edge")
-	assert_true(GameTooltip._root.position.y >= 0.0, "never positioned off the top edge")
-
 
 var _look: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/tooltip_look.json"))
 
@@ -265,3 +219,86 @@ func test_every_section_of_an_ability_tooltip_has_its_border():
 	], anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY)
 	assert_eq(GameTooltip._sections.get_child_count(), 4)
 	_assert_every_section_has_a_black_1_px_border()
+
+
+# -> where the sections' left edge and the title's top land for a mouse at
+# point, after two frames so the containers have sorted the new Labels.
+func _placed_at(point: Vector2) -> Vector2:
+	_put_mouse_at(point)
+	await wait_process_frames(2)
+	return Vector2(GameTooltip._sections.global_position.x, GameTooltip._root.position.y)
+
+
+func test_the_tooltip_moves_with_the_mouse():
+	var anchor: Control = add_child_autofree(Control.new())
+	var layout: Dictionary = _look["layouts"]["GO"]
+	_put_mouse_at(Vector2(100, 100))
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	var first: Vector2 = await _placed_at(Vector2(100, 100))
+	assert_eq(first, Vector2(100 + float(layout["near_x"]), 100))
+	var second: Vector2 = await _placed_at(Vector2(220, 160))
+	assert_eq(second, Vector2(220 + float(layout["near_x"]), 160), "the tooltip follows a moved mouse")
+
+
+func test_the_fields_flip_to_the_mouses_left_at_the_limit():
+	var anchor: Control = add_child_autofree(Control.new())
+	var layout: Dictionary = _look["layouts"]["GO4"]
+	var x: float = float(layout["mouse_x_limit"])
+	_put_mouse_at(Vector2(x, 100))
+	GameTooltip.show_sections(_sections_fixture(), anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ITEM)
+	var placed: Vector2 = await _placed_at(Vector2(x, 100))
+	assert_eq(placed.x, x + float(layout["far_x"]))
+	var left_of_limit: Vector2 = await _placed_at(Vector2(x - 1, 100))
+	assert_eq(left_of_limit.x, x - 1 + float(layout["near_x"]))
+
+
+func test_the_plain_layout_moves_up_low_on_the_stage_and_the_item_layout_does_not():
+	var anchor: Control = add_child_autofree(Control.new())
+	var plain: Dictionary = _look["layouts"]["GO"]
+	var y: float = float(plain["mouse_y_limit"]) + 1
+	_put_mouse_at(Vector2(100, y))
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	assert_eq((await _placed_at(Vector2(100, y))).y, y + float(plain["low_shift_y"]))
+	assert_false(_look["layouts"]["GO4"].has("low_shift_y"), "the item layout has no move up")
+	GameTooltip.show_sections(_sections_fixture(), anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ITEM)
+	assert_eq((await _placed_at(Vector2(100, 400))).y, 400.0)
+
+
+# ADR 0012: a tooltip that would run past the Stage's bottom edge slides up.
+func test_a_tooltip_that_does_not_fit_stays_on_the_stage():
+	var anchor: Control = add_child_autofree(Control.new())
+	_put_mouse_at(Vector2(100, 560))
+	GameTooltip.show_sections(_sections_fixture(), anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ITEM)
+	await _placed_at(Vector2(100, 560))
+	var stage: Vector2 = GameTooltip.get_viewport().get_visible_rect().size
+	assert_almost_eq(GameTooltip._root.position.y + GameTooltip._root.size.y, stage.y, 0.01)
+	await _placed_at(Vector2(-40, -40))
+	assert_eq(GameTooltip._root.position, Vector2.ZERO, "and stays inside the top left corner")
+
+
+func test_the_tooltip_hides_when_its_anchor_leaves_the_tree():
+	var anchor: Control = Control.new()
+	add_child(anchor)
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	anchor.free()
+	await wait_process_frames(1)
+	assert_false(GameTooltip._root.visible)
+
+
+func test_an_ability_icons_tooltip_shows_the_title_alone_first():
+	var anchor: Control = add_child_autofree(Control.new())
+	var sections: Array = _sections_fixture()
+	GameTooltip.show_sections(sections, anchor, null, Color.WHITE, TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
+	var delay: float = float(_look["detail_delay_frames"]) / float(_look["frame_rate"])
+	assert_true(GameTooltip._sections.get_child(0).visible, "the title shows at once")
+	assert_false(GameTooltip._sections.get_child(1).visible, "the body waits")
+	GameTooltip._process(delay * 0.9)
+	assert_false(GameTooltip._sections.get_child(1).visible, "still waiting just before the delay ends")
+	GameTooltip._process(delay * 0.2)
+	assert_true(GameTooltip._sections.get_child(1).visible, "the body shows after the delay")
+
+
+func test_a_tooltip_without_the_delay_shows_every_section_at_once():
+	var anchor: Control = add_child_autofree(Control.new())
+	GameTooltip.show_sections(_sections_fixture(), anchor)
+	assert_true(GameTooltip._sections.get_child(1).visible)

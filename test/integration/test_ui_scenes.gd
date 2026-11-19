@@ -10,6 +10,13 @@ const LOCKED_FACE := "res://assets/ui/zone_map/zone_button_locked.png"
 const ACHIEVEMENTS_FILE = "user://test_ui_scenes_achievements.cfg"
 
 
+var _default_mouse_source: Callable
+
+
+func before_all():
+	_default_mouse_source = GameTooltip.mouse_source
+
+
 func before_each():
 	GameData.current_save = PlayerSave.new_game("UiTest", 0)
 	ZoneManager.auto_switch_scenes = false
@@ -21,6 +28,7 @@ func after_each():
 	ZoneManager.auto_switch_scenes = true
 	ZoneManager.pending_battle = {}
 	GameTooltip.hide_tooltip()
+	GameTooltip.mouse_source = _default_mouse_source
 
 
 func test_main_menu_builds_slot_rows():
@@ -49,15 +57,15 @@ func test_class_cards_show_the_shared_tooltip_on_hover():
 		assert_eq(header.text, name, "header names the class")
 		var body: Label = GameTooltip._sections.get_child(1).get_child(0).get_child(0)
 		assert_eq(body.text, PlayerSave.CLASS_DESCRIPTIONS[class_id], "body is the class blurb")
-		# The rightmost card has no room for its tooltip on the right, and the
-		# tooltip has to flip rather than land back over the art it describes.
+		# The tooltip follows the mouse, and flips to the mouse's left past the
+		# plain layout's limit, as the rightmost card shows.
 		var card: TextureButton = menu.class_picker.get_node(name)
-		assert_false(
-			Rect2(card.global_position, card.size).intersects(
-				Rect2(GameTooltip._root.position, GameTooltip._root.size)
-			),
-			"%s tooltip clears its own card" % name
-		)
+		var mouse: Vector2 = card.global_position + card.size / 2.0
+		GameTooltip.mouse_source = func() -> Vector2: return mouse
+		await wait_process_frames(1)
+		var layout: Dictionary = TooltipTheme.look()["layouts"]["GO"]
+		var offset: float = float(layout["near_x"]) if mouse.x < float(layout["mouse_x_limit"]) else float(layout["far_x"])
+		assert_almost_eq(GameTooltip._sections.global_position.x, mouse.x + offset, 0.01, "%s tooltip sits at the mouse" % name)
 		menu.class_picker.get_node(name).mouse_exited.emit()
 		assert_false(GameTooltip._root.visible, "%s card hides it again" % name)
 
@@ -543,10 +551,12 @@ func test_the_new_game_warning_opens_beside_the_hovered_slot():
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	var first: Button = _slot_button(menu, 1)
 	var third: Button = _slot_button(menu, 3)
+	GameTooltip.mouse_source = func() -> Vector2: return first.global_position + first.size / 2.0
 	first.mouse_entered.emit()
 	await wait_process_frames(2)
 	var first_y: float = GameTooltip._root.global_position.y
 	first.mouse_exited.emit()
+	GameTooltip.mouse_source = func() -> Vector2: return third.global_position + third.size / 2.0
 	third.mouse_entered.emit()
 	await wait_process_frames(2)
 	assert_almost_eq(
