@@ -108,6 +108,20 @@ extracting it.
   for the cutscene AVI and its probe frame, the two shape exports and
   `export_swf_sources.py`. Every external command goes through
   `dev/urchin_dev/run.py`.
+- **Check a filter in a render against a Traced run's screenshot, not
+  against `references/sonny2_*.png` at 4112x2658.** Those twelve screenshots
+  share one size, nobody recorded the player that drew them, and that player
+  leaves out at least one filter. They still hold for layout and text, as
+  `SWF_DIFFERENCES.md` uses `sonny2_inventory_screen.png` for fonts. Sprite
+  3317 places the bar body 3316 with a Bevel, highlight (184, 215, 223), and a
+  black Glow of blur 2. In `sonny2_zone1_prison.png` the panel edge goes from
+  the Glow's dark outline straight to the body colour (92, 113, 117), with no
+  Bevel. The Flash debug player drew `references/traced_runs/web_flash_hub.png`
+  and `steam_flash_hub.png`. In both, the top edge of each panel is a 6 px band
+  near (183, 216, 223). Both Ruffle runs draw the same band. ffdec and
+  `assets/ui/battle/bottom_bar.png` draw it too, so the bar art is right
+  (julian-perge/urchin#299). The `*_flash_*.png` screenshots are 800x575 Stage
+  pixels under a 28 px title bar. The Ruffle screenshots have other sizes.
 - **Write every PNG through `dev/urchin_dev/png.py`, never `Image.save` or a
   copy of the driver's file.** Pillow and the driver's Java encoder compress
   with the zlib build of the machine they run on, so the same pixels came out
@@ -275,7 +289,7 @@ This tool checks how it looks: the art, the fills and the shadows.
   their own tasks. ffdec cuts the zone fill's Glow off at a hard box,
   (496, 506.5) 269.25x31.75, when it renders the fill inside sprite 3149,
   whose placement has a DropShadow.
-  Flash Player draws a soft glow there, as `references/sonny2_zone1_prison.png`
+  Flash Player draws a soft glow there, as `references/traced_runs/steam_flash_hub.png`
   shows, and so does the port, from the fill rendered alone. Do not re-extract
   `zone_fill.png` from the root frame to lower this score.
 - **The Victory score is `chrome` p99 14 and `panels` p99 9, with the 20 px
