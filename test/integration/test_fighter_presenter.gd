@@ -4,6 +4,7 @@
 # advance(), so nothing here waits on real time.
 extends GutTest
 
+const AlphaSteps = preload("res://test/alpha_steps.gd")
 const FighterPresenterScene = preload("res://scenes/battle/fighter_presenter.tscn")
 const StatusBarScene = preload("res://scenes/battle/status_bar.tscn")
 const HOME: Vector2 = Vector2(300, 250)
@@ -1012,38 +1013,52 @@ func test_a_stunned_unit_stays_stunned_until_its_death_plays():
 	assert_eq(_doll._state, DEAD, "and the half-turn's end leaves the death alone")
 
 
-# The ring fades in at +20 a frame at the original's 30 fps
-# (frame_217/PlaceObject3_3394_450).
-func test_the_ring_fades_in_over_its_fade_in_time():
+# The Traced run replayed the ring's enterFrame with the mouse over the fighter
+# on frames 1 to 10 and off it from frame 11 (FADE case "ring" of
+# alpha_steps_probe.as). The ring shows the alpha that each frame logged.
+func test_the_ring_fades_in_and_out_on_the_frames_the_traced_run_measured():
+	var measured: Array[float] = AlphaSteps.values("FADE", "ring")
 	var ring: Control = _overlay.ring
 	assert_eq(ring.modulate.a, 0.0, "starts invisible")
+	var ported: Array[float] = [FlashAlpha.to_percent(_presenter._ring_alpha)]
+	var shown: Array[float] = [ring.modulate.a]
 	_presenter.show_hover(true)
-	var fade: Tween = _presenter._ring_fade
-	fade.pause()
-	fade.custom_step(FighterPresenter.RING_FADE_IN_TIME * 0.5)
-	assert_almost_eq(ring.modulate.a, 0.5, 0.01, "half faded in at the halfway point")
-	fade.custom_step(FighterPresenter.RING_FADE_IN_TIME * 0.5)
-	assert_almost_eq(ring.modulate.a, 1.0, 0.001, "and fully in at the end")
+	for frame: int in range(1, measured.size()):
+		if frame == 11:
+			_presenter.show_hover(false)
+		_presenter.step_ring_frame()
+		ported.append(FlashAlpha.to_percent(_presenter._ring_alpha))
+		shown.append(ring.modulate.a)
+	assert_eq(ported, measured, "every frame's _alpha")
+	var drawn: Array[float] = []
+	for percent: float in measured:
+		drawn.append(maxf(percent, 0.0) / 100.0)
+	assert_eq(shown, drawn, "drawn as the alpha over 100, and nothing below 0")
 
 
-# It fades out at -5 a frame, four times slower than it fades in.
-func test_the_ring_fades_out_over_its_fade_out_time():
-	var ring: Control = _overlay.ring
-	ring.modulate.a = 1.0
-	_presenter.show_hover(false)
-	var fade: Tween = _presenter._ring_fade
-	fade.pause()
-	fade.custom_step(FighterPresenter.RING_FADE_OUT_TIME * 0.5)
-	assert_almost_eq(ring.modulate.a, 0.5, 0.01, "half faded out at the halfway point")
-	fade.custom_step(FighterPresenter.RING_FADE_OUT_TIME * 0.5)
-	assert_almost_eq(ring.modulate.a, 0.0, 0.001, "and gone at the end")
-
-
-func test_a_new_hover_replaces_the_running_fade():
+# _process() hands the ring each rendered frame's delta, so the ring steps once
+# for each whole SWF frame and stops once it is fully in.
+func test_the_ring_steps_once_per_swf_frame_and_stops_when_fully_in():
+	var measured: Array[float] = AlphaSteps.values("FADE", "ring")
+	var frame_seconds: float = 1.0 / BattleScreenClip.fps()
 	_presenter.show_hover(true)
-	var interrupted: Tween = _presenter._ring_fade
+	_presenter._process(frame_seconds * 0.5)
+	assert_eq(FlashAlpha.to_percent(_presenter._ring_alpha), measured[0], "half a frame steps nothing")
+	_presenter._process(frame_seconds * 0.5)
+	assert_eq(FlashAlpha.to_percent(_presenter._ring_alpha), measured[1], "the second half completes the frame")
+	_presenter._process(frame_seconds * 9.0)
+	assert_eq(FlashAlpha.to_percent(_presenter._ring_alpha), measured[10], "a long delta steps every frame it covers")
+	assert_false(_presenter.is_processing(), "and the ring stops once it is fully in")
+
+
+func test_leaving_mid_fade_turns_the_ring_around_from_where_it_is():
+	_presenter.show_hover(true)
+	_presenter.step_ring_frame()
+	_presenter.step_ring_frame()
+	var climbed: int = _presenter._ring_alpha
 	_presenter.show_hover(false)
-	assert_false(interrupted.is_valid(), "the running fade is killed, not left to fight the new one")
+	_presenter.step_ring_frame()
+	assert_eq(_presenter._ring_alpha, FlashAlpha.add(climbed, -FighterPresenter.RING_FADE_OUT_STEP), "one step down from the climb")
 
 
 func test_hover_shows_the_level_in_the_relation_color():
@@ -1092,7 +1107,8 @@ func test_hovering_again_shows_one_level_at_a_time():
 func test_hovering_a_dead_fighter_does_nothing():
 	_unit.active = false
 	_presenter.show_hover(true)
-	assert_null(_presenter._ring_fade, "no fade starts")
+	assert_false(_presenter._ring_hovered, "the ring is not hovered")
+	assert_false(_presenter.is_processing(), "and no fade starts")
 	assert_eq(_level_labels().size(), 0, "and no level shows")
 
 

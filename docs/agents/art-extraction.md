@@ -235,7 +235,10 @@ This tool checks how it looks: the art, the fills and the shadows.
   Label hidden. A `chrome` mode may also name `hide_names`: the capture then
   hides every node with one of those names, and what is under it. `panels`
   scores only the scene nodes in `nodes` against only the frame depths that
-  place them. The tool and the capture scene both read
+  place them. `alpha` scores alpha alone: the scene nodes in `nodes` and what
+  is under them, with every Label hidden, against only the frame placements of
+  those nodes with every edit text stripped. A node may be placed by a depth
+  or by an instance name. The tool and the capture scene both read
   this file, so a new entry does not change the tool.
   `just compare-screen --list` prints the entries.
 - **The config types no SWF number.** The tool reads the scene's timeline, its
@@ -252,18 +255,23 @@ This tool checks how it looks: the art, the fills and the shadows.
      arguments, then `capture_screenshot` with that `savePath`. Each mode needs
      two captures, one over magenta and one over green. The pixels that are
      the same in both are the pixels the scene covers, and only those are
-     scored.
+     scored. `alpha` mode needs two more, with `--control`, and it scores
+     every pixel that the port or the reference draws, less those that both
+     draw opaque.
   3. Run `just compare-screen <entry>` again. It prints p50, p90 and p99 of the
-     largest channel difference, and the control's p99. It writes
-     `<mode>_reference.png` and `<mode>_diff.png` beside the captures, in
-     `tasks/screen_compare/<entry>/`, which is git-ignored.
+     largest channel difference, or of the alpha difference in `alpha` mode,
+     and the control's p99. It writes `<mode>_reference.png` and
+     `<mode>_diff.png` beside the captures, in `tasks/screen_compare/<entry>/`,
+     which is git-ignored.
 - **The bar and the control.** A mode passes when its p99 is at or under its
   `bar` and the control is over the bar. The control scores the same capture
   against the reference moved 20 px to the right, so a bar that a wrong layout
   can pass fails the run. Write `"bar": null` in a new entry, and set the bar
   to the p99 of the first run that looks right in the diff image. The first
   entry, `victory_left_panel` in `panels` mode, scored p99 2 with the control
-  at 30.
+  at 30. An `alpha` mode's control is not the moved reference: it is a
+  capture of the same nodes with their material taken off, so a bar that
+  passes a node with no shader fails the run.
 - **How run-time state is frozen.** The capture scene never starts the game.
   It instantiates the entry's scene alone, with no save, no battle and no host
   scene, waits one frame for the containers, and turns the scene's processing
@@ -376,6 +384,19 @@ This tool checks how it looks: the art, the fills and the shadows.
   runs no script. It draws every right-hand bar as a left-hand one and every fill in
   the color of frame 1, so the rect test checks the bars part by part instead.
   Each bar's DropShadow is a `drop_shadow` piece of the rect test, which checks
-  the uniforms of `scenes/drop_shadow.gdshader` on the bar's Clip. Measured once
-  for julian-perge/urchin#382 against an ffdec render of p1BAR alone: the alpha
-  over the bar's box differs by p90 5 with the shader and p90 27 without it.
+  the uniforms of `scenes/drop_shadow.gdshader` on the bar's Clip. The
+  `status_bars` entry checks what that shader draws.
+- **The status bar shadow score is `alpha` p99 29, under a bar of 35, with
+  the no-material control at 144.** `just compare-screen status_bars` scores
+  the Clips of Bar1, Bar3 and Bar5 in `battle_scene.tscn` against p1BAR, p3BAR
+  and p5BAR on root frame 217, by alpha alone, because ffdec draws every fill
+  in the color of frame 1. It scores every pixel that the port or ffdec draws,
+  less those that both draw opaque, so the score is the shadow's rim and the
+  bars' edges. Bar1 alone scores p90 21 and p99 30, and its control p99 157.
+  The control capture takes the DropShadow material off the three Clips. The
+  bar is 6 over the score, because a new ffdec build or another GPU for the
+  capture can move the score a few points, and the control is far above it.
+  The right-hand bars are out, because ffdec does not mirror them. The
+  reference also keeps depth 72, the Hall window's clip mask, because the
+  ffdec driver refuses to hide a clip mask. The mask draws nothing and clips
+  only depths up to 340 (julian-perge/urchin#445).

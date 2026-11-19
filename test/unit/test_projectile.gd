@@ -4,7 +4,30 @@
 # spec/old/2026-08-19-vfx-registration-scenes-design.md.
 extends GutTest
 
+const AlphaSteps = preload("res://test/alpha_steps.gd")
 const ProjectileScene = preload("res://scenes/battle/projectile.tscn")
+
+
+# The Traced run replayed the bolt's onEnterFrame fade from its attach at 0
+# (FADE case "bolt" of alpha_steps_probe.as). The bolt shows the alpha that each
+# frame logged, and stops adding once it is at 100 or above.
+func test_the_bolt_fades_in_on_the_frames_the_traced_run_measured():
+	var measured: Array[float] = AlphaSteps.values("FADE", "bolt")
+	var bolt: Projectile = add_child_autofree(ProjectileScene.instantiate())
+	bolt.clip_name = "Krin.Firebolt"
+	bolt.start(Vector2(-400, 100), Vector2(400, 100))
+	bolt.set_process(false)
+	var ported: Array[float] = [FlashAlpha.to_percent(bolt._alpha)]
+	var shown: Array[float] = [0.0]
+	for _frame: int in 14:
+		bolt._process(1.0 / BattleScreenClip.fps())
+		ported.append(FlashAlpha.to_percent(bolt._alpha))
+		shown.append(bolt._bolt_sprite.modulate.a)
+	assert_eq(ported, measured.slice(0, 15), "every frame's _alpha")
+	var drawn: Array[float] = []
+	for percent: float in measured.slice(0, 15):
+		drawn.append(percent / 100.0)
+	assert_eq(shown, drawn, "drawn as the alpha over 100")
 
 
 func test_start_loads_the_named_bolt_clip_untinted():
