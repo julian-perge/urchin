@@ -11,7 +11,7 @@ A full-window state the player navigates to, such as Title, Hub, Battle, Game ov
 _Avoid_: Scene, page, menu
 
 **Window**:
-A set of Panels opened over the Hub, such as Inventory, Store, Abilities or Victory.
+A set of Panels opened over the Hub, such as Inventory, Store, Abilities, Options or Victory.
 _Avoid_: Screen, popup, dialog
 
 **Panel**:
