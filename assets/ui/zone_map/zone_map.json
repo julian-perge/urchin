@@ -1,0 +1,57 @@
+{
+ "art": {
+  "zone_button_locked": {
+   "rect": [
+    -16.1,
+    -16.15,
+    36.8,
+    36.8
+   ],
+   "relative_to": "sprite 4160",
+   "size": [
+    184,
+    184
+   ],
+   "zoom": 5.0
+  },
+  "zone_button_open": {
+   "rect": [
+    -16.1,
+    -16.15,
+    36.8,
+    36.8
+   ],
+   "relative_to": "sprite 4160",
+   "size": [
+    184,
+    184
+   ],
+   "zoom": 5.0
+  },
+  "zone_map": {
+   "rect": [
+    -380.6,
+    -252.45,
+    761.25,
+    505.0
+   ],
+   "relative_to": "sprite 4172",
+   "size": [
+    3045,
+    2020
+   ],
+   "zoom": 4.0
+  }
+ },
+ "line_shadow": {
+  "alpha": 1.0,
+  "angle": 45.0,
+  "blur": [
+   2.0,
+   2.0
+  ],
+  "color": "#000000",
+  "distance": 5.0,
+  "strength": 0.609375
+ }
+}

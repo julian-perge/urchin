@@ -5,6 +5,8 @@ extends GutTest
 
 const MainMenuScene = preload("res://scenes/main_menu.tscn")
 const GameScene = preload("res://scenes/game.tscn")
+const OPEN_FACE := "res://assets/ui/zone_map/zone_button_open.png"
+const LOCKED_FACE := "res://assets/ui/zone_map/zone_button_locked.png"
 const ACHIEVEMENTS_FILE = "user://test_ui_scenes_achievements.cfg"
 
 
@@ -1052,24 +1054,90 @@ func _shown_zones(map: Control) -> Array:
 	return shown
 
 
+# frame_449/DoAction.as sends a zone whose linked zone is not beaten to
+# underGF's "blank" face and clears its canUse, so the release script
+# (DefineButton2_4155 on(release)) does nothing for it. The map reads the
+# unlocks each time it opens.
 func test_zone_map_button_states_follow_unlocks():
 	var game = add_child_autofree(GameScene.instantiate())
 	await get_tree().process_frame
 	var map = game.get_node("ZoneMapOverlay")
 	var zones = map.get_node("Zones")
 	assert_eq(zones.get_child_count(), 7)
-	assert_false(zones.get_node("Zone1").disabled, "zone 1 always unlocked")
-	assert_true(zones.get_node("Zone2").disabled, "zone 2 locked at start")
-	GameData.current_save.quest_progress[1] = 10
-	# The map reads the unlocks again each time it opens, so opening it after
-	# the boss shows zone 2 open. Connectors._draw() also only runs while the
-	# panel (and so the whole subtree) is visible - exercise it for real rather
-	# than just trusting the node paths it hardcodes (Zone%d under ../Zones)
-	# line up with zone_map.tscn.
 	map.visible = true
 	await get_tree().process_frame
-	assert_false(zones.get_node("Zone2").disabled, "zone 2 unlocks after the boss")
+	assert_eq(_zone_face(zones, 1), OPEN_FACE, "zone 1 always shows the open face")
+	assert_eq(_zone_face(zones, 2), LOCKED_FACE, "zone 2 shows the blank face at start")
+	assert_true(zones.get_node("Zone2").disabled, "zone 2 takes no click at start")
+	var zone_before: int = ZoneManager.current_zone
+	zones.get_node("Zone2").pressed.emit()
+	assert_eq(ZoneManager.current_zone, zone_before, "a press on a locked zone does not change the zone")
+	assert_true(map.visible, "a press on a locked zone leaves the map up")
+
+	GameData.current_save.quest_progress[1] = 10
+	map.visible = false
+	map.visible = true
+	await get_tree().process_frame
+	assert_eq(_zone_face(zones, 2), OPEN_FACE, "zone 2 shows the open face after the boss")
+	assert_false(zones.get_node("Zone2").disabled, "zone 2 takes clicks after the boss")
 	assert_true(is_instance_valid(map.get_node("Connectors")), "connector lines node exists and drew without error")
+
+
+# DefineButton2_4155 on(rollOver) sets the tooltip's title to ZONES[sectionID]
+# and its text to ZONES2[sectionID], with no canUse check, and on(rollOut)
+# clears it.
+func test_a_zone_shows_its_name_in_the_tooltip_open_or_locked():
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var map = game.get_node("ZoneMapOverlay")
+	map.visible = true
+	var strings: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Strings.STRINGS_FILE))
+	var zones = map.get_node("Zones")
+	assert_true(zones.get_node("Zone2").disabled, "zone 2 is locked for this check")
+	for zone_id: int in [1, 2]:
+		zones.get_node("Zone%d" % zone_id).mouse_entered.emit()
+		assert_true(GameTooltip._root.visible, "zone %d shows the tooltip" % zone_id)
+		var lines: Array[String] = []
+		for label: Label in GameTooltip._sections.find_children("*", "Label", true, false):
+			lines.append(label.text)
+		assert_eq(lines, [strings["ZONES"][zone_id], strings["ZONES2"][zone_id]], "zone %d" % zone_id)
+		zones.get_node("Zone%d" % zone_id).mouse_exited.emit()
+		assert_false(GameTooltip._root.visible, "zone %d hides the tooltip on roll out" % zone_id)
+
+
+# lineMC's DropShadow comes from zone_map.json, which extract_zone_map writes
+# from the SWF. The connectors draw it as the lines again, moved by its distance
+# at its angle, inside one group tinted to its colour at its alpha times its
+# strength.
+func test_the_zone_links_read_their_shadow_from_the_record():
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var connectors = game.get_node("ZoneMapOverlay/Connectors")
+	var record: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(connectors.RECORD_FILE))
+	var shadow: Dictionary = record["line_shadow"]
+	var offset: Vector2 = Vector2.from_angle(deg_to_rad(float(shadow["angle"]))) * float(shadow["distance"])
+	assert_almost_eq(connectors.get_node("Shadow/Lines").position, offset, Vector2(0.001, 0.001))
+	var color: Color = Color.html(str(shadow["color"]))
+	color.a = float(shadow["alpha"]) * float(shadow["strength"])
+	var tint: Color = connectors.get_node("Shadow").self_modulate
+	assert_true(tint.is_equal_approx(color), "shadow colour %s, record %s" % [tint, color])
+
+
+func _zone_face(zones: Node, zone_id: int) -> String:
+	return (zones.get_node("Zone%d/Art" % zone_id) as TextureRect).texture.resource_path
+
+
+# Root frame overMap places only the map and the tooltip, so the Stage colour
+# shows around the map's frame. The original has no close button.
+func test_the_world_map_hides_the_zone_art_and_has_no_close_button():
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	var map = game.get_node("ZoneMapOverlay")
+	map.visible = true
+	assert_false(game.get_node("ZoneHost").visible, "the zone art hides while the map shows")
+	assert_null(map.get_node_or_null("CloseButton"), "the map has no close button")
+	map.visible = false
+	assert_true(game.get_node("ZoneHost").visible, "the zone art shows again when the map closes")
 
 
 # The victory frame's rows: the player's at the top (PlaceObject3_3002_1197),

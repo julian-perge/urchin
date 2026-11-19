@@ -779,7 +779,7 @@ Ported: `scripts/ui/hotbar.gd`'s `_refresh` builds the right panel, and `scripts
 - The hub art picks its frame from the same variable on the same frame, through `Krin.zoneName[sectionIn]` (line 2 of `frame_181/PlaceObject3_3287_59`'s onClipEvent(load)), so the panel
   always names the hub on screen.
 - The world map's zone buttons are the only other readers of these strings. They show `ZONES[sectionID]` and `ZONES2[sectionID]` as their tooltip's title and body (`DefineButton2_4155`
-  on(rollOver), lines 3-4), and the port's map has no tooltips yet.
+  on(rollOver), lines 3-4). The port's `zone_map.gd` shows them through `GameTooltip.show_title_and_body`, for locked zones too, because the rollOver reads no `canUse`.
 
 ## Post-battle hint (`krinNavTutSpeech`, frame_42/DoAction_21.as:26-76)
 
@@ -856,7 +856,7 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
 
 - After CS_CUT2 and CS_CUT4, which each unlock a zone, `gotoSceneKrin` (frame_219) opens the zone map. After CS_CUT3 it stays on the hub. Ported: `ZoneProgression.CUTSCENE_GOTO_SCENE` and
   `ZoneManager.open_zone_map_on_load`.
-- The zone map draws the lines between zones in code, `krinMapper.lineMC` on frame 449, colored by unlock state. Ported: `scripts/zones/zone_map_connectors.gd`.
+- The zone map draws the lines between zones in code, `krinMapper.lineMC` on frame 449, colored by unlock state. Ported: `scripts/zones/zone_map_connectors.gd`. lineMC carries a DropShadow (distance 5 at 45 degrees, blur 2, strength 0.61), which `extract_zone_map` writes to `assets/ui/zone_map/zone_map.json`. The port draws it without the blur.
 
 ## for..in order over arrays (Flash 14 and Ruffle 0.7.1, #38)
 

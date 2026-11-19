@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bo71ayunmem66"
-path="res://.godot/imported/zone_map_button_inactive.png-0bda11e947ab0f6a79b5a9c2248a6a50.ctex"
+uid="uid://bx57epu7fu75i"
+path="res://.godot/imported/zone_map.png-81cb78672f17cde75565cf20a0adbf73.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/zone_map/zone_map_button_inactive.png"
-dest_files=["res://.godot/imported/zone_map_button_inactive.png-0bda11e947ab0f6a79b5a9c2248a6a50.ctex"]
+source_file="res://assets/ui/zone_map/zone_map.png"
+dest_files=["res://.godot/imported/zone_map.png-81cb78672f17cde75565cf20a0adbf73.ctex"]
 
 [params]
 

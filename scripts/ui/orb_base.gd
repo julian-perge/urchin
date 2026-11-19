@@ -22,11 +22,7 @@ func _ready():
 	setup_orb()
 	var hit_box: Control = $Control
 	hit_box.gui_input.connect(_on_hit_box_input)
-	var sections: Array = [
-		{"bg_color": TooltipTheme.BG_HEADER, "lines": [{"text": tooltip_title, "color": TooltipTheme.TEXT_TITLE}]},
-		{"bg_color": TooltipTheme.BG_BODY, "lines": [{"text": tooltip_body, "color": TooltipTheme.TEXT_BODY}]},
-	]
-	hit_box.mouse_entered.connect(func(): GameTooltip.show_sections(sections, hit_box))
+	hit_box.mouse_entered.connect(func(): GameTooltip.show_title_and_body(tooltip_title, tooltip_body, hit_box))
 	hit_box.mouse_exited.connect(GameTooltip.hide_tooltip)
 
 func _on_hit_box_input(event: InputEvent) -> void:

@@ -252,12 +252,14 @@ def test_only_depths_and_goto_reach_the_driver_only_when_a_job_sets_them(
     jobs = [
         Job(0, 217, 4.0),
         Job(0, 217, 4.0, only_depths=(72, 630), goto=((630, 12),)),
+        Job(4173, 1, 4.0, nested_goto=((4160, 1, 2),)),
     ]
     with render.frames(tmp_path / "a.swf", jobs):
         pass
     assert "only_depths" not in sent[0] and "goto" not in sent[0]
     assert sent[1]["only_depths"] == [72, 630]
     assert sent[1]["goto"] == [{"depth": 630, "frame": 12}]
+    assert sent[2]["goto"] == [{"owner": 4160, "depth": 1, "frame": 2}]
 
 
 SHOW = tag(TAG_SHOW_FRAME)

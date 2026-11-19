@@ -100,7 +100,10 @@ class Job:
     hides that depth of the owner's timeline on every frame, which reaches a
     sprite drawn inside the rendered frame. Each (depth, frame) in goto shows
     the sprite at that depth on its own 1-based frame, the way a gotoAndStop
-    would. Each (owner, depth, degrees) in rotate sets the _rotation of that
+    would. Each (owner, depth, frame) in nested_goto does the same for the
+    sprite at that depth of the owner's timeline, on every frame of that
+    timeline, which reaches a sprite drawn inside the rendered frame. Each
+    (owner, depth, degrees) in rotate sets the _rotation of that
     depth of the owner's timeline on every frame, the way a script's
     _rotation = degrees would."""
 
@@ -113,6 +116,7 @@ class Job:
     only_depths: tuple[int, ...] = ()
     hide_depths: tuple[tuple[int, int], ...] = ()
     goto: tuple[tuple[int, int], ...] = ()
+    nested_goto: tuple[tuple[int, int, int], ...] = ()
     rotate: tuple[tuple[int, int, float], ...] = ()
 
 
@@ -191,8 +195,10 @@ def _request(job: Job, out: Path) -> dict:
         request["hide_depths"] = [
             {"owner": owner, "depth": depth} for owner, depth in job.hide_depths
         ]
-    if job.goto:
-        request["goto"] = [{"depth": d, "frame": f} for d, f in job.goto]
+    if job.goto or job.nested_goto:
+        request["goto"] = [{"depth": d, "frame": f} for d, f in job.goto] + [
+            {"owner": owner, "depth": d, "frame": f} for owner, d, f in job.nested_goto
+        ]
     if job.rotate:
         request["rotate_depths"] = [
             {"owner": owner, "depth": depth, "degrees": degrees}

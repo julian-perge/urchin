@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dms6vskl8ellq"
-path="res://.godot/imported/zone_map_full.png-c20feed6c7f106e1a299bdd45bb7c204.ctex"
+uid="uid://xqy73gwj8e8k"
+path="res://.godot/imported/zone_button_locked.png-5547ff8d48f222b90311def34fc52dd2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/zone_map/zone_map_full.png"
-dest_files=["res://.godot/imported/zone_map_full.png-c20feed6c7f106e1a299bdd45bb7c204.ctex"]
+source_file="res://assets/ui/zone_map/zone_button_locked.png"
+dest_files=["res://.godot/imported/zone_button_locked.png-5547ff8d48f222b90311def34fc52dd2.ctex"]
 
 [params]
 
