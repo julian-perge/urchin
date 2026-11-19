@@ -14,6 +14,13 @@
 #              leaves out (`left_out` in SCENES) are stripped too.
 #   "panels" - only the scene nodes in `nodes`, against only the frame depths
 #              that place them.
+#   "alpha"  - only the scene nodes in `nodes`, and what is under them, with
+#              every Label hidden, against only the frame placements of those
+#              nodes with every edit text stripped. It compares alpha alone, so
+#              a fill that ffdec draws in another colour does not count. It is
+#              for a filter that the port draws with a shader, such as a status
+#              bar's DropShadow: its control is a capture of the same nodes
+#              with their material taken off, in place of the moved reference.
 # dev/screen_compare/capture.gd reads the same file and draws the scene for a
 # capture. The scene's timeline, its frame label and the depth of each node
 # come from SCENES in screen_rects.py, where the rect test already needs them,
@@ -22,9 +29,9 @@
 # The method, generalized from the victory prototype's compare.py on the
 # branch prototype/victory-containers:
 #   - Each mode needs two captures of the same scene, one over magenta and one
-#     over green. A pixel the scene covers completely is the same in both, so
-#     the mask is every pixel that matches, shrunk by one pixel so that no
-#     resampled edge counts.
+#     over green, and alpha mode needs two more for its control. A pixel the
+#     scene covers completely is the same in both, so the mask is every pixel
+#     that matches, shrunk by one pixel so that no resampled edge counts.
 #   - The faces of the scene in test/fixtures/screen_rects.json are left out
 #     of the mask, because the game sets each face from its data and ffdec
 #     runs no ActionScript, so the reference cannot hold the same face.
@@ -39,11 +46,17 @@
 #     consecutive depths, each run moved by its pieces' offset or not moved,
 #     and the runs are drawn over each other in depth order, so the pieces
 #     between them keep their stacking.
+#   - In alpha mode, a pixel's alpha is 1 minus its mean channel difference
+#     between the two captures over 255, and its difference is how far that
+#     alpha is from the reference's, 0 to 255. Every pixel that either side
+#     draws is scored, less those that both draw opaque, and no mask is used.
 #   - The must-fail control scores the same capture against the reference
-#     moved 20 px to the right. A mode passes when its score is at or under
-#     its bar and the control is over the bar.
+#     moved 20 px to the right. In alpha mode it scores the control captures,
+#     with the material off the nodes, against the same reference. A mode
+#     passes when its score is at or under its bar and the control is over the
+#     bar.
 #
-# Run: just compare-screen <entry> [--mode chrome|panels] [--shots <folder>]
+# Run: just compare-screen <entry> [--mode chrome|panels|alpha] [--shots <folder>]
 #      just compare-screen --list
 from __future__ import annotations
 
@@ -67,7 +80,7 @@ CAPTURE_SCENE = "res://dev/screen_compare/capture.tscn"
 SHOTS = REPO_ROOT / "tasks" / "screen_compare"
 STAGE = (800, 575)
 ZOOM = 2
-MODES = ("chrome", "panels")
+MODES = ("chrome", "panels", "alpha")
 BACKGROUNDS = ("magenta", "green")
 # Two captures of one opaque pixel can differ by this much on a channel.
 SAME = 2
@@ -86,6 +99,9 @@ class Mode:
     bar: float | None
     depths: tuple[int, ...] = ()
     nodes: tuple[str, ...] = ()
+    # The depth or the instance name of the frame placement of each node, in
+    # alpha mode.
+    places: tuple[int | str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -123,6 +139,23 @@ def panel_depths(
             )
         depths.append(piece.depth)
     return tuple(depths)
+
+
+def node_places(
+    scene: screen_rects.Scene, nodes: Iterable[str], where: str
+) -> tuple[int | str, ...]:
+    """-> the depth or the instance name of the frame placement of each of
+    `nodes`, from the scene's pieces."""
+    places = []
+    for node in nodes:
+        piece = scene.pieces.get(node)
+        if piece is None or piece.inner_depth is not None or piece.via:
+            raise CompareError(
+                f"{where}: {node} is not a piece that SCENES of screen_rects.py"
+                " places on the frame itself"
+            )
+        places.append(piece.depth if piece.instance is None else piece.instance)
+    return tuple(places)
 
 
 def steam_pairs(
@@ -180,11 +213,16 @@ def load_config(
             if hide and mode != "chrome":
                 raise CompareError(f"{where}: only chrome mode takes hide_names")
             nodes = tuple(fields.get("nodes", ()))
-            if mode == "panels" and not nodes:
-                raise CompareError(f"{where}: panels needs its nodes")
+            if mode in ("panels", "alpha") and not nodes:
+                raise CompareError(f"{where}: {mode} needs its nodes")
             if mode == "chrome" and nodes:
                 raise CompareError(f"{where}: chrome takes no nodes")
-            modes[mode] = Mode(bar, panel_depths(scene, nodes, where), nodes)
+            if mode == "alpha":
+                modes[mode] = Mode(
+                    bar, nodes=nodes, places=node_places(scene, nodes, where)
+                )
+            else:
+                modes[mode] = Mode(bar, panel_depths(scene, nodes, where), nodes)
         if not modes:
             raise CompareError(f"{name}: no modes")
         entries[name] = Entry(
@@ -199,13 +237,28 @@ def load_config(
     return entries
 
 
-def capture_args(entry: str, mode: str, background: str) -> list[str]:
-    """-> the arguments capture.gd takes for one capture."""
-    return [f"--entry={entry}", f"--mode={mode}", f"--background={background}"]
+def capture_args(
+    entry: str, mode: str, background: str, control: bool = False
+) -> list[str]:
+    """-> the arguments capture.gd takes for one capture. A control capture
+    takes the material off the mode's nodes."""
+    args = [f"--entry={entry}", f"--mode={mode}", f"--background={background}"]
+    return [*args, "--control"] if control else args
 
 
-def capture_path(shots: Path, entry: str, mode: str, background: str) -> Path:
-    return shots / entry / f"{mode}_{background}.png"
+def capture_path(
+    shots: Path, entry: str, mode: str, background: str, control: bool = False
+) -> Path:
+    """-> where one capture of the entry's mode is saved, and where the tool
+    looks for it."""
+    return shots / entry / f"{mode}{'_control' if control else ''}_{background}.png"
+
+
+def controls(mode: str) -> tuple[bool, ...]:
+    """-> for each set of captures the mode needs, whether it is the control
+    set. Only alpha mode captures its control, and the others move the
+    reference instead."""
+    return (False, True) if mode == "alpha" else (False,)
 
 
 def drawn_mask(over_magenta: np.ndarray, over_green: np.ndarray) -> np.ndarray:
@@ -241,6 +294,37 @@ def masked_boxes(record: dict, scene: str) -> list[tuple[float, ...]]:
     """-> the rect of every face and doll the rect record holds for `scene`."""
     pieces = record["scenes"].get(scene, {}).get("pieces", {})
     return [tuple(p["rect"]) for p in pieces.values() if p["kind"] in MASKED_KINDS]
+
+
+def alpha_of(over_magenta: np.ndarray, over_green: np.ndarray) -> np.ndarray:
+    """-> the alpha, 0 to 1, of each pixel of a scene captured over magenta and
+    over green. The two backgrounds differ by 255 on every channel, so a pixel
+    the scene draws at alpha a differs by 255 * (1 - a) on each."""
+    gap = np.abs(over_magenta - over_green).mean(axis=2)
+    return np.clip(1.0 - gap / 255.0, 0.0, 1.0)
+
+
+def alpha_difference(
+    alpha: np.ndarray, reference: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
+    """-> how far, 0 to 255, the alpha of each pixel is from the alpha of an
+    RGBA reference, and the pixels that either of the two draws, less those
+    that both draw opaque. An opaque pixel on both sides always matches, and
+    it would only pull the percentiles down."""
+    port = np.rint(alpha * 255.0)
+    ours = reference[:, :, 3]
+    drawn = ((port > 0) | (ours > 0)) & ~((port == 255) & (ours == 255))
+    return np.abs(alpha * 255.0 - ours), drawn
+
+
+def alpha_score(alpha: np.ndarray, reference: np.ndarray) -> Score:
+    """-> the score of a capture's alpha against an RGBA reference, over every
+    pixel that either of the two draws, less those that both draw opaque."""
+    values, drawn = alpha_difference(alpha, reference)
+    if not drawn.any():
+        raise CompareError("no pixels to score: neither side draws anything")
+    p50, p90, p99 = (float(np.percentile(values[drawn], p)) for p in (50, 90, 99))
+    return Score(int(drawn.sum()), p50, p90, p99)
 
 
 def difference(shot: np.ndarray, reference: np.ndarray) -> np.ndarray:
@@ -395,6 +479,11 @@ def through_hub(index: SwfIndex, frame: int, **job) -> render.Job:
 
 
 def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
+    if mode == "alpha" and entry.timeline == window_chrome.KRINMENU:
+        raise CompareError(
+            f"{entry.frame}: a KRINMENU reference renders through the Hub"
+            " frame, and alpha mode keeps only depths of the entry's own frame"
+        )
     origin = screen_rects.origin_of(index, entry.timeline)
     frame = timeline.frame_of(index, entry.timeline, entry.frame)
     if mode == "panels":
@@ -427,6 +516,27 @@ def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
     texts = edit_text_ids(
         entry.timeline, frame, characters, lambda cid: character_kind(index, cid)
     )
+    if mode == "alpha":
+        layers = timeline.frames(index, entry.timeline)[frame - 1]
+        reasons = dict.fromkeys(texts, "an edit text, hidden in alpha mode")
+        # ffdec's driver refuses to hide a clip mask, so every mask of the frame
+        # stays. A mask draws nothing itself, and it clips the nodes only where
+        # Flash clips them too.
+        masks = {
+            depth for depth, layer in layers.items() if layer.clip_depth is not None
+        }
+        nodes = {
+            placed_depth(layers, place, entry.frame)
+            for place in entry.modes[mode].places
+        }
+        return render.Job(
+            entry.timeline,
+            frame,
+            ZOOM,
+            origin,
+            strip=tuple(strip.strip_list(WEB_SWF, reasons)) if reasons else (),
+            only_depths=tuple(sorted(masks | nodes)),
+        )
     reasons = dict.fromkeys(texts, "an edit text, hidden in chrome mode")
     layers = characters(entry.timeline)[frame - 1]
     for cid in left_out_ids(layers, entry.left_out, entry.frame):
@@ -437,6 +547,18 @@ def reference_job(index: SwfIndex, entry: Entry, mode: str) -> render.Job:
     if entry.timeline == window_chrome.KRINMENU:
         return through_hub(index, frame, strip=stripped)
     return render.Job(entry.timeline, frame, ZOOM, origin, strip=stripped)
+
+
+def placed_depth(
+    layers: dict[int, timeline.Layer], place: int | str, frame: str
+) -> int:
+    """-> the depth of the placement at the depth or with the instance name
+    `place` in `layers`."""
+    try:
+        layer = screen_rects.placed_layer(layers, place, str(place), frame)
+    except ValueError as error:
+        raise CompareError(str(error)) from error
+    return next(depth for depth, placed in layers.items() if placed is layer)
 
 
 def reference_jobs(
@@ -519,11 +641,12 @@ def save_diff(path: Path, values: np.ndarray, use: np.ndarray) -> None:
 def missing_captures(shots: Path, name: str, modes: Iterable[str]) -> list[str]:
     lines = []
     for mode in modes:
-        for background in BACKGROUNDS:
-            path = capture_path(shots, name, mode, background)
-            if not path.is_file():
-                args = json.dumps(capture_args(name, mode, background))
-                lines.append(f"  {path}\n    run_scene args: {args}")
+        for control in controls(mode):
+            for background in BACKGROUNDS:
+                path = capture_path(shots, name, mode, background, control)
+                if not path.is_file():
+                    args = json.dumps(capture_args(name, mode, background, control))
+                    lines.append(f"  {path}\n    run_scene args: {args}")
     return lines
 
 
@@ -540,25 +663,38 @@ def compare(
     magenta, green = (
         load_capture(capture_path(shots, name, mode, b)) for b in BACKGROUNDS
     )
-    mask = drawn_mask(magenta, green)
-    record = json.loads(screen_rects.RECORD.read_text())
-    for rect in masked_boxes(record, entry.scene):
-        mask &= ~box_mask(mask.shape, rect)
     image = render_reference(index, entry, mode, steam_index)
     image.save(shots / name / f"{mode}_reference.png")
     reference = np.asarray(image, dtype=np.int16)
-    found = score(magenta, reference, mask)
-    control = score(magenta, shifted(reference), mask)
-    save_diff(
-        shots / name / f"{mode}_diff.png",
-        difference(magenta, reference),
-        scored(reference, mask),
-    )
+    if mode == "alpha":
+        alpha = alpha_of(magenta, green)
+        found = alpha_score(alpha, reference)
+        control = alpha_score(
+            alpha_of(
+                *(
+                    load_capture(capture_path(shots, name, mode, b, control=True))
+                    for b in BACKGROUNDS
+                )
+            ),
+            reference,
+        )
+        control_name = "control with no material"
+        values, use = alpha_difference(alpha, reference)
+    else:
+        mask = drawn_mask(magenta, green)
+        record = json.loads(screen_rects.RECORD.read_text())
+        for rect in masked_boxes(record, entry.scene):
+            mask &= ~box_mask(mask.shape, rect)
+        found = score(magenta, reference, mask)
+        control = score(magenta, shifted(reference), mask)
+        control_name = f"control shifted {CONTROL_SHIFT} px"
+        values, use = difference(magenta, reference), scored(reference, mask)
+    save_diff(shots / name / f"{mode}_diff.png", values, use)
     problem = verdict(found.p99, control.p99, entry.modes[mode].bar)
     print(
         f"{name} {mode}: {found.pixels} pixels,"
         f" p50/p90/p99 {found.p50:.0f}/{found.p90:.0f}/{found.p99:.0f},"
-        f" control shifted {CONTROL_SHIFT} px p99 {control.p99:.0f},"
+        f" {control_name} p99 {control.p99:.0f},"
         f" bar {entry.modes[mode].bar}: {'pass' if problem is None else 'FAIL'}"
     )
     if problem is not None:

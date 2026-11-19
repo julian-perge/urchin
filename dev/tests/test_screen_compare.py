@@ -646,3 +646,149 @@ def test_a_steam_reference_splits_only_the_depths_its_mode_renders(monkeypatch):
         ((1,), (0.0, 0.0)),
         ((126,), (0.0, 13.0)),
     ]
+
+
+# The alpha mode: scores what a filter draws by alpha alone, against ffdec,
+# with a capture of the same nodes with no material as its control.
+ALPHA = {"nodes": ["Bar/Clip"], "bar": 40}
+ALPHA_SCENES = {
+    SCENE: Scene(
+        timeline=0,
+        frame="KRINBATTLESCENE",
+        pieces={
+            "Bar/Clip": Piece("bar_part", None, instance="p1BAR", art="filter"),
+            "LeftPanel": Piece("panel", 11),
+            "Row/Frame": Piece("art", 1197, "victory_row", inner_depth=2),
+        },
+    )
+}
+
+
+def test_the_alpha_of_a_capture_comes_from_its_magenta_and_green_copies():
+    box = (1, 1, 3, 2)
+    # Grey 100 at alpha 0.6 over magenta and over green.
+    magenta = capture(3, 4, (255, 0, 255), box, (162, 60, 162))
+    green = capture(3, 4, (0, 255, 0), box, (60, 162, 60))
+
+    alpha = screen_compare.alpha_of(magenta, green)
+
+    assert alpha[0, 0] == 0.0
+    assert alpha[1, 1] == pytest.approx(0.6, abs=0.005)
+    assert alpha[1, 2] == pytest.approx(0.6, abs=0.005)
+
+
+def test_the_alpha_score_counts_every_pixel_either_side_draws_short_of_opaque():
+    port = np.zeros((4, 4))
+    port[1, 1] = 1.0
+    port[0, 0] = 1.0
+    reference = np.zeros((4, 4, 4), dtype=np.int16)
+    reference[1, 1, 3] = 255
+    reference[0, 0, 3] = 204
+    reference[2, 2, 3] = 102
+
+    found = screen_compare.alpha_score(port, reference)
+
+    assert found.pixels == 2
+    assert found.p50 == pytest.approx(76.5)
+    assert found.p99 == pytest.approx(101.49, abs=0.1)
+
+
+def test_an_alpha_score_with_nothing_drawn_is_an_error():
+    with pytest.raises(screen_compare.CompareError, match="no pixels"):
+        screen_compare.alpha_score(np.zeros((2, 2)), np.zeros((2, 2, 4)))
+
+
+def test_an_alpha_mode_takes_pieces_placed_by_a_depth_or_an_instance_name(tmp_path):
+    path = write_config(
+        tmp_path, {"bars": entry(alpha={"nodes": ["Bar/Clip", "LeftPanel"], "bar": 40})}
+    )
+
+    mode = screen_compare.load_config(path, ALPHA_SCENES)["bars"].modes["alpha"]
+
+    assert mode.places == ("p1BAR", 11)
+    assert mode.nodes == ("Bar/Clip", "LeftPanel")
+
+
+@pytest.mark.parametrize(
+    ("fields", "message"),
+    [
+        ({"bar": 40}, "alpha needs its nodes"),
+        ({"nodes": ["Row/Frame"], "bar": 40}, "Row/Frame is not a piece"),
+        ({**ALPHA, "hide_names": ["Body"]}, "only chrome mode"),
+    ],
+)
+def test_an_alpha_mode_that_breaks_the_format_is_refused(tmp_path, fields, message):
+    path = write_config(tmp_path, {"broken": entry(alpha=fields)})
+
+    with pytest.raises(screen_compare.CompareError, match=message):
+        screen_compare.load_config(path, ALPHA_SCENES)
+
+
+def test_an_alpha_mode_needs_a_control_capture_with_no_material(tmp_path):
+    missing = screen_compare.missing_captures(tmp_path, "bars", ["alpha"])
+
+    assert len(missing) == 4
+    assert any("alpha_control_green.png" in line for line in missing)
+    assert any('"--control"' in line for line in missing)
+
+
+def test_the_control_capture_arguments_ask_for_no_material():
+    assert screen_compare.capture_args("bars", "alpha", "magenta", control=True) == [
+        "--entry=bars",
+        "--mode=alpha",
+        "--background=magenta",
+        "--control",
+    ]
+
+
+def test_an_alpha_reference_keeps_only_the_depths_of_its_nodes_with_no_text(
+    monkeypatch,
+):
+    from types import SimpleNamespace
+
+    layers = {
+        72: SimpleNamespace(character_id=333, name=None, clip_depth=340),
+        342: SimpleNamespace(character_id=3414, name="p5BAR", clip_depth=None),
+        360: SimpleNamespace(character_id=3414, name="p1BAR", clip_depth=None),
+        378: SimpleNamespace(character_id=3414, name="p3BAR", clip_depth=None),
+    }
+    monkeypatch.setattr(screen_compare.screen_rects, "origin_of", lambda *_: (0, 0))
+    monkeypatch.setattr(screen_compare.timeline, "frame_of", lambda *_: 1)
+    inside = {1: SimpleNamespace(character_id=3407, name=None)}
+    monkeypatch.setattr(
+        screen_compare.timeline,
+        "frames",
+        lambda _, owner: [layers] if owner == 0 else [inside],
+    )
+    kinds = {333: "shape", 3414: "sprite", 3407: "edittext"}
+    monkeypatch.setattr(screen_compare, "character_kind", lambda _, cid: kinds[cid])
+    monkeypatch.setattr(
+        screen_compare.strip, "strip_list", lambda _, reasons: sorted(reasons)
+    )
+    bars = screen_compare.Entry(
+        SCENE,
+        0,
+        "KRINBATTLESCENE",
+        {"alpha": screen_compare.Mode(40, places=("p1BAR", "p5BAR"))},
+        compare_strip=(3435,),
+    )
+
+    job = screen_compare.reference_job(None, bars, "alpha")
+
+    assert job.timeline == 0
+    assert job.only_depths == (72, 342, 360)
+    assert job.strip == (3407,)
+
+
+def test_an_alpha_mode_in_a_krinmenu_entry_is_refused(monkeypatch):
+    monkeypatch.setattr(screen_compare.screen_rects, "origin_of", lambda *_: (0, 0))
+    monkeypatch.setattr(screen_compare.timeline, "frame_of", lambda *_: 1)
+    menu = screen_compare.Entry(
+        SCENE,
+        screen_compare.window_chrome.KRINMENU,
+        "win",
+        {"alpha": screen_compare.Mode(40, places=(11,))},
+    )
+
+    with pytest.raises(screen_compare.CompareError, match="KRINMENU"):
+        screen_compare.reference_job(None, menu, "alpha")
