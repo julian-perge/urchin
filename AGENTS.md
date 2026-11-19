@@ -66,12 +66,13 @@ must not run the command.
   `uv run ruff format --check`. Try it with a staged file that holds `x=1`.
 
 `dev/tests/test_enforce_tools.py` sends sample commands to the hook for each
-rule, with no restart.
+rule, with no restart. The hook reads its input with `jq`. Without `jq` it
+lets every command run.
 
 ## Setup
 
-- Install `just`, `uv`, `prek`, Godot 4.7.2, and for the extractors a JDK and
-  the ffdec build in `docs/agents/art-extraction.md`.
+- Install `just`, `uv`, `prek`, `jq`, Godot 4.7.2, and for the extractors a
+  JDK and the ffdec build in `docs/agents/art-extraction.md`.
 - `GODOT_BIN` is the app bundle on macOS and `godot` on `PATH` elsewhere. To
   change it, or to limit the Godot processes that run at once with
   `GODOT_SLOTS` (default `auto`, the number of CPU cores), copy `.env.example`

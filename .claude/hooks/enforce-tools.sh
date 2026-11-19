@@ -257,6 +257,16 @@ check_command() {
     git)
       check_git "$@"
       ;;
+    # A git commit later in the same command line runs in the folder that cd moved to, so the commit check reads that repo.
+    cd)
+      [[ ${1-} == -[LP] ]] && shift
+      case "${1-}" in
+        '' | '~') CWD=$HOME ;;
+        '~/'*) CWD=$HOME/${1#'~/'} ;;
+        /*) CWD=$1 ;;
+        *) CWD=$CWD/$1 ;;
+      esac
+      ;;
   esac
 }
 

@@ -190,7 +190,8 @@ extracting it.
   throws a NullPointerException at `CommandLineArgumentParser.java:1650`, and
   the launcher sets `-Xmx1024m` where one export runs in 192m. Run each ffdec
   command under `lockf -k /tmp/urchin-ffdec.lock`, so that a second agent
-  waits for the first. The Bash hook in `AGENTS.md` blocks it otherwise.
+  waits for the first. Otherwise the Bash hook in the Hooks section of
+  `AGENTS.md` blocks it.
 - **Measure a backdrop colour from the SWF, never from the port's art.** The
   battle sky PNGs have a soft top edge, so the pixel at row 0 is transparent
   for 5 of the 9 skies, and a fill sampled there drew nothing. The colour under

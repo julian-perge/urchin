@@ -130,6 +130,12 @@ def test_commit_dash_c_checks_that_repo(repo: Path) -> None:
     assert run_hook(f"git -C {repo} commit -m 'feat: x'").returncode == 2
 
 
+def test_commit_after_cd_checks_that_repo(repo: Path) -> None:
+    (repo / "bad.py").write_text("x=1\n")
+    git(repo, "add", "bad.py")
+    assert run_hook(f"cd {repo} && git commit -m 'feat: x'").returncode == 2
+
+
 def test_commit_all_checks_unstaged_tracked_python(repo: Path) -> None:
     (repo / "clean.py").write_text("x=1\n")
     assert run_hook("git commit -m 'feat: x'", repo).returncode == 0
