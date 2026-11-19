@@ -285,6 +285,15 @@ This tool checks how it looks: the art, the fills and the shadows.
   placement, as `reference_job` in `screen_compare.py` says for `panels`.
   The `panels` reference keeps the Bevel and matches the port on those edges.
   The rims around the three masked faces come next, from 32 up.
+- **The Inventory score is `chrome` p99 67, with the 20 px control at 217.**
+  The `inventory` entry scores KRINMENU's `inventory` frame against
+  `inventory_window.tscn` with no data. `SCENES.compare_strip` takes the 31
+  doll clips (`DOLL_CHARACTERS`) out of the reference, because ffdec draws
+  them with blades that reach outside the doll's rect. Of the pixels at 60 or
+  more, about 80% are on the backdrop's outer 6 px. That is the same Bevel loss
+  as in the Victory score, and the `window-shell` entry scores that backdrop
+  with the Bevel. The rest is on the 16 element bars: ffdec runs no script and
+  draws them white, and the port tints them from `elementColorArray`.
 - **The Abilities score covers the panels and the ability pool.** The
   `abilities` entry scores `abilities_window.tscn` alone, with `hide_names`
   hiding the tree lines and nodes, the eight sockets, the pool's rows, the plus

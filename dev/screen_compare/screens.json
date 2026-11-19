@@ -83,6 +83,14 @@
    }
   }
  },
+ "inventory": {
+  "scene": "res://scenes/ui/menu/inventory_window.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 67
+   }
+  }
+ },
  "hub": {
   "scene": "res://test/fixtures/screen_rects/hub_chrome.tscn",
   "modes": {
