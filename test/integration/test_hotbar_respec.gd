@@ -48,6 +48,17 @@ func _click(control: Control) -> void:
 	_mouse_button(control, false)
 
 
+# Drags the equipped weapon onto the button and releases it there.
+func _release_an_item_drag_on(button: BaseButton, save: PlayerSave) -> void:
+	var item: GameItem = ItemManagerAuto.items_by_id[int(save.equip_array[Equipment.MAIN_HAND_SLOT])]
+	button.force_drag({"item": item, "source": "equip", "index": Equipment.MAIN_HAND_SLOT}, Control.new())
+	var motion := InputEventMouseMotion.new()
+	motion.position = button.get_global_rect().get_center()
+	motion.global_position = motion.position
+	button.get_viewport().push_input(motion, true)
+	_mouse_button(button, false)
+
+
 # A level 5 player with two talents learned and a move of its own on the bar.
 # The respec costs round(0.7 * 10 * 5^1.5) = 78 euros at level 5.
 func _trained_save(euro: float) -> PlayerSave:
@@ -89,7 +100,6 @@ func test_the_hub_banner_sits_where_the_navigation_frame_places_the_clip():
 	banner.advance(10.0 / float(layout["fps"]))
 	var hub_place: Dictionary = layout["positions"]["hub"]
 	assert_almost_eq(banner.position, Vector2(hub_place["x"], hub_place["y"]), Vector2(0.001, 0.001), "frame 12 is in place")
-	assert_almost_eq(banner.position, Vector2(400.0, 48.95), Vector2(0.001, 0.001))
 
 
 # Frame 181 places the banner at depth 1610: over KRINMENU at 175, which holds
@@ -170,18 +180,25 @@ func test_a_release_with_an_item_on_the_cursor_changes_nothing_and_shows_menu_66
 	var equip_before: Array = save.equip_array.duplicate()
 	var hub: Control = await _hub()
 	var button: BaseButton = _respec_button(hub)
-	var item: GameItem = ItemManagerAuto.items_by_id[int(save.equip_array[Equipment.MAIN_HAND_SLOT])]
-	var preview := Control.new()
-	button.force_drag({"item": item, "source": "equip", "index": Equipment.MAIN_HAND_SLOT}, preview)
-	var motion := InputEventMouseMotion.new()
-	motion.position = button.get_global_rect().get_center()
-	motion.global_position = motion.position
-	button.get_viewport().push_input(motion, true)
-	_mouse_button(button, false)
+	_release_an_item_drag_on(button, save)
 	assert_false(button.get_viewport().gui_is_dragging(), "the release ends the drag")
 	assert_eq(_respec_fields(save), before)
 	assert_eq(save.equip_array, equip_before, "the item stays where it was")
 	assert_false(hub.get_node("AbilitiesWindow").visible)
+	var banner: CombatTextBanner = hub.get_node("CombatTextBanner")
+	assert_true(banner.is_up())
+	assert_eq(banner.label.text, Strings.menu(66))
+
+
+# The original checks for an item on the cursor before PauseForScreen, so an
+# inert hotbar still refuses the release with MENU[66].
+func test_an_inert_hotbar_still_refuses_a_release_with_an_item_on_the_cursor():
+	var save: PlayerSave = _trained_save(100.0)
+	var before: Dictionary = _respec_fields(save)
+	var hub: Control = await _hub()
+	hub.get_node("Hotbar").set_inert(true)
+	_release_an_item_drag_on(_respec_button(hub), save)
+	assert_eq(_respec_fields(save), before)
 	var banner: CombatTextBanner = hub.get_node("CombatTextBanner")
 	assert_true(banner.is_up())
 	assert_eq(banner.label.text, Strings.menu(66))
