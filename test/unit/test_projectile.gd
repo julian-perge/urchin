@@ -85,11 +85,11 @@ func test_trail_art_is_halved_and_grows_from_that_baseline():
 
 	bolt._process(1.0 / 30.0)  # first tick - spawns the trail and grows it once
 	assert_eq(bolt._trail_sprite.scale.y, 0.5, "the trail's thickness stays at its design size")
-	# One tick of growth is 0.083 * step length * speed_const on top of a
-	# 1.0 baseline, then the whole thing is halved (the trail scene's own
-	# baked scale).
+	# One tick of growth is krinBoltTrailGrowth percent of the step length
+	# times speed_const on top of a 1.0 baseline, then the whole thing is
+	# halved (the trail scene's own baked scale).
 	var step_length: float = (Vector2(300, 100) - Vector2(100, 100)).length() / float(_krin["krinBoltTime"])
-	assert_almost_eq(bolt._trail_sprite.scale.x, 0.5 * (1.0 + 0.083 * step_length), 0.001,
+	assert_almost_eq(bolt._trail_sprite.scale.x, 0.5 * (1.0 + float(_krin["krinBoltTrailGrowth"]) / 100.0 * step_length), 0.001,
 		"growth is a multiple of the halved baseline, not an unscaled increment")
 
 
@@ -250,9 +250,9 @@ func test_miss_keeps_flying_past_the_target_until_off_screen():
 	assert_false(bolt.is_queued_for_deletion(), "miss - doesn't free at the coordinate-cross tick")
 	assert_true(bolt.position.x > 103.0, "kept moving past the target")
 
-	# krinBoltMake removes a missed bolt once it is more than 500 px from the
-	# origin of BATTLESCREEN (frame_42/DoAction_4.as:201), which sits where the
-	# battle frame places BATTLESCREEN.
+	# krinBoltMake removes a missed bolt once it is more than krinBoltMissX px
+	# from the origin of BATTLESCREEN (frame_42/DoAction_4.as:201), which sits
+	# where the battle frame places BATTLESCREEN.
 	var ended: Array = []
 	bolt.flight_ended.connect(func(): ended.append(bolt.position.x))
 	var last_x: float = bolt.position.x
@@ -262,8 +262,9 @@ func test_miss_keeps_flying_past_the_target_until_off_screen():
 		if bolt.is_queued_for_deletion():
 			break
 	assert_true(bolt.is_queued_for_deletion(), "eventually frees")
-	assert_lte(last_x, rest_x + 500.0, "not while it was within 500 px of BATTLESCREEN's origin")
-	assert_gt(bolt.position.x, rest_x + 500.0, "but on the tick it got further")
+	var miss_x: float = float(_krin["krinBoltMissX"])
+	assert_lte(last_x, rest_x + miss_x, "not while it was within %d px of BATTLESCREEN's origin" % miss_x)
+	assert_gt(bolt.position.x, rest_x + miss_x, "but on the tick it got further")
 	assert_eq(ended.size(), 1, "and its flight ends then")
 
 

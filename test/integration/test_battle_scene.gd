@@ -3141,7 +3141,7 @@ func test_a_melee_caster_is_still_in_its_runback_when_the_next_action_dispatches
 
 
 # A missed bolt flies on past its target and raises the impact flag again on
-# every frame until it is more than 500 px from the battle screen's center
+# every frame until it is more than krinBoltMissX px from BATTLESCREEN's origin
 # (frame_42/DoAction_4.as:188-205). Each raise starts the conductor's count
 # again, so the next action dispatches 26 frames after the bolt is gone.
 func test_the_next_action_dispatches_26_frames_after_a_missed_bolt_is_gone():
