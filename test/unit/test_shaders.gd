@@ -3,9 +3,9 @@
 # headless run, when something first asks the renderer for it, and then logs
 # "Shader compilation failed" if the code has an error. GUT fails the test that
 # was running when the engine logged that error. So each test here loads its
-# shader fresh from disk and asks for its uniform list, which compiles it. A .gdshaderinc does not compile alone. It
-# compiles as part of each shader that includes it, so the last test fails
-# when no shader includes it.
+# shader fresh from disk and asks for its uniform list, which compiles it. A
+# .gdshaderinc does not compile alone. It compiles as part of each shader that
+# includes it, so the last test fails when no shader includes it.
 extends GutTest
 
 const ROOT: String = "res://"
