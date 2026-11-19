@@ -114,7 +114,7 @@ const MENU_SAVE_DIR: String = "user://test_main_menu_saves/"
 
 
 const TITLE_CAPTIONS: String = "TitlePanel/Captions"
-const BACK_PANELS: Array[String] = ["ModePanel", "NamePanel", "SlotPanel", "NewGamePanel", "OptionsPanel"]
+const BACK_PANELS: Array[String] = ["ModePanel", "ManualPanel", "NamePanel", "SlotPanel", "NewGamePanel", "OptionsPanel"]
 
 
 # The original opens on mainMenu, root frame 46, whose captions are MENU[18],
@@ -159,20 +159,43 @@ func test_the_choice_shows_the_logo_and_no_arena_caption():
 	assert_eq(choice.size, Vector2(800.0, 575.0))
 
 
-# Game Manual and Credits open Screens the port does not have yet, so a click
-# on either leaves the title up (spec/107-title-slots.md, The title).
-func test_game_manual_and_credits_leave_the_title_up():
+# Credits opens a Screen the port does not have yet, so a click on it leaves
+# the title up (spec/107-title-slots.md, The title).
+func test_credits_leaves_the_title_up():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
 	var title: TitlePanel = menu.get_node("TitlePanel")
 	watch_signals(title)
-	menu.get_node(TITLE_CAPTIONS + "/GameManualSlot/HitButton").pressed.emit()
 	menu.get_node(TITLE_CAPTIONS + "/CreditsSlot/HitButton").pressed.emit()
-	assert_signal_emitted(title, "game_manual_pressed")
 	assert_signal_emitted(title, "credits_pressed")
 	assert_true(title.visible, "the title stays up")
 	for panel in BACK_PANELS:
 		assert_false(menu.get_node(panel).visible, "%s stays hidden" % panel)
+
+
+# The title's Game Manual button, 2693, goes to designMenu, root frame 124
+# (spec/107-game-manual.md).
+func test_game_manual_on_the_title_shows_the_manual():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	menu.get_node(TITLE_CAPTIONS + "/GameManualSlot/HitButton").pressed.emit()
+	assert_true(menu.get_node("ManualPanel").visible, "Game Manual shows the manual")
+	assert_false(menu.get_node("TitlePanel").visible, "in place of the title")
+	assert_eq(menu.get_node("ManualPanel/Body").text, "Please select a topic.")
+
+
+# frame_124/DoAction.as sets the body to EXPLAINEXTRA on every entry to
+# designMenu, so a topic read before Back does not stay on the next open.
+func test_the_manual_asks_for_a_topic_again_on_each_open():
+	var menu = add_child_autofree(MainMenuScene.instantiate())
+	await get_tree().process_frame
+	var game_manual: Button = menu.get_node(TITLE_CAPTIONS + "/GameManualSlot/HitButton")
+	game_manual.pressed.emit()
+	menu.get_node("ManualPanel/Topics/Topic1/HitButton").pressed.emit()
+	assert_ne(menu.get_node("ManualPanel/Body").text, "Please select a topic.", "a topic is shown")
+	menu.get_node("ManualPanel/Back/HitButton").pressed.emit()
+	game_manual.pressed.emit()
+	assert_eq(menu.get_node("ManualPanel/Body").text, "Please select a topic.")
 
 
 # Returns one message for each panel whose Back does not swap that panel for

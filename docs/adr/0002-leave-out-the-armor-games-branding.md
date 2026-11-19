@@ -23,6 +23,8 @@ Everything else frame 104 shows stays: "You're dead, Sonny...", "< Click here to
 
 Everything else frame 116 shows stays too: the `ENDING` text, PvP Arena line included, and OK!, each a Label at its text's own rect, with OK! clickable over button 2797's rect. The text still sends the player to www.ArmorGames.com, because that sentence is the game's own text, `ENDING` (`frame_1/DoAction.as:2240`), not part of the branding.
 
+The Game Manual Screen, `scenes/ui/menu/manual_panel.tscn`, added for [#365](https://github.com/julian-perge/urchin/issues/365), shows the original's root frame 124 (`designMenu`) without the logo, the copyright line and its link, at depths 41, 38 and 39. Its last topic still sends the player to "the Sonny forums on ArmorGames for guides and walkthroughs", because that sentence is the game's own text, `MANUALEX[4]`, not part of the branding and not a link.
+
 ## Widened to the title and to every publisher link
 
 This record first covered the branding on the game over and ending screens only. [#121](https://github.com/julian-perge/urchin/issues/121) widened it to the branding and every link to the publisher's site, on every Screen. The title Screen, `scenes/ui/menu/title_panel.tscn`, added for [#215](https://github.com/julian-perge/urchin/issues/215), is the first Screen built under the wider rule.
