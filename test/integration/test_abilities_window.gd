@@ -408,6 +408,48 @@ func test_the_pool_the_ring_and_the_held_icon_tint_the_disc_with_the_moves_eleme
 	_assert_color(_disc(GameTooltip._icon.texture, ADRENALINE_ID), _element(ADRENALINE_ID), "pool tooltip")
 
 
+func _talent_cover(window: Control, node_index: int) -> TextureRect:
+	return window.get_node("TreeNodes/Node%d/IconRect/Cover" % node_index)
+
+
+# krinRemakeTree shows the icon's black "bfilter" disc at an alpha of its own on
+# a node with no point in it, and hides it on a node with one
+# (DefineSprite_3142/frame_25/PlaceObject3_3100_153 load, lines 59-67).
+# extract_fade_steps writes that alpha to talent_cover.json. Flash stores it in
+# 1/256 steps.
+func test_a_tree_node_with_no_point_is_covered_until_it_takes_one() -> void:
+	var save: PlayerSave = GameData.current_save
+	save.skill_points = 1
+	var window: Control = _window()
+	assert_eq(TalentTree.get_rank(save, 0), 0, "sanity: node 0 has no point")
+	var cover: TextureRect = _talent_cover(window, 0)
+	var layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ui/abilities/talent_cover.json"))
+	assert_true(cover.visible, "a node with no point is covered")
+	assert_eq(cover.modulate.a, FlashAlpha.from_percent(float(layout["cover_percent"])) / 256.0, "at the alpha krinRemakeTree gives it")
+	(window.get_node("TreeNodes/Node0") as Button).pressed.emit()
+	assert_eq(TalentTree.get_rank(save, 0), 1, "sanity: the click learned the talent")
+	assert_false(cover.visible, "a node with a point shows its icon uncovered")
+
+
+# The tree places each icon, thing2, at its own size, so the disc covers the
+# same part of the icon as it does on a Radial menu orb. The port draws the
+# tree's icons smaller, and the disc shrinks with them. Every icon file is cut
+# to the box of disc.png, and the cover is rendered at the same zoom, so the
+# icon's size in stage px is disc.png's size over that zoom.
+func test_the_talent_cover_sits_on_the_icons_centre_at_the_icons_scale() -> void:
+	var window: Control = _window()
+	var icon_rect: TextureRect = window.get_node("TreeNodes/Node0/IconRect")
+	var cover: TextureRect = _talent_cover(window, 0)
+	var rect: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ui/abilities/cooldown.json"))["cover"]
+	var cover_texture: Texture2D = load("res://assets/ui/abilities/cooldown_cover.png")
+	var zoom: float = cover_texture.get_width() / float(rect["w"])
+	var icon_size: float = (load(AbilityIcon.DISC_PATH) as Texture2D).get_width() / zoom
+	var icon_scale: float = icon_rect.size.x / icon_size
+	assert_eq(cover.texture, cover_texture, "the black disc that the Radial menu shows")
+	assert_almost_eq(cover.get_global_rect().get_center(), icon_rect.get_global_rect().get_center() + Vector2(rect["x"] + rect["w"] / 2.0, rect["y"] + rect["h"] / 2.0) * icon_scale, Vector2(0.01, 0.01), "on the icon's centre")
+	assert_almost_eq(cover.size, Vector2(rect["w"], rect["h"]) * icon_scale, Vector2(0.01, 0.01), "at the icon's scale")
+
+
 # krinRemakeTree gives a node the element of its ID's move, and a passive
 # node's ID is 0, whose move is Physical
 # (DefineSprite_3142/frame_25/PlaceObject3_3100_153 load, lines 51-57).

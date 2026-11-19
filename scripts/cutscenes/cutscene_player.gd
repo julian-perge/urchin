@@ -44,11 +44,13 @@ signal _playback_settled
 # extract_cutscene_skip writes this file.
 const SKIP_LAYOUT_PATH: String = "res://assets/cutscenes/skip_button.json"
 
-# The fade clip takes 5 off its _alpha each frame while cutSceneEnd is false
-# and the alpha is above 0, and adds 5 each frame once cutSceneEnd is true
-# (frame_263/PlaceObject2_3466_80 enterFrame, lines 2-11). The alpha is in
-# Flash's 1/256 steps (FlashAlpha).
-const FADE_STEP: float = 5.0
+# The fade clip takes a step off its _alpha each frame while cutSceneEnd is
+# false and the alpha is above 0, and adds the same step each frame once
+# cutSceneEnd is true (frame_263/PlaceObject2_3466_80 enterFrame, lines 2-11).
+# extract_fade_steps writes the step to this file. The alpha is in Flash's 1/256
+# steps (FlashAlpha).
+const FADE_PATH: String = "res://assets/cutscenes/cutscene_fade.json"
+static var _fade_steps: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(FADE_PATH))
 # Render deltas that add up to a whole SWF frame can fall short of it by a float
 # rounding error, so a frame counts as passed within this margin.
 const FRAME_EPSILON: float = 0.000001
@@ -245,9 +247,9 @@ func _fade_ended(cut_scene_end: bool) -> bool:
 # One run of the fade clip's enterFrame.
 func step_fade(cut_scene_end: bool) -> void:
 	if cut_scene_end:
-		_fade_alpha = FlashAlpha.add(_fade_alpha, FADE_STEP)
+		_fade_alpha = FlashAlpha.add(_fade_alpha, float(_fade_steps["fade_step"]))
 	elif _fade_alpha > 0:
-		_fade_alpha = FlashAlpha.add(_fade_alpha, -FADE_STEP)
+		_fade_alpha = FlashAlpha.add(_fade_alpha, -float(_fade_steps["fade_step"]))
 	_show_fade()
 
 
