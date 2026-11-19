@@ -304,6 +304,10 @@ func start_battle(info: Dictionary) -> void:
 	var cutscene_id: String = str(info.get("cutscene_before", ""))
 	if not cutscene_id.is_empty():
 		await _play_cutscene_before(cutscene_id)
+	# The new game's first fights set the rotation on the frame after their
+	# Cutscene (see ZoneProgression.FIRST_STORY_FIGHT and TUTORIAL_FIGHT).
+	if info.has("music_rotation"):
+		AudioManagerAuto.set_first_fight_music(int(info["music_rotation"]))
 	AudioManagerAuto.play_battle_music(info.get("is_boss", false))
 	# The battle frame opens on blacker5's frame 1, which fades the battle in
 	# from black until the stop() on its frame 31
