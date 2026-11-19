@@ -1,0 +1,11 @@
+RUN	1
+FORIN	so_disk_saved_copy	none
+FORIN	so_source_push4	4	3,2,1,0
+FORIN	so_memory_saved_copy	4	0,1,2,3
+FORIN	so_memory_loaded_into_new_Array	4	3,2,1,0
+RUN	2
+FORIN	so_disk_saved_copy	4	0,1,2,3
+FORIN	so_disk_loaded_into_new_Array	4	3,2,1,0
+FORIN	so_source_push4	4	3,2,1,0
+FORIN	so_memory_saved_copy	4	0,1,2,3
+FORIN	so_memory_loaded_into_new_Array	4	3,2,1,0
