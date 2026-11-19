@@ -1,6 +1,7 @@
 # Unit tests for the CharacterVisual paper doll - part assembly from the
-# extracted rest pose of MODEL1 and MODEL4, the dressChar() texture layering, equip-looks
-# resolution, and the code-driven animation states.
+# extracted rest pose of each model, the pieces each model places with no name,
+# the dressChar() texture layering, equip-looks resolution, and the code-driven
+# animation states.
 extends GutTest
 
 const CharacterVisualScene = preload("res://scenes/character_visual.tscn")
@@ -321,7 +322,7 @@ func test_a_swing_that_starts_during_the_runback_dashes_as_one_from_that_spot():
 	assert_eq(dashes[0], dashes[1], "the dash and its arrival match a swing from that spot")
 
 
-func test_a_swing_plays_its_attack_label_and_an_unknown_label_plays_attack():
+func test_a_swing_plays_its_attack_label_and_an_unknown_label_plays_none():
 	watch_signals(visual)
 	# Attack_Upper is a 30-frame swing (1s) - the overhead Destroy strike.
 	visual.play_melee(func(): return Vector2(80, 0), 0.0, "Attack_Upper")
@@ -330,9 +331,9 @@ func test_a_swing_plays_its_attack_label_and_an_unknown_label_plays_attack():
 		visual._process(0.05)
 	assert_signal_emitted(visual, "attack_connected")
 	assert_eq(visual._state, CharacterVisual.State.IDLE)
-	# Unknown labels fall back to the base swing.
+	# Flash ignores a goto to a label the clip does not have.
 	visual.play_melee(func(): return Vector2(80, 0), 0.0, "Krin.Firebolt")
-	assert_eq(visual._attack_label, "Attack")
+	assert_eq(visual._attack_label, "")
 
 
 # Runs one swing through its Runback a frame at a time and returns the MODEL1
@@ -590,11 +591,17 @@ func test_a_model_with_no_placement_gets_no_shadow():
 	assert_null(visual.get_node_or_null("Body/Shadow"))
 
 
+# The shadow follows the clip's own matrix on every frame, so this test starts
+# each model's clip, as dressChar does.
 func test_asking_again_replaces_the_shadow():
-	visual.show_shadow("MODEL1")
-	visual.show_shadow("MODEL2")
+	visual.start_clip("MODEL1")
+	visual.start_clip("MODEL2")
 	await get_tree().process_frame
-	assert_eq(visual.get_node("Body").get_child_count(), 16)
+	var shadows: int = 0
+	for child in visual.get_node("Body").get_children():
+		if str(child.name).begins_with("Shadow"):
+			shadows += 1
+	assert_eq(shadows, 1)
 	var got: Rect2 = _shadow_rect(visual.get_node("Body/Shadow"))
 	assert_true(got.size.is_equal_approx(_expected_shadow_rect("MODEL2").size))
 
@@ -872,11 +879,9 @@ func test_a_model4_swing_plays_sfx_swing_on_model4s_cue_frame():
 			visual.sound_cue.disconnect(connection["callable"])
 
 
-# MODEL5 to MODEL8 have fewer named parts than the doll's 15, and MODEL2 and
-# MODEL9 name none, so the port plays MODEL1's clip for them, as it did for
-# every model before (#378).
+# The SWF exports no MODEL3, so a model of that name plays MODEL1's clip.
 func test_a_model_with_no_timeline_of_its_own_plays_model1s():
-	visual.start_clip("MODEL5")
+	visual.start_clip("MODEL3")
 	assert_eq(visual._model, "MODEL1")
 	assert_eq(_shown_frame(), 1)
 
@@ -885,3 +890,249 @@ func test_every_model_with_its_own_clip_has_its_timeline_and_cues():
 	for model in CharacterVisual.CLIP_MODELS:
 		assert_true(FileAccess.file_exists(CharacterVisual.animations_file(model)), model)
 		assert_true(FileAccess.file_exists(CharacterVisual.sound_cues_file(model)), model)
+
+
+# --- MODEL2 and MODEL5 to MODEL9 (extract_model_animations, extract_model_pieces)
+
+# Returns the 1-based frame of `model`'s `label`, as its animations file gives
+# it, for the label's first frame or, with `last` true, its last.
+func _frame_of(model: String, label: String, last: bool = false) -> int:
+	return int(_animations(model)["labels"][label]["end" if last else "start"])
+
+
+func _pieces_of(model: String) -> Dictionary:
+	return JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.pieces_file(model)))
+
+
+# MODEL5 names 11 of the doll's parts and has no foot2, shoulder, weapon1 or
+# weapon2. dressChar still dresses all 15 names, and a name the clip does not
+# place draws nothing.
+func test_a_model5_doll_stands_on_model5s_frame_1_and_hides_the_parts_it_does_not_place():
+	visual.dress_from_model(["MODEL5", "WOLF", "", "M"], ["", "", "", "", "", "", ""])
+	visual.start_clip("MODEL5")
+	var pose: Dictionary = _animations("MODEL5")["frames"][0]
+	assert_eq(pose.size(), 11, "sanity: MODEL5 places 11 parts")
+	for part_name in visual._parts:
+		var part: Node2D = visual._parts[part_name]
+		if not pose.has(part_name):
+			assert_false(part.visible, "%s is hidden" % part_name)
+			continue
+		var m: Array = pose[part_name]
+		var want := Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5]))
+		assert_true(part.visible and part.transform.is_equal_approx(want), part_name)
+	for part_name in ["foot2", "shoulder", "weapon1", "weapon2"]:
+		assert_false(visual._parts[part_name].visible, part_name)
+
+
+# Each model starts every label on its own frame: MODEL5 casts on 124 and dies
+# on 144, where MODEL1 casts on 189 and dies on 313.
+func test_each_of_model5_to_model8_plays_its_labels_on_its_own_frames():
+	for model in ["MODEL5", "MODEL6", "MODEL7", "MODEL8"]:
+		visual.start_clip(model)
+		assert_eq(visual._frame_index + 1, _frame_of(model, "stand"), "%s stand" % model)
+		var one_shots: Dictionary = {"cast": CharacterVisual.State.CAST, "hit": CharacterVisual.State.HIT, "stun": CharacterVisual.State.STUN}
+		for label in one_shots:
+			visual.set_state(one_shots[label])
+			assert_eq(visual._frame_index + 1, _frame_of(model, label), "%s %s starts on its own frame" % [model, label])
+			for step in _frame_of(model, label, true) - _frame_of(model, label):
+				visual._process(SWF_FRAME_SECONDS)
+			assert_true(_shows_pose(_animations(model)["frames"][_frame_of(model, label, true) - 1]), "%s %s ends on its own frame" % [model, label])
+		visual._process(SWF_FRAME_SECONDS)
+		assert_eq(visual._label, "stun2", "%s stun flows into stun2" % model)
+		assert_true(_shows_pose(_animations(model)["frames"][_frame_of(model, "stun2") - 1]), "%s stun2" % model)
+		visual.exit_stun()
+		assert_true(_shows_pose(_animations(model)["frames"][_frame_of(model, "outofstun") - 1]), "%s outofstun" % model)
+		visual.set_state(CharacterVisual.State.DEAD)
+		assert_true(_shows_pose(_animations(model)["frames"][_frame_of(model, "dead") - 1]), "%s dead" % model)
+
+
+# MODEL5 to MODEL8 run on frames 31 to 59, swing from 60 and run back on 92 to
+# 111, whose script falls into stand (DefineSprite_2631_MODEL7/frame_111).
+func test_each_of_model5_to_model8_swings_on_its_own_run_strike_and_runback_frames():
+	for model in ["MODEL5", "MODEL6", "MODEL7", "MODEL8"]:
+		visual.start_clip(model)
+		visual.play_melee(func(): return Vector2(80, 0), 0.0, "Attack")
+		var shown: Array = [int(visual._playhead) + 1]
+		for frame in 120:
+			visual._process(SWF_FRAME_SECONDS)
+			if visual.is_idle():
+				break
+			shown.append(int(visual._playhead) + 1)
+		assert_eq(shown[0], _frame_of(model, "run"), "%s run" % model)
+		assert_true(shown.has(_frame_of(model, "Attack")), "%s strike" % model)
+		assert_true(shown.has(_frame_of(model, "runback")), "%s runback" % model)
+		assert_eq(shown[-1], _frame_of(model, "runback", true), "%s ends the runback" % model)
+
+
+# MODEL5 plays sfx_swing on its frame 71 and MODEL6 and MODEL7 on their frame
+# 69 (DefineSprite_2664_MODEL5/frame_71, DefineSprite_2608_MODEL6/frame_69,
+# DefineSprite_2631_MODEL7/frame_69). MODEL8's scripts play no sound.
+func test_model5_to_model7_play_sfx_swing_on_their_own_cue_frame_and_model8_plays_none():
+	for model in ["MODEL5", "MODEL6", "MODEL7", "MODEL8"]:
+		var want: Array = []
+		for frame in _cues_of(model):
+			for cue in _cues_of(model)[frame]:
+				want.append([int(frame), cue])
+		assert_eq(want.size(), 0 if model == "MODEL8" else 1, "%s cues" % model)
+		visual.start_clip(model)
+		assert_eq(_swing_cues("Attack"), want, model)
+		for connection in visual.sound_cue.get_connections():
+			visual.sound_cue.disconnect(connection["callable"])
+
+
+# Gregor (MODEL7) swings with Terrify, whose label is Attack_Stab. MODEL7 has no
+# such label, so krinMelee's goto does nothing and the doll holds the run's last
+# frame, whose script runs stop(), until the Runback. It plays no swing sound.
+func test_a_swing_on_a_label_the_model_lacks_holds_the_run_until_the_runback():
+	visual.start_clip("MODEL7")
+	watch_signals(visual)
+	var cues: Array = _swing_cues("Attack_Stab")
+	assert_eq(cues, [], "no sfx_swing")
+	assert_signal_emitted(visual, "attack_connected", "Impact still lands")
+	visual.start_clip("MODEL7")
+	visual.play_melee(func(): return Vector2(80, 0), 0.0, "Attack_Stab")
+	var held: Array = []
+	for frame in 120:
+		visual._process(SWF_FRAME_SECONDS)
+		if visual._melee_phase == CharacterVisual.MeleePhase.STRIKE:
+			held.append(int(visual._playhead) + 1)
+		elif not held.is_empty():
+			break
+	assert_false(held.is_empty(), "sanity: the swing reached its strike")
+	assert_eq(held[-1], _frame_of("MODEL7", "run", true), "the strike ends on frame 59")
+	for frame in held:
+		assert_between(frame, _frame_of("MODEL7", "run"), _frame_of("MODEL7", "run", true), "every strike frame is a run frame")
+
+
+# MODEL2 has only stand, cast and dead. A hit or a stun sends the orb's clip to
+# a label it does not have, so it plays its stand loop on.
+func test_a_hit_or_stun_on_a_model_without_that_label_leaves_the_doll_as_it_was():
+	visual.start_clip("MODEL2")
+	for step in 5:
+		visual._process(SWF_FRAME_SECONDS)
+	visual.set_state(CharacterVisual.State.HIT)
+	assert_eq(visual._state, CharacterVisual.State.IDLE)
+	assert_eq(visual._frame_index, 5, "stand plays on")
+	visual.enter_stun()
+	assert_eq(visual._state, CharacterVisual.State.IDLE)
+	visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._frame_index, 6)
+
+
+# MODEL8 places two unnamed shapes at depths 9 and 10, between leg3 at 7 and
+# chest at 11, and dressChar does not dress them.
+func test_model8_draws_its_unnamed_clips_between_its_parts_in_depth_order():
+	visual.start_clip("MODEL8")
+	var pieces: Dictionary = _pieces_of("MODEL8")
+	for depth in ["9", "10"]:
+		var sprite: Sprite2D = visual.get_node("Body/Piece%s" % depth)
+		assert_true(sprite.visible, depth)
+		var rect: Dictionary = pieces["art"][pieces["frames"][0][depth]]
+		var got: Rect2 = sprite.transform * sprite.get_rect()
+		assert_true(got.is_equal_approx(Rect2(rect["x"], rect["y"], rect["w"], rect["h"])), "depth %s lands on its rect, got %s" % [depth, got])
+	var body: Node = visual.get_node("Body")
+	assert_lt(visual._parts["leg3"].get_index(), body.get_node("Piece9").get_index())
+	assert_lt(body.get_node("Piece9").get_index(), body.get_node("Piece10").get_index())
+	assert_lt(body.get_node("Piece10").get_index(), visual._parts["chest"].get_index())
+
+
+func test_a_new_clip_drops_the_last_models_pieces():
+	visual.start_clip("MODEL8")
+	visual.start_clip("MODEL1")
+	assert_null(visual.get_node_or_null("Body/Piece9"))
+
+
+# MODEL2 places its orb (DefineSprite 1768, 71 frames) on frame 1 and keeps it,
+# so the orb plays on its own clock and the stand label's goto back to frame 1
+# (DefineSprite_1795_MODEL2/frame_29) does not restart it.
+func test_the_orb_plays_on_its_own_clock_through_the_stand_loop():
+	visual.start_clip("MODEL2")
+	var pieces: Dictionary = _pieces_of("MODEL2")
+	var loop: Array = pieces["loops"]["3"]
+	var orb: Sprite2D = visual.get_node("Body/Piece3")
+	var stand: int = _frame_of("MODEL2", "stand", true)
+	for step in stand + 5:
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._frame_index, 5, "sanity: stand looped back to its frame 6")
+	assert_eq(orb.texture.resource_path, CharacterVisual.PIECE_ART % loop[stand + 5], "the orb is on its own frame %d" % (stand + 6))
+
+
+# MODEL2's dead label tints the orb toward red with colour offsets from frame
+# 58 and then fades it.
+func test_the_orb_takes_its_frames_colour_transform():
+	visual.start_clip("MODEL2")
+	visual.set_state(CharacterVisual.State.DEAD)
+	var frames: Array = _pieces_of("MODEL2")["frames"]
+	var tinted: int = -1
+	for index in range(_frame_of("MODEL2", "dead") - 1, frames.size()):
+		if frames[index]["3"]["color"][4] > 0.0:
+			tinted = index
+			break
+	assert_gt(tinted, 0, "sanity: a dead frame tints the orb")
+	for step in tinted - (_frame_of("MODEL2", "dead") - 1):
+		visual._process(SWF_FRAME_SECONDS)
+	assert_eq(visual._frame_index, tinted, "sanity: on the tinted frame")
+	var c: Array = frames[tinted]["3"]["color"]
+	var material: ShaderMaterial = visual.get_node("Body/Piece3").material
+	assert_eq(material.get_shader_parameter("offset"), Vector4(c[4], c[5], c[6], c[7]))
+	assert_eq(material.get_shader_parameter("multiplier"), Vector4(c[0], c[1], c[2], c[3]))
+
+
+# MODEL8 moves its shadow on later frames, and the shadow follows.
+func test_the_shadow_follows_the_models_matrix_on_every_frame():
+	visual.start_clip("MODEL8")
+	var shadows: Array = _animations("MODEL8")["shadow"]
+	var moved: int = -1
+	for index in shadows.size():
+		if shadows[index] != null and shadows[index] != shadows[0]:
+			moved = index
+			break
+	assert_gt(moved, 0, "sanity: MODEL8 moves its shadow")
+	visual._apply_frame_index(moved)
+	var shadow: Sprite2D = visual.get_node("Body/Shadow")
+	var m: Array = shadows[moved]
+	var placed := Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5]))
+	assert_true(shadow.transform.is_equal_approx(placed * shadow.get_meta("art")))
+
+
+# Flash measures a clip's _width over all it draws, so the bomb, which names no
+# part, is as wide as its own art.
+func test_a_doll_with_no_parts_measures_its_pieces():
+	visual.start_clip("MODEL9")
+	var bomb: Sprite2D = visual.get_node("Body/Piece3")
+	assert_true(bomb.visible)
+	var want: Rect2 = visual.transform * bomb.transform * bomb.get_rect()
+	assert_true(visual.get_bounds().is_equal_approx(want), "%s, want %s" % [visual.get_bounds(), want])
+
+
+# MODEL9's dead label is frames 163 to 192, and the script on frame 192 removes
+# the bomb (DefineSprite_2469_MODEL9/frame_192). BOOM1 plays from 163.
+func test_the_bomb_dies_on_its_dead_label_and_shows_its_blast():
+	visual.start_clip("MODEL9")
+	visual.set_state(CharacterVisual.State.DEAD)
+	assert_eq(visual._frame_index + 1, _frame_of("MODEL9", "dead"))
+	assert_true(visual.get_node("Body/Piece6").visible, "BOOM1 at depth 6")
+	for step in _frame_of("MODEL9", "dead", true) - _frame_of("MODEL9", "dead"):
+		visual._process(SWF_FRAME_SECONDS)
+	assert_false(visual.is_visible_in_tree(), "frame 192 removes the doll")
+
+
+func test_every_model_with_pieces_names_art_that_exists():
+	for model in CharacterVisual.CLIP_MODELS:
+		if not FileAccess.file_exists(CharacterVisual.pieces_file(model)):
+			continue
+		var pieces: Dictionary = _pieces_of(model)
+		for art in pieces["art"]:
+			assert_true(ResourceLoader.exists(CharacterVisual.PIECE_ART % art), art)
+
+
+# extract_doll_shadow and extract_model_animations each write a model's frame 1
+# shadow matrix. show_shadow reads the first and each frame the second, so they
+# must agree or the shadow jumps on the clip's first frame.
+func test_the_shadow_layout_and_each_timelines_first_shadow_agree():
+	var models: Dictionary = _shadow_layout()["models"]
+	for model in CharacterVisual.CLIP_MODELS:
+		var first: Array = _animations(model)["shadow"][0]
+		var want: Array = models[model]
+		for index in 6:
+			assert_almost_eq(float(first[index]), float(want[index]), 0.01, "%s matrix entry %d" % [model, index])
