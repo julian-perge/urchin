@@ -14,6 +14,12 @@ const ACHIEVEMENTS_FILE: String = "user://test_zone_battle_flow_achievements.cfg
 var unit_templates: Dictionary = {}
 
 
+# BattleAI keeps the original's left-behind AI values between calls, so each
+# battle here starts its AI from the state of a fresh game.
+func before_each():
+	BattleAI.reset_scratch()
+
+
 func before_all():
 	unit_templates = UnitManagerAuto.units_by_id
 

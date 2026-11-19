@@ -324,9 +324,10 @@ func test_an_absolute_move_after_a_left_focus_move_goes_to_player_focus_check():
 	assert_eq(chosen.get("target_slot"), 1)
 
 
-# Calls 305 and 308 of run 2 in aimove_web_ruffle.txt. counterFilter1 is 1 from
-# a call that had two enemies, and aliveEnemies is [2] from a later call that
-# took the weakest enemy. aliveEnemies[1] is undefined, and the conductor runs
+# The scratch state of calls 305 and 308 of run 2 in aimove_web_ruffle.txt,
+# which were in battle 109, put on the battle 212 units. counterFilter1 is 1
+# from a call that had two enemies, and aliveEnemies is [2] from a later call
+# that took the weakest enemy. aliveEnemies[1] is undefined, and the conductor runs
 # no move at an undefined target (line 350), so choose_move returns target 0.
 func test_a_fallback_past_the_end_of_the_left_enemy_list_has_no_target():
 	BattleAI.scratch.alive_enemies = [2]
