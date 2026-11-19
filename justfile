@@ -399,6 +399,11 @@ trace-swf build: (require "ffdec" "java")
 trace-run build player: (require "ffdec" "java")
     uv run trace_run "$@"
 
+[doc('Count the AImoveAdder calls that a global left by an earlier call changed, from the AIMOVE lines of Trace logs: just aimove-report <log>...')]
+[group('trace')]
+aimove-report +logs:
+    uv run aimove_report "$@"
+
 [doc('Print the distinct gotos that one Trace log has and the other lacks: just trace-diff <log a> <log b>')]
 [group('trace')]
 trace-diff log_a log_b:
