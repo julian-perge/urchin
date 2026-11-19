@@ -124,11 +124,11 @@ func test_boss_replay_counts_as_training_in_zones_1_to_5():
 func test_boss_replay_from_the_story_orb_sets_used_training():
 	var previous_save: PlayerSave = GameData.current_save
 	var previous_zone: int = ZoneManager.current_zone
-	var previous_auto_start: bool = ZoneManager.auto_start_battles
+	var previous_auto_start: bool = ZoneManager.auto_switch_scenes
 	var previous_pending: Dictionary = ZoneManager.pending_battle
 	GameData.current_save = save
 	ZoneManager.current_zone = 2
-	ZoneManager.auto_start_battles = false
+	ZoneManager.auto_switch_scenes = false
 	save.quest_progress[2] = 12
 	ZoneManager.request_story_fight()
 	assert_false(save.used_training, "the first fight against zone 2's boss leaves used_training alone")
@@ -137,7 +137,7 @@ func test_boss_replay_from_the_story_orb_sets_used_training():
 	assert_true(save.used_training, "replaying zone 2's boss sets used_training")
 
 	ZoneManager.pending_battle = previous_pending
-	ZoneManager.auto_start_battles = previous_auto_start
+	ZoneManager.auto_switch_scenes = previous_auto_start
 	ZoneManager.current_zone = previous_zone
 	GameData.current_save = previous_save
 
@@ -148,11 +148,11 @@ func test_boss_replay_from_the_story_orb_sets_used_training():
 func test_the_story_orb_plays_cs_cut1_before_every_story_attempt_at_109():
 	var previous_save: PlayerSave = GameData.current_save
 	var previous_zone: int = ZoneManager.current_zone
-	var previous_auto_start: bool = ZoneManager.auto_start_battles
+	var previous_auto_start: bool = ZoneManager.auto_switch_scenes
 	var previous_pending: Dictionary = ZoneManager.pending_battle
 	GameData.current_save = save
 	ZoneManager.current_zone = 1
-	ZoneManager.auto_start_battles = false
+	ZoneManager.auto_switch_scenes = false
 	save.quest_progress[1] = 9
 	for attempt in range(1, 3):
 		ZoneManager.pending_battle = {}
@@ -161,7 +161,7 @@ func test_the_story_orb_plays_cs_cut1_before_every_story_attempt_at_109():
 		assert_eq(ZoneManager.pending_battle.get("cutscene_before"), "CS_CUT1", "attempt %d plays CS_CUT1 first" % attempt)
 
 	ZoneManager.pending_battle = previous_pending
-	ZoneManager.auto_start_battles = previous_auto_start
+	ZoneManager.auto_switch_scenes = previous_auto_start
 	ZoneManager.current_zone = previous_zone
 	GameData.current_save = previous_save
 
@@ -171,11 +171,11 @@ func test_the_story_orb_plays_cs_cut1_before_every_story_attempt_at_109():
 func test_a_boss_replay_of_109_starts_with_no_cutscene():
 	var previous_save: PlayerSave = GameData.current_save
 	var previous_zone: int = ZoneManager.current_zone
-	var previous_auto_start: bool = ZoneManager.auto_start_battles
+	var previous_auto_start: bool = ZoneManager.auto_switch_scenes
 	var previous_pending: Dictionary = ZoneManager.pending_battle
 	GameData.current_save = save
 	ZoneManager.current_zone = 1
-	ZoneManager.auto_start_battles = false
+	ZoneManager.auto_switch_scenes = false
 	save.quest_progress[1] = 10
 	ZoneManager.pending_battle = {}
 	ZoneManager.request_story_fight()
@@ -184,7 +184,7 @@ func test_a_boss_replay_of_109_starts_with_no_cutscene():
 	assert_eq(ZoneManager.pending_battle.get("cutscene_before", ""), "", "it starts with no Cutscene")
 
 	ZoneManager.pending_battle = previous_pending
-	ZoneManager.auto_start_battles = previous_auto_start
+	ZoneManager.auto_switch_scenes = previous_auto_start
 	ZoneManager.current_zone = previous_zone
 	GameData.current_save = previous_save
 
@@ -195,10 +195,10 @@ func test_a_boss_replay_of_109_starts_with_no_cutscene():
 func test_no_other_story_orb_fight_has_a_cutscene_before_it():
 	var previous_save: PlayerSave = GameData.current_save
 	var previous_zone: int = ZoneManager.current_zone
-	var previous_auto_start: bool = ZoneManager.auto_start_battles
+	var previous_auto_start: bool = ZoneManager.auto_switch_scenes
 	var previous_pending: Dictionary = ZoneManager.pending_battle
 	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
+	ZoneManager.auto_switch_scenes = false
 	for zone in ZoneProgression.QUEST_HUB:
 		ZoneManager.current_zone = zone
 		var progress_max: int = int(ZoneProgression.QUEST_HUB[zone]["progress_max"])
@@ -211,7 +211,7 @@ func test_no_other_story_orb_fight_has_a_cutscene_before_it():
 			assert_eq(ZoneManager.pending_battle.get("cutscene_before", ""), "", "zone %d at progress %d" % [zone, progress])
 
 	ZoneManager.pending_battle = previous_pending
-	ZoneManager.auto_start_battles = previous_auto_start
+	ZoneManager.auto_switch_scenes = previous_auto_start
 	ZoneManager.current_zone = previous_zone
 	GameData.current_save = previous_save
 
@@ -229,10 +229,10 @@ func test_only_the_training_orb_of_zones_1_to_5_counts_as_training():
 func test_training_in_rome_leaves_used_training_alone():
 	var previous_save: PlayerSave = GameData.current_save
 	var previous_zone: int = ZoneManager.current_zone
-	var previous_auto_start: bool = ZoneManager.auto_start_battles
+	var previous_auto_start: bool = ZoneManager.auto_switch_scenes
 	var previous_pending: Dictionary = ZoneManager.pending_battle
 	GameData.current_save = save
-	ZoneManager.auto_start_battles = false
+	ZoneManager.auto_switch_scenes = false
 	save.quest_progress[5] = 14
 	save.quest_progress[6] = 1
 	ZoneManager.current_zone = 6
@@ -243,7 +243,7 @@ func test_training_in_rome_leaves_used_training_alone():
 	assert_true(save.used_training, "a training fight in CITY sets used_training")
 
 	ZoneManager.pending_battle = previous_pending
-	ZoneManager.auto_start_battles = previous_auto_start
+	ZoneManager.auto_switch_scenes = previous_auto_start
 	ZoneManager.current_zone = previous_zone
 	GameData.current_save = previous_save
 

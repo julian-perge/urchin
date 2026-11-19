@@ -13,7 +13,7 @@ extends Node2D
 var pending_battle: Dictionary = {}
 # Tests and headless flows set this false to keep request_* from switching to
 # the battle scene, and to keep a won battle from switching back to the Hub.
-var auto_start_battles: bool = true
+var auto_switch_scenes: bool = true
 # Set by game.gd's Victory Proceed right before it builds a new Hub, when the
 # cutscene it played goes on to the map (gotoSceneKrin == "overMap",
 # frame_219/DoAction.as). The new Hub's _ready() opens the zone map overlay and
@@ -106,7 +106,7 @@ func request_fight(pick: Dictionary) -> Dictionary:
 func _launch_battle(info: Dictionary) -> void:
 	pending_battle = info
 	battle_selected.emit(info)
-	if auto_start_battles:
+	if auto_switch_scenes:
 		get_tree().change_scene_to_file.call_deferred("res://scenes/battle_scene.tscn")
 
 # Zone definitions stored as resource

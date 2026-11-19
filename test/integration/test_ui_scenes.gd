@@ -10,13 +10,13 @@ const ACHIEVEMENTS_FILE = "user://test_ui_scenes_achievements.cfg"
 
 func before_each():
 	GameData.current_save = PlayerSave.new_game("UiTest", 0)
-	ZoneManager.auto_start_battles = false
+	ZoneManager.auto_switch_scenes = false
 	ZoneManager.current_zone = 1
 
 
 func after_each():
 	GameData.current_save = null
-	ZoneManager.auto_start_battles = true
+	ZoneManager.auto_switch_scenes = true
 	ZoneManager.pending_battle = {}
 	GameTooltip.hide_tooltip()
 
