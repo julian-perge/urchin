@@ -259,6 +259,11 @@ extract-speech-bubble *args: (require "ffdec" "java")
 extract-floating-numbers *args: (require "ffdec" "java")
     uv run extract_floating_numbers "$@"
 
+[doc('Run extract_hub_fade, which reads the SWF without ffdec')]
+[group('extract')]
+extract-hub-fade *args:
+    uv run extract_hub_fade "$@"
+
 [doc('Run extract_hotbar_icons, which reads the SWF through ffdec')]
 [group('extract')]
 extract-hotbar-icons *args: (require "ffdec" "java")
