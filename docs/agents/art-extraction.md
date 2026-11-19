@@ -370,3 +370,7 @@ This tool checks how it looks: the art, the fills and the shadows.
   icon: p99 6, with the 20 px control at 86. The status bars are out because ffdec
   runs no script. It draws every right-hand bar as a left-hand one and every fill in
   the color of frame 1, so the rect test checks the bars part by part instead.
+  Each bar's DropShadow is a `drop_shadow` piece of the rect test, which checks
+  the uniforms of `scenes/drop_shadow.gdshader` on the bar's Clip. Measured once
+  for julian-perge/urchin#382 against an ffdec render of p1BAR alone: the alpha
+  over the bar's box differs by p90 5 with the shader and p90 27 without it.

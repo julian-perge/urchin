@@ -33,6 +33,65 @@ func _life_color(frame: int) -> Color:
 	return Color.html(StatusBar.record()["life_colors"][frame])
 
 
+# The battle frame puts the DropShadow on the p#BAR placement, and buffTicker
+# attaches the buff icons into p#BAR, so every part of the bar lies inside the
+# CanvasGroup that draws the shadow.
+func test_every_part_of_the_bar_lies_inside_the_clip_that_draws_the_shadow() -> void:
+	var bar: StatusBar = _bar(1)
+	assert_true(bar.clip is CanvasGroup, "Clip is a CanvasGroup")
+	for part: Node in [bar.inner, bar.inner2, bar.buff_row]:
+		assert_true(bar.clip.is_ancestor_of(part), "%s lies inside Clip" % part.name)
+	var material: ShaderMaterial = bar.clip.material
+	assert_eq(material.shader.resource_path, "res://scenes/drop_shadow.gdshader")
+
+
+func test_the_clip_takes_the_drop_shadow_of_the_bars_placement() -> void:
+	var shadow: Dictionary = StatusBar.record()["shadow"]
+	var material: ShaderMaterial = _bar(2).clip.material
+	assert_eq(material.get_shader_parameter("shadow_color"), Color.html(shadow["color"]))
+	assert_eq(material.get_shader_parameter("blur"), Vector2(shadow["blur_x"], shadow["blur_y"]))
+	assert_almost_eq(float(material.get_shader_parameter("distance")), float(shadow["distance"]), 0.0001)
+	assert_almost_eq(float(material.get_shader_parameter("angle")), float(shadow["angle"]), 0.0001)
+	assert_almost_eq(float(material.get_shader_parameter("strength")), float(shadow["strength"]), 0.0001)
+
+
+# The shadow reaches its distance plus half its blur past the art, in stage px,
+# and the group's margins are in screen px.
+func test_the_clip_margins_reach_as_far_as_the_shadow_at_the_windows_scale() -> void:
+	var bar: StatusBar = _bar(1)
+	var shadow: Dictionary = StatusBar.record()["shadow"]
+	var stage_scale: float = bar.get_viewport().get_final_transform().get_scale().x
+	var reach: float = (float(shadow["distance"]) + maxf(float(shadow["blur_x"]), float(shadow["blur_y"])) / 2.0) * stage_scale
+	assert_gte(bar.clip.fit_margin, reach)
+	assert_gte(bar.clip.clear_margin, reach)
+	assert_almost_eq(float((bar.clip.material as ShaderMaterial).get_shader_parameter("stage_scale")), stage_scale, 0.0001)
+
+
+# The death fade sets _alpha on p#BAR, the clip that carries the DropShadow
+# (DefineSprite_57_LifeBarSmoother/frame_38), so Flash fades the bar and its
+# shadow as one picture. Clip's shader applies the fade once, the parts stay
+# unfaded, and each bar fades on its own.
+func test_the_death_fade_reaches_the_shadow_of_that_bar_alone() -> void:
+	var dying: StatusBar = _bar(1)
+	var other: StatusBar = _bar(2)
+	assert_ne(dying.clip.material, other.clip.material, "each bar has its own material")
+	var death: Dictionary = StatusBar.record()["death"]
+	dying.die()
+	_advance(dying, int(death["clear_frame"]) + 3)
+	assert_lt(dying.fade, 1.0, "the bar is fading")
+	assert_eq(dying.modulate.a, 1.0, "the parts are not faded one by one")
+	assert_almost_eq(float((dying.clip.material as ShaderMaterial).get_shader_parameter("fade")), dying.fade, 0.0001)
+	assert_almost_eq(float((other.clip.material as ShaderMaterial).get_shader_parameter("fade")), 1.0, 0.0001)
+
+
+# Clip's shadow falls under the text, so a Label that drew its own shadow would
+# draw the text's shadow twice.
+func test_the_labels_draw_no_shadow_of_their_own() -> void:
+	var bar: StatusBar = _bar(1)
+	for label: Label in [bar.name_label, bar.life_now_label, bar.life_max_label, bar.focus_now_label, bar.focus_max_label]:
+		assert_eq(label.get_theme_color("font_shadow_color").a, 0.0, "%s draws a shadow" % label.name)
+
+
 func test_a_bar_at_rest_shows_both_fills_at_full_width() -> void:
 	var bar: StatusBar = _bar(1)
 	assert_almost_eq(bar.life_fill.size.x, _full_width("life"), 0.001)
@@ -268,11 +327,11 @@ func test_a_death_clears_on_frame_17_then_fades_5_a_frame_and_hides() -> void:
 	assert_true(bar.inner.visible, "not yet cleared the frame before")
 	_advance(bar, 1)
 	assert_false(bar.inner.visible, "cleared on the clear frame")
-	assert_eq(bar.modulate.a, 1.0)
+	assert_eq(bar.fade, 1.0)
 	_advance(bar, 1)
-	assert_almost_eq(bar.modulate.a, 1.0 - per_frame, 0.001, "its step off the alpha the frame after")
+	assert_almost_eq(bar.fade, 1.0 - per_frame, 0.001, "its step off the alpha the frame after")
 	_advance(bar, roundi(1.0 / per_frame) - 1)
-	assert_almost_eq(bar.modulate.a, 0.0, 0.001, "to 0")
+	assert_almost_eq(bar.fade, 0.0, 0.001, "to 0")
 	assert_true(bar.visible, "it hides on the frame after")
 	_advance(bar, 1)
 	assert_false(bar.visible)

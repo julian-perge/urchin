@@ -24,6 +24,8 @@
 shader_type canvas_item;
 render_mode unshaded;
 
+#include "res://scenes/box_blur.gdshaderinc"
+
 uniform bool result_flash = false;
 uniform vec4 color : source_color = vec4(1.0);
 // Screen px for each stage px, because Flash measures a blur in stage px.
@@ -48,21 +50,12 @@ uniform vec4 buff_params_a = vec4(0.0);
 uniform vec4 buff_color_b : source_color = vec4(1.0);
 uniform vec4 buff_params_b = vec4(0.0);
 
-const int SAMPLES = 5;
-
-float box_alpha(vec2 uv, float blur, vec2 stage_pixel) {
-	float sum = 0.0;
-	for (int i = 0; i < SAMPLES; i++) {
-		for (int j = 0; j < SAMPLES; j++) {
-			vec2 offset = (vec2(float(i), float(j)) + 0.5) / float(SAMPLES) - 0.5;
-			sum += texture(doll, uv + offset * blur * stage_pixel).a;
-		}
-	}
-	return sum / float(SAMPLES * SAMPLES);
-}
+// The loops below that work a glow out at each sample keep their own copy of
+// box_alpha's 5 by 5 grid, because what they average is not the doll's alpha.
+const int SAMPLES = BOX_SAMPLES;
 
 float outer_glow(vec2 uv, vec2 stage_pixel) {
-	return clamp(box_alpha(uv, color_blur, stage_pixel) * color_strength, 0.0, 1.0);
+	return clamp(box_alpha(doll, uv, vec2(color_blur) * stage_pixel) * color_strength, 0.0, 1.0);
 }
 
 // The alpha the outer glow leaves, which the third glow reads, averaged over its
@@ -126,7 +119,7 @@ void fragment() {
 	if (result_flash) {
 		vec2 stage_pixel = SCREEN_PIXEL_SIZE * stage_scale;
 		vec4 glow_color = vec4(color.rgb, 1.0);
-		float white = clamp((1.0 - box_alpha(SCREEN_UV, white_blur, stage_pixel)) * white_strength, 0.0, 1.0);
+		float white = clamp((1.0 - box_alpha(doll, SCREEN_UV, vec2(white_blur) * stage_pixel)) * white_strength, 0.0, 1.0);
 		drawn = vec4(1.0) * white * drawn.a + drawn * (1.0 - white);
 		drawn += glow_color * outer_glow(SCREEN_UV, stage_pixel) * (1.0 - drawn.a);
 		float inner = clamp((1.0 - box_alpha_after_outer_glow(SCREEN_UV, stage_pixel)) * color_strength, 0.0, 1.0);
