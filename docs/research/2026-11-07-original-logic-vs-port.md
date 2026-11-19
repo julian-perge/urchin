@@ -698,7 +698,7 @@ These are the cases from sections 2 and 3 where a doc or comment reasoned its wa
 1. AS2 `for..in` order over arrays. It decides the AI pool order and `focusSelectNum` (F42/DoAction_9.as:39-106), the order of the `moveMatrix2` rebuild, and which inventory slot B3012 picks. Settling it needs a Flash or Ruffle run.
 2. Whether the stale `focusMove`, `focusCheck` and `D_Array_*` values change a decision in real play (2.11). Settling it needs a runtime trace of `AImoveAdder`.
 3. A runtime confirmation that a new game reaches frame 180 on both intro paths (2.18).
-4. The cost-failure path (CONDUCTOR:475-531). Unconfirmed:
+4. The cost-failure path (CONDUCTOR:475-531). Answered by #39: the move lands for free when a buff ticks on the caster. See DECODED_ALGORITHMS.md, "A cost failure at dispatch can still land the move". The original reading was:
    - The clip-local `moveBammer` is false there (set at 354).
    - If a buff tick re-raises the impact flag (511-521), the impact block (12-19) could run the failed move for free, using a stale `strikeSuccess`.
    - A cost failure at execution needs a teammate to drain the caster within the same half-turn, and no such case was found.
