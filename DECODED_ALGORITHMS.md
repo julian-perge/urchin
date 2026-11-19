@@ -237,12 +237,13 @@ save when the game starts, goes on to the first fight when it starts, and sends 
   victory screen's Proceed with `autoSaver` on (`DefineButton2_3004` on(release), lines 4-7), whose frame sets `dataMode` to "save" first (`DefineSprite_3142/frame_9/DoAction.as:3`). The
   class buttons and Start (`DefineButton2_2735` to 2737, `DefineButton2_2770`) only change `Krin` in memory. `DefineButton2_3182` saves too, always to slot 1, but `Navigation` places it off
   the stage at x -86 to -44, and the KRINMENU frame holding the last caller, `DefineButton2_3121`, is only opened by 3182.
-- So no player sees button 3121 or its tooltip. 3182's hit shape 3119 spans x -86.1 to -43.8 px and y 487.5 to 529.8 px at root frame 181 (`Navigation`, depth 132), and the stage
+- So no player sees button 3121 or its tooltip. 3182's hit shape 3119 spans x -86.1 to -43.9 px and y 487.6 to 529.8 px at root frame 181 (`Navigation`, depth 132), and the stage
   is 800 by 575 px with `Stage.scaleMode` "exactFit" (`frame_1/DoAction.as:4515`), so no off-stage area ever shows. 3182's on(release) is the only `gotoAndStop("data")` in the export.
-  The `data` label is frame 32 of sprite 3142 (KRINMENU), and it places only 3121 (depth 9, scaled 4.37 by 3.75) and the two side panels at depths 5 and 7. 3121 is a copy of the
-  Store's sell slot: its on(rollOver) shows `MENU[3]` over `MENU[4]` + " €" + `round(price / 3)` or `MENU[5]`, and its on(press) calls `krinHandleData(1)`. The port's save slot list is
-  root frame 74 (`dataMenu`, buttons 2719 to 2722), a different screen, so it shows no sell tooltip. The Steam build matches: its button 2913 has 3182's script and place, and its
-  button 3206 has 3121's script and place in frame 32 of sprite 3239 (#432).
+  The `data` label is frame 32 of sprite 3142 (KRINMENU). It places 3121 at depth 9, scaled 4.37 by 3.75, and moves and scales the two side panels at depths 5 and 7. 3121 shows the
+  Store's sell texts, but it is not the Store's sell slot 3015: its on(rollOver) shows `MENU[3]` over `MENU[4]` + " €" + `round(price / 3)` or `MENU[5]`, where 3015 shows
+  `ceil(price * 0.15)`, and its on(press) calls `krinHandleData(1)` instead of selling. The port's save slot list is root frame 74 (`dataMenu`, buttons 2719 to 2722), a different
+  screen, so it shows no sell tooltip. The Steam build matches: its button 2913 has 3182's script and place, and its button 3206 has 3121's script and place in frame 32 of sprite
+  3239 (#432).
 - So a new game in a used slot leaves the old save on disk until its first save, and a game over before then reloads the old save, because Re-Load reads the slot back
   (`DefineButton2_2791` on(release), lines 2-7).
 - Start (`DefineButton2_2770` on(release)) sends the player to CS_INTRO when `Krin.tutorOn` is true and to CS_INTRO2 when it is false, and sets `gotoSceneKrin` to "IntroSeq" or
