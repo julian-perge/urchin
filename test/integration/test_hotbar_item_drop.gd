@@ -98,21 +98,65 @@ func test_save_abilities_and_achievements_refuse_a_dropped_item_with_menu_66():
 
 
 # World Map (DefineButton2_3177 on(release)) checks Krin.mouseItem and does
-# nothing while an item is on the cursor. Inventory and Quit
-# (DefineButton2_3185 and DefineButton2_3178 on(release)) do not check it, so
-# in the original they open the Inventory or quit with the item still on the
-# cursor. The port's three buttons take no drop, so the drag ends with no
-# effect and the item goes back to its slot.
-func test_world_map_inventory_and_quit_ignore_a_dropped_item():
-	for button_name: String in ["ZoneMapButton", "InventoryButton", "QuitButton"]:
+# nothing while an item is on the cursor. In the port the button takes no
+# drop, so the drag ends with no effect and the item goes back to its slot.
+func test_world_map_ignores_a_dropped_item():
+	var save: PlayerSave = GameData.current_save
+	var equip_before: Array = save.equip_array.duplicate()
+	var hub: Control = await _hub()
+	var button: BaseButton = hub.get_node("Hotbar").get_node("%ZoneMapButton")
+	_release_an_item_drag_on(button)
+	assert_false(button.get_viewport().gui_is_dragging(), "the release ends the drag")
+	assert_false(hub.get_node("CombatTextBanner").is_up(), "no text shows")
+	assert_eq(_open_overlays(hub), [], "nothing opens")
+	assert_eq(save.equip_array, equip_before, "the item stays where it was")
+
+
+# Inventory (DefineButton2_3185 on(release)) does not check Krin.mouseItem, and
+# its rollOver sets thereIsASlotSelected, so onMouseDown keeps the item on the
+# cursor (frame_181/DoAction_2.as:8-50). The release sends KRINMENU to the
+# inventory frame, which keeps an open Inventory open.
+func test_a_dropped_item_on_inventory_opens_the_inventory_window():
+	for already_open: bool in [false, true]:
+		var context: String = "already open %s" % already_open
 		var save: PlayerSave = GameData.current_save
 		var equip_before: Array = save.equip_array.duplicate()
 		var hub: Control = await _hub()
-		var button: BaseButton = hub.get_node("Hotbar").get_node("%" + button_name)
-		_release_an_item_drag_on(button)
-		assert_false(button.get_viewport().gui_is_dragging(), button_name + ": the release ends the drag")
-		assert_false(hub.get_node("CombatTextBanner").is_up(), button_name + ": no text shows")
-		assert_eq(_open_overlays(hub), [], button_name + ": nothing opens")
-		assert_true(hub.is_inside_tree(), button_name + ": the Hub stays")
-		assert_eq(save.equip_array, equip_before, button_name + ": the item stays where it was")
+		if already_open:
+			hub.get_node("Hotbar").open_menu_screen("inventory_window")
+		_release_an_item_drag_on(hub.get_node("Hotbar").get_node("%InventoryButton"))
+		assert_eq(_open_overlays(hub), [&"InventoryWindow"], context)
+		assert_false(hub.get_node("CombatTextBanner").is_up(), context + ": no text shows")
+		assert_eq(save.equip_array, equip_before, context + ": the item stays where it was")
 		hub.get_parent().free()
+
+
+# Quit (DefineButton2_3178 on(release)) does not check Krin.mouseItem either,
+# so a release with an item on the cursor quits. The test cuts the button from
+# _on_quit_pressed, which would replace the test runner's scene, and watches the
+# pressed signal that the scene connects to it.
+func test_a_dropped_item_on_quit_presses_quit():
+	var hub: Control = await _hub()
+	var hotbar: Control = hub.get_node("Hotbar")
+	var button: BaseButton = hotbar.get_node("%QuitButton")
+	button.pressed.disconnect(hotbar._on_quit_pressed)
+	watch_signals(button)
+	_release_an_item_drag_on(button)
+	assert_false(button.get_viewport().gui_is_dragging(), "the release ends the drag")
+	assert_signal_emit_count(button, "pressed", 1)
+	assert_false(hub.get_node("CombatTextBanner").is_up(), "no text shows")
+
+
+# Inventory and Quit check PauseForScreen, so an inert hotbar ignores a drop on
+# them as it ignores a click.
+func test_an_inert_hotbar_ignores_a_dropped_item_on_inventory_and_quit():
+	var hub: Control = await _hub()
+	var hotbar: Control = hub.get_node("Hotbar")
+	hotbar.set_inert(true)
+	var quit: BaseButton = hotbar.get_node("%QuitButton")
+	quit.pressed.disconnect(hotbar._on_quit_pressed)
+	watch_signals(quit)
+	_release_an_item_drag_on(hotbar.get_node("%InventoryButton"))
+	_release_an_item_drag_on(quit)
+	assert_eq(_open_overlays(hub), [], "nothing opens")
+	assert_signal_not_emitted(quit, "pressed")

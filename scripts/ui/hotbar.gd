@@ -71,6 +71,9 @@ func _ready():
 	_refresh(ZoneManager.current_zone)
 	for refusing: String in ["%RespecButton", "%OptionsButton", "%SaveButton", "%AbilitiesButton", "%AchievementsButton"]:
 		(get_node(refusing) as BaseButton).set_drag_forwarding(Callable(), _can_drop_item, _refuse_item_drop)
+	for releasing: String in ["%InventoryButton", "%QuitButton"]:
+		var button: BaseButton = get_node(releasing)
+		button.set_drag_forwarding(Callable(), _can_drop_item, _release_with_item.bind(button))
 
 
 # The SWF draws the hover as one or two Glow filters on the icon, and every
@@ -276,20 +279,37 @@ func _on_respec_pressed() -> void:
 # The original's Respec, Options, Save, Abilities and Achievements buttons
 # (DefineButton2_3179, DefineButton2_3180, DefineButton2_3183,
 # DefineButton2_3184 and DefineButton2_3153 on(release)) refuse a release while
-# an item is on the cursor, with MENU[66]. World Map (DefineButton2_3177) checks
-# for the item and does nothing. Inventory and Quit do not check, so the
-# original opens the Inventory or quits. The port's three take no drop, so the
-# drag ends on them with no effect. In the port an item is on the cursor while the player drags it
-# from an Inventory or equipment slot (ItemSlot._get_drag_data), and the release
-# ends that drag on a button, so the button takes the drop and refuses it. The
-# original checks this before PauseForScreen, so an inert hotbar refuses too. The
-# item stays in its slot, because only an ItemSlot moves an item on a drop.
+# an item is on the cursor, with MENU[66]. In the port an item is on the cursor
+# while the player drags it from an Inventory or equipment slot
+# (ItemSlot._get_drag_data), and the release ends that drag on a button, so the
+# button takes the drop and refuses it. The original checks this before
+# PauseForScreen, so an inert hotbar refuses too. The item stays in its slot,
+# because only an ItemSlot moves an item on a drop. World Map
+# (DefineButton2_3177) checks for the item and does nothing, so it takes no drop.
+# Inventory and Quit do not check, and _release_with_item runs them.
 func _can_drop_item(_at_position: Vector2, data: Variant) -> bool:
 	return data is Dictionary and data.has("item")
 
 
 func _refuse_item_drop(_at_position: Vector2, _data: Variant) -> void:
 	_show_combat_text(Strings.menu(66))
+
+
+# Inventory and Quit (DefineButton2_3185 and DefineButton2_3178 on(release)) do
+# not check for an item on the cursor. Their rollOver sets
+# thereIsASlotSelected, so onMouseDown keeps the item on the cursor
+# (frame_181/DoAction_2.as:8-50) and the release runs as a click does, unless
+# PauseForScreen is set. Inventory's release sends KRINMENU to the inventory
+# frame, so a drop opens the Inventory Window and keeps it open, where a click
+# on the port's button toggles it. The port has no item on the cursor after the
+# drag ends, so the item goes back to its slot.
+func _release_with_item(_at_position: Vector2, _data: Variant, button: BaseButton) -> void:
+	if _inert:
+		return
+	if button.name == "InventoryButton":
+		open_menu_screen("inventory_window")
+	else:
+		button.pressed.emit()
 
 
 # The original sets the banner's text and calls a bare play(), which shows the

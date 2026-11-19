@@ -876,9 +876,10 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
   the port hides whenever a Window shows. Its tooltip is `SYSTEM[32]` + ": EUR" + the cost over `SYSTEM[33]`, with the euro sign where this line says EUR.
 - Each hotbar button reads `Krin.mouseItem` in its own way (on(release) of each button). Respec (`DefineButton2_3179`), Options (3180), Save (3183), Abilities (3184) and
   Achievements (3153) show `MENU[66]` with a bare `play()` while an item is on the cursor, and check this before `PauseForScreen`. World Map (3177) checks for the item but has no
-  `else`, so it does nothing. Inventory (3185) and Quit (3178) do not check, so with an item on the cursor they still go to the Inventory or quit, and the item stays on
-  the cursor. Ported: `hotbar.gd`'s `_ready` gives the five refusing buttons `_can_drop_item` and
-  `_refuse_item_drop`. The other three take no drop, so the port's item drag ends on them with no effect and the item stays in its slot, also on Inventory and Quit (#436, #437).
+  `else`, so it does nothing. Inventory (3185) and Quit (3178) do not check. Every hotbar rollOver sets `thereIsASlotSelected`, so `onMouseDown` keeps the item on the cursor
+  (`frame_181/DoAction_2.as:8-50`), and Inventory still goes to the `inventory` frame and Quit still quits. Ported: `hotbar.gd`'s `_ready` gives the five refusing buttons
+  `_can_drop_item` and `_refuse_item_drop`, and gives Inventory and Quit `_release_with_item`, which opens the Inventory Window or presses Quit unless the hotbar is inert.
+  World Map takes no drop. The port has no item on the cursor once the drag ends, so on every button the item goes back to its slot (#436, #437).
 
 ## The Abilities hint box and its tutorial steps (DefineSprite 3059, #387)
 
