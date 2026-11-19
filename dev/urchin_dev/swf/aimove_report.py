@@ -6,7 +6,8 @@
 # Each AIMOVE line holds the real outcome of one call and the outcome of
 # replays of the same call with the same dice. The "none" replay resets
 # nothing, so it must match the real outcome. The "all" replay sets every
-# left-behind global to the value the port's BattleAI.choose_move starts from,
+# left-behind global to the value the port's BattleAI.choose_move started from
+# before #475,
 # and each other replay resets one group of them. A call counts as changed
 # when the real outcome differs from the "all" replay.
 #

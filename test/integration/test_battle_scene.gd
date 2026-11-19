@@ -20,6 +20,12 @@ var _achievements_path: String
 var _tutorial_players_to_restore: Array = []
 
 
+# BattleAI keeps the original's left-behind AI values between calls, so each
+# battle here starts its AI from the state of a fresh game.
+func before_each():
+	BattleAI.reset_scratch()
+
+
 func before_all():
 	_achievements_path = ZoneManager.achievements_path
 	ZoneManager.achievements_path = ACHIEVEMENTS_FILE

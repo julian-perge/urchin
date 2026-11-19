@@ -23,6 +23,12 @@ const MAX_WEAK_HALF_TURNS: int = 20
 const MAX_HALF_TURNS: int = 400
 
 
+# BattleAI keeps the original's left-behind AI values between calls, so each
+# battle here starts its AI from the state of a fresh game.
+func before_each():
+	BattleAI.reset_scratch()
+
+
 func after_each():
 	randomize()
 

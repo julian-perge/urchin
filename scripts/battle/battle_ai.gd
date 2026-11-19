@@ -1,8 +1,9 @@
 # battle_ai.gd
 # Enemy/ally move selection, ported from AImoveAdder()
-# (frame42/sonny2_ai_move_adder.txt). Stateless - BattleRunner calls
-# choose_move() once per AI unit per half-turn, after ticking that unit's
-# pool cooldowns down (LowerCD).
+# (frame_42/DoAction_9.as). BattleRunner calls choose_move() once per AI unit
+# per half-turn, after ticking that unit's pool cooldowns down (LowerCD).
+# The values that the original keeps in _root globals between calls live in
+# BattleAI.scratch (see Scratch).
 #
 # The original's quirks are ported deliberately, not cleaned up:
 # - The uniform pick `ceil(roll / (100 / n)) - 1` with roll 0..99 slightly
@@ -23,10 +24,47 @@
 class_name BattleAI
 extends RefCounted
 
+# The original reads an unset global as undefined. A slot that holds this value
+# stands for undefined, and choose_move returns it as target 0.
+const UNDEFINED_SLOT: int = -1
+
+
+# AImoveAdder keeps these values in _root globals and resets only some of
+# them, so each call starts from what the calls before it left, also the calls
+# of the other side and of an earlier battle. Nothing else writes them, and they
+# last until the SWF reloads. DECODED_ALGORITHMS.md, "Left-behind globals in
+# AImoveAdder", has the lines and the Trace logs.
+class Scratch:
+	# focusCheck. NaN stands for undefined, because every comparison with
+	# undefined is false in AS2, as it is with NaN here.
+	var focus_check: float = NAN
+	var player_focus_check: int = UNDEFINED_SLOT
+	var number_lock_krin: int = UNDEFINED_SLOT
+	var focus_move: bool = false
+	var focus_select_num: int = -1
+	# Whether D_Array_S, D_Array_F and D_Array_E hold a move. An undefined list
+	# counts as empty, as its undefined length fails the heal scan's "> 0" test.
+	var defense_has_self: bool = false
+	var defense_has_ally: bool = false
+	var defense_has_enemy: bool = false
+	# aliveEnemies, or null while it is undefined.
+	var alive_enemies: Variant = null
+	var counter_filter_1: int = -1
+
+
+static var scratch: Scratch = Scratch.new()
+
+
+# Starts the left-behind values over, as a fresh load of the SWF does.
+static func reset_scratch() -> void:
+	scratch = Scratch.new()
+
 
 # Chooses a move for the unit in caster_slot. Returns {} to pass the turn
 # (queue move 0), else:
 #   {move_id, target_slot, pool: CombatUnit.MovePool, pool_index}
+# A target_slot of 0 is the original's undefined target, which the conductor
+# treats as a dead target (line 350), so BattleRunner passes the turn.
 # pool/pool_index tell BattleRunner which cooldown counter to set when the
 # move actually starts (AI_CD_ARR/AI_CD_PUT).
 static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_this_turn: Dictionary, moves_by_id: Dictionary) -> Dictionary:
@@ -34,24 +72,22 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 	if caster == null or not caster.active:
 		return {}
 
+	var s: Scratch = scratch
 	var team: int = caster.team_side
 	var friend_slots: Array[Variant] = [team, team + 2, team + 4]
 	var enemy_slots: Array[Variant] = [7 - team, 5 - team, 3 - team]
 
-	# Living teammates other than the caster; track the one lowest on focus
-	# (focusCheck/playerFocusCheck/numberLockKrin).
+	# The teammate scan (lines 6-34) writes the scratch values only for a
+	# living teammate, and the first slot sets focusCheck with no comparison.
 	var has_friends: bool = false
-	var friend_lock_slot: int = 0  # numberLockKrin - last living friend found
-	var lowest_focus = INF
-	var lowest_focus_slot: int = 0  # first value of playerFocusCheck
 	for slot in friend_slots:
 		var friend: CombatUnit = units.get(slot)
 		if friend != null and friend.active and slot != caster_slot:
 			has_friends = true
-			friend_lock_slot = slot
-			if friend.focus_n < lowest_focus:
-				lowest_focus = friend.focus_n
-				lowest_focus_slot = slot
+			s.number_lock_krin = slot
+			if slot == team or friend.focus_n < s.focus_check:
+				s.focus_check = friend.focus_n
+				s.player_focus_check = slot
 
 	# --- Absolute (boss-priority) pool: if anything is available, it is used
 	# unconditionally and the attack/defense pools are ignored.
@@ -77,44 +113,40 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 	var attack_indices_cd: Array[Variant] = []
 	var attack_ids: Array[Variant] = []  # A2: fully filtered
 	var attack_indices: Array[Variant] = []
-	var focus_move: bool = false
-	var focus_pick_index: int = -1  # indexes attack_ids_cd (A0), matching the original
-	# playerFocusCheck (frame_42/DoAction_9.as:13-33, 93-106, 407) starts at the
-	# teammate lowest on focus. When the focus scan finds a move that restores
-	# the caster's own focus, it changes to the caster, and the teammate focus
-	# moves that the scan walks after that move no longer count. The chosen
-	# focus move targets it.
-	var focus_target_slot: int = lowest_focus_slot
 	# --- Defense pool (D0 -> D1 -> D2) + ally/self/enemy splits.
 	var defense_ids: Array[Variant] = []  # D2
 	var defense_indices: Array[Variant] = []
-	var defense_has_self: bool = false  # D_Array_S nonempty
-	var defense_has_ally: bool = false  # D_Array_F nonempty
-	var defense_has_enemy: bool = false  # D_Array_E nonempty
 
 	if not use_absolute:
 		for i in caster.move_pool_attack.size():
 			if caster.cooldowns_attack[i] == 0:
 				attack_ids_cd.append(caster.move_pool_attack[i])
 				attack_indices_cd.append(i)
+		s.focus_move = false
+		# A self focus move sets playerFocusCheck to the caster (line 105), so
+		# the teammate focus moves that the scan walks after it no longer
+		# count (line 95). focusSelectNum indexes A0, not A2.
 		for i in range(attack_ids_cd.size() - 1, -1, -1):
 			var move: Ability = moves_by_id.get(attack_ids_cd[i])
 			if move == null or not MoveLegality.can_afford(caster, move):
 				continue
-			var restores_ally_focus: bool = move.targets_allies and lowest_focus < caster.focus_regen_limit
+			var restores_ally_focus: bool = move.targets_allies and s.focus_check < caster.focus_regen_limit
 			var restores_own_focus: bool = move.can_target_self and caster.focus_n < caster.focus_regen_limit
 			if move.effect_category != "Focus" or restores_ally_focus or restores_own_focus:
-				if restores_ally_focus and focus_target_slot != caster_slot and focus_target_slot != 0:
-					focus_move = true
-					focus_pick_index = i
+				if restores_ally_focus and s.player_focus_check != caster_slot:
+					s.focus_move = true
+					s.focus_select_num = i
 				if restores_own_focus:
-					focus_move = true
-					focus_pick_index = i
-					focus_target_slot = caster_slot
+					s.focus_move = true
+					s.focus_select_num = i
+					s.player_focus_check = caster_slot
 				if move.can_target_self or move.can_target_others or has_friends:
 					attack_ids.push_front(attack_ids_cd[i])
 					attack_indices.push_front(attack_indices_cd[i])
 
+		s.defense_has_self = false
+		s.defense_has_ally = false
+		s.defense_has_enemy = false
 		for i in caster.move_pool_defense.size():
 			if caster.cooldowns_defense[i] != 0:
 				continue
@@ -125,14 +157,16 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 				defense_ids.append(caster.move_pool_defense[i])
 				defense_indices.append(i)
 				if move.targets_allies:
-					defense_has_ally = true
+					s.defense_has_ally = true
 				if move.can_target_self:
-					defense_has_self = true
+					s.defense_has_self = true
 				if move.can_target_others:
-					defense_has_enemy = true
+					s.defense_has_enemy = true
 
 	# --- Heal-candidate scan (krinAITargetCheckedHEALTEST): the friendly unit
-	# (self included) lowest on predicted HP that the defense pool can target.
+	# (self included) lowest on predicted HP that the defense lists can target.
+	# On the absolute path it reads the lists that the last non-absolute call
+	# left.
 	var heal_candidate_slot: int = 0
 	var first_friend: CombatUnit = units.get(friend_slots[0])
 	for slot_index in friend_slots.size():
@@ -155,9 +189,9 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 			should_consider = current_full or candidate_ratio <= compare_ratio
 		if should_consider:
 			if slot == caster_slot:
-				if defense_has_self or defense_has_enemy:
+				if s.defense_has_self or s.defense_has_enemy:
 					heal_candidate_slot = slot
-			elif defense_has_ally or defense_has_enemy:
+			elif s.defense_has_ally or s.defense_has_enemy:
 				heal_candidate_slot = slot
 
 	# --- Attack vs defense mode (LifeBoundary1/2 + Aggression roll). Skipped
@@ -185,17 +219,17 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 		pool = CombatUnit.MovePool.ABSOLUTE
 		pool_index = absolute_indices[pick]
 	elif attack_mode:
-		if focus_move:
-			move_id = attack_ids_cd[focus_pick_index]
+		if s.focus_move:
+			move_id = attack_ids_cd[s.focus_select_num]
 			pool = CombatUnit.MovePool.ATTACK
-			pool_index = attack_indices_cd[focus_pick_index]
+			pool_index = attack_indices_cd[s.focus_select_num]
 		elif not attack_ids.is_empty():
 			var pick: int = _uniform_pick(attack_ids.size())
 			move_id = attack_ids[pick]
 			pool = CombatUnit.MovePool.ATTACK
 			pool_index = attack_indices[pick]
 	else:
-		focus_move = false
+		s.focus_move = false
 		var final_ids: Array[Variant] = defense_ids
 		var final_indices: Array[Variant] = defense_indices
 		if heal_candidate_slot != 0:
@@ -223,12 +257,12 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 		return {}
 	var chosen: Ability = moves_by_id.get(move_id)
 
-	# --- Pick the target.
+	# --- Pick the target (lines 345-440).
 	var target_slot: int = 0
-	var alive_enemies: Array[Variant] = []
 	if chosen.can_target_self:
 		target_slot = caster_slot
 	if chosen.can_target_others:
+		var alive_enemies: Array[Variant] = []
 		var weakest_slot: int = 0
 		for slot in enemy_slots:
 			var enemy: CombatUnit = units.get(slot)
@@ -241,23 +275,31 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 				var weakest: CombatUnit = units[weakest_slot]
 				if enemy.life_n + enemy.shield < weakest.life_n + weakest.shield:
 					weakest_slot = slot
-		if alive_enemies.is_empty():
-			return {}
+		s.alive_enemies = alive_enemies
 		if randi_range(0, 99) < caster.focus_aggression:
 			target_slot = weakest_slot
 		else:
-			target_slot = alive_enemies[_uniform_pick(alive_enemies.size())]
+			s.counter_filter_1 = _uniform_pick(alive_enemies.size())
+			target_slot = _slot_at(alive_enemies, s.counter_filter_1)
 
+	# Line 399 adds the heal guess even when the heal scan found no one, and
+	# before line 413 can pass the turn.
 	if chosen.targets_allies and (target_slot == 0 or target_slot == caster_slot):
-		if heal_candidate_slot != 0:
-			target_slot = heal_candidate_slot
-			healed_this_turn[target_slot] = healed_this_turn.get(target_slot, 0.0) + heal_guess(caster, chosen)
-	if chosen.targets_allies and not chosen.can_target_self and friend_lock_slot != 0:
-		target_slot = friend_lock_slot
-	if focus_move and focus_target_slot != 0:
-		target_slot = focus_target_slot
+		target_slot = heal_candidate_slot
+		healed_this_turn[target_slot] = healed_this_turn.get(target_slot, 0.0) + heal_guess(caster, chosen)
+	if chosen.targets_allies and not chosen.can_target_self:
+		target_slot = s.number_lock_krin
+	if s.focus_move:
+		target_slot = s.player_focus_check
+	# An undefined aliveEnemies has no length of 0, so only a list that a call
+	# built empty passes the turn.
+	if s.alive_enemies != null and s.alive_enemies.is_empty():
+		return {}
+	# An undefined target is not 0, so it skips this fallback.
 	if target_slot == 0:
-		target_slot = caster_slot
+		target_slot = _slot_at(s.alive_enemies, s.counter_filter_1)
+	if target_slot == UNDEFINED_SLOT:
+		target_slot = 0
 
 	return {
 		"move_id": move_id,
@@ -280,6 +322,14 @@ static func heal_guess(caster: CombatUnit, move: Ability) -> float:
 		+ caster.focus_n * move.focus_scaling_modifier
 		+ move.focus_amount_change
 	)
+
+
+# The slot at index in the original's aliveEnemies list. An undefined list or
+# an index past its end reads as undefined.
+static func _slot_at(list: Variant, index: int) -> int:
+	if list == null or index < 0 or index >= list.size():
+		return UNDEFINED_SLOT
+	return list[index]
 
 
 # The original's uniform list pick: KRSO roll 0..99 through
