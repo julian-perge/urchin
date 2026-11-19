@@ -139,7 +139,9 @@ static var _animations: Dictionary = {}
 static var _sound_cues: Dictionary = {}
 static var _pieces: Dictionary = {}
 # The PIECE_SHADER material that every doll sprite with no colour transform of
-# its own shares, so that it samples its mipmaps with the shader's bias.
+# its own shares, so that it samples its mipmaps with the shader's bias. Every
+# doll on screen draws with it, so a sprite that needs its own shader
+# parameters gets its own material first, as _apply_pieces does.
 static var _plain_piece_material: ShaderMaterial
 
 # dressChar's dollPartsArray. skin_code is the base-skin part code
