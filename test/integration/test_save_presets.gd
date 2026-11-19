@@ -117,8 +117,10 @@ func test_every_preset_is_a_real_new_game_with_story_progress():
 		assert_eq(save.player_class, PlayerSave.PlayerClass.BIOLOGICAL, preset_name)
 		assert_true(save.autosave, "%s autosaves like a default new game" % preset_name)
 		assert_eq(save.quest_progress.size(), PlayerSave.new_game("x").quest_progress.size(), preset_name)
-		for equip_slot in GameData.STARTING_EQUIPMENT:
-			assert_eq(int(save.equip_array[equip_slot]), GameData.STARTING_EQUIPMENT[equip_slot], "%s starting outfit" % preset_name)
+		for equip_slot in PlayerSave.STORY_EQUIP_ARRAY.size():
+			var starting_item: int = PlayerSave.STORY_EQUIP_ARRAY[equip_slot]
+			if starting_item != 0:
+				assert_eq(int(save.equip_array[equip_slot]), starting_item, "%s starting outfit" % preset_name)
 		var starting_moves: Array = TalentTree.STARTING_MOVES[save.player_class]
 		for i in starting_moves.size():
 			assert_eq(int(save.move_matrix[i]), starting_moves[i], "%s starting moves" % preset_name)

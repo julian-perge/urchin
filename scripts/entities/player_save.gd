@@ -26,6 +26,15 @@ const CLASS_DESCRIPTIONS: Array[String] = [
 	"Strong and stable, the Hydraulic line derives its power from its mastery of water. You can use it to bolster your physical strength, or channel it against the enemy to bring about their icy doom. Wielding such powers allows you greater control over the battle, as well as powerful survival and team support options.",
 ]
 
+# Sonny's gear before frame_180 runs (frame_42/DoAction_17.as:50): Levo Jeans,
+# Proverse All Stars and A Broken Pipe, with no White T-Shirt.
+const TUTORIAL_EQUIP_ARRAY: Array[int] = [0, 0, 0, 4, 8, 5, 0]
+# Sonny's gear from frame_180/DoAction.as:7 on, which adds the White T-Shirt.
+const STORY_EQUIP_ARRAY: Array[int] = [0, 11, 0, 4, 8, 5, 0]
+# StatSets0 as both frame_42/DoAction_17.as:51 and frame_180/DoAction.as:8 set
+# it, which is the bonuses of all four starting items.
+const STARTING_STAT_ALLOCATION: Array[int] = [5, 6, 5, 3, 0]
+
 @export var name_user: String = "Sonny"
 @export var euro: float = 0.0
 @export var player_class: int = 0
@@ -146,10 +155,32 @@ static func new_game(player_name: String, new_player_class: PlayerClass = Player
 	# (assignPointsStart), but frame_180/DoAction.as:7-8 then overwrites
 	# StatSets0 with the starting gear's bonuses before battle 100. So the
 	# spread is dropped here and only its rounding residue is kept, and
-	# GameData.new_game then equips that gear, which adds its bonuses onto the
-	# zeroed allocation.
+	# GameData.new_game then calls start_story, which puts on that gear and its
+	# bonuses. Only the Tutorial fights with the spread, through enter_tutorial.
 	save.stat_allocated = [0, 0, 0, 0, 0]
 	Leveling.assign_points_start(save)
 	save.stat_allocated = [0, 0, 0, 0, 0]
 	Leveling.compute_stats(save)
 	return save
+
+
+# Puts Sonny in the state the Tutorial route fights battle 2 in, because that
+# route reaches battle 2 (frame_165/DoAction.as) before frame_180 runs.
+# frame_42/DoAction_17.as:50-51 sets the gear without the White T-Shirt and
+# StatSets0 to the four items' bonuses, and the class button then adds the
+# level 1 spread (assignPointsStart). assign_points_start sets point_residue
+# again before it spreads, so the residue stays what new_game left.
+func enter_tutorial() -> void:
+	equip_array = TUTORIAL_EQUIP_ARRAY.duplicate()
+	stat_allocated = STARTING_STAT_ALLOCATION.duplicate()
+	Leveling.assign_points_start(self)
+
+
+# Puts Sonny in the state frame_180/DoAction.as:7-8 sets before battle 100 on
+# every route from class select: the full starting gear, and StatSets0 reset to
+# that gear's bonuses. None of the four items has piercing or defense, and the
+# original does not touch PerSets0 or DefSets0 here.
+func start_story() -> void:
+	equip_array = STORY_EQUIP_ARRAY.duplicate()
+	stat_allocated = STARTING_STAT_ALLOCATION.duplicate()
+	Leveling.compute_stats(self)

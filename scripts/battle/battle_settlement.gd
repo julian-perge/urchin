@@ -62,7 +62,10 @@ static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, ach
 	if settlement.outcome != BattleRunner.Outcome.WIN:
 		return settlement
 	# A Tutorial win puts the class's starting moves back on the first two bar slots
-	# (frame_219/DoAction.as:65-69) and goes straight on to the next fight. It pays
+	# (frame_219/DoAction.as:65-69) and goes straight on to the next fight. The
+	# gear and stats go to what frame_180 sets before that fight
+	# (frame_180/DoAction.as:7-8), because nothing between the win and battle 100
+	# reads them. It pays
 	# nothing and settles nothing else, because the original applies a win's money,
 	# XP, drops and achievements on the victory screen (DefineSprite_3142/frame_9),
 	# which a Tutorial win never opens (frame_181/PlaceObject3_3142_175
@@ -71,6 +74,7 @@ static func settle(runner: BattleRunner, save: PlayerSave, pick: Dictionary, ach
 		var starting_moves: Array = TalentTree.STARTING_MOVES.get(save.player_class, [])
 		for i in starting_moves.size():
 			save.move_matrix[i] = starting_moves[i]
+		save.start_story()
 		settlement.next_fight = ZoneProgression.FIGHT_AFTER_TUTORIAL
 		return settlement
 

@@ -712,6 +712,82 @@ func test_winning_the_tutorial_hands_the_hub_no_victory():
 	ZoneManager.pending_battle = {}
 
 
+# Sonny fights the Tutorial in the state that frame_42 and the class button
+# leave, because the Tutorial route reaches battle 2 (frame_165/DoAction.as)
+# before frame_180 runs. frame_42/DoAction_17.as:50-51 sets equipArray0 to
+# [0,0,0,4,8,5,0], with no White T-Shirt, and StatSets0 to [5,6,5,3,0].
+# assignPointsStart (frame_42/DoAction_15.as:57-78) then adds the 19 level 1
+# points by class ratio: 19 * ratio / 40, floored, with the 2 points of residue
+# going to the two largest fractions. Each stat is that allocation plus
+# ceil(getStat(class ratio, 1, true)), and life is 33 times its stat.
+func test_the_tutorial_fighter_holds_the_frame_165_gear_and_class_split():
+	var expected: Dictionary[PlayerSave.PlayerClass, Dictionary] = {
+		PlayerSave.PlayerClass.BIOLOGICAL: {"allocated": [8, 13, 6, 11, 0], "stats": [12.0, 20.0, 8.0, 19.0]},
+		PlayerSave.PlayerClass.PSYCHOLOGICAL: {"allocated": [8, 7, 15, 8, 0], "stats": [12.0, 9.0, 25.0, 13.0]},
+		PlayerSave.PlayerClass.HYDRAULIC: {"allocated": [13, 11, 8, 6, 0], "stats": [21.0, 16.0, 12.0, 10.0]},
+	}
+	ZoneManager.auto_switch_scenes = false
+	for player_class in expected:
+		var label: String = PlayerSave.CLASS_NAMES[player_class]
+		GameData.new_game(-1, "TutorialGear", player_class)
+		var save: PlayerSave = GameData.current_save
+		ZoneManager.pending_battle = {}
+		var pick: Dictionary = ZoneManager.request_tutorial_fight()
+		pick.erase("cutscene_before")
+		ZoneManager.pending_battle = {}
+
+		var scene = add_child_autofree(BattleSceneRes.instantiate())
+		scene.animation_speed = 0.0
+		scene.start_battle(pick)
+		var player: CombatUnit = scene.units[BattleRunner.PLAYER_SLOT]
+		var stats: Array = expected[player_class]["stats"]
+		assert_eq(save.equip_array, [0, 0, 0, 4, 8, 5, 0], "%s wears no White T-Shirt" % label)
+		assert_eq(player.equipment_ids, [0, 0, 0, 4, 8, 5, 0], "%s fighter's gear" % label)
+		assert_eq(save.stat_allocated, expected[player_class]["allocated"], "%s allocation" % label)
+		assert_almost_eq(save.point_residue, 0.158, 0.001, "%s point residue" % label)
+		assert_eq(player.base_life, stats[0] * CombatUnit.VIT_LIFE_FACTOR, "%s fighter's life" % label)
+		assert_eq([player.base_strength, player.base_magic, player.base_speed], stats.slice(1), "%s fighter's strength, magic and speed" % label)
+		scene.queue_free()
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+
+
+# A Tutorial win leaves Sonny in the state that frame_180/DoAction.as:7-8 sets
+# before battle 100: equipArray0 [0,11,0,4,8,5,0], with the White T-Shirt, and
+# StatSets0 [5,6,5,3,0], which drops the class split. The Biological stats are
+# then [9, 13, 7, 11], the same as a new game that skips the Tutorial.
+func test_battle_100_after_the_tutorial_uses_the_frame_180_gear_and_stats():
+	ZoneManager.auto_switch_scenes = false
+	GameData.new_game(-1, "TutorialThen100", PlayerSave.PlayerClass.BIOLOGICAL)
+	var save: PlayerSave = GameData.current_save
+	save.autosave = false
+	ZoneManager.pending_battle = {}
+	var pick: Dictionary = ZoneManager.request_tutorial_fight()
+	pick.erase("cutscene_before")
+	ZoneManager.pending_battle = {}
+	var tutorial = add_child_autofree(BattleSceneRes.instantiate())
+	tutorial.animation_speed = 0.0
+	tutorial.start_battle(pick)
+	tutorial.runner.win_condition = BattleRunner.Outcome.WIN
+	await wait_for_signal(tutorial.battle_finished, 5)
+
+	var next_pick: Dictionary = ZoneManager.pending_battle.duplicate()
+	assert_eq(next_pick.get("battle_id"), 100, "the Tutorial win goes on to battle 100")
+	next_pick.erase("cutscene_before")
+	ZoneManager.pending_battle = {}
+	var story = add_child_autofree(BattleSceneRes.instantiate())
+	story.animation_speed = 0.0
+	story.start_battle(next_pick)
+	var player: CombatUnit = story.units[BattleRunner.PLAYER_SLOT]
+	assert_eq(save.equip_array, [0, 11, 0, 4, 8, 5, 0], "Sonny wears the White T-Shirt")
+	assert_eq(player.equipment_ids, [0, 11, 0, 4, 8, 5, 0], "the battle 100 fighter's gear")
+	assert_eq(save.stat_allocated, [5, 6, 5, 3, 0], "the class split is gone")
+	assert_eq(player.base_life, 9.0 * CombatUnit.VIT_LIFE_FACTOR, "battle 100 life")
+	assert_eq([player.base_strength, player.base_magic, player.base_speed], [13.0, 7.0, 11.0], "battle 100 strength, magic and speed")
+	ZoneManager.pending_battle = {}
+	GameData.current_save = null
+
+
 # A Tutorial win goes on to CS_INTRO2 and then to battle 100 as a Story fight.
 # The win jumps to the cutsceneSequence that IntroSeq set
 # (frame_165/DoAction.as:8 and frame_219/DoAction.as:73-77), CS_INTRO2's end goes
