@@ -232,20 +232,18 @@ def main():
     discs = disc_depths(index)
     first_disc = min(discs)
     masks = {d for d, layer in layers[first_disc - 1].items() if layer.clip_depth}
-    jobs = [
-        render.Job(
-            ICON_SPRITE,
-            frame,
-            ZOOM,
-            strip=stripped,
-            only_depths=(
-                tuple(sorted(set(layers[frame - 1]) - {discs[frame]}))
-                if frame in discs
-                else ()
-            ),
+    jobs = []
+    for frame in sorted(set(labels.values())):
+        kept = ()
+        if frame in discs:
+            # render.Job draws every depth when only_depths is empty, so a
+            # frame with nothing but the disc would draw the disc again.
+            kept = tuple(sorted(set(layers[frame - 1]) - {discs[frame]}))
+            if not kept:
+                raise RuntimeError(f"{ICON_SPRITE} frame {frame} shows only the disc")
+        jobs.append(
+            render.Job(ICON_SPRITE, frame, ZOOM, strip=stripped, only_depths=kept)
         )
-        for frame in sorted(set(labels.values()))
-    ]
     # The driver refuses to hide a clip mask, so the disc keeps the masks of
     # its frame, which draw nothing themselves.
     disc_job = render.Job(

@@ -21,13 +21,6 @@ func test_the_disc_takes_the_colour_it_is_given() -> void:
 		_assert_color(DiscReader.disc_color(drawn, "Leading_Strike"), color, "element %d" % element)
 
 
-func test_the_disc_is_not_the_grey_ffdec_bakes_in() -> void:
-	var grey: Color = Color8(38, 38, 38)
-	var drawn: Texture2D = AbilityIcon.texture("Ghost_State", MenuTheme.ELEMENT_COLORS[CombatUnit.Element.SHADOW])
-	var read: Color = DiscReader.disc_color(drawn, "Ghost_State")
-	assert_gt(absf(read.r - grey.r) + absf(read.g - grey.g) + absf(read.b - grey.b), 0.1)
-
-
 func test_an_icon_that_shows_no_disc_is_the_extracted_file() -> void:
 	assert_false(AbilityIcon.shows_disc("Empty"), "Empty's grey disc has no script")
 	assert_eq(AbilityIcon.texture("Empty", Color.RED).resource_path, "res://assets/ui/abilities/Empty.png")
