@@ -511,6 +511,38 @@ func _has_label(label: String) -> bool:
 	return _timeline().get("labels", {}).has(label)
 
 
+func current_state() -> State:
+	return _state as State
+
+
+# -> the label the doll plays now, such as "stun" or "outofstun".
+func current_label() -> String:
+	return _label
+
+
+# -> how many frames of the current label have played.
+func label_frames() -> float:
+	return _label_frames
+
+
+func home_position() -> Vector2:
+	return _home_position
+
+
+func melee_phase() -> MeleePhase:
+	return _melee_phase
+
+
+# -> the swing label the doll plays for the melee that play_melee() started.
+func attack_label() -> String:
+	return _attack_label
+
+
+# -> the Node2D that holds one body part's layered sprites, such as "head".
+func part(part_name: String) -> Node2D:
+	return _parts[part_name]
+
+
 func is_idle() -> bool:
 	return _state == State.IDLE
 

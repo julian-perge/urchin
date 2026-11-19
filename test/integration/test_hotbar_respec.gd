@@ -124,10 +124,10 @@ func test_a_click_with_enough_money_respecs_and_opens_the_abilities_window():
 	assert_eq(save.move_matrix2, starting_moves, "the two starting moves are the only known moves")
 	for node: int in TalentTree.NODE_ARRAY_SIZE:
 		assert_eq(TalentTree.get_rank(save, node), 0, "talent %d" % node)
-	assert_eq(save.buff_adder_matrix, TalentTree._zero_array(TalentTree.NODE_ARRAY_SIZE), "passives cleared")
+	assert_eq(save.buff_adder_matrix, _zeros(TalentTree.NODE_ARRAY_SIZE), "passives cleared")
 	assert_true(hub.get_node("AbilitiesWindow").visible, "the Abilities Window opens")
 	assert_false(hub.get_node("ZoneHost").is_visible_in_tree(), "the zone screen hides, as KrinScreen does")
-	assert_eq(hub.get_node("AbilitiesWindow")._ability_points_value.text, "9", "the Window shows the new points")
+	assert_eq((hub.get_node("AbilitiesWindow/AbilityPointsValue") as Label).text, "9", "the Window shows the new points")
 	var banner: CombatTextBanner = hub.get_node("CombatTextBanner")
 	assert_true(banner.is_up())
 	assert_eq(banner.label.text, Strings.menu(67))
@@ -160,7 +160,7 @@ func test_a_respec_with_the_abilities_window_open_keeps_it_open_and_refreshes_it
 	hub.get_node("Hotbar").toggle_menu_screen("abilities_window")
 	_click(_respec_button(hub))
 	assert_true(hub.get_node("AbilitiesWindow").visible)
-	assert_eq(hub.get_node("AbilitiesWindow")._ability_points_value.text, "9")
+	assert_eq((hub.get_node("AbilitiesWindow/AbilityPointsValue") as Label).text, "9")
 
 
 func test_a_click_with_too_little_money_changes_nothing_and_shows_menu_42():
@@ -224,3 +224,10 @@ func test_an_inert_hotbar_ignores_a_click_on_respec():
 	_click(_respec_button(hub))
 	assert_eq(_respec_fields(save), before)
 	assert_false(hub.get_node("CombatTextBanner").is_up())
+
+
+func _zeros(size: int) -> Array:
+	var zeros: Array = []
+	zeros.resize(size)
+	zeros.fill(0)
+	return zeros

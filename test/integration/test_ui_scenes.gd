@@ -51,11 +51,11 @@ func test_class_cards_show_the_shared_tooltip_on_hover():
 		var name: String = PlayerSave.CLASS_NAMES[class_id]
 		menu.class_picker.get_node(name).mouse_entered.emit()
 		await get_tree().process_frame
-		assert_true(GameTooltip._root.visible, "%s card shows the tooltip" % name)
-		assert_eq(GameTooltip._sections.get_child_count(), 2, "%s: header plus blurb" % name)
-		var header: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+		assert_true(GameTooltip.is_showing(), "%s card shows the tooltip" % name)
+		assert_eq(GameTooltip.sections().size(), 2, "%s: header plus blurb" % name)
+		var header: Label = GameTooltip.line_label(0)
 		assert_eq(header.text, name, "header names the class")
-		var body: Label = GameTooltip._sections.get_child(1).get_child(0).get_child(0)
+		var body: Label = GameTooltip.line_label(1)
 		assert_eq(body.text, PlayerSave.CLASS_DESCRIPTIONS[class_id], "body is the class blurb")
 		# The tooltip follows the mouse, and flips to the mouse's left past the
 		# plain layout's limit, as the rightmost card shows.
@@ -65,9 +65,9 @@ func test_class_cards_show_the_shared_tooltip_on_hover():
 		await wait_process_frames(1)
 		var layout: Dictionary = TooltipTheme.look()["layouts"]["GO"]
 		var offset: float = float(layout["near_x"]) if mouse.x < float(layout["mouse_x_limit"]) else float(layout["far_x"])
-		assert_almost_eq(GameTooltip._sections.global_position.x, mouse.x + offset, 0.01, "%s tooltip sits at the mouse" % name)
+		assert_almost_eq(GameTooltip.sections_position().x, mouse.x + offset, 0.01, "%s tooltip sits at the mouse" % name)
 		menu.class_picker.get_node(name).mouse_exited.emit()
-		assert_false(GameTooltip._root.visible, "%s card hides it again" % name)
+		assert_false(GameTooltip.is_showing(), "%s card hides it again" % name)
 
 
 # The fades are stepped by hand rather than waited on: wait_seconds() races the
@@ -81,7 +81,7 @@ func test_class_cards_fade_their_color_copy_in_and_back_out_on_hover():
 	assert_eq(overlay.modulate.a, 0.0, "the colored copy starts hidden")
 
 	card.mouse_entered.emit()
-	var fade_in: Tween = menu._card_fades["Biological"]
+	var fade_in: Tween = menu.card_fade("Biological")
 	fade_in.pause()
 	fade_in.custom_step(menu.CARD_FADE_IN * 0.5)
 	assert_almost_eq(overlay.modulate.a, 0.5, 0.01, "half faded in at the halfway point")
@@ -89,7 +89,7 @@ func test_class_cards_fade_their_color_copy_in_and_back_out_on_hover():
 	assert_almost_eq(overlay.modulate.a, 1.0, 0.001, "reaches full color")
 
 	card.mouse_exited.emit()
-	var fade_out: Tween = menu._card_fades["Biological"]
+	var fade_out: Tween = menu.card_fade("Biological")
 	fade_out.pause()
 	fade_out.custom_step(menu.CARD_FADE_OUT * 0.5)
 	assert_almost_eq(overlay.modulate.a, 0.5, 0.01, "half faded back at the halfway point")
@@ -103,14 +103,14 @@ func test_hovering_a_card_again_mid_fade_replaces_the_running_fade():
 	var card: TextureButton = menu.class_picker.get_node("Hydraulic")
 	var overlay: TextureRect = card.get_node("Color")
 	card.mouse_entered.emit()
-	var interrupted: Tween = menu._card_fades["Hydraulic"]
+	var interrupted: Tween = menu.card_fade("Hydraulic")
 	interrupted.pause()
 	interrupted.custom_step(menu.CARD_FADE_IN * 0.5)
 
 	card.mouse_exited.emit()
 	assert_false(interrupted.is_valid(), "the interrupted fade is killed, not left running")
 	card.mouse_entered.emit()
-	var latest: Tween = menu._card_fades["Hydraulic"]
+	var latest: Tween = menu.card_fade("Hydraulic")
 	latest.pause()
 	latest.custom_step(menu.CARD_FADE_IN)
 	assert_almost_eq(overlay.modulate.a, 1.0, 0.001, "the last hover wins outright")
@@ -234,7 +234,7 @@ func _back_problems(menu: Control) -> Array[String]:
 	var found: Array[String] = []
 	for panel_name in BACK_PANELS:
 		var panel: Control = menu.get_node(panel_name)
-		menu._show_screen(panel)
+		menu.show_screen(panel)
 		(panel.get_node("Back/HitButton") as Button).pressed.emit()
 		if not menu.get_node("TitlePanel").visible:
 			found.append("%s: Back does not show the title" % panel_name)
@@ -254,7 +254,9 @@ func test_back_on_every_panel_shows_the_title():
 func test_control_a_back_with_no_target_fails_the_back_check():
 	var menu = add_child_autofree(MainMenuScene.instantiate())
 	await get_tree().process_frame
-	(menu.get_node("SlotPanel/Back") as MenuBack).pressed.disconnect(menu._on_back_pressed)
+	var back: MenuBack = menu.get_node("SlotPanel/Back")
+	for connection: Dictionary in back.pressed.get_connections():
+		back.pressed.disconnect(connection["callable"])
 	assert_eq(_back_problems(menu), [
 		"SlotPanel: Back does not show the title",
 		"SlotPanel: Back leaves the panel up",
@@ -439,7 +441,7 @@ func test_the_title_turns_the_sound_back_on():
 	AudioManagerAuto.stop_music()
 	await _menu_without_scene_change()
 	assert_true(AudioManagerAuto.sound_enabled, "the sound is on again")
-	assert_eq(AudioManagerAuto._music_mode, AudioManagerAuto.MusicMode.MENU, "and the menu music plays")
+	assert_eq(AudioManagerAuto.music_mode, AudioManagerAuto.MusicMode.MENU, "and the menu music plays")
 
 
 # The same resetHere clears Krin.soundToMake and Krin.missToMake, the sounds that
@@ -611,21 +613,21 @@ func test_new_game_slots_warn_that_a_new_game_replaces_the_save():
 	menu.get_node("ModePanel/Captions/LoadGameSlot/HitButton").pressed.emit()
 	var slot: Button = _slot_button(menu, 1)
 	slot.mouse_entered.emit()
-	assert_false(GameTooltip._root.visible, "a Load Game slot doesn't warn")
+	assert_false(GameTooltip.is_showing(), "a Load Game slot doesn't warn")
 	slot.mouse_exited.emit()
 
 	menu.get_node("SlotPanel/Back/HitButton").pressed.emit()
 	menu.get_node("ModePanel/Captions/NewGameSlot/HitButton").pressed.emit()
 	menu.get_node("NamePanel/OkButton").pressed.emit()
 	slot.mouse_entered.emit()
-	assert_true(GameTooltip._root.visible, "a New Game slot warns")
-	assert_eq(GameTooltip._sections.get_child_count(), 2, "header plus warning")
-	var header: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	assert_true(GameTooltip.is_showing(), "a New Game slot warns")
+	assert_eq(GameTooltip.sections().size(), 2, "header plus warning")
+	var header: Label = GameTooltip.line_label(0)
 	assert_eq(header.text, "New Game")
-	var body: Label = GameTooltip._sections.get_child(1).get_child(0).get_child(0)
+	var body: Label = GameTooltip.line_label(1)
 	assert_eq(body.text, WARNING)
 	slot.mouse_exited.emit()
-	assert_false(GameTooltip._root.visible, "leaving the slot hides the warning")
+	assert_false(GameTooltip.is_showing(), "leaving the slot hides the warning")
 
 
 # The warning opens beside the slot the pointer is on, so it moves down by the
@@ -640,13 +642,13 @@ func test_the_new_game_warning_opens_beside_the_hovered_slot():
 	GameTooltip.mouse_source = func() -> Vector2: return first.global_position + first.size / 2.0
 	first.mouse_entered.emit()
 	await wait_process_frames(2)
-	var first_y: float = GameTooltip._root.global_position.y
+	var first_y: float = GameTooltip.box_position().y
 	first.mouse_exited.emit()
 	GameTooltip.mouse_source = func() -> Vector2: return third.global_position + third.size / 2.0
 	third.mouse_entered.emit()
 	await wait_process_frames(2)
 	assert_almost_eq(
-		GameTooltip._root.global_position.y - first_y,
+		GameTooltip.box_position().y - first_y,
 		third.global_position.y - first.global_position.y,
 		0.01,
 		"the warning follows the pointer from slot 1 to slot 3"
@@ -714,12 +716,12 @@ func test_the_game_calls_the_player_sonny_whatever_the_save_is_named():
 
 	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())
 	abilities.refresh()
-	assert_eq(abilities._name_label.text, "Sonny", "the abilities window")
+	assert_eq((abilities.get_node("NameLabel") as Label).text, "Sonny", "the abilities window")
 
 	var inventory = add_child_autofree(load("res://scenes/ui/menu/inventory_window.tscn").instantiate())
 	inventory.refresh()
-	assert_eq(inventory._name_label.text, "Sonny", "the inventory window")
-	assert_eq(inventory._party_faces[0].tooltip().get("title"), "Sonny", "the player's face in the inventory window")
+	assert_eq((inventory.get_node("LeftPanel/Content/Header/NameRow/NameLabel") as Label).text, "Sonny", "the inventory window")
+	assert_eq((inventory.get_node("PartyFaces").get_child(0) as PartyFace).tooltip().get("title"), "Sonny", "the player's face in the inventory window")
 
 
 # START copies the rows into the new game: the difficulty Krin.difficulty, the
@@ -1016,11 +1018,11 @@ func test_inventory_window_equips_from_grid_click():
 	window.refresh()
 	var slot: ItemSlot = window.right_column.slots[0]
 	assert_eq(slot.item.id, item.id, "grid slot 0 mirrors item_array[0]")
-	window.right_column._on_slot_clicked(slot)
+	slot.slot_clicked.emit(slot)
 	var equip_slot = Equipment.slot_for_item(item)
 	assert_eq(int(GameData.current_save.equip_array[equip_slot]), item.id, "click equips into the natural slot")
 	assert_eq(int(GameData.current_save.item_array[0]), 0, "inventory cell emptied")
-	window._on_equip_slot_clicked(equip_slot)
+	window.equip_view.equip_slot_clicked.emit(equip_slot)
 	assert_eq(int(GameData.current_save.equip_array[equip_slot]), 0, "equip slot click unequips")
 	assert_eq(int(GameData.current_save.item_array[0]), item.id, "item returns to the first free cell")
 
@@ -1048,12 +1050,12 @@ func test_an_empty_equip_slot_names_its_slot_type():
 # native tooltip.
 func test_achievement_plates_show_the_name_over_the_description():
 	var window = add_child_autofree(load("res://scenes/ui/menu/achievements_window.tscn").instantiate())
-	var plate: Control = window._plates[1]
+	var plate: Control = window.get_node("Plate1")
 	assert_eq(plate.tooltip_text, "", "no native tooltip")
 	plate.mouse_entered.emit()
 	assert_eq(_tooltip_texts(), [Achievements.NAMES[1], Achievements.DESCRIPTIONS[1]], "Black Magic over its description")
 	plate.mouse_exited.emit()
-	assert_false(GameTooltip._root.visible, "leaving the plate hides it")
+	assert_false(GameTooltip.is_showing(), "leaving the plate hides it")
 
 
 # The hub's orbs show the original's titles over their descriptions: Next
@@ -1078,9 +1080,9 @@ func test_zone_orbs_show_the_original_titles_over_their_descriptions():
 
 func _tooltip_texts() -> Array:
 	var texts: Array = []
-	if not GameTooltip._root.visible:
+	if not GameTooltip.is_showing():
 		return texts
-	for section in GameTooltip._sections.get_children():
+	for section in GameTooltip.sections():
 		for label in section.get_child(0).get_children():
 			texts.append(label.text)
 	return texts
@@ -1093,17 +1095,17 @@ func test_abilities_window_edits_action_bar():
 	assert_eq(GameData.current_save.move_matrix.slice(0, 2), starting, "new game seeds the bar")
 	var reversed_starting: Array = starting.duplicate()
 	reversed_starting.reverse()
-	assert_eq(window._pool_move_ids, reversed_starting, "the pool lists the moves on the bar too, from the end of move_matrix2")
-	window._on_socket_pressed(0)
+	assert_eq(window.pool_move_ids(), reversed_starting, "the pool lists the moves on the bar too, from the end of move_matrix2")
+	(window.get_node("Socket0") as Button).pressed.emit()
 	assert_eq(int(GameData.current_save.move_matrix[0]), 0, "a socket click with nothing held removes the move")
-	window._on_pool_row_held(1)
-	window._on_socket_pressed(3)
+	(window.get_node("Pool/Mask/Rows/PoolRow1") as Button).button_down.emit()
+	(window.get_node("Socket3") as Button).pressed.emit()
 	assert_eq(int(GameData.current_save.move_matrix[3]), int(starting[0]), "the held move goes to the clicked socket")
 
 
 func test_achievements_window_builds_ten_plates():
 	var window = add_child_autofree(load("res://scenes/ui/menu/achievements_window.tscn").instantiate())
-	assert_eq(window._plates.size(), Achievements.ACHIEVEMENT_COUNT)
+	assert_eq(window.find_children("Plate*", "PanelContainer", false, false).size(), Achievements.ACHIEVEMENT_COUNT)
 
 
 func test_hotbar_menu_toggle_is_exclusive():
@@ -1238,13 +1240,13 @@ func test_a_zone_shows_its_name_in_the_tooltip_open_or_locked():
 	assert_true(zones.get_node("Zone2").disabled, "zone 2 is locked for this check")
 	for zone_id: int in [1, 2]:
 		zones.get_node("Zone%d" % zone_id).mouse_entered.emit()
-		assert_true(GameTooltip._root.visible, "zone %d shows the tooltip" % zone_id)
+		assert_true(GameTooltip.is_showing(), "zone %d shows the tooltip" % zone_id)
 		var lines: Array[String] = []
-		for label: Label in GameTooltip._sections.find_children("*", "Label", true, false):
+		for label: Label in GameTooltip.labels():
 			lines.append(label.text)
 		assert_eq(lines, [strings["ZONES"][zone_id], strings["ZONES2"][zone_id]], "zone %d" % zone_id)
 		zones.get_node("Zone%d" % zone_id).mouse_exited.emit()
-		assert_false(GameTooltip._root.visible, "zone %d hides the tooltip on roll out" % zone_id)
+		assert_false(GameTooltip.is_showing(), "zone %d hides the tooltip on roll out" % zone_id)
 
 
 # lineMC's DropShadow comes from zone_map.json, which extract_zone_map writes

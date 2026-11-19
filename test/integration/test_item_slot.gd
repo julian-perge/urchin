@@ -158,15 +158,15 @@ func test_hover_shows_a_tooltip_for_a_filled_slot():
 	var item: GameItem = ItemManagerAuto.items_by_id.values()[0]
 	slot.set_item(item)
 	slot.mouse_entered.emit()
-	assert_true(GameTooltip._root.visible, "tooltip shown for a real item")
-	var header_label: Label = GameTooltip._sections.get_child(0).get_child(0).get_child(0)
+	assert_true(GameTooltip.is_showing(), "tooltip shown for a real item")
+	var header_label: Label = GameTooltip.line_label(0)
 	assert_eq(header_label.text, item.display_name)
 
 
 func test_hover_on_an_empty_slot_shows_no_tooltip():
 	var slot: ItemSlot = add_child_autofree(ItemSlotScene.instantiate())
 	slot.mouse_entered.emit()
-	assert_false(GameTooltip._root.visible, "nothing to show for an empty slot")
+	assert_false(GameTooltip.is_showing(), "nothing to show for an empty slot")
 
 
 func test_hover_exit_hides_the_tooltip():
@@ -175,7 +175,7 @@ func test_hover_exit_hides_the_tooltip():
 	slot.set_item(item)
 	slot.mouse_entered.emit()
 	slot.mouse_exited.emit()
-	assert_false(GameTooltip._root.visible, "hidden on mouse exit")
+	assert_false(GameTooltip.is_showing(), "hidden on mouse exit")
 
 
 func test_tooltip_skips_the_type_line_for_a_none_type_item():
@@ -193,12 +193,12 @@ func test_tooltip_skips_the_type_line_for_a_none_type_item():
 	# as the title section it'd sit next to - checking "no BG_COST section"
 	# would pass even if the skip were broken, since BG_COST is never used
 	# by item tooltips at all).
-	assert_eq(GameTooltip._sections.get_child_count(), 1, "just the header - no type line for NONE, no body with nothing to show")
+	assert_eq(GameTooltip.sections().size(), 1, "just the header - no type line for NONE, no body with nothing to show")
 
 
 func _tooltip_texts() -> Array:
 	var texts: Array = []
-	for section in GameTooltip._sections.get_children():
+	for section in GameTooltip.sections():
 		for label in section.get_child(0).get_children():
 			texts.append(label.text)
 	return texts
@@ -220,7 +220,7 @@ func test_a_non_equipment_item_shows_only_its_name_and_flavor_text():
 	slot.mouse_entered.emit()
 	assert_eq(_tooltip_texts(), [item.display_name, item.tooltip], "the name over the flavor text, and nothing else")
 	assert_eq(
-		GameTooltip._sections.get_child(1).get_child(0).get_child(0).get_theme_color("font_color"),
+		GameTooltip.line_label(1).get_theme_color("font_color"),
 		Color("ffffff"),
 		"in the plain layout's white body"
 	)

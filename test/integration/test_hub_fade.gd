@@ -130,5 +130,5 @@ func test_a_zone_picked_on_the_world_map_fades_the_hub_in_again():
 	assert_eq(fade.color.a, 0.0, "the first fade is over")
 	var map: Control = game.get_node("ZoneMapOverlay")
 	map.visible = true
-	map._on_zone_selected(ZoneManager.current_zone)
+	(map.get_node("Zones/Zone%d" % ZoneManager.current_zone) as BaseButton).pressed.emit()
 	assert_eq(fade.color.a, AlphaSteps.values("FADE", "hub")[0] / 100.0, "the pick jumps to Navigation, which places the clip again")

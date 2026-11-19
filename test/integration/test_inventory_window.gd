@@ -187,9 +187,9 @@ func test_refresh_sets_every_element_bar_from_the_saves_per_and_def() -> void:
 func test_the_sixteen_bars_are_the_elements_in_order_with_their_own_stat() -> void:
 	var window: Control = add_child_autofree(SCENE.instantiate())
 	for k in 8:
-		assert_eq((window.get_node("PerBars/Bars/Bar%d" % k) as ElementBar)._kind, ElementBar.Kind.PIERCING)
-		assert_eq((window.get_node("DefBars/Bars/Bar%d" % k) as ElementBar)._kind, ElementBar.Kind.DEFENSE)
-		assert_eq((window.get_node("PerBars/Bars/Bar%d" % k) as ElementBar)._element, k)
+		assert_eq((window.get_node("PerBars/Bars/Bar%d" % k) as ElementBar).kind(), ElementBar.Kind.PIERCING)
+		assert_eq((window.get_node("DefBars/Bars/Bar%d" % k) as ElementBar).kind(), ElementBar.Kind.DEFENSE)
+		assert_eq((window.get_node("PerBars/Bars/Bar%d" % k) as ElementBar).element(), k)
 
 
 # A plain click on a party face selects the member (DefineButton2_2895
@@ -201,7 +201,7 @@ func _window_with_felicity_selected() -> Control:
 	GameData.current_save.party_roster = [0, 1, 2, 3, -1, -1]
 	var window: Control = add_child_autofree(SCENE.instantiate())
 	window.refresh()
-	var face: PartyFace = window._party_faces[3]
+	var face: PartyFace = window.get_node("PartyFaces").get_child(3)
 	assert_eq(face.party_id, 3)
 	face.chosen.emit(3, false)
 	return window
@@ -217,13 +217,13 @@ func test_a_female_member_shows_the_female_doll_in_model4s_first_pose() -> void:
 	assert_false(male.visible, "the male doll hides")
 	assert_true(female.visible, "the female doll shows")
 	assert_gt(female.get_bounds().size.x, 0.0, "and is dressed")
-	var skin: Sprite2D = female._parts["head"].get_child(0)
+	var skin: Sprite2D = female.part("head").get_child(0)
 	assert_eq(skin.texture.resource_path, CharacterVisual.SPRITE_ROOT + "/F_SHEAD_FEL.png")
 	var rig: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.animations_file("MODEL4")))
 	for part: String in CharacterVisual.DOLL_PARTS:
 		var m: Array = rig["frames"][0][part]
 		var expected := Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5]))
-		assert_true(female._parts[part].transform.is_equal_approx(expected), "%s holds MODEL4's first frame" % part)
+		assert_true(female.part(part).transform.is_equal_approx(expected), "%s holds MODEL4's first frame" % part)
 
 
 func test_a_male_member_shows_the_male_doll_again() -> void:

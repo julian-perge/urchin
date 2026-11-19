@@ -31,7 +31,7 @@ func _menu(index: int) -> String:
 
 func _tooltip_texts() -> Array:
 	var texts: Array = []
-	for section in GameTooltip._sections.get_children():
+	for section in GameTooltip.sections():
 		for label in section.get_child(0).get_children():
 			texts.append(label.text)
 	return texts
@@ -54,7 +54,7 @@ func test_can_drop_data_outside_sell_button_rejects_and_shows_no_tooltip():
 	var panel: RightColumn = add_child_autofree(RightColumnScene.instantiate())
 	var item: GameItem = _make_item(100.0)
 	assert_false(panel._can_drop_data(Vector2(-500, -500), {"item": item}))
-	assert_false(GameTooltip._root.visible, "no tooltip when not over the button")
+	assert_false(GameTooltip.is_showing(), "no tooltip when not over the button")
 
 
 # The original's sell press empties the mouse and sets the body to MENU[5]
@@ -76,9 +76,9 @@ func test_drag_end_notification_hides_the_price_preview():
 	panel.show_sell_button(true)
 	var item: GameItem = _make_item(100.0)
 	panel._can_drop_data(panel.sell_button.get_rect().get_center(), {"item": item})
-	assert_true(GameTooltip._root.visible, "price preview showing mid-drag")
+	assert_true(GameTooltip.is_showing(), "price preview showing mid-drag")
 	panel._notification(NOTIFICATION_DRAG_END)
-	assert_false(GameTooltip._root.visible, "hidden on a cancelled drag")
+	assert_false(GameTooltip.is_showing(), "hidden on a cancelled drag")
 
 
 # The character is the one extract_screen_rects read from edit text 2861, so the
@@ -120,7 +120,7 @@ func test_a_hidden_sell_slot_refuses_a_drop_and_sells_nothing():
 	assert_false(column._can_drop_data(at_position, {"item": item}))
 	column._drop_data(at_position, {"item": item})
 	assert_signal_not_emitted(column, "sell_pressed")
-	assert_false(GameTooltip._root.visible, "a hidden sell slot shows no price")
+	assert_false(GameTooltip.is_showing(), "a hidden sell slot shows no price")
 
 
 func test_the_grid_holds_36_slots_in_save_order():

@@ -141,6 +141,40 @@ func hide_tooltip() -> void:
 	_root.visible = false
 
 
+func is_showing() -> bool:
+	return _root.visible
+
+
+# -> the section boxes, title first, as show_sections() built them.
+func sections() -> Array[Node]:
+	return _sections.get_children()
+
+
+# -> the Label that shows one line of one section.
+func line_label(section_index: int, line_index: int = 0) -> Label:
+	return _sections.get_child(section_index).get_child(0).get_child(line_index)
+
+
+# -> every line's Label, title first.
+func labels() -> Array[Node]:
+	return _sections.find_children("*", "Label", true, false)
+
+
+func icon_texture() -> Texture2D:
+	return _icon.texture
+
+
+# -> the top left corner of the sections, where the text column starts, in
+# Stage px. The icon, when there is one, sits to its left.
+func sections_position() -> Vector2:
+	return _sections.global_position
+
+
+# -> the top left corner of the whole tooltip, icon included, in Stage px.
+func box_position() -> Vector2:
+	return _root.global_position
+
+
 # -> the add terms to draw a section's 2715 gradient with, or null for a section
 # with a flat fill. BG_HEADER and BG_COST name the two gradient bars
 # (scripts/ui/tooltip_theme.gd). The title takes the rarity's terms, as

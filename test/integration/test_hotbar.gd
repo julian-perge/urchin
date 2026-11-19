@@ -62,18 +62,18 @@ func test_zone_texts_read_the_strings_record_for_every_zone():
 
 
 func test_zone_texts_use_the_loader_instead_of_copies_of_english():
-	var original: Dictionary = Strings._load()
-	Strings._table = original.duplicate(true)
-	Strings._table["SYSTEM"][9] = "Zone prefix "
-	Strings._table["SYSTEM"][10] = "Stage prefix "
-	Strings._table["ZONES"][1] = "Zone name"
-	Strings._table["ZONES2"][1] = "Zone subtitle"
+	var table: Dictionary = _strings_file()
+	table["SYSTEM"][9] = "Zone prefix "
+	table["SYSTEM"][10] = "Stage prefix "
+	table["ZONES"][1] = "Zone name"
+	table["ZONES2"][1] = "Zone subtitle"
+	Strings.use_table(table)
 	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
 	hotbar._refresh(1)
 	assert_eq(hotbar.zone_title.text, "Zone prefix 1")
 	assert_eq(hotbar.zone_subtitle.text, "Zone name: Zone subtitle")
 	assert_string_starts_with(hotbar.stage_label.text, "Stage prefix ")
-	Strings._table = original
+	Strings.use_table({})
 
 
 func test_zone_fill_width_is_capped_but_stage_text_keeps_counting():
@@ -99,10 +99,10 @@ func test_hover_shows_a_two_section_tooltip_for_inventory_button():
 	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
 	var button: BaseButton = hotbar.get_node("%InventoryButton")
 	button.mouse_entered.emit()
-	assert_true(GameTooltip._root.visible)
-	assert_eq(GameTooltip._sections.get_child_count(), 2, "title + body")
+	assert_true(GameTooltip.is_showing())
+	assert_eq(GameTooltip.sections().size(), 2, "title + body")
 	button.mouse_exited.emit()
-	assert_false(GameTooltip._root.visible)
+	assert_false(GameTooltip.is_showing())
 
 
 func test_each_hotbar_tooltip_reads_its_system_entries():
@@ -127,7 +127,7 @@ func test_each_hotbar_tooltip_reads_its_system_entries():
 
 func _tooltip_lines() -> Array[String]:
 	var lines: Array[String] = []
-	for label: Label in GameTooltip._sections.find_children("*", "Label", true, false):
+	for label: Label in GameTooltip.labels():
 		lines.append(label.text)
 	return lines
 
@@ -155,10 +155,10 @@ func test_each_orb_tooltip_reads_its_system_entries():
 
 
 func test_tooltips_use_the_loader_instead_of_copies_of_the_english_text():
-	var original: Dictionary = Strings._load()
-	Strings._table = original.duplicate(true)
-	for index: int in Strings._table["SYSTEM"].size():
-		Strings._table["SYSTEM"][index] = "SYSTEM entry %d" % index
+	var table: Dictionary = _strings_file()
+	for index: int in table["SYSTEM"].size():
+		table["SYSTEM"][index] = "SYSTEM entry %d" % index
+	Strings.use_table(table)
 	var hotbar: Control = add_child_autofree(HotbarScene.instantiate())
 	for button_name: String in [
 		"Inventory", "Abilities", "Save", "Options", "Respec", "Achievements", "ZoneMap", "Quit",
@@ -173,7 +173,7 @@ func test_tooltips_use_the_loader_instead_of_copies_of_the_english_text():
 		(orb.get_node("Control") as Control).mouse_entered.emit()
 		for line: String in _tooltip_lines():
 			assert_true(line.begins_with("SYSTEM entry "), kind)
-	Strings._table = original
+	Strings.use_table({})
 
 
 func test_respec_tooltip_without_a_save_shows_its_title_without_a_price():
@@ -190,7 +190,7 @@ func test_zone_map_and_quit_buttons_also_show_tooltips():
 	for button_name in ["ZoneMapButton", "QuitButton"]:
 		var button: BaseButton = hotbar.get_node("%" + button_name)
 		button.mouse_entered.emit()
-		assert_true(GameTooltip._root.visible, "%s shows a tooltip" % button_name)
+		assert_true(GameTooltip.is_showing(), "%s shows a tooltip" % button_name)
 		button.mouse_exited.emit()
 
 
@@ -390,3 +390,7 @@ func test_windows_hide_zone_art_and_orbs_and_restore_them_on_close():
 		hotbar.toggle_menu_screen(group)
 		assert_true(hub.get_node("ZoneHost").is_visible_in_tree(), group)
 	GameData.current_save = previous_save
+
+
+func _strings_file() -> Dictionary:
+	return JSON.parse_string(FileAccess.get_file_as_string(Strings.STRINGS_FILE))

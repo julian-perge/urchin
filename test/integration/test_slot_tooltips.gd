@@ -30,7 +30,7 @@ func _menu(index: int) -> String:
 
 func _tooltip_texts() -> Array:
 	var texts: Array = []
-	for section in GameTooltip._sections.get_children():
+	for section in GameTooltip.sections():
 		for label in section.get_child(0).get_children():
 			texts.append(label.text)
 	return texts
@@ -42,7 +42,7 @@ func test_the_delete_slot_shows_delete_item_over_its_warning():
 	column.delete_button.mouse_entered.emit()
 	assert_eq(_tooltip_texts(), [_menu(1), _menu(2)])
 	column.delete_button.mouse_exited.emit()
-	assert_false(GameTooltip._root.visible)
+	assert_false(GameTooltip.is_showing())
 
 
 # DefineButton2_3015 on(rollOver): MENU[3] over MENU[5] with nothing on the mouse.
@@ -60,7 +60,7 @@ func test_the_sell_slot_names_the_selected_items_price():
 	column.show_sell_button(true)
 	var item: GameItem = ItemManagerAuto.get_item(5)
 	column.populate([item])
-	column._on_slot_clicked(column.slots[0])
+	column.slots[0].slot_clicked.emit(column.slots[0])
 	column.sell_button.mouse_entered.emit()
 	assert_eq(_tooltip_texts(), [_menu(3), "%s €%d" % [_menu(4), ceili(item.price * _sell_ratio())]])
 
@@ -95,7 +95,7 @@ func test_each_stance_button_shows_its_mode_name_over_its_description():
 		row.buttons[n].mouse_entered.emit()
 		assert_eq(_tooltip_texts(), [_menu(54 + n) + " " + _menu(64), _menu(59 + n)], "stance %d" % n)
 		row.buttons[n].mouse_exited.emit()
-		assert_false(GameTooltip._root.visible)
+		assert_false(GameTooltip.is_showing())
 
 
 func _files_under(dir: String, extensions: Array) -> Array:

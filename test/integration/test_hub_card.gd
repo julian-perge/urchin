@@ -295,7 +295,7 @@ func _hub_after_win(battle_id: int, levels_gained: int) -> Control:
 	var row: VictoryExpRow = victory.get_node("ExpRows/PlayerSlot/Row")
 	while not row.is_finished():
 		row.step()
-	victory._on_proceed_pressed()
+	(victory.get_node("ProceedButton") as Button).pressed.emit()
 	return game
 
 

@@ -283,7 +283,7 @@ func test_setup_draws_the_hover_ring_through_the_presenter():
 func test_a_unit_already_stunned_at_setup_plays_no_stun_animation():
 	_unit.stun = 1.0
 	_present(_unit)
-	assert_ne(_doll._state, STUN)
+	assert_ne(_doll.current_state(), STUN)
 
 
 func test_setup_mirrors_an_enemy_doll_and_leaves_its_overlay_readable():
@@ -340,7 +340,7 @@ func test_setup_dresses_the_doll_from_the_item_table():
 	var armor: GameItem = GameItem.new()
 	armor.looks = "ARCTIC"
 	_present(unit, {7: armor})
-	assert_eq(_doll._parts["chest"].get_child_count(), 2, "the chest's skin plus the ARCTIC armor")
+	assert_eq(_doll.part("chest").get_child_count(), 2, "the chest's skin plus the ARCTIC armor")
 
 
 # The runner applies a whole half-turn before the replay starts, so the unit is
@@ -502,7 +502,7 @@ func _snapshot_with(slots: Array) -> UnitSnapshot:
 # 483-537). The visual filter index of BARON is 4 and of HOUND is 16.
 func _chest_skin() -> Array:
 	var files: Array = []
-	for child in _doll._parts["chest"].get_children():
+	for child in _doll.part("chest").get_children():
 		if child is Sprite2D and not child.is_queued_for_deletion():
 			files.append(child.texture.resource_path.get_file())
 	return files
@@ -540,7 +540,7 @@ func test_a_form_that_is_already_worn_is_not_redrawn():
 	_presenter.show_state(_snapshot_with([slots["baron"].duplicate()]))
 	_doll.set_state(CharacterVisual.State.HIT)
 	_presenter.show_state(_snapshot_with([slots["baron"].duplicate()]))
-	assert_eq(_doll._state, CharacterVisual.State.HIT, "dressNow already says BARON, so changeForm does not run")
+	assert_eq(_doll.current_state(), CharacterVisual.State.HIT, "dressNow already says BARON, so changeForm does not run")
 
 
 func test_a_stunned_doll_stays_in_the_stun_loop_when_its_form_changes():
@@ -548,12 +548,12 @@ func test_a_stunned_doll_stays_in_the_stun_loop_when_its_form_changes():
 	var stunned: UnitSnapshot = _snapshot_with([])
 	stunned.stun = 1.0
 	_presenter.show_state(stunned)
-	assert_eq(_doll._label, "stun", "the entry plays first")
+	assert_eq(_doll.current_label(), "stun", "the entry plays first")
 	var swapped: UnitSnapshot = _snapshot_with([slots["baron"].duplicate()])
 	swapped.stun = 1.0
 	_presenter.show_state(swapped)
-	assert_eq(_doll._state, STUN)
-	assert_eq(_doll._label, "stun2", "the swap puts the new clip in the stun loop")
+	assert_eq(_doll.current_state(), STUN)
+	assert_eq(_doll.current_label(), "stun2", "the swap puts the new clip in the stun loop")
 
 
 func test_a_form_change_that_also_raises_the_stun_plays_the_stun_entry():
@@ -561,7 +561,7 @@ func test_a_form_change_that_also_raises_the_stun_plays_the_stun_entry():
 	var landing: UnitSnapshot = _snapshot_with([slots["baron"].duplicate()])
 	landing.stun = 1.0
 	_presenter.show_state(landing)
-	assert_eq(_doll._label, "stun", "the rise in the stun runs after changeForm, so it wins")
+	assert_eq(_doll.current_label(), "stun", "the rise in the stun runs after changeForm, so it wins")
 
 
 func test_a_model5_form_stands_smaller_and_lower_and_the_units_own_form_stands_back():
@@ -578,9 +578,9 @@ func test_a_model5_form_stands_smaller_and_lower_and_the_units_own_form_stands_b
 func test_a_model5_swap_during_a_swing_moves_the_saved_home_too():
 	var slots: Dictionary = _present_with_form_buffs()
 	_doll.play_melee(func(): return HOME + Vector2(200, 0), 0.0)
-	var home_before: Vector2 = _doll._home_position
+	var home_before: Vector2 = _doll.home_position()
 	_presenter.show_state(_snapshot_with([slots["hound"].duplicate()]))
-	assert_eq(_doll._home_position, home_before + Vector2(0, 10))
+	assert_eq(_doll.home_position(), home_before + Vector2(0, 10))
 
 
 func test_a_dead_fighter_keeps_its_form():
@@ -604,13 +604,13 @@ func test_a_stun_icon_shows_only_at_the_hit_that_lands_it():
 	_presenter.show_result(_damage(10.0, 90.0), null)
 	_play_out_the_hit()
 	assert_eq(_buff_icons().size(), 0, "a hit before the stun shows no icon")
-	assert_ne(_doll._state, STUN, "and no stun")
+	assert_ne(_doll.current_state(), STUN, "and no stun")
 
 	var stunning: MoveResult = _stunning(_result(MoveResult.Kind.STATUS_ONLY, MoveResult.Direction.NONE, 0.0, 90.0))
 	stunning.target_after.buff_slots = [slot.duplicate()]
 	_presenter.show_result(stunning, null)
 	assert_eq(_buff_icons().size(), 1, "the hit that lands the stun shows its icon")
-	assert_eq(_doll._state, STUN, "and starts the stun")
+	assert_eq(_doll.current_state(), STUN, "and starts the stun")
 
 
 func test_a_hit_bigger_than_the_displayed_health_stops_the_bar_at_empty():
@@ -682,7 +682,7 @@ func test_a_crit_plays_the_critical_label_for_a_heal_as_well_as_damage():
 
 func test_a_hit_flinches_the_doll_and_plays_the_hit_voice():
 	_presenter.show_result(_damage(10.0, 90.0), null)
-	assert_eq(_doll._state, HIT, "the flinch")
+	assert_eq(_doll.current_state(), HIT, "the flinch")
 	assert_eq(_cues, [VOICE_HIT], "and the unit's hit voices")
 
 
@@ -690,7 +690,7 @@ func test_a_hit_flinches_the_doll_and_plays_the_hit_voice():
 # which for a melee hit is after the caster has run back.
 func test_a_move_result_that_kills_plays_the_death_at_its_impact():
 	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
-	assert_eq(_doll._state, DEAD, "the doll plays its death at the impact")
+	assert_eq(_doll.current_state(), DEAD, "the doll plays its death at the impact")
 
 
 # The original plays the hit voice only when the target survives, in the else
@@ -831,7 +831,7 @@ func test_a_death_with_no_result_empties_the_bar_before_it_fades():
 
 func test_die_plays_the_death_with_no_hit():
 	_presenter.die()
-	assert_eq(_doll._state, DEAD, "the doll plays its death")
+	assert_eq(_doll.current_state(), DEAD, "the doll plays its death")
 	assert_eq(_cues, [VOICE_DIE], "with the death cry alone")
 
 
@@ -847,7 +847,7 @@ func test_damage_on_a_sswitch_target_shows_as_a_heal():
 	assert_eq(_numbers().size(), 1, "one number")
 	assert_eq(_numbers()[0].glyphs, ["1", "5"], "the amount the damage healed")
 	assert_eq(_numbers()[0].tint, Color("66FF00"), "drawn in heal green")
-	assert_ne(_doll._state, HIT, "no hit animation")
+	assert_ne(_doll.current_state(), HIT, "no hit animation")
 	assert_eq(_cues, [], "and no hit voice")
 
 
@@ -864,7 +864,7 @@ func test_heal_on_a_sswitch_target_shows_as_damage():
 	assert_eq(_bar.life, 80.0, "the bar falls, because the heal hurt the target")
 	assert_eq(_numbers()[-1].glyphs, ["2", "0"], "the amount the heal took")
 	assert_eq(_numbers()[-1].tint, Color("664D80"), "drawn in the Shadow color")
-	assert_eq(_doll._state, HIT, "the hit animation plays")
+	assert_eq(_doll.current_state(), HIT, "the hit animation plays")
 	assert_eq(_cues, [], "but no hit voice")
 
 
@@ -872,7 +872,7 @@ func test_heal_on_a_sswitch_target_shows_as_damage():
 # the death at that impact (frame_42/DoAction_8.as:208-228).
 func test_heal_that_kills_a_sswitch_target_plays_the_death():
 	_presenter.show_result(_killing(_heal_that_hurts(150.0, 0.0)), null)
-	assert_eq(_doll._state, DEAD, "the doll plays its death")
+	assert_eq(_doll.current_state(), DEAD, "the doll plays its death")
 	assert_eq(_presenter.displayed.life, 0.0, "the bar drops to empty")
 	assert_eq(_cues, [VOICE_DIE], "with the death cry and no hit voice")
 
@@ -883,7 +883,7 @@ func test_heal_that_kills_a_sswitch_target_plays_the_death():
 func test_damage_on_a_stunned_target_keeps_it_stunned():
 	_stun()
 	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
-	assert_eq(_doll._state, STUN, "no hit animation on a stunned target")
+	assert_eq(_doll.current_state(), STUN, "no hit animation on a stunned target")
 	assert_eq(_cues, [VOICE_HIT], "the hit voice still plays")
 
 
@@ -892,7 +892,7 @@ func test_damage_on_a_stunned_target_keeps_it_stunned():
 func test_heal_on_a_stunned_sswitch_target_keeps_it_stunned():
 	_stun()
 	_presenter.show_result(_stunned_at_hit(_heal_that_hurts(10.0, 90.0)), null)
-	assert_eq(_doll._state, STUN, "no hit animation on a stunned target")
+	assert_eq(_doll.current_state(), STUN, "no hit animation on a stunned target")
 
 
 # The runner resolves the whole half-turn before the replay, so the unit's stun
@@ -903,16 +903,16 @@ func test_heal_on_a_stunned_sswitch_target_keeps_it_stunned():
 # result states.
 func test_a_stun_from_later_in_the_half_turn_waits_for_the_hit_that_lands_it():
 	_unit.stun = 1.0
-	assert_ne(_doll._state, STUN, "the unit's stun doesn't show before the hit that lands it")
+	assert_ne(_doll.current_state(), STUN, "the unit's stun doesn't show before the hit that lands it")
 	_presenter.show_result(_damage(10.0, 90.0), null)
-	assert_eq(_doll._state, HIT, "a hit before it flinches")
+	assert_eq(_doll.current_state(), HIT, "a hit before it flinches")
 	_play_out_the_hit()
 	_presenter.show_result(_stunning(_damage(10.0, 80.0)), null)
-	assert_eq(_doll._state, STUN, "and the hit that lands it starts the stun")
+	assert_eq(_doll.current_state(), STUN, "and the hit that lands it starts the stun")
 
 	_present(_make_unit(CombatUnit.Team.TWO, ENEMY_SLOT))
 	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
-	assert_ne(_doll._state, HIT, "a stun that has worn off by the half-turn's end still stops the flinch")
+	assert_ne(_doll.current_state(), HIT, "a stun that has worn off by the half-turn's end still stops the flinch")
 
 
 # The original plays a hit's flinch and starts the stun it lands at the same
@@ -920,7 +920,7 @@ func test_a_stun_from_later_in_the_half_turn_waits_for_the_hit_that_lands_it():
 func test_a_hit_that_lands_a_stun_leaves_the_doll_stunned():
 	_presenter.show_result(_stunning(_damage(10.0, 90.0)), null)
 	_play_out_the_hit()
-	assert_eq(_doll._state, STUN)
+	assert_eq(_doll.current_state(), STUN)
 
 
 # The original's Focus branch draws no number, only the focus flash
@@ -956,7 +956,7 @@ func test_a_miss_shows_the_miss_word_in_the_moves_element_color_and_plays_nothin
 	assert_eq(number.glyphs, ["miss"], "the MISS word")
 	assert_eq(number.tint, Color("FF6600"), "in the Fire color")
 	assert_eq(_cues, [], "no sound and no voice")
-	assert_ne(_doll._state, HIT, "and no flinch")
+	assert_ne(_doll.current_state(), HIT, "and no flinch")
 
 
 # Shatter Bolt only applies a status effect, and at its impact the original
@@ -967,27 +967,27 @@ func test_a_status_only_result_starts_the_stun_and_draws_no_number():
 	_unit.stun = 1.0
 	_presenter.show_result(_stunning(_result(MoveResult.Kind.STATUS_ONLY, MoveResult.Direction.NONE, 0.0, 100.0)), null)
 	assert_eq(_numbers().size(), 0, "no number floats up")
-	assert_eq(_doll._state, STUN, "the target's stun animation starts at the impact")
+	assert_eq(_doll.current_state(), STUN, "the target's stun animation starts at the impact")
 	assert_eq(_cues, [], "and nothing plays")
 
 
 func test_any_rise_in_stun_replays_the_stun_animation():
 	_stun()
-	assert_eq(_doll._state, STUN, "the first stun")
+	assert_eq(_doll.current_state(), STUN, "the first stun")
 	_doll._process(0.1)
-	assert_gt(_doll._label_frames, 0.0, "sanity: the animation has moved on")
+	assert_gt(_doll.label_frames(), 0.0, "sanity: the animation has moved on")
 	_unit.stun = 2.0
 	_presenter.snap_to_unit()
-	assert_eq(_doll._label, "stun", "a second stun plays the stun-in label")
-	assert_eq(_doll._label_frames, 0.0, "from its start")
+	assert_eq(_doll.current_label(), "stun", "a second stun plays the stun-in label")
+	assert_eq(_doll.label_frames(), 0.0, "from its start")
 
 
 func test_a_result_with_no_change_in_stun_leaves_the_animation_alone():
 	_stun()
 	_doll._process(0.1)
-	var frames_into_label: float = _doll._label_frames
+	var frames_into_label: float = _doll.label_frames()
 	_presenter.show_result(_stunned_at_hit(_damage(10.0, 90.0)), null)
-	assert_eq(_doll._label_frames, frames_into_label)
+	assert_eq(_doll.label_frames(), frames_into_label)
 
 
 func test_any_fall_in_stun_plays_the_wake_up_even_while_still_stunned():
@@ -995,7 +995,7 @@ func test_any_fall_in_stun_plays_the_wake_up_even_while_still_stunned():
 	_presenter.snap_to_unit()
 	_unit.stun = 1.0
 	_presenter.snap_to_unit()
-	assert_eq(_doll._label, "outofstun", "a partial fall still plays the wake-up")
+	assert_eq(_doll.current_label(), "outofstun", "a partial fall still plays the wake-up")
 
 
 # A unit stunned when its half-turn starts can fall to a later hit in it, so the
@@ -1005,15 +1005,15 @@ func test_any_fall_in_stun_plays_the_wake_up_even_while_still_stunned():
 func test_a_stunned_unit_stays_stunned_until_its_death_plays():
 	_stun()
 	_unit.active = false
-	assert_eq(_doll._state, STUN, "the doll is still stunned")
-	assert_ne(_doll._label, "outofstun", "and doesn't wake up first")
+	assert_eq(_doll.current_state(), STUN, "the doll is still stunned")
+	assert_ne(_doll.current_label(), "outofstun", "and doesn't wake up first")
 	var killing_stun: MoveResult = _stunned_at_hit(_killing(_damage(100.0, 0.0)))
 	killing_stun.target_after.stun = 2.0
 	_presenter.show_result(killing_stun, null)
-	assert_eq(_doll._state, DEAD, "the hit that kills it plays the death, though it lands another stun")
+	assert_eq(_doll.current_state(), DEAD, "the hit that kills it plays the death, though it lands another stun")
 	_unit.stun = 2.0
 	_presenter.snap_to_unit()
-	assert_eq(_doll._state, DEAD, "and the half-turn's end leaves the death alone")
+	assert_eq(_doll.current_state(), DEAD, "and the half-turn's end leaves the death alone")
 
 
 # The Traced run replayed the ring's enterFrame with the mouse over the fighter
@@ -1384,7 +1384,7 @@ func test_cast_plays_the_cast_state_with_colortobe_set_to_the_moves_color():
 	var move := Ability.new()
 	move.visual_effect_color = Color(0.2, 1.0, 0.0)
 	_presenter.cast(move)
-	assert_eq(_doll._state, CharacterVisual.State.CAST, "the cast state")
+	assert_eq(_doll.current_state(), CharacterVisual.State.CAST, "the cast state")
 	assert_eq(_doll.colortobe, move.visual_effect_color)
 	assert_eq(_doll.modulate, Color.WHITE, "the doll itself is not tinted")
 
@@ -1398,7 +1398,7 @@ func test_a_swing_sets_colortobe_to_the_moves_color_at_the_strike():
 	_presenter.melee(target, move, func(): pass, false)
 	assert_ne(_doll.colortobe, move.visual_effect_color, "sanity: the dash has not set it")
 	for frame in 120:
-		if _doll._melee_phase == CharacterVisual.MeleePhase.STRIKE:
+		if _doll.melee_phase() == CharacterVisual.MeleePhase.STRIKE:
 			break
 		_doll._process(1.0 / 30.0)
 	assert_eq(_doll.colortobe, move.visual_effect_color)
@@ -1456,7 +1456,7 @@ func test_a_shield_block_draws_shielded_and_plays_its_sound_with_no_flinch_or_hi
 	assert_eq(_labels_drawn_by(_critical(_shield_block()), _fire_move()), ["shield"], "the shield label")
 	assert_eq(_numbers()[0].glyphs, ["shield"], "SHIELDED and no digits")
 	assert_eq(_cues, ["sfx_shield"], "the shield sound and no hit voice")
-	assert_ne(_doll._state, HIT, "and no flinch")
+	assert_ne(_doll.current_state(), HIT, "and no flinch")
 
 
 # The art the shield clip shows now.
@@ -1531,7 +1531,7 @@ func test_the_shield_clips_art_fills_the_box_the_extractor_measured_around_the_r
 func test_a_hit_exactly_as_big_as_the_shield_draws_nothing_and_plays_as_a_hit():
 	_presenter.show_result(_damage(0.0, 100.0), null)
 	assert_eq(_numbers().size(), 0, "no number")
-	assert_eq(_doll._state, HIT, "the flinch")
+	assert_eq(_doll.current_state(), HIT, "the flinch")
 	assert_eq(_cues, [VOICE_HIT], "the hit voice and no shield sound")
 	assert_false(_shield_clip.is_playing(), "and no shield clip")
 
@@ -1542,7 +1542,7 @@ func test_a_hit_bigger_than_the_shield_draws_what_got_through_and_flinches():
 	_presenter.show_result(_damage(15.0, 85.0), _fire_move())
 	assert_eq(_numbers()[-1].glyphs, ["1", "5"], "what got through")
 	assert_eq(_numbers()[-1].tint, Color("FF6600"), "in the move's element color")
-	assert_eq(_doll._state, HIT, "the flinch")
+	assert_eq(_doll.current_state(), HIT, "the flinch")
 	assert_eq(_cues, [VOICE_HIT], "the hit voice and no shield sound")
 	assert_false(_shield_clip.is_playing(), "and no shield clip")
 
@@ -1661,8 +1661,8 @@ func test_the_doll_looks_the_same_after_the_flash():
 	assert_eq(_flash_color(), _hit_flash, "a hit flashes a stunned doll")
 	_advance_flash(_flash_frames("hit").size())
 	assert_null(_flash_color(), "the flash is over")
-	assert_eq(_doll._state, STUN, "and the doll is still in its stun")
-	assert_eq(_doll._label, "stun", "on the same label")
+	assert_eq(_doll.current_state(), STUN, "and the doll is still in its stun")
+	assert_eq(_doll.current_label(), "stun", "on the same label")
 
 
 # executeMove's gotoAndPlay() starts BATTLEFLASH's label over, so a result that
@@ -1766,7 +1766,7 @@ func test_a_tick_that_a_shield_soaked_whole_draws_shielded_and_plays_the_shield_
 	_step_shield_clip(1)
 	assert_eq(_shield_clip_art(), SHIELD_CLIP_ART % 2, "the Shield clip plays")
 	assert_eq(_cues, [], "with no sound")
-	assert_ne(_doll._state, HIT, "and no flinch")
+	assert_ne(_doll.current_state(), HIT, "and no flinch")
 
 
 # The original redraws a unit's bars, buff icons and stun pose in the
@@ -1821,12 +1821,12 @@ func test_a_buff_running_out_at_a_tick_leaves_the_icon_row_and_wakes_a_stunned_d
 	_present(_unit, {}, {1: buff})
 	_stun()
 	assert_eq(_buff_icons().size(), 1, "sanity: the buff's icon shows")
-	assert_eq(_doll._state, STUN, "sanity: and the doll is stunned")
+	assert_eq(_doll.current_state(), STUN, "sanity: and the doll is stunned")
 
 	_presenter.show_tick(_tick(MoveResult.Direction.NONE, 0.0, 100.0))
 
 	assert_eq(_buff_icons().size(), 0, "the icon is gone")
-	assert_eq(_doll._label, "outofstun", "and the stunned doll wakes up")
+	assert_eq(_doll.current_label(), "outofstun", "and the stunned doll wakes up")
 
 
 # The speech clip runs 57 frames and then rests on its empty frame 1
