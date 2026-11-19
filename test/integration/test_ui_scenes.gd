@@ -1107,8 +1107,8 @@ func test_a_zone_shows_its_name_in_the_tooltip_open_or_locked():
 
 # lineMC's DropShadow comes from zone_map.json, which extract_zone_map writes
 # from the SWF. The connectors draw it as the lines again, moved by its distance
-# at its angle, inside one group tinted to its colour at its alpha times its
-# strength.
+# at its angle, inside one group whose shader blurs them by its blur and tints
+# them to its colour, alpha and strength.
 func test_the_zone_links_read_their_shadow_from_the_record():
 	var game = add_child_autofree(GameScene.instantiate())
 	await get_tree().process_frame
@@ -1117,10 +1117,28 @@ func test_the_zone_links_read_their_shadow_from_the_record():
 	var shadow: Dictionary = record["line_shadow"]
 	var offset: Vector2 = Vector2.from_angle(deg_to_rad(float(shadow["angle"]))) * float(shadow["distance"])
 	assert_almost_eq(connectors.get_node("Shadow/Lines").position, offset, Vector2(0.001, 0.001))
+	var material: ShaderMaterial = connectors.get_node("Shadow").material
 	var color: Color = Color.html(str(shadow["color"]))
-	color.a = float(shadow["alpha"]) * float(shadow["strength"])
-	var tint: Color = connectors.get_node("Shadow").self_modulate
+	color.a = float(shadow["alpha"])
+	var tint: Color = material.get_shader_parameter("shadow_color")
 	assert_true(tint.is_equal_approx(color), "shadow colour %s, record %s" % [tint, color])
+	assert_eq(material.get_shader_parameter("blur"), Vector2(float(shadow["blur"][0]), float(shadow["blur"][1])))
+	assert_almost_eq(float(material.get_shader_parameter("strength")), float(shadow["strength"]), 0.0001)
+
+
+# The shadow's blur is in stage px, so the connectors read the screen px for each
+# stage px again when the window's size changes, not only when the map opens.
+func test_the_zone_links_read_the_stage_scale_again_when_the_window_resizes():
+	var game = add_child_autofree(GameScene.instantiate())
+	await get_tree().process_frame
+	game.get_node("ZoneMapOverlay").visible = true
+	await get_tree().process_frame
+	var material: ShaderMaterial = game.get_node("ZoneMapOverlay/Connectors/Shadow").material
+	material.set_shader_parameter("stage_scale", -1.0)
+	get_viewport().size_changed.emit()
+	await get_tree().process_frame
+	var expected: float = get_viewport().get_final_transform().get_scale().x
+	assert_almost_eq(float(material.get_shader_parameter("stage_scale")), expected, 0.0001)
 
 
 func _zone_face(zones: Node, zone_id: int) -> String:

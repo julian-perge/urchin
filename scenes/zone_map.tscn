@@ -4,6 +4,10 @@
 [ext_resource type="Script" path="res://scripts/zones/zone_map_connectors.gd" id="2_connectors"]
 [ext_resource type="Texture2D" path="res://assets/ui/zone_map/zone_map.png" id="3_map"]
 [ext_resource type="Texture2D" path="res://assets/ui/zone_map/zone_button_open.png" id="4_open"]
+[ext_resource type="Shader" path="res://scenes/ui/zone_map_shadow.gdshader" id="5_shadow"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_shadow"]
+shader = ExtResource("5_shadow")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
 draw_center = false
@@ -54,6 +58,7 @@ script = ExtResource("2_connectors")
 
 [node name="Shadow" type="CanvasGroup" parent="Connectors"]
 show_behind_parent = true
+material = SubResource("ShaderMaterial_shadow")
 
 [node name="Lines" type="Node2D" parent="Connectors/Shadow"]
 
