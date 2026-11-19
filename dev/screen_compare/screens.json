@@ -203,5 +203,14 @@
     ]
    }
   }
+ },
+ "world_map": {
+  "scene": "res://scenes/zone_map.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 11,
+    "hide_names": ["Connectors"]
+   }
+  }
  }
 }
