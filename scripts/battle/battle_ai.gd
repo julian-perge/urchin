@@ -43,7 +43,7 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 	var has_friends: bool = false
 	var friend_lock_slot: int = 0  # numberLockKrin - last living friend found
 	var lowest_focus = INF
-	var lowest_focus_slot: int = 0  # playerFocusCheck
+	var lowest_focus_slot: int = 0  # first value of playerFocusCheck
 	for slot in friend_slots:
 		var friend: CombatUnit = units.get(slot)
 		if friend != null and friend.active and slot != caster_slot:
@@ -79,9 +79,11 @@ static func choose_move(caster_slot: int, units: Dictionary, phase: int, healed_
 	var attack_indices: Array[Variant] = []
 	var focus_move: bool = false
 	var focus_pick_index: int = -1  # indexes attack_ids_cd (A0), matching the original
-	# playerFocusCheck: the focus scan sets it to the caster when it finds a
-	# move that restores the caster's own focus, and the chosen focus move
-	# targets it (frame_42/DoAction_9.as:95-105, 407).
+	# playerFocusCheck (frame_42/DoAction_9.as:13-33, 93-106, 407) starts at the
+	# teammate lowest on focus. When the focus scan finds a move that restores
+	# the caster's own focus, it changes to the caster, and the teammate focus
+	# moves that the scan walks after that move no longer count. The chosen
+	# focus move targets it.
 	var focus_target_slot: int = lowest_focus_slot
 	# --- Defense pool (D0 -> D1 -> D2) + ally/self/enemy splits.
 	var defense_ids: Array[Variant] = []  # D2
