@@ -87,7 +87,7 @@
 # Twenty shapes of the web SWF hold a fill of bitmap 65535, the SWF id for
 # "no such bitmap", and the SWF defines no bitmap with that id. In every one of
 # them, no edge paints with that fill, so it draws nothing. CS_CUT3 (sprite
-# 3960) and CS_CUT4 (sprite 4038) place nine of these shapes. Their edges
+# 3960) and CS_CUT4 (sprite 4038) place eleven of these shapes. Their edges
 # paint with the other fill, a real bitmap. In CS_CUT3, that bitmap is one of
 # four frames of grey TV static (bitmaps 3950 to 3956). In CS_CUT4, it is the
 # skull and blood art. The Steam SWF has the same four static bitmaps in shapes

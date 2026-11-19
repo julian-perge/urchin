@@ -104,28 +104,43 @@ def test_each_extracted_clip_is_the_size_of_the_stage():
 
 
 def test_a_missing_bitmap_fill_counts_only_when_an_edge_paints_with_it():
-    # Shapes 3997 and 4018 of CS_CUT4 hold bitmap 65535 as fill 1 of a style
-    # set whose edges paint only with fill 2, a real bitmap. Shape 1 is like
-    # them, and shape 2 is the same shape with its edges painting fill 1.
-    def shape3(cid: int, painted: int) -> bytes:
-        missing = bytes([0x43]) + struct.pack("<H", 65535) + IDENTITY_MATRIX
-        bitmap = bytes([0x43]) + struct.pack("<H", 7) + IDENTITY_MATRIX
-        styles = bytes([2]) + missing + bitmap + bytes([0]) + bytes([0x20])
-        # A StyleChangeRecord that sets FillStyle1, one straight edge, and
-        # an EndShapeRecord.
-        records = bits(
-            (0, 1), (0b00100, 5), (painted, 2),
-            (1, 1), (1, 1), (0, 4), (0, 1), (0, 1), (1, 2),
-            (0, 1), (0, 5),
-        )  # fmt: skip
-        return tag(TAG_DEFINE_SHAPE3, struct.pack("<H", cid) + b"\0" + styles + records)
+    # Shapes 3997 and 4018 of CS_CUT4 hold bitmap 65535 as fill 1 of their
+    # second style set, and the edges of that set paint only with fill 2, a
+    # real bitmap. Shape 5 is like them. Each other shape holds 65535 as fill 1
+    # or fill 2 of its only style set, and its one edge paints either the 65535
+    # fill or the real bitmap.
+    missing = bytes([0x43]) + struct.pack("<H", 65535) + IDENTITY_MATRIX
+    bitmap = bytes([0x43]) + struct.pack("<H", 7) + IDENTITY_MATRIX
+    new_styles = 0b10000
 
-    placed = place2(1, cid=1) + place2(2, cid=2)
+    def styles(*fills: bytes) -> bytes:
+        # The fills, no line styles, and 2 bits for each fill index.
+        return bytes([len(fills)]) + b"".join(fills) + bytes([0]) + bytes([0x20])
+
+    def paint(fill: int, then: int = 0) -> bytes:
+        # A StyleChangeRecord that sets FillStyle1, one straight edge, and a
+        # StyleChangeRecord with the `then` flags, which end the shape at 0.
+        return bits(
+            (0, 1), (0b00100, 5), (fill, 2),
+            (1, 1), (1, 1), (0, 4), (0, 1), (0, 1), (1, 2),
+            (0, 1), (then, 5),
+        )  # fmt: skip
+
+    def shape3(cid: int, body: bytes) -> bytes:
+        return tag(TAG_DEFINE_SHAPE3, struct.pack("<H", cid) + b"\0" + body)
+
+    shapes = [
+        shape3(1, styles(missing, bitmap) + paint(2)),
+        shape3(2, styles(missing, bitmap) + paint(1)),
+        shape3(3, styles(bitmap, missing) + paint(1)),
+        shape3(4, styles(bitmap, missing) + paint(2)),
+        shape3(5, styles(bitmap) + paint(1, new_styles) + styles(missing, bitmap) + paint(2)),
+        shape3(6, styles(bitmap) + paint(1, new_styles) + styles(missing, bitmap) + paint(1)),
+    ]  # fmt: skip
+    placed = b"".join(place2(cid, cid=cid) for cid in range(1, 7))
     sprite = tag(
         TAG_DEFINE_SPRITE,
         struct.pack("<HH", 9, 1) + placed + tag(TAG_SHOW_FRAME) + tag(TAG_END),
     )
-    index = parse_swf(
-        swf(shape3(1, painted=2), shape3(2, painted=1), sprite, tag(TAG_SHOW_FRAME))
-    )
-    assert find_broken_bitmap_fill_cids(index, 9) == {2}
+    index = parse_swf(swf(*shapes, sprite, tag(TAG_SHOW_FRAME)))
+    assert find_broken_bitmap_fill_cids(index, 9) == {2, 4, 6}
