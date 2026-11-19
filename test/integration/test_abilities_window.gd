@@ -345,16 +345,16 @@ func test_the_close_button_hides_the_window() -> void:
 # node, the high node, then the starting moves in reverse.
 func test_the_pool_rows_walk_move_matrix2_from_the_end() -> void:
 	var save: PlayerSave = GameData.current_save
-	var starting: Array = TalentTree.STARTING_MOVES[save.player_class]
-	var active: Array = []
-	for node: Dictionary in TalentTree.TREES[save.player_class]:
-		if not TalentTree.is_passive(node):
-			active.append(TalentTree.granted_move_id(node, 1))
-	var low: int = int(active[0])
-	var high: int = int(active[1])
-	save.move_matrix2 = [int(starting[0]), int(starting[1]), high, low]
+	save.skill_points = 2
 	var window: Control = _window()
-	var expected: Array = [low, high, int(starting[1]), int(starting[0])]
+	for node_index: int in [0, 2]:
+		assert_false(TalentTree.is_passive(TalentTree.TREES[save.player_class][node_index]), "node %d is active" % node_index)
+		(window.get_node("TreeNodes/Node%d" % node_index) as Button).pressed.emit()
+	var starting: Array = TalentTree.STARTING_MOVES[save.player_class]
+	var expected: Array = [
+		int(save.skill_adder_matrix[0]), int(save.skill_adder_matrix[2]), int(starting[1]), int(starting[0]),
+	]
+	assert_does_not_have(expected, 0, "both nodes are learned")
 	for i in expected.size():
 		var row: AbilityPoolRow = window.get_node("Pool/Mask/Rows/PoolRow%d" % i)
 		assert_eq(row.name_label.text, MoveManagerAuto.get_move(expected[i]).display_name, "row %d" % i)
