@@ -6,8 +6,8 @@
 # renders the faces.
 #
 # The box steps its _alpha by 5 a frame in Flash's 1/256 steps (FlashAlpha), so
-# it takes 22 frames to fade in and 20 to fade out. show_line() is what the conductor does
-# to start a line (frame_217/PlaceObject2_3389_480 enterFrame, lines 819-831): it
+# it takes 22 frames to fade in and 20 to fade out. show_line() is what the
+# conductor does to start a line (frame_217/PlaceObject2_3389_480 enterFrame, lines 819-831): it
 # moves the box, fills the two fields and sends the face clip to the frame named
 # after the speaker. The box then fades in until hide_line() is called, which
 # is the original's nextSpeechKKK, and fades out from there. A line that
@@ -21,8 +21,10 @@
 class_name SpeechBox
 extends Control
 
-# Emitted whenever the box's alpha changes, on the original's 0 to 100 scale. The
-# battle scene sets the music's level from it (see battle_scene.gd).
+# Emitted whenever the box's alpha changes, with the value that a read of the
+# original's _alpha gives, which passes 100 at the end of a fade in and ends a
+# fade out below 0. The battle scene sets the music's level from it (see
+# battle_scene.gd).
 signal alpha_changed(alpha: float)
 
 const LAYOUT_PATH: String = "res://assets/ui/battle/speech_box.json"
