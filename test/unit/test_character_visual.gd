@@ -1340,3 +1340,77 @@ func test_model8_parts_land_where_the_flash_run_of_battle_408_put_them():
 			assert_almost_eq(rad_to_deg(part.transform.get_rotation()), float(f[11]), 0.05, where)
 			checked += 1
 	assert_eq(checked, 36, "6 parts on 2 frames for each of the 3 MODEL8 dolls, which Flash poses alike")
+
+
+# Returns the layer of `part_name` whose art has renders in glow_scales.json.
+func _glow_layer(part_name: String) -> Sprite2D:
+	for child in visual._parts[part_name].get_children():
+		if child is Sprite2D and not child.is_queued_for_deletion() and child.has_meta("glow_renders"):
+			return child
+	return null
+
+
+# Checks that `layer` shows the render made for the scale nearest the one its
+# part is drawn at, placed on that render's rect, and returns that render.
+func _assert_nearest_render(layer: Sprite2D) -> Dictionary:
+	var part: Node2D = layer.get_parent()
+	var drawn: float = sqrt(absf(part.get_global_transform_with_canvas().determinant()))
+	var renders: Array = layer.get_meta("glow_renders")
+	var shown: Dictionary = {}
+	for render in renders:
+		if layer.texture.resource_path == "%s/%s.png" % [CharacterVisual.SPRITE_ROOT, render["art"]]:
+			shown = render
+	assert_false(shown.is_empty(), "%s shows one of its renders" % part.name)
+	if shown.is_empty():
+		return shown
+	for render in renders:
+		assert_true(absf(log(shown["scale"] / drawn)) <= absf(log(render["scale"] / drawn)) + 0.000001,
+			"%s drawn at %.3f shows the render for %.3f, not %.3f" % [part.name, drawn, shown["scale"], render["scale"]])
+	assert_almost_eq(layer.position, Vector2(shown["x"], shown["y"]), Vector2(0.001, 0.001))
+	assert_almost_eq(layer.scale * layer.texture.get_size(), Vector2(shown["w"], shown["h"]), Vector2(0.001, 0.001))
+	return shown
+
+
+# Flash draws a filter's blur in stage px, so the Hydra's glow keeps its width on
+# MODEL8's parts at about 0.67, where the render made for scale 1 would draw it
+# two thirds as wide (references/traced_runs/zone4_boss/glow_scales.png).
+func test_a_model8_hydra_part_shows_the_glow_render_for_the_scale_it_is_drawn_at():
+	visual.start_clip("MODEL8")
+	visual.dress("M", "HYDRA2", "", ["", "", "", "", "", "", ""])
+	var layer: Sprite2D = _glow_layer("foot1")
+	assert_not_null(layer, "M_SFOOT_HYDRA2 has glow renders")
+	if layer == null:
+		return
+	assert_lt(float(_assert_nearest_render(layer)["scale"]), 1.0)
+
+
+# The inventory draws its doll bigger than the battle does, and Flash still draws
+# the chest's glow at its stage width there.
+func test_a_menu_sized_doll_shows_the_glow_render_for_its_larger_scale():
+	var state: SceneState = load("res://scenes/ui/menu/inventory_window.tscn").get_state()
+	for node in state.get_node_count():
+		if state.get_node_name(node) != "Doll":
+			continue
+		for property in state.get_node_property_count(node):
+			if state.get_node_property_name(node, property) == "scale":
+				visual.scale = state.get_node_property_value(node, property)
+	assert_gt(absf(visual.scale.y), 1.0, "the inventory's Doll is drawn bigger than 1")
+	visual.dress("M", "ONE", "", ["", "ULTI", "", "", "", "", ""])
+	var layer: Sprite2D = _glow_layer("chest")
+	assert_not_null(layer, "M_CHEST_ULTI has glow renders")
+	if layer == null:
+		return
+	assert_gt(float(_assert_nearest_render(layer)["scale"]), 1.0)
+
+
+# extract_doll_art renders every glow render at 2x, so each render's rect
+# times 2 is its PNG's size, as for the art in doll_offsets.json.
+func test_every_glow_render_is_its_rect_at_twice_the_size():
+	var renders: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CharacterVisual.GLOW_FILE))
+	var checked: int = 0
+	for art in renders:
+		for render in renders[art]:
+			var texture: Texture2D = load("%s/%s.png" % [CharacterVisual.SPRITE_ROOT, render["art"]])
+			assert_almost_eq(texture.get_size(), Vector2(render["w"], render["h"]) * 2.0, Vector2(1.0, 1.0), render["art"])
+			checked += 1
+	assert_gt(checked, renders.size(), "some arts have renders besides their own")

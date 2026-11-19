@@ -14,7 +14,6 @@ ROOT = Path(__file__).resolve().parents[2]
 UNTESTED = {
     "battle_screen_motion",
     "buff_icons",
-    "doll_art",
     "item_looks",
     "vfx_scenes",
     "zone_hub",

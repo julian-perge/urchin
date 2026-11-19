@@ -45,6 +45,13 @@ const SPRITE_ROOT: String = "res://resources/sprites"
 # each layer is positioned at (x, y) and scaled to w/h - without this every
 # part draws top-left-at-joint at export resolution (the giant-blob bug).
 const OFFSETS_FILE: String = SPRITE_ROOT + "/doll_offsets.json"
+# Flash draws a filter's blur in stage px at any scale, and a PNG carries its
+# glow baked at one scale. So extract_doll_art renders each art with a filter
+# once per scale the game can draw it at, and this file lists those renders:
+# name -> [{scale, art, x, y, w, h}], the render made for scale 1 first.
+# _fit_glow_renders() shows the render made for the scale nearest the one each
+# part is drawn at.
+const GLOW_FILE: String = SPRITE_ROOT + "/glow_scales.json"
 # The models whose own clip the doll plays, as extract_model_animations and
 # convert_model_sound_cues write them, which is every model the SWF exports.
 # dressChar attaches the unit's model[0] clip (frame_217/DoAction_2.as:17). A
@@ -125,6 +132,8 @@ static var _shadow_layout: Dictionary = {}
 static var _shadow_layout_loaded: bool = false
 static var _offsets: Dictionary = {}
 static var _offsets_loaded: bool = false
+static var _glow_renders: Dictionary = {}
+static var _glow_renders_loaded: bool = false
 # model -> the parsed animations_file and sound_cues_file of that model.
 static var _animations: Dictionary = {}
 static var _sound_cues: Dictionary = {}
@@ -366,6 +375,7 @@ func dress(gender: String, skin: String, hair: String, equip: Array) -> void:
 		var show_hair: bool = _equip_looks(equip, 0) == "" or gender == "F"
 		if part_name == "head" and show_hair and hair != "" and hair != "0":
 			_add_layer(part, "%s/HAIR_%s.png" % [SPRITE_ROOT, hair])
+	_fit_glow_renders()
 
 
 # Convenience: dress straight from a CombatUnit-style model array
@@ -609,8 +619,12 @@ func get_bounds() -> Rect2:
 
 
 func _process(delta: float) -> void:
-	if not animate:
-		return
+	if animate:
+		_animate(delta)
+	_fit_glow_renders()
+
+
+func _animate(delta: float) -> void:
 	_clip_frames += delta * BattleScreenClip.fps()
 	_animate_melee(delta)
 	match _state:
@@ -1062,7 +1076,46 @@ func _add_layer(part: Node2D, path: String) -> void:
 	sprite.position = Vector2(entry["x"], entry["y"])
 	var texture_size: Vector2 = sprite.texture.get_size()
 	sprite.scale = Vector2(entry["w"] / texture_size.x, entry["h"] / texture_size.y)
+	var renders: Array = _load_glow_renders().get(path.get_file().get_basename(), [])
+	if not renders.is_empty():
+		sprite.set_meta("glow_renders", renders)
 	part.add_child(sprite)
+
+
+# Shows each layer that has glow renders in the render made for the scale
+# nearest the one its part is drawn at on the stage. That scale takes in the
+# doll's own scale, the battle zoom and a menu's scale, so the glow keeps its
+# stage width through all of them, as Flash draws it.
+func _fit_glow_renders() -> void:
+	for part in _parts.values():
+		if not part.visible:
+			continue
+		var drawn: float = sqrt(absf(part.get_global_transform_with_canvas().determinant()))
+		if drawn == 0.0:
+			continue
+		for layer in part.get_children():
+			if not layer.has_meta("glow_renders") or layer.is_queued_for_deletion():
+				continue
+			var nearest: Dictionary = {}
+			for render in layer.get_meta("glow_renders"):
+				if nearest.is_empty() or absf(log(render["scale"] / drawn)) < absf(log(nearest["scale"] / drawn)):
+					nearest = render
+			var path: String = "%s/%s.png" % [SPRITE_ROOT, nearest["art"]]
+			if layer.texture.resource_path == path:
+				continue
+			layer.texture = load(path)
+			layer.position = Vector2(nearest["x"], nearest["y"])
+			var texture_size: Vector2 = layer.texture.get_size()
+			layer.scale = Vector2(nearest["w"] / texture_size.x, nearest["h"] / texture_size.y)
+
+
+static func _load_glow_renders() -> Dictionary:
+	if not _glow_renders_loaded:
+		_glow_renders_loaded = true
+		var parsed = JSON.parse_string(FileAccess.get_file_as_string(GLOW_FILE))
+		if parsed is Dictionary:
+			_glow_renders = parsed
+	return _glow_renders
 
 
 static func _load_offsets() -> Dictionary:
