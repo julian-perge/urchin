@@ -876,7 +876,7 @@ func _play_move_event(event: Dictionary) -> void:
 		_log("melee start: caster=%d target=%d move=%s label=%s" % [
 			caster_slot, target_slot, move.display_name, move.animation_label,
 		])
-		await caster.melee(_presenters[target_slot], move.animation_label, on_impact, animation_speed > 0.0)
+		await caster.melee(_presenters[target_slot], move, on_impact, animation_speed > 0.0)
 		if not is_inside_tree():
 			return
 		_count_from_impact(event)

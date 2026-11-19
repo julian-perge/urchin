@@ -11,9 +11,10 @@
 #   (<G>_S<CODE>_<skin>), the equipped-item art (<G>_<CODE>_<looks> for armor,
 #   M_<CODE>_<looks> for weapons), and hair on the head. dress() rebuilds them.
 #   A part that the model's frame does not place is hidden.
-# - The art a model places with no part name, such as MODEL8's body and
-#   MODEL2's orb, draws as "pieces" between the parts in the model's depth
-#   order (extract_model_pieces).
+# - The art a model places with no part name, such as MODEL8's body,
+#   MODEL2's orb and the swing trails, cast glow and stun mark of every model,
+#   draws as "pieces" between the parts in the model's depth order
+#   (extract_model_pieces).
 # - Animation plays the model's original keyframe timeline directly (stand/
 #   run/Attack*/runback/cast/stun/stun2/outofstun/hit/dead); only the melee
 #   run-to-target motion is code-driven (the original's krinMelee/krinBoltMake
@@ -147,8 +148,20 @@ const DOLL_PARTS: Dictionary[String, Dictionary] = {
 var _parts: Dictionary = {}  # name -> Node2D holding the layered sprites
 # The model's depth as a String -> the Sprite2D that draws its piece there.
 var _piece_nodes: Dictionary = {}
+# The model's depth as a String -> the clip piece that plays there: its "clip"
+# and "since" from the pieces file, the _clip_frames value it was placed on,
+# which starts its own clock, and the "tint" its tinted part took then.
+var _piece_runs: Dictionary = {}
+# The original's colortobe on the doll's clip. A clip piece's tinted part takes
+# it as its colour when the model places the clip, as its onClipEvent(load) runs
+# setRGB(colortobe) (DefineSprite_162/frame_1/PlaceObject2_161_1). The
+# conductor sets it to the move's param 11 before a cast's goto, and krinMelee
+# after a swing's goto (frame_217/PlaceObject2_3389_480 enterFrame, lines 417
+# and 450, and frame_42/DoAction_4.as:130-131).
+var colortobe: Color = Color.WHITE
 # The 0-based model frame the doll shows, and the SWF frames since the clip
-# started, which is the clock that a looping piece plays on.
+# started. A clip piece shows the frame of its own clip that this count has
+# reached since the model placed it.
 var _frame_index: int = 0
 var _clip_frames: float = 0.0
 # The model whose clip the doll plays, one of CLIP_MODELS.
@@ -179,6 +192,8 @@ var _label_finished: bool = false
 var _melee_phase: MeleePhase = MeleePhase.NONE
 var _home_position: Vector2 = Vector2.ZERO
 var _attack_label: String = "Attack"
+# The move's colour, which the strike sets as colortobe.
+var _attack_color: Color = Color.WHITE
 var _playhead: float = 0.0  # continuous 0-based frame position
 var _strike_frames: float = 0.0
 var _impact_fired: bool = false
@@ -357,7 +372,7 @@ func set_state(new_state: State) -> void:
 	_label_frames = 0.0
 	_label_finished = false
 	# Reset the transient transforms the previous state left behind (hit
-	# recoil x-offset, stun tilt, cast tint) - without this the doll keeps
+	# recoil x-offset, stun tilt) - without this the doll keeps
 	# rocking/tilting after the state ends.
 	if _body != null:
 		_body.position = Vector2.ZERO
@@ -385,9 +400,10 @@ func set_state(new_state: State) -> void:
 # label just before krinMelee reads both widths (frame_217/PlaceObject2_3389_480
 # enterFrame, lines 409-410). attack_label picks the swing (Attack /
 # Attack_Upper / Attack_Stab / attack2, per the move's addNewMove param 12).
-# Emits attack_connected at Impact and melee_finished once the Runback has
-# brought the doll home.
-func play_melee(target_spot: Callable, target_half_width: float, attack_label: String = "Attack") -> void:
+# The strike sets colortobe to attack_color, the move's param 11, which tints
+# the swing trail. Emits attack_connected at Impact and melee_finished once the
+# Runback has brought the doll home.
+func play_melee(target_spot: Callable, target_half_width: float, attack_label: String = "Attack", attack_color: Color = Color.WHITE) -> void:
 	# A swing that starts while the doll is still in its Runback keeps the doll's
 	# home. The original takes the clip's position at that moment as its new
 	# home (krinMelee's boltx, frame_42/DoAction_4.as:38-39), which leaves the
@@ -399,6 +415,7 @@ func play_melee(target_spot: Callable, target_half_width: float, attack_label: S
 	set_state(State.MELEE)
 	_melee_phase = MeleePhase.DASH
 	_attack_label = _valid_attack_label(attack_label)
+	_attack_color = attack_color
 	_strike_frames = 0.0
 	_impact_fired = false
 	_playhead = _label_start_frame("run")
@@ -561,11 +578,17 @@ func get_bounds() -> Rect2:
 			bounds = bounds.merge(rect) if found else rect
 			found = true
 	for piece in _piece_nodes.values():
-		if not piece.visible or piece.texture == null:
+		if not piece.visible:
 			continue
-		var rect: Rect2 = transform * _body.transform * piece.transform * piece.get_rect()
-		bounds = bounds.merge(rect) if found else rect
-		found = true
+		for sprite in [piece, piece.get_node_or_null("Tint")]:
+			if sprite == null or not sprite.visible or sprite.texture == null:
+				continue
+			var to_parent: Transform2D = transform * _body.transform * piece.transform
+			if sprite != piece:
+				to_parent *= sprite.transform
+			var rect: Rect2 = to_parent * sprite.get_rect()
+			bounds = bounds.merge(rect) if found else rect
+			found = true
 	return bounds
 
 
@@ -620,27 +643,30 @@ func _advance_label(delta: float, loop: bool) -> void:
 	elif _label_frames >= length:
 		_label_frames = length
 		_label_finished = true
-	_apply_label_frame(_label, _label_frames)
+	_apply_label_frame(_label, _label_frames, true)
 
 
 # Applies the pose `frames` SWF frames into a labeled segment: every part gets
 # the original frame's full affine matrix (rotation, scale, AND skew).
-func _apply_label_frame(label: String, frames: float) -> void:
+func _apply_label_frame(label: String, frames: float, played: bool = false) -> void:
 	var animations: Dictionary = _timeline()
 	var segment: Dictionary = animations.get("labels", {}).get(label, {})
 	if segment.is_empty():
 		return
 	var start: int = int(segment["start"]) - 1
 	var end: int = int(segment["end"]) - 1
-	_apply_frame_index(clampi(start + int(frames), start, end))
+	_apply_frame_index(clampi(start + int(frames), start, end), played)
 
 
-func _apply_frame_index(index: int) -> void:
+# Shows the model's frame `index`. `played` is true when the playhead plays on to
+# it, and false when a goto lands on it.
+func _apply_frame_index(index: int, played: bool = false) -> void:
 	var animations: Dictionary = _timeline()
 	var frames: Array = animations.get("frames", [])
 	if frames.is_empty():
 		return
 	var frame: int = clampi(index, 0, frames.size() - 1)
+	var previous: int = _frame_index
 	_frame_index = frame
 	var pose: Dictionary = frames[frame]
 	var alphas: Dictionary = animations["alphas"][frame]
@@ -658,7 +684,7 @@ func _apply_frame_index(index: int) -> void:
 		)
 		part.modulate.a = alphas.get(part_name, 1.0)
 	_apply_shadow(animations.get("shadow", []), frame)
-	_apply_pieces()
+	_apply_pieces(previous if played else -1)
 
 
 # Puts the shadow on `frame`'s matrix for it, or hides it on a frame that does
@@ -681,6 +707,7 @@ func _build_pieces() -> void:
 		_body.remove_child(node)
 		node.queue_free()
 	_piece_nodes.clear()
+	_piece_runs.clear()
 	var depths: Dictionary = {}
 	for shown in _piece_data().get("frames", []):
 		for depth in shown:
@@ -694,10 +721,15 @@ func _build_pieces() -> void:
 		_piece_nodes[depth] = sprite
 
 
-# Shows each piece as the model's frame _frame_index places it. A looping piece
-# shows the frame of its own clip that _clip_frames has reached, with the
-# frame's matrix and colour transform.
-func _apply_pieces() -> void:
+# Shows each piece as the model's frame _frame_index places it. A clip piece
+# shows the frame of its own clip that its clock has reached, with the model
+# frame's matrix and colour transform. Its clock runs on while the frame shows
+# the same placement, so a goto that lands on that placement, such as stun2's
+# goto back to its own first frame, does not restart it. `played_from` is the
+# 0-based frame the playhead played on from, or -1 after a goto. A clip that
+# the playhead played past the placing frame of, as a slow frame does, has played
+# one frame for each frame since, and a goto starts a clip on its frame 1.
+func _apply_pieces(played_from: int = -1) -> void:
 	if _piece_nodes.is_empty():
 		return
 	var data: Dictionary = _piece_data()
@@ -707,36 +739,91 @@ func _apply_pieces() -> void:
 		var sprite: Sprite2D = _piece_nodes[depth]
 		var entry = shown.get(depth)
 		sprite.visible = entry != null
+		if not entry is Dictionary:
+			_piece_runs.erase(depth)
 		if entry == null:
 			continue
 		if entry is String:
 			sprite.material = null
 			_show_piece_art(sprite, entry, Transform2D.IDENTITY)
+			_show_tint(sprite, "", Transform2D.IDENTITY, [], Color.WHITE)
 			continue
-		var loop: Array = data["loops"][depth]
+		var run: Dictionary = _piece_runs.get(depth, {})
+		if run.get("clip") != entry["clip"] or run.get("since") != entry["since"]:
+			var skipped: int = 0
+			if played_from >= 0 and played_from + 1 < int(entry["since"]):
+				skipped = _frame_index + 1 - int(entry["since"])
+			run = {"clip": entry["clip"], "since": entry["since"], "start": _clip_frames - skipped, "tint": colortobe}
+			_piece_runs[depth] = run
+		var clip: Dictionary = data["clips"][entry["clip"]]
+		var frame: int = _clip_frame(clip, int(_clip_frames - run["start"]))
 		var m: Array = entry["matrix"]
 		var c: Array = entry["color"]
-		var art: String = loop[int(_clip_frames) % loop.size()]
-		_show_piece_art(sprite, art, Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5])))
+		var placed := Transform2D(Vector2(m[0], m[1]), Vector2(m[2], m[3]), Vector2(m[4], m[5]))
+		_show_piece_art(sprite, clip["frames"][frame], placed)
 		if sprite.material == null:
 			sprite.material = ShaderMaterial.new()
 			sprite.material.shader = PIECE_SHADER
 		sprite.material.set_shader_parameter("multiplier", Vector4(c[0], c[1], c[2], c[3]))
 		sprite.material.set_shader_parameter("offset", Vector4(c[4], c[5], c[6], c[7]))
+		_show_tint(sprite, clip["tints"][frame] if clip.has("tints") else "", placed, c, run["tint"])
 
 
-# Draws the PNG `art` at its rect, under `placed`. A frame of a looping clip
-# that drew nothing has no rect and shows nothing.
+# Returns the 0-based frame a clip piece shows `age` SWF frames after the
+# model placed it. It holds its "hold" frame, and loops when it has none.
+static func _clip_frame(clip: Dictionary, age: int) -> int:
+	if clip.has("hold"):
+		return mini(age, int(clip["hold"]) - 1)
+	return age % (clip["frames"] as Array).size()
+
+
+# Draws the PNG `art` at its rect, under `placed`. A frame of a clip that drew
+# nothing has no rect and shows no texture, and the sprite keeps `placed` so
+# its tinted part can still draw.
 func _show_piece_art(sprite: Sprite2D, art: String, placed: Transform2D) -> void:
 	var rect: Dictionary = _piece_data()["art"].get(art, {})
 	if rect.is_empty():
-		sprite.visible = false
+		sprite.texture = null
+		sprite.transform = placed
 		return
 	var path: String = PIECE_ART % art
 	if sprite.texture == null or sprite.texture.resource_path != path:
 		sprite.texture = load(path)
-	var size: Vector2 = sprite.texture.get_size()
-	sprite.transform = placed * Transform2D(0.0, Vector2(rect["w"] / size.x, rect["h"] / size.y), 0.0, Vector2(rect["x"], rect["y"]))
+	sprite.transform = placed * _art_transform(sprite.texture, rect)
+
+
+static func _art_transform(texture: Texture2D, rect: Dictionary) -> Transform2D:
+	var size: Vector2 = texture.get_size()
+	return Transform2D(0.0, Vector2(rect["w"] / size.x, rect["h"] / size.y), 0.0, Vector2(rect["x"], rect["y"]))
+
+
+# Draws the tinted part `art` of a clip piece behind the rest of the clip, as
+# the original's tinted parts sit at the clip's lowest depth. setRGB gives the
+# part multipliers of 0 and `tint` as its offsets, and the clip's colour
+# transform `color` then applies over that. An empty `art` or one with no rect
+# hides the tinted part.
+func _show_tint(sprite: Sprite2D, art: String, placed: Transform2D, color: Array, tint: Color) -> void:
+	var node: Sprite2D = sprite.get_node_or_null("Tint")
+	var rect: Dictionary = _piece_data()["art"].get(art, {}) if art != "" else {}
+	if rect.is_empty():
+		if node != null:
+			node.visible = false
+		return
+	if node == null:
+		node = Sprite2D.new()
+		node.name = "Tint"
+		node.centered = false
+		node.show_behind_parent = true
+		node.material = ShaderMaterial.new()
+		node.material.shader = PIECE_SHADER
+		sprite.add_child(node)
+	node.visible = true
+	var path: String = PIECE_ART % art
+	if node.texture == null or node.texture.resource_path != path:
+		node.texture = load(path)
+	node.transform = sprite.transform.affine_inverse() * placed * _art_transform(node.texture, rect)
+	node.material.set_shader_parameter("multiplier", Vector4(0.0, 0.0, 0.0, color[3]))
+	node.material.set_shader_parameter("offset", Vector4(color[0] * tint.r + color[4], color[1] * tint.g + color[5], color[2] * tint.b + color[6], color[7]))
 
 
 func _label_start_frame(label: String) -> float:
@@ -822,13 +909,14 @@ func _animate_melee(delta: float) -> void:
 		MeleePhase.DASH:
 			if _state == State.MELEE:
 				_playhead = minf(_playhead + frames, _label_end_frame("run"))
-				_apply_frame_index(int(_playhead))
+				_apply_frame_index(int(_playhead), true)
 			_step_toward_target(minf(1.5 - 1.45 * _go_rat(), 1.0), frames)
 			if _go_rat() >= 1.0:
 				_melee_phase = MeleePhase.STRIKE
 				_strike_frames = 0.0
 				if _attack_label != "":
 					_show_swing_frame(_label_start_frame(_attack_label), true)
+				colortobe = _attack_color
 		MeleePhase.STRIKE:
 			_strike_frames += frames
 			if _attack_label != "":
@@ -882,7 +970,7 @@ func _show_swing_frame(frame: float, jumped: bool = false) -> void:
 		return
 	var before: int = int(frame) - 1 if jumped else int(_playhead)
 	_playhead = frame
-	_apply_frame_index(int(_playhead))
+	_apply_frame_index(int(_playhead), not jumped)
 	for index in range(before + 1, int(_playhead) + 1):
 		for cue in _cues().get(str(index + 1), []):
 			sound_cue.emit(cue)
@@ -899,7 +987,7 @@ func _play_runback_label(frames: float) -> void:
 	if _playhead > _label_end_frame("runback"):
 		set_state(State.IDLE)
 	else:
-		_apply_frame_index(int(_playhead))
+		_apply_frame_index(int(_playhead), true)
 
 
 func _step_home(frames: float) -> void:
@@ -924,7 +1012,7 @@ func _play_death(delta: float) -> void:
 		visible = false
 		state_finished.emit(State.DEAD)
 		return
-	_apply_frame_index(int(_playhead))
+	_apply_frame_index(int(_playhead), true)
 
 
 # stun(one-shot, MODEL1's 220-239) -> stun2(loop, MODEL1's 240-279 - the clip
