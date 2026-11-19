@@ -846,6 +846,9 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
 - In the Abilities window a press on a pool ability picks it up: `DefineButton2_2437` on(press) sets `UITmouseHold` to the ability and shows its icon on the cursor. A release over a ring
   socket calls `addMoveForPlayer` in its `menuMode` branch, which places the held ability in that socket, or shows `SKILLERROR` when the ring already holds the ability's limit
   (`KRINABILITY<id>[8]`) of copies (`frame_42/DoAction_11.as:1-32`). A release with nothing held empties the socket. `frame_181/DoAction_2.as:10-14` drops a held ability.
+  `KrinCreateAbilityMatrix` lists every ability in `moveMatrix2` in the pool, the ones on the ring too. Ported: `abilities_window.gd`'s `_on_pool_row_held`, `_on_socket_pressed` and
+  `_input` (#386). Flash runs `on(release)` only on the button that took the press, so the player presses a pool ability and then clicks a socket. The held icon sits where the tooltip clip
+  places `inner2`, which `extract_tooltip_look` writes as `held_icon`.
 - Ported: `hotbar.gd`'s `_on_respec_pressed`. The Respec button on the hotbar, `DefineButton2_3179`, refuses with `MENU[66]` while an item is on the cursor and does nothing while `PauseForScreen` is set. It costs
   `round(0.7 * respecValue(Level))` euros and refuses with `MENU[42]` when the player has less. Otherwise it sets the skill points as above and the stat points to `givePoints(Level, true)`,
   puts the class's two starting moves back as the only moves, clears the cooldowns, `skillAdderMatrix`, `buffAdderMatrix` and `talentMainArray`, rebuilds `StatSets0` from the equipped
