@@ -25,7 +25,7 @@ resolved the two bugs below.
   - Two things that looked like drift turned out to be genuine bugs in the *original web build itself*, faithfully carried through to both the Steam dump and `converted_json`: buff id 416
     references `_root.KrinLang[KLangChoosen].AUX[30]` (frame_42/DoAction_10.as:3154) - no `AUX` table exists, only `AUX1`/`AUX2`/`AUX3` - so its `25_tooltip_description` is `Undefined` on both sides.
     And `createNewItemKrin`'s "for" loop over the 5-slot `statUpdater` array (health/strength/magic/speed/focus) enumerates in *descending* index order, while the same loop over the 8-slot
-    `statUpdaterP`/`statUpdaterD` (piercing/defense per element) enumerates *ascending* - a legacy AS2 `Array` `for..in` quirk, not a bug, but one that had to be matched exactly to get
+    `statUpdaterP`/`statUpdaterD` (piercing/defense per element) enumerates *ascending* - the AS2 `for..in` order rule in DECODED_ALGORITHMS.md ("for..in order over arrays"), not a bug, but one that had to be matched exactly to get
     `tool_tip_alt`'s sentence order to agree.
   - **Battle `id` is not `battleCreationID`'s value at creation time.** `battleCreationID = N;` jump statements (nine of them, reserving per-zone id blocks: 49, 99, 199, 299, 399, 499, 599, 699, 999)
     retroactively relabel the *previous* battle - the one whose properties were just being set - rather than the next one; the following `createNewBattle()` then continues incrementing from the

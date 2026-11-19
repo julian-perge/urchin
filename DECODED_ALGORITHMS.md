@@ -829,6 +829,65 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
   `ZoneManager.open_zone_map_on_load`.
 - The zone map draws the lines between zones in code, `krinMapper.lineMC` on frame 449, colored by unlock state. Ported: `scripts/zones/zone_map_connectors.gd`.
 
+## for..in order over arrays (Flash 14 and Ruffle 0.7.1, #38)
+
+AS2 `for..in` walks an array's keys in the reverse of the order the keys were created. Index order does not matter. Writing to a key that already exists does not move it.
+
+- An array literal, `new Array(a, b, c)`, `push`, and index writes from 0 up all create keys in ascending order, so they walk from the last index down.
+- Index writes from the top down walk ascending. Writes in any other order walk in exactly the reverse write order (`2,0,4,1,3` walks `3,1,4,0,2`).
+- `new Array(n)` creates no keys, so it walks nothing. `delete` removes a key, and a later write puts it first. `splice`, `shift` and `sort` leave a descending walk. `reverse` walks `3,1,4,0,2` for 5 items, so do not assume an order after it.
+- An array copied by `for..in` from a literal walks ascending, and a list pushed while walking that copy walks descending again. So each `for..in` and `push` step of a filter chain flips the order.
+- That explains the `createNewItemKrin` case in SWF_DIFFERENCES.md: `statUpdater` gets indexes 0 to 4 written in order and walks `4..0`. `statUpdaterP` and `statUpdaterD` are written while walking the literal `Krin.PIU` (`frame_42/DoAction_16.as:14,41-45`), so they get keys 7 down to 0 and walk `0..7`.
+- Save loading writes into keys that already exist (`frame_42/DoAction_20.as:109-115`), so a loaded game keeps the new-game order. This is read from source. No run has loaded a save with the Probe.
+
+What it means for the port:
+
+- `AImoveAdder` (`frame_42/DoAction_9.as`): `CDArrayA`, `CDArrayD` and `CDArrayABS` are copied from the unit's literal move lists by `for..in` (`frame_42/DoAction_14.as:113-127,193-206`), so they walk ascending and pool index `i` is the literal's index `i`. `moveFilterA2` and the plain `moveFilterD2` pass through two flips and end ascending, as in `BattleAI`. `moveFilterABS1` (line 50) and the heal-filtered `moveFilterD2` (line 305) pass through one flip and end descending. The focus scan at line 85 walks `moveFilterA0` descending, so `focusSelectNum` ends on the lowest matching index. `BattleAI` does all three the other way: #391.
+- The `moveMatrix2` rebuild (`DefineButton2_3096` on(release), lines 48-58) walks the 38-zero literal `skillAdderMatrix` from node 37 down. `TalentTree._rebuild_known_moves` walks it from node 0 up: #392.
+- `B3012` (`DefineButton2_3012` on(press), lines 3-9) walks `Krin.itemArray` from 36 down and keeps the last empty slot, which is the lowest empty index. That is `item_array.find(0)`, so the port's slot pick already matches.
+
+Evidence: the Probe `dev/probes/forin.as` builds each kind of array before frame 1 runs, then waits until the root passes frame 42 and walks the game's own arrays. The web build was run under both players, and both logged the same lines. The game waits for a click on its language screen (root frame 1) and on CLICK TO PLAY (frames 4 and 5). For these runs a throwaway Probe file, not committed, ran the English button's code (`DefineButton2_298`) and called `_root.play()` on those frames. The FORIN lines of each log are in `references/traced_runs/forin_web_flash.txt` and `forin_web_ruffle.txt`. `literal38_built_by_index` sets `length = 38` and then writes indexes 0 to 37 in order. The Flash log:
+
+```
+FORIN	literal5	5	4,3,2,1,0
+FORIN	literal8	8	7,6,5,4,3,2,1,0
+FORIN	literal38_built_by_index	38	37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
+FORIN	literal38	38	37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
+FORIN	new_Array_3_args	3	2,1,0
+FORIN	new_Array_5	5
+FORIN	index_ascending	5	4,3,2,1,0
+FORIN	index_descending	5	0,1,2,3,4
+FORIN	index_2_0_4_1_3	5	3,1,4,0,2
+FORIN	push5	5	4,3,2,1,0
+FORIN	push5_then_overwrite_1	5	4,3,2,1,0
+FORIN	push5_then_write_7	8	7,4,3,2,1,0
+FORIN	literal5_delete_2	5	4,3,1,0
+FORIN	literal5_delete_2_rewrite_2	5	2,4,3,1,0
+FORIN	literal5_splice_1_1	4	3,2,1,0
+FORIN	literal5_splice_insert_at_1	6	5,4,3,2,1,0
+FORIN	literal5_shift	4	3,2,1,0
+FORIN	literal5_reverse	5	3,1,4,0,2
+FORIN	literal3_sort	3	2,1,0
+FORIN	copy_of_literal3_by_for_in	3	0,1,2
+FORIN	push_in_for_in_order_of_that_copy	3	2,1,0
+FORIN	game_Krin.itemArray	37	36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
+FORIN	game_Krin.skillAdderMatrix	38	37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
+FORIN	game_Krin.PIU	8	7,6,5,4,3,2,1,0
+FORIN	game_KRINITEM100.statUpdater	5	4,3,2,1,0
+FORIN	game_KRINITEM100.statUpdaterP	8	0,1,2,3,4,5,6,7
+FORIN	game_KRINITEM100.statUpdaterD	8	0,1,2,3,4,5,6,7
+FORIN	game_KNU1.movesA	3	2,1,0
+FORIN	game_KNU1.CDArrayA_built_as_DoAction_14	3	0,1,2
+FORIN	game_KNU1.parallelFilterA_built_as_DoAction_9	3	2,1,0
+FORIN	game_KNU6.movesA	3	2,1,0
+FORIN	game_KNU6.CDArrayA_built_as_DoAction_14	3	0,1,2
+FORIN	game_KNU6.parallelFilterA_built_as_DoAction_9	3	2,1,0
+FORIN	game_KNU7.movesA	4	3,2,1,0
+FORIN	game_KNU7.CDArrayA_built_as_DoAction_14	4	0,1,2,3
+FORIN	game_KNU7.parallelFilterA_built_as_DoAction_9	4	3,2,1,0
+FORIN	done
+```
+
 ## Approximation audit (2026-07-21) - port pieces NOT yet source-faithful
 
 Everything below still stands in for original behavior, except the rows marked DONE; the ActionScript truth is already located, so no re-decoding is needed:
