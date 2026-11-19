@@ -275,6 +275,13 @@ This tool checks how it looks: the art, the fills and the shadows.
   Flash Player draws a soft glow there, as `references/sonny2_zone1_prison.png`
   shows, and so does the port, from the fill rendered alone. Do not re-extract
   `zone_fill.png` from the root frame to lower this score.
+- **The Victory score is `chrome` p99 63 and `panels` p99 9, with the 20 px
+  controls at 122 and 119.** The `victory` entry scores KRINMENU's `win`
+  frame against `victory_window.tscn` with no data, so all 15 drop slots show
+  empty, as ffdec draws them. `panels` scores the backdrop and the four panels.
+  Most of the `chrome` pixels at 63 or more are on the backdrop's outer 3 px
+  edge, all the way round. The rest are the rims around the three masked faces,
+  the lines of the three XP bars and the centre panel's side edges.
 - **The Battle score covers the frame, not the fighters.** The `battle` entry uses
   `battle_scene.tscn` alone. `SCENES.compare_strip` takes the hall and its
   placeholder rigs, the sky, the fade, the clock, the pass and retreat buttons, the
