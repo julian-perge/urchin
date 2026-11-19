@@ -4,6 +4,7 @@
 # test_battle_assets.gd.
 extends GutTest
 
+const AlphaSteps = preload("res://test/alpha_steps.gd")
 const BattleSceneRes = preload("res://scenes/battle_scene.tscn")
 const BattleSceneScript = preload("res://scripts/battle/battle_scene.gd")
 # `uv run gut` gives each run a user:// folder of its own, so these paths never
@@ -311,34 +312,42 @@ func test_a_speaker_with_no_face_frame_shows_an_empty_face_well():
 	await _end_test_speech(scene)
 
 
-# combatScript fades at 5 alpha a frame on a 0 to 100 scale, so it takes 20
-# frames up and 20 down (frame_217/PlaceObject2_3367_634 enterFrame, lines
-# 2-12 and 19-22).
-func test_the_box_takes_20_frames_to_fade_in():
+# The Traced run replayed combatScript's enterFrame with a line up on frames 1
+# to 30, none on 31 to 55, and a line up again from frame 56 (FADE case
+# "speech" of alpha_steps_probe.as). The box passes 100 on the frame it gets
+# there, and the next frame sets it back to 100.
+func _speech_alphas(scene: Node, frames: int) -> Array[float]:
+	var shown: Array[float] = []
+	for _frame: int in frames:
+		_step_frames(scene, 1)
+		shown.append(scene.speech_box.alpha)
+	return shown
+
+
+func test_the_box_fades_in_on_the_frames_the_traced_run_measured():
+	var measured: Array[float] = AlphaSteps.values("FADE", "speech")
 	var scene = _speech_scene()
 	scene._play_speech(_line_from(scene, 1, "Sonny", "Hello", 5.0))
-	assert_almost_eq(scene.speech_box.modulate.a, 0.0, 0.001, "the box starts clear")
-	_step_frames(scene, 10)
-	assert_almost_eq(scene.speech_box.modulate.a, 0.5, 0.001, "half way after 10 frames")
-	_step_frames(scene, 10)
-	assert_almost_eq(scene.speech_box.modulate.a, 1.0, 0.001, "full after 20 frames")
+	assert_eq(scene.speech_box.alpha, measured[0], "the box starts clear")
+	assert_eq(_speech_alphas(scene, 30), measured.slice(1, 31), "every frame of the fade in")
+	assert_eq(scene.speech_box.modulate.a, 1.0, "and the box is fully up")
 	await _end_test_speech(scene)
 
 
-func test_the_box_takes_20_frames_to_fade_out():
+func test_the_box_fades_out_and_in_again_on_the_frames_the_traced_run_measured():
+	var measured: Array[float] = AlphaSteps.values("FADE", "speech")
 	var scene = _speech_scene()
 	var done: Array = [false]
 	var show_line: Callable = func():
 		await scene._play_speech(_line_from(scene, 1, "Sonny", "Hello", 1.0))
 		done[0] = true
 	show_line.call()
-	_step_frames(scene, 30)
-	assert_almost_eq(scene.speech_box.modulate.a, 1.0, 0.001, "the box is fully up for the line")
-	_step_frames(scene, 10)
-	assert_almost_eq(scene.speech_box.modulate.a, 0.5, 0.001, "half way out 10 frames after the line ends")
-	_step_frames(scene, 10)
-	assert_almost_eq(scene.speech_box.modulate.a, 0.0, 0.001, "clear 20 frames after it ends")
+	assert_eq(_speech_alphas(scene, 30), measured.slice(1, 31), "up for the line's 30 frames")
+	assert_eq(_speech_alphas(scene, 25), measured.slice(31, 56), "every frame of the fade out")
+	assert_eq(scene.speech_box.modulate.a, 0.0, "the box is clear")
 	assert_true(done[0], "and _play_speech has returned")
+	scene._play_speech(_line_from(scene, 1, "Sonny", "Again", 5.0))
+	assert_eq(_speech_alphas(scene, measured.size() - 56), measured.slice(56), "a new line fades in from below 0")
 	await _end_test_speech(scene)
 
 
@@ -351,10 +360,11 @@ func test_the_music_drops_to_17_percent_while_the_box_is_up():
 		await scene._play_speech(_line_from(scene, 1, "Sonny", "Hello", 1.0))
 		done[0] = true
 	show_line.call()
+	var measured: Array[float] = AlphaSteps.values("FADE", "speech")
 	_step_frames(scene, 25)
 	assert_almost_eq(AudioManagerAuto.music_level, 100.0 - 100.0 / _box_numbers["music_divisor"], 0.001, "the music sits at about 17 percent")
-	_step_frames(scene, 40)
-	assert_almost_eq(AudioManagerAuto.music_level, 100.0, 0.001, "and comes back after the box fades out")
+	_step_frames(scene, 30)
+	assert_almost_eq(AudioManagerAuto.music_level, 100.0 - measured[55] / _box_numbers["music_divisor"], 0.001, "and comes back after the box fades out")
 	await _end_test_speech(scene)
 
 

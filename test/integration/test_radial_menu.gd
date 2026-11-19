@@ -3,6 +3,7 @@
 # nothing here waits on real time.
 extends GutTest
 
+const AlphaSteps = preload("res://test/alpha_steps.gd")
 const RadialMenuScene = preload("res://scenes/battle/radial_menu.tscn")
 const ENEMY_SLOT: int = 2
 const CENTRE: Vector2 = Vector2(300, 300)
@@ -12,6 +13,10 @@ const DESTROY_ID: int = 2
 const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
 
 var _layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(BATTLE_LAYOUT_PATH))
+# The orb ring's alpha on each frame of the Traced run's replay of its enterFrame:
+# opened at 0 on frame 0, and with the mouse off it from frame 3, the frame on
+# which its fade-in ends (FADE case "radial" of alpha_steps_probe.as).
+var _measured: Array[float] = AlphaSteps.values("FADE", "radial")
 var _menu: RadialMenu
 var _player: CombatUnit
 var _enemy: CombatUnit
@@ -352,7 +357,7 @@ func test_a_darkened_orb_takes_the_originals_cover_and_count():
 	assert_almost_eq(cover.size, Vector2(23, 23), Vector2(0.5, 0.5), "23 px across")
 	assert_almost_eq(cover.modulate.a, 0.75, 0.001, "at 75% alpha while the ring fades in")
 	_step(CENTRE, 3)
-	assert_almost_eq(cover.modulate.a, 0.85, 0.001, "and 85% once it has")
+	assert_eq(cover.modulate.a, 217.0 / 256.0, "and 85% once it has, which Flash stores as 217/256")
 	var count: Label = _count(0)
 	assert_almost_eq(count.get_global_rect().position - centre, Vector2(-15.2, -6.65), Vector2(0.001, 0.001), "where the count starts")
 	assert_almost_eq(count.size.x, 30.35, 0.001, "how wide it is")
@@ -374,7 +379,7 @@ func test_a_new_menu_fades_in_over_two_frames_and_ignores_the_mouse_meanwhile():
 	_step(FAR)
 	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "the third frame ends the fade-in")
 	_step(FAR)
-	assert_almost_eq(_menu.modulate.a, 0.9, 0.001, "and from the fourth the mouse counts")
+	assert_eq(_menu.modulate.a, _measured[4] / 100.0, "and from the fourth the mouse counts")
 
 
 # hitTest with no shape flag tests the clip's bounding box, so the gaps between
@@ -399,30 +404,31 @@ func test_the_clips_box_holds_the_menu_to_its_edge():
 	_step(inside, 30)
 	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "just inside the corner")
 	_step(box.position - Vector2(0.5, 0.5))
-	assert_almost_eq(_menu.modulate.a, 0.9, 0.001, "just outside it")
+	assert_eq(_menu.modulate.a, _measured[4] / 100.0, "just outside it")
 
 
 # Off the clip the original takes 10 alpha a frame and hides the clip at 0, with
-# no grace (enterFrame lines 48-61).
-func test_off_the_clip_alpha_falls_a_tenth_a_frame_and_the_menu_closes_after_ten():
+# no grace (enterFrame lines 48-61). The Traced run logged the frame it hid on.
+func test_off_the_clip_alpha_falls_as_the_traced_run_measured_and_the_menu_closes_when_it_did():
 	_open_and_settle()
-	for frame in range(1, 10):
+	var hidden_frame: int = AlphaSteps.event_frame("radial", "hidden")
+	for frame: int in range(4, hidden_frame):
 		_step(FAR)
-		assert_almost_eq(_menu.modulate.a, 1.0 - frame * 0.1, 0.001, "frame %d" % frame)
+		assert_eq(_menu.modulate.a, _measured[frame] / 100.0, "frame %d" % frame)
 		assert_true(_menu.visible, "still up on frame %d" % frame)
 	_step(FAR)
-	assert_false(_menu.visible, "closed on the tenth frame")
+	assert_false(_menu.visible, "closed on frame %d" % hidden_frame)
 
 
 # Back over the clip the original sets alpha straight to 100 (enterFrame line 64).
 func test_coming_back_mid_fade_puts_alpha_straight_back_to_full():
 	_open_and_settle()
 	_step(FAR, 5)
-	assert_almost_eq(_menu.modulate.a, 0.5, 0.001, "halfway through the fade")
+	assert_eq(_menu.modulate.a, _measured[8] / 100.0, "five frames into the fade")
 	_step(_gap_between_orbs(2, 3))
 	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "straight back to full")
 	_step(FAR)
-	assert_almost_eq(_menu.modulate.a, 0.9, 0.001, "and leaving again gets no grace")
+	assert_eq(_menu.modulate.a, _measured[4] / 100.0, "and leaving again gets no grace")
 
 
 # _process() hands advance() each rendered frame's delta, which is not the
@@ -432,9 +438,9 @@ func test_the_menu_steps_once_per_swf_frame_whatever_the_delta():
 	_menu.advance(_frame_time() * 0.5, FAR)
 	assert_almost_eq(_menu.modulate.a, 1.0, 0.001, "half a frame changes nothing")
 	_menu.advance(_frame_time() * 0.5, FAR)
-	assert_almost_eq(_menu.modulate.a, 0.9, 0.001, "the second half completes the frame")
+	assert_eq(_menu.modulate.a, _measured[4] / 100.0, "the second half completes the frame")
 	_menu.advance(_frame_time() * 3.0, FAR)
-	assert_almost_eq(_menu.modulate.a, 0.6, 0.001, "a long delta steps every frame it covers")
+	assert_eq(_menu.modulate.a, _measured[7] / 100.0, "a long delta steps every frame it covers")
 
 
 # An empty slot's thingo is hidden, but the bounding box hitTest uses is the

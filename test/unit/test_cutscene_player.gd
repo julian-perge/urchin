@@ -6,7 +6,12 @@
 # scaled down to a fraction of a millisecond via animation_speed.
 extends GutTest
 
+const AlphaSteps = preload("res://test/alpha_steps.gd")
 const CutscenePlayerScene: PackedScene = preload("res://scenes/cutscenes/cutscene_player.tscn")
+# The Traced run replayed the fade clip's enterFrame with cutSceneEnd false on
+# frames 1 to 25 and true from frame 26 (FADE case "cutscene" of
+# alpha_steps_probe.as).
+const CUT_SCENE_END_FRAME: int = 26
 
 
 func test_play_fades_in_plays_video_then_fades_out_and_finishes():
@@ -44,7 +49,23 @@ func test_play_fades_in_plays_video_then_fades_out_and_finishes():
 	var got_finished: bool = await wait_for_signal(player.finished, 2.0)
 	assert_true(got_finished, "CutscenePlayer.finished fired")
 	assert_true(result.finished, "finished handler ran")
-	assert_almost_eq(result.alpha_at_finish, 1.0, 0.01, "fully opaque again when finished fires")
+	assert_gte(result.alpha_at_finish, 1.0, "fully opaque again when finished fires")
+
+
+func test_the_fade_clip_steps_on_the_frames_the_traced_run_measured():
+	var measured: Array[float] = AlphaSteps.values("FADE", "cutscene")
+	var gone_frame: int = AlphaSteps.event_frame("cutscene", "gone")
+	var player: CutscenePlayer = add_child_autofree(CutscenePlayerScene.instantiate())
+	var ported: Array[float] = [FlashAlpha.to_percent(player._fade_alpha)]
+	var black_on: int = -1
+	for frame: int in range(1, gone_frame + 1):
+		player.step_fade(frame >= CUT_SCENE_END_FRAME)
+		ported.append(FlashAlpha.to_percent(player._fade_alpha))
+		if black_on == -1 and player.is_black():
+			black_on = frame
+	assert_eq(ported, measured.slice(0, gone_frame + 1), "every frame's _alpha")
+	assert_eq(black_on, gone_frame, "the clip is black on the frame the original jumps away")
+	assert_eq(player.fade_rect.color.a, measured[gone_frame] / 100.0, "and draws the alpha it reached")
 
 
 # extract_cutscenes pads each clip to the 800x575 Stage, which is the viewport's
@@ -400,8 +421,10 @@ func test_pressing_skip_during_the_fade_in_stops_the_clip_that_plays_under_it():
 	# A real tween, so the fade-in is still running when play() returns.
 	player.animation_speed = 1000.0
 	viewport.add_child(player)
-	var result := {"clip_playing": true}
+	var result := {"clip_playing": true, "lowest": 1.0}
 	player.finished.connect(func(): result.clip_playing = player.video.is_playing())
+	var track: Callable = func(): result.lowest = minf(result.lowest, player.fade_rect.color.a)
+	get_tree().process_frame.connect(track)
 
 	player.play("CS_CUT4")
 	assert_gt(player.fade_rect.color.a, 0.5, "the fade-in has just started")
@@ -412,6 +435,8 @@ func test_pressing_skip_during_the_fade_in_stops_the_clip_that_plays_under_it():
 	var got_finished: bool = await wait_for_signal(player.finished, 2.0)
 	assert_true(got_finished, "the early press skipped the cutscene")
 	assert_false(result.clip_playing, "and stopped the clip")
+	get_tree().process_frame.disconnect(track)
+	assert_gt(result.lowest, 0.0, "the press turned the fade around before it cleared, as cutSceneEnd does")
 
 
 # A left click on the control's center, pushed through the viewport's GUI input.

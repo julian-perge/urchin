@@ -34,6 +34,9 @@ signal flight_ended
 
 const BOLT_TIME := 60.0       # krinBoltTime: step = distance / 60, fixed at spawn
 const BOLT_INCREASE := 1.15   # krinBoltIncrease: SpeedConst *= 1.15 every original frame
+# The bolt's onEnterFrame adds 10 to its _alpha while the alpha is under 100
+# (frame_42/DoAction_4.as:161-164).
+const BOLT_FADE_IN_STEP: float = 10.0
 const BOLT_SCENE_DIR := "res://scenes/battle/vfx/bolts/"
 const TRAIL_SCENE: PackedScene = preload("res://scenes/battle/vfx/trail/krintrail.tscn")
 # krinBoltMake removes a missed bolt once its x is more than 500 px either side
@@ -79,7 +82,9 @@ var _step: Vector2
 var _checker: float = 1.0
 var _target_x: float = 0.0
 var _speed_const: float = 1.0
-var _alpha: float = 0.0
+# The bolt's _alpha in Flash's 1/256 steps (FlashAlpha). krinBoltMake attaches
+# it at 0.
+var _alpha: int = 0
 var _frame_accum: float = 0.0
 var _trail_start: Vector2
 var _trail_spawned: bool = false
@@ -145,12 +150,13 @@ func _process(delta: float) -> void:
 	while _frame_accum >= 1.0:
 		_frame_accum -= 1.0
 		_ticks += 1
-		_alpha = minf(_alpha + 0.1, 1.0)
+		if FlashAlpha.to_percent(_alpha) < 100.0:
+			_alpha = FlashAlpha.add(_alpha, BOLT_FADE_IN_STEP)
 		position += _step * _speed_const
 		if not _trail_spawned:
 			_spawn_trail()
 		if _bolt_sprite != null:
-			_bolt_sprite.modulate.a = _alpha
+			_bolt_sprite.modulate.a = FlashAlpha.multiplier(_alpha)
 		# The trail runs its own fade to the end and frees itself, which on
 		# a long miss happens while the bolt is still flying - so this has
 		# to check the node is still there before touching it.
@@ -200,5 +206,5 @@ func _spawn_trail() -> void:
 func _draw() -> void:
 	if _bolt_sprite != null:
 		return  # real art loaded - the fallback circle stays hidden
-	draw_line(_trail_start - position, Vector2.ZERO, Color(color, _alpha * 0.5), 2.0)
-	draw_circle(Vector2.ZERO, 4.0, Color(color, _alpha))
+	draw_line(_trail_start - position, Vector2.ZERO, Color(color, FlashAlpha.multiplier(_alpha) * 0.5), 2.0)
+	draw_circle(Vector2.ZERO, 4.0, Color(color, FlashAlpha.multiplier(_alpha)))
